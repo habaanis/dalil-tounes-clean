@@ -130,14 +130,17 @@ export const BusinessDetail = ({
   // Si on a un slug (route /p/:slug), extraire l'ID du slug
   let extractedId: string | null = null;
   if (urlSlug && !urlId) {
-    // Format attendu: nom-entreprise-recXXXXXXXX (Airtable ID = dernier segment après le dernier tiret)
-    // Ex: "skila-mhadia-recmhQeR" → "recmhQeR"
-    const segments = urlSlug.split('-');
-    const lastSegment = segments[segments.length - 1];
-    // Airtable IDs start with "rec" followed by alphanumeric chars, or can be any short ID
-    if (lastSegment && lastSegment.length >= 6) {
-      extractedId = lastSegment;
-      console.log('📌 ID extrait du slug (dernier segment):', extractedId);
+    const uuidMatch = urlSlug.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i);
+    if (uuidMatch) {
+      extractedId = uuidMatch[0];
+      console.log('📌 ID extrait du slug (UUID):', extractedId);
+    } else {
+      const segments = urlSlug.split('-');
+      const lastSegment = segments[segments.length - 1];
+      if (lastSegment && lastSegment.length >= 6) {
+        extractedId = lastSegment;
+        console.log('📌 ID extrait du slug (dernier segment):', extractedId);
+      }
     }
   }
 
