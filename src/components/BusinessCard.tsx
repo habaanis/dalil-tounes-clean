@@ -29,6 +29,8 @@ interface BusinessCardProps {
     name: string;
     category?: string;
     gouvernorat?: string;
+    adresse?: string | null;
+    description?: string | null;
     statut_abonnement?: string | null;
     'niveau priorité abonnement'?: number | null;
     badges?: string[];
@@ -49,6 +51,8 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
   const t = useTranslation(language);
   const { getCategory } = useCategoryTranslation();
   const [showFullSchedule, setShowFullSchedule] = useState(false);
+  const [descriptionExpanded, setDescriptionExpanded] = useState(false);
+  const [showAddress, setShowAddress] = useState(false);
 
   const tier = mapSubscriptionToTier({
     statut_abonnement: business.statut_abonnement,
@@ -200,6 +204,128 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
             <span style={{ fontSize: isMinimal ? '11px' : '14px', fontWeight: '500', color: secondaryTextColor }}>
               {business.gouvernorat}
             </span>
+          </div>
+        )}
+
+        {/* Description cliquable avec effet d'agrandissement */}
+        {business.description && (
+          <div style={{ position: 'relative' }}>
+            <div
+              onClick={(e) => {
+                e.stopPropagation();
+                setDescriptionExpanded(!descriptionExpanded);
+              }}
+              style={{
+                cursor: 'pointer',
+                fontSize: descriptionExpanded ? '20px' : (isMinimal ? '11px' : '14px'),
+                color: secondaryTextColor,
+                lineHeight: '1.6',
+                transition: 'font-size 0.3s ease, box-shadow 0.3s ease, padding 0.3s ease, background 0.3s ease, border-radius 0.3s ease',
+                padding: descriptionExpanded ? '14px 16px' : '0',
+                background: descriptionExpanded
+                  ? isPremiumTier ? 'rgba(212, 175, 55, 0.08)' : 'rgba(255, 255, 255, 0.97)'
+                  : 'transparent',
+                borderRadius: descriptionExpanded ? '10px' : '0',
+                boxShadow: descriptionExpanded ? '0 8px 28px rgba(0,0,0,0.18)' : 'none',
+                position: descriptionExpanded ? 'relative' : 'static',
+                zIndex: descriptionExpanded ? 20 : 'auto',
+                display: descriptionExpanded ? 'block' : '-webkit-box',
+                WebkitLineClamp: descriptionExpanded ? undefined : 2,
+                WebkitBoxOrient: 'vertical' as const,
+                overflow: descriptionExpanded ? 'visible' : 'hidden',
+                border: descriptionExpanded ? `1px solid rgba(212, 175, 55, 0.25)` : '1px solid transparent',
+              }}
+              title={descriptionExpanded ? undefined : 'Cliquer pour agrandir'}
+            >
+              {business.description}
+            </div>
+            {!descriptionExpanded && (
+              <span
+                style={{
+                  fontSize: isMinimal ? '10px' : '11px',
+                  color: accentColor,
+                  fontStyle: 'italic',
+                  cursor: 'pointer',
+                  userSelect: 'none'
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setDescriptionExpanded(true);
+                }}
+              >
+                lire +
+              </span>
+            )}
+            {descriptionExpanded && (
+              <span
+                style={{
+                  display: 'block',
+                  marginTop: '6px',
+                  fontSize: '12px',
+                  color: accentColor,
+                  fontStyle: 'italic',
+                  cursor: 'pointer',
+                  userSelect: 'none'
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setDescriptionExpanded(false);
+                }}
+              >
+                ▲ réduire
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* Adresse avec bouton toggle */}
+        {business.adresse && (
+          <div style={{ paddingTop: '2px' }}>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowAddress(!showAddress);
+              }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                padding: '0',
+                color: accentColor,
+                fontSize: isMinimal ? '11px' : '13px',
+                fontWeight: '500'
+              }}
+            >
+              <MapPin size={isMinimal ? 12 : 14} style={{ color: accentColor, flexShrink: 0 }} />
+              <span>{showAddress ? 'Masquer l\'adresse' : 'Afficher l\'adresse'}</span>
+            </button>
+            <div
+              style={{
+                maxHeight: showAddress ? '120px' : '0',
+                overflow: 'hidden',
+                transition: 'max-height 0.3s ease, opacity 0.3s ease',
+                opacity: showAddress ? 1 : 0
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <p
+                style={{
+                  marginTop: '6px',
+                  fontSize: isMinimal ? '11px' : '13px',
+                  color: secondaryTextColor,
+                  lineHeight: '1.5',
+                  padding: '6px 10px',
+                  background: isPremiumTier ? 'rgba(212, 175, 55, 0.07)' : 'rgba(0,0,0,0.03)',
+                  borderRadius: '6px',
+                  borderLeft: `3px solid ${accentColor}`
+                }}
+              >
+                {business.adresse}
+              </p>
+            </div>
           </div>
         )}
 
