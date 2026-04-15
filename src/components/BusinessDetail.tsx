@@ -543,7 +543,16 @@ export const BusinessDetail = ({
         >
           {/* Bandeau cover — uniquement si image_url existe */}
           {business.image_url ? (
-            <div style={{ position: 'relative', width: '100%', height: '120px', overflow: 'hidden', borderRadius: '14px 14px 0 0' }}>
+            <div
+              style={{
+                position: 'relative',
+                width: '100%',
+                height: 'clamp(150px, 22vw, 200px)',
+                overflow: 'hidden',
+                borderRadius: '14px 14px 0 0',
+                backgroundColor: '#f0ede8',
+              }}
+            >
               <img
                 src={business.image_url}
                 alt={`Couverture ${business.nom}`}
@@ -552,16 +561,22 @@ export const BusinessDetail = ({
                   height: '100%',
                   objectFit: 'cover',
                   objectPosition: 'center',
-                  opacity: 0.8,
+                  opacity: 0.85,
                   display: 'block',
+                  imageRendering: 'auto',
+                  minWidth: 0,
                 }}
                 loading="lazy"
+                onError={(e) => {
+                  const img = e.currentTarget;
+                  img.style.display = 'none';
+                }}
               />
               <div
                 style={{
                   position: 'absolute',
                   inset: 0,
-                  background: `linear-gradient(to bottom, transparent 40%, ${colors.background}cc 100%)`,
+                  background: `linear-gradient(to bottom, transparent 45%, ${colors.background}cc 100%)`,
                 }}
               />
             </div>
@@ -575,7 +590,7 @@ export const BusinessDetail = ({
             style={{
               ...getLogoContainerStyle(colors.gold, '4px'),
               backgroundColor: colors.background,
-              marginTop: business.image_url ? '-56px' : '0',
+              marginTop: business.image_url ? '-64px' : '0',
               position: 'relative',
               zIndex: 2,
             }}
