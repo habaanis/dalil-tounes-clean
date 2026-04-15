@@ -588,9 +588,9 @@ export const BusinessDetail = ({
             {business.telephone && (
               <a
                 href={`tel:${business.telephone}`}
-                onClick={(e) => e.stopPropagation()}
+                onClick={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); }}
                 className="flex items-center gap-1 font-bold truncate max-w-full px-1 hover:underline"
-                style={{ color: colors.gold, textDecoration: 'none' }}
+                style={{ color: colors.gold, textDecoration: 'none', position: 'relative', zIndex: 100, pointerEvents: 'auto', cursor: 'pointer' }}
               >
                 <Phone size={11} className="flex-shrink-0" />
                 <span>{business.telephone}</span>
@@ -629,7 +629,7 @@ export const BusinessDetail = ({
                 )}
               </div>
               <button
-                onClick={() => setDescriptionExpanded(!descriptionExpanded)}
+                onClick={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); setDescriptionExpanded(!descriptionExpanded); }}
                 style={{
                   background: 'none',
                   border: 'none',
@@ -640,6 +640,9 @@ export const BusinessDetail = ({
                   color: colors.gold,
                   letterSpacing: '0.03em',
                   fontFamily: 'Playfair Display, serif',
+                  position: 'relative',
+                  zIndex: 100,
+                  pointerEvents: 'auto',
                 }}
               >
                 {descriptionExpanded ? '▲ Voir moins' : '... Lire la suite'}
@@ -1012,6 +1015,9 @@ export const BusinessDetail = ({
 
       {/* CSS pour effet brillant */}
       <style>{`
+        .modal-shine-effect {
+          pointer-events: none !important;
+        }
         .modal-shine-effect::after {
           content: '';
           position: absolute;
@@ -1022,7 +1028,7 @@ export const BusinessDetail = ({
           background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.3), transparent);
           transform: skewX(-20deg);
           animation: autoShine 3s infinite ease-in-out;
-          pointer-events: none;
+          pointer-events: none !important;
         }
         @keyframes autoShine {
           0% { left: -100%; }
