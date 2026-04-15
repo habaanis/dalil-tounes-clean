@@ -69,14 +69,8 @@ export default function Blog() {
                     </div>
                   </div>
 
-                  <div className="hidden md:block">
-                    <div className="w-40 h-28 rounded-xl overflow-hidden flex-shrink-0">
-                      <img
-                        src={article.coverImage}
-                        alt={article.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                    </div>
+                  <div className="hidden md:flex items-center self-center">
+                    <ArrowRight className="w-5 h-5 text-[#D4AF37] opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" />
                   </div>
                 </article>
               </Link>

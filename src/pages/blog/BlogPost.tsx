@@ -27,26 +27,21 @@ export default function BlogPost() {
         image={article.coverImage}
       />
 
-      <div className="h-[55vh] md:h-[60vh] relative overflow-hidden">
-        <img
-          src={article.coverImage}
-          alt={article.title}
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-
-        <div className="absolute bottom-0 left-0 right-0 px-4 pb-10">
-          <div className="max-w-2xl mx-auto">
-            <span className="inline-block text-xs uppercase tracking-[0.25em] text-[#D4AF37] font-medium mb-4">
-              {article.category}
-            </span>
-            <h1
-              className="text-3xl md:text-4xl font-light text-white leading-tight"
-              style={{ fontFamily: "'Playfair Display', serif" }}
-            >
-              {article.title}
-            </h1>
-          </div>
+      <div className="pt-16 pb-10 px-4 border-b border-gray-100">
+        <div className="max-w-2xl mx-auto text-center">
+          <span className="inline-block text-xs uppercase tracking-[0.25em] text-[#D4AF37] font-medium mb-6">
+            {article.category}
+          </span>
+          <h1
+            className="text-3xl md:text-4xl font-light text-gray-900 leading-tight"
+            style={{ fontFamily: "'Playfair Display', serif" }}
+          >
+            {article.title}
+          </h1>
+          {article.subtitle && (
+            <p className="mt-4 text-gray-500 text-lg font-light">{article.subtitle}</p>
+          )}
+          <div className="w-12 h-px bg-[#D4AF37] mx-auto mt-8" />
         </div>
       </div>
 
