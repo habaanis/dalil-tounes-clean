@@ -25,45 +25,33 @@ export const blogArticles: BlogArticle[] = [
     coverImage: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1600',
     excerpt: "Dalil Tounes n'est pas né dans un bureau de start-up ni lors d'une réunion de brainstorming. Il est né d'une frustration réelle, vécue sur le terrain, par des gens ordinaires qui cherchaient des réponses simples à des questions simples.",
     content: `
-<p>Dalil Tounes n'est pas né dans un bureau de start-up ni lors d'une réunion de brainstorming.</p>
+<h1>Comment est né Dalil Tounes 🧡</h1>
 
-<p>Il est né d'une frustration réelle, vécue sur le terrain, par des gens ordinaires qui cherchaient des réponses simples à des questions simples :</p>
+<p>Je vais te raconter pourquoi j'ai créé ce site 😊</p>
 
-<blockquote>« Où est le meilleur mécanicien de ma ville ? »<br/>« Est-ce que ce restaurant est vraiment bon ? »<br/>« Qui peut me faire une rénovation sérieuse à Sfax ? »</blockquote>
+<p>À chaque fois que je viens en Tunisie, je vois la même scène. Dans la rue, quelqu'un cherche une adresse. Un citoyen, un touriste, peu importe. Il demande "tu connais ceci ? c'est par où ?". Et on lui répond "non je sais pas" ou alors "oui c'est en face du café machin". Sauf que toi tu connais pas le café non plus. Bref 😅</p>
 
-<p>Des questions que tout le monde pose. Et auxquelles personne ne répondait vraiment bien.</p>
+<p>Dernièrement, j'ai dû faire ma première carte d'identité tunisienne. Enfin ! Pour acheter les timbres, je me suis trompé deux fois de bâtiment. Les gens veulent bien t'aider, mais ils ne savent pas vraiment. Ou alors ils te disent "non tu dois faire ci ou ça d'abord". Bon.</p>
 
-<h2>Le vide qu'on a voulu combler</h2>
+<p>Donc je vais sur Internet. Et là, les infos sont éparpillées. Pas d'adresse précise. Parfois juste un GPS pas pratique quand t'es à pied. Tout en arabe (si tu maîtrises pas, bonne chance 🥲). Les horaires faux. Et je dois ouvrir Facebook, Instagram, Google en même temps. Ça me fatigue franchement.</p>
 
-<p>En Tunisie, les bonnes adresses se transmettent encore aujourd'hui de bouche à oreille. On demande à un voisin, à un cousin, à un ami. Les plateformes internationales sont soit absentes, soit inadaptées à la réalité locale. Et les annuaires existants ? Souvent vides, obsolètes, ou trop complexes pour les petits commerçants qui n'ont pas le temps de gérer une présence digitale.</p>
+<p>Alors je me suis dit : si c'est galère pour moi de trouver une administration, alors pour trouver un plombier, un coiffeur, un médecin ou un artisan de confiance avec des bons avis, c'est pareil.</p>
 
-<p>L'idée de Dalil Tounes est née de ce constat simple : <strong>les Tunisiens méritent un outil qui leur ressemble.</strong></p>
+<p>Et les commerçants dans tout ça ? Eux aussi ils galèrent. Ils sont sur Facebook, Instagram, Google Maps, mais tout est séparé. Et beaucoup n'ont pas le temps de bien s'en occuper. Du coup ça fait vite fait. Résultat : pas de vitrine unique. Pas de rue qui amène les clients.</p>
 
-<h2>Une plateforme construite avec le terrain</h2>
+<p>L'idée est venue comme ça. Pourquoi pas <strong>un annuaire vivant qui relie les citoyens</strong> ? Pas juste une fiche froide. Quelque chose qui fait le lien entre les gens et les pros de confiance. Une sorte de CV business pour chaque pro. Adresse, horaires, photos, avis, contacts, GPS, réseaux sociaux, description. Tout en un clic. Et des infos vérifiées, pas n'importe quoi. 🧡</p>
 
-<p>Dès le départ, nous avons fait le choix d'aller à la rencontre des commerçants, des artisans, des prestataires. Pas pour leur vendre un abonnement, mais pour comprendre leur réalité. Ce que nous avons entendu nous a guidés :</p>
+<p>Dans mes projets, j'ai toujours eu cette envie d'aider les autres. Pas seulement pour l'argent. Je veux aider les petits commerçants, les petites entreprises qu'on connaît pas. Y'a tellement de gens qui méritent d'être plus visibles. Et même les associations (pour les enfants ou les animaux) qu'on connaît peu.</p>
 
-<ul>
-<li>« Je n'ai pas le temps de gérer ça. »</li>
-<li>« J'ai essayé d'autres plateformes, personne ne m'a appelé. »</li>
-<li>« Mes clients me trouvent sur WhatsApp, pas sur internet. »</li>
-</ul>
+<p>Je suis auto-entrepreneur en France, dans la traiteur. Rien à voir avec l'informatique. Je connaissais rien au début. Mais je me suis lancé. J'ai cherché, lu, appris, petit à petit.</p>
 
-<p>Ces retours ont façonné chaque décision de conception. La simplicité d'inscription. L'interface en arabe, français et anglais. L'intégration native de WhatsApp. La mise en avant des avis clients.</p>
+<p>Aujourd'hui, Dalil Tounes se construit pierre par pierre. Je ne veux pas faire juste un annuaire. Je veux créer un vrai lien entre les citoyens et les pros de leur quartier. Un annuaire vivant. Pas une liste morte. Et je suis convaincu que ça va marcher 🤲</p>
 
-<h2>Ce que Dalil Tounes est aujourd'hui</h2>
+<p>Beaucoup pensent que Facebook, Instagram et Google suffisent. Oui, ce sont des fenêtres. Mais ce ne sont pas les rues qui amènent les clients. Dalil Tounes, c'est la rue. C'est le lien. C'est l'annuaire vivant qui rapproche les gens.</p>
 
-<p>Dalil Tounes, c'est un annuaire vivant. Un espace où les entreprises tunisiennes — des plus grandes aux plus petites — peuvent exister dignement en ligne. Où les citoyens peuvent trouver rapidement ce qu'ils cherchent, comparer, contacter, faire confiance.</p>
+<p>Je ne viens pas du numérique. Mais je crois en ce projet. Parce qu'il répond à un vrai besoin. Parce qu'il est né d'une galère que j'ai vraiment vécue. Parce que je l'ai fait avec le cœur. 🧡</p>
 
-<p>C'est aussi une communauté. Chaque avis laissé, chaque fiche remplie, chaque partage contribue à construire une cartographie de confiance du commerce tunisien.</p>
-
-<h2>La route est encore longue</h2>
-
-<p>Nous sommes encore jeunes. Beaucoup de villes sont sous-représentées. Beaucoup de secteurs manquent d'acteurs référencés. Mais chaque semaine, de nouvelles entreprises rejoignent la plateforme. Chaque jour, des citoyens trouvent ce qu'ils cherchaient.</p>
-
-<p>C'est pour ça que nous continuons. Avec humilité. Avec ambition. Et avec beaucoup d'amour pour notre pays. 🧡</p>
-
-<p><em>— L'équipe Dalil Tounes</em></p>
+<p>Voilà. C'est mon histoire. Merci de l'avoir lue jusqu'ici 😌</p>
     `.trim(),
   },
 ];
