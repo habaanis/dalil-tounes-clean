@@ -15,31 +15,14 @@ interface ImageGalleryProps {
 export const ImageGallery = ({ imageUrls, altText, className = '', maxPhotos, height = '120px', objectFit = 'contain' }: ImageGalleryProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showFullscreen, setShowFullscreen] = useState(false);
-  const [brokenIndices, setBrokenIndices] = useState<Set<number>>(new Set());
 
-  let allThumbnailUrls = getGalleryImageUrls(imageUrls, 'thumbnail');
-  let allFullUrls = getGalleryImageUrls(imageUrls, 'full');
+  let thumbnailUrls = getGalleryImageUrls(imageUrls, 'thumbnail');
+  let fullUrls = getGalleryImageUrls(imageUrls, 'full');
 
   if (maxPhotos && maxPhotos > 0) {
-    allThumbnailUrls = allThumbnailUrls.slice(0, maxPhotos);
-    allFullUrls = allFullUrls.slice(0, maxPhotos);
+    thumbnailUrls = thumbnailUrls.slice(0, maxPhotos);
+    fullUrls = fullUrls.slice(0, maxPhotos);
   }
-
-  const validIndices = allThumbnailUrls.map((_, i) => i).filter((i) => !brokenIndices.has(i));
-  const thumbnailUrls = validIndices.map((i) => allThumbnailUrls[i]);
-  const fullUrls = validIndices.map((i) => allFullUrls[i]);
-
-  const handleImageError = (originalIndex: number, url: string) => {
-    console.warn('Image introuvable :', url.split('/').pop() || url);
-    setBrokenIndices((prev) => {
-      const next = new Set(prev);
-      next.add(originalIndex);
-      return next;
-    });
-    setCurrentIndex(0);
-  };
-
-  const currentOriginalIndex = validIndices[currentIndex] ?? 0;
 
   const goToPrevious = () => {
     setCurrentIndex((prev) => (prev === 0 ? thumbnailUrls.length - 1 : prev - 1));
@@ -63,7 +46,6 @@ export const ImageGallery = ({ imageUrls, altText, className = '', maxPhotos, he
             src={thumbnailUrls[currentIndex]}
             alt={`${altText} - Fond`}
             className="w-full h-full object-cover blur-xl scale-110 opacity-40"
-            onError={() => handleImageError(currentOriginalIndex, thumbnailUrls[currentIndex] || '')}
           />
         </div>
 
@@ -73,7 +55,6 @@ export const ImageGallery = ({ imageUrls, altText, className = '', maxPhotos, he
           alt={`${altText} - Image ${currentIndex + 1}`}
           className={`relative w-full h-full object-${objectFit} cursor-pointer transition-transform duration-300 hover:scale-105`}
           onClick={() => setShowFullscreen(true)}
-          onError={() => handleImageError(currentOriginalIndex, thumbnailUrls[currentIndex] || '')}
         />
 
         {/* Badge zoom - miniature */}
@@ -139,7 +120,6 @@ export const ImageGallery = ({ imageUrls, altText, className = '', maxPhotos, he
               alt={`${altText} - Image ${currentIndex + 1}`}
               className="max-w-full max-h-full object-contain shadow-2xl rounded-lg"
               onClick={(e) => e.stopPropagation()}
-              onError={() => handleImageError(currentOriginalIndex, fullUrls[currentIndex] || '')}
             />
 
             {/* Navigation en plein écran */}
