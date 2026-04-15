@@ -167,6 +167,7 @@ export const BusinessDetail = ({
   const [showFullSchedule, setShowFullSchedule] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
   const [descriptionExpanded, setDescriptionExpanded] = useState(false);
+  const [showDescriptionModal, setShowDescriptionModal] = useState(false);
 
   const actualBusinessId = businessId || businessProp?.id;
   useViewTracking(actualBusinessId);
@@ -579,11 +580,17 @@ export const BusinessDetail = ({
             <p className="font-medium text-xs truncate px-1" style={{ color: colors.gold }}>{translatedCategory}</p>
           )}
 
-          {/* Ville & Téléphone - Ultra compact */}
-          <div className="flex flex-col items-center text-gray-200 text-xs">
-            <div className="flex items-center gap-1 truncate max-w-full px-1">
+          {/* Adresse, Ville & Téléphone */}
+          <div className="flex flex-col items-center text-gray-200 text-xs gap-0.5">
+            <div className="flex items-center gap-1 max-w-full px-1">
               <MapPin size={11} className="flex-shrink-0" style={{ color: colors.gold }} />
-              <span className="truncate">{business.ville}</span>
+              <span className="text-center" style={{ fontSize: '10px' }}>
+                {business.adresse
+                  ? business.adresse
+                  : <span className="text-gray-500 italic">Adresse non renseignée</span>
+                }
+                {business.adresse && business.ville ? `, ${business.ville}` : (!business.adresse && business.ville ? business.ville : '')}
+              </span>
             </div>
             {business.telephone && (
               <a
@@ -598,38 +605,26 @@ export const BusinessDetail = ({
             )}
           </div>
 
-          {/* Description avec Lire la suite */}
+          {/* Description avec ouverture modale */}
           {translatedDescription && (
             <div className="text-left px-1">
-              <div
-                style={{
-                  position: 'relative',
-                  maxHeight: descriptionExpanded ? '800px' : '58px',
-                  overflow: 'hidden',
-                  transition: 'max-height 0.35s ease',
-                }}
-              >
-                <p
-                  className="text-gray-300 break-words"
-                  style={{ fontSize: '11px', lineHeight: '1.65', margin: 0 }}
-                >
+              <div style={{ position: 'relative', maxHeight: '52px', overflow: 'hidden' }}>
+                <p className="text-gray-300 break-words" style={{ fontSize: '11px', lineHeight: '1.65', margin: 0 }}>
                   {translatedDescription}
                 </p>
-                {!descriptionExpanded && (
-                  <div
-                    style={{
-                      position: 'absolute',
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      height: '22px',
-                      background: `linear-gradient(to bottom, transparent, ${colors.background})`,
-                    }}
-                  />
-                )}
+                <div
+                  style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    height: '22px',
+                    background: `linear-gradient(to bottom, transparent, ${colors.background})`,
+                  }}
+                />
               </div>
               <button
-                onClick={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); setDescriptionExpanded(!descriptionExpanded); }}
+                onClick={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); setShowDescriptionModal(true); }}
                 style={{
                   background: 'none',
                   border: 'none',
@@ -645,8 +640,76 @@ export const BusinessDetail = ({
                   pointerEvents: 'auto',
                 }}
               >
-                {descriptionExpanded ? '▲ Voir moins' : '... Lire la suite'}
+                ... Lire la suite
               </button>
+            </div>
+          )}
+
+          {/* Modale description */}
+          {showDescriptionModal && (
+            <div
+              className="fixed inset-0 z-[99999] flex items-center justify-center p-4"
+              style={{ backgroundColor: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(4px)', animation: 'descFadeIn 0.2s ease' }}
+              onClick={(e) => { e.stopPropagation(); setShowDescriptionModal(false); }}
+            >
+              <div
+                className="relative w-full"
+                style={{
+                  maxWidth: '420px',
+                  backgroundColor: '#fff',
+                  borderRadius: '16px',
+                  boxShadow: '0 24px 60px rgba(0,0,0,0.35)',
+                  padding: '28px 24px 24px',
+                  animation: 'descScaleIn 0.22s cubic-bezier(0.34,1.56,0.64,1)',
+                }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <span style={{ fontFamily: 'Playfair Display, serif', fontSize: '15px', fontWeight: '700', color: '#1a1a1a', letterSpacing: '0.02em' }}>
+                    {business.nom}
+                  </span>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setShowDescriptionModal(false); }}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: '20px',
+                      lineHeight: 1,
+                      color: '#888',
+                      padding: '0 0 0 12px',
+                      fontWeight: '300',
+                    }}
+                    aria-label="Fermer"
+                  >
+                    ×
+                  </button>
+                </div>
+                <div style={{ height: '1px', backgroundColor: colors.gold, marginBottom: '16px', opacity: 0.5 }} />
+                <p style={{ fontSize: '15px', lineHeight: '1.75', color: '#333', margin: 0, whiteSpace: 'pre-wrap' }}>
+                  {translatedDescription}
+                </p>
+                <div style={{ height: '1px', backgroundColor: colors.gold, marginTop: '20px', marginBottom: '16px', opacity: 0.3 }} />
+                <button
+                  onClick={(e) => { e.stopPropagation(); setShowDescriptionModal(false); }}
+                  style={{
+                    display: 'block',
+                    width: '100%',
+                    padding: '10px',
+                    borderRadius: '8px',
+                    border: `1.5px solid ${colors.gold}`,
+                    background: 'none',
+                    color: colors.gold,
+                    fontFamily: 'Playfair Display, serif',
+                    fontSize: '13px',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    letterSpacing: '0.05em',
+                  }}
+                >
+                  Fermer
+                </button>
+              </div>
             </div>
           )}
 
@@ -1033,6 +1096,14 @@ export const BusinessDetail = ({
         @keyframes autoShine {
           0% { left: -100%; }
           100% { left: 200%; }
+        }
+        @keyframes descFadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes descScaleIn {
+          from { opacity: 0; transform: scale(0.88); }
+          to { opacity: 1; transform: scale(1); }
         }
       `}</style>
     </div>
