@@ -1,4 +1,4 @@
-import { MapPin, Award, Clock, ChevronDown, ChevronUp } from 'lucide-react';
+import { MapPin, Award, Clock, ChevronDown, Phone } from 'lucide-react';
 import { useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
@@ -31,6 +31,8 @@ interface BusinessCardProps {
     gouvernorat?: string;
     adresse?: string | null;
     description?: string | null;
+    telephone?: string | null;
+    phone?: string | null;
     statut_abonnement?: string | null;
     'niveau priorité abonnement'?: number | null;
     badges?: string[];
@@ -207,87 +209,96 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
           </div>
         )}
 
-        {/* Description cliquable avec effet d'agrandissement */}
+        {/* Description avec "Lire la suite" */}
         {business.description && (
-          <div style={{ position: 'relative' }}>
+          <div onClick={(e) => e.stopPropagation()}>
             <div
-              onClick={(e) => {
-                e.stopPropagation();
-                setDescriptionExpanded(!descriptionExpanded);
-              }}
               style={{
-                cursor: 'pointer',
-                fontSize: descriptionExpanded ? '20px' : (isMinimal ? '11px' : '14px'),
-                color: secondaryTextColor,
-                lineHeight: '1.6',
-                transition: 'font-size 0.3s ease, box-shadow 0.3s ease, padding 0.3s ease, background 0.3s ease, border-radius 0.3s ease',
-                padding: descriptionExpanded ? '14px 16px' : '0',
-                background: descriptionExpanded
-                  ? isPremiumTier ? 'rgba(212, 175, 55, 0.08)' : 'rgba(255, 255, 255, 0.97)'
-                  : 'transparent',
-                borderRadius: descriptionExpanded ? '10px' : '0',
-                boxShadow: descriptionExpanded ? '0 8px 28px rgba(0,0,0,0.18)' : 'none',
-                position: descriptionExpanded ? 'relative' : 'static',
-                zIndex: descriptionExpanded ? 20 : 'auto',
-                display: descriptionExpanded ? 'block' : '-webkit-box',
-                WebkitLineClamp: descriptionExpanded ? undefined : 2,
-                WebkitBoxOrient: 'vertical' as const,
-                overflow: descriptionExpanded ? 'visible' : 'hidden',
-                border: descriptionExpanded ? `1px solid rgba(212, 175, 55, 0.25)` : '1px solid transparent',
+                position: 'relative',
+                maxHeight: descriptionExpanded ? '600px' : (isMinimal ? '38px' : '48px'),
+                overflow: 'hidden',
+                transition: 'max-height 0.35s ease',
               }}
-              title={descriptionExpanded ? undefined : 'Cliquer pour agrandir'}
             >
-              {business.description}
+              <p
+                style={{
+                  fontSize: isMinimal ? '11px' : '13px',
+                  color: secondaryTextColor,
+                  lineHeight: '1.6',
+                  margin: 0,
+                }}
+              >
+                {business.description}
+              </p>
+              {!descriptionExpanded && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    height: '20px',
+                    background: isPremiumTier
+                      ? 'linear-gradient(to bottom, transparent, rgba(10,10,10,0.85))'
+                      : 'linear-gradient(to bottom, transparent, rgba(255,255,255,0.95))',
+                  }}
+                />
+              )}
             </div>
-            {!descriptionExpanded && (
-              <span
-                style={{
-                  fontSize: isMinimal ? '10px' : '11px',
-                  color: accentColor,
-                  fontStyle: 'italic',
-                  cursor: 'pointer',
-                  userSelect: 'none'
-                }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setDescriptionExpanded(true);
-                }}
-              >
-                lire +
-              </span>
-            )}
-            {descriptionExpanded && (
-              <span
-                style={{
-                  display: 'block',
-                  marginTop: '6px',
-                  fontSize: '12px',
-                  color: accentColor,
-                  fontStyle: 'italic',
-                  cursor: 'pointer',
-                  userSelect: 'none'
-                }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setDescriptionExpanded(false);
-                }}
-              >
-                ▲ réduire
-              </span>
-            )}
+            <button
+              onClick={() => setDescriptionExpanded(!descriptionExpanded)}
+              style={{
+                background: 'none',
+                border: 'none',
+                padding: '2px 0 0 0',
+                cursor: 'pointer',
+                fontSize: isMinimal ? '10px' : '11px',
+                fontWeight: '600',
+                color: accentColor,
+                letterSpacing: '0.02em',
+              }}
+            >
+              {descriptionExpanded ? '▲ Voir moins' : '... Lire la suite'}
+            </button>
+          </div>
+        )}
+
+        {/* Téléphone cliquable */}
+        {(business.telephone || business.phone) && (
+          <div onClick={(e) => e.stopPropagation()}>
+            <a
+              href={`tel:${business.telephone || business.phone}`}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+                fontSize: isMinimal ? '11px' : '13px',
+                fontWeight: '600',
+                color: accentColor,
+                textDecoration: 'none',
+                padding: '4px 10px',
+                borderRadius: '20px',
+                border: `1px solid rgba(212,175,55,0.35)`,
+                background: isPremiumTier ? 'rgba(212,175,55,0.08)' : 'rgba(212,175,55,0.05)',
+                transition: 'background 0.2s ease',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(212,175,55,0.15)')}
+              onMouseLeave={(e) => (e.currentTarget.style.background = isPremiumTier ? 'rgba(212,175,55,0.08)' : 'rgba(212,175,55,0.05)')}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Phone size={isMinimal ? 11 : 13} style={{ flexShrink: 0 }} />
+              <span>{business.telephone || business.phone}</span>
+            </a>
           </div>
         )}
 
         {/* Adresse avec bouton toggle */}
         {business.adresse && (
-          <div style={{ paddingTop: '2px' }}>
+          <div style={{ paddingTop: '2px' }} onClick={(e) => e.stopPropagation()}>
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowAddress(!showAddress);
-              }}
+              onClick={() => setShowAddress(!showAddress)}
               style={{
-                display: 'flex',
+                display: 'inline-flex',
                 alignItems: 'center',
                 gap: '5px',
                 background: 'none',
@@ -300,7 +311,7 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
               }}
             >
               <MapPin size={isMinimal ? 12 : 14} style={{ color: accentColor, flexShrink: 0 }} />
-              <span>{showAddress ? 'Masquer l\'adresse' : 'Afficher l\'adresse'}</span>
+              <span>{showAddress ? "Masquer l'adresse" : "Afficher l'adresse"}</span>
             </button>
             <div
               style={{
@@ -309,7 +320,6 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
                 transition: 'max-height 0.3s ease, opacity 0.3s ease',
                 opacity: showAddress ? 1 : 0
               }}
-              onClick={(e) => e.stopPropagation()}
             >
               <p
                 style={{
