@@ -166,6 +166,7 @@ export const BusinessDetail = ({
   const [reviewCount, setReviewCount] = useState<number>(0);
   const [showFullSchedule, setShowFullSchedule] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
+  const [descriptionExpanded, setDescriptionExpanded] = useState(false);
 
   const actualBusinessId = businessId || businessProp?.id;
   useViewTracking(actualBusinessId);
@@ -584,22 +585,65 @@ export const BusinessDetail = ({
               <MapPin size={11} className="flex-shrink-0" style={{ color: colors.gold }} />
               <span className="truncate">{business.ville}</span>
             </div>
-            <div className="flex items-center gap-1 font-bold truncate max-w-full px-1" style={{ color: colors.gold }}>
-              <Phone size={11} className="flex-shrink-0" />
-              <button
-                onClick={(e) => { e.stopPropagation(); window.location.href = `tel:${business.telephone}`; }}
-                className="hover:underline truncate cursor-pointer bg-transparent border-none p-0 font-bold text-xs"
-                style={{ color: colors.gold }}
+            {business.telephone && (
+              <a
+                href={`tel:${business.telephone}`}
+                onClick={(e) => e.stopPropagation()}
+                className="flex items-center gap-1 font-bold truncate max-w-full px-1 hover:underline"
+                style={{ color: colors.gold, textDecoration: 'none' }}
               >
-                {business.telephone}
-              </button>
-            </div>
+                <Phone size={11} className="flex-shrink-0" />
+                <span>{business.telephone}</span>
+              </a>
+            )}
           </div>
 
-          {/* Description compacte - Traduite */}
+          {/* Description avec Lire la suite */}
           {translatedDescription && (
             <div className="text-left px-1">
-              <p className="text-gray-300 text-[10px] leading-relaxed line-clamp-none break-words">{translatedDescription}</p>
+              <div
+                style={{
+                  position: 'relative',
+                  maxHeight: descriptionExpanded ? '800px' : '58px',
+                  overflow: 'hidden',
+                  transition: 'max-height 0.35s ease',
+                }}
+              >
+                <p
+                  className="text-gray-300 break-words"
+                  style={{ fontSize: '11px', lineHeight: '1.65', margin: 0 }}
+                >
+                  {translatedDescription}
+                </p>
+                {!descriptionExpanded && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      height: '22px',
+                      background: `linear-gradient(to bottom, transparent, ${colors.background})`,
+                    }}
+                  />
+                )}
+              </div>
+              <button
+                onClick={() => setDescriptionExpanded(!descriptionExpanded)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  padding: '3px 0 0 0',
+                  cursor: 'pointer',
+                  fontSize: '10px',
+                  fontWeight: '700',
+                  color: colors.gold,
+                  letterSpacing: '0.03em',
+                  fontFamily: 'Playfair Display, serif',
+                }}
+              >
+                {descriptionExpanded ? '▲ Voir moins' : '... Lire la suite'}
+              </button>
             </div>
           )}
 
