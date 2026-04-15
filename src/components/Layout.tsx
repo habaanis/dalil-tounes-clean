@@ -72,6 +72,10 @@ export const Layout = ({ children }: LayoutProps) => {
       label: 'Notre Concept',
       path: '/concept',
     },
+    {
+      label: 'Blog',
+      path: '/blog',
+    },
   ];
 
   const toggleMenu = (label: string) => {
