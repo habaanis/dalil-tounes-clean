@@ -31,6 +31,9 @@ export const SuggestionEntrepriseModal = ({ isOpen, onClose }: SuggestionEntrepr
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<'success' | 'error' | 'warning' | 'info'>('info');
 
+  const cleanPhone = (value: string) => value.replace(/[\s\-().]/g, '');
+  const cleanEmail = (value: string) => value.trim().toLowerCase();
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
       ...formData,
@@ -49,9 +52,15 @@ export const SuggestionEntrepriseModal = ({ isOpen, onClose }: SuggestionEntrepr
         nom_entreprise: formData.nomEntreprise.trim(),
         secteur: formData.secteur.trim(),
         ville: formData.ville.trim() || null,
-        contact_suggere: [formData.contactSuggere.trim(), formData.contactSuggere2.trim()].filter(Boolean).join(' / ') || null,
+        contact_suggere: [
+          formData.contactSuggere.trim() ? `${formData.contactSuggere.trim()} (clean: ${cleanPhone(formData.contactSuggere)})` : '',
+          formData.contactSuggere2.trim() ? `${formData.contactSuggere2.trim()} (clean: ${cleanPhone(formData.contactSuggere2)})` : '',
+        ].filter(Boolean).join(' / ') || null,
         email_suggesteur: formData.emailSuggesteur.trim() || null,
-        raison_suggestion: formData.raisonSuggestion.trim() || null,
+        raison_suggestion: [
+          formData.raisonSuggestion.trim(),
+          formData.emailSuggesteur2.trim() ? `Email2: ${formData.emailSuggesteur2.trim()} (clean: ${cleanEmail(formData.emailSuggesteur2)})` : '',
+        ].filter(Boolean).join('\n') || null,
         type_demande: 'suggestion',
       };
 

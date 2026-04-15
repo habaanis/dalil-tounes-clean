@@ -49,6 +49,9 @@ export const RegistrationForm = ({ onClose, selectedPlan }: RegistrationFormProp
     consent: false,
   });
 
+  const cleanPhone = (value: string) => value.replace(/[\s\-().]/g, '');
+  const cleanEmail = (value: string) => value.trim().toLowerCase();
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     setFormData({
@@ -77,7 +80,7 @@ export const RegistrationForm = ({ onClose, selectedPlan }: RegistrationFormProp
         nom_entreprise: formData.companyName.trim(),
         secteur: formData.sector.trim(),
         ville: formData.city.trim(),
-        contact_suggere: `Tel: ${formData.phone}${formData.phone2 ? ` / ${formData.phone2}` : ''} | Contact: ${formData.contactName} (${formData.contactPosition}) - ${formData.contactPhone}`,
+        contact_suggere: `Tel: ${formData.phone}${formData.phone2 ? ` / ${formData.phone2}` : ''} | Tel_clean: ${cleanPhone(formData.phone)}${formData.phone2 ? ` / ${cleanPhone(formData.phone2)}` : ''} | Contact: ${formData.contactName} (${formData.contactPosition}) - ${formData.contactPhone}`,
         email_suggesteur: formData.email.trim().toLowerCase(),
         raison_suggestion: `Demande d'inscription entreprise
 
@@ -85,7 +88,7 @@ INFORMATIONS DÉTAILLÉES:
 - Forme juridique: ${formData.legalForm}
 - Registre commerce: ${formData.registrationNumber}
 - Adresse: ${formData.street}, ${formData.city} ${formData.postalCode}, ${formData.governorate}
-- Email: ${formData.email}${formData.email2 ? ` / ${formData.email2}` : ''}
+- Email: ${formData.email}${formData.email2 ? ` / ${formData.email2}` : ''}${formData.email2 ? ` | Email2_clean: ${cleanEmail(formData.email2)}` : ''}
 - Email contact: ${formData.contactEmail}
 ${formData.website ? `- Site web: ${formData.website}` : ''}
 - Plan abonnement: ${formData.subscriptionPlan} (${formData.subscriptionDuration === 'annual' ? 'Annuel' : 'Mensuel'})

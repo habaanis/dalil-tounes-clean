@@ -48,8 +48,10 @@ function normalizeBusiness(business: any): any {
     adresse: business.adresse || business.address || '',
     telephone: business.telephone || business.phone || '',
     telephone2: business.telephone2 || '',
+    telephone2_clean: business.telephone2_clean || '',
     email: business.email || '',
     email2: business.email2 || '',
+    email2_clean: business.email2_clean || '',
     site_web: business.site_web || business.website || '',
     description: business.description || '',
     services: business.services || '',
@@ -97,8 +99,10 @@ interface Business {
   adresse: string;
   telephone: string;
   telephone2?: string;
+  telephone2_clean?: string;
   email: string;
   email2?: string;
+  email2_clean?: string;
   site_web?: string;
   description: string;
   services?: string;
@@ -756,7 +760,7 @@ export const BusinessDetail = ({
             )}
             {business.telephone2 && (
               <a
-                href={`tel:${business.telephone2}`}
+                href={`tel:${business.telephone2_clean || business.telephone2}`}
                 onClick={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); }}
                 className="flex items-center gap-1 font-bold truncate max-w-full px-1 hover:underline"
                 style={{ color: colors.gold, textDecoration: 'none', position: 'relative', zIndex: 100, pointerEvents: 'auto', cursor: 'pointer', marginTop: '2px' }}
@@ -963,7 +967,7 @@ export const BusinessDetail = ({
             {/* Email 2 */}
             {business.email2 && (
               <a
-                href={`mailto:${business.email2}`}
+                href={`mailto:${business.email2_clean || business.email2}`}
                 onClick={(e) => e.stopPropagation()}
                 className="flex items-center justify-center w-6 h-6 rounded-full transition-all hover:scale-110 bg-[#6B7280] cursor-pointer"
                 style={{ position: 'relative', zIndex: 50, pointerEvents: 'auto' }}
