@@ -28,7 +28,9 @@ export const RegistrationForm = ({ onClose, selectedPlan }: RegistrationFormProp
     postalCode: '',
     governorate: '',
     phone: '',
+    phone2: '',
     email: '',
+    email2: '',
     website: '',
     sector: '',
     companyDescription: '',
@@ -75,7 +77,7 @@ export const RegistrationForm = ({ onClose, selectedPlan }: RegistrationFormProp
         nom_entreprise: formData.companyName.trim(),
         secteur: formData.sector.trim(),
         ville: formData.city.trim(),
-        contact_suggere: `Tel: ${formData.phone} | Contact: ${formData.contactName} (${formData.contactPosition}) - ${formData.contactPhone}`,
+        contact_suggere: `Tel: ${formData.phone}${formData.phone2 ? ` / ${formData.phone2}` : ''} | Contact: ${formData.contactName} (${formData.contactPosition}) - ${formData.contactPhone}`,
         email_suggesteur: formData.email.trim().toLowerCase(),
         raison_suggestion: `Demande d'inscription entreprise
 
@@ -83,6 +85,7 @@ INFORMATIONS DÉTAILLÉES:
 - Forme juridique: ${formData.legalForm}
 - Registre commerce: ${formData.registrationNumber}
 - Adresse: ${formData.street}, ${formData.city} ${formData.postalCode}, ${formData.governorate}
+- Email: ${formData.email}${formData.email2 ? ` / ${formData.email2}` : ''}
 - Email contact: ${formData.contactEmail}
 ${formData.website ? `- Site web: ${formData.website}` : ''}
 - Plan abonnement: ${formData.subscriptionPlan} (${formData.subscriptionDuration === 'annual' ? 'Annuel' : 'Mensuel'})
@@ -388,6 +391,19 @@ Les données ont été enregistrées dans Supabase.
 
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-0.5">
+                  Téléphone 2 (optionnel)
+                </label>
+                <input
+                  type="tel"
+                  name="phone2"
+                  value={formData.phone2}
+                  onChange={handleChange}
+                  className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-0.5">
                   {t.subscription.form.email} *
                 </label>
                 <input
@@ -395,6 +411,19 @@ Les données ont été enregistrées dans Supabase.
                   name="email"
                   required
                   value={formData.email}
+                  onChange={handleChange}
+                  className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-0.5">
+                  Email 2 (optionnel)
+                </label>
+                <input
+                  type="email"
+                  name="email2"
+                  value={formData.email2}
                   onChange={handleChange}
                   className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
                 />

@@ -47,7 +47,9 @@ function normalizeBusiness(business: any): any {
     gouvernorat: business.gouvernorat || business.city || '',
     adresse: business.adresse || business.address || '',
     telephone: business.telephone || business.phone || '',
+    telephone2: business.telephone2 || '',
     email: business.email || '',
+    email2: business.email2 || '',
     site_web: business.site_web || business.website || '',
     description: business.description || '',
     services: business.services || '',
@@ -94,7 +96,9 @@ interface Business {
   ville: string;
   adresse: string;
   telephone: string;
+  telephone2?: string;
   email: string;
+  email2?: string;
   site_web?: string;
   description: string;
   services?: string;
@@ -750,6 +754,17 @@ export const BusinessDetail = ({
                 <span>{business.telephone}</span>
               </a>
             )}
+            {business.telephone2 && (
+              <a
+                href={`tel:${business.telephone2}`}
+                onClick={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); }}
+                className="flex items-center gap-1 font-bold truncate max-w-full px-1 hover:underline"
+                style={{ color: colors.gold, textDecoration: 'none', position: 'relative', zIndex: 100, pointerEvents: 'auto', cursor: 'pointer', marginTop: '2px' }}
+              >
+                <Phone size={11} className="flex-shrink-0" />
+                <span>{business.telephone2}</span>
+              </a>
+            )}
           </div>
 
           {/* Description avec ouverture modale */}
@@ -941,6 +956,18 @@ export const BusinessDetail = ({
                 className="flex items-center justify-center w-6 h-6 rounded-full transition-all hover:scale-110 bg-[#6B7280] cursor-pointer"
                 style={{ position: 'relative', zIndex: 50, pointerEvents: 'auto' }}
                 title={business.email}
+              >
+                <Mail size={10} className="text-white" />
+              </a>
+            )}
+            {/* Email 2 */}
+            {business.email2 && (
+              <a
+                href={`mailto:${business.email2}`}
+                onClick={(e) => e.stopPropagation()}
+                className="flex items-center justify-center w-6 h-6 rounded-full transition-all hover:scale-110 bg-[#6B7280] cursor-pointer"
+                style={{ position: 'relative', zIndex: 50, pointerEvents: 'auto' }}
+                title={business.email2}
               >
                 <Mail size={10} className="text-white" />
               </a>

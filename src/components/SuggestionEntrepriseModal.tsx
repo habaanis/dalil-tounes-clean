@@ -20,7 +20,9 @@ export const SuggestionEntrepriseModal = ({ isOpen, onClose }: SuggestionEntrepr
     secteur: '',
     ville: '',
     contactSuggere: '',
+    contactSuggere2: '',
     emailSuggesteur: '',
+    emailSuggesteur2: '',
     raisonSuggestion: '',
   });
 
@@ -47,7 +49,7 @@ export const SuggestionEntrepriseModal = ({ isOpen, onClose }: SuggestionEntrepr
         nom_entreprise: formData.nomEntreprise.trim(),
         secteur: formData.secteur.trim(),
         ville: formData.ville.trim() || null,
-        contact_suggere: formData.contactSuggere.trim() || null,
+        contact_suggere: [formData.contactSuggere.trim(), formData.contactSuggere2.trim()].filter(Boolean).join(' / ') || null,
         email_suggesteur: formData.emailSuggesteur.trim() || null,
         raison_suggestion: formData.raisonSuggestion.trim() || null,
         type_demande: 'suggestion',
@@ -101,7 +103,9 @@ export const SuggestionEntrepriseModal = ({ isOpen, onClose }: SuggestionEntrepr
         secteur: '',
         ville: '',
         contactSuggere: '',
+        contactSuggere2: '',
         emailSuggesteur: '',
+        emailSuggesteur2: '',
         raisonSuggestion: '',
       });
 
@@ -243,12 +247,40 @@ export const SuggestionEntrepriseModal = ({ isOpen, onClose }: SuggestionEntrepr
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Téléphone 2 (optionnel)
+                    </label>
+                    <input
+                      type="text"
+                      name="contactSuggere2"
+                      value={formData.contactSuggere2}
+                      onChange={handleChange}
+                      placeholder={placeholder('telephone')}
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-orange-400 focus:ring-4 focus:ring-orange-100 transition-all outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       {label('email')}
                     </label>
                     <input
                       type="email"
                       name="emailSuggesteur"
                       value={formData.emailSuggesteur}
+                      onChange={handleChange}
+                      placeholder={placeholder('email')}
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-orange-400 focus:ring-4 focus:ring-orange-100 transition-all outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Email 2 (optionnel)
+                    </label>
+                    <input
+                      type="email"
+                      name="emailSuggesteur2"
+                      value={formData.emailSuggesteur2}
                       onChange={handleChange}
                       placeholder={placeholder('email')}
                       className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-orange-400 focus:ring-4 focus:ring-orange-100 transition-all outline-none"
