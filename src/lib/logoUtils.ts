@@ -45,15 +45,19 @@ export function getLogoContainerStyle(borderColor: string = '#D4AF37', borderWid
 }
 
 /**
- * Style CSS pour le logo dans un cercle
- * Le logo remplit ENTIÈREMENT le cercle - pas de fond blanc
+ * Style CSS pour le logo dans un cercle.
+ * Utilise object-contain pour éviter toute déformation,
+ * avec un fond blanc discret pour les logos transparents.
  */
 export function getLogoStyle(logoUrl?: string | null): React.CSSProperties {
+  const isDefault = isDefaultLogo(logoUrl);
   return {
-    objectFit: 'cover' as const,
+    objectFit: isDefault ? 'cover' : 'contain' as const,
     objectPosition: 'center' as const,
     width: '100%',
     height: '100%',
-    borderRadius: '50%'
+    borderRadius: '50%',
+    backgroundColor: isDefault ? 'transparent' : 'rgba(255,255,255,0.08)',
+    transition: 'opacity 0.3s ease',
   };
 }

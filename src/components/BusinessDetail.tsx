@@ -19,6 +19,7 @@ import {
 import { useViewTracking } from '../hooks/useViewTracking';
 import StructuredData from '../components/StructuredData';
 import { generateLocalBusinessSchema } from '../lib/structuredDataSchemas';
+import InfoModal from '../components/InfoModal';
 import {
   getParsedSchedule,
   translateScheduleTitle,
@@ -166,8 +167,8 @@ export const BusinessDetail = ({
   const [reviewCount, setReviewCount] = useState<number>(0);
   const [showFullSchedule, setShowFullSchedule] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
-  const [descriptionExpanded, setDescriptionExpanded] = useState(false);
   const [showDescriptionModal, setShowDescriptionModal] = useState(false);
+  const [showAddressModal, setShowAddressModal] = useState(false);
 
   const actualBusinessId = businessId || businessProp?.id;
   useViewTracking(actualBusinessId);
@@ -534,9 +535,9 @@ export const BusinessDetail = ({
         {/* Effet brillant */}
         <div className="absolute inset-0 pointer-events-none modal-shine-effect"></div>
 
-        {/* Galerie Photos - Bannière sans espace noir au-dessus */}
+        {/* Bannière + Logo */}
         <div className="relative pb-20">
-          {business.image_url && (
+          {business.image_url ? (
             <ImageGallery
               imageUrls={business.image_url}
               altText={business.nom}
@@ -545,19 +546,39 @@ export const BusinessDetail = ({
               height="240px"
               objectFit="cover"
             />
+          ) : (
+            <div
+              className="w-full rounded-t-2xl flex items-center justify-center"
+              style={{
+                height: '240px',
+                background: `linear-gradient(135deg, ${colors.background} 0%, rgba(212,175,55,0.12) 50%, ${colors.background} 100%)`,
+                borderBottom: `1px solid ${colors.gold}30`,
+              }}
+            >
+              <span style={{ fontSize: '52px', opacity: 0.25 }}>🏢</span>
+            </div>
           )}
 
-          {/* Logo rond - Toujours affiché avec fallback */}
+          {/* Logo rond - object-contain pour éviter les déformations */}
           <div className="absolute left-1/2 -translate-x-1/2 bottom-4 z-10">
             <div
               className="w-32 h-32 shadow-2xl"
-              style={getLogoContainerStyle(colors.gold, '5px')}
+              style={{
+                ...getLogoContainerStyle(colors.gold, '5px'),
+                backgroundColor: colors.background,
+              }}
             >
               <img
                 src={business.logo_url}
-                alt="Logo"
+                alt={`Logo ${business.nom}`}
                 className="w-full h-full"
                 style={getLogoStyle(business.logo_url)}
+                loading="lazy"
+                onLoad={(e) => { (e.target as HTMLImageElement).style.opacity = '1'; }}
+                onError={(e) => {
+                  const img = e.target as HTMLImageElement;
+                  img.src = 'https://ik.imagekit.io/gfdpqvshw/Design_Assets_Dalil_Tounes/logos/logo_dalil_tounes_sceau_luxe.png?updatedAt=1773327267816';
+                }}
               />
             </div>
           </div>
@@ -584,13 +605,31 @@ export const BusinessDetail = ({
           <div className="flex flex-col items-center text-gray-200 text-xs gap-0.5">
             <div className="flex items-center gap-1 max-w-full px-1">
               <MapPin size={11} className="flex-shrink-0" style={{ color: colors.gold }} />
-              <span className="text-center" style={{ fontSize: '10px' }}>
-                {business.adresse
-                  ? business.adresse
-                  : <span className="text-gray-500 italic">Adresse non renseignée</span>
-                }
-                {business.adresse && business.ville ? `, ${business.ville}` : (!business.adresse && business.ville ? business.ville : '')}
-              </span>
+              {business.adresse ? (
+                <button
+                  onClick={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); setShowAddressModal(true); }}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontSize: '10px',
+                    color: '#e5e7eb',
+                    padding: 0,
+                    textAlign: 'center',
+                    textDecoration: 'underline dotted',
+                    textDecorationColor: colors.gold,
+                    position: 'relative',
+                    zIndex: 100,
+                    pointerEvents: 'auto',
+                  }}
+                >
+                  {business.adresse}{business.ville ? `, ${business.ville}` : ''}
+                </button>
+              ) : (
+                <span style={{ fontSize: '10px', color: '#6b7280', fontStyle: 'italic' }}>
+                  Adresse non renseignée{business.ville ? ` · ${business.ville}` : ''}
+                </span>
+              )}
             </div>
             {business.telephone && (
               <a
@@ -645,72 +684,22 @@ export const BusinessDetail = ({
             </div>
           )}
 
-          {/* Modale description */}
           {showDescriptionModal && (
-            <div
-              className="fixed inset-0 z-[99999] flex items-center justify-center p-4"
-              style={{ backgroundColor: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(4px)', animation: 'descFadeIn 0.2s ease' }}
-              onClick={(e) => { e.stopPropagation(); setShowDescriptionModal(false); }}
-            >
-              <div
-                className="relative w-full"
-                style={{
-                  maxWidth: '420px',
-                  backgroundColor: '#fff',
-                  borderRadius: '16px',
-                  boxShadow: '0 24px 60px rgba(0,0,0,0.35)',
-                  padding: '28px 24px 24px',
-                  animation: 'descScaleIn 0.22s cubic-bezier(0.34,1.56,0.64,1)',
-                }}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <span style={{ fontFamily: 'Playfair Display, serif', fontSize: '15px', fontWeight: '700', color: '#1a1a1a', letterSpacing: '0.02em' }}>
-                    {business.nom}
-                  </span>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); setShowDescriptionModal(false); }}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      cursor: 'pointer',
-                      fontSize: '20px',
-                      lineHeight: 1,
-                      color: '#888',
-                      padding: '0 0 0 12px',
-                      fontWeight: '300',
-                    }}
-                    aria-label="Fermer"
-                  >
-                    ×
-                  </button>
-                </div>
-                <div style={{ height: '1px', backgroundColor: colors.gold, marginBottom: '16px', opacity: 0.5 }} />
-                <p style={{ fontSize: '15px', lineHeight: '1.75', color: '#333', margin: 0, whiteSpace: 'pre-wrap' }}>
-                  {translatedDescription}
-                </p>
-                <div style={{ height: '1px', backgroundColor: colors.gold, marginTop: '20px', marginBottom: '16px', opacity: 0.3 }} />
-                <button
-                  onClick={(e) => { e.stopPropagation(); setShowDescriptionModal(false); }}
-                  style={{
-                    display: 'block',
-                    width: '100%',
-                    padding: '10px',
-                    borderRadius: '8px',
-                    border: `1.5px solid ${colors.gold}`,
-                    background: 'none',
-                    color: colors.gold,
-                    fontFamily: 'Playfair Display, serif',
-                    fontSize: '13px',
-                    fontWeight: '700',
-                    cursor: 'pointer',
-                    letterSpacing: '0.05em',
-                  }}
-                >
-                  Fermer
-                </button>
-              </div>
-            </div>
+            <InfoModal
+              title={business.nom}
+              content={translatedDescription}
+              accentColor={colors.gold}
+              onClose={() => setShowDescriptionModal(false)}
+            />
+          )}
+
+          {showAddressModal && (
+            <InfoModal
+              title="Adresse"
+              content={[business.adresse, business.ville, business.gouvernorat].filter(Boolean).join('\n')}
+              accentColor={colors.gold}
+              onClose={() => setShowAddressModal(false)}
+            />
           )}
 
           {/* Horaires d'ouverture - Accordéon fermé par défaut */}
@@ -1096,14 +1085,6 @@ export const BusinessDetail = ({
         @keyframes autoShine {
           0% { left: -100%; }
           100% { left: 200%; }
-        }
-        @keyframes descFadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        @keyframes descScaleIn {
-          from { opacity: 0; transform: scale(0.88); }
-          to { opacity: 1; transform: scale(1); }
         }
       `}</style>
     </div>
