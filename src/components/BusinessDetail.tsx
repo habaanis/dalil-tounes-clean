@@ -34,6 +34,13 @@ import { useCategoryTranslation } from '../hooks/useCategoryTranslation';
 import { getMultilingualField } from '../lib/databaseI18n';
 import { getLogoUrl, getLogoStyle, getLogoContainerStyle } from '../lib/logoUtils';
 
+function buildWhatsAppUrl(raw: string): string {
+  const digits = raw.replace(/\D/g, '');
+  if (!digits) return '';
+  const normalized = digits.startsWith('216') ? digits : digits.startsWith('0') ? `216${digits.slice(1)}` : `216${digits}`;
+  return `https://wa.me/${normalized}`;
+}
+
 // Normalise les données business provenant de sources différentes (Airtable vs Supabase)
 function normalizeBusiness(business: any): any {
   if (!business) return null;
@@ -49,6 +56,7 @@ function normalizeBusiness(business: any): any {
     telephone: business.telephone || business.phone || '',
     telephone2: business.telephone2 || '',
     telephone2_clean: business.telephone2_clean || '',
+    whatsapp: business.whatsapp || '',
     email: business.email || '',
     email2: business.email2 || '',
     email2_clean: business.email2_clean || '',
@@ -101,6 +109,7 @@ interface Business {
   telephone: string;
   telephone2?: string;
   telephone2_clean?: string;
+  whatsapp?: string;
   email: string;
   email2?: string;
   email2_clean?: string;
@@ -769,6 +778,19 @@ export const BusinessDetail = ({
               >
                 <Phone size={11} className="flex-shrink-0" />
                 <span>{business.telephone2}</span>
+              </a>
+            )}
+            {business.whatsapp && buildWhatsAppUrl(business.whatsapp) && (
+              <a
+                href={buildWhatsAppUrl(business.whatsapp)}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); }}
+                className="flex items-center gap-1 font-bold truncate max-w-full px-1 hover:underline"
+                style={{ color: '#25D366', textDecoration: 'none', position: 'relative', zIndex: 100, pointerEvents: 'auto', cursor: 'pointer', marginTop: '2px' }}
+              >
+                <span style={{ fontSize: '11px', lineHeight: 1, flexShrink: 0 }}>💚</span>
+                <span>WhatsApp</span>
               </a>
             )}
             {business.score_avis != null && business.score_avis !== '' && (

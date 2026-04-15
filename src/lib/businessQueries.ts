@@ -40,7 +40,8 @@ export const BUSINESS_COLUMNS = `
   longitude,
   created_at,
   updated_at,
-  score_avis
+  score_avis,
+  whatsapp
 `;
 
 /**
