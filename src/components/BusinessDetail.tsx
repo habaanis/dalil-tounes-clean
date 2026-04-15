@@ -170,6 +170,7 @@ export const BusinessDetail = ({
   const [showDescriptionModal, setShowDescriptionModal] = useState(false);
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [showPhotosModal, setShowPhotosModal] = useState(false);
+  const [coverImageOk, setCoverImageOk] = useState<boolean | null>(null);
 
   const actualBusinessId = businessId || businessProp?.id;
   useViewTracking(actualBusinessId);
@@ -187,6 +188,22 @@ export const BusinessDetail = ({
       };
     }
   }, [asModal, handleCloseRef]);
+
+  useEffect(() => {
+    const url = business?.image_url;
+    if (!url || url.trim() === '') {
+      setCoverImageOk(false);
+      return;
+    }
+    setCoverImageOk(null);
+    const img = new window.Image();
+    img.onload = () => setCoverImageOk(true);
+    img.onerror = () => {
+      console.warn('Image introuvable :', url.split('/').pop() || url);
+      setCoverImageOk(false);
+    };
+    img.src = url;
+  }, [business?.image_url]);
 
   const downloadQRCode = () => {
     if (!qrCodeRef.current) return;
@@ -541,8 +558,8 @@ export const BusinessDetail = ({
           className="relative flex flex-col items-center pb-3"
           style={{ borderBottom: `1px solid ${colors.gold}20` }}
         >
-          {/* Bandeau cover — uniquement si image_url existe */}
-          {business.image_url ? (
+          {/* Bandeau cover — uniquement si image_url valide et accessible */}
+          {coverImageOk === true ? (
             <div style={{ position: 'relative', width: '100%', height: '120px', overflow: 'hidden', borderRadius: '14px 14px 0 0' }}>
               <img
                 src={business.image_url}
@@ -556,6 +573,7 @@ export const BusinessDetail = ({
                   display: 'block',
                 }}
                 loading="lazy"
+                onError={() => setCoverImageOk(false)}
               />
               <div
                 style={{
@@ -575,7 +593,7 @@ export const BusinessDetail = ({
             style={{
               ...getLogoContainerStyle(colors.gold, '4px'),
               backgroundColor: colors.background,
-              marginTop: business.image_url ? '-56px' : '0',
+              marginTop: coverImageOk === true ? '-56px' : '0',
               position: 'relative',
               zIndex: 2,
             }}
@@ -593,8 +611,8 @@ export const BusinessDetail = ({
             />
           </div>
 
-          {/* Bouton Voir les photos — uniquement si image_url existe */}
-          {business.image_url && (
+          {/* Bouton Voir les photos — uniquement si image_url valide et accessible */}
+          {coverImageOk === true && (
             <button
               onClick={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); setShowPhotosModal(true); }}
               style={{
@@ -626,11 +644,11 @@ export const BusinessDetail = ({
           )}
 
           {/* Spacing si pas de bandeau ni bouton */}
-          {!business.image_url && <div style={{ marginBottom: '4px' }} />}
+          {coverImageOk !== true && <div style={{ marginBottom: '4px' }} />}
         </div>
 
         {/* Lightbox photos */}
-        {showPhotosModal && business.image_url && (
+        {showPhotosModal && coverImageOk === true && (
           <div
             className="fixed inset-0 z-[99999] flex items-center justify-center p-4"
             style={{ backgroundColor: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(6px)', animation: 'infoFadeIn 0.2s ease' }}

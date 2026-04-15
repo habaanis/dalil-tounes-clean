@@ -38,10 +38,12 @@ export function ImageWithFallback({
   }, [src, defaultExtension]);
 
   const handleError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    if (hasError) return; // Éviter boucle infinie
+    if (hasError) return;
 
+    const brokenSrc = imgSrc;
     setHasError(true);
     setImgSrc('/images/placeholder.jpg');
+    console.warn('Image introuvable :', brokenSrc.split('/').pop() || brokenSrc);
 
     if (onError) {
       onError(e);
