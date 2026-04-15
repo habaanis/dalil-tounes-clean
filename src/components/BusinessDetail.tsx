@@ -169,6 +169,7 @@ export const BusinessDetail = ({
   const [linkCopied, setLinkCopied] = useState(false);
   const [showDescriptionModal, setShowDescriptionModal] = useState(false);
   const [showAddressModal, setShowAddressModal] = useState(false);
+  const [showPhotosModal, setShowPhotosModal] = useState(false);
 
   const actualBusinessId = businessId || businessProp?.id;
   useViewTracking(actualBusinessId);
@@ -535,54 +536,108 @@ export const BusinessDetail = ({
         {/* Effet brillant */}
         <div className="absolute inset-0 pointer-events-none modal-shine-effect"></div>
 
-        {/* Bannière + Logo */}
-        <div className="relative pb-20">
-          {business.image_url ? (
-            <ImageGallery
-              imageUrls={business.image_url}
-              altText={business.nom}
-              className="w-full rounded-t-2xl"
-              maxPhotos={6}
-              height="240px"
-              objectFit="cover"
+        {/* En-tête compact : Logo centré + bouton photos si disponibles */}
+        <div className="flex flex-col items-center pt-8 pb-3 px-4" style={{ borderBottom: `1px solid ${colors.gold}20` }}>
+          {/* Logo rond */}
+          <div
+            className="w-28 h-28 shadow-2xl mb-3"
+            style={{
+              ...getLogoContainerStyle(colors.gold, '4px'),
+              backgroundColor: colors.background,
+            }}
+          >
+            <img
+              src={business.logo_url}
+              alt={`Logo ${business.nom}`}
+              className="w-full h-full"
+              style={getLogoStyle(business.logo_url)}
+              loading="lazy"
+              onError={(e) => {
+                const img = e.target as HTMLImageElement;
+                img.src = 'https://ik.imagekit.io/gfdpqvshw/Design_Assets_Dalil_Tounes/logos/logo_dalil_tounes_sceau_luxe.png?updatedAt=1773327267816';
+              }}
             />
-          ) : (
-            <div
-              className="w-full rounded-t-2xl flex items-center justify-center"
-              style={{
-                height: '240px',
-                background: `linear-gradient(135deg, ${colors.background} 0%, rgba(212,175,55,0.12) 50%, ${colors.background} 100%)`,
-                borderBottom: `1px solid ${colors.gold}30`,
-              }}
-            >
-              <span style={{ fontSize: '52px', opacity: 0.25 }}>🏢</span>
-            </div>
-          )}
+          </div>
 
-          {/* Logo rond - object-contain pour éviter les déformations */}
-          <div className="absolute left-1/2 -translate-x-1/2 bottom-4 z-10">
-            <div
-              className="w-32 h-32 shadow-2xl"
+          {/* Bouton Voir les photos — uniquement si image_url existe */}
+          {business.image_url && (
+            <button
+              onClick={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); setShowPhotosModal(true); }}
               style={{
-                ...getLogoContainerStyle(colors.gold, '5px'),
-                backgroundColor: colors.background,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+                background: 'none',
+                border: `1px solid ${colors.gold}60`,
+                borderRadius: '20px',
+                padding: '4px 12px',
+                cursor: 'pointer',
+                fontSize: '11px',
+                fontFamily: 'Playfair Display, serif',
+                fontWeight: '600',
+                color: colors.gold,
+                letterSpacing: '0.03em',
+                transition: 'background 0.2s ease, border-color 0.2s ease',
+                position: 'relative',
+                zIndex: 100,
+                pointerEvents: 'auto',
               }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = `${colors.gold}18`; (e.currentTarget as HTMLButtonElement).style.borderColor = colors.gold; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = 'none'; (e.currentTarget as HTMLButtonElement).style.borderColor = `${colors.gold}60`; }}
             >
-              <img
-                src={business.logo_url}
-                alt={`Logo ${business.nom}`}
-                className="w-full h-full"
-                style={getLogoStyle(business.logo_url)}
-                loading="lazy"
-                onLoad={(e) => { (e.target as HTMLImageElement).style.opacity = '1'; }}
-                onError={(e) => {
-                  const img = e.target as HTMLImageElement;
-                  img.src = 'https://ik.imagekit.io/gfdpqvshw/Design_Assets_Dalil_Tounes/logos/logo_dalil_tounes_sceau_luxe.png?updatedAt=1773327267816';
+              <span style={{ fontSize: '13px' }}>📷</span>
+              Voir les photos
+            </button>
+          )}
+        </div>
+
+        {/* Lightbox photos */}
+        {showPhotosModal && business.image_url && (
+          <div
+            className="fixed inset-0 z-[99999] flex items-center justify-center p-4"
+            style={{ backgroundColor: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(6px)', animation: 'infoFadeIn 0.2s ease' }}
+            onClick={(e) => { e.stopPropagation(); setShowPhotosModal(false); }}
+          >
+            <div
+              className="relative w-full"
+              style={{ maxWidth: '480px', animation: 'infoScaleIn 0.22s cubic-bezier(0.34,1.56,0.64,1)' }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={(e) => { e.stopPropagation(); setShowPhotosModal(false); }}
+                style={{
+                  position: 'absolute',
+                  top: '-36px',
+                  right: '0',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: '28px',
+                  lineHeight: 1,
+                  color: '#fff',
+                  fontWeight: '300',
+                  zIndex: 10,
                 }}
-              />
+                aria-label="Fermer"
+              >
+                ×
+              </button>
+              <div style={{ borderRadius: '16px', overflow: 'hidden', boxShadow: '0 32px 80px rgba(0,0,0,0.6)' }}>
+                <ImageGallery
+                  imageUrls={business.image_url}
+                  altText={business.nom}
+                  className="w-full"
+                  maxPhotos={6}
+                  height="340px"
+                  objectFit="contain"
+                />
+              </div>
+              <p style={{ textAlign: 'center', marginTop: '12px', fontSize: '12px', fontFamily: 'Playfair Display, serif', color: colors.gold, opacity: 0.8, letterSpacing: '0.04em' }}>
+                {business.nom}
+              </p>
             </div>
           </div>
-        </div>
+        )}
 
         <div className="px-2 pb-1 pt-2 text-center space-y-1">
           {/* Nom & Catégorie avec Bouton Copier Lien */}
