@@ -1,4 +1,4 @@
-import { MapPin, Award, Clock, ChevronDown, Phone } from 'lucide-react';
+import { MapPin, Award, Clock, ChevronDown, Phone, Star } from 'lucide-react';
 import { useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
@@ -43,6 +43,7 @@ interface BusinessCardProps {
     'Note Google Globale'?: string | number | null;
     nombre_avis?: string | number | null;
     'Compteur Avis Google'?: string | number | null;
+    score_avis?: string | number | null;
   };
   onClick: () => void;
   variant?: 'simple' | 'premium';
@@ -345,6 +346,31 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
           reviewCount={business.nombre_avis || business['Compteur Avis Google']}
           className="mt-1"
         />
+
+        {/* Score avis interne */}
+        {business.score_avis != null && business.score_avis !== '' && (
+          <div
+            className="inline-flex items-center gap-1 mt-1 px-2 py-1 rounded-lg"
+            style={{
+              background: isPremiumTier ? 'rgba(212,175,55,0.12)' : 'rgba(212,175,55,0.08)',
+              border: '1px solid rgba(212,175,55,0.35)',
+            }}
+          >
+            <Star
+              size={isMinimal ? 12 : 14}
+              style={{ fill: '#D4AF37', color: '#D4AF37', flexShrink: 0 }}
+            />
+            <span
+              style={{
+                fontSize: isMinimal ? '11px' : '13px',
+                fontWeight: '600',
+                color: '#D4AF37',
+              }}
+            >
+              {business.score_avis} / 5
+            </span>
+          </div>
+        )}
 
         {business.horaires_ok && (
           <div style={{ paddingTop: '4px' }}>

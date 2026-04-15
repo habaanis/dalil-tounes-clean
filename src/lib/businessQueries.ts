@@ -39,7 +39,8 @@ export const BUSINESS_COLUMNS = `
   latitude,
   longitude,
   created_at,
-  updated_at
+  updated_at,
+  score_avis
 `;
 
 /**

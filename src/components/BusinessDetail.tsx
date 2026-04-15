@@ -52,6 +52,7 @@ function normalizeBusiness(business: any): any {
     email: business.email || '',
     email2: business.email2 || '',
     email2_clean: business.email2_clean || '',
+    score_avis: business.score_avis ?? null,
     site_web: business.site_web || business.website || '',
     description: business.description || '',
     services: business.services || '',
@@ -103,6 +104,7 @@ interface Business {
   email: string;
   email2?: string;
   email2_clean?: string;
+  score_avis?: string | number | null;
   site_web?: string;
   description: string;
   services?: string;
@@ -768,6 +770,15 @@ export const BusinessDetail = ({
                 <Phone size={11} className="flex-shrink-0" />
                 <span>{business.telephone2}</span>
               </a>
+            )}
+            {business.score_avis != null && business.score_avis !== '' && (
+              <div
+                className="flex items-center gap-1 px-1 mt-1"
+                style={{ fontSize: '11px', fontWeight: '600', color: colors.gold }}
+              >
+                <Star size={11} className="flex-shrink-0" style={{ fill: colors.gold, color: colors.gold }} />
+                <span>{business.score_avis} / 5</span>
+              </div>
             )}
           </div>
 
