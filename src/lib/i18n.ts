@@ -1235,6 +1235,15 @@ export const translations = {
         failed: 'Échec',
       },
     },
+    blog: {
+      tagline: 'Dalil Tounes',
+      title: 'Le Blog',
+      subtitle: 'Histoires, réflexions et actualités autour du commerce local tunisien.',
+      readTime: 'de lecture',
+      empty: 'Aucun article pour le moment.',
+      back: 'Retour au blog',
+      share: 'Partager',
+    },
   },
   en: {
     nav: {
@@ -2301,6 +2310,15 @@ export const translations = {
         completed: 'Completed',
         failed: 'Failed',
       },
+    },
+    blog: {
+      tagline: 'Dalil Tounes',
+      title: 'The Blog',
+      subtitle: 'Stories, reflections and news about local Tunisian commerce.',
+      readTime: 'read',
+      empty: 'No articles yet.',
+      back: 'Back to blog',
+      share: 'Share',
     },
   },
   ar: {
@@ -3414,6 +3432,15 @@ export const translations = {
         completed: 'مكتمل',
         failed: 'فشل',
       },
+    },
+    blog: {
+      tagline: 'دليل تونس',
+      title: 'المدوّنة',
+      subtitle: 'قصص وأفكار وأخبار حول التجارة المحلية التونسية.',
+      readTime: 'دقائق قراءة',
+      empty: 'لا توجد مقالات بعد.',
+      back: 'العودة إلى المدوّنة',
+      share: 'مشاركة',
     },
   },
   it: {
