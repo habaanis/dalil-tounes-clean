@@ -41,6 +41,8 @@ const Auth = lazy(() => import('./pages/Auth'));
 const CandidateDashboard = lazy(() => import('./pages/CandidateDashboard'));
 const CompanyDashboard = lazy(() => import('./pages/CompanyDashboard'));
 const Concept = lazy(() => import('./pages/Concept'));
+const Blog = lazy(() => import('./pages/blog/Blog'));
+const BlogPost = lazy(() => import('./pages/blog/BlogPost'));
 
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center">
@@ -118,6 +120,8 @@ function AppRouter() {
               <Route path="/abonnement" element={<Subscription />} />
               <Route path="/concept" element={<Concept />} />
               <Route path="/notre-concept" element={<Concept />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:slug" element={<BlogPost />} />
 
               {/* Partenaires */}
               <Route path="/partner-search" element={<PartnerSearch />} />
