@@ -536,14 +536,48 @@ export const BusinessDetail = ({
         {/* Effet brillant */}
         <div className="absolute inset-0 pointer-events-none modal-shine-effect"></div>
 
-        {/* En-tête compact : Logo centré + bouton photos si disponibles */}
-        <div className="flex flex-col items-center pt-8 pb-3 px-4" style={{ borderBottom: `1px solid ${colors.gold}20` }}>
-          {/* Logo rond */}
+        {/* En-tête : bandeau discret + logo centré + bouton photos */}
+        <div
+          className="relative flex flex-col items-center pb-3"
+          style={{ borderBottom: `1px solid ${colors.gold}20` }}
+        >
+          {/* Bandeau cover — uniquement si image_url existe */}
+          {business.image_url ? (
+            <div style={{ position: 'relative', width: '100%', height: '120px', overflow: 'hidden', borderRadius: '14px 14px 0 0' }}>
+              <img
+                src={business.image_url}
+                alt={`Couverture ${business.nom}`}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  objectPosition: 'center',
+                  opacity: 0.8,
+                  display: 'block',
+                }}
+                loading="lazy"
+              />
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: `linear-gradient(to bottom, transparent 40%, ${colors.background}cc 100%)`,
+                }}
+              />
+            </div>
+          ) : (
+            <div style={{ height: '28px' }} />
+          )}
+
+          {/* Logo rond — chevauchant le bandeau si présent */}
           <div
-            className="w-28 h-28 shadow-2xl mb-3"
+            className="w-28 h-28 shadow-2xl"
             style={{
               ...getLogoContainerStyle(colors.gold, '4px'),
               backgroundColor: colors.background,
+              marginTop: business.image_url ? '-56px' : '0',
+              position: 'relative',
+              zIndex: 2,
             }}
           >
             <img
@@ -571,6 +605,7 @@ export const BusinessDetail = ({
                 border: `1px solid ${colors.gold}60`,
                 borderRadius: '20px',
                 padding: '4px 12px',
+                marginTop: '10px',
                 cursor: 'pointer',
                 fontSize: '11px',
                 fontFamily: 'Playfair Display, serif',
@@ -589,6 +624,9 @@ export const BusinessDetail = ({
               Voir les photos
             </button>
           )}
+
+          {/* Spacing si pas de bandeau ni bouton */}
+          {!business.image_url && <div style={{ marginBottom: '4px' }} />}
         </div>
 
         {/* Lightbox photos */}
