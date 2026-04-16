@@ -13,6 +13,11 @@ export interface VilleEntry {
   gouvernorat: string;
 }
 
+export interface SousCategorieEntry {
+  slug: string;
+  label: string;
+}
+
 export const SEO_METIERS: MetierEntry[] = [
   { slug: 'medecin', label: 'Médecin', value: 'Médecin', secteur: 'Santé' },
   { slug: 'dentiste', label: 'Dentiste', value: 'Dentiste', secteur: 'Santé' },
@@ -100,6 +105,32 @@ export const SEO_VILLES: VilleEntry[] = [
   { slug: 'djerba', label: 'Djerba', gouvernorat: 'Médenine' },
 ];
 
+export const SEO_SOUS_CATEGORIES: Record<string, SousCategorieEntry[]> = {
+  avocat: [
+    { slug: 'fiscaliste', label: 'fiscaliste' },
+    { slug: 'droit-du-travail', label: 'droit du travail' },
+    { slug: 'immobilier', label: 'immobilier' },
+    { slug: 'droit-des-societes', label: 'droit des sociétés' },
+  ],
+  coiffeur: [
+    { slug: 'homme', label: 'homme' },
+    { slug: 'femme', label: 'femme' },
+    { slug: 'enfant', label: 'enfant' },
+    { slug: 'domicile', label: 'domicile' },
+  ],
+  plombier: [
+    { slug: 'chauffage', label: 'chauffage' },
+    { slug: 'depannage', label: 'dépannage' },
+    { slug: 'installation', label: 'installation' },
+  ],
+  medecin: [
+    { slug: 'generaliste', label: 'généraliste' },
+    { slug: 'pediatre', label: 'pédiatre' },
+    { slug: 'cardiologue', label: 'cardiologue' },
+    { slug: 'dermatologue', label: 'dermatologue' },
+  ],
+};
+
 export function findMetierBySlug(slug: string): MetierEntry | undefined {
   return SEO_METIERS.find(m => m.slug === slug);
 }
@@ -108,17 +139,49 @@ export function findVilleBySlug(slug: string): VilleEntry | undefined {
   return SEO_VILLES.find(v => v.slug === slug);
 }
 
+export function findSousCategorieBySlug(metierSlug: string, sousCatSlug: string): SousCategorieEntry | undefined {
+  return SEO_SOUS_CATEGORIES[metierSlug]?.find(s => s.slug === sousCatSlug);
+}
+
 export function metierVilleSlug(metierSlug: string, villeSlug: string): string {
   return `${metierSlug}-${villeSlug}`;
 }
 
-export function parseMetierVilleSlug(combinedSlug: string): { metier: MetierEntry; ville: VilleEntry } | null {
+export function metierSousCatVilleSlug(metierSlug: string, sousCatSlug: string, villeSlug: string): string {
+  return `${metierSlug}-${sousCatSlug}-${villeSlug}`;
+}
+
+export type ParsedSeoSlug =
+  | { type: 'metier-souscategorie-ville'; metier: MetierEntry; sousCategorie: SousCategorieEntry; ville: VilleEntry }
+  | { type: 'metier-ville'; metier: MetierEntry; ville: VilleEntry };
+
+export function parseSeoSlug(combinedSlug: string): ParsedSeoSlug | null {
   for (const ville of SEO_VILLES) {
-    if (combinedSlug.endsWith(`-${ville.slug}`)) {
-      const metierSlug = combinedSlug.slice(0, combinedSlug.length - ville.slug.length - 1);
-      const metier = findMetierBySlug(metierSlug);
-      if (metier) return { metier, ville };
+    if (!combinedSlug.endsWith(`-${ville.slug}`)) continue;
+
+    const withoutVille = combinedSlug.slice(0, combinedSlug.length - ville.slug.length - 1);
+
+    for (const metier of SEO_METIERS) {
+      if (!withoutVille.startsWith(`${metier.slug}-`)) continue;
+
+      const sousCatSlug = withoutVille.slice(metier.slug.length + 1);
+      const sousCategorie = findSousCategorieBySlug(metier.slug, sousCatSlug);
+
+      if (sousCategorie) {
+        return { type: 'metier-souscategorie-ville', metier, sousCategorie, ville };
+      }
     }
+
+    const metierSlug = withoutVille;
+    const metier = findMetierBySlug(metierSlug);
+    if (metier) return { type: 'metier-ville', metier, ville };
   }
+
   return null;
+}
+
+export function parseMetierVilleSlug(combinedSlug: string): { metier: MetierEntry; ville: VilleEntry } | null {
+  const parsed = parseSeoSlug(combinedSlug);
+  if (!parsed) return null;
+  return { metier: parsed.metier, ville: parsed.ville };
 }

@@ -47,9 +47,10 @@ function mapBusinessRow(row: Record<string, unknown>): SeoBusiness {
 export async function fetchSeoBusinesses(options: {
   limit?: number;
   categorie?: string;
+  sousCategorie?: string;
   city?: string;
 }): Promise<{ data: SeoBusiness[]; error: unknown }> {
-  const { limit = 40, categorie, city } = options;
+  const { limit = 40, categorie, sousCategorie, city } = options;
 
   let query = supabase
     .from('businesses')
@@ -58,6 +59,10 @@ export async function fetchSeoBusinesses(options: {
 
   if (categorie) {
     query = query.ilike('category', `%${categorie}%`);
+  }
+
+  if (sousCategorie) {
+    query = (query as any).ilike('sous_categories', `%${sousCategorie}%`);
   }
 
   if (city) {
