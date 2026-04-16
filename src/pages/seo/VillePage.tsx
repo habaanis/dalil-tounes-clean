@@ -5,7 +5,7 @@ import { SEOHead } from '../../components/SEOHead';
 import Breadcrumb from '../../components/seo/Breadcrumb';
 import SeoBusinessCard from '../../components/seo/SeoBusinessCard';
 import { findVilleBySlug, SEO_METIERS } from '../../lib/seoLandingData';
-import { fetchBusinesses } from '../../lib/businessQueries';
+import { fetchSeoBusinesses } from '../../lib/seoBusinessQueries';
 
 const VillePage: React.FC = () => {
   const { villeSlug } = useParams<{ villeSlug: string }>();
@@ -17,10 +17,9 @@ const VillePage: React.FC = () => {
   useEffect(() => {
     if (!ville) return;
     setLoading(true);
-    fetchBusinesses({
+    fetchSeoBusinesses({
       limit: 40,
-      gouvernorat: ville.gouvernorat,
-      sortByRating: false,
+      city: ville.label,
     }).then(({ data }) => {
       const sorted = [...(data ?? [])].sort((a, b) => {
         return (b['Note Google Globale'] ?? 0) - (a['Note Google Globale'] ?? 0);

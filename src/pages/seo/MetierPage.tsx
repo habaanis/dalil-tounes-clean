@@ -5,7 +5,7 @@ import { SEOHead } from '../../components/SEOHead';
 import Breadcrumb from '../../components/seo/Breadcrumb';
 import SeoBusinessCard from '../../components/seo/SeoBusinessCard';
 import { findMetierBySlug, SEO_VILLES } from '../../lib/seoLandingData';
-import { fetchBusinesses } from '../../lib/businessQueries';
+import { fetchSeoBusinesses } from '../../lib/seoBusinessQueries';
 
 const MetierPage: React.FC = () => {
   const { metierSlug } = useParams<{ metierSlug: string }>();
@@ -17,10 +17,9 @@ const MetierPage: React.FC = () => {
   useEffect(() => {
     if (!metier) return;
     setLoading(true);
-    fetchBusinesses({
+    fetchSeoBusinesses({
       limit: 40,
       categorie: metier.value,
-      sortByRating: false,
     }).then(({ data }) => {
       const sorted = [...(data ?? [])].sort((a, b) => {
         return (b['Note Google Globale'] ?? 0) - (a['Note Google Globale'] ?? 0);

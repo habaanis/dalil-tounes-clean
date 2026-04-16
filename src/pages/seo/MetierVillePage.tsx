@@ -5,7 +5,7 @@ import { SEOHead } from '../../components/SEOHead';
 import Breadcrumb from '../../components/seo/Breadcrumb';
 import SeoBusinessCard from '../../components/seo/SeoBusinessCard';
 import { parseMetierVilleSlug } from '../../lib/seoLandingData';
-import { fetchBusinesses } from '../../lib/businessQueries';
+import { fetchSeoBusinesses } from '../../lib/seoBusinessQueries';
 
 const MetierVillePage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -17,11 +17,10 @@ const MetierVillePage: React.FC = () => {
   useEffect(() => {
     if (!parsed) return;
     setLoading(true);
-    fetchBusinesses({
+    fetchSeoBusinesses({
       limit: 30,
       categorie: parsed.metier.value,
-      gouvernorat: parsed.ville.gouvernorat,
-      sortByRating: false,
+      city: parsed.ville.label,
     }).then(({ data }) => {
       setBusinesses(data ?? []);
       setLoading(false);
