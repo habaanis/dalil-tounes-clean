@@ -30,6 +30,11 @@ const SEO_COLUMNS = `
 `;
 
 function mapEntrepriseRow(row: Record<string, unknown>): SeoBusiness {
+  const sousCats = Array.isArray(row.sous_categories)
+    ? (row.sous_categories as string[])
+    : row.sous_categories
+      ? [row.sous_categories as string]
+      : [];
   return {
     id: row.id as string,
     nom: (row.nom as string) ?? '',
@@ -37,7 +42,7 @@ function mapEntrepriseRow(row: Record<string, unknown>): SeoBusiness {
     ville: row.ville as string | undefined,
     gouvernorat: row.ville as string | undefined,
     telephone: row.telephone as string | undefined,
-    'catégorie': row.sous_categories ? [row.sous_categories as string] : (row.categorie ? [row.categorie as string] : []),
+    'catégorie': sousCats.length > 0 ? sousCats : (row.categorie ? [row.categorie as string] : []),
     'Note Google Globale': row.score_avis as number | null ?? null,
     'Compteur Avis Google': null,
     logo_url: row.image_url as string | undefined,
@@ -63,11 +68,11 @@ export async function fetchSeoBusinesses(options: {
     .eq('statut_validation', 'valider');
 
   if (metierValue) {
-    query = query.ilike('sous_categories', `%${metierValue}%`);
+    query = query.contains('sous_categories', [metierValue]);
   }
 
   if (sousCategorie) {
-    query = query.ilike('sous_categories', `%${sousCategorie}%`);
+    query = query.contains('sous_categories', [sousCategorie]);
   }
 
   if (city) {
