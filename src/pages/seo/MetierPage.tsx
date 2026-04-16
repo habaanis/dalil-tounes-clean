@@ -19,7 +19,7 @@ const MetierPage: React.FC = () => {
     setLoading(true);
     fetchSeoBusinesses({
       limit: 40,
-      categorie: metier.value,
+      metier: metier.value,
     }).then(({ data }) => {
       const sorted = [...(data ?? [])].sort((a, b) => {
         return (b['Note Google Globale'] ?? 0) - (a['Note Google Globale'] ?? 0);

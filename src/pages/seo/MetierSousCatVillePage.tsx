@@ -22,7 +22,7 @@ const MetierSousCatVillePage: React.FC = () => {
     if (parsed.type === 'metier-souscategorie-ville') {
       fetchSeoBusinesses({
         limit: 30,
-        categorie: parsed.metier.value,
+        metier: parsed.metier.value,
         sousCategorie: parsed.sousCategorie.label,
         city: parsed.ville.label,
       }).then(({ data }) => {
@@ -32,7 +32,7 @@ const MetierSousCatVillePage: React.FC = () => {
     } else {
       fetchSeoBusinesses({
         limit: 30,
-        categorie: parsed.metier.value,
+        metier: parsed.metier.value,
         city: parsed.ville.label,
       }).then(({ data }) => {
         setBusinesses(data ?? []);

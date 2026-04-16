@@ -19,7 +19,7 @@ const MetierVillePage: React.FC = () => {
     setLoading(true);
     fetchSeoBusinesses({
       limit: 30,
-      categorie: parsed.metier.value,
+      metier: parsed.metier.value,
       city: parsed.ville.label,
     }).then(({ data }) => {
       setBusinesses(data ?? []);
