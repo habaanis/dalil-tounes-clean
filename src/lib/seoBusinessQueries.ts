@@ -68,11 +68,11 @@ export async function fetchSeoBusinesses(options: {
     .eq('statut_validation', 'valider');
 
   if (metierValue) {
-    query = query.filter('sous_categories::text', 'ilike', `%${metierValue}%`);
+    query = query.ilike('sous_categories', `%${metierValue}%`);
   }
 
   if (sousCategorie) {
-    query = query.filter('sous_categories::text', 'ilike', `%${sousCategorie}%`);
+    query = query.ilike('sous_categories', `%${sousCategorie}%`);
   }
 
   if (city) {
