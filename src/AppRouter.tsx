@@ -48,6 +48,9 @@ const MentionsLegales = lazy(() => import('./pages/legal/MentionsLegales'));
 const CGU = lazy(() => import('./pages/legal/CGU'));
 const PrivacyPolicy = lazy(() => import('./pages/legal/PrivacyPolicy'));
 const SitemapPage = lazy(() => import('./pages/legal/Sitemap'));
+const MetierVillePage = lazy(() => import('./pages/seo/MetierVillePage'));
+const MetierPage = lazy(() => import('./pages/seo/MetierPage'));
+const VillePage = lazy(() => import('./pages/seo/VillePage'));
 
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center">
@@ -157,6 +160,15 @@ function AppRouter() {
               <Route path="/cgu" element={<CGU />} />
               <Route path="/politique-confidentialite" element={<PrivacyPolicy />} />
               <Route path="/plan-du-site" element={<SitemapPage />} />
+
+              {/* SEO Landing pages - villes */}
+              <Route path="/ville/:villeSlug" element={<VillePage />} />
+
+              {/* SEO Landing pages - métiers seuls */}
+              <Route path="/metier/:metierSlug" element={<MetierPage />} />
+
+              {/* SEO Landing pages - combinaison métier+ville (ex: /plombier-tunis) */}
+              <Route path="/:slug" element={<MetierVillePage />} />
 
               {/* Anciennes routes hash - redirection */}
               <Route path="/#/*" element={<Navigate to="/" replace />} />
