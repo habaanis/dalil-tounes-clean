@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Copy, Check } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
@@ -57,7 +58,7 @@ const EmailContact: React.FC = () => {
             ) : (
               <>
                 <Copy className="h-3.5 w-3.5" />
-                {te.footer?.copyAddress || 'Copier l\'adresse'}
+                {te.footer?.copyAddress || "Copier l'adresse"}
               </>
             )}
           </button>
@@ -68,6 +69,8 @@ const EmailContact: React.FC = () => {
   );
 };
 
+const footerLink = 'text-gray-400 hover:text-[#D4AF37] transition-colors duration-200 text-sm leading-relaxed';
+
 const Footer: React.FC = () => {
   const { language } = useLanguage();
   const t = useTranslation(language);
@@ -75,123 +78,106 @@ const Footer: React.FC = () => {
   const { isRTL } = useRTL();
 
   return (
-    <footer className="bg-[#1a1a1a] text-white py-12">
+    <footer className="bg-[#111111] text-white pt-14 pb-8 border-t border-gray-800/60">
       <div className="container mx-auto px-4">
-        <div className="bg-gradient-to-r from-[#4A1D43] to-[#5A2D53] rounded-lg p-3 mb-8 border border-[#D4AF37] shadow-[0_2px_15px_rgba(212,175,55,0.2)]">
+
+        <div className="bg-gradient-to-r from-[#4A1D43]/80 to-[#5A2D53]/80 rounded-lg p-3.5 mb-12 border border-[#D4AF37]/50 shadow-[0_2px_20px_rgba(212,175,55,0.12)]">
           <p className="text-center text-white text-sm md:text-base font-medium" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
             {t.home.footerVisibility.text}
           </p>
         </div>
 
-        <div className={`grid grid-cols-1 md:grid-cols-4 gap-8 ${isRTL ? 'text-right' : 'text-left'}`}>
-          <div>
-            <h3 className="text-xl font-bold mb-3 text-white">{te.footer?.dalilTounes || 'Dalil Tounes'}</h3>
-            <p className="text-gray-300 text-sm leading-relaxed">
+        <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10 ${isRTL ? 'text-right' : 'text-left'}`}>
+
+          <div className="lg:col-span-1">
+            <h3 className="text-base font-semibold mb-3 text-white tracking-wide" style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.1rem' }}>
+              {te.footer?.dalilTounes || 'Dalil Tounes'}
+            </h3>
+            <p className="text-gray-500 text-xs leading-relaxed">
               {te.footer?.platformDescription || 'La plateforme de référence pour trouver tous les établissements et services en Tunisie.'}
             </p>
+            <div className="mt-5">
+              <a
+                href="https://www.facebook.com/daliltounes"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-gray-400 hover:text-[#D4AF37] transition-colors text-xs"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                Facebook
+              </a>
+            </div>
           </div>
 
           <div>
-            <h4 className="text-lg font-semibold mb-4 text-white">{te.footer?.navigation || 'Navigation'}</h4>
-            <ul className="space-y-2">
-              <li>
-                <a href="/" className="text-gray-300 hover:text-[#D4AF37] transition-colors text-sm">
-                  {te.footer?.home || t.nav.home}
-                </a>
-              </li>
-              <li>
-                <a href="#/businesses" className="text-gray-300 hover:text-[#D4AF37] transition-colors text-sm">
-                  {te.footer?.businesses || t.nav.businesses}
-                </a>
-              </li>
-              <li>
-                <a href="#/jobs" className="text-gray-300 hover:text-[#D4AF37] transition-colors text-sm">
-                  {te.footer?.jobs || t.nav.jobs}
-                </a>
-              </li>
-              <li>
-                <a href="#/subscription" className="text-gray-300 hover:text-[#D4AF37] transition-colors text-sm">
-                  {te.footer?.subscriptions || t.nav.subscription}
-                </a>
-              </li>
+            <h4 className="text-xs font-semibold mb-4 text-gray-300 uppercase tracking-widest" style={{ letterSpacing: '0.12em' }}>
+              {te.footer?.navigation || 'Navigation'}
+            </h4>
+            <ul className="space-y-2.5">
+              <li><Link to="/" className={footerLink}>{te.footer?.home || t.nav.home}</Link></li>
+              <li><Link to="/entreprises" className={footerLink}>{te.footer?.businesses || t.nav.businesses}</Link></li>
+              <li><Link to="/emplois" className={footerLink}>{te.footer?.jobs || t.nav.jobs}</Link></li>
+              <li><Link to="/notre-concept" className={footerLink}>{te.footer?.concept || 'Notre Concept'}</Link></li>
+              <li><Link to="/blog" className={footerLink}>Blog</Link></li>
+              <li><Link to="/abonnement" className={footerLink}>{te.footer?.subscriptions || t.nav.subscription}</Link></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="text-lg font-semibold mb-4 text-white">{te.footer?.citizens || t.nav.citizens}</h4>
-            <ul className="space-y-2">
-              <li>
-                <a href="#/citizens/health" className="text-gray-300 hover:text-[#D4AF37] transition-colors text-sm">
-                  {te.footer?.health || 'Santé'}
-                </a>
-              </li>
-              <li>
-                <a href="#/education" className="text-gray-300 hover:text-[#D4AF37] transition-colors text-sm">
-                  {te.footer?.education || 'Éducation'}
-                </a>
-              </li>
-              <li>
-                <a href="#/citizens/admin" className="text-gray-300 hover:text-[#D4AF37] transition-colors text-sm">
-                  {te.footer?.publicServices || 'Services Publics'}
-                </a>
-              </li>
-              <li>
-                <a href="#/citizens/magasins" className="text-gray-300 hover:text-[#D4AF37] transition-colors text-sm">
-                  {te.footer?.shops || 'Commerces & Magasins'}
-                </a>
-              </li>
-              <li>
-                <a href="#/citizens/leisure" className="text-gray-300 hover:text-[#D4AF37] transition-colors text-sm">
-                  {te.footer?.leisure || 'Loisirs & Événements'}
-                </a>
-              </li>
-              <li>
-                <a href="#/citizens/social" className="text-gray-300 hover:text-[#D4AF37] transition-colors text-sm">
-                  {te.footer?.socialServices || 'Services Sociaux'}
-                </a>
-              </li>
-              <li>
-                <a href="#/marketplace" className="text-gray-300 hover:text-[#D4AF37] transition-colors text-sm">
-                  {te.footer?.localMarket || 'Marché Local'}
-                </a>
-              </li>
+            <h4 className="text-xs font-semibold mb-4 text-gray-300 uppercase tracking-widest" style={{ letterSpacing: '0.12em' }}>
+              {te.footer?.citizens || t.nav.citizens}
+            </h4>
+            <ul className="space-y-2.5">
+              <li><Link to="/citizens/health" className={footerLink}>{te.footer?.health || 'Santé'}</Link></li>
+              <li><Link to="/education" className={footerLink}>{te.footer?.education || 'Éducation'}</Link></li>
+              <li><Link to="/citizens/admin" className={footerLink}>{te.footer?.publicServices || 'Services Publics'}</Link></li>
+              <li><Link to="/citizens/magasins" className={footerLink}>{te.footer?.shops || 'Commerces & Magasins'}</Link></li>
+              <li><Link to="/citizens/leisure" className={footerLink}>{te.footer?.leisure || 'Loisirs & Événements'}</Link></li>
+              <li><Link to="/marketplace" className={footerLink}>{te.footer?.localMarket || 'Marché Local'}</Link></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="text-lg font-semibold mb-4 text-white">{te.footer?.contact || 'Contact'}</h4>
+            <h4 className="text-xs font-semibold mb-4 text-gray-300 uppercase tracking-widest" style={{ letterSpacing: '0.12em' }}>
+              Informations légales
+            </h4>
+            <ul className="space-y-2.5">
+              <li><Link to="/mentions-legales" className={footerLink}>Mentions légales</Link></li>
+              <li><Link to="/cgu" className={footerLink}>CGU</Link></li>
+              <li><Link to="/politique-confidentialite" className={footerLink}>Confidentialité</Link></li>
+              <li><Link to="/plan-du-site" className={footerLink}>Plan du site</Link></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="text-xs font-semibold mb-4 text-gray-300 uppercase tracking-widest" style={{ letterSpacing: '0.12em' }}>
+              {te.footer?.contact || 'Contact'}
+            </h4>
             <div className="space-y-3">
               <EmailContact />
-              <div>
-                <a
-                  href="https://www.facebook.com/daliltounes"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-300 hover:text-[#D4AF37] transition-colors text-sm"
-                >
-                  {te.footer?.dalilTounes || 'Dalil Tounes'}
-                </a>
-              </div>
-              <p className="text-xs text-gray-400 mt-2 leading-relaxed">
+              <p className="text-xs text-gray-600 leading-relaxed pt-1">
                 {te.footer?.digitalGuide || 'Le guide digital des établissements et services en Tunisie'}
               </p>
             </div>
           </div>
+
         </div>
 
-        <div className="border-t border-gray-700 mt-10 pt-6">
+        <div className="border-t border-gray-800 mt-12 pt-6">
           <div className={`flex flex-col md:flex-row justify-between items-center gap-4 ${isRTL ? 'md:flex-row-reverse' : ''}`}>
-            <p className="text-gray-400 text-sm">
-              {te.footer?.copyright || '© 2024 Dalil Tounes. Tous droits réservés.'}
+            <p className="text-gray-600 text-xs">
+              © 2025 Dalil Tounes. Tous droits réservés.
             </p>
-            <a
-              href="#/subscription"
-              className="inline-block px-6 py-2.5 bg-[#4A1D43] hover:bg-[#D4AF37] text-white font-semibold rounded-lg transition-all shadow-md hover:shadow-lg border-2 border-[#D4AF37]"
+            <Link
+              to="/abonnement"
+              className="inline-block px-6 py-2.5 bg-transparent hover:bg-[#D4AF37] text-[#D4AF37] hover:text-black font-medium text-sm rounded-lg transition-all duration-200 border border-[#D4AF37]/60 hover:border-[#D4AF37]"
+              style={{ letterSpacing: '0.03em' }}
             >
               {te.footer?.registerEstablishment || 'Inscrire mon établissement'}
-            </a>
+            </Link>
           </div>
         </div>
+
       </div>
     </footer>
   );

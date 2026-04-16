@@ -43,6 +43,11 @@ const CompanyDashboard = lazy(() => import('./pages/CompanyDashboard'));
 const Concept = lazy(() => import('./pages/Concept'));
 const Blog = lazy(() => import('./pages/blog/Blog'));
 const BlogPost = lazy(() => import('./pages/blog/BlogPost'));
+const Contact = lazy(() => import('./pages/legal/Contact'));
+const MentionsLegales = lazy(() => import('./pages/legal/MentionsLegales'));
+const CGU = lazy(() => import('./pages/legal/CGU'));
+const PrivacyPolicy = lazy(() => import('./pages/legal/PrivacyPolicy'));
+const SitemapPage = lazy(() => import('./pages/legal/Sitemap'));
 
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center">
@@ -145,6 +150,13 @@ function AppRouter() {
               <Route path="/searchDebug" element={<SearchDebug />} />
               <Route path="/debug/entreprise" element={<EntrepriseDebug />} />
               <Route path="/debug/i18n" element={<I18nDebug />} />
+
+              {/* Pages légales et informations */}
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/mentions-legales" element={<MentionsLegales />} />
+              <Route path="/cgu" element={<CGU />} />
+              <Route path="/politique-confidentialite" element={<PrivacyPolicy />} />
+              <Route path="/plan-du-site" element={<SitemapPage />} />
 
               {/* Anciennes routes hash - redirection */}
               <Route path="/#/*" element={<Navigate to="/" replace />} />
