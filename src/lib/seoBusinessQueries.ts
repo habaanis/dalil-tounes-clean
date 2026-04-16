@@ -17,26 +17,28 @@ export interface SeoBusiness {
 
 const SEO_COLUMNS = `
   id,
-  name,
-  category,
-  city,
-  address,
-  phone,
+  nom,
+  categorie,
+  sous_categories,
+  ville,
+  adresse,
+  telephone,
   description,
   image_url,
-  status
+  score_avis,
+  statut_validation
 `;
 
-function mapBusinessRow(row: Record<string, unknown>): SeoBusiness {
+function mapEntrepriseRow(row: Record<string, unknown>): SeoBusiness {
   return {
     id: row.id as string,
-    nom: (row.name as string) ?? '',
-    adresse: row.address as string | undefined,
-    ville: row.city as string | undefined,
-    gouvernorat: row.city as string | undefined,
-    telephone: row.phone as string | undefined,
-    'catégorie': row.category ? [row.category as string] : [],
-    'Note Google Globale': null,
+    nom: (row.nom as string) ?? '',
+    adresse: row.adresse as string | undefined,
+    ville: row.ville as string | undefined,
+    gouvernorat: row.ville as string | undefined,
+    telephone: row.telephone as string | undefined,
+    'catégorie': row.sous_categories ? [row.sous_categories as string] : (row.categorie ? [row.categorie as string] : []),
+    'Note Google Globale': row.score_avis as number | null ?? null,
     'Compteur Avis Google': null,
     logo_url: row.image_url as string | undefined,
     description: row.description as string | undefined,
@@ -51,25 +53,25 @@ export async function fetchSeoBusinesses(options: {
   city?: string;
   categorie?: string;
 }): Promise<{ data: SeoBusiness[]; error: unknown }> {
-  const { limit = 40, metier, sousCategorie, city } = options;
+  const { limit = 40, sousCategorie, city } = options;
 
-  const metierValue = metier ?? options.categorie;
+  const metierValue = options.metier ?? options.categorie;
 
   let query = supabase
-    .from('businesses')
+    .from('entreprise')
     .select(SEO_COLUMNS)
-    .eq('status', 'approved');
+    .eq('statut_validation', 'valider');
 
   if (metierValue) {
-    query = query.ilike('category', `%${metierValue}%`);
+    query = query.ilike('sous_categories', `%${metierValue}%`);
   }
 
   if (sousCategorie) {
-    query = query.ilike('category', `%${sousCategorie}%`);
+    query = query.ilike('sous_categories', `%${sousCategorie}%`);
   }
 
   if (city) {
-    query = query.ilike('city', `%${city}%`);
+    query = query.ilike('ville', `%${city}%`);
   }
 
   query = query.limit(limit);
@@ -80,5 +82,5 @@ export async function fetchSeoBusinesses(options: {
     return { data: [], error };
   }
 
-  return { data: (data as Record<string, unknown>[]).map(mapBusinessRow), error: null };
+  return { data: (data as Record<string, unknown>[]).map(mapEntrepriseRow), error: null };
 }
