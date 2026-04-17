@@ -162,12 +162,25 @@ export default function SearchBar({
           const resp = await query;
           allResults = resp.data || [];
         } else {
+          const scopeMap: Record<string, string | null> = {
+            global: null,
+            sante: 'sante',
+            education: null,
+            administration: null,
+            loisirs: 'loisirs',
+            magasin: 'magasin',
+            marche_local: null,
+            tourism: 'tourisme',
+            services: 'services',
+          };
+          const rpcScope = scopeMap[scope] ?? null;
+
           // Utilisation de la nouvelle fonction RPC avec priorisation intelligente
           const resp = await supabase.rpc('search_entreprise_smart', {
             p_q: trimmedValue,
             p_ville: city && city.trim().length > 0 ? city : null,
             p_categorie: metier && metier.trim().length > 0 ? metier : null,
-            p_scope: null,
+            p_scope: rpcScope,
             p_limit: 30
           });
 
