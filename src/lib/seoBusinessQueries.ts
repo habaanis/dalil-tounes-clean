@@ -21,6 +21,7 @@ const SEO_COLUMNS = `
   categorie,
   sous_categories,
   ville,
+  gouvernorat,
   adresse,
   telephone,
   description,
@@ -40,7 +41,7 @@ function mapEntrepriseRow(row: Record<string, unknown>): SeoBusiness {
     nom: (row.nom as string) ?? '',
     adresse: row.adresse as string | undefined,
     ville: row.ville as string | undefined,
-    gouvernorat: row.ville as string | undefined,
+    gouvernorat: row.gouvernorat as string | undefined,
     telephone: row.telephone as string | undefined,
     'catégorie': sousCats.length > 0 ? sousCats : (row.categorie ? [row.categorie as string] : []),
     'Note Google Globale': row.score_avis as number | null ?? null,
@@ -76,7 +77,7 @@ export async function fetchSeoBusinesses(options: {
   }
 
   if (city) {
-    query = query.ilike('ville', `%${city}%`);
+    query = query.ilike('gouvernorat', `%${city}%`);
   }
 
   query = query.limit(limit);
