@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { Search, MapPin, ArrowRight, AlertCircle } from 'lucide-react';
 import { SEOHead } from '../../components/SEOHead';
+import SearchBar from '../../components/SearchBar';
 import Breadcrumb from '../../components/seo/Breadcrumb';
 import SeoBusinessCard from '../../components/seo/SeoBusinessCard';
 import { parseSeoSlug, SEO_SOUS_CATEGORIES } from '../../lib/seoLandingData';
@@ -160,7 +161,11 @@ const MetierSousCatVillePage: React.FC = () => {
           </div>
         </div>
 
-        <div className="container mx-auto max-w-5xl px-4 py-12">
+        <div className="container mx-auto max-w-5xl px-4 py-8">
+          <div className="mb-8 bg-[#1a1a1a] rounded-xl p-4 border border-[#D4AF37]/30">
+            <SearchBar scope="global" />
+          </div>
+
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[...Array(6)].map((_, i) => (

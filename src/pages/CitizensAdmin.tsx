@@ -7,11 +7,9 @@ import LocationSelectTunisie from '../components/LocationSelectTunisie';
 import { useLanguage } from '../context/LanguageContext';
 import { Language } from '../lib/i18n';
 import SearchBar from '../components/SearchBar';
-import AdminSearchBar from '../components/AdminSearchBar';
 import { getAdminCategoryLabel } from '../lib/adminCategories';
 import { readParams } from '../lib/urlParams';
 import { getSupabaseImageUrl } from '../lib/imageUtils';
-import CategorySearchBar from '../components/CategorySearchBar';
 import UnifiedBusinessCard from '../components/UnifiedBusinessCard';
 import { useNavigate } from '../lib/url';
 
@@ -536,15 +534,7 @@ export default function CitizensAdmin({ onNavigateBack }: CitizensAdminProps = {
       {/* Barre de recherche */}
       <section className="px-4 py-6">
         <div className="max-w-5xl mx-auto">
-          <CategorySearchBar
-            listePageValue="services citoyens"
-            placeholder={language === 'fr' ? 'Rechercher un service administratif...' : language === 'ar' ? 'البحث عن خدمة إدارية...' : 'Search for an administrative service...'}
-            onSelectBusiness={(businessId) => navigate(`/business/${businessId}`)}
-            onSearch={(query, ville) => {
-              setAdminSearchTerm(query);
-              setAdminSelectedGouvernorat(ville);
-            }}
-          />
+          <SearchBar scope="administration" />
         </div>
       </section>
 
@@ -579,15 +569,7 @@ export default function CitizensAdmin({ onNavigateBack }: CitizensAdminProps = {
           <p className="text-gray-600 text-xs mb-3">
             Trouvez les banques, assurances, bureaux de change et autres services administratifs près de chez vous.
           </p>
-          <AdminSearchBar
-            searchTerm={adminSearchTerm}
-            onSearchTermChange={setAdminSearchTerm}
-            selectedGouvernorat={adminSelectedGouvernorat}
-            onSelectedGouvernoratChange={setAdminSelectedGouvernorat}
-            selectedCategory={adminSelectedCategory}
-            onSelectedCategoryChange={setAdminSelectedCategory}
-            onSearch={runAdminSearch}
-          />
+          <SearchBar scope="administration" />
         </div>
       </section>
 

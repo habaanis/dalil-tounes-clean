@@ -7,7 +7,7 @@ import { FeaturedBusinessesStrip } from '../components/FeaturedBusinessesStrip';
 import { LocalBusinessesSection } from '../components/LocalBusinessesSection';
 import { scrollToWithOffsetDelayed } from '../lib/scrollUtils';
 import { getSupabaseImageUrl } from '../lib/imageUtils';
-import CategorySearchBar from '../components/CategorySearchBar';
+import SearchBar from '../components/SearchBar';
 import { useLanguage } from '../context/LanguageContext';
 
 interface Shop {
@@ -138,14 +138,7 @@ export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
       {/* Barre de Recherche */}
       <section className="py-6 px-4 relative z-50">
         <div className="max-w-5xl mx-auto">
-          <CategorySearchBar
-            listePageValue="commerces & magasins"
-            placeholder={language === 'fr' ? 'Rechercher un commerce ou magasin...' : language === 'ar' ? 'البحث عن متجر أو محل تجاري...' : 'Search for a shop or store...'}
-            onSelectBusiness={(businessId) => navigate(`/business/${businessId}`)}
-            onSearch={(query, ville) => {
-              fetchShops(query, ville);
-            }}
-          />
+          <SearchBar scope="magasin" />
         </div>
       </section>
 

@@ -9,8 +9,12 @@ import SpecialtyAutocomplete from '../components/SpecialtyAutocomplete';
 import VehicleTypeAutocomplete from '../components/VehicleTypeAutocomplete';
 import TransportInscription from './TransportInscription';
 import SearchBar from '../components/SearchBar';
-import HealthSearchBar from '../components/HealthSearchBar';
-import MedicalTransportSearchBar, { TransportFilters } from '../components/MedicalTransportSearchBar';
+
+interface TransportFilters {
+  gouvernorat: string;
+  vehicleType: string;
+  urgenceOnly: boolean;
+}
 import MedicalTransportCard from '../components/MedicalTransportCard';
 import MedicalTransportRegistrationForm from '../components/MedicalTransportRegistrationForm';
 import { readParams } from '../lib/urlParams';
@@ -18,7 +22,6 @@ import { supabase } from '../lib/supabaseClient';
 import { Tables } from '../lib/dbTables';
 import { getSupabaseImageUrl } from '../lib/imageUtils';
 import BackButton from '../components/BackButton';
-import CategorySearchBar from '../components/CategorySearchBar';
 import UnifiedBusinessCard from '../components/UnifiedBusinessCard';
 import { useNavigate } from 'react-router-dom';
 
@@ -271,15 +274,7 @@ export default function CitizensHealth({ onNavigate }: CitizensHealthProps) {
       {/* Barre de recherche */}
       <section className="px-4 py-6">
         <div className="max-w-5xl mx-auto">
-          <CategorySearchBar
-            listePageValue="santé"
-            placeholder={language === 'fr' ? 'Rechercher un professionnel de santé...' : language === 'ar' ? 'البحث عن مهني صحي...' : 'Search for a healthcare professional...'}
-            onSelectBusiness={(businessId) => navigate(`/business/${businessId}`)}
-            onSearch={(query, ville) => {
-              setSearchTerm(query);
-              setSelectedGouvernorat(ville);
-            }}
-          />
+          <SearchBar scope="sante" />
         </div>
       </section>
 
@@ -458,11 +453,29 @@ export default function CitizensHealth({ onNavigate }: CitizensHealthProps) {
             </div>
           </div>
 
-          {/* Barre de recherche intelligente */}
-          <MedicalTransportSearchBar
-            onSearch={searchTransport}
-            loading={loadingTransport}
-          />
+          {/* Filtres transport médical */}
+          <div className="bg-white rounded-xl border border-[#D4AF37] p-4 mb-4 flex flex-wrap gap-3 items-end">
+            <div className="flex-1 min-w-[180px]">
+              <LocationSelectTunisie
+                value={transportCity}
+                onChange={setTransportCity}
+                placeholder="Gouvernorat"
+                className="px-3 py-2 rounded-lg text-sm"
+              />
+            </div>
+            <div className="flex-1 min-w-[180px]">
+              <VehicleTypeAutocomplete
+                value={vehicleType}
+                onChange={setVehicleType}
+              />
+            </div>
+            <button
+              onClick={() => searchTransport({ gouvernorat: transportCity, vehicleType, urgenceOnly: false })}
+              className="px-5 py-2 bg-[#4A1D43] text-[#D4AF37] border border-[#D4AF37] rounded-lg text-sm font-medium hover:bg-[#5A2D53] transition-all"
+            >
+              Rechercher
+            </button>
+          </div>
 
           {/* Résultats */}
           {loadingTransport ? (

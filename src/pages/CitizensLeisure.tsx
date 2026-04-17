@@ -5,14 +5,13 @@ import 'leaflet/dist/leaflet.css';
 import { supabase } from '../lib/BoltDatabase';
 import { useLanguage } from '../context/LanguageContext';
 import { Language, translations as i18nTranslations } from '../lib/i18n';
-import LoisirSearchBar from '../components/LoisirSearchBar';
+import SearchBar from '../components/SearchBar';
 import { getSupabaseImageUrl } from '../lib/imageUtils';
 import EventCard from '../components/EventCard';
 import LeisureEventProposalForm from '../components/LeisureEventProposalForm';
 import { LOISIRS_CATEGORIES_KEYS } from '../lib/loisirCategories';
 import { SECTEURS_CULTURE } from '../lib/cultureEventCategories';
 import BackButton from '../components/BackButton';
-import CategorySearchBar from '../components/CategorySearchBar';
 import UnifiedBusinessCard from '../components/UnifiedBusinessCard';
 import { useNavigate } from 'react-router-dom';
 
@@ -700,17 +699,7 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
       {/* Barre de recherche */}
       <section className="px-4 py-6 bg-white">
         <div className="max-w-5xl mx-auto">
-          <CategorySearchBar
-            listePageValue="loisirs & évènements"
-            placeholder={language === 'fr' ? 'Rechercher un événement ou lieu de loisir...' : language === 'ar' ? 'البحث عن حدث أو مكان ترفيهي...' : 'Search for an event or leisure place...'}
-            onSelectBusiness={(businessId) => navigate(`/business/${businessId}`)}
-            onSearch={(query, ville) => {
-              const params = new URLSearchParams();
-              if (query) params.set('q', query);
-              if (ville) params.set('ville', ville);
-              window.location.href = `#/citizens-leisure?${params.toString()}`;
-            }}
-          />
+          <SearchBar scope="loisirs" />
         </div>
       </section>
 

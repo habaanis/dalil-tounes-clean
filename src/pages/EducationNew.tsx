@@ -35,14 +35,12 @@ import { Tables } from '../lib/dbTables';
 import CityAutocomplete from '../components/CityAutocomplete';
 import EducationCompare from '../components/EducationCompare';
 import SearchBar from '../components/SearchBar';
-import EducationSearchBar from '../components/EducationSearchBar';
 import { getEducationCategoryLabel } from '../lib/educationCategories';
 import { readParams } from '../lib/urlParams';
 import UnifiedBusinessCard from '../components/UnifiedBusinessCard';
 import { useNavigate } from '../lib/url';
 import { getSupabaseImageUrl } from '../lib/imageUtils';
 import BackButton from '../components/BackButton';
-import CategorySearchBar from '../components/CategorySearchBar';
 import { BusinessCard } from '../components/BusinessCard';
 import { BusinessDetail } from '../components/BusinessDetail';
 
@@ -781,15 +779,7 @@ export default function EducationNew() {
       {/* Barre de recherche */}
       <section className="px-4 py-6 bg-white">
         <div className="max-w-5xl mx-auto">
-          <CategorySearchBar
-            listePageValue="éducation"
-            placeholder={language === 'fr' ? 'Rechercher un établissement scolaire...' : language === 'ar' ? 'البحث عن مؤسسة تعليمية...' : 'Search for an educational institution...'}
-            onSelectBusiness={(businessId) => navigate(`/business/${businessId}`)}
-            onSearch={(query, ville) => {
-              setEducationSearchTerm(query);
-              setEducationSelectedGouvernorat(ville);
-            }}
-          />
+          <SearchBar scope="education" />
         </div>
       </section>
 

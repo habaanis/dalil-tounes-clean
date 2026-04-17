@@ -8,8 +8,6 @@ import { readParams } from '../lib/urlParams';
 import { generateBusinessUrl } from '../lib/slugify';
 import { RPC, Tables } from '../lib/dbTables';
 import SearchBar from '../components/SearchBar';
-import BusinessSearchBar from '../components/BusinessSearchBar';
-import CategorySearchBar from '../components/CategorySearchBar';
 import { FeaturedEventsCarousel } from '../components/FeaturedEventsCarousel';
 import { FeaturedBusinessesStrip } from '../components/FeaturedBusinessesStrip';
 import { METIERS_DOMAINES } from '../lib/categories';
@@ -1072,64 +1070,7 @@ export const Businesses = ({
 
         {/* Barre de recherche entreprises - Z-index élevé pour interaction */}
         <div id="section-recherche-b2b" className="mb-8 px-4 scroll-mt-24 isolate" style={{ position: 'relative', zIndex: 999 }}>
-          <CategorySearchBar
-            listePageValue={null}
-            placeholder={language === 'fr' ? 'Rechercher une entreprise...' : language === 'ar' ? 'البحث عن شركة...' : 'Search for a business...'}
-            onSelectBusiness={async (businessId) => {
-              try {
-                const { data, error } = await supabase
-                  .from(Tables.ENTREPRISE)
-                  .select('*')
-                  .eq('id', businessId)
-                  .single();
-
-                if (!error && data) {
-                  const businessData: Business = {
-                    id: data.id,
-                    name: data.nom || '',
-                    category: data.categorie || '',
-                    subCategories: data.sous_categories || '',
-                    city: data.ville || '',
-                    address: data.adresse || '',
-                    phone: data.telephone || '',
-                    email: data.email || '',
-                    website: data.site_web || '',
-                    description: data.description || '',
-                    services: data.services || '',
-                    imageUrl: data.image_url,
-                    logoUrl: data.logo_url,
-                    gouvernorat: data.gouvernorat || '',
-                    secteur: data.secteur || '',
-                    statut_abonnement: data['statut Abonnement'],
-                    'niveau priorité abonnement': data['niveau priorité abonnement'],
-                    badges: data.badges || [],
-                    mots_cles_recherche: data['mots cles recherche'] || '',
-                    instagram: data['Lien Instagram'] || '',
-                    facebook: data['lien facebook'] || '',
-                    tiktok: data['Lien TikTok'] || '',
-                    linkedin: data['Lien LinkedIn'] || '',
-                    youtube: data['Lien YouTube'] || '',
-                    lien_x: data.lien_x || '',
-                    horaires_ok: data.horaires_ok
-                  };
-                  setSelectedBusiness(businessData);
-                }
-              } catch (err) {
-                console.error('Erreur lors de la récupération de l\'entreprise:', err);
-              }
-            }}
-            onSearch={(query, ville) => {
-              setSearchTerm(query);
-              setSelectedCity(ville);
-            }}
-            onClear={() => {
-              setSearchTerm('');
-              setSelectedCity('');
-              setSelectedCategory('');
-              setFilterPremium(false);
-              setFilterCommerceLocal(false);
-            }}
-          />
+          <SearchBar scope="global" />
         </div>
 
         {/* Affichage des résultats : avec ou sans recherche active */}

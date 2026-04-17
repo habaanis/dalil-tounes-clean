@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { Search, ArrowRight, AlertCircle } from 'lucide-react';
 import { SEOHead } from '../../components/SEOHead';
+import SearchBar from '../../components/SearchBar';
 import Breadcrumb from '../../components/seo/Breadcrumb';
 import SeoBusinessCard from '../../components/seo/SeoBusinessCard';
 import { findVilleBySlug, SEO_METIERS } from '../../lib/seoLandingData';
@@ -120,7 +121,11 @@ const VillePage: React.FC = () => {
           </div>
         </div>
 
-        <div className="container mx-auto max-w-5xl px-4 py-12">
+        <div className="container mx-auto max-w-5xl px-4 py-8">
+          <div className="mb-8 bg-[#1a1a1a] rounded-xl p-4 border border-[#D4AF37]/30">
+            <SearchBar scope="global" />
+          </div>
+
           <div className="mb-10">
             <h2 className="text-xs font-semibold text-gray-400 mb-4 uppercase tracking-wider" style={{ letterSpacing: '0.1em' }}>
               Chercher par métier à {ville.label}

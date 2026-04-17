@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { MapPinned, MessageSquare, BarChart3, Smartphone, Navigation, ChevronRight } from 'lucide-react';
 import { PremiumPartnersSection } from '../components/PremiumPartnersSection';
 import CompanyCountCard from '../components/CompanyCountCard';
-import UnifiedSearchBar from '../components/UnifiedSearchBar';
+import SearchBar from '../components/SearchBar';
 import { isSearchBarAllowed } from '../config/searchBars';
 import HomeFeedbackWidget from '../components/HomeFeedbackWidget';
 import LeisureEventsSection from '../components/LeisureEventsSection';
@@ -193,7 +193,7 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
         <div className="max-w-5xl mx-auto relative z-[1001] overflow-visible">
           {isSearchBarAllowed('home') && (
             <div className="bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-[#D4AF37] p-2.5 md:p-3 relative overflow-visible">
-              <UnifiedSearchBar />
+              <SearchBar scope="global" />
             </div>
           )}
 

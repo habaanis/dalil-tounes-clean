@@ -7,7 +7,7 @@ import { useSimpleJobSearch } from '../hooks/useSimpleJobSearch';
 import { X, Plus, ArrowLeft } from 'lucide-react';
 import SimpleJobCard from '../components/SimpleJobCard';
 import JobDetail from './JobDetail';
-import JobSearchBar from '../components/JobSearchBar';
+import SearchBar from '../components/SearchBar';
 import { getSupabaseImageUrl } from '../lib/imageUtils';
 import StructuredData from '../components/StructuredData';
 import { generateCollectionPageSchema } from '../lib/structuredDataSchemas';
@@ -268,17 +268,7 @@ export const Jobs = () => {
 
       <section id="section-emploi-recherche" className="py-12 px-4 scroll-mt-24">
         <div className="max-w-7xl mx-auto">
-          <JobSearchBar
-            searchTerm={searchTerm}
-            onSearchTermChange={setSearchTerm}
-            selectedGouvernorat={selectedGouvernorat}
-            onSelectedGouvernoratChange={setSelectedGouvernorat}
-            selectedJobSector={selectedJobSector}
-            onSelectedJobSectorChange={setSelectedJobSector}
-            companyName={companyName}
-            onCompanyNameChange={setCompanyName}
-            onSearch={handleSearch}
-          />
+          <SearchBar scope="global" />
 
           <div id="section-emploi-offres" className="scroll-mt-24">
             {searchLoading ? (
