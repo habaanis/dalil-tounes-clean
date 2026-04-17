@@ -15,21 +15,6 @@ export interface SeoBusiness {
   is_premium?: boolean;
 }
 
-const SEO_COLUMNS = `
-  id,
-  nom,
-  categorie,
-  sous_categories,
-  ville,
-  gouvernorat,
-  adresse,
-  telephone,
-  description,
-  image_url,
-  score_avis,
-  statut_validation
-`;
-
 function mapEntrepriseRow(row: Record<string, unknown>): SeoBusiness {
   const sousCats = Array.isArray(row.sous_categories)
     ? (row.sous_categories as string[])
@@ -60,33 +45,39 @@ export async function fetchSeoBusinesses(options: {
   categorie?: string;
 }): Promise<{ data: SeoBusiness[]; error: unknown }> {
   const { limit = 40, sousCategorie, city } = options;
-
   const metierValue = options.metier ?? options.categorie;
 
-  let query = supabase
+  const { data, error } = await supabase
     .from('entreprise')
-    .select(SEO_COLUMNS)
+    .select('*')
     .eq('statut_validation', 'valider');
-
-  if (metierValue) {
-    query = query.ilike('sous_categories', `%${metierValue}%`);
-  }
-
-  if (sousCategorie) {
-    query = query.ilike('sous_categories', `%${sousCategorie}%`);
-  }
-
-  if (city) {
-    query = query.ilike('gouvernorat', `%${city}%`);
-  }
-
-  query = query.limit(limit);
-
-  const { data, error } = await query;
 
   if (error || !data) {
     return { data: [], error };
   }
 
-  return { data: (data as Record<string, unknown>[]).map(mapEntrepriseRow), error: null };
+  const filtered = (data as Record<string, unknown>[]).filter(item => {
+    const sousCatsRaw = Array.isArray(item.sous_categories)
+      ? (item.sous_categories as string[]).join(' ')
+      : (item.sous_categories as string) ?? '';
+
+    const matchMetier = metierValue
+      ? sousCatsRaw.toLowerCase().includes(metierValue.toLowerCase())
+      : true;
+
+    const matchSousCategorie = sousCategorie
+      ? sousCatsRaw.toLowerCase().includes(sousCategorie.toLowerCase())
+      : true;
+
+    const matchLocation = city
+      ? (item.gouvernorat as string | undefined)?.toLowerCase().includes(city.toLowerCase()) ||
+        (item.ville as string | undefined)?.toLowerCase().includes(city.toLowerCase())
+      : true;
+
+    return matchMetier && matchSousCategorie && matchLocation;
+  });
+
+  const limited = filtered.slice(0, limit);
+
+  return { data: limited.map(mapEntrepriseRow), error: null };
 }
