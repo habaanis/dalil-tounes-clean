@@ -167,7 +167,7 @@ export default function SearchBar({
             p_q: trimmedValue,
             p_ville: city && city.trim().length > 0 ? city : null,
             p_categorie: metier && metier.trim().length > 0 ? metier : null,
-            p_scope: scope !== 'global' ? scope : null,
+            p_scope: null,
             p_limit: 30
           });
 
