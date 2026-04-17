@@ -148,7 +148,7 @@ export default function Citizens({ onNavigate }: CitizensProps = {}) {
       setIsLoading(true);
       let query = supabaseClient
         .from(Tables.ENTREPRISE)
-        .select('id, nom, ville, "catégorie", "sous-catégories", telephone, site_web, description, email, adresse')
+        .select('id, nom, ville, "catégorie", sous_categories, telephone, site_web, description, email, adresse')
         .order('nom', { ascending: true })
         .limit(60);
 

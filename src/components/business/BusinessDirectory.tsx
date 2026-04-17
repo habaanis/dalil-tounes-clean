@@ -405,12 +405,12 @@ export default function BusinessDirectory({ mode, title, subtitle }: BusinessDir
                   )}
 
                   {/* Categories / Tags */}
-                  {(business as any)['sous-catégories'] && (
+                  {(business as any).sous_categories && (
                     <div className="mb-4">
                       <div className="flex flex-wrap gap-1">
-                        {(Array.isArray((business as any)['sous-catégories'])
-                          ? (business as any)['sous-catégories']
-                          : ((business as any)['sous-catégories'] as string).split(/[,;]/)
+                        {(Array.isArray((business as any).sous_categories)
+                          ? (business as any).sous_categories
+                          : ((business as any).sous_categories as string).split(/[,;]/)
                         ).slice(0, 3).map((subCat: string, idx: number) => (
                           <span
                             key={idx}

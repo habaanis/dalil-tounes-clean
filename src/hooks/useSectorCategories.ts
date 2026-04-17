@@ -74,16 +74,16 @@ export function useSectorCategories(secteur: string) {
     try {
       const { data, error: queryError } = await supabase
         .from('entreprise')
-        .select('"sous-catégories"')
+        .select('sous_categories')
         .contains('secteur', [secteur])
         .contains('"catégorie"', [selectedCategory])
-        .not('"sous-catégories"', 'is', null);
+        .not('sous_categories', 'is', null);
 
       if (queryError) throw queryError;
 
       const subCatCounts: Record<string, number> = {};
       data?.forEach((row: any) => {
-        const subCats = row['sous-catégories'];
+        const subCats = row.sous_categories;
         const subCatList = Array.isArray(subCats) ? subCats : (subCats ? [subCats] : []);
         subCatList.forEach((subCat: string) => {
           if (subCat) subCatCounts[subCat] = (subCatCounts[subCat] || 0) + 1;
@@ -111,6 +111,7 @@ export function useSectorCategories(secteur: string) {
     subCategories,
     loading,
     error,
-    loadSubCategoriesByCategory
+    loadSubCategoriesByCategory,
+    refetch: loadCategories,
   };
 }

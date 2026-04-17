@@ -390,7 +390,7 @@ export const Businesses = ({
     try {
       let query = supabase
         .from(Tables.ENTREPRISE)
-        .select('id, nom, secteur, "sous-catégories", "catégorie", gouvernorat, ville, adresse, telephone, email, site_web, description, services, image_url, logo_url, "statut Abonnement", "niveau priorité abonnement", "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok')
+        .select('id, nom, secteur, sous_categories, "catégorie", gouvernorat, ville, adresse, telephone, email, site_web, description, services, image_url, logo_url, "statut Abonnement", "niveau priorité abonnement", "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok')
         .order('"niveau priorité abonnement"', { ascending: false, nullsFirst: false })
         .order('nom', { ascending: true })
         .limit(10);
@@ -421,7 +421,7 @@ export const Businesses = ({
           id: data[0].id,
           nom: data[0].nom,
           secteur: data[0].secteur,
-          sous_categories: data[0]['sous-catégories'],
+          sous_categories: data[0].sous_categories,
           categorie: data[0]['catégorie'],
           badges_from_db: data[0].badges,
           services: data[0].services?.substring(0, 50) + '...' || 'NULL',
@@ -435,8 +435,8 @@ export const Businesses = ({
       const mappedData = (data || []).map((item: any) => ({
         id: item.id,
         name: item.nom || '',
-        category: Array.isArray(item['sous-catégories']) ? item['sous-catégories'].join(', ') : (item['sous-catégories'] || ''),
-        subCategories: Array.isArray(item['sous-catégories']) ? item['sous-catégories'].join(', ') : (item['sous-catégories'] || ''),
+        category: Array.isArray(item.sous_categories) ? item.sous_categories.join(', ') : (item.sous_categories || ''),
+        subCategories: Array.isArray(item.sous_categories) ? item.sous_categories.join(', ') : (item.sous_categories || ''),
         gouvernorat: item.gouvernorat || '',
         secteur: Array.isArray(item.secteur) ? item.secteur.join(', ') : (item.secteur || ''),
         city: item.ville || '',
@@ -501,7 +501,7 @@ export const Businesses = ({
     try {
       let query = supabase
         .from(Tables.ENTREPRISE)
-        .select('id, nom, secteur, "sous-catégories", "catégorie", gouvernorat, ville, adresse, telephone, email, site_web, description, services, image_url, logo_url, "statut Abonnement", "niveau priorité abonnement", "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok')
+        .select('id, nom, secteur, sous_categories, "catégorie", gouvernorat, ville, adresse, telephone, email, site_web, description, services, image_url, logo_url, "statut Abonnement", "niveau priorité abonnement", "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok')
         .order('"niveau priorité abonnement"', { ascending: false, nullsFirst: false })
         .order('nom', { ascending: true })
         .limit(30);
@@ -518,11 +518,11 @@ export const Businesses = ({
       }
 
       if (selectedCategory === 'finance') {
-        console.log(`[DEBUG] Filtre Finance avec sous-catégories:`, FINANCE_SUBCATEGORIES);
-        query = query.overlaps('"sous-catégories"', FINANCE_SUBCATEGORIES);
+        console.log(`[DEBUG] Filtre Finance avec sous_categories:`, FINANCE_SUBCATEGORIES);
+        query = query.overlaps('sous_categories', FINANCE_SUBCATEGORIES);
       } else if (selectedCategory) {
         console.log(`[DEBUG] Filtre Catégorie: "${selectedCategory}"`);
-        query = query.contains('"sous-catégories"', [selectedCategory]);
+        query = query.contains('sous_categories', [selectedCategory]);
       }
 
       if (filterPremium) {
@@ -563,7 +563,7 @@ export const Businesses = ({
           badges_from_db: data[0].badges,
           services: data[0].services?.substring(0, 50) + '...' || 'NULL',
           mots_cles_recherche: data[0]['mots cles recherche']?.substring(0, 100) + '...' || 'NULL',
-          sous_categories: data[0]['sous-catégories'],
+          sous_categories: data[0].sous_categories,
           categorie: data[0]['catégorie'],
           statut_abonnement: data[0]['statut Abonnement'],
           gouvernorat: data[0].gouvernorat
@@ -573,8 +573,8 @@ export const Businesses = ({
       let mappedData = (data || []).map((item: any) => ({
         id: item.id,
         name: item.nom,
-        category: Array.isArray(item['sous-catégories']) ? item['sous-catégories'].join(', ') : (item['sous-catégories'] || ''),
-        subCategories: Array.isArray(item['sous-catégories']) ? item['sous-catégories'].join(', ') : (item['sous-catégories'] || ''),
+        category: Array.isArray(item.sous_categories) ? item.sous_categories.join(', ') : (item.sous_categories || ''),
+        subCategories: Array.isArray(item.sous_categories) ? item.sous_categories.join(', ') : (item.sous_categories || ''),
         gouvernorat: item.gouvernorat || '',
         secteur: Array.isArray(item.secteur) ? item.secteur.join(', ') : (item.secteur || ''),
         city: item.ville || '',

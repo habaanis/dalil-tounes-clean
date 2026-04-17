@@ -100,7 +100,7 @@ export async function searchEducation({ keyword = '', city = '', quick = null, p
     if (city)
       query = query.ilike('ville', `%${city}%`);
     if (quick === 'languages')
-      query = query.contains('"sous-catégories"', ['langue']);
+      query = query.contains('sous_categories', ['langue']);
 
     const { data, error } = await query.limit(30);
     if (error) throw error;
@@ -245,7 +245,7 @@ export async function searchHealthEstablishments({ keyword = '', city = '', type
   try {
     let query = supabase
       .from('entreprise')
-      .select('id, nom, "catégorie", "sous-catégories", ville, adresse, telephone, site_web, email, description, verified')
+      .select('id, nom, "catégorie", sous_categories, ville, adresse, telephone, site_web, email, description, verified')
       .contains('"catégorie"', ['santé']);
 
     if (keyword.trim().length >= 2) {
@@ -260,7 +260,7 @@ export async function searchHealthEstablishments({ keyword = '', city = '', type
     }
 
     if (type) {
-      query = query.contains('"sous-catégories"', [type]);
+      query = query.contains('sous_categories', [type]);
     }
 
     const { data, error } = await query.order('nom', { ascending: true }).limit(30);
@@ -493,7 +493,7 @@ export async function searchMedicalTransportProviders(opts) {
     // Fallback : chercher dans la table entreprise
     let query = supabase
       .from('entreprise')
-      .select('id, nom as name, ville as city, telephone as phone, "sous-catégories", description')
+      .select('id, nom as name, ville as city, telephone as phone, sous_categories, description')
       .or('nom.ilike.%transport médical%,nom.ilike.%transport medical%,nom.ilike.%ambulance%,description.ilike.%transport médical%,description.ilike.%ambulance%');
 
     // Filtrer par ville

@@ -17,14 +17,14 @@ export function useBusinessCategories() {
 
       const { data, error: queryError } = await supabase
         .from('entreprise')
-        .select('"sous-catégories"')
-        .not('"sous-catégories"', 'is', null);
+        .select('sous_categories')
+        .not('sous_categories', 'is', null);
 
       if (queryError) throw queryError;
 
       const allSubCats: string[] = [];
       (data || []).forEach((item: any) => {
-        const val = item['sous-catégories'];
+        const val = item.sous_categories;
         if (Array.isArray(val)) {
           allSubCats.push(...val.filter(Boolean));
         } else if (typeof val === 'string' && val) {

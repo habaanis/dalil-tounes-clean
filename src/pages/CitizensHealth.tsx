@@ -83,7 +83,7 @@ export default function CitizensHealth({ onNavigate }: CitizensHealthProps) {
     try {
       let query = supabase
         .from(Tables.ENTREPRISE)
-        .select('id, nom, secteur, "sous-catégories", "catégorie", gouvernorat, ville, adresse, telephone, email, site_web, description, services, image_url, logo_url, "statut Abonnement", "niveau priorité abonnement", "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, "liste pages"')
+        .select('id, nom, secteur, sous_categories, "catégorie", gouvernorat, ville, adresse, telephone, email, site_web, description, services, image_url, logo_url, "statut Abonnement", "niveau priorité abonnement", "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, "liste pages"')
         .contains('"liste pages"', ['santé'])
         .order('"niveau priorité abonnement"', { ascending: false, nullsFirst: false })
         .order('nom', { ascending: true })
@@ -94,7 +94,7 @@ export default function CitizensHealth({ onNavigate }: CitizensHealthProps) {
       }
 
       if (selectedSanteCategory) {
-        query = query.contains('"sous-catégories"', [selectedSanteCategory]);
+        query = query.contains('sous_categories', [selectedSanteCategory]);
       }
 
       if (searchTerm && searchTerm.trim().length > 0) {
@@ -112,8 +112,8 @@ export default function CitizensHealth({ onNavigate }: CitizensHealthProps) {
         const mappedData = (data || []).map((item: any) => ({
           id: item.id,
           name: item.nom || '',
-          category: Array.isArray(item['sous-catégories']) ? item['sous-catégories'].join(', ') : (item['sous-catégories'] || ''),
-          subCategories: Array.isArray(item['sous-catégories']) ? item['sous-catégories'].join(', ') : (item['sous-catégories'] || ''),
+          category: Array.isArray(item.sous_categories) ? item.sous_categories.join(', ') : (item.sous_categories || ''),
+          subCategories: Array.isArray(item.sous_categories) ? item.sous_categories.join(', ') : (item.sous_categories || ''),
           gouvernorat: item.gouvernorat || '',
           secteur: Array.isArray(item.secteur) ? item.secteur.join(', ') : (item.secteur || ''),
           city: item.ville || '',

@@ -362,7 +362,7 @@ export default function CitizensAdmin({ onNavigateBack }: CitizensAdminProps = {
     try {
       let query = supabase
         .from(Tables.ENTREPRISE)
-        .select('id, nom, secteur, "sous-catégories", gouvernorat, "liste pages"')
+        .select('id, nom, secteur, sous_categories, gouvernorat, "liste pages"')
         .contains('"liste pages"', ['services citoyens'])
         .order('nom', { ascending: true })
         .limit(100);
@@ -372,7 +372,7 @@ export default function CitizensAdmin({ onNavigateBack }: CitizensAdminProps = {
       }
 
       if (adminSelectedCategory) {
-        query = query.contains('"sous-catégories"', [adminSelectedCategory]);
+        query = query.contains('sous_categories', [adminSelectedCategory]);
       }
 
       if (adminSearchTerm) {
