@@ -47,10 +47,10 @@ export async function fetchSeoBusinesses(options: {
   const { limit = 40, sousCategorie, city } = options;
   const metierValue = options.metier ?? options.categorie;
 
+  // TEMP: filtre statut_validation désactivé (à réactiver après validation des fiches)
   const { data, error } = await supabase
     .from('entreprise')
-    .select('*')
-    .eq('statut_validation', 'valider');
+    .select('*');
 
   if (error || !data) {
     return { data: [], error };
