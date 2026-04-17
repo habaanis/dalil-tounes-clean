@@ -300,18 +300,7 @@ export default function SearchBar({
       const params = new URLSearchParams();
       if (query) params.set('q', query);
       if (villeParam) params.set('ville', villeParam);
-      params.set('page_categorie', scope);
-      const routeMap: Record<string, string> = {
-        sante: '#/citizens/health',
-        education: '#/education',
-        administration: '#/citizens/admin',
-        loisirs: '#/citizens/leisure',
-        magasin: '#/citizens/shops',
-        marche_local: '#/local-marketplace',
-        tourism: '#/citizens/tourism',
-        services: '#/citizens/services',
-      };
-      goTo(`${routeMap[scope] || '#/entreprises'}?${params.toString()}`);
+      goTo(`/recherche?${params.toString()}`);
       return;
     }
 
@@ -364,28 +353,17 @@ export default function SearchBar({
       }
     }
 
-    if (!isGlobal && q.trim().length >= 2 && pageLabel) {
+    if (!isGlobal && q.trim().length >= 2) {
       const params = new URLSearchParams();
       if (q.trim()) params.set('q', q.trim());
       if (city.trim()) params.set('ville', city.trim());
-      params.set('page_categorie', scope);
-      const routeMap: Record<string, string> = {
-        sante: '#/citizens/health',
-        education: '#/education',
-        administration: '#/citizens/admin',
-        loisirs: '#/citizens/leisure',
-        magasin: '#/citizens/shops',
-        marche_local: '#/local-marketplace',
-        tourism: '#/citizens/tourism',
-        services: '#/citizens/services',
-      };
       return (
         <li
           className="py-2.5 px-2 font-medium cursor-pointer hover:bg-orange-50 rounded transition text-orange-700 flex items-center gap-2"
-          onClick={() => goTo(`${routeMap[scope] || '#/entreprises'}?${params.toString()}`)}
+          onClick={() => goTo(`/recherche?${params.toString()}`)}
         >
           <span>➡️</span>
-          <span>Voir tout dans {pageLabel}</span>
+          <span>{t(language as Lang, 'search.seeAll')}</span>
         </li>
       );
     }

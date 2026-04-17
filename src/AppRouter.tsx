@@ -82,6 +82,9 @@ function AppRouter() {
               <Route path="/citizens/tourism" element={<CitizensTourism />} />
               <Route path="/citizens/tourisme" element={<CitizensTourism />} />
 
+              {/* Recherche globale */}
+              <Route path="/recherche" element={<Businesses />} />
+
               {/* Entreprises */}
               <Route path="/businesses" element={<Businesses />} />
               <Route path="/entreprises" element={<Businesses />} />
