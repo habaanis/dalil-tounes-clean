@@ -39,10 +39,7 @@ export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
     const params = new URLSearchParams(window.location.hash.split('?')[1] || '');
     const q = params.get('q');
     const ville = params.get('ville');
-
-    if (q || ville) {
-      fetchShops(q || '', ville || '');
-    }
+    fetchShops(q || '', ville || '');
   }, []);
 
   const fetchShops = async (searchTerm: string, ville: string) => {
@@ -86,7 +83,6 @@ export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
     }
   };
 
-  const hasActiveSearch = shops.length > 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
@@ -145,110 +141,91 @@ export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
       <div className="max-w-7xl mx-auto px-4 py-8">
 
 
-        {/* Résultats de recherche - affichés si recherche active */}
-        {hasActiveSearch && (
-          <div ref={resultsRef} className="mb-10">
+        {/* Commerces Locaux à la Une */}
+        <div className="mb-10">
+          <LocalBusinessesSection
+            onCardClick={(id) => navigate(`/business/${id}`)}
+          />
+        </div>
 
-            {/* Loading State */}
-            {loading ? (
-              <div className="flex items-center justify-center py-20">
-                <Loader2 className="w-12 h-12 text-[#D4AF37] animate-spin" />
-                <p className="mt-3 text-sm text-gray-600 ml-3">Recherche en cours...</p>
+        {/* Magasins mis en avant */}
+        <div className="mb-10">
+          <FeaturedBusinessesStrip
+            variant="magasins"
+            onCardClick={(id) => navigate(`/business/${id}`)}
+          />
+        </div>
+
+        {/* Résultats de recherche */}
+        <div ref={resultsRef} className="mb-10 min-h-[80px]">
+          {loading ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="w-12 h-12 text-[#D4AF37] animate-spin" />
+              <p className="mt-3 text-sm text-gray-600 ml-3">Recherche en cours...</p>
+            </div>
+          ) : shops.length === 0 ? (
+            <div className="text-center py-8">
+              <Store className="w-10 h-10 text-[#D4AF37] mx-auto mb-3" />
+              <p className="text-sm text-gray-500">Aucun professionnel trouvé dans ce secteur</p>
+            </div>
+          ) : (
+            <div>
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-light text-gray-900">
+                  Commerces &amp; Magasins
+                  <span className="ml-2 text-sm text-gray-500">
+                    ({shops.length} {shops.length > 1 ? 'résultats' : 'résultat'})
+                  </span>
+                </h3>
               </div>
-            ) : shops.length === 0 ? (
-              <div className="text-center py-8">
-                <Store className="w-10 h-10 text-[#D4AF37] mx-auto mb-3" />
-                <p className="text-sm text-gray-500">Aucun établissement trouvé • Modifiez vos critères</p>
-              </div>
-            ) : (
-              <div>
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-xl font-light text-gray-900">
-                    Résultats de votre recherche
-                    <span className="ml-2 text-sm text-gray-500">
-                      ({shops.length} {shops.length > 1 ? 'magasins' : 'magasin'})
-                    </span>
-                  </h3>
-                  <button
-                    onClick={() => {
-                      setShops([]);
-                      window.location.hash = '#/citizens/magasins';
-                    }}
-                    className="text-sm text-gray-600 hover:text-gray-900 underline"
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {shops.map((shop) => (
+                  <div
+                    key={shop.id}
+                    onClick={() => navigate(`/business/${shop.id}`)}
+                    className="bg-white rounded-xl border-2 border-green-200 hover:shadow-2xl transition-all cursor-pointer overflow-hidden group"
                   >
-                    Réinitialiser la recherche
-                  </button>
-                </div>
-
-                {/* Shop Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {shops.map((shop) => (
-                      <div
-                        key={shop.id}
-                        onClick={() => navigate(`/business/${shop.id}`)}
-                        className="bg-white rounded-xl border-2 border-green-200 hover:shadow-2xl transition-all cursor-pointer overflow-hidden group"
-                      >
-                        {shop.image_url && (
-                          <div className="w-full h-40 bg-gradient-to-br from-green-50 to-emerald-50 overflow-hidden">
-                            <img
-                              src={getSupabaseImageUrl(shop.image_url)}
-                              alt={shop.nom}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                              onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                            />
-                          </div>
+                    {shop.image_url && (
+                      <div className="w-full h-40 bg-gradient-to-br from-green-50 to-emerald-50 overflow-hidden">
+                        <img
+                          src={getSupabaseImageUrl(shop.image_url)}
+                          alt={shop.nom}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                        />
+                      </div>
+                    )}
+                    <div className="p-4">
+                      <div className="flex items-start gap-3 mb-2">
+                        {shop.logo_url && (
+                          <img
+                            src={getSupabaseImageUrl(shop.logo_url)}
+                            alt={`Logo ${shop.nom}`}
+                            className="w-12 h-12 object-contain rounded-lg border border-gray-200"
+                            onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                          />
                         )}
-                        <div className="p-4">
-                          <div className="flex items-start gap-3 mb-2">
-                            {shop.logo_url && (
-                              <img
-                                src={getSupabaseImageUrl(shop.logo_url)}
-                                alt={`Logo ${shop.nom}`}
-                                className="w-12 h-12 object-contain rounded-lg border border-gray-200"
-                                onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                              />
-                            )}
-                            <div className="flex-1">
-                              <h3 className="font-bold text-gray-900 mb-1 group-hover:text-green-700 transition-colors">
-                                {shop.nom}
-                              </h3>
-                              <p className="text-sm text-green-700 font-medium">{Array.isArray((shop as any).sous_categories) ? (shop as any).sous_categories.join(', ') : ((shop as any).sous_categories || Array.isArray((shop as any)['catégorie']) ? (shop as any)['catégorie']?.join?.(', ') : (shop as any)['catégorie'] || '')}</p>
-                            </div>
-                          </div>
-                          {shop.ville && (
-                            <p className="text-xs text-gray-500 flex items-center gap-1 mt-2">
-                              <MapPin className="w-3 h-3 text-green-600" />
-                              {shop.ville}
-                            </p>
-                          )}
+                        <div className="flex-1">
+                          <h3 className="font-bold text-gray-900 mb-1 group-hover:text-green-700 transition-colors">
+                            {shop.nom}
+                          </h3>
+                          <p className="text-sm text-green-700 font-medium">{Array.isArray((shop as any).sous_categories) ? (shop as any).sous_categories.join(', ') : ((shop as any).sous_categories || Array.isArray((shop as any)['catégorie']) ? (shop as any)['catégorie']?.join?.(', ') : (shop as any)['catégorie'] || '')}</p>
                         </div>
                       </div>
-                  ))}
-                </div>
+                      {shop.ville && (
+                        <p className="text-xs text-gray-500 flex items-center gap-1 mt-2">
+                          <MapPin className="w-3 h-3 text-green-600" />
+                          {shop.ville}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
-            )}
-          </div>
-        )}
-
-        {/* SI PAS DE RECHERCHE : afficher les magasins mis en avant et commerces locaux */}
-        {!hasActiveSearch && (
-          <>
-            {/* Section Commerces Locaux à la Une */}
-            <div className="mb-10">
-              <LocalBusinessesSection
-                onCardClick={(id) => navigate(`/business/${id}`)}
-              />
             </div>
-
-            {/* Section Magasins mis en avant */}
-            <div className="mb-10">
-              <FeaturedBusinessesStrip
-                variant="magasins"
-                onCardClick={(id) => navigate(`/business/${id}`)}
-              />
-            </div>
-          </>
-        )}
+          )}
+        </div>
 
         {/* Business Registration Block - Bottom */}
         <div className="mt-10 relative overflow-hidden rounded-xl border border-[#D4AF37] shadow-lg">

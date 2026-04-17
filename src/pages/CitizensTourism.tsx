@@ -40,10 +40,7 @@ export default function CitizensTourism({ onNavigate }: CitizensTourismProps = {
     const params = new URLSearchParams(window.location.hash.split('?')[1] || '');
     const q = params.get('q');
     const ville = params.get('ville');
-
-    if (q || ville) {
-      fetchBusinesses(q || '', ville || '');
-    }
+    fetchBusinesses(q || '', ville || '');
   }, []);
 
   const fetchBusinesses = async (searchTerm: string, ville: string) => {
@@ -86,8 +83,6 @@ export default function CitizensTourism({ onNavigate }: CitizensTourismProps = {
       setLoading(false);
     }
   };
-
-  const hasActiveSearch = businesses.length > 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
@@ -149,10 +144,17 @@ export default function CitizensTourism({ onNavigate }: CitizensTourismProps = {
           </div>
         )}
 
-        {hasActiveSearch && !loading && (
+        {!loading && businesses.length === 0 && (
+          <div className="text-center py-12 min-h-[120px]">
+            <Globe className="w-16 h-16 mx-auto text-[#D4AF37] mb-4" />
+            <p className="text-gray-600">Aucun professionnel trouvé dans ce secteur</p>
+          </div>
+        )}
+
+        {!loading && businesses.length > 0 && (
           <div ref={resultsRef} className="mt-8">
             <h2 className="text-2xl font-semibold text-gray-900 mb-6">
-              Résultats de recherche ({businesses.length})
+              Tourisme &amp; Expatriation ({businesses.length})
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -164,15 +166,6 @@ export default function CitizensTourism({ onNavigate }: CitizensTourismProps = {
                 />
               ))}
             </div>
-          </div>
-        )}
-
-        {!hasActiveSearch && !loading && (
-          <div className="text-center py-12">
-            <Globe className="w-16 h-16 mx-auto text-[#D4AF37] mb-4" />
-            <p className="text-gray-600">
-              Utilisez la barre de recherche pour trouver des services touristiques
-            </p>
           </div>
         )}
       </div>

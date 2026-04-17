@@ -653,6 +653,10 @@ export default function EducationNew() {
     fetchEducationEvents();
   }, [eventsCity]);
 
+  useEffect(() => {
+    runEducationSearch();
+  }, []);
+
   // Garde anti-boucle pour EducationNew
   const prevEducationSearchRef = useRef({ educationSearchTerm: '', educationSelectedGouvernorat: '', educationSelectedCategory: '' });
   const educationFetchAttemptsRef = useRef(0);
@@ -679,9 +683,7 @@ export default function EducationNew() {
     educationFetchAttemptsRef.current += 1;
 
     const delayDebounceFn = setTimeout(() => {
-      if (educationSearchTerm || educationSelectedGouvernorat || educationSelectedCategory) {
-        runEducationSearch();
-      }
+      runEducationSearch();
     }, 300);
 
     return () => clearTimeout(delayDebounceFn);
@@ -1045,62 +1047,60 @@ export default function EducationNew() {
       )}
 
       {/* Résultats Entreprise (depuis table entreprise) */}
-      {hasActiveEducationSearch && (
-        <section ref={resultsRef} className="max-w-7xl mx-auto px-4 pb-8">
-          <div className="mb-6">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-2">
-              Établissements d'éducation
-            </h2>
-            {hasActiveEducationSearch && (
-              <div className="flex items-center justify-between">
-                <p className="text-sm text-gray-600">
-                  <span className="font-semibold text-blue-900">{entrepriseResults.length}</span> {t.results}
-                </p>
-                <button
-                  onClick={() => {
-                    setEducationSearchTerm('');
-                    setEducationSelectedGouvernorat('');
-                    setEducationSelectedCategory('');
-                    setShowEntrepriseResults(false);
-                    setEntrepriseResults([]);
-                  }}
-                  className="text-sm text-gray-600 hover:text-gray-900 underline"
-                >
-                  Réinitialiser la recherche
-                </button>
-              </div>
-            )}
-          </div>
-
-          {isLoading ? (
-            <div className="flex items-center justify-center py-8">
-              <Loader2 className="w-8 h-8 text-[#D4AF37] animate-spin" />
-              <p className="mt-2 text-xs text-gray-600 ml-2">Recherche en cours...</p>
-            </div>
-          ) : entrepriseResults.length === 0 ? (
-            <div className="text-center py-4">
-              <GraduationCap className="w-8 h-8 text-[#D4AF37]/30 mx-auto mb-2" />
-              <h3 className="text-sm font-semibold text-gray-700 mb-1">Aucun établissement trouvé</h3>
-              <p className="text-xs text-gray-500">Essayez de modifier vos critères de recherche</p>
-            </div>
-          ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {entrepriseResults.map((etablissement) => (
-                <motion.div
-                  key={etablissement.id}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                >
-                  <BusinessCard
-                    business={etablissement}
-                    onClick={() => setSelectedEducationBusiness(etablissement)}
-                  />
-                </motion.div>
-              ))}
+      <section ref={resultsRef} className="max-w-7xl mx-auto px-4 pb-8 min-h-[120px]">
+        <div className="mb-6">
+          <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+            Établissements d'éducation
+          </h2>
+          {(educationSearchTerm || educationSelectedGouvernorat || educationSelectedCategory) && (
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-gray-600">
+                <span className="font-semibold text-blue-900">{entrepriseResults.length}</span> {t.results}
+              </p>
+              <button
+                onClick={() => {
+                  setEducationSearchTerm('');
+                  setEducationSelectedGouvernorat('');
+                  setEducationSelectedCategory('');
+                  setShowEntrepriseResults(false);
+                  setEntrepriseResults([]);
+                }}
+                className="text-sm text-gray-600 hover:text-gray-900 underline"
+              >
+                Réinitialiser la recherche
+              </button>
             </div>
           )}
-        </section>
-      )}
+        </div>
+
+        {isLoading ? (
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="w-8 h-8 text-[#D4AF37] animate-spin" />
+            <p className="mt-2 text-xs text-gray-600 ml-2">Recherche en cours...</p>
+          </div>
+        ) : entrepriseResults.length === 0 ? (
+          <div className="text-center py-4">
+            <GraduationCap className="w-8 h-8 text-[#D4AF37]/30 mx-auto mb-2" />
+            <h3 className="text-sm font-semibold text-gray-700 mb-1">Aucun professionnel trouvé dans ce secteur</h3>
+            <p className="text-xs text-gray-500">Essayez de modifier vos critères de recherche</p>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {entrepriseResults.map((etablissement) => (
+              <motion.div
+                key={etablissement.id}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+              >
+                <BusinessCard
+                  business={etablissement}
+                  onClick={() => setSelectedEducationBusiness(etablissement)}
+                />
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </section>
 
       {/* Résultats établissements_education (table dédiée) */}
       <section className="max-w-7xl mx-auto px-4 pb-4">

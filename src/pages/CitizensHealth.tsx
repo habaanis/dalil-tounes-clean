@@ -179,6 +179,10 @@ export default function CitizensHealth({ onNavigate }: CitizensHealthProps) {
     }
   };
 
+  useEffect(() => {
+    runSearch();
+  }, []);
+
   // Garde anti-boucle pour CitizensHealth
   const prevHealthSearchRef = useRef({ searchTerm: '', selectedGouvernorat: '', selectedSanteCategory: '' });
   const healthFetchAttemptsRef = useRef(0);
@@ -205,9 +209,7 @@ export default function CitizensHealth({ onNavigate }: CitizensHealthProps) {
     healthFetchAttemptsRef.current += 1;
 
     const delayDebounceFn = setTimeout(() => {
-      if (searchTerm || selectedGouvernorat || selectedSanteCategory) {
-        runSearch();
-      }
+      runSearch();
     }, 300);
 
     return () => clearTimeout(delayDebounceFn);
@@ -272,78 +274,77 @@ export default function CitizensHealth({ onNavigate }: CitizensHealthProps) {
 
           {error && <div className="mt-4 text-red-600">{t.common.error}: {error}</div>}
 
-          {/* Résultats de recherche - affichés immédiatement après la barre si recherche active */}
-          {hasActiveSearch && (
-            <div ref={resultsRef} className="mt-8">
-              {loading ? (
-                <div className="text-center py-12">
-                  <div className="inline-block w-8 h-8 border-2 border-[#4A1D43] border-t-transparent rounded-full animate-spin"></div>
-                  <p className="mt-3 text-sm text-[#4A1D43]">Recherche en cours...</p>
-                </div>
-              ) : filteredBusinesses.length === 0 ? (
-                <div className="text-center py-12">
-                  <Building2 className="w-12 h-12 text-[#D4AF37]/50 mx-auto mb-3" />
-                  <p className="text-sm text-[#4A1D43]">Aucun résultat trouvé</p>
-                </div>
-              ) : (
-                <div>
-                  <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-2xl font-light text-[#4A1D43]" style={{ fontFamily: "'Playfair Display', serif" }}>
-                      Résultats de votre recherche
-                      <span className="ml-2 text-base text-[#D4AF37]">
-                        ({filteredBusinesses.length} {filteredBusinesses.length > 1 ? 'résultats' : 'résultat'})
-                      </span>
-                    </h3>
+          {/* Résultats de recherche */}
+          <div ref={resultsRef} className="mt-8 min-h-[120px]">
+            {loading ? (
+              <div className="text-center py-12">
+                <div className="inline-block w-8 h-8 border-2 border-[#4A1D43] border-t-transparent rounded-full animate-spin"></div>
+                <p className="mt-3 text-sm text-[#4A1D43]">Recherche en cours...</p>
+              </div>
+            ) : filteredBusinesses.length === 0 ? (
+              <div className="text-center py-12">
+                <Building2 className="w-12 h-12 text-[#D4AF37]/50 mx-auto mb-3" />
+                <p className="text-sm text-[#4A1D43]">Aucun professionnel trouvé dans ce secteur</p>
+              </div>
+            ) : (
+              <div>
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-2xl font-light text-[#4A1D43]" style={{ fontFamily: "'Playfair Display', serif" }}>
+                    Professionnels de santé
+                    <span className="ml-2 text-base text-[#D4AF37]">
+                      ({filteredBusinesses.length} {filteredBusinesses.length > 1 ? 'résultats' : 'résultat'})
+                    </span>
+                  </h3>
+                  {(searchTerm || selectedGouvernorat || selectedSanteCategory) && (
                     <button
                       onClick={() => {
                         setSearchTerm('');
                         setSelectedGouvernorat('');
                         setSelectedSanteCategory('');
-                        setFilteredBusinesses([]);
                       }}
                       className="px-4 py-2 rounded-lg border border-[#D4AF37] text-[#4A1D43] hover:bg-[#4A1D43] hover:text-[#D4AF37] transition-all text-sm"
                     >
                       Réinitialiser
                     </button>
-                  </div>
-                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {filteredBusinesses.map((business) => (
-                      <motion.div
-                        key={business.id}
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        onClick={() => navigate(`/business/${business.id}`)}
-                        className="bg-white rounded-xl border-2 border-[#D4AF37] hover:shadow-2xl transition-all cursor-pointer overflow-hidden group"
-                      >
-                        {business.image_url && (
-                          <div className="w-full h-32 bg-gradient-to-br from-[#4A1D43]/10 to-[#D4AF37]/10 overflow-hidden">
-                            <img
-                              src={business.image_url}
-                              alt={business.nom || business.name}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                              onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                            />
-                          </div>
-                        )}
-                        <div className="p-4 bg-gradient-to-br from-white to-[#4A1D43]/5">
-                          <h3 className="font-bold text-[#4A1D43] mb-1 text-base group-hover:text-[#D4AF37] transition-colors" style={{ fontFamily: "'Playfair Display', serif" }}>
-                            {business.nom || business.name}
-                          </h3>
-                          <p className="text-sm text-gray-700 font-medium">{business.subCategories || business.category}</p>
-                          {(business.ville || business.city) && (
-                            <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
-                              <MapPin className="w-3 h-3 text-[#D4AF37]" />
-                              {business.ville || business.city}
-                            </p>
-                          )}
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
+                  )}
                 </div>
-              )}
-            </div>
-          )}
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {filteredBusinesses.map((business) => (
+                    <motion.div
+                      key={business.id}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      onClick={() => navigate(`/business/${business.id}`)}
+                      className="bg-white rounded-xl border-2 border-[#D4AF37] hover:shadow-2xl transition-all cursor-pointer overflow-hidden group"
+                    >
+                      {business.image_url && (
+                        <div className="w-full h-32 bg-gradient-to-br from-[#4A1D43]/10 to-[#D4AF37]/10 overflow-hidden">
+                          <img
+                            src={business.image_url}
+                            alt={business.nom || business.name}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                          />
+                        </div>
+                      )}
+                      <div className="p-4 bg-gradient-to-br from-white to-[#4A1D43]/5">
+                        <h3 className="font-bold text-[#4A1D43] mb-1 text-base group-hover:text-[#D4AF37] transition-colors" style={{ fontFamily: "'Playfair Display', serif" }}>
+                          {business.nom || business.name}
+                        </h3>
+                        <p className="text-sm text-gray-700 font-medium">{business.subCategories || business.category}</p>
+                        {(business.ville || business.city) && (
+                          <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
+                            <MapPin className="w-3 h-3 text-[#D4AF37]" />
+                            {business.ville || business.city}
+                          </p>
+                        )}
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
