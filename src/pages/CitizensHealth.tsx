@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { Phone, Shield, Building2, CheckCircle2, ArrowRight, X, Plus, MapPin } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
-import { getEmergencyFacilities, getOnCallPharmaciesLink, searchMedicalTransportProviders } from '../lib/BoltDatabase';
 import LocationSelectTunisie from '../components/LocationSelectTunisie';
 import SpecialtyAutocomplete from '../components/SpecialtyAutocomplete';
 import VehicleTypeAutocomplete from '../components/VehicleTypeAutocomplete';
@@ -49,8 +48,6 @@ export default function CitizensHealth({ onNavigate }: CitizensHealthProps) {
   const [results, setResults] = useState<Professional[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [onCallLink, setOnCallLink] = useState<string | null>(null);
-  const [emergencies, setEmergencies] = useState<{ name: string; phone?: string; address?: string }[]>([]);
   const [transportCity, setTransportCity] = useState('');
   const [vehicleType, setVehicleType] = useState('');
   const [transportProviders, setTransportProviders] = useState<any[]>([]);
@@ -216,15 +213,6 @@ export default function CitizensHealth({ onNavigate }: CitizensHealthProps) {
     return () => clearTimeout(delayDebounceFn);
   }, [searchTerm, selectedGouvernorat, selectedSanteCategory]);
 
-  useEffect(() => {
-    (async () => {
-      const link = await getOnCallPharmaciesLink();
-      setOnCallLink(link);
-
-      const em = await getEmergencyFacilities();
-      setEmergencies(em ?? []);
-    })();
-  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
@@ -382,43 +370,9 @@ export default function CitizensHealth({ onNavigate }: CitizensHealthProps) {
               ))}
             </div>
 
-            <div className="mt-2 grid md:grid-cols-2 gap-2">
-              <div className="bg-white rounded-lg border border-[#D4AF37] px-2 py-2 hover:shadow-lg transition-all duration-300">
-                <div className="flex items-center gap-1.5 text-[#4A1D43] mb-1">
-                  <Shield className="w-3.5 h-3.5 text-[#D4AF37]" />
-                  <span className="text-[11px] font-medium">{t.health.emergency.pharmacy.title}</span>
-                </div>
-                <p className="text-[10px] text-gray-600">
-                  {onCallLink
-                    ? <a className="text-[#4A1D43] hover:text-[#D4AF37] underline font-medium transition-colors" href={onCallLink} target="_blank" rel="noreferrer">{t.health.emergency.pharmacy.cta}</a>
-                    : <span className="text-gray-500">{t.health.emergency.pharmacy.configureLink}</span>
-                  }
-                </p>
-              </div>
-
-              <div className="bg-white rounded-lg border border-[#D4AF37] px-2 py-2 hover:shadow-lg transition-all duration-300">
-                <div className="flex items-center gap-1.5 text-[#4A1D43] mb-1">
-                  <Building2 className="w-3.5 h-3.5 text-[#D4AF37]" />
-                  <span className="text-[11px] font-medium">{t.health.emergency.hotlinesTitle}</span>
-                </div>
-                <ul className="text-[10px] text-gray-700 space-y-0.5">
-                  {emergencies.length === 0 ? (
-                    <li className="text-gray-500">{t.health.emergency.toComplete}</li>
-                  ) : emergencies.map((e, idx) => (
-                    <li key={idx} className="flex items-start gap-1.5">
-                      <span className="mt-0.5 text-[#D4AF37]">•</span>
-                      <span>
-                        <span className="font-medium text-[#4A1D43]">{e.name}</span>{e.address ? ` — ${e.address}` : ''}
-                        {e.phone && (
-                          <>
-                            {' · '}
-                            <a href={`tel:${e.phone}`} className="text-[#4A1D43] hover:text-[#D4AF37] underline transition-colors">{e.phone}</a>
-                          </>
-                        )}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
+            <div className="mt-2">
+              <div className="bg-white rounded-lg border border-[#D4AF37] px-3 py-3 text-center">
+                <p className="text-[11px] text-gray-500 italic">Section en cours d'amélioration</p>
               </div>
             </div>
           </div>
