@@ -234,25 +234,8 @@ export default function MeilleursSection({
   const [page, setPage] = useState(0);
 
   useEffect(() => {
-    async function fetchTop() {
+    async function fetchData() {
       setLoadingTop(true);
-      try {
-        const { data } = await supabase
-          .from(Tables.ENTREPRISE)
-          .select(`id, nom, ville, gouvernorat, logo_url, image_url, sous_categories, "Note Google Globale", "Compteur Avis Google"`)
-          .contains('"liste pages"', [listePage])
-          .not('"Note Google Globale"', 'is', null)
-          .order('"Note Google Globale"', { ascending: false, nullsFirst: false })
-          .limit(TOP_COUNT);
-        setTopItems(data || []);
-      } catch {
-        setTopItems([]);
-      } finally {
-        setLoadingTop(false);
-      }
-    }
-
-    async function fetchAll() {
       setLoadingAll(true);
       try {
         const { data } = await supabase
@@ -260,23 +243,32 @@ export default function MeilleursSection({
           .select(`id, nom, ville, gouvernorat, logo_url, image_url, sous_categories, "Note Google Globale", "Compteur Avis Google"`)
           .contains('"liste pages"', [listePage])
           .order('"Note Google Globale"', { ascending: false, nullsFirst: false });
-        const topIds = new Set((await supabase
-          .from(Tables.ENTREPRISE)
-          .select('id')
-          .contains('"liste pages"', [listePage])
-          .not('"Note Google Globale"', 'is', null)
-          .order('"Note Google Globale"', { ascending: false, nullsFirst: false })
-          .limit(TOP_COUNT)).data?.map((d: { id: string }) => d.id) || []);
-        setAllItems((data || []).filter((d: MeilleursItem) => !topIds.has(d.id)));
+
+        const all: MeilleursItem[] = data || [];
+
+        const withRating = all.filter((item) => {
+          const raw = item['Note Google Globale'];
+          if (!raw) return false;
+          const n = typeof raw === 'string' ? parseFloat(raw.replace(',', '.')) : raw;
+          return !isNaN(n) && n > 0;
+        });
+
+        const top = withRating.slice(0, TOP_COUNT);
+        const topIds = new Set(top.map((t) => t.id));
+        const rest = all.filter((item) => !topIds.has(item.id));
+
+        setTopItems(top);
+        setAllItems(rest);
       } catch {
+        setTopItems([]);
         setAllItems([]);
       } finally {
+        setLoadingTop(false);
         setLoadingAll(false);
       }
     }
 
-    fetchTop();
-    fetchAll();
+    fetchData();
     setPage(0);
   }, [listePage]);
 
