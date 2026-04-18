@@ -168,6 +168,111 @@ export const blogArticles: BlogArticle[] = [
 <p>هذا أنا وهذا "دليل تونس" 🧡</p>
 <p>عيشك اللي قريت حتى للآخر 😌</p>`
     }
+  },
+  {
+    id: '3',
+    slug: 'comment-choisir-son-medecin',
+    author: "L'équipe Dalil Tounes",
+    date: '18 avril 2026',
+    readTime: '4 min',
+    coverImage: '',
+    fr: {
+      title: 'Comment choisir son médecin en Tunisie ?',
+      subtitle: 'Les critères essentiels pour bien choisir son professionnel de santé',
+      category: 'Santé',
+      excerpt: "Trouver le bon médecin n'est pas toujours simple. Voici les questions à se poser avant de prendre rendez-vous.",
+      content: `<h1>Comment choisir son médecin en Tunisie ?</h1>
+<p>Que ce soit pour un médecin généraliste ou un spécialiste, choisir le bon professionnel de santé est une décision importante. Voici quelques critères pour vous aider.</p>
+<h2>1. La localisation et l'accessibilité</h2>
+<p>Un cabinet proche de votre domicile ou de votre lieu de travail facilitera les consultations régulières. Vérifiez aussi les horaires d'ouverture et la disponibilité pour des rendez-vous urgents.</p>
+<h2>2. Les spécialités et compétences</h2>
+<p>Renseignez-vous sur les domaines de compétence du médecin. Un médecin généraliste bien formé peut souvent vous orienter vers le bon spécialiste.</p>
+<h2>3. La réputation et les avis</h2>
+<p>Les avis d'autres patients sont précieux. Sur Dalil Tounes, vous pouvez consulter les notes et commentaires laissés par des patients de votre région.</p>
+<h2>4. L'acceptation de la CNAM</h2>
+<p>Vérifiez si le médecin accepte la CNAM pour éviter les mauvaises surprises financières.</p>
+<p>Prenez le temps de comparer et n'hésitez pas à changer de médecin si vous ne vous sentez pas en confiance.</p>`
+    }
+  },
+  {
+    id: '4',
+    slug: 'bien-choisir-son-ecole',
+    author: "L'équipe Dalil Tounes",
+    date: '18 avril 2026',
+    readTime: '5 min',
+    coverImage: '',
+    fr: {
+      title: 'Bien choisir son école en Tunisie',
+      subtitle: 'Guide pratique pour les parents',
+      category: 'Éducation',
+      excerpt: "École publique, privée, cours particuliers... Comment s'y retrouver et faire le bon choix pour votre enfant ?",
+      content: `<h1>Bien choisir son école en Tunisie</h1>
+<p>Le choix de l'établissement scolaire est l'une des décisions les plus importantes pour l'avenir de votre enfant. Public, privé, ou soutien scolaire ? Voici un guide pratique.</p>
+<h2>École publique vs école privée</h2>
+<p>L'école publique offre un enseignement gratuit et un accès universel. L'école privée peut proposer des classes moins chargées, des méthodes pédagogiques différentes et des activités extrascolaires variées.</p>
+<h2>Les critères de sélection</h2>
+<ul>
+<li><strong>La proximité</strong> : un trajet court réduit la fatigue de l'enfant.</li>
+<li><strong>Le niveau académique</strong> : renseignez-vous sur les résultats aux examens nationaux.</li>
+<li><strong>L'encadrement</strong> : le ratio élèves/enseignant et la qualité du suivi individuel.</li>
+<li><strong>Les activités parascolaires</strong> : sport, arts, clubs… pour un développement complet.</li>
+</ul>
+<h2>Le soutien scolaire</h2>
+<p>Les cours particuliers peuvent compléter l'enseignement scolaire. Sur Dalil Tounes, vous trouverez des enseignants certifiés dans votre gouvernorat.</p>
+<p>Visitez les établissements, échangez avec d'autres parents, et faites confiance à votre instinct pour trouver l'environnement idéal pour votre enfant.</p>`
+    }
+  },
+  {
+    id: '5',
+    slug: 'activites-en-famille',
+    author: "L'équipe Dalil Tounes",
+    date: '18 avril 2026',
+    readTime: '4 min',
+    coverImage: '',
+    fr: {
+      title: 'Activités à faire en famille en Tunisie',
+      subtitle: 'Des idées pour profiter de vos loisirs ensemble',
+      category: 'Loisirs',
+      excerpt: "Sorties, sports, culture : découvrez les meilleures activités pour passer de bons moments en famille à travers la Tunisie.",
+      content: `<h1>Activités à faire en famille en Tunisie</h1>
+<p>La Tunisie regorge d'activités pour tous les âges. Voici une sélection pour profiter de vos weekends et vacances en famille.</p>
+<h2>Plein air et nature</h2>
+<p>Les plages de Hammamet, Djerba ou Sousse offrent des journées inoubliables. Pour les amoureux de la nature, les parcs nationaux comme Ichkeul ou Boukornine proposent des randonnées adaptées aux familles.</p>
+<h2>Culture et histoire</h2>
+<p>Faites découvrir à vos enfants la médina de Tunis, Carthage, ou El Jem. Ces visites éducatives et ludiques mêlent histoire et aventure.</p>
+<h2>Sports et activités créatives</h2>
+<p>Natation, football, arts martiaux, peinture... Les centres sportifs et culturels de votre ville proposent des cours pour tous les âges. Sur Dalil Tounes, filtrez par gouvernorat pour trouver les meilleures activités près de chez vous.</p>
+<h2>Parcs de loisirs</h2>
+<p>Friguia Park, Aqua Palace ou les parcs d'attractions locaux raviront les plus jeunes.</p>
+<p>Quelle que soit votre région, il y a toujours quelque chose à découvrir ensemble en Tunisie.</p>`
+    }
+  },
+  {
+    id: '6',
+    slug: 'que-faire-a-sousse',
+    author: "L'équipe Dalil Tounes",
+    date: '18 avril 2026',
+    readTime: '5 min',
+    coverImage: '',
+    fr: {
+      title: 'Que faire à Sousse ?',
+      subtitle: 'Le guide complet pour visiter la Perle du Sahel',
+      category: 'Tourisme',
+      excerpt: "Sousse est l'une des villes les plus dynamiques de Tunisie. Découvrez ses incontournables, ses restaurants, et ses activités.",
+      content: `<h1>Que faire à Sousse ?</h1>
+<p>Sousse, surnommée la "Perle du Sahel", est une ville qui allie histoire, plages magnifiques et vie nocturne animée. Voici un guide pour profiter au maximum de votre séjour.</p>
+<h2>La médina de Sousse</h2>
+<p>Classée au patrimoine mondial de l'UNESCO, la médina de Sousse est un labyrinthe fascinant de ruelles, de souks et de monuments historiques. Ne manquez pas la Grande Mosquée et le Ribat.</p>
+<h2>Les plages</h2>
+<p>La corniche de Sousse et les plages de Port El Kantaoui offrent des eaux cristallines idéales pour la baignade et les sports nautiques.</p>
+<h2>Port El Kantaoui</h2>
+<p>Ce port de plaisance aménagé est parfait pour une promenade, un dîner au bord de l'eau ou une sortie en bateau.</p>
+<h2>Le musée archéologique</h2>
+<p>L'un des plus riches de Tunisie, il abrite une collection impressionnante de mosaïques romaines.</p>
+<h2>Gastronomie locale</h2>
+<p>Goûtez l'ojja au merguez, le couscous au poisson, et les pâtisseries locales dans les restaurants du centre-ville.</p>
+<p>Sur Dalil Tounes, trouvez les meilleurs prestataires touristiques, hébergements et restaurants de Sousse recommandés par les habitants.</p>`
+    }
   }
 ];
 

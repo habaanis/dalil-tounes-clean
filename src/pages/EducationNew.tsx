@@ -34,7 +34,7 @@ import { supabase } from '../lib/supabaseClient';
 import { Tables } from '../lib/dbTables';
 import CityAutocomplete from '../components/CityAutocomplete';
 import EducationCompare from '../components/EducationCompare';
-import SearchBar from '../components/SearchBar';
+import MeilleursSection from '../components/MeilleursSection';
 import { getEducationCategoryLabel } from '../lib/educationCategories';
 import { readParams } from '../lib/urlParams';
 import UnifiedBusinessCard from '../components/UnifiedBusinessCard';
@@ -778,26 +778,6 @@ export default function EducationNew() {
         </div>
       </section>
 
-      {/* Barre de recherche */}
-      <section className="px-4 py-6 bg-white">
-        <div className="max-w-5xl mx-auto">
-          <SearchBar scope="education" />
-        </div>
-      </section>
-
-      {/* BARRE A SUPPRIMÉE - SearchBar unifié global (non connectée à Supabase)
-      <div className="max-w-5xl mx-auto px-4 py-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.15 }}
-            className="bg-white rounded-2xl p-6 mb-6 shadow-lg"
-          >
-            <SearchBar scope="education" enabled />
-          </motion.div>
-      </div>
-      */}
-
       <div className="max-w-5xl mx-auto px-4 py-6">
 
           {/* Bandeau informatif Événements Scolaires - Version compacte */}
@@ -1318,6 +1298,21 @@ export default function EducationNew() {
             <p className="text-sm text-gray-600">{t.noResults}</p>
           </div>
         )}
+      </section>
+
+      {/* Meilleurs établissements + article blog */}
+      <section className="py-8 bg-white">
+        <MeilleursSection
+          secteurLabel="établissements d'éducation"
+          listePage="éducation"
+          accentColor="#4A1D43"
+          sectionTitle="Meilleurs établissements d'éducation"
+          blogArticle={{
+            title: "Bien choisir son école en Tunisie",
+            excerpt: "École publique, privée, cours particuliers... Comment s'y retrouver et faire le bon choix pour votre enfant ?",
+            slug: "bien-choisir-son-ecole"
+          }}
+        />
       </section>
 
       {/* Bloc Carrières dans l'Éducation - Version compacte */}

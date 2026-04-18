@@ -7,7 +7,7 @@ import { FeaturedBusinessesStrip } from '../components/FeaturedBusinessesStrip';
 import { LocalBusinessesSection } from '../components/LocalBusinessesSection';
 import { scrollToWithOffsetDelayed } from '../lib/scrollUtils';
 import { getSupabaseImageUrl } from '../lib/imageUtils';
-import SearchBar from '../components/SearchBar';
+import MeilleursSection from '../components/MeilleursSection';
 import { useLanguage } from '../context/LanguageContext';
 
 interface Shop {
@@ -131,13 +131,6 @@ export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
         </div>
       </section>
 
-      {/* Barre de Recherche */}
-      <section className="py-6 px-4 relative z-50">
-        <div className="max-w-5xl mx-auto">
-          <SearchBar scope="magasin" />
-        </div>
-      </section>
-
       <div className="max-w-7xl mx-auto px-4 py-8">
 
 
@@ -225,6 +218,21 @@ export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
               </div>
             </div>
           )}
+        </div>
+
+        {/* Meilleurs commerces + article blog */}
+        <div className="py-8">
+          <MeilleursSection
+            secteurLabel="commerces"
+            listePage="commerce local"
+            accentColor="#4A0404"
+            sectionTitle="Meilleurs commerces & magasins"
+            blogArticle={{
+              title: "Activités à faire en famille en Tunisie",
+              excerpt: "Sorties, sports, culture : découvrez les meilleures activités pour passer de bons moments en famille.",
+              slug: "activites-en-famille"
+            }}
+          />
         </div>
 
         {/* Business Registration Block - Bottom */}

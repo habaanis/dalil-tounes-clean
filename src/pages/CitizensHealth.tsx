@@ -7,7 +7,7 @@ import LocationSelectTunisie from '../components/LocationSelectTunisie';
 import SpecialtyAutocomplete from '../components/SpecialtyAutocomplete';
 import VehicleTypeAutocomplete from '../components/VehicleTypeAutocomplete';
 import TransportInscription from './TransportInscription';
-import SearchBar from '../components/SearchBar';
+import MeilleursSection from '../components/MeilleursSection';
 
 interface TransportFilters {
   gouvernorat: string;
@@ -261,13 +261,6 @@ export default function CitizensHealth({ onNavigate }: CitizensHealthProps) {
         </div>
       </section>
 
-      {/* Barre de recherche */}
-      <section className="px-4 py-6">
-        <div className="max-w-5xl mx-auto">
-          <SearchBar scope="sante" />
-        </div>
-      </section>
-
       {/* Section santé */}
       <section className="px-4 py-4">
         <div className="max-w-5xl mx-auto">
@@ -346,6 +339,21 @@ export default function CitizensHealth({ onNavigate }: CitizensHealthProps) {
             )}
           </div>
         </div>
+      </section>
+
+      {/* Meilleurs professionnels de santé + article blog */}
+      <section className="py-8 bg-white">
+        <MeilleursSection
+          secteurLabel="professionnels de santé"
+          listePage="santé"
+          accentColor="#4A1D43"
+          sectionTitle="Meilleurs professionnels de santé"
+          blogArticle={{
+            title: "Comment choisir son médecin en Tunisie ?",
+            excerpt: "Trouver le bon médecin n'est pas toujours simple. Voici les questions à se poser avant de prendre rendez-vous.",
+            slug: "comment-choisir-son-medecin"
+          }}
+        />
       </section>
 
       {/* Bloc Urgences - Charte Bordeaux/Or - Version compacte */}

@@ -6,7 +6,7 @@ import { getStructureImageUrl } from '../lib/imageUtils';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BackButton from '../components/BackButton';
-import SearchBar from '../components/SearchBar';
+import MeilleursSection from '../components/MeilleursSection';
 import UnifiedBusinessCard from '../components/UnifiedBusinessCard';
 import { supabase } from '../lib/supabaseClient';
 
@@ -530,13 +530,6 @@ export default function CitizensServices({ onNavigateBack }: CitizensServicesPro
       {/* Contenu Onglet BUREAUX - Compact */}
       {activeTab === 'bureaux' && (
         <>
-          {/* Barre de recherche sous les onglets */}
-          <section className="px-4 py-2 bg-white">
-            <div className="max-w-5xl mx-auto">
-              <SearchBar scope="services" />
-            </div>
-          </section>
-
           {!loading && businesses.length > 0 && (
             <section className="px-4 py-2 bg-white">
               <div className="max-w-6xl mx-auto">
@@ -579,6 +572,23 @@ export default function CitizensServices({ onNavigateBack }: CitizensServicesPro
             </div>
           )}
         </>
+      )}
+
+      {/* Meilleurs services citoyens + article blog */}
+      {activeTab === 'bureaux' && (
+        <section className="py-8 bg-white">
+          <MeilleursSection
+            secteurLabel="services citoyens"
+            listePage="services-citoyens"
+            accentColor="#4A1D43"
+            sectionTitle="Meilleurs services aux citoyens"
+            blogArticle={{
+              title: "Activités à faire en famille en Tunisie",
+              excerpt: "Sorties, sports, culture : découvrez les meilleures activités pour passer de bons moments en famille.",
+              slug: "activites-en-famille"
+            }}
+          />
+        </section>
       )}
 
       {/* Contenu Onglet DÉMARCHES - Compact */}
