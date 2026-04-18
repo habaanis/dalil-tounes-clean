@@ -1,14 +1,12 @@
 import { motion } from 'framer-motion';
-import { Heart, Users, Baby, Building2, Phone, MapPin, Shield, AlertCircle, CheckCircle, Search, FileText, Clock, Download, ExternalLink } from 'lucide-react';
+import { Heart, Baby, Building2, Phone, Shield, AlertCircle, CheckCircle, FileText, Clock, Download, ExternalLink } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
 import { getStructureImageUrl } from '../lib/imageUtils';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BackButton from '../components/BackButton';
 import MeilleursSection from '../components/MeilleursSection';
-import UnifiedBusinessCard from '../components/UnifiedBusinessCard';
-import { supabase } from '../lib/supabaseClient';
 
 interface CitizensServicesProps {
   onNavigateBack?: () => void;
@@ -41,36 +39,9 @@ export default function CitizensServices({ onNavigateBack }: CitizensServicesPro
   const [activeTab, setActiveTab] = useState<'bureaux' | 'demarches' | 'social'>('bureaux');
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [businesses, setBusinesses] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
   const [selectedDemarche, setSelectedDemarche] = useState<Demarche | null>(null);
 
   const heroImageUrl = getStructureImageUrl('/images/service-social.jpg');
-
-  useEffect(() => {
-    if (activeTab === 'bureaux') {
-      fetchBusinesses();
-    }
-  }, [activeTab]);
-
-  const fetchBusinesses = async () => {
-    setLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from('entreprise')
-        .select('*')
-        .or('"liste pages".cs.{"services citoyens"},secteur.eq.Services')
-        .limit(12);
-
-      if (error) throw error;
-      setBusinesses(data || []);
-    } catch (error) {
-      console.error('Erreur chargement entreprises:', error);
-      setBusinesses([]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const emergencyNumbers = [
     { label: ss.urgencyNumbers.samu, number: '190', icon: Phone },
@@ -526,53 +497,6 @@ export default function CitizensServices({ onNavigateBack }: CitizensServicesPro
           </div>
         </div>
       </section>
-
-      {/* Contenu Onglet BUREAUX - Compact */}
-      {activeTab === 'bureaux' && (
-        <>
-          {!loading && businesses.length > 0 && (
-            <section className="px-4 py-2 bg-white">
-              <div className="max-w-6xl mx-auto">
-                <h2
-                  className="text-xl font-bold text-[#4A1D43] mb-3 text-center"
-                  style={{ fontFamily: "'Playfair Display', serif" }}
-                >
-                  {language === 'fr' ? 'Bureaux & Établissements publics' :
-                   language === 'ar' ? 'المكاتب والمؤسسات العامة' :
-                   language === 'en' ? 'Offices & Public establishments' :
-                   'Uffici e stabilimenti pubblici'}
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {businesses.map((business) => (
-                    <UnifiedBusinessCard
-                      key={business.id}
-                      business={business}
-                      onClick={() => navigate(`/business/${business.id}`)}
-                    />
-                  ))}
-                </div>
-              </div>
-            </section>
-          )}
-
-          {loading && (
-            <div className="flex items-center justify-center py-4">
-              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#4A1D43]"></div>
-            </div>
-          )}
-
-          {!loading && businesses.length === 0 && (
-            <div className="text-center py-4">
-              <Search className="w-10 h-10 mx-auto text-[#D4AF37] mb-2" />
-              <p className="text-gray-600 text-sm">
-                {language === 'fr' ? 'Aucun bureau trouvé. Utilisez la recherche ci-dessus.' :
-                 language === 'ar' ? 'لم يتم العثور على مكاتب. استخدم البحث أعلاه.' :
-                 'No offices found. Use the search above.'}
-              </p>
-            </div>
-          )}
-        </>
-      )}
 
       {/* Meilleurs services citoyens + article blog */}
       {activeTab === 'bureaux' && (

@@ -1,26 +1,10 @@
-import { useState, useRef, useEffect } from 'react';
-import { Store, Loader2, ChevronRight, Tag, MapPin, ShoppingBag, ArrowLeft } from 'lucide-react';
+import { Store, ChevronRight, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../lib/supabaseClient';
-import { Tables } from '../lib/dbTables';
 import { FeaturedBusinessesStrip } from '../components/FeaturedBusinessesStrip';
 import { LocalBusinessesSection } from '../components/LocalBusinessesSection';
 import { scrollToWithOffsetDelayed } from '../lib/scrollUtils';
-import { getSupabaseImageUrl } from '../lib/imageUtils';
 import MeilleursSection from '../components/MeilleursSection';
 import { useLanguage } from '../context/LanguageContext';
-
-interface Shop {
-  id: string;
-  nom: string;
-  ville: string | null;
-  image_url: string | null;
-  logo_url: string | null;
-  categorie: string | null;
-  sous_categories?: string | null;
-  gouvernorat?: string | null;
-  'page commerce local'?: boolean | null;
-}
 
 interface CitizensShopsProps {
   onNavigate?: (page: any) => void;
@@ -29,60 +13,6 @@ interface CitizensShopsProps {
 export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
   const { language } = useLanguage();
   const navigate = useNavigate();
-
-  const [shops, setShops] = useState<Shop[]>([]);
-  const [loading, setLoading] = useState(false);
-  const resultsRef = useRef<HTMLDivElement>(null);
-
-  // Récupération des paramètres URL pour afficher les résultats de recherche
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.hash.split('?')[1] || '');
-    const q = params.get('q');
-    const ville = params.get('ville');
-    fetchShops(q || '', ville || '');
-  }, []);
-
-  const fetchShops = async (searchTerm: string, ville: string) => {
-    setLoading(true);
-    console.log('[CitizensShops] 🔍 Recherche lancée avec:', { searchTerm, ville });
-
-    try {
-      let query = supabase
-        .from(Tables.ENTREPRISE)
-        .select('id, nom, ville, image_url, logo_url, "catégorie", sous_categories, gouvernorat, "liste pages"')
-        .contains('"liste pages"', ['commerces & magasins'])
-        .order('nom', { ascending: true })
-        .limit(100);
-
-      if (ville) {
-        query = query.eq('gouvernorat', ville);
-      }
-
-      if (searchTerm) {
-        const searchPattern = `%${searchTerm}%`;
-        query = query.or(`nom.ilike.${searchPattern},"mots cles recherche".ilike.${searchPattern},description.ilike.${searchPattern}`);
-      }
-
-      const { data, error } = await query;
-
-      if (error) {
-        console.error('[CitizensShops] ❌ Erreur requête:', error);
-        throw error;
-      }
-
-      console.log('[CitizensShops] ✅ Résultats:', data?.length || 0, 'commerces');
-      setShops((data || []) as Shop[]);
-
-      setTimeout(() => {
-        resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100);
-    } catch (error) {
-      console.error('[CitizensShops] 💥 Erreur:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
@@ -147,77 +77,6 @@ export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
             variant="magasins"
             onCardClick={(id) => navigate(`/business/${id}`)}
           />
-        </div>
-
-        {/* Résultats de recherche */}
-        <div ref={resultsRef} className="mb-10 min-h-[80px]">
-          {loading ? (
-            <div className="flex items-center justify-center py-20">
-              <Loader2 className="w-12 h-12 text-[#D4AF37] animate-spin" />
-              <p className="mt-3 text-sm text-gray-600 ml-3">Recherche en cours...</p>
-            </div>
-          ) : shops.length === 0 ? (
-            <div className="text-center py-8">
-              <Store className="w-10 h-10 text-[#D4AF37] mx-auto mb-3" />
-              <p className="text-sm text-gray-500">Aucun professionnel trouvé dans ce secteur</p>
-            </div>
-          ) : (
-            <div>
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-light text-gray-900">
-                  Commerces &amp; Magasins
-                  <span className="ml-2 text-sm text-gray-500">
-                    ({shops.length} {shops.length > 1 ? 'résultats' : 'résultat'})
-                  </span>
-                </h3>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {shops.map((shop) => (
-                  <div
-                    key={shop.id}
-                    onClick={() => navigate(`/business/${shop.id}`)}
-                    className="bg-white rounded-xl border-2 border-green-200 hover:shadow-2xl transition-all cursor-pointer overflow-hidden group"
-                  >
-                    {shop.image_url && (
-                      <div className="w-full h-40 bg-gradient-to-br from-green-50 to-emerald-50 overflow-hidden">
-                        <img
-                          src={getSupabaseImageUrl(shop.image_url)}
-                          alt={shop.nom}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                        />
-                      </div>
-                    )}
-                    <div className="p-4">
-                      <div className="flex items-start gap-3 mb-2">
-                        {shop.logo_url && (
-                          <img
-                            src={getSupabaseImageUrl(shop.logo_url)}
-                            alt={`Logo ${shop.nom}`}
-                            className="w-12 h-12 object-contain rounded-lg border border-gray-200"
-                            onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                          />
-                        )}
-                        <div className="flex-1">
-                          <h3 className="font-bold text-gray-900 mb-1 group-hover:text-green-700 transition-colors">
-                            {shop.nom}
-                          </h3>
-                          <p className="text-sm text-green-700 font-medium">{Array.isArray((shop as any).sous_categories) ? (shop as any).sous_categories.join(', ') : ((shop as any).sous_categories || Array.isArray((shop as any)['catégorie']) ? (shop as any)['catégorie']?.join?.(', ') : (shop as any)['catégorie'] || '')}</p>
-                        </div>
-                      </div>
-                      {shop.ville && (
-                        <p className="text-xs text-gray-500 flex items-center gap-1 mt-2">
-                          <MapPin className="w-3 h-3 text-green-600" />
-                          {shop.ville}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Meilleurs commerces + article blog */}

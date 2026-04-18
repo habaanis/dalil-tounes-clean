@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState, useRef } from 'react';
+import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Phone, Shield, Building2, CheckCircle2, ArrowRight, X, Plus, MapPin } from 'lucide-react';
+import { Phone, Shield, Building2, ArrowRight, X, Plus } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
 import LocationSelectTunisie from '../components/LocationSelectTunisie';
@@ -16,12 +16,8 @@ interface TransportFilters {
 }
 import MedicalTransportCard from '../components/MedicalTransportCard';
 import MedicalTransportRegistrationForm from '../components/MedicalTransportRegistrationForm';
-import { readParams } from '../lib/urlParams';
 import { supabase } from '../lib/supabaseClient';
-import { Tables } from '../lib/dbTables';
 import { getSupabaseImageUrl } from '../lib/imageUtils';
-import BackButton from '../components/BackButton';
-import UnifiedBusinessCard from '../components/UnifiedBusinessCard';
 import { useNavigate } from 'react-router-dom';
 
 type Professional = {
@@ -45,105 +41,19 @@ export default function CitizensHealth({ onNavigate }: CitizensHealthProps) {
   const t = useTranslation(language);
   const navigate = useNavigate();
 
-  const [results, setResults] = useState<Professional[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [transportCity, setTransportCity] = useState('');
   const [vehicleType, setVehicleType] = useState('');
   const [transportProviders, setTransportProviders] = useState<any[]>([]);
   const [loadingTransport, setLoadingTransport] = useState(false);
   const [showTransportModal, setShowTransportModal] = useState(false);
-  const [specialty, setSpecialty] = useState('');
-  const [city, setCity] = useState('');
-  const [acceptCNAM, setAcceptCNAM] = useState(false);
-
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedGouvernorat, setSelectedGouvernorat] = useState('');
-  const [selectedSanteCategory, setSelectedSanteCategory] = useState('');
-  const [filteredBusinesses, setFilteredBusinesses] = useState<any[]>([]);
-  const resultsRef = useRef<HTMLDivElement>(null);
 
   const isRTL = language === 'ar';
-  const { q, ville } = readParams();
-
-  const hasActiveSearch = !!searchTerm || !!selectedGouvernorat || !!selectedSanteCategory;
 
   const emergencyNumbers = useMemo(() => ([
     { num: '190', label: t.health.emergency.samu },
     { num: '198', label: t.health.emergency.civil },
     { num: '197', label: t.health.emergency.police },
   ]), [t]);
-
-  const runSearch = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      let query = supabase
-        .from(Tables.ENTREPRISE)
-        .select('id, nom, secteur, sous_categories, "catégorie", gouvernorat, ville, adresse, telephone, email, site_web, description, services, image_url, logo_url, "statut Abonnement", "niveau priorité abonnement", "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, "liste pages"')
-        .contains('"liste pages"', ['santé'])
-        .order('"niveau priorité abonnement"', { ascending: false, nullsFirst: false })
-        .order('nom', { ascending: true })
-        .limit(200);
-
-      if (selectedGouvernorat) {
-        query = query.eq('gouvernorat', selectedGouvernorat);
-      }
-
-      if (selectedSanteCategory) {
-        query = query.contains('sous_categories', [selectedSanteCategory]);
-      }
-
-      if (searchTerm && searchTerm.trim().length > 0) {
-        const searchPattern = `%${searchTerm.trim()}%`;
-        query = query.or(`nom.ilike.${searchPattern},"mots cles recherche".ilike.${searchPattern},description.ilike.${searchPattern}`);
-      }
-
-      const { data, error: err } = await query;
-      console.log('DEBUG SANTE RESULTATS', { data, error: err, count: data?.length });
-
-      if (err) {
-        setError(err.message);
-        setFilteredBusinesses([]);
-      } else {
-        const mappedData = (data || []).map((item: any) => ({
-          id: item.id,
-          name: item.nom || '',
-          category: Array.isArray(item.sous_categories) ? item.sous_categories.join(', ') : (item.sous_categories || ''),
-          subCategories: Array.isArray(item.sous_categories) ? item.sous_categories.join(', ') : (item.sous_categories || ''),
-          gouvernorat: item.gouvernorat || '',
-          secteur: Array.isArray(item.secteur) ? item.secteur.join(', ') : (item.secteur || ''),
-          city: item.ville || '',
-          address: item.adresse || '',
-          phone: item.telephone || '',
-          email: item.email || '',
-          website: item.site_web || '',
-          description: item.description || '',
-          services: item.services || '',
-          imageUrl: item.image_url || null,
-          logoUrl: item.logo_url || null,
-          statut_abonnement: item['statut Abonnement'] || null,
-          'niveau priorité abonnement': item['niveau priorité abonnement'] || null,
-          badges: [],
-          mots_cles_recherche: item['mots cles recherche'] || '',
-          instagram: item['Lien Instagram'] || '',
-          facebook: item['lien facebook'] || '',
-          tiktok: item['Lien TikTok'] || '',
-          linkedin: item['Lien LinkedIn'] || '',
-          youtube: item['Lien YouTube'] || '',
-          lien_x: item.lien_x || '',
-          horaires_ok: item.horaires_ok || null,
-        }));
-        setFilteredBusinesses(mappedData);
-      }
-
-      setTimeout(() => {
-        resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const searchTransport = async (filters: TransportFilters) => {
     setLoadingTransport(true);
@@ -178,43 +88,6 @@ export default function CitizensHealth({ onNavigate }: CitizensHealthProps) {
       setLoadingTransport(false);
     }
   };
-
-  useEffect(() => {
-    runSearch();
-  }, []);
-
-  // Garde anti-boucle pour CitizensHealth
-  const prevHealthSearchRef = useRef({ searchTerm: '', selectedGouvernorat: '', selectedSanteCategory: '' });
-  const healthFetchAttemptsRef = useRef(0);
-  const MAX_HEALTH_ATTEMPTS = 3;
-
-  useEffect(() => {
-    // Garde: Limiter les tentatives
-    if (healthFetchAttemptsRef.current >= MAX_HEALTH_ATTEMPTS) {
-      console.warn('⚠️ [CitizensHealth] Limite de tentatives atteinte');
-      return;
-    }
-
-    // Garde: Vérifier changement réel
-    const hasRealChange =
-      prevHealthSearchRef.current.searchTerm !== searchTerm ||
-      prevHealthSearchRef.current.selectedGouvernorat !== selectedGouvernorat ||
-      prevHealthSearchRef.current.selectedSanteCategory !== selectedSanteCategory;
-
-    if (!hasRealChange) {
-      return;
-    }
-
-    prevHealthSearchRef.current = { searchTerm, selectedGouvernorat, selectedSanteCategory };
-    healthFetchAttemptsRef.current += 1;
-
-    const delayDebounceFn = setTimeout(() => {
-      runSearch();
-    }, 300);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm, selectedGouvernorat, selectedSanteCategory]);
-
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
@@ -258,86 +131,6 @@ export default function CitizensHealth({ onNavigate }: CitizensHealthProps) {
           >
             {t.health.hero.description}
           </motion.p>
-        </div>
-      </section>
-
-      {/* Section santé */}
-      <section className="px-4 py-4">
-        <div className="max-w-5xl mx-auto">
-
-          {error && <div className="mt-4 text-red-600">{t.common.error}: {error}</div>}
-
-          {/* Résultats de recherche */}
-          <div ref={resultsRef} className="mt-8 min-h-[120px]">
-            {loading ? (
-              <div className="text-center py-12">
-                <div className="inline-block w-8 h-8 border-2 border-[#4A1D43] border-t-transparent rounded-full animate-spin"></div>
-                <p className="mt-3 text-sm text-[#4A1D43]">Recherche en cours...</p>
-              </div>
-            ) : filteredBusinesses.length === 0 ? (
-              <div className="text-center py-12">
-                <Building2 className="w-12 h-12 text-[#D4AF37]/50 mx-auto mb-3" />
-                <p className="text-sm text-[#4A1D43]">Aucun professionnel trouvé dans ce secteur</p>
-              </div>
-            ) : (
-              <div>
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-2xl font-light text-[#4A1D43]" style={{ fontFamily: "'Playfair Display', serif" }}>
-                    Professionnels de santé
-                    <span className="ml-2 text-base text-[#D4AF37]">
-                      ({filteredBusinesses.length} {filteredBusinesses.length > 1 ? 'résultats' : 'résultat'})
-                    </span>
-                  </h3>
-                  {(searchTerm || selectedGouvernorat || selectedSanteCategory) && (
-                    <button
-                      onClick={() => {
-                        setSearchTerm('');
-                        setSelectedGouvernorat('');
-                        setSelectedSanteCategory('');
-                      }}
-                      className="px-4 py-2 rounded-lg border border-[#D4AF37] text-[#4A1D43] hover:bg-[#4A1D43] hover:text-[#D4AF37] transition-all text-sm"
-                    >
-                      Réinitialiser
-                    </button>
-                  )}
-                </div>
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {filteredBusinesses.map((business) => (
-                    <motion.div
-                      key={business.id}
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      onClick={() => navigate(`/business/${business.id}`)}
-                      className="bg-white rounded-xl border-2 border-[#D4AF37] hover:shadow-2xl transition-all cursor-pointer overflow-hidden group"
-                    >
-                      {business.image_url && (
-                        <div className="w-full h-32 bg-gradient-to-br from-[#4A1D43]/10 to-[#D4AF37]/10 overflow-hidden">
-                          <img
-                            src={business.image_url}
-                            alt={business.nom || business.name}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                          />
-                        </div>
-                      )}
-                      <div className="p-4 bg-gradient-to-br from-white to-[#4A1D43]/5">
-                        <h3 className="font-bold text-[#4A1D43] mb-1 text-base group-hover:text-[#D4AF37] transition-colors" style={{ fontFamily: "'Playfair Display', serif" }}>
-                          {business.nom || business.name}
-                        </h3>
-                        <p className="text-sm text-gray-700 font-medium">{business.subCategories || business.category}</p>
-                        {(business.ville || business.city) && (
-                          <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
-                            <MapPin className="w-3 h-3 text-[#D4AF37]" />
-                            {business.ville || business.city}
-                          </p>
-                        )}
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
         </div>
       </section>
 
