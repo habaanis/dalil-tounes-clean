@@ -466,11 +466,9 @@ export const BusinessDetail = ({
     );
   }
 
-  console.log('[SKILA DEBUG] statut_abonnement brut:', JSON.stringify(business.statut_abonnement));
   const tier = mapSubscriptionToTier({
     statut_abonnement: business.statut_abonnement || null
   });
-  console.log('[SKILA DEBUG] tier calculé:', tier);
   const isPremium = isPremiumTier(tier);
   const tierLabel = getTierLabel(tier, language);
   const mediaLimits = getMediaLimits(tier);
@@ -564,8 +562,8 @@ export const BusinessDetail = ({
           className="relative flex flex-col items-center pb-3"
           style={{ borderBottom: `1px solid ${colors.gold}20` }}
         >
-          {/* Bandeau cover — uniquement si image_url existe */}
-          {business.image_url ? (
+          {/* Bandeau cover — masqué pour Gratuit */}
+          {tier !== 'gratuit' && business.image_url ? (
             <div
               style={{
                 position: 'relative',
@@ -643,8 +641,8 @@ export const BusinessDetail = ({
             />
           </div>
 
-          {/* Bouton Voir les photos — uniquement si image_url existe */}
-          {business.image_url && (
+          {/* Bouton Voir les photos — masqué pour Gratuit */}
+          {tier !== 'gratuit' && business.image_url && (
             <button
               onClick={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); setShowPhotosModal(true); }}
               style={{
@@ -679,8 +677,8 @@ export const BusinessDetail = ({
           {!business.image_url && <div style={{ marginBottom: '4px' }} />}
         </div>
 
-        {/* Lightbox photos */}
-        {showPhotosModal && business.image_url && (
+        {/* Lightbox photos — masquée pour Gratuit */}
+        {tier !== 'gratuit' && showPhotosModal && business.image_url && (
           <div
             className="fixed inset-0 z-[99999] flex items-center justify-center p-4"
             style={{ backgroundColor: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(6px)', animation: 'infoFadeIn 0.2s ease' }}
@@ -727,8 +725,8 @@ export const BusinessDetail = ({
           </div>
         )}
 
-        {/* Video - visible uniquement pour Premium et Elite */}
-        {mediaLimits.showVideos && business.video_url && (
+        {/* Video - visible uniquement pour Artisan, Premium et Elite */}
+        {tier !== 'gratuit' && mediaLimits.showVideos && business.video_url && (
           <div className="px-4 pt-2">
             <VideoPlayer
               videoUrls={business.video_url}
@@ -831,8 +829,8 @@ export const BusinessDetail = ({
             )}
           </div>
 
-          {/* Description avec ouverture modale */}
-          {translatedDescription && (
+          {/* Description — masquée pour Gratuit */}
+          {tier !== 'gratuit' && translatedDescription && (
             <div className="text-left px-1">
               <div style={{ position: 'relative', maxHeight: '52px', overflow: 'hidden' }}>
                 <p className="text-gray-300 break-words" style={{ fontSize: '11px', lineHeight: '1.65', margin: 0 }}>
@@ -871,7 +869,7 @@ export const BusinessDetail = ({
             </div>
           )}
 
-          {showDescriptionModal && (
+          {tier !== 'gratuit' && showDescriptionModal && (
             <InfoModal
               title={business.nom}
               content={translatedDescription}
@@ -889,8 +887,8 @@ export const BusinessDetail = ({
             />
           )}
 
-          {/* Horaires d'ouverture - Accordéon fermé par défaut */}
-          {business.horaires_ok && (() => {
+          {/* Horaires d'ouverture — masqués pour Gratuit */}
+          {tier !== 'gratuit' && business.horaires_ok && (() => {
             const parsedSchedule = getParsedSchedule(business.horaires_ok);
             const now = new Date();
             const todayIndex = (now.getDay() + 6) % 7;
@@ -984,8 +982,8 @@ export const BusinessDetail = ({
 
           {/* Ligne d'Action Horizontale : Réseaux Sociaux + GPS */}
           <div className="flex items-center justify-center gap-1.5 pt-0.5 flex-wrap px-1" style={{ borderTop: `1px solid ${colors.gold}30`, position: 'relative', zIndex: 50, pointerEvents: 'auto' }}>
-            {/* WhatsApp - uniquement si le numéro existe */}
-            {business.telephone && (
+            {/* WhatsApp - masqué pour Gratuit */}
+            {tier !== 'gratuit' && business.telephone && (
               <button
                 onClick={(e) => { e.stopPropagation(); window.open(`https://wa.me/${business.telephone.replace(/[^0-9]/g, '')}`, '_blank'); }}
                 className="flex items-center justify-center w-6 h-6 rounded-full transition-all hover:scale-110 bg-[#25D366] cursor-pointer"
@@ -998,8 +996,8 @@ export const BusinessDetail = ({
               </button>
             )}
 
-            {/* Telegram - uniquement si le numéro existe */}
-            {business.telephone && (
+            {/* Telegram - masqué pour Gratuit */}
+            {tier !== 'gratuit' && business.telephone && (
               <button
                 onClick={(e) => { e.stopPropagation(); window.open(`https://t.me/${business.telephone.replace(/[^0-9]/g, '')}`, '_blank'); }}
                 className="flex items-center justify-center w-6 h-6 rounded-full transition-all hover:scale-110 bg-[#26A5E4] cursor-pointer"
@@ -1012,8 +1010,8 @@ export const BusinessDetail = ({
               </button>
             )}
 
-            {/* Email */}
-            {business.email && (
+            {/* Email - masqué pour Gratuit */}
+            {tier !== 'gratuit' && business.email && (
               <a
                 href={`mailto:${business.email}`}
                 onClick={(e) => e.stopPropagation()}
@@ -1024,8 +1022,8 @@ export const BusinessDetail = ({
                 <Mail size={10} className="text-white" />
               </a>
             )}
-            {/* Email 2 */}
-            {business.email2 && (
+            {/* Email 2 - masqué pour Gratuit */}
+            {tier !== 'gratuit' && business.email2 && (
               <a
                 href={`mailto:${business.email2_clean || business.email2}`}
                 onClick={(e) => e.stopPropagation()}
@@ -1110,8 +1108,8 @@ export const BusinessDetail = ({
               </a>
             )}
 
-            {/* Bouton Site Web */}
-            {business.site_web && (
+            {/* Bouton Site Web - masqué pour Gratuit */}
+            {tier !== 'gratuit' && business.site_web && (
               <button
                 onClick={(e) => { e.stopPropagation(); window.open(business.site_web!.startsWith('http') ? business.site_web! : `https://${business.site_web}`, '_blank'); }}
                 className="inline-flex items-center gap-0.5 text-white px-2 py-0.5 rounded-full font-bold text-[8px] uppercase tracking-wide shadow-lg hover:scale-105 transition-transform flex-shrink-0 cursor-pointer"
@@ -1168,13 +1166,15 @@ export const BusinessDetail = ({
             </div>
           </div>}
 
-          {/* Formulaire Avis Intégré - Mini bloc */}
-          <div className="mt-0.5 pt-0.5" style={{ borderTop: `1px solid ${colors.gold}30` }}>
-            <EntrepriseAvisForm entrepriseId={actualBusinessId || ''} />
-          </div>
+          {/* Formulaire Avis - masqué pour Gratuit */}
+          {tier !== 'gratuit' && (
+            <div className="mt-0.5 pt-0.5" style={{ borderTop: `1px solid ${colors.gold}30` }}>
+              <EntrepriseAvisForm entrepriseId={actualBusinessId || ''} />
+            </div>
+          )}
 
-          {/* Zone de Partage Elite */}
-          <div className="mt-1 pt-1" style={{ borderTop: `0.5px solid ${colors.gold}40` }}>
+          {/* Zone de Partage - masquée pour Gratuit */}
+          {tier !== 'gratuit' && <div className="mt-1 pt-1" style={{ borderTop: `0.5px solid ${colors.gold}40` }}>
             <p
               className="text-[9px] font-medium mb-1.5 px-1"
               style={{
@@ -1248,7 +1248,7 @@ export const BusinessDetail = ({
                 </svg>
               </button>
             </div>
-          </div>
+          </div>}
         </div>
       </div>
 
