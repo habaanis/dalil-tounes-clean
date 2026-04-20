@@ -1,4 +1,5 @@
 import { MapPin, Award, Clock, ChevronDown, Phone, Star } from 'lucide-react';
+import GratuitCard from './GratuitCard';
 import { useState } from 'react';
 import { cleanAltText } from '../lib/textNormalization';
 import { useLanguage } from '../context/LanguageContext';
@@ -128,73 +129,20 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
   const isElite = tier === 'elite';
   const isPremiumTier = tier === 'premium' || tier === 'elite' || tier === 'artisan';
 
-  // Rendu dédié pour le tier Gratuit — carte minimaliste
+  // Rendu dédié pour le tier Gratuit — carte uniforme
   if (tier === 'gratuit') {
-    const locationLabel = business.ville || business.gouvernorat || '';
-    const isOpen = isCurrentlyOpen(business.horaires_ok ?? null);
-
     return (
-      <div
-        className="block cursor-pointer"
-        onClick={onClick}
-        style={{
-          backgroundColor: '#FFFFFF',
-          border: '2px solid #D4AF37',
-          borderRadius: '16px',
-          boxShadow: '0 0 12px rgba(212,175,55,0.2), 0 2px 8px rgba(0,0,0,0.06)',
-          padding: '20px 16px 16px',
-          transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-        }}
-        onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-2px)'; (e.currentTarget as HTMLDivElement).style.boxShadow = '0 0 18px rgba(212,175,55,0.35), 0 4px 14px rgba(0,0,0,0.1)'; }}
-        onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLDivElement).style.boxShadow = '0 0 12px rgba(212,175,55,0.2), 0 2px 8px rgba(0,0,0,0.06)'; }}
-      >
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', textAlign: 'center' }}>
-
-          {/* Logo centré */}
-          <div className="w-16 h-16 shadow-lg" style={getLogoContainerStyle('#D4AF37', '3px')}>
-            <img
-              src={getLogoUrl(business.logoUrl)}
-              alt={`${business.name}${locationLabel ? ` à ${locationLabel}` : ''}`}
-              className="w-full h-full"
-              style={getLogoStyle(business.logoUrl)}
-            />
-          </div>
-
-          {/* Nom */}
-          <h3 style={{ fontSize: '14px', fontWeight: '700', color: '#1A1A1A', lineHeight: '1.3', letterSpacing: '-0.01em', margin: 0 }}>
-            {business.name}
-          </h3>
-
-          {/* Catégorie */}
-          {translatedCategory && (
-            <>
-              <p style={{ fontSize: '11px', fontWeight: '500', color: '#6B7280', lineHeight: '1.4', margin: 0, maxWidth: '100%', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-                {translatedCategory}
-              </p>
-              <meta name="keywords" content={allKeywords.join(', ')} />
-              <span className="sr-only">{allKeywords.join(' ')}</span>
-            </>
-          )}
-
-          {/* Ville */}
-          {locationLabel && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <MapPin size={12} style={{ color: '#6B7280', flexShrink: 0 }} />
-              <span style={{ fontSize: '12px', fontWeight: '500', color: '#374151' }}>{locationLabel}</span>
-            </div>
-          )}
-
-          {/* Statut ouvert/fermé */}
-          {business.horaires_ok && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-              <Clock size={12} style={{ color: isOpen ? '#10B981' : '#EF4444', flexShrink: 0 }} />
-              <span style={{ fontSize: '12px', fontWeight: '700', color: isOpen ? '#10B981' : '#EF4444' }}>
-                {isOpen ? translateOpenStatus(language) : translateClosedStatus(language)}
-              </span>
-            </div>
-          )}
-        </div>
-      </div>
+      <GratuitCard
+        name={business.name}
+        logoUrl={business.logoUrl}
+        category={translatedCategory}
+        ville={business.ville}
+        gouvernorat={business.gouvernorat}
+        horaires_ok={business.horaires_ok}
+        telephone={business.telephone || business.phone}
+        language={language}
+        allKeywords={allKeywords}
+      />
     );
   }
 

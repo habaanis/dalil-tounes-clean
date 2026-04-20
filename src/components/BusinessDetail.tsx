@@ -35,6 +35,7 @@ import {
 import { useCategoryTranslation } from '../hooks/useCategoryTranslation';
 import { getMultilingualField } from '../lib/databaseI18n';
 import { getLogoUrl, getLogoStyle, getLogoContainerStyle } from '../lib/logoUtils';
+import GratuitCard from '../components/GratuitCard';
 
 function buildWhatsAppUrl(raw: string): string {
   const digits = raw.replace(/\D/g, '');
@@ -546,8 +547,24 @@ export const BusinessDetail = ({
         </>
       )}
 
+      {/* Carte Gratuit — rendu uniforme partagé avec BusinessCard */}
+      {tier === 'gratuit' && (
+        <div className="flex justify-center py-4">
+          <GratuitCard
+            name={business.nom}
+            logoUrl={business.logo_url}
+            category={translatedCategory}
+            ville={business.ville}
+            gouvernorat={business.gouvernorat}
+            horaires_ok={business.horaires_ok}
+            telephone={business.telephone}
+            language={language}
+          />
+        </div>
+      )}
+
       {/* Carte Prestige - 450px max + Fluide sans scroll interne */}
-      <div className="max-w-[450px] md:max-w-[650px] w-full mx-auto shadow-2xl transition-all duration-300"
+      {tier !== 'gratuit' && <div className="max-w-[450px] md:max-w-[650px] w-full mx-auto shadow-2xl transition-all duration-300"
            style={{
              borderRadius: '16px',
              border: `2px solid ${colors.border}`,
@@ -1274,7 +1291,7 @@ export const BusinessDetail = ({
             </div>
           </div>}
         </div>
-      </div>
+      </div>}
 
       {/* Bouton Retour - Ultra Compact */}
       {handleClose && (
