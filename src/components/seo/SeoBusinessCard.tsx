@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, Phone, Star, ExternalLink } from 'lucide-react';
 import { generateBusinessUrl } from '../../lib/slugify';
+import { cleanAltText } from '../../lib/textNormalization';
 
 interface SeoBusinessCardProps {
   business: {
@@ -27,7 +28,7 @@ const SeoBusinessCard: React.FC<SeoBusinessCardProps> = ({ business }) => {
   const url = generateBusinessUrl(business.nom, business.id);
 
   const ville = business.ville || business.gouvernorat || '';
-  const cat = (business['catégorie'] || []).join(', ');
+  const cat = cleanAltText((business['catégorie'] || []).join(', '));
   const logoAlt = (() => {
     if (!ville && !cat) return `${business.nom} - Professionnel en Tunisie`;
     if (!ville) return `${business.nom} - ${cat}`;

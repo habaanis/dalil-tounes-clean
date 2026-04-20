@@ -15,6 +15,7 @@ import {
 import { useCategoryTranslation } from '../hooks/useCategoryTranslation';
 import { getMultilingualField } from '../lib/databaseI18n';
 import { getLogoUrl, getLogoStyle, getLogoContainerStyle } from '../lib/logoUtils';
+import { cleanAltText } from '../lib/textNormalization';
 
 interface UnifiedBusinessCardProps {
   business: {
@@ -94,7 +95,7 @@ const UnifiedBusinessCard = ({ business, onClick }: UnifiedBusinessCardProps) =>
             src={businessLogo}
             alt={(() => {
               const ville = businessLocation;
-              const cat = business.sous_categories || rawCategory || '';
+              const cat = cleanAltText(business.sous_categories || rawCategory || '');
               if (!ville && !cat) return `${businessName} - Professionnel en Tunisie`;
               if (!ville) return `${businessName} - ${cat}`;
               if (!cat) return `${businessName} à ${ville} - Professionnel en Tunisie`;

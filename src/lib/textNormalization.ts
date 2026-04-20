@@ -34,3 +34,18 @@ export function textIncludes(text: string, searchTerm: string): boolean {
 export function textEquals(text: string, searchTerm: string): boolean {
   return normalizeText(text) === normalizeText(searchTerm);
 }
+
+/**
+ * Cleans a category/sous_categories string for use in alt attributes.
+ * Removes PostgreSQL array syntax ({...}), quotes, and normalizes separators.
+ * Example: {Lycée,"Collège"} → Lycée, Collège
+ */
+export function cleanAltText(value: string): string {
+  return value
+    .replace(/^\{|\}$/g, '')   // remove leading { and trailing }
+    .replace(/"/g, '')          // remove double quotes
+    .replace(/'/g, '')          // remove single quotes
+    .replace(/,/g, ', ')        // add space after commas
+    .replace(/\s{2,}/g, ' ')    // collapse multiple spaces
+    .trim();
+}

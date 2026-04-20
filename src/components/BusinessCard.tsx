@@ -1,5 +1,6 @@
 import { MapPin, Award, Clock, ChevronDown, Phone, Star } from 'lucide-react';
 import { useState } from 'react';
+import { cleanAltText } from '../lib/textNormalization';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
 import { ImageWithFallback } from './ImageWithFallback';
@@ -157,7 +158,7 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
               src={getLogoUrl(displayImage)}
               alt={(() => {
                 const ville = business.gouvernorat || '';
-                const cat = business.category || '';
+                const cat = cleanAltText(business.category || '');
                 if (!ville && !cat) return `${business.name} - Professionnel en Tunisie`;
                 if (!ville) return `${business.name} - ${cat}`;
                 if (!cat) return `${business.name} à ${ville} - Professionnel en Tunisie`;

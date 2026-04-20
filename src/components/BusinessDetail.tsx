@@ -8,6 +8,7 @@ import { ImageGallery } from '../components/ImageGallery';
 import VideoPlayer from '../components/VideoPlayer';
 import EntrepriseAvisForm from '../components/EntrepriseAvisForm';
 import { generateShareUrl, extractIdFromSlugUrl } from '../lib/slugify';
+import { cleanAltText } from '../lib/textNormalization';
 import { SEOHead } from './SEOHead';
 import { useHreflangPath } from '../hooks/useHreflangPath';
 import {
@@ -576,7 +577,7 @@ export const BusinessDetail = ({
                 src={business.image_url}
                 alt={(() => {
                   const ville = business.ville || '';
-                  const cat = business.sous_categories || '';
+                  const cat = cleanAltText(business.sous_categories || '');
                   if (!ville && !cat) return `${business.nom} - Professionnel en Tunisie`;
                   return `Couverture de ${business.nom} - ${cat || 'Professionnel'}${ville ? ` à ${ville}` : ''}`;
                 })()}
@@ -623,7 +624,7 @@ export const BusinessDetail = ({
               src={business.logo_url}
               alt={(() => {
                 const ville = business.ville || '';
-                const cat = business.sous_categories || '';
+                const cat = cleanAltText(business.sous_categories || '');
                 if (!ville && !cat) return `${business.nom} - Professionnel en Tunisie`;
                 if (!ville) return `${business.nom} - ${cat}`;
                 if (!cat) return `${business.nom} à ${ville} - Professionnel en Tunisie`;
