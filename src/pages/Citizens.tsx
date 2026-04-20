@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, MapPin, Crosshair, HeartPulse, GraduationCap, ShoppingBag, Landmark, PartyPopper, Briefcase, ArrowLeft, Mail, Globe, MapPin as MapPinIcon, Users } from 'lucide-react';
 import LocalMarketplace from './LocalMarketplace';
@@ -134,12 +135,12 @@ export default function Citizens({ onNavigate }: CitizensProps = {}) {
   const cityInputRef = useRef<HTMLDivElement>(null);
 
   const categories = [
-    { name: 'Santé', key: 'santé', bgImage: getSupabaseImageUrl('sante.jpg'), t: '12%', l: '18%', r: 0, w: 220, h: 180, z: 10 },
-    { name: 'Éducation', key: 'education', bgImage: getSupabaseImageUrl('education.jpg'), t: '5%', l: '32%', r: 0, w: 260, h: 210, z: 5 },
-    { name: 'Services Citoyens', key: 'administratif', bgImage: getSupabaseImageUrl('administratif.jpg'), t: '7%', l: '55%', r: 0, w: 240, h: 190, z: 8 },
-    { name: 'Tourisme & Expat', key: 'social', bgImage: getSupabaseImageUrl('service-social.jpg'), t: '30%', l: '30%', r: 0, w: 300, h: 220, z: 20 },
-    { name: 'Commerces & Magasins', key: 'magasins', bgImage: getSupabaseImageUrl('cat_magasin.jpg'), t: '40%', l: '12%', r: 0, w: 230, h: 190, z: 13 },
-    { name: 'Loisirs & Événements', key: 'loisirs', bgImage: getSupabaseImageUrl('loisir.jpg'), t: '38%', l: '60%', r: 0, w: 220, h: 180, z: 9 },
+    { name: 'Santé', key: 'santé', route: '/citizens/sante', bgImage: getSupabaseImageUrl('sante.jpg'), t: '12%', l: '18%', r: 0, w: 220, h: 180, z: 10 },
+    { name: 'Éducation', key: 'education', route: '/education', bgImage: getSupabaseImageUrl('education.jpg'), t: '5%', l: '32%', r: 0, w: 260, h: 210, z: 5 },
+    { name: 'Services Citoyens', key: 'administratif', route: '/citizens/services', bgImage: getSupabaseImageUrl('administratif.jpg'), t: '7%', l: '55%', r: 0, w: 240, h: 190, z: 8 },
+    { name: 'Tourisme & Expat', key: 'social', route: '/citizens/tourisme', bgImage: getSupabaseImageUrl('service-social.jpg'), t: '30%', l: '30%', r: 0, w: 300, h: 220, z: 20 },
+    { name: 'Commerces & Magasins', key: 'magasins', route: '/citizens/magasins', bgImage: getSupabaseImageUrl('cat_magasin.jpg'), t: '40%', l: '12%', r: 0, w: 230, h: 190, z: 13 },
+    { name: 'Loisirs & Événements', key: 'loisirs', route: '/citizens/loisirs', bgImage: getSupabaseImageUrl('loisir.jpg'), t: '38%', l: '60%', r: 0, w: 220, h: 180, z: 9 },
   ];
 
   useEffect(() => {
@@ -512,16 +513,17 @@ export default function Citizens({ onNavigate }: CitizensProps = {}) {
         <div className="max-w-7xl mx-auto mb-16 px-4 md:px-8">
           {/* Desktop: Mosaïque Absolute, Mobile: Liste Verticale */}
           <div className="relative w-full bg-white md:h-[800px] h-auto flex flex-col md:block gap-3 md:gap-0">
-            {categories.map(({ name, key, bgImage, t, l, r, w, h, z }) => {
+            {categories.map(({ name, key, route, bgImage, t, l, r, w, h, z }) => {
               return (
-                <div
+                <Link
                   key={key}
-                  onClick={() => handleCategoryClick(key)}
+                  to={route}
                   className="
                     cursor-pointer overflow-hidden rounded-lg border-3 border-[#D4AF37]
                     transition-all duration-500 ease-out
                     md:absolute relative
                     w-[95%] mx-auto md:w-auto h-32 md:h-auto
+                    no-underline
                   "
                   style={{
                     // Desktop: Coordonnées absolues de la mosaïque
@@ -531,6 +533,7 @@ export default function Citizens({ onNavigate }: CitizensProps = {}) {
                     height: window.innerWidth >= 768 ? `${h}px` : '128px',
                     zIndex: z,
                     boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)',
+                    textDecoration: 'none',
                   }}
                   onMouseEnter={(e) => {
                     const isMobile = window.innerWidth < 768;
@@ -577,7 +580,7 @@ export default function Citizens({ onNavigate }: CitizensProps = {}) {
                       {name}
                     </h3>
                   </div>
-                </div>
+                </Link>
               );
             })}
           </div>
