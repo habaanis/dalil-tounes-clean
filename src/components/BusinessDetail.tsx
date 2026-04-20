@@ -27,6 +27,7 @@ import {
   translateScheduleNotAvailable,
   translateOpenStatus,
   translateClosedStatus,
+  isCurrentlyOpen,
   getDayName,
   formatTodayScheduleText,
   getTodaySchedule
@@ -498,9 +499,9 @@ export const BusinessDetail = ({
       case 'gratuit':
       default:
         return {
-          background: '#1F2937',
-          border: '#6B7280',
-          gold: '#9CA3AF'
+          background: '#FFFFFF',
+          border: '#D4AF37',
+          gold: '#D4AF37'
         };
     }
   };
@@ -612,11 +613,11 @@ export const BusinessDetail = ({
 
           {/* Logo rond — chevauchant le bandeau si présent */}
           <div
-            className="w-28 h-28 shadow-2xl"
+            className={`${tier === 'gratuit' ? 'w-16 h-16' : 'w-28 h-28'} shadow-2xl`}
             style={{
-              ...getLogoContainerStyle(colors.gold, '4px'),
+              ...getLogoContainerStyle(colors.gold, tier === 'gratuit' ? '3px' : '4px'),
               backgroundColor: colors.background,
-              marginTop: business.image_url ? '-64px' : '0',
+              marginTop: (tier !== 'gratuit' && business.image_url) ? '-64px' : '0',
               position: 'relative',
               zIndex: 2,
             }}
@@ -739,7 +740,7 @@ export const BusinessDetail = ({
         <div className="px-2 pb-1 pt-2 text-center space-y-1">
           {/* Nom & Catégorie avec Bouton Copier Lien */}
           <div className="flex items-center justify-center gap-2 px-1">
-            <h1 className="text-base font-bold text-white tracking-tight leading-tight truncate">{business.nom}</h1>
+            <h1 className={`text-base font-bold tracking-tight leading-tight truncate ${tier === 'gratuit' ? 'text-gray-900' : 'text-white'}`}>{business.nom}</h1>
             <button
               onClick={copyLink}
               className="flex-shrink-0 transition-all hover:scale-110"
@@ -754,80 +755,103 @@ export const BusinessDetail = ({
           )}
 
           {/* Adresse, Ville & Téléphone */}
-          <div className="flex flex-col items-center text-gray-200 text-xs gap-0.5">
-            <div className="flex items-center gap-1 max-w-full px-1">
-              <MapPin size={11} className="flex-shrink-0" style={{ color: colors.gold }} />
-              {business.adresse ? (
-                <button
-                  onClick={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); setShowAddressModal(true); }}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontSize: '10px',
-                    color: '#e5e7eb',
-                    padding: 0,
-                    textAlign: 'center',
-                    textDecoration: 'underline dotted',
-                    textDecorationColor: colors.gold,
-                    position: 'relative',
-                    zIndex: 100,
-                    pointerEvents: 'auto',
-                  }}
-                >
-                  {business.adresse}{business.ville ? `, ${business.ville}` : ''}
-                </button>
-              ) : (
-                <span style={{ fontSize: '10px', color: '#6b7280', fontStyle: 'italic' }}>
-                  Adresse non renseignée{business.ville ? ` · ${business.ville}` : ''}
-                </span>
+          {tier === 'gratuit' ? (
+            /* Gratuit : uniquement ville + statut ouvert/fermé */
+            <div className="flex flex-col items-center gap-1.5 text-xs">
+              {(business.ville || business.gouvernorat) && (
+                <div className="flex items-center gap-1">
+                  <MapPin size={11} className="flex-shrink-0" style={{ color: '#6B7280' }} />
+                  <span style={{ fontSize: '12px', fontWeight: '500', color: '#374151' }}>
+                    {business.ville || business.gouvernorat}
+                  </span>
+                </div>
+              )}
+              {business.horaires_ok && (
+                <div className="flex items-center gap-1">
+                  <Clock size={11} className="flex-shrink-0" style={{ color: isCurrentlyOpen(business.horaires_ok) ? '#10B981' : '#EF4444' }} />
+                  <span style={{ fontSize: '12px', fontWeight: '700', color: isCurrentlyOpen(business.horaires_ok) ? '#10B981' : '#EF4444' }}>
+                    {isCurrentlyOpen(business.horaires_ok) ? translateOpenStatus(language) : translateClosedStatus(language)}
+                  </span>
+                </div>
               )}
             </div>
-            {business.telephone && (
-              <a
-                href={`tel:${business.telephone}`}
-                onClick={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); }}
-                className="flex items-center gap-1 font-bold truncate max-w-full px-1 hover:underline"
-                style={{ color: colors.gold, textDecoration: 'none', position: 'relative', zIndex: 100, pointerEvents: 'auto', cursor: 'pointer' }}
-              >
-                <Phone size={11} className="flex-shrink-0" />
-                <span>{business.telephone}</span>
-              </a>
-            )}
-            {business.telephone2 && (
-              <a
-                href={`tel:${business.telephone2_clean || business.telephone2}`}
-                onClick={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); }}
-                className="flex items-center gap-1 font-bold truncate max-w-full px-1 hover:underline"
-                style={{ color: colors.gold, textDecoration: 'none', position: 'relative', zIndex: 100, pointerEvents: 'auto', cursor: 'pointer', marginTop: '2px' }}
-              >
-                <Phone size={11} className="flex-shrink-0" />
-                <span>{business.telephone2}</span>
-              </a>
-            )}
-            {tier !== 'gratuit' && business.whatsapp && buildWhatsAppUrl(business.whatsapp) && (
-              <a
-                href={buildWhatsAppUrl(business.whatsapp)}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); }}
-                className="flex items-center gap-1 font-bold truncate max-w-full px-1 hover:underline"
-                style={{ color: '#25D366', textDecoration: 'none', position: 'relative', zIndex: 100, pointerEvents: 'auto', cursor: 'pointer', marginTop: '2px' }}
-              >
-                <span style={{ fontSize: '11px', lineHeight: 1, flexShrink: 0 }}>💚</span>
-                <span>WhatsApp</span>
-              </a>
-            )}
-            {tier !== 'gratuit' && business.score_avis != null && business.score_avis !== '' && (
-              <div
-                className="flex items-center gap-1 px-1 mt-1"
-                style={{ fontSize: '11px', fontWeight: '600', color: colors.gold }}
-              >
-                <Star size={11} className="flex-shrink-0" style={{ fill: colors.gold, color: colors.gold }} />
-                <span>{business.score_avis} / 5</span>
+          ) : (
+            /* Artisan / Premium / Elite : adresse complète + téléphones */
+            <div className="flex flex-col items-center text-gray-200 text-xs gap-0.5">
+              <div className="flex items-center gap-1 max-w-full px-1">
+                <MapPin size={11} className="flex-shrink-0" style={{ color: colors.gold }} />
+                {business.adresse ? (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); setShowAddressModal(true); }}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: '10px',
+                      color: '#e5e7eb',
+                      padding: 0,
+                      textAlign: 'center',
+                      textDecoration: 'underline dotted',
+                      textDecorationColor: colors.gold,
+                      position: 'relative',
+                      zIndex: 100,
+                      pointerEvents: 'auto',
+                    }}
+                  >
+                    {business.adresse}{business.ville ? `, ${business.ville}` : ''}
+                  </button>
+                ) : (
+                  <span style={{ fontSize: '10px', color: '#6b7280', fontStyle: 'italic' }}>
+                    Adresse non renseignée{business.ville ? ` · ${business.ville}` : ''}
+                  </span>
+                )}
               </div>
-            )}
-          </div>
+              {business.telephone && (
+                <a
+                  href={`tel:${business.telephone}`}
+                  onClick={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); }}
+                  className="flex items-center gap-1 font-bold truncate max-w-full px-1 hover:underline"
+                  style={{ color: colors.gold, textDecoration: 'none', position: 'relative', zIndex: 100, pointerEvents: 'auto', cursor: 'pointer' }}
+                >
+                  <Phone size={11} className="flex-shrink-0" />
+                  <span>{business.telephone}</span>
+                </a>
+              )}
+              {business.telephone2 && (
+                <a
+                  href={`tel:${business.telephone2_clean || business.telephone2}`}
+                  onClick={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); }}
+                  className="flex items-center gap-1 font-bold truncate max-w-full px-1 hover:underline"
+                  style={{ color: colors.gold, textDecoration: 'none', position: 'relative', zIndex: 100, pointerEvents: 'auto', cursor: 'pointer', marginTop: '2px' }}
+                >
+                  <Phone size={11} className="flex-shrink-0" />
+                  <span>{business.telephone2}</span>
+                </a>
+              )}
+              {business.whatsapp && buildWhatsAppUrl(business.whatsapp) && (
+                <a
+                  href={buildWhatsAppUrl(business.whatsapp)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); }}
+                  className="flex items-center gap-1 font-bold truncate max-w-full px-1 hover:underline"
+                  style={{ color: '#25D366', textDecoration: 'none', position: 'relative', zIndex: 100, pointerEvents: 'auto', cursor: 'pointer', marginTop: '2px' }}
+                >
+                  <span style={{ fontSize: '11px', lineHeight: 1, flexShrink: 0 }}>💚</span>
+                  <span>WhatsApp</span>
+                </a>
+              )}
+              {business.score_avis != null && business.score_avis !== '' && (
+                <div
+                  className="flex items-center gap-1 px-1 mt-1"
+                  style={{ fontSize: '11px', fontWeight: '600', color: colors.gold }}
+                >
+                  <Star size={11} className="flex-shrink-0" style={{ fill: colors.gold, color: colors.gold }} />
+                  <span>{business.score_avis} / 5</span>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Description — masquée pour Gratuit */}
           {tier !== 'gratuit' && translatedDescription && (
