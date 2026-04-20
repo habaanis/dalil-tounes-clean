@@ -128,112 +128,72 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
   const isElite = tier === 'elite';
   const isPremiumTier = tier === 'premium' || tier === 'elite' || tier === 'artisan';
 
-  // Rendu dédié pour le tier Gratuit — carte épurée
+  // Rendu dédié pour le tier Gratuit — carte minimaliste
   if (tier === 'gratuit') {
     const locationLabel = business.ville || business.gouvernorat || '';
     const isOpen = isCurrentlyOpen(business.horaires_ok ?? null);
-    const todayText = formatTodayScheduleText(getTodaySchedule(business.horaires_ok ?? null), language);
 
     return (
-      <div className="block">
-        <SignatureCard tier="decouverte" className="p-5" onClick={onClick}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+      <div
+        className="block cursor-pointer"
+        onClick={onClick}
+        style={{
+          backgroundColor: '#FFFFFF',
+          border: '2px solid #D4AF37',
+          borderRadius: '16px',
+          boxShadow: '0 0 12px rgba(212,175,55,0.2), 0 2px 8px rgba(0,0,0,0.06)',
+          padding: '20px 16px 16px',
+          transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+        }}
+        onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-2px)'; (e.currentTarget as HTMLDivElement).style.boxShadow = '0 0 18px rgba(212,175,55,0.35), 0 4px 14px rgba(0,0,0,0.1)'; }}
+        onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLDivElement).style.boxShadow = '0 0 12px rgba(212,175,55,0.2), 0 2px 8px rgba(0,0,0,0.06)'; }}
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', textAlign: 'center' }}>
 
-            {/* Logo centré */}
-            <div className="flex justify-center -mt-8 mb-1">
-              <div className="w-16 h-16 shadow-xl" style={getLogoContainerStyle('#D4AF37', '3px')}>
-                <img
-                  src={getLogoUrl(business.logoUrl)}
-                  alt={`${business.name}${locationLabel ? ` à ${locationLabel}` : ''}`}
-                  className="w-full h-full"
-                  style={getLogoStyle(business.logoUrl)}
-                />
-              </div>
-            </div>
-
-            {/* Nom */}
-            <div>
-              <h3 style={{ fontSize: '14px', fontWeight: '700', color: '#1A1A1A', lineHeight: '1.3', marginBottom: '3px', letterSpacing: '-0.01em' }}>
-                {business.name}
-              </h3>
-              {translatedCategory && (
-                <>
-                  <p style={{ fontSize: '11px', fontWeight: '500', color: '#6B7280', lineHeight: '1.4', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-                    {translatedCategory}
-                  </p>
-                  <meta name="keywords" content={allKeywords.join(', ')} />
-                  <span className="sr-only">{allKeywords.join(' ')}</span>
-                </>
-              )}
-            </div>
-
-            {/* Ville */}
-            {locationLabel && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <MapPin className="w-3 h-3" style={{ color: '#6B7280', flexShrink: 0 }} />
-                <span style={{ fontSize: '12px', fontWeight: '500', color: '#374151' }}>{locationLabel}</span>
-              </div>
-            )}
-
-            {/* Horaires */}
-            {business.horaires_ok && (
-              <div>
-                <button
-                  onClick={(e) => { e.stopPropagation(); setShowFullSchedule(!showFullSchedule); }}
-                  style={{ width: '100%', background: 'none', border: 'none', cursor: 'pointer', padding: 0, textAlign: 'left' }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '3px' }}>
-                        <Clock className="w-3 h-3" style={{ color: isOpen ? '#10B981' : '#EF4444', flexShrink: 0 }} />
-                        <span style={{ fontSize: '12px', fontWeight: '700', color: isOpen ? '#10B981' : '#EF4444' }}>
-                          {isOpen ? translateOpenStatus(language) : translateClosedStatus(language)}
-                        </span>
-                      </div>
-                      {todayText && (
-                        <p style={{ fontSize: '11px', color: '#6B7280', lineHeight: '1.3', margin: 0 }}>{todayText}</p>
-                      )}
-                    </div>
-                    <ChevronDown
-                      size={14}
-                      style={{ color: '#D4AF37', transform: showFullSchedule ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease', flexShrink: 0 }}
-                    />
-                  </div>
-                </button>
-
-                <div
-                  onClick={(e) => e.stopPropagation()}
-                  style={{ maxHeight: showFullSchedule ? '400px' : '0', overflow: 'hidden', transition: 'max-height 0.3s ease, opacity 0.3s ease', opacity: showFullSchedule ? 1 : 0 }}
-                >
-                  <div style={{ padding: '6px', backgroundColor: 'rgba(0,0,0,0.02)', borderRadius: '8px', fontSize: '10px', lineHeight: '1.5', marginTop: '6px' }}>
-                    {parseHoraires(business.horaires_ok).map((schedule, index) => {
-                      const now = new Date();
-                      const todayIndex = (now.getDay() + 6) % 7;
-                      const dayIndex = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'].findIndex(d => schedule.day.includes(d));
-                      const isToday = dayIndex === todayIndex;
-                      return (
-                        <div key={index} style={{ display: 'flex', gap: '12px', padding: '4px 6px', backgroundColor: isToday ? 'rgba(59,130,246,0.07)' : 'transparent', borderRadius: '4px', marginBottom: '2px' }}>
-                          <span style={{ minWidth: '72px', fontWeight: isToday ? '700' : '500', color: schedule.isOpen ? '#1A1A1A' : '#FF6B6B' }}>{schedule.day}</span>
-                          <span style={{ flex: 1, fontWeight: isToday ? '600' : '400', color: schedule.isOpen ? (isToday ? '#1A1A1A' : '#6B7280') : '#FF6B6B' }}>{schedule.hours}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Bouton Voir les détails */}
-            <button
-              onClick={(e) => { e.stopPropagation(); onClick(); }}
-              style={{ width: '100%', marginTop: '4px', paddingTop: '10px', borderTop: '1px solid rgba(212,175,55,0.25)', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', display: 'block' }}
-            >
-              <span style={{ fontSize: '13px', fontWeight: '700', color: '#D4AF37', letterSpacing: '0.01em' }} className="hover:underline">
-                {t.common.viewDetails} →
-              </span>
-            </button>
+          {/* Logo centré */}
+          <div className="w-16 h-16 shadow-lg" style={getLogoContainerStyle('#D4AF37', '3px')}>
+            <img
+              src={getLogoUrl(business.logoUrl)}
+              alt={`${business.name}${locationLabel ? ` à ${locationLabel}` : ''}`}
+              className="w-full h-full"
+              style={getLogoStyle(business.logoUrl)}
+            />
           </div>
-        </SignatureCard>
+
+          {/* Nom */}
+          <h3 style={{ fontSize: '14px', fontWeight: '700', color: '#1A1A1A', lineHeight: '1.3', letterSpacing: '-0.01em', margin: 0 }}>
+            {business.name}
+          </h3>
+
+          {/* Catégorie */}
+          {translatedCategory && (
+            <>
+              <p style={{ fontSize: '11px', fontWeight: '500', color: '#6B7280', lineHeight: '1.4', margin: 0, maxWidth: '100%', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+                {translatedCategory}
+              </p>
+              <meta name="keywords" content={allKeywords.join(', ')} />
+              <span className="sr-only">{allKeywords.join(' ')}</span>
+            </>
+          )}
+
+          {/* Ville */}
+          {locationLabel && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <MapPin size={12} style={{ color: '#6B7280', flexShrink: 0 }} />
+              <span style={{ fontSize: '12px', fontWeight: '500', color: '#374151' }}>{locationLabel}</span>
+            </div>
+          )}
+
+          {/* Statut ouvert/fermé */}
+          {business.horaires_ok && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <Clock size={12} style={{ color: isOpen ? '#10B981' : '#EF4444', flexShrink: 0 }} />
+              <span style={{ fontSize: '12px', fontWeight: '700', color: isOpen ? '#10B981' : '#EF4444' }}>
+                {isOpen ? translateOpenStatus(language) : translateClosedStatus(language)}
+              </span>
+            </div>
+          )}
+        </div>
       </div>
     );
   }
