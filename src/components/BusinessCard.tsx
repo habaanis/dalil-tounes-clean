@@ -155,7 +155,14 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
           >
             <img
               src={getLogoUrl(displayImage)}
-              alt={business.name}
+              alt={(() => {
+                const ville = business.gouvernorat || '';
+                const cat = business.category || '';
+                if (!ville && !cat) return `${business.name} - Professionnel en Tunisie`;
+                if (!ville) return `${business.name} - ${cat}`;
+                if (!cat) return `${business.name} à ${ville} - Professionnel en Tunisie`;
+                return `${business.name} à ${ville} - ${cat}`;
+              })()}
               className="w-full h-full"
               style={getLogoStyle(displayImage)}
             />

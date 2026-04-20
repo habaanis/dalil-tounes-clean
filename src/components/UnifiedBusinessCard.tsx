@@ -92,7 +92,14 @@ const UnifiedBusinessCard = ({ business, onClick }: UnifiedBusinessCardProps) =>
         >
           <img
             src={businessLogo}
-            alt={businessName}
+            alt={(() => {
+              const ville = businessLocation;
+              const cat = business.sous_categories || rawCategory || '';
+              if (!ville && !cat) return `${businessName} - Professionnel en Tunisie`;
+              if (!ville) return `${businessName} - ${cat}`;
+              if (!cat) return `${businessName} à ${ville} - Professionnel en Tunisie`;
+              return `${businessName} à ${ville} - ${cat}`;
+            })()}
             className="w-full h-full"
             style={getLogoStyle(business.logo_url || business.logoUrl)}
           />

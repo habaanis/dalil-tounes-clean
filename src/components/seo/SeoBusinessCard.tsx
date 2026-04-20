@@ -26,6 +26,15 @@ const SeoBusinessCard: React.FC<SeoBusinessCardProps> = ({ business }) => {
   const location = [business.ville, business.gouvernorat].filter(Boolean).join(', ');
   const url = generateBusinessUrl(business.nom, business.id);
 
+  const ville = business.ville || business.gouvernorat || '';
+  const cat = (business['catégorie'] || []).join(', ');
+  const logoAlt = (() => {
+    if (!ville && !cat) return `${business.nom} - Professionnel en Tunisie`;
+    if (!ville) return `${business.nom} - ${cat}`;
+    if (!cat) return `${business.nom} à ${ville} - Professionnel en Tunisie`;
+    return `${business.nom} à ${ville} - ${cat}`;
+  })();
+
   return (
     <Link
       to={url}
@@ -35,7 +44,7 @@ const SeoBusinessCard: React.FC<SeoBusinessCardProps> = ({ business }) => {
         {business.logo_url ? (
           <img
             src={business.logo_url}
-            alt={`Logo ${business.nom}`}
+            alt={logoAlt}
             className="w-12 h-12 rounded-lg object-cover flex-shrink-0 bg-gray-900"
             loading="lazy"
           />

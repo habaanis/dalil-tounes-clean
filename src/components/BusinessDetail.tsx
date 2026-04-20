@@ -574,7 +574,12 @@ export const BusinessDetail = ({
             >
               <img
                 src={business.image_url}
-                alt={`Couverture ${business.nom}`}
+                alt={(() => {
+                  const ville = business.ville || '';
+                  const cat = business.sous_categories || '';
+                  if (!ville && !cat) return `${business.nom} - Professionnel en Tunisie`;
+                  return `Couverture de ${business.nom} - ${cat || 'Professionnel'}${ville ? ` à ${ville}` : ''}`;
+                })()}
                 style={{
                   width: '100%',
                   height: '100%',
@@ -616,7 +621,14 @@ export const BusinessDetail = ({
           >
             <img
               src={business.logo_url}
-              alt={`Logo ${business.nom}`}
+              alt={(() => {
+                const ville = business.ville || '';
+                const cat = business.sous_categories || '';
+                if (!ville && !cat) return `${business.nom} - Professionnel en Tunisie`;
+                if (!ville) return `${business.nom} - ${cat}`;
+                if (!cat) return `${business.nom} à ${ville} - Professionnel en Tunisie`;
+                return `${business.nom} à ${ville} - ${cat}`;
+              })()}
               className="w-full h-full"
               style={getLogoStyle(business.logo_url)}
               loading="lazy"
