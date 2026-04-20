@@ -466,9 +466,11 @@ export const BusinessDetail = ({
     );
   }
 
+  console.log('[SKILA DEBUG] statut_abonnement brut:', JSON.stringify(business.statut_abonnement));
   const tier = mapSubscriptionToTier({
     statut_abonnement: business.statut_abonnement || null
   });
+  console.log('[SKILA DEBUG] tier calculé:', tier);
   const isPremium = isPremiumTier(tier);
   const tierLabel = getTierLabel(tier, language);
   const mediaLimits = getMediaLimits(tier);
