@@ -1123,10 +1123,13 @@ export const Businesses = ({
                         id: business.id,
                         name: business.name,
                         category: business.category,
+                        ville: business.city || null,
                         gouvernorat: business.gouvernorat,
                         statut_abonnement: business.statut_abonnement,
+                        'niveau priorité abonnement': business['niveau priorité abonnement'],
                         badges: business.badges || [],
                         imageUrl: business.imageUrl,
+                        logoUrl: business.logoUrl,
                         horaires_ok: business.horaires_ok
                       }}
                       onClick={() => {

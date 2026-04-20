@@ -13,6 +13,8 @@ export interface SeoBusiness {
   logo_url?: string;
   description?: string;
   is_premium?: boolean;
+  statut_abonnement?: string | null;
+  horaires_ok?: string | null;
 }
 
 function mapEntrepriseRow(row: Record<string, unknown>): SeoBusiness {
@@ -31,9 +33,11 @@ function mapEntrepriseRow(row: Record<string, unknown>): SeoBusiness {
     'catégorie': sousCats.length > 0 ? sousCats : (row.categorie ? [row.categorie as string] : []),
     'Note Google Globale': row.score_avis as number | null ?? null,
     'Compteur Avis Google': null,
-    logo_url: row.image_url as string | undefined,
+    logo_url: row.logo_url as string | undefined || row.image_url as string | undefined,
     description: row.description as string | undefined,
     is_premium: false,
+    statut_abonnement: (row['statut Abonnement'] as string | null) ?? (row.statut_abonnement as string | null) ?? null,
+    horaires_ok: row.horaires_ok as string | null ?? null,
   };
 }
 
