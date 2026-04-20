@@ -273,6 +273,186 @@ export const blogArticles: BlogArticle[] = [
 <p>Goûtez l'ojja au merguez, le couscous au poisson, et les pâtisseries locales dans les restaurants du centre-ville.</p>
 <p>Sur Dalil Tounes, trouvez les meilleurs prestataires touristiques, hébergements et restaurants de Sousse recommandés par les habitants.</p>`
     }
+  },
+  {
+    id: '3',
+    slug: 'pourquoi-dalil-tounes-change-la-donne',
+    author: "L'équipe Dalil Tounes",
+    date: '20 avril 2026',
+    readTime: '6 min',
+    coverImage: '',
+    fr: {
+      title: 'Pourquoi Dalil Tounes change la donne pour les pros et les clients',
+      subtitle: 'CV Business complet vs incomplet : la différence qui change tout',
+      category: 'Notre Histoire',
+      excerpt: "Découvrez pourquoi un CV Business bien rempli change radicalement la visibilité d'un professionnel et la confiance des clients. Comparaison, conseils et explications sans détours.",
+      content: `<h1>Pourquoi Dalil Tounes change la donne pour les pros et les clients</h1>
+
+<h2>1. Introduction (on plante le décor)</h2>
+<p>On cherche toujours un coiffeur, un chauffeur ou même un plombier de confiance qui sera là et qui inspire confiance. Tu demandes à un ami, il te dit "oui je connais un tel". Tu y vas, tu te perds et finalement tu es déçu par l'accueil ou le travail fourni. Alors tu regardes sur le net. Tu finis par appeler trois numéros, personne ne répond. Et quand quelqu'un décroche, tu n'es même pas sûr que ce soit le bon. Les horaires sont pas justes et puis parlons pas de la localisation.</p>
+<p>C'est exactement pour ça qu'on a créé <strong>Dalil Tounes, un annuaire professionnel et humain en Tunisie</strong>.</p>
+<p>Pas pour faire joli. Pour que les gens arrêtent de courir après les infos, et que toi, tu bénéficies d'une présentation de confiance.</p>
+
+<h2>2. Le CV Business, c'est quoi ?</h2>
+<p>Chez nous, chaque professionnel a sa propre <strong>fiche complète</strong>. On appelle ça un CV Business. C'est pas pour faire moderne, mais juste une façon de dire : <strong>tout est là, au même endroit</strong>. Comme quand vous allez vous présenter pour un travail, on vient avec un CV complet, pas juste le nom et le téléphone. On n'est bien d'accord.</p>
+<p>L'adresse, les horaires, les photos, les avis, le numéro de téléphone, le GPS, les réseaux sociaux… Même une petite description pour raconter son métier, sa passion.</p>
+<p>Et tout ça en un seul clic.</p>
+<p>Plus besoin d'ouvrir Facebook, Instagram et Google Maps en même temps. Plus besoin de jouer les détectives pour savoir si un pro est fiable.</p>
+
+<h2>3. La différence entre un CV complet et un CV incomplet (sans donner nos secrets)</h2>
+<p>On va être honnêtes. Tous les professionnels ne remplissent pas leur fiche de la même façon.</p>
+<p>Certains prennent le temps de tout mettre : photos, description, horaires précis, plusieurs moyens de contact. D'autres, non. Par manque de temps, par habitude, ou parce qu'ils ne mesurent pas l'impact. Par contre, le client veut gagner du temps pour vous trouver et voir votre statut de fiabilité.</p>
+<p>Alors voici ce qui change concrètement, sans rentrer dans les détails de notre algorithme (parce qu'on garde quelques secrets quand même).</p>
+<div style="overflow-x: auto;"><table style="border-collapse: collapse; width: 100%; margin: 20px 0;">
+<thead><tr style="background-color: #f5f0e8;"><th style="border: 1px solid #ddd; padding: 10px; text-align: left;">Ce qu'on observe</th><th style="border: 1px solid #ddd; padding: 10px; text-align: left;">CV complet</th><th style="border: 1px solid #ddd; padding: 10px; text-align: left;">CV incomplet</th></tr></thead>
+<tbody>
+<tr><td style="border: 1px solid #ddd; padding: 10px;">Visibilité sur Google</td><td style="border: 1px solid #ddd; padding: 10px;">Apparaît bien</td><td style="border: 1px solid #ddd; padding: 10px;">Se perd dans les résultats</td></tr>
+<tr style="background-color: #f9f9f9;"><td style="border: 1px solid #ddd; padding: 10px;">Confiance du client</td><td style="border: 1px solid #ddd; padding: 10px;">Forte (avis, photos)</td><td style="border: 1px solid #ddd; padding: 10px;">Hésitation, doute</td></tr>
+<tr><td style="border: 1px solid #ddd; padding: 10px;">Contacts reçus</td><td style="border: 1px solid #ddd; padding: 10px;">Plusieurs par semaine</td><td style="border: 1px solid #ddd; padding: 10px;">Très peu, voire aucun</td></tr>
+<tr style="background-color: #f9f9f9;"><td style="border: 1px solid #ddd; padding: 10px;">Suggestions de recherche</td><td style="border: 1px solid #ddd; padding: 10px;">Oui (par métier/ville)</td><td style="border: 1px solid #ddd; padding: 10px;">Non</td></tr>
+</tbody>
+</table></div>
+<p>Un CV Business bien rempli, c'est comme une vitrine propre et bien éclairée. Ça attire l'œil, ça rassure, ça donne envie d'entrer. Et nous derrière, nous créons les rues qui te ramèneront les clients.</p>
+
+<h2>4. Ce que ça change pour le professionnel</h2>
+<p>Imagine. Un client cherche "coiffeur à Sousse" sur Google.</p>
+<p>Le premier résultat : une fiche complète, photo du salon, horaires, avis, lien WhatsApp. Le deuxième : juste un nom et un numéro, sans photo, sans adresse précise.</p>
+<p>Devine sur lequel le client va cliquer ?</p>
+<p>Ce n'est pas de la magie. C'est juste du bon sens. Un CV complet, c'est la différence entre être vu ou être invisible. Entre recevoir des appels ou attendre.</p>
+<p>Et nous, ce qu'on veut, c'est que ceux qui prennent le temps d'exister soient récompensés.</p>
+
+<h2>5. Ce que ça change pour le client</h2>
+<p>Pour toi, visiteur, c'est du temps gagné. De la frustration en moins.</p>
+<p>Plus besoin d'appeler cinq numéros pour trouver un horaire. Plus besoin de demander son chemin dans la rue. Tu cliques, tu vois, tu appelles. Ou tu cliques sur l'itinéraire GPS et tu y vas.</p>
+<p>Et surtout, tu as des avis et des <strong>recommandations clients</strong>. Pas des étoiles venues de nulle part. Des vrais retours d'autres clients, comme toi. Ça aide à choisir. Il suffit de regarder un de tes concurrents pour comprendre et voir la différence. Ça rassure ton futur client.</p>
+
+<h2>6. Pourquoi on ne dit pas tout</h2>
+<p>Notre manière de classer les résultats, de calculer les scores, de mettre en avant certains profils… ce sont nos petits secrets. Et c'est ce qui fait notre valeur.</p>
+<p>Mais ce qu'on peut te dire, c'est que <strong>la complétude du CV a un impact direct</strong>. Plus une fiche est riche, plus elle est visible. Plus elle inspire confiance. Plus elle génère de contacts.</p>
+<p>Ce n'est pas une opinion. C'est ce qu'on observe au quotidien.</p>
+
+<h2>7. Et maintenant ?</h2>
+<p>Si tu es professionnel, prends cinq minutes pour vérifier ta fiche. Une photo manquante ? Un horaire à mettre à jour ? Un avis auquel répondre ? Ces petits détails changent tout.</p>
+<p>Si tu es client, explore l'annuaire. <strong>Compare les professionnels</strong> entre eux, fais même des tests. Comme si tu étais client, tu verras tout de suite la différence.</p>
+<p>Et si tu as un avis, bon ou mauvais, on est preneurs. C'est comme ça qu'on s'améliore.</p>
+<p>Voilà. C'est ça, Dalil Tounes. Pas un annuaire froid. Une boîte à outils pour que les gens se trouvent, se fassent confiance, et avancent ensemble. Pour que tu trouves <strong>les meilleurs professionnels près de chez toi</strong>. 🧡</p>`
+    },
+    en: {
+      title: 'Why Dalil Tounes is a game-changer for pros and clients',
+      subtitle: 'Complete vs incomplete Business CV: the difference that changes everything',
+      category: 'Our Story',
+      excerpt: "Discover why a complete Business CV radically changes a professional's visibility and client trust. Comparison, tips and straightforward explanations.",
+      content: `<h1>Why Dalil Tounes is a game-changer for pros and clients</h1>
+
+<h2>1. Introduction</h2>
+<p>We're always looking for a hairdresser, a driver or even a trustworthy plumber who will be there and inspire confidence. You ask a friend, he says "yes I know someone". You go there, get lost and end up disappointed with the welcome or the work done. So you go online. You end up calling three numbers, no one answers. And when someone picks up, you're not even sure it's the right one. The opening hours are wrong, and don't even mention the location.</p>
+<p>That's exactly why we created <strong>Dalil Tounes, a professional and human directory in Tunisia</strong>.</p>
+<p>Not to look pretty. So that people stop chasing information, and so that you benefit from a trustworthy presentation.</p>
+
+<h2>2. What is the Business CV?</h2>
+<p>With us, every professional has their own <strong>complete profile</strong>. We call it a Business CV. It's not to be modern, it's just a way to say: <strong>everything is there, in one place</strong>. Like when you go for a job interview, you come with a complete CV, not just your name and phone number. We agree on that.</p>
+<p>The address, opening hours, photos, reviews, phone number, GPS, social networks... Even a short description to tell about their work and passion.</p>
+<p>And all this in one click.</p>
+<p>No more opening Facebook, Instagram and Google Maps at the same time. No more playing detective to find out if a professional is reliable.</p>
+
+<h2>3. The difference between a complete and incomplete CV (without giving away our secrets)</h2>
+<p>Let's be honest. Not all professionals fill out their profile the same way.</p>
+<p>Some take the time to put everything: photos, description, precise opening hours, multiple contact methods. Others don't. Due to lack of time, habit, or because they don't measure the impact. Meanwhile, the client wants to save time to find you and see your reliability status.</p>
+<p>So here's what changes concretely, without going into the details of our algorithm (because we still keep a few secrets).</p>
+<div style="overflow-x: auto;"><table style="border-collapse: collapse; width: 100%; margin: 20px 0;">
+<thead><tr style="background-color: #f5f0e8;"><th style="border: 1px solid #ddd; padding: 10px; text-align: left;">What we observe</th><th style="border: 1px solid #ddd; padding: 10px; text-align: left;">Complete CV</th><th style="border: 1px solid #ddd; padding: 10px; text-align: left;">Incomplete CV</th></tr></thead>
+<tbody>
+<tr><td style="border: 1px solid #ddd; padding: 10px;">Google visibility</td><td style="border: 1px solid #ddd; padding: 10px;">Appears well</td><td style="border: 1px solid #ddd; padding: 10px;">Gets lost in results</td></tr>
+<tr style="background-color: #f9f9f9;"><td style="border: 1px solid #ddd; padding: 10px;">Client trust</td><td style="border: 1px solid #ddd; padding: 10px;">Strong (reviews, photos)</td><td style="border: 1px solid #ddd; padding: 10px;">Hesitation, doubt</td></tr>
+<tr><td style="border: 1px solid #ddd; padding: 10px;">Contacts received</td><td style="border: 1px solid #ddd; padding: 10px;">Several per week</td><td style="border: 1px solid #ddd; padding: 10px;">Very few, or none</td></tr>
+<tr style="background-color: #f9f9f9;"><td style="border: 1px solid #ddd; padding: 10px;">Search suggestions</td><td style="border: 1px solid #ddd; padding: 10px;">Yes (by profession/city)</td><td style="border: 1px solid #ddd; padding: 10px;">No</td></tr>
+</tbody>
+</table></div>
+<p>A well-filled Business CV is like a clean, well-lit storefront. It catches the eye, reassures, and makes people want to enter. And behind the scenes, we create the streets that will bring customers to you.</p>
+
+<h2>4. What this changes for the professional</h2>
+<p>Imagine. A client searches for "hairdresser in Sousse" on Google.</p>
+<p>The first result: a complete profile, salon photo, opening hours, reviews, WhatsApp link. The second: just a name and number, no photo, no precise address.</p>
+<p>Guess which one the client will click on?</p>
+<p>It's not magic. It's just common sense. A complete CV is the difference between being seen or being invisible. Between receiving calls or waiting.</p>
+<p>And what we want is for those who take the time to exist to be rewarded.</p>
+
+<h2>5. What this changes for the client</h2>
+<p>For you, the visitor, it's time saved. Less frustration.</p>
+<p>No more calling five numbers to find opening hours. No more asking for directions in the street. You click, you see, you call. Or you click on the GPS route and you go.</p>
+<p>And above all, you have reviews and <strong>client recommendations</strong>. Not stars coming from nowhere. Real feedback from other clients, just like you. It helps you choose. Just look at one of your competitors to understand and see the difference. It reassures your future client.</p>
+
+<h2>6. Why we don't tell everything</h2>
+<p>Our way of ranking results, calculating scores, highlighting certain profiles... these are our little secrets. And that's what gives us our value.</p>
+<p>But what we can tell you is that <strong>CV completeness has a direct impact</strong>. The richer the profile, the more visible it is. The more it inspires trust. The more contacts it generates.</p>
+<p>This isn't an opinion. This is what we observe every day.</p>
+
+<h2>7. So now?</h2>
+<p>If you're a professional, take five minutes to check your profile. A missing photo? An opening hour to update? A review to answer? These small details change everything.</p>
+<p>If you're a client, explore the directory. <strong>Compare professionals</strong> with each other, run tests yourself. As if you were a client, you'll immediately see the difference.</p>
+<p>And if you have an opinion, good or bad, we're all ears. That's how we improve.</p>
+<p>That's Dalil Tounes. Not a cold directory. A toolkit so that people find each other, trust each other, and move forward together. So that you find <strong>the best professionals near you</strong>. 🧡</p>`
+    },
+    ar: {
+      title: 'علاش Dalil Tounes يبدّل القواعد للبرو والكليونات',
+      subtitle: 'CV Business كامل مقابل CV ناقص : الفرق اللي يبدّل كل شي',
+      category: 'حكايتنا',
+      excerpt: "علاش CV Business كامل يبدّل visibility متاع البرو وثقة الكليونات. مقارنة، نصائح، وتفاصيل بدون حشو.",
+      content: `<h1>علاش Dalil Tounes يبدّل القواعد للبرو والكليونات</h1>
+
+<h2>1. علاش</h2>
+<p>ديما نلقاو رواحنا نلوجو على حجام، شوفور ولا حتى بلومبي يكون ثقة ويخدم مليح. تسأل صاحبك، يقلك "إي نعرف واحد".تمشي، تضيع، وفي اللخر تخرج موش راضي لا على المعاملة لا على الخدمة.</p>
+<p>تمشي للإنترنت، تلقى روحك تكلم في ثلاثة نوامر، حتى حد ما يجاوب. وكان جاوب واحد، ماكش حتى متأكد اللي هو الصحيح. التواقيت غالطة، وزيد الادريسة ماهيش واضحة.</p>
+<p>على خاطر هذا الكل عملنا <strong>Dalil Tounes، دليل مهني وإنساني في تونس</strong>.</p>
+<p>موش باش يبان مزيان وبرا، أما باش العباد ماعادش تتعب وهي تلوج على المعلومة، وإنت تلقى خدمة موثوقة وتقديم لخدمتك واضح.</p>
+
+<h2>2. الـ CV Business، شنوّة هو؟</h2>
+<p>عندنا، كل professionnel عندو <strong>fiche كاملة</strong> متاعو. نسميّوها CV Business.</p>
+<p>موش باش نبانو عصريين، أما باش نقولو اللي كل شي موجود في بلاصة وحدة.</p>
+<p>كيما كي تمشي تقدّم على خدمة، تجيب CV كامل، موش كان اسم وتيليفون، صحيح ولا؟</p>
+<p>العنوان، التواقيت، التصاور، الآراء، النوامر، الـ GPS، réseaux sociaux… حتى description صغيرة تحكي على خدمتو وشغفو.</p>
+<p>والكل هذا بكليك وحدة.</p>
+<p>ما عادش لازمك تحل Facebook و Instagram و Google Maps مع بعضهم. وما عادش لازمك تلعب دور "محقق" باش تعرف الBusiness هذا ثقة ولا لا.</p>
+
+<h2>3. الفرق بين CV كامل و CV ناقص (من غير ما نعطيو أسرارنا)</h2>
+<p>خلّينا نكونو واضحين. موش الكلّ professionnels يعمّرو fiche متاعهم بنفس الطريقة.</p>
+<p>فما شكون ياخو وقتو ويحط كل شي: تصاور، description، تواقيت مضبوطة، برشا طرق تواصل… وفما شكون لا. يا إمّا ما عندوش وقت، يا إمّا متعوّدش، ولا ما يعرفش قداش هذا يأثّر</p>
+<p>ما الClient يحب يربح الوقت، ويحب يلقى البرو فيسع ويعرف إذا هو ثقة ولا لا.</p>
+<p>وهوني يجي الفرق الحقيقي، من غير ما ندخلو في تفاصيل الـ algorithm متاعنا (خاطر عنا زادة شوية أسرار 😉).</p>
+<div style="overflow-x: auto;"><table style="border-collapse: collapse; width: 100%; margin: 20px 0;">
+<thead><tr style="background-color: #f5f0e8;"><th style="border: 1px solid #ddd; padding: 10px; text-align: left;">شنوّا نلاحظو</th><th style="border: 1px solid #ddd; padding: 10px; text-align: left;">CV كامل</th><th style="border: 1px solid #ddd; padding: 10px; text-align: left;">CV ناقص</th></tr></thead>
+<tbody>
+<tr><td style="border: 1px solid #ddd; padding: 10px;">الظهور في Google</td><td style="border: 1px solid #ddd; padding: 10px;">يبان مليح</td><td style="border: 1px solid #ddd; padding: 10px;">يضيع في النتايج</td></tr>
+<tr style="background-color: #f9f9f9;"><td style="border: 1px solid #ddd; padding: 10px;">ثقة الكلينت</td><td style="border: 1px solid #ddd; padding: 10px;">قوية (avis + تصاور)</td><td style="border: 1px solid #ddd; padding: 10px;">تردّد وشك</td></tr>
+<tr><td style="border: 1px solid #ddd; padding: 10px;">الكليونات اللي يجيو</td><td style="border: 1px solid #ddd; padding: 10px;">برشا في الجمعة</td><td style="border: 1px solid #ddd; padding: 10px;">قليل برشا ولا حتى شي</td></tr>
+<tr style="background-color: #f9f9f9;"><td style="border: 1px solid #ddd; padding: 10px;">اقتراحات البحث</td><td style="border: 1px solid #ddd; padding: 10px;">إيه (حسب الخدمة/المدينة)</td><td style="border: 1px solid #ddd; padding: 10px;">لا</td></tr>
+</tbody>
+</table></div>
+<p>CV Business كي يكون معبّي مليح، كيف vitrine نظيفة ومضوية. يجذب العين، يطمن، ويخلّي العبد يحب يدخل. وإحنا من جهتنا، نعملو الطرق اللي تجيبلك الحرفاء ليك 😉</p>
+
+<h2>4. شنوّا يبدّل هذا للبرو (professionnel)</h2>
+<p>تخيّل: Client يلوج على "حجام في سوسة" في Google. أول نتيجة: fiche كاملة، تصويرة الصالون، التواقيت، avis، حتى lien WhatsApp. الثاني: كان اسم ونومرو، لا تصاور، لا adresse واضحة.</p>
+<p>شكون تختار إنت؟ 😉</p>
+<p>موش سحر. هذا كان bon sens. CV كامل هو الفرق بين اللي يبان واللي ما يبانش. بين اللي تجيه مكالمات، واللي يقعد يستنى.</p>
+<p>وإحنا، اللي نحبّوه هو اللي ياخو وقتو باش يبيّن روحو، يتحاسب على خدمتو ويتكافأ 👌</p>
+
+<h2>5. شنوّا يبدّل هذا للClients</h2>
+<p>بالنسبة ليك إنت كزائر، هذا يوفّرلك الوقت وينقّصلك من الستراس.</p>
+<p>ما عادش لازمك تكلم خمسة نوامر باش تلقى التواقيت. ما عادش لازمك تسأل في الشارع على الطريق. تكليكي، تشوف، تكلم. ولا تكليكي على GPS وتمشي تول.</p>
+<p>والأهم، عندك avis و <strong>recommandations متاع حرفاء</strong>. موش étoiles جاية من غير بلاصة، لا. آراء حقيقية من عباد كيفك. وهذا يعاونك تختار.</p>
+<p>يكفيك تشوف الفرق بين زوز professionnels باش تفهم. وهذا الكل يطمّن الClient ويخلّيه يثق أكثر 👌</p>
+
+<h2>6. علاش ما نقولوش كل شي</h2>
+<p>الطريقة اللي نصنّفو بيها النتايج، كيفاش نحسبو السكور، وكيفاش نطلّعو بعض البروفيلات… هاذم أسرارنا الصغار 😉 وهذا اللي يعطي القيمة متاعنا.</p>
+<p>أما اللي ننجمو نقولوهولك هو إنو <strong>كمال الـ CV عندو تأثير مباشر</strong>. كل ما fiche تكون معبّية أكثر، كل ما تولّي تبان أكثر. تعطي ثقة أكثر، وتجيب كليونات أكثر.</p>
+<p>موش رأي، هذا اللي نشوفوه كل نهار في الواقع 👌</p>
+
+<h2>7. وتوا؟</h2>
+<p>إذا إنت professionnel، خذ 5 دقايق برك واعمل طلا على fiche متاعك. فما تصويرة ناقصة؟ توقيت لازم يتبدّل؟ ولا avis لازمك تجاوب عليه؟ الحاجات الصغار هاذم يفرّقو برشا.</p>
+<p>وإذا إنت client، جرّب الدليل. <strong>قارن بين الprofessionnels</strong>، واعمل tests وحدك. كيما كانك client، تو تشوف الفرق وحدك.</p>
+<p>وإذا عندك رأي، باهي ولا خايب، مرحبا بيه. هكاكا نطوّرو رواحنا ونولّيو خير 👌</p>
+<p>هاكا هو Dalil Tounes. موش دليل عادي وبارد. هو وسيلة باش العباد تلقى بعضها، تثق في بعضها، وتعاون بعضها باش تتقدّم. باش تلقى <strong>أحسن professionnels قريب ليك</strong>. 🧡</p>`
+    }
   }
 ];
 
