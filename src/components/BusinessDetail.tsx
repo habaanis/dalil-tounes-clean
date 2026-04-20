@@ -497,11 +497,12 @@ export const BusinessDetail = ({
           border: '#DC2626',
           gold: '#DC2626'
         };
+      case 'gratuit':
       default:
         return {
-          background: '#064E3B',
-          border: '#D4AF37',
-          gold: '#D4AF37'
+          background: '#1F2937',
+          border: '#6B7280',
+          gold: '#9CA3AF'
         };
     }
   };
