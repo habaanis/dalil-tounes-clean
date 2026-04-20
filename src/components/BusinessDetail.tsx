@@ -805,7 +805,7 @@ export const BusinessDetail = ({
                 <span>{business.telephone2}</span>
               </a>
             )}
-            {business.whatsapp && buildWhatsAppUrl(business.whatsapp) && (
+            {tier !== 'gratuit' && business.whatsapp && buildWhatsAppUrl(business.whatsapp) && (
               <a
                 href={buildWhatsAppUrl(business.whatsapp)}
                 target="_blank"
@@ -818,7 +818,7 @@ export const BusinessDetail = ({
                 <span>WhatsApp</span>
               </a>
             )}
-            {business.score_avis != null && business.score_avis !== '' && (
+            {tier !== 'gratuit' && business.score_avis != null && business.score_avis !== '' && (
               <div
                 className="flex items-center gap-1 px-1 mt-1"
                 style={{ fontSize: '11px', fontWeight: '600', color: colors.gold }}
@@ -1121,8 +1121,8 @@ export const BusinessDetail = ({
               </button>
             )}
 
-            {/* Bouton GPS - Pilule compacte */}
-            {(business.latitude && business.longitude) || business.adresse ? (
+            {/* Bouton GPS - masqué pour Gratuit */}
+            {tier !== 'gratuit' && ((business.latitude && business.longitude) || business.adresse) ? (
               <a
                 href={getGoogleMapsDirectionsUrl(business.latitude, business.longitude, business.adresse)}
                 target="_blank"
