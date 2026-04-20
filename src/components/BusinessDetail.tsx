@@ -712,7 +712,7 @@ export const BusinessDetail = ({
                   imageUrls={business.image_url}
                   altText={business.nom}
                   className="w-full"
-                  maxPhotos={6}
+                  maxPhotos={mediaLimits.maxPhotos}
                   height="340px"
                   objectFit="contain"
                 />
@@ -721,6 +721,17 @@ export const BusinessDetail = ({
                 {business.nom}
               </p>
             </div>
+          </div>
+        )}
+
+        {/* Video - visible uniquement pour Premium et Elite */}
+        {mediaLimits.showVideos && business.video_url && (
+          <div className="px-4 pt-2">
+            <VideoPlayer
+              videoUrls={business.video_url}
+              maxVideos={mediaLimits.maxVideos}
+              className="w-full rounded-xl overflow-hidden"
+            />
           </div>
         )}
 
@@ -1023,8 +1034,9 @@ export const BusinessDetail = ({
               </a>
             )}
 
+            {/* Réseaux sociaux - Premium et Elite uniquement */}
             {/* Instagram */}
-            {business['Lien Instagram'] && (
+            {(tier === 'premium' || tier === 'elite') && business['Lien Instagram'] && (
               <a
                 href={business['Lien Instagram']}
                 target="_blank"
@@ -1038,7 +1050,7 @@ export const BusinessDetail = ({
             )}
 
             {/* Facebook */}
-            {business['lien facebook'] && (
+            {(tier === 'premium' || tier === 'elite') && business['lien facebook'] && (
               <a
                 href={business['lien facebook']}
                 target="_blank"
@@ -1052,7 +1064,7 @@ export const BusinessDetail = ({
             )}
 
             {/* TikTok */}
-            {business['Lien TikTok'] && (
+            {(tier === 'premium' || tier === 'elite') && business['Lien TikTok'] && (
               <a
                 href={business['Lien TikTok']}
                 target="_blank"
@@ -1068,7 +1080,7 @@ export const BusinessDetail = ({
             )}
 
             {/* LinkedIn */}
-            {business['Lien LinkedIn'] && (
+            {(tier === 'premium' || tier === 'elite') && business['Lien LinkedIn'] && (
               <a
                 href={business['Lien LinkedIn']}
                 target="_blank"
@@ -1082,7 +1094,7 @@ export const BusinessDetail = ({
             )}
 
             {/* YouTube */}
-            {business['Lien YouTube'] && (
+            {(tier === 'premium' || tier === 'elite') && business['Lien YouTube'] && (
               <a
                 href={business['Lien YouTube']}
                 target="_blank"
@@ -1124,8 +1136,8 @@ export const BusinessDetail = ({
             ) : null}
           </div>
 
-          {/* QR Code - Collé sans marge */}
-          <div className="pt-0.5">
+          {/* QR Code - Artisan, Premium et Elite uniquement */}
+          {(tier === 'artisan' || tier === 'premium' || tier === 'elite') && <div className="pt-0.5">
             <div className="flex flex-col items-center">
               <div ref={qrCodeRef} className="inline-block p-0.5 rounded bg-white mb-0.5">
                 <QRCodeSVG
@@ -1151,7 +1163,7 @@ export const BusinessDetail = ({
                 {text.downloadQR}
               </button>
             </div>
-          </div>
+          </div>}
 
           {/* Formulaire Avis Intégré - Mini bloc */}
           <div className="mt-0.5 pt-0.5" style={{ borderTop: `1px solid ${colors.gold}30` }}>
