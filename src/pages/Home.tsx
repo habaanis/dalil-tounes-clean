@@ -227,6 +227,44 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
       {/* 8. Loisirs & Événements */}
       <LeisureEventsSection />
 
+      {/* Passerelle éditoriale → Blog */}
+      <section className="py-8 px-4">
+        <div
+          className="mx-auto text-center"
+          style={{
+            maxWidth: '540px',
+            borderTop: '1px solid #f0e6d2',
+            borderBottom: '1px solid #f0e6d2',
+            padding: '0.85rem 1rem',
+          }}
+        >
+          <p style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontSize: '0.9rem', color: '#5a5a5a', lineHeight: '1.7', margin: 0 }}>
+            Pourquoi Dalil Tounes change la donne pour les pros et les clients
+          </p>
+          <p style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontSize: '0.85rem', color: '#7a7a7a', lineHeight: '1.7', margin: '0.25rem 0 0' }}>
+            Et venez lire nos autres articles, avec un petit café.{' '}
+            <a
+              href="/blog/utilite-dalil-tounes-difference-cv-complet"
+              aria-label="Lire l'article : Pourquoi Dalil Tounes change la donne"
+              style={{
+                display: 'inline-block',
+                textDecoration: 'none',
+                transition: 'transform 0.2s ease',
+                fontSize: '1rem',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.25)')}
+              onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
+            >
+              ☕
+            </a>
+          </p>
+        </div>
+        {/* SEO – maillage interne footer :
+            Ajouter dans le Footer un lien texte :
+            <a href="/blog/utilite-dalil-tounes-difference-cv-complet">Pourquoi Dalil Tounes change la donne</a>
+            pour renforcer l'autorité interne de cet article. */}
+      </section>
+
       {/* 8. Avis (Feedback) */}
       <section className="py-2.5 px-4 bg-gradient-to-b from-gray-50 to-white relative z-[1]">
         <div className="max-w-2xl mx-auto relative z-[1]">
