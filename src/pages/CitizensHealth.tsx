@@ -101,17 +101,6 @@ export default function CitizensHealth({ onNavigate }: CitizensHealthProps) {
         {/* Overlay bordeaux léger */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#4A1D43]/40 to-[#6B2D5C]/30"></div>
 
-        {/* Bouton Retour en haut à gauche */}
-        {onNavigate && (
-          <button
-            onClick={() => onNavigate({ page: 'citizens' })}
-            className="absolute top-4 left-4 inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[#D4AF37] bg-[#4A1D43]/80 text-[#D4AF37] hover:bg-[#D4AF37] hover:text-[#4A1D43] transition-all duration-300 shadow-lg backdrop-blur-sm z-10"
-            style={{ fontFamily: "'Playfair Display', serif" }}
-          >
-            <ArrowRight className="w-4 h-4 rotate-180" />
-            <span className="text-sm font-medium">Retour aux catégories</span>
-          </button>
-        )}
 
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
           <motion.h1

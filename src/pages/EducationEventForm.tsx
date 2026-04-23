@@ -113,13 +113,6 @@ export const EducationEventForm = () => {
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.6 }}
         >
-          <button
-            onClick={() => window.history.back()}
-            className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-6 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Retour
-          </button>
 
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">

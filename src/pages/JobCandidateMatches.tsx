@@ -152,13 +152,6 @@ export default function JobCandidateMatches({ jobId }: JobCandidateMatchesProps)
     return (
       <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50 py-12">
         <div className="max-w-7xl mx-auto px-4">
-          <button
-            onClick={() => window.history.back()}
-            className="mb-4 flex items-center gap-2 text-gray-600 hover:text-gray-900"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            Retour
-          </button>
           <div className="bg-red-50 border border-red-200 text-red-800 p-6 rounded-lg">
             <h3 className="font-bold mb-2">Erreur</h3>
             <p>{error}</p>
@@ -171,14 +164,6 @@ export default function JobCandidateMatches({ jobId }: JobCandidateMatchesProps)
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50 py-12">
       <div className="max-w-7xl mx-auto px-4">
-        {/* Header */}
-        <button
-          onClick={() => window.history.back()}
-          className="mb-4 flex items-center gap-2 text-gray-600 hover:text-gray-900"
-        >
-          <ArrowLeft className="w-5 h-5" />
-          Retour à l'offre
-        </button>
 
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-4 flex items-center gap-3">

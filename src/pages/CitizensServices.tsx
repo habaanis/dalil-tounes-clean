@@ -264,10 +264,12 @@ export default function CitizensServices({ onNavigateBack }: CitizensServicesPro
         <div className="max-w-4xl mx-auto">
           <button
             onClick={() => setSelectedDemarche(null)}
-            className="mb-4 flex items-center gap-2 text-[#4A1D43] hover:text-[#D4AF37] transition font-semibold"
+            className="inline-flex items-center gap-2 mb-6 text-gray-400 hover:text-gray-700 transition-colors duration-200 group"
           >
-            <MapPin className="w-5 h-5" />
-            {language === 'fr' ? 'Retour aux démarches' : language === 'ar' ? 'العودة إلى الإجراءات' : 'Back to procedures'}
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="transition-transform duration-200 group-hover:-translate-x-0.5"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+            <span className="text-xs font-light tracking-widest uppercase">
+              {language === 'fr' ? 'Retour' : language === 'ar' ? 'رجوع' : 'Back'}
+            </span>
           </button>
 
           <div className="bg-white rounded-2xl border-2 border-[#D4AF37] shadow-lg p-6">
@@ -382,12 +384,6 @@ export default function CitizensServices({ onNavigateBack }: CitizensServicesPro
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
-      {/* Bouton Retour */}
-      <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-sm border-b border-[#D4AF37] px-4 py-3 shadow-sm">
-        <div className="max-w-7xl mx-auto">
-          <BackButton onNavigateBack={onNavigateBack} label={ss.backButton} />
-        </div>
-      </div>
 
       {/* Hero Banner Bordeaux/Or - Compact */}
       <section className="relative w-full h-[220px] overflow-hidden">

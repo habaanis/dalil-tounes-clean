@@ -26,17 +26,6 @@ export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
         }}
       >
 
-        {onNavigate && (
-          <div className="absolute top-4 left-4 z-10">
-            <button
-              onClick={() => onNavigate('citizens')}
-              className="flex items-center gap-2 text-[#D4AF37] hover:text-[#D4AF37]/80 transition-colors text-sm font-medium drop-shadow-lg"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Retour aux services citoyens</span>
-            </button>
-          </div>
-        )}
 
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-4 py-6">
           <h1 className="text-3xl md:text-4xl font-semibold mb-2 drop-shadow-lg text-[#D4AF37]">

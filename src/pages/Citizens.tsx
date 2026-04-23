@@ -263,17 +263,6 @@ export default function Citizens({ onNavigate }: CitizensProps = {}) {
   if (selectedCategory === 'emploi') {
     return (
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-        <div className="sticky top-0 z-10 bg-white border-b border-gray-200 px-4 py-4 shadow-sm">
-          <div className="max-w-7xl mx-auto">
-            <button
-              onClick={handleBack}
-              className="flex items-center gap-2 text-[#4A1D43] hover:text-[#D4AF37] transition font-medium"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              Retour aux catégories
-            </button>
-          </div>
-        </div>
         <Jobs />
       </div>
     );
@@ -282,17 +271,6 @@ export default function Citizens({ onNavigate }: CitizensProps = {}) {
   if (selectedCategory === 'santé') {
     return (
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-        <div className="sticky top-0 z-10 bg-white border-b border-gray-200 px-4 py-4 shadow-sm">
-          <div className="max-w-7xl mx-auto">
-            <button
-              onClick={handleBack}
-              className="flex items-center gap-2 text-[#4A1D43] hover:text-[#D4AF37] transition font-medium"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              Retour aux catégories
-            </button>
-          </div>
-        </div>
         <CitizensHealth />
       </div>
     );
@@ -301,17 +279,6 @@ export default function Citizens({ onNavigate }: CitizensProps = {}) {
   if (selectedCategory === 'localMarketplace') {
     return (
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-        <div className="sticky top-0 z-10 bg-white border-b border-gray-200 px-4 py-4 shadow-sm">
-          <div className="max-w-7xl mx-auto">
-            <button
-              onClick={handleBack}
-              className="flex items-center gap-2 text-[#D62828] hover:text-[#b91c1c] transition font-medium"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              Retour aux catégories
-            </button>
-          </div>
-        </div>
         <LocalMarketplace />
       </div>
     );
@@ -333,14 +300,6 @@ export default function Citizens({ onNavigate }: CitizensProps = {}) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-16 px-4">
         <div className="max-w-7xl mx-auto">
-          <button
-            onClick={handleBack}
-            className="flex items-center gap-2 text-[#4A1D43] hover:text-[#D4AF37] transition font-medium mb-8"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            Retour aux catégories
-          </button>
-
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

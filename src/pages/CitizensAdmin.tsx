@@ -401,13 +401,6 @@ export default function CitizensAdmin({ onNavigateBack }: CitizensAdminProps = {
     return (
       <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 p-4">
         <div className="max-w-4xl mx-auto">
-          <button
-            onClick={() => setSelectedDemarche(null)}
-            className="mb-4 flex items-center gap-2 text-[#4A1D43] hover:text-[#D4AF37] transition font-semibold"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            {t.backButton}
-          </button>
 
           <div className="bg-white rounded-xl border-2 border-[#D4AF37] shadow-md p-6">
             <h1 className="text-2xl font-semibold text-[#4A1D43] mb-3">
@@ -509,17 +502,6 @@ export default function CitizensAdmin({ onNavigateBack }: CitizensAdminProps = {
         />
         <div className="absolute inset-0 bg-gradient-to-r from-[#4A1D43]/30 to-[#4A1D43]/40"></div>
 
-        {onNavigateBack && (
-          <div className="absolute top-4 left-4 z-10">
-            <button
-              onClick={onNavigateBack}
-              className="flex items-center gap-2 text-[#D4AF37] hover:text-[#D4AF37]/80 transition-colors text-sm font-medium drop-shadow-lg"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>{t.backButton}</span>
-            </button>
-          </div>
-        )}
 
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-4 py-6">
           <h1 className="text-3xl md:text-4xl font-semibold mb-2 drop-shadow-lg text-[#D4AF37]">

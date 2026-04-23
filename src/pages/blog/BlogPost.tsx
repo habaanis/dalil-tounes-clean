@@ -85,15 +85,6 @@ export default function BlogPost() {
           style={{ fontFamily: 'inherit' }}
         />
 
-        <div className="py-10 border-t border-gray-100">
-          <Link
-            to="/blog"
-            className={`inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors group ${isRTL ? 'flex-row-reverse' : ''}`}
-          >
-            <ArrowLeft className={`w-4 h-4 transition-transform ${isRTL ? 'rotate-180 group-hover:translate-x-1' : 'group-hover:-translate-x-1'}`} />
-            {blog?.back || 'Retour au blog'}
-          </Link>
-        </div>
       </div>
     </div>
   );

@@ -6,6 +6,7 @@ import { Menu, X, ChevronDown, ChevronRight } from 'lucide-react';
 import LanguageSelector from './LanguageSelector';
 import Footer from './Footer';
 import { SocialBar } from './SocialBar';
+import { PageHeader } from './PageHeader';
 import { WhatsAppSupport } from './WhatsAppSupport';
 
 interface NavItem {
@@ -350,6 +351,8 @@ export const Layout = ({ children }: LayoutProps) => {
           )}
         </div>
       </nav>
+
+      <PageHeader />
 
       {location.pathname === '/' && (
         <div className="bg-yellow-400 border-b border-yellow-500 sticky top-16 z-40">

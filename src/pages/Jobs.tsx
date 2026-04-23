@@ -127,18 +127,6 @@ export const Jobs = () => {
           []
         )}
       />
-      {/* Bouton Retour aux catégories */}
-      <div className="bg-gradient-to-br from-orange-900 via-orange-800 to-orange-900 pt-6 px-4">
-        <div className="max-w-5xl mx-auto">
-          <a
-            href="#/citizens"
-            className="inline-flex items-center gap-2 text-white hover:text-orange-200 transition font-medium"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            Retour aux catégories
-          </a>
-        </div>
-      </div>
 
       <motion.div
         initial={{ opacity: 0 }}

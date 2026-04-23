@@ -631,17 +631,6 @@ export default function EducationNew() {
           backgroundImage: `linear-gradient(rgba(74, 29, 67, 0.6), rgba(74, 29, 67, 0.6)), url(${getSupabaseImageUrl('classe-ecole.jpg')})`
         }}
       >
-        {/* Bouton Retour aux catégories */}
-        <div className="max-w-5xl mx-auto pt-4 mb-3">
-          <button
-            onClick={() => window.location.hash = '#/citizens'}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-[#D4AF37] bg-[#4A1D43] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-[#4A1D43] transition-all duration-300 shadow-lg font-semibold"
-            style={{ fontFamily: "'Playfair Display', serif" }}
-          >
-            <ArrowLeft className="w-5 h-5" />
-            <span className="text-sm">Retour aux services citoyens</span>
-          </button>
-        </div>
 
         <div className="max-w-5xl mx-auto text-center">
           <motion.div

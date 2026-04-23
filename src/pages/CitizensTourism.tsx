@@ -94,17 +94,6 @@ export default function CitizensTourism({ onNavigate }: CitizensTourismProps = {
         />
         <div className="absolute inset-0 bg-gradient-to-r from-[#4A1D43]/80 via-[#4A1D43]/70 to-transparent"></div>
 
-        {onNavigate && (
-          <div className="absolute top-4 left-4 z-10">
-            <button
-              onClick={() => onNavigate('home')}
-              className="flex items-center gap-2 px-4 py-2 bg-white/95 backdrop-blur-sm text-[#4A1D43] rounded-lg shadow-lg hover:bg-white transition-all"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span className="font-medium text-sm">Retour</span>
-            </button>
-          </div>
-        )}
 
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-4 py-6">
           <h1 className="text-3xl md:text-4xl font-semibold mb-2 drop-shadow-lg text-[#D4AF37]">
