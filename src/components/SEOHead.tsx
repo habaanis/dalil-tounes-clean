@@ -18,18 +18,31 @@ interface SEOHeadProps {
 
 const SUPPORTED_LANGUAGES = ['fr', 'ar', 'it', 'ru', 'en'] as const;
 const DEFAULT_LANGUAGE = 'fr';
+const CANONICAL_ORIGIN = 'https://dalil-tounes.com';
+
+/**
+ * Construit l'URL canonique propre : toujours dalil-tounes.com, sans paramètres ?lang=
+ * ni fragments hash.
+ */
+const buildCanonicalUrl = (pathname?: string): string => {
+  const path = pathname || window.location.pathname || '/';
+  // Normalise : supprime le slash final sauf pour "/"
+  const clean = path.length > 1 ? path.replace(/\/$/, '') : path;
+  return `${CANONICAL_ORIGIN}${clean}`;
+};
 
 /**
  * Génère les URLs hreflang pour toutes les langues supportées
  */
-const generateHreflangUrls = (currentPath: string, baseUrl: string): Record<string, string> => {
+const generateHreflangUrls = (currentPath: string): Record<string, string> => {
   const urls: Record<string, string> = {};
+  const clean = currentPath.length > 1 ? currentPath.replace(/\/$/, '') : currentPath;
 
   SUPPORTED_LANGUAGES.forEach(lang => {
-    urls[lang] = `${baseUrl}?lang=${lang}${currentPath}`;
+    urls[lang] = `${CANONICAL_ORIGIN}${clean}?lang=${lang}`;
   });
 
-  urls['x-default'] = `${baseUrl}?lang=${DEFAULT_LANGUAGE}${currentPath}`;
+  urls['x-default'] = `${CANONICAL_ORIGIN}${clean}`;
 
   return urls;
 };
@@ -53,6 +66,10 @@ export const SEOHead = ({
   useEffect(() => {
     document.title = title;
     document.documentElement.lang = language;
+
+    // Canonical : toujours https://dalil-tounes.com/<chemin propre>
+    const resolvedPath = currentPath || window.location.pathname || '/';
+    const canonicalUrl = canonical || buildCanonicalUrl(resolvedPath);
 
     const metaTags = [
       // Basic meta tags
@@ -112,8 +129,7 @@ export const SEOHead = ({
       meta.setAttribute('content', content);
     });
 
-    // Canonical link
-    const canonicalUrl = canonical || url;
+    // Canonical link — URL propre sans paramètres ni hash
     let linkCanonical = document.querySelector('link[rel="canonical"]');
     if (!linkCanonical) {
       linkCanonical = document.createElement('link');
@@ -122,16 +138,17 @@ export const SEOHead = ({
     }
     linkCanonical.setAttribute('href', canonicalUrl);
 
+    // og:url aligné avec le canonical
+    const ogUrl = document.querySelector('meta[property="og:url"]');
+    if (ogUrl) ogUrl.setAttribute('content', canonicalUrl);
+
     // Nettoyer les anciennes balises hreflang
     const oldHreflangLinks = document.querySelectorAll('link[rel="alternate"][hreflang]');
     oldHreflangLinks.forEach(link => link.remove());
 
-    // Générer les URLs hreflang dynamiques
-    const baseUrl = window.location.origin;
-    const path = currentPath || window.location.hash || '#/';
-    const hreflangUrls = generateHreflangUrls(path, baseUrl);
+    // Générer les URLs hreflang — basées sur l'origine canonique
+    const hreflangUrls = generateHreflangUrls(resolvedPath);
 
-    // Créer les balises hreflang pour chaque langue
     Object.entries(hreflangUrls).forEach(([hreflang, hrefUrl]) => {
       const linkAlternate = document.createElement('link');
       linkAlternate.setAttribute('rel', 'alternate');
@@ -139,14 +156,6 @@ export const SEOHead = ({
       linkAlternate.setAttribute('href', hrefUrl);
       document.head.appendChild(linkAlternate);
     });
-
-    // Ajouter la balise auto-référencée pour la langue courante
-    const selfUrl = `${baseUrl}?lang=${language}${path}`;
-    const linkSelf = document.createElement('link');
-    linkSelf.setAttribute('rel', 'alternate');
-    linkSelf.setAttribute('hreflang', language);
-    linkSelf.setAttribute('href', selfUrl);
-    document.head.appendChild(linkSelf);
 
   }, [title, description, keywords, image, url, type, canonical, noindex, author, publishedTime, modifiedTime, language, currentPath]);
 

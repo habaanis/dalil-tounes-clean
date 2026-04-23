@@ -48,6 +48,12 @@
   ],
   "redirects": [
     {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.dalil-tounes.com" }],
+      "destination": "https://dalil-tounes.com/:path*",
+      "permanent": true
+    },
+    {
       "source": "/#/:path*",
       "destination": "/:path*",
       "permanent": true
