@@ -244,8 +244,8 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
           <p style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontSize: '0.85rem', color: '#7a7a7a', lineHeight: '1.7', margin: '0.25rem 0 0' }}>
             Et venez lire nos autres articles, avec un petit café.{' '}
             <a
-              href="/blog/utilite-dalil-tounes-difference-cv-complet"
-              aria-label="Lire l'article : Pourquoi Dalil Tounes change la donne"
+              href="/blog/pourquoi-dalil-tounes-change-la-donne-pour-les-pros-et-les-clients"
+              aria-label="Lire l'article : Pourquoi Dalil Tounes change la donne pour les pros et les clients"
               style={{
                 display: 'inline-block',
                 textDecoration: 'none',
@@ -261,7 +261,9 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
         </div>
         {/* SEO – maillage interne footer :
             Ajouter dans le Footer un lien texte :
-            <a href="/blog/utilite-dalil-tounes-difference-cv-complet">Pourquoi Dalil Tounes change la donne</a>
+            <a href="/blog/pourquoi-dalil-tounes-change-la-donne-pour-les-pros-et-les-clients">
+              Pourquoi Dalil Tounes change la donne pour les pros et les clients
+            </a>
             pour renforcer l'autorité interne de cet article. */}
       </section>
 
