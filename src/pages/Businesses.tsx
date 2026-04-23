@@ -820,7 +820,7 @@ export const Businesses = ({
                   {t.businesses.categories.partners.description}
                 </p>
                 <button
-                  onClick={() => onNavigate && onNavigate('partnerSearch')}
+                  onClick={() => navigate('/partner-search')}
                   className="px-5 py-2 text-sm font-medium bg-white text-[#800020] rounded-lg hover:shadow-lg transition-all"
                   style={{ border: '1px solid #D4AF37' }}
                 >
@@ -846,7 +846,7 @@ export const Businesses = ({
                   {t.businesses.categories.events.description}
                 </p>
                 <button
-                  onClick={() => onNavigate && onNavigate('businessEvents')}
+                  onClick={() => navigate('/business-events')}
                   className="px-5 py-2 text-sm font-medium bg-white text-[#800020] rounded-lg hover:shadow-lg transition-all"
                   style={{ border: '1px solid #D4AF37' }}
                 >
