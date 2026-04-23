@@ -1,23 +1,18 @@
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
+import { useRef } from 'react';
 
 interface PageHeaderProps {
-  /** Surcharge le comportement retour (par défaut : history.back) */
   backTo?: string;
-  /** Surcharge le label retour (par défaut : "Retour") */
   backLabel?: string;
-  /** Masque le bouton retour (ex: page d'accueil) */
   hideBack?: boolean;
 }
 
-/**
- * Barre de navigation secondaire standardisée, placée sous le nav principal.
- * Flèche ← Retour à gauche, logo centré (lien vers /).
- * Style Bottega : minimaliste, typographie espacée, discret.
- */
 export const PageHeader = ({ backTo, backLabel = 'Retour', hideBack = false }: PageHeaderProps) => {
   const navigate = useNavigate();
   const location = useLocation();
+  // Track whether we navigated within the app to avoid empty-history back()
+  const canGoBack = useRef(window.history.state?.idx > 0);
 
   const isHome = location.pathname === '/';
   if (isHome) return null;
@@ -25,29 +20,34 @@ export const PageHeader = ({ backTo, backLabel = 'Retour', hideBack = false }: P
   const handleBack = () => {
     if (backTo) {
       navigate(backTo);
+    } else if (canGoBack.current) {
+      navigate(-1);
     } else {
-      window.history.back();
+      navigate('/');
     }
   };
 
   return (
     <div className="fixed top-16 left-0 right-0 z-40 w-full border-b border-gray-100 bg-white/80 backdrop-blur-md">
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-8 sm:h-10 flex items-center justify-between">
-        {/* Bouton retour — gauche */}
+
         {!hideBack ? (
           <button
             onClick={handleBack}
-            className="inline-flex items-center gap-2 text-gray-400 hover:text-gray-700 transition-colors duration-200 group"
-            aria-label={backLabel}
+            className="group inline-flex items-center gap-1.5 text-gray-400 hover:text-gray-800 transition-colors duration-200"
+            aria-label={`${backLabel} — page précédente`}
           >
-            <ArrowLeft className="w-3.5 h-3.5 transition-transform duration-200 group-hover:-translate-x-0.5" strokeWidth={1.5} />
+            <ArrowLeft
+              className="w-3.5 h-3.5 transition-transform duration-200 group-hover:-translate-x-1"
+              strokeWidth={2}
+            />
             <span className="text-xs font-light tracking-widest uppercase">{backLabel}</span>
           </button>
         ) : (
-          <div />
+          <div className="w-16" />
         )}
 
-        {/* Logo centré → accueil */}
+        {/* Logo centré — lien vers accueil */}
         <Link
           to="/"
           className="absolute left-1/2 -translate-x-1/2 flex items-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity duration-200"
@@ -63,7 +63,6 @@ export const PageHeader = ({ backTo, backLabel = 'Retour', hideBack = false }: P
           </span>
         </Link>
 
-        {/* Espace droit — symétrie */}
         <div className="w-16" />
       </div>
     </div>
