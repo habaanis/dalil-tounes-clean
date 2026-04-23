@@ -5,6 +5,7 @@ import { useTranslation } from '../lib/i18n';
 import { Menu, X, ChevronDown, ChevronRight } from 'lucide-react';
 import LanguageSelector from './LanguageSelector';
 import Footer from './Footer';
+import { SocialBar } from './SocialBar';
 import { WhatsAppSupport } from './WhatsAppSupport';
 
 interface NavItem {
@@ -380,6 +381,7 @@ export const Layout = ({ children }: LayoutProps) => {
 
       <main className="min-h-[calc(100vh-5rem)]">{children}</main>
 
+      <SocialBar />
       <Footer />
 
       <WhatsAppSupport phoneNumber="+21612345678" />
