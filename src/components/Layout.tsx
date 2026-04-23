@@ -114,7 +114,7 @@ export const Layout = ({ children }: LayoutProps) => {
 
   return (
     <div className={`min-h-screen bg-white ${isRTL ? 'rtl' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
-      <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
+      <nav className="bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Link to="/" className="flex items-center gap-2 cursor-pointer">
@@ -355,7 +355,7 @@ export const Layout = ({ children }: LayoutProps) => {
       <PageHeader />
 
       {location.pathname === '/' && (
-        <div className="bg-yellow-400 border-b border-yellow-500 sticky top-16 z-40">
+        <div className="bg-yellow-400 border-b border-yellow-500 fixed top-16 left-0 right-0 z-40">
           <div className="max-w-7xl mx-auto px-4 py-3">
             <div className="flex items-center justify-between gap-4">
               <div className="text-center flex-1">
@@ -382,7 +382,7 @@ export const Layout = ({ children }: LayoutProps) => {
         </div>
       )}
 
-      <main className="min-h-[calc(100vh-5rem)]">{children}</main>
+      <main className={`min-h-[calc(100vh-5rem)] ${location.pathname === '/' ? 'pt-[124px]' : 'pt-[96px] sm:pt-[104px]'}`}>{children}</main>
 
       <SocialBar />
       <Footer />

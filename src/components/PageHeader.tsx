@@ -31,7 +31,7 @@ export const PageHeader = ({ backTo, backLabel = 'Retour', hideBack = false }: P
   };
 
   return (
-    <div className="sticky top-16 z-40 w-full border-b border-gray-100 bg-white/80 backdrop-blur-md">
+    <div className="fixed top-16 left-0 right-0 z-40 w-full border-b border-gray-100 bg-white/80 backdrop-blur-md">
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-8 sm:h-10 flex items-center justify-between">
         {/* Bouton retour — gauche */}
         {!hideBack ? (
