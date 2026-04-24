@@ -15,7 +15,7 @@ interface LeisureCard {
 const leisureCards: LeisureCard[] = [
   {
     id: '1',
-    image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80&fm=webp',
     title: 'Saveurs & Traditions',
     location: 'Gastronomie',
     tab: 'evenements',
@@ -24,7 +24,7 @@ const leisureCards: LeisureCard[] = [
   },
   {
     id: '2',
-    image: 'https://images.unsplash.com/photo-1564399579883-451a5d44ec08?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1564399579883-451a5d44ec08?w=600&q=80&fm=webp',
     title: 'Musée & Patrimoine',
     location: 'Sites historiques',
     tab: 'evenements',
@@ -33,7 +33,7 @@ const leisureCards: LeisureCard[] = [
   },
   {
     id: '3',
-    image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=600&q=80&fm=webp',
     title: 'Escapades & Nature',
     location: 'Nature & Détente',
     tab: 'evenements',
@@ -42,7 +42,7 @@ const leisureCards: LeisureCard[] = [
   },
   {
     id: '4',
-    image: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=600&q=80&fm=webp',
     title: 'Festivals & artisanat',
     location: 'Événements culturels',
     tab: 'evenements',
@@ -51,7 +51,7 @@ const leisureCards: LeisureCard[] = [
   },
   {
     id: '5',
-    image: 'https://images.unsplash.com/photo-1517649763962-0c623066013b?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1517649763962-0c623066013b?w=600&q=80&fm=webp',
     title: 'Sport & Aventure',
     location: 'Activités sportives',
     tab: 'evenements',
@@ -92,6 +92,10 @@ export const LeisureEventsSection: React.FC = () => {
                       src={card.image}
                       alt={card.title}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      loading="lazy"
+                      decoding="async"
+                      width="400"
+                      height="300"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
                   </div>
