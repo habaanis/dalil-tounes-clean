@@ -96,15 +96,26 @@ const Footer: React.FC = () => {
             <p className="text-gray-500 text-xs leading-relaxed">
               {te.footer?.platformDescription || 'La plateforme de référence pour trouver tous les établissements et services en Tunisie.'}
             </p>
-            <div className="mt-5">
+            <div className="mt-5 flex flex-col gap-2.5">
               <a
                 href="https://www.facebook.com/daliltounes"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Suivez-nous sur Facebook"
                 className="inline-flex items-center gap-2 text-gray-400 hover:text-[#D4AF37] transition-colors text-xs"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
                 Facebook
+              </a>
+              <a
+                href="https://www.instagram.com/dalil.tounes/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Suivez-nous sur Instagram"
+                className="inline-flex items-center gap-2 text-gray-400 hover:text-[#D4AF37] transition-colors text-xs"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" fill="none" stroke="currentColor" strokeWidth="2"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
+                Instagram
               </a>
             </div>
           </div>
