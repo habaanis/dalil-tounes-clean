@@ -35,6 +35,7 @@ import {
 import { useCategoryTranslation } from '../hooks/useCategoryTranslation';
 import { getMultilingualField } from '../lib/databaseI18n';
 import { getLogoUrl, getLogoStyle, getLogoContainerStyle } from '../lib/logoUtils';
+import { HERO_IMAGE_URL } from '../constants/images';
 import GratuitCard from '../components/GratuitCard';
 
 function buildWhatsAppUrl(raw: string): string {
@@ -581,7 +582,7 @@ export const BusinessDetail = ({
           style={{ borderBottom: `1px solid ${colors.gold}20` }}
         >
           {/* Bandeau cover — masqué pour Gratuit */}
-          {tier !== 'gratuit' && business.image_url ? (
+          {tier !== 'gratuit' ? (
             <div
               style={{
                 position: 'relative',
@@ -593,7 +594,7 @@ export const BusinessDetail = ({
               }}
             >
               <img
-                src={business.image_url}
+                src={business.image_url || HERO_IMAGE_URL}
                 alt={(() => {
                   const ville = business.ville || '';
                   const cat = cleanAltText(business.sous_categories || '');
@@ -634,7 +635,7 @@ export const BusinessDetail = ({
             style={{
               ...getLogoContainerStyle(colors.gold, tier === 'gratuit' ? '3px' : '4px'),
               backgroundColor: colors.background,
-              marginTop: (tier !== 'gratuit' && business.image_url) ? '-64px' : '0',
+              marginTop: tier !== 'gratuit' ? '-64px' : '0',
               position: 'relative',
               zIndex: 2,
             }}
@@ -691,8 +692,8 @@ export const BusinessDetail = ({
             </button>
           )}
 
-          {/* Spacing si pas de bandeau ni bouton */}
-          {!business.image_url && <div style={{ marginBottom: '4px' }} />}
+          {/* Spacing quand pas de bouton photos */}
+          {tier !== 'gratuit' && !business.image_url && <div style={{ marginBottom: '4px' }} />}
         </div>
 
         {/* Lightbox photos — masquée pour Gratuit */}
