@@ -1,9 +1,10 @@
 import CountUp from 'react-countup';
-import { useHomeData } from '../hooks/useHomeData';
 import { Language } from '../lib/i18n';
 
 interface CompanyCountCardProps {
   language: Language;
+  totalCount: number;
+  loading: boolean;
 }
 
 const translations = {
@@ -34,8 +35,7 @@ const translations = {
   },
 };
 
-export default function CompanyCountCard({ language }: CompanyCountCardProps) {
-  const { totalCount, loading } = useHomeData();
+export default function CompanyCountCard({ language, totalCount, loading }: CompanyCountCardProps) {
 
   const t = translations[language];
   const isRTL = language === 'ar';

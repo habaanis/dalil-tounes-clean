@@ -12,6 +12,7 @@ import { getSupabaseImageUrl, getSupabaseImageUrlTransformed } from '../lib/imag
 import StructuredData from '../components/StructuredData';
 import { generateOrganizationSchema, generateWebSiteSchema } from '../lib/structuredDataSchemas';
 import React from 'react';
+import { useHomeData } from '../hooks/useHomeData';
 
 
 
@@ -26,6 +27,7 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
   const { language } = useLanguage();
   const t = useTranslation(language);
   const navigate = useNavigate();
+  const { partners, totalCount, loading } = useHomeData();
 
   // État pour capturer la valeur de recherche
   const [searchQuery, setSearchQuery] = React.useState('');
@@ -175,11 +177,11 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
 
       {/* 3. Compteur */}
       <section className="px-4 py-2">
-        <CompanyCountCard language={language} />
+        <CompanyCountCard language={language} totalCount={totalCount} loading={loading} />
       </section>
 
       {/* 5. Établissements à la Une */}
-      <PremiumPartnersSection onCardClick={(id) => handleNavigateToBusinessDetail(id)} />
+      <PremiumPartnersSection onCardClick={(id) => handleNavigateToBusinessDetail(id)} partners={partners} loading={loading} />
 
       {/* 5.5 Slogan Marketing */}
       <section className="py-8 px-4 bg-white">

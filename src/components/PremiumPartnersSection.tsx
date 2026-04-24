@@ -1,12 +1,13 @@
-import { useHomeData } from '../hooks/useHomeData';
+import { HomeBusinessRow } from '../hooks/useHomeData';
 import { BusinessCard } from './BusinessCard';
 
 interface PremiumPartnersSectionProps {
   onCardClick: (id: string) => void;
+  partners: HomeBusinessRow[];
+  loading: boolean;
 }
 
-export const PremiumPartnersSection = ({ onCardClick }: PremiumPartnersSectionProps) => {
-  const { partners, loading } = useHomeData();
+export const PremiumPartnersSection = ({ onCardClick, partners, loading }: PremiumPartnersSectionProps) => {
 
   return (
     <section className="py-6 px-4 bg-gradient-to-b from-white to-gray-50">
