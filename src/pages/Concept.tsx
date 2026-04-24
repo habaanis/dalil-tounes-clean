@@ -2,7 +2,6 @@ import { Building2, MapPin, Users, Crown, Sparkles, Award, Star } from 'lucide-r
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
 import { SEOHead } from '../components/SEOHead';
-import { SocialShareButtons } from '../components/SocialShareButtons';
 import { LazyImage } from '../components/LazyImage';
 import StructuredData from '../components/StructuredData';
 import { generateAboutPageSchema } from '../lib/structuredDataSchemas';
@@ -69,11 +68,7 @@ export default function Concept() {
         currentPath={currentPath}
       />
 
-      <SocialShareButtons
-        floating
-        title="Dalil Tounes - Notre Concept"
-        description="Regarde ce projet magnifique pour la Tunisie"
-      />
+      {/* Icônes sociales déplacées en bas de page */}
 
       <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-amber-900">
