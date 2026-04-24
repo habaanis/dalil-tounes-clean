@@ -116,7 +116,7 @@ export function generateOrganizationSchema(): OrganizationSchema {
     },
     sameAs: [
       'https://www.facebook.com/daliltounes',
-      'https://www.instagram.com/daliltounes',
+      'https://www.instagram.com/dalil.tounes/',
       'https://www.linkedin.com/company/daliltounes',
     ],
   };

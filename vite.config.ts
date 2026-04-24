@@ -28,15 +28,25 @@ export default defineConfig({
       output: {
         manualChunks: {
           'vendor-react': ['react', 'react-dom'],
+          'vendor-router': ['react-router-dom'],
           'vendor-supabase': ['@supabase/supabase-js'],
           'vendor-map': ['leaflet', 'react-leaflet'],
-          'vendor-ui': ['framer-motion', 'lucide-react'],
+          'vendor-motion': ['framer-motion'],
+          'vendor-icons': ['lucide-react'],
         },
+        // Immutable asset filenames for long-term caching
+        assetFileNames: 'assets/[name]-[hash][extname]',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
       },
     },
     chunkSizeWarningLimit: 1000,
     sourcemap: false,
     minify: 'esbuild',
     target: 'esnext',
+    // Remove console.log in production
+    esbuildOptions: {
+      drop: ['console', 'debugger'],
+    },
   },
 });

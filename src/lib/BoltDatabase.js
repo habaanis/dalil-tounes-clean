@@ -98,7 +98,7 @@ export async function searchEducation({ keyword = '', city = '', quick = null, p
     if (keyword)
       query = query.or(`nom.ilike.%${keyword}%,description.ilike.%${keyword}%,ville.ilike.%${keyword}%`);
     if (city)
-      query = query.ilike('ville', `%${city}%`);
+      query = query.ilike('ville', `*${city}*`);
     if (quick === 'languages')
       query = query.contains('sous_categories', ['langue']);
 
@@ -122,7 +122,7 @@ export async function searchTeachers({ keyword = '', city = '' }) {
     if (keyword)
       query = query.or(`nom.ilike.%${keyword}%,matiere.ilike.%${keyword}%,description.ilike.%${keyword}%`);
     if (city)
-      query = query.ilike('ville', `%${city}%`);
+      query = query.ilike('ville', `*${city}*`);
 
     const { data, error } = await query.limit(30);
     if (error) throw error;
@@ -216,7 +216,7 @@ export async function searchEtablissements({ keyword = '', city = '', category =
 
     // Filtrage par ville
     if (city && city.trim()) {
-      query = query.ilike('ville', `%${city.trim()}%`);
+      query = query.ilike('ville', `*${city.trim()}*`);
     }
 
     // Recherche par mot-clé (large)
@@ -256,7 +256,7 @@ export async function searchHealthEstablishments({ keyword = '', city = '', type
     }
 
     if (city.trim()) {
-      query = query.ilike('ville', `%${city.trim()}%`);
+      query = query.ilike('ville', `*${city.trim()}*`);
     }
 
     if (type) {
@@ -434,7 +434,7 @@ export async function searchCities(searchTerm) {
             name_fr
           )
         `)
-        .or(`name_fr.ilike.%${searchTerm}%,name_ar.ilike.%${searchTerm}%`)
+        .or(`name_fr.ilike.%${searchTerm}%,name_ar.ilike.%${searchTerm}%`) // % correct dans .or() PostgREST
         .order('name_fr', { ascending: true })
         .limit(10);
 
@@ -498,7 +498,7 @@ export async function searchMedicalTransportProviders(opts) {
 
     // Filtrer par ville
     if (city.trim()) {
-      query = query.ilike('ville', `%${city.trim()}%`);
+      query = query.ilike('ville', `*${city.trim()}*`);
     }
 
     const { data, error } = await query.limit(limit);
