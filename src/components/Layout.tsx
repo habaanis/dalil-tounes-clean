@@ -119,12 +119,18 @@ export const Layout = ({ children }: LayoutProps) => {
           <div className="flex justify-between items-center h-16">
             <Link to="/" className="flex items-center gap-2 cursor-pointer">
               <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center shadow-sm">
-                <img
-                  src="/images/logo_dalil_tounes_sceau_luxe.png"
-                  alt="Logo Dalil Tounes - Annuaire des établissements en Tunisie"
-                  className="w-full h-full object-cover"
-                  style={{ objectPosition: 'center', borderRadius: '50%' }}
-                />
+                <picture>
+                  <source srcSet="/images/logo_dalil_tounes_sceau_luxe.webp" type="image/webp" width="140" height="140" />
+                  <img
+                    src="/images/logo_dalil_tounes_sceau_luxe.png"
+                    alt="Logo Dalil Tounes - Annuaire des établissements en Tunisie"
+                    className="w-full h-full object-cover"
+                    style={{ objectPosition: 'center', borderRadius: '50%' }}
+                    width="140"
+                    height="140"
+                    fetchPriority="high"
+                  />
+                </picture>
               </div>
               <h1 className="text-lg font-semibold text-gray-900">
                 Dalil Tounes

@@ -654,7 +654,7 @@ export const BusinessDetail = ({
               loading="lazy"
               onError={(e) => {
                 const img = e.target as HTMLImageElement;
-                img.src = 'https://ik.imagekit.io/gfdpqvshw/Design_Assets_Dalil_Tounes/logos/logo_dalil_tounes_sceau_luxe.png?updatedAt=1773327267816';
+                img.src = 'https://ik.imagekit.io/gfdpqvshw/Design_Assets_Dalil_Tounes/logos/logo_dalil_tounes_sceau_luxe.png?updatedAt=1773327267816&tr=w-140,h-140,f-auto,q-85';
               }}
             />
           </div>

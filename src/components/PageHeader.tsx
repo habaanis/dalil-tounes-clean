@@ -53,11 +53,17 @@ export const PageHeader = ({ backTo, backLabel = 'Retour', hideBack = false }: P
           className="absolute left-1/2 -translate-x-1/2 flex items-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity duration-200"
           aria-label="Dalil Tounes — Accueil"
         >
-          <img
-            src="/images/logo_dalil_tounes_sceau_luxe.png"
-            alt="Logo Dalil Tounes - Guide digital des services en Tunisie"
-            className="w-5 h-5 rounded-full object-cover"
-          />
+          <picture>
+            <source srcSet="/images/logo_dalil_tounes_sceau_luxe.webp" type="image/webp" width="140" height="140" />
+            <img
+              src="/images/logo_dalil_tounes_sceau_luxe.png"
+              alt="Logo Dalil Tounes - Guide digital des services en Tunisie"
+              className="w-5 h-5 rounded-full object-cover"
+              width="140"
+              height="140"
+              loading="lazy"
+            />
+          </picture>
           <span className="text-xs font-light tracking-widest uppercase text-gray-600 hidden sm:inline">
             Dalil Tounes
           </span>

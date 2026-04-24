@@ -2,10 +2,13 @@
  * Utilitaires pour la gestion du logo par défaut Dalil Tounes
  */
 
-// Logo par défaut - Sceau Luxe Dalil Tounes
-export const DEFAULT_LOGO_URL = 'https://ik.imagekit.io/gfdpqvshw/Design_Assets_Dalil_Tounes/logos/logo_dalil_tounes_sceau_luxe.png?updatedAt=1773327267816';
+// Logo par défaut — ImageKit avec WebP auto + redimensionnement 140px
+export const DEFAULT_LOGO_URL = 'https://ik.imagekit.io/gfdpqvshw/Design_Assets_Dalil_Tounes/logos/logo_dalil_tounes_sceau_luxe.png?updatedAt=1773327267816&tr=w-140,h-140,f-auto,q-85';
 
-// Version locale de secours (fallback)
+// Version locale WebP optimisée (140×140, Retina-ready)
+export const DEFAULT_LOGO_WEBP = '/images/logo_dalil_tounes_sceau_luxe.webp';
+
+// Version locale PNG — fallback navigateurs sans support WebP
 export const DEFAULT_LOGO_LOCAL = '/images/logo_dalil_tounes_sceau_luxe.png';
 
 /**
