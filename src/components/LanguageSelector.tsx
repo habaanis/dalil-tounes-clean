@@ -35,7 +35,7 @@ const LanguageSelector = () => {
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 px-2.5 py-1.5 rounded-md hover:bg-gray-50 transition-all duration-200 border border-gray-200"
         aria-label="Select language"
-        style={{ fontFamily: "'Inter', sans-serif" }}
+        style={{ fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" }}
       >
         <FlagIcon code={currentLang.code} size="sm" />
         <span className="text-sm font-medium text-gray-700 tracking-wide">{currentLang.label}</span>
@@ -55,7 +55,7 @@ const LanguageSelector = () => {
                 w-full flex items-center gap-2.5 px-3 py-2 hover:bg-gray-50 transition-all duration-150
                 ${language === lang.code ? 'bg-orange-50' : ''}
               `}
-              style={{ fontFamily: "'Inter', sans-serif" }}
+              style={{ fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" }}
             >
               <FlagIcon code={lang.code} size="sm" />
               <span className={`text-sm font-medium tracking-wide ${language === lang.code ? 'text-orange-600' : 'text-gray-700'}`}>
