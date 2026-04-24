@@ -74,7 +74,7 @@ export default function Concept() {
         <div className="absolute inset-0 bg-amber-900">
           <LazyImage
             src="/images/cat_magasin.jpg.jpg"
-            alt="Artisan tourneur sur bois tunisien dans son atelier"
+            alt="Artisans tunisiens - Savoir-faire local et commerce de proximité en Tunisie - Dalil Tounes"
             className="w-full h-full object-cover"
             style={{
               filter: 'brightness(0.7)',
@@ -125,7 +125,7 @@ export default function Concept() {
                 <div className="relative h-48 overflow-hidden">
                   <LazyImage
                     src={pillar.image}
-                    alt={t[pillar.titleKey as keyof typeof t] as string}
+                    alt={`${t.concept.pillars[pillar.titleKey.split('.')[2] as 'artisans' | 'businesses' | 'tourism' | 'citizens'].title} - ${t.concept.pillars[pillar.titleKey.split('.')[2] as 'artisans' | 'businesses' | 'tourism' | 'citizens'].subtitle} - Dalil Tounes Tunisie`}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
                   <div className={`absolute inset-0 bg-gradient-to-t ${pillar.color} opacity-60`}></div>
@@ -191,7 +191,7 @@ export default function Concept() {
           <div className="absolute inset-0 opacity-30">
             <LazyImage
               src="/images/entreprise_banner.webp"
-              alt="Elite business professionals background"
+              alt="Établissements premium Tunisie - Rejoignez l'élite des professionnels référencés sur Dalil Tounes"
               className="w-full h-full object-cover"
               fallbackSrc="https://images.pexels.com/photos/208736/pexels-photo-208736.jpeg?auto=compress&cs=tinysrgb&w=1920"
             />

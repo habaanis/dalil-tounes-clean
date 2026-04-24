@@ -419,7 +419,7 @@ export default function Citizens({ onNavigate }: CitizensProps = {}) {
           <div className="absolute inset-0 z-0">
             <img
               src={getSupabaseImageUrl('drapeau-tunisie.jpg')}
-              alt="Drapeau Tunisie"
+              alt="Drapeau de la Tunisie - Services citoyens et établissements tunisiens sur Dalil Tounes"
               className="w-full h-full object-cover blur-sm opacity-50"
               loading="lazy"
             />
@@ -429,7 +429,7 @@ export default function Citizens({ onNavigate }: CitizensProps = {}) {
           <div className="relative z-10 flex items-center justify-center gap-6 py-8 px-4">
             <img
               src={getSupabaseImageUrl('ibn-khaldoun.jpg')}
-              alt="Ibn Khaldoun"
+              alt="Ibn Khaldoun - Historien et penseur tunisien, symbole du savoir en Tunisie"
               className="w-20 h-20 md:w-28 md:h-28 object-cover rounded-full shadow-xl hidden sm:block"
               loading="lazy"
             />
@@ -446,7 +446,7 @@ export default function Citizens({ onNavigate }: CitizensProps = {}) {
             </div>
             <img
               src={getSupabaseImageUrl('habib.jpg')}
-              alt="Habib Bourguiba"
+              alt="Habib Bourguiba - Père de la nation tunisienne, fondateur de la République de Tunisie"
               className="w-20 h-20 md:w-28 md:h-28 object-cover rounded-full shadow-xl hidden sm:block"
               loading="lazy"
             />

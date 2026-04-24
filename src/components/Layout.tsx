@@ -121,7 +121,7 @@ export const Layout = ({ children }: LayoutProps) => {
               <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center shadow-sm">
                 <img
                   src="/images/logo_dalil_tounes_sceau_luxe.png"
-                  alt="Dalil Tounes"
+                  alt="Logo Dalil Tounes - Annuaire des établissements en Tunisie"
                   className="w-full h-full object-cover"
                   style={{ objectPosition: 'center', borderRadius: '50%' }}
                 />

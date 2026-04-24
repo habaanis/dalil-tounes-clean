@@ -55,7 +55,7 @@ export const PageHeader = ({ backTo, backLabel = 'Retour', hideBack = false }: P
         >
           <img
             src="/images/logo_dalil_tounes_sceau_luxe.png"
-            alt="Dalil Tounes"
+            alt="Logo Dalil Tounes - Guide digital des services en Tunisie"
             className="w-5 h-5 rounded-full object-cover"
           />
           <span className="text-xs font-light tracking-widest uppercase text-gray-600 hidden sm:inline">

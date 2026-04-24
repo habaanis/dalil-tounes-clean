@@ -70,7 +70,7 @@ const SeoBusinessCard: React.FC<SeoBusinessCardProps> = ({ business }) => {
             <div className="w-16 h-16 shadow-xl" style={getLogoContainerStyle('#D4AF37', '3px')}>
               <img
                 src={getLogoUrl(business.logo_url)}
-                alt={`${business.nom}${locationLabel ? ` à ${locationLabel}` : ''}`}
+                alt={`Logo ${business.nom}${locationLabel ? ` à ${locationLabel}` : ''} - Établissement Tunisie - Dalil Tounes`}
                 className="w-full h-full"
                 style={getLogoStyle(business.logo_url)}
                 loading="lazy"

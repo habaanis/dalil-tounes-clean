@@ -102,7 +102,7 @@ function BusinessCard({
         {imgSrc ? (
           <img
             src={imgSrc}
-            alt={item.nom}
+            alt={`${item.nom}${item.ville ? ` à ${item.ville}` : ''} - Meilleur établissement Tunisie - Dalil Tounes`}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-400"
             onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
           />

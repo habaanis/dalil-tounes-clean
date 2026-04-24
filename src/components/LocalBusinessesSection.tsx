@@ -107,14 +107,14 @@ export const LocalBusinessesSection = ({ onCardClick }: LocalBusinessesSectionPr
                           firstImageUrl.startsWith('http') ? (
                             <img
                               src={firstImageUrl}
-                              alt={business.nom}
+                              alt={`${business.nom}${business.ville ? ` à ${business.ville}` : ''} - Commerce local en Tunisie - Dalil Tounes`}
                               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                               loading="lazy"
                             />
                           ) : (
                             <SafeImage
                               src={firstImageUrl}
-                              alt={business.nom}
+                              alt={`${business.nom}${business.ville ? ` à ${business.ville}` : ''} - Commerce local en Tunisie - Dalil Tounes`}
                               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                               fallbackType="icon"
                             />
@@ -130,7 +130,7 @@ export const LocalBusinessesSection = ({ onCardClick }: LocalBusinessesSectionPr
                           <div className="absolute top-2 right-2 w-10 h-10 rounded-full shadow-md overflow-hidden">
                             <SafeImage
                               src={business.logo_url}
-                              alt={`${business.nom} logo`}
+                              alt={`Logo ${business.nom}${business.ville ? ` - ${business.ville}` : ''} - Annuaire Tunisie Dalil Tounes`}
                               className="w-full h-full"
                               style={{
                                 objectFit: 'cover',

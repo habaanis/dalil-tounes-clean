@@ -638,7 +638,7 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
         <div className="absolute inset-0">
           <img
             src="https://kmvjegbtroksjqaqliyv.supabase.co/storage/v1/object/public/photos-dalil/drapeau-tunisie.jpg"
-            alt="Drapeau de la Tunisie"
+            alt="Drapeau de la Tunisie - Loisirs et événements culturels tunisiens sur Dalil Tounes"
             className="w-full h-full object-cover brightness-105"
           />
           {/* Overlay bleu profond pour lisibilité */}
@@ -653,7 +653,7 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
               <div className="absolute inset-0 bg-[#D4AF37] blur-2xl opacity-30 rounded-full"></div>
               <img
                 src={getSupabaseImageUrl('logo-chechia-dore.png')}
-                alt="Chéchia Tunisienne"
+                alt="Chéchia dorée tunisienne - Symbole du patrimoine artisanal de Tunisie"
                 className="relative w-12 h-12 object-contain drop-shadow-2xl"
                 onError={(e) => {
                   e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ccircle cx="50" cy="50" r="45" fill="%23D4AF37"/%3E%3Ctext x="50" y="60" text-anchor="middle" fill="%23fff" font-size="40" font-family="serif"%3E✺%3C/text%3E%3C/svg%3E';

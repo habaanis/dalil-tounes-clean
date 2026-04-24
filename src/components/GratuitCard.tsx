@@ -49,7 +49,7 @@ export default function GratuitCard({
         <div className="w-12 h-12" style={getLogoContainerStyle('#D4AF37', '2px')}>
           <img
             src={getLogoUrl(logoUrl)}
-            alt={`${name}${locationLabel ? ` à ${locationLabel}` : ''}`}
+            alt={`Logo ${name}${locationLabel ? ` à ${locationLabel}` : ''} - Annuaire établissements Tunisie`}
             className="w-full h-full"
             style={getLogoStyle(logoUrl)}
           />
