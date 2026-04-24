@@ -7,6 +7,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { Language, translations as i18nTranslations } from '../lib/i18n';
 import SearchBar from '../components/SearchBar';
 import { getSupabaseImageUrl } from '../lib/imageUtils';
+import { HERO_IMAGE_URL, HERO_IMAGE_JPG_URL } from '../constants/images';
 import EventCard from '../components/EventCard';
 import LeisureEventProposalForm from '../components/LeisureEventProposalForm';
 import { LOISIRS_CATEGORIES_KEYS } from '../lib/loisirCategories';
@@ -637,9 +638,9 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
         {/* Image de fond - Drapeau Tunisien */}
         <div className="absolute inset-0">
           <picture>
-            <source src="https://kmvjegbtroksjqaqliyv.supabase.co/storage/v1/object/public/photos-dalil/drapeau-tunisie.webp?v=1" type="image/webp" />
+            <source src={HERO_IMAGE_URL} type="image/webp" />
             <img
-              src="https://kmvjegbtroksjqaqliyv.supabase.co/storage/v1/object/public/photos-dalil/drapeau-tunisie.jpg"
+              src={HERO_IMAGE_JPG_URL}
               alt="Drapeau de la Tunisie - Loisirs et événements culturels tunisiens sur Dalil Tounes"
               className="w-full h-full object-cover brightness-105"
             />

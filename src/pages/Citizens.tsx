@@ -17,6 +17,7 @@ import { Tables } from '../lib/dbTables';
 import BannerAdsCarousel from '../components/BannerAdsCarousel';
 import { RegistrationForm } from '../components/RegistrationForm';
 import { getSupabaseImageUrl } from '../lib/imageUtils';
+import { HERO_IMAGE_URL, HERO_IMAGE_JPG_URL } from '../constants/images';
 import StructuredData from '../components/StructuredData';
 import { generateCollectionPageSchema } from '../lib/structuredDataSchemas';
 
@@ -418,9 +419,9 @@ export default function Citizens({ onNavigate }: CitizensProps = {}) {
           {/* Drapeau tunisien en arrière-plan */}
           <div className="absolute inset-0 z-0">
             <picture>
-              <source srcSet={getSupabaseImageUrl('drapeau-tunisie.webp')} type="image/webp" />
+              <source srcSet={HERO_IMAGE_URL} type="image/webp" />
               <img
-                src={getSupabaseImageUrl('drapeau-tunisie.jpg')}
+                src={HERO_IMAGE_JPG_URL}
                 alt="Drapeau de la Tunisie - Services citoyens et établissements tunisiens sur Dalil Tounes"
                 className="w-full h-full object-cover blur-sm opacity-50"
                 loading="lazy"

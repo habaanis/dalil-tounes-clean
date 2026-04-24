@@ -15,6 +15,7 @@ import { FINANCE_SUBCATEGORIES } from '../lib/entrepriseCategories';
 import { Search, MapPin, Phone, Mail, Globe, Building2, X, Plus, ChevronDown, Star, Award, Briefcase } from 'lucide-react';
 import { Toast } from '../components/Toast';
 import { getSupabaseImageUrl } from '../lib/imageUtils';
+import { HERO_IMAGE_URL, HERO_IMAGE_JPG_URL } from '../constants/images';
 import { RegistrationForm } from '../components/RegistrationForm';
 import SignatureCard from '../components/SignatureCard';
 import { normalizeText } from '../lib/textNormalization';
@@ -771,9 +772,9 @@ export const Businesses = ({
           {/* Image de fond drapeau tunisien avec taille réduite */}
           <div className="relative h-64 md:h-72 overflow-hidden">
             <picture>
-              <source src="https://kmvjegbtroksjqaqliyv.supabase.co/storage/v1/object/public/photos-dalil/drapeau-tunisie.webp?v=1" type="image/webp" />
+              <source src={HERO_IMAGE_URL} type="image/webp" />
               <img
-                src="https://kmvjegbtroksjqaqliyv.supabase.co/storage/v1/object/public/photos-dalil/drapeau-tunisie.jpg"
+                src={HERO_IMAGE_JPG_URL}
                 alt="Drapeau de la Tunisie"
                 className="w-full h-full object-cover brightness-105"
               />

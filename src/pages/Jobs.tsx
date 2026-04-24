@@ -8,7 +8,7 @@ import { X, Plus, ArrowLeft } from 'lucide-react';
 import SimpleJobCard from '../components/SimpleJobCard';
 import JobDetail from './JobDetail';
 import SearchBar from '../components/SearchBar';
-import { getSupabaseImageUrl } from '../lib/imageUtils';
+import { HERO_IMAGE_URL, HERO_IMAGE_JPG_URL } from '../constants/images';
 import StructuredData from '../components/StructuredData';
 import { generateCollectionPageSchema } from '../lib/structuredDataSchemas';
 import JobPostForm from '../components/forms/JobPostForm';
@@ -139,9 +139,9 @@ export const Jobs = () => {
       >
         {/* Image du drapeau tunisien en arrière-plan */}
         <picture>
-          <source srcSet={getSupabaseImageUrl('drapeau-tunisie.webp')} type="image/webp" />
+          <source srcSet={HERO_IMAGE_URL} type="image/webp" />
           <img
-            src={getSupabaseImageUrl('drapeau-tunisie.jpg')}
+            src={HERO_IMAGE_JPG_URL}
             alt="Drapeau de la Tunisie"
             className="absolute inset-0 w-full h-full object-cover brightness-105"
           />

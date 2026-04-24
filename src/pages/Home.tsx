@@ -8,7 +8,8 @@ import SearchBar from '../components/SearchBar';
 import { isSearchBarAllowed } from '../config/searchBars';
 import HomeFeedbackWidget from '../components/HomeFeedbackWidget';
 import LeisureEventsSection from '../components/LeisureEventsSection';
-import { getSupabaseImageUrl, getSupabaseImageUrlTransformed } from '../lib/imageUtils';
+import { getSupabaseImageUrlTransformed } from '../lib/imageUtils';
+import { HERO_IMAGE_URL } from '../constants/images';
 import StructuredData from '../components/StructuredData';
 import { generateOrganizationSchema, generateWebSiteSchema } from '../lib/structuredDataSchemas';
 import React from 'react';
@@ -74,7 +75,7 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
         <div className="max-w-6xl mx-auto">
           <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-[#D4AF37] text-center">
             <img
-              src="https://kmvjegbtroksjqaqliyv.supabase.co/storage/v1/object/public/photos-dalil/drapeau-tunisie.webp?v=1"
+              src={HERO_IMAGE_URL}
               alt="Drapeau de la Tunisie"
               className="absolute inset-0 w-full h-full object-cover brightness-105"
               width="1200"

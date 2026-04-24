@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation, Language } from '../lib/i18n';
 import { getSupabaseImageUrl } from '../lib/imageUtils';
+import { HERO_IMAGE_URL, HERO_IMAGE_JPG_URL } from '../constants/images';
 
 interface WelcomeModalProps {
   isOpen: boolean;
@@ -71,7 +72,7 @@ export const WelcomeModal = ({ isOpen, onClose, onNavigate }: WelcomeModalProps)
             <div
               className="absolute inset-0 scale-125 translate-x-10 translate-y-10 bg-no-repeat bg-center opacity-100 mix-blend-soft-light pointer-events-none"
               style={{
-                backgroundImage: `image-set(url(${getSupabaseImageUrl('drapeau-tunisie.webp')}) type("image/webp"), url(${getSupabaseImageUrl('drapeau-tunisie.jpg')}) type("image/jpeg"))`,
+                backgroundImage: `image-set(url(${HERO_IMAGE_URL}) type("image/webp"), url(${HERO_IMAGE_JPG_URL}) type("image/jpeg"))`,
                 backgroundSize: 'contain'
               }}
             ></div>
