@@ -8,6 +8,7 @@ import Footer from './Footer';
 import { SocialBar } from './SocialBar';
 import { PageHeader } from './PageHeader';
 import { WhatsAppSupport } from './WhatsAppSupport';
+import { prefetchHomeData } from '../lib/homeDataPrefetch';
 
 interface NavItem {
   label: string;
@@ -95,6 +96,12 @@ export const Layout = ({ children }: LayoutProps) => {
     navigate('/subscription');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  // Prefetch des données home dès le montage du Layout — avant que Home soit rendu.
+  // Ne fait rien si le cache localStorage est encore frais (< 5 min).
+  useEffect(() => {
+    prefetchHomeData().catch(() => {/* silencieux — useHomeData gère le fallback */});
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
