@@ -190,6 +190,31 @@ export function getDefaultImagePath(): string {
 }
 
 /**
+ * Construit une URL Supabase Storage avec paramètres de transformation d'image.
+ * Supabase supporte width, height, quality, format (webp/origin) et resize.
+ *
+ * @param filename - Nom du fichier dans le bucket
+ * @param opts.width  - Largeur max en pixels
+ * @param opts.quality - Qualité (1-100, défaut 80)
+ * @param opts.format - 'webp' | 'origin' (défaut 'webp')
+ */
+export function getSupabaseImageUrlTransformed(
+  filename: string | null | undefined,
+  opts: { width?: number; quality?: number; format?: 'webp' | 'origin' } = {}
+): string {
+  const base = getSupabaseImageUrl(filename);
+  if (base === DEFAULT_IMAGE_PATH) return base;
+
+  const params = new URLSearchParams();
+  if (opts.width) params.set('width', String(opts.width));
+  if (opts.quality) params.set('quality', String(opts.quality));
+  params.set('format', opts.format ?? 'webp');
+
+  const separator = base.includes('?') ? '&' : '?';
+  return `${base}${separator}${params.toString()}`;
+}
+
+/**
  * Convertit un ancien chemin d'image local (/images/xxx.jpg) en URL Supabase Storage
  * Utilisé pour les images de structure (catégories, hero, backgrounds)
  *

@@ -25,8 +25,11 @@ export const ImageKitTransforms = {
   // Featured sections — WebP auto, max 600px
   FEATURED_IMAGE: 'tr=w-600,h-400,fo-auto,q-85,f-auto',
 
-  // Hero/bannière pleine largeur — WebP auto, max 1200px
+  // Hero desktop — WebP auto, max 1200px
   HERO_IMAGE: 'tr=w-1200,h-630,fo-auto,q-85,f-auto',
+
+  // Hero mobile — WebP auto, max 800px
+  HERO_IMAGE_MOBILE: 'tr=w-800,h-420,fo-auto,q-82,f-auto',
 };
 
 /**

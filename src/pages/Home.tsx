@@ -8,7 +8,7 @@ import SearchBar from '../components/SearchBar';
 import { isSearchBarAllowed } from '../config/searchBars';
 import HomeFeedbackWidget from '../components/HomeFeedbackWidget';
 import LeisureEventsSection from '../components/LeisureEventsSection';
-import { getSupabaseImageUrl } from '../lib/imageUtils';
+import { getSupabaseImageUrl, getSupabaseImageUrlTransformed } from '../lib/imageUtils';
 import StructuredData from '../components/StructuredData';
 import { generateOrganizationSchema, generateWebSiteSchema } from '../lib/structuredDataSchemas';
 import React from 'react';
@@ -71,15 +71,33 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
       <section className="py-4 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-[#D4AF37] text-center">
-            <img
-              src={getSupabaseImageUrl('drapeau-tunisie.jpg')}
-              alt="Drapeau de la Tunisie"
-              className="absolute inset-0 w-full h-full object-cover brightness-105"
-              width="1200"
-              height="630"
-              fetchPriority="high"
-              decoding="async"
-            />
+            <picture>
+              {/* Mobile : 800px max, WebP */}
+              <source
+                media="(max-width: 768px)"
+                srcSet={getSupabaseImageUrlTransformed('drapeau-tunisie.jpg', { width: 800, quality: 82 })}
+                type="image/webp"
+                width="800"
+                height="420"
+              />
+              {/* Desktop : 1200px max, WebP */}
+              <source
+                srcSet={getSupabaseImageUrlTransformed('drapeau-tunisie.jpg', { width: 1200, quality: 85 })}
+                type="image/webp"
+                width="1200"
+                height="630"
+              />
+              <img
+                src={getSupabaseImageUrl('drapeau-tunisie.jpg')}
+                alt="Drapeau de la Tunisie"
+                className="absolute inset-0 w-full h-full object-cover brightness-105"
+                width="1200"
+                height="630"
+                fetchPriority="high"
+                loading="eager"
+                decoding="async"
+              />
+            </picture>
             <div className="absolute inset-0 bg-black/30"></div>
 
             <div className="relative z-10">

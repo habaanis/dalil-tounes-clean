@@ -39,11 +39,13 @@
     <link rel="preconnect" href="https://ik.imagekit.io" crossorigin />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- Preload LCP hero image (drapeau-tunisie.jpg) -->
+    <!-- Preload LCP hero image — mobile 800px / desktop 1200px, WebP -->
     <link
       rel="preload"
       as="image"
-      href="https://kmvjegbtroksjqaqliyv.supabase.co/storage/v1/object/public/photos-dalil/drapeau-tunisie.jpg"
+      href="https://kmvjegbtroksjqaqliyv.supabase.co/storage/v1/object/public/photos-dalil/drapeau-tunisie.jpg?width=1200&quality=85&format=webp"
+      imagesrcset="https://kmvjegbtroksjqaqliyv.supabase.co/storage/v1/object/public/photos-dalil/drapeau-tunisie.jpg?width=800&quality=82&format=webp 800w, https://kmvjegbtroksjqaqliyv.supabase.co/storage/v1/object/public/photos-dalil/drapeau-tunisie.jpg?width=1200&quality=85&format=webp 1200w"
+      imagesizes="(max-width: 768px) 800px, 1200px"
       fetchpriority="high"
     />
     <!-- font-display:swap is set via &display=swap for no render-blocking -->
