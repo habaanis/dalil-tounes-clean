@@ -772,11 +772,12 @@ export const Businesses = ({
           {/* Image de fond drapeau tunisien avec taille réduite */}
           <div className="relative h-64 md:h-72 overflow-hidden">
             <picture>
-              <source src={HERO_IMAGE_URL} type="image/webp" />
+              <source srcSet={HERO_IMAGE_URL} type="image/webp" />
               <img
                 src={HERO_IMAGE_JPG_URL}
                 alt="Drapeau de la Tunisie"
                 className="w-full h-full object-cover brightness-105"
+                onError={(e) => { (e.currentTarget as HTMLImageElement).src = HERO_IMAGE_JPG_URL; }}
               />
             </picture>
             {/* Overlay bleu profond pour lisibilité */}
