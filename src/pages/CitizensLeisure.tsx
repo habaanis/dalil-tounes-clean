@@ -637,7 +637,7 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
         {/* Image de fond - Drapeau Tunisien */}
         <div className="absolute inset-0">
           <picture>
-            <source src="https://kmvjegbtroksjqaqliyv.supabase.co/storage/v1/object/public/photos-dalil/drapeau-tunisie.webp" type="image/webp" />
+            <source src="https://kmvjegbtroksjqaqliyv.supabase.co/storage/v1/object/public/photos-dalil/drapeau-tunisie.webp?v=1" type="image/webp" />
             <img
               src="https://kmvjegbtroksjqaqliyv.supabase.co/storage/v1/object/public/photos-dalil/drapeau-tunisie.jpg"
               alt="Drapeau de la Tunisie - Loisirs et événements culturels tunisiens sur Dalil Tounes"

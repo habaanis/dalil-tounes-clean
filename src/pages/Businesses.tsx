@@ -771,7 +771,7 @@ export const Businesses = ({
           {/* Image de fond drapeau tunisien avec taille réduite */}
           <div className="relative h-64 md:h-72 overflow-hidden">
             <picture>
-              <source src="https://kmvjegbtroksjqaqliyv.supabase.co/storage/v1/object/public/photos-dalil/drapeau-tunisie.webp" type="image/webp" />
+              <source src="https://kmvjegbtroksjqaqliyv.supabase.co/storage/v1/object/public/photos-dalil/drapeau-tunisie.webp?v=1" type="image/webp" />
               <img
                 src="https://kmvjegbtroksjqaqliyv.supabase.co/storage/v1/object/public/photos-dalil/drapeau-tunisie.jpg"
                 alt="Drapeau de la Tunisie"
