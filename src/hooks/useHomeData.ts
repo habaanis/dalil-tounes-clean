@@ -25,7 +25,7 @@ interface HomeData {
 
 const FIELDS = `id, nom, ville, gouvernorat, sous_categories, "statut Abonnement", "niveau priorité abonnement", image_url, logo_url, horaires_ok, telephone, is_featured`;
 const CACHE_KEY = 'home_data_v1';
-const STALE_TIME = 60_000; // 1 minute
+const STALE_TIME = 5 * 60_000; // 5 minutes
 
 interface CacheEntry {
   partners: HomeBusinessRow[];
@@ -49,12 +49,11 @@ function writeLocalCache(entry: Omit<CacheEntry, 'ts'>): void {
   try {
     localStorage.setItem(CACHE_KEY, JSON.stringify({ ...entry, ts: Date.now() }));
   } catch {
-    // localStorage peut être indisponible (mode privé, quota dépassé)
+    // localStorage indisponible (mode privé, quota)
   }
 }
 
 async function fetchHomeData(): Promise<{ partners: HomeBusinessRow[]; totalCount: number }> {
-  // Les deux requêtes partent en parallèle
   const [listRes, countRes] = await Promise.all([
     supabase
       .from('entreprise')
@@ -83,36 +82,38 @@ async function fetchHomeData(): Promise<{ partners: HomeBusinessRow[]; totalCoun
 }
 
 export function useHomeData(): HomeData {
-  const cached = readLocalCache();
-
-  const [partners, setPartners] = useState<HomeBusinessRow[]>(cached?.partners ?? []);
-  const [totalCount, setTotalCount] = useState(cached?.totalCount ?? 0);
-  // Si on a un cache valide, pas de spinner — on affiche directement
-  const [loading, setLoading] = useState(cached === null);
+  // Lire le cache une seule fois au montage pour initialiser l'état synchrone
+  const [state, setState] = useState<{ partners: HomeBusinessRow[]; totalCount: number; loading: boolean }>(() => {
+    const cached = readLocalCache();
+    return {
+      partners: cached?.partners ?? [],
+      totalCount: cached?.totalCount ?? 0,
+      // Cache valide → pas de spinner, le contenu s'affiche immédiatement
+      loading: cached === null,
+    };
+  });
 
   useEffect(() => {
-    // Cache encore frais : pas besoin de refetch
-    if (cached !== null) return;
+    // Cache encore frais au montage : pas de requête réseau
+    if (!state.loading) return;
 
     let cancelled = false;
 
     fetchHomeData()
-      .then(({ partners: p, totalCount: c }) => {
+      .then(({ partners, totalCount }) => {
         if (cancelled) return;
-        setPartners(p);
-        setTotalCount(c);
-        writeLocalCache({ partners: p, totalCount: c });
+        setState({ partners, totalCount, loading: false });
+        writeLocalCache({ partners, totalCount });
       })
       .catch((err) => {
         console.error('[useHomeData]', err);
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) setState((s) => ({ ...s, loading: false }));
       });
 
     return () => { cancelled = true; };
+  // Ne pas relancer si state.loading change après le montage
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return { partners, totalCount, loading };
+  return state;
 }
