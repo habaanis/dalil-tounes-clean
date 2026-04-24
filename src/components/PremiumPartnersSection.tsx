@@ -1,82 +1,12 @@
-import { useEffect, useState } from 'react';
-import { supabase } from '../lib/supabaseClient';
+import { useHomeData } from '../hooks/useHomeData';
 import { BusinessCard } from './BusinessCard';
-import { getSubscriptionPriority } from '../lib/subscriptionHelper';
-
-interface BusinessRow {
-  id: string;
-  nom: string;
-  ville: string | null;
-  gouvernorat: string | null;
-  sous_categories: string | null;
-  'statut Abonnement': string | null;
-  'niveau priorité abonnement': number | null;
-  image_url: string | null;
-  logo_url: string | null;
-  horaires_ok: string | null;
-  telephone: string | null;
-  is_featured: boolean | null;
-}
 
 interface PremiumPartnersSectionProps {
   onCardClick: (id: string) => void;
 }
 
 export const PremiumPartnersSection = ({ onCardClick }: PremiumPartnersSectionProps) => {
-  const [partners, setPartners] = useState<BusinessRow[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchPartners = async () => {
-      setLoading(true);
-      try {
-        const FIELDS = `id, nom, ville, gouvernorat, sous_categories, "statut Abonnement", "niveau priorité abonnement", image_url, logo_url, horaires_ok, telephone, is_featured`;
-
-        // Priorité 1 : is_featured = true
-        const { data: featuredData } = await supabase
-          .from('entreprise')
-          .select(FIELDS)
-          .eq('is_featured', true)
-          .order('"niveau priorité abonnement"', { ascending: false, nullsFirst: false })
-          .limit(4);
-
-        let rows: BusinessRow[] = (featuredData as BusinessRow[] | null) || [];
-
-        // Fallback : Elite Pro / Elite / Premium
-        if (rows.length < 4) {
-          const needed = 4 - rows.length;
-          const existingIds = rows.map((r) => r.id);
-
-          const { data: fallback } = await supabase
-            .from('entreprise')
-            .select(FIELDS)
-            .or('"statut Abonnement".ilike.*Elite Pro*,"statut Abonnement".ilike.*Elite*,"statut Abonnement".ilike.*Premium*')
-            .order('"niveau priorité abonnement"', { ascending: false, nullsFirst: false })
-            .limit(needed + existingIds.length);
-
-          const extras = ((fallback as BusinessRow[] | null) || []).filter(
-            (r) => !existingIds.includes(r.id)
-          );
-          rows = [...rows, ...extras].slice(0, 4);
-        }
-
-        rows = rows.sort((a, b) => {
-          if (a.is_featured && !b.is_featured) return -1;
-          if (!a.is_featured && b.is_featured) return 1;
-          return getSubscriptionPriority(b['statut Abonnement']) - getSubscriptionPriority(a['statut Abonnement']);
-        });
-
-        setPartners(rows);
-      } catch (err) {
-        console.error('[PremiumPartnersSection] error:', err);
-        setPartners([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPartners();
-  }, []);
+  const { partners, loading } = useHomeData();
 
   return (
     <section className="py-6 px-4 bg-gradient-to-b from-white to-gray-50">
