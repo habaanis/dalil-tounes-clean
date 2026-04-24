@@ -74,9 +74,9 @@ export async function getJobPostingsForSearch(params: JobSearchParams = {}) {
 
       if (gouvernorat) query.eq('ville', gouvernorat);
       if (secteur) query.eq('secteur_emploi', secteur);
-      if (companyName) query.ilike('nom_entreprise', `%${companyName}%`);
+      if (companyName) query.ilike('nom_entreprise', `*${companyName}*`);
       if (searchTerm) {
-        query.or(`titre_poste.ilike.%${searchTerm}%,description_poste.ilike.%${searchTerm}%`);
+        query.or(`titre_poste.ilike.*${searchTerm}*,description_poste.ilike.*${searchTerm}*`);
       }
 
       const { data: fallbackData, error: fallbackError } = await query.limit(50);

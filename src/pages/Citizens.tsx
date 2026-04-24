@@ -153,8 +153,8 @@ export default function Citizens({ onNavigate }: CitizensProps = {}) {
         .order('nom', { ascending: true })
         .limit(60);
 
-      if (q) query = query.ilike('nom', `%${q}%`);
-      if (ville) query = query.ilike('ville', `%${ville}%`);
+      if (q) query = query.ilike('nom', `*${q}*`);
+      if (ville) query = query.ilike('ville', `*${ville}*`);
 
       const { data } = await query;
       setResults(data ?? []);

@@ -312,7 +312,7 @@ export default function CitizensAdmin({ onNavigateBack }: CitizensAdminProps = {
         .select('*');
 
       if (q) {
-        query = query.or(`nom.ilike.%${q}%,description.ilike.%${q}%`);
+        query = query.or(`nom.ilike.*${q}*,description.ilike.*${q}*`);
       }
 
       if (publicType) {
@@ -376,7 +376,7 @@ export default function CitizensAdmin({ onNavigateBack }: CitizensAdminProps = {
       }
 
       if (adminSearchTerm) {
-        query = query.or(`nom.ilike.%${adminSearchTerm}%,"mots cles recherche".ilike.%${adminSearchTerm}%,description.ilike.%${adminSearchTerm}%`);
+        query = query.or(`nom.ilike.*${adminSearchTerm}*,"mots cles recherche".ilike.*${adminSearchTerm}*,description.ilike.*${adminSearchTerm}*`);
       }
 
       const { data, error } = await query;

@@ -64,9 +64,9 @@ export const FeaturedBusinessesStrip = ({ variant }: FeaturedBusinessesStripProp
           .from('entreprise')
           .select(FIELDS)
           .eq('is_featured', true)
-          .not('"statut Abonnement"', 'ilike', '%gratuit%')
-          .not('"statut Abonnement"', 'ilike', '%decouverte%')
-          .not('"statut Abonnement"', 'ilike', '%découverte%')
+          .not('"statut Abonnement"', 'ilike', '*gratuit*')
+          .not('"statut Abonnement"', 'ilike', '*decouverte*')
+          .not('"statut Abonnement"', 'ilike', '*découverte*')
           .order('"niveau priorité abonnement"', { ascending: false, nullsFirst: false })
           .limit(12);
 
@@ -80,7 +80,7 @@ export const FeaturedBusinessesStrip = ({ variant }: FeaturedBusinessesStripProp
           const { data: fallback } = await supabase
             .from('entreprise')
             .select(FIELDS)
-            .or('"statut Abonnement".ilike.%Elite Pro%,"statut Abonnement".ilike.%Elite%,"statut Abonnement".ilike.%Premium%')
+            .or('"statut Abonnement".ilike.*Elite Pro*,"statut Abonnement".ilike.*Elite*,"statut Abonnement".ilike.*Premium*')
             .not('is_featured', 'eq', true)
             .order('"niveau priorité abonnement"', { ascending: false, nullsFirst: false })
             .limit(needed + existingIds.length);

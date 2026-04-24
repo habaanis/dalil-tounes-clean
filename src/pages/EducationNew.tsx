@@ -410,11 +410,11 @@ export default function EducationNew() {
         .order('note_moyenne', { ascending: false });
 
       if (keyword) {
-        query = query.or(`nom.ilike.%${keyword}%,description.ilike.%${keyword}%`);
+        query = query.or(`nom.ilike.*${keyword}*,description.ilike.*${keyword}*`);
       }
 
       if (city) {
-        query = query.or(`ville.ilike.%${city}%,delegation.ilike.%${city}%`);
+        query = query.or(`ville.ilike.*${city}*,delegation.ilike.*${city}*`);
       }
 
       if (typeFilter !== 'all') {
@@ -550,7 +550,7 @@ export default function EducationNew() {
       const { data, error } = await supabase
         .from('job_postings')
         .select('id, title, company, city, contract_type, created_at')
-        .ilike('category', '%enseignement%')
+        .ilike('category', '*enseignement*')
         .order('created_at', { ascending: false })
         .limit(3);
 
@@ -581,7 +581,7 @@ export default function EducationNew() {
         .limit(10);
 
       if (eventsCity) {
-        query = query.ilike('city', `%${eventsCity}%`);
+        query = query.ilike('city', `*${eventsCity}*`);
       }
 
       const { data, error } = await query;

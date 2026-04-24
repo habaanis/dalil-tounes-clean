@@ -104,7 +104,7 @@ export default function SearchBar({
 
     if (q) {
       if (scope === 'education') {
-        query = query.or(`nom.ilike.%${q}%,matiere.ilike.%${q}%`);
+        query = query.or(`nom.ilike.*${q}*,matiere.ilike.*${q}*`);
       } else {
         query = query.ilike('nom', like(q));
       }

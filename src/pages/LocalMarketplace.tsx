@@ -269,11 +269,11 @@ export default function LocalMarketplace() {
       let query = supabase.from('v_annonces_visibles').select('*');
 
       if (searchKeyword) {
-        query = query.or(`title.ilike.%${searchKeyword}%,description.ilike.%${searchKeyword}%,category.ilike.%${searchKeyword}%`);
+        query = query.or(`title.ilike.*${searchKeyword}*,description.ilike.*${searchKeyword}*,category.ilike.*${searchKeyword}*`);
       }
 
       if (selectedCity) {
-        query = query.ilike('city', `%${selectedCity}%`);
+        query = query.ilike('city', `*${selectedCity}*`);
       }
 
       if (selectedCategory) {

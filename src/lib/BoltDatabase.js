@@ -96,7 +96,7 @@ export async function searchEducation({ keyword = '', city = '', quick = null, p
     }
 
     if (keyword)
-      query = query.or(`nom.ilike.%${keyword}%,description.ilike.%${keyword}%,ville.ilike.%${keyword}%`);
+      query = query.or(`nom.ilike.*${keyword}*,description.ilike.*${keyword}*,ville.ilike.*${keyword}*`);
     if (city)
       query = query.ilike('ville', `*${city}*`);
     if (quick === 'languages')
@@ -120,7 +120,7 @@ export async function searchTeachers({ keyword = '', city = '' }) {
     let query = supabase.from('professeurs_prives').select('*');
 
     if (keyword)
-      query = query.or(`nom.ilike.%${keyword}%,matiere.ilike.%${keyword}%,description.ilike.%${keyword}%`);
+      query = query.or(`nom.ilike.*${keyword}*,matiere.ilike.*${keyword}*,description.ilike.*${keyword}*`);
     if (city)
       query = query.ilike('ville', `*${city}*`);
 
@@ -222,7 +222,7 @@ export async function searchEtablissements({ keyword = '', city = '', category =
     // Recherche par mot-clé (large)
     if (keyword && keyword.trim()) {
       const kw = keyword.trim();
-      query = query.or(`nom.ilike.%${kw}%,description.ilike.%${kw}%,ville.ilike.%${kw}%`);
+      query = query.or(`nom.ilike.*${kw}*,description.ilike.*${kw}*,ville.ilike.*${kw}*`);
     }
 
     const { data, error } = await query
@@ -250,9 +250,7 @@ export async function searchHealthEstablishments({ keyword = '', city = '', type
 
     if (keyword.trim().length >= 2) {
       const kw = keyword.trim();
-      query = query.or(
-        `nom.ilike.%${kw}%,description.ilike.%${kw}%`
-      );
+      query = query.or(`nom.ilike.*${kw}*,description.ilike.*${kw}*`);
     }
 
     if (city.trim()) {
@@ -341,7 +339,7 @@ export async function searchHealthProfessionals(opts) {
     // Filtre par spécialité
     if (specialty.trim()) {
       const s = specialty.trim();
-      q = q.or(`nom.ilike.%${s}%,sous_categories.ilike.%${s}%`);
+      q = q.or(`nom.ilike.*${s}*,sous_categories.ilike.*${s}*`);
     }
 
     // Filtre par gouvernorat
@@ -373,7 +371,7 @@ export async function getEmergencyFacilities() {
       .from('entreprise')
       .select('nom as name, telephone as phone, adresse as address')
       .contains('"catégorie"', ['santé'])
-      .or('nom.ilike.%urgence%,nom.ilike.%hôpital%,nom.ilike.%hopital%,description.ilike.%urgence%,description.ilike.%24/7%')
+      .or('nom.ilike.*urgence*,nom.ilike.*hôpital*,nom.ilike.*hopital*,description.ilike.*urgence*,description.ilike.*24/7*')
       .limit(10);
 
     if (error) {
@@ -434,7 +432,7 @@ export async function searchCities(searchTerm) {
             name_fr
           )
         `)
-        .or(`name_fr.ilike.%${searchTerm}%,name_ar.ilike.%${searchTerm}%`) // % correct dans .or() PostgREST
+        .or(`name_fr.ilike.*${searchTerm}*,name_ar.ilike.*${searchTerm}*`)
         .order('name_fr', { ascending: true })
         .limit(10);
 
@@ -494,7 +492,7 @@ export async function searchMedicalTransportProviders(opts) {
     let query = supabase
       .from('entreprise')
       .select('id, nom as name, ville as city, telephone as phone, sous_categories, description')
-      .or('nom.ilike.%transport médical%,nom.ilike.%transport medical%,nom.ilike.%ambulance%,description.ilike.%transport médical%,description.ilike.%ambulance%');
+      .or('nom.ilike.*transport médical*,nom.ilike.*transport medical*,nom.ilike.*ambulance*,description.ilike.*transport médical*,description.ilike.*ambulance*');
 
     // Filtrer par ville
     if (city.trim()) {

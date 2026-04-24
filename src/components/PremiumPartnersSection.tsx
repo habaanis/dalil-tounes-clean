@@ -50,7 +50,7 @@ export const PremiumPartnersSection = ({ onCardClick }: PremiumPartnersSectionPr
           const { data: fallback } = await supabase
             .from('entreprise')
             .select(FIELDS)
-            .or('"statut Abonnement".ilike.%Elite Pro%,"statut Abonnement".ilike.%Elite%,"statut Abonnement".ilike.%Premium%')
+            .or('"statut Abonnement".ilike.*Elite Pro*,"statut Abonnement".ilike.*Elite*,"statut Abonnement".ilike.*Premium*')
             .order('"niveau priorité abonnement"', { ascending: false, nullsFirst: false })
             .limit(needed + existingIds.length);
 

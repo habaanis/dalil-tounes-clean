@@ -527,7 +527,7 @@ export const Businesses = ({
 
       if (filterPremium) {
         console.log(`[DEBUG] Filtre Premium activé (Elite/Premium/Artisan)`);
-        query = query.or('"statut Abonnement".ilike.%elite%,"statut Abonnement".ilike.%premium%,"statut Abonnement".ilike.%artisan%');
+        query = query.or('"statut Abonnement".ilike.*elite*,"statut Abonnement".ilike.*premium*,"statut Abonnement".ilike.*artisan*');
       }
 
       if (filterCommerceLocal) {

@@ -500,7 +500,7 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
         .gte('date_debut', new Date().toISOString());
 
       if (searchQuery) {
-        query = query.or(`titre.ilike.%${searchQuery}%,description_courte.ilike.%${searchQuery}%,secteur_evenement.ilike.%${searchQuery}%`);
+        query = query.or(`titre.ilike.*${searchQuery}*,description_courte.ilike.*${searchQuery}*,secteur_evenement.ilike.*${searchQuery}*`);
       }
 
       if (selectedLocation !== 'all') {
@@ -544,7 +544,7 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
         .contains('secteur', ['Loisirs & Événements']);
 
       if (searchQuery) {
-        query = query.or(`nom.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`);
+        query = query.or(`nom.ilike.*${searchQuery}*,description.ilike.*${searchQuery}*`);
       }
 
       if (categoryFilter) {

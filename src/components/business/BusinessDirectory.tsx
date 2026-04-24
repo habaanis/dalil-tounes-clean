@@ -76,13 +76,13 @@ export default function BusinessDirectory({ mode, title, subtitle }: BusinessDir
 
       // Filtrage par ville
       if (selectedCity) {
-        query = query.ilike('ville', `%${selectedCity}%`);
+        query = query.ilike('ville', `*${selectedCity}*`);
       }
 
       // Recherche par mot-clé
       if (searchTerm) {
         const kw = searchTerm.trim();
-        query = query.or(`nom.ilike.%${kw}%,description.ilike.%${kw}%,"mots cles recherche".ilike.%${kw}%,ville.ilike.%${kw}%`);
+        query = query.or(`nom.ilike.*${kw}*,description.ilike.*${kw}*,"mots cles recherche".ilike.*${kw}*,ville.ilike.*${kw}*`);
       }
 
       const { data, error: queryError, count } = await query

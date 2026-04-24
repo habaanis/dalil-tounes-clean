@@ -56,7 +56,7 @@ export const searchService = {
       const { data: fallback, error: fallbackErr } = await supabase
         .from('entreprise')
         .select('id, nom, ville, description, telephone, image_url, created_at')
-        .or(`nom.ilike.%${query}%,description.ilike.%${query}%`)
+        .or(`nom.ilike.*${query}*,description.ilike.*${query}*`)
         .limit(limit);
 
       if (fallbackErr) throw fallbackErr;
