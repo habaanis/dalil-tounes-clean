@@ -37,11 +37,9 @@
     <link rel="dns-prefetch" href="https://ik.imagekit.io" />
     <link rel="preconnect" href="https://kmvjegbtroksjqaqliyv.supabase.co" crossorigin />
     <link rel="preconnect" href="https://ik.imagekit.io" crossorigin />
-    <!-- Preload Playfair Display WOFF2 locaux — polices critiques above-the-fold -->
-    <link rel="preload" href="/fonts/playfair-display-400-latin.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/playfair-display-400-latin-ext.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/playfair-display-700-latin.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/playfair-display-700-latin-ext.woff2" as="font" type="font/woff2" crossorigin />
+    <!-- Preload Playfair Display — desktop uniquement (media query évite le téléchargement mobile) -->
+    <link rel="preload" href="/fonts/playfair-display-400-latin.woff2" as="font" type="font/woff2" crossorigin media="(min-width: 769px)" />
+    <link rel="preload" href="/fonts/playfair-display-700-latin.woff2" as="font" type="font/woff2" crossorigin media="(min-width: 769px)" />
     <!-- Preload LCP hero image -->
     <link
       rel="preload"
