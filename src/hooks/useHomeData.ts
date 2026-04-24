@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
-import { withCache } from '../lib/supabaseCache';
 import { getSubscriptionPriority } from '../lib/subscriptionHelper';
 
 export interface HomeBusinessRow {
@@ -25,48 +24,84 @@ interface HomeData {
 }
 
 const FIELDS = `id, nom, ville, gouvernorat, sous_categories, "statut Abonnement", "niveau priorité abonnement", image_url, logo_url, horaires_ok, telephone, is_featured`;
+const CACHE_KEY = 'home_data_v1';
+const STALE_TIME = 60_000; // 1 minute
+
+interface CacheEntry {
+  partners: HomeBusinessRow[];
+  totalCount: number;
+  ts: number;
+}
+
+function readLocalCache(): CacheEntry | null {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    if (!raw) return null;
+    const entry: CacheEntry = JSON.parse(raw);
+    if (Date.now() - entry.ts > STALE_TIME) return null;
+    return entry;
+  } catch {
+    return null;
+  }
+}
+
+function writeLocalCache(entry: Omit<CacheEntry, 'ts'>): void {
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ ...entry, ts: Date.now() }));
+  } catch {
+    // localStorage peut être indisponible (mode privé, quota dépassé)
+  }
+}
 
 async function fetchHomeData(): Promise<{ partners: HomeBusinessRow[]; totalCount: number }> {
-  // Requête unique : récupère featured + top premium en une seule passe, avec count total
-  const { data, count, error } = await supabase
-    .from('entreprise')
-    .select(FIELDS, { count: 'exact' })
-    .or('is_featured.eq.true,"statut Abonnement".ilike.*Elite Pro*,"statut Abonnement".ilike.*Elite*,"statut Abonnement".ilike.*Premium*')
-    .order('"niveau priorité abonnement"', { ascending: false, nullsFirst: false })
-    .limit(12);
+  // Les deux requêtes partent en parallèle
+  const [listRes, countRes] = await Promise.all([
+    supabase
+      .from('entreprise')
+      .select(FIELDS)
+      .or('is_featured.eq.true,"statut Abonnement".ilike.*Elite Pro*,"statut Abonnement".ilike.*Elite*,"statut Abonnement".ilike.*Premium*')
+      .order('"niveau priorité abonnement"', { ascending: false, nullsFirst: false })
+      .limit(12),
+    supabase
+      .from('entreprise')
+      .select('*', { count: 'exact', head: true }),
+  ]);
 
-  if (error) throw error;
+  if (listRes.error) throw listRes.error;
 
-  const rows = (data as HomeBusinessRow[]) ?? [];
-
-  // Trier : featured d'abord, puis par priorité d'abonnement
+  const rows = (listRes.data as HomeBusinessRow[]) ?? [];
   const sorted = [...rows].sort((a, b) => {
     if (a.is_featured && !b.is_featured) return -1;
     if (!a.is_featured && b.is_featured) return 1;
     return getSubscriptionPriority(b['statut Abonnement']) - getSubscriptionPriority(a['statut Abonnement']);
   });
 
-  // Pour le count total on refait un head-only si le count retourné est limité au filtre
-  const { count: total } = await supabase
-    .from('entreprise')
-    .select('*', { count: 'exact', head: true });
-
-  return { partners: sorted.slice(0, 4), totalCount: total ?? count ?? 0 };
+  return {
+    partners: sorted.slice(0, 4),
+    totalCount: countRes.count ?? 0,
+  };
 }
 
 export function useHomeData(): HomeData {
-  const [partners, setPartners] = useState<HomeBusinessRow[]>([]);
-  const [totalCount, setTotalCount] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const cached = readLocalCache();
+
+  const [partners, setPartners] = useState<HomeBusinessRow[]>(cached?.partners ?? []);
+  const [totalCount, setTotalCount] = useState(cached?.totalCount ?? 0);
+  // Si on a un cache valide, pas de spinner — on affiche directement
+  const [loading, setLoading] = useState(cached === null);
 
   useEffect(() => {
+    // Cache encore frais : pas besoin de refetch
+    if (cached !== null) return;
+
     let cancelled = false;
 
-    withCache('home_data', {}, fetchHomeData, 5 * 60 * 1000)
+    fetchHomeData()
       .then(({ partners: p, totalCount: c }) => {
         if (cancelled) return;
         setPartners(p);
         setTotalCount(c);
+        writeLocalCache({ partners: p, totalCount: c });
       })
       .catch((err) => {
         console.error('[useHomeData]', err);
@@ -76,6 +111,7 @@ export function useHomeData(): HomeData {
       });
 
     return () => { cancelled = true; };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return { partners, totalCount, loading };

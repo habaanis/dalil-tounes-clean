@@ -7,8 +7,26 @@ interface PremiumPartnersSectionProps {
   loading: boolean;
 }
 
-export const PremiumPartnersSection = ({ onCardClick, partners, loading }: PremiumPartnersSectionProps) => {
+function PartnerSkeleton() {
+  return (
+    <div
+      className="rounded-2xl overflow-hidden border border-gray-100 bg-white animate-pulse"
+      style={{ width: '200px', minHeight: '220px' }}
+    >
+      {/* image placeholder */}
+      <div className="bg-gray-200 h-28 w-full" />
+      {/* logo circle */}
+      <div className="px-3 pt-3 pb-2 flex flex-col gap-2">
+        <div className="w-10 h-10 rounded-full bg-gray-200 -mt-6 border-2 border-white" />
+        <div className="h-3 bg-gray-200 rounded w-3/4" />
+        <div className="h-2.5 bg-gray-100 rounded w-1/2" />
+        <div className="h-2 bg-gray-100 rounded w-2/3" />
+      </div>
+    </div>
+  );
+}
 
+export const PremiumPartnersSection = ({ onCardClick, partners, loading }: PremiumPartnersSectionProps) => {
   return (
     <section className="py-6 px-4 bg-gradient-to-b from-white to-gray-50">
       <div className="max-w-6xl mx-auto">
@@ -21,23 +39,15 @@ export const PremiumPartnersSection = ({ onCardClick, partners, loading }: Premi
           </p>
         </div>
 
-        {loading ? (
-          <div className="flex justify-center gap-4">
-            {[1, 2, 3, 4].map((i) => (
-              <div
-                key={i}
-                className="animate-pulse rounded-2xl bg-gray-100"
-                style={{ width: '200px', height: '220px', border: '2px solid #e5e7eb' }}
-              />
-            ))}
-          </div>
-        ) : partners.length === 0 ? (
-          <div className="text-center py-8 text-gray-500 text-sm">
-            Aucun établissement à afficher pour le moment
-          </div>
-        ) : (
-          <div className="flex flex-wrap gap-4 justify-center">
-            {partners.map((biz) => (
+        <div className="flex flex-wrap gap-4 justify-center">
+          {loading ? (
+            [1, 2, 3, 4].map((i) => <PartnerSkeleton key={i} />)
+          ) : partners.length === 0 ? (
+            <div className="text-center py-8 text-gray-500 text-sm w-full">
+              Aucun établissement à afficher pour le moment
+            </div>
+          ) : (
+            partners.map((biz) => (
               <BusinessCard
                 key={biz.id}
                 business={{
@@ -57,9 +67,9 @@ export const PremiumPartnersSection = ({ onCardClick, partners, loading }: Premi
                 }}
                 onClick={() => onCardClick(biz.id)}
               />
-            ))}
-          </div>
-        )}
+            ))
+          )}
+        </div>
       </div>
     </section>
   );
