@@ -175,6 +175,10 @@ export default function BannerAdsCarousel({ variant, onOpenForm }: BannerAdsCaro
                     src={getSupabaseImageUrl(currentSlide.imageUrl)}
                     alt={currentSlide.title}
                     className="absolute inset-0 w-full h-full object-cover object-center"
+                    loading="lazy"
+                    decoding="async"
+                    width="1200"
+                    height="400"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
                       if (!target.src.includes('placeholder.jpg')) {

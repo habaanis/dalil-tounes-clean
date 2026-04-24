@@ -182,6 +182,8 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
               })()}
               className="w-full h-full"
               style={getLogoStyle(displayImage)}
+              loading="lazy"
+              decoding="async"
             />
           </div>
         </div>

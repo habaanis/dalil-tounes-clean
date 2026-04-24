@@ -103,6 +103,8 @@ const UnifiedBusinessCard = ({ business, onClick }: UnifiedBusinessCardProps) =>
             })()}
             className="w-full h-full"
             style={getLogoStyle(business.logo_url || business.logoUrl)}
+            loading="lazy"
+            decoding="async"
           />
         </div>
 

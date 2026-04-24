@@ -75,6 +75,10 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
               src={getSupabaseImageUrl('drapeau-tunisie.jpg')}
               alt="Drapeau de la Tunisie"
               className="absolute inset-0 w-full h-full object-cover brightness-105"
+              width="1200"
+              height="630"
+              fetchPriority="high"
+              decoding="async"
             />
             <div className="absolute inset-0 bg-black/30"></div>
 

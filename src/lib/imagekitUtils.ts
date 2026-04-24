@@ -9,21 +9,24 @@ const DEFAULT_IMAGE_PATH = '/images/placeholder.jpg';
  * Paramètres de transformation ImageKit pour différents cas d'usage
  */
 export const ImageKitTransforms = {
-  // Cartes de visite (BusinessCard)
-  CARD_LOGO: 'tr=w-400,h-300,fo-auto,q-85',
+  // Cartes de visite (BusinessCard) — WebP auto, max 400px
+  CARD_LOGO: 'tr=w-400,h-300,fo-auto,q-85,f-auto',
 
-  // Galerie photo (BusinessDetail)
-  GALLERY_THUMBNAIL: 'tr=w-500,h-400,fo-auto,q-85',
+  // Galerie photo (BusinessDetail) — WebP auto
+  GALLERY_THUMBNAIL: 'tr=w-500,h-400,fo-auto,q-85,f-auto',
   GALLERY_FULL: 'tr=w-1000,f-auto',
 
-  // Images de couverture
-  COVER_IMAGE: 'tr=w-800,h-600,fo-auto,q-85',
+  // Images de couverture — WebP auto, max 800px
+  COVER_IMAGE: 'tr=w-800,h-600,fo-auto,q-85,f-auto',
 
-  // Vignettes petites
-  THUMBNAIL_SMALL: 'tr=w-200,h-150,fo-auto,q-80',
+  // Vignettes petites — WebP auto
+  THUMBNAIL_SMALL: 'tr=w-200,h-150,fo-auto,q-80,f-auto',
 
-  // Featured sections
-  FEATURED_IMAGE: 'tr=w-600,h-400,fo-auto,q-85',
+  // Featured sections — WebP auto, max 600px
+  FEATURED_IMAGE: 'tr=w-600,h-400,fo-auto,q-85,f-auto',
+
+  // Hero/bannière pleine largeur — WebP auto, max 1200px
+  HERO_IMAGE: 'tr=w-1200,h-630,fo-auto,q-85,f-auto',
 };
 
 /**
