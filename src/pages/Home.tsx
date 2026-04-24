@@ -72,21 +72,22 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
         <div className="max-w-6xl mx-auto">
           <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-[#D4AF37] text-center">
             <picture>
-              {/* Mobile : 800px max, WebP */}
+              {/* Mobile : 800px max, WebP natif */}
               <source
                 media="(max-width: 768px)"
-                srcSet={getSupabaseImageUrlTransformed('drapeau-tunisie.jpg', { width: 800, quality: 82 })}
+                srcSet={getSupabaseImageUrlTransformed('drapeau-tunisie.webp', { width: 800, quality: 82, format: 'origin' })}
                 type="image/webp"
                 width="800"
                 height="420"
               />
-              {/* Desktop : 1200px max, WebP */}
+              {/* Desktop : 1200px max, WebP natif */}
               <source
-                srcSet={getSupabaseImageUrlTransformed('drapeau-tunisie.jpg', { width: 1200, quality: 85 })}
+                srcSet={getSupabaseImageUrlTransformed('drapeau-tunisie.webp', { width: 1200, quality: 85, format: 'origin' })}
                 type="image/webp"
                 width="1200"
                 height="630"
               />
+              {/* Fallback JPG pour anciens navigateurs */}
               <img
                 src={getSupabaseImageUrl('drapeau-tunisie.jpg')}
                 alt="Drapeau de la Tunisie"

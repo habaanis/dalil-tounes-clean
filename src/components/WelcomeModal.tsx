@@ -71,7 +71,7 @@ export const WelcomeModal = ({ isOpen, onClose, onNavigate }: WelcomeModalProps)
             <div
               className="absolute inset-0 scale-125 translate-x-10 translate-y-10 bg-no-repeat bg-center opacity-100 mix-blend-soft-light pointer-events-none"
               style={{
-                backgroundImage: `url(${getSupabaseImageUrl('drapeau-tunisie.jpg')})`,
+                backgroundImage: `image-set(url(${getSupabaseImageUrl('drapeau-tunisie.webp')}) type("image/webp"), url(${getSupabaseImageUrl('drapeau-tunisie.jpg')}) type("image/jpeg"))`,
                 backgroundSize: 'contain'
               }}
             ></div>

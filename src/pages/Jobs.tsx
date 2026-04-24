@@ -138,11 +138,14 @@ export const Jobs = () => {
         }}
       >
         {/* Image du drapeau tunisien en arrière-plan */}
-        <img
-          src={getSupabaseImageUrl('drapeau-tunisie.jpg')}
-          alt="Drapeau de la Tunisie"
-          className="absolute inset-0 w-full h-full object-cover brightness-105"
-        />
+        <picture>
+          <source srcSet={getSupabaseImageUrl('drapeau-tunisie.webp')} type="image/webp" />
+          <img
+            src={getSupabaseImageUrl('drapeau-tunisie.jpg')}
+            alt="Drapeau de la Tunisie"
+            className="absolute inset-0 w-full h-full object-cover brightness-105"
+          />
+        </picture>
 
         {/* Overlay bordeaux avec 60% d'opacité */}
         <div

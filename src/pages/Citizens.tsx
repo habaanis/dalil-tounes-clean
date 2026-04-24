@@ -417,12 +417,15 @@ export default function Citizens({ onNavigate }: CitizensProps = {}) {
         >
           {/* Drapeau tunisien en arrière-plan */}
           <div className="absolute inset-0 z-0">
-            <img
-              src={getSupabaseImageUrl('drapeau-tunisie.jpg')}
-              alt="Drapeau de la Tunisie - Services citoyens et établissements tunisiens sur Dalil Tounes"
-              className="w-full h-full object-cover blur-sm opacity-50"
-              loading="lazy"
-            />
+            <picture>
+              <source srcSet={getSupabaseImageUrl('drapeau-tunisie.webp')} type="image/webp" />
+              <img
+                src={getSupabaseImageUrl('drapeau-tunisie.jpg')}
+                alt="Drapeau de la Tunisie - Services citoyens et établissements tunisiens sur Dalil Tounes"
+                className="w-full h-full object-cover blur-sm opacity-50"
+                loading="lazy"
+              />
+            </picture>
           </div>
 
           {/* Contenu du header */}

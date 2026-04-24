@@ -770,11 +770,14 @@ export const Businesses = ({
         <div className="relative mb-8">
           {/* Image de fond drapeau tunisien avec taille réduite */}
           <div className="relative h-64 md:h-72 overflow-hidden">
-            <img
-              src="https://kmvjegbtroksjqaqliyv.supabase.co/storage/v1/object/public/photos-dalil/drapeau-tunisie.jpg"
-              alt="Drapeau de la Tunisie"
-              className="w-full h-full object-cover brightness-105"
-            />
+            <picture>
+              <source src="https://kmvjegbtroksjqaqliyv.supabase.co/storage/v1/object/public/photos-dalil/drapeau-tunisie.webp" type="image/webp" />
+              <img
+                src="https://kmvjegbtroksjqaqliyv.supabase.co/storage/v1/object/public/photos-dalil/drapeau-tunisie.jpg"
+                alt="Drapeau de la Tunisie"
+                className="w-full h-full object-cover brightness-105"
+              />
+            </picture>
             {/* Overlay bleu profond pour lisibilité */}
             <div className="absolute inset-0 bg-[#0c2461] opacity-15"></div>
           </div>

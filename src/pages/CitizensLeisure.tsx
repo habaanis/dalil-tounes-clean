@@ -636,11 +636,14 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
       <div className="relative py-6 overflow-hidden" style={{ borderBottom: '2px solid #D4AF37' }}>
         {/* Image de fond - Drapeau Tunisien */}
         <div className="absolute inset-0">
-          <img
-            src="https://kmvjegbtroksjqaqliyv.supabase.co/storage/v1/object/public/photos-dalil/drapeau-tunisie.jpg"
-            alt="Drapeau de la Tunisie - Loisirs et événements culturels tunisiens sur Dalil Tounes"
-            className="w-full h-full object-cover brightness-105"
-          />
+          <picture>
+            <source src="https://kmvjegbtroksjqaqliyv.supabase.co/storage/v1/object/public/photos-dalil/drapeau-tunisie.webp" type="image/webp" />
+            <img
+              src="https://kmvjegbtroksjqaqliyv.supabase.co/storage/v1/object/public/photos-dalil/drapeau-tunisie.jpg"
+              alt="Drapeau de la Tunisie - Loisirs et événements culturels tunisiens sur Dalil Tounes"
+              className="w-full h-full object-cover brightness-105"
+            />
+          </picture>
           {/* Overlay bleu profond pour lisibilité */}
           <div className="absolute inset-0 bg-[#0c2461] opacity-65"></div>
         </div>
