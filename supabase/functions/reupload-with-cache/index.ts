@@ -7,6 +7,14 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
+const BUCKET = "photos-dalil";
+const CACHE_TTL = "31536000"; // 1 an
+
+const FILES = [
+  { path: "drapeau-tunisie.jpg", contentType: "image/jpeg" },
+  { path: "drapeau-tunisie.webp", contentType: "image/webp" },
+];
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 200, headers: corsHeaders });
@@ -18,39 +26,35 @@ Deno.serve(async (req: Request) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    const BUCKET = "photos-dalil";
-    const PATH = "drapeau-tunisie.jpg";
-    const CACHE_TTL = "31536000"; // 1 an
+    const results = [];
 
-    // 1. Télécharger le fichier existant
-    const { data: fileData, error: downloadError } = await supabase.storage
-      .from(BUCKET)
-      .download(PATH);
+    for (const file of FILES) {
+      const { data: fileData, error: downloadError } = await supabase.storage
+        .from(BUCKET)
+        .download(file.path);
 
-    if (downloadError || !fileData) {
-      throw new Error(`Download failed: ${downloadError?.message}`);
-    }
+      if (downloadError || !fileData) {
+        results.push({ path: file.path, success: false, error: downloadError?.message ?? "Not found" });
+        continue;
+      }
 
-    // 2. Ré-uploader avec le bon cacheControl (upsert pour remplacer)
-    const { error: uploadError } = await supabase.storage
-      .from(BUCKET)
-      .upload(PATH, fileData, {
-        cacheControl: CACHE_TTL,
-        contentType: "image/jpeg",
-        upsert: true,
-      });
+      const { error: uploadError } = await supabase.storage
+        .from(BUCKET)
+        .upload(file.path, fileData, {
+          cacheControl: CACHE_TTL,
+          contentType: file.contentType,
+          upsert: true,
+        });
 
-    if (uploadError) {
-      throw new Error(`Upload failed: ${uploadError.message}`);
+      if (uploadError) {
+        results.push({ path: file.path, success: false, error: uploadError.message });
+      } else {
+        results.push({ path: file.path, success: true, cacheControl: `public, max-age=${CACHE_TTL}, immutable` });
+      }
     }
 
     return new Response(
-      JSON.stringify({
-        success: true,
-        bucket: BUCKET,
-        path: PATH,
-        cacheControl: `public, max-age=${CACHE_TTL}, immutable`,
-      }),
+      JSON.stringify({ bucket: BUCKET, results }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (err) {
