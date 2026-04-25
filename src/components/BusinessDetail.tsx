@@ -517,7 +517,7 @@ export const BusinessDetail = ({
   const translatedServices = business ? (getMultilingualField(business, 'services', language, true) || business.services || '') : '';
 
   const content = (
-    <div className={asModal ? "" : "py-10 px-4"} dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className={asModal ? "" : "py-6 px-4"} dir={isRTL ? 'rtl' : 'ltr'}>
       {business && actualBusinessId && (
         <>
           <SEOHead
@@ -568,7 +568,7 @@ export const BusinessDetail = ({
       )}
 
       {/* Carte Prestige - centrée et lisible */}
-      {tier !== 'gratuit' && <div className="max-w-[560px] md:max-w-[860px] w-full mx-auto shadow-2xl transition-all duration-300"
+      {tier !== 'gratuit' && <div className="max-w-[520px] md:max-w-[700px] w-full mx-auto shadow-2xl transition-all duration-300"
            style={{
              borderRadius: '16px',
              border: `2px solid ${colors.border}`,
@@ -590,7 +590,7 @@ export const BusinessDetail = ({
               style={{
                 position: 'relative',
                 width: '100%',
-                height: 'clamp(160px, 24vw, 260px)',
+                height: 'clamp(130px, 18vw, 190px)',
                 overflow: 'hidden',
                 borderRadius: '14px 14px 0 0',
                 backgroundColor: '#f0ede8',
@@ -634,11 +634,11 @@ export const BusinessDetail = ({
 
           {/* Logo rond — chevauchant le bandeau si présent */}
           <div
-            className={`${tier === 'gratuit' ? 'w-16 h-16' : 'w-32 h-32'} shadow-2xl`}
+            className={`${tier === 'gratuit' ? 'w-16 h-16' : 'w-24 h-24'} shadow-2xl`}
             style={{
-              ...getLogoContainerStyle(colors.gold, tier === 'gratuit' ? '3px' : '4px'),
+              ...getLogoContainerStyle(colors.gold, tier === 'gratuit' ? '3px' : '3px'),
               backgroundColor: colors.background,
-              marginTop: tier !== 'gratuit' ? '-72px' : '0',
+              marginTop: tier !== 'gratuit' ? '-52px' : '0',
               position: 'relative',
               zIndex: 2,
             }}
@@ -758,10 +758,10 @@ export const BusinessDetail = ({
           </div>
         )}
 
-        <div className="px-2 pb-1 pt-2 text-center space-y-1">
+        <div className="px-4 pb-4 pt-3 text-center space-y-1.5">
           {/* Nom & Catégorie avec Bouton Copier Lien */}
           <div className="flex items-center justify-center gap-2 px-1 flex-wrap">
-            <h1 className={`text-xl md:text-2xl font-bold tracking-tight leading-tight ${tier === 'gratuit' ? 'text-gray-900' : 'text-white'}`}>{business.nom}</h1>
+            <h1 className={`text-lg md:text-xl font-bold tracking-tight leading-tight ${tier === 'gratuit' ? 'text-gray-900' : 'text-white'}`}>{business.nom}</h1>
             {business.statut_carte && (
               <span
                 className="flex-shrink-0"
