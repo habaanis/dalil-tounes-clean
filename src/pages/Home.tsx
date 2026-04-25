@@ -29,7 +29,7 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
   const { language } = useLanguage();
   const t = useTranslation(language);
   const navigate = useNavigate();
-  const { partners, totalCount, loading } = useHomeData();
+  const { partners, totalCount, certifiedCount, loading } = useHomeData();
 
   // État pour capturer la valeur de recherche
   const [searchQuery, setSearchQuery] = React.useState('');
@@ -179,7 +179,7 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
 
       {/* 3. Compteur */}
       <section className="px-4 py-2">
-        <CompanyCountCard language={language} totalCount={totalCount} loading={loading} />
+        <CompanyCountCard language={language} totalCount={totalCount} certifiedCount={certifiedCount} loading={loading} />
       </section>
 
       {/* 5. Établissements à la Une */}

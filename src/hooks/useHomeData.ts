@@ -12,6 +12,7 @@ export type { HomeBusinessRow };
 interface HomeData {
   partners: HomeBusinessRow[];
   totalCount: number;
+  certifiedCount: number;
   loading: boolean;
 }
 
@@ -21,23 +22,21 @@ export function useHomeData(): HomeData {
     return {
       partners: cached?.partners ?? [],
       totalCount: cached?.totalCount ?? 0,
-      // Cache frais → affichage immédiat, zéro spinner
+      certifiedCount: cached?.certifiedCount ?? 0,
       loading: cached === null,
     };
   });
 
   useEffect(() => {
-    // S'abonner aux mises à jour provenant du prefetch déclenché par Layout
     const unsub = subscribeHomeData((result: HomeQueryResult) => {
-      setState({ partners: result.partners, totalCount: result.totalCount, loading: false });
+      setState({ partners: result.partners, totalCount: result.totalCount, certifiedCount: result.certifiedCount, loading: false });
     });
 
-    // Si le cache est périmé ou absent, déclencher le fetch (ou se raccrocher
-    // à celui déjà en cours depuis Layout — le verrou inflight l'empêche d'être doublé)
+    // Si le cache est périmé ou absent, déclencher le fetch
     if (state.loading) {
       prefetchHomeData()
         .then((result) => {
-          setState({ partners: result.partners, totalCount: result.totalCount, loading: false });
+          setState({ partners: result.partners, totalCount: result.totalCount, certifiedCount: result.certifiedCount, loading: false });
         })
         .catch(() => {
           setState((s) => ({ ...s, loading: false }));

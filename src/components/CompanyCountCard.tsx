@@ -4,6 +4,7 @@ import { Language } from '../lib/i18n';
 interface CompanyCountCardProps {
   language: Language;
   totalCount: number;
+  certifiedCount: number;
   loading: boolean;
 }
 
@@ -11,32 +12,41 @@ const translations = {
   fr: {
     before: '',
     after: ' entreprises tunisiennes font déjà partie du réseau Dalil Tounes.',
+    certified: 'dont',
+    certifiedAfter: ' certifiées',
     sub: 'Un réseau qui grandit chaque jour',
   },
   en: {
     before: '',
     after: ' Tunisian companies are already part of the Dalil Tounes network.',
+    certified: 'including',
+    certifiedAfter: ' certified',
     sub: 'A network that grows every day',
   },
   ar: {
     before: 'انضمت بالفعل ',
     after: ' شركة تونسية إلى شبكة دليل تونس.',
+    certified: 'منها',
+    certifiedAfter: ' معتمدة',
     sub: 'شبكة تنمو كل يوم',
   },
   it: {
     before: '',
     after: ' aziende tunisine fanno già parte della rete Dalil Tounes.',
+    certified: 'di cui',
+    certifiedAfter: ' certificate',
     sub: 'Una rete che cresce ogni giorno',
   },
   ru: {
     before: 'Уже ',
     after: ' тунисских компаний являются частью сети Dalil Tounes.',
+    certified: 'из них',
+    certifiedAfter: ' сертифицированных',
     sub: 'Сеть, которая растёт каждый день',
   },
 };
 
-export default function CompanyCountCard({ language, totalCount, loading }: CompanyCountCardProps) {
-
+export default function CompanyCountCard({ language, totalCount, certifiedCount, loading }: CompanyCountCardProps) {
   const t = translations[language];
   const isRTL = language === 'ar';
 
@@ -59,7 +69,21 @@ export default function CompanyCountCard({ language, totalCount, loading }: Comp
       </h3>
 
       <p
-        className={`text-gray-600 text-sm md:text-base mt-2 ${
+        className={`text-[#4A1D43]/70 text-sm md:text-base mt-1 font-medium ${
+          isRTL ? 'text-right' : 'text-center'
+        }`}
+        dir={isRTL ? 'rtl' : 'ltr'}
+      >
+        {t.certified}{' '}
+        {loading
+          ? <span className="inline-block w-8 h-4 bg-gray-200 rounded animate-pulse align-middle" />
+          : <span className="text-[#D4AF37] font-semibold"><CountUp end={certifiedCount} duration={2} separator=" " /></span>
+        }
+        {t.certifiedAfter}
+      </p>
+
+      <p
+        className={`text-gray-600 text-sm md:text-base mt-1 ${
           isRTL ? 'text-right' : 'text-center'
         }`}
         dir={isRTL ? 'rtl' : 'ltr'}

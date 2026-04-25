@@ -32,6 +32,7 @@ export interface HomeBusinessRow {
 export interface HomeQueryResult {
   partners: HomeBusinessRow[];
   totalCount: number;
+  certifiedCount: number;
 }
 
 interface CacheEntry extends HomeQueryResult {
@@ -62,7 +63,7 @@ export function readHomeCache(): (HomeQueryResult & { fresh: boolean }) | null {
       localStorage.removeItem(CACHE_KEY);
       return null;
     }
-    return { partners: entry.partners, totalCount: entry.totalCount, fresh: age < STALE_TIME };
+    return { partners: entry.partners, totalCount: entry.totalCount, certifiedCount: entry.certifiedCount ?? 0, fresh: age < STALE_TIME };
   } catch {
     return null;
   }
@@ -78,7 +79,7 @@ function writeHomeCache(result: HomeQueryResult): void {
 }
 
 async function doFetch(): Promise<HomeQueryResult> {
-  const [listRes, countRes] = await Promise.all([
+  const [listRes, countRes, certifiedRes] = await Promise.all([
     supabase
       .from('entreprise')
       .select(FIELDS)
@@ -88,6 +89,10 @@ async function doFetch(): Promise<HomeQueryResult> {
     supabase
       .from('entreprise')
       .select('*', { count: 'exact', head: true }),
+    supabase
+      .from('entreprise')
+      .select('*', { count: 'exact', head: true })
+      .eq('statut_carte', 'certifie'),
   ]);
 
   if (listRes.error) throw listRes.error;
@@ -102,11 +107,11 @@ async function doFetch(): Promise<HomeQueryResult> {
     );
   });
 
-  // Si le count Supabase retourne 0 ou null (table vide / RLS / env dev),
-  // on tente une deuxième requête sans filtre sur la liste pour avoir au moins
-  // le nombre d'éléments retournés. Le chiffre réel sera celui de countRes si > 0.
-  const rawCount = countRes.count ?? 0;
-  return { partners: sorted.slice(0, 4), totalCount: rawCount };
+  return {
+    partners: sorted.slice(0, 4),
+    totalCount: countRes.count ?? 0,
+    certifiedCount: certifiedRes.count ?? 0,
+  };
 }
 
 /**
