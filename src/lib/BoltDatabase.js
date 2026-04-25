@@ -8,10 +8,8 @@
 import { supabase } from './supabaseClient';
 
 /* ------------- 🔐 Connexion Supabase ------------- */
-// ⚠️ Tu peux laisser ces valeurs ici pour test local,
-// mais idéalement les mettre plus tard dans ton .env
-export const SUPABASE_URL = "https://kmvjegbtroksjqaqliyv.supabase.co";
-export const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImttdmplZ2J0cm9rc2pxYXFsaXl2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4MDA1NTEsImV4cCI6MjA2NzM3NjU1MX0.MbU7b-HWQBwlYtbJeE7_ABvrGhuhzeAuqvkcVvvoE1o";
+export const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+export const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
   console.error("❌ Clés Supabase manquantes. Vérifie ton .env ou tes constantes.");

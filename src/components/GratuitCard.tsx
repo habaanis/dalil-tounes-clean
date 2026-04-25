@@ -18,14 +18,11 @@ interface GratuitCardProps {
 
 function renderStatutCarteBadge(statut_carte: string | null | undefined) {
   if (!statut_carte) return null;
-  const upper = statut_carte.toUpperCase();
-  const isCertified = upper.includes('CERTIFIÉ') && !upper.includes('NON');
-  const isNonCertified = upper.includes('NON CERTIFIÉ');
-  if (!isCertified && !isNonCertified) return null;
+  const isNonCertified = statut_carte === '⚠️ NON CERTIFIÉ';
   return (
     <span style={{
       display: 'inline-block', fontSize: '10px', fontFamily: 'sans-serif', fontWeight: '600',
-      color: '#fff', backgroundColor: isCertified ? '#16a34a' : '#ea580c',
+      color: '#fff', backgroundColor: isNonCertified ? '#ea580c' : '#16a34a',
       borderRadius: '4px', padding: '1px 6px'
     }}>
       {statut_carte}
