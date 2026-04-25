@@ -39,7 +39,7 @@ interface CacheEntry extends HomeQueryResult {
   ts: number;
 }
 
-const CACHE_KEY = 'home_data_v5';
+const CACHE_KEY = 'home_data_v6';
 const STALE_TIME = 5 * 60_000;   // 5 minutes — pas de refetch dans cette fenêtre
 const GC_TIME   = 60 * 60_000;   // 1 heure  — TTL maximale en localStorage
 
@@ -88,15 +88,17 @@ async function doFetch(): Promise<HomeQueryResult> {
       .limit(12),
     supabase
       .from('entreprise')
-      .select('*', { count: 'exact', head: true }),
+      .select('id', { count: 'exact', head: true }),
     supabase
       .from('entreprise')
-      .select('*', { count: 'exact', head: true })
+      .select('id', { count: 'exact', head: true })
       .ilike('statut_carte', '%CERTIFIÉ%')
       .not('statut_carte', 'ilike', '%NON CERTIFIÉ%'),
   ]);
 
   if (listRes.error) throw listRes.error;
+  if (countRes.error) console.error('[homeDataPrefetch] countRes error:', countRes.error);
+  if (certifiedRes.error) console.error('[homeDataPrefetch] certifiedRes error:', certifiedRes.error);
 
   const rows = (listRes.data as HomeBusinessRow[]) ?? [];
   const sorted = [...rows].sort((a, b) => {
