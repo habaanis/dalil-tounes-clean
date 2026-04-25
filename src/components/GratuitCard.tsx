@@ -13,6 +13,7 @@ interface GratuitCardProps {
   telephone?: string | null;
   language: string;
   allKeywords?: string[];
+  statut_carte?: string | null;
 }
 
 export default function GratuitCard({
@@ -25,6 +26,7 @@ export default function GratuitCard({
   telephone,
   language,
   allKeywords = [],
+  statut_carte,
 }: GratuitCardProps) {
   const [showPhone, setShowPhone] = useState(false);
   const locationLabel = ville || gouvernorat || '';
@@ -59,6 +61,16 @@ export default function GratuitCard({
         <p style={{ fontSize: '14px', fontWeight: '700', color: '#1A1A1A', lineHeight: '1.3', margin: 0, letterSpacing: '-0.01em' }}>
           {name}
         </p>
+        {statut_carte === 'certifie' && (
+          <span style={{ display: 'inline-block', fontSize: '10px', fontFamily: 'sans-serif', fontWeight: '600', color: '#fff', backgroundColor: '#16a34a', borderRadius: '4px', padding: '1px 6px' }}>
+            ⭐ CERTIFIÉ DALIL TOUNES
+          </span>
+        )}
+        {statut_carte === 'brut' && (
+          <span style={{ display: 'inline-block', fontSize: '10px', fontFamily: 'sans-serif', fontWeight: '600', color: '#fff', backgroundColor: '#ea580c', borderRadius: '4px', padding: '1px 6px' }}>
+            ⚠️ NON CERTIFIÉ
+          </span>
+        )}
 
         {/* Catégorie */}
         {category && (

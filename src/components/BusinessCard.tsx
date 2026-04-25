@@ -47,6 +47,7 @@ interface BusinessCardProps {
     nombre_avis?: string | number | null;
     'Compteur Avis Google'?: string | number | null;
     score_avis?: string | number | null;
+    statut_carte?: string | null;
   };
   onClick: () => void;
   variant?: 'simple' | 'premium';
@@ -205,6 +206,16 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
           >
             {business.name}
           </h3>
+          {business.statut_carte === 'certifie' && (
+            <span style={{ display: 'inline-block', fontSize: '10px', fontFamily: 'sans-serif', fontWeight: '600', color: '#fff', backgroundColor: '#16a34a', borderRadius: '4px', padding: '1px 6px', marginBottom: '4px' }}>
+              ⭐ CERTIFIÉ DALIL TOUNES
+            </span>
+          )}
+          {business.statut_carte === 'brut' && (
+            <span style={{ display: 'inline-block', fontSize: '10px', fontFamily: 'sans-serif', fontWeight: '600', color: '#fff', backgroundColor: '#ea580c', borderRadius: '4px', padding: '1px 6px', marginBottom: '4px' }}>
+              ⚠️ NON CERTIFIÉ
+            </span>
+          )}
           {translatedCategory && (
             <>
               <p

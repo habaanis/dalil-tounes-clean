@@ -36,6 +36,7 @@ interface UnifiedBusinessCardProps {
     logoUrl?: string | null;
     horaires_ok?: string | null;
     is_premium?: boolean;
+    statut_carte?: string | null;
   };
   onClick: () => void;
 }
@@ -123,6 +124,16 @@ const UnifiedBusinessCard = ({ business, onClick }: UnifiedBusinessCardProps) =>
         <h3 className="text-sm font-bold text-gray-900 text-center line-clamp-1 leading-tight">
           {businessName}
         </h3>
+        {business.statut_carte === 'certifie' && (
+          <span style={{ display: 'inline-block', fontSize: '10px', fontFamily: 'sans-serif', fontWeight: '600', color: '#fff', backgroundColor: '#16a34a', borderRadius: '4px', padding: '1px 6px' }}>
+            ⭐ CERTIFIÉ DALIL TOUNES
+          </span>
+        )}
+        {business.statut_carte === 'brut' && (
+          <span style={{ display: 'inline-block', fontSize: '10px', fontFamily: 'sans-serif', fontWeight: '600', color: '#fff', backgroundColor: '#ea580c', borderRadius: '4px', padding: '1px 6px' }}>
+            ⚠️ NON CERTIFIÉ
+          </span>
+        )}
 
         {translatedCategory && (
           <>
