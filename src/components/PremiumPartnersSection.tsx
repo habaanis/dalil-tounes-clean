@@ -64,6 +64,7 @@ export const PremiumPartnersSection = ({ onCardClick, partners, loading }: Premi
                   logoUrl: biz.logo_url,
                   horaires_ok: biz.horaires_ok,
                   telephone: biz.telephone,
+                  statut_carte: biz.statut_carte,
                 }}
                 onClick={() => onCardClick(biz.id)}
               />

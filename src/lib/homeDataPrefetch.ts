@@ -39,7 +39,7 @@ interface CacheEntry extends HomeQueryResult {
   ts: number;
 }
 
-const CACHE_KEY = 'home_data_v6';
+const CACHE_KEY = 'home_data_v7';
 const STALE_TIME = 5 * 60_000;   // 5 minutes — pas de refetch dans cette fenêtre
 const GC_TIME   = 60 * 60_000;   // 1 heure  — TTL maximale en localStorage
 
