@@ -7,12 +7,13 @@ import CompanyCountCard from '../components/CompanyCountCard';
 import SearchBar from '../components/SearchBar';
 import { isSearchBarAllowed } from '../config/searchBars';
 import HomeFeedbackWidget from '../components/HomeFeedbackWidget';
-import LeisureEventsSection from '../components/LeisureEventsSection';
 import { getSupabaseImageUrlTransformed } from '../lib/imageUtils';
 import { HERO_IMAGE_URL } from '../constants/images';
 import StructuredData from '../components/StructuredData';
 import { generateOrganizationSchema, generateWebSiteSchema } from '../lib/structuredDataSchemas';
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
+
+const LeisureEventsSection = lazy(() => import('../components/LeisureEventsSection'));
 import { useHomeData } from '../hooks/useHomeData';
 
 
@@ -232,8 +233,10 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
         </div>
       </section>
 
-      {/* 8. Loisirs & Événements */}
-      <LeisureEventsSection />
+      {/* 8. Loisirs & Événements — chargé hors du chemin critique LCP */}
+      <Suspense fallback={<div className="h-48" />}>
+        <LeisureEventsSection />
+      </Suspense>
 
       {/* Passerelle éditoriale → Blog */}
       <section className="py-8 px-4">

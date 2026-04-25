@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
@@ -22,6 +22,12 @@ import { normalizeText } from '../lib/textNormalization';
 import { BusinessCard } from '../components/BusinessCard';
 import { BusinessDetail } from '../components/BusinessDetail';
 import { getSubscriptionPriority } from '../lib/subscriptionHelper';
+import {
+  readBusinessesCache,
+  prefetchBusinessesData,
+  subscribeBusinessesData,
+  type BusinessRow,
+} from '../lib/businessesCache';
 import { extractMainCategory, getAllKeywords } from '../lib/categoryDisplay';
 import StructuredData from '../components/StructuredData';
 import { generateCollectionPageSchema } from '../lib/structuredDataSchemas';
@@ -77,8 +83,9 @@ export const Businesses = ({
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const t = useTranslation(language);
-  const [businesses, setBusinesses] = useState<Business[]>([]);
-  const [loading, setLoading] = useState(false);
+  const _initCache = readBusinessesCache();
+  const [businesses, setBusinesses] = useState<Business[]>((_initCache?.businesses as unknown as Business[]) ?? []);
+  const [loading, setLoading] = useState(_initCache === null);
   const [searchTerm, setSearchTerm] = useState(initialSearchKeyword || '');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedCity, setSelectedCity] = useState(initialSearchCity || '');
@@ -87,7 +94,7 @@ export const Businesses = ({
   const [selectedBusiness, setSelectedBusiness] = useState<Business | null>(null);
   const [preselectedBusinessId, setPreselectedBusinessId] = useState<string | null>(null);
   const [searching, setSearching] = useState(false);
-  const [premiumJobs, setPremiumJobs] = useState<any[]>([]);
+  const [premiumJobs, setPremiumJobs] = useState<any[]>(_initCache?.premiumJobs ?? []);
   const [loadingPremiumJobs, setLoadingPremiumJobs] = useState(false);
   const [showRegistrationForm, setShowRegistrationForm] = useState(false);
   const [filterPremium, setFilterPremium] = useState(false);
@@ -278,8 +285,30 @@ export const Businesses = ({
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, [initialSearchKeyword, initialSearchCity]);
 
+  // Abonnement au cache — reçoit les données dès qu'elles arrivent (premier chargement ou invalidation)
   useEffect(() => {
-    fetchPremiumJobs();
+    const unsub = subscribeBusinessesData((result) => {
+      setBusinesses(result.businesses as unknown as Business[]);
+      setPremiumJobs(result.premiumJobs);
+      setLoading(false);
+      setLoadingPremiumJobs(false);
+    });
+
+    const cached = readBusinessesCache();
+    if (!cached?.fresh) {
+      prefetchBusinessesData().then((result) => {
+        setBusinesses(result.businesses as unknown as Business[]);
+        setPremiumJobs(result.premiumJobs);
+        setLoading(false);
+        setLoadingPremiumJobs(false);
+      }).catch(() => {
+        setLoading(false);
+        setLoadingPremiumJobs(false);
+      });
+    }
+
+    return unsub;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchPremiumJobs = async () => {
@@ -313,8 +342,15 @@ export const Businesses = ({
       console.log('[DEBUG INIT] Premier mount, déclenchement recherche initiale');
       // Si aucun filtre, on charge toutes les entreprises
       if (!searchTerm && !selectedCity && !selectedCategory && !pageCategorie && !filterPremium && !filterCommerceLocal) {
-        console.log('[DEBUG INIT] Aucun filtre → fetchBusinesses()');
-        fetchBusinesses();
+        // Cache frais → affichage immédiat, pas de requête réseau
+        const cached = readBusinessesCache();
+        if (cached?.fresh) {
+          console.log('[DEBUG INIT] Cache frais → skip fetchBusinesses()');
+          setLoading(false);
+        } else {
+          console.log('[DEBUG INIT] Aucun filtre → fetchBusinesses()');
+          fetchBusinesses();
+        }
       } else {
         // Si des filtres sont présents (depuis URL), on lance la recherche filtrée
         console.log('[DEBUG INIT] Filtres présents → performSearch()');

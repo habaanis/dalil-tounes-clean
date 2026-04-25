@@ -9,6 +9,7 @@ import { SocialBar } from './SocialBar';
 import { PageHeader } from './PageHeader';
 import { WhatsAppSupport } from './WhatsAppSupport';
 import { prefetchHomeData } from '../lib/homeDataPrefetch';
+import { prefetchBusinessesData } from '../lib/businessesCache';
 
 interface NavItem {
   label: string;
@@ -97,10 +98,10 @@ export const Layout = ({ children }: LayoutProps) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Prefetch des données home dès le montage du Layout — avant que Home soit rendu.
-  // Ne fait rien si le cache localStorage est encore frais (< 5 min).
+  // Prefetch des données home + businesses dès le montage — ne fait rien si le cache est frais.
   useEffect(() => {
-    prefetchHomeData().catch(() => {/* silencieux — useHomeData gère le fallback */});
+    prefetchHomeData().catch(() => {});
+    prefetchBusinessesData().catch(() => {});
   }, []);
 
   useEffect(() => {
