@@ -187,11 +187,11 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
           </div>
         )}
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: isElite ? '10px' : '8px', flex: 1 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: isElite ? '6px' : '4px', flex: 1 }}>
         {/* Header avec logo rond centralisé */}
-        <div className="flex justify-center -mt-4 mb-2">
+        <div className="flex justify-center -mt-4 mb-1">
           <div
-            className={`${isElite ? 'w-20 h-20' : 'w-16 h-16'} shadow-xl`}
+            className={`${isElite ? 'w-10 h-10' : 'w-8 h-8'} shadow-xl`}
             style={getLogoContainerStyle(accentColor, '3px')}
           >
             <img
@@ -215,7 +215,7 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
         <div>
           <h3
             style={{
-              fontSize: isElite ? '20px' : '18px',
+              fontSize: isElite ? '16px' : '14px',
               fontWeight: '700',
               color: titleColor,
               lineHeight: '1.3',
@@ -394,7 +394,7 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
 
         <button
           onClick={(e) => { e.stopPropagation(); onClick(); }}
-          style={{ width: '100%', marginTop: 'auto', paddingTop: '10px', borderTop: '1px solid rgba(212, 175, 55, 0.3)', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', display: 'block' }}
+          style={{ width: '100%', marginTop: 'auto', paddingTop: '6px', borderTop: '1px solid rgba(212, 175, 55, 0.3)', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', display: 'block' }}
         >
           <span style={{ fontSize: '14px', fontWeight: '700', color: accentColor, textDecoration: 'none', letterSpacing: '0.01em' }} className="hover:underline">
             {t.common.viewDetails} →

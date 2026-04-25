@@ -61,7 +61,7 @@ export default function GratuitCard({
         border: '2px solid #D4AF37',
         borderRadius: '16px',
         boxShadow: '0 0 10px rgba(212,175,55,0.18), 0 2px 8px rgba(0,0,0,0.06)',
-        padding: '14px 12px',
+        padding: '8px 10px',
         width: '100%',
         height: '100%',
         display: 'flex',
@@ -69,10 +69,10 @@ export default function GratuitCard({
         position: 'relative',
       }}
     >
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', textAlign: 'center', flex: 1 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', textAlign: 'center', flex: 1 }}>
 
         {/* Logo */}
-        <div className="w-12 h-12" style={{ ...getLogoContainerStyle('#D4AF37', '2px'), flexShrink: 0 }}>
+        <div className="w-8 h-8" style={{ ...getLogoContainerStyle('#D4AF37', '2px'), flexShrink: 0 }}>
           <img
             src={getLogoUrl(logoUrl)}
             alt={`Logo ${name}${locationLabel ? ` à ${locationLabel}` : ''} - Annuaire établissements Tunisie`}
@@ -117,7 +117,7 @@ export default function GratuitCard({
       </div>
 
       {/* Téléphone + bouton "Voir les détails" épinglés en bas */}
-      <div style={{ marginTop: 'auto', paddingTop: '10px', borderTop: '1px solid rgba(212,175,55,0.25)' }}>
+      <div style={{ marginTop: 'auto', paddingTop: '6px', borderTop: '1px solid rgba(212,175,55,0.25)' }}>
         {telephone && (
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '6px' }}>
             {showPhone && (
