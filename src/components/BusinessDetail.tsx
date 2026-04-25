@@ -517,7 +517,7 @@ export const BusinessDetail = ({
   const translatedServices = business ? (getMultilingualField(business, 'services', language, true) || business.services || '') : '';
 
   const content = (
-    <div className={asModal ? "overflow-x-hidden" : "py-6 px-4 overflow-x-hidden"} style={{ wordBreak: 'break-word' }} dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className={asModal ? "overflow-x-hidden" : "py-4 px-4 overflow-x-hidden"} style={{ wordBreak: 'break-word', padding: asModal ? '1rem' : undefined }} dir={isRTL ? 'rtl' : 'ltr'}>
       {business && actualBusinessId && (
         <>
           <SEOHead
@@ -590,7 +590,7 @@ export const BusinessDetail = ({
               style={{
                 position: 'relative',
                 width: '100%',
-                height: 'clamp(130px, 18vw, 190px)',
+                height: 'clamp(90px, 14vw, 130px)',
                 overflow: 'hidden',
                 borderRadius: '14px 14px 0 0',
                 backgroundColor: '#f0ede8',
@@ -634,11 +634,11 @@ export const BusinessDetail = ({
 
           {/* Logo rond — chevauchant le bandeau si présent */}
           <div
-            className={`${tier === 'gratuit' ? 'w-16 h-16' : 'w-24 h-24'} shadow-2xl`}
+            className={`${tier === 'gratuit' ? 'w-14 h-14' : 'w-16 h-16'} shadow-2xl`}
             style={{
               ...getLogoContainerStyle(colors.gold, tier === 'gratuit' ? '3px' : '3px'),
               backgroundColor: colors.background,
-              marginTop: tier !== 'gratuit' ? '-52px' : '0',
+              marginTop: tier !== 'gratuit' ? '-36px' : '0',
               position: 'relative',
               zIndex: 2,
             }}
@@ -1354,12 +1354,19 @@ export const BusinessDetail = ({
   if (asModal && handleClose) {
     return (
       <div
-        className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-md p-4 overflow-y-auto"
+        className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-md p-3"
         onClick={handleClose}
       >
         <div
-          className="relative my-8"
-          style={{ maxWidth: '650px', width: '90%', margin: '2rem auto', borderRadius: '16px' }}
+          className="relative"
+          style={{
+            maxWidth: '500px',
+            width: '92%',
+            maxHeight: '80vh',
+            overflowY: 'auto',
+            borderRadius: '16px',
+            margin: '0 auto',
+          }}
           onClick={(e) => e.stopPropagation()}
         >
           {content}
@@ -1369,7 +1376,7 @@ export const BusinessDetail = ({
   }
 
   return (
-    <div className="mx-auto overflow-x-hidden" style={{ maxWidth: '650px', width: '90%' }}>
+    <div className="mx-auto overflow-x-hidden" style={{ maxWidth: '500px', width: '92%' }}>
       {content}
     </div>
   );
