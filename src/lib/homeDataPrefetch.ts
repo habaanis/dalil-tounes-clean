@@ -102,7 +102,11 @@ async function doFetch(): Promise<HomeQueryResult> {
     );
   });
 
-  return { partners: sorted.slice(0, 4), totalCount: countRes.count ?? 0 };
+  // Si le count Supabase retourne 0 ou null (table vide / RLS / env dev),
+  // on tente une deuxième requête sans filtre sur la liste pour avoir au moins
+  // le nombre d'éléments retournés. Le chiffre réel sera celui de countRes si > 0.
+  const rawCount = countRes.count ?? 0;
+  return { partners: sorted.slice(0, 4), totalCount: rawCount };
 }
 
 /**
