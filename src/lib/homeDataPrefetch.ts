@@ -25,7 +25,6 @@ export interface HomeBusinessRow {
   logo_url: string | null;
   horaires_ok: string | null;
   telephone: string | null;
-  is_featured: boolean | null;
   statut_carte: string | null;
 }
 
@@ -46,7 +45,7 @@ const GC_TIME   = 60 * 60_000;   // 1 heure  — TTL maximale en localStorage
 const FIELDS = [
   'id', 'nom', 'ville', 'gouvernorat', 'sous_categories',
   '"statut Abonnement"', '"niveau priorité abonnement"',
-  'image_url', 'logo_url', 'horaires_ok', 'telephone', 'is_featured', 'statut_carte',
+  'image_url', 'logo_url', 'horaires_ok', 'telephone', 'statut_carte',
 ].join(', ');
 
 // Verrou contre les appels simultanés (évite les doubles requêtes en cas de
@@ -83,7 +82,7 @@ async function doFetch(): Promise<HomeQueryResult> {
     supabase
       .from('entreprise')
       .select(FIELDS)
-      .or('is_featured.eq.true,"statut Abonnement".ilike.*Elite Pro*,"statut Abonnement".ilike.*Elite*,"statut Abonnement".ilike.*Premium*')
+      .or('"statut Abonnement".ilike.*Elite Pro*,"statut Abonnement".ilike.*Elite*,"statut Abonnement".ilike.*Premium*')
       .order('"niveau priorité abonnement"', { ascending: false, nullsFirst: false })
       .limit(12),
     supabase
@@ -101,14 +100,9 @@ async function doFetch(): Promise<HomeQueryResult> {
   if (certifiedRes.error) console.error('[homeDataPrefetch] certifiedRes error:', certifiedRes.error);
 
   const rows = (listRes.data as HomeBusinessRow[]) ?? [];
-  const sorted = [...rows].sort((a, b) => {
-    if (a.is_featured && !b.is_featured) return -1;
-    if (!a.is_featured && b.is_featured) return 1;
-    return (
-      getSubscriptionPriority(b['statut Abonnement']) -
-      getSubscriptionPriority(a['statut Abonnement'])
-    );
-  });
+  const sorted = [...rows].sort((a, b) =>
+    getSubscriptionPriority(b['statut Abonnement']) - getSubscriptionPriority(a['statut Abonnement'])
+  );
 
   return {
     partners: sorted.slice(0, 4),

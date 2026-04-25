@@ -23,7 +23,6 @@ interface BusinessRow {
   logo_url: string | null;
   horaires_ok: string | null;
   telephone: string | null;
-  is_featured: boolean | null;
 }
 
 function normalizeVariant(variant: RawVariant): NormalizedVariant {
@@ -57,46 +56,23 @@ export const FeaturedBusinessesStrip = ({ variant }: FeaturedBusinessesStripProp
     const fetchData = async () => {
       setLoading(true);
       try {
-        const FIELDS = `id, nom, ville, gouvernorat, sous_categories, "statut Abonnement", "niveau priorité abonnement", image_url, logo_url, horaires_ok, telephone, is_featured`;
+        const FIELDS = `id, nom, ville, gouvernorat, sous_categories, "statut Abonnement", "niveau priorité abonnement", image_url, logo_url, horaires_ok, telephone`;
 
-        // Priorité 1 : is_featured = true (jamais gratuit)
-        const { data: featuredData } = await supabase
+        const { data: fetchedData } = await supabase
           .from('entreprise')
           .select(FIELDS)
-          .eq('is_featured', true)
+          .or('"statut Abonnement".ilike.*Elite Pro*,"statut Abonnement".ilike.*Elite*,"statut Abonnement".ilike.*Premium*')
           .not('"statut Abonnement"', 'ilike', '*gratuit*')
           .not('"statut Abonnement"', 'ilike', '*decouverte*')
           .not('"statut Abonnement"', 'ilike', '*découverte*')
           .order('"niveau priorité abonnement"', { ascending: false, nullsFirst: false })
           .limit(12);
 
-        let rows: BusinessRow[] = (featuredData as BusinessRow[] | null) || [];
+        let rows: BusinessRow[] = (fetchedData as BusinessRow[] | null) || [];
 
-        // Priorité 2 : Premium / Elite / Elite Pro (si < 6 featured)
-        if (rows.length < 6) {
-          const needed = 12 - rows.length;
-          const existingIds = rows.map((r) => r.id);
-
-          const { data: fallback } = await supabase
-            .from('entreprise')
-            .select(FIELDS)
-            .or('"statut Abonnement".ilike.*Elite Pro*,"statut Abonnement".ilike.*Elite*,"statut Abonnement".ilike.*Premium*')
-            .not('is_featured', 'eq', true)
-            .order('"niveau priorité abonnement"', { ascending: false, nullsFirst: false })
-            .limit(needed + existingIds.length);
-
-          const extras = ((fallback as BusinessRow[] | null) || []).filter(
-            (r) => !existingIds.includes(r.id)
-          );
-          rows = [...rows, ...extras].slice(0, 12);
-        }
-
-        // Trier : is_featured d'abord, puis par priorité d'abonnement
-        rows = rows.sort((a, b) => {
-          if (a.is_featured && !b.is_featured) return -1;
-          if (!a.is_featured && b.is_featured) return 1;
-          return getSubscriptionPriority(b['statut Abonnement']) - getSubscriptionPriority(a['statut Abonnement']);
-        });
+        rows = rows.sort((a, b) =>
+          getSubscriptionPriority(b['statut Abonnement']) - getSubscriptionPriority(a['statut Abonnement'])
+        );
 
         if (isMounted) setBusinesses(rows);
       } catch (err) {
