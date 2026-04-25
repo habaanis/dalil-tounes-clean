@@ -115,7 +115,7 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
       titleColor = '#D4AF37';
       secondaryTextColor = '#E8E8E8';
       accentColor = '#D4AF37';
-      paddingClass = 'p-6';
+      paddingClass = 'p-3';
       displayImage = getFeaturedImageUrl(business.logoUrl, business.imageUrl);
       break;
 
@@ -124,7 +124,7 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
       titleColor = '#D4AF37';
       secondaryTextColor = '#E8E8E8';
       accentColor = '#D4AF37';
-      paddingClass = 'p-5';
+      paddingClass = 'p-3';
       displayImage = getFeaturedImageUrl(business.logoUrl, business.imageUrl);
       break;
 
@@ -133,7 +133,7 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
       titleColor = '#D4AF37';
       secondaryTextColor = '#E8E8E8';
       accentColor = '#D4AF37';
-      paddingClass = 'p-5';
+      paddingClass = 'p-3';
       displayImage = getFeaturedImageUrl(business.logoUrl, business.imageUrl);
       break;
 

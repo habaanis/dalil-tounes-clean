@@ -10,17 +10,14 @@ interface PremiumPartnersSectionProps {
 function PartnerSkeleton() {
   return (
     <div
-      className="rounded-2xl overflow-hidden border border-gray-100 bg-white animate-pulse"
-      style={{ minHeight: '280px', maxHeight: '320px' }}
+      className="rounded-xl overflow-hidden border border-gray-100 bg-white animate-pulse"
+      style={{ minHeight: '180px', maxHeight: '220px' }}
     >
-      {/* image placeholder */}
-      <div className="bg-gray-200 h-28 w-full" />
-      {/* logo circle */}
-      <div className="px-3 pt-3 pb-2 flex flex-col gap-2">
-        <div className="w-10 h-10 rounded-full bg-gray-200 -mt-6 border-2 border-white" />
+      <div className="bg-gray-200 h-20 w-full" />
+      <div className="px-2 pt-2 pb-2 flex flex-col gap-2">
+        <div className="w-8 h-8 rounded-full bg-gray-200 -mt-5 border-2 border-white" />
         <div className="h-3 bg-gray-200 rounded w-3/4" />
         <div className="h-2.5 bg-gray-100 rounded w-1/2" />
-        <div className="h-2 bg-gray-100 rounded w-2/3" />
       </div>
     </div>
   );
@@ -39,15 +36,11 @@ export const PremiumPartnersSection = ({ onCardClick, partners, loading }: Premi
           </p>
         </div>
 
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(2, 1fr)',
-          gap: '12px',
-        }} className="md:grid-cols-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
           {loading ? (
-            [1, 2, 3, 4].map((i) => <PartnerSkeleton key={i} />)
+            [1, 2, 3, 4, 5].map((i) => <PartnerSkeleton key={i} />)
           ) : partners.length === 0 ? (
-            <div className="text-center py-8 text-gray-500 text-sm col-span-2 md:col-span-4">
+            <div className="text-center py-8 text-gray-500 text-sm col-span-2 md:col-span-4 lg:col-span-5">
               Aucun établissement à afficher pour le moment
             </div>
           ) : (
@@ -56,8 +49,6 @@ export const PremiumPartnersSection = ({ onCardClick, partners, loading }: Premi
                 key={biz.id}
                 onClick={() => onCardClick(biz.id)}
                 style={{
-                  minHeight: '280px',
-                  maxHeight: '320px',
                   display: 'flex',
                   flexDirection: 'column',
                   cursor: 'pointer',
