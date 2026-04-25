@@ -53,14 +53,21 @@ interface BusinessCardProps {
   variant?: 'simple' | 'premium';
 }
 
-function renderStatutCarteBadge(statut_carte: string | null | undefined, extraStyle?: React.CSSProperties) {
+function renderStatutCarteBadge(statut_carte: string | null | undefined) {
   if (!statut_carte) return null;
   const isNonCertified = statut_carte === '⚠️ NON CERTIFIÉ';
   return (
     <span style={{
-      display: 'inline-block', fontSize: '10px', fontFamily: 'sans-serif', fontWeight: '600',
-      color: '#fff', backgroundColor: isNonCertified ? '#ea580c' : '#16a34a',
-      borderRadius: '4px', padding: '1px 6px', ...extraStyle
+      display: 'inline-block',
+      fontSize: '9px',
+      fontFamily: 'sans-serif',
+      fontWeight: '600',
+      letterSpacing: '0.03em',
+      color: isNonCertified ? '#c2410c' : '#15803d',
+      backgroundColor: isNonCertified ? 'rgba(234,88,12,0.08)' : 'rgba(22,163,74,0.08)',
+      border: `1px solid ${isNonCertified ? 'rgba(234,88,12,0.3)' : 'rgba(22,163,74,0.3)'}`,
+      borderRadius: '20px',
+      padding: '1px 7px',
     }}>
       {statut_carte}
     </span>
@@ -171,15 +178,14 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
         onClick={onClick}
       >
       <div style={{ position: 'relative' }}>
-        <div className="absolute top-0 right-0 z-10 flex flex-col items-end gap-1">
-          {isElite && (
+        {isElite && (
+          <div className="absolute top-0 right-0 z-10">
             <div className="flex items-center gap-1 bg-gradient-to-r from-[#D4AF37] to-[#F4D03F] text-[#121212] px-3 py-1.5 rounded-full shadow-lg text-xs font-bold">
               <Award size={14} />
               <span>ÉLITE PRO</span>
             </div>
-          )}
-          {renderStatutCarteBadge(business.statut_carte)}
-        </div>
+          </div>
+        )}
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: isElite ? '16px' : '12px' }}>
         {/* Header avec logo rond centralisé */}
@@ -213,7 +219,7 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
               fontWeight: '700',
               color: titleColor,
               lineHeight: '1.3',
-              marginBottom: '4px',
+              marginBottom: '2px',
               display: '-webkit-box',
               WebkitLineClamp: 2,
               WebkitBoxOrient: 'vertical',
@@ -223,6 +229,11 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
           >
             {business.name}
           </h3>
+          {business.statut_carte && (
+            <div style={{ marginBottom: '4px' }}>
+              {renderStatutCarteBadge(business.statut_carte)}
+            </div>
+          )}
           {translatedCategory && (
             <>
               <p

@@ -46,9 +46,16 @@ function renderStatutCarteBadge(statut_carte: string | null | undefined) {
   const isNonCertified = statut_carte === '⚠️ NON CERTIFIÉ';
   return (
     <span style={{
-      display: 'inline-block', fontSize: '10px', fontFamily: 'sans-serif', fontWeight: '600',
-      color: '#fff', backgroundColor: isNonCertified ? '#ea580c' : '#16a34a',
-      borderRadius: '4px', padding: '1px 6px'
+      display: 'inline-block',
+      fontSize: '9px',
+      fontFamily: 'sans-serif',
+      fontWeight: '600',
+      letterSpacing: '0.03em',
+      color: isNonCertified ? '#c2410c' : '#15803d',
+      backgroundColor: isNonCertified ? 'rgba(234,88,12,0.08)' : 'rgba(22,163,74,0.08)',
+      border: `1px solid ${isNonCertified ? 'rgba(234,88,12,0.3)' : 'rgba(22,163,74,0.3)'}`,
+      borderRadius: '20px',
+      padding: '1px 7px',
     }}>
       {statut_carte}
     </span>
@@ -124,15 +131,14 @@ const UnifiedBusinessCard = ({ business, onClick }: UnifiedBusinessCardProps) =>
           />
         </div>
 
-        <div className="absolute top-2 right-2 z-10 flex flex-col items-end gap-1">
-          {isElite && (
+        {isElite && (
+          <div className="absolute top-2 right-2 z-10">
             <div className="flex items-center gap-1 bg-gradient-to-r from-[#D4AF37] to-[#F4D03F] text-white px-2 py-0.5 rounded-full shadow-lg text-[10px] font-semibold">
               <Award size={10} />
               <span>Elite</span>
             </div>
-          )}
-          {renderStatutCarteBadge(business.statut_carte)}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* Contenu ultra-compact */}
@@ -140,6 +146,11 @@ const UnifiedBusinessCard = ({ business, onClick }: UnifiedBusinessCardProps) =>
         <h3 className="text-sm font-bold text-gray-900 text-center line-clamp-1 leading-tight">
           {businessName}
         </h3>
+        {business.statut_carte && (
+          <div className="flex justify-center">
+            {renderStatutCarteBadge(business.statut_carte)}
+          </div>
+        )}
 
         {translatedCategory && (
           <>

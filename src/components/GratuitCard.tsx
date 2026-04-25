@@ -21,9 +21,16 @@ function renderStatutCarteBadge(statut_carte: string | null | undefined) {
   const isNonCertified = statut_carte === '⚠️ NON CERTIFIÉ';
   return (
     <span style={{
-      display: 'inline-block', fontSize: '10px', fontFamily: 'sans-serif', fontWeight: '600',
-      color: '#fff', backgroundColor: isNonCertified ? '#ea580c' : '#16a34a',
-      borderRadius: '4px', padding: '1px 6px'
+      display: 'inline-block',
+      fontSize: '9px',
+      fontFamily: 'sans-serif',
+      fontWeight: '600',
+      letterSpacing: '0.03em',
+      color: isNonCertified ? '#c2410c' : '#15803d',
+      backgroundColor: isNonCertified ? 'rgba(234,88,12,0.08)' : 'rgba(22,163,74,0.08)',
+      border: `1px solid ${isNonCertified ? 'rgba(234,88,12,0.3)' : 'rgba(22,163,74,0.3)'}`,
+      borderRadius: '20px',
+      padding: '1px 7px',
     }}>
       {statut_carte}
     </span>
@@ -60,11 +67,6 @@ export default function GratuitCard({
         position: 'relative',
       }}
     >
-      {statut_carte && (
-        <div style={{ position: 'absolute', top: '8px', right: '8px', zIndex: 10 }}>
-          {renderStatutCarteBadge(statut_carte)}
-        </div>
-      )}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', textAlign: 'center' }}>
 
         {/* Logo */}
@@ -81,6 +83,7 @@ export default function GratuitCard({
         <p style={{ fontSize: '14px', fontWeight: '700', color: '#1A1A1A', lineHeight: '1.3', margin: 0, letterSpacing: '-0.01em' }}>
           {name}
         </p>
+        {renderStatutCarteBadge(statut_carte)}
 
         {/* Catégorie */}
         {category && (

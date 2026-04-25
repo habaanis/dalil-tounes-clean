@@ -764,12 +764,17 @@ export const BusinessDetail = ({
             <h1 className={`text-xl md:text-2xl font-bold tracking-tight leading-tight ${tier === 'gratuit' ? 'text-gray-900' : 'text-white'}`}>{business.nom}</h1>
             {business.statut_carte && (
               <span
-                className="flex-shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full"
-                style={
-                  business.statut_carte.toUpperCase().includes('CERTIF')
-                    ? { backgroundColor: '#D1FAE5', color: '#065F46', border: '1px solid #6EE7B7' }
-                    : { backgroundColor: '#FEF3C7', color: '#92400E', border: '1px solid #FCD34D' }
-                }
+                className="flex-shrink-0"
+                style={{
+                  fontSize: '10px',
+                  fontWeight: '600',
+                  letterSpacing: '0.03em',
+                  padding: '2px 8px',
+                  borderRadius: '20px',
+                  ...(business.statut_carte === '⚠️ NON CERTIFIÉ'
+                    ? { color: '#c2410c', backgroundColor: 'rgba(234,88,12,0.09)', border: '1px solid rgba(234,88,12,0.3)' }
+                    : { color: '#15803d', backgroundColor: 'rgba(22,163,74,0.09)', border: '1px solid rgba(22,163,74,0.3)' })
+                }}
               >
                 {business.statut_carte}
               </span>
