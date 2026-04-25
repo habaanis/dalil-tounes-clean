@@ -39,7 +39,7 @@ export const PremiumPartnersSection = ({ onCardClick, partners, loading }: Premi
           </p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 220px), 260px))', gap: '1rem', justifyContent: 'center' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 180px), 220px))', gap: '1rem', justifyContent: 'center' }}>
           {loading ? (
             [1, 2, 3, 4].map((i) => <PartnerSkeleton key={i} />)
           ) : partners.length === 0 ? (
