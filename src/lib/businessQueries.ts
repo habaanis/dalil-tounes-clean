@@ -41,7 +41,8 @@ export const BUSINESS_COLUMNS = `
   created_at,
   updated_at,
   score_avis,
-  whatsapp
+  whatsapp,
+  statut_carte
 `;
 
 /**

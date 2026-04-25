@@ -26,6 +26,7 @@ export interface HomeBusinessRow {
   horaires_ok: string | null;
   telephone: string | null;
   is_featured: boolean | null;
+  statut_carte: string | null;
 }
 
 export interface HomeQueryResult {
@@ -44,7 +45,7 @@ const GC_TIME   = 60 * 60_000;   // 1 heure  — TTL maximale en localStorage
 const FIELDS = [
   'id', 'nom', 'ville', 'gouvernorat', 'sous_categories',
   '"statut Abonnement"', '"niveau priorité abonnement"',
-  'image_url', 'logo_url', 'horaires_ok', 'telephone', 'is_featured',
+  'image_url', 'logo_url', 'horaires_ok', 'telephone', 'is_featured', 'statut_carte',
 ].join(', ');
 
 // Verrou contre les appels simultanés (évite les doubles requêtes en cas de

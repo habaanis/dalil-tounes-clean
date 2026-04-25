@@ -61,7 +61,7 @@ const FIELDS = [
   'adresse', 'telephone', 'email', 'site_web', 'description', 'services',
   'image_url', 'logo_url', '"statut Abonnement"', '"niveau priorité abonnement"',
   '"mots cles recherche"', '"Lien Instagram"', '"lien facebook"', '"Lien TikTok"',
-  '"Lien LinkedIn"', '"Lien YouTube"', 'lien_x', 'horaires_ok',
+  '"Lien LinkedIn"', '"Lien YouTube"', 'lien_x', 'horaires_ok', 'statut_carte',
 ].join(', ');
 
 let inflight: Promise<BusinessesDefaultData> | null = null;

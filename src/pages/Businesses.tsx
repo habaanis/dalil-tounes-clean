@@ -427,7 +427,7 @@ export const Businesses = ({
     try {
       let query = supabase
         .from(Tables.ENTREPRISE)
-        .select('id, nom, secteur, sous_categories, "catégorie", gouvernorat, ville, adresse, telephone, email, site_web, description, services, image_url, logo_url, "statut Abonnement", "niveau priorité abonnement", "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok')
+        .select('id, nom, secteur, sous_categories, "catégorie", gouvernorat, ville, adresse, telephone, email, site_web, description, services, image_url, logo_url, "statut Abonnement", "niveau priorité abonnement", "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, statut_carte')
         .order('"niveau priorité abonnement"', { ascending: false, nullsFirst: false })
         .order('nom', { ascending: true })
         .limit(10);
@@ -496,6 +496,7 @@ export const Businesses = ({
         youtube: item['Lien YouTube'] || '',
         lien_x: item.lien_x || '',
         horaires_ok: item.horaires_ok || null,
+        statut_carte: item.statut_carte || null,
       }));
 
       console.log(`[DEBUG] ✅ Mapping terminé: ${mappedData.length} entreprises`);
@@ -538,7 +539,7 @@ export const Businesses = ({
     try {
       let query = supabase
         .from(Tables.ENTREPRISE)
-        .select('id, nom, secteur, sous_categories, "catégorie", gouvernorat, ville, adresse, telephone, email, site_web, description, services, image_url, logo_url, "statut Abonnement", "niveau priorité abonnement", "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok')
+        .select('id, nom, secteur, sous_categories, "catégorie", gouvernorat, ville, adresse, telephone, email, site_web, description, services, image_url, logo_url, "statut Abonnement", "niveau priorité abonnement", "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, statut_carte')
         .order('"niveau priorité abonnement"', { ascending: false, nullsFirst: false })
         .order('nom', { ascending: true })
         .limit(30);
