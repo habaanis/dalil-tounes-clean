@@ -6,6 +6,7 @@ interface SignatureCardProps {
   isPremium?: boolean;
   onClick?: () => void;
   className?: string;
+  style?: React.CSSProperties;
 }
 
 export const SignatureCard = ({
@@ -13,7 +14,8 @@ export const SignatureCard = ({
   tier,
   isPremium = false,
   onClick,
-  className = ''
+  className = '',
+  style,
 }: SignatureCardProps) => {
   const getTierStyles = () => {
     if (tier) {
@@ -94,6 +96,7 @@ export const SignatureCard = ({
       onClick={onClick}
       style={{
         ...styles,
+        ...style,
         borderRadius: '16px',
         transition: 'all 0.3s ease',
         position: 'relative',

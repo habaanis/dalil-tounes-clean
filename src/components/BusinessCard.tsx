@@ -170,13 +170,14 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
   }
 
   return (
-    <div className="block">
+    <div className="block" style={{ minHeight: '280px', maxHeight: '320px' }}>
       <SignatureCard
         tier={signatureTier}
         className={paddingClass}
         onClick={onClick}
+        style={{ minHeight: '280px', maxHeight: '320px', display: 'flex', flexDirection: 'column' }}
       >
-      <div style={{ position: 'relative' }}>
+      <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', flex: 1, height: '100%' }}>
         {isElite && (
           <div className="absolute top-0 right-0 z-10">
             <div className="flex items-center gap-1 bg-gradient-to-r from-[#D4AF37] to-[#F4D03F] text-[#121212] px-3 py-1.5 rounded-full shadow-lg text-xs font-bold">
@@ -186,7 +187,7 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
           </div>
         )}
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: isElite ? '16px' : '12px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: isElite ? '10px' : '8px', flex: 1 }}>
         {/* Header avec logo rond centralisé */}
         <div className="flex justify-center -mt-4 mb-2">
           <div
@@ -393,7 +394,7 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
 
         <button
           onClick={(e) => { e.stopPropagation(); onClick(); }}
-          style={{ width: '100%', marginTop: '2px', paddingTop: '12px', borderTop: '1px solid rgba(212, 175, 55, 0.3)', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', display: 'block' }}
+          style={{ width: '100%', marginTop: 'auto', paddingTop: '10px', borderTop: '1px solid rgba(212, 175, 55, 0.3)', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', display: 'block' }}
         >
           <span style={{ fontSize: '14px', fontWeight: '700', color: accentColor, textDecoration: 'none', letterSpacing: '0.01em' }} className="hover:underline">
             {t.common.viewDetails} →

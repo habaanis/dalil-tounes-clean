@@ -64,13 +64,17 @@ export default function GratuitCard({
         padding: '14px 12px',
         maxWidth: '280px',
         width: '100%',
+        minHeight: '280px',
+        maxHeight: '320px',
+        display: 'flex',
+        flexDirection: 'column',
         position: 'relative',
       }}
     >
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', textAlign: 'center' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', textAlign: 'center', flex: 1 }}>
 
         {/* Logo */}
-        <div className="w-12 h-12" style={getLogoContainerStyle('#D4AF37', '2px')}>
+        <div className="w-12 h-12" style={{ ...getLogoContainerStyle('#D4AF37', '2px'), flexShrink: 0 }}>
           <img
             src={getLogoUrl(logoUrl)}
             alt={`Logo ${name}${locationLabel ? ` à ${locationLabel}` : ''} - Annuaire établissements Tunisie`}
@@ -80,7 +84,7 @@ export default function GratuitCard({
         </div>
 
         {/* Nom */}
-        <p style={{ fontSize: '14px', fontWeight: '700', color: '#1A1A1A', lineHeight: '1.3', margin: 0, letterSpacing: '-0.01em' }}>
+        <p style={{ fontSize: '14px', fontWeight: '700', color: '#1A1A1A', lineHeight: '1.3', margin: 0, letterSpacing: '-0.01em', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
           {name}
         </p>
         {renderStatutCarteBadge(statut_carte)}
@@ -114,38 +118,44 @@ export default function GratuitCard({
         )}
       </div>
 
-      {/* Icône téléphone en bas à droite */}
-      {telephone && (
-        <div style={{ position: 'absolute', bottom: '10px', right: '10px', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
-          {showPhone && (
-            <a
-              href={`tel:${telephone}`}
-              onClick={(e) => e.stopPropagation()}
-              style={{ fontSize: '11px', fontWeight: '600', color: '#D4AF37', textDecoration: 'none', background: 'rgba(212,175,55,0.08)', borderRadius: '6px', padding: '2px 6px', border: '1px solid rgba(212,175,55,0.3)' }}
+      {/* Téléphone + bouton "Voir les détails" épinglés en bas */}
+      <div style={{ marginTop: 'auto', paddingTop: '10px', borderTop: '1px solid rgba(212,175,55,0.25)' }}>
+        {telephone && (
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '6px' }}>
+            {showPhone && (
+              <a
+                href={`tel:${telephone}`}
+                onClick={(e) => e.stopPropagation()}
+                style={{ fontSize: '11px', fontWeight: '600', color: '#D4AF37', textDecoration: 'none', background: 'rgba(212,175,55,0.08)', borderRadius: '6px', padding: '2px 6px', border: '1px solid rgba(212,175,55,0.3)', marginRight: '6px' }}
+              >
+                {telephone}
+              </a>
+            )}
+            <button
+              onClick={(e) => { e.stopPropagation(); setShowPhone(!showPhone); }}
+              style={{
+                background: showPhone ? '#D4AF37' : 'rgba(212,175,55,0.1)',
+                border: '1.5px solid #D4AF37',
+                borderRadius: '50%',
+                width: '28px',
+                height: '28px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                transition: 'background 0.2s ease',
+                flexShrink: 0,
+              }}
+              title={showPhone ? 'Masquer le numéro' : 'Afficher le numéro'}
             >
-              {telephone}
-            </a>
-          )}
-          <button
-            onClick={(e) => { e.stopPropagation(); setShowPhone(!showPhone); }}
-            style={{
-              background: showPhone ? '#D4AF37' : 'rgba(212,175,55,0.1)',
-              border: '1.5px solid #D4AF37',
-              borderRadius: '50%',
-              width: '28px',
-              height: '28px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              transition: 'background 0.2s ease',
-            }}
-            title={showPhone ? 'Masquer le numéro' : 'Afficher le numéro'}
-          >
-            <Phone size={13} style={{ color: showPhone ? '#FFFFFF' : '#D4AF37' }} />
-          </button>
-        </div>
-      )}
+              <Phone size={13} style={{ color: showPhone ? '#FFFFFF' : '#D4AF37' }} />
+            </button>
+          </div>
+        )}
+        <span style={{ fontSize: '13px', fontWeight: '700', color: '#D4AF37', letterSpacing: '0.01em' }}>
+          Voir les détails →
+        </span>
+      </div>
     </div>
   );
 }
