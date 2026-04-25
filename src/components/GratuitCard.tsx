@@ -87,23 +87,7 @@ export default function GratuitCard({
         </p>
         {renderStatutCarteBadge(statut_carte)}
 
-        {/* Catégorie */}
-        {category && (
-          <>
-            <p style={{ fontSize: '11px', fontWeight: '500', color: '#6B7280', margin: 0, maxWidth: '100%', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-              {category}
-            </p>
-            {allKeywords.length > 0 && <span className="sr-only">{allKeywords.join(' ')}</span>}
-          </>
-        )}
-
-        {/* Ville */}
-        {locationLabel && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <MapPin size={11} style={{ color: '#6B7280', flexShrink: 0 }} />
-            <span style={{ fontSize: '11px', fontWeight: '500', color: '#374151' }}>{locationLabel}</span>
-          </div>
-        )}
+        {allKeywords.length > 0 && <span className="sr-only">{allKeywords.join(' ')}</span>}
 
         {/* Statut ouvert/fermé */}
         {horaires_ok && (

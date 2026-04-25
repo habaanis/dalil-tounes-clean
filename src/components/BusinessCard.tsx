@@ -234,36 +234,9 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
               {renderStatutCarteBadge(business.statut_carte)}
             </div>
           )}
-          {translatedCategory && (
-            <>
-              <p
-                style={{
-                  fontSize: '13px',
-                  fontWeight: '500',
-                  color: secondaryTextColor,
-                  lineHeight: '1.4',
-                  display: '-webkit-box',
-                  WebkitLineClamp: 1,
-                  WebkitBoxOrient: 'vertical',
-                  overflow: 'hidden'
-                }}
-              >
-                {translatedCategory}
-              </p>
-              <meta name="keywords" content={allKeywords.join(', ')} />
-              <span className="sr-only">{allKeywords.join(' ')}</span>
-            </>
-          )}
+          <meta name="keywords" content={allKeywords.join(', ')} />
+          <span className="sr-only">{allKeywords.join(' ')}</span>
         </div>
-
-        {business.gouvernorat && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', paddingTop: '2px' }}>
-            <MapPin className="w-4 h-4" style={{ color: accentColor, flexShrink: 0 }} />
-            <span style={{ fontSize: '14px', fontWeight: '500', color: secondaryTextColor }}>
-              {business.gouvernorat}
-            </span>
-          </div>
-        )}
 
         {/* Description avec "Lire la suite" */}
         {business.description && (
