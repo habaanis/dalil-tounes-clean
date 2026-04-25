@@ -568,7 +568,7 @@ export const BusinessDetail = ({
       )}
 
       {/* Carte Prestige - centrée et lisible */}
-      {tier !== 'gratuit' && <div className="max-w-[520px] md:max-w-[700px] w-full mx-auto shadow-2xl transition-all duration-300"
+      {tier !== 'gratuit' && <div className="w-full mx-auto shadow-2xl transition-all duration-300"
            style={{
              borderRadius: '16px',
              border: `2px solid ${colors.border}`,
@@ -1368,5 +1368,9 @@ export const BusinessDetail = ({
     );
   }
 
-  return content;
+  return (
+    <div className="w-full max-w-[700px] mx-auto overflow-x-hidden">
+      {content}
+    </div>
+  );
 };

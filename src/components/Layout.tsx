@@ -396,7 +396,7 @@ export const Layout = ({ children }: LayoutProps) => {
         </div>
       )}
 
-      <main className={`min-h-[calc(100vh-5rem)] ${location.pathname === '/' ? 'pt-[124px]' : 'pt-[96px] sm:pt-[104px]'}`}>{children}</main>
+      <main className={`min-h-[calc(100vh-5rem)] overflow-x-hidden ${location.pathname === '/' ? 'pt-[124px]' : 'pt-[96px] sm:pt-[104px]'}`}>{children}</main>
 
       <SocialBar />
       <Footer />
