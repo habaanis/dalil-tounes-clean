@@ -56,6 +56,7 @@ function renderStatutCarteBadge(statut_carte: string | null | undefined) {
 }
 
 const UnifiedBusinessCard = ({ business, onClick }: UnifiedBusinessCardProps) => {
+  console.log('statut_carte =', business.statut_carte, '| entreprise =', business.nom || business.name);
   const { language } = useLanguage();
   const t = useTranslation(language);
   const { getCategory } = useCategoryTranslation();

@@ -68,6 +68,7 @@ function renderStatutCarteBadge(statut_carte: string | null | undefined, extraSt
 }
 
 export const BusinessCard = ({ business, onClick, variant = 'simple' }: BusinessCardProps) => {
+  console.log('statut_carte =', business.statut_carte, '| entreprise =', business.name);
   const { language } = useLanguage();
   const t = useTranslation(language);
   const { getCategory } = useCategoryTranslation();

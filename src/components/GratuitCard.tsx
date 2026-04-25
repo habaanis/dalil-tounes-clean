@@ -42,6 +42,7 @@ export default function GratuitCard({
   allKeywords = [],
   statut_carte,
 }: GratuitCardProps) {
+  console.log('statut_carte =', statut_carte, '| entreprise =', name);
   const [showPhone, setShowPhone] = useState(false);
   const locationLabel = ville || gouvernorat || '';
   const isOpen = isCurrentlyOpen(horaires_ok ?? null);
