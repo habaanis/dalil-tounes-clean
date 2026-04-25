@@ -35,15 +35,11 @@ const translations = {
   },
 };
 
-// Chiffre plancher affiché si la base ne retourne pas encore de count fiable.
-// À mettre à jour manuellement quand le nombre réel est connu.
-const FALLBACK_COUNT = 1200;
-
 export default function CompanyCountCard({ language, totalCount, loading }: CompanyCountCardProps) {
 
   const t = translations[language];
   const isRTL = language === 'ar';
-  const displayCount = (!loading && totalCount > 0) ? totalCount : FALLBACK_COUNT;
+  const isReady = !loading && totalCount > 0;
 
   return (
     <div className="relative w-full flex flex-col items-center justify-center text-center py-6 my-4 px-4">
@@ -56,7 +52,7 @@ export default function CompanyCountCard({ language, totalCount, loading }: Comp
         dir={isRTL ? 'rtl' : 'ltr'}
       >
         {t.before}
-        {loading ? '...' : <CountUp end={displayCount} duration={2.5} separator=" " />}
+        {isReady ? <CountUp end={totalCount} duration={2.5} separator=" " /> : <span className="inline-block w-16 h-5 bg-gray-200 rounded animate-pulse align-middle" />}
         {t.after}
       </h3>
 
