@@ -362,7 +362,7 @@ export default function CitizensAdmin({ onNavigateBack }: CitizensAdminProps = {
     try {
       let query = supabase
         .from(Tables.ENTREPRISE)
-        .select('id, nom, secteur, sous_categories, gouvernorat, "liste pages"')
+        .select('id, nom, secteur, sous_categories, gouvernorat, "liste pages", statut_carte')
         .contains('"liste pages"', ['services citoyens'])
         .order('nom', { ascending: true })
         .limit(100);

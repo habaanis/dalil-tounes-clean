@@ -541,7 +541,7 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
     try {
       let query = supabase
         .from('entreprise')
-        .select('id, nom, secteur, sous_categories, ville, adresse, telephone, latitude, longitude')
+        .select('id, nom, secteur, sous_categories, ville, adresse, telephone, latitude, longitude, statut_carte')
         .contains('secteur', ['Loisirs & Événements']);
 
       if (searchQuery) {
