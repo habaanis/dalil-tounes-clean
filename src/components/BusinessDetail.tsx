@@ -517,7 +517,7 @@ export const BusinessDetail = ({
   const translatedServices = business ? (getMultilingualField(business, 'services', language, true) || business.services || '') : '';
 
   const content = (
-    <div className={asModal ? "overflow-x-hidden" : "py-6 px-4 overflow-x-hidden"} style={{ maxWidth: '700px', margin: '0 auto', wordBreak: 'break-word' }} dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className={asModal ? "overflow-x-hidden" : "py-6 px-4 overflow-x-hidden"} style={{ wordBreak: 'break-word' }} dir={isRTL ? 'rtl' : 'ltr'}>
       {business && actualBusinessId && (
         <>
           <SEOHead
@@ -1358,7 +1358,8 @@ export const BusinessDetail = ({
         onClick={handleClose}
       >
         <div
-          className="relative max-w-[700px] w-full my-8"
+          className="relative my-8"
+          style={{ maxWidth: '650px', width: '90%', margin: '2rem auto', borderRadius: '16px' }}
           onClick={(e) => e.stopPropagation()}
         >
           {content}
@@ -1368,7 +1369,7 @@ export const BusinessDetail = ({
   }
 
   return (
-    <div className="w-full max-w-[700px] mx-auto overflow-x-hidden">
+    <div className="mx-auto overflow-x-hidden" style={{ maxWidth: '650px', width: '90%' }}>
       {content}
     </div>
   );
