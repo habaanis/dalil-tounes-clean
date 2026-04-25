@@ -43,19 +43,18 @@ interface UnifiedBusinessCardProps {
 
 function renderStatutCarteBadge(statut_carte: string | null | undefined) {
   if (!statut_carte) return null;
-  const isNonCertified = statut_carte === '⚠️ NON CERTIFIÉ';
+  const isNonCertified = statut_carte.includes('NON');
   return (
     <span style={{
       display: 'inline-block',
       fontSize: '9px',
       fontFamily: 'sans-serif',
-      fontWeight: '600',
+      fontWeight: '700',
       letterSpacing: '0.03em',
-      color: isNonCertified ? '#c2410c' : '#15803d',
-      backgroundColor: isNonCertified ? 'rgba(234,88,12,0.08)' : 'rgba(22,163,74,0.08)',
-      border: `1px solid ${isNonCertified ? 'rgba(234,88,12,0.3)' : 'rgba(22,163,74,0.3)'}`,
+      color: '#ffffff',
+      backgroundColor: isNonCertified ? '#ea580c' : '#15803d',
       borderRadius: '20px',
-      padding: '1px 7px',
+      padding: '2px 8px',
     }}>
       {statut_carte}
     </span>

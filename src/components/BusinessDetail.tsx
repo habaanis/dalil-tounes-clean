@@ -767,13 +767,12 @@ export const BusinessDetail = ({
                 className="flex-shrink-0"
                 style={{
                   fontSize: '10px',
-                  fontWeight: '600',
+                  fontWeight: '700',
                   letterSpacing: '0.03em',
-                  padding: '2px 8px',
+                  padding: '3px 9px',
                   borderRadius: '20px',
-                  ...(business.statut_carte === '⚠️ NON CERTIFIÉ'
-                    ? { color: '#c2410c', backgroundColor: 'rgba(234,88,12,0.09)', border: '1px solid rgba(234,88,12,0.3)' }
-                    : { color: '#15803d', backgroundColor: 'rgba(22,163,74,0.09)', border: '1px solid rgba(22,163,74,0.3)' })
+                  color: '#ffffff',
+                  backgroundColor: business.statut_carte.includes('NON') ? '#ea580c' : '#15803d',
                 }}
               >
                 {business.statut_carte}
