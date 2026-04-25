@@ -74,6 +74,7 @@ function normalizeBusiness(business: any): any {
     image_url: business.image_url || business.imageUrl,
     logo_url: getLogoUrl(business.logo_url || business.logoUrl),
     statut_abonnement: business.statut_abonnement || business['statut Abonnement'],
+    statut_carte: business.statut_carte || null,
     'Lien Instagram': business['Lien Instagram'] || business.instagram,
     'Lien TikTok': business['Lien TikTok'] || business.tiktok,
     'Lien LinkedIn': business['Lien LinkedIn'] || business.linkedin,
@@ -127,6 +128,7 @@ interface Business {
   image_url?: string;
   logo_url?: string;
   statut_abonnement?: string | null;
+  statut_carte?: string | null;
   'Lien Instagram'?: string;
   'Lien TikTok'?: string;
   'Lien LinkedIn'?: string;
@@ -560,6 +562,7 @@ export const BusinessDetail = ({
             horaires_ok={business.horaires_ok}
             telephone={business.telephone}
             language={language}
+            statut_carte={business.statut_carte}
           />
         </div>
       )}
@@ -757,8 +760,20 @@ export const BusinessDetail = ({
 
         <div className="px-2 pb-1 pt-2 text-center space-y-1">
           {/* Nom & Catégorie avec Bouton Copier Lien */}
-          <div className="flex items-center justify-center gap-2 px-1">
+          <div className="flex items-center justify-center gap-2 px-1 flex-wrap">
             <h1 className={`text-base font-bold tracking-tight leading-tight truncate ${tier === 'gratuit' ? 'text-gray-900' : 'text-white'}`}>{business.nom}</h1>
+            {business.statut_carte && (
+              <span
+                className="flex-shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full"
+                style={
+                  business.statut_carte.toUpperCase().includes('CERTIF')
+                    ? { backgroundColor: '#D1FAE5', color: '#065F46', border: '1px solid #6EE7B7' }
+                    : { backgroundColor: '#FEF3C7', color: '#92400E', border: '1px solid #FCD34D' }
+                }
+              >
+                {business.statut_carte}
+              </span>
+            )}
             <button
               onClick={copyLink}
               className="flex-shrink-0 transition-all hover:scale-110"
