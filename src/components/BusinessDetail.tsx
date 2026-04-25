@@ -567,8 +567,8 @@ export const BusinessDetail = ({
         </div>
       )}
 
-      {/* Carte Prestige - 450px max + Fluide sans scroll interne */}
-      {tier !== 'gratuit' && <div className="max-w-[450px] md:max-w-[650px] w-full mx-auto shadow-2xl transition-all duration-300"
+      {/* Carte Prestige - centrée et lisible */}
+      {tier !== 'gratuit' && <div className="max-w-[560px] md:max-w-[860px] w-full mx-auto shadow-2xl transition-all duration-300"
            style={{
              borderRadius: '16px',
              border: `2px solid ${colors.border}`,
@@ -590,7 +590,7 @@ export const BusinessDetail = ({
               style={{
                 position: 'relative',
                 width: '100%',
-                height: 'clamp(150px, 22vw, 200px)',
+                height: 'clamp(160px, 24vw, 260px)',
                 overflow: 'hidden',
                 borderRadius: '14px 14px 0 0',
                 backgroundColor: '#f0ede8',
@@ -634,11 +634,11 @@ export const BusinessDetail = ({
 
           {/* Logo rond — chevauchant le bandeau si présent */}
           <div
-            className={`${tier === 'gratuit' ? 'w-16 h-16' : 'w-28 h-28'} shadow-2xl`}
+            className={`${tier === 'gratuit' ? 'w-16 h-16' : 'w-32 h-32'} shadow-2xl`}
             style={{
               ...getLogoContainerStyle(colors.gold, tier === 'gratuit' ? '3px' : '4px'),
               backgroundColor: colors.background,
-              marginTop: tier !== 'gratuit' ? '-64px' : '0',
+              marginTop: tier !== 'gratuit' ? '-72px' : '0',
               position: 'relative',
               zIndex: 2,
             }}
@@ -761,7 +761,7 @@ export const BusinessDetail = ({
         <div className="px-2 pb-1 pt-2 text-center space-y-1">
           {/* Nom & Catégorie avec Bouton Copier Lien */}
           <div className="flex items-center justify-center gap-2 px-1 flex-wrap">
-            <h1 className={`text-base font-bold tracking-tight leading-tight truncate ${tier === 'gratuit' ? 'text-gray-900' : 'text-white'}`}>{business.nom}</h1>
+            <h1 className={`text-xl md:text-2xl font-bold tracking-tight leading-tight ${tier === 'gratuit' ? 'text-gray-900' : 'text-white'}`}>{business.nom}</h1>
             {business.statut_carte && (
               <span
                 className="flex-shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full"
@@ -784,7 +784,7 @@ export const BusinessDetail = ({
             </button>
           </div>
           {translatedCategory && (
-            <p className="font-medium text-xs truncate px-1" style={{ color: colors.gold }}>{translatedCategory}</p>
+            <p className="font-medium text-sm truncate px-1" style={{ color: colors.gold }}>{translatedCategory}</p>
           )}
 
           {/* Adresse, Ville & Téléphone */}
@@ -812,7 +812,7 @@ export const BusinessDetail = ({
             /* Artisan / Premium / Elite : adresse complète + téléphones */
             <div className="flex flex-col items-center text-gray-200 text-xs gap-0.5">
               <div className="flex items-center gap-1 max-w-full px-1">
-                <MapPin size={11} className="flex-shrink-0" style={{ color: colors.gold }} />
+                <MapPin size={13} className="flex-shrink-0" style={{ color: colors.gold }} />
                 {business.adresse ? (
                   <button
                     onClick={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); setShowAddressModal(true); }}
@@ -820,7 +820,7 @@ export const BusinessDetail = ({
                       background: 'none',
                       border: 'none',
                       cursor: 'pointer',
-                      fontSize: '10px',
+                      fontSize: '13px',
                       color: '#e5e7eb',
                       padding: 0,
                       textAlign: 'center',
@@ -834,7 +834,7 @@ export const BusinessDetail = ({
                     {business.adresse}{business.ville ? `, ${business.ville}` : ''}
                   </button>
                 ) : (
-                  <span style={{ fontSize: '10px', color: '#6b7280', fontStyle: 'italic' }}>
+                  <span style={{ fontSize: '13px', color: '#6b7280', fontStyle: 'italic' }}>
                     Adresse non renseignée{business.ville ? ` · ${business.ville}` : ''}
                   </span>
                 )}
@@ -844,9 +844,9 @@ export const BusinessDetail = ({
                   href={`tel:${business.telephone}`}
                   onClick={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); }}
                   className="flex items-center gap-1 font-bold truncate max-w-full px-1 hover:underline"
-                  style={{ color: colors.gold, textDecoration: 'none', position: 'relative', zIndex: 100, pointerEvents: 'auto', cursor: 'pointer' }}
+                  style={{ fontSize: '14px', color: colors.gold, textDecoration: 'none', position: 'relative', zIndex: 100, pointerEvents: 'auto', cursor: 'pointer' }}
                 >
-                  <Phone size={11} className="flex-shrink-0" />
+                  <Phone size={13} className="flex-shrink-0" />
                   <span>{business.telephone}</span>
                 </a>
               )}
@@ -855,9 +855,9 @@ export const BusinessDetail = ({
                   href={`tel:${business.telephone2_clean || business.telephone2}`}
                   onClick={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); }}
                   className="flex items-center gap-1 font-bold truncate max-w-full px-1 hover:underline"
-                  style={{ color: colors.gold, textDecoration: 'none', position: 'relative', zIndex: 100, pointerEvents: 'auto', cursor: 'pointer', marginTop: '2px' }}
+                  style={{ fontSize: '14px', color: colors.gold, textDecoration: 'none', position: 'relative', zIndex: 100, pointerEvents: 'auto', cursor: 'pointer', marginTop: '2px' }}
                 >
-                  <Phone size={11} className="flex-shrink-0" />
+                  <Phone size={13} className="flex-shrink-0" />
                   <span>{business.telephone2}</span>
                 </a>
               )}
@@ -889,8 +889,8 @@ export const BusinessDetail = ({
           {/* Description — masquée pour Gratuit */}
           {tier !== 'gratuit' && translatedDescription && (
             <div className="text-left px-1">
-              <div style={{ position: 'relative', maxHeight: '52px', overflow: 'hidden' }}>
-                <p className="text-gray-300 break-words" style={{ fontSize: '11px', lineHeight: '1.65', margin: 0 }}>
+              <div style={{ position: 'relative', maxHeight: '72px', overflow: 'hidden' }}>
+                <p className="text-gray-300 break-words" style={{ fontSize: '13px', lineHeight: '1.65', margin: 0 }}>
                   {translatedDescription}
                 </p>
                 <div
@@ -961,10 +961,10 @@ export const BusinessDetail = ({
                 >
                   <div className="flex items-center gap-1">
                     <Clock size={10} className={parsedSchedule.isCurrentlyOpen ? 'text-green-400' : 'text-red-400'} />
-                    <span className="text-white font-semibold text-[10px]">{text.openingHours}</span>
+                    <span className="text-white font-semibold text-xs">{text.openingHours}</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded-full ${
+                    <span className={`text-[11px] font-semibold px-1.5 py-0.5 rounded-full ${
                       parsedSchedule.isCurrentlyOpen
                         ? 'bg-green-100 text-green-700'
                         : 'bg-red-100 text-red-700'
@@ -1003,7 +1003,7 @@ export const BusinessDetail = ({
                           return (
                             <React.Fragment key={`schedule-${index}`}>
                               <span
-                                className="text-[9px] rounded px-1 py-0.5"
+                                className="text-[11px] rounded px-1 py-0.5"
                                 style={{
                                   fontWeight: isToday ? '700' : '500',
                                   color: day.isOpen ? (isToday ? '#FFFFFF' : 'rgba(255, 255, 255, 0.7)') : '#EF4444',
@@ -1013,7 +1013,7 @@ export const BusinessDetail = ({
                                 {getDayName(dayIndex, language)}
                               </span>
                               <span
-                                className="text-[9px] text-left rounded px-1 py-0.5"
+                                className="text-[11px] text-left rounded px-1 py-0.5"
                                 style={{
                                   fontWeight: isToday ? '600' : '400',
                                   color: day.isOpen ? (isToday ? '#FFFFFF' : 'rgba(255, 255, 255, 0.6)') : '#EF4444',
@@ -1043,7 +1043,7 @@ export const BusinessDetail = ({
             {tier !== 'gratuit' && business.telephone && (
               <button
                 onClick={(e) => { e.stopPropagation(); window.open(`https://wa.me/${business.telephone.replace(/[^0-9]/g, '')}`, '_blank'); }}
-                className="flex items-center justify-center w-6 h-6 rounded-full transition-all hover:scale-110 bg-[#25D366] cursor-pointer"
+                className="flex items-center justify-center w-8 h-8 rounded-full transition-all hover:scale-110 bg-[#25D366] cursor-pointer"
                 style={{ position: 'relative', zIndex: 50, pointerEvents: 'auto' }}
                 title="Nous contacter sur WhatsApp"
               >
@@ -1057,7 +1057,7 @@ export const BusinessDetail = ({
             {tier !== 'gratuit' && business.telephone && (
               <button
                 onClick={(e) => { e.stopPropagation(); window.open(`https://t.me/${business.telephone.replace(/[^0-9]/g, '')}`, '_blank'); }}
-                className="flex items-center justify-center w-6 h-6 rounded-full transition-all hover:scale-110 bg-[#26A5E4] cursor-pointer"
+                className="flex items-center justify-center w-8 h-8 rounded-full transition-all hover:scale-110 bg-[#26A5E4] cursor-pointer"
                 style={{ position: 'relative', zIndex: 50, pointerEvents: 'auto' }}
                 title="Nous contacter sur Telegram"
               >
@@ -1072,7 +1072,7 @@ export const BusinessDetail = ({
               <a
                 href={`mailto:${business.email}`}
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center justify-center w-6 h-6 rounded-full transition-all hover:scale-110 bg-[#6B7280] cursor-pointer"
+                className="flex items-center justify-center w-8 h-8 rounded-full transition-all hover:scale-110 bg-[#6B7280] cursor-pointer"
                 style={{ position: 'relative', zIndex: 50, pointerEvents: 'auto' }}
                 title={business.email}
               >
@@ -1084,7 +1084,7 @@ export const BusinessDetail = ({
               <a
                 href={`mailto:${business.email2_clean || business.email2}`}
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center justify-center w-6 h-6 rounded-full transition-all hover:scale-110 bg-[#6B7280] cursor-pointer"
+                className="flex items-center justify-center w-8 h-8 rounded-full transition-all hover:scale-110 bg-[#6B7280] cursor-pointer"
                 style={{ position: 'relative', zIndex: 50, pointerEvents: 'auto' }}
                 title={business.email2}
               >
@@ -1100,7 +1100,7 @@ export const BusinessDetail = ({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center justify-center w-6 h-6 rounded-full transition-all hover:scale-110 bg-gradient-to-br from-[#F58529] via-[#DD2A7B] to-[#8134AF] cursor-pointer"
+                className="flex items-center justify-center w-8 h-8 rounded-full transition-all hover:scale-110 bg-gradient-to-br from-[#F58529] via-[#DD2A7B] to-[#8134AF] cursor-pointer"
                 style={{ position: 'relative', zIndex: 50, pointerEvents: 'auto' }}
               >
                 <Instagram size={10} className="text-white" />
@@ -1114,7 +1114,7 @@ export const BusinessDetail = ({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center justify-center w-6 h-6 rounded-full transition-all hover:scale-110 bg-[#1877F2] cursor-pointer"
+                className="flex items-center justify-center w-8 h-8 rounded-full transition-all hover:scale-110 bg-[#1877F2] cursor-pointer"
                 style={{ position: 'relative', zIndex: 50, pointerEvents: 'auto' }}
               >
                 <Facebook size={10} className="text-white" />
@@ -1128,7 +1128,7 @@ export const BusinessDetail = ({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center justify-center w-6 h-6 rounded-full transition-all hover:scale-110 bg-black cursor-pointer"
+                className="flex items-center justify-center w-8 h-8 rounded-full transition-all hover:scale-110 bg-black cursor-pointer"
                 style={{ position: 'relative', zIndex: 50, pointerEvents: 'auto' }}
               >
                 <svg className="text-[#00F2EA]" width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
@@ -1144,7 +1144,7 @@ export const BusinessDetail = ({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center justify-center w-6 h-6 rounded-full transition-all hover:scale-110 bg-[#0A66C2] cursor-pointer"
+                className="flex items-center justify-center w-8 h-8 rounded-full transition-all hover:scale-110 bg-[#0A66C2] cursor-pointer"
                 style={{ position: 'relative', zIndex: 50, pointerEvents: 'auto' }}
               >
                 <Linkedin size={10} className="text-white" />
@@ -1158,7 +1158,7 @@ export const BusinessDetail = ({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center justify-center w-6 h-6 rounded-full transition-all hover:scale-110 bg-[#FF0000] cursor-pointer"
+                className="flex items-center justify-center w-8 h-8 rounded-full transition-all hover:scale-110 bg-[#FF0000] cursor-pointer"
                 style={{ position: 'relative', zIndex: 50, pointerEvents: 'auto' }}
               >
                 <Youtube size={10} className="text-white" />
@@ -1273,7 +1273,7 @@ export const BusinessDetail = ({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center justify-center w-6 h-6 rounded-full transition-all hover:scale-110 bg-[#0084FF] cursor-pointer"
+                className="flex items-center justify-center w-8 h-8 rounded-full transition-all hover:scale-110 bg-[#0084FF] cursor-pointer"
                 style={{ position: 'relative', zIndex: 50, pointerEvents: 'auto' }}
                 title="Nous contacter sur Messenger"
               >
