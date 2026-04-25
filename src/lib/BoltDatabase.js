@@ -1,20 +1,18 @@
 /* ---------------------------------------------------------
-   ⚙️ Fichier : BoltDatabase.js
-   Projet : Dalil Tounes 🇹🇳
-   Objectif : Constantes Supabase + fonctions helpers
-   ⚠️ Le client Supabase unifié est dans src/lib/supabaseClient.ts
+   BoltDatabase.js - CONNEXION SUPABASE FIGEE
+   Ce fichier est prioritaire sur .env
+   NE PAS MODIFIER sauf pour changer définitivement de base
 --------------------------------------------------------- */
 
 import { supabase } from './supabaseClient';
 
-/* ------------- 🔐 Connexion Supabase ------------- */
-export const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-export const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+export const SUPABASE_CONFIG = {
+  url: 'https://kmvjegbtroksjqaqliyv.supabase.co',
+  anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImttdmplZ2J0cm9rc2pxYXFsaXl2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4MDA1NTEsImV4cCI6MjA2NzM3NjU1MX0.MbU7b-HWQBwlYtbJeE7_ABvrGhuhzeAuqvkcVvvoE1o'
+};
 
-if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-  console.error("❌ Clés Supabase manquantes. Vérifie ton .env ou tes constantes.");
-  throw new Error("Supabase non configuré.");
-}
+export const SUPABASE_URL = SUPABASE_CONFIG.url;
+export const SUPABASE_ANON_KEY = SUPABASE_CONFIG.anonKey;
 
 /* ------------- 🧩 Export du client unifié ------------- */
 export { supabase };

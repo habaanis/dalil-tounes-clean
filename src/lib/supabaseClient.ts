@@ -1,54 +1,33 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-type Keys = { url: string; anon: string; source: 'env' };
+// Valeurs figées — priorité absolue sur .env
+const HARDCODED_URL = 'https://kmvjegbtroksjqaqliyv.supabase.co';
+const HARDCODED_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImttdmplZ2J0cm9rc2pxYXFsaXl2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4MDA1NTEsImV4cCI6MjA2NzM3NjU1MX0.MbU7b-HWQBwlYtbJeE7_ABvrGhuhzeAuqvkcVvvoE1o';
 
-function readKeys(): Keys {
-  const url = import.meta.env.VITE_SUPABASE_URL as string;
-  const anon = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
+const SUPABASE_URL = HARDCODED_URL || (import.meta.env.VITE_SUPABASE_URL as string);
+const SUPABASE_ANON_KEY = HARDCODED_KEY || (import.meta.env.VITE_SUPABASE_ANON_KEY as string);
 
-  if (!url || !anon) {
-    console.error('[supabase] Clés manquantes — vérifie VITE_SUPABASE_URL et VITE_SUPABASE_ANON_KEY dans .env');
-  }
-
-  return { url, anon, source: 'env' };
+if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+  throw new Error('Aucune configuration Supabase trouvée !');
 }
 
-let client: SupabaseClient | null = null;
-let last: Keys | null = null;
-
-function ensureClient(): SupabaseClient {
-  const cur = readKeys();
-
-  if (!client || !last || cur.url !== last.url || cur.anon !== last.anon) {
-    client = createClient(cur.url, cur.anon, {
-      auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true
-      },
-      global: {
-        headers: {
-          'x-application-name': 'dalil-tounes'
-        }
-      }
-    });
-
-    if (import.meta.env.VITE_DEBUG_SEARCH === '1') {
-      console.info(
-        `[supabase] client (re)initialisé depuis ${cur.source}: ${cur.url.slice(0, 40)}…`
-      );
+const supabaseInstance: SupabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true
+  },
+  global: {
+    headers: {
+      'x-application-name': 'dalil-tounes'
     }
-
-    last = cur;
   }
+});
 
-  return client!;
-}
+export const supabaseUrl = SUPABASE_URL;
+export const supabaseAnonKey = SUPABASE_ANON_KEY;
 
-export const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
-export const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
-
-// --- Debug logging (optionnel mais utile) ---
+// --- Debug logging ---
 
 type SearchLog = {
   ts: string;
@@ -87,7 +66,7 @@ export async function rpcLog<T = any>(
   meta?: { page?: string; component?: string; scope?: string }
 ) {
   const t0 = performance.now();
-  const { data, error } = await ensureClient().rpc(name, params);
+  const { data, error } = await supabaseInstance.rpc(name, params);
 
   pushLog({
     ts: new Date().toISOString(),
@@ -113,7 +92,7 @@ export async function selectLikeLog<T = any>(
   meta?: { page?: string; component?: string; scope?: string }
 ) {
   const t0 = performance.now();
-  const { data, error } = await ensureClient()
+  const { data, error } = await supabaseInstance
     .from(table)
     .select('*')
     .ilike(column, like)
@@ -135,8 +114,5 @@ export async function selectLikeLog<T = any>(
   return { data: (data ?? []) as T[], error };
 }
 
-// ✅ On exporte maintenant un client simple, sans Proxy ni bind compliqué
-export const supabase: SupabaseClient = ensureClient();
+export const supabase: SupabaseClient = supabaseInstance;
 export default supabase;
-
-
