@@ -136,7 +136,7 @@ export const Layout = ({ children }: LayoutProps) => {
                     style={{ objectPosition: 'center', borderRadius: '50%' }}
                     width="140"
                     height="140"
-                    fetchPriority="high"
+                    fetchpriority="high"
                   />
                 </picture>
               </div>

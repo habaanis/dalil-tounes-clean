@@ -81,7 +81,7 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
               className="absolute inset-0 w-full h-full object-cover brightness-105"
               width="1200"
               height="630"
-              fetchPriority="high"
+              fetchpriority="high"
               loading="eager"
               decoding="async"
             />
