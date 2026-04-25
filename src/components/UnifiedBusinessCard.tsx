@@ -41,6 +41,23 @@ interface UnifiedBusinessCardProps {
   onClick: () => void;
 }
 
+function renderStatutCarteBadge(statut_carte: string | null | undefined) {
+  if (!statut_carte) return null;
+  const upper = statut_carte.toUpperCase();
+  const isCertified = upper.includes('CERTIFIÉ') && !upper.includes('NON');
+  const isNonCertified = upper.includes('NON CERTIFIÉ');
+  if (!isCertified && !isNonCertified) return null;
+  return (
+    <span style={{
+      display: 'inline-block', fontSize: '10px', fontFamily: 'sans-serif', fontWeight: '600',
+      color: '#fff', backgroundColor: isCertified ? '#16a34a' : '#ea580c',
+      borderRadius: '4px', padding: '1px 6px'
+    }}>
+      {statut_carte}
+    </span>
+  );
+}
+
 const UnifiedBusinessCard = ({ business, onClick }: UnifiedBusinessCardProps) => {
   const { language } = useLanguage();
   const t = useTranslation(language);
@@ -124,16 +141,7 @@ const UnifiedBusinessCard = ({ business, onClick }: UnifiedBusinessCardProps) =>
         <h3 className="text-sm font-bold text-gray-900 text-center line-clamp-1 leading-tight">
           {businessName}
         </h3>
-        {business.statut_carte === 'certifie' && (
-          <span style={{ display: 'inline-block', fontSize: '10px', fontFamily: 'sans-serif', fontWeight: '600', color: '#fff', backgroundColor: '#16a34a', borderRadius: '4px', padding: '1px 6px' }}>
-            ⭐ CERTIFIÉ DALIL TOUNES
-          </span>
-        )}
-        {business.statut_carte === 'brut' && (
-          <span style={{ display: 'inline-block', fontSize: '10px', fontFamily: 'sans-serif', fontWeight: '600', color: '#fff', backgroundColor: '#ea580c', borderRadius: '4px', padding: '1px 6px' }}>
-            ⚠️ NON CERTIFIÉ
-          </span>
-        )}
+        {renderStatutCarteBadge(business.statut_carte)}
 
         {translatedCategory && (
           <>

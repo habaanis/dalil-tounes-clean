@@ -16,6 +16,23 @@ interface GratuitCardProps {
   statut_carte?: string | null;
 }
 
+function renderStatutCarteBadge(statut_carte: string | null | undefined) {
+  if (!statut_carte) return null;
+  const upper = statut_carte.toUpperCase();
+  const isCertified = upper.includes('CERTIFIÉ') && !upper.includes('NON');
+  const isNonCertified = upper.includes('NON CERTIFIÉ');
+  if (!isCertified && !isNonCertified) return null;
+  return (
+    <span style={{
+      display: 'inline-block', fontSize: '10px', fontFamily: 'sans-serif', fontWeight: '600',
+      color: '#fff', backgroundColor: isCertified ? '#16a34a' : '#ea580c',
+      borderRadius: '4px', padding: '1px 6px'
+    }}>
+      {statut_carte}
+    </span>
+  );
+}
+
 export default function GratuitCard({
   name,
   logoUrl,
@@ -61,16 +78,7 @@ export default function GratuitCard({
         <p style={{ fontSize: '14px', fontWeight: '700', color: '#1A1A1A', lineHeight: '1.3', margin: 0, letterSpacing: '-0.01em' }}>
           {name}
         </p>
-        {statut_carte === 'certifie' && (
-          <span style={{ display: 'inline-block', fontSize: '10px', fontFamily: 'sans-serif', fontWeight: '600', color: '#fff', backgroundColor: '#16a34a', borderRadius: '4px', padding: '1px 6px' }}>
-            ⭐ CERTIFIÉ DALIL TOUNES
-          </span>
-        )}
-        {statut_carte === 'brut' && (
-          <span style={{ display: 'inline-block', fontSize: '10px', fontFamily: 'sans-serif', fontWeight: '600', color: '#fff', backgroundColor: '#ea580c', borderRadius: '4px', padding: '1px 6px' }}>
-            ⚠️ NON CERTIFIÉ
-          </span>
-        )}
+        {renderStatutCarteBadge(statut_carte)}
 
         {/* Catégorie */}
         {category && (
