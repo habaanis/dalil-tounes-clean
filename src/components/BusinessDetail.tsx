@@ -1360,9 +1360,9 @@ export const BusinessDetail = ({
         <div
           className="relative"
           style={{
-            maxWidth: '500px',
+            maxWidth: '420px',
             width: '92%',
-            maxHeight: '80vh',
+            maxHeight: '85vh',
             overflowY: 'auto',
             borderRadius: '16px',
             margin: '0 auto',
@@ -1376,7 +1376,7 @@ export const BusinessDetail = ({
   }
 
   return (
-    <div className="mx-auto overflow-x-hidden" style={{ maxWidth: '500px', width: '92%' }}>
+    <div className="mx-auto overflow-x-hidden" style={{ maxWidth: '420px', width: '92%' }}>
       {content}
     </div>
   );
