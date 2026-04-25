@@ -9,10 +9,10 @@ import { expandCityVariants } from '../lib/geoAliases';
 import { buildEntrepriseUrl } from '../lib/url';
 import { useLanguage } from '../context/LanguageContext';
 import { t, isRTL, type Lang } from '../lib/i18n';
-import { METIERS_DOMAINES } from '../lib/categories';
 import { normalizeText } from '../lib/textNormalization';
-import { ChevronDown } from 'lucide-react';
 import LocationSelectTunisie from './LocationSelectTunisie';
+
+type CertFilter = '' | 'certifie' | 'non_certifie';
 
 type Scope = 'global' | 'sante' | 'education' | 'administration' | 'loisirs' | 'magasin' | 'marche_local' | 'tourism' | 'services';
 type Mode = 'entreprises' | 'annonces' | 'evenements';
@@ -76,7 +76,8 @@ export default function SearchBar({
 
   const [q, setQ] = React.useState('');
   const [city, setCity] = React.useState('');
-  const [metier, setMetier] = React.useState('');
+  const [metier] = React.useState('');
+  const [certFilter, setCertFilter] = React.useState<CertFilter>('');
   const [ent, setEnt] = React.useState<ResultItem[]>([]);
   const [villes, setVilles] = React.useState<VilleItem[]>([]);
   const [loadingEnt, setLoadingEnt] = React.useState(false);
@@ -320,7 +321,8 @@ export default function SearchBar({
     const url = buildEntrepriseUrl({
       q: query || undefined,
       ville: villeParam || undefined,
-      categorie: detectedCategory
+      categorie: detectedCategory,
+      statut_carte: certFilter || undefined
     });
     goTo(url);
   };
@@ -418,20 +420,28 @@ export default function SearchBar({
             className="px-3 py-2 rounded-lg text-sm"
           />
         </div>
-        <div className="relative z-10">
-          <select
-            value={metier}
-            onChange={(e) => setMetier(e.target.value)}
-            className="w-full px-3 py-2 pr-9 rounded-lg border border-[#D4AF37] bg-white appearance-none text-gray-900 text-sm focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none"
-            dir={dir}
-          >
-            {METIERS_DOMAINES.map((m) => (
-              <option key={m.value} value={m.value}>
-                {m.value === '' ? t(language as Lang, 'search.allCategories') : m.label}
-              </option>
-            ))}
-          </select>
-          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#4A1D43] pointer-events-none" />
+        <div className="relative z-10 flex rounded-lg border border-[#D4AF37] bg-white overflow-hidden text-sm" dir={dir}>
+          {([
+            { value: '' as CertFilter, label: 'Tous' },
+            { value: 'certifie' as CertFilter, label: 'Certifiés' },
+            { value: 'non_certifie' as CertFilter, label: 'Non certifiés' },
+          ] as { value: CertFilter; label: string }[]).map(({ value, label }) => (
+            <button
+              key={value}
+              type="button"
+              onClick={() => setCertFilter(value)}
+              className="flex-1 px-2 py-2 text-xs font-medium transition-colors whitespace-nowrap"
+              style={{
+                backgroundColor: certFilter === value
+                  ? value === 'certifie' ? '#15803d' : value === 'non_certifie' ? '#c2410c' : '#D4AF37'
+                  : 'transparent',
+                color: certFilter === value ? '#fff' : value === 'certifie' ? '#15803d' : value === 'non_certifie' ? '#c2410c' : '#6b7280',
+                borderRight: value !== 'non_certifie' ? '1px solid #D4AF3740' : 'none',
+              }}
+            >
+              {label}
+            </button>
+          ))}
         </div>
       </div>
 

@@ -3,12 +3,14 @@ export function buildEntrepriseUrl(params: {
   ville?: string;
   categorie?: string;
   selected_id?: string;
+  statut_carte?: string;
 }) {
   const sp = new URLSearchParams();
   if (params.q && params.q.trim().length) sp.set('q', params.q.trim());
   if (params.ville && params.ville.trim().length) sp.set('ville', params.ville.trim());
   if (params.categorie && params.categorie.trim().length) sp.set('categorie', params.categorie.trim());
   if (params.selected_id && params.selected_id.trim().length) sp.set('selected_id', params.selected_id.trim());
+  if (params.statut_carte && params.statut_carte.trim().length) sp.set('statut_carte', params.statut_carte.trim());
   const qs = sp.toString();
   return qs ? `#/entreprises?${qs}` : '#/entreprises';
 }

@@ -6,6 +6,7 @@ export function readParams() {
     q: sp.get('q') || '',
     ville: sp.get('ville') || '',
     categorie: sp.get('categorie') || '',
-    selected_id: sp.get('selected_id') || ''
+    selected_id: sp.get('selected_id') || '',
+    statut_carte: sp.get('statut_carte') || ''
   };
 }

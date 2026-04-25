@@ -99,6 +99,7 @@ export const Businesses = ({
   const [showRegistrationForm, setShowRegistrationForm] = useState(false);
   const [filterPremium, setFilterPremium] = useState(false);
   const [filterCommerceLocal, setFilterCommerceLocal] = useState(false);
+  const [filterStatutCarte, setFilterStatutCarte] = useState<'' | 'certifie' | 'non_certifie'>('');
   const [availableCategories, setAvailableCategories] = useState<Array<{id: string, label: string, count: number}>>([]);
   const [selectedChipCategories, setSelectedChipCategories] = useState<string[]>([]);
 
@@ -118,7 +119,7 @@ export const Businesses = ({
     return () => clearTimeout(timeout);
   }, [loading, searching]);
 
-  const hasActiveSearch = !!searchTerm || !!selectedCity || !!selectedCategory || !!pageCategorie || filterPremium || filterCommerceLocal;
+  const hasActiveSearch = !!searchTerm || !!selectedCity || !!selectedCategory || !!pageCategorie || filterPremium || filterCommerceLocal || !!filterStatutCarte;
 
   // Extraire les catégories disponibles depuis les résultats
   useEffect(() => {
@@ -268,6 +269,12 @@ export const Businesses = ({
         setFilterCommerceLocal(newCommerceLocal);
       }
 
+      const rawStatutCarte = params.statut_carte || '';
+      const newStatutCarte = (rawStatutCarte === 'certifie' || rawStatutCarte === 'non_certifie') ? rawStatutCarte : '';
+      if (newStatutCarte !== filterStatutCarte) {
+        setFilterStatutCarte(newStatutCarte);
+      }
+
       if (pageCat && pageCat !== pageCategorie) {
         console.log(`[DEBUG] Mise à jour pageCategorie: "${pageCategorie}" → "${pageCat}"`);
         setPageCategorie(pageCat);
@@ -332,7 +339,7 @@ export const Businesses = ({
   };
 
   // Garde anti-boucle : stocker les dernières valeurs
-  const prevSearchRef = useRef({ searchTerm: '', selectedCity: '', selectedCategory: '', pageCategorie: null as string | null, filterPremium: false, filterCommerceLocal: false });
+  const prevSearchRef = useRef({ searchTerm: '', selectedCity: '', selectedCategory: '', pageCategorie: null as string | null, filterPremium: false, filterCommerceLocal: false, filterStatutCarte: '' as '' | 'certifie' | 'non_certifie' });
   const isInitialMount = useRef(true);
 
   useEffect(() => {
@@ -366,7 +373,8 @@ export const Businesses = ({
       prevSearchRef.current.selectedCategory !== selectedCategory ||
       prevSearchRef.current.pageCategorie !== pageCategorie ||
       prevSearchRef.current.filterPremium !== filterPremium ||
-      prevSearchRef.current.filterCommerceLocal !== filterCommerceLocal;
+      prevSearchRef.current.filterCommerceLocal !== filterCommerceLocal ||
+      prevSearchRef.current.filterStatutCarte !== filterStatutCarte;
 
     if (!hasRealChange) {
       console.log('⏭️ [SKIP] Aucun changement réel détecté, skip');
@@ -383,10 +391,10 @@ export const Businesses = ({
     });
 
     // Mettre à jour les références
-    prevSearchRef.current = { searchTerm, selectedCity, selectedCategory, pageCategorie, filterPremium, filterCommerceLocal };
+    prevSearchRef.current = { searchTerm, selectedCity, selectedCategory, pageCategorie, filterPremium, filterCommerceLocal, filterStatutCarte };
 
     const delayDebounceFn = setTimeout(() => {
-      if (searchTerm.length >= 1 || selectedCity || selectedCategory || filterPremium || filterCommerceLocal) {
+      if (searchTerm.length >= 1 || selectedCity || selectedCategory || filterPremium || filterCommerceLocal || filterStatutCarte) {
         console.log('➡️ [DEBUG] Déclenchement de performSearch()');
         performSearch();
       } else {
@@ -396,7 +404,7 @@ export const Businesses = ({
     }, 300);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm, selectedCity, selectedCategory, pageCategorie, filterPremium, filterCommerceLocal]);
+  }, [searchTerm, selectedCity, selectedCategory, pageCategorie, filterPremium, filterCommerceLocal, filterStatutCarte]);
 
   useEffect(() => {
     // ✅ CORRECTION BOUCLE INFINIE : enlever selectedBusiness des dépendances
@@ -435,6 +443,12 @@ export const Businesses = ({
       if (pageCategorie) {
         console.log(`[DEBUG] Filtre pageCategorie appliqué: "${pageCategorie}"`);
         query = query.contains('"liste pages"', [pageCategorie]);
+      }
+
+      if (filterStatutCarte === 'certifie') {
+        query = (query as any).ilike('statut_carte', '%CERTIF%').not('statut_carte', 'ilike', '%NON CERTIF%');
+      } else if (filterStatutCarte === 'non_certifie') {
+        query = (query as any).ilike('statut_carte', '%NON CERTIF%');
       }
 
       console.log('[DEBUG] Exécution de la requête Supabase...');
@@ -571,6 +585,12 @@ export const Businesses = ({
       if (filterCommerceLocal) {
         console.log(`[DEBUG] Filtre Commerce Local activé`);
         query = query.eq('"page commerce local"', true);
+      }
+
+      if (filterStatutCarte === 'certifie') {
+        query = (query as any).ilike('statut_carte', '%CERTIF%').not('statut_carte', 'ilike', '%NON CERTIF%');
+      } else if (filterStatutCarte === 'non_certifie') {
+        query = (query as any).ilike('statut_carte', '%NON CERTIF%');
       }
 
       console.log('[DEBUG] Exécution de la requête Supabase...');
