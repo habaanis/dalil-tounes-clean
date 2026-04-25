@@ -1192,8 +1192,7 @@ export const Businesses = ({
                         badges: business.badges || [],
                         imageUrl: business.imageUrl,
                         logoUrl: business.logoUrl,
-                        horaires_ok: business.horaires_ok,
-                        statut_carte: business.statut_carte
+                        horaires_ok: business.horaires_ok
                       }}
                       onClick={() => {
                         console.log('🔍 [BusinessCard] Ouverture modal pour:', business.name, business.id);
