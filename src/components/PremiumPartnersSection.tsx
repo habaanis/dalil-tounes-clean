@@ -11,7 +11,7 @@ function PartnerSkeleton() {
   return (
     <div
       className="rounded-2xl overflow-hidden border border-gray-100 bg-white animate-pulse"
-      style={{ width: '200px', minHeight: '220px' }}
+      style={{ minHeight: '280px', maxHeight: '320px' }}
     >
       {/* image placeholder */}
       <div className="bg-gray-200 h-28 w-full" />
@@ -39,35 +39,52 @@ export const PremiumPartnersSection = ({ onCardClick, partners, loading }: Premi
           </p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 180px), 220px))', gap: '1rem', justifyContent: 'center' }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, 1fr)',
+          gap: '12px',
+        }} className="md:grid-cols-4">
           {loading ? (
             [1, 2, 3, 4].map((i) => <PartnerSkeleton key={i} />)
           ) : partners.length === 0 ? (
-            <div className="text-center py-8 text-gray-500 text-sm w-full">
+            <div className="text-center py-8 text-gray-500 text-sm col-span-2 md:col-span-4">
               Aucun établissement à afficher pour le moment
             </div>
           ) : (
             partners.map((biz) => (
-              <BusinessCard
+              <div
                 key={biz.id}
-                business={{
-                  id: biz.id,
-                  name: biz.nom,
-                  category: Array.isArray(biz.sous_categories)
-                    ? (biz.sous_categories as unknown as string[]).join(', ')
-                    : (biz.sous_categories || ''),
-                  ville: biz.ville,
-                  gouvernorat: biz.gouvernorat,
-                  statut_abonnement: biz['statut Abonnement'],
-                  'niveau priorité abonnement': biz['niveau priorité abonnement'],
-                  imageUrl: biz.image_url,
-                  logoUrl: biz.logo_url,
-                  horaires_ok: biz.horaires_ok,
-                  telephone: biz.telephone,
-                  statut_carte: biz.statut_carte,
-                }}
                 onClick={() => onCardClick(biz.id)}
-              />
+                style={{
+                  minHeight: '280px',
+                  maxHeight: '320px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  cursor: 'pointer',
+                }}
+              >
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+                <BusinessCard
+                  business={{
+                    id: biz.id,
+                    name: biz.nom,
+                    category: Array.isArray(biz.sous_categories)
+                      ? (biz.sous_categories as unknown as string[]).join(', ')
+                      : (biz.sous_categories || ''),
+                    ville: biz.ville,
+                    gouvernorat: biz.gouvernorat,
+                    statut_abonnement: biz['statut Abonnement'],
+                    'niveau priorité abonnement': biz['niveau priorité abonnement'],
+                    imageUrl: biz.image_url,
+                    logoUrl: biz.logo_url,
+                    horaires_ok: biz.horaires_ok,
+                    telephone: biz.telephone,
+                    statut_carte: biz.statut_carte,
+                  }}
+                  onClick={() => onCardClick(biz.id)}
+                />
+                </div>
+              </div>
             ))
           )}
         </div>
