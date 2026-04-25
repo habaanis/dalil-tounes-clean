@@ -60,6 +60,11 @@ export default function GratuitCard({
         position: 'relative',
       }}
     >
+      {statut_carte && (
+        <div style={{ position: 'absolute', top: '8px', right: '8px', zIndex: 10 }}>
+          {renderStatutCarteBadge(statut_carte)}
+        </div>
+      )}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', textAlign: 'center' }}>
 
         {/* Logo */}
@@ -76,7 +81,6 @@ export default function GratuitCard({
         <p style={{ fontSize: '14px', fontWeight: '700', color: '#1A1A1A', lineHeight: '1.3', margin: 0, letterSpacing: '-0.01em' }}>
           {name}
         </p>
-        {renderStatutCarteBadge(statut_carte)}
 
         {/* Catégorie */}
         {category && (

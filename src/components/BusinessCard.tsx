@@ -171,14 +171,15 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
         onClick={onClick}
       >
       <div style={{ position: 'relative' }}>
-        {isElite && (
-          <div className="absolute top-0 right-0 z-10">
+        <div className="absolute top-0 right-0 z-10 flex flex-col items-end gap-1">
+          {isElite && (
             <div className="flex items-center gap-1 bg-gradient-to-r from-[#D4AF37] to-[#F4D03F] text-[#121212] px-3 py-1.5 rounded-full shadow-lg text-xs font-bold">
               <Award size={14} />
               <span>ÉLITE PRO</span>
             </div>
-          </div>
-        )}
+          )}
+          {renderStatutCarteBadge(business.statut_carte)}
+        </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: isElite ? '16px' : '12px' }}>
         {/* Header avec logo rond centralisé */}
@@ -222,7 +223,6 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
           >
             {business.name}
           </h3>
-          {renderStatutCarteBadge(business.statut_carte, { marginBottom: '4px' })}
           {translatedCategory && (
             <>
               <p

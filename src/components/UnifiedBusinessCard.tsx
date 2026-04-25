@@ -124,14 +124,15 @@ const UnifiedBusinessCard = ({ business, onClick }: UnifiedBusinessCardProps) =>
           />
         </div>
 
-        {isElite && (
-          <div className="absolute top-2 right-2 z-10">
+        <div className="absolute top-2 right-2 z-10 flex flex-col items-end gap-1">
+          {isElite && (
             <div className="flex items-center gap-1 bg-gradient-to-r from-[#D4AF37] to-[#F4D03F] text-white px-2 py-0.5 rounded-full shadow-lg text-[10px] font-semibold">
               <Award size={10} />
               <span>Elite</span>
             </div>
-          </div>
-        )}
+          )}
+          {renderStatutCarteBadge(business.statut_carte)}
+        </div>
       </div>
 
       {/* Contenu ultra-compact */}
@@ -139,7 +140,6 @@ const UnifiedBusinessCard = ({ business, onClick }: UnifiedBusinessCardProps) =>
         <h3 className="text-sm font-bold text-gray-900 text-center line-clamp-1 leading-tight">
           {businessName}
         </h3>
-        {renderStatutCarteBadge(business.statut_carte)}
 
         {translatedCategory && (
           <>
