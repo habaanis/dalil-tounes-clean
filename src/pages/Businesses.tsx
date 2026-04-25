@@ -60,7 +60,6 @@ interface Business {
   youtube?: string;
   lien_x?: string;
   horaires_ok?: string | null;
-  statut_carte?: string | null;
 }
 
 interface BusinessesProps {
@@ -655,7 +654,6 @@ export const Businesses = ({
         linkedin: item['Lien LinkedIn'] || '',
         youtube: item['Lien YouTube'] || '',
         horaires_ok: item.horaires_ok || null,
-        statut_carte: item.statut_carte || null,
       }));
 
       console.log(`[DEBUG] Mapping terminé: ${mappedData.length} entreprises`);
@@ -1194,9 +1192,7 @@ export const Businesses = ({
                         badges: business.badges || [],
                         imageUrl: business.imageUrl,
                         logoUrl: business.logoUrl,
-                        horaires_ok: business.horaires_ok,
-                        telephone: business.phone,
-                        statut_carte: business.statut_carte,
+                        horaires_ok: business.horaires_ok
                       }}
                       onClick={() => {
                         console.log('🔍 [BusinessCard] Ouverture modal pour:', business.name, business.id);
