@@ -39,7 +39,6 @@ export default function CompanyCountCard({ language, totalCount, loading }: Comp
 
   const t = translations[language];
   const isRTL = language === 'ar';
-  const isReady = !loading && totalCount > 0;
 
   return (
     <div className="relative w-full flex flex-col items-center justify-center text-center py-6 my-4 px-4">
@@ -52,7 +51,10 @@ export default function CompanyCountCard({ language, totalCount, loading }: Comp
         dir={isRTL ? 'rtl' : 'ltr'}
       >
         {t.before}
-        {isReady ? <CountUp end={totalCount} duration={2.5} separator=" " /> : <span className="inline-block w-16 h-5 bg-gray-200 rounded animate-pulse align-middle" />}
+        {loading
+          ? <span className="inline-block w-16 h-5 bg-gray-200 rounded animate-pulse align-middle" />
+          : <CountUp end={totalCount} duration={2.5} separator=" " />
+        }
         {t.after}
       </h3>
 
