@@ -170,12 +170,12 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
   }
 
   return (
-    <div className="block" style={{ minHeight: '280px', maxHeight: '320px' }}>
+    <div className="block" style={{ height: '100%' }}>
       <SignatureCard
         tier={signatureTier}
         className={paddingClass}
         onClick={onClick}
-        style={{ minHeight: '280px', maxHeight: '320px', display: 'flex', flexDirection: 'column' }}
+        style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
       >
       <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', flex: 1, height: '100%' }}>
         {isElite && (
