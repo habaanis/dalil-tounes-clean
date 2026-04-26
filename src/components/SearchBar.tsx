@@ -428,7 +428,7 @@ export default function SearchBar({
       data-search-scope={isGlobal ? 'entreprise-ville' : `entreprise-ville:${scope}`}
       data-component-name="SearchBar"
     >
-      <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-2.5">
+      <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-2.5">
         <div className="relative z-10">
           <input
             type="search"
@@ -451,29 +451,6 @@ export default function SearchBar({
             placeholder={t(language as Lang, 'search.placeholderCity')}
             className="px-3 py-2 rounded-lg text-sm"
           />
-        </div>
-        <div className="relative z-10 flex rounded-lg border border-[#D4AF37] bg-white overflow-hidden text-sm" dir={dir}>
-          {([
-            { value: '' as CertFilter, label: 'Tous' },
-            { value: 'certifie' as CertFilter, label: 'Certifiés' },
-            { value: 'non_certifie' as CertFilter, label: 'Non certifiés' },
-          ] as { value: CertFilter; label: string }[]).map(({ value, label }) => (
-            <button
-              key={value}
-              type="button"
-              onClick={() => setCertFilter(value)}
-              className="flex-1 px-2 py-2 text-xs font-medium transition-colors whitespace-nowrap"
-              style={{
-                backgroundColor: certFilter === value
-                  ? value === 'certifie' ? '#15803d' : value === 'non_certifie' ? '#c2410c' : '#D4AF37'
-                  : 'transparent',
-                color: certFilter === value ? '#fff' : value === 'certifie' ? '#15803d' : value === 'non_certifie' ? '#c2410c' : '#6b7280',
-                borderRight: value !== 'non_certifie' ? '1px solid #D4AF3740' : 'none',
-              }}
-            >
-              {label}
-            </button>
-          ))}
         </div>
       </div>
 

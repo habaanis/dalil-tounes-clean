@@ -98,6 +98,7 @@ export const Businesses = ({
   const [selectedBusiness, setSelectedBusiness] = useState<Business | null>(null);
   const [preselectedBusinessId, setPreselectedBusinessId] = useState<string | null>(null);
   const [searching, setSearching] = useState(false);
+  const [pending, setPending] = useState(false);
   const pendingSearchRef = useRef(false);
   const [premiumJobs, setPremiumJobs] = useState<any[]>(_initCache?.premiumJobs ?? []);
   const [loadingPremiumJobs, setLoadingPremiumJobs] = useState(false);
@@ -407,8 +408,10 @@ export const Businesses = ({
     prevSearchRef.current = { searchTerm, selectedCity, selectedCategory, pageCategorie, filterPremium, filterCommerceLocal, filterStatutCarte };
 
     pendingSearchRef.current = true;
+    setPending(true);
     const delayDebounceFn = setTimeout(() => {
       pendingSearchRef.current = false;
+      setPending(false);
       if (searchTerm.length >= 1 || selectedCity || selectedCategory || filterPremium || filterCommerceLocal || filterStatutCarte) {
         console.log('➡️ [DEBUG] Déclenchement de performSearch()');
         performSearch();
@@ -421,6 +424,7 @@ export const Businesses = ({
     return () => {
       clearTimeout(delayDebounceFn);
       pendingSearchRef.current = false;
+      setPending(false);
     };
   }, [searchTerm, selectedCity, selectedCategory, pageCategorie, filterPremium, filterCommerceLocal, filterStatutCarte]);
 
@@ -1153,17 +1157,15 @@ export const Businesses = ({
 
         {/* Affichage des résultats : avec ou sans recherche active */}
         <div ref={resultsRef} className="mb-12">
-          {(loading || searching || pendingSearchRef.current) ? (
+          {(loading || searching || pending) ? (
             <div className="text-center py-12">
               <div className="inline-block w-8 h-8 border-2 border-[#D4AF37] border-t-transparent rounded-full animate-spin"></div>
               <p className="mt-3 text-sm text-gray-600">{searching ? t.businesses.searching || t.common.loading : t.common.loading}</p>
             </div>
-          ) : filteredBusinesses.length === 0 ? (
+          ) : !loading && !searching && !pending && hasActiveSearch && filteredBusinesses.length === 0 ? (
             <div className="text-center py-12">
               <Building2 className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-              <p className="text-sm text-gray-600">
-                {hasActiveSearch ? t.common.noResults : 'Aucune entreprise disponible'}
-              </p>
+              <p className="text-sm text-gray-600">{t.common.noResults}</p>
             </div>
           ) : (
             <div className="px-4">
