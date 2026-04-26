@@ -1,0 +1,1 @@
+import{j as e}from"./vendor-motion-Cgifsi0A.js";import{U as t}from"./UnderConstruction-DtAOYEQD.js";import"./vendor-router-BpFm7ygo.js";const r=()=>e.jsx(t,{title:"Politique de Confidentialité",subtitle:"Notre politique de confidentialité et de protection des données personnelles sera publiée prochainement."});export{r as default};

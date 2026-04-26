@@ -1,0 +1,1 @@
+import{j as t}from"./vendor-motion-Cgifsi0A.js";import{U as o}from"./UnderConstruction-DtAOYEQD.js";import"./vendor-router-BpFm7ygo.js";const e=()=>t.jsx(o,{title:"Conditions Générales d'Utilisation",subtitle:"Nos conditions générales d'utilisation sont en cours de rédaction et seront disponibles prochainement."});export{e as default};
