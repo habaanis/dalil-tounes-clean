@@ -45,6 +45,17 @@ export function textEquals(text: string, searchTerm: string): boolean {
 }
 
 /**
+ * Strips quotes, extra whitespace, and control characters from a search term
+ * before sending it to Supabase.
+ */
+export function cleanSearchTerm(value: string): string {
+  return value
+    .replace(/["""''`]/g, '')  // remove all quote variants
+    .replace(/\s+/g, ' ')       // collapse whitespace
+    .trim();
+}
+
+/**
  * Extracts the French (default) name from a field that may have been polluted
  * with multilingual variants like "Nom | name_ar: ... | name_en: ...".
  * Returns only the part before any language marker.
