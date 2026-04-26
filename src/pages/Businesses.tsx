@@ -18,7 +18,7 @@ import { getSupabaseImageUrl } from '../lib/imageUtils';
 import { HERO_IMAGE_URL, HERO_IMAGE_JPG_URL } from '../constants/images';
 import { RegistrationForm } from '../components/RegistrationForm';
 import SignatureCard from '../components/SignatureCard';
-import { normalizeText, removeArabicDiacritics, extractFrenchName, cleanSearchTerm } from '../lib/textNormalization';
+import { normalizeText, removeArabicDiacritics, extractFrenchName, cleanSearchTerm, cleanArabicField } from '../lib/textNormalization';
 import { BusinessCard } from '../components/BusinessCard';
 import { BusinessDetail } from '../components/BusinessDetail';
 import { getSubscriptionPriority } from '../lib/subscriptionHelper';
@@ -529,8 +529,8 @@ export const Businesses = ({
         lien_x: item.lien_x || '',
         horaires_ok: item.horaires_ok || null,
         statut_carte: item.statut_carte || null,
-        name_ar: item.name_ar || null,
-        description_ar: item.description_ar || null,
+        name_ar: item.name_ar ? cleanArabicField(item.name_ar) : null,
+        description_ar: item.description_ar ? cleanArabicField(item.description_ar) : null,
       }));
 
       console.log(`[DEBUG] ✅ Mapping terminé: ${mappedData.length} entreprises`);
@@ -690,8 +690,8 @@ export const Businesses = ({
         youtube: item['Lien YouTube'] || '',
         horaires_ok: item.horaires_ok || null,
         statut_carte: item.statut_carte || null,
-        name_ar: item.name_ar || null,
-        description_ar: item.description_ar || null,
+        name_ar: item.name_ar ? cleanArabicField(item.name_ar) : null,
+        description_ar: item.description_ar ? cleanArabicField(item.description_ar) : null,
       }));
 
       console.log(`[DEBUG] Mapping terminé: ${mappedData.length} entreprises`);

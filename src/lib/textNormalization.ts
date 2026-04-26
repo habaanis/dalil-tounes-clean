@@ -68,6 +68,27 @@ export function extractFrenchName(value: string | null | undefined): string {
 }
 
 /**
+ * Cleans an Arabic field value coming from Airtable that may contain polluted
+ * multilingual markers like "كافيه | name_en: Coffee | name_it: Caffè".
+ *
+ * Rules:
+ * - If the value contains a language marker (name_en:, name_it:, name_ru:,
+ *   description_en:, etc.) → return everything BEFORE that marker, trimmed.
+ * - Otherwise → return the first "word" (content before the first space or |),
+ *   which is the pure Arabic term.
+ */
+export function cleanArabicField(value: string | null | undefined): string {
+  if (!value) return '';
+  const markerIdx = value.search(/\s*[\|,]\s*(name_en|name_it|name_ru|nom_en|nom_it|nom_ru|description_en|description_it|description_ru)\s*:/i);
+  if (markerIdx >= 0) {
+    return value.slice(0, markerIdx).trim();
+  }
+  // No marker found — take everything up to the first pipe or comma separator
+  const separatorIdx = value.search(/\s*[\|,]/);
+  return (separatorIdx >= 0 ? value.slice(0, separatorIdx) : value).trim();
+}
+
+/**
  * Cleans a category/sous_categories string for use in alt attributes.
  * Removes PostgreSQL array syntax ({...}), quotes, and normalizes separators.
  * Example: {Lycée,"Collège"} → Lycée, Collège

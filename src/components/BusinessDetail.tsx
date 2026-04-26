@@ -8,7 +8,7 @@ import { ImageGallery } from '../components/ImageGallery';
 import VideoPlayer from '../components/VideoPlayer';
 import EntrepriseAvisForm from '../components/EntrepriseAvisForm';
 import { generateShareUrl, extractIdFromSlugUrl } from '../lib/slugify';
-import { cleanAltText, extractFrenchName } from '../lib/textNormalization';
+import { cleanAltText, extractFrenchName, cleanArabicField } from '../lib/textNormalization';
 import { SEOHead } from './SEOHead';
 import { useHreflangPath } from '../hooks/useHreflangPath';
 import {
@@ -523,9 +523,9 @@ export const BusinessDetail = ({
   const showArabic = isArabicSearch && !!(business.name_ar || business.description_ar);
 
   // Nom et description : arabe si la recherche était en arabe et la traduction existe, sinon français
-  const displayName = showArabic && business.name_ar ? business.name_ar : business.nom;
+  const displayName = showArabic && business.name_ar ? cleanArabicField(business.name_ar) : business.nom;
   const displayDescription = showArabic && business.description_ar
-    ? business.description_ar
+    ? cleanArabicField(business.description_ar)
     : (getMultilingualField(business, 'description', language, true) || business.description || '');
   const translatedDescription = displayDescription;
   const translatedServices = business ? (getMultilingualField(business, 'services', language, true) || business.services || '') : '';

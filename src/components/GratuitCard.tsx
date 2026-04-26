@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { MapPin, Clock, Phone } from 'lucide-react';
 import { isCurrentlyOpen, translateOpenStatus, translateClosedStatus } from '../lib/horaireUtils';
 import { getLogoUrl, getLogoStyle, getLogoContainerStyle } from '../lib/logoUtils';
+import { cleanArabicField } from '../lib/textNormalization';
 
 interface GratuitCardProps {
   name: string;
@@ -90,7 +91,7 @@ export default function GratuitCard({
         {renderStatutCarteBadge(statut_carte)}
         {description_ar && (
           <p style={{ fontSize: '11px', color: '#6B7280', lineHeight: '1.4', margin: 0, direction: 'rtl', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-            {description_ar}
+            {cleanArabicField(description_ar)}
           </p>
         )}
 

@@ -16,7 +16,7 @@ import {
 import { useCategoryTranslation } from '../hooks/useCategoryTranslation';
 import { getMultilingualField } from '../lib/databaseI18n';
 import { getLogoUrl, getLogoStyle, getLogoContainerStyle } from '../lib/logoUtils';
-import { cleanAltText } from '../lib/textNormalization';
+import { cleanAltText, cleanArabicField } from '../lib/textNormalization';
 
 interface UnifiedBusinessCardProps {
   business: {
@@ -77,8 +77,8 @@ const UnifiedBusinessCard = ({ business, onClick }: UnifiedBusinessCardProps) =>
   const searchQuery = searchParams.get('q') || '';
   const showArabic = isArabicText(searchQuery) && !!(business.name_ar || business.description_ar);
 
-  const businessName = showArabic && business.name_ar ? business.name_ar : (business.nom || business.name || '');
-  const businessDescription = showArabic && business.description_ar ? business.description_ar : null;
+  const businessName = showArabic && business.name_ar ? cleanArabicField(business.name_ar) : (business.nom || business.name || '');
+  const businessDescription = showArabic && business.description_ar ? cleanArabicField(business.description_ar) : null;
 
   // Récupération de la catégorie traduite avec fallback
   const rawCategory = getMultilingualField(business, 'category', language, true) ||
