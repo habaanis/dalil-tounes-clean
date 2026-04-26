@@ -18,7 +18,7 @@ import { getSupabaseImageUrl } from '../lib/imageUtils';
 import { HERO_IMAGE_URL, HERO_IMAGE_JPG_URL } from '../constants/images';
 import { RegistrationForm } from '../components/RegistrationForm';
 import SignatureCard from '../components/SignatureCard';
-import { normalizeText, removeArabicDiacritics } from '../lib/textNormalization';
+import { normalizeText, removeArabicDiacritics, extractFrenchName } from '../lib/textNormalization';
 import { BusinessCard } from '../components/BusinessCard';
 import { BusinessDetail } from '../components/BusinessDetail';
 import { getSubscriptionPriority } from '../lib/subscriptionHelper';
@@ -497,7 +497,7 @@ export const Businesses = ({
 
       const mappedData = (data || []).map((item: any) => ({
         id: item.id,
-        name: item.nom || '',
+        name: extractFrenchName(item.nom),
         category: Array.isArray(item.sous_categories) ? item.sous_categories.join(', ') : (item.sous_categories || ''),
         subCategories: Array.isArray(item.sous_categories) ? item.sous_categories.join(', ') : (item.sous_categories || ''),
         gouvernorat: item.gouvernorat || '',
@@ -646,7 +646,7 @@ export const Businesses = ({
 
       let mappedData = (data || []).map((item: any) => ({
         id: item.id,
-        name: item.nom,
+        name: extractFrenchName(item.nom),
         category: Array.isArray(item.sous_categories) ? item.sous_categories.join(', ') : (item.sous_categories || ''),
         subCategories: Array.isArray(item.sous_categories) ? item.sous_categories.join(', ') : (item.sous_categories || ''),
         gouvernorat: item.gouvernorat || '',

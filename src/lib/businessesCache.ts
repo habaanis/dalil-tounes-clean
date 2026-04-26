@@ -8,6 +8,7 @@
 
 import { supabase } from './supabaseClient';
 import { Tables } from './dbTables';
+import { extractFrenchName } from './textNormalization';
 
 export interface BusinessRow {
   id: string;
@@ -96,7 +97,7 @@ function writeBusinessesCache(data: BusinessesDefaultData): void {
 function mapRow(item: Record<string, unknown>): BusinessRow {
   return {
     id: item.id as string,
-    name: (item.nom as string) || '',
+    name: extractFrenchName(item.nom as string),
     category: Array.isArray(item.sous_categories)
       ? (item.sous_categories as string[]).join(', ')
       : ((item.sous_categories as string) || ''),

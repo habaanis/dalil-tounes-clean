@@ -45,6 +45,18 @@ export function textEquals(text: string, searchTerm: string): boolean {
 }
 
 /**
+ * Extracts the French (default) name from a field that may have been polluted
+ * with multilingual variants like "Nom | name_ar: ... | name_en: ...".
+ * Returns only the part before any language marker.
+ */
+export function extractFrenchName(value: string | null | undefined): string {
+  if (!value) return '';
+  // Cut at the first occurrence of a language tag pattern
+  const idx = value.search(/\s*[\|,]\s*(name_ar|name_en|name_it|name_ru|nom_ar|nom_en|nom_it|nom_ru)\s*:/i);
+  return (idx >= 0 ? value.slice(0, idx) : value).trim();
+}
+
+/**
  * Cleans a category/sous_categories string for use in alt attributes.
  * Removes PostgreSQL array syntax ({...}), quotes, and normalizes separators.
  * Example: {Lycée,"Collège"} → Lycée, Collège
