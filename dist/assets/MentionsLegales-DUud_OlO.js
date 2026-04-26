@@ -1,1 +1,0 @@
-import{j as e}from"./vendor-motion-D-_jVWSU.js";import{U as t}from"./UnderConstruction-BqycK6I9.js";import"./vendor-router-DaqRP7DA.js";const i=()=>e.jsx(t,{title:"Mentions Légales",subtitle:"Les mentions légales de la plateforme Dalil Tounes seront publiées prochainement."});export{i as default};

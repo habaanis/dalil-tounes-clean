@@ -1,1 +1,0 @@
-import{j as t}from"./vendor-motion-D-_jVWSU.js";import{U as o}from"./UnderConstruction-BqycK6I9.js";import"./vendor-router-DaqRP7DA.js";const r=()=>t.jsx(o,{title:"Contact",subtitle:"Notre équipe est disponible pour répondre à toutes vos questions via contact@dalil-tounes.com"});export{r as default};
