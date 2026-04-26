@@ -3,6 +3,7 @@ import { MapPin, Store, ShoppingBag } from 'lucide-react';
 import { supabase } from '../lib/BoltDatabase';
 import { SafeImage } from './SafeImage';
 import { parseImageUrls } from '../lib/imagekitUtils';
+import { extractFrenchName } from '../lib/textNormalization';
 
 interface LocalBusiness {
   id: string;
@@ -43,7 +44,7 @@ export const LocalBusinessesSection = ({ onCardClick }: LocalBusinessesSectionPr
             count: data?.length || 0,
             data: data
           });
-          setBusinesses((data || []) as LocalBusiness[]);
+          setBusinesses((data || []).map((item: any) => ({ ...item, nom: extractFrenchName(item.nom) })) as LocalBusiness[]);
         }
       } catch (err) {
         console.error('[LocalBusinessesSection] 💥 Erreur inattendue:', err);

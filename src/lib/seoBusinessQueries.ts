@@ -1,4 +1,5 @@
 import { supabase } from './supabaseClient';
+import { extractFrenchName } from './textNormalization';
 
 export interface SeoBusiness {
   id: string;
@@ -25,7 +26,7 @@ function mapEntrepriseRow(row: Record<string, unknown>): SeoBusiness {
       : [];
   return {
     id: row.id as string,
-    nom: (row.nom as string) ?? '',
+    nom: extractFrenchName((row.nom as string) ?? ''),
     adresse: row.adresse as string | undefined,
     ville: row.ville as string | undefined,
     gouvernorat: row.gouvernorat as string | undefined,

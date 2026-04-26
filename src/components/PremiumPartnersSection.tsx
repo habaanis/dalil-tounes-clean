@@ -1,5 +1,6 @@
 import { HomeBusinessRow } from '../hooks/useHomeData';
 import { BusinessCard } from './BusinessCard';
+import { extractFrenchName } from '../lib/textNormalization';
 
 interface PremiumPartnersSectionProps {
   onCardClick: (id: string) => void;
@@ -58,7 +59,7 @@ export const PremiumPartnersSection = ({ onCardClick, partners, loading }: Premi
                 <BusinessCard
                   business={{
                     id: biz.id,
-                    name: biz.nom,
+                    name: extractFrenchName(biz.nom),
                     category: Array.isArray(biz.sous_categories)
                       ? (biz.sous_categories as unknown as string[]).join(', ')
                       : (biz.sous_categories || ''),

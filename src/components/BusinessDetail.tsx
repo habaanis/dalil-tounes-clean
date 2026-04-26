@@ -8,7 +8,7 @@ import { ImageGallery } from '../components/ImageGallery';
 import VideoPlayer from '../components/VideoPlayer';
 import EntrepriseAvisForm from '../components/EntrepriseAvisForm';
 import { generateShareUrl, extractIdFromSlugUrl } from '../lib/slugify';
-import { cleanAltText } from '../lib/textNormalization';
+import { cleanAltText, extractFrenchName } from '../lib/textNormalization';
 import { SEOHead } from './SEOHead';
 import { useHreflangPath } from '../hooks/useHreflangPath';
 import {
@@ -51,7 +51,7 @@ function normalizeBusiness(business: any): any {
 
   return {
     id: business.id,
-    nom: business.nom || business.name || '',
+    nom: extractFrenchName(business.nom || business.name || ''),
     categorie: business.categorie || business.category || '',
     sous_categories: business.sous_categories || business.subCategories || '',
     ville: business.ville || business.city || business.gouvernorat || '',

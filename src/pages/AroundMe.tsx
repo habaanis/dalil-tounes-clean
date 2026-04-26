@@ -6,6 +6,7 @@ import { supabase } from '../lib/BoltDatabase';
 import { MapPin, Navigation, Phone, AlertCircle, Loader, Target, Building2, Star } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { ImageWithFallback } from '../components/ImageWithFallback';
+import { extractFrenchName } from '../lib/textNormalization';
 
 // Fix Leaflet default marker icon
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -217,7 +218,7 @@ export default function AroundMe() {
                   business.latitude!,
                   business.longitude!
                 );
-                return { ...business, distance };
+                return { ...business, nom: extractFrenchName(business.nom), distance };
               })
               .filter((b) => b.distance <= radius)
               .sort((a, b) => a.distance - b.distance);

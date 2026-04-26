@@ -6,6 +6,7 @@ import { supabase } from '../lib/supabaseClient';
 import { Tables } from '../lib/dbTables';
 import { generateBusinessUrl } from '../lib/slugify';
 import { getSupabaseImageUrl } from '../lib/imageUtils';
+import { extractFrenchName } from '../lib/textNormalization';
 
 interface MeilleursItem {
   id: string;
@@ -246,7 +247,10 @@ export default function MeilleursSection({
           .contains('"liste pages"', [listePage])
           .order('"Note Google Globale"', { ascending: false, nullsFirst: false });
 
-        const all: MeilleursItem[] = data || [];
+        const all: MeilleursItem[] = (data || []).map((item: any) => ({
+          ...item,
+          nom: extractFrenchName(item.nom),
+        }));
 
         const withRating = all.filter((item) => {
           const raw = item['Note Google Globale'];

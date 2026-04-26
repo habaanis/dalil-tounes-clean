@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { supabase } from '../lib/supabaseClient';
 import { BusinessCard } from './BusinessCard';
 import { getSubscriptionPriority } from '../lib/subscriptionHelper';
+import { extractFrenchName } from '../lib/textNormalization';
 
 type RawVariant = 'home' | 'accueil' | 'businesses' | 'entreprises' | 'citizens' | 'citoyens' | 'shops' | 'magasins';
 type NormalizedVariant = 'home' | 'businesses' | 'citizens' | 'shops';
@@ -133,7 +134,7 @@ export const FeaturedBusinessesStrip = ({ variant }: FeaturedBusinessesStripProp
               <BusinessCard
                 business={{
                   id: biz.id,
-                  name: biz.nom,
+                  name: extractFrenchName(biz.nom),
                   category: Array.isArray(biz.sous_categories)
                     ? (biz.sous_categories as unknown as string[]).join(', ')
                     : (biz.sous_categories || ''),
