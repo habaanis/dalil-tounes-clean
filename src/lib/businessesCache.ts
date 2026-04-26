@@ -36,6 +36,7 @@ export interface BusinessRow {
   youtube: string;
   lien_x: string;
   horaires_ok: string | null;
+  statut_carte: string | null;
 }
 
 export interface PremiumJob {
@@ -125,6 +126,7 @@ function mapRow(item: Record<string, unknown>): BusinessRow {
     youtube: (item['Lien YouTube'] as string) || '',
     lien_x: (item.lien_x as string) || '',
     horaires_ok: (item.horaires_ok as string | null) ?? null,
+    statut_carte: (item.statut_carte as string | null) ?? null,
   };
 }
 
