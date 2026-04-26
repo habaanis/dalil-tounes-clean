@@ -573,11 +573,23 @@ export const Businesses = ({
         .limit(30);
 
       if (searchTerm && cleanSearchTerm(searchTerm).length >= 2) {
-        // Supprimer guillemets, harakat arabes et accents latins avant l'ilike (UTF-8 safe)
-        const normalizedTerm = removeArabicDiacritics(cleanSearchTerm(searchTerm));
-        const searchPattern = `%${normalizedTerm}%`;
-        console.log(`[DEBUG] Filtre Recherche: "${searchTerm}" → normalisé: "${normalizedTerm}" (pattern: ${searchPattern})`);
-        query = query.or(`nom.ilike.${searchPattern},"mots cles recherche".ilike.${searchPattern},description.ilike.${searchPattern},name_ar.ilike.${searchPattern},description_ar.ilike.${searchPattern}`);
+        // Pour l'arabe : ne pas normaliser (removeArabicDiacritics altère les caractères)
+        // Pour le latin : nettoyer seulement les guillemets parasites
+        const cleaned = cleanSearchTerm(searchTerm);
+        const searchPattern = `%${cleaned}%`;
+        console.log(`[DEBUG] Filtre Recherche: "${searchTerm}" → nettoyé: "${cleaned}" (pattern: ${searchPattern})`);
+        // Colonnes avec espaces ou accents passées via .filter() séparés pour éviter
+        // les bugs de parsing de la syntaxe .or() string avec noms de colonnes complexes
+        query = query.or(
+          [
+            `nom.ilike.${searchPattern}`,
+            `name_ar.ilike.${searchPattern}`,
+            `description.ilike.${searchPattern}`,
+            `description_ar.ilike.${searchPattern}`,
+            `ville.ilike.${searchPattern}`,
+            `gouvernorat.ilike.${searchPattern}`,
+          ].join(',')
+        );
       }
 
       if (selectedCity) {
@@ -693,50 +705,26 @@ export const Businesses = ({
           });
         }
 
+        // Le filtre Supabase a déjà retourné les bons résultats via ILIKE.
+        // Ce filtre JS est un garde-fou pour les colonnes non couvertes par le .or() Supabase.
+        // IMPORTANT : pour l'arabe, on compare en lowercase sans normalisation agressive.
+        const lowerTerm = normalizedSearchTerm.toLowerCase();
         mappedData = mappedData.filter((business) => {
-          // Sécurité totale contre les undefined/null
-          const matchNom = normalizeText(business.name || '').includes(normalizedSearchTerm);
-          const matchSecteur = normalizeText(business.secteur || '').includes(normalizedSearchTerm);
+          const matchNom = normalizeText(business.name || '').includes(lowerTerm);
+          const matchNameAr = (business.name_ar || '').toLowerCase().includes(lowerTerm)
+            || (business.name_ar || '').includes(searchTerm.trim());
+          const matchDescAr = (business.description_ar || '').toLowerCase().includes(lowerTerm)
+            || (business.description_ar || '').includes(searchTerm.trim());
+          const matchSecteur = normalizeText(business.secteur || '').includes(lowerTerm);
+          const matchMotsCles = normalizeText(business.mots_cles_recherche || '').includes(lowerTerm);
+          const matchCategory = normalizeText(business.category || '').includes(lowerTerm);
+          const matchServices = normalizeText(business.services || '').includes(lowerTerm);
+          const matchVille = normalizeText(business.city || '').includes(lowerTerm);
+          const matchGouvernorat = normalizeText(business.gouvernorat || '').includes(lowerTerm);
 
-          // PRIORITÉ RECHERCHE: Tous les badges sont indexés (même ceux non affichés)
-          let matchBadges = false;
-          let matchedBadge = null;
-          if (Array.isArray(business.badges) && business.badges.length > 0) {
-            // Parcours de TOUS les badges (pas seulement les 2 affichés)
-            business.badges.forEach(badge => {
-              const normalizedBadge = normalizeText(badge || '');
-              if (normalizedBadge.includes(normalizedSearchTerm)) {
-                matchBadges = true;
-                matchedBadge = badge;
-              }
-            });
-          }
-
-          const matchMotsCles = normalizeText(business.mots_cles_recherche || '').includes(normalizedSearchTerm);
-          const matchCategory = normalizeText(business.category || '').includes(normalizedSearchTerm);
-          const matchServices = normalizeText(business.services || '').includes(normalizedSearchTerm);
-
-          const isMatch = matchNom || matchSecteur || matchBadges || matchMotsCles || matchCategory || matchServices;
-
-          if (isMatch) {
-            console.log(`✅ Match trouvé:`, {
-              nom: business.name,
-              matchNom,
-              matchSecteur,
-              matchBadges,
-              badgeMatche: matchedBadge,
-              totalBadges: business.badges?.length || 0,
-              matchMotsCles,
-              matchCategory,
-              matchServices,
-              secteur: business.secteur || 'NULL',
-              badges_complet: business.badges || 'NULL',
-              mots_cles: (business.mots_cles_recherche || '').substring(0, 50) + '...',
-              services: (business.services || '').substring(0, 50) + '...'
-            });
-          }
-
-          return isMatch;
+          return matchNom || matchNameAr || matchDescAr || matchSecteur
+            || matchMotsCles || matchCategory || matchServices
+            || matchVille || matchGouvernorat;
         });
 
         console.log(`\n[Recherche Multi-colonnes] ✅ Résultats filtrés: ${mappedData.length}`);
