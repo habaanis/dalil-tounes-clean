@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, lazy, Suspense } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
 import { supabase } from '../lib/supabaseClient';
@@ -84,6 +84,7 @@ export const Businesses = ({
 }: BusinessesProps) => {
   const { language } = useLanguage();
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams] = useSearchParams();
   const t = useTranslation(language);
   const _initCache = readBusinessesCache();
@@ -243,17 +244,25 @@ export const Businesses = ({
       });
       console.log('═══════════════════════════════════════\n');
 
-      // ✅ PROTECTION BOUCLE INFINIE : ne setState que si vraiment différent
+      // Si les valeurs URL sont identiques à l'état courant (soumission répétée du même terme),
+      // le useEffect[searchTerm] ne se déclenchera pas — on force performSearch directement.
+      const urlMatchesCurrent =
+        urlQ === searchTerm &&
+        urlVille === selectedCity &&
+        urlCategorie === selectedCategory;
+
+      if (urlMatchesCurrent && (urlQ || urlVille || urlCategorie)) {
+        performSearch();
+        return;
+      }
+
       if (urlQ !== searchTerm) {
-        console.log(`[DEBUG] Mise à jour searchTerm: "${searchTerm}" → "${urlQ}"`);
         setSearchTerm(urlQ);
       }
       if (urlVille !== selectedCity) {
-        console.log(`[DEBUG] Mise à jour selectedCity: "${selectedCity}" → "${urlVille}"`);
         setSelectedCity(urlVille);
       }
       if (urlCategorie !== selectedCategory) {
-        console.log(`[DEBUG] Mise à jour selectedCategory: "${selectedCategory}" → "${urlCategorie}"`);
         setSelectedCategory(urlCategorie);
       }
       const newPreselected = urlSelectedId || null;
@@ -293,7 +302,7 @@ export const Businesses = ({
 
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
-  }, [initialSearchKeyword, initialSearchCity]);
+  }, [initialSearchKeyword, initialSearchCity, location]);
 
   // Abonnement au cache — reçoit les données dès qu'elles arrivent (premier chargement ou invalidation)
   useEffect(() => {
