@@ -79,17 +79,13 @@ export function extractFrenchName(value: string | null | undefined): string {
  */
 export function cleanArabicField(value: string | null | undefined): string {
   if (!value) return '';
-  // Strip a leading field label if present: "name_ar: ..." or "description_ar: ..."
-  let cleaned = value.replace(/^\s*(name_ar|description_ar|nom_ar)\s*:\s*/i, '');
-  // Cut at the first occurrence of another language marker (with or without pipe/comma before it)
-  // Handles: "arabic text   name_en: ..." or "arabic text | name_en: ..." or "arabic text, name_en: ..."
-  const markerIdx = cleaned.search(/[\s,|]*(name_en|name_it|name_ru|nom_en|nom_it|nom_ru|description_en|description_it|description_ru)\s*:/i);
+  const markerIdx = value.search(/\s*[\|,]\s*(name_en|name_it|name_ru|nom_en|nom_it|nom_ru|description_en|description_it|description_ru)\s*:/i);
   if (markerIdx >= 0) {
-    return cleaned.slice(0, markerIdx).trim();
+    return value.slice(0, markerIdx).trim();
   }
-  // No marker — take everything up to the first pipe or comma separator
-  const separatorIdx = cleaned.search(/\s*[|,]/);
-  return (separatorIdx >= 0 ? cleaned.slice(0, separatorIdx) : cleaned).trim();
+  // No marker found — take everything up to the first pipe or comma separator
+  const separatorIdx = value.search(/\s*[\|,]/);
+  return (separatorIdx >= 0 ? value.slice(0, separatorIdx) : value).trim();
 }
 
 /**
