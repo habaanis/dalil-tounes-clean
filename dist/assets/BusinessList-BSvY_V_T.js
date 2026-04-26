@@ -1,0 +1,1 @@
+import{j as t}from"./vendor-motion-D-_jVWSU.js";import{B as i}from"./BusinessDirectory-C3KaA0AT.js";import"./vendor-router-DaqRP7DA.js";import"./index-BD-D1qiz.js";import"./vendor-supabase-qSrGhBJl.js";import"./vendor-icons-BIed07FR.js";function n(){return t.jsx(i,{mode:"citizen"})}export{n as default};
