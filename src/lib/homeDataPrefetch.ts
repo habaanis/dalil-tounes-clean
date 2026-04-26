@@ -26,6 +26,8 @@ export interface HomeBusinessRow {
   horaires_ok: string | null;
   telephone: string | null;
   statut_carte: string | null;
+  name_ar: string | null;
+  description_ar: string | null;
 }
 
 export interface HomeQueryResult {
@@ -46,6 +48,7 @@ const FIELDS = [
   'id', 'nom', 'ville', 'gouvernorat', 'sous_categories',
   '"statut Abonnement"', '"niveau priorité abonnement"',
   'image_url', 'logo_url', 'horaires_ok', 'telephone', 'statut_carte',
+  'name_ar', 'description_ar',
 ].join(', ');
 
 // Verrou contre les appels simultanés (évite les doubles requêtes en cas de

@@ -63,6 +63,7 @@ const FIELDS = [
   'image_url', 'logo_url', '"statut Abonnement"', '"niveau priorité abonnement"',
   '"mots cles recherche"', '"Lien Instagram"', '"lien facebook"', '"Lien TikTok"',
   '"Lien LinkedIn"', '"Lien YouTube"', 'lien_x', 'horaires_ok', 'statut_carte',
+  'name_ar', 'description_ar',
 ].join(', ');
 
 let inflight: Promise<BusinessesDefaultData> | null = null;
@@ -127,6 +128,8 @@ function mapRow(item: Record<string, unknown>): BusinessRow {
     lien_x: (item.lien_x as string) || '',
     horaires_ok: (item.horaires_ok as string | null) ?? null,
     statut_carte: (item.statut_carte as string | null) ?? null,
+    name_ar: (item.name_ar as string | null) ?? null,
+    description_ar: (item.description_ar as string | null) ?? null,
   };
 }
 

@@ -42,7 +42,9 @@ export const BUSINESS_COLUMNS = `
   updated_at,
   score_avis,
   whatsapp,
-  statut_carte
+  statut_carte,
+  name_ar,
+  description_ar
 `;
 
 /**

@@ -23,6 +23,8 @@ interface BusinessRow {
   logo_url: string | null;
   horaires_ok: string | null;
   telephone: string | null;
+  name_ar: string | null;
+  description_ar: string | null;
 }
 
 function normalizeVariant(variant: RawVariant): NormalizedVariant {
@@ -56,7 +58,7 @@ export const FeaturedBusinessesStrip = ({ variant }: FeaturedBusinessesStripProp
     const fetchData = async () => {
       setLoading(true);
       try {
-        const FIELDS = `id, nom, ville, gouvernorat, sous_categories, "statut Abonnement", "niveau priorité abonnement", image_url, logo_url, horaires_ok, telephone`;
+        const FIELDS = `id, nom, ville, gouvernorat, sous_categories, "statut Abonnement", "niveau priorité abonnement", image_url, logo_url, horaires_ok, telephone, name_ar, description_ar`;
 
         const { data: fetchedData } = await supabase
           .from('entreprise')
@@ -143,6 +145,8 @@ export const FeaturedBusinessesStrip = ({ variant }: FeaturedBusinessesStripProp
                   logoUrl: biz.logo_url,
                   horaires_ok: biz.horaires_ok,
                   telephone: biz.telephone,
+                  name_ar: biz.name_ar,
+                  description_ar: biz.description_ar,
                 }}
                 onClick={() => {
                   window.location.hash = `#/business/${biz.id}`;

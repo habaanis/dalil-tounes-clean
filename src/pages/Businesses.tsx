@@ -61,6 +61,8 @@ interface Business {
   lien_x?: string;
   horaires_ok?: string | null;
   statut_carte?: string | null;
+  name_ar?: string | null;
+  description_ar?: string | null;
 }
 
 interface BusinessesProps {
@@ -436,7 +438,7 @@ export const Businesses = ({
     try {
       let query = supabase
         .from(Tables.ENTREPRISE)
-        .select('id, nom, secteur, sous_categories, "catégorie", gouvernorat, ville, adresse, telephone, email, site_web, description, services, image_url, logo_url, "statut Abonnement", "niveau priorité abonnement", "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, statut_carte')
+        .select('id, nom, secteur, sous_categories, "catégorie", gouvernorat, ville, adresse, telephone, email, site_web, description, services, image_url, logo_url, "statut Abonnement", "niveau priorité abonnement", "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, statut_carte, name_ar, description_ar')
         .order('"niveau priorité abonnement"', { ascending: false, nullsFirst: false })
         .order('nom', { ascending: true })
         .limit(10);
@@ -512,6 +514,8 @@ export const Businesses = ({
         lien_x: item.lien_x || '',
         horaires_ok: item.horaires_ok || null,
         statut_carte: item.statut_carte || null,
+        name_ar: item.name_ar || null,
+        description_ar: item.description_ar || null,
       }));
 
       console.log(`[DEBUG] ✅ Mapping terminé: ${mappedData.length} entreprises`);
@@ -554,7 +558,7 @@ export const Businesses = ({
     try {
       let query = supabase
         .from(Tables.ENTREPRISE)
-        .select('id, nom, secteur, sous_categories, "catégorie", gouvernorat, ville, adresse, telephone, email, site_web, description, services, image_url, logo_url, "statut Abonnement", "niveau priorité abonnement", "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, statut_carte')
+        .select('id, nom, secteur, sous_categories, "catégorie", gouvernorat, ville, adresse, telephone, email, site_web, description, services, image_url, logo_url, "statut Abonnement", "niveau priorité abonnement", "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, statut_carte, name_ar, description_ar')
         .order('"niveau priorité abonnement"', { ascending: false, nullsFirst: false })
         .order('nom', { ascending: true })
         .limit(30);
@@ -658,6 +662,8 @@ export const Businesses = ({
         youtube: item['Lien YouTube'] || '',
         horaires_ok: item.horaires_ok || null,
         statut_carte: item.statut_carte || null,
+        name_ar: item.name_ar || null,
+        description_ar: item.description_ar || null,
       }));
 
       console.log(`[DEBUG] Mapping terminé: ${mappedData.length} entreprises`);
@@ -1199,6 +1205,8 @@ export const Businesses = ({
                         telephone: business.phone || null,
                         horaires_ok: business.horaires_ok,
                         statut_carte: business.statut_carte || null,
+                        name_ar: business.name_ar || null,
+                        description_ar: business.description_ar || null,
                       }}
                       onClick={() => {
                         console.log('🔍 [BusinessCard] Ouverture modal pour:', business.name, business.id);
