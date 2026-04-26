@@ -577,7 +577,7 @@ export const Businesses = ({
         const normalizedTerm = removeArabicDiacritics(cleanSearchTerm(searchTerm));
         const searchPattern = `%${normalizedTerm}%`;
         console.log(`[DEBUG] Filtre Recherche: "${searchTerm}" → normalisé: "${normalizedTerm}" (pattern: ${searchPattern})`);
-        query = query.or(`nom.ilike.${searchPattern},"mots cles recherche".ilike.${searchPattern},description.ilike.${searchPattern}`);
+        query = query.or(`nom.ilike.${searchPattern},"mots cles recherche".ilike.${searchPattern},description.ilike.${searchPattern},name_ar.ilike.${searchPattern},description_ar.ilike.${searchPattern}`);
       }
 
       if (selectedCity) {
@@ -642,6 +642,7 @@ export const Businesses = ({
           statut_abonnement: data[0]['statut Abonnement'],
           gouvernorat: data[0].gouvernorat
         });
+        console.log('[DEBUG] item.nom brut (toutes entreprises):', (data as any[]).map((d: any) => d.nom));
       }
 
       let mappedData = (data || []).map((item: any) => ({
