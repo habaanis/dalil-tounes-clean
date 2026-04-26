@@ -98,6 +98,7 @@ export const Businesses = ({
   const [selectedBusiness, setSelectedBusiness] = useState<Business | null>(null);
   const [preselectedBusinessId, setPreselectedBusinessId] = useState<string | null>(null);
   const [searching, setSearching] = useState(false);
+  const pendingSearchRef = useRef(false);
   const [premiumJobs, setPremiumJobs] = useState<any[]>(_initCache?.premiumJobs ?? []);
   const [loadingPremiumJobs, setLoadingPremiumJobs] = useState(false);
   const [showRegistrationForm, setShowRegistrationForm] = useState(false);
@@ -405,7 +406,9 @@ export const Businesses = ({
     // Mettre à jour les références
     prevSearchRef.current = { searchTerm, selectedCity, selectedCategory, pageCategorie, filterPremium, filterCommerceLocal, filterStatutCarte };
 
+    pendingSearchRef.current = true;
     const delayDebounceFn = setTimeout(() => {
+      pendingSearchRef.current = false;
       if (searchTerm.length >= 1 || selectedCity || selectedCategory || filterPremium || filterCommerceLocal || filterStatutCarte) {
         console.log('➡️ [DEBUG] Déclenchement de performSearch()');
         performSearch();
@@ -415,7 +418,10 @@ export const Businesses = ({
       }
     }, 300);
 
-    return () => clearTimeout(delayDebounceFn);
+    return () => {
+      clearTimeout(delayDebounceFn);
+      pendingSearchRef.current = false;
+    };
   }, [searchTerm, selectedCity, selectedCategory, pageCategorie, filterPremium, filterCommerceLocal, filterStatutCarte]);
 
   useEffect(() => {
@@ -530,14 +536,14 @@ export const Businesses = ({
       console.log(`[DEBUG] ✅ Mapping terminé: ${mappedData.length} entreprises`);
       console.log('═══════════════════════════════════════\n');
 
+      setLoading(false);
       setBusinesses(mappedData);
     } catch (error) {
       console.error('❌ [ERROR] fetchBusinesses:', error);
+      setLoading(false);
       setBusinesses([]);
     } finally {
       clearTimeout(timeoutId);
-      setLoading(false);
-      console.log('✅ [DEBUG] fetchBusinesses terminé, loading=false');
     }
   };
 
@@ -739,6 +745,9 @@ export const Businesses = ({
 
       console.log('═══════════════════════════════════════\n');
 
+      // Mettre à jour businesses et searching dans le même batch React pour éviter
+      // le flash "aucun résultat" entre les deux updates
+      setSearching(false);
       setBusinesses(mappedData);
 
       setTimeout(() => {
@@ -746,11 +755,10 @@ export const Businesses = ({
       }, 100);
     } catch (error) {
       console.error('❌ [ERROR] performSearch:', error);
+      setSearching(false);
       setBusinesses([]);
     } finally {
       clearTimeout(timeoutId);
-      setSearching(false);
-      console.log('✅ [DEBUG] performSearch terminé, searching=false');
     }
   };
 
@@ -1145,7 +1153,7 @@ export const Businesses = ({
 
         {/* Affichage des résultats : avec ou sans recherche active */}
         <div ref={resultsRef} className="mb-12">
-          {(loading || searching) ? (
+          {(loading || searching || pendingSearchRef.current) ? (
             <div className="text-center py-12">
               <div className="inline-block w-8 h-8 border-2 border-[#D4AF37] border-t-transparent rounded-full animate-spin"></div>
               <p className="mt-3 text-sm text-gray-600">{searching ? t.businesses.searching || t.common.loading : t.common.loading}</p>
