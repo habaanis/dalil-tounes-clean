@@ -81,7 +81,7 @@ function isArabicText(text: string): boolean {
 }
 
 export const BusinessCard = ({ business, onClick, variant = 'simple' }: BusinessCardProps) => {
-  console.log('statut_carte =', business.statut_carte, '| entreprise =', business.name);
+  console.log('[BusinessCard] name:', business.name, '| name_ar:', business.name_ar, '| description_ar:', business.description_ar);
   const { language } = useLanguage();
   const t = useTranslation(language);
   const [searchParams] = useSearchParams();

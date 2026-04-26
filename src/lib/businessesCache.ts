@@ -53,7 +53,7 @@ interface CacheEntry extends BusinessesDefaultData {
   ts: number;
 }
 
-const CACHE_KEY   = 'businesses_default_v1';
+const CACHE_KEY   = 'businesses_default_v2';
 const STALE_TIME  = 5 * 60_000;
 const GC_TIME     = 60 * 60_000;
 
