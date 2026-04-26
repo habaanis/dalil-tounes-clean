@@ -1,15 +1,8 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-// Valeurs figées — priorité absolue sur .env
-const HARDCODED_URL = 'https://kmvjegbtroksjqaqliyv.supabase.co';
-const HARDCODED_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImttdmplZ2J0cm9rc2pxYXFsaXl2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4MDA1NTEsImV4cCI6MjA2NzM3NjU1MX0.MbU7b-HWQBwlYtbJeE7_ABvrGhuhzeAuqvkcVvvoE1o';
-
-const SUPABASE_URL = HARDCODED_URL || (import.meta.env.VITE_SUPABASE_URL as string);
-const SUPABASE_ANON_KEY = HARDCODED_KEY || (import.meta.env.VITE_SUPABASE_ANON_KEY as string);
-
-if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-  throw new Error('Aucune configuration Supabase trouvée !');
-}
+// Connexion EXCLUSIVEMENT sur la base de production — ne jamais modifier
+const SUPABASE_URL = 'https://kmvjegbtroksjqaqliyv.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImttdmplZ2J0cm9rc2pxYXFsaXl2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4MDA1NTEsImV4cCI6MjA2NzM3NjU1MX0.MbU7b-HWQBwlYtbJeE7_ABvrGhuhzeAuqvkcVvvoE1o';
 
 const supabaseInstance: SupabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
