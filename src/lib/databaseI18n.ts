@@ -40,17 +40,9 @@ export function getMultilingualField<T = string>(
     return data[fieldName];
   }
 
-  // Fallback vers le français si activé
+  // Fallback vers le français si activé — on s'arrête ici, jamais vers _en/_it/_ru
   if (fallbackToFrench && language !== 'fr' && data[baseField]) {
     return data[baseField];
-  }
-
-  // Fallback vers n'importe quelle langue disponible
-  for (const lang of Object.keys(COLUMN_SUFFIXES) as Language[]) {
-    const altField = `${baseField}${COLUMN_SUFFIXES[lang]}`;
-    if (data[altField] && String(data[altField]).trim()) {
-      return data[altField];
-    }
   }
 
   // Retour du champ de base ou chaîne vide

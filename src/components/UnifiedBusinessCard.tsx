@@ -69,7 +69,6 @@ function isArabicText(text: string): boolean {
 }
 
 const UnifiedBusinessCard = ({ business, onClick }: UnifiedBusinessCardProps) => {
-  console.log('statut_carte =', business.statut_carte, '| entreprise =', business.nom || business.name);
   const { language } = useLanguage();
   const t = useTranslation(language);
   const { getCategory } = useCategoryTranslation();
@@ -79,6 +78,7 @@ const UnifiedBusinessCard = ({ business, onClick }: UnifiedBusinessCardProps) =>
   const showArabic = isArabicText(searchQuery) && !!(business.name_ar || business.description_ar);
 
   const businessName = showArabic && business.name_ar ? business.name_ar : (business.nom || business.name || '');
+  const businessDescription = showArabic && business.description_ar ? business.description_ar : null;
 
   // Récupération de la catégorie traduite avec fallback
   const rawCategory = getMultilingualField(business, 'category', language, true) ||
@@ -163,9 +163,9 @@ const UnifiedBusinessCard = ({ business, onClick }: UnifiedBusinessCardProps) =>
             {renderStatutCarteBadge(business.statut_carte)}
           </div>
         )}
-        {showArabic && business.description_ar && (
+        {businessDescription && (
           <p className="text-[10px] text-gray-500 text-center line-clamp-2 leading-tight" style={{ direction: 'rtl' }}>
-            {business.description_ar}
+            {businessDescription}
           </p>
         )}
 

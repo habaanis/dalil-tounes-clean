@@ -81,12 +81,13 @@ function isArabicText(text: string): boolean {
 }
 
 export const BusinessCard = ({ business, onClick, variant = 'simple' }: BusinessCardProps) => {
-  console.log('[BusinessCard] name:', business.name, '| name_ar:', business.name_ar, '| description_ar:', business.description_ar);
   const { language } = useLanguage();
   const t = useTranslation(language);
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get('q') || '';
   const showArabic = isArabicText(searchQuery) && !!(business.name_ar || business.description_ar);
+  const displayName = showArabic && business.name_ar ? business.name_ar : business.name;
+  const displayDescription = showArabic && business.description_ar ? business.description_ar : (!showArabic ? business.description : null);
   const { getCategory } = useCategoryTranslation();
   const [showFullSchedule, setShowFullSchedule] = useState(false);
   const [descriptionExpanded, setDescriptionExpanded] = useState(false);
@@ -165,7 +166,7 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
   if (tier === 'gratuit') {
     return (
       <GratuitCard
-        name={showArabic && business.name_ar ? business.name_ar : business.name}
+        name={displayName}
         logoUrl={business.logoUrl}
         category={translatedCategory}
         ville={business.ville}
@@ -239,7 +240,7 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
               direction: showArabic && business.name_ar ? 'rtl' : 'ltr',
             }}
           >
-            {showArabic && business.name_ar ? business.name_ar : business.name}
+            {displayName}
           </h3>
           {business.statut_carte && (
             <div style={{ marginBottom: '4px' }}>
@@ -251,7 +252,7 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
         </div>
 
         {/* Description avec "Lire la suite" */}
-        {(showArabic ? business.description_ar : business.description) && (
+        {displayDescription && (
           <div onClick={(e) => e.stopPropagation()}>
             <div
               style={{
@@ -262,7 +263,7 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
               }}
             >
               <p style={{ fontSize: '13px', color: secondaryTextColor, lineHeight: '1.6', margin: 0, direction: showArabic && business.description_ar ? 'rtl' : 'ltr' }}>
-                {showArabic && business.description_ar ? business.description_ar : business.description}
+                {displayDescription}
               </p>
               {!descriptionExpanded && (
                 <div
