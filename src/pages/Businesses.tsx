@@ -7,7 +7,6 @@ import { buildEntrepriseUrl, getHashQueryParams } from '../lib/url';
 import { readParams } from '../lib/urlParams';
 import { generateBusinessUrl } from '../lib/slugify';
 import { RPC, Tables } from '../lib/dbTables';
-import SearchBar from '../components/SearchBar';
 import { FeaturedEventsCarousel } from '../components/FeaturedEventsCarousel';
 import { FeaturedBusinessesStrip } from '../components/FeaturedBusinessesStrip';
 import { METIERS_DOMAINES } from '../lib/categories';
@@ -1149,11 +1148,6 @@ export const Businesses = ({
             </div>
           </div>
         )}
-
-        {/* Barre de recherche entreprises - Z-index élevé pour interaction */}
-        <div id="section-recherche-b2b" className="mb-8 px-4 scroll-mt-24 isolate" style={{ position: 'relative', zIndex: 999 }}>
-          <SearchBar scope="global" autoSearch />
-        </div>
 
         {/* Affichage des résultats : avec ou sans recherche active */}
         <div ref={resultsRef} className="mb-12">
