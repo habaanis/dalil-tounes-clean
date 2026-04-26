@@ -1162,14 +1162,12 @@ export const Businesses = ({
               <div className="inline-block w-8 h-8 border-2 border-[#D4AF37] border-t-transparent rounded-full animate-spin"></div>
               <p className="mt-3 text-sm text-gray-600">{searching ? t.businesses.searching || t.common.loading : t.common.loading}</p>
             </div>
-          ) : filteredBusinesses.length === 0 ? (
+          ) : filteredBusinesses.length === 0 && hasActiveSearch ? (
             <div className="text-center py-12">
               <Building2 className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-              <p className="text-sm text-gray-600">
-                {hasActiveSearch ? t.common.noResults : 'Aucune entreprise disponible'}
-              </p>
+              <p className="text-sm text-gray-600">{t.common.noResults}</p>
             </div>
-          ) : (
+          ) : filteredBusinesses.length > 0 ? (
             <div className="px-4">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-bold text-[#4A1D43]">
@@ -1240,7 +1238,7 @@ export const Businesses = ({
                 </div>
               )}
             </div>
-          )}
+          ) : null}
         </div>
 
         {selectedBusiness && (
