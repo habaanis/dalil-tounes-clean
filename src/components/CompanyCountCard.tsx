@@ -69,7 +69,7 @@ export default function CompanyCountCard({ language, totalCount, certifiedCount,
       </h3>
 
       <p
-        className={`text-[#4A1D43]/70 text-sm md:text-base mt-1 font-medium ${
+        className={`text-[#4A1D43]/70 text-base md:text-lg mt-1 font-medium ${
           isRTL ? 'text-right' : 'text-center'
         }`}
         dir={isRTL ? 'rtl' : 'ltr'}
