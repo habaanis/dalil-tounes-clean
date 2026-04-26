@@ -202,7 +202,7 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
         <div className="max-w-5xl mx-auto relative z-[1001] overflow-visible">
           {isSearchBarAllowed('home') && (
             <div className="bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-[#D4AF37] p-2.5 md:p-3 relative overflow-visible">
-              <SearchBar scope="global" />
+              <SearchBar scope="global" autoSearch />
             </div>
           )}
 

@@ -57,6 +57,7 @@ type Props = {
   showSeeAllItem?: boolean;
   className?: string;
   enabled?: boolean;
+  autoSearch?: boolean;
 };
 
 export default function SearchBar({
@@ -65,7 +66,8 @@ export default function SearchBar({
   intentEnabled = false,
   showSeeAllItem = true,
   className = '',
-  enabled = true
+  enabled = true,
+  autoSearch = false,
 }: Props) {
   if (!enabled) return null;
 
@@ -86,6 +88,7 @@ export default function SearchBar({
   const [errVille, setErrVille] = React.useState<string | null>(null);
   const tEnt = React.useRef<number | null>(null);
   const tVille = React.useRef<number | null>(null);
+  const tAutoSearch = React.useRef<number | null>(null);
   const cache = React.useRef<Map<string, ResultItem[]>>(new Map());
 
   const isGlobal = scope === 'global';
@@ -283,10 +286,39 @@ export default function SearchBar({
   }, []);
 
   const goTo = (path: string) => {
-    // Enlever le # si présent pour compatibilité
     const cleanPath = path.startsWith('#') ? path.substring(1) : path;
     navigate(cleanPath);
   };
+
+  const triggerNavigation = (query: string, villeParam: string) => {
+    if (!isGlobal) {
+      const params = new URLSearchParams();
+      if (query) params.set('q', query);
+      if (villeParam) params.set('ville', villeParam);
+      goTo(`/recherche?${params.toString()}`);
+      return;
+    }
+    const url = buildEntrepriseUrl({
+      q: query || undefined,
+      ville: villeParam || undefined,
+      statut_carte: certFilter || undefined
+    });
+    goTo(url);
+  };
+
+  React.useEffect(() => {
+    if (!autoSearch) return;
+    if (tAutoSearch.current) window.clearTimeout(tAutoSearch.current);
+    const query = q.trim();
+    const villeParam = city.trim();
+    if (query.length === 0 && !villeParam) return;
+    tAutoSearch.current = window.setTimeout(() => {
+      triggerNavigation(query, villeParam);
+    }, 300);
+    return () => {
+      if (tAutoSearch.current) window.clearTimeout(tAutoSearch.current);
+    };
+  }, [q, city, autoSearch]);
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
