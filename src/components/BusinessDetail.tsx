@@ -83,8 +83,8 @@ function normalizeBusiness(business: any): any {
     'Lien Avis Google': business['Lien Avis Google'],
     video_url: business.video_url,
     horaires_ok: business.horaires_ok,
-    name_ar: business.name_ar || null,
-    description_ar: business.description_ar || null,
+    name_ar: business.name_ar ? cleanArabicField(business.name_ar) : null,
+    description_ar: business.description_ar ? cleanArabicField(business.description_ar) : null,
   };
 }
 

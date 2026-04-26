@@ -79,10 +79,34 @@ export function extractFrenchName(value: string | null | undefined): string {
  */
 export function cleanArabicField(value: string | null | undefined): string {
   if (!value) return '';
+
+  // If the value starts with a language marker like "name_ar: ..." or "description_ar: ...",
+  // extract the Arabic content after the marker and before the next marker
+  const startsWithMarker = value.match(/^(name_ar|description_ar|nom_ar)\s*:\s*/i);
+  if (startsWithMarker) {
+    const afterMarker = value.slice(startsWithMarker[0].length);
+    // Find the next language marker (with or without | separator)
+    const nextMarkerIdx = afterMarker.search(/\s{2,}(name_en|name_it|name_ru|description_en|description_it|description_ru|nom_en|nom_it|nom_ru)\s*:/i);
+    const pipeIdx = afterMarker.search(/\s*[\|,]\s*(name_en|name_it|name_ru|description_en|description_it|description_ru)\s*:/i);
+    const cutIdx = pipeIdx >= 0 && nextMarkerIdx >= 0 ? Math.min(pipeIdx, nextMarkerIdx)
+                 : pipeIdx >= 0 ? pipeIdx
+                 : nextMarkerIdx >= 0 ? nextMarkerIdx
+                 : -1;
+    return (cutIdx >= 0 ? afterMarker.slice(0, cutIdx) : afterMarker).trim();
+  }
+
+  // Cut at pipe/comma separator before another language marker
   const markerIdx = value.search(/\s*[\|,]\s*(name_en|name_it|name_ru|nom_en|nom_it|nom_ru|description_en|description_it|description_ru)\s*:/i);
   if (markerIdx >= 0) {
     return value.slice(0, markerIdx).trim();
   }
+
+  // Cut before a next-language marker separated by multiple spaces (no pipe)
+  const spaceMarkerIdx = value.search(/\s{2,}(name_en|name_it|name_ru|nom_en|nom_it|nom_ru|description_en|description_it|description_ru)\s*:/i);
+  if (spaceMarkerIdx >= 0) {
+    return value.slice(0, spaceMarkerIdx).trim();
+  }
+
   // No marker found — take everything up to the first pipe or comma separator
   const separatorIdx = value.search(/\s*[\|,]/);
   return (separatorIdx >= 0 ? value.slice(0, separatorIdx) : value).trim();
