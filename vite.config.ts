@@ -12,6 +12,7 @@ export default defineConfig({
   },
   optimizeDeps: {
     exclude: ['lucide-react'],
+    include: ['cookie'],
   },
   server: {
     // Configuration optimale pour Bolt WebContainer
