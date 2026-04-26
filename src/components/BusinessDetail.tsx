@@ -1372,7 +1372,7 @@ export const BusinessDetail = ({
   if (asModal && handleClose) {
     return (
       <div
-        className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-md p-3"
+        className="fixed inset-0 z-[20000] flex items-center justify-center bg-black/70 backdrop-blur-md p-3"
         onClick={handleClose}
       >
         <div
