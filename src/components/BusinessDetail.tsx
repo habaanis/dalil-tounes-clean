@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { supabase } from '../lib/supabaseClient';
 import { ArrowLeft, MapPin, Phone, Mail, Globe, Star, Instagram, Facebook, Linkedin, Youtube, Navigation, Download, QrCode, Clock, ChevronDown, Link as LinkIcon, Check } from 'lucide-react';
@@ -82,7 +82,9 @@ function normalizeBusiness(business: any): any {
     'lien facebook': business['lien facebook'] || business.facebook,
     'Lien Avis Google': business['Lien Avis Google'],
     video_url: business.video_url,
-    horaires_ok: business.horaires_ok
+    horaires_ok: business.horaires_ok,
+    name_ar: business.name_ar || null,
+    description_ar: business.description_ar || null,
   };
 }
 
@@ -137,6 +139,8 @@ interface Business {
   'Lien Avis Google'?: string;
   video_url?: string;
   horaires_ok?: string | null;
+  name_ar?: string | null;
+  description_ar?: string | null;
 }
 
 export const BusinessDetail = ({
@@ -184,6 +188,7 @@ export const BusinessDetail = ({
   const { language } = useLanguage();
   const { getCategory } = useCategoryTranslation();
   const currentPath = useHreflangPath();
+  const [searchParams] = useSearchParams();
   const [business, setBusiness] = useState<Business | null>(normalizedBusiness);
   const [loading, setLoading] = useState(!businessProp);
   const [error, setError] = useState(false);
@@ -250,7 +255,7 @@ export const BusinessDetail = ({
   const shareViaWhatsApp = () => {
     if (!business || !actualBusinessId) return;
     const shareUrl = generateShareUrl(business.nom, actualBusinessId);
-    const shareText = `${business.nom} - ${translatedCategory}\n${shareUrl}`;
+    const shareText = `${displayName} - ${translatedCategory}\n${shareUrl}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank');
   };
 
@@ -258,7 +263,7 @@ export const BusinessDetail = ({
   const shareViaTelegram = () => {
     if (!business || !actualBusinessId) return;
     const shareUrl = generateShareUrl(business.nom, actualBusinessId);
-    const shareText = `${business.nom} - ${translatedCategory}`;
+    const shareText = `${displayName} - ${translatedCategory}`;
     window.open(`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`, '_blank');
   };
 
@@ -512,9 +517,19 @@ export const BusinessDetail = ({
 
   const colors = getTierColors();
 
-  // Récupération des champs traduits avec fallback
-  const translatedDescription = business ? (getMultilingualField(business, 'description', language, true) || business.description || '') : '';
+  // Détection de la recherche arabe : si le paramètre q contient des caractères arabes
+  const searchQuery = searchParams.get('q') || '';
+  const isArabicSearch = /[\u0600-\u06FF]/.test(searchQuery);
+  const showArabic = isArabicSearch && !!(business.name_ar || business.description_ar);
+
+  // Nom et description : arabe si la recherche était en arabe et la traduction existe, sinon français
+  const displayName = showArabic && business.name_ar ? business.name_ar : business.nom;
+  const displayDescription = showArabic && business.description_ar
+    ? business.description_ar
+    : (getMultilingualField(business, 'description', language, true) || business.description || '');
+  const translatedDescription = displayDescription;
   const translatedServices = business ? (getMultilingualField(business, 'services', language, true) || business.services || '') : '';
+  const isArabicDisplay = showArabic && !!(business.name_ar || business.description_ar);
 
   const content = (
     <div className={asModal ? "overflow-x-hidden" : "py-4 px-4 overflow-x-hidden"} style={{ wordBreak: 'break-word', padding: asModal ? '1rem' : undefined }} dir={isRTL ? 'rtl' : 'ltr'}>
@@ -554,7 +569,7 @@ export const BusinessDetail = ({
       {tier === 'gratuit' && (
         <div className="flex justify-center py-4">
           <GratuitCard
-            name={business.nom}
+            name={displayName}
             logoUrl={business.logo_url}
             category={translatedCategory}
             ville={business.ville}
@@ -741,7 +756,7 @@ export const BusinessDetail = ({
                 />
               </div>
               <p style={{ textAlign: 'center', marginTop: '12px', fontSize: '12px', fontFamily: 'Playfair Display, serif', color: colors.gold, opacity: 0.8, letterSpacing: '0.04em' }}>
-                {business.nom}
+                {displayName}
               </p>
             </div>
           </div>
@@ -761,7 +776,10 @@ export const BusinessDetail = ({
         <div className="px-4 pb-4 pt-3 text-center space-y-1.5">
           {/* Nom & Catégorie avec Bouton Copier Lien */}
           <div className="flex items-center justify-center gap-2 px-1 flex-wrap">
-            <h1 className={`text-lg md:text-xl font-bold tracking-tight leading-tight ${tier === 'gratuit' ? 'text-gray-900' : 'text-white'}`}>{business.nom}</h1>
+            <h1
+              className={`text-lg md:text-xl font-bold tracking-tight leading-tight ${tier === 'gratuit' ? 'text-gray-900' : 'text-white'}`}
+              dir={isArabicDisplay ? 'rtl' : 'ltr'}
+            >{displayName}</h1>
             {business.statut_carte && (
               <span
                 className="flex-shrink-0"
@@ -892,7 +910,7 @@ export const BusinessDetail = ({
 
           {/* Description — masquée pour Gratuit */}
           {tier !== 'gratuit' && translatedDescription && (
-            <div className="text-left px-1">
+            <div className={isArabicDisplay ? 'text-right px-1' : 'text-left px-1'} dir={isArabicDisplay ? 'rtl' : 'ltr'}>
               <div style={{ position: 'relative', maxHeight: '72px', overflow: 'hidden' }}>
                 <p className="text-gray-300 break-words" style={{ fontSize: '13px', lineHeight: '1.65', margin: 0 }}>
                   {translatedDescription}
@@ -932,7 +950,7 @@ export const BusinessDetail = ({
 
           {tier !== 'gratuit' && showDescriptionModal && (
             <InfoModal
-              title={business.nom}
+              title={displayName}
               content={translatedDescription}
               accentColor={colors.gold}
               onClose={() => setShowDescriptionModal(false)}
