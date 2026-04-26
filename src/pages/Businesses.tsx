@@ -18,7 +18,7 @@ import { getSupabaseImageUrl } from '../lib/imageUtils';
 import { HERO_IMAGE_URL, HERO_IMAGE_JPG_URL } from '../constants/images';
 import { RegistrationForm } from '../components/RegistrationForm';
 import SignatureCard from '../components/SignatureCard';
-import { normalizeText } from '../lib/textNormalization';
+import { normalizeText, removeArabicDiacritics } from '../lib/textNormalization';
 import { BusinessCard } from '../components/BusinessCard';
 import { BusinessDetail } from '../components/BusinessDetail';
 import { getSubscriptionPriority } from '../lib/subscriptionHelper';
@@ -560,8 +560,10 @@ export const Businesses = ({
         .limit(30);
 
       if (searchTerm && searchTerm.trim().length >= 2) {
-        const searchPattern = `%${searchTerm.trim()}%`;
-        console.log(`[DEBUG] Filtre Recherche: "${searchTerm}" (pattern: ${searchPattern})`);
+        // Supprimer les harakat arabes et accents latins avant l'ilike (UTF-8 safe)
+        const normalizedTerm = removeArabicDiacritics(searchTerm.trim());
+        const searchPattern = `%${normalizedTerm}%`;
+        console.log(`[DEBUG] Filtre Recherche: "${searchTerm}" → normalisé: "${normalizedTerm}" (pattern: ${searchPattern})`);
         query = query.or(`nom.ilike.${searchPattern},"mots cles recherche".ilike.${searchPattern},description.ilike.${searchPattern}`);
       }
 

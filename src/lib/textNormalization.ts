@@ -12,13 +12,22 @@ export function removeAccents(text: string): string {
 }
 
 /**
+ * Removes Arabic diacritics (harakat/tashkeel) from text
+ * Example: "مَدرَسَة" -> "مدرسة"
+ */
+export function removeArabicDiacritics(text: string): string {
+  return text.replace(/[\u064B-\u065F\u0670\u06D6-\u06DC\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED]/g, '');
+}
+
+/**
  * Normalizes text for search by:
  * - Converting to lowercase
- * - Removing accents
+ * - Removing Latin accents
+ * - Removing Arabic diacritics (harakat)
  * - Trimming whitespace
  */
 export function normalizeText(text: string): string {
-  return removeAccents(text.toLowerCase().trim());
+  return removeArabicDiacritics(removeAccents(text.toLowerCase().trim()));
 }
 
 /**
