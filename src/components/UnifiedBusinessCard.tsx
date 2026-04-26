@@ -1,5 +1,6 @@
 import { MapPin, Award, Clock, ChevronDown } from 'lucide-react';
 import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
 import { extractMainCategory, getAllKeywords } from '../lib/categoryDisplay';
@@ -37,6 +38,8 @@ interface UnifiedBusinessCardProps {
     horaires_ok?: string | null;
     is_premium?: boolean;
     statut_carte?: string | null;
+    name_ar?: string | null;
+    description_ar?: string | null;
   };
   onClick: () => void;
 }
@@ -61,14 +64,21 @@ function renderStatutCarteBadge(statut_carte: string | null | undefined) {
   );
 }
 
+function isArabicText(text: string): boolean {
+  return /[\u0600-\u06FF]/.test(text);
+}
+
 const UnifiedBusinessCard = ({ business, onClick }: UnifiedBusinessCardProps) => {
   console.log('statut_carte =', business.statut_carte, '| entreprise =', business.nom || business.name);
   const { language } = useLanguage();
   const t = useTranslation(language);
   const { getCategory } = useCategoryTranslation();
   const [showFullSchedule, setShowFullSchedule] = useState(false);
+  const [searchParams] = useSearchParams();
+  const searchQuery = searchParams.get('q') || '';
+  const showArabic = isArabicText(searchQuery) && !!(business.name_ar || business.description_ar);
 
-  const businessName = business.nom || business.name || '';
+  const businessName = showArabic && business.name_ar ? business.name_ar : (business.nom || business.name || '');
 
   // Récupération de la catégorie traduite avec fallback
   const rawCategory = getMultilingualField(business, 'category', language, true) ||
@@ -142,13 +152,21 @@ const UnifiedBusinessCard = ({ business, onClick }: UnifiedBusinessCardProps) =>
 
       {/* Contenu ultra-compact */}
       <div className="p-3 flex flex-col gap-1">
-        <h3 className="text-sm font-bold text-gray-900 text-center line-clamp-1 leading-tight">
+        <h3
+          className="text-sm font-bold text-gray-900 text-center line-clamp-1 leading-tight"
+          style={{ direction: showArabic && business.name_ar ? 'rtl' : 'ltr' }}
+        >
           {businessName}
         </h3>
         {business.statut_carte && (
           <div className="flex justify-center">
             {renderStatutCarteBadge(business.statut_carte)}
           </div>
+        )}
+        {showArabic && business.description_ar && (
+          <p className="text-[10px] text-gray-500 text-center line-clamp-2 leading-tight" style={{ direction: 'rtl' }}>
+            {business.description_ar}
+          </p>
         )}
 
         {translatedCategory && (

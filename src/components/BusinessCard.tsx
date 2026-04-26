@@ -1,6 +1,7 @@
 import { MapPin, Award, Clock, ChevronDown, Phone, Star } from 'lucide-react';
 import GratuitCard from './GratuitCard';
 import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { cleanAltText } from '../lib/textNormalization';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
@@ -48,6 +49,8 @@ interface BusinessCardProps {
     'Compteur Avis Google'?: string | number | null;
     score_avis?: string | number | null;
     statut_carte?: string | null;
+    name_ar?: string | null;
+    description_ar?: string | null;
   };
   onClick: () => void;
   variant?: 'simple' | 'premium';
@@ -73,10 +76,17 @@ function renderStatutCarteBadge(statut_carte: string | null | undefined) {
   );
 }
 
+function isArabicText(text: string): boolean {
+  return /[\u0600-\u06FF]/.test(text);
+}
+
 export const BusinessCard = ({ business, onClick, variant = 'simple' }: BusinessCardProps) => {
   console.log('statut_carte =', business.statut_carte, '| entreprise =', business.name);
   const { language } = useLanguage();
   const t = useTranslation(language);
+  const [searchParams] = useSearchParams();
+  const searchQuery = searchParams.get('q') || '';
+  const showArabic = isArabicText(searchQuery) && !!(business.name_ar || business.description_ar);
   const { getCategory } = useCategoryTranslation();
   const [showFullSchedule, setShowFullSchedule] = useState(false);
   const [descriptionExpanded, setDescriptionExpanded] = useState(false);
@@ -155,7 +165,7 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
   if (tier === 'gratuit') {
     return (
       <GratuitCard
-        name={business.name}
+        name={showArabic && business.name_ar ? business.name_ar : business.name}
         logoUrl={business.logoUrl}
         category={translatedCategory}
         ville={business.ville}
@@ -165,6 +175,7 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
         language={language}
         allKeywords={allKeywords}
         statut_carte={business.statut_carte}
+        description_ar={showArabic ? (business.description_ar || null) : null}
       />
     );
   }
@@ -224,10 +235,11 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
               WebkitLineClamp: 2,
               WebkitBoxOrient: 'vertical',
               overflow: 'hidden',
-              letterSpacing: '-0.01em'
+              letterSpacing: '-0.01em',
+              direction: showArabic && business.name_ar ? 'rtl' : 'ltr',
             }}
           >
-            {business.name}
+            {showArabic && business.name_ar ? business.name_ar : business.name}
           </h3>
           {business.statut_carte && (
             <div style={{ marginBottom: '4px' }}>
@@ -239,7 +251,7 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
         </div>
 
         {/* Description avec "Lire la suite" */}
-        {business.description && (
+        {(showArabic ? business.description_ar : business.description) && (
           <div onClick={(e) => e.stopPropagation()}>
             <div
               style={{
@@ -249,8 +261,8 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
                 transition: 'max-height 0.35s ease',
               }}
             >
-              <p style={{ fontSize: '13px', color: secondaryTextColor, lineHeight: '1.6', margin: 0 }}>
-                {business.description}
+              <p style={{ fontSize: '13px', color: secondaryTextColor, lineHeight: '1.6', margin: 0, direction: showArabic && business.description_ar ? 'rtl' : 'ltr' }}>
+                {showArabic && business.description_ar ? business.description_ar : business.description}
               </p>
               {!descriptionExpanded && (
                 <div

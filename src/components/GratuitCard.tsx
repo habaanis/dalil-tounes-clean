@@ -14,6 +14,7 @@ interface GratuitCardProps {
   language: string;
   allKeywords?: string[];
   statut_carte?: string | null;
+  description_ar?: string | null;
 }
 
 function renderStatutCarteBadge(statut_carte: string | null | undefined) {
@@ -48,6 +49,7 @@ export default function GratuitCard({
   language,
   allKeywords = [],
   statut_carte,
+  description_ar,
 }: GratuitCardProps) {
   console.log('statut_carte =', statut_carte, '| entreprise =', name);
   const [showPhone, setShowPhone] = useState(false);
@@ -82,10 +84,15 @@ export default function GratuitCard({
         </div>
 
         {/* Nom */}
-        <p style={{ fontSize: '14px', fontWeight: '700', color: '#1A1A1A', lineHeight: '1.3', margin: 0, letterSpacing: '-0.01em', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+        <p style={{ fontSize: '14px', fontWeight: '700', color: '#1A1A1A', lineHeight: '1.3', margin: 0, letterSpacing: '-0.01em', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', direction: /[\u0600-\u06FF]/.test(name) ? 'rtl' : 'ltr' }}>
           {name}
         </p>
         {renderStatutCarteBadge(statut_carte)}
+        {description_ar && (
+          <p style={{ fontSize: '11px', color: '#6B7280', lineHeight: '1.4', margin: 0, direction: 'rtl', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+            {description_ar}
+          </p>
+        )}
 
         {allKeywords.length > 0 && <span className="sr-only">{allKeywords.join(' ')}</span>}
 
