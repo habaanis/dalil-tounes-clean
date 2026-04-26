@@ -30,7 +30,6 @@ import {
 import { extractMainCategory, getAllKeywords } from '../lib/categoryDisplay';
 import StructuredData from '../components/StructuredData';
 import { generateCollectionPageSchema } from '../lib/structuredDataSchemas';
-import FilterChips from '../components/FilterChips';
 
 interface Business {
   id: string;
@@ -970,18 +969,6 @@ export const Businesses = ({
             {t.home.suggestBusiness}
           </button>
         </div>
-
-        {/* Filtres chips pour affiner les résultats */}
-        {availableCategories.length > 0 && (
-          <div className="mb-6 px-4">
-            <FilterChips
-              categories={availableCategories}
-              selectedCategories={selectedChipCategories}
-              onToggleCategory={handleToggleChipCategory}
-              onClearAll={handleClearAllChips}
-            />
-          </div>
-        )}
 
         {/* Tags de filtres actifs - Design Premium */}
         {(selectedCity || selectedCategory) && (
