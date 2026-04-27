@@ -8,6 +8,7 @@ import { scrollToWithOffsetDelayed } from '../lib/scrollUtils';
 import { getSupabaseImageUrl } from '../lib/imageUtils';
 import UnifiedBusinessCard from '../components/UnifiedBusinessCard';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext';
 
 interface Business {
   id: string;
@@ -32,6 +33,7 @@ interface CitizensTourismProps {
 
 export default function CitizensTourism({ onNavigate }: CitizensTourismProps = {}) {
   const navigate = useNavigate();
+  const { language } = useLanguage();
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [loading, setLoading] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
@@ -97,10 +99,16 @@ export default function CitizensTourism({ onNavigate }: CitizensTourismProps = {
 
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-4 py-6">
           <h1 className="text-3xl md:text-4xl font-semibold mb-2 drop-shadow-lg text-[#D4AF37]">
-            Tourisme Local & Expatriation
+            {language === 'fr' ? 'Tourisme Local & Expatriation' :
+             language === 'ar' ? 'السياحة المحلية والاغتراب' :
+             language === 'en' ? 'Local Tourism & Expatriation' :
+             'Turismo Locale ed Espatrio'}
           </h1>
           <p className="text-sm md:text-base font-light text-white/95 max-w-3xl leading-relaxed drop-shadow-lg">
-            Découvrez les meilleurs services pour touristes et expatriés en Tunisie. Hébergement, guides touristiques, services d'immigration et plus encore.
+            {language === 'fr' ? "Découvrez les meilleurs services pour touristes et expatriés en Tunisie. Hébergement, guides touristiques, services d'immigration et plus encore." :
+             language === 'ar' ? 'اكتشف أفضل الخدمات للسياح والمغتربين في تونس. الإقامة، الأدلة السياحية، خدمات الهجرة والمزيد.' :
+             language === 'en' ? 'Discover the best services for tourists and expatriates in Tunisia. Accommodation, tourist guides, immigration services and more.' :
+             'Scopri i migliori servizi per turisti ed espatriati in Tunisia. Alloggio, guide turistiche, servizi di immigrazione e molto altro.'}
           </p>
         </div>
       </section>
@@ -108,7 +116,12 @@ export default function CitizensTourism({ onNavigate }: CitizensTourismProps = {
       <section className="py-6 px-4 bg-white">
         <div className="max-w-2xl mx-auto text-center">
           <p className="text-lg md:text-xl font-light mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
-            <span className="text-[#4A0404]">Votre guide pour un séjour réussi en Tunisie</span>
+            <span className="text-[#4A0404]">
+              {language === 'fr' ? 'Votre guide pour un séjour réussi en Tunisie' :
+               language === 'ar' ? 'دليلك لإقامة ناجحة في تونس' :
+               language === 'en' ? 'Your guide to a successful stay in Tunisia' :
+               'La tua guida per un soggiorno di successo in Tunisia'}
+            </span>
           </p>
           <div className="flex justify-center">
             <div className="w-[40px] h-[1px] bg-[#D4AF37]"></div>
@@ -136,14 +149,22 @@ export default function CitizensTourism({ onNavigate }: CitizensTourismProps = {
         {!loading && businesses.length === 0 && (
           <div className="text-center py-12 min-h-[120px]">
             <Globe className="w-16 h-16 mx-auto text-[#D4AF37] mb-4" />
-            <p className="text-gray-600">Aucun professionnel trouvé dans ce secteur</p>
+            <p className="text-gray-600">
+              {language === 'fr' ? 'Aucun professionnel trouvé dans ce secteur' :
+               language === 'ar' ? 'لم يتم العثور على أي مهني في هذا القطاع' :
+               language === 'en' ? 'No professional found in this sector' :
+               'Nessun professionista trovato in questo settore'}
+            </p>
           </div>
         )}
 
         {!loading && businesses.length > 0 && (
           <div ref={resultsRef} className="mt-8">
             <h2 className="text-2xl font-semibold text-gray-900 mb-6">
-              Tourisme &amp; Expatriation ({businesses.length})
+              {language === 'fr' ? 'Tourisme & Expatriation' :
+               language === 'ar' ? 'السياحة والاغتراب' :
+               language === 'en' ? 'Tourism & Expatriation' :
+               'Turismo ed Espatrio'} ({businesses.length})
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
