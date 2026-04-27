@@ -546,7 +546,14 @@ export default function SearchBar({
 
       <div className="mt-4 text-center">
         <p className="text-sm font-semibold text-[#4A1D43]">
-          <span aria-hidden="true">★</span> Les services préférés de vos voisins
+          <span
+            aria-hidden="true"
+            style={{
+              color: '#FFC107',
+              fontSize: '1.5em',
+              textShadow: '0 1px 2px rgba(0,0,0,0.2)',
+            }}
+          >★</span> Les services préférés de vos voisins
         </p>
         <p className="text-xs text-gray-500 mt-1">
           Les commerces et professionnels qui ont gagné la confiance des habitants
