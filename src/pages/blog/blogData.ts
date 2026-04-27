@@ -421,7 +421,7 @@ export const blogArticles: BlogArticle[] = [
     }
   },
   {
-    id: '3',
+    id: '7',
     slug: 'pourquoi-dalil-tounes-change-la-donne',
     author: "L'équipe Dalil Tounes",
     date: '20 avril 2026',
