@@ -85,11 +85,17 @@ export const Subscription = () => {
           <div className="bg-gradient-to-br from-red-50 via-orange-50 to-amber-50 rounded-3xl p-10 md:p-14 shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
             <div className="text-center mb-8">
               <h2 className="text-2xl md:text-3xl font-light text-gray-900 mb-4">
-                Faites rayonner votre marque en Tunisie
+                {language === 'fr' ? 'Faites rayonner votre marque en Tunisie' :
+                 language === 'ar' ? 'اجعل علامتك التجارية تتألق في تونس' :
+                 language === 'en' ? 'Make your brand shine in Tunisia' :
+                 'Fai brillare il tuo marchio in Tunisia'}
               </h2>
               <div className="max-w-3xl mx-auto">
                 <p className="text-gray-800 text-base md:text-lg leading-relaxed" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-                  Dalil Tounes est la plateforme de référence pour connecter votre entreprise avec des milliers de clients potentiels à travers la Tunisie. Rejoignez notre communauté d'entreprises qui font confiance à notre expertise pour développer leur visibilité et leur activité.
+                  {language === 'fr' ? "Dalil Tounes est la plateforme de référence pour connecter votre entreprise avec des milliers de clients potentiels à travers la Tunisie. Rejoignez notre communauté d'entreprises qui font confiance à notre expertise pour développer leur visibilité et leur activité." :
+                   language === 'ar' ? 'دليل تونس هي المنصة المرجعية لربط مؤسستك بآلاف العملاء المحتملين في جميع أنحاء تونس. انضم إلى مجتمعنا من الشركات التي تثق في خبرتنا لتطوير ظهورها ونشاطها.' :
+                   language === 'en' ? "Dalil Tounes is the leading platform to connect your business with thousands of potential customers across Tunisia. Join our community of businesses that trust our expertise to grow their visibility and activity." :
+                   'Dalil Tounes è la piattaforma di riferimento per collegare la tua azienda a migliaia di clienti potenziali in tutta la Tunisia. Unisciti alla nostra comunità di aziende che si affidano alla nostra esperienza per sviluppare visibilità e attività.'}
                 </p>
               </div>
             </div>
@@ -97,25 +103,49 @@ export const Subscription = () => {
             <div className="grid md:grid-cols-3 gap-6">
               <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm">
                 <div className="text-3xl mb-3">🎯</div>
-                <h3 className="font-semibold text-gray-900 mb-2">Visibilité Maximale</h3>
+                <h3 className="font-semibold text-gray-900 mb-2">
+                  {language === 'fr' ? 'Visibilité Maximale' :
+                   language === 'ar' ? 'ظهور أقصى' :
+                   language === 'en' ? 'Maximum Visibility' :
+                   'Massima Visibilità'}
+                </h3>
                 <p className="text-sm text-gray-600">
-                  Apparaissez en première position dans les résultats de recherche et attirez plus de clients.
+                  {language === 'fr' ? 'Apparaissez en première position dans les résultats de recherche et attirez plus de clients.' :
+                   language === 'ar' ? 'اظهر في المراتب الأولى في نتائج البحث واجذب المزيد من العملاء.' :
+                   language === 'en' ? 'Appear at the top of search results and attract more customers.' :
+                   'Appari ai primi posti nei risultati di ricerca e attira più clienti.'}
                 </p>
               </div>
 
               <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm">
                 <div className="text-3xl mb-3">📊</div>
-                <h3 className="font-semibold text-gray-900 mb-2">Statistiques Détaillées</h3>
+                <h3 className="font-semibold text-gray-900 mb-2">
+                  {language === 'fr' ? 'Statistiques Détaillées' :
+                   language === 'ar' ? 'إحصائيات مفصلة' :
+                   language === 'en' ? 'Detailed Statistics' :
+                   'Statistiche Dettagliate'}
+                </h3>
                 <p className="text-sm text-gray-600">
-                  Suivez vos performances avec des rapports complets sur vos vues, clics et interactions.
+                  {language === 'fr' ? 'Suivez vos performances avec des rapports complets sur vos vues, clics et interactions.' :
+                   language === 'ar' ? 'تابع أداءك من خلال تقارير شاملة عن المشاهدات والنقرات والتفاعلات.' :
+                   language === 'en' ? 'Track your performance with comprehensive reports on views, clicks and interactions.' :
+                   'Monitora le tue performance con report completi su visualizzazioni, clic e interazioni.'}
                 </p>
               </div>
 
               <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm">
                 <div className="text-3xl mb-3">⭐</div>
-                <h3 className="font-semibold text-gray-900 mb-2">Badge Premium</h3>
+                <h3 className="font-semibold text-gray-900 mb-2">
+                  {language === 'fr' ? 'Badge Premium' :
+                   language === 'ar' ? 'شارة بريميوم' :
+                   language === 'en' ? 'Premium Badge' :
+                   'Badge Premium'}
+                </h3>
                 <p className="text-sm text-gray-600">
-                  Distinguez-vous avec un badge doré et renforcez la confiance de vos clients.
+                  {language === 'fr' ? 'Distinguez-vous avec un badge doré et renforcez la confiance de vos clients.' :
+                   language === 'ar' ? 'تميّز بشارة ذهبية وعزّز ثقة عملائك.' :
+                   language === 'en' ? 'Stand out with a golden badge and strengthen customer trust.' :
+                   'Distinguiti con un badge dorato e rafforza la fiducia dei tuoi clienti.'}
                 </p>
               </div>
             </div>
