@@ -1,6 +1,8 @@
 import { HomeBusinessRow } from '../hooks/useHomeData';
 import { BusinessCard } from './BusinessCard';
 import { extractFrenchName } from '../lib/textNormalization';
+import { useLanguage } from '../context/LanguageContext';
+import { t, type Lang } from '../lib/i18n';
 
 interface PremiumPartnersSectionProps {
   onCardClick: (id: string) => void;
@@ -25,15 +27,17 @@ function PartnerSkeleton() {
 }
 
 export const PremiumPartnersSection = ({ onCardClick, partners, loading }: PremiumPartnersSectionProps) => {
+  const { language } = useLanguage();
+  const lang = language as Lang;
   return (
     <section className="py-6 px-4 bg-gradient-to-b from-white to-gray-50">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-5">
           <h2 className="text-lg md:text-xl font-light text-gray-900 mb-1">
-            Établissements à la Une
+            {t(lang, 'homeExtra.featuredTitle')}
           </h2>
           <p className="text-gray-600 text-sm">
-            Découvrez nos établissements premium et leurs services d'excellence
+            {t(lang, 'homeExtra.featuredSubtitle')}
           </p>
         </div>
 
@@ -42,7 +46,7 @@ export const PremiumPartnersSection = ({ onCardClick, partners, loading }: Premi
             [1, 2, 3, 4, 5].map((i) => <PartnerSkeleton key={i} />)
           ) : partners.length === 0 ? (
             <div className="text-center py-8 text-gray-500 text-sm col-span-2 md:col-span-4 lg:col-span-5">
-              Aucun établissement à afficher pour le moment
+              {t(lang, 'homeExtra.featuredEmpty')}
             </div>
           ) : (
             partners.map((biz) => (

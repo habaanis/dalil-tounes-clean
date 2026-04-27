@@ -189,7 +189,7 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
       <section className="py-8 px-4 bg-white">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-2xl md:text-3xl font-light mb-3 text-[#4A0404]" style={{ fontFamily: "'Playfair Display', serif" }}>
-            Les réseaux sociaux sont pour le divertissement, Dalil Tounes est l'outil de votre réussite.
+            {(t as any).homeExtra?.slogan}
           </h2>
           <div className="flex justify-center">
             <div className="w-[40px] h-[1px] bg-[#D4AF37]"></div>
@@ -208,7 +208,7 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
 
           <div className="text-center mt-3">
             <p className="text-xs text-gray-500 mb-2.5">
-              Vous connaissez une bonne adresse ? Partagez-la ici !
+              {(t as any).homeExtra?.suggestInvite}
             </p>
             <button
               onClick={onSuggestBusiness}
@@ -250,13 +250,13 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
           }}
         >
           <p style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontSize: '0.9rem', color: '#5a5a5a', lineHeight: '1.7', margin: 0 }}>
-            Pourquoi Dalil Tounes change la donne pour les pros et les clients
+            {(t as any).homeExtra?.editorialTitle}
           </p>
           <p style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontSize: '0.85rem', color: '#7a7a7a', lineHeight: '1.7', margin: '0.25rem 0 0' }}>
-            Et venez lire nos autres articles, avec un petit café.{' '}
+            {(t as any).homeExtra?.editorialSubtitle}{' '}
             <a
               href="/blog/pourquoi-dalil-tounes-change-la-donne-pour-les-pros-et-les-clients"
-              aria-label="Lire l'article : Pourquoi Dalil Tounes change la donne pour les pros et les clients"
+              aria-label={(t as any).homeExtra?.editorialAria}
               style={{
                 display: 'inline-block',
                 textDecoration: 'none',

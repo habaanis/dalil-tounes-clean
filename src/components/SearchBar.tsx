@@ -553,18 +553,18 @@ export default function SearchBar({
               fontSize: '1.5em',
               textShadow: '0 1px 2px rgba(0,0,0,0.2)',
             }}
-          >★</span> Les services préférés de vos voisins
+          >★</span> {t(language as Lang, 'search.preferredTitle')}
         </p>
         <p className="text-xs text-gray-500 mt-1">
-          Les commerces et professionnels qui ont gagné la confiance des habitants
+          {t(language as Lang, 'search.preferredSubtitle')}
         </p>
       </div>
 
       <div className="mt-3 flex rounded-lg border border-[#D4AF37] bg-white overflow-hidden text-sm" dir={dir}>
         {([
-          { value: '' as CertFilter, label: 'Tous' },
-          { value: 'certifie' as CertFilter, label: 'Certifiés' },
-          { value: 'non_certifie' as CertFilter, label: 'Non certifiés' },
+          { value: '' as CertFilter, label: t(language as Lang, 'search.certAll') },
+          { value: 'certifie' as CertFilter, label: t(language as Lang, 'search.certCertified') },
+          { value: 'non_certifie' as CertFilter, label: t(language as Lang, 'search.certNonCertified') },
         ] as { value: CertFilter; label: string }[]).map(({ value, label }) => (
           <button
             key={value}

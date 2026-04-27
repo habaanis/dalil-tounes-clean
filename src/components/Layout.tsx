@@ -33,6 +33,7 @@ export const Layout = ({ children }: LayoutProps) => {
 
   const showAdminLink = import.meta.env.DEV || import.meta.env.VITE_SHOW_ADMIN_LINK === 'true';
 
+  const tx = t as any;
   const navigationStructure: NavItem[] = [
     {
       label: t.nav.home || 'Accueil',
@@ -44,7 +45,7 @@ export const Layout = ({ children }: LayoutProps) => {
       children: [
         { label: t.navMenu?.businesses?.directory || 'Annuaire', path: '/businesses' },
         { label: t.navMenu?.businesses?.partners || 'Partenaires', path: '/partner-search' },
-        { label: 'Candidats disponibles', path: '/candidats' },
+        { label: tx.navExtra?.candidatesAvailable || 'Candidats disponibles', path: '/candidats' },
         { label: t.navMenu?.businesses?.events || 'Événements', path: '/business-events' },
       ],
     },
@@ -52,12 +53,12 @@ export const Layout = ({ children }: LayoutProps) => {
       label: t.nav.citizens || 'Citoyens',
       path: '/citizens',
       children: [
-        { label: 'Santé', path: '/citizens/health' },
-        { label: 'Éducation', path: '/education' },
-        { label: 'Services Citoyens', path: '/citizens/services' },
-        { label: 'Commerces & Magasins', path: '/citizens/shops' },
-        { label: 'Loisirs & Événements', path: '/citizens/leisure' },
-        { label: 'Tourisme Local & Expatriation', path: '/citizens/tourism' },
+        { label: t.navMenu?.citizens?.health || 'Santé', path: '/citizens/health' },
+        { label: t.navMenu?.citizens?.education || 'Éducation', path: '/education' },
+        { label: tx.navExtra?.servicesCitoyens || 'Services Citoyens', path: '/citizens/services' },
+        { label: t.navMenu?.citizens?.shops || 'Commerces & Magasins', path: '/citizens/shops' },
+        { label: t.navMenu?.citizens?.leisure || 'Loisirs & Événements', path: '/citizens/leisure' },
+        { label: tx.navExtra?.tourism || 'Tourisme Local & Expatriation', path: '/citizens/tourism' },
       ],
     },
     {
@@ -73,11 +74,11 @@ export const Layout = ({ children }: LayoutProps) => {
       path: '/subscription',
     },
     {
-      label: 'Notre Concept',
+      label: tx.navExtra?.concept || 'Notre Concept',
       path: '/concept',
     },
     {
-      label: 'Blog',
+      label: tx.navExtra?.blog || 'Blog',
       path: '/blog',
     },
   ];
@@ -214,7 +215,7 @@ export const Layout = ({ children }: LayoutProps) => {
                   <button
                     className="flex items-center gap-1 px-3 py-1.5 text-sm rounded-md border border-gray-200 hover:bg-gray-100 text-gray-700 transition-all"
                   >
-                    Admin
+                    {tx.navExtra?.admin || 'Admin'}
                     <ChevronDown
                       className={`w-4 h-4 transition-transform ${
                         openMenu === 'Admin' ? 'rotate-180' : ''
@@ -230,14 +231,14 @@ export const Layout = ({ children }: LayoutProps) => {
                           onClick={() => setOpenMenu(null)}
                           className="block w-full text-left text-sm px-4 py-2.5 hover:bg-orange-50 transition-colors text-gray-700 hover:text-orange-600"
                         >
-                          Sourcing Rapide
+                          {tx.navExtra?.adminSourcing || 'Sourcing Rapide'}
                         </Link>
                         <Link
                           to="/around-me"
                           onClick={() => setOpenMenu(null)}
                           className="block w-full text-left text-sm px-4 py-2.5 hover:bg-orange-50 transition-colors text-gray-700 hover:text-orange-600"
                         >
-                          Autour de moi
+                          {tx.navExtra?.adminAroundMe || 'Autour de moi'}
                         </Link>
                       </div>
                     </div>
@@ -322,7 +323,7 @@ export const Layout = ({ children }: LayoutProps) => {
                       }}
                       className="w-full text-left px-4 py-2 rounded-lg transition-all flex items-center justify-between text-gray-700 hover:bg-orange-50"
                     >
-                      <span>Admin</span>
+                      <span>{tx.navExtra?.admin || 'Admin'}</span>
                       <ChevronRight
                         className={`w-4 h-4 transition-transform ${
                           mobileExpandedMenu === 'Admin' ? 'rotate-90' : ''
@@ -340,7 +341,7 @@ export const Layout = ({ children }: LayoutProps) => {
                           }}
                           className="block w-full text-left px-4 py-2 text-sm rounded-lg text-gray-600 hover:bg-orange-50 hover:text-orange-600 transition-colors"
                         >
-                          Sourcing Rapide
+                          {tx.navExtra?.adminSourcing || 'Sourcing Rapide'}
                         </Link>
                         <Link
                           to="/around-me"
@@ -350,7 +351,7 @@ export const Layout = ({ children }: LayoutProps) => {
                           }}
                           className="block w-full text-left px-4 py-2 text-sm rounded-lg text-gray-600 hover:bg-orange-50 hover:text-orange-600 transition-colors"
                         >
-                          Autour de moi
+                          {tx.navExtra?.adminAroundMe || 'Autour de moi'}
                         </Link>
                       </div>
                     )}
