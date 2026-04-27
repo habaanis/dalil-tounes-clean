@@ -306,19 +306,8 @@ export default function SearchBar({
     goTo(url);
   };
 
-  React.useEffect(() => {
-    if (!autoSearch) return;
-    if (tAutoSearch.current) window.clearTimeout(tAutoSearch.current);
-    const query = q.trim();
-    const villeParam = city.trim();
-    if (query.length === 0 && !villeParam) return;
-    tAutoSearch.current = window.setTimeout(() => {
-      triggerNavigation(query, villeParam);
-    }, 300);
-    return () => {
-      if (tAutoSearch.current) window.clearTimeout(tAutoSearch.current);
-    };
-  }, [q, city, autoSearch]);
+  void autoSearch;
+  void triggerNavigation;
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -521,9 +510,15 @@ export default function SearchBar({
         </div>
       )}
 
-      <button type="submit" className="hidden">
-        {t(language as Lang, 'search.searchBtn')}
-      </button>
+      <div className="mt-3 flex justify-center">
+        <button
+          type="submit"
+          className="px-6 py-2.5 rounded-lg bg-[#4A1D43] text-white text-sm font-semibold hover:bg-[#5A2D53] transition-colors shadow-sm hover:shadow-md"
+          style={{ border: '1px solid #D4AF37' }}
+        >
+          {t(language as Lang, 'search.searchBtn')}
+        </button>
+      </div>
     </form>
   );
 }
