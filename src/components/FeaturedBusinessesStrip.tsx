@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabaseClient';
 import { BusinessCard } from './BusinessCard';
 import { getSubscriptionPriority } from '../lib/subscriptionHelper';
 import { extractFrenchName } from '../lib/textNormalization';
+import { useLanguage } from '../context/LanguageContext';
 
 type RawVariant = 'home' | 'accueil' | 'businesses' | 'entreprises' | 'citizens' | 'citoyens' | 'shops' | 'magasins';
 type NormalizedVariant = 'home' | 'businesses' | 'citizens' | 'shops';
@@ -38,17 +39,38 @@ function normalizeVariant(variant: RawVariant): NormalizedVariant {
   }
 }
 
-function getTextsForVariant(variant: NormalizedVariant) {
-  switch (variant) {
-    case 'home': return { title: 'Ils font bouger la Tunisie', subtitle: "Une sélection d'entreprises, commerces et services qui illustrent la richesse économique du pays." };
-    case 'businesses': return { title: 'Entreprises qui bougent', subtitle: 'Des prestataires et services B2B pour accompagner les professionnels et les projets.' };
-    case 'citizens': return { title: 'Près de chez vous', subtitle: 'Les professionnels et services utiles à votre quotidien, partout en Tunisie.' };
-    case 'shops': return { title: 'Commerces & boutiques', subtitle: 'Faites votre shopping en Tunisie : commerces de proximité, artisans et magasins.' };
-    default: return { title: 'Établissements en vedette', subtitle: '' };
-  }
+function getTextsForVariant(variant: NormalizedVariant, lang: string) {
+  const dict: Record<NormalizedVariant, Record<string, { title: string; subtitle: string }>> = {
+    home: {
+      fr: { title: 'Ils font bouger la Tunisie', subtitle: "Une sélection d'entreprises, commerces et services qui illustrent la richesse économique du pays." },
+      ar: { title: 'هم يحرّكون تونس', subtitle: 'مجموعة مختارة من المؤسسات والمحلات والخدمات التي تعكس الثراء الاقتصادي للبلاد.' },
+      en: { title: 'They move Tunisia forward', subtitle: 'A selection of businesses, shops and services that illustrate the country\'s economic richness.' },
+      it: { title: 'Fanno muovere la Tunisia', subtitle: 'Una selezione di aziende, negozi e servizi che illustrano la ricchezza economica del paese.' },
+    },
+    businesses: {
+      fr: { title: 'Entreprises qui bougent', subtitle: 'Des prestataires et services B2B pour accompagner les professionnels et les projets.' },
+      ar: { title: 'مؤسسات نشطة', subtitle: 'مزودو خدمات B2B لمرافقة المهنيين والمشاريع.' },
+      en: { title: 'Businesses on the move', subtitle: 'B2B providers and services to support professionals and projects.' },
+      it: { title: 'Aziende in movimento', subtitle: 'Fornitori e servizi B2B per accompagnare professionisti e progetti.' },
+    },
+    citizens: {
+      fr: { title: 'Près de chez vous', subtitle: 'Les professionnels et services utiles à votre quotidien, partout en Tunisie.' },
+      ar: { title: 'بالقرب منك', subtitle: 'المهنيون والخدمات المفيدة لحياتك اليومية في جميع أنحاء تونس.' },
+      en: { title: 'Near you', subtitle: 'Professionals and services useful for your daily life, throughout Tunisia.' },
+      it: { title: 'Vicino a te', subtitle: 'Professionisti e servizi utili per la tua vita quotidiana, in tutta la Tunisia.' },
+    },
+    shops: {
+      fr: { title: 'Commerces & boutiques', subtitle: 'Faites votre shopping en Tunisie : commerces de proximité, artisans et magasins.' },
+      ar: { title: 'محلات ومتاجر', subtitle: 'تسوّق في تونس: محلات الجوار والحرفيون والمتاجر.' },
+      en: { title: 'Shops & boutiques', subtitle: 'Shop in Tunisia: local shops, artisans and stores.' },
+      it: { title: 'Negozi e boutique', subtitle: 'Fai shopping in Tunisia: negozi di prossimità, artigiani e commerci.' },
+    },
+  };
+  return dict[variant]?.[lang] || dict[variant]?.fr || { title: '', subtitle: '' };
 }
 
 export const FeaturedBusinessesStrip = ({ variant }: FeaturedBusinessesStripProps) => {
+  const { language } = useLanguage();
   const normalized = normalizeVariant(variant);
   const [businesses, setBusinesses] = useState<BusinessRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -90,7 +112,7 @@ export const FeaturedBusinessesStrip = ({ variant }: FeaturedBusinessesStripProp
     return () => { isMounted = false; };
   }, [normalized]);
 
-  const { title, subtitle } = getTextsForVariant(normalized);
+  const { title, subtitle } = getTextsForVariant(normalized, language);
 
   if (loading) {
     return (

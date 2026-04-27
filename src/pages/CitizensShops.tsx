@@ -29,11 +29,16 @@ export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
 
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-4 py-6">
           <h1 className="text-3xl md:text-4xl font-semibold mb-2 drop-shadow-lg text-[#D4AF37]">
-            Commerces & Magasins
+            {language === 'fr' ? 'Commerces & Magasins' :
+             language === 'ar' ? 'المحلات والمتاجر' :
+             language === 'en' ? 'Shops & Stores' :
+             'Negozi e Commerci'}
           </h1>
           <p className="text-sm md:text-base font-light text-white/95 max-w-3xl leading-relaxed drop-shadow-lg">
-            Votre guide des commerces de proximité en Tunisie. Trouvez un magasin ouvert maintenant, bénéficiez des promotions
-            et découvrez les produits locaux. Achetez local, soutenez l'économie tunisienne.
+            {language === 'fr' ? "Votre guide des commerces de proximité en Tunisie. Trouvez un magasin ouvert maintenant, bénéficiez des promotions et découvrez les produits locaux. Achetez local, soutenez l'économie tunisienne." :
+             language === 'ar' ? 'دليلك للتجارة المحلية في تونس. اعثر على متجر مفتوح الآن، استفد من العروض الترويجية واكتشف المنتجات المحلية. اشترِ محليّاً وادعم الاقتصاد التونسي.' :
+             language === 'en' ? 'Your guide to local shops in Tunisia. Find an open shop now, take advantage of promotions and discover local products. Buy local, support the Tunisian economy.' :
+             'La tua guida ai negozi di prossimità in Tunisia. Trova un negozio aperto ora, approfitta delle promozioni e scopri i prodotti locali. Compra locale, sostieni l\'economia tunisina.'}
           </p>
         </div>
       </section>
@@ -42,7 +47,12 @@ export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
       <section className="py-6 px-4 bg-white">
         <div className="max-w-2xl mx-auto text-center">
           <p className="text-lg md:text-xl font-light mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
-            <span className="text-[#4A0404]">Vous êtes présent, mais êtes-vous trouvable ?</span>
+            <span className="text-[#4A0404]">
+              {language === 'fr' ? 'Vous êtes présent, mais êtes-vous trouvable ?' :
+               language === 'ar' ? 'أنت موجود، لكن هل يمكن العثور عليك؟' :
+               language === 'en' ? 'You are present, but can you be found?' :
+               'Sei presente, ma sei trovabile?'}
+            </span>
           </p>
           <div className="flex justify-center">
             <div className="w-[40px] h-[1px] bg-[#D4AF37]"></div>
@@ -71,13 +81,31 @@ export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
         {/* Meilleurs commerces + article blog */}
         <div className="py-8">
           <MeilleursSection
-            secteurLabel="commerces"
+            secteurLabel={
+              language === 'fr' ? 'commerces' :
+              language === 'ar' ? 'محلات' :
+              language === 'en' ? 'shops' :
+              'commerci'
+            }
             listePage="commerce local"
             accentColor="#4A0404"
-            sectionTitle="Meilleurs commerces & magasins"
+            sectionTitle={
+              language === 'fr' ? 'Meilleurs commerces & magasins' :
+              language === 'ar' ? 'أفضل المحلات والمتاجر' :
+              language === 'en' ? 'Best shops & stores' :
+              'Migliori negozi e commerci'
+            }
             blogArticle={{
-              title: "Activités à faire en famille en Tunisie",
-              excerpt: "Sorties, sports, culture : découvrez les meilleures activités pour passer de bons moments en famille.",
+              title:
+                language === 'fr' ? 'Activités à faire en famille en Tunisie' :
+                language === 'ar' ? 'أنشطة عائلية في تونس' :
+                language === 'en' ? 'Family activities to do in Tunisia' :
+                'Attività da fare in famiglia in Tunisia',
+              excerpt:
+                language === 'fr' ? 'Sorties, sports, culture : découvrez les meilleures activités pour passer de bons moments en famille.' :
+                language === 'ar' ? 'نزهات، رياضة، ثقافة: اكتشف أفضل الأنشطة لقضاء أوقات ممتعة مع العائلة.' :
+                language === 'en' ? 'Outings, sports, culture: discover the best activities to enjoy quality time with your family.' :
+                'Uscite, sport, cultura: scopri le migliori attività per trascorrere bei momenti in famiglia.',
               slug: "activites-en-famille"
             }}
           />
@@ -89,10 +117,16 @@ export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
           <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-3 p-5">
             <div>
               <h3 className="text-lg font-bold text-white mb-1 drop-shadow" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-                Vous êtes présent, mais êtes-vous trouvable ?
+                {language === 'fr' ? 'Vous êtes présent, mais êtes-vous trouvable ?' :
+                 language === 'ar' ? 'أنت موجود، لكن هل يمكن العثور عليك؟' :
+                 language === 'en' ? 'You are present, but can you be found?' :
+                 'Sei presente, ma sei trovabile?'}
               </h3>
               <p className="text-sm text-white/90 font-light leading-snug">
-                Voyez nos offres • Abonnements VIP & Premium • Augmentez votre visibilité
+                {language === 'fr' ? 'Voyez nos offres • Abonnements VIP & Premium • Augmentez votre visibilité' :
+                 language === 'ar' ? 'تصفح عروضنا • اشتراكات VIP وPremium • عزّز ظهورك' :
+                 language === 'en' ? 'See our offers • VIP & Premium subscriptions • Boost your visibility' :
+                 'Vedi le nostre offerte • Abbonamenti VIP & Premium • Aumenta la tua visibilità'}
               </p>
             </div>
             <button
@@ -102,7 +136,10 @@ export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
               }}
               className="flex items-center gap-2 bg-white text-[#4A0404] px-5 py-2.5 rounded-lg font-semibold hover:bg-[#D4AF37] hover:text-white hover:shadow-xl hover:scale-105 transition-all duration-300 whitespace-nowrap shadow-md text-sm"
             >
-              Voir nos offres
+              {language === 'fr' ? 'Voir nos offres' :
+               language === 'ar' ? 'عرض عروضنا' :
+               language === 'en' ? 'See our offers' :
+               'Vedi le nostre offerte'}
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
