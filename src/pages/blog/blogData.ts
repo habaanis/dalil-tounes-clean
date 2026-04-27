@@ -192,6 +192,40 @@ export const blogArticles: BlogArticle[] = [
 <h2>4. L'acceptation de la CNAM</h2>
 <p>Vérifiez si le médecin accepte la CNAM pour éviter les mauvaises surprises financières.</p>
 <p>Prenez le temps de comparer et n'hésitez pas à changer de médecin si vous ne vous sentez pas en confiance.</p>`
+    },
+    en: {
+      title: 'How to choose your doctor in Tunisia?',
+      subtitle: 'Key criteria to choose the right healthcare professional',
+      category: 'Health',
+      excerpt: "Finding the right doctor isn't always easy. Here are the questions to ask yourself before making an appointment.",
+      content: `<h1>How to choose your doctor in Tunisia?</h1>
+<p>Whether it's a general practitioner or a specialist, choosing the right healthcare professional is an important decision. Here are some criteria to help you.</p>
+<h2>1. Location and accessibility</h2>
+<p>A practice close to your home or workplace makes regular consultations easier. Also check opening hours and availability for urgent appointments.</p>
+<h2>2. Specialties and skills</h2>
+<p>Find out about the doctor's areas of expertise. A well-trained general practitioner can often refer you to the right specialist.</p>
+<h2>3. Reputation and reviews</h2>
+<p>Other patients' reviews are valuable. On Dalil Tounes, you can read ratings and comments left by patients in your region.</p>
+<h2>4. CNAM acceptance</h2>
+<p>Check if the doctor accepts CNAM to avoid unwelcome financial surprises.</p>
+<p>Take the time to compare and don't hesitate to change doctor if you don't feel confident.</p>`
+    },
+    ar: {
+      title: 'كيف تختار طبيبك في تونس؟',
+      subtitle: 'المعايير الأساسية لاختيار المهني الصحي المناسب',
+      category: 'الصحة',
+      excerpt: 'العثور على الطبيب المناسب ليس دائمًا سهلاً. إليك الأسئلة التي يجب طرحها قبل أخذ موعد.',
+      content: `<h1>كيف تختار طبيبك في تونس؟</h1>
+<p>سواء تعلق الأمر بطبيب عام أو متخصص، فإن اختيار المهني الصحي المناسب قرار مهم. إليك بعض المعايير لمساعدتك.</p>
+<h2>1. الموقع وسهولة الوصول</h2>
+<p>عيادة قريبة من منزلك أو عملك تسهّل عليك الاستشارات المنتظمة. تحقق أيضًا من أوقات العمل وتوفر مواعيد عاجلة.</p>
+<h2>2. التخصصات والمهارات</h2>
+<p>استفسر عن مجالات اختصاص الطبيب. الطبيب العام المؤهل يمكنه غالبًا توجيهك إلى المتخصص المناسب.</p>
+<h2>3. السمعة والتقييمات</h2>
+<p>آراء المرضى الآخرين قيّمة جدًا. على دليل تونس، يمكنك الاطلاع على التقييمات والتعليقات التي تركها مرضى من منطقتك.</p>
+<h2>4. قبول CNAM</h2>
+<p>تأكد من أن الطبيب يقبل CNAM لتجنب أي مفاجآت مالية.</p>
+<p>خذ وقتك للمقارنة ولا تتردد في تغيير الطبيب إذا لم تشعر بالثقة.</p>`
     }
   },
   {
@@ -220,6 +254,46 @@ export const blogArticles: BlogArticle[] = [
 <h2>Le soutien scolaire</h2>
 <p>Les cours particuliers peuvent compléter l'enseignement scolaire. Sur Dalil Tounes, vous trouverez des enseignants certifiés dans votre gouvernorat.</p>
 <p>Visitez les établissements, échangez avec d'autres parents, et faites confiance à votre instinct pour trouver l'environnement idéal pour votre enfant.</p>`
+    },
+    en: {
+      title: 'How to choose the right school in Tunisia',
+      subtitle: 'A practical guide for parents',
+      category: 'Education',
+      excerpt: 'Public school, private school, private tutoring... How to find your way and make the right choice for your child?',
+      content: `<h1>How to choose the right school in Tunisia</h1>
+<p>Choosing the right school is one of the most important decisions for your child's future. Public, private, or tutoring? Here is a practical guide.</p>
+<h2>Public vs private school</h2>
+<p>Public school offers free education and universal access. Private school may offer smaller classes, different teaching methods and a wide range of extracurricular activities.</p>
+<h2>Selection criteria</h2>
+<ul>
+<li><strong>Proximity</strong>: a short commute reduces the child's fatigue.</li>
+<li><strong>Academic level</strong>: check the school's results in national exams.</li>
+<li><strong>Supervision</strong>: the student/teacher ratio and the quality of individual follow-up.</li>
+<li><strong>Extracurricular activities</strong>: sports, arts, clubs... for a well-rounded development.</li>
+</ul>
+<h2>Tutoring</h2>
+<p>Private lessons can complement school education. On Dalil Tounes, you'll find certified teachers in your governorate.</p>
+<p>Visit schools, talk to other parents, and trust your instinct to find the ideal environment for your child.</p>`
+    },
+    ar: {
+      title: 'كيف تختار المدرسة المناسبة في تونس',
+      subtitle: 'دليل عملي للأولياء',
+      category: 'التعليم',
+      excerpt: 'مدرسة عمومية، خاصة، دروس خصوصية... كيف تجد طريقك وتتخذ القرار الصحيح لطفلك؟',
+      content: `<h1>كيف تختار المدرسة المناسبة في تونس</h1>
+<p>اختيار المؤسسة التعليمية من أهم القرارات لمستقبل طفلك. عمومية، خاصة، أم دعم مدرسي؟ إليك دليل عملي.</p>
+<h2>المدرسة العمومية مقابل الخاصة</h2>
+<p>المدرسة العمومية توفر تعليمًا مجانيًا ومتاحًا للجميع. المدرسة الخاصة قد توفر فصولًا أقل ازدحامًا، وطرق تعليم مختلفة وأنشطة لا صفية متنوعة.</p>
+<h2>معايير الاختيار</h2>
+<ul>
+<li><strong>القرب</strong>: المسافة القصيرة تقلل من إرهاق الطفل.</li>
+<li><strong>المستوى الأكاديمي</strong>: استفسر عن نتائج الامتحانات الوطنية.</li>
+<li><strong>التأطير</strong>: نسبة التلاميذ إلى المدرس وجودة المتابعة الفردية.</li>
+<li><strong>الأنشطة اللاصفية</strong>: الرياضة والفنون والنوادي... لتنمية شاملة.</li>
+</ul>
+<h2>الدعم المدرسي</h2>
+<p>الدروس الخصوصية يمكن أن تكمل التعليم المدرسي. على دليل تونس، تجد معلمين معتمدين في ولايتك.</p>
+<p>زر المؤسسات، تواصل مع الأولياء الآخرين، وثق بحدسك لاختيار البيئة المثالية لطفلك.</p>`
     }
   },
   {
@@ -245,6 +319,40 @@ export const blogArticles: BlogArticle[] = [
 <h2>Parcs de loisirs</h2>
 <p>Friguia Park, Aqua Palace ou les parcs d'attractions locaux raviront les plus jeunes.</p>
 <p>Quelle que soit votre région, il y a toujours quelque chose à découvrir ensemble en Tunisie.</p>`
+    },
+    en: {
+      title: 'Family activities to do in Tunisia',
+      subtitle: 'Ideas to enjoy your leisure time together',
+      category: 'Leisure',
+      excerpt: 'Outings, sports, culture: discover the best activities to enjoy quality family time across Tunisia.',
+      content: `<h1>Family activities to do in Tunisia</h1>
+<p>Tunisia is full of activities for all ages. Here is a selection to enjoy your weekends and holidays as a family.</p>
+<h2>Outdoors and nature</h2>
+<p>The beaches of Hammamet, Djerba or Sousse offer unforgettable days. For nature lovers, national parks like Ichkeul or Boukornine offer family-friendly hikes.</p>
+<h2>Culture and history</h2>
+<p>Introduce your children to the Tunis medina, Carthage, or El Jem. These educational and fun visits combine history and adventure.</p>
+<h2>Sports and creative activities</h2>
+<p>Swimming, football, martial arts, painting... Sports and cultural centers in your city offer classes for all ages. On Dalil Tounes, filter by governorate to find the best activities near you.</p>
+<h2>Theme parks</h2>
+<p>Friguia Park, Aqua Palace or local amusement parks will delight the youngest.</p>
+<p>Whatever your region, there's always something to discover together in Tunisia.</p>`
+    },
+    ar: {
+      title: 'أنشطة عائلية في تونس',
+      subtitle: 'أفكار لقضاء أوقات ممتعة معًا',
+      category: 'الترفيه',
+      excerpt: 'نزهات، رياضة، ثقافة: اكتشف أفضل الأنشطة لقضاء أوقات ممتعة مع العائلة في جميع أنحاء تونس.',
+      content: `<h1>أنشطة عائلية في تونس</h1>
+<p>تونس مليئة بالأنشطة لجميع الأعمار. إليك مجموعة مختارة للاستمتاع بعطلات نهاية الأسبوع والإجازات مع العائلة.</p>
+<h2>الهواء الطلق والطبيعة</h2>
+<p>شواطئ الحمامات وجربة وسوسة توفر أيامًا لا تُنسى. لمحبي الطبيعة، حدائق وطنية مثل إشكل وبوقرنين تقدم نزهات مناسبة للعائلات.</p>
+<h2>الثقافة والتاريخ</h2>
+<p>عرّف أطفالك على مدينة تونس العتيقة، قرطاج، أو الجم. زيارات تعليمية وممتعة تجمع بين التاريخ والمغامرة.</p>
+<h2>الرياضة والأنشطة الإبداعية</h2>
+<p>سباحة، كرة قدم، فنون قتالية، رسم... المراكز الرياضية والثقافية في مدينتك توفر دروسًا لجميع الأعمار. على دليل تونس، صفِّ حسب الولاية لإيجاد أفضل الأنشطة قريبًا منك.</p>
+<h2>حدائق الترفيه</h2>
+<p>فريڨيا بارك، أكوا بالاس أو الحدائق المحلية ستسعد الصغار.</p>
+<p>أيًا كانت منطقتك، يوجد دائمًا ما تكتشفه معًا في تونس.</p>`
     }
   },
   {
@@ -272,6 +380,44 @@ export const blogArticles: BlogArticle[] = [
 <h2>Gastronomie locale</h2>
 <p>Goûtez l'ojja au merguez, le couscous au poisson, et les pâtisseries locales dans les restaurants du centre-ville.</p>
 <p>Sur Dalil Tounes, trouvez les meilleurs prestataires touristiques, hébergements et restaurants de Sousse recommandés par les habitants.</p>`
+    },
+    en: {
+      title: 'What to do in Sousse?',
+      subtitle: 'The complete guide to visiting the Pearl of the Sahel',
+      category: 'Tourism',
+      excerpt: "Sousse is one of the most vibrant cities in Tunisia. Discover its must-sees, restaurants and activities.",
+      content: `<h1>What to do in Sousse?</h1>
+<p>Sousse, nicknamed the "Pearl of the Sahel", is a city that combines history, beautiful beaches and lively nightlife. Here's a guide to make the most of your stay.</p>
+<h2>The Sousse medina</h2>
+<p>A UNESCO World Heritage site, the Sousse medina is a fascinating labyrinth of alleys, souks and historical monuments. Don't miss the Great Mosque and the Ribat.</p>
+<h2>The beaches</h2>
+<p>The Sousse corniche and the beaches of Port El Kantaoui offer crystal-clear waters ideal for swimming and water sports.</p>
+<h2>Port El Kantaoui</h2>
+<p>This well-designed marina is perfect for a stroll, a waterside dinner or a boat trip.</p>
+<h2>The archaeological museum</h2>
+<p>One of the richest in Tunisia, it houses an impressive collection of Roman mosaics.</p>
+<h2>Local gastronomy</h2>
+<p>Try ojja with merguez, fish couscous, and local pastries in the downtown restaurants.</p>
+<p>On Dalil Tounes, find the best tour operators, accommodations and restaurants in Sousse recommended by locals.</p>`
+    },
+    ar: {
+      title: 'ماذا نفعل في سوسة؟',
+      subtitle: 'الدليل الكامل لزيارة لؤلؤة الساحل',
+      category: 'السياحة',
+      excerpt: 'سوسة من أكثر المدن حيوية في تونس. اكتشف معالمها الأساسية ومطاعمها وأنشطتها.',
+      content: `<h1>ماذا نفعل في سوسة؟</h1>
+<p>سوسة، الملقبة بـ "لؤلؤة الساحل"، مدينة تجمع بين التاريخ والشواطئ الرائعة والحياة الليلية النابضة. إليك دليلًا للاستمتاع بإقامتك إلى أقصى حد.</p>
+<h2>مدينة سوسة العتيقة</h2>
+<p>مصنفة ضمن التراث العالمي لليونسكو، مدينة سوسة العتيقة متاهة رائعة من الأزقة والأسواق والمعالم التاريخية. لا تفوّت الجامع الكبير والرباط.</p>
+<h2>الشواطئ</h2>
+<p>كورنيش سوسة وشواطئ بور القنطاوي توفر مياهًا صافية مثالية للسباحة والرياضات المائية.</p>
+<h2>بور القنطاوي</h2>
+<p>هذا الميناء السياحي المنظم مثالي للتنزه أو العشاء على ضفاف الماء أو رحلة بالقارب.</p>
+<h2>المتحف الأثري</h2>
+<p>من أغنى المتاحف في تونس، يضم مجموعة مذهلة من الفسيفساء الرومانية.</p>
+<h2>المطبخ المحلي</h2>
+<p>تذوّق العجة بالمرقاز، والكسكسي بالحوت، والحلويات المحلية في مطاعم وسط المدينة.</p>
+<p>على دليل تونس، اعثر على أفضل مزودي الخدمات السياحية والإقامة والمطاعم في سوسة الموصى بها من السكان.</p>`
     }
   },
   {
