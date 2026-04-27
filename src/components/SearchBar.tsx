@@ -209,24 +209,34 @@ export default function SearchBar({
           .slice(0, 30)
           .map(({ _priority, ...rest }) => rest);
 
-        if (cert && allResults.length > 0) {
+        if (allResults.length > 0) {
           const ids = allResults.map(r => r.id).filter(Boolean);
           if (ids.length > 0) {
-            const statutResp = await supabase
+            const metaResp = await supabase
               .from(Tables.ENTREPRISE)
-              .select('id, statut_carte')
+              .select('id, statut_carte, "Note Google Globale"')
               .in('id', ids);
             const statutMap = new Map<string, string | null>();
-            (statutResp.data || []).forEach((row: any) => {
+            const ratingMap = new Map<string, number | null>();
+            (metaResp.data || []).forEach((row: any) => {
               statutMap.set(row.id, row.statut_carte ?? null);
+              const raw = row['Note Google Globale'];
+              const num = typeof raw === 'number' ? raw : raw != null ? parseFloat(raw) : null;
+              ratingMap.set(row.id, Number.isFinite(num as number) ? (num as number) : null);
             });
-            allResults = allResults.filter(r => {
-              const sc = statutMap.get(r.id);
-              const isNon = typeof sc === 'string' && sc.toUpperCase().includes('NON');
-              if (cert === 'certifie') return sc && !isNon;
-              if (cert === 'non_certifie') return !sc || isNon;
-              return true;
-            });
+            allResults = allResults.map(r => ({
+              ...r,
+              note_google_globale: ratingMap.get(r.id) ?? null,
+            }));
+            if (cert) {
+              allResults = allResults.filter(r => {
+                const sc = statutMap.get(r.id);
+                const isNon = typeof sc === 'string' && sc.toUpperCase().includes('NON');
+                if (cert === 'certifie') return sc && !isNon;
+                if (cert === 'non_certifie') return !sc || isNon;
+                return true;
+              });
+            }
           }
         }
 
@@ -520,7 +530,12 @@ export default function SearchBar({
                       onMouseDown={(ev) => ev.preventDefault()}
                       onClick={() => goTo(`#/entreprises/${item.id}`)}
                     >
-                      <div className="font-medium">{displayName}</div>
+                      <div className="font-medium">
+                        {displayName}
+                        {typeof item.note_google_globale === 'number' && item.note_google_globale >= 4 && (
+                          <span className="ml-1 text-[#D4AF37]" aria-label="Note Google >= 4">★</span>
+                        )}
+                      </div>
                       <div className="text-xs text-gray-500">{item.ville} · {displayCategory}</div>
                     </li>
                   );
