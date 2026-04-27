@@ -110,7 +110,7 @@ export default function CitizensHealth({ onNavigate }: CitizensHealthProps) {
             className="text-4xl md:text-5xl font-light text-[#D4AF37] mb-3 drop-shadow-lg"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
-            Santé
+            {(t as any).healthExtra?.pageTitle || 'Santé'}
           </motion.h1>
           <motion.p
             initial={{ y: 20, opacity: 0 }}
@@ -126,13 +126,13 @@ export default function CitizensHealth({ onNavigate }: CitizensHealthProps) {
       {/* Meilleurs professionnels de santé + article blog */}
       <section className="py-8 bg-white">
         <MeilleursSection
-          secteurLabel="professionnels de santé"
+          secteurLabel={(t as any).healthExtra?.bestProTitle?.replace(/^Meilleurs\s+/i, '').replace(/^Best\s+/i, '') || 'professionnels de santé'}
           listePage="santé"
           accentColor="#4A1D43"
-          sectionTitle="Meilleurs professionnels de santé"
+          sectionTitle={(t as any).healthExtra?.bestProTitle || 'Meilleurs professionnels de santé'}
           blogArticle={{
-            title: "Comment choisir son médecin en Tunisie ?",
-            excerpt: "Trouver le bon médecin n'est pas toujours simple. Voici les questions à se poser avant de prendre rendez-vous.",
+            title: (t as any).healthExtra?.guideMedecinTitle || "Comment choisir son médecin en Tunisie ?",
+            excerpt: (t as any).healthExtra?.guideMedecinExcerpt || "Trouver le bon médecin n'est pas toujours simple. Voici les questions à se poser avant de prendre rendez-vous.",
             slug: "comment-choisir-son-medecin"
           }}
         />
@@ -163,7 +163,7 @@ export default function CitizensHealth({ onNavigate }: CitizensHealthProps) {
 
             <div className="mt-2">
               <div className="bg-white rounded-lg border border-[#D4AF37] px-3 py-3 text-center">
-                <p className="text-[11px] text-gray-500 italic">Section en cours d'amélioration</p>
+                <p className="text-[11px] text-gray-500 italic">{(t as any).healthExtra?.improving || "Section en cours d'amélioration"}</p>
               </div>
             </div>
           </div>
@@ -189,10 +189,10 @@ export default function CitizensHealth({ onNavigate }: CitizensHealthProps) {
                 transition={{ duration: 0.6 }}
               >
                 <h2 className="text-xl md:text-2xl font-light text-[#D4AF37] mb-1 drop-shadow-lg" style={{ fontFamily: "'Playfair Display', serif" }}>
-                  🚑 Transport Médical
+                  {(t as any).healthExtra?.transportTitle ? `🚑 ${(t as any).healthExtra.transportTitle}` : '🚑 Transport Médical'}
                 </h2>
                 <p className="text-white/95 text-xs md:text-sm font-light max-w-2xl mx-auto drop-shadow leading-snug">
-                  Ambulances, taxis médicaux et transports adaptés disponibles 24h/7j. Trouvez rapidement un véhicule ou inscrivez-vous comme prestataire.
+                  {(t as any).healthExtra?.transportSubtitle || 'Ambulances, taxis médicaux et transports adaptés disponibles 24h/7j. Trouvez rapidement un véhicule ou inscrivez-vous comme prestataire.'}
                 </p>
               </motion.div>
             </div>
@@ -204,7 +204,7 @@ export default function CitizensHealth({ onNavigate }: CitizensHealthProps) {
               <LocationSelectTunisie
                 value={transportCity}
                 onChange={setTransportCity}
-                placeholder="Gouvernorat"
+                placeholder={(t as any).healthExtra?.gouvernoratPlaceholder || 'Gouvernorat'}
                 className="px-3 py-2 rounded-lg text-sm"
               />
             </div>
@@ -218,7 +218,7 @@ export default function CitizensHealth({ onNavigate }: CitizensHealthProps) {
               onClick={() => searchTransport({ gouvernorat: transportCity, vehicleType, urgenceOnly: false })}
               className="px-5 py-2 bg-[#4A1D43] text-[#D4AF37] border border-[#D4AF37] rounded-lg text-sm font-medium hover:bg-[#5A2D53] transition-all"
             >
-              Rechercher
+              {(t as any).healthExtra?.searchBtn || 'Rechercher'}
             </button>
           </div>
 
@@ -226,13 +226,13 @@ export default function CitizensHealth({ onNavigate }: CitizensHealthProps) {
           {loadingTransport ? (
             <div className="text-center py-16">
               <div className="inline-block w-12 h-12 border-4 border-[#4A1D43] border-t-transparent rounded-full animate-spin"></div>
-              <p className="mt-4 text-[#4A1D43]">Recherche des prestataires...</p>
+              <p className="mt-4 text-[#4A1D43]">{(t as any).healthExtra?.searchingProviders || 'Recherche des prestataires...'}</p>
             </div>
           ) : transportProviders.length > 0 ? (
             <div className="mt-8">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-2xl font-light text-[#4A1D43]" style={{ fontFamily: "'Playfair Display', serif" }}>
-                  {transportProviders.length} prestataire{transportProviders.length > 1 ? 's' : ''} disponible{transportProviders.length > 1 ? 's' : ''}
+                  {transportProviders.length} {transportProviders.length > 1 ? ((t as any).healthExtra?.providerPlur || 'prestataires') : ((t as any).healthExtra?.providerSing || 'prestataire')} {transportProviders.length > 1 ? ((t as any).healthExtra?.availablePlur || 'disponibles') : ((t as any).healthExtra?.availableSing || 'disponible')}
                 </h3>
               </div>
 
@@ -245,8 +245,8 @@ export default function CitizensHealth({ onNavigate }: CitizensHealthProps) {
           ) : (
             <div className="mt-8 text-center py-12 bg-white rounded-xl border border-[#D4AF37]">
               <Building2 className="w-16 h-16 text-[#D4AF37]/50 mx-auto mb-4" />
-              <p className="text-[#4A1D43] mb-2 font-medium">Aucun prestataire trouvé</p>
-              <p className="text-sm text-gray-500">Essayez de modifier vos critères de recherche</p>
+              <p className="text-[#4A1D43] mb-2 font-medium">{(t as any).healthExtra?.noProviderFound || 'Aucun prestataire trouvé'}</p>
+              <p className="text-sm text-gray-500">{(t as any).healthExtra?.modifyCriteria || 'Essayez de modifier vos critères de recherche'}</p>
             </div>
           )}
 
@@ -259,18 +259,17 @@ export default function CitizensHealth({ onNavigate }: CitizensHealthProps) {
           >
             <div className="max-w-2xl mx-auto">
               <h3 className="text-2xl font-light text-[#4A1D43] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
-                Vous avez un véhicule adapté ?
+                {(t as any).healthExtra?.ctaTitle || 'Vous avez un véhicule adapté ?'}
               </h3>
               <p className="text-gray-700 text-sm mb-4 leading-relaxed">
-                Rejoignez notre réseau de prestataires de transport médical et aidez les citoyens à accéder plus facilement aux soins.
-                Inscription gratuite et simple.
+                {(t as any).healthExtra?.ctaText || 'Rejoignez notre réseau de prestataires de transport médical et aidez les citoyens à accéder plus facilement aux soins. Inscription gratuite et simple.'}
               </p>
               <button
                 onClick={() => setShowTransportModal(true)}
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#4A1D43] text-[#D4AF37] text-sm font-semibold border border-[#D4AF37] hover:bg-[#5A2D53] hover:shadow-xl transition-all duration-300 transform hover:scale-105"
               >
                 <Plus className="w-4 h-4" />
-                S'inscrire comme prestataire
+                {(t as any).healthExtra?.ctaButton || "S'inscrire comme prestataire"}
               </button>
             </div>
           </motion.div>

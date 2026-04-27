@@ -7,6 +7,8 @@ import { Tables } from '../lib/dbTables';
 import { generateBusinessUrl } from '../lib/slugify';
 import { getSupabaseImageUrl } from '../lib/imageUtils';
 import { extractFrenchName } from '../lib/textNormalization';
+import { useLanguage } from '../context/LanguageContext';
+import { t as translate, type Lang } from '../lib/i18n';
 
 interface MeilleursItem {
   id: string;
@@ -64,6 +66,9 @@ function BusinessCard({
   rank?: number;
   onClick: () => void;
 }) {
+  const { language } = useLanguage();
+  const lang = language as Lang;
+  const ratingNA = (translate as any)(lang, 'healthExtra.ratingNA') || 'Note non disponible';
   const getRating = (): number => {
     const raw = item['Note Google Globale'];
     if (!raw) return 0;
@@ -137,7 +142,7 @@ function BusinessCard({
         {rating > 0 ? (
           <StarRating value={rating} />
         ) : (
-          <span className="text-xs text-gray-300 italic">Note non disponible</span>
+          <span className="text-xs text-gray-300 italic">{ratingNA}</span>
         )}
       </div>
     </motion.div>
@@ -230,6 +235,9 @@ export default function MeilleursSection({
   searchQuery,
 }: MeilleursProps) {
   const navigate = useNavigate();
+  const { language } = useLanguage();
+  const lang = language as Lang;
+  const tx = (key: string, fallback: string) => (translate as any)(lang, `healthExtra.${key}`) || fallback;
   const [topItems, setTopItems] = useState<MeilleursItem[]>([]);
   const [allItems, setAllItems] = useState<MeilleursItem[]>([]);
   const [loadingTop, setLoadingTop] = useState(true);
@@ -297,7 +305,7 @@ export default function MeilleursSection({
             >
               {sectionTitle || `Les meilleurs ${secteurLabel}`}
             </h2>
-            <p className="text-xs text-gray-400 mt-0.5">Les mieux notés par la communauté</p>
+            <p className="text-xs text-gray-400 mt-0.5">{tx('bestSubtitle', 'Les mieux notés par la communauté')}</p>
           </div>
         </div>
 
@@ -308,7 +316,7 @@ export default function MeilleursSection({
         ) : topItems.length === 0 ? (
           <div className="text-center py-12 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
             <Building2 className="w-8 h-8 text-gray-300 mx-auto mb-3" />
-            <p className="text-sm text-gray-400 italic">Aucun professionnel référencé pour le moment.</p>
+            <p className="text-sm text-gray-400 italic">{tx('noProReferenced', 'Aucun professionnel référencé pour le moment.')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
@@ -339,7 +347,7 @@ export default function MeilleursSection({
                 <BookOpen className="w-5 h-5 text-[#D4AF37]" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-semibold text-[#D4AF37] uppercase tracking-widest mb-1">Guide</p>
+                <p className="text-xs font-semibold text-[#D4AF37] uppercase tracking-widest mb-1">{tx('guideLabel', 'Guide')}</p>
                 <h3
                   className="font-semibold text-base mb-1.5 group-hover:text-[#D4AF37] transition-colors"
                   style={{ color: accentColor, fontFamily: "'Playfair Display', serif" }}
@@ -367,10 +375,10 @@ export default function MeilleursSection({
                   className="text-xl font-bold leading-tight"
                   style={{ fontFamily: "'Playfair Display', serif", color: accentColor }}
                 >
-                  Tous les {secteurLabel} référencés
+                  {tx('allReferencedPrefix', 'Tous les')} {secteurLabel} {tx('allReferencedSuffix', 'référencés')}
                 </h2>
                 {!loadingAll && (
-                  <p className="text-xs text-gray-400 mt-0.5">{allItems.length} établissement{allItems.length > 1 ? 's' : ''}</p>
+                  <p className="text-xs text-gray-400 mt-0.5">{allItems.length} {allItems.length > 1 ? tx('establishmentPlur', 'établissements') : tx('establishmentSing', 'établissement')}</p>
                 )}
               </div>
             </div>
@@ -409,7 +417,7 @@ export default function MeilleursSection({
                     style={{ color: page === 0 ? undefined : accentColor }}
                   >
                     <ChevronLeft className="w-4 h-4" />
-                    Précédent
+                    {tx('pagPrev', 'Précédent')}
                   </button>
                   <span className="text-sm text-gray-400 px-2">
                     {page + 1} / {totalPages}
@@ -420,7 +428,7 @@ export default function MeilleursSection({
                     className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 hover:border-[#D4AF37] hover:text-[#D4AF37] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                     style={{ color: page >= totalPages - 1 ? undefined : accentColor }}
                   >
-                    Suivant
+                    {tx('pagNext', 'Suivant')}
                     <ChevronRight className="w-4 h-4" />
                   </button>
                 </div>
@@ -439,9 +447,9 @@ export default function MeilleursSection({
             style={{ backgroundColor: accentColor, color: '#fff' }}
           >
             <Search className="w-4 h-4" />
-            Rechercher d'autres {secteurLabel}
+            {tx('searchOtherPrefix', "Rechercher d'autres")} {secteurLabel}
           </button>
-          <p className="text-xs text-gray-400 mt-2">Affiner par ville, spécialité, disponibilité...</p>
+          <p className="text-xs text-gray-400 mt-2">{tx('searchOtherHint', 'Affiner par ville, spécialité, disponibilité...')}</p>
         </div>
       </section>
     </div>

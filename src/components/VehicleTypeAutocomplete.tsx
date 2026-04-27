@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Ambulance } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
+import { t, type Lang } from '../lib/i18n';
 
 interface VehicleTypeAutocompleteProps {
   value: string;
@@ -22,9 +24,12 @@ const VEHICLE_TYPES = [
 export default function VehicleTypeAutocomplete({
   value,
   onChange,
-  placeholder = 'Type de véhicule',
+  placeholder,
   className = ''
 }: VehicleTypeAutocompleteProps) {
+  const { language } = useLanguage();
+  const lang = language as Lang;
+  const resolvedPlaceholder = placeholder || (t as any)(lang, 'healthExtra.vehicleTypePlaceholder') || 'Type de véhicule';
   const [isOpen, setIsOpen] = useState(false);
   const [filteredOptions, setFilteredOptions] = useState(VEHICLE_TYPES);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
@@ -105,7 +110,7 @@ export default function VehicleTypeAutocomplete({
             setIsOpen(true);
             setFilteredOptions(VEHICLE_TYPES);
           }}
-          placeholder={placeholder}
+          placeholder={resolvedPlaceholder}
           className="w-full pl-9 pr-3 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-orange-200 focus:border-orange-300 outline-none text-sm"
         />
       </div>
