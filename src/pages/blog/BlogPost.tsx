@@ -2,6 +2,7 @@ import { useParams, Link, Navigate } from 'react-router-dom';
 import { ArrowLeft, Clock, Calendar, User, Share2 } from 'lucide-react';
 import { blogArticles, getArticleTranslation } from './blogData';
 import { SEOHead } from '../../components/SEOHead';
+import { SocialShareButtons } from '../../components/SocialShareButtons';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTranslation } from '../../lib/i18n';
 
@@ -84,6 +85,8 @@ export default function BlogPost() {
           dangerouslySetInnerHTML={{ __html: tr.content }}
           style={{ fontFamily: 'inherit' }}
         />
+
+        <SocialShareButtons title={tr.title} url={typeof window !== 'undefined' ? window.location.href : ''} />
 
       </div>
     </div>
