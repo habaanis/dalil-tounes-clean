@@ -945,7 +945,7 @@ export const Businesses = ({
             className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-white text-[#4A1D43] text-sm md:text-base font-medium hover:shadow-lg transition-all"
             style={{ border: '2px solid #D4AF37' }}
           >
-            Inscrire mon entreprise
+            {(t as any).businessesExtra?.registerMine || 'Inscrire mon entreprise'}
           </button>
 
           <button
@@ -956,7 +956,7 @@ export const Businesses = ({
             className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-[#4A1D43] text-white text-sm md:text-base font-medium hover:bg-[#5A2D53] transition-colors shadow-sm hover:shadow-md"
             style={{ border: '1px solid #D4AF37' }}
           >
-            Voir les candidats disponibles
+            {(t as any).businessesExtra?.viewCandidates || 'Voir les candidats disponibles'}
           </button>
 
           <button
@@ -1152,9 +1152,9 @@ export const Businesses = ({
             <div className="px-4">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-bold text-[#4A1D43]">
-                  {hasActiveSearch ? 'Résultats de votre recherche' : 'Entreprises en vedette'}
+                  {hasActiveSearch ? ((t as any).businessesExtra?.searchResults || 'Résultats de votre recherche') : ((t as any).businessesExtra?.featuredTitle || 'Entreprises en vedette')}
                   <span className="ms-2 text-sm text-gray-500 font-normal">
-                    ({hasActiveSearch ? filteredBusinesses.length : Math.min(9, filteredBusinesses.length)} {filteredBusinesses.length > 1 ? 'entreprises' : 'entreprise'})
+                    ({hasActiveSearch ? filteredBusinesses.length : Math.min(9, filteredBusinesses.length)} {filteredBusinesses.length > 1 ? ((t as any).businessesExtra?.businessPlur || 'entreprises') : ((t as any).businessesExtra?.businessSing || 'entreprise')})
                   </span>
                 </h3>
                 {hasActiveSearch && (
@@ -1169,7 +1169,7 @@ export const Businesses = ({
                     }}
                     className="text-xs text-[#4A1D43] hover:text-[#D4AF37] font-medium"
                   >
-                    Réinitialiser
+                    {(t as any).businessesExtra?.reset || 'Réinitialiser'}
                   </button>
                 )}
               </div>
@@ -1210,11 +1210,11 @@ export const Businesses = ({
               {!hasActiveSearch && filteredBusinesses.length > 9 && (
                 <div className="mt-6 text-center">
                   <p className="text-sm text-gray-600 mb-3">
-                    Vous recherchez une entreprise spécifique ? Utilisez la barre de recherche ci-dessus
+                    {(t as any).businessesExtra?.searchHint || 'Vous recherchez une entreprise spécifique ? Utilisez la barre de recherche ci-dessus'}
                   </p>
                   <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#D4AF37]/10 rounded-lg text-xs text-[#4A1D43]" style={{ border: '1px solid #D4AF37' }}>
                     <Search className="w-4 h-4" />
-                    <span className="font-medium">Plus de {filteredBusinesses.length - 9} entreprises disponibles via la recherche</span>
+                    <span className="font-medium">{(t as any).businessesExtra?.moreAvailablePrefix || 'Plus de'} {filteredBusinesses.length - 9} {(t as any).businessesExtra?.moreAvailableSuffix || 'entreprises disponibles via la recherche'}</span>
                   </div>
                 </div>
               )}
