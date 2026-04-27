@@ -127,112 +127,144 @@ export default function SearchBar({
   }
 
 
+  const runSearch = React.useCallback(async (qValue: string, cityValue: string, cert: CertFilter) => {
+    const trimmedValue = qValue.trim();
+
+    if (trimmedValue.length < MIN_CHARS) {
+      setEnt([]);
+      return;
+    }
+
+    const cacheKey = `${normalizeText(trimmedValue)}-${cityValue}-${scope}-${cert}`;
+    if (cache.current.has(cacheKey)) {
+      setEnt(cache.current.get(cacheKey)!);
+      return;
+    }
+
+    setLoadingEnt(true);
+    setErrEnt(null);
+    try {
+      let allResults: any[] = [];
+      const searchPattern = `%${trimmedValue}%`;
+
+      if (scope === 'education') {
+        let query = supabase
+          .from(Tables.PROFESSEURS)
+          .select('id, nom, ville, matiere')
+          .or(`nom.ilike.${searchPattern},matiere.ilike.${searchPattern}`)
+          .order('nom', { ascending: true })
+          .limit(12);
+
+        if (cityValue && cityValue.trim().length > 0) {
+          query = query.eq('gouvernorat', cityValue);
+        }
+
+        const resp = await query;
+        allResults = resp.data || [];
+      } else {
+        const scopeMap: Record<string, string | null> = {
+          global: null,
+          sante: 'sante',
+          education: null,
+          administration: null,
+          loisirs: 'loisirs',
+          magasin: 'magasin',
+          marche_local: null,
+          tourism: 'tourisme',
+          services: 'services',
+        };
+        const rpcScope = scopeMap[scope] ?? null;
+
+        const resp = await supabase.rpc('search_entreprise_smart', {
+          p_q: trimmedValue,
+          p_ville: cityValue && cityValue.trim().length > 0 ? cityValue : null,
+          p_categorie: metier && metier.trim().length > 0 ? metier : null,
+          p_scope: rpcScope,
+          p_limit: 30
+        });
+
+        if (resp.error) {
+          console.error('Search query error:', resp.error);
+          setErrEnt(resp.error.message);
+          setEnt([]);
+          setLoadingEnt(false);
+          return;
+        }
+
+        allResults = (resp.data || []).map(item => {
+          const score = item.score || 0;
+          let priority = 3;
+          if (score >= 50) priority = 0;
+          else if (score >= 20) priority = 1;
+          else if (score >= 10) priority = 2;
+
+          return { ...item, _priority: priority };
+        })
+        .sort((a, b) => {
+          if (a._priority !== b._priority) return a._priority - b._priority;
+          const nameA = a.nom || '';
+          const nameB = b.nom || '';
+            return nameA.localeCompare(nameB, 'fr', { sensitivity: 'base' });
+          })
+          .slice(0, 30)
+          .map(({ _priority, ...rest }) => rest);
+
+        if (cert && allResults.length > 0) {
+          const ids = allResults.map(r => r.id).filter(Boolean);
+          if (ids.length > 0) {
+            const statutResp = await supabase
+              .from(Tables.ENTREPRISE)
+              .select('id, statut_carte')
+              .in('id', ids);
+            const statutMap = new Map<string, string | null>();
+            (statutResp.data || []).forEach((row: any) => {
+              statutMap.set(row.id, row.statut_carte ?? null);
+            });
+            allResults = allResults.filter(r => {
+              const sc = statutMap.get(r.id);
+              const isNon = typeof sc === 'string' && sc.toUpperCase().includes('NON');
+              if (cert === 'certifie') return sc && !isNon;
+              if (cert === 'non_certifie') return !sc || isNon;
+              return true;
+            });
+          }
+        }
+
+        allResults = allResults.slice(0, 12);
+      }
+
+      cache.current.set(cacheKey, allResults);
+      if (cache.current.size > 50) {
+        const firstKey = cache.current.keys().next().value;
+        cache.current.delete(firstKey);
+      }
+
+      setEnt(allResults);
+    } catch (err) {
+      console.error('Search error:', err);
+      setErrEnt(err instanceof Error ? err.message : 'Erreur de recherche');
+      setEnt([]);
+    } finally {
+      setLoadingEnt(false);
+    }
+  }, [scope, metier]);
+
   const onChangeQ = (e: React.ChangeEvent<HTMLInputElement>) => {
     const v = e.currentTarget.value ?? '';
     setQ(v);
     if (tEnt.current) window.clearTimeout(tEnt.current);
-    tEnt.current = window.setTimeout(async () => {
-      const trimmedValue = v.trim();
-
-      if (trimmedValue.length < MIN_CHARS) {
-        setEnt([]);
-        return;
-      }
-
-      const cacheKey = `${normalizeText(trimmedValue)}-${city}-${scope}`;
-      if (cache.current.has(cacheKey)) {
-        setEnt(cache.current.get(cacheKey)!);
-        return;
-      }
-
-      setLoadingEnt(true);
-      setErrEnt(null);
-      try {
-        let allResults: any[] = [];
-        const searchPattern = `%${trimmedValue}%`;
-
-        if (scope === 'education') {
-          let query = supabase
-            .from(Tables.PROFESSEURS)
-            .select('id, nom, ville, matiere')
-            .or(`nom.ilike.${searchPattern},matiere.ilike.${searchPattern}`)
-            .order('nom', { ascending: true })
-            .limit(12);
-
-          if (city && city.trim().length > 0) {
-            query = query.eq('gouvernorat', city);
-          }
-
-          const resp = await query;
-          allResults = resp.data || [];
-        } else {
-          const scopeMap: Record<string, string | null> = {
-            global: null,
-            sante: 'sante',
-            education: null,
-            administration: null,
-            loisirs: 'loisirs',
-            magasin: 'magasin',
-            marche_local: null,
-            tourism: 'tourisme',
-            services: 'services',
-          };
-          const rpcScope = scopeMap[scope] ?? null;
-
-          // Utilisation de la nouvelle fonction RPC avec priorisation intelligente
-          const resp = await supabase.rpc('search_entreprise_smart', {
-            p_q: trimmedValue,
-            p_ville: city && city.trim().length > 0 ? city : null,
-            p_categorie: metier && metier.trim().length > 0 ? metier : null,
-            p_scope: rpcScope,
-            p_limit: 30
-          });
-
-          if (resp.error) {
-            console.error('Search query error:', resp.error);
-            setErrEnt(resp.error.message);
-            setEnt([]);
-            setLoadingEnt(false);
-            return;
-          }
-
-          // Les résultats sont déjà triés par pertinence (score DESC)
-          allResults = (resp.data || []).map(item => {
-            // Mapping du score pour compatibilité avec l'ancien système
-            const score = item.score || 0;
-            let priority = 3;
-            if (score >= 50) priority = 0; // Catégorie exacte/commence par
-            else if (score >= 20) priority = 1; // Nom exact/commence par
-            else if (score >= 10) priority = 2; // Contient dans nom
-
-            return { ...item, _priority: priority };
-          })
-          .sort((a, b) => {
-            if (a._priority !== b._priority) return a._priority - b._priority;
-            const nameA = a.nom || '';
-            const nameB = b.nom || '';
-              return nameA.localeCompare(nameB, 'fr', { sensitivity: 'base' });
-            })
-            .slice(0, 12)
-            .map(({ _priority, ...rest }) => rest);
-        }
-
-        cache.current.set(cacheKey, allResults);
-        if (cache.current.size > 50) {
-          const firstKey = cache.current.keys().next().value;
-          cache.current.delete(firstKey);
-        }
-
-        setEnt(allResults);
-      } catch (err) {
-        console.error('Search error:', err);
-        setErrEnt(err instanceof Error ? err.message : 'Erreur de recherche');
-        setEnt([]);
-      } finally {
-        setLoadingEnt(false);
-      }
+    tEnt.current = window.setTimeout(() => {
+      runSearch(v, city, certFilter);
     }, 100);
   };
+
+  React.useEffect(() => {
+    if (q.trim().length < MIN_CHARS) return;
+    if (tEnt.current) window.clearTimeout(tEnt.current);
+    tEnt.current = window.setTimeout(() => {
+      runSearch(q, city, certFilter);
+    }, 50);
+  }, [certFilter, city]);
 
   const onChangeCity = (e: React.ChangeEvent<HTMLInputElement>) => {
     const v = e.currentTarget.value ?? '';
