@@ -101,7 +101,7 @@ const Footer: React.FC = () => {
                 href="https://www.facebook.com/daliltounes"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Suivez-nous sur Facebook"
+                aria-label={te.footer?.followFacebook || 'Suivez-nous sur Facebook'}
                 className="inline-flex items-center gap-2 text-gray-400 hover:text-[#D4AF37] transition-colors text-xs"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
@@ -111,7 +111,7 @@ const Footer: React.FC = () => {
                 href="https://www.instagram.com/dalil.tounes/"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Suivez-nous sur Instagram"
+                aria-label={te.footer?.followInstagram || 'Suivez-nous sur Instagram'}
                 className="inline-flex items-center gap-2 text-gray-400 hover:text-[#D4AF37] transition-colors text-xs"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" fill="none" stroke="currentColor" strokeWidth="2"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
@@ -129,7 +129,7 @@ const Footer: React.FC = () => {
               <li><Link to="/entreprises" className={footerLink}>{te.footer?.businesses || t.nav.businesses}</Link></li>
               <li><Link to="/emplois" className={footerLink}>{te.footer?.jobs || t.nav.jobs}</Link></li>
               <li><Link to="/notre-concept" className={footerLink}>{te.footer?.concept || 'Notre Concept'}</Link></li>
-              <li><Link to="/blog" className={footerLink}>Blog</Link></li>
+              <li><Link to="/blog" className={footerLink}>{te.footer?.blog || 'Blog'}</Link></li>
               <li><Link to="/abonnement" className={footerLink}>{te.footer?.subscriptions || t.nav.subscription}</Link></li>
             </ul>
           </div>
@@ -150,13 +150,13 @@ const Footer: React.FC = () => {
 
           <div>
             <h4 className="text-xs font-semibold mb-4 text-gray-300 uppercase tracking-widest" style={{ letterSpacing: '0.12em' }}>
-              Informations légales
+              {te.footer?.legalInfo || 'Informations légales'}
             </h4>
             <ul className="space-y-2.5">
-              <li><Link to="/mentions-legales" className={footerLink}>Mentions légales</Link></li>
-              <li><Link to="/cgu" className={footerLink}>CGU</Link></li>
-              <li><Link to="/politique-confidentialite" className={footerLink}>Confidentialité</Link></li>
-              <li><Link to="/plan-du-site" className={footerLink}>Plan du site</Link></li>
+              <li><Link to="/mentions-legales" className={footerLink}>{te.footer?.legalNotice || 'Mentions légales'}</Link></li>
+              <li><Link to="/cgu" className={footerLink}>{te.footer?.cgu || 'CGU'}</Link></li>
+              <li><Link to="/politique-confidentialite" className={footerLink}>{te.footer?.privacy || 'Confidentialité'}</Link></li>
+              <li><Link to="/plan-du-site" className={footerLink}>{te.footer?.sitemap || 'Plan du site'}</Link></li>
             </ul>
           </div>
 

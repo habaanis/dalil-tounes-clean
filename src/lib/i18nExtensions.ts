@@ -143,6 +143,15 @@ export const translationExtensions = {
       digitalGuide: "Le guide digital des établissements et services en Tunisie",
       copyright: "© 2024 Dalil Tounes. Tous droits réservés.",
       registerEstablishment: "Inscrire mon établissement",
+      concept: "Notre Concept",
+      blog: "Blog",
+      legalInfo: "Informations légales",
+      legalNotice: "Mentions légales",
+      cgu: "CGU",
+      privacy: "Confidentialité",
+      sitemap: "Plan du site",
+      followFacebook: "Suivez-nous sur Facebook",
+      followInstagram: "Suivez-nous sur Instagram",
     },
 
     // === LAYOUT / NAVIGATION ===
@@ -309,6 +318,15 @@ export const translationExtensions = {
       digitalGuide: "الدليل الرقمي للمؤسسات والخدمات في تونس",
       copyright: "© 2024 دليل تونس. جميع الحقوق محفوظة.",
       registerEstablishment: "تسجيل مؤسستي",
+      concept: "مفهومنا",
+      blog: "المدونة",
+      legalInfo: "معلومات قانونية",
+      legalNotice: "إشعارات قانونية",
+      cgu: "الشروط العامة",
+      privacy: "الخصوصية",
+      sitemap: "خريطة الموقع",
+      followFacebook: "تابعنا على فيسبوك",
+      followInstagram: "تابعنا على إنستغرام",
     },
 
     layout: {
@@ -473,6 +491,15 @@ export const translationExtensions = {
       digitalGuide: "The digital guide to establishments and services in Tunisia",
       copyright: "© 2024 Dalil Tounes. All rights reserved.",
       registerEstablishment: "Register my establishment",
+      concept: "Our Concept",
+      blog: "Blog",
+      legalInfo: "Legal information",
+      legalNotice: "Legal notice",
+      cgu: "Terms of Use",
+      privacy: "Privacy",
+      sitemap: "Sitemap",
+      followFacebook: "Follow us on Facebook",
+      followInstagram: "Follow us on Instagram",
     },
 
     layout: {

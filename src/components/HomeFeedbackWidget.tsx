@@ -9,6 +9,7 @@ type Rating = 'positif' | 'neutre' | 'negatif' | null;
 export default function HomeFeedbackWidget() {
   const { language } = useLanguage();
   const t = useTranslation(language);
+  const tx = t as any;
   const [selectedRating, setSelectedRating] = useState<Rating>(null);
   const [comment, setComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -34,7 +35,7 @@ export default function HomeFeedbackWidget() {
 
       if (insertError) {
         console.error('Error inserting feedback:', insertError);
-        setError('Une erreur est survenue, merci de réessayer.');
+        setError(tx.homeExtra?.feedbackError || 'Une erreur est survenue, merci de réessayer.');
         setIsSubmitting(false);
         return;
       }
@@ -44,7 +45,7 @@ export default function HomeFeedbackWidget() {
       setComment('');
     } catch (err) {
       console.error('Error submitting feedback:', err);
-      setError('Une erreur est survenue, merci de réessayer.');
+      setError(tx.homeExtra?.feedbackError || 'Une erreur est survenue, merci de réessayer.');
     } finally {
       setIsSubmitting(false);
     }
@@ -54,8 +55,8 @@ export default function HomeFeedbackWidget() {
     return (
       <div className="bg-gradient-to-br from-[#4A1D43]/5 to-[#D4AF37]/10 rounded-xl p-5 border border-[#D4AF37] text-center">
         <CheckCircle className="w-12 h-12 text-[#D4AF37] mx-auto mb-3" />
-        <h3 className="text-lg font-semibold text-gray-900 mb-1">Merci pour votre avis !</h3>
-        <p className="text-sm text-gray-600">Votre retour nous aide à améliorer Dalil Tounes.</p>
+        <h3 className="text-lg font-semibold text-gray-900 mb-1">{tx.homeExtra?.feedbackThanks || 'Merci pour votre avis !'}</h3>
+        <p className="text-sm text-gray-600">{tx.homeExtra?.feedbackThanksSub || 'Votre retour nous aide à améliorer Dalil Tounes.'}</p>
       </div>
     );
   }
@@ -107,13 +108,13 @@ export default function HomeFeedbackWidget() {
 
       <div className="mb-3 relative z-[115]">
         <label className="block text-xs font-medium text-gray-700 mb-1.5">
-          Une remarque à nous partager ? (optionnel)
+          {tx.homeExtra?.feedbackRemark || 'Une remarque à nous partager ? (optionnel)'}
         </label>
         <textarea
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           rows={2}
-          placeholder="Dites-nous ce qui vous plaît ou ce qui pourrait être amélioré..."
+          placeholder={tx.homeExtra?.feedbackPlaceholder || 'Dites-nous ce qui vous plaît ou ce qui pourrait être amélioré...'}
           className="w-full px-3 py-2 border border-[#D4AF37] rounded-lg focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none transition-all resize-none text-sm text-gray-900 relative z-[116]"
         />
       </div>
@@ -132,7 +133,7 @@ export default function HomeFeedbackWidget() {
         style={{ pointerEvents: 'auto' }}
       >
         <Send className="w-4 h-4" />
-        {isSubmitting ? 'Envoi en cours...' : 'Envoyer mon avis'}
+        {isSubmitting ? (tx.homeExtra?.feedbackSending || 'Envoi en cours...') : (tx.homeExtra?.feedbackSend || 'Envoyer mon avis')}
       </button>
     </div>
   );

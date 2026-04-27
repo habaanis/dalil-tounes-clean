@@ -224,7 +224,7 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
       <section className="py-6 px-4 bg-white relative z-[1]">
         <div className="max-w-2xl mx-auto text-center">
           <p className="text-lg md:text-xl font-light mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
-            <span className="text-[#4A0404]">Vous êtes présent, mais êtes-vous trouvable ?</span>
+            <span className="text-[#4A0404]">{(t as any).homeExtra?.presentNotFindable}</span>
           </p>
 
           <div className="flex justify-center">

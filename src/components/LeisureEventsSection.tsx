@@ -1,6 +1,8 @@
 import React from 'react';
 import { MapPin, Palette, PartyPopper, Utensils, Building, Mountain, Dumbbell } from 'lucide-react';
 import { SECTEURS_CONFIG } from '../lib/cultureEventCategories';
+import { useLanguage } from '../context/LanguageContext';
+import { t, type Lang } from '../lib/i18n';
 
 interface LeisureCard {
   id: string;
@@ -61,15 +63,17 @@ const leisureCards: LeisureCard[] = [
 ];
 
 export const LeisureEventsSection: React.FC = () => {
+  const { language } = useLanguage();
+  const lang = language as Lang;
   return (
     <section className="py-3 px-4 bg-gradient-to-b from-white to-gray-50">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-4">
           <h2 className="text-lg md:text-xl font-light text-gray-900 mb-2">
-            Loisirs & Événements en Tunisie
+            {t(lang, 'homeExtra.leisureTitle')}
           </h2>
           <p className="text-gray-600 text-sm">
-            Découvrez les meilleurs endroits pour vos sorties et moments de détente
+            {t(lang, 'homeExtra.leisureSubtitle')}
           </p>
         </div>
 
