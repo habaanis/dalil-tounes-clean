@@ -417,7 +417,10 @@ export default function CitizensServices({ onNavigateBack }: CitizensServicesPro
                   textShadow: '0 4px 12px rgba(0,0,0,0.8), 0 2px 4px rgba(0,0,0,0.6)'
                 }}
               >
-                Services Citoyens
+                {language === 'fr' ? 'Services Citoyens' :
+                 language === 'ar' ? 'خدمات المواطنين' :
+                 language === 'en' ? 'Citizen Services' :
+                 'Servizi al Cittadino'}
               </h1>
               <p
                 className="text-sm md:text-base font-light text-white/95 leading-relaxed max-w-3xl mx-auto"
@@ -498,13 +501,31 @@ export default function CitizensServices({ onNavigateBack }: CitizensServicesPro
       {activeTab === 'bureaux' && (
         <section className="py-8 bg-white">
           <MeilleursSection
-            secteurLabel="services citoyens"
+            secteurLabel={
+              language === 'fr' ? 'services citoyens' :
+              language === 'ar' ? 'خدمات المواطنين' :
+              language === 'en' ? 'citizen services' :
+              'servizi al cittadino'
+            }
             listePage="services-citoyens"
             accentColor="#4A1D43"
-            sectionTitle="Meilleurs services aux citoyens"
+            sectionTitle={
+              language === 'fr' ? 'Meilleurs services aux citoyens' :
+              language === 'ar' ? 'أفضل الخدمات للمواطنين' :
+              language === 'en' ? 'Best citizen services' :
+              'Migliori servizi al cittadino'
+            }
             blogArticle={{
-              title: "Activités à faire en famille en Tunisie",
-              excerpt: "Sorties, sports, culture : découvrez les meilleures activités pour passer de bons moments en famille.",
+              title:
+                language === 'fr' ? 'Activités à faire en famille en Tunisie' :
+                language === 'ar' ? 'أنشطة عائلية في تونس' :
+                language === 'en' ? 'Family activities to do in Tunisia' :
+                'Attività da fare in famiglia in Tunisia',
+              excerpt:
+                language === 'fr' ? 'Sorties, sports, culture : découvrez les meilleures activités pour passer de bons moments en famille.' :
+                language === 'ar' ? 'نزهات، رياضة، ثقافة: اكتشف أفضل الأنشطة لقضاء أوقات ممتعة مع العائلة.' :
+                language === 'en' ? 'Outings, sports, culture: discover the best activities to enjoy quality time with your family.' :
+                'Uscite, sport, cultura: scopri le migliori attività per trascorrere bei momenti in famiglia.',
               slug: "activites-en-famille"
             }}
           />
