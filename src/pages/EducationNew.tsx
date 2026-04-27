@@ -176,6 +176,25 @@ const translations = {
       desc: "Découvrez les dernières opportunités d'emploi dans le secteur éducatif",
       noJobs: "Aucune offre disponible pour le moment",
       viewAll: "Voir toutes les offres d'emploi"
+    },
+    eventBanner: {
+      title: "Vous organisez un événement scolaire ?",
+      desc: "Journée portes ouvertes, forum d'orientation, inscriptions… Proposez vos événements aux familles de votre région.",
+      cta: "Proposer un événement"
+    },
+    meilleurs: {
+      secteurLabel: "établissements d'éducation",
+      sectionTitle: "Meilleurs établissements d'éducation",
+      blogTitle: "Bien choisir son école en Tunisie",
+      blogExcerpt: "École publique, privée, cours particuliers... Comment s'y retrouver et faire le bon choix pour votre enfant ?"
+    },
+    events: {
+      upcoming: "Événements à venir",
+      filterByCity: "Filtrer par ville",
+      allCities: "Toutes les villes",
+      noneInCity: "Aucun événement à venir à",
+      noneAtAll: "Aucun événement éducatif à venir pour le moment",
+      register: "S'inscrire"
     }
   },
   en: {
@@ -259,6 +278,25 @@ const translations = {
       desc: "Discover the latest job opportunities in the education sector",
       noJobs: "No offers available at the moment",
       viewAll: "View all job offers"
+    },
+    eventBanner: {
+      title: "Are you organizing a school event?",
+      desc: "Open house, orientation fair, registrations… Share your events with families in your region.",
+      cta: "Propose an event"
+    },
+    meilleurs: {
+      secteurLabel: "education institutions",
+      sectionTitle: "Best education institutions",
+      blogTitle: "Choosing the right school in Tunisia",
+      blogExcerpt: "Public school, private, tutoring... How to find your way and make the right choice for your child?"
+    },
+    events: {
+      upcoming: "Upcoming events",
+      filterByCity: "Filter by city",
+      allCities: "All cities",
+      noneInCity: "No upcoming events in",
+      noneAtAll: "No upcoming educational events at the moment",
+      register: "Register"
     }
   },
   ar: {
@@ -342,6 +380,25 @@ const translations = {
       desc: "اكتشف أحدث فرص العمل في قطاع التعليم",
       noJobs: "لا توجد عروض متاحة في الوقت الحالي",
       viewAll: "عرض جميع عروض العمل"
+    },
+    eventBanner: {
+      title: "هل تنظم حدثاً مدرسياً؟",
+      desc: "أيام مفتوحة، منتدى التوجيه، تسجيلات… اقترح فعالياتك على العائلات في منطقتك.",
+      cta: "اقترح حدثاً"
+    },
+    meilleurs: {
+      secteurLabel: "مؤسسات تعليمية",
+      sectionTitle: "أفضل مؤسسات التعليم",
+      blogTitle: "كيف تختار المدرسة المناسبة في تونس",
+      blogExcerpt: "مدرسة عمومية، خاصة، دروس خصوصية... كيف تتعرف على الخيارات وتتخذ القرار المناسب لطفلك؟"
+    },
+    events: {
+      upcoming: "الفعاليات القادمة",
+      filterByCity: "تصفية حسب المدينة",
+      allCities: "جميع المدن",
+      noneInCity: "لا توجد فعاليات قادمة في",
+      noneAtAll: "لا توجد فعاليات تعليمية قادمة في الوقت الحالي",
+      register: "التسجيل"
     }
   }
 };
@@ -660,10 +717,10 @@ export default function EducationNew() {
             <div className="flex flex-col md:flex-row items-start md:items-center gap-1.5">
               <div className="flex-1">
                 <h3 className="text-base md:text-lg font-semibold text-[#4A1D43] mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>
-                  Vous organisez un événement scolaire ?
+                  {t.eventBanner.title}
                 </h3>
                 <p className="text-xs text-gray-700 leading-snug mb-1.5">
-                  Journée portes ouvertes, forum d'orientation, inscriptions… Proposez vos événements aux familles de votre région.
+                  {t.eventBanner.desc}
                 </p>
                 <a
                   href="#/education-event-form"
@@ -671,7 +728,7 @@ export default function EducationNew() {
                   style={{ fontFamily: "'Playfair Display', serif" }}
                 >
                   <Calendar className="w-3.5 h-3.5 text-[#D4AF37]" />
-                  <span>Proposer un événement</span>
+                  <span>{t.eventBanner.cta}</span>
                 </a>
               </div>
             </div>
@@ -899,13 +956,13 @@ export default function EducationNew() {
       {/* Meilleurs établissements + article blog */}
       <section className="py-8 bg-white">
         <MeilleursSection
-          secteurLabel="établissements d'éducation"
+          secteurLabel={t.meilleurs.secteurLabel}
           listePage="éducation"
           accentColor="#4A1D43"
-          sectionTitle="Meilleurs établissements d'éducation"
+          sectionTitle={t.meilleurs.sectionTitle}
           blogArticle={{
-            title: "Bien choisir son école en Tunisie",
-            excerpt: "École publique, privée, cours particuliers... Comment s'y retrouver et faire le bon choix pour votre enfant ?",
+            title: t.meilleurs.blogTitle,
+            excerpt: t.meilleurs.blogExcerpt,
             slug: "bien-choisir-son-ecole"
           }}
         />
@@ -962,20 +1019,20 @@ export default function EducationNew() {
           className="bg-gradient-to-br from-[#4A1D43]/5 to-[#D4AF37]/5 rounded-xl px-3 py-3 border border-[#D4AF37] shadow-sm"
         >
           <div className="mb-2">
-            <h2 className="text-lg font-semibold text-[#4A1D43]" style={{ fontFamily: "'Playfair Display', serif" }}>Événements à venir</h2>
+            <h2 className="text-lg font-semibold text-[#4A1D43]" style={{ fontFamily: "'Playfair Display', serif" }}>{t.events.upcoming}</h2>
           </div>
 
           {/* Filtre par ville */}
           <div className="mb-3 max-w-md">
             <label className="block text-xs font-medium text-[#4A1D43] mb-1.5">
-              Filtrer par ville
+              {t.events.filterByCity}
             </label>
             <select
               value={eventsCity}
               onChange={(e) => setEventsCity(e.target.value)}
               className="w-full px-3 py-1.5 rounded-lg border border-[#D4AF37] focus:ring-2 focus:ring-[#4A1D43] focus:border-transparent text-sm"
             >
-              <option value="">Toutes les villes</option>
+              <option value="">{t.events.allCities}</option>
               <option value="Tunis">Tunis</option>
               <option value="Ariana">Ariana</option>
               <option value="Ben Arous">Ben Arous</option>
@@ -1033,7 +1090,7 @@ export default function EducationNew() {
                         className="flex-shrink-0 px-3 py-1.5 bg-[#4A1D43] hover:bg-[#5A2D53] border border-[#D4AF37] text-[#D4AF37] hover:text-white rounded-lg transition text-xs font-semibold"
                         style={{ fontFamily: "'Playfair Display', serif" }}
                       >
-                        S'inscrire
+                        {t.events.register}
                       </a>
                     )}
                   </div>
@@ -1044,8 +1101,8 @@ export default function EducationNew() {
             <div className="text-center py-8">
               <p className="text-gray-600">
                 {eventsCity
-                  ? `Aucun événement à venir à ${eventsCity}`
-                  : 'Aucun événement éducatif à venir pour le moment'}
+                  ? `${t.events.noneInCity} ${eventsCity}`
+                  : t.events.noneAtAll}
               </p>
             </div>
           )}
