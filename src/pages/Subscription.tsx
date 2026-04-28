@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
-import { Check, Star } from 'lucide-react';
+import { Check, Star, CreditCard, Smartphone } from 'lucide-react';
 import { RegistrationForm } from '../components/RegistrationForm';
 import { QuoteForm } from '../components/QuoteForm';
 
@@ -499,6 +499,50 @@ export const Subscription = () => {
                   >
                     {isCustom ? t.subscription.requestQuote : `${t.subscription.chooseButton} ${plan.name}`}
                   </button>
+
+                  {/* Payment buttons */}
+                  {!isCustom && (
+                    <div className="mt-4 space-y-2">
+                      <div className="w-full h-px bg-white/10 mb-3" />
+
+                      {/* Stripe */}
+                      <a
+                        href="#"
+                        className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-xs font-semibold bg-[#4F46E5] text-white hover:bg-[#4338CA] transition-colors shadow-sm hover:shadow-md"
+                      >
+                        <CreditCard className="w-3.5 h-3.5" />
+                        Payer par Carte (Stripe)
+                      </a>
+
+                      {/* PayPal */}
+                      <a
+                        href="#"
+                        className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-xs font-semibold bg-[#FFC439] text-[#003087] hover:bg-[#f0b429] transition-colors shadow-sm hover:shadow-md"
+                      >
+                        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.816-5.09a.932.932 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.471z"/>
+                        </svg>
+                        PayPal
+                      </a>
+
+                      {/* Flouci */}
+                      <a
+                        href="#"
+                        className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-xs font-semibold bg-[#059669] text-white hover:bg-[#047857] transition-colors shadow-sm hover:shadow-md"
+                      >
+                        <Smartphone className="w-3.5 h-3.5" />
+                        Payer avec Flouci 🇹🇳
+                      </a>
+
+                      <p className={`text-center text-[10px] pt-1 leading-tight ${
+                        isElitePro ? 'text-gray-500' :
+                        isArtisan || isPremium ? 'text-gray-400' :
+                        'text-gray-400'
+                      }`}>
+                        Paiements sécurisés. Facture disponible après validation.
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             );
