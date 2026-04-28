@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabaseClient';
-import { Check, X, Clock, Star, RefreshCw, ChevronDown } from 'lucide-react';
+import { Check, X, Clock, Star, RefreshCw, AlertTriangle, Database } from 'lucide-react';
 
 interface Avis {
   id: string;
@@ -12,7 +12,6 @@ interface Avis {
   status: 'pending' | 'approved' | 'rejected';
   date: string;
   submission_lang: string;
-  entreprise?: { nom?: string; name?: string };
 }
 
 type FilterStatus = 'pending' | 'approved' | 'rejected' | 'all';
@@ -24,81 +23,96 @@ const STATUS_LABELS: Record<string, { label: string; color: string; bg: string }
 };
 
 export default function AdminAvis() {
-  const [avis, setAvis] = useState<Avis[]>([]);
+  const [allAvis, setAllAvis] = useState<Avis[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<FilterStatus>('pending');
-  const [counts, setCounts] = useState({ pending: 0, approved: 0, rejected: 0 });
+  const [counts, setCounts] = useState({ pending: 0, approved: 0, rejected: 0, total: 0 });
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
+  const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
+  const [rpcError, setRpcError] = useState<string | null>(null);
 
   const showToast = (msg: string, ok = true) => {
     setToast({ msg, ok });
-    setTimeout(() => setToast(null), 3000);
+    setTimeout(() => setToast(null), 3500);
   };
 
-  const fetchCounts = useCallback(async () => {
-    const { data } = await supabase
-      .from('avis_entreprise')
-      .select('status');
-    if (data) {
-      const c = { pending: 0, approved: 0, rejected: 0 };
-      data.forEach((r: { status: string }) => {
-        if (r.status in c) c[r.status as keyof typeof c]++;
-      });
-      setCounts(c);
+  const fetchAll = useCallback(async () => {
+    setLoading(true);
+    setRpcError(null);
+
+    // Utilise la RPC SECURITY DEFINER qui bypasse RLS → voit tous les statuts
+    const { data, error } = await supabase.rpc('admin_get_all_avis');
+
+    if (error) {
+      console.error('[AdminAvis] RPC error:', error);
+      setRpcError(`Erreur RPC : ${error.message}`);
+      setLoading(false);
+      return;
     }
+
+    const rows = (data as Avis[]) || [];
+    setAllAvis(rows);
+    setLastRefresh(new Date());
+
+    // Calculer les compteurs localement
+    const c = { pending: 0, approved: 0, rejected: 0, total: rows.length };
+    rows.forEach(r => {
+      if (r.status in c) c[r.status as 'pending' | 'approved' | 'rejected']++;
+    });
+    setCounts(c);
+
+    setLoading(false);
   }, []);
 
-  const fetchAvis = useCallback(async () => {
-    setLoading(true);
-    let query = supabase
-      .from('avis_entreprise')
-      .select('*')
-      .order('date', { ascending: false })
-      .limit(100);
-
-    if (filter !== 'all') {
-      query = query.eq('status', filter);
-    }
-
-    const { data, error } = await query;
-    if (error) {
-      showToast('Erreur de chargement', false);
-    } else {
-      setAvis((data as Avis[]) || []);
-    }
-    setLoading(false);
-  }, [filter]);
-
   useEffect(() => {
-    fetchAvis();
-    fetchCounts();
-  }, [fetchAvis, fetchCounts]);
+    fetchAll();
+  }, [fetchAll]);
 
   const updateStatus = async (id: string, newStatus: 'approved' | 'rejected') => {
     setActionLoading(id);
-    const { error } = await supabase
-      .from('avis_entreprise')
-      .update({ status: newStatus })
-      .eq('id', id);
+
+    const { error } = await supabase.rpc('admin_update_avis_status', {
+      avis_id: id,
+      new_status: newStatus,
+    });
 
     if (error) {
-      showToast('Erreur lors de la mise à jour', false);
+      console.error('[AdminAvis] Update error:', error);
+      showToast(`Erreur : ${error.message}`, false);
     } else {
-      showToast(newStatus === 'approved' ? 'Avis approuvé et publié' : 'Avis rejeté');
-      setAvis(prev => prev.filter(a => a.id !== id));
-      fetchCounts();
+      const label = newStatus === 'approved' ? 'Avis approuvé et publié' : 'Avis rejeté';
+      showToast(label);
+      // Mise à jour locale immédiate (sans re-fetch)
+      setAllAvis(prev =>
+        prev.map(a => a.id === id ? { ...a, status: newStatus } : a)
+      );
+      setCounts(prev => {
+        const next = { ...prev };
+        const old = allAvis.find(a => a.id === id)?.status;
+        if (old && old in next) next[old as 'pending' | 'approved' | 'rejected']--;
+        next[newStatus]++;
+        return next;
+      });
     }
     setActionLoading(null);
   };
 
   const formatDate = (d: string) =>
-    new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    new Date(d).toLocaleDateString('fr-FR', {
+      day: '2-digit', month: 'short', year: 'numeric',
+      hour: '2-digit', minute: '2-digit',
+    });
+
+  const filtered = filter === 'all' ? allAvis : allAvis.filter(a => a.status === filter);
 
   const StarRow = ({ note }: { note: number }) => (
     <span className="flex gap-0.5">
       {[1,2,3,4,5].map(s => (
-        <Star key={s} className="w-3.5 h-3.5" style={{ fill: s <= note ? '#D4AF37' : '#E5E7EB', color: s <= note ? '#D4AF37' : '#D1D5DB' }} />
+        <Star key={s} className="w-3.5 h-3.5" style={{
+          fill: s <= note ? '#D4AF37' : '#E5E7EB',
+          color: s <= note ? '#D4AF37' : '#D1D5DB',
+        }} />
       ))}
     </span>
   );
@@ -107,23 +121,50 @@ export default function AdminAvis() {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-20">
-        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between gap-4 flex-wrap">
           <div>
             <h1 className="text-xl font-semibold text-gray-900">Modération des avis</h1>
-            <p className="text-sm text-gray-500 mt-0.5">Validez ou rejetez les avis avant publication</p>
+            {lastRefresh && (
+              <p className="text-xs text-gray-400 mt-0.5">
+                Dernière lecture : {lastRefresh.toLocaleTimeString('fr-FR')}
+              </p>
+            )}
           </div>
-          <button
-            onClick={() => { fetchAvis(); fetchCounts(); }}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-          >
-            <RefreshCw className="w-4 h-4" />
-            Actualiser
-          </button>
+
+          <div className="flex items-center gap-3">
+            {/* Badge total */}
+            <span className="flex items-center gap-1.5 text-sm text-gray-500 bg-gray-100 px-3 py-1.5 rounded-lg">
+              <Database className="w-4 h-4" />
+              {counts.total} avis total en base
+            </span>
+
+            {/* Bouton Actualiser */}
+            <button
+              onClick={fetchAll}
+              disabled={loading}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-gray-800 hover:bg-gray-900 rounded-lg transition-colors disabled:opacity-50"
+            >
+              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+              Actualiser
+            </button>
+          </div>
         </div>
       </div>
 
       <div className="max-w-5xl mx-auto px-4 py-6">
-        {/* Compteurs */}
+
+        {/* Erreur RPC */}
+        {rpcError && (
+          <div className="mb-4 flex items-start gap-3 bg-red-50 border border-red-200 rounded-xl p-4">
+            <AlertTriangle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-medium text-red-700">Impossible de charger les avis</p>
+              <p className="text-xs text-red-500 mt-0.5 font-mono">{rpcError}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Compteurs par statut */}
         <div className="grid grid-cols-3 gap-3 mb-6">
           {(['pending', 'approved', 'rejected'] as const).map(s => (
             <button
@@ -134,15 +175,17 @@ export default function AdminAvis() {
               }`}
               style={{ background: filter === s ? STATUS_LABELS[s].bg : '#fff' }}
             >
-              <p className="text-2xl font-bold" style={{ color: STATUS_LABELS[s].color }}>{counts[s]}</p>
+              <p className="text-2xl font-bold" style={{ color: STATUS_LABELS[s].color }}>
+                {counts[s]}
+              </p>
               <p className="text-sm font-medium text-gray-600 mt-0.5">{STATUS_LABELS[s].label}</p>
             </button>
           ))}
         </div>
 
         {/* Filtre rapide */}
-        <div className="flex items-center gap-2 mb-4">
-          <span className="text-sm text-gray-500">Filtrer :</span>
+        <div className="flex items-center gap-2 mb-4 flex-wrap">
+          <span className="text-sm text-gray-500">Afficher :</span>
           {(['pending', 'approved', 'rejected', 'all'] as const).map(s => (
             <button
               key={s}
@@ -153,12 +196,12 @@ export default function AdminAvis() {
                   : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
               }`}
             >
-              {s === 'all' ? 'Tous' : STATUS_LABELS[s].label}
+              {s === 'all' ? `Tous (${counts.total})` : `${STATUS_LABELS[s].label} (${counts[s]})`}
             </button>
           ))}
         </div>
 
-        {/* Liste des avis */}
+        {/* Liste */}
         {loading ? (
           <div className="space-y-3">
             {[1,2,3].map(i => (
@@ -168,21 +211,28 @@ export default function AdminAvis() {
               </div>
             ))}
           </div>
-        ) : avis.length === 0 ? (
+        ) : filtered.length === 0 ? (
           <div className="bg-white rounded-xl border border-gray-100 p-12 text-center">
             <Clock className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-            <p className="text-gray-500 font-medium">Aucun avis dans cette catégorie</p>
-            <p className="text-gray-400 text-sm mt-1">Les nouveaux avis apparaîtront ici</p>
+            <p className="text-gray-500 font-medium">
+              {counts.total === 0
+                ? 'Aucun avis dans la base de données'
+                : 'Aucun avis dans cette catégorie'}
+            </p>
+            {counts.total === 0 && (
+              <p className="text-gray-400 text-sm mt-1">
+                Les avis déposés sur les fiches entreprises apparaîtront ici
+              </p>
+            )}
           </div>
         ) : (
           <div className="space-y-3">
-            {avis.map(a => (
+            {filtered.map(a => (
               <div
                 key={a.id}
                 className="bg-white rounded-xl border border-gray-100 p-4 shadow-sm hover:shadow-md transition-shadow"
               >
                 <div className="flex items-start justify-between gap-4">
-                  {/* Infos avis */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-3 flex-wrap mb-1.5">
                       <StarRow note={a.note} />
@@ -194,7 +244,9 @@ export default function AdminAvis() {
                       </span>
                       <span className="text-xs text-gray-400">{formatDate(a.date)}</span>
                       {a.submission_lang && (
-                        <span className="text-xs text-gray-400 uppercase">{a.submission_lang}</span>
+                        <span className="text-xs text-gray-400 uppercase bg-gray-100 px-1.5 py-0.5 rounded">
+                          {a.submission_lang}
+                        </span>
                       )}
                     </div>
 
@@ -204,12 +256,14 @@ export default function AdminAvis() {
 
                     <div className="flex items-center gap-3 text-xs text-gray-500 flex-wrap">
                       <span className="font-medium text-gray-700">
-                        {a.auteur || 'Anonyme'}
+                        {a.auteur || <em className="text-gray-400">Anonyme</em>}
                       </span>
-                      {a.auteur_email && (
+                      {a.auteur_email ? (
                         <a href={`mailto:${a.auteur_email}`} className="text-blue-500 hover:underline">
                           {a.auteur_email}
                         </a>
+                      ) : (
+                        <span className="text-gray-300 italic text-[11px]">email non renseigné</span>
                       )}
                       <span className="text-gray-300">|</span>
                       <span className="text-gray-400 font-mono text-[11px]">
@@ -219,50 +273,48 @@ export default function AdminAvis() {
                   </div>
 
                   {/* Actions */}
-                  {a.status === 'pending' && (
-                    <div className="flex gap-2 shrink-0">
-                      <button
-                        onClick={() => updateStatus(a.id, 'approved')}
-                        disabled={actionLoading === a.id}
-                        className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg transition-colors disabled:opacity-50"
-                        title="Approuver et publier"
-                      >
-                        <Check className="w-3.5 h-3.5" />
-                        Valider
-                      </button>
+                  <div className="flex flex-col gap-2 shrink-0">
+                    {a.status === 'pending' && (
+                      <>
+                        <button
+                          onClick={() => updateStatus(a.id, 'approved')}
+                          disabled={actionLoading === a.id}
+                          className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg transition-colors disabled:opacity-50"
+                        >
+                          <Check className="w-3.5 h-3.5" />
+                          Valider
+                        </button>
+                        <button
+                          onClick={() => updateStatus(a.id, 'rejected')}
+                          disabled={actionLoading === a.id}
+                          className="flex items-center gap-1.5 px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold rounded-lg transition-colors disabled:opacity-50"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                          Rejeter
+                        </button>
+                      </>
+                    )}
+                    {a.status === 'approved' && (
                       <button
                         onClick={() => updateStatus(a.id, 'rejected')}
                         disabled={actionLoading === a.id}
-                        className="flex items-center gap-1.5 px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold rounded-lg transition-colors disabled:opacity-50"
-                        title="Rejeter"
+                        className="flex items-center gap-1 px-2.5 py-1.5 border border-red-200 text-red-500 hover:bg-red-50 text-xs font-medium rounded-lg transition-colors"
                       >
                         <X className="w-3.5 h-3.5" />
-                        Rejeter
+                        Retirer
                       </button>
-                    </div>
-                  )}
-
-                  {a.status === 'approved' && (
-                    <button
-                      onClick={() => updateStatus(a.id, 'rejected')}
-                      disabled={actionLoading === a.id}
-                      className="shrink-0 flex items-center gap-1 px-2.5 py-1.5 border border-red-200 text-red-500 hover:bg-red-50 text-xs font-medium rounded-lg transition-colors"
-                    >
-                      <X className="w-3.5 h-3.5" />
-                      Retirer
-                    </button>
-                  )}
-
-                  {a.status === 'rejected' && (
-                    <button
-                      onClick={() => updateStatus(a.id, 'approved')}
-                      disabled={actionLoading === a.id}
-                      className="shrink-0 flex items-center gap-1 px-2.5 py-1.5 border border-emerald-200 text-emerald-600 hover:bg-emerald-50 text-xs font-medium rounded-lg transition-colors"
-                    >
-                      <Check className="w-3.5 h-3.5" />
-                      Réapprouver
-                    </button>
-                  )}
+                    )}
+                    {a.status === 'rejected' && (
+                      <button
+                        onClick={() => updateStatus(a.id, 'approved')}
+                        disabled={actionLoading === a.id}
+                        className="flex items-center gap-1 px-2.5 py-1.5 border border-emerald-200 text-emerald-600 hover:bg-emerald-50 text-xs font-medium rounded-lg transition-colors"
+                      >
+                        <Check className="w-3.5 h-3.5" />
+                        Réapprouver
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}
@@ -273,7 +325,7 @@ export default function AdminAvis() {
       {/* Toast */}
       {toast && (
         <div
-          className={`fixed bottom-6 right-6 z-50 px-4 py-3 rounded-xl shadow-lg text-sm font-medium text-white transition-all ${
+          className={`fixed bottom-6 right-6 z-50 px-4 py-3 rounded-xl shadow-lg text-sm font-medium text-white transition-all animate-fade-in ${
             toast.ok ? 'bg-emerald-600' : 'bg-red-500'
           }`}
         >
