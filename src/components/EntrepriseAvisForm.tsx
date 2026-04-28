@@ -15,19 +15,18 @@ export default function EntrepriseAvisForm({ entrepriseId, onSuccess }: Entrepri
   const [comment, setComment] = useState('');
   const [auteur, setAuteur] = useState('');
   const [auteurEmail, setAuteurEmail] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
+  const [submitState, setSubmitState] = useState<'idle' | 'success' | 'error'>('idle');
+  const [errorDetail, setErrorDetail] = useState<string>('');
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitState('idle');
+    setErrorDetail('');
 
-    if (rating === 0) {
-      alert(message('champ_requis'));
-      return;
-    }
-
-    if (!comment.trim()) {
-      alert(message('champ_requis'));
+    if (rating === 0 || !comment.trim()) {
+      setSubmitState('error');
+      setErrorDetail(message('champ_requis'));
       return;
     }
 
@@ -48,11 +47,12 @@ export default function EntrepriseAvisForm({ entrepriseId, onSuccess }: Entrepri
 
       if (insertError) {
         console.error('Erreur insertion:', insertError);
-        alert(message('erreur'));
+        setSubmitState('error');
+        setErrorDetail(JSON.stringify(insertError, null, 2));
         return;
       }
 
-      setSuccessMessage('Merci ! Votre avis est en cours de validation et sera publié prochainement.');
+      setSubmitState('success');
       setRating(0);
       setComment('');
       setAuteur('');
@@ -61,9 +61,10 @@ export default function EntrepriseAvisForm({ entrepriseId, onSuccess }: Entrepri
       if (onSuccess) {
         setTimeout(() => onSuccess(), 2500);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Erreur:', err);
-      alert(message('erreur'));
+      setSubmitState('error');
+      setErrorDetail(err?.message ?? JSON.stringify(err));
     } finally {
       setSubmitting(false);
     }
@@ -183,10 +184,41 @@ export default function EntrepriseAvisForm({ entrepriseId, onSuccess }: Entrepri
           </button>
         </div>
 
-        {successMessage && (
-          <p style={{ marginTop: '4px', textAlign: 'center', fontSize: '9px', color: '#34D399', fontWeight: '600' }}>
-            {successMessage}
-          </p>
+        {submitState === 'success' && (
+          <div style={{
+            marginTop: '6px',
+            padding: '8px 10px',
+            borderRadius: '6px',
+            backgroundColor: 'rgba(52, 211, 153, 0.15)',
+            border: '1px solid #34D399',
+            textAlign: 'center',
+          }}>
+            <p style={{ fontSize: '10px', color: '#34D399', fontWeight: '700', margin: 0 }}>
+              Avis envoyé !
+            </p>
+            <p style={{ fontSize: '9px', color: '#34D399', margin: '2px 0 0' }}>
+              Votre avis est en cours de validation et sera publié prochainement.
+            </p>
+          </div>
+        )}
+
+        {submitState === 'error' && (
+          <div style={{
+            marginTop: '6px',
+            padding: '8px 10px',
+            borderRadius: '6px',
+            backgroundColor: 'rgba(239, 68, 68, 0.15)',
+            border: '1px solid #EF4444',
+          }}>
+            <p style={{ fontSize: '10px', color: '#FCA5A5', fontWeight: '700', margin: '0 0 2px' }}>
+              Erreur — avis non envoyé
+            </p>
+            {errorDetail && (
+              <pre style={{ fontSize: '8px', color: '#FCA5A5', margin: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>
+                {errorDetail}
+              </pre>
+            )}
+          </div>
         )}
       </form>
     </div>
