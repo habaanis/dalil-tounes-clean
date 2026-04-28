@@ -49,6 +49,12 @@
       "purpose": "any maskable"
     },
     {
+      "src": "/icons/icon-256x256.png",
+      "sizes": "256x256",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
       "src": "/icons/icon-384x384.png",
       "sizes": "384x384",
       "type": "image/png",
@@ -59,61 +65,6 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "/screenshots/home-desktop.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide"
-    },
-    {
-      "src": "/screenshots/home-mobile.png",
-      "sizes": "750x1334",
-      "type": "image/png",
-      "form_factor": "narrow"
-    }
-  ],
-  "shortcuts": [
-    {
-      "name": "Autour de moi",
-      "short_name": "Autour de moi",
-      "description": "Trouvez les entreprises proches",
-      "url": "/#/autour-de-moi",
-      "icons": [
-        {
-          "src": "/icons/shortcut-around-me.png",
-          "sizes": "96x96",
-          "type": "image/png"
-        }
-      ]
-    },
-    {
-      "name": "Rechercher",
-      "short_name": "Recherche",
-      "description": "Rechercher une entreprise",
-      "url": "/#/entreprises",
-      "icons": [
-        {
-          "src": "/icons/shortcut-search.png",
-          "sizes": "96x96",
-          "type": "image/png"
-        }
-      ]
-    },
-    {
-      "name": "Événements",
-      "short_name": "Événements",
-      "description": "Découvrir les événements",
-      "url": "/#/evenements",
-      "icons": [
-        {
-          "src": "/icons/shortcut-events.png",
-          "sizes": "96x96",
-          "type": "image/png"
-        }
-      ]
     }
   ],
   "related_applications": [],
