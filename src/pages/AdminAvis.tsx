@@ -1,6 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
-import { supabase } from '../lib/supabaseClient';
 import { Check, X, Clock, Star, RefreshCw, AlertTriangle, Database } from 'lucide-react';
+
+const EDGE_URL = 'https://kmvjegbtroksjqaqliyv.supabase.co/functions/v1/admin-avis';
+const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImttdmplZ2J0cm9rc2pxYXFsaXl2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4MDA1NTEsImV4cCI6MjA2NzM3NjU1MX0.MbU7b-HWQBwlYtbJeE7_ABvrGhuhzeAuqvkcVvvoE1o';
+const EDGE_HEADERS = { 'Authorization': `Bearer ${ANON_KEY}`, 'Content-Type': 'application/json' };
 
 interface Avis {
   id: string;
@@ -41,28 +44,27 @@ export default function AdminAvis() {
     setLoading(true);
     setRpcError(null);
 
-    // Utilise la RPC SECURITY DEFINER qui bypasse RLS → voit tous les statuts
-    const { data, error } = await supabase.rpc('admin_get_all_avis');
-
-    if (error) {
-      console.error('[AdminAvis] RPC error:', error);
-      setRpcError(`Erreur RPC : ${error.message}`);
+    try {
+      const res = await fetch(`${EDGE_URL}?action=list`, { headers: EDGE_HEADERS });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error ?? `HTTP ${res.status}`);
+      }
+      const { data } = await res.json();
+      const rows = (data as Avis[]) || [];
+      setAllAvis(rows);
+      setLastRefresh(new Date());
+      const c = { pending: 0, approved: 0, rejected: 0, total: rows.length };
+      rows.forEach(r => {
+        if (r.status in c) c[r.status as 'pending' | 'approved' | 'rejected']++;
+      });
+      setCounts(c);
+    } catch (err: any) {
+      console.error('[AdminAvis] fetch error:', err);
+      setRpcError(err.message ?? 'Erreur inconnue');
+    } finally {
       setLoading(false);
-      return;
     }
-
-    const rows = (data as Avis[]) || [];
-    setAllAvis(rows);
-    setLastRefresh(new Date());
-
-    // Calculer les compteurs localement
-    const c = { pending: 0, approved: 0, rejected: 0, total: rows.length };
-    rows.forEach(r => {
-      if (r.status in c) c[r.status as 'pending' | 'approved' | 'rejected']++;
-    });
-    setCounts(c);
-
-    setLoading(false);
   }, []);
 
   useEffect(() => {
@@ -72,15 +74,23 @@ export default function AdminAvis() {
   const updateStatus = async (id: string, newStatus: 'approved' | 'rejected') => {
     setActionLoading(id);
 
-    const { error } = await supabase.rpc('admin_update_avis_status', {
-      avis_id: id,
-      new_status: newStatus,
-    });
-
-    if (error) {
-      console.error('[AdminAvis] Update error:', error);
-      showToast(`Erreur : ${error.message}`, false);
-    } else {
+    try {
+      const res = await fetch(EDGE_URL, {
+        method: 'POST',
+        headers: EDGE_HEADERS,
+        body: JSON.stringify({ id, status: newStatus }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error ?? `HTTP ${res.status}`);
+      }
+    } catch (err: any) {
+      console.error('[AdminAvis] Update error:', err);
+      showToast(`Erreur : ${err.message}`, false);
+      setActionLoading(null);
+      return;
+    }
+    {
       const label = newStatus === 'approved' ? 'Avis approuvé et publié' : 'Avis rejeté';
       showToast(label);
       // Mise à jour locale immédiate (sans re-fetch)
