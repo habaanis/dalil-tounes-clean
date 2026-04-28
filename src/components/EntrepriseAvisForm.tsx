@@ -13,7 +13,10 @@ export default function EntrepriseAvisForm({ entrepriseId, onSuccess }: Entrepri
 
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
+  const [auteur, setAuteur] = useState('');
+  const [auteurEmail, setAuteurEmail] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,6 +31,7 @@ export default function EntrepriseAvisForm({ entrepriseId, onSuccess }: Entrepri
       return;
     }
 
+    setSubmitting(true);
     try {
       const { error: insertError } = await supabase
         .from('avis_entreprise')
@@ -35,8 +39,11 @@ export default function EntrepriseAvisForm({ entrepriseId, onSuccess }: Entrepri
           entreprise_id: entrepriseId,
           note: rating,
           commentaire: comment.trim(),
+          auteur: auteur.trim(),
+          auteur_email: auteurEmail.trim(),
+          status: 'pending',
           date: new Date().toISOString(),
-          submission_lang
+          submission_lang,
         });
 
       if (insertError) {
@@ -45,17 +52,33 @@ export default function EntrepriseAvisForm({ entrepriseId, onSuccess }: Entrepri
         return;
       }
 
-      setSuccessMessage(message('succes'));
+      setSuccessMessage('Merci ! Votre avis est en cours de validation et sera publié prochainement.');
       setRating(0);
       setComment('');
+      setAuteur('');
+      setAuteurEmail('');
 
       if (onSuccess) {
-        setTimeout(() => onSuccess(), 2000);
+        setTimeout(() => onSuccess(), 2500);
       }
     } catch (err) {
       console.error('Erreur:', err);
       alert(message('erreur'));
+    } finally {
+      setSubmitting(false);
     }
+  };
+
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    padding: '4px 6px',
+    borderRadius: '4px',
+    border: '1px solid #D4AF37',
+    fontSize: '10px',
+    outline: 'none',
+    backgroundColor: 'rgba(255,255,255,0.08)',
+    color: '#D4AF37',
+    marginBottom: '3px',
   };
 
   return (
@@ -63,92 +86,75 @@ export default function EntrepriseAvisForm({ entrepriseId, onSuccess }: Entrepri
       style={{
         border: '1px solid #D4AF37',
         borderRadius: '6px',
-        padding: '4px',
+        padding: '6px',
         backgroundColor: 'transparent',
         position: 'relative',
-        zIndex: 50
+        zIndex: 50,
       }}
     >
       <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '3px' }}>
-          <div
-            style={{
-              display: 'flex',
-              gap: '2px',
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginBottom: '3px'
-            }}
-          >
-            {[1, 2, 3, 4, 5].map((star) => (
-              <button
-                key={star}
-                type="button"
-                onClick={() => setRating(star)}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: '1px'
-                }}
-              >
-                <Star
-                  style={{
-                    width: '14px',
-                    height: '14px',
-                    fill: star <= rating ? '#D4AF37' : '#E5E7EB',
-                    color: star <= rating ? '#D4AF37' : '#D1D5DB'
-                  }}
-                />
-              </button>
-            ))}
-          </div>
-
-          {rating > 0 && (
-            <p
-              style={{
-                textAlign: 'center',
-                fontSize: '9px',
-                color: '#D4AF37',
-                marginBottom: '2px'
-              }}
+        {/* Étoiles */}
+        <div style={{ display: 'flex', gap: '2px', justifyContent: 'center', alignItems: 'center', marginBottom: '3px' }}>
+          {[1, 2, 3, 4, 5].map((star) => (
+            <button
+              key={star}
+              type="button"
+              onClick={() => setRating(star)}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '1px' }}
             >
-              {rating === 1 && 'Très mauvais'}
-              {rating === 2 && 'Mauvais'}
-              {rating === 3 && 'Moyen'}
-              {rating === 4 && 'Bon'}
-              {rating === 5 && 'Excellent'}
-            </p>
-          )}
+              <Star
+                style={{
+                  width: '14px',
+                  height: '14px',
+                  fill: star <= rating ? '#D4AF37' : '#E5E7EB',
+                  color: star <= rating ? '#D4AF37' : '#D1D5DB',
+                }}
+              />
+            </button>
+          ))}
         </div>
 
+        {rating > 0 && (
+          <p style={{ textAlign: 'center', fontSize: '9px', color: '#D4AF37', marginBottom: '3px' }}>
+            {rating === 1 && 'Très mauvais'}
+            {rating === 2 && 'Mauvais'}
+            {rating === 3 && 'Moyen'}
+            {rating === 4 && 'Bon'}
+            {rating === 5 && 'Excellent'}
+          </p>
+        )}
+
+        {/* Nom (optionnel) */}
+        <input
+          type="text"
+          value={auteur}
+          onChange={(e) => setAuteur(e.target.value)}
+          maxLength={80}
+          placeholder="Votre nom (optionnel)"
+          style={inputStyle}
+        />
+
+        {/* Email (optionnel) */}
+        <input
+          type="email"
+          value={auteurEmail}
+          onChange={(e) => setAuteurEmail(e.target.value)}
+          maxLength={120}
+          placeholder="Votre email (optionnel, non publié)"
+          style={inputStyle}
+        />
+
+        {/* Commentaire */}
         <div style={{ marginBottom: '3px' }}>
           <textarea
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             rows={2}
             maxLength={500}
-            style={{
-              width: '100%',
-              padding: '4px',
-              borderRadius: '4px',
-              border: '1px solid #D4AF37',
-              fontSize: '10px',
-              resize: 'vertical',
-              outline: 'none',
-              backgroundColor: 'rgba(255, 255, 255, 0.1)',
-              color: '#D4AF37'
-            }}
+            style={{ ...inputStyle, resize: 'vertical', marginBottom: '1px' }}
             placeholder={placeholder('votre_commentaire')}
           />
-          <p
-            style={{
-              textAlign: 'right',
-              fontSize: '8px',
-              color: '#D4AF37',
-              marginTop: '1px'
-            }}
-          >
+          <p style={{ textAlign: 'right', fontSize: '8px', color: '#D4AF37' }}>
             {comment.length}/500
           </p>
         </div>
@@ -156,43 +162,29 @@ export default function EntrepriseAvisForm({ entrepriseId, onSuccess }: Entrepri
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <button
             type="submit"
+            disabled={submitting}
             style={{
               padding: '4px 12px',
               borderRadius: '16px',
-              background: '#064E3B',
+              background: submitting ? '#374151' : '#064E3B',
               color: '#D4AF37',
               border: '1px solid #D4AF37',
               fontSize: '9px',
               fontWeight: '600',
-              cursor: 'pointer',
+              cursor: submitting ? 'not-allowed' : 'pointer',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              gap: '2px',
-              transition: 'all 0.2s ease'
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.transform = 'scale(1.02)';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.transform = 'scale(1)';
+              gap: '3px',
+              transition: 'all 0.2s ease',
             }}
           >
             <Send style={{ width: '10px', height: '10px' }} />
-            {button('envoyer')}
+            {submitting ? 'Envoi...' : button('envoyer')}
           </button>
         </div>
 
         {successMessage && (
-          <p
-            style={{
-              marginTop: '3px',
-              textAlign: 'center',
-              fontSize: '9px',
-              color: '#D4AF37',
-              fontWeight: '600'
-            }}
-          >
+          <p style={{ marginTop: '4px', textAlign: 'center', fontSize: '9px', color: '#34D399', fontWeight: '600' }}>
             {successMessage}
           </p>
         )}
