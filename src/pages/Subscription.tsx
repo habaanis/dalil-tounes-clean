@@ -1,9 +1,26 @@
 import { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
-import { Check, Star, CreditCard, Smartphone } from 'lucide-react';
+import { Check, Star, CreditCard, Smartphone, X } from 'lucide-react';
 import { RegistrationForm } from '../components/RegistrationForm';
 import { QuoteForm } from '../components/QuoteForm';
+
+const STRIPE_LINKS: Record<string, { monthly: string; annual: string }> = {
+  artisan: {
+    monthly: 'https://buy.stripe.com/3cI4gB7HJ50fb90c5x',
+    annual:  'https://buy.stripe.com/6oE3cz6DF1K33Cg3ce',
+  },
+  premium: {
+    monthly: 'https://buy.stripe.com/cN200ne672O72yc6op',
+    annual:  'https://buy.stripe.com/00g14v6DF50fb9028a',
+  },
+  elitePro: {
+    monthly: 'https://buy.stripe.com/5kA5kH3rv2O77SwaEF',
+    annual:  'https://buy.stripe.com/cN25kH8LL0GZ3CgeV5',
+  },
+};
+
+type ModalType = 'paypal' | 'flouci' | null;
 
 export const Subscription = () => {
   const { language } = useLanguage();
@@ -12,6 +29,7 @@ export const Subscription = () => {
   const [selectedPlan, setSelectedPlan] = useState<string>('');
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annual'>('monthly');
   const [showQuoteForm, setShowQuoteForm] = useState(false);
+  const [activeModal, setActiveModal] = useState<ModalType>(null);
 
   useEffect(() => {
     const hash = window.location.hash;
@@ -250,6 +268,11 @@ export const Subscription = () => {
             const isDecouverte = planConfig.key === 'decouverte';
             const displayPrice = billingPeriod === 'annual' && (isArtisan || isPremium || isElitePro) ? (plan.annualPrice || plan.price) : plan.price;
 
+            const hasPaidPayment = isArtisan || isPremium || isElitePro;
+            const stripeLink = hasPaidPayment
+              ? STRIPE_LINKS[planConfig.key]?.[billingPeriod] ?? '#'
+              : '#';
+
             const borderStyle = isCustom
               ? '2px dashed #9CA3AF'
               : isDecouverte
@@ -371,7 +394,6 @@ export const Subscription = () => {
                     {/* Deuxième ligne de séparation dorée épaisse sous le prix avec triangle */}
                     <div className="relative mb-3 -mx-6">
                       <div style={{ height: '3px', backgroundColor: '#D4AF37' }} />
-                      {/* Triangle coloré centré sur la ligne de séparation */}
                       <div
                         className="absolute left-1/2 -translate-x-1/2"
                         style={{
@@ -470,6 +492,7 @@ export const Subscription = () => {
                     </ul>
                   </div>
 
+                  {/* CTA principal */}
                   <button
                     onClick={() => {
                       if (isCustom) {
@@ -500,45 +523,49 @@ export const Subscription = () => {
                     {isCustom ? t.subscription.requestQuote : `${t.subscription.chooseButton} ${plan.name}`}
                   </button>
 
-                  {/* Payment buttons */}
-                  {!isCustom && (
-                    <div className="mt-4 space-y-2">
-                      <div className="w-full h-px bg-white/10 mb-3" />
+                  {/* Payment buttons — plans payants uniquement */}
+                  {hasPaidPayment && (
+                    <div className="mt-4 space-y-2.5">
+                      <div className="flex items-center gap-2 my-1">
+                        <div className="flex-1 h-px bg-white/15" />
+                        <span className="text-[10px] text-white/40 uppercase tracking-widest">paiement</span>
+                        <div className="flex-1 h-px bg-white/15" />
+                      </div>
 
                       {/* Stripe */}
                       <a
-                        href="#"
-                        className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-xs font-semibold bg-[#4F46E5] text-white hover:bg-[#4338CA] transition-colors shadow-sm hover:shadow-md"
+                        href={stripeLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-xs font-semibold bg-[#4F46E5] text-white hover:bg-[#4338CA] active:scale-95 transition-all shadow-sm hover:shadow-md"
                       >
-                        <CreditCard className="w-3.5 h-3.5" />
+                        <CreditCard className="w-3.5 h-3.5 flex-shrink-0" />
                         Payer par Carte (Stripe)
                       </a>
 
-                      {/* PayPal */}
-                      <a
-                        href="#"
-                        className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-xs font-semibold bg-[#FFC439] text-[#003087] hover:bg-[#f0b429] transition-colors shadow-sm hover:shadow-md"
+                      {/* PayPal — bientôt disponible */}
+                      <button
+                        type="button"
+                        onClick={() => setActiveModal('paypal')}
+                        className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-xs font-semibold bg-[#FFC439] text-[#003087] opacity-60 hover:opacity-75 transition-all cursor-not-allowed shadow-sm"
                       >
-                        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+                        <svg className="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                           <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.816-5.09a.932.932 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.471z"/>
                         </svg>
-                        PayPal
-                      </a>
+                        PayPal (Bientôt disponible)
+                      </button>
 
                       {/* Flouci */}
-                      <a
-                        href="#"
-                        className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-xs font-semibold bg-[#059669] text-white hover:bg-[#047857] transition-colors shadow-sm hover:shadow-md"
+                      <button
+                        type="button"
+                        onClick={() => setActiveModal('flouci')}
+                        className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-xs font-semibold bg-[#059669] text-white hover:bg-[#047857] active:scale-95 transition-all shadow-sm hover:shadow-md"
                       >
-                        <Smartphone className="w-3.5 h-3.5" />
-                        Payer avec Flouci 🇹🇳
-                      </a>
+                        <Smartphone className="w-3.5 h-3.5 flex-shrink-0" />
+                        Payer en Dinars (Flouci 🇹🇳)
+                      </button>
 
-                      <p className={`text-center text-[10px] pt-1 leading-tight ${
-                        isElitePro ? 'text-gray-500' :
-                        isArtisan || isPremium ? 'text-gray-400' :
-                        'text-gray-400'
-                      }`}>
+                      <p className="text-center text-[10px] text-white/40 pt-0.5 leading-tight">
                         Paiements sécurisés. Facture disponible après validation.
                       </p>
                     </div>
@@ -549,6 +576,79 @@ export const Subscription = () => {
           })}
         </div>
       </div>
+
+      {/* Modal PayPal */}
+      {activeModal === 'paypal' && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          onClick={() => setActiveModal(null)}
+        >
+          <div
+            className="relative bg-white rounded-2xl shadow-2xl max-w-sm w-full p-8 text-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setActiveModal(null)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+              aria-label="Fermer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <div className="w-14 h-14 bg-[#FFC439] rounded-full flex items-center justify-center mx-auto mb-5">
+              <svg className="w-7 h-7 text-[#003087]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.816-5.09a.932.932 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.471z"/>
+              </svg>
+            </div>
+            <h3 className="text-lg font-bold text-gray-900 mb-3">PayPal — Bientôt disponible</h3>
+            <p className="text-sm text-gray-600 leading-relaxed">
+              La validation PayPal est en cours. Veuillez utiliser le paiement par Carte pour le moment.
+            </p>
+            <button
+              onClick={() => setActiveModal(null)}
+              className="mt-6 w-full py-2.5 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition-colors"
+            >
+              Compris
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Flouci */}
+      {activeModal === 'flouci' && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          onClick={() => setActiveModal(null)}
+        >
+          <div
+            className="relative bg-white rounded-2xl shadow-2xl max-w-sm w-full p-8 text-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setActiveModal(null)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+              aria-label="Fermer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <div className="w-14 h-14 bg-[#059669] rounded-full flex items-center justify-center mx-auto mb-5">
+              <Smartphone className="w-7 h-7 text-white" />
+            </div>
+            <h3 className="text-lg font-bold text-gray-900 mb-1">Payer en Dinars 🇹🇳</h3>
+            <p className="text-xs text-[#059669] font-medium mb-4">via Flouci</p>
+            <p className="text-sm text-gray-600 leading-relaxed">
+              Pour régler votre abonnement en Dinars via Flouci, contactez-nous directement sur{' '}
+              <span className="font-semibold text-gray-800">WhatsApp</span> ou par{' '}
+              <span className="font-semibold text-gray-800">téléphone</span> pour recevoir votre lien de paiement local.
+            </p>
+            <button
+              onClick={() => setActiveModal(null)}
+              className="mt-6 w-full py-2.5 rounded-lg bg-[#059669] text-white text-sm font-semibold hover:bg-[#047857] transition-colors shadow-sm"
+            >
+              J'ai compris
+            </button>
+          </div>
+        </div>
+      )}
 
       {showRegistration && (
         <RegistrationForm
