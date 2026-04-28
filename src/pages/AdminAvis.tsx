@@ -1,10 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Check, X, Clock, Star, RefreshCw, AlertTriangle, Database } from 'lucide-react';
-
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
-const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
-const EDGE_URL = `${SUPABASE_URL}/functions/v1/admin-avis`;
-const EDGE_HEADERS = { 'Authorization': `Bearer ${ANON_KEY}`, 'Content-Type': 'application/json' };
+import { supabase } from '../lib/supabaseClient';
 
 interface Avis {
   id: string;
@@ -45,27 +41,22 @@ export default function AdminAvis() {
     setLoading(true);
     setRpcError(null);
 
-    try {
-      const res = await fetch(`${EDGE_URL}?action=list`, { headers: EDGE_HEADERS });
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error(body.error ?? `HTTP ${res.status}`);
-      }
-      const { data } = await res.json();
-      const rows = (data as Avis[]) || [];
-      setAllAvis(rows);
-      setLastRefresh(new Date());
-      const c = { pending: 0, approved: 0, rejected: 0, total: rows.length };
-      rows.forEach(r => {
-        if (r.status in c) c[r.status as 'pending' | 'approved' | 'rejected']++;
-      });
-      setCounts(c);
-    } catch (err: any) {
-      console.error('[AdminAvis] fetch error:', err);
-      setRpcError(err.message ?? 'Erreur inconnue');
-    } finally {
+    const { data, error } = await supabase.rpc('admin_get_all_avis');
+    if (error) {
+      console.error('[AdminAvis] RPC error:', error);
+      setRpcError(`Erreur : ${error.message}`);
       setLoading(false);
+      return;
     }
+    const rows = (data as Avis[]) || [];
+    setAllAvis(rows);
+    setLastRefresh(new Date());
+    const c = { pending: 0, approved: 0, rejected: 0, total: rows.length };
+    rows.forEach(r => {
+      if (r.status in c) c[r.status as 'pending' | 'approved' | 'rejected']++;
+    });
+    setCounts(c);
+    setLoading(false);
   }, []);
 
   useEffect(() => {
@@ -75,19 +66,13 @@ export default function AdminAvis() {
   const updateStatus = async (id: string, newStatus: 'approved' | 'rejected') => {
     setActionLoading(id);
 
-    try {
-      const res = await fetch(EDGE_URL, {
-        method: 'POST',
-        headers: EDGE_HEADERS,
-        body: JSON.stringify({ id, status: newStatus }),
-      });
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error(body.error ?? `HTTP ${res.status}`);
-      }
-    } catch (err: any) {
-      console.error('[AdminAvis] Update error:', err);
-      showToast(`Erreur : ${err.message}`, false);
+    const { error } = await supabase.rpc('admin_update_avis_status', {
+      avis_id: id,
+      new_status: newStatus,
+    });
+    if (error) {
+      console.error('[AdminAvis] Update error:', error);
+      showToast(`Erreur : ${error.message}`, false);
       setActionLoading(null);
       return;
     }
