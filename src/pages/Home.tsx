@@ -75,15 +75,16 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
       <section className="py-4 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-[#D4AF37] text-center">
+            {/* LCP element — loading=eager + fetchpriority=high obligatoires, jamais lazy */}
             <img
               src={HERO_IMAGE_URL}
               alt="Drapeau de la Tunisie"
               className="absolute inset-0 w-full h-full object-cover brightness-105"
               width="1200"
-              height="630"
+              height="400"
               fetchpriority="high"
               loading="eager"
-              decoding="async"
+              decoding="sync"
             />
             <div className="absolute inset-0 bg-black/30"></div>
 

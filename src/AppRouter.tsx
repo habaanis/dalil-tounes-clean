@@ -3,8 +3,9 @@ import { lazy, Suspense } from 'react';
 import { LanguageProvider } from './context/LanguageContext';
 import { AuthProvider } from './context/AuthContext';
 import { Layout } from './components/Layout';
-import { Home } from './pages/Home';
-import { Subscription } from './pages/Subscription';
+
+const Home = lazy(() => import('./pages/Home').then(m => ({ default: m.Home })));
+const Subscription = lazy(() => import('./pages/Subscription').then(m => ({ default: m.Subscription })));
 
 const Businesses = lazy(() => import('./pages/Businesses').then(m => ({ default: m.Businesses })));
 const Citizens = lazy(() => import('./pages/Citizens'));
@@ -54,8 +55,27 @@ const MetierPage = lazy(() => import('./pages/seo/MetierPage'));
 const VillePage = lazy(() => import('./pages/seo/VillePage'));
 
 const PageLoader = () => (
-  <div className="min-h-screen flex items-center justify-center">
-    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600"></div>
+  <div className="min-h-screen bg-white" aria-hidden="true">
+    {/* Hero skeleton — même proportions que le vrai hero */}
+    <div className="py-4 px-4">
+      <div className="max-w-6xl mx-auto">
+        <div
+          className="relative overflow-hidden rounded-3xl border border-[#D4AF37]"
+          style={{ minHeight: '140px', background: 'linear-gradient(135deg,#1a0a18 0%,#2d1029 50%,#1a0a18 100%)' }}
+        >
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6">
+            <div className="h-6 w-56 rounded-lg bg-white/10 animate-pulse" />
+            <div className="h-4 w-80 rounded-lg bg-white/10 animate-pulse" />
+          </div>
+        </div>
+      </div>
+    </div>
+    {/* Barre de recherche skeleton */}
+    <div className="px-4 pb-4">
+      <div className="max-w-6xl mx-auto">
+        <div className="h-12 rounded-xl bg-gray-100 animate-pulse" />
+      </div>
+    </div>
   </div>
 );
 

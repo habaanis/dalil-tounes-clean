@@ -2,7 +2,6 @@
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Dalil Tounes - Le guide digital des établissements et services en Tunisie. Trouvez facilement entreprises, services et opportunités." />
     <meta name="keywords" content="Tunisie, annuaire, entreprises, services, commerce, emploi, éducation, santé" />
@@ -27,27 +26,39 @@
     <meta property="og:site_name" content="Dalil Tounes" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="fr_TN" />
-
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@daliltounes" />
 
-    <!-- DNS prefetch for external resources -->
+    <!-- DNS prefetch pour ressources externes -->
     <link rel="dns-prefetch" href="https://kmvjegbtroksjqaqliyv.supabase.co" />
     <link rel="dns-prefetch" href="https://images.pexels.com" />
     <link rel="dns-prefetch" href="https://ik.imagekit.io" />
     <link rel="preconnect" href="https://kmvjegbtroksjqaqliyv.supabase.co" crossorigin />
     <link rel="preconnect" href="https://ik.imagekit.io" crossorigin />
-    <!-- Preload Playfair Display — desktop uniquement (media query évite le téléchargement mobile) -->
+
+    <!--
+      Polices Playfair Display hébergées localement.
+      font-display:swap garantit que le texte est visible immédiatement avec la police fallback,
+      puis remplacé sans bloquer le rendu (élimine le FOIT).
+      On preload uniquement sur desktop pour ne pas pénaliser le mobile.
+    -->
     <link rel="preload" href="/fonts/playfair-display-400-latin.woff2" as="font" type="font/woff2" crossorigin media="(min-width: 769px)" />
     <link rel="preload" href="/fonts/playfair-display-700-latin.woff2" as="font" type="font/woff2" crossorigin media="(min-width: 769px)" />
-    <!-- Preload LCP hero image -->
+
+    <!--
+      Preload de l'image LCP (hero) avec fetchpriority=high.
+      Indispensable pour que le navigateur commence à télécharger l'image
+      dès le parsing du HTML, avant même que React soit chargé.
+    -->
     <link
       rel="preload"
       as="image"
       href="https://kmvjegbtroksjqaqliyv.supabase.co/storage/v1/object/public/photos-dalil/drapeau-tunisie.webp?v=1"
       fetchpriority="high"
+      type="image/webp"
     />
-    <!-- Canonical and OG defaults (overridden per-page by SEOHead) -->
+
+    <!-- Canonical et OG par défaut (surchargés par SEOHead) -->
     <link rel="canonical" href="https://dalil-tounes.com/" />
     <meta property="og:url" content="https://dalil-tounes.com/" />
     <meta property="og:title" content="Dalil Tounes - Guide digital des établissements en Tunisie" />
@@ -55,71 +66,107 @@
     <meta name="robots" content="index, follow" />
     <title>Dalil Tounes - Guide digital des établissements en Tunisie</title>
 
-    <!-- CSS critique inline — débloque le rendu immédiatement sans attendre le bundle Vite -->
     <style>
-      /* Reset minimal */
+      /* ── Reset minimal ───────────────────────────────────────────── */
       *,::before,::after{box-sizing:border-box;border-width:0;border-style:solid}
-      html{line-height:1.5;-webkit-text-size-adjust:100%;font-family:ui-sans-serif,system-ui,sans-serif}
+      html{line-height:1.5;-webkit-text-size-adjust:100%;font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
       body{margin:0;line-height:inherit;overflow-x:hidden}
       #root{min-height:100vh}
 
-      /* Layout above-the-fold */
-      .max-w-6xl{max-width:72rem;width:100%}
-      .mx-auto{margin-left:auto;margin-right:auto}
-      .px-4{padding-left:1rem;padding-right:1rem}
-      .py-4{padding-top:1rem;padding-bottom:1rem}
-      .relative{position:relative}
-      .absolute{position:absolute}
-      .inset-0{top:0;right:0;bottom:0;left:0}
-      .overflow-hidden{overflow:hidden}
-      .rounded-3xl{border-radius:1.5rem}
-      .w-full{width:100%}
-      .h-full{height:100%}
-      .object-cover{object-fit:cover}
-      .text-center{text-align:center}
-      .text-white{color:#fff}
-      .z-10{z-index:10}
-      .flex{display:flex}
-      .items-center{align-items:center}
-      .justify-center{justify-content:center}
-      .gap-4{gap:1rem}
-      .flex-wrap{flex-wrap:wrap}
-
-      /* Hero image — évite le layout shift */
-      .hero-img{
-        position:absolute;inset:0;
-        width:100%;height:100%;
-        object-fit:cover;
-        filter:brightness(1.05);
-      }
-      .hero-overlay{
-        position:absolute;inset:0;
-        background:rgba(0,0,0,.30);
-      }
-
-      /* Skeleton placeholders — visibles dès le 1er paint */
-      @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-      .skeleton{
-        border-radius:1rem;
-        background:#f3f4f6;
-        animation:pulse 2s cubic-bezier(.4,0,.6,1) infinite;
-      }
-
-      /* Navigation bar placeholder */
-      .nav-placeholder{
-        height:56px;
-        background:#fff;
-        border-bottom:1px solid #f0e6d2;
-      }
-
-      /* Police mobile — pas de téléchargement web font */
+      /* ── Police fallback immédiate ───────────────────────────────── */
+      /* Sur mobile on n'attend jamais Playfair Display */
       @media(max-width:768px){
         h1,h2,h3,h4,h5,h6{font-family:Georgia,'Times New Roman',Times,serif}
       }
+
+      /* ── Animation skeleton ──────────────────────────────────────── */
+      @keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+      .sk{animation:pulse 1.8s ease-in-out infinite;background:#e5e7eb;border-radius:.75rem}
+
+      /* ── Navbar placeholder ──────────────────────────────────────── */
+      #pre-nav{
+        height:56px;background:#fff;
+        border-bottom:1px solid #f0e6d2;
+        display:flex;align-items:center;
+        padding:0 1rem;gap:1rem;
+        position:sticky;top:0;z-index:50;
+      }
+      #pre-nav .logo-sk{width:120px;height:28px}
+      #pre-nav .spacer{flex:1}
+      #pre-nav .nav-sk{width:200px;height:20px;display:none}
+      @media(min-width:768px){#pre-nav .nav-sk{display:block}}
+
+      /* ── Hero placeholder ────────────────────────────────────────── */
+      #pre-hero{
+        padding:1rem;
+      }
+      #pre-hero-inner{
+        max-width:72rem;margin:0 auto;
+        border-radius:1.5rem;overflow:hidden;
+        border:1px solid #D4AF37;
+        min-height:160px;
+        background:linear-gradient(135deg,#1a0a18 0%,#2d1029 60%,#1a0a18 100%);
+        display:flex;flex-direction:column;align-items:center;justify-content:center;
+        gap:.75rem;padding:1.5rem;
+      }
+      #pre-hero-inner .h1-sk{width:min(280px,70%);height:24px;background:rgba(255,255,255,.12)}
+      #pre-hero-inner .p-sk{width:min(420px,85%);height:16px;background:rgba(255,255,255,.08)}
+
+      /* ── Barre de recherche placeholder ─────────────────────────── */
+      #pre-search{padding:0 1rem .75rem}
+      #pre-search-inner{max-width:72rem;margin:0 auto}
+      #pre-search-inner .input-sk{height:48px;border-radius:.75rem}
+
+      /* Layout helpers */
+      .max-w-6xl{max-width:72rem;width:100%}
+      .mx-auto{margin-left:auto;margin-right:auto}
     </style>
   </head>
   <body>
+    <!--
+      Skeleton HTML natif — visible dès le premier octet, avant que React charge.
+      Élimine la page blanche et donne au navigateur un "LCP candidate" immédiat.
+      React efface #pre-skeleton quand il monte #root.
+    -->
+    <div id="pre-skeleton">
+      <!-- Navbar -->
+      <div id="pre-nav">
+        <div class="sk logo-sk"></div>
+        <div class="spacer"></div>
+        <div class="sk nav-sk"></div>
+      </div>
+      <!-- Hero (LCP candidate) -->
+      <div id="pre-hero">
+        <div id="pre-hero-inner">
+          <div class="sk h1-sk"></div>
+          <div class="sk p-sk"></div>
+        </div>
+      </div>
+      <!-- Search bar -->
+      <div id="pre-search">
+        <div id="pre-search-inner">
+          <div class="sk input-sk"></div>
+        </div>
+      </div>
+    </div>
+
     <div id="root"></div>
+
+    <script>
+      // Supprime le skeleton dès que React a monté son premier composant
+      (function(){
+        var ob = new MutationObserver(function(){
+          var r = document.getElementById('root');
+          if(r && r.children.length > 0){
+            var sk = document.getElementById('pre-skeleton');
+            if(sk) sk.remove();
+            ob.disconnect();
+          }
+        });
+        ob.observe(document.getElementById('root'), {childList:true});
+      })();
+    </script>
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
