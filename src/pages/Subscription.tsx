@@ -7,16 +7,16 @@ import { QuoteForm } from '../components/QuoteForm';
 
 const STRIPE_LINKS: Record<string, { monthly: string; annual: string }> = {
   artisan: {
-    monthly: 'https://buy.stripe.com/3cI4gB7HJ50fb90c5x',
-    annual:  'https://buy.stripe.com/6oE3cz6DF1K33Cg3ce',
+    monthly: 'https://buy.stripe.com/7sYaEZ5zB64j90Sb1tbsc01',
+    annual:  'https://buy.stripe.com/28EdRb6DF50f4KCglNbsc02',
   },
   premium: {
-    monthly: 'https://buy.stripe.com/cN200ne672O72yc6op',
-    annual:  'https://buy.stripe.com/00g14v6DF50fb9028a',
+    monthly: 'https://buy.stripe.com/7sY7sN6DFdwLgtkfhJbsc03',
+    annual:  'https://buy.stripe.com/fZufZjbXZ0JZgtk0mPbsc05',
   },
   elitePro: {
-    monthly: 'https://buy.stripe.com/5kA5kH3rv2O77SwaEF',
-    annual:  'https://buy.stripe.com/cN25kH8LL0GZ3CgeV5',
+    monthly: 'https://buy.stripe.com/fZubJ30fhakz0um0mPbsc06',
+    annual:  'https://buy.stripe.com/4gMbJ32npgIX4KCb1tbsc07',
   },
 };
 
