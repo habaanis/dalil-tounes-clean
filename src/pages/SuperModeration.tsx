@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabaseClient';
+import { supabase, supabaseUrl } from '../lib/supabaseClient';
 import { Check, Trash2, RefreshCw, Star } from 'lucide-react';
 
 interface Avis {
@@ -99,6 +99,13 @@ export default function SuperModeration() {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-5xl mx-auto">
+
+        {/* Bandeau projet connecté */}
+        <div className="mb-4 px-4 py-3 rounded-xl bg-blue-950 border border-blue-700 font-mono">
+          <p className="text-xs text-blue-300 mb-0.5 uppercase tracking-widest">Projet Supabase connecté (cette page)</p>
+          <p className="text-lg font-bold text-white break-all">{supabaseUrl}</p>
+          <p className="text-xs text-blue-400 mt-1">ID : <strong className="text-white">{supabaseUrl.replace('https://', '').split('.')[0]}</strong></p>
+        </div>
 
         {/* Header */}
         <div className="flex items-center justify-between mb-6">

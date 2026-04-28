@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Star, Send } from 'lucide-react';
-import { supabase } from '../lib/BoltDatabase';
+import { supabase, supabaseUrl } from '../lib/supabaseClient';
 import { useFormTranslation } from '../hooks/useFormTranslation';
 
 interface EntrepriseAvisFormProps {
@@ -93,6 +93,20 @@ export default function EntrepriseAvisForm({ entrepriseId, onSuccess }: Entrepri
         zIndex: 50,
       }}
     >
+      {/* Diagnostic projet connecté */}
+      <div style={{
+        marginBottom: '6px',
+        padding: '4px 6px',
+        borderRadius: '4px',
+        backgroundColor: 'rgba(30,58,138,0.5)',
+        border: '1px solid #3B82F6',
+        fontFamily: 'monospace',
+      }}>
+        <p style={{ fontSize: '8px', color: '#93C5FD', margin: 0 }}>
+          Projet : <strong style={{ color: '#fff' }}>{supabaseUrl.replace('https://', '').split('.')[0]}</strong>
+        </p>
+      </div>
+
       <form onSubmit={handleSubmit}>
         {/* Étoiles */}
         <div style={{ display: 'flex', gap: '2px', justifyContent: 'center', alignItems: 'center', marginBottom: '3px' }}>
