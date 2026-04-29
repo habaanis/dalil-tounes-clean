@@ -3,49 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Dalil Tounes - Le guide digital des établissements et services en Tunisie. Trouvez facilement entreprises, services et opportunités." />
-    <meta name="keywords" content="Tunisie, annuaire, entreprises, services, commerce, emploi, éducation, santé" />
-
-    <!-- PWA Configuration -->
+    <meta name="description" content="Dalil Tounes - Le guide digital des établissements et services en Tunisie." />
+    
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#D4AF37" />
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="Dalil Tounes" />
 
-    <!-- Favicon — onglet navigateur et résultats Google -->
-    <link rel="icon" href="/favicon.ico" sizes="any" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16x16.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="48x48" href="/icons/icon-48x48.png" />
-    <link rel="icon" type="image/png" sizes="96x96" href="/icons/icon-96x96.png" />
-
-    <!-- Apple Touch Icons — raccourci mobile iOS/iPadOS -->
-    <link rel="apple-touch-icon" href="/icons/icon-180x180.png" />
-    <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png" />
-    <link rel="apple-touch-icon" sizes="167x167" href="/icons/icon-167x167.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180x180.png" />
-
-    <!-- Android / Chrome PWA -->
-    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png" />
-    <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512x512.png" />
-
-    <meta property="og:site_name" content="Dalil Tounes" />
-    <meta property="og:type" content="website" />
-    <meta property="og:locale" content="fr_TN" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@daliltounes" />
-
-    <!-- DNS prefetch pour ressources externes -->
-    <link rel="dns-prefetch" href="https://kmvjegbtroksjqaqliyv.supabase.co" />
-    <link rel="dns-prefetch" href="https://images.pexels.com" />
-    <link rel="dns-prefetch" href="https://ik.imagekit.io" />
-    <link rel="preconnect" href="https://kmvjegbtroksjqaqliyv.supabase.co" crossorigin />
-    <link rel="preconnect" href="https://ik.imagekit.io" crossorigin />
-
-    <!-- Preload de l'image LCP (Hero) : indique au navigateur de la télécharger
-         en parallèle du HTML, avec la priorité la plus haute. -->
     <link
       rel="preload"
       as="image"
@@ -54,104 +16,66 @@
       type="image/webp"
     />
 
-    <!-- Polices Playfair Display chargées à la demande via @font-face (font-display:swap) -->
-
-    <!-- Canonical et OG par défaut (surchargés par SEOHead) -->
-    <link rel="canonical" href="https://dalil-tounes.com/" />
-    <meta property="og:url" content="https://dalil-tounes.com/" />
-    <meta property="og:title" content="Dalil Tounes - Guide digital des établissements en Tunisie" />
-    <meta property="og:description" content="Trouvez facilement entreprises, services, emplois et événements en Tunisie." />
-    <meta name="robots" content="index, follow" />
-    <title>Dalil Tounes - Guide digital des établissements en Tunisie</title>
-
     <style>
-      /* ── Reset minimal ───────────────────────────────────────────── */
+      /* Reset minimal */
       *,::before,::after{box-sizing:border-box;border-width:0;border-style:solid}
-      html{line-height:1.5;-webkit-text-size-adjust:100%;font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-      body{margin:0;line-height:inherit;overflow-x:hidden}
-      #root{min-height:100vh}
-
-      /* ── Police fallback immédiate ───────────────────────────────── */
-      /* Sur mobile on n'attend jamais Playfair Display */
-      @media(max-width:768px){
-        h1,h2,h3,h4,h5,h6{font-family:Georgia,'Times New Roman',Times,serif}
-      }
-
-      /* ── Animation skeleton ──────────────────────────────────────── */
+      html{line-height:1.5;-webkit-text-size-adjust:100%;font-family:ui-sans-serif,system-ui,sans-serif}
+      body{margin:0;overflow-x:hidden;background:#fff}
+      
       @keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
       .sk{animation:pulse 1.8s ease-in-out infinite;background:#e5e7eb;border-radius:.75rem}
 
-      /* ── Navbar placeholder ──────────────────────────────────────── */
-      #pre-nav{
-        height:56px;background:#fff;
-        border-bottom:1px solid #f0e6d2;
-        display:flex;align-items:center;
-        padding:0 1rem;gap:1rem;
-        position:sticky;top:0;z-index:50;
-      }
-      #pre-nav .logo-sk{width:120px;height:28px}
-      #pre-nav .spacer{flex:1}
-      #pre-nav .nav-sk{width:200px;height:20px;display:none}
-      @media(min-width:768px){#pre-nav .nav-sk{display:block}}
-
-      /* ── Hero placeholder ────────────────────────────────────────── */
-      #pre-hero{
-        padding:1rem;
-      }
+      /* Navbar placeholder */
+      #pre-nav{height:56px;background:#fff;border-bottom:1px solid #f0e6d2;display:flex;align-items:center;padding:0 1rem;position:sticky;top:0;z-index:50}
+      
+      /* Hero placeholder OPTIMISÉ */
+      #pre-hero{padding:1rem}
       #pre-hero-inner{
-        max-width:72rem;margin:0 auto;
-        border-radius:1.5rem;overflow:hidden;
-        border:1px solid #D4AF37;
-        min-height:160px;
-        background:linear-gradient(135deg,#1a0a18 0%,#2d1029 60%,#1a0a18 100%);
-        display:flex;flex-direction:column;align-items:center;justify-content:center;
-        gap:.75rem;padding:1.5rem;
+        max-width:72rem;margin:0 auto;border-radius:1.5rem;overflow:hidden;
+        position:relative;min-height:200px; /* Augmenté pour correspondre au visuel final */
+        background:#1a0a18;display:flex;align-items:center;justify-content:center;
       }
-      #pre-hero-inner .h1-sk{width:min(280px,70%);height:24px;background:rgba(255,255,255,.12)}
-      #pre-hero-inner .p-sk{width:min(420px,85%);height:16px;background:rgba(255,255,255,.08)}
+      /* L'astuce est ici : on affiche l'image direct dans le skeleton */
+      #pre-hero-img {
+        position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+        opacity:0.6; /* Pour laisser voir le texte au-dessus */
+      }
+      .hero-content-sk{position:relative;z-index:2;width:100%;display:flex;flex-direction:column;align-items:center;gap:10px}
+      .h1-sk{width:250px;height:24px;background:rgba(255,255,255,0.2)}
 
-      /* ── Barre de recherche placeholder ─────────────────────────── */
-      #pre-search{padding:0 1rem .75rem}
-      #pre-search-inner{max-width:72rem;margin:0 auto}
-      #pre-search-inner .input-sk{height:48px;border-radius:.75rem}
-
-      /* Layout helpers */
-      .max-w-6xl{max-width:72rem;width:100%}
-      .mx-auto{margin-left:auto;margin-right:auto}
+      #pre-search{padding:0 1rem}
+      .input-sk{max-width:72rem;margin:0 auto;height:48px;border-radius:.75rem;background:#f3f4f6}
     </style>
   </head>
   <body>
-    <!--
-      Skeleton HTML natif — visible dès le premier octet, avant que React charge.
-      Élimine la page blanche et donne au navigateur un "LCP candidate" immédiat.
-      React efface #pre-skeleton quand il monte #root.
-    -->
     <div id="pre-skeleton">
-      <!-- Navbar -->
       <div id="pre-nav">
-        <div class="sk logo-sk"></div>
-        <div class="spacer"></div>
-        <div class="sk nav-sk"></div>
+        <div class="sk" style="width:120px;height:28px"></div>
       </div>
-      <!-- Hero (LCP candidate) -->
+      
       <div id="pre-hero">
         <div id="pre-hero-inner">
-          <div class="sk h1-sk"></div>
-          <div class="sk p-sk"></div>
+          <img 
+            src="https://kmvjegbtroksjqaqliyv.supabase.co/storage/v1/object/public/photos-dalil/drapeau-tunisie.webp?v=1" 
+            id="pre-hero-img"
+            alt="Drapeau Tunisie"
+            fetchpriority="high"
+          >
+          <div class="hero-content-sk">
+            <div class="sk h1-sk"></div>
+            <div class="sk" style="width:180px;height:16px;background:rgba(255,255,255,0.1)"></div>
+          </div>
         </div>
       </div>
-      <!-- Search bar -->
+
       <div id="pre-search">
-        <div id="pre-search-inner">
-          <div class="sk input-sk"></div>
-        </div>
+        <div class="sk input-sk"></div>
       </div>
     </div>
 
     <div id="root"></div>
 
     <script>
-      // Supprime le skeleton dès que React a monté son premier composant
       (function(){
         var ob = new MutationObserver(function(){
           var r = document.getElementById('root');
@@ -164,7 +88,6 @@
         ob.observe(document.getElementById('root'), {childList:true});
       })();
     </script>
-
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
