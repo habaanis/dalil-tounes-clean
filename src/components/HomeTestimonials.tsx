@@ -26,7 +26,6 @@ export default function HomeTestimonials() {
         .from('avis_entreprise')
         .select('id, note, commentaire, auteur, created_at')
         .is('entreprise_id', null)
-        .eq('status', 'approved')
         .order('created_at', { ascending: false })
         .limit(6);
 

@@ -44,7 +44,7 @@ export default function EntrepriseAvisForm({ entrepriseId, onSuccess }: Entrepri
         commentaire: commentaireValue,
         auteur: auteur.trim(),
         auteur_email: auteurEmail.trim(),
-        status: 'pending',
+        status: 'approved',
         date: new Date().toISOString(),
         submission_lang,
       };

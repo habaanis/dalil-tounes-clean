@@ -238,9 +238,10 @@ export default function SuperModeration() {
                           <button
                             onClick={() => remove(a.id)}
                             disabled={actionId === a.id}
-                            className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-red-50 text-red-600 hover:bg-red-100 text-xs font-medium transition-colors disabled:opacity-50"
+                            className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 text-sm font-bold shadow-sm transition-colors disabled:opacity-50"
                           >
-                            <Trash2 size={12} />
+                            {actionId === a.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
+                            Supprimer
                           </button>
                         </div>
                       </td>

@@ -332,8 +332,7 @@ export const BusinessDetail = ({
           const { data: avisData } = await supabase
             .from('avis_entreprise')
             .select('note')
-            .eq('entreprise_id', actualBusinessId)
-            .eq('status', 'approved');
+            .eq('entreprise_id', actualBusinessId);
 
           if (avisData && avisData.length > 0) {
             const totalRating = avisData.reduce((sum, avis) => sum + (avis.note || 0), 0);
