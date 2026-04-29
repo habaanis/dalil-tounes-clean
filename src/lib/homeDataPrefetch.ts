@@ -139,6 +139,39 @@ export function prefetchHomeData(): Promise<HomeQueryResult> {
   return inflight;
 }
 
+/**
+ * Stale-While-Revalidate : lance un refetch en arrière-plan, même si le cache
+ * est frais. Les abonnés reçoivent la mise à jour uniquement si le contenu
+ * renvoyé diffère réellement de ce qui est en cache (évite les re-render inutiles).
+ */
+export function revalidateHomeData(): Promise<HomeQueryResult> {
+  if (inflight) return inflight;
+
+  inflight = doFetch()
+    .then((result) => {
+      const previous = readHomeCache();
+      writeHomeCache(result);
+      const changed = !previous || !sameResult(previous, result);
+      if (changed) notifySubscribers(result);
+      return result;
+    })
+    .finally(() => {
+      inflight = null;
+    });
+
+  return inflight;
+}
+
+function sameResult(a: HomeQueryResult, b: HomeQueryResult): boolean {
+  if (a.totalCount !== b.totalCount) return false;
+  if (a.certifiedCount !== b.certifiedCount) return false;
+  if (a.partners.length !== b.partners.length) return false;
+  for (let i = 0; i < a.partners.length; i++) {
+    if (a.partners[i].id !== b.partners[i].id) return false;
+  }
+  return true;
+}
+
 // ── Pub/Sub léger pour notifier les composants montés ──────────────────────
 type Subscriber = (result: HomeQueryResult) => void;
 const subscribers = new Set<Subscriber>();

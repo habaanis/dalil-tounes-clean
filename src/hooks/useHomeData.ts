@@ -4,6 +4,7 @@ import {
   HomeQueryResult,
   prefetchHomeData,
   readHomeCache,
+  revalidateHomeData,
   subscribeHomeData,
 } from '../lib/homeDataPrefetch';
 
@@ -39,14 +40,28 @@ export function useHomeData(): HomeData {
     let timeoutId: number | undefined;
 
     const runFetch = () => {
-      if (!state.loading) return;
-      prefetchHomeData()
-        .then((result) => {
-          setState({ partners: result.partners, totalCount: result.totalCount, certifiedCount: result.certifiedCount, loading: false });
-        })
-        .catch(() => {
-          setState((s) => ({ ...s, loading: false }));
+      // Stale-While-Revalidate :
+      // - Pas de cache → on affiche d'abord un état de chargement puis on
+      //   remplit avec `prefetchHomeData`.
+      // - Cache présent (frais ou périmé) → il a déjà été injecté dans `state`
+      //   au premier rendu ; on lance quand même une vérification silencieuse
+      //   vers Supabase. Les abonnés ne sont notifiés que si les données ont
+      //   réellement changé (voir `revalidateHomeData`).
+      const hasCache = readHomeCache() !== null;
+
+      if (!hasCache) {
+        prefetchHomeData()
+          .then((result) => {
+            setState({ partners: result.partners, totalCount: result.totalCount, certifiedCount: result.certifiedCount, loading: false });
+          })
+          .catch(() => {
+            setState((s) => ({ ...s, loading: false }));
+          });
+      } else {
+        revalidateHomeData().catch(() => {
+          // Revalidation silencieuse : on garde les données en cache en cas d'échec.
         });
+      }
     };
 
     const w = window as unknown as {
