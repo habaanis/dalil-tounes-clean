@@ -7,7 +7,7 @@ import { isSearchBarAllowed } from '../config/searchBars';
 import { HERO_IMAGE_URL } from '../constants/images';
 import StructuredData from '../components/StructuredData';
 import { generateOrganizationSchema, generateWebSiteSchema } from '../lib/structuredDataSchemas';
-import React, { lazy, Suspense } from 'react';
+import React, { lazy, Suspense, useEffect, useState } from 'react';
 
 // Tous les composants lourds (liste Premium, Avis, Témoignages, SearchBar)
 // sont chargés paresseusement afin de ne pas bloquer le rendu du Hero / LCP.
@@ -38,6 +38,23 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
 
   // État pour capturer la valeur de recherche
   const [searchQuery, setSearchQuery] = React.useState('');
+
+  // Tout ce qui est sous la barre de recherche est monté APRÈS le LCP.
+  // On déclenche : 2 s après le chargement OU dès que l'utilisateur
+  // interagit (scroll / focus / click) — le premier des deux.
+  const [belowFoldReady, setBelowFoldReady] = useState(false);
+  const [searchArmed, setSearchArmed] = useState(false);
+  useEffect(() => {
+    if (belowFoldReady) return;
+    const ready = () => setBelowFoldReady(true);
+    const timer = window.setTimeout(ready, 2000);
+    const events: Array<keyof WindowEventMap> = ['scroll', 'pointerdown', 'keydown', 'touchstart'];
+    events.forEach((e) => window.addEventListener(e, ready, { once: true, passive: true }));
+    return () => {
+      window.clearTimeout(timer);
+      events.forEach((e) => window.removeEventListener(e, ready));
+    };
+  }, [belowFoldReady]);
 
   const handleNavigateToBusinessDetail = (businessId: number | string) => {
     console.log('🔥 [Home] handleNavigateToBusinessDetail appelé');
@@ -190,10 +207,12 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
         <CompanyCountCard language={language} totalCount={totalCount} certifiedCount={certifiedCount} loading={loading} />
       </section>
 
-      {/* 5. Établissements à la Une */}
-      <Suspense fallback={<div style={{ minHeight: '220px' }} />}>
-        <PremiumPartnersSection onCardClick={(id) => handleNavigateToBusinessDetail(id)} partners={partners} loading={loading} />
-      </Suspense>
+      {/* 5. Établissements à la Une — monté seulement après le LCP (interaction ou 2s) */}
+      {belowFoldReady && (
+        <Suspense fallback={<div style={{ minHeight: '220px' }} />}>
+          <PremiumPartnersSection onCardClick={(id) => handleNavigateToBusinessDetail(id)} partners={partners} loading={loading} />
+        </Suspense>
+      )}
 
       {/* 5.5 Slogan Marketing */}
       <section className="py-8 px-4 bg-white">
@@ -207,14 +226,27 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
         </div>
       </section>
 
-      {/* 6. Barre de recherche */}
+      {/* 6. Barre de recherche — le SDK Supabase (chunk vendor-supabase)
+           ne se charge qu'au premier focus/clic pour ne pas pénaliser le LCP mobile. */}
       <section className="py-2 px-4 relative z-[1000] overflow-visible">
         <div className="max-w-5xl mx-auto relative z-[1001] overflow-visible">
           {isSearchBarAllowed('home') && (
-            <div className="bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-[#D4AF37] p-2.5 md:p-3 relative overflow-visible">
-              <Suspense fallback={<div style={{ minHeight: '56px' }} />}>
-                <SearchBar scope="global" autoSearch />
-              </Suspense>
+            <div className="bg-white rounded-xl border border-[#D4AF37] p-2.5 md:p-3 relative overflow-visible md:shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+              {searchArmed ? (
+                <Suspense fallback={<div style={{ minHeight: '56px' }} />}>
+                  <SearchBar scope="global" autoSearch />
+                </Suspense>
+              ) : (
+                <button
+                  type="button"
+                  onFocus={() => setSearchArmed(true)}
+                  onPointerDown={() => setSearchArmed(true)}
+                  className="w-full text-left h-12 px-3 rounded-lg bg-gray-50 text-gray-500 text-sm"
+                  aria-label={t.home.suggestBusiness}
+                >
+                  {(t as any).search?.placeholder || 'Rechercher...'}
+                </button>
+              )}
             </div>
           )}
 
@@ -224,7 +256,7 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
             </p>
             <button
               onClick={onSuggestBusiness}
-              className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#4A1D43] hover:bg-[#5A2D53] text-[#D4AF37] font-bold rounded-xl border border-[#D4AF37] shadow-[0_4px_15px_rgba(212,175,55,0.25)] hover:shadow-[0_6px_25px_rgba(212,175,55,0.4)] transition-all duration-300 hover:scale-105 text-sm"
+              className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#4A1D43] text-[#D4AF37] font-bold rounded-xl border border-[#D4AF37] text-sm md:shadow-[0_4px_15px_rgba(212,175,55,0.25)] md:hover:bg-[#5A2D53] md:hover:shadow-[0_6px_25px_rgba(212,175,55,0.4)] md:transition-all md:duration-300 md:hover:scale-105"
             >
               {t.home.suggestBusiness}
             </button>
@@ -246,9 +278,11 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
       </section>
 
       {/* 8. Loisirs & Événements — chargé hors du chemin critique LCP */}
-      <Suspense fallback={<div className="h-48" />}>
-        <LeisureEventsSection />
-      </Suspense>
+      {belowFoldReady && (
+        <Suspense fallback={<div className="h-48" />}>
+          <LeisureEventsSection />
+        </Suspense>
+      )}
 
       {/* Passerelle éditoriale → Blog */}
       <section className="py-8 px-4">
@@ -304,9 +338,11 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
               <div className="w-[40px] h-[1px] bg-[#D4AF37]" />
             </div>
           </div>
-          <Suspense fallback={<div style={{ minHeight: '200px' }} />}>
-            <HomeTestimonials />
-          </Suspense>
+          {belowFoldReady && (
+            <Suspense fallback={<div style={{ minHeight: '200px' }} />}>
+              <HomeTestimonials />
+            </Suspense>
+          )}
         </div>
       </section>
 
@@ -324,9 +360,11 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
               Votre retour nous aide à améliorer Dalil Tounes.
             </p>
           </div>
-          <Suspense fallback={<div style={{ minHeight: '180px' }} />}>
-            <EntrepriseAvisForm entrepriseId={null} />
-          </Suspense>
+          {belowFoldReady && (
+            <Suspense fallback={<div style={{ minHeight: '180px' }} />}>
+              <EntrepriseAvisForm entrepriseId={null} />
+            </Suspense>
+          )}
         </div>
       </section>
     </div>
