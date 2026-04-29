@@ -7,11 +7,8 @@ interface Avis {
   entreprise_id: string;
   note: number;
   commentaire: string;
-  auteur: string;
-  auteur_email: string;
   status: 'pending' | 'approved' | 'rejected';
-  date: string;
-  submission_lang: string;
+  created_at: string;
 }
 
 type FilterStatus = 'pending' | 'approved' | 'rejected' | 'all';
@@ -43,7 +40,7 @@ export default function AdminAvis() {
 
     const { data, error } = await supabase
       .from('avis_entreprise')
-      .select('id, entreprise_id, note, commentaire, auteur, auteur_email, status, date, submission_lang')
+      .select('id, entreprise_id, note, commentaire, status, created_at')
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -242,12 +239,7 @@ export default function AdminAvis() {
                       >
                         {STATUS_LABELS[a.status].label}
                       </span>
-                      <span className="text-xs text-gray-400">{formatDate(a.date)}</span>
-                      {a.submission_lang && (
-                        <span className="text-xs text-gray-400 uppercase bg-gray-100 px-1.5 py-0.5 rounded">
-                          {a.submission_lang}
-                        </span>
-                      )}
+                      <span className="text-xs text-gray-400">{formatDate(a.created_at)}</span>
                     </div>
 
                     <p className="text-sm text-gray-800 leading-relaxed mb-2">
@@ -255,16 +247,7 @@ export default function AdminAvis() {
                     </p>
 
                     <div className="flex items-center gap-3 text-xs text-gray-500 flex-wrap">
-                      <span className="font-medium text-gray-700">
-                        {a.auteur || <em className="text-gray-400">Anonyme</em>}
-                      </span>
-                      {a.auteur_email ? (
-                        <a href={`mailto:${a.auteur_email}`} className="text-blue-500 hover:underline">
-                          {a.auteur_email}
-                        </a>
-                      ) : (
-                        <span className="text-gray-300 italic text-[11px]">email non renseigné</span>
-                      )}
+                      <span className="font-medium text-gray-700">Utilisateur Dalil</span>
                       <span className="text-gray-300">|</span>
                       <span className="text-gray-400 font-mono text-[11px]">
                         Entreprise : {a.entreprise_id}

@@ -220,6 +220,12 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
               style={getLogoStyle(displayImage)}
               loading="lazy"
               decoding="async"
+              onError={(e) => {
+                const img = e.currentTarget;
+                if (!img.src.endsWith('/images/logo_dalil_tounes_sceau_luxe.webp')) {
+                  img.src = '/images/logo_dalil_tounes_sceau_luxe.webp';
+                }
+              }}
             />
           </div>
         </div>

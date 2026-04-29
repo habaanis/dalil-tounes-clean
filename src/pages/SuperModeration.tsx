@@ -7,10 +7,7 @@ interface Avis {
   entreprise_id: string | null;
   note: number;
   commentaire: string;
-  auteur: string;
-  auteur_email: string;
   status: string;
-  date: string;
   created_at: string;
 }
 
@@ -27,7 +24,7 @@ export default function SuperModeration() {
     // Requête ultra-simple, aucun filtre sur status
     const { data, error: err } = await supabase
       .from('avis_entreprise')
-      .select('*')
+      .select('id, entreprise_id, note, commentaire, status, created_at')
       .order('created_at', { ascending: false });
 
     if (err) {
@@ -189,10 +186,7 @@ export default function SuperModeration() {
                         </span>
                       </td>
                       <td className="px-3 py-3">
-                        <p className="text-gray-900 font-medium whitespace-nowrap">{a.auteur || '—'}</p>
-                        {a.auteur_email && (
-                          <p className="text-[11px] text-gray-500 whitespace-nowrap">{a.auteur_email}</p>
-                        )}
+                        <p className="text-gray-900 font-medium whitespace-nowrap">Utilisateur Dalil</p>
                       </td>
                       <td className="px-3 py-3">
                         {a.commentaire ? (

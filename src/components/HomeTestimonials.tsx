@@ -6,7 +6,6 @@ interface Testimonial {
   id: string;
   note: number;
   commentaire: string;
-  auteur: string;
   created_at: string;
 }
 
@@ -24,7 +23,7 @@ export default function HomeTestimonials() {
 
       const { data, error: err } = await supabase
         .from('avis_entreprise')
-        .select('id, note, commentaire, auteur, created_at')
+        .select('id, note, commentaire, created_at')
         .is('entreprise_id', null)
         .order('created_at', { ascending: false })
         .limit(6);
@@ -95,7 +94,7 @@ export default function HomeTestimonials() {
             « {t.commentaire} »
           </p>
           <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-            <p className="text-xs font-semibold text-[#4A1D43]">{t.auteur || 'Anonyme'}</p>
+            <p className="text-xs font-semibold text-[#4A1D43]">Utilisateur Dalil</p>
             <time className="text-[11px] text-gray-400">
               {new Date(t.created_at).toLocaleDateString('fr-FR', {
                 month: 'short',

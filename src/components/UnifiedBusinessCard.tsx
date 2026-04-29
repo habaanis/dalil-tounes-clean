@@ -137,6 +137,12 @@ const UnifiedBusinessCard = ({ business, onClick }: UnifiedBusinessCardProps) =>
             style={getLogoStyle(business.logo_url || business.logoUrl)}
             loading="lazy"
             decoding="async"
+            onError={(e) => {
+              const img = e.currentTarget;
+              if (img.src !== window.location.origin + '/images/logo_dalil_tounes_sceau_luxe.webp') {
+                img.src = '/images/logo_dalil_tounes_sceau_luxe.webp';
+              }
+            }}
           />
         </div>
 

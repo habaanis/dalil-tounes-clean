@@ -9,12 +9,10 @@ interface EntrepriseAvisFormProps {
 }
 
 export default function EntrepriseAvisForm({ entrepriseId, onSuccess }: EntrepriseAvisFormProps) {
-  const { label, placeholder, button, message, submission_lang } = useFormTranslation();
+  const { label, placeholder, button, message } = useFormTranslation();
 
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
-  const [auteur, setAuteur] = useState('');
-  const [auteurEmail, setAuteurEmail] = useState('');
   const [submitState, setSubmitState] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorDetail, setErrorDetail] = useState<string>('');
   const [submitting, setSubmitting] = useState(false);
@@ -42,11 +40,7 @@ export default function EntrepriseAvisForm({ entrepriseId, onSuccess }: Entrepri
         entreprise_id: entrepriseId ?? null,
         note: rating,
         commentaire: commentaireValue,
-        auteur: auteur.trim(),
-        auteur_email: auteurEmail.trim(),
         status: 'approved',
-        date: new Date().toISOString(),
-        submission_lang,
       };
       const { error: insertError } = await supabase
         .from('avis_entreprise')
@@ -61,8 +55,6 @@ export default function EntrepriseAvisForm({ entrepriseId, onSuccess }: Entrepri
       setSubmitState('success');
       setRating(0);
       setComment('');
-      setAuteur('');
-      setAuteurEmail('');
 
       if (onSuccess) {
         setTimeout(() => onSuccess(), 2500);
@@ -129,26 +121,6 @@ export default function EntrepriseAvisForm({ entrepriseId, onSuccess }: Entrepri
             {rating === 5 && 'Excellent'}
           </p>
         )}
-
-        {/* Nom (optionnel) */}
-        <input
-          type="text"
-          value={auteur}
-          onChange={(e) => setAuteur(e.target.value)}
-          maxLength={80}
-          placeholder="Votre nom (optionnel)"
-          style={inputStyle}
-        />
-
-        {/* Email (optionnel) */}
-        <input
-          type="email"
-          value={auteurEmail}
-          onChange={(e) => setAuteurEmail(e.target.value)}
-          maxLength={120}
-          placeholder="Votre email (optionnel, non publié)"
-          style={inputStyle}
-        />
 
         {/* Commentaire (obligatoire) */}
         <div style={{ marginBottom: '3px' }}>
