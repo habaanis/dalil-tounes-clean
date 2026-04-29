@@ -4,7 +4,7 @@ import { supabase, supabaseUrl } from '../lib/supabaseClient';
 import { useFormTranslation } from '../hooks/useFormTranslation';
 
 interface EntrepriseAvisFormProps {
-  entrepriseId: string;
+  entrepriseId?: string | null;
   onSuccess?: () => void;
 }
 
@@ -35,7 +35,7 @@ export default function EntrepriseAvisForm({ entrepriseId, onSuccess }: Entrepri
       const { error: insertError } = await supabase
         .from('avis_entreprise')
         .insert({
-          entreprise_id: entrepriseId,
+          entreprise_id: entrepriseId ?? null,
           note: rating,
           commentaire: comment.trim(),
           auteur: auteur.trim(),
@@ -159,14 +159,25 @@ export default function EntrepriseAvisForm({ entrepriseId, onSuccess }: Entrepri
           style={inputStyle}
         />
 
-        {/* Commentaire */}
+        {/* Commentaire (obligatoire) */}
         <div style={{ marginBottom: '3px' }}>
+          <label
+            htmlFor="avis-commentaire"
+            style={{ display: 'block', fontSize: '9px', color: '#D4AF37', marginBottom: '2px', fontWeight: 600 }}
+          >
+            {label('commentaire') || 'Commentaire'} <span style={{ color: '#EF4444' }}>*</span>
+          </label>
           <textarea
+            id="avis-commentaire"
+            name="commentaire"
             value={comment}
             onChange={(e) => setComment(e.target.value)}
-            rows={2}
+            rows={3}
+            minLength={3}
             maxLength={500}
-            style={{ ...inputStyle, resize: 'vertical', marginBottom: '1px' }}
+            required
+            aria-required="true"
+            style={{ ...inputStyle, resize: 'vertical', marginBottom: '1px', minHeight: '60px' }}
             placeholder={placeholder('votre_commentaire')}
           />
           <p style={{ textAlign: 'right', fontSize: '8px', color: '#D4AF37' }}>

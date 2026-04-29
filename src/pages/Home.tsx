@@ -6,8 +6,8 @@ import { PremiumPartnersSection } from '../components/PremiumPartnersSection';
 import CompanyCountCard from '../components/CompanyCountCard';
 import SearchBar from '../components/SearchBar';
 import { isSearchBarAllowed } from '../config/searchBars';
-import HomeFeedbackWidget from '../components/HomeFeedbackWidget';
 import HomeTestimonials from '../components/HomeTestimonials';
+import EntrepriseAvisForm from '../components/EntrepriseAvisForm';
 import { getSupabaseImageUrlTransformed } from '../lib/imageUtils';
 import { HERO_IMAGE_URL } from '../constants/images';
 import StructuredData from '../components/StructuredData';
@@ -298,10 +298,21 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
         </div>
       </section>
 
-      {/* Avis (Feedback UX) */}
-      <section className="py-2.5 px-4 bg-gradient-to-b from-gray-50 to-white relative z-[1]">
-        <div className="max-w-2xl mx-auto relative z-[1]">
-          <HomeFeedbackWidget />
+      {/* Formulaire d'avis public (avis_entreprise, entreprise_id = null) */}
+      <section className="py-6 px-4 bg-[#4A1D43] relative z-[1]">
+        <div className="max-w-xl mx-auto relative z-[1]">
+          <div className="text-center mb-4">
+            <h2
+              className="text-xl md:text-2xl font-light text-[#D4AF37] mb-1"
+              style={{ fontFamily: "'Playfair Display', serif" }}
+            >
+              Laissez-nous votre avis
+            </h2>
+            <p className="text-xs text-gray-300">
+              Votre retour nous aide à améliorer Dalil Tounes.
+            </p>
+          </div>
+          <EntrepriseAvisForm entrepriseId={null} />
         </div>
       </section>
     </div>

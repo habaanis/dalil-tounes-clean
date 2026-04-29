@@ -177,67 +177,91 @@ export default function SuperModeration() {
             </p>
           </div>
         ) : (
-          <div className="space-y-3">
-            {filtered.map(a => (
-              <div key={a.id} className="bg-white rounded-xl border border-gray-200 p-4">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap mb-1">
-                      {statusBadge(a.status)}
-                      <span className="flex items-center gap-0.5 text-amber-500 text-sm font-medium">
-                        <Star size={13} fill="currentColor" />
-                        {a.note}/5
-                      </span>
-                      <span className="text-xs text-gray-400 font-mono truncate max-w-[180px]">
-                        {a.entreprise_id ?? <em>entreprise_id null</em>}
-                      </span>
-                    </div>
-                    <p className="text-sm text-gray-800 mb-1">
-                      {a.commentaire || <em className="text-gray-400">Pas de commentaire</em>}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      Par <strong>{a.auteur || '—'}</strong>
-                      {a.auteur_email ? ` (${a.auteur_email})` : ''}
-                      {' · '}
-                      {new Date(a.created_at).toLocaleDateString('fr-FR', {
-                        day: '2-digit', month: 'short', year: 'numeric',
-                        hour: '2-digit', minute: '2-digit',
-                      })}
-                    </p>
-                    <p className="text-xs text-gray-300 font-mono mt-0.5">id: {a.id}</p>
-                  </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    {a.status !== 'approved' && (
-                      <button
-                        onClick={() => approve(a.id)}
-                        disabled={actionId === a.id}
-                        className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-green-50 text-green-700 hover:bg-green-100 text-xs font-medium transition-colors disabled:opacity-50"
-                      >
-                        {actionId === a.id ? <Loader2 size={11} className="animate-spin" /> : <Check size={13} />}
-                        Approuver
-                      </button>
-                    )}
-                    {a.status !== 'rejected' && (
-                      <button
-                        onClick={() => reject(a.id)}
-                        disabled={actionId === a.id}
-                        className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 text-xs font-medium transition-colors disabled:opacity-50"
-                      >
-                        Rejeter
-                      </button>
-                    )}
-                    <button
-                      onClick={() => remove(a.id)}
-                      disabled={actionId === a.id}
-                      className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 text-xs font-medium transition-colors disabled:opacity-50"
-                    >
-                      <Trash2 size={13} />
-                      Supprimer
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
+          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-sm">
+                <thead className="bg-gray-50 text-gray-600 uppercase text-[11px] tracking-wider">
+                  <tr>
+                    <th className="text-left px-3 py-2 font-semibold">Statut</th>
+                    <th className="text-left px-3 py-2 font-semibold">Note</th>
+                    <th className="text-left px-3 py-2 font-semibold">Auteur</th>
+                    <th className="text-left px-3 py-2 font-semibold w-[40%]">Commentaire</th>
+                    <th className="text-left px-3 py-2 font-semibold">Entreprise</th>
+                    <th className="text-left px-3 py-2 font-semibold">Date</th>
+                    <th className="text-right px-3 py-2 font-semibold">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {filtered.map(a => (
+                    <tr key={a.id} className="align-top hover:bg-gray-50/60">
+                      <td className="px-3 py-3">{statusBadge(a.status)}</td>
+                      <td className="px-3 py-3">
+                        <span className="flex items-center gap-0.5 text-amber-500 font-medium whitespace-nowrap">
+                          <Star size={13} fill="currentColor" />
+                          {a.note}/5
+                        </span>
+                      </td>
+                      <td className="px-3 py-3">
+                        <p className="text-gray-900 font-medium whitespace-nowrap">{a.auteur || '—'}</p>
+                        {a.auteur_email && (
+                          <p className="text-[11px] text-gray-500 whitespace-nowrap">{a.auteur_email}</p>
+                        )}
+                      </td>
+                      <td className="px-3 py-3">
+                        {a.commentaire ? (
+                          <p className="text-gray-800 leading-snug whitespace-pre-wrap break-words">
+                            {a.commentaire}
+                          </p>
+                        ) : (
+                          <em className="text-gray-400">Pas de commentaire</em>
+                        )}
+                      </td>
+                      <td className="px-3 py-3">
+                        <span className="text-[11px] text-gray-500 font-mono break-all">
+                          {a.entreprise_id ?? <em className="text-gray-400">général</em>}
+                        </span>
+                      </td>
+                      <td className="px-3 py-3 whitespace-nowrap text-xs text-gray-500">
+                        {new Date(a.created_at).toLocaleDateString('fr-FR', {
+                          day: '2-digit', month: 'short', year: 'numeric',
+                          hour: '2-digit', minute: '2-digit',
+                        })}
+                      </td>
+                      <td className="px-3 py-3">
+                        <div className="flex items-center justify-end gap-1.5 flex-wrap">
+                          {a.status !== 'approved' && (
+                            <button
+                              onClick={() => approve(a.id)}
+                              disabled={actionId === a.id}
+                              className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-green-50 text-green-700 hover:bg-green-100 text-xs font-medium transition-colors disabled:opacity-50"
+                            >
+                              {actionId === a.id ? <Loader2 size={11} className="animate-spin" /> : <Check size={12} />}
+                              Approuver
+                            </button>
+                          )}
+                          {a.status !== 'rejected' && (
+                            <button
+                              onClick={() => reject(a.id)}
+                              disabled={actionId === a.id}
+                              className="px-2.5 py-1 rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 text-xs font-medium transition-colors disabled:opacity-50"
+                            >
+                              Rejeter
+                            </button>
+                          )}
+                          <button
+                            onClick={() => remove(a.id)}
+                            disabled={actionId === a.id}
+                            className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-red-50 text-red-600 hover:bg-red-100 text-xs font-medium transition-colors disabled:opacity-50"
+                          >
+                            <Trash2 size={12} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>
