@@ -77,7 +77,7 @@ export const LeisureEventsSection: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3 md:gap-4 mb-5">
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-5 gap-1.5 sm:gap-3 md:gap-4 mb-5">
           {leisureCards.map((card) => {
             const Icon = card.icon;
             const url = card.secteur
@@ -91,7 +91,7 @@ export const LeisureEventsSection: React.FC = () => {
                 className="group cursor-pointer block"
               >
                 <div className="relative overflow-hidden rounded-xl sm:rounded-2xl border border-[#D4AF37] shadow-[0_4px_20px_rgba(0,0,0,0.05)] transition-all duration-300 hover:shadow-[0_8px_30px_rgba(74,29,67,0.15)] hover:scale-105">
-                  <div className="aspect-square sm:aspect-[4/5] overflow-hidden max-h-[140px] sm:max-h-none">
+                  <div className="aspect-square sm:aspect-[4/5] overflow-hidden max-h-[95px] sm:max-h-none">
                     <img
                       src={card.image}
                       alt={card.title}
