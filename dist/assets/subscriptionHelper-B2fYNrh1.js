@@ -1,0 +1,1 @@
+function i(r){if(!r)return"decouverte";const e=r.toLowerCase().trim();return e.includes("elite")?"elite":e.includes("premium")?"premium":e.includes("artisan")?"artisan":"decouverte"}function u(r){const e=i(r);return{elite:4,premium:3,artisan:2,decouverte:1}[e]}export{u as g};
