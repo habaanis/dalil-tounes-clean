@@ -1,6 +1,16 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { supabase } from '../lib/supabaseClient';
-import type { User, Session } from '@supabase/supabase-js';
+import type { User, Session, SupabaseClient } from '@supabase/supabase-js';
+
+// Import dynamique : le chunk vendor-supabase (~167 kB) n'est plus inclus
+// dans le bundle principal. Il est chargé uniquement au premier besoin
+// (montage du provider, qui s'exécute après le premier rendu).
+let supabasePromise: Promise<SupabaseClient> | null = null;
+function loadSupabase(): Promise<SupabaseClient> {
+  if (!supabasePromise) {
+    supabasePromise = import('../lib/supabaseClient').then((m) => m.supabase);
+  }
+  return supabasePromise;
+}
 
 interface AuthContextType {
   user: User | null;
@@ -21,31 +31,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [userType, setUserType] = useState<'candidate' | 'company' | null>(null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
+    let unsubscribe: (() => void) | null = null;
+    let cancelled = false;
 
-      if (session?.user) {
-        loadUserType(session.user.id);
-      }
-      setLoading(false);
+    loadSupabase().then((supabase) => {
+      if (cancelled) return;
+
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+
+        if (session?.user) {
+          loadUserType(session.user.id);
+        }
+        setLoading(false);
+      });
+
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange((_event, session) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+
+        if (session?.user) {
+          loadUserType(session.user.id);
+        } else {
+          setUserType(null);
+        }
+        setLoading(false);
+      });
+
+      unsubscribe = () => subscription.unsubscribe();
     });
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-
-      if (session?.user) {
-        loadUserType(session.user.id);
-      } else {
-        setUserType(null);
-      }
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
+    return () => {
+      cancelled = true;
+      if (unsubscribe) unsubscribe();
+    };
   }, []);
 
   const loadUserType = async (userId: string) => {
@@ -55,6 +77,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
+    const supabase = await loadSupabase();
     const { data: candidate } = await supabase
       .from('candidates')
       .select('id')
@@ -72,6 +95,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signUp = async (email: string, password: string, userType: 'candidate' | 'company') => {
     try {
+      const supabase = await loadSupabase();
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -99,6 +123,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     try {
+      const supabase = await loadSupabase();
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -119,6 +144,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signOut = async () => {
+    const supabase = await loadSupabase();
     await supabase.auth.signOut();
     setUserType(null);
     localStorage.removeItem(`userType_${user?.id}`);

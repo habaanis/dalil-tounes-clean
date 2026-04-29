@@ -8,8 +8,6 @@ import Footer from './Footer';
 import { SocialBar } from './SocialBar';
 import { PageHeader } from './PageHeader';
 import { WhatsAppSupport } from './WhatsAppSupport';
-import { prefetchHomeData } from '../lib/homeDataPrefetch';
-import { prefetchBusinessesData } from '../lib/businessesCache';
 
 interface NavItem {
   label: string;
@@ -99,10 +97,19 @@ export const Layout = ({ children }: LayoutProps) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Prefetch des données home + businesses dès le montage — ne fait rien si le cache est frais.
+  // Prefetch des données home + businesses au ralenti après le premier rendu,
+  // via un import dynamique pour sortir Supabase du bundle principal.
   useEffect(() => {
-    prefetchHomeData().catch(() => {});
-    prefetchBusinessesData().catch(() => {});
+    const w = window as unknown as { requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number };
+    const run = () => {
+      import('../lib/homeDataPrefetch').then((m) => m.prefetchHomeData().catch(() => {}));
+      import('../lib/businessesCache').then((m) => m.prefetchBusinessesData().catch(() => {}));
+    };
+    if (typeof w.requestIdleCallback === 'function') {
+      w.requestIdleCallback(run, { timeout: 2000 });
+    } else {
+      setTimeout(run, 500);
+    }
   }, []);
 
   useEffect(() => {

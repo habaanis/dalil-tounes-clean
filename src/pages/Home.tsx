@@ -89,7 +89,7 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
               height="400"
               fetchpriority="high"
               loading="eager"
-              decoding="sync"
+              decoding="async"
             />
             <div className="absolute inset-0 bg-black/30"></div>
 
