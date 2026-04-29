@@ -1,13 +1,16 @@
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState, lazy, Suspense } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
 import { Menu, X, ChevronDown, ChevronRight } from 'lucide-react';
 import LanguageSelector from './LanguageSelector';
-import Footer from './Footer';
-import { SocialBar } from './SocialBar';
-import { PageHeader } from './PageHeader';
-import { WhatsAppSupport } from './WhatsAppSupport';
+
+// Tout ce qui est hors viewport initial est chargé paresseusement : ces
+// composants ne doivent pas peser sur le premier bundle route-based.
+const Footer = lazy(() => import('./Footer'));
+const SocialBar = lazy(() => import('./SocialBar').then(m => ({ default: m.SocialBar })));
+const PageHeader = lazy(() => import('./PageHeader').then(m => ({ default: m.PageHeader })));
+const WhatsAppSupport = lazy(() => import('./WhatsAppSupport').then(m => ({ default: m.WhatsAppSupport })));
 
 interface NavItem {
   label: string;
@@ -374,7 +377,9 @@ export const Layout = ({ children }: LayoutProps) => {
         </div>
       </nav>
 
-      <PageHeader />
+      <Suspense fallback={null}>
+        <PageHeader />
+      </Suspense>
 
       {location.pathname === '/' && (
         <div className="bg-yellow-400 border-b border-yellow-500 fixed top-16 left-0 right-0 z-40">
@@ -406,10 +411,16 @@ export const Layout = ({ children }: LayoutProps) => {
 
       <main className={`min-h-[calc(100vh-5rem)] overflow-x-hidden ${location.pathname === '/' ? 'pt-[124px]' : 'pt-[96px] sm:pt-[104px]'}`}>{children}</main>
 
-      <SocialBar />
-      <Footer />
+      <Suspense fallback={null}>
+        <SocialBar />
+      </Suspense>
+      <Suspense fallback={null}>
+        <Footer />
+      </Suspense>
 
-      <WhatsAppSupport phoneNumber="+21612345678" />
+      <Suspense fallback={null}>
+        <WhatsAppSupport phoneNumber="+21612345678" />
+      </Suspense>
     </div>
   );
 };
