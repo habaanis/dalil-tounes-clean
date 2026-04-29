@@ -2,8 +2,29 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 
+/**
+ * Rend le <link rel="stylesheet"> généré par Vite non bloquant via la technique
+ * preload + onload swap. Le CSS critique du Hero est inline dans index.html,
+ * donc l'affichage initial reste correct avant que la feuille complète n'arrive.
+ */
+const nonBlockingCssPlugin = {
+  name: 'non-blocking-css',
+  transformIndexHtml(html: string) {
+    return html.replace(
+      /<link rel="stylesheet"([^>]*?)>/g,
+      (match: string) => {
+        const attrs = match.slice('<link rel="stylesheet"'.length, -1);
+        return (
+          `<link rel="preload" as="style"${attrs} onload="this.onload=null;this.rel='stylesheet'">` +
+          `<noscript><link rel="stylesheet"${attrs}></noscript>`
+        );
+      }
+    );
+  },
+};
+
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), nonBlockingCssPlugin],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -53,6 +74,12 @@ export default defineConfig({
         chunkFileNames: 'assets/[name]-[hash].js',
         entryFileNames: 'assets/[name]-[hash].js',
       },
+    },
+    // Empêche le preload automatique du chunk Supabase : il reste chargé
+    // dynamiquement au premier besoin (focus recherche, fetch Home, auth).
+    modulePreload: {
+      resolveDependencies: (_filename, deps) =>
+        deps.filter((d) => !d.includes('vendor-supabase')),
     },
     chunkSizeWarningLimit: 600,
     sourcemap: false,

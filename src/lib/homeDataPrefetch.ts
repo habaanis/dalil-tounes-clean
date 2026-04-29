@@ -10,8 +10,15 @@
  * sans provoquer de double-fetch grâce au verrou `inflight`.
  */
 
-import { supabase } from './supabaseClient';
 import { getSubscriptionPriority } from './subscriptionHelper';
+
+// Import dynamique : le chunk vendor-supabase (~167 kB) n'entre pas dans
+// le graphe statique du module Home, donc Vite ne génère pas de modulepreload
+// pour lui. Le SDK n'est chargé qu'au premier fetch réel.
+async function getSupabase() {
+  const m = await import('./supabaseClient');
+  return m.supabase;
+}
 
 export interface HomeBusinessRow {
   id: string;
@@ -81,6 +88,7 @@ function writeHomeCache(result: HomeQueryResult): void {
 }
 
 async function doFetch(): Promise<HomeQueryResult> {
+  const supabase = await getSupabase();
   const [listRes, countRes, certifiedRes] = await Promise.all([
     supabase
       .from('entreprise')
