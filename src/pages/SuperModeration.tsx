@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { supabase, supabaseUrl } from '../lib/supabaseClient';
-import { Check, Trash2, RefreshCw, Star } from 'lucide-react';
+import { Check, Trash2, RefreshCw, Star, Loader2 } from 'lucide-react';
 
 interface Avis {
   id: string;
-  entreprise_id: string;
+  entreprise_id: string | null;
   note: number;
   commentaire: string;
   auteur: string;
@@ -24,13 +24,15 @@ export default function SuperModeration() {
   const load = async () => {
     setLoading(true);
     setError(null);
+    // Requête ultra-simple, aucun filtre sur status
     const { data, error: err } = await supabase
       .from('avis_entreprise')
       .select('*')
-      .order('created_at', { ascending: false })
-      .limit(200);
+      .order('created_at', { ascending: false });
+
     if (err) {
       setError(err);
+      setAvis([]);
     } else {
       setAvis((data as Avis[]) || []);
     }
@@ -46,7 +48,7 @@ export default function SuperModeration() {
       .update({ status: 'approved' })
       .eq('id', id);
     if (err) {
-      alert('Erreur update : ' + JSON.stringify(err, null, 2));
+      alert('Erreur update :\n' + JSON.stringify(err, null, 2));
     } else {
       setAvis(prev => prev.map(a => a.id === id ? { ...a, status: 'approved' } : a));
     }
@@ -60,7 +62,7 @@ export default function SuperModeration() {
       .update({ status: 'rejected' })
       .eq('id', id);
     if (err) {
-      alert('Erreur update : ' + JSON.stringify(err, null, 2));
+      alert('Erreur update :\n' + JSON.stringify(err, null, 2));
     } else {
       setAvis(prev => prev.map(a => a.id === id ? { ...a, status: 'rejected' } : a));
     }
@@ -75,7 +77,7 @@ export default function SuperModeration() {
       .delete()
       .eq('id', id);
     if (err) {
-      alert('Erreur delete : ' + JSON.stringify(err, null, 2));
+      alert('Erreur delete :\n' + JSON.stringify(err, null, 2));
     } else {
       setAvis(prev => prev.filter(a => a.id !== id));
     }
@@ -101,32 +103,33 @@ export default function SuperModeration() {
       <div className="max-w-5xl mx-auto">
 
         {/* Bandeau projet connecté */}
-        <div className="mb-4 px-4 py-3 rounded-xl bg-blue-950 border border-blue-700 font-mono">
-          <p className="text-xs text-blue-300 mb-0.5 uppercase tracking-widest">Projet Supabase connecté (cette page)</p>
-          <p className="text-lg font-bold text-white break-all">{supabaseUrl}</p>
-          <p className="text-xs text-blue-400 mt-1">ID : <strong className="text-white">{supabaseUrl.replace('https://', '').split('.')[0]}</strong></p>
+        <div className="mb-4 px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 font-mono">
+          <p className="text-xs text-gray-400 mb-0.5 uppercase tracking-widest">Projet Supabase connecté</p>
+          <p className="text-base font-bold text-white break-all">{supabaseUrl}</p>
+          <p className="text-xs text-gray-400 mt-1">
+            ID : <strong className="text-green-400">{supabaseUrl.replace('https://', '').split('.')[0]}</strong>
+            <span className="ml-3 text-gray-500">— requête : SELECT * FROM avis_entreprise (sans filtre)</span>
+          </p>
         </div>
 
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Super Modération des Avis</h1>
-            <p className="text-sm text-gray-500 mt-1">Requête directe — supabase.from('avis_entreprise').select('*')</p>
-          </div>
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-2xl font-bold text-gray-900">Super Modération des Avis</h1>
           <button
             onClick={load}
-            className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+            disabled={loading}
+            className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
           >
             <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
             Actualiser
           </button>
         </div>
 
-        {/* Erreur brute */}
+        {/* Erreur brute JSON */}
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
-            <p className="text-sm font-semibold text-red-700 mb-2">Erreur Supabase :</p>
-            <pre className="text-xs text-red-600 overflow-auto whitespace-pre-wrap">
+            <p className="text-sm font-bold text-red-700 mb-2">Erreur Supabase — JSON brut :</p>
+            <pre className="text-xs text-red-600 overflow-auto whitespace-pre-wrap bg-red-100 rounded p-3">
               {JSON.stringify(error, null, 2)}
             </pre>
           </div>
@@ -152,10 +155,26 @@ export default function SuperModeration() {
 
         {/* Contenu */}
         {loading ? (
-          <div className="text-center py-16 text-gray-400">Chargement...</div>
+          <div className="flex flex-col items-center justify-center py-24 gap-3 text-gray-400">
+            <Loader2 size={32} className="animate-spin text-gray-500" />
+            <p className="text-sm">Chargement des avis depuis Supabase...</p>
+          </div>
+        ) : error ? (
+          <div className="text-center py-16">
+            <p className="text-red-500 font-semibold">Échec de la requête — voir l'erreur ci-dessus.</p>
+            <p className="text-sm text-gray-500 mt-1">Vérifiez les politiques RLS et la connexion réseau.</p>
+          </div>
         ) : filtered.length === 0 ? (
-          <div className="text-center py-16 text-gray-400">
-            {error ? 'Erreur — voir ci-dessus' : 'Aucun avis trouvé'}
+          <div className="flex flex-col items-center justify-center py-24 gap-2 text-gray-400">
+            <p className="text-base font-medium">Aucun avis pour le moment</p>
+            <p className="text-sm text-gray-400">
+              {filter !== 'all'
+                ? `Aucun avis avec le statut "${filter}". Essayez le filtre "Tous".`
+                : 'La table avis_entreprise est vide ou la requête n\'a rien retourné.'}
+            </p>
+            <p className="text-xs text-gray-300 font-mono mt-2">
+              SELECT * FROM avis_entreprise → {avis.length} ligne(s) totales
+            </p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -169,15 +188,23 @@ export default function SuperModeration() {
                         <Star size={13} fill="currentColor" />
                         {a.note}/5
                       </span>
-                      <span className="text-xs text-gray-400 font-mono truncate">{a.entreprise_id}</span>
+                      <span className="text-xs text-gray-400 font-mono truncate max-w-[180px]">
+                        {a.entreprise_id ?? <em>entreprise_id null</em>}
+                      </span>
                     </div>
-                    <p className="text-sm text-gray-800 mb-1">{a.commentaire || <em className="text-gray-400">Pas de commentaire</em>}</p>
+                    <p className="text-sm text-gray-800 mb-1">
+                      {a.commentaire || <em className="text-gray-400">Pas de commentaire</em>}
+                    </p>
                     <p className="text-xs text-gray-500">
                       Par <strong>{a.auteur || '—'}</strong>
                       {a.auteur_email ? ` (${a.auteur_email})` : ''}
                       {' · '}
-                      {new Date(a.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                      {new Date(a.created_at).toLocaleDateString('fr-FR', {
+                        day: '2-digit', month: 'short', year: 'numeric',
+                        hour: '2-digit', minute: '2-digit',
+                      })}
                     </p>
+                    <p className="text-xs text-gray-300 font-mono mt-0.5">id: {a.id}</p>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
                     {a.status !== 'approved' && (
@@ -186,7 +213,7 @@ export default function SuperModeration() {
                         disabled={actionId === a.id}
                         className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-green-50 text-green-700 hover:bg-green-100 text-xs font-medium transition-colors disabled:opacity-50"
                       >
-                        <Check size={13} />
+                        {actionId === a.id ? <Loader2 size={11} className="animate-spin" /> : <Check size={13} />}
                         Approuver
                       </button>
                     )}

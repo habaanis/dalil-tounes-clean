@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Send, CheckCircle } from 'lucide-react';
-import { supabase } from '../lib/BoltDatabase';
+import { supabase } from '../lib/supabaseClient';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
 
