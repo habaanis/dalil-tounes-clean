@@ -51,7 +51,7 @@ export default function EntrepriseAvisForm({ entrepriseId, onSuccess }: Entrepri
 
       if (insertError) {
         setSubmitState('error');
-        setErrorDetail(message('erreur_envoi') || 'Erreur — merci de réessayer.');
+        setErrorDetail(insertError.message || message('erreur_envoi') || 'Erreur — merci de réessayer.');
         return;
       }
 
