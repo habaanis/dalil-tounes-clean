@@ -5,6 +5,8 @@ import App from './App.tsx';
 import './index.css';
 import { registerServiceWorker } from './lib/registerServiceWorker';
 import { supportsWebP } from './lib/imageUtils';
+import { LanguageProvider } from './context/LanguageContext';
+import { AuthProvider } from './context/AuthContext';
 
 // Suppression des warnings Supabase tracing non critiques
 const originalConsoleWarn = console.warn;
@@ -13,7 +15,8 @@ console.warn = (...args) => {
   if (
     message.includes('Could not add aborted') ||
     message.includes('no active span found') ||
-    message.includes('aborted.isDebounce')
+    message.includes('aborted.isDebounce') ||
+    message.includes('Multiple GoTrueClient instances')
   ) {
     return;
   }
@@ -28,12 +31,16 @@ const isBoltWebContainer =
   (import.meta.env.DEV && window.location.port === '5173');
 
 // Utiliser HashRouter pour Bolt/dev, BrowserRouter pour production
-const Router = isBoltWebContainer ? HashRouter : BrowserRouter;;
+const Router = isBoltWebContainer ? HashRouter : BrowserRouter;
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Router>
-      <App />
+      <LanguageProvider>
+        <AuthProvider>
+          <App />
+        </AuthProvider>
+      </LanguageProvider>
     </Router>
   </StrictMode>
 );

@@ -30,5 +30,9 @@
 /#/autour-de-moi /around-me 301!
 /#/around-me /around-me 301!
 
+# Exclure les fichiers statiques du SPA fallback
+/service-worker.js  /service-worker.js  200
+/manifest.json      /manifest.json      200
+
 # SPA fallback - toutes les autres routes vers index.html
 /*    /index.html   200

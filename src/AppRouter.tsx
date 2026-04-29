@@ -1,7 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
-import { LanguageProvider } from './context/LanguageContext';
-import { AuthProvider } from './context/AuthContext';
 import { Layout } from './components/Layout';
 
 const Home = lazy(() => import('./pages/Home').then(m => ({ default: m.Home })));
@@ -83,11 +81,9 @@ const PageLoader = () => (
 
 function AppRouter() {
   return (
-    <LanguageProvider>
-      <AuthProvider>
-        <Layout>
-          <Suspense fallback={<PageLoader />}>
-            <Routes>
+    <Layout>
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
               {/* Page d'accueil */}
               <Route path="/" element={<Home />} />
 
@@ -203,11 +199,9 @@ function AppRouter() {
 
               {/* 404 - Redirection vers accueil */}
               <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </Suspense>
-        </Layout>
-      </AuthProvider>
-    </LanguageProvider>
+        </Routes>
+      </Suspense>
+    </Layout>
   );
 }
 
