@@ -7,6 +7,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { ImageGallery } from '../components/ImageGallery';
 import VideoPlayer from '../components/VideoPlayer';
 import EntrepriseAvisForm from '../components/EntrepriseAvisForm';
+import BusinessReviews from '../components/BusinessReviews';
 import { generateShareUrl, extractIdFromSlugUrl } from '../lib/slugify';
 import { cleanAltText, extractFrenchName, cleanArabicField } from '../lib/textNormalization';
 import { SEOHead } from './SEOHead';
@@ -1330,6 +1331,13 @@ export const BusinessDetail = ({
           </div>}
         </div>
       </div>}
+
+      {/* Section Avis clients */}
+      {actualBusinessId && (
+        <div className="px-1 mt-3">
+          <BusinessReviews entrepriseId={actualBusinessId} />
+        </div>
+      )}
 
       {/* Bouton Retour - Ultra Compact */}
       {handleClose && (
