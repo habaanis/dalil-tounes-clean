@@ -7,6 +7,7 @@ interface Review {
   note: number;
   commentaire: string;
   created_at: string;
+  auteur: string | null;
 }
 
 interface BusinessReviewsProps {
@@ -25,7 +26,7 @@ export default function BusinessReviews({ entrepriseId }: BusinessReviewsProps) 
       setLoading(true);
       const { data, error } = await supabase
         .from('avis_entreprise')
-        .select('id, note, commentaire, created_at')
+        .select('id, note, commentaire, created_at, auteur')
         .eq('entreprise_id', entrepriseId)
         .order('created_at', { ascending: false })
         .limit(20);
@@ -103,7 +104,7 @@ export default function BusinessReviews({ entrepriseId }: BusinessReviewsProps) 
                   className="text-xs font-bold text-[#D4AF37]"
                   style={{ fontFamily: "'Playfair Display', serif" }}
                 >
-                  Utilisateur Dalil
+                  {r.auteur && r.auteur.trim() ? r.auteur : 'Anonyme'}
                 </p>
                 {renderStars(r.note)}
               </div>

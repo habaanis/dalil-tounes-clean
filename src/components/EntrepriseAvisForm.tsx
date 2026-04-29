@@ -13,6 +13,7 @@ export default function EntrepriseAvisForm({ entrepriseId, onSuccess }: Entrepri
 
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
+  const [auteur, setAuteur] = useState('');
   const [submitState, setSubmitState] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorDetail, setErrorDetail] = useState<string>('');
   const [submitting, setSubmitting] = useState(false);
@@ -39,10 +40,12 @@ export default function EntrepriseAvisForm({ entrepriseId, onSuccess }: Entrepri
       const cleanedId = (typeof entrepriseId === 'string' && entrepriseId.trim() !== '')
         ? entrepriseId.trim()
         : null;
+      const auteurValue = (auteur || '').trim();
       const payload = {
         entreprise_id: cleanedId,
         note: rating,
         commentaire: commentaireValue,
+        auteur: auteurValue || null,
         status: 'approved',
       };
       const { error: insertError } = await supabase
@@ -58,6 +61,7 @@ export default function EntrepriseAvisForm({ entrepriseId, onSuccess }: Entrepri
       setSubmitState('success');
       setRating(0);
       setComment('');
+      setAuteur('');
 
       if (onSuccess) {
         setTimeout(() => onSuccess(), 1500);
@@ -127,6 +131,26 @@ export default function EntrepriseAvisForm({ entrepriseId, onSuccess }: Entrepri
             {rating === 5 && 'Excellent'}
           </p>
         )}
+
+        {/* Nom / Pseudo (optionnel) */}
+        <div style={{ marginBottom: '3px' }}>
+          <label
+            htmlFor="avis-auteur"
+            style={{ display: 'block', fontSize: '9px', color: '#D4AF37', marginBottom: '2px', fontWeight: 600 }}
+          >
+            Nom ou pseudo
+          </label>
+          <input
+            id="avis-auteur"
+            name="auteur"
+            type="text"
+            value={auteur}
+            onChange={(e) => setAuteur(e.target.value)}
+            maxLength={60}
+            style={inputStyle}
+            placeholder="Laisser vide pour rester anonyme"
+          />
+        </div>
 
         {/* Commentaire (obligatoire) */}
         <div style={{ marginBottom: '3px' }}>
