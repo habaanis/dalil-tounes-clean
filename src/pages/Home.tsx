@@ -76,15 +76,15 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
     <div>
       <StructuredData data={[generateOrganizationSchema(), generateWebSiteSchema()]} />
 
-      {/* 1. Hero */}
+      {/* 1. Hero — aucune animation / filtre au-dessus de la ligne de flottaison
+           pour ne pas repousser la mesure du LCP. */}
       <section className="py-4 px-4">
         <div className="max-w-6xl mx-auto">
-          <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-[#D4AF37] text-center">
-            {/* LCP element — loading=eager + fetchpriority=high obligatoires, jamais lazy */}
+          <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 border border-[#D4AF37] text-center">
             <img
               src={HERO_IMAGE_URL}
               alt="Drapeau de la Tunisie"
-              className="absolute inset-0 w-full h-full object-cover brightness-105"
+              className="absolute inset-0 w-full h-full object-cover"
               width="1200"
               height="400"
               fetchpriority="high"
@@ -94,10 +94,10 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
             <div className="absolute inset-0 bg-black/30"></div>
 
             <div className="relative z-10">
-              <h1 className="text-2xl md:text-3xl font-light text-white mb-4 drop-shadow-lg" style={{ fontFamily: "'Playfair Display', serif" }}>
+              <h1 className="text-2xl md:text-3xl font-light text-white mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
                 {t.home.connection.title}
               </h1>
-              <p className="text-base md:text-lg text-white leading-relaxed italic font-medium drop-shadow-lg" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+              <p className="text-base md:text-lg text-white leading-relaxed italic font-medium" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
                 {t.home.connection.description}
               </p>
             </div>
@@ -105,17 +105,19 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
         </div>
       </section>
 
-      {/* 1.5 Bouton Concept Premium */}
-      <section className="py-2.5 px-4">
+      {/* 1.5 Bouton Concept Premium — compact sur mobile pour ne pas
+           repousser le drapeau hors du viewport initial. Aucune animation
+           d'apparition ni transform : elles retardent le LCP. */}
+      <section className="py-2 px-4 md:py-2.5">
         <div className="max-w-6xl mx-auto flex justify-center">
           <a
             href="#/notre-concept"
-            className="group relative inline-flex items-center gap-2.5 px-6 py-2.5 bg-[#4A1D43] rounded-xl shadow-[0_4px_20px_rgba(212,175,55,0.25)] border border-[#D4AF37] hover:shadow-[0_8px_30px_rgba(212,175,55,0.4)] transition-all duration-300 hover:scale-105 hover:bg-[#5A2D53]"
+            className="inline-flex items-center gap-2 px-4 py-1.5 md:px-6 md:py-2.5 bg-[#4A1D43] rounded-xl border border-[#D4AF37]"
           >
-            <span className="relative text-base font-semibold text-[#D4AF37]" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+            <span className="text-sm md:text-base font-semibold text-[#D4AF37]" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
               {t.concept.ctaButton}
             </span>
-            <svg className="relative w-4 h-4 text-[#D4AF37] group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#D4AF37]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </a>
