@@ -32,8 +32,14 @@ export function useHomeData(): HomeData {
       setState({ partners: result.partners, totalCount: result.totalCount, certifiedCount: result.certifiedCount, loading: false });
     });
 
-    // Si le cache est périmé ou absent, déclencher le fetch
-    if (state.loading) {
+    // On diffère le fetch au-delà du premier rendu pour ne pas concurrencer
+    // le chargement de l'image LCP et du code critique. On utilise
+    // requestIdleCallback si dispo, sinon un setTimeout de secours.
+    let idleId: number | undefined;
+    let timeoutId: number | undefined;
+
+    const runFetch = () => {
+      if (!state.loading) return;
       prefetchHomeData()
         .then((result) => {
           setState({ partners: result.partners, totalCount: result.totalCount, certifiedCount: result.certifiedCount, loading: false });
@@ -41,9 +47,24 @@ export function useHomeData(): HomeData {
         .catch(() => {
           setState((s) => ({ ...s, loading: false }));
         });
+    };
+
+    const w = window as unknown as {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+      cancelIdleCallback?: (id: number) => void;
+    };
+
+    if (typeof w.requestIdleCallback === 'function') {
+      idleId = w.requestIdleCallback(runFetch, { timeout: 1500 });
+    } else {
+      timeoutId = window.setTimeout(runFetch, 300);
     }
 
-    return unsub;
+    return () => {
+      unsub();
+      if (idleId !== undefined && typeof w.cancelIdleCallback === 'function') w.cancelIdleCallback(idleId);
+      if (timeoutId !== undefined) window.clearTimeout(timeoutId);
+    };
   // Intentionnellement sans dépendances — on ne veut s'exécuter qu'au montage
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

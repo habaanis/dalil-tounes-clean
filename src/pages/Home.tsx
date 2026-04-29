@@ -2,19 +2,23 @@ import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
 import { useNavigate } from 'react-router-dom';
 import { MapPinned, MessageSquare, BarChart3, Smartphone, Navigation, ChevronRight } from 'lucide-react';
-import { PremiumPartnersSection } from '../components/PremiumPartnersSection';
 import CompanyCountCard from '../components/CompanyCountCard';
-import SearchBar from '../components/SearchBar';
 import { isSearchBarAllowed } from '../config/searchBars';
-import HomeTestimonials from '../components/HomeTestimonials';
-import EntrepriseAvisForm from '../components/EntrepriseAvisForm';
-import { getSupabaseImageUrlTransformed } from '../lib/imageUtils';
 import { HERO_IMAGE_URL } from '../constants/images';
 import StructuredData from '../components/StructuredData';
 import { generateOrganizationSchema, generateWebSiteSchema } from '../lib/structuredDataSchemas';
 import React, { lazy, Suspense } from 'react';
 
+// Tous les composants lourds (liste Premium, Avis, Témoignages, SearchBar)
+// sont chargés paresseusement afin de ne pas bloquer le rendu du Hero / LCP.
+const PremiumPartnersSection = lazy(() =>
+  import('../components/PremiumPartnersSection').then(m => ({ default: m.PremiumPartnersSection }))
+);
 const LeisureEventsSection = lazy(() => import('../components/LeisureEventsSection'));
+const HomeTestimonials = lazy(() => import('../components/HomeTestimonials'));
+const EntrepriseAvisForm = lazy(() => import('../components/EntrepriseAvisForm'));
+const SearchBar = lazy(() => import('../components/SearchBar'));
+
 import { useHomeData } from '../hooks/useHomeData';
 
 
@@ -185,7 +189,9 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
       </section>
 
       {/* 5. Établissements à la Une */}
-      <PremiumPartnersSection onCardClick={(id) => handleNavigateToBusinessDetail(id)} partners={partners} loading={loading} />
+      <Suspense fallback={<div style={{ minHeight: '220px' }} />}>
+        <PremiumPartnersSection onCardClick={(id) => handleNavigateToBusinessDetail(id)} partners={partners} loading={loading} />
+      </Suspense>
 
       {/* 5.5 Slogan Marketing */}
       <section className="py-8 px-4 bg-white">
@@ -204,7 +210,9 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
         <div className="max-w-5xl mx-auto relative z-[1001] overflow-visible">
           {isSearchBarAllowed('home') && (
             <div className="bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-[#D4AF37] p-2.5 md:p-3 relative overflow-visible">
-              <SearchBar scope="global" autoSearch />
+              <Suspense fallback={<div style={{ minHeight: '56px' }} />}>
+                <SearchBar scope="global" autoSearch />
+              </Suspense>
             </div>
           )}
 
@@ -294,7 +302,9 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
               <div className="w-[40px] h-[1px] bg-[#D4AF37]" />
             </div>
           </div>
-          <HomeTestimonials />
+          <Suspense fallback={<div style={{ minHeight: '200px' }} />}>
+            <HomeTestimonials />
+          </Suspense>
         </div>
       </section>
 
@@ -312,7 +322,9 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
               Votre retour nous aide à améliorer Dalil Tounes.
             </p>
           </div>
-          <EntrepriseAvisForm entrepriseId={null} />
+          <Suspense fallback={<div style={{ minHeight: '180px' }} />}>
+            <EntrepriseAvisForm entrepriseId={null} />
+          </Suspense>
         </div>
       </section>
     </div>
