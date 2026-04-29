@@ -24,26 +24,36 @@ export default function EntrepriseAvisForm({ entrepriseId, onSuccess }: Entrepri
     setSubmitState('idle');
     setErrorDetail('');
 
-    if (rating === 0 || !comment.trim()) {
+    const commentaireValue = (comment || '').trim();
+
+    if (rating === 0) {
       setSubmitState('error');
-      setErrorDetail(message('champ_requis'));
+      setErrorDetail('Merci de sélectionner une note (1 à 5 étoiles).');
+      return;
+    }
+
+    if (commentaireValue.length < 3) {
+      setSubmitState('error');
+      setErrorDetail(message('champ_requis') || 'Le commentaire est obligatoire (3 caractères minimum).');
       return;
     }
 
     setSubmitting(true);
     try {
+      const payload = {
+        entreprise_id: entrepriseId ?? null,
+        note: rating,
+        commentaire: commentaireValue,
+        auteur: auteur.trim(),
+        auteur_email: auteurEmail.trim(),
+        status: 'pending',
+        date: new Date().toISOString(),
+        submission_lang,
+      };
+      console.log('[EntrepriseAvisForm] insert payload', payload);
       const { error: insertError } = await supabase
         .from('avis_entreprise')
-        .insert({
-          entreprise_id: entrepriseId ?? null,
-          note: rating,
-          commentaire: comment.trim(),
-          auteur: auteur.trim(),
-          auteur_email: auteurEmail.trim(),
-          status: 'pending',
-          date: new Date().toISOString(),
-          submission_lang,
-        });
+        .insert(payload);
 
       if (insertError) {
         console.error('Erreur insertion:', insertError);
@@ -107,7 +117,7 @@ export default function EntrepriseAvisForm({ entrepriseId, onSuccess }: Entrepri
         </p>
       </div>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} noValidate>
         {/* Étoiles */}
         <div style={{ display: 'flex', gap: '2px', justifyContent: 'center', alignItems: 'center', marginBottom: '3px' }}>
           {[1, 2, 3, 4, 5].map((star) => (
@@ -173,9 +183,7 @@ export default function EntrepriseAvisForm({ entrepriseId, onSuccess }: Entrepri
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             rows={3}
-            minLength={3}
             maxLength={500}
-            required
             aria-required="true"
             style={{ ...inputStyle, resize: 'vertical', marginBottom: '1px', minHeight: '60px' }}
             placeholder={placeholder('votre_commentaire')}
