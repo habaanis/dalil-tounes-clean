@@ -93,11 +93,15 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
     <div>
       <StructuredData data={[generateOrganizationSchema(), generateWebSiteSchema()]} />
 
-      {/* 1. Hero — aucune animation / filtre au-dessus de la ligne de flottaison
-           pour ne pas repousser la mesure du LCP. */}
+      {/* 1. Hero — hauteur fixe (aspect-ratio) pour que l'image LCP soit
+           immédiatement stable. Aucun repaint déclenché par l'arrivée
+           ultérieure des données Supabase. */}
       <section className="py-4 px-4">
         <div className="max-w-6xl mx-auto">
-          <div className="relative overflow-hidden rounded-3xl p-6 md:p-8 border border-[#D4AF37] text-center">
+          <div
+            className="relative overflow-hidden rounded-3xl border border-[#D4AF37] text-center"
+            style={{ aspectRatio: '3 / 1', minHeight: 180 }}
+          >
             <img
               src={HERO_IMAGE_URL}
               alt="Drapeau de la Tunisie"
@@ -108,10 +112,10 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
               loading="eager"
               decoding="async"
             />
-            <div className="absolute inset-0 bg-black/30"></div>
+            <div className="absolute inset-0 bg-black/30" />
 
-            <div className="relative z-10">
-              <h1 className="text-2xl md:text-3xl font-light text-white mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center px-6">
+              <h1 className="text-2xl md:text-3xl font-light text-white mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
                 {t.home.connection.title}
               </h1>
               <p className="text-base md:text-lg text-white leading-relaxed italic font-medium" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
