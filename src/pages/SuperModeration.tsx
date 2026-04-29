@@ -13,6 +13,7 @@ interface Avis {
 
 export default function SuperModeration() {
   const [avis, setAvis] = useState<Avis[]>([]);
+  const [entrepriseNames, setEntrepriseNames] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<any>(null);
   const [actionId, setActionId] = useState<string | null>(null);
@@ -21,7 +22,6 @@ export default function SuperModeration() {
   const load = async () => {
     setLoading(true);
     setError(null);
-    // Requête ultra-simple, aucun filtre sur status
     const { data, error: err } = await supabase
       .from('avis_entreprise')
       .select('id, entreprise_id, note, commentaire, status, created_at')
@@ -30,9 +30,26 @@ export default function SuperModeration() {
     if (err) {
       setError(err);
       setAvis([]);
-    } else {
-      setAvis((data as Avis[]) || []);
+      setLoading(false);
+      return;
     }
+
+    const rows = (data as Avis[]) || [];
+    setAvis(rows);
+
+    const ids = Array.from(new Set(rows.map(r => r.entreprise_id).filter((x): x is string => !!x)));
+    if (ids.length > 0) {
+      const { data: ents } = await supabase
+        .from('entreprise')
+        .select('id, nom')
+        .in('id', ids);
+      const map: Record<string, string> = {};
+      (ents || []).forEach((e: any) => { if (e?.id) map[e.id] = e.nom || ''; });
+      setEntrepriseNames(map);
+    } else {
+      setEntrepriseNames({});
+    }
+
     setLoading(false);
   };
 
@@ -198,9 +215,15 @@ export default function SuperModeration() {
                         )}
                       </td>
                       <td className="px-3 py-3">
-                        <span className="text-[11px] text-gray-500 font-mono break-all">
-                          {a.entreprise_id ?? <em className="text-gray-400">général</em>}
-                        </span>
+                        {a.entreprise_id ? (
+                          <span className="text-xs text-gray-800 font-medium break-words">
+                            {entrepriseNames[a.entreprise_id] || <em className="text-gray-400">Entreprise inconnue</em>}
+                          </span>
+                        ) : (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700 whitespace-nowrap">
+                            SITE GENERAL
+                          </span>
+                        )}
                       </td>
                       <td className="px-3 py-3 whitespace-nowrap text-xs text-gray-500">
                         {new Date(a.created_at).toLocaleDateString('fr-FR', {

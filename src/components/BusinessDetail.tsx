@@ -1248,7 +1248,7 @@ export const BusinessDetail = ({
           {/* Formulaire Avis - masqué pour Gratuit */}
           {tier !== 'gratuit' && (
             <div className="mt-0.5 pt-0.5" style={{ borderTop: `1px solid ${colors.gold}30` }}>
-              <EntrepriseAvisForm entrepriseId={actualBusinessId || ''} />
+              <EntrepriseAvisForm entrepriseId={actualBusinessId || null} />
             </div>
           )}
 

@@ -36,8 +36,11 @@ export default function EntrepriseAvisForm({ entrepriseId, onSuccess }: Entrepri
 
     setSubmitting(true);
     try {
+      const cleanedId = (typeof entrepriseId === 'string' && entrepriseId.trim() !== '')
+        ? entrepriseId.trim()
+        : null;
       const payload = {
-        entreprise_id: entrepriseId ?? null,
+        entreprise_id: cleanedId,
         note: rating,
         commentaire: commentaireValue,
         status: 'approved',
@@ -57,8 +60,11 @@ export default function EntrepriseAvisForm({ entrepriseId, onSuccess }: Entrepri
       setComment('');
 
       if (onSuccess) {
-        setTimeout(() => onSuccess(), 2500);
+        setTimeout(() => onSuccess(), 1500);
       }
+      setTimeout(() => {
+        window.location.reload();
+      }, 1800);
     } catch (err: any) {
       setSubmitState('error');
       setErrorDetail(err?.message ?? 'Erreur inconnue');
@@ -180,10 +186,10 @@ export default function EntrepriseAvisForm({ entrepriseId, onSuccess }: Entrepri
             textAlign: 'center',
           }}>
             <p style={{ fontSize: '10px', color: '#34D399', fontWeight: '700', margin: 0 }}>
-              Avis envoyé !
+              Merci ! Votre avis a été publié
             </p>
             <p style={{ fontSize: '9px', color: '#34D399', margin: '2px 0 0' }}>
-              Votre avis est en cours de validation et sera publié prochainement.
+              Actualisation en cours...
             </p>
           </div>
         )}
