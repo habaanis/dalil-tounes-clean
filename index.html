@@ -44,27 +44,7 @@
     <link rel="preconnect" href="https://kmvjegbtroksjqaqliyv.supabase.co" crossorigin />
     <link rel="preconnect" href="https://ik.imagekit.io" crossorigin />
 
-    <!--
-      Polices Playfair Display hébergées localement.
-      font-display:swap garantit que le texte est visible immédiatement avec la police fallback,
-      puis remplacé sans bloquer le rendu (élimine le FOIT).
-      On preload uniquement sur desktop pour ne pas pénaliser le mobile.
-    -->
-    <link rel="preload" href="/fonts/playfair-display-400-latin.woff2" as="font" type="font/woff2" crossorigin media="(min-width: 769px)" />
-    <link rel="preload" href="/fonts/playfair-display-700-latin.woff2" as="font" type="font/woff2" crossorigin media="(min-width: 769px)" />
-
-    <!--
-      Preload de l'image LCP (hero) avec fetchpriority=high.
-      Indispensable pour que le navigateur commence à télécharger l'image
-      dès le parsing du HTML, avant même que React soit chargé.
-    -->
-    <link
-      rel="preload"
-      as="image"
-      href="https://kmvjegbtroksjqaqliyv.supabase.co/storage/v1/object/public/photos-dalil/drapeau-tunisie.webp?v=1"
-      fetchpriority="high"
-      type="image/webp"
-    />
+    <!-- Polices Playfair Display chargées à la demande via @font-face (font-display:swap) -->
 
     <!-- Canonical et OG par défaut (surchargés par SEOHead) -->
     <link rel="canonical" href="https://dalil-tounes.com/" />
