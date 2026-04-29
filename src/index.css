@@ -59,6 +59,18 @@
   .font-playfair {
     font-family: Georgia, 'Times New Roman', Times, serif !important;
   }
+
+  /* Optimisation images cartes & headers sur mobile */
+  .card img,
+  article img,
+  header img,
+  .business-card img,
+  .page-header img,
+  img.responsive-card-img {
+    width: 100%;
+    max-height: 250px;
+    object-fit: cover;
+  }
 }
 
 /* Blog article prose styles */

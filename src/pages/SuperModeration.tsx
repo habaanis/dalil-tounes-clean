@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase, supabaseUrl } from '../lib/supabaseClient';
+import { supabase } from '../lib/supabaseClient';
 import { Check, Trash2, RefreshCw, Star, Loader2 } from 'lucide-react';
 
 interface Avis {
@@ -102,16 +102,6 @@ export default function SuperModeration() {
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-5xl mx-auto">
 
-        {/* Bandeau projet connecté */}
-        <div className="mb-4 px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 font-mono">
-          <p className="text-xs text-gray-400 mb-0.5 uppercase tracking-widest">Projet Supabase connecté</p>
-          <p className="text-base font-bold text-white break-all">{supabaseUrl}</p>
-          <p className="text-xs text-gray-400 mt-1">
-            ID : <strong className="text-green-400">{supabaseUrl.replace('https://', '').split('.')[0]}</strong>
-            <span className="ml-3 text-gray-500">— requête : SELECT * FROM avis_entreprise (sans filtre)</span>
-          </p>
-        </div>
-
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-2xl font-bold text-gray-900">Super Modération des Avis</h1>
@@ -170,10 +160,7 @@ export default function SuperModeration() {
             <p className="text-sm text-gray-400">
               {filter !== 'all'
                 ? `Aucun avis avec le statut "${filter}". Essayez le filtre "Tous".`
-                : 'La table avis_entreprise est vide ou la requête n\'a rien retourné.'}
-            </p>
-            <p className="text-xs text-gray-300 font-mono mt-2">
-              SELECT * FROM avis_entreprise → {avis.length} ligne(s) totales
+                : 'Aucun avis soumis pour le moment.'}
             </p>
           </div>
         ) : (

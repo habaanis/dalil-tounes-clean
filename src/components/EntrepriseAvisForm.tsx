@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Star, Send } from 'lucide-react';
-import { supabase, supabaseUrl } from '../lib/supabaseClient';
+import { supabase } from '../lib/supabaseClient';
 import { useFormTranslation } from '../hooks/useFormTranslation';
 
 interface EntrepriseAvisFormProps {
@@ -27,14 +27,12 @@ export default function EntrepriseAvisForm({ entrepriseId, onSuccess }: Entrepri
     const commentaireValue = (comment || '').trim();
 
     if (rating === 0) {
-      setSubmitState('error');
-      setErrorDetail('Merci de sélectionner une note (1 à 5 étoiles).');
+      alert('Merci de sélectionner une note.');
       return;
     }
 
-    if (commentaireValue.length < 3) {
-      setSubmitState('error');
-      setErrorDetail(message('champ_requis') || 'Le commentaire est obligatoire (3 caractères minimum).');
+    if (!commentaireValue) {
+      alert("Merci d'écrire un commentaire");
       return;
     }
 
@@ -50,15 +48,13 @@ export default function EntrepriseAvisForm({ entrepriseId, onSuccess }: Entrepri
         date: new Date().toISOString(),
         submission_lang,
       };
-      console.log('[EntrepriseAvisForm] insert payload', payload);
       const { error: insertError } = await supabase
         .from('avis_entreprise')
         .insert(payload);
 
       if (insertError) {
-        console.error('Erreur insertion:', insertError);
         setSubmitState('error');
-        setErrorDetail(JSON.stringify(insertError, null, 2));
+        setErrorDetail(message('erreur_envoi') || 'Erreur — merci de réessayer.');
         return;
       }
 
@@ -72,9 +68,8 @@ export default function EntrepriseAvisForm({ entrepriseId, onSuccess }: Entrepri
         setTimeout(() => onSuccess(), 2500);
       }
     } catch (err: any) {
-      console.error('Erreur:', err);
       setSubmitState('error');
-      setErrorDetail(err?.message ?? JSON.stringify(err));
+      setErrorDetail(err?.message ?? 'Erreur inconnue');
     } finally {
       setSubmitting(false);
     }
@@ -103,20 +98,6 @@ export default function EntrepriseAvisForm({ entrepriseId, onSuccess }: Entrepri
         zIndex: 50,
       }}
     >
-      {/* Diagnostic projet connecté */}
-      <div style={{
-        marginBottom: '6px',
-        padding: '4px 6px',
-        borderRadius: '4px',
-        backgroundColor: 'rgba(30,58,138,0.5)',
-        border: '1px solid #3B82F6',
-        fontFamily: 'monospace',
-      }}>
-        <p style={{ fontSize: '8px', color: '#93C5FD', margin: 0 }}>
-          Projet : <strong style={{ color: '#fff' }}>{supabaseUrl.replace('https://', '').split('.')[0]}</strong>
-        </p>
-      </div>
-
       <form onSubmit={handleSubmit} noValidate>
         {/* Étoiles */}
         <div style={{ display: 'flex', gap: '2px', justifyContent: 'center', alignItems: 'center', marginBottom: '3px' }}>

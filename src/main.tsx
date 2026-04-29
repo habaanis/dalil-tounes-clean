@@ -49,6 +49,26 @@ if (import.meta.env.PROD) {
   registerServiceWorker();
 }
 
-supportsWebP().then((supported) => {
-  console.log(`[Image Optimization] WebP support: ${supported ? 'YES ✓' : 'NO ✗'}`);
+supportsWebP();
+
+// Applique loading="lazy" automatiquement à toutes les <img> (existantes + dynamiques)
+const applyLazyLoading = (root: ParentNode) => {
+  root.querySelectorAll('img:not([loading])').forEach((img) => {
+    img.setAttribute('loading', 'lazy');
+  });
+};
+applyLazyLoading(document);
+const imgObserver = new MutationObserver((mutations) => {
+  for (const m of mutations) {
+    m.addedNodes.forEach((node) => {
+      if (node instanceof HTMLElement) {
+        if (node.tagName === 'IMG' && !node.hasAttribute('loading')) {
+          node.setAttribute('loading', 'lazy');
+        } else {
+          applyLazyLoading(node);
+        }
+      }
+    });
+  }
 });
+imgObserver.observe(document.body, { childList: true, subtree: true });
