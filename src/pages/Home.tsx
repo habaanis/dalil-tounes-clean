@@ -7,6 +7,7 @@ import CompanyCountCard from '../components/CompanyCountCard';
 import SearchBar from '../components/SearchBar';
 import { isSearchBarAllowed } from '../config/searchBars';
 import HomeFeedbackWidget from '../components/HomeFeedbackWidget';
+import HomeTestimonials from '../components/HomeTestimonials';
 import { getSupabaseImageUrlTransformed } from '../lib/imageUtils';
 import { HERO_IMAGE_URL } from '../constants/images';
 import StructuredData from '../components/StructuredData';
@@ -279,7 +280,25 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
             pour renforcer l'autorité interne de cet article. */}
       </section>
 
-      {/* 8. Avis (Feedback) */}
+      {/* Témoignages publics — avis_entreprise avec entreprise_id IS NULL */}
+      <section className="py-10 px-4 bg-gradient-to-b from-white to-gray-50 relative z-[1]">
+        <div className="max-w-6xl mx-auto relative z-[1]">
+          <div className="text-center mb-6">
+            <h2
+              className="text-2xl md:text-3xl font-light text-[#4A1D43] mb-2"
+              style={{ fontFamily: "'Playfair Display', serif" }}
+            >
+              {(t as any).homeExtra?.testimonialsTitle || 'Ils parlent de nous'}
+            </h2>
+            <div className="flex justify-center">
+              <div className="w-[40px] h-[1px] bg-[#D4AF37]" />
+            </div>
+          </div>
+          <HomeTestimonials />
+        </div>
+      </section>
+
+      {/* Avis (Feedback UX) */}
       <section className="py-2.5 px-4 bg-gradient-to-b from-gray-50 to-white relative z-[1]">
         <div className="max-w-2xl mx-auto relative z-[1]">
           <HomeFeedbackWidget />
