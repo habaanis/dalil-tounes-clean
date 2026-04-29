@@ -77,7 +77,7 @@ export const LeisureEventsSection: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3 md:gap-4 mb-5">
           {leisureCards.map((card) => {
             const Icon = card.icon;
             const url = card.secteur
@@ -90,8 +90,8 @@ export const LeisureEventsSection: React.FC = () => {
                 href={url}
                 className="group cursor-pointer block"
               >
-                <div className="relative overflow-hidden rounded-2xl border border-[#D4AF37] shadow-[0_4px_20px_rgba(0,0,0,0.05)] transition-all duration-300 hover:shadow-[0_8px_30px_rgba(74,29,67,0.15)] hover:scale-105">
-                  <div className="aspect-[4/5] overflow-hidden">
+                <div className="relative overflow-hidden rounded-xl sm:rounded-2xl border border-[#D4AF37] shadow-[0_4px_20px_rgba(0,0,0,0.05)] transition-all duration-300 hover:shadow-[0_8px_30px_rgba(74,29,67,0.15)] hover:scale-105">
+                  <div className="aspect-square sm:aspect-[4/5] overflow-hidden max-h-[140px] sm:max-h-none">
                     <img
                       src={card.image}
                       alt={card.title}
@@ -104,19 +104,19 @@ export const LeisureEventsSection: React.FC = () => {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
                   </div>
 
-                  <div className="absolute top-3 right-3">
-                    <div className="bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-lg border border-[#D4AF37]">
-                      <Icon className="w-4 h-4 text-[#4A1D43]" />
+                  <div className="absolute top-1.5 right-1.5 sm:top-3 sm:right-3">
+                    <div className="bg-white/90 backdrop-blur-sm rounded-full p-1 sm:p-2 shadow-lg border border-[#D4AF37]">
+                      <Icon className="w-3 h-3 sm:w-4 sm:h-4 text-[#4A1D43]" />
                     </div>
                   </div>
 
-                  <div className="absolute bottom-0 left-0 right-0 p-4">
-                    <h3 className="text-white font-semibold text-base mb-1.5 drop-shadow-lg">
+                  <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-4">
+                    <h3 className="text-white font-semibold text-xs sm:text-base mb-0.5 sm:mb-1.5 drop-shadow-lg leading-tight">
                       {card.title}
                     </h3>
-                    <div className="flex items-center gap-1.5 text-white/90">
-                      <MapPin className="w-3.5 h-3.5" />
-                      <span className="text-xs drop-shadow">{card.location}</span>
+                    <div className="flex items-center gap-1 sm:gap-1.5 text-white/90">
+                      <MapPin className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
+                      <span className="text-[10px] sm:text-xs drop-shadow truncate">{card.location}</span>
                     </div>
                   </div>
                 </div>
