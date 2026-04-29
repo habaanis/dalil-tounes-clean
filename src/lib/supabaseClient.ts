@@ -1,8 +1,29 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-// Connexion EXCLUSIVEMENT sur la base de production — ne jamais modifier
+// ============================================================================
+// CONNEXION SUPABASE — PROJET DE PRODUCTION kmvjegbtroksjqaqliyv
+// ----------------------------------------------------------------------------
+// Les clés sont codées en dur INTENTIONNELLEMENT et ne doivent JAMAIS être
+// remplacées par import.meta.env.VITE_SUPABASE_URL / _ANON_KEY. Le fichier
+// .env peut dériver (local, preview, build machine) ; ce fichier est la
+// SEULE source de vérité pour l'URL et la clé anonyme de l'application.
+// ============================================================================
 const SUPABASE_URL = 'https://kmvjegbtroksjqaqliyv.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImttdmplZ2J0cm9rc2pxYXFsaXl2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4MDA1NTEsImV4cCI6MjA2NzM3NjU1MX0.MbU7b-HWQBwlYtbJeE7_ABvrGhuhzeAuqvkcVvvoE1o';
+const EXPECTED_PROJECT_REF = 'kmvjegbtroksjqaqliyv';
+
+if (!SUPABASE_URL.includes(EXPECTED_PROJECT_REF)) {
+  throw new Error(
+    `[supabaseClient] URL inattendue: ${SUPABASE_URL}. Projet attendu: ${EXPECTED_PROJECT_REF}`
+  );
+}
+
+const envUrl = (import.meta as unknown as { env?: Record<string, string> })?.env?.VITE_SUPABASE_URL;
+if (envUrl && !envUrl.includes(EXPECTED_PROJECT_REF) && typeof console !== 'undefined') {
+  console.warn(
+    `[supabaseClient] .env VITE_SUPABASE_URL (${envUrl}) diffère du projet attendu (${EXPECTED_PROJECT_REF}). Les valeurs codées en dur sont utilisées.`
+  );
+}
 
 const supabaseInstance: SupabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
