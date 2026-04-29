@@ -41,9 +41,13 @@ export default function AdminAvis() {
     setLoading(true);
     setRpcError(null);
 
-    const { data, error } = await supabase.rpc('admin_get_all_avis');
+    const { data, error } = await supabase
+      .from('avis_entreprise')
+      .select('id, entreprise_id, note, commentaire, auteur, auteur_email, status, date, submission_lang')
+      .order('created_at', { ascending: false });
+
     if (error) {
-      console.error('[AdminAvis] RPC error:', error);
+      console.error('[AdminAvis] Select error:', error);
       setRpcError(`Erreur : ${error.message}`);
       setLoading(false);
       return;
@@ -66,10 +70,10 @@ export default function AdminAvis() {
   const updateStatus = async (id: string, newStatus: 'approved' | 'rejected') => {
     setActionLoading(id);
 
-    const { error } = await supabase.rpc('admin_update_avis_status', {
-      avis_id: id,
-      new_status: newStatus,
-    });
+    const { error } = await supabase
+      .from('avis_entreprise')
+      .update({ status: newStatus })
+      .eq('id', id);
     if (error) {
       console.error('[AdminAvis] Update error:', error);
       showToast(`Erreur : ${error.message}`, false);

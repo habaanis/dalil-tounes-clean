@@ -1,6 +1,14 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { lazy, Suspense } from 'react';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { lazy, Suspense, useEffect } from 'react';
 import { Layout } from './components/Layout';
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
 
 const Home = lazy(() => import('./pages/Home').then(m => ({ default: m.Home })));
 const Subscription = lazy(() => import('./pages/Subscription').then(m => ({ default: m.Subscription })));
@@ -82,6 +90,7 @@ const PageLoader = () => (
 function AppRouter() {
   return (
     <Layout>
+      <ScrollToTop />
       <Suspense fallback={<PageLoader />}>
         <Routes>
               {/* Page d'accueil */}
