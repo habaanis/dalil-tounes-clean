@@ -1,0 +1,1 @@
+import{j as r}from"./vendor-react-D93DfVbF.js";import{B as t}from"./BusinessDirectory-CiGCps11.js";import"./index-BVH5P440.js";import"./vendor-icons-DVcGpg9a.js";import"./vendor-router-BqkCBVSV.js";import"./vendor-supabase-qSrGhBJl.js";import"./SignatureCard-CK6VPBy2.js";import"./subscriptionTiers-DRzIP6kI.js";function u(){return r.jsx(t,{mode:"partner"})}export{u as default};
