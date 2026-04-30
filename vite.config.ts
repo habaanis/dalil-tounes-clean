@@ -42,6 +42,14 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
+          // Contextes React globaux : DOIVENT rester dans le chunk principal
+          // (l'entrée), sinon un lazy chunk pourrait importer une seconde copie
+          // du module et obtenir un Symbol distinct de celui du Provider,
+          // provoquant « useLanguage must be used within LanguageProvider ».
+          // Retourner undefined garde ces modules dans l'entry chunk.
+          if (id.includes('/src/context/')) {
+            return undefined;
+          }
           // Bibliothèques critiques au démarrage — chunk dédié pour le cache long terme
           if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/')) {
             return 'vendor-react';
