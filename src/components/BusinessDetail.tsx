@@ -39,13 +39,15 @@ import { getLogoUrl, getLogoStyle, getLogoContainerStyle } from '../lib/logoUtil
 import { HERO_IMAGE_URL } from '../constants/images';
 import GratuitCard from '../components/GratuitCard';
 
-function getFullImageUrl(nomFichier?: string | null): string {
-  if (!nomFichier || nomFichier.trim() === '') return HERO_IMAGE_URL;
-  const cleaned = nomFichier.replace(/\s*,\s*/g, ',');
-  const first = cleaned.split(',').map((s) => s.trim()).find((s) => s.length > 0);
-  if (!first) return HERO_IMAGE_URL;
-  if (first.startsWith('http://') || first.startsWith('https://')) return first;
-  return `https://kmvjegbtroksjqaqliyv.supabase.co/storage/v1/object/public/entreprises/${first}`;
+function getFullImageUrl(url?: string | null): string {
+  if (!url || url.trim() === '') return HERO_IMAGE_URL;
+  let finalUrl = url.trim();
+  if (finalUrl.includes(',')) {
+    finalUrl = finalUrl.split(',')[0].trim();
+  }
+  if (!finalUrl) return HERO_IMAGE_URL;
+  if (finalUrl.startsWith('http://') || finalUrl.startsWith('https://')) return finalUrl;
+  return `https://kmvjegbtroksjqaqliyv.supabase.co/storage/v1/object/public/entreprises/${finalUrl}`;
 }
 
 function buildWhatsAppUrl(raw: string): string {
