@@ -41,9 +41,11 @@ import GratuitCard from '../components/GratuitCard';
 
 function getFullImageUrl(nomFichier?: string | null): string {
   if (!nomFichier || nomFichier.trim() === '') return HERO_IMAGE_URL;
-  const name = nomFichier.trim();
-  if (name.startsWith('http://') || name.startsWith('https://')) return name;
-  return `https://kmvjegbtroksjqaqliyv.supabase.co/storage/v1/object/public/entreprises/${name}`;
+  const cleaned = nomFichier.replace(/\s*,\s*/g, ',');
+  const first = cleaned.split(',').map((s) => s.trim()).find((s) => s.length > 0);
+  if (!first) return HERO_IMAGE_URL;
+  if (first.startsWith('http://') || first.startsWith('https://')) return first;
+  return `https://kmvjegbtroksjqaqliyv.supabase.co/storage/v1/object/public/entreprises/${first}`;
 }
 
 function buildWhatsAppUrl(raw: string): string {
