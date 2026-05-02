@@ -619,6 +619,12 @@ export const BusinessDetail = ({
                 backgroundColor: '#f0ede8',
               }}
             >
+              {(() => {
+                const imageUrlConstruite = getFullImageUrl(business.image_url);
+                console.log('\u{1F50D} Champ brut business.image_url :', business.image_url);
+                console.log('\u{1F50D} URL image utilis\u00e9e :', imageUrlConstruite);
+                return null;
+              })()}
               <img
                 src={getFullImageUrl(business.image_url)}
                 alt={(() => {
