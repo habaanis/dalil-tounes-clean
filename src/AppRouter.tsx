@@ -26,6 +26,7 @@ const Jobs = lazy(() => import('./pages/Jobs').then(m => ({ default: m.Jobs })))
 const PartnerSearch = lazy(() => import('./pages/PartnerSearch').then(m => ({ default: m.PartnerSearch })));
 const BusinessEvents = lazy(() => import('./pages/BusinessEvents').then(m => ({ default: m.BusinessEvents })));
 const BusinessDetail = lazy(() => import('./components/BusinessDetail').then(m => ({ default: m.BusinessDetail })));
+const LegacyBusinessRedirect = lazy(() => import('./components/LegacyBusinessRedirect').then(m => ({ default: m.LegacyBusinessRedirect })));
 const TransportInscription = lazy(() => import('./pages/TransportInscription'));
 const Education = lazy(() => import('./pages/EducationNew'));
 const EducationEventForm = lazy(() => import('./pages/EducationEventForm'));
@@ -115,9 +116,9 @@ function AppRouter() {
               {/* Entreprises */}
               <Route path="/businesses" element={<Businesses />} />
               <Route path="/entreprises" element={<Businesses />} />
-              <Route path="/business/:id/:slug?" element={<BusinessDetail />} />
-              <Route path="/entreprise/:id/:slug?" element={<BusinessDetail />} />
-              <Route path="/entreprises/:id/:slug?" element={<BusinessDetail />} />
+              <Route path="/business/:id/:slug?" element={<LegacyBusinessRedirect />} />
+              <Route path="/entreprise/:id/:slug?" element={<LegacyBusinessRedirect />} />
+              <Route path="/entreprises/:id/:slug?" element={<LegacyBusinessRedirect />} />
               <Route path="/p/:slug" element={<BusinessDetail />} />
 
               {/* Emplois */}
