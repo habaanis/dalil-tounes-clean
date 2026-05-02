@@ -613,7 +613,7 @@ export const BusinessDetail = ({
               }}
             >
               <img
-                src={business.image_url || HERO_IMAGE_URL}
+                src={(business.image_url && business.image_url.trim() !== '') ? business.image_url : HERO_IMAGE_URL}
                 alt={(() => {
                   const ville = business.ville || '';
                   const cat = cleanAltText(business.sous_categories || '');
@@ -631,9 +631,13 @@ export const BusinessDetail = ({
                   minWidth: 0,
                 }}
                 loading="lazy"
+                referrerPolicy="no-referrer"
                 onError={(e) => {
                   const img = e.currentTarget;
-                  img.style.display = 'none';
+                  if (img.src !== HERO_IMAGE_URL && !img.src.endsWith(HERO_IMAGE_URL)) {
+                    img.onerror = null;
+                    img.src = HERO_IMAGE_URL;
+                  }
                 }}
               />
               <div
