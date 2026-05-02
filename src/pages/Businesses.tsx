@@ -19,7 +19,6 @@ import { RegistrationForm } from '../components/RegistrationForm';
 import SignatureCard from '../components/SignatureCard';
 import { normalizeText, removeArabicDiacritics, extractFrenchName, cleanSearchTerm, cleanArabicField } from '../lib/textNormalization';
 import { BusinessCard } from '../components/BusinessCard';
-import { BusinessDetail } from '../components/BusinessDetail';
 import { getSubscriptionPriority } from '../lib/subscriptionHelper';
 import {
   readBusinessesCache,
@@ -93,7 +92,6 @@ export const Businesses = ({
   const [selectedCity, setSelectedCity] = useState(initialSearchCity || '');
   const [pageCategorie, setPageCategorie] = useState<string | null>(null);
   const [showSuggestForm, setShowSuggestForm] = useState(showSuggestionForm);
-  const [selectedBusiness, setSelectedBusiness] = useState<Business | null>(null);
   const [preselectedBusinessId, setPreselectedBusinessId] = useState<string | null>(null);
   const [searching, setSearching] = useState(false);
   const [pendingSearch, setPendingSearch] = useState(false);
@@ -427,13 +425,10 @@ export const Businesses = ({
   }, [searchTerm, selectedCity, selectedCategory, pageCategorie, filterPremium, filterCommerceLocal, filterStatutCarte]);
 
   useEffect(() => {
-    // ✅ CORRECTION BOUCLE INFINIE : enlever selectedBusiness des dépendances
-    // car setSelectedBusiness() déclenche ce useEffect à nouveau
-    if (preselectedBusinessId && !selectedBusiness && businesses.length > 0) {
+    if (preselectedBusinessId && businesses.length > 0) {
       const found = businesses.find((b) => b.id === preselectedBusinessId);
       if (found) {
-        console.log(`[DEBUG] Préselection entreprise trouvée: ${found.name}`);
-        setSelectedBusiness(found);
+        navigate(generateBusinessUrl(found.name, found.id));
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -1198,8 +1193,7 @@ export const Businesses = ({
                         description_ar: business.description_ar || null,
                       }}
                       onClick={() => {
-                        console.log('🔍 [BusinessCard] Ouverture modal pour:', business.name, business.id);
-                        setSelectedBusiness(business);
+                        navigate(generateBusinessUrl(business.name, business.id));
                       }}
                       variant="premium"
                     />
@@ -1221,14 +1215,6 @@ export const Businesses = ({
             </div>
           ) : null}
         </div>
-
-        {selectedBusiness && (
-          <BusinessDetail
-            business={selectedBusiness}
-            onClose={() => setSelectedBusiness(null)}
-            asModal={true}
-          />
-        )}
 
         {/* Modal Formulaire Inscription Entreprise */}
         {showRegistrationForm && (
