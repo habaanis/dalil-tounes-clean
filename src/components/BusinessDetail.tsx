@@ -1062,7 +1062,7 @@ export const BusinessDetail = ({
           {/* Ligne d'Action Horizontale : Réseaux Sociaux + GPS */}
           <div className="flex items-center justify-center gap-1.5 pt-0.5 flex-wrap px-1" style={{ borderTop: `1px solid ${colors.gold}30`, position: 'relative', zIndex: 50, pointerEvents: 'auto' }}>
             {/* WhatsApp - masqué pour Gratuit */}
-            {tier !== 'gratuit' && business.telephone && (
+            {tier !== 'gratuit' && business.telephone && business.whatsapp && business.whatsapp.trim() !== '' && (
               <button
                 onClick={(e) => { e.stopPropagation(); window.open(`https://wa.me/${business.telephone.replace(/[^0-9]/g, '')}`, '_blank'); }}
                 className="flex items-center justify-center w-8 h-8 rounded-full transition-all hover:scale-110 bg-[#25D366] cursor-pointer"
@@ -1076,7 +1076,7 @@ export const BusinessDetail = ({
             )}
 
             {/* Telegram - masqué pour Gratuit */}
-            {tier !== 'gratuit' && business.telephone && (
+            {tier !== 'gratuit' && business.telephone && (business as any).telegram && (business as any).telegram.trim() !== '' && (
               <button
                 onClick={(e) => { e.stopPropagation(); window.open(`https://t.me/${business.telephone.replace(/[^0-9]/g, '')}`, '_blank'); }}
                 className="flex items-center justify-center w-8 h-8 rounded-full transition-all hover:scale-110 bg-[#26A5E4] cursor-pointer"
@@ -1116,7 +1116,7 @@ export const BusinessDetail = ({
 
             {/* Réseaux sociaux - Premium et Elite uniquement */}
             {/* Instagram */}
-            {(tier === 'premium' || tier === 'elite') && business['Lien Instagram'] && (
+            {(tier === 'premium' || tier === 'elite') && business['Lien Instagram'] && business['Lien Instagram'].trim() !== '' && (
               <a
                 href={business['Lien Instagram']}
                 target="_blank"
@@ -1130,7 +1130,7 @@ export const BusinessDetail = ({
             )}
 
             {/* Facebook */}
-            {(tier === 'premium' || tier === 'elite') && business['lien facebook'] && (
+            {(tier === 'premium' || tier === 'elite') && business['lien facebook'] && business['lien facebook'].trim() !== '' && (
               <a
                 href={business['lien facebook']}
                 target="_blank"
@@ -1144,7 +1144,7 @@ export const BusinessDetail = ({
             )}
 
             {/* TikTok */}
-            {(tier === 'premium' || tier === 'elite') && business['Lien TikTok'] && (
+            {(tier === 'premium' || tier === 'elite') && business['Lien TikTok'] && business['Lien TikTok'].trim() !== '' && (
               <a
                 href={business['Lien TikTok']}
                 target="_blank"
@@ -1160,7 +1160,7 @@ export const BusinessDetail = ({
             )}
 
             {/* LinkedIn */}
-            {(tier === 'premium' || tier === 'elite') && business['Lien LinkedIn'] && (
+            {(tier === 'premium' || tier === 'elite') && business['Lien LinkedIn'] && business['Lien LinkedIn'].trim() !== '' && (
               <a
                 href={business['Lien LinkedIn']}
                 target="_blank"
@@ -1174,7 +1174,7 @@ export const BusinessDetail = ({
             )}
 
             {/* YouTube */}
-            {(tier === 'premium' || tier === 'elite') && business['Lien YouTube'] && (
+            {(tier === 'premium' || tier === 'elite') && business['Lien YouTube'] && business['Lien YouTube'].trim() !== '' && (
               <a
                 href={business['Lien YouTube']}
                 target="_blank"
