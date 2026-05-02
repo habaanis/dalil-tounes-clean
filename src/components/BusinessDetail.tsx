@@ -201,6 +201,7 @@ export const BusinessDetail = ({
   const [showDescriptionModal, setShowDescriptionModal] = useState(false);
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [showPhotosModal, setShowPhotosModal] = useState(false);
+  const [isReviewOpen, setIsReviewOpen] = useState(false);
 
   const actualBusinessId = businessId || businessProp?.id;
   useViewTracking(actualBusinessId);
@@ -1245,10 +1246,32 @@ export const BusinessDetail = ({
             </div>
           </div>}
 
-          {/* Formulaire Avis - masqué pour Gratuit */}
+          {/* Formulaire Avis - masqué pour Gratuit - repliable */}
           {tier !== 'gratuit' && (
             <div className="mt-0.5 pt-0.5" style={{ borderTop: `1px solid ${colors.gold}30` }}>
-              <EntrepriseAvisForm entrepriseId={actualBusinessId || null} />
+              <button
+                type="button"
+                onClick={() => setIsReviewOpen((v) => !v)}
+                className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition-all hover:opacity-90"
+                style={{ backgroundColor: `${colors.gold}15`, color: colors.gold, border: `1px solid ${colors.gold}40` }}
+                aria-expanded={isReviewOpen}
+              >
+                <span className="flex items-center gap-1.5">
+                  <span>{isReviewOpen ? '\u2212' : '+'}</span>
+                  <span>Mettez votre avis</span>
+                  <span className="opacity-70">({reviewCount} avis)</span>
+                </span>
+                <ChevronDown
+                  size={14}
+                  className="transition-transform"
+                  style={{ transform: isReviewOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                />
+              </button>
+              {isReviewOpen && (
+                <div className="mt-2">
+                  <EntrepriseAvisForm entrepriseId={actualBusinessId || null} />
+                </div>
+              )}
             </div>
           )}
 
