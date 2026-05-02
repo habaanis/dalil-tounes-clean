@@ -39,6 +39,13 @@ import { getLogoUrl, getLogoStyle, getLogoContainerStyle } from '../lib/logoUtil
 import { HERO_IMAGE_URL } from '../constants/images';
 import GratuitCard from '../components/GratuitCard';
 
+function getFullImageUrl(nomFichier?: string | null): string {
+  if (!nomFichier || nomFichier.trim() === '') return HERO_IMAGE_URL;
+  const name = nomFichier.trim();
+  if (name.startsWith('http://') || name.startsWith('https://')) return name;
+  return `https://kmvjegbtroksjqaqliyv.supabase.co/storage/v1/object/public/entreprises/${name}`;
+}
+
 function buildWhatsAppUrl(raw: string): string {
   const digits = raw.replace(/\D/g, '');
   if (!digits) return '';
@@ -613,7 +620,7 @@ export const BusinessDetail = ({
               }}
             >
               <img
-                src={(business.image_url && business.image_url.trim() !== '') ? business.image_url : HERO_IMAGE_URL}
+                src={getFullImageUrl(business.image_url)}
                 alt={(() => {
                   const ville = business.ville || '';
                   const cat = cleanAltText(business.sous_categories || '');
