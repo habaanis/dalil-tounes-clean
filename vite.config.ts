@@ -25,6 +25,9 @@ const nonBlockingCssPlugin = {
 
 export default defineConfig({
   plugins: [react(), nonBlockingCssPlugin],
+  esbuild: {
+    drop: ['console', 'debugger'],
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

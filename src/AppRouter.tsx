@@ -12,6 +12,7 @@ function ScrollToTop() {
 
 const Home = lazy(() => import('./pages/Home').then(m => ({ default: m.Home })));
 const Subscription = lazy(() => import('./pages/Subscription').then(m => ({ default: m.Subscription })));
+const PaiementConfirmation = lazy(() => import('./pages/PaiementConfirmation'));
 
 const Businesses = lazy(() => import('./pages/Businesses').then(m => ({ default: m.Businesses })));
 const Citizens = lazy(() => import('./pages/Citizens'));
@@ -158,6 +159,7 @@ function AppRouter() {
               {/* Pages publiques */}
               <Route path="/subscription" element={<Subscription />} />
               <Route path="/abonnement" element={<Subscription />} />
+              <Route path="/paiement/confirmation" element={<PaiementConfirmation />} />
               <Route path="/concept" element={<Concept />} />
               <Route path="/notre-concept" element={<Concept />} />
               <Route path="/blog" element={<Blog />} />
