@@ -419,7 +419,7 @@ export const Layout = ({ children }: LayoutProps) => {
       </Suspense>
 
       <Suspense fallback={null}>
-        <WhatsAppSupport phoneNumber="+21612345678" />
+        <WhatsAppSupport phoneNumber="+21627642252" />
       </Suspense>
     </div>
   );
