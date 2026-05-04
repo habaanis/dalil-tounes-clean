@@ -15,6 +15,13 @@ export default function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormPro
   const [userType, setUserType] = useState<'candidate' | 'company'>('candidate');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [cooldown, setCooldown] = useState(0);
+
+  React.useEffect(() => {
+    if (cooldown <= 0) return;
+    const t = setTimeout(() => setCooldown((s) => s - 1), 1000);
+    return () => clearTimeout(t);
+  }, [cooldown]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,8 +43,17 @@ export default function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormPro
       const { user, error: signUpError } = await signUp(email, password, userType);
 
       if (signUpError) {
-        if (signUpError.message.includes('already registered')) {
-          setError('Cet email est déjà utilisé');
+        const msg = (signUpError.message || '').toLowerCase();
+        if (msg.includes('already registered') || msg.includes('already been registered')) {
+          setError('Cet email est déjà utilisé. Connectez-vous plutôt.');
+        } else if (msg.includes('rate limit') || msg.includes('too many') || (signUpError as any).status === 429) {
+          setError('Trop de tentatives d\'inscription. Merci de patienter quelques minutes avant de réessayer.');
+          setCooldown(60);
+        } else if (msg.includes('for security purposes')) {
+          const m = signUpError.message.match(/(\d+)\s*seconds?/i);
+          const secs = m ? parseInt(m[1], 10) : 30;
+          setError(`Pour des raisons de sécurité, merci de patienter ${secs} secondes avant de réessayer.`);
+          setCooldown(secs);
         } else {
           setError(signUpError.message || 'Erreur lors de l\'inscription');
         }
@@ -153,13 +169,13 @@ export default function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormPro
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || cooldown > 0}
             className="w-full py-3 bg-orange-600 text-white rounded-lg font-semibold hover:bg-orange-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {loading && (
               <span className="inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
             )}
-            S'inscrire
+            {cooldown > 0 ? `Réessayer dans ${cooldown}s` : 'S\'inscrire'}
           </button>
         </form>
 
