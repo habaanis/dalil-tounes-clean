@@ -250,6 +250,20 @@ export const Layout = ({ children }: LayoutProps) => {
                         >
                           {tx.navExtra?.adminAroundMe || 'Autour de moi'}
                         </Link>
+                        <Link
+                          to="/admin/commercial"
+                          onClick={() => setOpenMenu(null)}
+                          className="block w-full text-left text-sm px-4 py-2.5 hover:bg-orange-50 transition-colors text-gray-700 hover:text-orange-600 font-semibold"
+                        >
+                          Gestion Terrain
+                        </Link>
+                        <Link
+                          to="/admin/premium"
+                          onClick={() => setOpenMenu(null)}
+                          className="block w-full text-left text-sm px-4 py-2.5 hover:bg-orange-50 transition-colors text-gray-700 hover:text-orange-600"
+                        >
+                          Abonnements Premium
+                        </Link>
                       </div>
                     </div>
                   )}
@@ -362,6 +376,26 @@ export const Layout = ({ children }: LayoutProps) => {
                           className="block w-full text-left px-4 py-2 text-sm rounded-lg text-gray-600 hover:bg-orange-50 hover:text-orange-600 transition-colors"
                         >
                           {tx.navExtra?.adminAroundMe || 'Autour de moi'}
+                        </Link>
+                        <Link
+                          to="/admin/commercial"
+                          onClick={() => {
+                            setShowMobileMenu(false);
+                            setMobileExpandedMenu(null);
+                          }}
+                          className="block w-full text-left px-4 py-2 text-sm rounded-lg text-gray-600 hover:bg-orange-50 hover:text-orange-600 transition-colors font-semibold"
+                        >
+                          Gestion Terrain
+                        </Link>
+                        <Link
+                          to="/admin/premium"
+                          onClick={() => {
+                            setShowMobileMenu(false);
+                            setMobileExpandedMenu(null);
+                          }}
+                          className="block w-full text-left px-4 py-2 text-sm rounded-lg text-gray-600 hover:bg-orange-50 hover:text-orange-600 transition-colors"
+                        >
+                          Abonnements Premium
                         </Link>
                       </div>
                     )}

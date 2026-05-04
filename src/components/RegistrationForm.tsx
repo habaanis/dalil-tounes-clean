@@ -49,8 +49,10 @@ export const RegistrationForm = ({ onClose, selectedPlan }: RegistrationFormProp
     consent: false,
   });
 
-  const cleanPhone = (value: string) => value.replace(/[\s\-().]/g, '');
-  const cleanEmail = (value: string) => value.trim().toLowerCase();
+  const cleanPhone = (value: string | undefined | null) =>
+    (value ?? '').replace(/[\s\-().]/g, '');
+  const cleanEmail = (value: string | undefined | null) =>
+    (value ?? '').trim().toLowerCase();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -149,7 +151,9 @@ ${formData.youtubeUrl ? `- YouTube: ${formData.youtubeUrl}` : ''}`,
         postalCode: '',
         governorate: '',
         phone: '',
+        phone2: '',
         email: '',
+        email2: '',
         website: '',
         sector: '',
         companyDescription: '',

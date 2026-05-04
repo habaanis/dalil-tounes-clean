@@ -16,9 +16,9 @@ import {
 } from 'lucide-react';
 
 // Portail commercial — /admin/commercial
-// Authentifié obligatoire. Le commercial doit exister dans la table `commerciaux`.
-// 3 onglets : Portefeuille (encaissements non versés), Encaisser (recherche artisan + bouton),
-// Mes Versements (RIB, D17, upload preuve).
+// Accessible :
+//  - aux commerciaux (fiche dans `commerciaux`) : vue personnelle (portefeuille, encaissement, versements).
+//  - aux admins (fiche dans `admins`) : vue globale de tous les commerciaux et leurs versements en attente.
 
 const BANK_DETAILS = {
   beneficiaire: 'Mr HABA ANIS TAIEB',
@@ -69,13 +69,31 @@ interface Artisan {
 
 type Tab = 'wallet' | 'encaisser' | 'versements';
 
+interface CommercialLite {
+  id: string;
+  nom: string;
+  zone: string;
+  actif: boolean;
+  portefeuille: number;
+  totalEncaisse: number;
+  nbVersements: number;
+}
+
+interface VersementAdmin extends Versement {
+  commercial_id: string;
+  commercial_nom?: string;
+}
+
 export default function AdminCommercial() {
   const { user, loading: authLoading } = useAuth();
   const [tab, setTab] = useState<Tab>('wallet');
 
   const [profil, setProfil] = useState<{ nom: string; zone: string } | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [encaissements, setEncaissements] = useState<Encaissement[]>([]);
   const [versements, setVersements] = useState<Versement[]>([]);
+  const [allCommerciaux, setAllCommerciaux] = useState<CommercialLite[]>([]);
+  const [allVersements, setAllVersements] = useState<VersementAdmin[]>([]);
   const [loading, setLoading] = useState(true);
   const [feedback, setFeedback] = useState<{ ok: boolean; msg: string } | null>(null);
 
@@ -105,17 +123,24 @@ export default function AdminCommercial() {
     if (!user) return;
     setLoading(true);
 
+    const { data: adminRow } = await supabase
+      .from('admins')
+      .select('id')
+      .eq('id', user.id)
+      .maybeSingle();
+    const admin = !!adminRow;
+    setIsAdmin(admin);
+
     const { data: comm } = await supabase
       .from('commerciaux')
       .select('nom, zone')
       .eq('id', user.id)
       .maybeSingle();
-
     setProfil(comm ?? null);
 
     const { data: enc } = await supabase
       .from('encaissements_cash')
-      .select('id, entreprise_id, tier, montant, recu_numero, verse, created_at')
+      .select('id, commercial_id, entreprise_id, tier, montant, recu_numero, verse, created_at')
       .eq('commercial_id', user.id)
       .order('created_at', { ascending: false });
     setEncaissements((enc || []) as Encaissement[]);
@@ -127,7 +152,68 @@ export default function AdminCommercial() {
       .order('created_at', { ascending: false });
     setVersements((vers || []) as Versement[]);
 
+    if (admin) {
+      const [{ data: allComm }, { data: allEnc }, { data: allVers }] = await Promise.all([
+        supabase.from('commerciaux').select('id, nom, zone, actif').order('nom'),
+        supabase
+          .from('encaissements_cash')
+          .select('commercial_id, montant, verse'),
+        supabase
+          .from('versements_commerciaux')
+          .select('id, commercial_id, montant, methode, preuve_url, statut, created_at')
+          .order('created_at', { ascending: false }),
+      ]);
+
+      const byCommId: Record<string, { portefeuille: number; total: number }> = {};
+      (allEnc || []).forEach((e: any) => {
+        const b = (byCommId[e.commercial_id] ||= { portefeuille: 0, total: 0 });
+        const m = Number(e.montant || 0);
+        b.total += m;
+        if (!e.verse) b.portefeuille += m;
+      });
+      const nbVersByComm: Record<string, number> = {};
+      (allVers || []).forEach((v: any) => {
+        nbVersByComm[v.commercial_id] = (nbVersByComm[v.commercial_id] || 0) + 1;
+      });
+
+      setAllCommerciaux(
+        (allComm || []).map((c: any) => ({
+          id: c.id,
+          nom: c.nom || '—',
+          zone: c.zone || '—',
+          actif: c.actif,
+          portefeuille: byCommId[c.id]?.portefeuille || 0,
+          totalEncaisse: byCommId[c.id]?.total || 0,
+          nbVersements: nbVersByComm[c.id] || 0,
+        }))
+      );
+
+      const nomById: Record<string, string> = Object.fromEntries(
+        (allComm || []).map((c: any) => [c.id, c.nom])
+      );
+      setAllVersements(
+        (allVers || []).map((v: any) => ({
+          ...v,
+          commercial_nom: nomById[v.commercial_id] || v.commercial_id,
+        })) as VersementAdmin[]
+      );
+    }
+
     setLoading(false);
+  };
+
+  const confirmerVersement = async (vId: string) => {
+    const { error } = await supabase
+      .from('versements_commerciaux')
+      .update({ statut: 'confirme' })
+      .eq('id', vId);
+    if (error) {
+      setFeedback({ ok: false, msg: error.message });
+    } else {
+      setFeedback({ ok: true, msg: 'Versement confirmé.' });
+      await loadAll();
+    }
+    setTimeout(() => setFeedback(null), 3000);
   };
 
   const portefeuille = useMemo(
@@ -315,14 +401,14 @@ export default function AdminCommercial() {
     );
   }
 
-  if (!profil) {
+  if (!profil && !isAdmin) {
     return (
       <div className="py-16 px-4">
         <div className="max-w-md mx-auto bg-white border border-gray-200 rounded-2xl p-8 text-center">
           <Users className="w-10 h-10 text-[#4A1D43] mx-auto mb-4" />
           <h1 className="text-xl font-bold text-gray-900 mb-2">Compte non autorisé</h1>
           <p className="text-sm text-gray-600">
-            Votre compte n'est pas enregistré comme commercial. Contactez l'administration.
+            Votre compte n'est pas enregistré comme commercial ni comme administrateur. Contactez l'administration.
           </p>
         </div>
       </div>
@@ -334,13 +420,103 @@ export default function AdminCommercial() {
       <div className="max-w-5xl mx-auto">
         <header className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900">
-            Espace Commercial — {profil.nom || user.email}
+            {profil
+              ? `Espace Commercial — ${profil.nom || user.email}`
+              : `Gestion Terrain — Administrateur`}
           </h1>
           <p className="text-sm text-gray-600">
-            Zone : <span className="font-semibold">{profil.zone || '—'}</span>
+            {profil ? (
+              <>Zone : <span className="font-semibold">{profil.zone || '—'}</span></>
+            ) : (
+              <>Vue globale des commerciaux de Sfax et Sousse.</>
+            )}
+            {isAdmin && <span className="ml-2 inline-block px-2 py-0.5 text-[10px] font-bold rounded bg-[#D4AF37] text-[#4A1D43]">ADMIN</span>}
           </p>
         </header>
 
+        {isAdmin && (
+          <section className="mb-6 bg-white border border-gray-200 rounded-xl p-5">
+            <h2 className="font-bold text-gray-900 mb-3">Mes commerciaux</h2>
+            {allCommerciaux.length === 0 ? (
+              <p className="text-sm text-gray-500">
+                Aucun commercial enregistré. Ajoutez-les dans la table <code>commerciaux</code>.
+              </p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className="text-xs uppercase text-gray-500 bg-gray-50">
+                    <tr>
+                      <th className="text-left px-3 py-2">Nom</th>
+                      <th className="text-left px-3 py-2">Zone</th>
+                      <th className="text-right px-3 py-2">Portefeuille</th>
+                      <th className="text-right px-3 py-2">Total encaissé</th>
+                      <th className="text-right px-3 py-2">Versements</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {allCommerciaux.map((c) => (
+                      <tr key={c.id}>
+                        <td className="px-3 py-2 font-semibold">{c.nom}</td>
+                        <td className="px-3 py-2">{c.zone}</td>
+                        <td className="px-3 py-2 text-right font-bold text-[#4A1D43]">
+                          {c.portefeuille.toFixed(3)} TND
+                        </td>
+                        <td className="px-3 py-2 text-right">{c.totalEncaisse.toFixed(3)} TND</td>
+                        <td className="px-3 py-2 text-right">{c.nbVersements}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            <h2 className="font-bold text-gray-900 mt-6 mb-3">Versements reçus (preuves)</h2>
+            {allVersements.length === 0 ? (
+              <p className="text-sm text-gray-500">Aucun versement signalé pour l'instant.</p>
+            ) : (
+              <ul className="divide-y divide-gray-100">
+                {allVersements.map((v) => (
+                  <li key={v.id} className="py-2 flex flex-wrap justify-between items-center gap-2 text-sm">
+                    <div>
+                      <div className="font-semibold">
+                        {v.commercial_nom} · {Number(v.montant).toFixed(3)} TND ·{' '}
+                        {v.methode === 'd17' ? 'D17' : 'Virement'}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        {new Date(v.created_at).toLocaleString('fr-FR')} · statut :{' '}
+                        <span className={`font-semibold ${v.statut === 'confirme' ? 'text-green-600' : 'text-amber-600'}`}>
+                          {v.statut}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {v.preuve_url && (
+                        <a
+                          href={v.preuve_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-[#4A1D43] font-semibold hover:underline"
+                        >
+                          Voir reçu
+                        </a>
+                      )}
+                      {v.statut !== 'confirme' && (
+                        <button
+                          onClick={() => confirmerVersement(v.id)}
+                          className="px-3 py-1 rounded-md bg-[#059669] text-white text-xs font-bold hover:bg-[#047857]"
+                        >
+                          Confirmer
+                        </button>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        )}
+
+        {profil && (<>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
           <StatCard
             icon={<Wallet className="w-5 h-5" />}
@@ -622,6 +798,7 @@ export default function AdminCommercial() {
             </div>
           </section>
         )}
+        </>)}
       </div>
     </div>
   );
