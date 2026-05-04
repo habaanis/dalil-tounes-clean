@@ -1,4 +1,9 @@
 import { supabase } from '../supabaseClient';
+import { sortByRelevance } from '../searchRelevance';
+
+// Debug temporaire : active les logs de score côté console.
+// Passer à false (ou retirer) une fois validé.
+const DEBUG_RELEVANCE = true;
 
 interface SearchResult {
   id: string;
@@ -43,25 +48,33 @@ export const searchService = {
   async searchAll(query: string, filters: SearchFilters = {}): Promise<SearchResult[]> {
     const { limit = 20, city, category } = filters;
 
+    // On demande un peu plus que 'limit' pour que le tri puisse réordonner
+    // sans perdre de candidats pertinents, puis on re-limite après tri.
+    const fetchLimit = Math.min(Math.max(limit * 3, 30), 100);
+
     const { data, error } = await supabase.rpc('search_entreprise_smart', {
       p_q: query,
       p_ville: city || null,
       p_categorie: category || null,
       p_scope: null,
-      p_limit: limit
+      p_limit: fetchLimit
     });
+
+    // Tri côté front : priorité (prefix > contient > description/tags)
+    const applySort = <T extends Record<string, any>>(rows: T[]): T[] =>
+      sortByRelevance(rows, query, { debug: DEBUG_RELEVANCE }).slice(0, limit);
 
     if (error) {
       console.error('[searchService] searchAll error:', error);
       const { data: fallback, error: fallbackErr } = await supabase
         .from('entreprise')
-        .select('id, nom, ville, description, telephone, image_url, created_at')
+        .select('id, nom, ville, description, telephone, image_url, created_at, tags, "niveau priorité abonnement"')
         .or(`nom.ilike.*${query}*,description.ilike.*${query}*`)
-        .limit(limit);
+        .limit(fetchLimit);
 
       if (fallbackErr) throw fallbackErr;
 
-      return (fallback || []).map((e: any) => ({
+      return applySort(fallback || []).map((e: any) => ({
         id: e.id,
         item_type: 'entreprise',
         title: e.nom || '',
@@ -75,7 +88,7 @@ export const searchService = {
       }));
     }
 
-    return (data || []).map((e: any) => ({
+    return applySort(data || []).map((e: any) => ({
       id: e.id,
       item_type: 'entreprise',
       title: e.nom || '',

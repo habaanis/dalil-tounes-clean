@@ -1,6 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { rpcLog, selectLikeLog } from '../lib/supabaseClient';
 import { Tables, RPC } from '../lib/dbTables';
+import { sortByRelevance } from '../lib/searchRelevance';
+
+// Debug temporaire : logs du score dans la console. Retirer après validation.
+const DEBUG_RELEVANCE = true;
 
 interface EntrepriseItem {
   id: string;
@@ -75,6 +79,8 @@ export function useSuggest(options: UseSuggestOptions = {}): UseSuggestResult {
       ]);
 
       // Handle entreprises result
+      // On applique un tri de pertinence côté front :
+      //  prefix > contient > description/tags, puis priorité d'abonnement.
       if (entreprisesResult.error) {
         console.warn('RPC enterprise_suggest_filtered failed, using fallback:', entreprisesResult.error.message);
 
@@ -83,7 +89,7 @@ export function useSuggest(options: UseSuggestOptions = {}): UseSuggestResult {
           Tables.ENTREPRISE,
           'nom',
           `%${q}%`,
-          8,
+          20,
           { component: 'useSuggest-fallback', scope: 'entreprise' }
         );
 
@@ -91,9 +97,15 @@ export function useSuggest(options: UseSuggestOptions = {}): UseSuggestResult {
           throw fallbackError;
         }
 
-        setEntreprises(fallbackData || []);
+        const sorted = sortByRelevance(fallbackData || [], q, { debug: DEBUG_RELEVANCE });
+        setEntreprises(sorted.slice(0, 8));
       } else {
-        setEntreprises(entreprisesResult.data || []);
+        const sorted = sortByRelevance(
+          (entreprisesResult.data as EntrepriseItem[]) || [],
+          q,
+          { debug: DEBUG_RELEVANCE }
+        );
+        setEntreprises(sorted.slice(0, 8));
       }
 
       // Handle villes result
