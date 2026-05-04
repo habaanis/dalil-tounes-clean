@@ -29,6 +29,13 @@ const BANK_DETAILS = {
 };
 const D17_PHONE = '+216 27 642 252';
 
+// Emails autorisés en tant qu'admin principal.
+// Si l'utilisateur connecté a l'un de ces emails, il est reconnu comme admin,
+// même sans ligne dans la table `admins` (auto-insertion en base au 1er accès).
+const ADMIN_EMAILS = [
+  'contact@dalil-tounes.com',
+];
+
 const TIER_AMOUNTS: Record<string, number> = {
   artisan: 120,
   premium: 240,
@@ -123,12 +130,23 @@ export default function AdminCommercial() {
     if (!user) return;
     setLoading(true);
 
+    const emailLc = (user.email || '').toLowerCase();
+    const isWhitelistedAdmin = ADMIN_EMAILS.includes(emailLc);
+
+    // Auto-provisioning : si l'email est whitelisté mais qu'aucune ligne n'existe
+    // dans `admins`, on l'insère. Cela respecte la RLS (l'INSERT utilise auth.uid()).
+    if (isWhitelistedAdmin) {
+      await supabase
+        .from('admins')
+        .upsert({ id: user.id, email: emailLc }, { onConflict: 'id' });
+    }
+
     const { data: adminRow } = await supabase
       .from('admins')
       .select('id')
       .eq('id', user.id)
       .maybeSingle();
-    const admin = !!adminRow;
+    const admin = !!adminRow || isWhitelistedAdmin;
     setIsAdmin(admin);
 
     const { data: comm } = await supabase
