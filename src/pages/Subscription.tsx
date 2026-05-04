@@ -25,10 +25,10 @@ type ModalType = 'paypal' | 'flouci' | 'manual' | null;
 // Coordonnées bancaires affichées dans le modal "Paiement Manuel".
 // Modifiable ici sans toucher au rendu.
 const BANK_DETAILS = {
-  beneficiaire: 'Dalil Tounes',
-  banque: 'BIAT - Banque Internationale Arabe de Tunisie',
-  rib: '08 123 0123456789012 34',
-  iban: 'TN59 0812 3012 3456 7890 1234',
+  beneficiaire: 'Mr HABA ANIS TAIEB',
+  banque: 'BIAT - Agence Mahdia I (21)',
+  rib: '08 501 000215099368049',
+  iban: 'TN59 0850 1000 2150 9936 8049',
   swift: 'BIATTNTT',
 };
 const D17_PHONE = '+216 27 642 252';
