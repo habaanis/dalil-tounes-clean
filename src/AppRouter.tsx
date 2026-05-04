@@ -48,6 +48,7 @@ const PartnerRequestsAdmin = lazy(() => import('./pages/PartnerRequestsAdmin'));
 const AdminInscriptionsLoisirs = lazy(() => import('./pages/AdminInscriptionsLoisirs'));
 const AdminAvis = lazy(() => import('./pages/AdminAvis'));
 const SuperModeration = lazy(() => import('./pages/SuperModeration'));
+const AdminPremium = lazy(() => import('./pages/AdminPremium'));
 const Auth = lazy(() => import('./pages/Auth'));
 const CandidateDashboard = lazy(() => import('./pages/CandidateDashboard'));
 const CompanyDashboard = lazy(() => import('./pages/CompanyDashboard'));
@@ -184,6 +185,8 @@ function AppRouter() {
               <Route path="/admin/sourcing" element={<AdminSourcing />} />
               <Route path="/admin/avis" element={<AdminAvis />} />
               <Route path="/admin/super-moderation" element={<SuperModeration />} />
+              <Route path="/admin/premium" element={<AdminPremium />} />
+              <Route path="/admin/abonnements" element={<AdminPremium />} />
 
               {/* Debug */}
               <Route path="/searchDebug" element={<SearchDebug />} />

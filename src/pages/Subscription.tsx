@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
-import { Check, Star, CreditCard, Smartphone, X } from 'lucide-react';
+import { Check, Star, CreditCard, Smartphone, X, Landmark, Copy, MessageCircle } from 'lucide-react';
 import { RegistrationForm } from '../components/RegistrationForm';
 import { QuoteForm } from '../components/QuoteForm';
 
@@ -20,7 +20,19 @@ const STRIPE_LINKS: Record<string, { monthly: string; annual: string }> = {
   },
 };
 
-type ModalType = 'paypal' | 'flouci' | null;
+type ModalType = 'paypal' | 'flouci' | 'manual' | null;
+
+// Coordonnées bancaires affichées dans le modal "Paiement Manuel".
+// Modifiable ici sans toucher au rendu.
+const BANK_DETAILS = {
+  beneficiaire: 'Dalil Tounes',
+  banque: 'BIAT - Banque Internationale Arabe de Tunisie',
+  rib: '08 123 0123456789012 34',
+  iban: 'TN59 0812 3012 3456 7890 1234',
+  swift: 'BIATTNTT',
+};
+const D17_PHONE = '+216 27 642 252';
+const WHATSAPP_CONTACT = '21627642252'; // numéro principal clients (sans +)
 
 export const Subscription = () => {
   const { language } = useLanguage();
@@ -30,6 +42,27 @@ export const Subscription = () => {
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annual'>('monthly');
   const [showQuoteForm, setShowQuoteForm] = useState(false);
   const [activeModal, setActiveModal] = useState<ModalType>(null);
+  // Plan ciblé lors de l'ouverture du modal "Paiement Manuel" (pour personnaliser le message WhatsApp).
+  const [manualPlanLabel, setManualPlanLabel] = useState<string>('');
+  const [copiedField, setCopiedField] = useState<string | null>(null);
+
+  const copyToClipboard = async (value: string, field: string) => {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopiedField(field);
+      setTimeout(() => setCopiedField(null), 1500);
+    } catch {
+      // no-op
+    }
+  };
+
+  const openWhatsAppReceipt = () => {
+    const planPart = manualPlanLabel ? ` (${manualPlanLabel})` : '';
+    const message =
+      `Bonjour Dalil Tounes, j'ai effectué le paiement pour l'abonnement${planPart} de [Nom de l'entreprise]. Voici le reçu.`;
+    const url = `https://wa.me/${WHATSAPP_CONTACT}?text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank');
+  };
 
   useEffect(() => {
     const hash = window.location.hash;
@@ -562,7 +595,20 @@ export const Subscription = () => {
                         className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-xs font-semibold bg-[#059669] text-white hover:bg-[#047857] active:scale-95 transition-all shadow-sm hover:shadow-md"
                       >
                         <Smartphone className="w-3.5 h-3.5 flex-shrink-0" />
-                        Payer en Dinars (Flouci 🇹🇳)
+                        Payer en Dinars (Flouci)
+                      </button>
+
+                      {/* Paiement Manuel Sécurisé — Virement bancaire ou D17 */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setManualPlanLabel(plan.name);
+                          setActiveModal('manual');
+                        }}
+                        className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-xs font-semibold bg-white text-[#4A1D43] border-2 border-[#D4AF37] hover:bg-[#FFF8E7] active:scale-95 transition-all shadow-sm hover:shadow-md"
+                      >
+                        <Landmark className="w-3.5 h-3.5 flex-shrink-0" />
+                        Payer par Virement Bancaire ou Versement (D17)
                       </button>
 
                       <p className="text-center text-[10px] text-white/40 pt-0.5 leading-tight">
@@ -646,6 +692,124 @@ export const Subscription = () => {
             >
               J'ai compris
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Paiement Manuel Sécurisé — Virement / D17 + validation WhatsApp */}
+      {activeModal === 'manual' && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          onClick={() => setActiveModal(null)}
+        >
+          <div
+            className="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 sm:p-8 max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setActiveModal(null)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+              aria-label="Fermer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="text-center mb-5">
+              <div className="w-14 h-14 bg-[#4A1D43] rounded-full flex items-center justify-center mx-auto mb-4">
+                <Landmark className="w-7 h-7 text-[#D4AF37]" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-1">Paiement Manuel Sécurisé</h3>
+              <p className="text-sm text-gray-600">
+                Virement bancaire ou versement D17 {manualPlanLabel ? `— ${manualPlanLabel}` : ''}
+              </p>
+            </div>
+
+            {/* RIB / IBAN */}
+            <div className="border border-gray-200 rounded-xl p-4 mb-4 bg-gray-50">
+              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">
+                Coordonnées bancaires (Virement)
+              </h4>
+              <dl className="space-y-2.5 text-sm">
+                <div className="flex justify-between items-center gap-3">
+                  <dt className="text-gray-600">Bénéficiaire</dt>
+                  <dd className="font-semibold text-gray-900 text-right">{BANK_DETAILS.beneficiaire}</dd>
+                </div>
+                <div className="flex justify-between items-center gap-3">
+                  <dt className="text-gray-600">Banque</dt>
+                  <dd className="font-semibold text-gray-900 text-right">{BANK_DETAILS.banque}</dd>
+                </div>
+                <div className="flex justify-between items-center gap-3">
+                  <dt className="text-gray-600">RIB</dt>
+                  <dd className="flex items-center gap-2">
+                    <span className="font-mono font-semibold text-gray-900">{BANK_DETAILS.rib}</span>
+                    <button
+                      type="button"
+                      onClick={() => copyToClipboard(BANK_DETAILS.rib, 'rib')}
+                      className="text-[#4A1D43] hover:text-[#D4AF37] transition-colors"
+                      aria-label="Copier le RIB"
+                    >
+                      <Copy className="w-4 h-4" />
+                    </button>
+                    {copiedField === 'rib' && <span className="text-[10px] text-green-600 font-semibold">copié</span>}
+                  </dd>
+                </div>
+                <div className="flex justify-between items-center gap-3">
+                  <dt className="text-gray-600">IBAN</dt>
+                  <dd className="flex items-center gap-2">
+                    <span className="font-mono font-semibold text-gray-900">{BANK_DETAILS.iban}</span>
+                    <button
+                      type="button"
+                      onClick={() => copyToClipboard(BANK_DETAILS.iban, 'iban')}
+                      className="text-[#4A1D43] hover:text-[#D4AF37] transition-colors"
+                      aria-label="Copier l'IBAN"
+                    >
+                      <Copy className="w-4 h-4" />
+                    </button>
+                    {copiedField === 'iban' && <span className="text-[10px] text-green-600 font-semibold">copié</span>}
+                  </dd>
+                </div>
+                <div className="flex justify-between items-center gap-3">
+                  <dt className="text-gray-600">SWIFT / BIC</dt>
+                  <dd className="font-mono font-semibold text-gray-900">{BANK_DETAILS.swift}</dd>
+                </div>
+              </dl>
+            </div>
+
+            {/* D17 / transfert téléphone */}
+            <div className="border border-gray-200 rounded-xl p-4 mb-5 bg-gradient-to-br from-[#FFF8E7] to-white">
+              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">
+                Versement D17 (transfert par téléphone)
+              </h4>
+              <div className="flex justify-between items-center gap-3 text-sm">
+                <span className="text-gray-600">Numéro D17</span>
+                <div className="flex items-center gap-2">
+                  <span className="font-mono font-semibold text-gray-900">{D17_PHONE}</span>
+                  <button
+                    type="button"
+                    onClick={() => copyToClipboard(D17_PHONE, 'd17')}
+                    className="text-[#4A1D43] hover:text-[#D4AF37] transition-colors"
+                    aria-label="Copier le numéro D17"
+                  >
+                    <Copy className="w-4 h-4" />
+                  </button>
+                  {copiedField === 'd17' && <span className="text-[10px] text-green-600 font-semibold">copié</span>}
+                </div>
+              </div>
+            </div>
+
+            {/* CTA WhatsApp */}
+            <button
+              type="button"
+              onClick={openWhatsAppReceipt}
+              className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl text-sm font-bold bg-[#25D366] text-white hover:bg-[#1EBE5D] active:scale-[0.98] transition-all shadow-lg hover:shadow-xl"
+            >
+              <MessageCircle className="w-5 h-5" strokeWidth={2.5} />
+              J'ai envoyé le paiement (Envoyer le reçu via WhatsApp)
+            </button>
+
+            <p className="text-center text-[11px] text-gray-500 mt-3 leading-relaxed">
+              Votre abonnement sera activé sous 24h après réception de la preuve de paiement.
+            </p>
           </div>
         </div>
       )}
