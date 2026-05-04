@@ -1,25 +1,36 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import SignupForm from '../components/auth/SignupForm';
 import LoginForm from '../components/auth/LoginForm';
 
 interface AuthProps {
-  onNavigate: (page: 'candidateDashboard' | 'companyDashboard') => void;
+  onNavigate?: (page: 'candidateDashboard' | 'companyDashboard') => void;
 }
 
 export default function Auth({ onNavigate }: AuthProps) {
   const { user, userType, loading } = useAuth();
   const [mode, setMode] = useState<'login' | 'signup'>('signup');
+  const navigate = useNavigate();
+
+  const goTo = (page: 'candidateDashboard' | 'companyDashboard') => {
+    if (typeof onNavigate === 'function') {
+      onNavigate(page);
+      return;
+    }
+    if (page === 'candidateDashboard') {
+      navigate('/candidate/dashboard');
+    } else {
+      navigate('/company/dashboard');
+    }
+  };
 
   useEffect(() => {
     if (!loading && user && userType) {
-      if (userType === 'candidate') {
-        onNavigate('candidateDashboard');
-      } else {
-        onNavigate('companyDashboard');
-      }
+      goTo(userType === 'candidate' ? 'candidateDashboard' : 'companyDashboard');
     }
-  }, [user, userType, loading, onNavigate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, userType, loading]);
 
   if (loading) {
     return (
@@ -29,20 +40,12 @@ export default function Auth({ onNavigate }: AuthProps) {
     );
   }
 
-  const handleSignupSuccess = (userType: 'candidate' | 'company') => {
-    if (userType === 'candidate') {
-      onNavigate('candidateDashboard');
-    } else {
-      onNavigate('companyDashboard');
-    }
+  const handleSignupSuccess = (type: 'candidate' | 'company') => {
+    goTo(type === 'candidate' ? 'candidateDashboard' : 'companyDashboard');
   };
 
   const handleLoginSuccess = () => {
-    if (userType === 'candidate') {
-      onNavigate('candidateDashboard');
-    } else {
-      onNavigate('companyDashboard');
-    }
+    goTo(userType === 'candidate' ? 'candidateDashboard' : 'companyDashboard');
   };
 
   return (

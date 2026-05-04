@@ -477,10 +477,10 @@ export default function AdminCommercial() {
                         <td className="px-3 py-2 font-semibold">{c.nom}</td>
                         <td className="px-3 py-2">{c.zone}</td>
                         <td className="px-3 py-2 text-right font-bold text-[#4A1D43]">
-                          {c.portefeuille.toFixed(3)} TND
+                          {Number(c.portefeuille || 0).toFixed(3)} TND
                         </td>
-                        <td className="px-3 py-2 text-right">{c.totalEncaisse.toFixed(3)} TND</td>
-                        <td className="px-3 py-2 text-right">{c.nbVersements}</td>
+                        <td className="px-3 py-2 text-right">{Number(c.totalEncaisse || 0).toFixed(3)} TND</td>
+                        <td className="px-3 py-2 text-right">{c.nbVersements || 0}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -497,7 +497,7 @@ export default function AdminCommercial() {
                   <li key={v.id} className="py-2 flex flex-wrap justify-between items-center gap-2 text-sm">
                     <div>
                       <div className="font-semibold">
-                        {v.commercial_nom} · {Number(v.montant).toFixed(3)} TND ·{' '}
+                        {v.commercial_nom || '—'} · {Number(v.montant || 0).toFixed(3)} TND ·{' '}
                         {v.methode === 'd17' ? 'D17' : 'Virement'}
                       </div>
                       <div className="text-xs text-gray-500">
