@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Lock } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 interface LoginFormProps {
@@ -11,6 +11,7 @@ export default function LoginForm({ onSuccess, onSwitchToSignup }: LoginFormProp
   const { signIn } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -19,12 +20,29 @@ export default function LoginForm({ onSuccess, onSwitchToSignup }: LoginFormProp
     setError(null);
     setLoading(true);
 
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanPassword = password;
+
+    if (!cleanEmail || !cleanPassword) {
+      setError('Merci de renseigner votre email et votre mot de passe.');
+      setLoading(false);
+      return;
+    }
+
     try {
-      const { user, error: signInError } = await signIn(email, password);
+      const { user, error: signInError } = await signIn(cleanEmail, cleanPassword);
 
       if (signInError) {
-        if (signInError.message.includes('Invalid login credentials')) {
-          setError('Email ou mot de passe incorrect');
+        const msg = (signInError.message || '').toLowerCase();
+        const status = (signInError as any).status;
+        if (msg.includes('invalid login credentials') || msg.includes('invalid_credentials')) {
+          setError('Identifiants invalides : email ou mot de passe incorrect.');
+        } else if (msg.includes('email not confirmed') || msg.includes('not confirmed')) {
+          setError('Compte non confirmé. Merci de vérifier votre boîte mail.');
+        } else if (msg.includes('rate limit') || msg.includes('too many') || status === 429) {
+          setError('Trop de tentatives de connexion. Patientez quelques minutes.');
+        } else if (msg.includes('user not found')) {
+          setError('Aucun compte trouvé pour cet email.');
         } else {
           setError(signInError.message || 'Erreur lors de la connexion');
         }
@@ -36,7 +54,7 @@ export default function LoginForm({ onSuccess, onSwitchToSignup }: LoginFormProp
         onSuccess();
       }
     } catch (err: any) {
-      setError(err.message || 'Une erreur est survenue');
+      setError(err?.message || 'Une erreur est survenue');
       setLoading(false);
     }
   };
@@ -66,6 +84,7 @@ export default function LoginForm({ onSuccess, onSwitchToSignup }: LoginFormProp
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
                 className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                 placeholder="votre.email@example.com"
                 required
@@ -80,13 +99,22 @@ export default function LoginForm({ onSuccess, onSwitchToSignup }: LoginFormProp
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                autoComplete="current-password"
+                className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                 placeholder="Votre mot de passe"
                 required
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+                aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500 rounded"
+              >
+                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
             </div>
           </div>
 
