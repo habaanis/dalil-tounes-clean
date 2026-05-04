@@ -49,10 +49,9 @@ export const RegistrationForm = ({ onClose, selectedPlan }: RegistrationFormProp
     consent: false,
   });
 
-  const cleanPhone = (value: string | undefined | null) =>
-    (value ?? '').replace(/[\s\-().]/g, '');
-  const cleanEmail = (value: string | undefined | null) =>
-    (value ?? '').trim().toLowerCase();
+  const s = (v: unknown): string => (typeof v === 'string' ? v : v == null ? '' : String(v));
+  const cleanPhone = (value: unknown) => s(value).replace(/[\s\-().]/g, '');
+  const cleanEmail = (value: unknown) => s(value).trim().toLowerCase();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -69,7 +68,7 @@ export const RegistrationForm = ({ onClose, selectedPlan }: RegistrationFormProp
     try {
       // Validation du format email societe
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(formData.email)) {
+      if (!emailRegex.test(s(formData.email))) {
         setToastMessage('Une erreur est survenue. Veuillez réessayer.');
         setToastType('error');
         setShowToast(true);
@@ -79,11 +78,11 @@ export const RegistrationForm = ({ onClose, selectedPlan }: RegistrationFormProp
 
       // Préparer les données pour la table suggestions_entreprises avec tous les nouveaux champs
       const suggestionData = {
-        nom_entreprise: formData.companyName.trim(),
-        secteur: formData.sector.trim(),
-        ville: formData.city.trim(),
-        contact_suggere: `Tel: ${formData.phone}${formData.phone2 ? ` / ${formData.phone2}` : ''} | Tel_clean: ${cleanPhone(formData.phone)}${formData.phone2 ? ` / ${cleanPhone(formData.phone2)}` : ''} | Contact: ${formData.contactName} (${formData.contactPosition}) - ${formData.contactPhone}`,
-        email_suggesteur: formData.email.trim().toLowerCase(),
+        nom_entreprise: s(formData.companyName).trim(),
+        secteur: s(formData.sector).trim(),
+        ville: s(formData.city).trim(),
+        contact_suggere: `Tel: ${s(formData.phone)}${formData.phone2 ? ` / ${s(formData.phone2)}` : ''} | Tel_clean: ${cleanPhone(formData.phone)}${formData.phone2 ? ` / ${cleanPhone(formData.phone2)}` : ''} | Contact: ${s(formData.contactName)} (${s(formData.contactPosition)}) - ${s(formData.contactPhone)}`,
+        email_suggesteur: s(formData.email).trim().toLowerCase(),
         raison_suggestion: `Demande d'inscription entreprise
 
 INFORMATIONS DÉTAILLÉES:
