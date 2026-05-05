@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import SignupForm from '../components/auth/SignupForm';
 import LoginForm from '../components/auth/LoginForm';
@@ -10,7 +10,10 @@ interface AuthProps {
 
 export default function Auth({ onNavigate }: AuthProps) {
   const { user, userType, loading } = useAuth();
-  const [mode, setMode] = useState<'login' | 'signup'>('signup');
+  const location = useLocation();
+  const initialMode: 'login' | 'signup' =
+    location.pathname === '/login' || location.pathname === '/connexion' ? 'login' : 'signup';
+  const [mode, setMode] = useState<'login' | 'signup'>(initialMode);
   const navigate = useNavigate();
 
   const goTo = (page: 'candidateDashboard' | 'companyDashboard') => {

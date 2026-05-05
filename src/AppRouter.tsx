@@ -151,6 +151,8 @@ function AppRouter() {
 
               {/* Auth */}
               <Route path="/auth" element={<Auth />} />
+              <Route path="/login" element={<Auth />} />
+              <Route path="/signup" element={<Auth />} />
               <Route path="/connexion" element={<Auth />} />
               <Route path="/inscription" element={<Auth />} />
 
