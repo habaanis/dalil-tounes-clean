@@ -102,6 +102,16 @@ export default function AdminCommercial() {
   const [allCommerciaux, setAllCommerciaux] = useState<CommercialLite[]>([]);
   const [allVersements, setAllVersements] = useState<VersementAdmin[]>([]);
   const [loading, setLoading] = useState(true);
+  const [authzChecking, setAuthzChecking] = useState(true);
+  const [authzDebug, setAuthzDebug] = useState<{
+    userId?: string;
+    email?: string;
+    adminRowFound?: boolean;
+    adminRowError?: string;
+    commercialRowFound?: boolean;
+    commercialRowError?: string;
+    whitelisted?: boolean;
+  } | null>(null);
   const [feedback, setFeedback] = useState<{ ok: boolean; msg: string } | null>(null);
 
   // onglet Encaisser
@@ -129,32 +139,51 @@ export default function AdminCommercial() {
   const loadAll = async () => {
     if (!user) return;
     setLoading(true);
+    setAuthzChecking(true);
 
     const emailLc = (user.email || '').toLowerCase();
     const isWhitelistedAdmin = ADMIN_EMAILS.includes(emailLc);
 
-    // Auto-provisioning : si l'email est whitelisté mais qu'aucune ligne n'existe
-    // dans `admins`, on l'insère. Cela respecte la RLS (l'INSERT utilise auth.uid()).
     if (isWhitelistedAdmin) {
-      await supabase
+      const { error: upsertErr } = await supabase
         .from('admins')
         .upsert({ id: user.id, email: emailLc }, { onConflict: 'id' });
+      if (upsertErr) {
+        console.error('[admins.upsert] auto-provisioning échoué', upsertErr);
+      }
     }
 
-    const { data: adminRow } = await supabase
+    const { data: adminRow, error: adminErr } = await supabase
       .from('admins')
       .select('id')
       .eq('id', user.id)
       .maybeSingle();
+    if (adminErr) {
+      console.error('[admins.select] erreur Supabase', { error: adminErr, userId: user.id });
+    }
     const admin = !!adminRow || isWhitelistedAdmin;
     setIsAdmin(admin);
 
-    const { data: comm } = await supabase
+    const { data: comm, error: commErr } = await supabase
       .from('commerciaux')
       .select('nom, zone')
       .eq('id', user.id)
       .maybeSingle();
+    if (commErr) {
+      console.error('[commerciaux.select] erreur Supabase', { error: commErr, userId: user.id });
+    }
     setProfil(comm ?? null);
+
+    setAuthzDebug({
+      userId: user.id,
+      email: emailLc,
+      adminRowFound: !!adminRow,
+      adminRowError: adminErr?.message,
+      commercialRowFound: !!comm,
+      commercialRowError: commErr?.message,
+      whitelisted: isWhitelistedAdmin,
+    });
+    setAuthzChecking(false);
 
     const { data: enc } = await supabase
       .from('encaissements_cash')
@@ -419,10 +448,11 @@ export default function AdminCommercial() {
     setTimeout(() => setFeedback(null), 4000);
   };
 
-  if (authLoading) {
+  if (authLoading || (user && authzChecking)) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center">
+      <div className="min-h-[60vh] flex flex-col items-center justify-center gap-3">
         <Loader2 className="w-6 h-6 animate-spin text-[#4A1D43]" />
+        <p className="text-sm text-gray-600">Vérification des droits d'accès...</p>
       </div>
     );
   }
@@ -450,11 +480,32 @@ export default function AdminCommercial() {
   if (!profil && !isAdmin) {
     return (
       <div className="py-16 px-4">
-        <div className="max-w-md mx-auto bg-white border border-gray-200 rounded-2xl p-8 text-center">
-          <Users className="w-10 h-10 text-[#4A1D43] mx-auto mb-4" />
-          <h1 className="text-xl font-bold text-gray-900 mb-2">Compte non autorisé</h1>
-          <p className="text-sm text-gray-600">
-            Votre compte n'est pas enregistré comme commercial ni comme administrateur. Contactez l'administration.
+        <div className="max-w-2xl mx-auto bg-white border border-gray-200 rounded-2xl p-8">
+          <div className="flex items-start gap-3 mb-6">
+            <Users className="w-10 h-10 text-[#4A1D43] flex-shrink-0" />
+            <div>
+              <h1 className="text-xl font-bold text-gray-900 mb-1">Compte non autorisé</h1>
+              <p className="text-sm text-gray-600">
+                Votre compte n'est pas enregistré comme commercial ni comme administrateur.
+                La page reste affichée pour diagnostic (aucune redirection automatique).
+              </p>
+            </div>
+          </div>
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-xs font-mono space-y-1 text-gray-800">
+            <div><span className="text-gray-500">user.id :</span> {authzDebug?.userId || '—'}</div>
+            <div><span className="text-gray-500">email :</span> {authzDebug?.email || '—'}</div>
+            <div><span className="text-gray-500">whitelisté (ADMIN_EMAILS) :</span> {String(authzDebug?.whitelisted)}</div>
+            <div><span className="text-gray-500">ligne dans admins :</span> {String(authzDebug?.adminRowFound)}</div>
+            {authzDebug?.adminRowError && (
+              <div className="text-red-600">erreur admins : {authzDebug.adminRowError}</div>
+            )}
+            <div><span className="text-gray-500">ligne dans commerciaux :</span> {String(authzDebug?.commercialRowFound)}</div>
+            {authzDebug?.commercialRowError && (
+              <div className="text-red-600">erreur commerciaux : {authzDebug.commercialRowError}</div>
+            )}
+          </div>
+          <p className="text-xs text-gray-500 mt-4">
+            Ouvrez la console (F12) pour le détail complet des erreurs Supabase.
           </p>
         </div>
       </div>
