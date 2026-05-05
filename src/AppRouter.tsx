@@ -191,6 +191,7 @@ function AppRouter() {
               <Route path="/admin/premium" element={<AdminPremium />} />
               <Route path="/admin/abonnements" element={<AdminPremium />} />
               <Route path="/admin/commercial" element={<AdminCommercial />} />
+              <Route path="/commercial" element={<AdminCommercial />} />
 
               {/* Debug */}
               <Route path="/searchDebug" element={<SearchDebug />} />

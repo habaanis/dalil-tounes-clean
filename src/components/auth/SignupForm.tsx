@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Mail, Lock, User, Briefcase, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, User, Briefcase, Eye, EyeOff, CheckCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 interface SignupFormProps {
@@ -9,6 +10,7 @@ interface SignupFormProps {
 
 export default function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormProps) {
   const { signUp } = useAuth();
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -17,6 +19,7 @@ export default function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormPro
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [cooldown, setCooldown] = useState(0);
 
   React.useEffect(() => {
@@ -65,7 +68,13 @@ export default function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormPro
       }
 
       if (user) {
-        onSuccess(userType);
+        setSuccessMessage('Compte créé avec succès ! Bienvenue dans l\'équipe.');
+        setLoading(false);
+        setTimeout(() => {
+          onSuccess(userType);
+          navigate('/commercial');
+        }, 1500);
+        return;
       }
     } catch (err: any) {
       setError(err.message || 'Une erreur est survenue');
@@ -84,6 +93,16 @@ export default function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormPro
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
             {error}
+          </div>
+        )}
+
+        {successMessage && (
+          <div className="mb-6 p-4 bg-green-50 border border-green-200 text-green-800 rounded-lg text-sm flex items-start gap-3" role="status" aria-live="polite">
+            <CheckCircle className="w-5 h-5 flex-shrink-0 text-green-600 mt-0.5" />
+            <div>
+              <div className="font-semibold">{successMessage}</div>
+              <div className="text-xs text-green-700 mt-1">Redirection vers votre espace commercial...</div>
+            </div>
           </div>
         )}
 
@@ -190,13 +209,19 @@ export default function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormPro
 
           <button
             type="submit"
-            disabled={loading || cooldown > 0}
+            disabled={loading || cooldown > 0 || !!successMessage}
             className="w-full py-3 bg-orange-600 text-white rounded-lg font-semibold hover:bg-orange-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
-            {loading && (
-              <span className="inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            {(loading || !!successMessage) && (
+              <span className="inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" aria-hidden="true" />
             )}
-            {cooldown > 0 ? `Réessayer dans ${cooldown}s` : 'S\'inscrire'}
+            {successMessage
+              ? 'Redirection...'
+              : loading
+                ? 'Création en cours...'
+                : cooldown > 0
+                  ? `Réessayer dans ${cooldown}s`
+                  : 'S\'inscrire'}
           </button>
         </form>
 
