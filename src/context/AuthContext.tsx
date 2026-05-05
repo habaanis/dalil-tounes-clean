@@ -34,35 +34,50 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     let unsubscribe: (() => void) | null = null;
     let cancelled = false;
 
-    loadSupabase().then((supabase) => {
-      if (cancelled) return;
+    loadSupabase()
+      .then((supabase) => {
+        if (cancelled) return;
 
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        setSession(session);
-        setUser(session?.user ?? null);
+        supabase.auth
+          .getSession()
+          .then(({ data: { session }, error }) => {
+            if (error) console.error('[AuthContext] getSession error', error);
+            setSession(session);
+            setUser(session?.user ?? null);
+            if (session?.user) {
+              loadUserType(session.user.id).catch((e) =>
+                console.error('[AuthContext] loadUserType failed', e)
+              );
+            }
+          })
+          .catch((e) => console.error('[AuthContext] getSession threw', e))
+          .finally(() => setLoading(false));
 
-        if (session?.user) {
-          loadUserType(session.user.id);
-        }
+        const {
+          data: { subscription },
+        } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+          setSession(nextSession);
+          setUser(nextSession?.user ?? null);
+          if (nextSession?.user) {
+            (async () => {
+              try {
+                await loadUserType(nextSession.user.id);
+              } catch (e) {
+                console.error('[AuthContext] loadUserType (onAuthStateChange) failed', e);
+              }
+            })();
+          } else {
+            setUserType(null);
+          }
+          setLoading(false);
+        });
+
+        unsubscribe = () => subscription.unsubscribe();
+      })
+      .catch((e) => {
+        console.error('[AuthContext] loadSupabase failed', e);
         setLoading(false);
       });
-
-      const {
-        data: { subscription },
-      } = supabase.auth.onAuthStateChange((_event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-
-        if (session?.user) {
-          loadUserType(session.user.id);
-        } else {
-          setUserType(null);
-        }
-        setLoading(false);
-      });
-
-      unsubscribe = () => subscription.unsubscribe();
-    });
 
     return () => {
       cancelled = true;

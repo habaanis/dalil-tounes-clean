@@ -477,44 +477,35 @@ export default function AdminCommercial() {
     );
   }
 
-  if (!profil && !isAdmin) {
-    return (
-      <div className="py-16 px-4">
-        <div className="max-w-2xl mx-auto bg-white border border-gray-200 rounded-2xl p-8">
-          <div className="flex items-start gap-3 mb-6">
-            <Users className="w-10 h-10 text-[#4A1D43] flex-shrink-0" />
-            <div>
-              <h1 className="text-xl font-bold text-gray-900 mb-1">Compte non autorisé</h1>
-              <p className="text-sm text-gray-600">
-                Votre compte n'est pas enregistré comme commercial ni comme administrateur.
-                La page reste affichée pour diagnostic (aucune redirection automatique).
-              </p>
-            </div>
-          </div>
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-xs font-mono space-y-1 text-gray-800">
-            <div><span className="text-gray-500">user.id :</span> {authzDebug?.userId || '—'}</div>
-            <div><span className="text-gray-500">email :</span> {authzDebug?.email || '—'}</div>
-            <div><span className="text-gray-500">whitelisté (ADMIN_EMAILS) :</span> {String(authzDebug?.whitelisted)}</div>
-            <div><span className="text-gray-500">ligne dans admins :</span> {String(authzDebug?.adminRowFound)}</div>
-            {authzDebug?.adminRowError && (
-              <div className="text-red-600">erreur admins : {authzDebug.adminRowError}</div>
-            )}
-            <div><span className="text-gray-500">ligne dans commerciaux :</span> {String(authzDebug?.commercialRowFound)}</div>
-            {authzDebug?.commercialRowError && (
-              <div className="text-red-600">erreur commerciaux : {authzDebug.commercialRowError}</div>
-            )}
-          </div>
-          <p className="text-xs text-gray-500 mt-4">
-            Ouvrez la console (F12) pour le détail complet des erreurs Supabase.
-          </p>
-        </div>
-      </div>
-    );
-  }
+  const hasAuthzError = !!(authzDebug?.adminRowError || authzDebug?.commercialRowError);
+  const noAuthzMatch = !profil && !isAdmin;
 
   return (
     <div className="py-8 px-4 bg-gray-50 min-h-screen">
       <div className="max-w-5xl mx-auto">
+        {(hasAuthzError || noAuthzMatch) && (
+          <div className="mb-6 bg-amber-50 border border-amber-300 rounded-xl p-5">
+            <h2 className="font-bold text-amber-900 mb-2">Diagnostic accès</h2>
+            <div className="bg-white border border-amber-200 rounded-lg p-3 text-xs font-mono space-y-1 text-gray-800">
+              <div><span className="text-gray-500">user.id :</span> {authzDebug?.userId || '—'}</div>
+              <div><span className="text-gray-500">email :</span> {authzDebug?.email || '—'}</div>
+              <div><span className="text-gray-500">whitelisté (ADMIN_EMAILS) :</span> {String(authzDebug?.whitelisted)}</div>
+              <div><span className="text-gray-500">ligne dans admins :</span> {String(authzDebug?.adminRowFound)}</div>
+              {authzDebug?.adminRowError && (
+                <div className="text-red-600 break-all">erreur admins : {authzDebug.adminRowError}</div>
+              )}
+              <div><span className="text-gray-500">ligne dans commerciaux :</span> {String(authzDebug?.commercialRowFound)}</div>
+              {authzDebug?.commercialRowError && (
+                <div className="text-red-600 break-all">erreur commerciaux : {authzDebug.commercialRowError}</div>
+              )}
+            </div>
+            {noAuthzMatch && !hasAuthzError && (
+              <p className="text-xs text-amber-800 mt-3">
+                Aucune fiche commercial/admin trouvée. L'accès reste ouvert pour diagnostic. La sécurité fine sera gérée plus tard.
+              </p>
+            )}
+          </div>
+        )}
         <header className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900">
             {profil

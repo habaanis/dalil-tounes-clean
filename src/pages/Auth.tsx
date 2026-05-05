@@ -31,21 +31,9 @@ export default function Auth({ onNavigate }: AuthProps) {
     }
   };
 
-  useEffect(() => {
-    if (loading) return;
-    if (!user) return;
-    if (!userType) return;
-    goTo(userType === 'candidate' ? 'candidateDashboard' : 'companyDashboard');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, userType, loading]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-50 flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-orange-600 border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
+  // Pas de redirection automatique : l'utilisateur reste sur /login
+  // même si une session existe. La navigation ne se fait qu'après
+  // une action explicite (submit du formulaire).
 
   const handleSignupSuccess = (type: 'candidate' | 'company') => {
     goTo(type === 'candidate' ? 'candidateDashboard' : 'companyDashboard');
