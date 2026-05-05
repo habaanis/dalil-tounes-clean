@@ -8,8 +8,13 @@ interface AuthProps {
   onNavigate?: (page: 'candidateDashboard' | 'companyDashboard') => void;
 }
 
+const ADMIN_EMAILS = [
+  'contact@dalil-tounes.com',
+  'zenanis75@hotmail.com',
+];
+
 export default function Auth({ onNavigate }: AuthProps) {
-  const { user, userType, loading } = useAuth();
+  const { user, userType } = useAuth();
   const location = useLocation();
   const isLoginPath = location.pathname === '/login' || location.pathname === '/connexion';
   const [mode, setMode] = useState<'login' | 'signup'>(isLoginPath ? 'login' : 'signup');
@@ -19,14 +24,22 @@ export default function Auth({ onNavigate }: AuthProps) {
     setMode(isLoginPath ? 'login' : 'signup');
   }, [isLoginPath]);
 
-  const goTo = (page: 'candidateDashboard' | 'companyDashboard') => {
-    if (typeof onNavigate === 'function') {
-      onNavigate(page);
-      return;
-    }
+  const isAdminEmail = (email?: string | null) =>
+    !!email && ADMIN_EMAILS.includes(email.toLowerCase());
+
+  const goTo = (page: 'candidateDashboard' | 'companyDashboard', emailHint?: string) => {
     const from = (location.state as { from?: string } | null)?.from;
     if (from) {
       navigate(from, { replace: true });
+      return;
+    }
+    const candidateEmail = emailHint || user?.email;
+    if (isAdminEmail(candidateEmail)) {
+      navigate('/admin/commercial', { replace: true });
+      return;
+    }
+    if (typeof onNavigate === 'function') {
+      onNavigate(page);
       return;
     }
     if (page === 'candidateDashboard') {
@@ -36,16 +49,12 @@ export default function Auth({ onNavigate }: AuthProps) {
     }
   };
 
-  // Pas de redirection automatique : l'utilisateur reste sur /login
-  // même si une session existe. La navigation ne se fait qu'après
-  // une action explicite (submit du formulaire).
-
   const handleSignupSuccess = (type: 'candidate' | 'company') => {
     goTo(type === 'candidate' ? 'candidateDashboard' : 'companyDashboard');
   };
 
-  const handleLoginSuccess = () => {
-    goTo(userType === 'candidate' ? 'candidateDashboard' : 'companyDashboard');
+  const handleLoginSuccess = (email?: string) => {
+    goTo(userType === 'candidate' ? 'candidateDashboard' : 'companyDashboard', email);
   };
 
   return (

@@ -1,7 +1,10 @@
 import { ReactNode, useEffect, useState, lazy, Suspense } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
 import { useTranslation } from '../lib/i18n';
+
+const ADMIN_EMAILS = ['contact@dalil-tounes.com', 'zenanis75@hotmail.com'];
 import { Menu, X, ChevronDown, ChevronRight } from 'lucide-react';
 import LanguageSelector from './LanguageSelector';
 
@@ -31,8 +34,10 @@ export const Layout = ({ children }: LayoutProps) => {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [mobileExpandedMenu, setMobileExpandedMenu] = useState<string | null>(null);
   const isRTL = language === 'ar';
+  const { user } = useAuth();
+  const isAdmin = !!user?.email && ADMIN_EMAILS.includes(user.email.toLowerCase());
 
-  const showAdminLink = import.meta.env.DEV || import.meta.env.VITE_SHOW_ADMIN_LINK === 'true';
+  const showAdminLink = isAdmin || import.meta.env.DEV || import.meta.env.VITE_SHOW_ADMIN_LINK === 'true';
 
   const tx = t as any;
   const navigationStructure: NavItem[] = [
@@ -40,6 +45,18 @@ export const Layout = ({ children }: LayoutProps) => {
       label: t.nav.home || 'Accueil',
       path: '/',
     },
+    ...(isAdmin
+      ? [
+          {
+            label: 'Espace Admin',
+            path: '/admin/commercial',
+            children: [
+              { label: 'Gestion Commerciaux', path: '/admin/commercial?tab=wallet' },
+              { label: 'Suivi des Versements', path: '/admin/commercial?tab=versements' },
+            ],
+          } as NavItem,
+        ]
+      : []),
     {
       label: t.nav.businesses || 'Entreprises',
       path: '/businesses',
@@ -62,14 +79,18 @@ export const Layout = ({ children }: LayoutProps) => {
         { label: tx.navExtra?.tourism || 'Tourisme Local & Expatriation', path: '/citizens/tourism' },
       ],
     },
-    {
-      label: t.nav.jobs || 'Emploi',
-      path: '/jobs',
-      children: [
-        { label: t.navMenu?.jobs?.browse || 'Parcourir', path: '/jobs' },
-        { label: t.navMenu?.jobs?.post || 'Publier', path: '/emplois/publier' },
-      ],
-    },
+    ...(isAdmin
+      ? []
+      : [
+          {
+            label: t.nav.jobs || 'Emploi',
+            path: '/jobs',
+            children: [
+              { label: t.navMenu?.jobs?.browse || 'Parcourir', path: '/jobs' },
+              { label: t.navMenu?.jobs?.post || 'Publier', path: '/emplois/publier' },
+            ],
+          } as NavItem,
+        ]),
     {
       label: t.nav.subscription || 'Abonnement',
       path: '/subscription',

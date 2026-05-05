@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../context/AuthContext';
 import {
@@ -94,7 +94,19 @@ interface VersementAdmin extends Versement {
 
 export default function AdminCommercial() {
   const { user, loading: authLoading } = useAuth();
-  const [tab, setTab] = useState<Tab>('wallet');
+  const location = useLocation();
+  const initialTab: Tab = (() => {
+    const q = new URLSearchParams(location.search).get('tab');
+    return q === 'versements' || q === 'encaisser' || q === 'wallet' ? (q as Tab) : 'wallet';
+  })();
+  const [tab, setTab] = useState<Tab>(initialTab);
+
+  useEffect(() => {
+    const q = new URLSearchParams(location.search).get('tab');
+    if (q === 'versements' || q === 'encaisser' || q === 'wallet') {
+      setTab(q as Tab);
+    }
+  }, [location.search]);
 
   const [profil, setProfil] = useState<{ nom: string; zone: string } | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);

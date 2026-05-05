@@ -3,7 +3,7 @@ import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 interface LoginFormProps {
-  onSuccess: () => void;
+  onSuccess: (email?: string) => void;
   onSwitchToSignup: () => void;
 }
 
@@ -51,7 +51,7 @@ export default function LoginForm({ onSuccess, onSwitchToSignup }: LoginFormProp
       }
 
       if (user) {
-        onSuccess();
+        onSuccess(cleanEmail);
       }
     } catch (err: any) {
       setError(err?.message || 'Une erreur est survenue');
