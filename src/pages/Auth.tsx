@@ -11,10 +11,13 @@ interface AuthProps {
 export default function Auth({ onNavigate }: AuthProps) {
   const { user, userType, loading } = useAuth();
   const location = useLocation();
-  const initialMode: 'login' | 'signup' =
-    location.pathname === '/login' || location.pathname === '/connexion' ? 'login' : 'signup';
-  const [mode, setMode] = useState<'login' | 'signup'>(initialMode);
+  const isLoginPath = location.pathname === '/login' || location.pathname === '/connexion';
+  const [mode, setMode] = useState<'login' | 'signup'>(isLoginPath ? 'login' : 'signup');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setMode(isLoginPath ? 'login' : 'signup');
+  }, [isLoginPath]);
 
   const goTo = (page: 'candidateDashboard' | 'companyDashboard') => {
     if (typeof onNavigate === 'function') {
@@ -29,9 +32,10 @@ export default function Auth({ onNavigate }: AuthProps) {
   };
 
   useEffect(() => {
-    if (!loading && user && userType) {
-      goTo(userType === 'candidate' ? 'candidateDashboard' : 'companyDashboard');
-    }
+    if (loading) return;
+    if (!user) return;
+    if (!userType) return;
+    goTo(userType === 'candidate' ? 'candidateDashboard' : 'companyDashboard');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, userType, loading]);
 
