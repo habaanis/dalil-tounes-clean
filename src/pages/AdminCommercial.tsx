@@ -305,6 +305,17 @@ export default function AdminCommercial() {
     });
 
     if (insErr) {
+      console.error('[encaissements_cash.insert] échec Supabase', {
+        error: insErr,
+        payload: {
+          commercial_id: user.id,
+          entreprise_id: a.id,
+          tier,
+          montant,
+          recu_numero: recuNumero,
+          verse: false,
+        },
+      });
       setFeedback({ ok: false, msg: `Erreur création reçu : ${insErr.message}` });
     } else {
       setFeedback({
@@ -359,6 +370,16 @@ export default function AdminCommercial() {
       .maybeSingle();
 
     if (insErr || !created) {
+      console.error('[versements_commerciaux.insert] échec Supabase', {
+        error: insErr,
+        payload: {
+          commercial_id: user.id,
+          montant,
+          methode,
+          preuve_url: pub.publicUrl,
+          statut: 'en_attente',
+        },
+      });
       setFeedback({ ok: false, msg: `Erreur création versement : ${insErr?.message}` });
       setUploading(false);
       return;
@@ -374,10 +395,17 @@ export default function AdminCommercial() {
       restant -= Number(enc.montant || 0);
     }
     if (idsARattacher.length > 0) {
-      await supabase
+      const { error: updErr } = await supabase
         .from('encaissements_cash')
         .update({ verse: true, versement_id: created.id })
         .in('id', idsARattacher);
+      if (updErr) {
+        console.error('[encaissements_cash.update] rattachement versement échoué', {
+          error: updErr,
+          versement_id: created.id,
+          ids: idsARattacher,
+        });
+      }
     }
 
     setFile(null);
