@@ -24,10 +24,15 @@ export default function Auth({ onNavigate }: AuthProps) {
       onNavigate(page);
       return;
     }
+    const from = (location.state as { from?: string } | null)?.from;
+    if (from) {
+      navigate(from, { replace: true });
+      return;
+    }
     if (page === 'candidateDashboard') {
-      navigate('/candidate/dashboard');
+      navigate('/dashboard/candidat', { replace: true });
     } else {
-      navigate('/company/dashboard');
+      navigate('/dashboard/entreprise', { replace: true });
     }
   };
 

@@ -34,6 +34,7 @@ const D17_PHONE = '+216 27 642 252';
 // même sans ligne dans la table `admins` (auto-insertion en base au 1er accès).
 const ADMIN_EMAILS = [
   'contact@dalil-tounes.com',
+  'zenanis75@hotmail.com',
 ];
 
 const TIER_AMOUNTS: Record<string, number> = {
