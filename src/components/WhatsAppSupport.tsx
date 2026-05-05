@@ -47,11 +47,11 @@ export const WhatsAppSupport = ({
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
+    <div className="fixed bottom-3 right-3 z-40 flex flex-col gap-2">
       {/* Bouton Messenger */}
       <button
         onClick={handleMessengerClick}
-        className="flex items-center justify-center w-14 h-14 rounded-full shadow-2xl transition-all hover:scale-110 hover:shadow-3xl group"
+        className="flex items-center justify-center w-11 h-11 rounded-full shadow-lg transition-all hover:scale-110 group"
         style={{
           backgroundColor: '#0084FF',
           animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
@@ -59,7 +59,7 @@ export const WhatsAppSupport = ({
         title={text.messenger}
         aria-label={text.messenger}
       >
-        <MessageCircle className="w-7 h-7 text-white" strokeWidth={2.5} fill="white" />
+        <MessageCircle className="w-5 h-5 text-white" strokeWidth={2.5} fill="white" />
 
         {/* Indicateur de disponibilité */}
         <span
@@ -79,7 +79,7 @@ export const WhatsAppSupport = ({
       {/* Bouton WhatsApp */}
       <button
         onClick={handleWhatsAppClick}
-        className="flex items-center justify-center w-14 h-14 rounded-full shadow-2xl transition-all hover:scale-110 hover:shadow-3xl group"
+        className="flex items-center justify-center w-11 h-11 rounded-full shadow-lg transition-all hover:scale-110 group"
         style={{
           backgroundColor: '#25D366',
           animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
@@ -87,7 +87,7 @@ export const WhatsAppSupport = ({
         title={text.whatsapp}
         aria-label={text.whatsapp}
       >
-        <MessageCircle className="w-7 h-7 text-white" strokeWidth={2.5} />
+        <MessageCircle className="w-5 h-5 text-white" strokeWidth={2.5} />
 
         {/* Indicateur de disponibilité */}
         <span

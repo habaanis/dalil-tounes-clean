@@ -641,77 +641,18 @@ export default function AdminCommercial() {
 
             {adminTab === 'portefeuille' && (
               <section className="mb-6 bg-white border border-gray-200 rounded-xl p-5">
-                <div className="flex items-center justify-between mb-3">
-                  <h2 className="font-bold text-gray-900">Mes commerciaux</h2>
+                <h2 className="font-bold text-gray-900 mb-3">Mes commerciaux</h2>
+
+                <div className="mb-4 flex justify-start">
                   <button
-                    onClick={() => setShowAddForm((v) => !v)}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#4A1D43] text-white text-xs font-bold hover:bg-[#5A2D53]"
+                    type="button"
+                    onClick={() => setShowAddForm(true)}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#4A1D43] text-white text-sm font-bold hover:bg-[#5A2D53] shadow-sm"
                   >
                     <Users className="w-4 h-4" />
-                    {showAddForm ? 'Annuler' : 'Ajouter un commercial'}
+                    Ajouter un commercial
                   </button>
                 </div>
-
-                {showAddForm && (
-                  <div className="mb-4 p-4 border border-[#D4AF37] bg-[#FFF8E7] rounded-lg">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-xs font-semibold text-gray-600 mb-1">Nom *</label>
-                        <input
-                          type="text"
-                          value={newComm.nom}
-                          onChange={(e) => setNewComm({ ...newComm, nom: e.target.value })}
-                          placeholder="Ex: Sami Ben Ahmed"
-                          className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-semibold text-gray-600 mb-1">Zone *</label>
-                        <select
-                          value={newComm.zone}
-                          onChange={(e) => setNewComm({ ...newComm, zone: e.target.value })}
-                          className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"
-                        >
-                          <option value="Sfax">Sfax</option>
-                          <option value="Sousse">Sousse</option>
-                          <option value="Tunis">Tunis</option>
-                          <option value="Mahdia">Mahdia</option>
-                          <option value="Monastir">Monastir</option>
-                          <option value="Nabeul">Nabeul</option>
-                          <option value="Autre">Autre</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-xs font-semibold text-gray-600 mb-1">Email</label>
-                        <input
-                          type="email"
-                          value={newComm.email}
-                          onChange={(e) => setNewComm({ ...newComm, email: e.target.value })}
-                          placeholder="nom@exemple.com"
-                          className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-semibold text-gray-600 mb-1">Téléphone</label>
-                        <input
-                          type="tel"
-                          value={newComm.telephone}
-                          onChange={(e) => setNewComm({ ...newComm, telephone: e.target.value })}
-                          placeholder="+216 ..."
-                          className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"
-                        />
-                      </div>
-                    </div>
-                    <button
-                      onClick={addCommercial}
-                      disabled={addingComm}
-                      className="mt-3 w-full sm:w-auto px-5 py-2 rounded-lg bg-[#059669] text-white text-sm font-bold hover:bg-[#047857] disabled:opacity-60 inline-flex items-center gap-2"
-                    >
-                      {addingComm ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
-                      Enregistrer
-                    </button>
-                  </div>
-                )}
 
                 {allCommerciaux.length === 0 ? (
                   <p className="text-sm text-gray-500">
@@ -1084,6 +1025,99 @@ export default function AdminCommercial() {
         )}
         </>)}
       </div>
+
+      {showAddForm && (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4"
+          onClick={() => !addingComm && setShowAddForm(false)}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-gray-900">Ajouter un commercial</h3>
+              <button
+                type="button"
+                onClick={() => !addingComm && setShowAddForm(false)}
+                className="text-gray-400 hover:text-gray-700"
+                aria-label="Fermer"
+              >
+                <XCircle className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="sm:col-span-2">
+                <label className="block text-xs font-semibold text-gray-600 mb-1">Nom *</label>
+                <input
+                  type="text"
+                  value={newComm.nom}
+                  onChange={(e) => setNewComm({ ...newComm, nom: e.target.value })}
+                  placeholder="Ex: Sami Ben Ahmed"
+                  className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1">Zone *</label>
+                <select
+                  value={newComm.zone}
+                  onChange={(e) => setNewComm({ ...newComm, zone: e.target.value })}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"
+                >
+                  <option value="Sfax">Sfax</option>
+                  <option value="Sousse">Sousse</option>
+                  <option value="Tunis">Tunis</option>
+                  <option value="Mahdia">Mahdia</option>
+                  <option value="Monastir">Monastir</option>
+                  <option value="Nabeul">Nabeul</option>
+                  <option value="Autre">Autre</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1">Téléphone</label>
+                <input
+                  type="tel"
+                  value={newComm.telephone}
+                  onChange={(e) => setNewComm({ ...newComm, telephone: e.target.value })}
+                  placeholder="+216 ..."
+                  className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"
+                />
+              </div>
+              <div className="sm:col-span-2">
+                <label className="block text-xs font-semibold text-gray-600 mb-1">Email</label>
+                <input
+                  type="email"
+                  value={newComm.email}
+                  onChange={(e) => setNewComm({ ...newComm, email: e.target.value })}
+                  placeholder="nom@exemple.com"
+                  className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-2 mt-5">
+              <button
+                type="button"
+                onClick={() => setShowAddForm(false)}
+                disabled={addingComm}
+                className="flex-1 px-4 py-2 rounded-lg border border-gray-300 text-gray-700 text-sm font-semibold hover:bg-gray-50 disabled:opacity-50"
+              >
+                Annuler
+              </button>
+              <button
+                type="button"
+                onClick={addCommercial}
+                disabled={addingComm}
+                className="flex-1 px-4 py-2 rounded-lg bg-[#059669] text-white text-sm font-bold hover:bg-[#047857] disabled:opacity-60 inline-flex items-center justify-center gap-2"
+              >
+                {addingComm ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
+                Enregistrer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
