@@ -141,6 +141,19 @@ export default function LoginForm({ onSuccess, onSwitchToSignup }: LoginFormProp
             </button>
           </p>
         </div>
+
+        <div className="mt-6 pt-6 border-t border-gray-200">
+          <button
+            type="button"
+            onClick={onSwitchToSignup}
+            className="w-full py-3 bg-white border-2 border-orange-600 text-orange-600 rounded-lg font-semibold hover:bg-orange-50 transition-colors"
+          >
+            Créer un compte
+          </button>
+          <p className="mt-2 text-xs text-center text-gray-500">
+            Rejoignez Dalil Tounes en quelques secondes.
+          </p>
+        </div>
       </div>
     </div>
   );
