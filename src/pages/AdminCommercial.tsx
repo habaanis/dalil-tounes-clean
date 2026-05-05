@@ -76,6 +76,7 @@ interface Artisan {
 }
 
 type Tab = 'wallet' | 'encaisser' | 'versements';
+type AdminTab = 'portefeuille' | 'historique';
 
 interface CommercialLite {
   id: string;
@@ -100,13 +101,22 @@ export default function AdminCommercial() {
     return q === 'versements' || q === 'encaisser' || q === 'wallet' ? (q as Tab) : 'wallet';
   })();
   const [tab, setTab] = useState<Tab>(initialTab);
+  const [adminTab, setAdminTab] = useState<AdminTab>(
+    initialTab === 'versements' ? 'historique' : 'portefeuille'
+  );
 
   useEffect(() => {
     const q = new URLSearchParams(location.search).get('tab');
     if (q === 'versements' || q === 'encaisser' || q === 'wallet') {
       setTab(q as Tab);
+      setAdminTab(q === 'versements' ? 'historique' : 'portefeuille');
     }
   }, [location.search]);
+
+  // Formulaire d'ajout rapide (admin)
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newComm, setNewComm] = useState({ nom: '', zone: 'Sfax', email: '', telephone: '' });
+  const [addingComm, setAddingComm] = useState(false);
 
   const [profil, setProfil] = useState<{ nom: string; zone: string } | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -461,6 +471,32 @@ export default function AdminCommercial() {
     setTimeout(() => setFeedback(null), 4000);
   };
 
+  const addCommercial = async () => {
+    if (!newComm.nom.trim() || !newComm.zone.trim()) {
+      setFeedback({ ok: false, msg: 'Nom et zone sont obligatoires.' });
+      return;
+    }
+    setAddingComm(true);
+    const { error } = await supabase.from('commerciaux').insert({
+      nom: newComm.nom.trim(),
+      zone: newComm.zone.trim(),
+      email: newComm.email.trim(),
+      telephone: newComm.telephone.trim(),
+      actif: true,
+    });
+    if (error) {
+      console.error('[commerciaux.insert] echec', error);
+      setFeedback({ ok: false, msg: `Ajout impossible : ${error.message}` });
+    } else {
+      setFeedback({ ok: true, msg: `Commercial "${newComm.nom}" ajouté.` });
+      setNewComm({ nom: '', zone: 'Sfax', email: '', telephone: '' });
+      setShowAddForm(false);
+      await loadAll();
+    }
+    setAddingComm(false);
+    setTimeout(() => setFeedback(null), 3500);
+  };
+
   if (authLoading || (user && authzChecking)) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center gap-3">
@@ -536,85 +572,232 @@ export default function AdminCommercial() {
         </header>
 
         {isAdmin && (
-          <section className="mb-6 bg-white border border-gray-200 rounded-xl p-5">
-            <h2 className="font-bold text-gray-900 mb-3">Mes commerciaux</h2>
-            {allCommerciaux.length === 0 ? (
-              <p className="text-sm text-gray-500">
-                Aucun commercial enregistré. Ajoutez-les dans la table <code>commerciaux</code>.
-              </p>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead className="text-xs uppercase text-gray-500 bg-gray-50">
-                    <tr>
-                      <th className="text-left px-3 py-2">Nom</th>
-                      <th className="text-left px-3 py-2">Zone</th>
-                      <th className="text-right px-3 py-2">Portefeuille</th>
-                      <th className="text-right px-3 py-2">Total encaissé</th>
-                      <th className="text-right px-3 py-2">Versements</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100">
-                    {allCommerciaux.map((c) => (
-                      <tr key={c.id}>
-                        <td className="px-3 py-2 font-semibold">{c.nom}</td>
-                        <td className="px-3 py-2">{c.zone}</td>
-                        <td className="px-3 py-2 text-right font-bold text-[#4A1D43]">
-                          {Number(c.portefeuille || 0).toFixed(3)} TND
-                        </td>
-                        <td className="px-3 py-2 text-right">{Number(c.totalEncaisse || 0).toFixed(3)} TND</td>
-                        <td className="px-3 py-2 text-right">{c.nbVersements || 0}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+          <>
+            {/* RIB BIAT toujours visible pour l'admin */}
+            <section className="mb-6 bg-gradient-to-br from-[#FFF8E7] via-white to-white border border-[#D4AF37] rounded-xl p-5">
+              <div className="flex items-center gap-2 mb-3">
+                <Banknote className="w-5 h-5 text-[#4A1D43]" />
+                <h2 className="font-bold text-gray-900">Compte bancaire de référence (BIAT)</h2>
+                <span className="ml-auto inline-block px-2 py-0.5 text-[10px] font-bold rounded bg-[#D4AF37] text-[#4A1D43]">
+                  RIB DE RÉCEPTION
+                </span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="border border-gray-200 rounded-lg p-4 bg-white">
+                  <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">
+                    Virement bancaire
+                  </h3>
+                  <dl className="space-y-2 text-sm">
+                    <Row k="Bénéficiaire" v={BANK_DETAILS.beneficiaire} />
+                    <Row k="Banque" v={BANK_DETAILS.banque} />
+                    <CopyRow k="RIB" v={BANK_DETAILS.rib} onCopy={() => copy(BANK_DETAILS.rib, 'rib-admin')} copied={copiedField === 'rib-admin'} />
+                    <CopyRow k="IBAN" v={BANK_DETAILS.iban} onCopy={() => copy(BANK_DETAILS.iban, 'iban-admin')} copied={copiedField === 'iban-admin'} />
+                    <Row k="SWIFT" v={BANK_DETAILS.swift} />
+                  </dl>
+                </div>
+                <div className="border border-gray-200 rounded-lg p-4 bg-white">
+                  <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">
+                    Transfert rapide D17 (La Poste)
+                  </h3>
+                  <CopyRow
+                    k="Numéro D17"
+                    v={D17_PHONE}
+                    onCopy={() => copy(D17_PHONE, 'd17-admin')}
+                    copied={copiedField === 'd17-admin'}
+                  />
+                  <p className="text-xs text-gray-500 mt-3">
+                    Ce numéro est communiqué aux commerciaux pour les transferts D17.
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            {/* Onglets admin */}
+            <nav className="flex gap-2 mb-5 border-b border-gray-200">
+              <TabButton
+                active={adminTab === 'portefeuille'}
+                onClick={() => setAdminTab('portefeuille')}
+                label="Portefeuille"
+              />
+              <TabButton
+                active={adminTab === 'historique'}
+                onClick={() => setAdminTab('historique')}
+                label="Historique des versements"
+              />
+            </nav>
+
+            {feedback && (
+              <div
+                className={`mb-4 px-4 py-3 rounded-lg text-sm flex items-center gap-2 ${
+                  feedback.ok
+                    ? 'bg-green-50 text-green-700 border border-green-200'
+                    : 'bg-red-50 text-red-700 border border-red-200'
+                }`}
+              >
+                {feedback.ok ? <CheckCircle2 className="w-4 h-4" /> : <XCircle className="w-4 h-4" />}
+                {feedback.msg}
               </div>
             )}
 
-            <h2 className="font-bold text-gray-900 mt-6 mb-3">Versements reçus (preuves)</h2>
-            {allVersements.length === 0 ? (
-              <p className="text-sm text-gray-500">Aucun versement signalé pour l'instant.</p>
-            ) : (
-              <ul className="divide-y divide-gray-100">
-                {allVersements.map((v) => (
-                  <li key={v.id} className="py-2 flex flex-wrap justify-between items-center gap-2 text-sm">
-                    <div>
-                      <div className="font-semibold">
-                        {v.commercial_nom || '—'} · {Number(v.montant || 0).toFixed(3)} TND ·{' '}
-                        {v.methode === 'd17' ? 'D17' : 'Virement'}
+            {adminTab === 'portefeuille' && (
+              <section className="mb-6 bg-white border border-gray-200 rounded-xl p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="font-bold text-gray-900">Mes commerciaux</h2>
+                  <button
+                    onClick={() => setShowAddForm((v) => !v)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#4A1D43] text-white text-xs font-bold hover:bg-[#5A2D53]"
+                  >
+                    <Users className="w-4 h-4" />
+                    {showAddForm ? 'Annuler' : 'Ajouter un commercial'}
+                  </button>
+                </div>
+
+                {showAddForm && (
+                  <div className="mb-4 p-4 border border-[#D4AF37] bg-[#FFF8E7] rounded-lg">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-600 mb-1">Nom *</label>
+                        <input
+                          type="text"
+                          value={newComm.nom}
+                          onChange={(e) => setNewComm({ ...newComm, nom: e.target.value })}
+                          placeholder="Ex: Sami Ben Ahmed"
+                          className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"
+                        />
                       </div>
-                      <div className="text-xs text-gray-500">
-                        {new Date(v.created_at).toLocaleString('fr-FR')} · statut :{' '}
-                        <span className={`font-semibold ${v.statut === 'confirme' ? 'text-green-600' : 'text-amber-600'}`}>
-                          {v.statut}
-                        </span>
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-600 mb-1">Zone *</label>
+                        <select
+                          value={newComm.zone}
+                          onChange={(e) => setNewComm({ ...newComm, zone: e.target.value })}
+                          className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"
+                        >
+                          <option value="Sfax">Sfax</option>
+                          <option value="Sousse">Sousse</option>
+                          <option value="Tunis">Tunis</option>
+                          <option value="Mahdia">Mahdia</option>
+                          <option value="Monastir">Monastir</option>
+                          <option value="Nabeul">Nabeul</option>
+                          <option value="Autre">Autre</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-600 mb-1">Email</label>
+                        <input
+                          type="email"
+                          value={newComm.email}
+                          onChange={(e) => setNewComm({ ...newComm, email: e.target.value })}
+                          placeholder="nom@exemple.com"
+                          className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-600 mb-1">Téléphone</label>
+                        <input
+                          type="tel"
+                          value={newComm.telephone}
+                          onChange={(e) => setNewComm({ ...newComm, telephone: e.target.value })}
+                          placeholder="+216 ..."
+                          className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm"
+                        />
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      {v.preuve_url && (
-                        <a
-                          href={v.preuve_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-xs text-[#4A1D43] font-semibold hover:underline"
-                        >
-                          Voir reçu
-                        </a>
-                      )}
-                      {v.statut !== 'confirme' && (
-                        <button
-                          onClick={() => confirmerVersement(v.id)}
-                          className="px-3 py-1 rounded-md bg-[#059669] text-white text-xs font-bold hover:bg-[#047857]"
-                        >
-                          Confirmer
-                        </button>
-                      )}
-                    </div>
-                  </li>
-                ))}
-              </ul>
+                    <button
+                      onClick={addCommercial}
+                      disabled={addingComm}
+                      className="mt-3 w-full sm:w-auto px-5 py-2 rounded-lg bg-[#059669] text-white text-sm font-bold hover:bg-[#047857] disabled:opacity-60 inline-flex items-center gap-2"
+                    >
+                      {addingComm ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
+                      Enregistrer
+                    </button>
+                  </div>
+                )}
+
+                {allCommerciaux.length === 0 ? (
+                  <p className="text-sm text-gray-500">
+                    Aucun commercial enregistré. Cliquez « Ajouter un commercial » pour en créer un.
+                  </p>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead className="text-xs uppercase text-gray-500 bg-gray-50">
+                        <tr>
+                          <th className="text-left px-3 py-2">Nom</th>
+                          <th className="text-left px-3 py-2">Zone</th>
+                          <th className="text-right px-3 py-2">Portefeuille Cash (DT)</th>
+                          <th className="text-right px-3 py-2">Total Encaissé (DT)</th>
+                          <th className="text-right px-3 py-2">Versements</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-100">
+                        {allCommerciaux.map((c) => (
+                          <tr key={c.id}>
+                            <td className="px-3 py-2 font-semibold text-gray-900">{c.nom}</td>
+                            <td className="px-3 py-2 text-gray-700">{c.zone}</td>
+                            <td className="px-3 py-2 text-right font-bold text-[#4A1D43]">
+                              {Number(c.portefeuille || 0).toFixed(3)}
+                            </td>
+                            <td className="px-3 py-2 text-right text-gray-900">
+                              {Number(c.totalEncaisse || 0).toFixed(3)}
+                            </td>
+                            <td className="px-3 py-2 text-right text-gray-700">{c.nbVersements || 0}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </section>
             )}
-          </section>
+
+            {adminTab === 'historique' && (
+              <section className="mb-6 bg-white border border-gray-200 rounded-xl p-5">
+                <h2 className="font-bold text-gray-900 mb-3">Historique des versements (preuves)</h2>
+                {allVersements.length === 0 ? (
+                  <p className="text-sm text-gray-500">Aucun versement signalé pour l'instant.</p>
+                ) : (
+                  <ul className="divide-y divide-gray-100">
+                    {allVersements.map((v) => (
+                      <li key={v.id} className="py-3 flex flex-wrap justify-between items-center gap-2 text-sm">
+                        <div>
+                          <div className="font-semibold text-gray-900">
+                            {v.commercial_nom || '—'} · {Number(v.montant || 0).toFixed(3)} TND ·{' '}
+                            {v.methode === 'd17' ? 'D17' : 'Virement'}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {new Date(v.created_at).toLocaleString('fr-FR')} · statut :{' '}
+                            <span className={`font-semibold ${v.statut === 'confirme' ? 'text-green-600' : 'text-amber-600'}`}>
+                              {v.statut}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {v.preuve_url && (
+                            <a
+                              href={v.preuve_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-xs text-[#4A1D43] font-semibold hover:underline"
+                            >
+                              Voir reçu
+                            </a>
+                          )}
+                          {v.statut !== 'confirme' && (
+                            <button
+                              onClick={() => confirmerVersement(v.id)}
+                              className="px-3 py-1 rounded-md bg-[#059669] text-white text-xs font-bold hover:bg-[#047857]"
+                            >
+                              Confirmer
+                            </button>
+                          )}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </section>
+            )}
+          </>
         )}
 
         {profil && (<>
