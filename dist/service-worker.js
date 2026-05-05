@@ -1,10 +1,10 @@
 // Dalil Tounes Service Worker
-// Version: 1.0.0
+// Version: 1.1.0
 // Stratégie: Cache-First pour assets, Network-First pour données
 
-const CACHE_NAME = 'dalil-tounes-v1';
-const STATIC_CACHE = 'dalil-static-v1';
-const DYNAMIC_CACHE = 'dalil-dynamic-v1';
+const CACHE_NAME = 'dalil-tounes-v2';
+const STATIC_CACHE = 'dalil-static-v2';
+const DYNAMIC_CACHE = 'dalil-dynamic-v2';
 
 // Assets à mettre en cache lors de l'installation
 const STATIC_ASSETS = [
