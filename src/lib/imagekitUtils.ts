@@ -206,3 +206,73 @@ export function getFeaturedImageUrl(
 export function getDefaultImagePath(): string {
   return DEFAULT_IMAGE_PATH;
 }
+
+/**
+ * Extrait le nom de fichier depuis une URL ImageKit et le transforme en texte alt lisible.
+ */
+export function altFromImageKitUrl(
+  url: string | null | undefined,
+  fallback?: string
+): string {
+  if (!url) return fallback || '';
+
+  try {
+    const clean = url.trim().split('?')[0];
+    const last = clean.substring(clean.lastIndexOf('/') + 1);
+    const noExt = last.replace(/\.(jpe?g|png|webp|gif|avif|svg)$/i, '');
+    const noHash = noExt.replace(/[_-][a-f0-9]{6,}$/i, '');
+    const readable = noHash
+      .replace(/[-_]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .toLowerCase();
+
+    if (!readable || /^\d+$/.test(readable)) {
+      return fallback || '';
+    }
+
+    const capitalized = readable.charAt(0).toUpperCase() + readable.slice(1);
+    return fallback ? `${fallback} — ${capitalized}` : capitalized;
+  } catch {
+    return fallback || '';
+  }
+}
+
+/**
+ * Génère une URL ImageKit avec une largeur personnalisée (pour srcSet responsive).
+ */
+export function buildImageKitUrlWithWidth(
+  url: string | null | undefined,
+  width: number,
+  quality: number = 85
+): string {
+  if (!url || !isImageKitUrl(url)) {
+    return url || DEFAULT_IMAGE_PATH;
+  }
+  const base = url.split('?')[0];
+  return `${base}?tr=w-${width},q-${quality},f-auto`;
+}
+
+/**
+ * Génère un srcSet responsive pour une image ImageKit.
+ */
+export function buildResponsiveSrcSet(
+  url: string | null | undefined,
+  widths: number[] = [320, 640, 960, 1280]
+): string {
+  if (!url || !isImageKitUrl(url)) return '';
+  return widths
+    .map((w) => `${buildImageKitUrlWithWidth(url, w)} ${w}w`)
+    .join(', ');
+}
+
+/**
+ * Obtient une URL ImageKit 1200x630 optimisée pour Open Graph / partages sociaux.
+ */
+export function getOgImageUrl(url: string | null | undefined): string {
+  if (!url || !isImageKitUrl(url)) {
+    return url || 'https://dalil-tounes.com/og-image.jpg';
+  }
+  const base = url.split('?')[0];
+  return `${base}?tr=w-1200,h-630,fo-auto,q-85,f-auto`;
+}

@@ -1,4 +1,5 @@
 import { getSchemaTypeFromCategory, getPriceRangeFromTier, parseOpeningHours } from './schemaTypeMapping';
+import { altFromImageKitUrl, buildImageKitUrlWithWidth, isImageKitUrl, parseImageUrls } from './imagekitUtils';
 
 export interface OrganizationSchema {
   '@context': string;
@@ -33,7 +34,17 @@ export interface LocalBusinessSchema {
   '@context': string;
   '@type': string;
   name: string;
-  image?: string;
+  image?: string | string[];
+  photo?: Array<{
+    '@type': string;
+    contentUrl: string;
+    caption?: string;
+    name?: string;
+  }>;
+  areaServed?: {
+    '@type': string;
+    name: string;
+  };
   address?: {
     '@type': string;
     streetAddress?: string;
@@ -149,6 +160,7 @@ export function generateLocalBusinessSchema(business: {
   telephone?: string;
   site_web?: string;
   photo_url?: string;
+  image_url?: string;
   latitude?: number;
   longitude?: number;
   note_moyenne?: number;
@@ -170,8 +182,33 @@ export function generateLocalBusinessSchema(business: {
     (schema as any).description = business.description;
   }
 
-  if (business.photo_url) {
-    schema.image = business.photo_url;
+  const allImageUrls: string[] = [];
+  if (business.photo_url) allImageUrls.push(business.photo_url);
+  if (business.image_url) {
+    allImageUrls.push(...parseImageUrls(business.image_url));
+  }
+  const uniqueImages = Array.from(new Set(allImageUrls.filter(Boolean)));
+
+  if (uniqueImages.length > 0) {
+    const optimized = uniqueImages.map((u) =>
+      isImageKitUrl(u) ? buildImageKitUrlWithWidth(u, 1200) : u
+    );
+    schema.image = optimized.length === 1 ? optimized[0] : optimized;
+
+    const altContext = [business.nom, business.ville].filter(Boolean).join(' ');
+    schema.photo = uniqueImages.slice(0, 10).map((u) => ({
+      '@type': 'ImageObject',
+      contentUrl: isImageKitUrl(u) ? buildImageKitUrlWithWidth(u, 1200) : u,
+      caption: altFromImageKitUrl(u, altContext),
+      name: altFromImageKitUrl(u, business.nom),
+    }));
+  }
+
+  if (business.ville) {
+    schema.areaServed = {
+      '@type': 'City',
+      name: business.ville,
+    };
   }
 
   if (business.adresse || business.ville || business.gouvernorat) {

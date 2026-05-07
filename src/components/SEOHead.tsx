@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
+import { getOgImageUrl, isImageKitUrl } from '../lib/imagekitUtils';
 
 interface SEOHeadProps {
   title: string;
@@ -70,6 +71,7 @@ export const SEOHead = ({
     // Canonical : toujours https://dalil-tounes.com/<chemin propre>
     const resolvedPath = currentPath || window.location.pathname || '/';
     const canonicalUrl = canonical || buildCanonicalUrl(resolvedPath);
+    const optimizedImage = isImageKitUrl(image) ? getOgImageUrl(image) : image;
 
     const metaTags = [
       // Basic meta tags
@@ -87,7 +89,10 @@ export const SEOHead = ({
       // Open Graph
       { property: 'og:title', content: title },
       { property: 'og:description', content: description },
-      { property: 'og:image', content: image },
+      { property: 'og:image', content: optimizedImage },
+      { property: 'og:image:width', content: '1200' },
+      { property: 'og:image:height', content: '630' },
+      { property: 'og:image:alt', content: title },
       { property: 'og:url', content: canonical || url },
       { property: 'og:type', content: type },
       { property: 'og:site_name', content: 'Dalil Tounes' },
@@ -101,7 +106,8 @@ export const SEOHead = ({
       { name: 'twitter:card', content: 'summary_large_image' },
       { name: 'twitter:title', content: title },
       { name: 'twitter:description', content: description },
-      { name: 'twitter:image', content: image },
+      { name: 'twitter:image', content: optimizedImage },
+      { name: 'twitter:image:alt', content: title },
       { name: 'twitter:site', content: '@daliltounes' },
 
       // Mobile
