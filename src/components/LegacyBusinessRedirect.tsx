@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { Tables } from '../lib/dbTables';
-import { generateBusinessUrl } from '../lib/slugify';
+import { generateBusinessUrl, buildEntrepriseUrl } from '../lib/slugify';
 import { extractFrenchName } from '../lib/textNormalization';
 
 export function LegacyBusinessRedirect() {
@@ -21,7 +21,7 @@ export function LegacyBusinessRedirect() {
     (async () => {
       const { data, error } = await supabase
         .from(Tables.ENTREPRISE)
-        .select('id, nom')
+        .select('id, nom, slug, ville')
         .eq('id', id)
         .maybeSingle();
 
@@ -33,7 +33,10 @@ export function LegacyBusinessRedirect() {
       }
 
       const name = extractFrenchName(data.nom) || data.nom || '';
-      navigate(generateBusinessUrl(name, data.id), { replace: true });
+      const target = data.slug
+        ? buildEntrepriseUrl(data.ville, data.slug, name, data.id)
+        : generateBusinessUrl(name, data.id);
+      navigate(target, { replace: true });
     })();
 
     return () => {

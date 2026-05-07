@@ -5,7 +5,7 @@ import { useTranslation } from '../lib/i18n';
 import { supabase } from '../lib/supabaseClient';
 import { buildEntrepriseUrl, getHashQueryParams } from '../lib/url';
 import { readParams } from '../lib/urlParams';
-import { generateBusinessUrl } from '../lib/slugify';
+import { generateBusinessUrl, buildEntrepriseUrl } from '../lib/slugify';
 import { RPC, Tables } from '../lib/dbTables';
 import { FeaturedEventsCarousel } from '../components/FeaturedEventsCarousel';
 import { FeaturedBusinessesStrip } from '../components/FeaturedBusinessesStrip';
@@ -428,7 +428,7 @@ export const Businesses = ({
     if (preselectedBusinessId && businesses.length > 0) {
       const found = businesses.find((b) => b.id === preselectedBusinessId);
       if (found) {
-        navigate(generateBusinessUrl(found.name, found.id));
+        navigate(buildEntrepriseUrl((found as any).ville || (found as any).city, (found as any).slug, found.name, found.id));
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -1193,7 +1193,7 @@ export const Businesses = ({
                         description_ar: business.description_ar || null,
                       }}
                       onClick={() => {
-                        navigate(generateBusinessUrl(business.name, business.id));
+                        navigate(buildEntrepriseUrl((business as any).ville || (business as any).city, (business as any).slug, business.name, business.id));
                       }}
                       variant="premium"
                     />

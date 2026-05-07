@@ -8,7 +8,7 @@ import { ImageGallery } from '../components/ImageGallery';
 import VideoPlayer from '../components/VideoPlayer';
 import EntrepriseAvisForm from '../components/EntrepriseAvisForm';
 import BusinessReviews from '../components/BusinessReviews';
-import { generateShareUrl, extractIdFromSlugUrl } from '../lib/slugify';
+import { generateShareUrl, extractIdFromSlugUrl, buildEntrepriseShareUrl } from '../lib/slugify';
 import { cleanAltText, extractFrenchName, cleanArabicField } from '../lib/textNormalization';
 import { SEOHead } from './SEOHead';
 import { useHreflangPath } from '../hooks/useHreflangPath';
@@ -97,6 +97,8 @@ function normalizeBusiness(business: any): any {
     horaires_ok: business.horaires_ok,
     name_ar: business.name_ar ? cleanArabicField(business.name_ar) : null,
     description_ar: business.description_ar ? cleanArabicField(business.description_ar) : null,
+    slug: business.slug || null,
+    qr_code_url: business.qr_code_url || null,
   };
 }
 
@@ -153,6 +155,8 @@ interface Business {
   horaires_ok?: string | null;
   name_ar?: string | null;
   description_ar?: string | null;
+  slug?: string | null;
+  qr_code_url?: string | null;
 }
 
 export const BusinessDetail = ({
@@ -166,22 +170,25 @@ export const BusinessDetail = ({
   console.log('Business reçu BRUT:', businessProp);
 
   // Récupérer l'ID depuis l'URL si pas passé en prop
-  const { id: urlId, slug: urlSlug } = useParams<{ id?: string; slug?: string }>();
+  const { id: urlId, slug: urlSlug, villeSlug: urlVilleSlug } = useParams<{ id?: string; slug?: string; villeSlug?: string }>();
   const navigate = useNavigate();
 
-  // Si on a un slug (route /p/:slug), extraire l'ID du slug
+  // Déterminer si l'URL correspond au nouveau format /entreprise/:ville/:slug
+  // ou au format legacy /p/:slug-id
+  const isCleanSlugRoute = Boolean(urlVilleSlug) || (!!urlSlug && !urlSlug.match(/-[a-f0-9]{8,}$/i) && !urlSlug.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i));
+  const cleanSlug = isCleanSlugRoute ? urlSlug : null;
+
+  // Si on a un slug legacy (route /p/:slug-id), extraire l'ID
   let extractedId: string | null = null;
-  if (urlSlug && !urlId) {
+  if (urlSlug && !urlId && !isCleanSlugRoute) {
     const uuidMatch = urlSlug.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i);
     if (uuidMatch) {
       extractedId = uuidMatch[0];
-      console.log('📌 ID extrait du slug (UUID):', extractedId);
     } else {
       const segments = urlSlug.split('-');
       const lastSegment = segments[segments.length - 1];
       if (lastSegment && lastSegment.length >= 6) {
         extractedId = lastSegment;
-        console.log('📌 ID extrait du slug (dernier segment):', extractedId);
       }
     }
   }
@@ -233,6 +240,19 @@ export const BusinessDetail = ({
 
   const downloadQRCode = () => {
     if (!qrCodeRef.current) return;
+
+    // Si qr_code_url est présent, télécharger directement l'image
+    const imgEl = qrCodeRef.current.querySelector('img');
+    if (imgEl && imgEl.src) {
+      const a = document.createElement('a');
+      a.href = imgEl.src;
+      a.download = `qr-code-${business?.nom || 'entreprise'}.png`;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.click();
+      return;
+    }
+
     const svg = qrCodeRef.current.querySelector('svg');
     if (!svg) return;
 
@@ -256,9 +276,17 @@ export const BusinessDetail = ({
     img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
   };
 
+  const getBusinessShareUrl = () => {
+    if (!business) return '';
+    if (business.slug) {
+      return buildEntrepriseShareUrl(business.ville, business.slug, business.nom, business.id);
+    }
+    return generateShareUrl(business.nom, business.id);
+  };
+
   const copyLink = () => {
-    if (!business || !actualBusinessId) return;
-    const shareUrl = generateShareUrl(business.nom, actualBusinessId);
+    if (!business) return;
+    const shareUrl = getBusinessShareUrl();
     navigator.clipboard.writeText(shareUrl).then(() => {
       setLinkCopied(true);
       setTimeout(() => setLinkCopied(false), 2000);
@@ -266,16 +294,16 @@ export const BusinessDetail = ({
   };
 
   const shareViaWhatsApp = () => {
-    if (!business || !actualBusinessId) return;
-    const shareUrl = generateShareUrl(business.nom, actualBusinessId);
+    if (!business) return;
+    const shareUrl = getBusinessShareUrl();
     const shareText = `${displayName} - ${translatedCategory}\n${shareUrl}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank');
   };
 
 
   const shareViaTelegram = () => {
-    if (!business || !actualBusinessId) return;
-    const shareUrl = generateShareUrl(business.nom, actualBusinessId);
+    if (!business) return;
+    const shareUrl = getBusinessShareUrl();
     const shareText = `${displayName} - ${translatedCategory}`;
     window.open(`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`, '_blank');
   };
@@ -289,33 +317,30 @@ export const BusinessDetail = ({
       return;
     }
 
-    if (!actualBusinessId) {
+    if (!actualBusinessId && !cleanSlug) {
       setError(true);
       setLoading(false);
       return;
     }
 
-    if (loadedBusinessIdRef.current === actualBusinessId) {
+    const cacheKey = cleanSlug ? `slug:${cleanSlug}` : actualBusinessId;
+    if (loadedBusinessIdRef.current === cacheKey) {
       return;
     }
 
     const fetchBusiness = async () => {
-      console.log('🚀 [BusinessDetail] fetchBusiness démarré');
-      console.log('📌 actualBusinessId:', actualBusinessId);
-      console.log('📌 businessProp:', businessProp);
-
       setLoading(true);
       setError(false);
 
       try {
-        console.log('🔍 Recherche par ID:', actualBusinessId);
-
         let query = supabase.from('entreprise').select('*');
 
-        // Recherche exacte d'abord, puis par préfixe pour les IDs extraits d'un slug (premiers 8 chars du UUID)
-        query = query.or(`id.eq.${actualBusinessId},id.ilike.${actualBusinessId}%`);
+        if (cleanSlug) {
+          query = query.eq('slug', cleanSlug);
+        } else if (actualBusinessId) {
+          query = query.or(`id.eq.${actualBusinessId},id.ilike.${actualBusinessId}%`);
+        }
 
-        console.log('⏳ Exécution de la requête Supabase...');
         const { data, error } = await query.maybeSingle();
 
         console.log('📊 Résultat Supabase:', { data, error });
@@ -344,7 +369,7 @@ export const BusinessDetail = ({
           const { data: avisData } = await supabase
             .from('avis_entreprise')
             .select('note')
-            .eq('entreprise_id', actualBusinessId);
+            .eq('entreprise_id', data.id);
 
           if (avisData && avisData.length > 0) {
             const totalRating = avisData.reduce((sum, avis) => sum + (avis.note || 0), 0);
@@ -356,7 +381,7 @@ export const BusinessDetail = ({
           console.error('Erreur avis:', avisErr);
         }
 
-        loadedBusinessIdRef.current = actualBusinessId;
+        loadedBusinessIdRef.current = cacheKey;
       } catch (err) {
         console.error('Erreur fetch business:', err);
         setError(true);
@@ -366,7 +391,7 @@ export const BusinessDetail = ({
     };
 
     fetchBusiness();
-  }, [businessId, businessProp, actualBusinessId]);
+  }, [businessId, businessProp, actualBusinessId, cleanSlug]);
 
   const translations = {
     fr: {
@@ -552,7 +577,7 @@ export const BusinessDetail = ({
             description={translatedDescription || `${business.nom} à ${business.ville}. ${translatedCategory}. Contactez-nous au ${business.telephone || 'voir coordonnées'}`}
             keywords={`${business.nom}, ${translatedCategory}, ${business.ville}, Tunisie, ${business.tags?.join(', ') || ''}`}
             image={business.image_url || undefined}
-            canonical={generateShareUrl(business.nom, actualBusinessId)}
+            canonical={business.slug ? buildEntrepriseShareUrl(business.ville, business.slug, business.nom, business.id) : generateShareUrl(business.nom, actualBusinessId)}
             type="article"
             author={business.nom}
             currentPath={currentPath}
@@ -1242,15 +1267,33 @@ export const BusinessDetail = ({
           {(tier === 'artisan' || tier === 'premium' || tier === 'elite') && <div className="pt-0.5">
             <div className="flex flex-col items-center">
               <div ref={qrCodeRef} className="inline-block p-0.5 rounded bg-white mb-0.5">
-                <QRCodeSVG
-                  value={window.location.href}
-                  size={60}
-                  level="H"
-                  includeMargin={true}
-                  fgColor={colors.gold}
-                  bgColor="#FFFFFF"
-                />
+                {business.qr_code_url ? (
+                  <img
+                    src={business.qr_code_url}
+                    alt={`QR Code ${business.nom}`}
+                    width={72}
+                    height={72}
+                    loading="lazy"
+                    decoding="async"
+                    style={{ display: 'block' }}
+                  />
+                ) : (
+                  <QRCodeSVG
+                    value={window.location.href}
+                    size={60}
+                    level="H"
+                    includeMargin={true}
+                    fgColor={colors.gold}
+                    bgColor="#FFFFFF"
+                  />
+                )}
               </div>
+              <p
+                className="text-[8px] font-medium mb-0.5 text-center"
+                style={{ color: colors.gold }}
+              >
+                Scannez pour enregistrer le contact
+              </p>
               <button
                 onClick={downloadQRCode}
                 className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-full transition-all text-[8px] font-medium"

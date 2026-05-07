@@ -4,7 +4,7 @@ import { Star, MapPin, ArrowRight, BookOpen, Search, Trophy, ChevronLeft, Chevro
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { Tables } from '../lib/dbTables';
-import { generateBusinessUrl } from '../lib/slugify';
+import { generateBusinessUrl, buildEntrepriseUrl } from '../lib/slugify';
 import { getSupabaseImageUrl } from '../lib/imageUtils';
 import { extractFrenchName } from '../lib/textNormalization';
 import { useLanguage } from '../context/LanguageContext';
@@ -18,6 +18,8 @@ interface MeilleursItem {
   logo_url?: string;
   image_url?: string;
   sous_categories?: string | string[];
+  slug?: string | null;
+  qr_code_url?: string | null;
   'Note Google Globale'?: number | string | null;
   'Compteur Avis Google'?: number | string | null;
 }
@@ -251,7 +253,7 @@ export default function MeilleursSection({
       try {
         const { data } = await supabase
           .from(Tables.ENTREPRISE)
-          .select(`id, nom, ville, gouvernorat, logo_url, image_url, sous_categories, "Note Google Globale", "Compteur Avis Google"`)
+          .select(`id, nom, ville, gouvernorat, logo_url, image_url, sous_categories, slug, qr_code_url, "Note Google Globale", "Compteur Avis Google"`)
           .contains('"liste pages"', [listePage])
           .order('"Note Google Globale"', { ascending: false, nullsFirst: false });
 
@@ -326,7 +328,7 @@ export default function MeilleursSection({
                 item={item}
                 accentColor={accentColor}
                 rank={idx + 1}
-                onClick={() => navigate(generateBusinessUrl(item.nom, item.id))}
+                onClick={() => navigate(buildEntrepriseUrl(item.ville, item.slug, item.nom, item.id))}
               />
             ))}
           </div>
@@ -401,7 +403,7 @@ export default function MeilleursSection({
                     <ListRow
                       item={item}
                       accentColor={accentColor}
-                      onClick={() => navigate(generateBusinessUrl(item.nom, item.id))}
+                      onClick={() => navigate(buildEntrepriseUrl(item.ville, item.slug, item.nom, item.id))}
                     />
                   </motion.div>
                 ))}

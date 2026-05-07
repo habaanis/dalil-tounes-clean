@@ -62,6 +62,41 @@ export function generateShareUrl(name: string, id: string): string {
 }
 
 /**
+ * Génère l'URL SEO-friendly pour une fiche entreprise à partir de ville + slug
+ * fournis par la base. Format: /entreprise/{villeSlug}/{slug}
+ *
+ * Si slug ou ville manquent, retombe sur l'ancienne route /p/{slug}-{id}
+ */
+export function buildEntrepriseUrl(
+  ville: string | null | undefined,
+  slug: string | null | undefined,
+  fallbackName?: string,
+  fallbackId?: string
+): string {
+  if (slug && ville) {
+    return `/entreprise/${generateSlug(ville)}/${slug}`;
+  }
+  if (slug && !ville) {
+    return `/entreprise/${slug}`;
+  }
+  if (fallbackName && fallbackId) {
+    return generateBusinessUrl(fallbackName, fallbackId);
+  }
+  return '/';
+}
+
+export function buildEntrepriseShareUrl(
+  ville: string | null | undefined,
+  slug: string | null | undefined,
+  fallbackName?: string,
+  fallbackId?: string
+): string {
+  const path = buildEntrepriseUrl(ville, slug, fallbackName, fallbackId);
+  const domain = typeof window !== 'undefined' ? window.location.origin : '';
+  return `${domain}${path}`;
+}
+
+/**
  * Validation d'un slug
  * Retourne true si le slug est valide (lettres, chiffres, tirets)
  */

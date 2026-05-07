@@ -120,8 +120,9 @@ function AppRouter() {
               <Route path="/businesses" element={<Businesses />} />
               <Route path="/entreprises" element={<Businesses />} />
               <Route path="/business/:id/:slug?" element={<LegacyBusinessRedirect />} />
-              <Route path="/entreprise/:id/:slug?" element={<LegacyBusinessRedirect />} />
               <Route path="/entreprises/:id/:slug?" element={<LegacyBusinessRedirect />} />
+              <Route path="/entreprise/:villeSlug/:slug" element={<BusinessDetail />} />
+              <Route path="/entreprise/:slug" element={<BusinessDetail />} />
               <Route path="/p/:slug" element={<BusinessDetail />} />
 
               {/* Emplois */}
