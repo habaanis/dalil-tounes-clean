@@ -333,15 +333,22 @@ export const BusinessDetail = ({
       setError(false);
 
       try {
+        // Normaliser le slug : trim + lowercase pour éviter les 404 dus à la casse
+        const normalizedSlug = cleanSlug ? cleanSlug.trim().toLowerCase() : null;
+        console.log('[BusinessDetail] Slug recherché:', normalizedSlug, '(brut:', cleanSlug, ')');
+
         let query = supabase.from('entreprise').select('*');
 
-        if (cleanSlug) {
-          query = query.eq('slug', cleanSlug);
+        if (normalizedSlug) {
+          // Recherche case-insensitive sur slug pour tolérer les variations
+          // (ex: "Skila" vs "skila" en base)
+          query = query.ilike('slug', normalizedSlug);
         } else if (actualBusinessId) {
           query = query.or(`id.eq.${actualBusinessId},id.ilike.${actualBusinessId}%`);
         }
 
         const { data, error } = await query.maybeSingle();
+        console.log('[BusinessDetail] Données reçues:', { data, error });
 
         console.log('📊 Résultat Supabase:', { data, error });
 

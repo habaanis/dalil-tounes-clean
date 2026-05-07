@@ -73,11 +73,14 @@ export function buildEntrepriseUrl(
   fallbackName?: string,
   fallbackId?: string
 ): string {
-  if (slug && ville) {
-    return `/entreprise/${generateSlug(ville)}/${slug}`;
+  // Normaliser le slug côté URL : trim + lowercase pour éviter les 404
+  // quand WhaleSync injecte un slug avec majuscule (ex: "Skila-mahdia")
+  const normalizedSlug = slug ? slug.trim().toLowerCase() : null;
+  if (normalizedSlug && ville) {
+    return `/entreprise/${generateSlug(ville)}/${normalizedSlug}`;
   }
-  if (slug && !ville) {
-    return `/entreprise/${slug}`;
+  if (normalizedSlug && !ville) {
+    return `/entreprise/${normalizedSlug}`;
   }
   if (fallbackName && fallbackId) {
     return generateBusinessUrl(fallbackName, fallbackId);
