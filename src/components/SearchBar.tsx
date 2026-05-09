@@ -209,83 +209,62 @@ export default function SearchBar({
           .slice(0, 30)
           .map(({ _priority, ...rest }) => rest);
 
-        // --- DEBUT CORRECTION ---
-        // Filet de sécurité : requête ILIKE directe case-insensitive sur "nom"
-        // avec la syntaxe CORRECTE pour l'opérateur `or`.
+        // Filet de sécurité multi-mots : chaque token de la requête doit être
+        // présent dans `nom` (AND). Enchaîner `.ilike()` sur la même colonne
+        // combine les conditions en AND côté PostgREST, ce qui garantit que
+        // "Envie Djerba" ne remonte QUE les fiches contenant les deux mots
+        // (ex: "Eva Beauty Envie Djerba") au lieu d'exploser le bruit.
         try {
-          const tokens = trimmedValue.split(/\s+/).filter((w) => w.length >= 2);
-          if (tokens.length > 0) {
-            // Construction d'une condition OR valide, par ex: "nom.ilike.%eva%,nom.ilike.%beauty%"
-            const conditions = tokens.map(t => `nom.ilike.%${t.replace(/%/g, '\\%')}%`).join(',');
-            let fallbackQuery = supabase
-              .from(Tables.ENTREPRISE)
-              .select('id, nom, ville, gouvernorat, categorie')
-              .or(conditions)
-              .limit(30);
+          const tokens = trimmedValue
+            .split(/\s+/)
+            .map((w) => w.trim())
+            .filter((w) => w.length >= 2);
+          const searchTokens = tokens.length > 0 ? tokens : [trimmedValue];
 
-            if (cityValue && cityValue.trim().length > 0) {
-              fallbackQuery = fallbackQuery.or(
-                `ville.ilike.%${cityValue}%,gouvernorat.ilike.%${cityValue}%`
-              );
-            }
+          let fallbackQuery = supabase
+            .from(Tables.ENTREPRISE)
+            .select('id, nom, ville, gouvernorat, categorie')
+            .limit(30);
 
-            const fb = await fallbackQuery;
-            if (!fb.error && Array.isArray(fb.data) && fb.data.length > 0) {
-              const existingIds = new Set(allResults.map((r) => r.id));
-              const normQ = normalizeText(trimmedValue);
-              const extras = fb.data
-                .filter((row: any) => row && row.id && !existingIds.has(row.id))
-                .map((row: any) => {
-                  const nomNorm = normalizeText(row.nom || '');
-                  const startsWith = nomNorm.startsWith(normQ) ? 0 : 1;
-                  return { row, startsWith };
-                })
-                .sort((a, b) => a.startsWith - b.startsWith)
-                .map(({ row }: any) => ({
-                  id: row.id,
-                  nom: row.nom,
-                  ville: row.ville || row.gouvernorat || '',
-                  gouvernorat: row.gouvernorat || null,
-                  categorie: row.categorie || '',
-                }));
+          for (const tok of searchTokens) {
+            const escaped = tok.replace(/[%_]/g, (c) => `\\${c}`);
+            fallbackQuery = fallbackQuery.ilike('nom', `%${escaped}%`);
+          }
 
-              // Prioriser les correspondances directes de nom en tête de liste
-              allResults = [...extras, ...allResults];
-            }
-          } else {
-            // Fallback pour un seul mot (moins de 2 lettres)
-            let fallbackQuery = supabase
-              .from(Tables.ENTREPRISE)
-              .select('id, nom, ville, gouvernorat, categorie')
-              .ilike('nom', `%${trimmedValue.replace(/%/g, '\\%')}%`)
-              .limit(30);
-            
-            if (cityValue && cityValue.trim().length > 0) {
-              fallbackQuery = fallbackQuery.or(
-                `ville.ilike.%${cityValue}%,gouvernorat.ilike.%${cityValue}%`
-              );
-            }
-            
-            const fb = await fallbackQuery;
-            if (!fb.error && Array.isArray(fb.data) && fb.data.length > 0) {
-              const existingIds = new Set(allResults.map((r) => r.id));
-              const normQ = normalizeText(trimmedValue);
-              const extras = fb.data
-                .filter((row: any) => row && row.id && !existingIds.has(row.id))
-                .map((row: any) => ({
-                  id: row.id,
-                  nom: row.nom,
-                  ville: row.ville || row.gouvernorat || '',
-                  gouvernorat: row.gouvernorat || null,
-                  categorie: row.categorie || '',
-                }));
-              allResults = [...extras, ...allResults];
-            }
+          if (cityValue && cityValue.trim().length > 0) {
+            const cityEsc = cityValue.replace(/[%_]/g, (c) => `\\${c}`);
+            fallbackQuery = fallbackQuery.or(
+              `ville.ilike.%${cityEsc}%,gouvernorat.ilike.%${cityEsc}%`
+            );
+          }
+
+          const fb = await fallbackQuery;
+          if (!fb.error && Array.isArray(fb.data) && fb.data.length > 0) {
+            const existingIds = new Set(allResults.map((r) => r.id));
+            const normQ = normalizeText(trimmedValue);
+            const extras = fb.data
+              .filter((row: any) => row && row.id && !existingIds.has(row.id))
+              .map((row: any) => {
+                const nomNorm = normalizeText(row.nom || '');
+                const exact = nomNorm === normQ ? 0 : nomNorm.startsWith(normQ) ? 1 : 2;
+                return { row, exact };
+              })
+              .sort((a, b) => a.exact - b.exact)
+              .map(({ row }: any) => ({
+                id: row.id,
+                nom: row.nom,
+                ville: row.ville || row.gouvernorat || '',
+                gouvernorat: row.gouvernorat || null,
+                categorie: row.categorie || '',
+              }));
+
+            allResults = [...extras, ...allResults];
+          } else if (fb.error) {
+            console.warn('[SearchBar] Fallback ILIKE error:', fb.error.message);
           }
         } catch (fbErr) {
-          console.warn('[SearchBar] Fallback ILIKE failed:', fbErr);
+          console.warn('[SearchBar] Fallback ILIKE exception:', fbErr);
         }
-        // --- FIN CORRECTION ---
 
         if (allResults.length > 0) {
           const ids = allResults.map(r => r.id).filter(Boolean);
