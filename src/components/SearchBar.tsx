@@ -209,53 +209,83 @@ export default function SearchBar({
           .slice(0, 30)
           .map(({ _priority, ...rest }) => rest);
 
-        // Filet de sécurité : requête ILIKE directe case-insensitive sur "nom".
-        // Évite qu'une fiche (ex: "Eva Beauty Envie Djerba") manque à la RPC
-        // à cause d'accents, multi-mots ou colonnes Airtable non renseignées.
+        // --- DEBUT CORRECTION ---
+        // Filet de sécurité : requête ILIKE directe case-insensitive sur "nom"
+        // avec la syntaxe CORRECTE pour l'opérateur `or`.
         try {
           const tokens = trimmedValue.split(/\s+/).filter((w) => w.length >= 2);
-          const orFilter = tokens.length > 0
-            ? tokens.map((w) => `nom.ilike.%${w}%`).join(',')
-            : `nom.ilike.%${trimmedValue}%`;
+          if (tokens.length > 0) {
+            // Construction d'une condition OR valide, par ex: "nom.ilike.%eva%,nom.ilike.%beauty%"
+            const conditions = tokens.map(t => `nom.ilike.%${t.replace(/%/g, '\\%')}%`).join(',');
+            let fallbackQuery = supabase
+              .from(Tables.ENTREPRISE)
+              .select('id, nom, ville, gouvernorat, categorie')
+              .or(conditions)
+              .limit(30);
 
-          let fallbackQuery = supabase
-            .from(Tables.ENTREPRISE)
-            .select('id, nom, ville, gouvernorat, categorie')
-            .or(orFilter)
-            .limit(30);
+            if (cityValue && cityValue.trim().length > 0) {
+              fallbackQuery = fallbackQuery.or(
+                `ville.ilike.%${cityValue}%,gouvernorat.ilike.%${cityValue}%`
+              );
+            }
 
-          if (cityValue && cityValue.trim().length > 0) {
-            fallbackQuery = fallbackQuery.or(
-              `ville.ilike.%${cityValue}%,gouvernorat.ilike.%${cityValue}%`
-            );
-          }
+            const fb = await fallbackQuery;
+            if (!fb.error && Array.isArray(fb.data) && fb.data.length > 0) {
+              const existingIds = new Set(allResults.map((r) => r.id));
+              const normQ = normalizeText(trimmedValue);
+              const extras = fb.data
+                .filter((row: any) => row && row.id && !existingIds.has(row.id))
+                .map((row: any) => {
+                  const nomNorm = normalizeText(row.nom || '');
+                  const startsWith = nomNorm.startsWith(normQ) ? 0 : 1;
+                  return { row, startsWith };
+                })
+                .sort((a, b) => a.startsWith - b.startsWith)
+                .map(({ row }: any) => ({
+                  id: row.id,
+                  nom: row.nom,
+                  ville: row.ville || row.gouvernorat || '',
+                  gouvernorat: row.gouvernorat || null,
+                  categorie: row.categorie || '',
+                }));
 
-          const fb = await fallbackQuery;
-          if (!fb.error && Array.isArray(fb.data) && fb.data.length > 0) {
-            const existingIds = new Set(allResults.map((r) => r.id));
-            const normQ = normalizeText(trimmedValue);
-            const extras = fb.data
-              .filter((row: any) => row && row.id && !existingIds.has(row.id))
-              .map((row: any) => {
-                const nomNorm = normalizeText(row.nom || '');
-                const startsWith = nomNorm.startsWith(normQ) ? 0 : 1;
-                return { row, startsWith };
-              })
-              .sort((a, b) => a.startsWith - b.startsWith)
-              .map(({ row }: any) => ({
-                id: row.id,
-                nom: row.nom,
-                ville: row.ville || row.gouvernorat || '',
-                gouvernorat: row.gouvernorat || null,
-                categorie: row.categorie || '',
-              }));
-
-            // Prioriser les correspondances directes de nom en tête de liste
-            allResults = [...extras, ...allResults];
+              // Prioriser les correspondances directes de nom en tête de liste
+              allResults = [...extras, ...allResults];
+            }
+          } else {
+            // Fallback pour un seul mot (moins de 2 lettres)
+            let fallbackQuery = supabase
+              .from(Tables.ENTREPRISE)
+              .select('id, nom, ville, gouvernorat, categorie')
+              .ilike('nom', `%${trimmedValue.replace(/%/g, '\\%')}%`)
+              .limit(30);
+            
+            if (cityValue && cityValue.trim().length > 0) {
+              fallbackQuery = fallbackQuery.or(
+                `ville.ilike.%${cityValue}%,gouvernorat.ilike.%${cityValue}%`
+              );
+            }
+            
+            const fb = await fallbackQuery;
+            if (!fb.error && Array.isArray(fb.data) && fb.data.length > 0) {
+              const existingIds = new Set(allResults.map((r) => r.id));
+              const normQ = normalizeText(trimmedValue);
+              const extras = fb.data
+                .filter((row: any) => row && row.id && !existingIds.has(row.id))
+                .map((row: any) => ({
+                  id: row.id,
+                  nom: row.nom,
+                  ville: row.ville || row.gouvernorat || '',
+                  gouvernorat: row.gouvernorat || null,
+                  categorie: row.categorie || '',
+                }));
+              allResults = [...extras, ...allResults];
+            }
           }
         } catch (fbErr) {
           console.warn('[SearchBar] Fallback ILIKE failed:', fbErr);
         }
+        // --- FIN CORRECTION ---
 
         if (allResults.length > 0) {
           const ids = allResults.map(r => r.id).filter(Boolean);
