@@ -218,6 +218,8 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
               })()}
               className="w-full h-full"
               style={getLogoStyle(displayImage)}
+              width={40}
+              height={40}
               loading="lazy"
               decoding="async"
               onError={(e) => {
