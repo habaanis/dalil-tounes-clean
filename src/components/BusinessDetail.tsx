@@ -1,11 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { supabase } from '../lib/supabaseClient';
 import { ArrowLeft, MapPin, Phone, Mail, Globe, Star, Instagram, Facebook, Linkedin, Youtube, Navigation, Download, QrCode, Clock, ChevronDown, Link as LinkIcon, Check } from 'lucide-react';
-import { QRCodeSVG } from 'qrcode.react';
-import { ImageGallery } from '../components/ImageGallery';
-import VideoPlayer from '../components/VideoPlayer';
+
+const QRCodeSVG = lazy(() =>
+  import('qrcode.react').then((m) => ({ default: m.QRCodeSVG }))
+);
+const ImageGallery = lazy(() =>
+  import('../components/ImageGallery').then((m) => ({ default: m.ImageGallery }))
+);
+const VideoPlayer = lazy(() => import('../components/VideoPlayer'));
 import EntrepriseAvisForm from '../components/EntrepriseAvisForm';
 import BusinessReviews from '../components/BusinessReviews';
 import { generateShareUrl, extractIdFromSlugUrl, buildEntrepriseShareUrl } from '../lib/slugify';
@@ -800,14 +805,16 @@ export const BusinessDetail = ({
                 ×
               </button>
               <div style={{ borderRadius: '16px', overflow: 'hidden', boxShadow: '0 32px 80px rgba(0,0,0,0.6)' }}>
-                <ImageGallery
-                  imageUrls={business.image_url}
-                  altText={business.nom}
-                  className="w-full"
-                  maxPhotos={mediaLimits.maxPhotos}
-                  height="340px"
-                  objectFit="contain"
-                />
+                <Suspense fallback={<div style={{ height: '340px', background: '#1a0a18' }} />}>
+                  <ImageGallery
+                    imageUrls={business.image_url}
+                    altText={business.nom}
+                    className="w-full"
+                    maxPhotos={mediaLimits.maxPhotos}
+                    height="340px"
+                    objectFit="contain"
+                  />
+                </Suspense>
               </div>
               <p style={{ textAlign: 'center', marginTop: '12px', fontSize: '12px', fontFamily: 'Playfair Display, serif', color: colors.gold, opacity: 0.8, letterSpacing: '0.04em' }}>
                 {displayName}
@@ -819,11 +826,13 @@ export const BusinessDetail = ({
         {/* Video - visible uniquement pour Artisan, Premium et Elite */}
         {tier !== 'gratuit' && mediaLimits.showVideos && business.video_url && (
           <div className="px-4 pt-2">
-            <VideoPlayer
-              videoUrls={business.video_url}
-              maxVideos={mediaLimits.maxVideos}
-              className="w-full rounded-xl overflow-hidden"
-            />
+            <Suspense fallback={<div className="w-full rounded-xl bg-black/20" style={{ aspectRatio: '16/9' }} />}>
+              <VideoPlayer
+                videoUrls={business.video_url}
+                maxVideos={mediaLimits.maxVideos}
+                className="w-full rounded-xl overflow-hidden"
+              />
+            </Suspense>
           </div>
         )}
 
@@ -1285,14 +1294,16 @@ export const BusinessDetail = ({
                     style={{ display: 'block' }}
                   />
                 ) : (
-                  <QRCodeSVG
-                    value={window.location.href}
-                    size={60}
-                    level="H"
-                    includeMargin={true}
-                    fgColor={colors.gold}
-                    bgColor="#FFFFFF"
-                  />
+                  <Suspense fallback={<div style={{ width: 60, height: 60, background: '#FFF' }} />}>
+                    <QRCodeSVG
+                      value={window.location.href}
+                      size={60}
+                      level="H"
+                      includeMargin={true}
+                      fgColor={colors.gold}
+                      bgColor="#FFFFFF"
+                    />
+                  </Suspense>
                 )}
               </div>
               <p
