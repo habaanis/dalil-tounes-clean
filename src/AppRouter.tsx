@@ -75,7 +75,7 @@ const PageLoader = () => (
       <div className="max-w-3xl mx-auto">
         <div
           className="relative overflow-hidden rounded-3xl border border-[#D4AF37]"
-          style={{ aspectRatio: '5 / 1', minHeight: 120, background: '#1a0a18' }}
+          style={{ aspectRatio: '3 / 1', minHeight: 180, background: '#1a0a18' }}
         >
           <img
             src="/images/drapeau-tunisie.webp?v=1"

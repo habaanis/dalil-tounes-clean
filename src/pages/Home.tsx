@@ -100,7 +100,7 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
         <div className="max-w-3xl mx-auto">
           <div
             className="relative overflow-hidden rounded-3xl border border-[#D4AF37] text-center"
-            style={{ aspectRatio: '5 / 1', minHeight: 120 }}
+            style={{ aspectRatio: '3 / 1', minHeight: 180 }}
           >
             <img
               src={HERO_IMAGE_URL}
