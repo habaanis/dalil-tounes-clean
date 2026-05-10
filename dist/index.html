@@ -28,22 +28,33 @@
       media="(min-width: 769px)"
     />
 
-    <style>*,:after,:before{border-style:solid;border-width:0;box-sizing:border-box}html{line-height:1.5;-webkit-text-size-adjust:100%;font-family:ui-sans-serif,system-ui,sans-serif}body{background:#fff;margin:0;overflow-x:hidden}@keyframes pulse{0%,to{opacity:1}50%{opacity:.45}}.sk{animation:pulse 1.8s ease-in-out infinite;background:#e5e7eb;border-radius:.75rem}#pre-nav{align-items:center;background:#fff;border-bottom:1px solid #f0e6d2;display:flex;height:56px;padding:0 1rem;position:sticky;top:0;z-index:50}#pre-hero{padding:1rem}#pre-hero-inner{align-items:center;background:#1a0a18;border-radius:1.5rem;display:flex;justify-content:center;margin:0 auto;max-width:72rem;min-height:200px;overflow:hidden;position:relative}#pre-hero-img{height:100%;inset:0;-o-object-fit:cover;object-fit:cover;opacity:.6;position:absolute;width:100%}.hero-content-sk{align-items:center;display:flex;flex-direction:column;gap:10px;position:relative;width:100%;z-index:2}.h1-sk{background:hsla(0,0%,100%,.2);height:24px;width:250px}#pre-search{padding:0 1rem}.input-sk{background:#f3f4f6;border-radius:.75rem;height:48px;margin:0 auto;max-width:72rem}@media (max-width:767px){section:first-of-type .rounded-3xl,section:first-of-type .rounded-xl,section:nth-of-type(2) a{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:none!important}}</style>
+    <style>*,:after,:before{border-style:solid;border-width:0;box-sizing:border-box}html{line-height:1.5;-webkit-text-size-adjust:100%;font-family:ui-sans-serif,system-ui,sans-serif}body{background:#fff;margin:0;overflow-x:hidden}@keyframes pulse{0%,to{opacity:1}50%{opacity:.45}}.sk{animation:pulse 1.8s ease-in-out infinite;background:#e5e7eb;border-radius:.75rem}#pre-nav{align-items:center;background:#fff;border-bottom:1px solid #f0e6d2;display:flex;height:56px;padding:0 1rem;position:sticky;top:0;z-index:50}#pre-hero{padding:1rem}#pre-hero-inner{align-items:center;aspect-ratio:3/1;background:#1a0a18;border:1px solid #d4af37;border-radius:1.5rem;display:flex;justify-content:center;margin:0 auto;max-width:72rem;min-height:180px;overflow:hidden;position:relative}#pre-hero-img{height:100%;inset:0;-o-object-fit:cover;object-fit:cover;opacity:1;position:absolute;width:100%}#pre-hero-overlay{background:rgba(0,0,0,.3);inset:0;position:absolute;z-index:1}.hero-content-sk{align-items:center;display:flex;flex-direction:column;gap:10px;padding:0 1.5rem;position:relative;width:100%;z-index:2}.h1-sk{background:hsla(0,0%,100%,.18);border-radius:.25rem;height:28px;max-width:320px;width:60%}#pre-search{padding:0 1rem}.input-sk{background:#f3f4f6;border-radius:.75rem;height:48px;margin:0 auto;max-width:72rem}@media (max-width:767px){section:first-of-type .rounded-3xl,section:first-of-type .rounded-xl,section:nth-of-type(2) a{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:none!important}}</style>
 
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ME2M208SES">
-    </script>
+    <!-- Google tag (gtag.js) — chargé APRÈS window.load pour ne pas
+         pénaliser le LCP mobile. La queue dataLayer est conservée
+         et rejouée dès que gtag.js est prêt. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-ME2M208SES');
+      function loadGtm() {
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=G-ME2M208SES';
+        document.head.appendChild(s);
+      }
+      if (document.readyState === 'complete') {
+        setTimeout(loadGtm, 0);
+      } else {
+        window.addEventListener('load', function(){ setTimeout(loadGtm, 500); }, { once: true });
+      }
     </script>
-    <script type="module" crossorigin src="/assets/index-DQ_ds7fI.js"></script>
+    <script type="module" crossorigin src="/assets/index-C-ysw66v.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/vendor-react-DSaysAo5.js">
     <link rel="modulepreload" crossorigin href="/assets/vendor-icons-Bo6zjYE3.js">
     <link rel="modulepreload" crossorigin href="/assets/vendor-router-CBWriE7m.js">
-    <link rel="preload" as="style" crossorigin href="/assets/index-XVq8oPjU.css" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" crossorigin href="/assets/index-XVq8oPjU.css"></noscript>
+    <link rel="preload" as="style" crossorigin href="/assets/index-C3ce7bo6.css" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" crossorigin href="/assets/index-C3ce7bo6.css"></noscript>
   </head>
   <body>
     <div id="pre-skeleton">
@@ -53,15 +64,19 @@
       
       <div id="pre-hero">
         <div id="pre-hero-inner">
-          <img 
-            src="/images/drapeau-tunisie.webp?v=1" 
+          <img
+            src="/images/drapeau-tunisie.webp?v=1"
             id="pre-hero-img"
-            alt="Drapeau Tunisie"
+            alt="Drapeau de la Tunisie"
+            width="1200"
+            height="400"
             fetchpriority="high"
+            decoding="async"
           >
+          <div id="pre-hero-overlay"></div>
           <div class="hero-content-sk">
             <div class="sk h1-sk"></div>
-            <div class="sk" style="width:180px;height:16px;background:rgba(255,255,255,0.1)"></div>
+            <div class="sk" style="width:50%;max-width:220px;height:16px;background:rgba(255,255,255,0.12);border-radius:.25rem"></div>
           </div>
         </div>
       </div>
