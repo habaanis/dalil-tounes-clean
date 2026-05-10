@@ -51,21 +51,25 @@ if (import.meta.env.PROD) {
 
 supportsWebP();
 
-// Applique loading="lazy" automatiquement à toutes les <img> (existantes + dynamiques)
-const applyLazyLoading = (root: ParentNode) => {
-  root.querySelectorAll('img:not([loading])').forEach((img) => {
-    img.setAttribute('loading', 'lazy');
-  });
+// Applique loading="lazy" + decoding="async" automatiquement à toutes les balises img.
+// Les images prioritaires (hero, logo, LCP) doivent porter loading="eager" pour
+// être exclues — voir fetchpriority/priority dans OptimizedImage.
+const tuneImg = (img: HTMLImageElement) => {
+  if (!img.hasAttribute('loading')) img.setAttribute('loading', 'lazy');
+  if (!img.hasAttribute('decoding')) img.setAttribute('decoding', 'async');
 };
-applyLazyLoading(document);
+const applyImgDefaults = (root: ParentNode) => {
+  root.querySelectorAll<HTMLImageElement>('img').forEach(tuneImg);
+};
+applyImgDefaults(document);
 const imgObserver = new MutationObserver((mutations) => {
   for (const m of mutations) {
     m.addedNodes.forEach((node) => {
       if (node instanceof HTMLElement) {
-        if (node.tagName === 'IMG' && !node.hasAttribute('loading')) {
-          node.setAttribute('loading', 'lazy');
+        if (node.tagName === 'IMG') {
+          tuneImg(node as HTMLImageElement);
         } else {
-          applyLazyLoading(node);
+          applyImgDefaults(node);
         }
       }
     });

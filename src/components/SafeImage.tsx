@@ -8,6 +8,9 @@ interface SafeImageProps {
   style?: React.CSSProperties;
   fallbackType?: 'placeholder' | 'icon';
   onError?: () => void;
+  width?: number;
+  height?: number;
+  priority?: boolean;
 }
 
 export const SafeImage = ({
@@ -16,7 +19,10 @@ export const SafeImage = ({
   className = '',
   style,
   fallbackType = 'placeholder',
-  onError
+  onError,
+  width,
+  height,
+  priority = false,
 }: SafeImageProps) => {
   const [imageError, setImageError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -68,7 +74,11 @@ export const SafeImage = ({
         style={style}
         onError={handleError}
         onLoad={handleLoad}
-        loading="lazy"
+        loading={priority ? 'eager' : 'lazy'}
+        decoding="async"
+        width={width}
+        height={height}
+        fetchPriority={priority ? 'high' : 'auto'}
       />
     </div>
   );

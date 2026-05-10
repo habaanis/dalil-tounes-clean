@@ -169,6 +169,8 @@ export const Layout = ({ children }: LayoutProps) => {
                     width="140"
                     height="140"
                     fetchpriority="high"
+                    loading="eager"
+                    decoding="async"
                   />
                 </picture>
               </div>

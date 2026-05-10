@@ -187,7 +187,7 @@ function ListRow({ item, accentColor, onClick }: { item: MeilleursItem; accentCo
             src={imgSrc}
             alt={item.nom}
             className="w-full h-full object-cover"
-            onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+            onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} decoding="async"
           />
         ) : (
           <div

@@ -847,7 +847,7 @@ export const Businesses = ({
                 src={HERO_IMAGE_JPG_URL}
                 alt="Drapeau de la Tunisie"
                 className="w-full h-full object-cover brightness-105"
-                onError={(e) => { (e.currentTarget as HTMLImageElement).src = HERO_IMAGE_JPG_URL; }}
+                onError={(e) => { (e.currentTarget as HTMLImageElement).src = HERO_IMAGE_JPG_URL; }} decoding="async"
               />
             </picture>
             {/* Overlay bleu profond pour lisibilité */}
@@ -885,6 +885,7 @@ export const Businesses = ({
                 alt="Collaboration entre entreprises"
                 className="absolute inset-0 w-full h-full object-cover brightness-105"
                 loading="lazy"
+              decoding="async"
               />
               <div className="absolute inset-0 bg-gradient-to-br from-[#800020]/70 to-[#4A1D43]/70"></div>
               <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
@@ -911,6 +912,7 @@ export const Businesses = ({
                 alt="Événements entreprise"
                 className="absolute inset-0 w-full h-full object-cover brightness-105"
                 loading="lazy"
+              decoding="async"
               />
               <div className="absolute inset-0 bg-gradient-to-br from-[#800020]/70 to-[#4A1D43]/70"></div>
               <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">

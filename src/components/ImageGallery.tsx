@@ -120,6 +120,8 @@ export const ImageGallery = ({ imageUrls, altText, className = '', maxPhotos, he
               alt={`${altText} - Image ${currentIndex + 1}`}
               className="max-w-full max-h-full object-contain shadow-2xl rounded-lg"
               onClick={(e) => e.stopPropagation()}
+              loading="eager"
+              decoding="async"
             />
 
             {/* Navigation en plein écran */}

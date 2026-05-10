@@ -452,6 +452,7 @@ export const BusinessEvents = () => {
                           src={event.image_url.split(',')[0].trim()}
                           alt={event.event_name}
                           className="w-full h-full object-contain"
+                        decoding="async"
                         />
                       </div>
                     )}

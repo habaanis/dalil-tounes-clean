@@ -7,6 +7,8 @@ interface LazyImageProps {
   style?: React.CSSProperties;
   onError?: (e: React.SyntheticEvent<HTMLImageElement>) => void;
   fallbackSrc?: string;
+  width?: number;
+  height?: number;
 }
 
 export const LazyImage = ({
@@ -15,7 +17,9 @@ export const LazyImage = ({
   className = '',
   style,
   onError,
-  fallbackSrc
+  fallbackSrc,
+  width,
+  height,
 }: LazyImageProps) => {
   const [imageSrc, setImageSrc] = useState<string | undefined>(undefined);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -68,6 +72,9 @@ export const LazyImage = ({
         onLoad={handleLoad}
         onError={handleError}
         loading="lazy"
+        decoding="async"
+        width={width}
+        height={height}
       />
     </div>
   );

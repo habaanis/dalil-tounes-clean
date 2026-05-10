@@ -425,6 +425,7 @@ export default function Citizens({ onNavigate }: CitizensProps = {}) {
                 alt="Drapeau de la Tunisie - Services citoyens et établissements tunisiens sur Dalil Tounes"
                 className="w-full h-full object-cover blur-sm opacity-50"
                 loading="lazy"
+              decoding="async"
               />
             </picture>
           </div>
@@ -436,6 +437,7 @@ export default function Citizens({ onNavigate }: CitizensProps = {}) {
               alt="Ibn Khaldoun - Historien et penseur tunisien, symbole du savoir en Tunisie"
               className="w-20 h-20 md:w-28 md:h-28 object-cover rounded-full shadow-xl hidden sm:block"
               loading="lazy"
+            decoding="async"
             />
             <div className="text-center">
               <h1
@@ -453,6 +455,7 @@ export default function Citizens({ onNavigate }: CitizensProps = {}) {
               alt="Habib Bourguiba - Père de la nation tunisienne, fondateur de la République de Tunisie"
               className="w-20 h-20 md:w-28 md:h-28 object-cover rounded-full shadow-xl hidden sm:block"
               loading="lazy"
+            decoding="async"
             />
           </div>
         </motion.div>
@@ -520,7 +523,7 @@ export default function Citizens({ onNavigate }: CitizensProps = {}) {
                         loading="lazy"
                         onError={(e) => {
                           e.currentTarget.style.display = 'none';
-                        }}
+                        }} decoding="async"
                       />
                       <div
                         className="absolute inset-0"

@@ -93,6 +93,7 @@ export default function CitizensTourism({ onNavigate }: CitizensTourismProps = {
           src={getSupabaseImageUrl('entreprise_banner.webp')}
           alt="Tourisme Local & Expatriation"
           className="absolute inset-0 w-full h-full object-cover"
+        decoding="async"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-[#4A1D43]/80 via-[#4A1D43]/70 to-transparent"></div>
 

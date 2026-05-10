@@ -83,6 +83,8 @@ export default function ImageCarousel({ slides, autoPlayInterval = 5000 }: Image
             src={slides[currentIndex].imageUrl}
             alt={slides[currentIndex].title}
             className="w-full h-full object-cover"
+            loading="lazy"
+            decoding="async"
           />
 
           {/* Overlay gradient */}

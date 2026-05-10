@@ -398,7 +398,7 @@ export default function CitizensServices({ onNavigateBack }: CitizensServicesPro
           onError={() => {
             setImageError(true);
             console.error('Failed to load hero image:', heroImageUrl);
-          }}
+          }} decoding="async"
         />
 
         <div className="absolute inset-0 bg-gradient-to-r from-[#4A1D43]/90 via-[#4A1D43]/75 to-[#D4AF37]/30"></div>

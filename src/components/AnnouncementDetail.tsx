@@ -297,6 +297,8 @@ export default function AnnouncementDetail({ announcementId, onClose }: Announce
                 src={getSupabaseImageUrl(announcement.photo_url[currentImageIndex])}
                 alt={announcement.title}
                 className="w-full h-full object-contain"
+                loading="eager"
+                decoding="async"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   if (!target.src.includes('placeholder.jpg')) {

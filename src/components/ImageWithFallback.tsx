@@ -50,10 +50,11 @@ export function ImageWithFallback({
 
   return (
     <img
+      loading="lazy"
+      decoding="async"
       {...props}
       src={imgSrc}
       alt={alt}
-      loading="lazy"
       onError={handleError}
     />
   );

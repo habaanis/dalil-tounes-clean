@@ -111,6 +111,7 @@ export const LocalBusinessesSection = ({ onCardClick }: LocalBusinessesSectionPr
                               alt={`${business.nom}${business.ville ? ` à ${business.ville}` : ''} - Commerce local en Tunisie - Dalil Tounes`}
                               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                               loading="lazy"
+                              decoding="async"
                             />
                           ) : (
                             <SafeImage

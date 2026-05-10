@@ -62,6 +62,7 @@ export const PageHeader = ({ backTo, backLabel = 'Retour', hideBack = false }: P
               width="140"
               height="140"
               loading="lazy"
+              decoding="async"
             />
           </picture>
           <span className="text-xs font-light tracking-widest uppercase text-gray-600 hidden sm:inline">

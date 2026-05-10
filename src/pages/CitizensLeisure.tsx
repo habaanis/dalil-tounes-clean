@@ -643,6 +643,7 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
               src={HERO_IMAGE_JPG_URL}
               alt="Drapeau de la Tunisie - Loisirs et événements culturels tunisiens sur Dalil Tounes"
               className="w-full h-full object-cover brightness-105"
+            decoding="async"
             />
           </picture>
           {/* Overlay bleu profond pour lisibilité */}
@@ -661,7 +662,7 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
                 className="relative w-12 h-12 object-contain drop-shadow-2xl"
                 onError={(e) => {
                   e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ccircle cx="50" cy="50" r="45" fill="%23D4AF37"/%3E%3Ctext x="50" y="60" text-anchor="middle" fill="%23fff" font-size="40" font-family="serif"%3E✺%3C/text%3E%3C/svg%3E';
-                }}
+                }} decoding="async"
               />
             </div>
           </div>
@@ -707,6 +708,7 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
                     src={(weeklyEvent.image_url?.split(',')[0]?.trim()) || "https://images.pexels.com/photos/1762578/pexels-photo-1762578.jpeg?auto=compress&cs=tinysrgb&w=600"}
                     alt={getTranslatedText(weeklyEvent, 'titre')}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  decoding="async"
                   />
                 </div>
                 <div className="p-3 space-y-2">
@@ -765,6 +767,7 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
                     src={(monthlyEvent.image_url?.split(',')[0]?.trim()) || "https://images.pexels.com/photos/3010168/pexels-photo-3010168.jpeg?auto=compress&cs=tinysrgb&w=600"}
                     alt={getTranslatedText(monthlyEvent, 'titre')}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  decoding="async"
                   />
                 </div>
                 <div className="p-3 space-y-2">
@@ -823,6 +826,7 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
                     src={(annualEvent.image_url?.split(',')[0]?.trim()) || "https://images.pexels.com/photos/8349107/pexels-photo-8349107.jpeg?auto=compress&cs=tinysrgb&w=600"}
                     alt={getTranslatedText(annualEvent, 'titre')}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  decoding="async"
                   />
                 </div>
                 <div className="p-3 space-y-2">
@@ -936,6 +940,7 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
                           alt={getTranslatedText(event, 'titre')}
                           className="absolute inset-0 w-full h-full object-cover"
                           loading="lazy"
+                        decoding="async"
                         />
                       )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
@@ -1028,6 +1033,7 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
               alt="Ibn Khaldoun"
               className="w-12 h-12 object-cover rounded-full opacity-80 shadow-lg"
               loading="lazy"
+            decoding="async"
             />
             <p className="text-center text-gray-700 text-base italic font-light leading-relaxed">
               Trouvez des idées, vérifiez les horaires et réservez votre place. Votre temps libre commence ici !
@@ -1037,6 +1043,7 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
               alt="Ibn Khaldoun"
               className="w-12 h-12 object-cover rounded-full opacity-80 shadow-lg"
               loading="lazy"
+            decoding="async"
             />
           </div>
         </div>

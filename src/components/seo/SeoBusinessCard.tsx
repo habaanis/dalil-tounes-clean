@@ -74,6 +74,7 @@ const SeoBusinessCard: React.FC<SeoBusinessCardProps> = ({ business }) => {
                 className="w-full h-full"
                 style={getLogoStyle(business.logo_url)}
                 loading="lazy"
+                decoding="async"
               />
             </div>
           </div>
@@ -177,6 +178,9 @@ const SeoBusinessCard: React.FC<SeoBusinessCardProps> = ({ business }) => {
             alt={`${business.nom}${locationLabel ? ` à ${locationLabel}` : ''}`}
             className="w-12 h-12 rounded-lg object-cover flex-shrink-0 bg-gray-900"
             loading="lazy"
+            decoding="async"
+            width={48}
+            height={48}
           />
         ) : (
           <div className="w-12 h-12 rounded-lg bg-gray-800 flex-shrink-0 flex items-center justify-center">

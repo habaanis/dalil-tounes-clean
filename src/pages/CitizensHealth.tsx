@@ -97,6 +97,7 @@ export default function CitizensHealth({ onNavigate }: CitizensHealthProps) {
           src={getSupabaseImageUrl('sante.jpg')}
           alt="Soins médicaux et urgences en Tunisie"
           className="w-full h-[240px] object-cover"
+        decoding="async"
         />
         {/* Overlay bordeaux léger */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#4A1D43]/40 to-[#6B2D5C]/30"></div>
@@ -180,6 +181,7 @@ export default function CitizensHealth({ onNavigate }: CitizensHealthProps) {
               src={getSupabaseImageUrl('sante_banner.webp')}
               alt="Ambulance en urgence"
               className="w-full h-full object-cover"
+            decoding="async"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-[#4A1D43]/90 to-[#6B2D5C]/80"></div>
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">

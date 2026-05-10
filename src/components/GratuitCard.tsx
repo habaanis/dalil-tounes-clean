@@ -81,6 +81,10 @@ export default function GratuitCard({
             alt={`Logo ${name}${locationLabel ? ` à ${locationLabel}` : ''} - Annuaire établissements Tunisie`}
             className="w-full h-full"
             style={getLogoStyle(logoUrl)}
+            loading="lazy"
+            decoding="async"
+            width={32}
+            height={32}
           />
         </div>
 

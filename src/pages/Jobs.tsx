@@ -144,6 +144,7 @@ export const Jobs = () => {
             src={HERO_IMAGE_JPG_URL}
             alt="Drapeau de la Tunisie"
             className="absolute inset-0 w-full h-full object-cover brightness-105"
+          decoding="async"
           />
         </picture>
 

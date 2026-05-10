@@ -499,6 +499,7 @@ export default function CitizensAdmin({ onNavigateBack }: CitizensAdminProps = {
           src={getSupabaseImageUrl('cat_administratif.jpg')}
           alt="Services Publics en Tunisie"
           className="w-full h-[260px] object-cover brightness-[0.6]"
+        decoding="async"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-[#4A1D43]/30 to-[#4A1D43]/40"></div>
 
