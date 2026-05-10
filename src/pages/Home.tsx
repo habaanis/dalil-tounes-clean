@@ -97,7 +97,7 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
            immédiatement stable. Aucun repaint déclenché par l'arrivée
            ultérieure des données Supabase. */}
       <section className="py-4 px-4">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-3xl mx-auto">
           <div
             className="relative overflow-hidden rounded-3xl border border-[#D4AF37] text-center"
             style={{ aspectRatio: '3 / 1', minHeight: 180 }}

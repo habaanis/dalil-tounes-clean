@@ -72,7 +72,7 @@ const VillePage = lazy(() => import('./pages/seo/VillePage'));
 const PageLoader = () => (
   <div className="min-h-screen bg-white" aria-hidden="true">
     <div className="py-4 px-4">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-3xl mx-auto">
         <div
           className="relative overflow-hidden rounded-3xl border border-[#D4AF37]"
           style={{ aspectRatio: '3 / 1', minHeight: 180, background: '#1a0a18' }}
