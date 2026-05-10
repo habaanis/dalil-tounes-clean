@@ -80,14 +80,25 @@
       }
     </style>
 
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ME2M208SES">
-    </script>
+    <!-- Google tag (gtag.js) — chargé APRÈS window.load pour ne pas
+         pénaliser le LCP mobile. La queue dataLayer est conservée
+         et rejouée dès que gtag.js est prêt. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-ME2M208SES');
+      function loadGtm() {
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=G-ME2M208SES';
+        document.head.appendChild(s);
+      }
+      if (document.readyState === 'complete') {
+        setTimeout(loadGtm, 0);
+      } else {
+        window.addEventListener('load', function(){ setTimeout(loadGtm, 500); }, { once: true });
+      }
     </script>
   </head>
   <body>

@@ -439,24 +439,20 @@ export const Layout = ({ children }: LayoutProps) => {
       </Suspense>
 
       {location.pathname === '/' && (
-        <div className="bg-yellow-400 border-b border-yellow-500 fixed top-16 left-0 right-0 z-40">
-          <div className="max-w-7xl mx-auto px-4 py-3">
-            <div className="flex items-center justify-between gap-4">
-              <div className="text-center flex-1">
-                <div className="flex items-center justify-center gap-2 mb-1">
-                  <span className="text-xl">🎉</span>
-                  <p className="text-sm md:text-base font-bold text-gray-900">
-                    {t.home?.banner?.title || 'Offre de lancement exceptionnelle !'}
-                  </p>
-                  <span className="text-xl">🎉</span>
-                </div>
-                <p className="text-xs md:text-sm text-gray-800">
+        <div className="bg-yellow-400 border-b border-yellow-500 mt-16">
+          <div className="max-w-7xl mx-auto px-4 py-2 md:py-3">
+            <div className="flex items-center justify-between gap-3 md:gap-4">
+              <div className="text-center flex-1 min-w-0">
+                <p className="text-sm md:text-base font-bold text-gray-900 truncate md:whitespace-normal">
+                  {t.home?.banner?.title || 'Offre de lancement exceptionnelle !'}
+                </p>
+                <p className="hidden md:block text-xs md:text-sm text-gray-800">
                   {t.home?.banner?.subtitle || '2 mois gratuits pour toute inscription'}
                 </p>
               </div>
               <button
                 onClick={handleNavigateToSubscription}
-                className="flex-shrink-0 px-4 py-2 md:px-6 md:py-2.5 bg-gray-900 text-white text-sm md:text-base font-semibold rounded-lg hover:bg-gray-800 hover:scale-105 transition-all duration-200 shadow-md hover:shadow-lg whitespace-nowrap"
+                className="flex-shrink-0 px-3 py-1.5 md:px-6 md:py-2.5 bg-gray-900 text-white text-sm md:text-base font-semibold rounded-lg md:hover:bg-gray-800 md:hover:scale-105 md:transition-all md:duration-200 md:shadow-md whitespace-nowrap"
                 aria-label="Discover offer"
               >
                 {t.home?.banner?.button || 'Découvrir'}
@@ -466,7 +462,7 @@ export const Layout = ({ children }: LayoutProps) => {
         </div>
       )}
 
-      <main className={`min-h-[calc(100vh-5rem)] overflow-x-hidden ${location.pathname === '/' ? 'pt-[124px]' : 'pt-[96px] sm:pt-[104px]'}`}>{children}</main>
+      <main className={`min-h-[calc(100vh-5rem)] overflow-x-hidden ${location.pathname === '/' ? '' : 'pt-[96px] sm:pt-[104px]'}`}>{children}</main>
 
       <Suspense fallback={null}>
         <SocialBar />
