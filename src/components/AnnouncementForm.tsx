@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { X, Upload, Loader2 } from 'lucide-react';
 import { supabase } from '../lib/BoltDatabase';
 import CityAutocomplete from './CityAutocomplete';
+import { OptimizedImage } from './OptimizedImage';
 
 interface AnnouncementFormProps {
   onClose: () => void;
@@ -401,7 +402,7 @@ export default function AnnouncementForm({ onClose, onSuccess, language }: Annou
             <div className="flex flex-wrap gap-4">
               {photos.map((photo, index) => (
                 <div key={index} className="relative w-24 h-24">
-                  <img src={photo} alt={`Photo ${index + 1}`} className="w-full h-full object-cover rounded-lg" />
+                  <OptimizedImage src={photo} alt={`Photo ${index + 1}`} className="w-full h-full object-cover rounded-lg" />
                   <button
                     type="button"
                     onClick={() => setPhotos(photos.filter((_, i) => i !== index))}
