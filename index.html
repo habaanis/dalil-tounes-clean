@@ -40,20 +40,27 @@
       /* Navbar placeholder */
       #pre-nav{height:56px;background:#fff;border-bottom:1px solid #f0e6d2;display:flex;align-items:center;padding:0 1rem;position:sticky;top:0;z-index:50}
       
-      /* Hero placeholder OPTIMISÉ */
+      /* Hero placeholder OPTIMISÉ — dimensions identiques au rendu React
+         afin que le navigateur sélectionne l'image du skeleton comme LCP.
+         aspect-ratio 3/1 = même box que le <img width=1200 height=400> de Home.tsx. */
       #pre-hero{padding:1rem}
       #pre-hero-inner{
         max-width:72rem;margin:0 auto;border-radius:1.5rem;overflow:hidden;
-        position:relative;min-height:200px; /* Augmenté pour correspondre au visuel final */
+        position:relative;aspect-ratio:3/1;min-height:180px;
+        border:1px solid #D4AF37;
         background:#1a0a18;display:flex;align-items:center;justify-content:center;
       }
-      /* L'astuce est ici : on affiche l'image direct dans le skeleton */
+      /* Image du drapeau AFFICHÉE EN PLEINE OPACITÉ — elle devient le LCP.
+         Un overlay noir au-dessus reproduit le voile du rendu final. */
       #pre-hero-img {
         position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
-        opacity:0.6; /* Pour laisser voir le texte au-dessus */
+        opacity:1;
       }
-      .hero-content-sk{position:relative;z-index:2;width:100%;display:flex;flex-direction:column;align-items:center;gap:10px}
-      .h1-sk{width:250px;height:24px;background:rgba(255,255,255,0.2)}
+      #pre-hero-overlay {
+        position:absolute;inset:0;background:rgba(0,0,0,0.3);z-index:1;
+      }
+      .hero-content-sk{position:relative;z-index:2;width:100%;display:flex;flex-direction:column;align-items:center;gap:10px;padding:0 1.5rem}
+      .h1-sk{width:60%;max-width:320px;height:28px;background:rgba(255,255,255,0.18);border-radius:.25rem}
 
       #pre-search{padding:0 1rem}
       .input-sk{max-width:72rem;margin:0 auto;height:48px;border-radius:.75rem;background:#f3f4f6}
@@ -91,15 +98,19 @@
       
       <div id="pre-hero">
         <div id="pre-hero-inner">
-          <img 
-            src="/images/drapeau-tunisie.webp?v=1" 
+          <img
+            src="/images/drapeau-tunisie.webp?v=1"
             id="pre-hero-img"
-            alt="Drapeau Tunisie"
+            alt="Drapeau de la Tunisie"
+            width="1200"
+            height="400"
             fetchpriority="high"
+            decoding="async"
           >
+          <div id="pre-hero-overlay"></div>
           <div class="hero-content-sk">
             <div class="sk h1-sk"></div>
-            <div class="sk" style="width:180px;height:16px;background:rgba(255,255,255,0.1)"></div>
+            <div class="sk" style="width:50%;max-width:220px;height:16px;background:rgba(255,255,255,0.12);border-radius:.25rem"></div>
           </div>
         </div>
       </div>
