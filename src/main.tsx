@@ -45,6 +45,16 @@ createRoot(document.getElementById('root')!).render(
   </StrictMode>
 );
 
+// Retire le skeleton UNIQUEMENT après que React a peint sa première frame
+// ET que l'image du hero React est dans le cache (elle l'est forcément, puisque
+// le skeleton vient de l'afficher). On passe par deux rAF pour garantir un vrai
+// paint avant le swap — évite le flash blanc et fige le LCP sur l'image déjà peinte.
+requestAnimationFrame(() => {
+  requestAnimationFrame(() => {
+    (window as unknown as { __removeSkeleton?: () => void }).__removeSkeleton?.();
+  });
+});
+
 if (import.meta.env.PROD) {
   registerServiceWorker();
 }

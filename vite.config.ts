@@ -15,7 +15,7 @@ const nonBlockingCssPlugin = {
       (match: string) => {
         const attrs = match.slice('<link rel="stylesheet"'.length, -1);
         return (
-          `<link rel="preload" as="style"${attrs} onload="this.onload=null;this.rel='stylesheet'">` +
+          `<link rel="preload" as="style" fetchpriority="low"${attrs} onload="this.onload=null;this.rel='stylesheet'">` +
           `<noscript><link rel="stylesheet"${attrs}></noscript>`
         );
       }

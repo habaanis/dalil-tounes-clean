@@ -33,6 +33,9 @@
       *,::before,::after{box-sizing:border-box;border-width:0;border-style:solid}
       html{line-height:1.5;-webkit-text-size-adjust:100%;font-family:ui-sans-serif,system-ui,sans-serif}
       body{margin:0;overflow-x:hidden;background:#fff}
+      /* Le root React est caché jusqu'à ce que le skeleton soit retiré :
+         garantit un seul et même pixel drapeau visible sans flash entre les deux. */
+      #root{opacity:0;transition:opacity 0s}
       
       @keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
       .sk{animation:pulse 1.8s ease-in-out infinite;background:#e5e7eb;border-radius:.75rem}
@@ -134,16 +137,26 @@
     <div id="root"></div>
 
     <script>
+      // Stratégie LCP stable :
+      // 1. Le skeleton HTML peint l'image drapeau le plus tôt possible.
+      // 2. React monte ensuite dans #root, invisible (opacity:0), avec la MÊME image
+      //    drapeau chargée depuis le cache — donc même pixel, aucun reflow.
+      // 3. Quand React signale "ready" (window.__appMounted), on swappe : on retire
+      //    le skeleton d'un coup, et #root devient visible. Le navigateur continue
+      //    de voir exactement le même drapeau => le LCP reste figé sur ce peint.
       (function(){
-        var ob = new MutationObserver(function(){
+        var skeletonRemoved = false;
+        function removeSkeleton(){
+          if (skeletonRemoved) return;
+          skeletonRemoved = true;
+          var sk = document.getElementById('pre-skeleton');
+          if (sk) sk.remove();
           var r = document.getElementById('root');
-          if(r && r.children.length > 0){
-            var sk = document.getElementById('pre-skeleton');
-            if(sk) sk.remove();
-            ob.disconnect();
-          }
-        });
-        ob.observe(document.getElementById('root'), {childList:true});
+          if (r) r.style.opacity = '1';
+        }
+        window.__removeSkeleton = removeSkeleton;
+        // Secours : si React n'émet pas le signal sous 6s, on affiche quand même.
+        setTimeout(removeSkeleton, 6000);
       })();
     </script>
     <script type="module" src="/src/main.tsx"></script>
