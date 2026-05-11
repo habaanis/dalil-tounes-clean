@@ -162,26 +162,21 @@ export default function SearchBar({
         const resp = await query;
         allResults = resp.data || [];
       } else {
-        const scopeMap: Record<string, string | null> = {
-          global: null,
-          sante: 'sante',
-          education: null,
-          administration: null,
-          loisirs: 'loisirs',
-          magasin: 'magasin',
-          marche_local: null,
-          tourism: 'tourisme',
-          services: 'services',
-        };
-        const rpcScope = scopeMap[scope] ?? null;
+        const searchTerm = trimmedValue.replace(/[%_]/g, (c) => `\\${c}`);
 
-        const resp = await supabase.rpc('search_entreprise_smart', {
-          p_q: trimmedValue,
-          p_ville: cityValue && cityValue.trim().length > 0 ? cityValue : null,
-          p_categorie: metier && metier.trim().length > 0 ? metier : null,
-          p_scope: rpcScope,
-          p_limit: 30
-        });
+        let query = supabase
+          .from(Tables.ENTREPRISE)
+          .select('*')
+          .or(
+            `nom.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,sous_categories_clean.ilike.%${searchTerm}%,ville.ilike.%${searchTerm}%,name_ar.ilike.%${searchTerm}%`
+          )
+          .limit(20);
+
+        if (cityValue && cityValue.trim().length > 0) {
+          query = query.eq('gouvernorat', cityValue);
+        }
+
+        const resp = await query;
 
         if (resp.error) {
           console.error('Search query error:', resp.error);
@@ -191,82 +186,18 @@ export default function SearchBar({
           return;
         }
 
-        allResults = (resp.data || []).map(item => {
-          const score = item.score || 0;
-          let priority = 3;
-          if (score >= 50) priority = 0;
-          else if (score >= 20) priority = 1;
-          else if (score >= 10) priority = 2;
-
-          return { ...item, _priority: priority };
-        })
-        .sort((a, b) => {
-          if (a._priority !== b._priority) return a._priority - b._priority;
-          const nameA = a.nom || '';
-          const nameB = b.nom || '';
-            return nameA.localeCompare(nameB, 'fr', { sensitivity: 'base' });
+        const normQ = normalizeText(trimmedValue);
+        allResults = (resp.data || [])
+          .map((row: any) => {
+            const nomNorm = normalizeText(row.nom || '');
+            const exact = nomNorm === normQ ? 0 : nomNorm.startsWith(normQ) ? 1 : 2;
+            return { row, exact };
           })
-          .slice(0, 30)
-          .map(({ _priority, ...rest }) => rest);
-
-        // Filet de sécurité multi-mots : chaque token de la requête doit être
-        // présent dans `nom` (AND). Enchaîner `.ilike()` sur la même colonne
-        // combine les conditions en AND côté PostgREST, ce qui garantit que
-        // "Envie Djerba" ne remonte QUE les fiches contenant les deux mots
-        // (ex: "Eva Beauty Envie Djerba") au lieu d'exploser le bruit.
-        try {
-          const tokens = trimmedValue
-            .split(/\s+/)
-            .map((w) => w.trim())
-            .filter((w) => w.length >= 2);
-          const searchTokens = tokens.length > 0 ? tokens : [trimmedValue];
-
-          let fallbackQuery = supabase
-            .from(Tables.ENTREPRISE)
-            .select('id, nom, ville, gouvernorat, categorie')
-            .limit(30);
-
-          for (const tok of searchTokens) {
-            const escaped = tok.replace(/[%_]/g, (c) => `\\${c}`);
-            fallbackQuery = fallbackQuery.or(
-              `nom.ilike.%${escaped}%,description.ilike.%${escaped}%,sous_categories_texte.ilike.%${escaped}%,sous_categories_clean.ilike.%${escaped}%`
-            );
-          }
-
-          if (cityValue && cityValue.trim().length > 0) {
-            const cityEsc = cityValue.replace(/[%_]/g, (c) => `\\${c}`);
-            fallbackQuery = fallbackQuery.or(
-              `ville.ilike.%${cityEsc}%,gouvernorat.ilike.%${cityEsc}%`
-            );
-          }
-
-          const fb = await fallbackQuery;
-          if (!fb.error && Array.isArray(fb.data) && fb.data.length > 0) {
-            const existingIds = new Set(allResults.map((r) => r.id));
-            const normQ = normalizeText(trimmedValue);
-            const extras = fb.data
-              .filter((row: any) => row && row.id && !existingIds.has(row.id))
-              .map((row: any) => {
-                const nomNorm = normalizeText(row.nom || '');
-                const exact = nomNorm === normQ ? 0 : nomNorm.startsWith(normQ) ? 1 : 2;
-                return { row, exact };
-              })
-              .sort((a, b) => a.exact - b.exact)
-              .map(({ row }: any) => ({
-                id: row.id,
-                nom: row.nom,
-                ville: row.ville || row.gouvernorat || '',
-                gouvernorat: row.gouvernorat || null,
-                categorie: row.categorie || '',
-              }));
-
-            allResults = [...extras, ...allResults];
-          } else if (fb.error) {
-            console.warn('[SearchBar] Fallback ILIKE error:', fb.error.message);
-          }
-        } catch (fbErr) {
-          console.warn('[SearchBar] Fallback ILIKE exception:', fbErr);
-        }
+          .sort((a, b) => a.exact - b.exact)
+          .map(({ row }: any) => ({
+            ...row,
+            ville: row.ville || row.gouvernorat || '',
+          }));
 
         if (allResults.length > 0) {
           const ids = allResults.map(r => r.id).filter(Boolean);
