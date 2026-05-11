@@ -591,6 +591,7 @@ export const Businesses = ({
             `description_ar.ilike.${searchPattern}`,
             `ville.ilike.${searchPattern}`,
             `gouvernorat.ilike.${searchPattern}`,
+            `sous_categories_texte.ilike.${searchPattern}`,
           ].join(',')
         );
       }

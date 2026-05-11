@@ -228,7 +228,9 @@ export default function SearchBar({
 
           for (const tok of searchTokens) {
             const escaped = tok.replace(/[%_]/g, (c) => `\\${c}`);
-            fallbackQuery = fallbackQuery.ilike('nom', `%${escaped}%`);
+            fallbackQuery = fallbackQuery.or(
+              `nom.ilike.%${escaped}%,description.ilike.%${escaped}%,sous_categories_texte.ilike.%${escaped}%`
+            );
           }
 
           if (cityValue && cityValue.trim().length > 0) {
