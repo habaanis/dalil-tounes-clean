@@ -229,7 +229,7 @@ export default function SearchBar({
           for (const tok of searchTokens) {
             const escaped = tok.replace(/[%_]/g, (c) => `\\${c}`);
             fallbackQuery = fallbackQuery.or(
-              `nom.ilike.%${escaped}%,description.ilike.%${escaped}%,sous_categories_texte.ilike.%${escaped}%`
+              `nom.ilike.%${escaped}%,description.ilike.%${escaped}%,sous_categories_texte.ilike.%${escaped}%,sous_categories_clean.ilike.%${escaped}%`
             );
           }
 
