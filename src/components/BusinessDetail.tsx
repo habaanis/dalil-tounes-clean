@@ -999,11 +999,34 @@ export const BusinessDetail = ({
               )}
               {business.score_avis != null && business.score_avis !== '' && (
                 <div
-                  className="flex items-center gap-1 px-1 mt-1"
+                  className="flex items-center gap-1.5 px-1 mt-1"
                   style={{ fontSize: '11px', fontWeight: '600', color: colors.gold }}
                 >
                   <Star size={11} className="flex-shrink-0" style={{ fill: colors.gold, color: colors.gold }} />
                   <span>{business.score_avis} / 5</span>
+                  {business['Lien Avis Google'] && (
+                    <a
+                      href={business['Lien Avis Google']}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); }}
+                      style={{
+                        fontSize: '10px',
+                        fontWeight: 300,
+                        color: colors.gold,
+                        opacity: 0.85,
+                        textDecoration: 'underline',
+                        textUnderlineOffset: '2px',
+                        letterSpacing: '0.02em',
+                        pointerEvents: 'auto',
+                        position: 'relative',
+                        zIndex: 100,
+                      }}
+                      title="Lire les avis Google"
+                    >
+                      (Lire les avis)
+                    </a>
+                  )}
                 </div>
               )}
             </div>
