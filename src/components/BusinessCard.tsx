@@ -311,7 +311,7 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
           </div>
         )}
 
-        {/* Adresse avec bouton GPS + toggle */}
+        {/* Adresse : bouton GPS doré (Google Maps nouvel onglet) + toggle */}
         {business.adresse && (
           <div style={{ paddingTop: '2px' }} onClick={(e) => e.stopPropagation()}>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
