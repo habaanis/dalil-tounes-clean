@@ -85,8 +85,7 @@ function normalizeBusiness(business: any): any {
     site_web: business.site_web || business.website || '',
     description: business.description || '',
     services: business.services || '',
-    latitude: business.latitude,
-    longitude: business.longitude,
+    url_google_maps: business.url_google_maps || null,
     created_at: business.created_at,
     image_url: business.image_url || business.imageUrl,
     logo_url: getLogoUrl(business.logo_url || business.logoUrl),
@@ -105,16 +104,6 @@ function normalizeBusiness(business: any): any {
     slug: business.slug || null,
     qr_code_url: business.qr_code_url || null,
   };
-}
-
-function getGoogleMapsDirectionsUrl(latitude?: number | null, longitude?: number | null, address?: string): string {
-  if (latitude && longitude) {
-    return `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`;
-  }
-  if (address) {
-    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
-  }
-  return '#';
 }
 
 interface BusinessDetailProps {
@@ -143,8 +132,7 @@ interface Business {
   site_web?: string;
   description: string;
   services?: string;
-  latitude?: number;
-  longitude?: number;
+  url_google_maps?: string | null;
   created_at?: string;
   image_url?: string;
   logo_url?: string;
@@ -163,7 +151,6 @@ interface Business {
   slug?: string | null;
   qr_code_url?: string | null;
   google_url?: string | null;
-  'BTN_Maps'?: string | null;
 }
 
 export const BusinessDetail = ({
@@ -604,8 +591,6 @@ export const BusinessDetail = ({
               telephone: business.telephone,
               site_web: business.site_web,
               photo_url: business.image_url,
-              latitude: business.latitude,
-              longitude: business.longitude,
               note_moyenne: averageRating || undefined,
               nombre_avis: reviewCount,
               categorie: translatedCategory,
@@ -931,9 +916,9 @@ export const BusinessDetail = ({
                     Adresse non renseignée{business.ville ? ` · ${business.ville}` : ''}
                   </span>
                 )}
-                {(business['BTN_Maps'] || business.adresse) && (
+                {business.url_google_maps && (
                   <a
-                    href={business['BTN_Maps'] || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(business.adresse || '')}`}
+                    href={`https://www.google.com/maps/search/?api=1&query=${business.url_google_maps}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); }}
