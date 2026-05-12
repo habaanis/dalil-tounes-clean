@@ -896,8 +896,39 @@ export const BusinessDetail = ({
           ) : (
             /* Artisan / Premium / Elite : adresse complète + téléphones */
             <div className="flex flex-col items-center text-gray-200 text-xs gap-0.5">
-              <div className="flex items-center gap-1 max-w-full px-1">
+              <div className="flex items-center gap-1.5 max-w-full px-1 flex-wrap justify-center">
                 <MapPin size={13} className="flex-shrink-0" style={{ color: colors.gold }} />
+                {((business.latitude && business.longitude) || business.adresse) && (
+                  <a
+                    href={getGoogleMapsDirectionsUrl(business.latitude, business.longitude, business.adresse)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); }}
+                    title={text.directions}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '3px',
+                      padding: '1px 7px',
+                      borderRadius: '999px',
+                      border: `1px solid ${colors.gold}`,
+                      background: `${colors.gold}22`,
+                      color: colors.gold,
+                      fontSize: '10px',
+                      fontWeight: 700,
+                      letterSpacing: '0.04em',
+                      textTransform: 'uppercase',
+                      textDecoration: 'none',
+                      position: 'relative',
+                      zIndex: 100,
+                      pointerEvents: 'auto',
+                      flexShrink: 0,
+                    }}
+                  >
+                    <Navigation size={10} strokeWidth={3} />
+                    <span>GPS</span>
+                  </a>
+                )}
                 {business.adresse ? (
                   <button
                     onClick={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); setShowAddressModal(true); }}
@@ -1263,20 +1294,6 @@ export const BusinessDetail = ({
               </button>
             )}
 
-            {/* Bouton GPS - masqué pour Gratuit */}
-            {tier !== 'gratuit' && ((business.latitude && business.longitude) || business.adresse) ? (
-              <a
-                href={getGoogleMapsDirectionsUrl(business.latitude, business.longitude, business.adresse)}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-0.5 text-white px-2 py-0.5 rounded-full font-bold text-[8px] uppercase tracking-wide shadow-lg hover:scale-105 transition-transform flex-shrink-0 cursor-pointer"
-                style={{ backgroundColor: colors.gold, position: 'relative', zIndex: 50, pointerEvents: 'auto' }}
-              >
-                <Navigation size={9} strokeWidth={3} />
-                <span className="truncate max-w-[100px]">{text.directions}</span>
-              </a>
-            ) : null}
           </div>
 
           {/* QR Code - Artisan, Premium et Elite uniquement */}
