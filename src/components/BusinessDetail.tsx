@@ -930,9 +930,9 @@ export const BusinessDetail = ({
                     Adresse non renseignée{business.ville ? ` · ${business.ville}` : ''}
                   </span>
                 )}
-                {business.google_url && (
+                {(business.google_url || business.adresse) && (
                   <a
-                    href={business.google_url}
+                    href={business.google_url || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(business.adresse || '')}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); }}
