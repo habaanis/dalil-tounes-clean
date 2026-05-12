@@ -931,9 +931,9 @@ export const BusinessDetail = ({
                     Adresse non renseignée{business.ville ? ` · ${business.ville}` : ''}
                   </span>
                 )}
-                {business['BTN_Maps'] && (
+                {(business['BTN_Maps'] || business.adresse) && (
                   <a
-                    href={business['BTN_Maps']}
+                    href={business['BTN_Maps'] || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(business.adresse || '')}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); }}
