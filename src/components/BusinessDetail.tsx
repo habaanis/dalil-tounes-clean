@@ -163,7 +163,7 @@ interface Business {
   slug?: string | null;
   qr_code_url?: string | null;
   google_url?: string | null;
-  'BTN maps'?: string | null;
+  'BTN_Maps'?: string | null;
 }
 
 export const BusinessDetail = ({
@@ -931,9 +931,9 @@ export const BusinessDetail = ({
                     Adresse non renseignée{business.ville ? ` · ${business.ville}` : ''}
                   </span>
                 )}
-                {(business['BTN maps'] || business.adresse) && (
+                {business['BTN_Maps'] && (
                   <a
-                    href={business['BTN maps'] || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(business.adresse || '')}`}
+                    href={business['BTN_Maps']}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); }}
