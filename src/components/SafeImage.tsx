@@ -78,7 +78,7 @@ export const SafeImage = ({
         decoding="async"
         width={width}
         height={height}
-        fetchPriority={priority ? 'high' : 'auto'}
+        {...{ fetchpriority: priority ? 'high' : 'auto' }}
       />
     </div>
   );
