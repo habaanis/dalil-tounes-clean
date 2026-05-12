@@ -85,7 +85,7 @@ function normalizeBusiness(business: any): any {
     site_web: business.site_web || business.website || '',
     description: business.description || '',
     services: business.services || '',
-    url_google_maps: business.url_google_maps || null,
+    'BTN_Maps': business['BTN_Maps'] || null,
     created_at: business.created_at,
     image_url: business.image_url || business.imageUrl,
     logo_url: getLogoUrl(business.logo_url || business.logoUrl),
@@ -132,7 +132,7 @@ interface Business {
   site_web?: string;
   description: string;
   services?: string;
-  url_google_maps?: string | null;
+  'BTN_Maps'?: string | null;
   created_at?: string;
   image_url?: string;
   logo_url?: string;
@@ -916,9 +916,9 @@ export const BusinessDetail = ({
                     Adresse non renseignée{business.ville ? ` · ${business.ville}` : ''}
                   </span>
                 )}
-                {business.url_google_maps && (
+                {(business['BTN_Maps'] || business.adresse) && (
                   <a
-                    href={`https://www.google.com/maps/search/?api=1&query=${business.url_google_maps}`}
+                    href={business['BTN_Maps'] || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(business.adresse || '')}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); }}

@@ -31,7 +31,7 @@ export const BUSINESS_COLUMNS = `
   "Note Google Globale",
   "Compteur Avis Google",
   "Lien Avis Google",
-  url_google_maps,
+  "BTN_Maps",
   "statut Abonnement",
   "niveau priorité abonnement",
   is_premium,

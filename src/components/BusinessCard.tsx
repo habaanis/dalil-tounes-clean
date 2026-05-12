@@ -52,7 +52,7 @@ interface BusinessCardProps {
     name_ar?: string | null;
     description_ar?: string | null;
     google_url?: string | null;
-    url_google_maps?: string | null;
+    'BTN_Maps'?: string | null;
   };
   onClick: () => void;
   variant?: 'simple' | 'premium';
@@ -324,9 +324,9 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
                 <MapPin size={14} style={{ color: accentColor, flexShrink: 0 }} />
                 <span>{showAddress ? "Masquer l'adresse" : "Afficher l'adresse"}</span>
               </button>
-              {business.url_google_maps && (
+              {(business['BTN_Maps'] || business.adresse) && (
                 <a
-                  href={`https://www.google.com/maps/search/?api=1&query=${business.url_google_maps}`}
+                  href={business['BTN_Maps'] || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(business.adresse || '')}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => e.stopPropagation()}
