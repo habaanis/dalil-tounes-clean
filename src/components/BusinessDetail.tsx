@@ -162,6 +162,7 @@ interface Business {
   description_ar?: string | null;
   slug?: string | null;
   qr_code_url?: string | null;
+  google_url?: string | null;
 }
 
 export const BusinessDetail = ({
@@ -896,11 +897,42 @@ export const BusinessDetail = ({
           ) : (
             /* Artisan / Premium / Elite : adresse complète + téléphones */
             <div className="flex flex-col items-center text-gray-200 text-xs gap-0.5">
-              <div className="flex items-center gap-1.5 max-w-full px-1 flex-wrap justify-center">
+              <div className="flex items-center gap-1.5 max-w-full px-1 flex-nowrap">
                 <MapPin size={13} className="flex-shrink-0" style={{ color: colors.gold }} />
-                {((business.latitude && business.longitude) || business.adresse) && (
+                {business.adresse ? (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); setShowAddressModal(true); }}
+                    className="truncate"
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: '13px',
+                      color: '#e5e7eb',
+                      padding: 0,
+                      textAlign: 'left',
+                      textDecoration: 'underline dotted',
+                      textDecorationColor: colors.gold,
+                      position: 'relative',
+                      zIndex: 100,
+                      pointerEvents: 'auto',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      minWidth: 0,
+                      maxWidth: '100%',
+                    }}
+                  >
+                    {business.adresse}{business.ville ? `, ${business.ville}` : ''}
+                  </button>
+                ) : (
+                  <span className="truncate" style={{ fontSize: '13px', color: '#6b7280', fontStyle: 'italic' }}>
+                    Adresse non renseignée{business.ville ? ` · ${business.ville}` : ''}
+                  </span>
+                )}
+                {business.google_url && (
                   <a
-                    href={getGoogleMapsDirectionsUrl(business.latitude, business.longitude, business.adresse)}
+                    href={business.google_url}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); }}
@@ -928,31 +960,6 @@ export const BusinessDetail = ({
                     <Navigation size={10} strokeWidth={3} />
                     <span>GPS</span>
                   </a>
-                )}
-                {business.adresse ? (
-                  <button
-                    onClick={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); setShowAddressModal(true); }}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      cursor: 'pointer',
-                      fontSize: '13px',
-                      color: '#e5e7eb',
-                      padding: 0,
-                      textAlign: 'center',
-                      textDecoration: 'underline dotted',
-                      textDecorationColor: colors.gold,
-                      position: 'relative',
-                      zIndex: 100,
-                      pointerEvents: 'auto',
-                    }}
-                  >
-                    {business.adresse}{business.ville ? `, ${business.ville}` : ''}
-                  </button>
-                ) : (
-                  <span style={{ fontSize: '13px', color: '#6b7280', fontStyle: 'italic' }}>
-                    Adresse non renseignée{business.ville ? ` · ${business.ville}` : ''}
-                  </span>
                 )}
               </div>
               {business.telephone && (

@@ -1,4 +1,4 @@
-import { MapPin, Award, Clock, ChevronDown, Phone, Star } from 'lucide-react';
+import { MapPin, Award, Clock, ChevronDown, Phone, Star, Navigation } from 'lucide-react';
 import GratuitCard from './GratuitCard';
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -51,6 +51,7 @@ interface BusinessCardProps {
     statut_carte?: string | null;
     name_ar?: string | null;
     description_ar?: string | null;
+    google_url?: string | null;
   };
   onClick: () => void;
   variant?: 'simple' | 'premium';
@@ -315,33 +316,36 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
         {business.adresse && (
           <div style={{ paddingTop: '2px' }} onClick={(e) => e.stopPropagation()}>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-              <a
-                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(business.adresse)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                title="Ouvrir l'itinéraire Google Maps"
-                style={{
-                  display: 'inline-flex', alignItems: 'center', gap: '4px',
-                  padding: '2px 8px', borderRadius: '20px',
-                  border: '1px solid rgba(212,175,55,0.45)',
-                  background: 'rgba(212,175,55,0.12)',
-                  color: '#D4AF37', fontSize: '11px', fontWeight: '700',
-                  letterSpacing: '0.03em', textDecoration: 'none',
-                  transition: 'background 0.2s ease',
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(212,175,55,0.22)')}
-                onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(212,175,55,0.12)')}
-              >
-                <MapPin size={14} style={{ color: '#D4AF37', flexShrink: 0 }} />
-                <span>GPS</span>
-              </a>
               <button
                 onClick={() => setShowAddress(!showAddress)}
                 style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', background: 'none', border: 'none', cursor: 'pointer', padding: '0', color: accentColor, fontSize: '13px', fontWeight: '500' }}
               >
+                <MapPin size={14} style={{ color: accentColor, flexShrink: 0 }} />
                 <span>{showAddress ? "Masquer l'adresse" : "Afficher l'adresse"}</span>
               </button>
+              {business.google_url && (
+                <a
+                  href={business.google_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  title="Ouvrir dans Google Maps"
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: '4px',
+                    padding: '2px 8px', borderRadius: '20px',
+                    border: '1px solid rgba(212,175,55,0.45)',
+                    background: 'rgba(212,175,55,0.12)',
+                    color: '#D4AF37', fontSize: '11px', fontWeight: '700',
+                    letterSpacing: '0.03em', textDecoration: 'none',
+                    transition: 'background 0.2s ease',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(212,175,55,0.22)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(212,175,55,0.12)')}
+                >
+                  <Navigation size={12} style={{ color: '#D4AF37', flexShrink: 0 }} />
+                  <span>GPS</span>
+                </a>
+              )}
             </div>
             <div style={{ maxHeight: showAddress ? '120px' : '0', overflow: 'hidden', transition: 'max-height 0.3s ease, opacity 0.3s ease', opacity: showAddress ? 1 : 0 }}>
               <p style={{ marginTop: '6px', fontSize: '13px', color: secondaryTextColor, lineHeight: '1.5', padding: '6px 10px', background: 'rgba(212, 175, 55, 0.07)', borderRadius: '6px', borderLeft: `3px solid ${accentColor}` }}>
