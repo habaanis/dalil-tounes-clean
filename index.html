@@ -155,8 +155,8 @@
           if (r) r.style.opacity = '1';
         }
         window.__removeSkeleton = removeSkeleton;
-        // Secours : si React n'émet pas le signal sous 6s, on affiche quand même.
-        setTimeout(removeSkeleton, 6000);
+        // Secours : si React n'émet pas le signal sous 2.5s, on affiche quand même.
+        setTimeout(removeSkeleton, 2500);
       })();
     </script>
     <script type="module" src="/src/main.tsx"></script>

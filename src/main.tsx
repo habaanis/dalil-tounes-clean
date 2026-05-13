@@ -24,11 +24,15 @@ console.warn = (...args) => {
 };
 
 // Détection de l'environnement Bolt WebContainer (dev ET preview)
+const host = window.location.hostname;
 const isBoltWebContainer =
-  window.location.hostname.includes('webcontainer') ||
-  window.location.hostname.includes('stackblitz') ||
-  window.location.hostname.includes('bolt.new') ||
-  (import.meta.env.DEV && window.location.port === '5173');
+  host.includes('webcontainer') ||
+  host.includes('stackblitz') ||
+  host.includes('bolt.new') ||
+  host.includes('local-credentialless') ||
+  host.includes('local-corp.webcontainer-api.io') ||
+  host.endsWith('.webcontainer-api.io') ||
+  import.meta.env.DEV;
 
 // Utiliser HashRouter pour Bolt/dev, BrowserRouter pour production
 const Router = isBoltWebContainer ? HashRouter : BrowserRouter;
