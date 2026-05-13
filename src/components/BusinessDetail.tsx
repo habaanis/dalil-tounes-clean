@@ -191,9 +191,8 @@ export const BusinessDetail = ({
 
   const businessId = businessIdProp || urlId || extractedId;
 
-  // Normaliser les données pour supporter Airtable et Supabase
-  const normalizedBusiness = normalizeBusiness(businessProp);
-  console.log('Business NORMALISÉ:', normalizedBusiness);
+  // businessProp n'est PAS utilise pour pre-seeder l'affichage : on relit toujours
+  // Supabase pour avoir les dernieres valeurs (statut_carte, description, etc.).
   console.log('BusinessId from prop:', businessIdProp);
   console.log('BusinessId from URL:', urlId);
   console.log('Final businessId:', businessId);
@@ -204,8 +203,11 @@ export const BusinessDetail = ({
   const { getCategory } = useCategoryTranslation();
   const currentPath = useHreflangPath();
   const [searchParams] = useSearchParams();
-  const [business, setBusiness] = useState<Business | null>(normalizedBusiness);
-  const [loading, setLoading] = useState(!businessProp);
+  // Pas de pre-seed depuis businessProp : on lit toujours Supabase pour garantir
+  // les dernieres valeurs (statut_carte, description, etc.). businessProp ne sert
+  // qu'a connaitre l'id a charger.
+  const [business, setBusiness] = useState<Business | null>(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const qrCodeRef = useRef<HTMLDivElement>(null);
   const [averageRating, setAverageRating] = useState<number | null>(null);
@@ -220,7 +222,6 @@ export const BusinessDetail = ({
   const actualBusinessId = businessId || businessProp?.id;
   useViewTracking(actualBusinessId);
 
-  const loadedBusinessIdRef = useRef<string | null>(null);
   const handleCloseRef = onClose || onNavigateBack || (() => navigate(-1));
 
   const translatedCategory = business ? getCategory(getMultilingualField(business, 'categorie', language, true) || business.categorie || '') : '';
@@ -305,22 +306,9 @@ export const BusinessDetail = ({
   };
 
   useEffect(() => {
-    if (businessProp) {
-      const normalized = normalizeBusiness(businessProp);
-      setBusiness(normalized);
-      setLoading(false);
-      loadedBusinessIdRef.current = businessProp.id;
-      return;
-    }
-
-    if (!actualBusinessId && !cleanSlug) {
+    if (!actualBusinessId && !cleanSlug && !businessProp?.id) {
       setError(true);
       setLoading(false);
-      return;
-    }
-
-    const cacheKey = cleanSlug ? `slug:${cleanSlug}` : actualBusinessId;
-    if (loadedBusinessIdRef.current === cacheKey) {
       return;
     }
 
@@ -331,16 +319,18 @@ export const BusinessDetail = ({
       try {
         // Normaliser le slug : trim + lowercase pour éviter les 404 dus à la casse
         const normalizedSlug = cleanSlug ? cleanSlug.trim().toLowerCase() : null;
-        console.log('[BusinessDetail] Slug recherché:', normalizedSlug, '(brut:', cleanSlug, ')');
+        const fetchId = actualBusinessId || businessProp?.id || null;
+        console.log('[BusinessDetail] Lecture Supabase fraiche:', { fetchId, normalizedSlug });
 
-        let query = supabase.from('entreprise').select('*');
+        // Lecture toujours fraiche : pas de cache HTTP cote client
+        let query = supabase
+          .from('entreprise')
+          .select('*');
 
         if (normalizedSlug) {
-          // Recherche case-insensitive sur slug pour tolérer les variations
-          // (ex: "Skila" vs "skila" en base)
           query = query.ilike('slug', normalizedSlug);
-        } else if (actualBusinessId) {
-          query = query.or(`id.eq.${actualBusinessId},id.ilike.${actualBusinessId}%`);
+        } else if (fetchId) {
+          query = query.or(`id.eq.${fetchId},id.ilike.${fetchId}%`);
         }
 
         const { data, error } = await query.maybeSingle();
@@ -384,7 +374,6 @@ export const BusinessDetail = ({
           console.error('Erreur avis:', avisErr);
         }
 
-        loadedBusinessIdRef.current = cacheKey;
       } catch (err) {
         console.error('Erreur fetch business:', err);
         setError(true);
