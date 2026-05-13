@@ -96,13 +96,6 @@ export default defineConfig({
     sourcemap: false,
     minify: 'esbuild',
     target: 'esnext',
-    // Supprime console.log et debugger en production
-    esbuildOptions: {
-      drop: ['console', 'debugger'],
-      // Tree-shaking agressif
-      treeShaking: true,
-    },
-    // Activer les CSS code splits pour ne charger que les styles nécessaires
     cssCodeSplit: true,
   },
 });

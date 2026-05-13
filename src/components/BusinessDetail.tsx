@@ -86,6 +86,7 @@ function normalizeBusiness(business: any): any {
     description: business.description || '',
     services: business.services || '',
     'BTN_Maps': business['BTN_Maps'] || null,
+    statut_validation: business.statut_validation || null,
     created_at: business.created_at,
     image_url: business.image_url || business.imageUrl,
     logo_url: getLogoUrl(business.logo_url || business.logoUrl),
@@ -133,6 +134,7 @@ interface Business {
   description: string;
   services?: string;
   'BTN_Maps'?: string | null;
+  statut_validation?: string | null;
   created_at?: string;
   image_url?: string;
   logo_url?: string;
@@ -582,6 +584,7 @@ export const BusinessDetail = ({
             type="article"
             author={business.nom}
             currentPath={currentPath}
+            noindex={business.statut_validation !== 'publié'}
           />
           <StructuredData
             data={generateLocalBusinessSchema({
