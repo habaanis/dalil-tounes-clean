@@ -19,8 +19,8 @@ interface BusinessRow {
   ville: string | null;
   gouvernorat: string | null;
   sous_categories: string | null;
-  'statut Abonnement': string | null;
-  'niveau priorité abonnement': number | null;
+  statut_abonnement: string | null;
+  niveau_priorite_abonnement: number | null;
   image_url: string | null;
   logo_url: string | null;
   horaires_ok: string | null;
@@ -81,22 +81,22 @@ export const FeaturedBusinessesStrip = ({ variant }: FeaturedBusinessesStripProp
     const fetchData = async () => {
       setLoading(true);
       try {
-        const FIELDS = `id, nom, ville, gouvernorat, sous_categories, "statut Abonnement", "niveau priorité abonnement", image_url, logo_url, horaires_ok, telephone, name_ar, description_ar`;
+        const FIELDS = `id, nom, ville, gouvernorat, sous_categories, statut_abonnement, niveau_priorite_abonnement, image_url, logo_url, horaires_ok, telephone, name_ar, description_ar`;
 
         const { data: fetchedData } = await supabase
           .from('entreprise')
           .select(FIELDS)
-          .or('"statut Abonnement".ilike.*Elite Pro*,"statut Abonnement".ilike.*Elite*,"statut Abonnement".ilike.*Premium*')
-          .not('"statut Abonnement"', 'ilike', '*gratuit*')
-          .not('"statut Abonnement"', 'ilike', '*decouverte*')
-          .not('"statut Abonnement"', 'ilike', '*découverte*')
-          .order('"niveau priorité abonnement"', { ascending: false, nullsFirst: false })
+          .or('statut_abonnement.ilike.*Elite Pro*,statut_abonnement.ilike.*Elite*,statut_abonnement.ilike.*Premium*')
+          .not('statut_abonnement', 'ilike', '*gratuit*')
+          .not('statut_abonnement', 'ilike', '*decouverte*')
+          .not('statut_abonnement', 'ilike', '*découverte*')
+          .order('niveau_priorite_abonnement', { ascending: false, nullsFirst: false })
           .limit(12);
 
         let rows: BusinessRow[] = (fetchedData as BusinessRow[] | null) || [];
 
         rows = rows.sort((a, b) =>
-          getSubscriptionPriority(b['statut Abonnement']) - getSubscriptionPriority(a['statut Abonnement'])
+          getSubscriptionPriority(b.statut_abonnement) - getSubscriptionPriority(a.statut_abonnement)
         );
 
         if (isMounted) setBusinesses(rows);
@@ -162,8 +162,8 @@ export const FeaturedBusinessesStrip = ({ variant }: FeaturedBusinessesStripProp
                     : (biz.sous_categories || ''),
                   ville: biz.ville,
                   gouvernorat: biz.gouvernorat,
-                  statut_abonnement: biz['statut Abonnement'],
-                  'niveau priorité abonnement': biz['niveau priorité abonnement'],
+                  statut_abonnement: biz.statut_abonnement,
+                  niveau_priorite_abonnement: biz.niveau_priorite_abonnement,
                   imageUrl: biz.image_url,
                   logoUrl: biz.logo_url,
                   horaires_ok: biz.horaires_ok,

@@ -8,7 +8,7 @@
  *   1 : le terme apparaît dans la description ou les mots-clés
  *   0 : aucune correspondance textuelle directe (l'item vient d'un fallback fuzzy / RPC)
  *
- * En cas d'égalité : on départage par "niveau priorité abonnement" desc
+ * En cas d'égalité : on départage par niveau_priorite_abonnement desc
  * (pour garder les partenaires premium devant), puis on conserve l'ordre d'origine.
  */
 
@@ -28,7 +28,6 @@ export interface ScorableItem {
   description?: string | null;
   short_description?: string | null;
   tags?: string[] | string | null;
-  'niveau priorité abonnement'?: number | null;
   niveau_priorite_abonnement?: number | null;
 }
 
@@ -69,7 +68,7 @@ export function sortByRelevance<T extends ScorableItem>(
     idx,
     score: relevanceScore(item, query),
     priority:
-      Number(item['niveau priorité abonnement'] ?? item.niveau_priorite_abonnement ?? 0),
+      Number(item.niveau_priorite_abonnement ?? 0),
   }));
 
   scored.sort((a, b) => {

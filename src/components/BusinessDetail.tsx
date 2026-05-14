@@ -90,7 +90,7 @@ function normalizeBusiness(business: any): any {
     created_at: business.created_at,
     image_url: business.image_url || business.imageUrl,
     logo_url: getLogoUrl(business.logo_url || business.logoUrl),
-    statut_abonnement: business.statut_abonnement || business['statut Abonnement'],
+    statut_abonnement: business.statut_abonnement || null,
     statut_carte: business.statut_carte || null,
     'Lien Instagram': business['Lien Instagram'] || business.instagram,
     'Lien TikTok': business['Lien TikTok'] || business.tiktok,
@@ -336,6 +336,22 @@ export const BusinessDetail = ({
         const { data, error } = await query.maybeSingle();
         console.log('[BusinessDetail] Données reçues:', { data, error });
 
+        // Diagnostic specifique : suivi des fiches qui posent probleme
+        // (pour traquer les delais de synchro Whalesync, ex. OMH Travel Service)
+        if (data && typeof data.nom === 'string' && /OMH\s+Travel/i.test(data.nom)) {
+          console.warn('[OMH-DIAG] Fiche "OMH Travel Service" lue depuis Supabase :', {
+            id: data.id,
+            slug: data.slug,
+            nom: data.nom,
+            description: data.description,
+            statut_carte: data.statut_carte,
+            statut_validation: data.statut_validation,
+            statut_abonnement: data.statut_abonnement,
+            updated_at: data.updated_at,
+            created_at: data.created_at,
+          });
+        }
+
         console.log('📊 Résultat Supabase:', { data, error });
 
         if (error || !data) {
@@ -352,7 +368,7 @@ export const BusinessDetail = ({
           ...data,
           image_url: data.image_url || data.imageUrl || data.Image,
           logo_url: data.logo_url || data.logoUrl || data.Logo,
-          statut_abonnement: (data['statut Abonnement'] || '').trim().toLowerCase() || null
+          statut_abonnement: (data.statut_abonnement || '').trim().toLowerCase() || null
         };
         const normalized = normalizeBusiness(mappedBusiness);
         setBusiness(normalized as Business);

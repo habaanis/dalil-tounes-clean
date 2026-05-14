@@ -38,7 +38,7 @@ interface BusinessCardProps {
     telephone?: string | null;
     phone?: string | null;
     statut_abonnement?: string | null;
-    'niveau priorité abonnement'?: number | null;
+    niveau_priorite_abonnement?: number | null;
     badges?: string[];
     imageUrl?: string | null;
     logoUrl?: string | null;
@@ -97,7 +97,7 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
 
   const tier = mapSubscriptionToTier({
     statut_abonnement: business.statut_abonnement,
-    'niveau priorité abonnement': business['niveau priorité abonnement']
+    niveau_priorite_abonnement: business.niveau_priorite_abonnement
   });
 
   // Récupération de la catégorie traduite avec fallback

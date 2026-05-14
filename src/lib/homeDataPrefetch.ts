@@ -26,8 +26,8 @@ export interface HomeBusinessRow {
   ville: string | null;
   gouvernorat: string | null;
   sous_categories: string | null;
-  'statut Abonnement': string | null;
-  'niveau priorité abonnement': number | null;
+  statut_abonnement: string | null;
+  niveau_priorite_abonnement: number | null;
   image_url: string | null;
   logo_url: string | null;
   horaires_ok: string | null;
@@ -53,7 +53,7 @@ const GC_TIME   = 60 * 60_000;   // 1 heure  — TTL maximale en localStorage
 
 const FIELDS = [
   'id', 'nom', 'ville', 'gouvernorat', 'sous_categories',
-  '"statut Abonnement"', '"niveau priorité abonnement"',
+  'statut_abonnement', 'niveau_priorite_abonnement',
   'image_url', 'logo_url', 'horaires_ok', 'telephone', 'statut_carte',
   'name_ar', 'description_ar',
 ].join(', ');
@@ -93,8 +93,8 @@ async function doFetch(): Promise<HomeQueryResult> {
     supabase
       .from('entreprise')
       .select(FIELDS)
-      .or('"statut Abonnement".ilike.*Elite Pro*,"statut Abonnement".ilike.*Elite*,"statut Abonnement".ilike.*Premium*')
-      .order('"niveau priorité abonnement"', { ascending: false, nullsFirst: false })
+      .or('statut_abonnement.ilike.*Elite Pro*,statut_abonnement.ilike.*Elite*,statut_abonnement.ilike.*Premium*')
+      .order('niveau_priorite_abonnement', { ascending: false, nullsFirst: false })
       .limit(12),
     supabase
       .from('entreprise')
@@ -112,7 +112,7 @@ async function doFetch(): Promise<HomeQueryResult> {
 
   const rows = (listRes.data as HomeBusinessRow[]) ?? [];
   const sorted = [...rows].sort((a, b) =>
-    getSubscriptionPriority(b['statut Abonnement']) - getSubscriptionPriority(a['statut Abonnement'])
+    getSubscriptionPriority(b.statut_abonnement) - getSubscriptionPriority(a.statut_abonnement)
   );
 
   return {

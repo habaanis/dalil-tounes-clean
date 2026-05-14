@@ -7,7 +7,7 @@ export type SubscriptionTier = 'gratuit' | 'artisan' | 'premium' | 'elite' | 'cu
 
 export interface SubscriptionData {
   statut_abonnement?: string | null;
-  'niveau priorité abonnement'?: number | null;
+  niveau_priorite_abonnement?: number | null;
 }
 
 export interface MediaLimits {
@@ -221,12 +221,12 @@ export function getTierPriority(tier: SubscriptionTier): number {
 }
 
 /**
- * Obtient le niveau de priorité depuis les données de la base
- * Utilise la colonne 'niveau priorité abonnement' si disponible, sinon calcule depuis le tier
+ * Obtient le niveau de priorité depuis les données de la base.
+ * Utilise la colonne `niveau_priorite_abonnement` si disponible, sinon calcule depuis le tier.
  */
 export function getPriorityLevel(data: SubscriptionData): number {
-  if (data['niveau priorité abonnement'] && data['niveau priorité abonnement'] > 0) {
-    return data['niveau priorité abonnement'];
+  if (data.niveau_priorite_abonnement && data.niveau_priorite_abonnement > 0) {
+    return data.niveau_priorite_abonnement;
   }
 
   const tier = mapSubscriptionToTier(data);

@@ -30,7 +30,7 @@ interface UnifiedBusinessCardProps {
     gouvernorat?: string;
     statut_abonnement?: string | null;
     subscription_tier?: string | null;
-    'niveau priorité abonnement'?: number | null;
+    niveau_priorite_abonnement?: number | null;
     image_url?: string | null;
     imageUrl?: string | null;
     logo_url?: string | null;
@@ -94,7 +94,7 @@ const UnifiedBusinessCard = ({ business, onClick }: UnifiedBusinessCardProps) =>
 
   const priorityLevel = getPriorityLevel({
     statut_abonnement: businessSubscription,
-    'niveau priorité abonnement': business['niveau priorité abonnement']
+    niveau_priorite_abonnement: business.niveau_priorite_abonnement
   });
 
   const mainCategory = extractMainCategory(rawCategory);

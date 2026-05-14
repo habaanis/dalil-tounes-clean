@@ -29,7 +29,6 @@ interface SeoBusinessCardProps {
     description?: string;
     is_premium?: boolean;
     statut_abonnement?: string | null;
-    'statut Abonnement'?: string | null;
     horaires_ok?: string | null;
   };
 }
@@ -37,7 +36,7 @@ interface SeoBusinessCardProps {
 const SeoBusinessCard: React.FC<SeoBusinessCardProps> = ({ business }) => {
   const [showFullSchedule, setShowFullSchedule] = useState(false);
 
-  const rawStatut = business.statut_abonnement || business['statut Abonnement'] || null;
+  const rawStatut = business.statut_abonnement || null;
   const tier = mapSubscriptionToTier({ statut_abonnement: rawStatut });
   const url = buildEntrepriseUrl((business as any).ville, (business as any).slug, business.nom, business.id) || generateBusinessUrl(business.nom, business.id);
   const locationLabel = business.ville || business.gouvernorat || '';

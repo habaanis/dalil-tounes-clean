@@ -37,7 +37,7 @@ function mapEntrepriseRow(row: Record<string, unknown>): SeoBusiness {
     logo_url: row.logo_url as string | undefined || row.image_url as string | undefined,
     description: row.description as string | undefined,
     is_premium: false,
-    statut_abonnement: (row['statut Abonnement'] as string | null) ?? (row.statut_abonnement as string | null) ?? null,
+    statut_abonnement: (row.statut_abonnement as string | null) ?? null,
     horaires_ok: row.horaires_ok as string | null ?? null,
   };
 }

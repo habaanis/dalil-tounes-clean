@@ -27,7 +27,7 @@ export interface BusinessRow {
   imageUrl: string | null;
   logoUrl: string | null;
   statut_abonnement: string | null;
-  'niveau priorité abonnement': number | null;
+  niveau_priorite_abonnement: number | null;
   badges: never[];
   mots_cles_recherche: string;
   instagram: string;
@@ -61,7 +61,7 @@ const GC_TIME     = 60 * 60_000;
 const FIELDS = [
   'id', 'nom', 'secteur', 'sous_categories', '"catégorie"', 'gouvernorat', 'ville',
   'adresse', 'telephone', 'email', 'site_web', 'description', 'services',
-  'image_url', 'logo_url', '"statut Abonnement"', '"niveau priorité abonnement"',
+  'image_url', 'logo_url', 'statut_abonnement', 'niveau_priorite_abonnement',
   '"mots cles recherche"', '"Lien Instagram"', '"lien facebook"', '"Lien TikTok"',
   '"Lien LinkedIn"', '"Lien YouTube"', 'lien_x', 'horaires_ok', 'statut_carte',
   'name_ar', 'description_ar',
@@ -117,8 +117,8 @@ function mapRow(item: Record<string, unknown>): BusinessRow {
     services: (item.services as string) || '',
     imageUrl: (item.image_url as string | null) ?? null,
     logoUrl: (item.logo_url as string | null) ?? null,
-    statut_abonnement: (item['statut Abonnement'] as string | null) ?? null,
-    'niveau priorité abonnement': (item['niveau priorité abonnement'] as number | null) ?? null,
+    statut_abonnement: (item.statut_abonnement as string | null) ?? null,
+    niveau_priorite_abonnement: (item.niveau_priorite_abonnement as number | null) ?? null,
     badges: [],
     mots_cles_recherche: (item['mots cles recherche'] as string) || '',
     instagram: (item['Lien Instagram'] as string) || '',
@@ -139,7 +139,7 @@ async function doFetch(): Promise<BusinessesDefaultData> {
     supabase
       .from(Tables.ENTREPRISE)
       .select(FIELDS)
-      .order('"niveau priorité abonnement"', { ascending: false, nullsFirst: false })
+      .order('niveau_priorite_abonnement', { ascending: false, nullsFirst: false })
       .order('nom', { ascending: true })
       .limit(10),
     supabase
