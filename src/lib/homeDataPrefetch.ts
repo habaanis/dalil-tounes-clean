@@ -38,12 +38,13 @@ export interface HomeBusinessRow {
 }
 
 // Les colonnes d'abonnement existent en base avec un espace / un accent
-// (heritage Airtable). On les selectionne via leurs vrais noms et on les
-// remappe vers les cles plates de l'interface front.
-const SUBSCRIPTION_COL = '"statut Abonnement"';
-const PRIORITY_COL = '"niveau priorité abonnement"';
+// (heritage Airtable). PostgREST ne sait pas appliquer .in() / .order() de
+// maniere fiable sur ces noms quotes, on lit donc large et on filtre / trie
+// cote client.
+const SUBSCRIPTION_COL_RAW = 'statut Abonnement';
+const PRIORITY_COL_RAW = 'niveau priorité abonnement';
 const CERTIFIED_LABEL = '\u2B50 CERTIFI\u00C9 DALIL TOUNES';
-const HOME_TIERS = ['premium', 'Elite', 'Elite Pro'];
+const HOME_TIERS_NORMALIZED = new Set(['premium', 'elite', 'elite pro']);
 
 export interface HomeQueryResult {
   partners: HomeBusinessRow[];
@@ -55,16 +56,13 @@ interface CacheEntry extends HomeQueryResult {
   ts: number;
 }
 
-const CACHE_KEY = 'home_data_v9_diag';
+const CACHE_KEY = 'home_data_v10';
 const STALE_TIME = 5 * 60_000;   // 5 minutes — pas de refetch dans cette fenêtre
 const GC_TIME   = 60 * 60_000;   // 1 heure  — TTL maximale en localStorage
 
-const FIELDS = [
-  'id', 'nom', 'ville', 'gouvernorat', 'sous_categories',
-  SUBSCRIPTION_COL, PRIORITY_COL,
-  'image_url', 'logo_url', 'horaires_ok', 'telephone', 'statut_carte',
-  'name_ar', 'description_ar',
-].join(', ');
+// On selectionne avec '*' pour eviter d'avoir a quoter manuellement les
+// colonnes contenant un espace ou un accent dans la liste select.
+const FIELDS = '*';
 
 // Verrou contre les appels simultanés (évite les doubles requêtes en cas de
 // montage multiple du composant)
@@ -103,17 +101,17 @@ async function doFetch(): Promise<HomeQueryResult> {
   // ou se trouvent les 1891 lignes).
   console.log('[HOME-DIAG] target Supabase URL =', (import.meta as unknown as { env: Record<string, string> }).env.VITE_SUPABASE_URL);
   console.log('[HOME-DIAG] FIELDS =', FIELDS);
-  console.log('[HOME-DIAG] SUBSCRIPTION_COL =', SUBSCRIPTION_COL, '| HOME_TIERS =', HOME_TIERS);
   console.log('[HOME-DIAG] CERTIFIED_LABEL =', JSON.stringify(CERTIFIED_LABEL));
 
   const [listRes, countRes, certifiedRes] = await Promise.all([
-    // Etablissements a la Une : tier premium / Elite / Elite Pro
+    // Etablissements a la Une : on ne peut pas filtrer .in() sur une colonne
+    // contenant un espace via PostgREST (erreur 400). On lit donc un echantillon
+    // large et on filtre/trie cote client sur les colonnes "statut Abonnement"
+    // et "niveau priorite abonnement".
     supabase
       .from('entreprise')
       .select(FIELDS)
-      .in(SUBSCRIPTION_COL, HOME_TIERS)
-      .order(PRIORITY_COL, { ascending: false, nullsFirst: false })
-      .limit(12),
+      .limit(200),
     // Compteur global : toutes les fiches entreprises (aucun filtre)
     supabase
       .from('entreprise')
@@ -157,14 +155,15 @@ async function doFetch(): Promise<HomeQueryResult> {
   // Normalise les cles avec espaces vers les cles plates exposees par HomeBusinessRow.
   // Si jamais les colonnes "statut Abonnement" / "niveau priorité abonnement" ne sont
   // pas retournees par PostgREST, on tombe sur le fallback snake_case.
-  const rows: HomeBusinessRow[] = ((listRes.data as Record<string, unknown>[] | null) ?? []).map((r) => ({
+  const rawRows = (listRes.data as Record<string, unknown>[] | null) ?? [];
+  const allMapped: HomeBusinessRow[] = rawRows.map((r) => ({
     id: r.id as string,
     nom: r.nom as string,
     ville: (r.ville as string | null) ?? null,
     gouvernorat: (r.gouvernorat as string | null) ?? null,
     sous_categories: (r.sous_categories as string | null) ?? null,
-    statut_abonnement: (r['statut Abonnement'] as string | null) ?? (r.statut_abonnement as string | null) ?? null,
-    niveau_priorite_abonnement: (r['niveau priorité abonnement'] as number | null) ?? (r.niveau_priorite_abonnement as number | null) ?? null,
+    statut_abonnement: (r[SUBSCRIPTION_COL_RAW] as string | null) ?? (r.statut_abonnement as string | null) ?? null,
+    niveau_priorite_abonnement: (r[PRIORITY_COL_RAW] as number | null) ?? (r.niveau_priorite_abonnement as number | null) ?? null,
     image_url: (r.image_url as string | null) ?? null,
     logo_url: (r.logo_url as string | null) ?? null,
     horaires_ok: (r.horaires_ok as string | null) ?? null,
@@ -174,7 +173,14 @@ async function doFetch(): Promise<HomeQueryResult> {
     description_ar: (r.description_ar as string | null) ?? null,
   }));
 
-  console.log('[HOME-DIAG] mapped rows for carrousel =', rows.length, rows.slice(0, 4).map((p) => ({
+  // Filtrage cote client : tier premium / Elite / Elite Pro (case-insensitive)
+  const rows = allMapped.filter((p) => {
+    const tier = (p.statut_abonnement || '').trim().toLowerCase();
+    return HOME_TIERS_NORMALIZED.has(tier);
+  });
+
+  console.log('[HOME-DIAG] rows fetched =', allMapped.length, '| filtered carrousel =', rows.length);
+  console.log('[HOME-DIAG] sample carrousel =', rows.slice(0, 4).map((p) => ({
     id: p.id,
     nom: p.nom,
     statut_abonnement: p.statut_abonnement,
@@ -182,9 +188,12 @@ async function doFetch(): Promise<HomeQueryResult> {
     statut_carte: p.statut_carte,
   })));
 
-  const sorted = [...rows].sort((a, b) =>
-    getSubscriptionPriority(b.statut_abonnement) - getSubscriptionPriority(a.statut_abonnement)
-  );
+  const sorted = [...rows].sort((a, b) => {
+    const pa = a.niveau_priorite_abonnement ?? -1;
+    const pb = b.niveau_priorite_abonnement ?? -1;
+    if (pa !== pb) return pb - pa;
+    return getSubscriptionPriority(b.statut_abonnement) - getSubscriptionPriority(a.statut_abonnement);
+  });
 
   const result = {
     partners: sorted.slice(0, 4),
