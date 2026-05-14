@@ -55,7 +55,7 @@ interface CacheEntry extends HomeQueryResult {
   ts: number;
 }
 
-const CACHE_KEY = 'home_data_v8';
+const CACHE_KEY = 'home_data_v9_diag';
 const STALE_TIME = 5 * 60_000;   // 5 minutes — pas de refetch dans cette fenêtre
 const GC_TIME   = 60 * 60_000;   // 1 heure  — TTL maximale en localStorage
 
@@ -97,6 +97,15 @@ function writeHomeCache(result: HomeQueryResult): void {
 
 async function doFetch(): Promise<HomeQueryResult> {
   const supabase = await getSupabase();
+
+  // [HOME-DIAG] Confirme la cible Supabase reellement utilisee par le bundle
+  // (utile pour detecter un bundle qui pointe vers un autre projet que celui
+  // ou se trouvent les 1891 lignes).
+  console.log('[HOME-DIAG] target Supabase URL =', (import.meta as unknown as { env: Record<string, string> }).env.VITE_SUPABASE_URL);
+  console.log('[HOME-DIAG] FIELDS =', FIELDS);
+  console.log('[HOME-DIAG] SUBSCRIPTION_COL =', SUBSCRIPTION_COL, '| HOME_TIERS =', HOME_TIERS);
+  console.log('[HOME-DIAG] CERTIFIED_LABEL =', JSON.stringify(CERTIFIED_LABEL));
+
   const [listRes, countRes, certifiedRes] = await Promise.all([
     // Etablissements a la Une : tier premium / Elite / Elite Pro
     supabase
@@ -105,7 +114,7 @@ async function doFetch(): Promise<HomeQueryResult> {
       .in(SUBSCRIPTION_COL, HOME_TIERS)
       .order(PRIORITY_COL, { ascending: false, nullsFirst: false })
       .limit(12),
-    // Compteur global : toutes les fiches entreprises
+    // Compteur global : toutes les fiches entreprises (aucun filtre)
     supabase
       .from('entreprise')
       .select('id', { count: 'exact', head: true }),
@@ -116,19 +125,46 @@ async function doFetch(): Promise<HomeQueryResult> {
       .eq('statut_carte', CERTIFIED_LABEL),
   ]);
 
-  if (listRes.error) throw listRes.error;
+  // [HOME-DIAG] Log brut de chaque reponse (status, error, count, sample)
+  console.log('[HOME-DIAG] countRes', {
+    count: countRes.count,
+    status: countRes.status,
+    statusText: countRes.statusText,
+    error: countRes.error,
+  });
+  console.log('[HOME-DIAG] certifiedRes', {
+    count: certifiedRes.count,
+    status: certifiedRes.status,
+    statusText: certifiedRes.statusText,
+    error: certifiedRes.error,
+  });
+  console.log('[HOME-DIAG] listRes', {
+    rows: Array.isArray(listRes.data) ? listRes.data.length : 0,
+    status: listRes.status,
+    statusText: listRes.statusText,
+    error: listRes.error,
+    firstRowKeys: Array.isArray(listRes.data) && listRes.data[0] ? Object.keys(listRes.data[0]) : [],
+    firstRow: Array.isArray(listRes.data) ? listRes.data[0] : null,
+  });
+
+  if (listRes.error) {
+    console.error('[homeDataPrefetch] listRes error:', listRes.error);
+    // On ne throw plus : on veut quand meme que les counts s'affichent si possible.
+  }
   if (countRes.error) console.error('[homeDataPrefetch] countRes error:', countRes.error);
   if (certifiedRes.error) console.error('[homeDataPrefetch] certifiedRes error:', certifiedRes.error);
 
-  // Normalise les cles avec espaces vers les cles plates exposees par HomeBusinessRow
+  // Normalise les cles avec espaces vers les cles plates exposees par HomeBusinessRow.
+  // Si jamais les colonnes "statut Abonnement" / "niveau priorité abonnement" ne sont
+  // pas retournees par PostgREST, on tombe sur le fallback snake_case.
   const rows: HomeBusinessRow[] = ((listRes.data as Record<string, unknown>[] | null) ?? []).map((r) => ({
     id: r.id as string,
     nom: r.nom as string,
     ville: (r.ville as string | null) ?? null,
     gouvernorat: (r.gouvernorat as string | null) ?? null,
     sous_categories: (r.sous_categories as string | null) ?? null,
-    statut_abonnement: (r['statut Abonnement'] as string | null) ?? null,
-    niveau_priorite_abonnement: (r['niveau priorité abonnement'] as number | null) ?? null,
+    statut_abonnement: (r['statut Abonnement'] as string | null) ?? (r.statut_abonnement as string | null) ?? null,
+    niveau_priorite_abonnement: (r['niveau priorité abonnement'] as number | null) ?? (r.niveau_priorite_abonnement as number | null) ?? null,
     image_url: (r.image_url as string | null) ?? null,
     logo_url: (r.logo_url as string | null) ?? null,
     horaires_ok: (r.horaires_ok as string | null) ?? null,
@@ -138,15 +174,31 @@ async function doFetch(): Promise<HomeQueryResult> {
     description_ar: (r.description_ar as string | null) ?? null,
   }));
 
+  console.log('[HOME-DIAG] mapped rows for carrousel =', rows.length, rows.slice(0, 4).map((p) => ({
+    id: p.id,
+    nom: p.nom,
+    statut_abonnement: p.statut_abonnement,
+    niveau_priorite_abonnement: p.niveau_priorite_abonnement,
+    statut_carte: p.statut_carte,
+  })));
+
   const sorted = [...rows].sort((a, b) =>
     getSubscriptionPriority(b.statut_abonnement) - getSubscriptionPriority(a.statut_abonnement)
   );
 
-  return {
+  const result = {
     partners: sorted.slice(0, 4),
     totalCount: countRes.count ?? 0,
     certifiedCount: certifiedRes.count ?? 0,
   };
+
+  console.log('[HOME-DIAG] final HomeQueryResult =', {
+    totalCount: result.totalCount,
+    certifiedCount: result.certifiedCount,
+    partners: result.partners.length,
+  });
+
+  return result;
 }
 
 /**
