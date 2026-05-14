@@ -322,7 +322,9 @@ export const BusinessDetail = ({
         const fetchId = actualBusinessId || businessProp?.id || null;
         console.log('[BusinessDetail] Lecture Supabase fraiche:', { fetchId, normalizedSlug });
 
-        // Lecture toujours fraiche : pas de cache HTTP cote client
+        // Lecture toujours fraiche : pas de cache HTTP cote client.
+        // IMPORTANT : sur une colonne uuid, on ne peut PAS utiliser ilike
+        // (Postgres leve une erreur), donc on filtre strictement par eq.
         let query = supabase
           .from('entreprise')
           .select('*');
@@ -330,10 +332,14 @@ export const BusinessDetail = ({
         if (normalizedSlug) {
           query = query.ilike('slug', normalizedSlug);
         } else if (fetchId) {
-          query = query.or(`id.eq.${fetchId},id.ilike.${fetchId}%`);
+          query = query.eq('id', fetchId);
         }
 
-        const { data, error } = await query.maybeSingle();
+        console.log('[Detail] param recu :', { fetchId, normalizedSlug, urlId, urlSlug, urlVilleSlug, isCleanSlugRoute });
+        console.log('[Detail] requete Supabase : table=entreprise filter=', normalizedSlug ? `slug ilike "${normalizedSlug}"` : `id eq "${fetchId}"`);
+
+        const { data, error, status, statusText } = await query.maybeSingle();
+        console.log('[Detail] reponse Supabase :', { status, statusText, error, hasData: !!data, rowKeys: data ? Object.keys(data) : [] });
         console.log('[BusinessDetail] Données reçues:', { data, error });
 
         // Diagnostic specifique : suivi des fiches qui posent probleme
