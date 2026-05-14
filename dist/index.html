@@ -28,7 +28,7 @@
       media="(min-width: 769px)"
     />
 
-    <style>*,:after,:before{border-style:solid;border-width:0;box-sizing:border-box}html{line-height:1.5;-webkit-text-size-adjust:100%;font-family:ui-sans-serif,system-ui,sans-serif}body{background:#fff;margin:0;overflow-x:hidden}@keyframes pulse{0%,to{opacity:1}50%{opacity:.45}}.sk{animation:pulse 1.8s ease-in-out infinite;background:#e5e7eb;border-radius:.75rem}#pre-nav{align-items:center;background:#fff;border-bottom:1px solid #f0e6d2;display:flex;height:56px;padding:0 1rem;position:sticky;top:0;z-index:50}#pre-hero{padding:1rem}#pre-hero-inner{align-items:center;aspect-ratio:3/1;background:#1a0a18;border:1px solid #d4af37;border-radius:1.5rem;display:flex;justify-content:center;margin:0 auto;max-width:72rem;min-height:180px;overflow:hidden;position:relative}#pre-hero-img{height:100%;inset:0;-o-object-fit:cover;object-fit:cover;opacity:1;position:absolute;width:100%}#pre-hero-overlay{background:rgba(0,0,0,.3);inset:0;position:absolute;z-index:1}.hero-content-sk{align-items:center;display:flex;flex-direction:column;gap:10px;padding:0 1.5rem;position:relative;width:100%;z-index:2}.h1-sk{background:hsla(0,0%,100%,.18);border-radius:.25rem;height:28px;max-width:320px;width:60%}#pre-search{padding:0 1rem}.input-sk{background:#f3f4f6;border-radius:.75rem;height:48px;margin:0 auto;max-width:72rem}@media (max-width:767px){section:first-of-type .rounded-3xl,section:first-of-type .rounded-xl,section:nth-of-type(2) a{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:none!important}}</style>
+    <style>*,:after,:before{border-style:solid;border-width:0;box-sizing:border-box}html{line-height:1.5;-webkit-text-size-adjust:100%;font-family:ui-sans-serif,system-ui,sans-serif}body{background:#fff;margin:0;overflow-x:hidden}#root{opacity:0;transition:opacity 0s}@keyframes pulse{0%,to{opacity:1}50%{opacity:.45}}.sk{animation:pulse 1.8s ease-in-out infinite;background:#e5e7eb;border-radius:.75rem}#pre-nav{align-items:center;background:#fff;border-bottom:1px solid #f0e6d2;display:flex;height:56px;padding:0 1rem;position:sticky;top:0;z-index:50}#pre-hero{padding:1rem}#pre-hero-inner{align-items:center;aspect-ratio:3/1;background:#1a0a18;border:1px solid #d4af37;border-radius:1.5rem;display:flex;justify-content:center;margin:0 auto;max-width:48rem;min-height:180px;overflow:hidden;position:relative}#pre-hero-img{height:100%;inset:0;-o-object-fit:cover;object-fit:cover;opacity:1;position:absolute;width:100%}#pre-hero-overlay{background:rgba(0,0,0,.3);inset:0;position:absolute;z-index:1}.hero-content-sk{align-items:center;display:flex;flex-direction:column;gap:10px;padding:0 1.5rem;position:relative;width:100%;z-index:2}.h1-sk{background:hsla(0,0%,100%,.18);border-radius:.25rem;height:28px;max-width:320px;width:60%}#pre-search{padding:0 1rem}.input-sk{background:#f3f4f6;border-radius:.75rem;height:48px;margin:0 auto;max-width:72rem}@media (max-width:767px){section:first-of-type .rounded-3xl,section:first-of-type .rounded-xl,section:nth-of-type(2) a{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:none!important}}</style>
 
     <!-- Google tag (gtag.js) — chargé APRÈS window.load pour ne pas
          pénaliser le LCP mobile. La queue dataLayer est conservée
@@ -50,11 +50,11 @@
         window.addEventListener('load', function(){ setTimeout(loadGtm, 500); }, { once: true });
       }
     </script>
-    <script type="module" crossorigin src="/assets/index-C-ysw66v.js"></script>
+    <script type="module" crossorigin src="/assets/index-BZR5bR4M.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/vendor-react-DSaysAo5.js">
     <link rel="modulepreload" crossorigin href="/assets/vendor-icons-Bo6zjYE3.js">
     <link rel="modulepreload" crossorigin href="/assets/vendor-router-CBWriE7m.js">
-    <link rel="preload" as="style" crossorigin href="/assets/index-C3ce7bo6.css" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" crossorigin href="/assets/index-C3ce7bo6.css"></noscript>
+    <link rel="preload" as="style" fetchpriority="low" crossorigin href="/assets/index-BvAApHEw.css" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" crossorigin href="/assets/index-BvAApHEw.css"></noscript>
   </head>
   <body>
     <div id="pre-skeleton">
@@ -89,16 +89,26 @@
     <div id="root"></div>
 
     <script>
+      // Stratégie LCP stable :
+      // 1. Le skeleton HTML peint l'image drapeau le plus tôt possible.
+      // 2. React monte ensuite dans #root, invisible (opacity:0), avec la MÊME image
+      //    drapeau chargée depuis le cache — donc même pixel, aucun reflow.
+      // 3. Quand React signale "ready" (window.__appMounted), on swappe : on retire
+      //    le skeleton d'un coup, et #root devient visible. Le navigateur continue
+      //    de voir exactement le même drapeau => le LCP reste figé sur ce peint.
       (function(){
-        var ob = new MutationObserver(function(){
+        var skeletonRemoved = false;
+        function removeSkeleton(){
+          if (skeletonRemoved) return;
+          skeletonRemoved = true;
+          var sk = document.getElementById('pre-skeleton');
+          if (sk) sk.remove();
           var r = document.getElementById('root');
-          if(r && r.children.length > 0){
-            var sk = document.getElementById('pre-skeleton');
-            if(sk) sk.remove();
-            ob.disconnect();
-          }
-        });
-        ob.observe(document.getElementById('root'), {childList:true});
+          if (r) r.style.opacity = '1';
+        }
+        window.__removeSkeleton = removeSkeleton;
+        // Secours : si React n'émet pas le signal sous 2.5s, on affiche quand même.
+        setTimeout(removeSkeleton, 2500);
       })();
     </script>
   </body>
