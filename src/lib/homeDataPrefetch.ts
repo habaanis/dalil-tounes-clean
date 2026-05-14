@@ -37,6 +37,14 @@ export interface HomeBusinessRow {
   description_ar: string | null;
 }
 
+// Les colonnes d'abonnement existent en base avec un espace / un accent
+// (heritage Airtable). On les selectionne via leurs vrais noms et on les
+// remappe vers les cles plates de l'interface front.
+const SUBSCRIPTION_COL = '"statut Abonnement"';
+const PRIORITY_COL = '"niveau priorité abonnement"';
+const CERTIFIED_LABEL = '\u2B50 CERTIFI\u00C9 DALIL TOUNES';
+const HOME_TIERS = ['premium', 'Elite', 'Elite Pro'];
+
 export interface HomeQueryResult {
   partners: HomeBusinessRow[];
   totalCount: number;
@@ -47,13 +55,13 @@ interface CacheEntry extends HomeQueryResult {
   ts: number;
 }
 
-const CACHE_KEY = 'home_data_v7';
+const CACHE_KEY = 'home_data_v8';
 const STALE_TIME = 5 * 60_000;   // 5 minutes — pas de refetch dans cette fenêtre
 const GC_TIME   = 60 * 60_000;   // 1 heure  — TTL maximale en localStorage
 
 const FIELDS = [
   'id', 'nom', 'ville', 'gouvernorat', 'sous_categories',
-  'statut_abonnement', 'niveau_priorite_abonnement',
+  SUBSCRIPTION_COL, PRIORITY_COL,
   'image_url', 'logo_url', 'horaires_ok', 'telephone', 'statut_carte',
   'name_ar', 'description_ar',
 ].join(', ');
@@ -90,27 +98,46 @@ function writeHomeCache(result: HomeQueryResult): void {
 async function doFetch(): Promise<HomeQueryResult> {
   const supabase = await getSupabase();
   const [listRes, countRes, certifiedRes] = await Promise.all([
+    // Etablissements a la Une : tier premium / Elite / Elite Pro
     supabase
       .from('entreprise')
       .select(FIELDS)
-      .or('statut_abonnement.ilike.*Elite Pro*,statut_abonnement.ilike.*Elite*,statut_abonnement.ilike.*Premium*')
-      .order('niveau_priorite_abonnement', { ascending: false, nullsFirst: false })
+      .in(SUBSCRIPTION_COL, HOME_TIERS)
+      .order(PRIORITY_COL, { ascending: false, nullsFirst: false })
       .limit(12),
+    // Compteur global : toutes les fiches entreprises
     supabase
       .from('entreprise')
       .select('id', { count: 'exact', head: true }),
+    // Compteur certifiees : match exact sur le label complet
     supabase
       .from('entreprise')
       .select('id', { count: 'exact', head: true })
-      .ilike('statut_carte', '%CERTIFIÉ%')
-      .not('statut_carte', 'ilike', '%NON CERTIFIÉ%'),
+      .eq('statut_carte', CERTIFIED_LABEL),
   ]);
 
   if (listRes.error) throw listRes.error;
   if (countRes.error) console.error('[homeDataPrefetch] countRes error:', countRes.error);
   if (certifiedRes.error) console.error('[homeDataPrefetch] certifiedRes error:', certifiedRes.error);
 
-  const rows = (listRes.data as HomeBusinessRow[]) ?? [];
+  // Normalise les cles avec espaces vers les cles plates exposees par HomeBusinessRow
+  const rows: HomeBusinessRow[] = ((listRes.data as Record<string, unknown>[] | null) ?? []).map((r) => ({
+    id: r.id as string,
+    nom: r.nom as string,
+    ville: (r.ville as string | null) ?? null,
+    gouvernorat: (r.gouvernorat as string | null) ?? null,
+    sous_categories: (r.sous_categories as string | null) ?? null,
+    statut_abonnement: (r['statut Abonnement'] as string | null) ?? null,
+    niveau_priorite_abonnement: (r['niveau priorité abonnement'] as number | null) ?? null,
+    image_url: (r.image_url as string | null) ?? null,
+    logo_url: (r.logo_url as string | null) ?? null,
+    horaires_ok: (r.horaires_ok as string | null) ?? null,
+    telephone: (r.telephone as string | null) ?? null,
+    statut_carte: (r.statut_carte as string | null) ?? null,
+    name_ar: (r.name_ar as string | null) ?? null,
+    description_ar: (r.description_ar as string | null) ?? null,
+  }));
+
   const sorted = [...rows].sort((a, b) =>
     getSubscriptionPriority(b.statut_abonnement) - getSubscriptionPriority(a.statut_abonnement)
   );
