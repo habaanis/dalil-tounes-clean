@@ -43,8 +43,15 @@ export interface HomeBusinessRow {
 // cote client.
 const SUBSCRIPTION_COL_RAW = 'statut Abonnement';
 const PRIORITY_COL_RAW = 'niveau priorité abonnement';
-const CERTIFIED_LABEL = '\u2B50 CERTIFI\u00C9 DALIL TOUNES';
-const HOME_TIERS_NORMALIZED = new Set(['premium', 'elite', 'elite pro']);
+const CERTIFIED_LABEL = '⭐ CERTIFIÉ DALIL TOUNES';
+
+// 🔧 CORRECTION : Filtre plus large qui capture toutes les valeurs contenant
+// "premium" ou "elite" (insensible à la casse)
+// Cela permet de capturer :
+// - premium 99tTND
+// - elite pro 189tnd
+// - premium, Elite, Elite Pro (sans chiffres)
+const HOME_TIERS_KEYWORDS = new Set(['premium', 'elite']);
 
 export interface HomeQueryResult {
   partners: HomeBusinessRow[];
@@ -56,7 +63,7 @@ interface CacheEntry extends HomeQueryResult {
   ts: number;
 }
 
-const CACHE_KEY = 'home_data_v10';
+const CACHE_KEY = 'home_data_v11';
 const STALE_TIME = 5 * 60_000;   // 5 minutes — pas de refetch dans cette fenêtre
 const GC_TIME   = 60 * 60_000;   // 1 heure  — TTL maximale en localStorage
 
@@ -104,10 +111,10 @@ async function doFetch(): Promise<HomeQueryResult> {
   console.log('[HOME-DIAG] CERTIFIED_LABEL =', JSON.stringify(CERTIFIED_LABEL));
 
   const [listRes, countRes, certifiedRes] = await Promise.all([
-    // Etablissements a la Une : on ne peut pas filtrer .in() sur une colonne
-    // contenant un espace via PostgREST (erreur 400). On lit donc un echantillon
-    // large et on filtre/trie cote client sur les colonnes "statut Abonnement"
-    // et "niveau priorite abonnement".
+    // Établissements à la Une : on ne peut pas filtrer .in() sur une colonne
+    // contenant un espace via PostgREST (erreur 400). On lit donc un échantillon
+    // large et on filtre/trie côté client sur les colonnes "statut Abonnement"
+    // et "niveau priorité abonnement".
     supabase
       .from('entreprise')
       .select(FIELDS)
@@ -116,14 +123,14 @@ async function doFetch(): Promise<HomeQueryResult> {
     supabase
       .from('entreprise')
       .select('id', { count: 'exact', head: true }),
-    // Compteur certifiees : match exact sur le label complet
+    // Compteur certifiées : match exact sur le label complet
     supabase
       .from('entreprise')
       .select('id', { count: 'exact', head: true })
       .eq('statut_carte', CERTIFIED_LABEL),
   ]);
 
-  // [HOME-DIAG] Log brut de chaque reponse (status, error, count, sample)
+  // [HOME-DIAG] Log brut de chaque réponse (status, error, count, sample)
   console.log('[HOME-DIAG] countRes', {
     count: countRes.count,
     status: countRes.status,
@@ -147,14 +154,14 @@ async function doFetch(): Promise<HomeQueryResult> {
 
   if (listRes.error) {
     console.error('[homeDataPrefetch] listRes error:', listRes.error);
-    // On ne throw plus : on veut quand meme que les counts s'affichent si possible.
+    // On ne throw plus : on veut quand même que les counts s'affichent si possible.
   }
   if (countRes.error) console.error('[homeDataPrefetch] countRes error:', countRes.error);
   if (certifiedRes.error) console.error('[homeDataPrefetch] certifiedRes error:', certifiedRes.error);
 
-  // Normalise les cles avec espaces vers les cles plates exposees par HomeBusinessRow.
+  // Normalise les clés avec espaces vers les clés plates exposées par HomeBusinessRow.
   // Si jamais les colonnes "statut Abonnement" / "niveau priorité abonnement" ne sont
-  // pas retournees par PostgREST, on tombe sur le fallback snake_case.
+  // pas retournées par PostgREST, on tombe sur le fallback snake_case.
   const rawRows = (listRes.data as Record<string, unknown>[] | null) ?? [];
   const allMapped: HomeBusinessRow[] = rawRows.map((r) => ({
     id: r.id as string,
@@ -173,10 +180,13 @@ async function doFetch(): Promise<HomeQueryResult> {
     description_ar: (r.description_ar as string | null) ?? null,
   }));
 
-  // Filtrage cote client : tier premium / Elite / Elite Pro (case-insensitive)
+  // 🔧 CORRECTION : Filtrage côté client plus large
+  // Capture toutes les valeurs contenant "premium" ou "elite" (insensible à la casse)
+  // Exemples capturés : premium, premium 99tTND, Elite, Elite Pro, elite pro 189tnd
   const rows = allMapped.filter((p) => {
-    const tier = (p.statut_abonnement || '').trim().toLowerCase();
-    return HOME_TIERS_NORMALIZED.has(tier);
+    const tier = (p.statut_abonnement || '').toLowerCase().trim();
+    return HOME_TIERS_KEYWORDS.has('premium') && tier.includes('premium') ||
+           HOME_TIERS_KEYWORDS.has('elite') && tier.includes('elite');
   });
 
   console.log('[HOME-DIAG] rows fetched =', allMapped.length, '| filtered carrousel =', rows.length);
@@ -196,7 +206,7 @@ async function doFetch(): Promise<HomeQueryResult> {
   });
 
   const result = {
-    partners: sorted.slice(0, 4),
+    partners: sorted.slice(0, 8), // Augmenté à 8 pour avoir plus de résultats
     totalCount: countRes.count ?? 0,
     certifiedCount: certifiedRes.count ?? 0,
   };
