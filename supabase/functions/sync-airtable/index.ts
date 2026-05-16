@@ -31,56 +31,188 @@ function respond(body: Record<string, unknown>, status = 200): Response {
   });
 }
 
+function str(val: unknown): string | null {
+  if (val === undefined || val === null) return null;
+  if (typeof val === "string") return val;
+  return String(val);
+}
+
+function num(val: unknown): number | null {
+  if (val === undefined || val === null) return null;
+  const n = Number(val);
+  return isNaN(n) ? null : n;
+}
+
+function int(val: unknown): number | null {
+  const n = num(val);
+  return n === null ? null : Math.round(n);
+}
+
+function bool(val: unknown): boolean | null {
+  if (val === undefined || val === null) return null;
+  if (typeof val === "boolean") return val;
+  if (val === "true" || val === 1) return true;
+  if (val === "false" || val === 0) return false;
+  return null;
+}
+
+function pick(f: Record<string, unknown>, ...keys: string[]): unknown {
+  for (const k of keys) {
+    if (f[k] !== undefined && f[k] !== null) return f[k];
+  }
+  return null;
+}
+
 function mapRecord(record: AirtableRecord): Record<string, unknown> {
   const f = record.fields;
+
   return {
     id_airtable: record.id,
-    nom: f["nom"] ?? f["Nom"] ?? null,
-    categorie: f["categorie"] ?? f["Catégorie"] ?? f["categorie_fr"] ?? null,
-    sous_categories: f["sous_categories"] ?? f["Sous-catégories"] ?? null,
-    ville: f["ville"] ?? f["Ville"] ?? null,
-    gouvernorat: f["gouvernorat"] ?? f["Gouvernorat"] ?? null,
-    adresse: f["adresse"] ?? f["Adresse"] ?? null,
-    telephone: f["telephone"] ?? f["Téléphone"] ?? null,
-    telephone2: f["telephone2"] ?? f["Téléphone 2"] ?? null,
-    whatsapp: f["whatsapp"] ?? f["WhatsApp"] ?? null,
-    email: f["email"] ?? f["Email"] ?? null,
-    email2: f["email2"] ?? f["Email 2"] ?? null,
-    site_web: f["site_web"] ?? f["Site web"] ?? null,
-    description: f["description"] ?? f["Description"] ?? null,
-    services: f["services"] ?? f["Services"] ?? null,
-    image_url: f["image_url"] ?? f["Image"] ?? null,
-    logo_url: f["logo_url"] ?? f["Logo"] ?? null,
-    video_url: f["video_url"] ?? f["Vidéo"] ?? null,
-    horaires_ok: f["horaires_ok"] ?? f["Horaires"] ?? null,
-    score_avis: f["score_avis"] ?? f["Score Avis"] ?? null,
-    "BTN_Maps": f["BTN_Maps"] ?? f["Lien Google Maps"] ?? null,
-    "Lien Instagram": f["Lien Instagram"] ?? null,
-    "Lien TikTok": f["Lien TikTok"] ?? null,
-    "Lien LinkedIn": f["Lien LinkedIn"] ?? null,
-    "Lien YouTube": f["Lien YouTube"] ?? null,
-    "lien facebook": f["lien facebook"] ?? f["Lien Facebook"] ?? null,
-    "Lien Avis Google": f["Lien Avis Google"] ?? null,
-    "statut Abonnement":
-      f["statut Abonnement"] ?? f["Statut Abonnement"] ?? null,
-    "niveau priorité abonnement":
-      f["niveau priorité abonnement"] ??
-      f["Niveau priorité abonnement"] ??
-      null,
-    statut_carte: f["statut_carte"] ?? f["Statut carte"] ?? null,
-    statut_abonnement:
-      f["statut_abonnement"] ??
-      f["statut Abonnement"] ??
-      f["Statut Abonnement"] ??
-      null,
-    name_ar: f["name_ar"] ?? null,
-    description_ar: f["description_ar"] ?? null,
-    tags: f["tags"] ?? f["Tags"] ?? null,
-    page_categorie: f["page_categorie"] ?? null,
-    secteur: f["secteur"] ?? f["Secteur"] ?? null,
-    is_premium: f["is_premium"] ?? false,
-    is_featured: f["is_featured"] ?? false,
-    is_local_verified: f["is_local_verified"] ?? false,
+
+    // -- Identite --
+    nom: str(pick(f, "nom", "Nom")),
+    description: str(pick(f, "description", "Description")),
+    adresse: str(pick(f, "adresse", "Adresse")),
+    ville: str(pick(f, "ville", "Ville")),
+    gouvernorat: str(pick(f, "gouvernorat", "Gouvernorat")),
+
+    // -- Statuts --
+    statut_carte: str(pick(f, "statut_carte", "Statut carte", "statut carte")),
+    "statut Abonnement": str(
+      pick(f, "statut Abonnement", "Statut Abonnement", "statut_abonnement")
+    ),
+    statut_validation: str(
+      pick(f, "statut_validation", "Statut Validation")
+    ),
+    status: str(pick(f, "status", "Status")),
+
+    // -- Contact --
+    telephone: str(pick(f, "telephone", "telephone1", "Téléphone", "Telephone")),
+    telephone2: str(pick(f, "telephone2", "Téléphone 2", "Telephone 2")),
+    email: str(pick(f, "email", "Email")),
+    email2: str(pick(f, "email2", "Email 2")),
+    site_web: str(pick(f, "site_web", "Site web", "Site Web")),
+    whatsapp: str(pick(f, "whatsapp", "WhatsApp", "Whatsapp")),
+
+    // -- Geo --
+    latitude: num(pick(f, "latitude", "Latitude")),
+    longitude: num(pick(f, "longitude", "Longitude")),
+
+    // -- Media --
+    image_url: str(pick(f, "image_url", "Image", "image")),
+    logo_url: str(pick(f, "logo_url", "Logo", "logo")),
+    video_url: str(pick(f, "video_url", "Vidéo", "Video", "video")),
+    image_couverture: str(
+      pick(f, "image_couverture", "Image couverture", "Image Couverture")
+    ),
+
+    // -- SEO / Slug --
+    slug: str(pick(f, "slug", "Slug")),
+    search_text: str(pick(f, "search_text", "Search Text")),
+    "mots cles recherche": str(
+      pick(f, "mots cles recherche", "Mots clés recherche", "mots_cles_recherche")
+    ),
+    synonymes_seo: str(pick(f, "synonymes_seo", "Synonymes SEO")),
+
+    // -- Reseaux sociaux --
+    "lien facebook": str(
+      pick(f, "lien facebook", "Lien Facebook", "lien_facebook")
+    ),
+    "Lien Instagram": str(pick(f, "Lien Instagram", "lien_instagram")),
+    "Lien LinkedIn": str(pick(f, "Lien LinkedIn", "lien_linkedin")),
+    "Lien TikTok": str(pick(f, "Lien TikTok", "lien_tiktok")),
+    "Lien YouTube": str(pick(f, "Lien YouTube", "lien_youtube")),
+    lien_x: str(pick(f, "lien_x", "Lien X", "Lien Twitter")),
+
+    // -- Avis / Notes --
+    "Note Google Globale": num(
+      pick(f, "Note Google Globale", "note_google_globale")
+    ),
+    "Compteur Avis Google": int(
+      pick(f, "Compteur Avis Google", "compteur_avis_google")
+    ),
+    score_avis: num(pick(f, "score_avis", "Score Avis")),
+    views_count: int(pick(f, "views_count", "Views Count")) ?? 0,
+
+    // -- Horaires / Maps --
+    horaires_ok: str(pick(f, "horaires_ok", "Horaires", "horaires")),
+    "BTN_Maps": str(pick(f, "BTN_Maps", "Lien Google Maps", "btn_maps")),
+    "Lien Avis Google": str(
+      pick(f, "Lien Avis Google", "lien_avis_google")
+    ),
+
+    // -- Booleens --
+    approved: bool(pick(f, "approved", "Approved")),
+    featured: bool(pick(f, "featured", "Featured")),
+    home_featured: bool(pick(f, "home_featured", "Home Featured")),
+    is_premium: bool(pick(f, "is_premium", "Is Premium")) ?? false,
+    is_local_verified: bool(
+      pick(f, "is_local_verified", "Is Local Verified")
+    ) ?? false,
+    verifie: bool(pick(f, "verifie", "Vérifié", "Verifie")),
+    "page commerce local": bool(
+      pick(f, "page commerce local", "Page Commerce Local")
+    ),
+    "mise en avant pub": bool(
+      pick(f, "mise en avant pub", "Mise en avant pub")
+    ),
+    email_lancement_envoye: bool(
+      pick(f, "email_lancement_envoye", "Email Lancement Envoyé")
+    ),
+
+    // -- Priorites / Niveaux --
+    priorite: int(pick(f, "priorite", "Priorité", "Priorite")),
+    niveau_priorite: int(pick(f, "niveau_priorite", "Niveau Priorité")),
+    "niveau priorité abonnement": num(
+      pick(
+        f,
+        "niveau priorité abonnement",
+        "Niveau priorité abonnement",
+        "niveau_priorite_abonnement"
+      )
+    ),
+
+    // -- Dates --
+    mis_a_jour_le: str(pick(f, "mis_a_jour_le", "Mis à jour le")),
+    "Date Fin Abonnement": str(
+      pick(f, "Date Fin Abonnement", "date_fin_abonnement")
+    ),
+
+    // -- Multilingue --
+    name_ar: str(pick(f, "name_ar", "Nom AR")),
+    name_en: str(pick(f, "name_en", "Nom EN")),
+    name_it: str(pick(f, "name_it", "Nom IT")),
+    name_ru: str(pick(f, "name_ru", "Nom RU")),
+    description_ar: str(pick(f, "description_ar", "Description AR")),
+    description_en: str(pick(f, "description_en", "Description EN")),
+    description_it: str(pick(f, "description_it", "Description IT")),
+    description_ru: str(pick(f, "description_ru", "Description RU")),
+
+    // -- Categories / Services --
+    sous_categories_texte: str(
+      pick(f, "sous_categories_texte", "Sous-catégories texte")
+    ),
+    sous_categories_clean: str(
+      pick(f, "sous_categories_clean", "Sous-catégories clean")
+    ),
+    services: str(pick(f, "services", "Services")),
+    qr_code_url: str(pick(f, "qr_code_url", "QR Code URL")),
+    google_url: str(pick(f, "google_url", "Google URL")),
+    matricule_fiscal: str(pick(f, "matricule_fiscal", "Matricule Fiscal")),
+    email_professionnel: str(
+      pick(f, "email_professionnel", "Email Professionnel")
+    ),
+    theme_culturel: str(pick(f, "theme_culturel", "Thème Culturel")),
+    secteur_evenement: str(
+      pick(f, "secteur_evenement", "Secteur Événement")
+    ),
+    "Sous-catégorie entreprise": str(
+      pick(f, "Sous-catégorie entreprise", "sous_categorie_entreprise")
+    ),
+    "Statut Sync": str(pick(f, "Statut Sync", "statut_sync")),
+    "Service RS Créé (VIP)": bool(
+      pick(f, "Service RS Créé (VIP)", "service_rs_cree_vip")
+    ),
   };
 }
 
@@ -123,7 +255,7 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    // -- Auth: either Supabase JWT (admin button) or CRON_SECRET header (cron) --
+    // -- Auth: Supabase JWT (admin button) OR x-cron-secret header (cron/n8n) --
     const authHeader = req.headers.get("Authorization") ?? "";
     const cronSecret = Deno.env.get("CRON_SECRET");
     const cronHeader = req.headers.get("x-cron-secret");
