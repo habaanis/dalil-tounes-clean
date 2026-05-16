@@ -9,6 +9,9 @@ const corsHeaders = {
 };
 
 const EXPECTED_COUNT = 1887;
+const AIRTABLE_BASE_ID_DEFAULT = "app9Q828Splwvm4jW";
+const AIRTABLE_TABLE_NAME = "entreprise";
+const BATCH_SIZE = 50;
 
 interface AirtableRecord {
   id: string;
@@ -21,7 +24,14 @@ interface AirtableResponse {
   offset?: string;
 }
 
-function mapAirtableToSupabase(record: AirtableRecord): Record<string, unknown> {
+function respond(body: Record<string, unknown>, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+}
+
+function mapRecord(record: AirtableRecord): Record<string, unknown> {
   const f = record.fields;
   return {
     id_airtable: record.id,
@@ -51,10 +61,18 @@ function mapAirtableToSupabase(record: AirtableRecord): Record<string, unknown> 
     "Lien YouTube": f["Lien YouTube"] ?? null,
     "lien facebook": f["lien facebook"] ?? f["Lien Facebook"] ?? null,
     "Lien Avis Google": f["Lien Avis Google"] ?? null,
-    "statut Abonnement": f["statut Abonnement"] ?? f["Statut Abonnement"] ?? null,
-    "niveau priorité abonnement": f["niveau priorité abonnement"] ?? f["Niveau priorité abonnement"] ?? null,
+    "statut Abonnement":
+      f["statut Abonnement"] ?? f["Statut Abonnement"] ?? null,
+    "niveau priorité abonnement":
+      f["niveau priorité abonnement"] ??
+      f["Niveau priorité abonnement"] ??
+      null,
     statut_carte: f["statut_carte"] ?? f["Statut carte"] ?? null,
-    statut_abonnement: f["statut_abonnement"] ?? f["statut Abonnement"] ?? f["Statut Abonnement"] ?? null,
+    statut_abonnement:
+      f["statut_abonnement"] ??
+      f["statut Abonnement"] ??
+      f["Statut Abonnement"] ??
+      null,
     name_ar: f["name_ar"] ?? null,
     description_ar: f["description_ar"] ?? null,
     tags: f["tags"] ?? f["Tags"] ?? null,
@@ -66,17 +84,18 @@ function mapAirtableToSupabase(record: AirtableRecord): Record<string, unknown> 
   };
 }
 
-async function fetchAllAirtableRecords(
+async function fetchAllFromAirtable(
   baseId: string,
-  token: string,
-  tableName: string
+  token: string
 ): Promise<AirtableRecord[]> {
   const allRecords: AirtableRecord[] = [];
   let offset: string | undefined;
+  let page = 0;
 
   do {
+    page++;
     const url = new URL(
-      `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(tableName)}`
+      `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(AIRTABLE_TABLE_NAME)}`
     );
     url.searchParams.set("pageSize", "100");
     if (offset) url.searchParams.set("offset", offset);
@@ -87,9 +106,7 @@ async function fetchAllAirtableRecords(
 
     if (!res.ok) {
       const errBody = await res.text();
-      throw new Error(
-        `Airtable API error ${res.status}: ${errBody}`
-      );
+      throw new Error(`Airtable API ${res.status} (page ${page}): ${errBody}`);
     }
 
     const data: AirtableResponse = await res.json();
@@ -106,68 +123,72 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
+    // -- Auth: either Supabase JWT (admin button) or CRON_SECRET header (cron) --
+    const authHeader = req.headers.get("Authorization") ?? "";
+    const cronSecret = Deno.env.get("CRON_SECRET");
+    const cronHeader = req.headers.get("x-cron-secret");
+
+    const isCron = cronSecret && cronHeader === cronSecret;
+
+    if (!isCron && !authHeader.startsWith("Bearer ")) {
+      return respond({ error: "Unauthorized" }, 401);
+    }
+
+    // -- Parse params --
     const url = new URL(req.url);
     const forceRefresh = url.searchParams.get("refresh") === "true";
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const airtableToken = Deno.env.get("AIRTABLE_TOKEN");
-    const airtableBaseId = Deno.env.get("AIRTABLE_BASE_ID") || "app9Q828Splwvm4jW";
+    const airtableBaseId =
+      Deno.env.get("AIRTABLE_BASE_ID") || AIRTABLE_BASE_ID_DEFAULT;
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // 1. Count current rows in Supabase
+    // 1. Count current rows
     const { count, error: countError } = await supabase
       .from("entreprise")
       .select("id", { count: "exact", head: true });
 
     if (countError) {
-      return new Response(
-        JSON.stringify({
-          error: "Failed to count entreprise rows",
-          details: countError.message,
-        }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      return respond(
+        { error: "Count query failed", details: countError.message },
+        500
       );
     }
 
     const currentCount = count ?? 0;
 
-    // 2. If count >= expected and no force refresh, return status only
+    // 2. If already at target and no force, skip
     if (!forceRefresh && currentCount >= EXPECTED_COUNT) {
-      return new Response(
-        JSON.stringify({
-          source: "supabase",
-          message: `Supabase already has ${currentCount} fiches (>= ${EXPECTED_COUNT}). No sync needed.`,
-          count: currentCount,
-          synced: false,
-        }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return respond({
+        source: "supabase",
+        synced: false,
+        message: `Base already contains ${currentCount} fiches (target: ${EXPECTED_COUNT}). Use ?refresh=true to force.`,
+        count: currentCount,
+      });
     }
 
-    // 3. Need to sync from Airtable
+    // 3. Validate Airtable token
     if (!airtableToken) {
-      return new Response(
-        JSON.stringify({
-          error: "AIRTABLE_TOKEN secret is not configured. Add it in Supabase Dashboard > Edge Functions > Secrets.",
+      return respond(
+        {
+          error:
+            "AIRTABLE_TOKEN is not configured. Add it in Supabase Dashboard > Edge Functions > Secrets.",
           count: currentCount,
-        }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        },
+        400
       );
     }
 
-    const records = await fetchAllAirtableRecords(
-      airtableBaseId,
-      airtableToken,
-      "entreprise"
-    );
+    // 4. Fetch all records from Airtable (full pagination)
+    const records = await fetchAllFromAirtable(airtableBaseId, airtableToken);
 
-    // 4. Map records to Supabase schema
-    const mapped = records.map(mapAirtableToSupabase);
+    // 5. Map to Supabase schema
+    const mapped = records.map(mapRecord);
 
-    // 5. Upsert in batches of 50 to avoid payload limits
-    const BATCH_SIZE = 50;
+    // 6. Upsert in batches
     let upsertedCount = 0;
     const errors: string[] = [];
 
@@ -175,32 +196,31 @@ Deno.serve(async (req: Request) => {
       const batch = mapped.slice(i, i + BATCH_SIZE);
       const { error: upsertError } = await supabase
         .from("entreprise")
-        .upsert(batch as never[], { onConflict: "id_airtable", ignoreDuplicates: false });
+        .upsert(batch as never[], {
+          onConflict: "id_airtable",
+          ignoreDuplicates: false,
+        });
 
       if (upsertError) {
-        errors.push(`Batch ${i / BATCH_SIZE + 1}: ${upsertError.message}`);
+        errors.push(
+          `Batch ${Math.floor(i / BATCH_SIZE) + 1}: ${upsertError.message}`
+        );
       } else {
         upsertedCount += batch.length;
       }
     }
 
-    return new Response(
-      JSON.stringify({
-        source: "airtable",
-        message: `Synced ${upsertedCount} / ${records.length} records from Airtable.`,
-        count: upsertedCount,
-        totalAirtable: records.length,
-        previousCount: currentCount,
-        synced: true,
-        errors: errors.length > 0 ? errors : undefined,
-      }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    return respond({
+      source: "airtable",
+      synced: true,
+      message: `Import terminé: ${upsertedCount} / ${records.length} fiches synchronisées.`,
+      count: upsertedCount,
+      totalAirtable: records.length,
+      previousSupabaseCount: currentCount,
+      errors: errors.length > 0 ? errors : undefined,
+    });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    return new Response(
-      JSON.stringify({ error: message }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    return respond({ error: message }, 500);
   }
 });
