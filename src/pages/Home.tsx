@@ -89,6 +89,17 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
     }
   };
 
+  // ✅ Fonction corrigée pour le bouton "Suggérer un établissement"
+  const handleSuggestBusiness = () => {
+    console.log('🔘 Bouton "Suggérer un établissement" cliqué');
+    if (onSuggestBusiness) {
+      onSuggestBusiness();
+    } else {
+      // Fallback : naviguer vers la page de suggestion
+      navigate('/suggest-business');
+    }
+  };
+
   return (
     <div>
       <StructuredData data={[generateOrganizationSchema(), generateWebSiteSchema()]} />
@@ -131,9 +142,9 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
            d'apparition ni transform : elles retardent le LCP. */}
       <section className="py-2 px-4 md:py-2.5">
         <div className="max-w-6xl mx-auto flex justify-center">
-          <a
-            href="#/notre-concept"
-            className="inline-flex items-center gap-2 px-4 py-1.5 md:px-6 md:py-2.5 bg-[#4A1D43] rounded-xl border border-[#D4AF37]"
+          <button
+            onClick={() => handleNavigate('subscription')}
+            className="inline-flex items-center gap-2 px-4 py-1.5 md:px-6 md:py-2.5 bg-[#4A1D43] rounded-xl border border-[#D4AF37] cursor-pointer"
           >
             <span className="text-sm md:text-base font-semibold text-[#D4AF37]" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
               {t.concept.ctaButton}
@@ -141,7 +152,7 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
             <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#D4AF37]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
-          </a>
+          </button>
         </div>
       </section>
 
@@ -245,7 +256,7 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
                   type="button"
                   onFocus={() => setSearchArmed(true)}
                   onPointerDown={() => setSearchArmed(true)}
-                  className="w-full text-left h-12 px-3 rounded-lg bg-gray-50 text-gray-500 text-sm"
+                  className="w-full text-left h-12 px-3 rounded-lg bg-gray-50 text-gray-500 text-sm cursor-pointer"
                   aria-label={t.home.suggestBusiness}
                 >
                   {(t as any).search?.placeholder || 'Rechercher...'}
@@ -259,8 +270,8 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
               {(t as any).homeExtra?.suggestInvite}
             </p>
             <button
-              onClick={onSuggestBusiness}
-              className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#4A1D43] text-[#D4AF37] font-bold rounded-xl border border-[#D4AF37] text-sm md:shadow-[0_4px_15px_rgba(212,175,55,0.25)] md:hover:bg-[#5A2D53] md:hover:shadow-[0_6px_25px_rgba(212,175,55,0.4)] md:transition-all md:duration-300 md:hover:scale-105"
+              onClick={handleSuggestBusiness}
+              className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#4A1D43] text-[#D4AF37] font-bold rounded-xl border border-[#D4AF37] text-sm md:shadow-[0_4px_15px_rgba(212,175,55,0.25)] md:hover:bg-[#5A2D53] md:hover:shadow-[0_6px_25px_rgba(212,175,55,0.4)] md:transition-all md:duration-300 md:hover:scale-105 cursor-pointer"
             >
               {t.home.suggestBusiness}
             </button>
@@ -320,12 +331,6 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
             </a>
           </p>
         </div>
-        {/* SEO – maillage interne footer :
-            Ajouter dans le Footer un lien texte :
-            <a href="/blog/pourquoi-dalil-tounes-change-la-donne-pour-les-pros-et-les-clients">
-              Pourquoi Dalil Tounes change la donne pour les pros et les clients
-            </a>
-            pour renforcer l'autorité interne de cet article. */}
       </section>
 
       {/* Témoignages publics — avis_entreprise avec entreprise_id IS NULL */}
