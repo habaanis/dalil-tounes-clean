@@ -65,6 +65,7 @@ const MetierVillePage = lazy(() => import('./pages/seo/MetierVillePage'));
 const MetierSousCatVillePage = lazy(() => import('./pages/seo/MetierSousCatVillePage'));
 const MetierPage = lazy(() => import('./pages/seo/MetierPage'));
 const VillePage = lazy(() => import('./pages/seo/VillePage'));
+const SuggestBusiness = lazy(() => import('./pages/SuggestBusiness').then(m => ({ default: m.SuggestBusiness })));
 
 // Le PageLoader réutilise LA MÊME image que le hero final. L'image est
 // déjà préchargée et servie depuis le cache, donc aucune requête réseau :
@@ -194,6 +195,7 @@ function AppRouter() {
               <Route path="/candidates" element={<CandidateList />} />
               <Route path="/candidats" element={<CandidateList />} />
               <Route path="/business-list" element={<BusinessList />} />
+              <Route path="/suggest-business" element={<SuggestBusiness />} />
 
               {/* Admin */}
               <Route path="/admin/partner-requests" element={<PartnerRequestsAdmin />} />
