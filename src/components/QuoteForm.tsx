@@ -3,6 +3,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
 import { X, Send } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
+import { notifyAdmin } from '../lib/notifyAdmin';
 
 interface QuoteFormProps {
   onClose: () => void;
@@ -77,6 +78,16 @@ export const QuoteForm = ({ onClose }: QuoteFormProps) => {
       if (submitError) throw submitError;
 
       setShowSuccess(true);
+
+      notifyAdmin('Nouvelle demande de devis', {
+        Nom: formData.nom,
+        Email: formData.email,
+        Telephone: formData.telephone,
+        Entreprise: formData.entreprise || 'Non precise',
+        Message: formData.message,
+        Budget: formData.budget_estime || 'Non precise',
+      });
+
       setFormData({
         nom: '',
         email: '',

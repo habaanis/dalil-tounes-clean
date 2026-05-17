@@ -3,6 +3,7 @@ import { Send, CheckCircle } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
+import { notifyAdmin } from '../lib/notifyAdmin';
 
 type Rating = 'positif' | 'neutre' | 'negatif' | null;
 
@@ -41,6 +42,12 @@ export default function HomeFeedbackWidget() {
       }
 
       setIsSubmitted(true);
+
+      notifyAdmin('Nouveau feedback page accueil', {
+        Note: selectedRating,
+        Commentaire: comment.trim() || 'Aucun commentaire',
+      });
+
       setSelectedRating(null);
       setComment('');
     } catch (err) {

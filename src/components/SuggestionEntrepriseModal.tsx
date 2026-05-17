@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabaseClient';
 import { Toast } from './Toast';
 import { useFormTranslation } from '../hooks/useFormTranslation';
 import { useCategoryTranslation } from '../hooks/useCategoryTranslation';
+import { notifyAdmin } from '../lib/notifyAdmin';
 
 interface SuggestionEntrepriseModalProps {
   isOpen: boolean;
@@ -105,6 +106,15 @@ export const SuggestionEntrepriseModal = ({ isOpen, onClose }: SuggestionEntrepr
       setToastMessage(message('succes'));
       setToastType('success');
       setShowToast(true);
+
+      notifyAdmin('Nouvelle suggestion d\'etablissement', {
+        Entreprise: formData.nomEntreprise,
+        Secteur: formData.secteur,
+        Ville: formData.ville || 'Non precise',
+        Contact: formData.contactSuggere || 'Non precise',
+        Email: formData.emailSuggesteur || 'Non precise',
+        Raison: formData.raisonSuggestion || 'Non precise',
+      });
 
       // Réinitialiser le formulaire
       setFormData({

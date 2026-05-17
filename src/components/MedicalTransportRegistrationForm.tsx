@@ -3,6 +3,7 @@ import { Ambulance, Car, Check, Loader } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
 import LocationSelectTunisie from './LocationSelectTunisie';
 import { Toast } from './Toast';
+import { notifyAdmin } from '../lib/notifyAdmin';
 
 interface MedicalTransportRegistrationFormProps {
   onSuccess?: () => void;
@@ -99,6 +100,14 @@ ${formData.notes ? `\n\nNotes supplémentaires:\n${formData.notes}` : ''}`,
       setToastMessage('Demande envoyée avec succès ! Merci de votre contribution.');
       setToastType('success');
       setShowToast(true);
+
+      notifyAdmin('Nouvelle inscription transport medical (composant)', {
+        Nom: formData.nom_complet,
+        Email: formData.email,
+        Telephone: formData.telephone,
+        Gouvernorat: formData.gouvernorat,
+        Ville: formData.ville_base,
+      });
 
       // Réinitialiser le formulaire
       setFormData({

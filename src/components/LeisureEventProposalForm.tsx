@@ -3,6 +3,7 @@ import { X } from 'lucide-react';
 import { supabase } from '../lib/BoltDatabase';
 import { Toast } from './Toast';
 import { useFormTranslation } from '../hooks/useFormTranslation';
+import { notifyAdmin } from '../lib/notifyAdmin';
 
 interface LeisureEventProposalFormProps {
   onClose: () => void;
@@ -93,6 +94,17 @@ const LeisureEventProposalForm: React.FC<LeisureEventProposalFormProps> = ({ onC
       setToastType('success');
       setToastMessage(message('succes'));
       setShowToast(true);
+
+      notifyAdmin('Nouvelle proposition evenement loisir', {
+        Nom: formData.prenom,
+        Evenement: formData.nom_evenement,
+        Organisateur: formData.organisateur,
+        Ville: formData.ville,
+        Date: formData.date_evenement,
+        Prix: formData.prix_entree || 'Non precise',
+        WhatsApp: formData.whatsapp,
+        Email: formData.email || 'Non precise',
+      }, '/admin/inscriptions-loisirs');
 
       setTimeout(() => {
         setFormData({

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { supabase } from '../lib/BoltDatabase';
+import { notifyAdmin } from '../lib/notifyAdmin';
 import {
   Ambulance,
   MapPin,
@@ -179,6 +180,18 @@ export default function TransportInscription() {
         setErrorMsg('Une erreur est survenue lors de l\'inscription. Veuillez réessayer.');
       } else {
         setSuccess(true);
+
+        notifyAdmin('Nouvelle inscription transport medical', {
+          Nom: form.full_name,
+          Email: form.email,
+          Telephone: form.phone,
+          Gouvernorat: form.governorate,
+          Villes: form.cities,
+          Vehicule: form.vehicle_type,
+          Disponibilite: form.availability,
+          Abonnement: form.subscription_tier,
+        });
+
         setForm({
           full_name: '',
           email: '',

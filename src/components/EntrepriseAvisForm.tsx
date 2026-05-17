@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Star, Send } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
+import { notifyAdmin } from '../lib/notifyAdmin';
 import { useFormTranslation } from '../hooks/useFormTranslation';
 
 interface EntrepriseAvisFormProps {
@@ -59,6 +60,14 @@ export default function EntrepriseAvisForm({ entrepriseId, onSuccess }: Entrepri
       }
 
       setSubmitState('success');
+
+      notifyAdmin('Nouvel avis entreprise', {
+        Note: `${rating}/5`,
+        Commentaire: commentaireValue,
+        Auteur: auteurValue || 'Anonyme',
+        'ID Entreprise': cleanedId || 'Non specifie',
+      }, '/admin/avis');
+
       setRating(0);
       setComment('');
       setAuteur('');

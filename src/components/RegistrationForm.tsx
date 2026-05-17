@@ -4,6 +4,7 @@ import { useTranslation } from '../lib/i18n';
 import { X } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
 import { Toast } from './Toast';
+import { notifyAdmin } from '../lib/notifyAdmin';
 
 interface RegistrationFormProps {
   onClose: () => void;
@@ -139,6 +140,15 @@ ${formData.youtubeUrl ? `- YouTube: ${formData.youtubeUrl}` : ''}`,
       setToastMessage('Demande envoyée avec succès ! Merci de votre contribution.');
       setToastType('success');
       setShowToast(true);
+
+      notifyAdmin('Nouvelle inscription entreprise', {
+        Entreprise: formData.companyName,
+        Secteur: formData.sector,
+        Ville: formData.city,
+        Telephone: formData.phone,
+        Email: formData.email,
+        Contact: formData.contactName,
+      }, '/admin/premium');
 
       // Réinitialiser le formulaire
       setFormData({

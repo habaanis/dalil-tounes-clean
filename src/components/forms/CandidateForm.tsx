@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Upload, X, Plus } from 'lucide-react'; // 👈 plus de Loader ici
 import { supabase } from '../../lib/supabaseClient';
+import { notifyAdmin } from '../../lib/notifyAdmin';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTranslation } from '../../lib/i18n';
 import { useFormTranslation } from '../../hooks/useFormTranslation';
@@ -320,6 +321,16 @@ export default function CandidateForm({ userId, onSuccess }: CandidateFormProps)
 
       console.log('✅ SUCCÈS: Profil candidat enregistré dans Supabase');
       setMessage({ type: 'success', text: t.candidate.form.success });
+
+      notifyAdmin('Nouveau profil candidat', {
+        Nom: payload.nom_complet,
+        Email: payload.email,
+        Telephone: payload.telephone,
+        Ville: payload.ville,
+        Categorie: payload.categorie,
+        Experience: `${payload.annees_experience} ans`,
+      }, '/candidats');
+
       if (onSuccess) onSuccess();
     } catch (error: any) {
       console.error('❌ ERREUR INATTENDUE:', error);

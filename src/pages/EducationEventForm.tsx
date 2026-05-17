@@ -5,6 +5,7 @@ import { useTranslation } from '../lib/i18n';
 import { Calendar, ArrowLeft } from 'lucide-react';
 import { supabase } from '../lib/BoltDatabase';
 import { useFormTranslation } from '../hooks/useFormTranslation';
+import { notifyAdmin } from '../lib/notifyAdmin';
 
 const SECTEURS_OPTIONS = [
   { value: 'education', label: 'Événement scolaire / éducatif' },
@@ -75,6 +76,16 @@ export const EducationEventForm = () => {
       }
 
       setSubmitSuccess(true);
+
+      notifyAdmin('Nouvel evenement education', {
+        Evenement: formData.event_name,
+        Date: formData.event_date,
+        Lieu: formData.location,
+        Ville: formData.city,
+        Organisateur: formData.organizer || 'Non precise',
+        Description: formData.short_description,
+      });
+
       setFormData({
         event_name: '',
         event_date: '',

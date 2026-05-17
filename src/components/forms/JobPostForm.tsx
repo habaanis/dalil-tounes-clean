@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, X, CheckCircle } from 'lucide-react';
 import { supabase } from '../../lib/supabaseClient';
+import { notifyAdmin } from '../../lib/notifyAdmin';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTranslation } from '../../lib/i18n';
 import { useFormTranslation } from '../../hooks/useFormTranslation';
@@ -296,6 +297,15 @@ export default function JobPostForm({ userId, jobId, onSuccess }: JobPostFormPro
         setMessage({ type: 'success', text: 'Formulaire envoyé avec succès ! Votre offre d\'emploi a été publiée.' });
         setShowSuccessToast(true);
         setTimeout(() => setShowSuccessToast(false), 5000);
+
+        notifyAdmin('Nouvelle offre d\'emploi', {
+          Poste: payload.titre_poste,
+          Entreprise: payload.nom_entreprise,
+          Ville: payload.ville,
+          Secteur: payload.secteur,
+          Contrat: payload.type_contrat,
+          Email: payload.email_contact,
+        }, '/admin/sourcing');
       }
 
       if (onSuccess) {
