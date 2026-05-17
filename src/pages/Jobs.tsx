@@ -117,7 +117,7 @@ export const Jobs = () => {
 
 
   return (
-    <div className="min-h-screen" style={{
+    <div className="min-h-screen overflow-x-hidden" style={{
       backgroundColor: '#F8F9FA'
     }}>
       <StructuredData
@@ -186,20 +186,22 @@ export const Jobs = () => {
       <section className="py-12 px-4">
         <div className="max-w-5xl mx-auto">
           <div className="grid md:grid-cols-2 gap-6">
+            {/* Carte PUBLIER UNE OFFRE - CORRIGÉE */}
             <motion.div
               initial={{ y: 30, opacity: 0 }}
               whileInView={{ y: 0, opacity: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="group relative rounded-xl px-4 py-4 hover:shadow-2xl transition-all duration-300 cursor-pointer hover:-translate-y-1 overflow-hidden"
+              className="group relative rounded-xl px-4 pt-8 pb-4 hover:shadow-2xl transition-all duration-300 cursor-pointer hover:-translate-y-1"
               style={{
                 backgroundColor: '#4A1D43',
                 border: '1px solid #D4AF37',
-                boxShadow: '0 10px 30px rgba(74, 29, 67, 0.3)'
+                boxShadow: '0 10px 30px rgba(74, 29, 67, 0.3)',
+                overflow: 'hidden'
               }}
             >
-              <div className="absolute top-2 right-2 px-2 py-0.5 bg-black border border-[#D4AF37] rounded-md">
-                <span className="text-[9px] font-bold tracking-wider text-[#D4AF37]">PREMIUM</span>
+              <div className="absolute top-2 right-2 px-2 py-0.5 bg-black border border-[#D4AF37] rounded-md z-10">
+                <span className="text-[9px] font-bold tracking-wider text-[#D4AF37] whitespace-nowrap">PREMIUM</span>
               </div>
               <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-[#800000] to-[#600000] rounded-full mb-3 mx-auto group-hover:scale-110 transition-transform shadow-lg">
                 <Plus className="w-6 h-6 text-[#D4AF37]" />
@@ -210,7 +212,7 @@ export const Jobs = () => {
               >
                 {t.jobs.postJob}
               </h3>
-              <p className="text-xs text-white leading-snug mb-3 text-center" style={{ lineHeight: '1.5' }}>
+              <p className="text-xs text-white leading-snug mb-3 text-center px-2" style={{ lineHeight: '1.5' }}>
                 Publiez vos offres d'emploi et trouvez les talents dont votre entreprise a besoin.
               </p>
               <button
@@ -222,28 +224,30 @@ export const Jobs = () => {
               </button>
             </motion.div>
 
+            {/* Carte DEPOSER MA CANDIDATURE - CORRIGÉE */}
             <motion.div
               initial={{ y: 30, opacity: 0 }}
               whileInView={{ y: 0, opacity: 1 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1, duration: 0.5 }}
-              className="group relative rounded-xl px-4 py-4 hover:shadow-2xl transition-all duration-300 cursor-pointer hover:-translate-y-1 overflow-hidden"
+              className="group relative rounded-xl px-4 pt-8 pb-4 hover:shadow-2xl transition-all duration-300 cursor-pointer hover:-translate-y-1"
               style={{
                 backgroundColor: '#4A1D43',
                 border: '1px solid #D4AF37',
-                boxShadow: '0 10px 30px rgba(74, 29, 67, 0.3)'
+                boxShadow: '0 10px 30px rgba(74, 29, 67, 0.3)',
+                overflow: 'hidden'
               }}
             >
-              <div className="absolute top-2 right-2 px-2 py-0.5 bg-black border border-[#D4AF37] rounded-md">
-                <span className="text-[9px] font-bold tracking-wider text-[#D4AF37]">TALENT</span>
+              <div className="absolute top-2 right-2 px-2 py-0.5 bg-black border border-[#D4AF37] rounded-md z-10">
+                <span className="text-[9px] font-bold tracking-wider text-[#D4AF37] whitespace-nowrap">TALENT</span>
               </div>
               <h3
-                className="text-lg font-light text-[#D4AF37] mb-2 text-center mt-4"
+                className="text-lg font-light text-[#D4AF37] mb-2 text-center"
                 style={{ fontFamily: "'Playfair Display', serif", letterSpacing: '0.5px' }}
               >
                 {t.jobs.findJob}
               </h3>
-              <p className="text-xs text-white leading-snug mb-3 text-center" style={{ lineHeight: '1.5' }}>
+              <p className="text-xs text-white leading-snug mb-3 text-center px-2" style={{ lineHeight: '1.5' }}>
                 Consultez les opportunités d'emploi et déposez votre candidature en ligne.
               </p>
               <button
