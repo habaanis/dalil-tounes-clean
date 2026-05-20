@@ -327,24 +327,49 @@ export const BusinessDetail = ({
         const fetchId = actualBusinessId || businessProp?.id || null;
         console.log('[BusinessDetail] Lecture Supabase fraiche:', { fetchId, normalizedSlug });
 
-        // Lecture toujours fraiche : pas de cache HTTP cote client.
-        // IMPORTANT : sur une colonne uuid, on ne peut PAS utiliser ilike
-        // (Postgres leve une erreur), donc on filtre strictement par eq.
-        let query = supabase
-          .from('entreprise')
-          .select('*');
+        let data: any = null;
+        let error: any = null;
 
         if (normalizedSlug) {
-          query = query.ilike('slug', normalizedSlug);
+          const res = await supabase
+            .from('entreprise')
+            .select('*')
+            .ilike('slug', normalizedSlug)
+            .maybeSingle();
+          data = res.data;
+          error = res.error;
         } else if (fetchId) {
-          query = query.eq('id', fetchId);
+          const isFullUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(fetchId);
+          if (isFullUuid) {
+            const res = await supabase
+              .from('entreprise')
+              .select('*')
+              .eq('id', fetchId)
+              .maybeSingle();
+            data = res.data;
+            error = res.error;
+          } else {
+            // Short ID prefix (8 chars from /p/ route) -- use RPC to cast uuid to text
+            const res = await supabase
+              .rpc('find_entreprise_by_id_prefix', { prefix: fetchId })
+              .maybeSingle();
+            data = res.data;
+            error = res.error;
+            // Fallback: try id_airtable (e.g. "rec..." Airtable IDs)
+            if (!data && !error) {
+              const res2 = await supabase
+                .from('entreprise')
+                .select('*')
+                .eq('id_airtable', fetchId)
+                .maybeSingle();
+              data = res2.data;
+              error = res2.error;
+            }
+          }
         }
 
         console.log('[Detail] param recu :', { fetchId, normalizedSlug, urlId, urlSlug, urlVilleSlug, isCleanSlugRoute });
-        console.log('[Detail] requete Supabase : table=entreprise filter=', normalizedSlug ? `slug ilike "${normalizedSlug}"` : `id eq "${fetchId}"`);
-
-        const { data, error, status, statusText } = await query.maybeSingle();
-        console.log('[Detail] reponse Supabase :', { status, statusText, error, hasData: !!data, rowKeys: data ? Object.keys(data) : [] });
+        console.log('[Detail] reponse Supabase :', { error, hasData: !!data, rowKeys: data ? Object.keys(data) : [] });
         console.log('[BusinessDetail] Données reçues:', { data, error });
 
         // Diagnostic specifique : suivi des fiches qui posent probleme

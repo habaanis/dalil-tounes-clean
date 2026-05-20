@@ -134,6 +134,7 @@ function AppRouter() {
               <Route path="/entreprises" element={<Businesses />} />
               <Route path="/business/:id/:slug?" element={<LegacyBusinessRedirect />} />
               <Route path="/entreprises/:id/:slug?" element={<LegacyBusinessRedirect />} />
+              <Route path="/entreprise/id/:id" element={<BusinessDetail />} />
               <Route path="/entreprise/:villeSlug/:slug" element={<BusinessDetail />} />
               <Route path="/entreprise/:slug" element={<BusinessDetail />} />
               <Route path="/p/:slug" element={<BusinessDetail />} />

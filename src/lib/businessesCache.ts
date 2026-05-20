@@ -38,6 +38,8 @@ export interface BusinessRow {
   lien_x: string;
   horaires_ok: string | null;
   statut_carte: string | null;
+  slug: string | null;
+  ville: string | null;
 }
 
 export interface PremiumJob {
@@ -64,7 +66,7 @@ const FIELDS = [
   'image_url', 'logo_url', 'statut_abonnement', 'niveau_priorite_abonnement',
   '"mots cles recherche"', '"Lien Instagram"', '"lien facebook"', '"Lien TikTok"',
   '"Lien LinkedIn"', '"Lien YouTube"', 'lien_x', 'horaires_ok', 'statut_carte',
-  'name_ar', 'description_ar',
+  'name_ar', 'description_ar', 'slug',
 ].join(', ');
 
 let inflight: Promise<BusinessesDefaultData> | null = null;
@@ -129,6 +131,8 @@ function mapRow(item: Record<string, unknown>): BusinessRow {
     lien_x: (item.lien_x as string) || '',
     horaires_ok: (item.horaires_ok as string | null) ?? null,
     statut_carte: (item.statut_carte as string | null) ?? null,
+    slug: (item.slug as string | null) ?? null,
+    ville: (item.ville as string | null) ?? null,
     name_ar: (item.name_ar as string | null) ?? null,
     description_ar: (item.description_ar as string | null) ?? null,
   };

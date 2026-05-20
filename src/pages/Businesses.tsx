@@ -3,9 +3,9 @@ import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
 import { supabase } from '../lib/supabaseClient';
-import { buildEntrepriseUrl, getHashQueryParams } from '../lib/url';
+import { getHashQueryParams } from '../lib/url';
 import { readParams } from '../lib/urlParams';
-import { generateBusinessUrl, buildEntrepriseUrl } from '../lib/slugify';
+import { buildEntrepriseUrl } from '../lib/slugify';
 import { RPC, Tables } from '../lib/dbTables';
 import { FeaturedEventsCarousel } from '../components/FeaturedEventsCarousel';
 import { FeaturedBusinessesStrip } from '../components/FeaturedBusinessesStrip';
@@ -58,6 +58,8 @@ interface Business {
   lien_x?: string;
   horaires_ok?: string | null;
   statut_carte?: string | null;
+  slug?: string | null;
+  ville?: string | null;
   name_ar?: string | null;
   description_ar?: string | null;
 }
@@ -450,7 +452,7 @@ export const Businesses = ({
     try {
       let query = supabase
         .from(Tables.ENTREPRISE)
-        .select('id, nom, secteur, sous_categories, "catégorie", gouvernorat, ville, adresse, telephone, email, site_web, description, services, image_url, logo_url, statut_abonnement, niveau_priorite_abonnement, "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, statut_carte, name_ar, description_ar')
+        .select('id, nom, secteur, sous_categories, "catégorie", gouvernorat, ville, adresse, telephone, email, site_web, description, services, image_url, logo_url, statut_abonnement, niveau_priorite_abonnement, "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, statut_carte, name_ar, description_ar, slug')
         .order('niveau_priorite_abonnement', { ascending: false, nullsFirst: false })
         .order('nom', { ascending: true })
         .limit(10);
@@ -506,6 +508,8 @@ export const Businesses = ({
         gouvernorat: item.gouvernorat || '',
         secteur: Array.isArray(item.secteur) ? item.secteur.join(', ') : (item.secteur || ''),
         city: item.ville || '',
+        ville: item.ville || '',
+        slug: item.slug || null,
         address: item.adresse || '',
         phone: item.telephone || '',
         email: item.email || '',
@@ -570,7 +574,7 @@ export const Businesses = ({
     try {
       let query = supabase
         .from(Tables.ENTREPRISE)
-        .select('id, nom, secteur, sous_categories, "catégorie", gouvernorat, ville, adresse, telephone, email, site_web, description, services, image_url, logo_url, statut_abonnement, niveau_priorite_abonnement, "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, statut_carte, name_ar, description_ar')
+        .select('id, nom, secteur, sous_categories, "catégorie", gouvernorat, ville, adresse, telephone, email, site_web, description, services, image_url, logo_url, statut_abonnement, niveau_priorite_abonnement, "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, statut_carte, name_ar, description_ar, slug')
         .order('niveau_priorite_abonnement', { ascending: false, nullsFirst: false })
         .order('nom', { ascending: true })
         .limit(30);
@@ -670,6 +674,8 @@ export const Businesses = ({
         gouvernorat: item.gouvernorat || '',
         secteur: Array.isArray(item.secteur) ? item.secteur.join(', ') : (item.secteur || ''),
         city: item.ville || '',
+        ville: item.ville || '',
+        slug: item.slug || null,
         address: item.adresse || '',
         phone: item.telephone || '',
         email: item.email || '',
@@ -1197,7 +1203,7 @@ export const Businesses = ({
                         description_ar: business.description_ar || null,
                       }}
                       onClick={() => {
-                        navigate(buildEntrepriseUrl((business as any).ville || (business as any).city, (business as any).slug, business.name, business.id));
+                        navigate(buildEntrepriseUrl(business.ville || business.city, business.slug, business.name, business.id));
                       }}
                       variant="premium"
                     />
