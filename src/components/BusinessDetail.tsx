@@ -302,7 +302,6 @@ export const BusinessDetail = ({
     window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank');
   };
 
-
   const shareViaTelegram = () => {
     if (!business) return;
     const shareUrl = getBusinessShareUrl();
@@ -339,6 +338,7 @@ export const BusinessDetail = ({
           data = res.data;
           error = res.error;
         } else if (fetchId) {
+          // Détecter si c'est un UUID complet (format avec tirets)
           const isFullUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(fetchId);
           if (isFullUuid) {
             const res = await supabase
@@ -349,18 +349,22 @@ export const BusinessDetail = ({
             data = res.data;
             error = res.error;
           } else {
-            // Short ID prefix (8 chars from /p/ route) -- use RPC to cast uuid to text
+            // C'est probablement un id_airtable (commence par 'rec') ou un slug court
+            // On essaie d'abord par id_airtable
             const res = await supabase
-              .rpc('find_entreprise_by_id_prefix', { prefix: fetchId })
+              .from('entreprise')
+              .select('*')
+              .eq('id_airtable', fetchId)
               .maybeSingle();
-            data = res.data;
-            error = res.error;
-            // Fallback: try id_airtable (e.g. "rec..." Airtable IDs)
-            if (!data && !error) {
+            if (res.data) {
+              data = res.data;
+              error = null;
+            } else {
+              // Fallback : essayer par slug (si l'identifiant ressemble à un slug)
               const res2 = await supabase
                 .from('entreprise')
                 .select('*')
-                .eq('id_airtable', fetchId)
+                .ilike('slug', fetchId)
                 .maybeSingle();
               data = res2.data;
               error = res2.error;
