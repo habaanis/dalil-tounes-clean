@@ -17,6 +17,14 @@ const COLUMN_SUFFIXES: Record<Language, string> = {
 };
 
 /**
+ * Mapping pour les champs dont le nom francais differe du prefixe des colonnes traduites.
+ * Ex: le champ francais est "nom" mais les colonnes traduites sont "name_en", "name_ar", etc.
+ */
+const FIELD_ALIASES: Record<string, string> = {
+  nom: 'name',
+};
+
+/**
  * Récupère la valeur d'un champ multilingue
  * @param data - L'objet contenant les données
  * @param baseField - Le nom du champ de base (ex: "nom", "description")
@@ -33,19 +41,33 @@ export function getMultilingualField<T = string>(
   if (!data) return '';
 
   const suffix = COLUMN_SUFFIXES[language];
-  const fieldName = `${baseField}${suffix}`;
 
-  // Si la colonne traduite existe et n'est pas vide
-  if (data[fieldName] && String(data[fieldName]).trim()) {
-    return data[fieldName];
+  if (language !== 'fr') {
+    // Try the direct column name first: baseField + suffix (e.g. "nom_ar")
+    const directField = `${baseField}${suffix}`;
+    if (data[directField] && String(data[directField]).trim()) {
+      return data[directField];
+    }
+
+    // Try the alias if one exists (e.g. "nom" -> "name" -> "name_ar")
+    const alias = FIELD_ALIASES[baseField];
+    if (alias) {
+      const aliasField = `${alias}${suffix}`;
+      if (data[aliasField] && String(data[aliasField]).trim()) {
+        return data[aliasField];
+      }
+    }
   }
 
-  // Fallback vers le français si activé — on s'arrête ici, jamais vers _en/_it/_ru
-  if (fallbackToFrench && language !== 'fr' && data[baseField]) {
+  // For French, or fallback when no translation found
+  if (data[baseField] && String(data[baseField]).trim()) {
     return data[baseField];
   }
 
-  // Retour du champ de base ou chaîne vide
+  if (fallbackToFrench && language !== 'fr') {
+    return data[baseField] || '';
+  }
+
   return data[baseField] || '';
 }
 

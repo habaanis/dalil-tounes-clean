@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
-import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { supabase } from '../lib/supabaseClient';
 import { ArrowLeft, MapPin, Phone, Mail, Globe, Star, Instagram, Facebook, Linkedin, Youtube, Navigation, Download, QrCode, Clock, ChevronDown, Link as LinkIcon, Check } from 'lucide-react';
@@ -101,7 +101,13 @@ function normalizeBusiness(business: any): any {
     video_url: business.video_url,
     horaires_ok: business.horaires_ok,
     name_ar: business.name_ar ? cleanArabicField(business.name_ar) : null,
+    name_en: business.name_en || null,
+    name_it: business.name_it || null,
+    name_ru: business.name_ru || null,
     description_ar: business.description_ar ? cleanArabicField(business.description_ar) : null,
+    description_en: business.description_en || null,
+    description_it: business.description_it || null,
+    description_ru: business.description_ru || null,
     slug: business.slug || null,
     qr_code_url: business.qr_code_url || null,
   };
@@ -202,7 +208,6 @@ export const BusinessDetail = ({
   const { language } = useLanguage();
   const { getCategory } = useCategoryTranslation();
   const currentPath = useHreflangPath();
-  const [searchParams] = useSearchParams();
   // Pas de pre-seed depuis businessProp : on lit toujours Supabase pour garantir
   // les dernieres valeurs (statut_carte, description, etc.). businessProp ne sert
   // qu'a connaitre l'id a charger.
@@ -568,19 +573,12 @@ export const BusinessDetail = ({
 
   const colors = getTierColors();
 
-  // Détection de la recherche arabe : si le paramètre q contient des caractères arabes
-  const searchQuery = searchParams.get('q') || '';
-  const isArabicSearch = /[\u0600-\u06FF]/.test(searchQuery);
-  const showArabic = isArabicSearch && !!(business.name_ar || business.description_ar);
-
-  // Nom et description : arabe si la recherche était en arabe et la traduction existe, sinon français
-  const displayName = showArabic && business.name_ar ? cleanArabicField(business.name_ar) : business.nom;
-  const displayDescription = showArabic && business.description_ar
-    ? cleanArabicField(business.description_ar)
-    : (getMultilingualField(business, 'description', language, true) || business.description || '');
+  // Nom et description traduits selon la langue sélectionnée
+  const displayName = String(getMultilingualField(business, 'nom', language, true)) || business.nom;
+  const displayDescription = String(getMultilingualField(business, 'description', language, true)) || business.description || '';
   const translatedDescription = displayDescription;
   const translatedServices = business ? (getMultilingualField(business, 'services', language, true) || business.services || '') : '';
-  const isArabicDisplay = showArabic && !!(business.name_ar || business.description_ar);
+  const isArabicDisplay = language === 'ar';
 
   const content = (
     <div className={asModal ? "overflow-x-hidden" : "py-4 px-4 overflow-x-hidden"} style={{ wordBreak: 'break-word', padding: asModal ? '1rem' : undefined }} dir={isRTL ? 'rtl' : 'ltr'}>

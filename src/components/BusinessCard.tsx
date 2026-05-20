@@ -1,8 +1,7 @@
 import { MapPin, Award, Clock, ChevronDown, Phone, Star, Navigation } from 'lucide-react';
 import GratuitCard from './GratuitCard';
 import { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { cleanAltText, cleanArabicField } from '../lib/textNormalization';
+import { cleanAltText } from '../lib/textNormalization';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
 import { ImageWithFallback } from './ImageWithFallback';
@@ -50,7 +49,13 @@ interface BusinessCardProps {
     score_avis?: string | number | null;
     statut_carte?: string | null;
     name_ar?: string | null;
+    name_en?: string | null;
+    name_it?: string | null;
+    name_ru?: string | null;
     description_ar?: string | null;
+    description_en?: string | null;
+    description_it?: string | null;
+    description_ru?: string | null;
     google_url?: string | null;
     'BTN_Maps'?: string | null;
   };
@@ -78,18 +83,14 @@ function renderStatutCarteBadge(statut_carte: string | null | undefined) {
   );
 }
 
-function isArabicText(text: string): boolean {
-  return /[\u0600-\u06FF]/.test(text);
-}
-
 export const BusinessCard = ({ business, onClick, variant = 'simple' }: BusinessCardProps) => {
   const { language } = useLanguage();
   const t = useTranslation(language);
-  const [searchParams] = useSearchParams();
-  const searchQuery = searchParams.get('q') || '';
-  const showArabic = isArabicText(searchQuery) && !!(business.name_ar || business.description_ar);
-  const displayName = showArabic && business.name_ar ? cleanArabicField(business.name_ar) : business.name;
-  const displayDescription = showArabic && business.description_ar ? cleanArabicField(business.description_ar) : (!showArabic ? business.description : null);
+  // Use the business object with "nom" mapped from "name" for getMultilingualField compatibility
+  const bizForI18n = { ...business, nom: business.name };
+  const displayName = String(getMultilingualField(bizForI18n, 'nom', language, true)) || business.name;
+  const displayDescription = String(getMultilingualField(bizForI18n, 'description', language, true)) || business.description || null;
+  const isArabicDisplay = language === 'ar';
   const { getCategory } = useCategoryTranslation();
   const [showFullSchedule, setShowFullSchedule] = useState(false);
   const [descriptionExpanded, setDescriptionExpanded] = useState(false);
@@ -178,7 +179,7 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
         language={language}
         allKeywords={allKeywords}
         statut_carte={business.statut_carte}
-        description_ar={showArabic ? (business.description_ar || null) : null}
+        description_ar={isArabicDisplay ? (business.description_ar || null) : null}
       />
     );
   }
@@ -247,7 +248,7 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
               WebkitBoxOrient: 'vertical',
               overflow: 'hidden',
               letterSpacing: '-0.01em',
-              direction: showArabic && business.name_ar ? 'rtl' : 'ltr',
+              direction: isArabicDisplay ? 'rtl' : 'ltr',
             }}
           >
             {displayName}
@@ -272,7 +273,7 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
                 transition: 'max-height 0.35s ease',
               }}
             >
-              <p style={{ fontSize: '13px', color: secondaryTextColor, lineHeight: '1.6', margin: 0, direction: showArabic && business.description_ar ? 'rtl' : 'ltr' }}>
+              <p style={{ fontSize: '13px', color: secondaryTextColor, lineHeight: '1.6', margin: 0, direction: isArabicDisplay ? 'rtl' : 'ltr' }}>
                 {displayDescription}
               </p>
               {!descriptionExpanded && (
