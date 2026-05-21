@@ -81,7 +81,7 @@ export const FeaturedBusinessesStrip = ({ variant }: FeaturedBusinessesStripProp
     const fetchData = async () => {
       setLoading(true);
       try {
-        const FIELDS = `id, nom, ville, gouvernorat, sous_categories, statut_abonnement, niveau_priorite_abonnement, image_url, logo_url, horaires_ok, telephone, name_ar, description_ar`;
+        const FIELDS = `id, nom, ville, gouvernorat, sous_categories_texte, statut_abonnement, "niveau priorité abonnement", image_url, logo_url, horaires_ok, telephone, name_ar, description_ar, slug`;
 
         const { data: fetchedData } = await supabase
           .from('entreprise')
@@ -90,7 +90,7 @@ export const FeaturedBusinessesStrip = ({ variant }: FeaturedBusinessesStripProp
           .not('statut_abonnement', 'ilike', '*gratuit*')
           .not('statut_abonnement', 'ilike', '*decouverte*')
           .not('statut_abonnement', 'ilike', '*découverte*')
-          .order('niveau_priorite_abonnement', { ascending: false, nullsFirst: false })
+          .order('niveau_priorite', { ascending: false, nullsFirst: false })
           .limit(12);
 
         let rows: BusinessRow[] = (fetchedData as BusinessRow[] | null) || [];

@@ -14,8 +14,8 @@ export const BUSINESS_COLUMNS = `
   adresse,
   ville,
   gouvernorat,
-  "catégorie",
-  secteur,
+  "catégorie_fk_autre_table",
+  secteur_fk_autre_table,
   description,
   telephone,
   email,
@@ -33,7 +33,7 @@ export const BUSINESS_COLUMNS = `
   "Lien Avis Google",
   "BTN_Maps",
   statut_abonnement,
-  niveau_priorite_abonnement,
+  niveau_priorite,
   is_premium,
   featured,
   home_featured,
@@ -45,7 +45,8 @@ export const BUSINESS_COLUMNS = `
   whatsapp,
   statut_carte,
   name_ar,
-  description_ar
+  description_ar,
+  slug
 `;
 
 /**
@@ -74,10 +75,10 @@ export async function fetchBusinesses(options: {
 
   // Filtres
   if (secteur) {
-    query = query.contains('secteur', [secteur]);
+    query = query.ilike('secteur_fk_autre_table', `%${secteur}%`);
   }
   if (categorie) {
-    query = query.contains('"catégorie"', [categorie]);
+    query = query.ilike('"catégorie_fk_autre_table"', `%${categorie}%`);
   }
   if (ville) {
     query = query.eq('ville', ville);

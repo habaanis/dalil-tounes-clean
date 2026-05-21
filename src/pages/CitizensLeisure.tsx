@@ -541,15 +541,15 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
     try {
       let query = supabase
         .from('entreprise')
-        .select('id, nom, secteur, sous_categories, ville, adresse, telephone, latitude, longitude, statut_carte')
-        .contains('secteur', ['Loisirs & Événements']);
+        .select('id, nom, secteur_fk_autre_table, sous_categories_texte, ville, adresse, telephone, latitude, longitude, statut_carte')
+        .ilike('secteur_fk_autre_table', '%Loisirs%');
 
       if (searchQuery) {
         query = query.or(`nom.ilike.*${searchQuery}*,description.ilike.*${searchQuery}*`);
       }
 
       if (categoryFilter) {
-        query = query.contains('sous_categories', [categoryFilter]);
+        query = query.ilike('sous_categories_texte', `%${categoryFilter}%`);
       }
 
       if (selectedLocation !== 'all') {

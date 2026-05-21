@@ -452,14 +452,14 @@ export const Businesses = ({
     try {
       let query = supabase
         .from(Tables.ENTREPRISE)
-        .select('id, nom, secteur, sous_categories, "catégorie", gouvernorat, ville, adresse, telephone, email, site_web, description, services, image_url, logo_url, statut_abonnement, niveau_priorite_abonnement, "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, statut_carte, name_ar, description_ar, slug')
-        .order('niveau_priorite_abonnement', { ascending: false, nullsFirst: false })
+        .select('id, nom, secteur_fk_autre_table, sous_categories_texte, sous_categories_clean, "catégorie_fk_autre_table", gouvernorat, ville, adresse, telephone, email, site_web, description, services, image_url, logo_url, statut_abonnement, "niveau priorité abonnement", "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, statut_carte, name_ar, description_ar, slug')
+        .order('niveau_priorite', { ascending: false, nullsFirst: false })
         .order('nom', { ascending: true })
         .limit(10);
 
       if (pageCategorie) {
         console.log(`[DEBUG] Filtre pageCategorie appliqué: "${pageCategorie}"`);
-        query = query.contains('"liste pages"', [pageCategorie]);
+        query = query.or(`sous_categories_texte.ilike.%${pageCategorie}%,sous_categories_clean.ilike.%${pageCategorie}%`);
       }
 
       if (filterStatutCarte === 'certifie') {
@@ -503,10 +503,10 @@ export const Businesses = ({
       const mappedData = (data || []).map((item: any) => ({
         id: item.id,
         name: extractFrenchName(item.nom),
-        category: Array.isArray(item.sous_categories) ? item.sous_categories.join(', ') : (item.sous_categories || ''),
-        subCategories: Array.isArray(item.sous_categories) ? item.sous_categories.join(', ') : (item.sous_categories || ''),
+        category: Array.isArray(item.sous_categories_texte) ? item.sous_categories_texte.join(', ') : (item.sous_categories_texte || ''),
+        subCategories: Array.isArray(item.sous_categories_texte) ? item.sous_categories_texte.join(', ') : (item.sous_categories_texte || ''),
         gouvernorat: item.gouvernorat || '',
-        secteur: Array.isArray(item.secteur) ? item.secteur.join(', ') : (item.secteur || ''),
+        secteur: Array.isArray(item.secteur_fk_autre_table) ? item.secteur_fk_autre_table.join(', ') : (item.secteur_fk_autre_table || ''),
         city: item.ville || '',
         ville: item.ville || '',
         slug: item.slug || null,
@@ -519,7 +519,7 @@ export const Businesses = ({
         imageUrl: item.image_url || null,
         logoUrl: item.logo_url || null,
         statut_abonnement: item.statut_abonnement || null,
-        niveau_priorite_abonnement: item.niveau_priorite_abonnement || null,
+        niveau_priorite_abonnement: item['niveau priorité abonnement'] || null,
         badges: [],
         mots_cles_recherche: item['mots cles recherche'] || '',
         instagram: item['Lien Instagram'] || '',
@@ -574,8 +574,8 @@ export const Businesses = ({
     try {
       let query = supabase
         .from(Tables.ENTREPRISE)
-        .select('id, nom, secteur, sous_categories, "catégorie", gouvernorat, ville, adresse, telephone, email, site_web, description, services, image_url, logo_url, statut_abonnement, niveau_priorite_abonnement, "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, statut_carte, name_ar, description_ar, slug')
-        .order('niveau_priorite_abonnement', { ascending: false, nullsFirst: false })
+        .select('id, nom, secteur_fk_autre_table, sous_categories_texte, sous_categories_clean, "catégorie_fk_autre_table", gouvernorat, ville, adresse, telephone, email, site_web, description, services, image_url, logo_url, statut_abonnement, "niveau priorité abonnement", "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, statut_carte, name_ar, description_ar, slug')
+        .order('niveau_priorite', { ascending: false, nullsFirst: false })
         .order('nom', { ascending: true })
         .limit(30);
 
@@ -608,10 +608,10 @@ export const Businesses = ({
 
       if (selectedCategory === 'finance') {
         console.log(`[DEBUG] Filtre Finance avec sous_categories:`, FINANCE_SUBCATEGORIES);
-        query = query.overlaps('sous_categories', FINANCE_SUBCATEGORIES);
+        query = query.or(FINANCE_SUBCATEGORIES.map(c => `sous_categories_texte.ilike.%${c}%`).join(','));
       } else if (selectedCategory) {
         console.log(`[DEBUG] Filtre Catégorie: "${selectedCategory}"`);
-        query = query.contains('sous_categories', [selectedCategory]);
+        query = query.ilike('sous_categories_texte', `%${selectedCategory}%`);
       }
 
       if (filterPremium) {
@@ -669,10 +669,10 @@ export const Businesses = ({
       let mappedData = (data || []).map((item: any) => ({
         id: item.id,
         name: extractFrenchName(item.nom),
-        category: Array.isArray(item.sous_categories) ? item.sous_categories.join(', ') : (item.sous_categories || ''),
-        subCategories: Array.isArray(item.sous_categories) ? item.sous_categories.join(', ') : (item.sous_categories || ''),
+        category: Array.isArray(item.sous_categories_texte) ? item.sous_categories_texte.join(', ') : (item.sous_categories_texte || ''),
+        subCategories: Array.isArray(item.sous_categories_texte) ? item.sous_categories_texte.join(', ') : (item.sous_categories_texte || ''),
         gouvernorat: item.gouvernorat || '',
-        secteur: Array.isArray(item.secteur) ? item.secteur.join(', ') : (item.secteur || ''),
+        secteur: Array.isArray(item.secteur_fk_autre_table) ? item.secteur_fk_autre_table.join(', ') : (item.secteur_fk_autre_table || ''),
         city: item.ville || '',
         ville: item.ville || '',
         slug: item.slug || null,
@@ -685,8 +685,8 @@ export const Businesses = ({
         imageUrl: item.image_url || null,
         logoUrl: item.logo_url || null,
         statut_abonnement: item.statut_abonnement || null,
-        niveau_priorite_abonnement: item.niveau_priorite_abonnement || null,
-        badges: item.badges || [],
+        niveau_priorite_abonnement: item['niveau priorité abonnement'] || null,
+        badges: [],
         mots_cles_recherche: item['mots cles recherche'] || '',
         instagram: item['Lien Instagram'] || '',
         facebook: item['lien facebook'] || '',

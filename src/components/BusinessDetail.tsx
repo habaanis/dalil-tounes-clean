@@ -69,8 +69,8 @@ function normalizeBusiness(business: any): any {
   return {
     id: business.id,
     nom: extractFrenchName(business.nom || business.name || ''),
-    categorie: business.categorie || business.category || '',
-    sous_categories: business.sous_categories || business.subCategories || '',
+    categorie: business['catégorie_fk_autre_table'] || business.categorie || business.category || '',
+    sous_categories: business.sous_categories_texte || business.sous_categories_clean || business['Sous-catégorie entreprise'] || business.sous_categories || business.subCategories || '',
     ville: business.ville || business.city || business.gouvernorat || '',
     gouvernorat: business.gouvernorat || business.city || '',
     adresse: business.adresse || business.address || '',

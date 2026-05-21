@@ -32,15 +32,15 @@ export function useSectorCategories(secteur: string) {
     try {
       const { data, error: queryError } = await supabase
         .from('entreprise')
-        .select('"catégorie"')
-        .contains('secteur', [secteur])
-        .not('"catégorie"', 'is', null);
+        .select('"catégorie_fk_autre_table"')
+        .ilike('secteur_fk_autre_table', `%${secteur}%`)
+        .not('"catégorie_fk_autre_table"', 'is', null);
 
       if (queryError) throw queryError;
 
       const categoryCounts: Record<string, number> = {};
       data?.forEach((row: any) => {
-        const cats = row['catégorie'];
+        const cats = row['catégorie_fk_autre_table'];
         const catList = Array.isArray(cats) ? cats : (cats ? [cats] : []);
         catList.forEach((cat: string) => {
           if (cat) categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
@@ -74,16 +74,16 @@ export function useSectorCategories(secteur: string) {
     try {
       const { data, error: queryError } = await supabase
         .from('entreprise')
-        .select('sous_categories')
-        .contains('secteur', [secteur])
-        .contains('"catégorie"', [selectedCategory])
-        .not('sous_categories', 'is', null);
+        .select('sous_categories_texte')
+        .ilike('secteur_fk_autre_table', `%${secteur}%`)
+        .ilike('"catégorie_fk_autre_table"', `%${selectedCategory}%`)
+        .not('sous_categories_texte', 'is', null);
 
       if (queryError) throw queryError;
 
       const subCatCounts: Record<string, number> = {};
       data?.forEach((row: any) => {
-        const subCats = row.sous_categories;
+        const subCats = row.sous_categories_texte;
         const subCatList = Array.isArray(subCats) ? subCats : (subCats ? [subCats] : []);
         subCatList.forEach((subCat: string) => {
           if (subCat) subCatCounts[subCat] = (subCatCounts[subCat] || 0) + 1;
