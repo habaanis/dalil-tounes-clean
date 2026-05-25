@@ -292,16 +292,26 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
             overflow: 'visible',
           }}
         >
-          <div className="absolute top-2 left-2 z-10">
+          <div
+            className="absolute z-10"
+            style={{
+              top: '-8px',
+              left: '-8px',
+            }}
+          >
             <div
-              className="flex items-center gap-1 px-2.5 py-1 rounded-full shadow-lg text-[10px] font-bold"
+              className="flex items-center gap-1 rounded-full shadow-lg font-bold"
               style={{
+                padding: '4px 10px',
+                fontSize: '10px',
                 background:
                   tier === 'elite'
                     ? 'linear-gradient(90deg, #D4AF37, #F4D03F)'
                     : theme.soft,
                 color: tier === 'elite' ? '#121212' : theme.accent,
-                border: tier === 'elite' ? 'none' : `1px solid ${theme.divider}`,
+                border: tier === 'elite' ? `1px solid ${theme.border}` : `1px solid ${theme.divider}`,
+                backdropFilter: 'blur(4px)',
+                whiteSpace: 'nowrap',
               }}
             >
               {isElite && <Award size={12} />}
