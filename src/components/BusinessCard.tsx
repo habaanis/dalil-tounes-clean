@@ -262,7 +262,7 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
           boxShadow: theme.shadow,
           overflow: 'visible',
           position: 'relative',
-          minHeight: '248px',
+          minHeight: '238px',
         }}
       >
         <div
@@ -315,23 +315,23 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
               flexDirection: 'column',
               gap: isElite ? '6px' : '4px',
               flex: 1,
-              paddingTop: '18px',
+              paddingTop: '8px',
               overflow: 'visible',
             }}
           >
             <div
               className="flex justify-center"
               style={{
-                marginTop: '8px',
-                marginBottom: '12px',
+                marginTop: '2px',
+                marginBottom: '10px',
                 overflow: 'visible',
               }}
             >
               <div
                 className="shadow-xl"
                 style={{
-                  width: isElite ? '70px' : '64px',
-                  height: isElite ? '70px' : '64px',
+                  width: isElite ? '68px' : '62px',
+                  height: isElite ? '68px' : '62px',
                   borderRadius: '9999px',
                   backgroundColor: '#ffffff',
                   border: `3px solid ${theme.accent}`,
@@ -361,8 +361,8 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
                     padding: '6px',
                     borderRadius: '9999px',
                   }}
-                  width={70}
-                  height={70}
+                  width={68}
+                  height={68}
                   loading="lazy"
                   decoding="async"
                   onError={(e) => {
