@@ -295,23 +295,23 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
           <div
             className="absolute z-10"
             style={{
-              top: '-8px',
-              left: '-8px',
+              top: '-6px',
+              left: '-4px',
             }}
           >
             <div
-              className="flex items-center gap-1 rounded-full shadow-lg font-bold"
+              className="flex items-center gap-1 font-bold"
               style={{
-                padding: '4px 10px',
-                fontSize: '10px',
-                background:
-                  tier === 'elite'
-                    ? 'linear-gradient(90deg, #D4AF37, #F4D03F)'
-                    : theme.soft,
-                color: tier === 'elite' ? '#121212' : theme.accent,
-                border: tier === 'elite' ? `1px solid ${theme.border}` : `1px solid ${theme.divider}`,
-                backdropFilter: 'blur(4px)',
+                padding: '0',
+                fontSize: '11px',
+                background: 'transparent',
+                color: theme.accent,
+                border: 'none',
+                boxShadow: 'none',
+                backdropFilter: 'none',
                 whiteSpace: 'nowrap',
+                letterSpacing: '0.02em',
+                textTransform: 'uppercase',
               }}
             >
               {isElite && <Award size={12} />}
