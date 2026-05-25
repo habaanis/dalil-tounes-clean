@@ -340,8 +340,8 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
               <div
                 className="shadow-xl"
                 style={{
-                  width: isElite ? '66px' : '60px',
-                  height: isElite ? '66px' : '60px',
+                  width: isElite ? '62px' : '56px',
+                  height: isElite ? '62px' : '56px',
                   borderRadius: '9999px',
                   backgroundColor: '#ffffff',
                   border: `3px solid ${theme.accent}`,
@@ -371,8 +371,8 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
                     padding: '6px',
                     borderRadius: '9999px',
                   }}
-                  width={66}
-                  height={66}
+                  width={62}
+                  height={62}
                   loading="lazy"
                   decoding="async"
                   onError={(e) => {
