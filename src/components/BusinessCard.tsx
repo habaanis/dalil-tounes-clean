@@ -292,7 +292,7 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
             overflow: 'visible',
           }}
         >
-          <div className="absolute top-2 right-2 z-10">
+          <div className="absolute top-2 left-2 z-10">
             <div
               className="flex items-center gap-1 px-2.5 py-1 rounded-full shadow-lg text-[10px] font-bold"
               style={{
