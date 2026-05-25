@@ -2,16 +2,12 @@
  * Cache persistant pour les données home — équivalent de React Query
  * sans dépendance externe.
  *
- * staleTime  : 5 minutes  → les visites dans la fenêtre n'émettent aucune requête
- * gcTime     : 1 heure    → les données sont gardées en localStorage pour un retour rapide
- *                           même après fermeture de l'onglet
+ * staleTime  : 5 minutes
+ * gcTime     : 1 heure
  */
 
 import { getSubscriptionPriority } from './subscriptionHelper';
 
-// Import dynamique : le chunk vendor-supabase (~167 kB) n'entre pas dans
-// le graphe statique du module Home, donc Vite ne génère pas de modulepreload
-// pour lui. Le SDK n'est chargé qu'au premier fetch réel.
 async function getSupabase() {
   const m = await import('./supabaseClient');
   return m.supabase;
@@ -33,7 +29,6 @@ export interface HomeBusinessRow {
   name_ar: string | null;
   description_ar: string | null;
 
-  // Champs utiles au diagnostic / tri éventuel
   featured: boolean | null;
   is_premium: boolean | null;
   approved: boolean | null;
@@ -43,8 +38,6 @@ export interface HomeBusinessRow {
 const SUBSCRIPTION_COL_RAW = 'statut Abonnement';
 const PRIORITY_COL_RAW = 'niveau priorité abonnement';
 
-// Règle métier actuelle : les cartes visibles dans "Établissements à la Une"
-// sont les fiches dont statut_carte vaut exactement ce label.
 const CERTIFIED_LABEL = '⭐ CERTIFIÉ DALIL TOUNES';
 
 export interface HomeQueryResult {
@@ -57,17 +50,16 @@ interface CacheEntry extends HomeQueryResult {
   ts: number;
 }
 
-// Nouvelle clé pour éviter de réutiliser l'ancien cache home_data_v11/v12.
-const CACHE_KEY = 'home_data_v13';
-
+const CACHE_KEY = 'home_data_v14';
 const STALE_TIME = 5 * 60_000;
 const GC_TIME = 60 * 60_000;
 
-// On sélectionne avec '*' pour éviter d'avoir à quoter manuellement les
-// colonnes contenant un espace ou un accent dans la liste select.
 const FIELDS = '*';
 
-// Verrou contre les appels simultanés
+const CERTIFIED_FETCH_LIMIT = 100;
+const HOME_PARTNERS_LIMIT = 5;
+const ROTATION_WINDOW_HOURS = 6;
+
 let inflight: Promise<HomeQueryResult> | null = null;
 
 export function readHomeCache(): (HomeQueryResult & { fresh: boolean }) | null {
@@ -114,6 +106,42 @@ function normalizeText(value: string | null | undefined): string {
 
 function isCertifiedDalilTounes(value: string | null): boolean {
   return normalizeText(value) === normalizeText(CERTIFIED_LABEL);
+}
+
+function getRotationSeed(): number {
+  const now = new Date();
+
+  const year = now.getUTCFullYear();
+  const month = now.getUTCMonth();
+  const day = now.getUTCDate();
+  const rotationSlot = Math.floor(now.getUTCHours() / ROTATION_WINDOW_HOURS);
+
+  return Number(`${year}${String(month + 1).padStart(2, '0')}${String(day).padStart(2, '0')}${rotationSlot}`);
+}
+
+function seededRandom(seed: number): () => number {
+  let value = seed % 2147483647;
+
+  if (value <= 0) {
+    value += 2147483646;
+  }
+
+  return () => {
+    value = (value * 16807) % 2147483647;
+    return (value - 1) / 2147483646;
+  };
+}
+
+function shuffleWithSeed<T>(items: T[], seed: number): T[] {
+  const shuffled = [...items];
+  const random = seededRandom(seed);
+
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+
+  return shuffled;
 }
 
 function mapHomeBusinessRow(r: Record<string, unknown>): HomeBusinessRow {
@@ -166,20 +194,16 @@ async function doFetch(): Promise<HomeQueryResult> {
   console.log('[HOME-DIAG] CERTIFIED_LABEL =', JSON.stringify(CERTIFIED_LABEL));
 
   const [listRes, countRes, certifiedRes] = await Promise.all([
-    // Établissements à la Une :
-    // on récupère directement les fiches certifiées côté Supabase.
     supabase
       .from('entreprise')
       .select(FIELDS)
       .eq('statut_carte', CERTIFIED_LABEL)
-      .limit(8),
+      .limit(CERTIFIED_FETCH_LIMIT),
 
-    // Compteur global : toutes les fiches entreprises.
     supabase
       .from('entreprise')
       .select('id', { count: 'exact', head: true }),
 
-    // Compteur certifiées : même règle métier que la section à la une.
     supabase
       .from('entreprise')
       .select('id', { count: 'exact', head: true })
@@ -209,10 +233,6 @@ async function doFetch(): Promise<HomeQueryResult> {
       Array.isArray(listRes.data) && listRes.data[0]
         ? Object.keys(listRes.data[0])
         : [],
-    firstRow:
-      Array.isArray(listRes.data) && listRes.data[0]
-        ? listRes.data[0]
-        : null,
   });
 
   if (listRes.error) {
@@ -231,33 +251,9 @@ async function doFetch(): Promise<HomeQueryResult> {
 
   const allMapped = rawRows.map(mapHomeBusinessRow);
 
-  // Sécurité côté client : même si Supabase retourne quelque chose d'inattendu,
-  // on garde uniquement les fiches certifiées.
-  const rows = allMapped.filter((p) => isCertifiedDalilTounes(p.statut_carte));
+  const certifiedRows = allMapped.filter((p) => isCertifiedDalilTounes(p.statut_carte));
 
-  console.log('[HOME-DIAG] rows fetched from Supabase =', allMapped.length);
-  console.log('[HOME-DIAG] certified carousel rows after client filter =', rows.length);
-
-  console.log(
-    '[HOME-DIAG] sample certified carousel =',
-    rows.slice(0, 8).map((p) => ({
-      id: p.id,
-      nom: p.nom,
-      statut_carte: p.statut_carte,
-      featured: p.featured,
-      is_premium: p.is_premium,
-      approved: p.approved,
-      statut_validation: p.statut_validation,
-      statut_abonnement: p.statut_abonnement,
-      niveau_priorite_abonnement: p.niveau_priorite_abonnement,
-    }))
-  );
-
-  // Tri :
-  // 1. priorité abonnement si elle existe
-  // 2. priorité calculée depuis le statut d'abonnement si elle existe
-  // 3. nom alphabétique pour un ordre stable
-  const sorted = [...rows].sort((a, b) => {
+  const sorted = [...certifiedRows].sort((a, b) => {
     const pa = a.niveau_priorite_abonnement ?? -1;
     const pb = b.niveau_priorite_abonnement ?? -1;
 
@@ -272,8 +268,27 @@ async function doFetch(): Promise<HomeQueryResult> {
     return (a.nom || '').localeCompare(b.nom || '', 'fr');
   });
 
+  const rotationSeed = getRotationSeed();
+  const rotated = shuffleWithSeed(sorted, rotationSeed);
+
+  const partners = rotated.slice(0, HOME_PARTNERS_LIMIT);
+
+  console.log('[HOME-DIAG] rows fetched from Supabase =', allMapped.length);
+  console.log('[HOME-DIAG] certified rows after client filter =', certifiedRows.length);
+  console.log('[HOME-DIAG] rotationSeed =', rotationSeed);
+  console.log(
+    '[HOME-DIAG] final 5 rotating partners =',
+    partners.map((p) => ({
+      id: p.id,
+      nom: p.nom,
+      statut_carte: p.statut_carte,
+      statut_abonnement: p.statut_abonnement,
+      niveau_priorite_abonnement: p.niveau_priorite_abonnement,
+    }))
+  );
+
   const result: HomeQueryResult = {
-    partners: sorted.slice(0, 8),
+    partners,
     totalCount: countRes.count ?? 0,
     certifiedCount: certifiedRes.count ?? 0,
   };
@@ -287,12 +302,6 @@ async function doFetch(): Promise<HomeQueryResult> {
   return result;
 }
 
-/**
- * Peut être appelé depuis n'importe quel endroit de l'arbre React.
- * - Si le cache est frais (< staleTime)  → résout immédiatement depuis localStorage
- * - Si le cache est périmé ou absent     → déclenche une requête
- * - Les abonnés sont notifiés via `subscribers` quand les nouvelles données arrivent
- */
 export function prefetchHomeData(): Promise<HomeQueryResult> {
   const cached = readHomeCache();
 
@@ -317,9 +326,6 @@ export function prefetchHomeData(): Promise<HomeQueryResult> {
   return inflight;
 }
 
-/**
- * Stale-While-Revalidate : lance un refetch en arrière-plan.
- */
 export function revalidateHomeData(): Promise<HomeQueryResult> {
   if (inflight) {
     return inflight;
@@ -358,7 +364,6 @@ function sameResult(a: HomeQueryResult, b: HomeQueryResult): boolean {
   return true;
 }
 
-// Pub/Sub léger pour notifier les composants montés
 type Subscriber = (result: HomeQueryResult) => void;
 
 const subscribers = new Set<Subscriber>();
