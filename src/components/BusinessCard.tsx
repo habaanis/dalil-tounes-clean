@@ -18,7 +18,7 @@ import {
 } from '../lib/horaireUtils';
 import { useCategoryTranslation } from '../hooks/useCategoryTranslation';
 import { getMultilingualField } from '../lib/databaseI18n';
-import { getLogoUrl, getLogoStyle, getLogoContainerStyle } from '../lib/logoUtils';
+import { getLogoUrl } from '../lib/logoUtils';
 import { RatingBadge } from './GoogleRating';
 
 interface BusinessCardProps {
@@ -64,27 +64,57 @@ interface BusinessCardProps {
   variant?: 'simple' | 'premium';
 }
 
+function normalizeText(value: string | null | undefined): string {
+  return String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toUpperCase();
+}
+
 function renderStatutCarteBadge(statut_carte: string | null | undefined) {
   if (!statut_carte) return null;
 
-  const isNonCertified = statut_carte.includes('NON');
+  const normalized = normalizeText(statut_carte);
+
+  const isNonCertified =
+    normalized.includes('NON CERTIFIE') ||
+    normalized.includes('NON CERTIFIED') ||
+    normalized.includes('NON');
+
+  const isCertified =
+    normalized.includes('CERTIFIE DALIL TOUNES') ||
+    normalized.includes('CERTIFIED DALIL TOUNES') ||
+    normalized.includes('CERTIFIE');
+
+  const label = isNonCertified
+    ? '⚠️ NON CERTIFIÉ'
+    : isCertified
+      ? '⭐ CERTIFIÉ DALIL TOUNES'
+      : statut_carte;
 
   return (
     <span
       style={{
-        display: 'inline-block',
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '4px',
+        width: 'fit-content',
         fontSize: '9px',
         fontFamily: 'sans-serif',
-        fontWeight: '700',
+        fontWeight: '800',
         letterSpacing: '0.03em',
         color: '#ffffff',
         backgroundColor: isNonCertified ? '#ea580c' : '#15803d',
         borderRadius: '20px',
-        padding: '2px 8px',
+        padding: '3px 9px',
         boxShadow: '0 4px 10px rgba(0,0,0,0.16)',
+        textTransform: 'uppercase',
+        lineHeight: 1.2,
       }}
     >
-      {statut_carte}
+      {label}
     </span>
   );
 }
@@ -230,8 +260,9 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
           border: `2px solid ${theme.border}`,
           borderRadius: '16px',
           boxShadow: theme.shadow,
-          overflow: 'hidden',
+          overflow: 'visible',
           position: 'relative',
+          minHeight: '248px',
         }}
       >
         <div
@@ -239,6 +270,8 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
             position: 'absolute',
             inset: 0,
             pointerEvents: 'none',
+            borderRadius: '16px',
+            overflow: 'hidden',
             background:
               tier === 'elite'
                 ? 'linear-gradient(135deg, rgba(212,175,55,0.18), transparent 36%, rgba(212,175,55,0.08))'
@@ -256,9 +289,10 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
             flex: 1,
             height: '100%',
             zIndex: 1,
+            overflow: 'visible',
           }}
         >
-          <div className="absolute top-0 right-0 z-10">
+          <div className="absolute top-2 right-2 z-10">
             <div
               className="flex items-center gap-1 px-2.5 py-1 rounded-full shadow-lg text-[10px] font-bold"
               style={{
@@ -275,13 +309,38 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
             </div>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: isElite ? '6px' : '4px', flex: 1 }}>
-            <div className="flex justify-center -mt-4 mb-1">
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: isElite ? '6px' : '4px',
+              flex: 1,
+              paddingTop: '18px',
+              overflow: 'visible',
+            }}
+          >
+            <div
+              className="flex justify-center"
+              style={{
+                marginTop: '8px',
+                marginBottom: '12px',
+                overflow: 'visible',
+              }}
+            >
               <div
-                className={`${isElite ? 'w-10 h-10' : 'w-8 h-8'} shadow-xl`}
+                className="shadow-xl"
                 style={{
-                  ...getLogoContainerStyle(theme.accent, '3px'),
-                  backgroundColor: theme.background,
+                  width: isElite ? '70px' : '64px',
+                  height: isElite ? '70px' : '64px',
+                  borderRadius: '9999px',
+                  backgroundColor: '#ffffff',
+                  border: `3px solid ${theme.accent}`,
+                  boxShadow: `0 8px 22px rgba(0,0,0,0.30), 0 0 0 3px ${theme.background}`,
+                  flexShrink: 0,
+                  overflow: 'hidden',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
                 <img
@@ -294,10 +353,16 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
                     if (!cat) return `${business.name} à ${ville} - Professionnel en Tunisie`;
                     return `${business.name} à ${ville} - ${cat}`;
                   })()}
-                  className="w-full h-full"
-                  style={getLogoStyle(displayImage)}
-                  width={40}
-                  height={40}
+                  style={{
+                    display: 'block',
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'contain',
+                    padding: '6px',
+                    borderRadius: '9999px',
+                  }}
+                  width={70}
+                  height={70}
                   loading="lazy"
                   decoding="async"
                   onError={(e) => {
