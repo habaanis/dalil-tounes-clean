@@ -262,7 +262,7 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
           boxShadow: theme.shadow,
           overflow: 'hidden',
           position: 'relative',
-          minHeight: '228px',
+          minHeight: '248px',
         }}
       >
         <div
@@ -312,17 +312,26 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
               flexDirection: 'column',
               gap: isElite ? '6px' : '4px',
               flex: 1,
-              paddingTop: '4px',
+              paddingTop: '14px',
             }}
           >
-            <div className="flex justify-center mt-1 mb-2">
+            <div
+              className="flex justify-center"
+              style={{
+                marginTop: '10px',
+                marginBottom: '12px',
+              }}
+            >
               <div
-                className={`${isElite ? 'w-14 h-14' : 'w-12 h-12'} shadow-xl`}
+                className="shadow-xl"
                 style={{
+                  width: isElite ? '68px' : '62px',
+                  height: isElite ? '68px' : '62px',
                   ...getLogoContainerStyle(theme.accent, '3px'),
                   backgroundColor: '#ffffff',
                   border: `3px solid ${theme.accent}`,
                   boxShadow: `0 8px 22px rgba(0,0,0,0.30), 0 0 0 3px ${theme.background}`,
+                  flexShrink: 0,
                 }}
               >
                 <img
@@ -337,8 +346,8 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
                   })()}
                   className="w-full h-full"
                   style={getLogoStyle(displayImage)}
-                  width={56}
-                  height={56}
+                  width={68}
+                  height={68}
                   loading="lazy"
                   decoding="async"
                   onError={(e) => {
