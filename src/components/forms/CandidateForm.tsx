@@ -17,7 +17,7 @@ interface RequestFormData {
 }
 
 export default function CandidateForm({ userId, onSuccess }: CandidateFormProps) {
-  const { language } = useLanguage();
+  useLanguage();
   const { submission_lang } = useFormTranslation();
 
   const [saving, setSaving] = useState(false);
