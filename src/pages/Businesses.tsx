@@ -15,7 +15,6 @@ import { Search, MapPin, Phone, Mail, Globe, Building2, X, Plus, ChevronDown, St
 import { Toast } from '../components/Toast';
 import { getSupabaseImageUrl } from '../lib/imageUtils';
 import { HERO_IMAGE_URL, HERO_IMAGE_JPG_URL } from '../constants/images';
-import { RegistrationForm } from '../components/RegistrationForm';
 import SignatureCard from '../components/SignatureCard';
 import { normalizeText, removeArabicDiacritics, extractFrenchName, cleanSearchTerm, cleanArabicField } from '../lib/textNormalization';
 import { BusinessCard } from '../components/BusinessCard';
@@ -100,7 +99,6 @@ export const Businesses = ({
   const pendingSearchRef = useRef(false);
   const [premiumJobs, setPremiumJobs] = useState<any[]>(_initCache?.premiumJobs ?? []);
   const [loadingPremiumJobs, setLoadingPremiumJobs] = useState(false);
-  const [showRegistrationForm, setShowRegistrationForm] = useState(false);
   const [filterPremium, setFilterPremium] = useState(false);
   const [filterCommerceLocal, setFilterCommerceLocal] = useState(false);
   const [filterStatutCarte, setFilterStatutCarte] = useState<'' | 'certifie' | 'non_certifie'>('');
@@ -188,14 +186,10 @@ export const Businesses = ({
     : businesses;
 
   const [suggestionForm, setSuggestionForm] = useState({
-    name: '',
-    category: '',
-    city: '',
-    address: '',
+    title: '',
     phone: '',
     email: '',
-    website: '',
-    description: '',
+    message: '',
   });
 
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error'; isVisible: boolean }>({
@@ -772,11 +766,11 @@ export const Businesses = ({
     try {
       const { error } = await supabase.from('suggestions_entreprises').insert([
         {
-          nom_entreprise: suggestionForm.name,
-          secteur: suggestionForm.category,
-          ville: suggestionForm.city || null,
+          nom_entreprise: suggestionForm.title,
+          secteur: 'Demande information / inscription',
+          ville: null,
           contact_suggere: `${suggestionForm.phone || ''} ${suggestionForm.email ? `- ${suggestionForm.email}` : ''}`.trim(),
-          raison_suggestion: `${suggestionForm.description || ''}${suggestionForm.address ? `\nAdresse: ${suggestionForm.address}` : ''}${suggestionForm.website ? `\nSite web: ${suggestionForm.website}` : ''}`,
+          raison_suggestion: suggestionForm.message,
           submission_lang: language,
         },
       ]);
@@ -785,23 +779,19 @@ export const Businesses = ({
 
       setToast({
         message: language === 'fr'
-          ? 'Merci ! Votre suggestion a été envoyée avec succès.'
+          ? 'Merci ! Votre demande a été envoyée avec succès. Nous vous recontacterons rapidement.'
           : language === 'ar'
-          ? 'شكراً! تم إرسال اقتراحك بنجاح.'
-          : 'Thank you! Your suggestion has been sent successfully.',
+          ? 'شكراً! تم إرسال طلبك بنجاح. سنتواصل معك قريباً.'
+          : 'Thank you! Your request has been sent successfully. We will contact you soon.',
         type: 'success',
         isVisible: true,
       });
 
       setSuggestionForm({
-        name: '',
-        category: '',
-        city: '',
-        address: '',
+        title: '',
         phone: '',
         email: '',
-        website: '',
-        description: '',
+        message: '',
       });
 
       setTimeout(() => {
@@ -946,11 +936,11 @@ export const Businesses = ({
         <div id="suggest-business" className="mb-8 px-4 flex flex-wrap gap-4 justify-center scroll-mt-24">
           <button
             type="button"
-            onClick={() => setShowRegistrationForm(true)}
+            onClick={() => setShowSuggestForm(true)}
             className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-white text-[#4A1D43] text-sm md:text-base font-medium hover:shadow-lg transition-all"
             style={{ border: '2px solid #D4AF37' }}
           >
-            {(t as any).businessesExtra?.registerMine || 'Inscrire mon entreprise'}
+            Demande d’information / inscription
           </button>
 
           <button
@@ -971,7 +961,7 @@ export const Businesses = ({
             style={{ border: '1px solid #D4AF37' }}
           >
             <Plus className="w-4 h-4" />
-            {t.home.suggestBusiness}
+            Faire une demande
           </button>
         </div>
 
@@ -1016,7 +1006,12 @@ export const Businesses = ({
           <div className="fixed inset-0 bg-black/80 z-[99999] flex items-center justify-center p-4" onClick={(e) => e.target === e.currentTarget && setShowSuggestForm(false)}>
             <div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative z-[100000]">
               <div className="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center">
-                <h2 className="text-xl font-medium text-gray-900">{t.businesses.suggestTitle}</h2>
+                <div>
+                  <h2 className="text-xl font-medium text-gray-900">Demande d’information / inscription</h2>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Une question ou une demande d’inscription ? Envoyez-nous votre demande, nous vous recontactons rapidement.
+                  </p>
+                </div>
                 <button
                   onClick={() => {
                     setShowSuggestForm(false);
@@ -1029,53 +1024,20 @@ export const Businesses = ({
               </div>
               <form onSubmit={handleSuggestionSubmit} className="p-6 space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{t.businesses.form.name} *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Titre de votre demande *</label>
                   <input
                     type="text"
                     required
-                    value={suggestionForm.name}
-                    onChange={(e) => setSuggestionForm({ ...suggestionForm, name: e.target.value })}
+                    value={suggestionForm.title}
+                    onChange={(e) => setSuggestionForm({ ...suggestionForm, title: e.target.value })}
+                    placeholder="Ex : inscription entreprise, chauffeur privé, professeur, candidat emploi..."
                     className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37]"
                   />
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t.businesses.form.category} *</label>
-                    <input
-                      type="text"
-                      required
-                      value={suggestionForm.category}
-                      onChange={(e) => setSuggestionForm({ ...suggestionForm, category: e.target.value })}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t.businesses.form.city} *</label>
-                    <input
-                      type="text"
-                      required
-                      value={suggestionForm.city}
-                      onChange={(e) => setSuggestionForm({ ...suggestionForm, city: e.target.value })}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37]"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{t.businesses.form.address} *</label>
-                  <input
-                    type="text"
-                    required
-                    value={suggestionForm.address}
-                    onChange={(e) => setSuggestionForm({ ...suggestionForm, address: e.target.value })}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37]"
-                  />
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t.businesses.form.phone} *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Téléphone *</label>
                     <input
                       type="tel"
                       required
@@ -1085,7 +1047,7 @@ export const Businesses = ({
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t.businesses.form.email} *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
                     <input
                       type="email"
                       required
@@ -1097,22 +1059,13 @@ export const Businesses = ({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{t.businesses.form.website}</label>
-                  <input
-                    type="url"
-                    value={suggestionForm.website}
-                    onChange={(e) => setSuggestionForm({ ...suggestionForm, website: e.target.value })}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{t.businesses.form.description} *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Message *</label>
                   <textarea
                     required
-                    rows={3}
-                    value={suggestionForm.description}
-                    onChange={(e) => setSuggestionForm({ ...suggestionForm, description: e.target.value })}
+                    rows={4}
+                    value={suggestionForm.message}
+                    onChange={(e) => setSuggestionForm({ ...suggestionForm, message: e.target.value })}
+                    placeholder="Expliquez brièvement votre demande."
                     className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37]"
                   />
                 </div>
@@ -1225,11 +1178,6 @@ export const Businesses = ({
             </div>
           ) : null}
         </div>
-
-        {/* Modal Formulaire Inscription Entreprise */}
-        {showRegistrationForm && (
-          <RegistrationForm onClose={() => setShowRegistrationForm(false)} />
-        )}
 
         {/* Toast Notification */}
         <Toast
