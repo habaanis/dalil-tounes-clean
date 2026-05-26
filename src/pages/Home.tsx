@@ -265,17 +265,18 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
             </div>
           )}
 
-          <div className="text-center mt-3">
-            <p className="text-xs text-gray-500 mb-2.5">
-              {(t as any).homeExtra?.suggestInvite}
-            </p>
-            <button
-              onClick={handleSuggestBusiness}
-              className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#4A1D43] text-[#D4AF37] font-bold rounded-xl border border-[#D4AF37] text-sm md:shadow-[0_4px_15px_rgba(212,175,55,0.25)] md:hover:bg-[#5A2D53] md:hover:shadow-[0_6px_25px_rgba(212,175,55,0.4)] md:transition-all md:duration-300 md:hover:scale-105 cursor-pointer"
-            >
-              {t.home.suggestBusiness}
-            </button>
-          </div>
+         <div className="text-center mt-3">
+  <p className="text-xs text-gray-500 mb-2.5">
+    Une question, une inscription ou une demande professionnelle ?
+  </p>
+
+  <button
+    onClick={handleSuggestBusiness}
+    className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#4A1D43] text-[#D4AF37] font-bold rounded-xl border border-[#D4AF37] text-sm md:shadow-[0_4px_15px_rgba(212,175,55,0.25)] md:hover:bg-[#5A2D53] md:hover:shadow-[0_6px_25px_rgba(212,175,55,0.4)] md:transition-all md:duration-300 md:hover:scale-105 cursor-pointer"
+  >
+    Demande d’information / inscription
+  </button>
+</div>
         </div>
       </section>
 
