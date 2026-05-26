@@ -5,11 +5,6 @@ import { useTranslation } from '../lib/i18n';
 import { supabase } from '../lib/BoltDatabase';
 import { Facebook, Linkedin, Youtube, Instagram } from 'lucide-react';
 
-const SECTEURS_OPTIONS = [
-  { value: 'education', label: 'Événement scolaire / éducatif' },
-  { value: 'Loisirs & Événements', label: 'Événement loisir / sortie' },
-  { value: 'entreprise', label: 'Événement professionnel / entreprise' },
-] as const;
 
 interface BusinessEvent {
   id: string;
@@ -54,29 +49,11 @@ export const BusinessEvents = () => {
   const [submitError, setSubmitError] = useState(false);
   const eventsRef = useRef<HTMLDivElement>(null);
 
-  // Détecter le secteur depuis l'URL (ex: #/business-events?sector=education)
-  const urlParams = new URLSearchParams(window.location.hash.split('?')[1] || '');
-  const sectorFromUrl = urlParams.get('sector') as 'education' | 'Loisirs & Événements' | 'entreprise' | null;
-  const defaultSector = sectorFromUrl || 'entreprise'; // Par défaut 'entreprise'
-
   const [formData, setFormData] = useState({
-    event_name: '',
-    event_date: '',           // ⬅ champ texte, mais pas obligatoire
-    end_date: '',
-    location: '',
-    city: '',
-    short_description: '',
-    organizer: '',
-    registration_url: '',
-    image_url: '',
-    event_period_label: '',   // ⬅ période libre
-    secteur_evenement: defaultSector, // NOUVEAU : secteur par défaut
-    // 👇 NOUVEAU
-    instagram_url: '',
-    facebook_url: '',
-    linkedin_url: '',
-    x_url: '',
-    youtube_url: '',
+    title: '',
+    phone: '',
+    email: '',
+    message: '',
   });
 
   useEffect(() => {
@@ -118,53 +95,30 @@ export const BusinessEvents = () => {
 
     try {
       const payload = {
-        event_name: formData.event_name,
-        event_date: formData.event_date || null,             // ⬅ null si vide
-        end_date: formData.end_date || null,
-        location: formData.location,
-        city: formData.city,
-        short_description: formData.short_description,
-        organizer: formData.organizer || null,
-        registration_url: formData.registration_url || null,
-        image_url: formData.image_url || null,
-        event_period_label: formData.event_period_label || null,
-        secteur_evenement: formData.secteur_evenement, // 🔥 NOUVEAU : secteur de l'événement
-        // 👇 NOUVEAU
-        instagram_url: formData.instagram_url || null,
-        facebook_url: formData.facebook_url || null,
-        linkedin_url: formData.linkedin_url || null,
-        x_url: formData.x_url || null,
-        youtube_url: formData.youtube_url || null,
+        nom_entreprise: formData.title,
+        secteur: 'Demande événement / information',
+        ville: null,
+        contact_suggere: `${formData.phone || ''}${formData.email ? ` - ${formData.email}` : ''}`.trim(),
+        raison_suggestion: formData.message,
+        submission_lang: language,
       };
 
       const { error: insertError } = await supabase
-        .from('featured_events')
+        .from('suggestions_entreprises')
         .insert([payload]);
 
       if (insertError) {
-        console.warn('⚠️ Cannot submit event - table not available:', insertError.message);
+        console.warn('⚠️ Cannot submit request - table not available:', insertError.message);
         setSubmitError(true);
         return;
       }
 
       setSubmitSuccess(true);
       setFormData({
-        event_name: '',
-        event_date: '',
-        end_date: '',
-        location: '',
-        city: '',
-        short_description: '',
-        organizer: '',
-        registration_url: '',
-        image_url: '',
-        event_period_label: '',
-        secteur_evenement: defaultSector, // Garder le même secteur
-        instagram_url: '',
-        facebook_url: '',
-        linkedin_url: '',
-        x_url: '',
-        youtube_url: '',
+        title: '',
+        phone: '',
+        email: '',
+        message: '',
       });
       fetchEvents();
       setTimeout(() => setSubmitSuccess(false), 5000);
@@ -589,10 +543,10 @@ export const BusinessEvents = () => {
           >
             <div className="text-center mb-6">
               <h2 className="text-3xl font-light text-[#4A1D43] mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
-                {t.businessEvents.submitForm.title}
+                Demande d'information / inscription
               </h2>
               <p className="text-gray-600">
-                {t.businessEvents.submitForm.description}
+                Pour toute demande d'information ou d'inscription, remplissez le formulaire ci-dessous.
               </p>
             </div>
 
@@ -604,240 +558,72 @@ export const BusinessEvents = () => {
                   onClick={() => setShowForm(true)}
                   className="px-8 py-3 bg-gradient-to-r from-[#4A1D43] to-[#800020] text-[#D4AF37] rounded-lg hover:shadow-lg transition-all font-semibold border-2 border-[#D4AF37]"
                 >
-                  {t.businessEvents.submitForm.title}
+                  Demande d'information / inscription
                 </motion.button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="relative z-50 bg-white rounded-2xl p-8 shadow-lg space-y-6">
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      {t.businessEvents.submitForm.eventName} *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.event_name}
-                      onChange={(e) => setFormData({ ...formData, event_name: e.target.value })}
-                      className="w-full px-4 py-2 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#800020] focus:border-transparent"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      {/* on enlève l'étoile visuelle ici */}
-                      {t.businessEvents.submitForm.date}
-                      <span className="block text-xs text-gray-500">
-                        (facultatif – si la date est connue)
-                      </span>
-                    </label>
-                    <input
-                      type="date"
-                      value={formData.event_date}
-                      onChange={(e) => setFormData({ ...formData, event_date: e.target.value })}
-                      className="w-full px-4 py-2 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#800020] focus:border-transparent"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      {t.businessEvents.submitForm.city} *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.city}
-                      onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                      className="w-full px-4 py-2 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#800020] focus:border-transparent"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      {t.businessEvents.submitForm.location} *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.location}
-                      onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                      className="w-full px-4 py-2 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#800020] focus:border-transparent"
-                    />
-                  </div>
-                </div>
-
-                {/* Date de fin */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Date de fin (optionnel)
-                  </label>
-                  <input
-                    type="date"
-                    value={formData.end_date}
-                    onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
-                    className="w-full px-4 py-2 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#800020] focus:border-transparent"
-                  />
-                </div>
-
-                {/* Période libre */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Période (optionnelle)
-                    <span className="block text-xs text-gray-500">
-                      Exemple : 2026, Mars 2027, 2026/2027…
-                    </span>
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.event_period_label}
-                    onChange={(e) =>
-                      setFormData({ ...formData, event_period_label: e.target.value })
-                    }
-                    className="w-full px-4 py-2 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#800020] focus:border-transparent"
-                    placeholder="Ex : 2026/2027"
-                  />
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Type d'événement *
-                    </label>
-                    <select
-                      required
-                      value={formData.secteur_evenement}
-                      onChange={(e) => setFormData({ ...formData, secteur_evenement: e.target.value as 'education' | 'Loisirs & Événements' | 'entreprise' })}
-                      className="w-full px-4 py-2 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#800020] focus:border-transparent"
-                    >
-                      {SECTEURS_OPTIONS.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      {t.businessEvents.submitForm.organizer}
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.organizer}
-                      onChange={(e) => setFormData({ ...formData, organizer: e.target.value })}
-                      className="w-full px-4 py-2 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#800020] focus:border-transparent"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {t.businessEvents.submitForm.shortDescription} *
-                  </label>
-                  <textarea
-                    required
-                    rows={4}
-                    value={formData.short_description}
-                    onChange={(e) => setFormData({ ...formData, short_description: e.target.value })}
-                    className="w-full px-4 py-2 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#800020] focus:border-transparent"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {t.businessEvents.submitForm.website}
-                  </label>
-                  <input
-                    type="url"
-                    value={formData.registration_url}
-                    onChange={(e) => setFormData({ ...formData, registration_url: e.target.value })}
-                    className="w-full px-4 py-2 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#800020] focus:border-transparent"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {t.businessEvents.submitForm.image}
-                  </label>
-                  <input
-                    type="url"
-                    value={formData.image_url}
-                    onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                    className="w-full px-4 py-2 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#800020] focus:border-transparent"
-                  />
-                  <p className="mt-2 text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-md px-3 py-2">
-                    ⚠️ Merci d'utiliser des images importées directement (hébergées sur votre site ou un service d'hébergement d'images) au lieu de liens Facebook pour éviter les erreurs d'affichage.
+                <div className="text-center mb-2">
+                  <p className="text-sm text-gray-600">
+                    Pour toute demande d'information ou d'inscription, envoyez-nous votre message. Notre équipe vous contactera directement.
                   </p>
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Instagram
-                    </label>
-                    <input
-                      type="url"
-                      value={formData.instagram_url}
-                      onChange={(e) => setFormData({ ...formData, instagram_url: e.target.value })}
-                      className="w-full px-4 py-2 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#800020] focus:border-transparent"
-                      placeholder="https://instagram.com/..."
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Facebook
-                    </label>
-                    <input
-                      type="url"
-                      value={formData.facebook_url}
-                      onChange={(e) => setFormData({ ...formData, facebook_url: e.target.value })}
-                      className="w-full px-4 py-2 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#800020] focus:border-transparent"
-                      placeholder="https://facebook.com/..."
-                    />
-                  </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Titre *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.title}
+                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    className="w-full px-4 py-2 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#800020] focus:border-transparent"
+                    placeholder="Ex : Inscription événement, demande d'information, partenariat..."
+                  />
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      LinkedIn
+                      Téléphone *
                     </label>
                     <input
-                      type="url"
-                      value={formData.linkedin_url}
-                      onChange={(e) => setFormData({ ...formData, linkedin_url: e.target.value })}
+                      type="tel"
+                      required
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       className="w-full px-4 py-2 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#800020] focus:border-transparent"
-                      placeholder="https://linkedin.com/..."
+                      placeholder="+216 ..."
                     />
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      X (Twitter)
+                      Email *
                     </label>
                     <input
-                      type="url"
-                      value={formData.x_url}
-                      onChange={(e) => setFormData({ ...formData, x_url: e.target.value })}
+                      type="email"
+                      required
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       className="w-full px-4 py-2 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#800020] focus:border-transparent"
-                      placeholder="https://x.com/..."
+                      placeholder="votre@email.com"
                     />
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Lien YouTube (optionnel)
+                    Message *
                   </label>
-                  <input
-                    type="url"
-                    value={formData.youtube_url}
-                    onChange={(e) => setFormData({ ...formData, youtube_url: e.target.value })}
-                    placeholder="https://youtube.com/..."
+                  <textarea
+                    required
+                    rows={5}
+                    value={formData.message}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     className="w-full px-4 py-2 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#800020] focus:border-transparent"
+                    placeholder="Expliquez votre demande..."
                   />
                 </div>
 
@@ -866,7 +652,7 @@ export const BusinessEvents = () => {
                     type="submit"
                     className="flex-1 px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg hover:shadow-lg transition-all font-medium"
                   >
-                    {t.businessEvents.submitForm.submit}
+                    Envoyer la demande
                   </button>
                   <button
                     type="button"
