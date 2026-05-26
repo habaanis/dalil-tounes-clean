@@ -954,15 +954,7 @@ export const Businesses = ({
             {(t as any).businessesExtra?.viewCandidates || 'Voir les candidats disponibles'}
           </button>
 
-          <button
-            type="button"
-            onClick={() => setShowSuggestForm(true)}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-[#4A1D43] text-white text-sm md:text-base font-medium hover:bg-[#5A2D53] transition-colors shadow-sm hover:shadow-md"
-            style={{ border: '1px solid #D4AF37' }}
-          >
-            <Plus className="w-4 h-4" />
-            Faire une demande
-          </button>
+         
         </div>
 
         {/* Tags de filtres actifs - Design Premium */}
