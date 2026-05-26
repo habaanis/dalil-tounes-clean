@@ -7,6 +7,8 @@ import { isSearchBarAllowed } from '../config/searchBars';
 import { HERO_IMAGE_URL } from '../constants/images';
 import StructuredData from '../components/StructuredData';
 import { generateOrganizationSchema, generateWebSiteSchema } from '../lib/structuredDataSchemas';
+import { supabase } from '../lib/BoltDatabase';
+import { notifyAdmin } from '../lib/notifyAdmin';
 import React, { lazy, Suspense, useEffect, useState } from 'react';
 
 // Tous les composants lourds (liste Premium, Avis, Témoignages, SearchBar)
@@ -44,6 +46,16 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
   // interagit (scroll / focus / click) — le premier des deux.
   const [belowFoldReady, setBelowFoldReady] = useState(false);
   const [searchArmed, setSearchArmed] = useState(false);
+  const [showRequestForm, setShowRequestForm] = useState(false);
+  const [requestForm, setRequestForm] = useState({
+    title: '',
+    phone: '',
+    email: '',
+    message: '',
+  });
+  const [requestSubmitting, setRequestSubmitting] = useState(false);
+  const [requestSuccess, setRequestSuccess] = useState(false);
+  const [requestError, setRequestError] = useState<string | null>(null);
   useEffect(() => {
     if (belowFoldReady) return;
     const ready = () => setBelowFoldReady(true);
@@ -89,14 +101,96 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
     }
   };
 
-  // ✅ Fonction corrigée pour le bouton "Suggérer un établissement"
+  // ✅ Bouton demande : ouvre le formulaire simple directement sur la page d'accueil
   const handleSuggestBusiness = () => {
-    console.log('🔘 Bouton "Suggérer un établissement" cliqué');
-    if (onSuggestBusiness) {
-      onSuggestBusiness();
-    } else {
-      // Fallback : naviguer vers la page de suggestion
-      navigate('/suggest-business');
+    setShowRequestForm(true);
+    setRequestSuccess(false);
+    setRequestError(null);
+  };
+
+  const handleRequestSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setRequestSubmitting(true);
+    setRequestSuccess(false);
+    setRequestError(null);
+
+    try {
+      const title = requestForm.title.trim();
+      const phone = requestForm.phone.trim();
+      const email = requestForm.email.trim();
+      const message = requestForm.message.trim();
+
+      if (!title) {
+        setRequestError('Le titre de votre demande est obligatoire.');
+        setRequestSubmitting(false);
+        return;
+      }
+
+      if (!phone && !email) {
+        setRequestError('Merci d’indiquer au moins un téléphone ou un email.');
+        setRequestSubmitting(false);
+        return;
+      }
+
+      if (email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          setRequestError('Format email invalide.');
+          setRequestSubmitting(false);
+          return;
+        }
+      }
+
+      if (!message) {
+        setRequestError('Merci de décrire brièvement votre demande.');
+        setRequestSubmitting(false);
+        return;
+      }
+
+      const payload = {
+        nom_entreprise: title,
+        secteur: 'Demande information / inscription',
+        ville: null,
+        contact_suggere: `${phone || ''}${phone && email ? ' - ' : ''}${email || ''}`.trim(),
+        raison_suggestion: `Demande depuis la page d’accueil\n\n${message}`,
+        submission_lang: language,
+      };
+
+      const { error } = await supabase
+        .from('suggestions_entreprises')
+        .insert([payload]);
+
+      if (error) {
+        console.error('Erreur Supabase:', error);
+        setRequestError('Une erreur est survenue. Veuillez réessayer.');
+        return;
+      }
+
+      notifyAdmin('Nouvelle demande depuis la page accueil', {
+        Titre: title,
+        Telephone: phone || 'Non renseigné',
+        Email: email || 'Non renseigné',
+        Message: message,
+        Langue: language,
+      });
+
+      setRequestSuccess(true);
+      setRequestForm({
+        title: '',
+        phone: '',
+        email: '',
+        message: '',
+      });
+
+      setTimeout(() => {
+        setShowRequestForm(false);
+        setRequestSuccess(false);
+      }, 1800);
+    } catch (error) {
+      console.error('Erreur demande accueil:', error);
+      setRequestError('Une erreur inattendue est survenue. Veuillez réessayer.');
+    } finally {
+      setRequestSubmitting(false);
     }
   };
 
@@ -377,6 +471,125 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
           )}
         </div>
       </section>
+      {showRequestForm && (
+        <div
+          className="fixed inset-0 bg-black/70 z-[99999] flex items-center justify-center p-4"
+          onClick={(e) => e.target === e.currentTarget && setShowRequestForm(false)}
+        >
+          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[#D4AF37]">
+            <div className="sticky top-0 bg-white border-b border-[#D4AF37]/40 px-6 py-4 flex items-start justify-between gap-4 rounded-t-2xl">
+              <div>
+                <h2 className="text-xl font-semibold text-[#4A1D43]">
+                  Demande d’information / inscription
+                </h2>
+                <p className="text-sm text-gray-600 mt-1">
+                  Une question, une inscription ou une demande professionnelle ? Envoyez-nous votre demande, notre équipe vous recontactera rapidement.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowRequestForm(false)}
+                className="p-2 rounded-full hover:bg-gray-100 transition"
+                aria-label="Fermer le formulaire"
+              >
+                ×
+              </button>
+            </div>
+
+            <form onSubmit={handleRequestSubmit} className="p-6 space-y-5">
+              {requestSuccess && (
+                <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg text-sm">
+                  Merci ! Votre demande a été envoyée avec succès. Nous vous recontacterons rapidement.
+                </div>
+              )}
+
+              {requestError && (
+                <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg text-sm">
+                  {requestError}
+                </div>
+              )}
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Titre de votre demande <span className="text-[#800020]">*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={requestForm.title}
+                  onChange={(e) => setRequestForm({ ...requestForm, title: e.target.value })}
+                  placeholder="Ex : inscription entreprise, candidat emploi, chauffeur privé, professeur..."
+                  className="w-full px-4 py-3 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#4A1D43] focus:border-[#4A1D43] text-sm"
+                />
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Téléphone
+                  </label>
+                  <input
+                    type="tel"
+                    value={requestForm.phone}
+                    onChange={(e) => setRequestForm({ ...requestForm, phone: e.target.value })}
+                    placeholder="+216 XX XXX XXX"
+                    className="w-full px-4 py-3 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#4A1D43] focus:border-[#4A1D43] text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    value={requestForm.email}
+                    onChange={(e) => setRequestForm({ ...requestForm, email: e.target.value })}
+                    placeholder="votre@email.com"
+                    className="w-full px-4 py-3 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#4A1D43] focus:border-[#4A1D43] text-sm"
+                  />
+                </div>
+              </div>
+
+              <p className="text-xs text-gray-500">
+                Merci d’indiquer au moins un moyen de contact : téléphone ou email.
+              </p>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Message <span className="text-[#800020]">*</span>
+                </label>
+                <textarea
+                  required
+                  rows={5}
+                  value={requestForm.message}
+                  onChange={(e) => setRequestForm({ ...requestForm, message: e.target.value })}
+                  placeholder="Expliquez brièvement votre demande, votre activité ou votre question..."
+                  className="w-full px-4 py-3 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#4A1D43] focus:border-[#4A1D43] text-sm resize-none"
+                />
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowRequestForm(false)}
+                  className="flex-1 px-5 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all text-sm font-medium"
+                >
+                  Annuler
+                </button>
+                <button
+                  type="submit"
+                  disabled={requestSubmitting}
+                  className="flex-1 px-5 py-3 bg-[#4A1D43] text-[#D4AF37] border border-[#D4AF37] rounded-lg hover:bg-[#5A2D53] transition-all text-sm font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {requestSubmitting ? 'Envoi en cours...' : 'Envoyer ma demande'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
