@@ -764,18 +764,36 @@ export const Businesses = ({
   const handleSuggestionSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const { error } = await supabase.from('suggestions_entreprises').insert([
-        {
-          nom_entreprise: suggestionForm.title,
-          secteur: 'Demande information / inscription',
-          ville: null,
-          contact_suggere: `${suggestionForm.phone || ''} ${suggestionForm.email ? `- ${suggestionForm.email}` : ''}`.trim(),
-          raison_suggestion: suggestionForm.message,
-          submission_lang: language,
-        },
-      ]);
+      const payload = {
+        nom_entreprise: suggestionForm.title,
+        secteur: 'Demande information / inscription',
+        ville: null,
+        contact_suggere: `${suggestionForm.phone || ''} ${suggestionForm.email ? `- ${suggestionForm.email}` : ''}`.trim(),
+        raison_suggestion: suggestionForm.message,
+        submission_lang: language,
+      };
+
+      const { data, error } = await supabase
+        .from('suggestions_entreprises')
+        .insert([payload])
+        .select()
+        .single();
 
       if (error) throw error;
+
+      if (data) {
+        fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/sync-suggestion-to-airtable`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+            },
+            body: JSON.stringify({ record: data }),
+          }
+        ).catch(() => {});
+      }
 
       setToast({
         message: language === 'fr'

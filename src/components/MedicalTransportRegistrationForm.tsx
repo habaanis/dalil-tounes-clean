@@ -107,12 +107,28 @@ export default function MedicalTransportRegistrationForm({
         type_demande: 'transport',
       };
 
-      const { error: insertError } = await supabase
+      const { data, error: insertError } = await supabase
         .from('suggestions_entreprises')
-        .insert([suggestionData]);
+        .insert([suggestionData])
+        .select()
+        .single();
 
       if (insertError) {
         throw insertError;
+      }
+
+      if (data) {
+        fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/sync-suggestion-to-airtable`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+            },
+            body: JSON.stringify({ record: data }),
+          }
+        ).catch(() => {});
       }
 
       notifyAdmin('Nouvelle demande transport médical', {

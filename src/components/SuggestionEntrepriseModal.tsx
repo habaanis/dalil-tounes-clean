@@ -92,7 +92,8 @@ export const SuggestionEntrepriseModal = ({ isOpen, onClose }: SuggestionEntrepr
       const { data, error } = await supabase
         .from('suggestions_entreprises')
         .insert([suggestionData])
-        .select();
+        .select()
+        .single();
 
       if (error) {
         setToastMessage(message('erreur'));
@@ -100,6 +101,20 @@ export const SuggestionEntrepriseModal = ({ isOpen, onClose }: SuggestionEntrepr
         setShowToast(true);
         setIsSubmitting(false);
         return;
+      }
+
+      if (data) {
+        fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/sync-suggestion-to-airtable`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+            },
+            body: JSON.stringify({ record: data }),
+          }
+        ).catch(() => {});
       }
 
       // Toast de succès

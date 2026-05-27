@@ -126,7 +126,8 @@ ${formData.youtubeUrl ? `- YouTube: ${formData.youtubeUrl}` : ''}`,
       const { data, error } = await supabase
         .from('suggestions_entreprises')
         .insert([suggestionData])
-        .select();
+        .select()
+        .single();
 
       if (error) {
         setToastMessage('Une erreur est survenue. Veuillez réessayer.');
@@ -134,6 +135,20 @@ ${formData.youtubeUrl ? `- YouTube: ${formData.youtubeUrl}` : ''}`,
         setShowToast(true);
         setLoading(false);
         return;
+      }
+
+      if (data) {
+        fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/sync-suggestion-to-airtable`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+            },
+            body: JSON.stringify({ record: data }),
+          }
+        ).catch(() => {});
       }
 
       // Afficher Toast de succès
