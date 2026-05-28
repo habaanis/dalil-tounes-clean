@@ -599,6 +599,313 @@ export const blogArticles: BlogArticle[] = [
 <p>وإذا عندك رأي، باهي ولا خايب، مرحبا بيه. هكاكا نطوّرو رواحنا ونولّيو خير 👌</p>
 <p>هاكا هو Dalil Tounes. موش دليل عادي وبارد. هو وسيلة باش العباد تلقى بعضها، تثق في بعضها، وتعاون بعضها باش تتقدّم. باش تلقى <strong>أحسن professionnels قريب ليك</strong>. 🧡</p>`
     }
+  },
+  {
+    id: '8',
+    slug: 'pourquoi-certaines-entreprises-attirent-des-clients',
+    author: "L'equipe Dalil Tounes",
+    date: '28 mai 2026',
+    readTime: '7 min',
+    coverImage: '',
+    fr: {
+      title: 'Pourquoi certaines entreprises attirent des clients... et d\'autres restent invisibles ?',
+      subtitle: 'La visibilite en ligne n\'est pas une option. C\'est une necessite.',
+      category: 'Visibilite',
+      excerpt: "Vous avez un bon produit. Un bon service. Mais personne ne vous trouve en ligne ? Decouvrez les 5 raisons qui expliquent pourquoi certaines entreprises attirent des clients naturellement, et comment vous pouvez faire pareil.",
+      content: `<h1>Pourquoi certaines entreprises attirent des clients... et d'autres restent invisibles ?</h1>
+
+<p style="font-size: 1.15em; color: #555; margin-bottom: 2em;">Vous avez un bon produit. Un bon service. Mais personne ne vous trouve en ligne ?<br>Vous n'etes pas seul. Et ce n'est pas une fatalite.</p>
+
+<p>En Tunisie, des milliers d'entreprises, de commerces et de professionnels font un travail remarquable... mais restent invisibles sur Internet. Pas parce qu'ils manquent de talent. Mais parce qu'ils n'ont pas encore mis en place les bons reflexes de visibilite.</p>
+
+<p>Pendant ce temps, d'autres entreprises, parfois moins connues, captent l'attention, recoivent des appels et remplissent leur agenda. Pourquoi ?</p>
+
+<p>Voici <strong>5 raisons concretes</strong> qui font la difference.</p>
+
+<h2>1. Elles ont une fiche complete et a jour</h2>
+
+<p>La premiere raison est la plus simple : <strong>les entreprises visibles ont pris le temps de bien se presenter</strong>.</p>
+
+<p>Ce n'est pas une question de budget. C'est une question de rigueur.</p>
+
+<ul>
+<li>Un nom clair et bien orthographie</li>
+<li>Une adresse precise (pas juste "en face du cafe")</li>
+<li>Des horaires a jour</li>
+<li>Un numero de telephone qui fonctionne</li>
+<li>Des photos recentes du local, des produits, de l'equipe</li>
+<li>Une courte description de l'activite</li>
+</ul>
+
+<p>Sur <strong>Dalil Tounes</strong>, on appelle ca un <strong>"CV Business"</strong>. C'est la vitrine numerique de chaque professionnel. Et comme pour un CV classique : plus il est complet, plus il inspire confiance.</p>
+
+<blockquote style="border-left: 4px solid #D4AF37; padding: 12px 20px; margin: 24px 0; background: #faf8f2; font-style: italic; color: #6b5c3e;">Un CV Business bien rempli, c'est comme une vitrine propre et bien eclairee.<br>Ca attire l'oeil. Ca rassure. Ca donne envie d'entrer.</blockquote>
+
+<h2>2. Elles apparaissent la ou les gens cherchent</h2>
+
+<p>Avoir un bon produit ne suffit pas. Encore faut-il <strong>etre present la ou les gens cherchent</strong>.</p>
+
+<p>Aujourd'hui, avant de se deplacer, 8 personnes sur 10 font une recherche en ligne. Google, annuaires, reseaux sociaux...</p>
+
+<p>Les entreprises visibles ont compris ca. Elles sont presentes sur :</p>
+
+<ul>
+<li>Google (fiche Google Business)</li>
+<li>Les annuaires professionnels comme <strong>Dalil Tounes</strong></li>
+<li>Facebook, Instagram, voire TikTok</li>
+</ul>
+
+<p>Mais surtout, elles ne se contentent pas d'etre presentes : elles <strong>mettent a jour regulierement</strong> leurs informations. Un numero change ? Elles le corrigent. De nouvelles photos ? Elles les ajoutent.</p>
+
+<p>Les entreprises invisibles, elles, sont "quelque part" sur Internet. Mais personne ne les trouve.</p>
+
+<h2>3. Elles recoltent (et affichent) des avis clients</h2>
+
+<p>C'est le reflexe le plus puissant. Et pourtant, c'est celui que la plupart des professionnels negligent.</p>
+
+<p><strong>Les avis clients sont la preuve sociale</strong> de votre competence. Quand un client hesite entre deux prestataires, c'est souvent les avis qui font pencher la balance.</p>
+
+<ul>
+<li>Les entreprises visibles demandent a leurs clients satisfaits de laisser un avis</li>
+<li>Elles repondent aux avis, meme negatifs, avec professionnalisme</li>
+<li>Elles affichent fièrement leurs recommandations</li>
+</ul>
+
+<p>Sur <strong>Dalil Tounes</strong>, chaque fiche peut recevoir des avis. Et plus une fiche a d'avis positifs, plus elle inspire confiance. C'est un cercle vertueux.</p>
+
+<blockquote style="border-left: 4px solid #D4AF37; padding: 12px 20px; margin: 24px 0; background: #faf8f2; font-style: italic; color: #6b5c3e;">Un client satisfait qui laisse un avis, c'est le meilleur commercial que vous puissiez avoir. Gratuit, credible, et permanent.</blockquote>
+
+<h2>4. Elles utilisent les bons mots-cles</h2>
+
+<p>Quand un client cherche "plombier Sousse", "coiffeur La Marsa" ou "restaurant Sfax", il utilise des <strong>mots-cles</strong>.</p>
+
+<p>Les entreprises visibles utilisent ces memes mots dans leur description, leurs titres, leurs fiches.</p>
+
+<p>Pas besoin d'etre expert en SEO. Il suffit de se poser la question :</p>
+
+<p><strong>"Si j'etais client, qu'est-ce que je taperais dans Google pour me trouver ?"</strong></p>
+
+<p>Et d'integrer naturellement ces termes dans sa presentation.</p>
+
+<p>Exemple :</p>
+
+<ul>
+<li>Au lieu de <em>"Bienvenue chez nous"</em>, ecrivez <em>"Salon de coiffure homme et femme a Sousse centre"</em></li>
+<li>Au lieu de <em>"Nous proposons nos services"</em>, ecrivez <em>"Plombier agree a Tunis - depannage rapide 7j/7"</em></li>
+</ul>
+
+<h2>5. Elles investissent dans leur image</h2>
+
+<p>On ne parle pas forcement de budget publicitaire. On parle de <strong>soigner sa presentation</strong>.</p>
+
+<ul>
+<li>Une photo de profil professionnelle (pas un logo flou pris au telephone)</li>
+<li>Des photos du local, de l'equipe, des realisations</li>
+<li>Un logo propre et moderne</li>
+<li>Une description qui raconte une histoire, pas juste une liste de services</li>
+</ul>
+
+<p>Les gens font confiance a ce qui a <strong>l'air serieux</strong>. Pas forcement a ce qui est le plus cher. Mais a ce qui est le mieux presente.</p>
+
+<p>Sur Dalil Tounes, les fiches les plus visitees sont celles qui ont une vraie identite visuelle. Pas parce qu'elles paient plus. Mais parce qu'elles prennent soin de leur image.</p>
+
+<h2>Et vous, ou en etes-vous ?</h2>
+
+<p>Si vous lisez cet article, c'est que vous avez deja la bonne demarche. Vous cherchez a comprendre. A progresser.</p>
+
+<p>Alors voici un petit exercice simple :</p>
+
+<ol>
+<li>Tapez le nom de votre entreprise sur Google. Que voyez-vous ?</li>
+<li>Regardez votre fiche sur Dalil Tounes. Est-elle complete ?</li>
+<li>Demandez a un ami : "Si tu devais choisir entre moi et mon concurrent, sur quoi tu te baserais ?"</li>
+</ol>
+
+<p>Les reponses vous guideront.</p>
+
+<h2>En resume</h2>
+
+<div style="overflow-x: auto;"><table style="border-collapse: collapse; width: 100%; margin: 20px 0;">
+<thead><tr style="background-color: #f5f0e8;"><th style="border: 1px solid #ddd; padding: 10px; text-align: left;">Les entreprises visibles...</th><th style="border: 1px solid #ddd; padding: 10px; text-align: left;">Les entreprises invisibles...</th></tr></thead>
+<tbody>
+<tr><td style="border: 1px solid #ddd; padding: 10px;">Ont une fiche complete et a jour</td><td style="border: 1px solid #ddd; padding: 10px;">Ont une fiche vide ou obsolete</td></tr>
+<tr style="background-color: #f9f9f9;"><td style="border: 1px solid #ddd; padding: 10px;">Sont presentes sur les bons canaux</td><td style="border: 1px solid #ddd; padding: 10px;">Comptent uniquement sur le bouche-a-oreille</td></tr>
+<tr><td style="border: 1px solid #ddd; padding: 10px;">Recoltent des avis clients</td><td style="border: 1px solid #ddd; padding: 10px;">Negligent la preuve sociale</td></tr>
+<tr style="background-color: #f9f9f9;"><td style="border: 1px solid #ddd; padding: 10px;">Utilisent les bons mots-cles</td><td style="border: 1px solid #ddd; padding: 10px;">N'optimisent pas leur description</td></tr>
+<tr><td style="border: 1px solid #ddd; padding: 10px;">Soignent leur image</td><td style="border: 1px solid #ddd; padding: 10px;">Negligent leur presentation visuelle</td></tr>
+</tbody>
+</table></div>
+
+<h2>Dalil Tounes est la pour vous aider</h2>
+
+<p>Que vous soyez artisan, commercant, medecin, restaurateur ou prestataire de services, <strong>Dalil Tounes vous offre un espace professionnel gratuit</strong> pour vous presenter, etre trouve, et inspirer confiance.</p>
+
+<p>Pas besoin d'etre un expert du digital. On s'occupe de la technique. Vous, vous vous occupez de votre metier.</p>
+
+<p>Et si vous voulez aller plus loin, nos formules Premium et Elite vous offrent encore plus de visibilite, des outils avances, et un accompagnement personnalise.</p>
+
+<blockquote style="border-left: 4px solid #D4AF37; padding: 12px 20px; margin: 24px 0; background: #faf8f2; font-style: italic; color: #6b5c3e;">La visibilite n'est pas reservee aux grandes entreprises.<br>Elle appartient a ceux qui font l'effort d'exister en ligne.</blockquote>
+
+<p style="text-align: center; margin-top: 2em; font-size: 1.1em;"><strong>Prenez 5 minutes. Completez votre fiche. Et laissez les clients venir a vous.</strong></p>`
+    },
+    en: {
+      title: 'Why some businesses attract clients... and others stay invisible?',
+      subtitle: 'Online visibility is not an option. It is a necessity.',
+      category: 'Visibility',
+      excerpt: "You have a good product. A good service. But nobody finds you online? Discover the 5 reasons why some businesses naturally attract clients, and how you can do the same.",
+      content: `<h1>Why some businesses attract clients... and others stay invisible?</h1>
+
+<p style="font-size: 1.15em; color: #555; margin-bottom: 2em;">You have a good product. A good service. But nobody finds you online?<br>You're not alone. And it's not inevitable.</p>
+
+<p>In Tunisia, thousands of businesses, shops and professionals do remarkable work... but remain invisible on the Internet. Not because they lack talent. But because they haven't yet implemented the right visibility practices.</p>
+
+<p>Meanwhile, other businesses, sometimes less known, capture attention, receive calls and fill their schedule. Why?</p>
+
+<p>Here are <strong>5 concrete reasons</strong> that make the difference.</p>
+
+<h2>1. They have a complete and up-to-date profile</h2>
+
+<p>The first reason is the simplest: <strong>visible businesses have taken the time to present themselves well</strong>.</p>
+
+<p>It's not a matter of budget. It's a matter of thoroughness.</p>
+
+<ul>
+<li>A clear, well-spelled name</li>
+<li>A precise address (not just "opposite the cafe")</li>
+<li>Up-to-date opening hours</li>
+<li>A working phone number</li>
+<li>Recent photos of the premises, products, and team</li>
+<li>A short description of the activity</li>
+</ul>
+
+<p>On <strong>Dalil Tounes</strong>, we call this a <strong>"Business CV"</strong>. It's the digital storefront of every professional. And like a regular CV: the more complete it is, the more trust it inspires.</p>
+
+<blockquote style="border-left: 4px solid #D4AF37; padding: 12px 20px; margin: 24px 0; background: #faf8f2; font-style: italic; color: #6b5c3e;">A well-filled Business CV is like a clean, well-lit storefront.<br>It catches the eye. It reassures. It makes you want to enter.</blockquote>
+
+<h2>2. They appear where people search</h2>
+
+<p>Having a good product isn't enough. You also need to <strong>be present where people search</strong>.</p>
+
+<p>Today, before going somewhere, 8 out of 10 people search online. Google, directories, social networks...</p>
+
+<p>Visible businesses understand this. They are present on:</p>
+
+<ul>
+<li>Google (Google Business profile)</li>
+<li>Professional directories like <strong>Dalil Tounes</strong></li>
+<li>Facebook, Instagram, even TikTok</li>
+</ul>
+
+<p>But above all, they don't just settle for being present: they <strong>regularly update</strong> their information.</p>
+
+<h2>3. They collect (and display) client reviews</h2>
+
+<p><strong>Client reviews are the social proof</strong> of your competence. When a client hesitates between two providers, reviews often tip the balance.</p>
+
+<ul>
+<li>Visible businesses ask their satisfied clients to leave a review</li>
+<li>They respond to reviews, even negative ones, professionally</li>
+<li>They proudly display their recommendations</li>
+</ul>
+
+<blockquote style="border-left: 4px solid #D4AF37; padding: 12px 20px; margin: 24px 0; background: #faf8f2; font-style: italic; color: #6b5c3e;">A satisfied client who leaves a review is the best salesperson you could have. Free, credible, and permanent.</blockquote>
+
+<h2>4. They use the right keywords</h2>
+
+<p>When a client searches for "plumber Sousse" or "restaurant Sfax", they use <strong>keywords</strong>.</p>
+
+<p>Visible businesses use these same words in their description, titles, and profiles.</p>
+
+<p>No need to be an SEO expert. Just ask yourself: <strong>"If I were a client, what would I type in Google to find me?"</strong></p>
+
+<h2>5. They invest in their image</h2>
+
+<p>We're not necessarily talking about advertising budget. We're talking about <strong>taking care of your presentation</strong>.</p>
+
+<ul>
+<li>A professional profile photo</li>
+<li>Photos of the premises, team, and achievements</li>
+<li>A clean, modern logo</li>
+<li>A description that tells a story</li>
+</ul>
+
+<p>People trust what <strong>looks serious</strong>. Not necessarily what's most expensive. But what's best presented.</p>
+
+<h2>Dalil Tounes is here to help you</h2>
+
+<p>Whether you're a craftsman, shopkeeper, doctor, restaurateur or service provider, <strong>Dalil Tounes offers you a free professional space</strong> to present yourself, be found, and inspire trust.</p>
+
+<blockquote style="border-left: 4px solid #D4AF37; padding: 12px 20px; margin: 24px 0; background: #faf8f2; font-style: italic; color: #6b5c3e;">Visibility is not reserved for big companies.<br>It belongs to those who make the effort to exist online.</blockquote>
+
+<p style="text-align: center; margin-top: 2em; font-size: 1.1em;"><strong>Take 5 minutes. Complete your profile. And let clients come to you.</strong></p>`
+    },
+    ar: {
+      title: 'علاش بعض المؤسسات تجذب الحرفاء... وبعضها تبقى مخبية؟',
+      subtitle: 'الظهور على الإنترنت ماهوش اختيار. هو ضرورة.',
+      category: 'الظهور',
+      excerpt: 'عندك منتوج باهي. خدمة ممتازة. أما حد ما يلقاك على الإنترنت؟ اكتشف الـ 5 أسباب اللي تخلّي بعض المؤسسات تجذب الحرفاء بشكل طبيعي.',
+      content: `<h1>علاش بعض المؤسسات تجذب الحرفاء... وبعضها تبقى مخبية؟</h1>
+
+<p style="font-size: 1.15em; color: #555; margin-bottom: 2em;">عندك منتوج باهي. خدمة ممتازة. أما حد ما يلقاك على الإنترنت؟<br>موش وحدك. وموش قدر.</p>
+
+<p>في تونس، آلاف المؤسسات والمحلات والمهنيين يخدمو خدمة ممتازة... أما يبقاو مخبيين على الإنترنت. موش خاطر ما عندهمش كفاءة. أما خاطر ما حطّوش بعد الأساسيات باش يبانو.</p>
+
+<h2>1. عندهم فيشة كاملة ومحيّنة</h2>
+
+<p>أول سبب هو أبسط حاجة: <strong>المؤسسات اللي تبان أخذو الوقت باش يقدّمو رواحهم مليح</strong>.</p>
+
+<ul>
+<li>اسم واضح ومكتوب صحيح</li>
+<li>عنوان دقيق</li>
+<li>أوقات خدمة محيّنة</li>
+<li>نومرو تيليفون يخدم</li>
+<li>تصاور جداد للمحل والمنتجات والفريق</li>
+<li>وصف قصير للنشاط</li>
+</ul>
+
+<p>في <strong>Dalil Tounes</strong>، نسمّيو هذا <strong>"CV Business"</strong>. هي الواجهة الرقمية لكل مهني.</p>
+
+<blockquote style="border-left: 4px solid #D4AF37; padding: 12px 20px; margin: 24px 0; background: #faf8f2; font-style: italic; color: #6b5c3e;">CV Business معبّي مليح، كيف واجهة محل نظيفة ومضوية. تجذب العين، تطمّن، وتخلّي العبد يحب يدخل.</blockquote>
+
+<h2>2. يبانو وين العباد تلوّج</h2>
+
+<p>اليوم، قبل ما يتحرّك، 8 من 10 عباد يلوّجو على الإنترنت. المؤسسات اللي تبان فهمت هذا وموجودة في:</p>
+
+<ul>
+<li>Google</li>
+<li>الأدلة المهنية كيف <strong>Dalil Tounes</strong></li>
+<li>Facebook, Instagram, حتى TikTok</li>
+</ul>
+
+<h2>3. يجمعو (ويبيّنو) آراء الحرفاء</h2>
+
+<p><strong>آراء الحرفاء هي الدليل الاجتماعي</strong> على كفاءتك. كي حريف يتردّد بين زوز مهنيين، الآراء هي اللي تفرّق.</p>
+
+<blockquote style="border-left: 4px solid #D4AF37; padding: 12px 20px; margin: 24px 0; background: #faf8f2; font-style: italic; color: #6b5c3e;">حريف راضي يخلّي رأي، هو أحسن commercial تنجم تلقاه. مجاني، موثوق، ودائم.</blockquote>
+
+<h2>4. يستعملو الكلمات المفتاحية الصحيحة</h2>
+
+<p>كي حريف يلوّج على "حجام سوسة" ولا "مطعم صفاقس"، يستعمل <strong>كلمات مفتاحية</strong>. المؤسسات اللي تبان تستعمل نفس الكلمات في الوصف والعنوان.</p>
+
+<h2>5. يستثمرو في صورتهم</h2>
+
+<p>موش بالضرورة ميزانية إعلانية. <strong>أما العناية بالتقديم</strong>:</p>
+
+<ul>
+<li>تصويرة بروفيل مهنية</li>
+<li>تصاور للمحل والفريق</li>
+<li>لوغو نظيف وعصري</li>
+<li>وصف يحكي قصة</li>
+</ul>
+
+<h2>Dalil Tounes هنا باش يعاونك</h2>
+
+<p>سواء كنت حرفي، تاجر، طبيب ولا مزوّد خدمات، <strong>Dalil Tounes يوفّرلك مساحة مهنية مجانية</strong> باش تقدّم روحك، تتلقى، وتلهم الثقة.</p>
+
+<blockquote style="border-left: 4px solid #D4AF37; padding: 12px 20px; margin: 24px 0; background: #faf8f2; font-style: italic; color: #6b5c3e;">الظهور موش محجوز للشركات الكبار. هو لكل واحد يعمل مجهود باش يبان على الإنترنت.</blockquote>
+
+<p style="text-align: center; margin-top: 2em; font-size: 1.1em;"><strong>خذ 5 دقايق. كمّل فيشتك. وخلّي الحرفاء يجيوك.</strong></p>`
+    }
   }
 ];
 
