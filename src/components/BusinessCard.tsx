@@ -18,7 +18,7 @@ import {
 } from '../lib/horaireUtils';
 import { useCategoryTranslation } from '../hooks/useCategoryTranslation';
 import { getMultilingualField } from '../lib/databaseI18n';
-import { getLogoUrl } from '../lib/logoUtils';
+import { getLogoUrl, getLogoContainerStyle, getLogoStyle } from '../lib/logoUtils';
 import { RatingBadge } from './GoogleRating';
 
 interface BusinessCardProps {
@@ -340,17 +340,12 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
               <div
                 className="shadow-xl"
                 style={{
+                  ...getLogoContainerStyle(theme.accent, '3px'),
                   width: isElite ? '62px' : '56px',
                   height: isElite ? '62px' : '56px',
-                  borderRadius: '9999px',
                   backgroundColor: '#ffffff',
-                  border: `3px solid ${theme.accent}`,
                   boxShadow: `0 8px 22px rgba(0,0,0,0.30), 0 0 0 3px ${theme.background}`,
                   flexShrink: 0,
-                  overflow: 'hidden',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
                 }}
               >
                 <img
@@ -363,14 +358,8 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
                     if (!cat) return `${business.name} à ${ville} - Professionnel en Tunisie`;
                     return `${business.name} à ${ville} - ${cat}`;
                   })()}
-                  style={{
-                    display: 'block',
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'contain',
-                    padding: '6px',
-                    borderRadius: '9999px',
-                  }}
+                  className="w-full h-full"
+                  style={getLogoStyle(displayImage)}
                   width={62}
                   height={62}
                   loading="lazy"

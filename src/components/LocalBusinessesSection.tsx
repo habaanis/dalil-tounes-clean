@@ -4,6 +4,7 @@ import { supabase } from '../lib/BoltDatabase';
 import { SafeImage } from './SafeImage';
 import { parseImageUrls } from '../lib/imagekitUtils';
 import { extractFrenchName } from '../lib/textNormalization';
+import { getLogoContainerStyle, getLogoStyle } from '../lib/logoUtils';
 
 interface LocalBusiness {
   id: string;
@@ -129,16 +130,15 @@ export const LocalBusinessesSection = ({ onCardClick }: LocalBusinessesSectionPr
                         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
 
                         {business.logo_url && (
-                          <div className="absolute top-2 right-2 w-10 h-10 rounded-full shadow-md overflow-hidden">
+                          <div
+                            className="absolute top-2 right-2 w-10 h-10 shadow-md"
+                            style={getLogoContainerStyle('#D4AF37', '2px')}
+                          >
                             <SafeImage
                               src={business.logo_url}
                               alt={`Logo ${business.nom}${business.ville ? ` - ${business.ville}` : ''} - Annuaire Tunisie Dalil Tounes`}
                               className="w-full h-full"
-                              style={{
-                                objectFit: 'cover',
-                                objectPosition: 'center',
-                                borderRadius: '50%'
-                              }}
+                              style={getLogoStyle(business.logo_url)}
                               fallbackType="icon"
                             />
                           </div>

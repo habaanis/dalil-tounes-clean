@@ -171,21 +171,21 @@ const SeoBusinessCard: React.FC<SeoBusinessCardProps> = ({ business }) => {
       className="group block bg-[#1a1a1a] border border-gray-800 hover:border-[#D4AF37]/50 rounded-xl p-5 transition-all duration-200 hover:shadow-[0_4px_24px_rgba(212,175,55,0.08)]"
     >
       <div className="flex items-start gap-4">
-        {business.logo_url ? (
+        <div
+          className="w-12 h-12 flex-shrink-0"
+          style={getLogoContainerStyle('#D4AF37', '2px')}
+        >
           <img
-            src={business.logo_url}
+            src={getLogoUrl(business.logo_url)}
             alt={`${business.nom}${locationLabel ? ` à ${locationLabel}` : ''}`}
-            className="w-12 h-12 rounded-lg object-cover flex-shrink-0 bg-gray-900"
+            className="w-full h-full"
+            style={getLogoStyle(business.logo_url)}
             loading="lazy"
             decoding="async"
             width={48}
             height={48}
           />
-        ) : (
-          <div className="w-12 h-12 rounded-lg bg-gray-800 flex-shrink-0 flex items-center justify-center">
-            <span className="text-gray-600 text-lg font-semibold">{business.nom.charAt(0).toUpperCase()}</span>
-          </div>
-        )}
+        </div>
 
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
