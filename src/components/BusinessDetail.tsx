@@ -56,6 +56,7 @@ import {
 import { useCategoryTranslation } from '../hooks/useCategoryTranslation';
 import { getMultilingualField } from '../lib/databaseI18n';
 import { getLogoUrl, getLogoStyle, getLogoContainerStyle } from '../lib/logoUtils';
+import { generateHashtags, formatHashtagsForShare } from '../lib/hashtagGenerator';
 import { HERO_IMAGE_URL } from '../constants/images';
 import GratuitCard from '../components/GratuitCard';
 
@@ -605,11 +606,23 @@ export const BusinessDetail = ({
     });
   };
 
+  const getShareHashtags = () => {
+    if (!business) return [];
+    const tier = mapSubscriptionToTier(business.statut_abonnement);
+    return generateHashtags({
+      category: translatedCategory || business.categorie,
+      ville: business.ville,
+      gouvernorat: business.gouvernorat,
+      isPremium: tier === 'premium' || tier === 'elite',
+    });
+  };
+
   const shareViaWhatsApp = () => {
     if (!business) return;
 
     const shareUrl = getBusinessShareUrl();
-    const shareText = `${displayName} - ${translatedCategory}\n${shareUrl}`;
+    const hashtags = getShareHashtags();
+    const shareText = `${displayName} - ${translatedCategory}\n${shareUrl}${formatHashtagsForShare(hashtags)}`;
 
     window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank');
   };
@@ -618,7 +631,8 @@ export const BusinessDetail = ({
     if (!business) return;
 
     const shareUrl = getBusinessShareUrl();
-    const shareText = `${displayName} - ${translatedCategory}`;
+    const hashtags = getShareHashtags();
+    const shareText = `${displayName} - ${translatedCategory}${formatHashtagsForShare(hashtags)}`;
 
     window.open(
       `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`,

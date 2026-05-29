@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { Facebook, Twitter, Instagram, Link2, Check } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { generateBlogHashtags, formatHashtagsForShare } from '../lib/hashtagGenerator';
 
 interface SocialShareButtonsProps {
   title: string;
   url?: string;
+  articleCategory?: string;
 }
 
-export const SocialShareButtons = ({ title, url }: SocialShareButtonsProps) => {
+export const SocialShareButtons = ({ title, url, articleCategory }: SocialShareButtonsProps) => {
   const { language } = useLanguage();
   const [copied, setCopied] = useState<'link' | 'instagram' | false>(false);
 
@@ -56,9 +58,13 @@ export const SocialShareButtons = ({ title, url }: SocialShareButtonsProps) => {
     }
   };
 
-  const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
-  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(`${title} ${shareUrl}`)}`;
-  const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(shareUrl)}`;
+  const hashtags = generateBlogHashtags(articleCategory);
+  const hashtagText = formatHashtagsForShare(hashtags);
+  const twitterHashtags = hashtags.map(h => h.replace('#', '')).join(',');
+
+  const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&quote=${encodeURIComponent(`${title}${hashtagText}`)}`;
+  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(`${title}\n${shareUrl}${hashtagText}`)}`;
+  const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(shareUrl)}&hashtags=${encodeURIComponent(twitterHashtags)}`;
 
   const btnBase =
     'inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5';

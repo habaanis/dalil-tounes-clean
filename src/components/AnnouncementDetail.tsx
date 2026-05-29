@@ -8,6 +8,7 @@ import ReportModal from './ReportModal';
 import AvisSection from './AvisSection';
 import { getSupabaseImageUrl } from '../lib/imageUtils';
 import { Toast } from './Toast';
+import { generateMarketplaceHashtags, formatHashtagsForShare } from '../lib/hashtagGenerator';
 
 interface AnnouncementDetailProps {
   announcementId: string;
@@ -107,14 +108,18 @@ export default function AnnouncementDetail({ announcementId, onClose }: Announce
   const handleShare = (platform: string) => {
     const url = window.location.href;
     const text = announcement ? `${announcement.title} - ${announcement.price} TND` : '';
+    const hashtags = announcement
+      ? generateMarketplaceHashtags(announcement.category, announcement.city)
+      : [];
+    const hashtagText = formatHashtagsForShare(hashtags);
 
     let shareUrl = '';
     switch (platform) {
       case 'whatsapp':
-        shareUrl = `https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`;
+        shareUrl = `https://wa.me/?text=${encodeURIComponent(`${text}\n${url}${hashtagText}`)}`;
         break;
       case 'facebook':
-        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(`${text}${hashtagText}`)}`;
         break;
       default:
         navigator.clipboard.writeText(url);

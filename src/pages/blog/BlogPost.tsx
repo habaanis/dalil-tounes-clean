@@ -86,7 +86,7 @@ export default function BlogPost() {
           style={{ fontFamily: 'inherit' }}
         />
 
-        <SocialShareButtons title={tr.title} url={typeof window !== 'undefined' ? window.location.href : ''} />
+        <SocialShareButtons title={tr.title} url={typeof window !== 'undefined' ? window.location.href : ''} articleCategory={tr.category} />
 
       </div>
     </div>
