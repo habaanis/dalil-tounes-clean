@@ -1,15 +1,15 @@
 type SectorHashtags = Record<string, string[]>;
 
 const SECTOR_HASHTAGS: SectorHashtags = {
-  'Santé': ['#SantéTunisie', '#BienÊtre'],
-  'Beauté': ['#BeautéTunisie', '#BienÊtre', '#SoinsTunisie'],
+  'Santé': ['#SanteTunisie', '#BienEtre'],
+  'Beauté': ['#BeauteTunisie', '#BienEtre', '#SoinsTunisie'],
   'Alimentation': ['#FoodTunisie', '#BonnesAdresses', '#GastronomeTunisie'],
   'Commerce': ['#ShoppingTunisie', '#BonnesAdresses'],
   'Juridique': ['#DroitTunisie', '#ConseilJuridique'],
   'Finance': ['#FinanceTunisie', '#ConseilFinancier'],
-  'Construction': ['#BâtimentTunisie', '#TravauxTunisie'],
+  'Construction': ['#BatimentTunisie', '#TravauxTunisie'],
   'Automobile': ['#AutoTunisie', '#GarageTunisie'],
-  'Éducation': ['#ÉducationTunisie', '#FormationTunisie'],
+  'Éducation': ['#EducationTunisie', '#FormationTunisie'],
   'Tourisme': ['#TourismeTunisie', '#VacancesTunisie', '#VisitTunisia'],
   'Immobilier': ['#ImmobilierTunisie', '#RealEstateTunisia'],
   'Technologie': ['#TechTunisie', '#DigitalTunisie'],
@@ -42,8 +42,12 @@ const CATEGORY_TO_SECTOR: Record<string, string> = {
   'Pressing': 'Services', 'Blanchisserie': 'Services', 'Nettoyage': 'Services',
 };
 
+function removeAccents(text: string): string {
+  return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
 function sanitizeHashtag(text: string): string {
-  return text
+  return removeAccents(text)
     .replace(/[\s\-''/().,;:!?]+/g, '')
     .replace(/[^\p{L}\p{N}_]/gu, '');
 }
@@ -130,10 +134,8 @@ export function generateHashtags(input: HashtagInput): string[] {
     tags.add('#PremiumTunisie');
   }
 
-  if (tags.size < 6) {
-    tags.add('#BusinessTunisie');
-  }
-  if (tags.size < 6) {
+  tags.add('#BusinessTunisie');
+  if (tags.size < 7) {
     tags.add('#GuideTunisie');
   }
 
@@ -184,3 +186,6 @@ export function generateMarketplaceHashtags(category?: string, ville?: string): 
 
   return Array.from(tags).slice(0, 8);
 }
+
+
+export { generateMarketplaceHashtags, formatHashtagsForShare }
