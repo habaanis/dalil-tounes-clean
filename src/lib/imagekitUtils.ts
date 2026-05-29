@@ -271,7 +271,7 @@ export function buildResponsiveSrcSet(
  */
 export function getOgImageUrl(url: string | null | undefined): string {
   if (!url || !isImageKitUrl(url)) {
-    return url || 'https://dalil-tounes.com/og-image.jpg';
+    return url || 'https://dalil-tounes.com/images/logo_dalil_tounes_crop.png';
   }
   const base = url.split('?')[0];
   return `${base}?tr=w-1200,h-630,fo-auto,q-85,f-auto`;

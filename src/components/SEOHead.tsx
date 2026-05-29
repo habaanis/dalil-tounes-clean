@@ -52,7 +52,7 @@ export const SEOHead = ({
   title,
   description,
   keywords,
-  image = 'https://dalil-tounes.com/og-image.jpg',
+  image,
   url = window.location.href,
   type = 'website',
   canonical,
@@ -71,7 +71,9 @@ export const SEOHead = ({
     // Canonical : toujours https://dalil-tounes.com/<chemin propre>
     const resolvedPath = currentPath || window.location.pathname || '/';
     const canonicalUrl = canonical || buildCanonicalUrl(resolvedPath);
-    const optimizedImage = isImageKitUrl(image) ? getOgImageUrl(image) : image;
+    const DEFAULT_OG_IMAGE = 'https://dalil-tounes.com/images/logo_dalil_tounes_crop.png';
+    const resolvedImage = image || DEFAULT_OG_IMAGE;
+    const optimizedImage = isImageKitUrl(resolvedImage) ? getOgImageUrl(resolvedImage) : resolvedImage;
 
     const metaTags = [
       // Basic meta tags
