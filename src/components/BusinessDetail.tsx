@@ -595,17 +595,6 @@ export const BusinessDetail = ({
     return generateShareUrl(business.nom, business.id);
   };
 
-  const copyLink = () => {
-    if (!business) return;
-
-    const shareUrl = getBusinessShareUrl();
-
-    navigator.clipboard.writeText(shareUrl).then(() => {
-      setLinkCopied(true);
-      setTimeout(() => setLinkCopied(false), 2000);
-    });
-  };
-
   const getShareHashtags = () => {
     if (!business) return [];
     const tier = mapSubscriptionToTier(business.statut_abonnement);
@@ -638,6 +627,43 @@ export const BusinessDetail = ({
       `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`,
       '_blank'
     );
+  };
+
+  const shareViaTwitter = () => {
+    if (!business) return;
+
+    const shareUrl = getBusinessShareUrl();
+    const hashtags = getShareHashtags();
+    const twitterHashtags = hashtags.map(h => h.replace('#', '')).join(',');
+
+    window.open(
+      `https://twitter.com/intent/tweet?text=${encodeURIComponent(`${displayName} - ${translatedCategory}`)}&url=${encodeURIComponent(shareUrl)}&hashtags=${encodeURIComponent(twitterHashtags)}`,
+      '_blank'
+    );
+  };
+
+  const shareViaFacebook = () => {
+    if (!business) return;
+
+    const shareUrl = getBusinessShareUrl();
+
+    window.open(
+      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
+      '_blank'
+    );
+  };
+
+  const copyShareMessage = () => {
+    if (!business) return;
+
+    const shareUrl = getBusinessShareUrl();
+    const hashtags = getShareHashtags();
+    const message = `${displayName} - ${translatedCategory}\n${shareUrl}${formatHashtagsForShare(hashtags)}`;
+
+    navigator.clipboard.writeText(message).then(() => {
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 2000);
+    });
   };
 
   if (loading) {
@@ -1032,7 +1058,7 @@ export const BusinessDetail = ({
               {renderStatutCarteBadge(business.statut_carte)}
 
               <button
-                onClick={copyLink}
+                onClick={copyShareMessage}
                 className="flex-shrink-0 transition-all hover:scale-110"
                 style={{ color: linkCopied ? '#10B981' : colors.gold }}
                 title={linkCopied ? text.linkCopied : 'Copier le lien'}
@@ -1667,7 +1693,7 @@ export const BusinessDetail = ({
                 {text.recommendText}
               </p>
 
-              <div className={`flex items-center gap-2 ${isRTL ? 'justify-end' : 'justify-center'} px-1`}>
+              <div className={`flex items-center gap-2 ${isRTL ? 'justify-end' : 'justify-center'} px-1 flex-wrap`}>
                 <button
                   onClick={shareViaWhatsApp}
                   className="flex items-center justify-center w-8 h-8 rounded-full transition-all hover:scale-110"
@@ -1681,6 +1707,47 @@ export const BusinessDetail = ({
                   title={text.shareViaWhatsApp}
                 >
                   <span style={{ color: colors.gold, fontSize: '16px' }}>☏</span>
+                </button>
+
+                <button
+                  onClick={shareViaTelegram}
+                  className="flex items-center justify-center w-8 h-8 rounded-full transition-all hover:scale-110"
+                  style={{
+                    backgroundColor: `${colors.gold}15`,
+                    border: `1px solid ${colors.gold}30`,
+                    position: 'relative',
+                    zIndex: 50,
+                    pointerEvents: 'auto',
+                  }}
+                  title={text.shareViaTelegram}
+                >
+                  <span style={{ color: colors.gold, fontSize: '14px' }}>✈</span>
+                </button>
+
+                <button
+                  onClick={shareViaTwitter}
+                  className="flex items-center justify-center w-8 h-8 rounded-full transition-all hover:scale-110 bg-black"
+                  style={{
+                    position: 'relative',
+                    zIndex: 50,
+                    pointerEvents: 'auto',
+                  }}
+                  title="Partager sur X"
+                >
+                  <span className="text-white text-xs font-bold">X</span>
+                </button>
+
+                <button
+                  onClick={shareViaFacebook}
+                  className="flex items-center justify-center w-8 h-8 rounded-full transition-all hover:scale-110 bg-[#1877F2]"
+                  style={{
+                    position: 'relative',
+                    zIndex: 50,
+                    pointerEvents: 'auto',
+                  }}
+                  title="Partager sur Facebook"
+                >
+                  <Facebook size={14} className="text-white" />
                 </button>
 
                 <a
@@ -1698,21 +1765,6 @@ export const BusinessDetail = ({
                 >
                   <span className="text-white text-xs font-bold">M</span>
                 </a>
-
-                <button
-                  onClick={shareViaTelegram}
-                  className="flex items-center justify-center w-8 h-8 rounded-full transition-all hover:scale-110"
-                  style={{
-                    backgroundColor: `${colors.gold}15`,
-                    border: `1px solid ${colors.gold}30`,
-                    position: 'relative',
-                    zIndex: 50,
-                    pointerEvents: 'auto',
-                  }}
-                  title={text.shareViaTelegram}
-                >
-                  <span style={{ color: colors.gold, fontSize: '14px' }}>✈</span>
-                </button>
               </div>
             </div>
           </div>

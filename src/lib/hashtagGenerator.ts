@@ -186,6 +186,3 @@ export function generateMarketplaceHashtags(category?: string, ville?: string): 
 
   return Array.from(tags).slice(0, 8);
 }
-
-
-export { generateMarketplaceHashtags, formatHashtagsForShare }
