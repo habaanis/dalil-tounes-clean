@@ -798,18 +798,142 @@ export const BusinessDetail = ({
       )}
 
       {tier === 'gratuit' && (
-        <div className="flex justify-center py-4">
-          <GratuitCard
-            name={displayName}
-            logoUrl={business.logo_url}
-            category={translatedCategory}
-            ville={business.ville}
-            gouvernorat={business.gouvernorat}
-            horaires_ok={business.horaires_ok}
-            telephone={business.telephone}
-            language={language}
-            statut_carte={business.statut_carte}
-          />
+        <div className="py-4 space-y-3">
+          <div className="flex justify-center">
+            <GratuitCard
+              name={displayName}
+              logoUrl={business.logo_url}
+              category={translatedCategory}
+              ville={business.ville}
+              gouvernorat={business.gouvernorat}
+              horaires_ok={business.horaires_ok}
+              telephone={business.telephone}
+              language={language}
+              statut_carte={business.statut_carte}
+            />
+          </div>
+
+          {business.horaires_ok &&
+            (() => {
+              const parsedSchedule = getParsedSchedule(business.horaires_ok);
+              const now = new Date();
+              const todayIndex = (now.getDay() + 6) % 7;
+
+              return (
+                <div className="text-left bg-white rounded-xl border border-gray-200 p-3">
+                  <button
+                    onClick={() => setShowFullSchedule(!showFullSchedule)}
+                    className="w-full flex items-center justify-between p-1.5 rounded-lg transition-all bg-gray-50 hover:bg-gray-100"
+                  >
+                    <span className="text-gray-800 font-semibold text-xs">{text.openingHours}</span>
+                    <div className="flex items-center gap-1">
+                      <span
+                        className={`text-[11px] font-semibold px-1.5 py-0.5 rounded-full ${
+                          parsedSchedule.isCurrentlyOpen
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-red-100 text-red-700'
+                        }`}
+                      >
+                        {parsedSchedule.isCurrentlyOpen
+                          ? translateOpenStatus(language)
+                          : translateClosedStatus(language)}
+                      </span>
+                      <ChevronDown
+                        size={12}
+                        className="transition-transform text-gray-500"
+                        style={{ transform: showFullSchedule ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                      />
+                    </div>
+                  </button>
+
+                  <div
+                    style={{
+                      maxHeight: showFullSchedule ? '300px' : '0',
+                      overflow: 'hidden',
+                      transition: 'max-height 0.3s ease, opacity 0.3s ease',
+                      opacity: showFullSchedule ? 1 : 0,
+                    }}
+                  >
+                    <div className="rounded-lg p-2 mt-1.5 bg-gray-50">
+                      {parsedSchedule.schedule.length > 0 ? (
+                        <div className="grid grid-cols-[auto_1fr] gap-x-2 gap-y-0.5">
+                          {parsedSchedule.schedule.map((day, index) => {
+                            const dayIndex2 = [
+                              'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche',
+                            ].findIndex((d) => day.day.includes(d));
+                            const isToday = dayIndex2 === todayIndex;
+
+                            return (
+                              <React.Fragment key={`schedule-g-${index}`}>
+                                <span
+                                  className="text-[11px] rounded px-1 py-0.5"
+                                  style={{
+                                    fontWeight: isToday ? '700' : '500',
+                                    color: day.isOpen
+                                      ? isToday ? '#1F2937' : '#6B7280'
+                                      : '#EF4444',
+                                    backgroundColor: isToday ? 'rgba(59, 130, 246, 0.08)' : 'transparent',
+                                  }}
+                                >
+                                  {getDayName(dayIndex2, language)}
+                                </span>
+                                <span
+                                  className="text-[11px] text-left rounded px-1 py-0.5"
+                                  style={{
+                                    fontWeight: isToday ? '600' : '400',
+                                    color: day.isOpen
+                                      ? isToday ? '#1F2937' : '#9CA3AF'
+                                      : '#EF4444',
+                                    backgroundColor: isToday ? 'rgba(59, 130, 246, 0.08)' : 'transparent',
+                                  }}
+                                >
+                                  {day.hours}
+                                </span>
+                              </React.Fragment>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <p className="text-gray-400 text-[10px] italic">
+                          {translateScheduleNotAvailable(language)}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+          {business.qr_code_url && (
+            <div className="flex flex-col items-center bg-white rounded-xl border border-gray-200 p-3">
+              <div ref={qrCodeRef} className="inline-block p-0.5 rounded bg-white mb-0.5">
+                <img
+                  src={business.qr_code_url.startsWith('http') ? business.qr_code_url : `https://kmvjegbtroksjqaqliyv.supabase.co/storage/v1/object/public/entreprises/${business.qr_code_url}`}
+                  alt={`QR Code ${business.nom}`}
+                  width={72}
+                  height={72}
+                  loading="lazy"
+                  decoding="async"
+                  style={{ display: 'block', imageRendering: 'pixelated' }}
+                  onError={(e) => {
+                    const img = e.currentTarget;
+                    img.style.display = 'none';
+                  }}
+                />
+              </div>
+              <p className="text-[8px] font-medium mb-0.5 text-center text-[#D4AF37]">
+                Scannez pour enregistrer le contact
+              </p>
+              <button
+                onClick={downloadQRCode}
+                className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-full transition-all text-[8px] font-medium"
+                style={{ backgroundColor: 'rgba(212,175,55,0.12)', color: '#D4AF37' }}
+              >
+                <Download size={8} />
+                {text.downloadQR}
+              </button>
+            </div>
+          )}
         </div>
       )}
 
@@ -1601,19 +1725,23 @@ export const BusinessDetail = ({
               )}
             </div>
 
-            {(tier === 'artisan' || tier === 'premium' || tier === 'elite') && (
+            {(tier === 'artisan' || tier === 'premium' || tier === 'elite' || business.qr_code_url) && (
               <div className="pt-0.5">
                 <div className="flex flex-col items-center">
                   <div ref={qrCodeRef} className="inline-block p-0.5 rounded bg-white mb-0.5">
                     {business.qr_code_url ? (
                       <img
-                        src={business.qr_code_url}
+                        src={business.qr_code_url.startsWith('http') ? business.qr_code_url : `https://kmvjegbtroksjqaqliyv.supabase.co/storage/v1/object/public/entreprises/${business.qr_code_url}`}
                         alt={`QR Code ${business.nom}`}
                         width={72}
                         height={72}
                         loading="lazy"
                         decoding="async"
-                        style={{ display: 'block' }}
+                        style={{ display: 'block', imageRendering: 'pixelated' }}
+                        onError={(e) => {
+                          const img = e.currentTarget;
+                          img.style.display = 'none';
+                        }}
                       />
                     ) : (
                       <Suspense fallback={<div style={{ width: 60, height: 60, background: '#FFF' }} />}>
