@@ -473,7 +473,8 @@ export const BusinessDetail = ({
       services: 'Services',
       contact: 'Contact',
       qrCodeTitle: 'QR Code',
-      downloadQR: 'Télécharger',
+      downloadQR: 'Télécharger le QR',
+      qrLabel: 'QR de partage professionnel',
       directions: 'Itinéraire GPS',
       leaveReview: 'Laissez votre avis',
       openingHours: 'Horaires',
@@ -490,7 +491,8 @@ export const BusinessDetail = ({
       services: 'Services',
       contact: 'Contact',
       qrCodeTitle: 'QR Code',
-      downloadQR: 'Download',
+      downloadQR: 'Download QR',
+      qrLabel: 'Professional sharing QR',
       directions: 'Get Directions',
       leaveReview: 'Leave a Review',
       openingHours: 'Opening Hours',
@@ -507,7 +509,8 @@ export const BusinessDetail = ({
       services: 'الخدمات',
       contact: 'اتصال',
       qrCodeTitle: 'رمز QR',
-      downloadQR: 'تحميل',
+      downloadQR: 'تحميل QR',
+      qrLabel: 'رمز QR للمشاركة المهنية',
       directions: 'الاتجاهات',
       leaveReview: 'اترك تقييمك',
       openingHours: 'ساعات العمل',
@@ -524,7 +527,8 @@ export const BusinessDetail = ({
       services: 'Servizi',
       contact: 'Contatto',
       qrCodeTitle: 'QR Code',
-      downloadQR: 'Scarica',
+      downloadQR: 'Scarica QR',
+      qrLabel: 'QR di condivisione professionale',
       directions: 'Indicazioni',
       leaveReview: 'Lascia una recensione',
       openingHours: 'Orari',
@@ -541,7 +545,8 @@ export const BusinessDetail = ({
       services: 'Услуги',
       contact: 'Контакт',
       qrCodeTitle: 'QR код',
-      downloadQR: 'Скачать',
+      downloadQR: 'Скачать QR',
+      qrLabel: 'QR для профессионального обмена',
       directions: 'Маршрут',
       leaveReview: 'Оставить отзыв',
       openingHours: 'Часы работы',
@@ -1611,24 +1616,24 @@ export const BusinessDetail = ({
 
             {(tier === 'artisan' || tier === 'premium' || tier === 'elite') && (
               <div className="pt-0.5">
-                <div className="flex flex-col items-center">
-                  <div ref={qrCodeRef} className="inline-block rounded bg-white mb-0.5" style={{ padding: '4px' }}>
+                <div className="flex flex-col items-center gap-0.5">
+                  <div ref={qrCodeRef} className="inline-block rounded bg-white" style={{ padding: '3px' }}>
                     {business.qr_code_url && isQrCodeImageUrl(business.qr_code_url) ? (
                       <img
                         src={business.qr_code_url}
                         alt={`QR Code ${business.nom}`}
-                        width={96}
-                        height={96}
+                        width={88}
+                        height={88}
                         loading="lazy"
                         decoding="async"
-                        style={{ display: 'block', width: '96px', height: '96px', objectFit: 'contain' }}
+                        style={{ display: 'block', width: '88px', height: '88px', objectFit: 'contain' }}
                       />
                     ) : (
-                      <Suspense fallback={<div style={{ width: 96, height: 96, background: '#FFF' }} />}>
+                      <Suspense fallback={<div style={{ width: 88, height: 88, background: '#FFF' }} />}>
                         <QRCodeSVG
                           value={business.qr_code_url || window.location.href}
-                          size={96}
-                          level="H"
+                          size={88}
+                          level="M"
                           includeMargin={true}
                           fgColor="#000000"
                           bgColor="#FFFFFF"
@@ -1638,15 +1643,15 @@ export const BusinessDetail = ({
                   </div>
 
                   <p
-                    className="text-[7px] font-medium mb-0.5 text-center"
+                    className="text-[7px] font-medium text-center leading-tight"
                     style={{ color: colors.gold }}
                   >
-                    Scannez pour enregistrer le contact
+                    {text.qrLabel}
                   </p>
 
                   <button
                     onClick={downloadQRCode}
-                    className="flex items-center gap-0.5 px-1 py-0.5 rounded-full transition-all text-[7px] font-medium"
+                    className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-full transition-all text-[7px] font-medium"
                     style={{
                       backgroundColor: `${colors.gold}20`,
                       color: colors.gold,
