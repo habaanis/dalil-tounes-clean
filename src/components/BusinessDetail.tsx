@@ -328,6 +328,7 @@ export const BusinessDetail = ({
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [showPhotosModal, setShowPhotosModal] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
+  const [showQrCode, setShowQrCode] = useState(false);
 
   const actualBusinessId = businessId || businessProp?.id;
 
@@ -1616,50 +1617,68 @@ export const BusinessDetail = ({
 
             {(tier === 'artisan' || tier === 'premium' || tier === 'elite') && (
               <div className="pt-0.5">
-                <div className="flex flex-col items-center gap-0.5">
-                  <div ref={qrCodeRef} className="inline-block rounded bg-white" style={{ padding: '3px' }}>
-                    {business.qr_code_url && isQrCodeImageUrl(business.qr_code_url) ? (
-                      <img
-                        src={business.qr_code_url}
-                        alt={`QR Code ${business.nom}`}
-                        width={88}
-                        height={88}
-                        loading="lazy"
-                        decoding="async"
-                        style={{ display: 'block', width: '88px', height: '88px', objectFit: 'contain' }}
-                      />
-                    ) : (
-                      <Suspense fallback={<div style={{ width: 88, height: 88, background: '#FFF' }} />}>
-                        <QRCodeSVG
-                          value={business.qr_code_url || window.location.href}
-                          size={88}
-                          level="M"
-                          includeMargin={true}
-                          fgColor="#000000"
-                          bgColor="#FFFFFF"
-                        />
-                      </Suspense>
-                    )}
-                  </div>
-
-                  <p
-                    className="text-[7px] font-medium text-center leading-tight"
-                    style={{ color: colors.gold }}
-                  >
-                    {text.qrLabel}
-                  </p>
-
-                  <button
-                    onClick={downloadQRCode}
-                    className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-full transition-all text-[7px] font-medium"
+                <button
+                  onClick={() => setShowQrCode(!showQrCode)}
+                  className="w-full flex items-center justify-between p-1.5 rounded-lg transition-all bg-white/5 hover:bg-white/10"
+                  style={{ border: `1px solid ${colors.gold}20` }}
+                >
+                  <span className="text-white font-semibold text-xs">{text.qrLabel}</span>
+                  <ChevronDown
+                    size={12}
+                    className="transition-transform"
                     style={{
-                      backgroundColor: `${colors.gold}20`,
                       color: colors.gold,
+                      transform: showQrCode ? 'rotate(180deg)' : 'rotate(0deg)',
                     }}
-                  >
-                    <Download size={7} />
-                    {text.downloadQR}
-                  </button>
+                  />
+                </button>
+
+                <div
+                  style={{
+                    maxHeight: showQrCode ? '200px' : '0',
+                    overflow: 'hidden',
+                    transition: 'max-height 0.3s ease, opacity 0.3s ease',
+                    opacity: showQrCode ? 1 : 0,
+                  }}
+                >
+                  <div className="flex flex-col items-center gap-1 pt-2 pb-1">
+                    <div ref={qrCodeRef} className="inline-block rounded bg-white" style={{ padding: '3px' }}>
+                      {business.qr_code_url && isQrCodeImageUrl(business.qr_code_url) ? (
+                        <img
+                          src={business.qr_code_url}
+                          alt={`QR Code ${business.nom}`}
+                          width={88}
+                          height={88}
+                          loading="lazy"
+                          decoding="async"
+                          style={{ display: 'block', width: '88px', height: '88px', objectFit: 'contain' }}
+                        />
+                      ) : (
+                        <Suspense fallback={<div style={{ width: 88, height: 88, background: '#FFF' }} />}>
+                          <QRCodeSVG
+                            value={business.qr_code_url || window.location.href}
+                            size={88}
+                            level="M"
+                            includeMargin={true}
+                            fgColor="#000000"
+                            bgColor="#FFFFFF"
+                          />
+                        </Suspense>
+                      )}
+                    </div>
+
+                    <button
+                      onClick={downloadQRCode}
+                      className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-full transition-all text-[7px] font-medium"
+                      style={{
+                        backgroundColor: `${colors.gold}20`,
+                        color: colors.gold,
+                      }}
+                    >
+                      <Download size={7} />
+                      {text.downloadQR}
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
