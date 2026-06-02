@@ -825,31 +825,54 @@ export const BusinessDetail = ({
             >
               <img
                 src={getFullImageUrl(business.image_url)}
-                alt={(() => {
-                  const ville = business.ville || '';
-                  const cat = cleanAltText(business.sous_categories || '');
-
-                  if (!ville && !cat) return `${business.nom} - Professionnel en Tunisie`;
-
-                  return `Couverture de ${business.nom} - ${cat || 'Professionnel'}${
-                    ville ? ` à ${ville}` : ''
-                  }`;
-                })()}
+                aria-hidden="true"
+                alt=""
                 style={{
+                  position: 'absolute',
+                  inset: 0,
                   width: '100%',
                   height: '100%',
                   objectFit: 'cover',
                   objectPosition: 'center',
-                  opacity: 0.85,
+                  filter: 'blur(12px)',
+                  opacity: 0.5,
+                  transform: 'scale(1.15)',
                   display: 'block',
-                  imageRendering: 'auto',
-                  minWidth: 0,
                 }}
                 loading="lazy"
                 referrerPolicy="no-referrer"
                 onError={(e) => {
                   const img = e.currentTarget;
+                  if (img.src !== HERO_IMAGE_URL && !img.src.endsWith(HERO_IMAGE_URL)) {
+                    img.onerror = null;
+                    img.src = HERO_IMAGE_URL;
+                  }
+                }}
+                decoding="async"
+              />
 
+              <img
+                src={getFullImageUrl(business.image_url)}
+                alt={(() => {
+                  const ville = business.ville || '';
+                  const cat = cleanAltText(business.sous_categories || '');
+                  if (!ville && !cat) return `${business.nom} - Professionnel en Tunisie`;
+                  return `Couverture de ${business.nom} - ${cat || 'Professionnel'}${
+                    ville ? ` à ${ville}` : ''
+                  }`;
+                })()}
+                style={{
+                  position: 'relative',
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  objectPosition: 'center',
+                  display: 'block',
+                }}
+                loading="lazy"
+                referrerPolicy="no-referrer"
+                onError={(e) => {
+                  const img = e.currentTarget;
                   if (img.src !== HERO_IMAGE_URL && !img.src.endsWith(HERO_IMAGE_URL)) {
                     img.onerror = null;
                     img.src = HERO_IMAGE_URL;
@@ -863,6 +886,7 @@ export const BusinessDetail = ({
                   position: 'absolute',
                   inset: 0,
                   background: `linear-gradient(to bottom, transparent 45%, ${colors.background}cc 100%)`,
+                  pointerEvents: 'none',
                 }}
               />
             </div>
