@@ -1588,25 +1588,25 @@ export const BusinessDetail = ({
             {(tier === 'artisan' || tier === 'premium' || tier === 'elite') && (
               <div className="pt-0.5">
                 <div className="flex flex-col items-center">
-                  <div ref={qrCodeRef} className="inline-block rounded bg-white mb-0.5" style={{ padding: '6px' }}>
+                  <div ref={qrCodeRef} className="inline-block rounded bg-white mb-0.5" style={{ padding: '4px' }}>
                     {business.qr_code_url && isQrCodeImageUrl(business.qr_code_url) ? (
                       <img
                         src={business.qr_code_url}
                         alt={`QR Code ${business.nom}`}
-                        width={120}
-                        height={120}
+                        width={96}
+                        height={96}
                         loading="lazy"
                         decoding="async"
-                        style={{ display: 'block', width: '120px', height: '120px', objectFit: 'contain' }}
+                        style={{ display: 'block', width: '96px', height: '96px', objectFit: 'contain' }}
                       />
                     ) : (
-                      <Suspense fallback={<div style={{ width: 120, height: 120, background: '#FFF' }} />}>
+                      <Suspense fallback={<div style={{ width: 96, height: 96, background: '#FFF' }} />}>
                         <QRCodeSVG
                           value={business.qr_code_url || window.location.href}
-                          size={120}
+                          size={96}
                           level="H"
-                          includeMargin={false}
-                          fgColor={colors.gold}
+                          includeMargin={true}
+                          fgColor="#000000"
                           bgColor="#FFFFFF"
                         />
                       </Suspense>
@@ -1614,7 +1614,7 @@ export const BusinessDetail = ({
                   </div>
 
                   <p
-                    className="text-[8px] font-medium mb-0.5 text-center"
+                    className="text-[7px] font-medium mb-0.5 text-center"
                     style={{ color: colors.gold }}
                   >
                     Scannez pour enregistrer le contact
@@ -1622,13 +1622,13 @@ export const BusinessDetail = ({
 
                   <button
                     onClick={downloadQRCode}
-                    className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-full transition-all text-[8px] font-medium"
+                    className="flex items-center gap-0.5 px-1 py-0.5 rounded-full transition-all text-[7px] font-medium"
                     style={{
                       backgroundColor: `${colors.gold}20`,
                       color: colors.gold,
                     }}
                   >
-                    <Download size={8} />
+                    <Download size={7} />
                     {text.downloadQR}
                   </button>
                 </div>
