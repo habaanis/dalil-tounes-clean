@@ -78,6 +78,16 @@ function getFullImageUrl(url?: string | null): string {
   return `https://kmvjegbtroksjqaqliyv.supabase.co/storage/v1/object/public/entreprises/${finalUrl}`;
 }
 
+function isQrCodeImageUrl(url: string): boolean {
+  const lower = url.toLowerCase();
+  if (/\.(png|jpg|jpeg|webp|svg|gif)(\?|$)/.test(lower)) return true;
+  if (lower.includes('api.qrserver.com')) return true;
+  if (lower.includes('imagekit.io')) return true;
+  if (lower.includes('supabase.co/storage')) return true;
+  if (lower.includes('qr-code') || lower.includes('qrcode')) return true;
+  return false;
+}
+
 function buildWhatsAppUrl(raw: string): string {
   const digits = raw.replace(/\D/g, '');
   if (!digits) return '';
@@ -1578,24 +1588,24 @@ export const BusinessDetail = ({
             {(tier === 'artisan' || tier === 'premium' || tier === 'elite') && (
               <div className="pt-0.5">
                 <div className="flex flex-col items-center">
-                  <div ref={qrCodeRef} className="inline-block p-0.5 rounded bg-white mb-0.5">
-                    {business.qr_code_url ? (
+                  <div ref={qrCodeRef} className="inline-block rounded bg-white mb-0.5" style={{ padding: '6px' }}>
+                    {business.qr_code_url && isQrCodeImageUrl(business.qr_code_url) ? (
                       <img
                         src={business.qr_code_url}
                         alt={`QR Code ${business.nom}`}
-                        width={72}
-                        height={72}
+                        width={120}
+                        height={120}
                         loading="lazy"
                         decoding="async"
-                        style={{ display: 'block' }}
+                        style={{ display: 'block', width: '120px', height: '120px', objectFit: 'contain' }}
                       />
                     ) : (
-                      <Suspense fallback={<div style={{ width: 60, height: 60, background: '#FFF' }} />}>
+                      <Suspense fallback={<div style={{ width: 120, height: 120, background: '#FFF' }} />}>
                         <QRCodeSVG
-                          value={window.location.href}
-                          size={60}
+                          value={business.qr_code_url || window.location.href}
+                          size={120}
                           level="H"
-                          includeMargin={true}
+                          includeMargin={false}
                           fgColor={colors.gold}
                           bgColor="#FFFFFF"
                         />
