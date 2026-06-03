@@ -213,8 +213,6 @@ function normalizeBusiness(business: any): any {
   };
 }
 
-const LAT_LNG_PATTERN = /^\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*$/;
-
 export function normalizeMapsUrl(
   value: unknown,
   latitude: unknown,
@@ -227,12 +225,7 @@ export function normalizeMapsUrl(
   for (const raw of candidates) {
     if (typeof raw !== 'string') continue;
     const trimmed = raw.trim();
-    if (!trimmed) continue;
     if (/^https?:\/\//i.test(trimmed)) return trimmed;
-    const m = trimmed.match(LAT_LNG_PATTERN);
-    if (m) {
-      return `https://www.google.com/maps/search/?api=1&query=${m[1]},${m[2]}`;
-    }
   }
 
   const lat = Number(latitude);
