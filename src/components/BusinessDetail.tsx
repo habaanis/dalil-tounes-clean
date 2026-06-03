@@ -452,6 +452,15 @@ export const BusinessDetail = ({
           return;
         }
 
+        console.log(
+          '[Supabase raw business GPS]',
+          data?.BTN_Maps,
+          data?.google_url,
+          data?.adresse,
+          data?.latitude,
+          data?.longitude
+        );
+
         const mappedBusiness = {
           ...data,
           image_url: data.image_url || data.imageUrl || data.Image,
@@ -460,6 +469,15 @@ export const BusinessDetail = ({
         };
 
         const normalized = normalizeBusiness(mappedBusiness);
+
+        console.log(
+          '[Normalized business GPS]',
+          normalized?.['BTN_Maps'],
+          normalized?.google_url,
+          normalized?.adresse,
+          normalized?.latitude,
+          normalized?.longitude
+        );
 
         setBusiness(normalized as Business);
 
