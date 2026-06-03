@@ -213,21 +213,36 @@ function normalizeBusiness(business: any): any {
   };
 }
 
-function buildMapsUrl(business: any): string | null {
-  const btnMaps = business?.['BTN_Maps'];
-  if (typeof btnMaps === 'string' && btnMaps.trim()) return btnMaps.trim();
+const LAT_LNG_PATTERN = /^\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*$/;
 
-  const googleUrl = business?.google_url;
-  if (typeof googleUrl === 'string' && googleUrl.trim()) return googleUrl.trim();
+export function normalizeMapsUrl(
+  value: unknown,
+  latitude: unknown,
+  longitude: unknown,
+  adresse: unknown,
+  ville: unknown,
+  gouvernorat: unknown
+): string | null {
+  const candidates = Array.isArray(value) ? value : [value];
+  for (const raw of candidates) {
+    if (typeof raw !== 'string') continue;
+    const trimmed = raw.trim();
+    if (!trimmed) continue;
+    if (/^https?:\/\//i.test(trimmed)) return trimmed;
+    const m = trimmed.match(LAT_LNG_PATTERN);
+    if (m) {
+      return `https://www.google.com/maps/search/?api=1&query=${m[1]},${m[2]}`;
+    }
+  }
 
-  const lat = Number(business?.latitude);
-  const lng = Number(business?.longitude);
+  const lat = Number(latitude);
+  const lng = Number(longitude);
   if (Number.isFinite(lat) && Number.isFinite(lng) && (lat !== 0 || lng !== 0)) {
     return `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
   }
 
-  const parts = [business?.adresse, business?.ville, business?.gouvernorat]
-    .filter((s) => typeof s === 'string' && s.trim())
+  const parts = [adresse, ville, gouvernorat]
+    .filter((s): s is string => typeof s === 'string' && s.trim().length > 0)
     .join(' ')
     .trim();
   if (parts) {
@@ -235,6 +250,17 @@ function buildMapsUrl(business: any): string | null {
   }
 
   return null;
+}
+
+function buildMapsUrl(business: any): string | null {
+  return normalizeMapsUrl(
+    [business?.['BTN_Maps'], business?.google_url],
+    business?.latitude,
+    business?.longitude,
+    business?.adresse,
+    business?.ville,
+    business?.gouvernorat
+  );
 }
 
 interface BusinessDetailProps {

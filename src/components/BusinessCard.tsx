@@ -8,6 +8,7 @@ import { extractMainCategory, getAllKeywords } from '../lib/categoryDisplay';
 import { getFeaturedImageUrl } from '../lib/imagekitUtils';
 import { mapSubscriptionToTier } from '../lib/subscriptionTiers';
 import SignatureCard from './SignatureCard';
+import { normalizeMapsUrl } from './BusinessDetail';
 import {
   isCurrentlyOpen,
   translateOpenStatus,
@@ -525,22 +526,14 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
                   </button>
 
                   {(() => {
-                    const btnMaps = business['BTN_Maps'];
-                    const googleUrl = business.google_url;
-                    const lat = Number(business.latitude);
-                    const lng = Number(business.longitude);
-                    const addressParts = [business.adresse, business.ville, business.gouvernorat]
-                      .filter((s) => typeof s === 'string' && s.trim())
-                      .join(' ')
-                      .trim();
-                    let mapsUrl: string | null = null;
-                    if (typeof btnMaps === 'string' && btnMaps.trim()) mapsUrl = btnMaps.trim();
-                    else if (typeof googleUrl === 'string' && googleUrl.trim()) mapsUrl = googleUrl.trim();
-                    else if (Number.isFinite(lat) && Number.isFinite(lng) && (lat !== 0 || lng !== 0)) {
-                      mapsUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
-                    } else if (addressParts) {
-                      mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${addressParts} Tunisie`)}`;
-                    }
+                    const mapsUrl = normalizeMapsUrl(
+                      [business['BTN_Maps'], business.google_url],
+                      business.latitude,
+                      business.longitude,
+                      business.adresse,
+                      business.ville,
+                      business.gouvernorat
+                    );
                     if (!mapsUrl) return null;
                     return (
                     <a
