@@ -55,6 +55,9 @@ interface BusinessCardProps {
     description_ru?: string | null;
     google_url?: string | null;
     'BTN_Maps'?: string | null;
+    latitude?: number | string | null;
+    longitude?: number | string | null;
+    gouvernorat?: string | null;
     featured?: boolean | null;
     is_premium?: boolean | null;
     approved?: boolean | null;
@@ -521,12 +524,27 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
                     <span>{showAddress ? "Masquer l'adresse" : "Afficher l'adresse"}</span>
                   </button>
 
-                  {(business['BTN_Maps'] || business.adresse) && (
+                  {(() => {
+                    const btnMaps = business['BTN_Maps'];
+                    const googleUrl = business.google_url;
+                    const lat = Number(business.latitude);
+                    const lng = Number(business.longitude);
+                    const addressParts = [business.adresse, business.ville, business.gouvernorat]
+                      .filter((s) => typeof s === 'string' && s.trim())
+                      .join(' ')
+                      .trim();
+                    let mapsUrl: string | null = null;
+                    if (typeof btnMaps === 'string' && btnMaps.trim()) mapsUrl = btnMaps.trim();
+                    else if (typeof googleUrl === 'string' && googleUrl.trim()) mapsUrl = googleUrl.trim();
+                    else if (Number.isFinite(lat) && Number.isFinite(lng) && (lat !== 0 || lng !== 0)) {
+                      mapsUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+                    } else if (addressParts) {
+                      mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${addressParts} Tunisie`)}`;
+                    }
+                    if (!mapsUrl) return null;
+                    return (
                     <a
-                      href={
-                        business['BTN_Maps'] ||
-                        `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(business.adresse || '')}`
-                      }
+                      href={mapsUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
@@ -550,7 +568,8 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
                       <Navigation size={12} style={{ color: theme.accent, flexShrink: 0 }} />
                       <span>GPS</span>
                     </a>
-                  )}
+                    );
+                  })()}
                 </div>
 
                 <div

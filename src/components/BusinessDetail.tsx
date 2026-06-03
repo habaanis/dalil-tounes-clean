@@ -208,7 +208,33 @@ function normalizeBusiness(business: any): any {
     slug: business.slug || null,
     qr_code_url: business.qr_code_url || null,
     google_url: business.google_url || null,
+    latitude: business.latitude ?? null,
+    longitude: business.longitude ?? null,
   };
+}
+
+function buildMapsUrl(business: any): string | null {
+  const btnMaps = business?.['BTN_Maps'];
+  if (typeof btnMaps === 'string' && btnMaps.trim()) return btnMaps.trim();
+
+  const googleUrl = business?.google_url;
+  if (typeof googleUrl === 'string' && googleUrl.trim()) return googleUrl.trim();
+
+  const lat = Number(business?.latitude);
+  const lng = Number(business?.longitude);
+  if (Number.isFinite(lat) && Number.isFinite(lng) && (lat !== 0 || lng !== 0)) {
+    return `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+  }
+
+  const parts = [business?.adresse, business?.ville, business?.gouvernorat]
+    .filter((s) => typeof s === 'string' && s.trim())
+    .join(' ')
+    .trim();
+  if (parts) {
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${parts} Tunisie`)}`;
+  }
+
+  return null;
 }
 
 interface BusinessDetailProps {
@@ -264,6 +290,8 @@ interface Business {
   slug?: string | null;
   qr_code_url?: string | null;
   google_url?: string | null;
+  latitude?: number | string | null;
+  longitude?: number | string | null;
 }
 
 export const BusinessDetail = ({
@@ -1135,14 +1163,19 @@ export const BusinessDetail = ({
                   </span>
                 )}
 
-                {(business.BTN_Maps || business.adresse) && (
+                {(() => {
+                  console.log('[BusinessDetail GPS]', {
+                    BTN_Maps: business['BTN_Maps'],
+                    google_url: business.google_url,
+                    adresse: business.adresse,
+                    latitude: business.latitude,
+                    longitude: business.longitude,
+                  });
+                  const mapsUrl = buildMapsUrl(business);
+                  if (!mapsUrl) return null;
+                  return (
                   <a
-                    href={
-                      business.BTN_Maps ||
-                      `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                        business.adresse || ''
-                      )}`
-                    }
+                    href={mapsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => {
@@ -1173,7 +1206,8 @@ export const BusinessDetail = ({
                     <Navigation size={10} strokeWidth={3} />
                     <span>GPS</span>
                   </a>
-                )}
+                  );
+                })()}
               </div>
 
               {business.telephone && (
