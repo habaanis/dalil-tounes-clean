@@ -95,14 +95,29 @@ export default function SearchBar({
   const pageLabel = isGlobal ? null : getCategoryDisplayName(scope as PageCategorie);
   const like = (s: string) => `%${(s || '').trim()}%`;
 
-  const SEARCH_FIELDS = [
-    'nom', 'ville', 'gouvernorat', 'adresse', 'categorie',
+  // Only simple-name TEXT columns -- no ARRAY columns, no spaces in names.
+  // ARRAY columns (categorie, sous_categories, secteur, tags, liste pages)
+  // and space-name columns (mots cles recherche) are handled in JS scoring only.
+  const OR_SAFE_FIELDS = [
+    'nom', 'ville', 'gouvernorat', 'adresse', 'description',
     'sous_categories_texte', 'sous_categories_clean',
-    'mots cles recherche', 'description', 'name_ar', 'services',
+    'name_ar', 'services',
   ];
 
-  const GEO_FIELDS = ['ville', 'gouvernorat', 'adresse'];
-  const ACTIVITY_FIELDS = ['categorie', 'sous_categories_texte', 'sous_categories_clean', 'mots cles recherche', 'services'];
+  function rowToSearchableText(row: any): string {
+    const textFields = [
+      row.nom, row.ville, row.gouvernorat, row.adresse,
+      row.description, row.sous_categories_texte, row.sous_categories_clean,
+      row.name_ar, row.services, row.statut_carte,
+      row['mots cles recherche'],
+    ];
+    const arrayFields = [row.categorie, row.sous_categories, row.secteur, row.tags];
+    for (const arr of arrayFields) {
+      if (Array.isArray(arr)) textFields.push(arr.join(' '));
+      else if (typeof arr === 'string') textFields.push(arr);
+    }
+    return normalizeText(textFields.filter(Boolean).join(' '));
+  }
 
   function scoreResult(row: any, words: string[]): number {
     const nom = normalizeText(row.nom || '');
@@ -113,25 +128,28 @@ export default function SearchBar({
     else if (nom.startsWith(fullQ)) score += 80;
     else if (nom.includes(fullQ)) score += 60;
 
+    const geoText = normalizeText([row.ville, row.gouvernorat, row.adresse].filter(Boolean).join(' '));
+    const catText = normalizeText([
+      row.sous_categories_texte, row.sous_categories_clean, row.services,
+      row['mots cles recherche'],
+      Array.isArray(row.categorie) ? row.categorie.join(' ') : row.categorie,
+      Array.isArray(row.tags) ? row.tags.join(' ') : row.tags,
+    ].filter(Boolean).join(' '));
+
     for (const w of words) {
       if (nom.startsWith(w)) score += 40;
       else if (nom.includes(w)) score += 25;
 
-      for (const f of ACTIVITY_FIELDS) {
-        const val = normalizeText(String(row[f] || ''));
-        if (val.includes(w)) { score += 15; break; }
-      }
-      for (const f of GEO_FIELDS) {
-        const val = normalizeText(String(row[f] || ''));
-        if (val.startsWith(w)) { score += 20; break; }
-        if (val.includes(w)) { score += 12; break; }
-      }
-      const desc = normalizeText(row.description || '');
-      if (desc.includes(w)) score += 5;
+      if (geoText.startsWith(w) || geoText.includes(` ${w}`)) score += 20;
+      else if (geoText.includes(w)) score += 12;
+
+      if (catText.includes(w)) score += 15;
+
+      if (normalizeText(row.description || '').includes(w)) score += 5;
     }
 
-    const isCertified = typeof row.statut_carte === 'string' && row.statut_carte.toUpperCase().includes('CERTIFI');
-    if (isCertified) score += 3;
+    const sc = normalizeText(row.statut_carte || '');
+    if (sc.includes('certifie') && !sc.includes('non')) score += 3;
     if (row.is_premium) score += 2;
 
     return score;
@@ -179,13 +197,16 @@ export default function SearchBar({
           return;
         }
 
+        // Build .or() using only safe text columns (no arrays, no space-names)
         const orParts: string[] = [];
         for (const word of words) {
           const escaped = word.replace(/[%_]/g, (c) => `\\${c}`);
-          for (const field of SEARCH_FIELDS) {
+          for (const field of OR_SAFE_FIELDS) {
             orParts.push(`${field}.ilike.%${escaped}%`);
           }
         }
+
+        console.log('[Search] query:', trimmedValue, '| or fields:', OR_SAFE_FIELDS.join(', '));
 
         let query = supabase
           .from(Tables.ENTREPRISE)
@@ -211,7 +232,7 @@ export default function SearchBar({
           return;
         }
 
-        console.log('[Search] query:', trimmedValue, '| raw results:', resp.data?.length);
+        console.log('[Search] raw results:', resp.data?.length);
 
         const rawRows = resp.data || [];
 
@@ -220,9 +241,10 @@ export default function SearchBar({
           return { ...row, _score: s, ville: row.ville || row.gouvernorat || '' };
         });
 
+        // For multi-word queries, keep only rows where every word matches at least one field
         if (words.length > 1) {
           scored = scored.filter((r: any) => {
-            const allText = SEARCH_FIELDS.map(f => normalizeText(String(r[f] || ''))).join(' ');
+            const allText = rowToSearchableText(r);
             return words.every(w => allText.includes(w));
           });
         }
@@ -231,10 +253,10 @@ export default function SearchBar({
 
         if (cert) {
           scored = scored.filter((r: any) => {
-            const sc = r.statut_carte;
-            const isNon = typeof sc === 'string' && sc.toUpperCase().includes('NON');
-            if (cert === 'certifie') return sc && !isNon;
-            if (cert === 'non_certifie') return !sc || isNon;
+            const sc = normalizeText(r.statut_carte || '');
+            const isNon = sc.includes('non');
+            if (cert === 'certifie') return sc.includes('certifie') && !isNon;
+            if (cert === 'non_certifie') return !sc.includes('certifie') || isNon;
             return true;
           });
         }
