@@ -206,7 +206,8 @@ export default function SearchBar({
           }
         }
 
-        console.log('[Search] query:', trimmedValue, '| or fields:', OR_SAFE_FIELDS.join(', '));
+        const cityTrimmed = cityValue ? cityValue.trim() : '';
+        console.log('[Search] query:', trimmedValue, '| city:', cityTrimmed, '| or fields:', OR_SAFE_FIELDS.join(', '));
 
         let query = supabase
           .from(Tables.ENTREPRISE)
@@ -214,8 +215,9 @@ export default function SearchBar({
           .or(orParts.join(','))
           .limit(40);
 
-        if (cityValue && cityValue.trim().length > 0) {
-          query = query.eq('gouvernorat', cityValue);
+        if (cityTrimmed.length > 0) {
+          const cityPattern = `%${cityTrimmed}%`;
+          query = query.or(`gouvernorat.ilike.${cityPattern},ville.ilike.${cityPattern},adresse.ilike.${cityPattern}`);
         }
 
         if (scope === 'magasin') {
@@ -232,7 +234,8 @@ export default function SearchBar({
           return;
         }
 
-        console.log('[Search] raw results:', resp.data?.length);
+        console.log('[Search] raw Supabase results:', resp.data?.length,
+          resp.data?.slice(0, 5).map((r: any) => ({ nom: r.nom, ville: r.ville, gouvernorat: r.gouvernorat })));
 
         const rawRows = resp.data || [];
 
@@ -241,12 +244,13 @@ export default function SearchBar({
           return { ...row, _score: s, ville: row.ville || row.gouvernorat || '' };
         });
 
-        // For multi-word queries, keep only rows where every word matches at least one field
         if (words.length > 1) {
+          const beforeFilter = scored.length;
           scored = scored.filter((r: any) => {
             const allText = rowToSearchableText(r);
             return words.every(w => allText.includes(w));
           });
+          console.log('[Search] multi-word filter:', beforeFilter, '->', scored.length);
         }
 
         scored.sort((a: any, b: any) => b._score - a._score);
