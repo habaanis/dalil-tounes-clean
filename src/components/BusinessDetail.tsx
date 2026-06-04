@@ -1247,7 +1247,7 @@ export const BusinessDetail = ({
                 })()}
               </div>
 
-              {business.telephone && (
+              {business.telephone && !/whats|watt/i.test(business.telephone) && (
                 <a
                   href={`tel:${business.telephone}`}
                   onClick={(e) => {
@@ -1270,7 +1270,7 @@ export const BusinessDetail = ({
                 </a>
               )}
 
-              {business.telephone2 && (
+              {business.telephone2 && !/whats|watt/i.test(business.telephone2) && (
                 <a
                   href={`tel:${business.telephone2_clean || business.telephone2}`}
                   onClick={(e) => {

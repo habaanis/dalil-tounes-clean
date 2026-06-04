@@ -217,6 +217,7 @@ export default function SearchBar({
             allResults = allResults.map(r => ({
               ...r,
               note_google_globale: ratingMap.get(r.id) ?? null,
+              statut_carte: statutMap.get(r.id) ?? null,
             }));
             if (cert) {
               allResults = allResults.filter(r => {
@@ -498,6 +499,9 @@ export default function SearchBar({
                       onClick={() => goTo(`#/entreprises/${item.id}`)}
                     >
                       <div className="font-medium">
+                        {typeof item.statut_carte === 'string' && item.statut_carte.toUpperCase().includes('CERTIFIÉ DALIL TOUNES') && (
+                          <span className="mr-1 text-[#D4AF37]" aria-label="Certifié Dalil Tounes">⭐</span>
+                        )}
                         {displayName}
                         {typeof item.note_google_globale === 'number' && item.note_google_globale >= 4 && (
                           <span className="ml-1 text-[#D4AF37]" aria-label="Note Google >= 4">★</span>
