@@ -1131,7 +1131,7 @@ export const BusinessDetail = ({
                 className="text-lg md:text-xl font-bold tracking-tight leading-tight text-white"
                 dir={isArabicDisplay ? 'rtl' : 'ltr'}
               >
-                {displayName}
+                {displayName}{business.ville ? ` à ${business.ville}` : ''}
               </h1>
 
               {renderStatutCarteBadge(business.statut_carte)}
