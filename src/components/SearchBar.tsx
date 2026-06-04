@@ -93,39 +93,49 @@ export default function SearchBar({
 
   const isGlobal = scope === 'global';
   const pageLabel = isGlobal ? null : getCategoryDisplayName(scope as PageCategorie);
-
   const like = (s: string) => `%${(s || '').trim()}%`;
 
-  async function fetchEntreprisesDirect(q: string, cityParam: string, limit = 12) {
-    const tableName = scope === 'education' ? Tables.PROFESSEURS : Tables.ENTREPRISE;
-    const nameField = 'nom';
+  const SEARCH_FIELDS = [
+    'nom', 'ville', 'gouvernorat', 'adresse', 'categorie',
+    'sous_categories_texte', 'sous_categories_clean',
+    'mots cles recherche', 'description', 'name_ar', 'services',
+  ];
 
-    let query = supabase
-      .from(tableName)
-      .select(scope === 'education' ? 'id, nom, ville, matiere' : 'id, nom, ville, categorie')
-      .order(nameField, { ascending: true })
-      .limit(limit);
+  const GEO_FIELDS = ['ville', 'gouvernorat', 'adresse'];
+  const ACTIVITY_FIELDS = ['categorie', 'sous_categories_texte', 'sous_categories_clean', 'mots cles recherche', 'services'];
 
-    if (q) {
-      if (scope === 'education') {
-        query = query.or(`nom.ilike.*${q}*,matiere.ilike.*${q}*`);
-      } else {
-        query = query.ilike('nom', like(q));
+  function scoreResult(row: any, words: string[]): number {
+    const nom = normalizeText(row.nom || '');
+    const fullQ = words.join(' ');
+    let score = 0;
+
+    if (nom === fullQ) score += 100;
+    else if (nom.startsWith(fullQ)) score += 80;
+    else if (nom.includes(fullQ)) score += 60;
+
+    for (const w of words) {
+      if (nom.startsWith(w)) score += 40;
+      else if (nom.includes(w)) score += 25;
+
+      for (const f of ACTIVITY_FIELDS) {
+        const val = normalizeText(String(row[f] || ''));
+        if (val.includes(w)) { score += 15; break; }
       }
+      for (const f of GEO_FIELDS) {
+        const val = normalizeText(String(row[f] || ''));
+        if (val.startsWith(w)) { score += 20; break; }
+        if (val.includes(w)) { score += 12; break; }
+      }
+      const desc = normalizeText(row.description || '');
+      if (desc.includes(w)) score += 5;
     }
 
-    if (cityParam && cityParam.trim().length > 0) {
-      query = query.eq('gouvernorat', cityParam);
-    }
+    const isCertified = typeof row.statut_carte === 'string' && row.statut_carte.toUpperCase().includes('CERTIFI');
+    if (isCertified) score += 3;
+    if (row.is_premium) score += 2;
 
-    // Filtre spécifique pour la page magasin
-    if (scope === 'magasin') {
-      query = query.eq('"page commerce local"', true);
-    }
-
-    return await query;
+    return score;
   }
-
 
   const runSearch = React.useCallback(async (qValue: string, cityValue: string, cert: CertFilter) => {
     const trimmedValue = qValue.trim();
@@ -145,9 +155,9 @@ export default function SearchBar({
     setErrEnt(null);
     try {
       let allResults: any[] = [];
-      const searchPattern = `%${trimmedValue}%`;
 
       if (scope === 'education') {
+        const searchPattern = `%${trimmedValue}%`;
         let query = supabase
           .from(Tables.PROFESSEURS)
           .select('id, nom, ville, matiere')
@@ -162,76 +172,75 @@ export default function SearchBar({
         const resp = await query;
         allResults = resp.data || [];
       } else {
-        const searchTerm = trimmedValue.replace(/[%_]/g, (c) => `\\${c}`);
+        const words = normalizeText(trimmedValue).split(/\s+/).filter(w => w.length >= 2);
+        if (words.length === 0) {
+          setEnt([]);
+          setLoadingEnt(false);
+          return;
+        }
+
+        const orParts: string[] = [];
+        for (const word of words) {
+          const escaped = word.replace(/[%_]/g, (c) => `\\${c}`);
+          for (const field of SEARCH_FIELDS) {
+            orParts.push(`${field}.ilike.%${escaped}%`);
+          }
+        }
 
         let query = supabase
           .from(Tables.ENTREPRISE)
           .select('*')
-          .or(
-            `nom.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,sous_categories_clean.ilike.%${searchTerm}%,ville.ilike.%${searchTerm}%,name_ar.ilike.%${searchTerm}%`
-          )
-          .limit(20);
+          .or(orParts.join(','))
+          .limit(40);
 
         if (cityValue && cityValue.trim().length > 0) {
           query = query.eq('gouvernorat', cityValue);
         }
 
+        if (scope === 'magasin') {
+          query = query.eq('"page commerce local"', true);
+        }
+
         const resp = await query;
 
         if (resp.error) {
-          console.error('Search query error:', resp.error);
+          console.error('[Search] query error:', resp.error);
           setErrEnt(resp.error.message);
           setEnt([]);
           setLoadingEnt(false);
           return;
         }
 
-        const normQ = normalizeText(trimmedValue);
-        allResults = (resp.data || [])
-          .map((row: any) => {
-            const nomNorm = normalizeText(row.nom || '');
-            const exact = nomNorm === normQ ? 0 : nomNorm.startsWith(normQ) ? 1 : 2;
-            return { row, exact };
-          })
-          .sort((a, b) => a.exact - b.exact)
-          .map(({ row }: any) => ({
-            ...row,
-            ville: row.ville || row.gouvernorat || '',
-          }));
+        console.log('[Search] query:', trimmedValue, '| raw results:', resp.data?.length);
 
-        if (allResults.length > 0) {
-          const ids = allResults.map(r => r.id).filter(Boolean);
-          if (ids.length > 0) {
-            const metaResp = await supabase
-              .from(Tables.ENTREPRISE)
-              .select('id, statut_carte, "Note Google Globale"')
-              .in('id', ids);
-            const statutMap = new Map<string, string | null>();
-            const ratingMap = new Map<string, number | null>();
-            (metaResp.data || []).forEach((row: any) => {
-              statutMap.set(row.id, row.statut_carte ?? null);
-              const raw = row['Note Google Globale'];
-              const num = typeof raw === 'number' ? raw : raw != null ? parseFloat(raw) : null;
-              ratingMap.set(row.id, Number.isFinite(num as number) ? (num as number) : null);
-            });
-            allResults = allResults.map(r => ({
-              ...r,
-              note_google_globale: ratingMap.get(r.id) ?? null,
-              statut_carte: statutMap.get(r.id) ?? null,
-            }));
-            if (cert) {
-              allResults = allResults.filter(r => {
-                const sc = statutMap.get(r.id);
-                const isNon = typeof sc === 'string' && sc.toUpperCase().includes('NON');
-                if (cert === 'certifie') return sc && !isNon;
-                if (cert === 'non_certifie') return !sc || isNon;
-                return true;
-              });
-            }
-          }
+        const rawRows = resp.data || [];
+
+        let scored = rawRows.map((row: any) => {
+          const s = scoreResult(row, words);
+          return { ...row, _score: s, ville: row.ville || row.gouvernorat || '' };
+        });
+
+        if (words.length > 1) {
+          scored = scored.filter((r: any) => {
+            const allText = SEARCH_FIELDS.map(f => normalizeText(String(r[f] || ''))).join(' ');
+            return words.every(w => allText.includes(w));
+          });
         }
 
-        allResults = allResults.slice(0, 12);
+        scored.sort((a: any, b: any) => b._score - a._score);
+
+        if (cert) {
+          scored = scored.filter((r: any) => {
+            const sc = r.statut_carte;
+            const isNon = typeof sc === 'string' && sc.toUpperCase().includes('NON');
+            if (cert === 'certifie') return sc && !isNon;
+            if (cert === 'non_certifie') return !sc || isNon;
+            return true;
+          });
+        }
+
+        allResults = scored.slice(0, 8);
+        console.log('[Search] scored results:', allResults.map((r: any) => ({ nom: r.nom, score: r._score, ville: r.ville })));
       }
 
       cache.current.set(cacheKey, allResults);
@@ -242,7 +251,7 @@ export default function SearchBar({
 
       setEnt(allResults);
     } catch (err) {
-      console.error('Search error:', err);
+      console.error('[Search] error:', err);
       setErrEnt(err instanceof Error ? err.message : 'Erreur de recherche');
       setEnt([]);
     } finally {
@@ -499,13 +508,17 @@ export default function SearchBar({
                       onClick={() => goTo(`#/entreprises/${item.id}`)}
                     >
                       <div className="font-medium">
-                        {typeof item.statut_carte === 'string' && item.statut_carte.toUpperCase().includes('CERTIFIÉ DALIL TOUNES') && (
+                        {typeof item.statut_carte === 'string' && normalizeText(item.statut_carte).includes('certifie dalil tounes') && (
                           <span className="mr-1 text-[#D4AF37]" aria-label="Certifié Dalil Tounes">⭐</span>
                         )}
                         {displayName}
-                        {typeof item.note_google_globale === 'number' && item.note_google_globale >= 4 && (
-                          <span className="ml-1 text-[#D4AF37]" aria-label="Note Google >= 4">★</span>
-                        )}
+                        {(() => {
+                          const googleNote = item['Note Google Globale'] ?? item.note_google_globale;
+                          const num = typeof googleNote === 'number' ? googleNote : googleNote != null ? parseFloat(googleNote) : null;
+                          return typeof num === 'number' && Number.isFinite(num) && num >= 4 ? (
+                            <span className="ml-1 text-[#D4AF37]" aria-label="Note Google >= 4">★</span>
+                          ) : null;
+                        })()}
                       </div>
                       <div className="text-xs text-gray-500">{item.ville} · {displayCategory}</div>
                     </li>
