@@ -88,6 +88,16 @@ function isQrCodeImageUrl(url: string): boolean {
   return false;
 }
 
+function isWhatsAppPhone(value: string, whatsappField?: string): boolean {
+  if (/whats|watt|wats|what\s*app/i.test(value)) return true;
+  if (whatsappField) {
+    const digitsA = value.replace(/\D/g, '');
+    const digitsB = whatsappField.replace(/\D/g, '');
+    if (digitsA && digitsB && digitsA.length >= 6 && (digitsA === digitsB || digitsA.endsWith(digitsB) || digitsB.endsWith(digitsA))) return true;
+  }
+  return false;
+}
+
 function buildWhatsAppUrl(raw: string): string {
   const digits = raw.replace(/\D/g, '');
   if (!digits) return '';
@@ -1247,7 +1257,7 @@ export const BusinessDetail = ({
                 })()}
               </div>
 
-              {business.telephone && !/whats|watt/i.test(business.telephone) && (
+              {business.telephone && !isWhatsAppPhone(business.telephone, business.whatsapp) && (
                 <a
                   href={`tel:${business.telephone}`}
                   onClick={(e) => {
@@ -1270,7 +1280,7 @@ export const BusinessDetail = ({
                 </a>
               )}
 
-              {business.telephone2 && !/whats|watt/i.test(business.telephone2) && (
+              {business.telephone2 && !isWhatsAppPhone(business.telephone2, business.whatsapp) && (
                 <a
                   href={`tel:${business.telephone2_clean || business.telephone2}`}
                   onClick={(e) => {
