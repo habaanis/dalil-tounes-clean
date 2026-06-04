@@ -73,7 +73,7 @@ export function parseHoraires(horaires: string | null | undefined): DaySchedule[
       }
 
       // Si on a un jour en attente et que la ligne contient des horaires
-      if (currentDay && trimmedLine.match(/\d{1,2}[:h]\d{2}/)) {
+      if (currentDay && trimmedLine.match(/\d{1,2}[.:h]\d{2}/)) {
         const hours = trimmedLine;
         const isOpen = !hours.toLowerCase().includes('fermé') &&
                        !hours.toLowerCase().includes('closed') &&
@@ -110,10 +110,8 @@ export function parseHoraires(horaires: string | null | undefined): DaySchedule[
 }
 
 function parseTimeString(timeStr: string): { hours: number; minutes: number } | null {
-  // Nettoyer la chaîne (supprimer espaces, h, H)
-  const cleaned = timeStr.trim().toLowerCase().replace(/h/g, ':');
+  const cleaned = timeStr.trim().toLowerCase().replace(/[h.]/g, ':');
 
-  // Format HH:MM ou H:MM
   let match = cleaned.match(/(\d{1,2}):(\d{2})/);
   if (match) {
     return {
@@ -122,7 +120,6 @@ function parseTimeString(timeStr: string): { hours: number; minutes: number } | 
     };
   }
 
-  // Format HH ou H (sans minutes, ex: "9" ou "18")
   match = cleaned.match(/^(\d{1,2})$/);
   if (match) {
     return {
@@ -159,9 +156,7 @@ export function isCurrentlyOpen(horaires: string | null | undefined): boolean {
 
   if (!todaySchedule || !todaySchedule.isOpen) return false;
 
-  // Accepter différents formats de séparateurs : -, –, >, à, etc.
-  // Exemples: "9h-18h", "09:00 - 18:00", "9:00 à 18:00", "9>18"
-  const timeRangeMatch = todaySchedule.hours.match(/(\d{1,2}(?:[:h]\d{2})?)\s*(?:[-–>àa]|to)\s*(\d{1,2}(?:[:h]\d{2})?)/i);
+  const timeRangeMatch = todaySchedule.hours.match(/(\d{1,2}(?:[.:h]\d{2})?)\s*(?:[-–—>àa]|to)\s*(\d{1,2}(?:[.:h]\d{2})?)/i);
   if (timeRangeMatch) {
     return isTimeInRange(now, timeRangeMatch[1], timeRangeMatch[2]);
   }
@@ -306,7 +301,7 @@ export function normalizeHoursDisplay(hours: string): string {
 
   // Remplacer les différents tirets par un tiret standard avec espaces
   const normalized = hours
-    .replace(/–/g, '-')  // Tiret long
+    .replace(/[–—]/g, '-')  // Tirets longs
     .replace(/\s*-\s*/g, ' - ')  // Ajouter espaces autour des tirets
     .replace(/\s*>\s*/g, ' - ')  // Remplacer > par -
     .replace(/\s+à\s+/gi, ' - ')  // Remplacer "à" par -
