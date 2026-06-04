@@ -512,10 +512,12 @@ export const BusinessDetail = ({
         setBusiness(normalized as Business);
 
         try {
+          console.log('[Avis fetch entrepriseId]', data.id);
           const { data: avisData } = await supabase
             .from('avis_entreprise')
             .select('note')
-            .eq('entreprise_id', data.id);
+            .eq('entreprise_id', data.id)
+            .eq('status', 'approved');
 
           if (avisData && avisData.length > 0) {
             const totalRating = avisData.reduce((sum, avis) => sum + (avis.note || 0), 0);
@@ -1795,7 +1797,7 @@ export const BusinessDetail = ({
 
               {showReviewForm && (
                 <div className="mt-2">
-                  <EntrepriseAvisForm entrepriseId={actualBusinessId || null} />
+                  <EntrepriseAvisForm entrepriseId={business?.id || null} />
                 </div>
               )}
             </div>
@@ -1865,7 +1867,7 @@ export const BusinessDetail = ({
 
       {actualBusinessId && (
         <div className="px-1 mt-3">
-          <BusinessReviews entrepriseId={actualBusinessId} />
+          <BusinessReviews entrepriseId={business?.id || actualBusinessId} />
         </div>
       )}
 

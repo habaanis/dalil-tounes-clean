@@ -41,6 +41,7 @@ export default function EntrepriseAvisForm({ entrepriseId, onSuccess }: Entrepri
       const cleanedId = (typeof entrepriseId === 'string' && entrepriseId.trim() !== '')
         ? entrepriseId.trim()
         : null;
+      console.log('[Avis submit entrepriseId]', entrepriseId, '-> cleanedId:', cleanedId);
       const auteurValue = (auteur || '').trim();
       const payload = {
         entreprise_id: cleanedId,

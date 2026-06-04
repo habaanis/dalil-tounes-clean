@@ -28,6 +28,7 @@ export default function BusinessReviews({ entrepriseId }: BusinessReviewsProps) 
         .from('avis_entreprise')
         .select('id, note, commentaire, created_at, auteur')
         .eq('entreprise_id', entrepriseId)
+        .eq('status', 'approved')
         .order('created_at', { ascending: false })
         .limit(20);
 
