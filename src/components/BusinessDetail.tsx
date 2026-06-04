@@ -1865,9 +1865,9 @@ export const BusinessDetail = ({
         </div>
       )}
 
-      {actualBusinessId && (
+      {business?.id && (
         <div className="px-1 mt-3">
-          <BusinessReviews entrepriseId={business?.id || actualBusinessId} />
+          <BusinessReviews entrepriseId={business.id} />
         </div>
       )}
 
