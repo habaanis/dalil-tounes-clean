@@ -118,8 +118,8 @@ export function generateOrganizationSchema(): OrganizationSchema {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'Dalil Tounes',
-    url: typeof window !== 'undefined' ? window.location.origin : 'https://daliltounes.com',
-    logo: typeof window !== 'undefined' ? `${window.location.origin}/images/logo.png` : undefined,
+    url: typeof window !== 'undefined' ? window.location.origin : 'https://dalil-tounes.com',
+    logo: 'https://dalil-tounes.com/images/logo_dalil_tounes_crop.png',
     description: 'Plateforme tunisienne de référencement des entreprises, services et événements en Tunisie',
     address: {
       '@type': 'PostalAddress',
@@ -134,7 +134,7 @@ export function generateOrganizationSchema(): OrganizationSchema {
 }
 
 export function generateWebSiteSchema(): WebSiteSchema {
-  const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://daliltounes.com';
+  const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://dalil-tounes.com';
 
   return {
     '@context': 'https://schema.org',
@@ -145,7 +145,7 @@ export function generateWebSiteSchema(): WebSiteSchema {
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: `${baseUrl}/#/businesses?q={search_term_string}`,
+        urlTemplate: `${baseUrl}/recherche?q={search_term_string}`,
       },
       'query-input': 'required name=search_term_string',
     },
@@ -272,7 +272,7 @@ export function generateCollectionPageSchema(
   description: string,
   items: Array<{ name: string; url?: string }> = []
 ): CollectionPageSchema {
-  const baseUrl = typeof window !== 'undefined' ? window.location.href : 'https://daliltounes.com';
+  const baseUrl = typeof window !== 'undefined' ? window.location.href : 'https://dalil-tounes.com';
 
   const schema: CollectionPageSchema = {
     '@context': 'https://schema.org',
@@ -298,7 +298,7 @@ export function generateCollectionPageSchema(
 }
 
 export function generateAboutPageSchema(): AboutPageSchema {
-  const baseUrl = typeof window !== 'undefined' ? window.location.href : 'https://daliltounes.com';
+  const baseUrl = typeof window !== 'undefined' ? window.location.href : 'https://dalil-tounes.com';
 
   return {
     '@context': 'https://schema.org',
@@ -315,7 +315,7 @@ export function generateAboutPageSchema(): AboutPageSchema {
 }
 
 export function generateContactPageSchema(): ContactPageSchema {
-  const baseUrl = typeof window !== 'undefined' ? window.location.href : 'https://daliltounes.com';
+  const baseUrl = typeof window !== 'undefined' ? window.location.href : 'https://dalil-tounes.com';
 
   return {
     '@context': 'https://schema.org',
