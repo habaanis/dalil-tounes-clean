@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { supabase } from '../lib/supabaseClient';
 import {
@@ -341,6 +341,7 @@ export const BusinessDetail = ({
   }>();
 
   const navigate = useNavigate();
+  const routerLocation = useLocation();
 
   let extractedId: string | null = null;
   let legacyShortId: string | null = null;
@@ -426,11 +427,13 @@ export const BusinessDetail = ({
         // 1. Clean slug lookup (primary path for new URLs)
         if (cleanSlugOnly) {
           const normalized = cleanSlugOnly.trim().toLowerCase();
-          const { data: slugData } = await supabase.rpc('find_entreprise_by_slug', {
-            p_slug: normalized,
-          });
-          if (slugData && slugData.length > 0) {
-            data = slugData[0];
+          const { data: slugRow } = await supabase
+            .from('entreprise')
+            .select('*')
+            .eq('slug', normalized)
+            .maybeSingle();
+          if (slugRow) {
+            data = slugRow;
           }
 
           if (!data && urlVilleSlug) {
@@ -491,7 +494,7 @@ export const BusinessDetail = ({
         }
 
         const canonicalPath = buildEntrepriseUrl(data);
-        const currentPathname = window.location.pathname;
+        const currentPathname = routerLocation.pathname;
         if (!asModal && !businessIdProp && canonicalPath !== '/' && currentPathname !== canonicalPath) {
           navigate(canonicalPath, { replace: true });
         }
@@ -1876,7 +1879,8 @@ export const BusinessDetail = ({
       )}
 
       {business && !asModal && (() => {
-        const seoMetier = findMetierByValue(business.categorie || '');
+        const catStr = typeof business.categorie === 'string' ? business.categorie : '';
+        const seoMetier = findMetierByValue(catStr);
         const seoVille = findVilleByLabel(business.ville || '');
         if (!seoMetier && !seoVille) return null;
         return (
