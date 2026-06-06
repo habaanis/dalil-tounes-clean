@@ -5,8 +5,11 @@ import { SEOHead } from '../../components/SEOHead';
 import SearchBar from '../../components/SearchBar';
 import Breadcrumb from '../../components/seo/Breadcrumb';
 import SeoBusinessCard from '../../components/seo/SeoBusinessCard';
-import { parseSeoSlug, SEO_SOUS_CATEGORIES } from '../../lib/seoLandingData';
+import { parseSeoSlug, SEO_SOUS_CATEGORIES, SEO_VILLES } from '../../lib/seoLandingData';
 import { fetchSeoBusinesses } from '../../lib/seoBusinessQueries';
+import StructuredData from '../../components/StructuredData';
+import { generateBreadcrumbSchema } from '../../lib/structuredDataSchemas';
+import SeoFAQ from '../../components/seo/SeoFAQ';
 
 const MetierSousCatVillePage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -73,7 +76,29 @@ const MetierSousCatVillePage: React.FC = () => {
     url: `https://dalil-tounes.com/${slug}`,
   };
 
+  const breadcrumbItems = [
+    { name: 'Accueil', url: '/' },
+    { name: 'Entreprises', url: '/entreprises' },
+    { name: metier.label, url: `/metier/${metier.slug}` },
+    ...(sousCategorie
+      ? [{ name: `${sousCategorie.label} ${ville.label}`, url: `/${slug}` }]
+      : [{ name: ville.label, url: `/${slug}` }]),
+  ];
+  const breadcrumbSchema = generateBreadcrumbSchema(breadcrumbItems);
+
+  const faqData = sousCategorie
+    ? [
+        { question: `Comment trouver un ${metier.label.toLowerCase()} ${sousCategorie.label} à ${ville.label} ?`, answer: `Consultez la liste ci-dessous ou utilisez la barre de recherche Dalil Tounes pour trouver un ${metier.label.toLowerCase()} spécialisé en ${sousCategorie.label} à ${ville.label}.` },
+        { question: `Les ${metier.label.toLowerCase()}s ${sousCategorie.label} à ${ville.label} sont-ils vérifiés ?`, answer: `Les informations proviennent de sources publiques ou sont communiquées par les professionnels. Les notes affichées sont basées sur les avis Google publics.` },
+      ]
+    : [
+        { question: `Comment trouver un ${metier.label.toLowerCase()} à ${ville.label} ?`, answer: `Consultez la liste ci-dessous ou utilisez la barre de recherche Dalil Tounes. Les résultats sont triés par note Google et complétude de la fiche.` },
+        { question: `Combien de ${metier.label.toLowerCase()}s sont référencés à ${ville.label} ?`, answer: `Dalil Tounes référence les ${metier.label.toLowerCase()}s disponibles à ${ville.label} et dans le gouvernorat de ${ville.gouvernorat}. De nouveaux établissements sont ajoutés régulièrement.` },
+      ];
+
   const sousCats = SEO_SOUS_CATEGORIES[metier.slug] ?? [];
+
+  const otherVilles = SEO_VILLES.filter(v => v.slug !== ville.slug).slice(0, 8);
 
   return (
     <>
@@ -85,10 +110,7 @@ const MetierSousCatVillePage: React.FC = () => {
         currentPath={`/${slug}`}
       />
 
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
-      />
+      <StructuredData data={[schemaData, breadcrumbSchema]} />
 
       <div className="min-h-screen bg-[#0f0f0f]">
         <div
@@ -274,24 +296,32 @@ const MetierSousCatVillePage: React.FC = () => {
               className="text-lg font-semibold text-white mb-4"
               style={{ fontFamily: "'Playfair Display', serif" }}
             >
-              Autres villes
+              {metier.label} dans d'autres villes
             </h2>
             <div className="flex flex-wrap gap-2">
-              {['tunis', 'sfax', 'sousse', 'nabeul', 'bizerte', 'monastir'].map(v => (
+              {otherVilles.map(v => (
                 <Link
-                  key={v}
+                  key={v.slug}
                   to={
                     sousCategorie
-                      ? `/${metier.slug}-${sousCategorie.slug}-${v}`
-                      : `/${metier.slug}-${v}`
+                      ? `/${metier.slug}-${sousCategorie.slug}-${v.slug}`
+                      : `/${metier.slug}-${v.slug}`
                   }
-                  className="px-3 py-1.5 rounded-full border border-gray-700 hover:border-[#D4AF37]/50 text-gray-400 hover:text-[#D4AF37] text-xs transition-all capitalize"
+                  className="px-3 py-1.5 rounded-full border border-gray-700 hover:border-[#D4AF37]/50 text-gray-400 hover:text-[#D4AF37] text-xs transition-all"
                 >
-                  {metier.label} à {v.charAt(0).toUpperCase() + v.slice(1)}
+                  {metier.label} {v.label}
                 </Link>
               ))}
             </div>
           </div>
+
+          <SeoFAQ
+            title={sousCategorie
+              ? `Questions fréquentes - ${metier.label} ${sousCategorie.label} à ${ville.label}`
+              : `Questions fréquentes - ${metier.label} à ${ville.label}`
+            }
+            questions={faqData}
+          />
         </div>
       </div>
     </>

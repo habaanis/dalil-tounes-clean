@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { supabase } from '../lib/supabaseClient';
 import {
@@ -58,6 +58,7 @@ import { getMultilingualField } from '../lib/databaseI18n';
 import { getLogoUrl, getLogoStyle, getLogoContainerStyle } from '../lib/logoUtils';
 import { generateHashtags, formatHashtagsForShare } from '../lib/hashtagGenerator';
 import { HERO_IMAGE_URL } from '../constants/images';
+import { findMetierByValue, findVilleByLabel } from '../lib/seoLandingData';
 import GratuitCard from '../components/GratuitCard';
 
 function getFullImageUrl(url?: string | null): string {
@@ -1870,6 +1871,43 @@ export const BusinessDetail = ({
           <BusinessReviews entrepriseId={business.id} />
         </div>
       )}
+
+      {business && !asModal && (() => {
+        const seoMetier = findMetierByValue(business.categorie || '');
+        const seoVille = findVilleByLabel(business.ville || '');
+        if (!seoMetier && !seoVille) return null;
+        return (
+          <div className="px-1 mt-6 pt-4 border-t border-gray-800 space-y-3">
+            {seoVille && (
+              <Link
+                to={`/ville/${seoVille.slug}`}
+                className="flex items-center gap-2 text-xs text-gray-400 hover:text-[#D4AF37] transition-colors"
+              >
+                <MapPin size={13} className="text-[#D4AF37] shrink-0" />
+                <span>Tous les professionnels a {seoVille.label}</span>
+              </Link>
+            )}
+            {seoMetier && (
+              <Link
+                to={`/metier/${seoMetier.slug}`}
+                className="flex items-center gap-2 text-xs text-gray-400 hover:text-[#D4AF37] transition-colors"
+              >
+                <ArrowLeft size={13} className="text-[#D4AF37] shrink-0 rotate-180" />
+                <span>Tous les {seoMetier.label.toLowerCase()}s en Tunisie</span>
+              </Link>
+            )}
+            {seoMetier && seoVille && (
+              <Link
+                to={`/${seoMetier.slug}-${seoVille.slug}`}
+                className="flex items-center gap-2 text-xs text-gray-400 hover:text-[#D4AF37] transition-colors"
+              >
+                <ArrowLeft size={13} className="text-[#D4AF37] shrink-0 rotate-180" />
+                <span>{seoMetier.label} a {seoVille.label}</span>
+              </Link>
+            )}
+          </div>
+        );
+      })()}
 
       {handleClose && (
         <div className="text-center mt-4">

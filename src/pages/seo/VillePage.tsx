@@ -7,8 +7,9 @@ import Breadcrumb from '../../components/seo/Breadcrumb';
 import SeoBusinessCard from '../../components/seo/SeoBusinessCard';
 import { findVilleBySlug, SEO_METIERS, SEO_VILLES } from '../../lib/seoLandingData';
 import { fetchSeoBusinesses } from '../../lib/seoBusinessQueries';
-import { generateFAQSchema } from '../../lib/structuredDataSchemas';
 import StructuredData from '../../components/StructuredData';
+import { generateBreadcrumbSchema } from '../../lib/structuredDataSchemas';
+import SeoFAQ from '../../components/seo/SeoFAQ';
 
 const VillePage: React.FC = () => {
   const { villeSlug } = useParams<{ villeSlug: string }>();
@@ -65,6 +66,12 @@ const VillePage: React.FC = () => {
     },
   };
 
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Accueil', url: '/' },
+    { name: 'Entreprises', url: '/entreprises' },
+    { name: ville.label, url: `/ville/${ville.slug}` },
+  ]);
+
   const popularMetiers = SEO_METIERS.filter(m =>
     ['medecin', 'dentiste', 'avocat', 'restaurant', 'coiffeur', 'pharmacie', 'garage', 'hotel', 'notaire', 'expert-comptable', 'architecte', 'plombier'].includes(m.slug)
   );
@@ -79,7 +86,7 @@ const VillePage: React.FC = () => {
         currentPath={`/ville/${ville.slug}`}
       />
 
-      <StructuredData data={[schemaData, generateFAQSchema(faqData)]} />
+      <StructuredData data={[schemaData, breadcrumbSchema]} />
 
       <div className="min-h-screen bg-[#0f0f0f]">
         <div
@@ -235,25 +242,7 @@ const VillePage: React.FC = () => {
             </div>
           </div>
 
-          <div className="mt-12 pt-8 border-t border-gray-800">
-            <h2
-              className="text-base font-semibold text-gray-300 mb-4"
-              style={{ fontFamily: "'Playfair Display', serif" }}
-            >
-              Questions fréquentes - {ville.label}
-            </h2>
-            <div className="space-y-4">
-              {faqData.map((faq, i) => (
-                <details key={i} className="group">
-                  <summary className="cursor-pointer text-sm text-gray-400 hover:text-white transition-colors py-2 list-none flex items-start gap-2">
-                    <span className="text-[#D4AF37] mt-0.5 shrink-0">&#9656;</span>
-                    <span>{faq.question}</span>
-                  </summary>
-                  <p className="text-xs text-gray-500 leading-relaxed pl-5 pb-3">{faq.answer}</p>
-                </details>
-              ))}
-            </div>
-          </div>
+          <SeoFAQ title={`Questions fréquentes - ${ville.label}`} questions={faqData} />
         </div>
       </div>
     </>

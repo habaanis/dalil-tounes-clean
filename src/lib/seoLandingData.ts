@@ -320,8 +320,18 @@ export function findMetierBySlug(slug: string): MetierEntry | undefined {
   return SEO_METIERS.find(m => m.slug === slug);
 }
 
+export function findMetierByValue(value: string): MetierEntry | undefined {
+  const lower = value.toLowerCase();
+  return SEO_METIERS.find(m => m.value.toLowerCase() === lower || m.label.toLowerCase() === lower);
+}
+
 export function findVilleBySlug(slug: string): VilleEntry | undefined {
   return SEO_VILLES.find(v => v.slug === slug);
+}
+
+export function findVilleByLabel(label: string): VilleEntry | undefined {
+  const lower = label.toLowerCase();
+  return SEO_VILLES.find(v => v.label.toLowerCase() === lower);
 }
 
 export function findSousCategorieBySlug(metierSlug: string, sousCatSlug: string): SousCategorieEntry | undefined {

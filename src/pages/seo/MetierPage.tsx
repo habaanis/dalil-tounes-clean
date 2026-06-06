@@ -7,8 +7,9 @@ import Breadcrumb from '../../components/seo/Breadcrumb';
 import SeoBusinessCard from '../../components/seo/SeoBusinessCard';
 import { findMetierBySlug, SEO_VILLES, SEO_METIERS } from '../../lib/seoLandingData';
 import { fetchSeoBusinesses } from '../../lib/seoBusinessQueries';
-import { generateFAQSchema } from '../../lib/structuredDataSchemas';
 import StructuredData from '../../components/StructuredData';
+import { generateBreadcrumbSchema } from '../../lib/structuredDataSchemas';
+import SeoFAQ from '../../components/seo/SeoFAQ';
 
 const MetierPage: React.FC = () => {
   const { metierSlug } = useParams<{ metierSlug: string }>();
@@ -54,6 +55,12 @@ const MetierPage: React.FC = () => {
     url: `https://dalil-tounes.com/metier/${metier.slug}`,
   };
 
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Accueil', url: '/' },
+    { name: 'Entreprises', url: '/entreprises' },
+    { name: metier.label, url: `/metier/${metier.slug}` },
+  ]);
+
   const popularVilles = SEO_VILLES.slice(0, 12);
 
   const otherMetiers = SEO_METIERS.filter(m => m.slug !== metier.slug && m.secteur === metier.secteur).slice(0, 10);
@@ -67,11 +74,11 @@ const MetierPage: React.FC = () => {
         title={pageTitle}
         description={pageDescription}
         keywords={pageKeywords}
-        canonical={`https://dalil-tounes.com/${metier.slug}`}
-        currentPath={`/${metier.slug}`}
+        canonical={`https://dalil-tounes.com/metier/${metier.slug}`}
+        currentPath={`/metier/${metier.slug}`}
       />
 
-      <StructuredData data={[schemaData, generateFAQSchema(faqData)]} />
+      <StructuredData data={[schemaData, breadcrumbSchema]} />
 
       <div className="min-h-screen bg-[#0f0f0f]">
         <div
@@ -229,25 +236,7 @@ const MetierPage: React.FC = () => {
             </div>
           )}
 
-          <div className="mt-12 pt-8 border-t border-gray-800">
-            <h2
-              className="text-base font-semibold text-gray-300 mb-4"
-              style={{ fontFamily: "'Playfair Display', serif" }}
-            >
-              Questions fréquentes - {metier.label}
-            </h2>
-            <div className="space-y-4">
-              {faqData.map((faq, i) => (
-                <details key={i} className="group">
-                  <summary className="cursor-pointer text-sm text-gray-400 hover:text-white transition-colors py-2 list-none flex items-start gap-2">
-                    <span className="text-[#D4AF37] mt-0.5 shrink-0">&#9656;</span>
-                    <span>{faq.question}</span>
-                  </summary>
-                  <p className="text-xs text-gray-500 leading-relaxed pl-5 pb-3">{faq.answer}</p>
-                </details>
-              ))}
-            </div>
-          </div>
+          <SeoFAQ title={`Questions fréquentes - ${metier.label}`} questions={faqData} />
         </div>
       </div>
     </>
