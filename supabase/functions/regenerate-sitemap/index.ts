@@ -38,15 +38,14 @@ function generateSlug(text: string): string {
     .replace(/-+/g, '-');
 }
 
-function generateBusinessUrl(name: string, id: string, ville?: string | null): string {
-  const nomSlug = generateSlug(name);
-  const shortId = id.substring(0, 8);
-  if (!nomSlug) return `/p/${shortId}`;
+function generateBusinessUrl(slug: string | null, name: string, ville?: string | null): string {
+  const businessSlug = slug || generateSlug(name);
+  if (!businessSlug) return '';
   if (ville) {
     const villeSlug = generateSlug(ville);
-    if (villeSlug) return `/entreprise/${villeSlug}/${nomSlug}-${shortId}`;
+    if (villeSlug) return `/entreprise/${villeSlug}/${businessSlug}`;
   }
-  return `/p/${nomSlug}-${shortId}`;
+  return `/p/${businessSlug}`;
 }
 
 function toLastmod(dateStr: string | null, fallback: string): string {
@@ -190,7 +189,7 @@ Deno.serve(async (req: Request) => {
     while (hasMore) {
       const { data: businesses } = await supabase
         .from('entreprise')
-        .select('id, nom, ville, updated_at, is_premium')
+        .select('id, nom, slug, ville, updated_at, is_premium')
         .order('updated_at', { ascending: false })
         .range(offset, offset + BATCH_SIZE - 1);
 
@@ -200,7 +199,8 @@ Deno.serve(async (req: Request) => {
       }
 
       for (const biz of businesses) {
-        const url = generateBusinessUrl(biz.nom, biz.id, biz.ville);
+        const url = generateBusinessUrl(biz.slug, biz.nom, biz.ville);
+        if (!url) continue;
         const lastmod = toLastmod(biz.updated_at, today);
         const priority = biz.is_premium ? '0.9' : '0.7';
         xml += `  <url>\n    <loc>${domain}${escapeXml(url)}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>${priority}</priority>\n  </url>\n`;

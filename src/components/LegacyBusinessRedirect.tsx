@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { Tables } from '../lib/dbTables';
 import { buildEntrepriseUrl } from '../lib/slugify';
-import { extractFrenchName } from '../lib/textNormalization';
+
 
 export function LegacyBusinessRedirect() {
   const { id } = useParams<{ id: string }>();
@@ -32,8 +32,7 @@ export function LegacyBusinessRedirect() {
         return;
       }
 
-      const name = extractFrenchName(data.nom) || data.nom || '';
-      const target = buildEntrepriseUrl(data.ville, name, data.id);
+      const target = buildEntrepriseUrl({ slug: data.slug, nom: data.nom, ville: data.ville, id: data.id });
       navigate(target, { replace: true });
     })();
 

@@ -328,7 +328,7 @@ export default function MeilleursSection({
                 item={item}
                 accentColor={accentColor}
                 rank={idx + 1}
-                onClick={() => navigate(buildEntrepriseUrl(item.ville, item.nom, item.id))}
+                onClick={() => navigate(buildEntrepriseUrl({ slug: item.slug, nom: item.nom, ville: item.ville, id: item.id }))}
               />
             ))}
           </div>
@@ -403,7 +403,7 @@ export default function MeilleursSection({
                     <ListRow
                       item={item}
                       accentColor={accentColor}
-                      onClick={() => navigate(buildEntrepriseUrl(item.ville, item.nom, item.id))}
+                      onClick={() => navigate(buildEntrepriseUrl({ slug: item.slug, nom: item.nom, ville: item.ville, id: item.id }))}
                     />
                   </motion.div>
                 ))}

@@ -343,6 +343,7 @@ export const BusinessDetail = ({
   const navigate = useNavigate();
 
   let extractedId: string | null = null;
+  let legacyShortId: string | null = null;
 
   if (urlSlug && !urlId) {
     const uuidMatch = urlSlug.match(
@@ -353,12 +354,12 @@ export const BusinessDetail = ({
     } else {
       const shortId = extractShortIdFromSlug(urlSlug);
       if (shortId) {
+        legacyShortId = shortId;
         extractedId = shortId;
       }
     }
   }
 
-  const hasShortIdInSlug = Boolean(extractedId && !urlId);
   const cleanSlugOnly = urlSlug && !extractedId && !urlId ? urlSlug : null;
 
   const businessId = businessIdProp || urlId || extractedId;
@@ -422,7 +423,37 @@ export const BusinessDetail = ({
         let data: any = null;
         let fetchError: any = null;
 
-        if (fetchId) {
+        // 1. Clean slug lookup (primary path for new URLs)
+        if (cleanSlugOnly) {
+          const normalized = cleanSlugOnly.trim().toLowerCase();
+          const { data: slugData } = await supabase.rpc('find_entreprise_by_slug', {
+            p_slug: normalized,
+          });
+          if (slugData && slugData.length > 0) {
+            data = slugData[0];
+          }
+
+          if (!data && urlVilleSlug) {
+            const villeLabel = urlVilleSlug
+              .split('-')
+              .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
+              .join(' ');
+            const { data: candidates } = await supabase
+              .from('entreprise')
+              .select('*')
+              .ilike('ville', `%${villeLabel}%`)
+              .limit(200);
+            if (candidates) {
+              const match = candidates.find(
+                (row: any) => generateSlug(row.nom || '') === normalized
+              );
+              if (match) data = match;
+            }
+          }
+        }
+
+        // 2. ID-based lookup (legacy URLs with shortId or full UUID)
+        if (!data && fetchId) {
           const isFullUuid =
             /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(fetchId);
 
@@ -453,45 +484,13 @@ export const BusinessDetail = ({
           }
         }
 
-        if (!data && !fetchError && cleanSlugOnly) {
-          const normalized = cleanSlugOnly.trim().toLowerCase();
-          const res = await supabase
-            .from('entreprise')
-            .select('*')
-            .ilike('slug', normalized)
-            .maybeSingle();
-          data = res.data;
-          fetchError = res.error;
-
-          if (!data && !fetchError && urlVilleSlug) {
-            const villeLabel = urlVilleSlug
-              .split('-')
-              .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
-              .join(' ');
-            const { data: candidates } = await supabase
-              .from('entreprise')
-              .select('*')
-              .ilike('ville', `%${villeLabel}%`)
-              .limit(200);
-            if (candidates) {
-              const match = candidates.find(
-                (row: any) => generateSlug(row.nom || '') === normalized
-              );
-              if (match) {
-                data = match;
-                fetchError = null;
-              }
-            }
-          }
-        }
-
         if (fetchError || !data) {
           setError(true);
           setLoading(false);
           return;
         }
 
-        const canonicalPath = buildEntrepriseUrl(data.ville, extractFrenchName(data.nom || data.name || ''), data.id);
+        const canonicalPath = buildEntrepriseUrl(data);
         const currentPathname = window.location.pathname;
         if (!asModal && !businessIdProp && canonicalPath !== '/' && currentPathname !== canonicalPath) {
           navigate(canonicalPath, { replace: true });
@@ -675,7 +674,7 @@ export const BusinessDetail = ({
 
   const getBusinessShareUrl = () => {
     if (!business) return '';
-    return buildEntrepriseShareUrl(business.ville, business.nom, business.id);
+    return buildEntrepriseShareUrl(business);
   };
 
   const copyLink = () => {
@@ -845,7 +844,7 @@ export const BusinessDetail = ({
             }
             keywords={`${business.nom}, ${translatedCategory}, ${business.ville}, Tunisie`}
             image={business.image_url || undefined}
-            canonical={buildEntrepriseShareUrl(business.ville, business.nom, business.id)}
+            canonical={buildEntrepriseShareUrl(business)}
             type="article"
             author={business.nom}
             currentPath={currentPath}

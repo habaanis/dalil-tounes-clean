@@ -38,7 +38,7 @@ const SeoBusinessCard: React.FC<SeoBusinessCardProps> = ({ business }) => {
 
   const rawStatut = business.statut_abonnement || null;
   const tier = mapSubscriptionToTier({ statut_abonnement: rawStatut });
-  const url = buildEntrepriseUrl(business.ville, business.nom, business.id);
+  const url = buildEntrepriseUrl({ slug: (business as any).slug, nom: business.nom, ville: business.ville, id: business.id });
   const locationLabel = business.ville || business.gouvernorat || '';
 
   const rawCat = business.sous_categories || business['catégorie'] || [];
