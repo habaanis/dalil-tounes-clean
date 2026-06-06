@@ -34,7 +34,7 @@ const SimilarBusinesses = lazy(() => import('../components/seo/SimilarBusinesses
 
 import EntrepriseAvisForm from '../components/EntrepriseAvisForm';
 import BusinessReviews from '../components/BusinessReviews';
-import { generateShareUrl, buildEntrepriseShareUrl, generateSlug } from '../lib/slugify';
+import { buildEntrepriseUrl, buildEntrepriseShareUrl, generateSlug, extractShortIdFromSlug } from '../lib/slugify';
 import { cleanAltText, extractFrenchName, cleanArabicField } from '../lib/textNormalization';
 import { SEOHead } from './SEOHead';
 import { useHreflangPath } from '../hooks/useHreflangPath';
@@ -342,32 +342,24 @@ export const BusinessDetail = ({
 
   const navigate = useNavigate();
 
-  const isCleanSlugRoute =
-    Boolean(urlVilleSlug) ||
-    (!!urlSlug &&
-      !urlSlug.match(/-[a-f0-9]{8,}$/i) &&
-      !urlSlug.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i));
-
-  const cleanSlug = isCleanSlugRoute ? urlSlug : null;
-
   let extractedId: string | null = null;
 
-  if (urlSlug && !urlId && !isCleanSlugRoute) {
+  if (urlSlug && !urlId) {
     const uuidMatch = urlSlug.match(
       /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i
     );
-
     if (uuidMatch) {
       extractedId = uuidMatch[0];
     } else {
-      const segments = urlSlug.split('-');
-      const lastSegment = segments[segments.length - 1];
-
-      if (lastSegment && lastSegment.length >= 6) {
-        extractedId = lastSegment;
+      const shortId = extractShortIdFromSlug(urlSlug);
+      if (shortId) {
+        extractedId = shortId;
       }
     }
   }
+
+  const hasShortIdInSlug = Boolean(extractedId && !urlId);
+  const cleanSlugOnly = urlSlug && !extractedId && !urlId ? urlSlug : null;
 
   const businessId = businessIdProp || urlId || extractedId;
 
@@ -414,7 +406,7 @@ export const BusinessDetail = ({
   }, [asModal, handleCloseRef]);
 
   useEffect(() => {
-    if (!actualBusinessId && !cleanSlug && !businessProp?.id) {
+    if (!actualBusinessId && !cleanSlugOnly && !businessProp?.id) {
       setError(true);
       setLoading(false);
       return;
@@ -425,49 +417,14 @@ export const BusinessDetail = ({
       setError(false);
 
       try {
-        const normalizedSlug = cleanSlug ? cleanSlug.trim().toLowerCase() : null;
         const fetchId = actualBusinessId || businessProp?.id || null;
 
         let data: any = null;
-        let error: any = null;
+        let fetchError: any = null;
 
-        if (normalizedSlug) {
-          const res = await supabase
-            .from('entreprise')
-            .select('*')
-            .ilike('slug', normalizedSlug)
-            .maybeSingle();
-
-          data = res.data;
-          error = res.error;
-
-          if (!data && !error && urlVilleSlug) {
-            const villeLabel = urlVilleSlug
-              .split('-')
-              .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-              .join(' ');
-
-            const { data: candidates } = await supabase
-              .from('entreprise')
-              .select('*')
-              .ilike('ville', `%${villeLabel}%`)
-              .limit(200);
-
-            if (candidates) {
-              const match = candidates.find(
-                (row: any) => generateSlug(row.nom || '') === normalizedSlug
-              );
-              if (match) {
-                data = match;
-                error = null;
-              }
-            }
-          }
-        } else if (fetchId) {
+        if (fetchId) {
           const isFullUuid =
-            /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
-              fetchId
-            );
+            /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(fetchId);
 
           if (isFullUuid) {
             const res = await supabase
@@ -475,47 +432,70 @@ export const BusinessDetail = ({
               .select('*')
               .eq('id', fetchId)
               .maybeSingle();
-
             data = res.data;
-            error = res.error;
+            fetchError = res.error;
           } else {
-            const res = await supabase
-              .from('entreprise')
-              .select('*')
-              .eq('id_airtable', fetchId)
-              .maybeSingle();
-
-            if (res.data) {
-              data = res.data;
-              error = null;
+            const { data: rpcData } = await supabase.rpc('find_entreprise_by_id_prefix', {
+              prefix: fetchId,
+            });
+            if (rpcData && rpcData.length > 0) {
+              data = rpcData[0];
             } else {
-              const res2 = await supabase
+              const res = await supabase
                 .from('entreprise')
                 .select('*')
-                .ilike('slug', fetchId)
+                .eq('id_airtable', fetchId)
                 .maybeSingle();
-
-              data = res2.data;
-              error = res2.error;
+              if (res.data) {
+                data = res.data;
+              }
             }
           }
         }
 
-        if (error || !data) {
-          console.error('Erreur lors du chargement de l’entreprise:', error);
+        if (!data && !fetchError && cleanSlugOnly) {
+          const normalized = cleanSlugOnly.trim().toLowerCase();
+          const res = await supabase
+            .from('entreprise')
+            .select('*')
+            .ilike('slug', normalized)
+            .maybeSingle();
+          data = res.data;
+          fetchError = res.error;
+
+          if (!data && !fetchError && urlVilleSlug) {
+            const villeLabel = urlVilleSlug
+              .split('-')
+              .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
+              .join(' ');
+            const { data: candidates } = await supabase
+              .from('entreprise')
+              .select('*')
+              .ilike('ville', `%${villeLabel}%`)
+              .limit(200);
+            if (candidates) {
+              const match = candidates.find(
+                (row: any) => generateSlug(row.nom || '') === normalized
+              );
+              if (match) {
+                data = match;
+                fetchError = null;
+              }
+            }
+          }
+        }
+
+        if (fetchError || !data) {
           setError(true);
           setLoading(false);
           return;
         }
 
-        console.log(
-          '[Supabase raw business GPS]',
-          data?.BTN_Maps,
-          data?.google_url,
-          data?.adresse,
-          data?.latitude,
-          data?.longitude
-        );
+        const canonicalPath = buildEntrepriseUrl(data.ville, extractFrenchName(data.nom || data.name || ''), data.id);
+        const currentPathname = window.location.pathname;
+        if (!asModal && !businessIdProp && canonicalPath !== '/' && currentPathname !== canonicalPath) {
+          navigate(canonicalPath, { replace: true });
+        }
 
         const mappedBusiness = {
           ...data,
@@ -525,20 +505,9 @@ export const BusinessDetail = ({
         };
 
         const normalized = normalizeBusiness(mappedBusiness);
-
-        console.log(
-          '[Normalized business GPS]',
-          normalized?.['BTN_Maps'],
-          normalized?.google_url,
-          normalized?.adresse,
-          normalized?.latitude,
-          normalized?.longitude
-        );
-
         setBusiness(normalized as Business);
 
         try {
-          console.log('[Avis fetch entrepriseId]', data.id);
           const { data: avisData } = await supabase
             .from('avis_entreprise')
             .select('note')
@@ -548,7 +517,6 @@ export const BusinessDetail = ({
           if (avisData && avisData.length > 0) {
             const totalRating = avisData.reduce((sum, avis) => sum + (avis.note || 0), 0);
             const avgRating = totalRating / avisData.length;
-
             setAverageRating(Number(avgRating.toFixed(1)));
             setReviewCount(avisData.length);
           } else {
@@ -567,7 +535,7 @@ export const BusinessDetail = ({
     };
 
     fetchBusiness();
-  }, [businessId, businessProp, actualBusinessId, cleanSlug]);
+  }, [businessId, businessProp, actualBusinessId, cleanSlugOnly, asModal, businessIdProp, navigate, urlVilleSlug]);
 
   const translations = {
     fr: {
@@ -707,12 +675,7 @@ export const BusinessDetail = ({
 
   const getBusinessShareUrl = () => {
     if (!business) return '';
-
-    if (business.slug) {
-      return buildEntrepriseShareUrl(business.ville, business.slug, business.nom, business.id);
-    }
-
-    return generateShareUrl(business.nom, business.id);
+    return buildEntrepriseShareUrl(business.ville, business.nom, business.id);
   };
 
   const copyLink = () => {
@@ -882,11 +845,7 @@ export const BusinessDetail = ({
             }
             keywords={`${business.nom}, ${translatedCategory}, ${business.ville}, Tunisie`}
             image={business.image_url || undefined}
-            canonical={
-              business.slug
-                ? buildEntrepriseShareUrl(business.ville, business.slug, business.nom, business.id)
-                : generateShareUrl(business.nom, actualBusinessId)
-            }
+            canonical={buildEntrepriseShareUrl(business.ville, business.nom, business.id)}
             type="article"
             author={business.nom}
             currentPath={currentPath}

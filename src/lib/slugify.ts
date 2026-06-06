@@ -31,11 +31,8 @@ export function generateSlug(text: string): string {
 }
 
 /**
- * Génère une URL complète pour une fiche entreprise
- * Format: /p/{slug}-{id}
- *
- * Le ID est ajouté à la fin pour garantir l'unicité même si 2 entreprises
- * ont le même nom
+ * Legacy URL for backward compatibility.
+ * Format: /p/{nom-slug}-{shortId}
  */
 export function generateBusinessUrl(name: string, id: string): string {
   const slug = generateSlug(name);
@@ -43,58 +40,55 @@ export function generateBusinessUrl(name: string, id: string): string {
   return `/p/${slug}-${shortId}`;
 }
 
-/**
- * Extrait l'ID depuis une URL avec slug
- * Format attendu: /p/{slug}-{id}
- */
 export function extractIdFromSlugUrl(url: string): string | null {
   const match = url.match(/\/p\/.*-([a-f0-9]{8,})$/i);
   return match ? match[1] : null;
 }
 
 /**
- * Génère l'URL complète pour le partage (avec domaine)
+ * Extrait le shortId (8 premiers chars de l'UUID) depuis la fin d'un slug URL.
+ * Fonctionne pour /p/{slug}-{shortId} et /entreprise/{ville}/{slug}-{shortId}
  */
+export function extractShortIdFromSlug(slug: string): string | null {
+  const match = slug.match(/-([a-f0-9]{8})$/i);
+  return match ? match[1] : null;
+}
+
 export function generateShareUrl(name: string, id: string): string {
-  const path = generateBusinessUrl(name, id);
+  const path = buildEntrepriseUrl(null, name, id);
   const domain = window.location.origin;
   return `${domain}${path}`;
 }
 
 /**
- * Génère l'URL SEO-friendly pour une fiche entreprise à partir de ville + slug
- * fournis par la base. Format: /entreprise/{villeSlug}/{slug}
- *
- * Si slug ou ville manquent, retombe sur l'ancienne route /p/{slug}-{id}
+ * URL canonique pour une fiche entreprise.
+ * Format : /entreprise/{villeSlug}/{nom-slug}-{shortId}
+ * Fallback sans ville : /p/{nom-slug}-{shortId}
  */
 export function buildEntrepriseUrl(
   ville: string | null | undefined,
-  slug: string | null | undefined,
-  fallbackName?: string,
-  fallbackId?: string
+  name: string | null | undefined,
+  id: string | null | undefined,
 ): string {
-  // Normaliser le slug côté URL : trim + lowercase pour éviter les 404
-  // quand WhaleSync injecte un slug avec majuscule (ex: "Skila-mahdia")
-  const normalizedSlug = slug ? slug.trim().toLowerCase() : null;
-  if (normalizedSlug && ville) {
-    return `/entreprise/${generateSlug(ville)}/${normalizedSlug}`;
+  if (!name || !id) return '/';
+  const nomSlug = generateSlug(name);
+  const shortId = id.substring(0, 8);
+  if (!nomSlug) return '/';
+  if (ville) {
+    const villeSlug = generateSlug(ville);
+    if (villeSlug) {
+      return `/entreprise/${villeSlug}/${nomSlug}-${shortId}`;
+    }
   }
-  if (normalizedSlug && !ville) {
-    return `/entreprise/${normalizedSlug}`;
-  }
-  if (fallbackName && fallbackId) {
-    return generateBusinessUrl(fallbackName, fallbackId);
-  }
-  return '/';
+  return `/p/${nomSlug}-${shortId}`;
 }
 
 export function buildEntrepriseShareUrl(
   ville: string | null | undefined,
-  slug: string | null | undefined,
-  fallbackName?: string,
-  fallbackId?: string
+  name: string | null | undefined,
+  id: string | null | undefined,
 ): string {
-  const path = buildEntrepriseUrl(ville, slug, fallbackName, fallbackId);
+  const path = buildEntrepriseUrl(ville, name, id);
   const domain = typeof window !== 'undefined' ? window.location.origin : '';
   return `${domain}${path}`;
 }

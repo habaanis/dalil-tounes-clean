@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { Tables } from '../lib/dbTables';
-import { generateBusinessUrl, buildEntrepriseUrl } from '../lib/slugify';
+import { buildEntrepriseUrl } from '../lib/slugify';
 import { extractFrenchName } from '../lib/textNormalization';
 
 export function LegacyBusinessRedirect() {
@@ -33,9 +33,7 @@ export function LegacyBusinessRedirect() {
       }
 
       const name = extractFrenchName(data.nom) || data.nom || '';
-      const target = data.slug
-        ? buildEntrepriseUrl(data.ville, data.slug, name, data.id)
-        : generateBusinessUrl(name, data.id);
+      const target = buildEntrepriseUrl(data.ville, name, data.id);
       navigate(target, { replace: true });
     })();
 

@@ -424,7 +424,7 @@ export const Businesses = ({
     if (preselectedBusinessId && businesses.length > 0) {
       const found = businesses.find((b) => b.id === preselectedBusinessId);
       if (found) {
-        navigate(buildEntrepriseUrl((found as any).ville || (found as any).city, (found as any).slug, found.name, found.id));
+        navigate(buildEntrepriseUrl((found as any).ville || (found as any).city, found.name, found.id));
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -1166,7 +1166,7 @@ export const Businesses = ({
                         description_ar: business.description_ar || null,
                       }}
                       onClick={() => {
-                        navigate(buildEntrepriseUrl(business.ville || business.city, business.slug, business.name, business.id));
+                        navigate(buildEntrepriseUrl(business.ville || business.city, business.name, business.id));
                       }}
                       variant="premium"
                     />

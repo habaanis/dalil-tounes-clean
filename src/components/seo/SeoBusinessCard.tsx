@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, Clock, ChevronDown } from 'lucide-react';
-import { generateBusinessUrl, buildEntrepriseUrl } from '../../lib/slugify';
+import { buildEntrepriseUrl } from '../../lib/slugify';
 import { mapSubscriptionToTier } from '../../lib/subscriptionTiers';
 import { getLogoUrl, getLogoStyle, getLogoContainerStyle } from '../../lib/logoUtils';
 import {
@@ -38,7 +38,7 @@ const SeoBusinessCard: React.FC<SeoBusinessCardProps> = ({ business }) => {
 
   const rawStatut = business.statut_abonnement || null;
   const tier = mapSubscriptionToTier({ statut_abonnement: rawStatut });
-  const url = buildEntrepriseUrl((business as any).ville, (business as any).slug, business.nom, business.id) || generateBusinessUrl(business.nom, business.id);
+  const url = buildEntrepriseUrl(business.ville, business.nom, business.id);
   const locationLabel = business.ville || business.gouvernorat || '';
 
   const rawCat = business.sous_categories || business['catégorie'] || [];

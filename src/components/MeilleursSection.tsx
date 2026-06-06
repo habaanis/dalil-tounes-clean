@@ -4,7 +4,7 @@ import { Star, MapPin, ArrowRight, BookOpen, Search, Trophy, ChevronLeft, Chevro
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { Tables } from '../lib/dbTables';
-import { generateBusinessUrl, buildEntrepriseUrl } from '../lib/slugify';
+import { buildEntrepriseUrl } from '../lib/slugify';
 import { getSupabaseImageUrl } from '../lib/imageUtils';
 import { extractFrenchName } from '../lib/textNormalization';
 import { useLanguage } from '../context/LanguageContext';
@@ -328,7 +328,7 @@ export default function MeilleursSection({
                 item={item}
                 accentColor={accentColor}
                 rank={idx + 1}
-                onClick={() => navigate(buildEntrepriseUrl(item.ville, item.slug, item.nom, item.id))}
+                onClick={() => navigate(buildEntrepriseUrl(item.ville, item.nom, item.id))}
               />
             ))}
           </div>
@@ -403,7 +403,7 @@ export default function MeilleursSection({
                     <ListRow
                       item={item}
                       accentColor={accentColor}
-                      onClick={() => navigate(buildEntrepriseUrl(item.ville, item.slug, item.nom, item.id))}
+                      onClick={() => navigate(buildEntrepriseUrl(item.ville, item.nom, item.id))}
                     />
                   </motion.div>
                 ))}
