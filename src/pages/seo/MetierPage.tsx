@@ -1,37 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { Search, ArrowRight, AlertCircle } from 'lucide-react';
 import { SEOHead } from '../../components/SEOHead';
 import SearchBar from '../../components/SearchBar';
 import Breadcrumb from '../../components/seo/Breadcrumb';
 import SeoBusinessCard from '../../components/seo/SeoBusinessCard';
+import LoadMoreButton from '../../components/seo/LoadMoreButton';
 import { findMetierBySlug, SEO_VILLES, SEO_METIERS } from '../../lib/seoLandingData';
-import { fetchSeoBusinesses } from '../../lib/seoBusinessQueries';
+import { usePaginatedSeoBusinesses } from '../../hooks/usePaginatedSeoBusinesses';
 import StructuredData from '../../components/StructuredData';
 import { generateBreadcrumbSchema } from '../../lib/structuredDataSchemas';
 import SeoFAQ from '../../components/seo/SeoFAQ';
 
 const MetierPage: React.FC = () => {
   const { metierSlug } = useParams<{ metierSlug: string }>();
-  const [businesses, setBusinesses] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
   const metier = metierSlug ? findMetierBySlug(metierSlug) : undefined;
 
-  useEffect(() => {
-    if (!metier) return;
-    setLoading(true);
-    fetchSeoBusinesses({
-      limit: 40,
-      metier: metier.value,
-    }).then(({ data }) => {
-      const sorted = [...(data ?? [])].sort((a, b) => {
-        return (b['Note Google Globale'] ?? 0) - (a['Note Google Globale'] ?? 0);
-      });
-      setBusinesses(sorted);
-      setLoading(false);
-    });
-  }, [metierSlug]);
+  const { businesses, total, loading, loadingMore, hasMore, loadMore } = usePaginatedSeoBusinesses(
+    { metier: metier?.value, pageSize: 20 },
+    [metierSlug]
+  );
 
   if (!metier) {
     return <Navigate to="/" replace />;
@@ -120,7 +108,7 @@ const MetierPage: React.FC = () => {
             {!loading && (
               <div className="flex items-center gap-2 mt-6 text-sm text-gray-500">
                 <Search className="w-4 h-4 text-[#D4AF37]" />
-                <span>{businesses.length} établissement{businesses.length !== 1 ? 's' : ''} référencé{businesses.length !== 1 ? 's' : ''}</span>
+                <span>{total} établissement{total !== 1 ? 's' : ''} référencé{total !== 1 ? 's' : ''}</span>
               </div>
             )}
           </div>
@@ -174,7 +162,7 @@ const MetierPage: React.FC = () => {
                   className="text-xl font-semibold text-white"
                   style={{ fontFamily: "'Playfair Display', serif" }}
                 >
-                  {businesses.length} résultat{businesses.length !== 1 ? 's' : ''}
+                  {total} résultat{total !== 1 ? 's' : ''}
                 </h2>
                 <Link
                   to={`/entreprises?categorie=${encodeURIComponent(metier.value)}`}
@@ -189,6 +177,16 @@ const MetierPage: React.FC = () => {
                   <SeoBusinessCard key={b.id} business={b} />
                 ))}
               </div>
+
+              {hasMore && (
+                <LoadMoreButton
+                  onClick={loadMore}
+                  loading={loadingMore}
+                  shown={businesses.length}
+                  total={total}
+                />
+              )}
+
               <p className="text-center text-[11px] text-gray-500 mt-6 leading-relaxed">
                 Les résultats affichés reposent sur des critères automatisés (avis publics, notes Google, complétude de la fiche).{' '}
                 <Link to="/info-avis" className="text-[#D4AF37] hover:underline">En savoir plus</Link>

@@ -1,35 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { Search, MapPin, ArrowRight, AlertCircle } from 'lucide-react';
 import { SEOHead } from '../../components/SEOHead';
 import SearchBar from '../../components/SearchBar';
 import Breadcrumb from '../../components/seo/Breadcrumb';
 import SeoBusinessCard from '../../components/seo/SeoBusinessCard';
+import LoadMoreButton from '../../components/seo/LoadMoreButton';
 import { parseMetierVilleSlug, SEO_VILLES } from '../../lib/seoLandingData';
-import { fetchSeoBusinesses } from '../../lib/seoBusinessQueries';
+import { usePaginatedSeoBusinesses } from '../../hooks/usePaginatedSeoBusinesses';
 import StructuredData from '../../components/StructuredData';
 import { generateBreadcrumbSchema } from '../../lib/structuredDataSchemas';
 import SeoFAQ from '../../components/seo/SeoFAQ';
 
 const MetierVillePage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
-  const [businesses, setBusinesses] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
   const parsed = slug ? parseMetierVilleSlug(slug) : null;
 
-  useEffect(() => {
-    if (!parsed) return;
-    setLoading(true);
-    fetchSeoBusinesses({
-      limit: 30,
-      metier: parsed.metier.value,
-      city: parsed.ville.label,
-    }).then(({ data }) => {
-      setBusinesses(data ?? []);
-      setLoading(false);
-    });
-  }, [slug]);
+  const { businesses, total, loading, loadingMore, hasMore, loadMore } = usePaginatedSeoBusinesses(
+    { metier: parsed?.metier.value, city: parsed?.ville.label, pageSize: 20 },
+    [slug]
+  );
 
   if (!parsed) {
     return <Navigate to="/" replace />;
@@ -40,11 +30,7 @@ const MetierVillePage: React.FC = () => {
   const pageDescription = `Trouvez un ${metier.label} de confiance à ${ville.label} avec avis et coordonnées. Annuaire complet des ${metier.label.toLowerCase()}s en Tunisie.`;
   const pageKeywords = `${metier.label} ${ville.label}, ${metier.label.toLowerCase()} tunisie, trouver ${metier.label.toLowerCase()} ${ville.label}, ${metier.secteur} ${ville.label}`;
 
-  const sortedBusinesses = [...businesses].sort((a, b) => {
-    const ratingA = a['Note Google Globale'] ?? 0;
-    const ratingB = b['Note Google Globale'] ?? 0;
-    return ratingB - ratingA;
-  });
+  const sortedBusinesses = businesses;
 
   const faqData = [
     { question: `Comment trouver un ${metier.label.toLowerCase()} à ${ville.label} ?`, answer: `Consultez la liste ci-dessous ou utilisez la barre de recherche Dalil Tounes. Les résultats sont triés par note Google et complétude de la fiche.` },
@@ -129,7 +115,7 @@ const MetierVillePage: React.FC = () => {
               {!loading && (
                 <div className="flex items-center gap-2 text-sm text-gray-500">
                   <Search className="w-4 h-4 text-[#D4AF37]" />
-                  <span>{sortedBusinesses.length} établissement{sortedBusinesses.length !== 1 ? 's' : ''} trouvé{sortedBusinesses.length !== 1 ? 's' : ''}</span>
+                  <span>{total} établissement{total !== 1 ? 's' : ''} trouvé{total !== 1 ? 's' : ''}</span>
                 </div>
               )}
             </div>
@@ -163,7 +149,7 @@ const MetierVillePage: React.FC = () => {
                   className="text-xl font-semibold text-white"
                   style={{ fontFamily: "'Playfair Display', serif" }}
                 >
-                  {sortedBusinesses.length} résultat{sortedBusinesses.length !== 1 ? 's' : ''}
+                  {total} résultat{total !== 1 ? 's' : ''}
                 </h2>
                 <Link
                   to={`/entreprises?categorie=${encodeURIComponent(metier.value)}&gouvernorat=${encodeURIComponent(ville.gouvernorat)}`}
@@ -179,6 +165,16 @@ const MetierVillePage: React.FC = () => {
                   <SeoBusinessCard key={b.id} business={b} />
                 ))}
               </div>
+
+              {hasMore && (
+                <LoadMoreButton
+                  onClick={loadMore}
+                  loading={loadingMore}
+                  shown={businesses.length}
+                  total={total}
+                />
+              )}
+
               <p className="text-center text-[11px] text-gray-500 mt-6 leading-relaxed">
                 Les résultats affichés reposent sur des critères automatisés (avis publics, notes Google, complétude de la fiche).{' '}
                 <Link to="/info-avis" className="text-[#D4AF37] hover:underline">En savoir plus</Link>

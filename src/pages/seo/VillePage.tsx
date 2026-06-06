@@ -1,37 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { Search, ArrowRight, AlertCircle } from 'lucide-react';
 import { SEOHead } from '../../components/SEOHead';
 import SearchBar from '../../components/SearchBar';
 import Breadcrumb from '../../components/seo/Breadcrumb';
 import SeoBusinessCard from '../../components/seo/SeoBusinessCard';
+import LoadMoreButton from '../../components/seo/LoadMoreButton';
 import { findVilleBySlug, SEO_METIERS, SEO_VILLES } from '../../lib/seoLandingData';
-import { fetchSeoBusinesses } from '../../lib/seoBusinessQueries';
+import { usePaginatedSeoBusinesses } from '../../hooks/usePaginatedSeoBusinesses';
 import StructuredData from '../../components/StructuredData';
 import { generateBreadcrumbSchema } from '../../lib/structuredDataSchemas';
 import SeoFAQ from '../../components/seo/SeoFAQ';
 
 const VillePage: React.FC = () => {
   const { villeSlug } = useParams<{ villeSlug: string }>();
-  const [businesses, setBusinesses] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
   const ville = villeSlug ? findVilleBySlug(villeSlug) : undefined;
 
-  useEffect(() => {
-    if (!ville) return;
-    setLoading(true);
-    fetchSeoBusinesses({
-      limit: 40,
-      city: ville.label,
-    }).then(({ data }) => {
-      const sorted = [...(data ?? [])].sort((a, b) => {
-        return (b['Note Google Globale'] ?? 0) - (a['Note Google Globale'] ?? 0);
-      });
-      setBusinesses(sorted);
-      setLoading(false);
-    });
-  }, [villeSlug]);
+  const { businesses, total, loading, loadingMore, hasMore, loadMore } = usePaginatedSeoBusinesses(
+    { city: ville?.label, pageSize: 20 },
+    [villeSlug]
+  );
 
   if (!ville) {
     return <Navigate to="/" replace />;
@@ -129,7 +117,7 @@ const VillePage: React.FC = () => {
             {!loading && (
               <div className="flex items-center gap-2 mt-6 text-sm text-gray-500">
                 <Search className="w-4 h-4 text-[#D4AF37]" />
-                <span>{businesses.length} établissement{businesses.length !== 1 ? 's' : ''} trouvé{businesses.length !== 1 ? 's' : ''}</span>
+                <span>{total} établissement{total !== 1 ? 's' : ''} trouvé{total !== 1 ? 's' : ''}</span>
               </div>
             )}
           </div>
@@ -180,7 +168,7 @@ const VillePage: React.FC = () => {
                   className="text-xl font-semibold text-white"
                   style={{ fontFamily: "'Playfair Display', serif" }}
                 >
-                  {businesses.length} résultat{businesses.length !== 1 ? 's' : ''}
+                  {total} résultat{total !== 1 ? 's' : ''}
                 </h2>
                 <Link
                   to={`/entreprises?gouvernorat=${encodeURIComponent(ville.gouvernorat)}`}
@@ -195,6 +183,15 @@ const VillePage: React.FC = () => {
                   <SeoBusinessCard key={b.id} business={b} />
                 ))}
               </div>
+
+              {hasMore && (
+                <LoadMoreButton
+                  onClick={loadMore}
+                  loading={loadingMore}
+                  shown={businesses.length}
+                  total={total}
+                />
+              )}
             </>
           ) : (
             <div className="text-center py-16">

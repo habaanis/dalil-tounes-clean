@@ -118,45 +118,49 @@ export async function fetchSimilarBusinesses(options: {
 
 export async function fetchSeoBusinesses(options: {
   limit?: number;
+  offset?: number;
   metier?: string;
   sousCategorie?: string;
   city?: string;
   categorie?: string;
-}): Promise<{ data: SeoBusiness[]; error: unknown }> {
-  const { limit = 40, sousCategorie, city } = options;
+}): Promise<{ data: SeoBusiness[]; total: number; error: unknown }> {
+  const { limit = 20, offset = 0, sousCategorie, city } = options;
   const metierValue = options.metier ?? options.categorie;
 
-  // TEMP: filtre statut_validation désactivé (à réactiver après validation des fiches)
-  const { data, error } = await supabase
+  let query = supabase
     .from('entreprise')
-    .select('*');
+    .select(SIMILAR_SELECT, { count: 'exact' });
 
-  if (error || !data) {
-    return { data: [], error };
+  if (metierValue) {
+    query = query.or(
+      `sous_categories.ilike.%${metierValue}%,categorie.ilike.%${metierValue}%`
+    );
   }
 
-  const filtered = (data as Record<string, unknown>[]).filter(item => {
-    const sousCatsRaw = Array.isArray(item.sous_categories)
-      ? (item.sous_categories as string[]).join(' ')
-      : (item.sous_categories as string) ?? '';
+  if (sousCategorie) {
+    query = query.ilike('sous_categories', `%${sousCategorie}%`);
+  }
 
-    const matchMetier = metierValue
-      ? sousCatsRaw.toLowerCase().includes(metierValue.toLowerCase())
-      : true;
+  if (city) {
+    query = query.or(
+      `ville.ilike.%${city}%,gouvernorat.ilike.%${city}%`
+    );
+  }
 
-    const matchSousCategorie = sousCategorie
-      ? sousCatsRaw.toLowerCase().includes(sousCategorie.toLowerCase())
-      : true;
+  query = query
+    .order('is_premium', { ascending: false })
+    .order('score_avis', { ascending: false, nullsFirst: false })
+    .range(offset, offset + limit - 1);
 
-    const matchLocation = city
-      ? (item.gouvernorat as string | undefined)?.toLowerCase().includes(city.toLowerCase()) ||
-        (item.ville as string | undefined)?.toLowerCase().includes(city.toLowerCase())
-      : true;
+  const { data, error, count } = await query;
 
-    return matchMetier && matchSousCategorie && matchLocation;
-  });
+  if (error || !data) {
+    return { data: [], total: 0, error };
+  }
 
-  const limited = filtered.slice(0, limit);
-
-  return { data: limited.map(mapEntrepriseRow), error: null };
+  return {
+    data: (data as Record<string, unknown>[]).map(mapEntrepriseRow),
+    total: count ?? 0,
+    error: null,
+  };
 }

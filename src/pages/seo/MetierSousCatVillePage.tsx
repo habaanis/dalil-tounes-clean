@@ -1,56 +1,39 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { Search, MapPin, ArrowRight, AlertCircle } from 'lucide-react';
 import { SEOHead } from '../../components/SEOHead';
 import SearchBar from '../../components/SearchBar';
 import Breadcrumb from '../../components/seo/Breadcrumb';
 import SeoBusinessCard from '../../components/seo/SeoBusinessCard';
+import LoadMoreButton from '../../components/seo/LoadMoreButton';
 import { parseSeoSlug, SEO_SOUS_CATEGORIES, SEO_VILLES } from '../../lib/seoLandingData';
-import { fetchSeoBusinesses } from '../../lib/seoBusinessQueries';
+import { usePaginatedSeoBusinesses } from '../../hooks/usePaginatedSeoBusinesses';
 import StructuredData from '../../components/StructuredData';
 import { generateBreadcrumbSchema } from '../../lib/structuredDataSchemas';
 import SeoFAQ from '../../components/seo/SeoFAQ';
 
 const MetierSousCatVillePage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
-  const [businesses, setBusinesses] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
   const parsed = slug ? parseSeoSlug(slug) : null;
 
-  useEffect(() => {
-    if (!parsed) return;
+  const sousCategorieParsed = parsed?.type === 'metier-souscategorie-ville' ? parsed.sousCategorie : null;
 
-    setLoading(true);
-
-    if (parsed.type === 'metier-souscategorie-ville') {
-      fetchSeoBusinesses({
-        limit: 30,
-        metier: parsed.metier.value,
-        sousCategorie: parsed.sousCategorie.label,
-        city: parsed.ville.label,
-      }).then(({ data }) => {
-        setBusinesses(data ?? []);
-        setLoading(false);
-      });
-    } else {
-      fetchSeoBusinesses({
-        limit: 30,
-        metier: parsed.metier.value,
-        city: parsed.ville.label,
-      }).then(({ data }) => {
-        setBusinesses(data ?? []);
-        setLoading(false);
-      });
-    }
-  }, [slug]);
+  const { businesses, total, loading, loadingMore, hasMore, loadMore } = usePaginatedSeoBusinesses(
+    {
+      metier: parsed?.metier.value,
+      sousCategorie: sousCategorieParsed?.label,
+      city: parsed?.ville.label,
+      pageSize: 20,
+    },
+    [slug]
+  );
 
   if (!parsed) {
     return <Navigate to="/" replace />;
   }
 
   const { metier, ville } = parsed;
-  const sousCategorie = parsed.type === 'metier-souscategorie-ville' ? parsed.sousCategorie : null;
+  const sousCategorie = sousCategorieParsed;
 
   const pageTitle = sousCategorie
     ? `${metier.label} ${sousCategorie.label} à ${ville.label} - Dalil Tounes`
@@ -64,9 +47,7 @@ const MetierSousCatVillePage: React.FC = () => {
     ? `${metier.label} ${sousCategorie.label} ${ville.label}, ${metier.label.toLowerCase()} ${sousCategorie.label} tunisie, ${metier.secteur} ${ville.label}`
     : `${metier.label} ${ville.label}, ${metier.label.toLowerCase()} tunisie, ${metier.secteur} ${ville.label}`;
 
-  const sortedBusinesses = [...businesses].sort((a, b) => {
-    return (b['Note Google Globale'] ?? 0) - (a['Note Google Globale'] ?? 0);
-  });
+  const sortedBusinesses = businesses;
 
   const schemaData = {
     '@context': 'https://schema.org',
@@ -175,7 +156,7 @@ const MetierSousCatVillePage: React.FC = () => {
                 <div className="flex items-center gap-2 text-sm text-gray-500">
                   <Search className="w-4 h-4 text-[#D4AF37]" />
                   <span>
-                    {sortedBusinesses.length} établissement{sortedBusinesses.length !== 1 ? 's' : ''} trouvé{sortedBusinesses.length !== 1 ? 's' : ''}
+                    {total} établissement{total !== 1 ? 's' : ''} trouvé{total !== 1 ? 's' : ''}
                   </span>
                 </div>
               )}
@@ -210,7 +191,7 @@ const MetierSousCatVillePage: React.FC = () => {
                   className="text-xl font-semibold text-white"
                   style={{ fontFamily: "'Playfair Display', serif" }}
                 >
-                  {sortedBusinesses.length} résultat{sortedBusinesses.length !== 1 ? 's' : ''}
+                  {total} résultat{total !== 1 ? 's' : ''}
                 </h2>
                 <Link
                   to={`/entreprises?categorie=${encodeURIComponent(metier.value)}&gouvernorat=${encodeURIComponent(ville.gouvernorat)}`}
@@ -226,6 +207,16 @@ const MetierSousCatVillePage: React.FC = () => {
                   <SeoBusinessCard key={b.id} business={b} />
                 ))}
               </div>
+
+              {hasMore && (
+                <LoadMoreButton
+                  onClick={loadMore}
+                  loading={loadingMore}
+                  shown={businesses.length}
+                  total={total}
+                />
+              )}
+
               <p className="text-center text-[11px] text-gray-500 mt-6 leading-relaxed">
                 Les résultats affichés reposent sur des critères automatisés (avis publics, notes Google, complétude de la fiche).{' '}
                 <Link to="/info-avis" className="text-[#D4AF37] hover:underline">En savoir plus</Link>
