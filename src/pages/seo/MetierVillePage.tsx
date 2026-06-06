@@ -5,8 +5,10 @@ import { SEOHead } from '../../components/SEOHead';
 import SearchBar from '../../components/SearchBar';
 import Breadcrumb from '../../components/seo/Breadcrumb';
 import SeoBusinessCard from '../../components/seo/SeoBusinessCard';
-import { parseMetierVilleSlug } from '../../lib/seoLandingData';
+import { parseMetierVilleSlug, SEO_VILLES } from '../../lib/seoLandingData';
 import { fetchSeoBusinesses } from '../../lib/seoBusinessQueries';
+import { generateFAQSchema } from '../../lib/structuredDataSchemas';
+import StructuredData from '../../components/StructuredData';
 
 const MetierVillePage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -43,6 +45,11 @@ const MetierVillePage: React.FC = () => {
     return ratingB - ratingA;
   });
 
+  const faqData = [
+    { question: `Comment trouver un ${metier.label.toLowerCase()} à ${ville.label} ?`, answer: `Consultez la liste ci-dessous ou utilisez la barre de recherche Dalil Tounes. Les résultats sont triés par note Google et complétude de la fiche.` },
+    { question: `Combien de ${metier.label.toLowerCase()}s sont référencés à ${ville.label} ?`, answer: `Dalil Tounes référence actuellement les ${metier.label.toLowerCase()}s disponibles à ${ville.label} et dans le gouvernorat de ${ville.gouvernorat}. De nouveaux établissements sont ajoutés régulièrement.` },
+  ];
+
   const schemaData = {
     '@context': 'https://schema.org',
     '@type': 'SearchResultsPage',
@@ -50,6 +57,8 @@ const MetierVillePage: React.FC = () => {
     description: pageDescription,
     url: `https://dalil-tounes.com/${slug}`,
   };
+
+  const otherVilles = SEO_VILLES.filter(v => v.slug !== ville.slug).slice(0, 8);
 
   return (
     <>
@@ -61,10 +70,7 @@ const MetierVillePage: React.FC = () => {
         currentPath={`/${slug}`}
       />
 
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
-      />
+      <StructuredData data={[schemaData, generateFAQSchema(faqData)]} />
 
       <div className="min-h-screen bg-[#0f0f0f]">
         <div
@@ -195,17 +201,37 @@ const MetierVillePage: React.FC = () => {
               className="text-lg font-semibold text-white mb-6"
               style={{ fontFamily: "'Playfair Display', serif" }}
             >
-              Autres recherches populaires
+              {metier.label} dans d'autres villes
             </h2>
             <div className="flex flex-wrap gap-2">
-              {['Tunis', 'Sfax', 'Sousse', 'Nabeul', 'Bizerte', 'Monastir'].map(v => (
+              {otherVilles.map(v => (
                 <Link
-                  key={v}
-                  to={`/${metier.slug}-${v.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-')}`}
+                  key={v.slug}
+                  to={`/${metier.slug}-${v.slug}`}
                   className="px-3 py-1.5 rounded-full border border-gray-700 hover:border-[#D4AF37]/50 text-gray-400 hover:text-[#D4AF37] text-xs transition-all"
                 >
-                  {metier.label} à {v}
+                  {metier.label} {v.label}
                 </Link>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-12 pt-8 border-t border-gray-800">
+            <h2
+              className="text-base font-semibold text-gray-300 mb-4"
+              style={{ fontFamily: "'Playfair Display', serif" }}
+            >
+              Questions fréquentes - {metier.label} à {ville.label}
+            </h2>
+            <div className="space-y-4">
+              {faqData.map((faq, i) => (
+                <details key={i} className="group">
+                  <summary className="cursor-pointer text-sm text-gray-400 hover:text-white transition-colors py-2 list-none flex items-start gap-2">
+                    <span className="text-[#D4AF37] mt-0.5 shrink-0">&#9656;</span>
+                    <span>{faq.question}</span>
+                  </summary>
+                  <p className="text-xs text-gray-500 leading-relaxed pl-5 pb-3">{faq.answer}</p>
+                </details>
               ))}
             </div>
           </div>

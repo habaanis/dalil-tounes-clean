@@ -71,5 +71,8 @@ Allow: /
 User-agent: Bytespider
 Allow: /
 
+User-agent: CCBot
+Allow: /
+
 # Sitemap
 Sitemap: https://dalil-tounes.com/sitemap.xml

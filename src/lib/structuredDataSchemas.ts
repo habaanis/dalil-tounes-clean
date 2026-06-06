@@ -113,12 +113,20 @@ export interface ContactPageSchema {
   url: string;
 }
 
+const CANONICAL_ORIGIN = 'https://dalil-tounes.com';
+
+function canonicalUrl(path?: string): string {
+  const p = path || (typeof window !== 'undefined' ? window.location.pathname : '/');
+  const clean = p.length > 1 ? p.replace(/\/$/, '') : p;
+  return `${CANONICAL_ORIGIN}${clean}`;
+}
+
 export function generateOrganizationSchema(): OrganizationSchema {
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'Dalil Tounes',
-    url: typeof window !== 'undefined' ? window.location.origin : 'https://dalil-tounes.com',
+    url: CANONICAL_ORIGIN,
     logo: 'https://dalil-tounes.com/images/logo_dalil_tounes_crop.png',
     description: 'Plateforme tunisienne de référencement des entreprises, services et événements en Tunisie',
     address: {
@@ -134,18 +142,16 @@ export function generateOrganizationSchema(): OrganizationSchema {
 }
 
 export function generateWebSiteSchema(): WebSiteSchema {
-  const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://dalil-tounes.com';
-
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: 'Dalil Tounes',
-    url: baseUrl,
+    url: CANONICAL_ORIGIN,
     potentialAction: {
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: `${baseUrl}/recherche?q={search_term_string}`,
+        urlTemplate: `${CANONICAL_ORIGIN}/recherche?q={search_term_string}`,
       },
       'query-input': 'required name=search_term_string',
     },
@@ -270,16 +276,15 @@ export function generateLocalBusinessSchema(business: {
 export function generateCollectionPageSchema(
   title: string,
   description: string,
-  items: Array<{ name: string; url?: string }> = []
+  items: Array<{ name: string; url?: string }> = [],
+  path?: string
 ): CollectionPageSchema {
-  const baseUrl = typeof window !== 'undefined' ? window.location.href : 'https://dalil-tounes.com';
-
   const schema: CollectionPageSchema = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
     name: title,
     description: description,
-    url: baseUrl,
+    url: canonicalUrl(path),
   };
 
   if (items.length > 0) {
@@ -298,14 +303,12 @@ export function generateCollectionPageSchema(
 }
 
 export function generateAboutPageSchema(): AboutPageSchema {
-  const baseUrl = typeof window !== 'undefined' ? window.location.href : 'https://dalil-tounes.com';
-
   return {
     '@context': 'https://schema.org',
     '@type': 'AboutPage',
     name: 'À propos de Dalil Tounes',
     description: 'Découvrez Dalil Tounes, la plateforme tunisienne de référencement des entreprises et services',
-    url: baseUrl,
+    url: canonicalUrl('/notre-concept'),
     mainEntity: {
       '@type': 'Organization',
       name: 'Dalil Tounes',
@@ -315,14 +318,12 @@ export function generateAboutPageSchema(): AboutPageSchema {
 }
 
 export function generateContactPageSchema(): ContactPageSchema {
-  const baseUrl = typeof window !== 'undefined' ? window.location.href : 'https://dalil-tounes.com';
-
   return {
     '@context': 'https://schema.org',
     '@type': 'ContactPage',
     name: 'Contact Dalil Tounes',
     description: 'Contactez l\'équipe Dalil Tounes pour toute question ou demande de partenariat',
-    url: baseUrl,
+    url: canonicalUrl('/contact'),
   };
 }
 
@@ -334,7 +335,22 @@ export function generateBreadcrumbSchema(items: Array<{ name: string; url: strin
       '@type': 'ListItem',
       position: index + 1,
       name: item.name,
-      item: item.url,
+      item: item.url.startsWith('http') ? item.url : `${CANONICAL_ORIGIN}${item.url}`,
+    })),
+  };
+}
+
+export function generateFAQSchema(questions: Array<{ question: string; answer: string }>) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: questions.map(q => ({
+      '@type': 'Question',
+      name: q.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: q.answer,
+      },
     })),
   };
 }

@@ -5,8 +5,10 @@ import { SEOHead } from '../../components/SEOHead';
 import SearchBar from '../../components/SearchBar';
 import Breadcrumb from '../../components/seo/Breadcrumb';
 import SeoBusinessCard from '../../components/seo/SeoBusinessCard';
-import { findVilleBySlug, SEO_METIERS } from '../../lib/seoLandingData';
+import { findVilleBySlug, SEO_METIERS, SEO_VILLES } from '../../lib/seoLandingData';
 import { fetchSeoBusinesses } from '../../lib/seoBusinessQueries';
+import { generateFAQSchema } from '../../lib/structuredDataSchemas';
+import StructuredData from '../../components/StructuredData';
 
 const VillePage: React.FC = () => {
   const { villeSlug } = useParams<{ villeSlug: string }>();
@@ -37,6 +39,14 @@ const VillePage: React.FC = () => {
   const pageTitle = `Annuaire des entreprises à ${ville.label} - Dalil Tounes`;
   const pageDescription = `Trouvez les meilleurs professionnels et établissements à ${ville.label}. Médecins, avocats, restaurants et plus encore avec avis et coordonnées.`;
   const pageKeywords = `entreprise ${ville.label}, annuaire ${ville.label}, professionnel ${ville.label} tunisie, services ${ville.label}`;
+
+  const faqData = [
+    { question: `Comment trouver un professionnel à ${ville.label} ?`, answer: `Utilisez la barre de recherche Dalil Tounes ou parcourez les catégories disponibles pour ${ville.label}. Vous pouvez filtrer par métier : médecin, avocat, plombier, coiffeur, restaurant et bien d'autres.` },
+    { question: `Quels types d'entreprises sont référencées à ${ville.label} ?`, answer: `Dalil Tounes référence tous types d'établissements à ${ville.label} : professionnels de santé, artisans, commerces, restaurants, hôtels, services juridiques, beauté et bien-être, et plus encore.` },
+    { question: `Les informations des entreprises à ${ville.label} sont-elles fiables ?`, answer: `Les données proviennent de sources publiques ou sont communiquées par les entreprises elles-mêmes. Les notes affichées sont basées sur les avis Google publics. Dalil Tounes n'attribue aucune note et n'effectue aucun classement éditorial.` },
+  ];
+
+  const otherVilles = SEO_VILLES.filter(v => v.slug !== ville.slug).slice(0, 12);
 
   const schemaData = {
     '@context': 'https://schema.org',
@@ -69,10 +79,7 @@ const VillePage: React.FC = () => {
         currentPath={`/ville/${ville.slug}`}
       />
 
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
-      />
+      <StructuredData data={[schemaData, generateFAQSchema(faqData)]} />
 
       <div className="min-h-screen bg-[#0f0f0f]">
         <div
@@ -201,6 +208,52 @@ const VillePage: React.FC = () => {
               </Link>
             </div>
           )}
+          {businesses.length > 0 && (
+            <p className="text-center text-[11px] text-gray-500 mt-6 leading-relaxed">
+              Les résultats affichés reposent sur des critères automatisés (avis publics, notes Google, complétude de la fiche).{' '}
+              <Link to="/info-avis" className="text-[#D4AF37] hover:underline">En savoir plus</Link>
+            </p>
+          )}
+
+          <div className="mt-16 pt-10 border-t border-gray-800">
+            <h2
+              className="text-lg font-semibold text-white mb-4"
+              style={{ fontFamily: "'Playfair Display', serif" }}
+            >
+              Autres villes en Tunisie
+            </h2>
+            <div className="flex flex-wrap gap-2">
+              {otherVilles.map(v => (
+                <Link
+                  key={v.slug}
+                  to={`/ville/${v.slug}`}
+                  className="px-3 py-1.5 rounded-full border border-gray-700 hover:border-[#D4AF37]/50 text-gray-400 hover:text-[#D4AF37] text-xs transition-all"
+                >
+                  {v.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-12 pt-8 border-t border-gray-800">
+            <h2
+              className="text-base font-semibold text-gray-300 mb-4"
+              style={{ fontFamily: "'Playfair Display', serif" }}
+            >
+              Questions fréquentes - {ville.label}
+            </h2>
+            <div className="space-y-4">
+              {faqData.map((faq, i) => (
+                <details key={i} className="group">
+                  <summary className="cursor-pointer text-sm text-gray-400 hover:text-white transition-colors py-2 list-none flex items-start gap-2">
+                    <span className="text-[#D4AF37] mt-0.5 shrink-0">&#9656;</span>
+                    <span>{faq.question}</span>
+                  </summary>
+                  <p className="text-xs text-gray-500 leading-relaxed pl-5 pb-3">{faq.answer}</p>
+                </details>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </>

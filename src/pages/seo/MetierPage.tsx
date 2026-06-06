@@ -5,8 +5,10 @@ import { SEOHead } from '../../components/SEOHead';
 import SearchBar from '../../components/SearchBar';
 import Breadcrumb from '../../components/seo/Breadcrumb';
 import SeoBusinessCard from '../../components/seo/SeoBusinessCard';
-import { findMetierBySlug, SEO_VILLES } from '../../lib/seoLandingData';
+import { findMetierBySlug, SEO_VILLES, SEO_METIERS } from '../../lib/seoLandingData';
 import { fetchSeoBusinesses } from '../../lib/seoBusinessQueries';
+import { generateFAQSchema } from '../../lib/structuredDataSchemas';
+import StructuredData from '../../components/StructuredData';
 
 const MetierPage: React.FC = () => {
   const { metierSlug } = useParams<{ metierSlug: string }>();
@@ -38,15 +40,26 @@ const MetierPage: React.FC = () => {
   const pageDescription = `Trouvez un ${metier.label} de confiance en Tunisie. Annuaire des ${metier.label.toLowerCase()}s avec avis, coordonnées et horaires.`;
   const pageKeywords = `${metier.label} tunisie, ${metier.label.toLowerCase()} pas cher, meilleur ${metier.label.toLowerCase()} tunisie, ${metier.secteur}`;
 
+  const faqData = [
+    { question: `Comment trouver un ${metier.label.toLowerCase()} en Tunisie ?`, answer: `Utilisez la barre de recherche Dalil Tounes ou parcourez la liste ci-dessous. Vous pouvez également filtrer par ville pour trouver un ${metier.label.toLowerCase()} proche de chez vous.` },
+    { question: `Les avis sur les ${metier.label.toLowerCase()}s sont-ils fiables ?`, answer: `Les notes affichées proviennent des avis Google publics. Dalil Tounes n'attribue aucune note et n'effectue aucun classement éditorial. Les résultats sont triés selon des critères automatisés : avis, complétude de la fiche et présence de photos.` },
+    { question: `Comment inscrire mon cabinet ou établissement de ${metier.label.toLowerCase()} sur Dalil Tounes ?`, answer: `Vous pouvez référencer votre établissement gratuitement sur Dalil Tounes. Rendez-vous sur la page Abonnement pour découvrir les options de mise en avant disponibles.` },
+  ];
+
   const schemaData = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
     name: pageTitle,
     description: pageDescription,
-    url: `https://dalil-tounes.com/${metier.slug}`,
+    url: `https://dalil-tounes.com/metier/${metier.slug}`,
   };
 
   const popularVilles = SEO_VILLES.slice(0, 12);
+
+  const otherMetiers = SEO_METIERS.filter(m => m.slug !== metier.slug && m.secteur === metier.secteur).slice(0, 10);
+  const otherSectorMetiers = otherMetiers.length < 6
+    ? SEO_METIERS.filter(m => m.slug !== metier.slug && m.secteur !== metier.secteur).slice(0, 12 - otherMetiers.length)
+    : [];
 
   return (
     <>
@@ -58,10 +71,7 @@ const MetierPage: React.FC = () => {
         currentPath={`/${metier.slug}`}
       />
 
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
-      />
+      <StructuredData data={[schemaData, generateFAQSchema(faqData)]} />
 
       <div className="min-h-screen bg-[#0f0f0f]">
         <div
@@ -196,6 +206,48 @@ const MetierPage: React.FC = () => {
               </Link>
             </div>
           )}
+
+          {(otherMetiers.length > 0 || otherSectorMetiers.length > 0) && (
+            <div className="mt-16 pt-10 border-t border-gray-800">
+              <h2
+                className="text-lg font-semibold text-white mb-4"
+                style={{ fontFamily: "'Playfair Display', serif" }}
+              >
+                Métiers associés
+              </h2>
+              <div className="flex flex-wrap gap-2">
+                {[...otherMetiers, ...otherSectorMetiers].map(m => (
+                  <Link
+                    key={m.slug}
+                    to={`/metier/${m.slug}`}
+                    className="px-3 py-1.5 rounded-full border border-gray-700 hover:border-[#D4AF37]/50 text-gray-400 hover:text-[#D4AF37] text-xs transition-all"
+                  >
+                    {m.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="mt-12 pt-8 border-t border-gray-800">
+            <h2
+              className="text-base font-semibold text-gray-300 mb-4"
+              style={{ fontFamily: "'Playfair Display', serif" }}
+            >
+              Questions fréquentes - {metier.label}
+            </h2>
+            <div className="space-y-4">
+              {faqData.map((faq, i) => (
+                <details key={i} className="group">
+                  <summary className="cursor-pointer text-sm text-gray-400 hover:text-white transition-colors py-2 list-none flex items-start gap-2">
+                    <span className="text-[#D4AF37] mt-0.5 shrink-0">&#9656;</span>
+                    <span>{faq.question}</span>
+                  </summary>
+                  <p className="text-xs text-gray-500 leading-relaxed pl-5 pb-3">{faq.answer}</p>
+                </details>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </>
