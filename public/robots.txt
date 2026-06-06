@@ -25,6 +25,8 @@ Allow: /marketplace
 Allow: /blog
 Allow: /metier/
 Allow: /ville/
+Allow: /secteur/
+Allow: /gouvernorat/
 Allow: /p/
 
 # Crawl-delay
