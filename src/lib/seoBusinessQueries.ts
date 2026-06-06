@@ -42,6 +42,80 @@ function mapEntrepriseRow(row: Record<string, unknown>): SeoBusiness {
   };
 }
 
+const SIMILAR_SELECT = 'id, nom, adresse, ville, gouvernorat, telephone, categorie, sous_categories, score_avis, logo_url, image_url, description, is_premium, statut_abonnement, horaires_ok, slug';
+
+export async function fetchSimilarBusinesses(options: {
+  excludeId: string;
+  categorie?: string;
+  ville?: string;
+  gouvernorat?: string;
+  limit?: number;
+}): Promise<SeoBusiness[]> {
+  const { excludeId, categorie, ville, gouvernorat, limit = 6 } = options;
+
+  if (!categorie && !ville) return [];
+
+  const results: SeoBusiness[] = [];
+  const seenIds = new Set<string>([excludeId]);
+
+  if (categorie && ville) {
+    const { data } = await supabase
+      .from('entreprise')
+      .select(SIMILAR_SELECT)
+      .neq('id', excludeId)
+      .ilike('categorie', `%${categorie}%`)
+      .ilike('ville', `%${ville}%`)
+      .order('is_premium', { ascending: false })
+      .order('score_avis', { ascending: false, nullsFirst: false })
+      .limit(limit);
+    if (data) {
+      for (const row of data as Record<string, unknown>[]) {
+        const id = row.id as string;
+        if (!seenIds.has(id)) { seenIds.add(id); results.push(mapEntrepriseRow(row)); }
+      }
+    }
+  }
+
+  if (results.length < limit && categorie) {
+    const { data } = await supabase
+      .from('entreprise')
+      .select(SIMILAR_SELECT)
+      .neq('id', excludeId)
+      .ilike('categorie', `%${categorie}%`)
+      .order('is_premium', { ascending: false })
+      .order('score_avis', { ascending: false, nullsFirst: false })
+      .limit(limit - results.length + 2);
+    if (data) {
+      for (const row of data as Record<string, unknown>[]) {
+        const id = row.id as string;
+        if (!seenIds.has(id)) { seenIds.add(id); results.push(mapEntrepriseRow(row)); }
+        if (results.length >= limit) break;
+      }
+    }
+  }
+
+  if (results.length < limit && ville) {
+    const gouv = gouvernorat || ville;
+    const { data } = await supabase
+      .from('entreprise')
+      .select(SIMILAR_SELECT)
+      .neq('id', excludeId)
+      .or(`ville.ilike.%${ville}%,gouvernorat.ilike.%${gouv}%`)
+      .order('is_premium', { ascending: false })
+      .order('score_avis', { ascending: false, nullsFirst: false })
+      .limit(limit - results.length + 2);
+    if (data) {
+      for (const row of data as Record<string, unknown>[]) {
+        const id = row.id as string;
+        if (!seenIds.has(id)) { seenIds.add(id); results.push(mapEntrepriseRow(row)); }
+        if (results.length >= limit) break;
+      }
+    }
+  }
+
+  return results.slice(0, limit);
+}
+
 export async function fetchSeoBusinesses(options: {
   limit?: number;
   metier?: string;

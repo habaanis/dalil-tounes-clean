@@ -30,6 +30,8 @@ const ImageGallery = lazy(() =>
 
 const VideoPlayer = lazy(() => import('../components/VideoPlayer'));
 
+const SimilarBusinesses = lazy(() => import('../components/seo/SimilarBusinesses'));
+
 import EntrepriseAvisForm from '../components/EntrepriseAvisForm';
 import BusinessReviews from '../components/BusinessReviews';
 import { generateShareUrl, buildEntrepriseShareUrl } from '../lib/slugify';
@@ -1908,6 +1910,19 @@ export const BusinessDetail = ({
           </div>
         );
       })()}
+
+      {business && !asModal && actualBusinessId && (
+        <div className="px-1">
+          <Suspense fallback={null}>
+            <SimilarBusinesses
+              businessId={actualBusinessId}
+              categorie={business.categorie}
+              ville={business.ville}
+              gouvernorat={business.gouvernorat}
+            />
+          </Suspense>
+        </div>
+      )}
 
       {handleClose && (
         <div className="text-center mt-4">
