@@ -34,7 +34,7 @@ const SimilarBusinesses = lazy(() => import('../components/seo/SimilarBusinesses
 
 import EntrepriseAvisForm from '../components/EntrepriseAvisForm';
 import BusinessReviews from '../components/BusinessReviews';
-import { generateShareUrl, buildEntrepriseShareUrl } from '../lib/slugify';
+import { generateShareUrl, buildEntrepriseShareUrl, generateSlug } from '../lib/slugify';
 import { cleanAltText, extractFrenchName, cleanArabicField } from '../lib/textNormalization';
 import { SEOHead } from './SEOHead';
 import { useHreflangPath } from '../hooks/useHreflangPath';
@@ -440,6 +440,29 @@ export const BusinessDetail = ({
 
           data = res.data;
           error = res.error;
+
+          if (!data && !error && urlVilleSlug) {
+            const villeLabel = urlVilleSlug
+              .split('-')
+              .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+              .join(' ');
+
+            const { data: candidates } = await supabase
+              .from('entreprise')
+              .select('*')
+              .ilike('ville', `%${villeLabel}%`)
+              .limit(200);
+
+            if (candidates) {
+              const match = candidates.find(
+                (row: any) => generateSlug(row.nom || '') === normalizedSlug
+              );
+              if (match) {
+                data = match;
+                error = null;
+              }
+            }
+          }
         } else if (fetchId) {
           const isFullUuid =
             /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
@@ -749,15 +772,35 @@ export const BusinessDetail = ({
     const handleBack = onClose || onNavigateBack || (() => navigate(-1));
 
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen">
-        <p className="text-gray-500 text-lg mb-6">{text.notFound}</p>
-        <button
-          onClick={handleBack}
-          className="flex items-center gap-2 px-6 py-3 bg-[#D62828] text-white rounded-3xl hover:bg-[#b91c1c] transition-all"
-        >
-          <ArrowLeft size={20} />
-          {text.backToSearch}
-        </button>
+      <div className="flex flex-col items-center justify-center min-h-screen px-4">
+        <div className="text-center max-w-md">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-6">
+            <MapPin className="w-8 h-8 text-gray-400" />
+          </div>
+          <h1 className="text-xl font-bold text-gray-800 mb-2">{text.notFound}</h1>
+          <p className="text-gray-500 text-sm mb-8">
+            {language === 'fr'
+              ? "Cette fiche n'existe plus ou a ete deplacee. Essayez une nouvelle recherche."
+              : language === 'ar'
+                ? 'هذه الصفحة لم تعد موجودة. حاول البحث مرة أخرى.'
+                : 'This page no longer exists. Try a new search.'}
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <button
+              onClick={handleBack}
+              className="flex items-center gap-2 px-6 py-3 bg-[#D4AF37] text-white rounded-full hover:bg-[#c9a42e] transition-all font-semibold text-sm"
+            >
+              <ArrowLeft size={18} />
+              {text.backToSearch}
+            </button>
+            <Link
+              to="/entreprises"
+              className="flex items-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 rounded-full hover:bg-gray-50 transition-all font-semibold text-sm"
+            >
+              {language === 'fr' ? 'Rechercher' : language === 'ar' ? 'بحث' : 'Search'}
+            </Link>
+          </div>
+        </div>
       </div>
     );
   }

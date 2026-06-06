@@ -1,39 +1,80 @@
 # Dalil Tounes - Robots.txt
-# Guide officiel pour les moteurs de recherche
+# Annuaire professionnel en Tunisie
 
 User-agent: *
 Allow: /
-
-# Block admin and sourcing pages from indexing
+Disallow: /admin/
 Disallow: /admin-sourcing
-Disallow: /admin
-Disallow: /sourcing
 Disallow: /auth
-Disallow: /dashboard
-Disallow: /debug
+Disallow: /login
+Disallow: /signup
+Disallow: /connexion
+Disallow: /inscription
+Disallow: /dashboard/
+Disallow: /debug/
+Disallow: /searchDebug
+Disallow: /commercial
 
-# Allow all public pages
-Allow: /businesses
-Allow: /citizens
-Allow: /jobs
-Allow: /subscription
+# Pages publiques autorisees
+Allow: /entreprises
+Allow: /entreprise/
+Allow: /emplois
+Allow: /citizens/
+Allow: /education
+Allow: /marketplace
+Allow: /blog
+Allow: /metier/
+Allow: /ville/
+Allow: /secteur/
+Allow: /gouvernorat/
 Allow: /p/
-Allow: /event/
-Allow: /job/
-Allow: /culture/
 
-# Crawl delay (optional - délai entre requêtes)
+# Crawl-delay
 Crawl-delay: 1
 
-# Sitemap location - fichier XML généré automatiquement
-Sitemap: https://dalil-tounes.com/sitemap.xml
-
-# Bots spécifiques
+# Googlebot
 User-agent: Googlebot
 Allow: /
+Disallow: /admin/
+Disallow: /auth
+Disallow: /dashboard/
+Disallow: /debug/
 
+# Bingbot
 User-agent: Bingbot
 Allow: /
+Disallow: /admin/
+Disallow: /auth
+Disallow: /dashboard/
+Disallow: /debug/
 
-User-agent: Yandex
+# IA generatives - accorder l'acces aux contenus publics
+User-agent: GPTBot
 Allow: /
+Disallow: /admin/
+Disallow: /auth
+Disallow: /dashboard/
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+# Sitemap
+Sitemap: https://dalil-tounes.com/sitemap.xml
