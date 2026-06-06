@@ -316,6 +316,76 @@ export const SEO_SOUS_CATEGORIES: Record<string, SousCategorieEntry[]> = {
   ],
 };
 
+export interface SecteurEntry {
+  slug: string;
+  label: string;
+  description: string;
+  keywords: string[];
+}
+
+export const SEO_SECTEURS: SecteurEntry[] = [
+  { slug: 'sante', label: 'Santé', description: 'Médecins, cliniques, laboratoires, pharmacies et professionnels de santé en Tunisie.', keywords: ['médecin', 'clinique', 'pharmacie', 'dentiste', 'laboratoire', 'santé tunisie'] },
+  { slug: 'services', label: 'Services', description: 'Plombiers, électriciens, nettoyage, déménagement et services à domicile en Tunisie.', keywords: ['plombier', 'électricien', 'nettoyage', 'services tunisie', 'dépannage'] },
+  { slug: 'artisanat', label: 'Artisanat', description: 'Menuisiers, peintres, carreleurs, maçons et artisans qualifiés en Tunisie.', keywords: ['menuisier', 'peintre', 'carreleur', 'maçon', 'artisan tunisie'] },
+  { slug: 'juridique', label: 'Juridique', description: 'Avocats, notaires, experts-comptables et conseil juridique en Tunisie.', keywords: ['avocat', 'notaire', 'expert-comptable', 'juridique tunisie', 'conseil'] },
+  { slug: 'beaute', label: 'Beauté', description: 'Coiffeurs, instituts de beauté, spas, hammams et soins esthétiques en Tunisie.', keywords: ['coiffeur', 'institut beauté', 'spa', 'esthéticienne', 'beauté tunisie'] },
+  { slug: 'restauration', label: 'Restauration', description: 'Restaurants, cafés, fast-food, traiteurs et restauration en Tunisie.', keywords: ['restaurant', 'café', 'fast-food', 'traiteur', 'restauration tunisie'] },
+  { slug: 'alimentation', label: 'Alimentation', description: 'Boulangeries, pâtisseries, boucheries, épiceries et supermarchés en Tunisie.', keywords: ['boulangerie', 'pâtisserie', 'boucherie', 'épicerie', 'alimentation tunisie'] },
+  { slug: 'auto', label: 'Automobile', description: 'Garages, mécaniciens, carrossiers, lavage auto et vente de voitures en Tunisie.', keywords: ['garage', 'mécanicien', 'carrosserie', 'lavage auto', 'automobile tunisie'] },
+  { slug: 'transport', label: 'Transport', description: 'Auto-écoles, taxis, location et transport de marchandises en Tunisie.', keywords: ['auto-école', 'taxi', 'location voiture', 'transport tunisie'] },
+  { slug: 'education', label: 'Éducation', description: 'Écoles privées, jardins d\'enfant, centres de formation et cours particuliers en Tunisie.', keywords: ['école privée', 'formation', 'cours particuliers', 'éducation tunisie'] },
+  { slug: 'immobilier', label: 'Immobilier', description: 'Agences immobilières, promoteurs et syndics en Tunisie.', keywords: ['agence immobilière', 'promoteur', 'immobilier tunisie', 'syndic'] },
+  { slug: 'tech', label: 'Technologie', description: 'Informatique, réparation, téléphonie, agences web et services numériques en Tunisie.', keywords: ['informatique', 'réparation', 'agence web', 'technologie tunisie'] },
+  { slug: 'sport', label: 'Sport', description: 'Salles de sport, clubs sportifs, piscines et coaching sportif en Tunisie.', keywords: ['salle de sport', 'fitness', 'piscine', 'club sportif', 'sport tunisie'] },
+  { slug: 'bien-etre', label: 'Bien-être', description: 'Yoga, méditation, relaxation et bien-être en Tunisie.', keywords: ['yoga', 'bien-être', 'relaxation', 'méditation tunisie'] },
+  { slug: 'mode', label: 'Mode', description: 'Boutiques de vêtements, chaussures, bijouteries et parfumeries en Tunisie.', keywords: ['boutique vêtements', 'bijouterie', 'parfumerie', 'mode tunisie'] },
+  { slug: 'evenementiel', label: 'Événementiel', description: 'Traiteurs mariage, décoration, location de salles et animation en Tunisie.', keywords: ['mariage', 'décoration', 'location salle', 'événementiel tunisie'] },
+  { slug: 'art', label: 'Art', description: 'Photographes, vidéastes et graphistes en Tunisie.', keywords: ['photographe', 'vidéaste', 'graphiste', 'art tunisie'] },
+  { slug: 'animaux', label: 'Animaux', description: 'Vétérinaires, toiletteurs, animaleries et pensions pour animaux en Tunisie.', keywords: ['vétérinaire', 'toilettage', 'animalerie', 'animaux tunisie'] },
+  { slug: 'profession-liberale', label: 'Profession libérale', description: 'Architectes, ingénieurs, géomètres et professions libérales en Tunisie.', keywords: ['architecte', 'ingénieur', 'géomètre', 'profession libérale tunisie'] },
+  { slug: 'shopping', label: 'Shopping', description: 'Boutiques cadeaux et commerces de détail en Tunisie.', keywords: ['cadeaux', 'shopping', 'commerce tunisie'] },
+];
+
+const SECTEUR_LABEL_TO_SLUG: Record<string, string> = {
+  'Santé': 'sante',
+  'Services': 'services',
+  'Artisanat': 'artisanat',
+  'Juridique': 'juridique',
+  'Beauté': 'beaute',
+  'Restauration': 'restauration',
+  'Alimentation': 'alimentation',
+  'Auto': 'auto',
+  'Transport': 'transport',
+  'Éducation': 'education',
+  'Immobilier': 'immobilier',
+  'Tech': 'tech',
+  'Sport': 'sport',
+  'Bien-être': 'bien-etre',
+  'Mode': 'mode',
+  'Événementiel': 'evenementiel',
+  'Art': 'art',
+  'Animaux': 'animaux',
+  'Profession libérale': 'profession-liberale',
+  'Shopping': 'shopping',
+};
+
+export function findSecteurBySlug(slug: string): SecteurEntry | undefined {
+  return SEO_SECTEURS.find(s => s.slug === slug);
+}
+
+export function getMetiersBySecteur(secteurSlug: string): MetierEntry[] {
+  const secteur = SEO_SECTEURS.find(s => s.slug === secteurSlug);
+  if (!secteur) return [];
+  return SEO_METIERS.filter(m => {
+    if (!m.secteur) return false;
+    return SECTEUR_LABEL_TO_SLUG[m.secteur] === secteurSlug;
+  });
+}
+
+export function getSecteurSlugFromLabel(label: string): string | undefined {
+  return SECTEUR_LABEL_TO_SLUG[label];
+}
+
 export function findMetierBySlug(slug: string): MetierEntry | undefined {
   return SEO_METIERS.find(m => m.slug === slug);
 }

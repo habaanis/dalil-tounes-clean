@@ -79,6 +79,13 @@ const staticPages = [
   { loc: '/plan-du-site', priority: '0.3', changefreq: 'monthly' },
 ];
 
+const seoSecteurSlugs = [
+  'sante', 'services', 'artisanat', 'juridique', 'beaute', 'restauration',
+  'alimentation', 'auto', 'transport', 'education', 'immobilier', 'tech',
+  'sport', 'bien-etre', 'mode', 'evenementiel', 'art', 'animaux',
+  'profession-liberale', 'shopping',
+];
+
 const seoMetierSlugs = [
   'medecin-generaliste', 'medecin-specialiste', 'cardiologue', 'dentiste',
   'chirurgien-dentiste', 'orthodontiste', 'pediatre', 'gynecologue',
@@ -134,6 +141,11 @@ Deno.serve(async (req: Request) => {
     // Static pages
     for (const page of staticPages) {
       xml += `  <url>\n    <loc>${domain}${escapeXml(page.loc)}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>${page.changefreq}</changefreq>\n    <priority>${page.priority}</priority>\n  </url>\n`;
+    }
+
+    // SEO secteur pages: /secteur/{slug}
+    for (const slug of seoSecteurSlugs) {
+      xml += `  <url>\n    <loc>${domain}/secteur/${escapeXml(slug)}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.75</priority>\n  </url>\n`;
     }
 
     // SEO metier pages: /metier/{slug}
@@ -233,7 +245,7 @@ Deno.serve(async (req: Request) => {
 
     xml += '\n</urlset>';
 
-    console.log(`[sitemap] Generated: ${staticPages.length} static + ${seoMetierSlugs.length} metiers + ${seoVilleSlugs.length} villes + ${topMetiers.length * topVilles.length} combos + dynamic entries`);
+    console.log(`[sitemap] Generated: ${staticPages.length} static + ${seoSecteurSlugs.length} secteurs + ${seoMetierSlugs.length} metiers + ${seoVilleSlugs.length} villes + ${topMetiers.length * topVilles.length} combos + dynamic entries`);
 
     return new Response(xml, {
       status: 200,

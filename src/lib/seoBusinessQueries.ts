@@ -1,5 +1,6 @@
 import { supabase } from './supabaseClient';
 import { extractFrenchName } from './textNormalization';
+import { getMetiersBySecteur } from './seoLandingData';
 
 export interface SeoBusiness {
   id: string;
@@ -153,6 +154,41 @@ export async function fetchSeoBusinesses(options: {
     .range(offset, offset + limit - 1);
 
   const { data, error, count } = await query;
+
+  if (error || !data) {
+    return { data: [], total: 0, error };
+  }
+
+  return {
+    data: (data as Record<string, unknown>[]).map(mapEntrepriseRow),
+    total: count ?? 0,
+    error: null,
+  };
+}
+
+export async function fetchSeoBusinessesBySecteur(options: {
+  secteurSlug: string;
+  limit?: number;
+  offset?: number;
+}): Promise<{ data: SeoBusiness[]; total: number; error: unknown }> {
+  const { secteurSlug, limit = 20, offset = 0 } = options;
+  const metiers = getMetiersBySecteur(secteurSlug);
+
+  if (metiers.length === 0) {
+    return { data: [], total: 0, error: null };
+  }
+
+  const orFilters = metiers
+    .map(m => `categorie.ilike.%${m.value}%,sous_categories.ilike.%${m.value}%`)
+    .join(',');
+
+  const { data, error, count } = await supabase
+    .from('entreprise')
+    .select(SIMILAR_SELECT, { count: 'exact' })
+    .or(orFilters)
+    .order('is_premium', { ascending: false })
+    .order('score_avis', { ascending: false, nullsFirst: false })
+    .range(offset, offset + limit - 1);
 
   if (error || !data) {
     return { data: [], total: 0, error };
