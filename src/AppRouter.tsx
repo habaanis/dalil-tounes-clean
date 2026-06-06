@@ -61,6 +61,7 @@ const MentionsLegales = lazy(() => import('./pages/legal/MentionsLegales'));
 const CGU = lazy(() => import('./pages/legal/CGU'));
 const PrivacyPolicy = lazy(() => import('./pages/legal/PrivacyPolicy'));
 const SitemapPage = lazy(() => import('./pages/legal/Sitemap'));
+const InfoAvis = lazy(() => import('./pages/legal/InfoAvis'));
 const MetierVillePage = lazy(() => import('./pages/seo/MetierVillePage'));
 const MetierSousCatVillePage = lazy(() => import('./pages/seo/MetierSousCatVillePage'));
 const MetierPage = lazy(() => import('./pages/seo/MetierPage'));
@@ -220,6 +221,7 @@ function AppRouter() {
               <Route path="/cgu" element={<CGU />} />
               <Route path="/politique-confidentialite" element={<PrivacyPolicy />} />
               <Route path="/plan-du-site" element={<SitemapPage />} />
+              <Route path="/info-avis" element={<InfoAvis />} />
 
               {/* SEO Landing pages - villes */}
               <Route path="/ville/:villeSlug" element={<VillePage />} />

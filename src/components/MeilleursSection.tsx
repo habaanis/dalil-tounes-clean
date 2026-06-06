@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Star, MapPin, ArrowRight, BookOpen, Search, Trophy, ChevronLeft, ChevronRight, Building2 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { Tables } from '../lib/dbTables';
 import { generateBusinessUrl, buildEntrepriseUrl } from '../lib/slugify';
@@ -454,6 +454,13 @@ export default function MeilleursSection({
           <p className="text-xs text-gray-400 mt-2">{tx('searchOtherHint', 'Affiner par ville, spécialité, disponibilité...')}</p>
         </div>
       </section>
+
+      <div className="max-w-5xl mx-auto px-4 pb-6">
+        <p className="text-center text-[11px] text-gray-400 leading-relaxed">
+          Les classements affichés reposent sur des critères automatisés (avis publics, notes Google, complétude de la fiche).{' '}
+          <Link to="/info-avis" className="text-[#D4AF37] hover:underline">En savoir plus</Link>
+        </p>
+      </div>
     </div>
   );
 }

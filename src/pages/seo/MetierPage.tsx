@@ -172,6 +172,10 @@ const MetierPage: React.FC = () => {
                   <SeoBusinessCard key={b.id} business={b} />
                 ))}
               </div>
+              <p className="text-center text-[11px] text-gray-500 mt-6 leading-relaxed">
+                Les résultats affichés reposent sur des critères automatisés (avis publics, notes Google, complétude de la fiche).{' '}
+                <Link to="/info-avis" className="text-[#D4AF37] hover:underline">En savoir plus</Link>
+              </p>
             </>
           ) : (
             <div className="text-center py-16">

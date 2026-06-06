@@ -267,6 +267,7 @@ const Footer: React.FC = () => {
               <li><Link to="/cgu" className={footerLink}>{te.footer?.cgu || 'CGU'}</Link></li>
               <li><Link to="/politique-confidentialite" className={footerLink}>{te.footer?.privacy || 'Confidentialité'}</Link></li>
               <li><Link to="/plan-du-site" className={footerLink}>{te.footer?.sitemap || 'Plan du site'}</Link></li>
+              <li><Link to="/info-avis" className={footerLink}>Avis & recommandations</Link></li>
             </ul>
           </div>
 
