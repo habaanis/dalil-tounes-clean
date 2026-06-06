@@ -67,6 +67,7 @@ const MetierSousCatVillePage = lazy(() => import('./pages/seo/MetierSousCatVille
 const MetierPage = lazy(() => import('./pages/seo/MetierPage'));
 const VillePage = lazy(() => import('./pages/seo/VillePage'));
 const SecteurPage = lazy(() => import('./pages/seo/SecteurPage'));
+const GouvernoratPage = lazy(() => import('./pages/seo/GouvernoratPage'));
 const SuggestBusiness = lazy(() => import('./pages/SuggestBusiness').then(m => ({ default: m.SuggestBusiness })));
 
 // Le PageLoader réutilise LA MÊME image que le hero final. L'image est
@@ -229,6 +230,9 @@ function AppRouter() {
 
               {/* SEO Landing pages - secteurs */}
               <Route path="/secteur/:secteurSlug" element={<SecteurPage />} />
+
+              {/* SEO Landing pages - gouvernorats */}
+              <Route path="/gouvernorat/:gouvernoratSlug" element={<GouvernoratPage />} />
 
               {/* SEO Landing pages - métiers seuls */}
               <Route path="/metier/:metierSlug" element={<MetierPage />} />

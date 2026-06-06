@@ -1,6 +1,6 @@
 import { supabase } from './supabaseClient';
 import { extractFrenchName } from './textNormalization';
-import { getMetiersBySecteur } from './seoLandingData';
+import { getMetiersBySecteur, findGouvernoratBySlug } from './seoLandingData';
 
 export interface SeoBusiness {
   id: string;
@@ -186,6 +186,37 @@ export async function fetchSeoBusinessesBySecteur(options: {
     .from('entreprise')
     .select(SIMILAR_SELECT, { count: 'exact' })
     .or(orFilters)
+    .order('is_premium', { ascending: false })
+    .order('score_avis', { ascending: false, nullsFirst: false })
+    .range(offset, offset + limit - 1);
+
+  if (error || !data) {
+    return { data: [], total: 0, error };
+  }
+
+  return {
+    data: (data as Record<string, unknown>[]).map(mapEntrepriseRow),
+    total: count ?? 0,
+    error: null,
+  };
+}
+
+export async function fetchSeoBusinessesByGouvernorat(options: {
+  gouvernoratSlug: string;
+  limit?: number;
+  offset?: number;
+}): Promise<{ data: SeoBusiness[]; total: number; error: unknown }> {
+  const { gouvernoratSlug, limit = 20, offset = 0 } = options;
+  const gouv = findGouvernoratBySlug(gouvernoratSlug);
+
+  if (!gouv) {
+    return { data: [], total: 0, error: null };
+  }
+
+  const { data, error, count } = await supabase
+    .from('entreprise')
+    .select(SIMILAR_SELECT, { count: 'exact' })
+    .ilike('gouvernorat', `%${gouv.label}%`)
     .order('is_premium', { ascending: false })
     .order('score_avis', { ascending: false, nullsFirst: false })
     .range(offset, offset + limit - 1);

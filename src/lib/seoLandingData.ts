@@ -369,6 +369,81 @@ const SECTEUR_LABEL_TO_SLUG: Record<string, string> = {
   'Shopping': 'shopping',
 };
 
+export interface GouvernoratEntry {
+  slug: string;
+  label: string;
+  description: string;
+  keywords: string[];
+}
+
+export const SEO_GOUVERNORATS: GouvernoratEntry[] = [
+  { slug: 'tunis', label: 'Tunis', description: 'Entreprises, commerces et professionnels dans le gouvernorat de Tunis, capitale de la Tunisie.', keywords: ['entreprise tunis', 'professionnel tunis', 'commerce tunis', 'services tunis'] },
+  { slug: 'ariana', label: 'Ariana', description: 'Trouvez des entreprises et services dans le gouvernorat de l\'Ariana, au nord de Tunis.', keywords: ['entreprise ariana', 'services ariana', 'commerce ariana'] },
+  { slug: 'ben-arous', label: 'Ben Arous', description: 'Annuaire des entreprises et professionnels dans le gouvernorat de Ben Arous.', keywords: ['entreprise ben arous', 'services ben arous', 'commerce ben arous'] },
+  { slug: 'la-manouba', label: 'La Manouba', description: 'Entreprises et services dans le gouvernorat de La Manouba.', keywords: ['entreprise manouba', 'services manouba', 'commerce manouba'] },
+  { slug: 'nabeul', label: 'Nabeul', description: 'Entreprises, artisans et services dans le gouvernorat de Nabeul et le Cap Bon.', keywords: ['entreprise nabeul', 'artisan nabeul', 'cap bon', 'hammamet'] },
+  { slug: 'zaghouan', label: 'Zaghouan', description: 'Annuaire des entreprises et professionnels dans le gouvernorat de Zaghouan.', keywords: ['entreprise zaghouan', 'services zaghouan'] },
+  { slug: 'bizerte', label: 'Bizerte', description: 'Entreprises et services dans le gouvernorat de Bizerte, au nord de la Tunisie.', keywords: ['entreprise bizerte', 'services bizerte', 'commerce bizerte'] },
+  { slug: 'beja', label: 'Béja', description: 'Annuaire des entreprises et professionnels dans le gouvernorat de Béja.', keywords: ['entreprise béja', 'services béja'] },
+  { slug: 'jendouba', label: 'Jendouba', description: 'Entreprises et services dans le gouvernorat de Jendouba, dont Tabarka et Aïn Draham.', keywords: ['entreprise jendouba', 'tabarka', 'ain draham'] },
+  { slug: 'le-kef', label: 'Le Kef', description: 'Annuaire des entreprises et professionnels dans le gouvernorat du Kef.', keywords: ['entreprise kef', 'services kef'] },
+  { slug: 'siliana', label: 'Siliana', description: 'Entreprises et services dans le gouvernorat de Siliana.', keywords: ['entreprise siliana', 'services siliana'] },
+  { slug: 'sousse', label: 'Sousse', description: 'Entreprises, commerces et professionnels dans le gouvernorat de Sousse, troisième ville de Tunisie.', keywords: ['entreprise sousse', 'commerce sousse', 'services sousse', 'port el kantaoui'] },
+  { slug: 'monastir', label: 'Monastir', description: 'Annuaire des entreprises et services dans le gouvernorat de Monastir.', keywords: ['entreprise monastir', 'services monastir', 'moknine'] },
+  { slug: 'mahdia', label: 'Mahdia', description: 'Entreprises et professionnels dans le gouvernorat de Mahdia.', keywords: ['entreprise mahdia', 'services mahdia'] },
+  { slug: 'sfax', label: 'Sfax', description: 'Entreprises, industries et services dans le gouvernorat de Sfax, deuxième ville de Tunisie.', keywords: ['entreprise sfax', 'industrie sfax', 'commerce sfax', 'services sfax'] },
+  { slug: 'kairouan', label: 'Kairouan', description: 'Annuaire des entreprises et professionnels dans le gouvernorat de Kairouan.', keywords: ['entreprise kairouan', 'services kairouan', 'artisan kairouan'] },
+  { slug: 'kasserine', label: 'Kasserine', description: 'Entreprises et services dans le gouvernorat de Kasserine.', keywords: ['entreprise kasserine', 'services kasserine'] },
+  { slug: 'sidi-bouzid', label: 'Sidi Bouzid', description: 'Annuaire des entreprises et professionnels dans le gouvernorat de Sidi Bouzid.', keywords: ['entreprise sidi bouzid', 'services sidi bouzid'] },
+  { slug: 'gabes', label: 'Gabès', description: 'Entreprises et services dans le gouvernorat de Gabès.', keywords: ['entreprise gabès', 'services gabès', 'industrie gabès'] },
+  { slug: 'medenine', label: 'Médenine', description: 'Entreprises et services dans le gouvernorat de Médenine, dont Djerba et Zarzis.', keywords: ['entreprise médenine', 'djerba', 'zarzis', 'services médenine'] },
+  { slug: 'tataouine', label: 'Tataouine', description: 'Annuaire des entreprises et professionnels dans le gouvernorat de Tataouine.', keywords: ['entreprise tataouine', 'services tataouine'] },
+  { slug: 'gafsa', label: 'Gafsa', description: 'Entreprises et services dans le gouvernorat de Gafsa.', keywords: ['entreprise gafsa', 'services gafsa'] },
+  { slug: 'tozeur', label: 'Tozeur', description: 'Entreprises et services dans le gouvernorat de Tozeur, porte du Sahara tunisien.', keywords: ['entreprise tozeur', 'services tozeur', 'nefta', 'tourisme tozeur'] },
+  { slug: 'kebili', label: 'Kébili', description: 'Annuaire des entreprises et professionnels dans le gouvernorat de Kébili et Douz.', keywords: ['entreprise kébili', 'douz', 'services kébili'] },
+];
+
+const GOUVERNORAT_LABEL_TO_SLUG: Record<string, string> = {
+  'Tunis': 'tunis',
+  'Ariana': 'ariana',
+  'Ben Arous': 'ben-arous',
+  'La Manouba': 'la-manouba',
+  'Nabeul': 'nabeul',
+  'Zaghouan': 'zaghouan',
+  'Bizerte': 'bizerte',
+  'Béja': 'beja',
+  'Jendouba': 'jendouba',
+  'Le Kef': 'le-kef',
+  'Siliana': 'siliana',
+  'Sousse': 'sousse',
+  'Monastir': 'monastir',
+  'Mahdia': 'mahdia',
+  'Sfax': 'sfax',
+  'Kairouan': 'kairouan',
+  'Kasserine': 'kasserine',
+  'Sidi Bouzid': 'sidi-bouzid',
+  'Gabès': 'gabes',
+  'Médenine': 'medenine',
+  'Tataouine': 'tataouine',
+  'Gafsa': 'gafsa',
+  'Tozeur': 'tozeur',
+  'Kébili': 'kebili',
+};
+
+export function findGouvernoratBySlug(slug: string): GouvernoratEntry | undefined {
+  return SEO_GOUVERNORATS.find(g => g.slug === slug);
+}
+
+export function getVillesByGouvernorat(gouvernoratSlug: string): VilleEntry[] {
+  const gouv = SEO_GOUVERNORATS.find(g => g.slug === gouvernoratSlug);
+  if (!gouv) return [];
+  return SEO_VILLES.filter(v => v.gouvernorat === gouv.label);
+}
+
+export function getGouvernoratSlugFromLabel(label: string): string | undefined {
+  return GOUVERNORAT_LABEL_TO_SLUG[label];
+}
+
 export function findSecteurBySlug(slug: string): SecteurEntry | undefined {
   return SEO_SECTEURS.find(s => s.slug === slug);
 }

@@ -119,6 +119,13 @@ const seoVilleSlugs = [
   'gafsa', 'tozeur', 'nefta', 'kebili', 'douz',
 ];
 
+const seoGouvernoratSlugs = [
+  'tunis', 'ariana', 'ben-arous', 'manouba', 'nabeul', 'zaghouan',
+  'bizerte', 'beja', 'jendouba', 'le-kef', 'siliana', 'sousse',
+  'monastir', 'mahdia', 'kairouan', 'kasserine', 'sidi-bouzid',
+  'sfax', 'gabes', 'medenine', 'tataouine', 'gafsa', 'tozeur', 'kebili',
+];
+
 const BATCH_SIZE = 5000;
 
 Deno.serve(async (req: Request) => {
@@ -156,6 +163,11 @@ Deno.serve(async (req: Request) => {
     // SEO ville pages: /ville/{slug}
     for (const slug of seoVilleSlugs) {
       xml += `  <url>\n    <loc>${domain}/ville/${escapeXml(slug)}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
+    }
+
+    // SEO gouvernorat pages: /gouvernorat/{slug}
+    for (const slug of seoGouvernoratSlugs) {
+      xml += `  <url>\n    <loc>${domain}/gouvernorat/${escapeXml(slug)}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.75</priority>\n  </url>\n`;
     }
 
     // SEO metier+ville combos for top metiers x top villes
@@ -245,7 +257,7 @@ Deno.serve(async (req: Request) => {
 
     xml += '\n</urlset>';
 
-    console.log(`[sitemap] Generated: ${staticPages.length} static + ${seoSecteurSlugs.length} secteurs + ${seoMetierSlugs.length} metiers + ${seoVilleSlugs.length} villes + ${topMetiers.length * topVilles.length} combos + dynamic entries`);
+    console.log(`[sitemap] Generated: ${staticPages.length} static + ${seoSecteurSlugs.length} secteurs + ${seoGouvernoratSlugs.length} gouvernorats + ${seoMetierSlugs.length} metiers + ${seoVilleSlugs.length} villes + ${topMetiers.length * topVilles.length} combos + dynamic entries`);
 
     return new Response(xml, {
       status: 200,
