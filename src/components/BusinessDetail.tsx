@@ -63,6 +63,7 @@ import { generateHashtags, formatHashtagsForShare } from '../lib/hashtagGenerato
 import { HERO_IMAGE_URL } from '../constants/images';
 import { findMetierByValue, findVilleByLabel } from '../lib/seoLandingData';
 import GratuitCard from '../components/GratuitCard';
+import ReservationForm from '../components/ReservationForm';
 
 function getFullImageUrl(url?: string | null): string {
   if (!url || url.trim() === '') return HERO_IMAGE_URL;
@@ -1808,6 +1809,16 @@ export const BusinessDetail = ({
                   <EntrepriseAvisForm entrepriseId={business?.id || null} />
                 </div>
               )}
+            </div>
+
+            <div className="mt-0.5 pt-0.5" style={{ borderTop: `1px solid ${colors.gold}30` }}>
+              <ReservationForm
+                businessId={business.id}
+                businessName={displayName}
+                businessEmail={business.email || undefined}
+                businessPhone={business.telephone || undefined}
+                accentColor={colors.gold}
+              />
             </div>
 
             <div className="mt-1 pt-1" style={{ borderTop: `0.5px solid ${colors.gold}40` }}>
