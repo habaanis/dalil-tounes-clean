@@ -37,6 +37,7 @@ import BusinessReviews from '../components/BusinessReviews';
 import { buildEntrepriseUrl, buildEntrepriseShareUrl, generateSlug, extractShortIdFromSlug } from '../lib/slugify';
 import { cleanAltText, extractFrenchName, cleanArabicField } from '../lib/textNormalization';
 import { SEOHead } from './SEOHead';
+import { getBusinessSeoMeta } from '../lib/seoMetaTemplates';
 import { useHreflangPath } from '../hooks/useHreflangPath';
 import {
   mapSubscriptionToTier,
@@ -837,22 +838,22 @@ export const BusinessDetail = ({
     >
       {business && actualBusinessId && (
         <>
-          <SEOHead
-            title={`${business.nom} - ${translatedCategory} | Dalil Tounes`}
-            description={
-              translatedDescription ||
-              `${business.nom} à ${business.ville}. ${translatedCategory}. Contactez-nous au ${
-                business.telephone || 'voir coordonnées'
-              }`
-            }
-            keywords={`${business.nom}, ${translatedCategory}, ${business.ville}, Tunisie`}
-            image={business.image_url || undefined}
-            canonical={buildEntrepriseShareUrl(business)}
-            type="article"
-            author={business.nom}
-            currentPath={currentPath}
-            noindex={business.statut_validation !== 'publié' && business.statut_validation !== 'publie'}
-          />
+          {(() => {
+            const bizSeo = getBusinessSeoMeta({ nom: business.nom, ville: business.ville, telephone: business.telephone, categorie: translatedCategory, description: translatedDescription || undefined }, buildEntrepriseShareUrl(business));
+            return (
+              <SEOHead
+                title={bizSeo.title}
+                description={bizSeo.description}
+                keywords={bizSeo.keywords}
+                image={business.image_url || undefined}
+                canonical={bizSeo.canonical}
+                type="article"
+                author={business.nom}
+                currentPath={currentPath}
+                noindex={business.statut_validation !== 'publié' && business.statut_validation !== 'publie'}
+              />
+            );
+          })()}
 
           <StructuredData
             data={generateLocalBusinessSchema({

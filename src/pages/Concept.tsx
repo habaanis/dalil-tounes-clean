@@ -2,6 +2,7 @@ import { Building2, MapPin, Users, Crown, Sparkles, Award, Star } from 'lucide-r
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
 import { SEOHead } from '../components/SEOHead';
+import { getConceptSeoMeta } from '../lib/seoMetaTemplates';
 import { LazyImage } from '../components/LazyImage';
 import StructuredData from '../components/StructuredData';
 import { generateAboutPageSchema } from '../lib/structuredDataSchemas';
@@ -61,10 +62,11 @@ export default function Concept() {
       <StructuredData data={generateAboutPageSchema()} />
 
       <SEOHead
-        title="Dalil Tounes | L'Excellence au Service de la Tunisie"
-        description="Découvrez notre vision premium : L'Humain, le Digital et le Patrimoine réunis pour booster la visibilité tunisienne. Rejoignez l'élite des établissements tunisiens."
+        title={getConceptSeoMeta().title}
+        description={getConceptSeoMeta().description}
         image="https://dalil-tounes.com/og-concept-premium.jpg"
         type="website"
+        canonical={getConceptSeoMeta().canonical}
         currentPath={currentPath}
       />
 

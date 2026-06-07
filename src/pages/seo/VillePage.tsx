@@ -7,6 +7,7 @@ import Breadcrumb from '../../components/seo/Breadcrumb';
 import SeoBusinessCard from '../../components/seo/SeoBusinessCard';
 import LoadMoreButton from '../../components/seo/LoadMoreButton';
 import { findVilleBySlug, SEO_METIERS, SEO_VILLES } from '../../lib/seoLandingData';
+import { getVilleSeoMeta } from '../../lib/seoMetaTemplates';
 import { usePaginatedSeoBusinesses } from '../../hooks/usePaginatedSeoBusinesses';
 import StructuredData from '../../components/StructuredData';
 import { generateBreadcrumbSchema } from '../../lib/structuredDataSchemas';
@@ -25,9 +26,10 @@ const VillePage: React.FC = () => {
     return <Navigate to="/" replace />;
   }
 
-  const pageTitle = `Annuaire des entreprises à ${ville.label} - Dalil Tounes`;
-  const pageDescription = `Trouvez les meilleurs professionnels et établissements à ${ville.label}. Médecins, avocats, restaurants et plus encore avec avis et coordonnées.`;
-  const pageKeywords = `entreprise ${ville.label}, annuaire ${ville.label}, professionnel ${ville.label} tunisie, services ${ville.label}`;
+  const seo = getVilleSeoMeta(ville.label, ville.slug);
+  const pageTitle = seo.title;
+  const pageDescription = seo.description;
+  const pageKeywords = seo.keywords;
 
   const faqData = [
     { question: `Comment trouver un professionnel à ${ville.label} ?`, answer: `Utilisez la barre de recherche Dalil Tounes ou parcourez les catégories disponibles pour ${ville.label}. Vous pouvez filtrer par métier : médecin, avocat, plombier, coiffeur, restaurant et bien d'autres.` },

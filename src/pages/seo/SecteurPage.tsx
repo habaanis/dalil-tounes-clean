@@ -16,6 +16,7 @@ import {
   SEO_VILLES,
 } from '../../lib/seoLandingData';
 import { usePaginatedSeoSecteur } from '../../hooks/usePaginatedSeoSecteur';
+import { getSecteurSeoMeta } from '../../lib/seoMetaTemplates';
 
 const SecteurPage: React.FC = () => {
   const { secteurSlug } = useParams<{ secteurSlug: string }>();
@@ -32,9 +33,10 @@ const SecteurPage: React.FC = () => {
   const popularVilles = SEO_VILLES.slice(0, 12);
   const otherSecteurs = SEO_SECTEURS.filter(s => s.slug !== secteur.slug).slice(0, 10);
 
-  const pageTitle = `${secteur.label} en Tunisie : professionnels et entreprises | Dalil Tounes`;
-  const pageDescription = secteur.description;
-  const pageKeywords = secteur.keywords.join(', ');
+  const seo = getSecteurSeoMeta(secteur.label, secteur.slug, secteur.description, secteur.keywords);
+  const pageTitle = seo.title;
+  const pageDescription = seo.description;
+  const pageKeywords = seo.keywords;
 
   const faqData = [
     {

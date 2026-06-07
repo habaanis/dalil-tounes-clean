@@ -17,6 +17,7 @@ import {
   SEO_METIERS,
 } from '../../lib/seoLandingData';
 import { usePaginatedSeoGouvernorat } from '../../hooks/usePaginatedSeoGouvernorat';
+import { getGouvernoratSeoMeta } from '../../lib/seoMetaTemplates';
 
 const GouvernoratPage: React.FC = () => {
   const { gouvernoratSlug } = useParams<{ gouvernoratSlug: string }>();
@@ -36,9 +37,10 @@ const GouvernoratPage: React.FC = () => {
   );
   const popularSecteurs = SEO_SECTEURS.slice(0, 8);
 
-  const pageTitle = `Entreprises dans le gouvernorat de ${gouvernorat.label} | Dalil Tounes`;
-  const pageDescription = gouvernorat.description;
-  const pageKeywords = gouvernorat.keywords.join(', ');
+  const seo = getGouvernoratSeoMeta(gouvernorat.label, gouvernorat.slug, gouvernorat.description, gouvernorat.keywords);
+  const pageTitle = seo.title;
+  const pageDescription = seo.description;
+  const pageKeywords = seo.keywords;
 
   const faqData = [
     {

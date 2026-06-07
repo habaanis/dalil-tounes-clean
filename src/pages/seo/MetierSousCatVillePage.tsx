@@ -7,6 +7,7 @@ import Breadcrumb from '../../components/seo/Breadcrumb';
 import SeoBusinessCard from '../../components/seo/SeoBusinessCard';
 import LoadMoreButton from '../../components/seo/LoadMoreButton';
 import { parseSeoSlug, SEO_SOUS_CATEGORIES, SEO_VILLES } from '../../lib/seoLandingData';
+import { getMetierSousCatVilleSeoMeta } from '../../lib/seoMetaTemplates';
 import { usePaginatedSeoBusinesses } from '../../hooks/usePaginatedSeoBusinesses';
 import StructuredData from '../../components/StructuredData';
 import { generateBreadcrumbSchema } from '../../lib/structuredDataSchemas';
@@ -35,17 +36,10 @@ const MetierSousCatVillePage: React.FC = () => {
   const { metier, ville } = parsed;
   const sousCategorie = sousCategorieParsed;
 
-  const pageTitle = sousCategorie
-    ? `${metier.label} ${sousCategorie.label} à ${ville.label} - Dalil Tounes`
-    : `Meilleurs ${metier.label} à ${ville.label} - Dalil Tounes`;
-
-  const pageDescription = sousCategorie
-    ? `Trouvez un ${metier.label} spécialisé en ${sousCategorie.label} à ${ville.label}. Annuaire complet avec avis et coordonnées.`
-    : `Trouvez un ${metier.label} de confiance à ${ville.label} avec avis et coordonnées. Annuaire complet en Tunisie.`;
-
-  const pageKeywords = sousCategorie
-    ? `${metier.label} ${sousCategorie.label} ${ville.label}, ${metier.label.toLowerCase()} ${sousCategorie.label} tunisie, ${metier.secteur} ${ville.label}`
-    : `${metier.label} ${ville.label}, ${metier.label.toLowerCase()} tunisie, ${metier.secteur} ${ville.label}`;
+  const seo = getMetierSousCatVilleSeoMeta(metier.label, sousCategorie?.label || null, ville.label, slug!, metier.secteur);
+  const pageTitle = seo.title;
+  const pageDescription = seo.description;
+  const pageKeywords = seo.keywords;
 
   const sortedBusinesses = businesses;
 

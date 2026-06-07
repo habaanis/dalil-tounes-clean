@@ -2,6 +2,7 @@ import { useParams, Link, Navigate } from 'react-router-dom';
 import { ArrowLeft, Clock, Calendar, User, Share2 } from 'lucide-react';
 import { blogArticles, getArticleTranslation } from './blogData';
 import { SEOHead } from '../../components/SEOHead';
+import { getBlogPostSeoMeta } from '../../lib/seoMetaTemplates';
 import { SocialShareButtons } from '../../components/SocialShareButtons';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTranslation } from '../../lib/i18n';
@@ -32,9 +33,11 @@ export default function BlogPost() {
   return (
     <div className="min-h-screen bg-white" dir={isRTL ? 'rtl' : 'ltr'}>
       <SEOHead
-        title={`${tr.title} — Blog Dalil Tounes`}
-        description={tr.excerpt}
+        title={getBlogPostSeoMeta(tr.title, tr.excerpt, article.slug).title}
+        description={getBlogPostSeoMeta(tr.title, tr.excerpt, article.slug).description}
         image={article.coverImage}
+        canonical={getBlogPostSeoMeta(tr.title, tr.excerpt, article.slug).canonical}
+        currentPath={`/blog/${article.slug}`}
       />
 
       <div className="pt-16 pb-10 px-4 border-b border-gray-100">

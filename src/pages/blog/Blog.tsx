@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Clock, ArrowRight, BookOpen } from 'lucide-react';
 import { blogArticles, getArticleTranslation } from './blogData';
 import { SEOHead } from '../../components/SEOHead';
+import { getBlogSeoMeta } from '../../lib/seoMetaTemplates';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTranslation } from '../../lib/i18n';
 
@@ -14,8 +15,11 @@ export default function Blog() {
   return (
     <div className="min-h-screen bg-white" dir={isRTL ? 'rtl' : 'ltr'}>
       <SEOHead
-        title="Blog — Dalil Tounes"
-        description="Découvrez les articles et actualités de Dalil Tounes, l'annuaire de référence des entreprises tunisiennes."
+        title={getBlogSeoMeta().title}
+        description={getBlogSeoMeta().description}
+        keywords={getBlogSeoMeta().keywords}
+        canonical={getBlogSeoMeta().canonical}
+        currentPath="/blog"
       />
 
       <section className="pt-20 pb-16 px-4 bg-white">

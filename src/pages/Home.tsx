@@ -6,6 +6,8 @@ import CompanyCountCard from '../components/CompanyCountCard';
 import { isSearchBarAllowed } from '../config/searchBars';
 import { HERO_IMAGE_URL } from '../constants/images';
 import StructuredData from '../components/StructuredData';
+import { SEOHead } from '../components/SEOHead';
+import { getHomeSeoMeta } from '../lib/seoMetaTemplates';
 import { generateOrganizationSchema, generateWebSiteSchema } from '../lib/structuredDataSchemas';
 import { supabase } from '../lib/BoltDatabase';
 import { notifyAdmin } from '../lib/notifyAdmin';
@@ -196,6 +198,13 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
 
   return (
     <div>
+      <SEOHead
+        title={getHomeSeoMeta().title}
+        description={getHomeSeoMeta().description}
+        keywords={getHomeSeoMeta().keywords}
+        canonical={getHomeSeoMeta().canonical}
+        currentPath="/"
+      />
       <StructuredData data={[generateOrganizationSchema(), generateWebSiteSchema()]} />
 
       {/* 1. Hero — hauteur fixe (aspect-ratio) pour que l'image LCP soit

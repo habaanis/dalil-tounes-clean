@@ -7,6 +7,7 @@ import Breadcrumb from '../../components/seo/Breadcrumb';
 import SeoBusinessCard from '../../components/seo/SeoBusinessCard';
 import LoadMoreButton from '../../components/seo/LoadMoreButton';
 import { findMetierBySlug, SEO_VILLES, SEO_METIERS } from '../../lib/seoLandingData';
+import { getMetierSeoMeta } from '../../lib/seoMetaTemplates';
 import { usePaginatedSeoBusinesses } from '../../hooks/usePaginatedSeoBusinesses';
 import StructuredData from '../../components/StructuredData';
 import { generateBreadcrumbSchema } from '../../lib/structuredDataSchemas';
@@ -25,9 +26,10 @@ const MetierPage: React.FC = () => {
     return <Navigate to="/" replace />;
   }
 
-  const pageTitle = `Meilleurs ${metier.label} en Tunisie - Dalil Tounes`;
-  const pageDescription = `Trouvez un ${metier.label} de confiance en Tunisie. Annuaire des ${metier.label.toLowerCase()}s avec avis, coordonnées et horaires.`;
-  const pageKeywords = `${metier.label} tunisie, ${metier.label.toLowerCase()} pas cher, meilleur ${metier.label.toLowerCase()} tunisie, ${metier.secteur}`;
+  const seo = getMetierSeoMeta(metier.label, metier.slug, metier.secteur);
+  const pageTitle = seo.title;
+  const pageDescription = seo.description;
+  const pageKeywords = seo.keywords;
 
   const faqData = [
     { question: `Comment trouver un ${metier.label.toLowerCase()} en Tunisie ?`, answer: `Utilisez la barre de recherche Dalil Tounes ou parcourez la liste ci-dessous. Vous pouvez également filtrer par ville pour trouver un ${metier.label.toLowerCase()} proche de chez vous.` },

@@ -7,6 +7,7 @@ import Breadcrumb from '../../components/seo/Breadcrumb';
 import SeoBusinessCard from '../../components/seo/SeoBusinessCard';
 import LoadMoreButton from '../../components/seo/LoadMoreButton';
 import { parseMetierVilleSlug, SEO_VILLES } from '../../lib/seoLandingData';
+import { getMetierVilleSeoMeta } from '../../lib/seoMetaTemplates';
 import { usePaginatedSeoBusinesses } from '../../hooks/usePaginatedSeoBusinesses';
 import StructuredData from '../../components/StructuredData';
 import { generateBreadcrumbSchema } from '../../lib/structuredDataSchemas';
@@ -26,9 +27,10 @@ const MetierVillePage: React.FC = () => {
   }
 
   const { metier, ville } = parsed;
-  const pageTitle = `Meilleurs ${metier.label} à ${ville.label} - Dalil Tounes`;
-  const pageDescription = `Trouvez un ${metier.label} de confiance à ${ville.label} avec avis et coordonnées. Annuaire complet des ${metier.label.toLowerCase()}s en Tunisie.`;
-  const pageKeywords = `${metier.label} ${ville.label}, ${metier.label.toLowerCase()} tunisie, trouver ${metier.label.toLowerCase()} ${ville.label}, ${metier.secteur} ${ville.label}`;
+  const seo = getMetierVilleSeoMeta(metier.label, ville.label, slug!, metier.secteur);
+  const pageTitle = seo.title;
+  const pageDescription = seo.description;
+  const pageKeywords = seo.keywords;
 
   const sortedBusinesses = businesses;
 
