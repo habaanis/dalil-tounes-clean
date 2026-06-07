@@ -74,29 +74,49 @@ export default function ReservationForm({
       source: 'business_detail',
     };
 
+    console.log('[Reservation] payload:', JSON.stringify(payload, null, 2));
+
     let airtableOk = false;
     try {
-      const { data, error } = await supabase.functions.invoke('reservations', {
+      const { data, error: fnError } = await supabase.functions.invoke('reservations', {
         body: payload,
       });
-      airtableOk = !error && data?.success === true;
-    } catch {
+      console.log('[Reservation] Edge Function response:', { data, error: fnError });
+      airtableOk = !fnError && data?.success === true;
+      if (fnError) {
+        console.error('[Reservation] Edge Function error:', fnError);
+      }
+    } catch (err) {
+      console.error('[Reservation] Edge Function exception:', err);
       airtableOk = false;
     }
 
-    await supabase.from('reservations').insert({
-      ...payload,
-      status: 'new',
-    });
+    try {
+      const { error: dbError } = await supabase.from('reservations').insert({
+        ...payload,
+        status: 'new',
+      });
+      if (dbError) {
+        console.error('[Reservation] Supabase insert error:', {
+          message: dbError.message,
+          details: dbError.details,
+          hint: dbError.hint,
+          code: dbError.code,
+        });
+      } else {
+        console.log('[Reservation] Supabase insert OK');
+      }
+    } catch (err) {
+      console.error('[Reservation] Supabase insert exception:', err);
+    }
 
     setSubmitting(false);
 
-    if (!airtableOk) {
+    if (airtableOk) {
+      setSuccess(true);
+    } else {
       setError(t.error);
-      return;
     }
-
-    setSuccess(true);
   };
 
   const reset = () => {

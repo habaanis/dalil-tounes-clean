@@ -99,12 +99,19 @@ Deno.serve(async (req: Request) => {
       const errText = await airtableRes.text();
       console.error("Airtable error:", airtableRes.status, errText);
       return jsonResponse(
-        { success: false, error: "Failed to save reservation" },
+        {
+          success: false,
+          error: "Failed to save reservation",
+          airtable_status: airtableRes.status,
+          airtable_details: errText,
+        },
         502
       );
     }
 
-    return jsonResponse({ success: true });
+    const airtableData = await airtableRes.json();
+    console.log("Airtable success:", JSON.stringify(airtableData));
+    return jsonResponse({ success: true, airtable_id: airtableData?.records?.[0]?.id });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.error("Reservation error:", message);
