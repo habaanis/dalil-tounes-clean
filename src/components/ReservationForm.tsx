@@ -2,12 +2,30 @@ import React, { useState } from 'react';
 import { CalendarDays, ChevronDown, Loader2, CheckCircle2 } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
 
+export interface ReservationTranslations {
+  title: string;
+  formName: string;
+  formPhone: string;
+  formEmail: string;
+  formDate: string;
+  formTime: string;
+  formMessage: string;
+  formSubmit: string;
+  success: string;
+  notice: string;
+  close: string;
+  sending: string;
+  error: string;
+}
+
 interface ReservationFormProps {
   businessId: string;
   businessName: string;
   businessEmail?: string;
   businessPhone?: string;
   accentColor?: string;
+  translations: ReservationTranslations;
+  isRTL?: boolean;
 }
 
 export default function ReservationForm({
@@ -16,6 +34,8 @@ export default function ReservationForm({
   businessEmail,
   businessPhone,
   accentColor = '#D4AF37',
+  translations: t,
+  isRTL = false,
 }: ReservationFormProps) {
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -58,7 +78,7 @@ export default function ReservationForm({
     setSubmitting(false);
 
     if (insertError) {
-      setError('Une erreur est survenue. Veuillez reessayer.');
+      setError(t.error);
       return;
     }
 
@@ -76,6 +96,16 @@ export default function ReservationForm({
     setOpen(false);
   };
 
+  const inputStyle = {
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    border: `1px solid ${accentColor}25`,
+  };
+
+  const focusHandler = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+    (e.currentTarget.style.borderColor = `${accentColor}60`);
+  const blurHandler = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+    (e.currentTarget.style.borderColor = `${accentColor}25`);
+
   if (success) {
     return (
       <div
@@ -84,32 +114,24 @@ export default function ReservationForm({
           backgroundColor: `${accentColor}08`,
           border: `1px solid ${accentColor}30`,
         }}
+        dir={isRTL ? 'rtl' : 'ltr'}
       >
-        <CheckCircle2
-          className="mx-auto mb-3"
-          size={36}
-          style={{ color: '#16a34a' }}
-        />
-        <p className="text-sm font-semibold text-white mb-1">
-          Demande envoyee avec succes !
-        </p>
-        <p className="text-xs text-gray-400 leading-relaxed mb-4">
-          Votre demande de rendez-vous a ete transmise a {businessName}.
-          L'etablissement vous contactera pour confirmer.
-        </p>
+        <CheckCircle2 className="mx-auto mb-3" size={36} style={{ color: '#16a34a' }} />
+        <p className="text-sm font-semibold text-white mb-1">{t.success}</p>
+        <p className="text-xs text-gray-400 leading-relaxed mb-4">{t.notice}</p>
         <button
           onClick={reset}
           className="text-xs font-medium transition-colors"
           style={{ color: accentColor }}
         >
-          Fermer
+          {t.close}
         </button>
       </div>
     );
   }
 
   return (
-    <div>
+    <div dir={isRTL ? 'rtl' : 'ltr'}>
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
@@ -123,7 +145,7 @@ export default function ReservationForm({
       >
         <span className="flex items-center gap-2">
           <CalendarDays size={14} />
-          <span>Prendre RDV / Reserver</span>
+          <span>{t.title}</span>
         </span>
         <ChevronDown
           size={14}
@@ -141,54 +163,42 @@ export default function ReservationForm({
         }}
       >
         <form onSubmit={handleSubmit} className="pt-3 space-y-3">
-          <p className="text-[11px] text-gray-500 leading-relaxed">
-            Remplissez ce formulaire pour envoyer une demande de rendez-vous.
-            L'etablissement vous recontactera pour confirmer.
-          </p>
+          <p className="text-[11px] text-gray-500 leading-relaxed">{t.notice}</p>
 
           <div className="grid grid-cols-1 gap-3">
             <input
               type="text"
-              placeholder="Votre nom *"
+              placeholder={`${t.formName} *`}
               value={nom}
               onChange={(e) => setNom(e.target.value)}
               required
               className="w-full px-3 py-2 rounded-lg text-xs text-white placeholder-gray-500 outline-none transition-colors"
-              style={{
-                backgroundColor: 'rgba(255,255,255,0.06)',
-                border: `1px solid ${accentColor}25`,
-              }}
-              onFocus={(e) => (e.currentTarget.style.borderColor = `${accentColor}60`)}
-              onBlur={(e) => (e.currentTarget.style.borderColor = `${accentColor}25`)}
+              style={inputStyle}
+              onFocus={focusHandler}
+              onBlur={blurHandler}
             />
 
             <input
               type="tel"
-              placeholder="Votre telephone *"
+              placeholder={`${t.formPhone} *`}
               value={telephone}
               onChange={(e) => setTelephone(e.target.value)}
               required
               className="w-full px-3 py-2 rounded-lg text-xs text-white placeholder-gray-500 outline-none transition-colors"
-              style={{
-                backgroundColor: 'rgba(255,255,255,0.06)',
-                border: `1px solid ${accentColor}25`,
-              }}
-              onFocus={(e) => (e.currentTarget.style.borderColor = `${accentColor}60`)}
-              onBlur={(e) => (e.currentTarget.style.borderColor = `${accentColor}25`)}
+              style={inputStyle}
+              onFocus={focusHandler}
+              onBlur={blurHandler}
             />
 
             <input
               type="email"
-              placeholder="Votre email (optionnel)"
+              placeholder={t.formEmail}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-3 py-2 rounded-lg text-xs text-white placeholder-gray-500 outline-none transition-colors"
-              style={{
-                backgroundColor: 'rgba(255,255,255,0.06)',
-                border: `1px solid ${accentColor}25`,
-              }}
-              onFocus={(e) => (e.currentTarget.style.borderColor = `${accentColor}60`)}
-              onBlur={(e) => (e.currentTarget.style.borderColor = `${accentColor}25`)}
+              style={inputStyle}
+              onFocus={focusHandler}
+              onBlur={blurHandler}
             />
 
             <div className="grid grid-cols-2 gap-3">
@@ -198,14 +208,11 @@ export default function ReservationForm({
                 onChange={(e) => setDate(e.target.value)}
                 min={today}
                 required
+                title={t.formDate}
                 className="w-full px-3 py-2 rounded-lg text-xs text-white placeholder-gray-500 outline-none transition-colors"
-                style={{
-                  backgroundColor: 'rgba(255,255,255,0.06)',
-                  border: `1px solid ${accentColor}25`,
-                  colorScheme: 'dark',
-                }}
-                onFocus={(e) => (e.currentTarget.style.borderColor = `${accentColor}60`)}
-                onBlur={(e) => (e.currentTarget.style.borderColor = `${accentColor}25`)}
+                style={{ ...inputStyle, colorScheme: 'dark' }}
+                onFocus={focusHandler}
+                onBlur={blurHandler}
               />
 
               <input
@@ -213,58 +220,43 @@ export default function ReservationForm({
                 value={heure}
                 onChange={(e) => setHeure(e.target.value)}
                 required
+                title={t.formTime}
                 className="w-full px-3 py-2 rounded-lg text-xs text-white placeholder-gray-500 outline-none transition-colors"
-                style={{
-                  backgroundColor: 'rgba(255,255,255,0.06)',
-                  border: `1px solid ${accentColor}25`,
-                  colorScheme: 'dark',
-                }}
-                onFocus={(e) => (e.currentTarget.style.borderColor = `${accentColor}60`)}
-                onBlur={(e) => (e.currentTarget.style.borderColor = `${accentColor}25`)}
+                style={{ ...inputStyle, colorScheme: 'dark' }}
+                onFocus={focusHandler}
+                onBlur={blurHandler}
               />
             </div>
 
             <textarea
-              placeholder="Message ou precisions (optionnel)"
+              placeholder={t.formMessage}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               rows={2}
               className="w-full px-3 py-2 rounded-lg text-xs text-white placeholder-gray-500 outline-none transition-colors resize-none"
-              style={{
-                backgroundColor: 'rgba(255,255,255,0.06)',
-                border: `1px solid ${accentColor}25`,
-              }}
-              onFocus={(e) => (e.currentTarget.style.borderColor = `${accentColor}60`)}
-              onBlur={(e) => (e.currentTarget.style.borderColor = `${accentColor}25`)}
+              style={inputStyle}
+              onFocus={focusHandler}
+              onBlur={blurHandler}
             />
           </div>
 
-          {error && (
-            <p className="text-xs text-red-400">{error}</p>
-          )}
+          {error && <p className="text-xs text-red-400">{error}</p>}
 
           <button
             type="submit"
             disabled={!canSubmit || submitting}
             className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-bold transition-all disabled:opacity-40"
-            style={{
-              backgroundColor: accentColor,
-              color: '#000',
-            }}
+            style={{ backgroundColor: accentColor, color: '#000' }}
           >
             {submitting ? (
               <>
                 <Loader2 size={14} className="animate-spin" />
-                Envoi en cours...
+                {t.sending}
               </>
             ) : (
-              'Envoyer la demande'
+              t.formSubmit
             )}
           </button>
-
-          <p className="text-[10px] text-gray-600 text-center leading-relaxed">
-            Ce formulaire transmet une demande. La confirmation depend de l'etablissement.
-          </p>
         </form>
       </div>
     </div>

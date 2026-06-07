@@ -553,12 +553,25 @@ export const BusinessDetail = ({
       downloadQR: 'Télécharger le QR',
       qrLabel: 'QR de partage professionnel',
       directions: 'Itinéraire GPS',
-      leaveReview: 'Laissez votre avis',
+      leaveReview: 'Mettez votre avis',
       openingHours: 'Horaires',
       linkCopied: 'Lien copié',
       recommendText: 'Recommander ce professionnel à un proche',
       shareViaWhatsApp: 'Partager via WhatsApp',
       shareViaTelegram: 'Partager via Telegram',
+      reservationTitle: 'Prendre RDV / Réserver',
+      reservationName: 'Nom complet',
+      reservationPhone: 'Téléphone',
+      reservationEmail: 'Email',
+      reservationDate: 'Date souhaitée',
+      reservationTime: 'Heure souhaitée',
+      reservationMessage: 'Message',
+      reservationSubmit: 'Envoyer la demande',
+      reservationSuccess: 'Votre demande a bien été envoyée à l\'entreprise.',
+      reservationNotice: 'Votre demande sera envoyée à l\'entreprise. Elle vous contactera directement pour confirmer. Pensez à téléphoner 24h avant pour confirmer votre venue.',
+      reservationClose: 'Fermer',
+      reservationSending: 'Envoi en cours...',
+      reservationError: 'Une erreur est survenue. Veuillez réessayer.',
     },
     en: {
       loading: 'Loading...',
@@ -577,6 +590,19 @@ export const BusinessDetail = ({
       recommendText: 'Recommend this professional to a friend',
       shareViaWhatsApp: 'Share via WhatsApp',
       shareViaTelegram: 'Share via Telegram',
+      reservationTitle: 'Book an Appointment',
+      reservationName: 'Full Name',
+      reservationPhone: 'Phone',
+      reservationEmail: 'Email',
+      reservationDate: 'Preferred Date',
+      reservationTime: 'Preferred Time',
+      reservationMessage: 'Message',
+      reservationSubmit: 'Send Request',
+      reservationSuccess: 'Your request has been successfully sent to the business.',
+      reservationNotice: 'Your request will be sent to the business. They will contact you directly to confirm. Please call 24 hours before your appointment to confirm.',
+      reservationClose: 'Close',
+      reservationSending: 'Sending...',
+      reservationError: 'An error occurred. Please try again.',
     },
     ar: {
       loading: 'جارٍ التحميل...',
@@ -589,12 +615,25 @@ export const BusinessDetail = ({
       downloadQR: 'تحميل QR',
       qrLabel: 'رمز QR للمشاركة المهنية',
       directions: 'الاتجاهات',
-      leaveReview: 'اترك تقييمك',
+      leaveReview: 'أضف رأيك',
       openingHours: 'ساعات العمل',
       linkCopied: 'تم نسخ الرابط',
       recommendText: 'أوصي بهذا المحترف لصديق',
       shareViaWhatsApp: 'مشاركة عبر واتساب',
       shareViaTelegram: 'مشاركة عبر تيليجرام',
+      reservationTitle: 'حجز موعد',
+      reservationName: 'الاسم الكامل',
+      reservationPhone: 'رقم الهاتف',
+      reservationEmail: 'البريد الإلكتروني',
+      reservationDate: 'التاريخ المطلوب',
+      reservationTime: 'الوقت المطلوب',
+      reservationMessage: 'رسالة',
+      reservationSubmit: 'إرسال الطلب',
+      reservationSuccess: 'تم إرسال طلبك إلى المؤسسة بنجاح.',
+      reservationNotice: 'سيتم إرسال طلبك إلى المؤسسة. ستتواصل معك مباشرة للتأكيد. يرجى الاتصال قبل 24 ساعة لتأكيد الموعد.',
+      reservationClose: 'إغلاق',
+      reservationSending: 'جارٍ الإرسال...',
+      reservationError: 'حدث خطأ. يرجى المحاولة مرة أخرى.',
     },
     it: {
       loading: 'Caricamento...',
@@ -613,6 +652,19 @@ export const BusinessDetail = ({
       recommendText: 'Consiglia questo professionista a un amico',
       shareViaWhatsApp: 'Condividi su WhatsApp',
       shareViaTelegram: 'Condividi su Telegram',
+      reservationTitle: 'Prenota un appuntamento',
+      reservationName: 'Nome completo',
+      reservationPhone: 'Telefono',
+      reservationEmail: 'Email',
+      reservationDate: 'Data desiderata',
+      reservationTime: 'Orario desiderato',
+      reservationMessage: 'Messaggio',
+      reservationSubmit: 'Invia richiesta',
+      reservationSuccess: 'La tua richiesta è stata inviata con successo all\'azienda.',
+      reservationNotice: 'La tua richiesta verrà inviata all\'azienda. Sarai contattato direttamente per la conferma. Ti consigliamo di telefonare 24 ore prima per confermare.',
+      reservationClose: 'Chiudi',
+      reservationSending: 'Invio in corso...',
+      reservationError: 'Si è verificato un errore. Riprova.',
     },
     ru: {
       loading: 'Загрузка...',
@@ -631,6 +683,19 @@ export const BusinessDetail = ({
       recommendText: 'Порекомендовать этого специалиста другу',
       shareViaWhatsApp: 'Поделиться в WhatsApp',
       shareViaTelegram: 'Поделиться в Telegram',
+      reservationTitle: 'Записаться на приём',
+      reservationName: 'Полное имя',
+      reservationPhone: 'Телефон',
+      reservationEmail: 'Электронная почта',
+      reservationDate: 'Желаемая дата',
+      reservationTime: 'Желаемое время',
+      reservationMessage: 'Сообщение',
+      reservationSubmit: 'Отправить запрос',
+      reservationSuccess: 'Ваш запрос успешно отправлен.',
+      reservationNotice: 'Ваш запрос будет отправлен компании. Они свяжутся с вами для подтверждения. Пожалуйста, позвоните за 24 часа до визита для подтверждения.',
+      reservationClose: 'Закрыть',
+      reservationSending: 'Отправка...',
+      reservationError: 'Произошла ошибка. Попробуйте ещё раз.',
     },
   };
 
@@ -1793,8 +1858,8 @@ export const BusinessDetail = ({
                 aria-expanded={showReviewForm}
               >
                 <span className="flex items-center gap-1.5">
-                  <span>Mettez votre avis</span>
-                  <span className="opacity-70">({reviewCount} avis)</span>
+                  <span>{text.leaveReview}</span>
+                  <span className="opacity-70">({reviewCount})</span>
                 </span>
 
                 <ChevronDown
@@ -1818,6 +1883,22 @@ export const BusinessDetail = ({
                 businessEmail={business.email || undefined}
                 businessPhone={business.telephone || undefined}
                 accentColor={colors.gold}
+                isRTL={isRTL}
+                translations={{
+                  title: text.reservationTitle,
+                  formName: text.reservationName,
+                  formPhone: text.reservationPhone,
+                  formEmail: text.reservationEmail,
+                  formDate: text.reservationDate,
+                  formTime: text.reservationTime,
+                  formMessage: text.reservationMessage,
+                  formSubmit: text.reservationSubmit,
+                  success: text.reservationSuccess,
+                  notice: text.reservationNotice,
+                  close: text.reservationClose,
+                  sending: text.reservationSending,
+                  error: text.reservationError,
+                }}
               />
             </div>
 
