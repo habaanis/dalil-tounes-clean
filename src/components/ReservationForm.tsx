@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { CalendarDays, ChevronDown, Loader2, CheckCircle2 } from 'lucide-react';
-import { supabase, supabaseUrl, supabaseAnonKey } from '../lib/supabaseClient';
+import { supabase } from '../lib/supabaseClient';
 
 export interface ReservationTranslations {
   title: string;
@@ -76,16 +76,10 @@ export default function ReservationForm({
 
     let airtableOk = false;
     try {
-      const res = await fetch(`${supabaseUrl}/functions/v1/reservations`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${supabaseAnonKey}`,
-        },
-        body: JSON.stringify(payload),
+      const { data, error } = await supabase.functions.invoke('reservations', {
+        body: payload,
       });
-      const json = await res.json();
-      airtableOk = json.success === true;
+      airtableOk = !error && data?.success === true;
     } catch {
       airtableOk = false;
     }
@@ -282,6 +276,3 @@ export default function ReservationForm({
     </div>
   );
 }
-
-
-export default ReservationForm
