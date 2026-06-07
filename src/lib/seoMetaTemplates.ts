@@ -63,9 +63,9 @@ export function getMetierVilleSeoMeta(
 ): SeoMeta {
   const ml = metierLabel.toLowerCase();
   return {
-    title: truncate(`${cap(metierLabel)} a ${cap(villeLabel)} - Avis et RDV | ${SITE}`, 65),
+    title: truncate(`${cap(metierLabel)} a ${cap(villeLabel)} - Adresses et avis | ${SITE}`, 65),
     description: truncate(
-      `Les meilleurs ${ml}s a ${cap(villeLabel)}. Consultez avis, horaires et prenez rendez-vous sur ${SITE}.`,
+      `Les meilleurs ${ml}s a ${cap(villeLabel)}. Consultez avis, horaires et coordonnees sur ${SITE}.`,
       160,
     ),
     keywords: `${ml} ${villeLabel}, ${ml} ${villeLabel} tunisie${secteur ? `, ${secteur} ${villeLabel}` : ''}`,
