@@ -6,13 +6,22 @@ export interface BlogArticleTranslation {
   content: string;
 }
 
+export interface BlogFAQItem {
+  question: string;
+  answer: string;
+}
+
 export interface BlogArticle {
   id: string;
   slug: string;
   author: string;
   date: string;
+  publishedDate: string;
   readTime: string;
   coverImage: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  faq?: BlogFAQItem[];
   fr: BlogArticleTranslation;
   en?: BlogArticleTranslation;
   ar?: BlogArticleTranslation;
@@ -24,8 +33,11 @@ export const blogArticles: BlogArticle[] = [
     slug: 'comment-est-ne-dalil-tounes',
     author: "L'équipe Dalil Tounes",
     date: '15 avril 2026',
+    publishedDate: '2026-04-15',
     readTime: '5 min',
     coverImage: '',
+    seoTitle: 'Comment est ne Dalil Tounes ? Notre histoire | Dalil Tounes',
+    seoDescription: "L'histoire de Dalil Tounes, annuaire professionnel en Tunisie. Ne d'une frustration reelle, il connecte citoyens et professionnels de confiance.",
     fr: {
       title: 'Comment est né Dalil Tounes 🧡',
       subtitle: "L'histoire d'une idée née du terrain",
@@ -92,8 +104,11 @@ export const blogArticles: BlogArticle[] = [
     slug: 'qui-est-le-createur-de-dalil-tounes',
     author: "L'équipe Dalil Tounes",
     date: '15 avril 2026',
+    publishedDate: '2026-04-15',
     readTime: '4 min',
     coverImage: '',
+    seoTitle: 'Qui est le createur de Dalil Tounes ? | Dalil Tounes',
+    seoDescription: "Decouvrez l'histoire d'Anis, fondateur de Dalil Tounes, auto-entrepreneur en France qui a cree l'annuaire de reference des professionnels tunisiens.",
     fr: {
       title: 'Qui est le créateur de Dalil Tounes ? 🧡',
       subtitle: "L'histoire d'un auto-entrepreneur qui n'y connaissait rien",
@@ -174,24 +189,36 @@ export const blogArticles: BlogArticle[] = [
     slug: 'comment-choisir-son-medecin',
     author: "L'équipe Dalil Tounes",
     date: '18 avril 2026',
+    publishedDate: '2026-04-18',
     readTime: '4 min',
     coverImage: '',
+    seoTitle: 'Comment choisir son medecin en Tunisie ? | Guide Dalil Tounes',
+    seoDescription: 'Decouvrez les criteres essentiels pour bien choisir votre medecin en Tunisie : localisation, specialites, avis patients, CNAM. Guide pratique.',
+    faq: [
+      { question: 'Comment choisir un bon medecin en Tunisie ?', answer: "Verifiez la localisation, les specialites, les avis patients et l'acceptation de la CNAM. Consultez l'annuaire Dalil Tounes pour comparer les professionnels de sante pres de chez vous." },
+      { question: 'Quelles informations verifier avant de consulter un medecin ?', answer: "Verifiez les horaires, l'adresse exacte, le numero de telephone, les avis Google et la specialite du medecin. Sur Dalil Tounes, toutes ces informations sont centralisees sur chaque fiche." },
+      { question: 'Ou trouver les coordonnees d\'un medecin en Tunisie ?', answer: "Sur Dalil Tounes, chaque medecin dispose d'une fiche complete avec adresse, telephone, horaires, GPS et avis. Recherchez par ville ou specialite." },
+      { question: 'Comment comparer plusieurs professionnels de sante ?', answer: "Utilisez Dalil Tounes pour comparer les fiches de medecins par ville, specialite, note Google et nombre d'avis. Les fiches les plus completes sont mises en avant." },
+    ],
     fr: {
       title: 'Comment choisir son médecin en Tunisie ?',
       subtitle: 'Les critères essentiels pour bien choisir son professionnel de santé',
       category: 'Santé',
       excerpt: "Trouver le bon médecin n'est pas toujours simple. Voici les questions à se poser avant de prendre rendez-vous.",
       content: `<h1>Comment choisir son médecin en Tunisie ?</h1>
-<p>Que ce soit pour un médecin généraliste ou un spécialiste, choisir le bon professionnel de santé est une décision importante. Voici quelques critères pour vous aider.</p>
-<h2>1. La localisation et l'accessibilité</h2>
-<p>Un cabinet proche de votre domicile ou de votre lieu de travail facilitera les consultations régulières. Vérifiez aussi les horaires d'ouverture et la disponibilité pour des rendez-vous urgents.</p>
-<h2>2. Les spécialités et compétences</h2>
-<p>Renseignez-vous sur les domaines de compétence du médecin. Un médecin généraliste bien formé peut souvent vous orienter vers le bon spécialiste.</p>
-<h2>3. La réputation et les avis</h2>
-<p>Les avis d'autres patients sont précieux. Sur Dalil Tounes, vous pouvez consulter les notes et commentaires laissés par des patients de votre région.</p>
-<h2>4. L'acceptation de la CNAM</h2>
-<p>Vérifiez si le médecin accepte la CNAM pour éviter les mauvaises surprises financières.</p>
-<p>Prenez le temps de comparer et n'hésitez pas à changer de médecin si vous ne vous sentez pas en confiance.</p>`
+<p>En Tunisie, trouver un <a href="/metier/medecin-generaliste">médecin généraliste</a> ou un spécialiste de confiance peut vite devenir un casse-tête. Informations dispersées, horaires incertains, avis introuvables. Que vous habitiez <a href="/ville/tunis">Tunis</a>, <a href="/ville/sfax">Sfax</a> ou <a href="/ville/sousse">Sousse</a>, voici les critères essentiels pour faire le bon choix.</p>
+<h2>La localisation et l'accessibilité</h2>
+<p>Un cabinet proche de votre domicile ou de votre lieu de travail facilitera les consultations régulières. Vérifiez les horaires d'ouverture et la disponibilité pour des rendez-vous urgents. Sur <a href="/secteur/sante">Dalil Tounes Santé</a>, vous pouvez filtrer les professionnels par ville et consulter leur adresse exacte avec GPS.</p>
+<h2>Les spécialités et compétences</h2>
+<p>Renseignez-vous sur les domaines de compétence du médecin. Un <a href="/metier/medecin-generaliste">médecin généraliste</a> bien formé peut souvent vous orienter vers le bon spécialiste : <a href="/metier/cardiologue">cardiologue</a>, <a href="/metier/dermatologue">dermatologue</a>, <a href="/metier/pediatre">pédiatre</a>, <a href="/metier/dentiste">dentiste</a>...</p>
+<h2>La réputation et les avis patients</h2>
+<p>Les avis d'autres patients sont précieux pour évaluer la qualité d'un praticien. Sur Dalil Tounes, consultez les notes Google et les commentaires laissés par des patients de votre région. Une fiche avec plusieurs avis positifs est un bon indicateur de confiance.</p>
+<h2>L'acceptation de la CNAM</h2>
+<p>Vérifiez si le médecin est conventionné et accepte la CNAM (Caisse Nationale d'Assurance Maladie) pour éviter les mauvaises surprises financières. Cette information est souvent précisée dans la description de la fiche professionnelle.</p>
+<h2>Les horaires et la prise de rendez-vous</h2>
+<p>Privilégiez les praticiens dont les horaires sont clairement affichés et à jour. Sur Dalil Tounes, chaque <a href="/secteur/sante">professionnel de santé</a> peut indiquer ses horaires précis, ses jours de repos et ses créneaux de consultation.</p>
+<h2>Conclusion</h2>
+<p>Prenez le temps de comparer et n'hésitez pas à changer de médecin si vous ne vous sentez pas en confiance. <a href="/entreprises">Explorez l'annuaire Dalil Tounes</a> pour trouver le professionnel de santé qui vous convient, avec avis, coordonnées et horaires vérifiés.</p>`
     },
     en: {
       title: 'How to choose your doctor in Tunisia?',
@@ -233,27 +260,38 @@ export const blogArticles: BlogArticle[] = [
     slug: 'bien-choisir-son-ecole',
     author: "L'équipe Dalil Tounes",
     date: '18 avril 2026',
+    publishedDate: '2026-04-18',
     readTime: '5 min',
     coverImage: '',
+    seoTitle: 'Comment bien choisir une ecole en Tunisie ? | Guide Dalil Tounes',
+    seoDescription: 'Ecole publique ou privee, criteres de selection, soutien scolaire : guide complet pour aider les parents a choisir la meilleure ecole en Tunisie.',
+    faq: [
+      { question: 'Ecole publique ou privee en Tunisie : comment choisir ?', answer: "L'ecole publique est gratuite et universelle. L'ecole privee offre des classes plus petites et des methodes differentes. Le choix depend de votre budget, de la proximite et des besoins de votre enfant." },
+      { question: 'Quels criteres pour choisir une bonne ecole en Tunisie ?', answer: "Verifiez la proximite, le niveau academique (resultats aux examens), le ratio eleves/enseignant, les activites parascolaires et les retours d'autres parents." },
+      { question: 'Ou trouver un cours particulier en Tunisie ?', answer: "Sur Dalil Tounes, recherchez des enseignants certifies dans votre gouvernorat via la section Education. Filtrez par matiere et localisation." },
+    ],
     fr: {
       title: 'Bien choisir son école en Tunisie',
       subtitle: 'Guide pratique pour les parents',
       category: 'Éducation',
       excerpt: "École publique, privée, cours particuliers... Comment s'y retrouver et faire le bon choix pour votre enfant ?",
-      content: `<h1>Bien choisir son école en Tunisie</h1>
-<p>Le choix de l'établissement scolaire est l'une des décisions les plus importantes pour l'avenir de votre enfant. Public, privé, ou soutien scolaire ? Voici un guide pratique.</p>
+      content: `<h1>Comment bien choisir une école en Tunisie ?</h1>
+<p>Le choix de l'établissement scolaire est l'une des décisions les plus importantes pour l'avenir de votre enfant. Que vous viviez à <a href="/ville/tunis">Tunis</a>, <a href="/ville/sousse">Sousse</a> ou <a href="/ville/sfax">Sfax</a>, voici un guide pratique pour vous aider à choisir entre école publique, privée, et soutien scolaire.</p>
 <h2>École publique vs école privée</h2>
-<p>L'école publique offre un enseignement gratuit et un accès universel. L'école privée peut proposer des classes moins chargées, des méthodes pédagogiques différentes et des activités extrascolaires variées.</p>
-<h2>Les critères de sélection</h2>
+<p>L'école publique offre un enseignement gratuit et un accès universel. L'école privée peut proposer des classes moins chargées, des méthodes pédagogiques différentes et des activités extrascolaires variées. Le choix dépend de vos priorités : budget, pédagogie, encadrement.</p>
+<h2>Les critères de sélection essentiels</h2>
 <ul>
-<li><strong>La proximité</strong> : un trajet court réduit la fatigue de l'enfant.</li>
-<li><strong>Le niveau académique</strong> : renseignez-vous sur les résultats aux examens nationaux.</li>
-<li><strong>L'encadrement</strong> : le ratio élèves/enseignant et la qualité du suivi individuel.</li>
-<li><strong>Les activités parascolaires</strong> : sport, arts, clubs… pour un développement complet.</li>
+<li><strong>La proximité</strong> : un trajet court réduit la fatigue de l'enfant et simplifie la logistique familiale.</li>
+<li><strong>Le niveau académique</strong> : renseignez-vous sur les résultats aux examens nationaux et le taux de réussite.</li>
+<li><strong>L'encadrement</strong> : le ratio élèves/enseignant et la qualité du suivi individuel sont déterminants.</li>
+<li><strong>Les activités parascolaires</strong> : sport, arts, clubs, langues... pour un développement complet de votre enfant.</li>
 </ul>
-<h2>Le soutien scolaire</h2>
-<p>Les cours particuliers peuvent compléter l'enseignement scolaire. Sur Dalil Tounes, vous trouverez des enseignants certifiés dans votre gouvernorat.</p>
-<p>Visitez les établissements, échangez avec d'autres parents, et faites confiance à votre instinct pour trouver l'environnement idéal pour votre enfant.</p>`
+<h2>Le soutien scolaire et les cours particuliers</h2>
+<p>Les cours particuliers peuvent compléter l'enseignement scolaire, surtout en période d'examens. Sur <a href="/education">Dalil Tounes Education</a>, vous trouverez des enseignants certifiés dans votre <a href="/gouvernorat/tunis">gouvernorat</a>. Comparez les profils, consultez les avis et choisissez le professeur adapté aux besoins de votre enfant.</p>
+<h2>Visitez avant de choisir</h2>
+<p>Rien ne remplace une visite sur place. Échangez avec la direction, observez les infrastructures, et discutez avec d'autres parents. Faites confiance à votre instinct pour trouver l'environnement idéal.</p>
+<h2>Conclusion</h2>
+<p>Choisir la bonne école demande du temps et de la recherche. <a href="/entreprises">Explorez l'annuaire Dalil Tounes</a> pour trouver les établissements scolaires, les professeurs particuliers et les centres de soutien dans votre ville.</p>`
     },
     en: {
       title: 'How to choose the right school in Tunisia',
@@ -301,24 +339,32 @@ export const blogArticles: BlogArticle[] = [
     slug: 'activites-en-famille',
     author: "L'équipe Dalil Tounes",
     date: '18 avril 2026',
+    publishedDate: '2026-04-18',
     readTime: '4 min',
     coverImage: '',
+    seoTitle: 'Activites en famille en Tunisie : idees et conseils | Dalil Tounes',
+    seoDescription: 'Plages, parcs, culture, sport : decouvrez les meilleures activites en famille en Tunisie. Idees de sorties par region sur Dalil Tounes.',
+    faq: [
+      { question: 'Quelles activites faire en famille en Tunisie ?', answer: 'Plages, parcs nationaux, visites culturelles (Carthage, medina de Tunis, El Jem), parcs de loisirs (Friguia Park), sports et ateliers creatifs. Dalil Tounes liste les activites par ville et gouvernorat.' },
+      { question: 'Ou trouver des activites pour enfants en Tunisie ?', answer: "Consultez la section Loisirs de Dalil Tounes pour trouver des centres sportifs, clubs, piscines et parcs pres de chez vous. Filtrez par ville ou gouvernorat." },
+    ],
     fr: {
-      title: 'Activités à faire en famille en Tunisie',
+      title: 'Activités en famille en Tunisie : idées et conseils',
       subtitle: 'Des idées pour profiter de vos loisirs ensemble',
       category: 'Loisirs',
       excerpt: "Sorties, sports, culture : découvrez les meilleures activités pour passer de bons moments en famille à travers la Tunisie.",
-      content: `<h1>Activités à faire en famille en Tunisie</h1>
-<p>La Tunisie regorge d'activités pour tous les âges. Voici une sélection pour profiter de vos weekends et vacances en famille.</p>
+      content: `<h1>Activités en famille en Tunisie : idées et conseils</h1>
+<p>La Tunisie regorge d'activités pour tous les âges. Que vous soyez à <a href="/ville/tunis">Tunis</a>, <a href="/ville/hammamet">Hammamet</a> ou <a href="/ville/djerba">Djerba</a>, voici les meilleures idées de sorties pour profiter de vos weekends et vacances en famille.</p>
 <h2>Plein air et nature</h2>
-<p>Les plages de Hammamet, Djerba ou Sousse offrent des journées inoubliables. Pour les amoureux de la nature, les parcs nationaux comme Ichkeul ou Boukornine proposent des randonnées adaptées aux familles.</p>
+<p>Les plages de <a href="/ville/hammamet">Hammamet</a>, <a href="/ville/djerba">Djerba</a> ou <a href="/ville/sousse">Sousse</a> offrent des journées inoubliables en bord de mer. Pour les amoureux de la nature, les parcs nationaux comme Ichkeul (près de <a href="/ville/bizerte">Bizerte</a>) ou Boukornine proposent des randonnées adaptées aux familles.</p>
 <h2>Culture et histoire</h2>
-<p>Faites découvrir à vos enfants la médina de Tunis, Carthage, ou El Jem. Ces visites éducatives et ludiques mêlent histoire et aventure.</p>
+<p>Faites découvrir à vos enfants la médina de <a href="/ville/tunis">Tunis</a>, le site archéologique de Carthage, ou l'amphithéâtre d'El Jem. Ces visites éducatives et ludiques mêlent histoire et aventure.</p>
 <h2>Sports et activités créatives</h2>
-<p>Natation, football, arts martiaux, peinture... Les centres sportifs et culturels de votre ville proposent des cours pour tous les âges. Sur Dalil Tounes, filtrez par gouvernorat pour trouver les meilleures activités près de chez vous.</p>
-<h2>Parcs de loisirs</h2>
-<p>Friguia Park, Aqua Palace ou les parcs d'attractions locaux raviront les plus jeunes.</p>
-<p>Quelle que soit votre région, il y a toujours quelque chose à découvrir ensemble en Tunisie.</p>`
+<p>Natation, football, arts martiaux, peinture... Les centres sportifs et culturels de votre ville proposent des cours pour tous les âges. Sur <a href="/citizens/leisure">Dalil Tounes Loisirs</a>, filtrez par gouvernorat pour trouver les <a href="/metier/salle-sport">salles de sport</a>, <a href="/metier/piscine">piscines</a> et clubs près de chez vous.</p>
+<h2>Parcs de loisirs et attractions</h2>
+<p>Friguia Park (entre Sousse et Hammamet), Aqua Palace ou les parcs d'attractions locaux raviront les plus jeunes. Pensez aussi aux sorties en bateau à <a href="/ville/sousse">Port El Kantaoui</a>.</p>
+<h2>Conclusion</h2>
+<p>Quelle que soit votre région, il y a toujours quelque chose à découvrir ensemble en Tunisie. <a href="/entreprises">Explorez l'annuaire Dalil Tounes</a> pour trouver les meilleures adresses de loisirs, restaurants et hébergements pour votre prochaine sortie familiale.</p>`
     },
     en: {
       title: 'Family activities to do in Tunisia',
@@ -360,8 +406,11 @@ export const blogArticles: BlogArticle[] = [
     slug: 'que-faire-a-sousse',
     author: "L'équipe Dalil Tounes",
     date: '18 avril 2026',
+    publishedDate: '2026-04-18',
     readTime: '5 min',
     coverImage: '',
+    seoTitle: 'Que faire a Sousse ? Guide touristique complet | Dalil Tounes',
+    seoDescription: "Decouvrez les incontournables de Sousse : medina, plages, Port El Kantaoui, restaurants et musees. Guide complet pour visiter la Perle du Sahel.",
     fr: {
       title: 'Que faire à Sousse ?',
       subtitle: 'Le guide complet pour visiter la Perle du Sahel',
@@ -425,8 +474,11 @@ export const blogArticles: BlogArticle[] = [
     slug: 'pourquoi-dalil-tounes-change-la-donne',
     author: "L'équipe Dalil Tounes",
     date: '20 avril 2026',
+    publishedDate: '2026-04-20',
     readTime: '6 min',
     coverImage: '',
+    seoTitle: 'CV Business complet vs incomplet : la visibilite qui change tout | Dalil Tounes',
+    seoDescription: "Pourquoi un CV Business bien rempli change la visibilite d'un professionnel et la confiance des clients. Comparaison et conseils pratiques.",
     fr: {
       title: 'Pourquoi Dalil Tounes change la donne pour les pros et les clients',
       subtitle: 'CV Business complet vs incomplet : la différence qui change tout',
@@ -605,8 +657,16 @@ export const blogArticles: BlogArticle[] = [
     slug: 'pourquoi-certaines-entreprises-attirent-des-clients',
     author: "L'equipe Dalil Tounes",
     date: '28 mai 2026',
+    publishedDate: '2026-05-28',
     readTime: '7 min',
     coverImage: '',
+    seoTitle: 'Comment attirer plus de clients en Tunisie ? 5 conseils | Dalil Tounes',
+    seoDescription: '5 raisons concretes pour lesquelles certaines entreprises attirent des clients et d\'autres restent invisibles. Conseils de visibilite en ligne.',
+    faq: [
+      { question: 'Pourquoi mon entreprise est invisible sur Internet ?', answer: "Souvent parce que la fiche en ligne est incomplete : pas de photos, horaires manquants, pas d'avis clients. Un CV Business complet sur Dalil Tounes ameliore considerablement votre visibilite." },
+      { question: 'Comment attirer plus de clients en ligne en Tunisie ?', answer: "Completez votre fiche professionnelle, recoltez des avis clients, utilisez les bons mots-cles dans votre description et soignez vos photos. Dalil Tounes vous aide a tout centraliser." },
+      { question: 'Les avis clients sont-ils importants pour la visibilite ?', answer: "Oui, les avis sont la preuve sociale de votre competence. Plus vous avez d'avis positifs, plus votre fiche inspire confiance et attire de nouveaux clients." },
+    ],
     fr: {
       title: 'Pourquoi certaines entreprises attirent des clients... et d\'autres restent invisibles ?',
       subtitle: 'La visibilite en ligne n\'est pas une option. C\'est une necessite.',
