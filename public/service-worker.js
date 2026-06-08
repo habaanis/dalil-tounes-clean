@@ -1,106 +1,78 @@
 // Dalil Tounes Service Worker
-// Version: 1.1.0
-// Stratégie: Cache-First pour assets, Network-First pour données
+// Version: 1.2.0
+// Strategie: Cache-First pour assets statiques, Network-First pour pages
 
-const CACHE_NAME = 'dalil-tounes-v2';
-const STATIC_CACHE = 'dalil-static-v2';
-const DYNAMIC_CACHE = 'dalil-dynamic-v2';
+const STATIC_CACHE = 'dalil-static-v3';
+const DYNAMIC_CACHE = 'dalil-dynamic-v3';
 
-// Assets à mettre en cache lors de l'installation
 const STATIC_ASSETS = [
   '/',
   '/index.html',
   '/manifest.json',
-  '/offline.html', // Page hors ligne (à créer si besoin)
+  '/offline.html',
 ];
 
-// Installation du Service Worker
+// URLs that must NEVER be intercepted by the service worker
+function shouldBypass(request) {
+  const url = new URL(request.url);
+
+  // Never intercept non-GET requests (POST reservations, etc.)
+  if (request.method !== 'GET') return true;
+
+  // Never intercept Supabase (API, Edge Functions, storage)
+  if (url.hostname.includes('supabase.co')) return true;
+
+  // Never intercept Edge Function paths served via our own origin proxy
+  if (url.pathname.startsWith('/functions/v1/')) return true;
+
+  // Never intercept /entreprise/ pages (SPA deep links)
+  if (url.pathname.startsWith('/entreprise/')) return true;
+
+  // Never intercept Resend / Airtable / external APIs
+  if (url.hostname.includes('resend.com')) return true;
+  if (url.hostname.includes('airtable.com')) return true;
+
+  // Dev environments
+  if (url.hostname.includes('webcontainer') || url.hostname.includes('local-credentialless')) return true;
+
+  return false;
+}
+
 self.addEventListener('install', (event) => {
-  console.log('[SW] Installation...');
   event.waitUntil(
-    caches.open(STATIC_CACHE).then((cache) => {
-      console.log('[SW] Cache des assets statiques');
-      return cache.addAll(STATIC_ASSETS);
-    })
+    caches.open(STATIC_CACHE).then((cache) => cache.addAll(STATIC_ASSETS))
   );
-  // Force le nouveau SW à prendre le contrôle immédiatement
   self.skipWaiting();
 });
 
-// Activation du Service Worker
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activation...');
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames
-          .filter((name) => {
-            // Supprimer les anciens caches
-            return name !== STATIC_CACHE && name !== DYNAMIC_CACHE;
-          })
-          .map((name) => {
-            console.log('[SW] Suppression ancien cache:', name);
-            return caches.delete(name);
-          })
-      );
-    })
+    caches.keys().then((names) =>
+      Promise.all(
+        names
+          .filter((n) => n !== STATIC_CACHE && n !== DYNAMIC_CACHE)
+          .map((n) => caches.delete(n))
+      )
+    )
   );
-  // Prend le contrôle de toutes les pages immédiatement
   return self.clients.claim();
 });
 
-// Interception des requêtes
 self.addEventListener('fetch', (event) => {
+  if (shouldBypass(event.request)) return;
+
   const { request } = event;
-  const url = new URL(request.url);
 
-  // Ignorer les requêtes non-GET
-  if (request.method !== 'GET') {
-    return;
-  }
-
-  // Ignorer les navigations vers webcontainer (environnement de dev)
-  if (url.hostname.includes('webcontainer') || url.hostname.includes('local-credentialless')) {
-    return;
-  }
-
-  // Ignorer les requêtes vers Supabase (toujours network-first)
-  if (url.hostname.includes('supabase.co')) {
+  // Cache-First for static assets (JS, CSS, fonts, images)
+  if (request.url.match(/\.(js|css|png|jpg|jpeg|webp|svg|gif|woff|woff2|ttf|eot)$/)) {
     event.respondWith(
-      fetch(request)
-        .then((response) => {
-          // Cloner la réponse pour la mettre en cache
-          const responseClone = response.clone();
-          caches.open(DYNAMIC_CACHE).then((cache) => {
-            cache.put(request, responseClone);
-          });
-          return response;
-        })
-        .catch(() => {
-          // En cas d'échec, essayer le cache
-          return caches.match(request);
-        })
-    );
-    return;
-  }
-
-  // Stratégie Cache-First pour les assets statiques (JS, CSS, images)
-  if (
-    request.url.match(/\.(js|css|png|jpg|jpeg|webp|svg|gif|woff|woff2|ttf|eot)$/)
-  ) {
-    event.respondWith(
-      caches.match(request).then((cachedResponse) => {
-        if (cachedResponse) {
-          // Asset trouvé dans le cache
-          return cachedResponse;
-        }
-        // Asset non trouvé, le télécharger et le mettre en cache
+      caches.match(request).then((cached) => {
+        if (cached) return cached;
         return fetch(request).then((response) => {
-          // Cloner la réponse
-          const responseClone = response.clone();
-          caches.open(DYNAMIC_CACHE).then((cache) => {
-            cache.put(request, responseClone);
-          });
+          if (response && response.ok) {
+            const clone = response.clone();
+            caches.open(DYNAMIC_CACHE).then((c) => c.put(request, clone));
+          }
           return response;
         });
       })
@@ -108,94 +80,66 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Stratégie Network-First pour les pages HTML
-  if (request.headers.get('accept').includes('text/html')) {
+  // Network-First for HTML pages
+  const accept = request.headers.get('accept') || '';
+  if (accept.includes('text/html')) {
     event.respondWith(
       fetch(request)
         .then((response) => {
-          // Mettre à jour le cache avec la nouvelle page
-          const responseClone = response.clone();
-          caches.open(DYNAMIC_CACHE).then((cache) => {
-            cache.put(request, responseClone);
-          });
+          if (response && response.ok) {
+            const clone = response.clone();
+            caches.open(DYNAMIC_CACHE).then((c) => c.put(request, clone));
+          }
           return response;
         })
-        .catch(() => {
-          // En cas d'échec réseau, essayer le cache
-          return caches.match(request).then((cachedResponse) => {
-            if (cachedResponse) {
-              return cachedResponse;
-            }
-            // Si aucune page en cache, retourner la page offline
-            return caches.match('/offline.html');
-          });
-        })
+        .catch(() =>
+          caches.match(request).then((cached) => cached || caches.match('/offline.html'))
+        )
+        .then((r) => r || new Response('Offline', { status: 503, statusText: 'Service Unavailable' }))
     );
     return;
   }
 
-  // Pour toutes les autres requêtes, stratégie Network-First
+  // All other GET requests: Network-First with safe fallback
   event.respondWith(
     fetch(request)
       .then((response) => {
-        const responseClone = response.clone();
-        caches.open(DYNAMIC_CACHE).then((cache) => {
-          cache.put(request, responseClone);
-        });
+        if (response && response.ok) {
+          const clone = response.clone();
+          caches.open(DYNAMIC_CACHE).then((c) => c.put(request, clone));
+        }
         return response;
       })
-      .catch(() => {
-        return caches.match(request);
-      })
+      .catch(() => caches.match(request))
+      .then((r) => r || new Response('', { status: 504 }))
   );
 });
 
-// Gestion des messages depuis le client
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
-
   if (event.data && event.data.type === 'CLEAR_CACHE') {
     event.waitUntil(
-      caches.keys().then((cacheNames) => {
-        return Promise.all(
-          cacheNames.map((name) => {
-            console.log('[SW] Nettoyage cache:', name);
-            return caches.delete(name);
-          })
-        );
-      })
+      caches.keys().then((names) => Promise.all(names.map((n) => caches.delete(n))))
     );
   }
 });
 
-// Gestion des notifications push (pour futures fonctionnalités)
 self.addEventListener('push', (event) => {
-  if (!event.data) {
-    return;
-  }
-
+  if (!event.data) return;
   const data = event.data.json();
-  const title = data.title || 'Dalil Tounes';
-  const options = {
-    body: data.body || 'Nouvelle notification',
-    icon: '/icons/icon-192x192.png',
-    badge: '/icons/icon-96x96.png',
-    vibrate: [200, 100, 200],
-    data: {
-      url: data.url || '/',
-    },
-  };
-
-  event.waitUntil(self.registration.showNotification(title, options));
+  event.waitUntil(
+    self.registration.showNotification(data.title || 'Dalil Tounes', {
+      body: data.body || '',
+      icon: '/icons/icon-192x192.png',
+      badge: '/icons/icon-96x96.png',
+      data: { url: data.url || '/' },
+    })
+  );
 });
 
-// Clic sur une notification
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-
-  event.waitUntil(
-    clients.openWindow(event.notification.data.url || '/')
-  );
+  event.waitUntil(clients.openWindow(event.notification.data.url || '/'));
 });
