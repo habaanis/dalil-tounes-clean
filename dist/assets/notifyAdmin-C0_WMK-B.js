@@ -1,0 +1,1 @@
+import{d as o,e as i}from"./index-DhtB1W9T.js";const e=`${o}/functions/v1/notify-form`;async function r(n,t,a){try{await fetch(e,{method:"POST",headers:{"Content-Type":"application/json",Authorization:`Bearer ${i}`},body:JSON.stringify({type:n,data:t,admin_url:a})})}catch{}}export{r as n};
