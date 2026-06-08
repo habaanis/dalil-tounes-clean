@@ -7,8 +7,8 @@
 import { supabase } from './supabaseClient';
 
 export const SUPABASE_CONFIG = {
-  url: import.meta.env.VITE_SUPABASE_URL,
-  anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY,
+  url: import.meta.env.VITE_SUPABASE_URL || "https://kmvjegbtroksjqaqliyv.supabase.co",
+  anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY || "",
 };
 
 export const SUPABASE_URL = SUPABASE_CONFIG.url;

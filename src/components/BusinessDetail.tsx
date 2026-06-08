@@ -80,7 +80,7 @@ function getFullImageUrl(url?: string | null): string {
     return finalUrl;
   }
 
-  return `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/entreprises/${finalUrl}`;
+  return `${import.meta.env.VITE_SUPABASE_URL || "https://kmvjegbtroksjqaqliyv.supabase.co"}/storage/v1/object/public/entreprises/${finalUrl}`;
 }
 
 function isQrCodeImageUrl(url: string): boolean {
