@@ -1,3 +1,4 @@
+// v3 – 2026-06-08 – Supabase+Airtable+Resend, idempotency, structured logs
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
@@ -80,9 +81,9 @@ async function sendEmailNotification(
     recipients.push(payload.business_email.trim());
   }
 
-  console.log("[Email] recipients:", recipients);
+  console.log("[Email] recipients:", JSON.stringify(recipients));
 
-  const subject = `Nouvelle demande de reservation via Dalil Tounes - ${payload.business_name}`;
+  const subject = `Nouvelle demande de reservation - ${payload.business_name}`;
   const html = buildEmailHtml(payload);
 
   try {
@@ -125,6 +126,8 @@ async function sendEmailNotification(
 }
 
 Deno.serve(async (req: Request) => {
+  console.log("[Reservation] v3 handler invoked, method:", req.method);
+
   if (req.method === "OPTIONS") {
     return new Response("ok", { status: 200, headers: corsHeaders });
   }
@@ -146,6 +149,12 @@ Deno.serve(async (req: Request) => {
     }
 
     const payload: ReservationPayload = await req.json();
+    console.log("[Reservation] payload received:", JSON.stringify({
+      business_id: payload.business_id,
+      business_name: payload.business_name,
+      customer_name: payload.customer_name,
+      idempotency_key: payload.idempotency_key,
+    }));
 
     if (
       !payload.business_id ||
@@ -179,7 +188,7 @@ Deno.serve(async (req: Request) => {
           .limit(1);
 
         if (existing && existing.length > 0) {
-          console.log("[Supabase] Duplicate idempotency_key, skipping insert:", idempotencyKey);
+          console.log("[Supabase] Duplicate idempotency_key, skipping:", idempotencyKey);
           supabaseOk = true;
           supabaseDuplicate = true;
         }
@@ -263,18 +272,24 @@ Deno.serve(async (req: Request) => {
     }
 
     // --- Email notification (never blocks the response) ---
+    console.log("[Email] Starting email notification...");
     const emailResult = await sendEmailNotification(payload);
-    console.log("[Email] Result:", JSON.stringify(emailResult));
+    console.log("[Email] Final result:", JSON.stringify(emailResult));
 
-    return jsonResponse({
+    const response = {
       success: airtableOk || supabaseOk,
+      version: "v3",
       duplicate: supabaseDuplicate,
       airtable_id: airtableId,
+      airtable_ok: airtableOk,
       supabase_ok: supabaseOk,
       email_sent: emailResult.sent,
       email_error: emailResult.error || null,
       email_recipients: emailResult.recipients || [],
-    });
+    };
+
+    console.log("[Reservation] Final response:", JSON.stringify(response));
+    return jsonResponse(response);
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.error("[Reservation] error:", message);
