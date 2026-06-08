@@ -1880,8 +1880,8 @@ export const BusinessDetail = ({
               <ReservationForm
                 businessId={business.id}
                 businessName={displayName}
-                businessEmail={business.email || undefined}
-                businessPhone={business.telephone || undefined}
+                businessEmail={business.email || business.email2 || business.email2_clean || undefined}
+                businessPhone={business.telephone || business.whatsapp || business.telephone2 || undefined}
                 accentColor={colors.gold}
                 isRTL={isRTL}
                 translations={{
