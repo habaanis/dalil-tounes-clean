@@ -28,6 +28,98 @@ function jsonResponse(body: Record<string, unknown>, status = 200) {
   });
 }
 
+function buildEmailHtml(p: ReservationPayload): string {
+  return `
+<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;background:#fafafa;border:1px solid #e0e0e0;border-radius:8px;">
+  <div style="text-align:center;padding-bottom:16px;border-bottom:2px solid #D4AF37;">
+    <h2 style="color:#1a1a1a;margin:0;">Nouvelle demande de r&eacute;servation</h2>
+    <p style="color:#666;font-size:13px;margin:4px 0 0;">via Dalil Tounes</p>
+  </div>
+
+  <table style="width:100%;margin-top:20px;border-collapse:collapse;">
+    <tr><td style="padding:8px 4px;color:#888;font-size:13px;width:140px;">Entreprise</td><td style="padding:8px 4px;font-size:14px;font-weight:600;">${escapeHtml(p.business_name)}</td></tr>
+    <tr style="background:#f5f5f5;"><td style="padding:8px 4px;color:#888;font-size:13px;">Client</td><td style="padding:8px 4px;font-size:14px;font-weight:600;">${escapeHtml(p.customer_name)}</td></tr>
+    <tr><td style="padding:8px 4px;color:#888;font-size:13px;">T&eacute;l&eacute;phone</td><td style="padding:8px 4px;font-size:14px;"><a href="tel:${escapeHtml(p.customer_phone)}" style="color:#D4AF37;text-decoration:none;">${escapeHtml(p.customer_phone)}</a></td></tr>
+    <tr style="background:#f5f5f5;"><td style="padding:8px 4px;color:#888;font-size:13px;">Email client</td><td style="padding:8px 4px;font-size:14px;">${p.customer_email ? escapeHtml(p.customer_email) : "Non renseign&eacute;"}</td></tr>
+    <tr><td style="padding:8px 4px;color:#888;font-size:13px;">Date souhait&eacute;e</td><td style="padding:8px 4px;font-size:14px;font-weight:600;">${escapeHtml(p.requested_date)}</td></tr>
+    <tr style="background:#f5f5f5;"><td style="padding:8px 4px;color:#888;font-size:13px;">Heure souhait&eacute;e</td><td style="padding:8px 4px;font-size:14px;font-weight:600;">${escapeHtml(p.requested_time)}</td></tr>
+  </table>
+
+  ${p.message ? `
+  <div style="margin-top:16px;padding:12px;background:#fff;border:1px solid #eee;border-radius:6px;">
+    <p style="color:#888;font-size:12px;margin:0 0 6px;">Message :</p>
+    <p style="color:#333;font-size:14px;margin:0;white-space:pre-wrap;">${escapeHtml(p.message)}</p>
+  </div>` : ""}
+
+  <div style="margin-top:20px;padding:12px;background:#fffbeb;border:1px solid #f5e6a3;border-radius:6px;">
+    <p style="color:#92400e;font-size:13px;margin:0;">Merci de contacter directement le client pour confirmer la r&eacute;servation.<br/>
+    Nous conseillons au client de vous t&eacute;l&eacute;phoner 24h avant pour confirmer sa venue.</p>
+  </div>
+
+  <p style="color:#aaa;font-size:11px;text-align:center;margin-top:24px;">Dalil Tounes &mdash; L'annuaire de la Tunisie</p>
+</div>`;
+}
+
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+async function sendEmailNotification(
+  payload: ReservationPayload
+): Promise<{ sent: boolean; error?: string }> {
+  const resendApiKey = Deno.env.get("RESEND_API_KEY");
+  if (!resendApiKey) {
+    console.warn("[Email] RESEND_API_KEY not configured, skipping email");
+    return { sent: false, error: "RESEND_API_KEY not configured" };
+  }
+
+  const recipients: string[] = [];
+
+  const adminEmail = "contact@dalil-tounes.com";
+  recipients.push(adminEmail);
+
+  if (payload.business_email && payload.business_email.trim()) {
+    recipients.push(payload.business_email.trim());
+  }
+
+  const subject = `Nouvelle demande de réservation via Dalil Tounes — ${payload.business_name}`;
+  const html = buildEmailHtml(payload);
+
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${resendApiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: "Dalil Tounes <reservations@dalil-tounes.com>",
+        to: recipients,
+        subject,
+        html,
+      }),
+    });
+
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error("[Email] Resend error:", res.status, errText);
+      return { sent: false, error: `Resend ${res.status}: ${errText}` };
+    }
+
+    const data = await res.json();
+    console.log("[Email] Sent successfully to:", recipients.join(", "), "id:", data.id);
+    return { sent: true };
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("[Email] Exception:", msg);
+    return { sent: false, error: msg };
+  }
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { status: 200, headers: corsHeaders });
@@ -111,7 +203,16 @@ Deno.serve(async (req: Request) => {
 
     const airtableData = await airtableRes.json();
     console.log("Airtable success:", JSON.stringify(airtableData));
-    return jsonResponse({ success: true, airtable_id: airtableData?.records?.[0]?.id });
+
+    const emailResult = await sendEmailNotification(payload);
+    console.log("[Email] Result:", JSON.stringify(emailResult));
+
+    return jsonResponse({
+      success: true,
+      airtable_id: airtableData?.records?.[0]?.id,
+      email_sent: emailResult.sent,
+      email_error: emailResult.error || null,
+    });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.error("Reservation error:", message);
