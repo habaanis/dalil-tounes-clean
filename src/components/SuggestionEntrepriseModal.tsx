@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Send, ArrowLeft, Building2 } from 'lucide-react';
-import { supabase } from '../lib/supabaseClient';
+import { supabase, supabaseUrl, supabaseAnonKey } from '../lib/supabaseClient';
 import { Toast } from './Toast';
 import { useFormTranslation } from '../hooks/useFormTranslation';
 import { useCategoryTranslation } from '../hooks/useCategoryTranslation';
@@ -105,12 +105,12 @@ export const SuggestionEntrepriseModal = ({ isOpen, onClose }: SuggestionEntrepr
 
       if (data) {
         fetch(
-          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/sync-suggestion-to-airtable`,
+          `${supabaseUrl}/functions/v1/sync-suggestion-to-airtable`,
           {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+              Authorization: `Bearer ${supabaseAnonKey}`,
             },
             body: JSON.stringify({ record: data }),
           }

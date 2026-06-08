@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
-import { supabase } from '../lib/supabaseClient';
+import { supabase, supabaseUrl } from '../lib/supabaseClient';
 import {
   ArrowLeft,
   MapPin,
@@ -80,7 +80,7 @@ function getFullImageUrl(url?: string | null): string {
     return finalUrl;
   }
 
-  return `${import.meta.env.VITE_SUPABASE_URL || "https://kmvjegbtroksjqaqliyv.supabase.co"}/storage/v1/object/public/entreprises/${finalUrl}`;
+  return `${supabaseUrl}/storage/v1/object/public/entreprises/${finalUrl}`;
 }
 
 function isQrCodeImageUrl(url: string): boolean {

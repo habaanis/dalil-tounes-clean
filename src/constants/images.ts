@@ -1,4 +1,6 @@
-const BASE = `${import.meta.env.VITE_SUPABASE_URL || "https://kmvjegbtroksjqaqliyv.supabase.co"}/storage/v1/object/public/photos-dalil`;
+import { supabaseUrl } from '../lib/supabaseClient';
+
+const BASE = `${supabaseUrl}/storage/v1/object/public/photos-dalil`;
 
 /** Drapeau tunisien — image hero utilisée sur toutes les pages de bannière.
  *  Hébergée localement dans /public/images pour éliminer la connexion externe

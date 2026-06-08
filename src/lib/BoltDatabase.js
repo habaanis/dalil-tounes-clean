@@ -4,11 +4,11 @@
    NE PAS MODIFIER sauf pour changer définitivement de base
 --------------------------------------------------------- */
 
-import { supabase } from './supabaseClient';
+import { supabase, supabaseUrl, supabaseAnonKey } from './supabaseClient';
 
 export const SUPABASE_CONFIG = {
-  url: import.meta.env.VITE_SUPABASE_URL || "https://kmvjegbtroksjqaqliyv.supabase.co",
-  anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY || "",
+  url: supabaseUrl,
+  anonKey: supabaseAnonKey,
 };
 
 export const SUPABASE_URL = SUPABASE_CONFIG.url;

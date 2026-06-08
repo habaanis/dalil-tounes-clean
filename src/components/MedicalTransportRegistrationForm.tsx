@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Check, Loader, X } from 'lucide-react';
-import { supabase } from '../lib/supabaseClient';
+import { supabase, supabaseUrl, supabaseAnonKey } from '../lib/supabaseClient';
 import { Toast } from './Toast';
 import { notifyAdmin } from '../lib/notifyAdmin';
 
@@ -119,12 +119,12 @@ export default function MedicalTransportRegistrationForm({
 
       if (data) {
         fetch(
-          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/sync-suggestion-to-airtable`,
+          `${supabaseUrl}/functions/v1/sync-suggestion-to-airtable`,
           {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+              Authorization: `Bearer ${supabaseAnonKey}`,
             },
             body: JSON.stringify({ record: data }),
           }
