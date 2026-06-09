@@ -1,4 +1,5 @@
-import { useLanguage } from '../context/LanguageContext';
+import { useContext } from 'react';
+import { LanguageContext } from '../context/LanguageContext';
 import { t, type Lang } from '../lib/i18n';
 
 const SOCIAL_LINKS = [
@@ -37,7 +38,8 @@ const SOCIAL_LINKS = [
 ];
 
 export const SocialBar = () => {
-  const { language } = useLanguage();
+  const ctx = useContext(LanguageContext);
+  const language = ctx?.language ?? 'fr';
   return (
   <div className="bg-gray-50 border-t border-gray-200 py-6">
     <div className="max-w-7xl mx-auto px-4 flex flex-col items-center gap-4">
