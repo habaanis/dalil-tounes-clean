@@ -367,8 +367,8 @@ export const translations = {
     },
     healthExtra: {
       pageTitle: 'Santé',
-      bestProTitle: 'Entreprises les plus recommandees par les clients',
-      bestSubtitle: 'Les mieux notees par la communaute',
+      bestProTitle: 'Entreprises les plus recommandées par les clients',
+      bestSubtitle: 'Les mieux notées par la communauté',
       guideLabel: 'Guide',
       guideMedecinTitle: 'Comment choisir son médecin en Tunisie ?',
       guideMedecinExcerpt: "Trouver le bon médecin n'est pas toujours simple. Voici les questions à se poser avant de prendre rendez-vous.",

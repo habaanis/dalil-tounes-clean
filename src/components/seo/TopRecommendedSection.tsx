@@ -146,11 +146,11 @@ export default function TopRecommendedSection({ ville, villeSlug }: TopRecommend
             className="text-lg md:text-xl font-bold text-white leading-tight"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
-            Entreprises les plus recommandees par les clients a{' '}
+            Entreprises les plus recommandées par les clients à{' '}
             <span className="text-[#D4AF37]">{ville}</span>
           </h2>
           <p className="text-xs text-gray-500 mt-0.5">
-            Les mieux notees par la communaute
+            Les mieux notées par la communauté
           </p>
         </div>
       </div>

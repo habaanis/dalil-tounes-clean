@@ -184,7 +184,7 @@ const translations = {
     },
     meilleurs: {
       secteurLabel: "établissements d'éducation",
-      sectionTitle: "Entreprises les plus recommandees par les clients",
+      sectionTitle: "Entreprises les plus recommandées par les clients",
       blogTitle: "Bien choisir son école en Tunisie",
       blogExcerpt: "École publique, privée, cours particuliers... Comment s'y retrouver et faire le bon choix pour votre enfant ?"
     },

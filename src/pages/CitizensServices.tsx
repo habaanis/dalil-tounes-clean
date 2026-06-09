@@ -510,7 +510,7 @@ export default function CitizensServices({ onNavigateBack }: CitizensServicesPro
             listePage="services citoyens"
             accentColor="#4A1D43"
             sectionTitle={
-              language === 'fr' ? 'Entreprises les plus recommandees par les clients' :
+              language === 'fr' ? 'Entreprises les plus recommandées par les clients' :
               language === 'ar' ? 'المؤسسات الأكثر توصية من قبل العملاء' :
               language === 'en' ? 'Most recommended businesses by customers' :
               'Aziende piu raccomandate dai clienti'

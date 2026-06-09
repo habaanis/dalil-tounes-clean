@@ -323,7 +323,7 @@ export default function MeilleursSection({
               className="text-2xl font-bold leading-tight"
               style={{ fontFamily: "'Playfair Display', serif", color: accentColor }}
             >
-              {sectionTitle || 'Entreprises les plus recommandees par les clients'}
+              {sectionTitle || 'Entreprises les plus recommandées par les clients'}
             </h2>
             <p className="text-xs text-gray-400 mt-0.5">{tx('bestSubtitle', 'Les mieux notés par la communauté')}</p>
           </div>

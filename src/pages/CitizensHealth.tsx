@@ -135,7 +135,7 @@ export default function CitizensHealth({ onNavigate }: CitizensHealthProps) {
           }
           listePage="santé"
           accentColor="#4A1D43"
-          sectionTitle={(t as any).healthExtra?.bestProTitle || 'Entreprises les plus recommandees par les clients'}
+          sectionTitle={(t as any).healthExtra?.bestProTitle || 'Entreprises les plus recommandées par les clients'}
           blogArticle={{
             title: (t as any).healthExtra?.guideMedecinTitle || "Comment choisir son médecin en Tunisie ?",
             excerpt: (t as any).healthExtra?.guideMedecinExcerpt || "Trouver le bon médecin n'est pas toujours simple. Voici les questions à se poser avant de prendre rendez-vous.",
