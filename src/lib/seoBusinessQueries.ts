@@ -298,9 +298,11 @@ export async function fetchTopRecommendedByCity(
   });
 
   scored.sort((a, b) => {
+    const diff = b.confidenceScore - a.confidenceScore;
+    if (Math.abs(diff) > 0.05) return diff;
     if (a.is_premium && !b.is_premium) return -1;
     if (!a.is_premium && b.is_premium) return 1;
-    return b.confidenceScore - a.confidenceScore;
+    return diff;
   });
 
   return scored.slice(0, limit);
