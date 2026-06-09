@@ -224,7 +224,7 @@ function mapRecord(record: AirtableRecord): Record<string, unknown> {
     ),
 
     // -- Array columns --
-    "liste pages": textArray(pick(f, "liste pages", "Liste Pages", "liste_pages")),
+    liste_pages: textArray(pick(f, "liste pages", "Liste Pages", "liste_pages")),
     categorie: str(pick(f, "categorie", "Catégorie", "catégorie", "Categorie")),
     secteur: textArray(pick(f, "secteur", "Secteur")),
     tags: textArray(pick(f, "tags", "Tags")),

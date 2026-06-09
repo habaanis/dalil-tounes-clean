@@ -267,7 +267,7 @@ export default function MeilleursSection({
         const { data } = await supabase
           .from(Tables.ENTREPRISE)
           .select(SELECT_FIELDS)
-          .contains('"liste pages"', [listePage])
+          .contains('liste_pages', [listePage])
           .order('"Note Google Globale"', { ascending: false, nullsFirst: false });
 
         const all: MeilleursItem[] = (data || []).map((item: any) => ({

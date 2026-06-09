@@ -96,7 +96,7 @@ export default function SearchBar({
   const like = (s: string) => `%${(s || '').trim()}%`;
 
   // Only simple-name TEXT columns -- no ARRAY columns, no spaces in names.
-  // ARRAY columns (categorie, sous_categories, secteur, tags, liste pages)
+  // ARRAY columns (categorie, sous_categories, secteur, tags, liste_pages)
   // and space-name columns (mots cles recherche) are handled in JS scoring only.
   const OR_SAFE_FIELDS = [
     'nom', 'ville', 'gouvernorat', 'adresse', 'description',
