@@ -6,9 +6,8 @@ const PROD_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsI
 const envUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
 const envKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
 
-const isCorrectProject = envUrl?.includes("kmvjegbtroksjqaqliyv");
-const SUPABASE_URL = isCorrectProject && envUrl ? envUrl : PROD_URL;
-const SUPABASE_ANON_KEY = isCorrectProject && envKey ? envKey : PROD_KEY;
+const SUPABASE_URL = envUrl || PROD_URL;
+const SUPABASE_ANON_KEY = envKey || PROD_KEY;
 
 export const supabase: SupabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
