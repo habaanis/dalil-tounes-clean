@@ -130,7 +130,7 @@ export default function CitizensHealth({ onNavigate }: CitizensHealthProps) {
           secteurLabel={(t as any).healthExtra?.bestProTitle?.replace(/^Meilleurs\s+/i, '').replace(/^Best\s+/i, '') || 'professionnels de santé'}
           listePage="santé"
           accentColor="#4A1D43"
-          sectionTitle={(t as any).healthExtra?.bestProTitle || 'Meilleurs professionnels de santé'}
+          sectionTitle={(t as any).healthExtra?.bestProTitle || 'Entreprises les plus recommandees par les clients dans le secteur de la sante'}
           blogArticle={{
             title: (t as any).healthExtra?.guideMedecinTitle || "Comment choisir son médecin en Tunisie ?",
             excerpt: (t as any).healthExtra?.guideMedecinExcerpt || "Trouver le bon médecin n'est pas toujours simple. Voici les questions à se poser avant de prendre rendez-vous.",

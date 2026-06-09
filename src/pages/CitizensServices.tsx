@@ -510,10 +510,10 @@ export default function CitizensServices({ onNavigateBack }: CitizensServicesPro
             listePage="services-citoyens"
             accentColor="#4A1D43"
             sectionTitle={
-              language === 'fr' ? 'Meilleurs services aux citoyens' :
-              language === 'ar' ? 'أفضل الخدمات للمواطنين' :
-              language === 'en' ? 'Best citizen services' :
-              'Migliori servizi al cittadino'
+              language === 'fr' ? 'Entreprises les plus recommandees par les clients dans les services aux citoyens' :
+              language === 'ar' ? 'المؤسسات الأكثر توصية من قبل العملاء في خدمات المواطنين' :
+              language === 'en' ? 'Most recommended businesses by customers in citizen services' :
+              'Aziende piu raccomandate dai clienti nei servizi al cittadino'
             }
             blogArticle={{
               title:
