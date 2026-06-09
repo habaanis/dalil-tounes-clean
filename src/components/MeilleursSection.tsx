@@ -264,11 +264,16 @@ export default function MeilleursSection({
       try {
         const SELECT_FIELDS = `id, nom, ville, gouvernorat, logo_url, image_url, sous_categories, slug, qr_code_url, "Note Google Globale", "Compteur Avis Google"`;
 
-        const { data } = await supabase
+        const { data, error: fetchError } = await supabase
           .from(Tables.ENTREPRISE)
           .select(SELECT_FIELDS)
-          .contains('liste_pages', [listePage])
+          .filter('liste_pages', 'cs', `{${listePage}}`)
           .order('"Note Google Globale"', { ascending: false, nullsFirst: false });
+
+        if (fetchError) {
+          console.error('[MeilleursSection] Supabase error:', fetchError.message);
+        }
+        console.log('[MeilleursSection] listePage:', listePage, '| results:', data?.length ?? 0);
 
         const all: MeilleursItem[] = (data || []).map((item: any) => ({
           ...item,

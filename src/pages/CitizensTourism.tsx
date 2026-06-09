@@ -53,7 +53,7 @@ export default function CitizensTourism({ onNavigate }: CitizensTourismProps = {
       let query = supabase
         .from(Tables.ENTREPRISE)
         .select('id, nom, ville, gouvernorat, adresse, telephone, site_web, email, image_url, logo_url, "catégorie", sous_categories, description, horaires, statut_carte')
-        .contains('liste_pages', ['tourisme local & expatriation'])
+        .filter('liste_pages', 'cs', '{tourisme local & expatriation}')
         .order('nom', { ascending: true })
         .limit(100);
 
