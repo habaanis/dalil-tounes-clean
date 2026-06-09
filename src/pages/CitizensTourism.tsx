@@ -50,12 +50,27 @@ export default function CitizensTourism({ onNavigate }: CitizensTourismProps = {
     console.log('[CitizensTourism] Recherche lancée avec:', { searchTerm, ville });
 
     try {
+      const SELECT_TOURISM = 'id, nom, ville, gouvernorat, adresse, telephone, site_web, email, image_url, logo_url, "catégorie", sous_categories, description, horaires, statut_carte';
       let query = supabase
         .from(Tables.ENTREPRISE)
-        .select('id, nom, ville, gouvernorat, adresse, telephone, site_web, email, image_url, logo_url, "catégorie", sous_categories, description, horaires, statut_carte')
+        .select(SELECT_TOURISM)
         .contains('liste_pages', ['tourisme local & expatriation'])
         .order('nom', { ascending: true })
         .limit(100);
+
+      const { count: checkCount } = await supabase
+        .from(Tables.ENTREPRISE)
+        .select('id', { count: 'exact', head: true })
+        .contains('liste_pages', ['tourisme local & expatriation']);
+
+      if (!checkCount || checkCount === 0) {
+        query = supabase
+          .from(Tables.ENTREPRISE)
+          .select(SELECT_TOURISM)
+          .contains('"liste pages"', ['tourisme local & expatriation'])
+          .order('nom', { ascending: true })
+          .limit(100);
+      }
 
       if (ville) {
         query = query.eq('gouvernorat', ville);

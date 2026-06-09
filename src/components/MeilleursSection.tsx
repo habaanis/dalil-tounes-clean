@@ -264,11 +264,20 @@ export default function MeilleursSection({
       try {
         const SELECT_FIELDS = `id, nom, ville, gouvernorat, logo_url, image_url, sous_categories, slug, qr_code_url, "Note Google Globale", "Compteur Avis Google"`;
 
-        const { data } = await supabase
+        let { data } = await supabase
           .from(Tables.ENTREPRISE)
           .select(SELECT_FIELDS)
           .contains('liste_pages', [listePage])
           .order('"Note Google Globale"', { ascending: false, nullsFirst: false });
+
+        if (!data || data.length === 0) {
+          const fallback = await supabase
+            .from(Tables.ENTREPRISE)
+            .select(SELECT_FIELDS)
+            .contains('"liste pages"', [listePage])
+            .order('"Note Google Globale"', { ascending: false, nullsFirst: false });
+          data = fallback.data;
+        }
 
         const all: MeilleursItem[] = (data || []).map((item: any) => ({
           ...item,
