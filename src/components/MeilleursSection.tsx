@@ -273,7 +273,6 @@ export default function MeilleursSection({
         if (fetchError) {
           console.error('[MeilleursSection] Supabase error:', fetchError.message);
         }
-        console.log('[MeilleursSection] listePage:', listePage, '| results:', data?.length ?? 0);
 
         const all: MeilleursItem[] = (data || []).map((item: any) => ({
           ...item,
