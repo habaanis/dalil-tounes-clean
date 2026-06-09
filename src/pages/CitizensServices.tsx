@@ -507,7 +507,7 @@ export default function CitizensServices({ onNavigateBack }: CitizensServicesPro
               language === 'en' ? 'citizen services' :
               'servizi al cittadino'
             }
-            listePage="services-citoyens"
+            listePage="services citoyens"
             accentColor="#4A1D43"
             sectionTitle={
               language === 'fr' ? 'Entreprises les plus recommandees par les clients' :

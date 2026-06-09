@@ -56,6 +56,15 @@ function bool(val: unknown): boolean | null {
   return null;
 }
 
+function textArray(val: unknown): string[] | null {
+  if (val === undefined || val === null) return null;
+  if (Array.isArray(val)) return val.map(String);
+  if (typeof val === "string") {
+    return val.split(",").map((s: string) => s.trim()).filter(Boolean);
+  }
+  return null;
+}
+
 function pick(f: Record<string, unknown>, ...keys: string[]): unknown {
   for (const k of keys) {
     if (f[k] !== undefined && f[k] !== null) return f[k];
@@ -213,6 +222,13 @@ function mapRecord(record: AirtableRecord): Record<string, unknown> {
     "Service RS Créé (VIP)": bool(
       pick(f, "Service RS Créé (VIP)", "service_rs_cree_vip")
     ),
+
+    // -- Array columns --
+    "liste pages": textArray(pick(f, "liste pages", "Liste Pages", "liste_pages")),
+    categorie: str(pick(f, "categorie", "Catégorie", "catégorie", "Categorie")),
+    secteur: textArray(pick(f, "secteur", "Secteur")),
+    tags: textArray(pick(f, "tags", "Tags")),
+    sous_categories: textArray(pick(f, "sous_categories", "Sous-catégories", "sous_categories_array")),
   };
 }
 

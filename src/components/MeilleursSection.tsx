@@ -247,13 +247,26 @@ export default function MeilleursSection({
   const [page, setPage] = useState(0);
 
   useEffect(() => {
+    function parseRating(raw: unknown): number {
+      if (!raw) return 0;
+      const n = typeof raw === 'string' ? parseFloat(String(raw).replace(',', '.')) : Number(raw);
+      return isNaN(n) ? 0 : Math.min(5, Math.max(0, n));
+    }
+    function parseCount(raw: unknown): number {
+      if (!raw) return 0;
+      const n = typeof raw === 'number' ? raw : parseInt(String(raw).replace(/[^\d]/g, ''), 10);
+      return isNaN(n) ? 0 : n;
+    }
+
     async function fetchData() {
       setLoadingTop(true);
       setLoadingAll(true);
       try {
+        const SELECT_FIELDS = `id, nom, ville, gouvernorat, logo_url, image_url, sous_categories, slug, qr_code_url, "Note Google Globale", "Compteur Avis Google"`;
+
         const { data } = await supabase
           .from(Tables.ENTREPRISE)
-          .select(`id, nom, ville, gouvernorat, logo_url, image_url, sous_categories, slug, qr_code_url, "Note Google Globale", "Compteur Avis Google"`)
+          .select(SELECT_FIELDS)
           .contains('"liste pages"', [listePage])
           .order('"Note Google Globale"', { ascending: false, nullsFirst: false });
 
@@ -262,14 +275,19 @@ export default function MeilleursSection({
           nom: extractFrenchName(item.nom),
         }));
 
-        const withRating = all.filter((item) => {
-          const raw = item['Note Google Globale'];
-          if (!raw) return false;
-          const n = typeof raw === 'string' ? parseFloat(raw.replace(',', '.')) : raw;
-          return !isNaN(n) && n > 0;
+        const qualified = all.filter((item) => {
+          const rating = parseRating(item['Note Google Globale']);
+          const count = parseCount(item['Compteur Avis Google']);
+          return rating >= 4.0 && count >= 5;
         });
 
-        const top = withRating.slice(0, TOP_COUNT);
+        qualified.sort((a, b) => {
+          const ratingDiff = parseRating(b['Note Google Globale']) - parseRating(a['Note Google Globale']);
+          if (ratingDiff !== 0) return ratingDiff;
+          return parseCount(b['Compteur Avis Google']) - parseCount(a['Compteur Avis Google']);
+        });
+
+        const top = qualified.slice(0, TOP_COUNT);
         const topIds = new Set(top.map((t) => t.id));
         const rest = all.filter((item) => !topIds.has(item.id));
 

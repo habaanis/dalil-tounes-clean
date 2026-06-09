@@ -87,7 +87,7 @@ export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
               language === 'en' ? 'shops' :
               'commerci'
             }
-            listePage="commerce local"
+            listePage="commerces & magasins"
             accentColor="#4A0404"
             sectionTitle={
               language === 'fr' ? 'Entreprises les plus recommandees par les clients' :
