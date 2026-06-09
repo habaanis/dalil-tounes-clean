@@ -367,8 +367,8 @@ export const translations = {
     },
     healthExtra: {
       pageTitle: 'Santé',
-      bestProTitle: 'Meilleurs professionnels de santé',
-      bestSubtitle: 'Les mieux notés par la communauté',
+      bestProTitle: 'Entreprises les plus recommandees par les clients',
+      bestSubtitle: 'Les mieux notees par la communaute',
       guideLabel: 'Guide',
       guideMedecinTitle: 'Comment choisir son médecin en Tunisie ?',
       guideMedecinExcerpt: "Trouver le bon médecin n'est pas toujours simple. Voici les questions à se poser avant de prendre rendez-vous.",
@@ -1718,8 +1718,8 @@ export const translations = {
     },
     healthExtra: {
       pageTitle: 'Health',
-      bestProTitle: 'Best healthcare professionals',
-      bestSubtitle: 'The highest rated by the community',
+      bestProTitle: 'Most recommended businesses by customers',
+      bestSubtitle: 'Highest rated by the community',
       guideLabel: 'Guide',
       guideMedecinTitle: 'How to choose your doctor in Tunisia?',
       guideMedecinExcerpt: "Finding the right doctor is not always easy. Here are the questions to ask yourself before booking an appointment.",
@@ -2914,8 +2914,8 @@ export const translations = {
     },
     healthExtra: {
       pageTitle: 'الصحة',
-      bestProTitle: 'أفضل المهنيين الصحيين',
-      bestSubtitle: 'الأعلى تقييماً من قبل المجتمع',
+      bestProTitle: 'المؤسسات الأكثر توصية من قبل العملاء',
+      bestSubtitle: 'الأعلى تقييما من قبل المجتمع',
       guideLabel: 'دليل',
       guideMedecinTitle: 'كيف تختار طبيبك في تونس؟',
       guideMedecinExcerpt: 'العثور على الطبيب المناسب ليس دائماً أمراً سهلاً. إليك الأسئلة التي يجب طرحها قبل حجز موعد.',

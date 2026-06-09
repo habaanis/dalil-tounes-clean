@@ -274,7 +274,13 @@ export async function fetchTopRecommendedByCity(
 
   if (error || !data || data.length === 0) return [];
 
-  const rows = (data as Record<string, unknown>[]).map(mapEntrepriseRow);
+  const villeNorm = ville.toLowerCase().trim();
+  const allRows = (data as Record<string, unknown>[]).map(mapEntrepriseRow);
+  const rows = allRows.filter((r) => {
+    const v = (r.ville || '').toLowerCase().trim();
+    return v === villeNorm || v.startsWith(villeNorm + ' ') || v.startsWith(villeNorm + ',') || v.endsWith(' ' + villeNorm);
+  });
+  if (rows.length === 0) return [];
 
   let sumRating = 0;
   let countWithRating = 0;

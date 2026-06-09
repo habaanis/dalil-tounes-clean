@@ -90,10 +90,10 @@ export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
             listePage="commerce local"
             accentColor="#4A0404"
             sectionTitle={
-              language === 'fr' ? 'Entreprises les plus recommandees par les clients dans les commerces & magasins' :
-              language === 'ar' ? 'المؤسسات الأكثر توصية من قبل العملاء في المحلات والمتاجر' :
-              language === 'en' ? 'Most recommended businesses by customers in shops & stores' :
-              'Aziende piu raccomandate dai clienti nei negozi e commerci'
+              language === 'fr' ? 'Entreprises les plus recommandees par les clients' :
+              language === 'ar' ? 'المؤسسات الأكثر توصية من قبل العملاء' :
+              language === 'en' ? 'Most recommended businesses by customers' :
+              'Aziende piu raccomandate dai clienti'
             }
             blogArticle={{
               title:

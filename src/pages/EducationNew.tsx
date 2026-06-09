@@ -184,7 +184,7 @@ const translations = {
     },
     meilleurs: {
       secteurLabel: "établissements d'éducation",
-      sectionTitle: "Entreprises les plus recommandees par les clients dans le secteur de l'education",
+      sectionTitle: "Entreprises les plus recommandees par les clients",
       blogTitle: "Bien choisir son école en Tunisie",
       blogExcerpt: "École publique, privée, cours particuliers... Comment s'y retrouver et faire le bon choix pour votre enfant ?"
     },
@@ -286,7 +286,7 @@ const translations = {
     },
     meilleurs: {
       secteurLabel: "education institutions",
-      sectionTitle: "Most recommended businesses by customers in education",
+      sectionTitle: "Most recommended businesses by customers",
       blogTitle: "Choosing the right school in Tunisia",
       blogExcerpt: "Public school, private, tutoring... How to find your way and make the right choice for your child?"
     },
@@ -388,7 +388,7 @@ const translations = {
     },
     meilleurs: {
       secteurLabel: "مؤسسات تعليمية",
-      sectionTitle: "المؤسسات الأكثر توصية من قبل العملاء في قطاع التعليم",
+      sectionTitle: "المؤسسات الأكثر توصية من قبل العملاء",
       blogTitle: "كيف تختار المدرسة المناسبة في تونس",
       blogExcerpt: "مدرسة عمومية، خاصة، دروس خصوصية... كيف تتعرف على الخيارات وتتخذ القرار المناسب لطفلك؟"
     },
