@@ -238,9 +238,8 @@ export async function fetchSeoBusinessesByGouvernorat(options: {
   };
 }
 
-const MIN_RATING = 3.5;
-const MIN_REVIEWS = 3;
-const BAYESIAN_PRIOR_REVIEWS = 5;
+const MIN_RATING = 4.0;
+const MIN_REVIEWS = 5;
 
 function parseRating(raw: unknown): number {
   if (raw == null) return 0;
@@ -282,27 +281,16 @@ export async function fetchTopRecommendedByCity(
   });
   if (rows.length === 0) return [];
 
-  let sumRating = 0;
-  let countWithRating = 0;
-  for (const r of rows) {
-    const rating = parseRating(r['Note Google Globale']);
-    if (rating > 0) { sumRating += rating; countWithRating++; }
-  }
-  const globalAvg = countWithRating > 0 ? sumRating / countWithRating : 4.0;
-
   const scored: RecommendedBusiness[] = rows.map((biz) => {
-    const R = parseRating(biz['Note Google Globale']);
-    const v = parseCount(biz['Compteur Avis Google']);
-    const score = (globalAvg * BAYESIAN_PRIOR_REVIEWS + R * v) / (BAYESIAN_PRIOR_REVIEWS + v);
-    return { ...biz, confidenceScore: score };
+    const rating = parseRating(biz['Note Google Globale']);
+    const reviewCount = parseCount(biz['Compteur Avis Google']);
+    return { ...biz, confidenceScore: rating };
   });
 
   scored.sort((a, b) => {
-    const diff = b.confidenceScore - a.confidenceScore;
-    if (Math.abs(diff) > 0.05) return diff;
-    if (a.is_premium && !b.is_premium) return -1;
-    if (!a.is_premium && b.is_premium) return 1;
-    return diff;
+    const ratingDiff = b.confidenceScore - a.confidenceScore;
+    if (ratingDiff !== 0) return ratingDiff;
+    return parseCount(b['Compteur Avis Google']) - parseCount(a['Compteur Avis Google']);
   });
 
   return scored.slice(0, limit);
