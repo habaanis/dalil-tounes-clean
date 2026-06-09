@@ -3,7 +3,7 @@
  */
 
 import { supabase } from './supabaseClient';
-import { cleanBusinessRatings, sortByRating, getTopRated } from './ratingUtils';
+import { cleanBusinessRatings, sortByRating as sortByRatingFn, getTopRated } from './ratingUtils';
 
 /**
  * Colonnes standard à récupérer pour les entreprises
@@ -14,8 +14,8 @@ export const BUSINESS_COLUMNS = `
   adresse,
   ville,
   gouvernorat,
-  "catégorie_fk_autre_table",
-  secteur_fk_autre_table,
+  categorie,
+  secteur,
   description,
   telephone,
   email,
@@ -33,7 +33,7 @@ export const BUSINESS_COLUMNS = `
   "Lien Avis Google",
   "BTN_Maps",
   statut_abonnement,
-  niveau_priorite,
+  niveau_priorite_abonnement,
   is_premium,
   featured,
   home_featured,
@@ -75,10 +75,10 @@ export async function fetchBusinesses(options: {
 
   // Filtres
   if (secteur) {
-    query = query.ilike('secteur_fk_autre_table', `%${secteur}%`);
+    query = query.ilike('secteur', `%${secteur}%`);
   }
   if (categorie) {
-    query = query.ilike('"catégorie_fk_autre_table"', `%${categorie}%`);
+    query = query.ilike('categorie', `%${categorie}%`);
   }
   if (ville) {
     query = query.eq('ville', ville);
@@ -103,9 +103,8 @@ export async function fetchBusinesses(options: {
   // Nettoyer les notes
   const cleanedData = data.map(cleanBusinessRatings);
 
-  // Trier par note si demandé
   if (sortByRating) {
-    return { data: sortByRating(cleanedData), error: null };
+    return { data: sortByRatingFn(cleanedData), error: null };
   }
 
   return { data: cleanedData, error: null };
@@ -204,7 +203,7 @@ export async function fetchFeaturedBusinesses(options: {
   const cleanedData = data.map(cleanBusinessRatings);
 
   if (sortByRating) {
-    return { data: sortByRating(cleanedData).slice(0, limit), error: null };
+    return { data: sortByRatingFn(cleanedData).slice(0, limit), error: null };
   }
 
   return { data: cleanedData.slice(0, limit), error: null };

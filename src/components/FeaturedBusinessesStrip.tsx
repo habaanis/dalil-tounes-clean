@@ -90,7 +90,7 @@ export const FeaturedBusinessesStrip = ({ variant }: FeaturedBusinessesStripProp
           .not('statut_abonnement', 'ilike', '*gratuit*')
           .not('statut_abonnement', 'ilike', '*decouverte*')
           .not('statut_abonnement', 'ilike', '*découverte*')
-          .order('niveau_priorite', { ascending: false, nullsFirst: false })
+          .order('niveau_priorite_abonnement', { ascending: false, nullsFirst: false })
           .limit(12);
 
         let rows: BusinessRow[] = (fetchedData as BusinessRow[] | null) || [];

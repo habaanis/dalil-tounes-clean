@@ -446,8 +446,8 @@ export const Businesses = ({
     try {
       let query = supabase
         .from(Tables.ENTREPRISE)
-        .select('id, nom, secteur_fk_autre_table, sous_categories_texte, sous_categories_clean, "catégorie_fk_autre_table", gouvernorat, ville, adresse, telephone, email, site_web, description, services, image_url, logo_url, statut_abonnement, "niveau priorité abonnement", "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, statut_carte, name_ar, description_ar, slug')
-        .order('niveau_priorite', { ascending: false, nullsFirst: false })
+        .select('id, nom, secteur, sous_categories_texte, sous_categories_clean, categorie, gouvernorat, ville, adresse, telephone, email, site_web, description, services, image_url, logo_url, statut_abonnement, niveau_priorite_abonnement, "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, statut_carte, name_ar, description_ar, slug')
+        .order('niveau_priorite_abonnement', { ascending: false, nullsFirst: false })
         .order('nom', { ascending: true })
         .limit(10);
 
@@ -513,7 +513,7 @@ export const Businesses = ({
         imageUrl: item.image_url || null,
         logoUrl: item.logo_url || null,
         statut_abonnement: item.statut_abonnement || null,
-        niveau_priorite_abonnement: item['niveau priorité abonnement'] || null,
+        niveau_priorite_abonnement: item.niveau_priorite_abonnement || null,
         badges: [],
         mots_cles_recherche: item['mots cles recherche'] || '',
         instagram: item['Lien Instagram'] || '',
@@ -568,8 +568,8 @@ export const Businesses = ({
     try {
       let query = supabase
         .from(Tables.ENTREPRISE)
-        .select('id, nom, secteur_fk_autre_table, sous_categories_texte, sous_categories_clean, "catégorie_fk_autre_table", gouvernorat, ville, adresse, telephone, email, site_web, description, services, image_url, logo_url, statut_abonnement, "niveau priorité abonnement", "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, statut_carte, name_ar, description_ar, slug')
-        .order('niveau_priorite', { ascending: false, nullsFirst: false })
+        .select('id, nom, secteur, sous_categories_texte, sous_categories_clean, categorie, gouvernorat, ville, adresse, telephone, email, site_web, description, services, image_url, logo_url, statut_abonnement, niveau_priorite_abonnement, "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, statut_carte, name_ar, description_ar, slug')
+        .order('niveau_priorite_abonnement', { ascending: false, nullsFirst: false })
         .order('nom', { ascending: true })
         .limit(30);
 
@@ -679,7 +679,7 @@ export const Businesses = ({
         imageUrl: item.image_url || null,
         logoUrl: item.logo_url || null,
         statut_abonnement: item.statut_abonnement || null,
-        niveau_priorite_abonnement: item['niveau priorité abonnement'] || null,
+        niveau_priorite_abonnement: item.niveau_priorite_abonnement || null,
         badges: [],
         mots_cles_recherche: item['mots cles recherche'] || '',
         instagram: item['Lien Instagram'] || '',

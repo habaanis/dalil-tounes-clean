@@ -1,0 +1,1 @@
+function s(){const t=window.location.hash||"",a=t.includes("?")?t.substring(t.indexOf("?")):window.location.search,e=new URLSearchParams(a);return{q:e.get("q")||"",ville:e.get("ville")||"",categorie:e.get("categorie")||"",selected_id:e.get("selected_id")||"",statut_carte:e.get("statut_carte")||""}}export{s as r};

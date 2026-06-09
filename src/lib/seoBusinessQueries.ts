@@ -17,6 +17,11 @@ export interface SeoBusiness {
   is_premium?: boolean;
   statut_abonnement?: string | null;
   horaires_ok?: string | null;
+  slug?: string | null;
+}
+
+export interface RecommendedBusiness extends SeoBusiness {
+  confidenceScore: number;
 }
 
 function mapEntrepriseRow(row: Record<string, unknown>): SeoBusiness {
@@ -33,17 +38,18 @@ function mapEntrepriseRow(row: Record<string, unknown>): SeoBusiness {
     gouvernorat: row.gouvernorat as string | undefined,
     telephone: row.telephone as string | undefined,
     'catégorie': sousCats.length > 0 ? sousCats : (row.categorie ? [row.categorie as string] : []),
-    'Note Google Globale': row.score_avis as number | null ?? null,
-    'Compteur Avis Google': null,
+    'Note Google Globale': (row['Note Google Globale'] as number | null) ?? (row.score_avis as number | null) ?? null,
+    'Compteur Avis Google': (row['Compteur Avis Google'] as number | null) ?? null,
     logo_url: row.logo_url as string | undefined || row.image_url as string | undefined,
     description: row.description as string | undefined,
-    is_premium: false,
+    is_premium: (row.is_premium as boolean | undefined) ?? false,
     statut_abonnement: (row.statut_abonnement as string | null) ?? null,
     horaires_ok: row.horaires_ok as string | null ?? null,
+    slug: (row.slug as string | null) ?? null,
   };
 }
 
-const SIMILAR_SELECT = 'id, nom, adresse, ville, gouvernorat, telephone, categorie, sous_categories, score_avis, logo_url, image_url, description, is_premium, statut_abonnement, horaires_ok, slug';
+const SIMILAR_SELECT = 'id, nom, adresse, ville, gouvernorat, telephone, categorie, sous_categories, score_avis, logo_url, image_url, description, is_premium, statut_abonnement, horaires_ok, slug, "Note Google Globale", "Compteur Avis Google"';
 
 export async function fetchSimilarBusinesses(options: {
   excludeId: string;
@@ -230,4 +236,66 @@ export async function fetchSeoBusinessesByGouvernorat(options: {
     total: count ?? 0,
     error: null,
   };
+}
+
+const MIN_RATING = 3.5;
+const MIN_REVIEWS = 3;
+const BAYESIAN_PRIOR_REVIEWS = 5;
+
+function parseRating(raw: unknown): number {
+  if (raw == null) return 0;
+  if (typeof raw === 'number') return isNaN(raw) ? 0 : raw;
+  const n = parseFloat(String(raw).replace(',', '.'));
+  return isNaN(n) ? 0 : Math.min(5, Math.max(0, n));
+}
+
+function parseCount(raw: unknown): number {
+  if (raw == null) return 0;
+  if (typeof raw === 'number') return isNaN(raw) ? 0 : Math.max(0, raw);
+  const n = parseInt(String(raw).replace(/[^\d]/g, ''), 10);
+  return isNaN(n) ? 0 : n;
+}
+
+export async function fetchTopRecommendedByCity(
+  ville: string,
+  limit: number = 6,
+): Promise<RecommendedBusiness[]> {
+  if (!ville) return [];
+
+  const { data, error } = await supabase
+    .from('entreprise')
+    .select(SIMILAR_SELECT)
+    .ilike('ville', `%${ville}%`)
+    .not('"Note Google Globale"', 'is', null)
+    .gte('"Note Google Globale"', MIN_RATING)
+    .gte('"Compteur Avis Google"', MIN_REVIEWS)
+    .order('"Note Google Globale"', { ascending: false, nullsFirst: false })
+    .limit(50);
+
+  if (error || !data || data.length === 0) return [];
+
+  const rows = (data as Record<string, unknown>[]).map(mapEntrepriseRow);
+
+  let sumRating = 0;
+  let countWithRating = 0;
+  for (const r of rows) {
+    const rating = parseRating(r['Note Google Globale']);
+    if (rating > 0) { sumRating += rating; countWithRating++; }
+  }
+  const globalAvg = countWithRating > 0 ? sumRating / countWithRating : 4.0;
+
+  const scored: RecommendedBusiness[] = rows.map((biz) => {
+    const R = parseRating(biz['Note Google Globale']);
+    const v = parseCount(biz['Compteur Avis Google']);
+    const score = (globalAvg * BAYESIAN_PRIOR_REVIEWS + R * v) / (BAYESIAN_PRIOR_REVIEWS + v);
+    return { ...biz, confidenceScore: score };
+  });
+
+  scored.sort((a, b) => {
+    if (a.is_premium && !b.is_premium) return -1;
+    if (!a.is_premium && b.is_premium) return 1;
+    return b.confidenceScore - a.confidenceScore;
+  });
+
+  return scored.slice(0, limit);
 }

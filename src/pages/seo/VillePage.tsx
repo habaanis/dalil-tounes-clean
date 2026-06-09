@@ -12,6 +12,7 @@ import { usePaginatedSeoBusinesses } from '../../hooks/usePaginatedSeoBusinesses
 import StructuredData from '../../components/StructuredData';
 import { generateBreadcrumbSchema } from '../../lib/structuredDataSchemas';
 import SeoFAQ from '../../components/seo/SeoFAQ';
+import TopRecommendedSection from '../../components/seo/TopRecommendedSection';
 
 const VillePage: React.FC = () => {
   const { villeSlug } = useParams<{ villeSlug: string }>();
@@ -146,6 +147,8 @@ const VillePage: React.FC = () => {
               ))}
             </div>
           </div>
+
+          <TopRecommendedSection ville={ville.label} villeSlug={ville.slug} />
 
           <div className="w-full h-px bg-gray-800 mb-10" />
 

@@ -71,7 +71,7 @@ export default function BusinessDirectory({ mode, title, subtitle }: BusinessDir
 
       // Filtrage par catégorie
       if (selectedCategory) {
-        query = query.ilike('"catégorie_fk_autre_table"', `%${selectedCategory}%`);
+        query = query.ilike('categorie', `%${selectedCategory}%`);
       }
 
       // Filtrage par ville

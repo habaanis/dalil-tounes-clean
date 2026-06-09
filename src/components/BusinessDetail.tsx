@@ -176,7 +176,7 @@ function normalizeBusiness(business: any): any {
   return {
     id: business.id,
     nom: extractFrenchName(business.nom || business.name || ''),
-    categorie: business['catégorie_fk_autre_table'] || business.categorie || business.category || '',
+    categorie: business['categorie'] || business.categorie || business.category || '',
     sous_categories:
       business.sous_categories_texte ||
       business.sous_categories_clean ||
