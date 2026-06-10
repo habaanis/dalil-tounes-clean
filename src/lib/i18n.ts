@@ -1104,6 +1104,7 @@ export const translations = {
             'Gestion multi-emplacements',
             'Rapport analytique détaillé',
             'Gestionnaire de compte',
+            'Réservation en ligne',
           ],
         },
         elitePro: {
@@ -1121,6 +1122,7 @@ export const translations = {
             'Mise en place : Création ou Audit de vos pages FB/IG',
             'Réseautage B2B : Mise en relation (3 partenaires certifiés)',
             'Rapport analytique détaillé & Gestionnaire de compte dédié',
+            'Réservation en ligne',
           ],
         },
         custom: {
@@ -2336,6 +2338,7 @@ export const translations = {
             'Multi-location management',
             'Detailed analytics report',
             'Account manager',
+            'Online reservation',
           ],
         },
         elitePro: {
@@ -2353,6 +2356,7 @@ export const translations = {
             'Setup: Creation or Audit of your FB/IG pages',
             'B2B Networking: Connect with partners (3 certified partners)',
             'Detailed analytical report & Dedicated account manager',
+            'Online reservation',
           ],
         },
       },
@@ -3565,6 +3569,7 @@ export const translations = {
             'إدارة متعددة المواقع',
             'تقرير تحليلي مفصل',
             'مدير حساب',
+            'حجز عبر الإنترنت',
           ],
         },
         elitePro: {
@@ -3582,6 +3587,7 @@ export const translations = {
             'الإعداد: إنشاء أو تدقيق صفحاتك FB/IG',
             'الشبكات B2B: ربط مع الشركاء (3 شركاء معتمدين)',
             'تقرير تحليلي مفصل ومدير حساب مخصص',
+            'حجز عبر الإنترنت',
           ],
         },
         custom: {

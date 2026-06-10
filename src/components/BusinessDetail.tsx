@@ -1876,6 +1876,7 @@ export const BusinessDetail = ({
               )}
             </div>
 
+            {(tier === 'premium' || tier === 'elite') && (
             <div className="mt-0.5 pt-0.5" style={{ borderTop: `1px solid ${colors.gold}30` }}>
               <ReservationForm
                 businessId={business.id}
@@ -1901,6 +1902,7 @@ export const BusinessDetail = ({
                 }}
               />
             </div>
+            )}
 
             <div className="mt-1 pt-1" style={{ borderTop: `0.5px solid ${colors.gold}40` }}>
               <p
