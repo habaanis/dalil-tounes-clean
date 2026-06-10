@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { Tables } from '../lib/dbTables';
@@ -90,6 +91,25 @@ export default function SearchBar({
   const tVille = React.useRef<number | null>(null);
   const tAutoSearch = React.useRef<number | null>(null);
   const cache = React.useRef<Map<string, ResultItem[]>>(new Map());
+  const formRef = React.useRef<HTMLFormElement>(null);
+  const [dropdownRect, setDropdownRect] = React.useState<{ top: number; left: number; width: number }>({ top: 0, left: 0, width: 0 });
+
+  const syncDropdownPos = React.useCallback(() => {
+    if (formRef.current) {
+      const r = formRef.current.getBoundingClientRect();
+      setDropdownRect({ top: r.bottom + 6, left: r.left, width: r.width });
+    }
+  }, []);
+
+  React.useEffect(() => {
+    syncDropdownPos();
+    window.addEventListener('scroll', syncDropdownPos, true);
+    window.addEventListener('resize', syncDropdownPos);
+    return () => {
+      window.removeEventListener('scroll', syncDropdownPos, true);
+      window.removeEventListener('resize', syncDropdownPos);
+    };
+  }, [syncDropdownPos]);
 
   const isGlobal = scope === 'global';
   const pageLabel = isGlobal ? null : getCategoryDisplayName(scope as PageCategorie);
@@ -479,9 +499,9 @@ export default function SearchBar({
 
   return (
     <form
+      ref={formRef}
       onSubmit={onSubmit}
       className={`relative w-full ${className ?? ''}`}
-      style={{ zIndex: 10000 }}
       data-search-bar="true"
       data-search-scope={isGlobal ? 'entreprise-ville' : `entreprise-ville:${scope}`}
       data-component-name="SearchBar"
@@ -512,10 +532,17 @@ export default function SearchBar({
         </div>
       </div>
 
-      {hasResults && (
+      {hasResults && ReactDOM.createPortal(
         <div
-          className="absolute left-0 right-0 mt-2 rounded-xl border bg-white shadow-xl p-3 space-y-3 max-h-[70vh] overflow-auto"
-          style={{ pointerEvents: 'auto', zIndex: 99999 }}
+          className="rounded-xl border bg-white shadow-2xl p-3 space-y-3 max-h-[60vh] overflow-auto"
+          style={{
+            position: 'fixed',
+            top: dropdownRect.top,
+            left: dropdownRect.left,
+            width: dropdownRect.width,
+            zIndex: 999999,
+            pointerEvents: 'auto',
+          }}
         >
           <ul className="divide-y">
             {renderSeeAll()}
@@ -565,7 +592,8 @@ export default function SearchBar({
             {!loadingEnt && ent.length > 0 && <span>Entreprises: {ent.length}</span>}
             {errEnt && <span className="text-red-600">Erreur: {errEnt}</span>}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       <div className="mt-3 flex justify-center">
