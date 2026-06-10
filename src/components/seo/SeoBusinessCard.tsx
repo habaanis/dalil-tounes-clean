@@ -220,9 +220,9 @@ const SeoBusinessCard: React.FC<SeoBusinessCardProps> = ({ business }) => {
   const theme = paidTheme || gratuitTheme;
 
   const innerContent = (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '-4px', marginBottom: '6px' }}>
-        <div className="shadow-lg" style={{ ...getLogoContainerStyle(theme.logoBorder, '3px'), width: '56px', height: '56px', flexShrink: 0 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '-2px', marginBottom: '4px' }}>
+        <div className="shadow-md" style={{ ...getLogoContainerStyle(theme.logoBorder, '2.5px'), width: '48px', height: '48px', flexShrink: 0 }}>
           <img
             src={getLogoUrl(business.logo_url)}
             alt={`Logo ${business.nom}${locationLabel ? ` à ${locationLabel}` : ''}`}
@@ -234,8 +234,8 @@ const SeoBusinessCard: React.FC<SeoBusinessCardProps> = ({ business }) => {
         </div>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px' }}>
-        <h3 style={{ fontSize: '14px', fontWeight: '700', color: theme.title, lineHeight: '1.3', letterSpacing: '-0.01em', flex: 1, minWidth: 0, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '5px' }}>
+        <h3 style={{ fontSize: '13px', fontWeight: '700', color: theme.title, lineHeight: '1.3', letterSpacing: '-0.01em', flex: 1, minWidth: 0, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
           {business.nom}
         </h3>
         {theme.badgeLabel && (
@@ -282,8 +282,8 @@ const SeoBusinessCard: React.FC<SeoBusinessCardProps> = ({ business }) => {
       )}
 
       {isClickable && (
-        <div style={{ marginTop: 'auto', paddingTop: '6px', borderTop: `1px solid ${theme.accent}40`, textAlign: 'center' }}>
-          <span style={{ fontSize: '14px', fontWeight: '700', color: theme.detailColor, letterSpacing: '0.01em' }}>
+        <div style={{ marginTop: 'auto', paddingTop: '5px', borderTop: `1px solid ${theme.accent}40`, textAlign: 'center' }}>
+          <span style={{ fontSize: '12px', fontWeight: '700', color: theme.detailColor, letterSpacing: '0.01em' }}>
             Voir les d&eacute;tails &rarr;
           </span>
         </div>
@@ -298,8 +298,8 @@ const SeoBusinessCard: React.FC<SeoBusinessCardProps> = ({ business }) => {
     boxShadow: paidTheme
       ? '0 8px 22px rgba(0,0,0,0.2)'
       : '0 0 12px rgba(212,175,55,0.22), 0 4px 10px rgba(212,175,55,0.1)',
-    padding: '12px',
-    minHeight: '220px',
+    padding: '10px',
+    minHeight: '185px',
     display: 'flex',
     flexDirection: 'column',
     transition: 'transform 0.2s ease, box-shadow 0.2s ease',
