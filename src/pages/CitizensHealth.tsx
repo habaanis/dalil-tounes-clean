@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Phone, Shield, Building2, ArrowRight, X, Plus, ArrowLeft, Loader2 } from 'lucide-react';
+import { Phone, Shield, Building2, ArrowRight, X, Plus, ArrowLeft } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
 import LocationSelectTunisie from '../components/LocationSelectTunisie';
@@ -9,21 +9,18 @@ import VehicleTypeAutocomplete from '../components/VehicleTypeAutocomplete';
 import TransportInscription from './TransportInscription';
 import MeilleursSection from '../components/MeilleursSection';
 import SearchBar from '../components/SearchBar';
-import SeoBusinessCard from '../components/seo/SeoBusinessCard';
+
+import MedicalTransportCard from '../components/MedicalTransportCard';
+import MedicalTransportRegistrationForm from '../components/MedicalTransportRegistrationForm';
+import { supabase } from '../lib/supabaseClient';
+import { getSupabaseImageUrl } from '../lib/imageUtils';
+import { useNavigate } from 'react-router-dom';
 
 interface TransportFilters {
   gouvernorat: string;
   vehicleType: string;
   urgenceOnly: boolean;
 }
-import MedicalTransportCard from '../components/MedicalTransportCard';
-import MedicalTransportRegistrationForm from '../components/MedicalTransportRegistrationForm';
-import { supabase } from '../lib/supabaseClient';
-import { Tables } from '../lib/dbTables';
-import { getSupabaseImageUrl } from '../lib/imageUtils';
-import { useNavigate } from 'react-router-dom';
-
-const ITEMS_PER_PAGE = 4;
 
 type Professional = {
   id: string;
@@ -51,30 +48,8 @@ export default function CitizensHealth({ onNavigate }: CitizensHealthProps) {
   const [transportProviders, setTransportProviders] = useState<any[]>([]);
   const [loadingTransport, setLoadingTransport] = useState(false);
   const [showTransportModal, setShowTransportModal] = useState(false);
-  const [healthBusinesses, setHealthBusinesses] = useState<any[]>([]);
-  const [loadingBusinesses, setLoadingBusinesses] = useState(true);
-  const [page, setPage] = useState(1);
 
   const isRTL = language === 'ar';
-
-  useEffect(() => {
-    const fetchHealthBusinesses = async () => {
-      setLoadingBusinesses(true);
-      const { data } = await supabase
-        .from(Tables.ENTREPRISE)
-        .select('id, nom, ville, gouvernorat, adresse, telephone, site_web, email, image_url, logo_url, categorie, sous_categories_texte, description, horaires_ok, is_premium, statut_abonnement, slug, "Note Google Globale", "Compteur Avis Google"')
-        .filter('liste_pages', 'cs', '{santé}')
-        .order('is_premium', { ascending: false })
-        .order('nom', { ascending: true })
-        .limit(100);
-      setHealthBusinesses((data || []).map((item: any) => ({
-        ...item,
-        sous_categories: item.sous_categories_texte || null,
-      })));
-      setLoadingBusinesses(false);
-    };
-    fetchHealthBusinesses();
-  }, []);
 
   const emergencyNumbers = useMemo(() => ([
     { num: '190', label: t.health.emergency.samu },
@@ -165,48 +140,6 @@ export default function CitizensHealth({ onNavigate }: CitizensHealthProps) {
           <div className="bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-[#D4AF37] p-2.5 md:p-3">
             <SearchBar scope="sante" intentEnabled={false} enabled />
           </div>
-        </div>
-      </section>
-
-      {/* Liste paginée des établissements santé */}
-      <section className="px-4 py-6">
-        <div className="max-w-5xl mx-auto">
-          {loadingBusinesses ? (
-            <div className="flex items-center justify-center py-8">
-              <Loader2 className="w-7 h-7 animate-spin text-[#D4AF37]" />
-            </div>
-          ) : healthBusinesses.length > 0 ? (
-            <>
-              <h2 className="text-xl font-semibold text-[#4A1D43] mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
-                {language === 'fr' ? 'Professionnels de santé' :
-                 language === 'ar' ? 'المهنيون الصحيون' :
-                 language === 'en' ? 'Healthcare professionals' :
-                 'Professionisti sanitari'} ({healthBusinesses.length})
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                {healthBusinesses.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE).map((b: any) => (
-                  <SeoBusinessCard key={b.id} business={b} />
-                ))}
-              </div>
-              {healthBusinesses.length > ITEMS_PER_PAGE && (
-                <div className="flex justify-center items-center gap-2 mt-6">
-                  {Array.from({ length: Math.ceil(healthBusinesses.length / ITEMS_PER_PAGE) }, (_, i) => i + 1).map((p) => (
-                    <button
-                      key={p}
-                      onClick={() => setPage(p)}
-                      className={`w-9 h-9 rounded-lg text-sm font-medium transition-all ${
-                        p === page
-                          ? 'bg-[#D4AF37] text-white shadow-md'
-                          : 'bg-white border border-gray-200 text-gray-700 hover:border-[#D4AF37] hover:text-[#D4AF37]'
-                      }`}
-                    >
-                      {p}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </>
-          ) : null}
         </div>
       </section>
 

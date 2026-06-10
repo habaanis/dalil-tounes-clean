@@ -523,7 +523,7 @@ export default function SearchBar({
                 <li className="py-1 text-xs font-semibold text-gray-500 sticky top-0 bg-white">
                   Entreprises
                 </li>
-                {ent.map((item: any) => {
+                {ent.slice(0, 5).map((item: any) => {
                   const displayName = item.nom;
                   const displayCategory = item.matiere || item.categorie;
                   return (

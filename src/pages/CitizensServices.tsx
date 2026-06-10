@@ -1,18 +1,13 @@
 import { motion } from 'framer-motion';
-import { Heart, Baby, Building2, Phone, Shield, AlertCircle, CheckCircle, FileText, Clock, Download, ExternalLink, ArrowLeft, Loader2 } from 'lucide-react';
+import { Heart, Baby, Building2, Phone, Shield, AlertCircle, CheckCircle, FileText, Clock, Download, ExternalLink, ArrowLeft } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
 import { getStructureImageUrl } from '../lib/imageUtils';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BackButton from '../components/BackButton';
 import MeilleursSection from '../components/MeilleursSection';
 import SearchBar from '../components/SearchBar';
-import SeoBusinessCard from '../components/seo/SeoBusinessCard';
-import { supabase } from '../lib/supabaseClient';
-import { Tables } from '../lib/dbTables';
-
-const ITEMS_PER_PAGE = 4;
 
 interface CitizensServicesProps {
   onNavigateBack?: () => void;
@@ -46,28 +41,6 @@ export default function CitizensServices({ onNavigateBack }: CitizensServicesPro
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [selectedDemarche, setSelectedDemarche] = useState<Demarche | null>(null);
-  const [serviceBusinesses, setServiceBusinesses] = useState<any[]>([]);
-  const [loadingBiz, setLoadingBiz] = useState(true);
-  const [bizPage, setBizPage] = useState(1);
-
-  useEffect(() => {
-    const fetchServiceBusinesses = async () => {
-      setLoadingBiz(true);
-      const { data } = await supabase
-        .from(Tables.ENTREPRISE)
-        .select('id, nom, ville, gouvernorat, adresse, telephone, site_web, email, image_url, logo_url, categorie, sous_categories_texte, description, horaires_ok, is_premium, statut_abonnement, slug, "Note Google Globale", "Compteur Avis Google"')
-        .filter('liste_pages', 'cs', '{services citoyens}')
-        .order('is_premium', { ascending: false })
-        .order('nom', { ascending: true })
-        .limit(100);
-      setServiceBusinesses((data || []).map((item: any) => ({
-        ...item,
-        sous_categories: item.sous_categories_texte || null,
-      })));
-      setLoadingBiz(false);
-    };
-    fetchServiceBusinesses();
-  }, []);
 
   const heroImageUrl = getStructureImageUrl('/images/service-social.jpg');
 
@@ -533,53 +506,11 @@ export default function CitizensServices({ onNavigateBack }: CitizensServicesPro
       </section>
 
       {/* SearchBar Services */}
-      <section className="py-2 px-4 relative z-[5]">
+      <section className="py-2 px-4 relative z-50">
         <div className="max-w-5xl mx-auto">
           <div className="bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-[#D4AF37] p-2.5 md:p-3">
             <SearchBar scope="services" intentEnabled={false} enabled />
           </div>
-        </div>
-      </section>
-
-      {/* Liste paginée des entreprises services */}
-      <section className="px-4 py-6">
-        <div className="max-w-5xl mx-auto">
-          {loadingBiz ? (
-            <div className="flex items-center justify-center py-8">
-              <Loader2 className="w-7 h-7 animate-spin text-[#D4AF37]" />
-            </div>
-          ) : serviceBusinesses.length > 0 ? (
-            <>
-              <h2 className="text-xl font-semibold text-[#4A1D43] mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
-                {language === 'fr' ? 'Services citoyens' :
-                 language === 'ar' ? 'خدمات المواطنين' :
-                 language === 'en' ? 'Citizen services' :
-                 'Servizi al cittadino'} ({serviceBusinesses.length})
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                {serviceBusinesses.slice((bizPage - 1) * ITEMS_PER_PAGE, bizPage * ITEMS_PER_PAGE).map((b: any) => (
-                  <SeoBusinessCard key={b.id} business={b} />
-                ))}
-              </div>
-              {serviceBusinesses.length > ITEMS_PER_PAGE && (
-                <div className="flex justify-center items-center gap-2 mt-6">
-                  {Array.from({ length: Math.ceil(serviceBusinesses.length / ITEMS_PER_PAGE) }, (_, i) => i + 1).map((p) => (
-                    <button
-                      key={p}
-                      onClick={() => setBizPage(p)}
-                      className={`w-9 h-9 rounded-lg text-sm font-medium transition-all ${
-                        p === bizPage
-                          ? 'bg-[#D4AF37] text-white shadow-md'
-                          : 'bg-white border border-gray-200 text-gray-700 hover:border-[#D4AF37] hover:text-[#D4AF37]'
-                      }`}
-                    >
-                      {p}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </>
-          ) : null}
         </div>
       </section>
 
