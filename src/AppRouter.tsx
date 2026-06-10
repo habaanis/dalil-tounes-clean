@@ -69,6 +69,7 @@ const VillePage = lazy(() => import('./pages/seo/VillePage'));
 const SecteurPage = lazy(() => import('./pages/seo/SecteurPage'));
 const GouvernoratPage = lazy(() => import('./pages/seo/GouvernoratPage'));
 const SuggestBusiness = lazy(() => import('./pages/SuggestBusiness').then(m => ({ default: m.SuggestBusiness })));
+const CardPreview = lazy(() => import('./pages/CardPreview'));
 
 // Le PageLoader réutilise LA MÊME image que le hero final. L'image est
 // déjà préchargée et servie depuis le cache, donc aucune requête réseau :
@@ -213,6 +214,7 @@ function AppRouter() {
               <Route path="/commercial" element={<AdminCommercial />} />
 
               {/* Debug */}
+              <Route path="/card-preview" element={<CardPreview />} />
               <Route path="/searchDebug" element={<SearchDebug />} />
               <Route path="/debug/entreprise" element={<EntrepriseDebug />} />
               <Route path="/debug/i18n" element={<I18nDebug />} />
