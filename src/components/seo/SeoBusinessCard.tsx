@@ -162,10 +162,10 @@ function PhoneButton({ phone, bgColor, textColor }: { phone: string; bgColor: st
       href={`tel:${phone}`}
       onClick={(e) => e.stopPropagation()}
       style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-        padding: '10px', borderRadius: '10px',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+        padding: '7px', borderRadius: '8px',
         backgroundColor: bgColor, color: textColor,
-        fontWeight: '700', fontSize: '13px', textDecoration: 'none',
+        fontWeight: '700', fontSize: '12px', textDecoration: 'none',
         transition: 'opacity 0.2s ease',
       }}
       onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.opacity = '0.85'; }}
@@ -220,9 +220,9 @@ const SeoBusinessCard: React.FC<SeoBusinessCardProps> = ({ business }) => {
   const theme = paidTheme || gratuitTheme;
 
   const innerContent = (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '-36px', marginBottom: '4px' }}>
-        <div className="w-16 h-16 shadow-xl" style={getLogoContainerStyle(theme.logoBorder, '3px')}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '-28px', marginBottom: '2px' }}>
+        <div className="w-12 h-12 shadow-lg" style={getLogoContainerStyle(theme.logoBorder, '2px')}>
           <img
             src={getLogoUrl(business.logo_url)}
             alt={`Logo ${business.nom}${locationLabel ? ` à ${locationLabel}` : ''}`}
@@ -234,14 +234,14 @@ const SeoBusinessCard: React.FC<SeoBusinessCardProps> = ({ business }) => {
         </div>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-        <h3 style={{ fontSize: '14px', fontWeight: '700', color: theme.title, lineHeight: '1.3', letterSpacing: '-0.01em', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px' }}>
+        <h3 style={{ fontSize: '13px', fontWeight: '700', color: theme.title, lineHeight: '1.2', letterSpacing: '-0.01em', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {business.nom}
         </h3>
         {theme.badgeLabel && (
           <span style={{
-            flexShrink: 0, fontSize: '8px', fontWeight: '800', letterSpacing: '0.05em',
-            padding: '2px 8px', borderRadius: '10px', textTransform: 'uppercase' as const,
+            flexShrink: 0, fontSize: '7px', fontWeight: '800', letterSpacing: '0.05em',
+            padding: '2px 6px', borderRadius: '8px', textTransform: 'uppercase' as const,
             backgroundColor: theme.badgeBg, color: theme.accent,
             border: `1px solid ${theme.accent}40`,
           }}>
@@ -251,15 +251,15 @@ const SeoBusinessCard: React.FC<SeoBusinessCardProps> = ({ business }) => {
       </div>
 
       {categoryLabel && (
-        <p style={{ fontSize: '11px', fontWeight: '500', color: theme.muted, lineHeight: '1.4', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+        <p style={{ fontSize: '10px', fontWeight: '500', color: theme.muted, lineHeight: '1.3', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', margin: 0 }}>
           {categoryLabel}
         </p>
       )}
 
       {locationLabel && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <MapPin style={{ width: '12px', height: '12px', color: theme.muted, flexShrink: 0 }} />
-          <span style={{ fontSize: '12px', fontWeight: '500', color: theme.text }}>{locationLabel}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <MapPin style={{ width: '11px', height: '11px', color: theme.muted, flexShrink: 0 }} />
+          <span style={{ fontSize: '11px', fontWeight: '500', color: theme.text }}>{locationLabel}</span>
         </div>
       )}
 
@@ -282,8 +282,8 @@ const SeoBusinessCard: React.FC<SeoBusinessCardProps> = ({ business }) => {
       )}
 
       {isClickable && (
-        <div style={{ paddingTop: '6px', borderTop: `1px solid ${theme.accent}40`, textAlign: 'center' }}>
-          <span style={{ fontSize: '13px', fontWeight: '700', color: theme.detailColor, letterSpacing: '0.01em' }}>
+        <div style={{ paddingTop: '4px', borderTop: `1px solid ${theme.accent}40`, textAlign: 'center' }}>
+          <span style={{ fontSize: '12px', fontWeight: '700', color: theme.detailColor, letterSpacing: '0.01em' }}>
             Voir les d&eacute;tails &rarr;
           </span>
         </div>
@@ -294,11 +294,11 @@ const SeoBusinessCard: React.FC<SeoBusinessCardProps> = ({ business }) => {
   const cardStyle: React.CSSProperties = {
     backgroundColor: theme.bg,
     border: `2px solid ${theme.border}`,
-    borderRadius: '16px',
+    borderRadius: '12px',
     boxShadow: paidTheme
-      ? '0 8px 24px rgba(0,0,0,0.25)'
-      : '0 0 15px rgba(212,175,55,0.3), 0 4px 12px rgba(212,175,55,0.15)',
-    padding: '20px',
+      ? '0 6px 18px rgba(0,0,0,0.2)'
+      : '0 0 10px rgba(212,175,55,0.25), 0 3px 8px rgba(212,175,55,0.12)',
+    padding: '14px',
     transition: 'transform 0.2s ease, box-shadow 0.2s ease',
     display: 'block',
     textDecoration: 'none',
@@ -311,15 +311,15 @@ const SeoBusinessCard: React.FC<SeoBusinessCardProps> = ({ business }) => {
       (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)';
       if (isClickable) {
         (e.currentTarget as HTMLElement).style.boxShadow = paidTheme
-          ? '0 12px 32px rgba(0,0,0,0.35)'
-          : '0 4px 20px rgba(212,175,55,0.45), 0 8px 16px rgba(212,175,55,0.2)';
+          ? '0 10px 28px rgba(0,0,0,0.3)'
+          : '0 3px 14px rgba(212,175,55,0.35), 0 6px 12px rgba(212,175,55,0.18)';
       }
     },
     onMouseLeave: (e: React.MouseEvent<HTMLElement>) => {
       (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
       (e.currentTarget as HTMLElement).style.boxShadow = paidTheme
-        ? '0 8px 24px rgba(0,0,0,0.25)'
-        : '0 0 15px rgba(212,175,55,0.3), 0 4px 12px rgba(212,175,55,0.15)';
+        ? '0 6px 18px rgba(0,0,0,0.2)'
+        : '0 0 10px rgba(212,175,55,0.25), 0 3px 8px rgba(212,175,55,0.12)';
     },
   };
 

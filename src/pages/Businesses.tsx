@@ -18,6 +18,7 @@ import { HERO_IMAGE_URL, HERO_IMAGE_JPG_URL } from '../constants/images';
 import SignatureCard from '../components/SignatureCard';
 import { normalizeText, removeArabicDiacritics, extractFrenchName, cleanSearchTerm, cleanArabicField } from '../lib/textNormalization';
 import { BusinessCard } from '../components/BusinessCard';
+import SearchBar from '../components/SearchBar';
 import { getSubscriptionPriority } from '../lib/subscriptionHelper';
 import {
   readBusinessesCache,
@@ -885,6 +886,15 @@ export const Businesses = ({
           </div>
         </div>
 
+
+        {/* SearchBar Entreprises */}
+        <section className="py-3 px-4 relative z-[5]">
+          <div className="max-w-5xl mx-auto">
+            <div className="bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-[#D4AF37] p-2.5 md:p-3">
+              <SearchBar scope="global" intentEnabled={false} enabled />
+            </div>
+          </div>
+        </section>
 
         {/* Bandeau d'événements entreprises */}
         <section id="section-evenements-entreprise" className="mb-6 px-4 scroll-mt-24">

@@ -1,14 +1,14 @@
 import { useState, useRef, useEffect } from 'react';
-import { Plane, Loader2, MapPin, ArrowLeft, Globe } from 'lucide-react';
+import { Loader2, ArrowLeft, Globe } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
 import { Tables } from '../lib/dbTables';
 import SearchBar from '../components/SearchBar';
-import { FeaturedBusinessesStrip } from '../components/FeaturedBusinessesStrip';
-import { scrollToWithOffsetDelayed } from '../lib/scrollUtils';
 import { getSupabaseImageUrl } from '../lib/imageUtils';
 import SeoBusinessCard from '../components/seo/SeoBusinessCard';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
+
+const ITEMS_PER_PAGE = 4;
 
 interface Business {
   id: string;
@@ -42,6 +42,7 @@ export default function CitizensTourism({ onNavigate }: CitizensTourismProps = {
   const { language } = useLanguage();
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
   const resultsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -84,6 +85,7 @@ export default function CitizensTourism({ onNavigate }: CitizensTourismProps = {
         ...item,
         sous_categories: item.sous_categories_texte || item.sous_categories || null,
       })) as Business[]);
+      setPage(1);
 
       setTimeout(() => {
         resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -106,6 +108,13 @@ export default function CitizensTourism({ onNavigate }: CitizensTourismProps = {
         />
         <div className="absolute inset-0 bg-gradient-to-r from-[#4A1D43]/80 via-[#4A1D43]/70 to-transparent"></div>
 
+        <button
+          onClick={() => window.history.length > 1 ? navigate(-1) : navigate('/citoyens')}
+          className="absolute top-4 left-4 z-10 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm text-[#4A1D43] px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-white transition-colors shadow-sm"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          {language === 'fr' ? 'Retour' : language === 'ar' ? 'رجوع' : language === 'en' ? 'Back' : 'Indietro'}
+        </button>
 
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-4 py-6">
           <h1 className="text-3xl md:text-4xl font-semibold mb-2 drop-shadow-lg text-[#D4AF37]">
@@ -147,9 +156,7 @@ export default function CitizensTourism({ onNavigate }: CitizensTourismProps = {
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <FeaturedBusinessesStrip onCardClick={(id) => navigate(`/business/${id}`)} />
-
+      <div className="max-w-5xl mx-auto px-4 py-8">
         {loading && (
           <div className="flex items-center justify-center py-12">
             <Loader2 className="w-8 h-8 animate-spin text-[#D4AF37]" />
@@ -169,22 +176,40 @@ export default function CitizensTourism({ onNavigate }: CitizensTourismProps = {
         )}
 
         {!loading && businesses.length > 0 && (
-          <div ref={resultsRef} className="mt-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+          <div ref={resultsRef} className="mt-6">
+            <h2 className="text-xl font-semibold text-[#4A0404] mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
               {language === 'fr' ? 'Tourisme & Expatriation' :
                language === 'ar' ? 'السياحة والاغتراب' :
                language === 'en' ? 'Tourism & Expatriation' :
                'Turismo ed Espatrio'} ({businesses.length})
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {businesses.map((business) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {businesses.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE).map((business) => (
                 <SeoBusinessCard
                   key={business.id}
                   business={business as any}
                 />
               ))}
             </div>
+
+            {businesses.length > ITEMS_PER_PAGE && (
+              <div className="flex justify-center items-center gap-2 mt-8">
+                {Array.from({ length: Math.ceil(businesses.length / ITEMS_PER_PAGE) }, (_, i) => i + 1).map((p) => (
+                  <button
+                    key={p}
+                    onClick={() => { setPage(p); resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
+                    className={`w-9 h-9 rounded-lg text-sm font-medium transition-all ${
+                      p === page
+                        ? 'bg-[#D4AF37] text-white shadow-md'
+                        : 'bg-white border border-gray-200 text-gray-700 hover:border-[#D4AF37] hover:text-[#D4AF37]'
+                    }`}
+                  >
+                    {p}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>

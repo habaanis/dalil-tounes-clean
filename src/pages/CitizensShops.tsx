@@ -1,10 +1,15 @@
-import { Store, ChevronRight, ArrowLeft } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { ChevronRight, ArrowLeft, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { FeaturedBusinessesStrip } from '../components/FeaturedBusinessesStrip';
-import { LocalBusinessesSection } from '../components/LocalBusinessesSection';
 import { scrollToWithOffsetDelayed } from '../lib/scrollUtils';
 import MeilleursSection from '../components/MeilleursSection';
 import { useLanguage } from '../context/LanguageContext';
+import SearchBar from '../components/SearchBar';
+import SeoBusinessCard from '../components/seo/SeoBusinessCard';
+import { supabase } from '../lib/supabaseClient';
+import { Tables } from '../lib/dbTables';
+
+const ITEMS_PER_PAGE = 4;
 
 interface CitizensShopsProps {
   onNavigate?: (page: any) => void;
@@ -13,6 +18,28 @@ interface CitizensShopsProps {
 export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
   const { language } = useLanguage();
   const navigate = useNavigate();
+  const [shopBusinesses, setShopBusinesses] = useState<any[]>([]);
+  const [loadingBiz, setLoadingBiz] = useState(true);
+  const [bizPage, setBizPage] = useState(1);
+
+  useEffect(() => {
+    const fetchShopBusinesses = async () => {
+      setLoadingBiz(true);
+      const { data } = await supabase
+        .from(Tables.ENTREPRISE)
+        .select('id, nom, ville, gouvernorat, adresse, telephone, site_web, email, image_url, logo_url, categorie, sous_categories_texte, description, horaires_ok, is_premium, statut_abonnement, slug, "Note Google Globale", "Compteur Avis Google"')
+        .filter('liste_pages', 'cs', '{commerces & magasins}')
+        .order('is_premium', { ascending: false })
+        .order('nom', { ascending: true })
+        .limit(100);
+      setShopBusinesses((data || []).map((item: any) => ({
+        ...item,
+        sous_categories: item.sous_categories_texte || null,
+      })));
+      setLoadingBiz(false);
+    };
+    fetchShopBusinesses();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
@@ -25,6 +52,13 @@ export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
           backgroundPosition: 'center 30%'
         }}
       >
+        <button
+          onClick={() => window.history.length > 1 ? navigate(-1) : navigate('/citoyens')}
+          className="absolute top-4 left-4 z-10 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm text-[#4A1D43] px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-white transition-colors shadow-sm"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          {language === 'fr' ? 'Retour' : language === 'ar' ? 'رجوع' : language === 'en' ? 'Back' : 'Indietro'}
+        </button>
 
 
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-4 py-6">
@@ -60,24 +94,58 @@ export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 py-8">
-
-
-        {/* Commerces Locaux à la Une */}
-        <div className="mb-10">
-          <LocalBusinessesSection
-            onCardClick={(id) => navigate(`/business/${id}`)}
-          />
+      {/* SearchBar Magasins */}
+      <section className="py-2 px-4 relative z-50">
+        <div className="max-w-5xl mx-auto">
+          <div className="bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-[#D4AF37] p-2.5 md:p-3">
+            <SearchBar scope="magasin" intentEnabled={false} enabled />
+          </div>
         </div>
+      </section>
 
-        {/* Magasins mis en avant */}
-        <div className="mb-10">
-          <FeaturedBusinessesStrip
-            variant="magasins"
-            onCardClick={(id) => navigate(`/business/${id}`)}
-          />
+      {/* Liste paginée des commerces */}
+      <section className="px-4 py-6">
+        <div className="max-w-5xl mx-auto">
+          {loadingBiz ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="w-7 h-7 animate-spin text-[#D4AF37]" />
+            </div>
+          ) : shopBusinesses.length > 0 ? (
+            <>
+              <h2 className="text-xl font-semibold text-[#4A0404] mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
+                {language === 'fr' ? 'Commerces & Magasins' :
+                 language === 'ar' ? 'المحلات والمتاجر' :
+                 language === 'en' ? 'Shops & Stores' :
+                 'Negozi e Commerci'} ({shopBusinesses.length})
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {shopBusinesses.slice((bizPage - 1) * ITEMS_PER_PAGE, bizPage * ITEMS_PER_PAGE).map((b: any) => (
+                  <SeoBusinessCard key={b.id} business={b} />
+                ))}
+              </div>
+              {shopBusinesses.length > ITEMS_PER_PAGE && (
+                <div className="flex justify-center items-center gap-2 mt-6">
+                  {Array.from({ length: Math.ceil(shopBusinesses.length / ITEMS_PER_PAGE) }, (_, i) => i + 1).map((p) => (
+                    <button
+                      key={p}
+                      onClick={() => setBizPage(p)}
+                      className={`w-9 h-9 rounded-lg text-sm font-medium transition-all ${
+                        p === bizPage
+                          ? 'bg-[#D4AF37] text-white shadow-md'
+                          : 'bg-white border border-gray-200 text-gray-700 hover:border-[#D4AF37] hover:text-[#D4AF37]'
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </>
+          ) : null}
         </div>
+      </section>
 
+      <div className="max-w-5xl mx-auto px-4 py-8">
         {/* Meilleurs commerces + article blog */}
         <div className="py-8">
           <MeilleursSection

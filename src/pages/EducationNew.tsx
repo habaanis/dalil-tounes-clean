@@ -43,6 +43,10 @@ import { getSupabaseImageUrl } from '../lib/imageUtils';
 import BackButton from '../components/BackButton';
 import { BusinessCard } from '../components/BusinessCard';
 import { BusinessDetail } from '../components/BusinessDetail';
+import SearchBar from '../components/SearchBar';
+import SeoBusinessCard from '../components/seo/SeoBusinessCard';
+
+const ITEMS_PER_PAGE = 4;
 
 interface Etablissement {
   id: string;
@@ -445,6 +449,29 @@ export default function EducationNew() {
 
   const [selectedEducationBusiness, setSelectedEducationBusiness] = useState<any | null>(null);
 
+  const [eduBusinesses, setEduBusinesses] = useState<any[]>([]);
+  const [loadingEduBiz, setLoadingEduBiz] = useState(true);
+  const [bizPage, setBizPage] = useState(1);
+
+  useEffect(() => {
+    const fetchEduBusinesses = async () => {
+      setLoadingEduBiz(true);
+      const { data } = await supabase
+        .from(Tables.ENTREPRISE)
+        .select('id, nom, ville, gouvernorat, adresse, telephone, site_web, email, image_url, logo_url, categorie, sous_categories_texte, description, horaires_ok, is_premium, statut_abonnement, slug, "Note Google Globale", "Compteur Avis Google"')
+        .filter('liste_pages', 'cs', '{éducation}')
+        .order('is_premium', { ascending: false })
+        .order('nom', { ascending: true })
+        .limit(100);
+      setEduBusinesses((data || []).map((item: any) => ({
+        ...item,
+        sous_categories: item.sous_categories_texte || null,
+      })));
+      setLoadingEduBiz(false);
+    };
+    fetchEduBusinesses();
+  }, []);
+
   const [educationEvents, setEducationEvents] = useState<any[]>([]);
   const [eventsCity, setEventsCity] = useState('');
 
@@ -688,6 +715,13 @@ export default function EducationNew() {
           backgroundImage: `linear-gradient(rgba(74, 29, 67, 0.6), rgba(74, 29, 67, 0.6)), url(${getSupabaseImageUrl('classe-ecole.jpg')})`
         }}
       >
+        <button
+          onClick={() => window.history.length > 1 ? navigate(-1) : navigate('/citoyens')}
+          className="absolute top-4 left-4 z-10 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm text-[#4A1D43] px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-white transition-colors shadow-sm"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          {language === 'fr' ? 'Retour' : language === 'ar' ? 'رجوع' : language === 'en' ? 'Back' : 'Indietro'}
+        </button>
 
         <div className="max-w-5xl mx-auto text-center">
           <motion.div
@@ -952,6 +986,57 @@ export default function EducationNew() {
           language={language}
         />
       )}
+
+      {/* SearchBar Éducation */}
+      <section className="py-2 px-4 relative z-50">
+        <div className="max-w-5xl mx-auto">
+          <div className="bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-[#D4AF37] p-2.5 md:p-3">
+            <SearchBar scope="education" intentEnabled={false} enabled />
+          </div>
+        </div>
+      </section>
+
+      {/* Liste paginée des entreprises éducation */}
+      <section className="px-4 py-6">
+        <div className="max-w-5xl mx-auto">
+          {loadingEduBiz ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="w-7 h-7 animate-spin text-[#D4AF37]" />
+            </div>
+          ) : eduBusinesses.length > 0 ? (
+            <>
+              <h2 className="text-xl font-semibold text-[#4A1D43] mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
+                {language === 'fr' ? 'Établissements d\'éducation' :
+                 language === 'ar' ? 'مؤسسات تعليمية' :
+                 language === 'en' ? 'Education establishments' :
+                 'Istituti di istruzione'} ({eduBusinesses.length})
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {eduBusinesses.slice((bizPage - 1) * ITEMS_PER_PAGE, bizPage * ITEMS_PER_PAGE).map((b: any) => (
+                  <SeoBusinessCard key={b.id} business={b} />
+                ))}
+              </div>
+              {eduBusinesses.length > ITEMS_PER_PAGE && (
+                <div className="flex justify-center items-center gap-2 mt-6">
+                  {Array.from({ length: Math.ceil(eduBusinesses.length / ITEMS_PER_PAGE) }, (_, i) => i + 1).map((p) => (
+                    <button
+                      key={p}
+                      onClick={() => setBizPage(p)}
+                      className={`w-9 h-9 rounded-lg text-sm font-medium transition-all ${
+                        p === bizPage
+                          ? 'bg-[#D4AF37] text-white shadow-md'
+                          : 'bg-white border border-gray-200 text-gray-700 hover:border-[#D4AF37] hover:text-[#D4AF37]'
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </>
+          ) : null}
+        </div>
+      </section>
 
       {/* Meilleurs établissements + article blog */}
       <section className="py-8 bg-white">
