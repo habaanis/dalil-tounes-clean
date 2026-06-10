@@ -6,7 +6,7 @@ import SearchBar from '../components/SearchBar';
 import { FeaturedBusinessesStrip } from '../components/FeaturedBusinessesStrip';
 import { scrollToWithOffsetDelayed } from '../lib/scrollUtils';
 import { getSupabaseImageUrl } from '../lib/imageUtils';
-import UnifiedBusinessCard from '../components/UnifiedBusinessCard';
+import SeoBusinessCard from '../components/seo/SeoBusinessCard';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -21,10 +21,16 @@ interface Business {
   email?: string;
   image_url?: string;
   logo_url?: string;
-  categorie?: string;
+  categorie?: string[];
   sous_categories?: string;
+  sous_categories_texte?: string;
   description?: string;
-  horaires?: string;
+  horaires_ok?: string;
+  is_premium?: boolean;
+  statut_abonnement?: string | null;
+  slug?: string;
+  'Note Google Globale'?: number | null;
+  'Compteur Avis Google'?: number | null;
 }
 
 interface CitizensTourismProps {
@@ -52,7 +58,7 @@ export default function CitizensTourism({ onNavigate }: CitizensTourismProps = {
     try {
       let query = supabase
         .from(Tables.ENTREPRISE)
-        .select('id, nom, ville, gouvernorat, adresse, telephone, site_web, email, image_url, logo_url, "catégorie", sous_categories, description, horaires, statut_carte')
+        .select('id, nom, ville, gouvernorat, adresse, telephone, site_web, email, image_url, logo_url, categorie, sous_categories_texte, description, horaires_ok, statut_carte, is_premium, statut_abonnement, slug, "Note Google Globale", "Compteur Avis Google"')
         .filter('liste_pages', 'cs', '{tourisme local & expatriation}')
         .order('nom', { ascending: true })
         .limit(100);
@@ -74,7 +80,10 @@ export default function CitizensTourism({ onNavigate }: CitizensTourismProps = {
       }
 
       console.log('[CitizensTourism] Résultats:', data?.length || 0, 'entreprises');
-      setBusinesses((data || []) as Business[]);
+      setBusinesses((data || []).map((item: any) => ({
+        ...item,
+        sous_categories: item.sous_categories_texte || item.sous_categories || null,
+      })) as Business[]);
 
       setTimeout(() => {
         resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -170,10 +179,9 @@ export default function CitizensTourism({ onNavigate }: CitizensTourismProps = {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {businesses.map((business) => (
-                <UnifiedBusinessCard
+                <SeoBusinessCard
                   key={business.id}
                   business={business as any}
-                  onClick={() => navigate(`/business/${business.id}`)}
                 />
               ))}
             </div>

@@ -9,6 +9,7 @@ import { getSupabaseImageUrl } from '../lib/imageUtils';
 import { extractFrenchName } from '../lib/textNormalization';
 import { useLanguage } from '../context/LanguageContext';
 import { t as translate, type Lang } from '../lib/i18n';
+import SeoBusinessCard from './seo/SeoBusinessCard';
 
 interface MeilleursItem {
   id: string;
@@ -262,7 +263,7 @@ export default function MeilleursSection({
       setLoadingTop(true);
       setLoadingAll(true);
       try {
-        const SELECT_FIELDS = `id, nom, ville, gouvernorat, logo_url, image_url, sous_categories, slug, qr_code_url, "Note Google Globale", "Compteur Avis Google"`;
+        const SELECT_FIELDS = `id, nom, ville, gouvernorat, logo_url, image_url, sous_categories_texte, slug, qr_code_url, "Note Google Globale", "Compteur Avis Google", adresse, telephone, description, is_premium, statut_abonnement, horaires_ok, categorie`;
 
         const { data, error: fetchError } = await supabase
           .from(Tables.ENTREPRISE)
@@ -277,6 +278,7 @@ export default function MeilleursSection({
         const all: MeilleursItem[] = (data || []).map((item: any) => ({
           ...item,
           nom: extractFrenchName(item.nom),
+          sous_categories: item.sous_categories_texte || item.sous_categories || null,
         }));
 
         const qualified = all.filter((item) => {
@@ -343,14 +345,27 @@ export default function MeilleursSection({
             <p className="text-sm text-gray-400 italic">{tx('noProReferenced', 'Aucun professionnel référencé pour le moment.')}</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-            {topItems.map((item, idx) => (
-              <BusinessCard
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {topItems.map((item) => (
+              <SeoBusinessCard
                 key={item.id}
-                item={item}
-                accentColor={accentColor}
-                rank={idx + 1}
-                onClick={() => navigate(buildEntrepriseUrl({ slug: item.slug, nom: item.nom, ville: item.ville, id: item.id }))}
+                business={{
+                  id: item.id,
+                  nom: item.nom,
+                  ville: item.ville,
+                  gouvernorat: item.gouvernorat,
+                  sous_categories: item.sous_categories,
+                  logo_url: item.logo_url || item.image_url,
+                  'Note Google Globale': typeof item['Note Google Globale'] === 'string' ? parseFloat(String(item['Note Google Globale']).replace(',', '.')) : (item['Note Google Globale'] as number | null),
+                  'Compteur Avis Google': typeof item['Compteur Avis Google'] === 'string' ? parseInt(String(item['Compteur Avis Google']).replace(/[^\d]/g, ''), 10) : (item['Compteur Avis Google'] as number | null),
+                  horaires_ok: (item as any).horaires_ok ?? null,
+                  statut_abonnement: (item as any).statut_abonnement ?? null,
+                  is_premium: (item as any).is_premium ?? false,
+                  description: (item as any).description,
+                  adresse: (item as any).adresse,
+                  telephone: (item as any).telephone,
+                  slug: item.slug ?? undefined,
+                } as any}
               />
             ))}
           </div>
@@ -414,7 +429,7 @@ export default function MeilleursSection({
             </div>
           ) : (
             <>
-              <div className="space-y-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 {pagedItems.map((item, idx) => (
                   <motion.div
                     key={item.id}
@@ -422,10 +437,24 @@ export default function MeilleursSection({
                     animate={{ opacity: 1 }}
                     transition={{ delay: idx * 0.03 }}
                   >
-                    <ListRow
-                      item={item}
-                      accentColor={accentColor}
-                      onClick={() => navigate(buildEntrepriseUrl({ slug: item.slug, nom: item.nom, ville: item.ville, id: item.id }))}
+                    <SeoBusinessCard
+                      business={{
+                        id: item.id,
+                        nom: item.nom,
+                        ville: item.ville,
+                        gouvernorat: item.gouvernorat,
+                        sous_categories: item.sous_categories,
+                        logo_url: item.logo_url || item.image_url,
+                        'Note Google Globale': typeof item['Note Google Globale'] === 'string' ? parseFloat(String(item['Note Google Globale']).replace(',', '.')) : (item['Note Google Globale'] as number | null),
+                        'Compteur Avis Google': typeof item['Compteur Avis Google'] === 'string' ? parseInt(String(item['Compteur Avis Google']).replace(/[^\d]/g, ''), 10) : (item['Compteur Avis Google'] as number | null),
+                        horaires_ok: (item as any).horaires_ok ?? null,
+                        statut_abonnement: (item as any).statut_abonnement ?? null,
+                        is_premium: (item as any).is_premium ?? false,
+                        description: (item as any).description,
+                        adresse: (item as any).adresse,
+                        telephone: (item as any).telephone,
+                        slug: item.slug ?? undefined,
+                      } as any}
                     />
                   </motion.div>
                 ))}

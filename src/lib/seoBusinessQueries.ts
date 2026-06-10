@@ -25,10 +25,11 @@ export interface RecommendedBusiness extends SeoBusiness {
 }
 
 function mapEntrepriseRow(row: Record<string, unknown>): SeoBusiness {
-  const sousCats = Array.isArray(row.sous_categories)
-    ? (row.sous_categories as string[])
-    : row.sous_categories
-      ? [row.sous_categories as string]
+  const rawSousCats = row.sous_categories_texte ?? row.sous_categories;
+  const sousCats = Array.isArray(rawSousCats)
+    ? (rawSousCats as string[])
+    : rawSousCats
+      ? [rawSousCats as string]
       : [];
   return {
     id: row.id as string,
@@ -49,7 +50,7 @@ function mapEntrepriseRow(row: Record<string, unknown>): SeoBusiness {
   };
 }
 
-const SIMILAR_SELECT = 'id, nom, adresse, ville, gouvernorat, telephone, categorie, sous_categories, score_avis, logo_url, image_url, description, is_premium, statut_abonnement, horaires_ok, slug, "Note Google Globale", "Compteur Avis Google"';
+const SIMILAR_SELECT = 'id, nom, adresse, ville, gouvernorat, telephone, categorie, sous_categories_texte, score_avis, logo_url, image_url, description, is_premium, statut_abonnement, horaires_ok, slug, "Note Google Globale", "Compteur Avis Google"';
 
 export async function fetchSimilarBusinesses(options: {
   excludeId: string;
