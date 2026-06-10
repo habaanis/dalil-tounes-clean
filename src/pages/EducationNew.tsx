@@ -961,9 +961,9 @@ export default function EducationNew() {
       )}
 
       {/* SearchBar Éducation */}
-      <section className="py-2 px-4 relative z-50">
-        <div className="max-w-5xl mx-auto">
-          <div className="bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-[#D4AF37] p-2.5 md:p-3">
+      <section className="py-2 px-4 relative z-[9999]" style={{ overflow: 'visible' }}>
+        <div className="max-w-5xl mx-auto" style={{ overflow: 'visible' }}>
+          <div className="bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-[#D4AF37] p-2.5 md:p-3" style={{ overflow: 'visible' }}>
             <SearchBar scope="education" intentEnabled={false} enabled />
           </div>
         </div>

@@ -480,7 +480,8 @@ export default function SearchBar({
   return (
     <form
       onSubmit={onSubmit}
-      className={`relative w-full z-[10000] ${className ?? ''}`}
+      className={`relative w-full ${className ?? ''}`}
+      style={{ zIndex: 10000 }}
       data-search-bar="true"
       data-search-scope={isGlobal ? 'entreprise-ville' : `entreprise-ville:${scope}`}
       data-component-name="SearchBar"
@@ -513,8 +514,8 @@ export default function SearchBar({
 
       {hasResults && (
         <div
-          className="absolute left-0 right-0 mt-2 rounded-xl border bg-white shadow-xl p-3 space-y-3 max-h-[70vh] overflow-auto z-[10001]"
-          style={{ pointerEvents: 'auto' }}
+          className="absolute left-0 right-0 mt-2 rounded-xl border bg-white shadow-xl p-3 space-y-3 max-h-[70vh] overflow-auto"
+          style={{ pointerEvents: 'auto', zIndex: 99999 }}
         >
           <ul className="divide-y">
             {renderSeeAll()}

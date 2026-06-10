@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Star, MapPin, ArrowRight, BookOpen, Search, Trophy, ChevronLeft, ChevronRight, Building2 } from 'lucide-react';
+import { Star, MapPin, ArrowRight, BookOpen, Search, Trophy, Building2 } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { Tables } from '../lib/dbTables';
@@ -40,8 +40,8 @@ interface MeilleursProps {
   searchQuery?: string;
 }
 
-const PAGE_SIZE = 10;
-const TOP_COUNT = 5;
+const PAGE_SIZE = 4;
+const TOP_COUNT = 4;
 
 function StarRating({ value }: { value: number }) {
   const stars = Math.round(value * 2) / 2;
@@ -345,7 +345,7 @@ export default function MeilleursSection({
             <p className="text-sm text-gray-400 italic">{tx('noProReferenced', 'Aucun professionnel référencé pour le moment.')}</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {topItems.map((item) => (
               <SeoBusinessCard
                 key={item.id}
@@ -429,7 +429,7 @@ export default function MeilleursSection({
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {pagedItems.map((item, idx) => (
                   <motion.div
                     key={item.id}
@@ -462,28 +462,20 @@ export default function MeilleursSection({
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="flex items-center justify-center gap-3 mt-6 pt-4 border-t border-gray-100">
-                  <button
-                    onClick={() => setPage((p) => Math.max(0, p - 1))}
-                    disabled={page === 0}
-                    className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 hover:border-[#D4AF37] hover:text-[#D4AF37] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-                    style={{ color: page === 0 ? undefined : accentColor }}
-                  >
-                    <ChevronLeft className="w-4 h-4" />
-                    {tx('pagPrev', 'Précédent')}
-                  </button>
-                  <span className="text-sm text-gray-400 px-2">
-                    {page + 1} / {totalPages}
-                  </span>
-                  <button
-                    onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
-                    disabled={page >= totalPages - 1}
-                    className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 hover:border-[#D4AF37] hover:text-[#D4AF37] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-                    style={{ color: page >= totalPages - 1 ? undefined : accentColor }}
-                  >
-                    {tx('pagNext', 'Suivant')}
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
+                <div className="flex items-center justify-center gap-2 mt-6 pt-4 border-t border-gray-100">
+                  {Array.from({ length: totalPages }, (_, i) => i).map((p) => (
+                    <button
+                      key={p}
+                      onClick={() => setPage(p)}
+                      className={`w-9 h-9 rounded-lg text-sm font-medium transition-all ${
+                        p === page
+                          ? 'bg-[#D4AF37] text-white shadow-md'
+                          : 'bg-white border border-gray-200 text-gray-700 hover:border-[#D4AF37] hover:text-[#D4AF37]'
+                      }`}
+                    >
+                      {p + 1}
+                    </button>
+                  ))}
                 </div>
               )}
             </>
