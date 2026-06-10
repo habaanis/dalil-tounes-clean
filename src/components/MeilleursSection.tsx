@@ -263,7 +263,7 @@ export default function MeilleursSection({
       setLoadingTop(true);
       setLoadingAll(true);
       try {
-        const SELECT_FIELDS = `id, nom, ville, gouvernorat, logo_url, image_url, sous_categories_texte, slug, qr_code_url, "Note Google Globale", "Compteur Avis Google", adresse, telephone, description, is_premium, statut_abonnement, horaires_ok, categorie`;
+        const SELECT_FIELDS = `id, nom, ville, gouvernorat, logo_url, image_url, sous_categories_texte, slug, qr_code_url, "Note Google Globale", "Compteur Avis Google", adresse, telephone, description, is_premium, statut_abonnement, horaires_ok, categorie, statut_carte`;
 
         const { data, error: fetchError } = await supabase
           .from(Tables.ENTREPRISE)

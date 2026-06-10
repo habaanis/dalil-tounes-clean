@@ -18,6 +18,7 @@ export interface SeoBusiness {
   statut_abonnement?: string | null;
   horaires_ok?: string | null;
   slug?: string | null;
+  statut_carte?: string | null;
 }
 
 export interface RecommendedBusiness extends SeoBusiness {
@@ -47,10 +48,11 @@ function mapEntrepriseRow(row: Record<string, unknown>): SeoBusiness {
     statut_abonnement: (row.statut_abonnement as string | null) ?? null,
     horaires_ok: row.horaires_ok as string | null ?? null,
     slug: (row.slug as string | null) ?? null,
+    statut_carte: (row.statut_carte as string | null) ?? null,
   };
 }
 
-const SIMILAR_SELECT = 'id, nom, adresse, ville, gouvernorat, telephone, categorie, sous_categories_texte, score_avis, logo_url, image_url, description, is_premium, statut_abonnement, horaires_ok, slug, "Note Google Globale", "Compteur Avis Google"';
+const SIMILAR_SELECT = 'id, nom, adresse, ville, gouvernorat, telephone, categorie, sous_categories_texte, score_avis, logo_url, image_url, description, is_premium, statut_abonnement, horaires_ok, slug, "Note Google Globale", "Compteur Avis Google", statut_carte';
 
 export async function fetchSimilarBusinesses(options: {
   excludeId: string;
