@@ -319,7 +319,7 @@ export default function MeilleursSection({
   return (
     <div className="space-y-12">
       {/* === Section 1 : Meilleurs === */}
-      <section className="max-w-5xl mx-auto px-4">
+      <section className="max-w-7xl mx-auto px-4">
         <div className="flex items-center gap-3 mb-8">
           <div className="w-9 h-9 rounded-xl bg-[#D4AF37]/15 flex items-center justify-center">
             <Trophy className="w-5 h-5 text-[#D4AF37]" />
@@ -345,7 +345,7 @@ export default function MeilleursSection({
             <p className="text-sm text-gray-400 italic">{tx('noProReferenced', 'Aucun professionnel référencé pour le moment.')}</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
             {topItems.map((item) => (
               <SeoBusinessCard
                 key={item.id}
@@ -403,7 +403,7 @@ export default function MeilleursSection({
 
       {/* === Section 2 : Tous les établissements === */}
       {(loadingAll || allItems.length > 0) && (
-        <section className="max-w-5xl mx-auto px-4">
+        <section className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center">
@@ -429,7 +429,7 @@ export default function MeilleursSection({
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
                 {pagedItems.map((item, idx) => (
                   <motion.div
                     key={item.id}
