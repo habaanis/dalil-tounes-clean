@@ -55,6 +55,8 @@ function getTierTheme(tier: SubscriptionTier) {
         badgeBg: 'rgba(212,175,55,0.15)',
         phoneBg: '#D4AF37',
         phoneText: '#064E3B',
+        detailColor: '#D4AF37',
+        darkBg: true,
       };
     case 'elite':
       return {
@@ -69,6 +71,8 @@ function getTierTheme(tier: SubscriptionTier) {
         badgeBg: 'rgba(212,175,55,0.15)',
         phoneBg: '#D4AF37',
         phoneText: '#000000',
+        detailColor: '#D4AF37',
+        darkBg: true,
       };
     case 'artisan':
       return {
@@ -83,6 +87,8 @@ function getTierTheme(tier: SubscriptionTier) {
         badgeBg: 'rgba(252,165,165,0.15)',
         phoneBg: '#FCA5A5',
         phoneText: '#7F1D1D',
+        detailColor: '#FCA5A5',
+        darkBg: true,
       };
     default:
       return null;
@@ -91,7 +97,7 @@ function getTierTheme(tier: SubscriptionTier) {
 
 function HoraireBlock({
   horaires_ok, isOpen, todayText, showFullSchedule, setShowFullSchedule,
-  accentColor, mutedColor, textColor,
+  accentColor, mutedColor, textColor, darkBg,
 }: {
   horaires_ok: string;
   isOpen: boolean;
@@ -101,6 +107,7 @@ function HoraireBlock({
   accentColor: string;
   mutedColor: string;
   textColor: string;
+  darkBg: boolean;
 }) {
   return (
     <div>
@@ -130,14 +137,14 @@ function HoraireBlock({
         onClick={(e) => e.stopPropagation()}
         style={{ maxHeight: showFullSchedule ? '400px' : '0', overflow: 'hidden', transition: 'max-height 0.3s ease, opacity 0.3s ease', opacity: showFullSchedule ? 1 : 0 }}
       >
-        <div style={{ padding: '6px', backgroundColor: textColor === '#E8E8E8' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.02)', borderRadius: '8px', fontSize: '10px', lineHeight: '1.5', marginTop: '6px' }}>
+        <div style={{ padding: '6px', backgroundColor: darkBg ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.02)', borderRadius: '8px', fontSize: '10px', lineHeight: '1.5', marginTop: '6px' }}>
           {parseHoraires(horaires_ok).map((schedule, index) => {
             const now = new Date();
             const todayIndex = (now.getDay() + 6) % 7;
             const dayIndex = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'].findIndex(d => schedule.day.includes(d));
             const isDayToday = dayIndex === todayIndex;
             return (
-              <div key={index} style={{ display: 'flex', gap: '12px', padding: '4px 6px', backgroundColor: isDayToday ? (textColor === '#E8E8E8' ? 'rgba(255,255,255,0.08)' : 'rgba(59,130,246,0.07)') : 'transparent', borderRadius: '4px', marginBottom: '2px' }}>
+              <div key={index} style={{ display: 'flex', gap: '12px', padding: '4px 6px', backgroundColor: isDayToday ? (darkBg ? 'rgba(255,255,255,0.08)' : 'rgba(59,130,246,0.07)') : 'transparent', borderRadius: '4px', marginBottom: '2px' }}>
                 <span style={{ minWidth: '72px', fontWeight: isDayToday ? '700' : '500', color: schedule.isOpen ? textColor : '#FF6B6B' }}>{schedule.day}</span>
                 <span style={{ flex: 1, fontWeight: isDayToday ? '600' : '400', color: schedule.isOpen ? (isDayToday ? textColor : mutedColor) : '#FF6B6B' }}>{schedule.hours}</span>
               </div>
@@ -156,7 +163,7 @@ function PhoneButton({ phone, bgColor, textColor }: { phone: string; bgColor: st
       onClick={(e) => e.stopPropagation()}
       style={{
         display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-        marginTop: '4px', padding: '10px', borderRadius: '10px',
+        padding: '10px', borderRadius: '10px',
         backgroundColor: bgColor, color: textColor,
         fontWeight: '700', fontSize: '13px', textDecoration: 'none',
         transition: 'opacity 0.2s ease',
@@ -185,17 +192,34 @@ const SeoBusinessCard: React.FC<SeoBusinessCardProps> = ({ business }) => {
   const todayText = formatTodayScheduleText(getTodaySchedule(business.horaires_ok ?? null), 'fr');
 
   const certified = isCertified(business.statut_carte);
-  const url = certified
+  const isPaid = tier === 'premium' || tier === 'elite' || tier === 'artisan';
+  const isClickable = isPaid || certified;
+
+  const url = isClickable
     ? buildEntrepriseUrl({ slug: (business as any).slug, nom: business.nom, ville: business.ville, id: business.id })
     : '';
 
   const paidTheme = getTierTheme(tier);
 
-  const cardContent = (theme: {
-    bg: string; border: string; title: string; text: string; muted: string;
-    accent: string; logoBorder: string; badgeLabel?: string; badgeBg?: string;
-    phoneBg: string; phoneText: string;
-  }) => (
+  const gratuitTheme = {
+    bg: '#FFFFFF',
+    border: '#D4AF37',
+    title: '#1A1A1A',
+    text: '#374151',
+    muted: '#6B7280',
+    accent: '#D4AF37',
+    logoBorder: '#D4AF37',
+    phoneBg: '#D4AF37',
+    phoneText: '#1A1A1A',
+    detailColor: '#D4AF37',
+    darkBg: false,
+    badgeLabel: undefined as string | undefined,
+    badgeBg: undefined as string | undefined,
+  };
+
+  const theme = paidTheme || gratuitTheme;
+
+  const innerContent = (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
       <div style={{ display: 'flex', justifyContent: 'center', marginTop: '-36px', marginBottom: '4px' }}>
         <div className="w-16 h-16 shadow-xl" style={getLogoContainerStyle(theme.logoBorder, '3px')}>
@@ -249,28 +273,23 @@ const SeoBusinessCard: React.FC<SeoBusinessCardProps> = ({ business }) => {
           accentColor={theme.accent}
           mutedColor={theme.muted}
           textColor={theme.text}
+          darkBg={theme.darkBg}
         />
       )}
 
       {phone && (
         <PhoneButton phone={phone} bgColor={theme.phoneBg} textColor={theme.phoneText} />
       )}
+
+      {isClickable && (
+        <div style={{ paddingTop: '6px', borderTop: `1px solid ${theme.accent}40`, textAlign: 'center' }}>
+          <span style={{ fontSize: '13px', fontWeight: '700', color: theme.detailColor, letterSpacing: '0.01em' }}>
+            Voir les d&eacute;tails &rarr;
+          </span>
+        </div>
+      )}
     </div>
   );
-
-  const gratuitTheme = {
-    bg: '#FFFFFF',
-    border: '#D4AF37',
-    title: '#1A1A1A',
-    text: '#374151',
-    muted: '#6B7280',
-    accent: '#D4AF37',
-    logoBorder: '#D4AF37',
-    phoneBg: '#D4AF37',
-    phoneText: '#1A1A1A',
-  };
-
-  const theme = paidTheme || gratuitTheme;
 
   const cardStyle: React.CSSProperties = {
     backgroundColor: theme.bg,
@@ -284,24 +303,37 @@ const SeoBusinessCard: React.FC<SeoBusinessCardProps> = ({ business }) => {
     display: 'block',
     textDecoration: 'none',
     color: 'inherit',
+    cursor: isClickable ? 'pointer' : 'default',
   };
 
   const hoverHandlers = {
-    onMouseEnter: (e: React.MouseEvent<HTMLElement>) => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)'; },
-    onMouseLeave: (e: React.MouseEvent<HTMLElement>) => { (e.currentTarget as HTMLElement).style.transform = 'translateY(0)'; },
+    onMouseEnter: (e: React.MouseEvent<HTMLElement>) => {
+      (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)';
+      if (isClickable) {
+        (e.currentTarget as HTMLElement).style.boxShadow = paidTheme
+          ? '0 12px 32px rgba(0,0,0,0.35)'
+          : '0 4px 20px rgba(212,175,55,0.45), 0 8px 16px rgba(212,175,55,0.2)';
+      }
+    },
+    onMouseLeave: (e: React.MouseEvent<HTMLElement>) => {
+      (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
+      (e.currentTarget as HTMLElement).style.boxShadow = paidTheme
+        ? '0 8px 24px rgba(0,0,0,0.25)'
+        : '0 0 15px rgba(212,175,55,0.3), 0 4px 12px rgba(212,175,55,0.15)';
+    },
   };
 
-  if (certified) {
+  if (isClickable) {
     return (
       <Link to={url} style={cardStyle} {...hoverHandlers}>
-        {cardContent(theme)}
+        {innerContent}
       </Link>
     );
   }
 
   return (
     <div style={cardStyle} {...hoverHandlers}>
-      {cardContent(theme)}
+      {innerContent}
     </div>
   );
 };
