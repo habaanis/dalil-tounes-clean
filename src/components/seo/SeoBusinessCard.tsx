@@ -162,16 +162,16 @@ function PhoneButton({ phone, bgColor, textColor }: { phone: string; bgColor: st
       href={`tel:${phone}`}
       onClick={(e) => e.stopPropagation()}
       style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
-        padding: '7px', borderRadius: '8px',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px',
+        padding: '4px 8px', borderRadius: '6px',
         backgroundColor: bgColor, color: textColor,
-        fontWeight: '700', fontSize: '12px', textDecoration: 'none',
+        fontWeight: '700', fontSize: '11px', textDecoration: 'none',
         transition: 'opacity 0.2s ease',
       }}
       onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.opacity = '0.85'; }}
       onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.opacity = '1'; }}
     >
-      <Phone style={{ width: '14px', height: '14px' }} />
+      <Phone style={{ width: '12px', height: '12px' }} />
       Appeler
     </a>
   );
@@ -220,9 +220,9 @@ const SeoBusinessCard: React.FC<SeoBusinessCardProps> = ({ business }) => {
   const theme = paidTheme || gratuitTheme;
 
   const innerContent = (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '-28px', marginBottom: '2px' }}>
-        <div className="w-12 h-12 shadow-lg" style={getLogoContainerStyle(theme.logoBorder, '2px')}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '-16px', marginBottom: '2px' }}>
+        <div className="w-8 h-8 shadow-sm" style={getLogoContainerStyle(theme.logoBorder, '2px')}>
           <img
             src={getLogoUrl(business.logo_url)}
             alt={`Logo ${business.nom}${locationLabel ? ` à ${locationLabel}` : ''}`}
@@ -296,9 +296,9 @@ const SeoBusinessCard: React.FC<SeoBusinessCardProps> = ({ business }) => {
     border: `2px solid ${theme.border}`,
     borderRadius: '12px',
     boxShadow: paidTheme
-      ? '0 6px 18px rgba(0,0,0,0.2)'
-      : '0 0 10px rgba(212,175,55,0.25), 0 3px 8px rgba(212,175,55,0.12)',
-    padding: '14px',
+      ? '0 4px 12px rgba(0,0,0,0.15)'
+      : '0 0 6px rgba(212,175,55,0.18), 0 2px 6px rgba(212,175,55,0.08)',
+    padding: '8px 10px',
     transition: 'transform 0.2s ease, box-shadow 0.2s ease',
     display: 'block',
     textDecoration: 'none',
@@ -311,15 +311,15 @@ const SeoBusinessCard: React.FC<SeoBusinessCardProps> = ({ business }) => {
       (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)';
       if (isClickable) {
         (e.currentTarget as HTMLElement).style.boxShadow = paidTheme
-          ? '0 10px 28px rgba(0,0,0,0.3)'
-          : '0 3px 14px rgba(212,175,55,0.35), 0 6px 12px rgba(212,175,55,0.18)';
+          ? '0 6px 18px rgba(0,0,0,0.25)'
+          : '0 2px 10px rgba(212,175,55,0.28), 0 4px 10px rgba(212,175,55,0.14)';
       }
     },
     onMouseLeave: (e: React.MouseEvent<HTMLElement>) => {
       (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
       (e.currentTarget as HTMLElement).style.boxShadow = paidTheme
-        ? '0 6px 18px rgba(0,0,0,0.2)'
-        : '0 0 10px rgba(212,175,55,0.25), 0 3px 8px rgba(212,175,55,0.12)';
+        ? '0 4px 12px rgba(0,0,0,0.15)'
+        : '0 0 6px rgba(212,175,55,0.18), 0 2px 6px rgba(212,175,55,0.08)';
     },
   };
 
