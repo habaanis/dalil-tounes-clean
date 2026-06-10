@@ -1,37 +1,9 @@
-import { useState, useRef, useEffect } from 'react';
-import { Loader2, ArrowLeft, Globe } from 'lucide-react';
-import { supabase } from '../lib/supabaseClient';
-import { Tables } from '../lib/dbTables';
+import { ArrowLeft } from 'lucide-react';
 import SearchBar from '../components/SearchBar';
 import { getSupabaseImageUrl } from '../lib/imageUtils';
-import SeoBusinessCard from '../components/seo/SeoBusinessCard';
+import MeilleursSection from '../components/MeilleursSection';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
-
-const ITEMS_PER_PAGE = 4;
-
-interface Business {
-  id: string;
-  nom: string;
-  ville: string;
-  gouvernorat: string;
-  adresse?: string;
-  telephone?: string;
-  site_web?: string;
-  email?: string;
-  image_url?: string;
-  logo_url?: string;
-  categorie?: string[];
-  sous_categories?: string;
-  sous_categories_texte?: string;
-  description?: string;
-  horaires_ok?: string;
-  is_premium?: boolean;
-  statut_abonnement?: string | null;
-  slug?: string;
-  'Note Google Globale'?: number | null;
-  'Compteur Avis Google'?: number | null;
-}
 
 interface CitizensTourismProps {
   onNavigate?: (page: any) => void;
@@ -40,62 +12,6 @@ interface CitizensTourismProps {
 export default function CitizensTourism({ onNavigate }: CitizensTourismProps = {}) {
   const navigate = useNavigate();
   const { language } = useLanguage();
-  const [businesses, setBusinesses] = useState<Business[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(1);
-  const resultsRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.hash.split('?')[1] || '');
-    const q = params.get('q');
-    const ville = params.get('ville');
-    fetchBusinesses(q || '', ville || '');
-  }, []);
-
-  const fetchBusinesses = async (searchTerm: string, ville: string) => {
-    setLoading(true);
-    console.log('[CitizensTourism] Recherche lancée avec:', { searchTerm, ville });
-
-    try {
-      let query = supabase
-        .from(Tables.ENTREPRISE)
-        .select('id, nom, ville, gouvernorat, adresse, telephone, site_web, email, image_url, logo_url, categorie, sous_categories_texte, description, horaires_ok, statut_carte, is_premium, statut_abonnement, slug, "Note Google Globale", "Compteur Avis Google"')
-        .filter('liste_pages', 'cs', '{tourisme local & expatriation}')
-        .order('nom', { ascending: true })
-        .limit(100);
-
-      if (ville) {
-        query = query.eq('gouvernorat', ville);
-      }
-
-      if (searchTerm) {
-        const searchPattern = `%${searchTerm}%`;
-        query = query.or(`nom.ilike.${searchPattern},"mots cles recherche".ilike.${searchPattern},description.ilike.${searchPattern}`);
-      }
-
-      const { data, error } = await query;
-
-      if (error) {
-        console.error('[CitizensTourism] Erreur requête:', error);
-        throw error;
-      }
-
-      console.log('[CitizensTourism] Résultats:', data?.length || 0, 'entreprises');
-      setBusinesses((data || []).map((item: any) => ({
-        ...item,
-        sous_categories: item.sous_categories_texte || item.sous_categories || null,
-      })) as Business[]);
-      setPage(1);
-
-      setTimeout(() => {
-        resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100);
-    } catch (error) {
-      console.error('[CitizensTourism] Erreur:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
@@ -104,7 +20,7 @@ export default function CitizensTourism({ onNavigate }: CitizensTourismProps = {
           src={getSupabaseImageUrl('entreprise_banner.webp')}
           alt="Tourisme Local & Expatriation"
           className="absolute inset-0 w-full h-full object-cover"
-        decoding="async"
+          decoding="async"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-[#4A1D43]/80 via-[#4A1D43]/70 to-transparent"></div>
 
@@ -157,63 +73,36 @@ export default function CitizensTourism({ onNavigate }: CitizensTourismProps = {
       </section>
 
       <div className="max-w-5xl mx-auto px-4 py-8">
-        {loading && (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-[#D4AF37]" />
-          </div>
-        )}
-
-        {!loading && businesses.length === 0 && (
-          <div className="text-center py-12 min-h-[120px]">
-            <Globe className="w-16 h-16 mx-auto text-[#D4AF37] mb-4" />
-            <p className="text-gray-600">
-              {language === 'fr' ? 'Aucun professionnel trouvé dans ce secteur' :
-               language === 'ar' ? 'لم يتم العثور على أي مهني في هذا القطاع' :
-               language === 'en' ? 'No professional found in this sector' :
-               'Nessun professionista trovato in questo settore'}
-            </p>
-          </div>
-        )}
-
-        {!loading && businesses.length > 0 && (
-          <div ref={resultsRef} className="mt-6">
-            <h2 className="text-xl font-semibold text-[#4A0404] mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
-              {language === 'fr' ? 'Tourisme & Expatriation' :
-               language === 'ar' ? 'السياحة والاغتراب' :
-               language === 'en' ? 'Tourism & Expatriation' :
-               'Turismo ed Espatrio'} ({businesses.length})
-            </h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {businesses.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE).map((business) => (
-                <SeoBusinessCard
-                  key={business.id}
-                  business={business as any}
-                />
-              ))}
-            </div>
-
-            {businesses.length > ITEMS_PER_PAGE && (
-              <div className="flex justify-center items-center gap-2 mt-8">
-                {Array.from({ length: Math.ceil(businesses.length / ITEMS_PER_PAGE) }, (_, i) => i + 1).map((p) => (
-                  <button
-                    key={p}
-                    onClick={() => { setPage(p); resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
-                    className={`w-9 h-9 rounded-lg text-sm font-medium transition-all ${
-                      p === page
-                        ? 'bg-[#D4AF37] text-white shadow-md'
-                        : 'bg-white border border-gray-200 text-gray-700 hover:border-[#D4AF37] hover:text-[#D4AF37]'
-                    }`}
-                  >
-                    {p}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+        <MeilleursSection
+          secteurLabel={
+            language === 'fr' ? 'tourisme' :
+            language === 'ar' ? 'سياحة' :
+            language === 'en' ? 'tourism' :
+            'turismo'
+          }
+          listePage="tourisme local & expatriation"
+          accentColor="#4A0404"
+          sectionTitle={
+            language === 'fr' ? 'Entreprises les plus recommandées par les clients' :
+            language === 'ar' ? 'المؤسسات الأكثر توصية من قبل العملاء' :
+            language === 'en' ? 'Most recommended businesses by customers' :
+            'Aziende più raccomandate dai clienti'
+          }
+          blogArticle={{
+            title:
+              language === 'fr' ? 'Guide du tourisme en Tunisie' :
+              language === 'ar' ? 'دليل السياحة في تونس' :
+              language === 'en' ? 'Tourism guide in Tunisia' :
+              'Guida al turismo in Tunisia',
+            excerpt:
+              language === 'fr' ? 'Découvrez les meilleurs sites, hébergements et activités pour un séjour inoubliable en Tunisie.' :
+              language === 'ar' ? 'اكتشف أفضل المواقع والإقامات والأنشطة لإقامة لا تُنسى في تونس.' :
+              language === 'en' ? 'Discover the best sites, accommodations and activities for an unforgettable stay in Tunisia.' :
+              'Scopri i migliori siti, alloggi e attività per un soggiorno indimenticabile in Tunisia.',
+            slug: "guide-tourisme-tunisie"
+          }}
+        />
       </div>
-
     </div>
   );
 }
