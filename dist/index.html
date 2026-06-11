@@ -56,6 +56,12 @@
          pénaliser le LCP mobile. La queue dataLayer est conservée
          et rejouée dès que gtag.js est prêt. -->
     <script>
+      if (window.location.hostname === 'www.dalil-tounes.com') {
+        window.location.replace('https://dalil-tounes.com' + window.location.pathname + window.location.search + window.location.hash);
+      }
+    </script>
+
+    <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
@@ -117,11 +123,11 @@
       }
     }
     </script>
-    <script type="module" crossorigin src="/assets/index-DgvZSs97.js"></script>
-    <link rel="modulepreload" crossorigin href="/assets/vendor-react-DSaysAo5.js">
-    <link rel="modulepreload" crossorigin href="/assets/vendor-icons-C199cpOs.js">
-    <link rel="modulepreload" crossorigin href="/assets/vendor-router-CBWriE7m.js">
-    <link rel="preload" as="style" fetchpriority="low" crossorigin href="/assets/index-CzXnsBfy.css" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" crossorigin href="/assets/index-CzXnsBfy.css"></noscript>
+    <script type="module" crossorigin src="/assets/index-B2b4IB1U.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/vendor-react-Baqs45qi.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-icons-8q-7oHV6.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-router-DEmKf8lT.js">
+    <link rel="preload" as="style" fetchpriority="low" crossorigin href="/assets/index-D1cOHtpW.css" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" crossorigin href="/assets/index-D1cOHtpW.css"></noscript>
   </head>
   <body>
     <div id="pre-skeleton">
@@ -178,5 +184,6 @@
         setTimeout(removeSkeleton, 2500);
       })();
     </script>
+    <script>function loadScript(a){var b=document.getElementsByTagName("head")[0],c=document.createElement("script");c.type="text/javascript",c.src="https://tracker.metricool.com/resources/be.js",c.onreadystatechange=a,c.onload=a,b.appendChild(c)}loadScript(function(){beTracker.t({hash:"af74732feb49ea4b1cf121673d7a1f24"})});</script>
   </body>
 </html>
