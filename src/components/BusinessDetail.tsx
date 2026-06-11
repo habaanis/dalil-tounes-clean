@@ -702,44 +702,48 @@ export const BusinessDetail = ({
   const text = translations[language as keyof typeof translations] || translations.fr;
   const isRTL = language === 'ar';
 
-  const downloadQRCode = () => {
-    if (!qrCodeRef.current || !business) return;
+  const downloadQRCode = async () => {
+    if (!business) return;
+    const url = business.qr_code_url || window.location.href;
+    const size = 1024;
+    const margin = 4;
 
-    const imgEl = qrCodeRef.current.querySelector('img');
+    const { QRCodeCanvas } = await import('qrcode.react');
+    const { createRoot } = await import('react-dom/client');
+    const { createElement } = await import('react');
 
-    if (imgEl && imgEl.src) {
+    const container = document.createElement('div');
+    container.style.position = 'fixed';
+    container.style.left = '-9999px';
+    document.body.appendChild(container);
+
+    const root = createRoot(container);
+    root.render(
+      createElement(QRCodeCanvas, {
+        value: url,
+        size,
+        level: 'H',
+        includeMargin: true,
+        marginSize: margin,
+        fgColor: '#000000',
+        bgColor: '#FFFFFF',
+      })
+    );
+
+    await new Promise((r) => setTimeout(r, 100));
+
+    const canvas = container.querySelector('canvas');
+    if (canvas) {
+      const pngUrl = canvas.toDataURL('image/png');
       const a = document.createElement('a');
-      a.href = imgEl.src;
-      a.download = `qr-code-${business.nom || 'entreprise'}.png`;
-      a.target = '_blank';
-      a.rel = 'noopener';
+      const safeName = (business.nom || 'entreprise').replace(/[^a-zA-Z0-9\u0600-\u06FF\s-]/g, '').replace(/\s+/g, '-').toLowerCase();
+      a.download = `qr-code-${safeName}.png`;
+      a.href = pngUrl;
       a.click();
-      return;
     }
 
-    const svg = qrCodeRef.current.querySelector('svg');
-
-    if (!svg) return;
-
-    const svgData = new XMLSerializer().serializeToString(svg);
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    const img = new Image();
-
-    img.onload = () => {
-      canvas.width = img.width;
-      canvas.height = img.height;
-      ctx?.drawImage(img, 0, 0);
-
-      const pngFile = canvas.toDataURL('image/png');
-      const downloadLink = document.createElement('a');
-
-      downloadLink.download = `qr-code-${business.nom || 'entreprise'}.png`;
-      downloadLink.href = pngFile;
-      downloadLink.click();
-    };
-
-    img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+    root.unmount();
+    document.body.removeChild(container);
   };
 
   const getBusinessShareUrl = () => {
