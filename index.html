@@ -109,6 +109,12 @@
          pénaliser le LCP mobile. La queue dataLayer est conservée
          et rejouée dès que gtag.js est prêt. -->
     <script>
+      if (window.location.hostname === 'www.dalil-tounes.com') {
+        window.location.replace('https://dalil-tounes.com' + window.location.pathname + window.location.search + window.location.hash);
+      }
+    </script>
+
+    <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());

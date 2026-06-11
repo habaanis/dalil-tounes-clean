@@ -1,6 +1,9 @@
 # Netlify redirects file
 # Supporte le SPA routing pour React Router
 
+# Redirection www vers non-www
+https://www.dalil-tounes.com/* https://dalil-tounes.com/:splat 301!
+
 # Anciennes routes hash vers nouvelles routes propres
 /#/citizens/health /citizens/health 301!
 /#/citizens/sante /citizens/health 301!
