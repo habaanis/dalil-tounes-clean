@@ -12,6 +12,7 @@ import { generateOrganizationSchema, generateWebSiteSchema } from '../lib/struct
 import { supabase } from '../lib/BoltDatabase';
 import { notifyAdmin } from '../lib/notifyAdmin';
 import React, { lazy, Suspense, useEffect, useState } from 'react';
+import InstallAppBanner from '../components/InstallAppBanner';
 
 // Tous les composants lourds (liste Premium, Avis, Témoignages, SearchBar)
 // sont chargés paresseusement afin de ne pas bloquer le rendu du Hero / LCP.
@@ -380,6 +381,13 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
     Demande d’information / inscription
   </button>
 </div>
+        </div>
+      </section>
+
+      {/* 6.5 Bannière installation PWA — visible uniquement sur mobile */}
+      <section className="py-3 px-4 md:hidden">
+        <div className="max-w-5xl mx-auto">
+          <InstallAppBanner />
         </div>
       </section>
 
