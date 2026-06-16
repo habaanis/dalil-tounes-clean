@@ -482,19 +482,26 @@ export const Layout = ({ children }: LayoutProps) => {
                 <Download className="w-4 h-4 md:w-5 md:h-5 text-gray-900 flex-shrink-0" />
                 <div className="min-w-0">
                   <p className="text-sm md:text-base font-bold text-gray-900 truncate md:whitespace-normal">
-                    Dalil Tounes sur mobile + inscriptions gratuites !
+                    <button
+                      type="button"
+                      onClick={handleInstallApp}
+                      className="underline decoration-2 decoration-gray-900/40 underline-offset-2 hover:decoration-gray-900 transition-colors cursor-pointer bg-transparent border-none p-0 m-0 font-bold text-gray-900 text-sm md:text-base"
+                    >
+                      Dalil Tounes
+                    </button>
+                    {' '}sur mobile + inscriptions gratuites !
                   </p>
                   <p className="hidden md:block text-xs text-gray-800">
-                    Installez l'application et gerez votre etablissement partout.
+                    Cliquez sur "Dalil Tounes" pour installer l'application sur votre mobile.
                   </p>
                 </div>
               </div>
               <button
-                onClick={handleInstallApp}
+                onClick={() => navigate('/concept')}
                 className="flex-shrink-0 px-3 py-1.5 md:px-6 md:py-2.5 bg-gray-900 text-white text-sm md:text-base font-bold rounded-lg md:hover:bg-gray-800 md:hover:scale-105 md:transition-all md:duration-200 md:shadow-md whitespace-nowrap"
-                aria-label="Installer l'application"
+                aria-label="Decouvrir notre concept"
               >
-                {pwaInstalled ? 'Ouvrir' : 'Installer'}
+                Decouvrir
               </button>
             </div>
           </div>

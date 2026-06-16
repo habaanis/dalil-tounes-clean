@@ -247,7 +247,7 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
       <section className="py-2 px-4 md:py-2.5">
         <div className="max-w-6xl mx-auto flex justify-center">
           <button
-            onClick={() => handleNavigate('subscription')}
+            onClick={() => navigate('/concept')}
             className="inline-flex items-center gap-2 px-4 py-1.5 md:px-6 md:py-2.5 bg-[#4A1D43] rounded-xl border border-[#D4AF37] cursor-pointer"
           >
             <span className="text-sm md:text-base font-semibold text-[#D4AF37]" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
