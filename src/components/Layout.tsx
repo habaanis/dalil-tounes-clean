@@ -499,9 +499,9 @@ export const Layout = ({ children }: LayoutProps) => {
               <button
                 onClick={() => navigate('/concept')}
                 className="flex-shrink-0 px-3 py-1.5 md:px-6 md:py-2.5 bg-gray-900 text-white text-sm md:text-base font-bold rounded-lg md:hover:bg-gray-800 md:hover:scale-105 md:transition-all md:duration-200 md:shadow-md whitespace-nowrap"
-                aria-label="Decouvrir notre concept"
+                aria-label="Venez nous connaître"
               >
-                Decouvrir
+                {language === 'ar' ? 'ايجاو تعرفوا علينا' : 'Venez nous connaître'}
               </button>
             </div>
           </div>
