@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTranslation } from '../lib/i18n';
 
 const ADMIN_EMAILS = ['contact@dalil-tounes.com', 'zenanis75@hotmail.com'];
-import { Menu, X, ChevronDown, ChevronRight } from 'lucide-react';
+import { Menu, X, ChevronDown, ChevronRight, Download, Share } from 'lucide-react';
 import LanguageSelector from './LanguageSelector';
 
 // Tout ce qui est hors viewport initial est chargé paresseusement : ces
@@ -36,6 +36,42 @@ export const Layout = ({ children }: LayoutProps) => {
   const isRTL = language === 'ar';
   const { user } = useAuth();
   const isAdmin = !!user?.email && ADMIN_EMAILS.includes(user.email.toLowerCase());
+
+  // PWA install banner state
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [showIOSGuide, setShowIOSGuide] = useState(false);
+  const [pwaInstalled, setPwaInstalled] = useState(false);
+
+  const pwaDetectPlatform = (): 'android' | 'ios' | 'other' => {
+    const ua = navigator.userAgent || '';
+    if (/android/i.test(ua)) return 'android';
+    if (/iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) return 'ios';
+    return 'other';
+  };
+
+  useEffect(() => {
+    if (window.matchMedia('(display-mode: standalone)').matches || (navigator as any).standalone) {
+      setPwaInstalled(true);
+      return;
+    }
+    const handler = (e: Event) => { e.preventDefault(); setDeferredPrompt(e); };
+    window.addEventListener('beforeinstallprompt', handler);
+    window.addEventListener('appinstalled', () => setPwaInstalled(true));
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
+  const handleInstallApp = async () => {
+    const platform = pwaDetectPlatform();
+    if (platform === 'ios') { setShowIOSGuide(true); return; }
+    if (deferredPrompt) {
+      await deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') setPwaInstalled(true);
+      setDeferredPrompt(null);
+    } else {
+      handleNavigateToSubscription();
+    }
+  };
 
   const showAdminLink = isAdmin || import.meta.env.DEV || import.meta.env.VITE_SHOW_ADMIN_LINK === 'true';
 
@@ -439,24 +475,66 @@ export const Layout = ({ children }: LayoutProps) => {
       </Suspense>
 
       {location.pathname === '/' && (
-        <div className="bg-yellow-400 border-b border-yellow-500 mt-16">
-          <div className="max-w-7xl mx-auto px-4 py-2 md:py-3">
+        <div className="bg-gradient-to-r from-[#4A1D43] to-[#6B2D63] border-b border-[#D4AF37]/40 mt-16">
+          <div className="max-w-7xl mx-auto px-4 py-2.5 md:py-3">
             <div className="flex items-center justify-between gap-3 md:gap-4">
-              <div className="text-center flex-1 min-w-0">
-                <p className="text-sm md:text-base font-bold text-gray-900 truncate md:whitespace-normal">
-                  {t.home?.banner?.title || 'Offre de lancement exceptionnelle !'}
-                </p>
-                <p className="hidden md:block text-xs md:text-sm text-gray-800">
-                  {t.home?.banner?.subtitle || '2 mois gratuits pour toute inscription'}
-                </p>
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                <Download className="w-4 h-4 md:w-5 md:h-5 text-[#D4AF37] flex-shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-sm md:text-base font-bold text-white truncate md:whitespace-normal">
+                    Dalil Tounes sur mobile + 6 mois gratuits !
+                  </p>
+                  <p className="hidden md:block text-xs text-gray-300">
+                    Installez l'application et gerez votre etablissement partout.
+                  </p>
+                </div>
               </div>
               <button
-                onClick={handleNavigateToSubscription}
-                className="flex-shrink-0 px-3 py-1.5 md:px-6 md:py-2.5 bg-gray-900 text-white text-sm md:text-base font-semibold rounded-lg md:hover:bg-gray-800 md:hover:scale-105 md:transition-all md:duration-200 md:shadow-md whitespace-nowrap"
-                aria-label="Discover offer"
+                onClick={handleInstallApp}
+                className="flex-shrink-0 px-3 py-1.5 md:px-6 md:py-2.5 bg-[#D4AF37] text-[#4A1D43] text-sm md:text-base font-bold rounded-lg md:hover:bg-[#E5C048] md:hover:scale-105 md:transition-all md:duration-200 md:shadow-md whitespace-nowrap"
+                aria-label="Installer l'application"
               >
-                {t.home?.banner?.button || 'Découvrir'}
+                {pwaInstalled ? 'Ouvrir' : 'Installer'}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showIOSGuide && (
+        <div
+          className="fixed inset-0 bg-black/70 z-[99999] flex items-end sm:items-center justify-center p-4"
+          onClick={(e) => e.target === e.currentTarget && setShowIOSGuide(false)}
+        >
+          <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden">
+            <div className="bg-[#4A1D43] px-5 py-4 flex items-center justify-between">
+              <h3 className="text-base font-semibold text-[#D4AF37]">
+                Installer sur iPhone / iPad
+              </h3>
+              <button onClick={() => setShowIOSGuide(false)} className="p-1 text-gray-300 hover:text-white transition" aria-label="Fermer">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-5 space-y-4">
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#4A1D43] text-[#D4AF37] flex items-center justify-center text-sm font-bold">1</div>
+                <div>
+                  <p className="text-sm font-medium text-gray-900">Appuyez sur le bouton Partager</p>
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <Share className="w-4 h-4 text-[#007AFF]" />
+                    <span className="text-xs text-gray-500">en bas de Safari</span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#4A1D43] text-[#D4AF37] flex items-center justify-center text-sm font-bold">2</div>
+                <p className="text-sm font-medium text-gray-900">Choisissez "Sur l'ecran d'accueil"</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#4A1D43] text-[#D4AF37] flex items-center justify-center text-sm font-bold">3</div>
+                <p className="text-sm font-medium text-gray-900">Confirmez en appuyant sur "Ajouter"</p>
+              </div>
+              <p className="text-xs text-gray-400 text-center pt-2 border-t border-gray-100">Fonctionne uniquement avec Safari</p>
             </div>
           </div>
         </div>
