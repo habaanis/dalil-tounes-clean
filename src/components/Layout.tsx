@@ -475,23 +475,23 @@ export const Layout = ({ children }: LayoutProps) => {
       </Suspense>
 
       {location.pathname === '/' && (
-        <div className="bg-gradient-to-r from-[#4A1D43] to-[#6B2D63] border-b border-[#D4AF37]/40 mt-16">
+        <div className="bg-yellow-400 border-b border-yellow-500 mt-16">
           <div className="max-w-7xl mx-auto px-4 py-2.5 md:py-3">
             <div className="flex items-center justify-between gap-3 md:gap-4">
               <div className="flex items-center gap-2 flex-1 min-w-0">
-                <Download className="w-4 h-4 md:w-5 md:h-5 text-[#D4AF37] flex-shrink-0" />
+                <Download className="w-4 h-4 md:w-5 md:h-5 text-gray-900 flex-shrink-0" />
                 <div className="min-w-0">
-                  <p className="text-sm md:text-base font-bold text-white truncate md:whitespace-normal">
-                    Dalil Tounes sur mobile + 6 mois gratuits !
+                  <p className="text-sm md:text-base font-bold text-gray-900 truncate md:whitespace-normal">
+                    Dalil Tounes sur mobile + inscriptions gratuites !
                   </p>
-                  <p className="hidden md:block text-xs text-gray-300">
+                  <p className="hidden md:block text-xs text-gray-800">
                     Installez l'application et gerez votre etablissement partout.
                   </p>
                 </div>
               </div>
               <button
                 onClick={handleInstallApp}
-                className="flex-shrink-0 px-3 py-1.5 md:px-6 md:py-2.5 bg-[#D4AF37] text-[#4A1D43] text-sm md:text-base font-bold rounded-lg md:hover:bg-[#E5C048] md:hover:scale-105 md:transition-all md:duration-200 md:shadow-md whitespace-nowrap"
+                className="flex-shrink-0 px-3 py-1.5 md:px-6 md:py-2.5 bg-gray-900 text-white text-sm md:text-base font-bold rounded-lg md:hover:bg-gray-800 md:hover:scale-105 md:transition-all md:duration-200 md:shadow-md whitespace-nowrap"
                 aria-label="Installer l'application"
               >
                 {pwaInstalled ? 'Ouvrir' : 'Installer'}
