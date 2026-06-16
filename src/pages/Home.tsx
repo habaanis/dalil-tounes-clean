@@ -241,25 +241,6 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
         </div>
       </section>
 
-      {/* 1.5 Bouton Concept Premium — compact sur mobile pour ne pas
-           repousser le drapeau hors du viewport initial. Aucune animation
-           d'apparition ni transform : elles retardent le LCP. */}
-      <section className="py-2 px-4 md:py-2.5">
-        <div className="max-w-6xl mx-auto flex justify-center">
-          <button
-            onClick={() => navigate('/concept')}
-            className="inline-flex items-center gap-2 px-4 py-1.5 md:px-6 md:py-2.5 bg-[#4A1D43] rounded-xl border border-[#D4AF37] cursor-pointer"
-          >
-            <span className="text-sm md:text-base font-semibold text-[#D4AF37]" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-              {t.concept.ctaButton}
-            </span>
-            <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#D4AF37]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        </div>
-      </section>
-
       {/* 2. Pourquoi choisir Dalil-Tounes */}
       <section id="section-pourquoi" className="py-3 px-4 bg-white scroll-mt-24">
         <div className="max-w-6xl mx-auto">
