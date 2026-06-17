@@ -372,35 +372,6 @@ export default function MeilleursSection({
         )}
       </section>
 
-      {/* === Article de blog === */}
-      {blogArticle && (
-        <section className="max-w-5xl mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            onClick={() => navigate(`/blog/${blogArticle.slug}`)}
-            className="group cursor-pointer bg-gradient-to-r from-[#4A1D43]/5 via-white to-[#D4AF37]/8 border border-[#D4AF37]/40 rounded-2xl p-5 hover:border-[#D4AF37] hover:shadow-lg transition-all"
-          >
-            <div className="flex items-start gap-4">
-              <div className="shrink-0 w-10 h-10 rounded-xl bg-[#D4AF37]/20 flex items-center justify-center">
-                <BookOpen className="w-5 h-5 text-[#D4AF37]" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-semibold text-[#D4AF37] uppercase tracking-widest mb-1">{tx('guideLabel', 'Guide')}</p>
-                <h3
-                  className="font-semibold text-base mb-1.5 group-hover:text-[#D4AF37] transition-colors"
-                  style={{ color: accentColor, fontFamily: "'Playfair Display', serif" }}
-                >
-                  {blogArticle.title}
-                </h3>
-                <p className="text-sm text-gray-500 line-clamp-2 leading-relaxed">{blogArticle.excerpt}</p>
-              </div>
-              <ArrowRight className="shrink-0 w-5 h-5 text-[#D4AF37] mt-1 group-hover:translate-x-1 transition-transform" />
-            </div>
-          </motion.div>
-        </section>
-      )}
-
       {/* === Section 2 : Tous les établissements === */}
       {(loadingAll || allItems.length > 0) && (
         <section className="max-w-7xl mx-auto px-4">
@@ -480,6 +451,35 @@ export default function MeilleursSection({
               )}
             </>
           )}
+        </section>
+      )}
+
+      {/* === Article de blog (après toutes les cartes) === */}
+      {blogArticle && (
+        <section className="max-w-5xl mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            onClick={() => navigate(`/blog/${blogArticle.slug}`)}
+            className="group cursor-pointer bg-gradient-to-r from-[#4A1D43]/5 via-white to-[#D4AF37]/8 border border-[#D4AF37]/40 rounded-2xl p-5 hover:border-[#D4AF37] hover:shadow-lg transition-all"
+          >
+            <div className="flex items-start gap-4">
+              <div className="shrink-0 w-10 h-10 rounded-xl bg-[#D4AF37]/20 flex items-center justify-center">
+                <BookOpen className="w-5 h-5 text-[#D4AF37]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-semibold text-[#D4AF37] uppercase tracking-widest mb-1">{tx('guideLabel', 'Guide')}</p>
+                <h3
+                  className="font-semibold text-base mb-1.5 group-hover:text-[#D4AF37] transition-colors"
+                  style={{ color: accentColor, fontFamily: "'Playfair Display', serif" }}
+                >
+                  {blogArticle.title}
+                </h3>
+                <p className="text-sm text-gray-500 line-clamp-2 leading-relaxed">{blogArticle.excerpt}</p>
+              </div>
+              <ArrowRight className="shrink-0 w-5 h-5 text-[#D4AF37] mt-1 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </motion.div>
         </section>
       )}
 
