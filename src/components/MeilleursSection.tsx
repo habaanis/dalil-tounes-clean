@@ -23,6 +23,8 @@ interface MeilleursItem {
   qr_code_url?: string | null;
   'Note Google Globale'?: number | string | null;
   'Compteur Avis Google'?: number | string | null;
+  is_premium?: boolean;
+  statut_abonnement?: string | null;
 }
 
 interface BlogArticleLink {
@@ -288,6 +290,9 @@ export default function MeilleursSection({
         });
 
         qualified.sort((a, b) => {
+          const aPremium = a.is_premium || (a.statut_abonnement && a.statut_abonnement !== 'gratuit') ? 1 : 0;
+          const bPremium = b.is_premium || (b.statut_abonnement && b.statut_abonnement !== 'gratuit') ? 1 : 0;
+          if (bPremium !== aPremium) return bPremium - aPremium;
           const ratingDiff = parseRating(b['Note Google Globale']) - parseRating(a['Note Google Globale']);
           if (ratingDiff !== 0) return ratingDiff;
           return parseCount(b['Compteur Avis Google']) - parseCount(a['Compteur Avis Google']);
@@ -296,6 +301,15 @@ export default function MeilleursSection({
         const top = qualified.slice(0, TOP_COUNT);
         const topIds = new Set(top.map((t) => t.id));
         const rest = all.filter((item) => !topIds.has(item.id));
+
+        rest.sort((a, b) => {
+          const aPremium = a.is_premium || (a.statut_abonnement && a.statut_abonnement !== 'gratuit') ? 1 : 0;
+          const bPremium = b.is_premium || (b.statut_abonnement && b.statut_abonnement !== 'gratuit') ? 1 : 0;
+          if (bPremium !== aPremium) return bPremium - aPremium;
+          const ratingDiff = parseRating(b['Note Google Globale']) - parseRating(a['Note Google Globale']);
+          if (ratingDiff !== 0) return ratingDiff;
+          return parseCount(b['Compteur Avis Google']) - parseCount(a['Compteur Avis Google']);
+        });
 
         setTopItems(top);
         setAllItems(rest);
