@@ -1,6 +1,5 @@
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
-import { useRef } from 'react';
 
 interface PageHeaderProps {
   backTo?: string;
@@ -11,8 +10,6 @@ interface PageHeaderProps {
 export const PageHeader = ({ backTo, backLabel = 'Retour', hideBack = false }: PageHeaderProps) => {
   const navigate = useNavigate();
   const location = useLocation();
-  // Track whether we navigated within the app to avoid empty-history back()
-  const canGoBack = useRef(window.history.state?.idx > 0);
 
   const isHome = location.pathname === '/';
   if (isHome) return null;
@@ -20,10 +17,9 @@ export const PageHeader = ({ backTo, backLabel = 'Retour', hideBack = false }: P
   const handleBack = () => {
     if (backTo) {
       navigate(backTo);
-    } else if (canGoBack.current) {
-      navigate(-1);
     } else {
-      navigate('/');
+      const parentPath = location.pathname.split('/').slice(0, -1).join('/') || '/';
+      navigate(parentPath);
     }
   };
 

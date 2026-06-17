@@ -1,4 +1,5 @@
 import { ArrowLeft, Home } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 interface BackButtonProps {
   onNavigate?: (page: string) => void;
@@ -8,21 +9,28 @@ interface BackButtonProps {
 }
 
 export default function BackButton({ onNavigate, onNavigateBack, label, showHomeButton = true }: BackButtonProps) {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const handleBackClick = () => {
+    if (onNavigateBack) {
+      onNavigateBack();
+      return;
+    }
     if (onNavigate) {
       onNavigate('citizens');
-    } else if (onNavigateBack) {
-      onNavigateBack();
-    } else {
-      window.location.hash = '#/citizens';
+      return;
     }
+    const pathname = location.pathname;
+    const parentPath = pathname.split('/').slice(0, -1).join('/') || '/';
+    navigate(parentPath);
   };
 
   const handleHomeClick = () => {
     if (onNavigate) {
       onNavigate('home');
     } else {
-      window.location.hash = '#/';
+      navigate('/');
     }
   };
 

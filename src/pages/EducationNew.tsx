@@ -689,7 +689,7 @@ export default function EducationNew() {
         }}
       >
         <button
-          onClick={() => window.history.length > 1 ? navigate(-1) : navigate('/citoyens')}
+          onClick={() => navigate('/citizens')}
           className="absolute top-4 left-4 z-10 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm text-[#4A1D43] px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-white transition-colors shadow-sm"
         >
           <ArrowLeft className="w-4 h-4" />
