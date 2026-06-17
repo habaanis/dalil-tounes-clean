@@ -391,7 +391,10 @@ export const BusinessDetail = ({
 
   useViewTracking(actualBusinessId);
 
-  const handleCloseRef = onClose || onNavigateBack || (() => navigate(-1));
+  const handleCloseRef = onClose || onNavigateBack || (() => {
+    const parentPath = routerLocation.pathname.split('/').slice(0, -1).join('/') || '/';
+    navigate(parentPath);
+  });
 
   const translatedCategory = business
     ? getCategory(getMultilingualField(business, 'categorie', language, true) || business.categorie || '')
@@ -805,7 +808,10 @@ export const BusinessDetail = ({
   }
 
   if (error || !business) {
-    const handleBack = onClose || onNavigateBack || (() => navigate(-1));
+    const handleBack = onClose || onNavigateBack || (() => {
+      const parentPath = routerLocation.pathname.split('/').slice(0, -1).join('/') || '/';
+      navigate(parentPath);
+    });
 
     return (
       <div className="flex flex-col items-center justify-center min-h-screen px-4">
@@ -847,7 +853,10 @@ export const BusinessDetail = ({
 
   const tierLabel = getTierLabel(tier, language);
   const mediaLimits = getMediaLimits(tier);
-  const handleClose = onClose || onNavigateBack || (() => navigate(-1));
+  const handleClose = onClose || onNavigateBack || (() => {
+    const parentPath = routerLocation.pathname.split('/').slice(0, -1).join('/') || '/';
+    navigate(parentPath);
+  });
 
   const getTierColors = () => {
     switch (tier) {
