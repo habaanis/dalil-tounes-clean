@@ -260,6 +260,18 @@ export default function MeilleursSection({
       const n = typeof raw === 'number' ? raw : parseInt(String(raw).replace(/[^\d]/g, ''), 10);
       return isNaN(n) ? 0 : n;
     }
+    function itemIsPremium(item: MeilleursItem): boolean {
+      if (item.is_premium === true) return true;
+      const s = item.statut_abonnement;
+      return s === 'premium' || s === 'pro' || s === 'elite' || s === 'artisan' || s === 'paid';
+    }
+    function sortBusinesses(a: MeilleursItem, b: MeilleursItem): number {
+      const premiumDiff = Number(itemIsPremium(b)) - Number(itemIsPremium(a));
+      if (premiumDiff !== 0) return premiumDiff;
+      const ratingDiff = parseRating(b['Note Google Globale']) - parseRating(a['Note Google Globale']);
+      if (ratingDiff !== 0) return ratingDiff;
+      return parseCount(b['Compteur Avis Google']) - parseCount(a['Compteur Avis Google']);
+    }
 
     async function fetchData() {
       setLoadingTop(true);
@@ -283,33 +295,10 @@ export default function MeilleursSection({
           sous_categories: item.sous_categories_texte || item.sous_categories || null,
         }));
 
-        const qualified = all.filter((item) => {
-          const rating = parseRating(item['Note Google Globale']);
-          const count = parseCount(item['Compteur Avis Google']);
-          return rating >= 4.0 && count >= 5;
-        });
+        all.sort(sortBusinesses);
 
-        qualified.sort((a, b) => {
-          const aPremium = a.is_premium || (a.statut_abonnement && a.statut_abonnement !== 'gratuit') ? 1 : 0;
-          const bPremium = b.is_premium || (b.statut_abonnement && b.statut_abonnement !== 'gratuit') ? 1 : 0;
-          if (bPremium !== aPremium) return bPremium - aPremium;
-          const ratingDiff = parseRating(b['Note Google Globale']) - parseRating(a['Note Google Globale']);
-          if (ratingDiff !== 0) return ratingDiff;
-          return parseCount(b['Compteur Avis Google']) - parseCount(a['Compteur Avis Google']);
-        });
-
-        const top = qualified.slice(0, TOP_COUNT);
-        const topIds = new Set(top.map((t) => t.id));
-        const rest = all.filter((item) => !topIds.has(item.id));
-
-        rest.sort((a, b) => {
-          const aPremium = a.is_premium || (a.statut_abonnement && a.statut_abonnement !== 'gratuit') ? 1 : 0;
-          const bPremium = b.is_premium || (b.statut_abonnement && b.statut_abonnement !== 'gratuit') ? 1 : 0;
-          if (bPremium !== aPremium) return bPremium - aPremium;
-          const ratingDiff = parseRating(b['Note Google Globale']) - parseRating(a['Note Google Globale']);
-          if (ratingDiff !== 0) return ratingDiff;
-          return parseCount(b['Compteur Avis Google']) - parseCount(a['Compteur Avis Google']);
-        });
+        const top = all.slice(0, TOP_COUNT);
+        const rest = all.slice(TOP_COUNT);
 
         setTopItems(top);
         setAllItems(rest);
