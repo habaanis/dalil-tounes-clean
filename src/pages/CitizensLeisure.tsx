@@ -559,7 +559,12 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
       const { data, error } = await query.order('nom', { ascending: true });
 
       if (!error && data) {
-        setLieux(data);
+        const sorted = [...data].sort((a: any, b: any) => {
+          const aP = a.is_premium === true || (a.statut_abonnement && !a.statut_abonnement.toLowerCase().includes('gratuit'));
+          const bP = b.is_premium === true || (b.statut_abonnement && !b.statut_abonnement.toLowerCase().includes('gratuit'));
+          return Number(bP) - Number(aP);
+        });
+        setLieux(sorted);
       }
     } catch (error) {
       console.error('Erreur chargement lieux:', error);

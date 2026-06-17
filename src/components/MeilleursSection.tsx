@@ -263,7 +263,9 @@ export default function MeilleursSection({
     function itemIsPremium(item: MeilleursItem): boolean {
       if (item.is_premium === true) return true;
       const s = item.statut_abonnement;
-      return s === 'premium' || s === 'pro' || s === 'elite' || s === 'artisan' || s === 'paid';
+      if (!s) return false;
+      const n = s.toLowerCase().trim();
+      return n.includes('premium') || n.includes('elite') || n.includes('artisan') || n.includes('pro') || n.includes('paid');
     }
     function sortBusinesses(a: MeilleursItem, b: MeilleursItem): number {
       const premiumDiff = Number(itemIsPremium(b)) - Number(itemIsPremium(a));
