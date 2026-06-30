@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { X, Send, Loader2 } from 'lucide-react';
-import { supabase } from '../lib/supabaseClient';
+import { supabase, supabaseUrl } from '../lib/supabaseClient';
 import { GOUVERNORATS_TUNISIE } from '../lib/tunisiaLocations';
 
 interface BusinessNeedFormProps {
@@ -80,6 +80,12 @@ export default function BusinessNeedForm({ isOpen, onClose }: BusinessNeedFormPr
       visibility: 'private' as const,
     };
 
+    console.log('[BusinessNeedForm] PRE-INSERT DEBUG:', {
+      supabaseUrl,
+      table: 'business_needs',
+      payload,
+    });
+
     const { data: inserted, error: insertError } = await supabase
       .from('business_needs')
       .insert(payload)
@@ -89,8 +95,19 @@ export default function BusinessNeedForm({ isOpen, onClose }: BusinessNeedFormPr
     setLoading(false);
 
     if (insertError) {
-      console.error('BusinessNeedForm insert error:', insertError);
-      setError(insertError.message || "Une erreur est survenue. Veuillez reessayer.");
+      const fullErr = `[${insertError.code}] ${insertError.message}` +
+        (insertError.details ? ` | details: ${insertError.details}` : '') +
+        (insertError.hint ? ` | hint: ${insertError.hint}` : '');
+      console.error('BusinessNeedForm FULL ERROR:', {
+        code: insertError.code,
+        message: insertError.message,
+        details: insertError.details,
+        hint: insertError.hint,
+        supabaseUrl,
+        table: 'business_needs',
+        payload,
+      });
+      setError(fullErr);
       return;
     }
 
