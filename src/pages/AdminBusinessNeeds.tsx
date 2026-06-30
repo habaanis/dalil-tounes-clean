@@ -95,6 +95,7 @@ export default function AdminBusinessNeeds() {
     }
 
     const rows = (data as BusinessNeed[]) || [];
+    console.log('[AdminBusinessNeeds] rows received:', rows.length, rows);
     setNeeds(rows);
 
     const c: Record<string, number> = { all: rows.length };
