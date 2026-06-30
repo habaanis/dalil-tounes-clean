@@ -872,15 +872,16 @@ export const Businesses = ({
           </div>
 
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 sm:px-6">
-            {/* Titre Principal */}
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold text-[#D4AF37] mb-3" style={{ textShadow: '2px 2px 8px rgba(0,0,0,0.9)' }}>
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold text-[#D4AF37] mb-4" style={{ textShadow: '2px 2px 8px rgba(0,0,0,0.9)' }}>
               Centre d'affaires de Dalil Tounes
             </h1>
 
-            {/* Texte descriptif */}
-            <div className="max-w-3xl mx-auto">
-              <p className="text-white/90 text-sm md:text-base leading-relaxed font-light" style={{ textShadow: '1px 1px 4px rgba(0,0,0,0.7)' }}>
-                Développez votre activité grâce à la plateforme professionnelle dédiée aux entreprises tunisiennes. Trouvez des fournisseurs, partenaires, prestataires et découvrez les opportunités professionnelles partout en Tunisie.
+            <div className="max-w-3xl mx-auto space-y-2">
+              <p className="text-white text-sm md:text-base leading-relaxed" style={{ textShadow: '1px 1px 4px rgba(0,0,0,0.7)' }}>
+                Développez votre activité grâce à la plateforme professionnelle dédiée aux entreprises tunisiennes.
+              </p>
+              <p className="text-white text-sm md:text-base leading-relaxed" style={{ textShadow: '1px 1px 4px rgba(0,0,0,0.7)' }}>
+                Trouvez des fournisseurs, partenaires, prestataires et découvrez les opportunités professionnelles partout en Tunisie.
               </p>
             </div>
           </div>
