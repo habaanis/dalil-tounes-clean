@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Check, X, Clock, Eye, RefreshCw, AlertTriangle, FileText } from 'lucide-react';
-import { supabase } from '../lib/supabaseClient';
+import { supabase, supabaseUrl } from '../lib/supabaseClient';
 
 interface BusinessNeed {
   id: string;
@@ -65,7 +65,7 @@ const FILTER_TABS: { value: FilterStatus; label: string }[] = [
 export default function AdminBusinessNeeds() {
   const [needs, setNeeds] = useState<BusinessNeed[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<FilterStatus>('pending_review');
+  const [filter, setFilter] = useState<FilterStatus>('all');
   const [counts, setCounts] = useState<Record<string, number>>({});
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
@@ -95,7 +95,7 @@ export default function AdminBusinessNeeds() {
     }
 
     const rows = (data as BusinessNeed[]) || [];
-    console.log('[AdminBusinessNeeds] rows received:', rows.length, rows);
+    console.log('[AdminBusinessNeeds] rows received:', rows.length, 'from:', supabaseUrl);
     setNeeds(rows);
 
     const c: Record<string, number> = { all: rows.length };
@@ -211,7 +211,12 @@ export default function AdminBusinessNeeds() {
         ) : filtered.length === 0 ? (
           <div className="text-center py-16 bg-white rounded-xl border border-gray-100">
             <Clock className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-            <p className="text-gray-600">Aucun besoin dans cette categorie.</p>
+            <p className="text-gray-600">
+              {needs.length === 0
+                ? 'Aucun besoin enregistre. Soumettez un formulaire pour commencer.'
+                : 'Aucun besoin dans cette categorie.'}
+            </p>
+            <p className="text-xs text-gray-400 mt-2">Base: {supabaseUrl}</p>
           </div>
         ) : (
           /* Table */
