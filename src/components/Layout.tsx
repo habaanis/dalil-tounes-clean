@@ -323,6 +323,13 @@ export const Layout = ({ children }: LayoutProps) => {
                         >
                           Abonnements Premium
                         </Link>
+                        <Link
+                          to="/admin/business-needs"
+                          onClick={() => setOpenMenu(null)}
+                          className="block w-full text-left text-sm px-4 py-2.5 hover:bg-orange-50 transition-colors text-gray-700 hover:text-orange-600"
+                        >
+                          Besoins professionnels
+                        </Link>
                       </div>
                     </div>
                   )}
@@ -455,6 +462,16 @@ export const Layout = ({ children }: LayoutProps) => {
                           className="block w-full text-left px-4 py-2 text-sm rounded-lg text-gray-600 hover:bg-orange-50 hover:text-orange-600 transition-colors"
                         >
                           Abonnements Premium
+                        </Link>
+                        <Link
+                          to="/admin/business-needs"
+                          onClick={() => {
+                            setShowMobileMenu(false);
+                            setMobileExpandedMenu(null);
+                          }}
+                          className="block w-full text-left px-4 py-2 text-sm rounded-lg text-gray-600 hover:bg-orange-50 hover:text-orange-600 transition-colors"
+                        >
+                          Besoins professionnels
                         </Link>
                       </div>
                     )}
