@@ -50,6 +50,7 @@ const AdminAvis = lazy(() => import('./pages/AdminAvis'));
 const SuperModeration = lazy(() => import('./pages/SuperModeration'));
 const AdminPremium = lazy(() => import('./pages/AdminPremium'));
 const AdminCommercial = lazy(() => import('./pages/AdminCommercial'));
+const AdminDownloads = lazy(() => import('./pages/AdminDownloads'));
 const Auth = lazy(() => import('./pages/Auth'));
 const CandidateDashboard = lazy(() => import('./pages/CandidateDashboard'));
 const CompanyDashboard = lazy(() => import('./pages/CompanyDashboard'));
@@ -212,6 +213,7 @@ function AppRouter() {
               <Route path="/admin/abonnements" element={<AdminPremium />} />
               <Route path="/admin/commercial" element={<AdminCommercial />} />
               <Route path="/commercial" element={<AdminCommercial />} />
+              <Route path="/admin/downloads" element={<AdminDownloads />} />
 
               {/* Debug */}
               <Route path="/card-preview" element={<CardPreview />} />

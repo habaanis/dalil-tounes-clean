@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Download, X, Share } from 'lucide-react';
 import { isAppInstalled } from '../lib/registerServiceWorker';
+import { supabase } from '../lib/supabaseClient';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
@@ -19,6 +20,17 @@ function detectPlatform(): Platform {
 
 function isInStandaloneMode(): boolean {
   return isAppInstalled();
+}
+
+function trackDownloadEvent(actionType: string, deviceType: string) {
+  supabase.from('app_download_events').insert({
+    action_type: actionType,
+    device_type: deviceType,
+    page_source: window.location.pathname,
+    user_agent: navigator.userAgent.slice(0, 500),
+  }).then(({ error }) => {
+    if (error) console.warn('[InstallTrack] Error:', error.message);
+  });
 }
 
 export default function InstallAppBanner() {
@@ -51,14 +63,20 @@ export default function InstallAppBanner() {
 
   const handleInstallClick = useCallback(async () => {
     if (platform === 'ios') {
+      trackDownloadEvent('pwa_ios_guide_shown', platform);
       setShowIOSGuide(true);
       return;
     }
 
+    trackDownloadEvent('pwa_install_click', platform);
+
     if (deferredPrompt) {
       await deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') setInstalled(true);
+      if (outcome === 'accepted') {
+        trackDownloadEvent('pwa_install_accepted', platform);
+        setInstalled(true);
+      }
       setDeferredPrompt(null);
       return;
     }
