@@ -88,7 +88,8 @@ export default function BusinessNeedForm({ isOpen, onClose }: BusinessNeedFormPr
     setLoading(false);
 
     if (insertError) {
-      setError("Une erreur est survenue. Veuillez reessayer.");
+      console.error('BusinessNeedForm insert error:', insertError);
+      setError(insertError.message || "Une erreur est survenue. Veuillez reessayer.");
       return;
     }
 
@@ -108,7 +109,7 @@ export default function BusinessNeedForm({ isOpen, onClose }: BusinessNeedFormPr
   };
 
   return (
-    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4" onClick={handleClose}>
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4" onClick={success ? undefined : handleClose}>
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
       <div
         className="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative z-[100000]"
@@ -128,17 +129,22 @@ export default function BusinessNeedForm({ isOpen, onClose }: BusinessNeedFormPr
 
         <div className="p-6">
           {success ? (
-            <div className="text-center py-8">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-50 flex items-center justify-center">
-                <Send className="w-7 h-7 text-green-600" />
+            <div className="text-center py-10">
+              <div className="w-20 h-20 mx-auto mb-5 rounded-full bg-green-50 border-2 border-green-200 flex items-center justify-center">
+                <Send className="w-8 h-8 text-green-600" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Besoin envoye avec succes</h3>
-              <p className="text-sm text-gray-600 max-w-md mx-auto">
-                Votre besoin professionnel a bien ete envoye. Il sera verifie avant publication.
+              <h3 className="text-xl font-bold text-[#4A1D43] mb-3">Besoin envoye avec succes !</h3>
+              <p className="text-sm text-gray-700 max-w-md mx-auto leading-relaxed">
+                Votre besoin professionnel a bien ete envoye.<br />
+                Il sera verifie avant publication.
+              </p>
+              <p className="text-xs text-gray-500 mt-3">
+                Vous serez contacte si votre besoin est valide.
               </p>
               <button
                 onClick={handleClose}
-                className="mt-6 px-6 py-2 bg-[#4A1D43] text-white rounded-lg hover:bg-[#5A2D53] transition-colors text-sm font-medium"
+                className="mt-8 px-8 py-3 bg-[#4A1D43] text-white rounded-lg hover:bg-[#5A2D53] transition-colors text-sm font-semibold shadow-sm"
+                style={{ border: '1px solid #D4AF37' }}
               >
                 Fermer
               </button>
