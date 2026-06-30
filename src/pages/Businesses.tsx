@@ -16,6 +16,7 @@ import { Toast } from '../components/Toast';
 import { getSupabaseImageUrl } from '../lib/imageUtils';
 import { HERO_IMAGE_URL, HERO_IMAGE_JPG_URL } from '../constants/images';
 import SignatureCard from '../components/SignatureCard';
+import BusinessNeedForm from '../components/BusinessNeedForm';
 import { normalizeText, removeArabicDiacritics, extractFrenchName, cleanSearchTerm, cleanArabicField } from '../lib/textNormalization';
 import { BusinessCard } from '../components/BusinessCard';
 import SearchBar from '../components/SearchBar';
@@ -94,6 +95,7 @@ export const Businesses = ({
   const [selectedCity, setSelectedCity] = useState(initialSearchCity || '');
   const [pageCategorie, setPageCategorie] = useState<string | null>(null);
   const [showSuggestForm, setShowSuggestForm] = useState(showSuggestionForm);
+  const [showNeedForm, setShowNeedForm] = useState(false);
   const [preselectedBusinessId, setPreselectedBusinessId] = useState<string | null>(null);
   const [searching, setSearching] = useState(false);
   const [pendingSearch, setPendingSearch] = useState(false);
@@ -1072,6 +1074,15 @@ export const Businesses = ({
             {(t as any).businessesExtra?.viewCandidates || 'Voir les candidats disponibles'}
           </button>
 
+          <button
+            type="button"
+            onClick={() => setShowNeedForm(true)}
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-white text-[#4A1D43] text-sm md:text-base font-medium hover:shadow-lg transition-all"
+            style={{ border: '2px solid #D4AF37' }}
+          >
+            Publier un besoin professionnel
+          </button>
+
          
         </div>
 
@@ -1203,6 +1214,8 @@ export const Businesses = ({
             </div>
           </div>
         )}
+
+        <BusinessNeedForm isOpen={showNeedForm} onClose={() => setShowNeedForm(false)} />
 
         {/* Affichage des résultats : avec ou sans recherche active */}
         <div ref={resultsRef} className="mb-12">
