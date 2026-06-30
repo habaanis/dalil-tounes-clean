@@ -939,6 +939,68 @@ export const Businesses = ({
           </div>
         </section>
 
+        {/* Ecosysteme professionnel */}
+        <section className="mb-8 px-4">
+          <div className="text-center mb-5">
+            <h2 className="text-lg md:text-xl font-bold text-[#4A1D43] mb-2">
+              L'ecosysteme professionnel Dalil Tounes
+            </h2>
+            <p className="text-sm text-gray-600 max-w-2xl mx-auto">
+              Le Centre d'affaires evolue continuellement afin de proposer de nouveaux services aux entreprises tunisiennes.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all relative">
+              <span className="absolute top-3 right-3 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-green-50 text-green-700 border border-green-200">Disponible</span>
+              <div className="text-2xl mb-3">🏢</div>
+              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5">Trouver une entreprise</h3>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Recherchez rapidement un fournisseur, un prestataire ou une entreprise.
+              </p>
+            </div>
+            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all relative">
+              <span className="absolute top-3 right-3 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-green-50 text-green-700 border border-green-200">Disponible</span>
+              <div className="text-2xl mb-3">📅</div>
+              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5">Evenements professionnels</h3>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Decouvrez les salons, conferences et evenements business.
+              </p>
+            </div>
+            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all relative">
+              <span className="absolute top-3 right-3 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-green-50 text-green-700 border border-green-200">Disponible</span>
+              <div className="text-2xl mb-3">💼</div>
+              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5">Recrutement</h3>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Consultez les entreprises qui recrutent et les candidats disponibles.
+              </p>
+            </div>
+            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all relative">
+              <span className="absolute top-3 right-3 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">A venir</span>
+              <div className="text-2xl mb-3">📦</div>
+              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5">Achat / Vente de materiel</h3>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Publiez ou consultez des annonces de materiel professionnel.
+              </p>
+            </div>
+            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all relative">
+              <span className="absolute top-3 right-3 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">A venir</span>
+              <div className="text-2xl mb-3">🤝</div>
+              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5">Recherche de fournisseurs</h3>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Publiez un besoin et trouvez rapidement des fournisseurs adaptes.
+              </p>
+            </div>
+            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all relative">
+              <span className="absolute top-3 right-3 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">A venir</span>
+              <div className="text-2xl mb-3">📈</div>
+              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5">Opportunites d'affaires</h3>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Developpez votre reseau grace aux partenariats et opportunites professionnelles.
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* Sections Visuelles - Design Bordeaux & Or */}
         <div className="mb-8 px-4">
           <div className="grid md:grid-cols-2 gap-4">
