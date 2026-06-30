@@ -81,15 +81,22 @@ export default function BusinessNeedForm({ isOpen, onClose }: BusinessNeedFormPr
       submission_lang: 'fr',
     };
 
-    const { error: insertError } = await supabase
+    const { data: inserted, error: insertError } = await supabase
       .from('business_needs')
-      .insert(payload);
+      .insert(payload)
+      .select('id')
+      .single();
 
     setLoading(false);
 
     if (insertError) {
       console.error('BusinessNeedForm insert error:', insertError);
       setError(insertError.message || "Une erreur est survenue. Veuillez reessayer.");
+      return;
+    }
+
+    if (!inserted) {
+      setError("L'envoi semble avoir echoue. Veuillez reessayer.");
       return;
     }
 
