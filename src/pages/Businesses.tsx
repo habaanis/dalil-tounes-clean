@@ -873,14 +873,9 @@ export const Businesses = ({
 
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 sm:px-6">
             {/* Titre Principal */}
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold text-[#D4AF37] mb-2" style={{ textShadow: '2px 2px 8px rgba(0,0,0,0.9)' }}>
-              {t.businesses.hero.title}
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold text-[#D4AF37] mb-3" style={{ textShadow: '2px 2px 8px rgba(0,0,0,0.9)' }}>
+              Centre d'affaires de Dalil Tounes
             </h1>
-
-            {/* Sous-titre */}
-            <p className="text-lg md:text-xl font-medium text-white mb-3" style={{ textShadow: '2px 2px 6px rgba(0,0,0,0.8)' }}>
-              {t.businesses.hero.subtitle}
-            </p>
 
             {/* Texte descriptif */}
             <div className="max-w-3xl mx-auto">
