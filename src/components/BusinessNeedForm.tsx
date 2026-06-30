@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { X, Send, Loader2 } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
-import { notifyAdmin } from '../lib/notifyAdmin';
+// TODO: Re-enable when notify-form CORS is fixed on production
+// import { notifyAdmin } from '../lib/notifyAdmin';
 import { GOUVERNORATS_TUNISIE } from '../lib/tunisiaLocations';
 
 interface BusinessNeedFormProps {
@@ -93,28 +94,29 @@ export default function BusinessNeedForm({ isOpen, onClose }: BusinessNeedFormPr
       return;
     }
 
-    const typeLabel = NEED_TYPES.find(t => t.value === formData.type)?.label || formData.type;
-    notifyAdmin(
-      'Nouveau besoin professionnel a valider',
-      {
-        'Type de besoin': typeLabel,
-        'Titre': payload.title,
-        'Description': payload.description,
-        'Entreprise': payload.company_name,
-        'Contact': payload.contact_name,
-        'Email': payload.contact_email,
-        'Telephone': payload.contact_phone,
-        'Ville': payload.city,
-        'Gouvernorat': payload.governorate,
-        'Budget': payload.budget_min || payload.budget_max
-          ? `${payload.budget_min ?? '—'} - ${payload.budget_max ?? '—'} TND`
-          : 'Non renseigne',
-        'Delai': payload.deadline || 'Non renseigne',
-        'Urgence': payload.urgency,
-        'Statut': 'pending_review — en attente de validation',
-      },
-      '/admin/business-needs'
-    ).catch(err => console.error('Notification email failed (non-blocking):', err));
+    // TODO: Re-enable notify-form once CORS is fixed on production Edge Function
+    // const typeLabel = NEED_TYPES.find(t => t.value === formData.type)?.label || formData.type;
+    // notifyAdmin(
+    //   'Nouveau besoin professionnel a valider',
+    //   {
+    //     'Type de besoin': typeLabel,
+    //     'Titre': payload.title,
+    //     'Description': payload.description,
+    //     'Entreprise': payload.company_name,
+    //     'Contact': payload.contact_name,
+    //     'Email': payload.contact_email,
+    //     'Telephone': payload.contact_phone,
+    //     'Ville': payload.city,
+    //     'Gouvernorat': payload.governorate,
+    //     'Budget': payload.budget_min || payload.budget_max
+    //       ? `${payload.budget_min ?? '—'} - ${payload.budget_max ?? '—'} TND`
+    //       : 'Non renseigne',
+    //     'Delai': payload.deadline || 'Non renseigne',
+    //     'Urgence': payload.urgency,
+    //     'Statut': 'pending_review — en attente de validation',
+    //   },
+    //   '/admin/business-needs'
+    // ).catch(err => console.error('Notification email failed (non-blocking):', err));
 
     setSuccess(true);
   };
