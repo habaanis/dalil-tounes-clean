@@ -1015,9 +1015,7 @@ export const Businesses = ({
 
           <button
             type="button"
-            onClick={() => {
-              if (onNavigate) onNavigate('candidateList');
-            }}
+            onClick={() => navigate('/candidats')}
             className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-[#4A1D43] text-white text-sm md:text-base font-medium hover:bg-[#5A2D53] transition-colors shadow-sm hover:shadow-md"
             style={{ border: '1px solid #D4AF37' }}
           >
