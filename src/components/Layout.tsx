@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from '../lib/i18n';
+import AdminNotifications from './AdminNotifications';
 
 const ADMIN_EMAILS = ['contact@dalil-tounes.com', 'zenanis75@hotmail.com'];
 import { Menu, X, ChevronDown, ChevronRight, Download, Share } from 'lucide-react';
@@ -276,64 +277,7 @@ export const Layout = ({ children }: LayoutProps) => {
               <LanguageSelector />
 
               {showAdminLink && (
-                <div
-                  className="relative nav-dropdown-container"
-                  onMouseEnter={() => setOpenMenu('Admin')}
-                  onMouseLeave={() => setOpenMenu(null)}
-                >
-                  <button
-                    className="flex items-center gap-1 px-3 py-1.5 text-sm rounded-md border border-gray-200 hover:bg-gray-100 text-gray-700 transition-all"
-                  >
-                    {tx.navExtra?.admin || 'Admin'}
-                    <ChevronDown
-                      className={`w-4 h-4 transition-transform ${
-                        openMenu === 'Admin' ? 'rotate-180' : ''
-                      }`}
-                    />
-                  </button>
-
-                  {openMenu === 'Admin' && (
-                    <div className="absolute top-full right-0 pt-2">
-                      <div className="bg-white rounded-lg shadow-xl py-2 min-w-[220px] border border-gray-200">
-                        <Link
-                          to="/admin/sourcing"
-                          onClick={() => setOpenMenu(null)}
-                          className="block w-full text-left text-sm px-4 py-2.5 hover:bg-orange-50 transition-colors text-gray-700 hover:text-orange-600"
-                        >
-                          {tx.navExtra?.adminSourcing || 'Sourcing Rapide'}
-                        </Link>
-                        <Link
-                          to="/around-me"
-                          onClick={() => setOpenMenu(null)}
-                          className="block w-full text-left text-sm px-4 py-2.5 hover:bg-orange-50 transition-colors text-gray-700 hover:text-orange-600"
-                        >
-                          {tx.navExtra?.adminAroundMe || 'Autour de moi'}
-                        </Link>
-                        <Link
-                          to="/admin/commercial"
-                          onClick={() => setOpenMenu(null)}
-                          className="block w-full text-left text-sm px-4 py-2.5 hover:bg-orange-50 transition-colors text-gray-700 hover:text-orange-600 font-semibold"
-                        >
-                          Gestion Terrain
-                        </Link>
-                        <Link
-                          to="/admin/premium"
-                          onClick={() => setOpenMenu(null)}
-                          className="block w-full text-left text-sm px-4 py-2.5 hover:bg-orange-50 transition-colors text-gray-700 hover:text-orange-600"
-                        >
-                          Abonnements Premium
-                        </Link>
-                        <Link
-                          to="/admin/business-needs"
-                          onClick={() => setOpenMenu(null)}
-                          className="block w-full text-left text-sm px-4 py-2.5 hover:bg-orange-50 transition-colors text-gray-700 hover:text-orange-600"
-                        >
-                          Besoins professionnels
-                        </Link>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                <AdminNotifications variant="desktop" />
               )}
             </div>
 
@@ -422,57 +366,14 @@ export const Layout = ({ children }: LayoutProps) => {
                     </button>
 
                     {mobileExpandedMenu === 'Admin' && (
-                      <div className="ml-4 mt-1 space-y-1">
-                        <Link
-                          to="/admin/sourcing"
-                          onClick={() => {
+                      <div className="ml-4 mt-1">
+                        <AdminNotifications
+                          variant="mobile"
+                          onNavigate={() => {
                             setShowMobileMenu(false);
                             setMobileExpandedMenu(null);
                           }}
-                          className="block w-full text-left px-4 py-2 text-sm rounded-lg text-gray-600 hover:bg-orange-50 hover:text-orange-600 transition-colors"
-                        >
-                          {tx.navExtra?.adminSourcing || 'Sourcing Rapide'}
-                        </Link>
-                        <Link
-                          to="/around-me"
-                          onClick={() => {
-                            setShowMobileMenu(false);
-                            setMobileExpandedMenu(null);
-                          }}
-                          className="block w-full text-left px-4 py-2 text-sm rounded-lg text-gray-600 hover:bg-orange-50 hover:text-orange-600 transition-colors"
-                        >
-                          {tx.navExtra?.adminAroundMe || 'Autour de moi'}
-                        </Link>
-                        <Link
-                          to="/admin/commercial"
-                          onClick={() => {
-                            setShowMobileMenu(false);
-                            setMobileExpandedMenu(null);
-                          }}
-                          className="block w-full text-left px-4 py-2 text-sm rounded-lg text-gray-600 hover:bg-orange-50 hover:text-orange-600 transition-colors font-semibold"
-                        >
-                          Gestion Terrain
-                        </Link>
-                        <Link
-                          to="/admin/premium"
-                          onClick={() => {
-                            setShowMobileMenu(false);
-                            setMobileExpandedMenu(null);
-                          }}
-                          className="block w-full text-left px-4 py-2 text-sm rounded-lg text-gray-600 hover:bg-orange-50 hover:text-orange-600 transition-colors"
-                        >
-                          Abonnements Premium
-                        </Link>
-                        <Link
-                          to="/admin/business-needs"
-                          onClick={() => {
-                            setShowMobileMenu(false);
-                            setMobileExpandedMenu(null);
-                          }}
-                          className="block w-full text-left px-4 py-2 text-sm rounded-lg text-gray-600 hover:bg-orange-50 hover:text-orange-600 transition-colors"
-                        >
-                          Besoins professionnels
-                        </Link>
+                        />
                       </div>
                     )}
                   </div>
