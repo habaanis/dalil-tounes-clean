@@ -75,10 +75,6 @@ export default function BusinessNeedForm({ isOpen, onClose }: BusinessNeedFormPr
       deadline: formData.deadline || null,
       urgency: formData.urgency,
       zone_intervention: formData.zone_intervention.trim() || null,
-      status: 'pending_review',
-      moderation_status: 'pending',
-      visibility: 'private',
-      submission_lang: 'fr',
     };
 
     const { data: inserted, error: insertError } = await supabase
