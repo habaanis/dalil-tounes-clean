@@ -873,14 +873,19 @@ export const Businesses = ({
 
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 sm:px-6">
             {/* Titre Principal */}
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold text-[#D4AF37] mb-3" style={{ textShadow: '2px 2px 8px rgba(0,0,0,0.9)' }}>
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold text-[#D4AF37] mb-2" style={{ textShadow: '2px 2px 8px rgba(0,0,0,0.9)' }}>
               {t.businesses.hero.title}
             </h1>
 
-            {/* Texte descriptif intégré dans le header */}
-            <div className="max-w-4xl mx-auto mt-4">
-              <p className="text-white/95 text-base md:text-lg leading-relaxed italic font-light" style={{ textShadow: '2px 2px 6px rgba(0,0,0,0.8), 0px 0px 10px rgba(0,0,0,0.5)' }}>
-                {t.home.mission.description}
+            {/* Sous-titre */}
+            <p className="text-lg md:text-xl font-medium text-white mb-3" style={{ textShadow: '2px 2px 6px rgba(0,0,0,0.8)' }}>
+              {t.businesses.hero.subtitle}
+            </p>
+
+            {/* Texte descriptif */}
+            <div className="max-w-3xl mx-auto">
+              <p className="text-white/90 text-sm md:text-base leading-relaxed font-light" style={{ textShadow: '1px 1px 4px rgba(0,0,0,0.7)' }}>
+                Développez votre activité grâce à la plateforme professionnelle dédiée aux entreprises tunisiennes. Trouvez des fournisseurs, partenaires, prestataires et découvrez les opportunités professionnelles partout en Tunisie.
               </p>
             </div>
           </div>
@@ -899,6 +904,43 @@ export const Businesses = ({
         {/* Bandeau d'événements entreprises */}
         <section id="section-evenements-entreprise" className="mb-6 px-4 scroll-mt-24">
           <FeaturedEventsCarousel />
+        </section>
+
+        {/* Nos services professionnels */}
+        <section className="mb-8 px-4">
+          <h2 className="text-lg md:text-xl font-bold text-[#4A1D43] mb-4 text-center">
+            Nos services professionnels
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all">
+              <div className="text-2xl mb-3">🤝</div>
+              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5">Trouver une entreprise</h3>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Recherchez rapidement un fournisseur, un prestataire ou une entreprise partout en Tunisie.
+              </p>
+            </div>
+            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all">
+              <div className="text-2xl mb-3">🤝</div>
+              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5">Trouver un partenaire</h3>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Développez votre réseau professionnel et identifiez de nouveaux partenaires.
+              </p>
+            </div>
+            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all">
+              <div className="text-2xl mb-3">👨‍💼</div>
+              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5">Recruter</h3>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Découvrez les entreprises qui recrutent et les candidats disponibles.
+              </p>
+            </div>
+            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all">
+              <div className="text-2xl mb-3">📅</div>
+              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5">Événements professionnels</h3>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Participez aux salons, conférences et événements business.
+              </p>
+            </div>
+          </div>
         </section>
 
         {/* Sections Visuelles - Design Bordeaux & Or */}

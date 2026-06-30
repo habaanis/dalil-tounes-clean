@@ -250,8 +250,8 @@ export const translations = {
     businesses: {
       title: 'Annuaire des Entreprises',
       hero: {
-        title: 'Dalil Tounes, la vitrine numérique de l\'économie tunisienne.',
-        subtitle: 'Mettons en lumière les entreprises tunisiennes.',
+        title: 'Entreprises',
+        subtitle: 'Le Centre d\'affaires de Dalil Tounes',
       },
       filterByCategory: 'Filtrer par métier / domaine',
       activeFilter: 'Filtre actif',
