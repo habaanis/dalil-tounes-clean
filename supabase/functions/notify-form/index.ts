@@ -7,7 +7,7 @@ const corsHeaders = {
     "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
-const ADMIN_EMAIL = "zenanis75@hotmail.com";
+const ADMIN_EMAILS = ["zenanis75@hotmail.com", "contact@dalil-tounes.com"];
 const FROM_EMAIL = "Dalil Tounes <notifications@dalil-tounes.com>";
 
 interface NotifyPayload {
@@ -84,7 +84,7 @@ Deno.serve(async (req: Request) => {
       },
       body: JSON.stringify({
         from: FROM_EMAIL,
-        to: [ADMIN_EMAIL],
+        to: ADMIN_EMAILS,
         subject,
         html,
       }),
