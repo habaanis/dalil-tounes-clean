@@ -407,9 +407,12 @@ export default function SearchBar({
 
   const handleResultClick = (item: ResultItem) => {
     if (resultMode === 'filterCards') {
+      const selectedLabel = getResultLabel(item);
+      setQ(selectedLabel);
+
       if (onResultSelect) {
         onResultSelect(item, {
-          query: q.trim(),
+          query: selectedLabel,
           city: city.trim(),
           certFilter,
           resultMode,

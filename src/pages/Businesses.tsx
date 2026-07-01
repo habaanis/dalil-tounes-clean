@@ -407,6 +407,7 @@ export const Businesses = ({
       if (newPreselected !== preselectedBusinessId) {
         console.log(`[DEBUG] Mise à jour preselectedBusinessId: "${preselectedBusinessId}" → "${newPreselected}"`);
         setPreselectedBusinessId(newPreselected);
+        setSelectedBusinessId(newPreselected);
       }
       const newPremium = premiumParam === 'true';
       if (newPremium !== filterPremium) {
@@ -570,7 +571,8 @@ export const Businesses = ({
     if (preselectedBusinessId && businesses.length > 0) {
       const found = businesses.find((b) => b.id === preselectedBusinessId);
       if (found) {
-        navigate(buildEntrepriseUrl({ slug: (found as any).slug, nom: found.name, ville: (found as any).ville || (found as any).city, id: found.id }));
+        setSelectedBusinessId(found.id);
+        setSearchTerm(found.name || '');
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
