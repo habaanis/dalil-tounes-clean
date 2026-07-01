@@ -1021,12 +1021,6 @@ export const Businesses = ({
                 Permettez aux entreprises de vendre leurs equipements, mobiliers ou stocks lors d'une fermeture, d'un renouvellement ou d'un destockage.
               </p>
             </div>
-<<<<<<< Updated upstream
-            <button type="button" onClick={() => setShowNeedForm(true)} className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all relative text-left cursor-pointer group">
-              <span className="absolute top-3 right-3 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-green-50 text-green-700 border border-green-200">Disponible</span>
-              <div className="text-2xl mb-3">📢</div>
-              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5 group-hover:text-[#D4AF37] transition-colors">Publication de besoins professionnels</h3>
-=======
             <button
               type="button"
               onClick={() => setShowNeedForm(true)}
@@ -1039,13 +1033,10 @@ export const Businesses = ({
               <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5">
                 {businessNeedsCopy.businessesCard.publishTitle}
               </h3>
->>>>>>> Stashed changes
               <p className="text-xs text-gray-600 leading-relaxed">
                 {businessNeedsCopy.businessesCard.publishDescription}
               </p>
             </button>
-<<<<<<< Updated upstream
-=======
             <button
               type="button"
               onClick={() => navigate('/besoins-professionnels')}
@@ -1065,7 +1056,6 @@ export const Businesses = ({
                 {businessNeedsCopy.businessesCard.consultAction}
               </span>
             </button>
->>>>>>> Stashed changes
           </div>
         </section>
 
