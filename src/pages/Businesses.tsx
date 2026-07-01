@@ -109,6 +109,12 @@ function getSectorLabel(item: Record<string, unknown>): string {
   ]);
 }
 
+function isCertifiedDalilTounes(statut_carte: string | null | undefined): boolean {
+  if (!statut_carte) return false;
+  const upper = statut_carte.toUpperCase();
+  return upper.includes('CERTIF') && !upper.includes('NON CERTIF');
+}
+
 export const Businesses = ({
   showSuggestionForm = false,
   onCloseSuggestionForm,
@@ -564,6 +570,9 @@ export const Businesses = ({
       }));
 
       mappedData.sort((a, b) => {
+        const certA = isCertifiedDalilTounes(a.statut_carte) ? 1 : 0;
+        const certB = isCertifiedDalilTounes(b.statut_carte) ? 1 : 0;
+        if (certB !== certA) return certB - certA;
         const priorityA = getSubscriptionPriority(a.statut_abonnement);
         const priorityB = getSubscriptionPriority(b.statut_abonnement);
         return priorityB - priorityA;
@@ -776,6 +785,9 @@ export const Businesses = ({
 
       // Trier par priorité d'abonnement (Elite > Premium > Artisan > Découverte)
       mappedData.sort((a, b) => {
+        const certA = isCertifiedDalilTounes(a.statut_carte) ? 1 : 0;
+        const certB = isCertifiedDalilTounes(b.statut_carte) ? 1 : 0;
+        if (certB !== certA) return certB - certA;
         const priorityA = getSubscriptionPriority(a.statut_abonnement);
         const priorityB = getSubscriptionPriority(b.statut_abonnement);
         return priorityB - priorityA;
