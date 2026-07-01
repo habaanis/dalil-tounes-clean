@@ -179,6 +179,7 @@ export const Businesses = ({
   const [businesses, setBusinesses] = useState<Business[]>((_initCache?.businesses as unknown as Business[]) ?? []);
   const [loading, setLoading] = useState(_initCache === null);
   const [searchTerm, setSearchTerm] = useState(initialSearchKeyword || '');
+  const [selectedBusinessId, setSelectedBusinessId] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedCity, setSelectedCity] = useState(initialSearchCity || '');
   const [pageCategorie, setPageCategorie] = useState<string | null>(null);
@@ -213,7 +214,7 @@ export const Businesses = ({
     return () => clearTimeout(timeout);
   }, [loading, searching]);
 
-  const hasActiveSearch = !!searchTerm || !!selectedCity || !!selectedCategory || !!pageCategorie || filterPremium || filterCommerceLocal || !!filterStatutCarte;
+  const hasActiveSearch = !!selectedBusinessId || !!searchTerm || !!selectedCity || !!selectedCategory || !!pageCategorie || filterPremium || filterCommerceLocal || !!filterStatutCarte;
 
   useEffect(() => {
     let active = true;
@@ -356,6 +357,8 @@ export const Businesses = ({
       const urlCategorie = params.categorie || '';
       const urlSelectedId = params.selected_id || '';
 
+      setSelectedBusinessId(null);
+
       const hashParams = getHashQueryParams();
       const pageCat = hashParams.get('page_categorie');
       const premiumParam = hashParams.get('premium');
@@ -486,7 +489,7 @@ export const Businesses = ({
   };
 
   // Garde anti-boucle : stocker les dernières valeurs
-  const prevSearchRef = useRef({ searchTerm: '', selectedCity: '', selectedCategory: '', pageCategorie: null as string | null, filterPremium: false, filterCommerceLocal: false, filterStatutCarte: '' as '' | 'certifie' | 'non_certifie' });
+  const prevSearchRef = useRef({ selectedBusinessId: null as string | null, searchTerm: '', selectedCity: '', selectedCategory: '', pageCategorie: null as string | null, filterPremium: false, filterCommerceLocal: false, filterStatutCarte: '' as '' | 'certifie' | 'non_certifie' });
   const isInitialMount = useRef(true);
 
   useEffect(() => {
@@ -495,7 +498,7 @@ export const Businesses = ({
       isInitialMount.current = false;
       console.log('[DEBUG INIT] Premier mount, déclenchement recherche initiale');
       // Si aucun filtre, on charge toutes les entreprises
-      if (!searchTerm && !selectedCity && !selectedCategory && !pageCategorie && !filterPremium && !filterCommerceLocal) {
+      if (!selectedBusinessId && !searchTerm && !selectedCity && !selectedCategory && !pageCategorie && !filterPremium && !filterCommerceLocal) {
         // Cache frais → affichage immédiat, pas de requête réseau
         const cached = readBusinessesCache();
         if (cached?.fresh) {
@@ -516,6 +519,7 @@ export const Businesses = ({
     // Ne déclencher que si les valeurs ont VRAIMENT changé
     const hasRealChange =
       prevSearchRef.current.searchTerm !== searchTerm ||
+      prevSearchRef.current.selectedBusinessId !== selectedBusinessId ||
       prevSearchRef.current.selectedCity !== selectedCity ||
       prevSearchRef.current.selectedCategory !== selectedCategory ||
       prevSearchRef.current.pageCategorie !== pageCategorie ||
@@ -530,6 +534,7 @@ export const Businesses = ({
 
     console.log('🔄 [DEBUG useEffect] Changement détecté:', {
       searchTerm,
+      selectedBusinessId,
       selectedCity,
       selectedCategory,
       pageCategorie,
@@ -538,14 +543,14 @@ export const Businesses = ({
     });
 
     // Mettre à jour les références
-    prevSearchRef.current = { searchTerm, selectedCity, selectedCategory, pageCategorie, filterPremium, filterCommerceLocal, filterStatutCarte };
+    prevSearchRef.current = { selectedBusinessId, searchTerm, selectedCity, selectedCategory, pageCategorie, filterPremium, filterCommerceLocal, filterStatutCarte };
 
     pendingSearchRef.current = true;
     setPendingSearch(true);
     const delayDebounceFn = setTimeout(() => {
       pendingSearchRef.current = false;
       setPendingSearch(false);
-      if (searchTerm.length >= 1 || selectedCity || selectedCategory || filterPremium || filterCommerceLocal || filterStatutCarte) {
+      if (selectedBusinessId || searchTerm.length >= 1 || selectedCity || selectedCategory || filterPremium || filterCommerceLocal || filterStatutCarte) {
         console.log('➡️ [DEBUG] Déclenchement de performSearch()');
         performSearch();
       } else {
@@ -559,7 +564,7 @@ export const Businesses = ({
       pendingSearchRef.current = false;
       setPendingSearch(false);
     };
-  }, [searchTerm, selectedCity, selectedCategory, pageCategorie, filterPremium, filterCommerceLocal, filterStatutCarte]);
+  }, [selectedBusinessId, searchTerm, selectedCity, selectedCategory, pageCategorie, filterPremium, filterCommerceLocal, filterStatutCarte]);
 
   useEffect(() => {
     if (preselectedBusinessId && businesses.length > 0) {
@@ -692,6 +697,7 @@ export const Businesses = ({
   const performSearch = async () => {
     console.log('═══════════════════════════════════════');
     console.log('🔍 [DEBUG performSearch] Démarrage...');
+    console.log('Entreprise sélectionnée:', selectedBusinessId);
     console.log('Terme recherché:', searchTerm);
     console.log('Ville sélectionnée:', selectedCity);
     console.log('Catégorie sélectionnée:', selectedCategory);
@@ -699,7 +705,7 @@ export const Businesses = ({
     console.log('Filter Commerce Local:', filterCommerceLocal);
     console.log('═══════════════════════════════════════');
 
-    if (searchTerm.length === 0 && !selectedCity && !selectedCategory && !filterPremium && !filterCommerceLocal) {
+    if (!selectedBusinessId && searchTerm.length === 0 && !selectedCity && !selectedCategory && !filterPremium && !filterCommerceLocal) {
       console.log('[DEBUG] Aucun filtre actif, appel de fetchBusinesses()');
       fetchBusinesses();
       return;
@@ -719,7 +725,10 @@ export const Businesses = ({
         .order('nom', { ascending: true })
         .limit(30);
 
-      if (searchTerm && cleanSearchTerm(searchTerm).length >= 2) {
+      if (selectedBusinessId) {
+        console.log(`[DEBUG] Filtre ID entreprise: "${selectedBusinessId}"`);
+        query = query.eq('id', selectedBusinessId);
+      } else if (searchTerm && cleanSearchTerm(searchTerm).length >= 2) {
         // Pour l'arabe : ne pas normaliser (removeArabicDiacritics altère les caractères)
         // Pour le latin : nettoyer seulement les guillemets parasites
         const cleaned = cleanSearchTerm(searchTerm);
@@ -741,32 +750,32 @@ export const Businesses = ({
         );
       }
 
-      if (selectedCity) {
+      if (!selectedBusinessId && selectedCity) {
         console.log(`[DEBUG] Filtre Gouvernorat: "${selectedCity}"`);
         query = query.eq('gouvernorat', selectedCity);
       }
 
-      if (selectedCategory === 'finance') {
+      if (!selectedBusinessId && selectedCategory === 'finance') {
         console.log(`[DEBUG] Filtre Finance avec sous_categories:`, FINANCE_SUBCATEGORIES);
         query = query.or(FINANCE_SUBCATEGORIES.map(c => `sous_categories_texte.ilike.%${c}%`).join(','));
-      } else if (selectedCategory) {
+      } else if (!selectedBusinessId && selectedCategory) {
         console.log(`[DEBUG] Filtre Catégorie: "${selectedCategory}"`);
         query = query.ilike('sous_categories_texte', `%${selectedCategory}%`);
       }
 
-      if (filterPremium) {
+      if (!selectedBusinessId && filterPremium) {
         console.log(`[DEBUG] Filtre Premium activé (Elite/Premium/Artisan)`);
         query = query.or('statut_abonnement.ilike.*elite*,statut_abonnement.ilike.*premium*,statut_abonnement.ilike.*artisan*');
       }
 
-      if (filterCommerceLocal) {
+      if (!selectedBusinessId && filterCommerceLocal) {
         console.log(`[DEBUG] Filtre Commerce Local activé`);
         query = query.eq('"page commerce local"', true);
       }
 
-      if (filterStatutCarte === 'certifie') {
+      if (!selectedBusinessId && filterStatutCarte === 'certifie') {
         query = (query as any).ilike('statut_carte', '%CERTIF%').not('statut_carte', 'ilike', '%NON CERTIF%');
-      } else if (filterStatutCarte === 'non_certifie') {
+      } else if (!selectedBusinessId && filterStatutCarte === 'non_certifie') {
         query = (query as any).ilike('statut_carte', '%NON CERTIF%');
       }
 
@@ -783,7 +792,8 @@ export const Businesses = ({
           searchTerm,
           selectedCity,
           selectedCategory,
-          filterPremium
+          filterPremium,
+          selectedBusinessId,
         });
         throw error;
       }
@@ -840,7 +850,7 @@ export const Businesses = ({
 
       console.log(`[DEBUG] Mapping terminé: ${mappedData.length} entreprises`);
 
-      if (searchTerm && searchTerm.length > 0) {
+      if (!selectedBusinessId && searchTerm && searchTerm.length > 0) {
         const normalizedSearchTerm = normalizeText(searchTerm);
         console.log(`\n🔎 [Recherche Multi-colonnes] Terme recherché: "${searchTerm}"`);
         console.log(`🔎 [Recherche Multi-colonnes] Terme normalisé: "${normalizedSearchTerm}"`);
@@ -907,6 +917,21 @@ export const Businesses = ({
     } finally {
       clearTimeout(timeoutId);
     }
+  };
+
+  const handleSearchBarResultSelect = (item: { id?: string; nom?: string }) => {
+    const selectedName = extractFrenchName(item.nom || '').trim();
+
+    setSelectedBusinessId(item.id || null);
+    setPreselectedBusinessId(null);
+    setSearchTerm(selectedName);
+    setSelectedCity('');
+    setSelectedCategory('');
+    setPageCategorie(null);
+    setFilterPremium(false);
+    setFilterCommerceLocal(false);
+    setFilterStatutCarte('');
+    setSelectedChipCategories([]);
   };
 
   const handleSuggestionSubmit = async (e: React.FormEvent) => {
@@ -1039,7 +1064,13 @@ export const Businesses = ({
         <section className="py-3 px-4 relative z-[5]">
           <div className="max-w-5xl mx-auto">
             <div className="bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-[#D4AF37] p-2.5 md:p-3">
-              <SearchBar scope="global" intentEnabled={false} enabled />
+              <SearchBar
+                scope="global"
+                intentEnabled={false}
+                enabled
+                resultMode="filterCards"
+                onResultSelect={handleSearchBarResultSelect}
+              />
             </div>
           </div>
         </section>
@@ -1385,11 +1416,15 @@ export const Businesses = ({
                 {hasActiveSearch && (
                   <button
                     onClick={() => {
+                      setSelectedBusinessId(null);
                       setSearchTerm('');
                       setSelectedCity('');
                       setSelectedCategory('');
                       setPageCategorie(null);
                       setFilterPremium(false);
+                      setFilterCommerceLocal(false);
+                      setFilterStatutCarte('');
+                      setSelectedChipCategories([]);
                       navigate('/entreprises');
                     }}
                     className="text-xs text-[#4A1D43] hover:text-[#D4AF37] font-medium"

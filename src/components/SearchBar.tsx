@@ -17,6 +17,7 @@ type CertFilter = '' | 'certifie' | 'non_certifie';
 
 type Scope = 'global' | 'sante' | 'education' | 'administration' | 'loisirs' | 'magasin' | 'marche_local' | 'tourism' | 'services';
 type Mode = 'entreprises' | 'annonces' | 'evenements';
+type ResultMode = 'redirectToDetail' | 'filterCards' | 'redirectToResults';
 
 interface EntrepriseItem {
   id: string;
@@ -47,6 +48,13 @@ interface EventItem {
 
 type ResultItem = EntrepriseItem | AnnonceItem | EventItem;
 
+type ResultSelectContext = {
+  query: string;
+  city: string;
+  certFilter: CertFilter;
+  resultMode: ResultMode;
+};
+
 interface VilleItem {
   ville: string;
 }
@@ -59,6 +67,8 @@ type Props = {
   className?: string;
   enabled?: boolean;
   autoSearch?: boolean;
+  resultMode?: ResultMode;
+  onResultSelect?: (item: ResultItem, context: ResultSelectContext) => void;
 };
 
 export default function SearchBar({
@@ -69,6 +79,8 @@ export default function SearchBar({
   className = '',
   enabled = true,
   autoSearch = false,
+  resultMode = 'redirectToDetail',
+  onResultSelect,
 }: Props) {
   if (!enabled) return null;
 
@@ -378,6 +390,46 @@ export default function SearchBar({
     navigate(cleanPath);
   };
 
+  const getResultLabel = (item: ResultItem): string => {
+    if ('nom' in item && item.nom) return item.nom;
+    if ('titre' in item && item.titre) return item.titre;
+    return q.trim();
+  };
+
+  const goToResults = (item?: ResultItem) => {
+    const url = buildEntrepriseUrl({
+      q: item ? getResultLabel(item) : q.trim() || undefined,
+      ville: city.trim() || undefined,
+      statut_carte: certFilter || undefined,
+    });
+    goTo(url);
+  };
+
+  const handleResultClick = (item: ResultItem) => {
+    if (resultMode === 'filterCards') {
+      if (onResultSelect) {
+        onResultSelect(item, {
+          query: q.trim(),
+          city: city.trim(),
+          certFilter,
+          resultMode,
+        });
+        setEnt([]);
+        return;
+      }
+
+      goToResults(item);
+      return;
+    }
+
+    if (resultMode === 'redirectToResults') {
+      goToResults(item);
+      return;
+    }
+
+    goTo(`#/entreprises/${item.id}`);
+  };
+
   const triggerNavigation = (query: string, villeParam: string) => {
     if (!isGlobal) {
       const params = new URLSearchParams();
@@ -559,7 +611,7 @@ export default function SearchBar({
                       key={item.id}
                       className="py-2 cursor-pointer hover:bg-gray-50"
                       onMouseDown={(ev) => ev.preventDefault()}
-                      onClick={() => goTo(`#/entreprises/${item.id}`)}
+                      onClick={() => handleResultClick(item)}
                     >
                       <div className="font-medium">
                         {typeof item.statut_carte === 'string' && normalizeText(item.statut_carte).includes('certifie dalil tounes') && (
