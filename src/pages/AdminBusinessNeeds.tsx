@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Check, X, Clock, Eye, RefreshCw, AlertTriangle, FileText } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabaseClient';
 
 interface BusinessNeed {
@@ -71,7 +70,6 @@ const FILTER_TABS: { value: FilterStatus; label: string }[] = [
 ];
 
 export default function AdminBusinessNeeds() {
-  const { session, loading: authLoading } = useAuth();
   const [needs, setNeeds] = useState<BusinessNeed[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<FilterStatus>('all');
@@ -89,32 +87,16 @@ export default function AdminBusinessNeeds() {
     setTimeout(() => setToast(null), 3500);
   };
 
-  const getAdminHeaders = useCallback(() => {
-    if (!session?.access_token) return undefined;
-    return { Authorization: `Bearer ${session.access_token}` };
-  }, [session?.access_token]);
-
   const fetchAll = useCallback(async () => {
     setLoading(true);
     setError(null);
     setLastFetchCount(null);
 
-    if (authLoading) return;
-
-    if (!session?.access_token) {
-      setNeeds([]);
-      setCounts({ all: 0 });
-      setLastFetchCount(0);
-      setError('Acces admin requis : connectez-vous avec un compte administrateur.');
-      setLoading(false);
-      return;
-    }
-
+    // TODO: remplacer ce mode admin V1 par une vraie authentification admin Supabase + garde de route.
     const { data, error: fetchErr } = await supabase.functions.invoke<AdminBusinessNeedsListResponse>(
       'admin-business-needs',
       {
         body: { action: 'list' },
-        headers: getAdminHeaders(),
       }
     );
 
@@ -138,22 +120,16 @@ export default function AdminBusinessNeeds() {
     rows.forEach(r => { c[r.status] = (c[r.status] || 0) + 1; });
     setCounts(c);
     setLoading(false);
-  }, [authLoading, getAdminHeaders, session?.access_token]);
+  }, []);
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
 
   const approve = async (id: string) => {
-    if (!session?.access_token) {
-      showToast('Acces admin requis.', false);
-      return;
-    }
-
     setActionLoading(id);
     const { data, error: err } = await supabase.functions.invoke<AdminBusinessNeedsMutationResponse>(
       'admin-business-needs',
       {
         body: { action: 'approve', id },
-        headers: getAdminHeaders(),
       }
     );
 
@@ -169,11 +145,6 @@ export default function AdminBusinessNeeds() {
 
   const reject = async () => {
     if (!rejectId) return;
-    if (!session?.access_token) {
-      showToast('Acces admin requis.', false);
-      return;
-    }
-
     setActionLoading(rejectId);
     const { data, error: err } = await supabase.functions.invoke<AdminBusinessNeedsMutationResponse>(
       'admin-business-needs',
@@ -183,7 +154,6 @@ export default function AdminBusinessNeeds() {
           id: rejectId,
           moderation_reason: rejectReason.trim() || null,
         },
-        headers: getAdminHeaders(),
       }
     );
 
