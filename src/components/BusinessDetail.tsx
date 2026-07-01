@@ -386,6 +386,7 @@ export const BusinessDetail = ({
   const [showPhotosModal, setShowPhotosModal] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [showQrCode, setShowQrCode] = useState(false);
+  const [activeTab, setActiveTab] = useState<'photos' | 'services' | 'about' | null>('photos');
 
   const actualBusinessId = businessId || businessProp?.id;
 
@@ -1097,22 +1098,50 @@ export const BusinessDetail = ({
               />
             </div>
 
-            {business.image_url && (
+            {/* Tabs: Photos / Services / À propos */}
+            <div style={{ display: 'flex', gap: '6px', marginTop: '10px', flexWrap: 'wrap', position: 'relative', zIndex: 100, pointerEvents: 'auto' }}>
+              {business.image_url && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.nativeEvent.stopImmediatePropagation();
+                    setActiveTab(activeTab === 'photos' ? null : 'photos');
+                  }}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '5px',
+                    background: activeTab === 'photos' ? `${colors.gold}18` : 'none',
+                    border: `1px solid ${activeTab === 'photos' ? colors.gold : `${colors.gold}60`}`,
+                    borderRadius: '20px',
+                    padding: '4px 12px',
+                    cursor: 'pointer',
+                    fontSize: '11px',
+                    fontFamily: 'Playfair Display, serif',
+                    fontWeight: '600',
+                    color: colors.gold,
+                    letterSpacing: '0.03em',
+                    transition: 'background 0.2s ease, border-color 0.2s ease',
+                  }}
+                >
+                  <span style={{ fontSize: '13px' }}>📷</span>
+                  Photos
+                </button>
+              )}
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   e.nativeEvent.stopImmediatePropagation();
-                  setShowPhotosModal(true);
+                  setActiveTab(activeTab === 'services' ? null : 'services');
                 }}
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '5px',
-                  background: 'none',
-                  border: `1px solid ${colors.gold}60`,
+                  background: activeTab === 'services' ? `${colors.gold}18` : 'none',
+                  border: `1px solid ${activeTab === 'services' ? colors.gold : `${colors.gold}60`}`,
                   borderRadius: '20px',
                   padding: '4px 12px',
-                  marginTop: '10px',
                   cursor: 'pointer',
                   fontSize: '11px',
                   fontFamily: 'Playfair Display, serif',
@@ -1120,15 +1149,128 @@ export const BusinessDetail = ({
                   color: colors.gold,
                   letterSpacing: '0.03em',
                   transition: 'background 0.2s ease, border-color 0.2s ease',
-                  position: 'relative',
-                  zIndex: 100,
-                  pointerEvents: 'auto',
                 }}
               >
-                <span style={{ fontSize: '13px' }}>📷</span>
-                Voir les photos
+                <span style={{ fontSize: '13px' }}>🛠️</span>
+                Services
               </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.nativeEvent.stopImmediatePropagation();
+                  setActiveTab(activeTab === 'about' ? null : 'about');
+                }}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  background: activeTab === 'about' ? `${colors.gold}18` : 'none',
+                  border: `1px solid ${activeTab === 'about' ? colors.gold : `${colors.gold}60`}`,
+                  borderRadius: '20px',
+                  padding: '4px 12px',
+                  cursor: 'pointer',
+                  fontSize: '11px',
+                  fontFamily: 'Playfair Display, serif',
+                  fontWeight: '600',
+                  color: colors.gold,
+                  letterSpacing: '0.03em',
+                  transition: 'background 0.2s ease, border-color 0.2s ease',
+                }}
+              >
+                <span style={{ fontSize: '13px' }}>ℹ️</span>
+                À propos
+              </button>
+            </div>
+
+            {/* Tab content: Photos */}
+            {activeTab === 'photos' && business.image_url && (
+              <div style={{ marginTop: '10px', position: 'relative', zIndex: 100, pointerEvents: 'auto' }}>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.nativeEvent.stopImmediatePropagation();
+                    setShowPhotosModal(true);
+                  }}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '5px',
+                    background: `${colors.gold}10`,
+                    border: `1px solid ${colors.gold}40`,
+                    borderRadius: '12px',
+                    padding: '8px 14px',
+                    cursor: 'pointer',
+                    fontSize: '11px',
+                    fontFamily: 'Playfair Display, serif',
+                    fontWeight: '500',
+                    color: colors.gold,
+                    letterSpacing: '0.02em',
+                  }}
+                >
+                  Voir les photos en grand
+                </button>
+              </div>
             )}
+
+            {/* Tab content: Services */}
+            {activeTab === 'services' && (
+              <div style={{ marginTop: '10px', position: 'relative', zIndex: 100, pointerEvents: 'auto' }}>
+                {business.sous_categories ? (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                    {business.sous_categories.split(',').map((s: string, i: number) => s.trim()).filter(Boolean).map((service: string, i: number) => (
+                      <span
+                        key={i}
+                        style={{
+                          display: 'inline-block',
+                          padding: '4px 10px',
+                          fontSize: '11px',
+                          fontFamily: 'Playfair Display, serif',
+                          fontWeight: '500',
+                          color: colors.gold,
+                          background: `${colors.gold}10`,
+                          border: `1px solid ${colors.gold}30`,
+                          borderRadius: '14px',
+                          letterSpacing: '0.02em',
+                        }}
+                      >
+                        {service}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p style={{ fontSize: '12px', color: '#999', fontStyle: 'italic', fontFamily: 'Playfair Display, serif' }}>
+                    Aucun service renseigné
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* Tab content: À propos */}
+            {activeTab === 'about' && (
+              <div style={{ marginTop: '10px', position: 'relative', zIndex: 100, pointerEvents: 'auto' }}>
+                {(business.description && business.description.trim()) ? (
+                  <p style={{
+                    fontSize: '12px',
+                    lineHeight: '1.6',
+                    color: '#ddd',
+                    fontFamily: 'Playfair Display, serif',
+                    whiteSpace: 'pre-line',
+                  }}>
+                    {business.description}
+                  </p>
+                ) : (
+                  <p style={{ fontSize: '12px', color: '#999', fontStyle: 'italic', fontFamily: 'Playfair Display, serif' }}>
+                    Aucune information complémentaire
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* SEO: hidden content for crawlers */}
+            <div className="sr-only" aria-hidden="false">
+              {business.sous_categories && <p>Services: {business.sous_categories}</p>}
+              {business.description && <p>À propos: {business.description}</p>}
+            </div>
           </div>
 
           {showPhotosModal && business.image_url && (
