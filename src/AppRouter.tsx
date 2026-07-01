@@ -15,6 +15,7 @@ const Subscription = lazy(() => import('./pages/Subscription').then(m => ({ defa
 const PaiementConfirmation = lazy(() => import('./pages/PaiementConfirmation'));
 
 const Businesses = lazy(() => import('./pages/Businesses').then(m => ({ default: m.Businesses })));
+const BusinessNeeds = lazy(() => import('./pages/BusinessNeeds'));
 const Citizens = lazy(() => import('./pages/Citizens'));
 const CitizensHealth = lazy(() => import('./pages/CitizensHealth'));
 const CitizensAdmin = lazy(() => import('./pages/CitizensAdmin'));
@@ -138,6 +139,7 @@ function AppRouter() {
               {/* Entreprises */}
               <Route path="/businesses" element={<Businesses />} />
               <Route path="/entreprises" element={<Businesses />} />
+              <Route path="/besoins-professionnels" element={<BusinessNeeds />} />
               <Route path="/business/:id/:slug?" element={<LegacyBusinessRedirect />} />
               <Route path="/entreprises/:id/:slug?" element={<LegacyBusinessRedirect />} />
               <Route path="/entreprise/id/:id" element={<BusinessDetail />} />
