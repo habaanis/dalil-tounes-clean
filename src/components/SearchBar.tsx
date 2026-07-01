@@ -59,6 +59,7 @@ type Props = {
   className?: string;
   enabled?: boolean;
   autoSearch?: boolean;
+  onResultSelect?: (name: string, ville: string) => void;
 };
 
 export default function SearchBar({
@@ -69,6 +70,7 @@ export default function SearchBar({
   className = '',
   enabled = true,
   autoSearch = false,
+  onResultSelect,
 }: Props) {
   if (!enabled) return null;
 
@@ -559,7 +561,15 @@ export default function SearchBar({
                       key={item.id}
                       className="py-2 cursor-pointer hover:bg-gray-50"
                       onMouseDown={(ev) => ev.preventDefault()}
-                      onClick={() => goTo(`#/entreprises/${item.id}`)}
+                      onClick={() => {
+                        if (onResultSelect) {
+                          onResultSelect(item.nom || '', item.ville || '');
+                          setQ(item.nom || '');
+                          setEnt([]);
+                        } else {
+                          goTo(`#/entreprises/${item.id}`);
+                        }
+                      }}
                     >
                       <div className="font-medium">
                         {typeof item.statut_carte === 'string' && normalizeText(item.statut_carte).includes('certifie dalil tounes') && (

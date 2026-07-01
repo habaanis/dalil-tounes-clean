@@ -565,7 +565,7 @@ export const Businesses = ({
     if (preselectedBusinessId && businesses.length > 0) {
       const found = businesses.find((b) => b.id === preselectedBusinessId);
       if (found) {
-        navigate(buildEntrepriseUrl({ slug: (found as any).slug, nom: found.name, ville: (found as any).ville || (found as any).city, id: found.id }));
+        setSearchTerm(found.name || '');
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -1039,7 +1039,10 @@ export const Businesses = ({
         <section className="py-3 px-4 relative z-[5]">
           <div className="max-w-5xl mx-auto">
             <div className="bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-[#D4AF37] p-2.5 md:p-3">
-              <SearchBar scope="global" intentEnabled={false} enabled />
+              <SearchBar scope="global" intentEnabled={false} enabled onResultSelect={(name, ville) => {
+                if (name) setSearchTerm(name);
+                if (ville) setSelectedCity(ville);
+              }} />
             </div>
           </div>
         </section>
