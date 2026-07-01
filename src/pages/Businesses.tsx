@@ -1020,14 +1020,14 @@ export const Businesses = ({
                 Permettez aux entreprises de vendre leurs equipements, mobiliers ou stocks lors d'une fermeture, d'un renouvellement ou d'un destockage.
               </p>
             </div>
-            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all relative">
-              <span className="absolute top-3 right-3 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">A venir</span>
+            <button type="button" onClick={() => setShowNeedForm(true)} className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all relative text-left cursor-pointer group">
+              <span className="absolute top-3 right-3 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-green-50 text-green-700 border border-green-200">Disponible</span>
               <div className="text-2xl mb-3">📢</div>
-              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5">Publication de besoins professionnels</h3>
+              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5 group-hover:text-[#D4AF37] transition-colors">Publication de besoins professionnels</h3>
               <p className="text-xs text-gray-600 leading-relaxed">
                 Exprimez vos besoins (prestataire, materiel, fournisseur, service...) afin d'etre contacte directement par les entreprises concernees.
               </p>
-            </div>
+            </button>
           </div>
         </section>
 
@@ -1108,15 +1108,6 @@ export const Businesses = ({
             style={{ border: '1px solid #D4AF37' }}
           >
             {(t as any).businessesExtra?.viewCandidates || 'Voir les candidats disponibles'}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setShowNeedForm(true)}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-white text-[#4A1D43] text-sm md:text-base font-medium hover:shadow-lg transition-all"
-            style={{ border: '2px solid #D4AF37' }}
-          >
-            Publier un besoin professionnel
           </button>
 
          
