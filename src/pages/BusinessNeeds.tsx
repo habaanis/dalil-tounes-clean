@@ -150,6 +150,7 @@ export default function BusinessNeeds() {
         .eq('status', 'published')
         .eq('moderation_status', 'approved')
         .eq('visibility', 'public')
+        .is('deleted_at', null)
         .order('is_featured', { ascending: false, nullsFirst: false })
         .order('published_at', { ascending: false, nullsFirst: false })
         .order('created_at', { ascending: false })

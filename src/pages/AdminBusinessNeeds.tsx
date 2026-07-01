@@ -1,10 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Check, X, Clock, Eye, RefreshCw, AlertTriangle, FileText } from 'lucide-react';
+import { Check, X, Clock, Eye, RefreshCw, AlertTriangle, FileText, Trash2, RotateCcw } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
 
 interface BusinessNeed {
   id: string;
   created_at: string;
+  deleted_at: string | null;
+  deleted_by: string | null;
   type: string;
   title: string;
   description: string;
@@ -26,7 +28,7 @@ interface BusinessNeed {
   published_at: string | null;
 }
 
-type FilterStatus = 'all' | 'pending_review' | 'published' | 'rejected' | 'closed';
+type FilterStatus = 'all' | 'pending_review' | 'published' | 'rejected' | 'closed' | 'deleted';
 
 interface AdminBusinessNeedsListResponse {
   data?: BusinessNeed[];
@@ -48,6 +50,7 @@ const STATUS_LABELS: Record<string, { label: string; color: string; bg: string }
   closed:         { label: 'Ferme',      color: '#1E40AF', bg: '#DBEAFE' },
   expired:        { label: 'Expire',     color: '#6B7280', bg: '#F3F4F6' },
   rejected:       { label: 'Refuse',     color: '#991B1B', bg: '#FEE2E2' },
+  deleted:        { label: 'Supprime',   color: '#374151', bg: '#E5E7EB' },
 };
 
 const TYPE_LABELS: Record<string, string> = {
@@ -67,7 +70,12 @@ const FILTER_TABS: { value: FilterStatus; label: string }[] = [
   { value: 'published', label: 'Publies' },
   { value: 'rejected', label: 'Refuses' },
   { value: 'closed', label: 'Fermes' },
+  { value: 'deleted', label: 'Supprimes' },
 ];
+
+function isDeletedNeed(need: BusinessNeed) {
+  return Boolean(need.deleted_at) || need.status === 'deleted';
+}
 
 export default function AdminBusinessNeeds() {
   const [needs, setNeeds] = useState<BusinessNeed[]>([]);
@@ -81,6 +89,7 @@ export default function AdminBusinessNeeds() {
   const [detailItem, setDetailItem] = useState<BusinessNeed | null>(null);
   const [rejectId, setRejectId] = useState<string | null>(null);
   const [rejectReason, setRejectReason] = useState('');
+  const [deleteItem, setDeleteItem] = useState<BusinessNeed | null>(null);
 
   const showToast = (msg: string, ok = true) => {
     setToast({ msg, ok });
@@ -117,7 +126,10 @@ export default function AdminBusinessNeeds() {
     setNeeds(rows);
 
     const c: Record<string, number> = { all: rows.length };
-    rows.forEach(r => { c[r.status] = (c[r.status] || 0) + 1; });
+    rows.forEach(r => {
+      const bucket = isDeletedNeed(r) ? 'deleted' : r.status;
+      c[bucket] = (c[bucket] || 0) + 1;
+    });
     setCounts(c);
     setLoading(false);
   }, []);
@@ -169,7 +181,49 @@ export default function AdminBusinessNeeds() {
     setRejectReason('');
   };
 
-  const filtered = filter === 'all' ? needs : needs.filter(n => n.status === filter);
+  const softDelete = async () => {
+    if (!deleteItem) return;
+    setActionLoading(deleteItem.id);
+    const { data, error: err } = await supabase.functions.invoke<AdminBusinessNeedsMutationResponse>(
+      'admin-business-needs',
+      {
+        body: { action: 'delete', id: deleteItem.id },
+      }
+    );
+
+    if (err || data?.error) {
+      console.error('[AdminBusinessNeeds] soft delete error:', { err, data });
+      showToast(`Erreur : ${getAdminFunctionErrorMessage(err, data)}`, false);
+    } else {
+      showToast('La publication a ete retiree des pages publiques.');
+      await fetchAll();
+    }
+    setActionLoading(null);
+    setDeleteItem(null);
+  };
+
+  const restore = async (id: string) => {
+    setActionLoading(id);
+    const { data, error: err } = await supabase.functions.invoke<AdminBusinessNeedsMutationResponse>(
+      'admin-business-needs',
+      {
+        body: { action: 'restore', id },
+      }
+    );
+
+    if (err || data?.error) {
+      console.error('[AdminBusinessNeeds] restore error:', { err, data });
+      showToast(`Erreur : ${getAdminFunctionErrorMessage(err, data)}`, false);
+    } else {
+      showToast('La publication a ete restauree et repassee en attente de validation.');
+      await fetchAll();
+    }
+    setActionLoading(null);
+  };
+
+  const filtered = filter === 'all'
+    ? needs
+    : needs.filter(n => (filter === 'deleted' ? isDeletedNeed(n) : !isDeletedNeed(n) && n.status === filter));
 
   const formatDate = (d: string) => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
@@ -264,8 +318,9 @@ export default function AdminBusinessNeeds() {
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {filtered.map(need => {
-                    const st = STATUS_LABELS[need.status] || STATUS_LABELS.draft;
-                    const isPending = need.status === 'pending_review';
+                    const isDeleted = isDeletedNeed(need);
+                    const st = isDeleted ? STATUS_LABELS.deleted : (STATUS_LABELS[need.status] || STATUS_LABELS.draft);
+                    const isPending = !isDeleted && need.status === 'pending_review';
                     return (
                       <tr key={need.id} className="hover:bg-gray-50 transition-colors">
                         <td className="px-4 py-3 whitespace-nowrap text-gray-600">{formatDate(need.created_at)}</td>
@@ -307,6 +362,27 @@ export default function AdminBusinessNeeds() {
                             >
                               <X className="w-4 h-4" />
                             </button>
+                            {isDeleted ? (
+                              <button
+                                onClick={() => restore(need.id)}
+                                disabled={actionLoading === need.id}
+                                className="inline-flex items-center gap-1 rounded px-2 py-1.5 text-xs font-medium text-emerald-700 transition-colors hover:bg-emerald-50 disabled:cursor-not-allowed disabled:opacity-30"
+                                title="Restaurer"
+                              >
+                                <RotateCcw className="w-4 h-4" />
+                                Restaurer
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => setDeleteItem(need)}
+                                disabled={actionLoading === need.id}
+                                className="inline-flex items-center gap-1 rounded px-2 py-1.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-30"
+                                title="Supprimer"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                                Supprimer
+                              </button>
+                            )}
                           </div>
                         </td>
                       </tr>
@@ -361,9 +437,45 @@ export default function AdminBusinessNeeds() {
               )}
               <div className="border-t pt-3 mt-3">
                 <Row label="Date d'envoi" value={formatDate(detailItem.created_at)} />
-                <Row label="Statut" value={STATUS_LABELS[detailItem.status]?.label || detailItem.status} />
+                <Row label="Statut" value={isDeletedNeed(detailItem) ? STATUS_LABELS.deleted.label : (STATUS_LABELS[detailItem.status]?.label || detailItem.status)} />
                 {detailItem.moderation_reason && <Row label="Raison refus" value={detailItem.moderation_reason} />}
+                {detailItem.deleted_at && <Row label="Archive le" value={formatDate(detailItem.deleted_at)} />}
+                {detailItem.deleted_by && <Row label="Archive par" value={detailItem.deleted_by} />}
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Modal */}
+      {deleteItem && (
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4" onClick={() => setDeleteItem(null)}>
+          <div className="absolute inset-0 bg-black/50"></div>
+          <div
+            className="bg-white rounded-xl shadow-2xl max-w-md w-full relative z-[100000] p-6"
+            onClick={e => e.stopPropagation()}
+          >
+            <h3 className="text-lg font-bold text-[#4A1D43] mb-3">Supprimer définitivement cette publication ?</h3>
+            <p className="text-sm leading-relaxed text-gray-600 mb-5">
+              Cette action retirera la publication de toutes les pages publiques.
+              <br />
+              Les données resteront archivées dans la base afin de conserver un historique.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setDeleteItem(null)}
+                className="px-4 py-2 text-sm text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={softDelete}
+                disabled={actionLoading === deleteItem.id}
+                className="inline-flex items-center gap-2 px-4 py-2 text-sm text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
+              >
+                <Trash2 className="w-4 h-4" />
+                Supprimer
+              </button>
             </div>
           </div>
         </div>
