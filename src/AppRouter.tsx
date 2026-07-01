@@ -52,6 +52,7 @@ const AdminPremium = lazy(() => import('./pages/AdminPremium'));
 const AdminCommercial = lazy(() => import('./pages/AdminCommercial'));
 const AdminDownloads = lazy(() => import('./pages/AdminDownloads'));
 const AdminBusinessNeeds = lazy(() => import('./pages/AdminBusinessNeeds'));
+const BusinessNeedsPublic = lazy(() => import('./pages/BusinessNeedsPublic'));
 const Auth = lazy(() => import('./pages/Auth'));
 const CandidateDashboard = lazy(() => import('./pages/CandidateDashboard'));
 const CompanyDashboard = lazy(() => import('./pages/CompanyDashboard'));
@@ -197,6 +198,7 @@ function AppRouter() {
 
               {/* Autres */}
               <Route path="/business-events" element={<BusinessEvents />} />
+              <Route path="/besoins-professionnels" element={<BusinessNeedsPublic />} />
               <Route path="/transport-inscription" element={<TransportInscription />} />
               <Route path="/candidate-profile" element={<CandidateProfile />} />
               <Route path="/candidates" element={<CandidateList />} />
