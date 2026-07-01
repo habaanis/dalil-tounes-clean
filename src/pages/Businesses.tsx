@@ -1040,6 +1040,14 @@ export const Businesses = ({
                 Exprimez vos besoins (prestataire, materiel, fournisseur, service...) afin d'etre contacte directement par les entreprises concernees.
               </p>
             </button>
+            <div onClick={() => navigate('/besoins-professionnels')} className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all relative cursor-pointer group">
+              <span className="absolute top-3 right-3 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-green-50 text-green-700 border border-green-200">Disponible</span>
+              <div className="text-2xl mb-3">🔍</div>
+              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5 group-hover:text-[#D4AF37] transition-colors">Consulter les besoins professionnels</h3>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Découvrez les besoins publiés par les entreprises tunisiennes et identifiez de nouvelles opportunités.
+              </p>
+            </div>
           </div>
         </section>
 
