@@ -74,6 +74,41 @@ interface BusinessesProps {
   onClearSearch?: () => void;
 }
 
+const ENTREPRISE_SELECT_FIELDS = 'id, nom, sous_categories_texte, sous_categories_clean, categorie, gouvernorat, ville, adresse, telephone, email, site_web, description, services, image_url, logo_url, statut_abonnement, "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, statut_carte, name_ar, description_ar, slug';
+
+function toTextList(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    return value.map(item => String(item).trim()).filter(Boolean);
+  }
+  if (typeof value === 'string') {
+    return value.split(',').map(item => item.trim()).filter(Boolean);
+  }
+  return [];
+}
+
+function joinUnique(values: string[]): string {
+  return Array.from(new Set(values)).join(', ');
+}
+
+function getSubCategoryLabel(item: Record<string, unknown>): string {
+  return joinUnique([
+    ...toTextList(item.sous_categories_texte),
+    ...toTextList(item.sous_categories_clean),
+  ]);
+}
+
+function getCategoryLabel(item: Record<string, unknown>): string {
+  return getSubCategoryLabel(item) || joinUnique(toTextList(item.categorie));
+}
+
+function getSectorLabel(item: Record<string, unknown>): string {
+  return joinUnique([
+    ...toTextList(item.categorie),
+    ...toTextList(item.sous_categories_texte),
+    ...toTextList(item.sous_categories_clean),
+  ]);
+}
+
 export const Businesses = ({
   showSuggestionForm = false,
   onCloseSuggestionForm,
@@ -449,8 +484,7 @@ export const Businesses = ({
     try {
       let query = supabase
         .from(Tables.ENTREPRISE)
-        .select('id, nom, secteur, sous_categories_texte, sous_categories_clean, categorie, gouvernorat, ville, adresse, telephone, email, site_web, description, services, image_url, logo_url, statut_abonnement, niveau_priorite_abonnement, "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, statut_carte, name_ar, description_ar, slug')
-        .order('niveau_priorite_abonnement', { ascending: false, nullsFirst: false })
+        .select(ENTREPRISE_SELECT_FIELDS)
         .order('nom', { ascending: true })
         .limit(10);
 
@@ -485,10 +519,8 @@ export const Businesses = ({
         console.log('[DEBUG] Exemple première entreprise:', {
           id: data[0].id,
           nom: data[0].nom,
-          secteur: data[0].secteur,
-          sous_categories: data[0].sous_categories,
-          categorie: data[0]['catégorie'],
-          badges_from_db: data[0].badges,
+          sous_categories: data[0].sous_categories_texte,
+          categorie: data[0].categorie,
           services: data[0].services?.substring(0, 50) + '...' || 'NULL',
           mots_cles_recherche: data[0]['mots cles recherche']?.substring(0, 100) + '...' || 'NULL',
           statut_abonnement: data[0].statut_abonnement,
@@ -500,10 +532,10 @@ export const Businesses = ({
       const mappedData = (data || []).map((item: any) => ({
         id: item.id,
         name: extractFrenchName(item.nom),
-        category: Array.isArray(item.sous_categories_texte) ? item.sous_categories_texte.join(', ') : (item.sous_categories_texte || ''),
-        subCategories: Array.isArray(item.sous_categories_texte) ? item.sous_categories_texte.join(', ') : (item.sous_categories_texte || ''),
+        category: getCategoryLabel(item),
+        subCategories: getSubCategoryLabel(item),
         gouvernorat: item.gouvernorat || '',
-        secteur: Array.isArray(item.secteur_fk_autre_table) ? item.secteur_fk_autre_table.join(', ') : (item.secteur_fk_autre_table || ''),
+        secteur: getSectorLabel(item),
         city: item.ville || '',
         ville: item.ville || '',
         slug: item.slug || null,
@@ -516,7 +548,7 @@ export const Businesses = ({
         imageUrl: item.image_url || null,
         logoUrl: item.logo_url || null,
         statut_abonnement: item.statut_abonnement || null,
-        niveau_priorite_abonnement: item.niveau_priorite_abonnement || null,
+        niveau_priorite_abonnement: null,
         badges: [],
         mots_cles_recherche: item['mots cles recherche'] || '',
         instagram: item['Lien Instagram'] || '',
@@ -530,6 +562,12 @@ export const Businesses = ({
         name_ar: item.name_ar ? cleanArabicField(item.name_ar) : null,
         description_ar: item.description_ar ? cleanArabicField(item.description_ar) : null,
       }));
+
+      mappedData.sort((a, b) => {
+        const priorityA = getSubscriptionPriority(a.statut_abonnement);
+        const priorityB = getSubscriptionPriority(b.statut_abonnement);
+        return priorityB - priorityA;
+      });
 
       console.log(`[DEBUG] ✅ Mapping terminé: ${mappedData.length} entreprises`);
       console.log('═══════════════════════════════════════\n');
@@ -571,8 +609,7 @@ export const Businesses = ({
     try {
       let query = supabase
         .from(Tables.ENTREPRISE)
-        .select('id, nom, secteur, sous_categories_texte, sous_categories_clean, categorie, gouvernorat, ville, adresse, telephone, email, site_web, description, services, image_url, logo_url, statut_abonnement, niveau_priorite_abonnement, "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, statut_carte, name_ar, description_ar, slug')
-        .order('niveau_priorite_abonnement', { ascending: false, nullsFirst: false })
+        .select(ENTREPRISE_SELECT_FIELDS)
         .order('nom', { ascending: true })
         .limit(30);
 
@@ -652,11 +689,10 @@ export const Businesses = ({
         console.log('[DEBUG] Exemple première entreprise:', {
           id: data[0].id,
           nom: data[0].nom,
-          badges_from_db: data[0].badges,
           services: data[0].services?.substring(0, 50) + '...' || 'NULL',
           mots_cles_recherche: data[0]['mots cles recherche']?.substring(0, 100) + '...' || 'NULL',
-          sous_categories: data[0].sous_categories,
-          categorie: data[0]['catégorie'],
+          sous_categories: data[0].sous_categories_texte,
+          categorie: data[0].categorie,
           statut_abonnement: data[0].statut_abonnement,
           gouvernorat: data[0].gouvernorat
         });
@@ -666,10 +702,10 @@ export const Businesses = ({
       let mappedData = (data || []).map((item: any) => ({
         id: item.id,
         name: extractFrenchName(item.nom),
-        category: Array.isArray(item.sous_categories_texte) ? item.sous_categories_texte.join(', ') : (item.sous_categories_texte || ''),
-        subCategories: Array.isArray(item.sous_categories_texte) ? item.sous_categories_texte.join(', ') : (item.sous_categories_texte || ''),
+        category: getCategoryLabel(item),
+        subCategories: getSubCategoryLabel(item),
         gouvernorat: item.gouvernorat || '',
-        secteur: Array.isArray(item.secteur_fk_autre_table) ? item.secteur_fk_autre_table.join(', ') : (item.secteur_fk_autre_table || ''),
+        secteur: getSectorLabel(item),
         city: item.ville || '',
         ville: item.ville || '',
         slug: item.slug || null,
@@ -682,7 +718,7 @@ export const Businesses = ({
         imageUrl: item.image_url || null,
         logoUrl: item.logo_url || null,
         statut_abonnement: item.statut_abonnement || null,
-        niveau_priorite_abonnement: item.niveau_priorite_abonnement || null,
+        niveau_priorite_abonnement: null,
         badges: [],
         mots_cles_recherche: item['mots cles recherche'] || '',
         instagram: item['Lien Instagram'] || '',

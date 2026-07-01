@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { X, Send, Loader2 } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
-// TODO: Re-enable when notify-form CORS is fixed on production
-// import { notifyAdmin } from '../lib/notifyAdmin';
 import { GOUVERNORATS_TUNISIE } from '../lib/tunisiaLocations';
 
 interface BusinessNeedFormProps {
@@ -26,6 +24,56 @@ const URGENCY_OPTIONS = [
   { value: 'normal', label: 'Normal' },
   { value: 'urgent', label: 'Urgent' },
 ];
+
+function formatBudget(min: number | null, max: number | null): string | null {
+  if (min === null && max === null) return null;
+  return `${min ?? 'Non renseigné'} - ${max ?? 'Non renseigné'} TND`;
+}
+
+async function notifyBusinessNeedAdmin(
+  payload: {
+    type: string;
+    title: string;
+    description: string;
+    company_name: string;
+    contact_name: string;
+    contact_email: string;
+    contact_phone: string;
+    city: string;
+    governorate: string;
+    urgency: string;
+    budget_min: number | null;
+    budget_max: number | null;
+    deadline: string | null;
+    category: string | null;
+  }
+): Promise<void> {
+  const typeLabel = NEED_TYPES.find(t => t.value === payload.type)?.label || payload.type;
+  const urgencyLabel = URGENCY_OPTIONS.find(u => u.value === payload.urgency)?.label || payload.urgency;
+
+  const { error } = await supabase.functions.invoke('notify-business-need', {
+    body: {
+      type: typeLabel,
+      title: payload.title,
+      description: payload.description,
+      company_name: payload.company_name,
+      contact_name: payload.contact_name,
+      contact_email: payload.contact_email,
+      contact_phone: payload.contact_phone,
+      city: payload.city,
+      governorate: payload.governorate,
+      urgency: urgencyLabel,
+      budget: formatBudget(payload.budget_min, payload.budget_max),
+      deadline: payload.deadline || null,
+      category: payload.category,
+      admin_url: '/admin/business-needs',
+    },
+  });
+
+  if (error) {
+    throw error;
+  }
+}
 
 export default function BusinessNeedForm({ isOpen, onClose }: BusinessNeedFormProps) {
   const [loading, setLoading] = useState(false);
@@ -94,29 +142,9 @@ export default function BusinessNeedForm({ isOpen, onClose }: BusinessNeedFormPr
       return;
     }
 
-    // TODO: Re-enable notify-form once CORS is fixed on production Edge Function
-    // const typeLabel = NEED_TYPES.find(t => t.value === formData.type)?.label || formData.type;
-    // notifyAdmin(
-    //   'Nouveau besoin professionnel a valider',
-    //   {
-    //     'Type de besoin': typeLabel,
-    //     'Titre': payload.title,
-    //     'Description': payload.description,
-    //     'Entreprise': payload.company_name,
-    //     'Contact': payload.contact_name,
-    //     'Email': payload.contact_email,
-    //     'Telephone': payload.contact_phone,
-    //     'Ville': payload.city,
-    //     'Gouvernorat': payload.governorate,
-    //     'Budget': payload.budget_min || payload.budget_max
-    //       ? `${payload.budget_min ?? '—'} - ${payload.budget_max ?? '—'} TND`
-    //       : 'Non renseigne',
-    //     'Delai': payload.deadline || 'Non renseigne',
-    //     'Urgence': payload.urgency,
-    //     'Statut': 'pending_review — en attente de validation',
-    //   },
-    //   '/admin/business-needs'
-    // ).catch(err => console.error('Notification email failed (non-blocking):', err));
+    notifyBusinessNeedAdmin(payload).catch(err => {
+      console.error('Business need notification email failed (non-blocking):', err);
+    });
 
     setSuccess(true);
   };
@@ -160,8 +188,7 @@ export default function BusinessNeedForm({ isOpen, onClose }: BusinessNeedFormPr
               </div>
               <h3 className="text-xl font-bold text-[#4A1D43] mb-3">Besoin envoye avec succes !</h3>
               <p className="text-sm text-gray-700 max-w-md mx-auto leading-relaxed">
-                Votre besoin professionnel a bien ete envoye.<br />
-                Il sera verifie avant publication.
+                Votre besoin professionnel a bien été envoyé. Il sera vérifié avant publication.
               </p>
               <p className="text-xs text-gray-500 mt-3">
                 Vous serez contacte si votre besoin est valide.

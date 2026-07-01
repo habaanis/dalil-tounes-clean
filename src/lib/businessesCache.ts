@@ -27,7 +27,7 @@ export interface BusinessRow {
   imageUrl: string | null;
   logoUrl: string | null;
   statut_abonnement: string | null;
-  niveau_priorite_abonnement: number | null;
+  niveau_priorite_abonnement?: number | null;
   badges: never[];
   mots_cles_recherche: string;
   instagram: string;
@@ -40,6 +40,8 @@ export interface BusinessRow {
   statut_carte: string | null;
   slug: string | null;
   ville: string | null;
+  name_ar?: string | null;
+  description_ar?: string | null;
 }
 
 export interface PremiumJob {
@@ -61,9 +63,9 @@ const STALE_TIME  = 5 * 60_000;
 const GC_TIME     = 60 * 60_000;
 
 const FIELDS = [
-  'id', 'nom', 'secteur', 'sous_categories_texte', 'categorie', 'gouvernorat', 'ville',
+  'id', 'nom', 'sous_categories_texte', 'sous_categories_clean', 'categorie', 'gouvernorat', 'ville',
   'adresse', 'telephone', 'email', 'site_web', 'description', 'services',
-  'image_url', 'logo_url', 'statut_abonnement', 'niveau_priorite_abonnement',
+  'image_url', 'logo_url', 'statut_abonnement',
   '"mots cles recherche"', '"Lien Instagram"', '"lien facebook"', '"Lien TikTok"',
   '"Lien LinkedIn"', '"Lien YouTube"', 'lien_x', 'horaires_ok', 'statut_carte',
   'name_ar', 'description_ar', 'slug',
@@ -96,21 +98,39 @@ function writeBusinessesCache(data: BusinessesDefaultData): void {
   }
 }
 
+function toTextList(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    return value.map(item => String(item).trim()).filter(Boolean);
+  }
+  if (typeof value === 'string') {
+    return value.split(',').map(item => item.trim()).filter(Boolean);
+  }
+  return [];
+}
+
+function joinUnique(values: string[]): string {
+  return Array.from(new Set(values)).join(', ');
+}
+
 function mapRow(item: Record<string, unknown>): BusinessRow {
-  const sousCat = item.sous_categories_texte;
+  const subCategoryLabel = joinUnique([
+    ...toTextList(item.sous_categories_texte),
+    ...toTextList(item.sous_categories_clean),
+  ]);
+  const categoryLabel = subCategoryLabel || joinUnique(toTextList(item.categorie));
+  const secteurLabel = joinUnique([
+    ...toTextList(item.categorie),
+    ...toTextList(item.sous_categories_texte),
+    ...toTextList(item.sous_categories_clean),
+  ]);
+
   return {
     id: item.id as string,
     name: extractFrenchName(item.nom as string),
-    category: Array.isArray(sousCat)
-      ? (sousCat as string[]).join(', ')
-      : ((sousCat as string) || ''),
-    subCategories: Array.isArray(sousCat)
-      ? (sousCat as string[]).join(', ')
-      : ((sousCat as string) || ''),
+    category: categoryLabel,
+    subCategories: subCategoryLabel,
     gouvernorat: (item.gouvernorat as string) || '',
-    secteur: Array.isArray(item.secteur_fk_autre_table)
-      ? (item.secteur_fk_autre_table as string[]).join(', ')
-      : ((item.secteur_fk_autre_table as string) || ''),
+    secteur: secteurLabel,
     city: (item.ville as string) || '',
     address: (item.adresse as string) || '',
     phone: (item.telephone as string) || '',
@@ -121,7 +141,7 @@ function mapRow(item: Record<string, unknown>): BusinessRow {
     imageUrl: (item.image_url as string | null) ?? null,
     logoUrl: (item.logo_url as string | null) ?? null,
     statut_abonnement: (item.statut_abonnement as string | null) ?? null,
-    niveau_priorite_abonnement: (item.niveau_priorite_abonnement as number | null) ?? null,
+    niveau_priorite_abonnement: null,
     badges: [],
     mots_cles_recherche: (item['mots cles recherche'] as string) || '',
     instagram: (item['Lien Instagram'] as string) || '',
@@ -144,7 +164,6 @@ async function doFetch(): Promise<BusinessesDefaultData> {
     supabase
       .from(Tables.ENTREPRISE)
       .select(FIELDS)
-      .order('niveau_priorite_abonnement', { ascending: false, nullsFirst: false })
       .order('nom', { ascending: true })
       .limit(10),
     supabase
@@ -156,7 +175,8 @@ async function doFetch(): Promise<BusinessesDefaultData> {
       .limit(6),
   ]);
 
-  const businesses = (listRes.data ?? []).map((item) => mapRow(item as Record<string, unknown>));
+  const rows = Array.isArray(listRes.data) ? (listRes.data as unknown[]) : [];
+  const businesses = rows.map((item) => mapRow(item as Record<string, unknown>));
   const premiumJobs = (jobsRes.data ?? []) as PremiumJob[];
 
   return { businesses, premiumJobs };
