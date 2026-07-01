@@ -5869,6 +5869,20 @@ export const dictionary = {
         consultDescription: 'Découvrez les besoins publiés par les entreprises tunisiennes et identifiez de nouvelles opportunités.',
         consultAction: 'Voir les besoins',
       },
+      activity: {
+        label: 'Activité',
+        moreActivities: '{count} autre(s) activité(s) publiée(s)',
+        tooltips: {
+          supplier_search: 'Recherche un fournisseur',
+          service_provider_search: 'Recherche un prestataire',
+          equipment_purchase: 'Recherche du matériel',
+          equipment_sale: 'Vend du matériel',
+          liquidation: 'Liquidation de matériel',
+          partnership: 'Recherche un partenaire',
+          business_opportunity: 'Opportunité d’affaires',
+          other: 'Besoin professionnel publié',
+        },
+      },
     },
     education: {
       title: 'Éducation',
@@ -5977,6 +5991,20 @@ export const dictionary = {
         consultTitle: 'Browse professional needs',
         consultDescription: 'Discover needs published by Tunisian companies and identify new opportunities.',
         consultAction: 'View needs',
+      },
+      activity: {
+        label: 'Activity',
+        moreActivities: '{count} additional published activity/activities',
+        tooltips: {
+          supplier_search: 'Looking for a supplier',
+          service_provider_search: 'Looking for a service provider',
+          equipment_purchase: 'Looking for equipment',
+          equipment_sale: 'Selling equipment',
+          liquidation: 'Equipment liquidation',
+          partnership: 'Looking for a partner',
+          business_opportunity: 'Business opportunity',
+          other: 'Published professional need',
+        },
       },
     },
     education: {
@@ -6087,6 +6115,20 @@ export const dictionary = {
         consultDescription: 'اكتشف الاحتياجات المنشورة من الشركات التونسية وحدد فرصاً جديدة.',
         consultAction: 'عرض الاحتياجات',
       },
+      activity: {
+        label: 'النشاط',
+        moreActivities: '{count} نشاط منشور إضافي',
+        tooltips: {
+          supplier_search: 'تبحث عن مورد',
+          service_provider_search: 'تبحث عن مزود خدمة',
+          equipment_purchase: 'تبحث عن معدات',
+          equipment_sale: 'تبيع معدات',
+          liquidation: 'تصفية معدات',
+          partnership: 'تبحث عن شريك',
+          business_opportunity: 'فرصة أعمال',
+          other: 'احتياج مهني منشور',
+        },
+      },
     },
     education: {
       title: 'التعليم',
@@ -6195,6 +6237,20 @@ export const dictionary = {
         consultTitle: 'Consultare i bisogni professionali',
         consultDescription: 'Scopri i bisogni pubblicati dalle aziende tunisine e individua nuove opportunità.',
         consultAction: 'Vedi i bisogni',
+      },
+      activity: {
+        label: 'Attività',
+        moreActivities: '{count} altra/e attività pubblicata/e',
+        tooltips: {
+          supplier_search: 'Cerca un fornitore',
+          service_provider_search: 'Cerca un prestatore',
+          equipment_purchase: 'Cerca materiale',
+          equipment_sale: 'Vende materiale',
+          liquidation: 'Liquidazione di materiale',
+          partnership: 'Cerca un partner',
+          business_opportunity: 'Opportunità d’affari',
+          other: 'Bisogno professionale pubblicato',
+        },
       },
     },
     education: {
@@ -6305,6 +6361,20 @@ export const dictionary = {
         consultDescription: 'Откройте потребности, опубликованные тунисскими компаниями, и находите новые возможности.',
         consultAction: 'Смотреть потребности',
       },
+      activity: {
+        label: 'Активность',
+        moreActivities: '{count} дополнительная опубликованная активность',
+        tooltips: {
+          supplier_search: 'Ищет поставщика',
+          service_provider_search: 'Ищет подрядчика',
+          equipment_purchase: 'Ищет оборудование',
+          equipment_sale: 'Продает оборудование',
+          liquidation: 'Ликвидация оборудования',
+          partnership: 'Ищет партнера',
+          business_opportunity: 'Деловая возможность',
+          other: 'Опубликованная профессиональная потребность',
+        },
+      },
     },
     education: {
       title: 'Образование',
@@ -6376,4 +6446,3 @@ export function isRTL(lang: Lang): boolean {
 }
 
 export const i18nDict = translations;
-

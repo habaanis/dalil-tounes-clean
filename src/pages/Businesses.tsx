@@ -18,7 +18,7 @@ import { HERO_IMAGE_URL, HERO_IMAGE_JPG_URL } from '../constants/images';
 import SignatureCard from '../components/SignatureCard';
 import BusinessNeedForm from '../components/BusinessNeedForm';
 import { normalizeText, removeArabicDiacritics, extractFrenchName, cleanSearchTerm, cleanArabicField } from '../lib/textNormalization';
-import { BusinessCard } from '../components/BusinessCard';
+import { BusinessCardWithActivity, type BusinessActivity } from '../components/BusinessCardWithActivity';
 import SearchBar from '../components/SearchBar';
 import { getSubscriptionPriority } from '../lib/subscriptionHelper';
 import {
@@ -74,7 +74,34 @@ interface BusinessesProps {
   onClearSearch?: () => void;
 }
 
+interface BusinessNeedActivityRow {
+  id: string;
+  type: string;
+  title: string | null;
+  company_name: string | null;
+}
+
 const ENTREPRISE_SELECT_FIELDS = 'id, nom, sous_categories_texte, sous_categories_clean, categorie, gouvernorat, ville, adresse, telephone, email, site_web, description, services, image_url, logo_url, statut_abonnement, "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, statut_carte, name_ar, description_ar, slug';
+
+const PUBLIC_BUSINESS_NEED_ACTIVITY_TYPES = new Set([
+  'supplier_search',
+  'service_provider_search',
+  'equipment_purchase',
+  'equipment_sale',
+  'liquidation',
+  'partnership',
+  'business_opportunity',
+  'other',
+]);
+
+function normalizeActivityCompanyName(value: string | null | undefined): string {
+  return String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
+}
 
 function toTextList(value: unknown): string[] {
   if (Array.isArray(value)) {
@@ -143,6 +170,7 @@ export const Businesses = ({
   const [filterStatutCarte, setFilterStatutCarte] = useState<'' | 'certifie' | 'non_certifie'>('');
   const [availableCategories, setAvailableCategories] = useState<Array<{id: string, label: string, count: number}>>([]);
   const [selectedChipCategories, setSelectedChipCategories] = useState<string[]>([]);
+  const [businessActivitiesByCompany, setBusinessActivitiesByCompany] = useState<Record<string, BusinessActivity[]>>({});
 
   const resultsRef = useRef<HTMLDivElement>(null);
 
@@ -161,6 +189,55 @@ export const Businesses = ({
   }, [loading, searching]);
 
   const hasActiveSearch = !!searchTerm || !!selectedCity || !!selectedCategory || !!pageCategorie || filterPremium || filterCommerceLocal || !!filterStatutCarte;
+
+  useEffect(() => {
+    let active = true;
+
+    async function fetchBusinessNeedActivities() {
+      const { data, error } = await supabase
+        .from('business_needs')
+        .select('id, type, title, company_name')
+        .eq('status', 'published')
+        .eq('moderation_status', 'approved')
+        .eq('visibility', 'public')
+        .is('deleted_at', null)
+        .order('published_at', { ascending: false, nullsFirst: false })
+        .order('created_at', { ascending: false })
+        .limit(500);
+
+      if (!active) return;
+
+      if (error) {
+        console.warn('[Businesses] Impossible de charger les activites business_needs:', error);
+        setBusinessActivitiesByCompany({});
+        return;
+      }
+
+      const grouped = ((data || []) as BusinessNeedActivityRow[]).reduce<Record<string, BusinessActivity[]>>((acc, row) => {
+        if (!row.id || !row.type || !PUBLIC_BUSINESS_NEED_ACTIVITY_TYPES.has(row.type)) return acc;
+
+        const companyKey = normalizeActivityCompanyName(row.company_name);
+        if (!companyKey) return acc;
+
+        acc[companyKey] = acc[companyKey] || [];
+        acc[companyKey].push({
+          id: row.id,
+          type: row.type,
+          title: row.title,
+        });
+
+        return acc;
+      }, {});
+
+      setBusinessActivitiesByCompany(grouped);
+    }
+
+    fetchBusinessNeedActivities();
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   // Extraire les catégories disponibles depuis les résultats
   useEffect(() => {
@@ -1314,8 +1391,9 @@ export const Businesses = ({
                   if (!business || !business.id) return null;
 
                   return (
-                    <BusinessCard
+                    <BusinessCardWithActivity
                       key={business.id}
+                      activities={businessActivitiesByCompany[normalizeActivityCompanyName(business.name)] || []}
                       business={{
                         id: business.id,
                         name: business.name,
