@@ -115,6 +115,26 @@ function isCertifiedDalilTounes(statut_carte: string | null | undefined): boolea
   return upper.includes('CERTIF') && !upper.includes('NON CERTIF');
 }
 
+function isPaidSubscription(statut_abonnement: string | null | undefined): boolean {
+  if (!statut_abonnement) return false;
+  const s = statut_abonnement.toLowerCase().trim();
+  return s.includes('artisan') || s.includes('premium') || s.includes('elite') || s.includes('custom') || s.includes('personnalis');
+}
+
+function hasActivity(business: Record<string, any>): boolean {
+  return !!(business.imageUrl || business.logoUrl || (business.description && business.description.trim()) || business.horaires_ok);
+}
+
+function getBusinessSortScore(business: Record<string, any>): number {
+  const certified = isCertifiedDalilTounes(business.statut_carte);
+  const premium = isPaidSubscription(business.statut_abonnement);
+  if (certified && premium) return 5;
+  if (certified) return 4;
+  if (premium) return 3;
+  if (hasActivity(business)) return 2;
+  return 1;
+}
+
 export const Businesses = ({
   showSuggestionForm = false,
   onCloseSuggestionForm,
@@ -570,9 +590,9 @@ export const Businesses = ({
       }));
 
       mappedData.sort((a, b) => {
-        const certA = isCertifiedDalilTounes(a.statut_carte) ? 1 : 0;
-        const certB = isCertifiedDalilTounes(b.statut_carte) ? 1 : 0;
-        if (certB !== certA) return certB - certA;
+        const scoreA = getBusinessSortScore(a);
+        const scoreB = getBusinessSortScore(b);
+        if (scoreB !== scoreA) return scoreB - scoreA;
         const priorityA = getSubscriptionPriority(a.statut_abonnement);
         const priorityB = getSubscriptionPriority(b.statut_abonnement);
         return priorityB - priorityA;
@@ -783,11 +803,11 @@ export const Businesses = ({
         console.log(`\n[Recherche Multi-colonnes] ✅ Résultats filtrés: ${mappedData.length}`);
       }
 
-      // Trier par priorité d'abonnement (Elite > Premium > Artisan > Découverte)
+      // Trier par priorité (Certifié+Premium > Certifié > Premium > Activité > Autres)
       mappedData.sort((a, b) => {
-        const certA = isCertifiedDalilTounes(a.statut_carte) ? 1 : 0;
-        const certB = isCertifiedDalilTounes(b.statut_carte) ? 1 : 0;
-        if (certB !== certA) return certB - certA;
+        const scoreA = getBusinessSortScore(a);
+        const scoreB = getBusinessSortScore(b);
+        if (scoreB !== scoreA) return scoreB - scoreA;
         const priorityA = getSubscriptionPriority(a.statut_abonnement);
         const priorityB = getSubscriptionPriority(b.statut_abonnement);
         return priorityB - priorityA;
