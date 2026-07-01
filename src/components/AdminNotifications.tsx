@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Settings, ChevronDown } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabaseClient';
 
 interface NotificationModule {
@@ -22,15 +23,29 @@ const MODULE_DEFINITIONS: Omit<NotificationModule, 'count' | 'loading'>[] = [
   { key: 'evenements', label: 'Evenements', path: '/admin/sourcing' },
 ];
 
-async function fetchModuleCounts(): Promise<Record<string, number>> {
+interface BusinessNeedsCountResponse {
+  counts?: {
+    pending_review?: number;
+  };
+  error?: string;
+}
+
+async function fetchModuleCounts(accessToken?: string): Promise<Record<string, number>> {
   const counts: Record<string, number> = {};
 
-  const { count, error } = await supabase
-    .from('business_needs')
-    .select('*', { count: 'exact', head: true })
-    .eq('status', 'pending_review');
+  if (accessToken) {
+    const { data, error } = await supabase.functions.invoke<BusinessNeedsCountResponse>(
+      'admin-business-needs',
+      {
+        body: { action: 'count' },
+        headers: { Authorization: `Bearer ${accessToken}` },
+      }
+    );
 
-  counts.business_needs = error ? 0 : (count ?? 0);
+    counts.business_needs = error || data?.error ? 0 : (data?.counts?.pending_review ?? 0);
+  } else {
+    counts.business_needs = 0;
+  }
 
   // Future modules - return 0 for now
   counts.partner_requests = 0;
@@ -45,13 +60,16 @@ async function fetchModuleCounts(): Promise<Record<string, number>> {
 }
 
 export function useAdminNotificationCount() {
+  const { session, loading: authLoading } = useAuth();
   const [total, setTotal] = useState(0);
   const [modules, setModules] = useState<NotificationModule[]>(
     MODULE_DEFINITIONS.map(m => ({ ...m, count: 0, loading: true }))
   );
 
   const refresh = useCallback(async () => {
-    const counts = await fetchModuleCounts();
+    if (authLoading) return;
+
+    const counts = await fetchModuleCounts(session?.access_token);
     let sum = 0;
     const updated = MODULE_DEFINITIONS.map(m => {
       const c = counts[m.key] ?? 0;
@@ -60,7 +78,7 @@ export function useAdminNotificationCount() {
     });
     setModules(updated);
     setTotal(sum);
-  }, []);
+  }, [authLoading, session?.access_token]);
 
   useEffect(() => {
     refresh();

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Check, X, Clock, Eye, RefreshCw, AlertTriangle, FileText } from 'lucide-react';
-import { supabase, supabaseUrl } from '../lib/supabaseClient';
+import { useAuth } from '../context/AuthContext';
+import { supabase } from '../lib/supabaseClient';
 
 interface BusinessNeed {
   id: string;
@@ -28,6 +29,19 @@ interface BusinessNeed {
 
 type FilterStatus = 'all' | 'pending_review' | 'published' | 'rejected' | 'closed';
 
+interface AdminBusinessNeedsListResponse {
+  data?: BusinessNeed[];
+  count?: number;
+  error?: string;
+  details?: unknown;
+}
+
+interface AdminBusinessNeedsMutationResponse {
+  data?: BusinessNeed;
+  error?: string;
+  details?: unknown;
+}
+
 const STATUS_LABELS: Record<string, { label: string; color: string; bg: string }> = {
   draft:          { label: 'Brouillon',  color: '#6B7280', bg: '#F3F4F6' },
   pending_review: { label: 'En attente', color: '#92400E', bg: '#FEF3C7' },
@@ -35,12 +49,6 @@ const STATUS_LABELS: Record<string, { label: string; color: string; bg: string }
   closed:         { label: 'Ferme',      color: '#1E40AF', bg: '#DBEAFE' },
   expired:        { label: 'Expire',     color: '#6B7280', bg: '#F3F4F6' },
   rejected:       { label: 'Refuse',     color: '#991B1B', bg: '#FEE2E2' },
-};
-
-const URGENCY_LABELS: Record<string, { label: string; color: string }> = {
-  low:    { label: 'Faible',  color: '#6B7280' },
-  normal: { label: 'Normal',  color: '#1E40AF' },
-  urgent: { label: 'Urgent',  color: '#DC2626' },
 };
 
 const TYPE_LABELS: Record<string, string> = {
@@ -63,10 +71,12 @@ const FILTER_TABS: { value: FilterStatus; label: string }[] = [
 ];
 
 export default function AdminBusinessNeeds() {
+  const { session, loading: authLoading } = useAuth();
   const [needs, setNeeds] = useState<BusinessNeed[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<FilterStatus>('all');
   const [counts, setCounts] = useState<Record<string, number>>({});
+  const [lastFetchCount, setLastFetchCount] = useState<number | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -79,73 +89,110 @@ export default function AdminBusinessNeeds() {
     setTimeout(() => setToast(null), 3500);
   };
 
+  const getAdminHeaders = useCallback(() => {
+    if (!session?.access_token) return undefined;
+    return { Authorization: `Bearer ${session.access_token}` };
+  }, [session?.access_token]);
+
   const fetchAll = useCallback(async () => {
     setLoading(true);
     setError(null);
+    setLastFetchCount(null);
 
-    const { data, error: fetchErr } = await supabase
-      .from('business_needs')
-      .select('*')
-      .order('created_at', { ascending: false });
+    if (authLoading) return;
 
-    if (fetchErr) {
-      setError(`Erreur : ${fetchErr.message}`);
+    if (!session?.access_token) {
+      setNeeds([]);
+      setCounts({ all: 0 });
+      setLastFetchCount(0);
+      setError('Acces admin requis : connectez-vous avec un compte administrateur.');
       setLoading(false);
       return;
     }
 
-    const rows = (data as BusinessNeed[]) || [];
-    console.log('[AdminBusinessNeeds] rows received:', rows.length, 'from:', supabaseUrl);
+    const { data, error: fetchErr } = await supabase.functions.invoke<AdminBusinessNeedsListResponse>(
+      'admin-business-needs',
+      {
+        body: { action: 'list' },
+        headers: getAdminHeaders(),
+      }
+    );
+
+    if (fetchErr || data?.error) {
+      console.error('[AdminBusinessNeeds] Edge Function read error:', { fetchErr, data });
+      setError(formatAdminFunctionError(fetchErr, data));
+      setLoading(false);
+      return;
+    }
+
+    const rows = data?.data || [];
+    console.log('[AdminBusinessNeeds] Edge Function read result:', {
+      function: 'admin-business-needs',
+      rowsReceived: rows.length,
+      exactCount: data?.count ?? rows.length,
+    });
+    setLastFetchCount(data?.count ?? rows.length);
     setNeeds(rows);
 
     const c: Record<string, number> = { all: rows.length };
     rows.forEach(r => { c[r.status] = (c[r.status] || 0) + 1; });
     setCounts(c);
     setLoading(false);
-  }, []);
+  }, [authLoading, getAdminHeaders, session?.access_token]);
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
 
   const approve = async (id: string) => {
-    setActionLoading(id);
-    const { error: err } = await supabase
-      .from('business_needs')
-      .update({
-        status: 'published',
-        moderation_status: 'approved',
-        visibility: 'public',
-        published_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', id);
+    if (!session?.access_token) {
+      showToast('Acces admin requis.', false);
+      return;
+    }
 
-    if (err) {
-      showToast(`Erreur : ${err.message}`, false);
+    setActionLoading(id);
+    const { data, error: err } = await supabase.functions.invoke<AdminBusinessNeedsMutationResponse>(
+      'admin-business-needs',
+      {
+        body: { action: 'approve', id },
+        headers: getAdminHeaders(),
+      }
+    );
+
+    if (err || data?.error) {
+      console.error('[AdminBusinessNeeds] approve error:', { err, data });
+      showToast(`Erreur : ${getAdminFunctionErrorMessage(err, data)}`, false);
     } else {
       showToast('Le besoin professionnel a ete valide.');
-      fetchAll();
+      await fetchAll();
     }
     setActionLoading(null);
   };
 
   const reject = async () => {
     if (!rejectId) return;
-    setActionLoading(rejectId);
-    const { error: err } = await supabase
-      .from('business_needs')
-      .update({
-        status: 'rejected',
-        moderation_status: 'rejected',
-        moderation_reason: rejectReason.trim() || null,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', rejectId);
+    if (!session?.access_token) {
+      showToast('Acces admin requis.', false);
+      return;
+    }
 
-    if (err) {
-      showToast(`Erreur : ${err.message}`, false);
+    setActionLoading(rejectId);
+    const { data, error: err } = await supabase.functions.invoke<AdminBusinessNeedsMutationResponse>(
+      'admin-business-needs',
+      {
+        body: {
+          action: 'reject',
+          id: rejectId,
+          moderation_reason: rejectReason.trim() || null,
+        },
+        headers: getAdminHeaders(),
+      }
+    );
+
+    if (err || data?.error) {
+      console.error('[AdminBusinessNeeds] reject error:', { err, data });
+      showToast(`Erreur : ${getAdminFunctionErrorMessage(err, data)}`, false);
     } else {
       showToast('Le besoin professionnel a ete refuse.');
-      fetchAll();
+      await fetchAll();
     }
     setActionLoading(null);
     setRejectId(null);
@@ -196,9 +243,12 @@ export default function AdminBusinessNeeds() {
 
         {/* Error */}
         {error && (
-          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-3">
-            <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0" />
-            <p className="text-sm text-red-700">{error}</p>
+          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
+            <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold text-red-800">Erreur Supabase complète</p>
+              <pre className="mt-2 whitespace-pre-wrap break-words text-xs text-red-700">{error}</pre>
+            </div>
           </div>
         )}
 
@@ -216,7 +266,14 @@ export default function AdminBusinessNeeds() {
                 ? 'Aucun besoin enregistre. Soumettez un formulaire pour commencer.'
                 : 'Aucun besoin dans cette categorie.'}
             </p>
-            <p className="text-xs text-gray-400 mt-2">Base: {supabaseUrl}</p>
+            <p className="text-xs text-gray-400 mt-2">
+              Source: Edge Function admin-business-needs - Lignes recues: {needs.length} - Count serveur: {lastFetchCount ?? 'non disponible'}
+            </p>
+            {needs.length === 0 && lastFetchCount === 0 && (
+              <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg max-w-xl mx-auto mt-4 px-4 py-3">
+                La fonction admin a repondu sans ligne. Verifiez que l'utilisateur est bien admin et que la fonction est deployee avec les bons secrets Supabase.
+              </p>
+            )}
           </div>
         ) : (
           /* Table */
@@ -227,11 +284,10 @@ export default function AdminBusinessNeeds() {
                   <tr>
                     <th className="text-left px-4 py-3 font-medium text-gray-600">Date</th>
                     <th className="text-left px-4 py-3 font-medium text-gray-600">Entreprise</th>
-                    <th className="text-left px-4 py-3 font-medium text-gray-600">Contact</th>
-                    <th className="text-left px-4 py-3 font-medium text-gray-600">Type</th>
                     <th className="text-left px-4 py-3 font-medium text-gray-600">Titre</th>
+                    <th className="text-left px-4 py-3 font-medium text-gray-600">Type</th>
                     <th className="text-left px-4 py-3 font-medium text-gray-600">Ville</th>
-                    <th className="text-left px-4 py-3 font-medium text-gray-600">Urgence</th>
+                    <th className="text-left px-4 py-3 font-medium text-gray-600">Gouvernorat</th>
                     <th className="text-left px-4 py-3 font-medium text-gray-600">Statut</th>
                     <th className="text-left px-4 py-3 font-medium text-gray-600">Actions</th>
                   </tr>
@@ -239,18 +295,15 @@ export default function AdminBusinessNeeds() {
                 <tbody className="divide-y divide-gray-100">
                   {filtered.map(need => {
                     const st = STATUS_LABELS[need.status] || STATUS_LABELS.draft;
-                    const urg = URGENCY_LABELS[need.urgency] || URGENCY_LABELS.normal;
+                    const isPending = need.status === 'pending_review';
                     return (
                       <tr key={need.id} className="hover:bg-gray-50 transition-colors">
                         <td className="px-4 py-3 whitespace-nowrap text-gray-600">{formatDate(need.created_at)}</td>
                         <td className="px-4 py-3 font-medium text-gray-900 max-w-[140px] truncate">{need.company_name}</td>
-                        <td className="px-4 py-3 text-gray-600 max-w-[120px] truncate">{need.contact_name}</td>
-                        <td className="px-4 py-3 text-gray-600 whitespace-nowrap">{TYPE_LABELS[need.type] || need.type}</td>
                         <td className="px-4 py-3 text-gray-900 max-w-[180px] truncate">{need.title}</td>
-                        <td className="px-4 py-3 text-gray-600 whitespace-nowrap">{need.city}, {need.governorate}</td>
-                        <td className="px-4 py-3">
-                          <span className="text-xs font-medium" style={{ color: urg.color }}>{urg.label}</span>
-                        </td>
+                        <td className="px-4 py-3 text-gray-600 whitespace-nowrap">{TYPE_LABELS[need.type] || need.type}</td>
+                        <td className="px-4 py-3 text-gray-600 whitespace-nowrap">{need.city || '-'}</td>
+                        <td className="px-4 py-3 text-gray-600 whitespace-nowrap">{need.governorate || '-'}</td>
                         <td className="px-4 py-3">
                           <span
                             className="text-xs font-semibold px-2 py-0.5 rounded-full"
@@ -268,26 +321,22 @@ export default function AdminBusinessNeeds() {
                             >
                               <Eye className="w-4 h-4" />
                             </button>
-                            {need.status === 'pending_review' && (
-                              <>
-                                <button
-                                  onClick={() => approve(need.id)}
-                                  disabled={actionLoading === need.id}
-                                  className="p-1.5 rounded hover:bg-green-50 text-green-600 transition-colors disabled:opacity-50"
-                                  title="Valider"
-                                >
-                                  <Check className="w-4 h-4" />
-                                </button>
-                                <button
-                                  onClick={() => setRejectId(need.id)}
-                                  disabled={actionLoading === need.id}
-                                  className="p-1.5 rounded hover:bg-red-50 text-red-600 transition-colors disabled:opacity-50"
-                                  title="Refuser"
-                                >
-                                  <X className="w-4 h-4" />
-                                </button>
-                              </>
-                            )}
+                            <button
+                              onClick={() => approve(need.id)}
+                              disabled={!isPending || actionLoading === need.id}
+                              className="p-1.5 rounded hover:bg-green-50 text-green-600 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                              title={isPending ? 'Valider' : 'Action disponible uniquement pour les besoins en attente'}
+                            >
+                              <Check className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => setRejectId(need.id)}
+                              disabled={!isPending || actionLoading === need.id}
+                              className="p-1.5 rounded hover:bg-red-50 text-red-600 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                              title={isPending ? 'Refuser' : 'Action disponible uniquement pour les besoins en attente'}
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
                           </div>
                         </td>
                       </tr>
@@ -403,4 +452,32 @@ function Row({ label, value, multiline }: { label: string; value: string; multil
       <span className={`text-gray-900 ${multiline ? 'whitespace-pre-wrap' : ''}`}>{value}</span>
     </div>
   );
+}
+
+function formatAdminFunctionError(
+  error: unknown,
+  data?: AdminBusinessNeedsListResponse | AdminBusinessNeedsMutationResponse | null
+) {
+  if (data?.error) {
+    return JSON.stringify({ error: data.error, details: data.details ?? null }, null, 2);
+  }
+
+  if (error instanceof Error) {
+    return JSON.stringify({ name: error.name, message: error.message }, null, 2);
+  }
+
+  try {
+    return JSON.stringify(error, null, 2);
+  } catch {
+    return String(error);
+  }
+}
+
+function getAdminFunctionErrorMessage(
+  error: unknown,
+  data?: AdminBusinessNeedsMutationResponse | null
+) {
+  if (data?.error) return data.error;
+  if (error instanceof Error) return error.message;
+  return 'Erreur serveur';
 }

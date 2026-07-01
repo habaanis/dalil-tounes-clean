@@ -25,56 +25,6 @@ const URGENCY_OPTIONS = [
   { value: 'urgent', label: 'Urgent' },
 ];
 
-function formatBudget(min: number | null, max: number | null): string | null {
-  if (min === null && max === null) return null;
-  return `${min ?? 'Non renseigné'} - ${max ?? 'Non renseigné'} TND`;
-}
-
-async function notifyBusinessNeedAdmin(
-  payload: {
-    type: string;
-    title: string;
-    description: string;
-    company_name: string;
-    contact_name: string;
-    contact_email: string;
-    contact_phone: string;
-    city: string;
-    governorate: string;
-    urgency: string;
-    budget_min: number | null;
-    budget_max: number | null;
-    deadline: string | null;
-    category: string | null;
-  }
-): Promise<void> {
-  const typeLabel = NEED_TYPES.find(t => t.value === payload.type)?.label || payload.type;
-  const urgencyLabel = URGENCY_OPTIONS.find(u => u.value === payload.urgency)?.label || payload.urgency;
-
-  const { error } = await supabase.functions.invoke('notify-business-need', {
-    body: {
-      type: typeLabel,
-      title: payload.title,
-      description: payload.description,
-      company_name: payload.company_name,
-      contact_name: payload.contact_name,
-      contact_email: payload.contact_email,
-      contact_phone: payload.contact_phone,
-      city: payload.city,
-      governorate: payload.governorate,
-      urgency: urgencyLabel,
-      budget: formatBudget(payload.budget_min, payload.budget_max),
-      deadline: payload.deadline || null,
-      category: payload.category,
-      admin_url: '/admin/business-needs',
-    },
-  });
-
-  if (error) {
-    throw error;
-  }
-}
-
 export default function BusinessNeedForm({ isOpen, onClose }: BusinessNeedFormProps) {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -141,10 +91,6 @@ export default function BusinessNeedForm({ isOpen, onClose }: BusinessNeedFormPr
       setError(insertError.message || "Une erreur est survenue. Veuillez reessayer.");
       return;
     }
-
-    notifyBusinessNeedAdmin(payload).catch(err => {
-      console.error('Business need notification email failed (non-blocking):', err);
-    });
 
     setSuccess(true);
   };
