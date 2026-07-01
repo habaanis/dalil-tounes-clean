@@ -264,7 +264,7 @@ export const Jobs = () => {
 
       <section id="section-emploi-recherche" className="py-12 px-4 scroll-mt-24">
         <div className="max-w-7xl mx-auto">
-          <SearchBar scope="global" />
+          <SearchBar scope="global" resultMode="redirectToResults" />
 
           <div id="section-emploi-offres" className="scroll-mt-24">
             {searchLoading ? (

@@ -334,7 +334,7 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
             <div className="bg-white rounded-xl border border-[#D4AF37] p-2.5 md:p-3 relative overflow-visible md:shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
               {searchArmed ? (
                 <Suspense fallback={<div style={{ minHeight: '56px' }} />}>
-                  <SearchBar scope="global" autoSearch />
+                  <SearchBar scope="global" autoSearch resultMode="redirectToResults" />
                 </Suspense>
               ) : (
                 <button

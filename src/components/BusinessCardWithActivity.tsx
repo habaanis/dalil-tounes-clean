@@ -1,4 +1,4 @@
-import type { ComponentProps } from 'react';
+import { useState, type ComponentProps } from 'react';
 import type { LucideIcon } from 'lucide-react';
 import { Briefcase, Handshake, Package, Search, TrendingUp } from 'lucide-react';
 import { BusinessCard } from './BusinessCard';
@@ -34,6 +34,7 @@ export function BusinessCardWithActivity({ activities = [], ...businessCardProps
   const { language } = useLanguage();
   const activityCopy = useTranslation(language).businessNeeds.activity;
   const visibleActivities = activities.filter(activity => activity?.id && activity?.type).slice(0, 3);
+  const [activeTooltipId, setActiveTooltipId] = useState<string | null>(null);
 
   if (visibleActivities.length === 0) {
     return <BusinessCard {...businessCardProps} />;
@@ -50,16 +51,32 @@ export function BusinessCardWithActivity({ activities = [], ...businessCardProps
           {visibleActivities.map(activity => {
             const Icon = getActivityIcon(activity.type);
             const tooltip = activityCopy.tooltips[activity.type] || activityCopy.tooltips.other;
+            const isTooltipVisible = activeTooltipId === activity.id;
 
             return (
-              <span
+              <button
                 key={activity.id}
+                type="button"
                 title={tooltip}
                 aria-label={tooltip}
-                className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-[#D4AF37]/50 bg-white text-[#D4AF37] shadow-sm"
+                aria-pressed={isTooltipVisible}
+                onClick={() => setActiveTooltipId(isTooltipVisible ? null : activity.id)}
+                onMouseEnter={() => setActiveTooltipId(activity.id)}
+                onMouseLeave={() => setActiveTooltipId(null)}
+                onFocus={() => setActiveTooltipId(activity.id)}
+                onBlur={() => setActiveTooltipId(null)}
+                className="group relative inline-flex h-6 w-6 items-center justify-center rounded-full border border-[#D4AF37]/50 bg-white text-[#D4AF37] shadow-sm focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/40"
               >
                 <Icon className="h-3.5 w-3.5" aria-hidden="true" />
-              </span>
+                <span
+                  role="tooltip"
+                  className={`pointer-events-none absolute left-1/2 top-full z-20 mt-1.5 -translate-x-1/2 whitespace-nowrap rounded-md bg-[#4A1D43] px-2 py-1 text-[11px] font-medium text-white shadow-lg transition-opacity ${
+                    isTooltipVisible ? 'opacity-100' : 'opacity-0'
+                  }`}
+                >
+                  {tooltip}
+                </span>
+              </button>
             );
           })}
           {hiddenCount > 0 && (
