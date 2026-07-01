@@ -1,11 +1,18 @@
-import { useState } from 'react';
-import { X, Send, Loader2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { X, Send, Loader2, Building2, CheckCircle2, Search } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
 import { GOUVERNORATS_TUNISIE } from '../lib/tunisiaLocations';
 
 interface BusinessNeedFormProps {
   isOpen: boolean;
   onClose: () => void;
+}
+
+interface MatchedCompany {
+  id: string;
+  nom: string | null;
+  slug: string | null;
+  ville: string | null;
 }
 
 const NEED_TYPES = [
@@ -29,6 +36,11 @@ export default function BusinessNeedForm({ isOpen, onClose }: BusinessNeedFormPr
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
+  const [companyResults, setCompanyResults] = useState<MatchedCompany[]>([]);
+  const [selectedCompany, setSelectedCompany] = useState<MatchedCompany | null>(null);
+  const [companySearchLoading, setCompanySearchLoading] = useState(false);
+  const [companySearchError, setCompanySearchError] = useState('');
+  const [hasSearchedCompany, setHasSearchedCompany] = useState(false);
 
   const [formData, setFormData] = useState({
     type: '',
@@ -48,10 +60,78 @@ export default function BusinessNeedForm({ isOpen, onClose }: BusinessNeedFormPr
     zone_intervention: '',
   });
 
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const query = formData.company_name.trim();
+    if (selectedCompany && query !== (selectedCompany.nom || '').trim()) {
+      setSelectedCompany(null);
+    }
+
+    if (selectedCompany && query === (selectedCompany.nom || '').trim()) {
+      setCompanyResults([]);
+      setCompanySearchLoading(false);
+      setCompanySearchError('');
+      setHasSearchedCompany(false);
+      return;
+    }
+
+    if (query.length < 2) {
+      setCompanyResults([]);
+      setCompanySearchLoading(false);
+      setCompanySearchError('');
+      setHasSearchedCompany(false);
+      return;
+    }
+
+    let active = true;
+    setCompanySearchLoading(true);
+    setCompanySearchError('');
+
+    const timer = window.setTimeout(async () => {
+      const { data, error: searchError } = await supabase
+        .from('entreprise')
+        .select('id, nom, slug, ville')
+        .ilike('nom', `%${query}%`)
+        .order('nom', { ascending: true })
+        .limit(6);
+
+      if (!active) return;
+
+      setCompanySearchLoading(false);
+      setHasSearchedCompany(true);
+
+      if (searchError) {
+        console.warn('[BusinessNeedForm] Entreprise search failed:', searchError);
+        setCompanySearchError("Recherche d'entreprise indisponible. Vous pouvez continuer sans selection.");
+        setCompanyResults([]);
+        return;
+      }
+
+      setCompanyResults((data || []) as MatchedCompany[]);
+    }, 300);
+
+    return () => {
+      active = false;
+      window.clearTimeout(timer);
+    };
+  }, [formData.company_name, isOpen, selectedCompany]);
+
   if (!isOpen) return null;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleCompanySelect = (company: MatchedCompany) => {
+    setSelectedCompany(company);
+    setCompanyResults([]);
+    setHasSearchedCompany(false);
+    setCompanySearchError('');
+    setFormData(prev => ({
+      ...prev,
+      company_name: company.nom || prev.company_name,
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -59,11 +139,18 @@ export default function BusinessNeedForm({ isOpen, onClose }: BusinessNeedFormPr
     setError('');
     setLoading(true);
 
+    const linkedCompany = selectedCompany && formData.company_name.trim() === (selectedCompany.nom || '').trim()
+      ? selectedCompany
+      : null;
+
     const payload = {
       type: formData.type,
       title: formData.title.trim(),
       description: formData.description.trim(),
       company_name: formData.company_name.trim(),
+      company_id: linkedCompany?.id || null,
+      company_slug: linkedCompany?.slug || null,
+      company_city: linkedCompany?.ville || null,
       contact_name: formData.contact_name.trim(),
       contact_email: formData.contact_email.trim(),
       contact_phone: formData.contact_phone.trim(),
@@ -98,6 +185,11 @@ export default function BusinessNeedForm({ isOpen, onClose }: BusinessNeedFormPr
   const handleClose = () => {
     setSuccess(false);
     setError('');
+    setSelectedCompany(null);
+    setCompanyResults([]);
+    setCompanySearchLoading(false);
+    setCompanySearchError('');
+    setHasSearchedCompany(false);
     setFormData({
       type: '', title: '', description: '', company_name: '',
       contact_name: '', contact_email: '', contact_phone: '',
@@ -202,14 +294,60 @@ export default function BusinessNeedForm({ isOpen, onClose }: BusinessNeedFormPr
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1">Nom de l'entreprise *</label>
-                    <input
-                      type="text"
-                      name="company_name"
-                      value={formData.company_name}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none"
-                    />
+                    <div className="relative">
+                      <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-gray-400" aria-hidden="true" />
+                      <input
+                        type="text"
+                        name="company_name"
+                        value={formData.company_name}
+                        onChange={handleChange}
+                        required
+                        autoComplete="organization"
+                        placeholder="Tapez le nom de votre entreprise"
+                        className="w-full px-3 py-2 pl-9 border border-gray-300 rounded-lg text-sm focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none"
+                      />
+                    </div>
+                    {selectedCompany && (
+                      <div className="mt-2 flex items-start gap-2 rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-xs text-green-800">
+                        <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0" aria-hidden="true" />
+                        <div>
+                          <p className="font-semibold">Fiche Dalil Tounes selectionnee</p>
+                          <p>{selectedCompany.nom}{selectedCompany.ville ? ` - ${selectedCompany.ville}` : ''}</p>
+                        </div>
+                      </div>
+                    )}
+                    {!selectedCompany && companyResults.length > 0 && (
+                      <div className="mt-2 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
+                        {companyResults.map(company => (
+                          <button
+                            key={company.id}
+                            type="button"
+                            onClick={() => handleCompanySelect(company)}
+                            className="flex w-full items-start gap-2 border-b border-gray-100 px-3 py-2 text-left text-xs transition hover:bg-[#D4AF37]/10 last:border-b-0"
+                          >
+                            <Building2 className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#D4AF37]" aria-hidden="true" />
+                            <span>
+                              <span className="block font-semibold text-gray-900">{company.nom}</span>
+                              {company.ville && <span className="block text-gray-600">{company.ville}</span>}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    {companySearchLoading && (
+                      <p className="mt-2 flex items-center gap-2 text-xs text-gray-500">
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+                        Recherche de votre fiche...
+                      </p>
+                    )}
+                    {!selectedCompany && hasSearchedCompany && !companySearchLoading && companyResults.length === 0 && !companySearchError && (
+                      <p className="mt-2 text-xs text-gray-500">
+                        Aucune fiche trouvee. Vous pouvez continuer avec le nom saisi.
+                      </p>
+                    )}
+                    {companySearchError && (
+                      <p className="mt-2 text-xs text-amber-700">{companySearchError}</p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1">Nom du contact *</label>

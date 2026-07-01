@@ -15,7 +15,6 @@ const Subscription = lazy(() => import('./pages/Subscription').then(m => ({ defa
 const PaiementConfirmation = lazy(() => import('./pages/PaiementConfirmation'));
 
 const Businesses = lazy(() => import('./pages/Businesses').then(m => ({ default: m.Businesses })));
-const BusinessNeeds = lazy(() => import('./pages/BusinessNeeds'));
 const Citizens = lazy(() => import('./pages/Citizens'));
 const CitizensHealth = lazy(() => import('./pages/CitizensHealth'));
 const CitizensAdmin = lazy(() => import('./pages/CitizensAdmin'));
@@ -27,6 +26,7 @@ const CultureEvents = lazy(() => import('./pages/CultureEvents'));
 const Jobs = lazy(() => import('./pages/Jobs').then(m => ({ default: m.Jobs })));
 const PartnerSearch = lazy(() => import('./pages/PartnerSearch').then(m => ({ default: m.PartnerSearch })));
 const BusinessEvents = lazy(() => import('./pages/BusinessEvents').then(m => ({ default: m.BusinessEvents })));
+const BusinessNeeds = lazy(() => import('./pages/BusinessNeeds'));
 const BusinessDetail = lazy(() => import('./components/BusinessDetail').then(m => ({ default: m.BusinessDetail })));
 const LegacyBusinessRedirect = lazy(() => import('./components/LegacyBusinessRedirect').then(m => ({ default: m.LegacyBusinessRedirect })));
 const TransportInscription = lazy(() => import('./pages/TransportInscription'));
@@ -65,7 +65,6 @@ const CGU = lazy(() => import('./pages/legal/CGU'));
 const PrivacyPolicy = lazy(() => import('./pages/legal/PrivacyPolicy'));
 const SitemapPage = lazy(() => import('./pages/legal/Sitemap'));
 const InfoAvis = lazy(() => import('./pages/legal/InfoAvis'));
-const MetierVillePage = lazy(() => import('./pages/seo/MetierVillePage'));
 const MetierSousCatVillePage = lazy(() => import('./pages/seo/MetierSousCatVillePage'));
 const MetierPage = lazy(() => import('./pages/seo/MetierPage'));
 const VillePage = lazy(() => import('./pages/seo/VillePage'));
@@ -139,7 +138,6 @@ function AppRouter() {
               {/* Entreprises */}
               <Route path="/businesses" element={<Businesses />} />
               <Route path="/entreprises" element={<Businesses />} />
-              <Route path="/besoins-professionnels" element={<BusinessNeeds />} />
               <Route path="/business/:id/:slug?" element={<LegacyBusinessRedirect />} />
               <Route path="/entreprises/:id/:slug?" element={<LegacyBusinessRedirect />} />
               <Route path="/entreprise/id/:id" element={<BusinessDetail />} />
@@ -199,6 +197,7 @@ function AppRouter() {
 
               {/* Autres */}
               <Route path="/business-events" element={<BusinessEvents />} />
+              <Route path="/besoins-professionnels" element={<BusinessNeeds />} />
               <Route path="/transport-inscription" element={<TransportInscription />} />
               <Route path="/candidate-profile" element={<CandidateProfile />} />
               <Route path="/candidates" element={<CandidateList />} />

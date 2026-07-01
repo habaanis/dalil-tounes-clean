@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ArrowRight, Briefcase, Filter, Loader2, RefreshCw, X } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { ArrowRight, Briefcase, ExternalLink, Filter, Loader2, RefreshCw, X } from 'lucide-react';
 import NeedCard, { PublicBusinessNeed } from '../components/NeedCard';
 import { SEOHead } from '../components/SEOHead';
 import StructuredData from '../components/StructuredData';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
+import { buildEntrepriseUrl } from '../lib/slugify';
 import { generateCollectionPageSchema } from '../lib/structuredDataSchemas';
 import { supabase } from '../lib/supabaseClient';
 
@@ -21,6 +22,8 @@ const PUBLIC_BUSINESS_NEEDS_FIELDS = `
   subcategory,
   tags,
   company_name,
+  company_slug,
+  company_city,
   city,
   governorate,
   zone_intervention,
@@ -108,6 +111,11 @@ function formatBudget(need: PublicBusinessNeed, locale: string): string {
   }
 
   return '';
+}
+
+function getCompanyProfileUrl(need: PublicBusinessNeed): string | null {
+  if (!need.company_slug || !need.company_city) return null;
+  return buildEntrepriseUrl({ slug: need.company_slug, ville: need.company_city });
 }
 
 function DetailRow({ label, value }: { label: string; value: string | null | undefined }) {
@@ -219,6 +227,7 @@ export default function BusinessNeeds() {
   ), [copy.seoDescription, copy.title, filteredNeeds]);
 
   const hasFilters = Boolean(selectedType || selectedCity || selectedGovernorate || selectedUrgency);
+  const selectedCompanyProfileUrl = selectedNeed ? getCompanyProfileUrl(selectedNeed) : null;
 
   const resetFilters = () => {
     setSelectedType('');
@@ -385,6 +394,7 @@ export default function BusinessNeeds() {
                   urgencyLabels: copy.urgencyLabels,
                 }}
                 locale={locale}
+                companyProfileUrl={getCompanyProfileUrl(need) || undefined}
                 onView={setSelectedNeed}
               />
             ))}
@@ -443,6 +453,16 @@ export default function BusinessNeeds() {
               <DetailRow label={copy.fields.urgency} value={copy.urgencyLabels[selectedNeed.urgency] || selectedNeed.urgency} />
               <DetailRow label={copy.fields.publishedAt} value={formatDate(selectedNeed.published_at || selectedNeed.created_at, locale)} />
             </dl>
+
+            {selectedCompanyProfileUrl && (
+              <Link
+                to={selectedCompanyProfileUrl}
+                className="mt-5 inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-[#D4AF37]/60 bg-white px-4 py-2 text-sm font-semibold text-[#4A1D43] transition hover:bg-[#D4AF37]/10 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:ring-offset-2"
+              >
+                <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                {copy.card.viewCompanyProfile}
+              </Link>
+            )}
 
             <div className="mt-5 rounded-lg border border-[#D4AF37]/40 bg-[#D4AF37]/10 p-4 text-sm font-medium text-[#4A1D43]">
               {copy.modal.responseComingSoon}

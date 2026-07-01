@@ -149,7 +149,6 @@ export const Businesses = ({
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const t = useTranslation(language);
-  const businessNeedsCopy = t.businessNeeds;
   const _initCache = readBusinessesCache();
   const [businesses, setBusinesses] = useState<Business[]>((_initCache?.businesses as unknown as Business[]) ?? []);
   const [loading, setLoading] = useState(_initCache === null);
@@ -1098,40 +1097,13 @@ export const Businesses = ({
                 Permettez aux entreprises de vendre leurs equipements, mobiliers ou stocks lors d'une fermeture, d'un renouvellement ou d'un destockage.
               </p>
             </div>
-            <button
-              type="button"
-              onClick={() => setShowNeedForm(true)}
-              className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all relative text-left focus:outline-none focus:ring-2 focus:ring-[#D4AF37]"
-            >
-              <span className="absolute top-3 right-3 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                {businessNeedsCopy.businessesCard.availableBadge}
-              </span>
+            <button type="button" onClick={() => setShowNeedForm(true)} className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all relative text-left cursor-pointer group">
+              <span className="absolute top-3 right-3 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-green-50 text-green-700 border border-green-200">Disponible</span>
               <div className="text-2xl mb-3">📢</div>
-              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5">
-                {businessNeedsCopy.businessesCard.publishTitle}
-              </h3>
+              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5 group-hover:text-[#D4AF37] transition-colors">Publication de besoins professionnels</h3>
               <p className="text-xs text-gray-600 leading-relaxed">
-                {businessNeedsCopy.businessesCard.publishDescription}
+                Exprimez vos besoins (prestataire, materiel, fournisseur, service...) afin d'etre contacte directement par les entreprises concernees.
               </p>
-            </button>
-            <button
-              type="button"
-              onClick={() => navigate('/besoins-professionnels')}
-              className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all relative text-left focus:outline-none focus:ring-2 focus:ring-[#D4AF37]"
-            >
-              <span className="absolute top-3 right-3 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                {businessNeedsCopy.businessesCard.availableBadge}
-              </span>
-              <div className="text-2xl mb-3">🔎</div>
-              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5">
-                {businessNeedsCopy.businessesCard.consultTitle}
-              </h3>
-              <p className="text-xs text-gray-600 leading-relaxed">
-                {businessNeedsCopy.businessesCard.consultDescription}
-              </p>
-              <span className="mt-3 inline-flex text-xs font-semibold text-[#4A1D43]">
-                {businessNeedsCopy.businessesCard.consultAction}
-              </span>
             </button>
           </div>
         </section>

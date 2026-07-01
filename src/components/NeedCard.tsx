@@ -1,4 +1,5 @@
-import { Building2, CalendarDays, Clock3, Eye, MapPin, Star, WalletCards } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Building2, CalendarDays, Clock3, Eye, ExternalLink, MapPin, Star, WalletCards } from 'lucide-react';
 
 export interface PublicBusinessNeed {
   id: string;
@@ -12,6 +13,8 @@ export interface PublicBusinessNeed {
   subcategory: string | null;
   tags: string[] | null;
   company_name: string;
+  company_slug: string | null;
+  company_city: string | null;
   city: string;
   governorate: string;
   zone_intervention: string | null;
@@ -37,12 +40,14 @@ interface NeedCardLabels {
   deadline: string;
   featured: string;
   viewNeed: string;
+  viewCompanyProfile: string;
 }
 
 interface NeedCardProps {
   need: PublicBusinessNeed;
   labels: NeedCardLabels;
   locale: string;
+  companyProfileUrl?: string;
   onView: (need: PublicBusinessNeed) => void;
 }
 
@@ -108,7 +113,7 @@ function getUrgencyClasses(urgency: string): string {
   return 'border-amber-200 bg-amber-50 text-amber-700';
 }
 
-export default function NeedCard({ need, labels, locale, onView }: NeedCardProps) {
+export default function NeedCard({ need, labels, locale, companyProfileUrl, onView }: NeedCardProps) {
   const publishedDate = formatDate(need.published_at || need.created_at, locale);
   const budget = formatBudget(need, locale);
   const deadline = formatDate(need.deadline, locale);
@@ -185,6 +190,16 @@ export default function NeedCard({ need, labels, locale, onView }: NeedCardProps
         <Eye className="h-4 w-4" aria-hidden="true" />
         {labels.viewNeed}
       </button>
+
+      {companyProfileUrl && (
+        <Link
+          to={companyProfileUrl}
+          className="mt-2 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-lg border border-[#D4AF37]/50 bg-white px-4 py-2 text-xs font-semibold text-[#4A1D43] transition hover:bg-[#D4AF37]/10 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:ring-offset-2"
+        >
+          <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+          {labels.viewCompanyProfile}
+        </Link>
+      )}
     </article>
   );
 }

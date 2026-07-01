@@ -12,21 +12,18 @@ const businessNeedColumns = `
   created_at,
   updated_at,
   published_at,
-  deleted_at,
-  deleted_by,
   type,
   title,
   description,
   company_name,
-  contact_name,
-  contact_email,
-  contact_phone,
+  company_id,
+  company_slug,
+  company_city,
   city,
   governorate,
   urgency,
   status,
   moderation_status,
-  moderation_reason,
   category,
   budget_min,
   budget_max,
@@ -41,7 +38,7 @@ type AdminContext = {
 };
 
 type RequestBody = {
-  action?: "list" | "count" | "approve" | "reject" | "delete" | "restore";
+  action?: "list" | "count" | "approve" | "reject";
   id?: string;
   moderation_reason?: string | null;
 };
@@ -231,8 +228,7 @@ Deno.serve(async (req: Request) => {
       const { count, error } = await supabaseAdmin
         .from("business_needs")
         .select("id", { count: "exact", head: true })
-        .eq("status", "pending_review")
-        .is("deleted_at", null);
+        .eq("status", "pending_review");
 
       if (error) throw error;
 
@@ -255,7 +251,6 @@ Deno.serve(async (req: Request) => {
           updated_at: now,
         })
         .eq("id", body.id)
-        .is("deleted_at", null)
         .select(businessNeedColumns)
         .maybeSingle();
 
@@ -274,53 +269,6 @@ Deno.serve(async (req: Request) => {
           moderation_reason: body.moderation_reason || null,
           visibility: "private",
           updated_at: new Date().toISOString(),
-        })
-        .eq("id", body.id)
-        .is("deleted_at", null)
-        .select(businessNeedColumns)
-        .maybeSingle();
-
-      if (error) throw error;
-      if (!data) return json({ error: "Besoin introuvable" }, 404);
-
-      return json({ data });
-    }
-
-    if (action === "delete") {
-      const now = new Date().toISOString();
-      const { data, error } = await supabaseAdmin
-        .from("business_needs")
-        .update({
-          deleted_at: now,
-          deleted_by: "admin",
-          status: "deleted",
-          visibility: "private",
-          updated_at: now,
-        })
-        .eq("id", body.id)
-        .is("deleted_at", null)
-        .select(businessNeedColumns)
-        .maybeSingle();
-
-      if (error) throw error;
-      if (!data) return json({ error: "Besoin introuvable" }, 404);
-
-      return json({ data });
-    }
-
-    if (action === "restore") {
-      const now = new Date().toISOString();
-      const { data, error } = await supabaseAdmin
-        .from("business_needs")
-        .update({
-          deleted_at: null,
-          deleted_by: null,
-          status: "pending_review",
-          moderation_status: "pending",
-          moderation_reason: null,
-          visibility: "private",
-          published_at: null,
-          updated_at: now,
         })
         .eq("id", body.id)
         .select(businessNeedColumns)

@@ -5844,6 +5844,7 @@ export const dictionary = {
         deadline: 'Délai',
         featured: 'Mis en avant',
         viewNeed: 'Voir le besoin',
+        viewCompanyProfile: 'Voir la fiche entreprise',
       },
       fields: {
         company: 'Entreprise',
@@ -5967,6 +5968,7 @@ export const dictionary = {
         deadline: 'Deadline',
         featured: 'Featured',
         viewNeed: 'View need',
+        viewCompanyProfile: 'View company profile',
       },
       fields: {
         company: 'Company',
@@ -6090,6 +6092,7 @@ export const dictionary = {
         deadline: 'الموعد',
         featured: 'مميز',
         viewNeed: 'عرض الاحتياج',
+        viewCompanyProfile: 'عرض ملف الشركة',
       },
       fields: {
         company: 'الشركة',
@@ -6213,6 +6216,7 @@ export const dictionary = {
         deadline: 'Scadenza',
         featured: 'In evidenza',
         viewNeed: 'Vedi il bisogno',
+        viewCompanyProfile: 'Vedi la scheda azienda',
       },
       fields: {
         company: 'Azienda',
@@ -6336,6 +6340,7 @@ export const dictionary = {
         deadline: 'Срок',
         featured: 'Рекомендуется',
         viewNeed: 'Посмотреть потребность',
+        viewCompanyProfile: 'Посмотреть профиль компании',
       },
       fields: {
         company: 'Компания',
