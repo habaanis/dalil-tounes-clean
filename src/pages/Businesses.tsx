@@ -136,6 +136,32 @@ function getSectorLabel(item: Record<string, unknown>): string {
   ]);
 }
 
+function isCertifiedDalilTounes(statut_carte: string | null | undefined): boolean {
+  if (!statut_carte) return false;
+  const upper = statut_carte.toUpperCase();
+  return upper.includes('CERTIF') && !upper.includes('NON CERTIF');
+}
+
+function isPaidSubscription(statut_abonnement: string | null | undefined): boolean {
+  if (!statut_abonnement) return false;
+  const s = statut_abonnement.toLowerCase().trim();
+  return s.includes('artisan') || s.includes('premium') || s.includes('elite') || s.includes('custom') || s.includes('personnalis');
+}
+
+function hasActivity(business: Record<string, any>): boolean {
+  return !!(business.imageUrl || business.logoUrl || (business.description && business.description.trim()) || business.horaires_ok);
+}
+
+function getBusinessSortScore(business: Record<string, any>): number {
+  const certified = isCertifiedDalilTounes(business.statut_carte);
+  const premium = isPaidSubscription(business.statut_abonnement);
+  if (certified && premium) return 5;
+  if (certified) return 4;
+  if (premium) return 3;
+  if (hasActivity(business)) return 2;
+  return 1;
+}
+
 export const Businesses = ({
   showSuggestionForm = false,
   onCloseSuggestionForm,
@@ -641,6 +667,9 @@ export const Businesses = ({
       }));
 
       mappedData.sort((a, b) => {
+        const scoreA = getBusinessSortScore(a);
+        const scoreB = getBusinessSortScore(b);
+        if (scoreB !== scoreA) return scoreB - scoreA;
         const priorityA = getSubscriptionPriority(a.statut_abonnement);
         const priorityB = getSubscriptionPriority(b.statut_abonnement);
         return priorityB - priorityA;
@@ -851,8 +880,11 @@ export const Businesses = ({
         console.log(`\n[Recherche Multi-colonnes] ✅ Résultats filtrés: ${mappedData.length}`);
       }
 
-      // Trier par priorité d'abonnement (Elite > Premium > Artisan > Découverte)
+      // Trier par priorité (Certifié+Premium > Certifié > Premium > Activité > Autres)
       mappedData.sort((a, b) => {
+        const scoreA = getBusinessSortScore(a);
+        const scoreB = getBusinessSortScore(b);
+        if (scoreB !== scoreA) return scoreB - scoreA;
         const priorityA = getSubscriptionPriority(a.statut_abonnement);
         const priorityB = getSubscriptionPriority(b.statut_abonnement);
         return priorityB - priorityA;
@@ -1105,6 +1137,14 @@ export const Businesses = ({
                 Exprimez vos besoins (prestataire, materiel, fournisseur, service...) afin d'etre contacte directement par les entreprises concernees.
               </p>
             </button>
+            <div onClick={() => navigate('/besoins-professionnels')} className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all relative cursor-pointer group">
+              <span className="absolute top-3 right-3 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-green-50 text-green-700 border border-green-200">Disponible</span>
+              <div className="text-2xl mb-3">🔍</div>
+              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5 group-hover:text-[#D4AF37] transition-colors">Consulter les besoins professionnels</h3>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Découvrez les besoins publiés par les entreprises tunisiennes et identifiez de nouvelles opportunités.
+              </p>
+            </div>
           </div>
         </section>
 
