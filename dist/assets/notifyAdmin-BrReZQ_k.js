@@ -1,1 +1,0 @@
-import{b as o,c as i}from"./index-DP5h2oU5.js";const s=`${o}/functions/v1/notify-form`;async function r(n,t,a){try{await fetch(s,{method:"POST",headers:{"Content-Type":"application/json",Authorization:`Bearer ${i}`},body:JSON.stringify({type:n,data:t,admin_url:a})})}catch{}}export{r as n};

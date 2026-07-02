@@ -126,14 +126,16 @@ export default function SearchBar({
   const isGlobal = scope === 'global';
   const pageLabel = isGlobal ? null : getCategoryDisplayName(scope as PageCategorie);
   const like = (s: string) => `%${(s || '').trim()}%`;
+  const GLOBAL_RAW_RESULT_LIMIT = 150;
+  const CATEGORY_RAW_RESULT_LIMIT = 40;
 
-  // Only simple-name TEXT columns -- no ARRAY columns, no spaces in names.
+  // Only TEXT columns supported by PostgREST ilike in .or().
   // ARRAY columns (categorie, sous_categories, secteur, tags, liste_pages)
-  // and space-name columns (mots cles recherche) are handled in JS scoring only.
+  // are handled in JS scoring only.
   const OR_SAFE_FIELDS = [
     'nom', 'ville', 'gouvernorat', 'adresse', 'description',
     'sous_categories_texte', 'sous_categories_clean',
-    'name_ar', 'services',
+    'name_ar', 'services', '"mots cles recherche"',
   ];
 
   function rowToSearchableText(row: any): string {
@@ -245,7 +247,7 @@ export default function SearchBar({
           .from(Tables.ENTREPRISE)
           .select('*')
           .or(orParts.join(','))
-          .limit(40);
+          .limit(isGlobal ? GLOBAL_RAW_RESULT_LIMIT : CATEGORY_RAW_RESULT_LIMIT);
 
         if (cityTrimmed.length > 0) {
           const cityPattern = `%${cityTrimmed}%`;
@@ -458,6 +460,11 @@ export default function SearchBar({
     const villeParam = city.trim();
     let detectedCategory: string | undefined;
 
+    if (resultMode === 'redirectToResults') {
+      goToResults();
+      return;
+    }
+
     if (isGlobal && intentEnabled) {
       const res = detectIntent(query);
       if (res.categorie && res.shouldRedirect) {
@@ -493,6 +500,19 @@ export default function SearchBar({
 
   const renderSeeAll = () => {
     if (!showSeeAllItem) return null;
+
+    if (resultMode === 'redirectToResults' && q.trim().length >= 2) {
+      return (
+        <li
+          className="py-2.5 px-2 font-medium cursor-pointer hover:bg-gray-50 rounded transition text-gray-700 flex items-center gap-2"
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => goToResults()}
+        >
+          <span>➡️</span>
+          <span>{t(language as Lang, 'search.seeAll')}</span>
+        </li>
+      );
+    }
 
     if (isGlobal && q.trim().length >= 2) {
       const res = detectIntent(q);
