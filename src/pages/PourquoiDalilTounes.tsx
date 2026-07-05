@@ -1,28 +1,9 @@
-import {
-  ArrowDown,
-  ArrowRight,
-  Award,
-  CalendarCheck,
-  Camera,
-  Check,
-  Clock,
-  Facebook,
-  Globe2,
-  Instagram,
-  Linkedin,
-  MapPin,
-  MessageCircle,
-  Phone,
-  Crown,
-  QrCode,
-  Search,
-  Share2,
-  ShoppingBag,
-  Star,
-  Wrench,
-} from 'lucide-react';
+import { ArrowDown, ArrowRight, Award, CalendarCheck, Camera, Check, Clock, Facebook, Globe as Globe2, Instagram, Linkedin, MapPin, MessageCircle, Phone, Crown, QrCode, Search, Share2, ShoppingBag, Star, Wrench } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { SEOHead } from '../components/SEOHead';
+import StructuredData from '../components/StructuredData';
+import Breadcrumb from '../components/seo/Breadcrumb';
 
 type PlatformRole = {
   name: string;
@@ -176,17 +157,50 @@ const ScreenshotFrame = ({
   src,
   alt,
   className = '',
+  width,
+  height,
 }: {
   src: string;
   alt: string;
   className?: string;
+  width: number;
+  height: number;
 }) => (
   <div className={`relative overflow-hidden rounded-[28px] border-2 border-[#D4AF37] bg-[#07573f] shadow-2xl ${className}`}>
-    <img src={src} alt={alt} className="h-auto w-full object-contain" loading="lazy" decoding="async" />
+    <img src={src} alt={alt} width={width} height={height} className="h-auto w-full object-contain" loading="lazy" decoding="async" />
   </div>
 );
 
 export default function PourquoiDalilTounes() {
+  const structuredData = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebPage',
+      name: 'Pourquoi Dalil Tounes ?',
+      description: 'Découvrez pourquoi Dalil Tounes rapproche les citoyens, les entreprises et les professionnels en Tunisie dans une plateforme claire, utile et vivante.',
+      url: 'https://dalil-tounes.com/pourquoi-dalil-tounes',
+      isPartOf: {
+        '@type': 'WebSite',
+        name: 'Dalil Tounes',
+        url: 'https://dalil-tounes.com',
+      },
+      publisher: {
+        '@type': 'Organization',
+        name: 'Dalil Tounes',
+        url: 'https://dalil-tounes.com',
+        logo: 'https://dalil-tounes.com/images/logo_dalil_tounes_crop.png',
+      },
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://dalil-tounes.com/' },
+        { '@type': 'ListItem', position: 2, name: 'Pourquoi Dalil Tounes', item: 'https://dalil-tounes.com/pourquoi-dalil-tounes' },
+      ],
+    },
+  ];
+
   return (
     <main className="min-h-screen bg-white text-gray-900">
       <SEOHead
@@ -195,6 +209,7 @@ export default function PourquoiDalilTounes() {
         canonical="https://dalil-tounes.com/pourquoi-dalil-tounes"
         currentPath="/pourquoi-dalil-tounes"
       />
+      <StructuredData data={structuredData} />
 
       <section className="relative flex min-h-[72vh] items-center overflow-hidden bg-[#1B1020] px-5 py-20 text-white">
         <img
@@ -219,6 +234,10 @@ export default function PourquoiDalilTounes() {
 
       <section className="px-5 py-20">
         <div className="mx-auto max-w-6xl">
+          <Breadcrumb items={[
+            { label: 'Accueil', href: '/' },
+            { label: 'Pourquoi Dalil Tounes' },
+          ]} />
           <div className="grid items-center gap-12 lg:grid-cols-[0.95fr_1.05fr]">
             <div>
               <SectionLabel>Le point de départ</SectionLabel>
@@ -295,6 +314,8 @@ export default function PourquoiDalilTounes() {
               src="/images/pourquoi-business-card.png"
               alt="Capture réelle d'une Business Card Dalil Tounes"
               className="mx-auto w-full max-w-xl bg-[#07573f]"
+              width={812}
+              height={572}
             />
           </div>
 
@@ -325,6 +346,8 @@ export default function PourquoiDalilTounes() {
               src="/images/pourquoi-cv-business.png"
               alt="Capture réelle d'un CV Business Dalil Tounes"
               className="mx-auto w-full max-w-[520px] bg-[#07573f]"
+              width={800}
+              height={1642}
             />
           </div>
         </div>
@@ -338,6 +361,13 @@ export default function PourquoiDalilTounes() {
             <div className="mt-7">
               <BenefitList items={citizenBenefits} />
             </div>
+            <Link
+              to="/businesses"
+              className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#4A1D43] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#3a1535]"
+            >
+              Explorer les entreprises
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
           </div>
 
           <div className="rounded-3xl border border-[#D4AF37]/35 bg-[#FFF8E6] p-7 shadow-sm">
@@ -346,6 +376,13 @@ export default function PourquoiDalilTounes() {
             <div className="mt-7">
               <BenefitList items={companyBenefits} />
             </div>
+            <Link
+              to="/subscription"
+              className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#D4AF37] px-5 py-2.5 text-sm font-semibold text-[#1B1020] transition hover:bg-[#c9a432]"
+            >
+              Voir les offres
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
           </div>
         </div>
       </section>
@@ -375,6 +412,35 @@ export default function PourquoiDalilTounes() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="px-5 py-16">
+        <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-center gap-4 text-center">
+          <Link
+            to="/"
+            className="rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-[#4A1D43] shadow-sm transition hover:border-[#D4AF37] hover:shadow-md"
+          >
+            Retour a l'accueil
+          </Link>
+          <Link
+            to="/concept"
+            className="rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-[#4A1D43] shadow-sm transition hover:border-[#D4AF37] hover:shadow-md"
+          >
+            Notre concept
+          </Link>
+          <Link
+            to="/businesses"
+            className="rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-[#4A1D43] shadow-sm transition hover:border-[#D4AF37] hover:shadow-md"
+          >
+            Rechercher une entreprise
+          </Link>
+          <Link
+            to="/subscription"
+            className="rounded-xl border border-[#D4AF37] bg-[#FFF8E6] px-5 py-2.5 text-sm font-semibold text-[#4A1D43] shadow-sm transition hover:bg-[#D4AF37] hover:text-white"
+          >
+            Voir les abonnements
+          </Link>
         </div>
       </section>
     </main>
