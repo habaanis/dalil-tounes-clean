@@ -34,6 +34,7 @@ const SimilarBusinesses = lazy(() => import('../components/seo/SimilarBusinesses
 
 import EntrepriseAvisForm from '../components/EntrepriseAvisForm';
 import BusinessReviews from '../components/BusinessReviews';
+import Breadcrumb from '../components/seo/Breadcrumb';
 import { buildEntrepriseUrl, buildEntrepriseShareUrl, generateSlug, extractShortIdFromSlug } from '../lib/slugify';
 import { cleanAltText, extractFrenchName, cleanArabicField } from '../lib/textNormalization';
 import { SEOHead } from './SEOHead';
@@ -939,18 +940,45 @@ export const BusinessDetail = ({
             data={generateLocalBusinessSchema({
               nom: business.nom,
               ville: business.ville,
+              gouvernorat: business.gouvernorat,
               adresse: business.adresse,
               telephone: business.telephone,
               site_web: business.site_web,
               photo_url: business.image_url,
+              image_url: business.image_url,
+              latitude: business.latitude,
+              longitude: business.longitude,
               note_moyenne: averageRating || undefined,
               nombre_avis: reviewCount,
+              horaires: business.horaires_ok,
               categorie: translatedCategory,
               statut_abonnement: business.statut_abonnement || undefined,
               description: translatedDescription,
             })}
           />
+
+          <StructuredData
+            data={{
+              '@context': 'https://schema.org',
+              '@type': 'BreadcrumbList',
+              itemListElement: [
+                { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://dalil-tounes.com/' },
+                ...(business.ville ? [{ '@type': 'ListItem', position: 2, name: business.ville, item: `https://dalil-tounes.com/ville/${generateSlug(business.ville)}` }] : []),
+                { '@type': 'ListItem', position: business.ville ? 3 : 2, name: business.nom },
+              ],
+            }}
+          />
         </>
+      )}
+
+      {!asModal && business && (
+        <Breadcrumb
+          items={[
+            { label: 'Accueil', href: '/' },
+            ...(business.ville ? [{ label: business.ville, href: `/ville/${generateSlug(business.ville)}` }] : []),
+            { label: displayName },
+          ]}
+        />
       )}
 
       {tier === 'gratuit' && (
@@ -1033,6 +1061,8 @@ export const BusinessDetail = ({
                     ville ? ` à ${ville}` : ''
                   }`;
                 })()}
+                width={400}
+                height={130}
                 style={{
                   position: 'relative',
                   width: '100%',
@@ -1041,7 +1071,8 @@ export const BusinessDetail = ({
                   objectPosition: 'center',
                   display: 'block',
                 }}
-                loading="lazy"
+                loading="eager"
+                {...{ fetchpriority: 'high' }}
                 referrerPolicy="no-referrer"
                 onError={(e) => {
                   const img = e.currentTarget;
@@ -1085,6 +1116,8 @@ export const BusinessDetail = ({
 
                   return `${business.nom} à ${ville} - ${cat}`;
                 })()}
+                width={64}
+                height={64}
                 className="w-full h-full"
                 style={getLogoStyle(business.logo_url)}
                 loading="lazy"
@@ -1268,6 +1301,7 @@ export const BusinessDetail = ({
 
             {/* SEO: hidden content for crawlers */}
             <div className="sr-only" aria-hidden="false">
+              <h2>Services et informations</h2>
               {business.sous_categories && <p>Services: {business.sous_categories}</p>}
               {business.description && <p>À propos: {business.description}</p>}
             </div>
@@ -1443,13 +1477,6 @@ export const BusinessDetail = ({
                 )}
 
                 {(() => {
-                  console.log('[BusinessDetail GPS]', {
-                    BTN_Maps: business['BTN_Maps'],
-                    google_url: business.google_url,
-                    adresse: business.adresse,
-                    latitude: business.latitude,
-                    longitude: business.longitude,
-                  });
                   const mapsUrl = buildMapsUrl(business);
                   if (!mapsUrl) return null;
                   return (
@@ -2124,6 +2151,7 @@ export const BusinessDetail = ({
 
       {business?.id && (
         <div className="px-1 mt-3">
+          <h2 className="sr-only">Avis clients</h2>
           <BusinessReviews entrepriseId={business.id} />
         </div>
       )}
@@ -2135,6 +2163,7 @@ export const BusinessDetail = ({
         if (!seoMetier && !seoVille) return null;
         return (
           <div className="px-1 mt-6 pt-4 border-t border-gray-800 space-y-3">
+            <h2 className="sr-only">Voir aussi</h2>
             {seoVille && (
               <Link
                 to={`/ville/${seoVille.slug}`}
@@ -2168,6 +2197,7 @@ export const BusinessDetail = ({
 
       {business && !asModal && actualBusinessId && (
         <div className="px-1">
+          <h2 className="sr-only">Entreprises similaires</h2>
           <Suspense fallback={null}>
             <SimilarBusinesses
               businessId={actualBusinessId}
