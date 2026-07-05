@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dalil Tounes — Annuaire professionnel en Tunisie | Entreprises, Sant&eacute;, &Eacute;ducation, Emplois</title>
+    <meta name="description" content="Dalil Tounes - Le guide digital des établissements et services en Tunisie. Annuaire professionnel, commerces, santé, éducation, loisirs." />
+    <meta name="keywords" content="annuaire tunisie, entreprises tunisie, dalil tounes, professionnels tunisie, commerces tunisie, santé tunisie, éducation tunisie, emploi tunisie, avocat tunisie, médecin tunisie, restaurant tunisie, plombier tunisie" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Dalil Tounes" />
+    <meta property="og:title" content="Dalil Tounes - Annuaire professionnel en Tunisie" />
+    <meta property="og:description" content="Le guide digital des établissements et services en Tunisie. Trouvez les meilleurs professionnels près de chez vous." />
+    <meta property="og:image" content="https://dalil-tounes.com/images/logo_dalil_tounes_crop.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Dalil Tounes - Votre booster commercial" />
+    <meta property="og:url" content="https://dalil-tounes.com" />
+    <meta property="og:locale" content="fr_TN" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@daliltounes" />
+    <meta name="twitter:title" content="Dalil Tounes - Annuaire professionnel en Tunisie" />
+    <meta name="twitter:description" content="Le guide digital des établissements et services en Tunisie. Trouvez les meilleurs professionnels près de chez vous." />
+    <meta name="twitter:image" content="https://dalil-tounes.com/images/logo_dalil_tounes_crop.png" />
+    <meta name="twitter:image:alt" content="Dalil Tounes - Votre booster commercial" />
+
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#D4AF37" />
+
+    <link
+      rel="preload"
+      as="image"
+      href="/images/drapeau-tunisie.webp?v=1"
+      fetchpriority="high"
+      type="image/webp"
+    />
+
+    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+
+    <link
+      rel="preload"
+      as="font"
+      href="/fonts/playfair-display-700-latin.woff2"
+      type="font/woff2"
+      crossorigin
+      media="(min-width: 769px)"
+    />
+
+    <style>
+      /* Reset minimal */
+      *,::before,::after{box-sizing:border-box;border-width:0;border-style:solid}
+      html{line-height:1.5;-webkit-text-size-adjust:100%;font-family:ui-sans-serif,system-ui,sans-serif}
+      body{margin:0;overflow-x:hidden;background:#fff}
+      /* Le root React est caché jusqu'à ce que le skeleton soit retiré :
+         garantit un seul et même pixel drapeau visible sans flash entre les deux. */
+      #root{opacity:0;transition:opacity 0s}
+      
+      @keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+      .sk{animation:pulse 1.8s ease-in-out infinite;background:#e5e7eb;border-radius:.75rem}
+
+      /* Navbar placeholder */
+      #pre-nav{height:56px;background:#fff;border-bottom:1px solid #f0e6d2;display:flex;align-items:center;padding:0 1rem;position:sticky;top:0;z-index:50}
+      
+      /* Hero placeholder OPTIMISÉ — dimensions identiques au rendu React
+         afin que le navigateur sélectionne l'image du skeleton comme LCP.
+         aspect-ratio 3/1 = même box que le <img width=1200 height=400> de Home.tsx. */
+      #pre-hero{padding:1rem}
+      #pre-hero-inner{
+        max-width:48rem;margin:0 auto;border-radius:1.5rem;overflow:hidden;
+        position:relative;aspect-ratio:3/1;min-height:180px;
+        border:1px solid #D4AF37;
+        background:#1a0a18;display:flex;align-items:center;justify-content:center;
+      }
+      /* Image du drapeau AFFICHÉE EN PLEINE OPACITÉ — elle devient le LCP.
+         Un overlay noir au-dessus reproduit le voile du rendu final. */
+      #pre-hero-img {
+        position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+        opacity:1;
+      }
+      #pre-hero-overlay {
+        position:absolute;inset:0;background:rgba(0,0,0,0.3);z-index:1;
+      }
+      .hero-content-sk{position:relative;z-index:2;width:100%;display:flex;flex-direction:column;align-items:center;gap:10px;padding:0 1.5rem}
+      .h1-sk{width:60%;max-width:320px;height:28px;background:rgba(255,255,255,0.18);border-radius:.25rem}
+
+      #pre-search{padding:0 1rem}
+      .input-sk{max-width:72rem;margin:0 auto;height:48px;border-radius:.75rem;background:#f3f4f6}
+
+      /* Mobile : neutraliser les effets coûteux au-dessus de la ligne de flottaison.
+         - box-shadow et backdrop-filter sont très gourmands sur le CPU mobile,
+           et retardent la peinture du LCP (drapeau).
+         - On les rétablit automatiquement au-dessus de 768px (md). */
+      @media (max-width: 767px) {
+        section:first-of-type .rounded-3xl,
+        section:first-of-type .rounded-xl,
+        section:nth-of-type(2) a {
+          box-shadow: none !important;
+          backdrop-filter: none !important;
+          -webkit-backdrop-filter: none !important;
+        }
+      }
+    </style>
+
+    <!-- Google tag (gtag.js) — chargé APRÈS window.load pour ne pas
+         pénaliser le LCP mobile. La queue dataLayer est conservée
+         et rejouée dès que gtag.js est prêt. -->
+    <script>
+      if (window.location.hostname === 'www.dalil-tounes.com') {
+        window.location.replace('https://dalil-tounes.com' + window.location.pathname + window.location.search + window.location.hash);
+      }
+    </script>
+
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-ME2M208SES');
+      function loadGtm() {
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=G-ME2M208SES';
+        document.head.appendChild(s);
+      }
+      if (document.readyState === 'complete') {
+        setTimeout(loadGtm, 0);
+      } else {
+        window.addEventListener('load', function(){ setTimeout(loadGtm, 500); }, { once: true });
+      }
+    </script>
+
+    <!-- Static JSON-LD for crawlers that don't execute JavaScript -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Dalil Tounes",
+      "alternateName": "دليل تونس",
+      "url": "https://dalil-tounes.com",
+      "description": "Le guide digital des établissements et services en Tunisie. Annuaire professionnel couvrant les 24 gouvernorats.",
+      "inLanguage": ["fr", "ar", "en", "it", "ru"],
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://dalil-tounes.com/recherche?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Dalil Tounes",
+      "url": "https://dalil-tounes.com",
+      "logo": "https://dalil-tounes.com/images/logo_dalil_tounes_crop.png",
+      "description": "Plateforme tunisienne de référencement des entreprises, services et événements en Tunisie",
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "TN"
+      },
+      "sameAs": [
+        "https://www.facebook.com/daliltounes",
+        "https://www.instagram.com/dalil.tounes/"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "email": "contact@dalil-tounes.com",
+        "contactType": "customer service",
+        "availableLanguage": ["French", "Arabic"]
+      }
+    }
+    </script>
+  </head>
+  <body>
+    <div id="pre-skeleton">
+      <div id="pre-nav">
+        <div class="sk" style="width:120px;height:28px"></div>
+      </div>
+      
+      <div id="pre-hero">
+        <div id="pre-hero-inner">
+          <img
+            src="/images/drapeau-tunisie.webp?v=1"
+            id="pre-hero-img"
+            alt="Drapeau de la Tunisie"
+            width="1200"
+            height="400"
+            fetchpriority="high"
+            decoding="async"
+          >
+          <div id="pre-hero-overlay"></div>
+          <div class="hero-content-sk">
+            <div class="sk h1-sk"></div>
+            <div class="sk" style="width:50%;max-width:220px;height:16px;background:rgba(255,255,255,0.12);border-radius:.25rem"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="pre-search">
+        <div class="sk input-sk"></div>
+      </div>
+    </div>
+
+    <div id="root"></div>
+
+    <script>
+      // Stratégie LCP stable :
+      // 1. Le skeleton HTML peint l'image drapeau le plus tôt possible.
+      // 2. React monte ensuite dans #root, invisible (opacity:0), avec la MÊME image
+      //    drapeau chargée depuis le cache — donc même pixel, aucun reflow.
+      // 3. Quand React signale "ready" (window.__appMounted), on swappe : on retire
+      //    le skeleton d'un coup, et #root devient visible. Le navigateur continue
+      //    de voir exactement le même drapeau => le LCP reste figé sur ce peint.
+      (function(){
+        var skeletonRemoved = false;
+        function removeSkeleton(){
+          if (skeletonRemoved) return;
+          skeletonRemoved = true;
+          var sk = document.getElementById('pre-skeleton');
+          if (sk) sk.remove();
+          var r = document.getElementById('root');
+          if (r) r.style.opacity = '1';
+        }
+        window.__removeSkeleton = removeSkeleton;
+        // Secours : si React n'émet pas le signal sous 2.5s, on affiche quand même.
+        setTimeout(removeSkeleton, 2500);
+      })();
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+    <script>function loadScript(a){var b=document.getElementsByTagName("head")[0],c=document.createElement("script");c.type="text/javascript",c.src="https://tracker.metricool.com/resources/be.js",c.onreadystatechange=a,c.onload=a,b.appendChild(c)}loadScript(function(){beTracker.t({hash:"af74732feb49ea4b1cf121673d7a1f24"})});</script>
+  </body>
+</html>

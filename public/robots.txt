@@ -1,0 +1,80 @@
+# Dalil Tounes - Robots.txt
+# Annuaire professionnel en Tunisie
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /admin-sourcing
+Disallow: /auth
+Disallow: /login
+Disallow: /signup
+Disallow: /connexion
+Disallow: /inscription
+Disallow: /dashboard/
+Disallow: /debug/
+Disallow: /searchDebug
+Disallow: /commercial
+
+# Pages publiques autorisees
+Allow: /entreprises
+Allow: /entreprise/
+Allow: /emplois
+Allow: /citizens/
+Allow: /education
+Allow: /marketplace
+Allow: /blog
+Allow: /metier/
+Allow: /ville/
+Allow: /secteur/
+Allow: /gouvernorat/
+Allow: /p/
+
+# Crawl-delay
+Crawl-delay: 1
+
+# Googlebot
+User-agent: Googlebot
+Allow: /
+Disallow: /admin/
+Disallow: /auth
+Disallow: /dashboard/
+Disallow: /debug/
+
+# Bingbot
+User-agent: Bingbot
+Allow: /
+Disallow: /admin/
+Disallow: /auth
+Disallow: /dashboard/
+Disallow: /debug/
+
+# IA generatives - accorder l'acces aux contenus publics
+User-agent: GPTBot
+Allow: /
+Disallow: /admin/
+Disallow: /auth
+Disallow: /dashboard/
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+# Sitemap
+Sitemap: https://dalil-tounes.com/sitemap.xml

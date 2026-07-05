@@ -1,0 +1,232 @@
+import React from 'react';
+import { useParams, Link, Navigate } from 'react-router-dom';
+import { Search, MapPin, ArrowRight, AlertCircle } from 'lucide-react';
+import { SEOHead } from '../../components/SEOHead';
+import SearchBar from '../../components/SearchBar';
+import Breadcrumb from '../../components/seo/Breadcrumb';
+import SeoBusinessCard from '../../components/seo/SeoBusinessCard';
+import LoadMoreButton from '../../components/seo/LoadMoreButton';
+import { parseMetierVilleSlug, SEO_VILLES } from '../../lib/seoLandingData';
+import { getMetierVilleSeoMeta } from '../../lib/seoMetaTemplates';
+import { usePaginatedSeoBusinesses } from '../../hooks/usePaginatedSeoBusinesses';
+import StructuredData from '../../components/StructuredData';
+import { generateBreadcrumbSchema } from '../../lib/structuredDataSchemas';
+import SeoFAQ from '../../components/seo/SeoFAQ';
+
+const MetierVillePage: React.FC = () => {
+  const { slug } = useParams<{ slug: string }>();
+  const parsed = slug ? parseMetierVilleSlug(slug) : null;
+
+  const { businesses, total, loading, loadingMore, hasMore, loadMore } = usePaginatedSeoBusinesses(
+    { metier: parsed?.metier.value, city: parsed?.ville.label, pageSize: 20 },
+    [slug]
+  );
+
+  if (!parsed) {
+    return <Navigate to="/" replace />;
+  }
+
+  const { metier, ville } = parsed;
+  const seo = getMetierVilleSeoMeta(metier.label, ville.label, slug!, metier.secteur);
+  const pageTitle = seo.title;
+  const pageDescription = seo.description;
+  const pageKeywords = seo.keywords;
+
+  const sortedBusinesses = businesses;
+
+  const faqData = [
+    { question: `Comment trouver un ${metier.label.toLowerCase()} à ${ville.label} ?`, answer: `Consultez la liste ci-dessous ou utilisez la barre de recherche Dalil Tounes. Les résultats sont triés par note Google et complétude de la fiche.` },
+    { question: `Combien de ${metier.label.toLowerCase()}s sont référencés à ${ville.label} ?`, answer: `Dalil Tounes référence actuellement les ${metier.label.toLowerCase()}s disponibles à ${ville.label} et dans le gouvernorat de ${ville.gouvernorat}. De nouveaux établissements sont ajoutés régulièrement.` },
+  ];
+
+  const schemaData = {
+    '@context': 'https://schema.org',
+    '@type': 'SearchResultsPage',
+    name: pageTitle,
+    description: pageDescription,
+    url: `https://dalil-tounes.com/${slug}`,
+  };
+
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Accueil', url: '/' },
+    { name: 'Entreprises', url: '/entreprises' },
+    { name: metier.label, url: `/metier/${metier.slug}` },
+    { name: ville.label, url: `/${slug}` },
+  ]);
+
+  const otherVilles = SEO_VILLES.filter(v => v.slug !== ville.slug).slice(0, 8);
+
+  return (
+    <>
+      <SEOHead
+        title={pageTitle}
+        description={pageDescription}
+        keywords={pageKeywords}
+        canonical={`https://dalil-tounes.com/${slug}`}
+        currentPath={`/${slug}`}
+      />
+
+      <StructuredData data={[schemaData, breadcrumbSchema]} />
+
+      <div className="min-h-screen bg-[#0f0f0f]">
+        <div
+          className="relative py-16 px-4 overflow-hidden"
+          style={{
+            background: 'linear-gradient(135deg, #111111 0%, #1a1008 50%, #111111 100%)',
+          }}
+        >
+          <div
+            className="absolute inset-0 opacity-5"
+            style={{
+              backgroundImage: 'radial-gradient(circle at 30% 50%, #D4AF37 0%, transparent 50%), radial-gradient(circle at 70% 50%, #D4AF37 0%, transparent 50%)',
+            }}
+          />
+          <div className="container mx-auto max-w-5xl relative">
+            <Breadcrumb
+              items={[
+                { label: 'Accueil', href: '/' },
+                { label: 'Entreprises', href: '/entreprises' },
+                { label: metier.label, href: `/${metier.slug}` },
+                { label: ville.label },
+              ]}
+            />
+
+            <div className="flex items-center gap-3 mb-4">
+              <span className="inline-block px-3 py-1 rounded-full border border-[#D4AF37]/40 text-[#D4AF37] text-xs font-medium tracking-widest uppercase">
+                {metier.secteur}
+              </span>
+            </div>
+
+            <h1
+              className="text-3xl md:text-5xl font-bold text-white mb-4 leading-tight"
+              style={{ fontFamily: "'Playfair Display', 'Cormorant Garamond', serif" }}
+            >
+              {metier.label} à{' '}
+              <span className="text-[#D4AF37]">{ville.label}</span>
+            </h1>
+
+            <p className="text-gray-400 text-base md:text-lg max-w-2xl leading-relaxed">
+              {pageDescription}
+            </p>
+
+            <div className="flex flex-wrap gap-3 mt-8">
+              <div className="flex items-center gap-2 text-sm text-gray-500">
+                <MapPin className="w-4 h-4 text-[#D4AF37]" />
+                <span>{ville.label}, Tunisie</span>
+              </div>
+              {!loading && (
+                <div className="flex items-center gap-2 text-sm text-gray-500">
+                  <Search className="w-4 h-4 text-[#D4AF37]" />
+                  <span>{total} établissement{total !== 1 ? 's' : ''} trouvé{total !== 1 ? 's' : ''}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="container mx-auto max-w-5xl px-4 py-8">
+          <div className="mb-8 bg-[#1a1a1a] rounded-xl p-4 border border-[#D4AF37]/30">
+            <SearchBar scope="global" />
+          </div>
+
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="bg-[#1a1a1a] rounded-xl p-5 animate-pulse">
+                  <div className="flex gap-4">
+                    <div className="w-12 h-12 bg-gray-800 rounded-lg" />
+                    <div className="flex-1 space-y-2">
+                      <div className="h-4 bg-gray-800 rounded w-3/4" />
+                      <div className="h-3 bg-gray-800 rounded w-1/2" />
+                      <div className="h-3 bg-gray-800 rounded w-2/3" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : sortedBusinesses.length > 0 ? (
+            <>
+              <div className="flex items-center justify-between mb-6">
+                <h2
+                  className="text-xl font-semibold text-white"
+                  style={{ fontFamily: "'Playfair Display', serif" }}
+                >
+                  {total} résultat{total !== 1 ? 's' : ''}
+                </h2>
+                <Link
+                  to={`/entreprises?categorie=${encodeURIComponent(metier.value)}&gouvernorat=${encodeURIComponent(ville.gouvernorat)}`}
+                  className="flex items-center gap-1 text-sm text-[#D4AF37] hover:underline"
+                >
+                  Voir tout l'annuaire
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {sortedBusinesses.map(b => (
+                  <SeoBusinessCard key={b.id} business={b} />
+                ))}
+              </div>
+
+              {hasMore && (
+                <LoadMoreButton
+                  onClick={loadMore}
+                  loading={loadingMore}
+                  shown={businesses.length}
+                  total={total}
+                />
+              )}
+
+              <p className="text-center text-[11px] text-gray-500 mt-6 leading-relaxed">
+                Les résultats affichés reposent sur des critères automatisés (avis publics, notes Google, complétude de la fiche).{' '}
+                <Link to="/info-avis" className="text-[#D4AF37] hover:underline">En savoir plus</Link>
+              </p>
+            </>
+          ) : (
+            <div className="text-center py-16">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-800 mb-6">
+                <AlertCircle className="w-8 h-8 text-gray-600" />
+              </div>
+              <h2 className="text-xl font-semibold text-white mb-3">
+                Aucun résultat pour {metier.label} à {ville.label}
+              </h2>
+              <p className="text-gray-500 text-sm mb-8 max-w-md mx-auto">
+                Aucun établissement n'a encore été référencé pour cette combinaison. Consultez l'annuaire complet pour plus d'options.
+              </p>
+              <Link
+                to="/entreprises"
+                className="inline-block px-8 py-3 border border-[#D4AF37]/60 text-[#D4AF37] text-sm font-medium rounded-lg hover:bg-[#D4AF37] hover:text-black transition-all"
+              >
+                Voir tout l'annuaire
+              </Link>
+            </div>
+          )}
+
+          <div className="mt-16 pt-10 border-t border-gray-800">
+            <h2
+              className="text-lg font-semibold text-white mb-6"
+              style={{ fontFamily: "'Playfair Display', serif" }}
+            >
+              {metier.label} dans d'autres villes
+            </h2>
+            <div className="flex flex-wrap gap-2">
+              {otherVilles.map(v => (
+                <Link
+                  key={v.slug}
+                  to={`/${metier.slug}-${v.slug}`}
+                  className="px-3 py-1.5 rounded-full border border-gray-700 hover:border-[#D4AF37]/50 text-gray-400 hover:text-[#D4AF37] text-xs transition-all"
+                >
+                  {metier.label} {v.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <SeoFAQ title={`Questions fréquentes - ${metier.label} à ${ville.label}`} questions={faqData} />
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default MetierVillePage;

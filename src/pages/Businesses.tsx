@@ -1,0 +1,1583 @@
+import { useState, useEffect, useRef, lazy, Suspense } from 'react';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext';
+import { useTranslation } from '../lib/i18n';
+import { supabase, supabaseUrl, supabaseAnonKey } from '../lib/supabaseClient';
+import { getHashQueryParams } from '../lib/url';
+import { readParams } from '../lib/urlParams';
+import { buildEntrepriseUrl } from '../lib/slugify';
+import { RPC, Tables } from '../lib/dbTables';
+import { FeaturedEventsCarousel } from '../components/FeaturedEventsCarousel';
+import { FeaturedBusinessesStrip } from '../components/FeaturedBusinessesStrip';
+import { METIERS_DOMAINES } from '../lib/categories';
+import { FINANCE_SUBCATEGORIES } from '../lib/entrepriseCategories';
+import { Search, MapPin, Phone, Mail, Globe, Building2, X, Plus, ChevronDown, Star, Award, Briefcase } from 'lucide-react';
+import { Toast } from '../components/Toast';
+import { getSupabaseImageUrl } from '../lib/imageUtils';
+import { HERO_IMAGE_URL, HERO_IMAGE_JPG_URL } from '../constants/images';
+import SignatureCard from '../components/SignatureCard';
+import BusinessNeedForm from '../components/BusinessNeedForm';
+import { normalizeText, removeArabicDiacritics, extractFrenchName, cleanSearchTerm, cleanArabicField } from '../lib/textNormalization';
+import { BusinessCardWithActivity, type BusinessActivity } from '../components/BusinessCardWithActivity';
+import SearchBar from '../components/SearchBar';
+import { getSubscriptionPriority } from '../lib/subscriptionHelper';
+import {
+  readBusinessesCache,
+  prefetchBusinessesData,
+  subscribeBusinessesData,
+  type BusinessRow,
+} from '../lib/businessesCache';
+import { extractMainCategory, getAllKeywords } from '../lib/categoryDisplay';
+import StructuredData from '../components/StructuredData';
+import { generateCollectionPageSchema } from '../lib/structuredDataSchemas';
+
+interface Business {
+  id: string;
+  name: string;
+  category: string;
+  subCategories?: string;
+  city: string;
+  address: string;
+  phone: string;
+  email: string;
+  website?: string;
+  description: string;
+  services?: string;
+  imageUrl?: string | null;
+  logoUrl?: string | null;
+  gouvernorat?: string;
+  secteur?: string;
+  statut_abonnement?: string | null;
+  niveau_priorite_abonnement?: number | null;
+  badges?: string[];
+  mots_cles_recherche?: string;
+  instagram?: string;
+  facebook?: string;
+  tiktok?: string;
+  linkedin?: string;
+  youtube?: string;
+  lien_x?: string;
+  horaires_ok?: string | null;
+  statut_carte?: string | null;
+  slug?: string | null;
+  ville?: string | null;
+  name_ar?: string | null;
+  description_ar?: string | null;
+}
+
+interface BusinessesProps {
+  showSuggestionForm?: boolean;
+  onCloseSuggestionForm?: () => void;
+  onNavigate?: (page: any) => void;
+  initialSearchKeyword?: string;
+  initialSearchCity?: string;
+  onClearSearch?: () => void;
+}
+
+interface BusinessNeedActivityRow {
+  id: string;
+  type: string;
+  title: string | null;
+  company_id?: string | null;
+  description: string | null;
+  company_name: string | null;
+  budget_min: number | null;
+  budget_max: number | null;
+  currency: string | null;
+  urgency: string | null;
+  city: string | null;
+  governorate: string | null;
+  company_slug: string | null;
+  company_city: string | null;
+  published_at: string | null;
+  created_at: string | null;
+}
+
+const ENTREPRISE_SELECT_FIELDS = 'id, nom, sous_categories_texte, sous_categories_clean, categorie, gouvernorat, ville, adresse, telephone, email, site_web, description, services, image_url, logo_url, statut_abonnement, "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, statut_carte, name_ar, description_ar, slug';
+
+const PUBLIC_BUSINESS_NEED_ACTIVITY_TYPES = new Set([
+  'supplier_search',
+  'service_provider_search',
+  'equipment_purchase',
+  'equipment_sale',
+  'liquidation',
+  'partnership',
+  'business_opportunity',
+  'other',
+]);
+
+function normalizeActivityCompanyName(value: string | null | undefined): string {
+  return String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
+}
+
+function getActivityCompanyIdKey(value: string | null | undefined): string {
+  const normalized = String(value || '').trim();
+  return normalized ? `id:${normalized}` : '';
+}
+
+function getActivityCompanySlugKey(slug: string | null | undefined, city: string | null | undefined): string {
+  const normalizedSlug = normalizeActivityCompanyName(slug);
+  const normalizedCity = normalizeActivityCompanyName(city);
+  return normalizedSlug && normalizedCity ? `slug:${normalizedSlug}|city:${normalizedCity}` : '';
+}
+
+function getActivityCompanyNameKey(value: string | null | undefined): string {
+  const normalized = normalizeActivityCompanyName(value);
+  return normalized ? `name:${normalized}` : '';
+}
+
+function getBusinessActivityKeys(business: Business): string[] {
+  return [
+    getActivityCompanyIdKey(business.id),
+    getActivityCompanySlugKey(business.slug, business.ville || business.city),
+    getActivityCompanyNameKey(business.name),
+  ].filter(Boolean);
+}
+
+function getActivitiesForBusiness(activitiesByKey: Record<string, BusinessActivity[]>, business: Business): BusinessActivity[] {
+  for (const key of getBusinessActivityKeys(business)) {
+    const activities = activitiesByKey[key];
+    if (activities?.length) return activities;
+  }
+
+  return [];
+}
+
+function toTextList(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    return value.map(item => String(item).trim()).filter(Boolean);
+  }
+  if (typeof value === 'string') {
+    return value.split(',').map(item => item.trim()).filter(Boolean);
+  }
+  return [];
+}
+
+function joinUnique(values: string[]): string {
+  return Array.from(new Set(values)).join(', ');
+}
+
+function getSubCategoryLabel(item: Record<string, unknown>): string {
+  return joinUnique([
+    ...toTextList(item.sous_categories_texte),
+    ...toTextList(item.sous_categories_clean),
+  ]);
+}
+
+function getCategoryLabel(item: Record<string, unknown>): string {
+  return getSubCategoryLabel(item) || joinUnique(toTextList(item.categorie));
+}
+
+function getSectorLabel(item: Record<string, unknown>): string {
+  return joinUnique([
+    ...toTextList(item.categorie),
+    ...toTextList(item.sous_categories_texte),
+    ...toTextList(item.sous_categories_clean),
+  ]);
+}
+
+function isCertifiedDalilTounes(statut_carte: string | null | undefined): boolean {
+  if (!statut_carte) return false;
+  const upper = statut_carte.toUpperCase();
+  return upper.includes('CERTIF') && !upper.includes('NON CERTIF');
+}
+
+function isPaidSubscription(statut_abonnement: string | null | undefined): boolean {
+  if (!statut_abonnement) return false;
+  const s = statut_abonnement.toLowerCase().trim();
+  return s.includes('artisan') || s.includes('premium') || s.includes('elite') || s.includes('custom') || s.includes('personnalis');
+}
+
+function hasActivity(business: Record<string, any>): boolean {
+  return !!(business.imageUrl || business.logoUrl || (business.description && business.description.trim()) || business.horaires_ok);
+}
+
+function getBusinessSortScore(business: Record<string, any>): number {
+  const certified = isCertifiedDalilTounes(business.statut_carte);
+  const premium = isPaidSubscription(business.statut_abonnement);
+  if (certified && premium) return 5;
+  if (certified) return 4;
+  if (premium) return 3;
+  if (hasActivity(business)) return 2;
+  return 1;
+}
+
+export const Businesses = ({
+  showSuggestionForm = false,
+  onCloseSuggestionForm,
+  onNavigate,
+  initialSearchKeyword = '',
+  initialSearchCity = '',
+  onClearSearch
+}: BusinessesProps) => {
+  const { language } = useLanguage();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const t = useTranslation(language);
+  const _initCache = readBusinessesCache();
+  const [businesses, setBusinesses] = useState<Business[]>((_initCache?.businesses as unknown as Business[]) ?? []);
+  const [loading, setLoading] = useState(_initCache === null);
+  const [searchTerm, setSearchTerm] = useState(initialSearchKeyword || '');
+  const [selectedBusinessId, setSelectedBusinessId] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedCity, setSelectedCity] = useState(initialSearchCity || '');
+  const [pageCategorie, setPageCategorie] = useState<string | null>(null);
+  const [showSuggestForm, setShowSuggestForm] = useState(showSuggestionForm);
+  const [showNeedForm, setShowNeedForm] = useState(false);
+  const [preselectedBusinessId, setPreselectedBusinessId] = useState<string | null>(null);
+  const [searching, setSearching] = useState(false);
+  const [pendingSearch, setPendingSearch] = useState(false);
+  const pendingSearchRef = useRef(false);
+  const [premiumJobs, setPremiumJobs] = useState<any[]>(_initCache?.premiumJobs ?? []);
+  const [loadingPremiumJobs, setLoadingPremiumJobs] = useState(false);
+  const [filterPremium, setFilterPremium] = useState(false);
+  const [filterCommerceLocal, setFilterCommerceLocal] = useState(false);
+  const [filterStatutCarte, setFilterStatutCarte] = useState<'' | 'certifie' | 'non_certifie'>('');
+  const [availableCategories, setAvailableCategories] = useState<Array<{id: string, label: string, count: number}>>([]);
+  const [selectedChipCategories, setSelectedChipCategories] = useState<string[]>([]);
+  const [businessActivitiesByCompany, setBusinessActivitiesByCompany] = useState<Record<string, BusinessActivity[]>>({});
+
+  const resultsRef = useRef<HTMLDivElement>(null);
+
+  // Protection anti-blocage : forcer arrêt du loading après 5s
+  useEffect(() => {
+    if (!loading && !searching) return;
+
+    const timeout = setTimeout(() => {
+      if (loading || searching) {
+        console.warn('⚠️ [TIMEOUT] Loading bloqué > 5s, déblocage forcé');
+        setLoading(false);
+        setSearching(false);
+      }
+    }, 5000);
+    return () => clearTimeout(timeout);
+  }, [loading, searching]);
+
+  const hasActiveSearch = !!selectedBusinessId || !!searchTerm || !!selectedCity || !!selectedCategory || !!pageCategorie || filterPremium || filterCommerceLocal || !!filterStatutCarte;
+
+  useEffect(() => {
+    let active = true;
+
+    async function fetchBusinessNeedActivities() {
+      const activitySelectWithCompanyId = 'id, type, title, company_id, description, company_name, budget_min, budget_max, currency, urgency, city, governorate, company_slug, company_city, published_at, created_at';
+      const activitySelectPublic = 'id, type, title, description, company_name, budget_min, budget_max, currency, urgency, city, governorate, company_slug, company_city, published_at, created_at';
+      const buildQuery = (selectFields: string) => supabase
+        .from('business_needs')
+        .select(selectFields)
+        .eq('status', 'published')
+        .eq('moderation_status', 'approved')
+        .eq('visibility', 'public')
+        .is('deleted_at', null)
+        .order('published_at', { ascending: false, nullsFirst: false })
+        .order('created_at', { ascending: false })
+        .limit(500);
+
+      let { data, error } = await buildQuery(activitySelectWithCompanyId);
+
+      if (error) {
+        const fallbackResponse = await buildQuery(activitySelectPublic);
+        data = fallbackResponse.data;
+        error = fallbackResponse.error;
+      }
+
+      if (!active) return;
+
+      if (error) {
+        console.warn('[Businesses] Impossible de charger les activites business_needs:', error);
+        setBusinessActivitiesByCompany({});
+        return;
+      }
+
+      const grouped = ((data || []) as BusinessNeedActivityRow[]).reduce<Record<string, BusinessActivity[]>>((acc, row) => {
+        if (!row.id || !row.type || !PUBLIC_BUSINESS_NEED_ACTIVITY_TYPES.has(row.type)) return acc;
+
+        const activity: BusinessActivity = {
+          id: row.id,
+          type: row.type,
+          title: row.title,
+          companyId: row.company_id,
+          description: row.description,
+          budgetMin: row.budget_min,
+          budgetMax: row.budget_max,
+          currency: row.currency,
+          urgency: row.urgency,
+          city: row.city,
+          governorate: row.governorate,
+          companySlug: row.company_slug,
+          companyCity: row.company_city,
+          publishedAt: row.published_at || row.created_at,
+        };
+
+        const keys = [
+          getActivityCompanyIdKey(row.company_id),
+          getActivityCompanySlugKey(row.company_slug, row.company_city),
+          getActivityCompanyNameKey(row.company_name),
+        ].filter(Boolean);
+
+        keys.forEach((key) => {
+          acc[key] = acc[key] || [];
+          acc[key].push(activity);
+        });
+
+        return acc;
+      }, {});
+
+      setBusinessActivitiesByCompany(grouped);
+    }
+
+    fetchBusinessNeedActivities();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  // Extraire les catégories disponibles depuis les résultats
+  useEffect(() => {
+    if (businesses.length === 0 || !searchTerm) {
+      setAvailableCategories([]);
+      return;
+    }
+
+    const categoryCount = new Map<string, number>();
+
+    businesses.forEach((biz) => {
+      const categories = [
+        biz.category,
+        biz.secteur,
+        ...(biz.subCategories?.split(',').map(s => s.trim()) || [])
+      ].filter(Boolean);
+
+      categories.forEach((cat) => {
+        if (cat && cat.trim()) {
+          const normalized = cat.trim();
+          categoryCount.set(normalized, (categoryCount.get(normalized) || 0) + 1);
+        }
+      });
+    });
+
+    const chips = Array.from(categoryCount.entries())
+      .map(([label, count]) => ({ id: label, label, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 10);
+
+    setAvailableCategories(chips);
+  }, [businesses, searchTerm]);
+
+  // Handler pour les chips
+  const handleToggleChipCategory = (categoryId: string) => {
+    setSelectedChipCategories((prev) => {
+      if (prev.includes(categoryId)) {
+        return prev.filter((id) => id !== categoryId);
+      } else {
+        return [...prev, categoryId];
+      }
+    });
+  };
+
+  const handleClearAllChips = () => {
+    setSelectedChipCategories([]);
+  };
+
+  // Filtrer les résultats selon les chips sélectionnés
+  const chipFilteredBusinesses = selectedChipCategories.length > 0
+    ? businesses.filter((biz) => {
+        const bizCategories = [
+          biz.category,
+          biz.secteur,
+          ...(biz.subCategories?.split(',').map(s => s.trim()) || [])
+        ].filter(Boolean).map(c => c.trim());
+
+        return selectedChipCategories.some((chipCat) =>
+          bizCategories.some((bizCat) => bizCat === chipCat)
+        );
+      })
+    : businesses;
+
+  const [suggestionForm, setSuggestionForm] = useState({
+    title: '',
+    phone: '',
+    email: '',
+    message: '',
+  });
+
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error'; isVisible: boolean }>({
+    message: '',
+    type: 'success',
+    isVisible: false,
+  });
+
+  useEffect(() => {
+    setShowSuggestForm(showSuggestionForm);
+  }, [showSuggestionForm]);
+
+  useEffect(() => {
+    const loadUrlParams = () => {
+      console.log('═══════════════════════════════════════');
+      console.log('🌐 [DEBUG URL] Chargement des paramètres URL...');
+
+      const params = readParams();
+      console.log('[DEBUG URL] readParams() retourne:', params);
+
+      const urlQ = params.q || initialSearchKeyword || '';
+      const urlVille = params.ville || initialSearchCity || '';
+      const urlCategorie = params.categorie || '';
+      const urlSelectedId = params.selected_id || '';
+
+      setSelectedBusinessId(null);
+
+      const hashParams = getHashQueryParams();
+      const pageCat = hashParams.get('page_categorie');
+      const premiumParam = hashParams.get('premium');
+      const commerceLocalParam = hashParams.get('commerce_local');
+
+      // Détection de l'ancre #suggest-business pour ouvrir le formulaire de suggestion
+      const currentPath = window.location.pathname + window.location.search + window.location.hash;
+      if (currentPath.includes('suggest-business')) {
+        setShowSuggestForm(true);
+      }
+
+      console.log('[DEBUG URL] Paramètres extraits:', {
+        urlQ,
+        urlVille,
+        urlCategorie,
+        urlSelectedId,
+        pageCat,
+        premiumParam,
+        commerceLocalParam,
+        suggestFormTrigger: currentPath.includes('suggest-business')
+      });
+      console.log('═══════════════════════════════════════\n');
+
+      // Si les valeurs URL sont identiques à l'état courant (soumission répétée du même terme),
+      // le useEffect[searchTerm] ne se déclenchera pas — on force performSearch directement.
+      const urlMatchesCurrent =
+        urlQ === searchTerm &&
+        urlVille === selectedCity &&
+        urlCategorie === selectedCategory;
+
+      if (urlMatchesCurrent && (urlQ || urlVille || urlCategorie)) {
+        performSearch();
+        return;
+      }
+
+      if (urlQ !== searchTerm) {
+        setSearchTerm(urlQ);
+      }
+      if (urlVille !== selectedCity) {
+        setSelectedCity(urlVille);
+      }
+      if (urlCategorie !== selectedCategory) {
+        setSelectedCategory(urlCategorie);
+      }
+      const newPreselected = urlSelectedId || null;
+      if (newPreselected !== preselectedBusinessId) {
+        console.log(`[DEBUG] Mise à jour preselectedBusinessId: "${preselectedBusinessId}" → "${newPreselected}"`);
+        setPreselectedBusinessId(newPreselected);
+        setSelectedBusinessId(newPreselected);
+      }
+      const newPremium = premiumParam === 'true';
+      if (newPremium !== filterPremium) {
+        console.log(`[DEBUG] Mise à jour filterPremium: ${filterPremium} → ${newPremium}`);
+        setFilterPremium(newPremium);
+      }
+      const newCommerceLocal = commerceLocalParam === 'true';
+      if (newCommerceLocal !== filterCommerceLocal) {
+        console.log(`[DEBUG] Mise à jour filterCommerceLocal: ${filterCommerceLocal} → ${newCommerceLocal}`);
+        setFilterCommerceLocal(newCommerceLocal);
+      }
+
+      const rawStatutCarte = params.statut_carte || '';
+      const newStatutCarte = (rawStatutCarte === 'certifie' || rawStatutCarte === 'non_certifie') ? rawStatutCarte : '';
+      if (newStatutCarte !== filterStatutCarte) {
+        setFilterStatutCarte(newStatutCarte);
+      }
+
+      if (pageCat && pageCat !== pageCategorie) {
+        console.log(`[DEBUG] Mise à jour pageCategorie: "${pageCategorie}" → "${pageCat}"`);
+        setPageCategorie(pageCat);
+      }
+    };
+
+    loadUrlParams();
+
+    const handleHashChange = () => {
+      console.log('[DEBUG] Hash changed, reloading params');
+      loadUrlParams();
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, [initialSearchKeyword, initialSearchCity, location]);
+
+  // Abonnement au cache — reçoit les données dès qu'elles arrivent (premier chargement ou invalidation)
+  useEffect(() => {
+    const unsub = subscribeBusinessesData((result) => {
+      setBusinesses(result.businesses as unknown as Business[]);
+      setPremiumJobs(result.premiumJobs);
+      setLoading(false);
+      setLoadingPremiumJobs(false);
+    });
+
+    const cached = readBusinessesCache();
+    if (!cached?.fresh) {
+      prefetchBusinessesData().then((result) => {
+        setBusinesses(result.businesses as unknown as Business[]);
+        setPremiumJobs(result.premiumJobs);
+        setLoading(false);
+        setLoadingPremiumJobs(false);
+      }).catch(() => {
+        setLoading(false);
+        setLoadingPremiumJobs(false);
+      });
+    }
+
+    return unsub;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const fetchPremiumJobs = async () => {
+    try {
+      setLoadingPremiumJobs(true);
+      const { data, error } = await supabase
+        .from(Tables.JOB_POSTINGS)
+        .select('*')
+        .eq('statut', 'active')
+        .eq('est_premium', true)
+        .order('created_at', { ascending: false })
+        .limit(6);
+
+      if (error) throw error;
+      setPremiumJobs(data || []);
+    } catch (error) {
+      console.error('Error fetching premium jobs:', error);
+    } finally {
+      setLoadingPremiumJobs(false);
+    }
+  };
+
+  // Garde anti-boucle : stocker les dernières valeurs
+  const prevSearchRef = useRef({ selectedBusinessId: null as string | null, searchTerm: '', selectedCity: '', selectedCategory: '', pageCategorie: null as string | null, filterPremium: false, filterCommerceLocal: false, filterStatutCarte: '' as '' | 'certifie' | 'non_certifie' });
+  const isInitialMount = useRef(true);
+
+  useEffect(() => {
+    // Au premier render, déclencher la recherche appropriée
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      console.log('[DEBUG INIT] Premier mount, déclenchement recherche initiale');
+      // Si aucun filtre, on charge toutes les entreprises
+      if (!selectedBusinessId && !searchTerm && !selectedCity && !selectedCategory && !pageCategorie && !filterPremium && !filterCommerceLocal) {
+        // Cache frais → affichage immédiat, pas de requête réseau
+        const cached = readBusinessesCache();
+        if (cached?.fresh) {
+          console.log('[DEBUG INIT] Cache frais → skip fetchBusinesses()');
+          setLoading(false);
+        } else {
+          console.log('[DEBUG INIT] Aucun filtre → fetchBusinesses()');
+          fetchBusinesses();
+        }
+      } else {
+        // Si des filtres sont présents (depuis URL), on lance la recherche filtrée
+        console.log('[DEBUG INIT] Filtres présents → performSearch()');
+        performSearch();
+      }
+      return;
+    }
+
+    // Ne déclencher que si les valeurs ont VRAIMENT changé
+    const hasRealChange =
+      prevSearchRef.current.searchTerm !== searchTerm ||
+      prevSearchRef.current.selectedBusinessId !== selectedBusinessId ||
+      prevSearchRef.current.selectedCity !== selectedCity ||
+      prevSearchRef.current.selectedCategory !== selectedCategory ||
+      prevSearchRef.current.pageCategorie !== pageCategorie ||
+      prevSearchRef.current.filterPremium !== filterPremium ||
+      prevSearchRef.current.filterCommerceLocal !== filterCommerceLocal ||
+      prevSearchRef.current.filterStatutCarte !== filterStatutCarte;
+
+    if (!hasRealChange) {
+      console.log('⏭️ [SKIP] Aucun changement réel détecté, skip');
+      return;
+    }
+
+    console.log('🔄 [DEBUG useEffect] Changement détecté:', {
+      searchTerm,
+      selectedBusinessId,
+      selectedCity,
+      selectedCategory,
+      pageCategorie,
+      filterPremium,
+      filterCommerceLocal
+    });
+
+    // Mettre à jour les références
+    prevSearchRef.current = { selectedBusinessId, searchTerm, selectedCity, selectedCategory, pageCategorie, filterPremium, filterCommerceLocal, filterStatutCarte };
+
+    pendingSearchRef.current = true;
+    setPendingSearch(true);
+    const delayDebounceFn = setTimeout(() => {
+      pendingSearchRef.current = false;
+      setPendingSearch(false);
+      if (selectedBusinessId || searchTerm.length >= 1 || selectedCity || selectedCategory || filterPremium || filterCommerceLocal || filterStatutCarte) {
+        console.log('➡️ [DEBUG] Déclenchement de performSearch()');
+        performSearch();
+      } else {
+        console.log('➡️ [DEBUG] Déclenchement de fetchBusinesses()');
+        fetchBusinesses();
+      }
+    }, 300);
+
+    return () => {
+      clearTimeout(delayDebounceFn);
+      pendingSearchRef.current = false;
+      setPendingSearch(false);
+    };
+  }, [selectedBusinessId, searchTerm, selectedCity, selectedCategory, pageCategorie, filterPremium, filterCommerceLocal, filterStatutCarte]);
+
+  useEffect(() => {
+    if (preselectedBusinessId && businesses.length > 0) {
+      const found = businesses.find((b) => b.id === preselectedBusinessId);
+      if (found) {
+        setSelectedBusinessId(found.id);
+        setSearchTerm(found.name || '');
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [preselectedBusinessId, businesses]);
+
+  const fetchBusinesses = async () => {
+    console.log('═══════════════════════════════════════');
+    console.log('🔍 [DEBUG fetchBusinesses] Démarrage...');
+    console.log('═══════════════════════════════════════');
+
+    setLoading(true);
+
+    // Protection : forcer arrêt du loading après 10s max
+    const timeoutId = setTimeout(() => {
+      console.warn('⚠️ [PROTECTION] fetchBusinesses timeout atteint, déblocage forcé');
+      setLoading(false);
+    }, 10000);
+
+    try {
+      let query = supabase
+        .from(Tables.ENTREPRISE)
+        .select(ENTREPRISE_SELECT_FIELDS)
+        .order('nom', { ascending: true })
+        .limit(10);
+
+      if (pageCategorie) {
+        console.log(`[DEBUG] Filtre pageCategorie appliqué: "${pageCategorie}"`);
+        query = query.or(`sous_categories_texte.ilike.%${pageCategorie}%,sous_categories_clean.ilike.%${pageCategorie}%`);
+      }
+
+      if (filterStatutCarte === 'certifie') {
+        query = (query as any).ilike('statut_carte', '%CERTIF%').not('statut_carte', 'ilike', '%NON CERTIF%');
+      } else if (filterStatutCarte === 'non_certifie') {
+        query = (query as any).ilike('statut_carte', '%NON CERTIF%');
+      }
+
+      console.log('[DEBUG] Exécution de la requête Supabase...');
+      const { data, error } = await query;
+
+      if (error) {
+        console.error('❌ [ERREUR CRITIQUE] Échec de la requête Supabase:');
+        console.error('Code erreur:', error.code);
+        console.error('Message:', error.message);
+        console.error('Details:', error.details);
+        console.error('Hint:', error.hint);
+        setBusinesses([]);
+        return;
+      }
+
+      console.log(`[DEBUG] ✅ Données reçues: ${data?.length || 0} entreprises`);
+
+      if (data && data.length > 0) {
+        console.log('[DEBUG] Colonnes disponibles dans data[0]:', Object.keys(data[0]));
+        console.log('[DEBUG] Exemple première entreprise:', {
+          id: data[0].id,
+          nom: data[0].nom,
+          sous_categories: data[0].sous_categories_texte,
+          categorie: data[0].categorie,
+          services: data[0].services?.substring(0, 50) + '...' || 'NULL',
+          mots_cles_recherche: data[0]['mots cles recherche']?.substring(0, 100) + '...' || 'NULL',
+          statut_abonnement: data[0].statut_abonnement,
+          gouvernorat: data[0].gouvernorat,
+          ville: data[0].ville
+        });
+      }
+
+      const mappedData = (data || []).map((item: any) => ({
+        id: item.id,
+        name: extractFrenchName(item.nom),
+        category: getCategoryLabel(item),
+        subCategories: getSubCategoryLabel(item),
+        gouvernorat: item.gouvernorat || '',
+        secteur: getSectorLabel(item),
+        city: item.ville || '',
+        ville: item.ville || '',
+        slug: item.slug || null,
+        address: item.adresse || '',
+        phone: item.telephone || '',
+        email: item.email || '',
+        website: item.site_web || '',
+        description: item.description || '',
+        services: item.services || '',
+        imageUrl: item.image_url || null,
+        logoUrl: item.logo_url || null,
+        statut_abonnement: item.statut_abonnement || null,
+        niveau_priorite_abonnement: null,
+        badges: [],
+        mots_cles_recherche: item['mots cles recherche'] || '',
+        instagram: item['Lien Instagram'] || '',
+        facebook: item['lien facebook'] || '',
+        tiktok: item['Lien TikTok'] || '',
+        linkedin: item['Lien LinkedIn'] || '',
+        youtube: item['Lien YouTube'] || '',
+        lien_x: item.lien_x || '',
+        horaires_ok: item.horaires_ok || null,
+        statut_carte: item.statut_carte || null,
+        name_ar: item.name_ar ? cleanArabicField(item.name_ar) : null,
+        description_ar: item.description_ar ? cleanArabicField(item.description_ar) : null,
+      }));
+
+      mappedData.sort((a, b) => {
+        const scoreA = getBusinessSortScore(a);
+        const scoreB = getBusinessSortScore(b);
+        if (scoreB !== scoreA) return scoreB - scoreA;
+        const priorityA = getSubscriptionPriority(a.statut_abonnement);
+        const priorityB = getSubscriptionPriority(b.statut_abonnement);
+        return priorityB - priorityA;
+      });
+
+      console.log(`[DEBUG] ✅ Mapping terminé: ${mappedData.length} entreprises`);
+      console.log('═══════════════════════════════════════\n');
+
+      setLoading(false);
+      setBusinesses(mappedData);
+    } catch (error) {
+      console.error('❌ [ERROR] fetchBusinesses:', error);
+      setLoading(false);
+      setBusinesses([]);
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  };
+
+  const performSearch = async () => {
+    console.log('═══════════════════════════════════════');
+    console.log('🔍 [DEBUG performSearch] Démarrage...');
+    console.log('Entreprise sélectionnée:', selectedBusinessId);
+    console.log('Terme recherché:', searchTerm);
+    console.log('Ville sélectionnée:', selectedCity);
+    console.log('Catégorie sélectionnée:', selectedCategory);
+    console.log('Filter Premium:', filterPremium);
+    console.log('Filter Commerce Local:', filterCommerceLocal);
+    console.log('═══════════════════════════════════════');
+
+    if (!selectedBusinessId && searchTerm.length === 0 && !selectedCity && !selectedCategory && !filterPremium && !filterCommerceLocal) {
+      console.log('[DEBUG] Aucun filtre actif, appel de fetchBusinesses()');
+      fetchBusinesses();
+      return;
+    }
+
+    setSearching(true);
+
+    // Protection : forcer arrêt du searching après 10s max
+    const timeoutId = setTimeout(() => {
+      console.warn('⚠️ [PROTECTION] performSearch timeout atteint, déblocage forcé');
+      setSearching(false);
+    }, 10000);
+    try {
+      let query = supabase
+        .from(Tables.ENTREPRISE)
+        .select(ENTREPRISE_SELECT_FIELDS)
+        .order('nom', { ascending: true })
+        .limit(30);
+
+      if (selectedBusinessId) {
+        console.log(`[DEBUG] Filtre ID entreprise: "${selectedBusinessId}"`);
+        query = query.eq('id', selectedBusinessId);
+      } else if (searchTerm && cleanSearchTerm(searchTerm).length >= 2) {
+        // Pour l'arabe : ne pas normaliser (removeArabicDiacritics altère les caractères)
+        // Pour le latin : nettoyer seulement les guillemets parasites
+        const cleaned = cleanSearchTerm(searchTerm);
+        const searchPattern = `%${cleaned}%`;
+        console.log(`[DEBUG] Filtre Recherche: "${searchTerm}" → nettoyé: "${cleaned}" (pattern: ${searchPattern})`);
+        // Colonnes avec espaces ou accents passées via .filter() séparés pour éviter
+        // les bugs de parsing de la syntaxe .or() string avec noms de colonnes complexes
+        query = query.or(
+          [
+            `nom.ilike.${searchPattern}`,
+            `name_ar.ilike.${searchPattern}`,
+            `description.ilike.${searchPattern}`,
+            `description_ar.ilike.${searchPattern}`,
+            `ville.ilike.${searchPattern}`,
+            `gouvernorat.ilike.${searchPattern}`,
+            `sous_categories_texte.ilike.${searchPattern}`,
+            `sous_categories_clean.ilike.${searchPattern}`,
+          ].join(',')
+        );
+      }
+
+      if (!selectedBusinessId && selectedCity) {
+        console.log(`[DEBUG] Filtre Gouvernorat: "${selectedCity}"`);
+        query = query.eq('gouvernorat', selectedCity);
+      }
+
+      if (!selectedBusinessId && selectedCategory === 'finance') {
+        console.log(`[DEBUG] Filtre Finance avec sous_categories:`, FINANCE_SUBCATEGORIES);
+        query = query.or(FINANCE_SUBCATEGORIES.map(c => `sous_categories_texte.ilike.%${c}%`).join(','));
+      } else if (!selectedBusinessId && selectedCategory) {
+        console.log(`[DEBUG] Filtre Catégorie: "${selectedCategory}"`);
+        query = query.ilike('sous_categories_texte', `%${selectedCategory}%`);
+      }
+
+      if (!selectedBusinessId && filterPremium) {
+        console.log(`[DEBUG] Filtre Premium activé (Elite/Premium/Artisan)`);
+        query = query.or('statut_abonnement.ilike.*elite*,statut_abonnement.ilike.*premium*,statut_abonnement.ilike.*artisan*');
+      }
+
+      if (!selectedBusinessId && filterCommerceLocal) {
+        console.log(`[DEBUG] Filtre Commerce Local activé`);
+        query = query.eq('"page commerce local"', true);
+      }
+
+      if (!selectedBusinessId && filterStatutCarte === 'certifie') {
+        query = (query as any).ilike('statut_carte', '%CERTIF%').not('statut_carte', 'ilike', '%NON CERTIF%');
+      } else if (!selectedBusinessId && filterStatutCarte === 'non_certifie') {
+        query = (query as any).ilike('statut_carte', '%NON CERTIF%');
+      }
+
+      console.log('[DEBUG] Exécution de la requête Supabase...');
+      const { data, error } = await query;
+
+      if (error) {
+        console.error('❌ [ERREUR CRITIQUE RECHERCHE] Échec de la requête Supabase:');
+        console.error('Code erreur:', error.code);
+        console.error('Message:', error.message);
+        console.error('Details:', error.details);
+        console.error('Hint:', error.hint);
+        console.error('Filtres appliqués:', {
+          searchTerm,
+          selectedCity,
+          selectedCategory,
+          filterPremium,
+          selectedBusinessId,
+        });
+        throw error;
+      }
+
+      console.log(`[DEBUG] ✅ Données reçues: ${data?.length || 0} entreprises`);
+
+      if (data && data.length > 0) {
+        console.log('[DEBUG] Colonnes disponibles dans data[0]:', Object.keys(data[0]));
+        console.log('[DEBUG] Exemple première entreprise:', {
+          id: data[0].id,
+          nom: data[0].nom,
+          services: data[0].services?.substring(0, 50) + '...' || 'NULL',
+          mots_cles_recherche: data[0]['mots cles recherche']?.substring(0, 100) + '...' || 'NULL',
+          sous_categories: data[0].sous_categories_texte,
+          categorie: data[0].categorie,
+          statut_abonnement: data[0].statut_abonnement,
+          gouvernorat: data[0].gouvernorat
+        });
+        console.log('[DEBUG] item.nom brut (toutes entreprises):', (data as any[]).map((d: any) => d.nom));
+      }
+
+      let mappedData = (data || []).map((item: any) => ({
+        id: item.id,
+        name: extractFrenchName(item.nom),
+        category: getCategoryLabel(item),
+        subCategories: getSubCategoryLabel(item),
+        gouvernorat: item.gouvernorat || '',
+        secteur: getSectorLabel(item),
+        city: item.ville || '',
+        ville: item.ville || '',
+        slug: item.slug || null,
+        address: item.adresse || '',
+        phone: item.telephone || '',
+        email: item.email || '',
+        website: item.site_web || '',
+        description: item.description || '',
+        services: item.services || '',
+        imageUrl: item.image_url || null,
+        logoUrl: item.logo_url || null,
+        statut_abonnement: item.statut_abonnement || null,
+        niveau_priorite_abonnement: null,
+        badges: [],
+        mots_cles_recherche: item['mots cles recherche'] || '',
+        instagram: item['Lien Instagram'] || '',
+        facebook: item['lien facebook'] || '',
+        tiktok: item['Lien TikTok'] || '',
+        linkedin: item['Lien LinkedIn'] || '',
+        youtube: item['Lien YouTube'] || '',
+        horaires_ok: item.horaires_ok || null,
+        statut_carte: item.statut_carte || null,
+        name_ar: item.name_ar ? cleanArabicField(item.name_ar) : null,
+        description_ar: item.description_ar ? cleanArabicField(item.description_ar) : null,
+      }));
+
+      console.log(`[DEBUG] Mapping terminé: ${mappedData.length} entreprises`);
+
+      if (!selectedBusinessId && searchTerm && searchTerm.length > 0) {
+        const normalizedSearchTerm = normalizeText(searchTerm);
+        console.log(`\n🔎 [Recherche Multi-colonnes] Terme recherché: "${searchTerm}"`);
+        console.log(`🔎 [Recherche Multi-colonnes] Terme normalisé: "${normalizedSearchTerm}"`);
+        console.log(`📊 [Debug] Nombre total avant filtre: ${mappedData.length}`);
+
+        if (mappedData.length > 0) {
+          console.log(`📋 [Debug] Exemple entreprise:`, {
+            nom: mappedData[0].name,
+            badges: mappedData[0].badges,
+            mots_cles_recherche: mappedData[0].mots_cles_recherche?.substring(0, 100) || 'NULL',
+            sous_categories: mappedData[0].category
+          });
+        }
+
+        // Le filtre Supabase a déjà retourné les bons résultats via ILIKE.
+        // Ce filtre JS est un garde-fou pour les colonnes non couvertes par le .or() Supabase.
+        // IMPORTANT : pour l'arabe, on compare en lowercase sans normalisation agressive.
+        const lowerTerm = normalizedSearchTerm.toLowerCase();
+        mappedData = mappedData.filter((business) => {
+          const matchNom = normalizeText(business.name || '').includes(lowerTerm);
+          const matchNameAr = (business.name_ar || '').toLowerCase().includes(lowerTerm)
+            || (business.name_ar || '').includes(searchTerm.trim());
+          const matchDescAr = (business.description_ar || '').toLowerCase().includes(lowerTerm)
+            || (business.description_ar || '').includes(searchTerm.trim());
+          const matchSecteur = normalizeText(business.secteur || '').includes(lowerTerm);
+          const matchMotsCles = normalizeText(business.mots_cles_recherche || '').includes(lowerTerm);
+          const matchCategory = normalizeText(business.category || '').includes(lowerTerm);
+          const matchServices = normalizeText(business.services || '').includes(lowerTerm);
+          const matchVille = normalizeText(business.city || '').includes(lowerTerm);
+          const matchGouvernorat = normalizeText(business.gouvernorat || '').includes(lowerTerm);
+
+          return matchNom || matchNameAr || matchDescAr || matchSecteur
+            || matchMotsCles || matchCategory || matchServices
+            || matchVille || matchGouvernorat;
+        });
+
+        console.log(`\n[Recherche Multi-colonnes] ✅ Résultats filtrés: ${mappedData.length}`);
+      }
+
+      // Trier par priorité (Certifié+Premium > Certifié > Premium > Activité > Autres)
+      mappedData.sort((a, b) => {
+        const scoreA = getBusinessSortScore(a);
+        const scoreB = getBusinessSortScore(b);
+        if (scoreB !== scoreA) return scoreB - scoreA;
+        const priorityA = getSubscriptionPriority(a.statut_abonnement);
+        const priorityB = getSubscriptionPriority(b.statut_abonnement);
+        return priorityB - priorityA;
+      });
+
+      console.log('═══════════════════════════════════════\n');
+
+      // Mettre à jour businesses et searching dans le même batch React pour éviter
+      // le flash "aucun résultat" entre les deux updates
+      setSearching(false);
+      setBusinesses(mappedData);
+
+      setTimeout(() => {
+        const resultsElement = resultsRef.current;
+        if (!resultsElement) return;
+
+        const isDesktop = window.matchMedia('(min-width: 768px)').matches;
+        if (!isDesktop) {
+          resultsElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          return;
+        }
+
+        const rect = resultsElement.getBoundingClientRect();
+        const cardHeight = Math.min(rect.height, 400);
+        const targetTop = rect.top + window.scrollY - (window.innerHeight / 2) + (cardHeight / 2);
+        window.scrollTo({ top: Math.max(targetTop, 0), behavior: 'smooth' });
+      }, 100);
+    } catch (error) {
+      console.error('❌ [ERROR] performSearch:', error);
+      setSearching(false);
+      setBusinesses([]);
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  };
+
+  const handleSearchBarResultSelect = (item: { id?: string; nom?: string }) => {
+    const selectedName = extractFrenchName(item.nom || '').trim();
+
+    setSelectedBusinessId(item.id || null);
+    setPreselectedBusinessId(null);
+    setSearchTerm(selectedName);
+    setSelectedCity('');
+    setSelectedCategory('');
+    setPageCategorie(null);
+    setFilterPremium(false);
+    setFilterCommerceLocal(false);
+    setFilterStatutCarte('');
+    setSelectedChipCategories([]);
+  };
+
+  const handleSuggestionSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const payload = {
+        nom_entreprise: suggestionForm.title,
+        secteur: 'Demande information / inscription',
+        ville: null,
+        contact_suggere: `${suggestionForm.phone || ''} ${suggestionForm.email ? `- ${suggestionForm.email}` : ''}`.trim(),
+        raison_suggestion: suggestionForm.message,
+        submission_lang: language,
+      };
+
+      const { data, error } = await supabase
+        .from('suggestions_entreprises')
+        .insert([payload])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      if (data) {
+        fetch(
+          `${supabaseUrl}/functions/v1/sync-suggestion-to-airtable`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${supabaseAnonKey}`,
+            },
+            body: JSON.stringify({ record: data }),
+          }
+        ).catch(() => {});
+      }
+
+      setToast({
+        message: language === 'fr'
+          ? 'Merci ! Votre demande a été envoyée avec succès. Nous vous recontacterons rapidement.'
+          : language === 'ar'
+          ? 'شكراً! تم إرسال طلبك بنجاح. سنتواصل معك قريباً.'
+          : 'Thank you! Your request has been sent successfully. We will contact you soon.',
+        type: 'success',
+        isVisible: true,
+      });
+
+      setSuggestionForm({
+        title: '',
+        phone: '',
+        email: '',
+        message: '',
+      });
+
+      setTimeout(() => {
+        setShowSuggestForm(false);
+        if (onCloseSuggestionForm) onCloseSuggestionForm();
+      }, 1500);
+    } catch (error) {
+      console.error('Error submitting suggestion:', error);
+      setToast({
+        message: language === 'fr'
+          ? 'Une erreur est survenue. Veuillez réessayer.'
+          : language === 'ar'
+          ? 'حدث خطأ. يرجى المحاولة مرة أخرى.'
+          : 'An error occurred. Please try again.',
+        type: 'error',
+        isVisible: true,
+      });
+    }
+  };
+
+  const categories = Array.isArray(businesses) ? [...new Set(businesses.map((b) => b.category).filter(Boolean))].sort() : [];
+  const cities = Array.isArray(businesses) ? [...new Set(businesses.map((b) => b.city).filter(Boolean))].sort() : [];
+
+  const filteredBusinesses = Array.isArray(chipFilteredBusinesses) ? chipFilteredBusinesses : [];
+
+  const businessListItems = Array.isArray(businesses) ? businesses.slice(0, 20).map(business => ({
+    name: business.name || 'Sans nom',
+    url: `${window.location.origin}/#/business/${business.id}`
+  })) : [];
+
+  return (
+    <div className="min-h-screen bg-[#F8F9FA]">
+      {Array.isArray(businesses) && businesses.length > 0 && (
+        <StructuredData
+          data={generateCollectionPageSchema(
+            'Annuaire des Entreprises en Tunisie - Dalil Tounes',
+            'Trouvez les meilleures entreprises et professionnels en Tunisie par secteur d\'activité',
+            businessListItems
+          )}
+        />
+      )}
+
+      <div className="max-w-7xl mx-auto">
+        {/* Hero Section Premium - Style CitizensLeisure adapté */}
+        <div className="relative mb-8">
+          {/* Image de fond drapeau tunisien avec taille réduite */}
+          <div className="relative h-64 md:h-72 overflow-hidden">
+            <picture>
+              <source srcSet={HERO_IMAGE_URL} type="image/webp" />
+              <img
+                src={HERO_IMAGE_JPG_URL}
+                alt="Drapeau de la Tunisie"
+                className="w-full h-full object-cover brightness-105"
+                onError={(e) => { (e.currentTarget as HTMLImageElement).src = HERO_IMAGE_JPG_URL; }} decoding="async"
+              />
+            </picture>
+            {/* Overlay bleu profond pour lisibilité */}
+            <div className="absolute inset-0 bg-[#0c2461] opacity-15"></div>
+          </div>
+
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 sm:px-6">
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold text-[#D4AF37] mb-4" style={{ textShadow: '2px 2px 8px rgba(0,0,0,0.9)' }}>
+              Centre d'affaires de Dalil Tounes
+            </h1>
+
+            <div className="max-w-3xl mx-auto space-y-2">
+              <p className="text-white text-sm md:text-base leading-relaxed" style={{ textShadow: '1px 1px 4px rgba(0,0,0,0.7)' }}>
+                Développez votre activité grâce à la plateforme professionnelle dédiée aux entreprises tunisiennes.
+              </p>
+              <p className="text-white text-sm md:text-base leading-relaxed" style={{ textShadow: '1px 1px 4px rgba(0,0,0,0.7)' }}>
+                Trouvez des fournisseurs, partenaires, prestataires et découvrez les opportunités professionnelles partout en Tunisie.
+              </p>
+            </div>
+          </div>
+        </div>
+
+
+        {/* SearchBar Entreprises */}
+        <section className="py-3 px-4 relative z-[5]">
+          <div className="max-w-5xl mx-auto">
+            <div className="bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-[#D4AF37] p-2.5 md:p-3">
+              <SearchBar
+                scope="global"
+                intentEnabled={false}
+                enabled
+                resultMode="filterCards"
+                onResultSelect={handleSearchBarResultSelect}
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* Bandeau d'événements entreprises */}
+        <section id="section-evenements-entreprise" className="mb-6 px-4 scroll-mt-24">
+          <FeaturedEventsCarousel />
+        </section>
+
+        {/* Nos services professionnels */}
+        <section className="mb-8 px-4">
+          <h2 className="text-lg md:text-xl font-bold text-[#4A1D43] mb-4 text-center">
+            Nos services professionnels
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all">
+              <div className="text-2xl mb-3">🤝</div>
+              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5">Trouver une entreprise</h3>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Recherchez rapidement un fournisseur, un prestataire ou une entreprise partout en Tunisie.
+              </p>
+            </div>
+            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all">
+              <div className="text-2xl mb-3">🤝</div>
+              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5">Trouver un partenaire</h3>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Développez votre réseau professionnel et identifiez de nouveaux partenaires.
+              </p>
+            </div>
+            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all">
+              <div className="text-2xl mb-3">👨‍💼</div>
+              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5">Recruter</h3>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Découvrez les entreprises qui recrutent et les candidats disponibles.
+              </p>
+            </div>
+            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all">
+              <div className="text-2xl mb-3">📅</div>
+              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5">Événements professionnels</h3>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Participez aux salons, conférences et événements business.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Prochaines evolutions */}
+        <section className="mb-8 px-4">
+          <div className="text-center mb-5">
+            <h2 className="text-lg md:text-xl font-bold text-[#4A1D43] mb-2">
+              Les prochaines evolutions du Centre d'affaires
+            </h2>
+            <p className="text-sm text-gray-600 max-w-2xl mx-auto">
+              Le Centre d'affaires Dalil Tounes evoluera progressivement afin de proposer de nouveaux services aux entreprises tunisiennes.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all relative">
+              <span className="absolute top-3 right-3 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">A venir</span>
+              <div className="text-2xl mb-3">📦</div>
+              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5">Achat / Vente de materiel professionnel</h3>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Publiez ou consultez des annonces de materiel professionnel entre entreprises.
+              </p>
+            </div>
+            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all relative">
+              <span className="absolute top-3 right-3 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">A venir</span>
+              <div className="text-2xl mb-3">🤝</div>
+              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5">Recherche de fournisseurs</h3>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Publiez un besoin et trouvez rapidement des fournisseurs adaptes a votre activite.
+              </p>
+            </div>
+            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all relative">
+              <span className="absolute top-3 right-3 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">A venir</span>
+              <div className="text-2xl mb-3">📈</div>
+              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5">Opportunites d'affaires</h3>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Developpez votre reseau grace aux partenariats, collaborations et opportunites professionnelles.
+              </p>
+            </div>
+            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all relative">
+              <span className="absolute top-3 right-3 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">A venir</span>
+              <div className="text-2xl mb-3">🏭</div>
+              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5">Liquidation de materiel</h3>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Permettez aux entreprises de vendre leurs equipements, mobiliers ou stocks lors d'une fermeture, d'un renouvellement ou d'un destockage.
+              </p>
+            </div>
+            <button type="button" onClick={() => setShowNeedForm(true)} className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all relative text-left cursor-pointer group">
+              <span className="absolute top-3 right-3 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-green-50 text-green-700 border border-green-200">Disponible</span>
+              <div className="text-2xl mb-3">📢</div>
+              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5 group-hover:text-[#D4AF37] transition-colors">Publication de besoins professionnels</h3>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Exprimez vos besoins (prestataire, materiel, fournisseur, service...) afin d'etre contacte directement par les entreprises concernees.
+              </p>
+            </button>
+            <div onClick={() => navigate('/besoins-professionnels')} className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all relative cursor-pointer group">
+              <span className="absolute top-3 right-3 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-green-50 text-green-700 border border-green-200">Disponible</span>
+              <div className="text-2xl mb-3">🔍</div>
+              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5 group-hover:text-[#D4AF37] transition-colors">Consulter les besoins professionnels</h3>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Découvrez les besoins publiés par les entreprises tunisiennes et identifiez de nouvelles opportunités.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Sections Visuelles - Design Bordeaux & Or */}
+        <div className="mb-8 px-4">
+          <div className="grid md:grid-cols-2 gap-4">
+            {/* Carte Partenaires */}
+            <div className="relative overflow-hidden rounded-xl h-48" style={{ border: '2px solid #D4AF37' }}>
+              <img
+                src={getSupabaseImageUrl('partenaires-fournisseurs.jpg')}
+                alt="Collaboration entre entreprises"
+                className="absolute inset-0 w-full h-full object-cover brightness-105"
+                loading="lazy"
+              decoding="async"
+              />
+              <div className="absolute inset-0 bg-gradient-to-br from-[#800020]/70 to-[#4A1D43]/70"></div>
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
+                <h4 className="text-lg font-bold text-[#D4AF37] mb-2">
+                  {t.businesses.categories.partners.title}
+                </h4>
+                <p className="text-white text-sm mb-4 line-clamp-2">
+                  {t.businesses.categories.partners.description}
+                </p>
+                <button
+                  onClick={() => navigate('/partner-search')}
+                  className="px-5 py-2 text-sm font-medium bg-white text-[#800020] rounded-lg hover:shadow-lg transition-all"
+                  style={{ border: '1px solid #D4AF37' }}
+                >
+                  Accéder
+                </button>
+              </div>
+            </div>
+
+            {/* Carte Événements */}
+            <div className="relative overflow-hidden rounded-xl h-48" style={{ border: '2px solid #D4AF37' }}>
+              <img
+                src={getSupabaseImageUrl('evenement entreprise.jpg')}
+                alt="Événements entreprise"
+                className="absolute inset-0 w-full h-full object-cover brightness-105"
+                loading="lazy"
+              decoding="async"
+              />
+              <div className="absolute inset-0 bg-gradient-to-br from-[#800020]/70 to-[#4A1D43]/70"></div>
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
+                <h4 className="text-lg font-bold text-[#D4AF37] mb-2">
+                  {t.businesses.categories.events.title}
+                </h4>
+                <p className="text-white text-sm mb-4 line-clamp-2">
+                  {t.businesses.categories.events.description}
+                </p>
+                <button
+                  onClick={() => navigate('/business-events')}
+                  className="px-5 py-2 text-sm font-medium bg-white text-[#800020] rounded-lg hover:shadow-lg transition-all"
+                  style={{ border: '1px solid #D4AF37' }}
+                >
+                  Accéder
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Boutons d'accès rapide - Design Premium */}
+        <div id="suggest-business" className="mb-8 px-4 flex flex-wrap gap-4 justify-center scroll-mt-24">
+          <button
+            type="button"
+            onClick={() => setShowSuggestForm(true)}
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-white text-[#4A1D43] text-sm md:text-base font-medium hover:shadow-lg transition-all"
+            style={{ border: '2px solid #D4AF37' }}
+          >
+            Demande d’information / inscription
+          </button>
+
+          <button
+            type="button"
+            onClick={() => navigate('/candidats')}
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-[#4A1D43] text-white text-sm md:text-base font-medium hover:bg-[#5A2D53] transition-colors shadow-sm hover:shadow-md"
+            style={{ border: '1px solid #D4AF37' }}
+          >
+            {(t as any).businessesExtra?.viewCandidates || 'Voir les candidats disponibles'}
+          </button>
+
+         
+        </div>
+
+        {/* Tags de filtres actifs - Design Premium */}
+        {(selectedCity || selectedCategory) && (
+          <div className="mb-8 px-4 flex flex-wrap gap-2 items-center">
+            {selectedCity && (
+              <span className="inline-flex items-center gap-1 bg-[#D4AF37]/10 text-[#4A1D43] px-3 py-1.5 rounded-full text-sm font-medium" style={{ border: '1px solid #D4AF37' }}>
+                <MapPin className="w-3.5 h-3.5" />
+                {selectedCity}
+              </span>
+            )}
+            {selectedCategory && (
+              <span className="inline-flex items-center gap-1 bg-[#D4AF37]/10 text-[#4A1D43] px-3 py-1.5 rounded-full text-sm font-medium" style={{ border: '1px solid #D4AF37' }}>
+                <Building2 className="w-3.5 h-3.5" />
+                {selectedCategory}
+              </span>
+            )}
+          </div>
+        )}
+
+        {pageCategorie && (
+          <div className="mb-6 px-4 flex items-center gap-2">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-sm" style={{ border: '1px solid #D4AF37' }}>
+              <span className="text-sm font-medium text-[#4A1D43]">
+                {t.businesses.activeFilter}: {pageCategorie}
+              </span>
+              <button
+                onClick={() => {
+                  setPageCategorie(null);
+                  navigate('/entreprises');
+                }}
+                className="text-[#4A1D43] hover:text-[#D4AF37] transition"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {showSuggestForm && (
+          <div className="fixed inset-0 bg-black/80 z-[99999] flex items-center justify-center p-4" onClick={(e) => e.target === e.currentTarget && setShowSuggestForm(false)}>
+            <div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative z-[100000]">
+              <div className="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center">
+                <div>
+                  <h2 className="text-xl font-medium text-gray-900">Demande d’information / inscription</h2>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Une question ou une demande d’inscription ? Envoyez-nous votre demande, nous vous recontactons rapidement.
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    setShowSuggestForm(false);
+                    if (onCloseSuggestionForm) onCloseSuggestionForm();
+                  }}
+                  className="p-1 hover:bg-gray-100 rounded"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <form onSubmit={handleSuggestionSubmit} className="p-6 space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Titre de votre demande *</label>
+                  <input
+                    type="text"
+                    required
+                    value={suggestionForm.title}
+                    onChange={(e) => setSuggestionForm({ ...suggestionForm, title: e.target.value })}
+                    placeholder="Ex : inscription entreprise, chauffeur privé, professeur, candidat emploi..."
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37]"
+                  />
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Téléphone *</label>
+                    <input
+                      type="tel"
+                      required
+                      value={suggestionForm.phone}
+                      onChange={(e) => setSuggestionForm({ ...suggestionForm, phone: e.target.value })}
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                    <input
+                      type="email"
+                      required
+                      value={suggestionForm.email}
+                      onChange={(e) => setSuggestionForm({ ...suggestionForm, email: e.target.value })}
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37]"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Message *</label>
+                  <textarea
+                    required
+                    rows={4}
+                    value={suggestionForm.message}
+                    onChange={(e) => setSuggestionForm({ ...suggestionForm, message: e.target.value })}
+                    placeholder="Expliquez brièvement votre demande."
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37]"
+                  />
+                </div>
+
+                <div className="flex gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowSuggestForm(false);
+                      if (onCloseSuggestionForm) onCloseSuggestionForm();
+                    }}
+                    className="flex-1 px-4 py-2 text-sm border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"
+                  >
+                    {t.common.cancel}
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 px-4 py-2 text-sm bg-[#4A1D43] text-white rounded-md hover:bg-[#5A2D53]"
+                    style={{ border: '1px solid #D4AF37' }}
+                  >
+                    {t.businesses.form.submit}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        <BusinessNeedForm isOpen={showNeedForm} onClose={() => setShowNeedForm(false)} />
+
+        {/* Affichage des résultats : avec ou sans recherche active */}
+        <div ref={resultsRef} className="mb-12">
+          {(loading || searching || pendingSearch) ? (
+            <div className="text-center py-12">
+              <div className="inline-block w-8 h-8 border-2 border-[#D4AF37] border-t-transparent rounded-full animate-spin"></div>
+              <p className="mt-3 text-sm text-gray-600">{searching ? t.businesses.searching || t.common.loading : t.common.loading}</p>
+            </div>
+          ) : filteredBusinesses.length === 0 && hasActiveSearch ? (
+            <div className="text-center py-12">
+              <Building2 className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+              <p className="text-sm text-gray-600">{t.common.noResults}</p>
+            </div>
+          ) : filteredBusinesses.length > 0 ? (
+            <div className="px-4">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-bold text-[#4A1D43]">
+                  {hasActiveSearch ? ((t as any).businessesExtra?.searchResults || 'Résultats de votre recherche') : ((t as any).businessesExtra?.featuredTitle || 'Entreprises en vedette')}
+                  <span className="ms-2 text-sm text-gray-500 font-normal">
+                    ({hasActiveSearch ? filteredBusinesses.length : Math.min(9, filteredBusinesses.length)} {filteredBusinesses.length > 1 ? ((t as any).businessesExtra?.businessPlur || 'entreprises') : ((t as any).businessesExtra?.businessSing || 'entreprise')})
+                  </span>
+                </h3>
+                {hasActiveSearch && (
+                  <button
+                    onClick={() => {
+                      setSelectedBusinessId(null);
+                      setSearchTerm('');
+                      setSelectedCity('');
+                      setSelectedCategory('');
+                      setPageCategorie(null);
+                      setFilterPremium(false);
+                      setFilterCommerceLocal(false);
+                      setFilterStatutCarte('');
+                      setSelectedChipCategories([]);
+                      navigate('/entreprises');
+                    }}
+                    className="text-xs text-[#4A1D43] hover:text-[#D4AF37] font-medium"
+                  >
+                    {(t as any).businessesExtra?.reset || 'Réinitialiser'}
+                  </button>
+                )}
+              </div>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {Array.isArray(filteredBusinesses) && filteredBusinesses.slice(0, hasActiveSearch ? filteredBusinesses.length : 9).map((business) => {
+                  if (!business || !business.id) return null;
+
+                  return (
+                    <BusinessCardWithActivity
+                      key={business.id}
+                      activities={getActivitiesForBusiness(businessActivitiesByCompany, business)}
+                      business={{
+                        id: business.id,
+                        name: business.name,
+                        category: business.category,
+                        ville: business.city || null,
+                        gouvernorat: business.gouvernorat,
+                        statut_abonnement: business.statut_abonnement,
+                        niveau_priorite_abonnement: business.niveau_priorite_abonnement,
+                        badges: business.badges || [],
+                        imageUrl: business.imageUrl,
+                        logoUrl: business.logoUrl,
+                        telephone: business.phone || null,
+                        horaires_ok: business.horaires_ok,
+                        statut_carte: business.statut_carte || null,
+                        name_ar: business.name_ar || null,
+                        description_ar: business.description_ar || null,
+                      }}
+                      onClick={() => {
+                        navigate(buildEntrepriseUrl({ slug: business.slug, nom: business.name, ville: business.ville || business.city, id: business.id }));
+                      }}
+                      variant="premium"
+                    />
+                  );
+                })}
+              </div>
+
+              {!hasActiveSearch && filteredBusinesses.length > 9 && (
+                <div className="mt-6 text-center">
+                  <p className="text-sm text-gray-600 mb-3">
+                    {(t as any).businessesExtra?.searchHint || 'Vous recherchez une entreprise spécifique ? Utilisez la barre de recherche ci-dessus'}
+                  </p>
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#D4AF37]/10 rounded-lg text-xs text-[#4A1D43]" style={{ border: '1px solid #D4AF37' }}>
+                    <Search className="w-4 h-4" />
+                    <span className="font-medium">{(t as any).businessesExtra?.moreAvailablePrefix || 'Plus de'} {filteredBusinesses.length - 9} {(t as any).businessesExtra?.moreAvailableSuffix || 'entreprises disponibles via la recherche'}</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : null}
+        </div>
+
+        {/* Toast Notification */}
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          isVisible={toast.isVisible}
+          onClose={() => setToast({ ...toast, isVisible: false })}
+          duration={4000}
+        />
+      </div>
+    </div>
+  );
+};

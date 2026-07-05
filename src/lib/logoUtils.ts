@@ -1,0 +1,68 @@
+/**
+ * Utilitaires pour la gestion du logo par défaut Dalil Tounes
+ */
+
+// Logo par défaut — ImageKit avec WebP auto + redimensionnement 140px
+export const DEFAULT_LOGO_URL = 'https://ik.imagekit.io/gfdpqvshw/Design_Assets_Dalil_Tounes/logos/logo_dalil_tounes_sceau_luxe.png?updatedAt=1773327267816&tr=w-140,h-140,f-auto,q-85';
+
+// Version locale WebP optimisée (140×140, Retina-ready)
+export const DEFAULT_LOGO_WEBP = '/images/logo_dalil_tounes_sceau_luxe.webp';
+
+// Version locale PNG — fallback navigateurs sans support WebP
+export const DEFAULT_LOGO_LOCAL = '/images/logo_dalil_tounes_sceau_luxe.png';
+
+/**
+ * Obtient l'URL du logo avec fallback
+ * Priorise le logo de l'entreprise, sinon utilise le logo Dalil Tounes
+ */
+export function getLogoUrl(logoUrl?: string | null): string {
+  if (logoUrl && logoUrl.trim() !== '') {
+    return logoUrl;
+  }
+  return DEFAULT_LOGO_URL;
+}
+
+/**
+ * Détermine si le logo affiché est le logo par défaut
+ * Utile pour appliquer des styles spécifiques (padding, etc.)
+ */
+export function isDefaultLogo(logoUrl?: string | null): boolean {
+  if (!logoUrl || logoUrl.trim() === '') return true;
+  return logoUrl === DEFAULT_LOGO_URL || logoUrl === DEFAULT_LOGO_LOCAL;
+}
+
+/**
+ * Style CSS pour le CONTENEUR du logo
+ * Le logo remplit ENTIÈREMENT le cercle sans fond blanc visible
+ */
+export function getLogoContainerStyle(borderColor: string = '#D4AF37', borderWidth: string = '3px'): React.CSSProperties {
+  return {
+    border: `${borderWidth} solid ${borderColor}`,
+    borderRadius: '50%',
+    padding: '0',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden'
+  };
+}
+
+/**
+ * Style CSS pour le logo dans un cercle.
+ * Default logo: cover (fills entirely).
+ * Custom logo: cover + slight scale to fill the circle better
+ * when logos have transparent padding around them.
+ */
+export function getLogoStyle(logoUrl?: string | null): React.CSSProperties {
+  const isDefault = isDefaultLogo(logoUrl);
+  return {
+    objectFit: 'cover' as const,
+    objectPosition: 'center' as const,
+    width: '100%',
+    height: '100%',
+    borderRadius: '50%',
+    backgroundColor: isDefault ? 'transparent' : '#ffffff',
+    transform: isDefault ? 'none' : 'scale(1.12)',
+    transition: 'opacity 0.3s ease',
+  };
+}
