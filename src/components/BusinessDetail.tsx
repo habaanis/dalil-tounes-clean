@@ -2164,7 +2164,7 @@ export const BusinessDetail = ({
         </div>
       )}
 
-      {business?.id && (
+      {!preview && business?.id && (
         <div className="px-1 mt-3">
           <h2 className="sr-only">Avis clients</h2>
           <BusinessReviews entrepriseId={business.id} />
@@ -2210,7 +2210,7 @@ export const BusinessDetail = ({
         );
       })()}
 
-      {business && !asModal && actualBusinessId && (
+      {!preview && business && !asModal && actualBusinessId && (
         <div className="px-1">
           <h2 className="sr-only">Entreprises similaires</h2>
           <Suspense fallback={null}>
@@ -2224,7 +2224,7 @@ export const BusinessDetail = ({
         </div>
       )}
 
-      {handleClose && (
+      {!preview && handleClose && (
         <div className="text-center mt-4">
           <button
             onClick={handleClose}
