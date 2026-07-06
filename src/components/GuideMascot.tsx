@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 
-export const MASCOT_IMAGE_URL = '/images/mascotte-dalil.png';
+export const MASCOT_IMAGE_URL = '/images/mascotte-dalil-transparent.png';
 
 type MascotPosition = 'left' | 'right' | 'center';
 type MascotSize = 'sm' | 'md' | 'lg';
@@ -32,8 +32,8 @@ function MascotImage({ size }: { size: MascotSize }) {
         alt="Dalil, la mascotte officielle de Dalil Tounes"
         className="w-full h-full object-contain drop-shadow-[0_8px_16px_rgba(0,0,0,0.12)]"
         loading="lazy"
-        width={176}
-        height={176}
+        width={624}
+        height={638}
       />
     </div>
   );
