@@ -137,7 +137,7 @@ export const Layout = ({ children }: LayoutProps) => {
       path: '/concept',
     },
     {
-      label: tx.navExtra?.blog || 'Blog',
+      label: tx.navExtra?.blog || 'Articles',
       path: '/blog',
     },
   ];

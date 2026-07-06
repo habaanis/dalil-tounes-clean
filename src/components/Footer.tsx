@@ -239,7 +239,7 @@ const Footer: React.FC = () => {
               <li><Link to="/entreprises" className={footerLink}>{te.footer?.businesses || t.nav.businesses}</Link></li>
               <li><Link to="/emplois" className={footerLink}>{te.footer?.jobs || t.nav.jobs}</Link></li>
               <li><Link to="/notre-concept" className={footerLink}>{te.footer?.concept || 'Notre Concept'}</Link></li>
-              <li><Link to="/blog" className={footerLink}>{te.footer?.blog || 'Blog'}</Link></li>
+              <li><Link to="/blog" className={footerLink}>{te.footer?.blog || 'Articles'}</Link></li>
               <li><Link to="/abonnement" className={footerLink}>{te.footer?.subscriptions || t.nav.subscription}</Link></li>
             </ul>
           </div>

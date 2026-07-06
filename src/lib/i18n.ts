@@ -345,7 +345,7 @@ export const translations = {
     },
     navExtra: {
       concept: 'Notre Concept',
-      blog: 'Blog',
+      blog: 'Articles',
       candidatesAvailable: 'Candidats disponibles',
       tourism: 'Tourisme Local & Expatriation',
       servicesCitoyens: 'Services Citoyens',
@@ -1360,7 +1360,7 @@ export const translations = {
     },
     blog: {
       tagline: 'Dalil Tounes',
-      title: 'Le Blog',
+      title: 'Articles Dalil Tounes',
       subtitle: 'Histoires, réflexions et actualités autour du commerce local tunisien.',
       readTime: 'de lecture',
       empty: 'Aucun article pour le moment.',
@@ -1698,7 +1698,7 @@ export const translations = {
     },
     navExtra: {
       concept: 'Our Concept',
-      blog: 'Blog',
+      blog: 'Articles',
       candidatesAvailable: 'Available candidates',
       tourism: 'Local Tourism & Expatriation',
       servicesCitoyens: 'Citizen Services',
@@ -2559,7 +2559,7 @@ export const translations = {
     },
     blog: {
       tagline: 'Dalil Tounes',
-      title: 'The Blog',
+      title: 'Dalil Tounes Articles',
       subtitle: 'Stories, reflections and news about local Tunisian commerce.',
       readTime: 'read',
       empty: 'No articles yet.',
@@ -2896,7 +2896,7 @@ export const translations = {
     },
     navExtra: {
       concept: 'مفهومنا',
-      blog: 'المدونة',
+      blog: 'مقالات',
       candidatesAvailable: 'المرشحون المتاحون',
       tourism: 'السياحة المحلية والاغتراب',
       servicesCitoyens: 'خدمات المواطنين',
@@ -3824,7 +3824,7 @@ export const translations = {
     },
     blog: {
       tagline: 'دليل تونس',
-      title: 'المدوّنة',
+      title: 'مقالات دليل تونس',
       subtitle: 'قصص وأفكار وأخبار حول التجارة المحلية التونسية.',
       readTime: 'دقائق قراءة',
       empty: 'لا توجد مقالات بعد.',

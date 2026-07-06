@@ -31,7 +31,7 @@ export default function Blog() {
             className="text-4xl md:text-5xl font-light text-gray-900 leading-tight mb-6"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
-            {blog?.title || 'Le Blog'}
+            {blog?.title || 'Articles Dalil Tounes'}
           </h1>
           <div className="w-12 h-px bg-[#D4AF37] mx-auto mb-8" />
           <p className="text-gray-500 text-lg font-light leading-relaxed max-w-xl mx-auto">
@@ -83,7 +83,7 @@ export default function Blog() {
                     </div>
 
                     <div className="hidden md:flex items-center self-center">
-                      <ArrowRight className={`w-5 h-5 text-[#D4AF37] opacity-0 group-hover:opacity-100 transition-all duration-300 ${isRTL ? 'rotate-180 group-hover:-translate-x-1' : 'group-hover:translate-x-1'}`} />
+                      <ArrowRight aria-hidden="true" className={`w-5 h-5 text-[#D4AF37] opacity-0 group-hover:opacity-100 transition-all duration-300 ${isRTL ? 'rotate-180 group-hover:-translate-x-1' : 'group-hover:translate-x-1'}`} />
                     </div>
                   </article>
                 </Link>

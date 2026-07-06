@@ -152,7 +152,7 @@ export function getBusinessSeoMeta(business: {
 
 export function getBlogSeoMeta(): SeoMeta {
   return {
-    title: `Blog et actualites Tunisie | ${SITE}`,
+    title: `Articles et actualites Tunisie | ${SITE}`,
     description: truncate(
       'Articles, guides et actualites sur les entreprises et services en Tunisie. Conseils pratiques par Dalil Tounes.',
       160,
