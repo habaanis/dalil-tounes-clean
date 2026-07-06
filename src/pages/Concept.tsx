@@ -7,6 +7,7 @@ import StructuredData from '../components/StructuredData';
 import { generateAboutPageSchema } from '../lib/structuredDataSchemas';
 import Breadcrumb from '../components/seo/Breadcrumb';
 import { useHreflangPath } from '../hooks/useHreflangPath';
+import { BusinessCard } from '../components/BusinessCard';
 
 const LOGO_URL = 'https://ik.imagekit.io/gfdpqvshw/Design_Assets_Dalil_Tounes/logos/logo_dalil_tounes_sceau_luxe.png?updatedAt=1773327267816&tr=w-140,h-140,f-auto,q-85';
 
@@ -45,141 +46,212 @@ function DemoSearchBar() {
   );
 }
 
+const DEMO_BUSINESS = {
+  id: 'demo-dalil-tounes',
+  name: 'Dalil Tounes',
+  categorie: 'Plateforme tunisienne',
+  ville: 'Tunisie',
+  gouvernorat: 'Tunisie',
+  adresse: 'Tunisie',
+  description: 'Decouvrez comment fonctionne une fiche professionnelle sur Dalil Tounes. Recherche, avis, horaires, GPS et contact direct.',
+  telephone: '+216 XX XXX XXX',
+  statut_abonnement: 'elite',
+  niveau_priorite_abonnement: 4,
+  logoUrl: LOGO_URL,
+  imageUrl: null,
+  horaires_ok: 'Lundi-Vendredi: 08:00-18:00, Samedi: 09:00-13:00',
+  note_google: '5.0',
+  nombre_avis: '24',
+  score_avis: '5.0',
+  statut_carte: 'Certifié Dalil Tounes',
+  latitude: 36.8065,
+  longitude: 10.1815,
+  google_url: null,
+  'BTN_Maps': null,
+  name_ar: null,
+  name_en: null,
+  name_it: null,
+  name_ru: null,
+  description_ar: null,
+  description_en: null,
+  description_it: null,
+  description_ru: null,
+  featured: true,
+  is_premium: true,
+  approved: true,
+  statut_validation: 'valide',
+  badges: [],
+};
+
 function DemoBusinessCard() {
   return (
-    <div className="rounded-2xl border border-gray-200 shadow-lg bg-white overflow-hidden max-w-[340px] mx-auto" aria-hidden="true">
-      <div className="relative h-24 bg-gradient-to-r from-[#1a0a18] to-[#2d1528]">
-        <img
-          src="/images/drapeau-tunisie.webp"
-          alt=""
-          className="absolute inset-0 w-full h-full object-cover opacity-30"
-          width={340}
-          height={96}
-        />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-14 h-14 rounded-full border-2 border-[#D4AF37] bg-white flex items-center justify-center shadow-xl overflow-hidden">
-            <img src={LOGO_URL} alt="" className="w-full h-full object-contain" width={56} height={56} />
-          </div>
-        </div>
-      </div>
-      <div className="p-4 text-center space-y-2">
-        <h3 className="text-base font-bold text-gray-900">Dalil Tounes</h3>
-        <p className="text-xs font-medium text-[#D4AF37]">Plateforme tunisienne</p>
-        <div className="flex items-center justify-center gap-1 text-xs text-gray-500">
-          <MapPin size={11} className="text-[#D4AF37]" />
-          <span>Tunisie</span>
-        </div>
-        <div className="flex items-center justify-center gap-1">
-          {[1,2,3,4,5].map(i => (
-            <Star key={i} size={12} className="text-[#D4AF37]" fill="#D4AF37" />
-          ))}
-          <span className="text-[10px] text-gray-500 ml-1">5.0</span>
-        </div>
-        <div className="flex items-center justify-center gap-2 pt-1">
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[10px] font-bold text-[#D4AF37]">
-            <Phone size={9} /> Appeler
-          </span>
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-green-50 border border-green-200 text-[10px] font-bold text-green-700">
-            WhatsApp
-          </span>
-        </div>
-      </div>
+    <div className="max-w-[340px] mx-auto" aria-hidden="true">
+      <BusinessCard
+        business={DEMO_BUSINESS}
+        onClick={() => {}}
+      />
     </div>
   );
 }
 
 function DemoCVBusiness() {
   return (
-    <div
-      className="rounded-2xl border-2 border-[#D4AF37] shadow-2xl overflow-hidden max-w-[360px] mx-auto"
-      style={{ background: '#000' }}
-      aria-hidden="true"
-    >
-      {/* Header image */}
-      <div className="relative h-20" style={{ background: '#1a0a18' }}>
-        <img
-          src="/images/drapeau-tunisie.webp"
-          alt=""
-          className="absolute inset-0 w-full h-full object-cover opacity-40"
-          width={360}
-          height={80}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/60" />
-      </div>
+    <div className="flex justify-center" aria-hidden="true">
+      <div
+        style={{
+          transform: 'scale(0.65)',
+          transformOrigin: 'top center',
+        }}
+      >
+        <div
+          className="rounded-2xl border-2 border-[#D4AF37] shadow-2xl overflow-hidden"
+          style={{ background: '#000', width: '380px' }}
+        >
+          {/* Header image */}
+          <div className="relative h-24" style={{ background: '#1a0a18' }}>
+            <img
+              src="/images/drapeau-tunisie.webp"
+              alt=""
+              className="absolute inset-0 w-full h-full object-cover opacity-40"
+              width={380}
+              height={96}
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/60" />
+          </div>
 
-      {/* Logo */}
-      <div className="flex justify-center -mt-7 relative z-10">
-        <div className="w-14 h-14 rounded-full border-[3px] border-[#D4AF37] bg-black flex items-center justify-center shadow-xl overflow-hidden">
-          <img src={LOGO_URL} alt="" className="w-full h-full object-contain" width={56} height={56} />
-        </div>
-      </div>
+          {/* Logo */}
+          <div className="flex justify-center -mt-8 relative z-10">
+            <div className="w-16 h-16 rounded-full border-[3px] border-[#D4AF37] bg-black flex items-center justify-center shadow-xl overflow-hidden">
+              <img src={LOGO_URL} alt="" className="w-full h-full object-contain" width={64} height={64} />
+            </div>
+          </div>
 
-      {/* Content */}
-      <div className="px-4 pb-4 pt-2 text-center space-y-2">
-        <h3 className="text-base font-bold text-white">Dalil Tounes</h3>
-        <p className="text-xs font-medium text-[#D4AF37]">Plateforme tunisienne</p>
+          {/* Content */}
+          <div className="px-5 pb-5 pt-3 text-center space-y-3">
+            <div>
+              <h3 className="text-lg font-bold text-white">Dalil Tounes</h3>
+              <p className="text-xs font-medium text-[#D4AF37] mt-1">Plateforme tunisienne</p>
+              <span className="inline-flex items-center gap-1 mt-2 px-2.5 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wide text-white bg-green-700">
+                CERTIFIE DALIL TOUNES
+              </span>
+            </div>
 
-        <div className="flex items-center justify-center gap-1.5 text-xs text-gray-300">
-          <MapPin size={11} className="text-[#D4AF37]" />
-          <span>Tunisie</span>
-          <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full border border-[#D4AF37] bg-[#D4AF37]/20 text-[9px] font-bold text-[#D4AF37] uppercase ml-1">
-            <Navigation size={8} strokeWidth={3} /> GPS
-          </span>
-        </div>
+            <div className="flex items-center justify-center gap-1.5 text-xs text-gray-300">
+              <MapPin size={12} className="text-[#D4AF37]" />
+              <span>Tunisie</span>
+              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full border border-[#D4AF37] bg-[#D4AF37]/20 text-[9px] font-bold text-[#D4AF37] uppercase ml-1">
+                <Navigation size={8} strokeWidth={3} /> GPS
+              </span>
+            </div>
 
-        <div className="flex items-center justify-center gap-1 text-xs text-[#D4AF37] font-bold">
-          <Phone size={11} />
-          <span>+216 XX XXX XXX</span>
-        </div>
+            <div className="flex items-center justify-center gap-1.5 text-xs text-[#D4AF37] font-bold">
+              <Phone size={12} />
+              <span>+216 XX XXX XXX</span>
+            </div>
 
-        <p className="text-[11px] text-gray-400 leading-relaxed px-2">
-          Decouvrez comment fonctionne une fiche professionnelle sur Dalil Tounes.
-        </p>
+            <p className="text-xs text-gray-400 leading-relaxed px-2">
+              Decouvrez comment fonctionne une fiche professionnelle sur Dalil Tounes. Recherche, fiches completes, avis et contact direct.
+            </p>
 
-        {/* Services tags */}
-        <div className="flex flex-wrap justify-center gap-1.5 pt-1">
-          <span className="px-2 py-0.5 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[9px] text-[#D4AF37] font-medium">
-            Recherche
-          </span>
-          <span className="px-2 py-0.5 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[9px] text-[#D4AF37] font-medium">
-            Annuaire
-          </span>
-          <span className="px-2 py-0.5 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[9px] text-[#D4AF37] font-medium">
-            Visibilite
-          </span>
-        </div>
+            {/* Services tags */}
+            <div className="flex flex-wrap justify-center gap-1.5 pt-1">
+              <span className="px-2.5 py-1 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[10px] text-[#D4AF37] font-medium">
+                Recherche
+              </span>
+              <span className="px-2.5 py-1 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[10px] text-[#D4AF37] font-medium">
+                Annuaire
+              </span>
+              <span className="px-2.5 py-1 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[10px] text-[#D4AF37] font-medium">
+                Visibilite
+              </span>
+              <span className="px-2.5 py-1 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[10px] text-[#D4AF37] font-medium">
+                Avis
+              </span>
+            </div>
 
-        {/* Action row */}
-        <div className="flex items-center justify-center gap-2 pt-2">
-          <span className="w-7 h-7 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center">
-            <Phone size={11} className="text-[#D4AF37]" />
-          </span>
-          <span className="w-7 h-7 rounded-full bg-green-900/40 border border-green-500/40 flex items-center justify-center">
-            <span className="text-[10px] text-green-400">W</span>
-          </span>
-          <span className="w-7 h-7 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center">
-            <Mail size={11} className="text-[#D4AF37]" />
-          </span>
-          <span className="w-7 h-7 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center">
-            <Globe size={11} className="text-[#D4AF37]" />
-          </span>
-        </div>
+            {/* Action buttons row */}
+            <div className="flex items-center justify-center gap-2.5 pt-2">
+              <span className="w-8 h-8 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center">
+                <Phone size={13} className="text-[#D4AF37]" />
+              </span>
+              <span className="w-8 h-8 rounded-full bg-green-900/40 border border-green-500/40 flex items-center justify-center">
+                <span className="text-[11px] text-green-400 font-bold">W</span>
+              </span>
+              <span className="w-8 h-8 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center">
+                <Mail size={13} className="text-[#D4AF37]" />
+              </span>
+              <span className="w-8 h-8 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center">
+                <Globe size={13} className="text-[#D4AF37]" />
+              </span>
+            </div>
 
-        {/* Hours */}
-        <div className="flex items-center justify-center gap-1.5 pt-1 text-[10px] text-green-400 font-medium">
-          <Clock size={10} />
-          <span>Ouvert maintenant</span>
-        </div>
+            {/* Hours */}
+            <div className="flex items-center justify-center gap-1.5 pt-1 text-[11px] text-green-400 font-medium">
+              <Clock size={11} />
+              <span>Ouvert maintenant</span>
+              <span className="text-gray-500 ml-1">08:00 - 18:00</span>
+            </div>
 
-        {/* Reviews */}
-        <div className="pt-2 border-t border-[#D4AF37]/30">
-          <button className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold bg-[#D4AF37]/15 text-[#D4AF37] border border-[#D4AF37]/40">
-            <span className="flex items-center gap-1.5">
-              <Star size={11} fill="#D4AF37" className="text-[#D4AF37]" />
-              Laisser un avis (12)
-            </span>
-            <ChevronDown size={12} />
-          </button>
+            {/* Full schedule */}
+            <div className="text-left rounded-lg bg-[#D4AF37]/5 border border-[#D4AF37]/20 p-3 text-[10px] space-y-1">
+              <div className="flex justify-between text-gray-300"><span className="text-[#D4AF37] font-semibold">Lundi</span><span>08:00 - 18:00</span></div>
+              <div className="flex justify-between text-gray-300"><span className="text-[#D4AF37] font-semibold">Mardi</span><span>08:00 - 18:00</span></div>
+              <div className="flex justify-between text-gray-300"><span className="text-[#D4AF37] font-semibold">Mercredi</span><span>08:00 - 18:00</span></div>
+              <div className="flex justify-between text-gray-300"><span className="text-[#D4AF37] font-semibold">Jeudi</span><span>08:00 - 18:00</span></div>
+              <div className="flex justify-between text-gray-300"><span className="text-[#D4AF37] font-semibold">Vendredi</span><span>08:00 - 18:00</span></div>
+              <div className="flex justify-between text-gray-300"><span className="text-[#D4AF37] font-semibold">Samedi</span><span>09:00 - 13:00</span></div>
+              <div className="flex justify-between text-red-400"><span className="font-semibold">Dimanche</span><span>Ferme</span></div>
+            </div>
+
+            {/* Photos gallery placeholder */}
+            <div className="pt-2">
+              <div className="grid grid-cols-3 gap-1.5 rounded-lg overflow-hidden">
+                <div className="aspect-square bg-gray-800 border border-[#D4AF37]/20 flex items-center justify-center">
+                  <span className="text-[9px] text-gray-500">Photo 1</span>
+                </div>
+                <div className="aspect-square bg-gray-800 border border-[#D4AF37]/20 flex items-center justify-center">
+                  <span className="text-[9px] text-gray-500">Photo 2</span>
+                </div>
+                <div className="aspect-square bg-gray-800 border border-[#D4AF37]/20 flex items-center justify-center">
+                  <span className="text-[9px] text-gray-500">Photo 3</span>
+                </div>
+              </div>
+            </div>
+
+            {/* QR Code section */}
+            <div className="flex items-center justify-center gap-3 pt-2 border-t border-[#D4AF37]/20">
+              <div className="w-14 h-14 bg-white rounded-lg flex items-center justify-center">
+                <div className="w-10 h-10 bg-gray-200 rounded" />
+              </div>
+              <div className="text-left">
+                <p className="text-[10px] text-gray-400">Scanner pour partager</p>
+                <p className="text-[10px] text-[#D4AF37] font-semibold">QR Code</p>
+              </div>
+            </div>
+
+            {/* Reviews section */}
+            <div className="pt-2 border-t border-[#D4AF37]/30">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-1.5">
+                  <Star size={13} fill="#D4AF37" className="text-[#D4AF37]" />
+                  <span className="text-sm font-bold text-[#D4AF37]">5.0 / 5</span>
+                  <span className="text-[10px] text-gray-400">(24 avis)</span>
+                </div>
+              </div>
+              <button className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-semibold bg-[#D4AF37]/15 text-[#D4AF37] border border-[#D4AF37]/40">
+                <span className="flex items-center gap-1.5">
+                  <Star size={12} fill="#D4AF37" className="text-[#D4AF37]" />
+                  Laisser un avis
+                </span>
+                <ChevronDown size={13} />
+              </button>
+            </div>
+
+            {/* Reservation button */}
+            <button className="w-full py-2.5 rounded-lg bg-[#D4AF37] text-black text-xs font-bold mt-2">
+              Reserver un rendez-vous
+            </button>
+          </div>
         </div>
       </div>
     </div>
