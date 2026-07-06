@@ -234,6 +234,8 @@ export default function Concept() {
       <section className="pt-10 px-4">
         <div className="max-w-5xl mx-auto">
           <GuideMascot
+            variant="welcome"
+            pose="hello"
             position="left"
             size="md"
             title="Bonjour ! Je suis Dalil."
