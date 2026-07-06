@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, Phone, MapPin, Star, Search, Globe, Navigation, Mail, Clock, ChevronDown } from 'lucide-react';
+import { ArrowRight, Phone, MapPin, Search } from 'lucide-react';
 import { SEOHead } from '../components/SEOHead';
 import { getConceptSeoMeta } from '../lib/seoMetaTemplates';
 import { LazyImage } from '../components/LazyImage';
@@ -8,6 +8,7 @@ import { generateAboutPageSchema } from '../lib/structuredDataSchemas';
 import Breadcrumb from '../components/seo/Breadcrumb';
 import { useHreflangPath } from '../hooks/useHreflangPath';
 import { BusinessCard } from '../components/BusinessCard';
+import { BusinessDetail } from '../components/BusinessDetail';
 
 const LOGO_URL = 'https://ik.imagekit.io/gfdpqvshw/Design_Assets_Dalil_Tounes/logos/logo_dalil_tounes_sceau_luxe.png?updatedAt=1773327267816&tr=w-140,h-140,f-auto,q-85';
 
@@ -48,18 +49,29 @@ function DemoSearchBar() {
 
 const DEMO_BUSINESS = {
   id: 'demo-dalil-tounes',
-  name: 'Dalil Tounes',
+  name: 'Fiche Démonstration',
+  nom: 'Fiche Démonstration',
   categorie: 'Plateforme tunisienne',
+  category: 'Plateforme tunisienne',
   ville: 'Tunisie',
+  city: 'Tunisie',
   gouvernorat: 'Tunisie',
   adresse: 'Tunisie',
-  description: 'Decouvrez comment fonctionne une fiche professionnelle sur Dalil Tounes. Recherche, avis, horaires, GPS et contact direct.',
+  description: 'Découvrez comment fonctionne une fiche professionnelle sur Dalil Tounes.',
   telephone: '+216 XX XXX XXX',
-  statut_abonnement: 'elite',
-  niveau_priorite_abonnement: 4,
+  phone: '+216 XX XXX XXX',
+  whatsapp: '+216 XX XXX XXX',
+  email: 'contact@dalil-tounes.com',
+  site_web: 'https://dalil-tounes.com',
+  website: 'https://dalil-tounes.com',
+  services: 'Recherche, Annuaire, Visibilité, Avis',
+  statut_abonnement: 'premium',
+  niveau_priorite_abonnement: 3,
   logoUrl: LOGO_URL,
+  logo_url: LOGO_URL,
   imageUrl: null,
-  horaires_ok: 'Lundi-Vendredi: 08:00-18:00, Samedi: 09:00-13:00',
+  image_url: null,
+  horaires_ok: 'Lundi : 08:00–18:00\nMardi : 08:00–18:00\nMercredi : 08:00–18:00\nJeudi : 08:00–18:00\nVendredi : 08:00–18:00\nSamedi : 09:00–13:00\nDimanche : Fermé',
   note_google: '5.0',
   nombre_avis: '24',
   score_avis: '5.0',
@@ -96,163 +108,9 @@ function DemoBusinessCard() {
 
 function DemoCVBusiness() {
   return (
-    <div className="flex justify-center" aria-hidden="true">
-      <div
-        style={{
-          transform: 'scale(0.65)',
-          transformOrigin: 'top center',
-        }}
-      >
-        <div
-          className="rounded-2xl border-2 border-[#D4AF37] shadow-2xl overflow-hidden"
-          style={{ background: '#000', width: '380px' }}
-        >
-          {/* Header image */}
-          <div className="relative h-24" style={{ background: '#1a0a18' }}>
-            <img
-              src="/images/drapeau-tunisie.webp"
-              alt=""
-              className="absolute inset-0 w-full h-full object-cover opacity-40"
-              width={380}
-              height={96}
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/60" />
-          </div>
-
-          {/* Logo */}
-          <div className="flex justify-center -mt-8 relative z-10">
-            <div className="w-16 h-16 rounded-full border-[3px] border-[#D4AF37] bg-black flex items-center justify-center shadow-xl overflow-hidden">
-              <img src={LOGO_URL} alt="" className="w-full h-full object-contain" width={64} height={64} />
-            </div>
-          </div>
-
-          {/* Content */}
-          <div className="px-5 pb-5 pt-3 text-center space-y-3">
-            <div>
-              <h3 className="text-lg font-bold text-white">Dalil Tounes</h3>
-              <p className="text-xs font-medium text-[#D4AF37] mt-1">Plateforme tunisienne</p>
-              <span className="inline-flex items-center gap-1 mt-2 px-2.5 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wide text-white bg-green-700">
-                CERTIFIE DALIL TOUNES
-              </span>
-            </div>
-
-            <div className="flex items-center justify-center gap-1.5 text-xs text-gray-300">
-              <MapPin size={12} className="text-[#D4AF37]" />
-              <span>Tunisie</span>
-              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full border border-[#D4AF37] bg-[#D4AF37]/20 text-[9px] font-bold text-[#D4AF37] uppercase ml-1">
-                <Navigation size={8} strokeWidth={3} /> GPS
-              </span>
-            </div>
-
-            <div className="flex items-center justify-center gap-1.5 text-xs text-[#D4AF37] font-bold">
-              <Phone size={12} />
-              <span>+216 XX XXX XXX</span>
-            </div>
-
-            <p className="text-xs text-gray-400 leading-relaxed px-2">
-              Decouvrez comment fonctionne une fiche professionnelle sur Dalil Tounes. Recherche, fiches completes, avis et contact direct.
-            </p>
-
-            {/* Services tags */}
-            <div className="flex flex-wrap justify-center gap-1.5 pt-1">
-              <span className="px-2.5 py-1 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[10px] text-[#D4AF37] font-medium">
-                Recherche
-              </span>
-              <span className="px-2.5 py-1 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[10px] text-[#D4AF37] font-medium">
-                Annuaire
-              </span>
-              <span className="px-2.5 py-1 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[10px] text-[#D4AF37] font-medium">
-                Visibilite
-              </span>
-              <span className="px-2.5 py-1 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[10px] text-[#D4AF37] font-medium">
-                Avis
-              </span>
-            </div>
-
-            {/* Action buttons row */}
-            <div className="flex items-center justify-center gap-2.5 pt-2">
-              <span className="w-8 h-8 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center">
-                <Phone size={13} className="text-[#D4AF37]" />
-              </span>
-              <span className="w-8 h-8 rounded-full bg-green-900/40 border border-green-500/40 flex items-center justify-center">
-                <span className="text-[11px] text-green-400 font-bold">W</span>
-              </span>
-              <span className="w-8 h-8 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center">
-                <Mail size={13} className="text-[#D4AF37]" />
-              </span>
-              <span className="w-8 h-8 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center">
-                <Globe size={13} className="text-[#D4AF37]" />
-              </span>
-            </div>
-
-            {/* Hours */}
-            <div className="flex items-center justify-center gap-1.5 pt-1 text-[11px] text-green-400 font-medium">
-              <Clock size={11} />
-              <span>Ouvert maintenant</span>
-              <span className="text-gray-500 ml-1">08:00 - 18:00</span>
-            </div>
-
-            {/* Full schedule */}
-            <div className="text-left rounded-lg bg-[#D4AF37]/5 border border-[#D4AF37]/20 p-3 text-[10px] space-y-1">
-              <div className="flex justify-between text-gray-300"><span className="text-[#D4AF37] font-semibold">Lundi</span><span>08:00 - 18:00</span></div>
-              <div className="flex justify-between text-gray-300"><span className="text-[#D4AF37] font-semibold">Mardi</span><span>08:00 - 18:00</span></div>
-              <div className="flex justify-between text-gray-300"><span className="text-[#D4AF37] font-semibold">Mercredi</span><span>08:00 - 18:00</span></div>
-              <div className="flex justify-between text-gray-300"><span className="text-[#D4AF37] font-semibold">Jeudi</span><span>08:00 - 18:00</span></div>
-              <div className="flex justify-between text-gray-300"><span className="text-[#D4AF37] font-semibold">Vendredi</span><span>08:00 - 18:00</span></div>
-              <div className="flex justify-between text-gray-300"><span className="text-[#D4AF37] font-semibold">Samedi</span><span>09:00 - 13:00</span></div>
-              <div className="flex justify-between text-red-400"><span className="font-semibold">Dimanche</span><span>Ferme</span></div>
-            </div>
-
-            {/* Photos gallery placeholder */}
-            <div className="pt-2">
-              <div className="grid grid-cols-3 gap-1.5 rounded-lg overflow-hidden">
-                <div className="aspect-square bg-gray-800 border border-[#D4AF37]/20 flex items-center justify-center">
-                  <span className="text-[9px] text-gray-500">Photo 1</span>
-                </div>
-                <div className="aspect-square bg-gray-800 border border-[#D4AF37]/20 flex items-center justify-center">
-                  <span className="text-[9px] text-gray-500">Photo 2</span>
-                </div>
-                <div className="aspect-square bg-gray-800 border border-[#D4AF37]/20 flex items-center justify-center">
-                  <span className="text-[9px] text-gray-500">Photo 3</span>
-                </div>
-              </div>
-            </div>
-
-            {/* QR Code section */}
-            <div className="flex items-center justify-center gap-3 pt-2 border-t border-[#D4AF37]/20">
-              <div className="w-14 h-14 bg-white rounded-lg flex items-center justify-center">
-                <div className="w-10 h-10 bg-gray-200 rounded" />
-              </div>
-              <div className="text-left">
-                <p className="text-[10px] text-gray-400">Scanner pour partager</p>
-                <p className="text-[10px] text-[#D4AF37] font-semibold">QR Code</p>
-              </div>
-            </div>
-
-            {/* Reviews section */}
-            <div className="pt-2 border-t border-[#D4AF37]/30">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-1.5">
-                  <Star size={13} fill="#D4AF37" className="text-[#D4AF37]" />
-                  <span className="text-sm font-bold text-[#D4AF37]">5.0 / 5</span>
-                  <span className="text-[10px] text-gray-400">(24 avis)</span>
-                </div>
-              </div>
-              <button className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-semibold bg-[#D4AF37]/15 text-[#D4AF37] border border-[#D4AF37]/40">
-                <span className="flex items-center gap-1.5">
-                  <Star size={12} fill="#D4AF37" className="text-[#D4AF37]" />
-                  Laisser un avis
-                </span>
-                <ChevronDown size={13} />
-              </button>
-            </div>
-
-            {/* Reservation button */}
-            <button className="w-full py-2.5 rounded-lg bg-[#D4AF37] text-black text-xs font-bold mt-2">
-              Reserver un rendez-vous
-            </button>
-          </div>
-        </div>
+    <div className="flex justify-center overflow-hidden" aria-hidden="true">
+      <div style={{ width: '420px', maxWidth: '100%', zoom: 0.78 } as React.CSSProperties}>
+        <BusinessDetail preview business={DEMO_BUSINESS} />
       </div>
     </div>
   );

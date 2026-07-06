@@ -279,6 +279,7 @@ interface BusinessDetailProps {
   onNavigateBack?: () => void;
   onClose?: () => void;
   asModal?: boolean;
+  preview?: boolean;
 }
 
 interface Business {
@@ -336,6 +337,7 @@ export const BusinessDetail = ({
   onNavigateBack,
   onClose,
   asModal = false,
+  preview = false,
 }: BusinessDetailProps) => {
   const { id: urlId, slug: urlSlug, villeSlug: urlVilleSlug } = useParams<{
     id?: string;
@@ -391,7 +393,7 @@ export const BusinessDetail = ({
 
   const actualBusinessId = businessId || businessProp?.id;
 
-  useViewTracking(actualBusinessId);
+  useViewTracking(preview ? undefined : actualBusinessId);
 
   const handleCloseRef = onClose || onNavigateBack || (() => {
     const parentPath = routerLocation.pathname.split('/').slice(0, -1).join('/') || '/';
@@ -415,6 +417,19 @@ export const BusinessDetail = ({
   }, [asModal, handleCloseRef]);
 
   useEffect(() => {
+    if (preview && businessProp) {
+      setBusiness(normalizeBusiness(businessProp) as Business);
+      setAverageRating(
+        businessProp.score_avis != null && businessProp.score_avis !== ''
+          ? Number(businessProp.score_avis)
+          : null,
+      );
+      setReviewCount(Number(businessProp.nombre_avis) || 0);
+      setError(false);
+      setLoading(false);
+      return;
+    }
+
     if (!actualBusinessId && !cleanSlugOnly && !businessProp?.id) {
       setError(true);
       setLoading(false);
@@ -544,7 +559,7 @@ export const BusinessDetail = ({
     };
 
     fetchBusiness();
-  }, [businessId, businessProp, actualBusinessId, cleanSlugOnly, asModal, businessIdProp, navigate, urlVilleSlug]);
+  }, [businessId, businessProp, actualBusinessId, cleanSlugOnly, asModal, businessIdProp, navigate, urlVilleSlug, preview]);
 
   const translations = {
     fr: {
@@ -917,7 +932,7 @@ export const BusinessDetail = ({
       style={{ wordBreak: 'break-word', padding: asModal ? '1rem' : undefined }}
       dir={isRTL ? 'rtl' : 'ltr'}
     >
-      {business && actualBusinessId && (
+      {!preview && business && actualBusinessId && (
         <>
           {(() => {
             const bizSeo = getBusinessSeoMeta({ nom: business.nom, ville: business.ville, telephone: business.telephone, categorie: translatedCategory, description: translatedDescription || undefined }, buildEntrepriseShareUrl(business));
@@ -971,7 +986,7 @@ export const BusinessDetail = ({
         </>
       )}
 
-      {!asModal && business && (
+      {!asModal && !preview && business && (
         <Breadcrumb
           items={[
             { label: 'Accueil', href: '/' },
