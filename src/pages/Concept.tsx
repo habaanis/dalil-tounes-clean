@@ -9,6 +9,7 @@ import Breadcrumb from '../components/seo/Breadcrumb';
 import { useHreflangPath } from '../hooks/useHreflangPath';
 import { BusinessCard } from '../components/BusinessCard';
 import { BusinessDetail } from '../components/BusinessDetail';
+import { GuideMascot } from '../components/GuideMascot';
 
 const LOGO_URL = 'https://ik.imagekit.io/gfdpqvshw/Design_Assets_Dalil_Tounes/logos/logo_dalil_tounes_sceau_luxe.png?updatedAt=1773327267816&tr=w-140,h-140,f-auto,q-85';
 
@@ -226,6 +227,18 @@ export default function Concept() {
             Decouvre comment trouver rapidement un artisan, un commercant, un professionnel ou une entreprise de
             confiance en Tunisie, et comment Dalil Tounes aide les professionnels a developper leur visibilite.
           </p>
+        </div>
+      </section>
+
+      {/* MASCOT INTRO */}
+      <section className="pt-10 px-4">
+        <div className="max-w-5xl mx-auto">
+          <GuideMascot
+            position="left"
+            size="md"
+            title="Bonjour ! Je suis Dalil."
+            message="Je vais te montrer comment trouver rapidement un professionnel de confiance et comprendre comment fonctionne Dalil Tounes."
+          />
         </div>
       </section>
 
