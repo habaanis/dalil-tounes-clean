@@ -305,14 +305,14 @@ export function generateCollectionPageSchema(
 export function generateAboutPageSchema(): AboutPageSchema {
   return {
     '@context': 'https://schema.org',
-    '@type': 'AboutPage',
-    name: 'À propos de Dalil Tounes',
-    description: 'Découvrez Dalil Tounes, la plateforme tunisienne de référencement des entreprises et services',
+    '@type': 'WebPage',
+    name: 'Comment fonctionne Dalil Tounes ?',
+    description: 'Découvrez comment trouver un artisan, un commerçant ou un professionnel de confiance en Tunisie avec Dalil Tounes.',
     url: canonicalUrl('/notre-concept'),
     mainEntity: {
       '@type': 'Organization',
       name: 'Dalil Tounes',
-      description: 'Plateforme de référencement complète pour trouver des entreprises, services, événements et opportunités en Tunisie',
+      description: 'Plateforme tunisienne pour trouver des professionnels, artisans et entreprises de confiance en Tunisie',
     },
   };
 }

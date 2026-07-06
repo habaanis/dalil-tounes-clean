@@ -173,12 +173,12 @@ export function getBlogPostSeoMeta(postTitle: string, excerpt: string, slug: str
 
 export function getConceptSeoMeta(): SeoMeta {
   return {
-    title: `Notre concept - Vision et mission | ${SITE}`,
+    title: `Comment fonctionne Dalil Tounes ? Trouver un professionnel en Tunisie | ${SITE}`,
     description: truncate(
-      "Decouvrez la vision de Dalil Tounes : l'Humain, le Digital et le Patrimoine reunis pour booster la visibilite des entreprises tunisiennes.",
+      "Decouvrez comment trouver un artisan, commercant ou professionnel de confiance en Tunisie avec Dalil Tounes. Recherche, fiches completes, avis et contact direct.",
       160,
     ),
-    keywords: 'dalil tounes concept, annuaire tunisie vision, entreprises tunisiennes visibilite',
+    keywords: 'comment fonctionne dalil tounes, trouver professionnel tunisie, annuaire entreprises tunisie, recherche artisan tunisie',
     canonical: `${DOMAIN}/notre-concept`,
   };
 }
