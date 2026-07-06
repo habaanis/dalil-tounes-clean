@@ -26,11 +26,11 @@ const SIZE_MAP: Record<MascotSize, string> = {
 
 function MascotImage({ size }: { size: MascotSize }) {
   return (
-    <div className={`flex-shrink-0 ${SIZE_MAP[size]}`}>
+    <div className={`flex-shrink-0 ${SIZE_MAP[size]} guide-mascot-figure`}>
       <img
         src={MASCOT_IMAGE_URL}
         alt="Dalil, la mascotte officielle de Dalil Tounes"
-        className="w-full h-full object-contain drop-shadow-[0_8px_16px_rgba(0,0,0,0.12)]"
+        className="w-full h-full object-contain drop-shadow-[0_8px_16px_rgba(0,0,0,0.12)] guide-mascot-img"
         loading="lazy"
         width={624}
         height={638}
@@ -38,6 +38,45 @@ function MascotImage({ size }: { size: MascotSize }) {
     </div>
   );
 }
+
+const MASCOT_ANIMATION_CSS = `
+  @keyframes guideMascotAppear {
+    from { opacity: 0; transform: translate3d(0, 12px, 0); }
+    to   { opacity: 1; transform: translate3d(0, 0, 0); }
+  }
+  @keyframes guideMascotBreathe {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    50%      { transform: translate3d(0, -2px, 0); }
+  }
+  @keyframes guideMascotGreet {
+    0%   { transform: rotate(0deg); }
+    25%  { transform: rotate(-2.5deg); }
+    55%  { transform: rotate(1.5deg); }
+    100% { transform: rotate(0deg); }
+  }
+  .guide-mascot {
+    animation: guideMascotAppear 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .guide-mascot-figure {
+    animation: guideMascotBreathe 4.5s ease-in-out infinite;
+    will-change: transform;
+  }
+  .guide-mascot-img {
+    transform-origin: 50% 88%;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .guide-mascot-figure:hover .guide-mascot-img {
+      animation: guideMascotGreet 300ms ease-in-out;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .guide-mascot,
+    .guide-mascot-figure,
+    .guide-mascot-figure:hover .guide-mascot-img {
+      animation: none;
+    }
+  }
+`;
 
 function MascotCta({ label, href, onClick }: { label: string; href?: string; onClick?: () => void }) {
   const classes =
@@ -89,8 +128,9 @@ export function GuideMascot({
 
   return (
     <div
-      className={`flex ${layout} gap-5 sm:gap-6 rounded-2xl border border-[#D4AF37]/25 bg-gradient-to-br from-[#FFFDF6] to-[#FBF6E8] p-5 sm:p-6 shadow-sm ${className}`}
+      className={`guide-mascot flex ${layout} gap-5 sm:gap-6 rounded-2xl border border-[#D4AF37]/25 bg-gradient-to-br from-[#FFFDF6] to-[#FBF6E8] p-5 sm:p-6 shadow-sm ${className}`}
     >
+      <style>{MASCOT_ANIMATION_CSS}</style>
       <MascotImage size={size} />
 
       <div className="flex-1 space-y-2">
