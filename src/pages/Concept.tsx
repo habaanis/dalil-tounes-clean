@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, Phone, MapPin, Star, Search } from 'lucide-react';
+import { ArrowRight, Phone, MapPin, Star, Search, Globe, Navigation, Mail, Clock, ChevronDown } from 'lucide-react';
 import { SEOHead } from '../components/SEOHead';
 import { getConceptSeoMeta } from '../lib/seoMetaTemplates';
 import { LazyImage } from '../components/LazyImage';
@@ -8,46 +8,219 @@ import { generateAboutPageSchema } from '../lib/structuredDataSchemas';
 import Breadcrumb from '../components/seo/Breadcrumb';
 import { useHreflangPath } from '../hooks/useHreflangPath';
 
+const LOGO_URL = 'https://ik.imagekit.io/gfdpqvshw/Design_Assets_Dalil_Tounes/logos/logo_dalil_tounes_sceau_luxe.png?updatedAt=1773327267816&tr=w-140,h-140,f-auto,q-85';
+
+function DemoSearchBar() {
+  return (
+    <div className="rounded-2xl border border-gray-200 shadow-lg bg-white p-4 space-y-3" aria-hidden="true">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+        <div className="relative">
+          <input
+            type="text"
+            readOnly
+            value="Plombier"
+            className="w-full px-3 py-2.5 rounded-lg border border-[#D4AF37] bg-white text-sm text-gray-800 font-medium"
+          />
+          <Search size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#D4AF37]" />
+        </div>
+        <div className="relative">
+          <input
+            type="text"
+            readOnly
+            value="Sousse"
+            className="w-full px-3 py-2.5 rounded-lg border border-[#D4AF37] bg-white text-sm text-gray-800 font-medium"
+          />
+          <MapPin size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#D4AF37]" />
+        </div>
+      </div>
+      <button className="w-full py-2.5 rounded-lg bg-[#4A1D43] text-white text-sm font-bold border border-[#D4AF37] hover:bg-[#5A2D53] transition-colors">
+        Rechercher
+      </button>
+      <div className="flex items-center gap-2 pt-1">
+        <span className="text-[10px] px-2.5 py-1 rounded-full bg-[#D4AF37] text-white font-semibold">Tous</span>
+        <span className="text-[10px] px-2.5 py-1 rounded-full border border-green-600 text-green-700 font-semibold">Certifies</span>
+        <span className="text-[10px] px-2.5 py-1 rounded-full border border-orange-500 text-orange-600 font-semibold">Non certifies</span>
+      </div>
+    </div>
+  );
+}
+
+function DemoBusinessCard() {
+  return (
+    <div className="rounded-2xl border border-gray-200 shadow-lg bg-white overflow-hidden max-w-[340px] mx-auto" aria-hidden="true">
+      <div className="relative h-24 bg-gradient-to-r from-[#1a0a18] to-[#2d1528]">
+        <img
+          src="/images/drapeau-tunisie.webp"
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover opacity-30"
+          width={340}
+          height={96}
+        />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-14 h-14 rounded-full border-2 border-[#D4AF37] bg-white flex items-center justify-center shadow-xl overflow-hidden">
+            <img src={LOGO_URL} alt="" className="w-full h-full object-contain" width={56} height={56} />
+          </div>
+        </div>
+      </div>
+      <div className="p-4 text-center space-y-2">
+        <h3 className="text-base font-bold text-gray-900">Dalil Tounes</h3>
+        <p className="text-xs font-medium text-[#D4AF37]">Plateforme tunisienne</p>
+        <div className="flex items-center justify-center gap-1 text-xs text-gray-500">
+          <MapPin size={11} className="text-[#D4AF37]" />
+          <span>Tunisie</span>
+        </div>
+        <div className="flex items-center justify-center gap-1">
+          {[1,2,3,4,5].map(i => (
+            <Star key={i} size={12} className="text-[#D4AF37]" fill="#D4AF37" />
+          ))}
+          <span className="text-[10px] text-gray-500 ml-1">5.0</span>
+        </div>
+        <div className="flex items-center justify-center gap-2 pt-1">
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[10px] font-bold text-[#D4AF37]">
+            <Phone size={9} /> Appeler
+          </span>
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-green-50 border border-green-200 text-[10px] font-bold text-green-700">
+            WhatsApp
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DemoCVBusiness() {
+  return (
+    <div
+      className="rounded-2xl border-2 border-[#D4AF37] shadow-2xl overflow-hidden max-w-[360px] mx-auto"
+      style={{ background: '#000' }}
+      aria-hidden="true"
+    >
+      {/* Header image */}
+      <div className="relative h-20" style={{ background: '#1a0a18' }}>
+        <img
+          src="/images/drapeau-tunisie.webp"
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover opacity-40"
+          width={360}
+          height={80}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/60" />
+      </div>
+
+      {/* Logo */}
+      <div className="flex justify-center -mt-7 relative z-10">
+        <div className="w-14 h-14 rounded-full border-[3px] border-[#D4AF37] bg-black flex items-center justify-center shadow-xl overflow-hidden">
+          <img src={LOGO_URL} alt="" className="w-full h-full object-contain" width={56} height={56} />
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="px-4 pb-4 pt-2 text-center space-y-2">
+        <h3 className="text-base font-bold text-white">Dalil Tounes</h3>
+        <p className="text-xs font-medium text-[#D4AF37]">Plateforme tunisienne</p>
+
+        <div className="flex items-center justify-center gap-1.5 text-xs text-gray-300">
+          <MapPin size={11} className="text-[#D4AF37]" />
+          <span>Tunisie</span>
+          <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full border border-[#D4AF37] bg-[#D4AF37]/20 text-[9px] font-bold text-[#D4AF37] uppercase ml-1">
+            <Navigation size={8} strokeWidth={3} /> GPS
+          </span>
+        </div>
+
+        <div className="flex items-center justify-center gap-1 text-xs text-[#D4AF37] font-bold">
+          <Phone size={11} />
+          <span>+216 XX XXX XXX</span>
+        </div>
+
+        <p className="text-[11px] text-gray-400 leading-relaxed px-2">
+          Decouvrez comment fonctionne une fiche professionnelle sur Dalil Tounes.
+        </p>
+
+        {/* Services tags */}
+        <div className="flex flex-wrap justify-center gap-1.5 pt-1">
+          <span className="px-2 py-0.5 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[9px] text-[#D4AF37] font-medium">
+            Recherche
+          </span>
+          <span className="px-2 py-0.5 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[9px] text-[#D4AF37] font-medium">
+            Annuaire
+          </span>
+          <span className="px-2 py-0.5 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[9px] text-[#D4AF37] font-medium">
+            Visibilite
+          </span>
+        </div>
+
+        {/* Action row */}
+        <div className="flex items-center justify-center gap-2 pt-2">
+          <span className="w-7 h-7 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center">
+            <Phone size={11} className="text-[#D4AF37]" />
+          </span>
+          <span className="w-7 h-7 rounded-full bg-green-900/40 border border-green-500/40 flex items-center justify-center">
+            <span className="text-[10px] text-green-400">W</span>
+          </span>
+          <span className="w-7 h-7 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center">
+            <Mail size={11} className="text-[#D4AF37]" />
+          </span>
+          <span className="w-7 h-7 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center">
+            <Globe size={11} className="text-[#D4AF37]" />
+          </span>
+        </div>
+
+        {/* Hours */}
+        <div className="flex items-center justify-center gap-1.5 pt-1 text-[10px] text-green-400 font-medium">
+          <Clock size={10} />
+          <span>Ouvert maintenant</span>
+        </div>
+
+        {/* Reviews */}
+        <div className="pt-2 border-t border-[#D4AF37]/30">
+          <button className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold bg-[#D4AF37]/15 text-[#D4AF37] border border-[#D4AF37]/40">
+            <span className="flex items-center gap-1.5">
+              <Star size={11} fill="#D4AF37" className="text-[#D4AF37]" />
+              Laisser un avis (12)
+            </span>
+            <ChevronDown size={12} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const STEPS = [
   {
     emoji: '\uD83D\uDD0E',
     title: 'Tu recherches un professionnel',
     problem: "Aujourd'hui, il n'est pas toujours facile de trouver rapidement un professionnel de confiance.",
     solution: "Il te suffit d'indiquer un metier, une activite ou une ville pour commencer ta recherche.",
-    image: "/images/Capture_d'écran_2026-06-30_à_22.07.03.png",
-    imageAlt: 'Barre de recherche Dalil Tounes - Rechercher un professionnel en Tunisie',
+    component: 'searchbar',
   },
   {
     emoji: '\uD83D\uDCCB',
     title: 'Dalil Tounes te propose plusieurs resultats',
     problem: 'Les informations importantes sont souvent dispersees ou difficiles a consulter rapidement.',
     solution: 'En quelques secondes, decouvre les professionnels correspondant a ta recherche grace aux Business Cards.',
-    image: '/images/pourquoi-business-card.png',
-    imageAlt: 'Business Cards Dalil Tounes - Resultats de recherche professionnels en Tunisie',
+    component: 'businesscard',
   },
   {
     emoji: '\uD83D\uDCC4',
     title: 'Tu ouvres une fiche complete',
     problem: 'Tu dois parfois consulter plusieurs sites ou applications pour reunir toutes les informations utiles.',
     solution: 'Le CV Business rassemble les informations essentielles sur une seule fiche : horaires, telephone, GPS, photos, services, avis, reservation, QR Code et bien plus encore.',
-    image: '/images/pourquoi-cv-business.png',
-    imageAlt: 'CV Business Dalil Tounes - Fiche complete entreprise en Tunisie',
+    component: 'cvbusiness',
   },
   {
     emoji: '\uD83D\uDCDE',
     title: 'Tu contactes facilement le professionnel',
     problem: 'Trouver le bon numero, les horaires ou la localisation peut faire perdre du temps.',
     solution: 'Depuis la fiche, tu peux appeler, reserver, utiliser le GPS ou contacter directement le professionnel.',
-    image: null,
-    imageAlt: '',
+    component: null,
   },
   {
     emoji: '\u2B50',
     title: 'Tu poursuis ta recherche si tu le souhaites',
     problem: null,
     solution: "Dalil Tounes peut egalement te proposer d'autres professionnels correspondant a ta recherche afin de t'aider a trouver celui qui repond le mieux a tes besoins.",
-    image: null,
-    imageAlt: '',
+    component: null,
   },
 ];
 
@@ -58,6 +231,13 @@ const FLOW_STEPS = [
   'Plus de contacts',
   "Plus d'opportunites",
 ];
+
+function StepIllustration({ type }: { type: string | null }) {
+  if (type === 'searchbar') return <DemoSearchBar />;
+  if (type === 'businesscard') return <DemoBusinessCard />;
+  if (type === 'cvbusiness') return <DemoCVBusiness />;
+  return null;
+}
 
 export default function Concept() {
   const currentPath = useHreflangPath();
@@ -133,11 +313,11 @@ export default function Concept() {
 
               <div
                 className={`flex flex-col ${
-                  step.image ? 'lg:flex-row' : ''
+                  step.component ? 'lg:flex-row' : ''
                 } gap-8 items-start`}
               >
                 {/* Text content */}
-                <div className={`flex-1 space-y-4 ${step.image ? 'lg:max-w-[50%]' : 'max-w-3xl'}`}>
+                <div className={`flex-1 space-y-4 ${step.component ? 'lg:max-w-[50%]' : 'max-w-3xl'}`}>
                   {step.problem && (
                     <div className="flex items-start gap-3 bg-red-50 border border-red-100 rounded-xl p-4">
                       <span className="text-red-400 text-lg mt-0.5">&#x26A0;</span>
@@ -188,20 +368,10 @@ export default function Concept() {
                   )}
                 </div>
 
-                {/* Image */}
-                {step.image && (
+                {/* Illustration */}
+                {step.component && (
                   <div className="flex-1 w-full lg:max-w-[50%]">
-                    <div className="rounded-2xl overflow-hidden border border-gray-200 shadow-lg">
-                      <img
-                        src={step.image}
-                        alt={step.imageAlt}
-                        width={800}
-                        height={idx === 2 ? 1642 : 572}
-                        className="w-full h-auto"
-                        loading={idx === 0 ? 'eager' : 'lazy'}
-                        decoding="async"
-                      />
-                    </div>
+                    <StepIllustration type={step.component} />
                   </div>
                 )}
               </div>
