@@ -355,44 +355,42 @@ export const Subscription = () => {
         >
           <div className="p-8 md:p-12 text-center">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white rounded-full text-xs font-bold mb-4 shadow-lg">
-              <span>🎁</span>
-              <span>Offre de lancement</span>
+              <span>🎉</span>
+              <span>Offre de lancement exceptionnelle</span>
             </div>
 
             <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">
-              Offre de lancement : 3 mois gratuits pour tester Dalil Tounes.
+              🎉 Offre de lancement exceptionnelle
             </h2>
 
             <div className="max-w-3xl mx-auto grid md:grid-cols-2 gap-4 mb-8">
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-[#D4AF37]/30">
                 <div className="flex items-center justify-center gap-2 mb-3">
-                  <span className="text-2xl">✨</span>
+                  <span className="text-2xl">✅</span>
                   <p className="text-lg font-bold text-white">
-                    3 mois gratuits
+                    3 mois gratuits pour découvrir et tester Dalil Tounes
                   </p>
                 </div>
-                <p className="text-sm text-gray-200 leading-relaxed">
-                  Pour tester Dalil Tounes, découvrir la plateforme et prendre le temps de vérifier si la solution correspond à ton activité.
-                </p>
               </div>
 
               <div className="bg-[#D4AF37] rounded-xl p-5 text-[#4A1D43] shadow-lg">
                 <div className="flex items-center justify-center gap-2 mb-3">
-                  <span className="text-2xl">🚀</span>
+                  <span className="text-2xl">✅</span>
                   <p className="text-lg font-bold">
-                    + 6 mois offerts
+                    + 6 mois offerts avec tout abonnement annuel
                   </p>
                 </div>
-                <p className="text-sm leading-relaxed">
-                  Pour tout abonnement annuel, afin de construire ta visibilité plus sereinement sur la durée.
-                </p>
               </div>
             </div>
 
-            <p className="text-sm text-gray-200 mb-6">
-              Une offre simple pour démarrer sans pression, avec la possibilité d’échanger avec nous si tu veux une solution plus adaptée.
-            </p>
-
+            <div className="max-w-2xl mx-auto mb-6">
+              <p className="text-xl md:text-2xl font-bold text-[#D4AF37] mb-2">
+                🎁 Jusqu'à 9 mois offerts au total !
+              </p>
+              <p className="text-sm text-gray-300">
+                Une occasion idéale pour développer sereinement votre visibilité en ligne.
+              </p>
+            </div>
             <button
               onClick={() => openRequestForm('Artisan')}
               className="px-8 py-3 bg-[#D4AF37] text-[#4A1D43] rounded-lg text-sm font-bold hover:bg-[#C4A027] transition-colors shadow-lg hover:shadow-xl"
