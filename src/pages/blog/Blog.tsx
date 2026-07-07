@@ -31,11 +31,11 @@ export default function Blog() {
             className="text-4xl md:text-5xl font-light text-gray-900 leading-tight mb-6"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
-            {blog?.title || 'Articles Dalil Tounes'}
+            Articles Dalil Tounes
           </h1>
           <div className="w-12 h-px bg-[#D4AF37] mx-auto mb-8" />
           <p className="text-gray-500 text-lg font-light leading-relaxed max-w-xl mx-auto">
-            {blog?.subtitle || 'Histoires, réflexions et actualités autour du commerce local tunisien.'}
+            Découvre nos conseils, guides et actualités pour mieux trouver les professionnels, artisans, commerçants et entreprises en Tunisie.
           </p>
         </div>
       </section>

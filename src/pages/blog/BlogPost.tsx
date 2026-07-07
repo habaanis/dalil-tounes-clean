@@ -5,11 +5,33 @@ import { SEOHead } from '../../components/SEOHead';
 import { SocialShareButtons } from '../../components/SocialShareButtons';
 import StructuredData from '../../components/StructuredData';
 import Breadcrumb from '../../components/seo/Breadcrumb';
+import GuideMascot from '../../components/GuideMascot';
 import { generateFAQSchema } from '../../lib/structuredDataSchemas';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTranslation } from '../../lib/i18n';
 
 const DOMAIN = 'https://dalil-tounes.com';
+const DEFAULT_SUMMARY = "Dans cet article, découvre des conseils simples pour mieux comprendre le sujet et avancer plus facilement avec Dalil Tounes.";
+const TAKEAWAY_TEXT = "L’essentiel est de prendre le temps de vérifier les informations utiles avant de faire ton choix : avis, coordonnées, horaires, services proposés et moyens de contact.";
+
+const PRACTICAL_CATEGORY_KEYWORDS = [
+  'pratique',
+  'conseil',
+  'guide',
+  'santé',
+  'sante',
+  'éducation',
+  'education',
+  'loisirs',
+  'tourisme',
+  'visibilité',
+  'visibilite',
+  'health',
+  'education',
+  'leisure',
+  'tourism',
+  'visibility',
+];
 
 type Lang = 'fr' | 'en' | 'ar';
 
@@ -90,6 +112,10 @@ export default function BlogPost() {
 
   const seoTitle = article.seoTitle || `${tr.title} | Blog Dalil Tounes`;
   const seoDesc = article.seoDescription || tr.excerpt;
+  const articleSummary = article.seoDescription || tr.excerpt || DEFAULT_SUMMARY;
+  const showDalilTip = PRACTICAL_CATEGORY_KEYWORDS.some((keyword) =>
+    tr.category.toLowerCase().includes(keyword)
+  );
 
   const related = blogArticles
     .filter(a => a.slug !== article.slug)
@@ -210,11 +236,33 @@ export default function BlogPost() {
           </button>
         </div>
 
+        <section className="mt-8 rounded-2xl border border-[#D4AF37]/25 bg-[#FFFDF6] p-5 shadow-sm" aria-labelledby="article-summary-title">
+          <h2 id="article-summary-title" className="text-sm font-semibold text-[#4A1D43]">
+            Résumé
+          </h2>
+          <p className="mt-2 text-sm leading-7 text-gray-700 sm:text-base">
+            {articleSummary}
+          </p>
+        </section>
+
         <div
           className="py-12 prose-blog"
           dangerouslySetInnerHTML={{ __html: contentHtml }}
           style={{ fontFamily: 'inherit' }}
         />
+
+        {showDalilTip && (
+          <div className="mb-12">
+            <GuideMascot
+              title="Le conseil de Dalil"
+              message="Avant de choisir un professionnel, prends quelques secondes pour consulter les avis, les horaires et les informations disponibles sur sa fiche."
+              variant="tip"
+              pose="idea"
+              position="left"
+              size="sm"
+            />
+          </div>
+        )}
 
         {article.faq && article.faq.length > 0 && (
           <div className="border-t border-gray-200 pt-8 pb-12">
@@ -237,6 +285,19 @@ export default function BlogPost() {
             </div>
           </div>
         )}
+
+        <section className="mb-10 rounded-2xl border border-[#D4AF37]/25 bg-[#FFFDF6] p-5 sm:p-6" aria-labelledby="article-takeaway-title">
+          <h2
+            id="article-takeaway-title"
+            className="text-xl font-light text-gray-900"
+            style={{ fontFamily: "'Playfair Display', serif" }}
+          >
+            À retenir
+          </h2>
+          <p className="mt-3 text-sm leading-7 text-gray-700 sm:text-base">
+            {TAKEAWAY_TEXT}
+          </p>
+        </section>
 
         {/* CTA final réutilisable */}
         <div className={`rounded-2xl border border-[#D4AF37]/25 bg-gradient-to-br from-[#FFFDF6] to-[#FBF6E8] p-6 sm:p-8 text-center`}>
