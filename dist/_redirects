@@ -36,6 +36,10 @@ https://www.dalil-tounes.com/* https://dalil-tounes.com/:splat 301!
 # Exclure les fichiers statiques du SPA fallback
 /service-worker.js  /service-worker.js  200
 /manifest.json      /manifest.json      200
+/assets/*           /assets/:splat     200
+/icons/*            /icons/:splat      200
+/images/*           /images/:splat     200
+/fonts/*            /fonts/:splat      200
 
 # SPA fallback - toutes les autres routes vers index.html
 /*    /index.html   200
