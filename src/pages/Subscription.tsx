@@ -356,47 +356,41 @@ export const Subscription = () => {
           <div className="p-8 md:p-12 text-center">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white rounded-full text-xs font-bold mb-4 shadow-lg">
               <span>🎁</span>
-              <span>{t.home.offer.badge}</span>
+              <span>Offre de lancement</span>
             </div>
 
             <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">
-              {t.home.offer.title}
+              Offre de lancement : 3 mois gratuits pour tester Dalil Tounes.
             </h2>
 
-            <div className="max-w-3xl mx-auto space-y-4 mb-8">
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-[#D4AF37]/30">
-                <div className="flex items-center justify-center gap-2 mb-2">
+            <div className="max-w-3xl mx-auto grid md:grid-cols-2 gap-4 mb-8">
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-[#D4AF37]/30">
+                <div className="flex items-center justify-center gap-2 mb-3">
                   <span className="text-2xl">✨</span>
-                  <p className="text-base font-medium text-white">
-                    {t.home.offer.freeMonths}
+                  <p className="text-lg font-bold text-white">
+                    3 mois gratuits
                   </p>
                 </div>
-                <p className="text-sm text-gray-200">{t.home.offer.noCommitment}</p>
+                <p className="text-sm text-gray-200 leading-relaxed">
+                  Pour tester Dalil Tounes, découvrir la plateforme et prendre le temps de vérifier si la solution correspond à ton activité.
+                </p>
               </div>
 
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-[#D4AF37]/30">
-                <div className="flex items-center justify-center gap-2 mb-2">
+              <div className="bg-[#D4AF37] rounded-xl p-5 text-[#4A1D43] shadow-lg">
+                <div className="flex items-center justify-center gap-2 mb-3">
                   <span className="text-2xl">🚀</span>
-                  <p className="text-base font-medium text-white">
-                    {t.home.offer.bonusMonths}
-                  </p>
-                </div>
-                <p className="text-sm text-gray-200">{t.home.offer.annualCondition}</p>
-              </div>
-
-              <div className="bg-[#D4AF37] rounded-lg p-4 text-[#4A1D43]">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <span className="text-2xl">🎯</span>
                   <p className="text-lg font-bold">
-                    {t.home.offer.totalMonths}
+                    + 6 mois offerts
                   </p>
                 </div>
-                <p className="text-sm">{t.home.offer.allFeatures}</p>
+                <p className="text-sm leading-relaxed">
+                  Pour tout abonnement annuel, afin de construire ta visibilité plus sereinement sur la durée.
+                </p>
               </div>
             </div>
 
             <p className="text-sm text-gray-200 mb-6">
-              {t.home.offer.description}
+              Une offre simple pour démarrer sans pression, avec la possibilité d’échanger avec nous si tu veux une solution plus adaptée.
             </p>
 
             <button
@@ -783,7 +777,7 @@ export const Subscription = () => {
           onClick={closeWelcomeModal}
         >
           <div
-            className="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 sm:p-8 border border-[#D4AF37]"
+            className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 sm:p-7 border border-[#D4AF37]"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-modal="true"
@@ -802,18 +796,18 @@ export const Subscription = () => {
               <div className="w-14 h-14 bg-[#4A1D43] rounded-full flex items-center justify-center mx-auto mb-4">
                 <MessageCircle className="w-7 h-7 text-[#D4AF37]" />
               </div>
-              <h2 id="subscription-welcome-title" className="text-2xl font-bold text-gray-900 mb-3">
+              <h2 id="subscription-welcome-title" className="text-2xl font-bold text-gray-900 mb-3 leading-tight">
                 {subscriptionIntroText.title}
               </h2>
             </div>
 
-            <div className="space-y-3 text-sm text-gray-600 leading-relaxed">
+            <div className="space-y-3 text-[15px] text-gray-600 leading-relaxed">
               {subscriptionIntroText.paragraphs.map((paragraph) => (
                 <p key={paragraph}>{paragraph}</p>
               ))}
             </div>
 
-            <label className="mt-5 flex items-center gap-3 text-sm text-gray-600 cursor-pointer">
+            <label className="mt-5 flex items-center gap-3 text-[15px] text-gray-600 cursor-pointer">
               <input
                 type="checkbox"
                 checked={hideWelcomeModal}
