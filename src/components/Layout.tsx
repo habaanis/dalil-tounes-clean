@@ -8,13 +8,13 @@ import AdminNotifications from './AdminNotifications';
 const ADMIN_EMAILS = ['contact@dalil-tounes.com', 'zenanis75@hotmail.com'];
 import { Menu, X, ChevronDown, ChevronRight, Download, Share } from 'lucide-react';
 import LanguageSelector from './LanguageSelector';
+import { WhatsAppSupport } from './WhatsAppSupport';
 
 // Tout ce qui est hors viewport initial est chargé paresseusement : ces
 // composants ne doivent pas peser sur le premier bundle route-based.
 const Footer = lazy(() => import('./Footer'));
 const SocialBar = lazy(() => import('./SocialBar').then(m => ({ default: m.SocialBar })));
 const PageHeader = lazy(() => import('./PageHeader').then(m => ({ default: m.PageHeader })));
-const WhatsAppSupport = lazy(() => import('./WhatsAppSupport').then(m => ({ default: m.WhatsAppSupport })));
 
 interface NavItem {
   label: string;
@@ -474,9 +474,7 @@ export const Layout = ({ children }: LayoutProps) => {
         <Footer />
       </Suspense>
 
-      <Suspense fallback={null}>
-        <WhatsAppSupport phoneNumber="+21627642252" />
-      </Suspense>
+      <WhatsAppSupport phoneNumber="+21627642252" />
     </div>
   );
 };
