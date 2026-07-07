@@ -3,7 +3,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
 import { supabase } from '../lib/BoltDatabase';
 import { notifyAdmin } from '../lib/notifyAdmin';
-import { Check, Star, CreditCard, Smartphone, X, Landmark, Copy, MessageCircle, Send } from 'lucide-react';
+import { Check, Star, CreditCard, Smartphone, X, Landmark, Copy, MessageCircle, Send, Mail } from 'lucide-react';
 
 const STRIPE_LINKS: Record<string, { monthly: string; annual: string }> = {
   artisan: {
@@ -21,6 +21,52 @@ const STRIPE_LINKS: Record<string, { monthly: string; annual: string }> = {
 };
 
 type ModalType = 'paypal' | 'flouci' | 'manual' | null;
+
+const SUBSCRIPTION_WELCOME_SEEN_KEY = 'dalilTounes_subscription_welcome_seen_v1';
+const CONTACT_EMAIL = 'contact@dalil-tounes.com';
+
+const subscriptionIntroText = {
+  title: 'Une solution adaptée à ton entreprise',
+  paragraphs: [
+    'Chaque entreprise est différente.',
+    "Que tu sois artisan, commerçant, profession libérale, PME ou grande entreprise, tes besoins et ton budget ne sont pas les mêmes.",
+    "Chez Dalil Tounes, notre objectif est de te proposer une solution adaptée à ton activité, avec des offres accessibles, évolutives et pensées pour t'accompagner dans ton développement.",
+    "Tu peux choisir de découvrir nos abonnements ou nous contacter directement afin que nous échangions ensemble sur la solution la plus adaptée à ton entreprise.",
+  ],
+  primaryAction: 'Découvrir les abonnements',
+  secondaryAction: 'Nous contacter',
+  hideLabel: 'Ne plus afficher cette fenêtre.',
+};
+
+const subscriptionContactText = {
+  title: 'Échanger avec Dalil Tounes',
+  subtitle: "Choisis le moyen le plus simple pour discuter de la solution adaptée à ton entreprise.",
+  emailLabel: 'Contact par e-mail',
+  whatsAppLabel: 'Contact WhatsApp',
+};
+
+const subscriptionPageMessaging = {
+  heroTitle: 'Une visibilité pensée pour accompagner ton entreprise',
+  heroDescription:
+    "Dalil Tounes t'aide à présenter ton activité de façon claire, rassurante et accessible. Choisis une offre simple pour démarrer, ou échange avec nous si tu as besoin d'une solution plus adaptée à ton entreprise.",
+  cards: [
+    {
+      icon: '🤝',
+      title: 'Accompagnement humain',
+      description: "Tu peux avancer à ton rythme, avec une solution adaptée à ton activité et à tes priorités.",
+    },
+    {
+      icon: '🌱',
+      title: 'Offres évolutives',
+      description: "Commence simplement, puis fais évoluer ta visibilité lorsque ton entreprise en a besoin.",
+    },
+    {
+      icon: '⭐',
+      title: 'Présence rassurante',
+      description: 'Présente tes informations essentielles pour aider les citoyens à te comprendre et à te contacter.',
+    },
+  ],
+};
 
 // Coordonnées bancaires affichées dans le modal "Paiement Manuel".
 // Modifiable ici sans toucher au rendu.
@@ -41,6 +87,9 @@ export const Subscription = () => {
   const [selectedPlan, setSelectedPlan] = useState<string>('');
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annual'>('monthly');
   const [activeModal, setActiveModal] = useState<ModalType>(null);
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
+  const [hideWelcomeModal, setHideWelcomeModal] = useState(false);
+  const [showContactModal, setShowContactModal] = useState(false);
   // Plan ciblé lors de l'ouverture du modal "Paiement Manuel" (pour personnaliser le message WhatsApp).
   const [manualPlanLabel, setManualPlanLabel] = useState<string>('');
   const [copiedField, setCopiedField] = useState<string | null>(null);
@@ -71,6 +120,23 @@ export const Subscription = () => {
       `Bonjour Dalil Tounes, j'ai effectué le paiement pour l'abonnement${planPart} de [Nom de l'entreprise]. Voici le reçu.`;
     const url = `https://wa.me/${WHATSAPP_CONTACT}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
+  };
+
+  const openWhatsAppContact = () => {
+    const message = "Bonjour Dalil Tounes, je souhaite échanger sur la solution la plus adaptée à mon entreprise.";
+    const url = `https://wa.me/${WHATSAPP_CONTACT}?text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank');
+  };
+
+  const closeWelcomeModal = () => {
+    localStorage.setItem(SUBSCRIPTION_WELCOME_SEEN_KEY, 'true');
+    setShowWelcomeModal(false);
+  };
+
+  const openHumanContactModal = () => {
+    localStorage.setItem(SUBSCRIPTION_WELCOME_SEEN_KEY, 'true');
+    setShowWelcomeModal(false);
+    setShowContactModal(true);
   };
 
   const openRequestForm = (planLabel: string) => {
@@ -190,6 +256,12 @@ export const Subscription = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if (localStorage.getItem(SUBSCRIPTION_WELCOME_SEEN_KEY) !== 'true') {
+      setShowWelcomeModal(true);
+    }
+  }, []);
+
   const plansConfig = [
     {
       key: 'decouverte',
@@ -241,78 +313,38 @@ export const Subscription = () => {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h1 className="text-3xl md:text-4xl font-light mb-3 text-gray-900">
-            {t.subscription.title}
+            Des offres adaptées à ton entreprise
           </h1>
-          <p className="text-base text-gray-600 max-w-2xl mx-auto">{t.subscription.subtitle}</p>
+          <p className="text-base text-gray-600 max-w-2xl mx-auto">
+            Une solution adaptée à ton activité, ton budget et ton rythme de développement.
+          </p>
         </div>
 
         <section className="mb-12">
           <div className="bg-gradient-to-br from-red-50 via-orange-50 to-amber-50 rounded-3xl p-10 md:p-14 shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
             <div className="text-center mb-8">
               <h2 className="text-2xl md:text-3xl font-light text-gray-900 mb-4">
-                {language === 'fr' ? 'Faites rayonner votre marque en Tunisie' :
-                 language === 'ar' ? 'اجعل علامتك التجارية تتألق في تونس' :
-                 language === 'en' ? 'Make your brand shine in Tunisia' :
-                 'Fai brillare il tuo marchio in Tunisia'}
+                {subscriptionPageMessaging.heroTitle}
               </h2>
               <div className="max-w-3xl mx-auto">
                 <p className="text-gray-800 text-base md:text-lg leading-relaxed" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-                  {language === 'fr' ? "Dalil Tounes est la plateforme de référence pour connecter votre entreprise avec des milliers de clients potentiels à travers la Tunisie. Rejoignez notre communauté d'entreprises qui font confiance à notre expertise pour développer leur visibilité et leur activité." :
-                   language === 'ar' ? 'دليل تونس هي المنصة المرجعية لربط مؤسستك بآلاف العملاء المحتملين في جميع أنحاء تونس. انضم إلى مجتمعنا من الشركات التي تثق في خبرتنا لتطوير ظهورها ونشاطها.' :
-                   language === 'en' ? "Dalil Tounes is the leading platform to connect your business with thousands of potential customers across Tunisia. Join our community of businesses that trust our expertise to grow their visibility and activity." :
-                   'Dalil Tounes è la piattaforma di riferimento per collegare la tua azienda a migliaia di clienti potenziali in tutta la Tunisia. Unisciti alla nostra comunità di aziende che si affidano alla nostra esperienza per sviluppare visibilità e attività.'}
+                  {subscriptionPageMessaging.heroDescription}
                 </p>
               </div>
             </div>
 
             <div className="grid md:grid-cols-3 gap-6">
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm">
-                <div className="text-3xl mb-3">🎯</div>
+              {subscriptionPageMessaging.cards.map((card) => (
+              <div key={card.title} className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm">
+                <div className="text-3xl mb-3">{card.icon}</div>
                 <h3 className="font-semibold text-gray-900 mb-2">
-                  {language === 'fr' ? 'Visibilité Maximale' :
-                   language === 'ar' ? 'ظهور أقصى' :
-                   language === 'en' ? 'Maximum Visibility' :
-                   'Massima Visibilità'}
+                  {card.title}
                 </h3>
                 <p className="text-sm text-gray-600">
-                  {language === 'fr' ? 'Apparaissez en première position dans les résultats de recherche et attirez plus de clients.' :
-                   language === 'ar' ? 'اظهر في المراتب الأولى في نتائج البحث واجذب المزيد من العملاء.' :
-                   language === 'en' ? 'Appear at the top of search results and attract more customers.' :
-                   'Appari ai primi posti nei risultati di ricerca e attira più clienti.'}
+                  {card.description}
                 </p>
               </div>
-
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm">
-                <div className="text-3xl mb-3">📊</div>
-                <h3 className="font-semibold text-gray-900 mb-2">
-                  {language === 'fr' ? 'Statistiques Détaillées' :
-                   language === 'ar' ? 'إحصائيات مفصلة' :
-                   language === 'en' ? 'Detailed Statistics' :
-                   'Statistiche Dettagliate'}
-                </h3>
-                <p className="text-sm text-gray-600">
-                  {language === 'fr' ? 'Suivez vos performances avec des rapports complets sur vos vues, clics et interactions.' :
-                   language === 'ar' ? 'تابع أداءك من خلال تقارير شاملة عن المشاهدات والنقرات والتفاعلات.' :
-                   language === 'en' ? 'Track your performance with comprehensive reports on views, clicks and interactions.' :
-                   'Monitora le tue performance con report completi su visualizzazioni, clic e interazioni.'}
-                </p>
-              </div>
-
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm">
-                <div className="text-3xl mb-3">⭐</div>
-                <h3 className="font-semibold text-gray-900 mb-2">
-                  {language === 'fr' ? 'Badge Premium' :
-                   language === 'ar' ? 'شارة بريميوم' :
-                   language === 'en' ? 'Premium Badge' :
-                   'Badge Premium'}
-                </h3>
-                <p className="text-sm text-gray-600">
-                  {language === 'fr' ? 'Distinguez-vous avec un badge doré et renforcez la confiance de vos clients.' :
-                   language === 'ar' ? 'تميّز بشارة ذهبية وعزّز ثقة عملائك.' :
-                   language === 'en' ? 'Stand out with a golden badge and strengthen customer trust.' :
-                   'Distinguiti con un badge dorato e rafforza la fiducia dei tuoi clienti.'}
-                </p>
-              </div>
+              ))}
             </div>
           </div>
         </section>
@@ -410,9 +442,15 @@ export const Subscription = () => {
             const isElitePro = planConfig.isElite || false;
             const isCustom = planConfig.isCustom || false;
             const isDecouverte = planConfig.key === 'decouverte';
-            const displayPrice = billingPeriod === 'annual' && (isArtisan || isPremium || isElitePro) ? (plan.annualPrice || plan.price) : plan.price;
+            const displayPrice = isElitePro
+              ? 'Solution sur mesure'
+              : isPremium
+              ? (billingPeriod === 'annual' ? '49 TND / mois en annuel' : '59 TND / mois')
+              : billingPeriod === 'annual' && isArtisan
+              ? (plan.annualPrice || plan.price)
+              : plan.price;
 
-            const hasPaidPayment = isArtisan || isPremium || isElitePro;
+            const hasPaidPayment = isArtisan || isPremium;
             const stripeLink = hasPaidPayment
               ? STRIPE_LINKS[planConfig.key]?.[billingPeriod] ?? '#'
               : '#';
@@ -499,7 +537,7 @@ export const Subscription = () => {
                 <div className={`px-5 pt-4 pb-4 flex flex-col flex-grow ${isElitePro ? 'text-[#D4AF37]' : isArtisan || isPremium ? 'text-white' : 'text-gray-900'}`}>
                   <div>
                     <div className="text-center mb-2">
-                      {billingPeriod === 'annual' && (isArtisan || isPremium || isElitePro) && plan.annualSavings && (
+                      {billingPeriod === 'annual' && (isArtisan || isPremium) && plan.annualSavings && (
                         <div className="mb-2 inline-block px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
                           {plan.annualSavings}
                         </div>
@@ -522,13 +560,18 @@ export const Subscription = () => {
                         }`}>
                           {displayPrice}
                         </div>
-                        {displayPrice !== 'Gratuit' && displayPrice !== 'Free' && displayPrice !== 'مجاني' && displayPrice !== 'Gratuito' && displayPrice !== 'Бесплатно' && (
+                        {displayPrice !== 'Gratuit' && displayPrice !== 'Free' && displayPrice !== 'مجاني' && displayPrice !== 'Gratuito' && displayPrice !== 'Бесплатно' && !isElitePro && (
                           <p className={`text-xs ${
                             isElitePro ? 'text-gray-400' :
                             isArtisan || isPremium ? 'text-gray-200' :
                             'text-gray-600'
                           }`}>
                             {t.subscription.perMonth}
+                          </p>
+                        )}
+                        {isElitePro && (
+                          <p className="text-xs text-gray-300 mt-2 px-2 leading-relaxed">
+                            Étude personnalisée selon les besoins de ton entreprise.
                           </p>
                         )}
                       </>
@@ -639,6 +682,10 @@ export const Subscription = () => {
                   {/* CTA principal */}
                   <button
                     onClick={() => {
+                      if (isElitePro) {
+                        setShowContactModal(true);
+                        return;
+                      }
                       const planNameMap: Record<string, string> = {
                         'decouverte': 'Découverte',
                         'artisan': 'Artisan',
@@ -660,7 +707,7 @@ export const Subscription = () => {
                         : 'border-2 border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-gray-900 shadow-sm hover:shadow-md'
                     }`}
                   >
-                    {isCustom ? t.subscription.requestQuote : `${t.subscription.chooseButton} ${plan.name}`}
+                    {isElitePro ? 'Nous contacter' : isCustom ? t.subscription.requestQuote : `${t.subscription.chooseButton} ${plan.name}`}
                   </button>
 
                   {/* Payment buttons — plans payants uniquement */}
@@ -729,6 +776,133 @@ export const Subscription = () => {
           })}
         </div>
       </div>
+
+      {showWelcomeModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          onClick={closeWelcomeModal}
+        >
+          <div
+            className="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 sm:p-8 border border-[#D4AF37]"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="subscription-welcome-title"
+          >
+            <button
+              type="button"
+              onClick={closeWelcomeModal}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+              aria-label="Fermer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="text-center mb-6">
+              <div className="w-14 h-14 bg-[#4A1D43] rounded-full flex items-center justify-center mx-auto mb-4">
+                <MessageCircle className="w-7 h-7 text-[#D4AF37]" />
+              </div>
+              <h2 id="subscription-welcome-title" className="text-2xl font-bold text-gray-900 mb-3">
+                {subscriptionIntroText.title}
+              </h2>
+            </div>
+
+            <div className="space-y-3 text-sm text-gray-600 leading-relaxed">
+              {subscriptionIntroText.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </div>
+
+            <label className="mt-5 flex items-center gap-3 text-sm text-gray-600 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={hideWelcomeModal}
+                onChange={(e) => setHideWelcomeModal(e.target.checked)}
+                className="h-4 w-4 rounded border-gray-300 text-[#4A1D43] focus:ring-[#4A1D43]"
+              />
+              <span>{subscriptionIntroText.hideLabel}</span>
+            </label>
+
+            <div className="mt-6 flex flex-col sm:flex-row gap-3">
+              <button
+                type="button"
+                onClick={closeWelcomeModal}
+                className="flex-1 px-5 py-3 bg-[#4A1D43] text-[#D4AF37] border border-[#D4AF37] rounded-lg hover:bg-[#5A2D53] transition-all text-sm font-semibold"
+              >
+                {subscriptionIntroText.primaryAction}
+              </button>
+              <button
+                type="button"
+                onClick={openHumanContactModal}
+                className="flex-1 px-5 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all text-sm font-medium"
+              >
+                {subscriptionIntroText.secondaryAction}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showContactModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          onClick={() => setShowContactModal(false)}
+        >
+          <div
+            className="relative bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 sm:p-7 border border-[#D4AF37]"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="subscription-contact-title"
+          >
+            <button
+              type="button"
+              onClick={() => setShowContactModal(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+              aria-label="Fermer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="text-center mb-6">
+              <div className="w-14 h-14 bg-[#4A1D43] rounded-full flex items-center justify-center mx-auto mb-4">
+                <Mail className="w-7 h-7 text-[#D4AF37]" />
+              </div>
+              <h2 id="subscription-contact-title" className="text-xl font-bold text-gray-900 mb-2">
+                {subscriptionContactText.title}
+              </h2>
+              <p className="text-sm text-gray-600 leading-relaxed">
+                {subscriptionContactText.subtitle}
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <a
+                href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('Demande abonnement - Dalil Tounes')}`}
+                className="flex items-center gap-3 rounded-xl border border-gray-200 p-4 hover:border-[#D4AF37] hover:bg-[#FFF8E7] transition-all"
+              >
+                <Mail className="w-5 h-5 text-[#4A1D43]" />
+                <span>
+                  <span className="block text-sm font-semibold text-gray-900">{subscriptionContactText.emailLabel}</span>
+                  <span className="block text-xs text-gray-500">{CONTACT_EMAIL}</span>
+                </span>
+              </a>
+
+              <button
+                type="button"
+                onClick={openWhatsAppContact}
+                className="w-full flex items-center gap-3 rounded-xl border border-gray-200 p-4 text-left hover:border-[#25D366] hover:bg-green-50 transition-all"
+              >
+                <MessageCircle className="w-5 h-5 text-[#25D366]" />
+                <span>
+                  <span className="block text-sm font-semibold text-gray-900">{subscriptionContactText.whatsAppLabel}</span>
+                  <span className="block text-xs text-gray-500">+{WHATSAPP_CONTACT}</span>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal PayPal */}
       {activeModal === 'paypal' && (
