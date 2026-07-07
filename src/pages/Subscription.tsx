@@ -775,7 +775,7 @@ export const Subscription = () => {
           onClick={closeWelcomeModal}
         >
           <div
-            className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 sm:p-7 border border-[#D4AF37]"
+            className="relative bg-white rounded-2xl shadow-2xl max-w-[390px] w-full p-5 sm:p-6 border border-[#D4AF37]"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-modal="true"
@@ -790,22 +790,22 @@ export const Subscription = () => {
               <X className="w-5 h-5" />
             </button>
 
-            <div className="text-center mb-6">
-              <div className="w-14 h-14 bg-[#4A1D43] rounded-full flex items-center justify-center mx-auto mb-4">
-                <MessageCircle className="w-7 h-7 text-[#D4AF37]" />
+            <div className="text-center mb-5">
+              <div className="w-[52px] h-[52px] bg-[#4A1D43] rounded-full flex items-center justify-center mx-auto mb-3">
+                <MessageCircle className="w-6 h-6 text-[#D4AF37]" />
               </div>
-              <h2 id="subscription-welcome-title" className="text-2xl font-bold text-gray-900 mb-3 leading-tight">
+              <h2 id="subscription-welcome-title" className="text-xl sm:text-[22px] font-bold text-gray-900 mb-2 leading-tight">
                 {subscriptionIntroText.title}
               </h2>
             </div>
 
-            <div className="space-y-3 text-[15px] text-gray-600 leading-relaxed">
+            <div className="space-y-2.5 text-[15.5px] sm:text-base text-gray-600 leading-relaxed">
               {subscriptionIntroText.paragraphs.map((paragraph) => (
                 <p key={paragraph}>{paragraph}</p>
               ))}
             </div>
 
-            <label className="mt-5 flex items-center gap-3 text-[15px] text-gray-600 cursor-pointer">
+            <label className="mt-4 flex items-center gap-3 text-[15px] text-gray-600 cursor-pointer">
               <input
                 type="checkbox"
                 checked={hideWelcomeModal}
@@ -815,7 +815,7 @@ export const Subscription = () => {
               <span>{subscriptionIntroText.hideLabel}</span>
             </label>
 
-            <div className="mt-6 flex flex-col sm:flex-row gap-3">
+            <div className="mt-5 flex flex-col sm:flex-row gap-3">
               <button
                 type="button"
                 onClick={closeWelcomeModal}
