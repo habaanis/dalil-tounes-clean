@@ -1,49 +1,4 @@
-export interface BlogArticleTranslation {
-  title: string;
-  subtitle: string;
-  category: string;
-  excerpt: string;
-  content: string;
-}
-
-export interface BlogFAQItem {
-  question: string;
-  answer: string;
-}
-
-export interface BlogArticle {
-  id: string;
-  slug: string;
-  author: string;
-  date: string;
-  publishedDate: string;
-  readTime: string;
-  coverImage: string;
-  seoTitle?: string;
-  seoDescription?: string;
-  faq?: BlogFAQItem[];
-  fr: BlogArticleTranslation;
-  en?: BlogArticleTranslation;
-  ar?: BlogArticleTranslation;
-}
-
-export const blogArticles: BlogArticle[] = [
-  {
-    id: '1',
-    slug: 'comment-est-ne-dalil-tounes',
-    author: "L'équipe Dalil Tounes",
-    date: '15 avril 2026',
-    publishedDate: '2026-04-15',
-    readTime: '5 min',
-    coverImage: '',
-    seoTitle: 'Comment est ne Dalil Tounes ? Notre histoire | Dalil Tounes',
-    seoDescription: "L'histoire de Dalil Tounes, annuaire professionnel en Tunisie. Ne d'une frustration reelle, il connecte citoyens et professionnels de confiance.",
-    fr: {
-      title: 'Comment est né Dalil Tounes 🧡',
-      subtitle: "L'histoire d'une idée née du terrain",
-      category: 'Notre Histoire',
-      excerpt: "Dalil Tounes n'est pas né dans un bureau de start-up. Il est né d'une frustration réelle, vécue sur le terrain.",
-      content: `<h1>Comment est né Dalil Tounes 🧡</h1>
+const t=[{id:"1",slug:"comment-est-ne-dalil-tounes",author:"L'équipe Dalil Tounes",date:"15 avril 2026",publishedDate:"2026-04-15",readTime:"5 min",coverImage:"",seoTitle:"Comment est ne Dalil Tounes ? Notre histoire | Dalil Tounes",seoDescription:"L'histoire de Dalil Tounes, annuaire professionnel en Tunisie. Ne d'une frustration reelle, il connecte citoyens et professionnels de confiance.",fr:{title:"Comment est né Dalil Tounes 🧡",subtitle:"L'histoire d'une idée née du terrain",category:"Notre Histoire",excerpt:"Dalil Tounes n'est pas né dans un bureau de start-up. Il est né d'une frustration réelle, vécue sur le terrain.",content:`<h1>Comment est né Dalil Tounes 🧡</h1>
 <p>Je vais te raconter pourquoi j'ai créé ce site 😊</p>
 <p>À chaque fois que je viens en Tunisie, je vois la même scène. Dans la rue, quelqu'un cherche une adresse. Un citoyen, un touriste, peu importe. Il demande "tu connais ceci ? c'est par où ?". Et on lui répond "non je sais pas" ou alors "oui c'est en face du café machin". Sauf que toi tu connais pas le café non plus. Bref 😅</p>
 <p>Dernièrement, j'ai dû faire ma première carte d'identité tunisienne. Enfin ! Pour acheter les timbres, je me suis trompé deux fois de bâtiment. Les gens veulent bien t'aider, mais ils ne savent pas vraiment. Ou alors ils te disent "non tu dois faire ci ou ça d'abord". Bon.</p>
@@ -56,14 +11,7 @@ export const blogArticles: BlogArticle[] = [
 <p>Aujourd'hui, Dalil Tounes se construit pierre par pierre. Je ne veux pas faire juste un annuaire. Je veux créer un vrai lien entre les citoyens et les pros de leur quartier. Un annuaire vivant. Pas une liste morte. Et je suis convaincu que ça va marcher 🤲</p>
 <p>Beaucoup pensent que Facebook, Instagram et Google suffisent. Oui, ce sont des fenêtres. Mais ce ne sont pas les rues qui amènent les clients. Dalil Tounes, c'est la rue. C'est le lien. C'est l'annuaire vivant qui rapproche les gens.</p>
 <p>Je ne viens pas du numérique. Mais je crois en ce projet. Parce qu'il répond à un vrai besoin. Parce qu'il est né d'une galère que j'ai vraiment vécue. Parce que je l'ai fait avec le cœur. 🧡</p>
-<p>Voilà. C'est mon histoire. Merci de l'avoir lue jusqu'ici 😌</p>`
-    },
-    en: {
-      title: 'How Dalil Tounes was born 🧡',
-      subtitle: 'The story of an idea born in the field',
-      category: 'Our Story',
-      excerpt: "Dalil Tounes was not born in a startup office. It was born from a real frustration, experienced in the field.",
-      content: `<h1>How Dalil Tounes was born 🧡</h1>
+<p>Voilà. C'est mon histoire. Merci de l'avoir lue jusqu'ici 😌</p>`},en:{title:"How Dalil Tounes was born 🧡",subtitle:"The story of an idea born in the field",category:"Our Story",excerpt:"Dalil Tounes was not born in a startup office. It was born from a real frustration, experienced in the field.",content:`<h1>How Dalil Tounes was born 🧡</h1>
 <p>Let me tell you why I created this site 😊</p>
 <p>Every time I come to Tunisia, I see the same scene. On the street, someone is looking for an address. A citizen, a tourist, it doesn't matter. They ask "do you know this place? Which way is it?". And the answer is "I don't know" or "yes, it's opposite the café so-and-so". Except you don't know that café either. Right 😅</p>
 <p>Recently, I had to get my first Tunisian ID card. Finally! To buy the stamps, I went to the wrong building twice. People genuinely want to help, but they don't really know. Or they tell you "no, you have to do this or that first". Okay.</p>
@@ -76,14 +24,7 @@ export const blogArticles: BlogArticle[] = [
 <p>Today, Dalil Tounes is being built brick by brick. I don't just want to make a directory. I want to create a real connection between citizens and the professionals in their neighborhood. A living directory. Not a dead list. And I'm convinced it will work 🤲</p>
 <p>Many people think Facebook, Instagram and Google are enough. Yes, they are windows. But they are not the streets that bring customers. Dalil Tounes is the street. It's the connection. It's the living directory that brings people together.</p>
 <p>I don't come from the digital world. But I believe in this project. Because it responds to a real need. Because it was born from a struggle I truly experienced. Because I built it with heart. 🧡</p>
-<p>There you go. That's my story. Thank you for reading it all the way through 😌</p>`
-    },
-    ar: {
-      title: 'كيفاش تولّد "دليل تونس" 🧡',
-      subtitle: 'قصة فكرة وُلدت من الواقع',
-      category: 'قصتنا',
-      excerpt: "دليل تونس موش مولود في مكتبة شركة ناشئة. تولد من إحباط حقيقي، عاشه أناس عاديون في الميدان.",
-      content: `<h1>كيفاش تولّد "دليل تونس" 🧡</h1>
+<p>There you go. That's my story. Thank you for reading it all the way through 😌</p>`},ar:{title:'كيفاش تولّد "دليل تونس" 🧡',subtitle:"قصة فكرة وُلدت من الواقع",category:"قصتنا",excerpt:"دليل تونس موش مولود في مكتبة شركة ناشئة. تولد من إحباط حقيقي، عاشه أناس عاديون في الميدان.",content:`<h1>كيفاش تولّد "دليل تونس" 🧡</h1>
 <p>خليني نحكيلكم علاش عملت الموقع هذا 😊</p>
 <p>كل مرة نجي لتونس، نلقى نفس المشكلة. في الشارع، عباد تسأل على ادريسة: مواطن، سائح… ما يهمش. نقولو "تعرف هذا وين؟ كيفاش نوصل؟" والجواب ديما يا "ما نعرفش" يا "إيه، بحدا قهوة فلان"... أما إنت ما تعرفش القهوة هذيك أصلاً 😅</p>
 <p>آخر مرة، كنت باش نعمل بطاقة تعريف. قلت أخيراً! أما باش نشري تنابر، غلّطت مرتين في البلاصة. الناس تحب تعاون، أما المعلومة موش ديما صحيحة. كل واحد يعطيك بطريقة مختلفة.</p>
@@ -96,25 +37,7 @@ export const blogArticles: BlogArticle[] = [
 <p>اليوم "دليل تونس" قاعد يتبنى حجر بحجر. موش كان دليل… نحب نخلق رابط حقيقي بين الناس والحرفيين. وأنا مقتنع أنه بش ينجح 🤲</p>
 <p>برشا يخممو أنو فيسبوك، إنستغرام وقوقل كافيين. آي، هما نوافذ. لكنها مش شوارع تجيب الزبائن. "دليل تونس" هو الشارع. هو الرابط. هو الدليل الحي اللي يقرّب بين الناس.</p>
 <p>أنا مش من عالم الرقمية. أما نؤمن بالمشروع هذا. خاترو يجيب حاجة حقيقية. خاترو تولد من معاناة عشتها انا. و خاترعملته بالقلب. 🧡</p>
-<p>هذه حكايتي، عيشك كان قريتها للآخر 😌</p>`
-    }
-  },
-  {
-    id: '2',
-    slug: 'qui-est-le-createur-de-dalil-tounes',
-    author: "L'équipe Dalil Tounes",
-    date: '15 avril 2026',
-    publishedDate: '2026-04-15',
-    readTime: '4 min',
-    coverImage: '',
-    seoTitle: 'Qui est le createur de Dalil Tounes ? | Dalil Tounes',
-    seoDescription: "Decouvrez l'histoire d'Anis, fondateur de Dalil Tounes, auto-entrepreneur en France qui a cree l'annuaire de reference des professionnels tunisiens.",
-    fr: {
-      title: 'Qui est le créateur de Dalil Tounes ? 🧡',
-      subtitle: "L'histoire d'un auto-entrepreneur qui n'y connaissait rien",
-      category: 'Notre Histoire',
-      excerpt: "Derrière Dalil Tounes, il y a une personne avec son histoire, ses galères, ses regrets, et ses rêves.",
-      content: `<h1>Qui est le créateur de Dalil Tounes ? 🧡</h1>
+<p>هذه حكايتي، عيشك كان قريتها للآخر 😌</p>`}},{id:"2",slug:"qui-est-le-createur-de-dalil-tounes",author:"L'équipe Dalil Tounes",date:"15 avril 2026",publishedDate:"2026-04-15",readTime:"4 min",coverImage:"",seoTitle:"Qui est le createur de Dalil Tounes ? | Dalil Tounes",seoDescription:"Decouvrez l'histoire d'Anis, fondateur de Dalil Tounes, auto-entrepreneur en France qui a cree l'annuaire de reference des professionnels tunisiens.",fr:{title:"Qui est le créateur de Dalil Tounes ? 🧡",subtitle:"L'histoire d'un auto-entrepreneur qui n'y connaissait rien",category:"Notre Histoire",excerpt:"Derrière Dalil Tounes, il y a une personne avec son histoire, ses galères, ses regrets, et ses rêves.",content:`<h1>Qui est le créateur de Dalil Tounes ? 🧡</h1>
 <p>Derrière Dalil Tounes, il y a une personne. Pas juste une entreprise ou un logo. Une personne avec son histoire, ses galères, ses regrets, et ses rêves. 😊</p>
 <p>Je m'appelle Anis. Je suis auto-entrepreneur en France, dans la traiteur. Rien à voir avec l'informatique. Rien à voir avec les sites web. Au début, je ne connaissais rien. Vraiment rien.</p>
 <p>Mais avant d'arriver ici, j'ai eu d'autres projets. Des projets que j'ai aimés, portés, et que je n'ai pas réussi à finir. Et ça, ça reste dans le cœur.</p>
@@ -135,14 +58,7 @@ export const blogArticles: BlogArticle[] = [
 <p>Dalil Tounes, c'est un projet humain. Pas une machine à faire de l'argent. C'est un annuaire vivant, pas une liste froide. Et c'est avec une équipe que je le construis, pierre par pierre.</p>
 <p>Merci d'être là. Merci de lire mon histoire. Et si vous voulez partager la vôtre, vous savez où me trouver.</p>
 <p>Voilà. C'est moi. C'est Dalil Tounes. 🧡</p>
-<p>Merci d'avoir lu jusqu'ici 😌</p>`
-    },
-    en: {
-      title: 'Who is the creator of Dalil Tounes? 🧡',
-      subtitle: "The story of a self-taught entrepreneur who knew nothing about tech",
-      category: 'Our Story',
-      excerpt: "Behind Dalil Tounes, there is a person with their story, struggles, regrets, and dreams.",
-      content: `<h1>Who is the creator of Dalil Tounes? 🧡</h1>
+<p>Merci d'avoir lu jusqu'ici 😌</p>`},en:{title:"Who is the creator of Dalil Tounes? 🧡",subtitle:"The story of a self-taught entrepreneur who knew nothing about tech",category:"Our Story",excerpt:"Behind Dalil Tounes, there is a person with their story, struggles, regrets, and dreams.",content:`<h1>Who is the creator of Dalil Tounes? 🧡</h1>
 <p>Behind Dalil Tounes, there is a person. Not just a company or a logo. A person with their story, struggles, regrets, and dreams. 😊</p>
 <p>My name is Anis. I'm a self-employed caterer in France. Nothing to do with tech. Nothing to do with websites. At first, I knew nothing. Really nothing.</p>
 <p>But before getting here, I had other projects. Projects I loved, carried, but didn't manage to finish. And that stays in the heart.</p>
@@ -153,14 +69,7 @@ export const blogArticles: BlogArticle[] = [
 <p>I don't come from the digital world. But I have a heart. And I've lived through the same struggles as you: addresses that can't be found, wrong opening hours, "yes it's opposite the café" when you don't know that café.</p>
 <p>Dalil Tounes is a human project. Not a money-making machine. It's a living directory, not a dead list. And with my team, I'm building it brick by brick.</p>
 <p>That's my story. That's me. That's Dalil Tounes. 🧡</p>
-<p>Thank you for reading this far 😌</p>`
-    },
-    ar: {
-      title: 'شكون ورا "دليل تونس" 🧡',
-      subtitle: 'حكاية مقاول ذاتي لم يكن يعرف شيئاً في الإعلامية',
-      category: 'قصتنا',
-      excerpt: "ورا دليل تونس، فما إنسان. موش كان شركة. شخص مع حكايته، صعوباته، ندومه، وأحلامه.",
-      content: `<h1>شكون ورا "دليل تونس" 🧡</h1>
+<p>Thank you for reading this far 😌</p>`},ar:{title:'شكون ورا "دليل تونس" 🧡',subtitle:"حكاية مقاول ذاتي لم يكن يعرف شيئاً في الإعلامية",category:"قصتنا",excerpt:"ورا دليل تونس، فما إنسان. موش كان شركة. شخص مع حكايته، صعوباته، ندومه، وأحلامه.",content:`<h1>شكون ورا "دليل تونس" 🧡</h1>
 <p>ورا "دليل تونس"، فما إنسان. موش كان شركة ولا لوغو. إنسان عندو حكاية، تعب وأحلام.</p>
 <p>أنا اسمي أنيس. نخدم كمقاول ذاتي في فرنسا، في مجال الماكلة. ما عندي حتى علاقة بالإعلامية ولا بالمواقع. في الأول ما كنت نعرف حتى شي. بالحق حتى شي.</p>
 <p>أما قبل ما نوصل لهنا، كان عندي برشا مشاريع. مشاريع حبيتها وخدمت عليها… أما ما كملتهمش. والحاجة هذي تبقى في القلب.</p>
@@ -181,31 +90,7 @@ export const blogArticles: BlogArticle[] = [
 <p>"دليل تونس" موش مشروع باش نربحو بيه برك. هو مشروع إنساني، دليل حي موش مجرد ليستة. وقاعدين نبنيو فيه أنا وفريقي، شوية بشوية.</p>
 <p>عيشك اللي إنت هنا، وعيشك اللي قريت حكايتي. وإذا تحب تحكي على حكايتك، تعرف وين تلقاني.</p>
 <p>هذا أنا وهذا "دليل تونس" 🧡</p>
-<p>عيشك اللي قريت حتى للآخر 😌</p>`
-    }
-  },
-  {
-    id: '3',
-    slug: 'comment-choisir-son-medecin',
-    author: "L'équipe Dalil Tounes",
-    date: '18 avril 2026',
-    publishedDate: '2026-04-18',
-    readTime: '4 min',
-    coverImage: '',
-    seoTitle: 'Comment choisir son medecin en Tunisie ? | Guide Dalil Tounes',
-    seoDescription: 'Decouvrez les criteres essentiels pour bien choisir votre medecin en Tunisie : localisation, specialites, avis patients, CNAM. Guide pratique.',
-    faq: [
-      { question: 'Comment choisir un bon medecin en Tunisie ?', answer: "Commence par verifier la localisation, la specialite, les horaires, les avis patients et, si c'est important pour toi, l'acceptation de la CNAM. Compare plusieurs options avant de prendre rendez-vous." },
-      { question: 'Quelles informations verifier avant de consulter un medecin ?', answer: "Verifie l'adresse exacte, le numero de telephone, les horaires, la specialite, les avis Google et les moyens de contact. Une fiche claire permet d'eviter les mauvaises surprises le jour de la consultation." },
-      { question: 'Ou trouver les coordonnees d\'un medecin en Tunisie ?', answer: "Sur Dalil Tounes, tu peux consulter des fiches de professionnels de sante avec adresse, telephone, horaires, GPS et avis lorsque ces informations sont disponibles." },
-      { question: 'Comment comparer plusieurs professionnels de sante ?', answer: "Compare la proximite, la specialite, les horaires, le nombre d'avis, la note Google et la clarte des informations. Le bon choix depend aussi de ton besoin : suivi regulier, urgence, specialiste ou premiere consultation." },
-    ],
-    fr: {
-      title: 'Comment choisir son médecin en Tunisie ?',
-      subtitle: 'Les critères essentiels pour bien choisir son professionnel de santé',
-      category: 'Santé',
-      excerpt: "Trouver le bon médecin n'est pas toujours simple. Voici les questions à se poser avant de prendre rendez-vous.",
-      content: `<h1>Comment choisir son médecin en Tunisie ?</h1>
+<p>عيشك اللي قريت حتى للآخر 😌</p>`}},{id:"3",slug:"comment-choisir-son-medecin",author:"L'équipe Dalil Tounes",date:"18 avril 2026",publishedDate:"2026-04-18",readTime:"4 min",coverImage:"",seoTitle:"Comment choisir son medecin en Tunisie ? | Guide Dalil Tounes",seoDescription:"Decouvrez les criteres essentiels pour bien choisir votre medecin en Tunisie : localisation, specialites, avis patients, CNAM. Guide pratique.",faq:[{question:"Comment choisir un bon medecin en Tunisie ?",answer:"Commence par verifier la localisation, la specialite, les horaires, les avis patients et, si c'est important pour toi, l'acceptation de la CNAM. Compare plusieurs options avant de prendre rendez-vous."},{question:"Quelles informations verifier avant de consulter un medecin ?",answer:"Verifie l'adresse exacte, le numero de telephone, les horaires, la specialite, les avis Google et les moyens de contact. Une fiche claire permet d'eviter les mauvaises surprises le jour de la consultation."},{question:"Ou trouver les coordonnees d'un medecin en Tunisie ?",answer:"Sur Dalil Tounes, tu peux consulter des fiches de professionnels de sante avec adresse, telephone, horaires, GPS et avis lorsque ces informations sont disponibles."},{question:"Comment comparer plusieurs professionnels de sante ?",answer:"Compare la proximite, la specialite, les horaires, le nombre d'avis, la note Google et la clarte des informations. Le bon choix depend aussi de ton besoin : suivi regulier, urgence, specialiste ou premiere consultation."}],fr:{title:"Comment choisir son médecin en Tunisie ?",subtitle:"Les critères essentiels pour bien choisir son professionnel de santé",category:"Santé",excerpt:"Trouver le bon médecin n'est pas toujours simple. Voici les questions à se poser avant de prendre rendez-vous.",content:`<h1>Comment choisir son médecin en Tunisie ?</h1>
 <p>Choisir un médecin n'est pas toujours évident.</p>
 <p>Tu peux avoir besoin d'un <a href="/metier/medecin-generaliste">médecin généraliste</a> pour un suivi régulier, d'un spécialiste pour un avis précis, ou simplement d'un cabinet proche de chez toi.</p>
 <p>Le problème, c'est que les informations sont parfois dispersées : horaires pas toujours à jour, adresse difficile à trouver, avis peu visibles, spécialité mal indiquée.</p>
@@ -237,14 +122,7 @@ export const blogArticles: BlogArticle[] = [
 <p>Le bon médecin n'est pas seulement celui qui est le plus proche ou le mieux noté.</p>
 <p>C'est celui qui correspond à ton besoin, qui te met en confiance et dont les informations sont suffisamment claires pour te permettre d'agir facilement.</p>
 <p>Prends le temps de comparer plusieurs fiches, de vérifier les horaires et de poser les bonnes questions avant de prendre rendez-vous.</p>
-<p><a href="/entreprises">Explore l'annuaire Dalil Tounes</a> pour trouver un professionnel de santé près de chez toi et consulter les informations disponibles avant de faire ton choix.</p>`
-    },
-    en: {
-      title: 'How to choose your doctor in Tunisia?',
-      subtitle: 'Key criteria to choose the right healthcare professional',
-      category: 'Health',
-      excerpt: "Finding the right doctor isn't always easy. Here are the questions to ask yourself before making an appointment.",
-      content: `<h1>How to choose your doctor in Tunisia?</h1>
+<p><a href="/entreprises">Explore l'annuaire Dalil Tounes</a> pour trouver un professionnel de santé près de chez toi et consulter les informations disponibles avant de faire ton choix.</p>`},en:{title:"How to choose your doctor in Tunisia?",subtitle:"Key criteria to choose the right healthcare professional",category:"Health",excerpt:"Finding the right doctor isn't always easy. Here are the questions to ask yourself before making an appointment.",content:`<h1>How to choose your doctor in Tunisia?</h1>
 <p>Whether it's a general practitioner or a specialist, choosing the right healthcare professional is an important decision. Here are some criteria to help you.</p>
 <h2>1. Location and accessibility</h2>
 <p>A practice close to your home or workplace makes regular consultations easier. Also check opening hours and availability for urgent appointments.</p>
@@ -254,14 +132,7 @@ export const blogArticles: BlogArticle[] = [
 <p>Other patients' reviews are valuable. On Dalil Tounes, you can read ratings and comments left by patients in your region.</p>
 <h2>4. CNAM acceptance</h2>
 <p>Check if the doctor accepts CNAM to avoid unwelcome financial surprises.</p>
-<p>Take the time to compare and don't hesitate to change doctor if you don't feel confident.</p>`
-    },
-    ar: {
-      title: 'كيف تختار طبيبك في تونس؟',
-      subtitle: 'المعايير الأساسية لاختيار المهني الصحي المناسب',
-      category: 'الصحة',
-      excerpt: 'العثور على الطبيب المناسب ليس دائمًا سهلاً. إليك الأسئلة التي يجب طرحها قبل أخذ موعد.',
-      content: `<h1>كيف تختار طبيبك في تونس؟</h1>
+<p>Take the time to compare and don't hesitate to change doctor if you don't feel confident.</p>`},ar:{title:"كيف تختار طبيبك في تونس؟",subtitle:"المعايير الأساسية لاختيار المهني الصحي المناسب",category:"الصحة",excerpt:"العثور على الطبيب المناسب ليس دائمًا سهلاً. إليك الأسئلة التي يجب طرحها قبل أخذ موعد.",content:`<h1>كيف تختار طبيبك في تونس؟</h1>
 <p>سواء تعلق الأمر بطبيب عام أو متخصص، فإن اختيار المهني الصحي المناسب قرار مهم. إليك بعض المعايير لمساعدتك.</p>
 <h2>1. الموقع وسهولة الوصول</h2>
 <p>عيادة قريبة من منزلك أو عملك تسهّل عليك الاستشارات المنتظمة. تحقق أيضًا من أوقات العمل وتوفر مواعيد عاجلة.</p>
@@ -271,30 +142,7 @@ export const blogArticles: BlogArticle[] = [
 <p>آراء المرضى الآخرين قيّمة جدًا. على دليل تونس، يمكنك الاطلاع على التقييمات والتعليقات التي تركها مرضى من منطقتك.</p>
 <h2>4. قبول CNAM</h2>
 <p>تأكد من أن الطبيب يقبل CNAM لتجنب أي مفاجآت مالية.</p>
-<p>خذ وقتك للمقارنة ولا تتردد في تغيير الطبيب إذا لم تشعر بالثقة.</p>`
-    }
-  },
-  {
-    id: '4',
-    slug: 'bien-choisir-son-ecole',
-    author: "L'équipe Dalil Tounes",
-    date: '18 avril 2026',
-    publishedDate: '2026-04-18',
-    readTime: '5 min',
-    coverImage: '',
-    seoTitle: 'Comment bien choisir une ecole en Tunisie ? | Guide Dalil Tounes',
-    seoDescription: 'Ecole publique ou privee, criteres de selection, soutien scolaire : guide complet pour aider les parents a choisir la meilleure ecole en Tunisie.',
-    faq: [
-      { question: 'Ecole publique ou privee en Tunisie : comment choisir ?', answer: "Le bon choix depend de ton enfant, de ton budget, de la proximite, du rythme de l'ecole et de la qualite de l'encadrement. L'ecole publique peut etre tres solide, tandis que l'ecole privee peut offrir des classes plus reduites ou des methodes differentes." },
-      { question: 'Quels criteres pour choisir une bonne ecole en Tunisie ?', answer: "Verifie la proximite, l'ambiance, le niveau academique, le suivi des eleves, les activites proposees, la communication avec les parents et les retours d'autres familles." },
-      { question: 'Ou trouver un cours particulier en Tunisie ?', answer: "Tu peux consulter les fiches disponibles sur Dalil Tounes et comparer les enseignants, centres de soutien ou etablissements par ville, gouvernorat, matiere et informations disponibles." },
-    ],
-    fr: {
-      title: 'Bien choisir son école en Tunisie',
-      subtitle: 'Guide pratique pour les parents',
-      category: 'Éducation',
-      excerpt: "École publique, privée, cours particuliers... Comment t'y retrouver et faire le bon choix pour ton enfant ?",
-      content: `<h1>Comment bien choisir une école en Tunisie ?</h1>
+<p>خذ وقتك للمقارنة ولا تتردد في تغيير الطبيب إذا لم تشعر بالثقة.</p>`}},{id:"4",slug:"bien-choisir-son-ecole",author:"L'équipe Dalil Tounes",date:"18 avril 2026",publishedDate:"2026-04-18",readTime:"5 min",coverImage:"",seoTitle:"Comment bien choisir une ecole en Tunisie ? | Guide Dalil Tounes",seoDescription:"Ecole publique ou privee, criteres de selection, soutien scolaire : guide complet pour aider les parents a choisir la meilleure ecole en Tunisie.",faq:[{question:"Ecole publique ou privee en Tunisie : comment choisir ?",answer:"Le bon choix depend de ton enfant, de ton budget, de la proximite, du rythme de l'ecole et de la qualite de l'encadrement. L'ecole publique peut etre tres solide, tandis que l'ecole privee peut offrir des classes plus reduites ou des methodes differentes."},{question:"Quels criteres pour choisir une bonne ecole en Tunisie ?",answer:"Verifie la proximite, l'ambiance, le niveau academique, le suivi des eleves, les activites proposees, la communication avec les parents et les retours d'autres familles."},{question:"Ou trouver un cours particulier en Tunisie ?",answer:"Tu peux consulter les fiches disponibles sur Dalil Tounes et comparer les enseignants, centres de soutien ou etablissements par ville, gouvernorat, matiere et informations disponibles."}],fr:{title:"Bien choisir son école en Tunisie",subtitle:"Guide pratique pour les parents",category:"Éducation",excerpt:"École publique, privée, cours particuliers... Comment t'y retrouver et faire le bon choix pour ton enfant ?",content:`<h1>Comment bien choisir une école en Tunisie ?</h1>
 <p>Choisir une école est une décision importante.</p>
 <p>Ce n'est pas seulement une question de niveau scolaire. C'est aussi une question de rythme, de confiance, de proximité et d'environnement pour ton enfant.</p>
 <p>Entre école publique, école privée, soutien scolaire et cours particuliers, il est normal de se sentir un peu perdu.</p>
@@ -328,14 +176,7 @@ export const blogArticles: BlogArticle[] = [
 <p>La bonne école n'est pas forcément la plus connue ou la plus chère.</p>
 <p>C'est celle où ton enfant peut apprendre, progresser et se sentir accompagné.</p>
 <p>Prends le temps de comparer, de visiter et de poser des questions simples avant de décider.</p>
-<p><a href="/entreprises">Explore l'annuaire Dalil Tounes</a> pour trouver des établissements scolaires, professeurs particuliers et centres de soutien dans ta ville.</p>`
-    },
-    en: {
-      title: 'How to choose the right school in Tunisia',
-      subtitle: 'A practical guide for parents',
-      category: 'Education',
-      excerpt: 'Public school, private school, private tutoring... How to find your way and make the right choice for your child?',
-      content: `<h1>How to choose the right school in Tunisia</h1>
+<p><a href="/entreprises">Explore l'annuaire Dalil Tounes</a> pour trouver des établissements scolaires, professeurs particuliers et centres de soutien dans ta ville.</p>`},en:{title:"How to choose the right school in Tunisia",subtitle:"A practical guide for parents",category:"Education",excerpt:"Public school, private school, private tutoring... How to find your way and make the right choice for your child?",content:`<h1>How to choose the right school in Tunisia</h1>
 <p>Choosing the right school is one of the most important decisions for your child's future. Public, private, or tutoring? Here is a practical guide.</p>
 <h2>Public vs private school</h2>
 <p>Public school offers free education and universal access. Private school may offer smaller classes, different teaching methods and a wide range of extracurricular activities.</p>
@@ -348,14 +189,7 @@ export const blogArticles: BlogArticle[] = [
 </ul>
 <h2>Tutoring</h2>
 <p>Private lessons can complement school education. On Dalil Tounes, you'll find certified teachers in your governorate.</p>
-<p>Visit schools, talk to other parents, and trust your instinct to find the ideal environment for your child.</p>`
-    },
-    ar: {
-      title: 'كيف تختار المدرسة المناسبة في تونس',
-      subtitle: 'دليل عملي للأولياء',
-      category: 'التعليم',
-      excerpt: 'مدرسة عمومية، خاصة، دروس خصوصية... كيف تجد طريقك وتتخذ القرار الصحيح لطفلك؟',
-      content: `<h1>كيف تختار المدرسة المناسبة في تونس</h1>
+<p>Visit schools, talk to other parents, and trust your instinct to find the ideal environment for your child.</p>`},ar:{title:"كيف تختار المدرسة المناسبة في تونس",subtitle:"دليل عملي للأولياء",category:"التعليم",excerpt:"مدرسة عمومية، خاصة، دروس خصوصية... كيف تجد طريقك وتتخذ القرار الصحيح لطفلك؟",content:`<h1>كيف تختار المدرسة المناسبة في تونس</h1>
 <p>اختيار المؤسسة التعليمية من أهم القرارات لمستقبل طفلك. عمومية، خاصة، أم دعم مدرسي؟ إليك دليل عملي.</p>
 <h2>المدرسة العمومية مقابل الخاصة</h2>
 <p>المدرسة العمومية توفر تعليمًا مجانيًا ومتاحًا للجميع. المدرسة الخاصة قد توفر فصولًا أقل ازدحامًا، وطرق تعليم مختلفة وأنشطة لا صفية متنوعة.</p>
@@ -368,30 +202,7 @@ export const blogArticles: BlogArticle[] = [
 </ul>
 <h2>الدعم المدرسي</h2>
 <p>الدروس الخصوصية يمكن أن تكمل التعليم المدرسي. على دليل تونس، تجد معلمين معتمدين في ولايتك.</p>
-<p>زر المؤسسات، تواصل مع الأولياء الآخرين، وثق بحدسك لاختيار البيئة المثالية لطفلك.</p>`
-    }
-  },
-  {
-    id: '5',
-    slug: 'activites-en-famille',
-    author: "L'équipe Dalil Tounes",
-    date: '18 avril 2026',
-    publishedDate: '2026-04-18',
-    readTime: '4 min',
-    coverImage: '',
-    seoTitle: 'Activites en famille en Tunisie : idees et conseils | Dalil Tounes',
-    seoDescription: 'Plages, parcs, culture, sport : decouvrez les meilleures activites en famille en Tunisie. Idees de sorties par region sur Dalil Tounes.',
-    faq: [
-      { question: 'Quelles activites faire en famille en Tunisie ?', answer: 'Tu peux alterner entre plages, balades en nature, visites culturelles, parcs de loisirs, ateliers creatifs, sport et sorties gourmandes. Le bon choix depend surtout de l age des enfants, de la saison et du temps disponible.' },
-      { question: 'Ou trouver des activites pour enfants en Tunisie ?', answer: "Consulte la section Loisirs de Dalil Tounes pour reperer des centres sportifs, clubs, piscines, parcs et activites pres de chez toi. Tu peux aussi chercher par ville ou gouvernorat pour preparer une sortie plus facilement." },
-      { question: 'Comment choisir une activite adaptee a toute la famille ?', answer: "Verifie la distance, les horaires, l age conseille, la presence d espaces ombrages ou de restauration, et les moyens de contact. Pour une sortie avec de jeunes enfants, privilegie les lieux simples d acces et faciles a organiser." },
-    ],
-    fr: {
-      title: 'Activités en famille en Tunisie : idées et conseils',
-      subtitle: 'Des idées pour profiter de vos loisirs ensemble',
-      category: 'Loisirs',
-      excerpt: "Sorties, sports, culture : découvrez les meilleures activités pour passer de bons moments en famille à travers la Tunisie.",
-      content: `<h1>Activités en famille en Tunisie : idées et conseils</h1>
+<p>زر المؤسسات، تواصل مع الأولياء الآخرين، وثق بحدسك لاختيار البيئة المثالية لطفلك.</p>`}},{id:"5",slug:"activites-en-famille",author:"L'équipe Dalil Tounes",date:"18 avril 2026",publishedDate:"2026-04-18",readTime:"4 min",coverImage:"",seoTitle:"Activites en famille en Tunisie : idees et conseils | Dalil Tounes",seoDescription:"Plages, parcs, culture, sport : decouvrez les meilleures activites en famille en Tunisie. Idees de sorties par region sur Dalil Tounes.",faq:[{question:"Quelles activites faire en famille en Tunisie ?",answer:"Tu peux alterner entre plages, balades en nature, visites culturelles, parcs de loisirs, ateliers creatifs, sport et sorties gourmandes. Le bon choix depend surtout de l age des enfants, de la saison et du temps disponible."},{question:"Ou trouver des activites pour enfants en Tunisie ?",answer:"Consulte la section Loisirs de Dalil Tounes pour reperer des centres sportifs, clubs, piscines, parcs et activites pres de chez toi. Tu peux aussi chercher par ville ou gouvernorat pour preparer une sortie plus facilement."},{question:"Comment choisir une activite adaptee a toute la famille ?",answer:"Verifie la distance, les horaires, l age conseille, la presence d espaces ombrages ou de restauration, et les moyens de contact. Pour une sortie avec de jeunes enfants, privilegie les lieux simples d acces et faciles a organiser."}],fr:{title:"Activités en famille en Tunisie : idées et conseils",subtitle:"Des idées pour profiter de vos loisirs ensemble",category:"Loisirs",excerpt:"Sorties, sports, culture : découvrez les meilleures activités pour passer de bons moments en famille à travers la Tunisie.",content:`<h1>Activités en famille en Tunisie : idées et conseils</h1>
 <p>Organiser une sortie en famille ne demande pas forcément un grand budget ni un long déplacement.</p>
 <p>En Tunisie, tu peux trouver des idées simples pour passer un bon moment avec les enfants : une plage, une balade, une visite culturelle, une activité sportive ou un atelier créatif.</p>
 <p>Que tu sois à <a href="/ville/tunis">Tunis</a>, <a href="/ville/hammamet">Hammamet</a>, <a href="/ville/sousse">Sousse</a> ou <a href="/ville/djerba">Djerba</a>, l'essentiel est de choisir une sortie adaptée à l'âge des enfants, à la saison et au temps dont tu disposes.</p>
@@ -421,14 +232,7 @@ export const blogArticles: BlogArticle[] = [
 <h2>Conclusion</h2>
 <p>Il y a toujours quelque chose à faire en famille en Tunisie, même près de chez toi.</p>
 <p>Le plus important est de choisir une activité réaliste, facile à vivre et adaptée à ton groupe.</p>
-<p>Pour préparer ta prochaine sortie, tu peux <a href="/entreprises">explorer les adresses disponibles sur Dalil Tounes</a> et comparer les loisirs, restaurants, clubs ou hébergements utiles autour de toi.</p>`
-    },
-    en: {
-      title: 'Family activities to do in Tunisia',
-      subtitle: 'Ideas to enjoy your leisure time together',
-      category: 'Leisure',
-      excerpt: 'Outings, sports, culture: discover the best activities to enjoy quality family time across Tunisia.',
-      content: `<h1>Family activities to do in Tunisia</h1>
+<p>Pour préparer ta prochaine sortie, tu peux <a href="/entreprises">explorer les adresses disponibles sur Dalil Tounes</a> et comparer les loisirs, restaurants, clubs ou hébergements utiles autour de toi.</p>`},en:{title:"Family activities to do in Tunisia",subtitle:"Ideas to enjoy your leisure time together",category:"Leisure",excerpt:"Outings, sports, culture: discover the best activities to enjoy quality family time across Tunisia.",content:`<h1>Family activities to do in Tunisia</h1>
 <p>Tunisia is full of activities for all ages. Here is a selection to enjoy your weekends and holidays as a family.</p>
 <h2>Outdoors and nature</h2>
 <p>The beaches of Hammamet, Djerba or Sousse offer unforgettable days. For nature lovers, national parks like Ichkeul or Boukornine offer family-friendly hikes.</p>
@@ -438,14 +242,7 @@ export const blogArticles: BlogArticle[] = [
 <p>Swimming, football, martial arts, painting... Sports and cultural centers in your city offer classes for all ages. On Dalil Tounes, filter by governorate to find the best activities near you.</p>
 <h2>Theme parks</h2>
 <p>Friguia Park, Aqua Palace or local amusement parks will delight the youngest.</p>
-<p>Whatever your region, there's always something to discover together in Tunisia.</p>`
-    },
-    ar: {
-      title: 'أنشطة عائلية في تونس',
-      subtitle: 'أفكار لقضاء أوقات ممتعة معًا',
-      category: 'الترفيه',
-      excerpt: 'نزهات، رياضة، ثقافة: اكتشف أفضل الأنشطة لقضاء أوقات ممتعة مع العائلة في جميع أنحاء تونس.',
-      content: `<h1>أنشطة عائلية في تونس</h1>
+<p>Whatever your region, there's always something to discover together in Tunisia.</p>`},ar:{title:"أنشطة عائلية في تونس",subtitle:"أفكار لقضاء أوقات ممتعة معًا",category:"الترفيه",excerpt:"نزهات، رياضة، ثقافة: اكتشف أفضل الأنشطة لقضاء أوقات ممتعة مع العائلة في جميع أنحاء تونس.",content:`<h1>أنشطة عائلية في تونس</h1>
 <p>تونس مليئة بالأنشطة لجميع الأعمار. إليك مجموعة مختارة للاستمتاع بعطلات نهاية الأسبوع والإجازات مع العائلة.</p>
 <h2>الهواء الطلق والطبيعة</h2>
 <p>شواطئ الحمامات وجربة وسوسة توفر أيامًا لا تُنسى. لمحبي الطبيعة، حدائق وطنية مثل إشكل وبوقرنين تقدم نزهات مناسبة للعائلات.</p>
@@ -455,30 +252,7 @@ export const blogArticles: BlogArticle[] = [
 <p>سباحة، كرة قدم، فنون قتالية، رسم... المراكز الرياضية والثقافية في مدينتك توفر دروسًا لجميع الأعمار. على دليل تونس، صفِّ حسب الولاية لإيجاد أفضل الأنشطة قريبًا منك.</p>
 <h2>حدائق الترفيه</h2>
 <p>فريڨيا بارك، أكوا بالاس أو الحدائق المحلية ستسعد الصغار.</p>
-<p>أيًا كانت منطقتك، يوجد دائمًا ما تكتشفه معًا في تونس.</p>`
-    }
-  },
-  {
-    id: '6',
-    slug: 'que-faire-a-sousse',
-    author: "L'équipe Dalil Tounes",
-    date: '18 avril 2026',
-    publishedDate: '2026-04-18',
-    readTime: '5 min',
-    coverImage: '',
-    seoTitle: 'Que faire a Sousse ? Guide touristique complet | Dalil Tounes',
-    seoDescription: "Decouvrez les incontournables de Sousse : medina, plages, Port El Kantaoui, restaurants et musees. Guide complet pour visiter la Perle du Sahel.",
-    faq: [
-      { question: 'Que visiter en priorité à Sousse ?', answer: 'Commence par la medina, le Ribat, la Grande Mosquee, le musee archeologique et la corniche. Si tu as plus de temps, ajoute Port El Kantaoui, une plage et une sortie en bateau.' },
-      { question: 'Sousse est-elle adaptée à une sortie en famille ?', answer: "Oui. Tu peux combiner plage, promenade, visite courte dans la medina, pause dans un cafe ou restaurant, et activites a Port El Kantaoui. L ideal est de garder un rythme simple, surtout avec des enfants." },
-      { question: 'Comment trouver des restaurants ou activités à Sousse ?', answer: 'Tu peux consulter les pages locales de Dalil Tounes pour reperer des entreprises, restaurants, loisirs et services utiles a Sousse avant de te deplacer.' },
-    ],
-    fr: {
-      title: 'Que faire à Sousse ?',
-      subtitle: 'Le guide complet pour visiter la Perle du Sahel',
-      category: 'Tourisme',
-      excerpt: "Sousse est l'une des villes les plus dynamiques de Tunisie. Découvrez ses incontournables, ses restaurants, et ses activités.",
-      content: `<h1>Que faire à Sousse ?</h1>
+<p>أيًا كانت منطقتك، يوجد دائمًا ما تكتشفه معًا في تونس.</p>`}},{id:"6",slug:"que-faire-a-sousse",author:"L'équipe Dalil Tounes",date:"18 avril 2026",publishedDate:"2026-04-18",readTime:"5 min",coverImage:"",seoTitle:"Que faire a Sousse ? Guide touristique complet | Dalil Tounes",seoDescription:"Decouvrez les incontournables de Sousse : medina, plages, Port El Kantaoui, restaurants et musees. Guide complet pour visiter la Perle du Sahel.",faq:[{question:"Que visiter en priorité à Sousse ?",answer:"Commence par la medina, le Ribat, la Grande Mosquee, le musee archeologique et la corniche. Si tu as plus de temps, ajoute Port El Kantaoui, une plage et une sortie en bateau."},{question:"Sousse est-elle adaptée à une sortie en famille ?",answer:"Oui. Tu peux combiner plage, promenade, visite courte dans la medina, pause dans un cafe ou restaurant, et activites a Port El Kantaoui. L ideal est de garder un rythme simple, surtout avec des enfants."},{question:"Comment trouver des restaurants ou activités à Sousse ?",answer:"Tu peux consulter les pages locales de Dalil Tounes pour reperer des entreprises, restaurants, loisirs et services utiles a Sousse avant de te deplacer."}],fr:{title:"Que faire à Sousse ?",subtitle:"Le guide complet pour visiter la Perle du Sahel",category:"Tourisme",excerpt:"Sousse est l'une des villes les plus dynamiques de Tunisie. Découvrez ses incontournables, ses restaurants, et ses activités.",content:`<h1>Que faire à Sousse ?</h1>
 <p>Sousse est l'une des villes les plus faciles à aimer en Tunisie.</p>
 <p>Tu peux y passer une matinée dans la médina, déjeuner près de la mer, marcher sur la corniche, visiter un musée, puis terminer la journée à Port El Kantaoui.</p>
 <p>Voici un guide pratique pour organiser ta visite sans courir partout.</p>
@@ -513,14 +287,7 @@ export const blogArticles: BlogArticle[] = [
 <h2>Trouver des adresses utiles à Sousse</h2>
 <p>Pour préparer ta visite, tu peux consulter les pages locales comme <a href="/ville/sousse">Sousse sur Dalil Tounes</a>.</p>
 <p>Tu peux aussi chercher des <a href="/entreprises">entreprises, restaurants, loisirs ou services</a> utiles selon ton besoin : où manger, où réserver, qui contacter, ou quelle activité choisir.</p>
-<p>L'objectif n'est pas de tout planifier à la minute. C'est surtout d'avoir les bonnes informations avant de te déplacer.</p>`
-    },
-    en: {
-      title: 'What to do in Sousse?',
-      subtitle: 'The complete guide to visiting the Pearl of the Sahel',
-      category: 'Tourism',
-      excerpt: "Sousse is one of the most vibrant cities in Tunisia. Discover its must-sees, restaurants and activities.",
-      content: `<h1>What to do in Sousse?</h1>
+<p>L'objectif n'est pas de tout planifier à la minute. C'est surtout d'avoir les bonnes informations avant de te déplacer.</p>`},en:{title:"What to do in Sousse?",subtitle:"The complete guide to visiting the Pearl of the Sahel",category:"Tourism",excerpt:"Sousse is one of the most vibrant cities in Tunisia. Discover its must-sees, restaurants and activities.",content:`<h1>What to do in Sousse?</h1>
 <p>Sousse, nicknamed the "Pearl of the Sahel", is a city that combines history, beautiful beaches and lively nightlife. Here's a guide to make the most of your stay.</p>
 <h2>The Sousse medina</h2>
 <p>A UNESCO World Heritage site, the Sousse medina is a fascinating labyrinth of alleys, souks and historical monuments. Don't miss the Great Mosque and the Ribat.</p>
@@ -532,14 +299,7 @@ export const blogArticles: BlogArticle[] = [
 <p>One of the richest in Tunisia, it houses an impressive collection of Roman mosaics.</p>
 <h2>Local gastronomy</h2>
 <p>Try ojja with merguez, fish couscous, and local pastries in the downtown restaurants.</p>
-<p>On Dalil Tounes, find the best tour operators, accommodations and restaurants in Sousse recommended by locals.</p>`
-    },
-    ar: {
-      title: 'ماذا نفعل في سوسة؟',
-      subtitle: 'الدليل الكامل لزيارة لؤلؤة الساحل',
-      category: 'السياحة',
-      excerpt: 'سوسة من أكثر المدن حيوية في تونس. اكتشف معالمها الأساسية ومطاعمها وأنشطتها.',
-      content: `<h1>ماذا نفعل في سوسة؟</h1>
+<p>On Dalil Tounes, find the best tour operators, accommodations and restaurants in Sousse recommended by locals.</p>`},ar:{title:"ماذا نفعل في سوسة؟",subtitle:"الدليل الكامل لزيارة لؤلؤة الساحل",category:"السياحة",excerpt:"سوسة من أكثر المدن حيوية في تونس. اكتشف معالمها الأساسية ومطاعمها وأنشطتها.",content:`<h1>ماذا نفعل في سوسة؟</h1>
 <p>سوسة، الملقبة بـ "لؤلؤة الساحل"، مدينة تجمع بين التاريخ والشواطئ الرائعة والحياة الليلية النابضة. إليك دليلًا للاستمتاع بإقامتك إلى أقصى حد.</p>
 <h2>مدينة سوسة العتيقة</h2>
 <p>مصنفة ضمن التراث العالمي لليونسكو، مدينة سوسة العتيقة متاهة رائعة من الأزقة والأسواق والمعالم التاريخية. لا تفوّت الجامع الكبير والرباط.</p>
@@ -551,25 +311,7 @@ export const blogArticles: BlogArticle[] = [
 <p>من أغنى المتاحف في تونس، يضم مجموعة مذهلة من الفسيفساء الرومانية.</p>
 <h2>المطبخ المحلي</h2>
 <p>تذوّق العجة بالمرقاز، والكسكسي بالحوت، والحلويات المحلية في مطاعم وسط المدينة.</p>
-<p>على دليل تونس، اعثر على أفضل مزودي الخدمات السياحية والإقامة والمطاعم في سوسة الموصى بها من السكان.</p>`
-    }
-  },
-  {
-    id: '7',
-    slug: 'pourquoi-dalil-tounes-change-la-donne',
-    author: "L'équipe Dalil Tounes",
-    date: '20 avril 2026',
-    publishedDate: '2026-04-20',
-    readTime: '6 min',
-    coverImage: '',
-    seoTitle: 'CV Business complet vs incomplet : la visibilite qui change tout | Dalil Tounes',
-    seoDescription: "Pourquoi un CV Business bien rempli change la visibilite d'un professionnel et la confiance des clients. Comparaison et conseils pratiques.",
-    fr: {
-      title: 'Pourquoi une fiche professionnelle complète inspire davantage confiance ?',
-      subtitle: 'Les informations utiles qui aident un client à faire son choix',
-      category: 'Notre Histoire',
-      excerpt: "Une fiche professionnelle complète aide les clients à comprendre, comparer et choisir plus sereinement. Voici pourquoi les informations utiles changent la perception d'une entreprise.",
-      content: `<h1>Pourquoi une fiche professionnelle complète inspire davantage confiance ?</h1>
+<p>على دليل تونس، اعثر على أفضل مزودي الخدمات السياحية والإقامة والمطاعم في سوسة الموصى بها من السكان.</p>`}},{id:"7",slug:"pourquoi-dalil-tounes-change-la-donne",author:"L'équipe Dalil Tounes",date:"20 avril 2026",publishedDate:"2026-04-20",readTime:"6 min",coverImage:"",seoTitle:"CV Business complet vs incomplet : la visibilite qui change tout | Dalil Tounes",seoDescription:"Pourquoi un CV Business bien rempli change la visibilite d'un professionnel et la confiance des clients. Comparaison et conseils pratiques.",fr:{title:"Pourquoi une fiche professionnelle complète inspire davantage confiance ?",subtitle:"Les informations utiles qui aident un client à faire son choix",category:"Notre Histoire",excerpt:"Une fiche professionnelle complète aide les clients à comprendre, comparer et choisir plus sereinement. Voici pourquoi les informations utiles changent la perception d'une entreprise.",content:`<h1>Pourquoi une fiche professionnelle complète inspire davantage confiance ?</h1>
 
 <p>Quand un client cherche un professionnel, il ne cherche pas seulement un nom.</p>
 <p>Il cherche à comprendre rapidement si cette entreprise, cet artisan, ce commerçant ou ce cabinet peut réellement répondre à son besoin.</p>
@@ -621,14 +363,7 @@ export const blogArticles: BlogArticle[] = [
 <h2>Conclusion</h2>
 <p>Une fiche complète ne transforme pas une entreprise à elle seule.</p>
 <p>Elle permet surtout au client de décider avec plus de repères.</p>
-<p>Et dans un monde où les gens comparent, lisent, vérifient et hésitent, cette clarté peut faire une vraie différence.</p>`
-    },
-    en: {
-      title: 'Why Dalil Tounes is a game-changer for pros and clients',
-      subtitle: 'Complete vs incomplete Business CV: the difference that changes everything',
-      category: 'Our Story',
-      excerpt: "Discover why a complete Business CV radically changes a professional's visibility and client trust. Comparison, tips and straightforward explanations.",
-      content: `<h1>Why Dalil Tounes is a game-changer for pros and clients</h1>
+<p>Et dans un monde où les gens comparent, lisent, vérifient et hésitent, cette clarté peut faire une vraie différence.</p>`},en:{title:"Why Dalil Tounes is a game-changer for pros and clients",subtitle:"Complete vs incomplete Business CV: the difference that changes everything",category:"Our Story",excerpt:"Discover why a complete Business CV radically changes a professional's visibility and client trust. Comparison, tips and straightforward explanations.",content:`<h1>Why Dalil Tounes is a game-changer for pros and clients</h1>
 
 <h2>1. Introduction</h2>
 <p>We're always looking for a hairdresser, a driver or even a trustworthy plumber who will be there and inspire confidence. You ask a friend, he says "yes I know someone". You go there, get lost and end up disappointed with the welcome or the work done. So you go online. You end up calling three numbers, no one answers. And when someone picks up, you're not even sure it's the right one. The opening hours are wrong, and don't even mention the location.</p>
@@ -677,14 +412,7 @@ export const blogArticles: BlogArticle[] = [
 <p>If you're a professional, take five minutes to check your profile. A missing photo? An opening hour to update? A review to answer? These small details change everything.</p>
 <p>If you're a client, explore the directory. <strong>Compare professionals</strong> with each other, run tests yourself. As if you were a client, you'll immediately see the difference.</p>
 <p>And if you have an opinion, good or bad, we're all ears. That's how we improve.</p>
-<p>That's Dalil Tounes. Not a cold directory. A toolkit so that people find each other, trust each other, and move forward together. So that you find <strong>the best professionals near you</strong>. 🧡</p>`
-    },
-    ar: {
-      title: 'علاش Dalil Tounes يبدّل القواعد للبرو والكليونات',
-      subtitle: 'CV Business كامل مقابل CV ناقص : الفرق اللي يبدّل كل شي',
-      category: 'حكايتنا',
-      excerpt: "علاش CV Business كامل يبدّل visibility متاع البرو وثقة الكليونات. مقارنة، نصائح، وتفاصيل بدون حشو.",
-      content: `<h1>علاش Dalil Tounes يبدّل القواعد للبرو والكليونات</h1>
+<p>That's Dalil Tounes. Not a cold directory. A toolkit so that people find each other, trust each other, and move forward together. So that you find <strong>the best professionals near you</strong>. 🧡</p>`},ar:{title:"علاش Dalil Tounes يبدّل القواعد للبرو والكليونات",subtitle:"CV Business كامل مقابل CV ناقص : الفرق اللي يبدّل كل شي",category:"حكايتنا",excerpt:"علاش CV Business كامل يبدّل visibility متاع البرو وثقة الكليونات. مقارنة، نصائح، وتفاصيل بدون حشو.",content:`<h1>علاش Dalil Tounes يبدّل القواعد للبرو والكليونات</h1>
 
 <h2>1. علاش</h2>
 <p>ديما نلقاو رواحنا نلوجو على حجام، شوفور ولا حتى بلومبي يكون ثقة ويخدم مليح. تسأل صاحبك، يقلك "إي نعرف واحد".تمشي، تضيع، وفي اللخر تخرج موش راضي لا على المعاملة لا على الخدمة.</p>
@@ -737,30 +465,7 @@ export const blogArticles: BlogArticle[] = [
 <p>إذا إنت professionnel، خذ 5 دقايق برك واعمل طلا على fiche متاعك. فما تصويرة ناقصة؟ توقيت لازم يتبدّل؟ ولا avis لازمك تجاوب عليه؟ الحاجات الصغار هاذم يفرّقو برشا.</p>
 <p>وإذا إنت client، جرّب الدليل. <strong>قارن بين الprofessionnels</strong>، واعمل tests وحدك. كيما كانك client، تو تشوف الفرق وحدك.</p>
 <p>وإذا عندك رأي، باهي ولا خايب، مرحبا بيه. هكاكا نطوّرو رواحنا ونولّيو خير 👌</p>
-<p>هاكا هو Dalil Tounes. موش دليل عادي وبارد. هو وسيلة باش العباد تلقى بعضها، تثق في بعضها، وتعاون بعضها باش تتقدّم. باش تلقى <strong>أحسن professionnels قريب ليك</strong>. 🧡</p>`
-    }
-  },
-  {
-    id: '8',
-    slug: 'pourquoi-certaines-entreprises-attirent-des-clients',
-    author: "L'equipe Dalil Tounes",
-    date: '28 mai 2026',
-    publishedDate: '2026-05-28',
-    readTime: '7 min',
-    coverImage: '',
-    seoTitle: 'Comment attirer plus de clients en Tunisie ? 5 conseils | Dalil Tounes',
-    seoDescription: '5 raisons concretes pour lesquelles certaines entreprises attirent des clients et d\'autres restent invisibles. Conseils de visibilite en ligne.',
-    faq: [
-      { question: 'Pourquoi mon entreprise est invisible sur Internet ?', answer: "Souvent parce que les informations disponibles sont incompletes, anciennes ou dispersees : horaires manquants, peu de photos, adresse imprecise, pas d'avis clients ou moyens de contact difficiles a trouver." },
-      { question: 'Comment attirer plus de clients en ligne en Tunisie ?', answer: "Commencez par clarifier vos informations : activite, services, ville, horaires, telephone, photos et avis. Ensuite, assurez-vous que ces informations restent coherentes sur Google, les reseaux sociaux, votre site et les annuaires professionnels." },
-      { question: 'Les avis clients sont-ils importants pour la visibilite ?', answer: "Oui. Les avis aident les clients a se faire une premiere idee avant de contacter une entreprise. Ils ne remplacent pas la qualite du travail, mais ils rassurent et facilitent la decision." },
-    ],
-    fr: {
-      title: 'Pourquoi certaines entreprises attirent des clients... et d\'autres restent invisibles ?',
-      subtitle: 'Ce qui aide un client à choisir une entreprise plutôt qu\'une autre',
-      category: 'Visibilite',
-      excerpt: "Comprendre pourquoi certaines entreprises inspirent confiance en ligne, et comment améliorer simplement les informations qui aident les clients à choisir.",
-      content: `<h1>Pourquoi certaines entreprises attirent des clients... et d'autres restent invisibles ?</h1>
+<p>هاكا هو Dalil Tounes. موش دليل عادي وبارد. هو وسيلة باش العباد تلقى بعضها، تثق في بعضها، وتعاون بعضها باش تتقدّم. باش تلقى <strong>أحسن professionnels قريب ليك</strong>. 🧡</p>`}},{id:"8",slug:"pourquoi-certaines-entreprises-attirent-des-clients",author:"L'equipe Dalil Tounes",date:"28 mai 2026",publishedDate:"2026-05-28",readTime:"7 min",coverImage:"",seoTitle:"Comment attirer plus de clients en Tunisie ? 5 conseils | Dalil Tounes",seoDescription:"5 raisons concretes pour lesquelles certaines entreprises attirent des clients et d'autres restent invisibles. Conseils de visibilite en ligne.",faq:[{question:"Pourquoi mon entreprise est invisible sur Internet ?",answer:"Souvent parce que les informations disponibles sont incompletes, anciennes ou dispersees : horaires manquants, peu de photos, adresse imprecise, pas d'avis clients ou moyens de contact difficiles a trouver."},{question:"Comment attirer plus de clients en ligne en Tunisie ?",answer:"Commencez par clarifier vos informations : activite, services, ville, horaires, telephone, photos et avis. Ensuite, assurez-vous que ces informations restent coherentes sur Google, les reseaux sociaux, votre site et les annuaires professionnels."},{question:"Les avis clients sont-ils importants pour la visibilite ?",answer:"Oui. Les avis aident les clients a se faire une premiere idee avant de contacter une entreprise. Ils ne remplacent pas la qualite du travail, mais ils rassurent et facilitent la decision."}],fr:{title:"Pourquoi certaines entreprises attirent des clients... et d'autres restent invisibles ?",subtitle:"Ce qui aide un client à choisir une entreprise plutôt qu'une autre",category:"Visibilite",excerpt:"Comprendre pourquoi certaines entreprises inspirent confiance en ligne, et comment améliorer simplement les informations qui aident les clients à choisir.",content:`<h1>Pourquoi certaines entreprises attirent des clients... et d'autres restent invisibles ?</h1>
 
 <p>Deux professionnels peuvent proposer un service de qualité, dans la même ville, avec des prix proches.</p>
 <p>Pourtant, l'un reçoit des appels régulièrement, pendant que l'autre se demande pourquoi personne ne le contacte.</p>
@@ -831,14 +536,7 @@ export const blogArticles: BlogArticle[] = [
 <p>Les entreprises qui attirent des clients ne sont pas toujours celles qui parlent le plus fort.</p>
 <p>Ce sont souvent celles qui rendent le choix plus simple.</p>
 <p>Elles donnent les bonnes informations, montrent des preuves concrètes et facilitent le contact.</p>
-<p>Être visible aide à être trouvé. Inspirer confiance aide à être choisi.</p>`
-    },
-    en: {
-      title: 'Why some businesses attract clients... and others stay invisible?',
-      subtitle: 'Online visibility is not an option. It is a necessity.',
-      category: 'Visibility',
-      excerpt: "You have a good product. A good service. But nobody finds you online? Discover the 5 reasons why some businesses naturally attract clients, and how you can do the same.",
-      content: `<h1>Why some businesses attract clients... and others stay invisible?</h1>
+<p>Être visible aide à être trouvé. Inspirer confiance aide à être choisi.</p>`},en:{title:"Why some businesses attract clients... and others stay invisible?",subtitle:"Online visibility is not an option. It is a necessity.",category:"Visibility",excerpt:"You have a good product. A good service. But nobody finds you online? Discover the 5 reasons why some businesses naturally attract clients, and how you can do the same.",content:`<h1>Why some businesses attract clients... and others stay invisible?</h1>
 
 <p style="font-size: 1.15em; color: #555; margin-bottom: 2em;">You have a good product. A good service. But nobody finds you online?<br>You're not alone. And it's not inevitable.</p>
 
@@ -922,14 +620,7 @@ export const blogArticles: BlogArticle[] = [
 
 <blockquote style="border-left: 4px solid #D4AF37; padding: 12px 20px; margin: 24px 0; background: #faf8f2; font-style: italic; color: #6b5c3e;">Visibility is not reserved for big companies.<br>It belongs to those who make the effort to exist online.</blockquote>
 
-<p style="text-align: center; margin-top: 2em; font-size: 1.1em;"><strong>Take 5 minutes. Complete your profile. And let clients come to you.</strong></p>`
-    },
-    ar: {
-      title: 'علاش بعض المؤسسات تجذب الحرفاء... وبعضها تبقى مخبية؟',
-      subtitle: 'الظهور على الإنترنت ماهوش اختيار. هو ضرورة.',
-      category: 'الظهور',
-      excerpt: 'عندك منتوج باهي. خدمة ممتازة. أما حد ما يلقاك على الإنترنت؟ اكتشف الـ 5 أسباب اللي تخلّي بعض المؤسسات تجذب الحرفاء بشكل طبيعي.',
-      content: `<h1>علاش بعض المؤسسات تجذب الحرفاء... وبعضها تبقى مخبية؟</h1>
+<p style="text-align: center; margin-top: 2em; font-size: 1.1em;"><strong>Take 5 minutes. Complete your profile. And let clients come to you.</strong></p>`},ar:{title:"علاش بعض المؤسسات تجذب الحرفاء... وبعضها تبقى مخبية؟",subtitle:"الظهور على الإنترنت ماهوش اختيار. هو ضرورة.",category:"الظهور",excerpt:"عندك منتوج باهي. خدمة ممتازة. أما حد ما يلقاك على الإنترنت؟ اكتشف الـ 5 أسباب اللي تخلّي بعض المؤسسات تجذب الحرفاء بشكل طبيعي.",content:`<h1>علاش بعض المؤسسات تجذب الحرفاء... وبعضها تبقى مخبية؟</h1>
 
 <p style="font-size: 1.15em; color: #555; margin-bottom: 2em;">عندك منتوج باهي. خدمة ممتازة. أما حد ما يلقاك على الإنترنت؟<br>موش وحدك. وموش قدر.</p>
 
@@ -989,13 +680,4 @@ export const blogArticles: BlogArticle[] = [
 
 <blockquote style="border-left: 4px solid #D4AF37; padding: 12px 20px; margin: 24px 0; background: #faf8f2; font-style: italic; color: #6b5c3e;">الظهور موش محجوز للشركات الكبار. هو لكل واحد يعمل مجهود باش يبان على الإنترنت.</blockquote>
 
-<p style="text-align: center; margin-top: 2em; font-size: 1.1em;"><strong>خذ 5 دقايق. كمّل فيشتك. وخلّي الحرفاء يجيوك.</strong></p>`
-    }
-  }
-];
-
-export function getArticleTranslation(article: BlogArticle, lang: string): BlogArticleTranslation {
-  if (lang === 'en' && article.en) return article.en;
-  if (lang === 'ar' && article.ar) return article.ar;
-  return article.fr;
-}
+<p style="text-align: center; margin-top: 2em; font-size: 1.1em;"><strong>خذ 5 دقايق. كمّل فيشتك. وخلّي الحرفاء يجيوك.</strong></p>`}}];function i(e,s){return s==="en"&&e.en?e.en:s==="ar"&&e.ar?e.ar:e.fr}export{t as b,i as g};

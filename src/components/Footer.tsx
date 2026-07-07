@@ -71,7 +71,7 @@ const EmailContact: React.FC = () => {
   );
 };
 
-const footerLink = 'text-gray-400 hover:text-[#D4AF37] transition-colors duration-200 text-sm leading-relaxed';
+const footerLink = 'text-gray-400 hover:text-[#D4AF37] focus-visible:text-[#D4AF37] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#111111] rounded-sm transition-colors duration-200 text-sm leading-relaxed';
 
 const Footer: React.FC = () => {
   const { language } = useLanguage();
@@ -197,7 +197,7 @@ const Footer: React.FC = () => {
           </p>
         </div>
 
-        <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10 ${isRTL ? 'text-right' : 'text-left'}`}>
+        <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-10 ${isRTL ? 'text-right' : 'text-left'}`}>
 
           <div className="lg:col-span-1">
             <h3 className="text-base font-semibold mb-3 text-white tracking-wide" style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.1rem' }}>
@@ -255,6 +255,28 @@ const Footer: React.FC = () => {
               <li><Link to="/citizens/magasins" className={footerLink}>{te.footer?.shops || 'Commerces & Magasins'}</Link></li>
               <li><Link to="/citizens/leisure" className={footerLink}>{te.footer?.leisure || 'Loisirs & Événements'}</Link></li>
               <li><Link to="/marketplace" className={footerLink}>{te.footer?.localMarket || 'Marché Local'}</Link></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="text-xs font-semibold mb-4 text-gray-300 uppercase tracking-widest" style={{ letterSpacing: '0.12em' }}>
+              Découvrir Dalil Tounes
+            </h4>
+            <ul className="space-y-2.5">
+              <li><Link to="/pourquoi-dalil-tounes" className={footerLink}>Pourquoi Dalil Tounes</Link></li>
+              <li><Link to="/concept" className={footerLink}>Comment fonctionne Dalil Tounes</Link></li>
+              <li><Link to="/blog" className={footerLink}>Articles</Link></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="text-xs font-semibold mb-4 text-gray-300 uppercase tracking-widest" style={{ letterSpacing: '0.12em' }}>
+              Professionnels
+            </h4>
+            <ul className="space-y-2.5">
+              <li><Link to="/subscription" className={footerLink}>Nos offres</Link></li>
+              <li><Link to="/businesses" className={footerLink}>Entreprises</Link></li>
+              {/* Future link: "Pourquoi créer une fiche professionnelle" */}
             </ul>
           </div>
 
@@ -426,4 +448,3 @@ const Footer: React.FC = () => {
 };
 
 export default Footer;
-
