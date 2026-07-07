@@ -223,6 +223,8 @@ function normalizeBusiness(business: any): any {
     email2: business.email2 || '',
     email2_clean: business.email2_clean || '',
     score_avis: business.score_avis ?? null,
+    'Note Google Globale': business['Note Google Globale'] ?? business.note_google ?? business.note_google_globale ?? null,
+    'Compteur Avis Google': business['Compteur Avis Google'] ?? business.nombre_avis ?? business.nombre_avis_google ?? null,
     site_web: business.site_web || business.website || '',
     description: business.description || '',
     a_propos: getAboutText(business),
@@ -326,6 +328,8 @@ interface Business {
   email2?: string;
   email2_clean?: string;
   score_avis?: string | number | null;
+  'Note Google Globale'?: string | number | null;
+  'Compteur Avis Google'?: string | number | null;
   site_web?: string;
   description: string;
   a_propos?: string | null;
@@ -1634,8 +1638,16 @@ export const BusinessDetail = ({
               )}
 
               {(() => {
-                const numericScore = Number(business.score_avis);
-                if (!Number.isFinite(numericScore) || numericScore <= 0) return null;
+                const rawGoogleRating = business['Note Google Globale'];
+                const numericRating = typeof rawGoogleRating === 'number'
+                  ? rawGoogleRating
+                  : Number(String(rawGoogleRating || '').replace(',', '.'));
+                const rawGoogleReviewCount = business['Compteur Avis Google'];
+                const reviewCount = typeof rawGoogleReviewCount === 'number'
+                  ? Math.floor(rawGoogleReviewCount)
+                  : parseInt(String(rawGoogleReviewCount || '').replace(/[^\d]/g, ''), 10);
+
+                if (!Number.isFinite(numericRating) || numericRating <= 0) return null;
                 return (
                   <div
                     className="flex items-center gap-1.5 px-1 mt-1"
@@ -1653,7 +1665,10 @@ export const BusinessDetail = ({
                         color: colors.gold,
                       }}
                     />
-                    <span>{numericScore} / 5</span>
+                    <span>{numericRating.toFixed(1)} / 5</span>
+                    {Number.isFinite(reviewCount) && reviewCount > 0 && (
+                      <span style={{ opacity: 0.85 }}>({reviewCount} avis)</span>
+                    )}
 
                     {business['Lien Avis Google'] && (
                       <a

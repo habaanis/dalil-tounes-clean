@@ -40,7 +40,7 @@ function mapEntrepriseRow(row: Record<string, unknown>): SeoBusiness {
     gouvernorat: row.gouvernorat as string | undefined,
     telephone: row.telephone as string | undefined,
     'catégorie': sousCats.length > 0 ? sousCats : (row.categorie ? [row.categorie as string] : []),
-    'Note Google Globale': (row['Note Google Globale'] as number | null) ?? (row.score_avis as number | null) ?? null,
+    'Note Google Globale': (row['Note Google Globale'] as number | null) ?? null,
     'Compteur Avis Google': (row['Compteur Avis Google'] as number | null) ?? null,
     logo_url: row.logo_url as string | undefined || row.image_url as string | undefined,
     description: row.description as string | undefined,

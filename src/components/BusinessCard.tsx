@@ -1,4 +1,4 @@
-import { MapPin, Award, Clock, ChevronDown, Phone, Star, Navigation } from 'lucide-react';
+import { MapPin, Award, Clock, ChevronDown, Phone, Navigation } from 'lucide-react';
 import GratuitCard from './GratuitCard';
 import { useState } from 'react';
 import { cleanAltText } from '../lib/textNormalization';
@@ -596,21 +596,6 @@ export const BusinessCard = ({ business, onClick, variant = 'simple' }: Business
               reviewCount={business.nombre_avis || business['Compteur Avis Google']}
               className="mt-1"
             />
-
-            {business.score_avis != null && business.score_avis !== '' && (
-              <div
-                className="inline-flex items-center gap-1 mt-1 px-2 py-1 rounded-lg"
-                style={{
-                  background: theme.soft,
-                  border: `1px solid ${theme.divider}`,
-                }}
-              >
-                <Star size={14} style={{ fill: theme.accent, color: theme.accent, flexShrink: 0 }} />
-                <span style={{ fontSize: '13px', fontWeight: '600', color: theme.accent }}>
-                  {business.score_avis} / 5
-                </span>
-              </div>
-            )}
 
             {business.horaires_ok && (
               <div style={{ paddingTop: '4px' }}>

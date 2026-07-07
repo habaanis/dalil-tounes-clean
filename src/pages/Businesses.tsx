@@ -62,6 +62,10 @@ interface Business {
   statut_carte?: string | null;
   slug?: string | null;
   ville?: string | null;
+  note_google?: string | number | null;
+  nombre_avis?: string | number | null;
+  'Note Google Globale'?: string | number | null;
+  'Compteur Avis Google'?: string | number | null;
   name_ar?: string | null;
   description_ar?: string | null;
 }
@@ -94,7 +98,7 @@ interface BusinessNeedActivityRow {
   created_at: string | null;
 }
 
-const ENTREPRISE_SELECT_FIELDS = 'id, nom, sous_categories_texte, sous_categories_clean, categorie, gouvernorat, ville, adresse, telephone, email, site_web, description, a_propos, services, image_url, logo_url, statut_abonnement, "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, statut_carte, name_ar, description_ar, slug';
+const ENTREPRISE_SELECT_FIELDS = 'id, nom, sous_categories_texte, sous_categories_clean, categorie, gouvernorat, ville, adresse, telephone, email, site_web, description, a_propos, services, image_url, logo_url, statut_abonnement, "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, statut_carte, "Note Google Globale", "Compteur Avis Google", name_ar, description_ar, slug';
 
 const PUBLIC_BUSINESS_NEED_ACTIVITY_TYPES = new Set([
   'supplier_search',
@@ -744,6 +748,10 @@ export const Businesses = ({
         lien_x: item.lien_x || '',
         horaires_ok: item.horaires_ok || null,
         statut_carte: item.statut_carte || null,
+        note_google: item['Note Google Globale'] ?? null,
+        nombre_avis: item['Compteur Avis Google'] ?? null,
+        'Note Google Globale': item['Note Google Globale'] ?? null,
+        'Compteur Avis Google': item['Compteur Avis Google'] ?? null,
         name_ar: item.name_ar ? cleanArabicField(item.name_ar) : null,
         description_ar: item.description_ar ? cleanArabicField(item.description_ar) : null,
       }));
@@ -922,6 +930,10 @@ export const Businesses = ({
         youtube: item['Lien YouTube'] || '',
         horaires_ok: item.horaires_ok || null,
         statut_carte: item.statut_carte || null,
+        note_google: item['Note Google Globale'] ?? null,
+        nombre_avis: item['Compteur Avis Google'] ?? null,
+        'Note Google Globale': item['Note Google Globale'] ?? null,
+        'Compteur Avis Google': item['Compteur Avis Google'] ?? null,
         name_ar: item.name_ar ? cleanArabicField(item.name_ar) : null,
         description_ar: item.description_ar ? cleanArabicField(item.description_ar) : null,
       }));
@@ -1545,6 +1557,10 @@ export const Businesses = ({
                         telephone: business.phone || null,
                         horaires_ok: business.horaires_ok,
                         statut_carte: business.statut_carte || null,
+                        note_google: business.note_google ?? business['Note Google Globale'] ?? null,
+                        nombre_avis: business.nombre_avis ?? business['Compteur Avis Google'] ?? null,
+                        'Note Google Globale': business['Note Google Globale'] ?? business.note_google ?? null,
+                        'Compteur Avis Google': business['Compteur Avis Google'] ?? business.nombre_avis ?? null,
                         name_ar: business.name_ar || null,
                         description_ar: business.description_ar || null,
                       }}

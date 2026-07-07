@@ -41,6 +41,10 @@ export interface BusinessRow {
   statut_carte: string | null;
   slug: string | null;
   ville: string | null;
+  note_google?: string | number | null;
+  nombre_avis?: string | number | null;
+  'Note Google Globale'?: string | number | null;
+  'Compteur Avis Google'?: string | number | null;
   name_ar?: string | null;
   description_ar?: string | null;
 }
@@ -59,7 +63,7 @@ interface CacheEntry extends BusinessesDefaultData {
   ts: number;
 }
 
-const CACHE_KEY   = 'businesses_default_v2';
+const CACHE_KEY   = 'businesses_default_v3';
 const STALE_TIME  = 5 * 60_000;
 const GC_TIME     = 60 * 60_000;
 
@@ -69,7 +73,7 @@ const FIELDS = [
   'image_url', 'logo_url', 'statut_abonnement',
   '"mots cles recherche"', '"Lien Instagram"', '"lien facebook"', '"Lien TikTok"',
   '"Lien LinkedIn"', '"Lien YouTube"', 'lien_x', 'horaires_ok', 'statut_carte',
-  'name_ar', 'description_ar', 'slug',
+  '"Note Google Globale"', '"Compteur Avis Google"', 'name_ar', 'description_ar', 'slug',
 ].join(', ');
 
 let inflight: Promise<BusinessesDefaultData> | null = null;
@@ -154,6 +158,10 @@ function mapRow(item: Record<string, unknown>): BusinessRow {
     lien_x: (item.lien_x as string) || '',
     horaires_ok: (item.horaires_ok as string | null) ?? null,
     statut_carte: (item.statut_carte as string | null) ?? null,
+    note_google: (item['Note Google Globale'] as string | number | null) ?? null,
+    nombre_avis: (item['Compteur Avis Google'] as string | number | null) ?? null,
+    'Note Google Globale': (item['Note Google Globale'] as string | number | null) ?? null,
+    'Compteur Avis Google': (item['Compteur Avis Google'] as string | number | null) ?? null,
     slug: (item.slug as string | null) ?? null,
     ville: (item.ville as string | null) ?? null,
     name_ar: (item.name_ar as string | null) ?? null,

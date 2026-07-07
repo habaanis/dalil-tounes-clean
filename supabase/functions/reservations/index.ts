@@ -9,6 +9,8 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
+const ADMIN_EMAIL = "contact@dalil-tounes.com";
+
 interface ReservationPayload {
   business_id: string;
   business_name: string;
@@ -39,15 +41,67 @@ function escapeHtml(str: string): string {
     .replace(/"/g, "&quot;");
 }
 
-function buildEmailHtml(p: ReservationPayload): string {
+function isValidEmail(email?: string | null): boolean {
+  if (!email) return false;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+}
+
+function cleanPhone(phone?: string | null): string {
+  return phone?.replace(/\s+/g, " ").trim() || "";
+}
+
+function getBusinessContactStatus(payload: ReservationPayload) {
+  const businessEmail = payload.business_email?.trim() || "";
+  const businessPhone = cleanPhone(payload.business_phone);
+  const hasValidBusinessEmail = isValidEmail(businessEmail);
+  const hasBusinessPhone = businessPhone.length > 0;
+
+  let adminNotice = "";
+  if (!hasValidBusinessEmail && hasBusinessPhone) {
+    adminNotice = "Entreprise sans email, contacter par téléphone";
+  } else if (!hasValidBusinessEmail && !hasBusinessPhone) {
+    adminNotice = "Aucun email ni téléphone entreprise renseigné";
+  }
+
+  return {
+    businessEmail,
+    businessPhone,
+    hasValidBusinessEmail,
+    hasBusinessPhone,
+    adminNotice,
+  };
+}
+
+function buildPhoneNotificationText(p: ReservationPayload): string {
+  return [
+    `Nouvelle demande de réservation via Dalil Tounes`,
+    `Entreprise: ${p.business_name}`,
+    `Client: ${p.customer_name}`,
+    `Téléphone client: ${p.customer_phone}`,
+    p.customer_email ? `Email client: ${p.customer_email}` : null,
+    `Date souhaitée: ${p.requested_date}`,
+    `Heure souhaitée: ${p.requested_time}`,
+    p.message ? `Message: ${p.message}` : null,
+  ].filter(Boolean).join("\n");
+}
+
+function buildEmailHtml(p: ReservationPayload, adminNotice = ""): string {
+  const businessPhone = cleanPhone(p.business_phone);
+
   return `
 <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;background:#fafafa;border:1px solid #e0e0e0;border-radius:8px;">
   <div style="text-align:center;padding-bottom:16px;border-bottom:2px solid #D4AF37;">
     <h2 style="color:#1a1a1a;margin:0;">Nouvelle demande de r&eacute;servation</h2>
     <p style="color:#666;font-size:13px;margin:4px 0 0;">via Dalil Tounes</p>
   </div>
+  ${adminNotice ? `
+  <div style="margin-top:16px;padding:12px;background:#fff4e5;border:1px solid #f4c76b;border-radius:6px;">
+    <p style="color:#92400e;font-size:13px;font-weight:700;margin:0 0 4px;">${escapeHtml(adminNotice)}</p>
+    ${businessPhone ? `<p style="color:#92400e;font-size:13px;margin:0;">T&eacute;l&eacute;phone entreprise : <a href="tel:${escapeHtml(businessPhone)}" style="color:#92400e;">${escapeHtml(businessPhone)}</a></p>` : ""}
+  </div>` : ""}
   <table style="width:100%;margin-top:20px;border-collapse:collapse;">
     <tr><td style="padding:8px 4px;color:#888;font-size:13px;width:140px;">Entreprise</td><td style="padding:8px 4px;font-size:14px;font-weight:600;">${escapeHtml(p.business_name)}</td></tr>
+    ${businessPhone ? `<tr style="background:#f5f5f5;"><td style="padding:8px 4px;color:#888;font-size:13px;">T&eacute;l&eacute;phone entreprise</td><td style="padding:8px 4px;font-size:14px;"><a href="tel:${escapeHtml(businessPhone)}" style="color:#D4AF37;text-decoration:none;">${escapeHtml(businessPhone)}</a></td></tr>` : ""}
     <tr style="background:#f5f5f5;"><td style="padding:8px 4px;color:#888;font-size:13px;">Client</td><td style="padding:8px 4px;font-size:14px;font-weight:600;">${escapeHtml(p.customer_name)}</td></tr>
     <tr><td style="padding:8px 4px;color:#888;font-size:13px;">T&eacute;l&eacute;phone</td><td style="padding:8px 4px;font-size:14px;"><a href="tel:${escapeHtml(p.customer_phone)}" style="color:#D4AF37;text-decoration:none;">${escapeHtml(p.customer_phone)}</a></td></tr>
     <tr style="background:#f5f5f5;"><td style="padding:8px 4px;color:#888;font-size:13px;">Email client</td><td style="padding:8px 4px;font-size:14px;">${p.customer_email ? escapeHtml(p.customer_email) : "Non renseign&eacute;"}</td></tr>
@@ -69,22 +123,24 @@ function buildEmailHtml(p: ReservationPayload): string {
 
 async function sendEmailNotification(
   payload: ReservationPayload
-): Promise<{ sent: boolean; error?: string; recipients?: string[] }> {
+): Promise<{ sent: boolean; error?: string; recipients?: string[]; bcc?: string[]; mode?: string }> {
   const resendApiKey = Deno.env.get("RESEND_API_KEY");
   if (!resendApiKey) {
     console.warn("[Email] RESEND_API_KEY not configured, skipping email");
     return { sent: false, error: "RESEND_API_KEY not configured" };
   }
 
-  const recipients: string[] = ["contact@dalil-tounes.com"];
-  if (payload.business_email?.trim()) {
-    recipients.push(payload.business_email.trim());
-  }
+  const contact = getBusinessContactStatus(payload);
+  const recipients = contact.hasValidBusinessEmail ? [contact.businessEmail] : [ADMIN_EMAIL];
+  const bcc = contact.hasValidBusinessEmail ? [ADMIN_EMAIL] : [];
+  const mode = contact.hasValidBusinessEmail ? "business_email" : "admin_fallback";
 
   console.log("[Email] recipients:", JSON.stringify(recipients));
+  console.log("[Email] bcc:", JSON.stringify(bcc));
+  console.log("[Email] mode:", mode);
 
   const subject = `Nouvelle demande de reservation - ${payload.business_name}`;
-  const html = buildEmailHtml(payload);
+  const html = buildEmailHtml(payload, contact.adminNotice);
 
   try {
     const res = await fetch("https://api.resend.com/emails", {
@@ -96,6 +152,7 @@ async function sendEmailNotification(
       body: JSON.stringify({
         from: "Dalil Tounes <onboarding@resend.dev>",
         to: recipients,
+        ...(bcc.length > 0 ? { bcc } : {}),
         subject,
         html,
       }),
@@ -107,7 +164,7 @@ async function sendEmailNotification(
 
     if (!res.ok) {
       console.error("[Email] Resend error:", res.status, responseText);
-      return { sent: false, error: `Resend ${res.status}: ${responseText}`, recipients };
+      return { sent: false, error: `Resend ${res.status}: ${responseText}`, recipients, bcc, mode };
     }
 
     let data;
@@ -117,12 +174,26 @@ async function sendEmailNotification(
       data = {};
     }
     console.log("[Email] Sent successfully to:", recipients.join(", "), "id:", data.id);
-    return { sent: true, recipients };
+    return { sent: true, recipients, bcc, mode };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error("[Email] Exception:", msg);
-    return { sent: false, error: msg, recipients };
+    return { sent: false, error: msg, recipients, bcc, mode };
   }
+}
+
+function preparePhoneNotification(payload: ReservationPayload) {
+  const businessPhone = cleanPhone(payload.business_phone);
+  if (!businessPhone) {
+    return { prepared: false, phone: null, message: null };
+  }
+
+  const message = buildPhoneNotificationText(payload);
+  console.log("[Phone] Business phone notification prepared for:", businessPhone);
+  console.log("[Phone] message preview:", message);
+  // TODO: Brancher ici le futur provider WhatsApp/SMS officiel de Dalil Tounes.
+  // La réservation conserve déjà business_phone dans Supabase et Airtable.
+  return { prepared: true, phone: businessPhone, message };
 }
 
 Deno.serve(async (req: Request) => {
@@ -271,6 +342,9 @@ Deno.serve(async (req: Request) => {
       }
     }
 
+    // --- Phone/WhatsApp notification preparation (provider not wired yet) ---
+    const phoneNotification = preparePhoneNotification(payload);
+
     // --- Email notification (never blocks the response) ---
     console.log("[Email] Starting email notification...");
     const emailResult = await sendEmailNotification(payload);
@@ -286,6 +360,10 @@ Deno.serve(async (req: Request) => {
       email_sent: emailResult.sent,
       email_error: emailResult.error || null,
       email_recipients: emailResult.recipients || [],
+      email_bcc: emailResult.bcc || [],
+      email_mode: emailResult.mode || null,
+      phone_notification_prepared: phoneNotification.prepared,
+      phone_notification_phone: phoneNotification.phone,
     };
 
     console.log("[Reservation] Final response:", JSON.stringify(response));

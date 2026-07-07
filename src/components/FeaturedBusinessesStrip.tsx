@@ -25,6 +25,8 @@ interface BusinessRow {
   logo_url: string | null;
   horaires_ok: string | null;
   telephone: string | null;
+  'Note Google Globale'?: string | number | null;
+  'Compteur Avis Google'?: string | number | null;
   name_ar: string | null;
   description_ar: string | null;
 }
@@ -81,7 +83,7 @@ export const FeaturedBusinessesStrip = ({ variant }: FeaturedBusinessesStripProp
     const fetchData = async () => {
       setLoading(true);
       try {
-        const FIELDS = `id, nom, ville, gouvernorat, sous_categories_texte, statut_abonnement, "niveau priorité abonnement", image_url, logo_url, horaires_ok, telephone, name_ar, description_ar, slug`;
+        const FIELDS = `id, nom, ville, gouvernorat, sous_categories_texte, statut_abonnement, "niveau priorité abonnement", image_url, logo_url, horaires_ok, telephone, "Note Google Globale", "Compteur Avis Google", name_ar, description_ar, slug`;
 
         const { data: fetchedData } = await supabase
           .from('entreprise')
@@ -168,6 +170,8 @@ export const FeaturedBusinessesStrip = ({ variant }: FeaturedBusinessesStripProp
                   logoUrl: biz.logo_url,
                   horaires_ok: biz.horaires_ok,
                   telephone: biz.telephone,
+                  'Note Google Globale': biz['Note Google Globale'] ?? null,
+                  'Compteur Avis Google': biz['Compteur Avis Google'] ?? null,
                   name_ar: biz.name_ar,
                   description_ar: biz.description_ar,
                 }}
