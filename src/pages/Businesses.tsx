@@ -42,6 +42,7 @@ interface Business {
   email: string;
   website?: string;
   description: string;
+  a_propos?: string | null;
   services?: string;
   imageUrl?: string | null;
   logoUrl?: string | null;
@@ -93,7 +94,7 @@ interface BusinessNeedActivityRow {
   created_at: string | null;
 }
 
-const ENTREPRISE_SELECT_FIELDS = 'id, nom, sous_categories_texte, sous_categories_clean, categorie, gouvernorat, ville, adresse, telephone, email, site_web, description, services, image_url, logo_url, statut_abonnement, "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, statut_carte, name_ar, description_ar, slug';
+const ENTREPRISE_SELECT_FIELDS = 'id, nom, sous_categories_texte, sous_categories_clean, categorie, gouvernorat, ville, adresse, telephone, email, site_web, description, a_propos, services, image_url, logo_url, statut_abonnement, "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, statut_carte, name_ar, description_ar, slug';
 
 const PUBLIC_BUSINESS_NEED_ACTIVITY_TYPES = new Set([
   'supplier_search',
@@ -727,6 +728,7 @@ export const Businesses = ({
         email: item.email || '',
         website: item.site_web || '',
         description: item.description || '',
+        a_propos: item.a_propos || null,
         services: item.services || '',
         imageUrl: item.image_url || null,
         logoUrl: item.logo_url || null,
@@ -905,6 +907,7 @@ export const Businesses = ({
         email: item.email || '',
         website: item.site_web || '',
         description: item.description || '',
+        a_propos: item.a_propos || null,
         services: item.services || '',
         imageUrl: item.image_url || null,
         logoUrl: item.logo_url || null,

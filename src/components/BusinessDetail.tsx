@@ -66,6 +66,22 @@ import { findMetierByValue, findVilleByLabel } from '../lib/seoLandingData';
 import GratuitCard from '../components/GratuitCard';
 import ReservationForm from '../components/ReservationForm';
 
+function TikTokIcon({ className = 'text-white', size = 10 }: { className?: string; size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={className}
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path d="M16.6 5.8c1.2 1.4 2.6 2.2 4.4 2.3v3.4c-1.6.1-3-.4-4.4-1.3v5.8c0 3.9-2.6 6.3-6.1 6.3-3.2 0-5.5-2.1-5.5-5.1 0-3.2 2.5-5.4 6.1-5.4.3 0 .7 0 1 .1v3.5c-.3-.1-.6-.1-.9-.1-1.5 0-2.4.7-2.4 1.8 0 1 .8 1.7 1.9 1.7 1.3 0 2.1-.8 2.1-2.4V2h3.8c.1 1.5.1 2.7 0 3.8Z" />
+    </svg>
+  );
+}
+
 function getFullImageUrl(url?: string | null): string {
   if (!url || url.trim() === '') return HERO_IMAGE_URL;
 
@@ -125,6 +141,17 @@ function normalizeText(value: string | null | undefined): string {
     .replace(/\s+/g, ' ')
     .trim()
     .toUpperCase();
+}
+
+function getAboutText(business: any): string {
+  return String(
+    business?.a_propos ||
+      business?.about ||
+      business?.['À propos'] ||
+      business?.['A propos'] ||
+      business?.['a propos'] ||
+      ''
+  ).trim();
 }
 
 function renderStatutCarteBadge(statut_carte: string | null | undefined) {
@@ -198,6 +225,7 @@ function normalizeBusiness(business: any): any {
     score_avis: business.score_avis ?? null,
     site_web: business.site_web || business.website || '',
     description: business.description || '',
+    a_propos: getAboutText(business),
     services: business.services || '',
     BTN_Maps: business.BTN_Maps || business['BTN_Maps'] || business.google_url || null,
     statut_validation: business.statut_validation || null,
@@ -300,6 +328,10 @@ interface Business {
   score_avis?: string | number | null;
   site_web?: string;
   description: string;
+  a_propos?: string | null;
+  about?: string | null;
+  'À propos'?: string | null;
+  'A propos'?: string | null;
   services?: string;
   BTN_Maps?: string | null;
   statut_validation?: string | null;
@@ -919,6 +951,8 @@ export const BusinessDetail = ({
     '';
 
   const translatedDescription = displayDescription;
+  const aboutText = getAboutText(business);
+  const shouldShowAbout = !!aboutText;
 
   const translatedServices = business
     ? getMultilingualField(business, 'services', language, true) || business.services || ''
@@ -1202,32 +1236,34 @@ export const BusinessDetail = ({
                 <span style={{ fontSize: '13px' }}>🛠️</span>
                 Services
               </button>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.nativeEvent.stopImmediatePropagation();
-                  setActiveTab(activeTab === 'about' ? null : 'about');
-                }}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '5px',
-                  background: activeTab === 'about' ? `${colors.gold}18` : 'none',
-                  border: `1px solid ${activeTab === 'about' ? colors.gold : `${colors.gold}60`}`,
-                  borderRadius: '20px',
-                  padding: '4px 12px',
-                  cursor: 'pointer',
-                  fontSize: '11px',
-                  fontFamily: 'Playfair Display, serif',
-                  fontWeight: '600',
-                  color: colors.gold,
-                  letterSpacing: '0.03em',
-                  transition: 'background 0.2s ease, border-color 0.2s ease',
-                }}
-              >
-                <span style={{ fontSize: '13px' }}>ℹ️</span>
-                À propos
-              </button>
+              {shouldShowAbout && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.nativeEvent.stopImmediatePropagation();
+                    setActiveTab(activeTab === 'about' ? null : 'about');
+                  }}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '5px',
+                    background: activeTab === 'about' ? `${colors.gold}18` : 'none',
+                    border: `1px solid ${activeTab === 'about' ? colors.gold : `${colors.gold}60`}`,
+                    borderRadius: '20px',
+                    padding: '4px 12px',
+                    cursor: 'pointer',
+                    fontSize: '11px',
+                    fontFamily: 'Playfair Display, serif',
+                    fontWeight: '600',
+                    color: colors.gold,
+                    letterSpacing: '0.03em',
+                    transition: 'background 0.2s ease, border-color 0.2s ease',
+                  }}
+                >
+                  <span style={{ fontSize: '13px' }}>ℹ️</span>
+                  À propos
+                </button>
+              )}
             </div>
 
             {/* Tab content: Photos */}
@@ -1294,23 +1330,17 @@ export const BusinessDetail = ({
             )}
 
             {/* Tab content: À propos */}
-            {activeTab === 'about' && (
+            {activeTab === 'about' && shouldShowAbout && (
               <div style={{ marginTop: '10px', position: 'relative', zIndex: 100, pointerEvents: 'auto' }}>
-                {(business.description && business.description.trim()) ? (
-                  <p style={{
-                    fontSize: '12px',
-                    lineHeight: '1.6',
-                    color: '#ddd',
-                    fontFamily: 'Playfair Display, serif',
-                    whiteSpace: 'pre-line',
-                  }}>
-                    {business.description}
-                  </p>
-                ) : (
-                  <p style={{ fontSize: '12px', color: '#999', fontStyle: 'italic', fontFamily: 'Playfair Display, serif' }}>
-                    Aucune information complémentaire
-                  </p>
-                )}
+                <p style={{
+                  fontSize: '12px',
+                  lineHeight: '1.6',
+                  color: '#ddd',
+                  fontFamily: 'Playfair Display, serif',
+                  whiteSpace: 'pre-line',
+                }}>
+                  {aboutText}
+                </p>
               </div>
             )}
 
@@ -1318,7 +1348,7 @@ export const BusinessDetail = ({
             <div className="sr-only" aria-hidden="false">
               <h2>Services et informations</h2>
               {business.sous_categories && <p>Services: {business.sous_categories}</p>}
-              {business.description && <p>À propos: {business.description}</p>}
+              {shouldShowAbout && <p>À propos: {aboutText}</p>}
             </div>
           </div>
 
@@ -1982,6 +2012,23 @@ export const BusinessDetail = ({
                     style={{ position: 'relative', zIndex: 50, pointerEvents: 'auto' }}
                   >
                     <Facebook size={10} className="text-white" />
+                  </a>
+                )}
+
+              {(tier === 'premium' || tier === 'elite') &&
+                business['Lien TikTok'] &&
+                business['Lien TikTok'].trim() !== '' && (
+                  <a
+                    href={business['Lien TikTok']}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="flex items-center justify-center w-8 h-8 rounded-full transition-all hover:scale-110 bg-black cursor-pointer"
+                    style={{ position: 'relative', zIndex: 50, pointerEvents: 'auto' }}
+                    title="TikTok"
+                    aria-label="TikTok"
+                  >
+                    <TikTokIcon size={11} className="text-white" />
                   </a>
                 )}
 

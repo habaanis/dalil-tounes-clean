@@ -23,6 +23,7 @@ export interface BusinessRow {
   email: string;
   website: string;
   description: string;
+  a_propos?: string | null;
   services: string;
   imageUrl: string | null;
   logoUrl: string | null;
@@ -64,7 +65,7 @@ const GC_TIME     = 60 * 60_000;
 
 const FIELDS = [
   'id', 'nom', 'sous_categories_texte', 'sous_categories_clean', 'categorie', 'gouvernorat', 'ville',
-  'adresse', 'telephone', 'email', 'site_web', 'description', 'services',
+  'adresse', 'telephone', 'email', 'site_web', 'description', 'a_propos', 'services',
   'image_url', 'logo_url', 'statut_abonnement',
   '"mots cles recherche"', '"Lien Instagram"', '"lien facebook"', '"Lien TikTok"',
   '"Lien LinkedIn"', '"Lien YouTube"', 'lien_x', 'horaires_ok', 'statut_carte',
@@ -137,6 +138,7 @@ function mapRow(item: Record<string, unknown>): BusinessRow {
     email: (item.email as string) || '',
     website: (item.site_web as string) || '',
     description: (item.description as string) || '',
+    a_propos: (item.a_propos as string | null) ?? null,
     services: (item.services as string) || '',
     imageUrl: (item.image_url as string | null) ?? null,
     logoUrl: (item.logo_url as string | null) ?? null,

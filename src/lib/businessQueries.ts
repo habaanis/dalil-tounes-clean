@@ -17,6 +17,7 @@ export const BUSINESS_COLUMNS = `
   categorie,
   secteur,
   description,
+  a_propos,
   telephone,
   email,
   site_web,
