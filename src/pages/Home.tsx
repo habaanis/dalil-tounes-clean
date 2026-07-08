@@ -13,8 +13,9 @@ import { supabase } from '../lib/BoltDatabase';
 import { notifyAdmin } from '../lib/notifyAdmin';
 import React, { lazy, Suspense, useEffect, useState } from 'react';
 import InstallAppBanner from '../components/InstallAppBanner';
+import SearchBar from '../components/SearchBar';
 
-// Tous les composants lourds (liste Premium, Avis, Témoignages, SearchBar)
+// Tous les composants lourds (liste Premium, Avis, Témoignages)
 // sont chargés paresseusement afin de ne pas bloquer le rendu du Hero / LCP.
 const PremiumPartnersSection = lazy(() =>
   import('../components/PremiumPartnersSection').then(m => ({ default: m.PremiumPartnersSection }))
@@ -22,7 +23,6 @@ const PremiumPartnersSection = lazy(() =>
 const LeisureEventsSection = lazy(() => import('../components/LeisureEventsSection'));
 const HomeTestimonials = lazy(() => import('../components/HomeTestimonials'));
 const EntrepriseAvisForm = lazy(() => import('../components/EntrepriseAvisForm'));
-const SearchBar = lazy(() => import('../components/SearchBar'));
 
 import { useHomeData } from '../hooks/useHomeData';
 

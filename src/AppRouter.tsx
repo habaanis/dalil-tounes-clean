@@ -1,6 +1,11 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { lazy, Suspense, useEffect } from 'react';
 import { Layout } from './components/Layout';
+import SearchBar from './components/SearchBar';
+
+if (typeof window !== 'undefined') {
+  (window as any).__DALIL_SEARCHBAR_STATIC__ = SearchBar;
+}
 
 function ScrollToTop() {
   const { pathname } = useLocation();
