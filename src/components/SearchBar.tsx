@@ -459,6 +459,8 @@ export default function SearchBar({
     const query = q.trim();
     const villeParam = city.trim();
     let detectedCategory: string | undefined;
+    setEnt([]);
+    setVilles([]);
 
     if (resultMode === 'redirectToResults') {
       goToResults();
@@ -571,6 +573,7 @@ export default function SearchBar({
   };
 
   const hasResults = q.trim().length >= MIN_CHARS && (ent.length > 0 || !loadingEnt || showSeeAllItem);
+  const shouldRenderDropdown = resultMode !== 'filterCards' && hasResults;
 
   return (
     <form
@@ -607,7 +610,7 @@ export default function SearchBar({
         </div>
       </div>
 
-      {hasResults && ReactDOM.createPortal(
+      {shouldRenderDropdown && ReactDOM.createPortal(
         <div
           className="rounded-xl border bg-white shadow-2xl p-3 space-y-3 max-h-[60vh] overflow-auto"
           style={{

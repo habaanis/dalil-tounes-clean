@@ -207,10 +207,22 @@ function SectionIntro({
 
 function DemoCVBusinessPreview() {
   return (
-    <div className="relative rounded-2xl border border-[#D4AF37]/30 bg-[#F8F4EA] p-2 shadow-[0_16px_42px_rgba(74,29,67,0.12)] overflow-hidden">
+    <div className="relative mx-auto w-fit max-w-full rounded-2xl border border-[#D4AF37]/30 bg-[#F8F4EA] p-2 shadow-[0_16px_42px_rgba(74,29,67,0.12)] overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_0%,rgba(212,175,55,0.16),transparent_26%)]" />
       <div className="relative mx-auto max-h-[430px] overflow-hidden rounded-xl">
         <div style={{ width: '440px', maxWidth: '100%', zoom: 0.58 } as any}>
+          <BusinessDetail preview business={DEMO_BUSINESS} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DemoCVBusinessLargePreview() {
+  return (
+    <div className="mx-auto w-fit max-w-full overflow-hidden rounded-2xl border border-[#D4AF37]/35 bg-[#F8F4EA] p-2 shadow-sm">
+      <div className="max-h-[72vh] overflow-y-auto overflow-x-hidden rounded-xl">
+        <div style={{ width: '420px', maxWidth: '100%', zoom: 0.88 } as any}>
           <BusinessDetail preview business={DEMO_BUSINESS} />
         </div>
       </div>
@@ -351,6 +363,7 @@ export const Businesses = ({
   const [pageCategorie, setPageCategorie] = useState<string | null>(null);
   const [showSuggestForm, setShowSuggestForm] = useState(showSuggestionForm);
   const [showNeedForm, setShowNeedForm] = useState(false);
+  const [showDemoModal, setShowDemoModal] = useState(false);
   const [preselectedBusinessId, setPreselectedBusinessId] = useState<string | null>(null);
   const [searching, setSearching] = useState(false);
   const [pendingSearch, setPendingSearch] = useState(false);
@@ -381,6 +394,17 @@ export const Businesses = ({
   }, [loading, searching]);
 
   const hasActiveSearch = !!selectedBusinessId || !!searchTerm || !!selectedCity || !!selectedCategory || !!pageCategorie || filterPremium || filterCommerceLocal || !!filterStatutCarte;
+
+  useEffect(() => {
+    if (!showDemoModal) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setShowDemoModal(false);
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [showDemoModal]);
 
   useEffect(() => {
     let active = true;
@@ -1333,8 +1357,22 @@ export const Businesses = ({
           </div>
         </section>
 
+        <section className="px-4 pt-4 pb-2">
+          <div className="max-w-5xl mx-auto">
+            <GuideMascot
+              variant="info"
+              pose="point"
+              position="left"
+              size="sm"
+              title="À vous d'explorer."
+              message="Vous pouvez maintenant découvrir les professionnels déjà présents sur Dalil Tounes et voir comment leurs fiches sont présentées aux visiteurs."
+              className="py-4 sm:py-5"
+            />
+          </div>
+        </section>
+
         {/* SearchBar Entreprises */}
-        <section id="business-search" className="py-8 px-4 relative z-[5] scroll-mt-28">
+        <section id="business-search" className="py-6 px-4 relative z-0 scroll-mt-28">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-5">
               <h2 className="text-xl md:text-2xl font-bold text-[#4A1D43]">Découvrez les entreprises déjà présentes sur Dalil Tounes.</h2>
@@ -1392,7 +1430,7 @@ export const Businesses = ({
         )}
 
         {/* Affichage des résultats : avec ou sans recherche active */}
-        <div ref={resultsRef} className="mb-10">
+        <div ref={resultsRef} className="relative z-10 mb-10 bg-[#F8F9FA]">
           {(loading || searching || pendingSearch) ? (
             <div className="text-center py-12">
               <div className="inline-block w-8 h-8 border-2 border-[#D4AF37] border-t-transparent rounded-full animate-spin"></div>
@@ -1409,7 +1447,7 @@ export const Businesses = ({
                 <h3 className="text-lg font-bold text-[#4A1D43]">
                   {hasActiveSearch ? ((t as any).businessesExtra?.searchResults || 'Résultats de votre recherche') : ((t as any).businessesExtra?.featuredTitle || 'Entreprises en vedette')}
                   <span className="ms-2 text-sm text-gray-500 font-normal">
-                    ({hasActiveSearch ? filteredBusinesses.length : Math.min(4, filteredBusinesses.length)} {filteredBusinesses.length > 1 ? ((t as any).businessesExtra?.businessPlur || 'entreprises') : ((t as any).businessesExtra?.businessSing || 'entreprise')})
+                    ({hasActiveSearch ? filteredBusinesses.length : Math.min(3, filteredBusinesses.length)} {filteredBusinesses.length > 1 ? ((t as any).businessesExtra?.businessPlur || 'entreprises') : ((t as any).businessesExtra?.businessSing || 'entreprise')})
                   </span>
                 </h3>
                 {hasActiveSearch && (
@@ -1424,7 +1462,13 @@ export const Businesses = ({
                       setFilterCommerceLocal(false);
                       setFilterStatutCarte('');
                       setSelectedChipCategories([]);
-                      navigate('/entreprises');
+                      navigate('/entreprises', { replace: true });
+                      window.setTimeout(() => {
+                        document.getElementById('business-search')?.scrollIntoView({
+                          behavior: 'smooth',
+                          block: 'start',
+                        });
+                      }, 50);
                     }}
                     className="text-xs text-[#4A1D43] hover:text-[#D4AF37] font-medium"
                   >
@@ -1433,7 +1477,7 @@ export const Businesses = ({
                 )}
               </div>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {Array.isArray(filteredBusinesses) && filteredBusinesses.slice(0, hasActiveSearch ? filteredBusinesses.length : 4).map((business) => {
+                {Array.isArray(filteredBusinesses) && filteredBusinesses.slice(0, hasActiveSearch ? filteredBusinesses.length : 3).map((business) => {
                   if (!business || !business.id) return null;
 
                   return (
@@ -1470,14 +1514,11 @@ export const Businesses = ({
                 })}
               </div>
 
-              {!hasActiveSearch && filteredBusinesses.length > 4 && (
+              {!hasActiveSearch && filteredBusinesses.length > 3 && (
                 <div className="mt-6 text-center">
-                  <p className="text-sm text-gray-600 mb-3">
-                    {(t as any).businessesExtra?.searchHint || 'Vous recherchez une entreprise spécifique ? Utilisez la barre de recherche ci-dessus'}
-                  </p>
                   <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#D4AF37]/10 rounded-lg text-xs text-[#4A1D43]" style={{ border: '1px solid #D4AF37' }}>
                     <Search className="w-4 h-4" />
-                    <span className="font-medium">{(t as any).businessesExtra?.moreAvailablePrefix || 'Plus de'} {filteredBusinesses.length - 4} {(t as any).businessesExtra?.moreAvailableSuffix || 'entreprises disponibles via la recherche'}</span>
+                    <span className="font-medium">Recherchez parmi les entreprises déjà présentes sur Dalil Tounes.</span>
                   </div>
                 </div>
               )}
@@ -1501,7 +1542,17 @@ export const Businesses = ({
                 <FeaturePill icon={QrCode} label="QR Code" />
               </div>
             </div>
-            <DemoCVBusinessPreview />
+            <div className="flex flex-col items-center lg:items-start gap-3">
+              <DemoCVBusinessPreview />
+              <button
+                type="button"
+                onClick={() => setShowDemoModal(true)}
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-[#D4AF37] bg-white px-5 py-2.5 text-sm font-bold text-[#4A1D43] shadow-sm transition hover:bg-[#FFF8E1] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/60"
+              >
+                Voir la fiche en grand
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
           </div>
         </section>
 
@@ -1594,6 +1645,40 @@ export const Businesses = ({
             </button>
           </div>
         </section>
+
+        {showDemoModal && (
+          <div
+            className="fixed inset-0 z-[120000] flex items-center justify-center bg-black/75 p-4"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="business-demo-modal-title"
+            onClick={(event) => {
+              if (event.target === event.currentTarget) setShowDemoModal(false);
+            }}
+          >
+            <div className="relative max-h-[calc(100vh-32px)] w-fit max-w-[95vw] overflow-y-auto overflow-x-hidden">
+              <div className="relative mb-3 rounded-2xl border border-white/70 bg-white/95 px-12 py-4 text-center shadow-2xl backdrop-blur">
+                <div className="mx-auto max-w-sm">
+                  <h2 id="business-demo-modal-title" className="text-lg font-bold text-[#4A1D43]">
+                    Exemple de fiche professionnelle Dalil Tounes
+                  </h2>
+                  <p className="mt-1 text-sm leading-relaxed text-gray-600">
+                    Cette démonstration vous permet de découvrir les principales fonctionnalités d'une fiche professionnelle.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowDemoModal(false)}
+                  className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 text-gray-600 transition hover:bg-gray-50 hover:text-[#4A1D43] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/60"
+                  aria-label="Fermer la démonstration"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+              <DemoCVBusinessLargePreview />
+            </div>
+          </div>
+        )}
 
         {showSuggestForm && (
           <div className="fixed inset-0 bg-black/80 z-[99999] flex items-center justify-center p-4" onClick={(e) => e.target === e.currentTarget && setShowSuggestForm(false)}>
