@@ -7,18 +7,14 @@ import { getHashQueryParams } from '../lib/url';
 import { readParams } from '../lib/urlParams';
 import { buildEntrepriseUrl } from '../lib/slugify';
 import { RPC, Tables } from '../lib/dbTables';
-import { FeaturedEventsCarousel } from '../components/FeaturedEventsCarousel';
-import { FeaturedBusinessesStrip } from '../components/FeaturedBusinessesStrip';
-import { METIERS_DOMAINES } from '../lib/categories';
 import { FINANCE_SUBCATEGORIES } from '../lib/entrepriseCategories';
-import { Search, MapPin, Phone, Mail, Globe, Building2, X, Plus, ChevronDown, Star, Award, Briefcase } from 'lucide-react';
+import { Search, MapPin, Phone, Mail, Building2, X, Award, ArrowRight, ShieldCheck, Clock, QrCode, Calendar } from 'lucide-react';
 import { Toast } from '../components/Toast';
-import { getSupabaseImageUrl } from '../lib/imageUtils';
-import { HERO_IMAGE_URL, HERO_IMAGE_JPG_URL } from '../constants/images';
-import SignatureCard from '../components/SignatureCard';
 import BusinessNeedForm from '../components/BusinessNeedForm';
 import { normalizeText, removeArabicDiacritics, extractFrenchName, cleanSearchTerm, cleanArabicField } from '../lib/textNormalization';
 import { BusinessCardWithActivity, type BusinessActivity } from '../components/BusinessCardWithActivity';
+import { BusinessDetail } from '../components/BusinessDetail';
+import { GuideMascot } from '../components/GuideMascot';
 import SearchBar from '../components/SearchBar';
 import { getSubscriptionPriority } from '../lib/subscriptionHelper';
 import {
@@ -110,6 +106,126 @@ const PUBLIC_BUSINESS_NEED_ACTIVITY_TYPES = new Set([
   'business_opportunity',
   'other',
 ]);
+
+const DEMO_LOGO_URL = 'https://ik.imagekit.io/gfdpqvshw/Design_Assets_Dalil_Tounes/logos/logo_dalil_tounes_sceau_luxe.png?updatedAt=1773327267816&tr=w-140,h-140,f-auto,q-85';
+
+const DEMO_BUSINESS = {
+  id: 'demo-professionnel-dalil',
+  name: 'Fiche Professionnelle Démo',
+  nom: 'Fiche Professionnelle Démo',
+  categorie: 'Entreprise tunisienne',
+  category: 'Entreprise tunisienne',
+  ville: 'Tunisie',
+  city: 'Tunisie',
+  gouvernorat: 'Tunisie',
+  adresse: 'Adresse de démonstration',
+  description: "Une fiche complète permet de présenter l'activité, les services, les horaires, les photos et les moyens de contact sur un seul espace clair.",
+  a_propos: "Cette démonstration montre comment une entreprise peut rassembler ses informations utiles dans un CV Business clair et rassurant.",
+  telephone: '+216 XX XXX XXX',
+  phone: '+216 XX XXX XXX',
+  whatsapp: '+216 XX XXX XXX',
+  email: 'contact@dalil-tounes.com',
+  site_web: 'https://dalil-tounes.com',
+  website: 'https://dalil-tounes.com',
+  services: 'Présentation, coordonnées, horaires, photos, réservation, QR Code',
+  statut_abonnement: 'premium',
+  niveau_priorite_abonnement: 3,
+  logoUrl: DEMO_LOGO_URL,
+  logo_url: DEMO_LOGO_URL,
+  imageUrl: null,
+  image_url: null,
+  horaires_ok: 'Lundi : 08:00–18:00\nMardi : 08:00–18:00\nMercredi : 08:00–18:00\nJeudi : 08:00–18:00\nVendredi : 08:00–18:00\nSamedi : 09:00–13:00\nDimanche : Fermé',
+  note_google: null,
+  nombre_avis: null,
+  score_avis: null,
+  statut_carte: 'Certifié Dalil Tounes',
+  latitude: 36.8065,
+  longitude: 10.1815,
+  google_url: null,
+  'BTN_Maps': null,
+  name_ar: null,
+  name_en: null,
+  name_it: null,
+  name_ru: null,
+  description_ar: null,
+  description_en: null,
+  description_it: null,
+  description_ru: null,
+  featured: true,
+  is_premium: true,
+  approved: true,
+  statut_validation: 'valide',
+  badges: [],
+};
+
+const PROFESSIONAL_FAQ = [
+  {
+    question: 'Est-ce que Dalil remplace Google Business ?',
+    answer: "Non. Dalil Tounes ne remplace pas Google Business, Facebook, Instagram, LinkedIn ou votre site web. La plateforme les complète en réunissant les informations utiles dans une fiche claire pensée pour la Tunisie.",
+  },
+  {
+    question: 'Puis-je conserver mon site web ?',
+    answer: "Oui. Votre site web reste important. La fiche Dalil Tounes peut au contraire aider vos visiteurs à retrouver votre site officiel, vos réseaux sociaux, vos coordonnées et vos informations pratiques.",
+  },
+  {
+    question: 'Comment mettre ma fiche à jour ?',
+    answer: "L'objectif est de permettre aux entreprises de vérifier, compléter et mettre à jour leurs informations afin que la fiche reste fiable pour les futurs clients.",
+  },
+  {
+    question: 'Pourquoi créer une fiche professionnelle ?',
+    answer: "Parce qu'une fiche complète rassure les visiteurs. Elle montre votre activité, vos informations utiles, vos horaires, vos moyens de contact et facilite le premier échange.",
+  },
+  {
+    question: 'Les artisans peuvent-ils rejoindre Dalil Tounes ?',
+    answer: "Oui. La page s'adresse aussi aux artisans, indépendants, commerçants, professions libérales, PME et entreprises qui souhaitent être trouvés plus facilement.",
+  },
+  {
+    question: 'Les commerçants sont-ils concernés ?',
+    answer: "Oui. Un commerce peut utiliser sa fiche pour présenter ses horaires, sa localisation, ses photos, ses réseaux sociaux, son site web et ses moyens de contact.",
+  },
+];
+
+function SectionIntro({
+  eyebrow,
+  title,
+  children,
+}: {
+  eyebrow?: string;
+  title: string;
+  children?: React.ReactNode;
+}) {
+  return (
+    <div className="max-w-3xl">
+      {eyebrow && (
+        <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#D4AF37] mb-3">{eyebrow}</p>
+      )}
+      <h2 className="text-2xl md:text-3xl font-bold text-[#4A1D43] leading-tight">{title}</h2>
+      {children && <div className="mt-4 text-sm md:text-base text-gray-600 leading-relaxed space-y-3">{children}</div>}
+    </div>
+  );
+}
+
+function DemoCVBusinessPreview() {
+  return (
+    <div className="relative rounded-2xl border border-[#D4AF37]/30 bg-[#F8F4EA] p-2 shadow-[0_16px_42px_rgba(74,29,67,0.12)] overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_0%,rgba(212,175,55,0.16),transparent_26%)]" />
+      <div className="relative mx-auto max-h-[430px] overflow-hidden rounded-xl">
+        <div style={{ width: '440px', maxWidth: '100%', zoom: 0.58 } as any}>
+          <BusinessDetail preview business={DEMO_BUSINESS} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FeaturePill({ icon: Icon, label }: { icon: React.ComponentType<{ className?: string }>; label: string }) {
+  return (
+    <span className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/35 bg-white px-3 py-1.5 text-xs font-semibold text-[#4A1D43] shadow-sm">
+      <Icon className="h-3.5 w-3.5 text-[#D4AF37]" />
+      {label}
+    </span>
+  );
+}
 
 function normalizeActivityCompanyName(value: string | null | undefined): string {
   return String(value || '')
@@ -1128,43 +1244,104 @@ export const Businesses = ({
       )}
 
       <div className="max-w-7xl mx-auto">
-        {/* Hero Section Premium - Style CitizensLeisure adapté */}
-        <div className="relative mb-8">
-          {/* Image de fond drapeau tunisien avec taille réduite */}
-          <div className="relative h-64 md:h-72 overflow-hidden">
-            <picture>
-              <source srcSet={HERO_IMAGE_URL} type="image/webp" />
-              <img
-                src={HERO_IMAGE_JPG_URL}
-                alt="Drapeau de la Tunisie"
-                className="w-full h-full object-cover brightness-105"
-                onError={(e) => { (e.currentTarget as HTMLImageElement).src = HERO_IMAGE_JPG_URL; }} decoding="async"
+        <section className="px-4 pt-8 pb-12">
+          <div className="relative overflow-hidden rounded-[28px] border border-[#D4AF37]/40 bg-gradient-to-br from-[#4A1D43] via-[#6D2B58] to-[#0B5A45] shadow-[0_28px_80px_rgba(74,29,67,0.22)]">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_15%,rgba(212,175,55,0.25),transparent_28%),radial-gradient(circle_at_80%_10%,rgba(255,255,255,0.14),transparent_26%)]" />
+            <div className="relative grid gap-8 lg:grid-cols-[1.05fr_0.95fr] items-center px-5 py-10 sm:px-8 lg:px-12 lg:py-14">
+              <div className="text-white">
+                <p className="mb-4 inline-flex rounded-full border border-[#D4AF37]/50 bg-white/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-[#F7D978]">
+                  Professionnels
+                </p>
+                <h1 className="text-3xl md:text-5xl font-bold leading-tight">
+                  Développez votre activité avec Dalil Tounes
+                </h1>
+                <p className="mt-5 max-w-2xl text-base md:text-lg leading-relaxed text-white/88">
+                  Présentez votre activité grâce à une fiche professionnelle complète, facilitez les contacts avec vos futurs clients et développez votre visibilité partout en Tunisie.
+                </p>
+                <div className="mt-7 flex flex-col sm:flex-row gap-3">
+                  <button
+                    type="button"
+                    onClick={() => navigate('/subscription')}
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-[#D4AF37] px-6 py-3 text-sm font-bold text-[#4A1D43] shadow-lg transition hover:bg-[#F0CD5A]"
+                  >
+                    Découvrir les offres
+                    <ArrowRight className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => document.getElementById('business-search')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                    className="inline-flex items-center justify-center gap-2 rounded-full border border-white/55 bg-white/10 px-6 py-3 text-sm font-bold text-white transition hover:bg-white/18"
+                  >
+                    Rechercher une entreprise
+                    <Search className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+
+              <GuideMascot
+                variant="business"
+                pose="hello"
+                position="left"
+                size="md"
+                title="Bonjour !"
+                message="Je vais vous montrer comment une fiche professionnelle peut aider votre activité à gagner en visibilité et inspirer confiance."
+                className="bg-white/95 border-white/70 shadow-xl"
               />
-            </picture>
-            {/* Overlay bleu profond pour lisibilité */}
-            <div className="absolute inset-0 bg-[#0c2461] opacity-15"></div>
+            </div>
           </div>
+        </section>
 
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 sm:px-6">
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold text-[#D4AF37] mb-4" style={{ textShadow: '2px 2px 8px rgba(0,0,0,0.9)' }}>
-              Centre d'affaires de Dalil Tounes
-            </h1>
+        <section className="px-4 py-8">
+          <div className="max-w-4xl mx-auto">
+            <SectionIntro
+              eyebrow="Présence en ligne"
+              title="Aujourd'hui, vos futurs clients recherchent d'abord sur Internet."
+            >
+              <p>Avant d'appeler, de se déplacer ou de réserver, beaucoup de personnes commencent par chercher une entreprise en ligne.</p>
+              <p>Elles veulent vérifier les horaires, l'adresse, les avis, les photos, les coordonnées et comprendre rapidement si le professionnel correspond à leur besoin.</p>
+              <p>Le bouche-à-oreille reste précieux. Beaucoup de personnes demandent encore conseil à leur entourage avant de choisir un artisan, un commerçant ou une entreprise.</p>
+              <p>Mais une recommandation ne permet pas toujours de vérifier le nouveau numéro, la nouvelle adresse, les horaires, les avis récents, les photos ou les services proposés.</p>
+              <p>Les citoyens souhaitent désormais compléter ces recommandations grâce à des informations fiables, cohérentes et régulièrement mises à jour. Quand ces informations sont faciles à retrouver, le premier contact devient naturellement plus simple.</p>
+            </SectionIntro>
+          </div>
+        </section>
 
-            <div className="max-w-3xl mx-auto space-y-2">
-              <p className="text-white text-sm md:text-base leading-relaxed" style={{ textShadow: '1px 1px 4px rgba(0,0,0,0.7)' }}>
-                Développez votre activité grâce à la plateforme professionnelle dédiée aux entreprises tunisiennes.
-              </p>
-              <p className="text-white text-sm md:text-base leading-relaxed" style={{ textShadow: '1px 1px 4px rgba(0,0,0,0.7)' }}>
-                Trouvez des fournisseurs, partenaires, prestataires et découvrez les opportunités professionnelles partout en Tunisie.
+        <section className="px-4 py-10 bg-white">
+          <div className="max-w-6xl mx-auto grid gap-8 lg:grid-cols-[1fr_0.9fr] items-start">
+            <SectionIntro
+              eyebrow="Pourquoi une fiche ?"
+              title="Pourquoi une fiche professionnelle est-elle importante ?"
+            >
+              <p>Beaucoup de professionnels possèdent un véritable savoir-faire. Pourtant, leurs informations sont parfois dispersées ou incomplètes.</p>
+              <p>Une page Facebook peut afficher un ancien numéro. Google Business peut contenir des horaires non mis à jour. Instagram montre souvent de belles photos, mais peu d'informations pratiques.</p>
+              <p>Une fiche professionnelle complète, cohérente et régulièrement mise à jour aide aussi les moteurs de recherche à mieux comprendre votre activité.</p>
+              <p>Plus votre présence numérique est cohérente, plus vous augmentez vos chances d'être trouvé lors des recherches locales, sans jamais garantir une position précise sur Google.</p>
+              <p>Une fiche professionnelle claire, complète et régulièrement mise à jour permet de rassurer les visiteurs et facilite le premier contact.</p>
+            </SectionIntro>
+
+            <div className="rounded-2xl border border-[#D4AF37]/30 bg-[#FFFDF6] p-5 shadow-sm">
+              <div className="flex items-center gap-3">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#D4AF37]/15 text-[#D4AF37]">
+                  <ShieldCheck className="h-5 w-5" />
+                </span>
+                <h3 className="text-lg font-bold text-[#4A1D43]">Conseil de Dalil</h3>
+              </div>
+              <p className="mt-4 text-sm leading-relaxed text-gray-700">
+                Avant de chercher à être plus visible, assurez-vous que les informations de votre entreprise sont cohérentes partout où vos clients peuvent vous trouver.
               </p>
             </div>
           </div>
-        </div>
-
+        </section>
 
         {/* SearchBar Entreprises */}
-        <section className="py-3 px-4 relative z-[5]">
+        <section id="business-search" className="py-8 px-4 relative z-[5] scroll-mt-28">
           <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-5">
+              <h2 className="text-xl md:text-2xl font-bold text-[#4A1D43]">Découvrez les entreprises déjà présentes sur Dalil Tounes.</h2>
+              <p className="mt-3 text-sm md:text-base text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                Vous pouvez rechercher une entreprise, un artisan, un commerçant ou un professionnel partout en Tunisie et découvrir leur fiche.
+              </p>
+            </div>
             <div className="bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-[#D4AF37] p-2.5 md:p-3">
               <SearchBar
                 scope="global"
@@ -1176,192 +1353,6 @@ export const Businesses = ({
             </div>
           </div>
         </section>
-
-        {/* Bandeau d'événements entreprises */}
-        <section id="section-evenements-entreprise" className="mb-6 px-4 scroll-mt-24">
-          <FeaturedEventsCarousel />
-        </section>
-
-        {/* Nos services professionnels */}
-        <section className="mb-8 px-4">
-          <h2 className="text-lg md:text-xl font-bold text-[#4A1D43] mb-4 text-center">
-            Nos services professionnels
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all">
-              <div className="text-2xl mb-3">🤝</div>
-              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5">Trouver une entreprise</h3>
-              <p className="text-xs text-gray-600 leading-relaxed">
-                Recherchez rapidement un fournisseur, un prestataire ou une entreprise partout en Tunisie.
-              </p>
-            </div>
-            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all">
-              <div className="text-2xl mb-3">🤝</div>
-              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5">Trouver un partenaire</h3>
-              <p className="text-xs text-gray-600 leading-relaxed">
-                Développez votre réseau professionnel et identifiez de nouveaux partenaires.
-              </p>
-            </div>
-            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all">
-              <div className="text-2xl mb-3">👨‍💼</div>
-              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5">Recruter</h3>
-              <p className="text-xs text-gray-600 leading-relaxed">
-                Découvrez les entreprises qui recrutent et les candidats disponibles.
-              </p>
-            </div>
-            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all">
-              <div className="text-2xl mb-3">📅</div>
-              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5">Événements professionnels</h3>
-              <p className="text-xs text-gray-600 leading-relaxed">
-                Participez aux salons, conférences et événements business.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Prochaines evolutions */}
-        <section className="mb-8 px-4">
-          <div className="text-center mb-5">
-            <h2 className="text-lg md:text-xl font-bold text-[#4A1D43] mb-2">
-              Les prochaines evolutions du Centre d'affaires
-            </h2>
-            <p className="text-sm text-gray-600 max-w-2xl mx-auto">
-              Le Centre d'affaires Dalil Tounes evoluera progressivement afin de proposer de nouveaux services aux entreprises tunisiennes.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all relative">
-              <span className="absolute top-3 right-3 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">A venir</span>
-              <div className="text-2xl mb-3">📦</div>
-              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5">Achat / Vente de materiel professionnel</h3>
-              <p className="text-xs text-gray-600 leading-relaxed">
-                Publiez ou consultez des annonces de materiel professionnel entre entreprises.
-              </p>
-            </div>
-            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all relative">
-              <span className="absolute top-3 right-3 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">A venir</span>
-              <div className="text-2xl mb-3">🤝</div>
-              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5">Recherche de fournisseurs</h3>
-              <p className="text-xs text-gray-600 leading-relaxed">
-                Publiez un besoin et trouvez rapidement des fournisseurs adaptes a votre activite.
-              </p>
-            </div>
-            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all relative">
-              <span className="absolute top-3 right-3 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">A venir</span>
-              <div className="text-2xl mb-3">📈</div>
-              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5">Opportunites d'affaires</h3>
-              <p className="text-xs text-gray-600 leading-relaxed">
-                Developpez votre reseau grace aux partenariats, collaborations et opportunites professionnelles.
-              </p>
-            </div>
-            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all relative">
-              <span className="absolute top-3 right-3 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">A venir</span>
-              <div className="text-2xl mb-3">🏭</div>
-              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5">Liquidation de materiel</h3>
-              <p className="text-xs text-gray-600 leading-relaxed">
-                Permettez aux entreprises de vendre leurs equipements, mobiliers ou stocks lors d'une fermeture, d'un renouvellement ou d'un destockage.
-              </p>
-            </div>
-            <button type="button" onClick={() => setShowNeedForm(true)} className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all relative text-left cursor-pointer group">
-              <span className="absolute top-3 right-3 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-green-50 text-green-700 border border-green-200">Disponible</span>
-              <div className="text-2xl mb-3">📢</div>
-              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5 group-hover:text-[#D4AF37] transition-colors">Publication de besoins professionnels</h3>
-              <p className="text-xs text-gray-600 leading-relaxed">
-                Exprimez vos besoins (prestataire, materiel, fournisseur, service...) afin d'etre contacte directement par les entreprises concernees.
-              </p>
-            </button>
-            <div onClick={() => navigate('/besoins-professionnels')} className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:border-[#D4AF37]/40 hover:shadow-md transition-all relative cursor-pointer group">
-              <span className="absolute top-3 right-3 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-green-50 text-green-700 border border-green-200">Disponible</span>
-              <div className="text-2xl mb-3">🔍</div>
-              <h3 className="text-sm font-bold text-[#4A1D43] mb-1.5 group-hover:text-[#D4AF37] transition-colors">Consulter les besoins professionnels</h3>
-              <p className="text-xs text-gray-600 leading-relaxed">
-                Découvrez les besoins publiés par les entreprises tunisiennes et identifiez de nouvelles opportunités.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Sections Visuelles - Design Bordeaux & Or */}
-        <div className="mb-8 px-4">
-          <div className="grid md:grid-cols-2 gap-4">
-            {/* Carte Partenaires */}
-            <div className="relative overflow-hidden rounded-xl h-48" style={{ border: '2px solid #D4AF37' }}>
-              <img
-                src={getSupabaseImageUrl('partenaires-fournisseurs.jpg')}
-                alt="Collaboration entre entreprises"
-                className="absolute inset-0 w-full h-full object-cover brightness-105"
-                loading="lazy"
-              decoding="async"
-              />
-              <div className="absolute inset-0 bg-gradient-to-br from-[#800020]/70 to-[#4A1D43]/70"></div>
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
-                <h4 className="text-lg font-bold text-[#D4AF37] mb-2">
-                  {t.businesses.categories.partners.title}
-                </h4>
-                <p className="text-white text-sm mb-4 line-clamp-2">
-                  {t.businesses.categories.partners.description}
-                </p>
-                <button
-                  onClick={() => navigate('/partner-search')}
-                  className="px-5 py-2 text-sm font-medium bg-white text-[#800020] rounded-lg hover:shadow-lg transition-all"
-                  style={{ border: '1px solid #D4AF37' }}
-                >
-                  Accéder
-                </button>
-              </div>
-            </div>
-
-            {/* Carte Événements */}
-            <div className="relative overflow-hidden rounded-xl h-48" style={{ border: '2px solid #D4AF37' }}>
-              <img
-                src={getSupabaseImageUrl('evenement entreprise.jpg')}
-                alt="Événements entreprise"
-                className="absolute inset-0 w-full h-full object-cover brightness-105"
-                loading="lazy"
-              decoding="async"
-              />
-              <div className="absolute inset-0 bg-gradient-to-br from-[#800020]/70 to-[#4A1D43]/70"></div>
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
-                <h4 className="text-lg font-bold text-[#D4AF37] mb-2">
-                  {t.businesses.categories.events.title}
-                </h4>
-                <p className="text-white text-sm mb-4 line-clamp-2">
-                  {t.businesses.categories.events.description}
-                </p>
-                <button
-                  onClick={() => navigate('/business-events')}
-                  className="px-5 py-2 text-sm font-medium bg-white text-[#800020] rounded-lg hover:shadow-lg transition-all"
-                  style={{ border: '1px solid #D4AF37' }}
-                >
-                  Accéder
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Boutons d'accès rapide - Design Premium */}
-        <div id="suggest-business" className="mb-8 px-4 flex flex-wrap gap-4 justify-center scroll-mt-24">
-          <button
-            type="button"
-            onClick={() => setShowSuggestForm(true)}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-white text-[#4A1D43] text-sm md:text-base font-medium hover:shadow-lg transition-all"
-            style={{ border: '2px solid #D4AF37' }}
-          >
-            Demande d’information / inscription
-          </button>
-
-          <button
-            type="button"
-            onClick={() => navigate('/candidats')}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-[#4A1D43] text-white text-sm md:text-base font-medium hover:bg-[#5A2D53] transition-colors shadow-sm hover:shadow-md"
-            style={{ border: '1px solid #D4AF37' }}
-          >
-            {(t as any).businessesExtra?.viewCandidates || 'Voir les candidats disponibles'}
-          </button>
-
-         
-        </div>
 
         {/* Tags de filtres actifs - Design Premium */}
         {(selectedCity || selectedCategory) && (
@@ -1399,6 +1390,210 @@ export const Businesses = ({
             </div>
           </div>
         )}
+
+        {/* Affichage des résultats : avec ou sans recherche active */}
+        <div ref={resultsRef} className="mb-10">
+          {(loading || searching || pendingSearch) ? (
+            <div className="text-center py-12">
+              <div className="inline-block w-8 h-8 border-2 border-[#D4AF37] border-t-transparent rounded-full animate-spin"></div>
+              <p className="mt-3 text-sm text-gray-600">{searching ? t.businesses.searching || t.common.loading : t.common.loading}</p>
+            </div>
+          ) : filteredBusinesses.length === 0 && hasActiveSearch ? (
+            <div className="text-center py-12">
+              <Building2 className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+              <p className="text-sm text-gray-600">{t.common.noResults}</p>
+            </div>
+          ) : filteredBusinesses.length > 0 ? (
+            <div className="px-4">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-bold text-[#4A1D43]">
+                  {hasActiveSearch ? ((t as any).businessesExtra?.searchResults || 'Résultats de votre recherche') : ((t as any).businessesExtra?.featuredTitle || 'Entreprises en vedette')}
+                  <span className="ms-2 text-sm text-gray-500 font-normal">
+                    ({hasActiveSearch ? filteredBusinesses.length : Math.min(4, filteredBusinesses.length)} {filteredBusinesses.length > 1 ? ((t as any).businessesExtra?.businessPlur || 'entreprises') : ((t as any).businessesExtra?.businessSing || 'entreprise')})
+                  </span>
+                </h3>
+                {hasActiveSearch && (
+                  <button
+                    onClick={() => {
+                      setSelectedBusinessId(null);
+                      setSearchTerm('');
+                      setSelectedCity('');
+                      setSelectedCategory('');
+                      setPageCategorie(null);
+                      setFilterPremium(false);
+                      setFilterCommerceLocal(false);
+                      setFilterStatutCarte('');
+                      setSelectedChipCategories([]);
+                      navigate('/entreprises');
+                    }}
+                    className="text-xs text-[#4A1D43] hover:text-[#D4AF37] font-medium"
+                  >
+                    {(t as any).businessesExtra?.reset || 'Réinitialiser'}
+                  </button>
+                )}
+              </div>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {Array.isArray(filteredBusinesses) && filteredBusinesses.slice(0, hasActiveSearch ? filteredBusinesses.length : 4).map((business) => {
+                  if (!business || !business.id) return null;
+
+                  return (
+                    <BusinessCardWithActivity
+                      key={business.id}
+                      activities={getActivitiesForBusiness(businessActivitiesByCompany, business)}
+                      business={{
+                        id: business.id,
+                        name: business.name,
+                        category: business.category,
+                        ville: business.city || null,
+                        gouvernorat: business.gouvernorat,
+                        statut_abonnement: business.statut_abonnement,
+                        niveau_priorite_abonnement: business.niveau_priorite_abonnement,
+                        badges: business.badges || [],
+                        imageUrl: business.imageUrl,
+                        logoUrl: business.logoUrl,
+                        telephone: business.phone || null,
+                        horaires_ok: business.horaires_ok,
+                        statut_carte: business.statut_carte || null,
+                        note_google: business.note_google ?? business['Note Google Globale'] ?? null,
+                        nombre_avis: business.nombre_avis ?? business['Compteur Avis Google'] ?? null,
+                        'Note Google Globale': business['Note Google Globale'] ?? business.note_google ?? null,
+                        'Compteur Avis Google': business['Compteur Avis Google'] ?? business.nombre_avis ?? null,
+                        name_ar: business.name_ar || null,
+                        description_ar: business.description_ar || null,
+                      }}
+                      onClick={() => {
+                        navigate(buildEntrepriseUrl({ slug: business.slug, nom: business.name, ville: business.ville || business.city, id: business.id }));
+                      }}
+                      variant="premium"
+                    />
+                  );
+                })}
+              </div>
+
+              {!hasActiveSearch && filteredBusinesses.length > 4 && (
+                <div className="mt-6 text-center">
+                  <p className="text-sm text-gray-600 mb-3">
+                    {(t as any).businessesExtra?.searchHint || 'Vous recherchez une entreprise spécifique ? Utilisez la barre de recherche ci-dessus'}
+                  </p>
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#D4AF37]/10 rounded-lg text-xs text-[#4A1D43]" style={{ border: '1px solid #D4AF37' }}>
+                    <Search className="w-4 h-4" />
+                    <span className="font-medium">{(t as any).businessesExtra?.moreAvailablePrefix || 'Plus de'} {filteredBusinesses.length - 4} {(t as any).businessesExtra?.moreAvailableSuffix || 'entreprises disponibles via la recherche'}</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : null}
+        </div>
+
+        <section className="px-4 py-8">
+          <div className="max-w-6xl mx-auto grid gap-8 lg:grid-cols-[0.95fr_1.05fr] items-center">
+            <div>
+              <SectionIntro eyebrow="Le CV Business" title="Une fiche qui devient le CV numérique de votre entreprise.">
+                <p>Le CV Business rassemble les informations utiles pour présenter votre activité, expliquer votre savoir-faire et aider les visiteurs à comprendre rapidement qui vous êtes.</p>
+                <p>Il ne s'agit pas seulement d'être visible. Il s'agit aussi d'inspirer confiance avec une fiche claire, complète et vérifiable.</p>
+              </SectionIntro>
+              <div className="mt-6 flex flex-wrap gap-2">
+                <FeaturePill icon={Phone} label="Téléphone" />
+                <FeaturePill icon={Mail} label="Description" />
+                <FeaturePill icon={Award} label="Certificat" />
+                <FeaturePill icon={Clock} label="Horaires" />
+                <FeaturePill icon={Calendar} label="Réservation" />
+                <FeaturePill icon={QrCode} label="QR Code" />
+              </div>
+            </div>
+            <DemoCVBusinessPreview />
+          </div>
+        </section>
+
+        <section className="px-4 py-8 bg-white">
+          <div className="max-w-5xl mx-auto">
+            <SectionIntro
+              eyebrow="Cohérence"
+              title="Une présence en ligne cohérente inspire confiance."
+            >
+              <p>Google Business, Facebook, Instagram, LinkedIn et votre site web restent utiles. Dalil Tounes ne les remplace pas : il les complète en rassemblant les informations importantes dans une fiche claire.</p>
+              <p>Un client peut voir un ancien numéro sur Facebook, des horaires différents sur Google et peu d'informations pratiques sur Instagram. Dans ce cas, il hésite ou passe à une autre entreprise.</p>
+              <p>Une fiche vérifiée et mise à jour aide à rendre vos informations plus cohérentes, plus faciles à consulter et plus rassurantes au moment de vous contacter.</p>
+            </SectionIntro>
+            <div className="mt-6 grid gap-3 md:grid-cols-3">
+              {['Centraliser les informations utiles', 'Éviter les informations contradictoires', 'Faciliter le premier contact'].map((item) => (
+                <div key={item} className="rounded-2xl border border-[#D4AF37]/20 bg-[#FFFDF6] px-4 py-3 text-sm font-semibold text-[#4A1D43]">
+                  {item}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="px-4 py-8">
+          <div className="max-w-5xl mx-auto">
+            <div className="grid gap-7 lg:grid-cols-[0.95fr_1.05fr] items-start">
+              <SectionIntro
+                eyebrow="Parcours client"
+                title="Comment un citoyen découvre votre entreprise ?"
+              >
+                <p>La fiche entreprise devient le point de rencontre entre les citoyens qui cherchent un professionnel et les professionnels qui souhaitent être trouvés.</p>
+                <div className="mt-5 rounded-2xl border border-[#D4AF37]/25 bg-white p-4 text-sm text-gray-700 shadow-sm">
+                  <span className="font-bold text-[#4A1D43]">Message de Dalil : </span>
+                  quand les informations sont claires, le visiteur hésite moins. Il comprend mieux votre activité et sait comment vous contacter.
+                </div>
+              </SectionIntro>
+
+              <div className="space-y-3">
+                {[
+                  'Le citoyen recherche un professionnel, une entreprise ou un service.',
+                  'Il consulte une fiche claire avec les informations utiles pour se faire une première idée.',
+                  'Il contacte, réserve ou partage la fiche quand il pense avoir trouvé le bon professionnel.',
+                ].map((item, index) => (
+                  <div key={item} className="flex gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+                    <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[#D4AF37]/15 text-sm font-bold text-[#4A1D43]">
+                      {index + 1}
+                    </span>
+                    <p className="text-sm leading-relaxed text-gray-700">{item}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="px-4 py-10">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center max-w-3xl mx-auto">
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#D4AF37] mb-3">FAQ</p>
+              <h2 className="text-2xl md:text-3xl font-bold text-[#4A1D43]">Questions fréquentes des professionnels</h2>
+            </div>
+            <div className="mt-8 grid gap-4 md:grid-cols-2">
+              {PROFESSIONAL_FAQ.map((item) => (
+                <div key={item.question} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                  <h3 className="text-base font-bold text-[#4A1D43]">{item.question}</h3>
+                  <p className="mt-3 text-sm leading-relaxed text-gray-600">{item.answer}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="px-4 py-10">
+          <div className="max-w-5xl mx-auto rounded-3xl border border-[#D4AF37]/35 bg-gradient-to-br from-[#4A1D43] to-[#0B5A45] p-7 md:p-10 text-center text-white shadow-[0_22px_60px_rgba(74,29,67,0.2)]">
+            <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#F7D978]">Avec Dalil</p>
+            <h2 className="mt-3 text-2xl md:text-4xl font-bold">Prêt à développer votre activité ?</h2>
+            <p className="mt-4 max-w-2xl mx-auto text-sm md:text-base leading-relaxed text-white/85">
+              Découvrez les différentes offres proposées par Dalil Tounes et choisissez la solution la plus adaptée à votre activité.
+            </p>
+            <p className="mt-4 text-sm text-white/75">
+              Dalil vous accompagne étape par étape, avec une approche simple, utile et progressive.
+            </p>
+            <button
+              type="button"
+              onClick={() => navigate('/subscription')}
+              className="mt-7 inline-flex items-center justify-center gap-2 rounded-full bg-[#D4AF37] px-7 py-3 text-sm font-bold text-[#4A1D43] shadow-lg transition hover:bg-[#F0CD5A]"
+            >
+              Découvrir les offres
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          </div>
+        </section>
 
         {showSuggestForm && (
           <div className="fixed inset-0 bg-black/80 z-[99999] flex items-center justify-center p-4" onClick={(e) => e.target === e.currentTarget && setShowSuggestForm(false)}>
@@ -1493,100 +1688,6 @@ export const Businesses = ({
         )}
 
         <BusinessNeedForm isOpen={showNeedForm} onClose={() => setShowNeedForm(false)} />
-
-        {/* Affichage des résultats : avec ou sans recherche active */}
-        <div ref={resultsRef} className="mb-12">
-          {(loading || searching || pendingSearch) ? (
-            <div className="text-center py-12">
-              <div className="inline-block w-8 h-8 border-2 border-[#D4AF37] border-t-transparent rounded-full animate-spin"></div>
-              <p className="mt-3 text-sm text-gray-600">{searching ? t.businesses.searching || t.common.loading : t.common.loading}</p>
-            </div>
-          ) : filteredBusinesses.length === 0 && hasActiveSearch ? (
-            <div className="text-center py-12">
-              <Building2 className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-              <p className="text-sm text-gray-600">{t.common.noResults}</p>
-            </div>
-          ) : filteredBusinesses.length > 0 ? (
-            <div className="px-4">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-bold text-[#4A1D43]">
-                  {hasActiveSearch ? ((t as any).businessesExtra?.searchResults || 'Résultats de votre recherche') : ((t as any).businessesExtra?.featuredTitle || 'Entreprises en vedette')}
-                  <span className="ms-2 text-sm text-gray-500 font-normal">
-                    ({hasActiveSearch ? filteredBusinesses.length : Math.min(9, filteredBusinesses.length)} {filteredBusinesses.length > 1 ? ((t as any).businessesExtra?.businessPlur || 'entreprises') : ((t as any).businessesExtra?.businessSing || 'entreprise')})
-                  </span>
-                </h3>
-                {hasActiveSearch && (
-                  <button
-                    onClick={() => {
-                      setSelectedBusinessId(null);
-                      setSearchTerm('');
-                      setSelectedCity('');
-                      setSelectedCategory('');
-                      setPageCategorie(null);
-                      setFilterPremium(false);
-                      setFilterCommerceLocal(false);
-                      setFilterStatutCarte('');
-                      setSelectedChipCategories([]);
-                      navigate('/entreprises');
-                    }}
-                    className="text-xs text-[#4A1D43] hover:text-[#D4AF37] font-medium"
-                  >
-                    {(t as any).businessesExtra?.reset || 'Réinitialiser'}
-                  </button>
-                )}
-              </div>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {Array.isArray(filteredBusinesses) && filteredBusinesses.slice(0, hasActiveSearch ? filteredBusinesses.length : 9).map((business) => {
-                  if (!business || !business.id) return null;
-
-                  return (
-                    <BusinessCardWithActivity
-                      key={business.id}
-                      activities={getActivitiesForBusiness(businessActivitiesByCompany, business)}
-                      business={{
-                        id: business.id,
-                        name: business.name,
-                        category: business.category,
-                        ville: business.city || null,
-                        gouvernorat: business.gouvernorat,
-                        statut_abonnement: business.statut_abonnement,
-                        niveau_priorite_abonnement: business.niveau_priorite_abonnement,
-                        badges: business.badges || [],
-                        imageUrl: business.imageUrl,
-                        logoUrl: business.logoUrl,
-                        telephone: business.phone || null,
-                        horaires_ok: business.horaires_ok,
-                        statut_carte: business.statut_carte || null,
-                        note_google: business.note_google ?? business['Note Google Globale'] ?? null,
-                        nombre_avis: business.nombre_avis ?? business['Compteur Avis Google'] ?? null,
-                        'Note Google Globale': business['Note Google Globale'] ?? business.note_google ?? null,
-                        'Compteur Avis Google': business['Compteur Avis Google'] ?? business.nombre_avis ?? null,
-                        name_ar: business.name_ar || null,
-                        description_ar: business.description_ar || null,
-                      }}
-                      onClick={() => {
-                        navigate(buildEntrepriseUrl({ slug: business.slug, nom: business.name, ville: business.ville || business.city, id: business.id }));
-                      }}
-                      variant="premium"
-                    />
-                  );
-                })}
-              </div>
-
-              {!hasActiveSearch && filteredBusinesses.length > 9 && (
-                <div className="mt-6 text-center">
-                  <p className="text-sm text-gray-600 mb-3">
-                    {(t as any).businessesExtra?.searchHint || 'Vous recherchez une entreprise spécifique ? Utilisez la barre de recherche ci-dessus'}
-                  </p>
-                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#D4AF37]/10 rounded-lg text-xs text-[#4A1D43]" style={{ border: '1px solid #D4AF37' }}>
-                    <Search className="w-4 h-4" />
-                    <span className="font-medium">{(t as any).businessesExtra?.moreAvailablePrefix || 'Plus de'} {filteredBusinesses.length - 9} {(t as any).businessesExtra?.moreAvailableSuffix || 'entreprises disponibles via la recherche'}</span>
-                  </div>
-                </div>
-              )}
-            </div>
-          ) : null}
-        </div>
 
         {/* Toast Notification */}
         <Toast
