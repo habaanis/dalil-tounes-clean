@@ -14,6 +14,7 @@ import { notifyAdmin } from '../lib/notifyAdmin';
 import React, { lazy, Suspense, useEffect, useState } from 'react';
 import InstallAppBanner from '../components/InstallAppBanner';
 import SearchBar from '../components/SearchBar';
+import VisibilityHouseSection from '../components/VisibilityHouseSection';
 
 // Tous les composants lourds (liste Premium, Avis, Témoignages)
 // sont chargés paresseusement afin de ne pas bloquer le rendu du Hero / LCP.
@@ -85,6 +86,13 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
       console.log('✅ Navigation directe vers /business/' + id);
       navigate(`/business/${id}`);
     }
+  };
+
+  const scrollToVisibilityHouse = () => {
+    document.getElementById('maison-visibilite')?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
   };
 
   const handleNavigate = (page: string) => {
@@ -236,6 +244,18 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
               <p className="text-base md:text-lg text-white leading-relaxed italic font-medium" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
                 {t.home.connection.description}
               </p>
+              <div className="mt-3 rounded-2xl border border-white/25 bg-black/25 px-4 py-2.5 backdrop-blur-sm">
+                <p className="text-xs font-semibold text-white md:text-sm">
+                  💡 Pourquoi votre présence sur Internet est-elle importante ?
+                </p>
+                <button
+                  type="button"
+                  onClick={scrollToVisibilityHouse}
+                  className="mt-1 text-xs font-bold text-[#D4AF37] underline-offset-4 transition hover:underline focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/70 rounded"
+                >
+                  Comprendre en 30 secondes ↓
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -319,6 +339,8 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
           </div>
         </div>
       </section>
+
+      <VisibilityHouseSection />
 
       {/* 3. Barre de recherche — le SDK Supabase (chunk vendor-supabase)
            ne se charge qu'au premier focus/clic pour ne pas pénaliser le LCP mobile. */}
