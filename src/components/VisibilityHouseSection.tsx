@@ -150,12 +150,12 @@ export default function VisibilityHouseSection() {
             Maison Dalil Tounes
           </p>
           <h2 className="text-2xl font-bold leading-tight text-[#4A1D43] md:text-4xl">
-            La Maison de la visibilité numérique
+            🏠 Votre présence sur Internet
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-base font-semibold leading-relaxed text-[#4A1D43] md:text-lg">
             Aucune plateforme ne suffit à elle seule.
             <br />
-            C'est l'ensemble de votre présence numérique qui fait votre force.
+            C'est l'ensemble de votre présence sur Internet qui fait votre force.
           </p>
         </div>
 

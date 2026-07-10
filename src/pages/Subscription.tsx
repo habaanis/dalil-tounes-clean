@@ -31,9 +31,9 @@ const subscriptionIntroText = {
     'Chaque entreprise est différente.',
     "Que tu sois artisan, commerçant, profession libérale, PME ou grande entreprise, tes besoins et ton budget ne sont pas les mêmes.",
     "Chez Dalil Tounes, notre objectif est de te proposer une solution adaptée à ton activité, avec des offres accessibles, évolutives et pensées pour t'accompagner dans ton développement.",
-    "Tu peux choisir de découvrir nos abonnements ou nous contacter directement afin que nous échangions ensemble sur la solution la plus adaptée à ton entreprise.",
+    "Tu peux choisir de découvrir nos solutions ou nous contacter directement afin que nous échangions ensemble sur la solution la plus adaptée à ton entreprise.",
   ],
-  primaryAction: 'Découvrir les abonnements',
+  primaryAction: 'Découvrir les solutions',
   secondaryAction: 'Nous contacter',
   hideLabel: 'Ne plus afficher cette fenêtre.',
 };
@@ -46,9 +46,9 @@ const subscriptionContactText = {
 };
 
 const subscriptionPageMessaging = {
-  heroTitle: 'Une visibilité pensée pour accompagner ton entreprise',
+  heroTitle: 'Choisissez la solution adaptée à votre activité',
   heroDescription:
-    "Dalil Tounes t'aide à présenter ton activité de façon claire, rassurante et accessible. Choisis une offre simple pour démarrer, ou échange avec nous si tu as besoin d'une solution plus adaptée à ton entreprise.",
+    "Dalil Tounes accompagne les professionnels dans le développement de leur présence sur Internet. L'objectif n'est pas de vendre un simple abonnement, mais de proposer une solution claire, utile et adaptée à chaque activité.",
   cards: [
     {
       icon: '🤝',
@@ -66,6 +66,74 @@ const subscriptionPageMessaging = {
       description: 'Présente tes informations essentielles pour aider les citoyens à te comprendre et à te contacter.',
     },
   ],
+};
+
+const planPresentation: Record<string, {
+  name?: string;
+  intro?: string;
+  features?: string[];
+  launchBonus?: string[];
+}> = {
+  decouverte: {
+    intro: 'Pour découvrir Dalil Tounes et poser les premières bases de votre visibilité.',
+    features: [
+      'Consultation du répertoire Dalil Tounes',
+      'Recherche de base',
+      "Profil d'entreprise simple",
+      'Support par email',
+    ],
+  },
+  artisan: {
+    intro: 'Pour lancer votre présence sur Internet.',
+    features: [
+      'Fiche professionnelle pour présenter votre activité',
+      'Galerie de vos réalisations (3 photos)',
+      'Badge "Dalil Tounes Vérifié"',
+      'Liens vers vos réseaux sociaux',
+      'QR Code personnalisé vers votre fiche',
+      'Assistance prioritaire par email',
+    ],
+  },
+  premium: {
+    intro: 'Pour développer votre visibilité et attirer de nouveaux clients.',
+    features: [
+      'Toutes les fonctionnalités Artisan',
+      'Mettez en valeur votre savoir-faire (5 photos)',
+      'Entreprise certifiée par Dalil Tounes',
+      'Mise en avant régionale',
+      'Publicité ciblée',
+      'Gestion multi-emplacements',
+      'Rapport analytique détaillé',
+      'Gestionnaire de compte',
+      'Réservation en ligne',
+    ],
+    launchBonus: ['Création et impression de 500 flyers professionnels avec l’abonnement annuel.'],
+  },
+  elitePro: {
+    name: 'Entreprise',
+    intro: 'Une solution personnalisée pour les entreprises ayant des besoins spécifiques.',
+    features: [
+      'CV Business personnalisé',
+      'Présentation complète de votre entreprise',
+      'Galerie de réalisations',
+      'Coordonnées centralisées',
+      'Réseaux sociaux',
+      'Réservation si activée',
+      'Référencement sur Dalil Tounes',
+      'Solution évolutive',
+      'Étude personnalisée',
+    ],
+    launchBonus: ['Création et impression de flyers professionnels selon la formule retenue.'],
+  },
+  custom: {
+    intro: 'Pour construire une solution adaptée à une organisation, un réseau ou un besoin particulier.',
+    features: [
+      'Solution personnalisée selon vos besoins',
+      'Budget flexible et adapté à votre entreprise',
+      'Accompagnement personnalisé',
+      'Fonctionnalités à la carte',
+    ],
+  },
 };
 
 // Coordonnées bancaires affichées dans le modal "Paiement Manuel".
@@ -313,10 +381,10 @@ export const Subscription = () => {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h1 className="text-3xl md:text-4xl font-light mb-3 text-gray-900">
-            Des offres adaptées à ton entreprise
+            Nos solutions pour développer votre présence en ligne
           </h1>
           <p className="text-base text-gray-600 max-w-2xl mx-auto">
-            Une solution adaptée à ton activité, ton budget et ton rythme de développement.
+            Choisissez la solution adaptée à votre activité, votre budget et votre rythme de développement.
           </p>
         </div>
 
@@ -346,6 +414,17 @@ export const Subscription = () => {
               </div>
               ))}
             </div>
+          </div>
+        </section>
+
+        <section className="mb-12">
+          <div className="mx-auto max-w-3xl rounded-3xl border border-[#D4AF37]/35 bg-white px-6 py-7 text-center shadow-[0_6px_24px_rgba(74,29,67,0.08)]">
+            <p className="text-base md:text-lg leading-relaxed text-[#4A1D43]" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+              Chez Dalil Tounes, nous croyons que chaque professionnel mérite sa place sur Internet.
+            </p>
+            <p className="mt-2 text-sm text-gray-600">
+              Parce qu'une petite entreprise d'aujourd'hui peut devenir la grande entreprise de demain.
+            </p>
           </div>
         </section>
 
@@ -429,11 +508,15 @@ export const Subscription = () => {
         <div className="grid md:grid-cols-5 gap-6 mb-12 max-w-6xl mx-auto items-start">
           {plansConfig.map((planConfig) => {
             const plan = t.subscription.plans[planConfig.key];
+            const presentation = planPresentation[planConfig.key] || {};
             const isArtisan = planConfig.key === 'artisan';
             const isPremium = planConfig.key === 'premium';
             const isElitePro = planConfig.isElite || false;
             const isCustom = planConfig.isCustom || false;
             const isDecouverte = planConfig.key === 'decouverte';
+            const displayPlanName = presentation.name || plan.name;
+            const displayFeatures = presentation.features || plan.features;
+            const launchBonus = presentation.launchBonus || [];
             const displayPrice = isElitePro
               ? 'Solution sur mesure'
               : isPremium
@@ -516,7 +599,7 @@ export const Subscription = () => {
                     isArtisan || isPremium ? 'text-white' :
                     'text-gray-900'
                   }`}>
-                    {plan.name}
+                    {displayPlanName}
                   </h3>
                 </div>
 
@@ -586,42 +669,19 @@ export const Subscription = () => {
                       />
                     </div>
 
-                    <ul className="space-y-2">
-                    {/* Section Inclus pour Elite Pro (exclusif mode annuel) */}
-                    {isElitePro && billingPeriod === 'annual' && (
-                      <>
-                        <li className="flex items-start gap-2 pb-2 border-b border-gray-200">
-                          <div
-                            className="mt-0.5 w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0"
-                            style={{ backgroundColor: '#D4AF37' }}
-                          >
-                            <Check className="w-2.5 h-2.5 text-white" />
-                          </div>
-                          <span className="text-xs font-bold leading-relaxed text-[#D4AF37]">
-                            {plan.annualBonus}
-                          </span>
-                        </li>
-                        {plan.annualFlyersBonus && (
-                          <li className="flex items-start gap-2 pb-2 border-b border-gray-200">
-                            <div
-                              className="mt-0.5 w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0"
-                              style={{ backgroundColor: '#D4AF37' }}
-                            >
-                              <Check className="w-2.5 h-2.5 text-white" />
-                            </div>
-                            <span className="text-xs font-bold leading-relaxed text-[#D4AF37]">
-                              {plan.annualFlyersBonus}
-                            </span>
-                          </li>
-                        )}
-                        <li className="py-1.5">
-                          <div
-                            className="w-full"
-                            style={{ height: '1.5px', backgroundColor: '#D4AF37' }}
-                          />
-                        </li>
-                      </>
+                    {presentation.intro && (
+                      <p className={`mb-3 rounded-xl px-3 py-2 text-center text-xs font-medium leading-relaxed ${
+                        isElitePro
+                          ? 'bg-[#D4AF37]/10 text-[#D4AF37]'
+                          : isArtisan || isPremium
+                          ? 'bg-white/10 text-white'
+                          : 'bg-[#D4AF37]/10 text-gray-700'
+                      }`}>
+                        {presentation.intro}
+                      </p>
                     )}
+
+                    <ul className="space-y-2">
                     {/* Bonus annuel pour Premium */}
                     {billingPeriod === 'annual' && isPremium && !isElitePro && plan.annualBonus && (
                       <>
@@ -636,22 +696,9 @@ export const Subscription = () => {
                             {plan.annualBonus}
                           </span>
                         </li>
-                        {plan.annualFlyersBonus && (
-                          <li className="flex items-start gap-2 pb-2 border-b border-gray-200">
-                            <div
-                              className="mt-0.5 w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0"
-                              style={{ backgroundColor: '#D4AF37' }}
-                            >
-                              <Check className="w-2.5 h-2.5 text-white" />
-                            </div>
-                            <span className="text-xs font-bold leading-relaxed text-orange-600">
-                              {plan.annualFlyersBonus}
-                            </span>
-                          </li>
-                        )}
                       </>
                     )}
-                    {plan.features.map((feature: string, featureIndex: number) => (
+                    {displayFeatures.map((feature: string, featureIndex: number) => (
                       <li key={featureIndex} className="flex items-start gap-2">
                         <div
                           className="mt-0.5 w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0"
@@ -669,6 +716,29 @@ export const Subscription = () => {
                       </li>
                     ))}
                     </ul>
+
+                    {launchBonus.length > 0 && (
+                      <div className={`mt-4 rounded-xl border p-3 ${
+                        isElitePro
+                          ? 'border-[#D4AF37]/50 bg-[#D4AF37]/10'
+                          : isPremium
+                          ? 'border-[#D4AF37]/45 bg-white/10'
+                          : 'border-[#D4AF37]/35 bg-[#FFF8E7]'
+                      }`}>
+                        <p className={`mb-2 text-xs font-bold ${
+                          isElitePro || isPremium ? 'text-[#D4AF37]' : 'text-[#4A1D43]'
+                        }`}>
+                          🎁 Bonus de lancement
+                        </p>
+                        {launchBonus.map((bonus) => (
+                          <p key={bonus} className={`text-xs leading-relaxed ${
+                            isElitePro ? 'text-gray-300' : isPremium ? 'text-gray-200' : 'text-gray-700'
+                          }`}>
+                            {bonus}
+                          </p>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   {/* CTA principal */}
@@ -682,7 +752,7 @@ export const Subscription = () => {
                         'decouverte': 'Découverte',
                         'artisan': 'Artisan',
                         'premium': 'Premium',
-                        'elitePro': 'Elite Pro',
+                        'elitePro': 'Entreprise',
                         'custom': 'Sur mesure'
                       };
                       openRequestForm(planNameMap[planConfig.key] || 'Premium');
@@ -699,7 +769,7 @@ export const Subscription = () => {
                         : 'border-2 border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-gray-900 shadow-sm hover:shadow-md'
                     }`}
                   >
-                    {isElitePro ? 'Nous contacter' : isCustom ? t.subscription.requestQuote : `${t.subscription.chooseButton} ${plan.name}`}
+                    {isElitePro ? 'Nous contacter' : isCustom ? t.subscription.requestQuote : `${t.subscription.chooseButton} ${displayPlanName}`}
                   </button>
 
                   {/* Payment buttons — plans payants uniquement */}
@@ -748,7 +818,7 @@ export const Subscription = () => {
                       <button
                         type="button"
                         onClick={() => {
-                          setManualPlanLabel(plan.name);
+                          setManualPlanLabel(displayPlanName);
                           setActiveModal('manual');
                         }}
                         className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-xs font-semibold bg-white text-[#4A1D43] border-2 border-[#D4AF37] hover:bg-[#FFF8E7] active:scale-95 transition-all shadow-sm hover:shadow-md"
