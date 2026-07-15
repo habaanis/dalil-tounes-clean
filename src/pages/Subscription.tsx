@@ -7,16 +7,16 @@ import { Check, Star, CreditCard, Smartphone, X, Landmark, Copy, MessageCircle, 
 
 const STRIPE_LINKS: Record<string, { monthly: string; annual: string }> = {
   artisan: {
-    monthly: 'https://buy.stripe.com/7sYaEZ5zB64j90Sb1tbsc01',
-    annual:  'https://buy.stripe.com/28EdRb6DF50f4KCglNbsc02',
+    monthly: 'https://buy.stripe.com/28E5kFaTVgIX7WO7Phbsc08',
+    annual:  'https://buy.stripe.com/7sY8wRfab3Wb6SKfhJbsc09',
   },
   premium: {
-    monthly: 'https://buy.stripe.com/7sY7sN6DFdwLgtkfhJbsc03',
-    annual:  'https://buy.stripe.com/fZufZjbXZ0JZgtk0mPbsc05',
+    monthly: 'https://buy.stripe.com/eVqdRb2npfET3Gy3z1bsc0a',
+    annual:  'https://buy.stripe.com/8x29AV9PRakz0um3z1bsc0b',
   },
   elitePro: {
-    monthly: 'https://buy.stripe.com/fZubJ30fhakz0um0mPbsc06',
-    annual:  'https://buy.stripe.com/4gMbJ32npgIX4KCb1tbsc07',
+    monthly: '',
+    annual: '',
   },
 };
 
