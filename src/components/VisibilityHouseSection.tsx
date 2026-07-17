@@ -2,15 +2,22 @@ import { ArrowRight, Briefcase } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const MAISON_DALIL_IMAGE = '/images/ChatGPT_Image_17_juil._2026,_13_09_03.png';
+const MASCOTTE_DALIL_IMAGE = '/images/ChatGPT_Image_6_juil._2026,_21_21_12.png';
 
 function VisibilityHouseIllustration() {
   return (
-    <div className="relative mx-auto w-full max-w-[680px]">
+    <div className="relative mx-auto flex w-full max-w-[720px] flex-col items-center justify-center gap-2 sm:flex-row sm:items-end sm:gap-0">
+      <img
+        src={MASCOTTE_DALIL_IMAGE}
+        alt="Mascotte Dalil qui accueille les visiteurs et présente la maison Dalil Tounes"
+        loading="lazy"
+        className="order-2 w-28 shrink-0 object-contain drop-shadow-[0_12px_28px_rgba(74,29,67,0.18)] sm:order-1 sm:-mr-4 sm:w-32 sm:self-center md:w-40 lg:w-44"
+      />
       <img
         src={MAISON_DALIL_IMAGE}
-        alt="Maison tunisienne Dalil Tounes avec sa porte verte et ses six fenêtres Google Business, Facebook, Instagram, WhatsApp, Site web et Dalil Tounes"
+        alt="Maison tunisienne Dalil Tounes avec sa porte verte et ses six fenêtres Google Business, Facebook, Instagram, WhatsApp, Site web et CV Business"
         loading="lazy"
-        className="mx-auto w-full object-contain drop-shadow-[0_18px_40px_rgba(74,29,67,0.18)]"
+        className="order-1 w-full max-w-[560px] object-contain drop-shadow-[0_18px_40px_rgba(74,29,67,0.18)] sm:order-2"
       />
     </div>
   );
