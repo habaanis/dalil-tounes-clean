@@ -1,16 +1,16 @@
 import { ArrowRight, Briefcase } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-const MAISON_DALIL_IMAGE = '/images/ChatGPT_Image_17_juil._2026,_12_53_27.png';
+const MAISON_DALIL_IMAGE = '/images/ChatGPT_Image_17_juil._2026,_13_09_03.png';
 
 function VisibilityHouseIllustration() {
   return (
     <div className="relative mx-auto w-full max-w-[680px]">
       <img
         src={MAISON_DALIL_IMAGE}
-        alt="Maison Dalil Tounes réunissant Google Business, Facebook, Instagram, WhatsApp, Site web et Dalil Tounes autour de la mascotte Dalil"
+        alt="Maison tunisienne Dalil Tounes avec sa porte verte et ses six fenêtres Google Business, Facebook, Instagram, WhatsApp, Site web et Dalil Tounes"
         loading="lazy"
-        className="mx-auto w-full rounded-[28px] object-contain shadow-[0_24px_80px_rgba(74,29,67,0.18)]"
+        className="mx-auto w-full object-contain drop-shadow-[0_18px_40px_rgba(74,29,67,0.18)]"
       />
     </div>
   );
