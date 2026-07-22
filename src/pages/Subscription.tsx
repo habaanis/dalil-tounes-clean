@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
-import { supabase } from '../lib/BoltDatabase';
-import { notifyAdmin } from '../lib/notifyAdmin';
+import { BusinessRegistrationRequestForm } from '../components/BusinessRegistrationRequestForm';
 import { Check, Star, CreditCard, Smartphone, X, Landmark, Copy, MessageCircle, Send, Mail } from 'lucide-react';
 
 const STRIPE_LINKS: Record<string, { monthly: string; annual: string }> = {
@@ -161,15 +160,6 @@ export const Subscription = () => {
   // Plan ciblé lors de l'ouverture du modal "Paiement Manuel" (pour personnaliser le message WhatsApp).
   const [manualPlanLabel, setManualPlanLabel] = useState<string>('');
   const [copiedField, setCopiedField] = useState<string | null>(null);
-  const [requestSubmitting, setRequestSubmitting] = useState(false);
-  const [requestSuccess, setRequestSuccess] = useState(false);
-  const [requestError, setRequestError] = useState<string | null>(null);
-  const [requestForm, setRequestForm] = useState({
-    title: '',
-    phone: '',
-    email: '',
-    message: '',
-  });
 
 
   const copyToClipboard = async (value: string, field: string) => {
@@ -209,107 +199,11 @@ export const Subscription = () => {
 
   const openRequestForm = (planLabel: string) => {
     setSelectedPlan(planLabel);
-    setRequestForm({
-      title: planLabel ? `Demande abonnement ${planLabel}` : '',
-      phone: '',
-      email: '',
-      message: '',
-    });
-    setRequestSuccess(false);
-    setRequestError(null);
     setShowRequestForm(true);
   };
 
   const closeRequestForm = () => {
     setShowRequestForm(false);
-    setRequestSuccess(false);
-    setRequestError(null);
-  };
-
-  const handleRequestSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setRequestSubmitting(true);
-    setRequestSuccess(false);
-    setRequestError(null);
-
-    try {
-      const title = requestForm.title.trim();
-      const phone = requestForm.phone.trim();
-      const email = requestForm.email.trim();
-      const message = requestForm.message.trim();
-
-      if (!title) {
-        setRequestError('Le titre de votre demande est obligatoire.');
-        setRequestSubmitting(false);
-        return;
-      }
-
-      if (!phone && !email) {
-        setRequestError('Merci d’indiquer au moins un téléphone ou un email.');
-        setRequestSubmitting(false);
-        return;
-      }
-
-      if (email) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-          setRequestError('Format email invalide.');
-          setRequestSubmitting(false);
-          return;
-        }
-      }
-
-      if (!message) {
-        setRequestError('Merci de décrire brièvement votre demande.');
-        setRequestSubmitting(false);
-        return;
-      }
-
-      const payload = {
-        nom_entreprise: title,
-        secteur: selectedPlan ? `Abonnement ${selectedPlan}` : 'Demande abonnement / inscription',
-        ville: null,
-        contact_suggere: `${phone || ''}${phone && email ? ' - ' : ''}${email || ''}`.trim(),
-        raison_suggestion: `Demande depuis la page abonnement${selectedPlan ? ` - ${selectedPlan}` : ''}\n\n${message}`,
-        submission_lang: language,
-      };
-
-      const { error } = await supabase
-        .from('suggestions_entreprises')
-        .insert([payload]);
-
-      if (error) {
-        console.error('Erreur Supabase abonnement:', error);
-        setRequestError('Une erreur est survenue. Veuillez réessayer.');
-        return;
-      }
-
-      notifyAdmin('Nouvelle demande abonnement', {
-        Plan: selectedPlan || 'Non renseigné',
-        Titre: title,
-        Telephone: phone || 'Non renseigné',
-        Email: email || 'Non renseigné',
-        Message: message,
-        Langue: language,
-      });
-
-      setRequestSuccess(true);
-      setRequestForm({
-        title: '',
-        phone: '',
-        email: '',
-        message: '',
-      });
-
-      setTimeout(() => {
-        closeRequestForm();
-      }, 1800);
-    } catch (error) {
-      console.error('Erreur demande abonnement:', error);
-      setRequestError('Une erreur inattendue est survenue. Veuillez réessayer.');
-    } finally {
-      setRequestSubmitting(false);
-    }
   };
 
   useEffect(() => {
@@ -1189,96 +1083,12 @@ export const Subscription = () => {
                 </p>
               </div>
 
-              <form onSubmit={handleRequestSubmit} className="space-y-5">
-                {requestSuccess && (
-                  <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg text-sm">
-                    Merci ! Votre demande a été envoyée avec succès. Nous vous recontacterons rapidement.
-                  </div>
-                )}
-
-                {requestError && (
-                  <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg text-sm">
-                    {requestError}
-                  </div>
-                )}
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Titre de votre demande <span className="text-[#800020]">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={requestForm.title}
-                    onChange={(e) => setRequestForm({ ...requestForm, title: e.target.value })}
-                    placeholder="Ex : demande abonnement Premium, inscription entreprise..."
-                    className="w-full px-4 py-3 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#4A1D43] focus:border-[#4A1D43] text-sm"
-                  />
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Téléphone
-                    </label>
-                    <input
-                      type="tel"
-                      value={requestForm.phone}
-                      onChange={(e) => setRequestForm({ ...requestForm, phone: e.target.value })}
-                      placeholder="+216 XX XXX XXX"
-                      className="w-full px-4 py-3 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#4A1D43] focus:border-[#4A1D43] text-sm"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      value={requestForm.email}
-                      onChange={(e) => setRequestForm({ ...requestForm, email: e.target.value })}
-                      placeholder="votre@email.com"
-                      className="w-full px-4 py-3 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#4A1D43] focus:border-[#4A1D43] text-sm"
-                    />
-                  </div>
-                </div>
-
-                <p className="text-xs text-gray-500">
-                  Merci d’indiquer au moins un moyen de contact : téléphone ou email.
-                </p>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Message <span className="text-[#800020]">*</span>
-                  </label>
-                  <textarea
-                    required
-                    rows={5}
-                    value={requestForm.message}
-                    onChange={(e) => setRequestForm({ ...requestForm, message: e.target.value })}
-                    placeholder="Expliquez brièvement votre activité, votre besoin, votre demande d’abonnement ou votre question..."
-                    className="w-full px-4 py-3 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#4A1D43] focus:border-[#4A1D43] text-sm resize-none"
-                  />
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                  <button
-                    type="button"
-                    onClick={closeRequestForm}
-                    className="flex-1 px-5 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all text-sm font-medium"
-                  >
-                    Annuler
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={requestSubmitting}
-                    className="flex-1 px-5 py-3 bg-[#4A1D43] text-[#D4AF37] border border-[#D4AF37] rounded-lg hover:bg-[#5A2D53] transition-all text-sm font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
-                  >
-                    {requestSubmitting ? 'Envoi en cours...' : 'Envoyer ma demande'}
-                  </button>
-                </div>
-              </form>
+              <BusinessRegistrationRequestForm
+                mode="subscription"
+                selectedPlan={selectedPlan}
+                onCancel={closeRequestForm}
+                onSuccess={() => window.setTimeout(closeRequestForm, 1800)}
+              />
             </div>
           </div>
         </div>

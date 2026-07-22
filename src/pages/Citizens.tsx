@@ -15,7 +15,6 @@ import { FeaturedBusinessesStrip } from '../components/FeaturedBusinessesStrip';
 import { supabase as supabaseClient } from '../lib/supabaseClient';
 import { Tables } from '../lib/dbTables';
 import BannerAdsCarousel from '../components/BannerAdsCarousel';
-import { RegistrationForm } from '../components/RegistrationForm';
 import { getSupabaseImageUrl } from '../lib/imageUtils';
 import { HERO_IMAGE_URL, HERO_IMAGE_JPG_URL } from '../constants/images';
 import StructuredData from '../components/StructuredData';
@@ -121,7 +120,6 @@ export default function Citizens({ onNavigate }: CitizensProps = {}) {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [categoryResults, setCategoryResults] = useState<any[]>([]);
-  const [showRegistrationForm, setShowRegistrationForm] = useState(false);
 
   const url = new URL(window.location.href);
   const q = (url.searchParams.get('q') || '').trim();
@@ -572,14 +570,6 @@ export default function Citizens({ onNavigate }: CitizensProps = {}) {
           </div>
         )}
       </div>
-
-      {/* Formulaire d'inscription */}
-      {showRegistrationForm && (
-        <RegistrationForm
-          onClose={() => setShowRegistrationForm(false)}
-          selectedPlan="Premium"
-        />
-      )}
     </div>
   );
 }

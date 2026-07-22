@@ -1,8 +1,7 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Check, Loader, X } from 'lucide-react';
-import { supabase, supabaseUrl, supabaseAnonKey } from '../lib/supabaseClient';
 import { Toast } from './Toast';
-import { notifyAdmin } from '../lib/notifyAdmin';
+import { submitLegacySuggestion } from '../lib/businessRegistration';
 
 interface MedicalTransportRegistrationFormProps {
   onSuccess?: () => void;
@@ -20,6 +19,7 @@ export default function MedicalTransportRegistrationForm({
   onSuccess,
   onCancel,
 }: MedicalTransportRegistrationFormProps) {
+  const startedAtRef = useRef(Date.now());
   const [loading, setLoading] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
@@ -97,45 +97,15 @@ export default function MedicalTransportRegistrationForm({
       const email = formData.email.trim();
       const message = formData.message.trim();
 
-      const suggestionData = {
-        nom_entreprise: title,
-        secteur: 'Transport médical / demande d’information',
-        ville: null,
-        contact_suggere: `${phone || ''}${phone && email ? ' - ' : ''}${email || ''}`.trim(),
-        email_suggesteur: email || null,
-        raison_suggestion: `Demande d’information / inscription transport médical\n\n${message}`,
-        type_demande: 'transport',
-      };
-
-      const { data, error: insertError } = await supabase
-        .from('suggestions_entreprises')
-        .insert([suggestionData])
-        .select()
-        .single();
-
-      if (insertError) {
-        throw insertError;
-      }
-
-      if (data) {
-        fetch(
-          `${supabaseUrl}/functions/v1/sync-suggestion-to-airtable`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${supabaseAnonKey}`,
-            },
-            body: JSON.stringify({ record: data }),
-          }
-        ).catch(() => {});
-      }
-
-      notifyAdmin('Nouvelle demande transport médical', {
-        Titre: title,
-        Telephone: phone || 'Non renseigné',
-        Email: email || 'Non renseigné',
-        Message: message,
+      await submitLegacySuggestion({
+        language: 'fr',
+        sourcePage: 'medical-transport',
+        legacyType: 'medical_transport',
+        title,
+        phone,
+        email,
+        message,
+        elapsedMs: Date.now() - startedAtRef.current,
       });
 
       showNotification(
@@ -144,6 +114,7 @@ export default function MedicalTransportRegistrationForm({
       );
 
       resetForm();
+      startedAtRef.current = Date.now();
 
       setTimeout(() => {
         onSuccess?.();

@@ -1,0 +1,11 @@
+# Configuration des Edge Functions concernées par l'inscription entreprise.
+# Ce fichier ne déploie rien à lui seul.
+
+[functions.submit-company-registration]
+verify_jwt = false
+
+[functions.sync-suggestion-to-airtable]
+verify_jwt = true
+
+[functions.notify-form]
+verify_jwt = true

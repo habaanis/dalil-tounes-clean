@@ -8,7 +8,8 @@ const WELCOME_SEEN_KEY = 'dalilTounes_welcome_seen_v1';
 const isWelcomeExcludedPath = (pathname: string) =>
   pathname.startsWith('/admin') ||
   pathname.startsWith('/debug') ||
-  pathname === '/searchDebug';
+  pathname === '/searchDebug' ||
+  pathname === '/inscription-entreprise';
 
 const shouldShowWelcomeForPath = (pathname: string) => {
   if (isWelcomeExcludedPath(pathname)) {
@@ -121,6 +122,7 @@ function App() {
         'auth': '/auth',
         'connexion': '/auth',
         'inscription': '/auth',
+        'inscription-entreprise': '/inscription-entreprise',
         'dashboard/candidat': '/dashboard/candidat',
         'dashboard/entreprise': '/dashboard/entreprise',
       };
