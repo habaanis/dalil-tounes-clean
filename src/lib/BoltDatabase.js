@@ -420,16 +420,10 @@ export async function searchCities(searchTerm) {
 
       // Fallback 2: recherche simple sans unaccent
       const { data: fallbackData, error: fallbackError } = await supabase
-        .from('cities')
-        .select(`
-          name_fr,
-          name_ar,
-          governorates (
-            name_fr
-          )
-        `)
-        .or(`name_fr.ilike.*${searchTerm}*,name_ar.ilike.*${searchTerm}*`)
-        .order('name_fr', { ascending: true })
+        .from('villes')
+        .select('nom')
+        .ilike('nom', `%${searchTerm}%`)
+        .order('nom', { ascending: true })
         .limit(10);
 
       if (fallbackError) {
@@ -438,9 +432,9 @@ export async function searchCities(searchTerm) {
       }
 
       const formattedFallback = fallbackData?.map(city => ({
-        name_fr: city.name_fr,
-        name_ar: city.name_ar,
-        governorate_fr: city.governorates?.name_fr || ''
+        name_fr: city.nom,
+        name_ar: city.nom,
+        governorate_fr: ''
       })) || [];
 
       console.log('✅ Villes trouvées (fallback):', formattedFallback.length);

@@ -7,7 +7,7 @@
 
 const Tables = {
   ENTREPRISE: 'entreprise',
-  CITIES: 'cities',
+  CITIES: 'villes',
   ANNONCES: 'annonces_locales',
   GOUVERNORATS: 'governorates',
   EDUCATION: 'etablissements_education',

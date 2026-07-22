@@ -813,6 +813,8 @@ export const Businesses = ({
       let query = supabase
         .from(Tables.ENTREPRISE)
         .select(ENTREPRISE_SELECT_FIELDS)
+        .not('nom', 'is', null)
+        .neq('nom', '')
         .order('nom', { ascending: true })
         .limit(10);
 
@@ -947,6 +949,8 @@ export const Businesses = ({
       let query = supabase
         .from(Tables.ENTREPRISE)
         .select(ENTREPRISE_SELECT_FIELDS)
+        .not('nom', 'is', null)
+        .neq('nom', '')
         .order('nom', { ascending: true })
         .limit(30);
 

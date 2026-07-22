@@ -246,6 +246,8 @@ export default function SearchBar({
         let query = supabase
           .from(Tables.ENTREPRISE)
           .select('*')
+          .not('nom', 'is', null)
+          .neq('nom', '')
           .or(orParts.join(','))
           .limit(isGlobal ? GLOBAL_RAW_RESULT_LIMIT : CATEGORY_RAW_RESULT_LIMIT);
 
@@ -354,13 +356,13 @@ export default function SearchBar({
         for (const variant of variants) {
           const resp = await supabase
             .from(Tables.CITIES)
-            .select('ville')
-            .ilike('ville', like(variant))
-            .order('ville', { ascending: true })
+            .select('nom')
+            .ilike('nom', like(variant))
+            .order('nom', { ascending: true })
             .limit(8);
 
           if (resp.data) {
-            allCities.push(...resp.data);
+            allCities.push(...resp.data.map((row: { nom: string }) => ({ ville: row.nom })));
           }
           if (resp.error) setErrVille(resp.error.message);
         }

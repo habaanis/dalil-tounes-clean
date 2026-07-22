@@ -197,6 +197,8 @@ async function doFetch(): Promise<HomeQueryResult> {
     supabase
       .from('entreprise')
       .select(FIELDS)
+      .not('nom', 'is', null)
+      .neq('nom', '')
       .eq('statut_carte', CERTIFIED_LABEL)
       .limit(CERTIFIED_FETCH_LIMIT),
 
@@ -248,12 +250,29 @@ async function doFetch(): Promise<HomeQueryResult> {
   }
 
   const rawRows = (listRes.data as Record<string, unknown>[] | null) ?? [];
+  let allMapped = rawRows.map(mapHomeBusinessRow);
 
-  const allMapped = rawRows.map(mapHomeBusinessRow);
+  if (allMapped.length === 0) {
+    const { data: fallbackRows, error: fallbackError } = await supabase
+      .from('entreprise')
+      .select(FIELDS)
+      .not('nom', 'is', null)
+      .neq('nom', '')
+      .order('nom', { ascending: true })
+      .limit(CERTIFIED_FETCH_LIMIT);
+
+    if (fallbackError) {
+      console.error('[homeDataPrefetch] fallbackRows error:', fallbackError);
+    }
+
+    allMapped = ((fallbackRows as Record<string, unknown>[] | null) ?? []).map(mapHomeBusinessRow);
+  }
 
   const certifiedRows = allMapped.filter((p) => isCertifiedDalilTounes(p.statut_carte));
 
-  const sorted = [...certifiedRows].sort((a, b) => {
+  const partnerCandidates = certifiedRows.length > 0 ? certifiedRows : allMapped;
+
+  const sorted = [...partnerCandidates].sort((a, b) => {
     const pa = a.niveau_priorite_abonnement ?? -1;
     const pb = b.niveau_priorite_abonnement ?? -1;
 
