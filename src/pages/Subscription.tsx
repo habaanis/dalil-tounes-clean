@@ -4,7 +4,6 @@ import {
   Check,
   ChevronRight,
   Clock3,
-  CreditCard,
   FileText,
   Info,
   MapPin,
@@ -20,6 +19,74 @@ import { useLanguage } from '../context/LanguageContext';
 type PreviewType = 'free' | 'artisan' | 'premium' | 'premium-detail' | 'launch' | 'request' | null;
 
 const LOGO_PATH = '/images/logo_dalil_tounes_sceau_luxe.webp';
+
+const printSupportCopy = {
+  fr: {
+    flyers: 'Flyers',
+    annualPremiumOnly: 'PREMIUM ANNUEL UNIQUEMENT',
+    flyerDescription: '500 flyers inclus avec l’abonnement annuel Premium.',
+    flyerProduction: 'Conception et impression réalisées par Dalil Tounes.',
+    flyerConditions: [
+      'En cas de paiement annuel Premium en trois fois, les 500 flyers sont préparés et imprimés après le troisième et dernier versement.',
+      'Le modèle du flyer est soumis au professionnel pour validation avant impression.',
+      'Le professionnel doit vérifier le nom de l’activité, les coordonnées, le téléphone, les horaires, les textes et le QR Code.',
+      'Une impression de 500 exemplaires est incluse après validation.',
+      'Toute réimpression demandée à la suite d’une modification effectuée après validation est facturée séparément.',
+    ],
+  },
+  en: {
+    flyers: 'Flyers',
+    annualPremiumOnly: 'ANNUAL PREMIUM ONLY',
+    flyerDescription: '500 flyers included with the annual Premium subscription.',
+    flyerProduction: 'Design and printing by Dalil Tounes.',
+    flyerConditions: [
+      'If the annual Premium subscription is paid in three installments, the 500 flyers are prepared and printed after the third and final installment.',
+      'The flyer design is submitted to the professional for approval before printing.',
+      'The professional must check the business name, contact details, phone number, opening hours, texts and QR Code.',
+      'One print run of 500 copies is included after approval.',
+      'Any reprint requested following a change made after approval is billed separately.',
+    ],
+  },
+  it: {
+    flyers: 'Volantini',
+    annualPremiumOnly: 'SOLO PREMIUM ANNUALE',
+    flyerDescription: '500 volantini inclusi con l’abbonamento annuale Premium.',
+    flyerProduction: 'Progettazione grafica e stampa a cura di Dalil Tounes.',
+    flyerConditions: [
+      'In caso di pagamento dell’abbonamento annuale Premium in tre rate, i 500 volantini vengono preparati e stampati dopo la terza e ultima rata.',
+      'Il modello del volantino viene sottoposto al professionista per l’approvazione prima della stampa.',
+      'Il professionista deve verificare il nome dell’attività, i recapiti, il telefono, gli orari, i testi e il QR Code.',
+      'Dopo l’approvazione è inclusa una tiratura di 500 copie.',
+      'Qualsiasi ristampa richiesta a seguito di una modifica effettuata dopo l’approvazione viene fatturata separatamente.',
+    ],
+  },
+  ru: {
+    flyers: 'Флаеры',
+    annualPremiumOnly: 'ТОЛЬКО ГОДОВАЯ ПОДПИСКА PREMIUM',
+    flyerDescription: '500 флаеров включены в годовую подписку Premium.',
+    flyerProduction: 'Дизайн и печать выполняет Dalil Tounes.',
+    flyerConditions: [
+      'При оплате годовой подписки Premium тремя платежами 500 флаеров подготавливаются и печатаются после третьего и последнего платежа.',
+      'Макет флаера перед печатью предоставляется профессионалу на утверждение.',
+      'Профессионал должен проверить название деятельности, контактные данные, телефон, часы работы, тексты и QR-код.',
+      'После утверждения включена печать 500 экземпляров.',
+      'Любая повторная печать, запрошенная из-за изменения после утверждения, оплачивается отдельно.',
+    ],
+  },
+  ar: {
+    flyers: 'المنشورات الإعلانية',
+    annualPremiumOnly: 'للاشتراك السنوي PREMIUM فقط',
+    flyerDescription: 'يشمل الاشتراك السنوي Premium طباعة 500 منشور إعلاني.',
+    flyerProduction: 'يتولى دليل تونس التصميم والطباعة.',
+    flyerConditions: [
+      'عند دفع الاشتراك السنوي Premium على ثلاث دفعات، يتم إعداد وطباعة 500 منشور إعلاني بعد الدفعة الثالثة والأخيرة.',
+      'يُعرض نموذج المنشور الإعلاني على المهني للمصادقة عليه قبل الطباعة.',
+      'يجب على المهني التحقق من اسم النشاط وبيانات الاتصال ورقم الهاتف وأوقات العمل والنصوص ورمز QR.',
+      'تشمل الخدمة طباعة 500 نسخة بعد المصادقة.',
+      'تُفوتر بشكل منفصل أي إعادة طباعة مطلوبة نتيجة تعديل تم بعد المصادقة.',
+    ],
+  },
+} as const;
 
 const subscriptionCopy = {
   fr: {
@@ -98,11 +165,7 @@ const subscriptionCopy = {
     certifiedTitle: 'Certifié Dalil Tounes',
     certifiedText: "Attribué après vérification de l'identité, des informations et des justificatifs.",
     certifiedIndependence: 'Cette vérification est indépendante de la formule choisie.',
-    businessCards: 'Cartes de visite',
-    flyers: 'Flyers',
-    printDesign: 'Design et impression professionnelle.',
-    annualOnly: "Inclus dans l'abonnement annuel uniquement.",
-    trialClarification: "Les 3 mois d'essai commencent dès l'inscription. L'abonnement annuel, les cartes de visite et les flyers sont confirmés après le paiement complet.",
+    trialClarification: "Les 3 mois d'essai commencent dès l'inscription. L'abonnement annuel est confirmé après le paiement complet. Les 500 flyers sont réservés à l'abonnement annuel Premium.",
     disclaimer: 'Dalil Tounes ne remplace pas vos réseaux sociaux et ne constitue pas une prestation de publicité.',
     ctaTitle: 'Prêt à présenter votre activité plus clairement ?',
     ctaText: 'Commencez gratuitement ou demandez un accompagnement pour créer votre CV Business.',
@@ -133,7 +196,6 @@ const subscriptionCopy = {
       'La période totale de 18 mois est calculée à partir de cette date.',
       "L'abonnement annuel est confirmé après le dernier versement.",
       "En cas de paiement annuel incomplet, le compte revient à la formule gratuite à la fin de la période d'essai.",
-      'Les cartes de visite et les flyers sont produits uniquement après le paiement annuel complet.',
       "L'offre est limitée dans le temps ou à un nombre d'inscriptions qui sera défini avant la mise en ligne.",
       "L'offre ne peut pas être cumulée avec une autre promotion sans validation.",
     ],
@@ -219,11 +281,7 @@ const subscriptionCopy = {
     certifiedTitle: 'موثّق من دليل تونس',
     certifiedText: 'يُمنح بعد التحقق من الهوية والمعلومات والمستندات الثبوتية.',
     certifiedIndependence: 'هذا التحقق مستقل عن الصيغة المختارة.',
-    businessCards: 'بطاقات الزيارة',
-    flyers: 'المطويات الإعلانية',
-    printDesign: 'تصميم وطباعة احترافيان.',
-    annualOnly: 'مضمنة فقط ضمن الاشتراك السنوي.',
-    trialClarification: 'تبدأ فترة التجربة المجانية لمدة 3 أشهر فور التسجيل. يتم تأكيد الاشتراك السنوي وبطاقات الزيارة والمطويات بعد اكتمال الدفع.',
+    trialClarification: 'تبدأ فترة التجربة المجانية لمدة 3 أشهر فور التسجيل. يتم تأكيد الاشتراك السنوي بعد اكتمال الدفع. تقتصر طباعة 500 منشور إعلاني على الاشتراك السنوي Premium.',
     disclaimer: 'لا يحل دليل تونس محل شبكاتك الاجتماعية ولا يشكل خدمة إعلانية.',
     ctaTitle: 'هل أنت مستعد لتقديم نشاطك بصورة أوضح؟',
     ctaText: 'ابدأ مجانًا أو اطلب مرافقة لإنشاء سيرة نشاطك المهنية.',
@@ -254,7 +312,6 @@ const subscriptionCopy = {
       'تُحتسب المدة الإجمالية البالغة 18 شهرًا ابتداءً من هذا التاريخ.',
       'يُؤكد الاشتراك السنوي بعد الدفعة الأخيرة.',
       'إذا لم يكتمل الدفع السنوي، يعود الحساب إلى الحضور الأساسي المجاني عند نهاية فترة التجربة.',
-      'لا تُنتج بطاقات الزيارة والمطويات إلا بعد اكتمال الدفع السنوي.',
       'العرض محدود زمنيًا أو بعدد تسجيلات سيُحدد قبل الإطلاق.',
       'لا يمكن جمع هذا العرض مع عرض ترويجي آخر دون موافقة.',
     ],
@@ -541,6 +598,7 @@ export const Subscription = () => {
   const { language } = useLanguage();
   const isArabic = language === 'ar';
   const copy = isArabic ? subscriptionCopy.ar : subscriptionCopy.fr;
+  const flyerCopy = printSupportCopy[language];
   const [activePreview, setActivePreview] = useState<PreviewType>(null);
   const [selectedPlan, setSelectedPlan] = useState('');
 
@@ -685,20 +743,12 @@ export const Subscription = () => {
               </article>
               <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
                 <div className="flex items-start gap-3">
-                  <CreditCard className="h-8 w-8 shrink-0 text-[#4A123F]" aria-hidden="true" />
-                  <div>
-                    <h3 className="font-bold text-[#4A123F]">{copy.businessCards}</h3>
-                    <p className="mt-1 text-sm text-slate-600">{copy.printDesign}</p>
-                    <p className="mt-2 text-xs font-bold text-[#07543F]">{copy.annualOnly}</p>
-                  </div>
-                </div>
-                <div className="my-4 h-px bg-amber-100" />
-                <div className="flex items-start gap-3">
                   <FileText className="h-8 w-8 shrink-0 text-[#4A123F]" aria-hidden="true" />
                   <div>
-                    <h3 className="font-bold text-[#4A123F]">{copy.flyers}</h3>
-                    <p className="mt-1 text-sm text-slate-600">{copy.printDesign}</p>
-                    <p className="mt-2 text-xs font-bold text-[#07543F]">{copy.annualOnly}</p>
+                    <h3 className="font-bold text-[#4A123F]">{flyerCopy.flyers}</h3>
+                    <p className="mt-1 text-sm text-slate-600">{flyerCopy.flyerDescription}</p>
+                    <p className="mt-1 text-sm text-slate-600">{flyerCopy.flyerProduction}</p>
+                    <p className="mt-2 text-xs font-bold text-[#07543F]">{flyerCopy.annualPremiumOnly}</p>
                   </div>
                 </div>
               </article>
@@ -769,6 +819,11 @@ export const Subscription = () => {
             <h2 className="mt-4 text-2xl font-bold text-[#4A123F]">{copy.launchConditionsTitle}</h2>
             <ul className="mt-5 space-y-3">
               {copy.launchConditions.map((condition) => (
+                <li key={condition} className="flex items-start gap-3 text-sm leading-6 text-slate-700">
+                  <Check className="mt-1 h-4 w-4 shrink-0 text-[#07543F]" aria-hidden="true" /> {condition}
+                </li>
+              ))}
+              {flyerCopy.flyerConditions.map((condition) => (
                 <li key={condition} className="flex items-start gap-3 text-sm leading-6 text-slate-700">
                   <Check className="mt-1 h-4 w-4 shrink-0 text-[#07543F]" aria-hidden="true" /> {condition}
                 </li>
