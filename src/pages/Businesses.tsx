@@ -2,7 +2,8 @@ import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
-import { supabase, supabaseUrl, supabaseAnonKey } from '../lib/supabaseClient';
+import { supabase } from '../lib/supabaseClient';
+import { submitLegacySuggestion } from '../lib/businessRegistration';
 import { getHashQueryParams } from '../lib/url';
 import { readParams } from '../lib/urlParams';
 import { buildEntrepriseUrl } from '../lib/slugify';
@@ -362,6 +363,7 @@ export const Businesses = ({
   const [selectedCity, setSelectedCity] = useState(initialSearchCity || '');
   const [pageCategorie, setPageCategorie] = useState<string | null>(null);
   const [showSuggestForm, setShowSuggestForm] = useState(showSuggestionForm);
+  const suggestionStartedAtRef = useRef(Date.now());
   const [showNeedForm, setShowNeedForm] = useState(false);
   const [showDemoModal, setShowDemoModal] = useState(false);
   const [preselectedBusinessId, setPreselectedBusinessId] = useState<string | null>(null);
@@ -1183,36 +1185,16 @@ export const Businesses = ({
   const handleSuggestionSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const payload = {
-        nom_entreprise: suggestionForm.title,
-        secteur: 'Demande information / inscription',
-        ville: null,
-        contact_suggere: `${suggestionForm.phone || ''} ${suggestionForm.email ? `- ${suggestionForm.email}` : ''}`.trim(),
-        raison_suggestion: suggestionForm.message,
-        submission_lang: language,
-      };
-
-      const { data, error } = await supabase
-        .from('suggestions_entreprises')
-        .insert([payload])
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      if (data) {
-        fetch(
-          `${supabaseUrl}/functions/v1/sync-suggestion-to-airtable`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${supabaseAnonKey}`,
-            },
-            body: JSON.stringify({ record: data }),
-          }
-        ).catch(() => {});
-      }
+      await submitLegacySuggestion({
+        language,
+        sourcePage: 'businesses',
+        legacyType: 'general',
+        title: suggestionForm.title,
+        phone: suggestionForm.phone,
+        email: suggestionForm.email,
+        message: suggestionForm.message,
+        elapsedMs: Date.now() - suggestionStartedAtRef.current,
+      });
 
       setToast({
         message: language === 'fr'
@@ -1230,6 +1212,7 @@ export const Businesses = ({
         email: '',
         message: '',
       });
+      suggestionStartedAtRef.current = Date.now();
 
       setTimeout(() => {
         setShowSuggestForm(false);

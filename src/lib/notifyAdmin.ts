@@ -5,18 +5,36 @@ const NOTIFY_URL = `${supabaseUrl}/functions/v1/notify-form`;
 export async function notifyAdmin(
   type: string,
   data: Record<string, unknown>,
-  adminUrl?: string
-): Promise<void> {
+  adminUrl?: string,
+): Promise<boolean> {
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), 10_000);
+
   try {
-    await fetch(NOTIFY_URL, {
+    const response = await fetch(NOTIFY_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${supabaseAnonKey}`,
+        apikey: supabaseAnonKey,
+        Authorization: `Bearer ${supabaseAnonKey}`,
       },
       body: JSON.stringify({ type, data, admin_url: adminUrl }),
+      signal: controller.signal,
     });
-  } catch {
-    // Silent fail - notification should never block user flow
+
+    if (!response.ok) {
+      console.warn(`[notifyAdmin] Notification refusée (${response.status}).`);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.warn(
+      '[notifyAdmin] Notification non envoyée.',
+      error instanceof Error ? error.message : String(error),
+    );
+    return false;
+  } finally {
+    window.clearTimeout(timeoutId);
   }
 }
