@@ -22,6 +22,11 @@ export interface BusinessRegistrationRequest {
   facebook?: string;
   instagram?: string;
   whatsapp?: string;
+  selectedPlatforms?: string[];
+  requestedBillingPeriod?: string;
+  requestedPaymentSchedule?: string;
+  preferredContactMethod?: string;
+  preferredContactTime?: string;
   description?: string;
   message: string;
   consent?: boolean;

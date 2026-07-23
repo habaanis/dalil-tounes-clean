@@ -21,6 +21,11 @@ export interface RawRegistrationRequest {
   facebook?: unknown;
   instagram?: unknown;
   whatsapp?: unknown;
+  selectedPlatforms?: unknown;
+  requestedBillingPeriod?: unknown;
+  requestedPaymentSchedule?: unknown;
+  preferredContactMethod?: unknown;
+  preferredContactTime?: unknown;
   description?: unknown;
   message?: unknown;
   consent?: unknown;
@@ -48,6 +53,11 @@ export interface NormalizedRegistrationRequest {
   facebook: string;
   instagram: string;
   whatsapp: string;
+  selectedPlatforms: string[];
+  requestedBillingPeriod: string;
+  requestedPaymentSchedule: string;
+  preferredContactMethod: string;
+  preferredContactTime: string;
   description: string;
   message: string;
   consent: boolean;
@@ -108,6 +118,27 @@ const SECTORS = new Set([
   'Association ou organisation',
   'Autre',
 ]);
+
+const PLATFORMS = new Set([
+  'facebook',
+  'instagram',
+  'whatsapp_business',
+  'google_business',
+  'website',
+  'other',
+  'none',
+]);
+const BILLING_PERIODS = new Set(['monthly', 'annual', 'advice']);
+const SUBSCRIPTION_PLANS = new Set(['cv_business', 'artisan', 'premium']);
+const CV_PAYMENT_SCHEDULES = new Set([
+  'one_payment',
+  'two_installments',
+  'three_installments',
+  'advice',
+]);
+const ANNUAL_PAYMENT_SCHEDULES = new Set(['one_payment', 'three_installments']);
+const CONTACT_METHODS = new Set(['whatsapp', 'phone', 'email']);
+const CONTACT_TIMES = new Set(['morning', 'afternoon', 'evening', 'anytime']);
 
 const MIN_FORM_TIME_MS = 1_000;
 const MAX_FORM_TIME_MS = 7 * 24 * 60 * 60 * 1000;
@@ -190,6 +221,11 @@ export function validateRegistrationRequest(raw: RawRegistrationRequest): Valida
         facebook: '',
         instagram: '',
         whatsapp: '',
+        selectedPlatforms: [],
+        requestedBillingPeriod: '',
+        requestedPaymentSchedule: '',
+        preferredContactMethod: '',
+        preferredContactTime: '',
         description: '',
         message,
         consent: false,
@@ -199,12 +235,66 @@ export function validateRegistrationRequest(raw: RawRegistrationRequest): Valida
   }
 
   if (mode === 'subscription') {
-    const title = singleLine(raw.title, 140);
-    if (title.length < 2) return invalid('Le titre de la demande est obligatoire.', 'title');
-    if (!phone && !email) return invalid('Indiquez un téléphone ou un email.', 'phone');
-    if (phone && !isValidPhone(phone)) return invalid('Numéro de téléphone invalide.', 'phone');
+    const selectedPlan = singleLine(raw.selectedPlan, 80);
+    if (!SUBSCRIPTION_PLANS.has(selectedPlan)) {
+      return invalid('Formule sélectionnée invalide.', 'selectedPlan');
+    }
+    const planKind = getPlanKind(selectedPlan);
+    const title = planKind === 'premium'
+      ? 'Demande — Formule Premium'
+      : planKind === 'artisan'
+        ? 'Demande — Formule Artisan'
+        : 'Demande — CV Business';
+    const companyName = singleLine(raw.companyName, 160);
+    const managerName = singleLine(raw.managerName, 120);
+    const governorate = singleLine(raw.governorate, 80);
+    const city = singleLine(raw.city, 100);
+    const sector = singleLine(raw.sector, 100);
+    const website = normalizeUrl(singleLine(raw.website, 300));
+    const facebook = normalizeUrl(singleLine(raw.facebook, 300), 'facebook');
+    const instagram = normalizeUrl(singleLine(raw.instagram, 300), 'instagram');
+    const whatsapp = normalizePhone(singleLine(raw.whatsapp, 24));
+    const selectedPlatforms = stringArray(raw.selectedPlatforms, PLATFORMS, 7);
+    const requestedBillingPeriod = singleLine(raw.requestedBillingPeriod, 40);
+    const requestedPaymentSchedule = singleLine(raw.requestedPaymentSchedule, 60);
+    const preferredContactMethod = singleLine(raw.preferredContactMethod, 40);
+    const preferredContactTime = singleLine(raw.preferredContactTime, 40);
+    const consent = raw.consent === true;
+
+    if (companyName.length < 2) return invalid('Nom de l’activité obligatoire.', 'companyName');
+    if (managerName.length < 2) return invalid('Nom du responsable obligatoire.', 'managerName');
+    if (!phone || !isValidPhone(phone)) return invalid('Numéro de téléphone invalide.', 'phone');
     if (email && !isValidEmail(email)) return invalid('Adresse email invalide.', 'email');
-    if (message.length < 3) return invalid('Décrivez brièvement votre demande.', 'message');
+    if (!GOVERNORATES.has(governorate)) return invalid('Gouvernorat invalide.', 'governorate');
+    if (city.length < 2) return invalid('Ville obligatoire.', 'city');
+    if (!SECTORS.has(sector)) return invalid('Secteur invalide.', 'sector');
+    if (website && !isValidUrl(website)) return invalid('Site web invalide.', 'website');
+    if (facebook && !isValidUrl(facebook, 'facebook')) return invalid('Lien Facebook invalide.', 'facebook');
+    if (instagram && !isValidUrl(instagram, 'instagram')) return invalid('Lien Instagram invalide.', 'instagram');
+    if (whatsapp && !isValidPhone(whatsapp)) return invalid('Numéro WhatsApp invalide.', 'whatsapp');
+    if (planKind === 'cv' && !CV_PAYMENT_SCHEDULES.has(requestedPaymentSchedule)) {
+      return invalid('Mode de paiement invalide.', 'requestedPaymentSchedule');
+    }
+    if (planKind !== 'cv' && !BILLING_PERIODS.has(requestedBillingPeriod)) {
+      return invalid('Durée d’abonnement invalide.', 'requestedBillingPeriod');
+    }
+    if (
+      planKind !== 'cv' &&
+      requestedBillingPeriod === 'annual' &&
+      !ANNUAL_PAYMENT_SCHEDULES.has(requestedPaymentSchedule)
+    ) {
+      return invalid('Mode de paiement annuel invalide.', 'requestedPaymentSchedule');
+    }
+    if (!CONTACT_METHODS.has(preferredContactMethod)) {
+      return invalid('Préférence de contact invalide.', 'preferredContactMethod');
+    }
+    if (preferredContactMethod === 'email' && !email) {
+      return invalid('Email obligatoire pour ce mode de contact.', 'email');
+    }
+    if (!CONTACT_TIMES.has(preferredContactTime)) {
+      return invalid('Moment de contact invalide.', 'preferredContactTime');
+    }
+    if (!consent) return invalid('Consentement obligatoire.', 'consent');
 
     return {
       ok: true,
@@ -215,23 +305,31 @@ export function validateRegistrationRequest(raw: RawRegistrationRequest): Valida
         requestId,
         elapsedMs,
         verificationField: '',
-        selectedPlan: singleLine(raw.selectedPlan, 80),
+        selectedPlan,
         title,
-        companyName: title,
-        managerName: '',
+        companyName,
+        managerName,
         phone,
         email,
-        governorate: '',
-        city: '',
-        sector: '',
+        governorate,
+        city,
+        sector,
         address: '',
-        website: '',
-        facebook: '',
-        instagram: '',
-        whatsapp: '',
+        website,
+        facebook,
+        instagram,
+        whatsapp,
+        selectedPlatforms,
+        requestedBillingPeriod: planKind === 'cv' ? '' : requestedBillingPeriod,
+        requestedPaymentSchedule:
+          planKind !== 'cv' && requestedBillingPeriod !== 'annual'
+            ? ''
+            : requestedPaymentSchedule,
+        preferredContactMethod,
+        preferredContactTime,
         description: '',
         message,
-        consent: false,
+        consent,
         legacyType: '',
       },
     };
@@ -286,12 +384,33 @@ export function validateRegistrationRequest(raw: RawRegistrationRequest): Valida
       facebook,
       instagram,
       whatsapp,
+      selectedPlatforms: [],
+      requestedBillingPeriod: '',
+      requestedPaymentSchedule: '',
+      preferredContactMethod: '',
+      preferredContactTime: '',
       description,
       message,
       consent,
       legacyType: '',
     },
   };
+}
+
+function getPlanKind(selectedPlan: string): 'cv' | 'artisan' | 'premium' {
+  if (selectedPlan === 'premium') return 'premium';
+  if (selectedPlan === 'artisan') return 'artisan';
+  return 'cv';
+}
+
+function stringArray(raw: unknown, allowed: Set<string>, maxItems: number): string[] {
+  if (!Array.isArray(raw)) return [];
+  const values = Array.from(new Set(
+    raw
+      .map((value) => singleLine(value, 60))
+      .filter((value) => allowed.has(value)),
+  )).slice(0, maxItems);
+  return values.includes('none') ? ['none'] : values;
 }
 
 function invalid(message: string, field?: string): ValidationResult {
