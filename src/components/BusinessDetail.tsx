@@ -229,6 +229,10 @@ function normalizeBusiness(business: any): any {
     description: business.description || '',
     a_propos: getAboutText(business),
     services: business.services || '',
+    services_ar: business.services_ar || null,
+    services_en: business.services_en || null,
+    services_it: business.services_it || null,
+    services_ru: business.services_ru || null,
     BTN_Maps: business.BTN_Maps || business['BTN_Maps'] || business.google_url || null,
     statut_validation: business.statut_validation || null,
     created_at: business.created_at,
@@ -337,6 +341,10 @@ interface Business {
   'À propos'?: string | null;
   'A propos'?: string | null;
   services?: string;
+  services_ar?: string | null;
+  services_en?: string | null;
+  services_it?: string | null;
+  services_ru?: string | null;
   BTN_Maps?: string | null;
   statut_validation?: string | null;
   created_at?: string;
@@ -602,8 +610,12 @@ export const BusinessDetail = ({
       loading: 'Chargement...',
       notFound: 'Entreprise introuvable.',
       backToSearch: 'Retour',
+      photos: 'Photos',
       description: 'À propos',
       services: 'Services',
+      servicesAndInformation: 'Services et informations',
+      viewPhotos: 'Voir les photos en grand',
+      noServices: 'Aucun service renseigné',
       contact: 'Contact',
       qrCodeTitle: 'QR Code',
       downloadQR: 'Télécharger le QR',
@@ -633,8 +645,12 @@ export const BusinessDetail = ({
       loading: 'Loading...',
       notFound: 'Business not found.',
       backToSearch: 'Back',
+      photos: 'Photos',
       description: 'About',
       services: 'Services',
+      servicesAndInformation: 'Services and information',
+      viewPhotos: 'View photos full size',
+      noServices: 'No services listed',
       contact: 'Contact',
       qrCodeTitle: 'QR Code',
       downloadQR: 'Download QR',
@@ -664,8 +680,12 @@ export const BusinessDetail = ({
       loading: 'جارٍ التحميل...',
       notFound: 'الشركة غير موجودة.',
       backToSearch: 'رجوع',
+      photos: 'الصور',
       description: 'حول',
       services: 'الخدمات',
+      servicesAndInformation: 'الخدمات والمعلومات',
+      viewPhotos: 'عرض الصور بالحجم الكبير',
+      noServices: 'لا توجد خدمات مسجلة',
       contact: 'اتصال',
       qrCodeTitle: 'رمز QR',
       downloadQR: 'تحميل QR',
@@ -695,8 +715,12 @@ export const BusinessDetail = ({
       loading: 'Caricamento...',
       notFound: 'Azienda non trovata.',
       backToSearch: 'Indietro',
-      description: 'Informazioni',
+      photos: 'Foto',
+      description: 'Chi siamo',
       services: 'Servizi',
+      servicesAndInformation: 'Servizi e informazioni',
+      viewPhotos: 'Vedi le foto ingrandite',
+      noServices: 'Nessun servizio indicato',
       contact: 'Contatto',
       qrCodeTitle: 'QR Code',
       downloadQR: 'Scarica QR',
@@ -726,8 +750,12 @@ export const BusinessDetail = ({
       loading: 'Загрузка...',
       notFound: 'Компания не найдена.',
       backToSearch: 'Назад',
+      photos: 'Фотографии',
       description: 'О нас',
       services: 'Услуги',
+      servicesAndInformation: 'Услуги и информация',
+      viewPhotos: 'Посмотреть фотографии в полном размере',
+      noServices: 'Услуги не указаны',
       contact: 'Контакт',
       qrCodeTitle: 'QR код',
       downloadQR: 'Скачать QR',
@@ -957,10 +985,16 @@ export const BusinessDetail = ({
   const translatedDescription = displayDescription;
   const aboutText = getAboutText(business);
   const shouldShowAbout = !!aboutText;
-
   const translatedServices = business
-    ? getMultilingualField(business, 'services', language, true) || business.services || ''
+    ? getMultilingualField(business, 'services', language, true) ||
+      business.services ||
+      ''
     : '';
+  const serviceList = String(translatedServices)
+    .split(/[,;\n]+/)
+    .map((service) => service.trim())
+    .filter(Boolean);
+  const visibleTabCount = 1 + (business.image_url ? 1 : 0) + (shouldShowAbout ? 1 : 0);
 
   const isArabicDisplay = language === 'ar';
 
@@ -1185,7 +1219,18 @@ export const BusinessDetail = ({
             </div>
 
             {/* Tabs: Photos / Services / À propos */}
-            <div style={{ display: 'flex', gap: '6px', marginTop: '10px', flexWrap: 'wrap', position: 'relative', zIndex: 100, pointerEvents: 'auto' }}>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: `repeat(${visibleTabCount}, minmax(0, 1fr))`,
+                gap: '6px',
+                width: '100%',
+                marginTop: '10px',
+                position: 'relative',
+                zIndex: 100,
+                pointerEvents: 'auto',
+              }}
+            >
               {business.image_url && (
                 <button
                   onClick={(e) => {
@@ -1196,13 +1241,17 @@ export const BusinessDetail = ({
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
-                    gap: '5px',
+                    justifyContent: 'center',
+                    width: '100%',
+                    minWidth: 0,
+                    whiteSpace: 'nowrap',
+                    gap: '1px',
                     background: activeTab === 'photos' ? `${colors.gold}18` : 'none',
                     border: `1px solid ${activeTab === 'photos' ? colors.gold : `${colors.gold}60`}`,
                     borderRadius: '20px',
-                    padding: '4px 12px',
+                    padding: '4px 1px',
                     cursor: 'pointer',
-                    fontSize: '11px',
+                    fontSize: 'clamp(9px, 2.5vw, 11px)',
                     fontFamily: 'Playfair Display, serif',
                     fontWeight: '600',
                     color: colors.gold,
@@ -1211,7 +1260,7 @@ export const BusinessDetail = ({
                   }}
                 >
                   <span style={{ fontSize: '13px' }}>📷</span>
-                  Photos
+                  {text.photos}
                 </button>
               )}
               <button
@@ -1223,13 +1272,17 @@ export const BusinessDetail = ({
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '5px',
+                  justifyContent: 'center',
+                  width: '100%',
+                  minWidth: 0,
+                  whiteSpace: 'nowrap',
+                  gap: '1px',
                   background: activeTab === 'services' ? `${colors.gold}18` : 'none',
                   border: `1px solid ${activeTab === 'services' ? colors.gold : `${colors.gold}60`}`,
                   borderRadius: '20px',
-                  padding: '4px 12px',
+                  padding: '4px 1px',
                   cursor: 'pointer',
-                  fontSize: '11px',
+                  fontSize: 'clamp(9px, 2.5vw, 11px)',
                   fontFamily: 'Playfair Display, serif',
                   fontWeight: '600',
                   color: colors.gold,
@@ -1238,7 +1291,7 @@ export const BusinessDetail = ({
                 }}
               >
                 <span style={{ fontSize: '13px' }}>🛠️</span>
-                Services
+                {text.services}
               </button>
               {shouldShowAbout && (
                 <button
@@ -1250,13 +1303,17 @@ export const BusinessDetail = ({
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
-                    gap: '5px',
+                    justifyContent: 'center',
+                    width: '100%',
+                    minWidth: 0,
+                    whiteSpace: 'nowrap',
+                    gap: '1px',
                     background: activeTab === 'about' ? `${colors.gold}18` : 'none',
                     border: `1px solid ${activeTab === 'about' ? colors.gold : `${colors.gold}60`}`,
                     borderRadius: '20px',
-                    padding: '4px 12px',
+                    padding: '4px 1px',
                     cursor: 'pointer',
-                    fontSize: '11px',
+                    fontSize: 'clamp(9px, 2.5vw, 11px)',
                     fontFamily: 'Playfair Display, serif',
                     fontWeight: '600',
                     color: colors.gold,
@@ -1265,7 +1322,7 @@ export const BusinessDetail = ({
                   }}
                 >
                   <span style={{ fontSize: '13px' }}>ℹ️</span>
-                  À propos
+                  {text.description}
                 </button>
               )}
             </div>
@@ -1295,7 +1352,7 @@ export const BusinessDetail = ({
                     letterSpacing: '0.02em',
                   }}
                 >
-                  Voir les photos en grand
+                  {text.viewPhotos}
                 </button>
               </div>
             )}
@@ -1303,11 +1360,11 @@ export const BusinessDetail = ({
             {/* Tab content: Services */}
             {activeTab === 'services' && (
               <div style={{ marginTop: '10px', position: 'relative', zIndex: 100, pointerEvents: 'auto' }}>
-                {business.sous_categories ? (
+                {serviceList.length > 0 ? (
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                    {business.sous_categories.split(',').map((s: string, i: number) => s.trim()).filter(Boolean).map((service: string, i: number) => (
+                    {serviceList.map((service, index) => (
                       <span
-                        key={i}
+                        key={`${service}-${index}`}
                         style={{
                           display: 'inline-block',
                           padding: '4px 10px',
@@ -1327,7 +1384,7 @@ export const BusinessDetail = ({
                   </div>
                 ) : (
                   <p style={{ fontSize: '12px', color: '#999', fontStyle: 'italic', fontFamily: 'Playfair Display, serif' }}>
-                    Aucun service renseigné
+                    {text.noServices}
                   </p>
                 )}
               </div>
@@ -1350,9 +1407,9 @@ export const BusinessDetail = ({
 
             {/* SEO: hidden content for crawlers */}
             <div className="sr-only" aria-hidden="false">
-              <h2>Services et informations</h2>
-              {business.sous_categories && <p>Services: {business.sous_categories}</p>}
-              {shouldShowAbout && <p>À propos: {aboutText}</p>}
+              <h2>{text.servicesAndInformation}</h2>
+              <p>{text.services}: {serviceList.length > 0 ? serviceList.join(', ') : text.noServices}</p>
+              {shouldShowAbout && <p>{text.description}: {aboutText}</p>}
             </div>
           </div>
 
