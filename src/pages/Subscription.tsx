@@ -18,8 +18,14 @@ import { BusinessDetail } from '../components/BusinessDetail';
 import { useLanguage } from '../context/LanguageContext';
 
 type PreviewType = 'free' | 'artisan' | 'premium' | 'premium-detail' | 'launch' | 'request' | null;
+type ModalSize = 'compact' | 'medium' | 'large';
 
 const LOGO_PATH = '/images/logo_dalil_tounes_sceau_luxe.webp';
+const MODAL_SIZE_CLASS_NAME: Record<ModalSize, string> = {
+  compact: 'w-[min(700px,calc(100vw-24px))] sm:w-[min(700px,calc(100vw-48px))]',
+  medium: 'w-[min(960px,calc(100vw-24px))] sm:w-[min(960px,calc(100vw-48px))]',
+  large: 'w-[min(1080px,calc(100vw-24px))] sm:w-[min(1080px,calc(100vw-48px))]',
+};
 
 const subscriptionCopy = {
   fr: {
@@ -233,7 +239,7 @@ const subscriptionCopy = {
     ctaTitle: 'هل أنت مستعد لتقديم نشاطك بصورة أوضح؟',
     ctaText: 'ابدأ مجانًا أو اطلب مرافقة لإنشاء سيرة نشاطك المهنية.',
     ctaButton: 'اختر الحل المناسب',
-    demoName: 'Fiche Démonstration Dalil Tounes',
+    demoName: 'بطاقة دليل تونس التجريبية',
     demoCategory: 'منصة تونسية',
     tunisia: 'تونس',
     open: 'مفتوح',
@@ -676,13 +682,13 @@ function Modal({
   onClose,
   children,
   closeLabel,
-  wide = false,
+  size = 'compact',
 }: {
   title: string;
   onClose: () => void;
   children: ReactNode;
   closeLabel: string;
-  wide?: boolean;
+  size?: ModalSize;
 }) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -739,9 +745,9 @@ function Modal({
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className={`relative max-h-[90vh] w-full overflow-y-auto rounded-3xl bg-white shadow-2xl ${wide ? 'max-w-4xl' : 'max-w-xl'}`}
+        className={`relative max-h-[90dvh] overflow-y-auto rounded-3xl bg-white shadow-2xl ${MODAL_SIZE_CLASS_NAME[size]}`}
       >
-        <div className="sticky top-0 z-20 flex justify-end bg-gradient-to-b from-white via-white/95 to-transparent px-4 pb-2 pt-4">
+        <div className="sticky top-0 z-20 flex justify-end bg-gradient-to-b from-white via-white/95 to-transparent px-3 pb-1 pt-3 sm:px-4">
           <button
             ref={closeButtonRef}
             type="button"
@@ -752,7 +758,7 @@ function Modal({
             <X className="h-5 w-5" aria-hidden="true" />
           </button>
         </div>
-        <div className="px-4 pb-5 sm:px-7 sm:pb-7">{children}</div>
+        <div className="px-4 pb-4 sm:px-6 sm:pb-6">{children}</div>
       </div>
     </div>
   );
@@ -1118,39 +1124,39 @@ export const Subscription = () => {
       </main>
 
       {activePreview === 'free' && (
-        <Modal title={copy.previewEssentialTitle} onClose={closePreview} closeLabel={copy.closeModal}>
-          <h2 className="mb-5 text-center text-2xl font-bold text-[#4A123F]">{copy.previewEssentialTitle}</h2>
+        <Modal title={copy.previewEssentialTitle} onClose={closePreview} closeLabel={copy.closeModal} size="compact">
+          <h2 className="mb-4 text-center text-2xl font-bold text-[#4A123F]">{copy.previewEssentialTitle}</h2>
           <EssentialCardPreview copy={copy} />
         </Modal>
       )}
 
       {activePreview === 'artisan' && (
-        <Modal title={copy.previewArtisanTitle} onClose={closePreview} closeLabel={copy.closeModal}>
-          <h2 className="mb-5 text-center text-2xl font-bold text-[#4A123F]">{copy.previewArtisanTitle}</h2>
+        <Modal title={copy.previewArtisanTitle} onClose={closePreview} closeLabel={copy.closeModal} size="compact">
+          <h2 className="mb-4 text-center text-2xl font-bold text-[#4A123F]">{copy.previewArtisanTitle}</h2>
           <GreenCardPreview tier="ARTISAN" copy={copy} />
         </Modal>
       )}
 
       {activePreview === 'premium' && (
-        <Modal title={copy.previewPremiumTitle} onClose={closePreview} closeLabel={copy.closeModal}>
-          <h2 className="mb-5 text-center text-2xl font-bold text-[#4A123F]">{copy.previewPremiumTitle}</h2>
+        <Modal title={copy.previewPremiumTitle} onClose={closePreview} closeLabel={copy.closeModal} size="compact">
+          <h2 className="mb-4 text-center text-2xl font-bold text-[#4A123F]">{copy.previewPremiumTitle}</h2>
           <GreenCardPreview tier="PREMIUM" copy={copy} onDetails={() => setActivePreview('premium-detail')} />
         </Modal>
       )}
 
       {activePreview === 'premium-detail' && (
-        <Modal title={copy.premiumDetailTitle} onClose={closePreview} closeLabel={copy.closeModal} wide>
-          <h2 className="mb-5 text-center text-2xl font-bold text-[#4A123F]">{copy.premiumDetailTitle}</h2>
+        <Modal title={copy.premiumDetailTitle} onClose={closePreview} closeLabel={copy.closeModal} size="large">
+          <h2 className="mb-4 text-center text-2xl font-bold text-[#4A123F]">{copy.premiumDetailTitle}</h2>
           <PremiumDetailPreview copy={copy} />
         </Modal>
       )}
 
       {activePreview === 'launch' && (
-        <Modal title={copy.launchConditionsDialog} onClose={closePreview} closeLabel={copy.closeModal}>
+        <Modal title={copy.launchConditionsDialog} onClose={closePreview} closeLabel={copy.closeModal} size="compact">
           <div className="mx-auto max-w-lg">
             <span className="rounded-full bg-[#D6AF2E] px-3 py-1 text-[10px] font-black tracking-[0.14em] text-[#07543F]">{copy.launchBadge}</span>
-            <h2 className="mt-4 text-2xl font-bold text-[#4A123F]">{copy.launchConditionsTitle}</h2>
-            <ul className="mt-5 space-y-3">
+            <h2 className="mt-3 text-2xl font-bold text-[#4A123F]">{copy.launchConditionsTitle}</h2>
+            <ul className="mt-4 space-y-3">
               {copy.launchConditions.map((condition) => (
                 <li key={condition} className="flex items-start gap-3 text-sm leading-6 text-slate-700">
                   <Check className="mt-1 h-4 w-4 shrink-0 text-[#07543F]" aria-hidden="true" /> {condition}
@@ -1167,9 +1173,9 @@ export const Subscription = () => {
       )}
 
       {activePreview === 'request' && selectedPlan && (
-        <Modal title={`${copy.requestModal} — ${selectedPlan.label}`} onClose={closePreview} closeLabel={copy.closeModal} wide>
-          <div className="mx-auto max-w-[860px]">
-            <div className="mb-5 text-center">
+        <Modal title={`${copy.requestModal} — ${selectedPlan.label}`} onClose={closePreview} closeLabel={copy.closeModal} size="medium">
+          <div className="mx-auto max-w-[800px]">
+            <div className="mb-4 text-center">
               <Send className="mx-auto h-8 w-8 text-[#D6AF2E]" aria-hidden="true" />
               <h2 className="mt-2 text-2xl font-bold text-[#4A123F]">{copy.requestTitle}</h2>
               <p className="mt-1 text-sm text-slate-600">{selectedPlan.label}</p>

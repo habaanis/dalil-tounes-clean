@@ -60,6 +60,7 @@ interface SubscriptionFormState {
 }
 
 interface FormCopy {
+  honeypotLabel: string;
   stepOne: string;
   stepTwo: string;
   activityTitle: string;
@@ -141,6 +142,7 @@ interface FormCopy {
 
 const COPY: Record<SupportedLanguage, FormCopy> = {
   fr: {
+    honeypotLabel: 'Ne remplissez pas ce champ',
     stepOne: 'Étape 1 sur 2',
     stepTwo: 'Étape 2 sur 2',
     activityTitle: 'Votre activité',
@@ -228,6 +230,7 @@ const COPY: Record<SupportedLanguage, FormCopy> = {
     formError: 'Vérifiez les informations indiquées puis réessayez.',
   },
   ar: {
+    honeypotLabel: 'لا تملأ هذا الحقل',
     stepOne: 'الخطوة 1 من 2',
     stepTwo: 'الخطوة 2 من 2',
     activityTitle: 'نشاطك',
@@ -315,6 +318,7 @@ const COPY: Record<SupportedLanguage, FormCopy> = {
     formError: 'تحقق من المعلومات ثم أعد المحاولة.',
   },
   en: {
+    honeypotLabel: 'Do not fill in this field',
     stepOne: 'Step 1 of 2',
     stepTwo: 'Step 2 of 2',
     activityTitle: 'Your business',
@@ -402,6 +406,7 @@ const COPY: Record<SupportedLanguage, FormCopy> = {
     formError: 'Check the information and try again.',
   },
   it: {
+    honeypotLabel: 'Non compilare questo campo',
     stepOne: 'Passaggio 1 di 2',
     stepTwo: 'Passaggio 2 di 2',
     activityTitle: 'La tua attività',
@@ -489,6 +494,7 @@ const COPY: Record<SupportedLanguage, FormCopy> = {
     formError: 'Controlla le informazioni e riprova.',
   },
   ru: {
+    honeypotLabel: 'Не заполняйте это поле',
     stepOne: 'Шаг 1 из 2',
     stepTwo: 'Шаг 2 из 2',
     activityTitle: 'Ваша деятельность',
@@ -772,7 +778,7 @@ export function SubscriptionRequestForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-5" noValidate dir={isArabic ? 'rtl' : 'ltr'}>
       <div className="sr-only" aria-hidden="true">
-        <label htmlFor="subscription-request-verification">Do not fill in this field</label>
+        <label htmlFor="subscription-request-verification">{copy.honeypotLabel}</label>
         <input
           id="subscription-request-verification"
           type="text"
