@@ -133,8 +133,6 @@ const subscriptionCopy = {
       'La période totale de 18 mois est calculée à partir de cette date.',
       "L'abonnement annuel est confirmé après le dernier versement.",
       "En cas de paiement annuel incomplet, le compte revient à la formule gratuite à la fin de la période d'essai.",
-      "L'offre est limitée dans le temps ou à un nombre d'inscriptions qui sera défini avant la mise en ligne.",
-      "L'offre ne peut pas être cumulée avec une autre promotion sans validation.",
     ],
     flyerConditions: [
       'En cas de paiement annuel Premium en trois fois, les 500 flyers sont préparés et imprimés après le troisième et dernier versement.',
@@ -261,8 +259,6 @@ const subscriptionCopy = {
       'تُحتسب المدة الإجمالية البالغة 18 شهرًا ابتداءً من هذا التاريخ.',
       'يُؤكد الاشتراك السنوي بعد الدفعة الأخيرة.',
       'إذا لم يكتمل الدفع السنوي، يعود الحساب إلى الحضور الأساسي المجاني عند نهاية فترة التجربة.',
-      'العرض محدود زمنيًا أو بعدد تسجيلات سيُحدد قبل الإطلاق.',
-      'لا يمكن جمع هذا العرض مع عرض ترويجي آخر دون موافقة.',
     ],
     flyerConditions: [
       'عند دفع الاشتراك السنوي Premium على ثلاث دفعات، يتم إعداد وطباعة 500 منشور إعلاني بعد الدفعة الثالثة والأخيرة.',
@@ -389,8 +385,6 @@ const subscriptionCopy = {
       'The total 18-month period is calculated from that date.',
       'The annual subscription is confirmed after the final installment.',
       'If the annual payment is incomplete, the account returns to the free plan at the end of the trial period.',
-      'The offer is limited in time or to a number of registrations that will be defined before launch.',
-      'The offer cannot be combined with another promotion without approval.',
     ],
     flyerConditions: [
       'If the annual Premium subscription is paid in three installments, the 500 flyers are prepared and printed after the third and final installment.',
@@ -517,8 +511,6 @@ const subscriptionCopy = {
       'Il periodo totale di 18 mesi viene calcolato a partire da tale data.',
       'L’abbonamento annuale è confermato dopo l’ultima rata.',
       'In caso di pagamento annuale incompleto, l’account torna alla formula gratuita al termine del periodo di prova.',
-      'L’offerta è limitata nel tempo o a un numero di registrazioni che sarà definito prima del lancio.',
-      'L’offerta non può essere cumulata con un’altra promozione senza approvazione.',
     ],
     flyerConditions: [
       'In caso di pagamento dell’abbonamento annuale Premium in tre rate, i 500 volantini vengono preparati e stampati dopo la terza e ultima rata.',
@@ -645,8 +637,6 @@ const subscriptionCopy = {
       'Общий период в 18 месяцев рассчитывается с этой даты.',
       'Годовая подписка подтверждается после последнего платежа.',
       'Если годовая оплата не завершена, после окончания пробного периода аккаунт возвращается на бесплатный тариф.',
-      'Предложение ограничено по времени или количеству регистраций, которое будет определено до запуска.',
-      'Предложение нельзя объединять с другой акцией без согласования.',
     ],
     flyerConditions: [
       'При оплате годовой подписки Premium тремя платежами 500 флаеров подготавливаются и печатаются после третьего и последнего платежа.',
