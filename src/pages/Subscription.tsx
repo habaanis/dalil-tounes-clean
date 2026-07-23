@@ -12,7 +12,8 @@ import {
   Send,
   X,
 } from 'lucide-react';
-import { BusinessRegistrationRequestForm } from '../components/BusinessRegistrationRequestForm';
+import { SubscriptionRequestForm } from '../components/SubscriptionRequestForm';
+import type { SubscriptionPlanCode } from '../components/SubscriptionRequestForm';
 import { BusinessDetail } from '../components/BusinessDetail';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -929,11 +930,14 @@ export const Subscription = () => {
   const isArabic = language === 'ar';
   const copy = subscriptionCopy[language as keyof typeof subscriptionCopy] ?? subscriptionCopy.fr;
   const [activePreview, setActivePreview] = useState<PreviewType>(null);
-  const [selectedPlan, setSelectedPlan] = useState('');
+  const [selectedPlan, setSelectedPlan] = useState<{
+    code: SubscriptionPlanCode;
+    label: string;
+  } | null>(null);
 
   const closePreview = () => setActivePreview(null);
-  const openRequest = (plan: string) => {
-    setSelectedPlan(plan);
+  const openRequest = (code: SubscriptionPlanCode, label: string) => {
+    setSelectedPlan({ code, label });
     setActivePreview('request');
   };
 
@@ -1003,7 +1007,7 @@ export const Subscription = () => {
             <FeatureList items={[...copy.cvFeatures]} columns />
             <button
               type="button"
-              onClick={() => openRequest(copy.cvPlanLabel)}
+              onClick={() => openRequest('cv_business', copy.cvPlanLabel)}
               className="mt-6 w-full rounded-xl bg-[#4A123F] px-5 py-3 text-sm font-bold text-white shadow-lg transition hover:bg-[#5B1C4E] focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]"
             >
               {copy.requestCreation}
@@ -1048,7 +1052,7 @@ export const Subscription = () => {
               intro={copy.artisanIntro}
               features={[...copy.artisanFeatures]}
               onPreview={() => setActivePreview('artisan')}
-              onRequest={() => openRequest(copy.artisanPlanLabel)}
+              onRequest={() => openRequest('artisan', copy.artisanPlanLabel)}
             />
             <ContinuousPlanCard
               tier="PREMIUM"
@@ -1056,7 +1060,7 @@ export const Subscription = () => {
               intro={copy.premiumIntro}
               features={[...copy.premiumFeatures]}
               onPreview={() => setActivePreview('premium')}
-              onRequest={() => openRequest(copy.premiumPlanLabel)}
+              onRequest={() => openRequest('premium', copy.premiumPlanLabel)}
             />
 
             <div className="grid content-start gap-4">
@@ -1162,15 +1166,19 @@ export const Subscription = () => {
         </Modal>
       )}
 
-      {activePreview === 'request' && (
-        <Modal title={`${copy.requestModal} — ${selectedPlan}`} onClose={closePreview} closeLabel={copy.closeModal} wide>
-          <div className="mx-auto max-w-3xl">
+      {activePreview === 'request' && selectedPlan && (
+        <Modal title={`${copy.requestModal} — ${selectedPlan.label}`} onClose={closePreview} closeLabel={copy.closeModal} wide>
+          <div className="mx-auto max-w-[860px]">
             <div className="mb-5 text-center">
               <Send className="mx-auto h-8 w-8 text-[#D6AF2E]" aria-hidden="true" />
               <h2 className="mt-2 text-2xl font-bold text-[#4A123F]">{copy.requestTitle}</h2>
-              <p className="mt-1 text-sm text-slate-600">{selectedPlan}</p>
+              <p className="mt-1 text-sm text-slate-600">{selectedPlan.label}</p>
             </div>
-            <BusinessRegistrationRequestForm mode="subscription" selectedPlan={selectedPlan} onCancel={closePreview} onSuccess={closePreview} />
+            <SubscriptionRequestForm
+              selectedPlan={selectedPlan.code}
+              selectedPlanLabel={selectedPlan.label}
+              onCancel={closePreview}
+            />
           </div>
         </Modal>
       )}
