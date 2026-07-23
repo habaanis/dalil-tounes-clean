@@ -229,6 +229,10 @@ function normalizeBusiness(business: any): any {
     description: business.description || '',
     a_propos: getAboutText(business),
     services: business.services || '',
+    services_ar: business.services_ar || null,
+    services_en: business.services_en || null,
+    services_it: business.services_it || null,
+    services_ru: business.services_ru || null,
     BTN_Maps: business.BTN_Maps || business['BTN_Maps'] || business.google_url || null,
     statut_validation: business.statut_validation || null,
     created_at: business.created_at,
@@ -337,6 +341,10 @@ interface Business {
   'À propos'?: string | null;
   'A propos'?: string | null;
   services?: string;
+  services_ar?: string | null;
+  services_en?: string | null;
+  services_it?: string | null;
+  services_ru?: string | null;
   BTN_Maps?: string | null;
   statut_validation?: string | null;
   created_at?: string;
@@ -605,6 +613,7 @@ export const BusinessDetail = ({
       photos: 'Photos',
       description: 'À propos',
       services: 'Services',
+      servicesAndInformation: 'Services et informations',
       viewPhotos: 'Voir les photos en grand',
       noServices: 'Aucun service renseigné',
       contact: 'Contact',
@@ -639,6 +648,7 @@ export const BusinessDetail = ({
       photos: 'Photos',
       description: 'About',
       services: 'Services',
+      servicesAndInformation: 'Services and information',
       viewPhotos: 'View photos full size',
       noServices: 'No services listed',
       contact: 'Contact',
@@ -673,6 +683,7 @@ export const BusinessDetail = ({
       photos: 'الصور',
       description: 'حول',
       services: 'الخدمات',
+      servicesAndInformation: 'الخدمات والمعلومات',
       viewPhotos: 'عرض الصور بالحجم الكبير',
       noServices: 'لا توجد خدمات مسجلة',
       contact: 'اتصال',
@@ -707,6 +718,7 @@ export const BusinessDetail = ({
       photos: 'Foto',
       description: 'Chi siamo',
       services: 'Servizi',
+      servicesAndInformation: 'Servizi e informazioni',
       viewPhotos: 'Vedi le foto ingrandite',
       noServices: 'Nessun servizio indicato',
       contact: 'Contatto',
@@ -741,6 +753,7 @@ export const BusinessDetail = ({
       photos: 'Фотографии',
       description: 'О нас',
       services: 'Услуги',
+      servicesAndInformation: 'Услуги и информация',
       viewPhotos: 'Посмотреть фотографии в полном размере',
       noServices: 'Услуги не указаны',
       contact: 'Контакт',
@@ -972,7 +985,12 @@ export const BusinessDetail = ({
   const translatedDescription = displayDescription;
   const aboutText = getAboutText(business);
   const shouldShowAbout = !!aboutText;
-  const serviceList = String(business.services || '')
+  const translatedServices = business
+    ? getMultilingualField(business, 'services', language, true) ||
+      business.services ||
+      ''
+    : '';
+  const serviceList = String(translatedServices)
     .split(/[,;\n]+/)
     .map((service) => service.trim())
     .filter(Boolean);
@@ -1389,7 +1407,7 @@ export const BusinessDetail = ({
 
             {/* SEO: hidden content for crawlers */}
             <div className="sr-only" aria-hidden="false">
-              <h2>Services et informations</h2>
+              <h2>{text.servicesAndInformation}</h2>
               <p>{text.services}: {serviceList.length > 0 ? serviceList.join(', ') : text.noServices}</p>
               {shouldShowAbout && <p>{text.description}: {aboutText}</p>}
             </div>
