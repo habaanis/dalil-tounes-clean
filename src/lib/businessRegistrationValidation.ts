@@ -4,6 +4,9 @@ export interface SelectOption {
   value: string;
   labelFr: string;
   labelAr: string;
+  labelEn?: string;
+  labelIt?: string;
+  labelRu?: string;
 }
 
 export const TUNISIA_GOVERNORATES: SelectOption[] = [
@@ -34,25 +37,25 @@ export const TUNISIA_GOVERNORATES: SelectOption[] = [
 ];
 
 export const BUSINESS_SECTORS: SelectOption[] = [
-  { value: 'Artisanat', labelFr: 'Artisanat', labelAr: 'الصناعات التقليدية' },
-  { value: 'Commerce', labelFr: 'Commerce', labelAr: 'التجارة' },
-  { value: 'Services aux particuliers', labelFr: 'Services aux particuliers', labelAr: 'خدمات للأفراد' },
-  { value: 'Services aux entreprises', labelFr: 'Services aux entreprises', labelAr: 'خدمات للمؤسسات' },
-  { value: 'Bâtiment et travaux', labelFr: 'Bâtiment et travaux', labelAr: 'البناء والأشغال' },
-  { value: 'Automobile', labelFr: 'Automobile', labelAr: 'السيارات' },
-  { value: 'Santé', labelFr: 'Santé', labelAr: 'الصحة' },
-  { value: 'Beauté et bien-être', labelFr: 'Beauté et bien-être', labelAr: 'الجمال والرفاه' },
-  { value: 'Restauration et alimentation', labelFr: 'Restauration et alimentation', labelAr: 'المطاعم والأغذية' },
-  { value: 'Tourisme et loisirs', labelFr: 'Tourisme et loisirs', labelAr: 'السياحة والترفيه' },
-  { value: 'Éducation et formation', labelFr: 'Éducation et formation', labelAr: 'التعليم والتكوين' },
-  { value: 'Transport et logistique', labelFr: 'Transport et logistique', labelAr: 'النقل والخدمات اللوجستية' },
-  { value: 'Informatique et numérique', labelFr: 'Informatique et numérique', labelAr: 'الإعلامية والرقمنة' },
-  { value: 'Finance, assurance et conseil', labelFr: 'Finance, assurance et conseil', labelAr: 'المالية والتأمين والاستشارة' },
-  { value: 'Agriculture et environnement', labelFr: 'Agriculture et environnement', labelAr: 'الفلاحة والبيئة' },
-  { value: 'Industrie', labelFr: 'Industrie', labelAr: 'الصناعة' },
-  { value: 'Profession libérale', labelFr: 'Profession libérale', labelAr: 'مهنة حرة' },
-  { value: 'Association ou organisation', labelFr: 'Association ou organisation', labelAr: 'جمعية أو منظمة' },
-  { value: 'Autre', labelFr: 'Autre', labelAr: 'أخرى' },
+  { value: 'Artisanat', labelFr: 'Artisanat', labelAr: 'الصناعات التقليدية', labelEn: 'Crafts', labelIt: 'Artigianato', labelRu: 'Ремесла' },
+  { value: 'Commerce', labelFr: 'Commerce', labelAr: 'التجارة', labelEn: 'Retail', labelIt: 'Commercio', labelRu: 'Торговля' },
+  { value: 'Services aux particuliers', labelFr: 'Services aux particuliers', labelAr: 'خدمات للأفراد', labelEn: 'Personal services', labelIt: 'Servizi alla persona', labelRu: 'Услуги для частных лиц' },
+  { value: 'Services aux entreprises', labelFr: 'Services aux entreprises', labelAr: 'خدمات للمؤسسات', labelEn: 'Business services', labelIt: 'Servizi alle imprese', labelRu: 'Услуги для бизнеса' },
+  { value: 'Bâtiment et travaux', labelFr: 'Bâtiment et travaux', labelAr: 'البناء والأشغال', labelEn: 'Construction and works', labelIt: 'Edilizia e lavori', labelRu: 'Строительство и ремонт' },
+  { value: 'Automobile', labelFr: 'Automobile', labelAr: 'السيارات', labelEn: 'Automotive', labelIt: 'Automotive', labelRu: 'Автомобили' },
+  { value: 'Santé', labelFr: 'Santé', labelAr: 'الصحة', labelEn: 'Health', labelIt: 'Salute', labelRu: 'Здоровье' },
+  { value: 'Beauté et bien-être', labelFr: 'Beauté et bien-être', labelAr: 'الجمال والرفاه', labelEn: 'Beauty and wellness', labelIt: 'Bellezza e benessere', labelRu: 'Красота и здоровье' },
+  { value: 'Restauration et alimentation', labelFr: 'Restauration et alimentation', labelAr: 'المطاعم والأغذية', labelEn: 'Food and catering', labelIt: 'Ristorazione e alimentazione', labelRu: 'Питание и рестораны' },
+  { value: 'Tourisme et loisirs', labelFr: 'Tourisme et loisirs', labelAr: 'السياحة والترفيه', labelEn: 'Tourism and leisure', labelIt: 'Turismo e tempo libero', labelRu: 'Туризм и досуг' },
+  { value: 'Éducation et formation', labelFr: 'Éducation et formation', labelAr: 'التعليم والتكوين', labelEn: 'Education and training', labelIt: 'Istruzione e formazione', labelRu: 'Образование и обучение' },
+  { value: 'Transport et logistique', labelFr: 'Transport et logistique', labelAr: 'النقل والخدمات اللوجستية', labelEn: 'Transport and logistics', labelIt: 'Trasporti e logistica', labelRu: 'Транспорт и логистика' },
+  { value: 'Informatique et numérique', labelFr: 'Informatique et numérique', labelAr: 'الإعلامية والرقمنة', labelEn: 'IT and digital', labelIt: 'Informatica e digitale', labelRu: 'ИТ и цифровые услуги' },
+  { value: 'Finance, assurance et conseil', labelFr: 'Finance, assurance et conseil', labelAr: 'المالية والتأمين والاستشارة', labelEn: 'Finance, insurance and consulting', labelIt: 'Finanza, assicurazioni e consulenza', labelRu: 'Финансы, страхование и консалтинг' },
+  { value: 'Agriculture et environnement', labelFr: 'Agriculture et environnement', labelAr: 'الفلاحة والبيئة', labelEn: 'Agriculture and environment', labelIt: 'Agricoltura e ambiente', labelRu: 'Сельское хозяйство и экология' },
+  { value: 'Industrie', labelFr: 'Industrie', labelAr: 'الصناعة', labelEn: 'Industry', labelIt: 'Industria', labelRu: 'Промышленность' },
+  { value: 'Profession libérale', labelFr: 'Profession libérale', labelAr: 'مهنة حرة', labelEn: 'Independent profession', labelIt: 'Libera professione', labelRu: 'Частная практика' },
+  { value: 'Association ou organisation', labelFr: 'Association ou organisation', labelAr: 'جمعية أو منظمة', labelEn: 'Association or organization', labelIt: 'Associazione o organizzazione', labelRu: 'Ассоциация или организация' },
+  { value: 'Autre', labelFr: 'Autre', labelAr: 'أخرى', labelEn: 'Other', labelIt: 'Altro', labelRu: 'Другое' },
 ];
 
 export function normalizePhone(value: string): string {

@@ -12,7 +12,7 @@ import {
   Send,
   X,
 } from 'lucide-react';
-import { BusinessRegistrationRequestForm } from '../components/BusinessRegistrationRequestForm';
+import { SubscriptionRequestForm } from '../components/SubscriptionRequestForm';
 import { BusinessDetail } from '../components/BusinessDetail';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -1164,13 +1164,13 @@ export const Subscription = () => {
 
       {activePreview === 'request' && (
         <Modal title={`${copy.requestModal} — ${selectedPlan}`} onClose={closePreview} closeLabel={copy.closeModal} wide>
-          <div className="mx-auto max-w-3xl">
+          <div className="mx-auto max-w-[860px]">
             <div className="mb-5 text-center">
               <Send className="mx-auto h-8 w-8 text-[#D6AF2E]" aria-hidden="true" />
               <h2 className="mt-2 text-2xl font-bold text-[#4A123F]">{copy.requestTitle}</h2>
               <p className="mt-1 text-sm text-slate-600">{selectedPlan}</p>
             </div>
-            <BusinessRegistrationRequestForm mode="subscription" selectedPlan={selectedPlan} onCancel={closePreview} onSuccess={closePreview} />
+            <SubscriptionRequestForm selectedPlan={selectedPlan} onCancel={closePreview} />
           </div>
         </Modal>
       )}

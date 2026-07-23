@@ -28,10 +28,9 @@ export function buildSuggestionRow(form: NormalizedRegistrationRequest): Record<
   }
 
   if (form.mode === 'subscription') {
-    const planLabel = form.selectedPlan ? `Abonnement ${form.selectedPlan}` : 'Demande abonnement / inscription';
     return {
       titre_demande: form.title,
-      telephone: form.phone || null,
+      telephone: form.phone,
       email: form.email || null,
       message: details,
       type_demande: 'demande_abonnement',
@@ -39,13 +38,20 @@ export function buildSuggestionRow(form: NormalizedRegistrationRequest): Record<
       langue: form.language,
       priorite: 'Normale',
       statut: 'en_attente',
-      nom_entreprise: form.title,
-      secteur: planLabel,
-      ville: null,
-      contact_suggere: [form.phone, form.email].filter(Boolean).join(' - '),
+      nom_entreprise: form.companyName,
+      secteur: form.sector,
+      ville: form.city,
+      contact_suggere: [
+        `Téléphone: ${form.phone}`,
+        form.whatsapp ? `WhatsApp: ${form.whatsapp}` : '',
+        `Responsable: ${form.managerName}`,
+        `Contact préféré: ${contactMethodLabel(form.preferredContactMethod)}`,
+      ].filter(Boolean).join(' | '),
       email_suggesteur: form.email || null,
       raison_suggestion: details,
       pack_type: form.selectedPlan || null,
+      facebook_url: form.facebook || null,
+      instagram_url: form.instagram || null,
       submission_lang: form.language,
     };
   }
@@ -94,10 +100,34 @@ export function buildDetailedMessage(form: NormalizedRegistrationRequest): strin
       `Request-ID: ${form.requestId}`,
       'Demande depuis la page abonnement',
       form.selectedPlan ? `Formule choisie: ${form.selectedPlan}` : '',
-      `Titre: ${form.title}`,
-      form.phone ? `Téléphone: ${form.phone}` : '',
+      `Titre interne: ${form.title}`,
+      `Activité: ${form.companyName}`,
+      `Responsable: ${form.managerName}`,
+      `Secteur: ${form.sector}`,
+      `Gouvernorat: ${form.governorate}`,
+      `Ville: ${form.city}`,
+      `Téléphone / WhatsApp: ${form.phone}`,
       form.email ? `Email: ${form.email}` : '',
-      form.message,
+      form.selectedPlatforms.length
+        ? `Plateformes existantes: ${form.selectedPlatforms.map(platformLabel).join(', ')}`
+        : 'Plateformes existantes: Non renseignées',
+      form.website ? `Site web: ${form.website}` : '',
+      form.facebook ? `Facebook: ${form.facebook}` : '',
+      form.instagram ? `Instagram: ${form.instagram}` : '',
+      form.whatsapp ? `WhatsApp complémentaire: ${form.whatsapp}` : '',
+      form.requestedBillingPeriod
+        ? `Période demandée: ${billingPeriodLabel(form.requestedBillingPeriod)}`
+        : '',
+      form.requestedPaymentSchedule
+        ? `Paiement souhaité: ${paymentScheduleLabel(form.requestedPaymentSchedule)}`
+        : '',
+      hasPremiumAnnualFlyers(form)
+        ? 'Avantage interne: 500 flyers inclus avec le Premium annuel après paiement complet et validation du modèle'
+        : '',
+      `Contact préféré: ${contactMethodLabel(form.preferredContactMethod)}`,
+      `Moment préféré: ${contactTimeLabel(form.preferredContactTime)}`,
+      form.message ? `Précision: ${form.message}` : 'Précision: Aucune',
+      'Consentement: Oui',
     ].filter(Boolean).join('\n');
   }
 
@@ -145,10 +175,32 @@ export function buildNotificationPayload(form: NormalizedRegistrationRequest, id
       data: {
         'ID Supabase': id,
         Plan: form.selectedPlan || 'Non renseigné',
-        Titre: form.title,
-        Téléphone: form.phone || 'Non renseigné',
+        'Titre interne': form.title,
+        Activité: form.companyName,
+        Responsable: form.managerName,
+        Secteur: form.sector,
+        Gouvernorat: form.governorate,
+        Ville: form.city,
+        'Téléphone / WhatsApp': form.phone,
         Email: form.email || 'Non renseigné',
-        Message: form.message,
+        Plateformes: form.selectedPlatforms.length
+          ? form.selectedPlatforms.map(platformLabel).join(', ')
+          : 'Non renseignées',
+        'Site web': form.website || 'Non renseigné',
+        Facebook: form.facebook || 'Non renseigné',
+        Instagram: form.instagram || 'Non renseigné',
+        WhatsApp: form.whatsapp || 'Identique ou non renseigné',
+        'Période demandée': form.requestedBillingPeriod
+          ? billingPeriodLabel(form.requestedBillingPeriod)
+          : 'Non applicable',
+        'Paiement souhaité': paymentScheduleLabel(form.requestedPaymentSchedule),
+        Flyers: hasPremiumAnnualFlyers(form)
+          ? '500 flyers — Premium annuel uniquement, après paiement complet et validation du modèle'
+          : 'Non inclus',
+        'Contact préféré': contactMethodLabel(form.preferredContactMethod),
+        'Moment préféré': contactTimeLabel(form.preferredContactTime),
+        Message: form.message || 'Aucune précision complémentaire',
+        Consentement: form.consent ? 'Oui' : 'Non',
         Langue: form.language,
       },
       admin_url: '/admin/premium',
@@ -172,4 +224,57 @@ export function buildNotificationPayload(form: NormalizedRegistrationRequest, id
     },
     admin_url: '/admin/premium',
   };
+}
+
+function platformLabel(value: string): string {
+  return {
+    facebook: 'Facebook',
+    instagram: 'Instagram',
+    whatsapp_business: 'WhatsApp Business',
+    google_business: 'Google Business',
+    website: 'Site Internet',
+    other: 'Autre',
+    none: 'Aucune pour le moment',
+  }[value] || value;
+}
+
+function billingPeriodLabel(value: string): string {
+  return {
+    monthly: 'Mensuel',
+    annual: 'Annuel',
+    advice: 'Conseil demandé',
+  }[value] || value;
+}
+
+function paymentScheduleLabel(value: string): string {
+  return {
+    cv_single_199: '199 TND en une fois',
+    cv_two_payments: '100 TND puis 99 TND',
+    cv_three_payments: '67 TND puis 66 TND puis 66 TND',
+    advice: 'Conseil demandé',
+    annual_single: 'Annuel en une fois',
+    annual_three: 'Annuel en trois fois',
+  }[value] || 'Non renseigné';
+}
+
+function contactMethodLabel(value: string): string {
+  return {
+    whatsapp: 'WhatsApp',
+    phone: 'Téléphone',
+    email: 'Email',
+  }[value] || value;
+}
+
+function contactTimeLabel(value: string): string {
+  return {
+    morning: 'Matin',
+    afternoon: 'Après-midi',
+    evening: 'Soir',
+    any: 'Peu importe',
+  }[value] || value;
+}
+
+function hasPremiumAnnualFlyers(form: NormalizedRegistrationRequest): boolean {
+  return form.requestedBillingPeriod === 'annual' &&
+    form.selectedPlan.toLowerCase().includes('premium');
 }
