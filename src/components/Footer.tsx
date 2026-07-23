@@ -73,11 +73,75 @@ const EmailContact: React.FC = () => {
 
 const footerLink = 'text-gray-400 hover:text-[#D4AF37] focus-visible:text-[#D4AF37] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#111111] rounded-sm transition-colors duration-200 text-sm leading-relaxed';
 
+const footerStaticCopy = {
+  fr: {
+    discover: 'Découvrir Dalil Tounes',
+    why: 'Pourquoi Dalil Tounes',
+    how: 'Comment fonctionne Dalil Tounes',
+    articles: 'Articles',
+    professionals: 'Professionnels',
+    offers: 'Nos offres',
+    businesses: 'Entreprises',
+    reviews: 'Avis & recommandations',
+    rights: 'Tous droits réservés.',
+    request: 'Demande d’information / inscription',
+  },
+  ar: {
+    discover: 'اكتشف Dalil Tounes',
+    why: 'لماذا Dalil Tounes',
+    how: 'كيف يعمل Dalil Tounes',
+    articles: 'المقالات',
+    professionals: 'المهنيون',
+    offers: 'عروضنا',
+    businesses: 'المؤسسات',
+    reviews: 'الآراء والتوصيات',
+    rights: 'جميع الحقوق محفوظة.',
+    request: 'طلب معلومات / تسجيل',
+  },
+  en: {
+    discover: 'Discover Dalil Tounes',
+    why: 'Why Dalil Tounes',
+    how: 'How Dalil Tounes works',
+    articles: 'Articles',
+    professionals: 'Professionals',
+    offers: 'Our offers',
+    businesses: 'Businesses',
+    reviews: 'Reviews & recommendations',
+    rights: 'All rights reserved.',
+    request: 'Information request / registration',
+  },
+  it: {
+    discover: 'Scopri Dalil Tounes',
+    why: 'Perché Dalil Tounes',
+    how: 'Come funziona Dalil Tounes',
+    articles: 'Articoli',
+    professionals: 'Professionisti',
+    offers: 'Le nostre offerte',
+    businesses: 'Attività',
+    reviews: 'Recensioni e raccomandazioni',
+    rights: 'Tutti i diritti riservati.',
+    request: 'Richiesta di informazioni / registrazione',
+  },
+  ru: {
+    discover: 'Откройте для себя Dalil Tounes',
+    why: 'Почему Dalil Tounes',
+    how: 'Как работает Dalil Tounes',
+    articles: 'Статьи',
+    professionals: 'Профессионалам',
+    offers: 'Наши предложения',
+    businesses: 'Организации',
+    reviews: 'Отзывы и рекомендации',
+    rights: 'Все права защищены.',
+    request: 'Запрос информации / регистрация',
+  },
+} as const;
+
 const Footer: React.FC = () => {
   const { language } = useLanguage();
   const t = useTranslation(language);
   const te = useTranslationExtended(language);
   const { isRTL } = useRTL();
+  const staticCopy = footerStaticCopy[language] ?? footerStaticCopy.fr;
 
   const [showRequestForm, setShowRequestForm] = useState(false);
   const [requestForm, setRequestForm] = useState({
@@ -260,22 +324,22 @@ const Footer: React.FC = () => {
 
           <div>
             <h4 className="text-xs font-semibold mb-4 text-gray-300 uppercase tracking-widest" style={{ letterSpacing: '0.12em' }}>
-              Découvrir Dalil Tounes
+              {staticCopy.discover}
             </h4>
             <ul className="space-y-2.5">
-              <li><Link to="/pourquoi-dalil-tounes" className={footerLink}>Pourquoi Dalil Tounes</Link></li>
-              <li><Link to="/concept" className={footerLink}>Comment fonctionne Dalil Tounes</Link></li>
-              <li><Link to="/blog" className={footerLink}>Articles</Link></li>
+              <li><Link to="/pourquoi-dalil-tounes" className={footerLink}>{staticCopy.why}</Link></li>
+              <li><Link to="/concept" className={footerLink}>{staticCopy.how}</Link></li>
+              <li><Link to="/blog" className={footerLink}>{staticCopy.articles}</Link></li>
             </ul>
           </div>
 
           <div>
             <h4 className="text-xs font-semibold mb-4 text-gray-300 uppercase tracking-widest" style={{ letterSpacing: '0.12em' }}>
-              Professionnels
+              {staticCopy.professionals}
             </h4>
             <ul className="space-y-2.5">
-              <li><Link to="/subscription" className={footerLink}>Nos offres</Link></li>
-              <li><Link to="/businesses" className={footerLink}>Entreprises</Link></li>
+              <li><Link to="/subscription" className={footerLink}>{staticCopy.offers}</Link></li>
+              <li><Link to="/businesses" className={footerLink}>{staticCopy.businesses}</Link></li>
               {/* Future link: "Pourquoi créer une fiche professionnelle" */}
             </ul>
           </div>
@@ -289,7 +353,7 @@ const Footer: React.FC = () => {
               <li><Link to="/cgu" className={footerLink}>{te.footer?.cgu || 'CGU'}</Link></li>
               <li><Link to="/politique-confidentialite" className={footerLink}>{te.footer?.privacy || 'Confidentialité'}</Link></li>
               <li><Link to="/plan-du-site" className={footerLink}>{te.footer?.sitemap || 'Plan du site'}</Link></li>
-              <li><Link to="/info-avis" className={footerLink}>Avis & recommandations</Link></li>
+              <li><Link to="/info-avis" className={footerLink}>{staticCopy.reviews}</Link></li>
             </ul>
           </div>
 
@@ -310,7 +374,7 @@ const Footer: React.FC = () => {
         <div className="border-t border-gray-800 mt-12 pt-6">
           <div className={`flex flex-col md:flex-row justify-between items-center gap-4 ${isRTL ? 'md:flex-row-reverse' : ''}`}>
             <p className="text-gray-600 text-xs">
-              © 2025 Dalil Tounes. Tous droits réservés.
+              © 2025 Dalil Tounes. {staticCopy.rights}
             </p>
             <button
               type="button"
@@ -318,7 +382,7 @@ const Footer: React.FC = () => {
               className="inline-block px-6 py-2.5 bg-transparent hover:bg-[#D4AF37] text-[#D4AF37] hover:text-black font-medium text-sm rounded-lg transition-all duration-200 border border-[#D4AF37]/60 hover:border-[#D4AF37]"
               style={{ letterSpacing: '0.03em' }}
             >
-              Demande d’information / inscription
+              {staticCopy.request}
             </button>
           </div>
         </div>

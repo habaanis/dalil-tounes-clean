@@ -1,1097 +1,1178 @@
-import { useState, useEffect } from 'react';
-import { useLanguage } from '../context/LanguageContext';
-import { useTranslation } from '../lib/i18n';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
+import {
+  BadgeCheck,
+  Check,
+  ChevronRight,
+  Clock3,
+  FileText,
+  Info,
+  MapPin,
+  Phone,
+  Rocket,
+  Send,
+  X,
+} from 'lucide-react';
 import { BusinessRegistrationRequestForm } from '../components/BusinessRegistrationRequestForm';
-import { Check, Star, CreditCard, Smartphone, X, Landmark, Copy, MessageCircle, Send, Mail } from 'lucide-react';
+import { BusinessDetail } from '../components/BusinessDetail';
+import { useLanguage } from '../context/LanguageContext';
 
-const STRIPE_LINKS: Record<string, { monthly: string; annual: string }> = {
-  artisan: {
-    monthly: 'https://buy.stripe.com/28E5kFaTVgIX7WO7Phbsc08',
-    annual:  'https://buy.stripe.com/7sY8wRfab3Wb6SKfhJbsc09',
-  },
-  premium: {
-    monthly: 'https://buy.stripe.com/eVqdRb2npfET3Gy3z1bsc0a',
-    annual:  'https://buy.stripe.com/8x29AV9PRakz0um3z1bsc0b',
-  },
-  elitePro: {
-    monthly: '',
-    annual: '',
-  },
-};
+type PreviewType = 'free' | 'artisan' | 'premium' | 'premium-detail' | 'launch' | 'request' | null;
 
-type ModalType = 'paypal' | 'flouci' | 'manual' | null;
+const LOGO_PATH = '/images/logo_dalil_tounes_sceau_luxe.webp';
 
-const SUBSCRIPTION_WELCOME_SEEN_KEY = 'dalilTounes_subscription_welcome_seen_v1';
-const CONTACT_EMAIL = 'contact@dalil-tounes.com';
-
-const subscriptionIntroText = {
-  title: 'Une solution adaptée à ton entreprise',
-  paragraphs: [
-    'Chaque entreprise est différente.',
-    "Que tu sois artisan, commerçant, profession libérale, PME ou grande entreprise, tes besoins et ton budget ne sont pas les mêmes.",
-    "Chez Dalil Tounes, notre objectif est de te proposer une solution adaptée à ton activité, avec des offres accessibles, évolutives et pensées pour t'accompagner dans ton développement.",
-    "Tu peux choisir de découvrir nos solutions ou nous contacter directement afin que nous échangions ensemble sur la solution la plus adaptée à ton entreprise.",
-  ],
-  primaryAction: 'Découvrir les solutions',
-  secondaryAction: 'Nous contacter',
-  hideLabel: 'Ne plus afficher cette fenêtre.',
-};
-
-const subscriptionContactText = {
-  title: 'Échanger avec Dalil Tounes',
-  subtitle: "Choisis le moyen le plus simple pour discuter de la solution adaptée à ton entreprise.",
-  emailLabel: 'Contact par e-mail',
-  whatsAppLabel: 'Contact WhatsApp',
-};
-
-const subscriptionPageMessaging = {
-  heroTitle: 'Choisissez la solution adaptée à votre activité',
-  heroDescription:
-    "Dalil Tounes accompagne les professionnels dans le développement de leur présence sur Internet. L'objectif n'est pas de vendre un simple abonnement, mais de proposer une solution claire, utile et adaptée à chaque activité.",
-  cards: [
-    {
-      icon: '🤝',
-      title: 'Accompagnement humain',
-      description: "Tu peux avancer à ton rythme, avec une solution adaptée à ton activité et à tes priorités.",
-    },
-    {
-      icon: '🌱',
-      title: 'Offres évolutives',
-      description: "Commence simplement, puis fais évoluer ta visibilité lorsque ton entreprise en a besoin.",
-    },
-    {
-      icon: '⭐',
-      title: 'Présence rassurante',
-      description: 'Présente tes informations essentielles pour aider les citoyens à te comprendre et à te contacter.',
-    },
-  ],
-};
-
-const planPresentation: Record<string, {
-  name?: string;
-  intro?: string;
-  features?: string[];
-  launchBonus?: string[];
-}> = {
-  decouverte: {
-    intro: 'Pour découvrir Dalil Tounes et poser les premières bases de votre visibilité.',
-    features: [
-      'Consultation du répertoire Dalil Tounes',
-      'Recherche de base',
-      "Profil d'entreprise simple",
-      'Support par email',
+const subscriptionCopy = {
+  fr: {
+    closeModal: 'Fermer la fenêtre',
+    heroEyebrow: 'Solutions pour les professionnels',
+    heroTitle: 'Choisissez votre manière de commencer',
+    heroSubtitle: "Dalil Tounes rassemble les informations de votre activité sans remplacer les plateformes.",
+    startingSolutions: 'Solutions de démarrage',
+    selfService: 'Je crée moi-même',
+    yourLogo: 'Votre\nlogo',
+    essentialTitle: 'Présence essentielle',
+    essentialFree: 'Gratuit, sans abonnement obligatoire',
+    essentialFeatures: [
+      "Nom de l'activité",
+      'Catégorie et ville',
+      'Téléphone ou WhatsApp',
+      "Horaires d'ouverture",
+      'Courte description',
+      "Logo de l'activité",
+      'Présence dans la recherche Dalil Tounes',
     ],
-  },
-  artisan: {
-    intro: 'Pour lancer votre présence sur Internet.',
-    features: [
-      'Fiche professionnelle pour présenter votre activité',
-      'Galerie de vos réalisations (3 photos)',
-      'Badge "Dalil Tounes Vérifié"',
-      'Liens vers vos réseaux sociaux',
-      'QR Code personnalisé vers votre fiche',
-      'Assistance prioritaire par email',
+    addActivity: 'Ajouter mon activité',
+    previewCard: 'Aperçu de la carte',
+    humanSupport: 'Accompagnement humain',
+    cvTitle: 'CV Business créé avec vous',
+    cvPriceNotice: 'Paiement unique — le prix total reste toujours 199 TND.',
+    paymentOptions: 'Possibilités de paiement',
+    payOnce: '199 TND en une fois',
+    or: 'ou',
+    payTwice: '100 TND puis 99 TND',
+    payThreeTimes: '67 + 66 + 66 TND',
+    cvPublication: 'Votre CV Business est préparé pendant les différentes étapes et publié après le paiement complet.',
+    cvFeatures: [
+      'Entretien et collecte des informations',
+      'Rédaction de la présentation',
+      'Organisation des services',
+      'Présentation du savoir-faire',
+      'Coordonnées complètes',
+      'Horaires',
+      "Zones d'intervention",
+      'Portfolio et réalisations',
+      "Jusqu'à 10 photos fournies par le professionnel",
+      'Connexion des plateformes existantes',
+      'QR Code numérique',
+      'Aperçu privé avant publication',
+      'Une correction groupée',
+      'Publication finale après le paiement complet',
     ],
-  },
-  premium: {
-    intro: 'Pour développer votre visibilité et attirer de nouveaux clients.',
-    features: [
-      'Toutes les fonctionnalités Artisan',
-      'Mettez en valeur votre savoir-faire (5 photos)',
-      'Entreprise certifiée par Dalil Tounes',
-      'Mise en avant régionale',
-      'Publicité ciblée',
-      'Gestion multi-emplacements',
-      'Rapport analytique détaillé',
-      'Gestionnaire de compte',
-      'Réservation en ligne',
+    requestCreation: 'Demander la création',
+    continuousServices: 'Services continus & options',
+    launchBadge: 'OFFRE DE LANCEMENT',
+    launchTitle: 'Offre spéciale de lancement',
+    launchIntro: "Profitez de 3 mois d'accès Artisan ou Premium offerts dès votre inscription.",
+    launchAnnualPrefix: "En choisissant l'abonnement annuel, bénéficiez de 3 mois supplémentaires :",
+    launchAnnualStrong: "18 mois d'accès au total pour le prix de 12.",
+    launchPayment: 'Paiement annuel possible en trois fois.',
+    seeConditions: 'Voir les conditions',
+    artisan: 'Artisan',
+    premium: 'Premium',
+    artisanIntro: 'Des outils pratiques pour gérer et développer votre présence avec une carte simple.',
+    artisanFeatures: [
+      'Statistiques et vues',
+      'Formulaires de demande de devis ou de contact',
+      'Outils pratiques pour améliorer votre présence',
+      'Support technique',
     ],
-    launchBonus: ['Création et impression de 500 flyers professionnels avec l’abonnement annuel.'],
-  },
-  elitePro: {
-    name: 'Entreprise',
-    intro: 'Une solution personnalisée pour les entreprises ayant des besoins spécifiques.',
-    features: [
-      'CV Business personnalisé',
-      'Présentation complète de votre entreprise',
-      'Galerie de réalisations',
-      'Coordonnées centralisées',
-      'Réseaux sociaux',
-      'Réservation si activée',
-      'Référencement sur Dalil Tounes',
-      'Solution évolutive',
-      'Étude personnalisée',
+    premiumIntro: 'Un suivi accompagné pour garder votre CV Business et vos informations à jour.',
+    premiumFeatures: [
+      'Mises à jour groupées',
+      "Ajout d'informations et de photos",
+      'Vérification des liens et horaires',
+      'Assistance prioritaire',
     ],
-    launchBonus: ['Création et impression de flyers professionnels selon la formule retenue.'],
-  },
-  custom: {
-    intro: 'Pour construire une solution adaptée à une organisation, un réseau ou un besoin particulier.',
-    features: [
-      'Solution personnalisée selon vos besoins',
-      'Budget flexible et adapté à votre entreprise',
-      'Accompagnement personnalisé',
-      'Fonctionnalités à la carte',
+    requestArtisan: 'Demander Artisan',
+    requestPremium: 'Demander Premium',
+    certifiedTitle: 'Certifié Dalil Tounes',
+    certifiedText: "Attribué après vérification de l'identité, des informations et des justificatifs.",
+    certifiedIndependence: 'Cette vérification est indépendante de la formule choisie.',
+    flyers: 'Flyers',
+    annualPremiumOnly: 'PREMIUM ANNUEL UNIQUEMENT',
+    flyerDescription: '500 flyers inclus avec l’abonnement annuel Premium.',
+    flyerProduction: 'Conception et impression réalisées par Dalil Tounes.',
+    trialClarification: "Les 3 mois d'essai commencent dès l'inscription. L'abonnement annuel est confirmé après le paiement complet. Les 500 flyers sont réservés à l'abonnement annuel Premium.",
+    disclaimer: 'Dalil Tounes ne remplace pas vos réseaux sociaux et ne constitue pas une prestation de publicité.',
+    ctaTitle: 'Prêt à présenter votre activité plus clairement ?',
+    ctaText: 'Commencez gratuitement ou demandez un accompagnement pour créer votre CV Business.',
+    ctaButton: 'Choisir ma solution',
+    demoName: 'Fiche Démonstration Dalil Tounes',
+    demoCategory: 'Plateforme tunisienne',
+    tunisia: 'Tunisie',
+    open: 'Ouvert',
+    todaySchedule: "Aujourd'hui : horaires indiqués sur la fiche",
+    todayCardSchedule: "Aujourd'hui : horaires affichés sur la carte",
+    demoHours: 'Lundi : 08:00–18:00\nMardi : 08:00–18:00\nMercredi : 08:00–18:00\nJeudi : 08:00–18:00\nVendredi : 08:00–18:00\nSamedi : 09:00–13:00\nDimanche : Fermé',
+    contactDalil: 'Contacter Dalil Tounes',
+    call: 'Appeler',
+    essentialPreviewText: "Une carte gratuite avec le logo et les informations essentielles de l'activité, sans galerie ni portfolio.",
+    artisanPreviewText: 'Carte simple pour présenter clairement les informations essentielles. Aucun accès à une fiche Premium détaillée.',
+    viewDetails: 'Voir les détails',
+    premiumDemoDescription: 'Découvrez comment fonctionne une fiche professionnelle sur Dalil Tounes.',
+    premiumDemoServices: 'Annuaire professionnel, Visibilité locale, Présentation des activités',
+    previewEssentialTitle: 'Aperçu — Présence essentielle',
+    previewArtisanTitle: 'Aperçu — Artisan',
+    previewPremiumTitle: 'Aperçu — Premium',
+    premiumDetailTitle: 'Fiche Premium détaillée',
+    launchConditionsDialog: "Conditions de l'offre spéciale de lancement",
+    launchConditionsTitle: "Conditions de l'offre spéciale",
+    launchConditions: [
+      'Offre réservée aux nouveaux abonnés Artisan et Premium.',
+      'Une seule offre par activité.',
+      "Les trois mois d'essai commencent à la date d'inscription.",
+      'La période totale de 18 mois est calculée à partir de cette date.',
+      "L'abonnement annuel est confirmé après le dernier versement.",
+      "En cas de paiement annuel incomplet, le compte revient à la formule gratuite à la fin de la période d'essai.",
     ],
+    flyerConditions: [
+      'En cas de paiement annuel Premium en trois fois, les 500 flyers sont préparés et imprimés après le troisième et dernier versement.',
+      'Le modèle du flyer est soumis au professionnel pour validation avant impression.',
+      'Le professionnel doit vérifier le nom de l’activité, les coordonnées, le téléphone, les horaires, les textes et le QR Code.',
+      'Une impression de 500 exemplaires est incluse après validation.',
+      'Toute réimpression demandée à la suite d’une modification effectuée après validation est facturée séparément.',
+    ],
+    requestTitle: 'Demander cette solution',
+    requestModal: 'Demande',
+    cvPlanLabel: 'CV Business — paiement unique 199 TND',
+    artisanPlanLabel: 'Abonnement Artisan',
+    premiumPlanLabel: 'Abonnement Premium',
   },
-};
+  ar: {
+    closeModal: 'إغلاق النافذة',
+    heroEyebrow: 'حلول للمهنيين',
+    heroTitle: 'اختر الطريقة المناسبة للبدء',
+    heroSubtitle: 'يجمع دليل تونس معلومات نشاطك دون أن يحل محل المنصات التي تستخدمها.',
+    startingSolutions: 'حلول البدء',
+    selfService: 'أنشئها بنفسي',
+    yourLogo: 'شعار\nنشاطك',
+    essentialTitle: 'الحضور الأساسي',
+    essentialFree: 'مجاني، دون اشتراك إلزامي',
+    essentialFeatures: [
+      'اسم النشاط',
+      'الفئة والمدينة',
+      'الهاتف أو واتساب',
+      'أوقات العمل',
+      'وصف مختصر',
+      'شعار النشاط',
+      'الظهور في بحث دليل تونس',
+    ],
+    addActivity: 'أضف نشاطي',
+    previewCard: 'معاينة البطاقة',
+    humanSupport: 'مرافقة بشرية',
+    cvTitle: 'سيرة النشاط المهنية ننشئها معك',
+    cvPriceNotice: 'دفعة واحدة — يبقى السعر الإجمالي دائمًا 199 د.ت.',
+    paymentOptions: 'خيارات الدفع',
+    payOnce: '199 د.ت دفعة واحدة',
+    or: 'أو',
+    payTwice: '100 د.ت ثم 99 د.ت',
+    payThreeTimes: '67 + 66 + 66 د.ت',
+    cvPublication: 'يتم إعداد سيرة نشاطك المهنية خلال المراحل المختلفة ونشرها بعد اكتمال الدفع.',
+    cvFeatures: [
+      'مقابلة وجمع المعلومات',
+      'صياغة العرض التعريفي',
+      'تنظيم الخدمات',
+      'عرض الخبرة المهنية',
+      'بيانات اتصال كاملة',
+      'أوقات العمل',
+      'مناطق التدخل',
+      'ملف الأعمال والإنجازات',
+      'ما يصل إلى 10 صور يقدمها المهني',
+      'ربط المنصات الموجودة',
+      'رمز QR رقمي',
+      'معاينة خاصة قبل النشر',
+      'تعديل مجمع واحد',
+      'النشر النهائي بعد اكتمال الدفع',
+    ],
+    requestCreation: 'اطلب الإنشاء',
+    continuousServices: 'خدمات مستمرة وخيارات',
+    launchBadge: 'عرض الإطلاق',
+    launchTitle: 'عرض إطلاق خاص',
+    launchIntro: 'استفد من 3 أشهر مجانية من خدمة حرفي أو بريميوم فور تسجيلك.',
+    launchAnnualPrefix: 'عند اختيار الاشتراك السنوي، تستفيد من 3 أشهر إضافية:',
+    launchAnnualStrong: '18 شهرًا من النفاذ إجمالًا بسعر 12 شهرًا.',
+    launchPayment: 'يمكن دفع الاشتراك السنوي على ثلاث دفعات.',
+    seeConditions: 'عرض الشروط',
+    artisan: 'حرفي',
+    premium: 'بريميوم',
+    artisanIntro: 'أدوات عملية لإدارة حضورك وتطويره باستخدام بطاقة بسيطة.',
+    artisanFeatures: [
+      'الإحصائيات والمشاهدات',
+      'نماذج طلب عرض سعر أو اتصال',
+      'أدوات عملية لتحسين حضورك',
+      'دعم فني',
+    ],
+    premiumIntro: 'مرافقة تساعدك على تحديث سيرة نشاطك المهنية ومعلوماتك.',
+    premiumFeatures: [
+      'تحديثات مجمعة',
+      'إضافة معلومات وصور',
+      'التحقق من الروابط وأوقات العمل',
+      'مساعدة ذات أولوية',
+    ],
+    requestArtisan: 'اطلب حرفي',
+    requestPremium: 'اطلب بريميوم',
+    certifiedTitle: 'موثّق من دليل تونس',
+    certifiedText: 'يُمنح بعد التحقق من الهوية والمعلومات والمستندات الثبوتية.',
+    certifiedIndependence: 'هذا التحقق مستقل عن الصيغة المختارة.',
+    flyers: 'المنشورات الإعلانية',
+    annualPremiumOnly: 'للاشتراك السنوي PREMIUM فقط',
+    flyerDescription: 'يشمل الاشتراك السنوي Premium طباعة 500 منشور إعلاني.',
+    flyerProduction: 'يتولى دليل تونس التصميم والطباعة.',
+    trialClarification: 'تبدأ فترة التجربة المجانية لمدة 3 أشهر فور التسجيل. يتم تأكيد الاشتراك السنوي بعد اكتمال الدفع. تقتصر طباعة 500 منشور إعلاني على الاشتراك السنوي Premium.',
+    disclaimer: 'لا يحل دليل تونس محل شبكاتك الاجتماعية ولا يشكل خدمة إعلانية.',
+    ctaTitle: 'هل أنت مستعد لتقديم نشاطك بصورة أوضح؟',
+    ctaText: 'ابدأ مجانًا أو اطلب مرافقة لإنشاء سيرة نشاطك المهنية.',
+    ctaButton: 'اختر الحل المناسب',
+    demoName: 'Fiche Démonstration Dalil Tounes',
+    demoCategory: 'منصة تونسية',
+    tunisia: 'تونس',
+    open: 'مفتوح',
+    todaySchedule: 'اليوم: الأوقات مبيّنة في البطاقة',
+    todayCardSchedule: 'اليوم: الأوقات معروضة على البطاقة',
+    demoHours: 'الاثنين: 08:00–18:00\nالثلاثاء: 08:00–18:00\nالأربعاء: 08:00–18:00\nالخميس: 08:00–18:00\nالجمعة: 08:00–18:00\nالسبت: 09:00–13:00\nالأحد: مغلق',
+    contactDalil: 'اتصل بدليل تونس',
+    call: 'اتصل',
+    essentialPreviewText: 'بطاقة مجانية تضم الشعار والمعلومات الأساسية للنشاط، دون معرض صور أو ملف أعمال.',
+    artisanPreviewText: 'بطاقة بسيطة لعرض المعلومات الأساسية بوضوح، دون النفاذ إلى بطاقة بريميوم المفصلة.',
+    viewDetails: 'عرض التفاصيل',
+    premiumDemoDescription: 'اكتشف كيف تعمل البطاقة المهنية على دليل تونس.',
+    premiumDemoServices: 'دليل مهني، حضور محلي، عرض الأنشطة',
+    previewEssentialTitle: 'معاينة — الحضور الأساسي',
+    previewArtisanTitle: 'معاينة — حرفي',
+    previewPremiumTitle: 'معاينة — بريميوم',
+    premiumDetailTitle: 'بطاقة بريميوم المفصلة',
+    launchConditionsDialog: 'شروط عرض الإطلاق الخاص',
+    launchConditionsTitle: 'شروط العرض الخاص',
+    launchConditions: [
+      'العرض مخصص للمشتركين الجدد في حرفي وبريميوم.',
+      'عرض واحد فقط لكل نشاط.',
+      'تبدأ فترة التجربة المجانية لمدة ثلاثة أشهر من تاريخ التسجيل.',
+      'تُحتسب المدة الإجمالية البالغة 18 شهرًا ابتداءً من هذا التاريخ.',
+      'يُؤكد الاشتراك السنوي بعد الدفعة الأخيرة.',
+      'إذا لم يكتمل الدفع السنوي، يعود الحساب إلى الحضور الأساسي المجاني عند نهاية فترة التجربة.',
+    ],
+    flyerConditions: [
+      'عند دفع الاشتراك السنوي Premium على ثلاث دفعات، يتم إعداد وطباعة 500 منشور إعلاني بعد الدفعة الثالثة والأخيرة.',
+      'يُعرض نموذج المنشور الإعلاني على المهني للمصادقة عليه قبل الطباعة.',
+      'يجب على المهني التحقق من اسم النشاط وبيانات الاتصال ورقم الهاتف وأوقات العمل والنصوص ورمز QR.',
+      'تشمل الخدمة طباعة 500 نسخة بعد المصادقة.',
+      'تُفوتر بشكل منفصل أي إعادة طباعة مطلوبة نتيجة تعديل تم بعد المصادقة.',
+    ],
+    requestTitle: 'اطلب هذا الحل',
+    requestModal: 'طلب',
+    cvPlanLabel: 'سيرة النشاط المهنية — دفعة واحدة 199 د.ت',
+    artisanPlanLabel: 'اشتراك حرفي',
+    premiumPlanLabel: 'اشتراك بريميوم',
+  },
+  en: {
+    closeModal: 'Close window',
+    heroEyebrow: 'Solutions for professionals',
+    heroTitle: 'Choose how you want to get started',
+    heroSubtitle: 'Dalil Tounes brings together your business information without replacing the platforms you use.',
+    startingSolutions: 'Getting-started solutions',
+    selfService: 'I create it myself',
+    yourLogo: 'Your\nlogo',
+    essentialTitle: 'Essential presence',
+    essentialFree: 'Free, with no mandatory subscription',
+    essentialFeatures: [
+      'Business name',
+      'Category and city',
+      'Phone or WhatsApp',
+      'Opening hours',
+      'Short description',
+      'Business logo',
+      'Visibility in Dalil Tounes search',
+    ],
+    addActivity: 'Add my business',
+    previewCard: 'Preview the card',
+    humanSupport: 'Personal support',
+    cvTitle: 'CV Business created with you',
+    cvPriceNotice: 'One-time payment — the total price always remains 199 TND.',
+    paymentOptions: 'Payment options',
+    payOnce: '199 TND in one payment',
+    or: 'or',
+    payTwice: '100 TND then 99 TND',
+    payThreeTimes: '67 + 66 + 66 TND',
+    cvPublication: 'Your CV Business is prepared through the different stages and published after full payment.',
+    cvFeatures: [
+      'Interview and information collection',
+      'Writing the presentation',
+      'Organising the services',
+      'Presenting professional expertise',
+      'Full contact details',
+      'Opening hours',
+      'Service areas',
+      'Portfolio and completed work',
+      'Up to 10 photos supplied by the professional',
+      'Connection to existing platforms',
+      'Digital QR Code',
+      'Private preview before publication',
+      'One grouped revision',
+      'Final publication after full payment',
+    ],
+    requestCreation: 'Request creation',
+    continuousServices: 'Ongoing services & options',
+    launchBadge: 'LAUNCH OFFER',
+    launchTitle: 'Special launch offer',
+    launchIntro: 'Enjoy 3 months of Artisan or Premium access free of charge from the date you register.',
+    launchAnnualPrefix: 'By choosing the annual subscription, you receive 3 additional months:',
+    launchAnnualStrong: '18 months of access in total for the price of 12.',
+    launchPayment: 'The annual subscription can be paid in three installments.',
+    seeConditions: 'View conditions',
+    artisan: 'Artisan',
+    premium: 'Premium',
+    artisanIntro: 'Practical tools to manage and develop your presence with a simple card.',
+    artisanFeatures: [
+      'Statistics and views',
+      'Quote request or contact forms',
+      'Practical tools to improve your presence',
+      'Technical support',
+    ],
+    premiumIntro: 'Guided support to keep your CV Business and information up to date.',
+    premiumFeatures: [
+      'Grouped updates',
+      'Adding information and photos',
+      'Verification of links and opening hours',
+      'Priority assistance',
+    ],
+    requestArtisan: 'Request Artisan',
+    requestPremium: 'Request Premium',
+    certifiedTitle: 'Certified by Dalil Tounes',
+    certifiedText: 'Awarded after verification of identity, information and supporting documents.',
+    certifiedIndependence: 'This verification is independent of the selected plan.',
+    flyers: 'Flyers',
+    annualPremiumOnly: 'ANNUAL PREMIUM ONLY',
+    flyerDescription: '500 flyers included with the annual Premium subscription.',
+    flyerProduction: 'Design and printing by Dalil Tounes.',
+    trialClarification: 'The 3-month trial starts when you register. The annual subscription is confirmed after full payment. The 500 flyers are reserved for the annual Premium subscription.',
+    disclaimer: 'Dalil Tounes does not replace your social media and is not an advertising service.',
+    ctaTitle: 'Ready to present your business more clearly?',
+    ctaText: 'Start for free or request support to create your CV Business.',
+    ctaButton: 'Choose my solution',
+    demoName: 'Dalil Tounes Demonstration Profile',
+    demoCategory: 'Tunisian platform',
+    tunisia: 'Tunisia',
+    open: 'Open',
+    todaySchedule: 'Today: hours shown on the profile',
+    todayCardSchedule: 'Today: hours shown on the card',
+    demoHours: 'Monday: 08:00–18:00\nTuesday: 08:00–18:00\nWednesday: 08:00–18:00\nThursday: 08:00–18:00\nFriday: 08:00–18:00\nSaturday: 09:00–13:00\nSunday: Closed',
+    contactDalil: 'Contact Dalil Tounes',
+    call: 'Call',
+    essentialPreviewText: 'A free card with the logo and essential business information, without a gallery or portfolio.',
+    artisanPreviewText: 'A simple card that clearly presents essential information. It does not include access to a detailed Premium profile.',
+    viewDetails: 'View details',
+    premiumDemoDescription: 'Discover how a professional profile works on Dalil Tounes.',
+    premiumDemoServices: 'Professional directory, Local visibility, Business presentation',
+    previewEssentialTitle: 'Preview — Essential presence',
+    previewArtisanTitle: 'Preview — Artisan',
+    previewPremiumTitle: 'Preview — Premium',
+    premiumDetailTitle: 'Detailed Premium profile',
+    launchConditionsDialog: 'Special launch offer conditions',
+    launchConditionsTitle: 'Special offer conditions',
+    launchConditions: [
+      'Offer reserved for new Artisan and Premium subscribers.',
+      'Only one offer per business.',
+      'The three-month trial starts on the registration date.',
+      'The total 18-month period is calculated from that date.',
+      'The annual subscription is confirmed after the final installment.',
+      'If the annual payment is incomplete, the account returns to the free plan at the end of the trial period.',
+    ],
+    flyerConditions: [
+      'If the annual Premium subscription is paid in three installments, the 500 flyers are prepared and printed after the third and final installment.',
+      'The flyer design is submitted to the professional for approval before printing.',
+      'The professional must check the business name, contact details, phone number, opening hours, texts and QR Code.',
+      'One print run of 500 copies is included after approval.',
+      'Any reprint requested following a change made after approval is billed separately.',
+    ],
+    requestTitle: 'Request this solution',
+    requestModal: 'Request',
+    cvPlanLabel: 'CV Business — one-time payment of 199 TND',
+    artisanPlanLabel: 'Artisan subscription',
+    premiumPlanLabel: 'Premium subscription',
+  },
+  it: {
+    closeModal: 'Chiudi la finestra',
+    heroEyebrow: 'Soluzioni per i professionisti',
+    heroTitle: 'Scegli come iniziare',
+    heroSubtitle: 'Dalil Tounes riunisce le informazioni della tua attività senza sostituire le piattaforme che utilizzi.',
+    startingSolutions: 'Soluzioni per iniziare',
+    selfService: 'Creo il profilo autonomamente',
+    yourLogo: 'Il tuo\nlogo',
+    essentialTitle: 'Presenza essenziale',
+    essentialFree: 'Gratuito, senza abbonamento obbligatorio',
+    essentialFeatures: [
+      'Nome dell’attività',
+      'Categoria e città',
+      'Telefono o WhatsApp',
+      'Orari di apertura',
+      'Breve descrizione',
+      'Logo dell’attività',
+      'Presenza nella ricerca Dalil Tounes',
+    ],
+    addActivity: 'Aggiungi la mia attività',
+    previewCard: 'Anteprima della scheda',
+    humanSupport: 'Assistenza personalizzata',
+    cvTitle: 'CV Business creato con te',
+    cvPriceNotice: 'Pagamento unico — il prezzo totale rimane sempre 199 TND.',
+    paymentOptions: 'Modalità di pagamento',
+    payOnce: '199 TND in un’unica soluzione',
+    or: 'oppure',
+    payTwice: '100 TND e poi 99 TND',
+    payThreeTimes: '67 + 66 + 66 TND',
+    cvPublication: 'Il tuo CV Business viene preparato durante le varie fasi e pubblicato dopo il pagamento completo.',
+    cvFeatures: [
+      'Colloquio e raccolta delle informazioni',
+      'Redazione della presentazione',
+      'Organizzazione dei servizi',
+      'Presentazione delle competenze professionali',
+      'Recapiti completi',
+      'Orari di apertura',
+      'Zone di intervento',
+      'Portfolio e lavori realizzati',
+      'Fino a 10 foto fornite dal professionista',
+      'Collegamento alle piattaforme esistenti',
+      'QR Code digitale',
+      'Anteprima privata prima della pubblicazione',
+      'Una revisione raggruppata',
+      'Pubblicazione finale dopo il pagamento completo',
+    ],
+    requestCreation: 'Richiedi la creazione',
+    continuousServices: 'Servizi continuativi e opzioni',
+    launchBadge: 'OFFERTA DI LANCIO',
+    launchTitle: 'Offerta speciale di lancio',
+    launchIntro: 'Ottieni 3 mesi di accesso Artisan o Premium gratuiti a partire dalla registrazione.',
+    launchAnnualPrefix: 'Scegliendo l’abbonamento annuale, ricevi altri 3 mesi:',
+    launchAnnualStrong: '18 mesi di accesso totali al prezzo di 12.',
+    launchPayment: 'L’abbonamento annuale può essere pagato in tre rate.',
+    seeConditions: 'Vedi le condizioni',
+    artisan: 'Artisan',
+    premium: 'Premium',
+    artisanIntro: 'Strumenti pratici per gestire e sviluppare la tua presenza con una scheda semplice.',
+    artisanFeatures: [
+      'Statistiche e visualizzazioni',
+      'Moduli per richieste di preventivo o contatto',
+      'Strumenti pratici per migliorare la tua presenza',
+      'Assistenza tecnica',
+    ],
+    premiumIntro: 'Assistenza dedicata per mantenere aggiornati il tuo CV Business e le tue informazioni.',
+    premiumFeatures: [
+      'Aggiornamenti raggruppati',
+      'Aggiunta di informazioni e foto',
+      'Verifica dei link e degli orari',
+      'Assistenza prioritaria',
+    ],
+    requestArtisan: 'Richiedi Artisan',
+    requestPremium: 'Richiedi Premium',
+    certifiedTitle: 'Certificato da Dalil Tounes',
+    certifiedText: 'Attribuito dopo la verifica dell’identità, delle informazioni e dei documenti giustificativi.',
+    certifiedIndependence: 'Questa verifica è indipendente dalla formula scelta.',
+    flyers: 'Volantini',
+    annualPremiumOnly: 'SOLO PREMIUM ANNUALE',
+    flyerDescription: '500 volantini inclusi con l’abbonamento annuale Premium.',
+    flyerProduction: 'Progettazione grafica e stampa a cura di Dalil Tounes.',
+    trialClarification: 'I 3 mesi di prova iniziano con la registrazione. L’abbonamento annuale è confermato dopo il pagamento completo. I 500 volantini sono riservati all’abbonamento annuale Premium.',
+    disclaimer: 'Dalil Tounes non sostituisce i tuoi social network e non costituisce un servizio pubblicitario.',
+    ctaTitle: 'Vuoi presentare la tua attività in modo più chiaro?',
+    ctaText: 'Inizia gratuitamente o richiedi assistenza per creare il tuo CV Business.',
+    ctaButton: 'Scegli la mia soluzione',
+    demoName: 'Scheda dimostrativa Dalil Tounes',
+    demoCategory: 'Piattaforma tunisina',
+    tunisia: 'Tunisia',
+    open: 'Aperto',
+    todaySchedule: 'Oggi: orari indicati nella scheda',
+    todayCardSchedule: 'Oggi: orari mostrati sulla scheda',
+    demoHours: 'Lunedì: 08:00–18:00\nMartedì: 08:00–18:00\nMercoledì: 08:00–18:00\nGiovedì: 08:00–18:00\nVenerdì: 08:00–18:00\nSabato: 09:00–13:00\nDomenica: Chiuso',
+    contactDalil: 'Contatta Dalil Tounes',
+    call: 'Chiama',
+    essentialPreviewText: 'Una scheda gratuita con il logo e le informazioni essenziali dell’attività, senza galleria né portfolio.',
+    artisanPreviewText: 'Una scheda semplice per presentare chiaramente le informazioni essenziali. Non include l’accesso a una scheda Premium dettagliata.',
+    viewDetails: 'Vedi i dettagli',
+    premiumDemoDescription: 'Scopri come funziona una scheda professionale su Dalil Tounes.',
+    premiumDemoServices: 'Elenco professionale, Visibilità locale, Presentazione delle attività',
+    previewEssentialTitle: 'Anteprima — Presenza essenziale',
+    previewArtisanTitle: 'Anteprima — Artisan',
+    previewPremiumTitle: 'Anteprima — Premium',
+    premiumDetailTitle: 'Scheda Premium dettagliata',
+    launchConditionsDialog: 'Condizioni dell’offerta speciale di lancio',
+    launchConditionsTitle: 'Condizioni dell’offerta speciale',
+    launchConditions: [
+      'Offerta riservata ai nuovi abbonati Artisan e Premium.',
+      'Una sola offerta per attività.',
+      'I tre mesi di prova iniziano dalla data di registrazione.',
+      'Il periodo totale di 18 mesi viene calcolato a partire da tale data.',
+      'L’abbonamento annuale è confermato dopo l’ultima rata.',
+      'In caso di pagamento annuale incompleto, l’account torna alla formula gratuita al termine del periodo di prova.',
+    ],
+    flyerConditions: [
+      'In caso di pagamento dell’abbonamento annuale Premium in tre rate, i 500 volantini vengono preparati e stampati dopo la terza e ultima rata.',
+      'Il modello del volantino viene sottoposto al professionista per l’approvazione prima della stampa.',
+      'Il professionista deve verificare il nome dell’attività, i recapiti, il telefono, gli orari, i testi e il QR Code.',
+      'Dopo l’approvazione è inclusa una tiratura di 500 copie.',
+      'Qualsiasi ristampa richiesta a seguito di una modifica effettuata dopo l’approvazione viene fatturata separatamente.',
+    ],
+    requestTitle: 'Richiedi questa soluzione',
+    requestModal: 'Richiesta',
+    cvPlanLabel: 'CV Business — pagamento unico di 199 TND',
+    artisanPlanLabel: 'Abbonamento Artisan',
+    premiumPlanLabel: 'Abbonamento Premium',
+  },
+  ru: {
+    closeModal: 'Закрыть окно',
+    heroEyebrow: 'Решения для профессионалов',
+    heroTitle: 'Выберите, как начать',
+    heroSubtitle: 'Dalil Tounes объединяет информацию о вашей деятельности, не заменяя используемые вами платформы.',
+    startingSolutions: 'Решения для начала работы',
+    selfService: 'Я создаю профиль самостоятельно',
+    yourLogo: 'Ваш\nлоготип',
+    essentialTitle: 'Базовое присутствие',
+    essentialFree: 'Бесплатно, без обязательной подписки',
+    essentialFeatures: [
+      'Название деятельности',
+      'Категория и город',
+      'Телефон или WhatsApp',
+      'Часы работы',
+      'Краткое описание',
+      'Логотип деятельности',
+      'Отображение в поиске Dalil Tounes',
+    ],
+    addActivity: 'Добавить мою деятельность',
+    previewCard: 'Предпросмотр карточки',
+    humanSupport: 'Персональное сопровождение',
+    cvTitle: 'CV Business, созданное вместе с вами',
+    cvPriceNotice: 'Единовременная оплата — общая стоимость всегда составляет 199 TND.',
+    paymentOptions: 'Варианты оплаты',
+    payOnce: '199 TND одним платежом',
+    or: 'или',
+    payTwice: '100 TND, затем 99 TND',
+    payThreeTimes: '67 + 66 + 66 TND',
+    cvPublication: 'Ваше CV Business подготавливается поэтапно и публикуется после полной оплаты.',
+    cvFeatures: [
+      'Собеседование и сбор информации',
+      'Подготовка презентации',
+      'Организация услуг',
+      'Представление профессионального опыта',
+      'Полные контактные данные',
+      'Часы работы',
+      'Зоны обслуживания',
+      'Портфолио и выполненные работы',
+      'До 10 фотографий, предоставленных профессионалом',
+      'Подключение существующих платформ',
+      'Цифровой QR-код',
+      'Закрытый предпросмотр перед публикацией',
+      'Одна групповая правка',
+      'Окончательная публикация после полной оплаты',
+    ],
+    requestCreation: 'Запросить создание',
+    continuousServices: 'Постоянные услуги и опции',
+    launchBadge: 'СТАРТОВОЕ ПРЕДЛОЖЕНИЕ',
+    launchTitle: 'Специальное стартовое предложение',
+    launchIntro: 'Получите 3 месяца доступа Artisan или Premium бесплатно с момента регистрации.',
+    launchAnnualPrefix: 'При выборе годовой подписки вы получаете ещё 3 месяца:',
+    launchAnnualStrong: 'всего 18 месяцев доступа по цене 12.',
+    launchPayment: 'Годовую подписку можно оплатить тремя платежами.',
+    seeConditions: 'Посмотреть условия',
+    artisan: 'Artisan',
+    premium: 'Premium',
+    artisanIntro: 'Практичные инструменты для управления и развития вашего присутствия с помощью простой карточки.',
+    artisanFeatures: [
+      'Статистика и просмотры',
+      'Формы запроса расчёта или связи',
+      'Практичные инструменты для улучшения вашего присутствия',
+      'Техническая поддержка',
+    ],
+    premiumIntro: 'Сопровождение для поддержания актуальности вашего CV Business и информации.',
+    premiumFeatures: [
+      'Пакетные обновления',
+      'Добавление информации и фотографий',
+      'Проверка ссылок и часов работы',
+      'Приоритетная помощь',
+    ],
+    requestArtisan: 'Запросить Artisan',
+    requestPremium: 'Запросить Premium',
+    certifiedTitle: 'Сертифицировано Dalil Tounes',
+    certifiedText: 'Присваивается после проверки личности, информации и подтверждающих документов.',
+    certifiedIndependence: 'Эта проверка не зависит от выбранного тарифа.',
+    flyers: 'Флаеры',
+    annualPremiumOnly: 'ТОЛЬКО ГОДОВАЯ ПОДПИСКА PREMIUM',
+    flyerDescription: '500 флаеров включены в годовую подписку Premium.',
+    flyerProduction: 'Дизайн и печать выполняет Dalil Tounes.',
+    trialClarification: 'Трёхмесячный пробный период начинается при регистрации. Годовая подписка подтверждается после полной оплаты. 500 флаеров доступны только в рамках годовой подписки Premium.',
+    disclaimer: 'Dalil Tounes не заменяет ваши социальные сети и не является рекламной услугой.',
+    ctaTitle: 'Готовы представить свою деятельность более понятно?',
+    ctaText: 'Начните бесплатно или запросите сопровождение для создания CV Business.',
+    ctaButton: 'Выбрать решение',
+    demoName: 'Демонстрационный профиль Dalil Tounes',
+    demoCategory: 'Тунисская платформа',
+    tunisia: 'Тунис',
+    open: 'Открыто',
+    todaySchedule: 'Сегодня: часы работы указаны в профиле',
+    todayCardSchedule: 'Сегодня: часы работы указаны на карточке',
+    demoHours: 'Понедельник: 08:00–18:00\nВторник: 08:00–18:00\nСреда: 08:00–18:00\nЧетверг: 08:00–18:00\nПятница: 08:00–18:00\nСуббота: 09:00–13:00\nВоскресенье: Закрыто',
+    contactDalil: 'Связаться с Dalil Tounes',
+    call: 'Позвонить',
+    essentialPreviewText: 'Бесплатная карточка с логотипом и основной информацией о деятельности, без галереи и портфолио.',
+    artisanPreviewText: 'Простая карточка для понятного представления основной информации. Доступ к подробному профилю Premium не включён.',
+    viewDetails: 'Посмотреть подробности',
+    premiumDemoDescription: 'Узнайте, как работает профессиональный профиль на Dalil Tounes.',
+    premiumDemoServices: 'Профессиональный каталог, Локальная видимость, Презентация деятельности',
+    previewEssentialTitle: 'Предпросмотр — Базовое присутствие',
+    previewArtisanTitle: 'Предпросмотр — Artisan',
+    previewPremiumTitle: 'Предпросмотр — Premium',
+    premiumDetailTitle: 'Подробный профиль Premium',
+    launchConditionsDialog: 'Условия специального стартового предложения',
+    launchConditionsTitle: 'Условия специального предложения',
+    launchConditions: [
+      'Предложение предназначено для новых подписчиков Artisan и Premium.',
+      'Только одно предложение на одну деятельность.',
+      'Трёхмесячный пробный период начинается с даты регистрации.',
+      'Общий период в 18 месяцев рассчитывается с этой даты.',
+      'Годовая подписка подтверждается после последнего платежа.',
+      'Если годовая оплата не завершена, после окончания пробного периода аккаунт возвращается на бесплатный тариф.',
+    ],
+    flyerConditions: [
+      'При оплате годовой подписки Premium тремя платежами 500 флаеров подготавливаются и печатаются после третьего и последнего платежа.',
+      'Макет флаера перед печатью предоставляется профессионалу на утверждение.',
+      'Профессионал должен проверить название деятельности, контактные данные, телефон, часы работы, тексты и QR-код.',
+      'После утверждения включена печать 500 экземпляров.',
+      'Любая повторная печать, запрошенная из-за изменения после утверждения, оплачивается отдельно.',
+    ],
+    requestTitle: 'Запросить это решение',
+    requestModal: 'Запрос',
+    cvPlanLabel: 'CV Business — единовременная оплата 199 TND',
+    artisanPlanLabel: 'Подписка Artisan',
+    premiumPlanLabel: 'Подписка Premium',
+  },
+} as const;
 
-// Coordonnées bancaires affichées dans le modal "Paiement Manuel".
-// Modifiable ici sans toucher au rendu.
-const BANK_DETAILS = {
-  beneficiaire: 'Mr HABA ANIS TAIEB',
-  banque: 'BIAT - Agence Mahdia I (21)',
-  rib: '08 501 000215099368049',
-  iban: 'TN59 0850 1000 2150 9936 8049',
-  swift: 'BIATTNTT',
-};
-const D17_PHONE = '+216 27 642 252';
-const WHATSAPP_CONTACT = '21627642252'; // numéro principal clients (sans +)
+type SubscriptionCopy = (typeof subscriptionCopy)[keyof typeof subscriptionCopy];
+
+function FeatureList({ items, columns = false }: { items: string[]; columns?: boolean }) {
+  return (
+    <ul className={columns ? 'grid gap-x-6 gap-y-2 sm:grid-cols-2' : 'space-y-2'}>
+      {items.map((item) => (
+        <li key={item} className="flex items-start gap-2 text-sm leading-5 text-slate-700">
+          <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
+            <Check className="h-3 w-3" aria-hidden="true" />
+          </span>
+          <span>{item}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function Modal({
+  title,
+  onClose,
+  children,
+  closeLabel,
+  wide = false,
+}: {
+  title: string;
+  onClose: () => void;
+  children: ReactNode;
+  closeLabel: string;
+  wide?: boolean;
+}) {
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    closeButtonRef.current?.focus();
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        onClose();
+        return;
+      }
+
+      if (event.key !== 'Tab' || !dialogRef.current) return;
+      const focusable = Array.from(
+        dialogRef.current.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ),
+      ).filter((element) => !element.hasAttribute('hidden'));
+
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = previousOverflow;
+      previousFocus?.focus();
+    };
+  }, [onClose]);
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-3 backdrop-blur-[2px] sm:p-6"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+    >
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
+        className={`relative max-h-[90vh] w-full overflow-y-auto rounded-3xl bg-white shadow-2xl ${wide ? 'max-w-4xl' : 'max-w-xl'}`}
+      >
+        <div className="sticky top-0 z-20 flex justify-end bg-gradient-to-b from-white via-white/95 to-transparent px-4 pb-2 pt-4">
+          <button
+            ref={closeButtonRef}
+            type="button"
+            onClick={onClose}
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-[#D6AF2E] hover:text-[#4A123F] focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]"
+            aria-label={closeLabel}
+          >
+            <X className="h-5 w-5" aria-hidden="true" />
+          </button>
+        </div>
+        <div className="px-4 pb-5 sm:px-7 sm:pb-7">{children}</div>
+      </div>
+    </div>
+  );
+}
+
+function DemoLogo({ alt }: { alt: string }) {
+  return (
+    <img
+      src={LOGO_PATH}
+      alt={alt}
+      className="h-20 w-20 rounded-full border-4 border-[#D6AF2E] bg-white object-cover shadow-lg"
+    />
+  );
+}
+
+function EssentialCardPreview({ copy }: { copy: SubscriptionCopy }) {
+  return (
+    <div className="mx-auto max-w-lg rounded-[26px] border-[3px] border-[#D6AF2E] bg-white p-5 text-slate-800 shadow-xl sm:p-7">
+      <div className="mb-5 flex justify-center">
+        <DemoLogo alt={copy.demoName} />
+      </div>
+      <h3 className="text-xl font-bold sm:text-2xl">{copy.demoName}</h3>
+      <p className="mt-1 font-semibold text-[#C89E19]">{copy.demoCategory}</p>
+      <p className="mt-3 flex items-center gap-2 text-slate-600">
+        <MapPin className="h-5 w-5" aria-hidden="true" /> {copy.tunisia}
+      </p>
+      <p className="mt-4 flex items-center gap-2 font-semibold text-emerald-700">
+        <Clock3 className="h-5 w-5" aria-hidden="true" /> {copy.open}
+      </p>
+      <p className="mt-1 text-slate-600">{copy.todaySchedule}</p>
+      <div className="mt-4 flex items-center justify-center gap-2 rounded-full bg-[#D6AF2E] px-5 py-3 font-bold text-[#173429]">
+        <Phone className="h-5 w-5" aria-hidden="true" /> {copy.contactDalil}
+      </div>
+      <p className="mt-4 text-sm leading-6 text-slate-600">{copy.essentialPreviewText}</p>
+    </div>
+  );
+}
+
+function GreenCardPreview({
+  tier,
+  copy,
+  onDetails,
+}: {
+  tier: 'ARTISAN' | 'PREMIUM';
+  copy: SubscriptionCopy;
+  onDetails?: () => void;
+}) {
+  const tierLabel = tier === 'ARTISAN' ? copy.artisan : copy.premium;
+
+  return (
+    <div className="mx-auto max-w-xl rounded-[26px] border-[3px] border-[#D6AF2E] bg-[#07543F] p-5 text-white shadow-2xl sm:p-7">
+      <div className="flex items-start justify-between gap-4">
+        <DemoLogo alt={copy.demoName} />
+        <span className="rounded-full border border-[#D6AF2E]/60 bg-[#D6AF2E]/15 px-3 py-1 text-xs font-bold tracking-widest text-[#F4CE55]">
+          {tierLabel}
+        </span>
+      </div>
+      <h3 className="mt-5 text-2xl font-bold text-[#F0C537]">{copy.demoName}</h3>
+      <p className="mt-1 font-semibold text-[#F0C537]">{copy.demoCategory}</p>
+      <p className="mt-3 flex items-center gap-2 text-emerald-50">
+        <MapPin className="h-5 w-5" aria-hidden="true" /> {copy.tunisia}
+      </p>
+      <p className="mt-4 flex items-center gap-2 font-semibold text-emerald-300">
+        <Clock3 className="h-5 w-5" aria-hidden="true" /> {copy.open}
+      </p>
+      <p className="mt-1 text-emerald-50">{copy.todayCardSchedule}</p>
+      <div className="mt-4 flex items-center justify-center gap-2 rounded-full bg-[#D6AF2E] px-5 py-3 font-bold text-[#07543F]">
+        <Phone className="h-5 w-5" aria-hidden="true" /> {copy.call}
+      </div>
+      {tier === 'ARTISAN' && (
+        <p className="mt-4 border-t border-[#D6AF2E]/35 pt-4 text-sm leading-6 text-emerald-50">{copy.artisanPreviewText}</p>
+      )}
+      {tier === 'PREMIUM' && (
+        <button
+          type="button"
+          onClick={onDetails}
+          className="mt-4 flex w-full items-center justify-center gap-2 border-t border-[#D6AF2E]/35 pt-4 text-base font-bold text-[#F0C537] transition hover:text-white focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]"
+        >
+          {copy.viewDetails} <ChevronRight className="h-5 w-5" aria-hidden="true" />
+        </button>
+      )}
+    </div>
+  );
+}
+
+function PremiumDetailPreview({ copy }: { copy: SubscriptionCopy }) {
+  const demonstrationBusiness = {
+    id: 'demo-dalil-tounes-premium',
+    nom: copy.demoName,
+    name_ar: copy.demoName,
+    categorie: copy.demoCategory,
+    adresse: `${copy.tunisia}, ${copy.tunisia}`,
+    description: copy.premiumDemoDescription,
+    description_ar: copy.premiumDemoDescription,
+    whatsapp: '+216 XX XXX XXX',
+    email: 'contact@dalil-tounes.com',
+    site_web: 'https://dalil-tounes.com',
+    services: copy.premiumDemoServices,
+    sous_categories_texte: copy.premiumDemoServices,
+    statut_abonnement: 'premium',
+    logo_url: LOGO_PATH,
+    image_url: null,
+    horaires_ok: copy.demoHours,
+    statut_carte: copy.certifiedTitle,
+    latitude: 36.8065,
+    longitude: 10.1815,
+    'lien facebook': 'https://www.facebook.com/daliltounes',
+    'Lien Instagram': 'https://www.instagram.com/dalil.tounes/',
+    'Lien LinkedIn': 'https://www.linkedin.com/company/daliltounes',
+  };
+
+  return <BusinessDetail preview business={demonstrationBusiness} />;
+}
+
+function ContinuousPlanCard({
+  tier,
+  copy,
+  intro,
+  features,
+  onPreview,
+  onRequest,
+}: {
+  tier: 'ARTISAN' | 'PREMIUM';
+  copy: SubscriptionCopy;
+  intro: string;
+  features: string[];
+  onPreview: () => void;
+  onRequest: () => void;
+}) {
+  const tierLabel = tier === 'ARTISAN' ? copy.artisan : copy.premium;
+  const requestLabel = tier === 'ARTISAN' ? copy.requestArtisan : copy.requestPremium;
+
+  return (
+    <article className="relative flex h-full min-h-[350px] flex-col overflow-hidden rounded-3xl border-2 border-[#D6AF2E] bg-[#07543F] p-5 text-white shadow-[0_12px_30px_rgba(7,84,63,0.16)] sm:p-6">
+      <span className="absolute right-0 top-0 rounded-bl-2xl bg-[#D6AF2E] px-4 py-2 text-[11px] font-black tracking-[0.16em] text-[#07543F]">
+        {tierLabel}
+      </span>
+      <span className="mb-5 w-fit rounded-full border border-[#D6AF2E]/50 bg-[#D6AF2E]/15 px-3 py-1 text-[10px] font-bold tracking-[0.12em] text-[#F4CE55]">
+        {copy.launchBadge}
+      </span>
+      <h3 className="text-2xl font-bold">{tierLabel}</h3>
+      <p className="mt-2 min-h-12 text-sm leading-6 text-emerald-50">{intro}</p>
+      <ul className="mt-5 space-y-3">
+        {features.map((feature) => (
+          <li key={feature} className="flex items-start gap-2 text-sm leading-5 text-emerald-50">
+            <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/10 text-[#F0C537]">
+              <Check className="h-3 w-3" />
+            </span>
+            {feature}
+          </li>
+        ))}
+      </ul>
+      <div className="mt-auto grid gap-2 pt-6 sm:grid-cols-2">
+        <button
+          type="button"
+          onClick={onPreview}
+          className="rounded-xl border border-[#D6AF2E] bg-transparent px-4 py-3 text-sm font-bold text-[#F0C537] transition hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]"
+        >
+          {copy.previewCard}
+        </button>
+        <button
+          type="button"
+          onClick={onRequest}
+          className="rounded-xl bg-[#D6AF2E] px-4 py-3 text-sm font-bold text-[#07543F] transition hover:bg-[#E5C64D] focus:outline-none focus:ring-2 focus:ring-white"
+        >
+          {requestLabel}
+        </button>
+      </div>
+    </article>
+  );
+}
 
 export const Subscription = () => {
   const { language } = useLanguage();
-  const t = useTranslation(language);
-  const [showRequestForm, setShowRequestForm] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<string>('');
-  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annual'>('monthly');
-  const [activeModal, setActiveModal] = useState<ModalType>(null);
-  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
-  const [hideWelcomeModal, setHideWelcomeModal] = useState(false);
-  const [showContactModal, setShowContactModal] = useState(false);
-  // Plan ciblé lors de l'ouverture du modal "Paiement Manuel" (pour personnaliser le message WhatsApp).
-  const [manualPlanLabel, setManualPlanLabel] = useState<string>('');
-  const [copiedField, setCopiedField] = useState<string | null>(null);
+  const isArabic = language === 'ar';
+  const copy = subscriptionCopy[language as keyof typeof subscriptionCopy] ?? subscriptionCopy.fr;
+  const [activePreview, setActivePreview] = useState<PreviewType>(null);
+  const [selectedPlan, setSelectedPlan] = useState('');
 
-
-  const copyToClipboard = async (value: string, field: string) => {
-    try {
-      await navigator.clipboard.writeText(value);
-      setCopiedField(field);
-      setTimeout(() => setCopiedField(null), 1500);
-    } catch {
-      // no-op
-    }
+  const closePreview = () => setActivePreview(null);
+  const openRequest = (plan: string) => {
+    setSelectedPlan(plan);
+    setActivePreview('request');
   };
-
-  const openWhatsAppReceipt = () => {
-    const planPart = manualPlanLabel ? ` (${manualPlanLabel})` : '';
-    const message =
-      `Bonjour Dalil Tounes, j'ai effectué le paiement pour l'abonnement${planPart} de [Nom de l'entreprise]. Voici le reçu.`;
-    const url = `https://wa.me/${WHATSAPP_CONTACT}?text=${encodeURIComponent(message)}`;
-    window.open(url, '_blank');
-  };
-
-  const openWhatsAppContact = () => {
-    const message = "Bonjour Dalil Tounes, je souhaite échanger sur la solution la plus adaptée à mon entreprise.";
-    const url = `https://wa.me/${WHATSAPP_CONTACT}?text=${encodeURIComponent(message)}`;
-    window.open(url, '_blank');
-  };
-
-  const closeWelcomeModal = () => {
-    localStorage.setItem(SUBSCRIPTION_WELCOME_SEEN_KEY, 'true');
-    setShowWelcomeModal(false);
-  };
-
-  const openHumanContactModal = () => {
-    localStorage.setItem(SUBSCRIPTION_WELCOME_SEEN_KEY, 'true');
-    setShowWelcomeModal(false);
-    setShowContactModal(true);
-  };
-
-  const openRequestForm = (planLabel: string) => {
-    setSelectedPlan(planLabel);
-    setShowRequestForm(true);
-  };
-
-  const closeRequestForm = () => {
-    setShowRequestForm(false);
-  };
-
-  useEffect(() => {
-    const hash = window.location.hash;
-    if (hash.includes('#form-inscription-entreprise')) {
-      setTimeout(() => {
-        const element = document.getElementById('form-inscription-entreprise');
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-      }, 100);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (localStorage.getItem(SUBSCRIPTION_WELCOME_SEEN_KEY) !== 'true') {
-      setShowWelcomeModal(true);
-    }
-  }, []);
-
-  const plansConfig = [
-    {
-      key: 'decouverte',
-      bgColor: 'bg-[#F8FAFC]',
-      headerColor: 'bg-gray-100',
-      textColor: 'text-gray-900',
-      bottomTriangleColor: '#6B7280',
-      tier: 'decouverte' as const,
-    },
-    {
-      key: 'artisan',
-      bgColor: 'bg-[#4A1D43]',
-      headerColor: 'bg-[#4A1D43]',
-      textColor: 'text-white',
-      popular: true,
-      bottomTriangleColor: '#5A2D53',
-      tier: 'artisan' as const,
-    },
-    {
-      key: 'premium',
-      bgColor: 'bg-[#064E3B]',
-      headerColor: 'bg-[#064E3B]',
-      textColor: 'text-white',
-      bottomTriangleColor: '#065F46',
-      tier: 'premium' as const,
-    },
-    {
-      key: 'elitePro',
-      bgColor: 'bg-[#121212]',
-      headerColor: 'bg-[#121212]',
-      textColor: 'text-[#D4AF37]',
-      bottomTriangleColor: '#1E1E1E',
-      isElite: true,
-      tier: 'elite' as const,
-    },
-    {
-      key: 'custom',
-      bgColor: 'bg-gray-50',
-      headerColor: 'bg-gray-200',
-      textColor: 'text-gray-900',
-      bottomTriangleColor: '#9CA3AF',
-      isCustom: true,
-      tier: 'custom' as const,
-    },
-  ];
 
   return (
-    <div className="py-12 px-4">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-3xl md:text-4xl font-light mb-3 text-gray-900">
-            Nos solutions pour développer votre présence en ligne
-          </h1>
-          <p className="text-base text-gray-600 max-w-2xl mx-auto">
-            Choisissez la solution adaptée à votre activité, votre budget et votre rythme de développement.
+    <div className="bg-[#FFFCF7] px-4 py-8 text-slate-900 sm:py-12" dir={isArabic ? 'rtl' : 'ltr'}>
+      <main className="mx-auto max-w-6xl">
+        <header className="mb-8 text-center sm:mb-10">
+          <p className="mb-3 flex items-center justify-center gap-3 text-xs font-black uppercase tracking-[0.2em] text-amber-600">
+            <span className="h-px w-8 bg-amber-400" /> {copy.heroEyebrow} <span className="h-px w-8 bg-amber-400" />
           </p>
-        </div>
+          <h1 className="text-3xl font-black tracking-tight text-[#4A123F] sm:text-4xl lg:text-5xl">
+            {copy.heroTitle}
+          </h1>
+          <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-500 sm:text-base">{copy.heroSubtitle}</p>
+        </header>
 
-        <section className="mb-12">
-          <div className="bg-gradient-to-br from-red-50 via-orange-50 to-amber-50 rounded-3xl p-10 md:p-14 shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl md:text-3xl font-light text-gray-900 mb-4">
-                {subscriptionPageMessaging.heroTitle}
-              </h2>
-              <div className="max-w-3xl mx-auto">
-                <p className="text-gray-800 text-base md:text-lg leading-relaxed" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-                  {subscriptionPageMessaging.heroDescription}
-                </p>
-              </div>
+        <section aria-label={copy.startingSolutions} className="grid items-stretch gap-5 lg:grid-cols-[0.82fr_1.18fr]">
+          <article className="flex flex-col rounded-3xl border border-[#D6AF2E] bg-white p-5 shadow-[0_12px_30px_rgba(74,18,63,0.07)] sm:p-7">
+            <span className="w-fit rounded-full bg-emerald-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-emerald-800">
+              {copy.selfService}
+            </span>
+            <div className="my-5 flex h-20 w-20 items-center justify-center rounded-full border border-dashed border-[#4A123F]/35 text-center text-[10px] font-bold uppercase text-[#4A123F]">
+              {copy.yourLogo.split('\n').map((line) => <span key={line}>{line}<br /></span>)}
             </div>
-
-            <div className="grid md:grid-cols-3 gap-6">
-              {subscriptionPageMessaging.cards.map((card) => (
-              <div key={card.title} className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm">
-                <div className="text-3xl mb-3">{card.icon}</div>
-                <h3 className="font-semibold text-gray-900 mb-2">
-                  {card.title}
-                </h3>
-                <p className="text-sm text-gray-600">
-                  {card.description}
-                </p>
-              </div>
-              ))}
+            <h2 className="text-2xl font-bold text-[#4A123F]">{copy.essentialTitle}</h2>
+            <div className="mt-3 flex items-end gap-2 text-[#07543F]">
+              <span className="text-4xl font-black">0</span><span className="pb-1 font-bold">TND</span>
             </div>
-          </div>
-        </section>
-
-        <section className="mb-12">
-          <div className="mx-auto max-w-3xl rounded-3xl border border-[#D4AF37]/35 bg-white px-6 py-7 text-center shadow-[0_6px_24px_rgba(74,29,67,0.08)]">
-            <p className="text-base md:text-lg leading-relaxed text-[#4A1D43]" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-              Chez Dalil Tounes, nous croyons que chaque professionnel mérite sa place sur Internet.
-            </p>
-            <p className="mt-2 text-sm text-gray-600">
-              Parce qu'une petite entreprise d'aujourd'hui peut devenir la grande entreprise de demain.
-            </p>
-          </div>
-        </section>
-
-        <div
-          id="form-inscription-entreprise"
-          className="scroll-mt-32 bg-gradient-to-br from-[#4A1D43] to-[#5A2D53] rounded-[20px] border-2 border-[#D4AF37] overflow-hidden mb-12 shadow-[0_8px_32px_rgba(212,175,55,0.15),0_0_40px_rgba(212,175,55,0.08)]"
-        >
-          <div className="p-8 md:p-12 text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white rounded-full text-xs font-bold mb-4 shadow-lg">
-              <span>🎉</span>
-              <span>Offre de lancement exceptionnelle</span>
-            </div>
-
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">
-              🎉 Offre de lancement exceptionnelle
-            </h2>
-
-            <div className="max-w-3xl mx-auto grid md:grid-cols-2 gap-4 mb-8">
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-[#D4AF37]/30">
-                <div className="flex items-center justify-center gap-2 mb-3">
-                  <span className="text-2xl">✅</span>
-                  <p className="text-lg font-bold text-white">
-                    3 mois gratuits pour découvrir et tester Dalil Tounes
-                  </p>
-                </div>
-              </div>
-
-              <div className="bg-[#D4AF37] rounded-xl p-5 text-[#4A1D43] shadow-lg">
-                <div className="flex items-center justify-center gap-2 mb-3">
-                  <span className="text-2xl">✅</span>
-                  <p className="text-lg font-bold">
-                    + 6 mois offerts avec tout abonnement annuel
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="max-w-2xl mx-auto mb-6">
-              <p className="text-xl md:text-2xl font-bold text-[#D4AF37] mb-2">
-                🎁 Jusqu'à 9 mois offerts au total !
-              </p>
-              <p className="text-sm text-gray-300">
-                Une occasion idéale pour développer sereinement votre visibilité en ligne.
-              </p>
-            </div>
-            <button
-              onClick={() => openRequestForm('Artisan')}
-              className="px-8 py-3 bg-[#D4AF37] text-[#4A1D43] rounded-lg text-sm font-bold hover:bg-[#C4A027] transition-colors shadow-lg hover:shadow-xl"
-            >
-              Demande d’information / inscription
-            </button>
-          </div>
-        </div>
-
-        {/* Toggle Mensuel / Annuel */}
-        <div className="flex justify-center mb-8">
-          <div className="inline-flex items-center bg-gray-100 rounded-lg p-1">
-            <button
-              onClick={() => setBillingPeriod('monthly')}
-              className={`px-6 py-2 rounded-md text-sm font-medium transition-all ${
-                billingPeriod === 'monthly'
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              {t.subscription.billing.monthly}
-            </button>
-            <button
-              onClick={() => setBillingPeriod('annual')}
-              className={`px-6 py-2 rounded-md text-sm font-medium transition-all ${
-                billingPeriod === 'annual'
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              {t.subscription.billing.annual}
-            </button>
-          </div>
-        </div>
-
-        <div className="grid md:grid-cols-5 gap-6 mb-12 max-w-6xl mx-auto items-start">
-          {plansConfig.map((planConfig) => {
-            const plan = t.subscription.plans[planConfig.key];
-            const presentation = planPresentation[planConfig.key] || {};
-            const isArtisan = planConfig.key === 'artisan';
-            const isPremium = planConfig.key === 'premium';
-            const isElitePro = planConfig.isElite || false;
-            const isCustom = planConfig.isCustom || false;
-            const isDecouverte = planConfig.key === 'decouverte';
-            const displayPlanName = presentation.name || plan.name;
-            const displayFeatures = presentation.features || plan.features;
-            const launchBonus = presentation.launchBonus || [];
-            const displayPrice = isElitePro
-              ? 'Solution sur mesure'
-              : isPremium
-              ? (billingPeriod === 'annual' ? '49 TND / mois en annuel' : '59 TND / mois')
-              : billingPeriod === 'annual' && isArtisan
-              ? (plan.annualPrice || plan.price)
-              : plan.price;
-
-            const hasPaidPayment = isArtisan || isPremium;
-            const stripeLink = hasPaidPayment
-              ? STRIPE_LINKS[planConfig.key]?.[billingPeriod] ?? '#'
-              : '#';
-
-            const borderStyle = isCustom
-              ? '2px dashed #9CA3AF'
-              : isDecouverte
-              ? '1px solid #D4AF37'
-              : '2px solid #D4AF37';
-
-            const shadowStyle = (isArtisan || isPremium || isElitePro)
-              ? '0 8px 32px rgba(212, 175, 55, 0.15), 0 0 40px rgba(212, 175, 55, 0.08)'
-              : '0 2px 10px rgba(0,0,0,0.05)';
-
-            return (
-              <div
-                key={planConfig.key}
-                className={`relative rounded-[20px] transition-all ${planConfig.bgColor} flex flex-col h-full overflow-hidden group hover:-translate-y-1`}
-                style={{
-                  border: borderStyle,
-                  boxShadow: shadowStyle
-                }}
-              >
-                {planConfig.popular && (
-                  <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white px-3 py-1 rounded-full flex items-center gap-1 z-20 shadow-lg">
-                    <Star className="w-3 h-3 fill-current" />
-                    <span className="text-xs font-bold">{plan.popular}</span>
-                  </div>
-                )}
-
-                {/* Glass shine effect for premium tiers */}
-                {(isArtisan || isPremium || isElitePro) && (
-                  <>
-                    <div
-                      className="absolute inset-0 rounded-[20px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10"
-                      style={{
-                        background: 'linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.8) 50%, transparent 100%)',
-                        animation: 'shine 1.5s ease-in-out',
-                        transform: 'translateX(-100%)',
-                      }}
-                    />
-                    <style>{`
-                      @keyframes shine {
-                        0% { transform: translateX(-100%) skewX(-15deg); }
-                        100% { transform: translateX(200%) skewX(-15deg); }
-                      }
-                      .group:hover > div:nth-child(${planConfig.popular ? '3' : '2'}) {
-                        animation: shine 1.5s ease-in-out;
-                      }
-                    `}</style>
-                  </>
-                )}
-
-                {/* Triangle doré en position absolue au sommet de la carte */}
-                <div
-                  className="absolute left-1/2 -translate-x-1/2 z-10"
-                  style={{
-                    top: '0',
-                    width: 0,
-                    height: 0,
-                    borderLeft: '20px solid transparent',
-                    borderRight: '20px solid transparent',
-                    borderTop: '16px solid #D4AF37',
-                  }}
-                />
-
-                {/* En-tête */}
-                <div className={`${planConfig.headerColor} py-2.5 px-4`}>
-                  <h3 className={`text-sm font-bold text-center tracking-wide uppercase ${
-                    isElitePro ? 'text-[#D4AF37]' :
-                    isArtisan || isPremium ? 'text-white' :
-                    'text-gray-900'
-                  }`}>
-                    {displayPlanName}
-                  </h3>
-                </div>
-
-                {/* Première ligne de séparation dorée fine sous le nom */}
-                <div
-                  className="w-full"
-                  style={{ height: '1px', backgroundColor: '#D4AF37' }}
-                />
-
-                <div className={`px-5 pt-4 pb-4 flex flex-col flex-grow ${isElitePro ? 'text-[#D4AF37]' : isArtisan || isPremium ? 'text-white' : 'text-gray-900'}`}>
-                  <div>
-                    <div className="text-center mb-2">
-                      {billingPeriod === 'annual' && (isArtisan || isPremium) && plan.annualSavings && (
-                        <div className="mb-2 inline-block px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
-                          {plan.annualSavings}
-                        </div>
-                      )}
-                    {isCustom ? (
-                      <>
-                        <div className="text-2xl font-bold mb-1 text-gray-900">
-                          {plan.subtitle}
-                        </div>
-                        <p className="text-xs text-gray-600 mt-2 px-2">
-                          {plan.description}
-                        </p>
-                      </>
-                    ) : (
-                      <>
-                        <div className={`text-3xl font-bold mb-1 ${
-                          isElitePro ? 'text-[#D4AF37]' :
-                          isArtisan || isPremium ? 'text-white' :
-                          'text-gray-900'
-                        }`}>
-                          {displayPrice}
-                        </div>
-                        {displayPrice !== 'Gratuit' && displayPrice !== 'Free' && displayPrice !== 'مجاني' && displayPrice !== 'Gratuito' && displayPrice !== 'Бесплатно' && !isElitePro && (
-                          <p className={`text-xs ${
-                            isElitePro ? 'text-gray-400' :
-                            isArtisan || isPremium ? 'text-gray-200' :
-                            'text-gray-600'
-                          }`}>
-                            {t.subscription.perMonth}
-                          </p>
-                        )}
-                        {isElitePro && (
-                          <p className="text-xs text-gray-300 mt-2 px-2 leading-relaxed">
-                            Étude personnalisée selon les besoins de ton entreprise.
-                          </p>
-                        )}
-                      </>
-                    )}
-                  </div>
-
-                    {/* Deuxième ligne de séparation dorée épaisse sous le prix avec triangle */}
-                    <div className="relative mb-3 -mx-6">
-                      <div style={{ height: '3px', backgroundColor: '#D4AF37' }} />
-                      <div
-                        className="absolute left-1/2 -translate-x-1/2"
-                        style={{
-                          top: '0',
-                          width: 0,
-                          height: 0,
-                          borderLeft: '20px solid transparent',
-                          borderRight: '20px solid transparent',
-                          borderTop: `20px solid ${planConfig.bottomTriangleColor}`,
-                        }}
-                      />
-                    </div>
-
-                    {presentation.intro && (
-                      <p className={`mb-3 rounded-xl px-3 py-2 text-center text-xs font-medium leading-relaxed ${
-                        isElitePro
-                          ? 'bg-[#D4AF37]/10 text-[#D4AF37]'
-                          : isArtisan || isPremium
-                          ? 'bg-white/10 text-white'
-                          : 'bg-[#D4AF37]/10 text-gray-700'
-                      }`}>
-                        {presentation.intro}
-                      </p>
-                    )}
-
-                    <ul className="space-y-2">
-                    {/* Bonus annuel pour Premium */}
-                    {billingPeriod === 'annual' && isPremium && !isElitePro && plan.annualBonus && (
-                      <>
-                        <li className="flex items-start gap-2 pb-2 border-b border-gray-200">
-                          <div
-                            className="mt-0.5 w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0"
-                            style={{ backgroundColor: '#D4AF37' }}
-                          >
-                            <Check className="w-2.5 h-2.5 text-white" />
-                          </div>
-                          <span className="text-xs font-bold leading-relaxed text-orange-600">
-                            {plan.annualBonus}
-                          </span>
-                        </li>
-                      </>
-                    )}
-                    {displayFeatures.map((feature: string, featureIndex: number) => (
-                      <li key={featureIndex} className="flex items-start gap-2">
-                        <div
-                          className="mt-0.5 w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0"
-                          style={{ backgroundColor: '#D4AF37' }}
-                        >
-                          <Check className="w-2.5 h-2.5 text-white" />
-                        </div>
-                        <span className={`text-xs leading-relaxed ${
-                          isElitePro ? 'text-gray-300' :
-                          isArtisan || isPremium ? 'text-gray-200' :
-                          'text-gray-700'
-                        }`}>
-                          {feature}
-                        </span>
-                      </li>
-                    ))}
-                    </ul>
-
-                    {launchBonus.length > 0 && (
-                      <div className={`mt-4 rounded-xl border p-3 ${
-                        isElitePro
-                          ? 'border-[#D4AF37]/50 bg-[#D4AF37]/10'
-                          : isPremium
-                          ? 'border-[#D4AF37]/45 bg-white/10'
-                          : 'border-[#D4AF37]/35 bg-[#FFF8E7]'
-                      }`}>
-                        <p className={`mb-2 text-xs font-bold ${
-                          isElitePro || isPremium ? 'text-[#D4AF37]' : 'text-[#4A1D43]'
-                        }`}>
-                          🎁 Bonus de lancement
-                        </p>
-                        {launchBonus.map((bonus) => (
-                          <p key={bonus} className={`text-xs leading-relaxed ${
-                            isElitePro ? 'text-gray-300' : isPremium ? 'text-gray-200' : 'text-gray-700'
-                          }`}>
-                            {bonus}
-                          </p>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* CTA principal */}
-                  <button
-                    onClick={() => {
-                      if (isElitePro) {
-                        setShowContactModal(true);
-                        return;
-                      }
-                      const planNameMap: Record<string, string> = {
-                        'decouverte': 'Découverte',
-                        'artisan': 'Artisan',
-                        'premium': 'Premium',
-                        'elitePro': 'Entreprise',
-                        'custom': 'Sur mesure'
-                      };
-                      openRequestForm(planNameMap[planConfig.key] || 'Premium');
-                    }}
-                    className={`w-full py-3 rounded-lg text-sm font-bold transition-all mt-auto ${
-                      isCustom
-                        ? 'bg-gray-700 text-white hover:bg-gray-800 shadow-md hover:shadow-lg border-2 border-dashed border-gray-400'
-                        : isElitePro
-                        ? 'bg-[#D4AF37] text-[#121212] hover:bg-[#C4A027] shadow-md hover:shadow-lg'
-                        : isArtisan
-                        ? 'bg-[#D4AF37] text-[#4A1D43] hover:bg-[#C4A027] shadow-md hover:shadow-lg'
-                        : isPremium
-                        ? 'bg-[#D4AF37] text-[#064E3B] hover:bg-[#C4A027] shadow-md hover:shadow-lg'
-                        : 'border-2 border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-gray-900 shadow-sm hover:shadow-md'
-                    }`}
-                  >
-                    {isElitePro ? 'Nous contacter' : isCustom ? t.subscription.requestQuote : `${t.subscription.chooseButton} ${displayPlanName}`}
-                  </button>
-
-                  {/* Payment buttons — plans payants uniquement */}
-                  {hasPaidPayment && (
-                    <div className="mt-4 space-y-2.5">
-                      <div className="flex items-center gap-2 my-1">
-                        <div className="flex-1 h-px bg-white/15" />
-                        <span className="text-[10px] text-white/40 uppercase tracking-widest">paiement</span>
-                        <div className="flex-1 h-px bg-white/15" />
-                      </div>
-
-                      {/* Stripe */}
-                      <a
-                        href={stripeLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-xs font-semibold bg-[#4F46E5] text-white hover:bg-[#4338CA] active:scale-95 transition-all shadow-sm hover:shadow-md"
-                      >
-                        <CreditCard className="w-3.5 h-3.5 flex-shrink-0" />
-                        Payer par Carte (Stripe)
-                      </a>
-
-                      {/* PayPal — bientôt disponible */}
-                      <button
-                        type="button"
-                        onClick={() => setActiveModal('paypal')}
-                        className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-xs font-semibold bg-[#FFC439] text-[#003087] opacity-60 hover:opacity-75 transition-all cursor-not-allowed shadow-sm"
-                      >
-                        <svg className="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                          <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.816-5.09a.932.932 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.471z"/>
-                        </svg>
-                        PayPal (Bientôt disponible)
-                      </button>
-
-                      {/* Flouci */}
-                      <button
-                        type="button"
-                        onClick={() => setActiveModal('flouci')}
-                        className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-xs font-semibold bg-[#059669] text-white hover:bg-[#047857] active:scale-95 transition-all shadow-sm hover:shadow-md"
-                      >
-                        <Smartphone className="w-3.5 h-3.5 flex-shrink-0" />
-                        Payer en Dinars (Flouci)
-                      </button>
-
-                      {/* Paiement Manuel Sécurisé — Virement bancaire ou D17 */}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setManualPlanLabel(displayPlanName);
-                          setActiveModal('manual');
-                        }}
-                        className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-xs font-semibold bg-white text-[#4A1D43] border-2 border-[#D4AF37] hover:bg-[#FFF8E7] active:scale-95 transition-all shadow-sm hover:shadow-md"
-                      >
-                        <Landmark className="w-3.5 h-3.5 flex-shrink-0" />
-                        Payer par Virement Bancaire ou Versement (D17)
-                      </button>
-
-                      <p className="text-center text-[10px] text-white/40 pt-0.5 leading-tight">
-                        Paiements sécurisés. Facture disponible après validation.
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {showWelcomeModal && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-          onClick={closeWelcomeModal}
-        >
-          <div
-            className="relative bg-white rounded-2xl shadow-2xl max-w-[390px] w-full p-5 sm:p-6 border border-[#D4AF37]"
-            onClick={(e) => e.stopPropagation()}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="subscription-welcome-title"
-          >
-            <button
-              type="button"
-              onClick={closeWelcomeModal}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
-              aria-label="Fermer"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            <div className="text-center mb-5">
-              <div className="w-[52px] h-[52px] bg-[#4A1D43] rounded-full flex items-center justify-center mx-auto mb-3">
-                <MessageCircle className="w-6 h-6 text-[#D4AF37]" />
-              </div>
-              <h2 id="subscription-welcome-title" className="text-xl sm:text-[22px] font-bold text-gray-900 mb-2 leading-tight">
-                {subscriptionIntroText.title}
-              </h2>
-            </div>
-
-            <div className="space-y-2.5 text-[15.5px] sm:text-base text-gray-600 leading-relaxed">
-              {subscriptionIntroText.paragraphs.map((paragraph) => (
-                <p key={paragraph}>{paragraph}</p>
-              ))}
-            </div>
-
-            <label className="mt-4 flex items-center gap-3 text-[15px] text-gray-600 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={hideWelcomeModal}
-                onChange={(e) => setHideWelcomeModal(e.target.checked)}
-                className="h-4 w-4 rounded border-gray-300 text-[#4A1D43] focus:ring-[#4A1D43]"
-              />
-              <span>{subscriptionIntroText.hideLabel}</span>
-            </label>
-
-            <div className="mt-5 flex flex-col sm:flex-row gap-3">
-              <button
-                type="button"
-                onClick={closeWelcomeModal}
-                className="flex-1 px-5 py-3 bg-[#4A1D43] text-[#D4AF37] border border-[#D4AF37] rounded-lg hover:bg-[#5A2D53] transition-all text-sm font-semibold"
-              >
-                {subscriptionIntroText.primaryAction}
-              </button>
-              <button
-                type="button"
-                onClick={openHumanContactModal}
-                className="flex-1 px-5 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all text-sm font-medium"
-              >
-                {subscriptionIntroText.secondaryAction}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {showContactModal && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-          onClick={() => setShowContactModal(false)}
-        >
-          <div
-            className="relative bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 sm:p-7 border border-[#D4AF37]"
-            onClick={(e) => e.stopPropagation()}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="subscription-contact-title"
-          >
-            <button
-              type="button"
-              onClick={() => setShowContactModal(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
-              aria-label="Fermer"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            <div className="text-center mb-6">
-              <div className="w-14 h-14 bg-[#4A1D43] rounded-full flex items-center justify-center mx-auto mb-4">
-                <Mail className="w-7 h-7 text-[#D4AF37]" />
-              </div>
-              <h2 id="subscription-contact-title" className="text-xl font-bold text-gray-900 mb-2">
-                {subscriptionContactText.title}
-              </h2>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                {subscriptionContactText.subtitle}
-              </p>
-            </div>
-
-            <div className="space-y-3">
+            <p className="mt-1 text-sm font-bold text-[#4A123F]">{copy.essentialFree}</p>
+            <div className="my-5 h-px bg-amber-100" />
+            <FeatureList items={[...copy.essentialFeatures]} />
+            <div className="mt-auto grid gap-2 pt-6">
               <a
-                href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('Demande abonnement - Dalil Tounes')}`}
-                className="flex items-center gap-3 rounded-xl border border-gray-200 p-4 hover:border-[#D4AF37] hover:bg-[#FFF8E7] transition-all"
+                href="/inscription-entreprise"
+                className="rounded-xl border-2 border-[#4A123F]/20 bg-white px-4 py-3 text-center text-sm font-bold text-[#4A123F] transition hover:border-[#D6AF2E] hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]"
               >
-                <Mail className="w-5 h-5 text-[#4A1D43]" />
-                <span>
-                  <span className="block text-sm font-semibold text-gray-900">{subscriptionContactText.emailLabel}</span>
-                  <span className="block text-xs text-gray-500">{CONTACT_EMAIL}</span>
-                </span>
+                {copy.addActivity}
               </a>
-
               <button
                 type="button"
-                onClick={openWhatsAppContact}
-                className="w-full flex items-center gap-3 rounded-xl border border-gray-200 p-4 text-left hover:border-[#25D366] hover:bg-green-50 transition-all"
+                onClick={() => setActivePreview('free')}
+                className="rounded-xl px-4 py-2 text-sm font-semibold text-slate-500 underline decoration-[#D6AF2E] underline-offset-4 transition hover:text-[#4A123F] focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]"
               >
-                <MessageCircle className="w-5 h-5 text-[#25D366]" />
-                <span>
-                  <span className="block text-sm font-semibold text-gray-900">{subscriptionContactText.whatsAppLabel}</span>
-                  <span className="block text-xs text-gray-500">+{WHATSAPP_CONTACT}</span>
-                </span>
+                {copy.previewCard}
               </button>
             </div>
-          </div>
-        </div>
-      )}
+          </article>
 
-      {/* Modal PayPal */}
-      {activeModal === 'paypal' && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-          onClick={() => setActiveModal(null)}
-        >
-          <div
-            className="relative bg-white rounded-2xl shadow-2xl max-w-sm w-full p-8 text-center"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={() => setActiveModal(null)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
-              aria-label="Fermer"
-            >
-              <X className="w-5 h-5" />
-            </button>
-            <div className="w-14 h-14 bg-[#FFC439] rounded-full flex items-center justify-center mx-auto mb-5">
-              <svg className="w-7 h-7 text-[#003087]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.816-5.09a.932.932 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.471z"/>
-              </svg>
+          <article className="flex flex-col rounded-3xl border-2 border-[#D6AF2E] bg-gradient-to-br from-white via-white to-amber-50/80 p-5 shadow-[0_14px_36px_rgba(214,175,46,0.12)] sm:p-7">
+            <span className="w-fit rounded-full bg-amber-100 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-amber-800">
+              {copy.humanSupport}
+            </span>
+            <h2 className="mt-4 text-2xl font-bold text-[#4A123F] sm:text-3xl">{copy.cvTitle}</h2>
+            <div className="mt-2 flex items-end gap-2 text-[#07543F]">
+              <span className="text-4xl font-black">199</span><span className="pb-1 font-bold">TND</span>
             </div>
-            <h3 className="text-lg font-bold text-gray-900 mb-3">PayPal — Bientôt disponible</h3>
-            <p className="text-sm text-gray-600 leading-relaxed">
-              La validation PayPal est en cours. Veuillez utiliser le paiement par Carte pour le moment.
-            </p>
-            <button
-              onClick={() => setActiveModal(null)}
-              className="mt-6 w-full py-2.5 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition-colors"
-            >
-              Compris
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Modal Flouci */}
-      {activeModal === 'flouci' && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-          onClick={() => setActiveModal(null)}
-        >
-          <div
-            className="relative bg-white rounded-2xl shadow-2xl max-w-sm w-full p-8 text-center"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={() => setActiveModal(null)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
-              aria-label="Fermer"
-            >
-              <X className="w-5 h-5" />
-            </button>
-            <div className="w-14 h-14 bg-[#059669] rounded-full flex items-center justify-center mx-auto mb-5">
-              <Smartphone className="w-7 h-7 text-white" />
+            <p className="mt-3 text-sm font-bold text-[#4A123F]">{copy.cvPriceNotice}</p>
+            <div className="mt-3 flex flex-wrap items-center gap-2" aria-label={copy.paymentOptions}>
+              <span className="rounded-lg bg-[#07543F] px-4 py-2 text-sm font-bold text-white">{copy.payOnce}</span>
+              <span className="text-xs text-slate-400">{copy.or}</span>
+              <span className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-[#4A123F]">{copy.payTwice}</span>
+              <span className="text-xs text-slate-400">{copy.or}</span>
+              <span className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-[#4A123F]">{copy.payThreeTimes}</span>
             </div>
-            <h3 className="text-lg font-bold text-gray-900 mb-1">Payer en Dinars 🇹🇳</h3>
-            <p className="text-xs text-[#059669] font-medium mb-4">via Flouci</p>
-            <p className="text-sm text-gray-600 leading-relaxed">
-              Pour régler votre abonnement en Dinars via Flouci, contactez-nous directement sur{' '}
-              <span className="font-semibold text-gray-800">WhatsApp</span> ou par{' '}
-              <span className="font-semibold text-gray-800">téléphone</span> pour recevoir votre lien de paiement local.
-            </p>
-            <button
-              onClick={() => setActiveModal(null)}
-              className="mt-6 w-full py-2.5 rounded-lg bg-[#059669] text-white text-sm font-semibold hover:bg-[#047857] transition-colors shadow-sm"
-            >
-              J'ai compris
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Modal Paiement Manuel Sécurisé — Virement / D17 + validation WhatsApp */}
-      {activeModal === 'manual' && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-          onClick={() => setActiveModal(null)}
-        >
-          <div
-            className="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 sm:p-8 max-h-[90vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={() => setActiveModal(null)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
-              aria-label="Fermer"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            <div className="text-center mb-5">
-              <div className="w-14 h-14 bg-[#4A1D43] rounded-full flex items-center justify-center mx-auto mb-4">
-                <Landmark className="w-7 h-7 text-[#D4AF37]" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-1">Paiement Manuel Sécurisé</h3>
-              <p className="text-sm text-gray-600">
-                Virement bancaire ou versement D17 {manualPlanLabel ? `— ${manualPlanLabel}` : ''}
-              </p>
-            </div>
-
-            {/* RIB / IBAN */}
-            <div className="border border-gray-200 rounded-xl p-4 mb-4 bg-gray-50">
-              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">
-                Coordonnées bancaires (Virement)
-              </h4>
-              <dl className="space-y-2.5 text-sm">
-                <div className="flex justify-between items-center gap-3">
-                  <dt className="text-gray-600">Bénéficiaire</dt>
-                  <dd className="font-semibold text-gray-900 text-right">{BANK_DETAILS.beneficiaire}</dd>
-                </div>
-                <div className="flex justify-between items-center gap-3">
-                  <dt className="text-gray-600">Banque</dt>
-                  <dd className="font-semibold text-gray-900 text-right">{BANK_DETAILS.banque}</dd>
-                </div>
-                <div className="flex justify-between items-center gap-3">
-                  <dt className="text-gray-600">RIB</dt>
-                  <dd className="flex items-center gap-2">
-                    <span className="font-mono font-semibold text-gray-900">{BANK_DETAILS.rib}</span>
-                    <button
-                      type="button"
-                      onClick={() => copyToClipboard(BANK_DETAILS.rib, 'rib')}
-                      className="text-[#4A1D43] hover:text-[#D4AF37] transition-colors"
-                      aria-label="Copier le RIB"
-                    >
-                      <Copy className="w-4 h-4" />
-                    </button>
-                    {copiedField === 'rib' && <span className="text-[10px] text-green-600 font-semibold">copié</span>}
-                  </dd>
-                </div>
-                <div className="flex justify-between items-center gap-3">
-                  <dt className="text-gray-600">IBAN</dt>
-                  <dd className="flex items-center gap-2">
-                    <span className="font-mono font-semibold text-gray-900">{BANK_DETAILS.iban}</span>
-                    <button
-                      type="button"
-                      onClick={() => copyToClipboard(BANK_DETAILS.iban, 'iban')}
-                      className="text-[#4A1D43] hover:text-[#D4AF37] transition-colors"
-                      aria-label="Copier l'IBAN"
-                    >
-                      <Copy className="w-4 h-4" />
-                    </button>
-                    {copiedField === 'iban' && <span className="text-[10px] text-green-600 font-semibold">copié</span>}
-                  </dd>
-                </div>
-                <div className="flex justify-between items-center gap-3">
-                  <dt className="text-gray-600">SWIFT / BIC</dt>
-                  <dd className="font-mono font-semibold text-gray-900">{BANK_DETAILS.swift}</dd>
-                </div>
-              </dl>
-            </div>
-
-            {/* D17 / transfert téléphone */}
-            <div className="border border-gray-200 rounded-xl p-4 mb-5 bg-gradient-to-br from-[#FFF8E7] to-white">
-              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">
-                Versement D17 (transfert par téléphone)
-              </h4>
-              <div className="flex justify-between items-center gap-3 text-sm">
-                <span className="text-gray-600">Numéro D17</span>
-                <div className="flex items-center gap-2">
-                  <span className="font-mono font-semibold text-gray-900">{D17_PHONE}</span>
-                  <button
-                    type="button"
-                    onClick={() => copyToClipboard(D17_PHONE, 'd17')}
-                    className="text-[#4A1D43] hover:text-[#D4AF37] transition-colors"
-                    aria-label="Copier le numéro D17"
-                  >
-                    <Copy className="w-4 h-4" />
-                  </button>
-                  {copiedField === 'd17' && <span className="text-[10px] text-green-600 font-semibold">copié</span>}
-                </div>
-              </div>
-            </div>
-
-            {/* CTA WhatsApp */}
+            <p className="mt-3 text-sm leading-6 text-slate-600">{copy.cvPublication}</p>
+            <div className="my-5 h-px bg-amber-100" />
+            <FeatureList items={[...copy.cvFeatures]} columns />
             <button
               type="button"
-              onClick={openWhatsAppReceipt}
-              className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl text-sm font-bold bg-[#25D366] text-white hover:bg-[#1EBE5D] active:scale-[0.98] transition-all shadow-lg hover:shadow-xl"
+              onClick={() => openRequest(copy.cvPlanLabel)}
+              className="mt-6 w-full rounded-xl bg-[#4A123F] px-5 py-3 text-sm font-bold text-white shadow-lg transition hover:bg-[#5B1C4E] focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]"
             >
-              <MessageCircle className="w-5 h-5" strokeWidth={2.5} />
-              J'ai envoyé le paiement (Envoyer le reçu via WhatsApp)
+              {copy.requestCreation}
             </button>
+          </article>
+        </section>
 
-            <p className="text-center text-[11px] text-gray-500 mt-3 leading-relaxed">
-              Votre abonnement sera activé sous 24h après réception de la preuve de paiement.
-            </p>
+        <section aria-labelledby="continuous-services-title" className="mt-9 sm:mt-11">
+          <div className="mb-5 flex items-center justify-center gap-3 text-center">
+            <span className="h-px w-8 bg-amber-400" />
+            <h2 id="continuous-services-title" className="text-sm font-black uppercase tracking-[0.18em] text-amber-600">
+              {copy.continuousServices}
+            </h2>
+            <span className="h-px w-8 bg-amber-400" />
           </div>
-        </div>
-      )}
 
-      {showRequestForm && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-          onClick={(e) => e.target === e.currentTarget && closeRequestForm()}
-        >
-          <div
-            className="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[#D4AF37]"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="mb-5 rounded-2xl border border-[#D6AF2E]/55 bg-gradient-to-r from-amber-50 via-white to-emerald-50 p-4 shadow-sm sm:flex sm:items-center sm:justify-between sm:gap-6 sm:p-5">
+            <div>
+              <span className="inline-flex rounded-full bg-[#D6AF2E] px-3 py-1 text-[10px] font-black tracking-[0.14em] text-[#07543F]">
+                {copy.launchBadge}
+              </span>
+              <h3 className="mt-2 text-lg font-bold text-[#4A123F]">{copy.launchTitle}</h3>
+              <p className="mt-1 text-sm leading-6 text-slate-700">{copy.launchIntro}</p>
+              <p className="text-sm leading-6 text-slate-700">
+                {copy.launchAnnualPrefix} <strong>{copy.launchAnnualStrong}</strong>
+              </p>
+              <p className="text-sm font-semibold leading-6 text-[#07543F]">{copy.launchPayment}</p>
+            </div>
             <button
-              onClick={closeRequestForm}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
-              aria-label="Fermer"
+              type="button"
+              onClick={() => setActivePreview('launch')}
+              className="mt-3 shrink-0 text-sm font-semibold text-[#4A123F] underline decoration-[#D6AF2E] underline-offset-4 hover:text-[#07543F] focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] sm:mt-0"
             >
-              <X className="w-5 h-5" />
+              {copy.seeConditions}
             </button>
+          </div>
 
-            <div className="p-6 sm:p-8">
-              <div className="text-center mb-6">
-                <div className="w-14 h-14 bg-[#4A1D43] rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Send className="w-7 h-7 text-[#D4AF37]" />
+          <div className="grid gap-5 lg:grid-cols-[1fr_1fr_0.82fr]">
+            <ContinuousPlanCard
+              tier="ARTISAN"
+              copy={copy}
+              intro={copy.artisanIntro}
+              features={[...copy.artisanFeatures]}
+              onPreview={() => setActivePreview('artisan')}
+              onRequest={() => openRequest(copy.artisanPlanLabel)}
+            />
+            <ContinuousPlanCard
+              tier="PREMIUM"
+              copy={copy}
+              intro={copy.premiumIntro}
+              features={[...copy.premiumFeatures]}
+              onPreview={() => setActivePreview('premium')}
+              onRequest={() => openRequest(copy.premiumPlanLabel)}
+            />
+
+            <div className="grid content-start gap-4">
+              <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
+                <div className="flex items-start gap-3">
+                  <BadgeCheck className="h-9 w-9 shrink-0 text-amber-500" aria-hidden="true" />
+                  <div>
+                    <h3 className="font-bold text-[#4A123F]">{copy.certifiedTitle}</h3>
+                    <p className="mt-1 text-sm leading-5 text-slate-600">{copy.certifiedText}</p>
+                    <p className="mt-2 text-xs leading-5 text-slate-500">{copy.certifiedIndependence}</p>
+                  </div>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                  Demande d’information / inscription
-                </h3>
-                <p className="text-sm text-gray-600">
-                  {selectedPlan
-                    ? `Vous avez choisi : ${selectedPlan}. Envoyez-nous votre demande, notre équipe vous contactera rapidement.`
-                    : 'Envoyez-nous votre demande, notre équipe vous contactera rapidement.'}
-                </p>
-              </div>
-
-              <BusinessRegistrationRequestForm
-                mode="subscription"
-                selectedPlan={selectedPlan}
-                onCancel={closeRequestForm}
-                onSuccess={() => window.setTimeout(closeRequestForm, 1800)}
-              />
+              </article>
+              <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
+                <div className="flex items-start gap-3">
+                  <FileText className="h-8 w-8 shrink-0 text-[#4A123F]" aria-hidden="true" />
+                  <div>
+                    <h3 className="font-bold text-[#4A123F]">{copy.flyers}</h3>
+                    <p className="mt-1 text-sm text-slate-600">{copy.flyerDescription}</p>
+                    <p className="mt-1 text-sm text-slate-600">{copy.flyerProduction}</p>
+                    <p className="mt-2 text-xs font-bold text-[#07543F]">{copy.annualPremiumOnly}</p>
+                  </div>
+                </div>
+              </article>
             </div>
           </div>
+
+          <p className="mt-4 rounded-xl border border-emerald-100 bg-white px-4 py-3 text-center text-sm font-semibold text-[#07543F]">
+            {copy.trialClarification}
+          </p>
+        </section>
+
+        <div className="mt-5 flex items-center justify-center gap-3 rounded-2xl border border-amber-200 bg-white px-4 py-4 text-center text-sm text-slate-700">
+          <Info className="h-5 w-5 shrink-0 text-[#4A123F]" aria-hidden="true" />
+          <p>{copy.disclaimer}</p>
         </div>
+
+        <section className="mt-5 flex flex-col gap-5 rounded-3xl bg-gradient-to-r from-[#4A123F] to-[#5F174F] p-5 text-white shadow-xl sm:flex-row sm:items-center sm:justify-between sm:p-7">
+          <div className="flex items-center gap-4">
+            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-[#D6AF2E] text-[#F0C537]">
+              <Rocket className="h-7 w-7" aria-hidden="true" />
+            </span>
+            <div>
+              <h2 className="text-xl font-bold">{copy.ctaTitle}</h2>
+              <p className="mt-1 text-sm text-purple-100">{copy.ctaText}</p>
+            </div>
+          </div>
+          <a
+            href="#continuous-services-title"
+            className="flex shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-bold text-[#4A123F] transition hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]"
+          >
+            {copy.ctaButton} <ChevronRight className="h-4 w-4" aria-hidden="true" />
+          </a>
+        </section>
+      </main>
+
+      {activePreview === 'free' && (
+        <Modal title={copy.previewEssentialTitle} onClose={closePreview} closeLabel={copy.closeModal}>
+          <h2 className="mb-5 text-center text-2xl font-bold text-[#4A123F]">{copy.previewEssentialTitle}</h2>
+          <EssentialCardPreview copy={copy} />
+        </Modal>
+      )}
+
+      {activePreview === 'artisan' && (
+        <Modal title={copy.previewArtisanTitle} onClose={closePreview} closeLabel={copy.closeModal}>
+          <h2 className="mb-5 text-center text-2xl font-bold text-[#4A123F]">{copy.previewArtisanTitle}</h2>
+          <GreenCardPreview tier="ARTISAN" copy={copy} />
+        </Modal>
+      )}
+
+      {activePreview === 'premium' && (
+        <Modal title={copy.previewPremiumTitle} onClose={closePreview} closeLabel={copy.closeModal}>
+          <h2 className="mb-5 text-center text-2xl font-bold text-[#4A123F]">{copy.previewPremiumTitle}</h2>
+          <GreenCardPreview tier="PREMIUM" copy={copy} onDetails={() => setActivePreview('premium-detail')} />
+        </Modal>
+      )}
+
+      {activePreview === 'premium-detail' && (
+        <Modal title={copy.premiumDetailTitle} onClose={closePreview} closeLabel={copy.closeModal} wide>
+          <h2 className="mb-5 text-center text-2xl font-bold text-[#4A123F]">{copy.premiumDetailTitle}</h2>
+          <PremiumDetailPreview copy={copy} />
+        </Modal>
+      )}
+
+      {activePreview === 'launch' && (
+        <Modal title={copy.launchConditionsDialog} onClose={closePreview} closeLabel={copy.closeModal}>
+          <div className="mx-auto max-w-lg">
+            <span className="rounded-full bg-[#D6AF2E] px-3 py-1 text-[10px] font-black tracking-[0.14em] text-[#07543F]">{copy.launchBadge}</span>
+            <h2 className="mt-4 text-2xl font-bold text-[#4A123F]">{copy.launchConditionsTitle}</h2>
+            <ul className="mt-5 space-y-3">
+              {copy.launchConditions.map((condition) => (
+                <li key={condition} className="flex items-start gap-3 text-sm leading-6 text-slate-700">
+                  <Check className="mt-1 h-4 w-4 shrink-0 text-[#07543F]" aria-hidden="true" /> {condition}
+                </li>
+              ))}
+              {copy.flyerConditions.map((condition) => (
+                <li key={condition} className="flex items-start gap-3 text-sm leading-6 text-slate-700">
+                  <Check className="mt-1 h-4 w-4 shrink-0 text-[#07543F]" aria-hidden="true" /> {condition}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </Modal>
+      )}
+
+      {activePreview === 'request' && (
+        <Modal title={`${copy.requestModal} — ${selectedPlan}`} onClose={closePreview} closeLabel={copy.closeModal} wide>
+          <div className="mx-auto max-w-3xl">
+            <div className="mb-5 text-center">
+              <Send className="mx-auto h-8 w-8 text-[#D6AF2E]" aria-hidden="true" />
+              <h2 className="mt-2 text-2xl font-bold text-[#4A123F]">{copy.requestTitle}</h2>
+              <p className="mt-1 text-sm text-slate-600">{selectedPlan}</p>
+            </div>
+            <BusinessRegistrationRequestForm mode="subscription" selectedPlan={selectedPlan} onCancel={closePreview} onSuccess={closePreview} />
+          </div>
+        </Modal>
       )}
     </div>
   );
