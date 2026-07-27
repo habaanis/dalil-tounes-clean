@@ -19,6 +19,12 @@
   - search_smart_autocomplete : autocomplétion unifiée
 */
 
+ALTER TABLE entreprise
+ADD COLUMN IF NOT EXISTS "catégorie" text[];
+
+ALTER TABLE entreprise
+ADD COLUMN IF NOT EXISTS "sous-catégories" text[];
+
 -- =============================================
 -- 1. Fonction norm() - normalisation
 -- =============================================

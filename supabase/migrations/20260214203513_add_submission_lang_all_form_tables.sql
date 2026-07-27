@@ -41,7 +41,7 @@ BEGIN
   END IF;
 
   -- demande_devis
-  IF NOT EXISTS (
+  IF to_regclass('public.demande_devis') IS NOT NULL AND NOT EXISTS (
     SELECT 1 FROM information_schema.columns
     WHERE table_name = 'demande_devis' AND column_name = 'submission_lang'
   ) THEN
@@ -49,7 +49,7 @@ BEGIN
   END IF;
 
   -- evenements_scolaire
-  IF NOT EXISTS (
+  IF to_regclass('public.evenements_scolaire') IS NOT NULL AND NOT EXISTS (
     SELECT 1 FROM information_schema.columns
     WHERE table_name = 'evenements_scolaire' AND column_name = 'submission_lang'
   ) THEN
@@ -57,7 +57,7 @@ BEGIN
   END IF;
 
   -- inquiries
-  IF NOT EXISTS (
+  IF to_regclass('public.inquiries') IS NOT NULL AND NOT EXISTS (
     SELECT 1 FROM information_schema.columns
     WHERE table_name = 'inquiries' AND column_name = 'submission_lang'
   ) THEN
@@ -105,7 +105,7 @@ BEGIN
   END IF;
 
   -- evenements_culturels
-  IF NOT EXISTS (
+  IF to_regclass('public.evenements_culturels') IS NOT NULL AND NOT EXISTS (
     SELECT 1 FROM information_schema.columns
     WHERE table_name = 'evenements_culturels' AND column_name = 'submission_lang'
   ) THEN

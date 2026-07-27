@@ -31,6 +31,16 @@ BEGIN
     FROM pg_constraint
     WHERE conname = 'business_needs_company_id_fkey'
       AND conrelid = 'public.business_needs'::regclass
+  ) AND (
+    SELECT atttypid
+    FROM pg_attribute
+    WHERE attrelid = 'public.business_needs'::regclass
+      AND attname = 'company_id'
+  ) = (
+    SELECT atttypid
+    FROM pg_attribute
+    WHERE attrelid = 'public.entreprise'::regclass
+      AND attname = 'id'
   ) THEN
     ALTER TABLE public.business_needs
       ADD CONSTRAINT business_needs_company_id_fkey

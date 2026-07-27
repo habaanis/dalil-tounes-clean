@@ -16,6 +16,15 @@
     - Ajout d'une politique pour permettre la modification par le créateur
 */
 
+CREATE TABLE IF NOT EXISTS public.projets_services_b2b (
+  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  type_annonce text NOT NULL,
+  titre_projet text NOT NULL,
+  description_detaillee text,
+  localisation_service text,
+  date_creation timestamptz DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Ajout des colonnes manquantes (seulement si elles n'existent pas déjà)
 DO $$ 
 BEGIN

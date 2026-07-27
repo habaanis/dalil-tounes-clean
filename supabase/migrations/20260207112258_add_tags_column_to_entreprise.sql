@@ -30,8 +30,16 @@ CREATE INDEX IF NOT EXISTS idx_entreprise_tags
 ON entreprise USING gin(tags);
 
 -- Créer un index trigram sur mots_cles_recherche pour recherche floue
-CREATE INDEX IF NOT EXISTS idx_entreprise_mots_cles_trgm 
-ON entreprise USING gin(mots_cles_recherche gin_trgm_ops);
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'entreprise' AND column_name = 'mots_cles_recherche'
+  ) THEN
+    CREATE INDEX IF NOT EXISTS idx_entreprise_mots_cles_trgm
+    ON entreprise USING gin(mots_cles_recherche gin_trgm_ops);
+  END IF;
+END $$;
 
 -- Créer un index trigram sur le nom pour recherche floue
 CREATE INDEX IF NOT EXISTS idx_entreprise_nom_trgm 

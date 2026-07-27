@@ -19,6 +19,28 @@
 CREATE EXTENSION IF NOT EXISTS unaccent;
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
+DROP INDEX IF EXISTS public.idx_entreprise_search;
+DROP INDEX IF EXISTS public.idx_entreprise_categories_trgm;
+
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1
+    FROM information_schema.columns
+    WHERE table_schema = 'public'
+      AND table_name = 'entreprise'
+      AND column_name = 'categorie'
+      AND data_type = 'text'
+  ) THEN
+    ALTER TABLE public.entreprise
+    ALTER COLUMN categorie TYPE text[]
+    USING CASE
+      WHEN categorie IS NULL OR trim(categorie) = '' THEN ARRAY[]::text[]
+      ELSE regexp_split_to_array(categorie, '\s*,\s*')
+    END;
+  END IF;
+END $$;
+
 CREATE OR REPLACE FUNCTION public.norm(txt text)
 RETURNS text
 LANGUAGE sql

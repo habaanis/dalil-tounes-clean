@@ -14,6 +14,9 @@
     - Permet au géocodage d'utiliser ville + adresse uniquement
 */
 
+ALTER TABLE entreprise
+ADD COLUMN IF NOT EXISTS gouvernorat text;
+
 -- Nettoyage des horaires dans gouvernorat
 UPDATE entreprise
 SET gouvernorat = NULL

@@ -31,7 +31,7 @@ CREATE INDEX IF NOT EXISTS idx_application_logs_session ON application_logs(sess
 CREATE INDEX IF NOT EXISTS idx_application_logs_user ON application_logs(user_id);
 
 -- Partition par date (optionnel)
-CREATE INDEX IF NOT EXISTS idx_application_logs_created_date ON application_logs(DATE(created_at));
+CREATE INDEX IF NOT EXISTS idx_application_logs_created_date ON application_logs(((created_at AT TIME ZONE 'UTC')::date));
 
 -- RLS sur application_logs
 ALTER TABLE application_logs ENABLE ROW LEVEL SECURITY;
