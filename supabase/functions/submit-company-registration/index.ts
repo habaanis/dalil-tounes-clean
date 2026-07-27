@@ -42,14 +42,9 @@ Deno.serve(async (request: Request) => {
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL');
   const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-  const anonKey = Deno.env.get('SUPABASE_ANON_KEY');
-  if (!supabaseUrl || !serviceRoleKey || !anonKey) {
+  if (!supabaseUrl || !serviceRoleKey) {
     console.error('[submit-company-registration] Missing Supabase environment variables');
     return json({ success: false, error: 'Server configuration error' }, 500, corsHeaders);
-  }
-
-  if (!constantTimeEqual(request.headers.get('apikey') || '', anonKey)) {
-    return json({ success: false, error: 'Invalid public API key' }, 401, corsHeaders);
   }
 
   try {
@@ -271,15 +266,6 @@ async function callEdgeFunction(
   } finally {
     clearTimeout(timeout);
   }
-}
-
-function constantTimeEqual(left: string, right: string): boolean {
-  if (left.length !== right.length) return false;
-  let difference = 0;
-  for (let index = 0; index < left.length; index += 1) {
-    difference |= left.charCodeAt(index) ^ right.charCodeAt(index);
-  }
-  return difference === 0;
 }
 
 function skippedIntegrations() {

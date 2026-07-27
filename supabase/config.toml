@@ -2,7 +2,7 @@
 # Ce fichier ne déploie rien à lui seul.
 
 [functions.submit-company-registration]
-verify_jwt = false
+verify_jwt = true
 
 [functions.sync-suggestion-to-airtable]
 verify_jwt = true
