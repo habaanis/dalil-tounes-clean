@@ -83,6 +83,7 @@ export async function submitBusinessRegistration(
       headers: {
         'Content-Type': 'application/json',
         apikey: supabaseAnonKey,
+        Authorization: `Bearer ${supabaseAnonKey}`,
       },
       body: JSON.stringify(request),
       signal: controller.signal,
