@@ -23,7 +23,15 @@ CREATE INDEX IF NOT EXISTS idx_entreprise_is_premium ON entreprise(is_premium) W
 CREATE INDEX IF NOT EXISTS idx_entreprise_categorie_premium ON entreprise(categorie, is_premium);
 
 -- Synchroniser avec "Statut Abonnement" existant (colonne avec espaces)
-UPDATE entreprise 
-SET is_premium = true 
-WHERE "Statut Abonnement" IN ('ELITE', 'PREMIUM')
-AND is_premium IS DISTINCT FROM true;
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'entreprise' AND column_name = 'Statut Abonnement'
+  ) THEN
+    UPDATE entreprise
+    SET is_premium = true
+    WHERE "Statut Abonnement" IN ('ELITE', 'PREMIUM')
+    AND is_premium IS DISTINCT FROM true;
+  END IF;
+END $$;

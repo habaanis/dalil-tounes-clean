@@ -20,6 +20,15 @@
     - Score visible pour debug
 */
 
+ALTER TABLE entreprise
+ADD COLUMN IF NOT EXISTS "mots cles recherche" text;
+
+ALTER TABLE entreprise
+ADD COLUMN IF NOT EXISTS "page commerce local" boolean DEFAULT false;
+
+ALTER TABLE entreprise
+ADD COLUMN IF NOT EXISTS "liste pages" text[];
+
 -- Fonction de recherche intelligente avec priorisation
 CREATE OR REPLACE FUNCTION public.search_entreprise_smart(
   p_q text,

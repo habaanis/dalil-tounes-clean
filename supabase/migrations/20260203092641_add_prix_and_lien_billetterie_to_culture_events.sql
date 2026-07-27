@@ -12,6 +12,19 @@
   - Le bouton "Voir détails" devient "Réserver/Billetterie" quand le lien existe
 */
 
+CREATE TABLE IF NOT EXISTS culture_events (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  titre text,
+  ville text,
+  date_debut timestamptz,
+  date_fin timestamptz,
+  categorie text,
+  image_url text,
+  est_annuel boolean DEFAULT false,
+  description_courte text,
+  type_affichage text
+);
+
 -- Ajouter la colonne prix
 ALTER TABLE culture_events 
 ADD COLUMN IF NOT EXISTS prix text;

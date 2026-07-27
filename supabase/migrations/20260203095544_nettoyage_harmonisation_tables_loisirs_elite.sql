@@ -45,6 +45,17 @@ DROP TABLE IF EXISTS evenements_locaux CASCADE;
 ALTER TABLE IF EXISTS registration_loisirs 
 RENAME TO inscriptions_loisirs;
 
+CREATE TABLE IF NOT EXISTS inscriptions_loisirs (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  nom_evenement text,
+  organisateur text,
+  date_prevue timestamptz,
+  ville text,
+  contact_tel text,
+  statut text DEFAULT 'En attente',
+  created_at timestamptz DEFAULT now()
+);
+
 -- Étape 3: Ajouter les nouvelles colonnes à inscriptions_loisirs
 ALTER TABLE inscriptions_loisirs 
 ADD COLUMN IF NOT EXISTS prenom text,

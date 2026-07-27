@@ -35,6 +35,8 @@
 -- SECTION 1 : AM\u00c9LIORATION TABLE BUSINESSES
 -- ============================================================
 
+CREATE EXTENSION IF NOT EXISTS postgis SCHEMA extensions;
+
 -- Ajouter colonnes pour les r\u00e9f\u00e9rences
 DO $$
 BEGIN
@@ -63,7 +65,7 @@ BEGIN
     SELECT 1 FROM information_schema.columns
     WHERE table_name = 'businesses' AND column_name = 'location'
   ) THEN
-    ALTER TABLE businesses ADD COLUMN location geometry(Point, 4326);
+    ALTER TABLE businesses ADD COLUMN location extensions.geometry(Point, 4326);
   END IF;
 
   IF NOT EXISTS (

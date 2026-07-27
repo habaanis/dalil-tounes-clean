@@ -73,19 +73,24 @@ ADD COLUMN IF NOT EXISTS description_it TEXT,
 ADD COLUMN IF NOT EXISTS description_ru TEXT;
 
 -- EVENEMENTS_CULTURELS
-ALTER TABLE evenements_culturels
-ADD COLUMN IF NOT EXISTS titre_ar TEXT,
-ADD COLUMN IF NOT EXISTS titre_en TEXT,
-ADD COLUMN IF NOT EXISTS titre_it TEXT,
-ADD COLUMN IF NOT EXISTS titre_ru TEXT,
-ADD COLUMN IF NOT EXISTS description_ar TEXT,
-ADD COLUMN IF NOT EXISTS description_en TEXT,
-ADD COLUMN IF NOT EXISTS description_it TEXT,
-ADD COLUMN IF NOT EXISTS description_ru TEXT,
-ADD COLUMN IF NOT EXISTS lieu_ar TEXT,
-ADD COLUMN IF NOT EXISTS lieu_en TEXT,
-ADD COLUMN IF NOT EXISTS lieu_it TEXT,
-ADD COLUMN IF NOT EXISTS lieu_ru TEXT;
+DO $$
+BEGIN
+  IF to_regclass('public.evenements_culturels') IS NOT NULL THEN
+    ALTER TABLE evenements_culturels
+    ADD COLUMN IF NOT EXISTS titre_ar TEXT,
+    ADD COLUMN IF NOT EXISTS titre_en TEXT,
+    ADD COLUMN IF NOT EXISTS titre_it TEXT,
+    ADD COLUMN IF NOT EXISTS titre_ru TEXT,
+    ADD COLUMN IF NOT EXISTS description_ar TEXT,
+    ADD COLUMN IF NOT EXISTS description_en TEXT,
+    ADD COLUMN IF NOT EXISTS description_it TEXT,
+    ADD COLUMN IF NOT EXISTS description_ru TEXT,
+    ADD COLUMN IF NOT EXISTS lieu_ar TEXT,
+    ADD COLUMN IF NOT EXISTS lieu_en TEXT,
+    ADD COLUMN IF NOT EXISTS lieu_it TEXT,
+    ADD COLUMN IF NOT EXISTS lieu_ru TEXT;
+  END IF;
+END $$;
 
 -- INDEX pour recherche multilingue
 CREATE INDEX IF NOT EXISTS idx_entreprise_nom_ar_trgm ON entreprise USING gin(nom_ar gin_trgm_ops);

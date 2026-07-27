@@ -29,6 +29,9 @@ CREATE TABLE IF NOT EXISTS avis_entreprise (
   created_at timestamptz DEFAULT now()
 );
 
+ALTER TABLE avis_entreprise
+ADD COLUMN IF NOT EXISTS date timestamptz DEFAULT now();
+
 -- Index pour améliorer les performances
 CREATE INDEX IF NOT EXISTS idx_avis_entreprise_entreprise_id ON avis_entreprise(entreprise_id);
 CREATE INDEX IF NOT EXISTS idx_avis_entreprise_date ON avis_entreprise(date DESC);

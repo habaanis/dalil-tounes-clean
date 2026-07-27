@@ -36,6 +36,10 @@ CREATE TABLE IF NOT EXISTS avis_entreprise (
   submission_lang text NOT NULL DEFAULT 'fr'
 );
 
+ALTER TABLE avis_entreprise
+ADD COLUMN IF NOT EXISTS status text NOT NULL DEFAULT 'pending'
+CHECK (status IN ('pending', 'approved', 'rejected'));
+
 -- Index de performance
 CREATE INDEX IF NOT EXISTS idx_avis_entreprise_entreprise_id
   ON avis_entreprise(entreprise_id);

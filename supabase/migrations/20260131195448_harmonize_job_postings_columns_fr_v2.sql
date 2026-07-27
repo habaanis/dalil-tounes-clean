@@ -56,6 +56,45 @@ BEGIN
   END IF;
 END $$;
 
+-- nom_entreprise
+ALTER TABLE job_postings ADD COLUMN IF NOT EXISTS nom_entreprise TEXT;
+
+-- ville
+ALTER TABLE job_postings ADD COLUMN IF NOT EXISTS ville TEXT;
+
+-- secteur_emploi
+ALTER TABLE job_postings ADD COLUMN IF NOT EXISTS secteur_emploi TEXT;
+
+-- type_contrat
+ALTER TABLE job_postings ADD COLUMN IF NOT EXISTS type_contrat TEXT;
+
+-- niveau_experience
+ALTER TABLE job_postings ADD COLUMN IF NOT EXISTS niveau_experience TEXT;
+
+-- competences_cles
+ALTER TABLE job_postings ADD COLUMN IF NOT EXISTS competences_cles TEXT[];
+
+-- exigences_profil
+ALTER TABLE job_postings ADD COLUMN IF NOT EXISTS exigences_profil TEXT;
+
+-- est_premium
+ALTER TABLE job_postings ADD COLUMN IF NOT EXISTS est_premium BOOLEAN DEFAULT false;
+
+-- telephone_contact
+ALTER TABLE job_postings ADD COLUMN IF NOT EXISTS telephone_contact TEXT;
+
+-- statut
+ALTER TABLE job_postings ADD COLUMN IF NOT EXISTS statut TEXT;
+
+-- salaire_min
+ALTER TABLE job_postings ADD COLUMN IF NOT EXISTS salaire_min NUMERIC;
+
+-- salaire_max
+ALTER TABLE job_postings ADD COLUMN IF NOT EXISTS salaire_max NUMERIC;
+
+-- is_premium_ad (colonne source optionnelle, supprimée après migration)
+ALTER TABLE job_postings ADD COLUMN IF NOT EXISTS is_premium_ad BOOLEAN;
+
 -- Étape 2: Migrer les données des colonnes anglaises vers les colonnes françaises
 
 -- Migrer company_address -> adresse_entreprise

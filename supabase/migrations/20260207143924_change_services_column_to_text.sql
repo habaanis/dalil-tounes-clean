@@ -11,8 +11,11 @@
     - Utilise ALTER COLUMN avec USING pour conversion sûre
 */
 
+ALTER TABLE entreprise
+ADD COLUMN IF NOT EXISTS services text[];
+
 -- Convertir la colonne services de ARRAY en TEXT
-ALTER TABLE entreprise 
+ALTER TABLE entreprise
 ALTER COLUMN services TYPE TEXT 
 USING CASE 
   WHEN services IS NULL OR array_length(services, 1) IS NULL THEN ''
