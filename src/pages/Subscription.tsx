@@ -1,13 +1,19 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import {
   Check,
+  Camera,
   ChevronRight,
   Clock3,
+  ExternalLink,
+  Globe2,
   Info,
   MapPin,
+  MessageCircle,
+  Navigation,
   Phone,
   Rocket,
   Send,
+  Share2,
   Sparkles,
   X,
 } from 'lucide-react';
@@ -1023,6 +1029,78 @@ function EssentialCardPreview({ copy }: { copy: SubscriptionCopy }) {
   );
 }
 
+function ArtisanCardPreview({ copy }: { copy: SubscriptionCopy }) {
+  const details = [
+    { icon: Phone, label: 'Téléphone', value: '+216 25 123 456' },
+    { icon: MessageCircle, label: 'WhatsApp', value: '+216 25 123 456' },
+    { icon: MapPin, label: 'Adresse', value: "Rue de l’Artisanat, Sousse, Tunisie" },
+    { icon: Clock3, label: 'Horaires', value: 'Lun – Sam : 08:00 – 18:00' },
+    { icon: Navigation, label: "Zones d’intervention", value: 'Sousse, Monastir, Mahdia et alentours' },
+    { icon: Globe2, label: 'Site internet', value: 'www.artisan-exemple.tn', external: true },
+    { icon: Share2, label: 'Réseaux sociaux', value: 'Facebook · Instagram · TikTok', external: true },
+    { icon: MapPin, label: 'Google Maps', value: 'Voir l’itinéraire', external: true },
+  ];
+
+  return (
+    <div className="mx-auto overflow-hidden rounded-[28px] border-2 border-[#D6AF2E] bg-gradient-to-br from-[#07543F] to-[#063C30] p-4 text-white shadow-2xl sm:p-6">
+      <div className="grid gap-6 lg:grid-cols-[1.08fr_0.92fr] lg:gap-7">
+        <div className="min-w-0">
+          <div className="flex items-start gap-4">
+            <div className="relative min-w-0 flex-1 overflow-hidden rounded-2xl border border-[#D6AF2E]/80">
+              <img
+                src={ARTISAN_PREVIEW_IMAGE_PATH}
+                alt={`${copy.artisan} — ${copy.demoName}`}
+                className="h-56 w-full object-cover sm:h-64"
+              />
+              <span className="absolute bottom-3 left-3 flex items-center gap-2 rounded-full bg-black/70 px-3 py-1.5 text-sm font-bold text-white backdrop-blur-sm">
+                <Camera className="h-4 w-4 text-[#F4CE55]" aria-hidden="true" /> 5 photos
+              </span>
+            </div>
+            <span className="shrink-0 rounded-full border border-[#D6AF2E] bg-[#D6AF2E]/10 px-3 py-1.5 text-xs font-black tracking-wider text-[#F4CE55]">
+              {copy.artisan}
+            </span>
+          </div>
+
+          <h3 className="mt-5 break-words text-2xl font-black text-[#F4CE55] sm:text-3xl">{copy.demoName}</h3>
+          <p className="mt-1 text-base font-semibold text-white">{copy.demoCategory}</p>
+          <p className="mt-4 flex items-center gap-2 text-emerald-50">
+            <MapPin className="h-5 w-5 shrink-0" aria-hidden="true" /> Sousse, {copy.tunisia}
+          </p>
+          <div className="mt-4 flex items-start gap-2">
+            <Clock3 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-300" aria-hidden="true" />
+            <div>
+              <p className="font-bold text-emerald-300">{copy.open}</p>
+              <p className="mt-1 text-sm text-emerald-50">{copy.todayCardSchedule}</p>
+            </div>
+          </div>
+          <div className="mt-5 flex items-center justify-center gap-2 rounded-full bg-[#D6AF2E] px-5 py-3.5 text-base font-black text-[#07543F] shadow-lg">
+            <Phone className="h-5 w-5" aria-hidden="true" /> {copy.call}
+          </div>
+        </div>
+
+        <dl className="min-w-0 divide-y divide-white/10 border-t border-white/15 lg:border-l lg:border-t-0 lg:pl-6 rtl:lg:border-l-0 rtl:lg:border-r rtl:lg:pl-0 rtl:lg:pr-6">
+          {details.map(({ icon: Icon, label, value, external }) => (
+            <div key={label} className="flex min-w-0 items-center gap-3 py-3 first:pt-0 lg:first:pt-1">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 text-[#F4CE55]">
+                <Icon className="h-5 w-5" aria-hidden="true" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <dt className="text-sm font-bold text-white">{label}</dt>
+                <dd className="mt-0.5 break-words text-sm leading-5 text-emerald-50">{value}</dd>
+              </div>
+              {external && <ExternalLink className="h-4 w-4 shrink-0 text-emerald-100" aria-hidden="true" />}
+            </div>
+          ))}
+        </dl>
+      </div>
+
+      <p className="mt-6 rounded-2xl border border-[#D6AF2E]/35 bg-black/10 px-4 py-3 text-sm leading-6 text-emerald-50">
+        {copy.artisanPreviewText}
+      </p>
+    </div>
+  );
+}
+
 function GreenCardPreview({
   tier,
   copy,
@@ -1474,9 +1552,9 @@ export const Subscription = () => {
       )}
 
       {activePreview === 'artisan' && (
-        <Modal title={copy.previewArtisanTitle} onClose={closePreview} closeLabel={copy.closeModal} size="compact">
+        <Modal title={copy.previewArtisanTitle} onClose={closePreview} closeLabel={copy.closeModal} size="large">
           <h2 className="mb-4 text-center text-2xl font-bold text-[#4A123F]">{copy.previewArtisanTitle}</h2>
-          <GreenCardPreview tier="ARTISAN" copy={copy} />
+          <ArtisanCardPreview copy={copy} />
         </Modal>
       )}
 
