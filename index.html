@@ -38,9 +38,6 @@
       type="image/webp"
     />
 
-    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
-    <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-
     <link
       rel="preload"
       as="font"
@@ -105,9 +102,6 @@
       }
     </style>
 
-    <!-- Google tag (gtag.js) — chargé APRÈS window.load pour ne pas
-         pénaliser le LCP mobile. La queue dataLayer est conservée
-         et rejouée dès que gtag.js est prêt. -->
     <script>
       if (window.location.hostname === 'www.dalil-tounes.com') {
         window.location.replace('https://dalil-tounes.com' + window.location.pathname + window.location.search + window.location.hash);
@@ -115,21 +109,76 @@
     </script>
 
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-ME2M208SES');
-      function loadGtm() {
-        var s = document.createElement('script');
-        s.async = true;
-        s.src = 'https://www.googletagmanager.com/gtag/js?id=G-ME2M208SES';
-        document.head.appendChild(s);
-      }
-      if (document.readyState === 'complete') {
-        setTimeout(loadGtm, 0);
-      } else {
-        window.addEventListener('load', function(){ setTimeout(loadGtm, 500); }, { once: true });
-      }
+      (function () {
+        var allowedHosts = ['dalil-tounes.com', 'www.dalil-tounes.com'];
+        var vercelEnvironment = __DALIL_VERCEL_ENV__;
+        var metaPixelId = __DALIL_META_PIXEL_ID__;
+        var trackingAllowed =
+          vercelEnvironment === 'production' &&
+          allowedHosts.indexOf(window.location.hostname.toLowerCase()) !== -1;
+
+        window.__DALIL_TRACKING_ALLOWED__ = trackingAllowed;
+        if (!trackingAllowed || window.__DALIL_TRACKING_LOADED__) return;
+        window.__DALIL_TRACKING_LOADED__ = true;
+
+        // Google Analytics — une seule initialisation, différée après window.load.
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
+        window.gtag('js', new Date());
+        window.gtag('config', 'G-ME2M208SES');
+
+        function loadGoogleAnalytics() {
+          if (document.querySelector('script[data-dalil-tracker="google-analytics"]')) return;
+          var script = document.createElement('script');
+          script.async = true;
+          script.dataset.dalilTracker = 'google-analytics';
+          script.src = 'https://www.googletagmanager.com/gtag/js?id=G-ME2M208SES';
+          document.head.appendChild(script);
+        }
+
+        // Metricool — une seule initialisation.
+        if (!document.querySelector('script[data-dalil-tracker="metricool"]')) {
+          var metricoolScript = document.createElement('script');
+          metricoolScript.async = true;
+          metricoolScript.dataset.dalilTracker = 'metricool';
+          metricoolScript.src = 'https://tracker.metricool.com/resources/be.js';
+          metricoolScript.onload = function () {
+            if (window.beTracker && !window.__DALIL_METRICOOL_INITIALIZED__) {
+              window.__DALIL_METRICOOL_INITIALIZED__ = true;
+              window.beTracker.t({ hash: 'af74732feb49ea4b1cf121673d7a1f24' });
+            }
+          };
+          document.head.appendChild(metricoolScript);
+        }
+
+        // Meta Pixel — activé seulement lorsqu'un identifiant public est configuré.
+        if (metaPixelId && !window.fbq) {
+          var fbq = window.fbq = function () {
+            fbq.callMethod ? fbq.callMethod.apply(fbq, arguments) : fbq.queue.push(arguments);
+          };
+          if (!window._fbq) window._fbq = fbq;
+          fbq.push = fbq;
+          fbq.loaded = true;
+          fbq.version = '2.0';
+          fbq.queue = [];
+          fbq('init', metaPixelId);
+          fbq('track', 'PageView');
+
+          var metaScript = document.createElement('script');
+          metaScript.async = true;
+          metaScript.dataset.dalilTracker = 'meta-pixel';
+          metaScript.src = 'https://connect.facebook.net/en_US/fbevents.js';
+          document.head.appendChild(metaScript);
+        }
+
+        if (document.readyState === 'complete') {
+          setTimeout(loadGoogleAnalytics, 0);
+        } else {
+          window.addEventListener('load', function () {
+            setTimeout(loadGoogleAnalytics, 500);
+          }, { once: true });
+        }
+      })();
     </script>
 
     <!-- Static JSON-LD for crawlers that don't execute JavaScript -->
@@ -233,6 +282,5 @@
       })();
     </script>
     <script type="module" src="/src/main.tsx"></script>
-    <script>function loadScript(a){var b=document.getElementsByTagName("head")[0],c=document.createElement("script");c.type="text/javascript",c.src="https://tracker.metricool.com/resources/be.js",c.onreadystatechange=a,c.onload=a,b.appendChild(c)}loadScript(function(){beTracker.t({hash:"af74732feb49ea4b1cf121673d7a1f24"})});</script>
   </body>
 </html>
