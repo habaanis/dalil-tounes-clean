@@ -2,11 +2,9 @@ import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import {
   Check,
   Camera,
-  CalendarCheck,
   ChevronRight,
   Clock3,
   ExternalLink,
-  FileText,
   Globe2,
   Info,
   MapPin,
@@ -21,6 +19,7 @@ import {
 } from 'lucide-react';
 import { SubscriptionRequestForm } from '../components/SubscriptionRequestForm';
 import type { SubscriptionPlanCode } from '../components/SubscriptionRequestForm';
+import { BusinessDetail } from '../components/BusinessDetail';
 import { useLanguage } from '../context/LanguageContext';
 
 type PreviewType = 'free' | 'artisan' | 'premium' | 'premium-detail' | 'launch' | 'request' | null;
@@ -1152,107 +1151,33 @@ function GreenCardPreview({
   );
 }
 
-const premiumDetailCopy: Record<OfferLanguage, {
-  presentation: string;
-  servicesTitle: string;
-  services: string[];
-  discoverServices: string;
-  galleryTitle: string;
-  galleryAlt: string;
-  newsTitle: string;
-  newsText: string;
-  quote: string;
-  book: string;
-  whatsapp: string;
-  practicalTitle: string;
-  practicalItems: string[];
-  finalMessage: string;
-  badgeNote: string;
-}> = {
-  fr: { presentation: 'Nous accompagnons les particuliers et les professionnels avec des services adaptés, un suivi personnalisé et une expérience reconnue dans notre domaine.', servicesTitle: 'Services principaux', services: ['Service principal', 'Accompagnement personnalisé', 'Intervention sur demande', 'Devis adapté au besoin'], discoverServices: 'Découvrir les services', galleryTitle: 'Nos réalisations', galleryAlt: 'Réalisation professionnelle', newsTitle: 'Actualité récente', newsText: 'Découvre notre nouvelle offre disponible ce mois-ci.', quote: 'Demander un devis', book: 'Réserver', whatsapp: 'Contacter sur WhatsApp', practicalTitle: 'Informations pratiques', practicalItems: ['Lun – Sam : 08:00 – 18:00', 'Sousse et régions voisines', 'Rue de l’Entreprise, Sousse', 'Google Maps', 'www.entreprise-exemple.tn', 'Facebook · Instagram · LinkedIn'], finalMessage: 'Une fiche complète pour présenter ton entreprise, valoriser ton savoir-faire et faciliter les demandes de tes futurs clients.', badgeNote: 'Ce badge confirme la fiabilité des informations recueillies par Dalil Tounes. Il ne constitue pas une certification de la qualité des produits ou des services.' },
-  ar: { presentation: 'نرافق الأفراد والمهنيين بخدمات ملائمة ومتابعة شخصية وخبرة معترف بها في مجالنا.', servicesTitle: 'الخدمات الرئيسية', services: ['الخدمة الرئيسية', 'مرافقة شخصية', 'تدخل عند الطلب', 'عرض سعر حسب الحاجة'], discoverServices: 'اكتشف الخدمات', galleryTitle: 'إنجازاتنا', galleryAlt: 'إنجاز مهني', newsTitle: 'آخر الأخبار', newsText: 'اكتشف عرضنا الجديد المتاح هذا الشهر.', quote: 'اطلب عرض سعر', book: 'احجز', whatsapp: 'تواصل عبر واتساب', practicalTitle: 'معلومات عملية', practicalItems: ['الاثنين – السبت: 08:00 – 18:00', 'سوسة والمناطق المجاورة', 'شارع المؤسسة، سوسة', 'خرائط Google', 'www.entreprise-exemple.tn', 'Facebook · Instagram · LinkedIn'], finalMessage: 'بطاقة متكاملة لتقديم مؤسستك وإبراز خبرتك وتسهيل طلبات عملائك المستقبليين.', badgeNote: 'تؤكد هذه الشارة موثوقية المعلومات التي جمعها دليل تونس، ولا تمثل شهادة على جودة المنتجات أو الخدمات.' },
-  en: { presentation: 'We support individuals and professionals with tailored services, personalised follow-up and recognised experience in our field.', servicesTitle: 'Main services', services: ['Core service', 'Personalised support', 'On-demand intervention', 'Quote tailored to your needs'], discoverServices: 'Discover the services', galleryTitle: 'Our work', galleryAlt: 'Professional project', newsTitle: 'Latest news', newsText: 'Discover our new offer available this month.', quote: 'Request a quote', book: 'Book', whatsapp: 'Contact on WhatsApp', practicalTitle: 'Practical information', practicalItems: ['Mon – Sat: 08:00 – 18:00', 'Sousse and surrounding areas', 'Business Street, Sousse', 'Google Maps', 'www.entreprise-exemple.tn', 'Facebook · Instagram · LinkedIn'], finalMessage: 'A complete profile to present your business, showcase your expertise and make it easier for future clients to contact you.', badgeNote: 'This badge confirms the reliability of the information collected by Dalil Tounes. It does not certify the quality of products or services.' },
-  it: { presentation: 'Accompagniamo privati e professionisti con servizi su misura, assistenza personalizzata ed esperienza riconosciuta nel nostro settore.', servicesTitle: 'Servizi principali', services: ['Servizio principale', 'Assistenza personalizzata', 'Intervento su richiesta', 'Preventivo adatto alle esigenze'], discoverServices: 'Scopri i servizi', galleryTitle: 'Le nostre realizzazioni', galleryAlt: 'Realizzazione professionale', newsTitle: 'Ultime novità', newsText: 'Scopri la nostra nuova offerta disponibile questo mese.', quote: 'Richiedi un preventivo', book: 'Prenota', whatsapp: 'Contatta su WhatsApp', practicalTitle: 'Informazioni pratiche', practicalItems: ['Lun – Sab: 08:00 – 18:00', 'Sousse e zone limitrofe', 'Via dell’Impresa, Sousse', 'Google Maps', 'www.entreprise-exemple.tn', 'Facebook · Instagram · LinkedIn'], finalMessage: 'Una scheda completa per presentare la tua azienda, valorizzare le tue competenze e facilitare le richieste dei futuri clienti.', badgeNote: 'Questo badge conferma l’affidabilità delle informazioni raccolte da Dalil Tounes. Non certifica la qualità dei prodotti o dei servizi.' },
-  ru: { presentation: 'Мы помогаем частным и корпоративным клиентам, предлагая подходящие услуги, индивидуальное сопровождение и признанный опыт.', servicesTitle: 'Основные услуги', services: ['Основная услуга', 'Индивидуальное сопровождение', 'Выезд по запросу', 'Расчёт под ваши потребности'], discoverServices: 'Посмотреть услуги', galleryTitle: 'Наши работы', galleryAlt: 'Профессиональная работа', newsTitle: 'Последняя новость', newsText: 'Откройте для себя наше новое предложение этого месяца.', quote: 'Запросить расчёт', book: 'Забронировать', whatsapp: 'Написать в WhatsApp', practicalTitle: 'Практическая информация', practicalItems: ['Пн – Сб: 08:00 – 18:00', 'Сус и соседние регионы', 'Деловая улица, Сус', 'Google Maps', 'www.entreprise-exemple.tn', 'Facebook · Instagram · LinkedIn'], finalMessage: 'Полный профиль, который представляет вашу компанию, подчёркивает опыт и упрощает обращения будущих клиентов.', badgeNote: 'Этот знак подтверждает достоверность информации, собранной Dalil Tounes, но не сертифицирует качество товаров или услуг.' },
-};
+function PremiumDetailPreview({ copy }: { copy: SubscriptionCopy }) {
+  const demonstrationBusiness = {
+    id: 'demo-dalil-tounes-premium',
+    nom: copy.demoName,
+    name_ar: copy.demoName,
+    categorie: copy.demoCategory,
+    adresse: `${copy.tunisia}, ${copy.tunisia}`,
+    description: copy.premiumDemoDescription,
+    description_ar: copy.premiumDemoDescription,
+    whatsapp: '+216 XX XXX XXX',
+    email: 'contact@dalil-tounes.com',
+    site_web: 'https://dalil-tounes.com',
+    services: copy.premiumDemoServices,
+    sous_categories_texte: copy.premiumDemoServices,
+    statut_abonnement: 'premium',
+    logo_url: LOGO_PATH,
+    image_url: null,
+    horaires_ok: copy.demoHours,
+    statut_carte: copy.certifiedTitle,
+    latitude: 36.8065,
+    longitude: 10.1815,
+    'lien facebook': 'https://www.facebook.com/daliltounes',
+    'Lien Instagram': 'https://www.instagram.com/dalil.tounes/',
+    'Lien LinkedIn': 'https://www.linkedin.com/company/daliltounes',
+  };
 
-function PremiumDetailPreview({ copy, language }: { copy: SubscriptionCopy; language: OfferLanguage }) {
-  const detailCopy = premiumDetailCopy[language] ?? premiumDetailCopy.fr;
-  const practicalIcons = [Clock3, Navigation, MapPin, MapPin, Globe2, Share2];
-  const galleryImages = ['/images/cat_magasin.jpg.jpg', '/images/pourquoi-business-card.png', '/images/pourquoi-cv-business.png'];
-
-  return (
-    <article className="mx-auto overflow-hidden rounded-[28px] border-2 border-[#D6AF2E] bg-white shadow-2xl">
-      <header className="relative">
-        <img src="/images/entreprise_banner.webp" alt={`${copy.demoName} — ${copy.demoCategory}`} className="h-52 w-full object-cover sm:h-64" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#063C30] via-[#063C30]/35 to-transparent" aria-hidden="true" />
-        <div className="absolute inset-x-4 bottom-4 flex items-end gap-4 sm:inset-x-6">
-          <img src={LOGO_PATH} alt={`${copy.demoName} — logo`} className="h-20 w-20 shrink-0 rounded-2xl border-2 border-[#D6AF2E] bg-white object-cover shadow-lg sm:h-24 sm:w-24" />
-          <div className="min-w-0 flex-1 text-white">
-            <h3 className="break-words text-xl font-black sm:text-3xl">{copy.demoName}</h3>
-            <p className="mt-1 text-sm text-emerald-50">{copy.demoCategory} · Sousse, {copy.tunisia}</p>
-          </div>
-        </div>
-      </header>
-
-      <div className="grid gap-6 p-4 sm:p-6 lg:grid-cols-[1.35fr_0.65fr]">
-        <div className="min-w-0 space-y-6">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-[#D6AF2E] px-3 py-1.5 text-xs font-black text-[#07543F]">✓ {copy.certifiedTitle}</span>
-            <span className="rounded-full bg-emerald-100 px-3 py-1.5 text-xs font-bold text-emerald-800">{copy.open}</span>
-          </div>
-          <p className="text-sm leading-6 text-slate-700 sm:text-base">{detailCopy.presentation}</p>
-
-          <section aria-labelledby="premium-services-title">
-            <h4 id="premium-services-title" className="text-lg font-black text-[#4A123F]">{detailCopy.servicesTitle}</h4>
-            <ul className="mt-3 grid gap-3 sm:grid-cols-2">
-              {detailCopy.services.map((service) => <li key={service} className="flex items-center gap-2 rounded-xl border border-amber-100 bg-amber-50/60 p-3 text-sm font-semibold text-slate-700"><Check className="h-4 w-4 shrink-0 text-[#07543F]" aria-hidden="true" />{service}</li>)}
-            </ul>
-            <button type="button" className="mt-3 rounded-lg px-1 py-2 text-sm font-bold text-[#4A123F] underline decoration-[#D6AF2E] underline-offset-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D6AF2E]">{detailCopy.discoverServices}</button>
-          </section>
-
-          <section aria-labelledby="premium-gallery-title">
-            <h4 id="premium-gallery-title" className="text-lg font-black text-[#4A123F]">{detailCopy.galleryTitle}</h4>
-            <div className="mt-3 grid grid-cols-3 gap-2 sm:gap-3">
-              {galleryImages.map((src, index) => <img key={src} src={src} alt={`${detailCopy.galleryAlt} ${index + 1}`} className="aspect-square min-w-0 rounded-xl border border-amber-100 object-cover" />)}
-            </div>
-          </section>
-
-          <aside className="rounded-2xl border border-[#D6AF2E]/45 bg-amber-50 p-4">
-            <p className="text-sm font-black text-[#4A123F]">{detailCopy.newsTitle}</p>
-            <p className="mt-1 text-sm leading-6 text-slate-700">{detailCopy.newsText}</p>
-          </aside>
-        </div>
-
-        <aside className="min-w-0 space-y-5 lg:border-s lg:border-amber-100 lg:ps-6">
-          <div className="grid gap-2">
-            <button type="button" className="flex items-center justify-center gap-2 rounded-xl bg-[#D6AF2E] px-4 py-3 text-sm font-black text-[#07543F] transition hover:bg-[#E5C64D] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#07543F]"><FileText className="h-4 w-4" aria-hidden="true" />{detailCopy.quote}</button>
-            <button type="button" className="flex items-center justify-center gap-2 rounded-xl bg-[#07543F] px-4 py-3 text-sm font-bold text-white transition hover:bg-[#096B50] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D6AF2E]"><CalendarCheck className="h-4 w-4" aria-hidden="true" />{detailCopy.book}</button>
-            <button type="button" className="flex items-center justify-center gap-2 rounded-xl border border-emerald-200 px-4 py-3 text-sm font-bold text-[#07543F] transition hover:bg-emerald-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D6AF2E]"><MessageCircle className="h-4 w-4" aria-hidden="true" />{detailCopy.whatsapp}</button>
-          </div>
-
-          <section aria-labelledby="premium-practical-title">
-            <h4 id="premium-practical-title" className="text-base font-black text-[#4A123F]">{detailCopy.practicalTitle}</h4>
-            <ul className="mt-2 divide-y divide-slate-100">
-              {detailCopy.practicalItems.map((item, index) => {
-                const Icon = practicalIcons[index];
-                return <li key={item} className="flex min-w-0 items-center gap-3 py-2.5 text-sm text-slate-600"><Icon className="h-4 w-4 shrink-0 text-[#07543F]" aria-hidden="true" /><span className="min-w-0 break-words">{item}</span></li>;
-              })}
-            </ul>
-          </section>
-
-          <div className="rounded-xl bg-emerald-50 p-3 text-xs leading-5 text-slate-600">
-            <p className="font-bold text-[#07543F]">{copy.certifiedTitle}</p>
-            <p className="mt-1">{detailCopy.badgeNote}</p>
-          </div>
-        </aside>
-      </div>
-
-      <footer className="border-t border-amber-100 bg-[#07543F] px-4 py-4 text-center text-sm font-semibold leading-6 text-emerald-50 sm:px-6">
-        {detailCopy.finalMessage}
-      </footer>
-    </article>
-  );
+  return <BusinessDetail preview business={demonstrationBusiness} />;
 }
 
 function ContinuousPlanCard({
@@ -1643,7 +1568,7 @@ export const Subscription = () => {
       {activePreview === 'premium-detail' && (
         <Modal title={copy.premiumDetailTitle} onClose={closePreview} closeLabel={copy.closeModal} size="large">
           <h2 className="mb-4 text-center text-2xl font-bold text-[#4A123F]">{copy.premiumDetailTitle}</h2>
-          <PremiumDetailPreview copy={copy} language={language as OfferLanguage} />
+          <PremiumDetailPreview copy={copy} />
         </Modal>
       )}
 
