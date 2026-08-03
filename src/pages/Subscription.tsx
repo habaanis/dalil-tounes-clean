@@ -801,12 +801,22 @@ const offerCopy: Record<OfferLanguage, {
   },
 };
 
-function FeatureList({ items, columns = false }: { items: string[]; columns?: boolean }) {
+function FeatureList({
+  items,
+  columns = false,
+  variant = 'light',
+}: {
+  items: string[];
+  columns?: boolean;
+  variant?: 'light' | 'dark';
+}) {
+  const isDark = variant === 'dark';
+
   return (
     <ul className={columns ? 'grid gap-x-6 gap-y-2 sm:grid-cols-2' : 'space-y-2'}>
       {items.map((item) => (
-        <li key={item} className="flex items-start gap-2 text-sm leading-5 text-slate-700">
-          <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
+        <li key={item} className={`flex items-start gap-2 text-sm font-medium leading-5 ${isDark ? 'text-emerald-50' : 'text-slate-700'}`}>
+          <span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${isDark ? 'bg-white/15 text-[#F4CE55]' : 'bg-emerald-50 text-emerald-700'}`}>
             <Check className="h-3 w-3" aria-hidden="true" />
           </span>
           <span>{item}</span>
@@ -859,7 +869,7 @@ function FeatureAccordion({
               aria-controls={panelId}
               onClick={() => setOpenIndex(isOpen ? null : index)}
               className={`flex min-h-12 w-full items-center gap-3 py-3 text-start text-sm font-semibold leading-5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D6AF2E] focus-visible:ring-inset ${
-                isDark ? 'text-emerald-50 hover:text-white' : 'text-slate-700 hover:text-[#4A123F]'
+                isDark ? `text-emerald-50 hover:text-white ${isOpen ? 'text-white' : ''}` : 'text-slate-700 hover:text-[#4A123F]'
               }`}
             >
               <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${isDark ? 'bg-white/10 text-[#F0C537]' : 'bg-emerald-50 text-emerald-700'}`}>
@@ -1140,13 +1150,13 @@ function ContinuousPlanCard({
       <p className="mt-3 text-sm leading-6 text-emerald-50">{intro}</p>
       {includesLabel && <p className="mt-3 rounded-xl bg-white/10 px-3 py-2 text-sm font-bold text-white">{includesLabel}</p>}
       <div className="mt-4">
-        <FeatureList items={featuredItems} />
+        <FeatureList items={featuredItems} variant="dark" />
         <button
           type="button"
           aria-expanded={showAllFeatures}
           aria-controls={`${detailsId}-details`}
           onClick={() => setShowAllFeatures((current) => !current)}
-          className="mt-3 rounded-lg px-1 py-2 text-sm font-bold text-[#F4CE55] underline decoration-[#D6AF2E]/70 underline-offset-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D6AF2E]"
+          className="mt-3 rounded-lg px-1 py-2 text-sm font-bold text-[#F4CE55] underline decoration-[#F4CE55]/80 underline-offset-4 transition hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D6AF2E]"
         >
           {showAllFeatures ? hideAllLabel : showAllLabel}
         </button>
@@ -1161,7 +1171,7 @@ function ContinuousPlanCard({
         </div>
       </div>
       {certifiedDisclaimer && (
-        <p className="mt-4 rounded-xl border border-[#D6AF2E]/40 bg-black/10 p-3 text-xs leading-5 text-emerald-50">
+        <p className="mt-3 rounded-xl border border-[#D6AF2E]/40 bg-black/10 p-2.5 text-xs leading-5 text-emerald-50">
           {certifiedDisclaimer}
         </p>
       )}
