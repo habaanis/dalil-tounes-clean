@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import {
   Check,
   ChevronRight,
@@ -20,6 +20,7 @@ type PreviewType = 'free' | 'artisan' | 'premium' | 'premium-detail' | 'launch' 
 type ModalSize = 'compact' | 'medium' | 'large';
 
 const LOGO_PATH = '/images/logo_dalil_tounes_sceau_luxe.webp';
+const ARTISAN_PREVIEW_IMAGE_PATH = '/images/cat_magasin.jpg.jpg';
 const MODAL_SIZE_CLASS_NAME: Record<ModalSize, string> = {
   compact: 'w-[min(700px,calc(100vw-24px))] sm:w-[min(700px,calc(100vw-48px))]',
   medium: 'w-[min(960px,calc(100vw-24px))] sm:w-[min(960px,calc(100vw-48px))]',
@@ -777,6 +778,83 @@ function FeatureList({ items, columns = false }: { items: string[]; columns?: bo
   );
 }
 
+function splitFeature(feature: string) {
+  const separatorIndex = feature.indexOf(' — ');
+  if (separatorIndex === -1) return { title: feature, description: '' };
+
+  return {
+    title: feature.slice(0, separatorIndex),
+    description: feature.slice(separatorIndex + 3),
+  };
+}
+
+function FeatureAccordion({
+  items,
+  variant = 'dark',
+  columns = false,
+}: {
+  items: string[];
+  variant?: 'dark' | 'light';
+  columns?: boolean;
+}) {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const accordionId = useId().replace(/:/g, '');
+  const isDark = variant === 'dark';
+
+  return (
+    <div className={columns ? 'grid items-start gap-x-6 sm:grid-cols-2' : ''}>
+      {items.map((feature, index) => {
+        const { title, description } = splitFeature(feature);
+        const isOpen = openIndex === index;
+        const panelId = `${accordionId}-panel-${index}`;
+        const buttonId = `${accordionId}-button-${index}`;
+
+        return (
+          <div
+            key={feature}
+            className={isDark ? 'border-b border-white/15 last:border-b-0' : 'border-b border-amber-100 last:border-b-0'}
+          >
+            <button
+              id={buttonId}
+              type="button"
+              aria-expanded={isOpen}
+              aria-controls={panelId}
+              onClick={() => setOpenIndex(isOpen ? null : index)}
+              className={`flex min-h-12 w-full items-center gap-3 py-3 text-start text-sm font-semibold leading-5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D6AF2E] focus-visible:ring-inset ${
+                isDark ? 'text-emerald-50 hover:text-white' : 'text-slate-700 hover:text-[#4A123F]'
+              }`}
+            >
+              <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${isDark ? 'bg-white/10 text-[#F0C537]' : 'bg-emerald-50 text-emerald-700'}`}>
+                <Check className="h-3 w-3" aria-hidden="true" />
+              </span>
+              <span className="flex-1">{title}</span>
+              <ChevronRight
+                className={`h-4 w-4 shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-90' : ''}`}
+                aria-hidden="true"
+              />
+              <span className="sr-only">{isOpen ? '−' : '+'}</span>
+            </button>
+            <div
+              id={panelId}
+              role="region"
+              aria-labelledby={buttonId}
+              className={`grid transition-[grid-template-rows,opacity] duration-200 ease-out ${isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}
+            >
+              <div className="overflow-hidden">
+                {description && (
+                  <p className={`pb-4 ps-8 pe-2 text-sm leading-6 ${isDark ? 'text-emerald-100/90' : 'text-slate-600'}`}>
+                    {description}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 function Modal({
   title,
   onClose,
@@ -864,10 +942,10 @@ function Modal({
   );
 }
 
-function DemoLogo({ alt }: { alt: string }) {
+function DemoLogo({ alt, src = LOGO_PATH }: { alt: string; src?: string }) {
   return (
     <img
-      src={LOGO_PATH}
+      src={src}
       alt={alt}
       className="h-20 w-20 rounded-full border-4 border-[#D6AF2E] bg-white object-cover shadow-lg"
     />
@@ -911,7 +989,10 @@ function GreenCardPreview({
   return (
     <div className="mx-auto max-w-xl rounded-[26px] border-[3px] border-[#D6AF2E] bg-[#07543F] p-5 text-white shadow-2xl sm:p-7">
       <div className="flex items-start justify-between gap-4">
-        <DemoLogo alt={copy.demoName} />
+        <DemoLogo
+          alt={tier === 'ARTISAN' ? `${copy.artisan} — ${copy.demoName}` : copy.demoName}
+          src={tier === 'ARTISAN' ? ARTISAN_PREVIEW_IMAGE_PATH : LOGO_PATH}
+        />
         <span className="rounded-full border border-[#D6AF2E]/60 bg-[#D6AF2E]/15 px-3 py-1 text-xs font-bold tracking-widest text-[#F4CE55]">
           {tierLabel}
         </span>
@@ -1000,7 +1081,7 @@ function ContinuousPlanCard({
   const requestLabel = tier === 'ARTISAN' ? copy.requestArtisan : copy.requestPremium;
 
   return (
-    <article className="relative flex h-full flex-col overflow-hidden rounded-3xl border-2 border-[#D6AF2E] bg-[#07543F] p-5 text-white shadow-[0_12px_30px_rgba(7,84,63,0.16)] sm:p-6">
+    <article className="relative flex flex-col self-start overflow-hidden rounded-3xl border-2 border-[#D6AF2E] bg-[#07543F] p-5 text-white shadow-[0_12px_30px_rgba(7,84,63,0.16)] sm:p-6">
       <span className="absolute right-0 top-0 rounded-bl-2xl bg-[#D6AF2E] px-4 py-2 text-[11px] font-black tracking-[0.16em] text-[#07543F]">
         {tierLabel}
       </span>
@@ -1010,22 +1091,15 @@ function ContinuousPlanCard({
       </div>
       <p className="mt-3 text-sm leading-6 text-emerald-50">{intro}</p>
       {includesLabel && <p className="mt-3 rounded-xl bg-white/10 px-3 py-2 text-sm font-bold text-white">{includesLabel}</p>}
-      <ul className="mt-5 space-y-3">
-        {features.map((feature) => (
-          <li key={feature} className="flex items-start gap-2 text-sm leading-5 text-emerald-50">
-            <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/10 text-[#F0C537]">
-              <Check className="h-3 w-3" />
-            </span>
-            {feature}
-          </li>
-        ))}
-      </ul>
+      <div className="mt-4">
+        <FeatureAccordion items={features} />
+      </div>
       {certifiedDisclaimer && (
         <p className="mt-4 rounded-xl border border-[#D6AF2E]/40 bg-black/10 p-3 text-xs leading-5 text-emerald-50">
           {certifiedDisclaimer}
         </p>
       )}
-      <div className="mt-auto grid gap-2 pt-6 sm:grid-cols-2">
+      <div className="grid gap-2 pt-6 sm:grid-cols-2">
         <button
           type="button"
           onClick={onPreview}
@@ -1138,7 +1212,7 @@ export const Subscription = () => {
             </button>
           </div>
 
-          <div className="grid items-stretch gap-5 lg:grid-cols-2">
+          <div className="grid items-start gap-5 lg:grid-cols-2">
             <ContinuousPlanCard
               tier="ARTISAN"
               copy={copy}
@@ -1205,7 +1279,11 @@ export const Subscription = () => {
           </div>
           <p className="mt-3 text-sm leading-6 text-slate-600">{copy.cvPublication}</p>
           <div className="my-5 h-px bg-amber-100" />
-          <FeatureList items={[...copy.cvFeatures, copy.certifiedTitle, personalAccessCopy[language as OfferLanguage] ?? personalAccessCopy.fr]} columns />
+          <FeatureAccordion
+            items={[...copy.cvFeatures, copy.certifiedTitle, personalAccessCopy[language as OfferLanguage] ?? personalAccessCopy.fr]}
+            variant="light"
+            columns
+          />
           <button
             type="button"
             onClick={() => openRequest('cv_business', copy.cvPlanLabel)}

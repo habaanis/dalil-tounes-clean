@@ -23,8 +23,25 @@ const nonBlockingCssPlugin = {
   },
 };
 
+/**
+ * Injecte uniquement des informations publiques nécessaires à l'activation des
+ * outils de mesure. VERCEL_ENV vaut "production", "preview" ou "development"
+ * sur Vercel. En dehors de Vercel, le suivi reste désactivé par défaut.
+ */
+const analyticsEnvironmentPlugin = {
+  name: 'analytics-environment',
+  transformIndexHtml(html: string) {
+    const vercelEnvironment = process.env.VERCEL_ENV || 'development';
+    const metaPixelId = process.env.VITE_META_PIXEL_ID || '';
+
+    return html
+      .replace('__DALIL_VERCEL_ENV__', JSON.stringify(vercelEnvironment))
+      .replace('__DALIL_META_PIXEL_ID__', JSON.stringify(metaPixelId));
+  },
+};
+
 export default defineConfig({
-  plugins: [react(), nonBlockingCssPlugin],
+  plugins: [react(), analyticsEnvironmentPlugin, nonBlockingCssPlugin],
   esbuild: {
     drop: ['console', 'debugger'],
   },
