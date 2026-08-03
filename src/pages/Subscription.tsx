@@ -1177,7 +1177,11 @@ function PremiumDetailPreview({ copy }: { copy: SubscriptionCopy }) {
     'Lien LinkedIn': 'https://www.linkedin.com/company/daliltounes',
   };
 
-  return <BusinessDetail preview business={demonstrationBusiness} />;
+  return (
+    <div className="mx-auto w-full max-w-[460px] overflow-hidden">
+      <BusinessDetail preview business={demonstrationBusiness} />
+    </div>
+  );
 }
 
 function ContinuousPlanCard({
