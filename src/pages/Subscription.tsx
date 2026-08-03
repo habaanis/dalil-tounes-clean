@@ -683,6 +683,8 @@ const offerCopy: Record<OfferLanguage, {
   premiumFeatures: string[];
   cvSectionTitle: string;
   cvSectionParagraphs: string[];
+  cvIdealTitle: string;
+  cvIdealItems: string[];
   cvActionsIntro: string;
   cvActions: string[];
   cvClosing: string;
@@ -735,6 +737,13 @@ const offerCopy: Record<OfferLanguage, {
       'Tu peux l’envoyer à tes clients par WhatsApp, e-mail ou message, le partager sur tes réseaux sociaux ou présenter ton entreprise après un premier contact.',
       'Toutes les informations utiles sont réunies sur une page : ton activité, tes services, ton savoir-faire, tes réalisations, tes coordonnées et tes plateformes professionnelles.',
     ],
+    cvIdealTitle: 'Idéal si tu :',
+    cvIdealItems: [
+      'tu envoies souvent la présentation de ton entreprise à des clients',
+      'tu réponds régulièrement à des demandes de devis',
+      'tu partages ton activité sur Facebook, WhatsApp ou d’autres réseaux',
+      'tu souhaites présenter ton entreprise de manière claire et professionnelle',
+    ],
     cvActionsIntro: 'Les visiteurs peuvent directement :',
     cvActions: ['t’appeler', 'te contacter sur WhatsApp', 'consulter ton emplacement sur Google Maps', 'visiter ton site internet', 'découvrir tes réseaux sociaux', 'accéder aux autres moyens de contact disponibles'],
     cvClosing: 'Grâce à son lien personnel et à son QR Code, partage ton CV Business sur tes cartes de visite, tes flyers, ta vitrine ou tes publications. Tu disposes ainsi d’un support professionnel simple à transmettre, facile à consulter et toujours accessible.',
@@ -746,6 +755,8 @@ const offerCopy: Record<OfferLanguage, {
     certifiedDisclaimer: 'Ce badge confirme la fiabilité des informations affichées. Il ne constitue pas une certification de la qualité des produits ou des services proposés.',
   },
   en: {
+    cvIdealTitle: 'Ideal if you:',
+    cvIdealItems: ['often send your company presentation to clients', 'regularly respond to quote requests', 'share your activity on Facebook, WhatsApp or other networks', 'want to present your business clearly and professionally'],
     artisanPrice: '30 TND', premiumPrice: '59 TND', perMonth: '/ month', premiumIncludesArtisan: 'Premium includes every benefit of the Artisan plan.',
     artisanIntro: 'A plan for artisans, independents, shops and small businesses that want a clearer profile and better local visibility.', premiumIntro: 'A plan for businesses that want to go further, reach a wider audience and receive more regular support.',
     artisanFeatures: ['We create your profile with you', 'A clear presentation of your activity', 'All your useful information in one place', 'Up to 5 photos', 'Better visibility in your region', 'A higher position than free profiles', 'Artisan badge', 'Simple statistics', 'Your QR Code', 'You can update your information', 'Support by email or WhatsApp'],
@@ -753,12 +764,18 @@ const offerCopy: Record<OfferLanguage, {
     cvSectionTitle: 'Much more than a simple presentation', cvSectionParagraphs: ['Your CV Business becomes a digital business card you can use every day.', 'Send it by WhatsApp, email or message, share it on social media or use it after a first contact.', 'Your activity, services, expertise, work, contact details and professional platforms are gathered on one page.'], cvActionsIntro: 'Visitors can directly:', cvActions: ['call you', 'contact you on WhatsApp', 'open your Google Maps location', 'visit your website', 'discover your social networks', 'use your other contact methods'], cvClosing: 'Its personal link and QR Code make it easy to share on business cards, flyers, your storefront or posts.', oneTimeService: 'One-time service', cvDistinction: 'Subscriptions cover visibility and ongoing support. CV Business is a complete, structured professional presentation created with you.', eliteTitle: 'Elite Pro', customSolution: 'Tailored solution', eliteIntro: 'Every business has different needs. Talk to us to build a solution suited to your organisation, goals and budget.', contactUs: 'Contact us', contactEmail: 'By email', contactWhatsApp: 'On WhatsApp', certifiedDisclaimer: 'This badge confirms the reliability of the displayed information. It does not certify the quality of the products or services offered.',
   },
   ar: {
+    cvIdealTitle: 'مثالي لك إذا كنت:',
+    cvIdealItems: ['ترسل عرض مؤسستك إلى العملاء باستمرار', 'ترد بانتظام على طلبات عروض الأسعار', 'تشارك نشاطك على فيسبوك أو واتساب أو شبكات أخرى', 'ترغب في تقديم مؤسستك بشكل واضح ومهني'],
     artisanPrice: '30 د.ت', premiumPrice: '59 د.ت', perMonth: '/ شهر', premiumIncludesArtisan: 'تشمل باقة بريميوم جميع مزايا اشتراك حرفي.', artisanIntro: 'صيغة للحرفيين والمستقلين والتجار والمؤسسات الصغيرة الراغبة في عرض أوضح وظهور أفضل في منطقتها.', premiumIntro: 'صيغة للمؤسسات التي تريد الوصول إلى جمهور أوسع والاستفادة من مرافقة أكثر انتظامًا.', artisanFeatures: ['ننشىء بطاقتك معك', 'تقديم واضح لنشاطك', 'كل معلوماتك المفيدة في مكان واحد', 'حتى 5 صور', 'ظهور أفضل في منطقتك', 'ترتيب أفضل من البطاقات المجانية', 'شارة حرفي', 'إحصائيات بسيطة', 'رمز QR الخاص بك', 'يمكنك تحديث معلوماتك', 'مساعدة عبر البريد أو واتساب'], premiumFeatures: ['تقديم أكثر تفصيلًا', 'ظهور أوسع في تونس', 'أولوية أعلى في النتائج', 'حضور في المساحات المهمة', 'شارة دليل تونس موثّق', 'حتى 15 صورة', 'إحصائيات أكثر تفصيلًا', 'إبراز مستمر', 'مشاركة أخبارك', 'زر حجز أو طلب', 'مرافقة ذات أولوية', 'نصائح مناسبة لحضورك', 'أسعار تفضيلية للخدمات الأخرى'], cvSectionTitle: 'أكثر بكثير من مجرد تقديم', cvSectionParagraphs: ['تصبح سيرة نشاطك بطاقة رقمية تستخدمها كل يوم.', 'أرسلها عبر واتساب أو البريد أو شاركها على شبكات التواصل.', 'يجتمع نشاطك وخدماتك وخبرتك وإنجازاتك وبيانات اتصالك في صفحة واحدة.'], cvActionsIntro: 'يمكن للزوار مباشرة:', cvActions: ['الاتصال بك', 'مراسلتك على واتساب', 'فتح موقعك على خرائط Google', 'زيارة موقعك', 'اكتشاف شبكاتك الاجتماعية', 'استخدام وسائل الاتصال الأخرى'], cvClosing: 'يسهّل الرابط الشخصي ورمز QR مشاركتها على بطاقات الزيارة والمنشورات والواجهة.', oneTimeService: 'خدمة لمرة واحدة', cvDistinction: 'الاشتراكات تخص الظهور والمتابعة المستمرة، أما CV Business فهو تقديم مهني كامل ومنظم ننشئه معك.', eliteTitle: 'إيليت برو', customSolution: 'حل حسب الطلب', eliteIntro: 'لكل مؤسسة احتياجات مختلفة. تواصل معنا لبناء حل يناسب تنظيمك وأهدافك وميزانيتك.', contactUs: 'تواصل معنا', contactEmail: 'بالبريد الإلكتروني', contactWhatsApp: 'عبر واتساب', certifiedDisclaimer: 'تؤكد هذه الشارة موثوقية المعلومات المعروضة، ولا تعد شهادة على جودة المنتجات أو الخدمات.',
   },
   it: {
+    cvIdealTitle: 'Ideale se:',
+    cvIdealItems: ['invii spesso la presentazione della tua azienda ai clienti', 'rispondi regolarmente alle richieste di preventivo', 'condividi la tua attività su Facebook, WhatsApp o altri social', 'desideri presentare la tua azienda in modo chiaro e professionale'],
     artisanPrice: '30 TND', premiumPrice: '59 TND', perMonth: '/ mese', premiumIncludesArtisan: 'Premium include tutti i vantaggi dell’abbonamento Artisan.', artisanIntro: 'Una formula per artigiani, indipendenti, commercianti e piccole imprese che desiderano una presentazione migliore e più visibilità locale.', premiumIntro: 'Una formula per le aziende che vogliono raggiungere un pubblico più ampio e ricevere un supporto più regolare.', artisanFeatures: ['Creiamo la tua scheda con te', 'Una presentazione chiara', 'Tutte le informazioni utili insieme', 'Fino a 5 foto', 'Più visibilità nella tua regione', 'Posizione migliore delle schede gratuite', 'Badge Artisan', 'Statistiche semplici', 'Il tuo QR Code', 'Puoi aggiornare le informazioni', 'Supporto via e-mail o WhatsApp'], premiumFeatures: ['Presentazione più sviluppata', 'Visibilità più ampia in Tunisia', 'Priorità superiore nei risultati', 'Presenza negli spazi importanti', 'Badge Dalil Tounes Certificato', 'Fino a 15 foto', 'Statistiche dettagliate', 'Visibilità nel tempo', 'Condivisione delle novità', 'Pulsante prenotazione o richiesta', 'Supporto prioritario', 'Consigli adatti alla tua presenza', 'Tariffe preferenziali sugli altri servizi'], cvSectionTitle: 'Molto più di una semplice presentazione', cvSectionParagraphs: ['Il tuo CV Business diventa un vero biglietto da visita digitale.', 'Invialo via WhatsApp, e-mail o messaggio e condividilo sui social.', 'Attività, servizi, competenze, lavori e contatti sono riuniti in una pagina.'], cvActionsIntro: 'I visitatori possono:', cvActions: ['chiamarti', 'contattarti su WhatsApp', 'aprire la posizione su Google Maps', 'visitare il sito', 'scoprire i social', 'usare gli altri contatti'], cvClosing: 'Il link personale e il QR Code facilitano la condivisione su biglietti, volantini, vetrina e pubblicazioni.', oneTimeService: 'Prestazione una tantum', cvDistinction: 'Gli abbonamenti riguardano visibilità e assistenza continua. CV Business è una presentazione professionale completa creata con te.', eliteTitle: 'Elite Pro', customSolution: 'Soluzione su misura', eliteIntro: 'Ogni azienda ha esigenze diverse. Parla con noi per costruire una soluzione adatta alla tua organizzazione, ai tuoi obiettivi e al tuo budget.', contactUs: 'Contattaci', contactEmail: 'Via e-mail', contactWhatsApp: 'Su WhatsApp', certifiedDisclaimer: 'Il badge conferma l’affidabilità delle informazioni mostrate, non certifica la qualità dei prodotti o servizi.',
   },
   ru: {
+    cvIdealTitle: 'Подходит вам, если вы:',
+    cvIdealItems: ['часто отправляете клиентам презентацию своей компании', 'регулярно отвечаете на запросы коммерческих предложений', 'рассказываете о своей деятельности в Facebook, WhatsApp или других сетях', 'хотите представить свою компанию понятно и профессионально'],
     artisanPrice: '30 TND', premiumPrice: '59 TND', perMonth: '/ месяц', premiumIncludesArtisan: 'Premium включает все преимущества тарифа Artisan.', artisanIntro: 'Тариф для мастеров, независимых специалистов, магазинов и малого бизнеса, которым нужны понятная презентация и локальная видимость.', premiumIntro: 'Тариф для компаний, которые хотят расширить аудиторию и получать регулярное сопровождение.', artisanFeatures: ['Создаём профиль вместе с вами', 'Понятная презентация деятельности', 'Вся полезная информация в одном месте', 'До 5 фотографий', 'Больше видимости в вашем регионе', 'Позиция выше бесплатных профилей', 'Значок Artisan', 'Простая статистика', 'Ваш QR-код', 'Самостоятельное обновление данных', 'Помощь по e-mail или WhatsApp'], premiumFeatures: ['Более подробная презентация', 'Видимость по всему Тунису', 'Повышенный приоритет в результатах', 'Размещение в важных разделах', 'Значок «Проверено Dalil Tounes»', 'До 15 фотографий', 'Подробная статистика', 'Регулярное продвижение', 'Публикация новостей', 'Кнопка бронирования или запроса', 'Приоритетная поддержка', 'Персональные рекомендации', 'Льготные цены на другие услуги'], cvSectionTitle: 'Гораздо больше, чем презентация', cvSectionParagraphs: ['CV Business становится цифровой визитной карточкой на каждый день.', 'Отправляйте её через WhatsApp, e-mail или сообщения и делитесь в соцсетях.', 'Деятельность, услуги, опыт, работы и контакты собраны на одной странице.'], cvActionsIntro: 'Посетители могут:', cvActions: ['позвонить вам', 'написать в WhatsApp', 'открыть адрес в Google Maps', 'посетить сайт', 'открыть социальные сети', 'использовать другие контакты'], cvClosing: 'Персональная ссылка и QR-код позволяют делиться профилем на визитках, флаерах, витрине и в публикациях.', oneTimeService: 'Разовая услуга', cvDistinction: 'Подписки обеспечивают видимость и постоянное сопровождение. CV Business — полная профессиональная презентация, созданная вместе с вами.', eliteTitle: 'Elite Pro', customSolution: 'Индивидуальное решение', eliteIntro: 'У каждой компании свои потребности. Свяжитесь с нами, чтобы создать решение под вашу организацию, цели и бюджет.', contactUs: 'Связаться с нами', contactEmail: 'По e-mail', contactWhatsApp: 'В WhatsApp', certifiedDisclaimer: 'Значок подтверждает достоверность показанной информации, но не качество товаров или услуг.',
   },
 };
@@ -1259,6 +1276,22 @@ export const Subscription = () => {
               <p className="mt-1 text-sm font-bold text-[#4A123F]">{copy.cvPriceNotice}</p>
             </div>
           </div>
+
+          <aside className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50/60 p-4 sm:p-5" aria-labelledby="cv-business-ideal-title">
+            <h3 id="cv-business-ideal-title" className="font-bold text-[#07543F]">
+              {(offerCopy[language as OfferLanguage] ?? offerCopy.fr).cvIdealTitle}
+            </h3>
+            <ul className="mt-3 grid gap-x-6 gap-y-2 sm:grid-cols-2">
+              {(offerCopy[language as OfferLanguage] ?? offerCopy.fr).cvIdealItems.map((item) => (
+                <li key={item} className="flex items-start gap-2 text-sm leading-5 text-slate-700">
+                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white text-emerald-700 shadow-sm" aria-hidden="true">
+                    <Check className="h-3 w-3" />
+                  </span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </aside>
 
           <div className="mt-6 rounded-2xl border border-amber-200 bg-white/80 p-5 sm:p-6">
             <h3 className="text-xl font-bold text-[#4A123F]">{(offerCopy[language as OfferLanguage] ?? offerCopy.fr).cvSectionTitle}</h3>
