@@ -1,15 +1,14 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import {
-  BadgeCheck,
   Check,
   ChevronRight,
   Clock3,
-  FileText,
   Info,
   MapPin,
   Phone,
   Rocket,
   Send,
+  Sparkles,
   X,
 } from 'lucide-react';
 import { SubscriptionRequestForm } from '../components/SubscriptionRequestForm';
@@ -99,9 +98,9 @@ const subscriptionCopy = {
       'Vérification des liens et horaires',
       'Assistance prioritaire',
     ],
-    requestArtisan: 'Demander Artisan',
-    requestPremium: 'Demander Premium',
-    certifiedTitle: 'Certifié Dalil Tounes',
+    requestArtisan: 'Choisir Artisan',
+    requestPremium: 'Choisir Premium',
+    certifiedTitle: 'Badge Dalil Tounes Certifié',
     certifiedText: "Attribué après vérification de l'identité, des informations et des justificatifs.",
     certifiedIndependence: 'Cette vérification est indépendante de la formule choisie.',
     flyers: 'Flyers',
@@ -225,8 +224,8 @@ const subscriptionCopy = {
       'التحقق من الروابط وأوقات العمل',
       'مساعدة ذات أولوية',
     ],
-    requestArtisan: 'اطلب حرفي',
-    requestPremium: 'اطلب بريميوم',
+    requestArtisan: 'اختر حرفي',
+    requestPremium: 'اختر بريميوم',
     certifiedTitle: 'موثّق من دليل تونس',
     certifiedText: 'يُمنح بعد التحقق من الهوية والمعلومات والمستندات الثبوتية.',
     certifiedIndependence: 'هذا التحقق مستقل عن الصيغة المختارة.',
@@ -351,8 +350,8 @@ const subscriptionCopy = {
       'Verification of links and opening hours',
       'Priority assistance',
     ],
-    requestArtisan: 'Request Artisan',
-    requestPremium: 'Request Premium',
+    requestArtisan: 'Choose Artisan',
+    requestPremium: 'Choose Premium',
     certifiedTitle: 'Certified by Dalil Tounes',
     certifiedText: 'Awarded after verification of identity, information and supporting documents.',
     certifiedIndependence: 'This verification is independent of the selected plan.',
@@ -477,8 +476,8 @@ const subscriptionCopy = {
       'Verifica dei link e degli orari',
       'Assistenza prioritaria',
     ],
-    requestArtisan: 'Richiedi Artisan',
-    requestPremium: 'Richiedi Premium',
+    requestArtisan: 'Scegli Artisan',
+    requestPremium: 'Scegli Premium',
     certifiedTitle: 'Certificato da Dalil Tounes',
     certifiedText: 'Attribuito dopo la verifica dell’identità, delle informazioni e dei documenti giustificativi.',
     certifiedIndependence: 'Questa verifica è indipendente dalla formula scelta.',
@@ -603,8 +602,8 @@ const subscriptionCopy = {
       'Проверка ссылок и часов работы',
       'Приоритетная помощь',
     ],
-    requestArtisan: 'Запросить Artisan',
-    requestPremium: 'Запросить Premium',
+    requestArtisan: 'Выбрать Artisan',
+    requestPremium: 'Выбрать Premium',
     certifiedTitle: 'Сертифицировано Dalil Tounes',
     certifiedText: 'Присваивается после проверки личности, информации и подтверждающих документов.',
     certifiedIndependence: 'Эта проверка не зависит от выбранного тарифа.',
@@ -661,6 +660,107 @@ const subscriptionCopy = {
 } as const;
 
 type SubscriptionCopy = (typeof subscriptionCopy)[keyof typeof subscriptionCopy];
+
+type OfferLanguage = keyof typeof subscriptionCopy;
+
+const personalAccessCopy: Record<OfferLanguage, string> = {
+  fr: 'Accès personnel pour gérer tes informations',
+  ar: 'دخول شخصي لإدارة معلوماتك',
+  en: 'Personal access to manage your information',
+  it: 'Accesso personale per gestire le tue informazioni',
+  ru: 'Личный доступ для управления информацией',
+};
+
+const offerCopy: Record<OfferLanguage, {
+  artisanPrice: string;
+  premiumPrice: string;
+  perMonth: string;
+  premiumIncludesArtisan: string;
+  artisanIntro: string;
+  premiumIntro: string;
+  artisanFeatures: string[];
+  premiumFeatures: string[];
+  cvSectionTitle: string;
+  cvSectionParagraphs: string[];
+  cvActionsIntro: string;
+  cvActions: string[];
+  cvClosing: string;
+  oneTimeService: string;
+  cvDistinction: string;
+  eliteTitle: string;
+  customSolution: string;
+  eliteIntro: string;
+  contactUs: string;
+  contactEmail: string;
+  contactWhatsApp: string;
+  certifiedDisclaimer: string;
+}> = {
+  fr: {
+    artisanPrice: '30 TND', premiumPrice: '59 TND', perMonth: '/ mois',
+    premiumIncludesArtisan: 'Premium inclut tous les avantages de l’abonnement Artisan.',
+    artisanIntro: 'Une formule pensée pour les artisans, les indépendants, les commerçants et les petites entreprises qui souhaitent être mieux présentés et plus facilement trouvés dans leur région.',
+    premiumIntro: 'Une formule destinée aux entreprises qui souhaitent aller plus loin, toucher un public plus large et bénéficier d’un accompagnement plus régulier.',
+    artisanFeatures: [
+      'Nous créons ta fiche avec toi — Nous échangeons avec toi et mettons en place une fiche claire, sans te laisser seul devant un formulaire.',
+      'Une présentation claire de ton activité — Une courte présentation aide les visiteurs à comprendre rapidement ce que tu proposes.',
+      'Tes informations utiles au même endroit — Téléphone, WhatsApp, adresse, horaires, zones d’intervention, site, réseaux sociaux et Google Maps.',
+      'Jusqu’à 5 photos — Présente ton commerce, tes produits, ton travail ou tes réalisations avec les photos que tu nous fournis.',
+      'Une meilleure visibilité dans ta région — Ta fiche est davantage mise en avant auprès des personnes qui recherchent ton activité localement.',
+      'Une position améliorée dans les recherches — Ta fiche apparaît avant les présences gratuites dans les résultats liés à ton activité.',
+      'Badge Artisan — Un repère visuel permet aux visiteurs d’identifier facilement ton inscription Artisan.',
+      'Des statistiques simples — Consulte les visites de ta fiche et les clics vers tes principaux moyens de contact.',
+      'Ton QR Code — Accède directement à ta fiche Dalil Tounes et partage-la facilement.',
+      'Tu restes libre de modifier tes informations — Mets à jour horaires, coordonnées, services et autres informations depuis ton espace.',
+      'Nous restons disponibles — Contacte-nous par e-mail ou WhatsApp lorsque tu as besoin d’aide concernant ta fiche.',
+    ],
+    premiumFeatures: [
+      'Une présentation plus développée — Nous pouvons mieux détailler ton activité, tes services et ce qui te différencie.',
+      'Une visibilité plus large en Tunisie — Ton entreprise peut être présentée à un public plus large selon son activité et les recherches.',
+      'Une priorité supérieure dans les résultats — Ta fiche apparaît avant les fiches Artisan et les présences gratuites.',
+      'Une présence dans les espaces importants — Page d’accueil, pages liées à ton métier et certaines sélections Dalil Tounes.',
+      'Badge Dalil Tounes Certifié — Les informations recueillies et vérifiées sont clairement signalées.',
+      'Jusqu’à 15 photos — Présente plus largement tes produits, ton établissement, ton équipe ou tes réalisations.',
+      'Des statistiques plus détaillées — Suis les consultations, clics WhatsApp, appels, visites du site et l’évolution de ta visibilité.',
+      'Des mises en avant au fil du temps — Ton entreprise peut apparaître dans des sélections et pages thématiques.',
+      'Partage de tes actualités — Présente une promotion, une nouveauté, un événement ou une réalisation récente.',
+      'Bouton de réservation ou de demande — Selon ton activité, les visiteurs peuvent demander un rendez-vous, une réservation ou des informations.',
+      'Un accompagnement prioritaire — Tes questions et demandes de modification sont traitées plus rapidement.',
+      'Des conseils adaptés à ta présence — Nous proposons des améliorations simples pour clarifier ta fiche et faciliter les contacts.',
+      'Des avantages sur les autres services — Profite de tarifs préférentiels sur le CV Business et certaines prestations Dalil Tounes.',
+    ],
+    cvSectionTitle: 'Bien plus qu’une simple présentation',
+    cvSectionParagraphs: [
+      'Ton CV Business devient une véritable carte de visite numérique que tu peux utiliser au quotidien.',
+      'Tu peux l’envoyer à tes clients par WhatsApp, e-mail ou message, le partager sur tes réseaux sociaux ou présenter ton entreprise après un premier contact.',
+      'Toutes les informations utiles sont réunies sur une page : ton activité, tes services, ton savoir-faire, tes réalisations, tes coordonnées et tes plateformes professionnelles.',
+    ],
+    cvActionsIntro: 'Les visiteurs peuvent directement :',
+    cvActions: ['t’appeler', 'te contacter sur WhatsApp', 'consulter ton emplacement sur Google Maps', 'visiter ton site internet', 'découvrir tes réseaux sociaux', 'accéder aux autres moyens de contact disponibles'],
+    cvClosing: 'Grâce à son lien personnel et à son QR Code, partage ton CV Business sur tes cartes de visite, tes flyers, ta vitrine ou tes publications. Tu disposes ainsi d’un support professionnel simple à transmettre, facile à consulter et toujours accessible.',
+    oneTimeService: 'Prestation ponctuelle',
+    cvDistinction: 'Les abonnements concernent ta visibilité, ton suivi et l’accompagnement continu. Le CV Business est une présentation professionnelle complète et structurée, réalisée avec toi.',
+    eliteTitle: 'Élite Pro', customSolution: 'Solution sur mesure',
+    eliteIntro: 'Chaque entreprise a des besoins différents. Échange avec nous afin de construire une solution adaptée à ton organisation, à tes objectifs et à ton budget.',
+    contactUs: 'Nous contacter', contactEmail: 'Par e-mail', contactWhatsApp: 'Sur WhatsApp',
+    certifiedDisclaimer: 'Ce badge confirme la fiabilité des informations affichées. Il ne constitue pas une certification de la qualité des produits ou des services proposés.',
+  },
+  en: {
+    artisanPrice: '30 TND', premiumPrice: '59 TND', perMonth: '/ month', premiumIncludesArtisan: 'Premium includes every benefit of the Artisan plan.',
+    artisanIntro: 'A plan for artisans, independents, shops and small businesses that want a clearer profile and better local visibility.', premiumIntro: 'A plan for businesses that want to go further, reach a wider audience and receive more regular support.',
+    artisanFeatures: ['We create your profile with you', 'A clear presentation of your activity', 'All your useful information in one place', 'Up to 5 photos', 'Better visibility in your region', 'A higher position than free profiles', 'Artisan badge', 'Simple statistics', 'Your QR Code', 'You can update your information', 'Support by email or WhatsApp'],
+    premiumFeatures: ['A more detailed presentation', 'Wider visibility across Tunisia', 'Higher priority than Artisan and free profiles', 'Presence in important Dalil Tounes spaces', 'Dalil Tounes Certified badge', 'Up to 15 photos', 'More detailed statistics', 'Ongoing highlights', 'Share your news', 'Booking or enquiry button', 'Priority support', 'Advice tailored to your presence', 'Preferential rates on other services'],
+    cvSectionTitle: 'Much more than a simple presentation', cvSectionParagraphs: ['Your CV Business becomes a digital business card you can use every day.', 'Send it by WhatsApp, email or message, share it on social media or use it after a first contact.', 'Your activity, services, expertise, work, contact details and professional platforms are gathered on one page.'], cvActionsIntro: 'Visitors can directly:', cvActions: ['call you', 'contact you on WhatsApp', 'open your Google Maps location', 'visit your website', 'discover your social networks', 'use your other contact methods'], cvClosing: 'Its personal link and QR Code make it easy to share on business cards, flyers, your storefront or posts.', oneTimeService: 'One-time service', cvDistinction: 'Subscriptions cover visibility and ongoing support. CV Business is a complete, structured professional presentation created with you.', eliteTitle: 'Elite Pro', customSolution: 'Tailored solution', eliteIntro: 'Every business has different needs. Talk to us to build a solution suited to your organisation, goals and budget.', contactUs: 'Contact us', contactEmail: 'By email', contactWhatsApp: 'On WhatsApp', certifiedDisclaimer: 'This badge confirms the reliability of the displayed information. It does not certify the quality of the products or services offered.',
+  },
+  ar: {
+    artisanPrice: '30 د.ت', premiumPrice: '59 د.ت', perMonth: '/ شهر', premiumIncludesArtisan: 'تشمل باقة بريميوم جميع مزايا اشتراك حرفي.', artisanIntro: 'صيغة للحرفيين والمستقلين والتجار والمؤسسات الصغيرة الراغبة في عرض أوضح وظهور أفضل في منطقتها.', premiumIntro: 'صيغة للمؤسسات التي تريد الوصول إلى جمهور أوسع والاستفادة من مرافقة أكثر انتظامًا.', artisanFeatures: ['ننشىء بطاقتك معك', 'تقديم واضح لنشاطك', 'كل معلوماتك المفيدة في مكان واحد', 'حتى 5 صور', 'ظهور أفضل في منطقتك', 'ترتيب أفضل من البطاقات المجانية', 'شارة حرفي', 'إحصائيات بسيطة', 'رمز QR الخاص بك', 'يمكنك تحديث معلوماتك', 'مساعدة عبر البريد أو واتساب'], premiumFeatures: ['تقديم أكثر تفصيلًا', 'ظهور أوسع في تونس', 'أولوية أعلى في النتائج', 'حضور في المساحات المهمة', 'شارة دليل تونس موثّق', 'حتى 15 صورة', 'إحصائيات أكثر تفصيلًا', 'إبراز مستمر', 'مشاركة أخبارك', 'زر حجز أو طلب', 'مرافقة ذات أولوية', 'نصائح مناسبة لحضورك', 'أسعار تفضيلية للخدمات الأخرى'], cvSectionTitle: 'أكثر بكثير من مجرد تقديم', cvSectionParagraphs: ['تصبح سيرة نشاطك بطاقة رقمية تستخدمها كل يوم.', 'أرسلها عبر واتساب أو البريد أو شاركها على شبكات التواصل.', 'يجتمع نشاطك وخدماتك وخبرتك وإنجازاتك وبيانات اتصالك في صفحة واحدة.'], cvActionsIntro: 'يمكن للزوار مباشرة:', cvActions: ['الاتصال بك', 'مراسلتك على واتساب', 'فتح موقعك على خرائط Google', 'زيارة موقعك', 'اكتشاف شبكاتك الاجتماعية', 'استخدام وسائل الاتصال الأخرى'], cvClosing: 'يسهّل الرابط الشخصي ورمز QR مشاركتها على بطاقات الزيارة والمنشورات والواجهة.', oneTimeService: 'خدمة لمرة واحدة', cvDistinction: 'الاشتراكات تخص الظهور والمتابعة المستمرة، أما CV Business فهو تقديم مهني كامل ومنظم ننشئه معك.', eliteTitle: 'إيليت برو', customSolution: 'حل حسب الطلب', eliteIntro: 'لكل مؤسسة احتياجات مختلفة. تواصل معنا لبناء حل يناسب تنظيمك وأهدافك وميزانيتك.', contactUs: 'تواصل معنا', contactEmail: 'بالبريد الإلكتروني', contactWhatsApp: 'عبر واتساب', certifiedDisclaimer: 'تؤكد هذه الشارة موثوقية المعلومات المعروضة، ولا تعد شهادة على جودة المنتجات أو الخدمات.',
+  },
+  it: {
+    artisanPrice: '30 TND', premiumPrice: '59 TND', perMonth: '/ mese', premiumIncludesArtisan: 'Premium include tutti i vantaggi dell’abbonamento Artisan.', artisanIntro: 'Una formula per artigiani, indipendenti, commercianti e piccole imprese che desiderano una presentazione migliore e più visibilità locale.', premiumIntro: 'Una formula per le aziende che vogliono raggiungere un pubblico più ampio e ricevere un supporto più regolare.', artisanFeatures: ['Creiamo la tua scheda con te', 'Una presentazione chiara', 'Tutte le informazioni utili insieme', 'Fino a 5 foto', 'Più visibilità nella tua regione', 'Posizione migliore delle schede gratuite', 'Badge Artisan', 'Statistiche semplici', 'Il tuo QR Code', 'Puoi aggiornare le informazioni', 'Supporto via e-mail o WhatsApp'], premiumFeatures: ['Presentazione più sviluppata', 'Visibilità più ampia in Tunisia', 'Priorità superiore nei risultati', 'Presenza negli spazi importanti', 'Badge Dalil Tounes Certificato', 'Fino a 15 foto', 'Statistiche dettagliate', 'Visibilità nel tempo', 'Condivisione delle novità', 'Pulsante prenotazione o richiesta', 'Supporto prioritario', 'Consigli adatti alla tua presenza', 'Tariffe preferenziali sugli altri servizi'], cvSectionTitle: 'Molto più di una semplice presentazione', cvSectionParagraphs: ['Il tuo CV Business diventa un vero biglietto da visita digitale.', 'Invialo via WhatsApp, e-mail o messaggio e condividilo sui social.', 'Attività, servizi, competenze, lavori e contatti sono riuniti in una pagina.'], cvActionsIntro: 'I visitatori possono:', cvActions: ['chiamarti', 'contattarti su WhatsApp', 'aprire la posizione su Google Maps', 'visitare il sito', 'scoprire i social', 'usare gli altri contatti'], cvClosing: 'Il link personale e il QR Code facilitano la condivisione su biglietti, volantini, vetrina e pubblicazioni.', oneTimeService: 'Prestazione una tantum', cvDistinction: 'Gli abbonamenti riguardano visibilità e assistenza continua. CV Business è una presentazione professionale completa creata con te.', eliteTitle: 'Elite Pro', customSolution: 'Soluzione su misura', eliteIntro: 'Ogni azienda ha esigenze diverse. Parla con noi per costruire una soluzione adatta alla tua organizzazione, ai tuoi obiettivi e al tuo budget.', contactUs: 'Contattaci', contactEmail: 'Via e-mail', contactWhatsApp: 'Su WhatsApp', certifiedDisclaimer: 'Il badge conferma l’affidabilità delle informazioni mostrate, non certifica la qualità dei prodotti o servizi.',
+  },
+  ru: {
+    artisanPrice: '30 TND', premiumPrice: '59 TND', perMonth: '/ месяц', premiumIncludesArtisan: 'Premium включает все преимущества тарифа Artisan.', artisanIntro: 'Тариф для мастеров, независимых специалистов, магазинов и малого бизнеса, которым нужны понятная презентация и локальная видимость.', premiumIntro: 'Тариф для компаний, которые хотят расширить аудиторию и получать регулярное сопровождение.', artisanFeatures: ['Создаём профиль вместе с вами', 'Понятная презентация деятельности', 'Вся полезная информация в одном месте', 'До 5 фотографий', 'Больше видимости в вашем регионе', 'Позиция выше бесплатных профилей', 'Значок Artisan', 'Простая статистика', 'Ваш QR-код', 'Самостоятельное обновление данных', 'Помощь по e-mail или WhatsApp'], premiumFeatures: ['Более подробная презентация', 'Видимость по всему Тунису', 'Повышенный приоритет в результатах', 'Размещение в важных разделах', 'Значок «Проверено Dalil Tounes»', 'До 15 фотографий', 'Подробная статистика', 'Регулярное продвижение', 'Публикация новостей', 'Кнопка бронирования или запроса', 'Приоритетная поддержка', 'Персональные рекомендации', 'Льготные цены на другие услуги'], cvSectionTitle: 'Гораздо больше, чем презентация', cvSectionParagraphs: ['CV Business становится цифровой визитной карточкой на каждый день.', 'Отправляйте её через WhatsApp, e-mail или сообщения и делитесь в соцсетях.', 'Деятельность, услуги, опыт, работы и контакты собраны на одной странице.'], cvActionsIntro: 'Посетители могут:', cvActions: ['позвонить вам', 'написать в WhatsApp', 'открыть адрес в Google Maps', 'посетить сайт', 'открыть социальные сети', 'использовать другие контакты'], cvClosing: 'Персональная ссылка и QR-код позволяют делиться профилем на визитках, флаерах, витрине и в публикациях.', oneTimeService: 'Разовая услуга', cvDistinction: 'Подписки обеспечивают видимость и постоянное сопровождение. CV Business — полная профессиональная презентация, созданная вместе с вами.', eliteTitle: 'Elite Pro', customSolution: 'Индивидуальное решение', eliteIntro: 'У каждой компании свои потребности. Свяжитесь с нами, чтобы создать решение под вашу организацию, цели и бюджет.', contactUs: 'Связаться с нами', contactEmail: 'По e-mail', contactWhatsApp: 'В WhatsApp', certifiedDisclaimer: 'Значок подтверждает достоверность показанной информации, но не качество товаров или услуг.',
+  },
+};
 
 function FeatureList({ items, columns = false }: { items: string[]; columns?: boolean }) {
   return (
@@ -876,6 +976,10 @@ function PremiumDetailPreview({ copy }: { copy: SubscriptionCopy }) {
 function ContinuousPlanCard({
   tier,
   copy,
+  price,
+  perMonth,
+  includesLabel,
+  certifiedDisclaimer,
   intro,
   features,
   onPreview,
@@ -883,6 +987,10 @@ function ContinuousPlanCard({
 }: {
   tier: 'ARTISAN' | 'PREMIUM';
   copy: SubscriptionCopy;
+  price: string;
+  perMonth: string;
+  includesLabel?: string;
+  certifiedDisclaimer?: string;
   intro: string;
   features: string[];
   onPreview: () => void;
@@ -892,15 +1000,16 @@ function ContinuousPlanCard({
   const requestLabel = tier === 'ARTISAN' ? copy.requestArtisan : copy.requestPremium;
 
   return (
-    <article className="relative flex h-full min-h-[350px] flex-col overflow-hidden rounded-3xl border-2 border-[#D6AF2E] bg-[#07543F] p-5 text-white shadow-[0_12px_30px_rgba(7,84,63,0.16)] sm:p-6">
+    <article className="relative flex h-full flex-col overflow-hidden rounded-3xl border-2 border-[#D6AF2E] bg-[#07543F] p-5 text-white shadow-[0_12px_30px_rgba(7,84,63,0.16)] sm:p-6">
       <span className="absolute right-0 top-0 rounded-bl-2xl bg-[#D6AF2E] px-4 py-2 text-[11px] font-black tracking-[0.16em] text-[#07543F]">
         {tierLabel}
       </span>
-      <span className="mb-5 w-fit rounded-full border border-[#D6AF2E]/50 bg-[#D6AF2E]/15 px-3 py-1 text-[10px] font-bold tracking-[0.12em] text-[#F4CE55]">
-        {copy.launchBadge}
-      </span>
-      <h3 className="text-2xl font-bold">{tierLabel}</h3>
-      <p className="mt-2 min-h-12 text-sm leading-6 text-emerald-50">{intro}</p>
+      <h3 className="mt-8 text-2xl font-bold">{tierLabel}</h3>
+      <div className="mt-2 flex items-end gap-2 text-[#F4CE55]">
+        <span className="text-4xl font-black">{price}</span><span className="pb-1 text-sm font-bold">{perMonth}</span>
+      </div>
+      <p className="mt-3 text-sm leading-6 text-emerald-50">{intro}</p>
+      {includesLabel && <p className="mt-3 rounded-xl bg-white/10 px-3 py-2 text-sm font-bold text-white">{includesLabel}</p>}
       <ul className="mt-5 space-y-3">
         {features.map((feature) => (
           <li key={feature} className="flex items-start gap-2 text-sm leading-5 text-emerald-50">
@@ -911,6 +1020,11 @@ function ContinuousPlanCard({
           </li>
         ))}
       </ul>
+      {certifiedDisclaimer && (
+        <p className="mt-4 rounded-xl border border-[#D6AF2E]/40 bg-black/10 p-3 text-xs leading-5 text-emerald-50">
+          {certifiedDisclaimer}
+        </p>
+      )}
       <div className="mt-auto grid gap-2 pt-6 sm:grid-cols-2">
         <button
           type="button"
@@ -960,7 +1074,7 @@ export const Subscription = () => {
           <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-500 sm:text-base">{copy.heroSubtitle}</p>
         </header>
 
-        <section aria-label={copy.startingSolutions} className="grid items-stretch gap-5 lg:grid-cols-[0.82fr_1.18fr]">
+        <section aria-label={copy.startingSolutions} className="mx-auto max-w-2xl">
           <article className="flex flex-col rounded-3xl border border-[#D6AF2E] bg-white p-5 shadow-[0_12px_30px_rgba(74,18,63,0.07)] sm:p-7">
             <span className="w-fit rounded-full bg-emerald-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-emerald-800">
               {copy.selfService}
@@ -992,33 +1106,6 @@ export const Subscription = () => {
             </div>
           </article>
 
-          <article className="flex flex-col rounded-3xl border-2 border-[#D6AF2E] bg-gradient-to-br from-white via-white to-amber-50/80 p-5 shadow-[0_14px_36px_rgba(214,175,46,0.12)] sm:p-7">
-            <span className="w-fit rounded-full bg-amber-100 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-amber-800">
-              {copy.humanSupport}
-            </span>
-            <h2 className="mt-4 text-2xl font-bold text-[#4A123F] sm:text-3xl">{copy.cvTitle}</h2>
-            <div className="mt-2 flex items-end gap-2 text-[#07543F]">
-              <span className="text-4xl font-black">199</span><span className="pb-1 font-bold">TND</span>
-            </div>
-            <p className="mt-3 text-sm font-bold text-[#4A123F]">{copy.cvPriceNotice}</p>
-            <div className="mt-3 flex flex-wrap items-center gap-2" aria-label={copy.paymentOptions}>
-              <span className="rounded-lg bg-[#07543F] px-4 py-2 text-sm font-bold text-white">{copy.payOnce}</span>
-              <span className="text-xs text-slate-400">{copy.or}</span>
-              <span className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-[#4A123F]">{copy.payTwice}</span>
-              <span className="text-xs text-slate-400">{copy.or}</span>
-              <span className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-[#4A123F]">{copy.payThreeTimes}</span>
-            </div>
-            <p className="mt-3 text-sm leading-6 text-slate-600">{copy.cvPublication}</p>
-            <div className="my-5 h-px bg-amber-100" />
-            <FeatureList items={[...copy.cvFeatures]} columns />
-            <button
-              type="button"
-              onClick={() => openRequest('cv_business', copy.cvPlanLabel)}
-              className="mt-6 w-full rounded-xl bg-[#4A123F] px-5 py-3 text-sm font-bold text-white shadow-lg transition hover:bg-[#5B1C4E] focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]"
-            >
-              {copy.requestCreation}
-            </button>
-          </article>
         </section>
 
         <section aria-labelledby="continuous-services-title" className="mt-9 sm:mt-11">
@@ -1051,52 +1138,104 @@ export const Subscription = () => {
             </button>
           </div>
 
-          <div className="grid gap-5 lg:grid-cols-[1fr_1fr_0.82fr]">
+          <div className="grid items-stretch gap-5 lg:grid-cols-2">
             <ContinuousPlanCard
               tier="ARTISAN"
               copy={copy}
-              intro={copy.artisanIntro}
-              features={[...copy.artisanFeatures]}
+              price={offerCopy[language as OfferLanguage]?.artisanPrice ?? offerCopy.fr.artisanPrice}
+              perMonth={offerCopy[language as OfferLanguage]?.perMonth ?? offerCopy.fr.perMonth}
+              intro={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).artisanIntro}
+              features={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).artisanFeatures}
               onPreview={() => setActivePreview('artisan')}
               onRequest={() => openRequest('artisan', copy.artisanPlanLabel)}
             />
             <ContinuousPlanCard
               tier="PREMIUM"
               copy={copy}
-              intro={copy.premiumIntro}
-              features={[...copy.premiumFeatures]}
+              price={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).premiumPrice}
+              perMonth={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).perMonth}
+              includesLabel={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).premiumIncludesArtisan}
+              certifiedDisclaimer={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).certifiedDisclaimer}
+              intro={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).premiumIntro}
+              features={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).premiumFeatures}
               onPreview={() => setActivePreview('premium')}
               onRequest={() => openRequest('premium', copy.premiumPlanLabel)}
             />
 
-            <div className="grid content-start gap-4">
-              <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
-                <div className="flex items-start gap-3">
-                  <BadgeCheck className="h-9 w-9 shrink-0 text-amber-500" aria-hidden="true" />
-                  <div>
-                    <h3 className="font-bold text-[#4A123F]">{copy.certifiedTitle}</h3>
-                    <p className="mt-1 text-sm leading-5 text-slate-600">{copy.certifiedText}</p>
-                    <p className="mt-2 text-xs leading-5 text-slate-500">{copy.certifiedIndependence}</p>
-                  </div>
-                </div>
-              </article>
-              <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
-                <div className="flex items-start gap-3">
-                  <FileText className="h-8 w-8 shrink-0 text-[#4A123F]" aria-hidden="true" />
-                  <div>
-                    <h3 className="font-bold text-[#4A123F]">{copy.flyers}</h3>
-                    <p className="mt-1 text-sm text-slate-600">{copy.flyerDescription}</p>
-                    <p className="mt-1 text-sm text-slate-600">{copy.flyerProduction}</p>
-                    <p className="mt-2 text-xs font-bold text-[#07543F]">{copy.annualPremiumOnly}</p>
-                  </div>
-                </div>
-              </article>
-            </div>
           </div>
 
           <p className="mt-4 rounded-xl border border-emerald-100 bg-white px-4 py-3 text-center text-sm font-semibold text-[#07543F]">
             {copy.trialClarification}
           </p>
+        </section>
+
+        <section className="mt-9 rounded-3xl border-2 border-[#D6AF2E] bg-gradient-to-br from-white via-white to-amber-50/80 p-5 shadow-[0_14px_36px_rgba(214,175,46,0.12)] sm:mt-11 sm:p-7">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+            <div className="max-w-3xl">
+              <span className="w-fit rounded-full bg-amber-100 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-amber-800">
+                {(offerCopy[language as OfferLanguage] ?? offerCopy.fr).oneTimeService}
+              </span>
+              <h2 className="mt-4 text-2xl font-bold text-[#4A123F] sm:text-3xl">{copy.cvTitle}</h2>
+              <p className="mt-3 text-sm leading-6 text-slate-600">{(offerCopy[language as OfferLanguage] ?? offerCopy.fr).cvDistinction}</p>
+            </div>
+            <div className="shrink-0 lg:text-end">
+              <div className="flex items-end gap-2 text-[#07543F] lg:justify-end">
+                <span className="text-4xl font-black">199</span><span className="pb-1 font-bold">TND</span>
+              </div>
+              <p className="mt-1 text-sm font-bold text-[#4A123F]">{copy.cvPriceNotice}</p>
+            </div>
+          </div>
+
+          <div className="mt-6 rounded-2xl border border-amber-200 bg-white/80 p-5 sm:p-6">
+            <h3 className="text-xl font-bold text-[#4A123F]">{(offerCopy[language as OfferLanguage] ?? offerCopy.fr).cvSectionTitle}</h3>
+            {(offerCopy[language as OfferLanguage] ?? offerCopy.fr).cvSectionParagraphs.map((paragraph) => (
+              <p key={paragraph} className="mt-3 text-sm leading-6 text-slate-700">{paragraph}</p>
+            ))}
+            <p className="mt-4 text-sm font-bold text-[#07543F]">{(offerCopy[language as OfferLanguage] ?? offerCopy.fr).cvActionsIntro}</p>
+            <FeatureList items={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).cvActions} columns />
+            <p className="mt-4 text-sm leading-6 text-slate-700">{(offerCopy[language as OfferLanguage] ?? offerCopy.fr).cvClosing}</p>
+          </div>
+
+          <div className="mt-5 flex flex-wrap items-center gap-2" aria-label={copy.paymentOptions}>
+            <span className="rounded-lg bg-[#07543F] px-4 py-2 text-sm font-bold text-white">{copy.payOnce}</span>
+            <span className="text-xs text-slate-400">{copy.or}</span>
+            <span className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-[#4A123F]">{copy.payTwice}</span>
+            <span className="text-xs text-slate-400">{copy.or}</span>
+            <span className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-[#4A123F]">{copy.payThreeTimes}</span>
+          </div>
+          <p className="mt-3 text-sm leading-6 text-slate-600">{copy.cvPublication}</p>
+          <div className="my-5 h-px bg-amber-100" />
+          <FeatureList items={[...copy.cvFeatures, copy.certifiedTitle, personalAccessCopy[language as OfferLanguage] ?? personalAccessCopy.fr]} columns />
+          <button
+            type="button"
+            onClick={() => openRequest('cv_business', copy.cvPlanLabel)}
+            className="mt-6 w-full rounded-xl bg-[#4A123F] px-5 py-3 text-sm font-bold text-white shadow-lg transition hover:bg-[#5B1C4E] focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] sm:w-auto"
+          >
+            {copy.requestCreation}
+          </button>
+        </section>
+
+        <section className="mt-5 rounded-3xl bg-gradient-to-r from-[#4A123F] to-[#5F174F] p-5 text-white shadow-xl sm:p-7">
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-start gap-4">
+              <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-[#D6AF2E] text-[#F0C537]">
+                <Sparkles className="h-7 w-7" aria-hidden="true" />
+              </span>
+              <div>
+                <h2 className="text-2xl font-bold">{(offerCopy[language as OfferLanguage] ?? offerCopy.fr).eliteTitle}</h2>
+                <p className="mt-1 font-bold text-[#F0C537]">{(offerCopy[language as OfferLanguage] ?? offerCopy.fr).customSolution}</p>
+                <p className="mt-3 max-w-2xl text-sm leading-6 text-purple-100">{(offerCopy[language as OfferLanguage] ?? offerCopy.fr).eliteIntro}</p>
+              </div>
+            </div>
+            <div className="grid shrink-0 gap-2 sm:min-w-48">
+              <a href="mailto:contact@dalil-tounes.com" aria-label={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).contactEmail} className="rounded-xl bg-white px-5 py-3 text-center text-sm font-bold text-[#4A123F] transition hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]">
+                {(offerCopy[language as OfferLanguage] ?? offerCopy.fr).contactUs}
+              </a>
+              <a href="https://wa.me/21650390546" target="_blank" rel="noreferrer" className="rounded-xl border border-[#D6AF2E] px-5 py-3 text-center text-sm font-bold text-[#F0C537] transition hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]">
+                {(offerCopy[language as OfferLanguage] ?? offerCopy.fr).contactWhatsApp}
+              </a>
+            </div>
+          </div>
         </section>
 
         <div className="mt-5 flex items-center justify-center gap-3 rounded-2xl border border-amber-200 bg-white px-4 py-4 text-center text-sm text-slate-700">
