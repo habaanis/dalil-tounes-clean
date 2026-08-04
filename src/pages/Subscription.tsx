@@ -4,12 +4,16 @@ import {
   CalendarDays,
   ChevronRight,
   Clock3,
+  Facebook,
   Globe2,
   ImageIcon,
   Info,
+  Instagram,
+  Linkedin,
   Mail,
   MapPin,
   MessageCircle,
+  Music2,
   Navigation,
   Phone,
   QrCode,
@@ -21,17 +25,19 @@ import {
   UserRound,
   Wrench,
   X,
+  Youtube,
 } from 'lucide-react';
 import { SubscriptionRequestForm } from '../components/SubscriptionRequestForm';
 import type { BillingPeriod, CheckoutOffer, SubscriptionPlanCode } from '../components/SubscriptionRequestForm';
 import { useLanguage } from '../context/LanguageContext';
 
 type PreviewType = 'free' | 'artisan' | 'premium' | 'launch' | 'request' | null;
-type ModalSize = 'compact' | 'medium' | 'large';
+type ModalSize = 'preview' | 'compact' | 'medium' | 'large';
 
 const LOGO_PATH = '/images/logo_dalil_tounes_sceau_luxe.webp';
 const PREMIUM_PREVIEW_IMAGE_PATH = '/images/drapeau-tunisie.webp';
 const MODAL_SIZE_CLASS_NAME: Record<ModalSize, string> = {
+  preview: 'w-[min(500px,calc(100vw-16px))] sm:w-[min(500px,calc(100vw-32px))]',
   compact: 'w-[min(700px,calc(100vw-24px))] sm:w-[min(700px,calc(100vw-48px))]',
   medium: 'w-[min(960px,calc(100vw-24px))] sm:w-[min(960px,calc(100vw-48px))]',
   large: 'w-[min(1080px,calc(100vw-24px))] sm:w-[min(1080px,calc(100vw-48px))]',
@@ -1129,23 +1135,30 @@ function SubscriptionBusinessCardPreview({ variant, copy, language }: { variant:
   const isPremium = variant === 'premium';
   const actionIcons = [Phone, MessageCircle, Navigation, CalendarDays, Globe2, Share2];
   const sectionIcons = [UserRound, Wrench, Clock3, Star, ImageIcon];
+  const socialNetworks = [
+    { label: 'Instagram', icon: Instagram, className: 'bg-gradient-to-br from-fuchsia-600 via-rose-500 to-amber-400' },
+    { label: 'Facebook', icon: Facebook, className: 'bg-[#1877F2]' },
+    { label: 'LinkedIn', icon: Linkedin, className: 'bg-[#0A66C2]' },
+    { label: 'YouTube', icon: Youtube, className: 'bg-[#FF0000]' },
+    { label: 'TikTok', icon: Music2, className: 'bg-black shadow-[inset_1px_0_0_#25F4EE,inset_-1px_0_0_#FE2C55]' },
+  ];
   const sectionOrder = isPremium ? [2, 3, 1] : [0, 1, 2, 3, 4];
   const activate = (label: string) => setFeedback(`${labels.demoFeedback} ${label}`);
 
   return (
-    <article className={`mx-auto w-full overflow-hidden text-white ${isPremium ? 'max-w-[430px] rounded-[26px] border-[3px] border-[#D6AF2E] bg-[radial-gradient(circle_at_50%_12%,#0A6149_0%,#043C30_43%,#022C24_100%)] p-2 shadow-[0_22px_50px_rgba(3,44,36,0.38),inset_0_0_32px_rgba(240,197,55,0.12)]' : 'max-w-[460px] rounded-[28px] border-2 border-[#D6AF2E]/90 bg-gradient-to-b from-[#07543F] to-[#04392E] shadow-[0_18px_38px_rgba(7,84,63,0.26)]'}`}>
-      <div className={`relative overflow-hidden ${isPremium ? 'h-28 rounded-t-[20px] border border-[#D6AF2E]/50' : 'h-24'}`}>
+    <article className={`mx-auto w-full overflow-hidden text-white ${isPremium ? 'max-w-[400px] rounded-[24px] border-2 border-[#D6AF2E] bg-[radial-gradient(circle_at_50%_12%,#09543F_0%,#04392E_45%,#022A22_100%)] p-1.5 shadow-[0_18px_38px_rgba(3,44,36,0.34),inset_0_0_22px_rgba(240,197,55,0.08)]' : 'max-w-[410px] rounded-[25px] border border-[#D6AF2E] bg-gradient-to-b from-[#07543F] to-[#04392E] shadow-[0_14px_30px_rgba(7,84,63,0.24)]'}`}>
+      <div className={`relative overflow-hidden ${isPremium ? 'h-24 rounded-t-[19px] border border-[#D6AF2E]/45' : 'h-20'}`}>
         <img src={PREMIUM_PREVIEW_IMAGE_PATH} alt={`${copy.demoName} — ${labels.category}`} className="h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#064333] via-[#064333]/15 to-transparent" />
       </div>
 
-      <div className={`${isPremium ? '-mt-8 rounded-[22px] border border-[#D6AF2E]/70 bg-[#04392E]/95 px-4 pb-4 pt-0 shadow-[inset_0_0_22px_rgba(214,175,46,0.1)]' : 'px-4 pb-4 sm:px-5'} relative`}>
+      <div className={`${isPremium ? '-mt-7 rounded-[20px] border border-[#D6AF2E]/60 bg-[#04372D]/95 px-3 pb-3 pt-0 shadow-[inset_0_0_14px_rgba(214,175,46,0.07)]' : 'px-3.5 pb-3'} relative`}>
         {isPremium ? (
           <div className="text-center">
-            <div className="mx-auto -translate-y-8"><DemoLogo alt={copy.demoName} /></div>
+            <div className="mx-auto -translate-y-7 scale-90"><DemoLogo alt={copy.demoName} /></div>
             <span className="-mt-6 inline-flex rounded-full border border-[#D6AF2E] bg-[#063C30] px-4 py-1 text-xs font-black text-[#F4CE55] shadow-[0_0_14px_rgba(214,175,46,0.18)]">⚒ {labels.category}</span>
-            <div className="mx-auto mt-2 max-w-[340px] rounded-2xl border border-[#D6AF2E]/80 bg-black/10 px-3 py-3 shadow-[inset_0_0_18px_rgba(214,175,46,0.1)]">
-              <h3 className="text-[23px] font-black leading-tight text-white sm:text-[25px]">{copy.demoName}</h3>
+            <div className="mx-auto mt-1.5 max-w-[320px] rounded-xl border border-[#D6AF2E]/75 bg-black/10 px-3 py-2.5 shadow-[inset_0_0_12px_rgba(214,175,46,0.07)]">
+              <h3 className="text-[20px] font-black leading-tight text-white sm:text-[22px]">{copy.demoName}</h3>
               <span className="mt-2 inline-flex rounded-full border border-[#D6AF2E]/80 bg-emerald-700/70 px-3 py-1 text-[11px] font-black uppercase tracking-wide text-white">★ {labels.certified}</span>
               <p className="mt-2 text-sm font-semibold text-[#F4CE55]">{copy.demoCategory}</p>
               <p className="mt-1 inline-flex items-center gap-1.5 text-sm text-emerald-50"><MapPin className="h-4 w-4 text-[#F4CE55]" aria-hidden="true" />{labels.city}</p>
@@ -1153,10 +1166,10 @@ function SubscriptionBusinessCardPreview({ variant, copy, language }: { variant:
             </div>
           </div>
         ) : (
-          <div className="-mt-8 flex items-start gap-3">
-            <div className="shrink-0"><DemoLogo alt={copy.demoName} /></div>
-            <div className="min-w-0 flex-1 pt-8">
-              <h3 className="text-[22px] font-black leading-tight text-white sm:text-[25px]">{copy.demoName}</h3>
+          <div className="-mt-7 flex items-start gap-2.5">
+            <div className="shrink-0 scale-90"><DemoLogo alt={copy.demoName} /></div>
+            <div className="min-w-0 flex-1 pt-7">
+              <h3 className="truncate text-[20px] font-black leading-tight text-white sm:text-[22px]">{copy.demoName}</h3>
               <span className="mt-2 inline-flex rounded-full bg-emerald-600/70 px-3 py-1 text-[11px] font-black uppercase tracking-wide text-white">★ {labels.artisanBadge}</span>
               <p className="mt-1 text-sm font-semibold text-[#F4CE55]">{copy.demoCategory}</p>
               <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-emerald-50"><span className="inline-flex items-center gap-1"><MapPin className="h-4 w-4 text-emerald-300" aria-hidden="true" />{labels.city}</span><button type="button" onClick={() => activate(labels.actions[2])} className="rounded-full border border-[#D6AF2E]/70 px-2 py-0.5 font-bold text-[#F4CE55] focus:outline-none focus-visible:ring-2 focus-visible:ring-white">GPS</button></div>
@@ -1165,31 +1178,31 @@ function SubscriptionBusinessCardPreview({ variant, copy, language }: { variant:
           </div>
         )}
 
-        <div className={`${isPremium ? 'mt-3' : 'mt-4'} grid grid-cols-3 gap-2`}>
+        <div className={`${isPremium ? 'mt-2.5' : 'mt-3'} grid grid-cols-3 gap-1.5`}>
           {labels.actions.map((label, index) => {
             const Icon = actionIcons[index];
-            return <button key={label} type="button" onClick={() => activate(label)} className={`flex min-h-[62px] flex-col items-center justify-center gap-1 rounded-xl px-1 py-2 text-[11px] font-bold transition hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-white sm:text-xs ${isPremium ? 'border border-[#D6AF2E]/80 bg-black/10 text-white shadow-[0_0_10px_rgba(214,175,46,0.12),inset_0_0_12px_rgba(214,175,46,0.08)] hover:bg-[#D6AF2E]/10' : 'border border-white/15 bg-white/5 text-emerald-50 hover:bg-white/12'}`}><Icon className={`h-5 w-5 ${index === 1 ? 'text-emerald-300' : 'text-[#F4CE55]'}`} aria-hidden="true" /><span>{isPremium && index === 2 ? 'GPS' : label}</span></button>;
+            return <button key={label} type="button" onClick={() => activate(label)} className={`flex min-h-[54px] flex-col items-center justify-center gap-1 rounded-lg px-1 py-1.5 text-[10px] font-bold transition hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-white sm:text-[11px] ${isPremium ? 'border border-[#D6AF2E]/70 bg-[#03352B] text-white shadow-[inset_0_1px_5px_rgba(244,206,85,0.1)] hover:bg-[#D6AF2E]/8' : 'border border-white/15 bg-white/5 text-emerald-50 hover:bg-white/12'}`}><Icon className={`h-[18px] w-[18px] ${index === 1 ? 'text-emerald-300' : 'text-[#F4CE55]'}`} aria-hidden="true" /><span>{isPremium && index === 2 ? 'GPS' : label}</span></button>;
           })}
         </div>
 
-        <div className={`mt-3 overflow-hidden rounded-xl ${isPremium ? 'border border-[#D6AF2E]/75 shadow-[inset_0_0_14px_rgba(214,175,46,0.06)]' : 'border border-white/15'}`}>
+        <div className={`mt-2.5 overflow-hidden rounded-xl ${isPremium ? 'border border-[#D6AF2E]/65 shadow-[inset_0_0_9px_rgba(214,175,46,0.05)]' : 'border border-white/15'}`}>
           {sectionOrder.map((index) => {
             const label = labels.sections[index];
             const Icon = sectionIcons[index];
             const expanded = openSection === index;
-            return <div key={label} className="border-b border-white/10 last:border-b-0">{isPremium && index === 3 && <button type="button" onClick={() => activate(labels.qr)} className="flex w-full items-center gap-2 border-b border-white/10 px-3 py-2 text-start text-xs font-bold transition hover:bg-white/8 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#D6AF2E]"><QrCode className="h-5 w-5 text-white" aria-hidden="true" />{labels.qr}<ChevronRight className="ms-auto h-4 w-4 text-[#F4CE55] rtl:rotate-180" aria-hidden="true" /></button>}<button type="button" aria-expanded={expanded} onClick={() => setOpenSection(expanded ? null : index)} className="flex w-full items-center gap-2 px-3 py-2 text-start transition hover:bg-white/8 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#D6AF2E]"><span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${isPremium ? 'bg-[#D6AF2E]/10 text-[#F4CE55]' : 'bg-white/8 text-emerald-200'}`}><Icon className="h-4 w-4" aria-hidden="true" /></span><span className="min-w-0 flex-1"><span className="block text-[13px] font-bold">{label}</span>{!isPremium && <span className="block truncate text-[11px] text-emerald-100/75">{labels.sectionHints[index]}</span>}</span><ChevronRight className={`h-4 w-4 shrink-0 text-[#F4CE55] transition ${expanded ? 'rotate-90 rtl:-rotate-90' : 'rtl:rotate-180'}`} aria-hidden="true" /></button>{expanded && <div className="bg-black/10 px-3 pb-2 text-xs leading-5 text-emerald-50">{labels.sectionHints[index]}</div>}</div>;
+            return <div key={label} className="border-b border-white/10 last:border-b-0">{isPremium && index === 3 && <button type="button" onClick={() => activate(labels.qr)} className="flex min-h-10 w-full items-center gap-2 border-b border-white/10 px-2.5 py-1.5 text-start text-[11px] font-bold transition hover:bg-white/8 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#D6AF2E]"><QrCode className="h-4 w-4 text-white" aria-hidden="true" />{labels.qr}<ChevronRight className="ms-auto h-3.5 w-3.5 text-[#F4CE55] rtl:rotate-180" aria-hidden="true" /></button>}<button type="button" aria-expanded={expanded} onClick={() => setOpenSection(expanded ? null : index)} className="flex min-h-[42px] w-full items-center gap-2 px-2.5 py-1.5 text-start transition hover:bg-white/8 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#D6AF2E]"><span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${isPremium ? 'bg-[#D6AF2E]/10 text-[#F4CE55]' : 'bg-white/8 text-emerald-200'}`}><Icon className="h-3.5 w-3.5" aria-hidden="true" /></span><span className="min-w-0 flex-1"><span className="block text-xs font-bold">{label}</span>{!isPremium && <span className="block truncate text-[10px] text-emerald-100/70">{labels.sectionHints[index]}</span>}</span><ChevronRight className={`h-3.5 w-3.5 shrink-0 text-[#F4CE55] transition ${expanded ? 'rotate-90 rtl:-rotate-90' : 'rtl:rotate-180'}`} aria-hidden="true" /></button>{expanded && <div className="bg-black/10 px-3 pb-2 text-[11px] leading-4 text-emerald-50">{labels.sectionHints[index]}</div>}</div>;
           })}
         </div>
 
-        {!isPremium && <section className="mt-3 rounded-xl border border-white/15 bg-white/5 p-3 text-center" aria-label={labels.social}>
-          <h4 className="font-bold text-[#F4CE55]">{labels.social}</h4>
+        {!isPremium && <section className="mt-2.5 rounded-xl border border-white/15 bg-white/5 p-2.5 text-center" aria-label={labels.social}>
+          <h4 className="text-sm font-bold text-[#F4CE55]">{labels.social}</h4>
           <div className="mt-2 flex flex-wrap justify-center gap-2">
-            {['Instagram', 'Facebook', 'LinkedIn', 'YouTube', 'TikTok'].map((network) => <button key={network} type="button" onClick={() => activate(network)} aria-label={network} className="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 bg-white/10 text-[10px] font-black transition hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D6AF2E]">{network.slice(0, 2)}</button>)}
+            {socialNetworks.map(({ label, icon: Icon, className }) => <button key={label} type="button" onClick={() => activate(label)} aria-label={label} className={`flex h-8 w-8 items-center justify-center rounded-full border border-white/25 text-white transition hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D6AF2E] ${className}`}><Icon className="h-4 w-4" aria-hidden="true" /></button>)}
           </div>
         </section>}
 
-        {!isPremium && <><button type="button" onClick={() => activate(labels.email)} className="mx-auto mt-2 flex items-center justify-center gap-2 rounded-full border border-white/25 px-4 py-1.5 text-xs font-bold transition hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D6AF2E]"><Mail className="h-4 w-4" aria-hidden="true" />{labels.email}</button><button type="button" onClick={() => activate(labels.recommend)} className="mt-2 flex w-full items-center gap-2 rounded-xl border border-[#D6AF2E]/80 px-3 py-2 text-start text-[#F4CE55] transition hover:bg-[#D6AF2E]/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"><Star className="h-5 w-5 shrink-0" aria-hidden="true" /><span className="min-w-0 flex-1"><span className="block text-sm font-bold">{labels.recommend}</span><span className="block text-[11px] text-emerald-100">{labels.recommendHint}</span></span><ChevronRight className="h-4 w-4 shrink-0 rtl:rotate-180" aria-hidden="true" /></button></>}
-        {isPremium && <div className="mt-3 flex justify-center gap-7 border-t border-[#D6AF2E]/40 pt-3">{[Phone, MessageCircle, Navigation].map((Icon, index) => <button key={index} type="button" onClick={() => activate(labels.actions[index])} aria-label={labels.actions[index]} className="flex h-11 w-11 items-center justify-center rounded-full border border-[#D6AF2E]/80 bg-black/10 text-[#F4CE55] shadow-[0_0_10px_rgba(214,175,46,0.12)] transition hover:bg-[#D6AF2E]/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"><Icon className="h-5 w-5" aria-hidden="true" /></button>)}</div>}
+        {!isPremium && <><button type="button" onClick={() => activate(labels.email)} className="mx-auto mt-2 flex h-8 items-center justify-center gap-1.5 rounded-full border border-white/25 px-3.5 text-[11px] font-bold transition hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D6AF2E]"><Mail className="h-3.5 w-3.5" aria-hidden="true" />{labels.email}</button><button type="button" onClick={() => activate(labels.recommend)} className="mt-2 flex min-h-12 w-full items-center gap-2 rounded-xl border border-[#D6AF2E]/75 px-2.5 py-1.5 text-start text-[#F4CE55] transition hover:bg-[#D6AF2E]/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"><Star className="h-4 w-4 shrink-0" aria-hidden="true" /><span className="min-w-0 flex-1"><span className="block text-xs font-bold">{labels.recommend}</span><span className="block truncate text-[10px] text-emerald-100">{labels.recommendHint}</span></span><ChevronRight className="h-3.5 w-3.5 shrink-0 rtl:rotate-180" aria-hidden="true" /></button></>}
+        {isPremium && <div className="mt-2.5 flex justify-center gap-6 border-t border-[#D6AF2E]/35 pt-2.5">{[Phone, MessageCircle, Navigation].map((Icon, index) => <button key={index} type="button" onClick={() => activate(labels.actions[index])} aria-label={labels.actions[index]} className="flex h-9 w-9 items-center justify-center rounded-full border border-[#D6AF2E]/70 bg-black/10 text-[#F4CE55] shadow-[inset_0_1px_4px_rgba(214,175,46,0.08)] transition hover:bg-[#D6AF2E]/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"><Icon className="h-4 w-4" aria-hidden="true" /></button>)}</div>}
         <p className="mt-1 min-h-4 text-center text-[10px] text-emerald-100" aria-live="polite">{feedback}</p>
       </div>
     </article>
@@ -1671,14 +1684,14 @@ export const Subscription = () => {
       )}
 
       {activePreview === 'artisan' && (
-        <Modal title={copy.previewArtisanTitle} onClose={closePreview} closeLabel={copy.closeModal} size="compact">
+        <Modal title={copy.previewArtisanTitle} onClose={closePreview} closeLabel={copy.closeModal} size="preview">
           <h2 className="mb-4 text-center text-2xl font-bold text-[#4A123F]">{copy.previewArtisanTitle}</h2>
           <SubscriptionBusinessCardPreview variant="artisan" copy={copy} language={language as OfferLanguage} />
         </Modal>
       )}
 
       {activePreview === 'premium' && (
-        <Modal title={copy.premiumDetailTitle} onClose={closePreview} closeLabel={copy.closeModal} size="compact">
+        <Modal title={copy.premiumDetailTitle} onClose={closePreview} closeLabel={copy.closeModal} size="preview">
           <h2 className="mb-4 text-center text-2xl font-bold text-[#4A123F]">{copy.premiumDetailTitle}</h2>
           <SubscriptionBusinessCardPreview variant="premium" copy={copy} language={language as OfferLanguage} />
         </Modal>
