@@ -685,13 +685,14 @@ const businessPreviewCopy: Record<OfferLanguage, {
   actions: [string, string, string, string, string, string];
   sections: [string, string, string, string, string];
   sectionHints: [string, string, string, string, string];
-  social: string; email: string; recommend: string; recommendHint: string; qr: string; demoFeedback: string;
+  social: string; email: string; recommend: string; qr: string; demoFeedback: string;
+  sharing: [string, string, string, string];
 }> = {
-  fr: { artisanBadge: 'Artisan', certified: 'Certifié Dalil Tounes', category: 'Services professionnels', city: 'Tunis, Tunisie', status: 'Ouvert', actions: ['Appeler', 'WhatsApp', 'Itinéraire', 'Réserver', 'Site web', 'Partager'], sections: ['À propos', 'Services', 'Horaires', 'Avis clients', 'Galerie'], sectionHints: ['Découvre qui nous sommes', 'Ce que nous faisons pour toi', 'Lun–Sam : 08:00–18:00', '5,0 · Avis de démonstration', 'Photos de nos réalisations'], social: 'Réseaux sociaux', email: 'Envoyer un e-mail', recommend: 'Recommander ce professionnel', recommendHint: 'Aide d’autres personnes à le découvrir', qr: 'QR de partage professionnel', demoFeedback: 'Interaction de démonstration :' },
-  ar: { artisanBadge: 'حرفي', certified: 'موثّق من دليل تونس', category: 'خدمات مهنية', city: 'تونس، تونس', status: 'مفتوح', actions: ['اتصال', 'واتساب', 'الاتجاهات', 'حجز', 'الموقع', 'مشاركة'], sections: ['من نحن', 'الخدمات', 'الأوقات', 'آراء العملاء', 'الصور'], sectionHints: ['اكتشف من نحن', 'ما نقدمه لك', 'الإثنين–السبت: 08:00–18:00', '5.0 · آراء تجريبية', 'صور من إنجازاتنا'], social: 'شبكات التواصل', email: 'إرسال بريد إلكتروني', recommend: 'أوصِ بهذا المهني', recommendHint: 'ساعد الآخرين على اكتشافه', qr: 'رمز QR للمشاركة المهنية', demoFeedback: 'تفاعل تجريبي:' },
-  en: { artisanBadge: 'Artisan', certified: 'Dalil Tounes Certified', category: 'Professional services', city: 'Tunis, Tunisia', status: 'Open', actions: ['Call', 'WhatsApp', 'Directions', 'Book', 'Website', 'Share'], sections: ['About', 'Services', 'Hours', 'Customer reviews', 'Gallery'], sectionHints: ['Discover who we are', 'What we do for you', 'Mon–Sat: 08:00–18:00', '5.0 · Demo reviews', 'Photos of our work'], social: 'Social networks', email: 'Send an email', recommend: 'Recommend this professional', recommendHint: 'Help other people discover them', qr: 'Professional sharing QR', demoFeedback: 'Demo interaction:' },
-  it: { artisanBadge: 'Artisan', certified: 'Certificato Dalil Tounes', category: 'Servizi professionali', city: 'Tunisi, Tunisia', status: 'Aperto', actions: ['Chiama', 'WhatsApp', 'Indicazioni', 'Prenota', 'Sito web', 'Condividi'], sections: ['Chi siamo', 'Servizi', 'Orari', 'Recensioni', 'Galleria'], sectionHints: ['Scopri chi siamo', 'Cosa facciamo per te', 'Lun–Sab: 08:00–18:00', '5,0 · Recensioni demo', 'Foto dei nostri lavori'], social: 'Social network', email: 'Invia un’e-mail', recommend: 'Consiglia questo professionista', recommendHint: 'Aiuta altre persone a scoprirlo', qr: 'QR di condivisione professionale', demoFeedback: 'Interazione demo:' },
-  ru: { artisanBadge: 'Artisan', certified: 'Проверено Dalil Tounes', category: 'Профессиональные услуги', city: 'Тунис, Тунис', status: 'Открыто', actions: ['Позвонить', 'WhatsApp', 'Маршрут', 'Бронь', 'Сайт', 'Поделиться'], sections: ['О нас', 'Услуги', 'Часы работы', 'Отзывы', 'Галерея'], sectionHints: ['Узнайте о нас', 'Что мы делаем для вас', 'Пн–Сб: 08:00–18:00', '5,0 · Демо-отзывы', 'Фотографии наших работ'], social: 'Социальные сети', email: 'Отправить письмо', recommend: 'Рекомендовать специалиста', recommendHint: 'Помогите другим узнать о нём', qr: 'Профессиональный QR-код', demoFeedback: 'Демонстрация:' },
+  fr: { artisanBadge: 'Artisan', certified: 'Certifié Dalil Tounes', category: 'Services professionnels', city: 'Tunis, Tunisie', status: 'Ouvert', actions: ['Appeler', 'WhatsApp', 'Itinéraire', 'Réserver', 'Site web', 'Partager'], sections: ['À propos', 'Services', 'Horaires', 'Avis clients', 'Galerie'], sectionHints: ['Découvre qui nous sommes', 'Ce que nous faisons pour toi', 'Lun–Sam : 08:00–18:00', '5,0 · Avis de démonstration', 'Photos de nos réalisations'], social: 'Réseaux sociaux', email: 'E-mail', recommend: 'Recommander ce professionnel', qr: 'QR de partage professionnel', demoFeedback: 'Interaction de démonstration :', sharing: ['WhatsApp', 'Telegram', 'SMS', 'Messenger'] },
+  ar: { artisanBadge: 'حرفي', certified: 'موثّق من دليل تونس', category: 'خدمات مهنية', city: 'تونس، تونس', status: 'مفتوح', actions: ['اتصال', 'واتساب', 'الاتجاهات', 'حجز', 'الموقع', 'مشاركة'], sections: ['من نحن', 'الخدمات', 'الأوقات', 'آراء العملاء', 'الصور'], sectionHints: ['اكتشف من نحن', 'ما نقدمه لك', 'الإثنين–السبت: 08:00–18:00', '5.0 · آراء تجريبية', 'صور من إنجازاتنا'], social: 'شبكات التواصل', email: 'البريد الإلكتروني', recommend: 'أوصِ بهذا المهني', qr: 'رمز QR للمشاركة المهنية', demoFeedback: 'تفاعل تجريبي:', sharing: ['واتساب', 'تيليغرام', 'رسالة نصية', 'ماسنجر'] },
+  en: { artisanBadge: 'Artisan', certified: 'Dalil Tounes Certified', category: 'Professional services', city: 'Tunis, Tunisia', status: 'Open', actions: ['Call', 'WhatsApp', 'Directions', 'Book', 'Website', 'Share'], sections: ['About', 'Services', 'Hours', 'Customer reviews', 'Gallery'], sectionHints: ['Discover who we are', 'What we do for you', 'Mon–Sat: 08:00–18:00', '5.0 · Demo reviews', 'Photos of our work'], social: 'Social networks', email: 'E-mail', recommend: 'Recommend this professional', qr: 'Professional sharing QR', demoFeedback: 'Demo interaction:', sharing: ['WhatsApp', 'Telegram', 'SMS', 'Messenger'] },
+  it: { artisanBadge: 'Artisan', certified: 'Certificato Dalil Tounes', category: 'Servizi professionali', city: 'Tunisi, Tunisia', status: 'Aperto', actions: ['Chiama', 'WhatsApp', 'Indicazioni', 'Prenota', 'Sito web', 'Condividi'], sections: ['Chi siamo', 'Servizi', 'Orari', 'Recensioni', 'Galleria'], sectionHints: ['Scopri chi siamo', 'Cosa facciamo per te', 'Lun–Sab: 08:00–18:00', '5,0 · Recensioni demo', 'Foto dei nostri lavori'], social: 'Reti sociali', email: 'E-mail', recommend: 'Consiglia questo professionista', qr: 'QR di condivisione professionale', demoFeedback: 'Interazione demo:', sharing: ['WhatsApp', 'Telegram', 'SMS', 'Messenger'] },
+  ru: { artisanBadge: 'Artisan', certified: 'Проверено Dalil Tounes', category: 'Профессиональные услуги', city: 'Тунис, Тунис', status: 'Открыто', actions: ['Позвонить', 'WhatsApp', 'Маршрут', 'Бронь', 'Сайт', 'Поделиться'], sections: ['О нас', 'Услуги', 'Часы работы', 'Отзывы', 'Галерея'], sectionHints: ['Узнайте о нас', 'Что мы делаем для вас', 'Пн–Сб: 08:00–18:00', '5,0 · Демо-отзывы', 'Фотографии наших работ'], social: 'Социальные сети', email: 'Эл. почта', recommend: 'Рекомендовать специалиста', qr: 'Профессиональный QR-код', demoFeedback: 'Демонстрация:', sharing: ['WhatsApp', 'Telegram', 'СМС', 'Messenger'] },
 };
 
 const personalAccessCopy: Record<OfferLanguage, string> = {
@@ -1128,6 +1129,19 @@ function EssentialCardPreview({ copy }: { copy: SubscriptionCopy }) {
   );
 }
 
+function SharingBrandIcon({ brand }: { brand: 'whatsapp' | 'telegram' | 'sms' | 'messenger' }) {
+  if (brand === 'telegram') {
+    return <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true"><path fill="currentColor" d="M20.7 3.4 3.6 10c-1.2.5-1.2 1.1-.2 1.4l4.4 1.4 1.7 5.2c.2.6.1.8.7.8.5 0 .7-.2 1-.5l2.1-2 4.4 3.2c.8.5 1.4.2 1.6-.8l2.9-13.8c.3-1.2-.5-1.8-1.5-1.5ZM9.5 12.5l8.6-5.4c.4-.2.8-.1.5.2l-7.1 6.4-.3 3.2-1.7-4.4Z" /></svg>;
+  }
+  if (brand === 'messenger') {
+    return <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true"><path fill="currentColor" d="M12 2C6.4 2 2 6.1 2 11.5c0 3.1 1.5 5.8 3.9 7.5v3l2.8-1.5c1 .3 2.1.5 3.3.5 5.6 0 10-4.1 10-9.5S17.6 2 12 2Zm1 12.8-2.5-2.7-4.9 2.7 5.4-5.7 2.5 2.7 4.9-2.7-5.4 5.7Z" /></svg>;
+  }
+  if (brand === 'sms') {
+    return <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true"><path fill="currentColor" d="M4 3h16a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H9l-5.7 3.4A.85.85 0 0 1 2 20.7V5a2 2 0 0 1 2-2Zm3 8.5a1.25 1.25 0 1 0 0-2.5 1.25 1.25 0 0 0 0 2.5Zm5 0A1.25 1.25 0 1 0 12 9a1.25 1.25 0 0 0 0 2.5Zm5 0A1.25 1.25 0 1 0 17 9a1.25 1.25 0 0 0 0 2.5Z" /></svg>;
+  }
+  return <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.5 15.3L2.2 22l4.8-1.3A10 10 0 1 0 12 2Zm5.6 14.1c-.2.7-1.3 1.3-1.9 1.4-.5.1-1.2.2-3.8-.9-3.2-1.4-5.3-4.7-5.5-4.9-.1-.2-1.3-1.8-1.3-3.4 0-1.6.8-2.4 1.1-2.8.3-.3.7-.4 1-.4h.7c.2 0 .5-.1.7.6l.9 2.2c.1.2.1.5 0 .7l-.4.6-.6.6c-.2.2-.4.4-.2.8.2.3.8 1.3 1.8 2.1 1.2 1.1 2.3 1.5 2.6 1.7.3.2.5.2.7-.1l1.1-1.3c.2-.3.5-.3.8-.2l2.1 1c.3.2.6.2.7.4.1.2.1.8-.1 1.5Z" /></svg>;
+}
+
 function SubscriptionBusinessCardPreview({ variant, copy, language }: { variant: 'artisan' | 'premium'; copy: SubscriptionCopy; language: OfferLanguage }) {
   const labels = businessPreviewCopy[language] ?? businessPreviewCopy.fr;
   const [openSection, setOpenSection] = useState<number | null>(null);
@@ -1142,27 +1156,33 @@ function SubscriptionBusinessCardPreview({ variant, copy, language }: { variant:
     { label: 'YouTube', icon: Youtube, className: 'bg-[#FF0000]' },
     { label: 'TikTok', icon: Music2, className: 'bg-black shadow-[inset_1px_0_0_#25F4EE,inset_-1px_0_0_#FE2C55]' },
   ];
+  const sharingNetworks = [
+    { brand: 'whatsapp' as const, label: labels.sharing[0], className: 'bg-[#25D366]' },
+    { brand: 'telegram' as const, label: labels.sharing[1], className: 'bg-[#229ED9]' },
+    { brand: 'sms' as const, label: labels.sharing[2], className: 'bg-[#3976D8]' },
+    { brand: 'messenger' as const, label: labels.sharing[3], className: 'bg-gradient-to-br from-[#00B2FF] via-[#696BFF] to-[#D329C6]' },
+  ];
   const sectionOrder = isPremium ? [2, 3, 1] : [0, 1, 2, 3, 4];
   const activate = (label: string) => setFeedback(`${labels.demoFeedback} ${label}`);
 
   return (
     <article className={`mx-auto w-full overflow-hidden text-white ${isPremium ? 'max-w-[400px] rounded-[24px] border-2 border-[#D6AF2E] bg-[radial-gradient(circle_at_50%_12%,#09543F_0%,#04392E_45%,#022A22_100%)] p-1.5 shadow-[0_18px_38px_rgba(3,44,36,0.34),inset_0_0_22px_rgba(240,197,55,0.08)]' : 'max-w-[410px] rounded-[25px] border border-[#D6AF2E] bg-gradient-to-b from-[#07543F] to-[#04392E] shadow-[0_14px_30px_rgba(7,84,63,0.24)]'}`}>
-      <div className={`relative overflow-hidden ${isPremium ? 'h-24 rounded-t-[19px] border border-[#D6AF2E]/45' : 'h-20'}`}>
+      <div className={`relative overflow-hidden ${isPremium ? 'h-[88px] rounded-t-[19px] border border-[#D6AF2E]/40' : 'h-20'}`}>
         <img src={PREMIUM_PREVIEW_IMAGE_PATH} alt={`${copy.demoName} — ${labels.category}`} className="h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#064333] via-[#064333]/15 to-transparent" />
       </div>
 
-      <div className={`${isPremium ? '-mt-7 rounded-[20px] border border-[#D6AF2E]/60 bg-[#04372D]/95 px-3 pb-3 pt-0 shadow-[inset_0_0_14px_rgba(214,175,46,0.07)]' : 'px-3.5 pb-3'} relative`}>
+      <div className={`${isPremium ? '-mt-5 rounded-[20px] border border-[#D6AF2E]/55 bg-[#04372D]/95 px-3 pb-3 pt-0 shadow-[0_0_10px_rgba(214,175,46,0.09),inset_0_0_10px_rgba(214,175,46,0.04)]' : 'px-3.5 pb-3'} relative`}>
         {isPremium ? (
           <div className="text-center">
-            <div className="mx-auto -translate-y-7 scale-90"><DemoLogo alt={copy.demoName} /></div>
-            <span className="-mt-6 inline-flex rounded-full border border-[#D6AF2E] bg-[#063C30] px-4 py-1 text-xs font-black text-[#F4CE55] shadow-[0_0_14px_rgba(214,175,46,0.18)]">⚒ {labels.category}</span>
-            <div className="mx-auto mt-1.5 max-w-[320px] rounded-xl border border-[#D6AF2E]/75 bg-black/10 px-3 py-2.5 shadow-[inset_0_0_12px_rgba(214,175,46,0.07)]">
-              <h3 className="text-[20px] font-black leading-tight text-white sm:text-[22px]">{copy.demoName}</h3>
-              <span className="mt-2 inline-flex rounded-full border border-[#D6AF2E]/80 bg-emerald-700/70 px-3 py-1 text-[11px] font-black uppercase tracking-wide text-white">★ {labels.certified}</span>
-              <p className="mt-2 text-sm font-semibold text-[#F4CE55]">{copy.demoCategory}</p>
-              <p className="mt-1 inline-flex items-center gap-1.5 text-sm text-emerald-50"><MapPin className="h-4 w-4 text-[#F4CE55]" aria-hidden="true" />{labels.city}</p>
-              <p className="mt-1 text-sm font-bold text-emerald-300">WhatsApp</p>
+            <div className="mx-auto -translate-y-6 scale-[0.78]"><DemoLogo alt={copy.demoName} /></div>
+            <span className="-mt-7 inline-flex rounded-full border border-[#D6AF2E]/80 bg-[#063C30] px-3.5 py-0.5 text-[11px] font-black text-[#F4CE55]">⚒ {labels.category}</span>
+            <div className="mx-auto mt-2 max-w-[310px] rounded-xl border border-[#D6AF2E]/65 bg-black/10 px-3 py-2 shadow-[0_0_8px_rgba(214,175,46,0.08),inset_0_0_8px_rgba(214,175,46,0.04)]">
+              <h3 className="text-[18px] font-black leading-tight text-white sm:text-[20px]">{copy.demoName}</h3>
+              <span className="mt-1.5 inline-flex items-center justify-center rounded-full border border-[#D6AF2E]/70 bg-emerald-700/65 px-3 py-0.5 text-[10px] font-black uppercase tracking-wide text-white">★ {labels.certified}</span>
+              <p className="mt-1.5 text-xs font-semibold text-[#F4CE55]">{copy.demoCategory}</p>
+              <p className="mt-1 inline-flex items-center gap-1.5 text-xs text-emerald-50"><MapPin className="h-3.5 w-3.5 text-[#F4CE55]" aria-hidden="true" />{labels.city}</p>
+              <p className="mt-1 text-xs font-bold text-emerald-300">WhatsApp</p>
             </div>
           </div>
         ) : (
@@ -1178,10 +1198,10 @@ function SubscriptionBusinessCardPreview({ variant, copy, language }: { variant:
           </div>
         )}
 
-        <div className={`${isPremium ? 'mt-2.5' : 'mt-3'} grid grid-cols-3 gap-1.5`}>
+        <div className={`${isPremium ? 'mt-2' : 'mt-3'} grid grid-cols-3 gap-1.5`}>
           {labels.actions.map((label, index) => {
             const Icon = actionIcons[index];
-            return <button key={label} type="button" onClick={() => activate(label)} className={`flex min-h-[54px] flex-col items-center justify-center gap-1 rounded-lg px-1 py-1.5 text-[10px] font-bold transition hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-white sm:text-[11px] ${isPremium ? 'border border-[#D6AF2E]/70 bg-[#03352B] text-white shadow-[inset_0_1px_5px_rgba(244,206,85,0.1)] hover:bg-[#D6AF2E]/8' : 'border border-white/15 bg-white/5 text-emerald-50 hover:bg-white/12'}`}><Icon className={`h-[18px] w-[18px] ${index === 1 ? 'text-emerald-300' : 'text-[#F4CE55]'}`} aria-hidden="true" /><span>{isPremium && index === 2 ? 'GPS' : label}</span></button>;
+            return <button key={label} type="button" onClick={() => activate(label)} className={`flex flex-col items-center justify-center gap-0.5 rounded-lg px-1 py-1 text-[10px] font-bold transition hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-white ${isPremium ? 'min-h-[48px] border border-[#D6AF2E]/55 bg-[#03352B] text-white shadow-[inset_0_1px_4px_rgba(244,206,85,0.07)] hover:bg-[#D6AF2E]/8' : 'min-h-[54px] border border-white/15 bg-white/5 text-emerald-50 hover:bg-white/12'}`}><Icon className={`${isPremium ? 'h-4 w-4' : 'h-[18px] w-[18px]'} ${index === 1 ? 'text-emerald-300' : 'text-[#F4CE55]'}`} aria-hidden="true" /><span>{isPremium && index === 2 ? 'GPS' : label}</span></button>;
           })}
         </div>
 
@@ -1201,8 +1221,26 @@ function SubscriptionBusinessCardPreview({ variant, copy, language }: { variant:
           </div>
         </section>}
 
-        {!isPremium && <><button type="button" onClick={() => activate(labels.email)} className="mx-auto mt-2 flex h-8 items-center justify-center gap-1.5 rounded-full border border-white/25 px-3.5 text-[11px] font-bold transition hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D6AF2E]"><Mail className="h-3.5 w-3.5" aria-hidden="true" />{labels.email}</button><button type="button" onClick={() => activate(labels.recommend)} className="mt-2 flex min-h-12 w-full items-center gap-2 rounded-xl border border-[#D6AF2E]/75 px-2.5 py-1.5 text-start text-[#F4CE55] transition hover:bg-[#D6AF2E]/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"><Star className="h-4 w-4 shrink-0" aria-hidden="true" /><span className="min-w-0 flex-1"><span className="block text-xs font-bold">{labels.recommend}</span><span className="block truncate text-[10px] text-emerald-100">{labels.recommendHint}</span></span><ChevronRight className="h-3.5 w-3.5 shrink-0 rtl:rotate-180" aria-hidden="true" /></button></>}
-        {isPremium && <div className="mt-2.5 flex justify-center gap-6 border-t border-[#D6AF2E]/35 pt-2.5">{[Phone, MessageCircle, Navigation].map((Icon, index) => <button key={index} type="button" onClick={() => activate(labels.actions[index])} aria-label={labels.actions[index]} className="flex h-9 w-9 items-center justify-center rounded-full border border-[#D6AF2E]/70 bg-black/10 text-[#F4CE55] shadow-[inset_0_1px_4px_rgba(214,175,46,0.08)] transition hover:bg-[#D6AF2E]/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"><Icon className="h-4 w-4" aria-hidden="true" /></button>)}</div>}
+        {!isPremium && <>
+          <button type="button" onClick={() => activate(labels.email)} aria-label={labels.email} className="mx-auto mt-1.5 flex h-9 items-center justify-center gap-2 rounded-lg border border-sky-200/60 bg-gradient-to-r from-[#1264A3] to-[#208BD0] pe-3 ps-1.5 text-[11px] font-bold text-white shadow-sm transition hover:brightness-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-white">
+            <span className="flex h-6 w-7 items-center justify-center rounded bg-white/95 text-[#1264A3] shadow-sm"><Mail className="h-4 w-4 stroke-[2.4]" aria-hidden="true" /></span>{labels.email}
+          </button>
+          <section className="mt-1.5 rounded-xl border border-[#D6AF2E]/45 bg-black/10 px-2.5 py-2 text-center" aria-label={labels.recommend}>
+            <h4 className="text-[11px] font-bold text-[#F4CE55]">{labels.recommend}</h4>
+            <div className="mt-1.5 flex justify-center gap-2.5">
+              {sharingNetworks.map(({ brand, label, className }) => <button key={brand} type="button" onClick={() => activate(label)} aria-label={label} title={label} className={`flex h-9 w-9 items-center justify-center rounded-full border border-white/25 text-white shadow-sm transition hover:-translate-y-0.5 hover:brightness-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-white ${className}`}><SharingBrandIcon brand={brand} /></button>)}
+            </div>
+          </section>
+        </>}
+        {isPremium && <>
+          <section className="mt-2 rounded-xl border border-[#D6AF2E]/45 bg-[#032F27]/90 px-2.5 py-2 text-center shadow-[inset_0_0_7px_rgba(214,175,46,0.03)]" aria-label={labels.social}>
+            <h4 className="text-[11px] font-bold tracking-wide text-[#E7C75A]">{labels.social}</h4>
+            <div className="mt-1.5 flex justify-center gap-2.5">
+              {socialNetworks.map(({ label, icon: Icon, className }) => <button key={label} type="button" onClick={() => activate(label)} aria-label={label} title={label} className={`flex h-7 w-7 items-center justify-center rounded-full border border-white/15 text-white opacity-90 transition hover:scale-105 hover:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white ${className}`}><Icon className="h-3.5 w-3.5" aria-hidden="true" /></button>)}
+            </div>
+          </section>
+          <div className="mt-2 flex justify-center gap-6 border-t border-[#D6AF2E]/30 pt-2">{[Phone, MessageCircle, Navigation].map((Icon, index) => <button key={index} type="button" onClick={() => activate(labels.actions[index])} aria-label={labels.actions[index]} className="flex h-9 w-9 items-center justify-center rounded-full border border-[#D6AF2E]/60 bg-black/10 text-[#F4CE55] shadow-[inset_0_1px_4px_rgba(214,175,46,0.06)] transition hover:bg-[#D6AF2E]/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"><Icon className="h-4 w-4" aria-hidden="true" /></button>)}</div>
+        </>}
         <p className="mt-1 min-h-4 text-center text-[10px] text-emerald-100" aria-live="polite">{feedback}</p>
       </div>
     </article>
