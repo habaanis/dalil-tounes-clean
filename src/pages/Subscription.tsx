@@ -1159,6 +1159,8 @@ function SubscriptionBusinessCardPreview({ variant, copy, language }: { variant:
     { label: 'YouTube', icon: Youtube, className: 'bg-[#FF0000]' },
     { label: 'TikTok', icon: Music2, className: 'bg-black shadow-[inset_1px_0_0_#25F4EE,inset_-1px_0_0_#FE2C55]' },
   ];
+  const artisanSocialNetwork = socialNetworks[1];
+  const ArtisanSocialIcon = artisanSocialNetwork.icon;
   const sharingNetworks = [
     { brand: 'email' as const, label: labels.email, className: 'bg-gradient-to-br from-[#1264A3] to-[#208BD0]' },
     { brand: 'whatsapp' as const, label: labels.sharing[0], className: 'bg-[#25D366]' },
@@ -1166,7 +1168,8 @@ function SubscriptionBusinessCardPreview({ variant, copy, language }: { variant:
     { brand: 'sms' as const, label: labels.sharing[2], className: 'bg-[#3976D8]' },
     { brand: 'messenger' as const, label: labels.sharing[3], className: 'bg-gradient-to-br from-[#00B2FF] via-[#696BFF] to-[#D329C6]' },
   ];
-  const sectionOrder = isPremium ? [2, 3, 1] : [0, 1, 2, 3, 4];
+  const actionOrder = isPremium ? [0, 1, 2, 3, 4, 5] : [0, 1, 2];
+  const sectionOrder = isPremium ? [2, 3, 1, 4] : [0, 1, 2, 4];
   const activate = (label: string) => setFeedback(`${labels.demoFeedback} ${label}`);
 
   return (
@@ -1182,10 +1185,14 @@ function SubscriptionBusinessCardPreview({ variant, copy, language }: { variant:
             <div className="relative mx-auto h-10">
               <div className="absolute left-1/2 top-0 z-10 -translate-x-1/2 -translate-y-6 scale-[0.78] drop-shadow-[0_0_7px_rgba(239,198,66,0.48)]"><DemoLogo alt={copy.demoName} /></div>
             </div>
+            <div className="mb-1.5 flex flex-wrap items-center justify-center gap-1.5">
+              <span className="inline-flex items-center gap-1 rounded-full border border-[#F4CE55] bg-[#D6AF2E] px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.08em] text-[#032A22] shadow-[0_0_10px_rgba(244,206,85,0.34)]"><Sparkles className="h-3 w-3" aria-hidden="true" />{copy.premiumDetailTitle}</span>
+              <span className="inline-flex items-center gap-1 rounded-full border border-[#D6AF2E]/70 bg-[#052F26] px-2.5 py-1 text-[10px] font-black text-[#FFF4B8]"><Star className="h-3 w-3 fill-current" aria-hidden="true" />5,0</span>
+            </div>
             <span className="inline-flex rounded-full border border-[#E0B93E]/85 bg-[#021E19] px-3.5 py-0.5 text-[11px] font-black text-[#F4CE55] shadow-[0_0_8px_rgba(224,185,62,0.18),inset_0_1px_4px_rgba(224,185,62,0.08)]">⚒ {labels.category}</span>
             <div className="mx-auto mt-1.5 max-w-[310px] rounded-xl border border-[#D9B43A]/65 bg-[linear-gradient(145deg,rgba(5,53,42,0.92),rgba(1,25,21,0.94))] px-3 py-2 shadow-[0_0_8px_rgba(224,185,62,0.1),inset_0_0_10px_rgba(0,0,0,0.24)]">
               <h3 className="font-serif text-[19px] font-bold leading-tight tracking-[0.01em] text-[#FFFDF2] sm:text-[21px]">{copy.demoName}</h3>
-              <span className="mt-1.5 inline-flex items-center justify-center rounded-full border border-[#E0B93E]/80 bg-gradient-to-r from-[#076044] to-[#087A50] px-3 py-0.5 text-[10px] font-black uppercase tracking-wide text-white shadow-[inset_0_1px_4px_rgba(255,255,255,0.08)]">★ {labels.certified}</span>
+              <span className="mt-1.5 inline-flex items-center justify-center gap-1.5 rounded-full border-2 border-[#F4CE55] bg-gradient-to-r from-[#076044] to-[#087A50] px-3 py-1 text-[10px] font-black uppercase tracking-wide text-white shadow-[0_0_12px_rgba(244,206,85,0.28),inset_0_1px_4px_rgba(255,255,255,0.1)]"><Check className="h-3.5 w-3.5" aria-hidden="true" />{labels.certified}</span>
               <p className="mt-1.5 text-xs font-semibold text-[#F4CE55]">{copy.demoCategory}</p>
               <p className="mt-1 inline-flex items-center gap-1.5 text-xs text-emerald-50"><MapPin className="h-3.5 w-3.5 text-[#F4CE55]" aria-hidden="true" />{labels.city}</p>
               <p className="mt-1 text-xs font-bold text-emerald-300">WhatsApp</p>
@@ -1205,7 +1212,8 @@ function SubscriptionBusinessCardPreview({ variant, copy, language }: { variant:
         )}
 
         <div className={`${isPremium ? 'mt-2' : 'mt-3'} grid grid-cols-3 gap-1.5`}>
-          {labels.actions.map((label, index) => {
+          {actionOrder.map((index) => {
+            const label = labels.actions[index];
             const Icon = actionIcons[index];
             return <button key={label} type="button" onClick={() => activate(label)} className={`flex flex-col items-center justify-center gap-0.5 rounded-lg px-1 py-1 text-[10px] font-bold transition hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-white ${isPremium ? 'min-h-[48px] border border-[#DDB638]/75 bg-[linear-gradient(145deg,#06382D,#011F1A)] text-[#FFFDF2] shadow-[0_0_6px_rgba(221,182,56,0.1),inset_0_1px_7px_rgba(242,202,75,0.11),inset_0_-4px_8px_rgba(0,0,0,0.2)] hover:border-[#F0CB50] hover:shadow-[0_0_9px_rgba(221,182,56,0.2),inset_0_1px_7px_rgba(242,202,75,0.13)]' : 'min-h-[54px] border border-[#B99B32]/45 bg-[linear-gradient(145deg,rgba(5,58,45,0.88),rgba(2,38,31,0.94))] text-emerald-50 shadow-[inset_0_1px_5px_rgba(255,255,255,0.03)] hover:border-[#D6AF2E]/70 hover:bg-[#073D30]'}`}><Icon className={`${isPremium ? 'h-4 w-4' : 'h-[18px] w-[18px]'} ${index === 1 ? 'text-emerald-300' : 'text-[#F4CE55]'}`} aria-hidden="true" /><span>{isPremium && index === 2 ? 'GPS' : label}</span></button>;
           })}
@@ -1216,14 +1224,14 @@ function SubscriptionBusinessCardPreview({ variant, copy, language }: { variant:
             const label = labels.sections[index];
             const Icon = sectionIcons[index];
             const expanded = openSection === index;
-            return <div key={label} className={isPremium ? 'overflow-hidden rounded-lg border border-[#D9B43A]/60 bg-[linear-gradient(90deg,#042E25,#011F1A)] shadow-[0_0_5px_rgba(217,180,58,0.06),inset_0_1px_5px_rgba(224,185,62,0.04)]' : 'border-b border-white/10 last:border-b-0'}>{isPremium && index === 3 && <button type="button" onClick={() => activate(labels.qr)} className="flex min-h-9 w-full items-center gap-2 border-b border-[#D9B43A]/25 px-2.5 py-1 text-start text-[11px] font-bold transition hover:bg-[#D6AF2E]/8 hover:shadow-[inset_0_0_7px_rgba(214,175,46,0.06)] focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#D6AF2E]"><QrCode className="h-4 w-4 text-white" aria-hidden="true" />{labels.qr}<ChevronRight className="ms-auto h-3.5 w-3.5 text-[#F4CE55] rtl:rotate-180" aria-hidden="true" /></button>}<button type="button" aria-expanded={expanded} onClick={() => setOpenSection(expanded ? null : index)} className={`flex w-full items-center gap-2 px-2.5 text-start transition focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#D6AF2E] ${isPremium ? 'min-h-9 py-1 hover:bg-[#D6AF2E]/8 hover:shadow-[inset_0_0_7px_rgba(214,175,46,0.06)]' : 'min-h-[42px] py-1.5 hover:bg-white/8'}`}><span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${isPremium ? 'bg-[#D6AF2E]/10 text-[#F4CE55]' : 'bg-emerald-900/65 text-emerald-300'}`}><Icon className="h-3.5 w-3.5" aria-hidden="true" /></span><span className="min-w-0 flex-1"><span className="block text-xs font-bold">{label}</span>{!isPremium && <span className="block truncate text-[10px] text-emerald-100/70">{labels.sectionHints[index]}</span>}</span><ChevronRight className={`h-3.5 w-3.5 shrink-0 text-[#F4CE55] transition ${expanded ? 'rotate-90 rtl:-rotate-90' : 'rtl:rotate-180'}`} aria-hidden="true" /></button>{expanded && <div className="bg-black/15 px-3 pb-2 text-[11px] leading-4 text-emerald-50">{labels.sectionHints[index]}</div>}</div>;
+            return <div key={label} className={isPremium ? 'overflow-hidden rounded-lg border border-[#D9B43A]/60 bg-[linear-gradient(90deg,#042E25,#011F1A)] shadow-[0_0_5px_rgba(217,180,58,0.06),inset_0_1px_5px_rgba(224,185,62,0.04)]' : 'border-b border-white/10 last:border-b-0'}>{isPremium && index === 3 && <button type="button" onClick={() => activate(labels.qr)} className="flex min-h-9 w-full items-center gap-2 border-b border-[#D9B43A]/25 px-2.5 py-1 text-start text-[11px] font-bold transition hover:bg-[#D6AF2E]/8 hover:shadow-[inset_0_0_7px_rgba(214,175,46,0.06)] focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#D6AF2E]"><QrCode className="h-4 w-4 text-white" aria-hidden="true" />{labels.qr}<ChevronRight className="ms-auto h-3.5 w-3.5 text-[#F4CE55] rtl:rotate-180" aria-hidden="true" /></button>}<button type="button" aria-expanded={expanded} onClick={() => setOpenSection(expanded ? null : index)} className={`flex w-full items-center gap-2 px-2.5 text-start transition focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#D6AF2E] ${isPremium ? 'min-h-9 py-1 hover:bg-[#D6AF2E]/8 hover:shadow-[inset_0_0_7px_rgba(214,175,46,0.06)]' : 'min-h-[42px] py-1.5 hover:bg-white/8'}`}><span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${isPremium ? 'bg-[#D6AF2E]/10 text-[#F4CE55]' : 'bg-emerald-900/65 text-emerald-300'}`}><Icon className="h-3.5 w-3.5" aria-hidden="true" /></span><span className="min-w-0 flex-1"><span className="block text-xs font-bold">{label}</span>{!isPremium && <span className="block truncate text-[10px] text-emerald-100/70">{labels.sectionHints[index]}</span>}{index === 4 && <span className={`mt-0.5 block text-[10px] font-black ${isPremium ? 'text-[#F4CE55]' : 'text-emerald-300'}`}>{isPremium ? '20' : '≤ 5'} · {labels.sections[4]}</span>}</span><ChevronRight className={`h-3.5 w-3.5 shrink-0 text-[#F4CE55] transition ${expanded ? 'rotate-90 rtl:-rotate-90' : 'rtl:rotate-180'}`} aria-hidden="true" /></button>{expanded && <div className="bg-black/15 px-3 pb-2 text-[11px] leading-4 text-emerald-50">{labels.sectionHints[index]}</div>}</div>;
           })}
         </div>
 
         {!isPremium && <section className="mt-2.5 rounded-xl border border-[#B99B32]/35 bg-[#021F1A]/70 p-2.5 text-center shadow-[inset_0_0_9px_rgba(0,0,0,0.16)]" aria-label={labels.social}>
           <h4 className="text-sm font-bold text-[#F4CE55]">{labels.social}</h4>
           <div className="mt-2 flex flex-wrap justify-center gap-2">
-            {socialNetworks.map(({ label, icon: Icon, className }) => <button key={label} type="button" onClick={() => activate(label)} aria-label={label} className={`flex h-8 w-8 items-center justify-center rounded-full border border-white/25 text-white transition hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D6AF2E] ${className}`}><Icon className="h-4 w-4" aria-hidden="true" /></button>)}
+            <button type="button" onClick={() => activate(artisanSocialNetwork.label)} aria-label={artisanSocialNetwork.label} className={`flex h-8 w-8 items-center justify-center rounded-full border border-white/25 text-white transition hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D6AF2E] ${artisanSocialNetwork.className}`}><ArtisanSocialIcon className="h-4 w-4" aria-hidden="true" /></button>
           </div>
         </section>}
 
@@ -1238,6 +1246,7 @@ function SubscriptionBusinessCardPreview({ variant, copy, language }: { variant:
         {isPremium && <>
           <section className="mt-2 rounded-xl border border-[#DDB638]/60 bg-[linear-gradient(145deg,#032A22,#011B17)] px-2.5 py-2 text-center shadow-[0_0_6px_rgba(221,182,56,0.08),inset_0_0_9px_rgba(0,0,0,0.24)]" aria-label={labels.social}>
             <h4 className="text-[11px] font-bold tracking-wide text-[#E7C75A]">{labels.social}</h4>
+            <p className="mt-0.5 text-[10px] font-semibold text-emerald-100">5 · {labels.social}</p>
             <div className="mt-1.5 flex justify-center gap-2.5">
               {socialNetworks.map(({ label, icon: Icon, className }) => <button key={label} type="button" onClick={() => activate(label)} aria-label={label} title={label} className={`flex h-7 w-7 items-center justify-center rounded-full border border-white/20 text-white opacity-95 shadow-[0_3px_7px_rgba(0,0,0,0.28),0_0_5px_rgba(221,182,56,0.08)] transition hover:scale-105 hover:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white ${className}`}><Icon className="h-3.5 w-3.5" aria-hidden="true" /></button>)}
             </div>
