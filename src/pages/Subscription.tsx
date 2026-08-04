@@ -1129,7 +1129,10 @@ function EssentialCardPreview({ copy }: { copy: SubscriptionCopy }) {
   );
 }
 
-function SharingBrandIcon({ brand }: { brand: 'whatsapp' | 'telegram' | 'sms' | 'messenger' }) {
+function SharingBrandIcon({ brand }: { brand: 'email' | 'whatsapp' | 'telegram' | 'sms' | 'messenger' }) {
+  if (brand === 'email') {
+    return <Mail className="h-5 w-5 stroke-[2.4]" aria-hidden="true" />;
+  }
   if (brand === 'telegram') {
     return <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true"><path fill="currentColor" d="M20.7 3.4 3.6 10c-1.2.5-1.2 1.1-.2 1.4l4.4 1.4 1.7 5.2c.2.6.1.8.7.8.5 0 .7-.2 1-.5l2.1-2 4.4 3.2c.8.5 1.4.2 1.6-.8l2.9-13.8c.3-1.2-.5-1.8-1.5-1.5ZM9.5 12.5l8.6-5.4c.4-.2.8-.1.5.2l-7.1 6.4-.3 3.2-1.7-4.4Z" /></svg>;
   }
@@ -1157,6 +1160,7 @@ function SubscriptionBusinessCardPreview({ variant, copy, language }: { variant:
     { label: 'TikTok', icon: Music2, className: 'bg-black shadow-[inset_1px_0_0_#25F4EE,inset_-1px_0_0_#FE2C55]' },
   ];
   const sharingNetworks = [
+    { brand: 'email' as const, label: labels.email, className: 'bg-gradient-to-br from-[#1264A3] to-[#208BD0]' },
     { brand: 'whatsapp' as const, label: labels.sharing[0], className: 'bg-[#25D366]' },
     { brand: 'telegram' as const, label: labels.sharing[1], className: 'bg-[#229ED9]' },
     { brand: 'sms' as const, label: labels.sharing[2], className: 'bg-[#3976D8]' },
@@ -1175,9 +1179,11 @@ function SubscriptionBusinessCardPreview({ variant, copy, language }: { variant:
       <div className={`${isPremium ? '-mt-5 rounded-[20px] border border-[#D6AF2E]/55 bg-[#04372D]/95 px-3 pb-3 pt-0 shadow-[0_0_10px_rgba(214,175,46,0.09),inset_0_0_10px_rgba(214,175,46,0.04)]' : 'px-3.5 pb-3'} relative`}>
         {isPremium ? (
           <div className="text-center">
-            <div className="mx-auto -translate-y-6 scale-[0.78]"><DemoLogo alt={copy.demoName} /></div>
-            <span className="-mt-7 inline-flex rounded-full border border-[#D6AF2E]/80 bg-[#063C30] px-3.5 py-0.5 text-[11px] font-black text-[#F4CE55]">⚒ {labels.category}</span>
-            <div className="mx-auto mt-2 max-w-[310px] rounded-xl border border-[#D6AF2E]/65 bg-black/10 px-3 py-2 shadow-[0_0_8px_rgba(214,175,46,0.08),inset_0_0_8px_rgba(214,175,46,0.04)]">
+            <div className="relative mx-auto h-10">
+              <div className="absolute left-1/2 top-0 z-10 -translate-x-1/2 -translate-y-6 scale-[0.78]"><DemoLogo alt={copy.demoName} /></div>
+            </div>
+            <span className="inline-flex rounded-full border border-[#D6AF2E]/75 bg-[#063C30] px-3.5 py-0.5 text-[11px] font-black text-[#F4CE55] shadow-[0_0_7px_rgba(214,175,46,0.1)]">⚒ {labels.category}</span>
+            <div className="mx-auto mt-1.5 max-w-[310px] rounded-xl border border-[#D6AF2E]/55 bg-black/10 px-3 py-2 shadow-[0_0_7px_rgba(214,175,46,0.07),inset_0_0_7px_rgba(214,175,46,0.03)]">
               <h3 className="text-[18px] font-black leading-tight text-white sm:text-[20px]">{copy.demoName}</h3>
               <span className="mt-1.5 inline-flex items-center justify-center rounded-full border border-[#D6AF2E]/70 bg-emerald-700/65 px-3 py-0.5 text-[10px] font-black uppercase tracking-wide text-white">★ {labels.certified}</span>
               <p className="mt-1.5 text-xs font-semibold text-[#F4CE55]">{copy.demoCategory}</p>
@@ -1222,13 +1228,10 @@ function SubscriptionBusinessCardPreview({ variant, copy, language }: { variant:
         </section>}
 
         {!isPremium && <>
-          <button type="button" onClick={() => activate(labels.email)} aria-label={labels.email} className="mx-auto mt-1.5 flex h-9 items-center justify-center gap-2 rounded-lg border border-sky-200/60 bg-gradient-to-r from-[#1264A3] to-[#208BD0] pe-3 ps-1.5 text-[11px] font-bold text-white shadow-sm transition hover:brightness-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-white">
-            <span className="flex h-6 w-7 items-center justify-center rounded bg-white/95 text-[#1264A3] shadow-sm"><Mail className="h-4 w-4 stroke-[2.4]" aria-hidden="true" /></span>{labels.email}
-          </button>
-          <section className="mt-1.5 rounded-xl border border-[#D6AF2E]/45 bg-black/10 px-2.5 py-2 text-center" aria-label={labels.recommend}>
+          <section className="mt-1 rounded-xl border border-[#D6AF2E]/45 bg-black/10 px-2.5 py-1.5 text-center" aria-label={labels.recommend}>
             <h4 className="text-[11px] font-bold text-[#F4CE55]">{labels.recommend}</h4>
-            <div className="mt-1.5 flex justify-center gap-2.5">
-              {sharingNetworks.map(({ brand, label, className }) => <button key={brand} type="button" onClick={() => activate(label)} aria-label={label} title={label} className={`flex h-9 w-9 items-center justify-center rounded-full border border-white/25 text-white shadow-sm transition hover:-translate-y-0.5 hover:brightness-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-white ${className}`}><SharingBrandIcon brand={brand} /></button>)}
+            <div className="mt-1 flex justify-center gap-2 sm:gap-2.5">
+              {sharingNetworks.map(({ brand, label, className }) => <button key={brand} type="button" onClick={() => activate(label)} aria-label={label} title={label} className={`flex h-8 w-8 items-center justify-center rounded-full border border-white/25 text-white shadow-sm transition hover:-translate-y-0.5 hover:brightness-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-white sm:h-9 sm:w-9 ${className}`}><SharingBrandIcon brand={brand} /></button>)}
             </div>
           </section>
         </>}
