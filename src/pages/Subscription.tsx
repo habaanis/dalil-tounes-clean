@@ -18,7 +18,7 @@ import {
   X,
 } from 'lucide-react';
 import { SubscriptionRequestForm } from '../components/SubscriptionRequestForm';
-import type { SubscriptionPlanCode } from '../components/SubscriptionRequestForm';
+import type { CheckoutOffer, SubscriptionPlanCode } from '../components/SubscriptionRequestForm';
 import { BusinessDetail } from '../components/BusinessDetail';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -746,6 +746,14 @@ const essentialCvCopy: Record<OfferLanguage, {
   },
 };
 
+const annualOfferCopy: Record<OfferLanguage, { artisan: string; premium: string }> = {
+  fr: { artisan: 'ou 299 TND / an — environ 2 mois offerts', premium: 'ou 595 TND / an — environ 2 mois offerts' },
+  ar: { artisan: 'أو 299 د.ت / سنة — ما يعادل شهرين تقريبًا مجانًا', premium: 'أو 595 د.ت / سنة — ما يعادل شهرين تقريبًا مجانًا' },
+  en: { artisan: 'or 299 TND / year — around 2 months free', premium: 'or 595 TND / year — around 2 months free' },
+  it: { artisan: 'oppure 299 TND / anno — circa 2 mesi gratuiti', premium: 'oppure 595 TND / anno — circa 2 mesi gratuiti' },
+  ru: { artisan: 'или 299 TND / год — около 2 месяцев бесплатно', premium: 'или 595 TND / год — около 2 месяцев бесплатно' },
+};
+
 function ensureFeatureDescriptions(items: readonly string[], description: string) {
   return items.map((item) => splitFeature(item).description ? item : `${item} — ${description}`);
 }
@@ -1249,6 +1257,7 @@ function ContinuousPlanCard({
   copy,
   price,
   perMonth,
+  annualLabel,
   includesLabel,
   certifiedDisclaimer,
   intro,
@@ -1263,6 +1272,7 @@ function ContinuousPlanCard({
   copy: SubscriptionCopy;
   price: string;
   perMonth: string;
+  annualLabel: string;
   includesLabel?: string;
   certifiedDisclaimer?: string;
   intro: string;
@@ -1289,6 +1299,7 @@ function ContinuousPlanCard({
       <div className="mt-2 flex items-end gap-2 text-[#F4CE55]">
         <span className="text-4xl font-black">{price}</span><span className="pb-1 text-sm font-bold">{perMonth}</span>
       </div>
+      <p className="mt-1 text-sm font-semibold text-emerald-100">{annualLabel}</p>
       <p className="mt-3 text-sm leading-6 text-emerald-50">{intro}</p>
       {includesLabel && <p className="mt-3 rounded-xl bg-white/10 px-3 py-2 text-sm font-bold text-white">{includesLabel}</p>}
       <div className="mt-4">
@@ -1342,17 +1353,19 @@ export const Subscription = () => {
   const isArabic = language === 'ar';
   const copy = subscriptionCopy[language as keyof typeof subscriptionCopy] ?? subscriptionCopy.fr;
   const essentialCopy = essentialCvCopy[language as OfferLanguage] ?? essentialCvCopy.fr;
+  const annualCopy = annualOfferCopy[language as OfferLanguage] ?? annualOfferCopy.fr;
   const [activePreview, setActivePreview] = useState<PreviewType>(null);
   const [showCvDetails, setShowCvDetails] = useState(false);
   const cvDetailsId = useId().replace(/:/g, '');
   const [selectedPlan, setSelectedPlan] = useState<{
     code: SubscriptionPlanCode;
     label: string;
+    checkoutOffer: CheckoutOffer;
   } | null>(null);
 
   const closePreview = () => setActivePreview(null);
-  const openRequest = (code: SubscriptionPlanCode, label: string) => {
-    setSelectedPlan({ code, label });
+  const openRequest = (code: SubscriptionPlanCode, label: string, checkoutOffer: CheckoutOffer) => {
+    setSelectedPlan({ code, label, checkoutOffer });
     setActivePreview('request');
   };
 
@@ -1439,19 +1452,21 @@ export const Subscription = () => {
               copy={copy}
               price={offerCopy[language as OfferLanguage]?.artisanPrice ?? offerCopy.fr.artisanPrice}
               perMonth={offerCopy[language as OfferLanguage]?.perMonth ?? offerCopy.fr.perMonth}
+              annualLabel={annualCopy.artisan}
               intro={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).artisanIntro}
               features={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).artisanFeatures}
               descriptionLead={accordionDescriptionLeadCopy[language as OfferLanguage] ?? accordionDescriptionLeadCopy.fr}
               showAllLabel={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).showAllFeatures}
               hideAllLabel={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).hideAllFeatures}
               onPreview={() => setActivePreview('artisan')}
-              onRequest={() => openRequest('artisan', copy.artisanPlanLabel)}
+              onRequest={() => openRequest('artisan', copy.artisanPlanLabel, 'artisan')}
             />
             <ContinuousPlanCard
               tier="PREMIUM"
               copy={copy}
               price={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).premiumPrice}
               perMonth={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).perMonth}
+              annualLabel={annualCopy.premium}
               includesLabel={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).premiumIncludesArtisan}
               certifiedDisclaimer={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).certifiedDisclaimer}
               intro={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).premiumIntro}
@@ -1460,7 +1475,7 @@ export const Subscription = () => {
               showAllLabel={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).showAllFeatures}
               hideAllLabel={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).hideAllFeatures}
               onPreview={() => setActivePreview('premium')}
-              onRequest={() => openRequest('premium', copy.premiumPlanLabel)}
+              onRequest={() => openRequest('premium', copy.premiumPlanLabel, 'premium')}
             />
 
           </div>
@@ -1503,7 +1518,7 @@ export const Subscription = () => {
           <p className="mt-4 border-t border-amber-100 pt-4 text-sm font-bold text-[#07543F]">{essentialCopy.ideal}</p>
           <button
             type="button"
-            onClick={() => openRequest('cv_business', essentialCopy.planLabel)}
+            onClick={() => openRequest('cv_business', essentialCopy.planLabel, 'cv_essential')}
             className="mt-5 w-full rounded-xl bg-[#07543F] px-5 py-3 text-sm font-bold text-white transition hover:bg-emerald-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D6AF2E] sm:w-auto"
           >
             {essentialCopy.choose}
@@ -1596,7 +1611,7 @@ export const Subscription = () => {
           </div>
           <button
             type="button"
-            onClick={() => openRequest('cv_business', copy.cvPlanLabel)}
+            onClick={() => openRequest('cv_business', copy.cvPlanLabel, 'cv_complete')}
             className="mt-6 w-full rounded-xl bg-[#4A123F] px-5 py-3 text-sm font-bold text-white shadow-lg transition hover:bg-[#5B1C4E] focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] sm:w-auto"
           >
             {copy.requestCreation}
@@ -1723,6 +1738,7 @@ export const Subscription = () => {
             <SubscriptionRequestForm
               selectedPlan={selectedPlan.code}
               selectedPlanLabel={selectedPlan.label}
+              checkoutOffer={selectedPlan.checkoutOffer}
               onCancel={closePreview}
             />
           </div>
