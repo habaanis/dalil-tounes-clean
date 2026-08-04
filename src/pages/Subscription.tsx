@@ -18,7 +18,7 @@ import {
   X,
 } from 'lucide-react';
 import { SubscriptionRequestForm } from '../components/SubscriptionRequestForm';
-import type { CheckoutOffer, SubscriptionPlanCode } from '../components/SubscriptionRequestForm';
+import type { BillingPeriod, CheckoutOffer, SubscriptionPlanCode } from '../components/SubscriptionRequestForm';
 import { BusinessDetail } from '../components/BusinessDetail';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -746,12 +746,20 @@ const essentialCvCopy: Record<OfferLanguage, {
   },
 };
 
-const annualOfferCopy: Record<OfferLanguage, { artisan: string; premium: string }> = {
-  fr: { artisan: 'ou 299 TND / an — environ 2 mois offerts', premium: 'ou 595 TND / an — environ 2 mois offerts' },
-  ar: { artisan: 'أو 299 د.ت / سنة — ما يعادل شهرين تقريبًا مجانًا', premium: 'أو 595 د.ت / سنة — ما يعادل شهرين تقريبًا مجانًا' },
-  en: { artisan: 'or 299 TND / year — around 2 months free', premium: 'or 595 TND / year — around 2 months free' },
-  it: { artisan: 'oppure 299 TND / anno — circa 2 mesi gratuiti', premium: 'oppure 595 TND / anno — circa 2 mesi gratuiti' },
-  ru: { artisan: 'или 299 TND / год — около 2 месяцев бесплатно', premium: 'или 595 TND / год — около 2 месяцев бесплатно' },
+const paymentChoiceCopy: Record<OfferLanguage, {
+  title: string;
+  monthly: string;
+  annual: string;
+  threeMonthsFree: string;
+  mostEconomical: string;
+  artisanAnnualPrice: string;
+  premiumAnnualPrice: string;
+}> = {
+  fr: { title: 'Choisis ton rythme de paiement', monthly: 'Mensuel', annual: 'Annuel', threeMonthsFree: '3 mois offerts', mostEconomical: 'Le plus économique', artisanAnnualPrice: '299 TND / an', premiumAnnualPrice: '595 TND / an' },
+  ar: { title: 'اختر وتيرة الدفع', monthly: 'شهري', annual: 'سنوي', threeMonthsFree: '3 أشهر مجانًا', mostEconomical: 'الأكثر توفيرًا', artisanAnnualPrice: '299 TND / سنة', premiumAnnualPrice: '595 TND / سنة' },
+  en: { title: 'Choose your payment schedule', monthly: 'Monthly', annual: 'Annual', threeMonthsFree: '3 months free', mostEconomical: 'Best value', artisanAnnualPrice: '299 TND / year', premiumAnnualPrice: '595 TND / year' },
+  it: { title: 'Scegli il ritmo di pagamento', monthly: 'Mensile', annual: 'Annuale', threeMonthsFree: '3 mesi gratuiti', mostEconomical: 'Il più conveniente', artisanAnnualPrice: '299 TND / anno', premiumAnnualPrice: '595 TND / anno' },
+  ru: { title: 'Выбери периодичность оплаты', monthly: 'Ежемесячно', annual: 'Ежегодно', threeMonthsFree: '3 месяца бесплатно', mostEconomical: 'Самый выгодный вариант', artisanAnnualPrice: '299 TND / год', premiumAnnualPrice: '595 TND / год' },
 };
 function ensureFeatureDescriptions(items: readonly string[], description: string) {
   return items.map((item) => splitFeature(item).description ? item : `${item} — ${description}`);
@@ -1256,7 +1264,8 @@ function ContinuousPlanCard({
   copy,
   price,
   perMonth,
-  annualLabel,
+  paymentCopy,
+  annualPrice,
   includesLabel,
   certifiedDisclaimer,
   intro,
@@ -1271,7 +1280,8 @@ function ContinuousPlanCard({
   copy: SubscriptionCopy;
   price: string;
   perMonth: string;
-  annualLabel: string;
+  paymentCopy: (typeof paymentChoiceCopy)[OfferLanguage];
+  annualPrice: string;
   includesLabel?: string;
   certifiedDisclaimer?: string;
   intro: string;
@@ -1280,11 +1290,12 @@ function ContinuousPlanCard({
   showAllLabel: string;
   hideAllLabel: string;
   onPreview: () => void;
-  onRequest: () => void;
+  onRequest: (billingPeriod: BillingPeriod) => void;
 }) {
   const tierLabel = tier === 'ARTISAN' ? copy.artisan : copy.premium;
   const requestLabel = tier === 'ARTISAN' ? copy.requestArtisan : copy.requestPremium;
   const [showAllFeatures, setShowAllFeatures] = useState(false);
+  const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>('monthly');
   const featuredIndexes = tier === 'ARTISAN' ? [0, 4, 3, 7, 9] : [1, 2, 4, 6];
   const featuredItems = featuredIndexes.map((index) => splitFeature(features[index]).title);
   const detailsId = useId().replace(/:/g, '');
@@ -1298,7 +1309,6 @@ function ContinuousPlanCard({
       <div className="mt-2 flex items-end gap-2 text-[#F4CE55]">
         <span className="text-4xl font-black">{price}</span><span className="pb-1 text-sm font-bold">{perMonth}</span>
       </div>
-      <p className="mt-1 text-sm font-semibold text-emerald-100">{annualLabel}</p>
       <p className="mt-3 text-sm leading-6 text-emerald-50">{intro}</p>
       {includesLabel && <p className="mt-3 rounded-xl bg-white/10 px-3 py-2 text-sm font-bold text-white">{includesLabel}</p>}
       <div className="mt-4">
@@ -1327,6 +1337,42 @@ function ContinuousPlanCard({
           {certifiedDisclaimer}
         </p>
       )}
+      <fieldset className="mt-5 rounded-2xl border border-[#D6AF2E]/50 bg-white/10 p-3">
+        <legend className="px-1 text-sm font-bold text-white">{paymentCopy.title}</legend>
+        <div className="mt-2 grid gap-2 sm:grid-cols-2">
+          <label className="relative flex min-h-16 cursor-pointer items-center rounded-xl border border-white/30 bg-[#064634] px-3 py-2.5 transition has-[:checked]:border-[#F4CE55] has-[:checked]:bg-white has-[:checked]:text-[#07543F] focus-within:ring-2 focus-within:ring-[#F4CE55] focus-within:ring-offset-2 focus-within:ring-offset-[#07543F]">
+            <input
+              type="radio"
+              name={`${detailsId}-billing-period`}
+              value="monthly"
+              checked={billingPeriod === 'monthly'}
+              onChange={() => setBillingPeriod('monthly')}
+              className="sr-only"
+            />
+            <span>
+              <span className="block text-sm font-black">{paymentCopy.monthly}</span>
+              <span className="mt-0.5 block text-xs font-semibold">{price} {perMonth}</span>
+            </span>
+          </label>
+          <label className="relative flex min-h-16 cursor-pointer items-center rounded-xl border border-white/30 bg-[#064634] px-3 py-2.5 pe-24 transition has-[:checked]:border-[#F4CE55] has-[:checked]:bg-white has-[:checked]:text-[#07543F] focus-within:ring-2 focus-within:ring-[#F4CE55] focus-within:ring-offset-2 focus-within:ring-offset-[#07543F] sm:pe-3 sm:pt-7">
+            <input
+              type="radio"
+              name={`${detailsId}-billing-period`}
+              value="annual"
+              checked={billingPeriod === 'annual'}
+              onChange={() => setBillingPeriod('annual')}
+              className="sr-only"
+            />
+            <span>
+              <span className="block text-sm font-black">{paymentCopy.annual}</span>
+              <span className="mt-0.5 block text-xs font-semibold">{annualPrice}</span>
+            </span>
+            <span className="absolute end-2 top-2 rounded-full bg-[#D6AF2E] px-2 py-1 text-[10px] font-black text-[#07543F]">
+              {paymentCopy.threeMonthsFree}
+            </span>
+          </label>
+        </div>
+      </fieldset>
       <div className="grid gap-2 pt-6 sm:grid-cols-2">
         <button
           type="button"
@@ -1337,7 +1383,7 @@ function ContinuousPlanCard({
         </button>
         <button
           type="button"
-          onClick={onRequest}
+          onClick={() => onRequest(billingPeriod)}
           className="rounded-xl bg-[#D6AF2E] px-4 py-3 text-sm font-bold text-[#07543F] transition hover:bg-[#E5C64D] focus:outline-none focus:ring-2 focus:ring-white"
         >
           {requestLabel}
@@ -1352,7 +1398,7 @@ export const Subscription = () => {
   const isArabic = language === 'ar';
   const copy = subscriptionCopy[language as keyof typeof subscriptionCopy] ?? subscriptionCopy.fr;
   const essentialCopy = essentialCvCopy[language as OfferLanguage] ?? essentialCvCopy.fr;
-  const annualCopy = annualOfferCopy[language as OfferLanguage] ?? annualOfferCopy.fr;
+  const paymentCopy = paymentChoiceCopy[language as OfferLanguage] ?? paymentChoiceCopy.fr;
   const [activePreview, setActivePreview] = useState<PreviewType>(null);
   const [showCvDetails, setShowCvDetails] = useState(false);
   const cvDetailsId = useId().replace(/:/g, '');
@@ -1360,11 +1406,12 @@ export const Subscription = () => {
     code: SubscriptionPlanCode;
     label: string;
     checkoutOffer: CheckoutOffer;
+    billingPeriod?: BillingPeriod;
   } | null>(null);
 
   const closePreview = () => setActivePreview(null);
-  const openRequest = (code: SubscriptionPlanCode, label: string, checkoutOffer: CheckoutOffer) => {
-    setSelectedPlan({ code, label, checkoutOffer });
+  const openRequest = (code: SubscriptionPlanCode, label: string, checkoutOffer: CheckoutOffer, billingPeriod?: BillingPeriod) => {
+    setSelectedPlan({ code, label, checkoutOffer, billingPeriod });
     setActivePreview('request');
   };
 
@@ -1451,21 +1498,23 @@ export const Subscription = () => {
               copy={copy}
               price={offerCopy[language as OfferLanguage]?.artisanPrice ?? offerCopy.fr.artisanPrice}
               perMonth={offerCopy[language as OfferLanguage]?.perMonth ?? offerCopy.fr.perMonth}
-              annualLabel={annualCopy.artisan}
+              paymentCopy={paymentCopy}
+              annualPrice={paymentCopy.artisanAnnualPrice}
               intro={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).artisanIntro}
               features={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).artisanFeatures}
               descriptionLead={accordionDescriptionLeadCopy[language as OfferLanguage] ?? accordionDescriptionLeadCopy.fr}
               showAllLabel={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).showAllFeatures}
               hideAllLabel={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).hideAllFeatures}
               onPreview={() => setActivePreview('artisan')}
-              onRequest={() => openRequest('artisan', copy.artisanPlanLabel, 'artisan')}
+              onRequest={(billingPeriod) => openRequest('artisan', copy.artisanPlanLabel, 'artisan', billingPeriod)}
             />
             <ContinuousPlanCard
               tier="PREMIUM"
               copy={copy}
               price={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).premiumPrice}
               perMonth={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).perMonth}
-              annualLabel={annualCopy.premium}
+              paymentCopy={paymentCopy}
+              annualPrice={paymentCopy.premiumAnnualPrice}
               includesLabel={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).premiumIncludesArtisan}
               certifiedDisclaimer={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).certifiedDisclaimer}
               intro={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).premiumIntro}
@@ -1474,7 +1523,7 @@ export const Subscription = () => {
               showAllLabel={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).showAllFeatures}
               hideAllLabel={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).hideAllFeatures}
               onPreview={() => setActivePreview('premium')}
-              onRequest={() => openRequest('premium', copy.premiumPlanLabel, 'premium')}
+              onRequest={(billingPeriod) => openRequest('premium', copy.premiumPlanLabel, 'premium', billingPeriod)}
             />
 
           </div>
@@ -1738,6 +1787,7 @@ export const Subscription = () => {
               selectedPlan={selectedPlan.code}
               selectedPlanLabel={selectedPlan.label}
               checkoutOffer={selectedPlan.checkoutOffer}
+              initialBillingPeriod={selectedPlan.billingPeriod}
               onCancel={closePreview}
             />
           </div>

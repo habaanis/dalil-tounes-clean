@@ -23,6 +23,7 @@ import {
 type SupportedLanguage = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 export type SubscriptionPlanCode = 'cv_business' | 'artisan' | 'premium';
 export type CheckoutOffer = 'cv_essential' | 'cv_complete' | 'artisan' | 'premium';
+export type BillingPeriod = 'monthly' | 'annual';
 type PlanKind = 'cv' | 'artisan' | 'premium';
 type Platform = 'facebook' | 'instagram' | 'whatsapp_business' | 'google_business' | 'website' | 'other' | 'none';
 
@@ -30,6 +31,7 @@ interface SubscriptionRequestFormProps {
   selectedPlan: SubscriptionPlanCode;
   selectedPlanLabel: string;
   checkoutOffer: CheckoutOffer;
+  initialBillingPeriod?: BillingPeriod;
   onCancel?: () => void;
   onSuccess?: () => void;
 }
@@ -40,39 +42,42 @@ const CHECKOUT_COPY: Record<SupportedLanguage, {
   paySecurely: string;
   checkoutLoading: string;
   checkoutError: string;
+  stripeEquivalent: string;
+  monthlyPrice: string;
+  annualPrice: string;
 }> = {
   fr: {
     currencyNotice: 'Le paiement sécurisé est effectué en euros selon l’équivalent indiqué. Des frais de conversion peuvent éventuellement être appliqués par ta banque.',
     installmentsNotice: 'Le paiement en trois fois reste possible après échange avec notre équipe.',
-    paySecurely: 'Payer maintenant', checkoutLoading: 'Ouverture du paiement…', checkoutError: 'Le paiement sécurisé ne peut pas être ouvert pour le moment. Réessaie ou contacte notre équipe.',
+    paySecurely: 'Payer maintenant', checkoutLoading: 'Ouverture du paiement…', checkoutError: 'Le paiement sécurisé ne peut pas être ouvert pour le moment. Réessaie ou contacte notre équipe.', stripeEquivalent: 'Paiement sécurisé Stripe', monthlyPrice: 'Prix mensuel', annualPrice: 'Prix annuel',
   },
   ar: {
     currencyNotice: 'يتم الدفع الآمن باليورو وفق القيمة المعادلة الموضحة. قد يطبق بنكك رسوم تحويل إضافية.',
     installmentsNotice: 'يبقى الدفع على ثلاث دفعات ممكنًا بعد التواصل مع فريقنا.',
-    paySecurely: 'الدفع الآن', checkoutLoading: 'جارٍ فتح الدفع…', checkoutError: 'تعذر فتح الدفع الآمن حاليًا. حاول مجددًا أو تواصل مع فريقنا.',
+    paySecurely: 'الدفع الآن', checkoutLoading: 'جارٍ فتح الدفع…', checkoutError: 'تعذر فتح الدفع الآمن حاليًا. حاول مجددًا أو تواصل مع فريقنا.', stripeEquivalent: 'دفع آمن عبر Stripe', monthlyPrice: 'السعر الشهري', annualPrice: 'السعر السنوي',
   },
   en: {
     currencyNotice: 'Secure payment is made in euros at the equivalent amount shown. Your bank may apply currency conversion fees.',
     installmentsNotice: 'Payment in three instalments remains available after speaking with our team.',
-    paySecurely: 'Pay now', checkoutLoading: 'Opening payment…', checkoutError: 'Secure payment cannot be opened right now. Try again or contact our team.',
+    paySecurely: 'Pay now', checkoutLoading: 'Opening payment…', checkoutError: 'Secure payment cannot be opened right now. Try again or contact our team.', stripeEquivalent: 'Secure Stripe payment', monthlyPrice: 'Monthly price', annualPrice: 'Annual price',
   },
   it: {
     currencyNotice: 'Il pagamento sicuro viene effettuato in euro secondo l’equivalente indicato. La tua banca potrebbe applicare commissioni di conversione.',
     installmentsNotice: 'Il pagamento in tre rate resta possibile dopo aver parlato con il nostro team.',
-    paySecurely: 'Paga ora', checkoutLoading: 'Apertura del pagamento…', checkoutError: 'Al momento non è possibile aprire il pagamento sicuro. Riprova o contatta il nostro team.',
+    paySecurely: 'Paga ora', checkoutLoading: 'Apertura del pagamento…', checkoutError: 'Al momento non è possibile aprire il pagamento sicuro. Riprova o contatta il nostro team.', stripeEquivalent: 'Pagamento sicuro Stripe', monthlyPrice: 'Prezzo mensile', annualPrice: 'Prezzo annuale',
   },
   ru: {
     currencyNotice: 'Безопасная оплата производится в евро по указанному эквиваленту. Ваш банк может взимать комиссию за конвертацию.',
     installmentsNotice: 'Оплата тремя частями доступна после согласования с нашей командой.',
-    paySecurely: 'Оплатить сейчас', checkoutLoading: 'Переход к оплате…', checkoutError: 'Сейчас не удаётся открыть безопасную оплату. Повторите попытку или свяжитесь с нашей командой.',
+    paySecurely: 'Оплатить сейчас', checkoutLoading: 'Переход к оплате…', checkoutError: 'Сейчас не удаётся открыть безопасную оплату. Повторите попытку или свяжитесь с нашей командой.', stripeEquivalent: 'Безопасная оплата Stripe', monthlyPrice: 'Цена за месяц', annualPrice: 'Цена за год',
   },
 };
 
 const CHECKOUT_AMOUNTS = {
   cv_essential: { oneTime: '23 €' },
   cv_complete: { oneTime: '59 €' },
-  artisan: { monthly: '8,90 €', annual: '89 €' },
-  premium: { monthly: '17,90 €', annual: '175 €' },
+  artisan: { monthly: { tnd: '30', eur: '8,90 €' }, annual: { tnd: '299', eur: '89 €' } },
+  premium: { monthly: { tnd: '59', eur: '17,90 €' }, annual: { tnd: '595', eur: '175 €' } },
 } as const;
 
 interface SubscriptionFormState {
@@ -665,6 +670,7 @@ export function SubscriptionRequestForm({
   selectedPlan,
   selectedPlanLabel,
   checkoutOffer,
+  initialBillingPeriod,
   onCancel,
   onSuccess,
 }: SubscriptionRequestFormProps) {
@@ -678,7 +684,11 @@ export function SubscriptionRequestForm({
   const requestIdRef = useRef(createRequestId());
   const submittingRef = useRef(false);
   const [step, setStep] = useState<1 | 2>(1);
-  const [form, setForm] = useState<SubscriptionFormState>(INITIAL_STATE);
+  const [form, setForm] = useState<SubscriptionFormState>(() => ({
+    ...INITIAL_STATE,
+    requestedBillingPeriod: initialBillingPeriod ?? '',
+    requestedPaymentSchedule: initialBillingPeriod === 'annual' ? 'one_payment' : '',
+  }));
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -829,11 +839,11 @@ export function SubscriptionRequestForm({
     }
     if (form.requestedBillingPeriod === 'monthly') {
       const amount = CHECKOUT_AMOUNTS[checkoutOffer as 'artisan' | 'premium']?.monthly;
-      return amount ? { offer: `${checkoutOffer}_monthly`, amount: `${amount} / ${copy.monthly.toLowerCase()}` } : null;
+      return amount ? { offer: `${checkoutOffer}_monthly`, ...amount, tnd: `${amount.tnd} TND / ${copy.monthly.toLowerCase()}`, period: copy.monthly, priceLabel: checkoutCopy.monthlyPrice } : null;
     }
     if (form.requestedBillingPeriod === 'annual' && form.requestedPaymentSchedule === 'one_payment') {
       const amount = CHECKOUT_AMOUNTS[checkoutOffer as 'artisan' | 'premium']?.annual;
-      return amount ? { offer: `${checkoutOffer}_annual`, amount: `${amount} / ${copy.annual.toLowerCase()}` } : null;
+      return amount ? { offer: `${checkoutOffer}_annual`, ...amount, tnd: `${amount.tnd} TND / ${copy.annual.toLowerCase()}`, period: copy.annual, priceLabel: checkoutCopy.annualPrice } : null;
     }
     return null;
   })();
@@ -1017,6 +1027,13 @@ export function SubscriptionRequestForm({
           <div className="rounded-2xl border border-[#D4AF37]/40 bg-[#FFF9E8] p-4">
             <span className="block text-xs font-bold uppercase tracking-[0.12em] text-slate-600">{copy.selectedSolution}</span>
             <strong className="mt-1 block text-base text-[#4A1D43]">{selectedPlanLabel}</strong>
+            {planKind !== 'cv' && checkoutSelection && 'tnd' in checkoutSelection && (
+              <div className="mt-3 border-t border-[#D4AF37]/30 pt-3 text-sm text-slate-700">
+                <p className="font-bold text-[#07543F]">{selectedPlanLabel} — {checkoutSelection.period}</p>
+                <p className="mt-1"><span className="font-semibold">{checkoutSelection.priceLabel} :</span> {checkoutSelection.tnd}</p>
+                <p><span className="font-semibold">{checkoutCopy.stripeEquivalent} :</span> {checkoutSelection.eur}</p>
+              </div>
+            )}
           </div>
 
           {planKind === 'cv' ? (
@@ -1139,7 +1156,7 @@ export function SubscriptionRequestForm({
               disabled={submitting || openingCheckout}
               className="w-full rounded-xl bg-[#07543F] px-5 py-3 text-sm font-bold text-white transition hover:bg-emerald-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] disabled:cursor-wait disabled:opacity-60"
             >
-              {openingCheckout ? checkoutCopy.checkoutLoading : `${checkoutCopy.paySecurely} — ${checkoutSelection.amount}`}
+              {openingCheckout ? checkoutCopy.checkoutLoading : `${checkoutCopy.paySecurely} — ${'eur' in checkoutSelection ? checkoutSelection.eur : checkoutSelection.amount}`}
             </button>
           )}
         </section>
