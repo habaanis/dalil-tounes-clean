@@ -753,7 +753,6 @@ const annualOfferCopy: Record<OfferLanguage, { artisan: string; premium: string 
   it: { artisan: 'oppure 299 TND / anno — circa 2 mesi gratuiti', premium: 'oppure 595 TND / anno — circa 2 mesi gratuiti' },
   ru: { artisan: 'или 299 TND / год — около 2 месяцев бесплатно', premium: 'или 595 TND / год — около 2 месяцев бесплатно' },
 };
-
 function ensureFeatureDescriptions(items: readonly string[], description: string) {
   return items.map((item) => splitFeature(item).description ? item : `${item} — ${description}`);
 }
