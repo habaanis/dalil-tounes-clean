@@ -686,6 +686,66 @@ const accordionDescriptionLeadCopy: Record<OfferLanguage, string> = {
   ru: 'Эта услуга включена и адаптируется к информации о вашей деятельности.',
 };
 
+const essentialCvCopy: Record<OfferLanguage, {
+  title: string;
+  subtitle: string;
+  badge: string;
+  humanMessage: string[];
+  features: string[];
+  payOnce: string;
+  payThreeTimes: string;
+  publication: string;
+  ideal: string;
+  choose: string;
+  planLabel: string;
+  completeIdeal: string;
+  helpTitle: string;
+  helpText: string;
+}> = {
+  fr: {
+    title: 'CV Business Essentiel',
+    subtitle: 'Une première présentation professionnelle pour lancer ton activité sans dépasser ton budget.',
+    badge: 'Formule de démarrage',
+    humanMessage: [
+      'Chez Dalil Tounes, nous savons que chaque activité avance à son rythme.',
+      'Si tu viens de commencer ou que ton budget est encore limité, nous pouvons t’aider à construire une première présence professionnelle, simple et claire.',
+      'Notre objectif est de t’accompagner aujourd’hui et de faire évoluer ta présentation avec ton activité.',
+    ],
+    features: ['Entretien court et collecte des informations essentielles', 'Présentation courte de l’activité', 'Coordonnées complètes', 'Horaires', 'Zones d’intervention', 'Jusqu’à 5 photos fournies par le professionnel', 'Connexion de WhatsApp, Facebook, Instagram, du site internet et de Google Maps', 'Lien personnel partageable', 'QR Code numérique', 'Aperçu privé avant publication', 'Une correction groupée', 'Publication après paiement complet'],
+    payOnce: '79 TND en une fois', payThreeTimes: '27 + 26 + 26 TND',
+    publication: 'La publication finale intervient après le paiement complet.',
+    ideal: 'Idéal pour commencer avec une présentation claire et les informations essentielles.',
+    choose: 'Choisir la formule Essentielle', planLabel: 'CV Business Essentiel — 79 TND',
+    completeIdeal: 'Idéal si tu veux une présentation plus complète, structurée et détaillée de ton activité, de tes services et de ton savoir-faire.',
+    helpTitle: 'Tu hésites entre les deux formules ?',
+    helpText: 'Écris-nous sur WhatsApp ou par e-mail. Nous t’aiderons à choisir la solution la plus adaptée à ton activité et à ton budget, sans te pousser vers une offre inutilement élevée.',
+  },
+  ar: {
+    title: 'CV Business الأساسي', subtitle: 'عرض مهني أول لإطلاق نشاطك دون تجاوز ميزانيتك.', badge: 'صيغة للانطلاق',
+    humanMessage: ['في دليل تونس، نعرف أن لكل نشاط وتيرته الخاصة.', 'إذا كنت قد بدأت للتو أو كانت ميزانيتك ما تزال محدودة، يمكننا مساعدتك على بناء حضور مهني أول بسيط وواضح.', 'هدفنا هو مرافقتك اليوم وتطوير عرضك مع تطور نشاطك.'],
+    features: ['محادثة قصيرة وجمع المعلومات الأساسية', 'تقديم مختصر للنشاط', 'بيانات اتصال كاملة', 'أوقات العمل', 'مناطق التدخل', 'حتى 5 صور يقدمها المهني', 'ربط واتساب وفيسبوك وإنستغرام والموقع الإلكتروني وخرائط Google', 'رابط شخصي قابل للمشاركة', 'رمز QR رقمي', 'معاينة خاصة قبل النشر', 'تعديل واحد مجمّع', 'النشر بعد إتمام الدفع'],
+    payOnce: '79 د.ت دفعة واحدة', payThreeTimes: '27 + 26 + 26 د.ت', publication: 'يتم النشر النهائي بعد إتمام الدفع.', ideal: 'مثالي للبدء بعرض واضح ومعلومات أساسية.', choose: 'اختر الصيغة الأساسية', planLabel: 'CV Business الأساسي — 79 د.ت', completeIdeal: 'مثالي إذا كنت تريد عرضًا أكمل ومنظمًا ومفصلًا لنشاطك وخدماتك وخبرتك.', helpTitle: 'هل تتردد بين الصيغتين؟', helpText: 'اكتب لنا عبر واتساب أو البريد الإلكتروني. سنساعدك على اختيار الحل الأنسب لنشاطك وميزانيتك، دون دفعك إلى صيغة أعلى لا تحتاج إليها.',
+  },
+  en: {
+    title: 'Essential Business CV', subtitle: 'A first professional presentation to launch your activity without exceeding your budget.', badge: 'Starter plan',
+    humanMessage: ['At Dalil Tounes, we know that every activity moves at its own pace.', 'If you have just started or your budget is still limited, we can help you build a simple, clear first professional presence.', 'Our goal is to support you today and develop your presentation as your activity grows.'],
+    features: ['Short interview and collection of essential information', 'Short presentation of the activity', 'Full contact details', 'Opening hours', 'Service areas', 'Up to 5 photos supplied by the professional', 'Connection to WhatsApp, Facebook, Instagram, website and Google Maps', 'Personal shareable link', 'Digital QR Code', 'Private preview before publication', 'One grouped revision', 'Publication after full payment'],
+    payOnce: '79 TND in one payment', payThreeTimes: '27 + 26 + 26 TND', publication: 'Final publication takes place after full payment.', ideal: 'Ideal for getting started with a clear presentation and essential information.', choose: 'Choose the Essential plan', planLabel: 'Essential Business CV — 79 TND', completeIdeal: 'Ideal if you want a fuller, structured and detailed presentation of your activity, services and expertise.', helpTitle: 'Not sure which plan to choose?', helpText: 'Write to us on WhatsApp or by email. We will help you choose the solution best suited to your activity and budget, without pushing you towards an unnecessarily expensive plan.',
+  },
+  it: {
+    title: 'CV Business Essenziale', subtitle: 'Una prima presentazione professionale per avviare la tua attività senza superare il budget.', badge: 'Formula di partenza',
+    humanMessage: ['In Dalil Tounes sappiamo che ogni attività procede con i propri tempi.', 'Se hai appena iniziato o il tuo budget è ancora limitato, possiamo aiutarti a creare una prima presenza professionale semplice e chiara.', 'Il nostro obiettivo è accompagnarti oggi e far evolvere la tua presentazione insieme alla tua attività.'],
+    features: ['Breve colloquio e raccolta delle informazioni essenziali', 'Breve presentazione dell’attività', 'Recapiti completi', 'Orari', 'Zone di intervento', 'Fino a 5 foto fornite dal professionista', 'Collegamento di WhatsApp, Facebook, Instagram, sito internet e Google Maps', 'Link personale condivisibile', 'QR Code digitale', 'Anteprima privata prima della pubblicazione', 'Una revisione raggruppata', 'Pubblicazione dopo il pagamento completo'],
+    payOnce: '79 TND in un’unica soluzione', payThreeTimes: '27 + 26 + 26 TND', publication: 'La pubblicazione finale avviene dopo il pagamento completo.', ideal: 'Ideale per iniziare con una presentazione chiara e le informazioni essenziali.', choose: 'Scegli la formula Essenziale', planLabel: 'CV Business Essenziale — 79 TND', completeIdeal: 'Ideale se desideri una presentazione più completa, strutturata e dettagliata della tua attività, dei servizi e delle competenze.', helpTitle: 'Sei indeciso tra le due formule?', helpText: 'Scrivici su WhatsApp o via e-mail. Ti aiuteremo a scegliere la soluzione più adatta alla tua attività e al tuo budget, senza spingerti verso una formula inutilmente più costosa.',
+  },
+  ru: {
+    title: 'CV Business Essential', subtitle: 'Первая профессиональная презентация для запуска деятельности без превышения бюджета.', badge: 'Стартовый вариант',
+    humanMessage: ['В Dalil Tounes мы понимаем, что каждый бизнес развивается в своём темпе.', 'Если вы только начали или ваш бюджет пока ограничен, мы поможем создать первое простое и понятное профессиональное представление.', 'Наша цель — поддержать вас сегодня и развивать презентацию вместе с вашей деятельностью.'],
+    features: ['Короткое интервью и сбор основной информации', 'Краткое представление деятельности', 'Полные контактные данные', 'Часы работы', 'Зоны обслуживания', 'До 5 фотографий от специалиста', 'Подключение WhatsApp, Facebook, Instagram, сайта и Google Maps', 'Персональная ссылка для публикации', 'Цифровой QR-код', 'Закрытый предпросмотр до публикации', 'Один пакет правок', 'Публикация после полной оплаты'],
+    payOnce: '79 TND одним платежом', payThreeTimes: '27 + 26 + 26 TND', publication: 'Окончательная публикация выполняется после полной оплаты.', ideal: 'Подходит для старта с понятной презентацией и основной информацией.', choose: 'Выбрать Essential', planLabel: 'CV Business Essential — 79 TND', completeIdeal: 'Подходит, если вам нужна более полная, структурированная и подробная презентация деятельности, услуг и опыта.', helpTitle: 'Не уверены, какой вариант выбрать?', helpText: 'Напишите нам в WhatsApp или по электронной почте. Мы поможем выбрать решение под вашу деятельность и бюджет, не склоняя вас к неоправданно дорогому варианту.',
+  },
+};
+
 function ensureFeatureDescriptions(items: readonly string[], description: string) {
   return items.map((item) => splitFeature(item).description ? item : `${item} — ${description}`);
 }
@@ -1281,6 +1341,7 @@ export const Subscription = () => {
   const { language } = useLanguage();
   const isArabic = language === 'ar';
   const copy = subscriptionCopy[language as keyof typeof subscriptionCopy] ?? subscriptionCopy.fr;
+  const essentialCopy = essentialCvCopy[language as OfferLanguage] ?? essentialCvCopy.fr;
   const [activePreview, setActivePreview] = useState<PreviewType>(null);
   const [showCvDetails, setShowCvDetails] = useState(false);
   const cvDetailsId = useId().replace(/:/g, '');
@@ -1409,7 +1470,47 @@ export const Subscription = () => {
           </p>
         </section>
 
-        <section className="mt-9 rounded-3xl border-2 border-[#D6AF2E] bg-gradient-to-br from-white via-white to-amber-50/80 p-5 shadow-[0_14px_36px_rgba(214,175,46,0.12)] sm:mt-11 sm:p-7">
+        <section className="mt-9 rounded-3xl border border-[#D6AF2E]/60 bg-white p-5 shadow-[0_10px_28px_rgba(74,18,63,0.06)] sm:mt-11 sm:p-6" aria-labelledby="essential-cv-title">
+          <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
+            <div>
+              <span className="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-emerald-800">
+                {essentialCopy.badge}
+              </span>
+              <h2 id="essential-cv-title" className="mt-3 text-2xl font-bold text-[#4A123F]">{essentialCopy.title}</h2>
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">{essentialCopy.subtitle}</p>
+            </div>
+            <div className="flex items-end gap-2 text-[#07543F] lg:justify-end">
+              <span className="text-4xl font-black">79</span><span className="pb-1 font-bold">TND</span>
+            </div>
+          </div>
+
+          <aside className="mt-5 rounded-2xl border border-emerald-100 bg-emerald-50/50 p-4" aria-label={essentialCopy.badge}>
+            {essentialCopy.humanMessage.map((paragraph) => (
+              <p key={paragraph} className="mt-2 first:mt-0 text-sm leading-6 text-slate-700">{paragraph}</p>
+            ))}
+          </aside>
+
+          <div className="mt-5">
+            <FeatureList items={essentialCopy.features} columns />
+          </div>
+
+          <div className="mt-5 flex flex-wrap items-center gap-2" aria-label={copy.paymentOptions}>
+            <span className="rounded-lg bg-[#07543F] px-4 py-2 text-sm font-bold text-white">{essentialCopy.payOnce}</span>
+            <span className="text-xs text-slate-400">{copy.or}</span>
+            <span className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-[#4A123F]">{essentialCopy.payThreeTimes}</span>
+          </div>
+          <p className="mt-3 text-sm font-semibold text-slate-600">{essentialCopy.publication}</p>
+          <p className="mt-4 border-t border-amber-100 pt-4 text-sm font-bold text-[#07543F]">{essentialCopy.ideal}</p>
+          <button
+            type="button"
+            onClick={() => openRequest('cv_business', essentialCopy.planLabel)}
+            className="mt-5 w-full rounded-xl bg-[#07543F] px-5 py-3 text-sm font-bold text-white transition hover:bg-emerald-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D6AF2E] sm:w-auto"
+          >
+            {essentialCopy.choose}
+          </button>
+        </section>
+
+        <section className="mt-5 rounded-3xl border-2 border-[#D6AF2E] bg-gradient-to-br from-white via-white to-amber-50/80 p-5 shadow-[0_14px_36px_rgba(214,175,46,0.12)] sm:p-7">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
             <div className="max-w-3xl">
               <span className="w-fit rounded-full bg-amber-100 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-amber-800">
@@ -1440,6 +1541,7 @@ export const Subscription = () => {
                 </li>
               ))}
             </ul>
+            <p className="mt-4 border-t border-emerald-200 pt-3 text-sm font-bold leading-6 text-[#07543F]">{essentialCopy.completeIdeal}</p>
           </aside>
 
           <div className="mt-6 rounded-2xl border border-amber-200 bg-white/80 p-5 sm:p-6">
@@ -1500,6 +1602,19 @@ export const Subscription = () => {
             {copy.requestCreation}
           </button>
         </section>
+
+        <aside className="mt-5 rounded-2xl border border-amber-200 bg-white p-5 text-center shadow-sm" aria-labelledby="cv-choice-help-title">
+          <h2 id="cv-choice-help-title" className="text-lg font-bold text-[#4A123F]">{essentialCopy.helpTitle}</h2>
+          <p className="mx-auto mt-2 max-w-3xl text-sm leading-6 text-slate-700">{essentialCopy.helpText}</p>
+          <div className="mt-4 flex flex-wrap justify-center gap-3">
+            <a href="https://wa.me/21650390546" target="_blank" rel="noreferrer" className="rounded-xl bg-[#07543F] px-5 py-3 text-sm font-bold text-white transition hover:bg-emerald-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D6AF2E]">
+              {(offerCopy[language as OfferLanguage] ?? offerCopy.fr).contactWhatsApp}
+            </a>
+            <a href="mailto:contact@dalil-tounes.com" className="rounded-xl border border-[#4A123F]/20 bg-white px-5 py-3 text-sm font-bold text-[#4A123F] transition hover:border-[#D6AF2E] hover:bg-amber-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D6AF2E]">
+              {(offerCopy[language as OfferLanguage] ?? offerCopy.fr).contactEmail}
+            </a>
+          </div>
+        </aside>
 
         <section className="mt-5 rounded-3xl bg-gradient-to-r from-[#4A123F] to-[#5F174F] p-5 text-white shadow-xl sm:p-7">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
