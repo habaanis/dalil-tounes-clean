@@ -1176,6 +1176,12 @@ const premiumDetailCopy: Record<OfferLanguage, {
   ru: { presentation: 'Мы помогаем частным и корпоративным клиентам, предлагая подходящие услуги, индивидуальное сопровождение и признанный опыт.', servicesTitle: 'Основные услуги', services: ['Основная услуга', 'Индивидуальное сопровождение', 'Выезд по запросу', 'Расчёт под ваши потребности'], discoverServices: 'Посмотреть услуги', galleryTitle: 'Наши работы', galleryAlt: 'Профессиональная работа', newsTitle: 'Последняя новость', newsText: 'Откройте для себя наше новое предложение этого месяца.', quote: 'Запросить расчёт', book: 'Забронировать', whatsapp: 'Написать в WhatsApp', practicalTitle: 'Практическая информация', practicalItems: ['Пн – Сб: 08:00 – 18:00', 'Сус и соседние регионы', 'Деловая улица, Сус', 'Google Maps', 'www.entreprise-exemple.tn', 'Facebook · Instagram · LinkedIn'], finalMessage: 'Полный профиль, который представляет вашу компанию, подчёркивает опыт и упрощает обращения будущих клиентов.', badgeNote: 'Этот знак подтверждает достоверность информации, собранной Dalil Tounes, но не сертифицирует качество товаров или услуг.' },
 };
 
+<<<<<<< HEAD
+  return (
+    <div className="mx-auto w-full max-w-[460px] overflow-hidden">
+      <BusinessDetail preview business={demonstrationBusiness} />
+    </div>
+=======
 function PremiumDetailPreview({ copy, language }: { copy: SubscriptionCopy; language: OfferLanguage }) {
   const detailCopy = premiumDetailCopy[language] ?? premiumDetailCopy.fr;
   const practicalIcons = [Clock3, Navigation, MapPin, MapPin, Globe2, Share2];
@@ -1252,6 +1258,7 @@ function PremiumDetailPreview({ copy, language }: { copy: SubscriptionCopy; lang
         {detailCopy.finalMessage}
       </footer>
     </article>
+>>>>>>> main
   );
 }
 
