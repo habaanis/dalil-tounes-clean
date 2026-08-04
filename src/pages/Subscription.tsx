@@ -1,32 +1,37 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import {
   Check,
-  Camera,
+  CalendarDays,
   ChevronRight,
   Clock3,
-  ExternalLink,
   Globe2,
+  ImageIcon,
   Info,
+  Mail,
   MapPin,
   MessageCircle,
   Navigation,
   Phone,
+  QrCode,
   Rocket,
   Send,
   Share2,
   Sparkles,
+  Star,
+  UserRound,
+  Wrench,
   X,
 } from 'lucide-react';
 import { SubscriptionRequestForm } from '../components/SubscriptionRequestForm';
 import type { BillingPeriod, CheckoutOffer, SubscriptionPlanCode } from '../components/SubscriptionRequestForm';
-import { BusinessDetail } from '../components/BusinessDetail';
 import { useLanguage } from '../context/LanguageContext';
 
-type PreviewType = 'free' | 'artisan' | 'premium' | 'premium-detail' | 'launch' | 'request' | null;
+type PreviewType = 'free' | 'artisan' | 'premium' | 'launch' | 'request' | null;
 type ModalSize = 'compact' | 'medium' | 'large';
 
 const LOGO_PATH = '/images/logo_dalil_tounes_sceau_luxe.webp';
 const ARTISAN_PREVIEW_IMAGE_PATH = '/images/cat_magasin.jpg.jpg';
+const PREMIUM_PREVIEW_IMAGE_PATH = '/images/drapeau-tunisie.webp';
 const MODAL_SIZE_CLASS_NAME: Record<ModalSize, string> = {
   compact: 'w-[min(700px,calc(100vw-24px))] sm:w-[min(700px,calc(100vw-48px))]',
   medium: 'w-[min(960px,calc(100vw-24px))] sm:w-[min(960px,calc(100vw-48px))]',
@@ -670,6 +675,20 @@ type SubscriptionCopy = (typeof subscriptionCopy)[keyof typeof subscriptionCopy]
 
 type OfferLanguage = keyof typeof subscriptionCopy;
 
+const businessPreviewCopy: Record<OfferLanguage, {
+  artisanBadge: string; certified: string; category: string; city: string; status: string;
+  actions: [string, string, string, string, string, string];
+  sections: [string, string, string, string, string];
+  sectionHints: [string, string, string, string, string];
+  social: string; email: string; recommend: string; recommendHint: string; qr: string; demoFeedback: string;
+}> = {
+  fr: { artisanBadge: 'Artisan', certified: 'Certifié Dalil Tounes', category: 'Services professionnels', city: 'Tunis, Tunisie', status: 'Ouvert', actions: ['Appeler', 'WhatsApp', 'Itinéraire', 'Réserver', 'Site web', 'Partager'], sections: ['À propos', 'Services', 'Horaires', 'Avis clients', 'Galerie'], sectionHints: ['Découvre qui nous sommes', 'Ce que nous faisons pour toi', 'Lun–Sam : 08:00–18:00', '5,0 · Avis de démonstration', 'Photos de nos réalisations'], social: 'Réseaux sociaux', email: 'Envoyer un e-mail', recommend: 'Recommander ce professionnel', recommendHint: 'Aide d’autres personnes à le découvrir', qr: 'QR de partage professionnel', demoFeedback: 'Interaction de démonstration :' },
+  ar: { artisanBadge: 'حرفي', certified: 'موثّق من دليل تونس', category: 'خدمات مهنية', city: 'تونس، تونس', status: 'مفتوح', actions: ['اتصال', 'واتساب', 'الاتجاهات', 'حجز', 'الموقع', 'مشاركة'], sections: ['من نحن', 'الخدمات', 'الأوقات', 'آراء العملاء', 'الصور'], sectionHints: ['اكتشف من نحن', 'ما نقدمه لك', 'الإثنين–السبت: 08:00–18:00', '5.0 · آراء تجريبية', 'صور من إنجازاتنا'], social: 'شبكات التواصل', email: 'إرسال بريد إلكتروني', recommend: 'أوصِ بهذا المهني', recommendHint: 'ساعد الآخرين على اكتشافه', qr: 'رمز QR للمشاركة المهنية', demoFeedback: 'تفاعل تجريبي:' },
+  en: { artisanBadge: 'Artisan', certified: 'Dalil Tounes Certified', category: 'Professional services', city: 'Tunis, Tunisia', status: 'Open', actions: ['Call', 'WhatsApp', 'Directions', 'Book', 'Website', 'Share'], sections: ['About', 'Services', 'Hours', 'Customer reviews', 'Gallery'], sectionHints: ['Discover who we are', 'What we do for you', 'Mon–Sat: 08:00–18:00', '5.0 · Demo reviews', 'Photos of our work'], social: 'Social networks', email: 'Send an email', recommend: 'Recommend this professional', recommendHint: 'Help other people discover them', qr: 'Professional sharing QR', demoFeedback: 'Demo interaction:' },
+  it: { artisanBadge: 'Artisan', certified: 'Certificato Dalil Tounes', category: 'Servizi professionali', city: 'Tunisi, Tunisia', status: 'Aperto', actions: ['Chiama', 'WhatsApp', 'Indicazioni', 'Prenota', 'Sito web', 'Condividi'], sections: ['Chi siamo', 'Servizi', 'Orari', 'Recensioni', 'Galleria'], sectionHints: ['Scopri chi siamo', 'Cosa facciamo per te', 'Lun–Sab: 08:00–18:00', '5,0 · Recensioni demo', 'Foto dei nostri lavori'], social: 'Social network', email: 'Invia un’e-mail', recommend: 'Consiglia questo professionista', recommendHint: 'Aiuta altre persone a scoprirlo', qr: 'QR di condivisione professionale', demoFeedback: 'Interazione demo:' },
+  ru: { artisanBadge: 'Artisan', certified: 'Проверено Dalil Tounes', category: 'Профессиональные услуги', city: 'Тунис, Тунис', status: 'Открыто', actions: ['Позвонить', 'WhatsApp', 'Маршрут', 'Бронь', 'Сайт', 'Поделиться'], sections: ['О нас', 'Услуги', 'Часы работы', 'Отзывы', 'Галерея'], sectionHints: ['Узнайте о нас', 'Что мы делаем для вас', 'Пн–Сб: 08:00–18:00', '5,0 · Демо-отзывы', 'Фотографии наших работ'], social: 'Социальные сети', email: 'Отправить письмо', recommend: 'Рекомендовать специалиста', recommendHint: 'Помогите другим узнать о нём', qr: 'Профессиональный QR-код', demoFeedback: 'Демонстрация:' },
+};
+
 const personalAccessCopy: Record<OfferLanguage, string> = {
   fr: 'Accès personnel pour gérer tes informations',
   ar: 'دخول شخصي لإدارة معلوماتك',
@@ -1104,158 +1123,65 @@ function EssentialCardPreview({ copy }: { copy: SubscriptionCopy }) {
   );
 }
 
-function ArtisanCardPreview({ copy }: { copy: SubscriptionCopy }) {
-  const details = [
-    { icon: Phone, label: 'Téléphone', value: '+216 25 123 456' },
-    { icon: MessageCircle, label: 'WhatsApp', value: '+216 25 123 456' },
-    { icon: MapPin, label: 'Adresse', value: "Rue de l’Artisanat, Sousse, Tunisie" },
-    { icon: Clock3, label: 'Horaires', value: 'Lun – Sam : 08:00 – 18:00' },
-    { icon: Navigation, label: "Zones d’intervention", value: 'Sousse, Monastir, Mahdia et alentours' },
-    { icon: Globe2, label: 'Site internet', value: 'www.artisan-exemple.tn', external: true },
-    { icon: Share2, label: 'Réseaux sociaux', value: 'Facebook · Instagram · TikTok', external: true },
-    { icon: MapPin, label: 'Google Maps', value: 'Voir l’itinéraire', external: true },
-  ];
+function SubscriptionBusinessCardPreview({ variant, copy, language }: { variant: 'artisan' | 'premium'; copy: SubscriptionCopy; language: OfferLanguage }) {
+  const labels = businessPreviewCopy[language] ?? businessPreviewCopy.fr;
+  const [openSection, setOpenSection] = useState<number | null>(null);
+  const [feedback, setFeedback] = useState('');
+  const isPremium = variant === 'premium';
+  const actionIcons = [Phone, MessageCircle, Navigation, CalendarDays, Globe2, Share2];
+  const sectionIcons = [UserRound, Wrench, Clock3, Star, ImageIcon];
+  const activate = (label: string) => setFeedback(`${labels.demoFeedback} ${label}`);
 
   return (
-    <div className="mx-auto overflow-hidden rounded-[28px] border-2 border-[#D6AF2E] bg-gradient-to-br from-[#07543F] to-[#063C30] p-4 text-white shadow-2xl sm:p-6">
-      <div className="grid gap-6 lg:grid-cols-[1.08fr_0.92fr] lg:gap-7">
-        <div className="min-w-0">
-          <div className="flex items-start gap-4">
-            <div className="relative min-w-0 flex-1 overflow-hidden rounded-2xl border border-[#D6AF2E]/80">
-              <img
-                src={ARTISAN_PREVIEW_IMAGE_PATH}
-                alt={`${copy.artisan} — ${copy.demoName}`}
-                className="h-56 w-full object-cover sm:h-64"
-              />
-              <span className="absolute bottom-3 left-3 flex items-center gap-2 rounded-full bg-black/70 px-3 py-1.5 text-sm font-bold text-white backdrop-blur-sm">
-                <Camera className="h-4 w-4 text-[#F4CE55]" aria-hidden="true" /> 5 photos
-              </span>
-            </div>
-            <span className="shrink-0 rounded-full border border-[#D6AF2E] bg-[#D6AF2E]/10 px-3 py-1.5 text-xs font-black tracking-wider text-[#F4CE55]">
-              {copy.artisan}
-            </span>
-          </div>
+    <article className={`mx-auto w-full max-w-[500px] overflow-hidden rounded-[30px] text-white ${isPremium ? 'border-[3px] border-[#D6AF2E] bg-[radial-gradient(circle_at_50%_15%,#0B694F_0%,#063D31_42%,#032C24_100%)] shadow-[0_24px_60px_rgba(3,44,36,0.35),inset_0_0_38px_rgba(214,175,46,0.08)]' : 'border-2 border-[#D6AF2E]/80 bg-gradient-to-b from-[#086047] to-[#064333] shadow-[0_18px_42px_rgba(7,84,63,0.25)]'}`}>
+      <div className="relative h-36 overflow-hidden sm:h-44">
+        <img src={isPremium ? PREMIUM_PREVIEW_IMAGE_PATH : ARTISAN_PREVIEW_IMAGE_PATH} alt={`${copy.demoName} — ${labels.category}`} className="h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#064333] via-[#064333]/25 to-transparent" />
+        <div className="absolute inset-x-0 -bottom-10 flex justify-center">
+          <DemoLogo alt={copy.demoName} />
+        </div>
+      </div>
 
-          <h3 className="mt-5 break-words text-2xl font-black text-[#F4CE55] sm:text-3xl">{copy.demoName}</h3>
-          <p className="mt-1 text-base font-semibold text-white">{copy.demoCategory}</p>
-          <p className="mt-4 flex items-center gap-2 text-emerald-50">
-            <MapPin className="h-5 w-5 shrink-0" aria-hidden="true" /> Sousse, {copy.tunisia}
-          </p>
-          <div className="mt-4 flex items-start gap-2">
-            <Clock3 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-300" aria-hidden="true" />
-            <div>
-              <p className="font-bold text-emerald-300">{copy.open}</p>
-              <p className="mt-1 text-sm text-emerald-50">{copy.todayCardSchedule}</p>
-            </div>
-          </div>
-          <div className="mt-5 flex items-center justify-center gap-2 rounded-full bg-[#D6AF2E] px-5 py-3.5 text-base font-black text-[#07543F] shadow-lg">
-            <Phone className="h-5 w-5" aria-hidden="true" /> {copy.call}
+      <div className="px-4 pb-5 pt-14 sm:px-6 sm:pb-7">
+        <div className="text-center">
+          <span className={`inline-flex rounded-full px-3 py-1 text-xs font-black uppercase tracking-[0.12em] ${isPremium ? 'border border-[#D6AF2E] bg-black/20 text-[#F4CE55]' : 'bg-white/12 text-emerald-50'}`}>{isPremium ? labels.certified : labels.artisanBadge}</span>
+          <h3 className={`mt-3 break-words text-2xl font-black sm:text-3xl ${isPremium ? 'text-[#F4CE55]' : 'text-white'}`}>{copy.demoName}</h3>
+          <p className="mt-1 font-semibold text-[#F4CE55]">{labels.category}</p>
+          <div className="mt-3 flex flex-wrap items-center justify-center gap-2 text-sm text-emerald-50">
+            <span className="inline-flex items-center gap-1.5"><MapPin className="h-4 w-4 text-[#F4CE55]" aria-hidden="true" />{labels.city}</span>
+            <span aria-hidden="true">·</span>
+            <span className="inline-flex items-center gap-1.5 font-bold text-emerald-300"><Clock3 className="h-4 w-4" aria-hidden="true" />{labels.status}</span>
           </div>
         </div>
 
-        <dl className="min-w-0 divide-y divide-white/10 border-t border-white/15 lg:border-l lg:border-t-0 lg:pl-6 rtl:lg:border-l-0 rtl:lg:border-r rtl:lg:pl-0 rtl:lg:pr-6">
-          {details.map(({ icon: Icon, label, value, external }) => (
-            <div key={label} className="flex min-w-0 items-center gap-3 py-3 first:pt-0 lg:first:pt-1">
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 text-[#F4CE55]">
-                <Icon className="h-5 w-5" aria-hidden="true" />
-              </span>
-              <div className="min-w-0 flex-1">
-                <dt className="text-sm font-bold text-white">{label}</dt>
-                <dd className="mt-0.5 break-words text-sm leading-5 text-emerald-50">{value}</dd>
-              </div>
-              {external && <ExternalLink className="h-4 w-4 shrink-0 text-emerald-100" aria-hidden="true" />}
-            </div>
-          ))}
-        </dl>
+        <div className="mt-5 grid grid-cols-3 gap-2 sm:gap-3">
+          {labels.actions.map((label, index) => {
+            const Icon = actionIcons[index];
+            return <button key={label} type="button" onClick={() => activate(label)} className={`flex min-h-20 flex-col items-center justify-center gap-2 rounded-2xl px-1 py-3 text-xs font-bold transition hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-white sm:text-sm ${isPremium ? 'border border-[#D6AF2E]/75 bg-black/10 text-white shadow-[inset_0_0_16px_rgba(214,175,46,0.08)] hover:bg-[#D6AF2E]/10' : 'border border-white/15 bg-white/8 text-emerald-50 hover:bg-white/15'}`}><Icon className={`h-6 w-6 ${index === 1 ? 'text-emerald-300' : 'text-[#F4CE55]'}`} aria-hidden="true" /><span>{label}</span></button>;
+          })}
+        </div>
+
+        <div className={`mt-5 overflow-hidden rounded-2xl ${isPremium ? 'border border-[#D6AF2E]/70' : 'border border-white/15'}`}>
+          {labels.sections.map((label, index) => {
+            const Icon = sectionIcons[index];
+            const expanded = openSection === index;
+            return <div key={label} className="border-b border-white/10 last:border-b-0"><button type="button" aria-expanded={expanded} onClick={() => setOpenSection(expanded ? null : index)} className="flex w-full items-center gap-3 px-4 py-3 text-start transition hover:bg-white/8 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#D6AF2E]"><span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${isPremium ? 'bg-[#D6AF2E]/12 text-[#F4CE55]' : 'bg-white/10 text-emerald-200'}`}><Icon className="h-5 w-5" aria-hidden="true" /></span><span className="min-w-0 flex-1"><span className="block font-bold">{label}</span><span className="block truncate text-xs text-emerald-100/80">{labels.sectionHints[index]}</span></span><ChevronRight className={`h-5 w-5 shrink-0 text-[#F4CE55] transition ${expanded ? 'rotate-90 rtl:-rotate-90' : 'rtl:rotate-180'}`} aria-hidden="true" /></button>{expanded && <div className="bg-black/10 px-4 pb-4 pt-1 text-sm leading-6 text-emerald-50">{labels.sectionHints[index]}</div>}</div>;
+          })}
+          {isPremium && <button type="button" onClick={() => activate(labels.qr)} className="flex w-full items-center gap-3 border-t border-[#D6AF2E]/30 px-4 py-3 text-start font-bold transition hover:bg-white/8 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#D6AF2E]"><span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#D6AF2E]/12 text-[#F4CE55]"><QrCode className="h-5 w-5" aria-hidden="true" /></span>{labels.qr}</button>}
+        </div>
+
+        <section className={`mt-5 rounded-2xl p-4 text-center ${isPremium ? 'border border-[#D6AF2E]/60 bg-black/10' : 'border border-white/15 bg-white/5'}`} aria-label={labels.social}>
+          <h4 className="font-bold text-[#F4CE55]">{labels.social}</h4>
+          <div className="mt-3 flex flex-wrap justify-center gap-2">
+            {['Instagram', 'Facebook', 'LinkedIn', 'YouTube', 'TikTok'].map((network) => <button key={network} type="button" onClick={() => activate(network)} aria-label={network} className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/10 text-xs font-black transition hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D6AF2E]">{network.slice(0, 2)}</button>)}
+          </div>
+        </section>
+
+        <button type="button" onClick={() => activate(labels.email)} className="mx-auto mt-4 flex items-center justify-center gap-2 rounded-full border border-white/25 px-5 py-2.5 text-sm font-bold transition hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D6AF2E]"><Mail className="h-5 w-5" aria-hidden="true" />{labels.email}</button>
+        <button type="button" onClick={() => activate(labels.recommend)} className={`mt-4 flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-start transition focus:outline-none focus-visible:ring-2 focus-visible:ring-white ${isPremium ? 'border border-[#D6AF2E] text-[#F4CE55] hover:bg-[#D6AF2E]/10' : 'border border-white/20 text-white hover:bg-white/10'}`}><Star className="h-6 w-6 shrink-0" aria-hidden="true" /><span className="min-w-0 flex-1"><span className="block font-bold">{labels.recommend}</span><span className="block text-xs text-emerald-100">{labels.recommendHint}</span></span><ChevronRight className="h-5 w-5 shrink-0 rtl:rotate-180" aria-hidden="true" /></button>
+        <p className="mt-3 min-h-5 text-center text-xs text-emerald-100" aria-live="polite">{feedback}</p>
       </div>
-
-      <p className="mt-6 rounded-2xl border border-[#D6AF2E]/35 bg-black/10 px-4 py-3 text-sm leading-6 text-emerald-50">
-        {copy.artisanPreviewText}
-      </p>
-    </div>
-  );
-}
-
-function GreenCardPreview({
-  tier,
-  copy,
-  onDetails,
-}: {
-  tier: 'ARTISAN' | 'PREMIUM';
-  copy: SubscriptionCopy;
-  onDetails?: () => void;
-}) {
-  const tierLabel = tier === 'ARTISAN' ? copy.artisan : copy.premium;
-
-  return (
-    <div className="mx-auto max-w-xl rounded-[26px] border-[3px] border-[#D6AF2E] bg-[#07543F] p-5 text-white shadow-2xl sm:p-7">
-      <div className="flex items-start justify-between gap-4">
-        <DemoLogo
-          alt={tier === 'ARTISAN' ? `${copy.artisan} — ${copy.demoName}` : copy.demoName}
-          src={tier === 'ARTISAN' ? ARTISAN_PREVIEW_IMAGE_PATH : LOGO_PATH}
-        />
-        <span className="rounded-full border border-[#D6AF2E]/60 bg-[#D6AF2E]/15 px-3 py-1 text-xs font-bold tracking-widest text-[#F4CE55]">
-          {tierLabel}
-        </span>
-      </div>
-      <h3 className="mt-5 text-2xl font-bold text-[#F0C537]">{copy.demoName}</h3>
-      <p className="mt-1 font-semibold text-[#F0C537]">{copy.demoCategory}</p>
-      <p className="mt-3 flex items-center gap-2 text-emerald-50">
-        <MapPin className="h-5 w-5" aria-hidden="true" /> {copy.tunisia}
-      </p>
-      <p className="mt-4 flex items-center gap-2 font-semibold text-emerald-300">
-        <Clock3 className="h-5 w-5" aria-hidden="true" /> {copy.open}
-      </p>
-      <p className="mt-1 text-emerald-50">{copy.todayCardSchedule}</p>
-      <div className="mt-4 flex items-center justify-center gap-2 rounded-full bg-[#D6AF2E] px-5 py-3 font-bold text-[#07543F]">
-        <Phone className="h-5 w-5" aria-hidden="true" /> {copy.call}
-      </div>
-      {tier === 'ARTISAN' && (
-        <p className="mt-4 border-t border-[#D6AF2E]/35 pt-4 text-sm leading-6 text-emerald-50">{copy.artisanPreviewText}</p>
-      )}
-      {tier === 'PREMIUM' && (
-        <button
-          type="button"
-          onClick={onDetails}
-          className="mt-4 flex w-full items-center justify-center gap-2 border-t border-[#D6AF2E]/35 pt-4 text-base font-bold text-[#F0C537] transition hover:text-white focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]"
-        >
-          {copy.viewDetails} <ChevronRight className="h-5 w-5" aria-hidden="true" />
-        </button>
-      )}
-    </div>
-  );
-}
-
-function PremiumDetailPreview({ copy }: { copy: SubscriptionCopy }) {
-  const demonstrationBusiness = {
-    id: 'demo-dalil-tounes-premium',
-    nom: copy.demoName,
-    name_ar: copy.demoName,
-    categorie: copy.demoCategory,
-    adresse: `${copy.tunisia}, ${copy.tunisia}`,
-    description: copy.premiumDemoDescription,
-    description_ar: copy.premiumDemoDescription,
-    whatsapp: '+216 XX XXX XXX',
-    email: 'contact@dalil-tounes.com',
-    site_web: 'https://dalil-tounes.com',
-    services: copy.premiumDemoServices,
-    sous_categories_texte: copy.premiumDemoServices,
-    statut_abonnement: 'premium',
-    logo_url: LOGO_PATH,
-    image_url: null,
-    horaires_ok: copy.demoHours,
-    statut_carte: copy.certifiedTitle,
-    latitude: 36.8065,
-    longitude: 10.1815,
-    'lien facebook': 'https://www.facebook.com/daliltounes',
-    'Lien Instagram': 'https://www.instagram.com/dalil.tounes/',
-    'Lien LinkedIn': 'https://www.linkedin.com/company/daliltounes',
-  };
-
-  return (
-    <div className="mx-auto w-full max-w-[460px] overflow-hidden">
-      <BusinessDetail preview business={demonstrationBusiness} />
-    </div>
+    </article>
   );
 }
 
@@ -1734,23 +1660,16 @@ export const Subscription = () => {
       )}
 
       {activePreview === 'artisan' && (
-        <Modal title={copy.previewArtisanTitle} onClose={closePreview} closeLabel={copy.closeModal} size="large">
+        <Modal title={copy.previewArtisanTitle} onClose={closePreview} closeLabel={copy.closeModal} size="compact">
           <h2 className="mb-4 text-center text-2xl font-bold text-[#4A123F]">{copy.previewArtisanTitle}</h2>
-          <ArtisanCardPreview copy={copy} />
+          <SubscriptionBusinessCardPreview variant="artisan" copy={copy} language={language as OfferLanguage} />
         </Modal>
       )}
 
       {activePreview === 'premium' && (
-        <Modal title={copy.previewPremiumTitle} onClose={closePreview} closeLabel={copy.closeModal} size="compact">
-          <h2 className="mb-4 text-center text-2xl font-bold text-[#4A123F]">{copy.previewPremiumTitle}</h2>
-          <GreenCardPreview tier="PREMIUM" copy={copy} onDetails={() => setActivePreview('premium-detail')} />
-        </Modal>
-      )}
-
-      {activePreview === 'premium-detail' && (
         <Modal title={copy.premiumDetailTitle} onClose={closePreview} closeLabel={copy.closeModal} size="large">
           <h2 className="mb-4 text-center text-2xl font-bold text-[#4A123F]">{copy.premiumDetailTitle}</h2>
-          <PremiumDetailPreview copy={copy} />
+          <SubscriptionBusinessCardPreview variant="premium" copy={copy} language={language as OfferLanguage} />
         </Modal>
       )}
 
