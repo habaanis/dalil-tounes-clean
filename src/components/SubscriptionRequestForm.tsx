@@ -22,15 +22,58 @@ import {
 
 type SupportedLanguage = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 export type SubscriptionPlanCode = 'cv_business' | 'artisan' | 'premium';
+export type CheckoutOffer = 'cv_essential' | 'cv_complete' | 'artisan' | 'premium';
 type PlanKind = 'cv' | 'artisan' | 'premium';
 type Platform = 'facebook' | 'instagram' | 'whatsapp_business' | 'google_business' | 'website' | 'other' | 'none';
 
 interface SubscriptionRequestFormProps {
   selectedPlan: SubscriptionPlanCode;
   selectedPlanLabel: string;
+  checkoutOffer: CheckoutOffer;
   onCancel?: () => void;
   onSuccess?: () => void;
 }
+
+const CHECKOUT_COPY: Record<SupportedLanguage, {
+  currencyNotice: string;
+  installmentsNotice: string;
+  paySecurely: string;
+  checkoutLoading: string;
+  checkoutError: string;
+}> = {
+  fr: {
+    currencyNotice: 'Le paiement sécurisé est effectué en euros selon l’équivalent indiqué. Des frais de conversion peuvent éventuellement être appliqués par ta banque.',
+    installmentsNotice: 'Le paiement en trois fois reste possible après échange avec notre équipe.',
+    paySecurely: 'Payer maintenant', checkoutLoading: 'Ouverture du paiement…', checkoutError: 'Le paiement sécurisé ne peut pas être ouvert pour le moment. Réessaie ou contacte notre équipe.',
+  },
+  ar: {
+    currencyNotice: 'يتم الدفع الآمن باليورو وفق القيمة المعادلة الموضحة. قد يطبق بنكك رسوم تحويل إضافية.',
+    installmentsNotice: 'يبقى الدفع على ثلاث دفعات ممكنًا بعد التواصل مع فريقنا.',
+    paySecurely: 'الدفع الآن', checkoutLoading: 'جارٍ فتح الدفع…', checkoutError: 'تعذر فتح الدفع الآمن حاليًا. حاول مجددًا أو تواصل مع فريقنا.',
+  },
+  en: {
+    currencyNotice: 'Secure payment is made in euros at the equivalent amount shown. Your bank may apply currency conversion fees.',
+    installmentsNotice: 'Payment in three instalments remains available after speaking with our team.',
+    paySecurely: 'Pay now', checkoutLoading: 'Opening payment…', checkoutError: 'Secure payment cannot be opened right now. Try again or contact our team.',
+  },
+  it: {
+    currencyNotice: 'Il pagamento sicuro viene effettuato in euro secondo l’equivalente indicato. La tua banca potrebbe applicare commissioni di conversione.',
+    installmentsNotice: 'Il pagamento in tre rate resta possibile dopo aver parlato con il nostro team.',
+    paySecurely: 'Paga ora', checkoutLoading: 'Apertura del pagamento…', checkoutError: 'Al momento non è possibile aprire il pagamento sicuro. Riprova o contatta il nostro team.',
+  },
+  ru: {
+    currencyNotice: 'Безопасная оплата производится в евро по указанному эквиваленту. Ваш банк может взимать комиссию за конвертацию.',
+    installmentsNotice: 'Оплата тремя частями доступна после согласования с нашей командой.',
+    paySecurely: 'Оплатить сейчас', checkoutLoading: 'Переход к оплате…', checkoutError: 'Сейчас не удаётся открыть безопасную оплату. Повторите попытку или свяжитесь с нашей командой.',
+  },
+};
+
+const CHECKOUT_AMOUNTS = {
+  cv_essential: { oneTime: '23 €' },
+  cv_complete: { oneTime: '59 €' },
+  artisan: { monthly: '8,90 €', annual: '89 €' },
+  premium: { monthly: '17,90 €', annual: '175 €' },
+} as const;
 
 interface SubscriptionFormState {
   companyName: string;
@@ -621,12 +664,14 @@ const inputClassName =
 export function SubscriptionRequestForm({
   selectedPlan,
   selectedPlanLabel,
+  checkoutOffer,
   onCancel,
   onSuccess,
 }: SubscriptionRequestFormProps) {
   const { language } = useLanguage();
   const currentLanguage = isSupportedLanguage(language) ? language : 'fr';
   const copy = COPY[currentLanguage];
+  const checkoutCopy = CHECKOUT_COPY[currentLanguage];
   const isArabic = currentLanguage === 'ar';
   const planKind = getPlanKind(selectedPlan);
   const startedAtRef = useRef(Date.now());
@@ -637,6 +682,7 @@ export function SubscriptionRequestForm({
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [openingCheckout, setOpeningCheckout] = useState(false);
 
   const setField = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = event.target;
@@ -772,6 +818,50 @@ export function SubscriptionRequestForm({
     } finally {
       submittingRef.current = false;
       setSubmitting(false);
+    }
+  };
+
+  const checkoutSelection = (() => {
+    if (planKind === 'cv') {
+      if (form.requestedPaymentSchedule !== 'one_payment') return null;
+      const amount = CHECKOUT_AMOUNTS[checkoutOffer as 'cv_essential' | 'cv_complete']?.oneTime;
+      return amount ? { offer: checkoutOffer, amount } : null;
+    }
+    if (form.requestedBillingPeriod === 'monthly') {
+      const amount = CHECKOUT_AMOUNTS[checkoutOffer as 'artisan' | 'premium']?.monthly;
+      return amount ? { offer: `${checkoutOffer}_monthly`, amount: `${amount} / ${copy.monthly.toLowerCase()}` } : null;
+    }
+    if (form.requestedBillingPeriod === 'annual' && form.requestedPaymentSchedule === 'one_payment') {
+      const amount = CHECKOUT_AMOUNTS[checkoutOffer as 'artisan' | 'premium']?.annual;
+      return amount ? { offer: `${checkoutOffer}_annual`, amount: `${amount} / ${copy.annual.toLowerCase()}` } : null;
+    }
+    return null;
+  })();
+
+  const openStripeCheckout = async () => {
+    const validationError = validateStepOne() || validateStepTwo();
+    if (validationError || !checkoutSelection) {
+      setErrorMessage(validationError || copy.requiredPaymentSchedule);
+      return;
+    }
+
+    setOpeningCheckout(true);
+    setErrorMessage('');
+    try {
+      const response = await fetch('/api/create-stripe-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          offer: checkoutSelection.offer,
+          email: normalizeEmail(form.email),
+        }),
+      });
+      const body = await response.json() as { url?: string };
+      if (!response.ok || !body.url) throw new Error('Checkout unavailable');
+      window.location.assign(body.url);
+    } catch {
+      setErrorMessage(checkoutCopy.checkoutError);
+      setOpeningCheckout(false);
     }
   };
 
@@ -1038,6 +1128,20 @@ export function SubscriptionRequestForm({
           </label>
 
           <p className="text-center text-sm font-semibold text-[#4A1D43]">{copy.freeNotice}</p>
+          <div className="rounded-xl border border-[#D4AF37]/40 bg-[#FFF9E8] px-4 py-3 text-sm leading-6 text-[#4A1D43]">
+            <p>{checkoutCopy.currencyNotice}</p>
+            <p className="mt-1 font-semibold">{checkoutCopy.installmentsNotice}</p>
+          </div>
+          {checkoutSelection && (
+            <button
+              type="button"
+              onClick={openStripeCheckout}
+              disabled={submitting || openingCheckout}
+              className="w-full rounded-xl bg-[#07543F] px-5 py-3 text-sm font-bold text-white transition hover:bg-emerald-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] disabled:cursor-wait disabled:opacity-60"
+            >
+              {openingCheckout ? checkoutCopy.checkoutLoading : `${checkoutCopy.paySecurely} — ${checkoutSelection.amount}`}
+            </button>
+          )}
         </section>
       )}
 
