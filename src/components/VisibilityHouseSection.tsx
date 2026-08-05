@@ -43,17 +43,19 @@ function VisibilityHouseIllustration() {
     <div className="relative mx-auto w-full max-w-[760px]" aria-label="Maison Dalil Tounes de la visibilité numérique">
       <div className="relative aspect-[3/2] overflow-visible">
         <img
-          src="/images/maison-dalil-tounes-validee.png"
+          src="/images/maison-dalil-tounes-validee.webp"
           alt="Maison Dalil Tounes représentant la présence numérique d'une entreprise"
           className="absolute inset-0 h-full w-full object-contain drop-shadow-[0_22px_48px_rgba(74,29,67,0.16)]"
           loading="lazy"
+          decoding="async"
         />
 
         <img
-          src="/images/mascotte-dalil-transparent.png"
+          src="/images/mascotte-dalil-transparent.webp"
           alt="Dalil, la mascotte officielle, présente la Maison Dalil Tounes"
           className="absolute bottom-[7%] left-[9%] z-20 h-[39%] w-auto -rotate-3 drop-shadow-[0_18px_24px_rgba(74,29,67,0.22)] sm:bottom-[8%] sm:left-[10%] sm:h-[40%] md:bottom-[8%] md:left-[7%] md:h-[42%] lg:left-[6%]"
           loading="lazy"
+          decoding="async"
         />
 
         {platformWindows.map((room) => {

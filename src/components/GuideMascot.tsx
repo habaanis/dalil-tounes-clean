@@ -12,7 +12,7 @@ import { Link } from 'react-router-dom';
  * - Ton : professionnel, discret, chaleureux et utile — jamais enfantin ni envahissant.
  */
 
-export const MASCOT_IMAGE_URL = '/images/mascotte-dalil-transparent.png';
+export const MASCOT_IMAGE_URL = '/images/mascotte-dalil-transparent.webp';
 
 type MascotPosition = 'left' | 'right' | 'center';
 type MascotSize = 'sm' | 'md' | 'lg';

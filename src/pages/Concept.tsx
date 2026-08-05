@@ -144,7 +144,7 @@ export default function Concept() {
       <section className="relative min-h-[50vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
           <LazyImage
-            src="/images/cat_magasin.jpg.jpg"
+            src="/images/cat_magasin-1920.webp"
             alt="Commerces et artisans en Tunisie"
             className="w-full h-full object-cover"
             style={{ filter: 'brightness(0.55)' }}

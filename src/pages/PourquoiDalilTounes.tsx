@@ -312,7 +312,7 @@ export default function PourquoiDalilTounes() {
             </div>
 
             <ScreenshotFrame
-              src="/images/pourquoi-business-card.png"
+              src="/images/pourquoi-business-card.webp"
               alt="Capture réelle d'une Business Card Dalil Tounes"
               className="mx-auto w-full max-w-xl bg-[#07573f]"
               width={812}
@@ -344,7 +344,7 @@ export default function PourquoiDalilTounes() {
             </div>
 
             <ScreenshotFrame
-              src="/images/pourquoi-cv-business.png"
+              src="/images/pourquoi-cv-business.webp"
               alt="Capture réelle d'un CV Business Dalil Tounes"
               className="mx-auto w-full max-w-[520px] bg-[#07573f]"
               width={800}

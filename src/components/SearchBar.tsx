@@ -595,6 +595,7 @@ export default function SearchBar({
             autoCorrect="off"
             spellCheck={false}
             dir={dir}
+            aria-label={t(language as Lang, 'search.placeholderQuery')}
             placeholder={t(language as Lang, 'search.placeholderQuery')}
             className="w-full px-3 py-2 rounded-lg border border-[#D4AF37] bg-white text-sm focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none"
             value={q}
