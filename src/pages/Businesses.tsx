@@ -108,6 +108,33 @@ const PUBLIC_BUSINESS_NEED_ACTIVITY_TYPES = new Set([
   'other',
 ]);
 
+const PROFESSIONAL_FAQ = [
+  {
+    question: 'Est-ce que Dalil remplace Google Business ?',
+    answer: "Non. Dalil Tounes ne remplace pas Google Business, Facebook, Instagram, LinkedIn ou votre site web. La plateforme les complète en réunissant les informations utiles dans une fiche claire pensée pour la Tunisie.",
+  },
+  {
+    question: 'Puis-je conserver mon site web ?',
+    answer: "Oui. Votre site web reste important. La fiche Dalil Tounes peut au contraire aider vos visiteurs à retrouver votre site officiel, vos réseaux sociaux, vos coordonnées et vos informations pratiques.",
+  },
+  {
+    question: 'Comment mettre ma fiche à jour ?',
+    answer: "L'objectif est de permettre aux entreprises de vérifier, compléter et mettre à jour leurs informations afin que la fiche reste fiable pour les futurs clients.",
+  },
+  {
+    question: 'Pourquoi créer une fiche professionnelle ?',
+    answer: "Parce qu'une fiche complète rassure les visiteurs. Elle montre votre activité, vos informations utiles, vos horaires, vos moyens de contact et facilite le premier échange.",
+  },
+  {
+    question: 'Les artisans peuvent-ils rejoindre Dalil Tounes ?',
+    answer: "Oui. La page s'adresse aussi aux artisans, indépendants, commerçants, professions libérales, PME et entreprises qui souhaitent être trouvés plus facilement.",
+  },
+  {
+    question: 'Les commerçants sont-ils concernés ?',
+    answer: "Oui. Un commerce peut utiliser sa fiche pour présenter ses horaires, sa localisation, ses photos, ses réseaux sociaux, son site web et ses moyens de contact.",
+  },
+];
+
 function SectionIntro({
   eyebrow,
   title,
