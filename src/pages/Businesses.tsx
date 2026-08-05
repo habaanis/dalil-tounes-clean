@@ -15,6 +15,7 @@ import BusinessNeedForm from '../components/BusinessNeedForm';
 import { normalizeText, removeArabicDiacritics, extractFrenchName, cleanSearchTerm, cleanArabicField } from '../lib/textNormalization';
 import { BusinessCardWithActivity, type BusinessActivity } from '../components/BusinessCardWithActivity';
 import { BusinessCardPreview, type BusinessCardPreviewLanguage } from '../components/BusinessCardPreview';
+import { CvBusinessSharingInfo } from '../components/CvBusinessSharingInfo';
 import { GuideMascot } from '../components/GuideMascot';
 import SearchBar from '../components/SearchBar';
 import { getSubscriptionPriority } from '../lib/subscriptionHelper';
@@ -1460,6 +1461,7 @@ export const Businesses = ({
                 <FeaturePill icon={Calendar} label="Réservation" />
                 <FeaturePill icon={QrCode} label="QR Code" />
               </div>
+              <CvBusinessSharingInfo language={language as BusinessCardPreviewLanguage} className="mt-5" />
             </div>
             <div className="flex flex-col items-center lg:items-start gap-3">
               <DemoCVBusinessPreview language={language as BusinessCardPreviewLanguage} />
