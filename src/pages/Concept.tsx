@@ -7,11 +7,8 @@ import StructuredData from '../components/StructuredData';
 import { generateAboutPageSchema } from '../lib/structuredDataSchemas';
 import Breadcrumb from '../components/seo/Breadcrumb';
 import { useHreflangPath } from '../hooks/useHreflangPath';
-import { BusinessCard } from '../components/BusinessCard';
-import { BusinessDetail } from '../components/BusinessDetail';
+import { BusinessCardPreview } from '../components/BusinessCardPreview';
 import { GuideMascot } from '../components/GuideMascot';
-
-const LOGO_URL = 'https://ik.imagekit.io/gfdpqvshw/Design_Assets_Dalil_Tounes/logos/logo_dalil_tounes_sceau_luxe.png?updatedAt=1773327267816&tr=w-140,h-140,f-auto,q-85';
 
 function DemoSearchBar() {
   return (
@@ -48,75 +45,13 @@ function DemoSearchBar() {
   );
 }
 
-const DEMO_BUSINESS = {
-  id: 'demo-dalil-tounes',
-  name: 'Fiche Démonstration',
-  nom: 'Fiche Démonstration',
-  categorie: 'Plateforme tunisienne',
-  category: 'Plateforme tunisienne',
-  ville: 'Tunisie',
-  city: 'Tunisie',
-  gouvernorat: 'Tunisie',
-  adresse: 'Tunisie',
-  description: 'Découvrez comment fonctionne une fiche professionnelle sur Dalil Tounes.',
-  telephone: '+216 XX XXX XXX',
-  phone: '+216 XX XXX XXX',
-  whatsapp: '+216 XX XXX XXX',
-  email: 'contact@dalil-tounes.com',
-  site_web: 'https://dalil-tounes.com',
-  website: 'https://dalil-tounes.com',
-  services: 'Recherche, Annuaire, Visibilité, Avis',
-  statut_abonnement: 'premium',
-  niveau_priorite_abonnement: 3,
-  logoUrl: LOGO_URL,
-  logo_url: LOGO_URL,
-  imageUrl: null,
-  image_url: null,
-  horaires_ok: 'Lundi : 08:00–18:00\nMardi : 08:00–18:00\nMercredi : 08:00–18:00\nJeudi : 08:00–18:00\nVendredi : 08:00–18:00\nSamedi : 09:00–13:00\nDimanche : Fermé',
-  note_google: null,
-  nombre_avis: null,
-  score_avis: null,
-  statut_carte: 'Certifié Dalil Tounes',
-  latitude: 36.8065,
-  longitude: 10.1815,
-  google_url: null,
-  'BTN_Maps': null,
-  name_ar: null,
-  name_en: null,
-  name_it: null,
-  name_ru: null,
-  description_ar: null,
-  description_en: null,
-  description_it: null,
-  description_ru: null,
-  featured: true,
-  is_premium: true,
-  approved: true,
-  statut_validation: 'valide',
-  badges: [],
-};
-
 function DemoBusinessCard() {
-  return (
-    <div className="max-w-[340px] mx-auto" aria-hidden="true">
-      <BusinessCard
-        business={DEMO_BUSINESS}
-        onClick={() => {}}
-      />
-    </div>
-  );
+  return <BusinessCardPreview variant="artisan" size="compact" interactive={false} />;
 }
 
 function DemoCVBusiness() {
-  return (
-    <div className="flex justify-center overflow-hidden" aria-hidden="true">
-      <div style={{ width: '420px', maxWidth: '100%', zoom: 0.78 } as React.CSSProperties}>
-        <BusinessDetail preview business={DEMO_BUSINESS} />
-      </div>
-    </div>
-  );
+  return <BusinessCardPreview variant="premium" size="compact" interactive={false} />;
 }
-
 const STEPS = [
   {
     emoji: '\uD83D\uDD0E',
