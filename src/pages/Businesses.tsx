@@ -108,6 +108,26 @@ const PUBLIC_BUSINESS_NEED_ACTIVITY_TYPES = new Set([
   'other',
 ]);
 
+function SectionIntro({
+  eyebrow,
+  title,
+  children,
+}: {
+  eyebrow?: string;
+  title: string;
+  children?: React.ReactNode;
+}) {
+  return (
+    <div className="max-w-3xl">
+      {eyebrow && (
+        <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[#D4AF37]">{eyebrow}</p>
+      )}
+      <h2 className="text-2xl font-bold leading-tight text-[#4A1D43] md:text-3xl">{title}</h2>
+      {children && <div className="mt-4 space-y-3 text-sm leading-relaxed text-gray-600 md:text-base">{children}</div>}
+    </div>
+  );
+}
+
 function DemoCVBusinessPreview({ language }: { language: BusinessCardPreviewLanguage }) {
   return <BusinessCardPreview variant="premium" size="compact" interactive={false} language={language} />;
 }
