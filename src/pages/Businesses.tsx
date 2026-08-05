@@ -14,7 +14,7 @@ import { Toast } from '../components/Toast';
 import BusinessNeedForm from '../components/BusinessNeedForm';
 import { normalizeText, removeArabicDiacritics, extractFrenchName, cleanSearchTerm, cleanArabicField } from '../lib/textNormalization';
 import { BusinessCardWithActivity, type BusinessActivity } from '../components/BusinessCardWithActivity';
-import { BusinessDetail } from '../components/BusinessDetail';
+import { BusinessCardPreview, type BusinessCardPreviewLanguage } from '../components/BusinessCardPreview';
 import { GuideMascot } from '../components/GuideMascot';
 import SearchBar from '../components/SearchBar';
 import { getSubscriptionPriority } from '../lib/subscriptionHelper';
@@ -108,57 +108,6 @@ const PUBLIC_BUSINESS_NEED_ACTIVITY_TYPES = new Set([
   'other',
 ]);
 
-const DEMO_LOGO_URL = 'https://ik.imagekit.io/gfdpqvshw/Design_Assets_Dalil_Tounes/logos/logo_dalil_tounes_sceau_luxe.png?updatedAt=1773327267816&tr=w-140,h-140,f-auto,q-85';
-
-const DEMO_BUSINESS = {
-  id: 'demo-professionnel-dalil',
-  name: 'Fiche Professionnelle Démo',
-  nom: 'Fiche Professionnelle Démo',
-  categorie: 'Entreprise tunisienne',
-  category: 'Entreprise tunisienne',
-  ville: 'Tunisie',
-  city: 'Tunisie',
-  gouvernorat: 'Tunisie',
-  adresse: 'Adresse de démonstration',
-  description: "Une fiche complète permet de présenter l'activité, les services, les horaires, les photos et les moyens de contact sur un seul espace clair.",
-  a_propos: "Cette démonstration montre comment une entreprise peut rassembler ses informations utiles dans un CV Business clair et rassurant.",
-  telephone: '+216 XX XXX XXX',
-  phone: '+216 XX XXX XXX',
-  whatsapp: '+216 XX XXX XXX',
-  email: 'contact@dalil-tounes.com',
-  site_web: 'https://dalil-tounes.com',
-  website: 'https://dalil-tounes.com',
-  services: 'Présentation, coordonnées, horaires, photos, réservation, QR Code',
-  statut_abonnement: 'premium',
-  niveau_priorite_abonnement: 3,
-  logoUrl: DEMO_LOGO_URL,
-  logo_url: DEMO_LOGO_URL,
-  imageUrl: null,
-  image_url: null,
-  horaires_ok: 'Lundi : 08:00–18:00\nMardi : 08:00–18:00\nMercredi : 08:00–18:00\nJeudi : 08:00–18:00\nVendredi : 08:00–18:00\nSamedi : 09:00–13:00\nDimanche : Fermé',
-  note_google: null,
-  nombre_avis: null,
-  score_avis: null,
-  statut_carte: 'Certifié Dalil Tounes',
-  latitude: 36.8065,
-  longitude: 10.1815,
-  google_url: null,
-  'BTN_Maps': null,
-  name_ar: null,
-  name_en: null,
-  name_it: null,
-  name_ru: null,
-  description_ar: null,
-  description_en: null,
-  description_it: null,
-  description_ru: null,
-  featured: true,
-  is_premium: true,
-  approved: true,
-  statut_validation: 'valide',
-  badges: [],
-};
-
 const PROFESSIONAL_FAQ = [
   {
     question: 'Est-ce que Dalil remplace Google Business ?',
@@ -198,37 +147,20 @@ function SectionIntro({
   return (
     <div className="max-w-3xl">
       {eyebrow && (
-        <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#D4AF37] mb-3">{eyebrow}</p>
+        <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[#D4AF37]">{eyebrow}</p>
       )}
-      <h2 className="text-2xl md:text-3xl font-bold text-[#4A1D43] leading-tight">{title}</h2>
-      {children && <div className="mt-4 text-sm md:text-base text-gray-600 leading-relaxed space-y-3">{children}</div>}
+      <h2 className="text-2xl font-bold leading-tight text-[#4A1D43] md:text-3xl">{title}</h2>
+      {children && <div className="mt-4 space-y-3 text-sm leading-relaxed text-gray-600 md:text-base">{children}</div>}
     </div>
   );
 }
 
-function DemoCVBusinessPreview() {
-  return (
-    <div className="relative mx-auto w-fit max-w-full rounded-2xl border border-[#D4AF37]/30 bg-[#F8F4EA] p-2 shadow-[0_16px_42px_rgba(74,29,67,0.12)] overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_0%,rgba(212,175,55,0.16),transparent_26%)]" />
-      <div className="relative mx-auto max-h-[430px] overflow-hidden rounded-xl">
-        <div style={{ width: '440px', maxWidth: '100%', zoom: 0.58 } as any}>
-          <BusinessDetail preview business={DEMO_BUSINESS} />
-        </div>
-      </div>
-    </div>
-  );
+function DemoCVBusinessPreview({ language }: { language: BusinessCardPreviewLanguage }) {
+  return <BusinessCardPreview variant="premium" size="compact" interactive={false} language={language} />;
 }
 
-function DemoCVBusinessLargePreview() {
-  return (
-    <div className="mx-auto w-fit max-w-full overflow-hidden rounded-2xl border border-[#D4AF37]/35 bg-[#F8F4EA] p-2 shadow-sm">
-      <div className="max-h-[72vh] overflow-y-auto overflow-x-hidden rounded-xl">
-        <div style={{ width: '420px', maxWidth: '100%', zoom: 0.88 } as any}>
-          <BusinessDetail preview business={DEMO_BUSINESS} />
-        </div>
-      </div>
-    </div>
-  );
+function DemoCVBusinessLargePreview({ language }: { language: BusinessCardPreviewLanguage }) {
+  return <BusinessCardPreview variant="premium" size="full" interactive language={language} />;
 }
 
 function FeaturePill({ icon: Icon, label }: { icon: React.ComponentType<{ className?: string }>; label: string }) {
@@ -1530,7 +1462,7 @@ export const Businesses = ({
               </div>
             </div>
             <div className="flex flex-col items-center lg:items-start gap-3">
-              <DemoCVBusinessPreview />
+              <DemoCVBusinessPreview language={language as BusinessCardPreviewLanguage} />
               <button
                 type="button"
                 onClick={() => setShowDemoModal(true)}
@@ -1662,7 +1594,7 @@ export const Businesses = ({
                   <X className="h-5 w-5" />
                 </button>
               </div>
-              <DemoCVBusinessLargePreview />
+              <DemoCVBusinessLargePreview language={language as BusinessCardPreviewLanguage} />
             </div>
           </div>
         )}

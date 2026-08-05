@@ -211,9 +211,9 @@ export const Layout = ({ children }: LayoutProps) => {
                   />
                 </picture>
               </div>
-              <h1 className="text-lg font-semibold text-gray-900">
+              <span className="text-lg font-semibold text-gray-900">
                 Dalil Tounes
-              </h1>
+              </span>
             </Link>
 
             <div className="hidden md:flex items-center gap-6">
@@ -282,8 +282,11 @@ export const Layout = ({ children }: LayoutProps) => {
             </div>
 
             <button
+              type="button"
               onClick={() => setShowMobileMenu(!showMobileMenu)}
               className="md:hidden p-2 text-gray-700 hover:text-orange-600"
+              aria-label={showMobileMenu ? 'Fermer le menu principal' : 'Ouvrir le menu principal'}
+              aria-expanded={showMobileMenu}
             >
               {showMobileMenu ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>

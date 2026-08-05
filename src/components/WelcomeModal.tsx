@@ -99,13 +99,13 @@ export const WelcomeModal = ({ isOpen, onClose }: WelcomeModalProps) => {
 
               <div className="text-center">
                 <p className="mb-1.5 text-xs font-semibold text-[#D4AF37]">Bienvenue chez vous.</p>
-                <h1
+                <h2
                   id="welcome-title"
                   className="text-xl font-semibold leading-snug text-[#4A1D43] sm:text-2xl"
                   dir="rtl"
                 >
                   مرحبا بيك في Dalil Tounes
-                </h1>
+                </h2>
                 <p className="mx-auto mt-3 max-w-[520px] text-xs leading-5 text-gray-600 sm:text-sm">
                   Dalil Tounes aide les citoyens à trouver les bonnes entreprises et permet aux entreprises tunisiennes d'être plus visibles, plus facilement trouvées et contactées par les citoyens.
                 </p>

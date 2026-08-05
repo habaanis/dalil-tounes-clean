@@ -20,6 +20,7 @@ export default function LocationSelectTunisie({
         <MapPin className="w-4 h-4 text-[#4A1D43]" />
       </span>
       <select
+        aria-label={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className={`w-full pl-9 pr-3 py-2 rounded-lg border border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none text-sm text-gray-900 bg-white cursor-pointer ${className}`}
