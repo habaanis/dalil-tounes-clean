@@ -9,6 +9,8 @@ import Breadcrumb from '../components/seo/Breadcrumb';
 import { useHreflangPath } from '../hooks/useHreflangPath';
 import { BusinessCardPreview } from '../components/BusinessCardPreview';
 import { GuideMascot } from '../components/GuideMascot';
+import { CvBusinessSharingInfo, type CvBusinessSharingLanguage } from '../components/CvBusinessSharingInfo';
+import { useLanguage } from '../context/LanguageContext';
 
 function DemoSearchBar() {
   return (
@@ -108,6 +110,7 @@ function StepIllustration({ type }: { type: string | null }) {
 export default function Concept() {
   const currentPath = useHreflangPath();
   const seo = getConceptSeoMeta();
+  const { language } = useLanguage();
 
   return (
     <div className="min-h-screen bg-white">
@@ -215,6 +218,10 @@ export default function Concept() {
                       {step.solution}
                     </p>
                   </div>
+
+                  {idx === 2 && (
+                    <CvBusinessSharingInfo language={language as CvBusinessSharingLanguage} />
+                  )}
 
                   {/* Step 4: show action buttons */}
                   {idx === 3 && (
