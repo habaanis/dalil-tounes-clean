@@ -191,7 +191,7 @@ const MetierSousCatVillePage: React.FC = () => {
                   to={`/entreprises?categorie=${encodeURIComponent(metier.value)}&gouvernorat=${encodeURIComponent(ville.gouvernorat)}`}
                   className="flex items-center gap-1 text-sm text-[#D4AF37] hover:underline"
                 >
-                  Voir tout l'annuaire
+                  Voir tous les professionnels
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
@@ -229,7 +229,7 @@ const MetierSousCatVillePage: React.FC = () => {
               <p className="text-gray-500 text-sm mb-8 max-w-md mx-auto">
                 {sousCategorie
                   ? `Essayez une recherche plus générale ou consultez tous les ${metier.label.toLowerCase()}s à ${ville.label}.`
-                  : `Aucun établissement n'a encore été référencé. Consultez l'annuaire complet pour plus d'options.`}
+                  : `Aucun établissement n'a encore été référencé. Explorez tous les professionnels pour plus d'options.`}
               </p>
               <div className="flex flex-wrap gap-3 justify-center">
                 {sousCategorie && (
@@ -244,7 +244,7 @@ const MetierSousCatVillePage: React.FC = () => {
                   to="/entreprises"
                   className="inline-block px-6 py-3 border border-gray-700 text-gray-400 text-sm font-medium rounded-lg hover:border-gray-500 hover:text-white transition-all"
                 >
-                  Voir tout l'annuaire
+                  Voir tous les professionnels
                 </Link>
               </div>
             </div>

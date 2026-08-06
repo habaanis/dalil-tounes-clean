@@ -98,7 +98,7 @@ export const Layout = ({ children }: LayoutProps) => {
       label: t.nav.businesses || 'Entreprises',
       path: '/businesses',
       children: [
-        { label: t.navMenu?.businesses?.directory || 'Annuaire', path: '/businesses' },
+        { label: t.navMenu?.businesses?.directory || 'Plateforme', path: '/businesses' },
         { label: t.navMenu?.businesses?.partners || 'Partenaires', path: '/partner-search' },
         { label: tx.navExtra?.candidatesAvailable || 'Candidats disponibles', path: '/candidats' },
         { label: t.navMenu?.businesses?.events || 'Événements', path: '/business-events' },
@@ -200,7 +200,7 @@ export const Layout = ({ children }: LayoutProps) => {
                   <source srcSet="/images/logo_dalil_tounes_sceau_luxe.webp" type="image/webp" width="140" height="140" />
                   <img
                     src="/images/logo_dalil_tounes_sceau_luxe.png"
-                    alt="Logo Dalil Tounes - Annuaire des établissements en Tunisie"
+                    alt="Logo Dalil Tounes - Plateforme des établissements en Tunisie"
                     className="w-full h-full object-cover"
                     style={{ objectPosition: 'center', borderRadius: '50%' }}
                     width="140"

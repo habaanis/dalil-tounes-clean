@@ -17,7 +17,7 @@ const PAGE_COPY = {
     formHint: 'Les champs marqués d’un astérisque sont obligatoires. Les autres pourront être complétés plus tard.',
     privacyTitle: 'Comment vos informations sont utilisées',
     privacyText:
-      'Elles sont transmises à l’équipe Dalil Tounes pour traiter votre demande et ne sont pas publiées automatiquement dans l’annuaire.',
+      'Elles sont transmises à l’équipe Dalil Tounes pour traiter votre demande et ne sont pas publiées automatiquement sur la plateforme.',
     documentTitle: 'Inscrire mon entreprise sur Dalil Tounes',
     description:
       'Demandez simplement l’inscription de votre entreprise, commerce, activité artisanale ou professionnelle sur Dalil Tounes.',

@@ -109,7 +109,7 @@ const VillePage: React.FC = () => {
               className="text-3xl md:text-5xl font-bold text-white mb-4 leading-tight"
               style={{ fontFamily: "'Playfair Display', 'Cormorant Garamond', serif" }}
             >
-              Annuaire{' '}
+              Plateforme{' '}
               <span className="text-[#D4AF37]">{ville.label}</span>
             </h1>
 
@@ -179,7 +179,7 @@ const VillePage: React.FC = () => {
                   to={`/entreprises?gouvernorat=${encodeURIComponent(ville.gouvernorat)}`}
                   className="flex items-center gap-1 text-sm text-[#D4AF37] hover:underline"
                 >
-                  Annuaire complet
+                  Tous les professionnels
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>

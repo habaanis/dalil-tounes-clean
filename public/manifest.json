@@ -1,7 +1,7 @@
 {
-  "name": "Dalil Tounes - Annuaire Tunisien",
+  "name": "Dalil Tounes - Plateforme Tunisienne",
   "short_name": "Dalil Tounes",
-  "description": "L'annuaire complet des entreprises, services et événements en Tunisie. Trouvez les meilleurs établissements autour de vous.",
+  "description": "La plateforme tunisienne des entreprises, services et événements. Trouvez les meilleurs établissements autour de vous.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

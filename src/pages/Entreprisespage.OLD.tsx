@@ -91,7 +91,7 @@ export default function EntreprisesPage() {
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6 text-gray-900">Annuaire des Entreprises</h1>
+      <h1 className="text-3xl font-bold mb-6 text-gray-900">Plateforme des Entreprises</h1>
 
       <div className="mb-6 bg-white rounded-xl shadow-sm border border-gray-200 p-4">
         <div className="flex flex-wrap gap-4 items-center">
