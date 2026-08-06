@@ -136,7 +136,7 @@ export const LocalBusinessesSection = ({ onCardClick }: LocalBusinessesSectionPr
                           >
                             <SafeImage
                               src={business.logo_url}
-                              alt={`Logo ${business.nom}${business.ville ? ` - ${business.ville}` : ''} - Annuaire Tunisie Dalil Tounes`}
+                              alt={`Logo ${business.nom}${business.ville ? ` - ${business.ville}` : ''} - Plateforme tunisienne Dalil Tounes`}
                               className="w-full h-full"
                               style={getLogoStyle(business.logo_url)}
                               fallbackType="icon"

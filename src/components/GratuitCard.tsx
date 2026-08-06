@@ -78,7 +78,7 @@ export default function GratuitCard({
         <div className="w-8 h-8" style={{ ...getLogoContainerStyle('#D4AF37', '2px'), flexShrink: 0 }}>
           <img
             src={getLogoUrl(logoUrl)}
-            alt={`Logo ${name}${locationLabel ? ` à ${locationLabel}` : ''} - Annuaire établissements Tunisie`}
+            alt={`Logo ${name}${locationLabel ? ` à ${locationLabel}` : ''} - Plateforme des établissements en Tunisie`}
             className="w-full h-full"
             style={getLogoStyle(logoUrl)}
             loading="lazy"

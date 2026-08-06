@@ -188,7 +188,7 @@ export default function BusinessDirectory({ mode, title, subtitle }: BusinessDir
   // Get display texts based on mode
   const displayTitle = title || (mode === 'partner'
     ? t.business?.partnerSearch?.title || 'Rechercher des partenaires'
-    : t.business?.directory?.title || 'Annuaire des entreprises');
+    : t.business?.directory?.title || 'Plateforme des entreprises');
 
   const displaySubtitle = subtitle || (mode === 'partner'
     ? t.business?.partnerSearch?.subtitle || 'Trouvez des partenaires, fournisseurs et prestataires'
@@ -515,7 +515,7 @@ export default function BusinessDirectory({ mode, title, subtitle }: BusinessDir
           <h3 className="text-lg font-medium text-gray-900 mb-3">
             {mode === 'partner'
               ? t.business?.partnerSearch?.help?.title || 'Comment trouver le bon partenaire ?'
-              : t.business?.directory?.help?.title || 'Comment utiliser l\'annuaire ?'}
+              : t.business?.directory?.help?.title || 'Comment utiliser la plateforme ?'}
           </h3>
           <ul className="space-y-2 text-sm text-gray-600">
             <li>• {t.business?.directory?.help?.tip1 || 'Utilisez les filtres pour affiner votre recherche'}</li>

@@ -95,7 +95,7 @@ const MentionsLegales: React.FC = () => {
             3. Objet du site
           </h2>
           <p>
-            Dalil Tounes est une plateforme d'annuaire en ligne à destination des professionnels et
+            Dalil Tounes est une plateforme digitale à destination des professionnels et
             des particuliers en Tunisie. Elle a pour vocation de mettre en relation des utilisateurs
             avec des entreprises, prestataires de services et professionnels de santé référencés sur
             le territoire tunisien.

@@ -10,7 +10,7 @@ export const translations = {
       subscription: 'Abonnement',
     },
     navMenu: {
-      businesses: { directory: 'Annuaire', suggest: 'Suggérer une entreprise', partners: 'Partenaires / fournisseurs', jobs: 'Emploi', events: 'Événements' },
+      businesses: { directory: 'Plateforme', suggest: 'Suggérer une entreprise', partners: 'Partenaires / fournisseurs', jobs: 'Emploi', events: 'Événements' },
       citizens: { health: 'Santé', education: 'Éducation', publicServices: 'Services publics', shops: 'Commerces & Magasins', leisure: 'Loisirs & Événements', marketplace: 'Marché Local', social: 'Services sociaux' },
       jobs: { browse: 'Consulter les offres', post: 'Publier une offre', cv: 'Déposer un CV' },
       subscription: { register: 'Inscrire mon entreprise', terms: 'Conditions générales', privacy: 'Politique de confidentialité' },
@@ -120,7 +120,7 @@ export const translations = {
       partnerPromo: {
         title: 'Faites rayonner votre marque dans toute la Tunisie',
         subtitle:
-          "Affichez votre entreprise sur la page d'accueil de Dalil Tounes, l'annuaire national des établissements et services. Touchez des milliers de citoyens, de professionnels et de voyageurs qui recherchent chaque jour des entreprises comme la vôtre.",
+          "Affichez votre entreprise sur la page d'accueil de Dalil Tounes, la plateforme tunisienne des établissements et services. Touchez des milliers de citoyens, de professionnels et de voyageurs qui recherchent chaque jour des entreprises comme la vôtre.",
         offerLabel: 'En ce moment :',
         offerStrong: '6 mois offerts pour tout abonnement annuel.',
         cta: "Découvrir l'offre partenaires",
@@ -177,7 +177,7 @@ export const translations = {
         paragraph1: 'La Tunisie regorge de talents, de savoir-faire ancestraux et d\'entreprises innovantes. Pourtant, trop souvent, ces trésors restent invisibles, noyés dans un monde digital qui ne leur rend pas justice.',
         mission: 'Notre mission est simple mais ambitieuse : digitaliser sans déshumaniser.',
         paragraph2: 'Nous croyons fermement qu\'on peut embrasser la modernité sans perdre notre âme. Chaque potier de Nabeul, chaque restaurant familial de Sfax, chaque guide touristique de Tozeur mérite d\'être découvert, célébré et soutenu.',
-        paragraph3: 'n\'est pas juste un répertoire digital. C\'est un pont entre tradition et innovation, un outil au service de notre économie locale, une plateforme qui met en lumière ce qui fait la beauté et la force de notre pays.',
+        paragraph3: 'est bien plus qu\'une plateforme digitale. C\'est un pont entre tradition et innovation, un outil au service de notre économie locale, une plateforme qui met en lumière ce qui fait la beauté et la force de notre pays.',
         together: 'Ensemble, construisons une Tunisie digitale qui nous ressemble.',
         values: 'Avec noblesse, passion et fierté pour notre identité',
       },
@@ -248,7 +248,7 @@ export const translations = {
       },
     },
     businesses: {
-      title: 'Annuaire des Entreprises',
+      title: 'Plateforme des Entreprises',
       hero: {
         title: 'Entreprises',
         subtitle: 'Le Centre d\'affaires de Dalil Tounes',
@@ -262,7 +262,7 @@ export const translations = {
       allCategories: 'Toutes les catégories',
       allCities: 'Toutes les villes',
       suggestTitle: 'Suggérer une Entreprise',
-      suggestDescription: 'Aidez-nous à enrichir notre annuaire en suggérant une entreprise',
+      suggestDescription: 'Aidez-nous à enrichir notre plateforme en suggérant une entreprise',
       categories: {
         partners: {
           title: 'Rechercher un partenaire/fournisseur',
@@ -509,7 +509,7 @@ export const translations = {
             },
           },
           directory: {
-            title: 'Annuaire des Bureaux',
+            title: 'Bureaux locaux',
             subtitle: 'Unités Locales de Promotion Sociale (ULPS)',
             intro: 'Les ULPS sont présentes dans toutes les délégations de Tunisie. Elles sont votre point de contact pour bénéficier des programmes sociaux et obtenir des informations.',
             findOffice: 'Trouvez votre bureau local',
@@ -555,7 +555,7 @@ export const translations = {
     },
     health: {
       title: 'Trouvez Votre Spécialiste et les Urgences',
-      intro: 'Facilitez votre recherche d\'un professionnel de la santé. Notre répertoire vous permet de trouver rapidement un médecin généraliste, un spécialiste, un dentiste ou un autre paramédical, en filtrant par quartier, spécialité et disponibilité. Votre santé est notre priorité : trouvez immédiatement l\'aide dont vous avez besoin, que vous soyez résident ou visiteur.',
+      intro: 'Facilitez votre recherche d\'un professionnel de la santé. Notre plateforme vous permet de trouver rapidement un médecin généraliste, un spécialiste, un dentiste ou un autre paramédical, en filtrant par quartier, spécialité et disponibilité. Votre santé est notre priorité : trouvez immédiatement l\'aide dont vous avez besoin, que vous soyez résident ou visiteur.',
       hero: {
         description: 'Bienvenue dans l\'espace Santé de Dalil Tounes. Que vous soyez résident, en visite ou en déplacement, votre bien-être est essentiel. Nous sommes là pour alléger le stress des démarches : trouver un spécialiste, localiser la pharmacie de garde ou connaître le chemin de l\'urgence la plus proche ne devrait jamais être une source d\'inquiétude.',
       },
@@ -691,7 +691,7 @@ export const translations = {
     },
     business: {
       directory: {
-        title: 'Annuaire des entreprises',
+        title: 'Plateforme des entreprises',
         subtitle: 'Découvrez les établissements tunisiens',
         infoBanner: 'Trouvez les services et établissements dont vous avez besoin',
         filters: {
@@ -711,7 +711,7 @@ export const translations = {
           viewDetails: 'Voir la fiche',
         },
         help: {
-          title: 'Comment utiliser l\'annuaire ?',
+          title: 'Comment utiliser la plateforme ?',
           tip1: 'Utilisez les filtres pour affiner votre recherche',
           tip2: 'Contactez directement les entreprises par téléphone ou email',
           tip3: 'Vérifiez les établissements marqués comme "Vérifiés"',
@@ -1069,7 +1069,7 @@ export const translations = {
           name: 'Découverte',
           price: 'Gratuit',
           features: [
-            'Consultation du répertoire',
+            'Consultation de la plateforme',
             'Recherche de base',
             'Profil d\'entreprise simple',
             'Support par email',
@@ -1377,7 +1377,7 @@ export const translations = {
       subscription: 'Subscription',
     },
     navMenu: {
-      businesses: { directory: 'Directory', suggest: 'Suggest a business', partners: 'Partners / suppliers', jobs: 'Jobs', events: 'Events' },
+      businesses: { directory: 'Platform', suggest: 'Suggest a business', partners: 'Partners / suppliers', jobs: 'Jobs', events: 'Events' },
       citizens: { health: 'Health', education: 'Education', publicServices: 'Public services', shops: 'Shops & Stores', leisure: 'Leisure & Events', marketplace: 'Local Marketplace', social: 'Social Services' },
       jobs: { browse: 'Browse jobs', post: 'Post a job', cv: 'Submit a CV' },
       subscription: { register: 'Register my business', terms: 'Terms of use', privacy: 'Privacy policy' },
@@ -1487,7 +1487,7 @@ export const translations = {
       partnerPromo: {
         title: 'Make your brand shine across Tunisia',
         subtitle:
-          'Showcase your business on the Dalil Tounes homepage, the national directory of establishments and services. Reach thousands of citizens, professionals, and travelers who search every day for businesses like yours.',
+          'Showcase your business on the Dalil Tounes homepage, Tunisia\'s platform for establishments and services. Reach thousands of citizens, professionals, and travelers who search every day for businesses like yours.',
         offerLabel: 'Right now:',
         offerStrong: '6 months free with any annual subscription.',
         cta: 'Discover the partner offer',
@@ -1544,7 +1544,7 @@ export const translations = {
         paragraph1: 'Tunisia is full of talent, ancestral know-how and innovative companies. Yet too often, these treasures remain invisible, drowned in a digital world that does not do them justice.',
         mission: 'Our mission is simple but ambitious: digitize without dehumanizing.',
         paragraph2: 'We firmly believe that we can embrace modernity without losing our soul. Every potter in Nabeul, every family restaurant in Sfax, every tour guide in Tozeur deserves to be discovered, celebrated and supported.',
-        paragraph3: 'is not just a digital directory. It\'s a bridge between tradition and innovation, a tool serving our local economy, a platform that highlights what makes our country beautiful and strong.',
+        paragraph3: 'is much more than a digital platform. It\'s a bridge between tradition and innovation, a tool serving our local economy, a platform that highlights what makes our country beautiful and strong.',
         together: 'Together, let\'s build a digital Tunisia that looks like us.',
         values: 'With nobility, passion and pride in our identity',
       },
@@ -1615,14 +1615,14 @@ export const translations = {
       },
     },
     businesses: {
-      title: 'Business Directory',
+      title: 'Business Platform',
       search: 'Search for a business...',
       filterCategory: 'Category',
       filterCity: 'City',
       allCategories: 'All categories',
       allCities: 'All cities',
       suggestTitle: 'Suggest a Business',
-      suggestDescription: 'Help us enrich our directory by suggesting a business',
+      suggestDescription: 'Help us enrich our platform by suggesting a business',
       categories: {
         partners: {
           title: 'Find a partner/supplier',
@@ -1862,7 +1862,7 @@ export const translations = {
             },
           },
           directory: {
-            title: 'Office Directory',
+            title: 'Local Offices',
             subtitle: 'Local Social Promotion Units (ULPS)',
             intro: 'ULPS are present in all delegations of Tunisia. They are your contact point to benefit from social programs and obtain information.',
             findOffice: 'Find your local office',
@@ -1908,7 +1908,7 @@ export const translations = {
     },
     health: {
       title: 'Find Your Specialist and Emergency Services in Mahdia',
-      intro: 'Simplify your search for a healthcare professional. Our directory allows you to quickly find a general practitioner, specialist, dentist or other paramedical professional.',
+      intro: 'Simplify your search for a healthcare professional. Our platform allows you to quickly find a general practitioner, specialist, dentist or other paramedical professional.',
       emergency: {
         title: 'Emergency Numbers',
         subtitle: 'In case of medical emergency, call directly',
@@ -2039,7 +2039,7 @@ export const translations = {
     },
     business: {
       directory: {
-        title: 'Business Directory',
+        title: 'Business Platform',
         subtitle: 'Discover Tunisian establishments',
         infoBanner: 'Find the services and establishments you need',
         filters: {
@@ -2059,7 +2059,7 @@ export const translations = {
           viewDetails: 'View details',
         },
         help: {
-          title: 'How to use the directory?',
+          title: 'How to use the platform?',
           tip1: 'Use filters to refine your search',
           tip2: 'Contact businesses directly by phone or email',
           tip3: 'Check establishments marked as "Verified"',
@@ -2303,7 +2303,7 @@ export const translations = {
           name: 'Discovery',
           price: 'Free',
           features: [
-            'Directory consultation',
+            'Platform access',
             'Basic search',
             'Simple business profile',
             'Email support',
@@ -2576,7 +2576,7 @@ export const translations = {
       subscription: 'الاشتراك',
     },
     navMenu: {
-      businesses: { directory: 'الدليل', suggest: 'اقتراح شركة', partners: 'شركاء / موردون', jobs: 'الوظائف', events: 'الفعاليات' },
+      businesses: { directory: 'المنصة', suggest: 'اقتراح شركة', partners: 'شركاء / موردون', jobs: 'الوظائف', events: 'الفعاليات' },
       citizens: { health: 'الصحة', education: 'التعليم', publicServices: 'الخدمات العامة', shops: 'المحلات والمتاجر', leisure: 'الترفيه والفعاليات', marketplace: 'السوق المحلي', social: 'الخدمات الاجتماعية' },
       jobs: { browse: 'تصفح الوظائف', post: 'نشر عرض', cv: 'إيداع سيرة ذاتية' },
       subscription: { register: 'تسجيل شركتي', terms: 'شروط الاستخدام', privacy: 'سياسة الخصوصية' },
@@ -2678,7 +2678,7 @@ export const translations = {
       partnerPromo: {
         title: 'اجعل علامتك التجارية تتألّق في كلّ تونس',
         subtitle:
-          'اعرض مؤسستك على الصفحة الرئيسية لـ Dalil Tounes، الدليل الوطني للمؤسسات والخدمات. تواصل مع آلاف المواطنين والمهنيين والمسافرين الذين يبحثون يوميًا عن مؤسسات مثل مؤسستك.',
+          'اعرض مؤسستك على الصفحة الرئيسية لـ Dalil Tounes، المنصة التونسية للمؤسسات والخدمات. تواصل مع آلاف المواطنين والمهنيين والمسافرين الذين يبحثون يوميًا عن مؤسسات مثل مؤسستك.',
         offerLabel: 'حاليًا:',
         offerStrong: '6 أشهر مجانًا مع أي اشتراك سنوي.',
         cta: 'اكتشف عرض الشركاء',
@@ -2806,7 +2806,7 @@ export const translations = {
       },
     },
     businesses: {
-      title: 'دليل الشركات',
+      title: 'منصة الشركات',
       search: 'البحث عن شركة...',
       filterCategory: 'الفئة',
       filterCity: 'المدينة',
@@ -3060,7 +3060,7 @@ export const translations = {
             },
           },
           directory: {
-            title: 'دليل المكاتب',
+            title: 'المكاتب المحلية',
             subtitle: 'وحدات النهوض الاجتماعي المحلية (ULPS)',
             intro: 'تتواجد وحدات النهوض الاجتماعي في جميع المعتمديات التونسية. هي نقطة اتصالك للاستفادة من البرامج الاجتماعية والحصول على المعلومات.',
             findOffice: 'ابحث عن مكتبك المحلي',
@@ -3248,7 +3248,7 @@ export const translations = {
     },
     business: {
       directory: {
-        title: 'دليل الشركات',
+        title: 'منصة الشركات',
         subtitle: 'اكتشف المؤسسات التونسية',
         infoBanner: 'ابحث عن الخدمات والمؤسسات التي تحتاجها',
         filters: {
@@ -3268,7 +3268,7 @@ export const translations = {
           viewDetails: 'عرض التفاصيل',
         },
         help: {
-          title: 'كيفية استخدام الدليل؟',
+          title: 'كيفية استخدام المنصة؟',
           tip1: 'استخدم المرشحات لتحسين البحث',
           tip2: 'اتصل بالشركات مباشرة عبر الهاتف أو البريد الإلكتروني',
           tip3: 'تحقق من المؤسسات المعلمة على أنها "موثوقة"',
@@ -3534,7 +3534,7 @@ export const translations = {
           name: 'اكتشاف',
           price: 'مجاني',
           features: [
-            'الاطلاع على الدليل',
+            'تصفح المنصة',
             'بحث أساسي',
             'ملف تعريف بسيط للشركة',
             'دعم عبر البريد الإلكتروني',
@@ -3841,7 +3841,7 @@ export const translations = {
       subscription: 'Abbonamento',
     },
     navMenu: {
-      businesses: { directory: 'Elenco', suggest: 'Suggerisci un\'azienda', partners: 'Partner / fornitori', jobs: 'Lavoro', events: 'Eventi' },
+      businesses: { directory: 'Piattaforma', suggest: 'Suggerisci un\'azienda', partners: 'Partner / fornitori', jobs: 'Lavoro', events: 'Eventi' },
       citizens: { health: 'Salute', education: 'Istruzione', publicServices: 'Servizi pubblici', shops: 'Negozi e Commerci', leisure: 'Tempo libero ed Eventi', marketplace: 'Mercato Locale', social: 'Servizi sociali' },
       jobs: { browse: 'Consulta offerte', post: 'Pubblica un\'offerta', cv: 'Invia un CV' },
       subscription: { register: 'Registra la mia azienda', terms: 'Termini di utilizzo', privacy: 'Privacy policy' },
@@ -3943,7 +3943,7 @@ export const translations = {
       partnerPromo: {
         title: 'Fai brillare il tuo marchio in tutta la Tunisia',
         subtitle:
-          "Metti in evidenza la tua azienda nella homepage di Dalil Tounes, l'elenco nazionale di attività e servizi. Raggiungi migliaia di cittadini, professionisti e viaggiatori che ogni giorno cercano aziende come la tua.",
+          "Metti in evidenza la tua azienda nella homepage di Dalil Tounes, la piattaforma tunisina di attività e servizi. Raggiungi migliaia di cittadini, professionisti e viaggiatori che ogni giorno cercano aziende come la tua.",
         offerLabel: 'In questo momento:',
         offerStrong: '6 mesi in omaggio con qualsiasi abbonamento annuale.',
         cta: "Scopri l'offerta partner",
@@ -4000,7 +4000,7 @@ export const translations = {
         paragraph1: 'La Tunisia è piena di talenti, di saperi ancestrali e di imprese innovative. Eppure troppo spesso, questi tesori rimangono invisibili, annegati in un mondo digitale che non rende loro giustizia.',
         mission: 'La nostra missione è semplice ma ambiziosa: digitalizzare senza disumanizzare.',
         paragraph2: 'Crediamo fermamente che si possa abbracciare la modernità senza perdere la nostra anima. Ogni vasaio di Nabeul, ogni ristorante familiare di Sfax, ogni guida turistica di Tozeur merita di essere scoperto, celebrato e sostenuto.',
-        paragraph3: 'non è solo una directory digitale. È un ponte tra tradizione e innovazione, uno strumento al servizio della nostra economia locale, una piattaforma che mette in luce ciò che rende il nostro paese bello e forte.',
+        paragraph3: 'è molto più di una piattaforma digitale. È un ponte tra tradizione e innovazione, uno strumento al servizio della nostra economia locale, una piattaforma che mette in luce ciò che rende il nostro paese bello e forte.',
         together: 'Insieme, costruiamo una Tunisia digitale che ci assomiglia.',
         values: 'Con nobiltà, passione e orgoglio per la nostra identità',
       },
@@ -4071,14 +4071,14 @@ export const translations = {
       },
     },
     businesses: {
-      title: 'Elenco Aziende',
+      title: 'Piattaforma delle Aziende',
       search: 'Cerca un\'azienda...',
       filterCategory: 'Categoria',
       filterCity: 'Città',
       allCategories: 'Tutte le categorie',
       allCities: 'Tutte le città',
       suggestTitle: 'Suggerisci un\'Azienda',
-      suggestDescription: 'Aiutaci ad arricchire il nostro elenco suggerendo un\'azienda',
+      suggestDescription: 'Aiutaci ad arricchire la nostra piattaforma suggerendo un\'azienda',
       categories: {
         partners: {
           title: 'Trova un partner/fornitore',
@@ -4235,7 +4235,7 @@ export const translations = {
             },
           },
           directory: {
-            title: 'Elenco degli Uffici',
+            title: 'Uffici locali',
             subtitle: 'Unità Locali di Promozione Sociale (ULPS)',
             intro: 'Le ULPS sono presenti in tutte le delegazioni della Tunisia. Sono il tuo punto di contatto per beneficiare dei programmi sociali e ottenere informazioni.',
             findOffice: 'Trova il tuo ufficio locale',
@@ -4402,7 +4402,7 @@ export const translations = {
     },
     business: {
       directory: {
-        title: 'Elenco delle aziende',
+        title: 'Piattaforma delle aziende',
         subtitle: 'Scopri le strutture tunisine',
         infoBanner: 'Trova i servizi e le strutture di cui hai bisogno',
         filters: {
@@ -4422,7 +4422,7 @@ export const translations = {
           viewDetails: 'Visualizza dettagli',
         },
         help: {
-          title: 'Come utilizzare l\'elenco?',
+          title: 'Come utilizzare la piattaforma?',
           tip1: 'Usa i filtri per affinare la ricerca',
           tip2: 'Contatta le aziende direttamente per telefono o email',
           tip3: 'Verifica le strutture contrassegnate come "Verificate"',
@@ -4661,7 +4661,7 @@ export const translations = {
           name: 'Scoperta',
           price: 'Gratuito',
           features: [
-            'Consultazione della directory',
+            'Consultazione della piattaforma',
             'Ricerca di base',
             'Profilo aziendale semplice',
             'Supporto via email',
@@ -4923,7 +4923,7 @@ export const translations = {
       subscription: 'Подписка',
     },
     navMenu: {
-      businesses: { directory: 'Справочник', suggest: 'Предложить компанию', partners: 'Партнёры / поставщики', jobs: 'Работа', events: 'Мероприятия' },
+      businesses: { directory: 'Платформа', suggest: 'Предложить компанию', partners: 'Партнёры / поставщики', jobs: 'Работа', events: 'Мероприятия' },
       citizens: { health: 'Здоровье', education: 'Образование', publicServices: 'Госуслуги', shops: 'Магазины и Лавки', leisure: 'Досуг и Мероприятия', marketplace: 'Местный Рынок', social: 'Социальные услуги' },
       jobs: { browse: 'Смотреть вакансии', post: 'Разместить вакансию', cv: 'Отправить резюме' },
       subscription: { register: 'Зарегистрировать компанию', terms: 'Условия использования', privacy: 'Политика конфиденциальности' },
@@ -5025,7 +5025,7 @@ export const translations = {
       partnerPromo: {
         title: 'Пусть ваш бренд сияет по всей Тунисии',
         subtitle:
-          'Разместите вашу компанию на главной странице Dalil Tounes — национального справочника заведений и услуг. Достигайте тысяч жителей, профессионалов и путешественников, которые каждый день ищут компании, похожие на вашу.',
+          'Разместите вашу компанию на главной странице Dalil Tounes — тунисской платформы заведений и услуг. Достигайте тысяч жителей, профессионалов и путешественников, которые каждый день ищут компании, похожие на вашу.',
         offerLabel: 'Сейчас:',
         offerStrong: '6 месяцев в подарок при оформлении годовой подписки.',
         cta: 'Посмотреть партнёрское предложение',
@@ -5082,7 +5082,7 @@ export const translations = {
         paragraph1: 'Тунис полон талантов, древних ремёсел и инновационных компаний. Однако слишком часто эти сокровища остаются невидимыми, утопая в цифровом мире, который не воздаёт им должное.',
         mission: 'Наша миссия проста, но амбициозна: оцифровать, не лишая человечности.',
         paragraph2: 'Мы твёрдо верим, что можно принять современность, не теряя нашу душу. Каждый гончар в Набёле, каждый семейный ресторан в Сфаксе, каждый туристический гид в Тозёре заслуживает того, чтобы быть открытым, прославленным и поддержанным.',
-        paragraph3: '- это не просто цифровой справочник. Это мост между традицией и инновациями, инструмент, служащий нашей местной экономике, платформа, которая подчёркивает то, что делает нашу страну прекрасной и сильной.',
+        paragraph3: '- это гораздо больше, чем цифровая платформа. Это мост между традицией и инновациями, инструмент, служащий нашей местной экономике, платформа, которая подчёркивает то, что делает нашу страну прекрасной и сильной.',
         together: 'Вместе давайте построим цифровой Тунис, похожий на нас.',
         values: 'С благородством, страстью и гордостью за нашу идентичность',
       },
@@ -5153,14 +5153,14 @@ export const translations = {
       },
     },
     businesses: {
-      title: 'Справочник компаний',
+      title: 'Платформа компаний',
       search: 'Поиск компании...',
       filterCategory: 'Категория',
       filterCity: 'Город',
       allCategories: 'Все категории',
       allCities: 'Все города',
       suggestTitle: 'Предложить компанию',
-      suggestDescription: 'Помогите нам обогатить наш справочник, предложив компанию',
+      suggestDescription: 'Помогите нам развивать нашу платформу, предложив компанию',
       categories: {
         partners: {
           title: 'Найти партнера/поставщика',

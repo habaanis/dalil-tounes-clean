@@ -226,7 +226,7 @@ export default function PourquoiDalilTounes() {
             La plateforme tunisienne qui rapproche les citoyens et les entreprises.
           </p>
         <p className="mx-auto mt-6 max-w-3xl text-base leading-7 text-white/75 sm:text-lg">
-  À première vue, Dalil Tounes peut ressembler à un annuaire d'entreprises.
+  À première vue, Dalil Tounes peut ressembler à une simple liste d'entreprises.
   <br />
   En réalité, c'est une plateforme vivante qui met en relation les citoyens, les entreprises et les professionnels, tout en offrant aux entreprises une fiche professionnelle complète pour développer leur visibilité en Tunisie.
 </p>

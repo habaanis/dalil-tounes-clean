@@ -54,7 +54,7 @@ const CGU: React.FC = () => {
           <p>
             Dalil Tounes est une plateforme de référencement. Elle a pour vocation de faciliter la
             mise en relation entre les utilisateurs et des prestataires tiers (entreprises, médecins,
-            commerces, etc.) référencés dans l'annuaire.
+            commerces, etc.) référencés sur la plateforme.
           </p>
           <ul className="mt-4 space-y-3 pl-4 border-l-2 border-[#D4AF37]">
             <li>
@@ -66,7 +66,7 @@ const CGU: React.FC = () => {
             <li>
               <span className="font-medium">Absence de garantie :</span> L'éditeur ne garantit pas
               la disponibilité, la qualité, la conformité, la licéité ni l'exactitude des services
-              ou informations fournis par les tiers inscrits sur l'annuaire. Il appartient à
+              ou informations fournis par les tiers inscrits sur la plateforme. Il appartient à
               l'utilisateur de procéder à toutes les vérifications qu'il juge nécessaires avant
               d'engager une relation commerciale ou contractuelle avec un prestataire.
             </li>

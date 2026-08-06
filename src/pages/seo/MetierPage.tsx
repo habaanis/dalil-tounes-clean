@@ -170,7 +170,7 @@ const MetierPage: React.FC = () => {
                   to={`/entreprises?categorie=${encodeURIComponent(metier.value)}`}
                   className="flex items-center gap-1 text-sm text-[#D4AF37] hover:underline"
                 >
-                  Annuaire complet
+                  Tous les professionnels
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
