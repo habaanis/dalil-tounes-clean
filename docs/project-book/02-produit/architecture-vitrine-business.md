@@ -1,6 +1,6 @@
 # Architecture de la Vitrine Business Dalil Tounes
 
-Version : 1.0
+Version : 1.1
 
 ## Décision officielle
 
@@ -19,6 +19,8 @@ Le CV Business complet correspond à l'offre Premium.
 
 L'offre Artisan utilise le même moteur, mais avec une présentation plus simple et un nombre de fonctions limité.
 
+Il n'existe pas d'offre Élite dans cette architecture commerciale.
+
 ---
 
 ## Principes
@@ -28,7 +30,7 @@ L'offre Artisan utilise le même moteur, mais avec une présentation plus simple
 3. Le visuel général du site Dalil Tounes n'est pas refait dans ce chantier.
 4. Les améliorations visuelles concernent d'abord l'intérieur de la vitrine.
 5. L'identité Dalil Tounes est conservée.
-6. Lienora sert de référence pour les mécanismes, la qualité du contenu et le SEO, pas comme modèle visuel à copier.
+6. Lienora sert de référence pour les mécanismes, la hiérarchie visuelle, la qualité du contenu et le SEO, sans reprendre sa marque.
 7. Les bases SEO techniques doivent être correctes pour toutes les fiches indexables.
 8. La richesse du contenu et les fonctions commerciales distinguent les offres.
 
@@ -121,26 +123,28 @@ Fonctions prévues :
 - connexion complète à la plateforme ;
 - entreprises similaires.
 
-L'offre Elite Pro peut utiliser la même architecture Premium avec des limites médias et fonctions supplémentaires.
-
 ---
 
 ## Référence Lienora
 
-Les mécanismes utiles à reprendre et adapter sont :
+Les mécanismes utiles repris et adaptés sont :
 
-- sections de contenu clairement organisées ;
-- gestion propre des champs absents ;
-- contenu utile visible directement ;
-- présentation, services, réalisations, photos, horaires et informations pratiques ;
-- métadonnées propres à chaque entreprise ;
-- canonical individuel ;
-- HTML initial exploitable par les moteurs ;
-- données structurées ;
-- sitemap des vitrines publiées ;
-- partage et QR code.
+- une vitrine compacte et centrée ;
+- une couverture avec logo superposé ;
+- une identité professionnelle immédiatement lisible ;
+- des actions rapides en haut de la vitrine ;
+- une présentation repliable ;
+- des rubriques en accordéon ;
+- les services, réalisations, horaires et informations pratiques ;
+- le QR code, le partage et l'ajout aux contacts ;
+- la gestion propre des champs absents ;
+- les métadonnées propres à chaque entreprise ;
+- le canonical individuel ;
+- le futur HTML initial exploitable par les moteurs ;
+- les données structurées ;
+- le futur sitemap des vitrines publiées.
 
-Ces mécanismes doivent être adaptés à Airtable, Supabase, ImageKit et aux composants existants de Dalil Tounes.
+Ces mécanismes sont adaptés à Airtable, Supabase, ImageKit, aux composants existants et à l'identité visuelle de Dalil Tounes.
 
 ---
 
