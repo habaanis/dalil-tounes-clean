@@ -1,13 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
   ArrowLeft,
   Building2,
-  CalendarDays,
   Check,
-  Clock3,
   Copy,
-  ExternalLink,
   Facebook,
   Globe2,
   Instagram,
@@ -114,6 +111,7 @@ interface ShowcaseCopy {
   reviews: string;
   leaveReview: string;
   platform: string;
+  social: string;
   call: string;
   whatsapp: string;
   email: string;
@@ -153,6 +151,7 @@ const COPY: Record<string, ShowcaseCopy> = {
     reviews: 'Avis clients',
     leaveReview: 'Donner un avis',
     platform: 'Découvrir aussi sur Dalil Tounes',
+    social: 'Réseaux sociaux',
     call: 'Appeler',
     whatsapp: 'WhatsApp',
     email: 'Email',
@@ -190,6 +189,7 @@ const COPY: Record<string, ShowcaseCopy> = {
     reviews: 'Customer reviews',
     leaveReview: 'Leave a review',
     platform: 'Discover more on Dalil Tounes',
+    social: 'Social media',
     call: 'Call',
     whatsapp: 'WhatsApp',
     email: 'Email',
@@ -227,6 +227,7 @@ const COPY: Record<string, ShowcaseCopy> = {
     reviews: 'آراء العملاء',
     leaveReview: 'أضف رأيك',
     platform: 'اكتشف المزيد على دليل تونس',
+    social: 'الشبكات الاجتماعية',
     call: 'اتصال',
     whatsapp: 'واتساب',
     email: 'البريد الإلكتروني',
@@ -264,6 +265,7 @@ const COPY: Record<string, ShowcaseCopy> = {
     reviews: 'Recensioni',
     leaveReview: 'Lascia una recensione',
     platform: 'Scopri anche su Dalil Tounes',
+    social: 'Social network',
     call: 'Chiama',
     whatsapp: 'WhatsApp',
     email: 'Email',
@@ -301,6 +303,7 @@ const COPY: Record<string, ShowcaseCopy> = {
     reviews: 'Отзывы клиентов',
     leaveReview: 'Оставить отзыв',
     platform: 'Больше на Dalil Tounes',
+    social: 'Социальные сети',
     call: 'Позвонить',
     whatsapp: 'WhatsApp',
     email: 'Email',
@@ -378,13 +381,37 @@ const buildWhatsAppUrl = (value: unknown): string => {
   return `https://wa.me/${normalized}`;
 };
 
+const isQrCodeImageUrl = (value: unknown): boolean => {
+  const url = String(value || '').trim().toLowerCase();
+  if (!url) return false;
+  return (
+    /\.(png|jpe?g|webp|svg|gif)(\?|$)/.test(url) ||
+    url.includes('api.qrserver.com') ||
+    url.includes('imagekit.io') ||
+    url.includes('supabase.co/storage') ||
+    url.includes('/qr-code') ||
+    url.includes('/qrcode')
+  );
+};
+
 const buildMapsUrl = (business: BusinessRecord): string => {
   const existing = firstText(business, ['BTN_Maps', 'google_url']);
   if (/^https?:\/\//i.test(existing)) return existing;
 
-  const latitude = numericValue(business.latitude);
-  const longitude = numericValue(business.longitude);
-  if ((latitude || longitude) && Number.isFinite(latitude) && Number.isFinite(longitude)) {
+  const coordinatePair = existing.match(
+    /^\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*$/,
+  );
+  if (coordinatePair) {
+    return `https://www.google.com/maps/search/?api=1&query=${coordinatePair[1]},${coordinatePair[2]}`;
+  }
+
+  const latitude = Number(business.latitude);
+  const longitude = Number(business.longitude);
+  if (
+    Number.isFinite(latitude) &&
+    Number.isFinite(longitude) &&
+    (latitude !== 0 || longitude !== 0)
+  ) {
     return `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
   }
 
@@ -406,10 +433,8 @@ const themeForTier = (tier: SubscriptionTier) => {
     return {
       page: '#15090d',
       card: '#4f1515',
-      cardSoft: '#681c1c',
       accent: '#FCA5A5',
       border: '#DC2626',
-      muted: '#FECACA',
     };
   }
 
@@ -417,20 +442,16 @@ const themeForTier = (tier: SubscriptionTier) => {
     return {
       page: '#080808',
       card: '#050505',
-      cardSoft: '#121212',
       accent: '#D4AF37',
       border: '#D4AF37',
-      muted: '#D1D5DB',
     };
   }
 
   return {
     page: '#07130f',
     card: '#064E3B',
-    cardSoft: '#083f33',
     accent: '#D4AF37',
     border: '#D4AF37',
-    muted: '#D1FAE5',
   };
 };
 
@@ -440,7 +461,7 @@ function Section({
   accent,
 }: {
   title: string;
-  children: React.ReactNode;
+  children: ReactNode;
   accent: string;
 }) {
   return (
@@ -465,7 +486,7 @@ function ActionLink({
 }: {
   href: string;
   label: string;
-  icon: React.ReactNode;
+  icon: ReactNode;
   accent: string;
   external?: boolean;
 }) {
@@ -501,7 +522,14 @@ export default function BusinessShowcaseDetail() {
   const [failed, setFailed] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  useViewTracking(business?.id);
+  const tier = useMemo(
+    () => mapSubscriptionToTier({ statut_abonnement: business?.statut_abonnement }),
+    [business?.statut_abonnement],
+  );
+  const capabilities = useMemo(() => getBusinessShowcaseCapabilities(tier), [tier]);
+  const theme = useMemo(() => themeForTier(tier), [tier]);
+
+  useViewTracking(capabilities.variant === 'directory' ? undefined : business?.id);
 
   useEffect(() => {
     let cancelled = false;
@@ -572,7 +600,6 @@ export default function BusinessShowcaseDetail() {
 
         if (!record) {
           setFailed(true);
-          setLoading(false);
           return;
         }
 
@@ -595,19 +622,10 @@ export default function BusinessShowcaseDetail() {
     };
   }, [location.pathname, navigate, urlId, urlSlug, urlVilleSlug]);
 
-  const tier = useMemo(
-    () => mapSubscriptionToTier({ statut_abonnement: business?.statut_abonnement }),
-    [business?.statut_abonnement],
-  );
-  const capabilities = useMemo(() => getBusinessShowcaseCapabilities(tier), [tier]);
-  const theme = useMemo(() => themeForTier(tier), [tier]);
-
   const displayName = business
     ? String(getMultilingualField(business, 'nom', language, true) || business.nom || '')
     : '';
-  const categoryLabel = business
-    ? splitList(business.categorie).join(', ')
-    : '';
+  const categoryLabel = business ? splitList(business.categorie).join(', ') : '';
   const translatedDescription = business
     ? String(getMultilingualField(business, 'description', language, true) || business.description || '')
     : '';
@@ -666,6 +684,9 @@ export default function BusinessShowcaseDetail() {
   const rating = numericValue(business['Note Google Globale']);
   const googleReviewCount = Math.floor(numericValue(business['Compteur Avis Google']));
   const schedule = business.horaires_ok ? getParsedSchedule(business.horaires_ok) : null;
+  const qrImageUrl = isQrCodeImageUrl(business.qr_code_url)
+    ? String(business.qr_code_url)
+    : '';
   const seo = getBusinessSeoMeta(
     {
       nom: displayName,
@@ -687,8 +708,12 @@ export default function BusinessShowcaseDetail() {
       site_web: canonicalUrl,
       photo_url: business.image_url || undefined,
       image_url: business.image_url || undefined,
-      latitude: numericValue(business.latitude) || undefined,
-      longitude: numericValue(business.longitude) || undefined,
+      latitude: Number.isFinite(Number(business.latitude))
+        ? Number(business.latitude)
+        : undefined,
+      longitude: Number.isFinite(Number(business.longitude))
+        ? Number(business.longitude)
+        : undefined,
       note_moyenne: rating || undefined,
       nombre_avis: googleReviewCount || undefined,
       horaires: business.horaires_ok || undefined,
@@ -752,6 +777,7 @@ export default function BusinessShowcaseDetail() {
   const certification = String(business.statut_carte || '').trim();
   const showGallery = capabilities.showGallery && Boolean(business.image_url);
   const showVideo = capabilities.showVideos && Boolean(business.video_url);
+  const showAchievements = capabilities.variant === 'premium' && Boolean(achievementsText);
   const hasContact = Boolean(
     business.telephone ||
       whatsappUrl ||
@@ -972,7 +998,7 @@ export default function BusinessShowcaseDetail() {
                   </Section>
                 )}
 
-                {achievementsText && (
+                {showAchievements && (
                   <Section title={text.achievements} accent={theme.accent}>
                     <p className="whitespace-pre-line text-sm leading-7 text-gray-100">{achievementsText}</p>
                   </Section>
@@ -1041,7 +1067,7 @@ export default function BusinessShowcaseDetail() {
                 )}
 
                 {socialLinks.length > 0 && (
-                  <Section title="Réseaux sociaux" accent={theme.accent}>
+                  <Section title={text.social} accent={theme.accent}>
                     <div className="grid grid-cols-2 gap-2">
                       {socialLinks.map(link => (
                         <ActionLink
@@ -1062,9 +1088,9 @@ export default function BusinessShowcaseDetail() {
                     <div className="flex flex-col items-center gap-4 text-center">
                       {capabilities.showQrCode && (
                         <div className="rounded-2xl bg-white p-3 shadow-xl">
-                          {business.qr_code_url ? (
+                          {qrImageUrl ? (
                             <img
-                              src={business.qr_code_url}
+                              src={qrImageUrl}
                               alt={`QR code ${displayName}`}
                               width={150}
                               height={150}
