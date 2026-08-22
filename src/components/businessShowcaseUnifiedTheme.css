@@ -1,0 +1,26 @@
+/*
+ * Artisan et Premium utilisent volontairement la meme identite visuelle
+ * verte et doree. Les fonctions et les limites medias les differencient,
+ * pas la couleur de la vitrine.
+ */
+.dt-showcase-page {
+  --dt-page: #eef1ef !important;
+  --dt-ink: #0f2d23 !important;
+  --dt-accent: #f4ce55 !important;
+  --dt-border: #d4af37 !important;
+  --dt-muted: #b8d2c9 !important;
+  --dt-glow: rgba(20, 111, 77, 0.34) !important;
+  --dt-glow-soft: rgba(17, 92, 67, 0.25) !important;
+  --dt-shell-start: #031d18 !important;
+  --dt-shell-mid: #042d24 !important;
+  --dt-shell-end: #011914 !important;
+  --dt-identity-start: #032a22fa !important;
+  --dt-identity-end: #011915fc !important;
+  --dt-panel-start: #05352aeb !important;
+  --dt-panel-end: #011915f0 !important;
+  --dt-panel-dark: #021e19 !important;
+  --dt-badge-start: #076044 !important;
+  --dt-badge-end: #087a50 !important;
+  --dt-action-start: #06382d !important;
+  --dt-action-end: #011f1a !important;
+}
