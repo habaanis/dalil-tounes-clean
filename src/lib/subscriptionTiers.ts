@@ -84,8 +84,8 @@ export function mapSubscriptionToTier(data: SubscriptionData): SubscriptionTier 
 /**
  * Obtient les limites médias selon le plan d'abonnement.
  * - Gratuit : pas de galerie ;
- * - Artisan : 3 photos maximum ;
- * - Premium : 5 photos maximum et 1 vidéo.
+ * - Artisan : 5 photos maximum ;
+ * - Premium : 10 photos maximum et 1 vidéo.
  *
  * Les anciennes valeurs techniques Elite et Custom utilisent les limites
  * Premium afin de ne pas recréer une quatrième offre.
@@ -101,7 +101,7 @@ export function getMediaLimits(tier: SubscriptionTier): MediaLimits {
       };
     case 'artisan':
       return {
-        maxPhotos: 3,
+        maxPhotos: 5,
         maxVideos: 0,
         showGallery: true,
         showVideos: false,
@@ -110,7 +110,7 @@ export function getMediaLimits(tier: SubscriptionTier): MediaLimits {
     case 'elite':
     case 'custom':
       return {
-        maxPhotos: 5,
+        maxPhotos: 10,
         maxVideos: 1,
         showGallery: true,
         showVideos: true,
@@ -267,16 +267,16 @@ export function getTierColors(statut_abonnement: string | null) {
       };
     case 'artisan':
       return {
-        cardBg: '#4A1D43',
+        cardBg: '#047857',
         text: '#FFFFFF',
-        secondaryText: '#E5D4E4',
-        border: '#D4AF37',
-        primary: '#D4AF37',
-        primaryText: '#4A1D43',
-        accent: '#B8941F',
-        badgeBg: '#5A2D53',
-        badgeText: '#E5D4E4',
-        divider: '#6B2D5C',
+        secondaryText: '#D1FAE5',
+        border: '#10B981',
+        primary: '#10B981',
+        primaryText: '#FFFFFF',
+        accent: '#34D399',
+        badgeBg: '#065F46',
+        badgeText: '#D1FAE5',
+        divider: '#059669',
       };
     case 'gratuit':
     default:
