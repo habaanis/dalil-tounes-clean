@@ -30,7 +30,7 @@ const platformWindows = [
   },
   {
     label: 'CV Business',
-    description: 'Vous rassemblez toutes vos informations dans une fiche claire.',
+    description: 'Votre Vitrine Business réunit vos informations, services, photos, horaires, contacts et plateformes existantes.',
     position: { left: '48.5%', top: '49.0%', width: '8.5%', height: '12.7%' },
     featured: true,
   },
@@ -105,7 +105,10 @@ function VisibilitySummary() {
   return (
     <div className="mx-auto max-w-md rounded-[26px] border border-[#D4AF37]/30 bg-white/80 p-5 shadow-[0_18px_45px_rgba(74,29,67,0.08)] backdrop-blur">
       <p className="text-sm leading-relaxed text-gray-700">
-        Chaque fenêtre joue un rôle. Ensemble, elles construisent une présence numérique plus claire, plus rassurante et plus facile à retrouver.
+        Google Business, Facebook, Instagram, WhatsApp et votre site jouent chacun un rôle. La Vitrine Business les réunit dans un seul espace professionnel, clair, rassurant et facile à retrouver.
+      </p>
+      <p className="mt-3 text-sm font-semibold leading-relaxed text-[#4A1D43]">
+        C'est cette réunion de toute votre présence numérique qui fait la force de votre CV Business.
       </p>
       <Link
         to="/businesses"
@@ -145,3 +148,4 @@ export default function VisibilityHouseSection() {
     </section>
   );
 }
+
