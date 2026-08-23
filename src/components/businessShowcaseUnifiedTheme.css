@@ -84,16 +84,18 @@
 .dt-social-grid, .dt-platform-grid { margin-top: 5px !important; gap: 4px !important; }
 .dt-social-link, .dt-platform-link { min-height: 36px !important; padding: 5px 7px !important; font-size: 0.6rem !important; }
 
-/* Blocs retires du CV compact. */
 #dt-section-platform { display: none !important; }
 #dt-section-reviews .dt-accordion-panel > div > div:nth-child(2) { display: none !important; }
 
-/* Le bouton Reservation du haut ouvre directement le formulaire du panneau. */
+/* Un seul bouton Reservation : celui du haut. */
+#dt-section-booking { display: none !important; }
+#dt-section-booking.open { display: block !important; }
+#dt-section-booking.open > .dt-accordion-trigger { display: none !important; }
+#dt-section-booking.open > .dt-accordion-panel { border-top: 0 !important; padding: 8px !important; }
 #dt-section-booking .dt-accordion-panel > div > button:first-child { display: none !important; }
 #dt-section-booking .dt-accordion-panel > div > div:nth-child(2) { max-height: none !important; overflow: visible !important; opacity: 1 !important; }
 #dt-section-booking form { padding-top: 0 !important; }
 
-/* QR : phrase explicative et ajout aux contacts du bas supprimes. */
 .dt-qr-copy > p:last-child { display: none !important; }
 .dt-qr-card { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 7px !important; align-items: center !important; }
 .dt-qr-copy { grid-column: 1 / 3 !important; }
