@@ -25,13 +25,24 @@ export interface RecommendedBusiness extends SeoBusiness {
   confidenceScore: number;
 }
 
+function normalizeStringArray(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    return value
+      .map((item) => String(item ?? '').trim())
+      .filter(Boolean);
+  }
+
+  if (typeof value === 'string' && value.trim()) {
+    return [value.trim()];
+  }
+
+  return [];
+}
+
 function mapEntrepriseRow(row: Record<string, unknown>): SeoBusiness {
-  const rawSousCats = row.sous_categories_texte ?? row.sous_categories;
-  const sousCats = Array.isArray(rawSousCats)
-    ? (rawSousCats as string[])
-    : rawSousCats
-      ? [rawSousCats as string]
-      : [];
+  const sousCategories = normalizeStringArray(row.sous_categories_texte ?? row.sous_categories);
+  const categories = normalizeStringArray(row.categorie);
+
   return {
     id: row.id as string,
     nom: extractFrenchName((row.nom as string) ?? ''),
@@ -39,14 +50,14 @@ function mapEntrepriseRow(row: Record<string, unknown>): SeoBusiness {
     ville: row.ville as string | undefined,
     gouvernorat: row.gouvernorat as string | undefined,
     telephone: row.telephone as string | undefined,
-    'catégorie': sousCats.length > 0 ? sousCats : (row.categorie ? [row.categorie as string] : []),
+    'catégorie': sousCategories.length > 0 ? sousCategories : categories,
     'Note Google Globale': (row['Note Google Globale'] as number | null) ?? null,
     'Compteur Avis Google': (row['Compteur Avis Google'] as number | null) ?? null,
-    logo_url: row.logo_url as string | undefined || row.image_url as string | undefined,
+    logo_url: (row.logo_url as string | undefined) || (row.image_url as string | undefined),
     description: row.description as string | undefined,
     is_premium: (row.is_premium as boolean | undefined) ?? false,
     statut_abonnement: (row.statut_abonnement as string | null) ?? null,
-    horaires_ok: row.horaires_ok as string | null ?? null,
+    horaires_ok: (row.horaires_ok as string | null) ?? null,
     slug: (row.slug as string | null) ?? null,
     statut_carte: (row.statut_carte as string | null) ?? null,
   };
@@ -73,7 +84,7 @@ export async function fetchSimilarBusinesses(options: {
       .from('entreprise')
       .select(SIMILAR_SELECT)
       .neq('id', excludeId)
-      .ilike('categorie', `%${categorie}%`)
+      .ilike('sous_categories_texte', `%${categorie}%`)
       .ilike('ville', `%${ville}%`)
       .order('is_premium', { ascending: false })
       .order('score_avis', { ascending: false, nullsFirst: false })
@@ -81,7 +92,10 @@ export async function fetchSimilarBusinesses(options: {
     if (data) {
       for (const row of data as Record<string, unknown>[]) {
         const id = row.id as string;
-        if (!seenIds.has(id)) { seenIds.add(id); results.push(mapEntrepriseRow(row)); }
+        if (!seenIds.has(id)) {
+          seenIds.add(id);
+          results.push(mapEntrepriseRow(row));
+        }
       }
     }
   }
@@ -91,33 +105,60 @@ export async function fetchSimilarBusinesses(options: {
       .from('entreprise')
       .select(SIMILAR_SELECT)
       .neq('id', excludeId)
-      .ilike('categorie', `%${categorie}%`)
+      .ilike('sous_categories_texte', `%${categorie}%`)
       .order('is_premium', { ascending: false })
       .order('score_avis', { ascending: false, nullsFirst: false })
       .limit(limit - results.length + 2);
     if (data) {
       for (const row of data as Record<string, unknown>[]) {
         const id = row.id as string;
-        if (!seenIds.has(id)) { seenIds.add(id); results.push(mapEntrepriseRow(row)); }
+        if (!seenIds.has(id)) {
+          seenIds.add(id);
+          results.push(mapEntrepriseRow(row));
+        }
         if (results.length >= limit) break;
       }
     }
   }
 
   if (results.length < limit && ville) {
-    const gouv = gouvernorat || ville;
     const { data } = await supabase
       .from('entreprise')
       .select(SIMILAR_SELECT)
       .neq('id', excludeId)
-      .or(`ville.ilike.%${ville}%,gouvernorat.ilike.%${gouv}%`)
+      .ilike('ville', `%${ville}%`)
       .order('is_premium', { ascending: false })
       .order('score_avis', { ascending: false, nullsFirst: false })
       .limit(limit - results.length + 2);
     if (data) {
       for (const row of data as Record<string, unknown>[]) {
         const id = row.id as string;
-        if (!seenIds.has(id)) { seenIds.add(id); results.push(mapEntrepriseRow(row)); }
+        if (!seenIds.has(id)) {
+          seenIds.add(id);
+          results.push(mapEntrepriseRow(row));
+        }
+        if (results.length >= limit) break;
+      }
+    }
+  }
+
+  // Le gouvernorat n'est utilisé qu'en repli explicite, jamais comme équivalent d'une ville.
+  if (results.length < limit && !ville && gouvernorat) {
+    const { data } = await supabase
+      .from('entreprise')
+      .select(SIMILAR_SELECT)
+      .neq('id', excludeId)
+      .ilike('gouvernorat', `%${gouvernorat}%`)
+      .order('is_premium', { ascending: false })
+      .order('score_avis', { ascending: false, nullsFirst: false })
+      .limit(limit - results.length + 2);
+    if (data) {
+      for (const row of data as Record<string, unknown>[]) {
+        const id = row.id as string;
+        if (!seenIds.has(id)) {
+          seenIds.add(id);
+          results.push(mapEntrepriseRow(row));
+        }
         if (results.length >= limit) break;
       }
     }
@@ -141,20 +182,20 @@ export async function fetchSeoBusinesses(options: {
     .from('entreprise')
     .select(SIMILAR_SELECT, { count: 'exact' });
 
+  // Les métiers/sous-catégories sont stockés sous forme de texte normalisé
+  // dans sous_categories_texte. On évite volontairement `ilike` sur `categorie`,
+  // qui peut être un tableau Postgres et n'est donc pas un champ texte scalaire.
   if (metierValue) {
-    query = query.or(
-      `sous_categories.ilike.%${metierValue}%,categorie.ilike.%${metierValue}%`
-    );
+    query = query.ilike('sous_categories_texte', `%${metierValue}%`);
   }
 
   if (sousCategorie) {
-    query = query.ilike('sous_categories', `%${sousCategorie}%`);
+    query = query.ilike('sous_categories_texte', `%${sousCategorie}%`);
   }
 
+  // Une page ville doit représenter cette ville, pas tout son gouvernorat.
   if (city) {
-    query = query.or(
-      `ville.ilike.%${city}%,gouvernorat.ilike.%${city}%`
-    );
+    query = query.ilike('ville', `%${city}%`);
   }
 
   query = query
@@ -188,7 +229,7 @@ export async function fetchSeoBusinessesBySecteur(options: {
   }
 
   const orFilters = metiers
-    .map(m => `categorie.ilike.%${m.value}%,sous_categories.ilike.%${m.value}%`)
+    .map((m) => `sous_categories_texte.ilike.%${m.value}%`)
     .join(',');
 
   const { data, error, count } = await supabase
@@ -286,7 +327,6 @@ export async function fetchTopRecommendedByCity(
 
   const scored: RecommendedBusiness[] = rows.map((biz) => {
     const rating = parseRating(biz['Note Google Globale']);
-    const reviewCount = parseCount(biz['Compteur Avis Google']);
     return { ...biz, confidenceScore: rating };
   });
 
