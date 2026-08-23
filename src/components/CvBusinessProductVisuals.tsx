@@ -99,7 +99,7 @@ const copy: Record<BusinessCardPreviewLanguage, {
   },
 };
 
-function QrVisual({ language }: { language: BusinessCardPreviewLanguage }) {
+export function CvBusinessQrVisual({ language = 'fr' }: { language?: BusinessCardPreviewLanguage }) {
   const t = copy[language] ?? copy.fr;
   const isRtl = language === 'ar';
 
@@ -185,7 +185,7 @@ export function CvBusinessProductVisuals({
           <BusinessCardPreview variant="premium" size={compact ? 'compact' : 'full'} interactive={false} language={language} />
         </div>
         <div className="flex justify-center">
-          <QrVisual language={language} />
+          <CvBusinessQrVisual language={language} />
         </div>
       </div>
     </div>
