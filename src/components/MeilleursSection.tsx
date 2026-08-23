@@ -25,6 +25,7 @@ interface MeilleursItem {
   'Compteur Avis Google'?: number | string | null;
   is_premium?: boolean;
   statut_abonnement?: string | null;
+  statut_carte?: string | null;
 }
 
 interface BlogArticleLink {
@@ -365,6 +366,7 @@ export default function MeilleursSection({
                   'Compteur Avis Google': typeof item['Compteur Avis Google'] === 'string' ? parseInt(String(item['Compteur Avis Google']).replace(/[^\d]/g, ''), 10) : (item['Compteur Avis Google'] as number | null),
                   horaires_ok: (item as any).horaires_ok ?? null,
                   statut_abonnement: (item as any).statut_abonnement ?? null,
+                  statut_carte: item.statut_carte ?? null,
                   is_premium: (item as any).is_premium ?? false,
                   description: (item as any).description,
                   adresse: (item as any).adresse,
@@ -425,6 +427,7 @@ export default function MeilleursSection({
                         'Compteur Avis Google': typeof item['Compteur Avis Google'] === 'string' ? parseInt(String(item['Compteur Avis Google']).replace(/[^\d]/g, ''), 10) : (item['Compteur Avis Google'] as number | null),
                         horaires_ok: (item as any).horaires_ok ?? null,
                         statut_abonnement: (item as any).statut_abonnement ?? null,
+                        statut_carte: item.statut_carte ?? null,
                         is_premium: (item as any).is_premium ?? false,
                         description: (item as any).description,
                         adresse: (item as any).adresse,
