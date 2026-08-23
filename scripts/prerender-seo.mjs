@@ -39,10 +39,23 @@ function firstText(value) {
   return String(value ?? '').trim();
 }
 
+function firstUrl(value) {
+  if (Array.isArray(value)) {
+    return value.map(String).map(item => item.trim()).find(item => /^https?:\/\//i.test(item)) || '';
+  }
+
+  return String(value ?? '')
+    .split(/[,;\n]+/)
+    .map(item => item.trim())
+    .find(item => /^https?:\/\//i.test(item)) || '';
+}
+
 function cleanDescription(value, fallback) {
   const text = String(value ?? '')
     .replace(/\s+/g, ' ')
-    .trim();
+    .trim()
+    .replace(/^["'“”]+/, '')
+    .replace(/["'“”]+$/, '');
   const selected = text || fallback;
   return selected.length > 160 ? `${selected.slice(0, 157).trim()}...` : selected;
 }
@@ -67,7 +80,7 @@ function buildSeoHtml(template, business) {
     business.description,
     `${name}${category ? ` — ${category}` : ''}${locationLabel ? ` à ${locationLabel}` : ''}. Coordonnées, services et informations professionnelles sur Dalil Tounes.`,
   );
-  const image = firstText(business.image_url) || firstText(business.logo_url) || `${DOMAIN}/images/logo_dalil_tounes_crop.png`;
+  const image = firstUrl(business.image_url) || firstUrl(business.logo_url) || `${DOMAIN}/images/logo_dalil_tounes_crop.png`;
   const phone = firstText(business.telephone);
   const address = firstText(business.adresse);
   const rating = Number(business['Note Google Globale']);
