@@ -80,7 +80,7 @@ export default function BusinessSearchCardV2({
       onClick={onClick}
       dir={isRTL ? 'rtl' : 'ltr'}
     >
-      <div className="relative h-[72px] overflow-hidden border-b border-[#D4AF37]/35">
+      <div className="relative h-[66px] overflow-hidden border-b border-[#D4AF37]/35">
         <img
           src={cover}
           alt={displayName}
@@ -94,21 +94,24 @@ export default function BusinessSearchCardV2({
         </span>
       </div>
 
-      <div className="relative px-3.5 pb-3.5 pt-0">
-        <div className="-mt-6 mb-1.5 flex justify-center">
-          <div className="flex h-[54px] w-[54px] items-center justify-center overflow-hidden rounded-full border-[3px] border-[#D4AF37] bg-white p-1 shadow-[0_4px_11px_rgba(0,0,0,0.25)]">
+      <div className="relative px-3.5 pb-2.5 pt-0">
+        <div className="-mt-5 mb-1 flex justify-center">
+          <div className="flex h-[50px] w-[50px] items-center justify-center overflow-hidden rounded-full border-[3px] border-[#D4AF37] bg-white p-1 shadow-[0_4px_11px_rgba(0,0,0,0.25)]">
             <img src={logo} alt={`Logo ${displayName}`} className="h-full w-full object-contain" loading="lazy" decoding="async" />
           </div>
         </div>
 
-        <h3 className="line-clamp-2 font-serif text-[16px] font-bold leading-[1.08] text-[#E9BD35]">
+        <h3 className="line-clamp-2 font-serif text-[16px] font-bold leading-[1.06] text-[#E9BD35]">
           {displayName}
         </h3>
 
         {isCertified(business.statut_carte) && (
-          <p className="mt-1 text-[8px] font-black uppercase tracking-[0.04em] text-[#E5B92F]">
-            ★ {text.certified}
-          </p>
+          <div className="mt-1 inline-flex max-w-full items-center gap-1 rounded-full border border-[#D4AF37]/70 bg-[#064934]/90 px-2 py-0.5 shadow-[inset_0_0_6px_rgba(212,175,55,0.08)]">
+            <span className="shrink-0 text-[9px] leading-none text-[#E5B92F]">★</span>
+            <span className="truncate text-[7.5px] font-black uppercase tracking-[0.04em] text-white">
+              {text.certified}
+            </span>
+          </div>
         )}
 
         {categoryLabel && (
@@ -116,21 +119,21 @@ export default function BusinessSearchCardV2({
         )}
 
         {phone && (
-          <div className="mt-2" onClick={(event) => event.stopPropagation()}>
+          <div className="mt-1.5" onClick={(event) => event.stopPropagation()}>
             <a
               href={`tel:${phone}`}
-              className="inline-flex min-h-8 max-w-full items-center justify-center gap-1.5 rounded-full border border-[#D4AF37]/55 bg-[#0A5A42]/80 px-3 text-[10px] font-bold text-[#E8BD34] transition hover:border-[#F1D36A]"
+              className="inline-flex min-h-7 max-w-full items-center justify-center gap-1.5 rounded-full border border-[#D4AF37]/55 bg-[#0A5A42]/80 px-2.5 text-[10px] font-bold text-[#E8BD34] transition hover:border-[#F1D36A]"
             >
-              <Phone className="h-3.5 w-3.5" />
+              <Phone className="h-3 w-3" />
               <span className="truncate">{phone}</span>
             </a>
           </div>
         )}
 
         {business.horaires_ok && (
-          <div className="mt-2 border-t border-[#D4AF37]/30 pt-2 text-[9px]">
+          <div className="mt-1.5 border-t border-[#D4AF37]/30 pt-1.5 text-[9px]">
             <div className="flex items-center gap-1.5">
-              <Clock3 className={`h-3.5 w-3.5 shrink-0 ${openNow ? 'text-emerald-300' : 'text-red-400'}`} />
+              <Clock3 className={`h-3 w-3 shrink-0 ${openNow ? 'text-emerald-300' : 'text-red-400'}`} />
               <span className={`font-extrabold ${openNow ? 'text-emerald-300' : 'text-red-400'}`}>
                 {openNow ? text.open : text.closed}
               </span>
@@ -145,7 +148,7 @@ export default function BusinessSearchCardV2({
             event.stopPropagation();
             onClick();
           }}
-          className="mt-2.5 flex min-h-9 w-full items-center justify-start border-t border-[#D4AF37]/30 px-0 pt-2 text-left text-[11px] font-black text-[#E8BD34] transition hover:text-[#F5D76E] rtl:text-right"
+          className="mt-2 flex min-h-8 w-full items-center justify-start border-t border-[#D4AF37]/30 px-0 pt-1.5 text-left text-[11px] font-black text-[#E8BD34] transition hover:text-[#F5D76E] rtl:text-right"
         >
           {text.details} →
         </button>
