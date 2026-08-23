@@ -29,6 +29,11 @@ const normalizeUrl = (value: unknown): string => {
   return /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
 };
 
+const strictHttpUrl = (value: unknown): string => {
+  const raw = String(value || '').trim();
+  return /^https?:\/\//i.test(raw) ? raw : '';
+};
+
 const getGoogleReviewsUrl = (business: BusinessRecord | null): string => {
   if (!business) return '';
 
@@ -47,7 +52,7 @@ const getGoogleReviewsUrl = (business: BusinessRecord | null): string => {
 
   const listingCandidates = [business.google_url, business.BTN_Maps];
   for (const candidate of listingCandidates) {
-    const url = normalizeUrl(candidate);
+    const url = strictHttpUrl(candidate);
     if (url) return url;
   }
 
@@ -118,22 +123,27 @@ export default function BusinessShowcaseLienoraEnhanced() {
 
   useEffect(() => {
     const enhance = () => {
-      document.querySelectorAll<HTMLButtonElement>('.dt-accordion-trigger').forEach(button => {
-        if (!isReviewsLabel(button.textContent || '')) return;
-        if (button.dataset.googleReviewsLinked === 'true') return;
+      if (reviewsUrl) {
+        document.querySelectorAll<HTMLButtonElement>('.dt-accordion-trigger').forEach(button => {
+          if (!isReviewsLabel(button.textContent || '')) return;
 
-        button.dataset.googleReviewsLinked = 'true';
-        button.title = 'Voir les avis Google';
-        button.addEventListener(
-          'click',
-          event => {
-            event.preventDefault();
-            event.stopImmediatePropagation();
-            window.open(reviewsUrl, '_blank', 'noopener,noreferrer');
-          },
-          true,
-        );
-      });
+          button.dataset.googleReviewsUrl = reviewsUrl;
+          if (button.dataset.googleReviewsLinked === 'true') return;
+
+          button.dataset.googleReviewsLinked = 'true';
+          button.title = 'Voir les avis Google';
+          button.addEventListener(
+            'click',
+            event => {
+              event.preventDefault();
+              event.stopImmediatePropagation();
+              const target = button.dataset.googleReviewsUrl;
+              if (target) window.open(target, '_blank', 'noopener,noreferrer');
+            },
+            true,
+          );
+        });
+      }
 
       const qrActions = document.querySelectorAll<HTMLButtonElement>('.dt-qr-actions button');
       qrActions.forEach((button, index) => {
