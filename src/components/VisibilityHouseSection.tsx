@@ -1,4 +1,4 @@
-import { ArrowRight, Briefcase } from 'lucide-react';
+import { ArrowRight, Briefcase, QrCode } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -110,6 +110,14 @@ function VisibilitySummary() {
       <p className="mt-3 text-sm font-semibold leading-relaxed text-[#4A1D43]">
         C'est cette réunion de toute votre présence numérique qui fait la force de votre CV Business.
       </p>
+
+      <div className="mt-3 flex items-start gap-2 rounded-xl border border-[#D4AF37]/20 bg-[#FFF8E6]/70 px-3 py-2.5">
+        <QrCode className="mt-0.5 h-4 w-4 shrink-0 text-[#D4AF37]" aria-hidden="true" />
+        <p className="text-xs font-medium leading-relaxed text-[#4A1D43]">
+          Et votre Vitrine Business se partage aussi en un scan grâce à votre QR professionnel.
+        </p>
+      </div>
+
       <Link
         to="/businesses"
         className="mt-5 inline-flex items-center justify-center gap-2 rounded-full border border-[#D4AF37] bg-[#4A1D43] px-6 py-3 text-sm font-bold text-[#D4AF37] shadow-[0_12px_30px_rgba(74,29,67,0.18)] transition hover:bg-[#5A2D53] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/70"
@@ -148,4 +156,3 @@ export default function VisibilityHouseSection() {
     </section>
   );
 }
-
