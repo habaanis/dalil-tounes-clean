@@ -25,13 +25,58 @@ export interface RecommendedBusiness extends SeoBusiness {
   confidenceScore: number;
 }
 
-function mapEntrepriseRow(row: Record<string, unknown>): SeoBusiness {
-  const rawSousCats = row.sous_categories_texte ?? row.sous_categories;
-  const sousCats = Array.isArray(rawSousCats)
-    ? (rawSousCats as string[])
-    : rawSousCats
-      ? [rawSousCats as string]
-      : [];
+type EntrepriseRow = Record<string, unknown>;
+
+const SIMILAR_SELECT = 'id, nom, adresse, ville, gouvernorat, telephone, categorie, sous_categories_texte, score_avis, logo_url, image_url, description, is_premium, statut_abonnement, horaires_ok, slug, "Note Google Globale", "Compteur Avis Google", statut_carte, statut_validation';
+const PUBLIC_FETCH_LIMIT = 5000;
+
+function normalizeText(value: unknown): string {
+  return String(value ?? '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function rowCategories(row: EntrepriseRow): string[] {
+  const raw = row.categorie;
+  if (Array.isArray(raw)) {
+    return raw.map(value => String(value).trim()).filter(Boolean);
+  }
+  if (typeof raw === 'string' && raw.trim()) {
+    return [raw.trim()];
+  }
+  return [];
+}
+
+function rowSousCategories(row: EntrepriseRow): string[] {
+  const raw = row.sous_categories_texte;
+  if (Array.isArray(raw)) {
+    return raw.map(value => String(value).trim()).filter(Boolean);
+  }
+  return String(raw ?? '')
+    .split(/[,;\n]+/)
+    .map(value => value.trim())
+    .filter(Boolean);
+}
+
+function businessMatchesTerm(row: EntrepriseRow, term?: string): boolean {
+  if (!term) return true;
+  const needle = normalizeText(term);
+  if (!needle) return true;
+
+  const values = [...rowCategories(row), ...rowSousCategories(row)];
+  return values.some(value => {
+    const normalized = normalizeText(value);
+    return normalized === needle || normalized.includes(needle) || needle.includes(normalized);
+  });
+}
+
+function mapEntrepriseRow(row: EntrepriseRow): SeoBusiness {
+  const categories = rowCategories(row);
+  const sousCategories = rowSousCategories(row);
+
   return {
     id: row.id as string,
     nom: extractFrenchName((row.nom as string) ?? ''),
@@ -39,20 +84,72 @@ function mapEntrepriseRow(row: Record<string, unknown>): SeoBusiness {
     ville: row.ville as string | undefined,
     gouvernorat: row.gouvernorat as string | undefined,
     telephone: row.telephone as string | undefined,
-    'catégorie': sousCats.length > 0 ? sousCats : (row.categorie ? [row.categorie as string] : []),
+    'catégorie': sousCategories.length > 0 ? sousCategories : categories,
     'Note Google Globale': (row['Note Google Globale'] as number | null) ?? null,
     'Compteur Avis Google': (row['Compteur Avis Google'] as number | null) ?? null,
-    logo_url: row.logo_url as string | undefined || row.image_url as string | undefined,
+    logo_url: (row.logo_url as string | undefined) || (row.image_url as string | undefined),
     description: row.description as string | undefined,
     is_premium: (row.is_premium as boolean | undefined) ?? false,
     statut_abonnement: (row.statut_abonnement as string | null) ?? null,
-    horaires_ok: row.horaires_ok as string | null ?? null,
+    horaires_ok: (row.horaires_ok as string | null) ?? null,
     slug: (row.slug as string | null) ?? null,
     statut_carte: (row.statut_carte as string | null) ?? null,
   };
 }
 
-const SIMILAR_SELECT = 'id, nom, adresse, ville, gouvernorat, telephone, categorie, sous_categories_texte, score_avis, logo_url, image_url, description, is_premium, statut_abonnement, horaires_ok, slug, "Note Google Globale", "Compteur Avis Google", statut_carte';
+function sortRows(rows: EntrepriseRow[]): EntrepriseRow[] {
+  return [...rows].sort((a, b) => {
+    const premiumA = a.is_premium === true ? 1 : 0;
+    const premiumB = b.is_premium === true ? 1 : 0;
+    if (premiumA !== premiumB) return premiumB - premiumA;
+
+    const scoreA = Number(a.score_avis ?? 0) || 0;
+    const scoreB = Number(b.score_avis ?? 0) || 0;
+    if (scoreA !== scoreB) return scoreB - scoreA;
+
+    const ratingA = parseRating(a['Note Google Globale']);
+    const ratingB = parseRating(b['Note Google Globale']);
+    if (ratingA !== ratingB) return ratingB - ratingA;
+
+    return parseCount(b['Compteur Avis Google']) - parseCount(a['Compteur Avis Google']);
+  });
+}
+
+async function fetchPublishedRows(filters?: {
+  ville?: string;
+  gouvernorat?: string;
+}): Promise<{ rows: EntrepriseRow[]; error: unknown }> {
+  let query = supabase
+    .from('entreprise')
+    .select(SIMILAR_SELECT)
+    // publie / publié / published sont tous couverts par ce préfixe.
+    .ilike('statut_validation', 'publi%')
+    .limit(PUBLIC_FETCH_LIMIT);
+
+  if (filters?.ville) {
+    // Une page ville ne doit pas récupérer tout le gouvernorat : cela évite
+    // le chevauchement ville ↔ gouvernorat et la cannibalisation SEO.
+    query = query.ilike('ville', `%${filters.ville}%`);
+  }
+
+  if (filters?.gouvernorat) {
+    query = query.ilike('gouvernorat', `%${filters.gouvernorat}%`);
+  }
+
+  const { data, error } = await query;
+  return {
+    rows: (data ?? []) as EntrepriseRow[],
+    error,
+  };
+}
+
+function paginateRows(rows: EntrepriseRow[], offset: number, limit: number) {
+  const sorted = sortRows(rows);
+  return {
+    data: sorted.slice(offset, offset + limit).map(mapEntrepriseRow),
+    total: sorted.length,
+  };
+}
 
 export async function fetchSimilarBusinesses(options: {
   excludeId: string;
@@ -62,68 +159,36 @@ export async function fetchSimilarBusinesses(options: {
   limit?: number;
 }): Promise<SeoBusiness[]> {
   const { excludeId, categorie, ville, gouvernorat, limit = 6 } = options;
+  if (!categorie && !ville && !gouvernorat) return [];
 
-  if (!categorie && !ville) return [];
+  // On récupère uniquement les fiches publiques, puis on filtre les catégories
+  // côté application. `categorie` est un ARRAY PostgreSQL : utiliser `ilike`
+  // directement sur cette colonne provoquait les erreurs historiques.
+  const { rows, error } = await fetchPublishedRows(
+    ville ? { ville } : gouvernorat ? { gouvernorat } : undefined,
+  );
+  if (error) return [];
 
-  const results: SeoBusiness[] = [];
-  const seenIds = new Set<string>([excludeId]);
-
-  if (categorie && ville) {
-    const { data } = await supabase
-      .from('entreprise')
-      .select(SIMILAR_SELECT)
-      .neq('id', excludeId)
-      .ilike('categorie', `%${categorie}%`)
-      .ilike('ville', `%${ville}%`)
-      .order('is_premium', { ascending: false })
-      .order('score_avis', { ascending: false, nullsFirst: false })
-      .limit(limit);
-    if (data) {
-      for (const row of data as Record<string, unknown>[]) {
-        const id = row.id as string;
-        if (!seenIds.has(id)) { seenIds.add(id); results.push(mapEntrepriseRow(row)); }
-      }
-    }
+  let candidates = rows.filter(row => String(row.id) !== excludeId);
+  if (categorie) {
+    candidates = candidates.filter(row => businessMatchesTerm(row, categorie));
   }
 
-  if (results.length < limit && categorie) {
-    const { data } = await supabase
-      .from('entreprise')
-      .select(SIMILAR_SELECT)
-      .neq('id', excludeId)
-      .ilike('categorie', `%${categorie}%`)
-      .order('is_premium', { ascending: false })
-      .order('score_avis', { ascending: false, nullsFirst: false })
-      .limit(limit - results.length + 2);
-    if (data) {
-      for (const row of data as Record<string, unknown>[]) {
-        const id = row.id as string;
-        if (!seenIds.has(id)) { seenIds.add(id); results.push(mapEntrepriseRow(row)); }
-        if (results.length >= limit) break;
-      }
-    }
+  // Si la ville exacte ne donne pas assez de résultats, on autorise ensuite le
+  // même gouvernorat sans dupliquer les entreprises déjà trouvées.
+  let selected = sortRows(candidates).slice(0, limit);
+  if (selected.length < limit && ville && gouvernorat) {
+    const { rows: governorateRows } = await fetchPublishedRows({ gouvernorat });
+    const seen = new Set(selected.map(row => String(row.id)));
+    const extras = governorateRows
+      .filter(row => String(row.id) !== excludeId)
+      .filter(row => !seen.has(String(row.id)))
+      .filter(row => !categorie || businessMatchesTerm(row, categorie));
+
+    selected = [...selected, ...sortRows(extras)].slice(0, limit);
   }
 
-  if (results.length < limit && ville) {
-    const gouv = gouvernorat || ville;
-    const { data } = await supabase
-      .from('entreprise')
-      .select(SIMILAR_SELECT)
-      .neq('id', excludeId)
-      .or(`ville.ilike.%${ville}%,gouvernorat.ilike.%${gouv}%`)
-      .order('is_premium', { ascending: false })
-      .order('score_avis', { ascending: false, nullsFirst: false })
-      .limit(limit - results.length + 2);
-    if (data) {
-      for (const row of data as Record<string, unknown>[]) {
-        const id = row.id as string;
-        if (!seenIds.has(id)) { seenIds.add(id); results.push(mapEntrepriseRow(row)); }
-        if (results.length >= limit) break;
-      }
-    }
-  }
-
-  return results.slice(0, limit);
+  return selected.map(mapEntrepriseRow);
 }
 
 export async function fetchSeoBusinesses(options: {
@@ -137,42 +202,17 @@ export async function fetchSeoBusinesses(options: {
   const { limit = 20, offset = 0, sousCategorie, city } = options;
   const metierValue = options.metier ?? options.categorie;
 
-  let query = supabase
-    .from('entreprise')
-    .select(SIMILAR_SELECT, { count: 'exact' });
+  const { rows, error } = await fetchPublishedRows(city ? { ville: city } : undefined);
+  if (error) return { data: [], total: 0, error };
 
-  if (metierValue) {
-    query = query.or(
-      `sous_categories.ilike.%${metierValue}%,categorie.ilike.%${metierValue}%`
-    );
-  }
+  const filtered = rows.filter(row => {
+    if (metierValue && !businessMatchesTerm(row, metierValue)) return false;
+    if (sousCategorie && !businessMatchesTerm(row, sousCategorie)) return false;
+    return true;
+  });
 
-  if (sousCategorie) {
-    query = query.ilike('sous_categories', `%${sousCategorie}%`);
-  }
-
-  if (city) {
-    query = query.or(
-      `ville.ilike.%${city}%,gouvernorat.ilike.%${city}%`
-    );
-  }
-
-  query = query
-    .order('is_premium', { ascending: false })
-    .order('score_avis', { ascending: false, nullsFirst: false })
-    .range(offset, offset + limit - 1);
-
-  const { data, error, count } = await query;
-
-  if (error || !data) {
-    return { data: [], total: 0, error };
-  }
-
-  return {
-    data: (data as Record<string, unknown>[]).map(mapEntrepriseRow),
-    total: count ?? 0,
-    error: null,
-  };
+  const page = paginateRows(filtered, offset, limit);
+  return { ...page, error: null };
 }
 
 export async function fetchSeoBusinessesBySecteur(options: {
@@ -187,27 +227,15 @@ export async function fetchSeoBusinessesBySecteur(options: {
     return { data: [], total: 0, error: null };
   }
 
-  const orFilters = metiers
-    .map(m => `categorie.ilike.%${m.value}%,sous_categories.ilike.%${m.value}%`)
-    .join(',');
+  const { rows, error } = await fetchPublishedRows();
+  if (error) return { data: [], total: 0, error };
 
-  const { data, error, count } = await supabase
-    .from('entreprise')
-    .select(SIMILAR_SELECT, { count: 'exact' })
-    .or(orFilters)
-    .order('is_premium', { ascending: false })
-    .order('score_avis', { ascending: false, nullsFirst: false })
-    .range(offset, offset + limit - 1);
+  const filtered = rows.filter(row =>
+    metiers.some(metier => businessMatchesTerm(row, metier.value)),
+  );
 
-  if (error || !data) {
-    return { data: [], total: 0, error };
-  }
-
-  return {
-    data: (data as Record<string, unknown>[]).map(mapEntrepriseRow),
-    total: count ?? 0,
-    error: null,
-  };
+  const page = paginateRows(filtered, offset, limit);
+  return { ...page, error: null };
 }
 
 export async function fetchSeoBusinessesByGouvernorat(options: {
@@ -222,23 +250,11 @@ export async function fetchSeoBusinessesByGouvernorat(options: {
     return { data: [], total: 0, error: null };
   }
 
-  const { data, error, count } = await supabase
-    .from('entreprise')
-    .select(SIMILAR_SELECT, { count: 'exact' })
-    .ilike('gouvernorat', `%${gouv.label}%`)
-    .order('is_premium', { ascending: false })
-    .order('score_avis', { ascending: false, nullsFirst: false })
-    .range(offset, offset + limit - 1);
+  const { rows, error } = await fetchPublishedRows({ gouvernorat: gouv.label });
+  if (error) return { data: [], total: 0, error };
 
-  if (error || !data) {
-    return { data: [], total: 0, error };
-  }
-
-  return {
-    data: (data as Record<string, unknown>[]).map(mapEntrepriseRow),
-    total: count ?? 0,
-    error: null,
-  };
+  const page = paginateRows(rows, offset, limit);
+  return { ...page, error: null };
 }
 
 const MIN_RATING = 4.0;
@@ -246,16 +262,16 @@ const MIN_REVIEWS = 5;
 
 function parseRating(raw: unknown): number {
   if (raw == null) return 0;
-  if (typeof raw === 'number') return isNaN(raw) ? 0 : raw;
+  if (typeof raw === 'number') return Number.isNaN(raw) ? 0 : raw;
   const n = parseFloat(String(raw).replace(',', '.'));
-  return isNaN(n) ? 0 : Math.min(5, Math.max(0, n));
+  return Number.isNaN(n) ? 0 : Math.min(5, Math.max(0, n));
 }
 
 function parseCount(raw: unknown): number {
   if (raw == null) return 0;
-  if (typeof raw === 'number') return isNaN(raw) ? 0 : Math.max(0, raw);
+  if (typeof raw === 'number') return Number.isNaN(raw) ? 0 : Math.max(0, raw);
   const n = parseInt(String(raw).replace(/[^\d]/g, ''), 10);
-  return isNaN(n) ? 0 : n;
+  return Number.isNaN(n) ? 0 : n;
 }
 
 export async function fetchTopRecommendedByCity(
@@ -264,30 +280,33 @@ export async function fetchTopRecommendedByCity(
 ): Promise<RecommendedBusiness[]> {
   if (!ville) return [];
 
-  const { data, error } = await supabase
-    .from('entreprise')
-    .select(SIMILAR_SELECT)
-    .ilike('ville', `%${ville}%`)
-    .not('"Note Google Globale"', 'is', null)
-    .gte('"Note Google Globale"', MIN_RATING)
-    .gte('"Compteur Avis Google"', MIN_REVIEWS)
-    .order('"Note Google Globale"', { ascending: false, nullsFirst: false })
-    .limit(50);
+  const { rows, error } = await fetchPublishedRows({ ville });
+  if (error || rows.length === 0) return [];
 
-  if (error || !data || data.length === 0) return [];
+  const villeNorm = normalizeText(ville);
+  const filteredRows = rows.filter(row => {
+    const rowVille = normalizeText(row.ville);
+    if (
+      rowVille !== villeNorm &&
+      !rowVille.startsWith(`${villeNorm} `) &&
+      !rowVille.startsWith(`${villeNorm},`) &&
+      !rowVille.endsWith(` ${villeNorm}`)
+    ) {
+      return false;
+    }
 
-  const villeNorm = ville.toLowerCase().trim();
-  const allRows = (data as Record<string, unknown>[]).map(mapEntrepriseRow);
-  const rows = allRows.filter((r) => {
-    const v = (r.ville || '').toLowerCase().trim();
-    return v === villeNorm || v.startsWith(villeNorm + ' ') || v.startsWith(villeNorm + ',') || v.endsWith(' ' + villeNorm);
+    return (
+      parseRating(row['Note Google Globale']) >= MIN_RATING &&
+      parseCount(row['Compteur Avis Google']) >= MIN_REVIEWS
+    );
   });
-  if (rows.length === 0) return [];
 
-  const scored: RecommendedBusiness[] = rows.map((biz) => {
-    const rating = parseRating(biz['Note Google Globale']);
-    const reviewCount = parseCount(biz['Compteur Avis Google']);
-    return { ...biz, confidenceScore: rating };
+  const scored: RecommendedBusiness[] = filteredRows.map(row => {
+    const business = mapEntrepriseRow(row);
+    return {
+      ...business,
+      confidenceScore: parseRating(row['Note Google Globale']),
+    };
   });
 
   scored.sort((a, b) => {
