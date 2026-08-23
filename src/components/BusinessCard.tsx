@@ -56,6 +56,7 @@ interface BusinessCardProps {
  * - Gratuit conserve la carte annuaire historique ;
  * - Artisan et Premium utilisent la BusinessCard compacte validée.
  *
+ * Toutes les variantes ouvrent la fiche entreprise via le même onClick.
  * Aucun champ Airtable/Supabase ni droit d'abonnement n'est modifié ici.
  */
 export const BusinessCard = ({ business, onClick }: BusinessCardProps) => {
@@ -88,19 +89,33 @@ export const BusinessCard = ({ business, onClick }: BusinessCardProps) => {
 
   if (tier === 'gratuit') {
     return (
-      <GratuitCard
-        name={displayName}
-        logoUrl={business.logoUrl}
-        category={translatedCategory}
-        ville={business.ville}
-        gouvernorat={business.gouvernorat || undefined}
-        horaires_ok={business.horaires_ok}
-        telephone={business.telephone || business.phone}
-        language={language}
-        allKeywords={allKeywords}
-        statut_carte={business.statut_carte}
-        description_ar={language === 'ar' ? business.description_ar || null : null}
-      />
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={onClick}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            onClick();
+          }
+        }}
+        className="h-full cursor-pointer rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/60"
+        aria-label={`Voir les détails de ${displayName}`}
+      >
+        <GratuitCard
+          name={displayName}
+          logoUrl={business.logoUrl}
+          category={translatedCategory}
+          ville={business.ville}
+          gouvernorat={business.gouvernorat || undefined}
+          horaires_ok={business.horaires_ok}
+          telephone={business.telephone || business.phone}
+          language={language}
+          allKeywords={allKeywords}
+          statut_carte={business.statut_carte}
+          description_ar={language === 'ar' ? business.description_ar || null : null}
+        />
+      </div>
     );
   }
 

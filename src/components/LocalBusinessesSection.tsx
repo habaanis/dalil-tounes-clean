@@ -1,23 +1,35 @@
 import { useEffect, useState } from 'react';
-import { MapPin, Store, ShoppingBag } from 'lucide-react';
+import { Store } from 'lucide-react';
 import { supabase } from '../lib/BoltDatabase';
-import { SafeImage } from './SafeImage';
-import { parseImageUrls } from '../lib/imagekitUtils';
 import { extractFrenchName } from '../lib/textNormalization';
-import { getLogoContainerStyle, getLogoStyle } from '../lib/logoUtils';
+import { BusinessCard } from './BusinessCard';
 
 interface LocalBusiness {
   id: string;
   nom: string;
   ville: string | null;
+  gouvernorat: string | null;
   image_url: string | null;
   logo_url: string | null;
-  categorie: string | null;
+  categorie: string | string[] | null;
+  sous_categories_texte: string | null;
+  statut_abonnement: string | null;
+  horaires_ok: string | null;
+  telephone: string | null;
+  description: string | null;
+  statut_carte: string | null;
+  'Note Google Globale': string | number | null;
+  'Compteur Avis Google': string | number | null;
   'page commerce local': boolean | null;
 }
 
 interface LocalBusinessesSectionProps {
   onCardClick: (id: string) => void;
+}
+
+function toCategoryLabel(value: string | string[] | null | undefined, fallback?: string | null): string {
+  if (Array.isArray(value)) return value.filter(Boolean).join(', ');
+  return fallback || value || '';
 }
 
 export const LocalBusinessesSection = ({ onCardClick }: LocalBusinessesSectionProps) => {
@@ -28,27 +40,24 @@ export const LocalBusinessesSection = ({ onCardClick }: LocalBusinessesSectionPr
     const fetchLocalBusinesses = async () => {
       setLoading(true);
       try {
-        console.log('[LocalBusinessesSection] 🔍 Recherche des commerces locaux...');
-
         const { data, error } = await supabase
           .from('entreprise')
-          .select('id, nom, ville, image_url, logo_url, categorie, "page commerce local"')
+          .select('id, nom, ville, gouvernorat, image_url, logo_url, categorie, sous_categories_texte, statut_abonnement, horaires_ok, telephone, description, statut_carte, "Note Google Globale", "Compteur Avis Google", "page commerce local"')
           .eq('"page commerce local"', true)
           .order('created_at', { ascending: false })
           .limit(6);
 
         if (error) {
-          console.error('[LocalBusinessesSection] ❌ Erreur requête:', error);
+          console.error('[LocalBusinessesSection] Erreur requête:', error);
           setBusinesses([]);
         } else {
-          console.log('[LocalBusinessesSection] 📊 Données commerces locaux:', {
-            count: data?.length || 0,
-            data: data
-          });
-          setBusinesses((data || []).map((item: any) => ({ ...item, nom: extractFrenchName(item.nom) })) as LocalBusiness[]);
+          setBusinesses((data || []).map((item: any) => ({
+            ...item,
+            nom: extractFrenchName(item.nom),
+          })) as LocalBusiness[]);
         }
       } catch (err) {
-        console.error('[LocalBusinessesSection] 💥 Erreur inattendue:', err);
+        console.error('[LocalBusinessesSection] Erreur inattendue:', err);
         setBusinesses([]);
       } finally {
         setLoading(false);
@@ -58,9 +67,7 @@ export const LocalBusinessesSection = ({ onCardClick }: LocalBusinessesSectionPr
     fetchLocalBusinesses();
   }, []);
 
-  if (!loading && businesses.length === 0) {
-    return null;
-  }
+  if (!loading && businesses.length === 0) return null;
 
   return (
     <section className="py-4 px-4 bg-white">
@@ -68,13 +75,9 @@ export const LocalBusinessesSection = ({ onCardClick }: LocalBusinessesSectionPr
         <div className="text-center mb-4">
           <div className="flex items-center justify-center gap-2 mb-2">
             <Store className="w-5 h-5 text-[#4A1D43]" />
-            <h2 className="text-lg md:text-xl font-light text-gray-900">
-              Commerces Locaux
-            </h2>
+            <h2 className="text-lg md:text-xl font-light text-gray-900">Commerces Locaux</h2>
           </div>
-          <p className="text-gray-600 text-sm">
-            Soutenez nos commerçants et artisans locaux
-          </p>
+          <p className="text-gray-600 text-sm">Soutenez nos commerçants et artisans locaux</p>
         </div>
 
         <div className="overflow-x-auto scrollbar-hide pb-4 -mx-4 px-4 md:overflow-visible">
@@ -82,99 +85,37 @@ export const LocalBusinessesSection = ({ onCardClick }: LocalBusinessesSectionPr
             <div className="flex gap-4 md:grid md:grid-cols-2 lg:grid-cols-3">
               {[1, 2, 3, 4, 5, 6].map((i) => (
                 <div key={i} className="flex-shrink-0 w-[260px] md:w-auto">
-                  <div className="bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] overflow-hidden animate-pulse border border-gray-200">
-                    <div className="h-36 bg-gray-200"></div>
-                    <div className="p-4">
-                      <div className="h-4 bg-gray-200 rounded mb-2"></div>
-                      <div className="h-3 bg-gray-200 rounded w-2/3"></div>
-                    </div>
-                  </div>
+                  <div className="h-[190px] rounded-2xl border border-gray-200 bg-gray-100 animate-pulse" />
                 </div>
               ))}
             </div>
           ) : (
             <div className="flex gap-4 md:grid md:grid-cols-2 lg:grid-cols-3">
-              {businesses.map((business) => {
-                const firstImageUrl = business.image_url ? parseImageUrls(business.image_url)[0] : null;
-
-                return (
-                  <div
-                    key={business.id}
+              {businesses.map((business) => (
+                <div key={business.id} className="flex-shrink-0 w-[260px] md:w-auto h-full">
+                  <BusinessCard
+                    business={{
+                      id: business.id,
+                      name: business.nom,
+                      category: toCategoryLabel(business.categorie, business.sous_categories_texte),
+                      ville: business.ville,
+                      gouvernorat: business.gouvernorat,
+                      description: business.description,
+                      telephone: business.telephone,
+                      statut_abonnement: business.statut_abonnement,
+                      imageUrl: business.image_url,
+                      logoUrl: business.logo_url,
+                      horaires_ok: business.horaires_ok,
+                      statut_carte: business.statut_carte,
+                      note_google: business['Note Google Globale'],
+                      nombre_avis: business['Compteur Avis Google'],
+                      'Note Google Globale': business['Note Google Globale'],
+                      'Compteur Avis Google': business['Compteur Avis Google'],
+                    }}
                     onClick={() => onCardClick(business.id)}
-                    className="group cursor-pointer flex-shrink-0 w-[260px] md:w-auto h-full"
-                  >
-                    <div className="relative bg-white rounded-2xl border border-gray-200 shadow-[0_4px_20px_rgba(0,0,0,0.05)] overflow-hidden transition-all duration-300 hover:shadow-[0_8px_30px_rgba(0,0,0,0.1)] hover:scale-105 hover:border-[#4A1D43] h-full flex flex-col">
-                      <div className="relative h-36 overflow-hidden bg-gray-100">
-                        {firstImageUrl ? (
-                          firstImageUrl.startsWith('http') ? (
-                            <img
-                              src={firstImageUrl}
-                              alt={`${business.nom}${business.ville ? ` à ${business.ville}` : ''} - Commerce local en Tunisie - Dalil Tounes`}
-                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                              loading="lazy"
-                              decoding="async"
-                            />
-                          ) : (
-                            <SafeImage
-                              src={firstImageUrl}
-                              alt={`${business.nom}${business.ville ? ` à ${business.ville}` : ''} - Commerce local en Tunisie - Dalil Tounes`}
-                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                              fallbackType="icon"
-                            />
-                          )
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                            <ShoppingBag className="w-12 h-12 text-gray-300" />
-                          </div>
-                        )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
-
-                        {business.logo_url && (
-                          <div
-                            className="absolute top-2 right-2 w-10 h-10 shadow-md"
-                            style={getLogoContainerStyle('#D4AF37', '2px')}
-                          >
-                            <SafeImage
-                              src={business.logo_url}
-                              alt={`Logo ${business.nom}${business.ville ? ` - ${business.ville}` : ''} - Plateforme tunisienne Dalil Tounes`}
-                              className="w-full h-full"
-                              style={getLogoStyle(business.logo_url)}
-                              fallbackType="icon"
-                            />
-                          </div>
-                        )}
-
-                        <div className="absolute top-2 left-2">
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-white/95 text-[#4A1D43] text-[10px] font-semibold rounded-full shadow-md border border-[#4A1D43]/20">
-                            <Store className="w-2.5 h-2.5" />
-                            Local
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="p-3 flex-1 flex flex-col justify-between">
-                        <h3 className="font-semibold text-gray-900 text-sm mb-1 line-clamp-2 group-hover:text-[#4A1D43] transition-colors min-h-[2.5rem]">
-                          {business.nom}
-                        </h3>
-
-                        <div className="flex items-start gap-2 text-[11px] text-gray-600">
-                          {business.ville && (
-                            <div className="flex items-center gap-1">
-                              <MapPin className="w-3 h-3 text-[#4A1D43] flex-shrink-0" />
-                              <span className="line-clamp-1">{business.ville}</span>
-                            </div>
-                          )}
-                          {business.categorie && (
-                            <span className="px-1.5 py-0.5 bg-gray-100 rounded-full text-gray-700 line-clamp-1 text-[10px]">
-                              {business.categorie}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+                  />
+                </div>
+              ))}
             </div>
           )}
         </div>

@@ -63,7 +63,9 @@ interface CacheEntry extends BusinessesDefaultData {
   ts: number;
 }
 
-const CACHE_KEY   = 'businesses_default_v3';
+// v4 force le renouvellement de l'ancien cache qui pouvait contenir seulement
+// les premières entreprises gratuites classées alphabétiquement.
+const CACHE_KEY   = 'businesses_default_v4';
 const STALE_TIME  = 5 * 60_000;
 const GC_TIME     = 60 * 60_000;
 
@@ -174,6 +176,9 @@ async function doFetch(): Promise<BusinessesDefaultData> {
     supabase
       .from(Tables.ENTREPRISE)
       .select(FIELDS)
+      .not('nom', 'is', null)
+      .neq('nom', '')
+      .or('statut_abonnement.ilike.%premium%,statut_abonnement.ilike.%artisan%')
       .order('nom', { ascending: true })
       .limit(10),
     supabase
