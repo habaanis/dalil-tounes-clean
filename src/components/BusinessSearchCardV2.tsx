@@ -47,56 +47,11 @@ const COPY: Record<string, {
   gps: string;
   details: string;
 }> = {
-  fr: {
-    artisan: 'Vitrine Business Artisan',
-    premium: 'CV Business Premium',
-    certified: 'Certifié Dalil Tounes',
-    open: 'Ouvert',
-    closed: 'Fermé',
-    call: 'Appeler',
-    gps: 'GPS',
-    details: 'Voir le CV Business',
-  },
-  ar: {
-    artisan: 'واجهة نشاط حرفي',
-    premium: 'السيرة المهنية Premium',
-    certified: 'موثّق من دليل تونس',
-    open: 'مفتوح',
-    closed: 'مغلق',
-    call: 'اتصال',
-    gps: 'GPS',
-    details: 'عرض السيرة المهنية',
-  },
-  en: {
-    artisan: 'Artisan Business Showcase',
-    premium: 'Premium Business CV',
-    certified: 'Dalil Tounes Certified',
-    open: 'Open',
-    closed: 'Closed',
-    call: 'Call',
-    gps: 'GPS',
-    details: 'View Business CV',
-  },
-  it: {
-    artisan: 'Vetrina Business Artisan',
-    premium: 'CV Business Premium',
-    certified: 'Certificato Dalil Tounes',
-    open: 'Aperto',
-    closed: 'Chiuso',
-    call: 'Chiama',
-    gps: 'GPS',
-    details: 'Vedi CV Business',
-  },
-  ru: {
-    artisan: 'Витрина Business Artisan',
-    premium: 'CV Business Premium',
-    certified: 'Проверено Dalil Tounes',
-    open: 'Открыто',
-    closed: 'Закрыто',
-    call: 'Позвонить',
-    gps: 'GPS',
-    details: 'Открыть CV Business',
-  },
+  fr: { artisan: 'Vitrine Business Artisan', premium: 'CV Business Premium', certified: 'Certifié Dalil Tounes', open: 'Ouvert', closed: 'Fermé', call: 'Appeler', gps: 'GPS', details: 'Voir le CV Business' },
+  ar: { artisan: 'واجهة نشاط حرفي', premium: 'السيرة المهنية Premium', certified: 'موثّق من دليل تونس', open: 'مفتوح', closed: 'مغلق', call: 'اتصال', gps: 'GPS', details: 'عرض السيرة المهنية' },
+  en: { artisan: 'Artisan Business Showcase', premium: 'Premium Business CV', certified: 'Dalil Tounes Certified', open: 'Open', closed: 'Closed', call: 'Call', gps: 'GPS', details: 'View Business CV' },
+  it: { artisan: 'Vetrina Business Artisan', premium: 'CV Business Premium', certified: 'Certificato Dalil Tounes', open: 'Aperto', closed: 'Chiuso', call: 'Chiama', gps: 'GPS', details: 'Vedi CV Business' },
+  ru: { artisan: 'Витрина Business Artisan', premium: 'CV Business Premium', certified: 'Проверено Dalil Tounes', open: 'Открыто', closed: 'Закрыто', call: 'Позвонить', gps: 'GPS', details: 'Открыть CV Business' },
 };
 
 function numberValue(value: unknown): number {
@@ -145,75 +100,74 @@ export default function BusinessSearchCardV2({
 
   return (
     <article
-      className="group relative h-full cursor-pointer overflow-hidden rounded-[22px] border-2 border-[#D4AF37] bg-[radial-gradient(circle_at_50%_3%,rgba(20,111,77,0.32),transparent_28%),linear-gradient(145deg,#031D18_0%,#04382D_52%,#011914_100%)] text-white shadow-[0_18px_38px_rgba(0,39,30,0.30),0_0_10px_rgba(212,175,55,0.13)] transition duration-200 hover:-translate-y-1 hover:shadow-[0_22px_46px_rgba(0,39,30,0.38),0_0_14px_rgba(212,175,55,0.20)]"
+      className="group relative h-full cursor-pointer overflow-hidden rounded-[18px] border-2 border-[#D4AF37] bg-[radial-gradient(circle_at_50%_3%,rgba(20,111,77,0.30),transparent_27%),linear-gradient(145deg,#031D18_0%,#04382D_52%,#011914_100%)] text-white shadow-[0_12px_28px_rgba(0,39,30,0.26),0_0_8px_rgba(212,175,55,0.12)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_16px_34px_rgba(0,39,30,0.32),0_0_10px_rgba(212,175,55,0.18)]"
       onClick={onClick}
       dir={isRTL ? 'rtl' : 'ltr'}
     >
-      <div className="relative h-[112px] overflow-hidden border-b border-[#D4AF37]/45">
+      <div className="relative h-[82px] overflow-hidden border-b border-[#D4AF37]/40">
         <img
           src={cover}
           alt={`${displayName}${location ? ` - ${location}` : ''}`}
-          className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.025]"
+          className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
           loading="lazy"
           decoding="async"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#02251e] via-black/15 to-black/5" />
-        <span className="absolute left-3 top-3 rounded-full border border-[#E4C04B]/85 bg-[#011D18]/90 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.08em] text-[#F4CE55] shadow-md backdrop-blur-sm">
+        <div className="absolute inset-0 bg-gradient-to-t from-[#02251e] via-black/10 to-black/5" />
+        <span className="absolute left-2.5 top-2.5 rounded-full border border-[#E4C04B]/80 bg-[#011D18]/90 px-2 py-0.5 text-[8px] font-black uppercase tracking-[0.07em] text-[#F4CE55] shadow-sm backdrop-blur-sm">
           {tier === 'premium' ? text.premium : text.artisan}
         </span>
       </div>
 
-      <div className="relative px-4 pb-4 pt-0">
-        <div className="-mt-9 mb-2 flex items-end justify-between gap-3">
-          <div className="flex h-[72px] w-[72px] shrink-0 items-center justify-center overflow-hidden rounded-full border-[3px] border-[#D4AF37] bg-white p-1.5 shadow-[0_7px_18px_rgba(0,0,0,0.34),0_0_9px_rgba(212,175,55,0.28)]">
+      <div className="relative px-3 pb-3 pt-0">
+        <div className="-mt-7 mb-1.5 flex items-end justify-between gap-2">
+          <div className="flex h-[56px] w-[56px] shrink-0 items-center justify-center overflow-hidden rounded-full border-[3px] border-[#D4AF37] bg-white p-1 shadow-[0_5px_13px_rgba(0,0,0,0.30),0_0_7px_rgba(212,175,55,0.24)]">
             <img src={logo} alt={`Logo ${displayName}`} className="h-full w-full object-contain" loading="lazy" decoding="async" />
           </div>
 
           {isCertified(business.statut_carte) && (
-            <span className="mb-1 inline-flex rounded-full border border-[#D4AF37]/70 bg-emerald-700/90 px-2 py-1 text-[9px] font-extrabold uppercase tracking-wide text-white">
+            <span className="mb-0.5 inline-flex rounded-full border border-[#D4AF37]/65 bg-emerald-700/90 px-1.5 py-0.5 text-[7px] font-extrabold uppercase tracking-wide text-white">
               ★ {text.certified}
             </span>
           )}
         </div>
 
-        <h3 className="line-clamp-2 font-serif text-[19px] font-bold leading-tight text-[#FFFDF2]">
+        <h3 className="line-clamp-2 font-serif text-[16px] font-bold leading-[1.08] text-[#FFFDF2]">
           {displayName}
         </h3>
 
         {categoryLabel && (
-          <p className="mt-1 line-clamp-1 text-xs font-bold text-[#F4CE55]">{categoryLabel}</p>
+          <p className="mt-0.5 line-clamp-1 text-[10px] font-bold text-[#F4CE55]">{categoryLabel}</p>
         )}
 
-        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[11px] text-emerald-50/90">
+        <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[9px] text-emerald-50/90">
           {location && (
-            <span className="inline-flex min-w-0 items-center gap-1.5">
-              <MapPin className="h-3.5 w-3.5 shrink-0 text-[#F4CE55]" />
+            <span className="inline-flex min-w-0 items-center gap-1">
+              <MapPin className="h-3 w-3 shrink-0 text-[#F4CE55]" />
               <span className="truncate">{location}</span>
             </span>
           )}
-
           {rating > 0 && (
             <span className="inline-flex items-center gap-1 font-bold text-[#FFF4BF]">
-              <Star className="h-3.5 w-3.5 fill-[#F4CE55] text-[#F4CE55]" />
+              <Star className="h-3 w-3 fill-[#F4CE55] text-[#F4CE55]" />
               {rating.toFixed(1)}{reviews > 0 ? ` (${reviews})` : ''}
             </span>
           )}
         </div>
 
         {displayDescription && (
-          <p className="mt-3 line-clamp-2 min-h-[40px] text-xs leading-5 text-emerald-50/80">
+          <p className="mt-1.5 line-clamp-1 text-[9px] leading-4 text-emerald-50/75">
             {displayDescription}
           </p>
         )}
 
         {(phone || mapsUrl) && (
-          <div className="mt-3 grid grid-cols-2 gap-2" onClick={(event) => event.stopPropagation()}>
+          <div className="mt-2 grid grid-cols-2 gap-1.5" onClick={(event) => event.stopPropagation()}>
             {phone ? (
               <a
                 href={`tel:${phone}`}
-                className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-lg border border-[#D4AF37]/55 bg-[#042C24]/85 px-2 text-[11px] font-bold text-[#F4CE55] transition hover:border-[#F4CE55] hover:bg-[#064133]"
+                className="inline-flex min-h-8 items-center justify-center gap-1 rounded-md border border-[#D4AF37]/50 bg-[#042C24]/85 px-1.5 text-[9px] font-bold text-[#F4CE55] transition hover:border-[#F4CE55] hover:bg-[#064133]"
               >
-                <Phone className="h-3.5 w-3.5" />
+                <Phone className="h-3 w-3" />
                 {text.call}
               </a>
             ) : <span />}
@@ -223,9 +177,9 @@ export default function BusinessSearchCardV2({
                 href={mapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-lg border border-[#D4AF37]/55 bg-[#042C24]/85 px-2 text-[11px] font-bold text-[#F4CE55] transition hover:border-[#F4CE55] hover:bg-[#064133]"
+                className="inline-flex min-h-8 items-center justify-center gap-1 rounded-md border border-[#D4AF37]/50 bg-[#042C24]/85 px-1.5 text-[9px] font-bold text-[#F4CE55] transition hover:border-[#F4CE55] hover:bg-[#064133]"
               >
-                <Navigation className="h-3.5 w-3.5" />
+                <Navigation className="h-3 w-3" />
                 {text.gps}
               </a>
             )}
@@ -233,14 +187,12 @@ export default function BusinessSearchCardV2({
         )}
 
         {business.horaires_ok && (
-          <div className="mt-3 flex items-start gap-2 rounded-lg border border-[#D4AF37]/25 bg-black/10 px-2.5 py-2 text-[10px] text-emerald-50/75">
-            <Clock3 className={`mt-0.5 h-3.5 w-3.5 shrink-0 ${openNow ? 'text-emerald-300' : 'text-red-300'}`} />
-            <div className="min-w-0">
-              <span className={`font-extrabold ${openNow ? 'text-emerald-300' : 'text-red-300'}`}>
-                {openNow ? text.open : text.closed}
-              </span>
-              {today && <span className="ml-1.5 rtl:ml-0 rtl:mr-1.5">· {today}</span>}
-            </div>
+          <div className="mt-2 flex min-h-[30px] items-center gap-1.5 rounded-md border border-[#D4AF37]/22 bg-black/10 px-2 py-1 text-[8px] text-emerald-50/72">
+            <Clock3 className={`h-3 w-3 shrink-0 ${openNow ? 'text-emerald-300' : 'text-red-300'}`} />
+            <span className={`font-extrabold ${openNow ? 'text-emerald-300' : 'text-red-300'}`}>
+              {openNow ? text.open : text.closed}
+            </span>
+            {today && <span className="line-clamp-1 opacity-85">· {today}</span>}
           </div>
         )}
 
@@ -250,7 +202,7 @@ export default function BusinessSearchCardV2({
             event.stopPropagation();
             onClick();
           }}
-          className="mt-3 flex min-h-11 w-full items-center justify-center rounded-xl border border-[#D4AF37]/75 bg-[linear-gradient(90deg,#063B2F,#02251E)] px-3 text-xs font-black text-[#F4CE55] shadow-[inset_0_1px_6px_rgba(212,175,55,0.08)] transition hover:border-[#F4CE55] hover:bg-[#064436]"
+          className="mt-2 flex min-h-9 w-full items-center justify-center rounded-lg border border-[#D4AF37]/70 bg-[linear-gradient(90deg,#063B2F,#02251E)] px-2 text-[10px] font-black text-[#F4CE55] shadow-[inset_0_1px_5px_rgba(212,175,55,0.07)] transition hover:border-[#F4CE55] hover:bg-[#064436]"
         >
           {text.details} →
         </button>
