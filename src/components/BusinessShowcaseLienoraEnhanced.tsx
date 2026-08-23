@@ -205,8 +205,8 @@ export default function BusinessShowcaseLienoraEnhanced() {
               logoUrl
                 ? {
                     src: logoUrl,
-                    height: 24,
-                    width: 24,
+                    height: 30,
+                    width: 30,
                     excavate: true,
                   }
                 : undefined
