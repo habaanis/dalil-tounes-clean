@@ -1,6 +1,9 @@
 import { ArrowRight, Briefcase } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext';
+import { CvBusinessProductVisuals } from './CvBusinessProductVisuals';
+import type { BusinessCardPreviewLanguage } from './BusinessCardPreview';
 
 const platformWindows = [
   {
@@ -120,6 +123,8 @@ function VisibilitySummary() {
 }
 
 export default function VisibilityHouseSection() {
+  const { language } = useLanguage();
+
   return (
     <section id="maison-visibilite" className="scroll-mt-24 bg-gradient-to-b from-white via-[#FFFCF5] to-white px-4 py-10 md:py-14">
       <div className="mx-auto max-w-6xl">
@@ -140,6 +145,14 @@ export default function VisibilityHouseSection() {
         <div className="grid items-center gap-8 lg:grid-cols-[1.25fr_0.75fr]">
           <VisibilityHouseIllustration />
           <VisibilitySummary />
+        </div>
+
+        <div className="mt-14 border-t border-[#D4AF37]/25 pt-10">
+          <CvBusinessProductVisuals
+            language={language as BusinessCardPreviewLanguage}
+            compact
+            showExplanations
+          />
         </div>
       </div>
     </section>
