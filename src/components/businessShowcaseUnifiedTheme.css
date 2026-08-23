@@ -87,11 +87,42 @@
 #dt-section-platform { display: none !important; }
 #dt-section-reviews .dt-accordion-panel > div > div:nth-child(2) { display: none !important; }
 
-/* Un seul bouton Reservation : celui du haut. */
+/*
+ * Reservation : aucun bloc visible dans le bas de la fiche.
+ * Le bouton du haut ouvre le meme formulaire comme une petite fenetre.
+ */
 #dt-section-booking { display: none !important; }
-#dt-section-booking.open { display: block !important; }
-#dt-section-booking.open > .dt-accordion-trigger { display: none !important; }
-#dt-section-booking.open > .dt-accordion-panel { border-top: 0 !important; padding: 8px !important; }
+#dt-section-booking.open {
+  position: fixed !important;
+  z-index: 10020 !important;
+  inset: 50% auto auto 50% !important;
+  display: block !important;
+  width: min(92vw, 380px) !important;
+  max-height: 86dvh !important;
+  overflow-y: auto !important;
+  transform: translate(-50%, -50%) !important;
+  border: 2px solid #d4af37 !important;
+  border-radius: 16px !important;
+  background: linear-gradient(145deg, #052f27, #011914) !important;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.68), 0 0 0 9999px rgba(0, 0, 0, 0.62) !important;
+}
+#dt-section-booking.open > .dt-accordion-trigger {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 2 !important;
+  display: grid !important;
+  min-height: 42px !important;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.32) !important;
+  background: #042d24 !important;
+  color: #f4ce55 !important;
+}
+#dt-section-booking.open > .dt-accordion-trigger .dt-accordion-chevron {
+  transform: rotate(90deg) !important;
+}
+#dt-section-booking.open > .dt-accordion-panel {
+  border-top: 0 !important;
+  padding: 10px !important;
+}
 #dt-section-booking .dt-accordion-panel > div > button:first-child { display: none !important; }
 #dt-section-booking .dt-accordion-panel > div > div:nth-child(2) { max-height: none !important; overflow: visible !important; opacity: 1 !important; }
 #dt-section-booking form { padding-top: 0 !important; }
