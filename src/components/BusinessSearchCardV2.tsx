@@ -80,7 +80,7 @@ export default function BusinessSearchCardV2({
       onClick={onClick}
       dir={isRTL ? 'rtl' : 'ltr'}
     >
-      <div className="relative h-[66px] overflow-hidden border-b border-[#D4AF37]/35">
+      <div className="relative h-[58px] overflow-hidden border-b border-[#D4AF37]/35">
         <img
           src={cover}
           alt={displayName}
@@ -89,51 +89,51 @@ export default function BusinessSearchCardV2({
           decoding="async"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#064332]/70 via-transparent to-black/5" />
-        <span className="absolute left-3 top-2 text-[10px] font-black uppercase tracking-[0.12em] text-[#E5B92F] drop-shadow-sm">
+        <span className="absolute left-3 top-1.5 text-[9px] font-black uppercase tracking-[0.12em] text-[#E5B92F] drop-shadow-sm">
           {tier === 'premium' ? text.premium : text.artisan}
         </span>
       </div>
 
-      <div className="relative px-3.5 pb-2.5 pt-0">
-        <div className="-mt-5 mb-1 flex justify-center">
-          <div className="flex h-[50px] w-[50px] items-center justify-center overflow-hidden rounded-full border-[3px] border-[#D4AF37] bg-white p-1 shadow-[0_4px_11px_rgba(0,0,0,0.25)]">
+      <div className="relative px-3 pb-2 pt-0">
+        <div className="-mt-4.5 mb-0.5 flex justify-center">
+          <div className="flex h-[46px] w-[46px] items-center justify-center overflow-hidden rounded-full border-[3px] border-[#D4AF37] bg-white p-1 shadow-[0_4px_10px_rgba(0,0,0,0.24)]">
             <img src={logo} alt={`Logo ${displayName}`} className="h-full w-full object-contain" loading="lazy" decoding="async" />
           </div>
         </div>
 
-        <h3 className="line-clamp-2 font-serif text-[16px] font-bold leading-[1.06] text-[#E9BD35]">
+        <h3 className="line-clamp-2 font-serif text-[15px] font-bold leading-[1.03] text-[#E9BD35]">
           {displayName}
         </h3>
 
         {isCertified(business.statut_carte) && (
-          <div className="mt-1 inline-flex max-w-full items-center gap-1 rounded-full border border-[#D4AF37]/70 bg-[#064934]/90 px-2 py-0.5 shadow-[inset_0_0_6px_rgba(212,175,55,0.08)]">
-            <span className="shrink-0 text-[9px] leading-none text-[#E5B92F]">★</span>
-            <span className="truncate text-[7.5px] font-black uppercase tracking-[0.04em] text-white">
+          <div className="mt-0.5 inline-flex max-w-full items-center gap-1 rounded-full border border-[#D4AF37]/70 bg-[#064934]/90 px-2 py-0.5 shadow-[inset_0_0_6px_rgba(212,175,55,0.08)]">
+            <span className="shrink-0 text-[8px] leading-none text-[#E5B92F]">★</span>
+            <span className="truncate text-[7px] font-black uppercase tracking-[0.04em] text-white">
               {text.certified}
             </span>
           </div>
         )}
 
         {categoryLabel && (
-          <p className="mt-1 line-clamp-1 text-[10px] font-semibold text-[#F0C642]">{categoryLabel}</p>
+          <p className="mt-0.5 line-clamp-1 text-[9.5px] font-semibold text-[#F0C642]">{categoryLabel}</p>
         )}
 
         {phone && (
-          <div className="mt-1.5" onClick={(event) => event.stopPropagation()}>
+          <div className="mt-1" onClick={(event) => event.stopPropagation()}>
             <a
               href={`tel:${phone}`}
-              className="inline-flex min-h-7 max-w-full items-center justify-center gap-1.5 rounded-full border border-[#D4AF37]/55 bg-[#0A5A42]/80 px-2.5 text-[10px] font-bold text-[#E8BD34] transition hover:border-[#F1D36A]"
+              className="inline-flex min-h-6 max-w-full items-center justify-center gap-1 rounded-full border border-[#D4AF37]/55 bg-[#0A5A42]/80 px-2 text-[9px] font-bold text-[#E8BD34] transition hover:border-[#F1D36A]"
             >
-              <Phone className="h-3 w-3" />
+              <Phone className="h-2.5 w-2.5" />
               <span className="truncate">{phone}</span>
             </a>
           </div>
         )}
 
         {business.horaires_ok && (
-          <div className="mt-1.5 border-t border-[#D4AF37]/30 pt-1.5 text-[9px]">
-            <div className="flex items-center gap-1.5">
-              <Clock3 className={`h-3 w-3 shrink-0 ${openNow ? 'text-emerald-300' : 'text-red-400'}`} />
+          <div className="mt-1 border-t border-[#D4AF37]/30 pt-1 text-[8px]">
+            <div className="flex items-center gap-1">
+              <Clock3 className={`h-2.5 w-2.5 shrink-0 ${openNow ? 'text-emerald-300' : 'text-red-400'}`} />
               <span className={`font-extrabold ${openNow ? 'text-emerald-300' : 'text-red-400'}`}>
                 {openNow ? text.open : text.closed}
               </span>
@@ -148,7 +148,7 @@ export default function BusinessSearchCardV2({
             event.stopPropagation();
             onClick();
           }}
-          className="mt-2 flex min-h-8 w-full items-center justify-start border-t border-[#D4AF37]/30 px-0 pt-1.5 text-left text-[11px] font-black text-[#E8BD34] transition hover:text-[#F5D76E] rtl:text-right"
+          className="mt-1.5 flex min-h-7 w-full items-center justify-start border-t border-[#D4AF37]/30 px-0 pt-1 text-left text-[10px] font-black text-[#E8BD34] transition hover:text-[#F5D76E] rtl:text-right"
         >
           {text.details} →
         </button>
