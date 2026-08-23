@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ChevronRight, Copy, QrCode, Share2, X } from 'lucide-react';
+import { ChevronRight, Copy, Home, QrCode, Share2, X } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import LegacyBusinessCardPreview, {
   type BusinessCardPreviewLanguage,
@@ -7,6 +7,7 @@ import LegacyBusinessCardPreview, {
   type BusinessCardPreviewSize,
   type BusinessCardPreviewVariant,
 } from './BusinessCardPreviewLegacy';
+import './subscriptionCompactCards.css';
 
 export type {
   BusinessCardPreviewLanguage,
@@ -134,6 +135,24 @@ export function BusinessCardPreview(props: BusinessCardPreviewProps) {
     setCopyFeedback('Lien copié');
   };
 
+  const handleAddToHome = () => {
+    const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    window.alert(
+      isIos
+        ? 'Sur iPhone : Safari → Partager → Ajouter à l’écran d’accueil.'
+        : 'Sur Android : Chrome → Menu → Ajouter à l’écran d’accueil.',
+    );
+  };
+
+  const handleInstallQr = () => {
+    const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    window.alert(
+      isIos
+        ? 'Sur iPhone : Safari → Partager → Ajouter à l’écran d’accueil. Le raccourci ouvrira directement ce CV Business.'
+        : 'Sur Android : Chrome → Menu → Installer l’application ou Ajouter à l’écran d’accueil. Le raccourci ouvrira directement ce CV Business.',
+    );
+  };
+
   return (
     <>
       <div className={`mx-auto w-full ${previewWidthClass}`} onClickCapture={handlePreviewClickCapture}>
@@ -180,16 +199,31 @@ export function BusinessCardPreview(props: BusinessCardPreviewProps) {
                     <div className="min-w-0 flex-1">
                       <p className="text-[10px] font-black uppercase tracking-[0.12em] text-[#D6AF2E]">Accès direct</p>
                       <p className="mt-0.5 text-xs font-bold text-white">Scannez ce CV Business</p>
-                      <div className="mt-2 grid grid-cols-2 gap-1.5">
-                        <button type="button" onClick={handleShare} className="inline-flex min-h-8 items-center justify-center gap-1 rounded-md border border-[#D9B43A]/55 px-2 text-[9px] font-bold text-[#F4CE55] hover:bg-[#D6AF2E]/10">
+                      <div className="mt-2 grid grid-cols-3 gap-1.5">
+                        <button type="button" onClick={handleShare} className="inline-flex min-h-8 items-center justify-center gap-1 rounded-md border border-[#D9B43A]/55 px-1.5 text-[8.5px] font-bold text-[#F4CE55] hover:bg-[#D6AF2E]/10">
                           <Share2 className="h-3 w-3" /> Partager
                         </button>
-                        <button type="button" onClick={handleCopy} className="inline-flex min-h-8 items-center justify-center gap-1 rounded-md border border-[#D9B43A]/55 px-2 text-[9px] font-bold text-[#F4CE55] hover:bg-[#D6AF2E]/10">
+                        <button type="button" onClick={handleCopy} className="inline-flex min-h-8 items-center justify-center gap-1 rounded-md border border-[#D9B43A]/55 px-1.5 text-[8.5px] font-bold text-[#F4CE55] hover:bg-[#D6AF2E]/10">
                           <Copy className="h-3 w-3" /> Copier
+                        </button>
+                        <button type="button" onClick={handleAddToHome} className="inline-flex min-h-8 items-center justify-center gap-1 rounded-md border border-[#D9B43A]/55 px-1.5 text-center text-[8px] font-bold leading-tight text-[#F4CE55] hover:bg-[#D6AF2E]/10">
+                          <Home className="h-3 w-3 shrink-0" /> Ajouter à l’écran d’accueil
                         </button>
                       </div>
                       <p className="mt-1 min-h-3 text-[8px] text-emerald-200">{copyFeedback}</p>
                     </div>
+                  </div>
+
+                  <div className="mt-2 rounded-lg border border-[#D9B43A]/45 bg-white/[0.035] p-2">
+                    <p className="text-[9px] font-black text-[#F4CE55]">Votre QR toujours avec vous</p>
+                    <button
+                      type="button"
+                      onClick={handleInstallQr}
+                      className="mt-1.5 flex min-h-9 w-full items-center justify-center gap-2 rounded-md border border-[#D6AF2E] bg-[#087A50] px-3 text-[10px] font-black text-white transition hover:bg-[#0A8B5B]"
+                    >
+                      <QrCode className="h-3.5 w-3.5 text-[#F4CE55]" /> Installer mon QR
+                    </button>
+                    <p className="mt-1.5 text-[8px] leading-3 text-emerald-100/75">Ouvre cette vitrine directement depuis votre écran d’accueil.</p>
                   </div>
                 </div>
               )}
