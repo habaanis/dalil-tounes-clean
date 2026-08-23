@@ -27,7 +27,8 @@ function extractArrayBlock(name, nextMarker) {
   const startMarker = `export const ${name}`;
   const start = source.indexOf(startMarker);
   if (start < 0) return '';
-  const end = nextMarker ? source.indexOf(nextMarker, start) : source.length;
+  const searchFrom = start + startMarker.length;
+  const end = nextMarker ? source.indexOf(nextMarker, searchFrom) : source.length;
   return source.slice(start, end < 0 ? source.length : end);
 }
 
