@@ -5,15 +5,8 @@ import { createClient } from '@supabase/supabase-js';
 const DIST_DIR = join(process.cwd(), 'dist');
 const TEMPLATE_PATH = join(DIST_DIR, 'index.html');
 const DOMAIN = 'https://dalil-tounes.com';
-const PROD_SUPABASE_URL = 'https://kmvjegbtroksjqaqliyv.supabase.co';
-const PROD_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJIUzI1NiIsInJlZiI6ImttdmplZ2J0cm9rc2pxYXFsaXl2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4MDA1NTEsImV4cCI6MjA2NzM3NjU1MX0.MbU7b-HWQBwlYtbJeE7_ABvrGhuhzeAuqvkcVvvoE1o';
-const ENV_SUPABASE_URL = process.env.VITE_SUPABASE_URL;
-const ENV_SUPABASE_ANON_KEY = process.env.VITE_SUPABASE_ANON_KEY;
-const ENV_MATCHES_PROD = Boolean(
-  ENV_SUPABASE_URL?.includes('kmvjegbtroksjqaqliyv') && ENV_SUPABASE_ANON_KEY,
-);
-const SUPABASE_URL = ENV_MATCHES_PROD ? ENV_SUPABASE_URL : PROD_SUPABASE_URL;
-const SUPABASE_ANON_KEY = ENV_MATCHES_PROD ? ENV_SUPABASE_ANON_KEY : PROD_SUPABASE_ANON_KEY;
+const SUPABASE_URL = 'https://kmvjegbtroksjqaqliyv.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_LtS4rlNHzN52y7shlHyfVA_CTxbXuEj';
 const PAGE_SIZE = 1000;
 
 function escapeHtml(value) {
