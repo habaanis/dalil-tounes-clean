@@ -4,10 +4,12 @@ import path from 'node:path';
 const root = process.cwd();
 const distDir = path.join(root, 'dist');
 const sourcePath = path.join(root, 'src', 'lib', 'seoLandingData.ts');
+const supabaseClientPath = path.join(root, 'src', 'lib', 'supabaseClient.ts');
 const ORIGIN = 'https://dalil-tounes.com';
 const TODAY = new Date().toISOString().split('T')[0];
 
 const source = fs.readFileSync(sourcePath, 'utf8');
+const supabaseClientSource = fs.readFileSync(supabaseClientPath, 'utf8');
 
 function xmlEscape(value) {
   return String(value)
@@ -41,6 +43,18 @@ function parseSlugs(block) {
   return Array.from(block.matchAll(/\{\s*slug:\s*'([^']+)'/g), match => match[1]);
 }
 
+function readPublicSupabaseConfig() {
+  const fallbackUrl = supabaseClientSource.match(/const PROD_URL = "([^"]+)"/)?.[1];
+  const fallbackKey = supabaseClientSource.match(/const PROD_KEY = "([^"]+)"/)?.[1];
+  const envUrl = process.env.VITE_SUPABASE_URL;
+  const envKey = process.env.VITE_SUPABASE_ANON_KEY;
+  const useEnv = Boolean(envUrl?.includes('kmvjegbtroksjqaqliyv') && envKey);
+  return {
+    url: useEnv ? envUrl : fallbackUrl,
+    key: useEnv ? envKey : fallbackKey,
+  };
+}
+
 const metiers = parseSlugs(extractArrayBlock('SEO_METIERS', 'export const SEO_VILLES'));
 const villes = parseSlugs(extractArrayBlock('SEO_VILLES', 'export const SEO_SOUS_CATEGORIES'));
 const secteurs = parseSlugs(extractArrayBlock('SEO_SECTEURS', 'const SECTEUR_LABEL_TO_SLUG'));
@@ -71,9 +85,8 @@ for (const slug of secteurs) add(`/secteur/${slug}`, '0.8', 'weekly');
 for (const slug of gouvernorats) add(`/gouvernorat/${slug}`, '0.8', 'weekly');
 
 async function fetchBusinesses() {
-  const supabaseUrl = process.env.VITE_SUPABASE_URL;
-  const anonKey = process.env.VITE_SUPABASE_ANON_KEY;
-  if (!supabaseUrl || !anonKey) return [];
+  const { url: supabaseUrl, key: anonKey } = readPublicSupabaseConfig();
+  if (!supabaseUrl || !anonKey) throw new Error('configuration Supabase publique introuvable');
 
   const rows = [];
   const pageSize = 1000;
