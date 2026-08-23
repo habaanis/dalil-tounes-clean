@@ -32,7 +32,7 @@ const Jobs = lazy(() => import('./pages/Jobs').then(m => ({ default: m.Jobs })))
 const PartnerSearch = lazy(() => import('./pages/PartnerSearch').then(m => ({ default: m.PartnerSearch })));
 const BusinessEvents = lazy(() => import('./pages/BusinessEvents').then(m => ({ default: m.BusinessEvents })));
 const BusinessNeeds = lazy(() => import('./pages/BusinessNeeds'));
-const BusinessDetail = lazy(() => import('./components/BusinessDetail').then(m => ({ default: m.BusinessDetail })));
+const BusinessDetail = lazy(() => import('./components/BusinessShowcaseDetail'));
 const LegacyBusinessRedirect = lazy(() => import('./components/LegacyBusinessRedirect').then(m => ({ default: m.LegacyBusinessRedirect })));
 const TransportInscription = lazy(() => import('./pages/TransportInscription'));
 const Education = lazy(() => import('./pages/EducationNew'));
