@@ -16,7 +16,7 @@ import { generateLocalBusinessSchema } from '../lib/structuredDataSchemas';
 import GratuitCard from './GratuitCard';
 import { SEOHead } from './SEOHead';
 import StructuredData from './StructuredData';
-import BusinessShowcaseLienoraDetail from './BusinessShowcaseLienoraDetail';
+import BusinessShowcaseLienoraEnhanced from './BusinessShowcaseLienoraEnhanced';
 import './businessShowcaseUnifiedTheme.css';
 
 interface BusinessRecord {
@@ -192,11 +192,11 @@ export default function BusinessShowcaseDetail() {
   }
 
   if (failed || !business) {
-    return <BusinessShowcaseLienoraDetail />;
+    return <BusinessShowcaseLienoraEnhanced />;
   }
 
   if (tier !== 'gratuit') {
-    return <BusinessShowcaseLienoraDetail />;
+    return <BusinessShowcaseLienoraEnhanced />;
   }
 
   const displayName = String(
