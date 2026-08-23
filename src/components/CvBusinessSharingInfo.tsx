@@ -6,28 +6,28 @@ export type CvBusinessSharingLanguage = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 const sharingCopy: Record<CvBusinessSharingLanguage, { title: string; text: string; note: string }> = {
   fr: {
     title: 'Partagez votre CV Business facilement',
-    text: 'Envoyez simplement le lien de votre fiche par WhatsApp, e-mail ou réseaux sociaux, ou partagez son QR Code. Vos clients pourront ouvrir votre CV Business et utiliser directement les boutons disponibles : appel, WhatsApp, itinéraire, réservation, site web, réseaux sociaux et partage.',
-    note: 'Une capture d’écran ou une image n’est pas interactive. Pour profiter de toutes les fonctions, partagez le lien ou le QR Code.',
+    text: 'Envoyez simplement le lien de votre fiche par WhatsApp, e-mail ou réseaux sociaux, ou utilisez son QR Code. Placé sur une carte de visite, un comptoir, une vitrine ou simplement présenté depuis votre téléphone, le QR permet au client d’ouvrir directement votre CV Business en un scan, sans devoir rechercher votre entreprise ni saisir une adresse. Il retrouve alors immédiatement les boutons disponibles : appel, WhatsApp, itinéraire, réservation, site web, réseaux sociaux et partage.',
+    note: 'Le QR transforme votre support physique ou votre téléphone en accès direct vers votre vitrine professionnelle. Une capture d’écran ou une image seule n’est pas interactive : pour profiter de toutes les fonctions, partagez le lien ou le QR Code.',
   },
   ar: {
     title: 'شارك CV Business بسهولة',
-    text: 'أرسل رابط بطاقتك عبر واتساب أو البريد الإلكتروني أو شبكات التواصل، أو شارك رمز QR الخاص بها. سيتمكن عملاؤك من فتح CV Business واستخدام الأزرار المتاحة مباشرة: الاتصال، واتساب، الاتجاهات، الحجز، الموقع الإلكتروني، شبكات التواصل والمشاركة.',
-    note: 'لقطة الشاشة أو الصورة ليست تفاعلية. للاستفادة من جميع الوظائف، شارك الرابط أو رمز QR.',
+    text: 'أرسل رابط بطاقتك عبر واتساب أو البريد الإلكتروني أو شبكات التواصل، أو استخدم رمز QR الخاص بها. عند وضعه على بطاقة عمل أو واجهة أو مكتب، أو عرضه مباشرة من هاتفك، يمكن للعميل فتح CV Business بمسح واحد دون البحث عن شركتك أو كتابة أي عنوان. ثم يجد فوراً أزرار الاتصال وواتساب والاتجاهات والحجز والموقع الإلكتروني وشبكات التواصل والمشاركة.',
+    note: 'يحوّل رمز QR أي وسيلة مطبوعة أو هاتفك إلى وصول مباشر لواجهتك المهنية. الصورة أو لقطة الشاشة وحدها ليست تفاعلية: للاستفادة من جميع الوظائف، شارك الرابط أو رمز QR.',
   },
   en: {
     title: 'Share your Business CV easily',
-    text: 'Send your profile link by WhatsApp, email or social media, or share its QR Code. Your customers can open your Business CV and use the available buttons directly: call, WhatsApp, directions, booking, website, social media and sharing.',
-    note: 'A screenshot or image is not interactive. To use every feature, share the link or QR Code.',
+    text: 'Send your profile link by WhatsApp, email or social media, or use its QR Code. Placed on a business card, counter or storefront, or simply shown from your phone, the QR lets a customer open your Business CV in one scan without searching for your company or typing an address. They immediately reach the available actions: call, WhatsApp, directions, booking, website, social media and sharing.',
+    note: 'The QR turns a physical support or your phone into direct access to your professional showcase. A screenshot or image alone is not interactive: share the link or QR Code to use every feature.',
   },
   it: {
     title: 'Condividi facilmente il tuo CV Business',
-    text: 'Invia il link della scheda tramite WhatsApp, e-mail o social network, oppure condividi il suo QR Code. I clienti potranno aprire il tuo CV Business e utilizzare direttamente i pulsanti disponibili: chiamata, WhatsApp, indicazioni, prenotazione, sito web, social network e condivisione.',
-    note: 'Uno screenshot o un’immagine non sono interattivi. Per utilizzare tutte le funzioni, condividi il link o il QR Code.',
+    text: 'Invia il link della scheda tramite WhatsApp, e-mail o social network, oppure usa il suo QR Code. Inserito su un biglietto da visita, un bancone o una vetrina, oppure mostrato direttamente dal telefono, il QR permette al cliente di aprire il CV Business con una sola scansione, senza cercare l’azienda o digitare un indirizzo. Trova subito chiamata, WhatsApp, indicazioni, prenotazione, sito web, social network e condivisione.',
+    note: 'Il QR trasforma un supporto fisico o il telefono in un accesso diretto alla vetrina professionale. Uno screenshot o un’immagine da soli non sono interattivi: condividi il link o il QR Code.',
   },
   ru: {
     title: 'Легко делитесь своим CV Business',
-    text: 'Отправьте ссылку на профиль через WhatsApp, электронную почту или социальные сети либо поделитесь его QR-кодом. Клиенты смогут открыть CV Business и сразу использовать доступные кнопки: звонок, WhatsApp, маршрут, бронирование, сайт, социальные сети и отправка профиля.',
-    note: 'Снимок экрана или изображение не интерактивны. Чтобы использовать все функции, поделитесь ссылкой или QR-кодом.',
+    text: 'Отправьте ссылку на профиль через WhatsApp, электронную почту или социальные сети либо используйте его QR-код. Разместите QR на визитке, стойке или витрине либо просто покажите его на телефоне: клиент одним сканированием откроет Business CV без поиска компании и ввода адреса. Сразу будут доступны звонок, WhatsApp, маршрут, бронирование, сайт, социальные сети и отправка профиля.',
+    note: 'QR-код превращает печатный носитель или ваш телефон в прямой вход в профессиональную витрину. Снимок экрана или изображение сами по себе не интерактивны: используйте ссылку или QR-код.',
   },
 };
 
