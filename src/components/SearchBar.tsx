@@ -129,9 +129,6 @@ export default function SearchBar({
   const GLOBAL_RAW_RESULT_LIMIT = 150;
   const CATEGORY_RAW_RESULT_LIMIT = 40;
 
-  // Only TEXT columns supported by PostgREST ilike in .or().
-  // ARRAY columns (categorie, sous_categories, secteur, tags, liste_pages)
-  // are handled in JS scoring only.
   const OR_SAFE_FIELDS = [
     'nom', 'ville', 'gouvernorat', 'adresse', 'description',
     'sous_categories_texte', 'sous_categories_clean',
@@ -231,7 +228,6 @@ export default function SearchBar({
           return;
         }
 
-        // Build .or() using only safe text columns (no arrays, no space-names)
         const orParts: string[] = [];
         for (const word of words) {
           const escaped = word.replace(/[%_]/g, (c) => `\\${c}`);
@@ -575,7 +571,7 @@ export default function SearchBar({
   };
 
   const hasResults = q.trim().length >= MIN_CHARS && (ent.length > 0 || !loadingEnt || showSeeAllItem);
-  const shouldRenderDropdown = resultMode !== 'filterCards' && hasResults;
+  const shouldRenderDropdown = hasResults;
 
   return (
     <form
