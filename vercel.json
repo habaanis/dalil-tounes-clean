@@ -1,4 +1,92 @@
 {
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.dalil-tounes.com" }],
+      "destination": "https://dalil-tounes.com/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/entreprises",
+      "destination": "/businesses",
+      "permanent": true
+    },
+    {
+      "source": "/emploi",
+      "destination": "/jobs",
+      "permanent": true
+    },
+    {
+      "source": "/emplois",
+      "destination": "/jobs",
+      "permanent": true
+    },
+    {
+      "source": "/citizens/sante",
+      "destination": "/citizens/health",
+      "permanent": true
+    },
+    {
+      "source": "/citizens/loisirs",
+      "destination": "/citizens/leisure",
+      "permanent": true
+    },
+    {
+      "source": "/citizens/magasins",
+      "destination": "/citizens/shops",
+      "permanent": true
+    },
+    {
+      "source": "/citizens/tourisme",
+      "destination": "/citizens/tourism",
+      "permanent": true
+    },
+    {
+      "source": "/evenements",
+      "destination": "/culture-events",
+      "permanent": true
+    },
+    {
+      "source": "/marche-local",
+      "destination": "/marketplace",
+      "permanent": true
+    },
+    {
+      "source": "/local-marketplace",
+      "destination": "/marketplace",
+      "permanent": true
+    },
+    {
+      "source": "/autour-de-moi",
+      "destination": "/around-me",
+      "permanent": true
+    },
+    {
+      "source": "/abonnement",
+      "destination": "/subscription",
+      "permanent": true
+    },
+    {
+      "source": "/notre-concept",
+      "destination": "/concept",
+      "permanent": true
+    },
+    {
+      "source": "/connexion",
+      "destination": "/auth",
+      "permanent": true
+    },
+    {
+      "source": "/login",
+      "destination": "/auth",
+      "permanent": true
+    },
+    {
+      "source": "/signup",
+      "destination": "/auth",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/(.*)",
@@ -71,19 +159,6 @@
           "value": "1; mode=block"
         }
       ]
-    }
-  ],
-  "redirects": [
-    {
-      "source": "/:path*",
-      "has": [{ "type": "host", "value": "www.dalil-tounes.com" }],
-      "destination": "https://dalil-tounes.com/:path*",
-      "permanent": true
-    },
-    {
-      "source": "/#/:path*",
-      "destination": "/:path*",
-      "permanent": true
     }
   ]
 }
