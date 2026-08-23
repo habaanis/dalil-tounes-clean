@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { X } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { ChevronRight, QrCode, X } from 'lucide-react';
 import LegacyBusinessCardPreview, {
   type BusinessCardPreviewLanguage,
   type BusinessCardPreviewProps,
@@ -15,9 +15,10 @@ export type {
 };
 
 /**
- * Exemple réel affiché uniquement dans les aperçus commerciaux de la page
- * Abonnement. La structure, les champs et les droits Artisan/Premium restent
- * entièrement gérés par le composant historique inchangé.
+ * Exemple réel affiché uniquement dans les aperçus commerciaux.
+ * La structure, les champs et les droits Artisan/Premium restent gérés
+ * par le composant historique ; ce wrapper fournit le cas réel Aux saveurs d'Anis
+ * et harmonise la présentation des aperçus avec le CV Business actuel.
  */
 const AUX_SAVEURS_PREVIEW: Record<BusinessCardPreviewLanguage, {
   name: string;
@@ -28,6 +29,7 @@ const AUX_SAVEURS_PREVIEW: Record<BusinessCardPreviewLanguage, {
   reviews: string;
   gallery: string;
   galleryTitle: string;
+  qrTitle: string;
 }> = {
   fr: {
     name: "Aux saveurs d'Anis",
@@ -38,6 +40,7 @@ const AUX_SAVEURS_PREVIEW: Record<BusinessCardPreviewLanguage, {
     reviews: 'Avis clients',
     gallery: 'Buffets et créations culinaires',
     galleryTitle: 'Galerie',
+    qrTitle: 'QR Code et partage',
   },
   ar: {
     name: "Aux saveurs d'Anis",
@@ -48,6 +51,7 @@ const AUX_SAVEURS_PREVIEW: Record<BusinessCardPreviewLanguage, {
     reviews: 'آراء العملاء',
     gallery: 'بوفيهات وإبداعات في فن الطبخ',
     galleryTitle: 'الصور',
+    qrTitle: 'رمز QR والمشاركة',
   },
   en: {
     name: "Aux saveurs d'Anis",
@@ -58,6 +62,7 @@ const AUX_SAVEURS_PREVIEW: Record<BusinessCardPreviewLanguage, {
     reviews: 'Customer reviews',
     gallery: 'Buffets and culinary creations',
     galleryTitle: 'Gallery',
+    qrTitle: 'QR Code and sharing',
   },
   it: {
     name: "Aux saveurs d'Anis",
@@ -68,6 +73,7 @@ const AUX_SAVEURS_PREVIEW: Record<BusinessCardPreviewLanguage, {
     reviews: 'Recensioni clienti',
     gallery: 'Buffet e creazioni culinarie',
     galleryTitle: 'Galleria',
+    qrTitle: 'QR Code e condivisione',
   },
   ru: {
     name: "Aux saveurs d'Anis",
@@ -78,6 +84,7 @@ const AUX_SAVEURS_PREVIEW: Record<BusinessCardPreviewLanguage, {
     reviews: 'Отзывы клиентов',
     gallery: 'Банкеты и кулинарные работы',
     galleryTitle: 'Галерея',
+    qrTitle: 'QR-код и поделиться',
   },
 };
 
@@ -93,7 +100,7 @@ const GENERIC_DEMO_CATEGORIES = new Set([
   'Plateforme tunisienne',
   'منصة تونسية',
   'Tunisian platform',
-  'Piattaforma tunisina',
+  'Piattaforma tunisiana',
   'Тунисская платформа',
 ]);
 
@@ -114,6 +121,13 @@ const AUX_SAVEURS_GALLERY = [
 ];
 
 const GALLERY_LABELS = ['Galerie', 'الصور', 'Gallery', 'Galleria', 'Галерея'];
+const LEGACY_QR_LABELS = [
+  'QR de partage professionnel',
+  'رمز QR للمشاركة المهنية',
+  'Professional sharing QR',
+  'QR di condivisione professionale',
+  'Профессиональный QR-код',
+];
 
 export function BusinessCardPreview(props: BusinessCardPreviewProps) {
   const language = props.language ?? 'fr';
@@ -121,8 +135,30 @@ export function BusinessCardPreview(props: BusinessCardPreviewProps) {
   const usesGenericName = !props.name || GENERIC_DEMO_NAMES.has(props.name);
   const usesGenericCategory = !props.category || GENERIC_DEMO_CATEGORIES.has(props.category);
   const [galleryOpen, setGalleryOpen] = useState(false);
+  const legacyPreviewRef = useRef<HTMLDivElement>(null);
   const imageLimit = props.variant === 'premium' ? 10 : 5;
   const galleryImages = AUX_SAVEURS_GALLERY.slice(0, imageLimit);
+  const previewWidthClass = props.variant === 'premium' ? 'max-w-[350px]' : 'max-w-[360px]';
+
+  useEffect(() => {
+    if (props.variant !== 'premium') return;
+    const root = legacyPreviewRef.current;
+    if (!root) return;
+
+    const hideLegacyQr = () => {
+      root.querySelectorAll<HTMLButtonElement>('button').forEach((button) => {
+        const label = button.textContent?.replace(/\s+/g, ' ').trim() ?? '';
+        if (LEGACY_QR_LABELS.some((qrLabel) => label.includes(qrLabel))) {
+          button.style.display = 'none';
+        }
+      });
+    };
+
+    hideLegacyQr();
+    const observer = new MutationObserver(hideLegacyQr);
+    observer.observe(root, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, [language, props.variant]);
 
   const handlePreviewClickCapture = (event: React.MouseEvent<HTMLDivElement>) => {
     const button = (event.target as HTMLElement).closest('button');
@@ -135,19 +171,37 @@ export function BusinessCardPreview(props: BusinessCardPreviewProps) {
 
   return (
     <>
-      <div onClickCapture={handlePreviewClickCapture}>
-        <LegacyBusinessCardPreview
-          {...props}
-          name={usesGenericName ? preview.name : props.name}
-          category={usesGenericCategory ? preview.category : props.category}
-          city={props.city ?? preview.city}
-          status={props.status ?? preview.status}
-          hours={props.hours ?? preview.hours}
-          reviews={props.reviews ?? preview.reviews}
-          gallery={props.gallery ?? `${preview.gallery} · ${galleryImages.length} photo${galleryImages.length > 1 ? 's' : ''}`}
-          logo={props.logo ?? AUX_SAVEURS_LOGO}
-          coverImage={props.coverImage ?? AUX_SAVEURS_COVER}
-        />
+      <div className={`mx-auto w-full ${previewWidthClass}`} onClickCapture={handlePreviewClickCapture}>
+        <div ref={legacyPreviewRef}>
+          <LegacyBusinessCardPreview
+            {...props}
+            name={usesGenericName ? preview.name : props.name}
+            category={usesGenericCategory ? preview.category : props.category}
+            city={props.city ?? preview.city}
+            status={props.status ?? preview.status}
+            hours={props.hours ?? preview.hours}
+            reviews={props.reviews ?? preview.reviews}
+            gallery={props.gallery ?? `${preview.gallery} · ${galleryImages.length} photo${galleryImages.length > 1 ? 's' : ''}`}
+            logo={props.logo ?? AUX_SAVEURS_LOGO}
+            coverImage={props.coverImage ?? AUX_SAVEURS_COVER}
+          />
+        </div>
+
+        {props.variant === 'premium' && (
+          <div className="relative z-10 mx-1 -mt-3 rounded-b-[20px] border border-t-0 border-[#D9B43A]/70 bg-[linear-gradient(180deg,#032A22,#011B17)] px-2.5 pb-2 pt-4 shadow-[0_8px_16px_rgba(0,24,19,0.25)]">
+            <button
+              type="button"
+              className="flex min-h-9 w-full items-center gap-2 rounded-lg border border-[#D9B43A]/60 bg-[linear-gradient(90deg,#042E25,#011F1A)] px-2.5 py-1 text-start text-[11px] font-bold text-white transition hover:bg-[#D6AF2E]/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D6AF2E]"
+              aria-label={preview.qrTitle}
+            >
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#D6AF2E]/10 text-[#F4CE55]">
+                <QrCode className="h-3.5 w-3.5" aria-hidden="true" />
+              </span>
+              <span className="flex-1">{preview.qrTitle}</span>
+              <ChevronRight className="h-3.5 w-3.5 text-[#F4CE55] rtl:rotate-180" aria-hidden="true" />
+            </button>
+          </div>
+        )}
       </div>
 
       {galleryOpen && (
