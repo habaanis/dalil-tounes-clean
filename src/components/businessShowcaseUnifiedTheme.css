@@ -326,6 +326,21 @@
   display: none !important;
 }
 
+/* Le bouton Reservation du haut ouvre directement le formulaire du panneau. */
+#dt-section-booking .dt-accordion-panel > div > button:first-child {
+  display: none !important;
+}
+
+#dt-section-booking .dt-accordion-panel > div > div:nth-child(2) {
+  max-height: none !important;
+  overflow: visible !important;
+  opacity: 1 !important;
+}
+
+#dt-section-booking form {
+  padding-top: 0 !important;
+}
+
 /* QR : pas de phrase explicative, pas de doublon "Ajouter aux contacts". */
 .dt-qr-copy > p:last-child {
   display: none !important;
