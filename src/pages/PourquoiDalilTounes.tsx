@@ -37,6 +37,7 @@ const businessCardMarkers: Marker[] = [
   { label: 'Certificat Dalil Tounes', icon: Award },
   { label: 'Téléphone', icon: Phone },
   { label: 'Horaires', icon: Clock },
+  { label: 'QR professionnel', description: 'Un scan peut ouvrir directement la Vitrine Business.', icon: QrCode },
   { label: 'Voir les détails', icon: ArrowRight },
 ];
 
@@ -67,15 +68,15 @@ const cvBusinessGroups: FeatureGroup[] = [
   },
   {
     title: 'Partager',
-    description: "Retrouver ou transmettre la fiche sur ton smartphone.",
+    description: "Retrouver ou transmettre la Vitrine Business sur ton smartphone.",
     icon: QrCode,
-    items: ['QR Code professionnel'],
+    items: ['QR Code professionnel', 'Partage direct'],
   },
 ];
 
 const citizenBenefits = [
   'Trouver rapidement le bon professionnel',
-  'Consulter des fiches complètes et régulièrement mises à jour',
+  'Consulter des Vitrines Business complètes et régulièrement mises à jour',
   'Lire les avis des clients',
   'Voir les horaires, le GPS et les coordonnées',
   "Réserver ou contacter directement l'entreprise",
@@ -85,10 +86,10 @@ const citizenBenefits = [
 
 const companyBenefits = [
   'Gagner en visibilité auprès des citoyens',
-  'Présenter votre activité avec une fiche professionnelle complète',
+  'Présenter votre activité avec une Vitrine Business complète',
   'Valoriser votre savoir-faire grâce au Certificat Dalil Tounes',
   'Recevoir des demandes de contact et de réservation',
-  'Faciliter le partage de votre fiche grâce au QR Code professionnel',
+  'Faciliter le partage de votre Vitrine grâce au QR Code professionnel',
   'Développer votre présence numérique',
   'Être trouvé plus facilement par vos futurs clients',
 ];
@@ -97,8 +98,8 @@ const timelineSteps = [
   { title: 'Photos', description: 'Montrer les lieux, les réalisations et le savoir-faire.', icon: Camera },
   { title: 'Avis', description: 'Faire évoluer la confiance avec les retours publics.', icon: Star },
   { title: 'Informations', description: 'Garder les horaires, coordonnées et détails utiles à jour.', icon: Clock },
-  { title: 'Réservations', description: 'Faciliter les demandes directes depuis la fiche.', icon: CalendarCheck },
-  { title: 'Partage', description: 'Retrouver ou transmettre une fiche grâce au QR Code professionnel.', icon: QrCode },
+  { title: 'Réservations', description: 'Faciliter les demandes directes depuis la Vitrine Business.', icon: CalendarCheck },
+  { title: 'Partage', description: 'Retrouver ou transmettre la Vitrine grâce au QR Code professionnel.', icon: QrCode },
 ];
 
 const SectionLabel = ({ children }: { children: string }) => (
@@ -225,11 +226,11 @@ export default function PourquoiDalilTounes() {
           <p className="mx-auto mt-5 max-w-3xl text-xl leading-8 text-white/90 sm:text-2xl">
             La plateforme tunisienne qui rapproche les citoyens et les entreprises.
           </p>
-        <p className="mx-auto mt-6 max-w-3xl text-base leading-7 text-white/75 sm:text-lg">
-  À première vue, Dalil Tounes peut ressembler à une simple liste d'entreprises.
-  <br />
-  En réalité, c'est une plateforme vivante qui met en relation les citoyens, les entreprises et les professionnels, tout en offrant aux entreprises une fiche professionnelle complète pour développer leur visibilité en Tunisie.
-</p>
+          <p className="mx-auto mt-6 max-w-3xl text-base leading-7 text-white/75 sm:text-lg">
+            À première vue, Dalil Tounes peut ressembler à une simple liste d'entreprises.
+            <br />
+            En réalité, c'est une plateforme vivante qui met en relation les citoyens et les professionnels, tout en offrant aux entreprises une Vitrine Business complète pour présenter leur activité et développer leur visibilité en Tunisie.
+          </p>
         </div>
       </section>
 
@@ -246,8 +247,7 @@ export default function PourquoiDalilTounes() {
                 Chaque plateforme répond à un besoin différent.
               </h2>
               <p className="mt-5 text-lg leading-8 text-gray-700">
-                Aujourd'hui, tu dois souvent passer d'une plateforme à une autre pour trouver toutes les informations dont tu as besoin.
-                Dalil Tounes rapproche ces usages pour rendre ton parcours plus clair, du premier aperçu jusqu'au contact.
+                Aujourd'hui, tu dois souvent passer d'une plateforme à une autre pour trouver toutes les informations dont tu as besoin. La Vitrine Business rapproche ces informations dans une présentation claire, tandis que Dalil Tounes facilite ensuite la découverte et le contact.
               </p>
             </div>
 
@@ -276,7 +276,7 @@ export default function PourquoiDalilTounes() {
 
           <div className="mt-12 rounded-2xl border border-[#D4AF37]/40 bg-[#FFF8E6] p-6 text-center shadow-sm">
             <p className="text-lg font-semibold leading-8 text-[#4A1D43]">
-              Dalil Tounes réunit ces usages dans une plateforme pensée pour les citoyens, les entreprises et les professionnels en Tunisie, afin qu'ils puissent se retrouver plus facilement.
+              La force de la Vitrine Business est de réunir les informations utiles de l'entreprise dans un seul espace. Dalil Tounes ajoute ensuite la recherche, la découverte et les connexions entre métiers, villes, secteurs et professionnels.
             </p>
           </div>
         </div>
@@ -290,19 +290,19 @@ export default function PourquoiDalilTounes() {
               Comment Dalil Tounes peut t'aider ?
             </h2>
             <p className="mt-5 text-lg leading-8 text-gray-700">
-              Tu découvres d'abord une entreprise en quelques secondes, puis tu ouvres son CV Business pour consulter toutes les informations utiles.
+              Une carte permet de découvrir rapidement l'entreprise. Un clic ou un scan ouvre sa Vitrine Business, puis Dalil Tounes l'intègre dans un écosystème de recherche et de découverte plus large.
             </p>
           </div>
 
           <div className="mt-14 grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
             <div>
               <SectionLabel>Étape 1</SectionLabel>
-              <h3 className="text-3xl font-bold text-[#4A1D43]">① Business Card</h3>
+              <h3 className="text-3xl font-bold text-[#4A1D43]">① Carte Business & QR</h3>
               <p className="mt-4 text-lg leading-8 text-gray-700">
-                La Business Card te permet de découvrir rapidement une entreprise.
+                La Carte Business te permet de découvrir rapidement une entreprise et sert de porte d'entrée vers sa Vitrine Business.
               </p>
               <p className="mt-3 leading-7 text-gray-600">
-                En quelques secondes, tu visualises les informations essentielles avant d'ouvrir la fiche complète.
+                Elle peut être affichée dans Dalil Tounes, partagée directement ou ouverte en scannant le QR professionnel.
               </p>
               <div className="mt-7 grid gap-3 sm:grid-cols-2">
                 {businessCardMarkers.map((marker) => (
@@ -321,20 +321,22 @@ export default function PourquoiDalilTounes() {
           </div>
 
           <div className="mx-auto my-14 flex max-w-md flex-col items-center rounded-3xl border border-[#D4AF37]/35 bg-white px-6 py-7 text-center shadow-sm">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#D4AF37]">① Business Card</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#D4AF37]">① Carte Business / QR</p>
             <ArrowDown className="my-3 h-7 w-7 text-[#4A1D43]" aria-hidden="true" />
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#D4AF37]">② CV Business</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#D4AF37]">② Vitrine Business</p>
+            <ArrowDown className="my-3 h-7 w-7 text-[#4A1D43]" aria-hidden="true" />
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#D4AF37]">③ Visibilité Dalil Tounes</p>
             <p className="mt-4 text-lg font-semibold text-[#4A1D43]">
-              En un clic, découvre toutes les informations utiles.
+              Un accès simple, une présentation complète, puis une visibilité amplifiée.
             </p>
           </div>
 
           <div className="grid items-start gap-10 lg:grid-cols-[0.88fr_1.12fr]">
             <div>
               <SectionLabel>Étape 2</SectionLabel>
-              <h3 className="text-3xl font-bold text-[#4A1D43]">② CV Business</h3>
+              <h3 className="text-3xl font-bold text-[#4A1D43]">② Vitrine Business</h3>
               <p className="mt-4 text-lg leading-8 text-gray-700">
-                Le CV Business rassemble toutes les informations utiles pour t'aider à faire ton choix et permettre aux entreprises de présenter pleinement leur activité.
+                La Vitrine Business est le cœur du CV Business : elle rassemble les informations utiles pour aider le visiteur à comprendre l'activité, se rassurer et passer facilement au contact.
               </p>
               <div className="mt-7 grid gap-3">
                 {cvBusinessGroups.map((group) => (
@@ -345,11 +347,22 @@ export default function PourquoiDalilTounes() {
 
             <ScreenshotFrame
               src="/images/pourquoi-cv-business.webp"
-              alt="Capture réelle d'un CV Business Dalil Tounes"
+              alt="Capture réelle d'une Vitrine Business Dalil Tounes"
               className="mx-auto w-full max-w-[520px] bg-[#07573f]"
               width={800}
               height={1642}
             />
+          </div>
+
+          <div className="mx-auto mt-14 max-w-4xl rounded-3xl border border-[#D4AF37]/35 bg-white p-7 text-center shadow-sm">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FFF3CC] text-[#4A1D43]">
+              <Globe2 className="h-6 w-6" aria-hidden="true" />
+            </div>
+            <SectionLabel>Étape 3</SectionLabel>
+            <h3 className="text-2xl font-bold text-[#4A1D43]">③ Visibilité dans l'écosystème Dalil Tounes</h3>
+            <p className="mx-auto mt-4 max-w-2xl leading-7 text-gray-600">
+              La Vitrine Business ne reste pas isolée. Elle peut être découverte depuis la recherche Dalil Tounes et reliée aux pages métier, ville, gouvernorat et secteur afin de multiplier les chemins qui mènent vers l'entreprise.
+            </p>
           </div>
         </div>
       </section>
