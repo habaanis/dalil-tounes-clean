@@ -1,4 +1,5 @@
 import { Link2, QrCode, Share2 } from 'lucide-react';
+import { CvBusinessQrVisual } from './CvBusinessProductVisuals';
 
 export type CvBusinessSharingLanguage = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 
@@ -35,23 +36,28 @@ export function CvBusinessSharingInfo({ language = 'fr', className = '' }: { lan
   const isRtl = language === 'ar';
 
   return (
-    <aside
-      className={`rounded-2xl border border-[#D4AF37]/55 bg-[linear-gradient(145deg,#073D31,#021F1A)] p-4 text-white shadow-[0_12px_28px_rgba(2,31,26,0.18)] sm:p-5 ${className}`}
-      dir={isRtl ? 'rtl' : 'ltr'}
-      aria-labelledby={`cv-sharing-title-${language}`}
-    >
-      <div className="flex items-start gap-3">
-        <div className="flex shrink-0 gap-1.5 text-[#F4CE55]" aria-hidden="true">
-          <span className="flex h-8 w-8 items-center justify-center rounded-full border border-[#D4AF37]/50 bg-black/20"><Link2 className="h-4 w-4" /></span>
-          <span className="flex h-8 w-8 items-center justify-center rounded-full border border-[#D4AF37]/50 bg-black/20"><QrCode className="h-4 w-4" /></span>
-          <span className="hidden h-8 w-8 items-center justify-center rounded-full border border-[#D4AF37]/50 bg-black/20 sm:flex"><Share2 className="h-4 w-4" /></span>
+    <div className={className} dir={isRtl ? 'rtl' : 'ltr'}>
+      <aside
+        className="rounded-2xl border border-[#D4AF37]/55 bg-[linear-gradient(145deg,#073D31,#021F1A)] p-4 text-white shadow-[0_12px_28px_rgba(2,31,26,0.18)] sm:p-5"
+        aria-labelledby={`cv-sharing-title-${language}`}
+      >
+        <div className="flex items-start gap-3">
+          <div className="flex shrink-0 gap-1.5 text-[#F4CE55]" aria-hidden="true">
+            <span className="flex h-8 w-8 items-center justify-center rounded-full border border-[#D4AF37]/50 bg-black/20"><Link2 className="h-4 w-4" /></span>
+            <span className="flex h-8 w-8 items-center justify-center rounded-full border border-[#D4AF37]/50 bg-black/20"><QrCode className="h-4 w-4" /></span>
+            <span className="hidden h-8 w-8 items-center justify-center rounded-full border border-[#D4AF37]/50 bg-black/20 sm:flex"><Share2 className="h-4 w-4" /></span>
+          </div>
+          <div className="min-w-0">
+            <h3 id={`cv-sharing-title-${language}`} className="text-base font-bold text-[#F4CE55] sm:text-lg">{copy.title}</h3>
+            <p className="mt-1.5 text-sm leading-6 text-emerald-50">{copy.text}</p>
+            <p className="mt-2 border-t border-white/15 pt-2 text-xs leading-5 text-emerald-100/85">{copy.note}</p>
+          </div>
         </div>
-        <div className="min-w-0">
-          <h3 id={`cv-sharing-title-${language}`} className="text-base font-bold text-[#F4CE55] sm:text-lg">{copy.title}</h3>
-          <p className="mt-1.5 text-sm leading-6 text-emerald-50">{copy.text}</p>
-          <p className="mt-2 border-t border-white/15 pt-2 text-xs leading-5 text-emerald-100/85">{copy.note}</p>
-        </div>
+      </aside>
+
+      <div className="mt-5">
+        <CvBusinessQrVisual language={language} />
       </div>
-    </aside>
+    </div>
   );
 }
