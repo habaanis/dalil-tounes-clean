@@ -298,7 +298,7 @@ export default function CultureEvents({ onNavigateBack }: CultureEventsProps = {
                 ) : (
                   <div className="text-center py-10 text-gray-400">
                     <Calendar className="w-12 h-12 mx-auto mb-4 opacity-30" />
-                    <p>Aucun événement cette semaine</p>
+                    <p>{t.noEvents}</p>
                   </div>
                 )}
               </div>
@@ -328,7 +328,7 @@ export default function CultureEvents({ onNavigateBack }: CultureEventsProps = {
                 ) : (
                   <div className="text-center py-10 text-gray-400">
                     <Calendar className="w-12 h-12 mx-auto mb-4 opacity-30" />
-                    <p>Aucun événement ce mois-ci</p>
+                    <p>{t.noEvents}</p>
                   </div>
                 )}
               </div>
@@ -358,7 +358,7 @@ export default function CultureEvents({ onNavigateBack }: CultureEventsProps = {
                 ) : (
                   <div className="text-center py-10 text-gray-400">
                     <Calendar className="w-12 h-12 mx-auto mb-4 opacity-30" />
-                    <p>Aucun événement annuel</p>
+                    <p>{t.noEvents}</p>
                   </div>
                 )}
               </div>
