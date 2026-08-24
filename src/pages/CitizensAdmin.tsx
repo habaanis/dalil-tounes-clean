@@ -140,7 +140,18 @@ export default function CitizensAdmin({ onNavigateBack }: CitizensAdminProps = {
       downloadForm: 'Télécharger le Formulaire Officiel (PDF)',
       accessOnlineForm: 'Accéder au formulaire en ligne',
       legalWarning: 'Attention : Vérifiez toujours la validité de ce formulaire auprès de l\'administration concernée avant de vous déplacer.',
-      loading: 'Chargement...'
+      loading: 'Chargement...',
+      heroAlt: 'Services publics en Tunisie',
+      queryLabel: 'Recherche',
+      cityLabel: 'Ville',
+      adminFinanceTitle: 'Services Administratifs & Financiers',
+      adminFinanceDescription: 'Trouvez les banques, assurances, bureaux de change et autres services administratifs près de chez vous.',
+      resultsTitle: 'Résultats de recherche',
+      resultsCount: 'résultats',
+      resetSearch: 'Réinitialiser la recherche',
+      searching: 'Recherche en cours...',
+      noService: 'Aucun service trouvé',
+      modifySearch: 'Essayez de modifier vos critères de recherche'
     },
     en: {
       title: 'Public Services',
@@ -176,7 +187,18 @@ export default function CitizensAdmin({ onNavigateBack }: CitizensAdminProps = {
       downloadForm: 'Download Official Form (PDF)',
       accessOnlineForm: 'Access online form',
       legalWarning: 'Warning: Always verify the validity of this form with the relevant administration before traveling.',
-      loading: 'Loading...'
+      loading: 'Loading...',
+      heroAlt: 'Public services in Tunisia',
+      queryLabel: 'Search',
+      cityLabel: 'City',
+      adminFinanceTitle: 'Administrative & Financial Services',
+      adminFinanceDescription: 'Find banks, insurance companies, exchange offices and other administrative services near you.',
+      resultsTitle: 'Search results',
+      resultsCount: 'results',
+      resetSearch: 'Reset search',
+      searching: 'Searching...',
+      noService: 'No service found',
+      modifySearch: 'Try changing your search criteria'
     },
     ar: {
       title: 'الخدمات العامة',
@@ -212,7 +234,18 @@ export default function CitizensAdmin({ onNavigateBack }: CitizensAdminProps = {
       downloadForm: 'تحميل النموذج الرسمي (PDF)',
       accessOnlineForm: 'الوصول إلى النموذج عبر الإنترنت',
       legalWarning: 'تحذير: يرجى دائماً التحقق من صحة هذا النموذج مع الإدارة المعنية قبل التنقل.',
-      loading: 'جاري التحميل...'
+      loading: 'جاري التحميل...',
+      heroAlt: 'الخدمات العامة في تونس',
+      queryLabel: 'البحث',
+      cityLabel: 'المدينة',
+      adminFinanceTitle: 'الخدمات الإدارية والمالية',
+      adminFinanceDescription: 'اعثر على البنوك وشركات التأمين ومكاتب الصرف وغيرها من الخدمات الإدارية القريبة منك.',
+      resultsTitle: 'نتائج البحث',
+      resultsCount: 'نتائج',
+      resetSearch: 'إعادة تعيين البحث',
+      searching: 'جارٍ البحث...',
+      noService: 'لم يتم العثور على خدمة',
+      modifySearch: 'حاول تعديل معايير البحث'
     },
     it: {
       title: 'Servizi Pubblici',
@@ -248,7 +281,18 @@ export default function CitizensAdmin({ onNavigateBack }: CitizensAdminProps = {
       downloadForm: 'Scarica il Modulo Ufficiale (PDF)',
       accessOnlineForm: 'Accedi al modulo online',
       legalWarning: 'Attenzione: Verifica sempre la validità di questo modulo con l\'amministrazione competente prima di recarti.',
-      loading: 'Caricamento...'
+      loading: 'Caricamento...',
+      heroAlt: 'Servizi pubblici in Tunisia',
+      queryLabel: 'Ricerca',
+      cityLabel: 'Città',
+      adminFinanceTitle: 'Servizi Amministrativi e Finanziari',
+      adminFinanceDescription: 'Trova banche, assicurazioni, uffici di cambio e altri servizi amministrativi vicino a te.',
+      resultsTitle: 'Risultati della ricerca',
+      resultsCount: 'risultati',
+      resetSearch: 'Reimposta la ricerca',
+      searching: 'Ricerca in corso...',
+      noService: 'Nessun servizio trovato',
+      modifySearch: 'Prova a modificare i criteri di ricerca'
     },
     ru: {
       title: 'Государственные Услуги',
@@ -284,7 +328,18 @@ export default function CitizensAdmin({ onNavigateBack }: CitizensAdminProps = {
       downloadForm: 'Скачать официальную форму (PDF)',
       accessOnlineForm: 'Доступ к онлайн-форме',
       legalWarning: 'Внимание: Всегда проверяйте действительность этой формы в соответствующей администрации перед поездкой.',
-      loading: 'Загрузка...'
+      loading: 'Загрузка...',
+      heroAlt: 'Государственные услуги в Тунисе',
+      queryLabel: 'Поиск',
+      cityLabel: 'Город',
+      adminFinanceTitle: 'Административные и финансовые услуги',
+      adminFinanceDescription: 'Найдите банки, страховые компании, обменные пункты и другие административные услуги рядом с вами.',
+      resultsTitle: 'Результаты поиска',
+      resultsCount: 'результатов',
+      resetSearch: 'Сбросить поиск',
+      searching: 'Поиск...',
+      noService: 'Услуги не найдены',
+      modifySearch: 'Попробуйте изменить критерии поиска'
     }
   };
 
@@ -502,7 +557,7 @@ export default function CitizensAdmin({ onNavigateBack }: CitizensAdminProps = {
       <section className="relative w-full overflow-hidden rounded-b-2xl shadow-md">
         <img
           src={getSupabaseImageUrl('cat_administratif.jpg')}
-          alt="Services Publics en Tunisie"
+          alt={t.heroAlt}
           className="w-full h-[260px] object-cover brightness-[0.6]"
         decoding="async"
         />
@@ -530,8 +585,8 @@ export default function CitizensAdmin({ onNavigateBack }: CitizensAdminProps = {
         <section className="px-4 pb-2">
           <div className="max-w-5xl mx-auto">
             <div className="text-xs text-gray-500">
-              {q && <>Recherche : <b>{q}</b> · </>}
-              {ville && <>Ville : <b>{ville}</b></>}
+              {q && <>{t.queryLabel} : <b>{q}</b> · </>}
+              {ville && <>{t.cityLabel} : <b>{ville}</b></>}
             </div>
           </div>
         </section>
@@ -553,9 +608,9 @@ export default function CitizensAdmin({ onNavigateBack }: CitizensAdminProps = {
 
       <section className="px-4 pb-4">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-lg font-semibold text-[#4A1D43] mb-2">Services Administratifs & Financiers</h2>
+          <h2 className="text-lg font-semibold text-[#4A1D43] mb-2">{t.adminFinanceTitle}</h2>
           <p className="text-gray-600 text-xs mb-3">
-            Trouvez les banques, assurances, bureaux de change et autres services administratifs près de chez vous.
+            {t.adminFinanceDescription}
           </p>
           <SearchBar scope="administration" />
         </div>
@@ -566,11 +621,11 @@ export default function CitizensAdmin({ onNavigateBack }: CitizensAdminProps = {
           <div className="max-w-5xl mx-auto">
             <div className="mb-3">
               <h2 className="text-lg font-semibold text-[#4A1D43] mb-1">
-                Résultats de recherche
+                {t.resultsTitle}
               </h2>
               <div className="flex items-center justify-between">
                 <p className="text-xs text-gray-600">
-                  <span className="font-semibold text-[#4A1D43]">{adminResults.length}</span> résultats
+                  <span className="font-semibold text-[#4A1D43]">{adminResults.length}</span> {t.resultsCount}
                 </p>
                 <button
                   onClick={() => {
@@ -581,7 +636,7 @@ export default function CitizensAdmin({ onNavigateBack }: CitizensAdminProps = {
                   }}
                   className="text-xs text-gray-600 hover:text-[#4A1D43] underline"
                 >
-                  Réinitialiser la recherche
+                  {t.resetSearch}
                 </button>
               </div>
             </div>
@@ -589,13 +644,13 @@ export default function CitizensAdmin({ onNavigateBack }: CitizensAdminProps = {
             {adminLoading ? (
               <div className="flex items-center justify-center py-8">
                 <Loader2 className="w-8 h-8 text-[#4A1D43] animate-spin" />
-                <p className="text-xs text-gray-600 ml-3">Recherche en cours...</p>
+                <p className="text-xs text-gray-600 ml-3">{t.searching}</p>
               </div>
             ) : adminResults.length === 0 ? (
               <div className="text-center py-8">
                 <Landmark className="w-12 h-12 text-gray-300 mx-auto mb-2" />
-                <h3 className="text-sm font-semibold text-gray-700 mb-1">Aucun service trouvé</h3>
-                <p className="text-xs text-gray-500">Essayez de modifier vos critères de recherche</p>
+                <h3 className="text-sm font-semibold text-gray-700 mb-1">{t.noService}</h3>
+                <p className="text-xs text-gray-500">{t.modifySearch}</p>
               </div>
             ) : (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">

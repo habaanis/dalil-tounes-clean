@@ -4,6 +4,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { useViewTracking } from '../hooks/useViewTracking';
 import { getMultilingualField } from '../lib/databaseI18n';
+import { getPublicComponentTranslations } from '../lib/publicComponentTranslations';
 import { getBusinessSeoMeta } from '../lib/seoMetaTemplates';
 import {
   buildEntrepriseUrl,
@@ -81,6 +82,7 @@ export default function BusinessShowcaseDetail() {
   const location = useLocation();
   const navigate = useNavigate();
   const { language } = useLanguage();
+  const text = getPublicComponentTranslations(language);
 
   const [business, setBusiness] = useState<BusinessRecord | null>(null);
   const [loading, setLoading] = useState(true);
@@ -186,7 +188,7 @@ export default function BusinessShowcaseDetail() {
     return (
       <main className="min-h-[70vh] bg-[#F5F5F5] px-4 py-12 text-center text-gray-600">
         <div className="mx-auto mt-20 h-10 w-10 animate-spin rounded-full border-2 border-[#D4AF37] border-t-transparent" />
-        <p className="mt-4">Chargement de la fiche...</p>
+        <p className="mt-4">{text.loadingProfile}</p>
       </main>
     );
   }
@@ -270,12 +272,12 @@ export default function BusinessShowcaseDetail() {
           className="mb-4 inline-flex min-h-11 items-center gap-2 rounded-xl border border-[#D4AF37]/60 bg-white px-4 py-2 text-sm font-bold text-[#4A1D43] shadow-sm"
         >
           <ArrowLeft size={17} />
-          Retour
+          {text.back}
         </button>
 
         <section className="rounded-2xl border border-[#D4AF37]/25 bg-white p-4 shadow-xl">
           <p className="mb-3 text-center text-[11px] font-extrabold uppercase tracking-[0.16em] text-[#B8941F]">
-            Fiche gratuite Dalil Tounes
+            {text.freeProfile}
           </p>
 
           <GratuitCard

@@ -4,6 +4,8 @@ import { useParams } from 'react-router-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import { supabase } from '../lib/supabaseClient';
 import { getLogoUrl } from '../lib/logoUtils';
+import { useLanguage } from '../context/LanguageContext';
+import { getPublicComponentTranslations } from '../lib/publicComponentTranslations';
 import BusinessShowcaseLienoraDetail from './BusinessShowcaseLienoraDetail';
 import './businessShowcasePreviewEnhancements.css';
 
@@ -73,6 +75,8 @@ const isReviewsLabel = (label: string): boolean => {
 
 export default function BusinessShowcaseLienoraEnhanced() {
   const { id, slug } = useParams<{ id?: string; slug?: string }>();
+  const { language } = useLanguage();
+  const text = getPublicComponentTranslations(language);
   const [business, setBusiness] = useState<BusinessRecord | null>(null);
   const [installPrompt, setInstallPrompt] = useState<InstallPromptEvent | null>(null);
   const [qrMount, setQrMount] = useState<HTMLElement | null>(null);
@@ -131,7 +135,7 @@ export default function BusinessShowcaseLienoraEnhanced() {
           if (button.dataset.googleReviewsLinked === 'true') return;
 
           button.dataset.googleReviewsLinked = 'true';
-          button.title = 'Voir les avis Google';
+          button.title = text.googleReviews;
           button.addEventListener(
             'click',
             event => {
@@ -164,12 +168,12 @@ export default function BusinessShowcaseLienoraEnhanced() {
         installBox.className = 'dt-install-qr-preview';
 
         const title = document.createElement('strong');
-        title.textContent = 'Votre QR toujours avec vous';
+        title.textContent = text.qrAlways;
 
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'dt-install-qr-button';
-        button.innerHTML = '<span aria-hidden="true">▦</span><span>Installer mon QR</span>';
+        button.innerHTML = `<span aria-hidden="true">▦</span><span>${text.installQr}</span>`;
         button.addEventListener('click', async () => {
           if (installPrompt) {
             await installPrompt.prompt();
@@ -179,15 +183,11 @@ export default function BusinessShowcaseLienoraEnhanced() {
           }
 
           const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
-          window.alert(
-            isIos
-              ? 'Sur iPhone : Safari → Partager → Ajouter à l’écran d’accueil.'
-              : 'Sur Android : Chrome → Menu → Installer l’application ou Ajouter à l’écran d’accueil.',
-          );
+          window.alert(isIos ? text.installIos : text.installAndroid);
         });
 
         const note = document.createElement('p');
-        note.textContent = 'Ouvre cette vitrine directement depuis votre écran d’accueil.';
+        note.textContent = text.qrNote;
 
         installBox.append(title, button, note);
         qrCard.appendChild(installBox);
@@ -198,7 +198,7 @@ export default function BusinessShowcaseLienoraEnhanced() {
     const observer = new MutationObserver(enhance);
     observer.observe(document.body, { childList: true, subtree: true });
     return () => observer.disconnect();
-  }, [installPrompt, reviewsUrl]);
+  }, [installPrompt, reviewsUrl, text]);
 
   return (
     <>

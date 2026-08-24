@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
+import { getBusinessesPageTranslations } from '../lib/businessesPageTranslations';
 import { supabase } from '../lib/supabaseClient';
 import { submitLegacySuggestion } from '../lib/businessRegistration';
 import { getHashQueryParams } from '../lib/url';
@@ -287,6 +288,7 @@ export const Businesses = ({
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const t = useTranslation(language);
+  const pageT = getBusinessesPageTranslations(language);
   const _initCache = readBusinessesCache();
   const [businesses, setBusinesses] = useState<Business[]>((_initCache?.businesses as unknown as Business[]) ?? []);
   const [loading, setLoading] = useState(_initCache === null);
@@ -1130,11 +1132,7 @@ export const Businesses = ({
       });
 
       setToast({
-        message: language === 'fr'
-          ? 'Merci ! Votre demande a été envoyée avec succès. Nous vous recontacterons rapidement.'
-          : language === 'ar'
-          ? 'شكراً! تم إرسال طلبك بنجاح. سنتواصل معك قريباً.'
-          : 'Thank you! Your request has been sent successfully. We will contact you soon.',
+        message: pageT.form.success,
         type: 'success',
         isVisible: true,
       });
@@ -1154,11 +1152,7 @@ export const Businesses = ({
     } catch (error) {
       console.error('Error submitting suggestion:', error);
       setToast({
-        message: language === 'fr'
-          ? 'Une erreur est survenue. Veuillez réessayer.'
-          : language === 'ar'
-          ? 'حدث خطأ. يرجى المحاولة مرة أخرى.'
-          : 'An error occurred. Please try again.',
+        message: pageT.form.error,
         type: 'error',
         isVisible: true,
       });
@@ -1171,7 +1165,7 @@ export const Businesses = ({
   const filteredBusinesses = Array.isArray(chipFilteredBusinesses) ? chipFilteredBusinesses : [];
 
   const businessListItems = Array.isArray(businesses) ? businesses.slice(0, 20).map(business => ({
-    name: business.name || 'Sans nom',
+    name: business.name || pageT.seo.unnamedBusiness,
     url: `${window.location.origin}/#/business/${business.id}`
   })) : [];
 
@@ -1180,8 +1174,8 @@ export const Businesses = ({
       {Array.isArray(businesses) && businesses.length > 0 && (
         <StructuredData
           data={generateCollectionPageSchema(
-            'Annuaire des Entreprises en Tunisie - Dalil Tounes',
-            'Trouvez les meilleures entreprises et professionnels en Tunisie par secteur d\'activité',
+            pageT.seo.title,
+            pageT.seo.description,
             businessListItems
           )}
         />
@@ -1194,13 +1188,13 @@ export const Businesses = ({
             <div className="relative grid gap-8 lg:grid-cols-[1.05fr_0.95fr] items-center px-5 py-10 sm:px-8 lg:px-12 lg:py-14">
               <div className="text-white">
                 <p className="mb-4 inline-flex rounded-full border border-[#D4AF37]/50 bg-white/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-[#F7D978]">
-                  Professionnels
+                  {pageT.hero.eyebrow}
                 </p>
                 <h1 className="text-3xl md:text-5xl font-bold leading-tight">
-                  Développez votre activité avec Dalil Tounes
+                  {pageT.hero.title}
                 </h1>
                 <p className="mt-5 max-w-2xl text-base md:text-lg leading-relaxed text-white/88">
-                  Présentez votre activité grâce à une fiche professionnelle complète, facilitez les contacts avec vos futurs clients et développez votre visibilité partout en Tunisie.
+                  {pageT.hero.description}
                 </p>
                 <div className="mt-7 flex flex-col sm:flex-row gap-3">
                   <button
@@ -1208,7 +1202,7 @@ export const Businesses = ({
                     onClick={() => navigate('/subscription')}
                     className="inline-flex items-center justify-center gap-2 rounded-full bg-[#D4AF37] px-6 py-3 text-sm font-bold text-[#4A1D43] shadow-lg transition hover:bg-[#F0CD5A]"
                   >
-                    Découvrir les offres
+                    {pageT.hero.offers}
                     <ArrowRight className="h-4 w-4" />
                   </button>
                   <button
@@ -1216,7 +1210,7 @@ export const Businesses = ({
                     onClick={() => document.getElementById('business-search')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
                     className="inline-flex items-center justify-center gap-2 rounded-full border border-white/55 bg-white/10 px-6 py-3 text-sm font-bold text-white transition hover:bg-white/18"
                   >
-                    Rechercher une entreprise
+                    {pageT.hero.search}
                     <Search className="h-4 w-4" />
                   </button>
                 </div>
@@ -1227,8 +1221,8 @@ export const Businesses = ({
                 pose="hello"
                 position="left"
                 size="md"
-                title="Bonjour !"
-                message="Je vais vous montrer comment une fiche professionnelle peut aider votre activité à gagner en visibilité et inspirer confiance."
+                title={pageT.hero.mascotTitle}
+                message={pageT.hero.mascotMessage}
                 className="bg-white/95 border-white/70 shadow-xl"
               />
             </div>
@@ -1238,14 +1232,14 @@ export const Businesses = ({
         <section className="px-4 py-8">
           <div className="max-w-4xl mx-auto">
             <SectionIntro
-              eyebrow="Présence en ligne"
-              title="Aujourd'hui, vos futurs clients recherchent d'abord sur Internet."
+              eyebrow={pageT.onlinePresence.eyebrow}
+              title={pageT.onlinePresence.title}
             >
-              <p>Avant d'appeler, de se déplacer ou de réserver, beaucoup de personnes commencent par chercher une entreprise en ligne.</p>
-              <p>Elles veulent vérifier les horaires, l'adresse, les avis, les photos, les coordonnées et comprendre rapidement si le professionnel correspond à leur besoin.</p>
-              <p>Le bouche-à-oreille reste précieux. Beaucoup de personnes demandent encore conseil à leur entourage avant de choisir un artisan, un commerçant ou une entreprise.</p>
-              <p>Mais une recommandation ne permet pas toujours de vérifier le nouveau numéro, la nouvelle adresse, les horaires, les avis récents, les photos ou les services proposés.</p>
-              <p>Les citoyens souhaitent désormais compléter ces recommandations grâce à des informations fiables, cohérentes et régulièrement mises à jour. Quand ces informations sont faciles à retrouver, le premier contact devient naturellement plus simple.</p>
+              <p>{pageT.onlinePresence.paragraphs[0]}</p>
+              <p>{pageT.onlinePresence.paragraphs[1]}</p>
+              <p>{pageT.onlinePresence.paragraphs[2]}</p>
+              <p>{pageT.onlinePresence.paragraphs[3]}</p>
+              <p>{pageT.onlinePresence.paragraphs[4]}</p>
             </SectionIntro>
           </div>
         </section>
@@ -1253,14 +1247,14 @@ export const Businesses = ({
         <section className="px-4 py-10 bg-white">
           <div className="max-w-6xl mx-auto grid gap-8 lg:grid-cols-[1fr_0.9fr] items-start">
             <SectionIntro
-              eyebrow="Pourquoi une fiche ?"
-              title="Pourquoi une fiche professionnelle est-elle importante ?"
+              eyebrow={pageT.whyProfile.eyebrow}
+              title={pageT.whyProfile.title}
             >
-              <p>Beaucoup de professionnels possèdent un véritable savoir-faire. Pourtant, leurs informations sont parfois dispersées ou incomplètes.</p>
-              <p>Une page Facebook peut afficher un ancien numéro. Google Business peut contenir des horaires non mis à jour. Instagram montre souvent de belles photos, mais peu d'informations pratiques.</p>
-              <p>Une fiche professionnelle complète, cohérente et régulièrement mise à jour aide aussi les moteurs de recherche à mieux comprendre votre activité.</p>
-              <p>Plus votre présence numérique est cohérente, plus vous augmentez vos chances d'être trouvé lors des recherches locales, sans jamais garantir une position précise sur Google.</p>
-              <p>Une fiche professionnelle claire, complète et régulièrement mise à jour permet de rassurer les visiteurs et facilite le premier contact.</p>
+              <p>{pageT.whyProfile.paragraphs[0]}</p>
+              <p>{pageT.whyProfile.paragraphs[1]}</p>
+              <p>{pageT.whyProfile.paragraphs[2]}</p>
+              <p>{pageT.whyProfile.paragraphs[3]}</p>
+              <p>{pageT.whyProfile.paragraphs[4]}</p>
             </SectionIntro>
 
             <div className="rounded-2xl border border-[#D4AF37]/30 bg-[#FFFDF6] p-5 shadow-sm">
@@ -1268,10 +1262,10 @@ export const Businesses = ({
                 <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#D4AF37]/15 text-[#D4AF37]">
                   <ShieldCheck className="h-5 w-5" />
                 </span>
-                <h3 className="text-lg font-bold text-[#4A1D43]">Conseil de Dalil</h3>
+                <h3 className="text-lg font-bold text-[#4A1D43]">{pageT.whyProfile.adviceTitle}</h3>
               </div>
               <p className="mt-4 text-sm leading-relaxed text-gray-700">
-                Avant de chercher à être plus visible, assurez-vous que les informations de votre entreprise sont cohérentes partout où vos clients peuvent vous trouver.
+                {pageT.whyProfile.adviceText}
               </p>
             </div>
           </div>
@@ -1284,8 +1278,8 @@ export const Businesses = ({
               pose="point"
               position="left"
               size="sm"
-              title="À vous d'explorer."
-              message="Vous pouvez maintenant découvrir les professionnels déjà présents sur Dalil Tounes et voir comment leurs fiches sont présentées aux visiteurs."
+              title={pageT.explore.mascotTitle}
+              message={pageT.explore.mascotMessage}
               className="py-4 sm:py-5"
             />
           </div>
@@ -1295,9 +1289,9 @@ export const Businesses = ({
         <section id="business-search" className="py-6 px-4 relative z-0 scroll-mt-28">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-5">
-              <h2 className="text-xl md:text-2xl font-bold text-[#4A1D43]">Découvrez les entreprises déjà présentes sur Dalil Tounes.</h2>
+              <h2 className="text-xl md:text-2xl font-bold text-[#4A1D43]">{pageT.explore.title}</h2>
               <p className="mt-3 text-sm md:text-base text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                Vous pouvez rechercher une entreprise, un artisan, un commerçant ou un professionnel partout en Tunisie et découvrir leur fiche.
+                {pageT.explore.description}
               </p>
             </div>
             <div className="bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-[#D4AF37] p-2.5 md:p-3">
@@ -1365,9 +1359,9 @@ export const Businesses = ({
             <div className="px-4">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-bold text-[#4A1D43]">
-                  {hasActiveSearch ? ((t as any).businessesExtra?.searchResults || 'Résultats de votre recherche') : ((t as any).businessesExtra?.featuredTitle || 'Entreprises en vedette')}
+                  {hasActiveSearch ? pageT.results.searchResults : pageT.results.featured}
                   <span className="ms-2 text-sm text-gray-500 font-normal">
-                    ({hasActiveSearch ? filteredBusinesses.length : Math.min(3, filteredBusinesses.length)} {filteredBusinesses.length > 1 ? ((t as any).businessesExtra?.businessPlur || 'entreprises') : ((t as any).businessesExtra?.businessSing || 'entreprise')})
+                    ({hasActiveSearch ? filteredBusinesses.length : Math.min(3, filteredBusinesses.length)} {filteredBusinesses.length > 1 ? pageT.results.businessPlural : pageT.results.businessSingular})
                   </span>
                 </h3>
                 {hasActiveSearch && (
@@ -1392,7 +1386,7 @@ export const Businesses = ({
                     }}
                     className="text-xs text-[#4A1D43] hover:text-[#D4AF37] font-medium"
                   >
-                    {(t as any).businessesExtra?.reset || 'Réinitialiser'}
+                    {pageT.results.reset}
                   </button>
                 )}
               </div>
@@ -1438,7 +1432,7 @@ export const Businesses = ({
                 <div className="mt-6 text-center">
                   <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#D4AF37]/10 rounded-lg text-xs text-[#4A1D43]" style={{ border: '1px solid #D4AF37' }}>
                     <Search className="w-4 h-4" />
-                    <span className="font-medium">Recherchez parmi les entreprises déjà présentes sur Dalil Tounes.</span>
+                    <span className="font-medium">{pageT.explore.hint}</span>
                   </div>
                 </div>
               )}
@@ -1449,17 +1443,17 @@ export const Businesses = ({
         <section className="px-4 py-8">
           <div className="max-w-6xl mx-auto grid gap-8 lg:grid-cols-[0.95fr_1.05fr] items-center">
             <div>
-              <SectionIntro eyebrow="Le CV Business" title="Une fiche qui devient le CV numérique de votre entreprise.">
-                <p>Le CV Business rassemble les informations utiles pour présenter votre activité, expliquer votre savoir-faire et aider les visiteurs à comprendre rapidement qui vous êtes.</p>
-                <p>Il ne s'agit pas seulement d'être visible. Il s'agit aussi d'inspirer confiance avec une fiche claire, complète et vérifiable.</p>
+              <SectionIntro eyebrow={pageT.cvBusiness.eyebrow} title={pageT.cvBusiness.title}>
+                <p>{pageT.cvBusiness.paragraphs[0]}</p>
+                <p>{pageT.cvBusiness.paragraphs[1]}</p>
               </SectionIntro>
               <div className="mt-6 flex flex-wrap gap-2">
-                <FeaturePill icon={Phone} label="Téléphone" />
-                <FeaturePill icon={Mail} label="Description" />
-                <FeaturePill icon={Award} label="Certificat" />
-                <FeaturePill icon={Clock} label="Horaires" />
-                <FeaturePill icon={Calendar} label="Réservation" />
-                <FeaturePill icon={QrCode} label="QR Code" />
+                <FeaturePill icon={Phone} label={pageT.cvBusiness.features.phone} />
+                <FeaturePill icon={Mail} label={pageT.cvBusiness.features.description} />
+                <FeaturePill icon={Award} label={pageT.cvBusiness.features.certificate} />
+                <FeaturePill icon={Clock} label={pageT.cvBusiness.features.hours} />
+                <FeaturePill icon={Calendar} label={pageT.cvBusiness.features.booking} />
+                <FeaturePill icon={QrCode} label={pageT.cvBusiness.features.qrCode} />
               </div>
               <CvBusinessSharingInfo language={language as BusinessCardPreviewLanguage} className="mt-5" />
             </div>
@@ -1470,7 +1464,7 @@ export const Businesses = ({
                 onClick={() => setShowDemoModal(true)}
                 className="inline-flex items-center justify-center gap-2 rounded-full border border-[#D4AF37] bg-white px-5 py-2.5 text-sm font-bold text-[#4A1D43] shadow-sm transition hover:bg-[#FFF8E1] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/60"
               >
-                Voir la fiche en grand
+                {pageT.cvBusiness.viewLarge}
                 <ArrowRight className="h-4 w-4" />
               </button>
             </div>
@@ -1480,15 +1474,15 @@ export const Businesses = ({
         <section className="px-4 py-8 bg-white">
           <div className="max-w-5xl mx-auto">
             <SectionIntro
-              eyebrow="Cohérence"
-              title="Une présence en ligne cohérente inspire confiance."
+              eyebrow={pageT.consistency.eyebrow}
+              title={pageT.consistency.title}
             >
-              <p>Google Business, Facebook, Instagram, LinkedIn et votre site web restent utiles. Dalil Tounes ne les remplace pas : il les complète en rassemblant les informations importantes dans une fiche claire.</p>
-              <p>Un client peut voir un ancien numéro sur Facebook, des horaires différents sur Google et peu d'informations pratiques sur Instagram. Dans ce cas, il hésite ou passe à une autre entreprise.</p>
-              <p>Une fiche vérifiée et mise à jour aide à rendre vos informations plus cohérentes, plus faciles à consulter et plus rassurantes au moment de vous contacter.</p>
+              <p>{pageT.consistency.paragraphs[0]}</p>
+              <p>{pageT.consistency.paragraphs[1]}</p>
+              <p>{pageT.consistency.paragraphs[2]}</p>
             </SectionIntro>
             <div className="mt-6 grid gap-3 md:grid-cols-3">
-              {['Centraliser les informations utiles', 'Éviter les informations contradictoires', 'Faciliter le premier contact'].map((item) => (
+              {pageT.consistency.benefits.map((item: string) => (
                 <div key={item} className="rounded-2xl border border-[#D4AF37]/20 bg-[#FFFDF6] px-4 py-3 text-sm font-semibold text-[#4A1D43]">
                   {item}
                 </div>
@@ -1501,22 +1495,18 @@ export const Businesses = ({
           <div className="max-w-5xl mx-auto">
             <div className="grid gap-7 lg:grid-cols-[0.95fr_1.05fr] items-start">
               <SectionIntro
-                eyebrow="Parcours client"
-                title="Comment un citoyen découvre votre entreprise ?"
+                eyebrow={pageT.customerJourney.eyebrow}
+                title={pageT.customerJourney.title}
               >
-                <p>La fiche entreprise devient le point de rencontre entre les citoyens qui cherchent un professionnel et les professionnels qui souhaitent être trouvés.</p>
+                <p>{pageT.customerJourney.description}</p>
                 <div className="mt-5 rounded-2xl border border-[#D4AF37]/25 bg-white p-4 text-sm text-gray-700 shadow-sm">
-                  <span className="font-bold text-[#4A1D43]">Message de Dalil : </span>
-                  quand les informations sont claires, le visiteur hésite moins. Il comprend mieux votre activité et sait comment vous contacter.
+                  <span className="font-bold text-[#4A1D43]">{pageT.customerJourney.dalilLabel}</span>
+                  {pageT.customerJourney.dalilMessage}
                 </div>
               </SectionIntro>
 
               <div className="space-y-3">
-                {[
-                  'Le citoyen recherche un professionnel, une entreprise ou un service.',
-                  'Il consulte une fiche claire avec les informations utiles pour se faire une première idée.',
-                  'Il contacte, réserve ou partage la fiche quand il pense avoir trouvé le bon professionnel.',
-                ].map((item, index) => (
+                {pageT.customerJourney.steps.map((item: string, index: number) => (
                   <div key={item} className="flex gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
                     <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[#D4AF37]/15 text-sm font-bold text-[#4A1D43]">
                       {index + 1}
@@ -1532,11 +1522,11 @@ export const Businesses = ({
         <section className="px-4 py-10">
           <div className="max-w-6xl mx-auto">
             <div className="text-center max-w-3xl mx-auto">
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#D4AF37] mb-3">FAQ</p>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#4A1D43]">Questions fréquentes des professionnels</h2>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#D4AF37] mb-3">{pageT.faq.eyebrow}</p>
+              <h2 className="text-2xl md:text-3xl font-bold text-[#4A1D43]">{pageT.faq.title}</h2>
             </div>
             <div className="mt-8 grid gap-4 md:grid-cols-2">
-              {PROFESSIONAL_FAQ.map((item) => (
+              {pageT.faq.items.map((item: { question: string; answer: string }) => (
                 <div key={item.question} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
                   <h3 className="text-base font-bold text-[#4A1D43]">{item.question}</h3>
                   <p className="mt-3 text-sm leading-relaxed text-gray-600">{item.answer}</p>
@@ -1548,20 +1538,20 @@ export const Businesses = ({
 
         <section className="px-4 py-10">
           <div className="max-w-5xl mx-auto rounded-3xl border border-[#D4AF37]/35 bg-gradient-to-br from-[#4A1D43] to-[#0B5A45] p-7 md:p-10 text-center text-white shadow-[0_22px_60px_rgba(74,29,67,0.2)]">
-            <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#F7D978]">Avec Dalil</p>
-            <h2 className="mt-3 text-2xl md:text-4xl font-bold">Prêt à développer votre activité ?</h2>
+            <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#F7D978]">{pageT.finalCta.eyebrow}</p>
+            <h2 className="mt-3 text-2xl md:text-4xl font-bold">{pageT.finalCta.title}</h2>
             <p className="mt-4 max-w-2xl mx-auto text-sm md:text-base leading-relaxed text-white/85">
-              Découvrez les différentes offres proposées par Dalil Tounes et choisissez la solution la plus adaptée à votre activité.
+              {pageT.finalCta.description}
             </p>
             <p className="mt-4 text-sm text-white/75">
-              Dalil vous accompagne étape par étape, avec une approche simple, utile et progressive.
+              {pageT.finalCta.reassurance}
             </p>
             <button
               type="button"
               onClick={() => navigate('/subscription')}
               className="mt-7 inline-flex items-center justify-center gap-2 rounded-full bg-[#D4AF37] px-7 py-3 text-sm font-bold text-[#4A1D43] shadow-lg transition hover:bg-[#F0CD5A]"
             >
-              Découvrir les offres
+              {pageT.finalCta.button}
               <ArrowRight className="h-4 w-4" />
             </button>
           </div>
@@ -1581,17 +1571,17 @@ export const Businesses = ({
               <div className="relative mb-3 rounded-2xl border border-white/70 bg-white/95 px-12 py-4 text-center shadow-2xl backdrop-blur">
                 <div className="mx-auto max-w-sm">
                   <h2 id="business-demo-modal-title" className="text-lg font-bold text-[#4A1D43]">
-                    Exemple de fiche professionnelle Dalil Tounes
+                    {pageT.demo.title}
                   </h2>
                   <p className="mt-1 text-sm leading-relaxed text-gray-600">
-                    Cette démonstration vous permet de découvrir les principales fonctionnalités d'une fiche professionnelle.
+                    {pageT.demo.description}
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setShowDemoModal(false)}
                   className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 text-gray-600 transition hover:bg-gray-50 hover:text-[#4A1D43] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/60"
-                  aria-label="Fermer la démonstration"
+                  aria-label={pageT.demo.close}
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -1606,9 +1596,9 @@ export const Businesses = ({
             <div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative z-[100000]">
               <div className="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center">
                 <div>
-                  <h2 className="text-xl font-medium text-gray-900">Demande d’information / inscription</h2>
+                  <h2 className="text-xl font-medium text-gray-900">{pageT.form.title}</h2>
                   <p className="text-sm text-gray-600 mt-1">
-                    Une question ou une demande d’inscription ? Envoyez-nous votre demande, nous vous recontactons rapidement.
+                    {pageT.form.description}
                   </p>
                 </div>
                 <button
@@ -1623,20 +1613,20 @@ export const Businesses = ({
               </div>
               <form onSubmit={handleSuggestionSubmit} className="p-6 space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Titre de votre demande *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{pageT.form.requestTitle}</label>
                   <input
                     type="text"
                     required
                     value={suggestionForm.title}
                     onChange={(e) => setSuggestionForm({ ...suggestionForm, title: e.target.value })}
-                    placeholder="Ex : inscription entreprise, chauffeur privé, professeur, candidat emploi..."
+                    placeholder={pageT.form.requestPlaceholder}
                     className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37]"
                   />
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Téléphone *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{pageT.form.phone}</label>
                     <input
                       type="tel"
                       required
@@ -1646,7 +1636,7 @@ export const Businesses = ({
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{pageT.form.email}</label>
                     <input
                       type="email"
                       required
@@ -1658,13 +1648,13 @@ export const Businesses = ({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Message *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{pageT.form.message}</label>
                   <textarea
                     required
                     rows={4}
                     value={suggestionForm.message}
                     onChange={(e) => setSuggestionForm({ ...suggestionForm, message: e.target.value })}
-                    placeholder="Expliquez brièvement votre demande."
+                    placeholder={pageT.form.messagePlaceholder}
                     className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-[#D4AF37] focus:border-[#D4AF37]"
                   />
                 </div>

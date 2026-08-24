@@ -1,462 +1,84 @@
-import { ArrowDown, ArrowRight, Award, CalendarCheck, Camera, Check, Clock, Facebook, Globe as Globe2, Instagram, Linkedin, MapPin, MessageCircle, Phone, Crown, QrCode, Search, Share2, ShoppingBag, Star, Wrench } from 'lucide-react';
+import { ArrowDown, ArrowRight, Award, CalendarCheck, Camera, Check, Clock, Facebook, Globe as Globe2, Instagram, Linkedin, MapPin, Phone, Crown, QrCode, Search, ShoppingBag, Star } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { SEOHead } from '../components/SEOHead';
 import StructuredData from '../components/StructuredData';
 import Breadcrumb from '../components/seo/Breadcrumb';
+import { useLanguage } from '../context/LanguageContext';
+import type { Language } from '../lib/i18n';
 
-type PlatformRole = {
-  name: string;
-  question: string;
-  icons: LucideIcon[];
+type PlatformRole = { name: string; question: string; icons: LucideIcon[] };
+type Marker = { label: string; description?: string; icon: LucideIcon };
+type FeatureGroup = { title: string; description: string; icon: LucideIcon; items: string[] };
+type TimelineStep = { title: string; description: string; icon: LucideIcon };
+
+type PageCopy = {
+  seoTitle: string; seoDescription: string; breadcrumbHome: string; breadcrumbCurrent: string;
+  heroTitle: string; heroSubtitle: string; heroP1: string; heroP2: string;
+  startLabel: string; startTitle: string; startText: string; strength: string;
+  journeyLabel: string; journeyTitle: string; journeyText: string;
+  step1Label: string; step1Title: string; step1P1: string; step1P2: string;
+  flow1: string; flow2: string; flow3: string; flowSummary: string;
+  step2Label: string; step2Title: string; step2Text: string;
+  step3Label: string; step3Title: string; step3Text: string;
+  citizensLabel: string; citizensTitle: string; citizensCta: string;
+  prosLabel: string; prosTitle: string; prosCta: string;
+  livingLabel: string; livingTitle: string; livingText: string;
+  backHome: string; concept: string; searchBusiness: string; subscriptions: string;
+  businessCardAlt: string; showcaseAlt: string;
+  platformRoles: PlatformRole[]; markers: Marker[]; groups: FeatureGroup[];
+  citizenBenefits: string[]; companyBenefits: string[]; timeline: TimelineStep[];
 };
 
-type Marker = {
-  label: string;
-  description?: string;
-  icon: LucideIcon;
+const copies: Record<Language, PageCopy> = {
+  fr: {
+    seoTitle:'Pourquoi Dalil Tounes ? Plateforme tunisienne pour citoyens et entreprises', seoDescription:'Découvrez pourquoi Dalil Tounes rapproche les citoyens, les entreprises et les professionnels en Tunisie dans une plateforme claire, utile et vivante.', breadcrumbHome:'Accueil', breadcrumbCurrent:'Pourquoi Dalil Tounes',
+    heroTitle:'Pourquoi Dalil Tounes ?', heroSubtitle:'La plateforme tunisienne qui rapproche les citoyens et les entreprises.', heroP1:"À première vue, Dalil Tounes peut ressembler à une simple liste d'entreprises.", heroP2:"En réalité, c'est une plateforme vivante qui met en relation les citoyens et les professionnels, tout en offrant aux entreprises une Vitrine Business complète pour présenter leur activité et développer leur visibilité en Tunisie.",
+    startLabel:'Le point de départ', startTitle:'Chaque plateforme répond à un besoin différent.', startText:"Aujourd'hui, tu dois souvent passer d'une plateforme à une autre pour trouver toutes les informations dont tu as besoin. La Vitrine Business rapproche ces informations dans une présentation claire, tandis que Dalil Tounes facilite ensuite la découverte et le contact.", strength:"La force de la Vitrine Business est de réunir les informations utiles de l'entreprise dans un seul espace. Dalil Tounes ajoute ensuite la recherche, la découverte et les connexions entre métiers, villes, secteurs et professionnels.",
+    journeyLabel:'Le parcours', journeyTitle:"Comment Dalil Tounes peut t'aider ?", journeyText:"Une carte permet de découvrir rapidement l'entreprise. Un clic ou un scan ouvre sa Vitrine Business, puis Dalil Tounes l'intègre dans un écosystème de recherche et de découverte plus large.", step1Label:'Étape 1', step1Title:'① Carte Business & QR', step1P1:"La Carte Business te permet de découvrir rapidement une entreprise et sert de porte d'entrée vers sa Vitrine Business.", step1P2:'Elle peut être affichée dans Dalil Tounes, partagée directement ou ouverte en scannant le QR professionnel.', flow1:'① Carte Business / QR', flow2:'② Vitrine Business', flow3:'③ Visibilité Dalil Tounes', flowSummary:'Un accès simple, une présentation complète, puis une visibilité amplifiée.', step2Label:'Étape 2', step2Title:'② Vitrine Business', step2Text:"La Vitrine Business est le cœur du CV Business : elle rassemble les informations utiles pour aider le visiteur à comprendre l'activité, se rassurer et passer facilement au contact.", step3Label:'Étape 3', step3Title:"③ Visibilité dans l'écosystème Dalil Tounes", step3Text:"La Vitrine Business ne reste pas isolée. Elle peut être découverte depuis la recherche Dalil Tounes et reliée aux pages métier, ville, gouvernorat et secteur afin de multiplier les chemins qui mènent vers l'entreprise.",
+    citizensLabel:'Pour les citoyens', citizensTitle:'Tu cherches une entreprise ?', citizensCta:'Explorer les entreprises', prosLabel:'Pour les professionnels', prosTitle:'Vous êtes une entreprise ?', prosCta:'Voir les offres', livingLabel:'Une plateforme vivante', livingTitle:'Dalil Tounes évolue continuellement.', livingText:'Chaque nouvelle fonctionnalité est développée en fonction des besoins réels des citoyens et des entreprises.', backHome:"Retour à l'accueil", concept:'Notre concept', searchBusiness:'Rechercher une entreprise', subscriptions:'Voir les abonnements', businessCardAlt:"Capture réelle d'une Business Card Dalil Tounes", showcaseAlt:"Capture réelle d'une Vitrine Business Dalil Tounes",
+    platformRoles:[{name:'Google',question:'Où trouver cette entreprise ?',icons:[Search]},{name:'Facebook / Instagram',question:'Que publie cette entreprise ?',icons:[Facebook,Instagram]},{name:'LinkedIn',question:'Qui est cette entreprise sur le plan professionnel ?',icons:[Linkedin]},{name:'Pages Jaunes',question:'Comment contacter cette entreprise ?',icons:[Clock]},{name:'Marketplace B2B',question:'Que cherche à acheter ou vendre cette entreprise ?',icons:[ShoppingBag]}],
+    markers:[{label:'Premium',description:"Cette Business Card met en avant le statut Premium de l'établissement.",icon:Crown},{label:'Certificat Dalil Tounes',icon:Award},{label:'Téléphone',icon:Phone},{label:'Horaires',icon:Clock},{label:'QR professionnel',description:'Un scan peut ouvrir directement la Vitrine Business.',icon:QrCode},{label:'Voir les détails',icon:ArrowRight}],
+    groups:[{title:'Localisation',description:"Trouver l'établissement et préparer ta visite.",icon:MapPin,items:['GPS','Coordonnées','Horaires']},{title:'Réputation',description:'Lire les signaux de confiance.',icon:Award,items:['Avis Google','Certificat Dalil Tounes']},{title:"Découvrir l'entreprise",description:"Comprendre l'activité en images et en services.",icon:Camera,items:['Photos','Services','Présentation']},{title:'Échanger',description:'Passer facilement de la découverte au contact.',icon:Phone,items:['Téléphone','Réservation','Site web','Réseaux sociaux']},{title:'Partager',description:'Retrouver ou transmettre la Vitrine Business sur ton smartphone.',icon:QrCode,items:['QR Code professionnel','Partage direct']}],
+    citizenBenefits:['Trouver rapidement le bon professionnel','Consulter des Vitrines Business complètes et régulièrement mises à jour','Lire les avis des clients','Voir les horaires, le GPS et les coordonnées',"Réserver ou contacter directement l'entreprise",'Découvrir les services, les photos et les informations utiles','Partager facilement une entreprise avec ton entourage'], companyBenefits:['Gagner en visibilité auprès des citoyens','Présenter votre activité avec une Vitrine Business complète','Valoriser votre savoir-faire grâce au Certificat Dalil Tounes','Recevoir des demandes de contact et de réservation','Faciliter le partage de votre Vitrine grâce au QR Code professionnel','Développer votre présence numérique','Être trouvé plus facilement par vos futurs clients'], timeline:[{title:'Photos',description:'Montrer les lieux, les réalisations et le savoir-faire.',icon:Camera},{title:'Avis',description:'Faire évoluer la confiance avec les retours publics.',icon:Star},{title:'Informations',description:'Garder les horaires, coordonnées et détails utiles à jour.',icon:Clock},{title:'Réservations',description:'Faciliter les demandes directes depuis la Vitrine Business.',icon:CalendarCheck},{title:'Partage',description:'Retrouver ou transmettre la Vitrine grâce au QR Code professionnel.',icon:QrCode}],
+  },
+  en: {
+    seoTitle:'Why Dalil Tounes? Tunisian platform for citizens and businesses', seoDescription:'Discover why Dalil Tounes connects citizens, businesses and professionals in Tunisia through a clear, useful and evolving platform.', breadcrumbHome:'Home', breadcrumbCurrent:'Why Dalil Tounes', heroTitle:'Why Dalil Tounes?', heroSubtitle:'The Tunisian platform connecting citizens and businesses.', heroP1:'At first glance, Dalil Tounes may look like a simple list of businesses.', heroP2:'In reality, it is a living platform connecting citizens and professionals while giving businesses a complete Business Showcase to present their activity and grow their visibility in Tunisia.', startLabel:'Starting point', startTitle:'Each platform answers a different need.', startText:'Today, you often need to move from one platform to another to find all the information you need. The Business Showcase brings this information together clearly, while Dalil Tounes then makes discovery and contact easier.', strength:'The strength of the Business Showcase is bringing useful business information into one place. Dalil Tounes then adds search, discovery and connections between trades, cities, sectors and professionals.', journeyLabel:'The journey', journeyTitle:'How can Dalil Tounes help you?', journeyText:'A Business Card lets you quickly discover a company. One click or QR scan opens its Business Showcase, then Dalil Tounes connects it to a broader search and discovery ecosystem.', step1Label:'Step 1', step1Title:'① Business Card & QR', step1P1:'The Business Card helps you quickly discover a company and acts as the gateway to its Business Showcase.', step1P2:'It can be displayed in Dalil Tounes, shared directly or opened by scanning the professional QR code.', flow1:'① Business Card / QR', flow2:'② Business Showcase', flow3:'③ Dalil Tounes visibility', flowSummary:'Simple access, complete presentation, then amplified visibility.', step2Label:'Step 2', step2Title:'② Business Showcase', step2Text:'The Business Showcase is the heart of the Business CV: it brings together useful information to help visitors understand the activity, gain confidence and make contact easily.', step3Label:'Step 3', step3Title:'③ Visibility across the Dalil Tounes ecosystem', step3Text:'The Business Showcase does not stay isolated. It can be discovered through Dalil Tounes search and linked to trade, city, governorate and sector pages to create more paths toward the business.', citizensLabel:'For citizens', citizensTitle:'Looking for a business?', citizensCta:'Explore businesses', prosLabel:'For professionals', prosTitle:'Are you a business?', prosCta:'View offers', livingLabel:'A living platform', livingTitle:'Dalil Tounes keeps evolving.', livingText:'Each new feature is developed around the real needs of citizens and businesses.', backHome:'Back to home', concept:'Our concept', searchBusiness:'Search for a business', subscriptions:'View subscriptions', businessCardAlt:'Real Dalil Tounes Business Card screenshot', showcaseAlt:'Real Dalil Tounes Business Showcase screenshot',
+    platformRoles:[{name:'Google',question:'Where can I find this business?',icons:[Search]},{name:'Facebook / Instagram',question:'What does this business publish?',icons:[Facebook,Instagram]},{name:'LinkedIn',question:'Who is this business professionally?',icons:[Linkedin]},{name:'Yellow Pages',question:'How can I contact this business?',icons:[Clock]},{name:'B2B Marketplace',question:'What is this business looking to buy or sell?',icons:[ShoppingBag]}], markers:[{label:'Premium',description:'This Business Card highlights the business Premium status.',icon:Crown},{label:'Dalil Tounes Certificate',icon:Award},{label:'Phone',icon:Phone},{label:'Opening hours',icon:Clock},{label:'Professional QR',description:'A scan can directly open the Business Showcase.',icon:QrCode},{label:'View details',icon:ArrowRight}], groups:[{title:'Location',description:'Find the business and prepare your visit.',icon:MapPin,items:['GPS','Contact details','Opening hours']},{title:'Reputation',description:'Review trust signals.',icon:Award,items:['Google reviews','Dalil Tounes Certificate']},{title:'Discover the business',description:'Understand the activity through images and services.',icon:Camera,items:['Photos','Services','Presentation']},{title:'Connect',description:'Move easily from discovery to contact.',icon:Phone,items:['Phone','Booking','Website','Social media']},{title:'Share',description:'Save or share the Business Showcase on your phone.',icon:QrCode,items:['Professional QR Code','Direct sharing']}], citizenBenefits:['Quickly find the right professional','Browse complete and regularly updated Business Showcases','Read customer reviews','See opening hours, GPS and contact details','Book or contact the business directly','Discover services, photos and useful information','Easily share a business with others'], companyBenefits:['Gain visibility with citizens','Present your activity through a complete Business Showcase','Highlight your expertise with the Dalil Tounes Certificate','Receive contact and booking requests','Make your Showcase easy to share with a professional QR Code','Grow your digital presence','Be found more easily by future customers'], timeline:[{title:'Photos',description:'Show the premises, work and expertise.',icon:Camera},{title:'Reviews',description:'Build trust with public feedback.',icon:Star},{title:'Information',description:'Keep opening hours, contacts and useful details up to date.',icon:Clock},{title:'Bookings',description:'Make direct requests easy from the Business Showcase.',icon:CalendarCheck},{title:'Sharing',description:'Save or share the Showcase with the professional QR Code.',icon:QrCode}],
+  },
+  ar: {
+    seoTitle:'لماذا Dalil Tounes؟ منصة تونسية للمواطنين والمؤسسات', seoDescription:'اكتشف لماذا تجمع Dalil Tounes المواطنين والمؤسسات والمهنيين في تونس ضمن منصة واضحة ومفيدة ومتطورة.', breadcrumbHome:'الرئيسية', breadcrumbCurrent:'لماذا Dalil Tounes', heroTitle:'لماذا Dalil Tounes؟', heroSubtitle:'المنصة التونسية التي تقرّب المواطنين والمؤسسات.', heroP1:'قد تبدو Dalil Tounes للوهلة الأولى مجرد قائمة مؤسسات.', heroP2:'لكنها في الواقع منصة حية تربط المواطنين بالمهنيين وتوفر للمؤسسات واجهة Business Showcase متكاملة لتقديم نشاطها وتطوير ظهورها في تونس.', startLabel:'نقطة البداية', startTitle:'كل منصة تجيب عن حاجة مختلفة.', startText:'اليوم تحتاج غالباً إلى الانتقال بين عدة منصات لجمع المعلومات التي تحتاجها. تجمع Business Showcase هذه المعلومات في عرض واضح، ثم تسهّل Dalil Tounes الاكتشاف والتواصل.', strength:'قوة Business Showcase هي جمع معلومات المؤسسة المفيدة في مكان واحد. وتضيف Dalil Tounes البحث والاكتشاف والروابط بين المهن والمدن والقطاعات والمهنيين.', journeyLabel:'المسار', journeyTitle:'كيف تساعدك Dalil Tounes؟', journeyText:'تسمح Business Card باكتشاف المؤسسة بسرعة. بنقرة أو مسح QR تفتح Business Showcase، ثم تربطها Dalil Tounes بمنظومة أوسع للبحث والاكتشاف.', step1Label:'المرحلة 1', step1Title:'① Business Card و QR', step1P1:'تساعدك Business Card على اكتشاف المؤسسة بسرعة وتعمل كبوابة نحو Business Showcase.', step1P2:'يمكن عرضها داخل Dalil Tounes أو مشاركتها مباشرة أو فتحها عبر مسح QR المهني.', flow1:'① Business Card / QR', flow2:'② Business Showcase', flow3:'③ الظهور في Dalil Tounes', flowSummary:'وصول بسيط، عرض متكامل، ثم ظهور أقوى.', step2Label:'المرحلة 2', step2Title:'② Business Showcase', step2Text:'Business Showcase هي قلب CV Business: تجمع المعلومات المفيدة لمساعدة الزائر على فهم النشاط والثقة به والتواصل بسهولة.', step3Label:'المرحلة 3', step3Title:'③ الظهور داخل منظومة Dalil Tounes', step3Text:'لا تبقى Business Showcase معزولة. يمكن اكتشافها من بحث Dalil Tounes وربطها بصفحات المهنة والمدينة والولاية والقطاع لزيادة المسارات المؤدية إلى المؤسسة.', citizensLabel:'للمواطنين', citizensTitle:'هل تبحث عن مؤسسة؟', citizensCta:'استكشف المؤسسات', prosLabel:'للمهنيين', prosTitle:'هل أنت مؤسسة؟', prosCta:'عرض العروض', livingLabel:'منصة حية', livingTitle:'Dalil Tounes تتطور باستمرار.', livingText:'يتم تطوير كل ميزة جديدة وفق الاحتياجات الحقيقية للمواطنين والمؤسسات.', backHome:'العودة إلى الرئيسية', concept:'مفهومنا', searchBusiness:'البحث عن مؤسسة', subscriptions:'عرض الاشتراكات', businessCardAlt:'لقطة حقيقية لـ Business Card من Dalil Tounes', showcaseAlt:'لقطة حقيقية لـ Business Showcase من Dalil Tounes',
+    platformRoles:[{name:'Google',question:'أين أجد هذه المؤسسة؟',icons:[Search]},{name:'Facebook / Instagram',question:'ماذا تنشر هذه المؤسسة؟',icons:[Facebook,Instagram]},{name:'LinkedIn',question:'ما هويتها المهنية؟',icons:[Linkedin]},{name:'دليل الهاتف',question:'كيف أتواصل مع هذه المؤسسة؟',icons:[Clock]},{name:'سوق B2B',question:'ماذا تريد هذه المؤسسة شراءه أو بيعه؟',icons:[ShoppingBag]}], markers:[{label:'Premium',description:'تُبرز Business Card حالة Premium للمؤسسة.',icon:Crown},{label:'شهادة Dalil Tounes',icon:Award},{label:'الهاتف',icon:Phone},{label:'التوقيت',icon:Clock},{label:'QR مهني',description:'يمكن للمسح فتح Business Showcase مباشرة.',icon:QrCode},{label:'عرض التفاصيل',icon:ArrowRight}], groups:[{title:'الموقع',description:'العثور على المؤسسة والاستعداد للزيارة.',icon:MapPin,items:['GPS','بيانات الاتصال','التوقيت']},{title:'السمعة',description:'مراجعة مؤشرات الثقة.',icon:Award,items:['آراء Google','شهادة Dalil Tounes']},{title:'اكتشاف المؤسسة',description:'فهم النشاط عبر الصور والخدمات.',icon:Camera,items:['صور','خدمات','تقديم']},{title:'التواصل',description:'الانتقال بسهولة من الاكتشاف إلى الاتصال.',icon:Phone,items:['هاتف','حجز','موقع ويب','شبكات اجتماعية']},{title:'المشاركة',description:'حفظ أو مشاركة Business Showcase على الهاتف.',icon:QrCode,items:['QR Code مهني','مشاركة مباشرة']}], citizenBenefits:['العثور بسرعة على المهني المناسب','تصفح Business Showcases متكاملة ومحدثة','قراءة آراء العملاء','رؤية التوقيت وGPS وبيانات الاتصال','الحجز أو التواصل مباشرة مع المؤسسة','اكتشاف الخدمات والصور والمعلومات المفيدة','مشاركة المؤسسة بسهولة مع الآخرين'], companyBenefits:['زيادة الظهور لدى المواطنين','تقديم النشاط عبر Business Showcase متكاملة','إبراز الخبرة عبر شهادة Dalil Tounes','تلقي طلبات اتصال وحجز','تسهيل مشاركة الواجهة عبر QR Code مهني','تطوير الحضور الرقمي','سهولة العثور عليك من العملاء المستقبليين'], timeline:[{title:'الصور',description:'عرض المكان والإنجازات والخبرة.',icon:Camera},{title:'الآراء',description:'تطوير الثقة عبر التقييمات العامة.',icon:Star},{title:'المعلومات',description:'إبقاء التوقيت والاتصالات والتفاصيل المفيدة محدثة.',icon:Clock},{title:'الحجوزات',description:'تسهيل الطلبات المباشرة من Business Showcase.',icon:CalendarCheck},{title:'المشاركة',description:'حفظ أو مشاركة الواجهة عبر QR Code المهني.',icon:QrCode}],
+  },
+  it: {
+    seoTitle:'Perché Dalil Tounes? Piattaforma tunisina per cittadini e imprese', seoDescription:'Scopri perché Dalil Tounes collega cittadini, imprese e professionisti in Tunisia in una piattaforma chiara, utile e dinamica.', breadcrumbHome:'Home', breadcrumbCurrent:'Perché Dalil Tounes', heroTitle:'Perché Dalil Tounes?', heroSubtitle:'La piattaforma tunisina che avvicina cittadini e imprese.', heroP1:'A prima vista, Dalil Tounes può sembrare un semplice elenco di imprese.', heroP2:'In realtà è una piattaforma viva che mette in contatto cittadini e professionisti, offrendo alle imprese una Business Showcase completa per presentare l’attività e sviluppare la visibilità in Tunisia.', startLabel:'Il punto di partenza', startTitle:'Ogni piattaforma risponde a un bisogno diverso.', startText:'Oggi spesso devi passare da una piattaforma all’altra per trovare tutte le informazioni necessarie. La Business Showcase le riunisce in modo chiaro, mentre Dalil Tounes facilita poi scoperta e contatto.', strength:'La forza della Business Showcase è riunire le informazioni utili dell’impresa in un unico spazio. Dalil Tounes aggiunge ricerca, scoperta e collegamenti tra mestieri, città, settori e professionisti.', journeyLabel:'Il percorso', journeyTitle:'Come può aiutarti Dalil Tounes?', journeyText:'Una Business Card permette di scoprire rapidamente un’impresa. Un clic o una scansione QR apre la Business Showcase, poi Dalil Tounes la collega a un ecosistema più ampio di ricerca e scoperta.', step1Label:'Passaggio 1', step1Title:'① Business Card & QR', step1P1:'La Business Card permette di scoprire rapidamente un’impresa e funge da accesso alla sua Business Showcase.', step1P2:'Può essere mostrata su Dalil Tounes, condivisa direttamente o aperta scansionando il QR professionale.', flow1:'① Business Card / QR', flow2:'② Business Showcase', flow3:'③ Visibilità Dalil Tounes', flowSummary:'Accesso semplice, presentazione completa, poi visibilità amplificata.', step2Label:'Passaggio 2', step2Title:'② Business Showcase', step2Text:'La Business Showcase è il cuore del CV Business: riunisce le informazioni utili per aiutare il visitatore a capire l’attività, fidarsi e passare facilmente al contatto.', step3Label:'Passaggio 3', step3Title:'③ Visibilità nell’ecosistema Dalil Tounes', step3Text:'La Business Showcase non rimane isolata. Può essere scoperta dalla ricerca Dalil Tounes e collegata alle pagine mestiere, città, governatorato e settore per moltiplicare i percorsi verso l’impresa.', citizensLabel:'Per i cittadini', citizensTitle:'Cerchi un’impresa?', citizensCta:'Esplora le imprese', prosLabel:'Per i professionisti', prosTitle:'Sei un’impresa?', prosCta:'Vedi le offerte', livingLabel:'Una piattaforma viva', livingTitle:'Dalil Tounes evolve continuamente.', livingText:'Ogni nuova funzionalità viene sviluppata in base ai bisogni reali di cittadini e imprese.', backHome:'Torna alla home', concept:'Il nostro concetto', searchBusiness:'Cerca un’impresa', subscriptions:'Vedi abbonamenti', businessCardAlt:'Screenshot reale di una Business Card Dalil Tounes', showcaseAlt:'Screenshot reale di una Business Showcase Dalil Tounes',
+    platformRoles:[{name:'Google',question:'Dove trovo questa impresa?',icons:[Search]},{name:'Facebook / Instagram',question:'Cosa pubblica questa impresa?',icons:[Facebook,Instagram]},{name:'LinkedIn',question:'Chi è professionalmente questa impresa?',icons:[Linkedin]},{name:'Pagine Gialle',question:'Come contatto questa impresa?',icons:[Clock]},{name:'Marketplace B2B',question:'Cosa cerca di comprare o vendere questa impresa?',icons:[ShoppingBag]}], markers:[{label:'Premium',description:'Questa Business Card mette in evidenza lo stato Premium dell’impresa.',icon:Crown},{label:'Certificato Dalil Tounes',icon:Award},{label:'Telefono',icon:Phone},{label:'Orari',icon:Clock},{label:'QR professionale',description:'Una scansione può aprire direttamente la Business Showcase.',icon:QrCode},{label:'Vedi dettagli',icon:ArrowRight}], groups:[{title:'Posizione',description:'Trova l’impresa e prepara la visita.',icon:MapPin,items:['GPS','Contatti','Orari']},{title:'Reputazione',description:'Consulta i segnali di fiducia.',icon:Award,items:['Recensioni Google','Certificato Dalil Tounes']},{title:'Scopri l’impresa',description:'Comprendi l’attività attraverso immagini e servizi.',icon:Camera,items:['Foto','Servizi','Presentazione']},{title:'Contatto',description:'Passa facilmente dalla scoperta al contatto.',icon:Phone,items:['Telefono','Prenotazione','Sito web','Social network']},{title:'Condividi',description:'Salva o condividi la Business Showcase sul telefono.',icon:QrCode,items:['QR Code professionale','Condivisione diretta']}], citizenBenefits:['Trova rapidamente il professionista giusto','Consulta Business Showcase complete e aggiornate','Leggi le recensioni dei clienti','Vedi orari, GPS e contatti','Prenota o contatta direttamente l’impresa','Scopri servizi, foto e informazioni utili','Condividi facilmente un’impresa'], companyBenefits:['Aumenta la visibilità presso i cittadini','Presenta l’attività con una Business Showcase completa','Valorizza il know-how con il Certificato Dalil Tounes','Ricevi richieste di contatto e prenotazione','Facilita la condivisione tramite QR Code professionale','Sviluppa la presenza digitale','Fatti trovare più facilmente dai futuri clienti'], timeline:[{title:'Foto',description:'Mostra luoghi, lavori e competenze.',icon:Camera},{title:'Recensioni',description:'Fai crescere la fiducia con i feedback pubblici.',icon:Star},{title:'Informazioni',description:'Mantieni aggiornati orari, contatti e dettagli utili.',icon:Clock},{title:'Prenotazioni',description:'Facilita le richieste dirette dalla Business Showcase.',icon:CalendarCheck},{title:'Condivisione',description:'Salva o condividi la Showcase tramite QR Code professionale.',icon:QrCode}],
+  },
+  ru: {
+    seoTitle:'Почему Dalil Tounes? Тунисская платформа для жителей и бизнеса', seoDescription:'Узнайте, почему Dalil Tounes объединяет жителей, компании и специалистов Туниса в понятной, полезной и развивающейся платформе.', breadcrumbHome:'Главная', breadcrumbCurrent:'Почему Dalil Tounes', heroTitle:'Почему Dalil Tounes?', heroSubtitle:'Тунисская платформа, которая сближает жителей и бизнес.', heroP1:'На первый взгляд Dalil Tounes может показаться обычным списком компаний.', heroP2:'На самом деле это живая платформа, соединяющая жителей и специалистов и предоставляющая компаниям полноценную Business Showcase для презентации деятельности и роста видимости в Тунисе.', startLabel:'Отправная точка', startTitle:'Каждая платформа решает свою задачу.', startText:'Сегодня часто приходится переходить между несколькими платформами, чтобы собрать всю необходимую информацию. Business Showcase объединяет ее в понятном виде, а Dalil Tounes облегчает поиск и контакт.', strength:'Сила Business Showcase в том, что полезная информация о компании собрана в одном месте. Dalil Tounes добавляет поиск, открытие и связи между профессиями, городами, секторами и специалистами.', journeyLabel:'Путь', journeyTitle:'Как Dalil Tounes может помочь?', journeyText:'Business Card позволяет быстро узнать о компании. Один клик или сканирование QR открывает Business Showcase, а Dalil Tounes связывает ее с более широкой экосистемой поиска и открытия.', step1Label:'Шаг 1', step1Title:'① Business Card & QR', step1P1:'Business Card помогает быстро узнать о компании и служит входом в ее Business Showcase.', step1P2:'Ее можно показывать в Dalil Tounes, делиться напрямую или открывать сканированием профессионального QR.', flow1:'① Business Card / QR', flow2:'② Business Showcase', flow3:'③ Видимость Dalil Tounes', flowSummary:'Простой доступ, полная презентация, затем усиленная видимость.', step2Label:'Шаг 2', step2Title:'② Business Showcase', step2Text:'Business Showcase — сердце Business CV: она собирает полезную информацию, чтобы посетитель понял деятельность, получил доверие и легко связался.', step3Label:'Шаг 3', step3Title:'③ Видимость в экосистеме Dalil Tounes', step3Text:'Business Showcase не остается изолированной. Ее можно найти через поиск Dalil Tounes и страницы профессий, городов, губернаторств и секторов, создавая больше путей к компании.', citizensLabel:'Для жителей', citizensTitle:'Ищете компанию?', citizensCta:'Смотреть компании', prosLabel:'Для профессионалов', prosTitle:'Вы представляете компанию?', prosCta:'Смотреть предложения', livingLabel:'Живая платформа', livingTitle:'Dalil Tounes постоянно развивается.', livingText:'Каждая новая функция создается с учетом реальных потребностей жителей и компаний.', backHome:'На главную', concept:'Наша концепция', searchBusiness:'Найти компанию', subscriptions:'Смотреть подписки', businessCardAlt:'Реальный скриншот Business Card Dalil Tounes', showcaseAlt:'Реальный скриншот Business Showcase Dalil Tounes',
+    platformRoles:[{name:'Google',question:'Где найти эту компанию?',icons:[Search]},{name:'Facebook / Instagram',question:'Что публикует эта компания?',icons:[Facebook,Instagram]},{name:'LinkedIn',question:'Как компания представлена профессионально?',icons:[Linkedin]},{name:'Желтые страницы',question:'Как связаться с этой компанией?',icons:[Clock]},{name:'B2B Marketplace',question:'Что компания хочет купить или продать?',icons:[ShoppingBag]}], markers:[{label:'Premium',description:'Business Card подчеркивает Premium-статус компании.',icon:Crown},{label:'Сертификат Dalil Tounes',icon:Award},{label:'Телефон',icon:Phone},{label:'Часы работы',icon:Clock},{label:'Профессиональный QR',description:'Сканирование может сразу открыть Business Showcase.',icon:QrCode},{label:'Подробнее',icon:ArrowRight}], groups:[{title:'Местоположение',description:'Найдите компанию и подготовьте визит.',icon:MapPin,items:['GPS','Контакты','Часы работы']},{title:'Репутация',description:'Изучите сигналы доверия.',icon:Award,items:['Отзывы Google','Сертификат Dalil Tounes']},{title:'Узнать о компании',description:'Понять деятельность через фото и услуги.',icon:Camera,items:['Фото','Услуги','Презентация']},{title:'Связаться',description:'Легко перейти от знакомства к контакту.',icon:Phone,items:['Телефон','Бронирование','Сайт','Соцсети']},{title:'Поделиться',description:'Сохранить или отправить Business Showcase на телефоне.',icon:QrCode,items:['Профессиональный QR Code','Прямая отправка']}], citizenBenefits:['Быстро найти подходящего специалиста','Смотреть полные и регулярно обновляемые Business Showcase','Читать отзывы клиентов','Смотреть часы работы, GPS и контакты','Бронировать или связываться с компанией напрямую','Изучать услуги, фото и полезную информацию','Легко делиться компанией с другими'], companyBenefits:['Повысить видимость среди жителей','Представить деятельность в полной Business Showcase','Подчеркнуть экспертизу Сертификатом Dalil Tounes','Получать запросы на контакт и бронирование','Упростить распространение Showcase через профессиональный QR Code','Развивать цифровое присутствие','Легче находиться будущими клиентами'], timeline:[{title:'Фото',description:'Показывайте места, работы и опыт.',icon:Camera},{title:'Отзывы',description:'Развивайте доверие с публичными отзывами.',icon:Star},{title:'Информация',description:'Поддерживайте часы работы, контакты и важные детали в актуальном состоянии.',icon:Clock},{title:'Бронирования',description:'Упростите прямые запросы из Business Showcase.',icon:CalendarCheck},{title:'Отправка',description:'Сохраняйте или делитесь Showcase через профессиональный QR Code.',icon:QrCode}],
+  },
 };
 
-type FeatureGroup = {
-  title: string;
-  description: string;
-  icon: LucideIcon;
-  items: string[];
-};
-
-const platformRoles: PlatformRole[] = [
-  { name: 'Google', question: 'Où trouver cette entreprise ?', icons: [Search] },
-  { name: 'Facebook / Instagram', question: 'Que publie cette entreprise ?', icons: [Facebook, Instagram] },
-  { name: 'LinkedIn', question: 'Qui est cette entreprise sur le plan professionnel ?', icons: [Linkedin] },
-  { name: 'Pages Jaunes', question: 'Comment contacter cette entreprise ?', icons: [Clock] },
-  { name: 'Marketplace B2B', question: 'Que cherche à acheter ou vendre cette entreprise ?', icons: [ShoppingBag] },
-];
-
-const businessCardMarkers: Marker[] = [
-  { label: 'Premium', description: "Cette Business Card met en avant le statut Premium de l'établissement.", icon: Crown },
-  { label: 'Certificat Dalil Tounes', icon: Award },
-  { label: 'Téléphone', icon: Phone },
-  { label: 'Horaires', icon: Clock },
-  { label: 'QR professionnel', description: 'Un scan peut ouvrir directement la Vitrine Business.', icon: QrCode },
-  { label: 'Voir les détails', icon: ArrowRight },
-];
-
-const cvBusinessGroups: FeatureGroup[] = [
-  {
-    title: 'Localisation',
-    description: "Trouver l'établissement et préparer ta visite.",
-    icon: MapPin,
-    items: ['GPS', 'Coordonnées', 'Horaires'],
-  },
-  {
-    title: 'Réputation',
-    description: 'Lire les signaux de confiance.',
-    icon: Award,
-    items: ['Avis Google', 'Certificat Dalil Tounes'],
-  },
-  {
-    title: "Découvrir l'entreprise",
-    description: "Comprendre l'activité en images et en services.",
-    icon: Camera,
-    items: ['Photos', 'Services', 'Présentation'],
-  },
-  {
-    title: 'Échanger',
-    description: 'Passer facilement de la découverte au contact.',
-    icon: Phone,
-    items: ['Téléphone', 'Réservation', 'Site web', 'Réseaux sociaux'],
-  },
-  {
-    title: 'Partager',
-    description: "Retrouver ou transmettre la Vitrine Business sur ton smartphone.",
-    icon: QrCode,
-    items: ['QR Code professionnel', 'Partage direct'],
-  },
-];
-
-const citizenBenefits = [
-  'Trouver rapidement le bon professionnel',
-  'Consulter des Vitrines Business complètes et régulièrement mises à jour',
-  'Lire les avis des clients',
-  'Voir les horaires, le GPS et les coordonnées',
-  "Réserver ou contacter directement l'entreprise",
-  'Découvrir les services, les photos et les informations utiles',
-  'Partager facilement une entreprise avec ton entourage',
-];
-
-const companyBenefits = [
-  'Gagner en visibilité auprès des citoyens',
-  'Présenter votre activité avec une Vitrine Business complète',
-  'Valoriser votre savoir-faire grâce au Certificat Dalil Tounes',
-  'Recevoir des demandes de contact et de réservation',
-  'Faciliter le partage de votre Vitrine grâce au QR Code professionnel',
-  'Développer votre présence numérique',
-  'Être trouvé plus facilement par vos futurs clients',
-];
-
-const timelineSteps = [
-  { title: 'Photos', description: 'Montrer les lieux, les réalisations et le savoir-faire.', icon: Camera },
-  { title: 'Avis', description: 'Faire évoluer la confiance avec les retours publics.', icon: Star },
-  { title: 'Informations', description: 'Garder les horaires, coordonnées et détails utiles à jour.', icon: Clock },
-  { title: 'Réservations', description: 'Faciliter les demandes directes depuis la Vitrine Business.', icon: CalendarCheck },
-  { title: 'Partage', description: 'Retrouver ou transmettre la Vitrine grâce au QR Code professionnel.', icon: QrCode },
-];
-
-const SectionLabel = ({ children }: { children: string }) => (
-  <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-[#D4AF37]">{children}</p>
-);
-
-const BenefitList = ({ items }: { items: string[] }) => (
-  <ul className="space-y-3">
-    {items.map((item) => (
-      <li key={item} className="flex items-start gap-3 text-gray-700">
-        <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#FFF8E6] text-[#B8860B]">
-          <Check className="h-3.5 w-3.5" aria-hidden="true" />
-        </span>
-        <span>{item}</span>
-      </li>
-    ))}
-  </ul>
-);
-
-const MarkerPill = ({ marker }: { marker: Marker }) => (
-  <div className="rounded-xl border border-[#D4AF37]/25 bg-white/90 p-3 shadow-sm">
-    <div className="flex items-center gap-2.5">
-      <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#FFF8E6] text-[#4A1D43]">
-        <marker.icon className="h-4 w-4" aria-hidden="true" />
-      </span>
-      <div>
-        <p className="text-xs font-bold text-[#4A1D43]">{marker.label}</p>
-        {marker.description && <p className="mt-0.5 text-[11px] leading-4 text-gray-600">{marker.description}</p>}
-      </div>
-    </div>
-  </div>
-);
-
-const FeatureGroupCard = ({ group }: { group: FeatureGroup }) => (
-  <div className="rounded-2xl border border-[#D4AF37]/25 bg-[#FFFCF4] p-4 shadow-sm">
-    <div className="flex items-start gap-3.5">
-      <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#FFF3CC] text-[#4A1D43]">
-        <group.icon className="h-5 w-5" aria-hidden="true" />
-      </span>
-      <div className="min-w-0">
-        <h4 className="text-base font-bold text-[#4A1D43]">{group.title}</h4>
-        <p className="mt-0.5 text-sm leading-5 text-gray-600">{group.description}</p>
-        <div className="mt-2.5 flex flex-wrap gap-2">
-          {group.items.map((item) => (
-            <span key={item} className="rounded-full border border-[#D4AF37]/25 bg-white/75 px-3 py-1.5 text-xs font-semibold text-[#4A1D43]">
-              {item}
-            </span>
-          ))}
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
-const ScreenshotFrame = ({
-  src,
-  alt,
-  className = '',
-  width,
-  height,
-}: {
-  src: string;
-  alt: string;
-  className?: string;
-  width: number;
-  height: number;
-}) => (
-  <div className={`relative overflow-hidden rounded-[28px] border-2 border-[#D4AF37] bg-[#07573f] shadow-2xl ${className}`}>
-    <img src={src} alt={alt} width={width} height={height} className="h-auto w-full object-contain" loading="lazy" decoding="async" />
-  </div>
-);
+const SectionLabel = ({ children }: { children: string }) => <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-[#D4AF37]">{children}</p>;
+const BenefitList = ({ items }: { items: string[] }) => <ul className="space-y-3">{items.map((item) => <li key={item} className="flex items-start gap-3 text-gray-700"><span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#FFF8E6] text-[#B8860B]"><Check className="h-3.5 w-3.5" aria-hidden="true" /></span><span>{item}</span></li>)}</ul>;
+const MarkerPill = ({ marker }: { marker: Marker }) => <div className="rounded-xl border border-[#D4AF37]/25 bg-white/90 p-3 shadow-sm"><div className="flex items-center gap-2.5"><span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#FFF8E6] text-[#4A1D43]"><marker.icon className="h-4 w-4" aria-hidden="true" /></span><div><p className="text-xs font-bold text-[#4A1D43]">{marker.label}</p>{marker.description && <p className="mt-0.5 text-[11px] leading-4 text-gray-600">{marker.description}</p>}</div></div></div>;
+const FeatureGroupCard = ({ group }: { group: FeatureGroup }) => <div className="rounded-2xl border border-[#D4AF37]/25 bg-[#FFFCF4] p-4 shadow-sm"><div className="flex items-start gap-3.5"><span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#FFF3CC] text-[#4A1D43]"><group.icon className="h-5 w-5" aria-hidden="true" /></span><div className="min-w-0"><h4 className="text-base font-bold text-[#4A1D43]">{group.title}</h4><p className="mt-0.5 text-sm leading-5 text-gray-600">{group.description}</p><div className="mt-2.5 flex flex-wrap gap-2">{group.items.map((item) => <span key={item} className="rounded-full border border-[#D4AF37]/25 bg-white/75 px-3 py-1.5 text-xs font-semibold text-[#4A1D43]">{item}</span>)}</div></div></div></div>;
+const ScreenshotFrame = ({ src, alt, className = '', width, height }: { src:string; alt:string; className?:string; width:number; height:number }) => <div className={`relative overflow-hidden rounded-[28px] border-2 border-[#D4AF37] bg-[#07573f] shadow-2xl ${className}`}><img src={src} alt={alt} width={width} height={height} className="h-auto w-full object-contain" loading="lazy" decoding="async" /></div>;
 
 export default function PourquoiDalilTounes() {
-  const structuredData = [
-    {
-      '@context': 'https://schema.org',
-      '@type': 'WebPage',
-      name: 'Pourquoi Dalil Tounes ?',
-      description: 'Découvrez pourquoi Dalil Tounes rapproche les citoyens, les entreprises et les professionnels en Tunisie dans une plateforme claire, utile et vivante.',
-      url: 'https://dalil-tounes.com/pourquoi-dalil-tounes',
-      isPartOf: {
-        '@type': 'WebSite',
-        name: 'Dalil Tounes',
-        url: 'https://dalil-tounes.com',
-      },
-      publisher: {
-        '@type': 'Organization',
-        name: 'Dalil Tounes',
-        url: 'https://dalil-tounes.com',
-        logo: 'https://dalil-tounes.com/images/logo_dalil_tounes_crop.png',
-      },
-    },
-    {
-      '@context': 'https://schema.org',
-      '@type': 'BreadcrumbList',
-      itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://dalil-tounes.com/' },
-        { '@type': 'ListItem', position: 2, name: 'Pourquoi Dalil Tounes', item: 'https://dalil-tounes.com/pourquoi-dalil-tounes' },
-      ],
-    },
-  ];
+  const { language } = useLanguage();
+  const t = copies[language] || copies.fr;
+  const isRTL = language === 'ar';
+  const structuredData = [{ '@context':'https://schema.org','@type':'WebPage',name:t.heroTitle,description:t.seoDescription,url:'https://dalil-tounes.com/pourquoi-dalil-tounes',isPartOf:{'@type':'WebSite',name:'Dalil Tounes',url:'https://dalil-tounes.com'},publisher:{'@type':'Organization',name:'Dalil Tounes',url:'https://dalil-tounes.com',logo:'https://dalil-tounes.com/images/logo_dalil_tounes_crop.png'}},{'@context':'https://schema.org','@type':'BreadcrumbList',itemListElement:[{'@type':'ListItem',position:1,name:t.breadcrumbHome,item:'https://dalil-tounes.com/'},{'@type':'ListItem',position:2,name:t.breadcrumbCurrent,item:'https://dalil-tounes.com/pourquoi-dalil-tounes'}]}];
 
-  return (
-    <main className="min-h-screen bg-white text-gray-900">
-      <SEOHead
-        title="Pourquoi Dalil Tounes ? Plateforme tunisienne pour citoyens et entreprises"
-        description="Découvrez pourquoi Dalil Tounes rapproche les citoyens, les entreprises et les professionnels en Tunisie dans une plateforme claire, utile et vivante."
-        canonical="https://dalil-tounes.com/pourquoi-dalil-tounes"
-        currentPath="/pourquoi-dalil-tounes"
-      />
-      <StructuredData data={structuredData} />
-
-      <section className="relative flex min-h-[72vh] items-center overflow-hidden bg-[#1B1020] px-5 py-20 text-white">
-        <img
-          src="/images/drapeau-tunisie.webp?v=1"
-          alt=""
-          className="absolute inset-0 h-full w-full object-cover opacity-35"
-          aria-hidden="true"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#1B1020]/80 via-[#1B1020]/75 to-white" />
-        <div className="relative mx-auto max-w-5xl text-center">
-          <SectionLabel>Dalil Tounes</SectionLabel>
-          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">Pourquoi Dalil Tounes ?</h1>
-          <p className="mx-auto mt-5 max-w-3xl text-xl leading-8 text-white/90 sm:text-2xl">
-            La plateforme tunisienne qui rapproche les citoyens et les entreprises.
-          </p>
-          <p className="mx-auto mt-6 max-w-3xl text-base leading-7 text-white/75 sm:text-lg">
-            À première vue, Dalil Tounes peut ressembler à une simple liste d'entreprises.
-            <br />
-            En réalité, c'est une plateforme vivante qui met en relation les citoyens et les professionnels, tout en offrant aux entreprises une Vitrine Business complète pour présenter leur activité et développer leur visibilité en Tunisie.
-          </p>
-        </div>
-      </section>
-
-      <section className="px-5 py-20">
-        <div className="mx-auto max-w-6xl">
-          <Breadcrumb items={[
-            { label: 'Accueil', href: '/' },
-            { label: 'Pourquoi Dalil Tounes' },
-          ]} />
-          <div className="grid items-center gap-12 lg:grid-cols-[0.95fr_1.05fr]">
-            <div>
-              <SectionLabel>Le point de départ</SectionLabel>
-              <h2 className="text-3xl font-bold tracking-tight text-[#4A1D43] sm:text-4xl">
-                Chaque plateforme répond à un besoin différent.
-              </h2>
-              <p className="mt-5 text-lg leading-8 text-gray-700">
-                Aujourd'hui, tu dois souvent passer d'une plateforme à une autre pour trouver toutes les informations dont tu as besoin. La Vitrine Business rapproche ces informations dans une présentation claire, tandis que Dalil Tounes facilite ensuite la découverte et le contact.
-              </p>
-            </div>
-
-            <div className="grid gap-3 sm:grid-cols-2">
-              {platformRoles.map((platform) => (
-                <div
-                  key={platform.name}
-                  className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
-                >
-                  <div className="mb-4 flex gap-2">
-                    {platform.icons.map((Icon, index) => (
-                      <span
-                        key={`${platform.name}-${index}`}
-                        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#FFF8E6] text-[#4A1D43]"
-                      >
-                        <Icon className="h-5 w-5" aria-hidden="true" />
-                      </span>
-                    ))}
-                  </div>
-                  <p className="font-semibold text-gray-900">{platform.name}</p>
-                  <p className="mt-1 text-sm leading-6 text-gray-600">"{platform.question}"</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="mt-12 rounded-2xl border border-[#D4AF37]/40 bg-[#FFF8E6] p-6 text-center shadow-sm">
-            <p className="text-lg font-semibold leading-8 text-[#4A1D43]">
-              La force de la Vitrine Business est de réunir les informations utiles de l'entreprise dans un seul espace. Dalil Tounes ajoute ensuite la recherche, la découverte et les connexions entre métiers, villes, secteurs et professionnels.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-gray-50 px-5 py-20">
-        <div className="mx-auto max-w-6xl">
-          <div className="mx-auto max-w-3xl text-center">
-            <SectionLabel>Le parcours</SectionLabel>
-            <h2 className="text-3xl font-bold tracking-tight text-[#4A1D43] sm:text-4xl">
-              Comment Dalil Tounes peut t'aider ?
-            </h2>
-            <p className="mt-5 text-lg leading-8 text-gray-700">
-              Une carte permet de découvrir rapidement l'entreprise. Un clic ou un scan ouvre sa Vitrine Business, puis Dalil Tounes l'intègre dans un écosystème de recherche et de découverte plus large.
-            </p>
-          </div>
-
-          <div className="mt-14 grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
-            <div>
-              <SectionLabel>Étape 1</SectionLabel>
-              <h3 className="text-3xl font-bold text-[#4A1D43]">① Carte Business & QR</h3>
-              <p className="mt-4 text-lg leading-8 text-gray-700">
-                La Carte Business te permet de découvrir rapidement une entreprise et sert de porte d'entrée vers sa Vitrine Business.
-              </p>
-              <p className="mt-3 leading-7 text-gray-600">
-                Elle peut être affichée dans Dalil Tounes, partagée directement ou ouverte en scannant le QR professionnel.
-              </p>
-              <div className="mt-7 grid gap-3 sm:grid-cols-2">
-                {businessCardMarkers.map((marker) => (
-                  <MarkerPill key={marker.label} marker={marker} />
-                ))}
-              </div>
-            </div>
-
-            <ScreenshotFrame
-              src="/images/pourquoi-business-card.webp"
-              alt="Capture réelle d'une Business Card Dalil Tounes"
-              className="mx-auto w-full max-w-xl bg-[#07573f]"
-              width={812}
-              height={572}
-            />
-          </div>
-
-          <div className="mx-auto my-14 flex max-w-md flex-col items-center rounded-3xl border border-[#D4AF37]/35 bg-white px-6 py-7 text-center shadow-sm">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#D4AF37]">① Carte Business / QR</p>
-            <ArrowDown className="my-3 h-7 w-7 text-[#4A1D43]" aria-hidden="true" />
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#D4AF37]">② Vitrine Business</p>
-            <ArrowDown className="my-3 h-7 w-7 text-[#4A1D43]" aria-hidden="true" />
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#D4AF37]">③ Visibilité Dalil Tounes</p>
-            <p className="mt-4 text-lg font-semibold text-[#4A1D43]">
-              Un accès simple, une présentation complète, puis une visibilité amplifiée.
-            </p>
-          </div>
-
-          <div className="grid items-start gap-10 lg:grid-cols-[0.88fr_1.12fr]">
-            <div>
-              <SectionLabel>Étape 2</SectionLabel>
-              <h3 className="text-3xl font-bold text-[#4A1D43]">② Vitrine Business</h3>
-              <p className="mt-4 text-lg leading-8 text-gray-700">
-                La Vitrine Business est le cœur du CV Business : elle rassemble les informations utiles pour aider le visiteur à comprendre l'activité, se rassurer et passer facilement au contact.
-              </p>
-              <div className="mt-7 grid gap-3">
-                {cvBusinessGroups.map((group) => (
-                  <FeatureGroupCard key={group.title} group={group} />
-                ))}
-              </div>
-            </div>
-
-            <ScreenshotFrame
-              src="/images/pourquoi-cv-business.webp"
-              alt="Capture réelle d'une Vitrine Business Dalil Tounes"
-              className="mx-auto w-full max-w-[520px] bg-[#07573f]"
-              width={800}
-              height={1642}
-            />
-          </div>
-
-          <div className="mx-auto mt-14 max-w-4xl rounded-3xl border border-[#D4AF37]/35 bg-white p-7 text-center shadow-sm">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FFF3CC] text-[#4A1D43]">
-              <Globe2 className="h-6 w-6" aria-hidden="true" />
-            </div>
-            <SectionLabel>Étape 3</SectionLabel>
-            <h3 className="text-2xl font-bold text-[#4A1D43]">③ Visibilité dans l'écosystème Dalil Tounes</h3>
-            <p className="mx-auto mt-4 max-w-2xl leading-7 text-gray-600">
-              La Vitrine Business ne reste pas isolée. Elle peut être découverte depuis la recherche Dalil Tounes et reliée aux pages métier, ville, gouvernorat et secteur afin de multiplier les chemins qui mènent vers l'entreprise.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section className="px-5 py-20">
-        <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-2">
-          <div className="rounded-3xl border border-gray-200 bg-white p-7 shadow-sm">
-            <SectionLabel>Pour les citoyens</SectionLabel>
-            <h2 className="text-3xl font-bold text-[#4A1D43]">Tu cherches une entreprise ?</h2>
-            <div className="mt-7">
-              <BenefitList items={citizenBenefits} />
-            </div>
-            <Link
-              to="/businesses"
-              className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#4A1D43] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#3a1535]"
-            >
-              Explorer les entreprises
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </Link>
-          </div>
-
-          <div className="rounded-3xl border border-[#D4AF37]/35 bg-[#FFF8E6] p-7 shadow-sm">
-            <SectionLabel>Pour les professionnels</SectionLabel>
-            <h2 className="text-3xl font-bold text-[#4A1D43]">Vous êtes une entreprise ?</h2>
-            <div className="mt-7">
-              <BenefitList items={companyBenefits} />
-            </div>
-            <Link
-              to="/subscription"
-              className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#D4AF37] px-5 py-2.5 text-sm font-semibold text-[#1B1020] transition hover:bg-[#c9a432]"
-            >
-              Voir les offres
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-[#1B1020] px-5 py-20 text-white">
-        <div className="mx-auto max-w-6xl">
-          <div className="mx-auto max-w-3xl text-center">
-            <SectionLabel>Une plateforme vivante</SectionLabel>
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Dalil Tounes évolue continuellement.</h2>
-            <p className="mt-5 text-lg leading-8 text-white/75">
-              Chaque nouvelle fonctionnalité est développée en fonction des besoins réels des citoyens et des entreprises.
-            </p>
-          </div>
-
-          <div className="relative mt-12 grid gap-4 md:grid-cols-5">
-            <div className="absolute left-0 right-0 top-[42px] hidden h-px bg-white/15 md:block" aria-hidden="true" />
-            {timelineSteps.map((step, index) => (
-              <div key={step.title} className="relative rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur">
-                <div className="mb-5 flex items-center justify-between">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#D4AF37] text-[#1B1020]">
-                    <step.icon className="h-5 w-5" aria-hidden="true" />
-                  </div>
-                  <span className="text-sm font-semibold text-white/35">0{index + 1}</span>
-                </div>
-                <h3 className="font-semibold text-white">{step.title}</h3>
-                <p className="mt-2 text-sm leading-6 text-white/65">{step.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="px-5 py-16">
-        <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-center gap-4 text-center">
-          <Link
-            to="/"
-            className="rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-[#4A1D43] shadow-sm transition hover:border-[#D4AF37] hover:shadow-md"
-          >
-            Retour a l'accueil
-          </Link>
-          <Link
-            to="/concept"
-            className="rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-[#4A1D43] shadow-sm transition hover:border-[#D4AF37] hover:shadow-md"
-          >
-            Notre concept
-          </Link>
-          <Link
-            to="/businesses"
-            className="rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-[#4A1D43] shadow-sm transition hover:border-[#D4AF37] hover:shadow-md"
-          >
-            Rechercher une entreprise
-          </Link>
-          <Link
-            to="/subscription"
-            className="rounded-xl border border-[#D4AF37] bg-[#FFF8E6] px-5 py-2.5 text-sm font-semibold text-[#4A1D43] shadow-sm transition hover:bg-[#D4AF37] hover:text-white"
-          >
-            Voir les abonnements
-          </Link>
-        </div>
-      </section>
-    </main>
-  );
+  return <main className="min-h-screen bg-white text-gray-900" dir={isRTL ? 'rtl' : 'ltr'}>
+    <SEOHead title={t.seoTitle} description={t.seoDescription} canonical="https://dalil-tounes.com/pourquoi-dalil-tounes" currentPath="/pourquoi-dalil-tounes" /><StructuredData data={structuredData} />
+    <section className="relative flex min-h-[72vh] items-center overflow-hidden bg-[#1B1020] px-5 py-20 text-white"><img src="/images/drapeau-tunisie.webp?v=1" alt="" className="absolute inset-0 h-full w-full object-cover opacity-35" aria-hidden="true" /><div className="absolute inset-0 bg-gradient-to-b from-[#1B1020]/80 via-[#1B1020]/75 to-white" /><div className="relative mx-auto max-w-5xl text-center"><SectionLabel>Dalil Tounes</SectionLabel><h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">{t.heroTitle}</h1><p className="mx-auto mt-5 max-w-3xl text-xl leading-8 text-white/90 sm:text-2xl">{t.heroSubtitle}</p><p className="mx-auto mt-6 max-w-3xl text-base leading-7 text-white/75 sm:text-lg">{t.heroP1}<br />{t.heroP2}</p></div></section>
+    <section className="px-5 py-20"><div className="mx-auto max-w-6xl"><Breadcrumb items={[{label:t.breadcrumbHome,href:'/'},{label:t.breadcrumbCurrent}]} /><div className="grid items-center gap-12 lg:grid-cols-[0.95fr_1.05fr]"><div><SectionLabel>{t.startLabel}</SectionLabel><h2 className="text-3xl font-bold tracking-tight text-[#4A1D43] sm:text-4xl">{t.startTitle}</h2><p className="mt-5 text-lg leading-8 text-gray-700">{t.startText}</p></div><div className="grid gap-3 sm:grid-cols-2">{t.platformRoles.map((p)=><div key={p.name} className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"><div className="mb-4 flex gap-2">{p.icons.map((Icon,i)=><span key={`${p.name}-${i}`} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#FFF8E6] text-[#4A1D43]"><Icon className="h-5 w-5" aria-hidden="true" /></span>)}</div><p className="font-semibold text-gray-900">{p.name}</p><p className="mt-1 text-sm leading-6 text-gray-600">“{p.question}”</p></div>)}</div></div><div className="mt-12 rounded-2xl border border-[#D4AF37]/40 bg-[#FFF8E6] p-6 text-center shadow-sm"><p className="text-lg font-semibold leading-8 text-[#4A1D43]">{t.strength}</p></div></div></section>
+    <section className="bg-gray-50 px-5 py-20"><div className="mx-auto max-w-6xl"><div className="mx-auto max-w-3xl text-center"><SectionLabel>{t.journeyLabel}</SectionLabel><h2 className="text-3xl font-bold tracking-tight text-[#4A1D43] sm:text-4xl">{t.journeyTitle}</h2><p className="mt-5 text-lg leading-8 text-gray-700">{t.journeyText}</p></div><div className="mt-14 grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]"><div><SectionLabel>{t.step1Label}</SectionLabel><h3 className="text-3xl font-bold text-[#4A1D43]">{t.step1Title}</h3><p className="mt-4 text-lg leading-8 text-gray-700">{t.step1P1}</p><p className="mt-3 leading-7 text-gray-600">{t.step1P2}</p><div className="mt-7 grid gap-3 sm:grid-cols-2">{t.markers.map((m)=><MarkerPill key={m.label} marker={m} />)}</div></div><ScreenshotFrame src="/images/pourquoi-business-card.webp" alt={t.businessCardAlt} className="mx-auto w-full max-w-xl bg-[#07573f]" width={812} height={572} /></div><div className="mx-auto my-14 flex max-w-md flex-col items-center rounded-3xl border border-[#D4AF37]/35 bg-white px-6 py-7 text-center shadow-sm"><p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#D4AF37]">{t.flow1}</p><ArrowDown className="my-3 h-7 w-7 text-[#4A1D43]" aria-hidden="true" /><p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#D4AF37]">{t.flow2}</p><ArrowDown className="my-3 h-7 w-7 text-[#4A1D43]" aria-hidden="true" /><p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#D4AF37]">{t.flow3}</p><p className="mt-4 text-lg font-semibold text-[#4A1D43]">{t.flowSummary}</p></div><div className="grid items-start gap-10 lg:grid-cols-[0.88fr_1.12fr]"><div><SectionLabel>{t.step2Label}</SectionLabel><h3 className="text-3xl font-bold text-[#4A1D43]">{t.step2Title}</h3><p className="mt-4 text-lg leading-8 text-gray-700">{t.step2Text}</p><div className="mt-7 grid gap-3">{t.groups.map((g)=><FeatureGroupCard key={g.title} group={g} />)}</div></div><ScreenshotFrame src="/images/pourquoi-cv-business.webp" alt={t.showcaseAlt} className="mx-auto w-full max-w-[520px] bg-[#07573f]" width={800} height={1642} /></div><div className="mx-auto mt-14 max-w-4xl rounded-3xl border border-[#D4AF37]/35 bg-white p-7 text-center shadow-sm"><div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FFF3CC] text-[#4A1D43]"><Globe2 className="h-6 w-6" aria-hidden="true" /></div><SectionLabel>{t.step3Label}</SectionLabel><h3 className="text-2xl font-bold text-[#4A1D43]">{t.step3Title}</h3><p className="mx-auto mt-4 max-w-2xl leading-7 text-gray-600">{t.step3Text}</p></div></div></section>
+    <section className="px-5 py-20"><div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-2"><div className="rounded-3xl border border-gray-200 bg-white p-7 shadow-sm"><SectionLabel>{t.citizensLabel}</SectionLabel><h2 className="text-3xl font-bold text-[#4A1D43]">{t.citizensTitle}</h2><div className="mt-7"><BenefitList items={t.citizenBenefits} /></div><Link to="/businesses" className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#4A1D43] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#3a1535]">{t.citizensCta}<ArrowRight className={`h-4 w-4 ${isRTL?'rotate-180':''}`} aria-hidden="true" /></Link></div><div className="rounded-3xl border border-[#D4AF37]/35 bg-[#FFF8E6] p-7 shadow-sm"><SectionLabel>{t.prosLabel}</SectionLabel><h2 className="text-3xl font-bold text-[#4A1D43]">{t.prosTitle}</h2><div className="mt-7"><BenefitList items={t.companyBenefits} /></div><Link to="/subscription" className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#D4AF37] px-5 py-2.5 text-sm font-semibold text-[#1B1020] transition hover:bg-[#c9a432]">{t.prosCta}<ArrowRight className={`h-4 w-4 ${isRTL?'rotate-180':''}`} aria-hidden="true" /></Link></div></div></section>
+    <section className="bg-[#1B1020] px-5 py-20 text-white"><div className="mx-auto max-w-6xl"><div className="mx-auto max-w-3xl text-center"><SectionLabel>{t.livingLabel}</SectionLabel><h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{t.livingTitle}</h2><p className="mt-5 text-lg leading-8 text-white/75">{t.livingText}</p></div><div className="relative mt-12 grid gap-4 md:grid-cols-5"><div className="absolute left-0 right-0 top-[42px] hidden h-px bg-white/15 md:block" aria-hidden="true" />{t.timeline.map((s,i)=><div key={s.title} className="relative rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur"><div className="mb-5 flex items-center justify-between"><div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#D4AF37] text-[#1B1020]"><s.icon className="h-5 w-5" aria-hidden="true" /></div><span className="text-sm font-semibold text-white/35">0{i+1}</span></div><h3 className="font-semibold text-white">{s.title}</h3><p className="mt-2 text-sm leading-6 text-white/65">{s.description}</p></div>)}</div></div></section>
+    <section className="px-5 py-16"><div className="mx-auto flex max-w-3xl flex-wrap items-center justify-center gap-4 text-center"><Link to="/" className="rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-[#4A1D43] shadow-sm transition hover:border-[#D4AF37] hover:shadow-md">{t.backHome}</Link><Link to="/concept" className="rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-[#4A1D43] shadow-sm transition hover:border-[#D4AF37] hover:shadow-md">{t.concept}</Link><Link to="/businesses" className="rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-[#4A1D43] shadow-sm transition hover:border-[#D4AF37] hover:shadow-md">{t.searchBusiness}</Link><Link to="/subscription" className="rounded-xl border border-[#D4AF37] bg-[#FFF8E6] px-5 py-2.5 text-sm font-semibold text-[#4A1D43] shadow-sm transition hover:bg-[#D4AF37] hover:text-white">{t.subscriptions}</Link></div></section>
+  </main>;
 }

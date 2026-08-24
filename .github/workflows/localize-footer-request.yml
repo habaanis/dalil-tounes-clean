@@ -1,0 +1,73 @@
+name: Localize footer request form
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/localize-footer-request.yml'
+  push:
+    branches:
+      - i18n-public-sections-20260824
+    paths:
+      - '.github/workflows/localize-footer-request.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  localize:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: i18n-public-sections-20260824
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Connect footer form translations
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');
+          const p='src/components/Footer.tsx';
+          let s=fs.readFileSync(p,'utf8');
+          s=s.replace("import { useTranslationExtended } from '../lib/useTranslationExtended';", "import { useTranslationExtended } from '../lib/useTranslationExtended';\nimport { getFooterRequestTranslations } from '../lib/footerRequestTranslations';");
+          s=s.replace('  const staticCopy = footerStaticCopy[language] ?? footerStaticCopy.fr;', '  const staticCopy = footerStaticCopy[language] ?? footerStaticCopy.fr;\n  const formT = getFooterRequestTranslations(language);');
+          const reps=[
+            ["setRequestError('Le titre de votre demande est obligatoire.');","setRequestError(formT.requiredTitle);"],
+            ["setRequestError('Merci d’indiquer au moins un téléphone ou un email.');","setRequestError(formT.requiredContact);"],
+            ["setRequestError('Format email invalide.');","setRequestError(formT.invalidEmail);"],
+            ["setRequestError('Merci de décrire brièvement votre demande.');","setRequestError(formT.requiredMessage);"],
+            ["setRequestError('Une erreur est survenue. Veuillez réessayer.');","setRequestError(formT.submitError);"],
+            ["setRequestError('Une erreur inattendue est survenue. Veuillez réessayer.');","setRequestError(formT.unexpectedError);"],
+            ['                    Demande d’information / inscription','                    {formT.heading}'],
+            ['                    Une question, une inscription ou une demande professionnelle ? Envoyez-nous votre demande, notre équipe vous recontactera rapidement.','                    {formT.intro}'],
+            ['aria-label="Fermer le formulaire"','aria-label={formT.close}'],
+            ['                    Merci ! Votre demande a été envoyée avec succès. Nous vous recontacterons rapidement.','                    {formT.success}'],
+            ['                    Titre de votre demande <span className="text-[#800020]">*</span>','                    {formT.title} <span className="text-[#800020]">*</span>'],
+            ['placeholder="Ex : inscription entreprise, candidat emploi, chauffeur privé, professeur..."','placeholder={formT.titlePlaceholder}'],
+            ['                      Téléphone','                      {formT.phone}'],
+            ['                      Email','                      {formT.email}'],
+            ['placeholder="votre@email.com"','placeholder={formT.emailPlaceholder}'],
+            ['                  Merci d’indiquer au moins un moyen de contact : téléphone ou email.','                  {formT.contactHint}'],
+            ['                    Message <span className="text-[#800020]">*</span>','                    {formT.message} <span className="text-[#800020]">*</span>'],
+            ['placeholder="Expliquez brièvement votre demande, votre activité ou votre question..."','placeholder={formT.messagePlaceholder}'],
+            ['                    Annuler','                    {formT.cancel}'],
+            ["{requestSubmitting ? 'Envoi en cours...' : 'Envoyer ma demande'}",'{requestSubmitting ? formT.sending : formT.submit}']
+          ];
+          for(const [a,b] of reps) s=s.split(a).join(b);
+          fs.writeFileSync(p,s);
+          NODE
+      - run: npm run build
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/components/Footer.tsx
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "i18n: localize footer request form"
+          git push origin HEAD:i18n-public-sections-20260824

@@ -1407,7 +1407,7 @@ export default function BusinessShowcaseLienoraDetail() {
           </div>
 
           <p className="dt-powered-by">
-            Propulsé par
+            {language === 'ar' ? 'مدعوم من' : language === 'en' ? 'Powered by' : language === 'it' ? 'Offerto da' : language === 'ru' ? 'При поддержке' : 'Propulsé par'}
             <img src="/images/logo_dalil_tounes_crop.png" alt="" />
             Dalil Tounes
           </p>
@@ -1437,13 +1437,13 @@ export default function BusinessShowcaseLienoraDetail() {
             type="button"
             className="absolute right-5 top-5 flex h-11 w-11 items-center justify-center rounded-full border border-[#D4AF37] bg-[#0f2d23] text-[#F4CE55]"
             onClick={() => setSelectedImage('')}
-            aria-label="Fermer"
+            aria-label={text.reservationClose}
           >
             <X aria-hidden="true" />
           </button>
           <img
             src={selectedImage}
-            alt={`Réalisation de ${displayName}`}
+            alt={`${text.gallery}: ${displayName}`}
             className="max-h-[90vh] max-w-full rounded-xl object-contain"
             onClick={event => event.stopPropagation()}
           />

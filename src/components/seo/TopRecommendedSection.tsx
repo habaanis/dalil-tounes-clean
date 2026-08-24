@@ -6,6 +6,8 @@ import { fetchTopRecommendedByCity, type RecommendedBusiness } from '../../lib/s
 import { buildEntrepriseUrl } from '../../lib/slugify';
 import { getSupabaseImageUrl } from '../../lib/imageUtils';
 import { extractFrenchName } from '../../lib/textNormalization';
+import { useLanguage } from '../../context/LanguageContext';
+import { getPublicComponentTranslations } from '../../lib/publicComponentTranslations';
 
 interface TopRecommendedSectionProps {
   ville: string;
@@ -39,10 +41,12 @@ function RecommendedCard({
   biz,
   rank,
   onClick,
+  ratingUnavailable,
 }: {
   biz: RecommendedBusiness;
   rank: number;
   onClick: () => void;
+  ratingUnavailable: string;
 }) {
   const name = extractFrenchName(biz.nom);
   const rating = parseRating(biz['Note Google Globale']);
@@ -106,7 +110,7 @@ function RecommendedCard({
         {rating > 0 ? (
           <StarRating value={rating} />
         ) : (
-          <span className="text-xs text-gray-300 italic">Note non disponible</span>
+          <span className="text-xs text-gray-300 italic">{ratingUnavailable}</span>
         )}
       </div>
     </motion.div>
@@ -117,6 +121,8 @@ export default function TopRecommendedSection({ ville, villeSlug }: TopRecommend
   const [items, setItems] = useState<RecommendedBusiness[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { language } = useLanguage();
+  const publicT = getPublicComponentTranslations(language);
 
   useEffect(() => {
     let cancelled = false;
@@ -146,11 +152,11 @@ export default function TopRecommendedSection({ ville, villeSlug }: TopRecommend
             className="text-lg md:text-xl font-bold text-white leading-tight"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
-            Entreprises les plus recommandées par les clients à{' '}
+            {publicT.topRecommendedPrefix}{' '}
             <span className="text-[#D4AF37]">{ville}</span>
           </h2>
           <p className="text-xs text-gray-500 mt-0.5">
-            Les mieux notées par la communauté
+            {publicT.topRecommendedSubtitle}
           </p>
         </div>
       </div>
@@ -162,7 +168,7 @@ export default function TopRecommendedSection({ ville, villeSlug }: TopRecommend
       ) : items.length === 0 ? (
         <div className="text-center py-12 bg-gray-50/5 rounded-2xl border border-dashed border-gray-700">
           <Building2 className="w-8 h-8 text-gray-600 mx-auto mb-3" />
-          <p className="text-sm text-gray-500 italic">Aucun professionnel reference pour le moment.</p>
+          <p className="text-sm text-gray-500 italic">{publicT.noProfessional}</p>
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 gap-4">
@@ -174,6 +180,7 @@ export default function TopRecommendedSection({ ville, villeSlug }: TopRecommend
                 biz={biz}
                 rank={idx + 1}
                 onClick={() => navigate(url)}
+                ratingUnavailable={publicT.ratingUnavailable}
               />
             );
           })}
@@ -181,8 +188,8 @@ export default function TopRecommendedSection({ ville, villeSlug }: TopRecommend
       )}
 
       <p className="text-center text-[11px] text-gray-600 mt-4 leading-relaxed">
-        Les classements reposent sur des criteres automatises (avis publics, notes Google, volume d'avis).{' '}
-        <Link to="/info-avis" className="text-[#D4AF37] hover:underline">En savoir plus</Link>
+        {publicT.rankingInfo}{' '}
+        <Link to="/info-avis" className="text-[#D4AF37] hover:underline">{publicT.learnMore}</Link>
       </p>
     </section>
   );
