@@ -13,8 +13,6 @@ src/pages/Concept.tsx:318: <span className="font-semibold text-gray-900">Dalil T
 src/pages/CultureEvents.tsx:301: <p>Aucun événement cette semaine</p>
 src/pages/CultureEvents.tsx:331: <p>Aucun événement ce mois-ci</p>
 src/pages/CultureEvents.tsx:361: <p>Aucun événement annuel</p>
-src/pages/EducationNew.tsx:747: {q && <>Recherche : <b>{q}</b> · </>}
-src/pages/EducationNew.tsx:748: {ville && <>Ville : <b>{ville}</b></>}
 src/pages/JobCandidateMatches.tsx:49: setError('Vous devez être connecté pour voir les candidats');
 src/pages/JobCandidateMatches.tsx:143: <p className="text-gray-600">Recherche des candidats correspondants...</p>
 src/pages/JobCandidateMatches.tsx:156: <h3 className="font-bold mb-2">Erreur</h3>
@@ -70,12 +68,6 @@ src/components/BusinessDetail.tsx:2334: <h2 className="sr-only">Entreprises simi
 src/components/BusinessNeedForm.tsx:126: {!selectedCompany && companyResults.length > 0 && <div className="mt-2 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">{companyResults.map(company => <button key={company.id} type="button" onClick={() => handleCompanySelect(company)} clas
 src/components/BusinessShowcaseLienoraDetail.tsx:994: <span>Réalisation {index + 1}</span>
 src/components/BusinessShowcaseLienoraDetail.tsx:1013: <span>Réalisation {index + 4}</span>
-src/components/DebugSearchPanel.tsx:179: <p className="text-gray-500 text-sm">Aucune barre détectée sur cette page</p>
-src/components/DebugSearchPanel.tsx:259: <option value="entreprise">Entreprise</option>
-src/components/DebugSearchPanel.tsx:260: <option value="ville">Ville</option>
-src/components/DebugSearchPanel.tsx:310: <th className="px-4 py-3 text-left font-medium text-gray-700">Résultats</th>
-src/components/DebugSearchPanel.tsx:311: <th className="px-4 py-3 text-left font-medium text-gray-700">Erreur</th>
-src/components/DebugSearchPanel.tsx:350: <summary>Voir</summary>
 src/components/FeaturedBusinessesStrip.tsx:125: <span>Chargement des établissements en vedette...</span>
 src/components/FeaturedBusinessesStrip.tsx:136: <p className="text-sm text-gray-500">Aucun établissement à afficher pour le moment.</p>
 src/components/FeaturedEventCard.tsx:117: <span>Voir les détails</span>
@@ -119,9 +111,6 @@ src/components/SearchBar.tsx:670: {errEnt && <span className="text-red-600">Erre
 src/components/SimpleEventCard.tsx:15: <p className="text-sm text-[#4A1D43]/80">Ville: {event.ville}</p>
 src/components/StarNavigation.tsx:50: aria-label="Services pour les citoyens"
 src/components/StarNavigation.tsx:122: aria-label="Services pour les citoyens"
-src/components/SupabaseStatus.tsx:28: <span>Connexion Supabase active</span>
-src/components/SupabaseStatus.tsx:35: <span>Erreur de connexion Supabase</span>
-src/components/SupabaseStatus.tsx:42: <span>Vérification de la connexion...</span>
 src/components/VideoPlayer.tsx:130: <h4 className="font-semibold text-[#4A1D43] mb-1">Voir la vidéo</h4>
 src/components/WelcomeModal.tsx:90: aria-label="Fermer l'ecran de bienvenue"
 src/components/auth/SignupForm.tsx:50: else if (msg.includes('for security purposes')) { const m = signUpError.message.match(/(\d+)\s*seconds?/i); const secs = m ? parseInt(m[1], 10) : 30; setError(`${t.security} ${secs} ${t.seconds}`); setCooldown(secs); }
