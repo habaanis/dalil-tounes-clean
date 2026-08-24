@@ -35,3 +35,4 @@ for (const [from, to] of replacements) {
   s = s.split(from).join(to);
 }
 fs.writeFileSync(p, s);
+// trigger
