@@ -147,4 +147,5 @@ const xml = [
 ].join('\n');
 
 fs.writeFileSync(path.join(distDir, 'sitemap.xml'), xml);
+fs.rmSync(shortRoutesManifestPath, { force: true });
 console.log(`Sitemap généré : ${entries.size} URLs, dont ${businessCount} entreprises et ${shortRouteCount} routes SEO courtes solides.`);
