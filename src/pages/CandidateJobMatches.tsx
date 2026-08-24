@@ -154,7 +154,7 @@ export default function CandidateJobMatches() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50 py-12">
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50 py-12" dir={language === 'ar' ? 'rtl' : 'ltr'}>
         <div className="max-w-7xl mx-auto px-4">
           <div className="bg-red-50 border border-red-200 text-red-800 p-6 rounded-lg">
             <h3 className="font-bold mb-2">{t.error}</h3>
