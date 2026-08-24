@@ -15,7 +15,7 @@ function ScrollToTop() {
   return null;
 }
 
-const Home = lazy(() => import('./pages/Home').then(m => ({ default: m.Home })));
+const Home = lazy(() => import('./pages/HomeVitrineFirst'));
 const Subscription = lazy(() => import('./pages/Subscription').then(m => ({ default: m.Subscription })));
 const PaiementConfirmation = lazy(() => import('./pages/PaiementConfirmation'));
 const NotFound = lazy(() => import('./pages/NotFound'));
