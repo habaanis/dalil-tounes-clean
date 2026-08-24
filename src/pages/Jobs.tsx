@@ -12,10 +12,12 @@ import { HERO_IMAGE_URL, HERO_IMAGE_JPG_URL } from '../constants/images';
 import StructuredData from '../components/StructuredData';
 import { generateCollectionPageSchema } from '../lib/structuredDataSchemas';
 import JobPostForm from '../components/forms/JobPostForm';
+import { getHomeJobsResidualTranslations } from '../lib/homeJobsResidualTranslations';
 
 export const Jobs = () => {
   const { language } = useLanguage();
   const t = useTranslation(language);
+  const residualT = getHomeJobsResidualTranslations(language).jobs;
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedGouvernorat, setSelectedGouvernorat] = useState('');
@@ -213,7 +215,7 @@ export const Jobs = () => {
                 {t.jobs.postJob}
               </h3>
               <p className="text-xs text-white leading-snug mb-3 text-center px-2" style={{ lineHeight: '1.5' }}>
-                Publiez vos offres d'emploi et trouvez les talents dont votre entreprise a besoin.
+                {residualT.postDescription}
               </p>
               <button
                 onClick={() => setShowPostForm(true)}
@@ -248,7 +250,7 @@ export const Jobs = () => {
                 {t.jobs.findJob}
               </h3>
               <p className="text-xs text-white leading-snug mb-3 text-center px-2" style={{ lineHeight: '1.5' }}>
-                Consultez les opportunités d'emploi et déposez votre candidature en ligne.
+                {residualT.findDescription}
               </p>
               <button
                 onClick={() => setShowApplicationForm(true)}

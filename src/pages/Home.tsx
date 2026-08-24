@@ -15,6 +15,7 @@ import React, { lazy, Suspense, useEffect, useState } from 'react';
 import InstallAppBanner from '../components/InstallAppBanner';
 import SearchBar from '../components/SearchBar';
 import VisibilityHouseSection from '../components/VisibilityHouseSection';
+import { getHomeJobsResidualTranslations } from '../lib/homeJobsResidualTranslations';
 
 // Tous les composants lourds (liste Premium, Avis, Témoignages)
 // sont chargés paresseusement afin de ne pas bloquer le rendu du Hero / LCP.
@@ -39,6 +40,7 @@ interface HomeProps {
 export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSearchSubmit }: HomeProps = {}) => {
   const { language } = useLanguage();
   const t = useTranslation(language);
+  const residualT = getHomeJobsResidualTranslations(language).home;
   const navigate = useNavigate();
   const { partners, totalCount, certifiedCount, loading } = useHomeData();
 
@@ -246,14 +248,14 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
               </p>
               <div className="mt-3 rounded-2xl border border-white/25 bg-black/25 px-4 py-2.5 backdrop-blur-sm">
                 <p className="text-xs font-semibold text-white md:text-sm">
-                  💡 Pourquoi votre présence sur Internet est-elle importante ?
+                  {residualT.visibilityQuestion}
                 </p>
                 <button
                   type="button"
                   onClick={scrollToVisibilityHouse}
                   className="mt-1 text-xs font-bold text-[#D4AF37] underline-offset-4 transition hover:underline focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/70 rounded"
                 >
-                  Comprendre en 30 secondes ↓
+                  {residualT.visibilityCta}
                 </button>
               </div>
             </div>
@@ -261,22 +263,22 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
         </div>
       </section>
 
-      {/* 2. À quoi sert Dalil Tounes ? */}
+      {/* 2. {residualT.purposeTitle} */}
       <section id="section-pourquoi" className="py-3 px-4 bg-white scroll-mt-24">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-3">
             <h2 className="text-lg md:text-xl font-light text-gray-900 mb-1">
-              À quoi sert Dalil Tounes ?
+              {residualT.purposeTitle}
             </h2>
             <p className="mx-auto max-w-3xl text-[11px] md:text-xs leading-relaxed text-gray-600">
-              Dalil Tounes est une plateforme numérique qui met en relation les citoyens et les entreprises tunisiennes. Les entreprises y présentent leur activité grâce à une fiche professionnelle complète, tandis que les citoyens peuvent rechercher, comparer et contacter plus facilement les professionnels qui répondent à leurs besoins.
+              {residualT.purposeDescription}
             </p>
             <button
               type="button"
               onClick={() => navigate('/pourquoi-dalil-tounes')}
               className="mt-2 inline-flex items-center text-[11px] font-semibold text-[#4A1D43] transition hover:text-[#D4AF37] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/60 rounded"
             >
-              👉 Découvrir à quoi sert Dalil Tounes →
+              {residualT.purposeCta}
             </button>
           </div>
 
@@ -286,10 +288,10 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
                 <Search className="w-3.5 h-3.5 text-[#4A1D43]" />
               </div>
               <h3 className="text-xs font-medium text-gray-900 mb-1">
-                Trouver une entreprise
+                {residualT.findTitle}
               </h3>
               <p className="text-[11px] text-gray-600 leading-relaxed">
-                Trouvez rapidement un artisan, un commerçant ou un professionnel partout en Tunisie.
+                {residualT.findText}
               </p>
             </div>
 
@@ -298,10 +300,10 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
                 <Building2 className="w-3.5 h-3.5 text-[#4A1D43]" />
               </div>
               <h3 className="text-xs font-medium text-gray-900 mb-1">
-                Développer sa visibilité
+                {residualT.visibilityTitle}
               </h3>
               <p className="text-[11px] text-gray-600 leading-relaxed">
-                Présentez votre activité grâce à une fiche professionnelle complète.
+                {residualT.visibilityText}
               </p>
             </div>
 
@@ -310,10 +312,10 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
                 <Handshake className="w-3.5 h-3.5 text-[#4A1D43]" />
               </div>
               <h3 className="text-xs font-medium text-gray-900 mb-1">
-                Mettre en relation
+                {residualT.connectTitle}
               </h3>
               <p className="text-[11px] text-gray-600 leading-relaxed">
-                Dalil Tounes rapproche les citoyens et les entreprises tunisiennes afin qu'ils puissent se retrouver plus facilement.
+                {residualT.connectText}
               </p>
             </div>
 
@@ -322,17 +324,17 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
                 <ArrowRight className="w-3.5 h-3.5 text-[#4A1D43]" />
               </div>
               <h3 className="text-xs font-medium text-gray-900 mb-1">
-                Découvrir la plateforme
+                {residualT.discoverTitle}
               </h3>
               <p className="text-[11px] text-gray-600 leading-relaxed">
-                Découvrez comment fonctionne Dalil Tounes, ses fonctionnalités actuelles et les évolutions à venir.
+                {residualT.discoverText}
               </p>
               <button
                 type="button"
                 onClick={() => navigate('/pourquoi-dalil-tounes')}
                 className="mt-2 inline-flex items-center gap-1 text-[11px] font-semibold text-[#4A1D43] transition hover:text-[#D4AF37] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/60 rounded"
               >
-                En savoir plus
+                {residualT.learnMore}
                 <ChevronRight className="w-3 h-3" aria-hidden="true" />
               </button>
             </div>
@@ -368,14 +370,14 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
 
          <div className="text-center mt-3">
   <p className="text-xs text-gray-500 mb-2.5">
-    Une question, une inscription ou une demande professionnelle ?
+    {residualT.requestQuestion}
   </p>
 
   <button
     onClick={handleSuggestBusiness}
     className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#4A1D43] text-[#D4AF37] font-bold rounded-xl border border-[#D4AF37] text-sm md:shadow-[0_4px_15px_rgba(212,175,55,0.25)] md:hover:bg-[#5A2D53] md:hover:shadow-[0_6px_25px_rgba(212,175,55,0.4)] md:transition-all md:duration-300 md:hover:scale-105 cursor-pointer"
   >
-    Demande d’information / inscription
+    {residualT.requestButton}
   </button>
 </div>
         </div>
@@ -518,10 +520,10 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
             <div className="sticky top-0 bg-white border-b border-[#D4AF37]/40 px-6 py-4 flex items-start justify-between gap-4 rounded-t-2xl">
               <div>
                 <h2 className="text-xl font-semibold text-[#4A1D43]">
-                  Demande d’information / inscription
+                  {residualT.requestButton}
                 </h2>
                 <p className="text-sm text-gray-600 mt-1">
-                  Une question, une inscription ou une demande professionnelle ? Envoyez-nous votre demande, notre équipe vous recontactera rapidement.
+                  {residualT.requestQuestion} Envoyez-nous votre demande, notre équipe vous recontactera rapidement.
                 </p>
               </div>
               <button
