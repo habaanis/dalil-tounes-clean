@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, MapPin, Clock, Tag, ArrowLeft, Briefcase } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
+import { getBusinessNeedsPublicTranslations } from '../lib/businessNeedsPublicTranslations';
 import { supabase } from '../lib/supabaseClient';
 
 interface PublicBusinessNeed {
@@ -21,26 +23,17 @@ interface PublicBusinessNeed {
   published_at: string | null;
 }
 
-const TYPE_LABELS: Record<string, string> = {
-  supplier_search: 'Recherche fournisseur',
-  service_provider_search: 'Recherche prestataire',
-  equipment_purchase: 'Achat materiel',
-  equipment_sale: 'Vente materiel',
-  liquidation: 'Liquidation',
-  partnership: 'Partenariat',
-  business_opportunity: "Opportunite d'affaires",
-  other: 'Autre',
-};
-
-const URGENCY_LABELS: Record<string, { label: string; color: string; bg: string }> = {
-  low: { label: 'Pas urgent', color: '#065F46', bg: '#D1FAE5' },
-  medium: { label: 'Moyen', color: '#92400E', bg: '#FEF3C7' },
-  high: { label: 'Urgent', color: '#991B1B', bg: '#FEE2E2' },
-  critical: { label: 'Tres urgent', color: '#7F1D1D', bg: '#FCA5A5' },
+const URGENCY_STYLES: Record<string, { color: string; bg: string }> = {
+  low: { color: '#065F46', bg: '#D1FAE5' },
+  medium: { color: '#92400E', bg: '#FEF3C7' },
+  high: { color: '#991B1B', bg: '#FEE2E2' },
+  critical: { color: '#7F1D1D', bg: '#FCA5A5' },
 };
 
 export default function BusinessNeedsPublic() {
   const navigate = useNavigate();
+  const { language } = useLanguage();
+  const t = getBusinessNeedsPublicTranslations(language);
   const [needs, setNeeds] = useState<PublicBusinessNeed[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -59,9 +52,7 @@ export default function BusinessNeedsPublic() {
       .eq('moderation_status', 'approved')
       .order('published_at', { ascending: false });
 
-    if (!error && data) {
-      setNeeds(data);
-    }
+    if (!error && data) setNeeds(data);
     setLoading(false);
   }
 
@@ -76,46 +67,42 @@ export default function BusinessNeedsPublic() {
 
   function formatDate(dateStr: string | null) {
     if (!dateStr) return '';
-    return new Date(dateStr).toLocaleDateString('fr-TN', { day: 'numeric', month: 'short', year: 'numeric' });
+    return new Date(dateStr).toLocaleDateString(t.locale, { day: 'numeric', month: 'short', year: 'numeric' });
   }
 
   function formatBudget(min: number | null, max: number | null) {
     if (!min && !max) return null;
-    if (min && max) return `${min.toLocaleString()} - ${max.toLocaleString()} TND`;
-    if (min) return `A partir de ${min.toLocaleString()} TND`;
-    return `Jusqu'a ${max!.toLocaleString()} TND`;
+    if (min && max) return `${min.toLocaleString(t.locale)} - ${max.toLocaleString(t.locale)} TND`;
+    if (min) return `${t.from} ${min.toLocaleString(t.locale)} TND`;
+    return `${t.until} ${max!.toLocaleString(t.locale)} TND`;
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       <div className="max-w-5xl mx-auto px-4 py-8">
-        {/* Header */}
         <div className="mb-8">
           <button
             onClick={() => navigate('/entreprises')}
             className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#4A1D43] mb-4 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            Retour au Centre d'affaires
+            {t.back}
           </button>
           <div className="flex items-center gap-3 mb-2">
             <div className="w-10 h-10 rounded-xl bg-[#4A1D43] flex items-center justify-center">
               <Briefcase className="w-5 h-5 text-[#D4AF37]" />
             </div>
-            <h1 className="text-2xl font-bold text-[#4A1D43]">Besoins professionnels</h1>
+            <h1 className="text-2xl font-bold text-[#4A1D43]">{t.title}</h1>
           </div>
-          <p className="text-gray-600 text-sm">
-            Decouvrez les besoins publies par les entreprises tunisiennes et identifiez de nouvelles opportunites.
-          </p>
+          <p className="text-gray-600 text-sm">{t.intro}</p>
         </div>
 
-        {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-3 mb-6">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
               type="text"
-              placeholder="Rechercher un besoin..."
+              placeholder={t.search}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37]/30"
@@ -126,39 +113,36 @@ export default function BusinessNeedsPublic() {
             onChange={(e) => setFilterType(e.target.value)}
             className="px-4 py-2.5 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:border-[#D4AF37]"
           >
-            <option value="">Tous les types</option>
-            {Object.entries(TYPE_LABELS).map(([key, label]) => (
-              <option key={key} value={key}>{label}</option>
+            <option value="">{t.allTypes}</option>
+            {Object.entries(t.types).map(([key, label]) => (
+              <option key={key} value={key}>{String(label)}</option>
             ))}
           </select>
         </div>
 
-        {/* Results count */}
         <p className="text-xs text-gray-500 mb-4">
-          {filtered.length} besoin{filtered.length > 1 ? 's' : ''} publie{filtered.length > 1 ? 's' : ''}
+          {filtered.length} {filtered.length === 1 ? t.published : t.publishedPlural}
         </p>
 
-        {/* Loading */}
         {loading && (
           <div className="flex justify-center py-16">
             <div className="w-8 h-8 border-3 border-[#D4AF37] border-t-transparent rounded-full animate-spin" />
           </div>
         )}
 
-        {/* Empty state */}
         {!loading && filtered.length === 0 && (
           <div className="text-center py-16 bg-white rounded-xl border border-gray-100">
             <Briefcase className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-            <p className="text-gray-500 text-sm">Aucun besoin publie pour le moment.</p>
-            <p className="text-gray-400 text-xs mt-1">Revenez bientot pour decouvrir de nouvelles opportunites.</p>
+            <p className="text-gray-500 text-sm">{t.empty}</p>
+            <p className="text-gray-400 text-xs mt-1">{t.comeBack}</p>
           </div>
         )}
 
-        {/* Cards */}
         {!loading && filtered.length > 0 && (
           <div className="grid gap-4">
             {filtered.map((need) => {
-              const urgencyInfo = URGENCY_LABELS[need.urgency] || URGENCY_LABELS.medium;
+              const urgencyStyle = URGENCY_STYLES[need.urgency] || URGENCY_STYLES.medium;
+              const urgencyLabel = t.urgency[need.urgency] || t.urgency.medium;
               const budget = formatBudget(need.budget_min, need.budget_max);
               return (
                 <div key={need.id} className="bg-white rounded-xl p-5 border border-gray-100 hover:border-[#D4AF37]/30 hover:shadow-sm transition-all">
@@ -166,9 +150,9 @@ export default function BusinessNeedsPublic() {
                     <h3 className="text-base font-semibold text-[#4A1D43] flex-1 min-w-0">{need.title}</h3>
                     <span
                       className="text-[10px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap"
-                      style={{ color: urgencyInfo.color, backgroundColor: urgencyInfo.bg }}
+                      style={{ color: urgencyStyle.color, backgroundColor: urgencyStyle.bg }}
                     >
-                      {urgencyInfo.label}
+                      {urgencyLabel}
                     </span>
                   </div>
 
@@ -187,7 +171,7 @@ export default function BusinessNeedsPublic() {
                     )}
                     <span className="flex items-center gap-1">
                       <Tag className="w-3.5 h-3.5" />
-                      {TYPE_LABELS[need.type] || need.type}
+                      {t.types[need.type] || need.type}
                     </span>
                     {need.published_at && (
                       <span className="flex items-center gap-1">
@@ -204,12 +188,12 @@ export default function BusinessNeedsPublic() {
                       )}
                       {need.deadline && (
                         <span className="text-[11px] px-2 py-0.5 rounded bg-orange-50 text-orange-700">
-                          Echeance: {formatDate(need.deadline)}
+                          {t.deadline}: {formatDate(need.deadline)}
                         </span>
                       )}
                       {need.zone_intervention && (
                         <span className="text-[11px] px-2 py-0.5 rounded bg-green-50 text-green-700">
-                          Zone: {need.zone_intervention}
+                          {t.zone}: {need.zone_intervention}
                         </span>
                       )}
                     </div>
