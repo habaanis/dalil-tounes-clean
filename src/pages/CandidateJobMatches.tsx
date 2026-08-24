@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Briefcase, MapPin, Building2, Clock, Award, TrendingUp, Send, Loader2 } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
 import { useLanguage } from '../context/LanguageContext';
-import { useTranslation } from '../lib/i18n';
+import { getCandidateJobMatchTranslations } from '../lib/jobMatchPageTranslations';
 
 interface JobMatch {
   job_id: string;
@@ -21,7 +21,7 @@ interface JobMatch {
 
 export default function CandidateJobMatches() {
   const { language } = useLanguage();
-  const t = useTranslation(language);
+  const t = getCandidateJobMatchTranslations(language);
 
   const [loading, setLoading] = useState(true);
   const [applying, setApplying] = useState<string | null>(null);
@@ -43,7 +43,7 @@ export default function CandidateJobMatches() {
       const { data: { user } } = await supabase.auth.getUser();
 
       if (!user) {
-        setError('Vous devez être connecté pour voir vos recommandations');
+        setError(t.login);
         return;
       }
 
@@ -59,7 +59,7 @@ export default function CandidateJobMatches() {
       }
 
       if (!candidate) {
-        setError('Aucun profil candidat trouvé. Veuillez créer votre profil candidat d\'abord.');
+        setError(t.noProfile);
         return;
       }
 
@@ -80,7 +80,7 @@ export default function CandidateJobMatches() {
       setMatches(data || []);
     } catch (err: any) {
       console.error('[CandidateJobMatches] Unexpected error:', err);
-      setError(err.message || 'Erreur lors du chargement des recommandations');
+      setError(err.message || t.loadError);
     } finally {
       setLoading(false);
     }
@@ -105,7 +105,7 @@ export default function CandidateJobMatches() {
         if (error.code === '23505') {
           setMessage({
             type: 'error',
-            text: 'Vous avez déjà postulé à cette offre'
+            text: t.already
           });
         } else {
           throw error;
@@ -115,7 +115,7 @@ export default function CandidateJobMatches() {
 
       setMessage({
         type: 'success',
-        text: 'Candidature envoyée avec succès !'
+        text: t.success
       });
 
       // Retirer l'offre de la liste après candidature
@@ -124,7 +124,7 @@ export default function CandidateJobMatches() {
       console.error('[CandidateJobMatches] Error applying:', err);
       setMessage({
         type: 'error',
-        text: 'Erreur lors de l\'envoi de la candidature'
+        text: t.applyError
       });
     } finally {
       setApplying(null);
@@ -139,12 +139,12 @@ export default function CandidateJobMatches() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50 py-12">
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50 py-12" dir={language === 'ar' ? 'rtl' : 'ltr'}>
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-center py-20">
             <div className="text-center">
               <div className="inline-block w-12 h-12 border-4 border-orange-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-              <p className="text-gray-600">Chargement de vos recommandations...</p>
+              <p className="text-gray-600">{t.loading}</p>
             </div>
           </div>
         </div>
@@ -157,14 +157,14 @@ export default function CandidateJobMatches() {
       <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50 py-12">
         <div className="max-w-7xl mx-auto px-4">
           <div className="bg-red-50 border border-red-200 text-red-800 p-6 rounded-lg">
-            <h3 className="font-bold mb-2">Erreur</h3>
+            <h3 className="font-bold mb-2">{t.error}</h3>
             <p>{error}</p>
             {error.includes('profil candidat') && (
               <button
                 onClick={() => window.location.hash = '#/emplois/candidature'}
                 className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
               >
-                Créer mon profil candidat
+                {t.createProfile}
               </button>
             )}
           </div>
@@ -180,10 +180,10 @@ export default function CandidateJobMatches() {
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-4 flex items-center gap-3">
             <TrendingUp className="w-10 h-10 text-orange-600" />
-            Offres recommandées pour vous
+            {t.title}
           </h1>
           <p className="text-lg text-gray-600">
-            Découvrez les offres d'emploi qui correspondent le mieux à votre profil
+            {t.subtitle}
           </p>
         </div>
 
@@ -201,10 +201,10 @@ export default function CandidateJobMatches() {
           <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
             <Briefcase className="w-20 h-20 text-gray-300 mx-auto mb-4" />
             <h3 className="text-2xl font-bold text-gray-800 mb-2">
-              Aucune offre correspondante pour le moment
+              {t.empty}
             </h3>
             <p className="text-gray-600">
-              Complétez votre profil et ajoutez plus de compétences pour améliorer vos recommandations.
+              {t.emptyHint}
             </p>
           </div>
         ) : (
@@ -253,7 +253,7 @@ export default function CandidateJobMatches() {
                     {/* Raison du match */}
                     {match.reason && (
                       <div className="mb-3 text-sm text-gray-600 bg-blue-50 border border-blue-200 rounded-lg p-3">
-                        <span className="font-medium text-blue-900">Pourquoi cette offre ? </span>
+                        <span className="font-medium text-blue-900">{t.why} </span>
                         {match.reason}
                       </div>
                     )}
@@ -280,7 +280,7 @@ export default function CandidateJobMatches() {
                     {/* Salaire */}
                     {match.salary_min && match.salary_max && (
                       <div className="text-sm font-medium text-green-700">
-                        💰 {match.salary_min} - {match.salary_max} TND/mois
+                        💰 {match.salary_min} - {match.salary_max} {t.salaryMonth}
                       </div>
                     )}
                   </div>
@@ -291,7 +291,7 @@ export default function CandidateJobMatches() {
                       onClick={() => window.location.hash = `#/emplois/${match.job_id}`}
                       className="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium text-center"
                     >
-                      Voir l'offre
+                      {t.view}
                     </button>
                     <button
                       onClick={() => handleApply(match.job_id)}
@@ -301,12 +301,12 @@ export default function CandidateJobMatches() {
                       {applying === match.job_id ? (
                         <>
                           <Loader2 className="w-4 h-4 animate-spin" />
-                          <span>En cours...</span>
+                          <span>{t.working}</span>
                         </>
                       ) : (
                         <>
                           <Send className="w-4 h-4" />
-                          <span>Postuler</span>
+                          <span>{t.apply}</span>
                         </>
                       )}
                     </button>

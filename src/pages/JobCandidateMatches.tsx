@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Users, MapPin, Award, TrendingUp, Mail, ArrowLeft, Loader2, X } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
 import { useLanguage } from '../context/LanguageContext';
-import { useTranslation } from '../lib/i18n';
+import { getCompanyJobMatchTranslations } from '../lib/jobMatchPageTranslations';
 import PremiumWrapper, { PremiumBadge } from '../components/PremiumWrapper';
 
 interface CandidateMatch {
@@ -23,7 +23,7 @@ interface JobCandidateMatchesProps {
 
 export default function JobCandidateMatches({ jobId }: JobCandidateMatchesProps) {
   const { language } = useLanguage();
-  const t = useTranslation(language);
+  const t = getCompanyJobMatchTranslations(language);
 
   const [loading, setLoading] = useState(true);
   const [matches, setMatches] = useState<CandidateMatch[]>([]);
@@ -46,7 +46,7 @@ export default function JobCandidateMatches({ jobId }: JobCandidateMatchesProps)
       const { data: { user } } = await supabase.auth.getUser();
 
       if (!user) {
-        setError('Vous devez être connecté pour voir les candidats');
+        setError(t.login);
         return;
       }
 
@@ -62,12 +62,12 @@ export default function JobCandidateMatches({ jobId }: JobCandidateMatchesProps)
       }
 
       if (!job) {
-        setError('Offre d\'emploi non trouvée');
+        setError(t.notFound);
         return;
       }
 
       if (job.created_by !== user.id) {
-        setError('Vous n\'avez pas accès aux candidats de cette offre');
+        setError(t.forbidden);
         return;
       }
 
@@ -88,7 +88,7 @@ export default function JobCandidateMatches({ jobId }: JobCandidateMatchesProps)
       setMatches(data || []);
     } catch (err: any) {
       console.error('[JobCandidateMatches] Unexpected error:', err);
-      setError(err.message || 'Erreur lors du chargement des candidats');
+      setError(err.message || t.loadError);
     } finally {
       setLoading(false);
     }
@@ -110,12 +110,12 @@ export default function JobCandidateMatches({ jobId }: JobCandidateMatchesProps)
       console.log('[JobCandidateMatches] Message envoyé à:', showContactForm.candidate_id);
       console.log('[JobCandidateMatches] Message:', contactMessage);
 
-      alert('Fonctionnalité de messagerie en cours de développement. Le candidat sera notifié prochainement.');
+      alert(t.devMessage);
       setShowContactForm(null);
       setContactMessage('');
     } catch (err) {
       console.error('[JobCandidateMatches] Error sending message:', err);
-      alert('Erreur lors de l\'envoi du message');
+      alert(t.sendError);
     } finally {
       setSending(false);
     }
@@ -128,19 +128,19 @@ export default function JobCandidateMatches({ jobId }: JobCandidateMatchesProps)
   };
 
   const getExperienceLabel = (years: number) => {
-    if (years === 0) return 'Débutant';
-    if (years === 1) return '1 an d\'expérience';
-    return `${years} ans d'expérience`;
+    if (years === 0) return t.beginner;
+    if (years === 1) return t.oneYear;
+    return `${years} ${t.years}`;
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50 py-12">
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50 py-12" dir={language === 'ar' ? 'rtl' : 'ltr'}>
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-center py-20">
             <div className="text-center">
               <div className="inline-block w-12 h-12 border-4 border-orange-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-              <p className="text-gray-600">Recherche des candidats correspondants...</p>
+              <p className="text-gray-600">{t.loading}</p>
             </div>
           </div>
         </div>
@@ -153,7 +153,7 @@ export default function JobCandidateMatches({ jobId }: JobCandidateMatchesProps)
       <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50 py-12">
         <div className="max-w-7xl mx-auto px-4">
           <div className="bg-red-50 border border-red-200 text-red-800 p-6 rounded-lg">
-            <h3 className="font-bold mb-2">Erreur</h3>
+            <h3 className="font-bold mb-2">{t.error}</h3>
             <p>{error}</p>
           </div>
         </div>
@@ -168,10 +168,10 @@ export default function JobCandidateMatches({ jobId }: JobCandidateMatchesProps)
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-4 flex items-center gap-3">
             <Users className="w-10 h-10 text-orange-600" />
-            Candidats correspondants
+            {t.title}
           </h1>
           <p className="text-lg text-gray-600">
-            Pour l'offre : <span className="font-semibold">{jobTitle}</span>
+            {t.forJob} <span className="font-semibold">{jobTitle}</span>
           </p>
         </div>
 
@@ -180,10 +180,10 @@ export default function JobCandidateMatches({ jobId }: JobCandidateMatchesProps)
           <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
             <Users className="w-20 h-20 text-gray-300 mx-auto mb-4" />
             <h3 className="text-2xl font-bold text-gray-800 mb-2">
-              Aucun candidat correspondant pour le moment
+              {t.empty}
             </h3>
             <p className="text-gray-600">
-              Les candidats dont le profil correspond apparaîtront ici automatiquement.
+              {t.emptyHint}
             </p>
           </div>
         ) : (
@@ -235,7 +235,7 @@ export default function JobCandidateMatches({ jobId }: JobCandidateMatchesProps)
                     {/* Raison du match */}
                     {match.reason && (
                       <div className="mb-3 text-sm text-gray-600 bg-blue-50 border border-blue-200 rounded-lg p-3">
-                        <span className="font-medium text-blue-900">Pourquoi ce candidat ? </span>
+                        <span className="font-medium text-blue-900">{t.why} </span>
                         {match.reason}
                       </div>
                     )}
@@ -267,7 +267,7 @@ export default function JobCandidateMatches({ jobId }: JobCandidateMatchesProps)
                       className="px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:shadow-lg hover:from-orange-600 hover:to-orange-700 transition-all font-medium flex items-center justify-center gap-2"
                     >
                       <Mail className="w-4 h-4" />
-                      <span>Contacter</span>
+                      <span>{t.contact}</span>
                     </button>
                   </div>
                 </div>
@@ -282,7 +282,7 @@ export default function JobCandidateMatches({ jobId }: JobCandidateMatchesProps)
             <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full">
               <div className="flex items-center justify-between p-6 border-b border-gray-200">
                 <h3 className="text-2xl font-bold text-gray-900">
-                  Contacter {showContactForm.full_name}
+                  {t.contactTitle} {showContactForm.full_name}
                 </h3>
                 <button
                   onClick={() => setShowContactForm(null)}
@@ -294,15 +294,14 @@ export default function JobCandidateMatches({ jobId }: JobCandidateMatchesProps)
 
               <div className="p-6">
                 <p className="text-sm text-gray-600 mb-4">
-                  <strong>Note :</strong> Cette fonctionnalité de messagerie est en cours de développement.
-                  Pour le moment, le message sera simulé.
+                  <strong>{t.note}</strong> {t.noteText}
                 </p>
 
                 <textarea
                   value={contactMessage}
                   onChange={(e) => setContactMessage(e.target.value)}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 min-h-[200px]"
-                  placeholder="Votre message..."
+                  placeholder={t.messagePlaceholder}
                 />
 
                 <div className="flex gap-3 mt-4">
@@ -310,7 +309,7 @@ export default function JobCandidateMatches({ jobId }: JobCandidateMatchesProps)
                     onClick={() => setShowContactForm(null)}
                     className="flex-1 px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium"
                   >
-                    Annuler
+                    {t.cancel}
                   </button>
                   <button
                     onClick={handleSendMessage}
@@ -320,12 +319,12 @@ export default function JobCandidateMatches({ jobId }: JobCandidateMatchesProps)
                     {sending ? (
                       <>
                         <Loader2 className="w-4 h-4 animate-spin" />
-                        <span>Envoi...</span>
+                        <span>{t.sending}</span>
                       </>
                     ) : (
                       <>
                         <Mail className="w-4 h-4" />
-                        <span>Envoyer</span>
+                        <span>{t.send}</span>
                       </>
                     )}
                   </button>
