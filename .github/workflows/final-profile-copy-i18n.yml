@@ -1,0 +1,47 @@
+name: Finalize premium profile i18n
+
+on:
+  push:
+    branches:
+      - i18n-public-sections-20260824
+    paths:
+      - '.github/workflows/final-profile-copy-i18n.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: i18n-public-sections-20260824
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Localize remaining profile copy
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const p = 'src/components/BusinessShowcaseLienoraDetail.tsx';
+          let s = fs.readFileSync(p, 'utf8');
+          s = s.replace('            Propulsé par', "            {language === 'ar' ? 'مدعوم من' : language === 'en' ? 'Powered by' : language === 'it' ? 'Offerto da' : language === 'ru' ? 'При поддержке' : 'Propulsé par'}");
+          s = s.replace('            aria-label="Fermer"', '            aria-label={text.reservationClose}');
+          s = s.replace('            alt={`Réalisation de ${displayName}`}', '            alt={`${text.gallery}: ${displayName}`}');
+          fs.writeFileSync(p, s);
+          NODE
+      - run: npm run build
+      - name: Commit localized copy
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/components/BusinessShowcaseLienoraDetail.tsx
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "i18n: finalize premium profile public copy"
+          git push origin HEAD:i18n-public-sections-20260824
