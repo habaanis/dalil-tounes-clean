@@ -1200,7 +1200,7 @@ export const Businesses = ({
                   <button
                     type="button"
                     onClick={() => navigate('/subscription')}
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-[#D4AF37] px-6 py-3 text-sm font-bold text-[#4A1D43] shadow-lg transition hover:bg-[#F0CD5A]"
+                    className="inline-flex items-center justify-center gap-2 rounded-full border border-white/55 bg-white/10 px-6 py-3 text-sm font-bold text-white transition hover:bg-white/18"
                   >
                     {pageT.hero.offers}
                     <ArrowRight className="h-4 w-4" />
@@ -1208,7 +1208,7 @@ export const Businesses = ({
                   <button
                     type="button"
                     onClick={() => document.getElementById('business-search')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-                    className="inline-flex items-center justify-center gap-2 rounded-full border border-white/55 bg-white/10 px-6 py-3 text-sm font-bold text-white transition hover:bg-white/18"
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-[#D4AF37] px-6 py-3 text-sm font-bold text-[#4A1D43] shadow-lg transition hover:bg-[#F0CD5A]"
                   >
                     {pageT.hero.search}
                     <Search className="h-4 w-4" />
