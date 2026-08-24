@@ -6,9 +6,6 @@ src/pages/CandidateProfile.tsx:93: <li>• {t.candidate?.help?.tip4 || 'Téléch
 src/pages/CardPreview.tsx:70: <strong>Donnees test :</strong> Note Google 4.7 | 23 avis | Centre de Langues | Tunis
 src/pages/CardPreview.tsx:174: <strong>Note :</strong> Si "Aucun professionnel reference" s'affiche, c'est parce que la requete
 src/pages/Concept.tsx:318: <span className="font-semibold text-gray-900">Dalil Tounes</span> simplifie la recherche des citoyens
-src/pages/CultureEvents.tsx:301: <p>Aucun événement cette semaine</p>
-src/pages/CultureEvents.tsx:331: <p>Aucun événement ce mois-ci</p>
-src/pages/CultureEvents.tsx:361: <p>Aucun événement annuel</p>
 src/pages/LocalMarketplace.tsx:259: setError('Erreur de chargement des annonces');
 src/pages/LocalMarketplace.tsx:303: setError('Erreur de recherche');
 src/pages/PourquoiDalilTounes.tsx:208: title="Pourquoi Dalil Tounes ? Plateforme tunisienne pour citoyens et entreprises"
