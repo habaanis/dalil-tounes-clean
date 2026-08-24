@@ -24,47 +24,27 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import re
+
           p = Path('src/pages/Businesses.tsx')
           s = p.read_text()
-          old = '''                <div className="mt-7 flex flex-col sm:flex-row gap-3">
-                  <button
-                    type="button"
-                    onClick={() => navigate('/subscription')}
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-[#D4AF37] px-6 py-3 text-sm font-bold text-[#4A1D43] shadow-lg transition hover:bg-[#F0CD5A]"
-                  >
-                    {pageT.hero.offers}
-                    <ArrowRight className="h-4 w-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => document.getElementById('business-search')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-                    className="inline-flex items-center justify-center gap-2 rounded-full border border-white/55 bg-white/10 px-6 py-3 text-sm font-bold text-white transition hover:bg-white/18"
-                  >
-                    {pageT.hero.search}
-                    <Search className="h-4 w-4" />
-                  </button>
-                </div>'''
-          new = '''                <div className="mt-7 flex flex-col sm:flex-row gap-3">
-                  <button
-                    type="button"
-                    onClick={() => document.getElementById('business-search')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-[#D4AF37] px-6 py-3 text-sm font-bold text-[#4A1D43] shadow-lg transition hover:bg-[#F0CD5A]"
-                  >
-                    {pageT.hero.search}
-                    <Search className="h-4 w-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => navigate('/subscription')}
-                    className="inline-flex items-center justify-center gap-2 rounded-full border border-white/55 bg-white/10 px-6 py-3 text-sm font-bold text-white transition hover:bg-white/18"
-                  >
-                    {pageT.hero.offers}
-                    <ArrowRight className="h-4 w-4" />
-                  </button>
-                </div>'''
-          if old not in s:
-              raise SystemExit('Expected hero CTA block not found; aborting without changes.')
-          p.write_text(s.replace(old, new, 1))
+
+          primary = 'inline-flex items-center justify-center gap-2 rounded-full bg-[#D4AF37] px-6 py-3 text-sm font-bold text-[#4A1D43] shadow-lg transition hover:bg-[#F0CD5A]'
+          secondary = 'inline-flex items-center justify-center gap-2 rounded-full border border-white/55 bg-white/10 px-6 py-3 text-sm font-bold text-white transition hover:bg-white/18'
+
+          offers_pattern = re.compile(r"(onClick=\{\(\) => navigate\('/subscription'\)\}\s*\n\s*className=\")[^\"]+(\")")
+          search_pattern = re.compile(r"(onClick=\{\(\) => document\.getElementById\('business-search'\)\?\.scrollIntoView\(\{ behavior: 'smooth', block: 'start' \}\)\}\s*\n\s*className=\")[^\"]+(\")")
+
+          s2, n1 = offers_pattern.subn(r'\1' + secondary + r'\2', s, count=1)
+          s3, n2 = search_pattern.subn(r'\1' + primary + r'\2', s2, count=1)
+
+          if n1 != 1 or n2 != 1:
+              raise SystemExit(f'Expected one offers CTA and one search CTA; got offers={n1}, search={n2}. No file written.')
+
+          if s3 == s:
+              raise SystemExit('No E-01 change produced.')
+
+          p.write_text(s3)
           PY
       - run: npm run build
       - name: Commit E-01 fix
