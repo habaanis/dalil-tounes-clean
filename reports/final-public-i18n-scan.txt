@@ -13,8 +13,6 @@ src/pages/Concept.tsx:318: <span className="font-semibold text-gray-900">Dalil T
 src/pages/CultureEvents.tsx:301: <p>Aucun événement cette semaine</p>
 src/pages/CultureEvents.tsx:331: <p>Aucun événement ce mois-ci</p>
 src/pages/CultureEvents.tsx:361: <p>Aucun événement annuel</p>
-src/pages/EducationEventForm.tsx:171: placeholder="votre.email@exemple.com"
-src/pages/EducationEventForm.tsx:191: placeholder="Décrivez votre événement, votre besoin, votre question ou votre demande..."
 src/pages/EducationNew.tsx:747: {q && <>Recherche : <b>{q}</b> · </>}
 src/pages/EducationNew.tsx:748: {ville && <>Ville : <b>{ville}</b></>}
 src/pages/JobCandidateMatches.tsx:49: setError('Vous devez être connecté pour voir les candidats');
