@@ -48,6 +48,20 @@ function parseEntries(block, includeDescription = false) {
   return entries;
 }
 
+function parseSousCategories() {
+  const block = extractArrayBlock('SEO_SOUS_CATEGORIES', 'export interface SecteurEntry');
+  const result = new Map();
+  const groupRe = /(?:'([^']+)'|([a-zA-Z0-9-]+))\s*:\s*\[([\s\S]*?)\],/g;
+
+  for (const match of block.matchAll(groupRe)) {
+    const metierSlug = match[1] || match[2];
+    const entries = parseEntries(match[3]);
+    if (metierSlug && entries.length > 0) result.set(metierSlug, entries);
+  }
+
+  return result;
+}
+
 function replaceOrInsertMeta(html, { title, description, canonical }) {
   const escapedTitle = htmlEscape(title);
   const escapedDescription = htmlEscape(description);
@@ -79,15 +93,19 @@ function replaceOrInsertMeta(html, { title, description, canonical }) {
   return out;
 }
 
+const writtenRoutes = new Set();
+
 function writePage(route, meta) {
   const cleanRoute = route.replace(/^\/+|\/+$/g, '');
   const dir = path.join(distDir, ...cleanRoute.split('/'));
   fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(path.join(dir, 'index.html'), replaceOrInsertMeta(baseHtml, meta));
+  writtenRoutes.add(route);
 }
 
 const metiers = parseEntries(extractArrayBlock('SEO_METIERS', 'export const SEO_VILLES'));
 const villes = parseEntries(extractArrayBlock('SEO_VILLES', 'export const SEO_SOUS_CATEGORIES'));
+const sousCategories = parseSousCategories();
 const secteurs = parseEntries(extractArrayBlock('SEO_SECTEURS', 'const SECTEUR_LABEL_TO_SLUG'), true);
 const gouvernorats = parseEntries(extractArrayBlock('SEO_GOUVERNORATS', 'export const SEO_'), true);
 
@@ -127,4 +145,34 @@ for (const item of gouvernorats) {
   });
 }
 
+let metierVilleCount = 0;
+for (const metier of metiers) {
+  for (const ville of villes) {
+    const route = `/${metier.slug}-${ville.slug}`;
+    writePage(route, {
+      title: `${metier.label} à ${ville.label} | Adresses et professionnels | Dalil Tounes`,
+      description: `Trouvez des ${metier.label.toLowerCase()} à ${ville.label}. Consultez leurs informations, horaires et coordonnées sur Dalil Tounes.`,
+      canonical: `${ORIGIN}${route}`,
+    });
+    metierVilleCount += 1;
+  }
+}
+
+let sousCategorieVilleCount = 0;
+for (const metier of metiers) {
+  const entries = sousCategories.get(metier.slug) || [];
+  for (const sousCategorie of entries) {
+    for (const ville of villes) {
+      const route = `/${metier.slug}-${sousCategorie.slug}-${ville.slug}`;
+      writePage(route, {
+        title: `${metier.label} ${sousCategorie.label} à ${ville.label} | Dalil Tounes`,
+        description: `${metier.label} spécialisé en ${sousCategorie.label} à ${ville.label}. Découvrez les professionnels, leurs horaires et coordonnées sur Dalil Tounes.`,
+        canonical: `${ORIGIN}${route}`,
+      });
+      sousCategorieVilleCount += 1;
+    }
+  }
+}
+
 console.log(`SEO HTML généré : ${metiers.length} métiers, ${villes.length} villes, ${secteurs.length} secteurs, ${gouvernorats.length} gouvernorats.`);
+console.log(`Routes SEO courtes générées : ${metierVilleCount} métier-ville, ${sousCategorieVilleCount} spécialité-ville, ${writtenRoutes.size} routes SEO uniques au total.`);
