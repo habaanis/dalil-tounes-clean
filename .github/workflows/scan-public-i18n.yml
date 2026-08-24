@@ -1,0 +1,36 @@
+name: Scan public i18n
+
+on:
+  push:
+    branches:
+      - i18n-public-sections-20260824
+    paths:
+      - 'scripts/scan-public-i18n.mjs'
+      - '.github/workflows/scan-public-i18n.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  scan:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: i18n-public-sections-20260824
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Run scanner
+        run: node scripts/scan-public-i18n.mjs
+      - name: Commit report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/public-i18n-scan.md
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "chore: add public i18n scan report"
+          git push origin HEAD:i18n-public-sections-20260824
