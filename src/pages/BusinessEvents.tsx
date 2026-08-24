@@ -298,7 +298,7 @@ export const BusinessEvents = () => {
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="{pageT.searchLabel}, une ville, une entreprise..."
+                  placeholder={pageT.searchPlaceholder}
                   className="w-full px-4 py-2.5 border border-[#D4AF37] rounded-lg text-sm focus:ring-2 focus:ring-[#4A1D43] focus:border-[#4A1D43]"
                 />
               </div>
