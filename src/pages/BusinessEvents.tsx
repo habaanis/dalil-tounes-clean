@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
+import { getBusinessEventsPageTranslations } from '../lib/businessEventsPageTranslations';
 import { supabase } from '../lib/BoltDatabase';
 import { Facebook, Linkedin, Youtube, Instagram } from 'lucide-react';
 
@@ -34,6 +35,7 @@ interface BusinessEvent {
 export const BusinessEvents = () => {
   const { language } = useLanguage();
   const t = useTranslation(language);
+  const pageT = getBusinessEventsPageTranslations(language);
   const [events, setEvents] = useState<BusinessEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -72,7 +74,7 @@ export const BusinessEvents = () => {
 
       if (fetchError) {
         console.warn('⚠️ featured_events table not available:', fetchError.message);
-        setError('Impossible de charger les événements pour le moment.');
+        setError(pageT.loadError);
         setEvents([]);
         return;
       }
@@ -81,7 +83,7 @@ export const BusinessEvents = () => {
       setEvents(data || []);
     } catch (err) {
       console.warn('⚠️ Error fetching events:', err);
-      setError('Une erreur est survenue lors du chargement des événements.');
+      setError(pageT.loadErrorGeneric);
       setEvents([]);
     } finally {
       setLoading(false);
@@ -269,7 +271,7 @@ export const BusinessEvents = () => {
       {/* Events Section */}
       <section id="business-events-list" ref={eventsRef} className="py-12 px-4">
         <div className="max-w-7xl mx-auto">
-          {/* Titre */}
+          {/* {pageT.titleLabel}/}
           <motion.div
             initial={{ y: 20, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
@@ -289,14 +291,14 @@ export const BusinessEvents = () => {
             {/* Recherche textuelle */}
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Rechercher un événement
+                {pageT.searchLabel}
               </label>
               <div className="relative">
                 <input
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Rechercher un événement, une ville, une entreprise..."
+                  placeholder="{pageT.searchLabel}, une ville, une entreprise..."
                   className="w-full px-4 py-2.5 border border-[#D4AF37] rounded-lg text-sm focus:ring-2 focus:ring-[#4A1D43] focus:border-[#4A1D43]"
                 />
               </div>
@@ -307,14 +309,14 @@ export const BusinessEvents = () => {
               {/* Ville */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Ville
+                  {pageT.city}
                 </label>
                 <select
                   value={selectedCity}
                   onChange={(e) => setSelectedCity(e.target.value)}
                   className="w-full px-3 py-2.5 border border-[#D4AF37] rounded-lg text-sm focus:ring-2 focus:ring-[#4A1D43] focus:border-[#4A1D43]"
                 >
-                  <option value="">Toutes les villes</option>
+                  <option value="">{pageT.allCities}</option>
                   {cityOptions.map((city) => (
                     <option key={city} value={city}>
                       {city}
@@ -326,14 +328,14 @@ export const BusinessEvents = () => {
               {/* Catégorie */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Catégorie
+                  {pageT.category}
                 </label>
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
                   className="w-full px-3 py-2.5 border border-[#D4AF37] rounded-lg text-sm focus:ring-2 focus:ring-[#4A1D43] focus:border-[#4A1D43]"
                 >
-                  <option value="">Toutes les catégories</option>
+                  <option value="">{pageT.allCategories}</option>
                   {categoryOptions.map((category) => (
                     <option key={category} value={category}>
                       {t.businessEvents.eventTypes[category as keyof typeof t.businessEvents.eventTypes] || category}
@@ -352,7 +354,7 @@ export const BusinessEvents = () => {
                     className="w-4 h-4 text-[#800020] border-[#D4AF37] rounded focus:ring-[#800020]"
                   />
                   <span className="text-sm text-gray-700">
-                    Afficher uniquement les événements à venir
+                    {pageT.upcomingOnly}
                   </span>
                 </label>
               </div>
@@ -363,7 +365,7 @@ export const BusinessEvents = () => {
           {loading ? (
             <div className="text-center py-16">
               <div className="inline-block w-12 h-12 border-4 border-[#800020] border-t-transparent rounded-full animate-spin"></div>
-              <p className="mt-4 text-sm text-gray-600">Chargement des événements...</p>
+              <p className="mt-4 text-sm text-gray-600">{pageT.loading}</p>
             </div>
           ) : error ? (
             <div className="mb-6 p-4 rounded-lg bg-[#800020]/5 border border-[#D4AF37] text-[#800020] text-sm">
@@ -374,7 +376,7 @@ export const BusinessEvents = () => {
               <div className="max-w-2xl mx-auto">
                 <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-12 border-2 border-gray-100">
                   <p className="text-xl text-gray-600 font-light">
-                    Aucun événement trouvé pour ces critères.
+                    {pageT.empty}
                   </p>
                 </div>
               </div>
@@ -424,7 +426,7 @@ export const BusinessEvents = () => {
 
                       <div className="space-y-1 mb-3 text-xs text-gray-600">
                         <div>
-                          <strong>Date:</strong>{' '}
+                          <strong>{pageT.date}:</strong>{' '}
                           <span>
                             {event.event_period_label && event.event_period_label.trim() !== ''
                               ? event.event_period_label
@@ -442,7 +444,7 @@ export const BusinessEvents = () => {
                                       ? end.toLocaleDateString()
                                       : event.end_date;
 
-                                    return `Du ${startLabel} au ${endLabel}`;
+                                    return `${pageT.from} ${startLabel} ${pageT.to} ${endLabel}`;
                                   }
 
                                   return startLabel;
@@ -450,11 +452,11 @@ export const BusinessEvents = () => {
                           </span>
                         </div>
                         <div>
-                          <strong>Lieu:</strong> {event.city}, {event.location}
+                          <strong>{pageT.location}:</strong> {event.city}, {event.location}
                         </div>
                         {event.organizer && (
                           <div>
-                            <strong>Org:</strong> {event.organizer}
+                            <strong>{pageT.organizer}:</strong> {event.organizer}
                           </div>
                         )}
                       </div>
@@ -543,10 +545,10 @@ export const BusinessEvents = () => {
           >
             <div className="text-center mb-6">
               <h2 className="text-3xl font-light text-[#4A1D43] mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
-                Demande d'information / inscription
+                {pageT.formTitle}
               </h2>
               <p className="text-gray-600">
-                Pour toute demande d'information ou d'inscription, remplissez le formulaire ci-dessous.
+                {pageT.formIntro}
               </p>
             </div>
 
@@ -558,20 +560,20 @@ export const BusinessEvents = () => {
                   onClick={() => setShowForm(true)}
                   className="px-8 py-3 bg-gradient-to-r from-[#4A1D43] to-[#800020] text-[#D4AF37] rounded-lg hover:shadow-lg transition-all font-semibold border-2 border-[#D4AF37]"
                 >
-                  Demande d'information / inscription
+                  {pageT.formTitle}
                 </motion.button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="relative z-50 bg-white rounded-2xl p-8 shadow-lg space-y-6">
                 <div className="text-center mb-2">
                   <p className="text-sm text-gray-600">
-                    Pour toute demande d'information ou d'inscription, envoyez-nous votre message. Notre équipe vous contactera directement.
+                    {pageT.formHelp}
                   </p>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Titre *
+                    {pageT.titleLabel}
                   </label>
                   <input
                     type="text"
@@ -579,14 +581,14 @@ export const BusinessEvents = () => {
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     className="w-full px-4 py-2 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#800020] focus:border-transparent"
-                    placeholder="Ex : Inscription événement, demande d'information, partenariat..."
+                    placeholder={pageT.titlePlaceholder}
                   />
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Téléphone *
+                      {pageT.phone}
                     </label>
                     <input
                       type="tel"
@@ -600,7 +602,7 @@ export const BusinessEvents = () => {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Email *
+                      {pageT.email}
                     </label>
                     <input
                       type="email"
@@ -615,7 +617,7 @@ export const BusinessEvents = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Message *
+                    {pageT.message}
                   </label>
                   <textarea
                     required
@@ -623,7 +625,7 @@ export const BusinessEvents = () => {
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     className="w-full px-4 py-2 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#800020] focus:border-transparent"
-                    placeholder="Expliquez votre demande..."
+                    placeholder={pageT.messagePlaceholder}
                   />
                 </div>
 
@@ -652,7 +654,7 @@ export const BusinessEvents = () => {
                     type="submit"
                     className="flex-1 px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg hover:shadow-lg transition-all font-medium"
                   >
-                    Envoyer la demande
+                    {t.businessEvents.submitForm.submit}
                   </button>
                   <button
                     type="button"
