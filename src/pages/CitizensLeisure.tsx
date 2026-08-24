@@ -392,6 +392,15 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
   };
 
   const t = translations[language];
+  const dateLocale: Record<Language, string> = { fr: 'fr-FR', en: 'en-US', ar: 'ar-TN', it: 'it-IT', ru: 'ru-RU' };
+  const currentDateLocale = dateLocale[language];
+  const leisureAlt = {
+    fr: { hero: 'Drapeau de la Tunisie - Loisirs et événements culturels tunisiens sur Dalil Tounes', chechia: 'Chéchia dorée tunisienne - Symbole du patrimoine artisanal de Tunisie' },
+    en: { hero: 'Flag of Tunisia - Leisure and cultural events on Dalil Tounes', chechia: 'Golden Tunisian chechia - Symbol of Tunisian craft heritage' },
+    ar: { hero: 'علم تونس - الترفيه والفعاليات الثقافية على دليل تونس', chechia: 'الشاشية التونسية الذهبية - رمز التراث الحرفي التونسي' },
+    it: { hero: 'Bandiera della Tunisia - Tempo libero ed eventi culturali su Dalil Tounes', chechia: 'Chechia tunisina dorata - Simbolo del patrimonio artigianale tunisino' },
+    ru: { hero: 'Флаг Туниса - Досуг и культурные мероприятия на Dalil Tounes', chechia: 'Золотая тунисская шешия - Символ ремесленного наследия Туниса' },
+  }[language];
 
   const getTranslatedText = (item: Evenement, field: 'titre' | 'description'): string => {
     return field === 'titre' ? item.titre : item.description;
@@ -408,9 +417,9 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
     };
 
     if (debut.toDateString() === fin.toDateString()) {
-      return debut.toLocaleDateString(language === 'ar' ? 'ar-TN' : language === 'en' ? 'en-US' : 'fr-FR', options);
+      return debut.toLocaleDateString(currentDateLocale, options);
     } else {
-      return `${debut.toLocaleDateString(language === 'ar' ? 'ar-TN' : language === 'en' ? 'en-US' : 'fr-FR', { day: 'numeric', month: 'short' })} - ${fin.toLocaleDateString(language === 'ar' ? 'ar-TN' : language === 'en' ? 'en-US' : 'fr-FR', { day: 'numeric', month: 'short' })}`;
+      return `${debut.toLocaleDateString(currentDateLocale, { day: 'numeric', month: 'short' })} - ${fin.toLocaleDateString(currentDateLocale, { day: 'numeric', month: 'short' })}`;
     }
   };
 
@@ -575,7 +584,7 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
 
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
-    return date.toLocaleDateString(language, { day: 'numeric', month: 'long', year: 'numeric' });
+    return date.toLocaleDateString(currentDateLocale, { day: 'numeric', month: 'long', year: 'numeric' });
   };
 
   const nextSlide = () => {
@@ -646,7 +655,7 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
             <source src={HERO_IMAGE_URL} type="image/webp" />
             <img
               src={HERO_IMAGE_JPG_URL}
-              alt="Drapeau de la Tunisie - Loisirs et événements culturels tunisiens sur Dalil Tounes"
+              alt={leisureAlt.hero}
               className="w-full h-full object-cover brightness-105"
             decoding="async"
             />
@@ -663,7 +672,7 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
               <div className="absolute inset-0 bg-[#D4AF37] blur-2xl opacity-30 rounded-full"></div>
               <img
                 src={getSupabaseImageUrl('logo-chechia-dore.png')}
-                alt="Chéchia dorée tunisienne - Symbole du patrimoine artisanal de Tunisie"
+                alt={leisureAlt.chechia}
                 className="relative w-12 h-12 object-contain drop-shadow-2xl"
                 onError={(e) => {
                   e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ccircle cx="50" cy="50" r="45" fill="%23D4AF37"/%3E%3Ctext x="50" y="60" text-anchor="middle" fill="%23fff" font-size="40" font-family="serif"%3E✺%3C/text%3E%3C/svg%3E';
