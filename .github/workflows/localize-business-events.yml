@@ -7,6 +7,12 @@ on:
     paths:
       - 'scripts/localize-business-events.mjs'
       - '.github/workflows/localize-business-events.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'scripts/localize-business-events.mjs'
+      - '.github/workflows/localize-business-events.yml'
   workflow_dispatch:
 
 permissions:
