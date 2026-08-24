@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
 import { getBusinessesPageTranslations } from '../lib/businessesPageTranslations';
+import { getBusinessBadgeLegendTranslations } from '../lib/businessBadgeLegendTranslations';
 import { supabase } from '../lib/supabaseClient';
 import { submitLegacySuggestion } from '../lib/businessRegistration';
 import { getHashQueryParams } from '../lib/url';
@@ -289,6 +290,7 @@ export const Businesses = ({
   const [searchParams] = useSearchParams();
   const t = useTranslation(language);
   const pageT = getBusinessesPageTranslations(language);
+  const badgeLegend = getBusinessBadgeLegendTranslations(language);
   const _initCache = readBusinessesCache();
   const [businesses, setBusinesses] = useState<Business[]>((_initCache?.businesses as unknown as Business[]) ?? []);
   const [loading, setLoading] = useState(_initCache === null);
@@ -1342,6 +1344,19 @@ export const Businesses = ({
             </div>
           </div>
         )}
+
+        <div className="mx-auto mb-4 flex max-w-5xl flex-col gap-2 px-4 text-xs text-gray-600 sm:flex-row sm:flex-wrap sm:justify-center" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+          <span className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/35 bg-white px-3 py-2 shadow-sm">
+            <span className="font-black text-[#4A1D43]">Premium / Artisan</span>
+            <span aria-hidden="true">—</span>
+            <span>{badgeLegend.service.replace(/^Premium \/ Artisan\s*:\s*/i, '')}</span>
+          </span>
+          <span className="inline-flex items-center gap-2 rounded-full border border-emerald-700/20 bg-white px-3 py-2 shadow-sm">
+            <span className="font-black text-emerald-800">{language === 'ar' ? 'موثّق' : language === 'en' ? 'Certified' : language === 'it' ? 'Certificato' : language === 'ru' ? 'Проверено' : 'Certifié'}</span>
+            <span aria-hidden="true">—</span>
+            <span>{badgeLegend.certified.replace(/^[^:：]+[:：]\s*/, '')}</span>
+          </span>
+        </div>
 
         {/* Affichage des résultats : avec ou sans recherche active */}
         <div ref={resultsRef} className="relative z-10 mb-10 bg-[#F8F9FA]">
