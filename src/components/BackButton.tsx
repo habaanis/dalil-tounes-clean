@@ -1,5 +1,7 @@
 import { ArrowLeft, Home } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext';
+import { getPublicComponentTranslations } from '../lib/publicComponentTranslations';
 
 interface BackButtonProps {
   onNavigate?: (page: string) => void;
@@ -11,6 +13,8 @@ interface BackButtonProps {
 export default function BackButton({ onNavigate, onNavigateBack, label, showHomeButton = true }: BackButtonProps) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { language } = useLanguage();
+  const publicT = getPublicComponentTranslations(language);
 
   const handleBackClick = () => {
     if (onNavigateBack) {
@@ -41,7 +45,7 @@ export default function BackButton({ onNavigate, onNavigateBack, label, showHome
         className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#4A1D43] hover:text-[#6B2A5E] transition-colors group"
       >
         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-        <span>{label || 'Retour aux services'}</span>
+        <span>{label || publicT.backServices}</span>
       </button>
 
       {showHomeButton && (
@@ -52,7 +56,7 @@ export default function BackButton({ onNavigate, onNavigateBack, label, showHome
             className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 hover:text-[#4A1D43] transition-colors group"
           >
             <Home className="w-4 h-4 group-hover:scale-110 transition-transform" />
-            <span>Accueil</span>
+            <span>{publicT.home}</span>
           </button>
         </>
       )}
