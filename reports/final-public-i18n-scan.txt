@@ -38,11 +38,7 @@ src/pages/PourquoiDalilTounes.tsx:208: title="Pourquoi Dalil Tounes ? Plateforme
 src/pages/PourquoiDalilTounes.tsx:374: <h2 className="text-3xl font-bold text-[#4A1D43]">Tu cherches une entreprise ?</h2>
 src/pages/PourquoiDalilTounes.tsx:388: <SectionLabel>Pour les professionnels</SectionLabel>
 src/pages/PourquoiDalilTounes.tsx:389: <h2 className="text-3xl font-bold text-[#4A1D43]">Vous êtes une entreprise ?</h2>
-src/pages/TransportInscription.tsx:207: Titre de votre demande <span className="text-red-600">*</span>
-src/pages/TransportInscription.tsx:216: placeholder="Ex : Inscription transport médical, demande d'information, partenariat..."
-src/pages/TransportInscription.tsx:251: placeholder="votre.email@exemple.com"
-src/pages/TransportInscription.tsx:271: Votre message <span className="text-red-600">*</span>
-src/pages/TransportInscription.tsx:278: placeholder="Décrivez votre demande, votre activité, votre besoin ou votre question..."
+src/pages/TransportInscription.tsx:162: <label className="block text-sm font-medium text-gray-700 mb-2">{t.message} <span className="text-red-600">*</span></label>
 src/components/AlerteRechercheForm.tsx:119: placeholder="votre@email.com"
 src/components/AlerteRechercheForm.tsx:147: placeholder="Sélectionnez une ville"
 src/components/AlerteRechercheForm.tsx:183: <option value="buy">Recherche</option>
