@@ -5,6 +5,7 @@ const root = process.cwd();
 const distDir = path.join(root, 'dist');
 const sourcePath = path.join(root, 'src', 'lib', 'seoLandingData.ts');
 const supabaseClientPath = path.join(root, 'src', 'lib', 'supabaseClient.ts');
+const shortRoutesManifestPath = path.join(distDir, 'seo-short-routes.json');
 const ORIGIN = 'https://dalil-tounes.com';
 const TODAY = new Date().toISOString().split('T')[0];
 
@@ -84,6 +85,20 @@ for (const slug of villes) add(`/ville/${slug}`, '0.75', 'weekly');
 for (const slug of secteurs) add(`/secteur/${slug}`, '0.8', 'weekly');
 for (const slug of gouvernorats) add(`/gouvernorat/${slug}`, '0.8', 'weekly');
 
+let shortRouteCount = 0;
+if (fs.existsSync(shortRoutesManifestPath)) {
+  try {
+    const manifest = JSON.parse(fs.readFileSync(shortRoutesManifestPath, 'utf8'));
+    for (const item of manifest.routes || []) {
+      if (!item?.indexable || !item?.route) continue;
+      add(item.route, item.type === 'metier-ville' ? '0.78' : '0.72', 'weekly');
+      shortRouteCount += 1;
+    }
+  } catch (error) {
+    console.warn(`[sitemap] Manifeste SEO court illisible : ${error instanceof Error ? error.message : String(error)}`);
+  }
+}
+
 async function fetchBusinesses() {
   const { url: supabaseUrl, key: anonKey } = readPublicSupabaseConfig();
   if (!supabaseUrl || !anonKey) throw new Error('configuration Supabase publique introuvable');
@@ -132,4 +147,4 @@ const xml = [
 ].join('\n');
 
 fs.writeFileSync(path.join(distDir, 'sitemap.xml'), xml);
-console.log(`Sitemap généré : ${entries.size} URLs, dont ${businessCount} entreprises.`);
+console.log(`Sitemap généré : ${entries.size} URLs, dont ${businessCount} entreprises et ${shortRouteCount} routes SEO courtes solides.`);
