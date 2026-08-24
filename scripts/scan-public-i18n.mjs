@@ -1,3 +1,4 @@
+// trigger scan after workflow creation
 import fs from 'node:fs';
 import path from 'node:path';
 
