@@ -1,0 +1,76 @@
+name: Hotfix home and jobs i18n
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  hotfix:
+    if: github.event_name == 'workflow_dispatch' || github.head_ref == 'hotfix-home-jobs-i18n-20260824'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: hotfix-home-jobs-i18n-20260824
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Apply exact i18n replacements
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          home = Path('src/pages/Home.tsx')
+          s = home.read_text()
+          s = s.replace("import VisibilityHouseSection from '../components/VisibilityHouseSection';", "import VisibilityHouseSection from '../components/VisibilityHouseSection';\nimport { getHomeJobsResidualTranslations } from '../lib/homeJobsResidualTranslations';")
+          s = s.replace("  const t = useTranslation(language);", "  const t = useTranslation(language);\n  const residualT = getHomeJobsResidualTranslations(language).home;", 1)
+          replacements = {
+            '💡 Pourquoi votre présence sur Internet est-elle importante ?': '{residualT.visibilityQuestion}',
+            'Comprendre en 30 secondes ↓': '{residualT.visibilityCta}',
+            'À quoi sert Dalil Tounes ?': '{residualT.purposeTitle}',
+            "Dalil Tounes est une plateforme numérique qui met en relation les citoyens et les entreprises tunisiennes. Les entreprises y présentent leur activité grâce à une fiche professionnelle complète, tandis que les citoyens peuvent rechercher, comparer et contacter plus facilement les professionnels qui répondent à leurs besoins.": '{residualT.purposeDescription}',
+            '👉 Découvrir à quoi sert Dalil Tounes →': '{residualT.purposeCta}',
+            'Trouver une entreprise': '{residualT.findTitle}',
+            'Trouvez rapidement un artisan, un commerçant ou un professionnel partout en Tunisie.': '{residualT.findText}',
+            'Développer sa visibilité': '{residualT.visibilityTitle}',
+            'Présentez votre activité grâce à une fiche professionnelle complète.': '{residualT.visibilityText}',
+            'Mettre en relation': '{residualT.connectTitle}',
+            "Dalil Tounes rapproche les citoyens et les entreprises tunisiennes afin qu'ils puissent se retrouver plus facilement.": '{residualT.connectText}',
+            'Découvrir la plateforme': '{residualT.discoverTitle}',
+            'Découvrez comment fonctionne Dalil Tounes, ses fonctionnalités actuelles et les évolutions à venir.': '{residualT.discoverText}',
+            'En savoir plus': '{residualT.learnMore}',
+            'Une question, une inscription ou une demande professionnelle ?': '{residualT.requestQuestion}',
+            'Demande d’information / inscription': '{residualT.requestButton}',
+          }
+          for old, new in replacements.items():
+            if old not in s:
+              print('warning missing home literal:', old)
+            s = s.replace(old, new)
+          home.write_text(s)
+
+          jobs = Path('src/pages/Jobs.tsx')
+          s = jobs.read_text()
+          s = s.replace("import JobPostForm from '../components/forms/JobPostForm';", "import JobPostForm from '../components/forms/JobPostForm';\nimport { getHomeJobsResidualTranslations } from '../lib/homeJobsResidualTranslations';")
+          s = s.replace("  const t = useTranslation(language);", "  const t = useTranslation(language);\n  const residualT = getHomeJobsResidualTranslations(language).jobs;", 1)
+          s = s.replace("Publiez vos offres d'emploi et trouvez les talents dont votre entreprise a besoin.", '{residualT.postDescription}')
+          s = s.replace("Consultez les opportunités d'emploi et déposez votre candidature en ligne.", '{residualT.findDescription}')
+          jobs.write_text(s)
+          PY
+      - run: npm run build
+      - name: Commit hotfix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/pages/Home.tsx src/pages/Jobs.tsx
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "i18n: fix home and jobs residual French"
+          git push origin HEAD:hotfix-home-jobs-i18n-20260824
