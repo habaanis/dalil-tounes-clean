@@ -1,0 +1,74 @@
+name: UX E01 Business Search Priority
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ux-e01-business-search-priority-20260824
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Prioritize business search CTA
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('src/pages/Businesses.tsx')
+          s = p.read_text()
+          old = '''                <div className="mt-7 flex flex-col sm:flex-row gap-3">
+                  <button
+                    type="button"
+                    onClick={() => navigate('/subscription')}
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-[#D4AF37] px-6 py-3 text-sm font-bold text-[#4A1D43] shadow-lg transition hover:bg-[#F0CD5A]"
+                  >
+                    {pageT.hero.offers}
+                    <ArrowRight className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => document.getElementById('business-search')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                    className="inline-flex items-center justify-center gap-2 rounded-full border border-white/55 bg-white/10 px-6 py-3 text-sm font-bold text-white transition hover:bg-white/18"
+                  >
+                    {pageT.hero.search}
+                    <Search className="h-4 w-4" />
+                  </button>
+                </div>'''
+          new = '''                <div className="mt-7 flex flex-col sm:flex-row gap-3">
+                  <button
+                    type="button"
+                    onClick={() => document.getElementById('business-search')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-[#D4AF37] px-6 py-3 text-sm font-bold text-[#4A1D43] shadow-lg transition hover:bg-[#F0CD5A]"
+                  >
+                    {pageT.hero.search}
+                    <Search className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => navigate('/subscription')}
+                    className="inline-flex items-center justify-center gap-2 rounded-full border border-white/55 bg-white/10 px-6 py-3 text-sm font-bold text-white transition hover:bg-white/18"
+                  >
+                    {pageT.hero.offers}
+                    <ArrowRight className="h-4 w-4" />
+                  </button>
+                </div>'''
+          if old not in s:
+              raise SystemExit('Expected hero CTA block not found; aborting without changes.')
+          p.write_text(s.replace(old, new, 1))
+          PY
+      - run: npm run build
+      - name: Commit E-01 fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/pages/Businesses.tsx
+          git commit -m "ux: prioritize business search on Businesses hero"
+          git push origin HEAD:ux-e01-business-search-priority-20260824
