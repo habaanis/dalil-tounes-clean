@@ -134,10 +134,10 @@ function DemoSearchBar({ t }: { t: ConceptCopy }) {
   );
 }
 
-function StepIllustration({ type, t }: { type: string | null; t: ConceptCopy }) {
+function StepIllustration({ type, t, language }: { type: string | null; t: ConceptCopy; language: Language }) {
   if (type === 'searchbar') return <DemoSearchBar t={t} />;
-  if (type === 'businesscard') return <BusinessCardPreview variant="artisan" size="compact" interactive={false} />;
-  if (type === 'cvbusiness') return <BusinessCardPreview variant="premium" size="compact" interactive={false} />;
+  if (type === 'businesscard') return <BusinessCardPreview variant="artisan" size="compact" interactive={false} language={language} />;
+  if (type === 'cvbusiness') return <BusinessCardPreview variant="premium" size="compact" interactive={false} language={language} />;
   return null;
 }
 
@@ -169,7 +169,7 @@ export default function Concept() {
             {idx === 2 && <CvBusinessSharingInfo language={language as CvBusinessSharingLanguage} />}
             {idx === 3 && <div className="flex flex-wrap gap-3 pt-2"><span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-sm font-medium text-[#D4AF37]"><Phone size={14} /> {t.call}</span><span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-sm font-medium text-[#D4AF37]"><MapPin size={14} /> GPS</span><span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-green-50 border border-green-200 text-sm font-medium text-green-700">WhatsApp</span><span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-blue-50 border border-blue-200 text-sm font-medium text-blue-700">{t.reserve}</span></div>}
             {idx === 4 && <div className="pt-2"><Link to="/entreprises" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#D4AF37] text-white font-semibold text-sm hover:bg-[#c9a42e] transition-colors"><Search size={16} />{t.trySearch}</Link></div>}
-          </div>{step.component && <div className="flex-1 w-full lg:max-w-[50%]"><StepIllustration type={step.component} t={t} /></div>}</div>
+          </div>{step.component && <div className="flex-1 w-full lg:max-w-[50%]"><StepIllustration type={step.component} t={t} language={language} /></div>}</div>
         </div>
       ))}</div></section>
 
