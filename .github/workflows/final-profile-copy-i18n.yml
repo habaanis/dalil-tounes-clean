@@ -6,6 +6,11 @@ on:
       - i18n-public-sections-20260824
     paths:
       - '.github/workflows/final-profile-copy-i18n.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/final-profile-copy-i18n.yml'
   workflow_dispatch:
 
 permissions:
@@ -45,4 +50,3 @@ jobs:
           if git diff --cached --quiet; then exit 0; fi
           git commit -m "i18n: finalize premium profile public copy"
           git push origin HEAD:i18n-public-sections-20260824
-# trigger
