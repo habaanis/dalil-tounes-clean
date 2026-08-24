@@ -24,7 +24,6 @@ src/pages/JobCandidateMatches.tsx:305: placeholder="Votre message..."
 src/pages/JobCandidateMatches.tsx:328: <span>Envoyer</span>
 src/pages/LocalMarketplace.tsx:259: setError('Erreur de chargement des annonces');
 src/pages/LocalMarketplace.tsx:303: setError('Erreur de recherche');
-src/pages/NotFound.tsx:15: <div className="mb-5 text-sm font-semibold uppercase tracking-[0.2em] text-[#D4AF37]">Erreur 404</div>
 src/pages/PartnerSearch.tsx:539: <span className="text-sm font-medium">Erreur lors de l'envoi</span>
 src/pages/PartnerSearch.tsx:585: <h3 className="text-lg font-semibold text-[#4A1D43]">Proposer mes services</h3>
 src/pages/PartnerSearch.tsx:593: Nom de l'entreprise <span className="text-[#800020]">*</span>
