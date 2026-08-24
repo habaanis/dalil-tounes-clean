@@ -1,0 +1,61 @@
+name: UX F01 Badge Legend
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.head_ref == 'ux-f01-premium-certified-legend-20260824'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ux-f01-premium-certified-legend-20260824
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Add badge legend near business results
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('src/pages/Businesses.tsx')
+          s = p.read_text()
+
+          import_anchor = "import { getBusinessesPageTranslations } from '../lib/businessesPageTranslations';\n"
+          import_line = "import { getBusinessBadgeLegendTranslations } from '../lib/businessBadgeLegendTranslations';\n"
+          if import_line not in s:
+              if import_anchor not in s:
+                  raise SystemExit('Import anchor not found')
+              s = s.replace(import_anchor, import_anchor + import_line, 1)
+
+          const_anchor = "  const pageT = getBusinessesPageTranslations(language);\n"
+          const_line = "  const badgeLegend = getBusinessBadgeLegendTranslations(language);\n"
+          if const_line not in s:
+              if const_anchor not in s:
+                  raise SystemExit('Translation anchor not found')
+              s = s.replace(const_anchor, const_anchor + const_line, 1)
+
+          results_anchor = "        {/* Affichage des résultats : avec ou sans recherche active */}\n        <div ref={resultsRef} className=\"relative z-10 mb-10 bg-[#F8F9FA]\">\n"
+          legend = """        <div className=\"mx-auto mb-4 flex max-w-5xl flex-col gap-2 px-4 text-xs text-gray-600 sm:flex-row sm:flex-wrap sm:justify-center\" dir={language === 'ar' ? 'rtl' : 'ltr'}>\n          <span className=\"inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/35 bg-white px-3 py-2 shadow-sm\">\n            <span className=\"font-black text-[#4A1D43]\">Premium / Artisan</span>\n            <span aria-hidden=\"true\">—</span>\n            <span>{badgeLegend.service.replace(/^Premium \/ Artisan\s*:\s*/i, '')}</span>\n          </span>\n          <span className=\"inline-flex items-center gap-2 rounded-full border border-emerald-700/20 bg-white px-3 py-2 shadow-sm\">\n            <span className=\"font-black text-emerald-800\">{language === 'ar' ? 'موثّق' : language === 'en' ? 'Certified' : language === 'it' ? 'Certificato' : language === 'ru' ? 'Проверено' : 'Certifié'}</span>\n            <span aria-hidden=\"true\">—</span>\n            <span>{badgeLegend.certified.replace(/^[^:：]+[:：]\s*/, '')}</span>\n          </span>\n        </div>\n\n        {/* Affichage des résultats : avec ou sans recherche active */}\n        <div ref={resultsRef} className=\"relative z-10 mb-10 bg-[#F8F9FA]\">\n"""
+          if legend not in s:
+              if results_anchor not in s:
+                  raise SystemExit('Results anchor not found')
+              s = s.replace(results_anchor, legend, 1)
+
+          p.write_text(s)
+          PY
+      - run: npm run build
+      - name: Commit F-01 fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/pages/Businesses.tsx src/lib/businessBadgeLegendTranslations.ts
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "ux: explain Premium and Certified badges"
+          git push origin HEAD:ux-f01-premium-certified-legend-20260824
