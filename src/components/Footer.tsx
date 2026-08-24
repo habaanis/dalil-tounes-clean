@@ -86,6 +86,7 @@ const footerStaticCopy = {
     reviews: 'Avis & recommandations',
     rights: 'Tous droits réservés.',
     request: 'Demande d’information / inscription',
+    slogan: 'Ne soyez pas seulement présent, soyez trouvable.',
   },
   ar: {
     discover: 'اكتشف Dalil Tounes',
@@ -98,6 +99,7 @@ const footerStaticCopy = {
     reviews: 'الآراء والتوصيات',
     rights: 'جميع الحقوق محفوظة.',
     request: 'طلب معلومات / تسجيل',
+    slogan: 'لا تكتفِ بالحضور، كن سهل العثور عليك.',
   },
   en: {
     discover: 'Discover Dalil Tounes',
@@ -110,6 +112,7 @@ const footerStaticCopy = {
     reviews: 'Reviews & recommendations',
     rights: 'All rights reserved.',
     request: 'Information request / registration',
+    slogan: 'Do not just be present, be easy to find.',
   },
   it: {
     discover: 'Scopri Dalil Tounes',
@@ -122,6 +125,7 @@ const footerStaticCopy = {
     reviews: 'Recensioni e raccomandazioni',
     rights: 'Tutti i diritti riservati.',
     request: 'Richiesta di informazioni / registrazione',
+    slogan: 'Non limitarti a essere presente, fatti trovare.',
   },
   ru: {
     discover: 'Откройте для себя Dalil Tounes',
@@ -134,6 +138,7 @@ const footerStaticCopy = {
     reviews: 'Отзывы и рекомендации',
     rights: 'Все права защищены.',
     request: 'Запрос информации / регистрация',
+    slogan: 'Не просто присутствуйте — будьте заметны и доступны для поиска.',
   },
 } as const;
 
@@ -259,7 +264,7 @@ const Footer: React.FC = () => {
 
         <div className="bg-gradient-to-r from-[#4A1D43]/80 to-[#5A2D53]/80 rounded-lg p-3.5 mb-12 border border-[#D4AF37]/50 shadow-[0_2px_20px_rgba(212,175,55,0.12)]">
           <p className="text-center text-white text-sm md:text-base font-medium" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-            {t.home.footerVisibility.text}
+            {staticCopy.slogan}
           </p>
         </div>
 
