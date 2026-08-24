@@ -22,11 +22,30 @@ const out = [];
 for (const file of files) {
   const base = path.basename(file);
   if (file.startsWith('src/pages/') && !publicPages.has(base)) continue;
+  if (file.includes('/debug/') || base === 'DebugSearchPanel.tsx' || base === 'SupabaseStatus.tsx') continue;
   const lines = fs.readFileSync(file,'utf8').split(/\r?\n/);
+  let inBlockComment = false;
   lines.forEach((line,i) => {
-    const t = line.trim();
-    if (!fr.test(t)) return;
-    if (/^(\/\/|\*|\/\*|import\b|export type\b|interface\b)/.test(t)) return;
+    let visible = line;
+    if (inBlockComment) {
+      const end = visible.indexOf('*/');
+      if (end === -1) return;
+      visible = visible.slice(end + 2);
+      inBlockComment = false;
+    }
+    const start = visible.indexOf('/*');
+    if (start !== -1) {
+      const end = visible.indexOf('*/', start + 2);
+      if (end === -1) {
+        visible = visible.slice(0, start);
+        inBlockComment = true;
+      } else {
+        visible = visible.slice(0, start) + visible.slice(end + 2);
+      }
+    }
+    const t = visible.trim();
+    if (!t || !fr.test(t)) return;
+    if (/^(\/\/|\*|import\b|export type\b|interface\b)/.test(t)) return;
     if (/console\.|\.from\(|\.eq\(|\.ilike\(|secteur:|status:|moderation_status:|visibility:/.test(t)) return;
     const direct = />\s*[^<{][^<]*</.test(t)
       || /\b(?:placeholder|title|aria-label|alt)="[^"]*[A-Za-zÀ-ÿ][^"]*"/.test(t)
