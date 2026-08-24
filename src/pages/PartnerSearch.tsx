@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
+import { getPartnerSearchOfferTranslations } from '../lib/partnerSearchOfferTranslations';
 import { supabase } from '../lib/supabaseClient';
 import { Handshake, Network, TrendingUp, Send, CheckCircle, XCircle, ArrowLeft } from 'lucide-react';
 import { Toast } from '../components/Toast';
@@ -40,6 +41,7 @@ import { Toast } from '../components/Toast';
 export const PartnerSearch = () => {
   const { language } = useLanguage();
   const t = useTranslation(language);
+  const offerT = getPartnerSearchOfferTranslations(language);
 
   const [formData, setFormData] = useState({
     profileType: '',
@@ -507,7 +509,7 @@ ${offerFormData.description.trim()}
                   {isSubmitting ? (
                     <>
                       <div className="w-4 h-4 border-2 border-[#D4AF37] border-t-transparent rounded-full animate-spin"></div>
-                      <span className="text-sm">Envoi en cours...</span>
+                      <span className="text-sm">{offerT.sending}</span>
                     </>
                   ) : (
                     <>
@@ -536,7 +538,7 @@ ${offerFormData.description.trim()}
                   >
                     <div className="flex items-center gap-2">
                       <XCircle className="w-5 h-5" />
-                      <span className="text-sm font-medium">Erreur lors de l'envoi</span>
+                      <span className="text-sm font-medium">{offerT.sendError}</span>
                     </div>
                     {errorMessage && (
                       <p className="text-xs text-red-600 ml-7">{errorMessage}</p>
@@ -582,7 +584,7 @@ ${offerFormData.description.trim()}
                     >
                       <ArrowLeft className="w-4 h-4 text-[#800020]" />
                     </button>
-                    <h3 className="text-lg font-semibold text-[#4A1D43]">Proposer mes services</h3>
+                    <h3 className="text-lg font-semibold text-[#4A1D43]">{offerT.title}</h3>
                   </div>
                 </div>
 
@@ -590,7 +592,7 @@ ${offerFormData.description.trim()}
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-[#4A1D43] mb-1.5">
-                        Nom de l'entreprise <span className="text-[#800020]">*</span>
+                        {offerT.company} <span className="text-[#800020]">*</span>
                       </label>
                       <input
                         type="text"
@@ -599,13 +601,13 @@ ${offerFormData.description.trim()}
                         onChange={handleOfferChange}
                         required
                         className="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition-all outline-none"
-                        placeholder="Votre entreprise"
+                        placeholder={offerT.companyPlaceholder}
                       />
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium text-[#4A1D43] mb-1.5">
-                        Secteur d'activité <span className="text-[#800020]">*</span>
+                        {offerT.sector} <span className="text-[#800020]">*</span>
                       </label>
                       <select
                         name="secteurActivite"
@@ -614,24 +616,24 @@ ${offerFormData.description.trim()}
                         required
                         className="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition-all outline-none"
                       >
-                        <option value="">Sélectionnez</option>
-                        <option value="informatique">Informatique & Tech</option>
-                        <option value="marketing">Marketing & Communication</option>
-                        <option value="finance">Finance & Comptabilité</option>
-                        <option value="juridique">Juridique & Conseil</option>
-                        <option value="construction">Construction & BTP</option>
-                        <option value="design">Design & Créatif</option>
-                        <option value="formation">Formation & Education</option>
-                        <option value="sante">Santé & Bien-être</option>
-                        <option value="commerce">Commerce & Vente</option>
-                        <option value="logistique">Logistique & Transport</option>
-                        <option value="autre">Autre</option>
+                        <option value="">{offerT.select}</option>
+                        <option value="informatique">{offerT.sectors.informatique}</option>
+                        <option value="marketing">{offerT.sectors.marketing}</option>
+                        <option value="finance">{offerT.sectors.finance}</option>
+                        <option value="juridique">{offerT.sectors.juridique}</option>
+                        <option value="construction">{offerT.sectors.construction}</option>
+                        <option value="design">{offerT.sectors.design}</option>
+                        <option value="formation">{offerT.sectors.formation}</option>
+                        <option value="sante">{offerT.sectors.sante}</option>
+                        <option value="commerce">{offerT.sectors.commerce}</option>
+                        <option value="logistique">{offerT.sectors.logistique}</option>
+                        <option value="autre">{offerT.sectors.autre}</option>
                       </select>
                     </div>
 
                     <div className="md:col-span-2">
                       <label className="block text-sm font-medium text-[#4A1D43] mb-1.5">
-                        Description de vos services <span className="text-[#800020]">*</span>
+                        {offerT.description} <span className="text-[#800020]">*</span>
                       </label>
                       <textarea
                         name="description"
@@ -639,28 +641,28 @@ ${offerFormData.description.trim()}
                         onChange={handleOfferChange}
                         required
                         rows={4}
-                        placeholder="Décrivez vos services, expertise, points forts..."
+                        placeholder={offerT.descriptionPlaceholder}
                         className="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition-all resize-none outline-none"
                       ></textarea>
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium text-[#4A1D43] mb-1.5">
-                        Site web / Portfolio
+                        {offerT.website}
                       </label>
                       <input
                         type="url"
                         name="siteWeb"
                         value={offerFormData.siteWeb}
                         onChange={handleOfferChange}
-                        placeholder="https://votre-site.com"
+                        placeholder="https://example.com"
                         className="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition-all outline-none"
                       />
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium text-[#4A1D43] mb-1.5">
-                        Années d'expérience
+                        {offerT.experience}
                       </label>
                       <input
                         type="number"
@@ -684,14 +686,14 @@ ${offerFormData.description.trim()}
                         value={offerFormData.email}
                         onChange={handleOfferChange}
                         required
-                        placeholder="votre@email.com"
+                        placeholder={offerT.emailPlaceholder}
                         className="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition-all outline-none"
                       />
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium text-[#4A1D43] mb-1.5">
-                        Téléphone <span className="text-[#800020]">*</span>
+                        {offerT.phone} <span className="text-[#800020]">*</span>
                       </label>
                       <input
                         type="tel"
@@ -706,7 +708,7 @@ ${offerFormData.description.trim()}
 
                     <div className="md:col-span-2">
                       <label className="block text-sm font-medium text-[#4A1D43] mb-1.5">
-                        Ville / Région <span className="text-[#800020]">*</span>
+                        {offerT.city} <span className="text-[#800020]">*</span>
                       </label>
                       <input
                         type="text"
@@ -730,12 +732,12 @@ ${offerFormData.description.trim()}
                     {isSubmittingOffer ? (
                       <>
                         <div className="w-4 h-4 border-2 border-[#D4AF37] border-t-transparent rounded-full animate-spin"></div>
-                        <span>Envoi en cours...</span>
+                        <span>{offerT.sending}</span>
                       </>
                     ) : (
                       <>
                         <Send className="w-4 h-4 text-[#D4AF37]" />
-                        <span>Envoyer mon offre</span>
+                        <span>{offerT.send}</span>
                       </>
                     )}
                   </motion.button>
@@ -747,7 +749,7 @@ ${offerFormData.description.trim()}
                       className="flex items-center gap-2 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700"
                     >
                       <CheckCircle className="w-5 h-5" />
-                      <span className="text-sm">Votre offre a bien été envoyée, merci !</span>
+                      <span className="text-sm">{offerT.success}</span>
                     </motion.div>
                   )}
 
@@ -759,7 +761,7 @@ ${offerFormData.description.trim()}
                     >
                       <div className="flex items-center gap-2">
                         <XCircle className="w-5 h-5" />
-                        <span className="text-sm font-medium">Erreur lors de l'envoi</span>
+                        <span className="text-sm font-medium">{offerT.sendError}</span>
                       </div>
                       {offerErrorMessage && (
                         <p className="text-xs text-red-600 ml-7">{offerErrorMessage}</p>
