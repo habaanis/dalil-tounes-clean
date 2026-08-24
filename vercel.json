@@ -48,8 +48,7 @@
     { "source": "/cgu", "destination": "/index.html" },
     { "source": "/politique-confidentialite", "destination": "/index.html" },
     { "source": "/plan-du-site", "destination": "/index.html" },
-    { "source": "/info-avis", "destination": "/index.html" },
-    { "source": "/:slug", "destination": "/index.html" }
+    { "source": "/info-avis", "destination": "/index.html" }
   ],
   "headers": [
     {
