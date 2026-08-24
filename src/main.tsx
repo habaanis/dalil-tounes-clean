@@ -7,6 +7,7 @@ import { registerServiceWorker } from './lib/registerServiceWorker';
 import { supportsWebP } from './lib/imageUtils';
 import { LanguageProvider } from './context/LanguageContext';
 import { AuthProvider } from './context/AuthContext';
+import ScrollToTopButton from './components/ScrollToTopButton';
 
 // Suppression des warnings Supabase tracing non critiques
 const originalConsoleWarn = console.warn;
@@ -42,6 +43,7 @@ createRoot(document.getElementById('root')!).render(
       <LanguageProvider>
         <AuthProvider>
           <App />
+          <ScrollToTopButton />
         </AuthProvider>
       </LanguageProvider>
     </Router>

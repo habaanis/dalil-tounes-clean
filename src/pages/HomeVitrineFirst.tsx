@@ -1,6 +1,7 @@
 import { ArrowRight, CheckCircle2, QrCode, Share2, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { BusinessCardPreview, type BusinessCardPreviewLanguage } from '../components/BusinessCardPreview';
+import VisibilityHouseSection from '../components/VisibilityHouseSection';
 import { useLanguage } from '../context/LanguageContext';
 import { Home as PlatformHome } from './Home';
 
@@ -169,7 +170,12 @@ export default function HomeVitrineFirst() {
         </div>
       </section>
 
-      <PlatformHome />
+      <VisibilityHouseSection />
+
+      <style>{`.platform-home-after-vitrine #maison-visibilite{display:none}`}</style>
+      <div className="platform-home-after-vitrine">
+        <PlatformHome />
+      </div>
     </div>
   );
 }
