@@ -22,7 +22,7 @@ const COPY: Record<BusinessCardPreviewLanguage, {
   fr: {
     eyebrow: 'Votre présence professionnelle commence ici',
     title: 'Votre entreprise mérite mieux qu’une simple fiche.',
-    accent: 'Créez votre Vitrine Business professionnelle.',
+    accent: 'Créez votre CV Business professionnel.',
     description: 'Un CV Business vivant qui réunit votre activité, vos services, vos réalisations, vos contacts, vos avis et votre QR Code dans une vitrine élégante, facile à montrer et à partager.',
     example: "Exemple réel de présentation : Aux saveurs d'Anis",
     primary: 'Découvrir les offres',
@@ -36,7 +36,7 @@ const COPY: Record<BusinessCardPreviewLanguage, {
   ar: {
     eyebrow: 'حضورك المهني يبدأ من هنا',
     title: 'مؤسستك تستحق أكثر من مجرد بطاقة بسيطة.',
-    accent: 'أنشئ واجهة Business احترافية.',
+    accent: 'أنشئ CV Business احترافيًا.',
     description: 'CV Business حي يجمع نشاطك وخدماتك وإنجازاتك ووسائل الاتصال والآراء ورمز QR في واجهة أنيقة وسهلة العرض والمشاركة.',
     example: "مثال تقديم: Aux saveurs d'Anis",
     primary: 'اكتشف العروض',
@@ -50,7 +50,7 @@ const COPY: Record<BusinessCardPreviewLanguage, {
   en: {
     eyebrow: 'Your professional presence starts here',
     title: 'Your business deserves more than a simple listing.',
-    accent: 'Create your professional Business Showcase.',
+    accent: 'Create your professional Business CV.',
     description: 'A living Business CV bringing together your activity, services, work, contact options, reviews and QR Code in one elegant showcase that is easy to present and share.',
     example: "Presentation example: Aux saveurs d'Anis",
     primary: 'Discover the offers',
@@ -64,7 +64,7 @@ const COPY: Record<BusinessCardPreviewLanguage, {
   it: {
     eyebrow: 'La tua presenza professionale inizia qui',
     title: 'La tua attività merita più di una semplice scheda.',
-    accent: 'Crea la tua Vetrina Business professionale.',
+    accent: 'Crea il tuo CV Business professionale.',
     description: 'Un CV Business vivo che riunisce attività, servizi, lavori, contatti, recensioni e QR Code in una vetrina elegante, facile da mostrare e condividere.',
     example: "Esempio di presentazione: Aux saveurs d'Anis",
     primary: 'Scopri le offerte',
@@ -78,7 +78,7 @@ const COPY: Record<BusinessCardPreviewLanguage, {
   ru: {
     eyebrow: 'Ваше профессиональное присутствие начинается здесь',
     title: 'Ваш бизнес заслуживает большего, чем простая карточка.',
-    accent: 'Создайте профессиональную Business-витрину.',
+    accent: 'Создайте профессиональный Business CV.',
     description: 'Живой Business CV объединяет деятельность, услуги, работы, контакты, отзывы и QR-код в одной элегантной витрине, которую легко показывать и делиться.',
     example: "Пример презентации: Aux saveurs d'Anis",
     primary: 'Посмотреть предложения',
