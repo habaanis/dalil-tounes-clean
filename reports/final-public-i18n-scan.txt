@@ -1,8 +1,4 @@
 src/pages/BusinessEvents.tsx:613: placeholder="votre@email.com"
-src/pages/CandidateJobMatches.tsx:46: setError('Vous devez être connecté pour voir vos recommandations');
-src/pages/CandidateJobMatches.tsx:62: setError('Aucun profil candidat trouvé. Veuillez créer votre profil candidat d\'abord.');
-src/pages/CandidateJobMatches.tsx:147: <p className="text-gray-600">Chargement de vos recommandations...</p>
-src/pages/CandidateJobMatches.tsx:160: <h3 className="font-bold mb-2">Erreur</h3>
 src/pages/CandidateProfile.tsx:90: <li>• {t.candidate?.help?.tip1 || 'Renseignez toutes vos coordonnées'}</li>
 src/pages/CandidateProfile.tsx:91: <li>• {t.candidate?.help?.tip2 || 'Listez vos compétences principales'}</li>
 src/pages/CandidateProfile.tsx:92: <li>• {t.candidate?.help?.tip3 || 'Indiquez votre expérience professionnelle'}</li>
@@ -13,27 +9,8 @@ src/pages/Concept.tsx:318: <span className="font-semibold text-gray-900">Dalil T
 src/pages/CultureEvents.tsx:301: <p>Aucun événement cette semaine</p>
 src/pages/CultureEvents.tsx:331: <p>Aucun événement ce mois-ci</p>
 src/pages/CultureEvents.tsx:361: <p>Aucun événement annuel</p>
-src/pages/JobCandidateMatches.tsx:49: setError('Vous devez être connecté pour voir les candidats');
-src/pages/JobCandidateMatches.tsx:143: <p className="text-gray-600">Recherche des candidats correspondants...</p>
-src/pages/JobCandidateMatches.tsx:156: <h3 className="font-bold mb-2">Erreur</h3>
-src/pages/JobCandidateMatches.tsx:305: placeholder="Votre message..."
-src/pages/JobCandidateMatches.tsx:328: <span>Envoyer</span>
 src/pages/LocalMarketplace.tsx:259: setError('Erreur de chargement des annonces');
 src/pages/LocalMarketplace.tsx:303: setError('Erreur de recherche');
-src/pages/PartnerSearch.tsx:539: <span className="text-sm font-medium">Erreur lors de l'envoi</span>
-src/pages/PartnerSearch.tsx:585: <h3 className="text-lg font-semibold text-[#4A1D43]">Proposer mes services</h3>
-src/pages/PartnerSearch.tsx:593: Nom de l'entreprise <span className="text-[#800020]">*</span>
-src/pages/PartnerSearch.tsx:602: placeholder="Votre entreprise"
-src/pages/PartnerSearch.tsx:617: <option value="">Sélectionnez</option>
-src/pages/PartnerSearch.tsx:634: Description de vos services <span className="text-[#800020]">*</span>
-src/pages/PartnerSearch.tsx:642: placeholder="Décrivez vos services, expertise, points forts..."
-src/pages/PartnerSearch.tsx:656: placeholder="https://votre-site.com"
-src/pages/PartnerSearch.tsx:687: placeholder="votre@email.com"
-src/pages/PartnerSearch.tsx:694: Téléphone <span className="text-[#800020]">*</span>
-src/pages/PartnerSearch.tsx:709: Ville / Région <span className="text-[#800020]">*</span>
-src/pages/PartnerSearch.tsx:738: <span>Envoyer mon offre</span>
-src/pages/PartnerSearch.tsx:750: <span className="text-sm">Votre offre a bien été envoyée, merci !</span>
-src/pages/PartnerSearch.tsx:762: <span className="text-sm font-medium">Erreur lors de l'envoi</span>
 src/pages/PourquoiDalilTounes.tsx:208: title="Pourquoi Dalil Tounes ? Plateforme tunisienne pour citoyens et entreprises"
 src/pages/PourquoiDalilTounes.tsx:374: <h2 className="text-3xl font-bold text-[#4A1D43]">Tu cherches une entreprise ?</h2>
 src/pages/PourquoiDalilTounes.tsx:388: <SectionLabel>Pour les professionnels</SectionLabel>
