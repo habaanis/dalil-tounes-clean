@@ -4,6 +4,7 @@ import { Copy, Check, X } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
 import { useTranslationExtended } from '../lib/useTranslationExtended';
+import { getFooterRequestTranslations } from '../lib/footerRequestTranslations';
 import { useRTL } from '../lib/useRTL';
 import { supabase } from '../lib/BoltDatabase';
 import { notifyAdmin } from '../lib/notifyAdmin';
@@ -142,6 +143,7 @@ const Footer: React.FC = () => {
   const te = useTranslationExtended(language);
   const { isRTL } = useRTL();
   const staticCopy = footerStaticCopy[language] ?? footerStaticCopy.fr;
+  const formT = getFooterRequestTranslations(language);
 
   const [showRequestForm, setShowRequestForm] = useState(false);
   const [requestForm, setRequestForm] = useState({
@@ -179,13 +181,13 @@ const Footer: React.FC = () => {
       const message = requestForm.message.trim();
 
       if (!title) {
-        setRequestError('Le titre de votre demande est obligatoire.');
+        setRequestError(formT.requiredTitle);
         setRequestSubmitting(false);
         return;
       }
 
       if (!phone && !email) {
-        setRequestError('Merci d’indiquer au moins un téléphone ou un email.');
+        setRequestError(formT.requiredContact);
         setRequestSubmitting(false);
         return;
       }
@@ -193,14 +195,14 @@ const Footer: React.FC = () => {
       if (email) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
-          setRequestError('Format email invalide.');
+          setRequestError(formT.invalidEmail);
           setRequestSubmitting(false);
           return;
         }
       }
 
       if (!message) {
-        setRequestError('Merci de décrire brièvement votre demande.');
+        setRequestError(formT.requiredMessage);
         setRequestSubmitting(false);
         return;
       }
@@ -220,7 +222,7 @@ const Footer: React.FC = () => {
 
       if (error) {
         console.error('Erreur Supabase footer:', error);
-        setRequestError('Une erreur est survenue. Veuillez réessayer.');
+        setRequestError(formT.submitError);
         return;
       }
 
@@ -245,7 +247,7 @@ const Footer: React.FC = () => {
       }, 1800);
     } catch (error) {
       console.error('Erreur demande footer:', error);
-      setRequestError('Une erreur inattendue est survenue. Veuillez réessayer.');
+      setRequestError(formT.unexpectedError);
     } finally {
       setRequestSubmitting(false);
     }
@@ -396,17 +398,17 @@ const Footer: React.FC = () => {
               <div className="sticky top-0 bg-white border-b border-[#D4AF37]/40 px-6 py-4 flex items-start justify-between gap-4 rounded-t-2xl">
                 <div>
                   <h2 className="text-xl font-semibold text-[#4A1D43]">
-                    Demande d’information / inscription
+                    {formT.heading}
                   </h2>
                   <p className="text-sm text-gray-600 mt-1">
-                    Une question, une inscription ou une demande professionnelle ? Envoyez-nous votre demande, notre équipe vous recontactera rapidement.
+                    {formT.intro}
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={closeRequestForm}
                   className="p-2 rounded-full hover:bg-gray-100 transition"
-                  aria-label="Fermer le formulaire"
+                  aria-label={formT.close}
                 >
                   <X className="w-5 h-5 text-gray-600" />
                 </button>
@@ -415,7 +417,7 @@ const Footer: React.FC = () => {
               <form onSubmit={handleRequestSubmit} className="p-6 space-y-5">
                 {requestSuccess && (
                   <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg text-sm">
-                    Merci ! Votre demande a été envoyée avec succès. Nous vous recontacterons rapidement.
+                    {formT.success}
                   </div>
                 )}
 
@@ -427,14 +429,14 @@ const Footer: React.FC = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Titre de votre demande <span className="text-[#800020]">*</span>
+                    {formT.title} <span className="text-[#800020]">*</span>
                   </label>
                   <input
                     type="text"
                     required
                     value={requestForm.title}
                     onChange={(e) => setRequestForm({ ...requestForm, title: e.target.value })}
-                    placeholder="Ex : inscription entreprise, candidat emploi, chauffeur privé, professeur..."
+                    placeholder={formT.titlePlaceholder}
                     className="w-full px-4 py-3 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#4A1D43] focus:border-[#4A1D43] text-sm"
                   />
                 </div>
@@ -442,7 +444,7 @@ const Footer: React.FC = () => {
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Téléphone
+                      {formT.phone}
                     </label>
                     <input
                       type="tel"
@@ -455,32 +457,32 @@ const Footer: React.FC = () => {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Email
+                      {formT.email}
                     </label>
                     <input
                       type="email"
                       value={requestForm.email}
                       onChange={(e) => setRequestForm({ ...requestForm, email: e.target.value })}
-                      placeholder="votre@email.com"
+                      placeholder={formT.emailPlaceholder}
                       className="w-full px-4 py-3 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#4A1D43] focus:border-[#4A1D43] text-sm"
                     />
                   </div>
                 </div>
 
                 <p className="text-xs text-gray-500">
-                  Merci d’indiquer au moins un moyen de contact : téléphone ou email.
+                  {formT.contactHint}
                 </p>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Message <span className="text-[#800020]">*</span>
+                    {formT.message} <span className="text-[#800020]">*</span>
                   </label>
                   <textarea
                     required
                     rows={5}
                     value={requestForm.message}
                     onChange={(e) => setRequestForm({ ...requestForm, message: e.target.value })}
-                    placeholder="Expliquez brièvement votre demande, votre activité ou votre question..."
+                    placeholder={formT.messagePlaceholder}
                     className="w-full px-4 py-3 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#4A1D43] focus:border-[#4A1D43] text-sm resize-none"
                   />
                 </div>
@@ -491,14 +493,14 @@ const Footer: React.FC = () => {
                     onClick={closeRequestForm}
                     className="flex-1 px-5 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all text-sm font-medium"
                   >
-                    Annuler
+                    {formT.cancel}
                   </button>
                   <button
                     type="submit"
                     disabled={requestSubmitting}
                     className="flex-1 px-5 py-3 bg-[#4A1D43] text-[#D4AF37] border border-[#D4AF37] rounded-lg hover:bg-[#5A2D53] transition-all text-sm font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
                   >
-                    {requestSubmitting ? 'Envoi en cours...' : 'Envoyer ma demande'}
+                    {requestSubmitting ? formT.sending : formT.submit}
                   </button>
                 </div>
               </form>
