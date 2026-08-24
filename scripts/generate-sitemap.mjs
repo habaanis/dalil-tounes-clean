@@ -121,11 +121,20 @@ async function fetchBusinesses() {
 }
 
 let businessCount = 0;
+let skippedBusinessCount = 0;
 try {
   const businesses = await fetchBusinesses();
   for (const business of businesses) {
-    const businessSlug = business.slug || slugify(business.nom);
-    if (!businessSlug) continue;
+    const businessName = String(business.nom ?? '').trim();
+    if (!businessName) {
+      skippedBusinessCount += 1;
+      continue;
+    }
+    const businessSlug = business.slug || slugify(businessName);
+    if (!businessSlug) {
+      skippedBusinessCount += 1;
+      continue;
+    }
     const villeSlug = slugify(business.ville);
     const route = villeSlug ? `/entreprise/${villeSlug}/${businessSlug}` : `/entreprise/${businessSlug}`;
     const lastmod = business.updated_at ? new Date(business.updated_at).toISOString().split('T')[0] : TODAY;
@@ -148,4 +157,4 @@ const xml = [
 
 fs.writeFileSync(path.join(distDir, 'sitemap.xml'), xml);
 fs.rmSync(shortRoutesManifestPath, { force: true });
-console.log(`Sitemap généré : ${entries.size} URLs, dont ${businessCount} entreprises et ${shortRouteCount} routes SEO courtes solides.`);
+console.log(`Sitemap généré : ${entries.size} URLs, dont ${businessCount} entreprises nommées, ${shortRouteCount} routes SEO courtes solides et ${skippedBusinessCount} entreprises incomplètes exclues.`);
