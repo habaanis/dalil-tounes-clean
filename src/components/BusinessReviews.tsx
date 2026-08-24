@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Star, Loader2, MessageSquare } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
+import { useLanguage } from '../context/LanguageContext';
+import { getPublicComponentTranslations } from '../lib/publicComponentTranslations';
 
 interface Review {
   id: string;
@@ -15,6 +17,9 @@ interface BusinessReviewsProps {
 }
 
 export default function BusinessReviews({ entrepriseId }: BusinessReviewsProps) {
+  const { language } = useLanguage();
+  const publicT = getPublicComponentTranslations(language);
+  const dateLocale = { fr: 'fr-FR', en: 'en-US', ar: 'ar-TN', it: 'it-IT', ru: 'ru-RU' }[language];
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -62,7 +67,7 @@ export default function BusinessReviews({ entrepriseId }: BusinessReviewsProps) 
     return (
       <div className="flex items-center justify-center py-6 text-gray-400">
         <Loader2 className="w-4 h-4 animate-spin" />
-        <span className="ml-2 text-xs">Chargement des avis...</span>
+        <span className="ml-2 text-xs">{publicT.reviewsLoading}</span>
       </div>
     );
   }
@@ -76,7 +81,7 @@ export default function BusinessReviews({ entrepriseId }: BusinessReviewsProps) 
             className="text-sm font-semibold text-[#D4AF37]"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
-            Avis clients
+            {publicT.reviewsTitle}
           </h3>
         </div>
         {reviews.length > 0 && (
@@ -91,7 +96,7 @@ export default function BusinessReviews({ entrepriseId }: BusinessReviewsProps) 
 
       {reviews.length === 0 ? (
         <p className="text-center text-xs text-gray-400 py-4 italic">
-          Aucun avis pour le moment.
+          {publicT.reviewsEmpty}
         </p>
       ) : (
         <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
@@ -105,7 +110,7 @@ export default function BusinessReviews({ entrepriseId }: BusinessReviewsProps) 
                   className="text-xs font-bold text-[#D4AF37]"
                   style={{ fontFamily: "'Playfair Display', serif" }}
                 >
-                  {r.auteur && r.auteur.trim() ? r.auteur : 'Anonyme'}
+                  {r.auteur && r.auteur.trim() ? r.auteur : publicT.anonymous}
                 </p>
                 {renderStars(r.note)}
               </div>
@@ -115,7 +120,7 @@ export default function BusinessReviews({ entrepriseId }: BusinessReviewsProps) 
                 </p>
               )}
               <time className="text-[10px] text-gray-500 mt-2 block">
-                {new Date(r.created_at).toLocaleDateString('fr-FR', {
+                {new Date(r.created_at).toLocaleDateString(dateLocale, {
                   day: 'numeric',
                   month: 'short',
                   year: 'numeric',
