@@ -45,3 +45,4 @@ jobs:
           if git diff --cached --quiet; then exit 0; fi
           git commit -m "i18n: finalize premium profile public copy"
           git push origin HEAD:i18n-public-sections-20260824
+# trigger
