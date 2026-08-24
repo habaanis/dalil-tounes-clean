@@ -26,7 +26,7 @@ const CitizensHealth = lazy(() => import('./pages/CitizensHealth'));
 const CitizensAdmin = lazy(() => import('./pages/CitizensAdmin'));
 const CitizensLeisure = lazy(() => import('./pages/CitizensLeisure'));
 const CitizensShops = lazy(() => import('./pages/CitizensShops'));
-const CitizensServices = lazy(() => import('./pages/CitizensServices'));
+const CitizensServices = lazy(() => import('./pages/CitizensServicesLocalized'));
 const CitizensTourism = lazy(() => import('./pages/CitizensTourism'));
 const CultureEvents = lazy(() => import('./pages/CultureEvents'));
 const Jobs = lazy(() => import('./pages/Jobs').then(m => ({ default: m.Jobs })));
