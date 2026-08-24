@@ -1,7 +1,4 @@
 src/pages/BusinessEvents.tsx:613: placeholder="votre@email.com"
-src/pages/BusinessNeedsPublic.tsx:105: <h1 className="text-2xl font-bold text-[#4A1D43]">Besoins professionnels</h1>
-src/pages/BusinessNeedsPublic.tsx:118: placeholder="Rechercher un besoin..."
-src/pages/BusinessNeedsPublic.tsx:152: <p className="text-gray-500 text-sm">Aucun besoin publie pour le moment.</p>
 src/pages/CandidateJobMatches.tsx:46: setError('Vous devez être connecté pour voir vos recommandations');
 src/pages/CandidateJobMatches.tsx:62: setError('Aucun profil candidat trouvé. Veuillez créer votre profil candidat d\'abord.');
 src/pages/CandidateJobMatches.tsx:147: <p className="text-gray-600">Chargement de vos recommandations...</p>
