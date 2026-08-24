@@ -6,11 +6,35 @@ import { getBlogSeoMeta } from '../../lib/seoMetaTemplates';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTranslation } from '../../lib/i18n';
 
+const blogHeroCopy = {
+  fr: {
+    title: 'Articles Dalil Tounes',
+    intro: 'Découvrez nos conseils, guides et actualités pour mieux trouver les professionnels, artisans, commerçants et entreprises en Tunisie.',
+  },
+  ar: {
+    title: 'مقالات دليل تونس',
+    intro: 'اكتشف نصائحنا وأدلتنا وآخر الأخبار لمساعدتك على العثور بسهولة أكبر على المهنيين والحرفيين والتجار والمؤسسات في تونس.',
+  },
+  en: {
+    title: 'Dalil Tounes Articles',
+    intro: 'Discover our tips, guides and news to help you find professionals, craftspeople, merchants and businesses in Tunisia more easily.',
+  },
+  it: {
+    title: 'Articoli Dalil Tounes',
+    intro: 'Scopri i nostri consigli, guide e aggiornamenti per trovare più facilmente professionisti, artigiani, commercianti e imprese in Tunisia.',
+  },
+  ru: {
+    title: 'Статьи Dalil Tounes',
+    intro: 'Читайте наши советы, руководства и новости, чтобы проще находить специалистов, мастеров, продавцов и компании в Тунисе.',
+  },
+} as const;
+
 export default function Blog() {
   const { language } = useLanguage();
   const t = useTranslation(language);
   const isRTL = language === 'ar';
   const blog = (t as any).blog;
+  const heroCopy = blogHeroCopy[language] ?? blogHeroCopy.fr;
 
   return (
     <div className="min-h-screen bg-white" dir={isRTL ? 'rtl' : 'ltr'}>
@@ -31,11 +55,11 @@ export default function Blog() {
             className="text-4xl md:text-5xl font-light text-gray-900 leading-tight mb-6"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
-            Articles Dalil Tounes
+            {heroCopy.title}
           </h1>
           <div className="w-12 h-px bg-[#D4AF37] mx-auto mb-8" />
           <p className="text-gray-500 text-lg font-light leading-relaxed max-w-xl mx-auto">
-            Découvre nos conseils, guides et actualités pour mieux trouver les professionnels, artisans, commerçants et entreprises en Tunisie.
+            {heroCopy.intro}
           </p>
         </div>
       </section>
