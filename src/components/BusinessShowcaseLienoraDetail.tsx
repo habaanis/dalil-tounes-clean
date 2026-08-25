@@ -1118,6 +1118,12 @@ export default function BusinessShowcaseLienoraDetail() {
         )}
       </div>
       <div className="dt-qr-actions">
+        {capabilities.variant === 'premium' && (
+          <Link className="dt-qr-action" to={`/qr-business/${business.id}`}>
+            <QrCode aria-hidden="true" />
+            {language === 'ar' ? 'عرض رمز QR الخاص بي' : language === 'en' ? 'Present my Business QR' : language === 'it' ? 'Mostra il mio QR Business' : language === 'ru' ? 'Показать мой Business QR' : 'Présenter mon QR Business'}
+          </Link>
+        )}
         <button type="button" className="dt-qr-action" onClick={() => void share()}>
           <Share2 aria-hidden="true" />{text.share}
         </button>

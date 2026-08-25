@@ -34,6 +34,7 @@ const PartnerSearch = lazy(() => import('./pages/PartnerSearch').then(m => ({ de
 const BusinessEvents = lazy(() => import('./pages/BusinessEvents').then(m => ({ default: m.BusinessEvents })));
 const BusinessNeeds = lazy(() => import('./pages/BusinessNeeds'));
 const BusinessDetail = lazy(() => import('./components/BusinessShowcaseDetail'));
+const BusinessQr = lazy(() => import('./pages/BusinessQr'));
 const LegacyBusinessRedirect = lazy(() => import('./components/LegacyBusinessRedirect').then(m => ({ default: m.LegacyBusinessRedirect })));
 const TransportInscription = lazy(() => import('./pages/TransportInscription'));
 const Education = lazy(() => import('./pages/EducationNew'));
@@ -146,6 +147,7 @@ function AppRouter() {
           <Route path="/entreprise/:villeSlug/:slug" element={<BusinessDetail />} />
           <Route path="/entreprise/:slug" element={<BusinessDetail />} />
           <Route path="/p/:slug" element={<BusinessDetail />} />
+          <Route path="/qr-business/:id" element={<BusinessQr />} />
 
           <Route path="/jobs" element={<Jobs />} />
           <Route path="/emploi" element={<Jobs />} />
