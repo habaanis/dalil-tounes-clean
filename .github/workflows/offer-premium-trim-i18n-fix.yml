@@ -26,16 +26,16 @@ jobs:
           from pathlib import Path
           p = Path('src/pages/Subscription.tsx')
           s = p.read_text()
-          for old in [
+          remaining = [
             "'Condivisione delle novità', ",
-            "'Consigli adatti alla tua presenza', ",
             "'Tariffe preferenziali sugli altri servizi'",
             "'Публикация новостей', ",
             "'Персональные рекомендации', ",
             "'Льготные цены на другие услуги'",
-          ]:
+          ]
+          for old in remaining:
               if old not in s:
-                  raise SystemExit(f'Missing expected item: {old}')
+                  raise SystemExit(f'Missing expected remaining item: {old}')
               s = s.replace(old, '', 1)
           s = s.replace("'Supporto prioritario', ],", "'Supporto prioritario'],")
           s = s.replace("'Приоритетная поддержка', ],", "'Приоритетная поддержка'],")
