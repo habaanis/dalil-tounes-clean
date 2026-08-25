@@ -8,6 +8,7 @@ import { FORCE_ENTERPRISE_ONLY } from '../config/searchMode';
 import { expandQuery, rankItemByQuery, MIN_CHARS } from '../lib/searchSynonyms';
 import { expandCityVariants } from '../lib/geoAliases';
 import { buildEntrepriseUrl } from '../lib/url';
+import { buildEntrepriseUrl as buildBusinessDetailUrl } from '../lib/slugify';
 import { useLanguage } from '../context/LanguageContext';
 import { t, isRTL, type Lang } from '../lib/i18n';
 import { normalizeText } from '../lib/textNormalization';
@@ -430,7 +431,13 @@ export default function SearchBar({
       return;
     }
 
-    goTo(`#/entreprises/${item.id}`);
+    const businessItem = item as any;
+    goTo(buildBusinessDetailUrl({
+      slug: businessItem.slug,
+      nom: businessItem.nom,
+      ville: businessItem.ville,
+      id: businessItem.id,
+    }));
   };
 
   const triggerNavigation = (query: string, villeParam: string) => {
