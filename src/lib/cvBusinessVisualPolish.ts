@@ -20,7 +20,9 @@ const applyCvBusinessVisualPolish = () => {
         : ratingText;
 
       if (existingBadge) {
-        existingBadge.textContent = label;
+        if (existingBadge.textContent !== label) {
+          existingBadge.textContent = label;
+        }
       } else {
         const badge = document.createElement('small');
         badge.className = 'dt-section-badge dt-google-review-badge';
@@ -31,7 +33,7 @@ const applyCvBusinessVisualPolish = () => {
     }
   }
 
-  if (rating) rating.hidden = true;
+  if (rating && !rating.hidden) rating.hidden = true;
 };
 
 let observer: MutationObserver | null = null;
