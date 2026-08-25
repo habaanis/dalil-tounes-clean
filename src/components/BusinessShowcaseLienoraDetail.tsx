@@ -852,7 +852,7 @@ export default function BusinessShowcaseLienoraDetail() {
         { label: 'LinkedIn', href: normalizeExternalUrl(business['Lien LinkedIn']), icon: Linkedin },
         { label: 'YouTube', href: normalizeExternalUrl(business['Lien YouTube']), icon: Youtube },
         { label: 'TikTok', href: normalizeExternalUrl(business['Lien TikTok']), icon: Music2 },
-      ].filter(link => link.href)
+      ].filter(link => link.href).slice(0, capabilities.variant === 'artisan' ? 2 : undefined)
     : [];
 
   const primaryActions = [

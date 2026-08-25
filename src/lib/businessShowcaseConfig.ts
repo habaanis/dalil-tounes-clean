@@ -41,13 +41,13 @@ export function getBusinessShowcaseCapabilities(
   if (effectiveTier === 'artisan') {
     return {
       variant: 'artisan',
-      productLabel: 'Vitrine Business Artisan',
+      productLabel: 'CV Business Artisan',
       ...media,
       showDetailedPresentation: true,
       showServices: true,
       showAbout: true,
       showWebsite: true,
-      showSocialLinks: false,
+      showSocialLinks: true,
       showReservation: false,
       showQrCode: true,
       showShareTools: true,
