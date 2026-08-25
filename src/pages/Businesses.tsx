@@ -1366,9 +1366,79 @@ export const Businesses = ({
               <p className="mt-3 text-sm text-gray-600">{searching ? t.businesses.searching || t.common.loading : t.common.loading}</p>
             </div>
           ) : filteredBusinesses.length === 0 && hasActiveSearch ? (
-            <div className="text-center py-12">
+            <div className="px-4 py-12 text-center">
               <Building2 className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-              <p className="text-sm text-gray-600">{t.common.noResults}</p>
+              <h3 className="text-lg font-bold text-[#4A1D43]">
+                {language === 'ar'
+                  ? 'لم يتم العثور على أي مؤسسة لهذا البحث'
+                  : language === 'en'
+                    ? 'No business found for this search'
+                    : language === 'it'
+                      ? 'Nessuna impresa trovata per questa ricerca'
+                      : language === 'ru'
+                        ? 'По этому запросу компании не найдены'
+                        : 'Aucune entreprise trouvée pour cette recherche'}
+              </h3>
+              <p className="mx-auto mt-2 max-w-xl text-sm leading-relaxed text-gray-600">
+                {language === 'ar'
+                  ? 'جرّب نشاطًا آخر أو مدينة أخرى أو وسّع نطاق البحث.'
+                  : language === 'en'
+                    ? 'Try another activity, another city, or broaden your search.'
+                    : language === 'it'
+                      ? 'Prova un’altra attività, un’altra città o amplia la ricerca.'
+                      : language === 'ru'
+                        ? 'Попробуйте другой вид деятельности, другой город или расширьте поиск.'
+                        : 'Essayez une autre activité, une autre ville ou élargissez votre recherche.'}
+              </p>
+              <div className="mt-5 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedBusinessId(null);
+                    setSearchTerm('');
+                    setSelectedCity('');
+                    setSelectedCategory('');
+                    setPageCategorie(null);
+                    setFilterPremium(false);
+                    setFilterCommerceLocal(false);
+                    setFilterStatutCarte('');
+                    setSelectedChipCategories([]);
+                    navigate('/entreprises', { replace: true });
+                    window.setTimeout(() => {
+                      document.getElementById('business-search')?.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start',
+                      });
+                    }, 50);
+                  }}
+                  className="inline-flex items-center justify-center rounded-full bg-[#D4AF37] px-5 py-2.5 text-sm font-bold text-[#4A1D43] transition hover:bg-[#F0CD5A]"
+                >
+                  {language === 'ar'
+                    ? 'إعادة ضبط البحث'
+                    : language === 'en'
+                      ? 'Reset search'
+                      : language === 'it'
+                        ? 'Reimposta la ricerca'
+                        : language === 'ru'
+                          ? 'Сбросить поиск'
+                          : 'Réinitialiser la recherche'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowSuggestForm(true)}
+                  className="text-sm font-semibold text-[#4A1D43] underline decoration-[#D4AF37] underline-offset-4 transition hover:text-[#D4AF37]"
+                >
+                  {language === 'ar'
+                    ? 'اقتراح مؤسسة'
+                    : language === 'en'
+                      ? 'Suggest a business'
+                      : language === 'it'
+                        ? 'Suggerisci un’impresa'
+                        : language === 'ru'
+                          ? 'Предложить компанию'
+                          : 'Suggérer une entreprise'}
+                </button>
+              </div>
             </div>
           ) : filteredBusinesses.length > 0 ? (
             <div className="px-4">
