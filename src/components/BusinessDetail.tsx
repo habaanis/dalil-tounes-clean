@@ -169,11 +169,11 @@ function renderStatutCarteBadge(statut_carte: string | null | undefined) {
     normalized.includes('CERTIFIED DALIL TOUNES') ||
     normalized.includes('CERTIFIE');
 
-  const label = isNonCertified
-    ? '⚠️ NON CERTIFIÉ'
-    : isCertified
-      ? '⭐ CERTIFIÉ DALIL TOUNES'
-      : statut_carte;
+  if (isNonCertified) return null;
+
+  const label = isCertified
+    ? '⭐ CERTIFIÉ DALIL TOUNES'
+    : statut_carte;
 
   return (
     <span
@@ -187,7 +187,7 @@ function renderStatutCarteBadge(statut_carte: string | null | undefined) {
         padding: '4px 10px',
         borderRadius: '999px',
         color: '#ffffff',
-        backgroundColor: isNonCertified ? '#ea580c' : '#15803d',
+        backgroundColor: '#15803d',
         boxShadow: '0 4px 12px rgba(0,0,0,0.18)',
         textTransform: 'uppercase',
         lineHeight: 1.2,
