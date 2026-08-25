@@ -32,6 +32,7 @@ interface SubscriptionRequestFormProps {
   selectedPlanLabel: string;
   checkoutOffer: CheckoutOffer;
   initialBillingPeriod?: BillingPeriod;
+  creationMode?: boolean;
   onCancel?: () => void;
   onSuccess?: () => void;
 }
@@ -671,6 +672,7 @@ export function SubscriptionRequestForm({
   selectedPlanLabel,
   checkoutOffer,
   initialBillingPeriod,
+  creationMode = false,
   onCancel,
   onSuccess,
 }: SubscriptionRequestFormProps) {
@@ -740,9 +742,10 @@ export function SubscriptionRequestForm({
   };
 
   const validateStepTwo = (): string | null => {
-    if (planKind === 'cv' && !form.requestedPaymentSchedule) return copy.requiredPaymentSchedule;
-    if (planKind !== 'cv' && !form.requestedBillingPeriod) return copy.requiredPlanChoice;
+    if (!creationMode && planKind === 'cv' && !form.requestedPaymentSchedule) return copy.requiredPaymentSchedule;
+    if (!creationMode && planKind !== 'cv' && !form.requestedBillingPeriod) return copy.requiredPlanChoice;
     if (
+      !creationMode &&
       planKind !== 'cv' &&
       form.requestedBillingPeriod === 'annual' &&
       !['one_payment', 'three_installments'].includes(form.requestedPaymentSchedule)
@@ -804,7 +807,7 @@ export function SubscriptionRequestForm({
       instagram: normalizeWebAddress(form.instagram, 'instagram'),
       whatsapp: form.whatsapp.trim() ? normalizePhone(form.whatsapp) : '',
       selectedPlatforms: form.selectedPlatforms,
-      requestedBillingPeriod: planKind === 'cv' ? '' : form.requestedBillingPeriod,
+      requestedBillingPeriod: creationMode || planKind === 'cv' ? '' : form.requestedBillingPeriod,
       requestedPaymentSchedule: form.requestedPaymentSchedule,
       preferredContactMethod: form.preferredContactMethod,
       preferredContactTime: form.preferredContactTime,
@@ -1036,7 +1039,7 @@ export function SubscriptionRequestForm({
             )}
           </div>
 
-          {planKind === 'cv' ? (
+          {creationMode ? null : planKind === 'cv' ? (
             <ChoiceGroup legend={copy.cvPaymentQuestion}>
               <RadioChoice name="requestedPaymentSchedule" value="one_payment" checked={form.requestedPaymentSchedule === 'one_payment'} onChange={setField} label={copy.cvSingle} />
               <RadioChoice name="requestedPaymentSchedule" value="two_installments" checked={form.requestedPaymentSchedule === 'two_installments'} onChange={setField} label={copy.cvTwo} />
@@ -1145,11 +1148,13 @@ export function SubscriptionRequestForm({
           </label>
 
           <p className="text-center text-sm font-semibold text-[#4A1D43]">{copy.freeNotice}</p>
-          <div className="rounded-xl border border-[#D4AF37]/40 bg-[#FFF9E8] px-4 py-3 text-sm leading-6 text-[#4A1D43]">
-            <p>{checkoutCopy.currencyNotice}</p>
-            <p className="mt-1 font-semibold">{checkoutCopy.installmentsNotice}</p>
-          </div>
-          {checkoutSelection && (
+          {!creationMode && (
+            <div className="rounded-xl border border-[#D4AF37]/40 bg-[#FFF9E8] px-4 py-3 text-sm leading-6 text-[#4A1D43]">
+              <p>{checkoutCopy.currencyNotice}</p>
+              <p className="mt-1 font-semibold">{checkoutCopy.installmentsNotice}</p>
+            </div>
+          )}
+          {!creationMode && checkoutSelection && (
             <button
               type="button"
               onClick={openStripeCheckout}
