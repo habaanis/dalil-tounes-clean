@@ -1,0 +1,21 @@
+name: Audit legacy CV Business references
+
+on:
+  push:
+    branches: [cleanup-cv-business-preview-20260825]
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: cleanup-cv-business-preview-20260825
+      - name: Find legacy preview references
+        run: grep -R -n BusinessCardPreviewLegacy src || true
+      - name: Find legacy detail references
+        run: grep -R -n LegacyBusinessDetail src || true
+      - name: Find new showcase references
+        run: grep -R -n BusinessShowcaseLienora src || true
+      - run: npm ci
+      - run: npm run build
