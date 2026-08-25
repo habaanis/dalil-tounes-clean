@@ -1075,7 +1075,7 @@ function DemoLogo({ alt, src = LOGO_PATH }: { alt: string; src?: string }) {
   );
 }
 
-function EssentialCardPreview({ copy }: { copy: SubscriptionCopy }) {
+function EssentialCardPreview({ copy, previewText }: { copy: SubscriptionCopy; previewText: string }) {
   return (
     <div className="mx-auto max-w-lg rounded-[26px] border-[3px] border-[#D6AF2E] bg-white p-5 text-slate-800 shadow-xl sm:p-7">
       <div className="mb-5 flex justify-center">
@@ -1093,7 +1093,7 @@ function EssentialCardPreview({ copy }: { copy: SubscriptionCopy }) {
       <div className="mt-4 flex items-center justify-center gap-2 rounded-full bg-[#D6AF2E] px-5 py-3 font-bold text-[#173429]">
         <Phone className="h-5 w-5" aria-hidden="true" /> {copy.contactDalil}
       </div>
-      <p className="mt-4 text-sm leading-6 text-slate-600">{copy.essentialPreviewText}</p>
+      <p className="mt-4 text-sm leading-6 text-slate-600">{previewText}</p>
     </div>
   );
 }
@@ -1116,6 +1116,8 @@ const simplifiedOfferCopy: Record<OfferLanguage, {
   preview: string;
   chooseArtisan: string;
   choosePremium: string;
+  essentialFeatures: string[];
+  essentialPreviewText: string;
 }> = {
   fr: {
     productsTitle: 'Choisissez votre CV Business',
@@ -1135,6 +1137,8 @@ const simplifiedOfferCopy: Record<OfferLanguage, {
     preview: 'Aperçu du CV Business',
     chooseArtisan: 'Choisir CV Business Artisan',
     choosePremium: 'Choisir CV Business Premium',
+    essentialFeatures: ["Nom de l'activité", 'Activité', 'Ville', 'Téléphone', "Horaires d'ouverture"],
+    essentialPreviewText: "Une présence gratuite avec le nom, l’activité, la ville, le téléphone et les horaires.",
   },
   ar: {
     productsTitle: 'اختر CV Business الخاص بك',
@@ -1154,6 +1158,8 @@ const simplifiedOfferCopy: Record<OfferLanguage, {
     preview: 'معاينة CV Business',
     chooseArtisan: 'اختر CV Business حرفي',
     choosePremium: 'اختر CV Business Premium',
+    essentialFeatures: ['اسم النشاط', 'النشاط', 'المدينة', 'الهاتف', 'أوقات العمل'],
+    essentialPreviewText: 'حضور مجاني يتضمن اسم النشاط والنشاط والمدينة والهاتف وأوقات العمل.',
   },
   en: {
     productsTitle: 'Choose your Business CV',
@@ -1173,6 +1179,8 @@ const simplifiedOfferCopy: Record<OfferLanguage, {
     preview: 'Business CV preview',
     chooseArtisan: 'Choose Artisan Business CV',
     choosePremium: 'Choose Premium Business CV',
+    essentialFeatures: ['Business name', 'Activity', 'City', 'Phone', 'Opening hours'],
+    essentialPreviewText: 'A free presence with the business name, activity, city, phone and opening hours.',
   },
   it: {
     productsTitle: 'Scegli il tuo CV Business',
@@ -1192,6 +1200,8 @@ const simplifiedOfferCopy: Record<OfferLanguage, {
     preview: 'Anteprima CV Business',
     chooseArtisan: 'Scegli CV Business Artisan',
     choosePremium: 'Scegli CV Business Premium',
+    essentialFeatures: ["Nome dell’attività", 'Attività', 'Città', 'Telefono', 'Orari di apertura'],
+    essentialPreviewText: 'Una presenza gratuita con nome, attività, città, telefono e orari.',
   },
   ru: {
     productsTitle: 'Выберите свой Business CV',
@@ -1211,6 +1221,8 @@ const simplifiedOfferCopy: Record<OfferLanguage, {
     preview: 'Предпросмотр Business CV',
     chooseArtisan: 'Выбрать Business CV Artisan',
     choosePremium: 'Выбрать Business CV Premium',
+    essentialFeatures: ['Название деятельности', 'Деятельность', 'Город', 'Телефон', 'Часы работы'],
+    essentialPreviewText: 'Бесплатное присутствие с названием, деятельностью, городом, телефоном и часами работы.',
   },
 };
 
@@ -1307,7 +1319,7 @@ export const Subscription = () => {
             </div>
             <p className="mt-1 text-sm font-bold text-[#4A123F]">{copy.essentialFree}</p>
             <div className="my-5 h-px bg-amber-100" />
-            <FeatureList items={[...copy.essentialFeatures]} />
+            <FeatureList items={simplifiedOfferCopy[language as OfferLanguage].essentialFeatures} />
             <div className="mt-auto grid gap-2 pt-6">
               <a
                 href="/inscription-entreprise"
@@ -1429,7 +1441,7 @@ export const Subscription = () => {
             </div>
           </div>
           <a
-            href="#continuous-services-title"
+            href="#cv-business-products-title"
             className="flex shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-bold text-[#4A123F] transition hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]"
           >
             {copy.ctaButton} <ChevronRight className="h-4 w-4" aria-hidden="true" />
@@ -1440,7 +1452,7 @@ export const Subscription = () => {
       {activePreview === 'free' && (
         <Modal title={copy.previewEssentialTitle} onClose={closePreview} closeLabel={copy.closeModal} size="compact">
           <h2 className="mb-4 text-center text-2xl font-bold text-[#4A123F]">{copy.previewEssentialTitle}</h2>
-          <EssentialCardPreview copy={copy} />
+          <EssentialCardPreview copy={copy} previewText={simplifiedOfferCopy[language as OfferLanguage].essentialPreviewText} />
         </Modal>
       )}
 
