@@ -1,0 +1,47 @@
+name: Simplify CV Business offer push
+
+on:
+  push:
+    branches: [offer-cv-business-creation-maintenance-20260825]
+
+permissions:
+  contents: write
+
+jobs:
+  patch-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: offer-cv-business-creation-maintenance-20260825
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Reuse offer patch script
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          source = Path('.github/workflows/offer-cv-business-creation-maintenance.yml').read_text().splitlines()
+          start = next(i for i, line in enumerate(source) if line.strip() == '- name: Apply offer architecture')
+          run_line = next(i for i in range(start + 1, len(source)) if source[i].strip() == 'run: |')
+          end = next(i for i in range(run_line + 1, len(source)) if source[i].startswith('      - ') and i > run_line + 1)
+          block = source[run_line + 1:end]
+          script = '\n'.join(line[10:] if line.startswith('          ') else line for line in block) + '\n'
+          Path('/tmp/apply-offer.sh').write_text(script)
+          PY
+          bash /tmp/apply-offer.sh
+      - run: npm run build
+      - name: Commit source changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/pages/Subscription.tsx src/components/SubscriptionRequestForm.tsx
+          if git diff --cached --quiet; then
+            echo "No source changes to commit"
+          else
+            git commit -m "offer: simplify CV Business creation and annual maintenance"
+            git push origin HEAD:offer-cv-business-creation-maintenance-20260825
+          fi
