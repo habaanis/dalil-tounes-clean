@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter, HashRouter } from 'react-router-dom';
 import App from './App.tsx';
 import './index.css';
+import './styles/cvBusinessPolish.css';
 import { registerServiceWorker } from './lib/registerServiceWorker';
 import { supportsWebP } from './lib/imageUtils';
 import { LanguageProvider } from './context/LanguageContext';
