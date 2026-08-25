@@ -4,7 +4,6 @@ import { supabase } from '../lib/supabaseClient';
 import { Tables } from '../lib/dbTables';
 import { buildEntrepriseUrl } from '../lib/slugify';
 
-
 export function LegacyBusinessRedirect() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -19,11 +18,24 @@ export function LegacyBusinessRedirect() {
     let cancelled = false;
 
     (async () => {
-      const { data, error } = await supabase
+      const selectFields = 'id, id_airtable, nom, slug, ville';
+
+      let { data, error } = await supabase
         .from(Tables.ENTREPRISE)
-        .select('id, nom, slug, ville')
+        .select(selectFields)
         .eq('id', id)
         .maybeSingle();
+
+      if ((!data || error) && /^rec[a-z0-9]+$/i.test(id)) {
+        const fallback = await supabase
+          .from(Tables.ENTREPRISE)
+          .select(selectFields)
+          .eq('id_airtable', id)
+          .maybeSingle();
+
+        data = fallback.data;
+        error = fallback.error;
+      }
 
       if (cancelled) return;
 
@@ -32,7 +44,12 @@ export function LegacyBusinessRedirect() {
         return;
       }
 
-      const target = buildEntrepriseUrl({ slug: data.slug, nom: data.nom, ville: data.ville, id: data.id });
+      const target = buildEntrepriseUrl({
+        slug: data.slug,
+        nom: data.nom,
+        ville: data.ville,
+        id: data.id,
+      });
       navigate(target, { replace: true });
     })();
 
