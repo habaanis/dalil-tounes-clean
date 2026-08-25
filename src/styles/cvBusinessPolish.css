@@ -28,3 +28,69 @@
   font-weight: 900;
   letter-spacing: 0.01em;
 }
+
+.dt-showcase .dt-presentation-accordion {
+  margin-top: 7px;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--dt-border) 58%, transparent);
+  border-radius: 10px;
+  background: linear-gradient(90deg, var(--dt-panel-start), var(--dt-panel-end));
+}
+
+.dt-showcase .dt-presentation-trigger {
+  min-height: 50px;
+}
+
+.dt-showcase .dt-presentation-icon {
+  width: 18px;
+  height: 18px;
+  border: 1px solid color-mix(in srgb, var(--dt-accent) 72%, transparent);
+  border-radius: 50%;
+  color: var(--dt-accent);
+  display: grid;
+  place-items: center;
+  font-size: 0.68rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.dt-showcase .dt-presentation-spacer {
+  width: 1px;
+  height: 1px;
+}
+
+.dt-showcase .dt-presentation-chevron {
+  display: grid;
+  place-items: center;
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.dt-showcase .dt-presentation-content {
+  display: none;
+  padding: 12px;
+  border-top: 1px solid color-mix(in srgb, var(--dt-border) 35%, transparent);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.dt-showcase .dt-presentation-accordion.open .dt-presentation-content {
+  display: block;
+  animation: dt-accordion-in 0.18s ease-out;
+}
+
+.dt-showcase .dt-presentation-accordion.open .dt-presentation-chevron {
+  transform: rotate(90deg);
+}
+
+[dir='rtl'] .dt-showcase .dt-presentation-accordion.open .dt-presentation-chevron {
+  transform: rotate(-90deg);
+}
+
+.dt-showcase .dt-presentation-content .dt-eyebrow {
+  margin-top: 0;
+}
+
+.dt-showcase .dt-presentation-content h2 {
+  margin-top: 0;
+}

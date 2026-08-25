@@ -1,8 +1,57 @@
 const REVIEW_SECTION_ID = 'dt-section-reviews';
 
-const applyCvBusinessVisualPolish = () => {
-  const showcase = document.querySelector<HTMLElement>('.dt-showcase');
-  if (!showcase) return;
+const enhancePresentationAccordion = (showcase: HTMLElement, index: number) => {
+  const intro = showcase.querySelector<HTMLElement>('.dt-intro');
+  if (!intro || intro.dataset.presentationAccordion === 'true') return;
+
+  intro.dataset.presentationAccordion = 'true';
+  intro.classList.add('dt-presentation-accordion');
+
+  const label = intro.querySelector<HTMLElement>('.dt-eyebrow')?.textContent?.trim() || 'Présentation';
+  const panelId = `dt-presentation-panel-${index}`;
+
+  const panel = document.createElement('div');
+  panel.className = 'dt-presentation-content';
+  panel.id = panelId;
+
+  while (intro.firstChild) {
+    panel.appendChild(intro.firstChild);
+  }
+
+  const trigger = document.createElement('button');
+  trigger.type = 'button';
+  trigger.className = 'dt-accordion-trigger dt-presentation-trigger';
+  trigger.setAttribute('aria-expanded', 'false');
+  trigger.setAttribute('aria-controls', panelId);
+
+  const icon = document.createElement('span');
+  icon.className = 'dt-presentation-icon';
+  icon.setAttribute('aria-hidden', 'true');
+  icon.textContent = 'i';
+
+  const title = document.createElement('span');
+  title.textContent = label;
+
+  const spacer = document.createElement('span');
+  spacer.className = 'dt-presentation-spacer';
+  spacer.setAttribute('aria-hidden', 'true');
+
+  const chevron = document.createElement('span');
+  chevron.className = 'dt-accordion-chevron dt-presentation-chevron';
+  chevron.setAttribute('aria-hidden', 'true');
+  chevron.textContent = '›';
+
+  trigger.append(icon, title, spacer, chevron);
+  intro.append(trigger, panel);
+
+  trigger.addEventListener('click', () => {
+    const open = intro.classList.toggle('open');
+    trigger.setAttribute('aria-expanded', String(open));
+  });
+};
+
+const polishShowcase = (showcase: HTMLElement, index: number) => {
+  enhancePresentationAccordion(showcase, index);
 
   const rating = showcase.querySelector<HTMLElement>('.dt-rating');
   const reviewTrigger = showcase.querySelector<HTMLButtonElement>(`#${REVIEW_SECTION_ID} .dt-accordion-trigger`);
@@ -34,6 +83,12 @@ const applyCvBusinessVisualPolish = () => {
   }
 
   if (rating && !rating.hidden) rating.hidden = true;
+};
+
+const applyCvBusinessVisualPolish = () => {
+  document.querySelectorAll<HTMLElement>('.dt-showcase').forEach((showcase, index) => {
+    polishShowcase(showcase, index);
+  });
 };
 
 let observer: MutationObserver | null = null;
