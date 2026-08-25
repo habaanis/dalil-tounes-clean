@@ -56,8 +56,8 @@ export function mapSubscriptionToTier(data: SubscriptionData): SubscriptionTier 
 /**
  * Obtient les limites médias selon le plan d'abonnement
  * - Gratuit: Pas de galerie
- * - Artisan: 3 photos max
- * - Premium: 5 photos max, 1 vidéo
+ * - Artisan: 5 photos max
+ * - Premium: 10 photos max, 1 vidéo
  * - Elite Pro: 10 photos max, 3 vidéos
  * - Custom: 10 photos max, 3 vidéos
  */
@@ -72,14 +72,14 @@ export function getMediaLimits(tier: SubscriptionTier): MediaLimits {
       };
     case 'artisan':
       return {
-        maxPhotos: 3,
+        maxPhotos: 5,
         maxVideos: 0,
         showGallery: true,
         showVideos: false,
       };
     case 'premium':
       return {
-        maxPhotos: 5,
+        maxPhotos: 10,
         maxVideos: 1,
         showGallery: true,
         showVideos: true,
