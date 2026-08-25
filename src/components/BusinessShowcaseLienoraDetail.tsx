@@ -878,6 +878,12 @@ export default function BusinessShowcaseLienoraDetail() {
       icon: Navigation,
       external: true,
     },
+    websiteUrl && {
+      label: text.website,
+      href: websiteUrl,
+      icon: Globe2,
+      external: true,
+    },
   ].filter((action): action is ActionConfig => Boolean(action));
 
   const copyLink = async () => {
@@ -1362,16 +1368,18 @@ export default function BusinessShowcaseLienoraDetail() {
               </div>
             )}
             <div className="dt-secondary-actions">
-              <button
-                type="button"
-                className="dt-secondary-action"
-                onClick={capabilities.showReservation ? openBooking : requestQuote}
-              >
-                {capabilities.showReservation
-                  ? <CalendarDays aria-hidden="true" />
-                  : <FileText aria-hidden="true" />}
-                {capabilities.showReservation ? text.book : text.requestQuote}
-              </button>
+              {(capabilities.showReservation || whatsappUrl || business.email) && (
+                <button
+                  type="button"
+                  className="dt-secondary-action"
+                  onClick={capabilities.showReservation ? openBooking : requestQuote}
+                >
+                  {capabilities.showReservation
+                    ? <CalendarDays aria-hidden="true" />
+                    : <FileText aria-hidden="true" />}
+                  {capabilities.showReservation ? text.book : text.requestQuote}
+                </button>
+              )}
               <button type="button" className="dt-secondary-action" onClick={downloadContact}>
                 <Contact aria-hidden="true" />{text.addContact}
               </button>
