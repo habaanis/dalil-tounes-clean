@@ -1,0 +1,62 @@
+name: Validate simplified offer consistency
+
+on:
+  push:
+    branches: [offer-cv-business-creation-maintenance-20260825]
+
+permissions:
+  contents: write
+
+jobs:
+  fix-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: offer-cv-business-creation-maintenance-20260825
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Align essential presence and CTA
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('src/pages/Subscription.tsx')
+          s = p.read_text()
+
+          s = s.replace("  choosePremium: string;\n}>", "  choosePremium: string;\n  essentialFeatures: string[];\n  essentialPreviewText: string;\n}>", 1)
+
+          additions = {
+            "    choosePremium: 'Choisir CV Business Premium',\n": "    choosePremium: 'Choisir CV Business Premium',\n    essentialFeatures: [\"Nom de l'activité\", 'Activité', 'Ville', 'Téléphone', \"Horaires d'ouverture\"],\n    essentialPreviewText: \"Une présence gratuite avec le nom, l’activité, la ville, le téléphone et les horaires.\",\n",
+            "    choosePremium: 'اختر CV Business Premium',\n": "    choosePremium: 'اختر CV Business Premium',\n    essentialFeatures: ['اسم النشاط', 'النشاط', 'المدينة', 'الهاتف', 'أوقات العمل'],\n    essentialPreviewText: 'حضور مجاني يتضمن اسم النشاط والنشاط والمدينة والهاتف وأوقات العمل.',\n",
+            "    choosePremium: 'Choose Premium Business CV',\n": "    choosePremium: 'Choose Premium Business CV',\n    essentialFeatures: ['Business name', 'Activity', 'City', 'Phone', 'Opening hours'],\n    essentialPreviewText: 'A free presence with the business name, activity, city, phone and opening hours.',\n",
+            "    choosePremium: 'Scegli CV Business Premium',\n": "    choosePremium: 'Scegli CV Business Premium',\n    essentialFeatures: [\"Nome dell’attività\", 'Attività', 'Città', 'Telefono', 'Orari di apertura'],\n    essentialPreviewText: 'Una presenza gratuita con nome, attività, città, telefono e orari.',\n",
+            "    choosePremium: 'Выбрать Business CV Premium',\n": "    choosePremium: 'Выбрать Business CV Premium',\n    essentialFeatures: ['Название деятельности', 'Деятельность', 'Город', 'Телефон', 'Часы работы'],\n    essentialPreviewText: 'Бесплатное присутствие с названием, деятельностью, городом, телефоном и часами работы.',\n",
+          }
+          for old, new in additions.items():
+              if old not in s:
+                  raise SystemExit(f'Missing translation anchor: {old}')
+              s = s.replace(old, new, 1)
+
+          s = s.replace("function EssentialCardPreview({ copy }: { copy: SubscriptionCopy }) {", "function EssentialCardPreview({ copy, previewText }: { copy: SubscriptionCopy; previewText: string }) {", 1)
+          s = s.replace("<p className=\"mt-4 text-sm leading-6 text-slate-600\">{copy.essentialPreviewText}</p>", "<p className=\"mt-4 text-sm leading-6 text-slate-600\">{previewText}</p>", 1)
+          s = s.replace("<FeatureList items={[...copy.essentialFeatures]} />", "<FeatureList items={simplifiedOfferCopy[language as OfferLanguage].essentialFeatures} />", 1)
+          s = s.replace('href="#continuous-services-title"', 'href="#cv-business-products-title"', 1)
+          s = s.replace("<EssentialCardPreview copy={copy} />", "<EssentialCardPreview copy={copy} previewText={simplifiedOfferCopy[language as OfferLanguage].essentialPreviewText} />", 1)
+          p.write_text(s)
+          PY
+      - run: npm run build
+      - name: Commit consistency fixes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/pages/Subscription.tsx
+          if git diff --cached --quiet; then
+            echo "No source changes to commit"
+          else
+            git commit -m "offer: align essential presence with simplified model"
+            git push origin HEAD:offer-cv-business-creation-maintenance-20260825
+          fi
