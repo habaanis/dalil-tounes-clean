@@ -1,0 +1,48 @@
+name: Validate B-05 non-certified badge
+
+on:
+  push:
+    branches: [ux-b05-hide-non-certified-20260825]
+
+permissions:
+  contents: write
+
+jobs:
+  patch-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ux-b05-hide-non-certified-20260825
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Hide public non-certified badge
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('src/components/BusinessDetail.tsx')
+          s = p.read_text()
+          old = """  const label = isNonCertified\n    ? '⚠️ NON CERTIFIÉ'\n    : isCertified\n      ? '⭐ CERTIFIÉ DALIL TOUNES'\n      : statut_carte;\n\n  return (\n"""
+          new = """  if (isNonCertified) return null;\n\n  const label = isCertified\n    ? '⭐ CERTIFIÉ DALIL TOUNES'\n    : statut_carte;\n\n  return (\n"""
+          if old not in s:
+              raise SystemExit('Expected certification badge block not found')
+          s = s.replace(old, new, 1)
+          s = s.replace("backgroundColor: isNonCertified ? '#ea580c' : '#15803d',", "backgroundColor: '#15803d',", 1)
+          p.write_text(s)
+          PY
+      - run: npm run build
+      - name: Commit source change
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/components/BusinessDetail.tsx
+          if git diff --cached --quiet; then
+            echo "No source changes"
+          else
+            git commit -m "ux: hide non-certified warning badge"
+            git push origin HEAD:ux-b05-hide-non-certified-20260825
+          fi
