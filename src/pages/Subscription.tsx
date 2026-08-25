@@ -1098,135 +1098,161 @@ function EssentialCardPreview({ copy }: { copy: SubscriptionCopy }) {
   );
 }
 
-function ContinuousPlanCard({
-  tier,
-  copy,
+const simplifiedOfferCopy: Record<OfferLanguage, {
+  productsTitle: string;
+  productsSubtitle: string;
+  creationLabel: string;
+  firstYearIncluded: string;
+  artisanTitle: string;
+  artisanIntro: string;
+  artisanFeatures: string[];
+  premiumTitle: string;
+  premiumIntro: string;
+  maintenanceTitle: string;
+  maintenancePrice: string;
+  maintenanceIntro: string;
+  maintenanceFeatures: string[];
+  noRenewal: string;
+  preview: string;
+  chooseArtisan: string;
+  choosePremium: string;
+}> = {
+  fr: {
+    productsTitle: 'Choisissez votre CV Business',
+    productsSubtitle: 'Un prix de création simple. Les 12 premiers mois de mise en ligne sont inclus.',
+    creationLabel: 'Création — paiement unique',
+    firstYearIncluded: '12 mois de mise en ligne inclus',
+    artisanTitle: 'CV Business Artisan',
+    artisanIntro: 'Une présentation légère et professionnelle pour les artisans, indépendants, commerçants et petites activités.',
+    artisanFeatures: ['Présentation légère', 'Activité et services', 'Coordonnées', 'Téléphone et WhatsApp', 'Horaires', '2 réseaux sociaux du professionnel', 'Jusqu’à 5 photos', 'QR Code Business'],
+    premiumTitle: 'CV Business Premium',
+    premiumIntro: 'Le CV Business complet de Dalil Tounes, avec la présentation Premium et les fonctionnalités actuelles de la formule.',
+    maintenanceTitle: 'Maintien annuel du CV Business',
+    maintenancePrice: '50 TND / an',
+    maintenanceIntro: 'À partir de la deuxième année, le maintien annuel garde votre CV Business actif et entretenu.',
+    maintenanceFeatures: ['Maintien du CV Business en ligne', 'Hébergement inclus', 'QR Business actif', 'Maintenance technique', 'Mises à jour techniques de la plateforme Dalil Tounes', 'Jusqu’à 10 demandes de modification par an', 'Assistance Dalil Tounes'],
+    noRenewal: 'Sans renouvellement, votre entreprise reste présente gratuitement sur Dalil Tounes avec la Présence essentielle. Les fonctions du CV Business sont désactivées jusqu’à sa réactivation.',
+    preview: 'Aperçu du CV Business',
+    chooseArtisan: 'Choisir CV Business Artisan',
+    choosePremium: 'Choisir CV Business Premium',
+  },
+  ar: {
+    productsTitle: 'اختر CV Business الخاص بك',
+    productsSubtitle: 'سعر إنشاء واضح. أول 12 شهرًا من النشر مشمولة.',
+    creationLabel: 'الإنشاء — دفعة واحدة',
+    firstYearIncluded: '12 شهرًا من النشر مشمولة',
+    artisanTitle: 'CV Business حرفي',
+    artisanIntro: 'عرض مهني خفيف للحرفيين والمستقلين والتجار والأنشطة الصغيرة.',
+    artisanFeatures: ['عرض مختصر', 'النشاط والخدمات', 'بيانات الاتصال', 'الهاتف وواتساب', 'أوقات العمل', 'شبكتان اجتماعيتان للمهني', 'حتى 5 صور', 'QR Business'],
+    premiumTitle: 'CV Business Premium',
+    premiumIntro: 'النسخة الكاملة من CV Business في دليل تونس مع عرض Premium ووظائفه الحالية.',
+    maintenanceTitle: 'الصيانة السنوية لـ CV Business',
+    maintenancePrice: '50 د.ت / سنة',
+    maintenanceIntro: 'ابتداءً من السنة الثانية، تحافظ الصيانة السنوية على CV Business نشطًا ومحدّثًا.',
+    maintenanceFeatures: ['إبقاء CV Business منشورًا', 'الاستضافة مشمولة', 'QR Business نشط', 'الصيانة التقنية', 'التحديثات التقنية لمنصة دليل تونس', 'حتى 10 طلبات تعديل في السنة', 'مساعدة دليل تونس'],
+    noRenewal: 'دون تجديد، يبقى نشاطك حاضرًا مجانًا على دليل تونس ضمن الحضور الأساسي، ويتم تعطيل وظائف CV Business إلى حين إعادة تفعيله.',
+    preview: 'معاينة CV Business',
+    chooseArtisan: 'اختر CV Business حرفي',
+    choosePremium: 'اختر CV Business Premium',
+  },
+  en: {
+    productsTitle: 'Choose your Business CV',
+    productsSubtitle: 'A simple creation price. The first 12 months online are included.',
+    creationLabel: 'Creation — one-time payment',
+    firstYearIncluded: '12 months online included',
+    artisanTitle: 'Artisan Business CV',
+    artisanIntro: 'A light professional presentation for craftspeople, independents, shops and small businesses.',
+    artisanFeatures: ['Light presentation', 'Activity and services', 'Contact details', 'Phone and WhatsApp', 'Opening hours', '2 client social networks', 'Up to 5 photos', 'Business QR Code'],
+    premiumTitle: 'Premium Business CV',
+    premiumIntro: 'The complete Dalil Tounes Business CV with the current Premium presentation and features.',
+    maintenanceTitle: 'Annual Business CV maintenance',
+    maintenancePrice: '50 TND / year',
+    maintenanceIntro: 'From the second year, annual maintenance keeps your Business CV active and maintained.',
+    maintenanceFeatures: ['Business CV kept online', 'Hosting included', 'Business QR Code kept active', 'Technical maintenance', 'Dalil Tounes platform technical updates', 'Up to 10 modification requests per year', 'Dalil Tounes assistance'],
+    noRenewal: 'Without renewal, your business remains listed for free on Dalil Tounes with Essential Presence. Business CV features are disabled until reactivation.',
+    preview: 'Business CV preview',
+    chooseArtisan: 'Choose Artisan Business CV',
+    choosePremium: 'Choose Premium Business CV',
+  },
+  it: {
+    productsTitle: 'Scegli il tuo CV Business',
+    productsSubtitle: 'Un prezzo di creazione semplice. I primi 12 mesi online sono inclusi.',
+    creationLabel: 'Creazione — pagamento unico',
+    firstYearIncluded: '12 mesi online inclusi',
+    artisanTitle: 'CV Business Artisan',
+    artisanIntro: 'Una presentazione professionale leggera per artigiani, indipendenti, commercianti e piccole attività.',
+    artisanFeatures: ['Presentazione leggera', 'Attività e servizi', 'Recapiti', 'Telefono e WhatsApp', 'Orari', '2 social network del cliente', 'Fino a 5 foto', 'QR Code Business'],
+    premiumTitle: 'CV Business Premium',
+    premiumIntro: 'Il CV Business completo di Dalil Tounes con la presentazione Premium e le funzionalità attuali.',
+    maintenanceTitle: 'Mantenimento annuale del CV Business',
+    maintenancePrice: '50 TND / anno',
+    maintenanceIntro: 'Dal secondo anno, il mantenimento annuale mantiene il CV Business attivo e curato.',
+    maintenanceFeatures: ['CV Business mantenuto online', 'Hosting incluso', 'QR Business attivo', 'Manutenzione tecnica', 'Aggiornamenti tecnici della piattaforma Dalil Tounes', 'Fino a 10 richieste di modifica all’anno', 'Assistenza Dalil Tounes'],
+    noRenewal: 'Senza rinnovo, l’attività resta presente gratuitamente su Dalil Tounes con la Presenza essenziale. Le funzioni del CV Business vengono disattivate fino alla riattivazione.',
+    preview: 'Anteprima CV Business',
+    chooseArtisan: 'Scegli CV Business Artisan',
+    choosePremium: 'Scegli CV Business Premium',
+  },
+  ru: {
+    productsTitle: 'Выберите свой Business CV',
+    productsSubtitle: 'Простая цена создания. Первые 12 месяцев размещения включены.',
+    creationLabel: 'Создание — разовая оплата',
+    firstYearIncluded: '12 месяцев размещения включены',
+    artisanTitle: 'Business CV Artisan',
+    artisanIntro: 'Лёгкая профессиональная презентация для мастеров, независимых специалистов, магазинов и малого бизнеса.',
+    artisanFeatures: ['Краткая презентация', 'Деятельность и услуги', 'Контактные данные', 'Телефон и WhatsApp', 'Часы работы', '2 социальные сети клиента', 'До 5 фотографий', 'Business QR Code'],
+    premiumTitle: 'Business CV Premium',
+    premiumIntro: 'Полный Business CV Dalil Tounes с текущей Premium-презентацией и функциями.',
+    maintenanceTitle: 'Ежегодное обслуживание Business CV',
+    maintenancePrice: '50 TND / год',
+    maintenanceIntro: 'Со второго года ежегодное обслуживание сохраняет Business CV активным и актуальным.',
+    maintenanceFeatures: ['Business CV остаётся онлайн', 'Хостинг включён', 'Business QR Code активен', 'Техническое обслуживание', 'Технические обновления платформы Dalil Tounes', 'До 10 запросов на изменения в год', 'Поддержка Dalil Tounes'],
+    noRenewal: 'Без продления компания остаётся бесплатно представлена на Dalil Tounes в формате Essential Presence. Функции Business CV отключаются до повторной активации.',
+    preview: 'Предпросмотр Business CV',
+    chooseArtisan: 'Выбрать Business CV Artisan',
+    choosePremium: 'Выбрать Business CV Premium',
+  },
+};
+
+function CreationPlanCard({
+  title,
   price,
-  perMonth,
-  paymentCopy,
-  annualPrice,
-  includesLabel,
-  certifiedDisclaimer,
+  creationLabel,
+  firstYearIncluded,
   intro,
   features,
-  descriptionLead,
-  showAllLabel,
-  hideAllLabel,
+  previewLabel,
+  chooseLabel,
   onPreview,
   onRequest,
 }: {
-  tier: 'ARTISAN' | 'PREMIUM';
-  copy: SubscriptionCopy;
+  title: string;
   price: string;
-  perMonth: string;
-  paymentCopy: (typeof paymentChoiceCopy)[OfferLanguage];
-  annualPrice: string;
-  includesLabel?: string;
-  certifiedDisclaimer?: string;
+  creationLabel: string;
+  firstYearIncluded: string;
   intro: string;
-  features: string[];
-  descriptionLead: string;
-  showAllLabel: string;
-  hideAllLabel: string;
+  features: readonly string[];
+  previewLabel: string;
+  chooseLabel: string;
   onPreview: () => void;
-  onRequest: (billingPeriod: BillingPeriod) => void;
+  onRequest: () => void;
 }) {
-  const tierLabel = tier === 'ARTISAN' ? copy.artisan : copy.premium;
-  const requestLabel = tier === 'ARTISAN' ? copy.requestArtisan : copy.requestPremium;
-  const [showAllFeatures, setShowAllFeatures] = useState(false);
-  const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>('monthly');
-  const featuredIndexes = tier === 'ARTISAN' ? [0, 4, 3, 7, 9] : [1, 2, 4, 6];
-  const featuredItems = featuredIndexes.map((index) => splitFeature(features[index]).title);
-  const detailsId = useId().replace(/:/g, '');
-
   return (
-    <article className="relative flex flex-col self-start overflow-hidden rounded-3xl border-2 border-[#D6AF2E] bg-[#07543F] p-5 text-white shadow-[0_12px_30px_rgba(7,84,63,0.16)] sm:p-6">
-      <span className="absolute right-0 top-0 rounded-bl-2xl bg-[#D6AF2E] px-4 py-2 text-[11px] font-black tracking-[0.16em] text-[#07543F]">
-        {tierLabel}
-      </span>
-      <h3 className="mt-8 text-2xl font-bold">{tierLabel}</h3>
+    <article className="relative flex h-full flex-col overflow-hidden rounded-3xl border-2 border-[#D6AF2E] bg-[#07543F] p-5 text-white shadow-[0_12px_30px_rgba(7,84,63,0.16)] sm:p-6">
+      <span className="absolute right-0 top-0 rounded-bl-2xl bg-[#D6AF2E] px-4 py-2 text-[11px] font-black tracking-[0.12em] text-[#07543F]">CV BUSINESS</span>
+      <h3 className="mt-8 text-2xl font-bold">{title}</h3>
       <div className="mt-2 flex items-end gap-2 text-[#F4CE55]">
-        <span className="text-4xl font-black">{price}</span><span className="pb-1 text-sm font-bold">{perMonth}</span>
+        <span className="text-4xl font-black">{price}</span>
       </div>
+      <p className="mt-1 text-xs font-bold uppercase tracking-[0.08em] text-emerald-100">{creationLabel}</p>
       <p className="mt-3 text-sm leading-6 text-emerald-50">{intro}</p>
-      {includesLabel && <p className="mt-3 rounded-xl bg-white/10 px-3 py-2 text-sm font-bold text-white">{includesLabel}</p>}
-      <div className="mt-4">
-        <FeatureList items={featuredItems} variant="dark" />
-        <button
-          type="button"
-          aria-expanded={showAllFeatures}
-          aria-controls={`${detailsId}-details`}
-          onClick={() => setShowAllFeatures((current) => !current)}
-          className="mt-3 rounded-lg px-1 py-2 text-sm font-bold text-[#F4CE55] underline decoration-[#F4CE55]/80 underline-offset-4 transition hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D6AF2E]"
-        >
-          {showAllFeatures ? hideAllLabel : showAllLabel}
-        </button>
-        <div
-          id={`${detailsId}-details`}
-          hidden={!showAllFeatures}
-          className={`grid transition-[grid-template-rows,opacity] duration-200 ease-out ${showAllFeatures ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}
-        >
-          <div className="overflow-hidden">
-            <FeatureAccordion items={ensureFeatureDescriptions(features, descriptionLead)} />
-          </div>
-        </div>
+      <p className="mt-3 rounded-xl bg-white/10 px-3 py-2 text-sm font-bold text-white">{firstYearIncluded}</p>
+      <div className="mt-4 flex-1">
+        <FeatureList items={features} variant="dark" />
       </div>
-      {certifiedDisclaimer && (
-        <p className="mt-3 rounded-xl border border-[#D6AF2E]/40 bg-black/10 p-2.5 text-xs leading-5 text-emerald-50">
-          {certifiedDisclaimer}
-        </p>
-      )}
-      <fieldset className="mt-5 rounded-2xl border border-[#D6AF2E]/50 bg-white/10 p-3">
-        <legend className="px-1 text-sm font-bold text-white">{paymentCopy.title}</legend>
-        <div className="mt-2 grid gap-2 sm:grid-cols-2">
-          <label className="relative flex min-h-16 cursor-pointer items-center rounded-xl border border-white/30 bg-[#064634] px-3 py-2.5 transition has-[:checked]:border-[#F4CE55] has-[:checked]:bg-white has-[:checked]:text-[#07543F] focus-within:ring-2 focus-within:ring-[#F4CE55] focus-within:ring-offset-2 focus-within:ring-offset-[#07543F]">
-            <input
-              type="radio"
-              name={`${detailsId}-billing-period`}
-              value="monthly"
-              checked={billingPeriod === 'monthly'}
-              onChange={() => setBillingPeriod('monthly')}
-              className="sr-only"
-            />
-            <span>
-              <span className="block text-sm font-black">{paymentCopy.monthly}</span>
-              <span className="mt-0.5 block text-xs font-semibold">{price} {perMonth}</span>
-            </span>
-          </label>
-          <label className="relative flex min-h-16 cursor-pointer items-center rounded-xl border border-white/30 bg-[#064634] px-3 py-2.5 pe-24 transition has-[:checked]:border-[#F4CE55] has-[:checked]:bg-white has-[:checked]:text-[#07543F] focus-within:ring-2 focus-within:ring-[#F4CE55] focus-within:ring-offset-2 focus-within:ring-offset-[#07543F] sm:pe-3 sm:pt-7">
-            <input
-              type="radio"
-              name={`${detailsId}-billing-period`}
-              value="annual"
-              checked={billingPeriod === 'annual'}
-              onChange={() => setBillingPeriod('annual')}
-              className="sr-only"
-            />
-            <span>
-              <span className="block text-sm font-black">{paymentCopy.annual}</span>
-              <span className="mt-0.5 block text-xs font-semibold">{annualPrice}</span>
-            </span>
-            <span className="absolute end-2 top-2 rounded-full bg-[#D6AF2E] px-2 py-1 text-[10px] font-black text-[#07543F]">
-              {paymentCopy.threeMonthsFree}
-            </span>
-          </label>
-        </div>
-      </fieldset>
       <div className="grid gap-2 pt-6 sm:grid-cols-2">
-        <button
-          type="button"
-          onClick={onPreview}
-          className="rounded-xl border border-[#D6AF2E] bg-transparent px-4 py-3 text-sm font-bold text-[#F0C537] transition hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]"
-        >
-          {copy.previewCard}
-        </button>
-        <button
-          type="button"
-          onClick={() => onRequest(billingPeriod)}
-          className="rounded-xl bg-[#D6AF2E] px-4 py-3 text-sm font-bold text-[#07543F] transition hover:bg-[#E5C64D] focus:outline-none focus:ring-2 focus:ring-white"
-        >
-          {requestLabel}
-        </button>
+        <button type="button" onClick={onPreview} className="rounded-xl border border-[#D6AF2E] bg-transparent px-4 py-3 text-sm font-bold text-[#F0C537] transition hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]">{previewLabel}</button>
+        <button type="button" onClick={onRequest} className="rounded-xl bg-[#D6AF2E] px-4 py-3 text-sm font-bold text-[#07543F] transition hover:bg-[#E5C64D] focus:outline-none focus:ring-2 focus:ring-white">{chooseLabel}</button>
       </div>
     </article>
   );
@@ -1301,208 +1327,54 @@ export const Subscription = () => {
 
         </section>
 
-        <section aria-labelledby="continuous-services-title" className="mt-9 sm:mt-11">
-          <div className="mb-5 flex items-center justify-center gap-3 text-center">
-            <span className="h-px w-8 bg-amber-400" />
-            <h2 id="continuous-services-title" className="text-sm font-black uppercase tracking-[0.18em] text-amber-600">
-              {copy.continuousServices}
-            </h2>
-            <span className="h-px w-8 bg-amber-400" />
-          </div>
+        <section aria-labelledby="cv-business-products-title" className="mt-9 sm:mt-11">
+<div className="mb-6 text-center">
+  <p className="text-xs font-black uppercase tracking-[0.18em] text-amber-600">CV BUSINESS DALIL TOUNES</p>
+  <h2 id="cv-business-products-title" className="mt-2 text-2xl font-black text-[#4A123F] sm:text-3xl">{simplifiedOfferCopy[language as OfferLanguage].productsTitle}</h2>
+  <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-slate-600">{simplifiedOfferCopy[language as OfferLanguage].productsSubtitle}</p>
+</div>
 
-          <div className="mb-5 rounded-2xl border border-[#D6AF2E]/55 bg-gradient-to-r from-amber-50 via-white to-emerald-50 p-4 shadow-sm sm:flex sm:items-center sm:justify-between sm:gap-6 sm:p-5">
-            <div>
-              <span className="inline-flex rounded-full bg-[#D6AF2E] px-3 py-1 text-[10px] font-black tracking-[0.14em] text-[#07543F]">
-                {copy.launchBadge}
-              </span>
-              <h3 className="mt-2 text-lg font-bold text-[#4A123F]">{copy.launchTitle}</h3>
-              <p className="mt-1 text-sm leading-6 text-slate-700">{copy.launchIntro}</p>
-              <p className="text-sm leading-6 text-slate-700">
-                {copy.launchAnnualPrefix} <strong>{copy.launchAnnualStrong}</strong>
-              </p>
-              <p className="text-sm font-semibold leading-6 text-[#07543F]">{copy.launchPayment}</p>
-            </div>
-            <button
-              type="button"
-              onClick={() => setActivePreview('launch')}
-              className="mt-3 shrink-0 text-sm font-semibold text-[#4A123F] underline decoration-[#D6AF2E] underline-offset-4 hover:text-[#07543F] focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] sm:mt-0"
-            >
-              {copy.seeConditions}
-            </button>
-          </div>
+<div className="grid items-stretch gap-5 lg:grid-cols-2">
+  <CreationPlanCard
+    title={simplifiedOfferCopy[language as OfferLanguage].artisanTitle}
+    price={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).artisanPrice}
+    creationLabel={simplifiedOfferCopy[language as OfferLanguage].creationLabel}
+    firstYearIncluded={simplifiedOfferCopy[language as OfferLanguage].firstYearIncluded}
+    intro={simplifiedOfferCopy[language as OfferLanguage].artisanIntro}
+    features={simplifiedOfferCopy[language as OfferLanguage].artisanFeatures}
+    previewLabel={simplifiedOfferCopy[language as OfferLanguage].preview}
+    chooseLabel={simplifiedOfferCopy[language as OfferLanguage].chooseArtisan}
+    onPreview={() => setActivePreview('artisan')}
+    onRequest={() => openRequest('artisan', `${simplifiedOfferCopy[language as OfferLanguage].artisanTitle} — ${(offerCopy[language as OfferLanguage] ?? offerCopy.fr).artisanPrice}`, 'artisan')}
+  />
+  <CreationPlanCard
+    title={simplifiedOfferCopy[language as OfferLanguage].premiumTitle}
+    price={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).premiumPrice}
+    creationLabel={simplifiedOfferCopy[language as OfferLanguage].creationLabel}
+    firstYearIncluded={simplifiedOfferCopy[language as OfferLanguage].firstYearIncluded}
+    intro={simplifiedOfferCopy[language as OfferLanguage].premiumIntro}
+    features={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).premiumFeatures}
+    previewLabel={simplifiedOfferCopy[language as OfferLanguage].preview}
+    chooseLabel={simplifiedOfferCopy[language as OfferLanguage].choosePremium}
+    onPreview={() => setActivePreview('premium')}
+    onRequest={() => openRequest('premium', `${simplifiedOfferCopy[language as OfferLanguage].premiumTitle} — ${(offerCopy[language as OfferLanguage] ?? offerCopy.fr).premiumPrice}`, 'premium')}
+  />
+</div>
 
-          <div className="grid items-start gap-5 lg:grid-cols-2">
-            <ContinuousPlanCard
-              tier="ARTISAN"
-              copy={copy}
-              price={offerCopy[language as OfferLanguage]?.artisanPrice ?? offerCopy.fr.artisanPrice}
-              perMonth={offerCopy[language as OfferLanguage]?.perMonth ?? offerCopy.fr.perMonth}
-              paymentCopy={paymentCopy}
-              annualPrice={paymentCopy.artisanAnnualPrice}
-              intro={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).artisanIntro}
-              features={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).artisanFeatures}
-              descriptionLead={accordionDescriptionLeadCopy[language as OfferLanguage] ?? accordionDescriptionLeadCopy.fr}
-              showAllLabel={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).showAllFeatures}
-              hideAllLabel={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).hideAllFeatures}
-              onPreview={() => setActivePreview('artisan')}
-              onRequest={(billingPeriod) => openRequest('artisan', copy.artisanPlanLabel, 'artisan', billingPeriod)}
-            />
-            <ContinuousPlanCard
-              tier="PREMIUM"
-              copy={copy}
-              price={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).premiumPrice}
-              perMonth={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).perMonth}
-              paymentCopy={paymentCopy}
-              annualPrice={paymentCopy.premiumAnnualPrice}
-              includesLabel={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).premiumIncludesArtisan}
-              certifiedDisclaimer={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).certifiedDisclaimer}
-              intro={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).premiumIntro}
-              features={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).premiumFeatures}
-              descriptionLead={accordionDescriptionLeadCopy[language as OfferLanguage] ?? accordionDescriptionLeadCopy.fr}
-              showAllLabel={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).showAllFeatures}
-              hideAllLabel={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).hideAllFeatures}
-              onPreview={() => setActivePreview('premium')}
-              onRequest={(billingPeriod) => openRequest('premium', copy.premiumPlanLabel, 'premium', billingPeriod)}
-            />
-
-          </div>
-
-          <p className="mt-4 rounded-xl border border-emerald-100 bg-white px-4 py-3 text-center text-sm font-semibold text-[#07543F]">
-            {copy.trialClarification}
-          </p>
-        </section>
-
-        <section className="mt-9 rounded-3xl border border-[#D6AF2E]/60 bg-white p-5 shadow-[0_10px_28px_rgba(74,18,63,0.06)] sm:mt-11 sm:p-6" aria-labelledby="essential-cv-title">
-          <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
-            <div>
-              <span className="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-emerald-800">
-                {essentialCopy.badge}
-              </span>
-              <h2 id="essential-cv-title" className="mt-3 text-2xl font-bold text-[#4A123F]">{essentialCopy.title}</h2>
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">{essentialCopy.subtitle}</p>
-            </div>
-            <div className="flex items-end gap-2 text-[#07543F] lg:justify-end">
-              <span className="text-4xl font-black">79</span><span className="pb-1 font-bold">TND</span>
-            </div>
-          </div>
-
-          <aside className="mt-5 rounded-2xl border border-emerald-100 bg-emerald-50/50 p-4" aria-label={essentialCopy.badge}>
-            {essentialCopy.humanMessage.map((paragraph) => (
-              <p key={paragraph} className="mt-2 first:mt-0 text-sm leading-6 text-slate-700">{paragraph}</p>
-            ))}
-          </aside>
-
-          <div className="mt-5">
-            <FeatureList items={essentialCopy.features} columns />
-          </div>
-
-          <div className="mt-5 flex flex-wrap items-center gap-2" aria-label={copy.paymentOptions}>
-            <span className="rounded-lg bg-[#07543F] px-4 py-2 text-sm font-bold text-white">{essentialCopy.payOnce}</span>
-            <span className="text-xs text-slate-400">{copy.or}</span>
-            <span className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-[#4A123F]">{essentialCopy.payThreeTimes}</span>
-          </div>
-          <p className="mt-3 text-sm font-semibold text-slate-600">{essentialCopy.publication}</p>
-          <p className="mt-4 border-t border-amber-100 pt-4 text-sm font-bold text-[#07543F]">{essentialCopy.ideal}</p>
-          <button
-            type="button"
-            onClick={() => openRequest('cv_business', essentialCopy.planLabel, 'cv_essential')}
-            className="mt-5 w-full rounded-xl bg-[#07543F] px-5 py-3 text-sm font-bold text-white transition hover:bg-emerald-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D6AF2E] sm:w-auto"
-          >
-            {essentialCopy.choose}
-          </button>
-        </section>
-
-        <section className="mt-5 rounded-3xl border-2 border-[#D6AF2E] bg-gradient-to-br from-white via-white to-amber-50/80 p-5 shadow-[0_14px_36px_rgba(214,175,46,0.12)] sm:p-7">
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-            <div className="max-w-3xl">
-              <span className="w-fit rounded-full bg-amber-100 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-amber-800">
-                {(offerCopy[language as OfferLanguage] ?? offerCopy.fr).oneTimeService}
-              </span>
-              <h2 className="mt-4 text-2xl font-bold text-[#4A123F] sm:text-3xl">{copy.cvTitle}</h2>
-              <p className="mt-3 text-sm leading-6 text-slate-600">{(offerCopy[language as OfferLanguage] ?? offerCopy.fr).cvDistinction}</p>
-            </div>
-            <div className="shrink-0 lg:text-end">
-              <div className="flex items-end gap-2 text-[#07543F] lg:justify-end">
-                <span className="text-4xl font-black">199</span><span className="pb-1 font-bold">TND</span>
-              </div>
-              <p className="mt-1 text-sm font-bold text-[#4A123F]">{copy.cvPriceNotice}</p>
-            </div>
-          </div>
-
-          <aside className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50/60 p-4 sm:p-5" aria-labelledby="cv-business-ideal-title">
-            <h3 id="cv-business-ideal-title" className="font-bold text-[#07543F]">
-              {(offerCopy[language as OfferLanguage] ?? offerCopy.fr).cvIdealTitle}
-            </h3>
-            <ul className="mt-3 grid gap-x-6 gap-y-2 sm:grid-cols-2">
-              {(offerCopy[language as OfferLanguage] ?? offerCopy.fr).cvIdealItems.map((item) => (
-                <li key={item} className="flex items-start gap-2 text-sm leading-5 text-slate-700">
-                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white text-emerald-700 shadow-sm" aria-hidden="true">
-                    <Check className="h-3 w-3" />
-                  </span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-            <p className="mt-4 border-t border-emerald-200 pt-3 text-sm font-bold leading-6 text-[#07543F]">{essentialCopy.completeIdeal}</p>
-          </aside>
-
-          <div className="mt-6 rounded-2xl border border-amber-200 bg-white/80 p-5 sm:p-6">
-            <h3 className="text-xl font-bold text-[#4A123F]">{(offerCopy[language as OfferLanguage] ?? offerCopy.fr).cvSectionTitle}</h3>
-            {(offerCopy[language as OfferLanguage] ?? offerCopy.fr).cvSectionParagraphs.map((paragraph) => (
-              <p key={paragraph} className="mt-3 text-sm leading-6 text-slate-700">{paragraph}</p>
-            ))}
-            <p className="mt-4 text-sm font-bold text-[#07543F]">{(offerCopy[language as OfferLanguage] ?? offerCopy.fr).cvActionsIntro}</p>
-            <FeatureList items={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).cvActions} columns />
-            <p className="mt-4 text-sm leading-6 text-slate-700">{(offerCopy[language as OfferLanguage] ?? offerCopy.fr).cvClosing}</p>
-          </div>
-
-          <div className="mt-5 flex flex-wrap items-center gap-2" aria-label={copy.paymentOptions}>
-            <span className="rounded-lg bg-[#07543F] px-4 py-2 text-sm font-bold text-white">{copy.payOnce}</span>
-            <span className="text-xs text-slate-400">{copy.or}</span>
-            <span className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-[#4A123F]">{copy.payTwice}</span>
-            <span className="text-xs text-slate-400">{copy.or}</span>
-            <span className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-[#4A123F]">{copy.payThreeTimes}</span>
-          </div>
-          <p className="mt-3 text-sm leading-6 text-slate-600">{copy.cvPublication}</p>
-          <div className="my-5 h-px bg-amber-100" />
-          <FeatureList
-            items={[0, 1, 2, 3, 7, 9].map((index) => splitFeature(copy.cvFeatures[index]).title)}
-            columns
-          />
-          <button
-            type="button"
-            aria-expanded={showCvDetails}
-            aria-controls={`${cvDetailsId}-details`}
-            onClick={() => setShowCvDetails((current) => !current)}
-            className="mt-4 rounded-lg px-1 py-2 text-sm font-bold text-[#4A123F] underline decoration-[#D6AF2E] underline-offset-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D6AF2E]"
-          >
-            {showCvDetails
-              ? (offerCopy[language as OfferLanguage] ?? offerCopy.fr).hideCvDetails
-              : (offerCopy[language as OfferLanguage] ?? offerCopy.fr).showCvDetails}
-          </button>
-          <div
-            id={`${cvDetailsId}-details`}
-            hidden={!showCvDetails}
-            className={`grid transition-[grid-template-rows,opacity] duration-200 ease-out ${showCvDetails ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}
-          >
-            <div className="overflow-hidden">
-              <FeatureAccordion
-                items={ensureFeatureDescriptions(
-                  [...copy.cvFeatures, copy.certifiedTitle, personalAccessCopy[language as OfferLanguage] ?? personalAccessCopy.fr],
-                  accordionDescriptionLeadCopy[language as OfferLanguage] ?? accordionDescriptionLeadCopy.fr,
-                )}
-                variant="light"
-                columns
-              />
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={() => openRequest('cv_business', copy.cvPlanLabel, 'cv_complete')}
-            className="mt-6 w-full rounded-xl bg-[#4A123F] px-5 py-3 text-sm font-bold text-white shadow-lg transition hover:bg-[#5B1C4E] focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] sm:w-auto"
-          >
-            {copy.requestCreation}
-          </button>
+<div className="mt-5 rounded-3xl border border-[#D6AF2E]/60 bg-white p-5 shadow-[0_10px_28px_rgba(74,18,63,0.06)] sm:p-6">
+  <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
+    <div>
+      <span className="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-emerald-800">APRÈS 12 MOIS</span>
+      <h3 className="mt-3 text-2xl font-bold text-[#4A123F]">{simplifiedOfferCopy[language as OfferLanguage].maintenanceTitle}</h3>
+      <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">{simplifiedOfferCopy[language as OfferLanguage].maintenanceIntro}</p>
+    </div>
+    <div className="text-3xl font-black text-[#07543F]">{simplifiedOfferCopy[language as OfferLanguage].maintenancePrice}</div>
+  </div>
+  <div className="mt-5">
+    <FeatureList items={simplifiedOfferCopy[language as OfferLanguage].maintenanceFeatures} columns />
+  </div>
+  <p className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold leading-6 text-[#4A123F]">{simplifiedOfferCopy[language as OfferLanguage].noRenewal}</p>
+</div>
         </section>
 
         <aside className="mt-5 rounded-2xl border border-amber-200 bg-white p-5 text-center shadow-sm" aria-labelledby="cv-choice-help-title">
@@ -1573,8 +1445,8 @@ export const Subscription = () => {
       )}
 
       {activePreview === 'artisan' && (
-        <Modal title={copy.previewArtisanTitle} onClose={closePreview} closeLabel={copy.closeModal} size="preview">
-          <h2 className="mb-4 text-center text-2xl font-bold text-[#4A123F]">{copy.previewArtisanTitle}</h2>
+        <Modal title={simplifiedOfferCopy[language as OfferLanguage].artisanTitle} onClose={closePreview} closeLabel={copy.closeModal} size="preview">
+          <h2 className="mb-4 text-center text-2xl font-bold text-[#4A123F]">{simplifiedOfferCopy[language as OfferLanguage].artisanTitle}</h2>
           <BusinessCardPreview
             variant="artisan"
             size="full"
@@ -1586,8 +1458,8 @@ export const Subscription = () => {
       )}
 
       {activePreview === 'premium' && (
-        <Modal title={copy.premiumDetailTitle} onClose={closePreview} closeLabel={copy.closeModal} size="preview">
-          <h2 className="mb-4 text-center text-2xl font-bold text-[#4A123F]">{copy.premiumDetailTitle}</h2>
+        <Modal title={simplifiedOfferCopy[language as OfferLanguage].premiumTitle} onClose={closePreview} closeLabel={copy.closeModal} size="preview">
+          <h2 className="mb-4 text-center text-2xl font-bold text-[#4A123F]">{simplifiedOfferCopy[language as OfferLanguage].premiumTitle}</h2>
           <BusinessCardPreview
             variant="premium"
             size="full"
@@ -1632,6 +1504,7 @@ export const Subscription = () => {
               selectedPlanLabel={selectedPlan.label}
               checkoutOffer={selectedPlan.checkoutOffer}
               initialBillingPeriod={selectedPlan.billingPeriod}
+              creationMode={selectedPlan.code === 'artisan' || selectedPlan.code === 'premium'}
               onCancel={closePreview}
             />
           </div>
