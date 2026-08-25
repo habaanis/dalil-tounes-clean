@@ -4,10 +4,8 @@ import {
   ChevronRight,
   Clock3,
   Contact,
-  Facebook,
   Globe2,
   Images,
-  Instagram,
   Mail,
   MapPin,
   MessageCircle,
@@ -69,7 +67,6 @@ type PreviewCopy = {
   contactNotice: string;
   address: string;
   phone: string;
-  social: string;
   qrText: string;
   powered: string;
 };
@@ -99,7 +96,6 @@ const COPY: Record<BusinessCardPreviewLanguage, PreviewCopy> = {
     contactNotice: 'Coordonnées fournies par le professionnel.',
     address: 'Adresse',
     phone: 'Téléphone',
-    social: 'Retrouvez-nous',
     qrText: 'Scannez ce CV Business pour l’ouvrir directement.',
     powered: 'Propulsé par 🇹🇳 Dalil Tounes',
   },
@@ -127,7 +123,6 @@ const COPY: Record<BusinessCardPreviewLanguage, PreviewCopy> = {
     contactNotice: 'بيانات الاتصال مقدمة من المهني.',
     address: 'العنوان',
     phone: 'الهاتف',
-    social: 'تابعونا',
     qrText: 'امسح رمز CV Business لفتحه مباشرة.',
     powered: 'بدعم من 🇹🇳 دليل تونس',
   },
@@ -155,7 +150,6 @@ const COPY: Record<BusinessCardPreviewLanguage, PreviewCopy> = {
     contactNotice: 'Contact details provided by the professional.',
     address: 'Address',
     phone: 'Phone',
-    social: 'Find us online',
     qrText: 'Scan this Business CV to open it directly.',
     powered: 'Powered by 🇹🇳 Dalil Tounes',
   },
@@ -183,7 +177,6 @@ const COPY: Record<BusinessCardPreviewLanguage, PreviewCopy> = {
     contactNotice: 'Contatti forniti dal professionista.',
     address: 'Indirizzo',
     phone: 'Telefono',
-    social: 'Seguici',
     qrText: 'Scansiona questo CV Business per aprirlo direttamente.',
     powered: 'Offerto da 🇹🇳 Dalil Tounes',
   },
@@ -211,7 +204,6 @@ const COPY: Record<BusinessCardPreviewLanguage, PreviewCopy> = {
     contactNotice: 'Контакты предоставлены профессионалом.',
     address: 'Адрес',
     phone: 'Телефон',
-    social: 'Мы в сети',
     qrText: 'Сканируйте Business CV, чтобы открыть его напрямую.',
     powered: 'На платформе 🇹🇳 Dalil Tounes',
   },
@@ -312,13 +304,6 @@ export default function BusinessCardPreview({
           <p><strong>{t.address}</strong><br />Sousse, Tunisie</p>
           <p><strong>{t.phone}</strong><br />+216 XX XXX XXX</p>
           <p><strong>{t.email}</strong><br />contact@exemple.tn</p>
-          <div className="border-t border-[#D4AF37]/20 pt-2">
-            <strong>{t.social}</strong>
-            <div className="mt-2 flex gap-3">
-              <span className="inline-flex items-center gap-1"><Instagram className="h-3.5 w-3.5" /> Instagram</span>
-              <span className="inline-flex items-center gap-1"><Facebook className="h-3.5 w-3.5" /> Facebook</span>
-            </div>
-          </div>
         </div>
       ),
     },
