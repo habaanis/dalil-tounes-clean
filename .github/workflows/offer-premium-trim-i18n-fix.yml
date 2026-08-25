@@ -1,0 +1,55 @@
+name: Fix Premium trim translations
+
+on:
+  push:
+    branches: [offer-premium-trim-20260825]
+
+permissions:
+  contents: write
+
+jobs:
+  patch-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: offer-premium-trim-20260825
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Fix remaining translations
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('src/pages/Subscription.tsx')
+          s = p.read_text()
+          for old in [
+            "'Condivisione delle novità', ",
+            "'Consigli adatti alla tua presenza', ",
+            "'Tariffe preferenziali sugli altri servizi'",
+            "'Публикация новостей', ",
+            "'Персональные рекомендации', ",
+            "'Льготные цены на другие услуги'",
+          ]:
+              if old not in s:
+                  raise SystemExit(f'Missing expected item: {old}')
+              s = s.replace(old, '', 1)
+          s = s.replace("'Supporto prioritario', ],", "'Supporto prioritario'],")
+          s = s.replace("'Приоритетная поддержка', ],", "'Приоритетная поддержка'],")
+          p.write_text(s)
+          PY
+      - run: npm run build
+      - name: Commit source change
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/pages/Subscription.tsx
+          if git diff --cached --quiet; then
+            echo "No source changes"
+          else
+            git commit -m "offer: align Premium benefits translations"
+            git push origin HEAD:offer-premium-trim-20260825
+          fi
