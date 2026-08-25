@@ -890,8 +890,12 @@ export const BusinessDetail = ({
 
   if (error || !business) {
     const handleBack = onClose || onNavigateBack || (() => {
-      const parentPath = routerLocation.pathname.split('/').slice(0, -1).join('/') || '/';
-      navigate(parentPath);
+      const historyIndex = Number(window.history.state?.idx);
+      if (Number.isFinite(historyIndex) && historyIndex > 0) {
+        navigate(-1);
+        return;
+      }
+      navigate('/entreprises');
     });
 
     return (
@@ -935,8 +939,12 @@ export const BusinessDetail = ({
   const tierLabel = getTierLabel(tier, language);
   const mediaLimits = getMediaLimits(tier);
   const handleClose = onClose || onNavigateBack || (() => {
-    const parentPath = routerLocation.pathname.split('/').slice(0, -1).join('/') || '/';
-    navigate(parentPath);
+    const historyIndex = Number(window.history.state?.idx);
+    if (Number.isFinite(historyIndex) && historyIndex > 0) {
+      navigate(-1);
+      return;
+    }
+    navigate('/entreprises');
   });
 
   const getTierColors = () => {
