@@ -1,0 +1,82 @@
+name: Trim Premium offer benefits
+
+on:
+  push:
+    branches: [offer-premium-trim-20260825]
+
+permissions:
+  contents: write
+
+jobs:
+  patch-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: offer-premium-trim-20260825
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Trim Premium benefits
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('src/pages/Subscription.tsx')
+          s = p.read_text()
+          replacements = {
+            "Jusqu’à 15 photos": "Jusqu’à 10 photos",
+            "Up to 15 photos": "Up to 10 photos",
+            "حتى 15 صورة": "حتى 10 صور",
+            "Fino a 15 foto": "Fino a 10 foto",
+            "До 15 фотографий": "До 10 фотографий",
+          }
+          for old, new in replacements.items():
+              s = s.replace(old, new)
+          removals = [
+            "      'Partage de tes actualités — Présente une promotion, une nouveauté, un événement ou une réalisation récente.',\n",
+            "      'Des conseils adaptés à ta présence — Nous proposons des améliorations simples pour clarifier ta fiche et faciliter les contacts.',\n",
+            "      'Des avantages sur les autres services — Profite de tarifs préférentiels sur le CV Business et certaines prestations Dalil Tounes.',\n",
+          ]
+          for item in removals:
+              if item not in s:
+                  raise SystemExit(f'Missing FR item: {item}')
+              s = s.replace(item, '', 1)
+          simple_replacements = {
+            "'Share your news', ": "",
+            "'Advice tailored to your presence', ": "",
+            "'Preferential rates on other services'": "",
+            "'مشاركة أخبارك', ": "",
+            "'نصائح مناسبة لحضورك', ": "",
+            "'أسعار تفضيلية للخدمات الأخرى'": "",
+            "'Condividi le tue novità', ": "",
+            "'Consigli adatti alla tua presenza', ": "",
+            "'Tariffe preferenziali su altri servizi'": "",
+            "'Делитесь новостями', ": "",
+            "'Советы для вашего присутствия', ": "",
+            "'Льготные тарифы на другие услуги'": "",
+          }
+          for old, new in simple_replacements.items():
+              if old in s:
+                  s = s.replace(old, new)
+          # clean possible dangling comma before ] caused by last-item removal
+          s = s.replace("'Priority support', ],", "'Priority support'],")
+          s = s.replace("'مرافقة ذات أولوية', ],", "'مرافقة ذات أولوية'],")
+          s = s.replace("'Assistenza prioritaria', ],", "'Assistenza prioritaria'],")
+          s = s.replace("'Приоритетная поддержка', ],", "'Приоритетная поддержка'],")
+          p.write_text(s)
+          PY
+      - run: npm run build
+      - name: Commit source change
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/pages/Subscription.tsx
+          if git diff --cached --quiet; then
+            echo "No source changes"
+          else
+            git commit -m "offer: simplify Premium benefits"
+            git push origin HEAD:offer-premium-trim-20260825
+          fi
