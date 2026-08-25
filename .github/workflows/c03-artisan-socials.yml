@@ -1,0 +1,59 @@
+name: Validate C-03 Artisan social links
+
+on:
+  push:
+    branches: [ux-c03-artisan-socials-20260825]
+
+permissions:
+  contents: write
+
+jobs:
+  patch-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ux-c03-artisan-socials-20260825
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Align Artisan CV Business capabilities
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          config = Path('src/lib/businessShowcaseConfig.ts')
+          s = config.read_text()
+          s = s.replace(' * - Vitrine Business Artisan;', ' * - CV Business Artisan;', 1)
+          s = s.replace("productLabel: 'Vitrine Business Artisan'", "productLabel: 'CV Business Artisan'", 1)
+          old = """      showWebsite: true,\n      showSocialLinks: false,\n      showReservation: false,\n"""
+          new = """      showWebsite: true,\n      showSocialLinks: true,\n      showReservation: false,\n"""
+          if old not in s:
+              raise SystemExit('Artisan capabilities block not found')
+          s = s.replace(old, new, 1)
+          config.write_text(s)
+
+          detail = Path('src/components/BusinessShowcaseLienoraDetail.tsx')
+          s = detail.read_text()
+          old = """      ].filter(link => link.href)\n    : [];\n"""
+          new = """      ].filter(link => link.href).slice(0, capabilities.variant === 'artisan' ? 2 : undefined)\n    : [];\n"""
+          if old not in s:
+              raise SystemExit('Social links block not found')
+          s = s.replace(old, new, 1)
+          detail.write_text(s)
+          PY
+      - run: npm run build
+      - name: Commit source change
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/lib/businessShowcaseConfig.ts src/components/BusinessShowcaseLienoraDetail.tsx
+          if git diff --cached --quiet; then
+            echo "No source changes"
+          else
+            git commit -m "ux: align Artisan CV Business social links"
+            git push origin HEAD:ux-c03-artisan-socials-20260825
+          fi
