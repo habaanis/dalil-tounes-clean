@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { ChevronRight, Copy, Home, QrCode, Share2, X } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
-import LegacyBusinessCardPreview, {
+import BaseBusinessCardPreview, {
   type BusinessCardPreviewLanguage,
   type BusinessCardPreviewProps,
   type BusinessCardPreviewSize,
   type BusinessCardPreviewVariant,
-} from './BusinessCardPreviewLegacy';
+} from './BusinessCardPreviewBase';
 import './subscriptionCompactCards.css';
 
 export type {
@@ -91,7 +91,7 @@ export function BusinessCardPreview(props: BusinessCardPreviewProps) {
 
   return <>
     <div className={`mx-auto w-full ${previewWidthClass}`} onClickCapture={handlePreviewClickCapture} dir={language === 'ar' ? 'rtl' : 'ltr'}><div ref={legacyPreviewRef}>
-      <LegacyBusinessCardPreview {...props} name={usesGenericName ? preview.name : props.name} category={usesGenericCategory ? preview.category : props.category} city={props.city ?? preview.city} status={props.status ?? preview.status} hours={props.hours ?? preview.hours} reviews={props.reviews ?? preview.reviews} gallery={props.gallery ?? `${preview.gallery} · ${galleryImages.length}`} logo={props.logo ?? AUX_SAVEURS_LOGO} coverImage={props.coverImage ?? AUX_SAVEURS_COVER} />
+      <BaseBusinessCardPreview {...props} name={usesGenericName ? preview.name : props.name} category={usesGenericCategory ? preview.category : props.category} city={props.city ?? preview.city} status={props.status ?? preview.status} hours={props.hours ?? preview.hours} reviews={props.reviews ?? preview.reviews} gallery={props.gallery ?? `${preview.gallery} · ${galleryImages.length}`} logo={props.logo ?? AUX_SAVEURS_LOGO} coverImage={props.coverImage ?? AUX_SAVEURS_COVER} />
       {props.variant === 'premium' && <div ref={qrBlockRef} className="mt-1 overflow-hidden rounded-lg border border-[#D9B43A]/60 bg-[linear-gradient(90deg,#042E25,#011F1A)] shadow-[0_0_5px_rgba(217,180,58,0.06)]">
         <button type="button" aria-expanded={qrOpen} onClick={()=>setQrOpen(v=>!v)} className="flex min-h-9 w-full items-center gap-2 px-2.5 py-1 text-start text-[11px] font-bold text-white transition hover:bg-[#D6AF2E]/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#D6AF2E]"><span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#D6AF2E]/10 text-[#F4CE55]"><QrCode className="h-3.5 w-3.5" aria-hidden="true" /></span><span className="flex-1">{preview.qrTitle}</span><ChevronRight className={`h-3.5 w-3.5 text-[#F4CE55] transition ${qrOpen ? 'rotate-90' : ''}`} aria-hidden="true" /></button>
         {qrOpen && <div className="border-t border-[#D9B43A]/30 bg-[#021E19] px-2.5 py-2.5"><div className="flex items-center gap-3"><div className="rounded-lg bg-white p-1.5"><QRCodeSVG value={qrValue} size={78} level="H" imageSettings={{src:AUX_SAVEURS_LOGO,width:20,height:20,excavate:true}} /></div><div className="min-w-0 flex-1"><p className="text-[10px] font-black uppercase tracking-[0.12em] text-[#D6AF2E]">{t.direct}</p><p className="mt-0.5 text-xs font-bold text-white">{t.scan}</p><div className="mt-2 grid grid-cols-3 gap-1.5"><button type="button" onClick={handleShare} className="inline-flex min-h-8 items-center justify-center gap-1 rounded-md border border-[#D9B43A]/55 px-1.5 text-[8.5px] font-bold text-[#F4CE55] hover:bg-[#D6AF2E]/10"><Share2 className="h-3 w-3" /> {t.share}</button><button type="button" onClick={handleCopy} className="inline-flex min-h-8 items-center justify-center gap-1 rounded-md border border-[#D9B43A]/55 px-1.5 text-[8.5px] font-bold text-[#F4CE55] hover:bg-[#D6AF2E]/10"><Copy className="h-3 w-3" /> {t.copy}</button><button type="button" onClick={handleAddToHome} className="inline-flex min-h-8 items-center justify-center gap-1 rounded-md border border-[#D9B43A]/55 px-1.5 text-center text-[8px] font-bold leading-tight text-[#F4CE55] hover:bg-[#D6AF2E]/10"><Home className="h-3 w-3 shrink-0" /> {t.add}</button></div><p className="mt-1 min-h-3 text-[8px] text-emerald-200">{copyFeedback}</p></div></div><div className="mt-2 rounded-lg border border-[#D9B43A]/45 bg-white/[0.035] p-2"><p className="text-[9px] font-black text-[#F4CE55]">{t.always}</p><button type="button" onClick={handleInstallQr} className="mt-1.5 flex min-h-9 w-full items-center justify-center gap-2 rounded-md border border-[#D6AF2E] bg-[#087A50] px-3 text-[10px] font-black text-white transition hover:bg-[#0A8B5B]"><QrCode className="h-3.5 w-3.5 text-[#F4CE55]" /> {t.install}</button><p className="mt-1.5 text-[8px] leading-3 text-emerald-100/75">{t.open}</p></div></div>}

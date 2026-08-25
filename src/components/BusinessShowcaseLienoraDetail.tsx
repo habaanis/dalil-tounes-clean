@@ -75,7 +75,6 @@ import EntrepriseAvisForm from './EntrepriseAvisForm';
 import ReservationForm from './ReservationForm';
 import SimilarBusinesses from './seo/SimilarBusinesses';
 import VideoPlayer from './VideoPlayer';
-import { BusinessDetail as LegacyBusinessDetail } from './BusinessDetail';
 import './businessShowcaseLienora.css';
 
 interface BusinessRecord {
@@ -737,8 +736,18 @@ export default function BusinessShowcaseLienoraDetail() {
     );
   }
 
-  if (failed || !business) return <LegacyBusinessDetail />;
-  if (capabilities.variant === 'directory') return <LegacyBusinessDetail businessId={business.id} />;
+  if (failed || !business || capabilities.variant === 'directory') {
+    return (
+      <div className="dt-showcase-page flex items-center justify-center px-4 text-center">
+        <div className="max-w-md">
+          <p className="text-sm text-gray-600">{language === 'ar' ? 'تعذر عرض هذا السجل المهني.' : language === 'en' ? 'This Business CV cannot be displayed.' : language === 'it' ? 'Questo CV Business non può essere visualizzato.' : language === 'ru' ? 'Этот Business CV не может быть отображён.' : 'Ce CV Business ne peut pas être affiché.'}</p>
+          <button type="button" onClick={() => navigate('/entreprises')} className="mt-4 rounded-full bg-[#D4AF37] px-5 py-2 text-sm font-semibold text-white">
+            {language === 'ar' ? 'العودة إلى البحث' : language === 'en' ? 'Back to search' : language === 'it' ? 'Torna alla ricerca' : language === 'ru' ? 'Вернуться к поиску' : 'Retour à la recherche'}
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const visualVariant = capabilities.variant === 'artisan' ? 'artisan' : 'premium';
   const displayName = String(
