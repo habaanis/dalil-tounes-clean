@@ -4,6 +4,7 @@ import BaseBusinessCardPreview, {
   type BusinessCardPreviewSize,
   type BusinessCardPreviewVariant,
 } from './BusinessCardPreviewBase';
+import './businessCardPreviewCompact.css';
 
 export type {
   BusinessCardPreviewLanguage,
@@ -70,18 +71,20 @@ export function BusinessCardPreview(props: BusinessCardPreviewProps) {
   const demo = DEMO_COPY[language];
 
   return (
-    <BaseBusinessCardPreview
-      {...props}
-      language={language}
-      name={props.name || demo.name}
-      category={props.category || demo.category}
-      city={props.city || demo.city}
-      status={props.status || demo.status}
-      hours={props.hours || demo.hours}
-      reviews={props.reviews || demo.reviews}
-      logo={props.logo || AUX_SAVEURS_LOGO}
-      coverImage={props.coverImage || AUX_SAVEURS_COVER}
-    />
+    <div className="dt-marketing-preview">
+      <BaseBusinessCardPreview
+        {...props}
+        language={language}
+        name={props.name || demo.name}
+        category={props.category || demo.category}
+        city={props.city || demo.city}
+        status={props.status || demo.status}
+        hours={props.hours || demo.hours}
+        reviews={props.reviews || demo.reviews}
+        logo={props.logo || AUX_SAVEURS_LOGO}
+        coverImage={props.coverImage || AUX_SAVEURS_COVER}
+      />
+    </div>
   );
 }
 
