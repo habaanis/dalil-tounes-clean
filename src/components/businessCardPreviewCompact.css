@@ -59,6 +59,31 @@
   height: 15px;
 }
 
+.dt-marketing-preview .dt-more-actions-trigger {
+  width: 100%;
+  min-height: 30px;
+  margin-top: 5px;
+  justify-content: space-between;
+  padding: 4px 9px;
+}
+
+.dt-marketing-preview .dt-more-actions-trigger svg {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.18s ease;
+}
+
+.dt-marketing-preview .dt-more-actions-panel {
+  margin-top: 4px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.dt-marketing-preview .dt-more-actions-panel .dt-primary-action {
+  min-height: 42px;
+}
+
 .dt-marketing-preview .dt-secondary-actions {
   margin-top: 5px;
   gap: 4px;
