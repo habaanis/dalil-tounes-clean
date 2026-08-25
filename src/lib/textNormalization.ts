@@ -47,10 +47,15 @@ export function textEquals(text: string, searchTerm: string): boolean {
 /**
  * Strips quotes, extra whitespace, and control characters from a search term
  * before sending it to Supabase.
+ *
+ * Apostrophes are converted to the SQL ILIKE wildcard instead of being removed.
+ * This keeps searches resilient when business names use an apostrophe or a
+ * typographic apostrophe with slightly different spacing (for example d' anis).
  */
 export function cleanSearchTerm(value: string): string {
   return value
-    .replace(/["""''`]/g, '')  // remove all quote variants
+    .replace(/["“”`]/g, '')      // remove double quote/backtick variants
+    .replace(/[‘’']/g, '%')      // tolerate apostrophe variants in ILIKE searches
     .replace(/\s+/g, ' ')       // collapse whitespace
     .trim();
 }
