@@ -6,6 +6,7 @@ import './index.css';
 import './styles/cvBusinessPolish.css';
 import { registerServiceWorker } from './lib/registerServiceWorker';
 import { supportsWebP } from './lib/imageUtils';
+import { enableCvBusinessVisualPolish } from './lib/cvBusinessVisualPolish';
 import { LanguageProvider } from './context/LanguageContext';
 import { AuthProvider } from './context/AuthContext';
 import ScrollToTopButton from './components/ScrollToTopButton';
@@ -50,6 +51,8 @@ createRoot(document.getElementById('root')!).render(
     </Router>
   </StrictMode>
 );
+
+enableCvBusinessVisualPolish();
 
 // Retire le skeleton UNIQUEMENT après que React a peint sa première frame
 // ET que l'image du hero React est dans le cache (elle l'est forcément, puisque
