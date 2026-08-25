@@ -1,0 +1,17 @@
+/* CV Business visual polish: keep these overrides narrowly scoped to the public showcase. */
+.dt-showcase .dt-rating {
+  color: var(--dt-accent);
+  font-weight: 900;
+}
+
+.dt-showcase .dt-logo {
+  width: 92px;
+  height: 92px;
+  border-width: 2px;
+}
+
+.dt-showcase .dt-logo img {
+  padding: 2px;
+  border-radius: 50%;
+  object-fit: cover;
+}
