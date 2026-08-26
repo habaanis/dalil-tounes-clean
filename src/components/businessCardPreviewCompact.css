@@ -9,12 +9,13 @@
 .dt-marketing-preview .dt-identity {
   margin-top: -18px;
   padding: 0 12px 12px;
+  overflow: visible;
 }
 
 .dt-marketing-preview .dt-logo {
-  width: 78px;
-  height: 78px;
-  margin-top: -31px;
+  width: 84px;
+  height: 84px;
+  margin-top: -12px;
 }
 
 .dt-marketing-preview .dt-activity-pill {
