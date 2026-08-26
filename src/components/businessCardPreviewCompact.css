@@ -77,12 +77,41 @@
 .dt-marketing-preview .dt-more-actions-panel {
   margin-top: 4px;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 4px;
 }
 
 .dt-marketing-preview .dt-more-actions-panel .dt-primary-action {
   min-height: 42px;
+}
+
+.dt-marketing-preview .dt-preview-social-panel {
+  margin-top: 5px;
+  padding: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.dt-marketing-preview .dt-preview-social-chip {
+  min-height: 28px;
+  padding: 4px 7px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid rgba(244, 206, 85, 0.35);
+  border-radius: 999px;
+  color: #fff;
+  font-size: 8px;
+  font-weight: 800;
+}
+
+.dt-marketing-preview .dt-preview-social-chip svg {
+  width: 13px;
+  height: 13px;
+  color: #F4CE55;
 }
 
 .dt-marketing-preview .dt-secondary-actions {
@@ -131,6 +160,39 @@
 .dt-marketing-preview .dt-accordion-panel,
 .dt-marketing-preview .dt-presentation-content {
   padding: 9px;
+}
+
+.dt-marketing-preview .dt-preview-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.dt-marketing-preview .dt-preview-gallery-item {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1 / 1;
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: 8px;
+  background: #021e19;
+}
+
+.dt-marketing-preview .dt-preview-gallery-item img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.dt-marketing-preview .dt-preview-gallery-more {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 25, 20, 0.58);
+  color: #F4CE55;
+  font-size: 0.78rem;
+  font-weight: 900;
 }
 
 .dt-marketing-preview .dt-powered-by {
