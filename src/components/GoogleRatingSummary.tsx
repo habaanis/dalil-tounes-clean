@@ -7,12 +7,12 @@ interface GoogleRatingSummaryProps {
   className?: string;
 }
 
-const REVIEW_LABELS: Record<string, { singular: string; plural: string; aria: string }> = {
-  fr: { singular: 'avis', plural: 'avis', aria: 'Note Google' },
-  ar: { singular: 'تقييم', plural: 'تقييمات', aria: 'تقييم Google' },
-  en: { singular: 'review', plural: 'reviews', aria: 'Google rating' },
-  it: { singular: 'recensione', plural: 'recensioni', aria: 'Valutazione Google' },
-  ru: { singular: 'отзыв', plural: 'отзывов', aria: 'Рейтинг Google' },
+const REVIEW_LABELS: Record<string, { singular: string; plural: string; aria: string; outOfFive: string }> = {
+  fr: { singular: 'avis', plural: 'avis', aria: 'Note Google', outOfFive: 'sur 5' },
+  ar: { singular: 'تقييم', plural: 'تقييمات', aria: 'تقييم Google', outOfFive: 'من 5' },
+  en: { singular: 'review', plural: 'reviews', aria: 'Google rating', outOfFive: 'out of 5' },
+  it: { singular: 'recensione', plural: 'recensioni', aria: 'Valutazione Google', outOfFive: 'su 5' },
+  ru: { singular: 'отзыв', plural: 'отзывов', aria: 'Рейтинг Google', outOfFive: 'из 5' },
 };
 
 function parseNumber(value: string | number | null | undefined): number {
@@ -45,7 +45,7 @@ export default function GoogleRatingSummary({
   return (
     <div
       className={`inline-flex items-center gap-1 text-[11px] font-semibold ${className}`}
-      aria-label={`${copy.aria} ${normalizedRating.toFixed(1)} sur 5, ${normalizedReviewCount} ${reviewLabel}`}
+      aria-label={`${copy.aria} ${normalizedRating.toFixed(1)} ${copy.outOfFive}, ${normalizedReviewCount} ${reviewLabel}`}
     >
       <Star className="h-3 w-3 shrink-0 fill-[#D4AF37] text-[#D4AF37]" aria-hidden="true" />
       <span>{normalizedRating.toFixed(1)}</span>

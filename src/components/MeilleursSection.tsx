@@ -578,7 +578,9 @@ export default function MeilleursSection({
           {useGoogleRecommendationCriteria
             ? tx('rankingDisclosure', 'Les recommandations reposent uniquement sur les notes et avis publics disponibles sur Google. Dalil Tounes n’attribue aucune note.')
             : 'Les classements affichés reposent sur des critères automatisés (avis publics, notes Google, complétude de la fiche).'}{' '}
-          <Link to="/info-avis" className="text-[#D4AF37] hover:underline">En savoir plus</Link>
+          <Link to="/info-avis" className="text-[#D4AF37] hover:underline">
+            {useGoogleRecommendationCriteria ? tx('learnMore', 'En savoir plus') : 'En savoir plus'}
+          </Link>
         </p>
       </div>
     </div>
