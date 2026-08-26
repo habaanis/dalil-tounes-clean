@@ -106,12 +106,12 @@ const COPY: Record<PublicLanguage, {
 };
 
 const CATEGORY_ROUTES = [
-  { key: 'health', route: '/citizens/sante', image: 'sante.jpg', top: '12%', left: '18%', width: 220, height: 180, z: 10 },
-  { key: 'education', route: '/education', image: 'education.jpg', top: '5%', left: '32%', width: 260, height: 210, z: 5 },
-  { key: 'services', route: '/citizens/services', image: 'cat_administratif.jpg', top: '7%', left: '55%', width: 240, height: 190, z: 8 },
-  { key: 'tourism', route: '/citizens/tourisme', image: 'service-social.jpg', top: '30%', left: '30%', width: 300, height: 220, z: 20 },
-  { key: 'shops', route: '/citizens/magasins', image: 'cat_magasin.jpg', top: '40%', left: '12%', width: 230, height: 190, z: 13 },
-  { key: 'leisure', route: '/citizens/loisirs', image: 'loisir.jpg', top: '38%', left: '60%', width: 220, height: 180, z: 9 },
+  { key: 'health', route: '/citizens/sante', image: 'sante.jpg', top: '96px', left: '18%', width: 220, height: 180, z: 10 },
+  { key: 'education', route: '/education', image: 'education.jpg', top: '40px', left: '32%', width: 260, height: 210, z: 5 },
+  { key: 'services', route: '/citizens/services', image: 'cat_administratif.jpg', top: '56px', left: '55%', width: 240, height: 190, z: 8 },
+  { key: 'tourism', route: '/citizens/tourisme', image: 'service-social.jpg', top: '240px', left: '30%', width: 300, height: 220, z: 20 },
+  { key: 'shops', route: '/citizens/magasins', image: 'cat_magasin.jpg', top: '320px', left: '12%', width: 230, height: 190, z: 13 },
+  { key: 'leisure', route: '/citizens/loisirs', image: 'loisir.jpg', top: '304px', left: '60%', width: 220, height: 180, z: 9 },
 ] as const;
 
 export default function Citizens() {
@@ -199,9 +199,9 @@ export default function Citizens() {
                 to={category.route}
                 className="relative mx-auto h-32 w-[95%] cursor-pointer overflow-hidden rounded-lg border-2 border-[#D4AF37] no-underline transition-all duration-500 ease-out md:absolute md:mx-0 md:h-auto md:w-auto"
                 style={{
-                  top: category.top,
-                  left: isRTL ? undefined : category.left,
-                  right: isRTL ? category.left : undefined,
+                  top: window.innerWidth >= 768 ? category.top : undefined,
+                  left: window.innerWidth >= 768 && !isRTL ? category.left : undefined,
+                  right: window.innerWidth >= 768 && isRTL ? category.left : undefined,
                   width: window.innerWidth >= 768 ? `${category.width}px` : '95%',
                   height: window.innerWidth >= 768 ? `${category.height}px` : '128px',
                   zIndex: category.z,
