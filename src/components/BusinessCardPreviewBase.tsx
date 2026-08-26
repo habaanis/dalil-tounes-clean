@@ -157,7 +157,6 @@ export default function BusinessCardPreview({
             <div className="dt-product-label">{isPremium ? t.productPremium : t.productArtisan}</div>
             <h1>{name}</h1>
             {isPremium && <div className="dt-professional-badge">{t.certified}</div>}
-            <p className="dt-slogan">{category}</p>
             <p className="dt-location"><MapPin /> {city}</p>
           </div>
         </section>
