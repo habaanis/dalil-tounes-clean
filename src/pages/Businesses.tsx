@@ -159,7 +159,7 @@ function SectionIntro({
 }
 
 function DemoCVBusinessPreview({ language }: { language: BusinessCardPreviewLanguage }) {
-  return <BusinessCardPreview variant="premium" size="compact" interactive={false} language={language} />;
+  return <BusinessCardPreview variant="premium" size="compact" interactive language={language} />;
 }
 
 function DemoCVBusinessLargePreview({ language }: { language: BusinessCardPreviewLanguage }) {
