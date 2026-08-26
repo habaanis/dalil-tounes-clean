@@ -157,7 +157,7 @@ export default function HomeVitrineFirst() {
             <div className="absolute -inset-4 rounded-[36px] bg-gradient-to-br from-[#D4AF37]/18 via-transparent to-[#4A1D43]/10 blur-2xl" aria-hidden="true" />
             <div className="relative rounded-[30px] border border-[#D4AF37]/45 bg-white/90 p-3 shadow-[0_28px_70px_rgba(74,29,67,0.16)] backdrop-blur-sm">
               <p className="mb-3 text-center text-[11px] font-bold text-[#4A1D43]">{t.example}</p>
-              <BusinessCardPreview variant="premium" size="compact" interactive={false} language={lang} />
+              <BusinessCardPreview variant="premium" size="compact" interactive language={lang} />
             </div>
           </div>
         </div>
