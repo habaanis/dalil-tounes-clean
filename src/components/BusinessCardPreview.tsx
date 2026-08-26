@@ -15,6 +15,15 @@ export type {
 
 const AUX_SAVEURS_COVER = 'https://ik.imagekit.io/gfdpqvshw/Lienora/client/aux-saveurs-danis/aux-saveurs-danis-gastronomie.jpg?updatedAt=1787090066953';
 const AUX_SAVEURS_LOGO = 'https://ik.imagekit.io/gfdpqvshw/Lienora/client/aux-saveurs-danis/aux-saveurs-danis-logo-v2?updatedAt=1787096555330';
+const AUX_SAVEURS_GALLERY = [
+  'https://ik.imagekit.io/gfdpqvshw/Lienora/client/aux-saveurs-danis/Aux-saveurs-danis-dessert-assiette?updatedAt=1787090066955',
+  'https://ik.imagekit.io/gfdpqvshw/Lienora/client/aux-saveurs-danis/aux-saveurs-danis-mariage?updatedAt=1787090066964',
+  'https://ik.imagekit.io/gfdpqvshw/Lienora/client/aux-saveurs-danis/aux-saveurs-danis-evenement.jpg?updatedAt=1787090429737',
+  'https://ik.imagekit.io/gfdpqvshw/Lienora/client/aux-saveurs-danis/aux-saveurs-danis-plat-emporter.jpg?updatedAt=1787090477302',
+  'https://ik.imagekit.io/gfdpqvshw/Lienora/client/aux-saveurs-danis/aux-saveurs-danis-amuse-bouche.jpg?updatedAt=1787090516040',
+  'https://ik.imagekit.io/gfdpqvshw/Lienora/client/aux-saveurs-danis/aux-saveurs-danis-creation-menu.jpg?updatedAt=1787090578091',
+  'https://ik.imagekit.io/gfdpqvshw/Lienora/client/aux-saveurs-danis/aux-saveurs-danis-tradition?updatedAt=1787096633576',
+];
 
 const DEMO_COPY: Record<BusinessCardPreviewLanguage, {
   name: string;
@@ -83,6 +92,7 @@ export function BusinessCardPreview(props: BusinessCardPreviewProps) {
         reviews={props.reviews || demo.reviews}
         logo={props.logo || AUX_SAVEURS_LOGO}
         coverImage={props.coverImage || AUX_SAVEURS_COVER}
+        gallery={props.gallery || AUX_SAVEURS_GALLERY}
       />
     </div>
   );
