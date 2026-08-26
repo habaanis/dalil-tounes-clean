@@ -1,97 +1,34 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
-  GraduationCap,
-  Search,
   MapPin,
-  Award,
-  Users,
-  Euro,
-  Bus,
-  Star,
   ChevronDown,
-  Filter,
-  FileText,
-  Briefcase,
-  Globe,
-  CheckCircle2,
-  TrendingUp,
-  Video,
-  Navigation,
   Clock,
-  Plus,
-  X,
-  Utensils,
-  Home as HomeIcon,
-  ArrowLeft,
-  Calendar,
-
-  Tag
+  Calendar
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
-import { useTranslation } from '../lib/i18n';
 import { supabase } from '../lib/supabaseClient';
-import CityAutocomplete from '../components/CityAutocomplete';
-import EducationCompare from '../components/EducationCompare';
 import MeilleursSection from '../components/MeilleursSection';
-import { getEducationCategoryLabel } from '../lib/educationCategories';
-import { readParams } from '../lib/urlParams';
-import UnifiedBusinessCard from '../components/UnifiedBusinessCard';
-import { useNavigate } from '../lib/url';
 import { getSupabaseImageUrl } from '../lib/imageUtils';
-import BackButton from '../components/BackButton';
-import { BusinessCard } from '../components/BusinessCard';
-import { BusinessDetail } from '../components/BusinessDetail';
 import SearchBar from '../components/SearchBar';
-
-interface Etablissement {
-  id: string;
-  nom: string;
-  type_etablissement: string;
-  niveau_etude: string;
-  systeme_enseignement: string;
-  langue_principale: string;
-  frais_scolarite_range: string;
-  frais_min?: number;
-  frais_max?: number;
-  adresse: string;
-  ville: string;
-  delegation: string;
-  telephone: string;
-  email: string;
-  site_web: string;
-  description: string;
-  accreditations: string[];
-  homologue_francais: boolean;
-  homologation_etrangere: boolean;
-  agrement_ministre: boolean;
-  ratio_eleves_enseignant?: number;
-  ratio_eleves_prof?: number;
-  taux_reussite_bac?: number;
-  transport_scolaire: boolean;
-  cantine: boolean;
-  internat: boolean;
-  latitude?: number;
-  longitude?: number;
-  note_moyenne: number;
-  nombre_avis: number;
-  niveau_abonnement: number;
-  services_inclus?: string[];
-  annee_fondation?: number;
-  capacite_accueil?: number;
-  langues_enseignees?: string[];
-  activites_extra?: string[];
-  lien_video_visite?: string;
-  photos?: string[];
-}
+import { Link } from 'react-router-dom';
 
 interface JobOffer {
   id: string;
-  titre: string;
-  entreprise: string;
-  ville: string;
-  type_contrat: string;
+  title: string;
+  company: string;
+  city: string;
+  contract_type: string;
   created_at: string;
+}
+
+interface EducationEvent {
+  id: string;
+  event_name: string;
+  organizer?: string | null;
+  event_date?: string | null;
+  city?: string | null;
+  registration_url?: string | null;
 }
 
 const translations = {
@@ -403,281 +340,181 @@ const translations = {
   }
 };
 
-function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
-  const R = 6371;
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLon = (lon2 - lon1) * Math.PI / 180;
-  const a =
-    Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-    Math.sin(dLon/2) * Math.sin(dLon/2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  return R * c;
-}
+const educationPageTranslations = {
+  fr: {
+    ...translations.fr,
+    searchPreferredTitle: "Trouvez l'établissement adapté à votre parcours",
+    searchPreferredSubtitle: "Recherchez une école, une université ou une formation en Tunisie"
+  },
+  en: {
+    ...translations.en,
+    searchPreferredTitle: 'Find the right institution for your path',
+    searchPreferredSubtitle: 'Search for a school, university or training course in Tunisia'
+  },
+  ar: {
+    ...translations.ar,
+    searchPreferredTitle: 'اعثر على المؤسسة المناسبة لمسارك',
+    searchPreferredSubtitle: 'ابحث عن مدرسة أو جامعة أو دورة تكوينية في تونس'
+  },
+  it: {
+    ...translations.en,
+    title: "Istruzione e formazione: trova l'istituto ideale",
+    welcome: "La tua guida completa all'istruzione in Tunisia. Dalla scuola dell'infanzia all'università e alla formazione continua, Dalil Tounes ti aiuta a scegliere il percorso migliore. Confronta i programmi, consulta le recensioni dei genitori e iscrivi i tuoi figli con fiducia.",
+    adminBlock: {
+      title: "Documenti richiesti per l'iscrizione",
+      desc: 'Trova le procedure amministrative necessarie',
+      link: 'Vai alla sezione amministrativa'
+    },
+    partnerBlock: {
+      title: 'Giornate aperte ed eventi',
+      desc: 'Scopri gli eventi organizzati dai nostri istituti partner',
+      link: 'Vedi gli eventi'
+    },
+    careersBlock: {
+      title: "Carriere nell'istruzione",
+      desc: "Scopri le ultime opportunità di lavoro nel settore dell'istruzione",
+      noJobs: 'Nessuna offerta disponibile al momento',
+      viewAll: 'Vedi tutte le offerte di lavoro'
+    },
+    eventBanner: {
+      title: 'Organizzi un evento scolastico?',
+      desc: 'Giornata aperta, fiera di orientamento, iscrizioni… Condividi i tuoi eventi con le famiglie della tua regione.',
+      cta: 'Proponi un evento'
+    },
+    meilleurs: {
+      secteurLabel: 'istituti di istruzione',
+      sectionTitle: 'Le attività più consigliate dai clienti',
+      blogTitle: 'Come scegliere la scuola giusta in Tunisia',
+      blogExcerpt: 'Scuola pubblica, privata, lezioni individuali... Come orientarsi e fare la scelta giusta per tuo figlio?'
+    },
+    events: {
+      upcoming: 'Prossimi eventi',
+      filterByCity: 'Filtra per città',
+      allCities: 'Tutte le città',
+      noneInCity: 'Nessun prossimo evento a',
+      noneAtAll: 'Nessun evento educativo in programma al momento',
+      register: 'Iscriviti'
+    },
+    searchPreferredTitle: "Trova l'istituto adatto al tuo percorso",
+    searchPreferredSubtitle: 'Cerca una scuola, università o formazione in Tunisia'
+  },
+  ru: {
+    ...translations.en,
+    title: 'Образование и обучение: найдите подходящее учебное заведение',
+    welcome: 'Ваш полный путеводитель по образованию в Тунисе. От детского сада до университета и непрерывного обучения — Dalil Tounes поможет выбрать лучший путь. Сравнивайте программы, читайте отзывы родителей и уверенно записывайте детей на обучение.',
+    adminBlock: {
+      title: 'Документы, необходимые для поступления',
+      desc: 'Узнайте о необходимых административных процедурах',
+      link: 'Перейти в административный раздел'
+    },
+    partnerBlock: {
+      title: 'Дни открытых дверей и мероприятия',
+      desc: 'Узнайте о мероприятиях наших учебных заведений-партнёров',
+      link: 'Посмотреть мероприятия'
+    },
+    careersBlock: {
+      title: 'Карьера в образовании',
+      desc: 'Откройте для себя новые вакансии в сфере образования',
+      noJobs: 'В данный момент вакансий нет',
+      viewAll: 'Посмотреть все вакансии'
+    },
+    eventBanner: {
+      title: 'Организуете школьное мероприятие?',
+      desc: 'День открытых дверей, профориентационная ярмарка, набор учащихся… Расскажите о мероприятии семьям вашего региона.',
+      cta: 'Предложить мероприятие'
+    },
+    meilleurs: {
+      secteurLabel: 'учебных заведений',
+      sectionTitle: 'Компании, которые чаще всего рекомендуют клиенты',
+      blogTitle: 'Как выбрать подходящую школу в Тунисе',
+      blogExcerpt: 'Государственная или частная школа, индивидуальные занятия... Как разобраться и сделать правильный выбор для ребёнка?'
+    },
+    events: {
+      upcoming: 'Предстоящие мероприятия',
+      filterByCity: 'Фильтр по городу',
+      allCities: 'Все города',
+      noneInCity: 'Нет предстоящих мероприятий в городе',
+      noneAtAll: 'В данный момент образовательных мероприятий не запланировано',
+      register: 'Зарегистрироваться'
+    },
+    searchPreferredTitle: 'Найдите учебное заведение для своего пути',
+    searchPreferredSubtitle: 'Ищите школы, университеты и учебные курсы в Тунисе'
+  }
+};
+
+const dateLocales = {
+  fr: 'fr-FR',
+  en: 'en-GB',
+  ar: 'ar-TN',
+  it: 'it-IT',
+  ru: 'ru-RU'
+} as const;
 
 export default function EducationNew() {
   const { language } = useLanguage();
-  const tGlobal = useTranslation(language);
-  const t = translations[language as keyof typeof translations] || translations.fr;
+  const t = educationPageTranslations[language as keyof typeof educationPageTranslations] || educationPageTranslations.fr;
+  const dateLocale = dateLocales[language as keyof typeof dateLocales] || dateLocales.fr;
   const isRTL = language === 'ar';
-  const { q, ville } = readParams();
-  const navigate = useNavigate();
-
-  const [keyword, setKeyword] = useState('');
-  const [city, setCity] = useState('');
-  const [userAddress, setUserAddress] = useState('');
-  const [userCoords, setUserCoords] = useState<{lat: number, lng: number} | null>(null);
-  const [typeFilter, setTypeFilter] = useState('all');
-  const [niveauFilter, setNiveauFilter] = useState('all');
-  const [langueFilter, setLangueFilter] = useState('all');
-  const [prixFilter, setPrixFilter] = useState('all');
-  const [systemFilter, setSystemFilter] = useState('all');
-
-  const [isLoading, setIsLoading] = useState(false);
-  const [etablissements, setEtablissements] = useState<Etablissement[]>([]);
-  const [etablissementsWithDistance, setEtablissementsWithDistance] = useState<(Etablissement & {distance?: number, travelTime?: number})[]>([]);
-  const [showFilters, setShowFilters] = useState(false);
-
-  const [selectedForCompare, setSelectedForCompare] = useState<string[]>([]);
-  const [showCompare, setShowCompare] = useState(false);
 
   const [jobOffers, setJobOffers] = useState<JobOffer[]>([]);
-
-  const [selectedEducationBusiness, setSelectedEducationBusiness] = useState<any | null>(null);
-
-  const [educationEvents, setEducationEvents] = useState<any[]>([]);
+  const [educationEvents, setEducationEvents] = useState<EducationEvent[]>([]);
   const [eventsCity, setEventsCity] = useState('');
 
-  const runSearch = async () => {
-    setIsLoading(true);
-    try {
-      // TODO: Table etablissements_education en cours de création
-      // Temporairement désactivé pour éviter les erreurs console
-      /*
-      let query = supabase
-        .from('etablissements_education')
-        .select('*');
-
-      // Filtrer par page_categorie si la table l'a
-      // Note: etablissements_education est une table dédiée, pas entreprise
-      // Donc pas besoin de filtrer par page_categorie ici
-
-      query = query
-        .order('niveau_abonnement', { ascending: false })
-        .order('note_moyenne', { ascending: false });
-
-      if (keyword) {
-        query = query.or(`nom.ilike.*${keyword}*,description.ilike.*${keyword}*`);
-      }
-
-      if (city) {
-        query = query.or(`ville.ilike.*${city}*,delegation.ilike.*${city}*`);
-      }
-
-      if (typeFilter !== 'all') {
-        const typeMap: Record<string, string> = {
-          public: 'Public',
-          prive: 'Privé',
-          international: 'International'
-        };
-        query = query.eq('type_etablissement', typeMap[typeFilter]);
-      }
-
-      if (niveauFilter !== 'all') {
-        const niveauMap: Record<string, string> = {
-          creche: 'Crèche',
-          primaire: 'Primaire',
-          lycee: 'Lycée',
-          superieur: 'Supérieur'
-        };
-        query = query.eq('niveau_etude', niveauMap[niveauFilter]);
-      }
-
-      if (langueFilter !== 'all') {
-        const langueMap: Record<string, string> = {
-          francais: 'Français',
-          anglais: 'Anglais',
-          arabe: 'Arabe',
-          autre: 'Autre'
-        };
-        query = query.eq('langue_principale', langueMap[langueFilter]);
-      }
-
-      if (prixFilter !== 'all') {
-        const prixMap: Record<string, string> = {
-          faible: 'Faible',
-          moyen: 'Moyen',
-          eleve: 'Élevé'
-        };
-        query = query.eq('frais_scolarite_range', prixMap[prixFilter]);
-      }
-
-      if (systemFilter !== 'all') {
-        const systemMap: Record<string, string> = {
-          francais: 'Français',
-          anglais: 'Anglais',
-          arabe: 'National',
-          allemand: 'Allemand',
-          autre: 'International'
-        };
-        query = query.eq('systeme_enseignement', systemMap[systemFilter]);
-      }
-
-      const { data, error } = await query;
-
-      if (error) throw error;
-      setEtablissements(data || []);
-
-      if (userCoords && data) {
-        const withDistance = data.map(etab => {
-          if (etab.latitude && etab.longitude) {
-            const dist = calculateDistance(userCoords.lat, userCoords.lng, etab.latitude, etab.longitude);
-            const travelTime = Math.round((dist / 40) * 60);
-            return { ...etab, distance: dist, travelTime };
-          }
-          return etab;
-        });
-        setEtablissementsWithDistance(withDistance);
-      } else {
-        setEtablissementsWithDistance(data || []);
-      }
-      */
-      setEtablissements([]);
-      setEtablissementsWithDistance([]);
-    } catch (error) {
-      console.error('Erreur recherche:', error);
-      setEtablissements([]);
-      setEtablissementsWithDistance([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const calculateDistances = async () => {
-    if (!userAddress) return;
-
-    try {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            setUserCoords({
-              lat: position.coords.latitude,
-              lng: position.coords.longitude
-            });
-            runSearch();
-          },
-          () => {
-            alert(tGlobal.education.errors.geolocationDenied);
-          }
-        );
-      }
-    } catch (error) {
-      console.error('Erreur géolocalisation:', error);
-    }
-  };
-
-  const resetFilters = () => {
-    setKeyword('');
-    setCity('');
-    setUserAddress('');
-    setUserCoords(null);
-    setTypeFilter('all');
-    setNiveauFilter('all');
-    setLangueFilter('all');
-    setPrixFilter('all');
-    setSystemFilter('all');
-    setSelectedForCompare([]);
-    setEtablissements([]);
-    setEtablissementsWithDistance([]);
-  };
-
-  const toggleSelectForCompare = (id: string) => {
-    setSelectedForCompare(prev => {
-      if (prev.includes(id)) {
-        return prev.filter(i => i !== id);
-      } else if (prev.length < 3) {
-        return [...prev, id];
-      }
-      return prev;
-    });
-  };
-
-  const fetchJobOffers = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('job_postings')
-        .select('id, title, company, city, contract_type, created_at')
-        .ilike('category', '*enseignement*')
-        .order('created_at', { ascending: false })
-        .limit(3);
-
-      if (error) throw error;
-      setJobOffers(data || []);
-    } catch (error) {
-      console.error('Erreur chargement offres emploi:', error);
-    }
-  };
-
   useEffect(() => {
+    let isActive = true;
+
+    const fetchJobOffers = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('job_postings')
+          .select('id, title, company, city, contract_type, created_at')
+          .ilike('category', '*enseignement*')
+          .order('created_at', { ascending: false })
+          .limit(3);
+
+        if (error) throw error;
+        if (isActive) setJobOffers((data || []) as JobOffer[]);
+      } catch (error) {
+        console.error('Erreur chargement offres emploi:', error);
+      }
+    };
+
     fetchJobOffers();
-    fetchEducationEvents();
+    return () => {
+      isActive = false;
+    };
   }, []);
 
   useEffect(() => {
+    let isActive = true;
+
+    const fetchEducationEvents = async () => {
+      try {
+        let query = supabase
+          .from('featured_events')
+          .select('id, event_name, organizer, event_date, city, registration_url')
+          .eq('secteur_evenement', 'education')
+          .gte('event_date', new Date().toISOString().split('T')[0])
+          .order('event_date', { ascending: true })
+          .limit(10);
+
+        if (eventsCity) {
+          query = query.ilike('city', `*${eventsCity}*`);
+        }
+
+        const { data, error } = await query;
+        if (error) throw error;
+        if (isActive) setEducationEvents((data || []) as EducationEvent[]);
+      } catch (error) {
+        console.error('Erreur chargement événements éducation:', error);
+      }
+    };
+
     fetchEducationEvents();
+    return () => {
+      isActive = false;
+    };
   }, [eventsCity]);
-
-  const fetchEducationEvents = async () => {
-    try {
-      let query = supabase
-        .from('featured_events')
-        .select('*')
-        .eq('secteur_evenement', 'education')
-        .gte('event_date', new Date().toISOString().split('T')[0])
-        .order('event_date', { ascending: true })
-        .limit(10);
-
-      if (eventsCity) {
-        query = query.ilike('city', `*${eventsCity}*`);
-      }
-
-      const { data, error } = await query;
-      if (error) throw error;
-      setEducationEvents(data || []);
-    } catch (error) {
-      console.error('Erreur chargement événements éducation:', error);
-    }
-  };
-
-  useEffect(() => {
-    setIsLoading(true);
-    (async () => {
-      // TODO: Table etablissements_education en cours de création
-      // Temporairement désactivé pour éviter les erreurs console
-      /*
-      let query = supabase
-        .from('etablissements_education')
-        .select('*')
-        .order('nom', { ascending: true })
-        .limit(60);
-
-      if (q) query = query.ilike('nom', `%${q}%`);
-      if (ville) query = query.eq('gouvernorat', ville);
-
-      const { data, error } = await query;
-      if (error) {
-        console.error('Erreur:', error);
-        setEtablissements([]);
-      } else {
-        setEtablissements(data || []);
-      }
-      */
-      setEtablissements([]);
-      setIsLoading(false);
-    })();
-  }, [q, ville]);
-
-  const displayedEtabs = userCoords ? etablissementsWithDistance : etablissements;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white" dir={isRTL ? 'rtl' : 'ltr'}>
@@ -688,14 +525,6 @@ export default function EducationNew() {
           backgroundImage: `linear-gradient(rgba(74, 29, 67, 0.6), rgba(74, 29, 67, 0.6)), url(${getSupabaseImageUrl('classe-ecole.jpg')})`
         }}
       >
-        <button
-          onClick={() => navigate('/citizens')}
-          className="absolute top-4 left-4 z-10 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm text-[#4A1D43] px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-white transition-colors shadow-sm"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          {language === 'fr' ? 'Retour' : language === 'ar' ? 'رجوع' : language === 'en' ? 'Back' : 'Indietro'}
-        </button>
-
         <div className="max-w-5xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -712,259 +541,18 @@ export default function EducationNew() {
         </div>
       </section>
 
-      <div className="max-w-5xl mx-auto px-4 py-6">
-
-          {/* Bandeau informatif Événements Scolaires - Version compacte */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.15 }}
-            className="bg-[#FAF9F6] rounded-lg px-3 py-2 mb-4 shadow-sm border border-[#D4AF37]"
-          >
-            <div className="flex flex-col md:flex-row items-start md:items-center gap-1.5">
-              <div className="flex-1">
-                <h3 className="text-base md:text-lg font-semibold text-[#4A1D43] mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>
-                  {t.eventBanner.title}
-                </h3>
-                <p className="text-xs text-gray-700 leading-snug mb-1.5">
-                  {t.eventBanner.desc}
-                </p>
-                <a
-                  href="#/education-event-form"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#4A1D43] hover:bg-[#5A2D53] border border-[#D4AF37] text-[#D4AF37] hover:text-white font-semibold rounded-lg shadow-sm transition-all transform hover:scale-105 cursor-pointer text-xs"
-                  style={{ fontFamily: "'Playfair Display', serif" }}
-                >
-                  <Calendar className="w-3.5 h-3.5 text-[#D4AF37]" />
-                  <span>{t.eventBanner.cta}</span>
-                </a>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* BARRE C SUPPRIMÉE - Barre de recherche principale avec filtres manuels (non connectée à Supabase)
-          {(q || ville) && (
-            <div className="mb-6 text-sm text-gray-500">
-              {q && <>Recherche : <b>{q}</b> · </>}
-              {ville && <>Ville : <b>{ville}</b></>}
-            </div>
-          )}
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20"
-          >
-            <div className={`flex flex-col md:flex-row gap-3 ${isRTL ? 'md:flex-row-reverse' : ''}`}>
-              <div className="flex-1 relative">
-                <Search className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400`} />
-                <input
-                  type="text"
-                  value={keyword}
-                  onChange={(e) => setKeyword(e.target.value)}
-                  placeholder={t.searchPlaceholder}
-                  data-search-bar="true"
-                  data-search-scope="education"
-                  data-component-name="EducationNew-Keyword"
-                  className={`w-full ${isRTL ? 'pr-10 text-right' : 'pl-10'} py-3 rounded-lg border-0 focus:ring-2 focus:ring-blue-500 text-gray-900`}
-                />
-              </div>
-              <div className="md:w-72">
-                <CityAutocomplete
-                  value={city}
-                  onChange={setCity}
-                  placeholder={t.cityPlaceholder}
-                />
-              </div>
-              <button
-                onClick={() => setShowFilters(!showFilters)}
-                className="md:hidden px-6 py-3 rounded-lg bg-white/20 hover:bg-white/30 text-white border border-white/30 transition flex items-center justify-center gap-2"
-              >
-                <Filter className="w-5 h-5" />
-                {t.filters}
-              </button>
-            </div>
-
-            <div className={`mt-4 flex ${isRTL ? 'flex-row-reverse' : ''} gap-3`}>
-              <div className="flex-1 relative">
-                <Navigation className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400`} />
-                <input
-                  type="text"
-                  value={userAddress}
-                  onChange={(e) => setUserAddress(e.target.value)}
-                  placeholder={t.yourAddress}
-                  data-search-bar="true"
-                  data-search-scope="adresse"
-                  data-component-name="EducationNew-Address"
-                  className={`w-full ${isRTL ? 'pr-10 text-right' : 'pl-10'} py-3 rounded-lg border-0 focus:ring-2 focus:ring-blue-500 text-gray-900`}
-                />
-              </div>
-              <button
-                onClick={calculateDistances}
-                disabled={!userAddress}
-                className="px-6 py-3 rounded-lg bg-[#4A1D43] hover:bg-[#5A2D53] border-2 border-[#D4AF37] text-[#D4AF37] hover:text-white font-semibold transition shadow-lg disabled:opacity-50 flex items-center gap-2"
-                style={{ fontFamily: "'Playfair Display', serif" }}
-              >
-                <MapPin className="w-5 h-5" />
-                {t.calculateDistance}
-              </button>
-            </div>
-
-            <div className={`mt-4 grid grid-cols-1 md:grid-cols-5 gap-3 ${showFilters ? 'block' : 'hidden md:grid'}`}>
-              <select
-                value={typeFilter}
-                onChange={(e) => setTypeFilter(e.target.value)}
-                className="px-4 py-2 rounded-lg border-0 focus:ring-2 focus:ring-blue-500 text-gray-900 text-sm"
-              >
-                <option value="all">{t.typeOptions.all}</option>
-                <option value="public">{t.typeOptions.public}</option>
-                <option value="prive">{t.typeOptions.prive}</option>
-                <option value="international">{t.typeOptions.international}</option>
-              </select>
-
-              <select
-                value={niveauFilter}
-                onChange={(e) => setNiveauFilter(e.target.value)}
-                className="px-4 py-2 rounded-lg border-0 focus:ring-2 focus:ring-blue-500 text-gray-900 text-sm"
-              >
-                <option value="all">{t.niveauOptions.all}</option>
-                <option value="creche">{t.niveauOptions.creche}</option>
-                <option value="primaire">{t.niveauOptions.primaire}</option>
-                <option value="lycee">{t.niveauOptions.lycee}</option>
-                <option value="superieur">{t.niveauOptions.superieur}</option>
-              </select>
-
-              <select
-                value={langueFilter}
-                onChange={(e) => setLangueFilter(e.target.value)}
-                className="px-4 py-2 rounded-lg border-0 focus:ring-2 focus:ring-blue-500 text-gray-900 text-sm"
-              >
-                <option value="all">{t.langueOptions.all}</option>
-                <option value="francais">{t.langueOptions.francais}</option>
-                <option value="anglais">{t.langueOptions.anglais}</option>
-                <option value="arabe">{t.langueOptions.arabe}</option>
-                <option value="autre">{t.langueOptions.autre}</option>
-              </select>
-
-              <select
-                value={prixFilter}
-                onChange={(e) => setPrixFilter(e.target.value)}
-                className="px-4 py-2 rounded-lg border-0 focus:ring-2 focus:ring-blue-500 text-gray-900 text-sm"
-              >
-                <option value="all">{t.prixOptions.all}</option>
-                <option value="faible">{t.prixOptions.faible}</option>
-                <option value="moyen">{t.prixOptions.moyen}</option>
-                <option value="eleve">{t.prixOptions.eleve}</option>
-              </select>
-
-              <select
-                value={systemFilter}
-                onChange={(e) => setSystemFilter(e.target.value)}
-                className="px-4 py-2 rounded-lg border-0 focus:ring-2 focus:ring-blue-500 text-gray-900 text-sm"
-              >
-                <option value="all">{t.systemOptions.all}</option>
-                <option value="francais">{t.systemOptions.francais}</option>
-                <option value="anglais">{t.systemOptions.anglais}</option>
-                <option value="arabe">{t.systemOptions.arabe}</option>
-                <option value="allemand">{t.systemOptions.allemand}</option>
-                <option value="autre">{t.systemOptions.autre}</option>
-              </select>
-            </div>
-
-            <div className={`mt-4 flex ${isRTL ? 'flex-row-reverse' : ''} gap-3`}>
-              <button
-                onClick={runSearch}
-                disabled={isLoading}
-                className="flex-1 px-6 py-3 rounded-lg bg-orange-600 hover:bg-orange-700 text-white font-medium transition shadow-lg disabled:opacity-50"
-              >
-                {t.searchBtn}
-              </button>
-              <button
-                onClick={resetFilters}
-                className="px-6 py-3 rounded-lg bg-white/20 hover:bg-white/30 text-white border border-white/30 transition"
-              >
-                {t.resetBtn}
-              </button>
-            </div>
-          </motion.div>
-          */}
-
-          {/* Blocs d'information */}
-          <section className="max-w-7xl mx-auto px-4 py-8">
-            <div className="grid md:grid-cols-2 gap-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="bg-gradient-to-br from-[#4A1D43]/5 to-[#D4AF37]/5 rounded-2xl p-6 border border-[#D4AF37]"
-          >
-            <h3 className="text-lg font-semibold text-[#4A1D43] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>{t.adminBlock.title}</h3>
-            <p className="text-sm text-gray-600 mb-4">{t.adminBlock.desc}</p>
-            <a
-              href="#/citizens/admin"
-              className="inline-flex items-center gap-2 text-[#4A1D43] hover:text-[#D4AF37] font-medium text-sm transition-colors"
-            >
-              {t.adminBlock.link}
-              <ChevronDown className={`w-4 h-4 ${isRTL ? 'rotate-90' : '-rotate-90'}`} />
-            </a>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="bg-gradient-to-br from-[#4A1D43]/5 to-[#D4AF37]/5 rounded-2xl p-6 border border-[#D4AF37]"
-          >
-            <h3 className="text-lg font-semibold text-[#4A1D43] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>{t.partnerBlock.title}</h3>
-            <p className="text-sm text-gray-600 mb-4">{t.partnerBlock.desc}</p>
-            <button
-              onClick={() => {
-                const eventsSection = document.getElementById('education-events-section');
-                eventsSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              }}
-              className="inline-flex items-center gap-2 text-[#4A1D43] hover:text-[#D4AF37] font-medium text-sm transition-colors"
-            >
-              {t.partnerBlock.link}
-              <ChevronDown className={`w-4 h-4 ${isRTL ? 'rotate-90' : '-rotate-90'}`} />
-            </button>
-          </motion.div>
-            </div>
-          </section>
-        </div>
-
-      {/* Bouton comparaison flottant */}
-      {selectedForCompare.length > 0 && (
-        <div className="fixed bottom-8 right-8 z-40">
-          <motion.button
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            onClick={() => setShowCompare(true)}
-            className="bg-gradient-to-r from-[#4A1D43] to-[#6B2D5C] border-2 border-[#D4AF37] text-[#D4AF37] px-6 py-4 rounded-full shadow-2xl hover:shadow-3xl transition-all flex items-center gap-3"
-            style={{ fontFamily: "'Playfair Display', serif" }}
-          >
-            <Award className="w-6 h-6" />
-            <div className="text-left">
-              <div className="text-sm font-semibold">{t.compare}</div>
-              <div className="text-xs opacity-90">{selectedForCompare.length} {t.selected}</div>
-            </div>
-          </motion.button>
-        </div>
-      )}
-
-      {/* Modal comparaison */}
-      {showCompare && selectedForCompare.length >= 2 && (
-        <EducationCompare
-          etablissements={displayedEtabs.filter(e => selectedForCompare.includes(e.id))}
-          onClose={() => setShowCompare(false)}
-          language={language}
-        />
-      )}
-
       {/* SearchBar Éducation */}
       <section className="py-2 px-4 relative z-[9999]" style={{ overflow: 'visible' }}>
         <div className="max-w-5xl mx-auto" style={{ overflow: 'visible' }}>
           <div className="bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-[#D4AF37] p-2.5 md:p-3" style={{ overflow: 'visible' }}>
-            <SearchBar scope="global" intentEnabled={false} enabled resultMode="redirectToResults" />
+            <SearchBar
+              scope="global"
+              intentEnabled={false}
+              enabled
+              resultMode="redirectToResults"
+              preferredTitle={t.searchPreferredTitle}
+              preferredSubtitle={t.searchPreferredSubtitle}
+            />
           </div>
         </div>
       </section>
@@ -981,7 +569,64 @@ export default function EducationNew() {
             excerpt: t.meilleurs.blogExcerpt,
             slug: "bien-choisir-son-ecole"
           }}
+          useGoogleRecommendationCriteria
         />
+      </section>
+
+      <section className="max-w-5xl mx-auto px-4 pb-8" aria-label={t.eventBanner.title}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.15 }}
+          className="bg-[#FAF9F6] rounded-lg px-3 py-2 mb-6 shadow-sm border border-[#D4AF37]"
+        >
+          <h2 className="text-base md:text-lg font-semibold text-[#4A1D43] mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>
+            {t.eventBanner.title}
+          </h2>
+          <p className="text-xs text-gray-700 leading-snug mb-1.5">{t.eventBanner.desc}</p>
+          <Link
+            to="/education-event-form"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#4A1D43] hover:bg-[#5A2D53] border border-[#D4AF37] text-[#D4AF37] hover:text-white font-semibold rounded-lg shadow-sm transition-all transform hover:scale-105 text-xs"
+            style={{ fontFamily: "'Playfair Display', serif" }}
+          >
+            <Calendar className="w-3.5 h-3.5 text-[#D4AF37]" aria-hidden="true" />
+            <span>{t.eventBanner.cta}</span>
+          </Link>
+        </motion.div>
+
+        <div className="grid md:grid-cols-2 gap-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="bg-gradient-to-br from-[#4A1D43]/5 to-[#D4AF37]/5 rounded-2xl p-6 border border-[#D4AF37]"
+          >
+            <h2 className="text-lg font-semibold text-[#4A1D43] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>{t.adminBlock.title}</h2>
+            <p className="text-sm text-gray-600 mb-4">{t.adminBlock.desc}</p>
+            <Link to="/citizens/admin" className="inline-flex items-center gap-2 text-[#4A1D43] hover:text-[#D4AF37] font-medium text-sm transition-colors">
+              {t.adminBlock.link}
+              <ChevronDown className={`w-4 h-4 ${isRTL ? 'rotate-90' : '-rotate-90'}`} aria-hidden="true" />
+            </Link>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="bg-gradient-to-br from-[#4A1D43]/5 to-[#D4AF37]/5 rounded-2xl p-6 border border-[#D4AF37]"
+          >
+            <h2 className="text-lg font-semibold text-[#4A1D43] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>{t.partnerBlock.title}</h2>
+            <p className="text-sm text-gray-600 mb-4">{t.partnerBlock.desc}</p>
+            <button
+              type="button"
+              onClick={() => document.getElementById('education-events-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+              className="inline-flex items-center gap-2 text-[#4A1D43] hover:text-[#D4AF37] font-medium text-sm transition-colors"
+            >
+              {t.partnerBlock.link}
+              <ChevronDown className={`w-4 h-4 ${isRTL ? 'rotate-90' : '-rotate-90'}`} aria-hidden="true" />
+            </button>
+          </motion.div>
+        </div>
       </section>
 
       {/* Bloc Carrières dans l'Éducation - Version compacte */}
@@ -1000,14 +645,14 @@ export default function EducationNew() {
             <div className="grid md:grid-cols-3 gap-3 mb-3">
               {jobOffers.map((job) => (
                 <div key={job.id} className="bg-[#FAF9F6] rounded-lg px-3 py-2 border border-[#D4AF37]/30 hover:shadow-md transition">
-                  <h3 className="font-semibold text-[#4A1D43] mb-1 text-sm">{job.titre}</h3>
-                  <p className="text-xs text-gray-600 mb-1">{job.entreprise}</p>
+                  <h3 className="font-semibold text-[#4A1D43] mb-1 text-sm">{job.title}</h3>
+                  <p className="text-xs text-gray-600 mb-1">{job.company}</p>
                   <div className="flex items-center gap-1.5 text-xs text-gray-500">
                     <MapPin className="w-3 h-3 text-[#D4AF37]" />
-                    <span>{job.ville}</span>
+                    <span>{job.city}</span>
                   </div>
                   <span className="inline-block mt-1.5 px-2 py-0.5 bg-[#D4AF37]/20 text-[#4A1D43] rounded-full text-[10px] font-medium">
-                    {job.type_contrat}
+                    {job.contract_type}
                   </span>
                 </div>
               ))}
@@ -1016,14 +661,14 @@ export default function EducationNew() {
             <p className="text-gray-600 mb-3 text-sm">{t.careersBlock.noJobs}</p>
           )}
 
-          <a
-            href="#/jobs"
+          <Link
+            to="/jobs"
             className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#4A1D43] hover:bg-[#5A2D53] text-[#D4AF37] hover:text-white rounded-lg transition font-semibold text-xs border border-[#D4AF37]"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
             {t.careersBlock.viewAll}
             <ChevronDown className={`w-3.5 h-3.5 ${isRTL ? 'rotate-90' : '-rotate-90'}`} />
-          </a>
+          </Link>
         </motion.div>
       </section>
 
@@ -1082,7 +727,7 @@ export default function EducationNew() {
                           <div className="flex items-center gap-1">
                             <Clock className="w-3 h-3 flex-shrink-0 text-[#D4AF37]" />
                             <span>
-                              {new Date(event.event_date).toLocaleDateString('fr-FR', {
+                              {new Date(event.event_date).toLocaleDateString(dateLocale, {
                                 day: 'numeric',
                                 month: 'long',
                                 year: 'numeric'
@@ -1125,14 +770,6 @@ export default function EducationNew() {
         </motion.div>
       </section>
 
-      {/* Modal de détails entreprise */}
-      {selectedEducationBusiness && (
-        <BusinessDetail
-          business={selectedEducationBusiness}
-          onClose={() => setSelectedEducationBusiness(null)}
-          asModal={true}
-        />
-      )}
     </div>
   );
 }
