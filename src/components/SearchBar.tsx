@@ -69,6 +69,8 @@ type Props = {
   autoSearch?: boolean;
   resultMode?: ResultMode;
   onResultSelect?: (item: ResultItem, context: ResultSelectContext) => void;
+  preferredTitle?: string;
+  preferredSubtitle?: string;
 };
 
 export default function SearchBar({
@@ -81,6 +83,8 @@ export default function SearchBar({
   autoSearch = false,
   resultMode = 'redirectToDetail',
   onResultSelect,
+  preferredTitle,
+  preferredSubtitle,
 }: Props) {
   if (!enabled) return null;
 
@@ -692,10 +696,10 @@ export default function SearchBar({
               fontSize: '1.5em',
               textShadow: '0 1px 2px rgba(0,0,0,0.2)',
             }}
-          >★</span> {t(language as Lang, 'search.preferredTitle')}
+          >★</span> {preferredTitle || t(language as Lang, 'search.preferredTitle')}
         </p>
         <p className="text-xs text-gray-500 mt-1">
-          {t(language as Lang, 'search.preferredSubtitle')}
+          {preferredSubtitle || t(language as Lang, 'search.preferredSubtitle')}
         </p>
       </div>
 

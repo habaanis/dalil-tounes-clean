@@ -3,6 +3,7 @@ import { MapPin, Clock, Phone } from 'lucide-react';
 import { isCurrentlyOpen, translateOpenStatus, translateClosedStatus } from '../lib/horaireUtils';
 import { getLogoUrl, getLogoStyle, getLogoContainerStyle } from '../lib/logoUtils';
 import { cleanArabicField } from '../lib/textNormalization';
+import GoogleRatingSummary from './GoogleRatingSummary';
 
 interface GratuitCardProps {
   name: string;
@@ -16,11 +17,26 @@ interface GratuitCardProps {
   allKeywords?: string[];
   statut_carte?: string | null;
   description_ar?: string | null;
+  showGoogleRating?: boolean;
+  googleRating?: string | number | null;
+  googleReviewCount?: string | number | null;
 }
 
-function renderStatutCarteBadge(statut_carte: string | null | undefined) {
+const CARD_COPY: Record<string, { certified: string; nonCertified: string; details: string; showPhone: string; hidePhone: string }> = {
+  fr: { certified: 'CERTIFIÉ', nonCertified: 'NON CERTIFIÉ', details: 'Voir les détails', showPhone: 'Afficher le numéro', hidePhone: 'Masquer le numéro' },
+  ar: { certified: 'معتمد', nonCertified: 'غير معتمد', details: 'عرض التفاصيل', showPhone: 'عرض الرقم', hidePhone: 'إخفاء الرقم' },
+  en: { certified: 'CERTIFIED', nonCertified: 'NON-CERTIFIED', details: 'View details', showPhone: 'Show phone number', hidePhone: 'Hide phone number' },
+  it: { certified: 'CERTIFICATO', nonCertified: 'NON CERTIFICATO', details: 'Vedi i dettagli', showPhone: 'Mostra il numero', hidePhone: 'Nascondi il numero' },
+  ru: { certified: 'СЕРТИФИЦИРОВАНО', nonCertified: 'НЕ СЕРТИФИЦИРОВАНО', details: 'Подробнее', showPhone: 'Показать номер', hidePhone: 'Скрыть номер' },
+};
+
+function renderStatutCarteBadge(statut_carte: string | null | undefined, language: string, localize: boolean) {
   if (!statut_carte) return null;
   const isNonCertified = statut_carte === '⚠️ NON CERTIFIÉ';
+  const copy = CARD_COPY[language] || CARD_COPY.fr;
+  const label = localize
+    ? `${isNonCertified ? '⚠️ ' : '✓ '}${isNonCertified ? copy.nonCertified : copy.certified}`
+    : statut_carte;
   return (
     <span style={{
       display: 'inline-block',
@@ -34,7 +50,7 @@ function renderStatutCarteBadge(statut_carte: string | null | undefined) {
       borderRadius: '20px',
       padding: '1px 7px',
     }}>
-      {statut_carte}
+      {label}
     </span>
   );
 }
@@ -51,11 +67,14 @@ export default function GratuitCard({
   allKeywords = [],
   statut_carte,
   description_ar,
+  showGoogleRating = false,
+  googleRating,
+  googleReviewCount,
 }: GratuitCardProps) {
-  console.log('statut_carte =', statut_carte, '| entreprise =', name);
   const [showPhone, setShowPhone] = useState(false);
   const locationLabel = ville || gouvernorat || '';
   const isOpen = isCurrentlyOpen(horaires_ok ?? null);
+  const cardCopy = CARD_COPY[language] || CARD_COPY.fr;
 
   return (
     <div
@@ -92,7 +111,15 @@ export default function GratuitCard({
         <p style={{ fontSize: '14px', fontWeight: '700', color: '#1A1A1A', lineHeight: '1.3', margin: 0, letterSpacing: '-0.01em', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', direction: /[\u0600-\u06FF]/.test(name) ? 'rtl' : 'ltr' }}>
           {name}
         </p>
-        {renderStatutCarteBadge(statut_carte)}
+        {renderStatutCarteBadge(statut_carte, language, showGoogleRating)}
+        {showGoogleRating && (
+          <GoogleRatingSummary
+            rating={googleRating}
+            reviewCount={googleReviewCount}
+            language={language}
+            className="text-[#4A1D43]"
+          />
+        )}
         {description_ar && (
           <p style={{ fontSize: '11px', color: '#6B7280', lineHeight: '1.4', margin: 0, direction: 'rtl', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
             {cleanArabicField(description_ar)}
@@ -140,14 +167,14 @@ export default function GratuitCard({
                 transition: 'background 0.2s ease',
                 flexShrink: 0,
               }}
-              title={showPhone ? 'Masquer le numéro' : 'Afficher le numéro'}
+              title={showPhone ? cardCopy.hidePhone : cardCopy.showPhone}
             >
               <Phone size={13} style={{ color: showPhone ? '#FFFFFF' : '#D4AF37' }} />
             </button>
           </div>
         )}
         <span style={{ fontSize: '13px', fontWeight: '700', color: '#D4AF37', letterSpacing: '0.01em' }}>
-          Voir les détails →
+          {showGoogleRating ? cardCopy.details : 'Voir les détails'} →
         </span>
       </div>
     </div>

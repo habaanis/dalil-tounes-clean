@@ -2,6 +2,7 @@ import { Clock3, Phone } from 'lucide-react';
 import { getCoverImageUrl } from '../lib/imagekitUtils';
 import { getLogoUrl } from '../lib/logoUtils';
 import { isCurrentlyOpen, formatTodayScheduleText, getTodaySchedule } from '../lib/horaireUtils';
+import GoogleRatingSummary from './GoogleRatingSummary';
 
 interface BusinessSearchCardV2Props {
   business: {
@@ -34,6 +35,7 @@ interface BusinessSearchCardV2Props {
   categoryLabel?: string;
   language: string;
   onClick: () => void;
+  showGoogleRating?: boolean;
 }
 
 const COPY: Record<string, {
@@ -63,6 +65,7 @@ export default function BusinessSearchCardV2({
   categoryLabel,
   language,
   onClick,
+  showGoogleRating = false,
 }: BusinessSearchCardV2Props) {
   const text = COPY[language] || COPY.fr;
   const isRTL = language === 'ar';
@@ -116,6 +119,15 @@ export default function BusinessSearchCardV2({
 
         {categoryLabel && (
           <p className="mt-0.5 line-clamp-1 text-[9.5px] font-semibold text-[#F0C642]">{categoryLabel}</p>
+        )}
+
+        {showGoogleRating && (
+          <GoogleRatingSummary
+            rating={business['Note Google Globale'] ?? business.note_google}
+            reviewCount={business['Compteur Avis Google'] ?? business.nombre_avis}
+            language={language}
+            className="mt-1 text-white"
+          />
         )}
 
         {phone && (
