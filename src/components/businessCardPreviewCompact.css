@@ -164,35 +164,79 @@
 
 .dt-marketing-preview .dt-preview-gallery-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: 1.5fr 0.9fr;
+  grid-auto-flow: dense;
   gap: 5px;
 }
 
 .dt-marketing-preview .dt-preview-gallery-item {
   position: relative;
   overflow: hidden;
-  aspect-ratio: 1 / 1;
-  border: 1px solid rgba(212, 175, 55, 0.35);
-  border-radius: 8px;
+  min-height: 54px;
+  margin: 0;
+  border: 1px solid rgba(212, 175, 55, 0.42);
+  border-radius: 9px;
   background: #021e19;
+}
+
+.dt-marketing-preview .dt-preview-gallery-item-1 {
+  min-height: 105px;
+}
+
+.dt-marketing-preview .dt-preview-gallery-item-2 {
+  min-height: 105px;
+}
+
+.dt-marketing-preview .dt-preview-gallery-item-3 {
+  min-height: 92px;
+}
+
+.dt-marketing-preview .dt-preview-gallery-item-4 {
+  min-height: 92px;
+}
+
+.dt-marketing-preview .dt-preview-gallery-item-5 {
+  min-height: 66px;
+}
+
+.dt-marketing-preview .dt-preview-gallery-item-6 {
+  min-height: 58px;
+}
+
+.dt-marketing-preview .dt-preview-gallery-item-7 {
+  min-height: 54px;
+  grid-column: 1 / 2;
+  width: 82%;
 }
 
 .dt-marketing-preview .dt-preview-gallery-item img {
   width: 100%;
   height: 100%;
+  position: absolute;
+  inset: 0;
   display: block;
   object-fit: cover;
 }
 
-.dt-marketing-preview .dt-preview-gallery-more {
+.dt-marketing-preview .dt-preview-gallery-item figcaption {
   position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  background: rgba(0, 25, 20, 0.58);
-  color: #F4CE55;
-  font-size: 0.78rem;
-  font-weight: 900;
+  left: 8px;
+  right: 8px;
+  bottom: 7px;
+  z-index: 1;
+  color: #fff;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.9);
+}
+
+.dt-marketing-preview .dt-preview-gallery-item::after {
+  content: '';
+  position: absolute;
+  inset: 45% 0 0;
+  background: linear-gradient(to bottom, transparent, rgba(0, 20, 16, 0.72));
+  pointer-events: none;
 }
 
 .dt-marketing-preview .dt-powered-by {
