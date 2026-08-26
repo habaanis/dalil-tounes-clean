@@ -79,9 +79,13 @@ export const BusinessCard = ({ business, onClick, showGoogleRating = false }: Bu
     business.category ||
     business.categorie ||
     '';
-  const mainCategory = extractMainCategory(rawCategory);
+  const categoryText = String(rawCategory).trim();
+  const normalizedCategory = ['{}', '[]', 'null', 'undefined'].includes(categoryText.toLowerCase())
+    ? ''
+    : categoryText;
+  const mainCategory = extractMainCategory(normalizedCategory);
   const translatedCategory = getCategory(mainCategory);
-  const allKeywords = getAllKeywords(rawCategory);
+  const allKeywords = getAllKeywords(normalizedCategory);
 
   const tier = mapSubscriptionToTier({
     statut_abonnement: business.statut_abonnement,
