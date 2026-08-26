@@ -4,6 +4,7 @@ import { BusinessCard } from '../BusinessCard';
 import { buildEntrepriseUrl } from '../../lib/slugify';
 
 interface SeoBusinessCardProps {
+  showGoogleRating?: boolean;
   business: {
     id: string;
     nom: string;
@@ -35,7 +36,7 @@ function toLabel(value: string | string[] | null | undefined): string {
   return value || '';
 }
 
-const SeoBusinessCard: React.FC<SeoBusinessCardProps> = ({ business }) => {
+const SeoBusinessCard: React.FC<SeoBusinessCardProps> = ({ business, showGoogleRating = false }) => {
   const navigate = useNavigate();
   const categoryLabel =
     toLabel(business.sous_categories) ||
@@ -74,6 +75,7 @@ const SeoBusinessCard: React.FC<SeoBusinessCardProps> = ({ business }) => {
           id: business.id,
         }));
       }}
+      showGoogleRating={showGoogleRating}
     />
   );
 };

@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Phone, Building2, X, Plus, ArrowLeft } from 'lucide-react';
+import { Phone, Building2, X, Plus, Search } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
 import LocationSelectTunisie from '../components/LocationSelectTunisie';
@@ -11,7 +11,6 @@ import MedicalTransportCard from '../components/MedicalTransportCard';
 import MedicalTransportRegistrationForm from '../components/MedicalTransportRegistrationForm';
 import { supabase } from '../lib/supabaseClient';
 import { getSupabaseImageUrl } from '../lib/imageUtils';
-import { useNavigate } from 'react-router-dom';
 
 type PublicLanguage = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 
@@ -46,6 +45,9 @@ const COPY: Record<PublicLanguage, {
   ctaText: string;
   ctaButton: string;
   close: string;
+  preferredTitle: string;
+  preferredSubtitle: string;
+  transportPrompt: string;
 }> = {
   fr: {
     back: 'Retour',
@@ -72,6 +74,9 @@ const COPY: Record<PublicLanguage, {
     ctaText: 'Rejoignez notre réseau de prestataires de transport médical et aidez les citoyens à accéder plus facilement aux soins. Inscription gratuite et simple.',
     ctaButton: "S'inscrire comme prestataire",
     close: 'Fermer',
+    preferredTitle: 'Les professionnels de santé recommandés près de chez vous',
+    preferredSubtitle: 'Médecins, spécialistes et services de santé évalués par leurs patients',
+    transportPrompt: 'Sélectionnez vos critères puis lancez la recherche.',
   },
   ar: {
     back: 'رجوع',
@@ -98,6 +103,9 @@ const COPY: Record<PublicLanguage, {
     ctaText: 'انضم إلى شبكة مقدمي خدمات النقل الطبي وساعد المواطنين على الوصول إلى الرعاية بسهولة أكبر. التسجيل مجاني وبسيط.',
     ctaButton: 'التسجيل كمقدم خدمة',
     close: 'إغلاق',
+    preferredTitle: 'المهنيون الصحيون الموصى بهم بالقرب منك',
+    preferredSubtitle: 'أطباء وأخصائيون وخدمات صحية قيّمها مرضاهم',
+    transportPrompt: 'اختر معاييرك ثم ابدأ البحث.',
   },
   en: {
     back: 'Back',
@@ -124,6 +132,9 @@ const COPY: Record<PublicLanguage, {
     ctaText: 'Join our medical transport provider network and help citizens access care more easily. Registration is free and simple.',
     ctaButton: 'Register as a provider',
     close: 'Close',
+    preferredTitle: 'Recommended healthcare professionals near you',
+    preferredSubtitle: 'Doctors, specialists and health services rated by their patients',
+    transportPrompt: 'Select your criteria, then start the search.',
   },
   it: {
     back: 'Indietro',
@@ -150,6 +161,9 @@ const COPY: Record<PublicLanguage, {
     ctaText: "Unisciti alla nostra rete di trasporto medico e aiuta i cittadini ad accedere più facilmente alle cure. L'iscrizione è gratuita e semplice.",
     ctaButton: 'Registrati come fornitore',
     close: 'Chiudi',
+    preferredTitle: 'Professionisti sanitari consigliati vicino a te',
+    preferredSubtitle: 'Medici, specialisti e servizi sanitari valutati dai loro pazienti',
+    transportPrompt: 'Seleziona i criteri, quindi avvia la ricerca.',
   },
   ru: {
     back: 'Назад',
@@ -176,6 +190,9 @@ const COPY: Record<PublicLanguage, {
     ctaText: 'Присоединяйтесь к сети медицинского транспорта и помогайте людям легче получать необходимую помощь. Регистрация бесплатная и простая.',
     ctaButton: 'Зарегистрироваться как поставщик',
     close: 'Закрыть',
+    preferredTitle: 'Рекомендуемые медицинские специалисты рядом с вами',
+    preferredSubtitle: 'Врачи, специалисты и медицинские службы по оценкам пациентов',
+    transportPrompt: 'Выберите критерии и запустите поиск.',
   },
 };
 
@@ -186,7 +203,6 @@ interface CitizensHealthProps {
 export default function CitizensHealth({}: CitizensHealthProps) {
   const { language } = useLanguage();
   const t = useTranslation(language);
-  const navigate = useNavigate();
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as PublicLanguage;
   const c = COPY[lang];
   const isRTL = lang === 'ar';
@@ -195,6 +211,7 @@ export default function CitizensHealth({}: CitizensHealthProps) {
   const [vehicleType, setVehicleType] = useState('');
   const [transportProviders, setTransportProviders] = useState<any[]>([]);
   const [loadingTransport, setLoadingTransport] = useState(false);
+  const [hasSearchedTransport, setHasSearchedTransport] = useState(false);
   const [showTransportModal, setShowTransportModal] = useState(false);
 
   const emergencyNumbers = useMemo(() => ([
@@ -204,6 +221,7 @@ export default function CitizensHealth({}: CitizensHealthProps) {
   ]), [t]);
 
   const searchTransport = async (filters: TransportFilters) => {
+    setHasSearchedTransport(true);
     setLoadingTransport(true);
     try {
       let query = supabase
@@ -233,13 +251,6 @@ export default function CitizensHealth({}: CitizensHealthProps) {
       <section className="relative w-full overflow-hidden rounded-b-3xl shadow-lg">
         <img src={getSupabaseImageUrl('sante.jpg')} alt={c.heroAlt} className="w-full h-[240px] object-cover" decoding="async" />
         <div className="absolute inset-0 bg-gradient-to-br from-[#4A1D43]/40 to-[#6B2D5C]/30" />
-        <button
-          onClick={() => navigate('/citizens')}
-          className={`absolute top-4 z-10 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm text-[#4A1D43] px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-white transition-colors shadow-sm ${isRTL ? 'right-4' : 'left-4'}`}
-        >
-          <ArrowLeft className={`w-4 h-4 ${isRTL ? 'rotate-180' : ''}`} />
-          {c.back}
-        </button>
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
           <motion.h1 initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }} className="text-4xl md:text-5xl font-light text-[#D4AF37] mb-3 drop-shadow-lg" style={{ fontFamily: "'Playfair Display', serif" }}>
             {c.pageTitle}
@@ -253,7 +264,14 @@ export default function CitizensHealth({}: CitizensHealthProps) {
       <section className="py-2 px-4 relative z-[9999]" style={{ overflow: 'visible' }}>
         <div className="max-w-5xl mx-auto" style={{ overflow: 'visible' }}>
           <div className="bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-[#D4AF37] p-2.5 md:p-3" style={{ overflow: 'visible' }}>
-            <SearchBar scope="sante" intentEnabled={false} enabled resultMode="redirectToResults" />
+            <SearchBar
+              scope="sante"
+              intentEnabled={false}
+              enabled
+              resultMode="redirectToResults"
+              preferredTitle={c.preferredTitle}
+              preferredSubtitle={c.preferredSubtitle}
+            />
           </div>
         </div>
       </section>
@@ -264,6 +282,7 @@ export default function CitizensHealth({}: CitizensHealthProps) {
           listePage="santé"
           accentColor="#4A1D43"
           sectionTitle={c.bestTitle}
+          useGoogleRecommendationCriteria
           blogArticle={{ title: c.guideTitle, excerpt: c.guideExcerpt, slug: 'comment-choisir-son-medecin' }}
         />
       </section>
@@ -283,9 +302,6 @@ export default function CitizensHealth({}: CitizensHealthProps) {
                   <div className="text-[10px] text-white/90 mt-1">{n.label}</div>
                 </a>
               ))}
-            </div>
-            <div className="mt-2 bg-white rounded-lg border border-[#D4AF37] px-3 py-3 text-center">
-              <p className="text-[11px] text-gray-500 italic">{c.improving}</p>
             </div>
           </div>
         </div>
@@ -314,6 +330,11 @@ export default function CitizensHealth({}: CitizensHealthProps) {
             <div className="text-center py-16">
               <div className="inline-block w-12 h-12 border-4 border-[#4A1D43] border-t-transparent rounded-full animate-spin" />
               <p className="mt-4 text-[#4A1D43]">{c.searching}</p>
+            </div>
+          ) : !hasSearchedTransport ? (
+            <div className="mt-8 text-center py-10 bg-white rounded-xl border border-[#D4AF37]">
+              <Search className="w-12 h-12 text-[#D4AF37]/60 mx-auto mb-3" />
+              <p className="text-sm text-[#4A1D43] font-medium">{c.transportPrompt}</p>
             </div>
           ) : transportProviders.length > 0 ? (
             <div className="mt-8">

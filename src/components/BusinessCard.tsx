@@ -49,6 +49,7 @@ interface BusinessCardProps {
   };
   onClick: () => void;
   variant?: 'simple' | 'premium';
+  showGoogleRating?: boolean;
 }
 
 /**
@@ -59,7 +60,7 @@ interface BusinessCardProps {
  * Toutes les variantes ouvrent la fiche entreprise via le même onClick.
  * Aucun champ Airtable/Supabase ni droit d'abonnement n'est modifié ici.
  */
-export const BusinessCard = ({ business, onClick }: BusinessCardProps) => {
+export const BusinessCard = ({ business, onClick, showGoogleRating = false }: BusinessCardProps) => {
   const { language } = useLanguage();
   const { getCategory } = useCategoryTranslation();
 
@@ -114,6 +115,9 @@ export const BusinessCard = ({ business, onClick }: BusinessCardProps) => {
           allKeywords={allKeywords}
           statut_carte={business.statut_carte}
           description_ar={language === 'ar' ? business.description_ar || null : null}
+          showGoogleRating={showGoogleRating}
+          googleRating={business['Note Google Globale'] ?? business.note_google}
+          googleReviewCount={business['Compteur Avis Google'] ?? business.nombre_avis}
         />
       </div>
     );
@@ -128,6 +132,7 @@ export const BusinessCard = ({ business, onClick }: BusinessCardProps) => {
       categoryLabel={translatedCategory}
       language={language}
       onClick={onClick}
+      showGoogleRating={showGoogleRating}
     />
   );
 };

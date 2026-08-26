@@ -41,6 +41,7 @@ interface MeilleursProps {
   sectionTitle?: string;
   blogArticle?: BlogArticleLink;
   searchQuery?: string;
+  useGoogleRecommendationCriteria?: boolean;
 }
 
 const PAGE_SIZE = 4;
@@ -239,6 +240,7 @@ export default function MeilleursSection({
   sectionTitle,
   blogArticle,
   searchQuery,
+  useGoogleRecommendationCriteria = false,
 }: MeilleursProps) {
   const navigate = useNavigate();
   const { language } = useLanguage();
@@ -263,14 +265,20 @@ export default function MeilleursSection({
     }
     function itemIsPremium(item: MeilleursItem): boolean {
       if (item.is_premium === true) return true;
-      const s = item.statut_abonnement;
-      if (!s) return false;
-      const n = s.toLowerCase().trim();
-      return n.includes('premium') || n.includes('elite') || n.includes('artisan') || n.includes('pro') || n.includes('paid');
+      const subscriptionStatus = item.statut_abonnement;
+      if (!subscriptionStatus) return false;
+      const normalizedStatus = subscriptionStatus.toLowerCase().trim();
+      return normalizedStatus.includes('premium')
+        || normalizedStatus.includes('elite')
+        || normalizedStatus.includes('artisan')
+        || normalizedStatus.includes('pro')
+        || normalizedStatus.includes('paid');
     }
     function sortBusinesses(a: MeilleursItem, b: MeilleursItem): number {
-      const premiumDiff = Number(itemIsPremium(b)) - Number(itemIsPremium(a));
-      if (premiumDiff !== 0) return premiumDiff;
+      if (!useGoogleRecommendationCriteria) {
+        const premiumDiff = Number(itemIsPremium(b)) - Number(itemIsPremium(a));
+        if (premiumDiff !== 0) return premiumDiff;
+      }
       const ratingDiff = parseRating(b['Note Google Globale']) - parseRating(a['Note Google Globale']);
       if (ratingDiff !== 0) return ratingDiff;
       return parseCount(b['Compteur Avis Google']) - parseCount(a['Compteur Avis Google']);
@@ -300,8 +308,15 @@ export default function MeilleursSection({
 
         all.sort(sortBusinesses);
 
-        const top = all.slice(0, TOP_COUNT);
-        const rest = all.slice(TOP_COUNT);
+        const recommended = useGoogleRecommendationCriteria
+          ? all.filter((item) => (
+              parseRating(item['Note Google Globale']) >= 4
+              && parseCount(item['Compteur Avis Google']) >= 5
+            ))
+          : all;
+        const top = recommended.slice(0, TOP_COUNT);
+        const topIds = new Set(top.map((item) => item.id));
+        const rest = all.filter((item) => !topIds.has(item.id));
 
         setTopItems(top);
         setAllItems(rest);
@@ -316,10 +331,27 @@ export default function MeilleursSection({
 
     fetchData();
     setPage(0);
-  }, [listePage]);
+  }, [listePage, useGoogleRecommendationCriteria]);
 
   const totalPages = Math.ceil(allItems.length / PAGE_SIZE);
   const pagedItems = allItems.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+  const displayedEstablishmentCount = useGoogleRecommendationCriteria
+    ? topItems.length + allItems.length
+    : allItems.length;
+  const paginationItems: Array<number | string> = [];
+  const visiblePageNumbers = totalPages <= 5
+    ? Array.from({ length: totalPages }, (_, index) => index)
+    : Array.from(new Set([0, totalPages - 1, page - 1, page, page + 1]))
+        .filter((candidate) => candidate >= 0 && candidate < totalPages)
+        .sort((a, b) => a - b);
+
+  visiblePageNumbers.forEach((pageNumber, index) => {
+    const previousPageNumber = visiblePageNumbers[index - 1];
+    if (index > 0 && pageNumber - previousPageNumber > 1) {
+      paginationItems.push(`ellipsis-${previousPageNumber}-${pageNumber}`);
+    }
+    paginationItems.push(pageNumber);
+  });
   const searchTarget = searchQuery || secteurLabel;
 
   return (
@@ -338,6 +370,11 @@ export default function MeilleursSection({
               {sectionTitle || 'Entreprises les plus recommandées par les clients'}
             </h2>
             <p className="text-xs text-gray-400 mt-0.5">{tx('bestSubtitle', 'Les mieux notés par la communauté')}</p>
+            {useGoogleRecommendationCriteria && (
+              <p className="text-[11px] text-gray-400 mt-1">
+                {tx('rankingCriteria', 'Note Google ≥ 4/5 et au moins 5 avis, triés par note puis par nombre d’avis')}
+              </p>
+            )}
           </div>
         </div>
 
@@ -348,13 +385,18 @@ export default function MeilleursSection({
         ) : topItems.length === 0 ? (
           <div className="text-center py-12 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
             <Building2 className="w-8 h-8 text-gray-300 mx-auto mb-3" />
-            <p className="text-sm text-gray-400 italic">{tx('noProReferenced', 'Aucun professionnel référencé pour le moment.')}</p>
+            <p className="text-sm text-gray-400 italic">
+              {useGoogleRecommendationCriteria
+                ? tx('noRecommended', 'Aucune entreprise ne remplit actuellement les critères de recommandation.')
+                : tx('noProReferenced', 'Aucun professionnel référencé pour le moment.')}
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
             {topItems.map((item) => (
               <SeoBusinessCard
                 key={item.id}
+                showGoogleRating={useGoogleRecommendationCriteria}
                 business={{
                   id: item.id,
                   nom: item.nom,
@@ -395,7 +437,7 @@ export default function MeilleursSection({
                   {tx('allReferencedPrefix', 'Tous les')} {secteurLabel} {tx('allReferencedSuffix', 'référencés')}
                 </h2>
                 {!loadingAll && (
-                  <p className="text-xs text-gray-400 mt-0.5">{allItems.length} {allItems.length > 1 ? tx('establishmentPlur', 'établissements') : tx('establishmentSing', 'établissement')}</p>
+                  <p className="text-xs text-gray-400 mt-0.5">{displayedEstablishmentCount} {displayedEstablishmentCount > 1 ? tx('establishmentPlur', 'établissements') : tx('establishmentSing', 'établissement')}</p>
                 )}
               </div>
             </div>
@@ -416,6 +458,7 @@ export default function MeilleursSection({
                     transition={{ delay: idx * 0.03 }}
                   >
                     <SeoBusinessCard
+                      showGoogleRating={useGoogleRecommendationCriteria}
                       business={{
                         id: item.id,
                         nom: item.nom,
@@ -441,20 +484,44 @@ export default function MeilleursSection({
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="flex items-center justify-center gap-2 mt-6 pt-4 border-t border-gray-100">
-                  {Array.from({ length: totalPages }, (_, i) => i).map((p) => (
+                <div className="flex flex-wrap items-center justify-center gap-2 mt-6 pt-4 border-t border-gray-100">
+                  {useGoogleRecommendationCriteria && (
                     <button
-                      key={p}
-                      onClick={() => setPage(p)}
+                      type="button"
+                      onClick={() => setPage((current) => Math.max(0, current - 1))}
+                      disabled={page === 0}
+                      className="min-h-9 rounded-lg border border-gray-200 bg-white px-3 text-xs font-medium text-gray-700 transition-all hover:border-[#D4AF37] hover:text-[#D4AF37] disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      {tx('pagPrev', 'Précédent')}
+                    </button>
+                  )}
+                  {(useGoogleRecommendationCriteria ? paginationItems : Array.from({ length: totalPages }, (_, index) => index)).map((item) => typeof item === 'number' ? (
+                    <button
+                      key={item}
+                      type="button"
+                      onClick={() => setPage(item)}
+                      aria-current={item === page ? 'page' : undefined}
                       className={`w-9 h-9 rounded-lg text-sm font-medium transition-all ${
-                        p === page
+                        item === page
                           ? 'bg-[#D4AF37] text-white shadow-md'
                           : 'bg-white border border-gray-200 text-gray-700 hover:border-[#D4AF37] hover:text-[#D4AF37]'
                       }`}
                     >
-                      {p + 1}
+                      {item + 1}
                     </button>
+                  ) : (
+                    <span key={item} className="px-0.5 text-gray-400" aria-hidden="true">…</span>
                   ))}
+                  {useGoogleRecommendationCriteria && (
+                    <button
+                      type="button"
+                      onClick={() => setPage((current) => Math.min(totalPages - 1, current + 1))}
+                      disabled={page === totalPages - 1}
+                      className="min-h-9 rounded-lg border border-gray-200 bg-white px-3 text-xs font-medium text-gray-700 transition-all hover:border-[#D4AF37] hover:text-[#D4AF37] disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      {tx('pagNext', 'Suivant')}
+                    </button>
+                  )}
                 </div>
               )}
             </>
@@ -508,7 +575,9 @@ export default function MeilleursSection({
 
       <div className="max-w-5xl mx-auto px-4 pb-6">
         <p className="text-center text-[11px] text-gray-400 leading-relaxed">
-          Les classements affichés reposent sur des critères automatisés (avis publics, notes Google, complétude de la fiche).{' '}
+          {useGoogleRecommendationCriteria
+            ? tx('rankingDisclosure', 'Les recommandations reposent uniquement sur les notes et avis publics disponibles sur Google. Dalil Tounes n’attribue aucune note.')
+            : 'Les classements affichés reposent sur des critères automatisés (avis publics, notes Google, complétude de la fiche).'}{' '}
           <Link to="/info-avis" className="text-[#D4AF37] hover:underline">En savoir plus</Link>
         </p>
       </div>

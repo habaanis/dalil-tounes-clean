@@ -3,6 +3,7 @@ import { MapPin, Clock, Phone } from 'lucide-react';
 import { isCurrentlyOpen, translateOpenStatus, translateClosedStatus } from '../lib/horaireUtils';
 import { getLogoUrl, getLogoStyle, getLogoContainerStyle } from '../lib/logoUtils';
 import { cleanArabicField } from '../lib/textNormalization';
+import GoogleRatingSummary from './GoogleRatingSummary';
 
 interface GratuitCardProps {
   name: string;
@@ -16,6 +17,9 @@ interface GratuitCardProps {
   allKeywords?: string[];
   statut_carte?: string | null;
   description_ar?: string | null;
+  showGoogleRating?: boolean;
+  googleRating?: string | number | null;
+  googleReviewCount?: string | number | null;
 }
 
 function renderStatutCarteBadge(statut_carte: string | null | undefined) {
@@ -51,8 +55,10 @@ export default function GratuitCard({
   allKeywords = [],
   statut_carte,
   description_ar,
+  showGoogleRating = false,
+  googleRating,
+  googleReviewCount,
 }: GratuitCardProps) {
-  console.log('statut_carte =', statut_carte, '| entreprise =', name);
   const [showPhone, setShowPhone] = useState(false);
   const locationLabel = ville || gouvernorat || '';
   const isOpen = isCurrentlyOpen(horaires_ok ?? null);
@@ -93,6 +99,14 @@ export default function GratuitCard({
           {name}
         </p>
         {renderStatutCarteBadge(statut_carte)}
+        {showGoogleRating && (
+          <GoogleRatingSummary
+            rating={googleRating}
+            reviewCount={googleReviewCount}
+            language={language}
+            className="text-[#4A1D43]"
+          />
+        )}
         {description_ar && (
           <p style={{ fontSize: '11px', color: '#6B7280', lineHeight: '1.4', margin: 0, direction: 'rtl', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
             {cleanArabicField(description_ar)}
