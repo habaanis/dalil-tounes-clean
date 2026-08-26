@@ -149,7 +149,6 @@ export default function BusinessCardPreview({
   const [openSection, setOpenSection] = useState<SectionId | null>(null);
   const [actionsOpen, setActionsOpen] = useState(false);
   const [socialsOpen, setSocialsOpen] = useState(false);
-  const galleryCount = isPremium ? 10 : 5;
   const ratingLabel = reviews || '5.0 ★ · 27 avis';
   const moreActionsLabel = language === 'ar' ? 'المزيد من الإجراءات' : language === 'en' ? 'More actions' : language === 'it' ? 'Altre azioni' : language === 'ru' ? 'Другие действия' : "Plus d’actions";
   const socialLabel = isPremium ? t.socialNetworks : t.twoNetworksChoice;
@@ -159,9 +158,13 @@ export default function BusinessCardPreview({
     : gallery && /^https?:\/\//i.test(gallery)
       ? [gallery]
       : [];
+  const tierPhotoLimit = isPremium ? 10 : 5;
   const galleryImages = suppliedGallery.length > 0
-    ? suppliedGallery.slice(0, 3)
-    : [coverImage, coverImage, coverImage];
+    ? suppliedGallery.slice(0, tierPhotoLimit)
+    : [coverImage].slice(0, tierPhotoLimit);
+  const galleryCount = suppliedGallery.length > 0
+    ? Math.min(suppliedGallery.length, tierPhotoLimit)
+    : tierPhotoLimit;
 
   const toggle = (id: SectionId) => {
     if (!interactive) return;
@@ -170,18 +173,12 @@ export default function BusinessCardPreview({
 
   const galleryContent = (
     <div>
-      <div className="dt-preview-gallery-grid">
+      <div className={`dt-preview-gallery-grid dt-preview-gallery-count-${galleryImages.length}`}>
         {galleryImages.map((image, index) => (
-          <div className="dt-preview-gallery-item" key={`${image}-${index}`}>
-            <img
-              src={image}
-              alt={`${name} - réalisation ${index + 1}`}
-              style={{ objectPosition: index === 0 ? '35% center' : index === 1 ? '55% center' : '75% center' }}
-            />
-            {index === galleryImages.length - 1 && galleryCount > galleryImages.length && (
-              <span className="dt-preview-gallery-more">+{galleryCount - galleryImages.length}</span>
-            )}
-          </div>
+          <figure className={`dt-preview-gallery-item dt-preview-gallery-item-${index + 1}`} key={`${image}-${index}`}>
+            <img src={image} alt={`${name} - réalisation ${index + 1}`} />
+            <figcaption>Réalisation {index + 1}</figcaption>
+          </figure>
         ))}
       </div>
       {typeof gallery === 'string' && gallery && !/^https?:\/\//i.test(gallery) && (
