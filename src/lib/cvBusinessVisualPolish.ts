@@ -1,5 +1,26 @@
 const REVIEW_SECTION_ID = 'dt-section-reviews';
 
+const normalizeLabel = (value: string) => value
+  .toLocaleLowerCase()
+  .normalize('NFD')
+  .replace(/[\u0300-\u036f]/g, '')
+  .replace(/[^a-z0-9\u0600-\u06ff]+/g, ' ')
+  .trim();
+
+const hideDuplicateActivityLabel = (showcase: HTMLElement) => {
+  const activity = showcase.querySelector<HTMLElement>('.dt-activity-pill');
+  const slogan = showcase.querySelector<HTMLElement>('.dt-slogan');
+  if (!activity || !slogan) return;
+
+  const activityLabel = normalizeLabel(activity.textContent?.replace(/^⚒\s*/, '') || '');
+  const sloganLabel = normalizeLabel(slogan.textContent || '');
+  const isDuplicate = Boolean(activityLabel && sloganLabel && activityLabel === sloganLabel);
+
+  if (slogan.hidden !== isDuplicate) {
+    slogan.hidden = isDuplicate;
+  }
+};
+
 const enhancePresentationAccordion = (showcase: HTMLElement, index: number) => {
   const intro = showcase.querySelector<HTMLElement>('.dt-intro');
   if (!intro || intro.dataset.presentationAccordion === 'true') return;
@@ -51,6 +72,7 @@ const enhancePresentationAccordion = (showcase: HTMLElement, index: number) => {
 };
 
 const polishShowcase = (showcase: HTMLElement, index: number) => {
+  hideDuplicateActivityLabel(showcase);
   enhancePresentationAccordion(showcase, index);
 
   const rating = showcase.querySelector<HTMLElement>('.dt-rating');
