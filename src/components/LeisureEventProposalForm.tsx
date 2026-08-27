@@ -9,8 +9,18 @@ interface LeisureEventProposalFormProps {
   onClose: () => void;
 }
 
+const formCopy = {
+  fr: { title: 'Proposer un événement', subtitle: 'Partagez votre événement avec la communauté', intro: 'Vous connaissez un événement à ne pas manquer ? Partagez-le avec la communauté !', who: 'Qui êtes-vous ?', organizer: 'Je suis organisateur de cet événement', phoneHint: 'Commencez par le code pays sans le + (ex. : 21621234567)', optional: 'optionnel', infoTitle: 'Information', info: 'Votre événement sera vérifié par notre équipe avant publication. Vous serez contacté par WhatsApp une fois validé.', close: 'Fermer', invalidDates: 'La date de fin doit être postérieure ou égale à la date de début.' },
+  en: { title: 'Propose an event', subtitle: 'Share your event with the community', intro: 'Know an event not to be missed? Share it with the community!', who: 'Who are you?', organizer: 'I organize this event', phoneHint: 'Start with the country code without the + (e.g. 21621234567)', optional: 'optional', infoTitle: 'Information', info: 'Our team will verify your event before publication. We will contact you on WhatsApp once it is approved.', close: 'Close', invalidDates: 'The end date must be on or after the start date.' },
+  it: { title: 'Proponi un evento', subtitle: 'Condividi il tuo evento con la comunità', intro: 'Conosci un evento da non perdere? Condividilo con la comunità!', who: 'Chi sei?', organizer: 'Sono l’organizzatore di questo evento', phoneHint: 'Inizia con il prefisso internazionale senza + (es. 21621234567)', optional: 'facoltativo', infoTitle: 'Informazione', info: 'Il nostro team verificherà il tuo evento prima della pubblicazione. Ti contatteremo su WhatsApp dopo l’approvazione.', close: 'Chiudi', invalidDates: 'La data di fine deve essere uguale o successiva alla data di inizio.' },
+  ru: { title: 'Предложить мероприятие', subtitle: 'Поделитесь мероприятием с сообществом', intro: 'Знаете мероприятие, которое нельзя пропустить? Поделитесь им с сообществом!', who: 'Кто вы?', organizer: 'Я организатор этого мероприятия', phoneHint: 'Начните с кода страны без знака + (например, 21621234567)', optional: 'необязательно', infoTitle: 'Информация', info: 'Наша команда проверит мероприятие перед публикацией. После одобрения мы свяжемся с вами в WhatsApp.', close: 'Закрыть', invalidDates: 'Дата окончания должна совпадать с датой начала или быть позже.' },
+  ar: { title: 'اقترح فعالية', subtitle: 'شارك فعاليتك مع المجتمع', intro: 'هل تعرف فعالية لا ينبغي تفويتها؟ شاركها مع المجتمع!', who: 'من أنت؟', organizer: 'أنا منظم هذه الفعالية', phoneHint: 'ابدأ برمز البلد دون علامة + (مثال: 21621234567)', optional: 'اختياري', infoTitle: 'معلومة', info: 'سيتحقق فريقنا من الفعالية قبل نشرها، وسنتواصل معك عبر واتساب بعد الموافقة عليها.', close: 'إغلاق', invalidDates: 'يجب أن يكون تاريخ النهاية مساوياً لتاريخ البداية أو بعده.' },
+} as const;
+
 const LeisureEventProposalForm: React.FC<LeisureEventProposalFormProps> = ({ onClose }) => {
-  const { label, placeholder, button, message, submission_lang } = useFormTranslation();
+  const { label, placeholder, button, message, submission_lang, language } = useFormTranslation();
+  const copy = formCopy[language] || formCopy.fr;
+  const today = new Date().toISOString().slice(0, 10);
 
   const [formData, setFormData] = useState({
     prenom: '',
@@ -24,21 +34,13 @@ const LeisureEventProposalForm: React.FC<LeisureEventProposalFormProps> = ({ onC
     description: '',
     whatsapp: '',
     email: '',
-    type_affichage: '',
     est_organisateur: false,
-    contact_tel: '',
   });
 
   const [loading, setLoading] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<'success' | 'error'>('success');
-
-  const typeAffichageOptions = [
-    { value: 'hebdo', label: 'Hebdomadaire' },
-    { value: 'mensuel', label: 'Mensuel' },
-    { value: 'annuel', label: 'Annuel' },
-  ];
 
   const tunisianCities = [
     'Tunis', 'Sfax', 'Sousse', 'Kairouan', 'Bizerte', 'Gabès', 'Ariana', 'Gafsa',
@@ -54,6 +56,12 @@ const LeisureEventProposalForm: React.FC<LeisureEventProposalFormProps> = ({ onC
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (formData.date_fin_evenement && formData.date_fin_evenement < formData.date_evenement) {
+      setToastType('error');
+      setToastMessage(copy.invalidDates);
+      setShowToast(true);
+      return;
+    }
     setLoading(true);
 
     try {
@@ -76,14 +84,11 @@ const LeisureEventProposalForm: React.FC<LeisureEventProposalFormProps> = ({ onC
         description: formData.description,
         whatsapp: formData.whatsapp,
         email: formData.email || null,
-        type_affichage: formData.type_affichage || null,
+        type_affichage: null,
         statut_whalesync: 'Nouveau',
         lien_contact_whatsapp: whatsappLink,
         submission_lang: submission_lang,
       };
-
-      console.log('🔍 FormData avant envoi:', formData);
-      console.log('📤 Données à envoyer vers Supabase:', inscriptionData);
 
       const { error } = await supabase
         .from('inscriptions_loisirs')
@@ -119,19 +124,18 @@ const LeisureEventProposalForm: React.FC<LeisureEventProposalFormProps> = ({ onC
           description: '',
           whatsapp: '',
           email: '',
-          type_affichage: '',
           est_organisateur: false,
-          contact_tel: '',
         });
         onClose();
       }, 2500);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Erreur lors de la soumission:', error);
       console.error('Détails de l\'erreur:', JSON.stringify(error, null, 2));
 
-      const errorMessage = error?.message || error?.error_description || 'Une erreur est survenue';
-      const errorDetails = error?.details || '';
-      const errorHint = error?.hint || '';
+      const formError = error as { message?: string; error_description?: string; details?: string; hint?: string };
+      const errorMessage = formError.message || formError.error_description || message('erreur');
+      const errorDetails = formError.details || '';
+      const errorHint = formError.hint || '';
 
       const fullErrorMessage = `Erreur: ${errorMessage}${errorDetails ? ` - ${errorDetails}` : ''}${errorHint ? ` (${errorHint})` : ''}`;
 
@@ -149,11 +153,12 @@ const LeisureEventProposalForm: React.FC<LeisureEventProposalFormProps> = ({ onC
         <div className="bg-[#F8F9FA] rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" style={{ border: '2px solid #D4AF37' }}>
           <div className="sticky top-0 bg-gradient-to-r from-[#4A1D43] via-[#6B2A5C] to-[#4A1D43] p-6 flex items-center justify-between rounded-t-3xl">
             <div>
-              <h2 className="text-2xl font-bold text-white">Proposer un Événement</h2>
-              <p className="text-sm text-gray-200 mt-1">Partagez votre événement avec la communauté</p>
+              <h2 className="text-2xl font-bold text-white">{copy.title}</h2>
+              <p className="text-sm text-gray-200 mt-1">{copy.subtitle}</p>
             </div>
             <button
               onClick={onClose}
+              aria-label={copy.close}
               className="p-2 hover:bg-white/20 rounded-full transition-colors"
             >
               <X className="w-6 h-6 text-white" />
@@ -163,13 +168,13 @@ const LeisureEventProposalForm: React.FC<LeisureEventProposalFormProps> = ({ onC
           <form onSubmit={handleSubmit} className="p-6 space-y-5">
             <div className="bg-[#F8F9FA] p-4 mb-6 rounded-xl" style={{ borderLeft: '4px solid #D4AF37' }}>
               <p className="text-sm font-medium text-[#4A1D43]">
-                Vous connaissez un événement à ne pas manquer ? Partagez-le avec la communauté !
+                {copy.intro}
               </p>
             </div>
 
             <div className="bg-white border-2 border-gray-100 rounded-2xl p-5 space-y-4">
               <h3 className="text-lg font-bold text-gray-800">
-                Qui êtes-vous ?
+                {copy.who}
               </h3>
 
               <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
@@ -181,7 +186,7 @@ const LeisureEventProposalForm: React.FC<LeisureEventProposalFormProps> = ({ onC
                   className="w-5 h-5 text-[#D4AF37]500 rounded focus:ring-2 focus:ring-[#D4AF37]/20500"
                 />
                 <label htmlFor="est_organisateur" className="text-sm font-medium text-gray-700 cursor-pointer">
-                  Je suis organisateur de cet événement
+                  {copy.organizer}
                 </label>
               </div>
             </div>
@@ -217,7 +222,7 @@ const LeisureEventProposalForm: React.FC<LeisureEventProposalFormProps> = ({ onC
                 />
                 <p className="text-xs text-gray-500 italic flex items-center gap-1">
                   <span>💡</span>
-                  Commencez par le code pays sans le + (ex: 21621234567)
+                  {copy.phoneHint}
                 </p>
               </div>
             </div>
@@ -288,11 +293,13 @@ const LeisureEventProposalForm: React.FC<LeisureEventProposalFormProps> = ({ onC
 
               <div className="space-y-2">
                 <label className="block text-sm font-semibold text-gray-700">
-                  {label('date_debut')}
+                  {label('date_debut')} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="date"
                   name="date_evenement"
+                  required
+                  min={today}
                   value={formData.date_evenement}
                   onChange={handleChange}
                   className="w-full px-4 py-3 rounded-xl border-2 border-[#D4AF37] focus:border-[#D4AF37] focus:ring-4 focus:ring-[#D4AF37]/20 outline-none transition-all"
@@ -309,13 +316,13 @@ const LeisureEventProposalForm: React.FC<LeisureEventProposalFormProps> = ({ onC
                 name="date_fin_evenement"
                 value={formData.date_fin_evenement}
                 onChange={handleChange}
-                min={formData.date_evenement}
+                min={formData.date_evenement || today}
                 className="w-full px-4 py-3 rounded-xl border-2 border-[#D4AF37] focus:border-[#D4AF37] focus:ring-4 focus:ring-[#D4AF37]/20 outline-none transition-all"
                 placeholder={placeholder('date_fin')}
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
               <div className="space-y-2">
                 <label className="block text-sm font-semibold text-gray-700">
                   {label('prix_entree')} <span className="text-red-500">*</span>
@@ -331,28 +338,11 @@ const LeisureEventProposalForm: React.FC<LeisureEventProposalFormProps> = ({ onC
                 />
               </div>
 
-              <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700">
-                  {label('type_affichage')} <span className="text-red-500">*</span>
-                </label>
-                <select
-                  name="type_affichage"
-                  required
-                  value={formData.type_affichage}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-xl border-2 border-[#D4AF37] focus:border-[#D4AF37] focus:ring-4 focus:ring-[#D4AF37]/20 outline-none transition-all bg-white"
-                >
-                  <option value="">Sélectionner la fréquence</option>
-                  {typeAffichageOptions.map(option => (
-                    <option key={option.value} value={option.value}>{option.label}</option>
-                  ))}
-                </select>
-              </div>
             </div>
 
             <div className="space-y-2">
               <label className="block text-sm font-semibold text-gray-700">
-                {label('lien_billetterie')} <span className="text-gray-500 text-xs">(optionnel)</span>
+                {label('lien_billetterie')} <span className="text-gray-500 text-xs">({copy.optional})</span>
               </label>
               <input
                 type="url"
@@ -382,7 +372,7 @@ const LeisureEventProposalForm: React.FC<LeisureEventProposalFormProps> = ({ onC
             <div className="bg-[#F8F9FA] rounded-xl p-4" style={{ border: '1px solid #D4AF37' }}>
               <p className="text-sm text-[#4A1D43] flex items-start gap-2">
                 <span className="text-lg">ℹ️</span>
-                <span><strong>Information:</strong> Votre événement sera vérifié par notre équipe avant publication. Vous serez contacté par WhatsApp une fois validé.</span>
+                <span><strong>{copy.infoTitle}:</strong> {copy.info}</span>
               </p>
             </div>
 
