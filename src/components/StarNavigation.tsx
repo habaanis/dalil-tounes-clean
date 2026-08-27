@@ -29,7 +29,7 @@ export default function StarNavigation({ onNavigate }: StarNavigationProps) {
   const navButtons: NavButton[] = [
     { id: 'sante', label: 'Santé', icon: HeartPulse, link: '#/citizens/sante', color: 'from-red-500 to-red-600' },
     { id: 'education', label: 'Éducation', icon: GraduationCap, link: '#/education', color: 'from-cyan-500 to-cyan-600' },
-    { id: 'magasin', label: 'Magasins & marché local', icon: ShoppingBag, link: '#/citizens/magasins', color: 'from-emerald-500 to-emerald-600' },
+    { id: 'magasin', label: 'Magasins & marché local', icon: ShoppingBag, link: '#/citizens/shops', color: 'from-emerald-500 to-emerald-600' },
     { id: 'admin', label: 'Administratif', icon: Landmark, link: '#/citizens/services', color: 'from-yellow-500 to-yellow-600' },
     { id: 'loisir', label: 'Loisirs & évènements', icon: PartyPopper, link: '#/citizens/leisure', color: 'from-pink-500 to-pink-600' },
   ];
