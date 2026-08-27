@@ -26,6 +26,7 @@ interface MeilleursItem {
   is_premium?: boolean;
   statut_abonnement?: string | null;
   statut_carte?: string | null;
+  categorie?: string | null;
 }
 
 interface BlogArticleLink {
@@ -42,10 +43,12 @@ interface MeilleursProps {
   blogArticle?: BlogArticleLink;
   searchQuery?: string;
   useGoogleRecommendationCriteria?: boolean;
+  excludedKeywords?: readonly string[];
 }
 
 const PAGE_SIZE = 4;
 const TOP_COUNT = 4;
+const EMPTY_EXCLUDED_KEYWORDS: readonly string[] = [];
 
 function StarRating({ value }: { value: number }) {
   const stars = Math.round(value * 2) / 2;
@@ -241,6 +244,7 @@ export default function MeilleursSection({
   blogArticle,
   searchQuery,
   useGoogleRecommendationCriteria = false,
+  excludedKeywords = EMPTY_EXCLUDED_KEYWORDS,
 }: MeilleursProps) {
   const navigate = useNavigate();
   const { language } = useLanguage();
@@ -300,11 +304,31 @@ export default function MeilleursSection({
           console.error('[MeilleursSection] Supabase error:', fetchError.message);
         }
 
-        const all: MeilleursItem[] = (data || []).map((item: any) => ({
+        const mappedItems: MeilleursItem[] = (data || []).map((item: any) => ({
           ...item,
           nom: extractFrenchName(item.nom),
           sous_categories: item.sous_categories_texte || item.sous_categories || null,
         }));
+
+        const normalizedExcludedKeywords = excludedKeywords.map((keyword) => (
+          keyword.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim()
+        ));
+        const all = normalizedExcludedKeywords.length === 0
+          ? mappedItems
+          : mappedItems.filter((item) => {
+              const searchableText = [
+                item.nom,
+                item.categorie,
+                ...(Array.isArray(item.sous_categories) ? item.sous_categories : [item.sous_categories]),
+              ]
+                .filter(Boolean)
+                .join(' ')
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase();
+
+              return !normalizedExcludedKeywords.some((keyword) => searchableText.includes(keyword));
+            });
 
         all.sort(sortBusinesses);
 
@@ -331,7 +355,7 @@ export default function MeilleursSection({
 
     fetchData();
     setPage(0);
-  }, [listePage, useGoogleRecommendationCriteria]);
+  }, [excludedKeywords, listePage, useGoogleRecommendationCriteria]);
 
   const totalPages = Math.ceil(allItems.length / PAGE_SIZE);
   const pagedItems = allItems.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);

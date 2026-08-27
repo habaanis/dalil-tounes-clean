@@ -132,7 +132,7 @@ export function getCategoryRoute(categorie: PageCategorie): string {
   const routes: Record<PageCategorie, string> = {
     sante: '#/citizens/health',
     education: '#/education',
-    administration: '#/citizens/admin',
+    administration: '#/citizens/services',
     loisirs: '#/citizens/leisure',
     magasin: '#/citizens/shops',
     marche_local: '#/local-marketplace'

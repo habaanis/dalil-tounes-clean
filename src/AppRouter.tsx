@@ -15,6 +15,11 @@ function ScrollToTop() {
   return null;
 }
 
+function CitizenServicesRedirect() {
+  const { search } = useLocation();
+  return <Navigate to={{ pathname: '/citizens/services', search }} replace />;
+}
+
 const Home = lazy(() => import('./pages/HomeVitrineFirst'));
 const Subscription = lazy(() => import('./pages/Subscription').then(m => ({ default: m.Subscription })));
 const PaiementConfirmation = lazy(() => import('./pages/PaiementConfirmation'));
@@ -23,7 +28,6 @@ const NotFound = lazy(() => import('./pages/NotFound'));
 const Businesses = lazy(() => import('./pages/Businesses').then(m => ({ default: m.Businesses })));
 const Citizens = lazy(() => import('./pages/Citizens'));
 const CitizensHealth = lazy(() => import('./pages/CitizensHealth'));
-const CitizensAdmin = lazy(() => import('./pages/CitizensAdmin'));
 const CitizensLeisure = lazy(() => import('./pages/CitizensLeisure'));
 const CitizensShops = lazy(() => import('./pages/CitizensShops'));
 const CitizensServices = lazy(() => import('./pages/CitizensServicesLocalized'));
@@ -128,7 +132,7 @@ function AppRouter() {
           <Route path="/citizens" element={<Citizens />} />
           <Route path="/citizens/health" element={<CitizensHealth />} />
           <Route path="/citizens/sante" element={<CitizensHealth />} />
-          <Route path="/citizens/admin" element={<CitizensAdmin />} />
+          <Route path="/citizens/admin" element={<CitizenServicesRedirect />} />
           <Route path="/citizens/leisure" element={<CitizensLeisure />} />
           <Route path="/citizens/loisirs" element={<CitizensLeisure />} />
           <Route path="/citizens/shops" element={<CitizensShops />} />

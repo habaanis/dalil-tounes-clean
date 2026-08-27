@@ -603,7 +603,7 @@ export default function EducationNew() {
           >
             <h2 className="text-lg font-semibold text-[#4A1D43] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>{t.adminBlock.title}</h2>
             <p className="text-sm text-gray-600 mb-4">{t.adminBlock.desc}</p>
-            <Link to="/citizens/admin" className="inline-flex items-center gap-2 text-[#4A1D43] hover:text-[#D4AF37] font-medium text-sm transition-colors">
+            <Link to="/citizens/services" className="inline-flex items-center gap-2 text-[#4A1D43] hover:text-[#D4AF37] font-medium text-sm transition-colors">
               {t.adminBlock.link}
               <ChevronDown className={`w-4 h-4 ${isRTL ? 'rotate-90' : '-rotate-90'}`} aria-hidden="true" />
             </Link>

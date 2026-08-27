@@ -54,15 +54,15 @@ export const staticPages: SitemapURL[] = [
     ]
   },
   {
-    loc: '/citizens/admin',
+    loc: '/citizens/services',
     changefreq: 'weekly',
     priority: 0.8,
     alternates: [
-      { lang: 'fr', href: 'https://dalil-tounes.com/citizens/admin' },
-      { lang: 'ar', href: 'https://dalil-tounes.com/ar/citizens/admin' },
-      { lang: 'en', href: 'https://dalil-tounes.com/en/citizens/admin' },
-      { lang: 'it', href: 'https://dalil-tounes.com/it/citizens/admin' },
-      { lang: 'ru', href: 'https://dalil-tounes.com/ru/citizens/admin' }
+      { lang: 'fr', href: 'https://dalil-tounes.com/citizens/services' },
+      { lang: 'ar', href: 'https://dalil-tounes.com/ar/citizens/services' },
+      { lang: 'en', href: 'https://dalil-tounes.com/en/citizens/services' },
+      { lang: 'it', href: 'https://dalil-tounes.com/it/citizens/services' },
+      { lang: 'ru', href: 'https://dalil-tounes.com/ru/citizens/services' }
     ]
   },
   {
