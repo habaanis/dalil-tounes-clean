@@ -1,20 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
-import { Search, MapPin, Calendar, Users, DollarSign, Star, Ticket, Music, Sparkles, PartyPopper, Clock, ArrowLeft, ChevronLeft, ChevronRight, Camera, Waves, Utensils, Film, MapPinned, Plus } from 'lucide-react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
+import { Search, MapPin, Calendar, DollarSign, Ticket, Music, Sparkles, PartyPopper, ChevronLeft, ChevronRight, Camera, Waves, Utensils, Film, MapPinned, Plus } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { supabase } from '../lib/BoltDatabase';
 import { useLanguage } from '../context/LanguageContext';
-import { Language, translations as i18nTranslations } from '../lib/i18n';
-import SearchBar from '../components/SearchBar';
+import { Language } from '../lib/i18n';
 import { getSupabaseImageUrl } from '../lib/imageUtils';
-import { HERO_IMAGE_URL, HERO_IMAGE_JPG_URL } from '../constants/images';
+import { HERO_IMAGE_URL } from '../constants/images';
 import EventCard from '../components/EventCard';
 import LeisureEventProposalForm from '../components/LeisureEventProposalForm';
-import { LOISIRS_CATEGORIES_KEYS } from '../lib/loisirCategories';
 import { SECTEURS_CULTURE } from '../lib/cultureEventCategories';
-import BackButton from '../components/BackButton';
-import UnifiedBusinessCard from '../components/UnifiedBusinessCard';
-import { useNavigate } from 'react-router-dom';
+import MeilleursSection from '../components/MeilleursSection';
+import { SEOHead } from '../components/SEOHead';
 
 const GOUVERNORATS_TUNISIE = [
   'Tunis',
@@ -43,10 +39,66 @@ const GOUVERNORATS_TUNISIE = [
   'Jendouba'
 ];
 
+const ACTIVITY_LABELS: Record<Language, Record<string, string>> = {
+  fr: {
+    'Saveurs & Traditions': 'Saveurs & Traditions',
+    'Musée & Patrimoine': 'Musée & Patrimoine',
+    'Escapades & Nature': 'Escapades & Nature',
+    'Festivals & artisanat': 'Festivals & artisanat',
+    'Sport & Aventure': 'Sport & Aventure',
+    'Art & Culture': 'Art & Culture',
+    'Sorties & Soirées': 'Sorties & Soirées',
+  },
+  en: {
+    'Saveurs & Traditions': 'Flavours & Traditions',
+    'Musée & Patrimoine': 'Museums & Heritage',
+    'Escapades & Nature': 'Nature Getaways',
+    'Festivals & artisanat': 'Festivals & Crafts',
+    'Sport & Aventure': 'Sport & Adventure',
+    'Art & Culture': 'Art & Culture',
+    'Sorties & Soirées': 'Outings & Nightlife',
+  },
+  ar: {
+    'Saveurs & Traditions': 'النكهات والتقاليد',
+    'Musée & Patrimoine': 'المتاحف والتراث',
+    'Escapades & Nature': 'رحلات وطبيعة',
+    'Festivals & artisanat': 'مهرجانات وحرف',
+    'Sport & Aventure': 'رياضة ومغامرة',
+    'Art & Culture': 'فن وثقافة',
+    'Sorties & Soirées': 'خروجات وسهرات',
+  },
+  it: {
+    'Saveurs & Traditions': 'Sapori & Tradizioni',
+    'Musée & Patrimoine': 'Musei & Patrimonio',
+    'Escapades & Nature': 'Escursioni & Natura',
+    'Festivals & artisanat': 'Festival & Artigianato',
+    'Sport & Aventure': 'Sport & Avventura',
+    'Art & Culture': 'Arte & Cultura',
+    'Sorties & Soirées': 'Uscite & Vita notturna',
+  },
+  ru: {
+    'Saveurs & Traditions': 'Вкусы и традиции',
+    'Musée & Patrimoine': 'Музеи и наследие',
+    'Escapades & Nature': 'Природа и поездки',
+    'Festivals & artisanat': 'Фестивали и ремёсла',
+    'Sport & Aventure': 'Спорт и приключения',
+    'Art & Culture': 'Искусство и культура',
+    'Sorties & Soirées': 'Отдых и вечерняя жизнь',
+  },
+};
+
 interface Evenement {
   id: string;
   titre: string;
+  titre_ar?: string;
+  titre_en?: string;
+  titre_it?: string;
+  titre_ru?: string;
   description: string;
+  description_ar?: string;
+  description_en?: string;
+  description_it?: string;
+  description_ru?: string;
   description_courte?: string;
   date_debut: string;
   date_fin: string;
@@ -62,62 +114,37 @@ interface Evenement {
   organisateur?: string;
   est_annuel?: boolean;
   secteur_evenement?: string;
-  accessible_enfants?: boolean;
   note_moyenne?: number;
   nombre_avis?: number;
 }
 
-interface Etablissement {
-  id: string;
-  nom: string;
-  secteur: string;
-  sous_categories?: string;
-  ville: string;
-  adresse?: string;
-  telephone?: string;
-  latitude?: number;
-  longitude?: number;
-}
-
-interface CitizensLeisureProps {
-  onNavigateBack?: () => void;
-}
-
-export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps = {}) {
-  const navigate = useNavigate();
+export default function CitizensLeisure() {
   const { language } = useLanguage();
 
   const url = new URL(window.location.href);
   const qParam = (url.searchParams.get('q') || '').trim();
   const villeParam = (url.searchParams.get('ville') || '').trim();
-  const tabParam = url.searchParams.get('tab') as 'evenements' | 'lieux' | null;
   const categoryParam = url.searchParams.get('category') || '';
 
-  const [activeTab, setActiveTab] = useState<'evenements' | 'lieux'>(tabParam || 'evenements');
-  const [categoryFilter, setCategoryFilter] = useState<string>(categoryParam);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedLocation, setSelectedLocation] = useState('all');
+  const [searchQuery, setSearchQuery] = useState(qParam);
+  const [selectedLocation, setSelectedLocation] = useState(villeParam || 'all');
   const [selectedTemporalite, setSelectedTemporalite] = useState('all');
-  const [kidsOnly, setKidsOnly] = useState(false);
   const [selectedPrice, setSelectedPrice] = useState('all');
-  const [selectedActivityType, setSelectedActivityType] = useState('all');
+  const [selectedActivityType, setSelectedActivityType] = useState(categoryParam || 'all');
   const [evenements, setEvenements] = useState<Evenement[]>([]);
-  const [lieux, setLieux] = useState<Etablissement[]>([]);
   const [featuredEvents, setFeaturedEvents] = useState<Evenement[]>([]);
   const [weeklyEvent, setWeeklyEvent] = useState<Evenement | null>(null);
   const [monthlyEvent, setMonthlyEvent] = useState<Evenement | null>(null);
   const [annualEvent, setAnnualEvent] = useState<Evenement | null>(null);
   const [loading, setLoading] = useState(true);
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [showMap, setShowMap] = useState(false);
-  const [selectedMarker, setSelectedMarker] = useState<string | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   const [hoveredEventId, setHoveredEventId] = useState<string | null>(null);
   const [showProposalForm, setShowProposalForm] = useState(false);
 
-  const translations: Record<Language, any> = {
+  const translations = {
     fr: {
       title: 'Agenda Loisirs & événements',
+      seoTitle: 'Loisirs et événements en Tunisie | Dalil Tounes',
       subtitle: 'Votre guide Premium des sorties en Tunisie.',
       description: 'Marre de l\'ennui ? Devenez l\'expert de votre propre ville ! De la plage la plus secrète au festival incontournable, Dalil Tounes vous connecte aux meilleures activités et événements de votre ville et de toute la Tunisie.',
       backButton: 'Retour aux catégories',
@@ -167,10 +194,19 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
       loading: 'Chargement...',
       authenticTourism: 'Découvrez la Tunisie des Terres. Loin des circuits balisés et du béton des hôtels, l\'âme de la Tunisie se cache dans ses villages de montagne, ses sites antiques méconnus et le savoir-faire de ses artisans. Nous avons sélectionné pour vous des expériences authentiques pour valoriser notre patrimoine et soutenir l\'économie locale.',
       authenticTourismHighlight: 'Explorez l\'intérieur, rencontrez l\'histoire.',
-      proposeEvent: 'Proposer un événement loisir'
+      proposeEvent: 'Proposer un événement loisir',
+      sector: 'loisirs et événements',
+      recommended: 'Entreprises les plus recommandées par les clients',
+      allReferenced: 'Tous les lieux de loisirs référencés',
+      searchOther: 'Rechercher d\'autres lieux de loisirs',
+      eventsIntro: 'Recherchez un événement à venir par ville, activité, date ou prix.',
+      activityAll: 'Tous les types',
+      activeFilter: 'Filtre actif',
+      clearFilter: 'Effacer le filtre'
     },
     en: {
       title: 'Leisure & Events Agenda',
+      seoTitle: 'Leisure and events in Tunisia | Dalil Tounes',
       subtitle: 'Your Premium guide to outings in Tunisia.',
       description: 'Your source of inspiration for outings! Find the nearest cinema, the best beach, or discover upcoming cultural events, festivals and concerts. From local to national, plan your free time with Dalil Tounes.',
       backButton: 'Back to categories',
@@ -220,10 +256,19 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
       loading: 'Loading...',
       authenticTourism: 'Discover Authentic Tunisia. Far from standard tourist circuits and hotel concrete, Tunisia\'s soul lies in its mountain villages, ancient hidden sites, and artisan craftsmanship. We\'ve selected authentic experiences to showcase our heritage and support the local economy.',
       authenticTourismHighlight: 'Explore the interior, meet history.',
-      proposeEvent: 'Propose a leisure event'
+      proposeEvent: 'Propose a leisure event',
+      sector: 'leisure and events',
+      recommended: 'Businesses most recommended by customers',
+      allReferenced: 'All listed leisure venues',
+      searchOther: 'Search for other leisure venues',
+      eventsIntro: 'Search upcoming events by city, activity, date or price.',
+      activityAll: 'All types',
+      activeFilter: 'Active filter',
+      clearFilter: 'Clear filter'
     },
     ar: {
       title: 'أجندة الترفيه والفعاليات',
+      seoTitle: 'الترفيه والفعاليات في تونس | دليل تونس',
       subtitle: 'دليلك البريميوم للخروجات في تونس.',
       description: 'مصدر إلهامك للخروج! ابحث عن أقرب سينما، أفضل شاطئ، أو اكتشف الفعاليات الثقافية والمهرجانات والحفلات القادمة. من المحلي إلى الوطني، خطط لوقت فراغك مع دليل تونس.',
       backButton: 'العودة إلى الفئات',
@@ -273,10 +318,19 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
       loading: 'جاري التحميل...',
       authenticTourism: 'اكتشف تونس الأصيلة. بعيداً عن المسارات السياحية المعتادة وخرسانة الفنادق، تكمن روح تونس في قراها الجبلية ومواقعها الأثرية المخفية وحرفية حرفييها. لقد اخترنا لك تجارب أصيلة لتسليط الضوء على تراثنا ودعم الاقتصاد المحلي.',
       authenticTourismHighlight: 'استكشف الداخل، التقِ بالتاريخ.',
-      proposeEvent: 'اقترح حدثاً ترفيهياً'
+      proposeEvent: 'اقترح حدثاً ترفيهياً',
+      sector: 'الترفيه والفعاليات',
+      recommended: 'المؤسسات الأكثر توصية من قبل العملاء',
+      allReferenced: 'جميع أماكن الترفيه المسجلة',
+      searchOther: 'البحث عن أماكن ترفيه أخرى',
+      eventsIntro: 'ابحث عن فعالية قادمة حسب المدينة أو النشاط أو التاريخ أو السعر.',
+      activityAll: 'جميع الأنواع',
+      activeFilter: 'المرشح النشط',
+      clearFilter: 'مسح المرشح'
     },
     it: {
       title: 'Agenda Tempo Libero ed Eventi',
+      seoTitle: 'Tempo libero ed eventi in Tunisia | Dalil Tounes',
       subtitle: 'La tua guida Premium alle uscite in Tunisia.',
       description: 'La tua fonte di ispirazione per le uscite! Trova il cinema più vicino, la migliore spiaggia, o scopri eventi culturali, festival e concerti in arrivo. Dal locale al nazionale, pianifica il tuo tempo libero con Dalil Tounes.',
       backButton: 'Torna alle categorie',
@@ -330,10 +384,19 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
       loading: 'Caricamento...',
       authenticTourism: 'Scopri la Tunisia Autentica. Lontano dai circuiti turistici standard e dal cemento degli hotel, l\'anima della Tunisia si trova nei suoi villaggi di montagna, nei siti antichi nascosti e nell\'artigianato. Abbiamo selezionato esperienze autentiche per valorizzare il nostro patrimonio e sostenere l\'economia locale.',
       authenticTourismHighlight: 'Esplora l\'interno, incontra la storia.',
-      proposeEvent: 'Proponi un evento per il tempo libero'
+      proposeEvent: 'Proponi un evento per il tempo libero',
+      sector: 'tempo libero ed eventi',
+      recommended: 'Le aziende più consigliate dai clienti',
+      allReferenced: 'Tutti i luoghi per il tempo libero registrati',
+      searchOther: 'Cerca altri luoghi per il tempo libero',
+      eventsIntro: 'Cerca i prossimi eventi per città, attività, data o prezzo.',
+      activityAll: 'Tutti i tipi',
+      activeFilter: 'Filtro attivo',
+      clearFilter: 'Cancella filtro'
     },
     ru: {
       title: 'Программа Досуга и Мероприятий',
+      seoTitle: 'Досуг и мероприятия в Тунисе | Dalil Tounes',
       subtitle: 'Ваш премиум-гид по развлечениям в Тунисе.',
       description: 'Ваш источник вдохновения для прогулок! Найдите ближайший кинотеатр, лучший пляж или откройте для себя предстоящие культурные мероприятия, фестивали и концерты. От местного до национального, планируйте свое свободное время с Dalil Tounes.',
       backButton: 'Вернуться к категориям',
@@ -387,7 +450,15 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
       loading: 'Загрузка...',
       authenticTourism: 'Откройте для себя настоящий Тунис. Вдали от стандартных туристических маршрутов и бетона отелей, душа Туниса живет в горных деревнях, скрытых древних местах и ремесленном мастерстве. Мы отобрали аутентичные впечатления, чтобы показать наше наследие и поддержать местную экономику.',
       authenticTourismHighlight: 'Исследуйте внутренние районы, встретьте историю.',
-      proposeEvent: 'Предложить развлекательное мероприятие'
+      proposeEvent: 'Предложить развлекательное мероприятие',
+      sector: 'досуг и мероприятия',
+      recommended: 'Компании, которые чаще всего рекомендуют клиенты',
+      allReferenced: 'Все зарегистрированные места для досуга',
+      searchOther: 'Найти другие места для досуга',
+      eventsIntro: 'Ищите предстоящие события по городу, типу, дате или цене.',
+      activityAll: 'Все типы',
+      activeFilter: 'Активный фильтр',
+      clearFilter: 'Сбросить фильтр'
     }
   };
 
@@ -403,12 +474,19 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
   }[language];
 
   const getTranslatedText = (item: Evenement, field: 'titre' | 'description'): string => {
-    return field === 'titre' ? item.titre : item.description;
+    if (language === 'fr') return item[field] || '';
+    const translated = item[`${field}_${language}` as keyof Evenement];
+    return typeof translated === 'string' && translated.trim() ? translated : (item[field] || '');
+  };
+
+  const isSafeTicketLink = (link?: string): link is string => {
+    if (!link?.trim()) return false;
+    return !/example\.com|description/i.test(link);
   };
 
   const formatEventDate = (dateDebut: string, dateFin: string): string => {
     const debut = new Date(dateDebut);
-    const fin = new Date(dateFin);
+    const fin = new Date(dateFin || dateDebut);
 
     const options: Intl.DateTimeFormatOptions = {
       weekday: 'long',
@@ -422,20 +500,6 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
       return `${debut.toLocaleDateString(currentDateLocale, { day: 'numeric', month: 'short' })} - ${fin.toLocaleDateString(currentDateLocale, { day: 'numeric', month: 'short' })}`;
     }
   };
-
-  useEffect(() => {
-    if (qParam) setSearchQuery(qParam);
-    if (villeParam) setSelectedLocation(villeParam);
-
-    loadFeaturedEvents();
-    loadAgendaEvents();
-    if (activeTab === 'evenements') {
-      loadEvenements();
-    } else {
-      loadLieux();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTab, selectedLocation, selectedTemporalite, kidsOnly, selectedPrice, searchQuery, categoryFilter, selectedActivityType]);
 
   const loadFeaturedEvents = async () => {
     try {
@@ -462,39 +526,36 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
         .select('*')
         .eq('est_valide', true)
         .eq('type_affichage', 'hebdo')
+        .gte('date_debut', new Date().toISOString())
         .order('date_debut', { ascending: true })
         .limit(1)
         .maybeSingle();
 
-      if (weekly) {
-        setWeeklyEvent(weekly);
-      }
+      setWeeklyEvent(weekly ?? null);
 
       const { data: monthly } = await supabase
         .from('evenements_locaux')
         .select('*')
         .eq('est_valide', true)
         .eq('type_affichage', 'mensuel')
+        .gte('date_debut', new Date().toISOString())
         .order('date_debut', { ascending: true })
         .limit(1)
         .maybeSingle();
 
-      if (monthly) {
-        setMonthlyEvent(monthly);
-      }
+      setMonthlyEvent(monthly ?? null);
 
       const { data: annual } = await supabase
         .from('evenements_locaux')
         .select('*')
         .eq('est_valide', true)
         .eq('type_affichage', 'annuel')
+        .gte('date_debut', new Date().toISOString())
         .order('date_debut', { ascending: true })
         .limit(1)
         .maybeSingle();
 
-      if (annual) {
-        setAnnualEvent(annual);
-      }
+      setAnnualEvent(annual ?? null);
     } catch (error) {
       console.error('Erreur chargement événements agenda:', error);
     }
@@ -517,16 +578,23 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
         query = query.ilike('localisation_ville', selectedLocation);
       }
 
-      if (selectedTemporalite === 'hebdo') {
-        query = query.eq('type_affichage', 'hebdo');
-      } else if (selectedTemporalite === 'mensuel') {
-        query = query.eq('type_affichage', 'mensuel');
-      } else if (selectedTemporalite === 'annuel') {
-        query = query.eq('type_affichage', 'annuel');
+      if (selectedTemporalite !== 'all') {
+        const now = new Date();
+        const end = new Date(now);
+        if (selectedTemporalite === 'hebdo') {
+          end.setDate(end.getDate() + 7);
+        } else if (selectedTemporalite === 'mensuel') {
+          end.setMonth(end.getMonth() + 1);
+        } else {
+          end.setFullYear(end.getFullYear() + 1);
+        }
+        query = query.lte('date_debut', end.toISOString());
       }
 
-      if (selectedPrice !== 'all') {
-        query = query.eq('prix', selectedPrice);
+      if (selectedPrice === 'Gratuit') {
+        query = query.ilike('prix', '%gratuit%');
+      } else if (selectedPrice === 'Payant') {
+        query = query.not('prix', 'ilike', '%gratuit%');
       }
 
       if (selectedActivityType !== 'all' && selectedActivityType !== '') {
@@ -545,63 +613,28 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
     }
   };
 
-  const loadLieux = async () => {
-    setLoading(true);
-    try {
-      let query = supabase
-        .from('entreprise')
-        .select('id, nom, secteur_fk_autre_table, sous_categories_texte, ville, adresse, telephone, latitude, longitude, statut_carte')
-        .ilike('secteur_fk_autre_table', '%Loisirs%');
+  useEffect(() => {
+    loadFeaturedEvents();
+    loadAgendaEvents();
+  }, []);
 
-      if (searchQuery) {
-        query = query.or(`nom.ilike.*${searchQuery}*,description.ilike.*${searchQuery}*`);
-      }
-
-      if (categoryFilter) {
-        query = query.ilike('sous_categories_texte', `%${categoryFilter}%`);
-      }
-
-      if (selectedLocation !== 'all') {
-        query = query.ilike('ville', selectedLocation);
-      }
-
-      const { data, error } = await query.order('nom', { ascending: true });
-
-      if (!error && data) {
-        const sorted = [...data].sort((a: any, b: any) => {
-          const aP = a.is_premium === true || (a.statut_abonnement && !a.statut_abonnement.toLowerCase().includes('gratuit'));
-          const bP = b.is_premium === true || (b.statut_abonnement && !b.statut_abonnement.toLowerCase().includes('gratuit'));
-          return Number(bP) - Number(aP);
-        });
-        setLieux(sorted);
-      }
-    } catch (error) {
-      console.error('Erreur chargement lieux:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    loadEvenements();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedLocation, selectedTemporalite, selectedPrice, searchQuery, selectedActivityType]);
 
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
     return date.toLocaleDateString(currentDateLocale, { day: 'numeric', month: 'long', year: 'numeric' });
   };
 
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % featuredEvents.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + featuredEvents.length) % featuredEvents.length);
-  };
-
   const getTypeIcon = (type: string) => {
-    const typeMap: Record<string, any> = {
+    const typeMap: Record<string, LucideIcon> = {
       'Cinéma': Film,
       'Cinema': Film,
       'Concert': Music,
       'Festival': PartyPopper,
-      'Sport': Users,
+      'Sport': MapPinned,
       'Plage': Waves,
       'Beach': Waves,
       'Restaurant': Utensils,
@@ -621,45 +654,32 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
     }
   };
 
-  const renderStars = (rating: number, count: number) => {
-    return (
-      <div className="flex items-center gap-2">
-        <div className="flex items-center gap-1">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <Star
-              key={star}
-              className={`w-4 h-4 ${
-                star <= rating
-                  ? 'fill-[#D4AF37] text-[#D4AF37]'
-                  : 'text-gray-300'
-              }`}
-            />
-          ))}
-        </div>
-        <span className="text-sm text-gray-600">({count})</span>
-      </div>
-    );
-  };
-
   return (
     <div
       className="min-h-screen bg-[#f5f5dc]"
       dir={language === 'ar' ? 'rtl' : 'ltr'}
       style={language === 'ar' ? { fontFamily: "'Amiri', 'Cairo', 'Tajawal', serif" } : {}}
     >
+      <SEOHead
+        title={t.seoTitle}
+        description={t.description}
+        canonical="https://dalil-tounes.com/citizens/leisure"
+        currentPath="/citizens/leisure"
+      />
       {/* Premium Header Section avec Image Drapeau Tunisien */}
       <div className="relative py-6 overflow-hidden" style={{ borderBottom: '2px solid #D4AF37' }}>
         {/* Image de fond - Drapeau Tunisien */}
         <div className="absolute inset-0">
-          <picture>
-            <source src={HERO_IMAGE_URL} type="image/webp" />
-            <img
-              src={HERO_IMAGE_JPG_URL}
-              alt={leisureAlt.hero}
-              className="w-full h-full object-cover brightness-105"
+          <img
+            src={HERO_IMAGE_URL}
+            alt={leisureAlt.hero}
+            className="w-full h-full object-cover brightness-105"
+            onError={(event) => {
+              event.currentTarget.onerror = null;
+              event.currentTarget.src = 'https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?auto=compress&cs=tinysrgb&w=1600';
+            }}
             decoding="async"
-            />
-          </picture>
+          />
           {/* Overlay bleu profond pour lisibilité */}
           <div className="absolute inset-0 bg-[#0c2461] opacity-65"></div>
         </div>
@@ -693,17 +713,25 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
             {/* Texte descriptif intégré dans le header */}
             <div className="max-w-4xl mx-auto mt-6">
               <p className="text-white/95 text-base md:text-lg leading-relaxed italic font-light" style={{ textShadow: '2px 2px 6px rgba(0,0,0,0.8), 0px 0px 10px rgba(0,0,0,0.5)' }}>
-                {t.authenticTourism} <span className="font-semibold text-[#D4AF37]" style={{ textShadow: '2px 2px 6px rgba(0,0,0,0.9)' }}>{t.authenticTourismHighlight}</span>
+                {t.description}
               </p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Barre de recherche */}
-      <section className="px-4 py-6 bg-white">
+      <section className="px-4 py-8 bg-white">
         <div className="max-w-5xl mx-auto">
-          <SearchBar scope="loisirs" />
+          <MeilleursSection
+            secteurLabel={t.sector}
+            listePage="loisirs & évènements"
+            accentColor="#4A1D43"
+            sectionTitle={t.recommended}
+            useGoogleRecommendationCriteria
+            includeRecommendedInTotal
+            allReferencedLabel={t.allReferenced}
+            searchOtherLabel={t.searchOther}
+          />
         </div>
       </section>
 
@@ -744,7 +772,7 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
                       </span>
                     </div>
                   )}
-                  {weeklyEvent.lien_billetterie && (
+                  {isSafeTicketLink(weeklyEvent.lien_billetterie) && (
                     <a
                       href={weeklyEvent.lien_billetterie}
                       target="_blank"
@@ -803,7 +831,7 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
                       </span>
                     </div>
                   )}
-                  {monthlyEvent.lien_billetterie && (
+                  {isSafeTicketLink(monthlyEvent.lien_billetterie) && (
                     <a
                       href={monthlyEvent.lien_billetterie}
                       target="_blank"
@@ -862,7 +890,7 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
                       </span>
                     </div>
                   )}
-                  {annualEvent.lien_billetterie && (
+                  {isSafeTicketLink(annualEvent.lien_billetterie) && (
                     <a
                       href={annualEvent.lien_billetterie}
                       target="_blank"
@@ -991,7 +1019,7 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
                         </div>
                       </div>
 
-                      {event.lien_billetterie && (
+                      {isSafeTicketLink(event.lien_billetterie) && (
                         <a
                           href={event.lien_billetterie}
                           target="_blank"
@@ -1011,73 +1039,29 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
           </div>
         )}
 
-        {/* Tabs */}
-        <div className="bg-white rounded-2xl shadow-xl p-2.5 mb-8" style={{ border: '2px solid #D4AF37' }}>
-          <div className="grid grid-cols-2 gap-2.5">
-            <button
-              onClick={() => setActiveTab('evenements')}
-              className={`py-3 px-4 rounded-xl font-bold text-base transition-all duration-300 ${
-                activeTab === 'evenements'
-                  ? 'bg-[#4A1D43] text-white shadow-2xl scale-105'
-                  : 'bg-gradient-to-r from-gray-100 to-gray-50 text-gray-700 hover:bg-[#4A1D43]/10 hover:text-[#4A1D43]'
-              }`}
-              style={{ border: '2px solid #D4AF37' }}
-            >
-              <Music className="w-5 h-5 inline mr-2" />
-              {t.tabEvents}
-            </button>
-            <button
-              onClick={() => setActiveTab('lieux')}
-              className={`py-3 px-4 rounded-xl font-bold text-base transition-all duration-300 ${
-                activeTab === 'lieux'
-                  ? 'bg-[#4A1D43] text-white shadow-2xl scale-105'
-                  : 'bg-gradient-to-r from-gray-100 to-gray-50 text-gray-700 hover:bg-[#4A1D43]/10 hover:text-[#4A1D43]'
-              }`}
-              style={{ border: '2px solid #D4AF37' }}
-            >
-              <MapPin className="w-5 h-5 inline mr-2" />
-              {t.tabPlaces}
-            </button>
-          </div>
-
-          {/* Subtitle Below Tabs */}
-          <div className="flex items-center justify-center gap-4 mt-5 max-w-5xl mx-auto">
-            <img
-              src={getSupabaseImageUrl('ibn-khaldoun.jpg')}
-              alt="Ibn Khaldoun"
-              className="w-12 h-12 object-cover rounded-full opacity-80 shadow-lg"
-              loading="lazy"
-            decoding="async"
-            />
-            <p className="text-center text-gray-700 text-base italic font-light leading-relaxed">
-              Trouvez des idées, vérifiez les horaires et réservez votre place. Votre temps libre commence ici !
-            </p>
-            <img
-              src={getSupabaseImageUrl('ibn-khaldoun.jpg')}
-              alt="Ibn Khaldoun"
-              className="w-12 h-12 object-cover rounded-full opacity-80 shadow-lg"
-              loading="lazy"
-            decoding="async"
-            />
-          </div>
+        <div className="mb-6 text-center">
+          <h2 className="text-2xl font-bold text-[#4A1D43]">{t.tabEvents}</h2>
+          <p className="mt-2 text-sm text-gray-600">{t.eventsIntro}</p>
         </div>
 
         {/* Search and Filters */}
         <div className="bg-white rounded-2xl shadow-xl p-5 mb-8" style={{ border: '2px solid #D4AF37' }}>
           {/* Active Filter Badge */}
-          {categoryFilter && (
+          {selectedActivityType !== 'all' && (
             <div className="mb-6 flex items-center gap-3">
               <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#4A1D43] text-white rounded-full font-semibold text-sm shadow-lg">
-                Filtre actif: {categoryFilter}
+                {t.activeFilter}: {ACTIVITY_LABELS[language][selectedActivityType] || selectedActivityType}
               </span>
               <button
                 onClick={() => {
-                  setCategoryFilter('');
-                  window.history.replaceState({}, '', '#/citizens/leisure');
+                  setSelectedActivityType('all');
+                  const cleanUrl = new URL(window.location.href);
+                  cleanUrl.searchParams.delete('category');
+                  window.history.replaceState({}, '', `${cleanUrl.pathname}${cleanUrl.search}`);
                 }}
                 className="text-sm text-gray-600 hover:text-[#4A1D43] underline"
               >
-                Effacer le filtre
+                {t.clearFilter}
               </button>
             </div>
           )}
@@ -1101,7 +1085,7 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
             </div>
 
             {/* Filters */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
               {/* Location Filter */}
               <select
                 value={selectedLocation}
@@ -1116,35 +1100,29 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
                 ))}
               </select>
 
-              {/* Activity Type Filter (Events only) */}
-              {activeTab === 'evenements' && (
-                <select
-                  value={selectedActivityType}
-                  onChange={(e) => setSelectedActivityType(e.target.value)}
-                  className="px-3 py-2 rounded-lg border border-[#D4AF37]/30 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 outline-none bg-white font-medium shadow-sm transition-all hover:shadow-md text-xs"
-                >
-                  <option value="all">🎨 Tous les types</option>
-                  {SECTEURS_CULTURE.map((secteur) => (
-                    <option key={secteur} value={secteur}>
-                      {secteur}
-                    </option>
-                  ))}
-                </select>
-              )}
+              <select
+                value={selectedActivityType}
+                onChange={(e) => setSelectedActivityType(e.target.value)}
+                className="px-3 py-2 rounded-lg border border-[#D4AF37]/30 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 outline-none bg-white font-medium shadow-sm transition-all hover:shadow-md text-xs"
+              >
+                <option value="all">🎨 {t.activityAll}</option>
+                {SECTEURS_CULTURE.map((secteur) => (
+                  <option key={secteur} value={secteur}>
+                    {ACTIVITY_LABELS[language][secteur] || secteur}
+                  </option>
+                ))}
+              </select>
 
-              {/* Temporalité Filter (Events only) */}
-              {activeTab === 'evenements' && (
-                <select
-                  value={selectedTemporalite}
-                  onChange={(e) => setSelectedTemporalite(e.target.value)}
-                  className="px-3 py-2 rounded-lg border border-[#D4AF37]/30 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 outline-none bg-white font-medium shadow-sm transition-all hover:shadow-md text-xs"
-                >
-                  <option value="all">📅 {t.temporaliteAll}</option>
-                  <option value="hebdo">📆 {t.temporaliteWeekly}</option>
-                  <option value="mensuel">🗓️ {t.temporaliteMonthly}</option>
-                  <option value="annuel">⭐ {t.temporaliteAnnual}</option>
-                </select>
-              )}
+              <select
+                value={selectedTemporalite}
+                onChange={(e) => setSelectedTemporalite(e.target.value)}
+                className="px-3 py-2 rounded-lg border border-[#D4AF37]/30 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 outline-none bg-white font-medium shadow-sm transition-all hover:shadow-md text-xs"
+              >
+                <option value="all">📅 {t.temporaliteAll}</option>
+                <option value="hebdo">📆 {t.temporaliteWeekly}</option>
+                <option value="mensuel">🗓️ {t.temporaliteMonthly}</option>
+                <option value="annuel">⭐ {t.temporaliteAnnual}</option>
+              </select>
 
               {/* Price Filter */}
               <select
@@ -1156,84 +1134,9 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
                 <option value="Gratuit">{t.priceFree}</option>
                 <option value="Payant">{t.pricePaid}</option>
               </select>
-
-              {/* Kids Filter */}
-              <button
-                onClick={() => setKidsOnly(!kidsOnly)}
-                className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg font-semibold transition-all shadow-sm hover:shadow-md text-xs ${
-                  kidsOnly
-                    ? 'bg-[#4A1D43] text-white shadow-lg'
-                    : 'bg-white text-gray-700 border border-[#D4AF37]/30 hover:border-[#D4AF37]'
-                }`}
-              >
-                <Users className="w-3.5 h-3.5" />
-                {t.kidsAccessible}
-              </button>
             </div>
           </div>
         </div>
-
-        {/* Map Toggle Button - Lieux Only */}
-        {activeTab === 'lieux' && lieux.length > 0 && (
-          <div className="flex justify-end mb-6">
-            <button
-              onClick={() => setShowMap(!showMap)}
-              className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-bold transition-all ${
-                showMap
-                  ? 'bg-[#4A1D43] text-white shadow-lg'
-                  : 'bg-white text-gray-700 border-2 border-[#D4AF37] hover:border-[#4A1D43]'
-              }`}
-            >
-              <MapPinned className="w-5 h-5" />
-              {showMap ? 'Masquer la Carte' : 'Afficher sur la Carte'}
-            </button>
-          </div>
-        )}
-
-        {/* Interactive Map */}
-        {activeTab === 'lieux' && showMap && lieux.length > 0 && (
-          <div className="bg-white rounded-3xl shadow-2xl p-6 mb-8">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <MapPinned className="w-6 h-6 text-[#D4AF37]" />
-              Carte Interactive des Lieux
-            </h3>
-            <div className="h-96 rounded-2xl overflow-hidden shadow-lg">
-              <MapContainer
-                center={[35.5047, 11.0622]}
-                zoom={7}
-                style={{ height: '100%', width: '100%' }}
-              >
-                <TileLayer
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                />
-                {lieux
-                  .filter((lieu) => lieu.latitude && lieu.longitude)
-                  .map((lieu) => (
-                    <Marker
-                      key={lieu.id}
-                      position={[lieu.latitude!, lieu.longitude!]}
-                      eventHandlers={{
-                        click: () => setSelectedMarker(lieu.id),
-                      }}
-                    >
-                      <Popup>
-                        <div className="p-2">
-                          <h4 className="font-bold text-gray-900 mb-1">{lieu.nom}</h4>
-                          {(lieu as any).sous_categories && (
-                            <p className="text-xs text-[#D4AF37] font-medium mb-2">{Array.isArray((lieu as any).sous_categories) ? (lieu as any).sous_categories.join(', ') : (lieu as any).sous_categories}</p>
-                          )}
-                          {lieu.adresse && (
-                            <p className="text-sm text-gray-600">{lieu.adresse}</p>
-                          )}
-                        </div>
-                      </Popup>
-                    </Marker>
-                  ))}
-              </MapContainer>
-            </div>
-          </div>
-        )}
 
         {/* Results */}
         {loading ? (
@@ -1242,50 +1145,31 @@ export default function CitizensLeisure({ onNavigateBack }: CitizensLeisureProps
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {activeTab === 'evenements' ? (
-              evenements.length === 0 ? (
-                <div className="col-span-full bg-white rounded-xl p-12 text-center">
-                  <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-500 text-lg">{t.noEvents}</p>
-                  <p className="text-sm text-gray-400 mt-2">{t.modifyFilters}</p>
-                </div>
-              ) : (
-                evenements.map((event) => (
-                  <EventCard
-                    key={event.id}
-                    id={event.id}
-                    titre={getTranslatedText(event, 'titre')}
-                    description={getTranslatedText(event, 'description')}
-                    date_debut={event.date_debut}
-                    localisation_ville={event.localisation_ville}
-                    prix={event.prix}
-                    type_evenement={event.type_evenement}
-                    lien_billetterie={event.lien_billetterie}
-                    image_url={event.image_url}
-                    accessible_enfants={event.accessible_enfants}
-                    niveau_abonnement={event.niveau_abonnement}
-                    organisateur={event.organisateur}
-                    note_moyenne={event.note_moyenne}
-                    nombre_avis={event.nombre_avis}
-                  />
-                ))
-              )
+            {evenements.length === 0 ? (
+              <div className="col-span-full bg-white rounded-xl p-12 text-center">
+                <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <p className="text-gray-500 text-lg">{t.noEvents}</p>
+                <p className="text-sm text-gray-400 mt-2">{t.modifyFilters}</p>
+              </div>
             ) : (
-              lieux.length === 0 ? (
-                <div className="col-span-full bg-white rounded-xl p-12 text-center">
-                  <MapPin className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-500 text-lg">{t.noPlaces}</p>
-                  <p className="text-sm text-gray-400 mt-2">{t.modifyFilters}</p>
-                </div>
-              ) : (
-                lieux.map((lieu) => (
-                  <UnifiedBusinessCard
-                    key={lieu.id}
-                    business={lieu as any}
-                    onClick={() => navigate(`/business/${lieu.id}`)}
-                  />
-                ))
-              )
+              evenements.map((event) => (
+                <EventCard
+                  key={event.id}
+                  id={event.id}
+                  titre={getTranslatedText(event, 'titre')}
+                  description={getTranslatedText(event, 'description')}
+                  date_debut={event.date_debut}
+                  localisation_ville={event.localisation_ville}
+                  prix={event.prix}
+                  type_evenement={event.type_evenement}
+                  lien_billetterie={event.lien_billetterie}
+                  image_url={event.image_url}
+                  niveau_abonnement={event.niveau_abonnement}
+                  organisateur={event.organisateur}
+                  note_moyenne={event.note_moyenne}
+                  nombre_avis={event.nombre_avis}
+                />
+              ))
             )}
           </div>
         )}
