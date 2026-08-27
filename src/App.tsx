@@ -93,7 +93,7 @@ function App() {
       const hashToPathMap: Record<string, string> = {
         'citizens/health': '/citizens/health',
         'citizens/sante': '/citizens/health',
-        'citizens/admin': '/citizens/admin',
+        'citizens/admin': '/citizens/services',
         'citizens/leisure': '/citizens/leisure',
         'citizens/loisirs': '/citizens/leisure',
         'citizens/shops': '/citizens/shops',

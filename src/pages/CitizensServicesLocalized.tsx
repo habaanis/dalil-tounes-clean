@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { AlertCircle, ArrowLeft, Baby, Building2, CheckCircle, Clock, ExternalLink, FileText, Heart, Phone, Shield } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { AlertCircle, ArrowLeft, Baby, Building2, CheckCircle, Clock, ExternalLink, FileText, Heart, Phone, Shield, type LucideIcon } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
 import { getStructureImageUrl } from '../lib/imageUtils';
@@ -26,6 +25,8 @@ type PageCopy = {
   title: string;
   intro: string;
   tabs: { offices: string; procedures: string; social: string };
+  searchTitle: string;
+  searchSubtitle: string;
   recommended: string;
   sector: string;
   articleTitle: string;
@@ -43,6 +44,8 @@ type PageCopy = {
   socialIntro: string;
   officesTitle: string;
   officesIntro: string;
+  usefulLinksTitle: string;
+  officialLinks: { registry: string; justice: string; passport: string };
   together: string;
   procedures: ProcedureCopy[];
 };
@@ -52,6 +55,8 @@ const COPY: Record<Lang, PageCopy> = {
     back: 'Retour', title: 'Services Citoyens',
     intro: "Retrouvez les services publics et sociaux utiles en Tunisie, les démarches administratives essentielles et les numéros d'urgence.",
     tabs: { offices: 'Bureaux', procedures: 'Démarches', social: 'Social' },
+    searchTitle: 'Services administratifs et citoyens recommandés près de chez vous',
+    searchSubtitle: 'Associations, services juridiques, sociaux et administratifs évalués par leurs usagers',
     recommended: 'Entreprises les plus recommandées par les clients', sector: 'services citoyens',
     articleTitle: 'Activités à faire en famille en Tunisie', articleExcerpt: 'Sorties, sports, culture : découvrez des idées pour passer de bons moments en famille.',
     proceduresTitle: 'Démarches administratives', proceduresIntro: 'Retrouvez les documents requis, délais, coûts et services compétents pour les principales démarches.',
@@ -59,6 +64,8 @@ const COPY: Record<Lang, PageCopy> = {
     warning: "Vérifiez toujours les informations et les formulaires auprès de l'administration concernée avant de vous déplacer.",
     socialTitle: "Aide sociale et numéros d'urgence", socialIntro: 'Retrouvez rapidement les principaux services d’aide et de protection.',
     officesTitle: 'Bureaux & établissements publics', officesIntro: 'Recherchez une administration ou un service public près de chez vous.',
+    usefulLinksTitle: 'Liens administratifs officiels',
+    officialLinks: { registry: 'Registre National des Entreprises', justice: 'Services judiciaires en ligne', passport: 'Rendez-vous passeport en ligne' },
     together: 'Ensemble, construisons une société plus juste, accessible et solidaire.',
     procedures: [
       { title: "Carte d'identité nationale", description: "Obtention ou renouvellement de la carte d'identité nationale pour les citoyens tunisiens.", documents: ['Acte de naissance (original + 2 photocopies)', 'Certificat de résidence (moins de 3 mois)', "2 photos d'identité récentes", "Ancienne carte d'identité (si renouvellement)"], delay: '15 jours ouvrables', cost: '10 TND', authority: 'Mairie / Municipalité' },
@@ -73,6 +80,8 @@ const COPY: Record<Lang, PageCopy> = {
     back: 'رجوع', title: 'خدمات المواطنين',
     intro: 'اعثر على الخدمات العمومية والاجتماعية المفيدة في تونس، والإجراءات الإدارية الأساسية وأرقام الطوارئ.',
     tabs: { offices: 'المكاتب', procedures: 'الإجراءات', social: 'الشؤون الاجتماعية' },
+    searchTitle: 'الخدمات الإدارية وخدمات المواطنين الموصى بها بالقرب منك',
+    searchSubtitle: 'جمعيات وخدمات قانونية واجتماعية وإدارية قيّمها مستخدموها',
     recommended: 'المؤسسات الأكثر توصية من قبل العملاء', sector: 'خدمات المواطنين',
     articleTitle: 'أنشطة عائلية في تونس', articleExcerpt: 'نزهات ورياضة وثقافة: اكتشف أفكاراً لقضاء أوقات ممتعة مع العائلة.',
     proceduresTitle: 'الإجراءات الإدارية', proceduresIntro: 'اعثر على الوثائق المطلوبة والآجال والتكاليف والمصالح المختصة لأهم الإجراءات.',
@@ -80,6 +89,8 @@ const COPY: Record<Lang, PageCopy> = {
     warning: 'تحقق دائماً من المعلومات والنماذج لدى الإدارة المعنية قبل التنقل.',
     socialTitle: 'المساعدة الاجتماعية وأرقام الطوارئ', socialIntro: 'اعثر بسرعة على أهم خدمات المساعدة والحماية.',
     officesTitle: 'المكاتب والمؤسسات العمومية', officesIntro: 'ابحث عن إدارة أو خدمة عمومية قريبة منك.',
+    usefulLinksTitle: 'روابط إدارية رسمية',
+    officialLinks: { registry: 'السجل الوطني للمؤسسات', justice: 'الخدمات القضائية عبر الإنترنت', passport: 'حجز موعد جواز السفر عبر الإنترنت' },
     together: 'معاً، لنبني مجتمعاً أكثر عدلاً وإتاحة وتضامناً.',
     procedures: [
       { title: 'بطاقة التعريف الوطنية', description: 'الحصول على بطاقة التعريف الوطنية أو تجديدها للمواطنين التونسيين.', documents: ['شهادة ميلاد (الأصل + نسختان)', 'شهادة إقامة (أقل من 3 أشهر)', 'صورتان شمسيتان حديثتان', 'بطاقة التعريف القديمة (في حالة التجديد)'], delay: '15 يوم عمل', cost: '10 د.ت', authority: 'البلدية' },
@@ -94,6 +105,8 @@ const COPY: Record<Lang, PageCopy> = {
     back: 'Back', title: 'Citizen Services',
     intro: 'Find useful public and social services in Tunisia, essential administrative procedures and emergency numbers.',
     tabs: { offices: 'Offices', procedures: 'Procedures', social: 'Social' },
+    searchTitle: 'Recommended administrative and citizen services near you',
+    searchSubtitle: 'Associations and legal, social and administrative services rated by their users',
     recommended: 'Most recommended businesses by customers', sector: 'citizen services',
     articleTitle: 'Family activities in Tunisia', articleExcerpt: 'Outings, sports and culture: discover ideas for quality family time.',
     proceduresTitle: 'Administrative procedures', proceduresIntro: 'Find required documents, processing times, costs and competent authorities for key procedures.',
@@ -101,6 +114,8 @@ const COPY: Record<Lang, PageCopy> = {
     warning: 'Always verify information and forms with the relevant authority before travelling.',
     socialTitle: 'Social assistance & emergency numbers', socialIntro: 'Quickly find the main assistance and protection services.',
     officesTitle: 'Public offices & institutions', officesIntro: 'Search for a public office or service near you.',
+    usefulLinksTitle: 'Official administrative links',
+    officialLinks: { registry: 'National Register of Enterprises', justice: 'Online judicial services', passport: 'Online passport appointments' },
     together: 'Together, let us build a fairer, more accessible and supportive society.',
     procedures: [
       { title: 'National ID Card', description: 'Obtain or renew the national ID card for Tunisian citizens.', documents: ['Birth certificate (original + 2 copies)', 'Residence certificate (less than 3 months)', '2 recent ID photos', 'Old ID card (if renewing)'], delay: '15 working days', cost: '10 TND', authority: 'Municipality' },
@@ -115,6 +130,8 @@ const COPY: Record<Lang, PageCopy> = {
     back: 'Indietro', title: 'Servizi al Cittadino',
     intro: 'Trova i servizi pubblici e sociali utili in Tunisia, le principali pratiche amministrative e i numeri di emergenza.',
     tabs: { offices: 'Uffici', procedures: 'Pratiche', social: 'Sociale' },
+    searchTitle: 'Servizi amministrativi e al cittadino consigliati vicino a te',
+    searchSubtitle: 'Associazioni e servizi legali, sociali e amministrativi valutati dagli utenti',
     recommended: 'Aziende più raccomandate dai clienti', sector: 'servizi al cittadino',
     articleTitle: 'Attività da fare in famiglia in Tunisia', articleExcerpt: 'Uscite, sport e cultura: scopri idee per trascorrere bei momenti in famiglia.',
     proceduresTitle: 'Pratiche amministrative', proceduresIntro: 'Trova documenti richiesti, tempi, costi e uffici competenti per le principali pratiche.',
@@ -122,6 +139,8 @@ const COPY: Record<Lang, PageCopy> = {
     warning: "Verifica sempre informazioni e moduli presso l'amministrazione competente prima di spostarti.",
     socialTitle: 'Assistenza sociale e numeri di emergenza', socialIntro: 'Trova rapidamente i principali servizi di assistenza e protezione.',
     officesTitle: 'Uffici ed enti pubblici', officesIntro: 'Cerca un ufficio o un servizio pubblico vicino a te.',
+    usefulLinksTitle: 'Link amministrativi ufficiali',
+    officialLinks: { registry: 'Registro Nazionale delle Imprese', justice: 'Servizi giudiziari online', passport: 'Appuntamenti passaporto online' },
     together: 'Insieme, costruiamo una società più giusta, accessibile e solidale.',
     procedures: [
       { title: "Carta d'identità nazionale", description: "Rilascio o rinnovo della carta d'identità nazionale per i cittadini tunisini.", documents: ['Certificato di nascita (originale + 2 copie)', 'Certificato di residenza (meno di 3 mesi)', '2 foto tessera recenti', "Vecchia carta d'identità (in caso di rinnovo)"], delay: '15 giorni lavorativi', cost: '10 TND', authority: 'Comune / Municipalità' },
@@ -136,6 +155,8 @@ const COPY: Record<Lang, PageCopy> = {
     back: 'Назад', title: 'Государственные услуги',
     intro: 'Найдите полезные государственные и социальные службы Туниса, основные административные процедуры и экстренные номера.',
     tabs: { offices: 'Учреждения', procedures: 'Процедуры', social: 'Социальная помощь' },
+    searchTitle: 'Рекомендуемые административные и государственные услуги рядом с вами',
+    searchSubtitle: 'Ассоциации, юридические, социальные и административные службы по оценкам пользователей',
     recommended: 'Компании, которые чаще всего рекомендуют клиенты', sector: 'государственные услуги',
     articleTitle: 'Семейные занятия в Тунисе', articleExcerpt: 'Прогулки, спорт и культура: идеи для приятного семейного отдыха.',
     proceduresTitle: 'Административные процедуры', proceduresIntro: 'Документы, сроки, стоимость и компетентные учреждения для основных административных процедур.',
@@ -143,6 +164,8 @@ const COPY: Record<Lang, PageCopy> = {
     warning: 'Перед поездкой всегда уточняйте актуальность информации и форм в соответствующем учреждении.',
     socialTitle: 'Социальная помощь и экстренные номера', socialIntro: 'Быстрый доступ к основным службам помощи и защиты.',
     officesTitle: 'Государственные учреждения', officesIntro: 'Найдите государственное учреждение или службу рядом с вами.',
+    usefulLinksTitle: 'Официальные административные ссылки',
+    officialLinks: { registry: 'Национальный реестр предприятий', justice: 'Судебные услуги онлайн', passport: 'Онлайн-запись на получение паспорта' },
     together: 'Вместе создаём более справедливое, доступное и солидарное общество.',
     procedures: [
       { title: 'Национальное удостоверение личности', description: 'Получение или продление национального удостоверения личности для граждан Туниса.', documents: ['Свидетельство о рождении (оригинал + 2 копии)', 'Справка о месте жительства (не старше 3 месяцев)', '2 свежие фотографии на документы', 'Старое удостоверение личности (при продлении)'], delay: '15 рабочих дней', cost: '10 TND', authority: 'Муниципалитет' },
@@ -155,12 +178,32 @@ const COPY: Record<Lang, PageCopy> = {
   },
 };
 
+const SERVICE_EXCLUDED_KEYWORDS = [
+  'dentiste',
+  'dentaire',
+  'orthodont',
+  'pharmacie',
+  'clinique',
+  'hopital',
+  'hôpital',
+  'laboratoire medical',
+  'laboratoire médical',
+  'location de voiture',
+  'location voiture',
+  'rent a car',
+];
+
+const OFFICIAL_LINKS = [
+  { key: 'registry' as const, url: 'https://www.rne.tn' },
+  { key: 'justice' as const, url: 'https://www.e-justice.tn' },
+  { key: 'passport' as const, url: 'https://www.passeport.gov.tn' },
+];
+
 export default function CitizensServicesLocalized() {
   const { language } = useLanguage();
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as Lang;
   const c = COPY[lang];
   const isRTL = lang === 'ar';
-  const navigate = useNavigate();
   const translations = useTranslation(language);
   const ss = translations.citizens.socialServices;
   const [activeTab, setActiveTab] = useState<Tab>('bureaux');
@@ -210,7 +253,6 @@ export default function CitizensServicesLocalized() {
       <section className="relative h-[240px] overflow-hidden">
         <img src={getStructureImageUrl('/images/service-social.jpg')} alt={c.title} className="absolute inset-0 w-full h-full object-cover" loading="lazy" decoding="async" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#4A1D43]/90 via-[#4A1D43]/75 to-[#D4AF37]/30" />
-        <button onClick={() => navigate('/citizens')} className={`absolute top-4 z-10 flex items-center gap-1.5 bg-white/90 text-[#4A1D43] px-3 py-1.5 rounded-lg text-sm font-medium ${isRTL ? 'right-4' : 'left-4'}`}><ArrowLeft className={`w-4 h-4 ${isRTL ? 'rotate-180' : ''}`} />{c.back}</button>
         <div className="relative h-full flex items-center justify-center px-4 text-center text-white">
           <div className="max-w-4xl"><h1 className="text-3xl md:text-4xl font-bold mb-3 text-[#D4AF37]">{c.title}</h1><p className="text-sm md:text-base leading-relaxed">{c.intro}</p></div>
         </div>
@@ -224,26 +266,71 @@ export default function CitizensServicesLocalized() {
         </div>
       </section>
 
-      <section className="py-3 px-4"><div className="max-w-5xl mx-auto"><div className="bg-white rounded-xl border border-[#D4AF37] p-3"><SearchBar scope="services" intentEnabled={false} enabled resultMode="redirectToResults" /></div></div></section>
-
-      <section className="py-6 bg-white"><MeilleursSection secteurLabel={c.sector} listePage="services citoyens" accentColor="#4A1D43" sectionTitle={c.recommended} blogArticle={{ title: c.articleTitle, excerpt: c.articleExcerpt, slug: 'activites-en-famille' }} /></section>
-
-      {activeTab === 'bureaux' && <section className="px-4 py-8"><div className="max-w-5xl mx-auto text-center"><Building2 className="w-10 h-10 text-[#D4AF37] mx-auto mb-3" /><h2 className="text-2xl font-bold text-[#4A1D43]">{c.officesTitle}</h2><p className="mt-2 text-gray-600">{c.officesIntro}</p></div></section>}
+      {activeTab === 'bureaux' && (
+        <>
+          <section className="px-4 pt-8 pb-3">
+            <div className="max-w-5xl mx-auto text-center">
+              <Building2 className="w-10 h-10 text-[#D4AF37] mx-auto mb-3" />
+              <h2 className="text-2xl font-bold text-[#4A1D43]">{c.officesTitle}</h2>
+              <p className="mt-2 text-gray-600">{c.officesIntro}</p>
+            </div>
+          </section>
+          <section className="py-3 px-4">
+            <div className="max-w-5xl mx-auto">
+              <div className="bg-white rounded-xl border border-[#D4AF37] p-3">
+                <SearchBar
+                  scope="services"
+                  intentEnabled={false}
+                  enabled
+                  resultMode="redirectToResults"
+                  preferredTitle={c.searchTitle}
+                  preferredSubtitle={c.searchSubtitle}
+                />
+              </div>
+            </div>
+          </section>
+          <section className="py-6 bg-white">
+            <MeilleursSection
+              secteurLabel={c.sector}
+              listePage="services citoyens"
+              accentColor="#4A1D43"
+              sectionTitle={c.recommended}
+              useGoogleRecommendationCriteria
+              excludedKeywords={SERVICE_EXCLUDED_KEYWORDS}
+              blogArticle={{ title: c.articleTitle, excerpt: c.articleExcerpt, slug: 'activites-en-famille' }}
+            />
+          </section>
+        </>
+      )}
 
       {activeTab === 'demarches' && <section className="px-4 py-8 bg-white"><div className="max-w-6xl mx-auto"><div className="text-center mb-6"><h2 className="text-2xl font-bold text-[#4A1D43]">{c.proceduresTitle}</h2><p className="mt-2 text-gray-600">{c.proceduresIntro}</p></div><div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">{c.procedures.map((item, index) => <motion.button key={item.title} type="button" whileHover={{ y: -3 }} onClick={() => setSelectedProcedure(index)} className={`text-start bg-white rounded-xl border-2 border-[#D4AF37] p-4 hover:shadow-lg ${isRTL ? 'text-right' : 'text-left'}`}><h3 className="font-bold text-[#4A1D43] mb-2">{item.title}</h3><p className="text-gray-600 text-xs line-clamp-3 mb-3">{item.description}</p><div className="flex justify-between text-xs text-[#4A1D43]"><span>{item.documents.length} {c.pieces}</span><span>{item.delay}</span></div></motion.button>)}</div></div></section>}
 
       {activeTab === 'social' && <section className="px-4 py-8"><div className="max-w-5xl mx-auto"><div className="text-center mb-5"><h2 className="text-2xl font-bold text-[#4A1D43]">{c.socialTitle}</h2><p className="mt-2 text-gray-600">{c.socialIntro}</p></div><div className="grid grid-cols-2 md:grid-cols-5 gap-2">{emergencyNumbers.map(({ label, number, icon: Icon }) => <a key={number} href={`tel:${number}`} className="flex flex-col items-center justify-center rounded-xl bg-[#4A1D43] border border-[#D4AF37] p-3 text-center"><Icon className="w-5 h-5 text-[#D4AF37] mb-2" /><span className="text-xs text-white">{label}</span><strong className="text-lg text-[#D4AF37]">{number}</strong></a>)}</div><div className="mt-7 grid md:grid-cols-2 gap-3"><SocialCard title={ss.sections.national.amenSocial.title} body={ss.sections.national.amenSocial.description} /><SocialCard title={ss.sections.national.pnafn.title} body={ss.sections.national.pnafn.description} /><SocialCard title={ss.sections.health.cnam.title} body={ss.sections.health.cnam.description} /><SocialCard title={ss.sections.childhood.allocations.title} body={ss.sections.childhood.allocations.description} /></div></div></section>}
+
+      <section className="px-4 py-8 bg-white border-t border-gray-100">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-xl font-bold text-[#4A1D43] text-center mb-4">{c.usefulLinksTitle}</h2>
+          <div className="grid gap-3 md:grid-cols-3">
+            {OFFICIAL_LINKS.map((link) => (
+              <a key={link.url} href={link.url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between gap-3 rounded-xl border border-[#D4AF37] bg-[#FFFDF6] p-4 text-sm font-semibold text-[#4A1D43] hover:bg-[#D4AF37]/10 transition-colors">
+                <span>{c.officialLinks[link.key]}</span>
+                <ExternalLink className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
 
       <section className="px-4 py-4 bg-[#4A1D43] border-t border-[#D4AF37]"><p className="max-w-4xl mx-auto text-center text-sm text-[#D4AF37] font-medium">{c.together}</p></section>
     </div>
   );
 }
 
-function TabButton({ active, onClick, icon: Icon, label }: { active: boolean; onClick: () => void; icon: any; label: string }) {
-  return <button type="button" onClick={onClick} className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold border-2 transition ${active ? 'bg-[#4A1D43] text-[#D4AF37] border-[#D4AF37]' : 'bg-gray-100 text-gray-700 border-transparent'}`}><Icon className="w-4 h-4" />{label}</button>;
+function TabButton({ active, onClick, icon: Icon, label }: { active: boolean; onClick: () => void; icon: LucideIcon; label: string }) {
+  return <button type="button" onClick={onClick} aria-pressed={active} className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold border-2 transition ${active ? 'bg-[#4A1D43] text-[#D4AF37] border-[#D4AF37]' : 'bg-gray-100 text-gray-700 border-transparent'}`}><Icon className="w-4 h-4" />{label}</button>;
 }
 
-function InfoCard({ icon: Icon, label, value }: { icon: any; label: string; value: string }) {
+function InfoCard({ icon: Icon, label, value }: { icon: LucideIcon; label: string; value: string }) {
   return <div className="rounded-xl border border-[#D4AF37] bg-[#FFFDF6] p-4"><div className="flex items-center gap-2 text-[#4A1D43] mb-2"><Icon className="w-5 h-5" /><strong>{label}</strong></div><p className="text-gray-800">{value}</p></div>;
 }
 
