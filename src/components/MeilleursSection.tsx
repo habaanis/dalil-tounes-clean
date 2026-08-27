@@ -45,6 +45,8 @@ interface MeilleursProps {
   useGoogleRecommendationCriteria?: boolean;
   includeRecommendedInTotal?: boolean;
   excludedKeywords?: readonly string[];
+  allReferencedLabel?: string;
+  searchOtherLabel?: string;
 }
 
 const PAGE_SIZE = 4;
@@ -247,6 +249,8 @@ export default function MeilleursSection({
   useGoogleRecommendationCriteria = false,
   includeRecommendedInTotal = true,
   excludedKeywords = EMPTY_EXCLUDED_KEYWORDS,
+  allReferencedLabel,
+  searchOtherLabel,
 }: MeilleursProps) {
   const navigate = useNavigate();
   const { language } = useLanguage();
@@ -460,7 +464,7 @@ export default function MeilleursSection({
                   className="text-xl font-bold leading-tight"
                   style={{ fontFamily: "'Playfair Display', serif", color: accentColor }}
                 >
-                  {tx('allReferencedPrefix', 'Tous les')} {secteurLabel} {tx('allReferencedSuffix', 'référencés')}
+                  {allReferencedLabel || `${tx('allReferencedPrefix', 'Tous les')} ${secteurLabel} ${tx('allReferencedSuffix', 'référencés')}`}
                 </h2>
                 {!loadingAll && (
                   <p className="text-xs text-gray-400 mt-0.5">{displayedEstablishmentCount} {displayedEstablishmentCount > 1 ? tx('establishmentPlur', 'établissements') : tx('establishmentSing', 'établissement')}</p>
@@ -593,7 +597,7 @@ export default function MeilleursSection({
             style={{ backgroundColor: accentColor, color: '#fff' }}
           >
             <Search className="w-4 h-4" />
-            {tx('searchOtherPrefix', "Rechercher d'autres")} {secteurLabel}
+            {searchOtherLabel || `${tx('searchOtherPrefix', "Rechercher d'autres")} ${secteurLabel}`}
           </button>
           <p className="text-xs text-gray-400 mt-2">{tx('searchOtherHint', 'Affiner par ville, spécialité, disponibilité...')}</p>
         </div>

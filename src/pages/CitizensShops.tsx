@@ -4,6 +4,7 @@ import { scrollToWithOffsetDelayed } from '../lib/scrollUtils';
 import MeilleursSection from '../components/MeilleursSection';
 import { useLanguage } from '../context/LanguageContext';
 import SearchBar from '../components/SearchBar';
+import { SEOHead } from '../components/SEOHead';
 
 type PublicLanguage = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 
@@ -15,80 +16,86 @@ const copy: Record<PublicLanguage, {
   recommended: string;
   preferredTitle: string;
   preferredSubtitle: string;
-  articleTitle: string;
-  articleExcerpt: string;
+  allReferenced: string;
+  searchOther: string;
+  seoTitle: string;
   offerText: string;
   offerButton: string;
 }> = {
   fr: {
     title: 'Commerces & Magasins',
-    intro: "Votre guide des commerces de proximité en Tunisie. Trouvez un magasin ouvert maintenant, profitez des promotions et découvrez les produits locaux. Achetez local et soutenez l'économie tunisienne.",
+    intro: "Votre guide des commerces de proximité en Tunisie. Trouvez un magasin, consultez ses horaires, sa localisation, ses avis et ses coordonnées. Achetez local et soutenez l'économie tunisienne.",
     slogan: 'Vous êtes présent, mais êtes-vous trouvable ?',
     sector: 'commerces',
     recommended: 'Entreprises les plus recommandées par les clients',
     preferredTitle: 'Les commerces préférés de vos voisins',
     preferredSubtitle: 'Les commerces qui ont gagné la confiance des habitants',
-    articleTitle: 'Activités à faire en famille en Tunisie',
-    articleExcerpt: 'Sorties, sports, culture : découvrez les meilleures activités pour passer de bons moments en famille.',
+    allReferenced: 'Tous les commerces référencés',
+    searchOther: "Rechercher d'autres commerces",
+    seoTitle: 'Commerces et magasins en Tunisie | Dalil Tounes',
     offerText: 'Découvrez nos offres • Artisan & Premium • Développez votre visibilité',
     offerButton: 'Voir nos offres',
   },
   ar: {
     title: 'المحلات والمتاجر',
-    intro: 'دليلك للتجارة المحلية في تونس. اعثر على متجر مفتوح الآن، استفد من العروض واكتشف المنتجات المحلية. اشترِ محلياً وادعم الاقتصاد التونسي.',
+    intro: 'دليلك إلى المتاجر القريبة في تونس. اعثر على متجر، واطّلع على توقيته وموقعه وآراء حرفائه وبيانات الاتصال به. اشترِ محلياً وادعم الاقتصاد التونسي.',
     slogan: 'أنت موجود، لكن هل يمكن العثور عليك؟',
     sector: 'محلات',
     recommended: 'المؤسسات الأكثر توصية من قبل العملاء',
     preferredTitle: 'المحلات المفضلة لدى جيرانك',
     preferredSubtitle: 'المحلات التي كسبت ثقة السكان',
-    articleTitle: 'أنشطة عائلية في تونس',
-    articleExcerpt: 'نزهات ورياضة وثقافة: اكتشف أفضل الأنشطة لقضاء أوقات ممتعة مع العائلة.',
-    offerText: 'اكتشف عروضنا • حرفي وPremium • عزّز ظهور نشاطك',
-    offerButton: 'عرض عروضنا',
+    allReferenced: 'جميع المحلات المسجلة',
+    searchOther: 'البحث عن محلات أخرى',
+    seoTitle: 'المحلات والمتاجر في تونس | دليل تونس',
+    offerText: 'اكتشف عروضنا • Artisan وPremium • عزّز ظهور نشاطك',
+    offerButton: 'اطّلع على عروضنا',
   },
   en: {
     title: 'Shops & Stores',
-    intro: 'Your guide to local shops in Tunisia. Find a shop that is open now, discover promotions and local products. Buy local and support the Tunisian economy.',
+    intro: 'Your guide to local shops in Tunisia. Find a shop and check its opening hours, location, reviews and contact details. Buy local and support the Tunisian economy.',
     slogan: 'You are present, but can you be found?',
     sector: 'shops',
     recommended: 'Most recommended businesses by customers',
     preferredTitle: "Your neighbors' favorite shops",
     preferredSubtitle: 'Shops that have earned the trust of local residents',
-    articleTitle: 'Family activities to do in Tunisia',
-    articleExcerpt: 'Outings, sports and culture: discover the best activities for quality time with your family.',
+    allReferenced: 'All listed shops',
+    searchOther: 'Search other shops',
+    seoTitle: 'Shops and stores in Tunisia | Dalil Tounes',
     offerText: 'Discover our offers • Artisan & Premium • Grow your visibility',
     offerButton: 'See our offers',
   },
   it: {
     title: 'Negozi e Commerci',
-    intro: "La tua guida ai negozi di prossimità in Tunisia. Trova un negozio aperto ora, scopri promozioni e prodotti locali. Compra locale e sostieni l'economia tunisina.",
+    intro: "La tua guida ai negozi di prossimità in Tunisia. Trova un negozio e consulta orari, posizione, recensioni e contatti. Compra locale e sostieni l'economia tunisina.",
     slogan: 'Sei presente, ma sei trovabile?',
     sector: 'commerci',
     recommended: 'Aziende più raccomandate dai clienti',
     preferredTitle: 'I negozi preferiti dai tuoi vicini',
     preferredSubtitle: 'I negozi che hanno conquistato la fiducia dei residenti',
-    articleTitle: 'Attività da fare in famiglia in Tunisia',
-    articleExcerpt: 'Uscite, sport e cultura: scopri le migliori attività per trascorrere bei momenti in famiglia.',
+    allReferenced: 'Tutti i negozi registrati',
+    searchOther: 'Cerca altri negozi',
+    seoTitle: 'Negozi e commerci in Tunisia | Dalil Tounes',
     offerText: 'Scopri le nostre offerte • Artisan & Premium • Aumenta la tua visibilità',
     offerButton: 'Vedi le nostre offerte',
   },
   ru: {
     title: 'Магазины и торговые точки',
-    intro: 'Ваш гид по местным магазинам Туниса. Найдите открытый сейчас магазин, узнайте об акциях и местных товарах. Покупайте местное и поддерживайте экономику Туниса.',
+    intro: 'Ваш гид по местным магазинам Туниса. Найдите магазин и проверьте часы работы, адрес, отзывы и контактные данные. Покупайте местное и поддерживайте экономику Туниса.',
     slogan: 'Вы представлены в интернете, но легко ли вас найти?',
     sector: 'магазины',
     recommended: 'Компании, которые чаще всего рекомендуют клиенты',
     preferredTitle: 'Любимые магазины ваших соседей',
     preferredSubtitle: 'Магазины, заслужившие доверие местных жителей',
-    articleTitle: 'Семейные занятия в Тунисе',
-    articleExcerpt: 'Прогулки, спорт и культура: откройте лучшие идеи для приятного семейного отдыха.',
-    offerText: 'Посмотрите наши предложения • Artisan и Premium • Повышайте свою видимость',
+    allReferenced: 'Все зарегистрированные магазины',
+    searchOther: 'Найти другие магазины',
+    seoTitle: 'Магазины и торговые точки в Тунисе | Dalil Tounes',
+    offerText: 'Откройте наши предложения • Artisan и Premium • Сделайте вашу компанию заметнее',
     offerButton: 'Посмотреть предложения',
   },
 };
 
 interface CitizensShopsProps {
-  onNavigate?: (page: any) => void;
+  onNavigate?: (page: 'subscription') => void;
 }
 
 export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
@@ -100,6 +107,12 @@ export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50" dir={isRTL ? 'rtl' : 'ltr'}>
+      <SEOHead
+        title={t.seoTitle}
+        description={t.intro}
+        canonical="https://dalil-tounes.com/citizens/shops"
+        currentPath="/citizens/shops"
+      />
       <section
         className="relative w-full overflow-hidden rounded-b-2xl shadow-md h-[300px] bg-cover"
         style={{
@@ -114,16 +127,7 @@ export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
         </div>
       </section>
 
-      <section className="py-6 px-4 bg-white">
-        <div className="max-w-2xl mx-auto text-center">
-          <p className="text-lg md:text-xl font-light mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
-            <span className="text-[#4A0404]">{t.slogan}</span>
-          </p>
-          <div className="flex justify-center"><div className="w-[40px] h-[1px] bg-[#D4AF37]" /></div>
-        </div>
-      </section>
-
-      <section className="py-2 px-4 relative z-[9999]" style={{ overflow: 'visible' }}>
+      <section className="py-6 px-4 relative z-[9999]" style={{ overflow: 'visible' }}>
         <div className="max-w-5xl mx-auto" style={{ overflow: 'visible' }}>
           <div className="bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-[#D4AF37] p-2.5 md:p-3" style={{ overflow: 'visible' }}>
             <SearchBar
@@ -147,7 +151,8 @@ export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
             sectionTitle={t.recommended}
             useGoogleRecommendationCriteria
             includeRecommendedInTotal={false}
-            blogArticle={{ title: t.articleTitle, excerpt: t.articleExcerpt, slug: 'activites-en-famille' }}
+            allReferencedLabel={t.allReferenced}
+            searchOtherLabel={t.searchOther}
           />
         </div>
 

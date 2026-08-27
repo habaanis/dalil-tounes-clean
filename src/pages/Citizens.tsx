@@ -110,7 +110,7 @@ const CATEGORY_ROUTES = [
   { key: 'education', route: '/education', image: 'education.jpg', top: '40px', left: '32%', width: 260, height: 210, z: 5 },
   { key: 'services', route: '/citizens/services', image: 'cat_administratif.jpg', top: '56px', left: '55%', width: 240, height: 190, z: 8 },
   { key: 'tourism', route: '/citizens/tourisme', image: 'service-social.jpg', top: '240px', left: '30%', width: 300, height: 220, z: 20 },
-  { key: 'shops', route: '/citizens/magasins', image: 'cat_magasin.jpg', top: '320px', left: '12%', width: 230, height: 190, z: 13 },
+  { key: 'shops', route: '/citizens/shops', image: 'cat_magasin.jpg', top: '320px', left: '12%', width: 230, height: 190, z: 13 },
   { key: 'leisure', route: '/citizens/loisirs', image: 'loisir.jpg', top: '304px', left: '60%', width: 220, height: 180, z: 9 },
 ] as const;
 
