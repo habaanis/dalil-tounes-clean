@@ -2,6 +2,17 @@ import React from 'react';
 import { Star } from 'lucide-react';
 import { analyzeTicketLink, getPrixValue } from '../lib/ticketLinkAnalyzer';
 import SignatureCard from './SignatureCard';
+import { useLanguage } from '../context/LanguageContext';
+
+const EVENT_CARD_COPY = {
+  fr: { by: 'Par', viewEvent: 'Voir l’événement', reserveSeats: 'Réserver mes places', officialSite: 'Site officiel', reserve: 'Réserver ma place', freeEntry: 'Entrée libre', moreInfo: 'Plus d’infos sur place' },
+  en: { by: 'By', viewEvent: 'View event', reserveSeats: 'Book tickets', officialSite: 'Official website', reserve: 'Book my place', freeEntry: 'Free entry', moreInfo: 'More information on site' },
+  it: { by: 'Di', viewEvent: 'Vedi evento', reserveSeats: 'Prenota i biglietti', officialSite: 'Sito ufficiale', reserve: 'Prenota il mio posto', freeEntry: 'Ingresso gratuito', moreInfo: 'Maggiori informazioni sul posto' },
+  ru: { by: 'Организатор:', viewEvent: 'Посмотреть мероприятие', reserveSeats: 'Забронировать билеты', officialSite: 'Официальный сайт', reserve: 'Забронировать место', freeEntry: 'Вход свободный', moreInfo: 'Подробнее на месте' },
+  ar: { by: 'تنظيم', viewEvent: 'عرض الفعالية', reserveSeats: 'حجز التذاكر', officialSite: 'الموقع الرسمي', reserve: 'حجز مكاني', freeEntry: 'الدخول مجاني', moreInfo: 'مزيد من المعلومات في المكان' },
+} as const;
+
+const DATE_LOCALES = { fr: 'fr-FR', en: 'en-US', it: 'it-IT', ru: 'ru-RU', ar: 'ar-TN' } as const;
 
 interface EventCardProps {
   id: string;
@@ -13,7 +24,6 @@ interface EventCardProps {
   type_evenement: string;
   lien_billetterie?: string;
   image_url?: string;
-  accessible_enfants: boolean;
   niveau_abonnement: string;
   organisateur?: string;
   note_moyenne?: number;
@@ -31,17 +41,19 @@ const EventCard: React.FC<EventCardProps> = ({
   type_evenement,
   lien_billetterie,
   image_url,
-  accessible_enfants,
-  niveau_abonnement,
   organisateur,
   note_moyenne = 0,
   nombre_avis = 0,
   onImageClick,
   is_premium = false,
 }) => {
+  const { language } = useLanguage();
+  const copy = EVENT_CARD_COPY[language];
+  const dateLocale = DATE_LOCALES[language];
+
   const formatFullDate = (dateString: string): string => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('fr-FR', {
+    return date.toLocaleDateString(dateLocale, {
       day: 'numeric',
       month: 'long',
       year: 'numeric'
@@ -99,13 +111,6 @@ const EventCard: React.FC<EventCardProps> = ({
           </div>
         </div>
 
-        {accessible_enfants && (
-          <div className="absolute top-2 right-2">
-            <span className="px-2 py-0.5 bg-[#4A1D43]/90 backdrop-blur-sm text-white text-xs rounded flex items-center gap-1">
-              Kids
-            </span>
-          </div>
-        )}
       </div>
 
       <div className={`flex-1 p-3 ${is_premium ? 'bg-[#4A1D43]' : 'bg-white'}`}>
@@ -138,7 +143,7 @@ const EventCard: React.FC<EventCardProps> = ({
 
         {organisateur && (
           <div className={`text-xs mb-1.5 italic ${is_premium ? 'text-gray-300' : 'text-gray-500'}`}>
-            Par {organisateur}
+            {copy.by} {organisateur}
           </div>
         )}
 
@@ -157,7 +162,13 @@ const EventCard: React.FC<EventCardProps> = ({
                     : linkAnalysis.colorClass
                 } text-white rounded font-semibold text-center transition-all text-xs`}
               >
-                {linkAnalysis.text}
+                {linkAnalysis.text === 'Voir l\'événement'
+                  ? copy.viewEvent
+                  : linkAnalysis.text === 'Réserver mes places'
+                    ? copy.reserveSeats
+                    : linkAnalysis.text === 'Site Officiel'
+                      ? copy.officialSite
+                      : copy.reserve}
               </a>
             );
           }
@@ -169,7 +180,7 @@ const EventCard: React.FC<EventCardProps> = ({
                   ? 'bg-[#5A2D53] text-[#D4AF37]'
                   : 'bg-gray-100 text-gray-700'
               }`}>
-                {getPrixValue(prix) === 0 ? 'Entrée Libre' : 'Plus d\'infos sur place'}
+                {getPrixValue(prix) === 0 ? copy.freeEntry : copy.moreInfo}
               </span>
             </div>
           );
