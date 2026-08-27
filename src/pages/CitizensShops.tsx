@@ -1,4 +1,4 @@
-import { ChevronRight, ArrowLeft } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { scrollToWithOffsetDelayed } from '../lib/scrollUtils';
 import MeilleursSection from '../components/MeilleursSection';
@@ -8,72 +8,78 @@ import SearchBar from '../components/SearchBar';
 type PublicLanguage = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 
 const copy: Record<PublicLanguage, {
-  back: string;
   title: string;
   intro: string;
   slogan: string;
   sector: string;
   recommended: string;
+  preferredTitle: string;
+  preferredSubtitle: string;
   articleTitle: string;
   articleExcerpt: string;
   offerText: string;
   offerButton: string;
 }> = {
   fr: {
-    back: 'Retour',
     title: 'Commerces & Magasins',
     intro: "Votre guide des commerces de proximité en Tunisie. Trouvez un magasin ouvert maintenant, profitez des promotions et découvrez les produits locaux. Achetez local et soutenez l'économie tunisienne.",
     slogan: 'Vous êtes présent, mais êtes-vous trouvable ?',
     sector: 'commerces',
     recommended: 'Entreprises les plus recommandées par les clients',
+    preferredTitle: 'Les commerces préférés de vos voisins',
+    preferredSubtitle: 'Les commerces qui ont gagné la confiance des habitants',
     articleTitle: 'Activités à faire en famille en Tunisie',
     articleExcerpt: 'Sorties, sports, culture : découvrez les meilleures activités pour passer de bons moments en famille.',
     offerText: 'Découvrez nos offres • Artisan & Premium • Développez votre visibilité',
     offerButton: 'Voir nos offres',
   },
   ar: {
-    back: 'رجوع',
     title: 'المحلات والمتاجر',
     intro: 'دليلك للتجارة المحلية في تونس. اعثر على متجر مفتوح الآن، استفد من العروض واكتشف المنتجات المحلية. اشترِ محلياً وادعم الاقتصاد التونسي.',
     slogan: 'أنت موجود، لكن هل يمكن العثور عليك؟',
     sector: 'محلات',
     recommended: 'المؤسسات الأكثر توصية من قبل العملاء',
+    preferredTitle: 'المحلات المفضلة لدى جيرانك',
+    preferredSubtitle: 'المحلات التي كسبت ثقة السكان',
     articleTitle: 'أنشطة عائلية في تونس',
     articleExcerpt: 'نزهات ورياضة وثقافة: اكتشف أفضل الأنشطة لقضاء أوقات ممتعة مع العائلة.',
     offerText: 'اكتشف عروضنا • حرفي وPremium • عزّز ظهور نشاطك',
     offerButton: 'عرض عروضنا',
   },
   en: {
-    back: 'Back',
     title: 'Shops & Stores',
     intro: 'Your guide to local shops in Tunisia. Find a shop that is open now, discover promotions and local products. Buy local and support the Tunisian economy.',
     slogan: 'You are present, but can you be found?',
     sector: 'shops',
     recommended: 'Most recommended businesses by customers',
+    preferredTitle: "Your neighbors' favorite shops",
+    preferredSubtitle: 'Shops that have earned the trust of local residents',
     articleTitle: 'Family activities to do in Tunisia',
     articleExcerpt: 'Outings, sports and culture: discover the best activities for quality time with your family.',
     offerText: 'Discover our offers • Artisan & Premium • Grow your visibility',
     offerButton: 'See our offers',
   },
   it: {
-    back: 'Indietro',
     title: 'Negozi e Commerci',
     intro: "La tua guida ai negozi di prossimità in Tunisia. Trova un negozio aperto ora, scopri promozioni e prodotti locali. Compra locale e sostieni l'economia tunisina.",
     slogan: 'Sei presente, ma sei trovabile?',
     sector: 'commerci',
     recommended: 'Aziende più raccomandate dai clienti',
+    preferredTitle: 'I negozi preferiti dai tuoi vicini',
+    preferredSubtitle: 'I negozi che hanno conquistato la fiducia dei residenti',
     articleTitle: 'Attività da fare in famiglia in Tunisia',
     articleExcerpt: 'Uscite, sport e cultura: scopri le migliori attività per trascorrere bei momenti in famiglia.',
     offerText: 'Scopri le nostre offerte • Artisan & Premium • Aumenta la tua visibilità',
     offerButton: 'Vedi le nostre offerte',
   },
   ru: {
-    back: 'Назад',
     title: 'Магазины и торговые точки',
     intro: 'Ваш гид по местным магазинам Туниса. Найдите открытый сейчас магазин, узнайте об акциях и местных товарах. Покупайте местное и поддерживайте экономику Туниса.',
     slogan: 'Вы представлены в интернете, но легко ли вас найти?',
     sector: 'магазины',
     recommended: 'Компании, которые чаще всего рекомендуют клиенты',
+    preferredTitle: 'Любимые магазины ваших соседей',
+    preferredSubtitle: 'Магазины, заслужившие доверие местных жителей',
     articleTitle: 'Семейные занятия в Тунисе',
     articleExcerpt: 'Прогулки, спорт и культура: откройте лучшие идеи для приятного семейного отдыха.',
     offerText: 'Посмотрите наши предложения • Artisan и Premium • Повышайте свою видимость',
@@ -102,14 +108,6 @@ export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
           backgroundPosition: 'center 30%'
         }}
       >
-        <button
-          onClick={() => navigate('/citizens')}
-          className={`absolute top-4 z-10 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm text-[#4A1D43] px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-white transition-colors shadow-sm ${isRTL ? 'right-4' : 'left-4'}`}
-        >
-          <ArrowLeft className={`w-4 h-4 ${isRTL ? 'rotate-180' : ''}`} />
-          {t.back}
-        </button>
-
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-4 py-6">
           <h1 className="text-3xl md:text-4xl font-semibold mb-2 drop-shadow-lg text-[#D4AF37]">{t.title}</h1>
           <p className="text-sm md:text-base font-light text-white/95 max-w-3xl leading-relaxed drop-shadow-lg">{t.intro}</p>
@@ -128,7 +126,14 @@ export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
       <section className="py-2 px-4 relative z-[9999]" style={{ overflow: 'visible' }}>
         <div className="max-w-5xl mx-auto" style={{ overflow: 'visible' }}>
           <div className="bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-[#D4AF37] p-2.5 md:p-3" style={{ overflow: 'visible' }}>
-            <SearchBar scope="magasin" intentEnabled={false} enabled resultMode="redirectToResults" />
+            <SearchBar
+              scope="magasin"
+              intentEnabled={false}
+              enabled
+              resultMode="redirectToResults"
+              preferredTitle={t.preferredTitle}
+              preferredSubtitle={t.preferredSubtitle}
+            />
           </div>
         </div>
       </section>
@@ -140,6 +145,8 @@ export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
             listePage="commerces & magasins"
             accentColor="#4A0404"
             sectionTitle={t.recommended}
+            useGoogleRecommendationCriteria
+            includeRecommendedInTotal={false}
             blogArticle={{ title: t.articleTitle, excerpt: t.articleExcerpt, slug: 'activites-en-famille' }}
           />
         </div>
