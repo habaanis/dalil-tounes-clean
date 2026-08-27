@@ -316,7 +316,16 @@ export function formatTodayScheduleText(todaySchedule: DaySchedule | null, langu
   if (!todaySchedule) return translateScheduleNotAvailable(language);
 
   const todayLabel = translateToday(language);
-  const hours = normalizeHoursDisplay(todaySchedule.hours);
+  const normalizedHours = normalizeHoursDisplay(todaySchedule.hours);
+  const hours = /^(ouvert\s+)?24\s*h\s*\/\s*24$/i.test(normalizedHours)
+    ? ({
+        en: 'Open 24 hours',
+        ar: 'مفتوح على مدار الساعة',
+        it: 'Aperto 24 ore su 24',
+        ru: 'Круглосуточно',
+        fr: 'Ouvert 24h/24',
+      }[language] || 'Ouvert 24h/24')
+    : normalizedHours;
 
   return `${todayLabel} : ${hours}`;
 }
