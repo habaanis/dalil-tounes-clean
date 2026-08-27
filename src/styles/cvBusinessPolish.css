@@ -40,6 +40,7 @@
 .dt-showcase .dt-presentation-accordion {
   margin-top: 7px;
   padding: 0;
+  scroll-margin-top: 92px;
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--dt-border) 58%, transparent);
   border-radius: 10px;

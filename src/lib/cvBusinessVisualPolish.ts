@@ -23,7 +23,11 @@ const hideDuplicateActivityLabel = (showcase: HTMLElement) => {
 
 const enhancePresentationAccordion = (showcase: HTMLElement, index: number) => {
   const intro = showcase.querySelector<HTMLElement>('.dt-intro');
-  if (!intro || intro.dataset.presentationAccordion === 'true') return;
+  if (
+    !intro
+    || intro.dataset.presentationAccordion === 'true'
+    || intro.querySelector('.dt-presentation-trigger')
+  ) return;
 
   intro.dataset.presentationAccordion = 'true';
   intro.classList.add('dt-presentation-accordion');
