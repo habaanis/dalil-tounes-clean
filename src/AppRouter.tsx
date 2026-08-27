@@ -20,6 +20,11 @@ function CitizenServicesRedirect() {
   return <Navigate to={{ pathname: '/citizens/services', search }} replace />;
 }
 
+function CitizenShopsRedirect() {
+  const { search } = useLocation();
+  return <Navigate to={{ pathname: '/citizens/shops', search }} replace />;
+}
+
 const Home = lazy(() => import('./pages/HomeVitrineFirst'));
 const Subscription = lazy(() => import('./pages/Subscription').then(m => ({ default: m.Subscription })));
 const PaiementConfirmation = lazy(() => import('./pages/PaiementConfirmation'));
@@ -136,7 +141,7 @@ function AppRouter() {
           <Route path="/citizens/leisure" element={<CitizensLeisure />} />
           <Route path="/citizens/loisirs" element={<CitizensLeisure />} />
           <Route path="/citizens/shops" element={<CitizensShops />} />
-          <Route path="/citizens/magasins" element={<CitizensShops />} />
+          <Route path="/citizens/magasins" element={<CitizenShopsRedirect />} />
           <Route path="/citizens/services" element={<CitizensServices />} />
           <Route path="/citizens/tourism" element={<CitizensTourism />} />
           <Route path="/citizens/tourisme" element={<CitizensTourism />} />
