@@ -1,6 +1,7 @@
 import {
   useEffect,
   useMemo,
+  useRef,
   useState,
   type CSSProperties,
   type ReactNode,
@@ -624,11 +625,27 @@ export default function BusinessShowcaseLienoraDetail() {
   const [business, setBusiness] = useState<BusinessRecord | null>(null);
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
+  const [presentationOpen, setPresentationOpen] = useState(false);
   const [expandedIntro, setExpandedIntro] = useState(false);
   const [openSection, setOpenSection] = useState<SectionId | null>(null);
   const [notice, setNotice] = useState('');
   const [copied, setCopied] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
+  const presentationRef = useRef<HTMLElement>(null);
+
+  const togglePresentation = () => {
+    const nextOpen = !presentationOpen;
+    setPresentationOpen(nextOpen);
+
+    if (nextOpen) {
+      window.requestAnimationFrame(() => {
+        presentationRef.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
+      });
+    }
+  };
 
   const tier = useMemo(
     () => mapSubscriptionToTier({ statut_abonnement: business?.statut_abonnement }),
@@ -1395,25 +1412,42 @@ export default function BusinessShowcaseLienoraDetail() {
 
           <div className="dt-showcase-body">
             {(translatedDescription || aboutText) && (
-              <section className={`dt-intro ${expandedIntro ? 'expanded' : ''}`}>
-                <p className="dt-eyebrow">{text.presentation}</p>
-                <h2>{visualVariant === 'artisan' ? text.introArtisan : text.introProfessional}</h2>
-                {translatedDescription && (
-                  <p className="dt-intro-description">{translatedDescription}</p>
-                )}
-                {expandedIntro && aboutText && aboutText !== translatedDescription && (
-                  <blockquote className="dt-about-quote">{aboutText}</blockquote>
-                )}
-                {(translatedDescription.length > 220 || (aboutText && aboutText !== translatedDescription)) && (
-                  <button
-                    type="button"
-                    className="dt-read-intro"
-                    aria-expanded={expandedIntro}
-                    onClick={() => setExpandedIntro(value => !value)}
-                  >
-                    {expandedIntro ? text.readLess : text.readMore}
-                  </button>
-                )}
+              <section
+                ref={presentationRef}
+                className={`dt-intro dt-presentation-accordion ${presentationOpen ? 'open' : ''} ${expandedIntro ? 'expanded' : ''}`}
+              >
+                <button
+                  type="button"
+                  className="dt-accordion-trigger dt-presentation-trigger"
+                  aria-expanded={presentationOpen}
+                  aria-controls="dt-presentation-panel"
+                  onClick={togglePresentation}
+                >
+                  <span className="dt-presentation-icon" aria-hidden="true">i</span>
+                  <span>{text.presentation}</span>
+                  <span className="dt-presentation-spacer" aria-hidden="true" />
+                  <ChevronRight className="dt-accordion-chevron dt-presentation-chevron" aria-hidden="true" />
+                </button>
+                <div className="dt-presentation-content" id="dt-presentation-panel">
+                  <p className="dt-eyebrow">{text.presentation}</p>
+                  <h2>{visualVariant === 'artisan' ? text.introArtisan : text.introProfessional}</h2>
+                  {translatedDescription && (
+                    <p className="dt-intro-description">{translatedDescription}</p>
+                  )}
+                  {expandedIntro && aboutText && aboutText !== translatedDescription && (
+                    <blockquote className="dt-about-quote">{aboutText}</blockquote>
+                  )}
+                  {(translatedDescription.length > 220 || (aboutText && aboutText !== translatedDescription)) && (
+                    <button
+                      type="button"
+                      className="dt-read-intro"
+                      aria-expanded={expandedIntro}
+                      onClick={() => setExpandedIntro(value => !value)}
+                    >
+                      {expandedIntro ? text.readLess : text.readMore}
+                    </button>
+                  )}
+                </div>
               </section>
             )}
 
