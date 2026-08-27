@@ -781,6 +781,10 @@ export default function BusinessShowcaseLienoraDetail() {
     translatedServices || business.sous_categories_texte || business.sous_categories_clean,
   );
   const aboutText = firstText(business, ['a_propos', 'about', 'À propos', 'A propos']);
+  const presentationSummary = aboutText || translatedDescription;
+  const presentationDetails = aboutText && translatedDescription && aboutText !== translatedDescription
+    ? translatedDescription
+    : '';
   const slogan = firstText(business, ['slogan', 'Slogan', 'accroche', 'tagline']) || categoryLabel;
   const canonicalPath = buildEntrepriseUrl(business);
   const canonicalUrl = `https://dalil-tounes.com${canonicalPath}`;
@@ -1431,13 +1435,13 @@ export default function BusinessShowcaseLienoraDetail() {
                 <div className="dt-presentation-content" id="dt-presentation-panel">
                   <p className="dt-eyebrow">{text.presentation}</p>
                   <h2>{visualVariant === 'artisan' ? text.introArtisan : text.introProfessional}</h2>
-                  {translatedDescription && (
-                    <p className="dt-intro-description">{translatedDescription}</p>
+                  {presentationSummary && (
+                    <p className="dt-intro-description">{presentationSummary}</p>
                   )}
-                  {expandedIntro && aboutText && aboutText !== translatedDescription && (
-                    <blockquote className="dt-about-quote">{aboutText}</blockquote>
+                  {expandedIntro && presentationDetails && (
+                    <div className="dt-about-quote">{presentationDetails}</div>
                   )}
-                  {(translatedDescription.length > 220 || (aboutText && aboutText !== translatedDescription)) && (
+                  {(presentationSummary.length > 220 || presentationDetails) && (
                     <button
                       type="button"
                       className="dt-read-intro"
