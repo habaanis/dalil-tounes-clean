@@ -1309,8 +1309,15 @@ export const Businesses = ({
         </section>
 
         {/* Tags de filtres actifs - Design Premium */}
-        {(selectedCity || selectedCategory) && (
+        {(searchTerm || selectedCity || selectedCategory) && (
           <div className="mb-8 px-4 flex flex-wrap gap-2 items-center">
+            {searchTerm && (
+              <span className="inline-flex items-center gap-1 bg-[#4A1D43]/5 text-[#4A1D43] px-3 py-1.5 rounded-full text-sm font-medium" style={{ border: '1px solid #4A1D43' }}>
+                <Search className="w-3.5 h-3.5" />
+                <span>{language === 'ar' ? 'البحث' : language === 'en' ? 'Search' : language === 'it' ? 'Ricerca' : language === 'ru' ? 'Поиск' : 'Recherche'} :</span>
+                <strong>{searchTerm}</strong>
+              </span>
+            )}
             {selectedCity && (
               <span className="inline-flex items-center gap-1 bg-[#D4AF37]/10 text-[#4A1D43] px-3 py-1.5 rounded-full text-sm font-medium" style={{ border: '1px solid #D4AF37' }}>
                 <MapPin className="w-3.5 h-3.5" />
