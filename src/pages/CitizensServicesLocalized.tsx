@@ -191,6 +191,7 @@ const SERVICE_EXCLUDED_KEYWORDS = [
   'location de voiture',
   'location voiture',
   'rent a car',
+  'tendance car',
 ];
 
 const OFFICIAL_LINKS = [
