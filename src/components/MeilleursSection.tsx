@@ -43,6 +43,7 @@ interface MeilleursProps {
   blogArticle?: BlogArticleLink;
   searchQuery?: string;
   useGoogleRecommendationCriteria?: boolean;
+  includeRecommendedInTotal?: boolean;
   excludedKeywords?: readonly string[];
 }
 
@@ -244,6 +245,7 @@ export default function MeilleursSection({
   blogArticle,
   searchQuery,
   useGoogleRecommendationCriteria = false,
+  includeRecommendedInTotal = true,
   excludedKeywords = EMPTY_EXCLUDED_KEYWORDS,
 }: MeilleursProps) {
   const navigate = useNavigate();
@@ -359,7 +361,7 @@ export default function MeilleursSection({
 
   const totalPages = Math.ceil(allItems.length / PAGE_SIZE);
   const pagedItems = allItems.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
-  const displayedEstablishmentCount = useGoogleRecommendationCriteria
+  const displayedEstablishmentCount = useGoogleRecommendationCriteria && includeRecommendedInTotal
     ? topItems.length + allItems.length
     : allItems.length;
   const paginationItems: Array<number | string> = [];
