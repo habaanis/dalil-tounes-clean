@@ -186,13 +186,10 @@ function BusinessCenterCard({
   title: string;
   description: string;
   cta: string;
-  to: string;
+  to?: string;
 }) {
-  return (
-    <Link
-      to={to}
-      className="group flex h-full flex-col rounded-2xl border border-[#D4AF37]/30 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-[#D4AF37] hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/60"
-    >
+  const content = (
+    <>
       <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#D4AF37]/12 text-[#800020]">
         <Icon className="h-5 w-5" />
       </span>
@@ -200,8 +197,25 @@ function BusinessCenterCard({
       <p className="mt-2 flex-1 text-sm leading-relaxed text-gray-600">{description}</p>
       <span className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-[#800020]">
         {cta}
-        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" />
+        {to && <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" />}
       </span>
+    </>
+  );
+
+  if (!to) {
+    return (
+      <div className="flex h-full flex-col rounded-2xl border border-[#D4AF37]/30 bg-white p-5 shadow-sm" aria-disabled="true">
+        {content}
+      </div>
+    );
+  }
+
+  return (
+    <Link
+      to={to}
+      className="group flex h-full flex-col rounded-2xl border border-[#D4AF37]/30 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-[#D4AF37] hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/60"
+    >
+      {content}
     </Link>
   );
 }
@@ -1285,7 +1299,6 @@ export const Businesses = ({
                 title={pageT.businessCenter.needs.title}
                 description={pageT.businessCenter.needs.description}
                 cta={pageT.businessCenter.needs.cta}
-                to="/besoins-professionnels"
               />
             </div>
           </div>
