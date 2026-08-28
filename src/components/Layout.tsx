@@ -100,6 +100,7 @@ export const Layout = ({ children }: LayoutProps) => {
       children: [
         { label: t.navMenu?.businesses?.directory || 'Plateforme', path: '/businesses' },
         { label: t.navMenu?.businesses?.partners || 'Partenaires', path: '/partner-search' },
+        { label: t.businessNeeds?.title || 'Besoins & stocks professionnels', path: '/besoins-professionnels' },
         { label: tx.navExtra?.candidatesAvailable || 'Candidats disponibles', path: '/candidats' },
         { label: t.navMenu?.businesses?.events || 'Événements', path: '/business-events' },
       ],
