@@ -30,6 +30,7 @@ import {
 import { extractMainCategory, getAllKeywords } from '../lib/categoryDisplay';
 import StructuredData from '../components/StructuredData';
 import { generateCollectionPageSchema } from '../lib/structuredDataSchemas';
+import { SEOHead } from '../components/SEOHead';
 
 interface Business {
   id: string;
@@ -159,11 +160,11 @@ function SectionIntro({
 }
 
 function DemoCVBusinessPreview({ language }: { language: BusinessCardPreviewLanguage }) {
-  return <BusinessCardPreview variant="premium" size="compact" interactive language={language} />;
+  return <BusinessCardPreview variant="premium" size="compact" interactive language={language} headingLevel="h3" />;
 }
 
 function DemoCVBusinessLargePreview({ language }: { language: BusinessCardPreviewLanguage }) {
-  return <BusinessCardPreview variant="premium" size="full" interactive language={language} />;
+  return <BusinessCardPreview variant="premium" size="full" interactive language={language} headingLevel="h3" />;
 }
 
 function FeaturePill({ icon: Icon, label }: { icon: React.ComponentType<{ className?: string }>; label: string }) {
@@ -1218,6 +1219,11 @@ export const Businesses = ({
 
   return (
     <div className="min-h-screen bg-[#F8F9FA]">
+      <SEOHead
+        title={pageT.seo.title}
+        description={pageT.seo.description}
+        currentPath="/recherche"
+      />
       {Array.isArray(businesses) && businesses.length > 0 && (
         <StructuredData
           data={generateCollectionPageSchema(
@@ -1228,7 +1234,7 @@ export const Businesses = ({
         />
       )}
 
-      <div className="max-w-7xl mx-auto">
+      <div className="mx-auto flex max-w-7xl flex-col">
         <section className="px-4 pt-8 pb-12">
           <div className="relative overflow-hidden rounded-[28px] border border-[#D4AF37]/40 bg-gradient-to-br from-[#4A1D43] via-[#6D2B58] to-[#0B5A45] shadow-[0_28px_80px_rgba(74,29,67,0.22)]">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_15%,rgba(212,175,55,0.25),transparent_28%),radial-gradient(circle_at_80%_10%,rgba(255,255,255,0.14),transparent_26%)]" />
@@ -1305,7 +1311,7 @@ export const Businesses = ({
           </div>
         </section>
 
-        <section className="px-4 py-8">
+        <section className="order-2 px-4 py-8">
           <div className="max-w-4xl mx-auto">
             <SectionIntro
               eyebrow={pageT.onlinePresence.eyebrow}
@@ -1320,7 +1326,7 @@ export const Businesses = ({
           </div>
         </section>
 
-        <section className="px-4 py-10 bg-white">
+        <section className="order-2 bg-white px-4 py-10">
           <div className="max-w-6xl mx-auto grid gap-8 lg:grid-cols-[1fr_0.9fr] items-start">
             <SectionIntro
               eyebrow={pageT.whyProfile.eyebrow}
@@ -1347,7 +1353,7 @@ export const Businesses = ({
           </div>
         </section>
 
-        <section className="px-4 pt-4 pb-2">
+        <section className="order-1 px-4 pb-2 pt-4">
           <div className="max-w-5xl mx-auto">
             <GuideMascot
               variant="info"
@@ -1362,7 +1368,7 @@ export const Businesses = ({
         </section>
 
         {/* SearchBar Entreprises */}
-        <section id="business-search" className="py-6 px-4 relative z-0 scroll-mt-28">
+        <section id="business-search" className="relative z-0 order-1 scroll-mt-28 px-4 py-6">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-5">
               <h2 className="text-xl md:text-2xl font-bold text-[#4A1D43]">{pageT.explore.title}</h2>
@@ -1377,6 +1383,8 @@ export const Businesses = ({
                 enabled
                 resultMode="filterCards"
                 onResultSelect={handleSearchBarResultSelect}
+                preferredTitle={pageT.explore.preferredTitle}
+                preferredSubtitle={pageT.explore.preferredSubtitle}
               />
             </div>
           </div>
@@ -1384,7 +1392,7 @@ export const Businesses = ({
 
         {/* Tags de filtres actifs - Design Premium */}
         {(searchTerm || selectedCity || selectedCategory) && (
-          <div className="mb-8 px-4 flex flex-wrap gap-2 items-center">
+          <div className="order-1 mb-8 flex flex-wrap items-center gap-2 px-4">
             {searchTerm && (
               <span className="inline-flex items-center gap-1 bg-[#4A1D43]/5 text-[#4A1D43] px-3 py-1.5 rounded-full text-sm font-medium" style={{ border: '1px solid #4A1D43' }}>
                 <Search className="w-3.5 h-3.5" />
@@ -1408,7 +1416,7 @@ export const Businesses = ({
         )}
 
         {pageCategorie && (
-          <div className="mb-6 px-4 flex items-center gap-2">
+          <div className="order-1 mb-6 flex items-center gap-2 px-4">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-sm" style={{ border: '1px solid #D4AF37' }}>
               <span className="text-sm font-medium text-[#4A1D43]">
                 {t.businesses.activeFilter}: {pageCategorie}
@@ -1426,7 +1434,7 @@ export const Businesses = ({
           </div>
         )}
 
-        <div className="mx-auto mb-4 flex max-w-5xl flex-col gap-2 px-4 text-xs text-gray-600 sm:flex-row sm:flex-wrap sm:justify-center" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+        <div className="order-1 mx-auto mb-4 flex max-w-5xl flex-col gap-2 px-4 text-xs text-gray-600 sm:flex-row sm:flex-wrap sm:justify-center" dir={language === 'ar' ? 'rtl' : 'ltr'}>
           <span className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/35 bg-white px-3 py-2 shadow-sm">
             <span className="font-black text-[#4A1D43]">Premium / Artisan</span>
             <span aria-hidden="true">—</span>
@@ -1440,7 +1448,7 @@ export const Businesses = ({
         </div>
 
         {/* Affichage des résultats : avec ou sans recherche active */}
-        <div ref={resultsRef} className="relative z-10 mb-10 bg-[#F8F9FA]">
+        <div ref={resultsRef} className="relative z-10 order-1 mb-10 bg-[#F8F9FA]">
           {(loading || searching || pendingSearch) ? (
             <div className="text-center py-12">
               <div className="inline-block w-8 h-8 border-2 border-[#D4AF37] border-t-transparent rounded-full animate-spin"></div>
@@ -1606,7 +1614,7 @@ export const Businesses = ({
           ) : null}
         </div>
 
-        <section className="px-4 py-8">
+        <section className="order-3 px-4 py-8">
           <div className="max-w-6xl mx-auto grid gap-8 lg:grid-cols-[0.95fr_1.05fr] items-center">
             <div>
               <SectionIntro eyebrow={pageT.cvBusiness.eyebrow} title={pageT.cvBusiness.title}>
@@ -1637,7 +1645,7 @@ export const Businesses = ({
           </div>
         </section>
 
-        <section className="px-4 py-8 bg-white">
+        <section className="order-3 bg-white px-4 py-8">
           <div className="max-w-5xl mx-auto">
             <SectionIntro
               eyebrow={pageT.consistency.eyebrow}
@@ -1657,7 +1665,7 @@ export const Businesses = ({
           </div>
         </section>
 
-        <section className="px-4 py-8">
+        <section className="order-3 px-4 py-8">
           <div className="max-w-5xl mx-auto">
             <div className="grid gap-7 lg:grid-cols-[0.95fr_1.05fr] items-start">
               <SectionIntro
@@ -1685,7 +1693,7 @@ export const Businesses = ({
           </div>
         </section>
 
-        <section className="px-4 py-10">
+        <section className="order-3 px-4 py-10">
           <div className="max-w-6xl mx-auto">
             <div className="text-center max-w-3xl mx-auto">
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#D4AF37] mb-3">{pageT.faq.eyebrow}</p>
@@ -1702,7 +1710,7 @@ export const Businesses = ({
           </div>
         </section>
 
-        <section className="px-4 py-10">
+        <section className="order-3 px-4 py-10">
           <div className="max-w-5xl mx-auto rounded-3xl border border-[#D4AF37]/35 bg-gradient-to-br from-[#4A1D43] to-[#0B5A45] p-7 md:p-10 text-center text-white shadow-[0_22px_60px_rgba(74,29,67,0.2)]">
             <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#F7D978]">{pageT.finalCta.eyebrow}</p>
             <h2 className="mt-3 text-2xl md:text-4xl font-bold">{pageT.finalCta.title}</h2>
