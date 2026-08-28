@@ -8,13 +8,27 @@ export const businessesPageTranslations: Record<Language, any> = {
       description: "Trouvez les meilleures entreprises et professionnels en Tunisie par secteur d'activité",
     },
     hero: {
-      eyebrow: 'Professionnels',
+      eyebrow: 'Centre d’affaires',
       title: 'Développez votre activité avec Dalil Tounes',
       description: 'Présentez votre activité grâce à une fiche professionnelle complète, facilitez les contacts avec vos futurs clients et développez votre visibilité partout en Tunisie.',
       offers: 'Découvrir les offres',
       search: 'Rechercher une entreprise',
       mascotTitle: 'Bonjour !',
       mascotMessage: 'Je vais vous montrer comment une fiche professionnelle peut aider votre activité à gagner en visibilité et inspirer confiance.',
+    },
+    businessCenter: {
+      title: 'Le Centre d’affaires de Dalil Tounes',
+      description: 'Développez aussi votre activité entre professionnels grâce aux services déjà disponibles sur Dalil Tounes.',
+      network: {
+        title: 'Réseau professionnel',
+        description: 'Recherchez un partenaire, un fournisseur ou un prestataire pour accompagner votre activité.',
+        cta: 'Développer mon réseau',
+      },
+      needs: {
+        title: 'Besoins & stocks professionnels',
+        description: 'Consultez ou publiez une recherche de stock, de matériel, de fournisseur ou une offre de déstockage.',
+        cta: 'En préparation',
+      },
     },
     onlinePresence: {
       eyebrow: 'Présence en ligne',
@@ -159,13 +173,19 @@ export const businessesPageTranslations: Record<Language, any> = {
       description: 'Find businesses and professionals in Tunisia by sector of activity',
     },
     hero: {
-      eyebrow: 'Professionals',
+      eyebrow: 'Business Center',
       title: 'Grow your business with Dalil Tounes',
       description: 'Present your activity with a complete professional profile, make it easier for future customers to contact you and strengthen your visibility across Tunisia.',
       offers: 'Discover the offers',
       search: 'Search for a business',
       mascotTitle: 'Hello!',
       mascotMessage: 'I will show you how a professional profile can help your business gain visibility and inspire confidence.',
+    },
+    businessCenter: {
+      title: 'The Dalil Tounes Business Center',
+      description: 'Grow your activity between professionals with the services already available on Dalil Tounes.',
+      network: { title: 'Professional network', description: 'Find a partner, supplier or service provider to support your activity.', cta: 'Grow my network' },
+      needs: { title: 'Professional needs & stock', description: 'Browse or publish a search for stock, equipment or suppliers, or a clearance offer.', cta: 'Coming soon' },
     },
     onlinePresence: {
       eyebrow: 'Online presence',
@@ -273,13 +293,19 @@ export const businessesPageTranslations: Record<Language, any> = {
   ar: {
     seo: { unnamedBusiness: 'دون اسم', title: 'دليل الشركات في تونس - دليل تونس', description: 'ابحث عن الشركات والمهنيين في تونس حسب قطاع النشاط' },
     hero: {
-      eyebrow: 'المهنيون',
+      eyebrow: 'مركز الأعمال',
       title: 'طوّر نشاطك مع دليل تونس',
       description: 'قدّم نشاطك من خلال بطاقة مهنية متكاملة، وسهّل تواصل العملاء المحتملين معك، وطوّر حضورك في مختلف أنحاء تونس.',
       offers: 'اكتشف العروض',
       search: 'ابحث عن مؤسسة',
       mascotTitle: 'مرحباً!',
       mascotMessage: 'سأوضح لك كيف يمكن للبطاقة المهنية أن تساعد نشاطك على زيادة الظهور وتعزيز الثقة.',
+    },
+    businessCenter: {
+      title: 'مركز أعمال دليل تونس',
+      description: 'طوّر نشاطك أيضاً بين المهنيين من خلال الخدمات المتوفرة على دليل تونس.',
+      network: { title: 'الشبكة المهنية', description: 'ابحث عن شريك أو مورّد أو مقدم خدمات لدعم نشاطك.', cta: 'طوّر شبكتي المهنية' },
+      needs: { title: 'الاحتياجات والمخزون المهني', description: 'تصفّح أو انشر طلباً للمخزون أو المعدات أو المورّدين أو عرضاً لتصفية المخزون.', cta: 'قيد الإعداد' },
     },
     onlinePresence: {
       eyebrow: 'الحضور على الإنترنت',
@@ -363,7 +389,13 @@ export const businessesPageTranslations: Record<Language, any> = {
   },
   it: {
     seo: { unnamedBusiness: 'Senza nome', title: 'Elenco delle imprese in Tunisia - Dalil Tounes', description: 'Trova imprese e professionisti in Tunisia per settore di attività' },
-    hero: { eyebrow: 'Professionisti', title: 'Sviluppa la tua attività con Dalil Tounes', description: 'Presenta la tua attività con una scheda professionale completa, facilita i contatti con i futuri clienti e aumenta la tua visibilità in tutta la Tunisia.', offers: 'Scopri le offerte', search: 'Cerca un’impresa', mascotTitle: 'Ciao!', mascotMessage: 'Ti mostrerò come una scheda professionale può aiutare la tua attività ad aumentare la visibilità e ispirare fiducia.' },
+    hero: { eyebrow: 'Centro d’affari', title: 'Sviluppa la tua attività con Dalil Tounes', description: 'Presenta la tua attività con una scheda professionale completa, facilita i contatti con i futuri clienti e aumenta la tua visibilità in tutta la Tunisia.', offers: 'Scopri le offerte', search: 'Cerca un’impresa', mascotTitle: 'Ciao!', mascotMessage: 'Ti mostrerò come una scheda professionale può aiutare la tua attività ad aumentare la visibilità e ispirare fiducia.' },
+    businessCenter: {
+      title: 'Il Centro d’affari di Dalil Tounes',
+      description: 'Sviluppa la tua attività anche tra professionisti grazie ai servizi già disponibili su Dalil Tounes.',
+      network: { title: 'Rete professionale', description: 'Trova un partner, un fornitore o un prestatore di servizi per sostenere la tua attività.', cta: 'Sviluppa la mia rete' },
+      needs: { title: 'Esigenze e stock professionali', description: 'Consulta o pubblica una ricerca di stock, attrezzature o fornitori oppure un’offerta di liquidazione.', cta: 'In preparazione' },
+    },
     onlinePresence: {
       eyebrow: 'Presenza online', title: 'Oggi i tuoi futuri clienti cercano prima su Internet.',
       paragraphs: ['Prima di chiamare, spostarsi o prenotare, molte persone iniziano cercando un’impresa online.', 'Vogliono verificare orari, indirizzo, recensioni, foto e contatti e capire rapidamente se il professionista risponde alle loro esigenze.', 'Il passaparola resta prezioso e molte persone chiedono ancora consiglio a familiari e conoscenti prima di scegliere un artigiano, un negozio o un’impresa.', 'Ma una raccomandazione non consente sempre di verificare il nuovo numero, il nuovo indirizzo, gli orari, le recensioni recenti, le foto o i servizi offerti.', 'Oggi i cittadini vogliono completare le raccomandazioni con informazioni affidabili, coerenti e aggiornate. Quando sono facili da trovare, il primo contatto diventa naturalmente più semplice.'],
@@ -395,7 +427,13 @@ export const businessesPageTranslations: Record<Language, any> = {
   },
   ru: {
     seo: { unnamedBusiness: 'Без названия', title: 'Каталог компаний Туниса - Dalil Tounes', description: 'Найдите компании и специалистов в Тунисе по сфере деятельности' },
-    hero: { eyebrow: 'Профессионалам', title: 'Развивайте свой бизнес с Dalil Tounes', description: 'Представьте свою деятельность с помощью полноценной профессиональной карточки, упростите связь с будущими клиентами и повышайте видимость по всему Тунису.', offers: 'Посмотреть предложения', search: 'Найти компанию', mascotTitle: 'Здравствуйте!', mascotMessage: 'Я покажу, как профессиональная карточка помогает повысить видимость вашей деятельности и укрепить доверие.' },
+    hero: { eyebrow: 'Бизнес-центр', title: 'Развивайте свой бизнес с Dalil Tounes', description: 'Представьте свою деятельность с помощью полноценной профессиональной карточки, упростите связь с будущими клиентами и повышайте видимость по всему Тунису.', offers: 'Посмотреть предложения', search: 'Найти компанию', mascotTitle: 'Здравствуйте!', mascotMessage: 'Я покажу, как профессиональная карточка помогает повысить видимость вашей деятельности и укрепить доверие.' },
+    businessCenter: {
+      title: 'Бизнес-центр Dalil Tounes',
+      description: 'Развивайте связи между профессионалами с помощью сервисов, уже доступных на Dalil Tounes.',
+      network: { title: 'Профессиональная сеть', description: 'Найдите партнера, поставщика или исполнителя для развития своей деятельности.', cta: 'Развивать сеть' },
+      needs: { title: 'Профессиональные потребности и запасы', description: 'Просматривайте или публикуйте запросы на запасы, оборудование и поставщиков, а также предложения по распродаже.', cta: 'Готовится' },
+    },
     onlinePresence: { eyebrow: 'Присутствие в интернете', title: 'Сегодня ваши будущие клиенты сначала ищут в интернете.', paragraphs: ['Перед звонком, визитом или бронированием многие сначала ищут компанию в интернете.', 'Они хотят проверить часы работы, адрес, отзывы, фотографии и контакты и быстро понять, подходит ли специалист их потребностям.', 'Рекомендации знакомых по-прежнему важны: многие советуются с близкими перед выбором мастера, магазина или компании.', 'Но рекомендация не всегда позволяет проверить новый номер телефона, адрес, часы работы, свежие отзывы, фотографии или услуги.', 'Сегодня пользователи хотят дополнять рекомендации надежной, согласованной и регулярно обновляемой информацией. Когда её легко найти, первый контакт становится проще.'] },
     whyProfile: { eyebrow: 'Зачем карточка?', title: 'Почему профессиональная карточка важна?', paragraphs: ['Многие специалисты обладают настоящим опытом, но информация о них иногда разбросана или неполна.', 'На странице Facebook может быть старый номер телефона, в Google Business — неактуальные часы, а в Instagram — красивые фотографии, но мало практической информации.', 'Полная, согласованная и регулярно обновляемая профессиональная карточка также помогает поисковым системам лучше понимать вашу деятельность.', 'Чем согласованнее ваше цифровое присутствие, тем выше шансы быть найденным в локальном поиске, без гарантии конкретной позиции в Google.', 'Четкая, полная и регулярно обновляемая карточка помогает успокоить посетителей и облегчает первый контакт.'], adviceTitle: 'Совет Dalil', adviceText: 'Прежде чем стремиться к большей видимости, убедитесь, что информация о вашей компании согласована везде, где клиенты могут вас найти.' },
     explore: { mascotTitle: 'Теперь исследуйте сами.', mascotMessage: 'Вы можете познакомиться со специалистами, уже представленными в Dalil Tounes, и посмотреть, как их карточки выглядят для посетителей.', title: 'Откройте компании, уже представленные в Dalil Tounes.', description: 'Найдите компанию, мастера, магазин или специалиста в любой точке Туниса и откройте их карточку.', hint: 'Ищите среди компаний, уже представленных в Dalil Tounes.' },
