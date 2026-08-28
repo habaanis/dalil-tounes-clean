@@ -1,95 +1,53 @@
-import React, { useState, useEffect } from 'react';
-import { Briefcase } from 'lucide-react';
-import { supabase } from '../lib/supabaseClient';
-import { useLanguage } from '../context/LanguageContext';
-import { useTranslation } from '../lib/i18n';
+import { Briefcase, CheckCircle2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { SEOHead } from '../components/SEOHead';
 import JobPostForm from '../components/forms/JobPostForm';
+import { useLanguage } from '../context/LanguageContext';
+import { getJobsPageTranslations } from '../lib/jobsPageTranslations';
 
 export default function PublishJob() {
   const { language } = useLanguage();
-  const t = useTranslation(language);
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [anonymousUserId, setAnonymousUserId] = useState<string>('');
-
-  useEffect(() => {
-    const checkUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
-
-      if (!user) {
-        let storedId = localStorage.getItem('dalil_anonymous_job_id');
-        if (!storedId) {
-          storedId = `anon_job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-          localStorage.setItem('dalil_anonymous_job_id', storedId);
-        }
-        setAnonymousUserId(storedId);
-      }
-
-      setLoading(false);
-    };
-
-    checkUser();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null);
-      }
-    );
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  const handleSuccess = () => {
-    setTimeout(() => {
-      window.location.hash = '#/jobs';
-    }, 2000);
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="inline-block w-8 h-8 border-2 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-
-  const userId = user?.id || anonymousUserId;
+  const copy = getJobsPageTranslations(language);
+  const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-[#4A1D43] py-16 px-4">
-      <div className="max-w-4xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-light text-[#F5F5DC] mb-2">
-            {t.jobPost?.title || 'Publier une offre d\'emploi'}
+    <main className="min-h-screen bg-[#4A1D43] px-4 py-16">
+      <SEOHead
+        title={copy.publishPageTitle}
+        description={copy.publishPageSubtitle}
+        canonical="https://dalil-tounes.com/emplois/publier"
+        currentPath="/emplois/publier"
+      />
+
+      <div className="mx-auto max-w-4xl">
+        <div className="mb-8 text-center">
+          <span className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-[#D4AF37] bg-[#2A1525] text-[#D4AF37]">
+            <Briefcase className="h-7 w-7" aria-hidden="true" />
+          </span>
+          <h1 className="mb-3 font-serif text-3xl font-light text-[#D4AF37] md:text-4xl">
+            {copy.publishPageTitle}
           </h1>
-          <p className="text-[#E8D5C4]">
-            {t.jobPost?.subtitle || 'Trouvez les meilleurs talents en Tunisie'}
+          <p className="text-[#E8D5C4]">{copy.publishPageSubtitle}</p>
+        </div>
+
+        <div className="mb-8 rounded-lg border border-[#D4AF37] bg-[#2A1525] p-4">
+          <p className="flex items-start gap-3 text-sm leading-6 text-[#F5F5DC]">
+            <CheckCircle2 className="mt-0.5 h-5 w-5 flex-none text-[#D4AF37]" aria-hidden="true" />
+            <span>{copy.publishPageNotice}</span>
           </p>
         </div>
 
-        <div className="bg-[#2A1525] border border-[#D4AF37] rounded-lg p-4 mb-8">
-          <p className="text-sm text-[#F5F5DC]">
-            {t.jobPost?.infoBanner || 'Votre offre sera visible par des milliers de candidats qualifiés'}
-          </p>
+        <div className="rounded-2xl border border-[#D4AF37] bg-[#1A1A1A] p-6 shadow-2xl md:p-8">
+          <JobPostForm mode="employer" onSuccess={() => navigate('/jobs')} />
         </div>
 
-        <div className="bg-[#1A1A1A] rounded-2xl shadow-2xl p-6 md:p-8 border border-[#D4AF37]">
-          <JobPostForm userId={userId} onSuccess={handleSuccess} />
-        </div>
-
-        <div className="mt-8 bg-[#2A1525] border border-[#D4AF37] rounded-lg p-6">
-          <h3 className="text-lg font-medium text-[#F5F5DC] mb-3">
-            {t.jobPost?.help?.title || 'Conseils pour une offre efficace'}
-          </h3>
+        <div className="mt-8 rounded-lg border border-[#D4AF37] bg-[#2A1525] p-6">
+          <h2 className="mb-3 text-lg font-medium text-[#F5F5DC]">{copy.helpTitle}</h2>
           <ul className="space-y-2 text-sm text-[#E8D5C4]">
-            <li>• {t.jobPost?.help?.tip1 || 'Rédigez un titre clair et précis'}</li>
-            <li>• {t.jobPost?.help?.tip2 || 'Détaillez les missions et responsabilités'}</li>
-            <li>• {t.jobPost?.help?.tip3 || 'Précisez les compétences requises'}</li>
-            <li>• {t.jobPost?.help?.tip4 || 'Indiquez la fourchette de salaire si possible'}</li>
+            {copy.helpTips.map(tip => <li key={tip}>• {tip}</li>)}
           </ul>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
