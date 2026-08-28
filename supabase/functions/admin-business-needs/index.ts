@@ -16,6 +16,9 @@ const businessNeedColumns = `
   title,
   description,
   company_name,
+  contact_name,
+  contact_email,
+  contact_phone,
   company_id,
   company_slug,
   company_city,
@@ -24,6 +27,7 @@ const businessNeedColumns = `
   urgency,
   status,
   moderation_status,
+  moderation_reason,
   category,
   budget_min,
   budget_max,
@@ -34,7 +38,6 @@ const businessNeedColumns = `
 type AdminContext = {
   id: string;
   email: string;
-  mode: "supabase-admin" | "temporary-v1";
 };
 
 type RequestBody = {
@@ -83,42 +86,6 @@ function getBearerToken(req: Request) {
   return match?.[1] || "";
 }
 
-function decodeJwtPayload(token: string): Record<string, unknown> | null {
-  const [, payload] = token.split(".");
-  if (!payload) return null;
-
-  try {
-    const normalized = payload.replace(/-/g, "+").replace(/_/g, "/");
-    const padded = normalized.padEnd(normalized.length + (4 - normalized.length % 4) % 4, "=");
-    return JSON.parse(atob(padded)) as Record<string, unknown>;
-  } catch {
-    return null;
-  }
-}
-
-function getProjectRef() {
-  const supabaseUrl = Deno.env.get("SUPABASE_URL");
-  if (!supabaseUrl) return "";
-
-  try {
-    return new URL(supabaseUrl).hostname.split(".")[0] || "";
-  } catch {
-    return "";
-  }
-}
-
-function isTemporaryV1AdminRequest(token: string) {
-  const publicKeys = [
-    Deno.env.get("SUPABASE_ANON_KEY"),
-    Deno.env.get("SUPABASE_PUBLISHABLE_KEY"),
-  ].filter(Boolean);
-
-  if (publicKeys.includes(token)) return true;
-
-  const payload = decodeJwtPayload(token);
-  return payload?.role === "anon" && payload?.ref === getProjectRef();
-}
-
 async function requireAdmin(req: Request, supabaseAdmin: ReturnType<typeof createClient>): Promise<AdminContext> {
   const token = getBearerToken(req);
 
@@ -127,16 +94,6 @@ async function requireAdmin(req: Request, supabaseAdmin: ReturnType<typeof creat
       status: 401,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
-  }
-
-  // TODO: remplacer ce mode temporaire V1 par une vraie authentification admin
-  // Supabase et supprimer l'acceptation de la clé publique anon pour l'administration.
-  if (isTemporaryV1AdminRequest(token)) {
-    return {
-      id: "temporary-admin-v1",
-      email: "temporary-admin-v1@dalil-tounes.local",
-      mode: "temporary-v1",
-    };
   }
 
   const { data: userData, error: userError } = await supabaseAdmin.auth.getUser(token);
@@ -172,7 +129,7 @@ async function requireAdmin(req: Request, supabaseAdmin: ReturnType<typeof creat
     });
   }
 
-  return { id: user.id, email, mode: "supabase-admin" };
+  return { id: user.id, email };
 }
 
 async function readRequestBody(req: Request): Promise<RequestBody> {
@@ -216,6 +173,7 @@ Deno.serve(async (req: Request) => {
       const { data, error, count } = await supabaseAdmin
         .from("business_needs")
         .select(businessNeedColumns, { count: "exact" })
+        .is("deleted_at", null)
         .order("created_at", { ascending: false })
         .range(0, 9999);
 
@@ -228,7 +186,9 @@ Deno.serve(async (req: Request) => {
       const { count, error } = await supabaseAdmin
         .from("business_needs")
         .select("id", { count: "exact", head: true })
-        .eq("status", "pending_review");
+        .eq("status", "pending_review")
+        .eq("moderation_status", "pending")
+        .is("deleted_at", null);
 
       if (error) throw error;
 
@@ -251,6 +211,9 @@ Deno.serve(async (req: Request) => {
           updated_at: now,
         })
         .eq("id", body.id)
+        .eq("status", "pending_review")
+        .eq("moderation_status", "pending")
+        .is("deleted_at", null)
         .select(businessNeedColumns)
         .maybeSingle();
 
@@ -271,6 +234,9 @@ Deno.serve(async (req: Request) => {
           updated_at: new Date().toISOString(),
         })
         .eq("id", body.id)
+        .eq("status", "pending_review")
+        .eq("moderation_status", "pending")
+        .is("deleted_at", null)
         .select(businessNeedColumns)
         .maybeSingle();
 

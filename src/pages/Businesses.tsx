@@ -1299,6 +1299,7 @@ export const Businesses = ({
                 title={pageT.businessCenter.needs.title}
                 description={pageT.businessCenter.needs.description}
                 cta={pageT.businessCenter.needs.cta}
+                to="/besoins-professionnels"
               />
             </div>
           </div>

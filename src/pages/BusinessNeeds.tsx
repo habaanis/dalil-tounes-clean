@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { ArrowRight, Briefcase, ExternalLink, Filter, Loader2, RefreshCw, X } from 'lucide-react';
 import NeedCard, { PublicBusinessNeed } from '../components/NeedCard';
+import BusinessNeedForm from '../components/BusinessNeedForm';
 import { SEOHead } from '../components/SEOHead';
 import StructuredData from '../components/StructuredData';
 import { useLanguage } from '../context/LanguageContext';
@@ -134,8 +135,6 @@ export default function BusinessNeeds() {
   const t = useTranslation(language);
   const copy = t.businessNeeds;
   const locale = getLocale(language);
-  const navigate = useNavigate();
-
   const [needs, setNeeds] = useState<PublicBusinessNeed[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -144,6 +143,7 @@ export default function BusinessNeeds() {
   const [selectedGovernorate, setSelectedGovernorate] = useState('');
   const [selectedUrgency, setSelectedUrgency] = useState('');
   const [selectedNeed, setSelectedNeed] = useState<PublicBusinessNeed | null>(null);
+  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -264,7 +264,7 @@ export default function BusinessNeeds() {
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <button
                 type="button"
-                onClick={() => navigate('/entreprises')}
+                onClick={() => setShowForm(true)}
                 className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[#D4AF37] bg-white px-5 py-2.5 text-sm font-semibold text-[#4A1D43] transition hover:bg-[#D4AF37]/10 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:ring-offset-2"
               >
                 {copy.publishNeed}
@@ -369,6 +369,14 @@ export default function BusinessNeeds() {
           <div className="rounded-lg border border-gray-200 bg-white p-8 text-center shadow-sm">
             <Briefcase className="mx-auto h-10 w-10 text-[#D4AF37]" aria-hidden="true" />
             <p className="mt-4 text-base font-semibold text-[#4A1D43]">{copy.empty}</p>
+            <button
+              type="button"
+              onClick={() => setShowForm(true)}
+              className="mt-5 inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[#D4AF37] bg-white px-5 py-2.5 text-sm font-semibold text-[#4A1D43] transition hover:bg-[#D4AF37]/10 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:ring-offset-2"
+            >
+              {copy.publishNeed}
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </button>
           </div>
         ) : filteredNeeds.length === 0 ? (
           <div className="rounded-lg border border-gray-200 bg-white p-8 text-center shadow-sm">
@@ -470,6 +478,8 @@ export default function BusinessNeeds() {
           </div>
         </div>
       )}
+
+      <BusinessNeedForm isOpen={showForm} onClose={() => setShowForm(false)} />
     </main>
   );
 }

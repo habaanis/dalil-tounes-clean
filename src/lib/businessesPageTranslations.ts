@@ -27,7 +27,7 @@ export const businessesPageTranslations: Record<Language, any> = {
       needs: {
         title: 'Besoins & stocks professionnels',
         description: 'Consultez ou publiez une recherche de stock, de matériel, de fournisseur ou une offre de déstockage.',
-        cta: 'En préparation',
+        cta: 'Voir les besoins et stocks',
       },
     },
     onlinePresence: {
@@ -185,7 +185,7 @@ export const businessesPageTranslations: Record<Language, any> = {
       title: 'The Dalil Tounes Business Center',
       description: 'Grow your activity between professionals with the services already available on Dalil Tounes.',
       network: { title: 'Professional network', description: 'Find a partner, supplier or service provider to support your activity.', cta: 'Grow my network' },
-      needs: { title: 'Professional needs & stock', description: 'Browse or publish a search for stock, equipment or suppliers, or a clearance offer.', cta: 'Coming soon' },
+      needs: { title: 'Professional needs & stock', description: 'Browse or publish a search for stock, equipment or suppliers, or a clearance offer.', cta: 'View needs and stock' },
     },
     onlinePresence: {
       eyebrow: 'Online presence',
@@ -305,7 +305,7 @@ export const businessesPageTranslations: Record<Language, any> = {
       title: 'مركز أعمال دليل تونس',
       description: 'طوّر نشاطك أيضاً بين المهنيين من خلال الخدمات المتوفرة على دليل تونس.',
       network: { title: 'الشبكة المهنية', description: 'ابحث عن شريك أو مورّد أو مقدم خدمات لدعم نشاطك.', cta: 'طوّر شبكتي المهنية' },
-      needs: { title: 'الاحتياجات والمخزون المهني', description: 'تصفّح أو انشر طلباً للمخزون أو المعدات أو المورّدين أو عرضاً لتصفية المخزون.', cta: 'قيد الإعداد' },
+      needs: { title: 'الاحتياجات والمخزون المهني', description: 'تصفّح أو انشر طلباً للمخزون أو المعدات أو المورّدين أو عرضاً لتصفية المخزون.', cta: 'عرض الاحتياجات والمخزون' },
     },
     onlinePresence: {
       eyebrow: 'الحضور على الإنترنت',
@@ -394,7 +394,7 @@ export const businessesPageTranslations: Record<Language, any> = {
       title: 'Il Centro d’affari di Dalil Tounes',
       description: 'Sviluppa la tua attività anche tra professionisti grazie ai servizi già disponibili su Dalil Tounes.',
       network: { title: 'Rete professionale', description: 'Trova un partner, un fornitore o un prestatore di servizi per sostenere la tua attività.', cta: 'Sviluppa la mia rete' },
-      needs: { title: 'Esigenze e stock professionali', description: 'Consulta o pubblica una ricerca di stock, attrezzature o fornitori oppure un’offerta di liquidazione.', cta: 'In preparazione' },
+      needs: { title: 'Esigenze e stock professionali', description: 'Consulta o pubblica una ricerca di stock, attrezzature o fornitori oppure un’offerta di liquidazione.', cta: 'Vedi esigenze e stock' },
     },
     onlinePresence: {
       eyebrow: 'Presenza online', title: 'Oggi i tuoi futuri clienti cercano prima su Internet.',
@@ -432,7 +432,7 @@ export const businessesPageTranslations: Record<Language, any> = {
       title: 'Бизнес-центр Dalil Tounes',
       description: 'Развивайте связи между профессионалами с помощью сервисов, уже доступных на Dalil Tounes.',
       network: { title: 'Профессиональная сеть', description: 'Найдите партнера, поставщика или исполнителя для развития своей деятельности.', cta: 'Развивать сеть' },
-      needs: { title: 'Профессиональные потребности и запасы', description: 'Просматривайте или публикуйте запросы на запасы, оборудование и поставщиков, а также предложения по распродаже.', cta: 'Готовится' },
+      needs: { title: 'Профессиональные потребности и запасы', description: 'Просматривайте или публикуйте запросы на запасы, оборудование и поставщиков, а также предложения по распродаже.', cta: 'Смотреть потребности и запасы' },
     },
     onlinePresence: { eyebrow: 'Присутствие в интернете', title: 'Сегодня ваши будущие клиенты сначала ищут в интернете.', paragraphs: ['Перед звонком, визитом или бронированием многие сначала ищут компанию в интернете.', 'Они хотят проверить часы работы, адрес, отзывы, фотографии и контакты и быстро понять, подходит ли специалист их потребностям.', 'Рекомендации знакомых по-прежнему важны: многие советуются с близкими перед выбором мастера, магазина или компании.', 'Но рекомендация не всегда позволяет проверить новый номер телефона, адрес, часы работы, свежие отзывы, фотографии или услуги.', 'Сегодня пользователи хотят дополнять рекомендации надежной, согласованной и регулярно обновляемой информацией. Когда её легко найти, первый контакт становится проще.'] },
     whyProfile: { eyebrow: 'Зачем карточка?', title: 'Почему профессиональная карточка важна?', paragraphs: ['Многие специалисты обладают настоящим опытом, но информация о них иногда разбросана или неполна.', 'На странице Facebook может быть старый номер телефона, в Google Business — неактуальные часы, а в Instagram — красивые фотографии, но мало практической информации.', 'Полная, согласованная и регулярно обновляемая профессиональная карточка также помогает поисковым системам лучше понимать вашу деятельность.', 'Чем согласованнее ваше цифровое присутствие, тем выше шансы быть найденным в локальном поиске, без гарантии конкретной позиции в Google.', 'Четкая, полная и регулярно обновляемая карточка помогает успокоить посетителей и облегчает первый контакт.'], adviceTitle: 'Совет Dalil', adviceText: 'Прежде чем стремиться к большей видимости, убедитесь, что информация о вашей компании согласована везде, где клиенты могут вас найти.' },
