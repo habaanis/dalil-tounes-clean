@@ -25,9 +25,15 @@ export default function BackButton({ onNavigate, onNavigateBack, label, showHome
       onNavigate('citizens');
       return;
     }
+
+    if (location.key !== 'default') {
+      navigate(-1);
+      return;
+    }
+
     const pathname = location.pathname;
     const parentPath = pathname.split('/').slice(0, -1).join('/') || '/';
-    navigate(parentPath);
+    navigate(parentPath, { replace: true });
   };
 
   const handleHomeClick = () => {
