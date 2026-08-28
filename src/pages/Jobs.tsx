@@ -1,19 +1,30 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Briefcase, Building2, ShieldCheck, UserRound, X } from 'lucide-react';
+import { ArrowRight, Briefcase, Building2, ShieldCheck, Sparkles, UserRound, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { SEOHead } from '../components/SEOHead';
 import StructuredData from '../components/StructuredData';
 import JobPostForm from '../components/forms/JobPostForm';
+import VerifiedJobCard from '../components/VerifiedJobCard';
 import { HERO_IMAGE_JPG_URL, HERO_IMAGE_URL } from '../constants/images';
 import { useLanguage } from '../context/LanguageContext';
 import { generateCollectionPageSchema } from '../lib/structuredDataSchemas';
 import { getJobsPageTranslations, type JobRequestMode } from '../lib/jobsPageTranslations';
+import { getCurrentVerifiedJobs } from '../lib/verifiedJobs';
+
+const JOB_LOCALES = {
+  fr: 'fr-FR',
+  ar: 'ar-TN',
+  en: 'en-GB',
+  it: 'it-IT',
+  ru: 'ru-RU',
+} as const;
 
 export const Jobs = () => {
   const { language } = useLanguage();
   const copy = getJobsPageTranslations(language);
   const [requestMode, setRequestMode] = useState<JobRequestMode | null>(null);
+  const verifiedJobs = getCurrentVerifiedJobs();
 
   useEffect(() => {
     if (!requestMode) return undefined;
@@ -130,25 +141,68 @@ export const Jobs = () => {
           <p className="mb-3 text-center text-xs font-bold uppercase tracking-[0.2em] text-[#9A7418]">
             {copy.offersEyebrow}
           </p>
-          <h2 className="mb-8 text-center font-serif text-3xl text-[#4A1D43]">{copy.offersTitle}</h2>
+          <h2 className="mb-3 text-center font-serif text-3xl text-[#4A1D43]">{copy.offersTitle}</h2>
+          <p className="mb-8 text-center text-sm font-medium text-gray-600">
+            {verifiedJobs.length} {copy.offersFound}
+          </p>
 
-          <div className="rounded-2xl border border-[#D4AF37] bg-white px-6 py-10 text-center shadow-sm md:px-12">
-            <span className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-[#4A1D43] text-[#D4AF37]">
-              <Briefcase className="h-7 w-7" aria-hidden="true" />
-            </span>
-            <h3 className="mb-3 text-xl font-semibold text-[#4A1D43]">{copy.emptyTitle}</h3>
-            <p className="mx-auto mb-4 max-w-3xl text-sm leading-6 text-gray-600 md:text-base">{copy.emptyDescription}</p>
-            <p className="mx-auto mb-7 flex max-w-2xl items-start justify-center gap-2 text-sm font-medium text-gray-700">
-              <ShieldCheck className="mt-0.5 h-5 w-5 flex-none text-[#9A7418]" aria-hidden="true" />
-              <span>{copy.emptyNote}</span>
-            </p>
-            <Link
-              to="/businesses"
-              className="inline-flex items-center gap-2 rounded-lg border border-[#4A1D43] px-5 py-3 text-sm font-semibold text-[#4A1D43] transition hover:bg-[#4A1D43] hover:text-white"
-            >
-              {copy.businessLink}
-              <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden="true" />
-            </Link>
+          {verifiedJobs.length > 0 ? (
+            <div className="grid gap-5 md:grid-cols-2">
+              {verifiedJobs.map((offer) => (
+                <VerifiedJobCard
+                  key={offer.id}
+                  offer={offer}
+                  locale={JOB_LOCALES[language]}
+                  labels={{
+                    verifiedOn: copy.verifiedOn,
+                    reviewUntil: copy.reviewUntil,
+                    source: copy.source,
+                    apply: copy.applyAtSource,
+                    externalNotice: copy.externalNotice,
+                  }}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-2xl border border-[#D4AF37] bg-white px-6 py-10 text-center shadow-sm md:px-12">
+              <span className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-[#4A1D43] text-[#D4AF37]">
+                <Briefcase className="h-7 w-7" aria-hidden="true" />
+              </span>
+              <h3 className="mb-3 text-xl font-semibold text-[#4A1D43]">{copy.emptyTitle}</h3>
+              <p className="mx-auto mb-4 max-w-3xl text-sm leading-6 text-gray-600 md:text-base">{copy.emptyDescription}</p>
+            </div>
+          )}
+
+          <p className="mx-auto mt-8 flex max-w-3xl items-start justify-center gap-2 text-center text-sm font-medium text-gray-700">
+            <ShieldCheck className="mt-0.5 h-5 w-5 flex-none text-[#9A7418]" aria-hidden="true" />
+            <span>{copy.emptyNote}</span>
+          </p>
+
+          <div className="mt-10 grid gap-5 md:grid-cols-2">
+            <div className="rounded-2xl border border-[#D4AF37] bg-[#4A1D43] p-6 text-white">
+              <Sparkles className="mb-4 h-7 w-7 text-[#D4AF37]" aria-hidden="true" />
+              <h3 className="mb-3 font-serif text-2xl text-[#D4AF37]">{copy.talentsTitle}</h3>
+              <p className="mb-5 text-sm leading-6 text-white/90">{copy.talentsDescription}</p>
+              <Link
+                to="/candidats"
+                className="inline-flex items-center gap-2 rounded-lg border border-[#D4AF37] bg-white px-5 py-3 text-sm font-semibold text-[#4A1D43] transition hover:bg-[#F5F5DC]"
+              >
+                {copy.talentsLink}
+                <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden="true" />
+              </Link>
+            </div>
+            <div className="rounded-2xl border border-[#D4AF37] bg-white p-6">
+              <Building2 className="mb-4 h-7 w-7 text-[#4A1D43]" aria-hidden="true" />
+              <h3 className="mb-3 font-serif text-2xl text-[#4A1D43]">{copy.businessLink}</h3>
+              <p className="mb-5 text-sm leading-6 text-gray-600">{copy.heroDescription}</p>
+              <Link
+                to="/businesses"
+                className="inline-flex items-center gap-2 rounded-lg border border-[#4A1D43] px-5 py-3 text-sm font-semibold text-[#4A1D43] transition hover:bg-[#4A1D43] hover:text-white"
+              >
+                {copy.businessLink}
+                <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden="true" />
+              </Link>
+            </div>
           </div>
         </div>
       </section>
