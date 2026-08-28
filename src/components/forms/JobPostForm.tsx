@@ -9,6 +9,7 @@ import { getJobsPageTranslations, type JobRequestMode } from '../../lib/jobsPage
 interface JobPostFormProps {
   userId?: string;
   mode?: JobRequestMode;
+  initialTitle?: string;
   onSuccess?: () => void;
 }
 
@@ -24,6 +25,7 @@ const EMPTY_FORM: RequestData = { title: '', phone: '', email: '', message: '' }
 export default function JobPostForm({
   userId = 'public-jobs-page',
   mode = 'employer',
+  initialTitle = '',
   onSuccess,
 }: JobPostFormProps) {
   const { language } = useLanguage();
@@ -31,8 +33,9 @@ export default function JobPostForm({
   const { submission_lang } = useFormTranslation();
   const [saving, setSaving] = useState(false);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
-  const [formData, setFormData] = useState<RequestData>(EMPTY_FORM);
+  const [formData, setFormData] = useState<RequestData>(() => ({ ...EMPTY_FORM, title: initialTitle }));
   const isEmployer = mode === 'employer';
+  const isCandidateContact = mode === 'candidate-contact';
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -62,12 +65,20 @@ export default function JobPostForm({
       return;
     }
 
-    const requestType = isEmployer ? 'Demande publication offre emploi' : 'Candidature emploi';
+    const requestType = isCandidateContact
+      ? 'Demande mise en relation candidat'
+      : isEmployer
+        ? 'Demande publication offre emploi'
+        : 'Candidature emploi';
     const contact = [phone, email].filter(Boolean).join(' - ');
 
     try {
       const { error } = await supabase.from('suggestions_entreprises').insert([{
-        nom_entreprise: isEmployer ? title : `Candidature : ${title}`,
+        nom_entreprise: isCandidateContact
+          ? `Mise en relation : ${title}`
+          : isEmployer
+            ? title
+            : `Candidature : ${title}`,
         secteur: requestType,
         ville: null,
         contact_suggere: contact,
@@ -78,7 +89,11 @@ export default function JobPostForm({
       if (error) throw error;
 
       notifyAdmin(
-        isEmployer ? 'Nouvelle demande de publication emploi' : 'Nouvelle candidature emploi',
+        isCandidateContact
+          ? 'Nouvelle demande de mise en relation candidat'
+          : isEmployer
+            ? 'Nouvelle demande de publication emploi'
+            : 'Nouvelle candidature emploi',
         {
           Poste: title,
           Telephone: phone || 'Non renseigné',
@@ -92,7 +107,11 @@ export default function JobPostForm({
 
       setFeedback({
         type: 'success',
-        text: isEmployer ? copy.form.employerSuccess : copy.form.candidateSuccess,
+        text: isCandidateContact
+          ? copy.form.contactCandidateSuccess
+          : isEmployer
+            ? copy.form.employerSuccess
+            : copy.form.candidateSuccess,
       });
       setFormData(EMPTY_FORM);
 
@@ -109,7 +128,7 @@ export default function JobPostForm({
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="rounded-lg border border-[#D4AF37] bg-[#4A1D43]/20 p-4">
         <p className="text-sm leading-relaxed text-[#E8D5C4]">
-          {isEmployer ? copy.form.employerIntro : copy.form.candidateIntro}
+          {isEmployer || isCandidateContact ? copy.form.employerIntro : copy.form.candidateIntro}
         </p>
       </div>
 
@@ -128,7 +147,7 @@ export default function JobPostForm({
 
       <div>
         <label htmlFor={`job-request-title-${mode}`} className="mb-2 block text-sm font-medium text-[#F5F5DC]">
-          {isEmployer ? copy.form.employerTitleLabel : copy.form.candidateTitleLabel}<span className="text-[#D4AF37]"> *</span>
+          {isEmployer || isCandidateContact ? copy.form.employerTitleLabel : copy.form.candidateTitleLabel}<span className="text-[#D4AF37]"> *</span>
         </label>
         <input
           id={`job-request-title-${mode}`}
@@ -137,7 +156,7 @@ export default function JobPostForm({
           value={formData.title}
           onChange={(event) => setFormData(previous => ({ ...previous, title: event.target.value }))}
           className="w-full rounded-lg border border-[#D4AF37] bg-[#2A1525] px-4 py-3 text-[#F5F5DC] placeholder:text-gray-500 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]"
-          placeholder={isEmployer ? copy.form.employerTitlePlaceholder : copy.form.candidateTitlePlaceholder}
+          placeholder={isEmployer || isCandidateContact ? copy.form.employerTitlePlaceholder : copy.form.candidateTitlePlaceholder}
         />
       </div>
 
@@ -174,7 +193,7 @@ export default function JobPostForm({
           value={formData.message}
           onChange={(event) => setFormData(previous => ({ ...previous, message: event.target.value }))}
           className="w-full rounded-lg border border-[#D4AF37] bg-[#2A1525] px-4 py-3 text-[#F5F5DC] placeholder:text-gray-500 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]"
-          placeholder={isEmployer ? copy.form.employerMessagePlaceholder : copy.form.candidateMessagePlaceholder}
+          placeholder={isEmployer || isCandidateContact ? copy.form.employerMessagePlaceholder : copy.form.candidateMessagePlaceholder}
         />
       </div>
 
@@ -184,7 +203,11 @@ export default function JobPostForm({
         className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-[#D4AF37] bg-white px-6 py-3 font-semibold text-[#4A1D43] transition-all hover:shadow-[0_0_25px_rgba(212,175,55,0.4)] disabled:cursor-not-allowed disabled:opacity-50"
       >
         {saving && <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#4A1D43] border-t-transparent" aria-hidden="true" />}
-        {isEmployer ? copy.form.employerSubmit : copy.form.candidateSubmit}
+        {isCandidateContact
+          ? copy.form.contactCandidateSubmit
+          : isEmployer
+            ? copy.form.employerSubmit
+            : copy.form.candidateSubmit}
       </button>
     </form>
   );
