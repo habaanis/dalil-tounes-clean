@@ -29,10 +29,16 @@ export const PageHeader = ({ backTo, backLabel, hideBack = false }: PageHeaderPr
   const handleBack = () => {
     if (backTo) {
       navigate(backTo);
-    } else {
-      const parentPath = location.pathname.split('/').slice(0, -1).join('/') || '/';
-      navigate(parentPath);
+      return;
     }
+
+    if (location.key !== 'default') {
+      navigate(-1);
+      return;
+    }
+
+    const parentPath = location.pathname.split('/').slice(0, -1).join('/') || '/';
+    navigate(parentPath, { replace: true });
   };
 
   return (
