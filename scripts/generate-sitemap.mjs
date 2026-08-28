@@ -72,7 +72,7 @@ const corePages = [
   ['/citizens', '0.8', 'weekly'], ['/citizens/health', '0.8', 'weekly'], ['/citizens/leisure', '0.8', 'weekly'],
   ['/citizens/admin', '0.7', 'weekly'], ['/citizens/shops', '0.8', 'weekly'], ['/citizens/services', '0.8', 'weekly'],
   ['/citizens/tourism', '0.8', 'weekly'], ['/education', '0.8', 'weekly'], ['/culture-events', '0.8', 'daily'],
-  ['/marketplace', '0.7', 'daily'], ['/around-me', '0.7', 'daily'], ['/inscription-entreprise', '0.8', 'monthly'],
+  ['/around-me', '0.7', 'daily'], ['/inscription-entreprise', '0.8', 'monthly'],
   ['/subscription', '0.8', 'monthly'], ['/concept', '0.7', 'monthly'], ['/pourquoi-dalil-tounes', '0.7', 'monthly'],
   ['/partner-directory', '0.6', 'weekly'], ['/business-events', '0.6', 'weekly'], ['/besoins-professionnels', '0.7', 'daily'],
   ['/blog', '0.7', 'weekly'], ['/contact', '0.5', 'monthly'], ['/mentions-legales', '0.3', 'yearly'],
