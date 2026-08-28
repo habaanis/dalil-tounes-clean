@@ -24,8 +24,8 @@ https://www.dalil-tounes.com/* https://dalil-tounes.com/:splat 301!
 /#/education /education 301!
 /#/evenements /culture-events 301!
 /#/culture-events /culture-events 301!
-/#/marketplace /marketplace 301!
-/#/marche-local /marketplace 301!
+/#/marketplace /citizens 301!
+/#/marche-local /citizens 301!
 /#/subscription /subscription 301!
 /#/abonnement /subscription 301!
 /#/concept /concept 301!
