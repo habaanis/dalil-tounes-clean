@@ -4,8 +4,8 @@ export const businessesPageTranslations: Record<Language, any> = {
   fr: {
     seo: {
       unnamedBusiness: 'Sans nom',
-      title: 'Annuaire des Entreprises en Tunisie - Dalil Tounes',
-      description: "Trouvez les meilleures entreprises et professionnels en Tunisie par secteur d'activité",
+      title: 'Centre d’affaires et entreprises en Tunisie | Dalil Tounes',
+      description: "Recherchez des entreprises en Tunisie, développez votre réseau professionnel et découvrez les services du Centre d’affaires Dalil Tounes.",
     },
     hero: {
       eyebrow: 'Centre d’affaires',
@@ -60,6 +60,8 @@ export const businessesPageTranslations: Record<Language, any> = {
       title: 'Découvrez les entreprises déjà présentes sur Dalil Tounes.',
       description: 'Vous pouvez rechercher une entreprise, un artisan, un commerçant ou un professionnel partout en Tunisie et découvrir leur fiche.',
       hint: 'Recherchez parmi les entreprises déjà présentes sur Dalil Tounes.',
+      preferredTitle: 'Entreprises et professionnels recommandés',
+      preferredSubtitle: 'Des professionnels appréciés par leurs clients et déjà présents sur Dalil Tounes',
     },
     results: {
       searchResults: 'Résultats de votre recherche',
@@ -169,8 +171,8 @@ export const businessesPageTranslations: Record<Language, any> = {
   en: {
     seo: {
       unnamedBusiness: 'Unnamed business',
-      title: 'Business Directory in Tunisia - Dalil Tounes',
-      description: 'Find businesses and professionals in Tunisia by sector of activity',
+      title: 'Business Center and companies in Tunisia | Dalil Tounes',
+      description: 'Find companies in Tunisia, grow your professional network and discover the Dalil Tounes Business Center services.',
     },
     hero: {
       eyebrow: 'Business Center',
@@ -217,6 +219,8 @@ export const businessesPageTranslations: Record<Language, any> = {
       title: 'Discover businesses already listed on Dalil Tounes.',
       description: 'Search for a business, craftsperson, shop or professional anywhere in Tunisia and discover their profile.',
       hint: 'Search among businesses already listed on Dalil Tounes.',
+      preferredTitle: 'Recommended businesses and professionals',
+      preferredSubtitle: 'Professionals appreciated by their customers and already listed on Dalil Tounes',
     },
     results: {
       searchResults: 'Your search results',
@@ -291,7 +295,7 @@ export const businessesPageTranslations: Record<Language, any> = {
     },
   },
   ar: {
-    seo: { unnamedBusiness: 'دون اسم', title: 'دليل الشركات في تونس - دليل تونس', description: 'ابحث عن الشركات والمهنيين في تونس حسب قطاع النشاط' },
+    seo: { unnamedBusiness: 'دون اسم', title: 'مركز الأعمال والمؤسسات في تونس | دليل تونس', description: 'ابحث عن المؤسسات في تونس وطوّر شبكتك المهنية واكتشف خدمات مركز أعمال دليل تونس.' },
     hero: {
       eyebrow: 'مركز الأعمال',
       title: 'طوّر نشاطك مع دليل تونس',
@@ -337,6 +341,8 @@ export const businessesPageTranslations: Record<Language, any> = {
       title: 'اكتشف المؤسسات الموجودة بالفعل على دليل تونس.',
       description: 'يمكنك البحث عن مؤسسة أو حرفي أو متجر أو مهني في مختلف أنحاء تونس واكتشاف بطاقته.',
       hint: 'ابحث بين المؤسسات الموجودة بالفعل على دليل تونس.',
+      preferredTitle: 'مؤسسات ومهنيون موصى بهم',
+      preferredSubtitle: 'مهنيون يحظون بتقدير عملائهم وموجودون بالفعل على دليل تونس',
     },
     results: { searchResults: 'نتائج بحثك', featured: 'مؤسسات مميزة', businessSingular: 'مؤسسة', businessPlural: 'مؤسسات', reset: 'إعادة التعيين' },
     cvBusiness: {
@@ -388,7 +394,7 @@ export const businessesPageTranslations: Record<Language, any> = {
     },
   },
   it: {
-    seo: { unnamedBusiness: 'Senza nome', title: 'Elenco delle imprese in Tunisia - Dalil Tounes', description: 'Trova imprese e professionisti in Tunisia per settore di attività' },
+    seo: { unnamedBusiness: 'Senza nome', title: 'Centro d’affari e imprese in Tunisia | Dalil Tounes', description: 'Trova imprese in Tunisia, sviluppa la tua rete professionale e scopri i servizi del Centro d’affari Dalil Tounes.' },
     hero: { eyebrow: 'Centro d’affari', title: 'Sviluppa la tua attività con Dalil Tounes', description: 'Presenta la tua attività con una scheda professionale completa, facilita i contatti con i futuri clienti e aumenta la tua visibilità in tutta la Tunisia.', offers: 'Scopri le offerte', search: 'Cerca un’impresa', mascotTitle: 'Ciao!', mascotMessage: 'Ti mostrerò come una scheda professionale può aiutare la tua attività ad aumentare la visibilità e ispirare fiducia.' },
     businessCenter: {
       title: 'Il Centro d’affari di Dalil Tounes',
@@ -405,7 +411,7 @@ export const businessesPageTranslations: Record<Language, any> = {
       paragraphs: ['Molti professionisti possiedono un vero savoir-faire, ma le loro informazioni sono talvolta sparse o incomplete.', 'Una pagina Facebook può mostrare un vecchio numero. Google Business può contenere orari non aggiornati. Instagram mostra spesso belle foto ma poche informazioni pratiche.', 'Una scheda professionale completa, coerente e aggiornata aiuta anche i motori di ricerca a comprendere meglio la tua attività.', 'Più la tua presenza digitale è coerente, maggiori sono le possibilità di essere trovato nelle ricerche locali, senza garantire una posizione precisa su Google.', 'Una scheda chiara, completa e aggiornata rassicura i visitatori e facilita il primo contatto.'],
       adviceTitle: 'Consiglio di Dalil', adviceText: 'Prima di cercare più visibilità, assicurati che le informazioni della tua impresa siano coerenti ovunque i clienti possano trovarti.',
     },
-    explore: { mascotTitle: 'Ora esplora tu.', mascotMessage: 'Puoi scoprire i professionisti già presenti su Dalil Tounes e vedere come le loro schede vengono presentate ai visitatori.', title: 'Scopri le imprese già presenti su Dalil Tounes.', description: 'Cerca un’impresa, un artigiano, un commerciante o un professionista in tutta la Tunisia e scopri la sua scheda.', hint: 'Cerca tra le imprese già presenti su Dalil Tounes.' },
+    explore: { mascotTitle: 'Ora esplora tu.', mascotMessage: 'Puoi scoprire i professionisti già presenti su Dalil Tounes e vedere come le loro schede vengono presentate ai visitatori.', title: 'Scopri le imprese già presenti su Dalil Tounes.', description: 'Cerca un’impresa, un artigiano, un commerciante o un professionista in tutta la Tunisia e scopri la sua scheda.', hint: 'Cerca tra le imprese già presenti su Dalil Tounes.', preferredTitle: 'Imprese e professionisti consigliati', preferredSubtitle: 'Professionisti apprezzati dai clienti e già presenti su Dalil Tounes' },
     results: { searchResults: 'Risultati della ricerca', featured: 'Imprese in evidenza', businessSingular: 'impresa', businessPlural: 'imprese', reset: 'Reimposta' },
     cvBusiness: { eyebrow: 'CV Business', title: 'Una scheda che diventa il CV digitale della tua impresa.', paragraphs: ['Il CV Business riunisce le informazioni utili per presentare la tua attività, spiegare il tuo savoir-faire e aiutare i visitatori a capire rapidamente chi sei.', 'Non si tratta solo di essere visibili, ma anche di ispirare fiducia con una scheda chiara, completa e verificabile.'], features: { phone: 'Telefono', description: 'Descrizione', certificate: 'Certificato', hours: 'Orari', booking: 'Prenotazione', qrCode: 'QR Code' }, viewLarge: 'Vedi la scheda grande' },
     consistency: { eyebrow: 'Coerenza', title: 'Una presenza online coerente ispira fiducia.', paragraphs: ['Google Business, Facebook, Instagram, LinkedIn e il tuo sito web restano utili. Dalil Tounes non li sostituisce: li completa riunendo le informazioni importanti in una scheda chiara.', 'Un cliente può vedere un vecchio numero su Facebook, orari diversi su Google e poche informazioni pratiche su Instagram. In quel caso può esitare o scegliere un’altra impresa.', 'Una scheda verificata e aggiornata rende le informazioni più coerenti, più facili da consultare e più rassicuranti al momento del contatto.'], benefits: ['Centralizzare le informazioni utili', 'Evitare informazioni contraddittorie', 'Facilitare il primo contatto'] },
@@ -426,7 +432,7 @@ export const businessesPageTranslations: Record<Language, any> = {
     form: { title: 'Richiesta informazioni / registrazione', description: 'Hai una domanda o vuoi registrarti? Inviaci la richiesta e ti ricontatteremo rapidamente.', requestTitle: 'Titolo della richiesta *', requestPlaceholder: 'Es.: registrazione impresa, autista privato, insegnante, candidato...', phone: 'Telefono *', email: 'Email *', message: 'Messaggio *', messagePlaceholder: 'Spiega brevemente la tua richiesta.', success: 'Grazie! La tua richiesta è stata inviata con successo. Ti contatteremo presto.', error: 'Si è verificato un errore. Riprova.' },
   },
   ru: {
-    seo: { unnamedBusiness: 'Без названия', title: 'Каталог компаний Туниса - Dalil Tounes', description: 'Найдите компании и специалистов в Тунисе по сфере деятельности' },
+    seo: { unnamedBusiness: 'Без названия', title: 'Бизнес-центр и компании Туниса | Dalil Tounes', description: 'Находите компании в Тунисе, развивайте профессиональную сеть и пользуйтесь сервисами бизнес-центра Dalil Tounes.' },
     hero: { eyebrow: 'Бизнес-центр', title: 'Развивайте свой бизнес с Dalil Tounes', description: 'Представьте свою деятельность с помощью полноценной профессиональной карточки, упростите связь с будущими клиентами и повышайте видимость по всему Тунису.', offers: 'Посмотреть предложения', search: 'Найти компанию', mascotTitle: 'Здравствуйте!', mascotMessage: 'Я покажу, как профессиональная карточка помогает повысить видимость вашей деятельности и укрепить доверие.' },
     businessCenter: {
       title: 'Бизнес-центр Dalil Tounes',
@@ -436,7 +442,7 @@ export const businessesPageTranslations: Record<Language, any> = {
     },
     onlinePresence: { eyebrow: 'Присутствие в интернете', title: 'Сегодня ваши будущие клиенты сначала ищут в интернете.', paragraphs: ['Перед звонком, визитом или бронированием многие сначала ищут компанию в интернете.', 'Они хотят проверить часы работы, адрес, отзывы, фотографии и контакты и быстро понять, подходит ли специалист их потребностям.', 'Рекомендации знакомых по-прежнему важны: многие советуются с близкими перед выбором мастера, магазина или компании.', 'Но рекомендация не всегда позволяет проверить новый номер телефона, адрес, часы работы, свежие отзывы, фотографии или услуги.', 'Сегодня пользователи хотят дополнять рекомендации надежной, согласованной и регулярно обновляемой информацией. Когда её легко найти, первый контакт становится проще.'] },
     whyProfile: { eyebrow: 'Зачем карточка?', title: 'Почему профессиональная карточка важна?', paragraphs: ['Многие специалисты обладают настоящим опытом, но информация о них иногда разбросана или неполна.', 'На странице Facebook может быть старый номер телефона, в Google Business — неактуальные часы, а в Instagram — красивые фотографии, но мало практической информации.', 'Полная, согласованная и регулярно обновляемая профессиональная карточка также помогает поисковым системам лучше понимать вашу деятельность.', 'Чем согласованнее ваше цифровое присутствие, тем выше шансы быть найденным в локальном поиске, без гарантии конкретной позиции в Google.', 'Четкая, полная и регулярно обновляемая карточка помогает успокоить посетителей и облегчает первый контакт.'], adviceTitle: 'Совет Dalil', adviceText: 'Прежде чем стремиться к большей видимости, убедитесь, что информация о вашей компании согласована везде, где клиенты могут вас найти.' },
-    explore: { mascotTitle: 'Теперь исследуйте сами.', mascotMessage: 'Вы можете познакомиться со специалистами, уже представленными в Dalil Tounes, и посмотреть, как их карточки выглядят для посетителей.', title: 'Откройте компании, уже представленные в Dalil Tounes.', description: 'Найдите компанию, мастера, магазин или специалиста в любой точке Туниса и откройте их карточку.', hint: 'Ищите среди компаний, уже представленных в Dalil Tounes.' },
+    explore: { mascotTitle: 'Теперь исследуйте сами.', mascotMessage: 'Вы можете познакомиться со специалистами, уже представленными в Dalil Tounes, и посмотреть, как их карточки выглядят для посетителей.', title: 'Откройте компании, уже представленные в Dalil Tounes.', description: 'Найдите компанию, мастера, магазин или специалиста в любой точке Туниса и откройте их карточку.', hint: 'Ищите среди компаний, уже представленных в Dalil Tounes.', preferredTitle: 'Рекомендуемые компании и специалисты', preferredSubtitle: 'Специалисты, которых ценят клиенты и которые уже представлены в Dalil Tounes' },
     results: { searchResults: 'Результаты поиска', featured: 'Рекомендуемые компании', businessSingular: 'компания', businessPlural: 'компании', reset: 'Сбросить' },
     cvBusiness: { eyebrow: 'Business CV', title: 'Карточка, которая становится цифровым CV вашей компании.', paragraphs: ['Business CV объединяет полезную информацию для представления деятельности, опыта и быстрого понимания того, кто вы.', 'Речь не только о видимости. Важно также вызывать доверие с помощью ясной, полной и проверяемой карточки.'], features: { phone: 'Телефон', description: 'Описание', certificate: 'Сертификат', hours: 'Часы работы', booking: 'Бронирование', qrCode: 'QR-код' }, viewLarge: 'Открыть карточку крупно' },
     consistency: { eyebrow: 'Согласованность', title: 'Согласованное присутствие в интернете вызывает доверие.', paragraphs: ['Google Business, Facebook, Instagram, LinkedIn и ваш сайт остаются полезными. Dalil Tounes не заменяет их, а дополняет, собирая важную информацию в одной ясной карточке.', 'Клиент может увидеть старый номер в Facebook, другие часы в Google и мало практической информации в Instagram. В таком случае он может сомневаться или выбрать другую компанию.', 'Проверенная и обновленная карточка делает информацию более согласованной, удобной для просмотра и надежной в момент обращения.'], benefits: ['Собрать полезную информацию в одном месте', 'Избежать противоречивой информации', 'Упростить первый контакт'] },

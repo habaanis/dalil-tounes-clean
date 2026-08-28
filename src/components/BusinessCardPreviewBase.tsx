@@ -45,6 +45,7 @@ export interface BusinessCardPreviewProps {
   gallery?: string | string[];
   reviews?: string;
   hours?: string;
+  headingLevel?: 'h1' | 'h2' | 'h3';
 }
 
 const DEFAULT_LOGO = '/images/logo_dalil_tounes_sceau_luxe.webp';
@@ -142,7 +143,7 @@ function NetworkIcon({ network }: { network: BusinessCardPreviewNetwork }) {
 
 export default function BusinessCardPreview({
   variant, language = 'fr', size = 'full', interactive = true, name = "Aux saveurs d'Anis", category = 'Traiteur événementiel', city = 'Sousse, Tunisie', status = 'Ouvert',
-  logo = DEFAULT_LOGO, coverImage = DEFAULT_COVER, networks, gallery, reviews, hours,
+  logo = DEFAULT_LOGO, coverImage = DEFAULT_COVER, networks, gallery, reviews, hours, headingLevel = 'h1',
 }: BusinessCardPreviewProps) {
   const t = COPY[language];
   const isPremium = variant === 'premium';
@@ -152,6 +153,7 @@ export default function BusinessCardPreview({
   const ratingLabel = reviews || '5.0 ★ · 27 avis';
   const moreActionsLabel = language === 'ar' ? 'المزيد من الإجراءات' : language === 'en' ? 'More actions' : language === 'it' ? 'Altre azioni' : language === 'ru' ? 'Другие действия' : "Plus d’actions";
   const socialLabel = isPremium ? t.socialNetworks : t.twoNetworksChoice;
+  const IdentityHeading = headingLevel;
   const activeNetworks = (networks?.length ? networks : isPremium ? DEFAULT_PREMIUM_NETWORKS : DEFAULT_ARTISAN_NETWORKS).slice(0, isPremium ? 5 : 2);
   const suppliedGallery = Array.isArray(gallery)
     ? gallery.filter(Boolean)
@@ -206,7 +208,7 @@ export default function BusinessCardPreview({
           <div className="dt-activity-pill"><Wrench className="h-3 w-3" /> {category}</div>
           <div className="dt-identity-panel">
             <div className="dt-product-label">{isPremium ? t.productPremium : t.productArtisan}</div>
-            <h1>{name}</h1>
+            <IdentityHeading>{name}</IdentityHeading>
             {isPremium && <div className="dt-professional-badge">{t.certified}</div>}
             <p className="dt-location"><MapPin /> {city}</p>
           </div>

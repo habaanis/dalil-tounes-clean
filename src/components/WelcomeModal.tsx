@@ -18,8 +18,65 @@ const languages: Array<{ code: Language; flag: string; label: string; featured?:
   { code: 'ru', flag: '🇷🇺', label: 'Русский' },
 ];
 
+const welcomeCopy: Record<Language, {
+  eyebrow: string;
+  title: string;
+  description: string;
+  detected: string;
+  learnMore: string;
+  choose: string;
+  close: string;
+}> = {
+  fr: {
+    eyebrow: 'Bienvenue chez vous.',
+    title: 'Bienvenue sur Dalil Tounes',
+    description: "Dalil Tounes aide les citoyens à trouver les bonnes entreprises et permet aux entreprises tunisiennes d'être plus visibles, plus facilement trouvées et contactées.",
+    detected: 'Nous avons détecté votre langue. Vous pouvez la conserver ou en choisir une autre.',
+    learnMore: 'À quoi sert Dalil Tounes ?',
+    choose: 'Choisissez votre langue',
+    close: "Fermer l'écran de bienvenue",
+  },
+  ar: {
+    eyebrow: 'مرحباً بك في بلدك.',
+    title: 'مرحباً بك في دليل تونس',
+    description: 'يساعد دليل تونس المواطنين على العثور على المؤسسات المناسبة، ويساعد المؤسسات التونسية على زيادة ظهورها وتسهيل العثور عليها والتواصل معها.',
+    detected: 'لقد اكتشفنا لغتك. يمكنك الاحتفاظ بها أو اختيار لغة أخرى.',
+    learnMore: 'ما فائدة دليل تونس؟',
+    choose: 'اختر لغتك',
+    close: 'إغلاق شاشة الترحيب',
+  },
+  en: {
+    eyebrow: 'Welcome home.',
+    title: 'Welcome to Dalil Tounes',
+    description: 'Dalil Tounes helps people find the right businesses and helps Tunisian businesses become more visible, easier to find and easier to contact.',
+    detected: 'We detected your language. You can keep it or choose another one.',
+    learnMore: 'What is Dalil Tounes for?',
+    choose: 'Choose your language',
+    close: 'Close the welcome screen',
+  },
+  it: {
+    eyebrow: 'Benvenuto a casa.',
+    title: 'Benvenuto su Dalil Tounes',
+    description: 'Dalil Tounes aiuta le persone a trovare le imprese giuste e permette alle imprese tunisine di essere più visibili, facili da trovare e da contattare.',
+    detected: 'Abbiamo rilevato la tua lingua. Puoi mantenerla o sceglierne un’altra.',
+    learnMore: 'A cosa serve Dalil Tounes?',
+    choose: 'Scegli la tua lingua',
+    close: 'Chiudi la schermata di benvenuto',
+  },
+  ru: {
+    eyebrow: 'Добро пожаловать.',
+    title: 'Добро пожаловать в Dalil Tounes',
+    description: 'Dalil Tounes помогает людям находить подходящие компании, а тунисским компаниям — становиться заметнее и доступнее для поиска и связи.',
+    detected: 'Мы определили ваш язык. Вы можете оставить его или выбрать другой.',
+    learnMore: 'Для чего нужен Dalil Tounes?',
+    choose: 'Выберите язык',
+    close: 'Закрыть экран приветствия',
+  },
+};
+
 export const WelcomeModal = ({ isOpen, onClose }: WelcomeModalProps) => {
   const { language, setLanguage } = useLanguage();
+  const copy = welcomeCopy[language];
   const firstLanguageButtonRef = useRef<HTMLButtonElement>(null);
   const showDetectedLanguageHint = useMemo(() => {
     if (!isOpen) {
@@ -87,7 +144,7 @@ export const WelcomeModal = ({ isOpen, onClose }: WelcomeModalProps) => {
               type="button"
               onClick={onClose}
               className="absolute right-3 top-3 z-10 inline-flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 bg-white/90 text-gray-500 shadow-sm transition hover:border-[#D4AF37] hover:text-[#4A1D43] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/60"
-              aria-label="Fermer l'ecran de bienvenue"
+              aria-label={copy.close}
             >
               <X className="h-4 w-4" aria-hidden="true" />
             </button>
@@ -98,20 +155,20 @@ export const WelcomeModal = ({ isOpen, onClose }: WelcomeModalProps) => {
               </div>
 
               <div className="text-center">
-                <p className="mb-1.5 text-xs font-semibold text-[#D4AF37]">Bienvenue chez vous.</p>
+                <p className="mb-1.5 text-xs font-semibold text-[#D4AF37]">{copy.eyebrow}</p>
                 <h2
                   id="welcome-title"
                   className="text-xl font-semibold leading-snug text-[#4A1D43] sm:text-2xl"
-                  dir="rtl"
+                  dir={language === 'ar' ? 'rtl' : 'ltr'}
                 >
-                  مرحبا بيك في Dalil Tounes
+                  {copy.title}
                 </h2>
                 <p className="mx-auto mt-3 max-w-[520px] text-xs leading-5 text-gray-600 sm:text-sm">
-                  Dalil Tounes aide les citoyens à trouver les bonnes entreprises et permet aux entreprises tunisiennes d'être plus visibles, plus facilement trouvées et contactées par les citoyens.
+                  {copy.description}
                 </p>
                 {showDetectedLanguageHint && (
                   <p className="mx-auto mt-2 max-w-[430px] text-[11px] leading-4 text-gray-400">
-                    Nous avons détecté votre langue. Vous pouvez la conserver ou en choisir une autre.
+                    {copy.detected}
                   </p>
                 )}
               </div>
@@ -122,12 +179,12 @@ export const WelcomeModal = ({ isOpen, onClose }: WelcomeModalProps) => {
                 className="mx-auto mt-4 inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/50 bg-[#FFF8E6] px-3.5 py-1.5 text-xs font-semibold text-[#4A1D43] transition hover:border-[#D4AF37] hover:bg-[#FFF3CC] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/60"
               >
                 <Info className="h-3.5 w-3.5" aria-hidden="true" />
-                À quoi sert Dalil Tounes ?
+                {copy.learnMore}
               </Link>
 
               <div className="mt-4 border-t border-gray-100 pt-3.5">
                 <p className="mb-2.5 text-center text-[11px] font-semibold uppercase tracking-wide text-gray-400">
-                  Choisissez votre langue
+                  {copy.choose}
                 </p>
 
                 <div className="grid grid-cols-2 gap-2">

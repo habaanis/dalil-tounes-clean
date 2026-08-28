@@ -7,6 +7,14 @@ import { supabase } from '../lib/supabaseClient';
 import { Handshake, Network, TrendingUp, Send, CheckCircle, XCircle, ArrowLeft } from 'lucide-react';
 import { Toast } from '../components/Toast';
 
+const FEATURE_LABELS = {
+  fr: { collaboration: 'Collaboration', network: 'Réseau', opportunity: 'Opportunité' },
+  ar: { collaboration: 'تعاون', network: 'شبكة مهنية', opportunity: 'فرصة' },
+  en: { collaboration: 'Collaboration', network: 'Network', opportunity: 'Opportunity' },
+  it: { collaboration: 'Collaborazione', network: 'Rete', opportunity: 'Opportunità' },
+  ru: { collaboration: 'Сотрудничество', network: 'Сеть', opportunity: 'Возможность' },
+} as const;
+
 /*
  * =============================================================================
  * COMPOSANT: PartnerSearch - Page Partenaire / Fournisseur
@@ -42,6 +50,7 @@ export const PartnerSearch = () => {
   const { language } = useLanguage();
   const t = useTranslation(language);
   const offerT = getPartnerSearchOfferTranslations(language);
+  const featureLabels = FEATURE_LABELS[language];
 
   const [formData, setFormData] = useState({
     profileType: '',
@@ -333,7 +342,7 @@ ${offerFormData.description.trim()}
               <div className="w-12 h-12 bg-[#D4AF37]/10 rounded-full flex items-center justify-center mx-auto mb-3">
                 <Handshake className="w-6 h-6 text-[#800020]" />
               </div>
-              <h3 className="text-sm font-semibold text-[#4A1D43] mb-1">Collaboration</h3>
+              <h3 className="text-sm font-semibold text-[#4A1D43] mb-1">{featureLabels.collaboration}</h3>
               <p className="text-xs text-gray-600 leading-relaxed">
                 {t.partnerSearch.intro.paragraph1.split('.')[0]}
               </p>
@@ -343,7 +352,7 @@ ${offerFormData.description.trim()}
               <div className="w-12 h-12 bg-[#D4AF37]/10 rounded-full flex items-center justify-center mx-auto mb-3">
                 <Network className="w-6 h-6 text-[#800020]" />
               </div>
-              <h3 className="text-sm font-semibold text-[#4A1D43] mb-1">Réseau</h3>
+              <h3 className="text-sm font-semibold text-[#4A1D43] mb-1">{featureLabels.network}</h3>
               <p className="text-xs text-gray-600 leading-relaxed">
                 {t.partnerSearch.intro.paragraph2.split('.')[0]}
               </p>
@@ -353,7 +362,7 @@ ${offerFormData.description.trim()}
               <div className="w-12 h-12 bg-[#D4AF37]/10 rounded-full flex items-center justify-center mx-auto mb-3">
                 <TrendingUp className="w-6 h-6 text-[#800020]" />
               </div>
-              <h3 className="text-sm font-semibold text-[#4A1D43] mb-1">Opportunité</h3>
+              <h3 className="text-sm font-semibold text-[#4A1D43] mb-1">{featureLabels.opportunity}</h3>
               <p className="text-xs text-gray-600 leading-relaxed">
                 {t.partnerSearch.intro.paragraph3.split('.')[0]}
               </p>
