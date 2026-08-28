@@ -1,6 +1,13 @@
 import { useContext } from 'react';
 import { LanguageContext } from '../context/LanguageContext';
-import { t, type Lang } from '../lib/i18n';
+
+const FOLLOW_US_COPY = {
+  fr: 'Suivez-nous',
+  ar: 'تابعنا',
+  en: 'Follow us',
+  it: 'Seguici',
+  ru: 'Подписывайтесь на нас',
+} as const;
 
 const SOCIAL_LINKS = [
   {
@@ -44,7 +51,7 @@ export const SocialBar = () => {
   <div className="bg-gray-50 border-t border-gray-200 py-6">
     <div className="max-w-7xl mx-auto px-4 flex flex-col items-center gap-4">
       <p className="text-sm font-medium text-gray-500 tracking-wide uppercase">
-        {t(language as Lang, 'homeExtra.followUs')}
+        {FOLLOW_US_COPY[language] ?? FOLLOW_US_COPY.fr}
       </p>
       <div className="flex items-center gap-4">
         {SOCIAL_LINKS.map(({ label, href, color, icon }) => (
