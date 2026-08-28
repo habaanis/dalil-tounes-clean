@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, lazy, Suspense } from 'react';
-import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
 import { getBusinessesPageTranslations } from '../lib/businessesPageTranslations';
@@ -11,7 +11,7 @@ import { readParams } from '../lib/urlParams';
 import { buildEntrepriseUrl } from '../lib/slugify';
 import { RPC, Tables } from '../lib/dbTables';
 import { FINANCE_SUBCATEGORIES } from '../lib/entrepriseCategories';
-import { Search, MapPin, Phone, Mail, Building2, X, Award, ArrowRight, ShieldCheck, Clock, QrCode, Calendar } from 'lucide-react';
+import { Search, MapPin, Phone, Mail, Building2, X, Award, ArrowRight, ShieldCheck, Clock, QrCode, Calendar, Network, PackageSearch } from 'lucide-react';
 import { Toast } from '../components/Toast';
 import BusinessNeedForm from '../components/BusinessNeedForm';
 import { normalizeText, removeArabicDiacritics, extractFrenchName, cleanSearchTerm, cleanArabicField } from '../lib/textNormalization';
@@ -172,6 +172,37 @@ function FeaturePill({ icon: Icon, label }: { icon: React.ComponentType<{ classN
       <Icon className="h-3.5 w-3.5 text-[#D4AF37]" />
       {label}
     </span>
+  );
+}
+
+function BusinessCenterCard({
+  icon: Icon,
+  title,
+  description,
+  cta,
+  to,
+}: {
+  icon: React.ComponentType<{ className?: string }>;
+  title: string;
+  description: string;
+  cta: string;
+  to: string;
+}) {
+  return (
+    <Link
+      to={to}
+      className="group flex h-full flex-col rounded-2xl border border-[#D4AF37]/30 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-[#D4AF37] hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/60"
+    >
+      <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#D4AF37]/12 text-[#800020]">
+        <Icon className="h-5 w-5" />
+      </span>
+      <h3 className="mt-4 text-lg font-bold text-[#4A1D43]">{title}</h3>
+      <p className="mt-2 flex-1 text-sm leading-relaxed text-gray-600">{description}</p>
+      <span className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-[#800020]">
+        {cta}
+        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" />
+      </span>
+    </Link>
   );
 }
 
@@ -1226,6 +1257,35 @@ export const Businesses = ({
                 title={pageT.hero.mascotTitle}
                 message={pageT.hero.mascotMessage}
                 className="bg-white/95 border-white/70 shadow-xl"
+              />
+            </div>
+          </div>
+        </section>
+
+        <section className="px-4 pb-4" aria-labelledby="business-center-title">
+          <div className="mx-auto max-w-5xl rounded-3xl border border-[#D4AF37]/25 bg-[#FFFDF6] p-5 sm:p-7">
+            <div className="mx-auto max-w-3xl text-center">
+              <h2 id="business-center-title" className="text-2xl font-bold text-[#4A1D43] md:text-3xl">
+                {pageT.businessCenter.title}
+              </h2>
+              <p className="mt-3 text-sm leading-relaxed text-gray-600 md:text-base">
+                {pageT.businessCenter.description}
+              </p>
+            </div>
+            <div className="mt-6 grid gap-4 md:grid-cols-2">
+              <BusinessCenterCard
+                icon={Network}
+                title={pageT.businessCenter.network.title}
+                description={pageT.businessCenter.network.description}
+                cta={pageT.businessCenter.network.cta}
+                to="/partner-search"
+              />
+              <BusinessCenterCard
+                icon={PackageSearch}
+                title={pageT.businessCenter.needs.title}
+                description={pageT.businessCenter.needs.description}
+                cta={pageT.businessCenter.needs.cta}
+                to="/besoins-professionnels"
               />
             </div>
           </div>
