@@ -71,13 +71,20 @@ export default function BusinessNeedForm({ isOpen, onClose }: BusinessNeedFormPr
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); setError(''); setLoading(true);
+    const businessNeedId = crypto.randomUUID();
     const linkedCompany = selectedCompany && formData.company_name.trim() === (selectedCompany.nom || '').trim() ? selectedCompany : null;
     const payload = {
-      type: formData.type, title: formData.title.trim(), description: formData.description.trim(), company_name: formData.company_name.trim(), company_id: linkedCompany?.id || null, company_slug: linkedCompany?.slug || null, company_city: linkedCompany?.ville || null, contact_name: formData.contact_name.trim(), contact_email: formData.contact_email.trim(), contact_phone: formData.contact_phone.trim(), city: formData.city.trim(), governorate: formData.governorate, category: formData.category.trim() || null, budget_min: formData.budget_min ? parseFloat(formData.budget_min) : null, budget_max: formData.budget_max ? parseFloat(formData.budget_max) : null, deadline: formData.deadline || null, urgency: formData.urgency, zone_intervention: formData.zone_intervention.trim() || null, status: 'pending_review' as const, moderation_status: 'pending' as const, visibility: 'private' as const,
+      id: businessNeedId, type: formData.type, title: formData.title.trim(), description: formData.description.trim(), company_name: formData.company_name.trim(), company_id: linkedCompany?.id || null, company_slug: linkedCompany?.slug || null, company_city: linkedCompany?.ville || null, contact_name: formData.contact_name.trim(), contact_email: formData.contact_email.trim(), contact_phone: formData.contact_phone.trim(), city: formData.city.trim(), governorate: formData.governorate, category: formData.category.trim() || null, budget_min: formData.budget_min ? parseFloat(formData.budget_min) : null, budget_max: formData.budget_max ? parseFloat(formData.budget_max) : null, deadline: formData.deadline || null, urgency: formData.urgency, zone_intervention: formData.zone_intervention.trim() || null, submission_lang: language, status: 'pending_review' as const, moderation_status: 'pending' as const, visibility: 'private' as const,
     };
     const { error: insertError } = await supabase.from('business_needs').insert([payload]);
+    if (insertError) { setLoading(false); console.error('BusinessNeedForm insert error:', insertError); setError(t.genericError); return; }
+
+    const { error: notificationError } = await supabase.functions.invoke('notify-business-need', {
+      body: { business_need_id: businessNeedId },
+    });
+    if (notificationError) console.warn('[BusinessNeedForm] Airtable/email notification deferred:', notificationError);
+
     setLoading(false);
-    if (insertError) { console.error('BusinessNeedForm insert error:', insertError); setError(t.genericError); return; }
     setSuccess(true);
   };
 
