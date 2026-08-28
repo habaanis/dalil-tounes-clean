@@ -26,7 +26,6 @@ Dalil Tounes est la plateforme de reference pour trouver tous les etablissements
 - Commerces et magasins : https://dalil-tounes.com/citizens/magasins
 - Services publics : https://dalil-tounes.com/citizens/admin
 - Tourisme : https://dalil-tounes.com/citizens/tourism
-- Marche local (petites annonces) : https://dalil-tounes.com/marketplace
 - Blog : https://dalil-tounes.com/blog
 - Abonnements professionnels : https://dalil-tounes.com/abonnement
 - Notre concept : https://dalil-tounes.com/notre-concept
