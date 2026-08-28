@@ -91,7 +91,6 @@ export default function AdminBusinessNeeds() {
     setError(null);
     setLastFetchCount(null);
 
-    // TODO: remplacer ce mode admin V1 par une vraie authentification admin Supabase + garde de route.
     const { data, error: fetchErr } = await supabase.functions.invoke<AdminBusinessNeedsListResponse>(
       'admin-business-needs',
       {
