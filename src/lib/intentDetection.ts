@@ -135,7 +135,7 @@ export function getCategoryRoute(categorie: PageCategorie): string {
     administration: '#/citizens/services',
     loisirs: '#/citizens/leisure',
     magasin: '#/citizens/shops',
-    marche_local: '#/local-marketplace'
+    marche_local: '/citizens'
   };
 
   return routes[categorie] || '#/entreprises';

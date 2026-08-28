@@ -25,6 +25,11 @@ function CitizenShopsRedirect() {
   return <Navigate to={{ pathname: '/citizens/shops', search }} replace />;
 }
 
+function RetiredMarketplaceRedirect() {
+  const { search } = useLocation();
+  return <Navigate to={{ pathname: '/citizens', search }} replace />;
+}
+
 const Home = lazy(() => import('./pages/HomeVitrineFirst'));
 const Subscription = lazy(() => import('./pages/Subscription').then(m => ({ default: m.Subscription })));
 const PaiementConfirmation = lazy(() => import('./pages/PaiementConfirmation'));
@@ -48,7 +53,6 @@ const LegacyBusinessRedirect = lazy(() => import('./components/LegacyBusinessRed
 const TransportInscription = lazy(() => import('./pages/TransportInscription'));
 const Education = lazy(() => import('./pages/EducationNew'));
 const EducationEventForm = lazy(() => import('./pages/EducationEventForm'));
-const LocalMarketplace = lazy(() => import('./pages/LocalMarketplace'));
 const AdminSourcing = lazy(() => import('./pages/AdminSourcing'));
 const AroundMe = lazy(() => import('./pages/AroundMe'));
 const SearchDebug = lazy(() => import('./pages/debug/SearchDebug'));
@@ -171,9 +175,9 @@ function AppRouter() {
           <Route path="/culture-events" element={<CultureEvents />} />
           <Route path="/evenements" element={<CultureEvents />} />
 
-          <Route path="/marketplace" element={<LocalMarketplace />} />
-          <Route path="/marche-local" element={<LocalMarketplace />} />
-          <Route path="/local-marketplace" element={<LocalMarketplace />} />
+          <Route path="/marketplace" element={<RetiredMarketplaceRedirect />} />
+          <Route path="/marche-local" element={<RetiredMarketplaceRedirect />} />
+          <Route path="/local-marketplace" element={<RetiredMarketplaceRedirect />} />
 
           <Route path="/around-me" element={<AroundMe />} />
           <Route path="/autour-de-moi" element={<AroundMe />} />

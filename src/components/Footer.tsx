@@ -325,7 +325,6 @@ const Footer: React.FC = () => {
               <li><Link to="/citizens/services" className={footerLink}>{te.footer?.publicServices || 'Services Publics'}</Link></li>
               <li><Link to="/citizens/shops" className={footerLink}>{te.footer?.shops || 'Commerces & Magasins'}</Link></li>
               <li><Link to="/citizens/leisure" className={footerLink}>{te.footer?.leisure || 'Loisirs & Événements'}</Link></li>
-              <li><Link to="/marketplace" className={footerLink}>{te.footer?.localMarket || 'Marché Local'}</Link></li>
             </ul>
           </div>
 

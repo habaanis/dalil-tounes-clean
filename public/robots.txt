@@ -21,7 +21,6 @@ Allow: /entreprise/
 Allow: /emplois
 Allow: /citizens/
 Allow: /education
-Allow: /marketplace
 Allow: /blog
 Allow: /metier/
 Allow: /ville/

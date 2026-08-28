@@ -14,7 +14,7 @@ const COPY: Record<PublicLanguage, { badge: string; title: string; back: string;
         { label: 'Accueil', to: '/' }, { label: 'Entreprises', to: '/entreprises' }, { label: 'Emplois', to: '/emplois' }, { label: 'Notre Concept', to: '/notre-concept' }, { label: 'Blog', to: '/blog' }, { label: 'Abonnements', to: '/abonnement' },
       ]},
       { title: 'Espace Citoyens', links: [
-        { label: 'Santé', to: '/citizens/health' }, { label: 'Éducation', to: '/education' }, { label: 'Services Publics', to: '/citizens/services' }, { label: 'Commerces & Magasins', to: '/citizens/shops' }, { label: 'Loisirs & Événements', to: '/citizens/leisure' }, { label: 'Marché Local', to: '/marketplace' },
+        { label: 'Santé', to: '/citizens/health' }, { label: 'Éducation', to: '/education' }, { label: 'Services Publics', to: '/citizens/services' }, { label: 'Commerces & Magasins', to: '/citizens/shops' }, { label: 'Loisirs & Événements', to: '/citizens/leisure' },
       ]},
       { title: 'Informations légales', links: [
         { label: 'Contact', to: '/contact' }, { label: 'Mentions légales', to: '/mentions-legales' }, { label: "Conditions Générales d'Utilisation", to: '/cgu' }, { label: 'Politique de confidentialité', to: '/politique-confidentialite' },
@@ -28,7 +28,7 @@ const COPY: Record<PublicLanguage, { badge: string; title: string; back: string;
         { label: 'الرئيسية', to: '/' }, { label: 'المؤسسات', to: '/entreprises' }, { label: 'الوظائف', to: '/emplois' }, { label: 'فكرتنا', to: '/notre-concept' }, { label: 'المقالات', to: '/blog' }, { label: 'الاشتراكات', to: '/abonnement' },
       ]},
       { title: 'فضاء المواطنين', links: [
-        { label: 'الصحة', to: '/citizens/health' }, { label: 'التعليم', to: '/education' }, { label: 'الخدمات العمومية', to: '/citizens/services' }, { label: 'المحلات والمتاجر', to: '/citizens/shops' }, { label: 'الترفيه والفعاليات', to: '/citizens/leisure' }, { label: 'السوق المحلي', to: '/marketplace' },
+        { label: 'الصحة', to: '/citizens/health' }, { label: 'التعليم', to: '/education' }, { label: 'الخدمات العمومية', to: '/citizens/services' }, { label: 'المحلات والمتاجر', to: '/citizens/shops' }, { label: 'الترفيه والفعاليات', to: '/citizens/leisure' },
       ]},
       { title: 'المعلومات القانونية', links: [
         { label: 'اتصل بنا', to: '/contact' }, { label: 'الإشعارات القانونية', to: '/mentions-legales' }, { label: 'الشروط العامة للاستخدام', to: '/cgu' }, { label: 'سياسة الخصوصية', to: '/politique-confidentialite' },
@@ -42,7 +42,7 @@ const COPY: Record<PublicLanguage, { badge: string; title: string; back: string;
         { label: 'Home', to: '/' }, { label: 'Businesses', to: '/entreprises' }, { label: 'Jobs', to: '/emplois' }, { label: 'Our Concept', to: '/notre-concept' }, { label: 'Blog', to: '/blog' }, { label: 'Subscriptions', to: '/abonnement' },
       ]},
       { title: 'Citizen area', links: [
-        { label: 'Health', to: '/citizens/health' }, { label: 'Education', to: '/education' }, { label: 'Public Services', to: '/citizens/services' }, { label: 'Shops & Stores', to: '/citizens/shops' }, { label: 'Leisure & Events', to: '/citizens/leisure' }, { label: 'Local Marketplace', to: '/marketplace' },
+        { label: 'Health', to: '/citizens/health' }, { label: 'Education', to: '/education' }, { label: 'Public Services', to: '/citizens/services' }, { label: 'Shops & Stores', to: '/citizens/shops' }, { label: 'Leisure & Events', to: '/citizens/leisure' },
       ]},
       { title: 'Legal information', links: [
         { label: 'Contact', to: '/contact' }, { label: 'Legal Notice', to: '/mentions-legales' }, { label: 'Terms of Use', to: '/cgu' }, { label: 'Privacy Policy', to: '/politique-confidentialite' },
@@ -56,7 +56,7 @@ const COPY: Record<PublicLanguage, { badge: string; title: string; back: string;
         { label: 'Home', to: '/' }, { label: 'Aziende', to: '/entreprises' }, { label: 'Lavoro', to: '/emplois' }, { label: 'Il nostro concept', to: '/notre-concept' }, { label: 'Blog', to: '/blog' }, { label: 'Abbonamenti', to: '/abonnement' },
       ]},
       { title: 'Spazio cittadini', links: [
-        { label: 'Salute', to: '/citizens/health' }, { label: 'Istruzione', to: '/education' }, { label: 'Servizi pubblici', to: '/citizens/services' }, { label: 'Negozi e commerci', to: '/citizens/shops' }, { label: 'Tempo libero ed eventi', to: '/citizens/leisure' }, { label: 'Mercato locale', to: '/marketplace' },
+        { label: 'Salute', to: '/citizens/health' }, { label: 'Istruzione', to: '/education' }, { label: 'Servizi pubblici', to: '/citizens/services' }, { label: 'Negozi e commerci', to: '/citizens/shops' }, { label: 'Tempo libero ed eventi', to: '/citizens/leisure' },
       ]},
       { title: 'Informazioni legali', links: [
         { label: 'Contatti', to: '/contact' }, { label: 'Note legali', to: '/mentions-legales' }, { label: 'Condizioni generali di utilizzo', to: '/cgu' }, { label: 'Informativa sulla privacy', to: '/politique-confidentialite' },
@@ -70,7 +70,7 @@ const COPY: Record<PublicLanguage, { badge: string; title: string; back: string;
         { label: 'Главная', to: '/' }, { label: 'Компании', to: '/entreprises' }, { label: 'Работа', to: '/emplois' }, { label: 'Наша концепция', to: '/notre-concept' }, { label: 'Блог', to: '/blog' }, { label: 'Подписки', to: '/abonnement' },
       ]},
       { title: 'Раздел для граждан', links: [
-        { label: 'Здоровье', to: '/citizens/health' }, { label: 'Образование', to: '/education' }, { label: 'Государственные услуги', to: '/citizens/services' }, { label: 'Магазины', to: '/citizens/shops' }, { label: 'Досуг и события', to: '/citizens/leisure' }, { label: 'Местный рынок', to: '/marketplace' },
+        { label: 'Здоровье', to: '/citizens/health' }, { label: 'Образование', to: '/education' }, { label: 'Государственные услуги', to: '/citizens/services' }, { label: 'Магазины', to: '/citizens/shops' }, { label: 'Досуг и события', to: '/citizens/leisure' },
       ]},
       { title: 'Юридическая информация', links: [
         { label: 'Контакты', to: '/contact' }, { label: 'Юридическая информация', to: '/mentions-legales' }, { label: 'Условия использования', to: '/cgu' }, { label: 'Политика конфиденциальности', to: '/politique-confidentialite' },
