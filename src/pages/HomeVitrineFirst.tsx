@@ -14,6 +14,9 @@ const COPY: Record<BusinessCardPreviewLanguage, {
   example: string;
   primary: string;
   secondary: string;
+  offerBadge: string;
+  offerTitle: string;
+  offerDetail: string;
   proof1: string;
   proof2: string;
   proof3: string;
@@ -28,6 +31,9 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     example: "Exemple réel de présentation : Aux saveurs d'Anis",
     primary: 'Découvrir les offres',
     secondary: 'Découvrir la plateforme',
+    offerBadge: 'Offre de bienvenue',
+    offerTitle: '3 ans de CV Business — 2 années offertes',
+    offerDetail: 'Payez uniquement la création du CV Business de votre choix.',
     proof1: 'Une présentation qui rassure',
     proof2: 'Un QR Code toujours avec vous',
     proof3: 'Un lien simple à partager partout',
@@ -42,6 +48,9 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     example: "مثال تقديم: Aux saveurs d'Anis",
     primary: 'اكتشف العروض',
     secondary: 'اكتشف المنصة',
+    offerBadge: 'عرض ترحيبي',
+    offerTitle: '3 سنوات من CV Business — سنتان مجانًا',
+    offerDetail: 'ادفع فقط تكلفة إنشاء CV Business الذي تختاره.',
     proof1: 'تقديم مهني يبعث الثقة',
     proof2: 'رمز QR معك دائماً',
     proof3: 'رابط واحد سهل المشاركة',
@@ -56,6 +65,9 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     example: "Presentation example: Aux saveurs d'Anis",
     primary: 'Discover the offers',
     secondary: 'Discover the platform',
+    offerBadge: 'Welcome offer',
+    offerTitle: '3 years of Business CV — 2 years free',
+    offerDetail: 'Only pay for the creation of the Business CV you choose.',
     proof1: 'A presentation that builds trust',
     proof2: 'A QR Code always with you',
     proof3: 'One simple link to share anywhere',
@@ -70,6 +82,9 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     example: "Esempio di presentazione: Aux saveurs d'Anis",
     primary: 'Scopri le offerte',
     secondary: 'Scopri la piattaforma',
+    offerBadge: 'Offerta di benvenuto',
+    offerTitle: '3 anni di CV Business — 2 anni offerti',
+    offerDetail: 'Paghi solo la creazione del CV Business che scegli.',
     proof1: 'Una presentazione che crea fiducia',
     proof2: 'Un QR Code sempre con te',
     proof3: 'Un solo link da condividere ovunque',
@@ -84,6 +99,9 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     example: "Пример презентации: Aux saveurs d'Anis",
     primary: 'Посмотреть предложения',
     secondary: 'Открыть платформу',
+    offerBadge: 'Приветственное предложение',
+    offerTitle: '3 года Business CV — 2 года бесплатно',
+    offerDetail: 'Оплатите только создание выбранного Business CV.',
     proof1: 'Презентация, вызывающая доверие',
     proof2: 'QR-код всегда с вами',
     proof3: 'Одна ссылка для любого канала',
@@ -118,6 +136,19 @@ export default function HomeVitrineFirst() {
             <p className="mt-5 max-w-xl text-sm leading-7 text-gray-600 md:text-base">
               {t.description}
             </p>
+
+            <button
+              type="button"
+              onClick={() => navigate('/subscription')}
+              className="mt-5 flex w-full max-w-xl items-center justify-between gap-3 rounded-2xl border border-[#D4AF37]/60 bg-white/90 px-4 py-3 text-left shadow-sm transition hover:-translate-y-0.5 hover:bg-[#FFF8DF] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]"
+            >
+              <span>
+                <span className="block text-[10px] font-black uppercase tracking-[0.14em] text-[#B58A18]">{t.offerBadge}</span>
+                <span className="mt-0.5 block text-sm font-black text-[#4A1D43] sm:text-base">{t.offerTitle}</span>
+                <span className="mt-0.5 block text-xs font-semibold text-gray-600">{t.offerDetail}</span>
+              </span>
+              <ArrowRight className="h-5 w-5 shrink-0 text-[#4A1D43]" aria-hidden="true" />
+            </button>
 
             <div className="mt-6 flex flex-wrap gap-3">
               <button
