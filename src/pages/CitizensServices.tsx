@@ -1,17 +1,12 @@
 import { motion } from 'framer-motion';
-import { Heart, Baby, Building2, Phone, Shield, AlertCircle, CheckCircle, FileText, Clock, Download, ExternalLink, ArrowLeft } from 'lucide-react';
+import { Heart, Baby, Building2, Phone, Shield, AlertCircle, CheckCircle, FileText, Clock, Download, ExternalLink, ChevronRight } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
 import { getStructureImageUrl } from '../lib/imageUtils';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import BackButton from '../components/BackButton';
 import MeilleursSection from '../components/MeilleursSection';
 import SearchBar from '../components/SearchBar';
-
-interface CitizensServicesProps {
-  onNavigateBack?: () => void;
-}
 
 interface Demarche {
   id: string;
@@ -31,7 +26,7 @@ interface Demarche {
   lien_pdf_formulaire?: string | null;
 }
 
-export default function CitizensServices({ onNavigateBack }: CitizensServicesProps) {
+export default function CitizensServices() {
   const { language } = useLanguage();
   const t = useTranslation(language);
   const ss = t.citizens.socialServices;
@@ -392,7 +387,7 @@ export default function CitizensServices({ onNavigateBack }: CitizensServicesPro
           onClick={() => navigate('/citizens')}
           className="absolute top-4 left-4 z-10 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm text-[#4A1D43] px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-white transition-colors shadow-sm"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ChevronRight className="w-4 h-4" />
           {language === 'fr' ? 'Retour' : language === 'ar' ? 'رجوع' : language === 'en' ? 'Back' : 'Indietro'}
         </button>
         <div className={`absolute inset-0 bg-gradient-to-br from-gray-200 via-gray-100 to-white transition-opacity duration-500 ${imageLoaded && !imageError ? 'opacity-0' : 'opacity-100'}`}></div>

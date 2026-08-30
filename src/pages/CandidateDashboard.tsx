@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { User, FileText, Briefcase, Settings, LogOut, Crown } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import CandidateForm from '../components/forms/CandidateForm';

@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { UserCircle } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';

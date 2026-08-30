@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { useLanguage } from '../context/LanguageContext';
-import { useTranslation } from '../lib/i18n';
 import { Mail, Phone, MapPin, Clock, Filter } from 'lucide-react';
 
 interface PartnerRequest {
@@ -47,8 +46,6 @@ const formatDate = (iso: string) => {
 };
 
 export default function PartnerRequestsAdmin() {
-  const { language } = useLanguage();
-  const t = useTranslation(language);
   const [requests, setRequests] = useState<PartnerRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

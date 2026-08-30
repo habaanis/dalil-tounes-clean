@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function I18nDebug() {
   const missing = (typeof window !== 'undefined' && (window as any).__MISSING_I18N__) || {};
   const keys = Object.keys(missing).sort();

@@ -9,3 +9,24 @@ verify_jwt = true
 
 [functions.notify-form]
 verify_jwt = true
+
+[functions.admin-avis]
+verify_jwt = true
+
+[functions.admin-business-needs]
+verify_jwt = true
+
+[functions.notify-business-need]
+verify_jwt = true
+
+[functions.regenerate-sitemap]
+verify_jwt = true
+
+[functions.reservations]
+verify_jwt = true
+
+[functions.reupload-with-cache]
+verify_jwt = true
+
+[functions.sync-airtable]
+verify_jwt = true

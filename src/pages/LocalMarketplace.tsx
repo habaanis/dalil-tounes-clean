@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search, Plus, MapPin, Tag, TrendingUp, AlertCircle, Zap } from 'lucide-react';
+import { Search, Plus, TrendingUp, AlertCircle, Zap } from 'lucide-react';
 import { supabase } from '../lib/BoltDatabase';
 import { useLanguage } from '../context/LanguageContext';
 import AnnouncementForm from '../components/AnnouncementForm';
@@ -8,21 +8,24 @@ import MarketplaceCard from '../components/MarketplaceCard';
 import LocationSelectTunisie from '../components/LocationSelectTunisie';
 import BonnesAffaires from '../components/BonnesAffaires';
 import AlerteRechercheForm from '../components/AlerteRechercheForm';
-import SearchBar from '../components/SearchBar';
-import { isSearchBarAllowed } from '../config/searchBars';
 import { getSupabaseImageUrl } from '../lib/imageUtils';
 
 interface Announcement {
   id: string;
-  titre: string;
+  title: string;
   description: string;
-  prix: number;
-  localisation_ville: string;
-  contact_tel: string;
+  price: number;
+  city: string;
   photo_url: string[];
-  categorie: string;
+  category: string;
   type_annonce: string;
-  vues: number;
+  urgent: boolean;
+  date_publication: string;
+  hours_ago: number;
+  vendeur_badge?: string;
+  vendeur_note?: number;
+  vues?: number;
+  contact_tel?: string;
   created_at: string;
 }
 

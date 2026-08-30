@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Briefcase, Users, Building2, Settings, LogOut, Crown } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Briefcase, Users, Building2, Settings, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import JobPostForm from '../components/forms/JobPostForm';
 

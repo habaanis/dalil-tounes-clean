@@ -37,15 +37,12 @@ interface HomeProps {
   onSearchSubmit?: (keyword: string, city: string) => void;
 }
 
-export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSearchSubmit }: HomeProps = {}) => {
+export const Home = ({ onNavigate, onNavigateToBusiness }: HomeProps = {}) => {
   const { language } = useLanguage();
   const t = useTranslation(language);
   const residualT = getHomeJobsResidualTranslations(language).home;
   const navigate = useNavigate();
   const { partners, totalCount, certifiedCount, loading } = useHomeData();
-
-  // État pour capturer la valeur de recherche
-  const [searchQuery, setSearchQuery] = React.useState('');
 
   // Tout ce qui est sous la barre de recherche est monté APRÈS le LCP.
   // On déclenche : 2 s après le chargement OU dès que l'utilisateur
@@ -75,17 +72,11 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
   }, [belowFoldReady]);
 
   const handleNavigateToBusinessDetail = (businessId: number | string) => {
-    console.log('🔥 [Home] handleNavigateToBusinessDetail appelé');
-    console.log('📌 businessId:', businessId);
-    console.log('📌 onNavigateToBusiness:', !!onNavigateToBusiness);
-
     const id = typeof businessId === 'number' ? businessId.toString() : businessId;
 
     if (onNavigateToBusiness) {
-      console.log('✅ Utilisation du callback onNavigateToBusiness');
       onNavigateToBusiness(id);
     } else {
-      console.log('✅ Navigation directe vers /business/' + id);
       navigate(`/business/${id}`);
     }
   };
@@ -95,23 +86,6 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
       behavior: 'smooth',
       block: 'start',
     });
-  };
-
-  const handleNavigate = (page: string) => {
-    if (onNavigate) {
-      onNavigate(page as any);
-    } else {
-      // Fallback navigation avec React Router
-      const pageMap: Record<string, string> = {
-        'businesses': '/businesses',
-        'citizens': '/citizens',
-        'jobs': '/jobs',
-        'subscription': '/subscription',
-        'candidateList': '/candidates',
-        'businessList': '/business-list'
-      };
-      navigate(pageMap[page] || '/');
-    }
   };
 
   // ✅ Bouton demande : ouvre le formulaire simple directement sur la page d'accueil
@@ -233,7 +207,7 @@ export const Home = ({ onNavigate, onSuggestBusiness, onNavigateToBusiness, onSe
               className="absolute inset-0 w-full h-full object-cover"
               width="1200"
               height="400"
-              fetchpriority="high"
+              fetchPriority="high"
               loading="eager"
               decoding="async"
             />

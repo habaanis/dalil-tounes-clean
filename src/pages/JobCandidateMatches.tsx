@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Users, MapPin, Award, TrendingUp, Mail, ArrowLeft, Loader2, X } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Users, MapPin, Award, TrendingUp, Mail, Loader2, X } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
 import { useLanguage } from '../context/LanguageContext';
 import { getCompanyJobMatchTranslations } from '../lib/jobMatchPageTranslations';

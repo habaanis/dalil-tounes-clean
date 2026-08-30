@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Building2, MapPin, Clock, Award, DollarSign, Mail, Phone, Calendar, Loader, Users } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
 import { JobPosting } from '../hooks/useJobSearch';

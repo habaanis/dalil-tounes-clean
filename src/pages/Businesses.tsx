@@ -1208,7 +1208,6 @@ export const Businesses = ({
   };
 
   const categories = Array.isArray(businesses) ? [...new Set(businesses.map((b) => b.category).filter(Boolean))].sort() : [];
-  const cities = Array.isArray(businesses) ? [...new Set(businesses.map((b) => b.city).filter(Boolean))].sort() : [];
 
   const filteredBusinesses = Array.isArray(chipFilteredBusinesses) ? chipFilteredBusinesses : [];
 

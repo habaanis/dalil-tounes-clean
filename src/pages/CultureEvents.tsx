@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Calendar, ArrowLeft } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import { supabase } from '../lib/BoltDatabase';
 import { useLanguage } from '../context/LanguageContext';
 import { Language } from '../lib/i18n';
@@ -22,11 +22,7 @@ interface CultureEvent {
   secteur_evenement?: string;
 }
 
-interface CultureEventsProps {
-  onNavigateBack?: () => void;
-}
-
-export default function CultureEvents({ onNavigateBack }: CultureEventsProps = {}) {
+export default function CultureEvents() {
   const { language } = useLanguage();
 
   const url = new URL(window.location.href);
@@ -35,7 +31,7 @@ export default function CultureEvents({ onNavigateBack }: CultureEventsProps = {
   const [weeklyEvents, setWeeklyEvents] = useState<CultureEvent[]>([]);
   const [monthlyEvents, setMonthlyEvents] = useState<CultureEvent[]>([]);
   const [annualEvents, setAnnualEvents] = useState<CultureEvent[]>([]);
-  const [allEvents, setAllEvents] = useState<CultureEvent[]>([]);
+  const [, setAllEvents] = useState<CultureEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedSecteur, setSelectedSecteur] = useState<string>(secteurParam);
 
@@ -207,8 +203,6 @@ export default function CultureEvents({ onNavigateBack }: CultureEventsProps = {
       setMonthlyEvents(monthly);
       setAnnualEvents(annual);
       setAllEvents(allData);
-
-      console.log('Événements chargés:', { total: allData.length, weekly: weekly.length, monthly: monthly.length, annual: annual.length });
 
     } catch (error: any) {
       console.error('Exception:', error);

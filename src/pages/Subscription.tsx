@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import {
   Check,
   ChevronRight,
@@ -664,22 +664,6 @@ type SubscriptionCopy = (typeof subscriptionCopy)[keyof typeof subscriptionCopy]
 
 type OfferLanguage = keyof typeof subscriptionCopy;
 
-const personalAccessCopy: Record<OfferLanguage, string> = {
-  fr: 'Accès personnel pour gérer tes informations',
-  ar: 'دخول شخصي لإدارة معلوماتك',
-  en: 'Personal access to manage your information',
-  it: 'Accesso personale per gestire le tue informazioni',
-  ru: 'Личный доступ для управления информацией',
-};
-
-const accordionDescriptionLeadCopy: Record<OfferLanguage, string> = {
-  fr: 'Cette prestation est incluse et adaptée aux informations de ton activité.',
-  ar: 'هذه الخدمة مشمولة ويتم تكييفها مع معلومات نشاطك.',
-  en: 'This service is included and tailored to your business information.',
-  it: 'Questa prestazione è inclusa e adattata alle informazioni della tua attività.',
-  ru: 'Эта услуга включена и адаптируется к информации о вашей деятельности.',
-};
-
 const essentialCvCopy: Record<OfferLanguage, {
   title: string;
   subtitle: string;
@@ -739,25 +723,6 @@ const essentialCvCopy: Record<OfferLanguage, {
     payOnce: '79 TND одним платежом', payThreeTimes: '27 + 26 + 26 TND', publication: 'Окончательная публикация выполняется после полной оплаты.', ideal: 'Подходит для старта с понятной презентацией и основной информацией.', choose: 'Выбрать Essential', planLabel: 'CV Business Essential — 79 TND', completeIdeal: 'Подходит, если вам нужна более полная, структурированная и подробная презентация деятельности, услуг и опыта.', helpTitle: 'Не уверены, какой вариант выбрать?', helpText: 'Напишите нам в WhatsApp или по электронной почте. Мы поможем выбрать решение под вашу деятельность и бюджет, не склоняя вас к неоправданно дорогому варианту.',
   },
 };
-
-const paymentChoiceCopy: Record<OfferLanguage, {
-  title: string;
-  monthly: string;
-  annual: string;
-  threeMonthsFree: string;
-  mostEconomical: string;
-  artisanAnnualPrice: string;
-  premiumAnnualPrice: string;
-}> = {
-  fr: { title: 'Choisis ton rythme de paiement', monthly: 'Mensuel', annual: 'Annuel', threeMonthsFree: '3 mois offerts', mostEconomical: 'Le plus économique', artisanAnnualPrice: '299 TND / an', premiumAnnualPrice: '595 TND / an' },
-  ar: { title: 'اختر وتيرة الدفع', monthly: 'شهري', annual: 'سنوي', threeMonthsFree: '3 أشهر مجانًا', mostEconomical: 'الأكثر توفيرًا', artisanAnnualPrice: '299 TND / سنة', premiumAnnualPrice: '595 TND / سنة' },
-  en: { title: 'Choose your payment schedule', monthly: 'Monthly', annual: 'Annual', threeMonthsFree: '3 months free', mostEconomical: 'Best value', artisanAnnualPrice: '299 TND / year', premiumAnnualPrice: '595 TND / year' },
-  it: { title: 'Scegli il ritmo di pagamento', monthly: 'Mensile', annual: 'Annuale', threeMonthsFree: '3 mesi gratuiti', mostEconomical: 'Il più conveniente', artisanAnnualPrice: '299 TND / anno', premiumAnnualPrice: '595 TND / anno' },
-  ru: { title: 'Выбери периодичность оплаты', monthly: 'Ежемесячно', annual: 'Ежегодно', threeMonthsFree: '3 месяца бесплатно', mostEconomical: 'Самый выгодный вариант', artisanAnnualPrice: '299 TND / год', premiumAnnualPrice: '595 TND / год' },
-};
-function ensureFeatureDescriptions(items: readonly string[], description: string) {
-  return items.map((item) => splitFeature(item).description ? item : `${item} — ${description}`);
-}
 
 const offerCopy: Record<OfferLanguage, {
   artisanPrice: string;
@@ -895,83 +860,6 @@ function FeatureList({
         </li>
       ))}
     </ul>
-  );
-}
-
-function splitFeature(feature: string) {
-  const separatorIndex = feature.indexOf(' — ');
-  if (separatorIndex === -1) return { title: feature, description: '' };
-
-  return {
-    title: feature.slice(0, separatorIndex),
-    description: feature.slice(separatorIndex + 3),
-  };
-}
-
-function FeatureAccordion({
-  items,
-  variant = 'dark',
-  columns = false,
-}: {
-  items: string[];
-  variant?: 'dark' | 'light';
-  columns?: boolean;
-}) {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const accordionId = useId().replace(/:/g, '');
-  const isDark = variant === 'dark';
-
-  return (
-    <div className={columns ? 'grid items-start gap-x-6 sm:grid-cols-2' : ''}>
-      {items.map((feature, index) => {
-        const { title, description } = splitFeature(feature);
-        const isOpen = openIndex === index;
-        const panelId = `${accordionId}-panel-${index}`;
-        const buttonId = `${accordionId}-button-${index}`;
-
-        return (
-          <div
-            key={feature}
-            className={isDark ? 'border-b border-white/15 last:border-b-0' : 'border-b border-amber-100 last:border-b-0'}
-          >
-            <button
-              id={buttonId}
-              type="button"
-              aria-expanded={isOpen}
-              aria-controls={panelId}
-              onClick={() => setOpenIndex(isOpen ? null : index)}
-              className={`flex min-h-12 w-full items-center gap-3 py-3 text-start text-sm font-semibold leading-5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D6AF2E] focus-visible:ring-inset ${
-                isDark ? `text-emerald-50 hover:text-white ${isOpen ? 'text-white' : ''}` : 'text-slate-700 hover:text-[#4A123F]'
-              }`}
-            >
-              <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${isDark ? 'bg-white/10 text-[#F0C537]' : 'bg-emerald-50 text-emerald-700'}`}>
-                <Check className="h-3 w-3" aria-hidden="true" />
-              </span>
-              <span className="flex-1">{title}</span>
-              <ChevronRight
-                className={`h-4 w-4 shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-90' : ''}`}
-                aria-hidden="true"
-              />
-              <span className="sr-only">{isOpen ? '−' : '+'}</span>
-            </button>
-            <div
-              id={panelId}
-              role="region"
-              aria-labelledby={buttonId}
-              className={`grid transition-[grid-template-rows,opacity] duration-200 ease-out ${isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}
-            >
-              <div className="overflow-hidden">
-                {description && (
-                  <p className={`pb-4 ps-8 pe-2 text-sm leading-6 ${isDark ? 'text-emerald-100/90' : 'text-slate-600'}`}>
-                    {description}
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
-        );
-      })}
-    </div>
   );
 }
 
@@ -1276,7 +1164,7 @@ function CreationPlanCard({
   creationLabel: string;
   firstYearIncluded: string;
   intro: string;
-  features: readonly string[];
+  features: string[];
   previewLabel: string;
   chooseLabel: string;
   onPreview: () => void;
@@ -1308,11 +1196,8 @@ export const Subscription = () => {
   const isArabic = language === 'ar';
   const copy = subscriptionCopy[language as keyof typeof subscriptionCopy] ?? subscriptionCopy.fr;
   const essentialCopy = essentialCvCopy[language as OfferLanguage] ?? essentialCvCopy.fr;
-  const paymentCopy = paymentChoiceCopy[language as OfferLanguage] ?? paymentChoiceCopy.fr;
   const simpleCopy = simplifiedOfferCopy[language as OfferLanguage] ?? simplifiedOfferCopy.fr;
   const [activePreview, setActivePreview] = useState<PreviewType>(null);
-  const [showCvDetails, setShowCvDetails] = useState(false);
-  const cvDetailsId = useId().replace(/:/g, '');
   const [selectedPlan, setSelectedPlan] = useState<{
     code: SubscriptionPlanCode;
     label: string;

@@ -10,6 +10,7 @@ import { enableCvBusinessVisualPolish } from './lib/cvBusinessVisualPolish';
 import { LanguageProvider } from './context/LanguageContext';
 import { AuthProvider } from './context/AuthContext';
 import ScrollToTopButton from './components/ScrollToTopButton';
+import ErrorBoundary from './components/ErrorBoundary';
 
 // Suppression des warnings Supabase tracing non critiques
 const originalConsoleWarn = console.warn;

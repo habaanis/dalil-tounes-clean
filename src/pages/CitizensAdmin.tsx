@@ -1,13 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
-import { MapPin, Filter, Clock, FileText, Users, Building2, AlertCircle, CheckCircle, Phone, ExternalLink, Download, ArrowLeft, Loader2, Tag, Landmark } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { MapPin, Clock, FileText, Building2, AlertCircle, CheckCircle, Phone, ExternalLink, Download, Loader2, Landmark } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
 import { Tables } from '../lib/dbTables';
-import LocationSelectTunisie from '../components/LocationSelectTunisie';
 import { useLanguage } from '../context/LanguageContext';
 import { Language } from '../lib/i18n';
 import SearchBar from '../components/SearchBar';
-import { getAdminCategoryLabel } from '../lib/adminCategories';
 import { readParams } from '../lib/urlParams';
 import { getSupabaseImageUrl } from '../lib/imageUtils';
 import UnifiedBusinessCard from '../components/UnifiedBusinessCard';
@@ -50,20 +47,13 @@ interface Etablissement {
   longitude: number;
 }
 
-interface CitizensAdminProps {
-  onNavigateBack?: () => void;
-}
-
-export default function CitizensAdmin({ onNavigateBack }: CitizensAdminProps = {}) {
+export default function CitizensAdmin() {
   const navigate = useNavigate();
   const { language } = useLanguage();
   const { q, ville } = readParams();
 
-  const [searchQuery, setSearchQuery] = useState('');
+  const [, setSearchQuery] = useState('');
   const [selectedCity, setSelectedCity] = useState('');
-  const [publicType, setPublicType] = useState<'citoyen' | 'expat' | 'visiteur'>('citoyen');
-  const [serviceFilter, setServiceFilter] = useState('');
-  const [showOpenNow, setShowOpenNow] = useState(false);
   const [demarches, setDemarches] = useState<Demarche[]>([]);
   const [etablissements, setEtablissements] = useState<Etablissement[]>([]);
   const [loading, setLoading] = useState(true);
@@ -350,11 +340,12 @@ export default function CitizensAdmin({ onNavigateBack }: CitizensAdminProps = {
     if (ville) setSelectedCity(ville);
   }, [q, ville]);
 
+
   useEffect(() => {
     loadDemarches();
     loadEtablissements();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [publicType, selectedCity, serviceFilter, q, ville]);
+  }, [selectedCity, q, ville]);
 
   const loadDemarches = async () => {
     setLoading(true);
@@ -435,7 +426,6 @@ export default function CitizensAdmin({ onNavigateBack }: CitizensAdminProps = {
       }
 
       const { data, error } = await query;
-      console.log('DEBUG ADMIN RESULTATS', { data, error, count: data?.length });
 
       if (error) throw error;
 
