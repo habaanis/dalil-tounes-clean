@@ -1,26 +1,5 @@
 import { useState, type CSSProperties, type ReactNode } from 'react';
-import {
-  CalendarDays,
-  ChevronRight,
-  Clock3,
-  Contact,
-  Facebook,
-  Globe2,
-  Images,
-  Instagram,
-  Linkedin,
-  Mail,
-  MapPin,
-  MessageCircle,
-  Music2,
-  Navigation,
-  Phone,
-  QrCode,
-  Share2,
-  Star,
-  Wrench,
-  Youtube,
-} from 'lucide-react';
+import { CalendarDays, ChevronRight, Clock3, Contact, Facebook, Globe as Globe2, Images, Instagram, Linkedin, Mail, MapPin, MessageCircle, Music2, Navigation, Phone, QrCode, Share2, Star, Wrench, Youtube } from 'lucide-react';
 import './businessShowcaseLienora.css';
 import '../styles/cvBusinessPolish.css';
 
