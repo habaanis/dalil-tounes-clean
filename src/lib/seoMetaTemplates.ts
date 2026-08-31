@@ -20,12 +20,12 @@ function truncate(s: string, max: number): string {
 
 export function getHomeSeoMeta(): SeoMeta {
   return {
-    title: `Annuaire Entreprises Tunisie | ${SITE}`,
+    title: `Plateforme des professionnels en Tunisie | CV Business | ${SITE}`,
     description: truncate(
-      'Trouvez les meilleurs professionnels, commerces et services en Tunisie. Avis, horaires et coordonnees sur Dalil Tounes, annuaire de reference.',
+      'Dalil Tounes est la plateforme tunisienne qui développe le CV Business des professionnels. Découvrez entreprises, artisans, commerces et services partout en Tunisie.',
       160,
     ),
-    keywords: 'annuaire tunisie, entreprises tunisie, professionnels tunisie, commerces tunisie, services tunisie',
+    keywords: 'annuaire tunisie, entreprises tunisie, dalil tounes, professionnels tunisie, cv business tunisie, artisans tunisie, commerces tunisie, services tunisie',
     canonical: DOMAIN,
   };
 }
