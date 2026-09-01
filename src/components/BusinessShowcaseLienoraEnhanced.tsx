@@ -16,11 +16,6 @@ type BusinessRecord = {
   [key: string]: unknown;
 };
 
-type InstallPromptEvent = Event & {
-  prompt: () => Promise<void>;
-  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
-};
-
 const normalizeUrl = (value: unknown): string => {
   const raw = String(value || '').trim();
   if (!raw) return '';
@@ -69,17 +64,11 @@ const isReviewsLabel = (label: string): boolean => {
   );
 };
 
-const isStandalone = (): boolean => {
-  const iosStandalone = Boolean((navigator as Navigator & { standalone?: boolean }).standalone);
-  return window.matchMedia?.('(display-mode: standalone)').matches || iosStandalone;
-};
-
 export default function BusinessShowcaseLienoraEnhanced() {
   const { id, slug } = useParams<{ id?: string; slug?: string }>();
   const { language } = useLanguage();
   const text = getPublicComponentTranslations(language);
   const [business, setBusiness] = useState<BusinessRecord | null>(null);
-  const [installPrompt, setInstallPrompt] = useState<InstallPromptEvent | null>(null);
 
   const reviewsUrl = useMemo(() => getGoogleReviewsUrl(business), [business]);
 
@@ -114,83 +103,35 @@ export default function BusinessShowcaseLienoraEnhanced() {
   }, [id, slug]);
 
   useEffect(() => {
-    const onBeforeInstallPrompt = (event: Event) => {
-      event.preventDefault();
-      setInstallPrompt(event as InstallPromptEvent);
-    };
-    const onInstalled = () => setInstallPrompt(null);
-
-    window.addEventListener('beforeinstallprompt', onBeforeInstallPrompt);
-    window.addEventListener('appinstalled', onInstalled);
-    return () => {
-      window.removeEventListener('beforeinstallprompt', onBeforeInstallPrompt);
-      window.removeEventListener('appinstalled', onInstalled);
-    };
-  }, []);
-
-  useEffect(() => {
     const enhance = () => {
-      if (reviewsUrl) {
-        document.querySelectorAll<HTMLButtonElement>('.dt-accordion-trigger').forEach(button => {
-          if (!isReviewsLabel(button.textContent || '')) return;
+      if (!reviewsUrl) return;
 
-          button.dataset.googleReviewsUrl = reviewsUrl;
-          if (button.dataset.googleReviewsLinked !== 'true') {
-            button.dataset.googleReviewsLinked = 'true';
-            button.title = text.googleReviews;
-            button.addEventListener(
-              'click',
-              event => {
-                event.preventDefault();
-                event.stopImmediatePropagation();
-                const target = button.dataset.googleReviewsUrl;
-                if (target) window.open(target, '_blank', 'noopener,noreferrer');
-              },
-              true,
-            );
-          }
-        });
-      }
+      document.querySelectorAll<HTMLButtonElement>('.dt-accordion-trigger').forEach(button => {
+        if (!isReviewsLabel(button.textContent || '')) return;
 
-      const actions = document.querySelector<HTMLElement>('.dt-showcase .dt-actions');
-      if (!actions) return;
+        button.dataset.googleReviewsUrl = reviewsUrl;
+        if (button.dataset.googleReviewsLinked === 'true') return;
 
-      let installButton = actions.querySelector<HTMLButtonElement>('.dt-install-business-app');
-      if (isStandalone()) {
-        installButton?.remove();
-        return;
-      }
-
-      if (!installButton) {
-        installButton = document.createElement('button');
-        installButton.type = 'button';
-        installButton.className = 'dt-install-business-app';
-        actions.appendChild(installButton);
-      }
-
-      if (installButton.dataset.label !== text.installQr) {
-        installButton.dataset.label = text.installQr;
-        installButton.innerHTML = `<span class="dt-install-business-app-icon" aria-hidden="true">⌂</span><span>${text.installQr}</span>`;
-      }
-
-      installButton.onclick = async () => {
-        if (installPrompt) {
-          await installPrompt.prompt();
-          const choice = await installPrompt.userChoice;
-          if (choice.outcome === 'accepted') setInstallPrompt(null);
-          return;
-        }
-
-        const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
-        window.alert(isIos ? text.installIos : text.installAndroid);
-      };
+        button.dataset.googleReviewsLinked = 'true';
+        button.title = text.googleReviews;
+        button.addEventListener(
+          'click',
+          event => {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            const target = button.dataset.googleReviewsUrl;
+            if (target) window.open(target, '_blank', 'noopener,noreferrer');
+          },
+          true,
+        );
+      });
     };
 
     enhance();
     const observer = new MutationObserver(enhance);
     observer.observe(document.body, { childList: true, subtree: true });
     return () => observer.disconnect();
-  }, [installPrompt, reviewsUrl, text]);
+  }, [reviewsUrl, text.googleReviews]);
 
   return <BusinessShowcaseLienoraDetail />;
 }
