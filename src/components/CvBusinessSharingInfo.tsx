@@ -1,5 +1,4 @@
 import { Link2, QrCode, Share2 } from 'lucide-react';
-import { CvBusinessQrVisual } from './CvBusinessProductVisuals';
 
 export type CvBusinessSharingLanguage = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 
@@ -54,10 +53,6 @@ export function CvBusinessSharingInfo({ language = 'fr', className = '' }: { lan
           </div>
         </div>
       </aside>
-
-      <div className="mt-5">
-        <CvBusinessQrVisual language={language} />
-      </div>
     </div>
   );
 }
