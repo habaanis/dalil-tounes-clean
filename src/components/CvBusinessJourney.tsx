@@ -90,7 +90,7 @@ const COPY: Record<BusinessCardPreviewLanguage, {
 
 function JourneyArrow({ rtl }: { rtl: boolean }) {
   return (
-    <div className="hidden h-[360px] items-center justify-center lg:flex" aria-hidden="true">
+    <div className="hidden h-[400px] items-center justify-center lg:flex" aria-hidden="true">
       <ArrowRight className={`h-6 w-6 text-[#D5B257] ${rtl ? 'rotate-180' : ''}`} />
     </div>
   );
@@ -100,7 +100,7 @@ function PwaPhone({ language }: { language: BusinessCardPreviewLanguage }) {
   const t = COPY[language];
   const rtl = language === 'ar';
   return (
-    <div className="mx-auto flex h-[360px] w-[180px] flex-col overflow-hidden rounded-[28px] border-[4px] border-[#1b1b1b] bg-[#111820] shadow-[0_16px_36px_rgba(0,0,0,0.22)]" dir={rtl ? 'rtl' : 'ltr'}>
+    <div className="mx-auto flex h-[400px] w-[200px] flex-col overflow-hidden rounded-[30px] border-[4px] border-[#1b1b1b] bg-[#111820] shadow-[0_16px_36px_rgba(0,0,0,0.22)]" dir={rtl ? 'rtl' : 'ltr'}>
       <div className="flex items-center justify-between px-3.5 pt-2.5 text-[8px] font-bold text-white">
         <span>11:30</span>
         <span>● ● ▬</span>
@@ -138,7 +138,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
 
   return (
     <section className="border-y border-[#D5B257]/25 bg-[radial-gradient(circle_at_top,rgba(213,178,87,0.12),transparent_32%),linear-gradient(180deg,#fffdf8_0%,#ffffff_100%)] px-4 py-5 sm:py-6" dir={rtl ? 'rtl' : 'ltr'}>
-      <div className="mx-auto max-w-[900px]">
+      <div className="mx-auto max-w-[820px]">
         <div className="mx-auto max-w-2xl text-center">
           <div className="inline-flex items-center gap-1.5 rounded-full border border-[#D5B257]/45 bg-white px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.11em] text-[#4A1D43] shadow-sm">
             <Smartphone className="h-3 w-3 text-[#D5B257]" aria-hidden="true" />
@@ -148,31 +148,31 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
           <p className="mx-auto mt-1 max-w-xl text-xs leading-5 text-gray-600 sm:text-[13px]">{t.subtitle}</p>
         </div>
 
-        <div className="mt-4 grid items-start justify-center gap-y-5 lg:grid-cols-[180px_32px_180px_32px_180px] lg:gap-x-3">
-          <article className="w-[180px] text-center">
+        <div className="mt-4 grid items-start justify-items-center gap-y-6 lg:grid-cols-[230px_22px_230px_22px_230px] lg:gap-x-2">
+          <article className="w-full max-w-[230px] text-center">
             <div className="mb-1.5 inline-flex rounded-full bg-[#032D21] px-2.5 py-1 text-[10px] font-black text-[#F4CE55]">{t.pwaTitle}</div>
             <PwaPhone language={language} />
-            <p className="mx-auto mt-2 max-w-[180px] text-[11px] leading-4.5 text-gray-700">{t.pwaText}</p>
+            <p className="mx-auto mt-2 max-w-[220px] text-[11px] leading-4.5 text-gray-700">{t.pwaText}</p>
           </article>
 
           <JourneyArrow rtl={rtl} />
 
-          <article className="w-[180px] text-center">
+          <article className="w-full max-w-[230px] text-center">
             <div className="mb-1.5 inline-flex rounded-full bg-[#032D21] px-2.5 py-1 text-[10px] font-black text-[#F4CE55]">{t.qrTitle}</div>
-            <div className="mx-auto h-[360px] w-[180px] overflow-visible">
-              <div className="origin-top-left scale-[0.51] rtl:origin-top-right">
+            <div className="mx-auto h-[400px] w-[230px] overflow-visible">
+              <div className="origin-top-left scale-[0.65] rtl:origin-top-right">
                 <CvBusinessQrVisual language={language} />
               </div>
             </div>
-            <p className="mx-auto mt-2 max-w-[180px] text-[11px] leading-4.5 text-gray-700">{t.qrText}</p>
+            <p className="mx-auto mt-2 max-w-[220px] text-[11px] leading-4.5 text-gray-700">{t.qrText}</p>
           </article>
 
           <JourneyArrow rtl={rtl} />
 
-          <article className="w-[180px] text-center">
+          <article className="w-full max-w-[230px] text-center">
             <div className="mb-1.5 inline-flex rounded-full bg-[#032D21] px-2.5 py-1 text-[10px] font-black text-[#F4CE55]">{t.cvTitle}</div>
-            <div className="mx-auto h-[360px] w-[180px] overflow-hidden">
-              <div className="origin-top-left scale-[0.625] rtl:origin-top-right">
+            <div className="mx-auto h-[400px] w-[230px] overflow-hidden">
+              <div className="origin-top-left scale-[0.64] rtl:origin-top-right">
                 <BusinessCardPreview
                   variant="premium"
                   size="compact"
@@ -182,7 +182,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
                 />
               </div>
             </div>
-            <p className="mx-auto mt-2 max-w-[180px] text-[11px] leading-4.5 text-gray-700">{t.cvText}</p>
+            <p className="mx-auto mt-2 max-w-[220px] text-[11px] leading-4.5 text-gray-700">{t.cvText}</p>
           </article>
         </div>
 
