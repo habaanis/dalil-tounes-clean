@@ -97,17 +97,20 @@ export default async function handler(request: Request) {
 
   const origin = checkoutOrigin(request);
   const orderRef = safeReference(payload.orderRef || payload.requestId);
-  const successUrl = new URL('/subscription', origin);
-  successUrl.searchParams.set('checkout', 'success');
+  const successUrl = new URL('/paiement/confirmation', origin);
+  successUrl.searchParams.set('provider', 'stripe');
   successUrl.searchParams.set('session_id', '{CHECKOUT_SESSION_ID}');
   if (orderRef) successUrl.searchParams.set('order_ref', orderRef);
+
+  const cancelUrl = new URL('/subscription', origin);
+  cancelUrl.searchParams.set('checkout', 'cancelled');
 
   const form = new URLSearchParams({
     mode: expected.mode,
     'line_items[0][price]': expected.priceId,
     'line_items[0][quantity]': '1',
     success_url: successUrl.toString(),
-    cancel_url: `${origin}/subscription?checkout=cancelled`,
+    cancel_url: cancelUrl.toString(),
     locale: 'auto',
     'metadata[dalil_tounes_offer]': offer,
   });
