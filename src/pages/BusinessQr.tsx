@@ -237,12 +237,12 @@ export default function BusinessQr() {
   };
 
   if (loading) {
-    return <div className="min-h-screen grid place-items-center bg-[#003C31] text-white">{text.loading}</div>;
+    return <div className="fixed inset-0 z-[10000] grid place-items-center bg-[#003C31] text-white">{text.loading}</div>;
   }
 
   if (!business || !premiumAccess) {
     return (
-      <div className="min-h-screen grid place-items-center bg-[#F6F7F4] px-4 text-center">
+      <div className="fixed inset-0 z-[10000] grid place-items-center overflow-y-auto bg-[#F6F7F4] px-4 text-center">
         <div className="max-w-md rounded-3xl border border-[#D4AF37]/40 bg-white p-8 shadow-xl">
           <p className="text-gray-700">{text.unavailable}</p>
           <Link to={cvPath} className="mt-5 inline-flex rounded-full bg-[#0B4B3E] px-5 py-2.5 font-semibold text-white">{text.back}</Link>
@@ -252,7 +252,7 @@ export default function BusinessQr() {
   }
 
   return (
-    <main className="min-h-screen bg-[#003C31] px-3 py-4 sm:py-6" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+    <main className="fixed inset-0 z-[10000] overflow-y-auto bg-[#003C31] px-3 py-4 sm:py-6" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       <CvBusinessQrVisual
         language={language}
         name={business.nom}
