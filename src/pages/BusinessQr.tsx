@@ -248,9 +248,9 @@ export default function BusinessQr() {
   }
 
   return (
-    <main className="min-h-screen bg-[#F6F7F4] px-3 py-6 sm:px-4 sm:py-8" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-      <div className="mx-auto max-w-[430px] overflow-hidden rounded-[2rem] border-2 border-[#D4AF37] bg-[#073D34] text-center text-white shadow-2xl">
-        <div className="relative h-36 overflow-hidden bg-[#0A3A31] sm:h-40">
+    <main className="min-h-screen bg-[#F6F7F4] px-3 py-4 sm:py-6" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+      <div className="mx-auto w-full max-w-[360px] overflow-hidden rounded-[26px] border-[1.5px] border-[#D4AF37] bg-[#063D33] text-center text-white shadow-[0_18px_45px_rgba(0,45,35,0.24)]">
+        <div className="relative h-[116px] overflow-hidden bg-[#0A3A31]">
           <img
             src={coverUrl}
             alt=""
@@ -261,59 +261,61 @@ export default function BusinessQr() {
               event.currentTarget.src = HERO_IMAGE_URL;
             }}
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#073D34]/55" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#063D33]/35" />
         </div>
 
-        <div className="relative px-5 pb-5 sm:px-7">
-          <div className="mx-auto -mt-12 flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border-[3px] border-[#D4AF37] bg-[#073D34] p-1 shadow-xl">
+        <div className="relative px-5 pb-4">
+          <div className="mx-auto -mt-[38px] flex h-[76px] w-[76px] items-center justify-center overflow-hidden rounded-full border-2 border-[#D4AF37] bg-[#063D33] p-[3px] shadow-lg">
             <img src={logoUrl} alt={`Logo ${business.nom}`} className="h-full w-full rounded-full object-cover" />
           </div>
 
-          <h1 className="mt-3 text-2xl font-black leading-tight sm:text-[1.7rem]">{business.nom}</h1>
+          <h1 className="mt-3 font-serif text-[25px] font-bold leading-[1.05] tracking-[-0.02em] text-[#FFFDF5]">
+            {business.nom}
+          </h1>
           {business.categorie && (
-            <p className="mt-1 text-sm font-semibold text-[#F4CE55]">{business.categorie}</p>
+            <p className="mt-1 text-[13px] font-semibold text-[#E7C65A]">{business.categorie}</p>
           )}
-          <p className="mx-auto mt-3 max-w-sm text-sm leading-5 text-white/85">{text.scan}</p>
+          <p className="mx-auto mt-3 max-w-[285px] text-[13px] leading-[1.45] text-white/88">{text.scan}</p>
 
-          <div className="mx-auto mt-5 max-w-[300px] rounded-[1.5rem] bg-white p-3 shadow-inner sm:max-w-[320px] sm:p-4">
+          <div className="mx-auto mt-4 w-[244px] rounded-[18px] bg-white p-[10px] shadow-[0_8px_24px_rgba(0,0,0,0.16)]">
             <div className="relative mx-auto w-fit">
-              <QRCodeSVG id="dt-business-qr" value={cvUrl} size={280} level="H" includeMargin bgColor="#ffffff" fgColor="#000000" />
-              <div className="pointer-events-none absolute left-1/2 top-1/2 grid h-16 w-16 -translate-x-1/2 -translate-y-1/2 place-items-center overflow-hidden rounded-full border-4 border-white bg-[#073D34] shadow-md">
+              <QRCodeSVG id="dt-business-qr" value={cvUrl} size={224} level="H" includeMargin={false} bgColor="#ffffff" fgColor="#000000" />
+              <div className="pointer-events-none absolute left-1/2 top-1/2 grid h-[52px] w-[52px] -translate-x-1/2 -translate-y-1/2 place-items-center overflow-hidden rounded-full border-[3px] border-white bg-[#063D33] shadow-md">
                 <img src={logoUrl} alt="" className="h-full w-full object-cover" />
               </div>
             </div>
           </div>
 
-          <div className="mt-5 grid grid-cols-3 divide-x divide-[#D4AF37]/25 rtl:divide-x-reverse">
-            <button type="button" onClick={shareBusiness} className="flex min-w-0 flex-col items-center gap-1.5 px-1 py-2 text-[#F4CE55] transition hover:bg-white/5">
-              <Share2 size={20} />
-              <span className="text-[11px] font-medium leading-tight">{shareConfirmed ? text.shared : text.share}</span>
+          <div className="mt-4 grid grid-cols-3 divide-x divide-[#D4AF37]/25 rtl:divide-x-reverse">
+            <button type="button" onClick={shareBusiness} className="flex min-w-0 flex-col items-center justify-start gap-1 px-1 py-2 text-[#E7C65A] transition hover:bg-white/[0.03]">
+              <Share2 size={18} strokeWidth={1.8} />
+              <span className="text-[10px] font-medium leading-[1.15]">{shareConfirmed ? text.shared : text.share}</span>
             </button>
-            <button type="button" onClick={downloadPng} className="flex min-w-0 flex-col items-center gap-1.5 px-1 py-2 text-[#F4CE55] transition hover:bg-white/5">
-              <Download size={20} />
-              <span className="text-[11px] font-medium leading-tight">{text.download}</span>
+            <button type="button" onClick={downloadPng} className="flex min-w-0 flex-col items-center justify-start gap-1 px-1 py-2 text-[#E7C65A] transition hover:bg-white/[0.03]">
+              <Download size={18} strokeWidth={1.8} />
+              <span className="text-[10px] font-medium leading-[1.15]">{text.download}</span>
             </button>
-            <button type="button" onClick={installApp} className="flex min-w-0 flex-col items-center gap-1.5 px-1 py-2 text-[#F4CE55] transition hover:bg-white/5">
-              <Home size={20} />
-              <span className="text-[11px] font-medium leading-tight">{text.install}</span>
+            <button type="button" onClick={installApp} className="flex min-w-0 flex-col items-center justify-start gap-1 px-1 py-2 text-[#E7C65A] transition hover:bg-white/[0.03]">
+              <Home size={18} strokeWidth={1.8} />
+              <span className="max-w-[88px] text-[10px] font-medium leading-[1.15]">{text.install}</span>
             </button>
           </div>
 
           {showInstallHelp && (
-            <div className="mt-3 rounded-2xl border border-white/15 bg-black/15 p-4 text-start text-xs leading-5 text-white/85">
-              <p className="font-bold text-[#F4CE55]">{text.installTitle}</p>
-              <p className="mt-2">{text.installIos}</p>
+            <div className="mt-2.5 rounded-xl border border-white/12 bg-black/10 px-3 py-2.5 text-start text-[10px] leading-4 text-white/78">
+              <p className="font-bold text-[#E7C65A]">{text.installTitle}</p>
+              <p className="mt-1.5">{text.installIos}</p>
               <p>{text.installAndroid}</p>
             </div>
           )}
 
-          <Link to={cvPath} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[#D4AF37] px-4 py-3 font-bold text-white transition hover:bg-white/5">
-            <ExternalLink size={18} />{text.open}
+          <Link to={cvPath} className="mt-3 inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-[12px] border border-[#D4AF37] px-4 py-2.5 text-[14px] font-bold text-white transition hover:bg-white/[0.04]">
+            <ExternalLink size={16} />{text.open}
           </Link>
 
-          <div className="mt-5 flex items-center justify-center gap-2 text-xs text-white/55">
+          <div className="mt-3.5 flex items-center justify-center gap-1.5 text-[10px] text-white/50">
             <span>{text.powered}</span>
-            <span className="font-semibold text-white/75">Dalil Tounes</span>
+            <span className="font-semibold text-white/72">Dalil Tounes</span>
           </div>
         </div>
       </div>
