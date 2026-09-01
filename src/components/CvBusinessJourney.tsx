@@ -149,18 +149,18 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
           })}
         </div>
 
-        <div className="relative mt-3 rounded-[20px] border border-[#D5B257]/40 bg-white px-4 py-3 shadow-[0_12px_28px_rgba(46,16,42,0.06)] sm:px-5 sm:py-4">
+        <div className="relative mt-3 rounded-[20px] border border-[#D5B257]/40 bg-white px-4 py-1.5 shadow-[0_12px_28px_rgba(46,16,42,0.06)] sm:px-5 sm:py-2">
           <button type="button" onClick={previous} aria-label="Previous" className="absolute left-3 top-1/2 z-20 -translate-y-1/2 rounded-full border border-[#D5B257]/50 bg-white p-2 text-[#B98920] shadow-sm hover:bg-[#fff8e8]"><ChevronLeft className="h-5 w-5" /></button>
           <button type="button" onClick={next} aria-label="Next" className="absolute right-3 top-1/2 z-20 -translate-y-1/2 rounded-full border border-[#D5B257]/50 bg-white p-2 text-[#B98920] shadow-sm hover:bg-[#fff8e8]"><ChevronRight className="h-5 w-5" /></button>
 
-          <div className="grid min-h-[420px] items-center gap-3 md:grid-cols-[220px_1fr_55px] lg:grid-cols-[230px_1fr_60px]">
+          <div className="grid min-h-[380px] items-center gap-3 md:grid-cols-[220px_1fr_55px] lg:grid-cols-[230px_1fr_60px]">
             <div className="hidden md:block pl-2">
               <p className="font-serif text-[21px] font-bold leading-tight text-[#032D21]">{items[active].title}</p>
               <div className="mt-2 h-px w-8 bg-[#D5B257]" />
               <p className="mt-3 max-w-[210px] text-[13px] leading-5 text-gray-600">{items[active].text}</p>
             </div>
 
-            <div className="flex min-h-[400px] items-center justify-center overflow-visible">
+            <div className="flex min-h-[380px] items-center justify-center overflow-visible">
               {active === 0 && <PwaPhone language={language} />}
               {active === 1 && <div className="origin-center scale-[0.67] sm:scale-[0.70]"><CvBusinessQrVisual language={language} /></div>}
               {active === 2 && <div className="origin-center scale-[0.60] sm:scale-[0.64]"><BusinessCardPreview variant="premium" size="compact" language={language} name="Aux saveurs d’Anis" category={language === 'ar' ? 'ممون حفلات ومناسبات' : 'Traiteur événementiel'} /></div>}
