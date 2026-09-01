@@ -88,9 +88,12 @@ const COPY: Record<BusinessCardPreviewLanguage, {
   },
 };
 
+const FRAME_W = 220;
+const FRAME_H = 420;
+
 function JourneyArrow({ rtl }: { rtl: boolean }) {
   return (
-    <div className="hidden h-[440px] items-center justify-center lg:flex" aria-hidden="true">
+    <div className="hidden h-[420px] items-center justify-center lg:flex" aria-hidden="true">
       <ArrowRight className={`h-6 w-6 text-[#D5B257] ${rtl ? 'rotate-180' : ''}`} />
     </div>
   );
@@ -100,7 +103,7 @@ function PwaPhone({ language }: { language: BusinessCardPreviewLanguage }) {
   const t = COPY[language];
   const rtl = language === 'ar';
   return (
-    <div className="mx-auto flex h-[420px] w-[210px] flex-col overflow-hidden rounded-[30px] border-[4px] border-[#1b1b1b] bg-[#111820] shadow-[0_16px_36px_rgba(0,0,0,0.22)]" dir={rtl ? 'rtl' : 'ltr'}>
+    <div className="mx-auto flex h-[400px] w-[200px] flex-col overflow-hidden rounded-[30px] border-[4px] border-[#1b1b1b] bg-[#111820] shadow-[0_16px_36px_rgba(0,0,0,0.22)]" dir={rtl ? 'rtl' : 'ltr'}>
       <div className="flex items-center justify-between px-3.5 pt-2.5 text-[8px] font-bold text-white">
         <span>11:30</span>
         <span>● ● ▬</span>
@@ -137,7 +140,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
   const rtl = language === 'ar';
 
   return (
-    <section className="border-y border-[#D5B257]/25 bg-[radial-gradient(circle_at_top,rgba(213,178,87,0.12),transparent_32%),linear-gradient(180deg,#fffdf8_0%,#ffffff_100%)] px-4 py-5 sm:py-6" dir={rtl ? 'rtl' : 'ltr'}>
+    <section className="overflow-hidden border-y border-[#D5B257]/25 bg-[radial-gradient(circle_at_top,rgba(213,178,87,0.12),transparent_32%),linear-gradient(180deg,#fffdf8_0%,#ffffff_100%)] px-4 py-5 sm:py-6" dir={rtl ? 'rtl' : 'ltr'}>
       <div className="mx-auto max-w-[800px]">
         <div className="mx-auto max-w-2xl text-center">
           <div className="inline-flex items-center gap-1.5 rounded-full border border-[#D5B257]/45 bg-white px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.11em] text-[#4A1D43] shadow-sm">
@@ -151,7 +154,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
         <div className="mt-4 grid items-start justify-items-center gap-y-8 lg:grid-cols-[220px_26px_220px_26px_220px] lg:gap-x-2">
           <article className="w-[220px] text-center">
             <div className="mb-2 inline-flex rounded-full bg-[#032D21] px-2.5 py-1 text-[10px] font-black text-[#F4CE55]">{t.pwaTitle}</div>
-            <div className="flex h-[440px] items-start justify-center overflow-visible">
+            <div className="flex h-[420px] w-[220px] items-start justify-center overflow-hidden">
               <PwaPhone language={language} />
             </div>
             <p className="mx-auto mt-2 max-w-[220px] text-[11px] leading-4.5 text-gray-700">{t.pwaText}</p>
@@ -161,8 +164,8 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
 
           <article className="w-[220px] text-center">
             <div className="mb-2 inline-flex rounded-full bg-[#032D21] px-2.5 py-1 text-[10px] font-black text-[#F4CE55]">{t.qrTitle}</div>
-            <div className="relative mx-auto h-[440px] w-[220px] overflow-visible">
-              <div className="absolute left-1/2 top-0 origin-top -translate-x-1/2 scale-[0.60]">
+            <div className="relative mx-auto h-[420px] w-[220px] overflow-hidden">
+              <div className="absolute left-1/2 top-0 origin-top -translate-x-1/2 scale-[0.58]">
                 <CvBusinessQrVisual language={language} />
               </div>
             </div>
@@ -173,8 +176,8 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
 
           <article className="w-[220px] text-center">
             <div className="mb-2 inline-flex rounded-full bg-[#032D21] px-2.5 py-1 text-[10px] font-black text-[#F4CE55]">{t.cvTitle}</div>
-            <div className="relative mx-auto h-[440px] w-[220px] overflow-visible">
-              <div className="absolute left-1/2 top-0 origin-top -translate-x-1/2 scale-[0.76]">
+            <div className="relative mx-auto h-[420px] w-[220px] overflow-hidden rounded-[16px]">
+              <div className="absolute left-1/2 top-0 origin-top -translate-x-1/2 scale-[0.58]">
                 <BusinessCardPreview
                   variant="premium"
                   size="compact"
