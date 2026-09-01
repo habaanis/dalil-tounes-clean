@@ -2,6 +2,7 @@ import { ArrowRight, CheckCircle2, QrCode, Share2, Sparkles } from 'lucide-react
 import { useNavigate } from 'react-router-dom';
 import { BusinessCardPreview, type BusinessCardPreviewLanguage } from '../components/BusinessCardPreview';
 import { CvBusinessQrVisual } from '../components/CvBusinessProductVisuals';
+import CvBusinessJourney from '../components/CvBusinessJourney';
 import VisibilityHouseSection from '../components/VisibilityHouseSection';
 import { useLanguage } from '../context/LanguageContext';
 import { Home as PlatformHome } from './Home';
@@ -197,6 +198,8 @@ export default function HomeVitrineFirst() {
           </div>
         </div>
       </section>
+
+      <CvBusinessJourney language={lang} />
 
       <section className="bg-[#2E102A] px-4 py-6 text-center text-white">
         <div className="mx-auto max-w-4xl">
