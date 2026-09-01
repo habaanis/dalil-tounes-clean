@@ -138,7 +138,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
 
   return (
     <section className="overflow-hidden border-y border-[#D5B257]/25 bg-[radial-gradient(circle_at_top,rgba(213,178,87,0.12),transparent_32%),linear-gradient(180deg,#fffdf8_0%,#ffffff_100%)] px-4 py-6 sm:py-7" dir={rtl ? 'rtl' : 'ltr'}>
-      <div className="mx-auto max-w-[1040px]">
+      <div className="mx-auto max-w-[1180px]">
         <div className="mx-auto max-w-3xl text-center">
           <div className="inline-flex items-center gap-1.5 rounded-full border border-[#D5B257]/45 bg-white px-3 py-1 text-[9px] font-black uppercase tracking-[0.11em] text-[#4A1D43] shadow-sm">
             <Smartphone className="h-3 w-3 text-[#D5B257]" aria-hidden="true" />
@@ -148,7 +148,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
           <p className="mx-auto mt-1.5 max-w-2xl text-xs leading-5 text-gray-600 sm:text-[13px]">{t.subtitle}</p>
         </div>
 
-        <div className="mt-5 grid items-start justify-center gap-y-10 lg:grid-cols-[250px_38px_270px_38px_270px] lg:gap-x-3">
+        <div className="mt-5 grid items-start justify-center gap-y-10 lg:grid-cols-[250px_44px_330px_44px_330px] lg:gap-x-3">
           <article className="w-[250px] text-center">
             <div className="mb-2.5 inline-flex rounded-full bg-[#032D21] px-3.5 py-1.5 text-[11px] font-black text-[#F4CE55]">{t.pwaTitle}</div>
             <div className="h-[460px] w-[250px] overflow-hidden rounded-[34px]">
@@ -159,22 +159,22 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
 
           <JourneyArrow rtl={rtl} />
 
-          <article className="w-[270px] text-center">
+          <article className="w-[330px] text-center">
             <div className="mb-2.5 inline-flex rounded-full bg-[#032D21] px-3.5 py-1.5 text-[11px] font-black text-[#F4CE55]">{t.qrTitle}</div>
-            <div className="relative mx-auto h-[460px] w-[270px] overflow-hidden rounded-[30px]">
-              <div className="absolute left-1/2 top-0 origin-top -translate-x-1/2 scale-[0.76]">
+            <div className="relative mx-auto h-[460px] w-[330px] overflow-hidden rounded-[30px]">
+              <div className="absolute left-1/2 top-0 origin-top -translate-x-1/2 scale-[0.93]">
                 <CvBusinessQrVisual language={language} />
               </div>
             </div>
-            <p className="mx-auto mt-3 max-w-[260px] text-[12px] leading-5 text-gray-700">{t.qrText}</p>
+            <p className="mx-auto mt-3 max-w-[315px] text-[12px] leading-5 text-gray-700">{t.qrText}</p>
           </article>
 
           <JourneyArrow rtl={rtl} />
 
-          <article className="w-[270px] text-center">
+          <article className="w-[330px] text-center">
             <div className="mb-2.5 inline-flex rounded-full bg-[#032D21] px-3.5 py-1.5 text-[11px] font-black text-[#F4CE55]">{t.cvTitle}</div>
-            <div className="relative mx-auto h-[460px] w-[270px] overflow-hidden rounded-[30px]">
-              <div className="absolute left-1/2 top-0 origin-top -translate-x-1/2 scale-[0.94]">
+            <div className="relative mx-auto h-[460px] w-[330px] overflow-hidden rounded-[30px]">
+              <div className="absolute left-1/2 top-0 origin-top -translate-x-1/2 scale-[1.15]">
                 <BusinessCardPreview
                   variant="premium"
                   size="compact"
@@ -184,11 +184,11 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
                 />
               </div>
             </div>
-            <p className="mx-auto mt-3 max-w-[260px] text-[12px] leading-5 text-gray-700">{t.cvText}</p>
+            <p className="mx-auto mt-3 max-w-[315px] text-[12px] leading-5 text-gray-700">{t.cvText}</p>
           </article>
         </div>
 
-        <div className="mx-auto mt-6 flex max-w-4xl items-center justify-center gap-2 rounded-xl border border-[#D5B257]/45 bg-[#032D21] px-4 py-2.5 text-center text-[11px] font-bold text-white shadow-sm">
+        <div className="mx-auto mt-6 flex max-w-5xl items-center justify-center gap-2 rounded-xl border border-[#D5B257]/45 bg-[#032D21] px-4 py-2.5 text-center text-[11px] font-bold text-white shadow-sm">
           <Download className="h-3.5 w-3.5 shrink-0 text-[#F4CE55]" aria-hidden="true" />
           <span>{language === 'ar' ? 'التطبيق = وصول سريع • QR Business = مشاركة فورية • CV Business = العرض المهني الكامل' : 'Application = accès rapide • QR Business = partage immédiat • CV Business = présentation professionnelle complète'}</span>
         </div>
