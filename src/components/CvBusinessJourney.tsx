@@ -127,6 +127,8 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
   ];
   const previous = () => setActive((active + 2) % 3);
   const next = () => setActive((active + 1) % 3);
+  const compactSlideHeight = active === 0 ? 'min-h-[392px]' : active === 1 ? 'min-h-[410px]' : 'min-h-[380px]';
+  const compactVisualHeight = active === 0 ? 'h-[380px]' : active === 1 ? 'h-[400px]' : 'min-h-[380px]';
 
   return (
     <section className="border-y border-[#D5B257]/25 bg-[radial-gradient(circle_at_top,rgba(213,178,87,0.12),transparent_32%),linear-gradient(180deg,#fffdf8_0%,#ffffff_100%)] px-4 py-4 sm:py-5" dir={rtl ? 'rtl' : 'ltr'}>
@@ -153,16 +155,20 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
           <button type="button" onClick={previous} aria-label="Previous" className="absolute left-3 top-1/2 z-20 -translate-y-1/2 rounded-full border border-[#D5B257]/50 bg-white p-2 text-[#B98920] shadow-sm hover:bg-[#fff8e8]"><ChevronLeft className="h-5 w-5" /></button>
           <button type="button" onClick={next} aria-label="Next" className="absolute right-3 top-1/2 z-20 -translate-y-1/2 rounded-full border border-[#D5B257]/50 bg-white p-2 text-[#B98920] shadow-sm hover:bg-[#fff8e8]"><ChevronRight className="h-5 w-5" /></button>
 
-          <div className="grid min-h-[380px] items-center gap-3 md:grid-cols-[220px_1fr_55px] lg:grid-cols-[230px_1fr_60px]">
+          <div className={`grid ${compactSlideHeight} items-center gap-3 md:grid-cols-[220px_1fr_55px] lg:grid-cols-[230px_1fr_60px]`}>
             <div className="hidden md:block pl-2">
               <p className="font-serif text-[21px] font-bold leading-tight text-[#032D21]">{items[active].title}</p>
               <div className="mt-2 h-px w-8 bg-[#D5B257]" />
               <p className="mt-3 max-w-[210px] text-[13px] leading-5 text-gray-600">{items[active].text}</p>
             </div>
 
-            <div className="flex min-h-[380px] items-center justify-center overflow-visible">
+            <div className={`relative flex ${compactVisualHeight} items-center justify-center overflow-visible`}>
               {active === 0 && <PwaPhone language={language} />}
-              {active === 1 && <div className="origin-center scale-[0.67] sm:scale-[0.70]"><CvBusinessQrVisual language={language} /></div>}
+              {active === 1 && (
+                <div className="absolute left-1/2 top-1/2 origin-center -translate-x-1/2 -translate-y-1/2 scale-[0.67] sm:scale-[0.70]">
+                  <CvBusinessQrVisual language={language} />
+                </div>
+              )}
               {active === 2 && <div className="origin-center scale-[0.60] sm:scale-[0.64]"><BusinessCardPreview variant="premium" size="compact" language={language} name="Aux saveurs d’Anis" category={language === 'ar' ? 'ممون حفلات ومناسبات' : 'Traiteur événementiel'} /></div>}
             </div>
 
