@@ -1,4 +1,5 @@
-import { ArrowRight, Download, Smartphone } from 'lucide-react';
+import { useState } from 'react';
+import { ChevronLeft, ChevronRight, Download, QrCode, Smartphone, UserRound } from 'lucide-react';
 import { BusinessCardPreview, type BusinessCardPreviewLanguage } from './BusinessCardPreview';
 import { CvBusinessQrVisual, AUX_SAVEURS_LOGO } from './CvBusinessQrVisual';
 
@@ -88,39 +89,22 @@ const COPY: Record<BusinessCardPreviewLanguage, {
   },
 };
 
-function JourneyArrow({ rtl }: { rtl: boolean }) {
-  return (
-    <div className="hidden h-[460px] items-center justify-center lg:flex" aria-hidden="true">
-      <ArrowRight className={`h-8 w-8 text-[#D5B257] ${rtl ? 'rotate-180' : ''}`} />
-    </div>
-  );
-}
-
 function PwaPhone({ language }: { language: BusinessCardPreviewLanguage }) {
   const t = COPY[language];
   const rtl = language === 'ar';
   return (
     <div className="mx-auto flex h-[460px] w-[250px] flex-col overflow-hidden rounded-[34px] border-[4px] border-[#1b1b1b] bg-[#111820] shadow-[0_18px_42px_rgba(0,0,0,0.22)]" dir={rtl ? 'rtl' : 'ltr'}>
-      <div className="flex items-center justify-between px-4 pt-3 text-[9px] font-bold text-white">
-        <span>11:30</span>
-        <span>● ● ▬</span>
-      </div>
+      <div className="flex items-center justify-between px-4 pt-3 text-[9px] font-bold text-white"><span>11:30</span><span>● ● ▬</span></div>
       <div className="px-5 pt-9">
         <img src={AUX_SAVEURS_LOGO} alt="Aux saveurs d'Anis" className="h-16 w-16 rounded-[18px] object-cover shadow-lg" />
         <p className="mt-3 text-[12px] font-semibold text-white">Aux saveurs d’Anis</p>
       </div>
       <div className="mt-auto p-3.5">
         <div className="rounded-[20px] bg-white p-3.5 text-[#1b1b1b] shadow-2xl">
-          <div className="flex items-center justify-between">
-            <p className="text-[11px] font-bold">{t.installTitle}</p>
-            <span className="text-base text-gray-400">×</span>
-          </div>
+          <div className="flex items-center justify-between"><p className="text-[11px] font-bold">{t.installTitle}</p><span className="text-base text-gray-400">×</span></div>
           <div className="mt-3 flex items-center gap-2.5">
             <img src={AUX_SAVEURS_LOGO} alt="" className="h-10 w-10 rounded-xl object-cover" />
-            <div className="min-w-0">
-              <p className="truncate text-[10px] font-bold">Aux saveurs d’Anis</p>
-              <p className="text-[9px] text-gray-500">dalil-tounes.com</p>
-            </div>
+            <div className="min-w-0"><p className="truncate text-[10px] font-bold">Aux saveurs d’Anis</p><p className="text-[9px] text-gray-500">dalil-tounes.com</p></div>
           </div>
           <div className="mt-3 grid grid-cols-2 gap-2">
             <button type="button" className="rounded-xl px-2 py-2 text-[9px] font-semibold text-gray-700">{t.installCancel}</button>
@@ -135,61 +119,68 @@ function PwaPhone({ language }: { language: BusinessCardPreviewLanguage }) {
 export default function CvBusinessJourney({ language }: { language: BusinessCardPreviewLanguage }) {
   const t = COPY[language];
   const rtl = language === 'ar';
+  const [active, setActive] = useState(0);
+  const items = [
+    { title: t.pwaTitle, text: t.pwaText, icon: Smartphone },
+    { title: t.qrTitle, text: t.qrText, icon: QrCode },
+    { title: t.cvTitle, text: t.cvText, icon: UserRound },
+  ];
+  const previous = () => setActive((active + 2) % 3);
+  const next = () => setActive((active + 1) % 3);
 
   return (
-    <section className="overflow-hidden border-y border-[#D5B257]/25 bg-[radial-gradient(circle_at_top,rgba(213,178,87,0.12),transparent_32%),linear-gradient(180deg,#fffdf8_0%,#ffffff_100%)] px-4 py-6 sm:py-7" dir={rtl ? 'rtl' : 'ltr'}>
-      <div className="mx-auto max-w-[1180px]">
+    <section className="border-y border-[#D5B257]/25 bg-[radial-gradient(circle_at_top,rgba(213,178,87,0.12),transparent_32%),linear-gradient(180deg,#fffdf8_0%,#ffffff_100%)] px-4 py-6 sm:py-8" dir={rtl ? 'rtl' : 'ltr'}>
+      <div className="mx-auto max-w-[1120px]">
         <div className="mx-auto max-w-3xl text-center">
-          <div className="inline-flex items-center gap-1.5 rounded-full border border-[#D5B257]/45 bg-white px-3 py-1 text-[9px] font-black uppercase tracking-[0.11em] text-[#4A1D43] shadow-sm">
-            <Smartphone className="h-3 w-3 text-[#D5B257]" aria-hidden="true" />
-            {t.eyebrow}
-          </div>
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-[#D5B257]/45 bg-white px-3 py-1 text-[9px] font-black uppercase tracking-[0.11em] text-[#4A1D43] shadow-sm"><Smartphone className="h-3 w-3 text-[#D5B257]" />{t.eyebrow}</div>
           <h2 className="mt-2.5 font-serif text-2xl font-bold text-[#2E102A] sm:text-[30px]">{t.title}</h2>
           <p className="mx-auto mt-1.5 max-w-2xl text-xs leading-5 text-gray-600 sm:text-[13px]">{t.subtitle}</p>
         </div>
 
-        <div className="mt-5 grid items-start justify-center gap-y-10 lg:grid-cols-[250px_44px_330px_44px_330px] lg:gap-x-3">
-          <article className="w-[250px] text-center">
-            <div className="mb-2.5 inline-flex rounded-full bg-[#032D21] px-3.5 py-1.5 text-[11px] font-black text-[#F4CE55]">{t.pwaTitle}</div>
-            <div className="h-[460px] w-[250px] overflow-hidden rounded-[34px]">
-              <PwaPhone language={language} />
-            </div>
-            <p className="mx-auto mt-3 max-w-[245px] text-[12px] leading-5 text-gray-700">{t.pwaText}</p>
-          </article>
-
-          <JourneyArrow rtl={rtl} />
-
-          <article className="w-[330px] text-center">
-            <div className="mb-2.5 inline-flex rounded-full bg-[#032D21] px-3.5 py-1.5 text-[11px] font-black text-[#F4CE55]">{t.qrTitle}</div>
-            <div className="relative mx-auto h-[460px] w-[330px] overflow-hidden rounded-[30px]">
-              <div className="absolute left-1/2 top-0 origin-top -translate-x-1/2 scale-[0.93]">
-                <CvBusinessQrVisual language={language} />
-              </div>
-            </div>
-            <p className="mx-auto mt-3 max-w-[315px] text-[12px] leading-5 text-gray-700">{t.qrText}</p>
-          </article>
-
-          <JourneyArrow rtl={rtl} />
-
-          <article className="w-[330px] text-center">
-            <div className="mb-2.5 inline-flex rounded-full bg-[#032D21] px-3.5 py-1.5 text-[11px] font-black text-[#F4CE55]">{t.cvTitle}</div>
-            <div className="relative mx-auto h-[460px] w-[330px] overflow-hidden rounded-[30px]">
-              <div className="absolute left-1/2 top-0 origin-top -translate-x-1/2 scale-[1.15]">
-                <BusinessCardPreview
-                  variant="premium"
-                  size="compact"
-                  language={language}
-                  name="Aux saveurs d’Anis"
-                  category={language === 'ar' ? 'ممون حفلات ومناسبات' : 'Traiteur événementiel'}
-                />
-              </div>
-            </div>
-            <p className="mx-auto mt-3 max-w-[315px] text-[12px] leading-5 text-gray-700">{t.cvText}</p>
-          </article>
+        <div className="mt-5 grid overflow-hidden rounded-2xl border border-[#D5B257]/35 bg-white shadow-sm sm:grid-cols-3">
+          {items.map((item, index) => {
+            const Icon = item.icon;
+            const selected = active === index;
+            return (
+              <button key={item.title} type="button" onClick={() => setActive(index)} className={`flex items-center justify-center gap-2 px-4 py-3 text-[12px] font-black transition ${selected ? 'bg-[#032D21] text-[#F4CE55]' : 'bg-white text-[#2E102A] hover:bg-[#fffaf0]'}`}>
+                <Icon className="h-4 w-4" />{item.title}
+              </button>
+            );
+          })}
         </div>
 
-        <div className="mx-auto mt-6 flex max-w-5xl items-center justify-center gap-2 rounded-xl border border-[#D5B257]/45 bg-[#032D21] px-4 py-2.5 text-center text-[11px] font-bold text-white shadow-sm">
-          <Download className="h-3.5 w-3.5 shrink-0 text-[#F4CE55]" aria-hidden="true" />
+        <div className="relative mt-4 overflow-hidden rounded-[24px] border border-[#D5B257]/40 bg-white px-4 py-5 shadow-[0_16px_40px_rgba(46,16,42,0.08)] sm:px-7 sm:py-6">
+          <button type="button" onClick={previous} aria-label="Previous" className="absolute left-3 top-1/2 z-10 -translate-y-1/2 rounded-full border border-[#D5B257]/50 bg-white p-2 text-[#B98920] shadow-sm hover:bg-[#fff8e8]"><ChevronLeft className="h-5 w-5" /></button>
+          <button type="button" onClick={next} aria-label="Next" className="absolute right-3 top-1/2 z-10 -translate-y-1/2 rounded-full border border-[#D5B257]/50 bg-white p-2 text-[#B98920] shadow-sm hover:bg-[#fff8e8]"><ChevronRight className="h-5 w-5" /></button>
+
+          <div className="grid min-h-[500px] items-center gap-6 md:grid-cols-[1fr_420px_1fr]">
+            <div className="hidden md:block">
+              <p className="font-serif text-2xl font-bold text-[#032D21]">{items[active].title}</p>
+              <p className="mt-3 max-w-[260px] text-sm leading-6 text-gray-600">{items[active].text}</p>
+            </div>
+
+            <div className="flex min-h-[480px] items-center justify-center overflow-hidden">
+              {active === 0 && <PwaPhone language={language} />}
+              {active === 1 && <div className="scale-[0.92] sm:scale-100"><CvBusinessQrVisual language={language} /></div>}
+              {active === 2 && <div className="scale-[1.18] sm:scale-[1.32]"><BusinessCardPreview variant="premium" size="compact" language={language} name="Aux saveurs d’Anis" category={language === 'ar' ? 'ممون حفلات ومناسبات' : 'Traiteur événementiel'} /></div>}
+            </div>
+
+            <div className="hidden md:block">
+              <div className="rounded-2xl border border-[#D5B257]/25 bg-[#fffdf7] p-4">
+                <p className="text-sm font-bold text-[#032D21]">{items[active].title}</p>
+                <p className="mt-2 text-xs leading-5 text-gray-600">{items[active].text}</p>
+              </div>
+            </div>
+          </div>
+
+          <p className="mt-3 text-center text-sm leading-6 text-gray-700 md:hidden">{items[active].text}</p>
+          <div className="mt-3 flex justify-center gap-2">
+            {[0,1,2].map((index) => <button key={index} type="button" onClick={() => setActive(index)} aria-label={`Slide ${index + 1}`} className={`h-2.5 w-2.5 rounded-full ${active === index ? 'bg-[#032D21]' : 'bg-gray-300'}`} />)}
+          </div>
+        </div>
+
+        <div className="mx-auto mt-5 flex max-w-5xl items-center justify-center gap-2 rounded-xl border border-[#D5B257]/45 bg-[#032D21] px-4 py-2.5 text-center text-[11px] font-bold text-white shadow-sm">
+          <Download className="h-3.5 w-3.5 shrink-0 text-[#F4CE55]" />
           <span>{language === 'ar' ? 'التطبيق = وصول سريع • QR Business = مشاركة فورية • CV Business = العرض المهني الكامل' : 'Application = accès rapide • QR Business = partage immédiat • CV Business = présentation professionnelle complète'}</span>
         </div>
       </div>
