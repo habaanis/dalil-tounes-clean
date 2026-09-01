@@ -149,28 +149,24 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
           })}
         </div>
 
-        <div className="relative mt-4 overflow-hidden rounded-[24px] border border-[#D5B257]/40 bg-white px-4 py-5 shadow-[0_16px_40px_rgba(46,16,42,0.08)] sm:px-7 sm:py-6">
-          <button type="button" onClick={previous} aria-label="Previous" className="absolute left-3 top-1/2 z-10 -translate-y-1/2 rounded-full border border-[#D5B257]/50 bg-white p-2 text-[#B98920] shadow-sm hover:bg-[#fff8e8]"><ChevronLeft className="h-5 w-5" /></button>
-          <button type="button" onClick={next} aria-label="Next" className="absolute right-3 top-1/2 z-10 -translate-y-1/2 rounded-full border border-[#D5B257]/50 bg-white p-2 text-[#B98920] shadow-sm hover:bg-[#fff8e8]"><ChevronRight className="h-5 w-5" /></button>
+        <div className="relative mt-4 rounded-[24px] border border-[#D5B257]/40 bg-white px-4 py-5 shadow-[0_16px_40px_rgba(46,16,42,0.08)] sm:px-7 sm:py-6">
+          <button type="button" onClick={previous} aria-label="Previous" className="absolute left-3 top-1/2 z-20 -translate-y-1/2 rounded-full border border-[#D5B257]/50 bg-white p-2 text-[#B98920] shadow-sm hover:bg-[#fff8e8]"><ChevronLeft className="h-5 w-5" /></button>
+          <button type="button" onClick={next} aria-label="Next" className="absolute right-3 top-1/2 z-20 -translate-y-1/2 rounded-full border border-[#D5B257]/50 bg-white p-2 text-[#B98920] shadow-sm hover:bg-[#fff8e8]"><ChevronRight className="h-5 w-5" /></button>
 
-          <div className="grid min-h-[500px] items-center gap-6 md:grid-cols-[1fr_420px_1fr]">
-            <div className="hidden md:block">
+          <div className="grid min-h-[650px] items-center gap-6 md:grid-cols-[260px_1fr_100px] lg:grid-cols-[280px_1fr_130px]">
+            <div className="hidden md:block pl-2 lg:pl-4">
               <p className="font-serif text-2xl font-bold text-[#032D21]">{items[active].title}</p>
-              <p className="mt-3 max-w-[260px] text-sm leading-6 text-gray-600">{items[active].text}</p>
+              <div className="mt-3 h-px w-8 bg-[#D5B257]" />
+              <p className="mt-4 max-w-[250px] text-sm leading-6 text-gray-600">{items[active].text}</p>
             </div>
 
-            <div className="flex min-h-[480px] items-center justify-center overflow-hidden">
+            <div className="flex min-h-[620px] items-center justify-center overflow-visible py-2">
               {active === 0 && <PwaPhone language={language} />}
-              {active === 1 && <div className="scale-[0.92] sm:scale-100"><CvBusinessQrVisual language={language} /></div>}
-              {active === 2 && <div className="scale-[1.18] sm:scale-[1.32]"><BusinessCardPreview variant="premium" size="compact" language={language} name="Aux saveurs d’Anis" category={language === 'ar' ? 'ممون حفلات ومناسبات' : 'Traiteur événementiel'} /></div>}
+              {active === 1 && <div className="origin-center scale-[0.84] sm:scale-[0.90]"><CvBusinessQrVisual language={language} /></div>}
+              {active === 2 && <div className="origin-center scale-[0.82] sm:scale-[0.88]"><BusinessCardPreview variant="premium" size="compact" language={language} name="Aux saveurs d’Anis" category={language === 'ar' ? 'ممون حفلات ومناسبات' : 'Traiteur événementiel'} /></div>}
             </div>
 
-            <div className="hidden md:block">
-              <div className="rounded-2xl border border-[#D5B257]/25 bg-[#fffdf7] p-4">
-                <p className="text-sm font-bold text-[#032D21]">{items[active].title}</p>
-                <p className="mt-2 text-xs leading-5 text-gray-600">{items[active].text}</p>
-              </div>
-            </div>
+            <div className="hidden md:block" aria-hidden="true" />
           </div>
 
           <p className="mt-3 text-center text-sm leading-6 text-gray-700 md:hidden">{items[active].text}</p>
