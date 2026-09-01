@@ -30,7 +30,7 @@ const copy: Record<BusinessCardPreviewLanguage, VisualCopy> = {
     productText: 'Un seul lien réunit vos informations, vos actions de contact, vos services, vos avis, vos réalisations et vos réseaux sociaux.',
     name: "Aux saveurs d'Anis",
     category: 'Traiteur événementiel',
-    scan: 'Scannez ce QR pour ouvrir directement le CV Business.',
+    scan: 'Présentez ce QR pour ouvrir directement le CV Business.',
     share: 'Partager',
     download: 'Télécharger',
     add: "Ajouter à l’écran d’accueil",
@@ -43,7 +43,7 @@ const copy: Record<BusinessCardPreviewLanguage, VisualCopy> = {
     productText: 'رابط واحد يجمع معلوماتك ووسائل الاتصال والخدمات والآراء والأعمال وشبكات التواصل.',
     name: "Aux saveurs d'Anis",
     category: 'متعهد حفلات وتموين',
-    scan: 'امسح رمز QR لفتح السيرة المهنية مباشرة.',
+    scan: 'قدّم رمز QR هذا لفتح السيرة المهنية مباشرة.',
     share: 'مشاركة',
     download: 'تنزيل',
     add: 'إضافة إلى الشاشة الرئيسية',
@@ -56,7 +56,7 @@ const copy: Record<BusinessCardPreviewLanguage, VisualCopy> = {
     productText: 'One link brings together your information, contact actions, services, reviews, work and social networks.',
     name: "Aux saveurs d'Anis",
     category: 'Event caterer',
-    scan: 'Scan this QR to open the Business CV directly.',
+    scan: 'Present this QR to open the Business CV directly.',
     share: 'Share',
     download: 'Download',
     add: 'Add to home screen',
@@ -69,7 +69,7 @@ const copy: Record<BusinessCardPreviewLanguage, VisualCopy> = {
     productText: 'Un solo link riunisce informazioni, contatti, servizi, recensioni, lavori e social network.',
     name: "Aux saveurs d'Anis",
     category: 'Catering per eventi',
-    scan: 'Scansiona questo QR per aprire direttamente il CV Business.',
+    scan: 'Presenta questo QR per aprire direttamente il CV Business.',
     share: 'Condividi',
     download: 'Scarica',
     add: 'Aggiungi alla schermata Home',
@@ -82,7 +82,7 @@ const copy: Record<BusinessCardPreviewLanguage, VisualCopy> = {
     productText: 'Одна ссылка объединяет информацию, контакты, услуги, отзывы, работы и социальные сети.',
     name: "Aux saveurs d'Anis",
     category: 'Выездной кейтеринг',
-    scan: 'Отсканируйте QR-код, чтобы сразу открыть Business CV.',
+    scan: 'Покажите этот QR-код, чтобы сразу открыть Business CV.',
     share: 'Поделиться',
     download: 'Скачать',
     add: 'Добавить на главный экран',
@@ -143,60 +143,65 @@ export function CvBusinessQrVisual({
   ];
 
   return (
-    <div
+    <section
       dir={isRtl ? 'rtl' : 'ltr'}
-      className="mx-auto w-full max-w-[360px] rounded-[28px] border-[1.5px] border-[#D4AF37] bg-[#003C31] p-[12px] text-white shadow-[0_18px_45px_rgba(0,42,34,0.22)]"
+      aria-label={`${displayName} — QR Business`}
+      className="mx-auto w-full max-w-[354px] rounded-[30px] border-[2px] border-[#D6B44A] bg-[#003D32] px-[13px] pb-[15px] pt-[13px] text-white shadow-[0_18px_48px_rgba(0,43,34,0.20)]"
     >
-      <div className="overflow-hidden rounded-[19px] border border-[#D4AF37]/35 bg-[#062E27]">
+      <div className="overflow-hidden rounded-[18px] border border-[#D6B44A]/45 bg-[#073B32]">
         <img
           src={coverImage}
           alt=""
-          className="block h-[138px] w-full object-cover"
+          className="block h-[142px] w-full object-cover"
           loading="eager"
           decoding="async"
         />
       </div>
 
       <div className="relative -mt-[43px] flex justify-center">
-        <div className="grid h-[86px] w-[86px] place-items-center overflow-hidden rounded-full border-2 border-[#D4AF37] bg-[#003C31] p-[3px] shadow-[0_5px_15px_rgba(0,0,0,0.2)]">
+        <div className="grid h-[88px] w-[88px] place-items-center overflow-hidden rounded-full border-[2px] border-[#D6B44A] bg-[#003D32] p-[3px] shadow-[0_5px_16px_rgba(0,0,0,0.18)]">
           <img src={logo} alt={`Logo ${displayName}`} className="h-full w-full rounded-full object-cover" />
         </div>
       </div>
 
       <div className="px-3 text-center">
-        <h3 className="mt-2 font-serif text-[27px] font-bold leading-[1.05] text-[#FFFDF7]">{displayName}</h3>
-        <p className="mt-1 text-[13px] font-semibold text-[#D9B84B]">{displayCategory}</p>
-        <p className="mx-auto mt-3 max-w-[285px] text-[13px] leading-[1.45] text-white/90">{scanText || t.scan}</p>
+        <h3 className="mt-[10px] font-serif text-[28px] font-bold leading-[1.05] tracking-[-0.015em] text-[#FFFDF7]">
+          {displayName}
+        </h3>
+        <p className="mt-[4px] text-[14px] font-medium leading-tight text-[#DAB94E]">{displayCategory}</p>
+        <p className="mx-auto mt-[13px] max-w-[278px] text-[13px] leading-[1.45] text-white/90">
+          {scanText || t.scan}
+        </p>
       </div>
 
-      <div className="mx-auto mt-4 w-[244px] rounded-[17px] bg-white p-[10px] shadow-[0_7px_18px_rgba(0,0,0,0.15)]">
-        <div className="relative mx-auto h-[224px] w-[224px]">
+      <div className="mx-auto mt-[14px] w-[242px] rounded-[16px] bg-white p-[10px] shadow-[0_8px_20px_rgba(0,0,0,0.14)]">
+        <div className="relative mx-auto h-[222px] w-[222px]">
           <QRCodeSVG
             id={qrId}
             value={qrValue}
-            size={224}
+            size={222}
             level="H"
             includeMargin={false}
             bgColor="#ffffff"
             fgColor="#000000"
           />
-          <div className="pointer-events-none absolute left-1/2 top-1/2 grid h-[54px] w-[54px] -translate-x-1/2 -translate-y-1/2 place-items-center overflow-hidden rounded-full border-[3px] border-white bg-[#003C31] shadow-md">
+          <div className="pointer-events-none absolute left-1/2 top-1/2 grid h-[56px] w-[56px] -translate-x-1/2 -translate-y-1/2 place-items-center overflow-hidden rounded-full border-[3px] border-white bg-[#003D32] shadow-md">
             <img src={logo} alt="" className="h-full w-full object-cover" />
           </div>
         </div>
       </div>
 
-      <div className="mx-2 mt-4 grid grid-cols-3 divide-x divide-[#D4AF37]/25 rtl:divide-x-reverse">
+      <div className="mx-[7px] mt-[15px] grid grid-cols-3 divide-x divide-[#D6B44A]/25 rtl:divide-x-reverse">
         {actions.map(({ icon: Icon, label, action }) => (
           <button
             key={label}
             type="button"
             onClick={interactive ? action : undefined}
-            className="flex min-h-[59px] min-w-0 flex-col items-center justify-start gap-1.5 px-1.5 py-2 text-center text-[#D9B84B]"
+            className="flex min-h-[62px] min-w-0 flex-col items-center justify-start gap-[6px] px-1 py-[7px] text-center text-[#DAB94E]"
             aria-label={label}
           >
-            <Icon size={19} strokeWidth={1.8} aria-hidden="true" />
-            <span className="max-w-[90px] text-[10px] font-medium leading-[1.2]">{label}</span>
+            <Icon size={20} strokeWidth={1.7} aria-hidden="true" />
+            <span className="max-w-[92px] text-[10px] font-medium leading-[1.18]">{label}</span>
           </button>
         ))}
       </div>
@@ -204,20 +209,20 @@ export function CvBusinessQrVisual({
       {openHref ? (
         <a
           href={openHref}
-          className="mx-2 mt-2 flex min-h-[45px] items-center justify-center gap-2 rounded-[12px] border border-[#D4AF37] px-4 py-2.5 text-[14px] font-bold text-white no-underline"
+          className="mx-[8px] mt-[4px] flex min-h-[46px] items-center justify-center gap-2 rounded-[11px] border border-[#D6B44A] px-4 py-2.5 text-[14px] font-bold text-white no-underline"
         >
-          <ExternalLink size={17} aria-hidden="true" />
+          <ExternalLink size={17} strokeWidth={1.8} aria-hidden="true" />
           {openLabel || t.open}
         </a>
       ) : (
-        <div className="mx-2 mt-2 flex min-h-[45px] items-center justify-center gap-2 rounded-[12px] border border-[#D4AF37] px-4 py-2.5 text-[14px] font-bold text-white">
-          <ExternalLink size={17} aria-hidden="true" />
+        <div className="mx-[8px] mt-[4px] flex min-h-[46px] items-center justify-center gap-2 rounded-[11px] border border-[#D6B44A] px-4 py-2.5 text-[14px] font-bold text-white">
+          <ExternalLink size={17} strokeWidth={1.8} aria-hidden="true" />
           {openLabel || t.open}
         </div>
       )}
 
-      <p className="mt-3.5 mb-0 text-center text-[10px] text-white/60">{poweredText || t.powered}</p>
-    </div>
+      <p className="mb-0 mt-[14px] text-center text-[10px] font-normal text-white/62">{poweredText || t.powered}</p>
+    </section>
   );
 }
 
