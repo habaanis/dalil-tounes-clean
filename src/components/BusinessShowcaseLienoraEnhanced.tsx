@@ -168,7 +168,11 @@ export default function BusinessShowcaseLienoraEnhanced() {
         actions.appendChild(installButton);
       }
 
-      installButton.innerHTML = `<span class="dt-install-business-app-icon" aria-hidden="true">⌂</span><span>${text.installQr}</span>`;
+      if (installButton.dataset.label !== text.installQr) {
+        installButton.dataset.label = text.installQr;
+        installButton.innerHTML = `<span class="dt-install-business-app-icon" aria-hidden="true">⌂</span><span>${text.installQr}</span>`;
+      }
+
       installButton.onclick = async () => {
         if (installPrompt) {
           await installPrompt.prompt();
