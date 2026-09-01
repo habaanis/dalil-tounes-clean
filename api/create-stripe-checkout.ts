@@ -49,6 +49,11 @@ function checkoutOrigin(request: Request): string {
   }
 }
 
+function safeReference(value: unknown): string {
+  const text = String(value || '').trim();
+  return /^[a-zA-Z0-9-]{8,100}$/.test(text) ? text : '';
+}
+
 async function stripeRequest(path: string, secretKey: string, init?: RequestInit) {
   return fetch(`https://api.stripe.com/v1/${path}`, {
     ...init,
@@ -65,7 +70,7 @@ export default async function handler(request: Request) {
   const secretKey = process.env.STRIPE_SECRET_KEY;
   if (!secretKey) return json({ error: 'Stripe is not configured' }, 503);
 
-  let payload: { offer?: string; email?: string };
+  let payload: { offer?: string; email?: string; orderRef?: string; requestId?: string };
   try {
     payload = await request.json();
   } catch {
@@ -91,15 +96,26 @@ export default async function handler(request: Request) {
   if (!validPrice) return json({ error: 'Stripe price configuration does not match the expected offer' }, 409);
 
   const origin = checkoutOrigin(request);
+  const orderRef = safeReference(payload.orderRef || payload.requestId);
+  const successUrl = new URL('/subscription', origin);
+  successUrl.searchParams.set('checkout', 'success');
+  successUrl.searchParams.set('session_id', '{CHECKOUT_SESSION_ID}');
+  if (orderRef) successUrl.searchParams.set('order_ref', orderRef);
+
   const form = new URLSearchParams({
     mode: expected.mode,
     'line_items[0][price]': expected.priceId,
     'line_items[0][quantity]': '1',
-    success_url: `${origin}/subscription?checkout=success`,
+    success_url: successUrl.toString(),
     cancel_url: `${origin}/subscription?checkout=cancelled`,
     locale: 'auto',
     'metadata[dalil_tounes_offer]': offer,
   });
+
+  if (orderRef) {
+    form.set('client_reference_id', orderRef);
+    form.set('metadata[dalil_tounes_order_ref]', orderRef);
+  }
 
   if (payload.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email)) {
     form.set('customer_email', payload.email.slice(0, 180));
