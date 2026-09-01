@@ -93,22 +93,22 @@ function PwaPhone({ language }: { language: BusinessCardPreviewLanguage }) {
   const t = COPY[language];
   const rtl = language === 'ar';
   return (
-    <div className="mx-auto flex h-[460px] w-[250px] flex-col overflow-hidden rounded-[34px] border-[4px] border-[#1b1b1b] bg-[#111820] shadow-[0_18px_42px_rgba(0,0,0,0.22)]" dir={rtl ? 'rtl' : 'ltr'}>
+    <div className="mx-auto flex h-[420px] w-[228px] flex-col overflow-hidden rounded-[32px] border-[4px] border-[#1b1b1b] bg-[#111820] shadow-[0_18px_42px_rgba(0,0,0,0.22)]" dir={rtl ? 'rtl' : 'ltr'}>
       <div className="flex items-center justify-between px-4 pt-3 text-[9px] font-bold text-white"><span>11:30</span><span>● ● ▬</span></div>
-      <div className="px-5 pt-9">
-        <img src={AUX_SAVEURS_LOGO} alt="Aux saveurs d'Anis" className="h-16 w-16 rounded-[18px] object-cover shadow-lg" />
-        <p className="mt-3 text-[12px] font-semibold text-white">Aux saveurs d’Anis</p>
+      <div className="px-5 pt-8">
+        <img src={AUX_SAVEURS_LOGO} alt="Aux saveurs d'Anis" className="h-14 w-14 rounded-[16px] object-cover shadow-lg" />
+        <p className="mt-3 text-[11px] font-semibold text-white">Aux saveurs d’Anis</p>
       </div>
-      <div className="mt-auto p-3.5">
-        <div className="rounded-[20px] bg-white p-3.5 text-[#1b1b1b] shadow-2xl">
-          <div className="flex items-center justify-between"><p className="text-[11px] font-bold">{t.installTitle}</p><span className="text-base text-gray-400">×</span></div>
-          <div className="mt-3 flex items-center gap-2.5">
-            <img src={AUX_SAVEURS_LOGO} alt="" className="h-10 w-10 rounded-xl object-cover" />
-            <div className="min-w-0"><p className="truncate text-[10px] font-bold">Aux saveurs d’Anis</p><p className="text-[9px] text-gray-500">dalil-tounes.com</p></div>
+      <div className="mt-auto p-3">
+        <div className="rounded-[18px] bg-white p-3 text-[#1b1b1b] shadow-2xl">
+          <div className="flex items-center justify-between"><p className="text-[10px] font-bold">{t.installTitle}</p><span className="text-base text-gray-400">×</span></div>
+          <div className="mt-2.5 flex items-center gap-2">
+            <img src={AUX_SAVEURS_LOGO} alt="" className="h-9 w-9 rounded-xl object-cover" />
+            <div className="min-w-0"><p className="truncate text-[9px] font-bold">Aux saveurs d’Anis</p><p className="text-[8px] text-gray-500">dalil-tounes.com</p></div>
           </div>
-          <div className="mt-3 grid grid-cols-2 gap-2">
-            <button type="button" className="rounded-xl px-2 py-2 text-[9px] font-semibold text-gray-700">{t.installCancel}</button>
-            <button type="button" className="rounded-xl bg-[#032D21] px-2 py-2 text-[9px] font-bold text-white">{t.installAction}</button>
+          <div className="mt-2.5 grid grid-cols-2 gap-2">
+            <button type="button" className="rounded-xl px-2 py-1.5 text-[9px] font-semibold text-gray-700">{t.installCancel}</button>
+            <button type="button" className="rounded-xl bg-[#032D21] px-2 py-1.5 text-[9px] font-bold text-white">{t.installAction}</button>
           </div>
         </div>
       </div>
@@ -129,53 +129,53 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
   const next = () => setActive((active + 1) % 3);
 
   return (
-    <section className="border-y border-[#D5B257]/25 bg-[radial-gradient(circle_at_top,rgba(213,178,87,0.12),transparent_32%),linear-gradient(180deg,#fffdf8_0%,#ffffff_100%)] px-4 py-6 sm:py-8" dir={rtl ? 'rtl' : 'ltr'}>
-      <div className="mx-auto max-w-[1120px]">
+    <section className="border-y border-[#D5B257]/25 bg-[radial-gradient(circle_at_top,rgba(213,178,87,0.12),transparent_32%),linear-gradient(180deg,#fffdf8_0%,#ffffff_100%)] px-4 py-5 sm:py-6" dir={rtl ? 'rtl' : 'ltr'}>
+      <div className="mx-auto max-w-[1080px]">
         <div className="mx-auto max-w-3xl text-center">
           <div className="inline-flex items-center gap-1.5 rounded-full border border-[#D5B257]/45 bg-white px-3 py-1 text-[9px] font-black uppercase tracking-[0.11em] text-[#4A1D43] shadow-sm"><Smartphone className="h-3 w-3 text-[#D5B257]" />{t.eyebrow}</div>
-          <h2 className="mt-2.5 font-serif text-2xl font-bold text-[#2E102A] sm:text-[30px]">{t.title}</h2>
-          <p className="mx-auto mt-1.5 max-w-2xl text-xs leading-5 text-gray-600 sm:text-[13px]">{t.subtitle}</p>
+          <h2 className="mt-2 font-serif text-2xl font-bold text-[#2E102A] sm:text-[28px]">{t.title}</h2>
+          <p className="mx-auto mt-1 max-w-2xl text-xs leading-5 text-gray-600 sm:text-[13px]">{t.subtitle}</p>
         </div>
 
-        <div className="mt-5 grid overflow-hidden rounded-2xl border border-[#D5B257]/35 bg-white shadow-sm sm:grid-cols-3">
+        <div className="mt-4 grid overflow-hidden rounded-2xl border border-[#D5B257]/35 bg-white shadow-sm sm:grid-cols-3">
           {items.map((item, index) => {
             const Icon = item.icon;
             const selected = active === index;
             return (
-              <button key={item.title} type="button" onClick={() => setActive(index)} className={`flex items-center justify-center gap-2 px-4 py-3 text-[12px] font-black transition ${selected ? 'bg-[#032D21] text-[#F4CE55]' : 'bg-white text-[#2E102A] hover:bg-[#fffaf0]'}`}>
+              <button key={item.title} type="button" onClick={() => setActive(index)} className={`flex items-center justify-center gap-2 px-4 py-2.5 text-[12px] font-black transition ${selected ? 'bg-[#032D21] text-[#F4CE55]' : 'bg-white text-[#2E102A] hover:bg-[#fffaf0]'}`}>
                 <Icon className="h-4 w-4" />{item.title}
               </button>
             );
           })}
         </div>
 
-        <div className="relative mt-4 rounded-[24px] border border-[#D5B257]/40 bg-white px-4 py-5 shadow-[0_16px_40px_rgba(46,16,42,0.08)] sm:px-7 sm:py-6">
+        <div className="relative mt-3 rounded-[22px] border border-[#D5B257]/40 bg-white px-4 py-4 shadow-[0_14px_34px_rgba(46,16,42,0.07)] sm:px-6 sm:py-5">
           <button type="button" onClick={previous} aria-label="Previous" className="absolute left-3 top-1/2 z-20 -translate-y-1/2 rounded-full border border-[#D5B257]/50 bg-white p-2 text-[#B98920] shadow-sm hover:bg-[#fff8e8]"><ChevronLeft className="h-5 w-5" /></button>
           <button type="button" onClick={next} aria-label="Next" className="absolute right-3 top-1/2 z-20 -translate-y-1/2 rounded-full border border-[#D5B257]/50 bg-white p-2 text-[#B98920] shadow-sm hover:bg-[#fff8e8]"><ChevronRight className="h-5 w-5" /></button>
 
-          <div className="grid min-h-[650px] items-center gap-6 md:grid-cols-[260px_1fr_100px] lg:grid-cols-[280px_1fr_130px]">
-            <div className="hidden md:block pl-2 lg:pl-4">
-              <p className="font-serif text-2xl font-bold text-[#032D21]">{items[active].title}</p>
-              <div className="mt-3 h-px w-8 bg-[#D5B257]" />
-              <p className="mt-4 max-w-[250px] text-sm leading-6 text-gray-600">{items[active].text}</p>
+          <div className="grid min-h-[500px] items-center gap-4 md:grid-cols-[245px_1fr_70px] lg:grid-cols-[260px_1fr_80px]">
+            <div className="hidden md:block pl-2 lg:pl-3">
+              <p className="font-serif text-[22px] font-bold leading-tight text-[#032D21]">{items[active].title}</p>
+              <div className="mt-2.5 h-px w-8 bg-[#D5B257]" />
+              <p className="mt-3 max-w-[230px] text-sm leading-6 text-gray-600">{items[active].text}</p>
             </div>
 
-            <div className="flex min-h-[620px] items-center justify-center overflow-visible py-2">
+            <div className="flex min-h-[480px] items-center justify-center overflow-visible py-1">
               {active === 0 && <PwaPhone language={language} />}
-              {active === 1 && <div className="origin-center scale-[0.84] sm:scale-[0.90]"><CvBusinessQrVisual language={language} /></div>}
-              {active === 2 && <div className="origin-center scale-[0.82] sm:scale-[0.88]"><BusinessCardPreview variant="premium" size="compact" language={language} name="Aux saveurs d’Anis" category={language === 'ar' ? 'ممون حفلات ومناسبات' : 'Traiteur événementiel'} /></div>}
+              {active === 1 && <div className="origin-center scale-[0.78] sm:scale-[0.82]"><CvBusinessQrVisual language={language} /></div>}
+              {active === 2 && <div className="origin-center scale-[0.72] sm:scale-[0.76]"><BusinessCardPreview variant="premium" size="compact" language={language} name="Aux saveurs d’Anis" category={language === 'ar' ? 'ممون حفلات ومناسبات' : 'Traiteur événementiel'} /></div>}
             </div>
 
             <div className="hidden md:block" aria-hidden="true" />
           </div>
 
-          <p className="mt-3 text-center text-sm leading-6 text-gray-700 md:hidden">{items[active].text}</p>
-          <div className="mt-3 flex justify-center gap-2">
+          <p className="mt-2 text-center text-sm leading-6 text-gray-700 md:hidden">{items[active].text}</p>
+          <div className="mt-2 flex justify-center gap-2">
             {[0,1,2].map((index) => <button key={index} type="button" onClick={() => setActive(index)} aria-label={`Slide ${index + 1}`} className={`h-2.5 w-2.5 rounded-full ${active === index ? 'bg-[#032D21]' : 'bg-gray-300'}`} />)}
           </div>
         </div>
 
-        <div className="mx-auto mt-5 flex max-w-5xl items-center justify-center gap-2 rounded-xl border border-[#D5B257]/45 bg-[#032D21] px-4 py-2.5 text-center text-[11px] font-bold text-white shadow-sm">
+        <div className="mx-auto mt-4 flex max-w-5xl items-center justify-center gap-2 rounded-xl border border-[#D5B257]/45 bg-[#032D21] px-4 py-2 text-center text-[11px] font-bold text-white shadow-sm">
           <Download className="h-3.5 w-3.5 shrink-0 text-[#F4CE55]" />
           <span>{language === 'ar' ? 'التطبيق = وصول سريع • QR Business = مشاركة فورية • CV Business = العرض المهني الكامل' : 'Application = accès rapide • QR Business = partage immédiat • CV Business = présentation professionnelle complète'}</span>
         </div>
