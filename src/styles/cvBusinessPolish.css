@@ -3,20 +3,26 @@
   display: none !important;
 }
 
-/* Let the logo sit cleanly on the cover/identity seam without being clipped. */
+/* Compact identity header: same card width, less vertical space. */
+.dt-showcase .dt-cover {
+  height: 112px;
+}
+
 .dt-showcase .dt-identity {
+  margin-top: -17px;
+  padding: 0 12px 11px;
   overflow: visible;
 }
 
 .dt-showcase .dt-logo {
-  width: 84px;
-  height: 84px;
-  margin-top: -12px;
+  width: 66px;
+  height: 66px;
+  margin: -24px auto 5px;
   position: relative;
   z-index: 3;
   border-width: 3px;
   background: var(--dt-panel-dark, #021e19);
-  box-shadow: 0 0 9px color-mix(in srgb, var(--dt-accent) 34%, transparent);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--dt-accent) 30%, transparent);
 }
 
 .dt-showcase .dt-logo img {
@@ -27,6 +33,41 @@
   border-radius: 50%;
   object-fit: contain;
   transform: none;
+}
+
+.dt-showcase .dt-activity-pill {
+  padding: 3px 11px;
+  font-size: 9px;
+}
+
+.dt-showcase .dt-identity-panel {
+  margin-top: 6px;
+  padding: 8px 9px;
+}
+
+.dt-showcase .dt-product-label {
+  font-size: 7px;
+}
+
+.dt-showcase .dt-identity-panel h1 {
+  margin: 2px 0 4px;
+  font-size: clamp(1.42rem, 5.2vw, 1.9rem);
+  line-height: 1.04;
+}
+
+.dt-showcase .dt-professional-badge {
+  padding: 2px 8px;
+  font-size: 7px;
+}
+
+.dt-showcase .dt-slogan {
+  margin: 5px 0 2px;
+  font-size: 0.74rem;
+}
+
+.dt-showcase .dt-location {
+  margin-top: 3px;
+  font-size: 0.7rem;
 }
 
 .dt-showcase .dt-google-review-badge {
@@ -137,6 +178,10 @@
 }
 
 @media (max-width: 700px) {
+  .dt-showcase .dt-cover {
+    height: 104px;
+  }
+
   .dt-showcase .dt-gallery-main {
     grid-template-columns: 1.55fr 0.9fr;
     grid-template-rows: 118px 96px;
@@ -148,6 +193,20 @@
 }
 
 @media (max-width: 390px) {
+  .dt-showcase .dt-cover {
+    height: 96px;
+  }
+
+  .dt-showcase .dt-logo {
+    width: 60px;
+    height: 60px;
+    margin-top: -21px;
+  }
+
+  .dt-showcase .dt-identity-panel h1 {
+    font-size: clamp(1.28rem, 7vw, 1.65rem);
+  }
+
   .dt-showcase .dt-gallery-main {
     grid-template-columns: 1.4fr 0.9fr;
     grid-template-rows: 104px 84px;
