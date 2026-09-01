@@ -1,13 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Download, ExternalLink, Home, Share2 } from 'lucide-react';
-import { QRCodeSVG } from 'qrcode.react';
 import { useLanguage } from '../context/LanguageContext';
 import { supabase, supabaseUrl } from '../lib/supabaseClient';
 import { buildEntrepriseUrl, generateSlug } from '../lib/slugify';
 import { getLogoUrl } from '../lib/logoUtils';
 import { mapSubscriptionToTier } from '../lib/subscriptionTiers';
 import { HERO_IMAGE_URL } from '../constants/images';
+import { CvBusinessQrVisual } from '../components/CvBusinessProductVisuals';
 
 interface BusinessQrRecord {
   id: string;
@@ -27,14 +26,13 @@ interface BeforeInstallPromptEvent extends Event {
 
 const COPY = {
   fr: {
-    scan: 'Scannez ce QR pour ouvrir le CV Business.',
+    scan: 'Scannez ce QR pour ouvrir directement le CV Business.',
     share: 'Partager',
     shared: 'Lien copié',
     download: 'Télécharger',
     install: "Ajouter à l’écran d’accueil",
     open: 'Ouvrir le CV Business',
-    powered: 'Propulsé par',
-    installTitle: "Installer le CV Business",
+    powered: 'Propulsé par Dalil Tounes',
     installIos: 'iPhone : ouvrez cette page dans Safari, puis Partager → Ajouter à l’écran d’accueil.',
     installAndroid: 'Android : ouvrez cette page dans Chrome, puis Menu → Ajouter à l’écran d’accueil ou Installer.',
     loading: 'Chargement du QR Business…',
@@ -42,14 +40,13 @@ const COPY = {
     back: 'Retour au CV Business',
   },
   ar: {
-    scan: 'امسح رمز QR لفتح السيرة المهنية.',
+    scan: 'امسح رمز QR لفتح السيرة المهنية مباشرة.',
     share: 'مشاركة',
     shared: 'تم نسخ الرابط',
     download: 'تنزيل',
     install: 'إضافة إلى الشاشة الرئيسية',
     open: 'فتح السيرة المهنية',
-    powered: 'بدعم من',
-    installTitle: 'تثبيت السيرة المهنية',
+    powered: 'بدعم من دليل تونس',
     installIos: 'iPhone: افتح هذه الصفحة في Safari، ثم مشاركة ← إضافة إلى الشاشة الرئيسية.',
     installAndroid: 'Android: افتح هذه الصفحة في Chrome، ثم القائمة ← إضافة إلى الشاشة الرئيسية أو تثبيت.',
     loading: 'جارٍ تحميل رمز QR…',
@@ -57,14 +54,13 @@ const COPY = {
     back: 'العودة إلى السيرة المهنية',
   },
   en: {
-    scan: 'Scan this QR to open the Business CV.',
+    scan: 'Scan this QR to open the Business CV directly.',
     share: 'Share',
     shared: 'Link copied',
     download: 'Download',
     install: 'Add to home screen',
     open: 'Open Business CV',
-    powered: 'Powered by',
-    installTitle: 'Install the Business CV',
+    powered: 'Powered by Dalil Tounes',
     installIos: 'iPhone: open this page in Safari, then Share → Add to Home Screen.',
     installAndroid: 'Android: open this page in Chrome, then Menu → Add to Home Screen or Install.',
     loading: 'Loading Business QR…',
@@ -72,14 +68,13 @@ const COPY = {
     back: 'Back to Business CV',
   },
   it: {
-    scan: 'Scansiona questo QR per aprire il CV Business.',
+    scan: 'Scansiona questo QR per aprire direttamente il CV Business.',
     share: 'Condividi',
     shared: 'Link copiato',
     download: 'Scarica',
     install: 'Aggiungi alla schermata Home',
     open: 'Apri il CV Business',
-    powered: 'Offerto da',
-    installTitle: 'Installa il CV Business',
+    powered: 'Powered by Dalil Tounes',
     installIos: 'iPhone: apri questa pagina in Safari, quindi Condividi → Aggiungi alla schermata Home.',
     installAndroid: 'Android: apri questa pagina in Chrome, quindi Menu → Aggiungi alla schermata Home o Installa.',
     loading: 'Caricamento QR Business…',
@@ -87,14 +82,13 @@ const COPY = {
     back: 'Torna al CV Business',
   },
   ru: {
-    scan: 'Отсканируйте QR-код, чтобы открыть Business CV.',
+    scan: 'Отсканируйте QR-код, чтобы сразу открыть Business CV.',
     share: 'Поделиться',
     shared: 'Ссылка скопирована',
     download: 'Скачать',
     install: 'Добавить на главный экран',
     open: 'Открыть Business CV',
-    powered: 'При поддержке',
-    installTitle: 'Установить Business CV',
+    powered: 'При поддержке Dalil Tounes',
     installIos: 'iPhone: откройте эту страницу в Safari, затем Поделиться → На экран «Домой».',
     installAndroid: 'Android: откройте эту страницу в Chrome, затем Меню → Добавить на главный экран или Установить.',
     loading: 'Загрузка Business QR…',
@@ -117,7 +111,6 @@ export default function BusinessQr() {
   const text = COPY[language as keyof typeof COPY] || COPY.fr;
   const [business, setBusiness] = useState<BusinessQrRecord | null>(null);
   const [loading, setLoading] = useState(true);
-  const [showInstallHelp, setShowInstallHelp] = useState(false);
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [shareConfirmed, setShareConfirmed] = useState(false);
 
@@ -147,10 +140,7 @@ export default function BusinessQr() {
       event.preventDefault();
       setInstallPrompt(event as BeforeInstallPromptEvent);
     };
-    const handleInstalled = () => {
-      setInstallPrompt(null);
-      setShowInstallHelp(false);
-    };
+    const handleInstalled = () => setInstallPrompt(null);
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstall);
     window.addEventListener('appinstalled', handleInstalled);
@@ -166,6 +156,22 @@ export default function BusinessQr() {
   const coverUrl = getCoverUrl(business?.image_url);
   const tier = business ? mapSubscriptionToTier(business) : 'gratuit';
   const premiumAccess = tier === 'premium' || tier === 'elite' || tier === 'custom';
+
+  useEffect(() => {
+    if (!business?.id) return;
+
+    const existing = document.querySelector<HTMLLinkElement>('link[rel="manifest"]');
+    const link = existing || document.createElement('link');
+    link.rel = 'manifest';
+    link.href = `/api/business-manifest?id=${encodeURIComponent(business.id)}&name=${encodeURIComponent(business.nom)}&logo=${encodeURIComponent(logoUrl)}`;
+    if (!existing) document.head.appendChild(link);
+    document.title = `${business.nom} — CV Business`;
+
+    return () => {
+      link.href = '/manifest.json';
+      document.title = 'Dalil Tounes — Plateforme des professionnels en Tunisie | CV Business';
+    };
+  }, [business?.id, business?.nom, logoUrl]);
 
   const downloadPng = () => {
     const svg = document.getElementById('dt-business-qr');
@@ -219,26 +225,24 @@ export default function BusinessQr() {
   };
 
   const installApp = async () => {
-    if (!installPrompt) {
-      setShowInstallHelp((value) => !value);
+    if (installPrompt) {
+      await installPrompt.prompt();
+      const choice = await installPrompt.userChoice;
+      if (choice.outcome === 'accepted') setInstallPrompt(null);
       return;
     }
 
-    await installPrompt.prompt();
-    const choice = await installPrompt.userChoice;
-    if (choice.outcome === 'accepted') {
-      setInstallPrompt(null);
-      setShowInstallHelp(false);
-    }
+    const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    window.alert(isIos ? text.installIos : text.installAndroid);
   };
 
   if (loading) {
-    return <div className="min-h-[70vh] grid place-items-center text-gray-600">{text.loading}</div>;
+    return <div className="min-h-screen grid place-items-center bg-[#003C31] text-white">{text.loading}</div>;
   }
 
   if (!business || !premiumAccess) {
     return (
-      <div className="min-h-[70vh] grid place-items-center px-4 text-center">
+      <div className="min-h-screen grid place-items-center bg-[#F6F7F4] px-4 text-center">
         <div className="max-w-md rounded-3xl border border-[#D4AF37]/40 bg-white p-8 shadow-xl">
           <p className="text-gray-700">{text.unavailable}</p>
           <Link to={cvPath} className="mt-5 inline-flex rounded-full bg-[#0B4B3E] px-5 py-2.5 font-semibold text-white">{text.back}</Link>
@@ -248,77 +252,27 @@ export default function BusinessQr() {
   }
 
   return (
-    <main className="min-h-screen bg-[#F6F7F4] px-3 py-4 sm:py-6" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-      <div className="mx-auto w-full max-w-[360px] overflow-hidden rounded-[26px] border-[1.5px] border-[#D4AF37] bg-[#063D33] text-center text-white shadow-[0_18px_45px_rgba(0,45,35,0.24)]">
-        <div className="relative h-[116px] overflow-hidden bg-[#0A3A31]">
-          <img
-            src={coverUrl}
-            alt=""
-            className="h-full w-full object-cover"
-            loading="eager"
-            onError={(event) => {
-              event.currentTarget.onerror = null;
-              event.currentTarget.src = HERO_IMAGE_URL;
-            }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#063D33]/35" />
-        </div>
-
-        <div className="relative px-5 pb-4">
-          <div className="mx-auto -mt-[38px] flex h-[76px] w-[76px] items-center justify-center overflow-hidden rounded-full border-2 border-[#D4AF37] bg-[#063D33] p-[3px] shadow-lg">
-            <img src={logoUrl} alt={`Logo ${business.nom}`} className="h-full w-full rounded-full object-cover" />
-          </div>
-
-          <h1 className="mt-3 font-serif text-[25px] font-bold leading-[1.05] tracking-[-0.02em] text-[#FFFDF5]">
-            {business.nom}
-          </h1>
-          {business.categorie && (
-            <p className="mt-1 text-[13px] font-semibold text-[#E7C65A]">{business.categorie}</p>
-          )}
-          <p className="mx-auto mt-3 max-w-[285px] text-[13px] leading-[1.45] text-white/88">{text.scan}</p>
-
-          <div className="mx-auto mt-4 w-[244px] rounded-[18px] bg-white p-[10px] shadow-[0_8px_24px_rgba(0,0,0,0.16)]">
-            <div className="relative mx-auto w-fit">
-              <QRCodeSVG id="dt-business-qr" value={cvUrl} size={224} level="H" includeMargin={false} bgColor="#ffffff" fgColor="#000000" />
-              <div className="pointer-events-none absolute left-1/2 top-1/2 grid h-[52px] w-[52px] -translate-x-1/2 -translate-y-1/2 place-items-center overflow-hidden rounded-full border-[3px] border-white bg-[#063D33] shadow-md">
-                <img src={logoUrl} alt="" className="h-full w-full object-cover" />
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-4 grid grid-cols-3 divide-x divide-[#D4AF37]/25 rtl:divide-x-reverse">
-            <button type="button" onClick={shareBusiness} className="flex min-w-0 flex-col items-center justify-start gap-1 px-1 py-2 text-[#E7C65A] transition hover:bg-white/[0.03]">
-              <Share2 size={18} strokeWidth={1.8} />
-              <span className="text-[10px] font-medium leading-[1.15]">{shareConfirmed ? text.shared : text.share}</span>
-            </button>
-            <button type="button" onClick={downloadPng} className="flex min-w-0 flex-col items-center justify-start gap-1 px-1 py-2 text-[#E7C65A] transition hover:bg-white/[0.03]">
-              <Download size={18} strokeWidth={1.8} />
-              <span className="text-[10px] font-medium leading-[1.15]">{text.download}</span>
-            </button>
-            <button type="button" onClick={installApp} className="flex min-w-0 flex-col items-center justify-start gap-1 px-1 py-2 text-[#E7C65A] transition hover:bg-white/[0.03]">
-              <Home size={18} strokeWidth={1.8} />
-              <span className="max-w-[88px] text-[10px] font-medium leading-[1.15]">{text.install}</span>
-            </button>
-          </div>
-
-          {showInstallHelp && (
-            <div className="mt-2.5 rounded-xl border border-white/12 bg-black/10 px-3 py-2.5 text-start text-[10px] leading-4 text-white/78">
-              <p className="font-bold text-[#E7C65A]">{text.installTitle}</p>
-              <p className="mt-1.5">{text.installIos}</p>
-              <p>{text.installAndroid}</p>
-            </div>
-          )}
-
-          <Link to={cvPath} className="mt-3 inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-[12px] border border-[#D4AF37] px-4 py-2.5 text-[14px] font-bold text-white transition hover:bg-white/[0.04]">
-            <ExternalLink size={16} />{text.open}
-          </Link>
-
-          <div className="mt-3.5 flex items-center justify-center gap-1.5 text-[10px] text-white/50">
-            <span>{text.powered}</span>
-            <span className="font-semibold text-white/72">Dalil Tounes</span>
-          </div>
-        </div>
-      </div>
+    <main className="min-h-screen bg-[#003C31] px-3 py-4 sm:py-6" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+      <CvBusinessQrVisual
+        language={language}
+        name={business.nom}
+        category={business.categorie || undefined}
+        coverImage={coverUrl}
+        logo={logoUrl}
+        qrValue={cvUrl}
+        shareLabel={shareConfirmed ? text.shared : text.share}
+        downloadLabel={text.download}
+        addLabel={text.install}
+        openLabel={text.open}
+        scanText={text.scan}
+        poweredText={text.powered}
+        openHref={cvPath}
+        onShare={shareBusiness}
+        onDownload={downloadPng}
+        onInstall={installApp}
+        qrId="dt-business-qr"
+        interactive
+      />
     </main>
   );
 }
