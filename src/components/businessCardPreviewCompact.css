@@ -141,6 +141,10 @@
   gap: 3px;
 }
 
+.dt-marketing-preview .dt-accordion-list > .dt-accordion:last-child {
+  display: none;
+}
+
 .dt-marketing-preview .dt-accordion-trigger,
 .dt-marketing-preview .dt-presentation-trigger {
   min-height: 35px;
