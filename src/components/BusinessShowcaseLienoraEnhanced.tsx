@@ -1,9 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { createPortal } from 'react-dom';
 import { useParams } from 'react-router-dom';
-import { QRCodeSVG } from 'qrcode.react';
 import { supabase } from '../lib/supabaseClient';
-import { getLogoUrl } from '../lib/logoUtils';
 import { useLanguage } from '../context/LanguageContext';
 import { getPublicComponentTranslations } from '../lib/publicComponentTranslations';
 import BusinessShowcaseLienoraDetail from './BusinessShowcaseLienoraDetail';
@@ -14,15 +11,9 @@ type BusinessRecord = {
   slug?: string | null;
   nom?: string | null;
   ville?: string | null;
-  logo_url?: string | null;
   google_url?: string | null;
   BTN_Maps?: string | null;
   [key: string]: unknown;
-};
-
-type InstallPromptEvent = Event & {
-  prompt: () => Promise<void>;
-  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 };
 
 const normalizeUrl = (value: unknown): string => {
@@ -78,12 +69,8 @@ export default function BusinessShowcaseLienoraEnhanced() {
   const { language } = useLanguage();
   const text = getPublicComponentTranslations(language);
   const [business, setBusiness] = useState<BusinessRecord | null>(null);
-  const [installPrompt, setInstallPrompt] = useState<InstallPromptEvent | null>(null);
-  const [qrMount, setQrMount] = useState<HTMLElement | null>(null);
 
   const reviewsUrl = useMemo(() => getGoogleReviewsUrl(business), [business]);
-  const logoUrl = useMemo(() => getLogoUrl(business?.logo_url), [business?.logo_url]);
-  const qrValue = typeof window === 'undefined' ? 'https://dalil-tounes.com' : window.location.href;
 
   useEffect(() => {
     let cancelled = false;
@@ -116,114 +103,35 @@ export default function BusinessShowcaseLienoraEnhanced() {
   }, [id, slug]);
 
   useEffect(() => {
-    const onBeforeInstallPrompt = (event: Event) => {
-      event.preventDefault();
-      setInstallPrompt(event as InstallPromptEvent);
-    };
-
-    window.addEventListener('beforeinstallprompt', onBeforeInstallPrompt);
-    return () => window.removeEventListener('beforeinstallprompt', onBeforeInstallPrompt);
-  }, []);
-
-  useEffect(() => {
     const enhance = () => {
-      if (reviewsUrl) {
-        document.querySelectorAll<HTMLButtonElement>('.dt-accordion-trigger').forEach(button => {
-          if (!isReviewsLabel(button.textContent || '')) return;
+      if (!reviewsUrl) return;
 
-          button.dataset.googleReviewsUrl = reviewsUrl;
-          if (button.dataset.googleReviewsLinked === 'true') return;
+      document.querySelectorAll<HTMLButtonElement>('.dt-accordion-trigger').forEach(button => {
+        if (!isReviewsLabel(button.textContent || '')) return;
 
-          button.dataset.googleReviewsLinked = 'true';
-          button.title = text.googleReviews;
-          button.addEventListener(
-            'click',
-            event => {
-              event.preventDefault();
-              event.stopImmediatePropagation();
-              const target = button.dataset.googleReviewsUrl;
-              if (target) window.open(target, '_blank', 'noopener,noreferrer');
-            },
-            true,
-          );
-        });
-      }
+        button.dataset.googleReviewsUrl = reviewsUrl;
+        if (button.dataset.googleReviewsLinked === 'true') return;
 
-      const qrActions = document.querySelectorAll<HTMLButtonElement>('.dt-qr-actions button');
-      qrActions.forEach((button, index) => {
-        if (index > 1) button.classList.add('dt-preview-hide-contact');
+        button.dataset.googleReviewsLinked = 'true';
+        button.title = text.googleReviews;
+        button.addEventListener(
+          'click',
+          event => {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            const target = button.dataset.googleReviewsUrl;
+            if (target) window.open(target, '_blank', 'noopener,noreferrer');
+          },
+          true,
+        );
       });
-
-      const qrWrap = document.querySelector<HTMLElement>('.dt-qr-wrap');
-      if (qrWrap && !qrWrap.querySelector('.dt-generated-qr')) {
-        const mount = document.createElement('div');
-        mount.className = 'dt-generated-qr';
-        qrWrap.replaceChildren(mount);
-        setQrMount(mount);
-      }
-
-      const qrCard = document.querySelector<HTMLElement>('.dt-qr-card');
-      if (qrCard && !qrCard.querySelector('.dt-install-qr-preview')) {
-        const installBox = document.createElement('div');
-        installBox.className = 'dt-install-qr-preview';
-
-        const title = document.createElement('strong');
-        title.textContent = text.qrAlways;
-
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.className = 'dt-install-qr-button';
-        button.innerHTML = `<span aria-hidden="true">▦</span><span>${text.installQr}</span>`;
-        button.addEventListener('click', async () => {
-          if (installPrompt) {
-            await installPrompt.prompt();
-            await installPrompt.userChoice;
-            setInstallPrompt(null);
-            return;
-          }
-
-          const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
-          window.alert(isIos ? text.installIos : text.installAndroid);
-        });
-
-        const note = document.createElement('p');
-        note.textContent = text.qrNote;
-
-        installBox.append(title, button, note);
-        qrCard.appendChild(installBox);
-      }
     };
 
     enhance();
     const observer = new MutationObserver(enhance);
     observer.observe(document.body, { childList: true, subtree: true });
     return () => observer.disconnect();
-  }, [installPrompt, reviewsUrl, text]);
+  }, [reviewsUrl, text.googleReviews]);
 
-  return (
-    <>
-      <BusinessShowcaseLienoraDetail />
-      {qrMount &&
-        createPortal(
-          <QRCodeSVG
-            value={qrValue}
-            size={116}
-            level="H"
-            includeMargin={false}
-            title={`QR Code ${business?.nom || 'Dalil Tounes'}`}
-            imageSettings={
-              logoUrl
-                ? {
-                    src: logoUrl,
-                    height: 30,
-                    width: 30,
-                    excavate: true,
-                  }
-                : undefined
-            }
-          />,
-          qrMount,
-        )}
-    </>
-  );
+  return <BusinessShowcaseLienoraDetail />;
 }

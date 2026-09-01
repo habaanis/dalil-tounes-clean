@@ -4,6 +4,7 @@
     { "source": "/businesses", "destination": "/index.html" },
     { "source": "/business/:path*", "destination": "/index.html" },
     { "source": "/entreprise/:path*", "destination": "/index.html" },
+    { "source": "/qr-business/:path*", "destination": "/index.html" },
     { "source": "/p/:slug", "destination": "/index.html" },
     { "source": "/jobs", "destination": "/index.html" },
     { "source": "/emplois/:path*", "destination": "/index.html" },

@@ -4,6 +4,7 @@ import BaseBusinessCardPreview, {
   type BusinessCardPreviewSize,
   type BusinessCardPreviewVariant,
 } from './BusinessCardPreviewBase';
+import { CvBusinessQrVisual } from './CvBusinessQrVisual';
 import './businessCardPreviewCompact.css';
 
 export type {
@@ -78,8 +79,10 @@ const DEMO_COPY: Record<BusinessCardPreviewLanguage, {
 export function BusinessCardPreview(props: BusinessCardPreviewProps) {
   const language = props.language ?? 'fr';
   const demo = DEMO_COPY[language];
+  const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
+  const showQrBeside = props.size === 'compact' && (pathname === '/businesses' || pathname === '/entreprises');
 
-  return (
+  const preview = (
     <div className="dt-marketing-preview">
       <BaseBusinessCardPreview
         {...props}
@@ -94,6 +97,19 @@ export function BusinessCardPreview(props: BusinessCardPreviewProps) {
         coverImage={props.coverImage || AUX_SAVEURS_COVER}
         gallery={props.gallery || AUX_SAVEURS_GALLERY}
       />
+    </div>
+  );
+
+  if (!showQrBeside) return preview;
+
+  return (
+    <div className="flex flex-col items-start justify-center gap-4 md:flex-row md:gap-5">
+      {preview}
+      <div className="h-[570px] w-[286px] shrink-0 overflow-visible">
+        <div className="origin-top-left scale-[0.80]">
+          <CvBusinessQrVisual language={language} />
+        </div>
+      </div>
     </div>
   );
 }

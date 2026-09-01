@@ -1,7 +1,7 @@
 import { ArrowRight, CheckCircle2, QrCode, Share2, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { BusinessCardPreview, type BusinessCardPreviewLanguage } from '../components/BusinessCardPreview';
-import { CvBusinessQrVisual } from '../components/CvBusinessProductVisuals';
+import CvBusinessJourney from '../components/CvBusinessJourney';
 import VisibilityHouseSection from '../components/VisibilityHouseSection';
 import { useLanguage } from '../context/LanguageContext';
 import { Home as PlatformHome } from './Home';
@@ -120,7 +120,7 @@ export default function HomeVitrineFirst() {
   return (
     <div dir={rtl ? 'rtl' : 'ltr'}>
       <section className="relative overflow-hidden border-b border-[#D4AF37]/25 bg-[radial-gradient(circle_at_top_left,rgba(212,175,55,0.18),transparent_28%),linear-gradient(135deg,#fffdf8_0%,#ffffff_52%,#f7f0f5_100%)] px-4 py-8 md:py-12">
-        <div className="mx-auto grid max-w-[1400px] items-center gap-8 lg:grid-cols-[0.8fr_1.2fr]">
+        <div className="mx-auto grid max-w-[1280px] items-center gap-8 lg:grid-cols-[1fr_0.72fr]">
           <div className={rtl ? 'text-right' : 'text-left'}>
             <div className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/45 bg-white/85 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.14em] text-[#4A1D43] shadow-sm">
               <Sparkles className="h-3.5 w-3.5 text-[#D4AF37]" aria-hidden="true" />
@@ -185,18 +185,19 @@ export default function HomeVitrineFirst() {
             </div>
           </div>
 
-          <div className="relative mx-auto w-full max-w-[800px]">
+          <div className="relative mx-auto w-full max-w-[460px]">
             <div className="absolute -inset-4 rounded-[36px] bg-gradient-to-br from-[#D4AF37]/18 via-transparent to-[#4A1D43]/10 blur-2xl" aria-hidden="true" />
-            <div className="relative rounded-[30px] border border-[#D4AF37]/45 bg-white/90 p-3 shadow-[0_28px_70px_rgba(74,29,67,0.16)] backdrop-blur-sm">
+            <div className="relative rounded-[30px] border border-[#D4AF37]/45 bg-white/90 p-4 shadow-[0_28px_70px_rgba(74,29,67,0.16)] backdrop-blur-sm">
               <p className="mb-3 text-center text-[11px] font-bold text-[#4A1D43]">{t.example}</p>
-              <div className="grid items-start gap-4 md:grid-cols-2">
+              <div className="flex justify-center">
                 <BusinessCardPreview variant="premium" size="compact" interactive language={lang} />
-                <CvBusinessQrVisual language={lang} />
               </div>
             </div>
           </div>
         </div>
       </section>
+
+      <CvBusinessJourney language={lang} />
 
       <section className="bg-[#2E102A] px-4 py-6 text-center text-white">
         <div className="mx-auto max-w-4xl">

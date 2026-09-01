@@ -1,94 +1,110 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Download, ExternalLink, Home, QrCode } from 'lucide-react';
-import { QRCodeSVG } from 'qrcode.react';
 import { useLanguage } from '../context/LanguageContext';
-import { supabase } from '../lib/supabaseClient';
+import { supabase, supabaseUrl } from '../lib/supabaseClient';
 import { buildEntrepriseUrl, generateSlug } from '../lib/slugify';
 import { getLogoUrl } from '../lib/logoUtils';
 import { mapSubscriptionToTier } from '../lib/subscriptionTiers';
+import { HERO_IMAGE_URL } from '../constants/images';
+import { CvBusinessQrVisual } from '../components/CvBusinessProductVisuals';
 
 interface BusinessQrRecord {
   id: string;
   nom: string;
   slug?: string | null;
   ville?: string | null;
+  categorie?: string | null;
+  image_url?: string | null;
   logo_url?: string | null;
   statut_abonnement?: string | null;
+  cv_business_status?: string | null;
+}
+
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
 }
 
 const COPY = {
   fr: {
-    title: 'Mon QR Business',
-    intro: 'Présentez ce QR depuis votre téléphone : votre client le scanne et ouvre directement votre CV Business.',
-    scan: 'Scannez pour découvrir mon CV Business',
-    home: "Ajouter à l’écran d’accueil",
-    download: 'Télécharger le QR en PNG',
+    scan: 'Scannez ce QR pour ouvrir directement le CV Business.',
+    share: 'Partager',
+    shared: 'Lien copié',
+    download: 'Télécharger',
+    install: "Ajouter à l’écran d’accueil",
     open: 'Ouvrir le CV Business',
-    installTitle: "Pour l’ajouter à l’écran d’accueil",
-    installIos: 'iPhone : Safari → Partager → Ajouter à l’écran d’accueil.',
-    installAndroid: 'Android : Chrome → Menu → Ajouter à l’écran d’accueil ou Installer.',
+    powered: 'Propulsé par Dalil Tounes',
+    installIos: 'iPhone : ouvrez cette page dans Safari, puis Partager → Ajouter à l’écran d’accueil.',
+    installAndroid: 'Android : ouvrez cette page dans Chrome, puis Menu → Ajouter à l’écran d’accueil ou Installer.',
     loading: 'Chargement du QR Business…',
-    unavailable: 'Cette présentation QR est réservée au CV Business Premium.',
+    unavailable: "Ce QR Business sera disponible lorsque le CV Business sera publié.",
     back: 'Retour au CV Business',
   },
   ar: {
-    title: 'رمز QR للأعمال',
-    intro: 'اعرض هذا الرمز من هاتفك: يقوم العميل بمسحه ويفتح مباشرة السيرة المهنية لنشاطك.',
-    scan: 'امسح الرمز لاكتشاف السيرة المهنية لنشاطي',
-    home: 'إضافة إلى الشاشة الرئيسية',
-    download: 'تنزيل رمز QR بصيغة PNG',
+    scan: 'امسح رمز QR لفتح السيرة المهنية مباشرة.',
+    share: 'مشاركة',
+    shared: 'تم نسخ الرابط',
+    download: 'تنزيل',
+    install: 'إضافة إلى الشاشة الرئيسية',
     open: 'فتح السيرة المهنية',
-    installTitle: 'لإضافته إلى الشاشة الرئيسية',
-    installIos: 'iPhone: Safari ← مشاركة ← إضافة إلى الشاشة الرئيسية.',
-    installAndroid: 'Android: Chrome ← القائمة ← إضافة إلى الشاشة الرئيسية أو تثبيت.',
+    powered: 'بدعم من دليل تونس',
+    installIos: 'iPhone: افتح هذه الصفحة في Safari، ثم مشاركة ← إضافة إلى الشاشة الرئيسية.',
+    installAndroid: 'Android: افتح هذه الصفحة في Chrome، ثم القائمة ← إضافة إلى الشاشة الرئيسية أو تثبيت.',
     loading: 'جارٍ تحميل رمز QR…',
-    unavailable: 'عرض QR هذا مخصص لـ CV Business Premium.',
+    unavailable: 'سيصبح QR Business متاحًا عند نشر CV Business.',
     back: 'العودة إلى السيرة المهنية',
   },
   en: {
-    title: 'My Business QR',
-    intro: 'Present this QR from your phone: your customer scans it and opens your Business CV directly.',
-    scan: 'Scan to discover my Business CV',
-    home: 'Add to home screen',
-    download: 'Download QR as PNG',
+    scan: 'Scan this QR to open the Business CV directly.',
+    share: 'Share',
+    shared: 'Link copied',
+    download: 'Download',
+    install: 'Add to home screen',
     open: 'Open Business CV',
-    installTitle: 'To add it to your home screen',
-    installIos: 'iPhone: Safari → Share → Add to Home Screen.',
-    installAndroid: 'Android: Chrome → Menu → Add to Home Screen or Install.',
+    powered: 'Powered by Dalil Tounes',
+    installIos: 'iPhone: open this page in Safari, then Share → Add to Home Screen.',
+    installAndroid: 'Android: open this page in Chrome, then Menu → Add to Home Screen or Install.',
     loading: 'Loading Business QR…',
-    unavailable: 'This QR presentation is reserved for the Premium Business CV.',
+    unavailable: 'This Business QR will be available once the Business CV is published.',
     back: 'Back to Business CV',
   },
   it: {
-    title: 'Il mio QR Business',
-    intro: 'Mostra questo QR dal telefono: il cliente lo scansiona e apre direttamente il tuo CV Business.',
-    scan: 'Scansiona per scoprire il mio CV Business',
-    home: 'Aggiungi alla schermata Home',
-    download: 'Scarica il QR in PNG',
+    scan: 'Scansiona questo QR per aprire direttamente il CV Business.',
+    share: 'Condividi',
+    shared: 'Link copiato',
+    download: 'Scarica',
+    install: 'Aggiungi alla schermata Home',
     open: 'Apri il CV Business',
-    installTitle: 'Per aggiungerlo alla schermata Home',
-    installIos: 'iPhone: Safari → Condividi → Aggiungi alla schermata Home.',
-    installAndroid: 'Android: Chrome → Menu → Aggiungi alla schermata Home o Installa.',
+    powered: 'Powered by Dalil Tounes',
+    installIos: 'iPhone: apri questa pagina in Safari, quindi Condividi → Aggiungi alla schermata Home.',
+    installAndroid: 'Android: apri questa pagina in Chrome, quindi Menu → Aggiungi alla schermata Home o Installa.',
     loading: 'Caricamento QR Business…',
-    unavailable: 'Questa presentazione QR è riservata al CV Business Premium.',
+    unavailable: 'Il QR Business sarà disponibile quando il CV Business sarà pubblicato.',
     back: 'Torna al CV Business',
   },
   ru: {
-    title: 'Мой Business QR',
-    intro: 'Покажите этот QR на телефоне: клиент сканирует его и сразу открывает ваш Business CV.',
-    scan: 'Сканируйте, чтобы открыть мой Business CV',
-    home: 'Добавить на главный экран',
-    download: 'Скачать QR в PNG',
+    scan: 'Отсканируйте QR-код, чтобы сразу открыть Business CV.',
+    share: 'Поделиться',
+    shared: 'Ссылка скопирована',
+    download: 'Скачать',
+    install: 'Добавить на главный экран',
     open: 'Открыть Business CV',
-    installTitle: 'Чтобы добавить на главный экран',
-    installIos: 'iPhone: Safari → Поделиться → На экран «Домой».',
-    installAndroid: 'Android: Chrome → Меню → Добавить на главный экран или Установить.',
+    powered: 'При поддержке Dalil Tounes',
+    installIos: 'iPhone: откройте эту страницу в Safari, затем Поделиться → На экран «Домой».',
+    installAndroid: 'Android: откройте эту страницу в Chrome, затем Меню → Добавить на главный экран или Установить.',
     loading: 'Загрузка Business QR…',
-    unavailable: 'Эта QR-презентация доступна для Premium Business CV.',
+    unavailable: 'Business QR станет доступен после публикации Business CV.',
     back: 'Назад к Business CV',
   },
 } as const;
+
+function getCoverUrl(value?: string | null): string {
+  if (!value?.trim()) return HERO_IMAGE_URL;
+  const first = value.split(',')[0]?.trim();
+  if (!first) return HERO_IMAGE_URL;
+  if (/^https?:\/\//i.test(first)) return first;
+  return `${supabaseUrl}/storage/v1/object/public/entreprises/${first}`;
+}
 
 export default function BusinessQr() {
   const { id } = useParams<{ id: string }>();
@@ -96,7 +112,8 @@ export default function BusinessQr() {
   const text = COPY[language as keyof typeof COPY] || COPY.fr;
   const [business, setBusiness] = useState<BusinessQrRecord | null>(null);
   const [loading, setLoading] = useState(true);
-  const [showInstallHelp, setShowInstallHelp] = useState(false);
+  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [shareConfirmed, setShareConfirmed] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -107,7 +124,7 @@ export default function BusinessQr() {
       }
       const { data } = await supabase
         .from('entreprise')
-        .select('id, nom, slug, ville, logo_url, statut_abonnement')
+        .select('id, nom, slug, ville, categorie, image_url, logo_url, statut_abonnement, cv_business_status')
         .eq('id', id)
         .maybeSingle();
       if (!cancelled) {
@@ -119,11 +136,45 @@ export default function BusinessQr() {
     return () => { cancelled = true; };
   }, [id]);
 
+  useEffect(() => {
+    const handleBeforeInstall = (event: Event) => {
+      event.preventDefault();
+      setInstallPrompt(event as BeforeInstallPromptEvent);
+    };
+    const handleInstalled = () => setInstallPrompt(null);
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+    window.addEventListener('appinstalled', handleInstalled);
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+      window.removeEventListener('appinstalled', handleInstalled);
+    };
+  }, []);
+
   const cvPath = useMemo(() => business ? buildEntrepriseUrl(business) : '/entreprises', [business]);
   const cvUrl = `https://dalil-tounes.com${cvPath}`;
   const logoUrl = business ? getLogoUrl(business.logo_url) : '';
+  const coverUrl = getCoverUrl(business?.image_url);
   const tier = business ? mapSubscriptionToTier(business) : 'gratuit';
-  const premiumAccess = tier === 'premium' || tier === 'elite' || tier === 'custom';
+  const legacyPremiumAccess = tier === 'premium' || tier === 'elite' || tier === 'custom';
+  const cvBusinessAccess = business?.cv_business_status === 'published';
+  const qrAccess = cvBusinessAccess || legacyPremiumAccess;
+
+  useEffect(() => {
+    if (!business?.id || !qrAccess) return;
+
+    const existing = document.querySelector<HTMLLinkElement>('link[rel="manifest"]');
+    const link = existing || document.createElement('link');
+    link.rel = 'manifest';
+    link.href = `/api/business-manifest?id=${encodeURIComponent(business.id)}&name=${encodeURIComponent(business.nom)}&logo=${encodeURIComponent(logoUrl)}`;
+    if (!existing) document.head.appendChild(link);
+    document.title = `${business.nom} — CV Business`;
+
+    return () => {
+      link.href = '/manifest.json';
+      document.title = 'Dalil Tounes — Plateforme des professionnels en Tunisie | CV Business';
+    };
+  }, [business?.id, business?.nom, logoUrl, qrAccess]);
 
   const downloadPng = () => {
     const svg = document.getElementById('dt-business-qr');
@@ -147,13 +198,54 @@ export default function BusinessQr() {
     image.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(serialized)}`;
   };
 
+  const shareBusiness = async () => {
+    if (!business) return;
+    const shareData = {
+      title: business.nom,
+      text: `${business.nom} — CV Business Dalil Tounes`,
+      url: cvUrl,
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+        return;
+      }
+      await navigator.clipboard.writeText(cvUrl);
+      setShareConfirmed(true);
+      window.setTimeout(() => setShareConfirmed(false), 1800);
+    } catch (error) {
+      if ((error as DOMException)?.name !== 'AbortError') {
+        try {
+          await navigator.clipboard.writeText(cvUrl);
+          setShareConfirmed(true);
+          window.setTimeout(() => setShareConfirmed(false), 1800);
+        } catch {
+          // Clipboard can be unavailable in some embedded browsers.
+        }
+      }
+    }
+  };
+
+  const installApp = async () => {
+    if (installPrompt) {
+      await installPrompt.prompt();
+      const choice = await installPrompt.userChoice;
+      if (choice.outcome === 'accepted') setInstallPrompt(null);
+      return;
+    }
+
+    const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    window.alert(isIos ? text.installIos : text.installAndroid);
+  };
+
   if (loading) {
-    return <div className="min-h-[70vh] grid place-items-center text-gray-600">{text.loading}</div>;
+    return <div className="fixed inset-0 z-[10000] grid place-items-center bg-[#032D21] text-white">{text.loading}</div>;
   }
 
-  if (!business || !premiumAccess) {
+  if (!business || !qrAccess) {
     return (
-      <div className="min-h-[70vh] grid place-items-center px-4 text-center">
+      <div className="fixed inset-0 z-[10000] grid place-items-center overflow-y-auto bg-[#F6F7F4] px-4 text-center">
         <div className="max-w-md rounded-3xl border border-[#D4AF37]/40 bg-white p-8 shadow-xl">
           <p className="text-gray-700">{text.unavailable}</p>
           <Link to={cvPath} className="mt-5 inline-flex rounded-full bg-[#0B4B3E] px-5 py-2.5 font-semibold text-white">{text.back}</Link>
@@ -163,48 +255,27 @@ export default function BusinessQr() {
   }
 
   return (
-    <main className="min-h-screen bg-[#F6F7F4] px-4 py-8" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-      <div className="mx-auto max-w-xl rounded-[2rem] border border-[#D4AF37]/60 bg-[#073D34] p-5 text-center text-white shadow-2xl sm:p-8">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border-2 border-[#D4AF37] bg-white">
-          <img src={logoUrl} alt={`Logo ${business.nom}`} className="h-full w-full object-cover" />
-        </div>
-        <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#F4CE55]">CV Business Premium</p>
-        <h1 className="mt-2 text-3xl font-black">{text.title}</h1>
-        <h2 className="mt-1 text-lg font-bold text-[#F4CE55]">{business.nom}</h2>
-        <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-white/80">{text.intro}</p>
-
-        <div className="mx-auto mt-6 max-w-[360px] rounded-[1.75rem] bg-white p-5 shadow-inner">
-          <div className="relative mx-auto w-fit">
-            <QRCodeSVG id="dt-business-qr" value={cvUrl} size={300} level="H" includeMargin bgColor="#ffffff" fgColor="#000000" />
-            <div className="pointer-events-none absolute left-1/2 top-1/2 grid h-16 w-16 -translate-x-1/2 -translate-y-1/2 place-items-center overflow-hidden rounded-full border-4 border-white bg-[#073D34] shadow-md">
-              <img src={logoUrl} alt="" className="h-full w-full object-cover" />
-            </div>
-          </div>
-        </div>
-        <p className="mt-4 font-semibold text-[#F4CE55]">{text.scan}</p>
-
-        <div className="mt-6 grid gap-3">
-          <button type="button" onClick={() => setShowInstallHelp(value => !value)} className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#D4AF37] bg-[#0E6C55] px-4 py-3 font-bold text-white transition hover:bg-[#118062]">
-            <Home size={18} />{text.home}
-          </button>
-          <button type="button" onClick={downloadPng} className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#D4AF37] bg-[#0E6C55] px-4 py-3 font-bold text-white transition hover:bg-[#118062]">
-            <Download size={18} />{text.download}
-          </button>
-          <Link to={cvPath} className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#D4AF37] px-4 py-3 font-bold text-[#F4CE55] transition hover:bg-white/5">
-            <ExternalLink size={18} />{text.open}
-          </Link>
-        </div>
-
-        {showInstallHelp && (
-          <div className="mt-5 rounded-2xl border border-white/15 bg-black/15 p-4 text-start text-sm leading-6 text-white/85">
-            <p className="font-bold text-[#F4CE55]">{text.installTitle}</p>
-            <p className="mt-2">{text.installIos}</p>
-            <p>{text.installAndroid}</p>
-          </div>
-        )}
-
-        <div className="mt-6 flex items-center justify-center gap-2 text-xs text-white/55"><QrCode size={14} /> Dalil Tounes</div>
-      </div>
+    <main className="fixed inset-0 z-[10000] overflow-y-auto bg-[#032D21] px-3 py-4 sm:py-6" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+      <CvBusinessQrVisual
+        language={language}
+        name={business.nom}
+        category={business.categorie || undefined}
+        coverImage={coverUrl}
+        logo={logoUrl}
+        qrValue={cvUrl}
+        shareLabel={shareConfirmed ? text.shared : text.share}
+        downloadLabel={text.download}
+        addLabel={text.install}
+        openLabel={text.open}
+        scanText={text.scan}
+        poweredText={text.powered}
+        openHref={cvPath}
+        onShare={shareBusiness}
+        onDownload={downloadPng}
+        onInstall={installApp}
+        qrId="dt-business-qr"
+        interactive
+      />
     </main>
   );
 }
