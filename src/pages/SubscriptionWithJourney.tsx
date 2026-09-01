@@ -9,8 +9,8 @@ export default function SubscriptionWithJourney() {
 
   return (
     <>
-      <Subscription />
       <CvBusinessJourney language={lang} />
+      <Subscription />
     </>
   );
 }
