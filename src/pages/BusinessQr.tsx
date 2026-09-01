@@ -240,7 +240,7 @@ export default function BusinessQr() {
   };
 
   if (loading) {
-    return <div className="fixed inset-0 z-[10000] grid place-items-center bg-[#003C31] text-white">{text.loading}</div>;
+    return <div className="fixed inset-0 z-[10000] grid place-items-center bg-[#032D21] text-white">{text.loading}</div>;
   }
 
   if (!business || !qrAccess) {
@@ -255,7 +255,7 @@ export default function BusinessQr() {
   }
 
   return (
-    <main className="fixed inset-0 z-[10000] overflow-y-auto bg-[#003C31] px-3 py-4 sm:py-6" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+    <main className="fixed inset-0 z-[10000] overflow-y-auto bg-[#032D21] px-3 py-4 sm:py-6" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       <CvBusinessQrVisual
         language={language}
         name={business.nom}
