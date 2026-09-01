@@ -17,6 +17,7 @@ interface BusinessQrRecord {
   image_url?: string | null;
   logo_url?: string | null;
   statut_abonnement?: string | null;
+  cv_business_status?: string | null;
 }
 
 interface BeforeInstallPromptEvent extends Event {
@@ -36,7 +37,7 @@ const COPY = {
     installIos: 'iPhone : ouvrez cette page dans Safari, puis Partager → Ajouter à l’écran d’accueil.',
     installAndroid: 'Android : ouvrez cette page dans Chrome, puis Menu → Ajouter à l’écran d’accueil ou Installer.',
     loading: 'Chargement du QR Business…',
-    unavailable: 'Cette présentation QR est réservée au CV Business Premium.',
+    unavailable: "Ce QR Business sera disponible lorsque le CV Business sera publié.",
     back: 'Retour au CV Business',
   },
   ar: {
@@ -50,7 +51,7 @@ const COPY = {
     installIos: 'iPhone: افتح هذه الصفحة في Safari، ثم مشاركة ← إضافة إلى الشاشة الرئيسية.',
     installAndroid: 'Android: افتح هذه الصفحة في Chrome، ثم القائمة ← إضافة إلى الشاشة الرئيسية أو تثبيت.',
     loading: 'جارٍ تحميل رمز QR…',
-    unavailable: 'عرض QR هذا مخصص لـ CV Business Premium.',
+    unavailable: 'سيصبح QR Business متاحًا عند نشر CV Business.',
     back: 'العودة إلى السيرة المهنية',
   },
   en: {
@@ -64,7 +65,7 @@ const COPY = {
     installIos: 'iPhone: open this page in Safari, then Share → Add to Home Screen.',
     installAndroid: 'Android: open this page in Chrome, then Menu → Add to Home Screen or Install.',
     loading: 'Loading Business QR…',
-    unavailable: 'This QR presentation is reserved for the Premium Business CV.',
+    unavailable: 'This Business QR will be available once the Business CV is published.',
     back: 'Back to Business CV',
   },
   it: {
@@ -78,7 +79,7 @@ const COPY = {
     installIos: 'iPhone: apri questa pagina in Safari, quindi Condividi → Aggiungi alla schermata Home.',
     installAndroid: 'Android: apri questa pagina in Chrome, quindi Menu → Aggiungi alla schermata Home o Installa.',
     loading: 'Caricamento QR Business…',
-    unavailable: 'Questa presentazione QR è riservata al CV Business Premium.',
+    unavailable: 'Il QR Business sarà disponibile quando il CV Business sarà pubblicato.',
     back: 'Torna al CV Business',
   },
   ru: {
@@ -92,7 +93,7 @@ const COPY = {
     installIos: 'iPhone: откройте эту страницу в Safari, затем Поделиться → На экран «Домой».',
     installAndroid: 'Android: откройте эту страницу в Chrome, затем Меню → Добавить на главный экран или Установить.',
     loading: 'Загрузка Business QR…',
-    unavailable: 'Эта QR-презентация доступна для Premium Business CV.',
+    unavailable: 'Business QR станет доступен после публикации Business CV.',
     back: 'Назад к Business CV',
   },
 } as const;
@@ -123,7 +124,7 @@ export default function BusinessQr() {
       }
       const { data } = await supabase
         .from('entreprise')
-        .select('id, nom, slug, ville, categorie, image_url, logo_url, statut_abonnement')
+        .select('id, nom, slug, ville, categorie, image_url, logo_url, statut_abonnement, cv_business_status')
         .eq('id', id)
         .maybeSingle();
       if (!cancelled) {
@@ -155,10 +156,12 @@ export default function BusinessQr() {
   const logoUrl = business ? getLogoUrl(business.logo_url) : '';
   const coverUrl = getCoverUrl(business?.image_url);
   const tier = business ? mapSubscriptionToTier(business) : 'gratuit';
-  const premiumAccess = tier === 'premium' || tier === 'elite' || tier === 'custom';
+  const legacyPremiumAccess = tier === 'premium' || tier === 'elite' || tier === 'custom';
+  const cvBusinessAccess = business?.cv_business_status === 'published';
+  const qrAccess = cvBusinessAccess || legacyPremiumAccess;
 
   useEffect(() => {
-    if (!business?.id) return;
+    if (!business?.id || !qrAccess) return;
 
     const existing = document.querySelector<HTMLLinkElement>('link[rel="manifest"]');
     const link = existing || document.createElement('link');
@@ -171,7 +174,7 @@ export default function BusinessQr() {
       link.href = '/manifest.json';
       document.title = 'Dalil Tounes — Plateforme des professionnels en Tunisie | CV Business';
     };
-  }, [business?.id, business?.nom, logoUrl]);
+  }, [business?.id, business?.nom, logoUrl, qrAccess]);
 
   const downloadPng = () => {
     const svg = document.getElementById('dt-business-qr');
@@ -240,7 +243,7 @@ export default function BusinessQr() {
     return <div className="fixed inset-0 z-[10000] grid place-items-center bg-[#003C31] text-white">{text.loading}</div>;
   }
 
-  if (!business || !premiumAccess) {
+  if (!business || !qrAccess) {
     return (
       <div className="fixed inset-0 z-[10000] grid place-items-center overflow-y-auto bg-[#F6F7F4] px-4 text-center">
         <div className="max-w-md rounded-3xl border border-[#D4AF37]/40 bg-white p-8 shadow-xl">
