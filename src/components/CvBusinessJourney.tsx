@@ -88,9 +88,12 @@ const COPY: Record<BusinessCardPreviewLanguage, {
   },
 };
 
+const PREVIEW_WIDTH = 230;
+const PREVIEW_HEIGHT = 400;
+
 function JourneyArrow({ rtl }: { rtl: boolean }) {
   return (
-    <div className="hidden h-[420px] items-center justify-center lg:flex" aria-hidden="true">
+    <div className="hidden h-[400px] items-center justify-center lg:flex" aria-hidden="true">
       <ArrowRight className={`h-7 w-7 text-[#D5B257] ${rtl ? 'rotate-180' : ''}`} />
     </div>
   );
@@ -138,7 +141,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
 
   return (
     <section className="overflow-hidden border-y border-[#D5B257]/25 bg-[radial-gradient(circle_at_top,rgba(213,178,87,0.12),transparent_32%),linear-gradient(180deg,#fffdf8_0%,#ffffff_100%)] px-4 py-5 sm:py-6" dir={rtl ? 'rtl' : 'ltr'}>
-      <div className="mx-auto max-w-[1000px]">
+      <div className="mx-auto max-w-[900px]">
         <div className="mx-auto max-w-2xl text-center">
           <div className="inline-flex items-center gap-1.5 rounded-full border border-[#D5B257]/45 bg-white px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.11em] text-[#4A1D43] shadow-sm">
             <Smartphone className="h-3 w-3 text-[#D5B257]" aria-hidden="true" />
@@ -148,33 +151,33 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
           <p className="mx-auto mt-1 max-w-xl text-xs leading-5 text-gray-600 sm:text-[13px]">{t.subtitle}</p>
         </div>
 
-        <div className="mt-4 grid items-start justify-center gap-y-8 lg:grid-cols-[260px_30px_260px_30px_260px] lg:gap-x-3">
-          <article className="w-[260px] text-center">
+        <div className="mt-4 grid items-start justify-center gap-y-8 lg:grid-cols-[230px_28px_230px_28px_230px] lg:gap-x-4">
+          <article className="w-[230px] text-center">
             <div className="mb-2 inline-flex rounded-full bg-[#032D21] px-3 py-1.5 text-[11px] font-black text-[#F4CE55]">{t.pwaTitle}</div>
-            <div className="flex h-[420px] w-[260px] items-start justify-center overflow-hidden">
+            <div className="h-[400px] w-[230px] overflow-hidden">
               <PwaPhone language={language} />
             </div>
-            <p className="mx-auto mt-2 max-w-[250px] text-[12px] leading-5 text-gray-700">{t.pwaText}</p>
+            <p className="mx-auto mt-2 max-w-[230px] text-[12px] leading-5 text-gray-700">{t.pwaText}</p>
           </article>
 
           <JourneyArrow rtl={rtl} />
 
-          <article className="w-[260px] text-center">
+          <article className="w-[230px] text-center">
             <div className="mb-2 inline-flex rounded-full bg-[#032D21] px-3 py-1.5 text-[11px] font-black text-[#F4CE55]">{t.qrTitle}</div>
-            <div className="relative mx-auto h-[420px] w-[260px] overflow-hidden">
-              <div className="absolute left-1/2 top-0 origin-top -translate-x-1/2 scale-[0.72]">
+            <div className="relative mx-auto h-[400px] w-[230px] overflow-hidden rounded-[32px]">
+              <div className="absolute left-1/2 top-0 origin-top -translate-x-1/2 scale-[0.65]">
                 <CvBusinessQrVisual language={language} />
               </div>
             </div>
-            <p className="mx-auto mt-2 max-w-[250px] text-[12px] leading-5 text-gray-700">{t.qrText}</p>
+            <p className="mx-auto mt-2 max-w-[230px] text-[12px] leading-5 text-gray-700">{t.qrText}</p>
           </article>
 
           <JourneyArrow rtl={rtl} />
 
-          <article className="w-[260px] text-center">
+          <article className="w-[230px] text-center">
             <div className="mb-2 inline-flex rounded-full bg-[#032D21] px-3 py-1.5 text-[11px] font-black text-[#F4CE55]">{t.cvTitle}</div>
-            <div className="relative mx-auto h-[420px] w-[260px] overflow-hidden rounded-[18px]">
-              <div className="absolute left-1/2 top-0 origin-top -translate-x-1/2 scale-[0.90]">
+            <div className="relative mx-auto h-[400px] w-[230px] overflow-hidden rounded-[32px]">
+              <div className="absolute left-1/2 top-0 origin-top -translate-x-1/2 scale-[0.80]">
                 <BusinessCardPreview
                   variant="premium"
                   size="compact"
@@ -184,7 +187,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
                 />
               </div>
             </div>
-            <p className="mx-auto mt-2 max-w-[250px] text-[12px] leading-5 text-gray-700">{t.cvText}</p>
+            <p className="mx-auto mt-2 max-w-[230px] text-[12px] leading-5 text-gray-700">{t.cvText}</p>
           </article>
         </div>
 
