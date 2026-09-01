@@ -31,7 +31,7 @@ function RetiredMarketplaceRedirect() {
 }
 
 const Home = lazy(() => import('./pages/HomeVitrineFirst'));
-const Subscription = lazy(() => import('./pages/Subscription').then(m => ({ default: m.Subscription })));
+const Subscription = lazy(() => import('./pages/SubscriptionWithJourney'));
 const PaiementConfirmation = lazy(() => import('./pages/PaiementConfirmation'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
