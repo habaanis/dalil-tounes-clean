@@ -33,6 +33,7 @@ interface SubscriptionRequestFormProps {
   checkoutOffer: CheckoutOffer;
   initialBillingPeriod?: BillingPeriod;
   creationMode?: boolean;
+  presentationModelLabel?: string;
   onCancel?: () => void;
   onSuccess?: () => void;
 }
@@ -673,6 +674,7 @@ export function SubscriptionRequestForm({
   checkoutOffer,
   initialBillingPeriod,
   creationMode = false,
+  presentationModelLabel,
   onCancel,
   onSuccess,
 }: SubscriptionRequestFormProps) {
@@ -811,7 +813,10 @@ export function SubscriptionRequestForm({
       requestedPaymentSchedule: form.requestedPaymentSchedule,
       preferredContactMethod: form.preferredContactMethod,
       preferredContactTime: form.preferredContactTime,
-      message: cleanMultiline(form.message),
+      message: cleanMultiline([
+        presentationModelLabel ? `Modèle de présentation choisi : ${presentationModelLabel}` : '',
+        form.message,
+      ].filter(Boolean).join('\n')),
       consent: form.consent,
     };
 

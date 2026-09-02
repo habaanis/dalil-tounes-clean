@@ -1210,13 +1210,14 @@ export const Subscription = () => {
     label: string;
     checkoutOffer: CheckoutOffer;
     billingPeriod?: BillingPeriod;
+    presentationModelLabel?: string;
   } | null>(null);
   const [selectedFormula, setSelectedFormula] = useState<'artisan' | 'premium' | null>(null);
   const [selectedPresentationModel, setSelectedPresentationModel] = useState<PresentationModel | null>(null);
 
   const closePreview = () => setActivePreview(null);
-  const openRequest = (code: SubscriptionPlanCode, label: string, checkoutOffer: CheckoutOffer, billingPeriod?: BillingPeriod) => {
-    setSelectedPlan({ code, label, checkoutOffer, billingPeriod });
+  const openRequest = (code: SubscriptionPlanCode, label: string, checkoutOffer: CheckoutOffer, billingPeriod?: BillingPeriod, presentationModelLabel?: string) => {
+    setSelectedPlan({ code, label, checkoutOffer, billingPeriod, presentationModelLabel });
     setActivePreview('request');
   };
   const selectFormula = (formula: 'artisan' | 'premium') => {
@@ -1231,7 +1232,7 @@ export const Subscription = () => {
   const continueWithModel = () => {
     if (!selectedFormula || !selectedPresentationModel || !selectedFormulaLabel) return;
     const modelLabel = getPresentationModelLabel(language, selectedPresentationModel);
-    openRequest(selectedFormula, `${selectedFormulaLabel} — ${modelLabel}`, selectedFormula);
+    openRequest(selectedFormula, `${selectedFormulaLabel} — ${modelLabel}`, selectedFormula, undefined, modelLabel);
   };
 
   return (
@@ -1486,6 +1487,7 @@ export const Subscription = () => {
               checkoutOffer={selectedPlan.checkoutOffer}
               initialBillingPeriod={selectedPlan.billingPeriod}
               creationMode={selectedPlan.code === 'artisan' || selectedPlan.code === 'premium'}
+              presentationModelLabel={selectedPlan.presentationModelLabel}
               onCancel={closePreview}
             />
           </div>
