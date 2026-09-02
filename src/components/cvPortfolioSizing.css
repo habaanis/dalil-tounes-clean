@@ -1,35 +1,72 @@
 /* Le Portfolio conserve volontairement une silhouette de vitrine mobile sur grand écran. */
 @media (min-width: 601px) {
   .cvp-shell {
-    width: min(100%, 480px);
+    width: min(100%, 400px);
   }
 
   .cvp-cover {
-    height: 330px;
+    height: 245px;
+  }
+
+  .cvp-cover::after {
+    height: 245px;
   }
 
   .cvp-identity {
-    margin-right: 14px;
-    margin-left: 14px;
+    margin: -62px 12px 0;
+    padding: 60px 12px 16px;
     padding-right: 14px;
     padding-left: 14px;
   }
 
+  .cvp-logo {
+    top: -52px;
+    width: 104px;
+    height: 104px;
+  }
+
+  .cvp-activity {
+    padding: 7px 16px;
+    font-size: 0.78rem;
+  }
+
+  .cvp-name-panel {
+    margin-top: 13px;
+    padding: 13px;
+  }
+
+  .cvp-name-panel h1 {
+    font-size: 2rem;
+  }
+
   .cvp-actions {
+    gap: 8px;
+    padding-top: 16px;
+    padding-bottom: 12px;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     padding-right: 14px;
     padding-left: 14px;
   }
 
   .cvp-actions a {
-    min-height: 72px;
+    min-height: 58px;
     flex-direction: column;
-    font-size: 0.78rem;
+    font-size: 0.72rem;
   }
 
   .cvp-content {
+    padding-top: 16px;
+    padding-bottom: 16px;
     padding-right: 16px;
     padding-left: 16px;
+  }
+
+  .cvp-section {
+    margin-bottom: 20px;
+  }
+
+  .cvp-gallery-grid button {
+    height: 145px;
   }
 
   .cvp-about-grid {
@@ -37,6 +74,18 @@
   }
 
   .cvp-service-strip {
-    grid-auto-columns: 150px;
+    grid-auto-columns: 125px;
   }
+}
+
+/* Sur l'accueil, on montre un aperçu court. Le texte complet reste dans « À propos ». */
+.cvp-content-home .cvp-about-grid p:first-child {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
+}
+
+.cvp-content-home .cvp-about-extra {
+  display: none;
 }
