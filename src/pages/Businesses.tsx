@@ -118,11 +118,11 @@ const DIRECTORY_NAV_COPY: Record<BusinessCardPreviewLanguage, {
   showDetails: string;
   hideDetails: string;
 }> = {
-  fr: { search: 'Rechercher', businessCenter: "Centre d’affaires", professionals: 'Pour les professionnels', showDetails: 'Découvrir les services pour professionnels', hideDetails: 'Masquer les explications' },
-  ar: { search: 'البحث', businessCenter: 'مركز الأعمال', professionals: 'للمهنيين', showDetails: 'اكتشف خدمات المهنيين', hideDetails: 'إخفاء الشروحات' },
-  en: { search: 'Search', businessCenter: 'Business centre', professionals: 'For professionals', showDetails: 'Discover services for professionals', hideDetails: 'Hide explanations' },
-  it: { search: 'Cerca', businessCenter: 'Centro d’affari', professionals: 'Per i professionisti', showDetails: 'Scopri i servizi per professionisti', hideDetails: 'Nascondi le spiegazioni' },
-  ru: { search: 'Поиск', businessCenter: 'Деловой центр', professionals: 'Для профессионалов', showDetails: 'Услуги для профессионалов', hideDetails: 'Скрыть пояснения' },
+  fr: { search: 'Rechercher', businessCenter: "Centre d’affaires", professionals: 'Pour les professionnels', showDetails: 'Comprendre le CV Business', hideDetails: 'Masquer les explications' },
+  ar: { search: 'البحث', businessCenter: 'مركز الأعمال', professionals: 'للمهنيين', showDetails: 'فهم الـ CV Business', hideDetails: 'إخفاء الشروحات' },
+  en: { search: 'Search', businessCenter: 'Business centre', professionals: 'For professionals', showDetails: 'Understand the CV Business', hideDetails: 'Hide explanations' },
+  it: { search: 'Cerca', businessCenter: 'Centro d’affari', professionals: 'Per i professionisti', showDetails: 'Capire il CV Business', hideDetails: 'Nascondi le spiegazioni' },
+  ru: { search: 'Поиск', businessCenter: 'Деловой центр', professionals: 'Для профессионалов', showDetails: 'Что такое CV Business', hideDetails: 'Скрыть пояснения' },
 };
 
 const PROFESSIONAL_FAQ = [
