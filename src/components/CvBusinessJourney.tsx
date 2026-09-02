@@ -175,7 +175,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
               <img
                 src="/images/cv-business-professionnel-aux-saveurs-anis.png"
                 alt={`${t.cvTitle} — Aux saveurs d’Anis`}
-                className="h-full w-full object-contain object-top"
+                className="h-full w-auto max-w-none object-contain object-top"
                 loading="lazy"
                 decoding="async"
               />
