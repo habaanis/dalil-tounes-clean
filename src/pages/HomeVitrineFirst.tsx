@@ -153,7 +153,7 @@ export default function HomeVitrineFirst() {
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as BusinessCardPreviewLanguage;
   const t = COPY[lang];
   const rtl = lang === 'ar';
-  const [showPlatformMobile, setShowPlatformMobile] = useState(false);
+  const [showPlatformDetails, setShowPlatformDetails] = useState(false);
 
   return (
     <div dir={rtl ? 'rtl' : 'ltr'}>
@@ -265,30 +265,34 @@ export default function HomeVitrineFirst() {
         </div>
       </section>
 
-      <section className="bg-white px-4 py-7 lg:hidden">
-        <div className="mx-auto max-w-md rounded-3xl border border-[#D4AF37]/40 bg-[#FFFCF7] p-5 text-center shadow-sm">
-          <h2 className="font-serif text-2xl font-bold text-[#2E102A]">{t.platformTitle}</h2>
-          <p className="mt-2 text-sm leading-6 text-gray-600">{t.platformText}</p>
-          <button
-            type="button"
-            onClick={() => navigate('/businesses')}
-            className="mt-4 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#4A1D43] px-5 py-3 text-sm font-black text-white"
-          >
-            {t.platformCta}
-            <ArrowRight className="h-4 w-4" aria-hidden="true" />
-          </button>
-          <button
-            type="button"
-            aria-expanded={showPlatformMobile}
-            onClick={() => setShowPlatformMobile((current) => !current)}
-            className="mt-3 text-sm font-bold text-[#4A1D43] underline decoration-[#D4AF37] underline-offset-4"
-          >
-            {showPlatformMobile ? t.platformDetailsClose : t.platformDetailsOpen}
-          </button>
+      <section className="bg-white px-4 py-7 lg:py-10">
+        <div className="mx-auto max-w-4xl rounded-3xl border border-[#D4AF37]/40 bg-[#FFFCF7] p-5 text-center shadow-sm lg:flex lg:items-center lg:justify-between lg:gap-8 lg:p-7 lg:text-left rtl:lg:text-right">
+          <div>
+            <h2 className="font-serif text-2xl font-bold text-[#2E102A] lg:text-3xl">{t.platformTitle}</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-600 lg:text-base">{t.platformText}</p>
+          </div>
+          <div className="mt-4 grid shrink-0 gap-2 lg:mt-0 lg:min-w-[270px]">
+            <button
+              type="button"
+              onClick={() => navigate('/businesses')}
+              className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#4A1D43] px-5 py-3 text-sm font-black text-white"
+            >
+              {t.platformCta}
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              aria-expanded={showPlatformDetails}
+              onClick={() => setShowPlatformDetails((current) => !current)}
+              className="min-h-10 text-sm font-bold text-[#4A1D43] underline decoration-[#D4AF37] underline-offset-4"
+            >
+              {showPlatformDetails ? t.platformDetailsClose : t.platformDetailsOpen}
+            </button>
+          </div>
         </div>
       </section>
 
-      <div className={showPlatformMobile ? 'block' : 'hidden lg:block'}>
+      <div className={showPlatformDetails ? 'block' : 'hidden'}>
           <VisibilityHouseSection />
 
           <style>{`.platform-home-after-vitrine #maison-visibilite{display:none}`}</style>
