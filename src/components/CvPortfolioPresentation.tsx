@@ -138,6 +138,14 @@ export function CvPortfolioPresentation({
     ? profile.presentation.description
     : '';
   const serviceImages = gallery.length > 0 ? gallery : [{ thumbnail: coverImage, full: coverImage }];
+  const actionPriority = (href: string) => {
+    if (href.startsWith('tel:')) return 0;
+    if (href.includes('wa.me') || href.includes('whatsapp')) return 1;
+    if (href.includes('maps') || href.includes('google.com/maps')) return 2;
+    return 3;
+  };
+  const featuredActions = [...actions].sort((a, b) => actionPriority(a.href) - actionPriority(b.href)).slice(0, 3);
+  const secondaryActions = actions.filter(action => !featuredActions.includes(action));
 
   const tabs = useMemo(() => [
     { id: 'home' as const, label: copy.home, icon: Home, visible: true },
@@ -233,9 +241,9 @@ export function CvPortfolioPresentation({
             </div>
           </header>
 
-          {actions.length > 0 && (
+          {featuredActions.length > 0 && (
             <section className="cvp-actions" aria-label="Actions">
-              {actions.map(({ label, href, icon: Icon, external }) => (
+              {featuredActions.map(({ label, href, icon: Icon, external }) => (
                 <a href={href} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined} key={label}>
                   <Icon /><span>{label}</span>
                 </a>
@@ -265,15 +273,28 @@ export function CvPortfolioPresentation({
               </section>
             )}
 
-            <section className="cvp-extra-actions">
-              {presentation.visibleActions.includes('reservation') && bookingContent && <button type="button" onClick={() => setBookingOpen(value => !value)}><CalendarDays />{copy.book}</button>}
-              {(profile.contact.whatsapp || profile.contact.email) && <button type="button" onClick={onQuote}><FileText />{copy.quote}</button>}
-              {presentation.visibleActions.includes('add_contact') && <button type="button" onClick={onDownloadContact}><Contact />{copy.addContact}</button>}
-            </section>
+            {activeTab !== 'home' && (
+              <>
+                {secondaryActions.length > 0 && (
+                  <section className="cvp-actions cvp-secondary-actions" aria-label={copy.practical}>
+                    {secondaryActions.map(({ label, href, icon: Icon, external }) => (
+                      <a href={href} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined} key={label}>
+                        <Icon /><span>{label}</span>
+                      </a>
+                    ))}
+                  </section>
+                )}
+                <section className="cvp-extra-actions">
+                  {presentation.visibleActions.includes('reservation') && bookingContent && <button type="button" onClick={() => setBookingOpen(value => !value)}><CalendarDays />{copy.book}</button>}
+                  {(profile.contact.whatsapp || profile.contact.email) && <button type="button" onClick={onQuote}><FileText />{copy.quote}</button>}
+                  {presentation.visibleActions.includes('add_contact') && <button type="button" onClick={onDownloadContact}><Contact />{copy.addContact}</button>}
+                </section>
+              </>
+            )}
             {bookingOpen && bookingContent && <section className="cvp-booking">{bookingContent}</section>}
             {notice && <p className="cvp-notice" role="status">{notice}</p>}
           </div>
-          <footer className="cvp-footer">{copy.poweredBy}</footer>
+          {activeTab !== 'home' && <footer className="cvp-footer">{copy.poweredBy}</footer>}
         </article>
       </div>
     </div>
