@@ -190,6 +190,20 @@ export const Layout = ({ children }: LayoutProps) => {
     return location.pathname.startsWith(path);
   };
 
+  // Comme les vitrines publiques Lienora, les CV Business sont des pages
+  // autonomes : le modèle choisi remplace toute la présentation publique.
+  const isStandaloneBusinessProfile =
+    location.pathname.startsWith('/entreprise/') ||
+    location.pathname.startsWith('/p/');
+
+  if (isStandaloneBusinessProfile) {
+    return (
+      <div className={`min-h-screen bg-white ${isRTL ? 'rtl' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
+        <main className="min-h-screen overflow-x-hidden">{children}</main>
+      </div>
+    );
+  }
+
   return (
     <div className={`min-h-screen bg-white ${isRTL ? 'rtl' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
       <nav className="bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-50">
