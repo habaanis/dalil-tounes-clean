@@ -251,8 +251,8 @@ export function CvPortfolioPresentation({
             ))}
           </nav>
 
-          <div className="cvp-content" id="cv-portfolio-content">
-            {activeTab === 'home' && <>{hasSection('about') && aboutBlock}{hasSection('services') && servicesBlock}{hasSection('gallery') && galleryBlock}</>}
+          <div className={`cvp-content cvp-content-${activeTab}`} id="cv-portfolio-content">
+            {activeTab === 'home' && <>{hasSection('about') && aboutBlock}{hasSection('services') && servicesBlock}</>}
             {activeTab === 'about' && aboutBlock}
             {activeTab === 'services' && servicesBlock}
             {activeTab === 'gallery' && galleryBlock}
