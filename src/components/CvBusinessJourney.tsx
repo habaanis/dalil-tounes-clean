@@ -181,14 +181,17 @@ function ExpandedJourneyVisual({
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
+    const previousDocumentOverflow = document.documentElement.style.overflow;
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') onClose();
     };
 
     document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
     document.addEventListener('keydown', handleKeyDown);
     return () => {
       document.body.style.overflow = previousOverflow;
+      document.documentElement.style.overflow = previousDocumentOverflow;
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, [onClose]);
