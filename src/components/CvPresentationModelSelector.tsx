@@ -148,7 +148,7 @@ export function CvPresentationModelSelector({
           className={`flex flex-col rounded-2xl border p-3.5 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'professional' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
         >
           <ModelPreview
-            src="/images/cv-business-professionnel-aux-saveurs-anis.png"
+            src="/images/cv-business-portfolio-aux-saveurs-anis.png"
             alt={`${copy.professional} — Aux saveurs d’Anis`}
           />
           <span className="mt-3 min-w-0">
@@ -164,7 +164,7 @@ export function CvPresentationModelSelector({
           className={`flex flex-col rounded-2xl border p-3.5 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'portfolio' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
         >
           <ModelPreview
-            src="/images/cv-business-portfolio-aux-saveurs-anis.png"
+            src="/images/cv-business-professionnel-aux-saveurs-anis.png"
             alt={`${copy.portfolio} — Aux saveurs d’Anis`}
           />
           <span className="mt-3 min-w-0">
