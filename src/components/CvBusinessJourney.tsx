@@ -160,7 +160,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
           <article className="w-[180px] text-center">
             <div className="mb-1.5 inline-flex rounded-full bg-[#032D21] px-2.5 py-1 text-[10px] font-black text-[#F4CE55]">{t.qrTitle}</div>
             <div className="relative mx-auto h-[360px] w-[180px] overflow-hidden">
-              <div className="absolute left-0 top-0 w-[354px] origin-top-left scale-[0.508] rtl:left-auto rtl:right-0 rtl:origin-top-right">
+              <div className="absolute left-[2px] top-0 w-[354px] origin-top-left scale-[0.496] rtl:left-auto rtl:right-[2px] rtl:origin-top-right">
                 <CvBusinessQrVisual language={language} />
               </div>
             </div>
