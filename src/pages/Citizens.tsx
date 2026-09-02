@@ -22,6 +22,7 @@ type ResultRow = {
 const COPY: Record<PublicLanguage, {
   title: string;
   subtitle: string;
+  chooseTitle: string;
   welcome1: string;
   welcome2: string;
   results: string;
@@ -30,12 +31,11 @@ const COPY: Record<PublicLanguage, {
   schemaTitle: string;
   schemaDescription: string;
   flagAlt: string;
-  ibnAlt: string;
-  bourguibaAlt: string;
 }> = {
   fr: {
-    title: 'Citoyens',
-    subtitle: 'Trouvez facilement les services et établissements de votre région',
+    title: "Que recherchez-vous aujourd’hui ?",
+    subtitle: 'Choisissez une rubrique pour trouver rapidement un professionnel, un commerce ou un service près de chez vous.',
+    chooseTitle: 'Choisissez votre rubrique',
     welcome1: "Parce qu'en Tunisie, l'accueil est une tradition…",
     welcome2: 'nous voulons que vous vous sentiez comme chez vous ❤️',
     results: 'Résultats de recherche',
@@ -44,12 +44,11 @@ const COPY: Record<PublicLanguage, {
     schemaTitle: 'Services Citoyens - Dalil Tounes',
     schemaDescription: 'Découvrez les services citoyens en Tunisie : santé, administration, éducation, commerces, loisirs et services sociaux.',
     flagAlt: 'Drapeau de la Tunisie - services citoyens sur Dalil Tounes',
-    ibnAlt: 'Ibn Khaldoun, historien et penseur tunisien',
-    bourguibaAlt: 'Habib Bourguiba, figure historique tunisienne',
   },
   ar: {
-    title: 'المواطنون',
-    subtitle: 'اعثر بسهولة على الخدمات والمؤسسات القريبة منك',
+    title: 'ماذا تبحث عنه اليوم؟',
+    subtitle: 'اختر قسماً للعثور بسرعة على مهني أو متجر أو خدمة بالقرب منك.',
+    chooseTitle: 'اختر القسم المناسب',
     welcome1: 'لأن حسن الاستقبال في تونس تقليد راسخ…',
     welcome2: 'نريدك أن تشعر وكأنك في بيتك ❤️',
     results: 'نتائج البحث',
@@ -58,12 +57,11 @@ const COPY: Record<PublicLanguage, {
     schemaTitle: 'خدمات المواطنين - دليل تونس',
     schemaDescription: 'اكتشف خدمات المواطنين في تونس: الصحة والإدارة والتعليم والتجارة والترفيه والخدمات الاجتماعية.',
     flagAlt: 'علم تونس - خدمات المواطنين على دليل تونس',
-    ibnAlt: 'ابن خلدون، المؤرخ والمفكر التونسي',
-    bourguibaAlt: 'الحبيب بورقيبة، شخصية تاريخية تونسية',
   },
   en: {
-    title: 'Citizens',
-    subtitle: 'Easily find services and establishments in your area',
+    title: 'What are you looking for today?',
+    subtitle: 'Choose a category to quickly find a professional, shop or service near you.',
+    chooseTitle: 'Choose a category',
     welcome1: 'In Tunisia, hospitality is a tradition…',
     welcome2: 'we want you to feel at home ❤️',
     results: 'Search results',
@@ -72,12 +70,11 @@ const COPY: Record<PublicLanguage, {
     schemaTitle: 'Citizen Services - Dalil Tounes',
     schemaDescription: 'Discover citizen services in Tunisia: health, administration, education, shops, leisure and social services.',
     flagAlt: 'Tunisian flag - citizen services on Dalil Tounes',
-    ibnAlt: 'Ibn Khaldoun, Tunisian historian and thinker',
-    bourguibaAlt: 'Habib Bourguiba, Tunisian historical figure',
   },
   it: {
-    title: 'Cittadini',
-    subtitle: 'Trova facilmente servizi e attività nella tua zona',
+    title: 'Cosa cerchi oggi?',
+    subtitle: 'Scegli una categoria per trovare rapidamente un professionista, un negozio o un servizio vicino a te.',
+    chooseTitle: 'Scegli una categoria',
     welcome1: "In Tunisia l'ospitalità è una tradizione…",
     welcome2: 'vogliamo che tu ti senta a casa ❤️',
     results: 'Risultati della ricerca',
@@ -86,12 +83,11 @@ const COPY: Record<PublicLanguage, {
     schemaTitle: 'Servizi ai cittadini - Dalil Tounes',
     schemaDescription: 'Scopri i servizi ai cittadini in Tunisia: salute, amministrazione, istruzione, commercio, tempo libero e servizi sociali.',
     flagAlt: 'Bandiera tunisina - servizi ai cittadini su Dalil Tounes',
-    ibnAlt: 'Ibn Khaldoun, storico e pensatore tunisino',
-    bourguibaAlt: 'Habib Bourguiba, figura storica tunisina',
   },
   ru: {
-    title: 'Гражданам',
-    subtitle: 'Легко находите услуги и организации рядом с вами',
+    title: 'Что вы ищете сегодня?',
+    subtitle: 'Выберите категорию, чтобы быстро найти специалиста, магазин или услугу рядом с вами.',
+    chooseTitle: 'Выберите категорию',
     welcome1: 'В Тунисе гостеприимство — это традиция…',
     welcome2: 'мы хотим, чтобы вы чувствовали себя как дома ❤️',
     results: 'Результаты поиска',
@@ -100,18 +96,16 @@ const COPY: Record<PublicLanguage, {
     schemaTitle: 'Услуги для граждан - Dalil Tounes',
     schemaDescription: 'Откройте услуги для граждан в Тунисе: здоровье, администрация, образование, магазины, досуг и социальная помощь.',
     flagAlt: 'Флаг Туниса - услуги для граждан на Dalil Tounes',
-    ibnAlt: 'Ибн Хальдун, тунисский историк и мыслитель',
-    bourguibaAlt: 'Хабиб Бургиба, историческая фигура Туниса',
   },
 };
 
 const CATEGORY_ROUTES = [
-  { key: 'health', route: '/citizens/sante', image: 'sante.jpg', top: '96px', left: '18%', width: 220, height: 180, z: 10 },
-  { key: 'education', route: '/education', image: 'education.jpg', top: '40px', left: '32%', width: 260, height: 210, z: 5 },
-  { key: 'services', route: '/citizens/services', image: 'cat_administratif.jpg', top: '56px', left: '55%', width: 240, height: 190, z: 8 },
-  { key: 'tourism', route: '/citizens/tourisme', image: 'service-social.jpg', top: '240px', left: '30%', width: 300, height: 220, z: 20 },
-  { key: 'shops', route: '/citizens/shops', image: 'cat_magasin.jpg', top: '320px', left: '12%', width: 230, height: 190, z: 13 },
-  { key: 'leisure', route: '/citizens/loisirs', image: 'loisir.jpg', top: '304px', left: '60%', width: 220, height: 180, z: 9 },
+  { key: 'health', route: '/citizens/sante', image: 'sante.jpg' },
+  { key: 'education', route: '/education', image: 'education.jpg' },
+  { key: 'services', route: '/citizens/services', image: 'cat_administratif.jpg' },
+  { key: 'tourism', route: '/citizens/tourisme', image: 'service-social.jpg' },
+  { key: 'shops', route: '/citizens/shops', image: 'cat_magasin.jpg' },
+  { key: 'leisure', route: '/citizens/loisirs', image: 'loisir.jpg' },
 ] as const;
 
 export default function Citizens() {
@@ -159,82 +153,31 @@ export default function Citizens() {
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white px-4 pb-24 pt-16" dir={isRTL ? 'rtl' : 'ltr'}>
       <StructuredData data={generateCollectionPageSchema(t.schemaTitle, t.schemaDescription, citizensItems)} />
 
-      <div className="mx-auto max-w-5xl">
+      <div className="mx-auto max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="relative mb-6 overflow-hidden rounded-3xl"
+          className="relative mb-8 overflow-hidden rounded-3xl border border-[#D4AF37]/30"
         >
           <div className="absolute inset-0 z-0">
             <picture>
               <source srcSet={HERO_IMAGE_URL} type="image/webp" />
-              <img src={HERO_IMAGE_JPG_URL} alt={t.flagAlt} className="h-full w-full object-cover opacity-50 blur-sm" loading="lazy" decoding="async" />
+              <img src={HERO_IMAGE_JPG_URL} alt={t.flagAlt} className="h-full w-full object-cover opacity-35" loading="lazy" decoding="async" />
             </picture>
           </div>
+          <div className="absolute inset-0 bg-white/65" />
 
-          <div className="relative z-10 flex items-center justify-center gap-6 px-4 py-8">
-            <img src={getSupabaseImageUrl('ibn-khaldoun.jpg')} alt={t.ibnAlt} className="hidden h-20 w-20 rounded-full object-cover shadow-xl sm:block md:h-28 md:w-28" loading="lazy" decoding="async" />
-            <div className="text-center">
-              <h1 className="mb-3 text-4xl font-light text-gray-900 md:text-5xl" style={{ fontFamily: "'Playfair Display', serif" }}>{t.title}</h1>
-              <p className="mx-auto max-w-2xl text-lg font-medium text-gray-800" style={{ fontFamily: "'Playfair Display', serif" }}>{t.subtitle}</p>
-            </div>
-            <img src={getSupabaseImageUrl('habib.jpg')} alt={t.bourguibaAlt} className="hidden h-20 w-20 rounded-full object-cover shadow-xl sm:block md:h-28 md:w-28" loading="lazy" decoding="async" />
+          <div className="relative z-10 px-5 py-8 text-center sm:px-8 md:py-10">
+            <h1 className="text-3xl font-bold text-[#4A1D43] md:text-5xl" style={{ fontFamily: "'Playfair Display', serif" }}>{t.title}</h1>
+            <p className="mx-auto mt-3 max-w-3xl text-base leading-7 text-gray-700 md:text-lg">{t.subtitle}</p>
           </div>
         </motion.div>
-
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} className="mb-12 text-center">
-          <p className="text-xl font-light italic leading-relaxed text-gray-700 md:text-2xl">
-            {t.welcome1}<br />
-            <span>{lang === 'fr' ? 'et sur ' : lang === 'ar' ? 'وعلى ' : lang === 'en' ? 'and on ' : lang === 'it' ? 'e su ' : 'и в '}</span>
-            <span className="font-semibold text-[#D62828]">Dalil Tounes</span>, {t.welcome2}
-          </p>
-        </motion.div>
-
-        <div className="mx-auto mb-16 max-w-7xl px-4 md:px-8">
-          <div className="relative flex h-auto w-full flex-col gap-3 bg-white md:block md:h-[560px] md:gap-0">
-            {CATEGORY_ROUTES.map((category, index) => (
-              <Link
-                key={category.key}
-                to={category.route}
-                className="relative mx-auto h-32 w-[95%] cursor-pointer overflow-hidden rounded-lg border-2 border-[#D4AF37] no-underline transition-all duration-500 ease-out md:absolute md:mx-0 md:h-auto md:w-auto"
-                style={{
-                  top: window.innerWidth >= 768 ? category.top : undefined,
-                  left: window.innerWidth >= 768 && !isRTL ? category.left : undefined,
-                  right: window.innerWidth >= 768 && isRTL ? category.left : undefined,
-                  width: window.innerWidth >= 768 ? `${category.width}px` : '95%',
-                  height: window.innerWidth >= 768 ? `${category.height}px` : '128px',
-                  zIndex: category.z,
-                  boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)',
-                }}
-                onMouseEnter={(event) => {
-                  const mobile = window.innerWidth < 768;
-                  event.currentTarget.style.transform = mobile ? 'scale(1.03)' : 'scale(1.15)';
-                  event.currentTarget.style.zIndex = '999';
-                  event.currentTarget.style.boxShadow = '0 20px 50px rgba(212, 175, 55, 0.5)';
-                }}
-                onMouseLeave={(event) => {
-                  event.currentTarget.style.transform = 'scale(1)';
-                  event.currentTarget.style.zIndex = String(category.z);
-                  event.currentTarget.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.3)';
-                }}
-              >
-                <img src={getSupabaseImageUrl(category.image)} alt="" className="absolute inset-0 h-full w-full object-cover brightness-[0.65]" loading="lazy" decoding="async" />
-                <div className={`absolute inset-0 ${category.key === 'education' ? 'bg-gradient-to-b' : 'bg-gradient-to-t'} from-black/90 via-black/50 to-transparent`} />
-                <div className={`pointer-events-none absolute left-0 right-0 z-10 p-3 ${category.key === 'education' ? 'top-0' : 'bottom-0'}`}>
-                  <h2 className={`text-base font-light leading-tight tracking-wide text-[#D4AF37] md:text-lg ${isRTL ? 'text-right' : 'text-left'}`} style={{ fontFamily: "'Playfair Display', serif", textShadow: '0 2px 8px rgba(0, 0, 0, 0.6)' }}>
-                    {t.categories[index]}
-                  </h2>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
 
         {results.length > 0 && (
-          <div className="mb-16 rounded-xl border-2 border-[#D4AF37] bg-white p-4 shadow-sm">
-            <h2 className="mb-3 text-lg font-medium text-gray-900">{t.results}</h2>
-            <div className="grid gap-2 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
+          <div className="mb-8 rounded-2xl border border-[#D4AF37]/40 bg-white p-4 shadow-sm sm:p-6">
+            <h2 className="mb-4 text-xl font-bold text-[#4A1D43]">{t.results}</h2>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {results.map((result) => (
                 <div key={result.id} className="rounded-xl border border-gray-100 p-4 transition hover:shadow-sm">
                   <h3 className="font-semibold text-gray-900">{result.nom}</h3>
@@ -246,6 +189,35 @@ export default function Citizens() {
             </div>
           </div>
         )}
+
+        <motion.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }} aria-labelledby="citizen-categories">
+          <h2 id="citizen-categories" className="mb-4 text-center text-2xl font-bold text-[#4A1D43] md:text-3xl" style={{ fontFamily: "'Playfair Display', serif" }}>{t.chooseTitle}</h2>
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-5">
+            {CATEGORY_ROUTES.map((category, index) => (
+              <Link
+                key={category.key}
+                to={category.route}
+                className="group relative h-32 overflow-hidden rounded-2xl border border-[#D4AF37]/70 bg-[#4A1D43] shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:ring-offset-2 sm:h-40 md:h-44"
+              >
+                <img src={getSupabaseImageUrl(category.image)} alt="" className="absolute inset-0 h-full w-full object-cover brightness-[0.65]" loading="lazy" decoding="async" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent" />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 p-3 sm:p-4">
+                  <h3 className={`text-base font-bold leading-tight text-white md:text-lg ${isRTL ? 'text-right' : 'text-left'}`} style={{ textShadow: '0 2px 8px rgba(0, 0, 0, 0.7)' }}>
+                    {t.categories[index]}
+                  </h3>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </motion.section>
+
+        <div className="mt-8 rounded-2xl border border-[#D4AF37]/30 bg-white px-5 py-4 text-center shadow-sm">
+          <p className="text-base italic leading-7 text-gray-700">
+            {t.welcome1}{' '}
+            <span>{lang === 'fr' ? 'et sur ' : lang === 'ar' ? 'وعلى ' : lang === 'en' ? 'and on ' : lang === 'it' ? 'e su ' : 'и в '}</span>
+            <span className="font-semibold text-[#D62828]">Dalil Tounes</span>, {t.welcome2}
+          </p>
+        </div>
       </div>
     </div>
   );
