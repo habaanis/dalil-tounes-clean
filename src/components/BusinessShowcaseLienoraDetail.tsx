@@ -50,7 +50,16 @@ import {
 } from '../lib/slugify';
 import { getCoverImageUrl, getGalleryImageUrls } from '../lib/imagekitUtils';
 import { getLogoUrl } from '../lib/logoUtils';
-import { getMultilingualField } from '../lib/databaseI18n';
+import { adaptDalilBusiness } from '../lib/cvBusinessDalilAdapter';
+import {
+  dalilCapabilitiesToPresentationEntitlements,
+  getDalilContentAvailability,
+} from '../lib/cvPresentationDalilBridge';
+import {
+  resolveCvPresentation,
+  type CvPresentationAction,
+  type CvPresentationSection,
+} from '../lib/cvPresentationEngine';
 import { getBusinessSeoMeta } from '../lib/seoMetaTemplates';
 import {
   findGouvernoratBySlug,
@@ -76,6 +85,7 @@ import EntrepriseAvisForm from './EntrepriseAvisForm';
 import ReservationForm from './ReservationForm';
 import SimilarBusinesses from './seo/SimilarBusinesses';
 import VideoPlayer from './VideoPlayer';
+import { CvPortfolioPresentation } from './CvPortfolioPresentation';
 import './businessShowcaseLienora.css';
 
 interface BusinessRecord {
@@ -441,30 +451,6 @@ const normalizeForComparison = (value: unknown): string =>
     .replace(/\s+/g, ' ')
     .trim();
 
-const firstText = (business: BusinessRecord, keys: string[]): string => {
-  for (const key of keys) {
-    const value = business[key];
-    if (typeof value === 'string' && value.trim()) return value.trim();
-  }
-  return '';
-};
-
-const splitList = (value: unknown): string[] => {
-  if (Array.isArray(value)) {
-    return value.map(item => String(item).trim()).filter(Boolean);
-  }
-  return String(value || '')
-    .split(/[,;\n]+/)
-    .map(item => item.trim())
-    .filter(Boolean)
-    .filter(item => item !== '{}');
-};
-
-const numericValue = (value: unknown): number => {
-  const parsed = Number(String(value ?? '').replace(',', '.').replace(/[^\d.-]/g, ''));
-  return Number.isFinite(parsed) ? parsed : 0;
-};
-
 const normalizeExternalUrl = (value: unknown): string => {
   const raw = String(value || '').trim();
   if (!raw) return '';
@@ -493,35 +479,6 @@ const isQrCodeImageUrl = (value: unknown): boolean => {
     url.includes('/qr-code') ||
     url.includes('/qrcode')
   );
-};
-
-const buildMapsUrl = (business: BusinessRecord): string => {
-  const existing = firstText(business, ['BTN_Maps', 'google_url']);
-  if (/^https?:\/\//i.test(existing)) return existing;
-
-  const coordinatePair = existing.match(
-    /^\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*$/,
-  );
-  if (coordinatePair) {
-    return `https://www.google.com/maps/search/?api=1&query=${coordinatePair[1]},${coordinatePair[2]}`;
-  }
-
-  const latitude = Number(business.latitude);
-  const longitude = Number(business.longitude);
-  if (
-    Number.isFinite(latitude) &&
-    Number.isFinite(longitude) &&
-    (latitude !== 0 || longitude !== 0)
-  ) {
-    return `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
-  }
-
-  const location = [business.adresse, business.ville, business.gouvernorat, 'Tunisie']
-    .filter(Boolean)
-    .join(' ');
-  return location
-    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`
-    : '';
 };
 
 const isPublished = (value: unknown): boolean => {
@@ -767,34 +724,49 @@ export default function BusinessShowcaseLienoraDetail() {
   }
 
   const visualVariant = capabilities.variant === 'artisan' ? 'artisan' : 'premium';
-  const displayName = String(
-    getMultilingualField(business, 'nom', language, true) || business.nom || '',
-  );
-  const categoryLabel = splitList(business.categorie).join(', ');
-  const translatedDescription = String(
-    getMultilingualField(business, 'description', language, true) || business.description || '',
-  );
-  const translatedServices = String(
-    getMultilingualField(business, 'services', language, true) || business.services || '',
-  );
-  const serviceItems = splitList(
-    translatedServices || business.sous_categories_texte || business.sous_categories_clean,
-  );
-  const aboutText = firstText(business, ['a_propos', 'about', 'À propos', 'A propos']);
+  const storedPresentationModel = [
+    business.modele_presentation,
+    business.presentation_model,
+    business.modele_cv,
+    business.cv_model,
+  ].map(value => String(value || '').trim()).find(Boolean)?.toLowerCase() || '';
+  const previewPresentationModel = new URLSearchParams(location.search).get('preview-model');
+  const presentationStyle = previewPresentationModel === 'portfolio' || storedPresentationModel.includes('portfolio')
+    ? 'portfolio'
+    : 'business';
+  const cvProfile = adaptDalilBusiness(business, {
+    language,
+    style: presentationStyle,
+  });
+  const resolvedPresentation = resolveCvPresentation({
+    brand: 'dalil_tounes',
+    style: cvProfile.display.style,
+    entitlements: dalilCapabilitiesToPresentationEntitlements(capabilities),
+    content: getDalilContentAvailability(cvProfile),
+  });
+  const hasAction = (action: CvPresentationAction) =>
+    resolvedPresentation.visibleActions.includes(action);
+  const hasSection = (section: CvPresentationSection) =>
+    resolvedPresentation.visibleSections.includes(section);
+  const displayName = cvProfile.identity.name;
+  const categoryLabel = cvProfile.identity.activity;
+  const translatedDescription = cvProfile.presentation.description;
+  const serviceItems = cvProfile.services;
+  const aboutText = cvProfile.presentation.about;
   const presentationSummary = aboutText || translatedDescription;
   const presentationDetails = aboutText && translatedDescription && aboutText !== translatedDescription
     ? translatedDescription
     : '';
-  const slogan = firstText(business, ['slogan', 'Slogan', 'accroche', 'tagline']) || categoryLabel;
+  const slogan = cvProfile.identity.slogan;
   const canonicalPath = buildEntrepriseUrl(business);
   const canonicalUrl = `https://dalil-tounes.com${canonicalPath}`;
   const coverImage = getCoverImageUrl(business.image_url);
   const logoImage = getLogoUrl(business.logo_url);
-  const mapsUrl = buildMapsUrl(business);
+  const mapsUrl = cvProfile.location.directionsUrl;
   const whatsappUrl = buildWhatsAppUrl(business.whatsapp || business.telephone);
-  const websiteUrl = capabilities.showWebsite ? normalizeExternalUrl(business.site_web) : '';
-  const rating = numericValue(business['Note Google Globale']);
-  const googleReviewCount = Math.floor(numericValue(business['Compteur Avis Google']));
+  const websiteUrl = hasAction('website') ? cvProfile.contact.website : '';
+  const rating = cvProfile.reviews.rating || 0;
+  const googleReviewCount = cvProfile.reviews.count;
   const schedule = business.horaires_ok ? getParsedSchedule(business.horaires_ok) : null;
   const galleryThumbs = capabilities.showGallery
     ? getGalleryImageUrls(business.image_url, 'thumbnail').slice(0, capabilities.maxPhotos)
@@ -866,7 +838,7 @@ export default function BusinessShowcaseLienoraDetail() {
     return normalizedSector.includes(normalizedLabel) || normalizedLabel.includes(normalizedSector);
   });
 
-  const socialLinks = capabilities.showSocialLinks
+  const socialLinks = hasSection('social_links')
     ? [
         { label: 'Instagram', href: normalizeExternalUrl(business['Lien Instagram']), icon: Instagram },
         { label: 'Facebook', href: normalizeExternalUrl(business['lien facebook']), icon: Facebook },
@@ -877,23 +849,23 @@ export default function BusinessShowcaseLienoraDetail() {
     : [];
 
   const primaryActions = [
-    business.telephone && {
+    hasAction('call') && business.telephone && {
       label: text.call,
       href: `tel:${business.telephone}`,
       icon: Phone,
     },
-    whatsappUrl && {
+    hasAction('whatsapp') && whatsappUrl && {
       label: text.whatsapp,
       href: whatsappUrl,
       icon: MessageCircle,
       external: true,
     },
-    business.email && {
+    hasAction('email') && business.email && {
       label: text.email,
       href: `mailto:${business.email}`,
       icon: Mail,
     },
-    mapsUrl && {
+    hasAction('directions') && mapsUrl && {
       label: text.directions,
       href: mapsUrl,
       icon: Navigation,
@@ -1167,8 +1139,8 @@ export default function BusinessShowcaseLienoraDetail() {
     </div>
   );
 
-  const sections: AccordionConfig[] = [
-    capabilities.showServices && {
+  const sections = [
+    hasSection('services') && {
       id: 'services' as const,
       title: text.services,
       icon: Briefcase,
@@ -1191,7 +1163,7 @@ export default function BusinessShowcaseLienoraDetail() {
       badge: String(galleryItems.length),
       content: galleryContent,
     },
-    capabilities.showVideos && business.video_url && {
+    hasSection('video') && business.video_url && {
       id: 'video' as const,
       title: text.video,
       icon: Images,
@@ -1228,7 +1200,7 @@ export default function BusinessShowcaseLienoraDetail() {
       icon: Info,
       content: practicalContent,
     },
-    capabilities.showReservation && {
+    hasAction('reservation') && {
       id: 'booking' as const,
       title: text.booking,
       icon: CalendarDays,
@@ -1258,7 +1230,7 @@ export default function BusinessShowcaseLienoraDetail() {
         />
       ),
     },
-    capabilities.showReviews && {
+    hasSection('reviews') && {
       id: 'reviews' as const,
       title: text.reviews,
       icon: Star,
@@ -1297,7 +1269,66 @@ export default function BusinessShowcaseLienoraDetail() {
       icon: QrCode,
       content: sharingContent,
     },
-  ].filter((section): section is AccordionConfig => Boolean(section));
+  ].filter(Boolean) as AccordionConfig[];
+
+  if (resolvedPresentation.style === 'portfolio') {
+    return (
+      <main dir={isRTL ? 'rtl' : 'ltr'}>
+        <SEOHead
+          title={seo.title}
+          description={seo.description}
+          keywords={seo.keywords}
+          image={coverImage}
+          canonical={canonicalUrl}
+          currentPath={canonicalPath}
+          type="website"
+          author={displayName}
+          noindex={!isPublished(business.statut_validation)}
+        />
+        <StructuredData data={[localBusinessSchema, breadcrumbSchema]} />
+        <CvPortfolioPresentation
+          language={language}
+          profile={cvProfile}
+          presentation={resolvedPresentation}
+          coverImage={coverImage}
+          logoImage={logoImage}
+          productLabel={resolvedPresentation.productName}
+          certification={certification}
+          actions={primaryActions}
+          gallery={galleryItems}
+          onBack={handleBack}
+          bookingContent={sections.find(section => section.id === 'booking')?.content}
+          onQuote={requestQuote}
+          onDownloadContact={downloadContact}
+          onSelectImage={setSelectedImage}
+          notice={contactNotice}
+        />
+        {selectedImage && (
+          <div
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/95 p-4"
+            role="dialog"
+            aria-modal="true"
+            onClick={() => setSelectedImage('')}
+          >
+            <button
+              type="button"
+              className="absolute right-5 top-5 flex h-11 w-11 items-center justify-center rounded-full border border-[#D4AF37] bg-[#0f2d23] text-[#F4CE55]"
+              onClick={() => setSelectedImage('')}
+              aria-label={text.reservationClose}
+            >
+              <X aria-hidden="true" />
+            </button>
+            <img
+              src={selectedImage}
+              alt={`${text.gallery}: ${displayName}`}
+              className="max-h-[90vh] max-w-full rounded-xl object-contain"
+              onClick={event => event.stopPropagation()}
+            />
+          </div>
+        )}
+      </main>
+    );
+  }
 
   return (
     <main className="dt-showcase-page" style={themeVariables(visualVariant)} dir={isRTL ? 'rtl' : 'ltr'}>
@@ -1395,16 +1426,16 @@ export default function BusinessShowcaseLienoraDetail() {
               </div>
             )}
             <div className="dt-secondary-actions">
-              {(capabilities.showReservation || whatsappUrl || business.email) && (
+              {(hasAction('reservation') || whatsappUrl || business.email) && (
                 <button
                   type="button"
                   className="dt-secondary-action"
-                  onClick={capabilities.showReservation ? openBooking : requestQuote}
+                  onClick={hasAction('reservation') ? openBooking : requestQuote}
                 >
-                  {capabilities.showReservation
+                  {hasAction('reservation')
                     ? <CalendarDays aria-hidden="true" />
                     : <FileText aria-hidden="true" />}
-                  {capabilities.showReservation ? text.book : text.requestQuote}
+                  {hasAction('reservation') ? text.book : text.requestQuote}
                 </button>
               )}
               <button type="button" className="dt-secondary-action" onClick={downloadContact}>
