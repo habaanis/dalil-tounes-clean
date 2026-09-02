@@ -1,5 +1,5 @@
 import { ArrowRight, CheckCircle2, QrCode, Share2, Sparkles } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BusinessCardPreview, type BusinessCardPreviewLanguage } from '../components/BusinessCardPreview';
 import CvBusinessJourney from '../components/CvBusinessJourney';
@@ -154,15 +154,6 @@ export default function HomeVitrineFirst() {
   const t = COPY[lang];
   const rtl = lang === 'ar';
   const [showPlatformMobile, setShowPlatformMobile] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(() => typeof window !== 'undefined' && window.matchMedia('(min-width: 1024px)').matches);
-
-  useEffect(() => {
-    const desktopQuery = window.matchMedia('(min-width: 1024px)');
-    const updateDesktop = () => setIsDesktop(desktopQuery.matches);
-    updateDesktop();
-    desktopQuery.addEventListener('change', updateDesktop);
-    return () => desktopQuery.removeEventListener('change', updateDesktop);
-  }, []);
 
   return (
     <div dir={rtl ? 'rtl' : 'ltr'}>
@@ -297,16 +288,14 @@ export default function HomeVitrineFirst() {
         </div>
       </section>
 
-      {(isDesktop || showPlatformMobile) && (
-        <div>
+      <div className={showPlatformMobile ? 'block' : 'hidden lg:block'}>
           <VisibilityHouseSection />
 
           <style>{`.platform-home-after-vitrine #maison-visibilite{display:none}`}</style>
           <div className="platform-home-after-vitrine">
             <PlatformHome />
           </div>
-        </div>
-      )}
+      </div>
     </div>
   );
 }
