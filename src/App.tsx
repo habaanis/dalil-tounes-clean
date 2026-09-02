@@ -9,6 +9,8 @@ const WELCOME_SEEN_KEY = 'dalilTounes_welcome_seen_v1';
 const isWelcomeExcludedPath = (pathname: string) =>
   pathname.startsWith('/admin') ||
   pathname.startsWith('/debug') ||
+  pathname.startsWith('/entreprise/') ||
+  pathname.startsWith('/p/') ||
   pathname === '/searchDebug' ||
   pathname === '/inscription-entreprise';
 
