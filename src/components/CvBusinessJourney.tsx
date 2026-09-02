@@ -16,6 +16,8 @@ const COPY: Record<BusinessCardPreviewLanguage, {
   qrText: string;
   cvTitle: string;
   cvText: string;
+  professionalModel: string;
+  portfolioModel: string;
   summary: string;
   openPreview: string;
   closePreview: string;
@@ -32,7 +34,9 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     qrTitle: '2. QR Business',
     qrText: 'Présentez, partagez ou imprimez votre QR Business.',
     cvTitle: '3. CV Business',
-    cvText: 'Votre présentation professionnelle complète, toujours accessible.',
+    cvText: 'Deux modèles au choix : Professionnel ou Portfolio.',
+    professionalModel: 'Professionnel',
+    portfolioModel: 'Portfolio',
     summary: 'Application = accès rapide • QR Business = partage immédiat • CV Business = présentation professionnelle complète',
     openPreview: 'Agrandir le visuel',
     closePreview: 'Fermer le visuel',
@@ -49,7 +53,9 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     qrTitle: '2. QR Business',
     qrText: 'اعرض QR Business أو شاركه أو اطبعه بسهولة.',
     cvTitle: '3. CV Business',
-    cvText: 'عرضك المهني الكامل متاح دائمًا.',
+    cvText: 'نموذجان للاختيار: احترافي أو معرض أعمال.',
+    professionalModel: 'احترافي',
+    portfolioModel: 'معرض أعمال',
     summary: 'التطبيق = وصول سريع • QR Business = مشاركة فورية • CV Business = العرض المهني الكامل',
     openPreview: 'تكبير الصورة',
     closePreview: 'إغلاق الصورة',
@@ -66,7 +72,9 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     qrTitle: '2. Business QR',
     qrText: 'Show, share or print your Business QR.',
     cvTitle: '3. Business CV',
-    cvText: 'Your complete professional presentation, always accessible.',
+    cvText: 'Two models to choose from: Professional or Portfolio.',
+    professionalModel: 'Professional',
+    portfolioModel: 'Portfolio',
     summary: 'App = quick access • Business QR = instant sharing • Business CV = complete professional presentation',
     openPreview: 'Enlarge visual',
     closePreview: 'Close visual',
@@ -83,7 +91,9 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     qrTitle: '2. QR Business',
     qrText: 'Mostra, condividi o stampa il tuo QR Business.',
     cvTitle: '3. CV Business',
-    cvText: 'La tua presentazione professionale completa, sempre accessibile.',
+    cvText: 'Due modelli a scelta: Professionale o Portfolio.',
+    professionalModel: 'Professionale',
+    portfolioModel: 'Portfolio',
     summary: 'App = accesso rapido • QR Business = condivisione immediata • CV Business = presentazione professionale completa',
     openPreview: 'Ingrandisci il visual',
     closePreview: 'Chiudi il visual',
@@ -100,7 +110,9 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     qrTitle: '2. Business QR',
     qrText: 'Показывайте, отправляйте или печатайте ваш Business QR.',
     cvTitle: '3. Business CV',
-    cvText: 'Ваша полная профессиональная презентация всегда доступна.',
+    cvText: 'Две модели на выбор: Профессиональная или Портфолио.',
+    professionalModel: 'Профи',
+    portfolioModel: 'Портфолио',
     summary: 'Приложение = быстрый доступ • Business QR = мгновенная отправка • Business CV = полная профессиональная презентация',
     openPreview: 'Увеличить изображение',
     closePreview: 'Закрыть изображение',
@@ -151,7 +163,8 @@ function PwaPhone({ language }: { language: BusinessCardPreviewLanguage }) {
   );
 }
 
-type JourneyVisual = 'pwa' | 'qr' | 'cv';
+type CvModel = 'professional' | 'portfolio';
+type JourneyVisual = 'pwa' | 'qr' | 'cv-professional' | 'cv-portfolio';
 
 function PreviewButton({ label, onClick }: { label: string; onClick: () => void }) {
   return (
@@ -177,7 +190,11 @@ function ExpandedJourneyVisual({
   onClose: () => void;
 }) {
   const t = COPY[language];
-  const title = visual === 'pwa' ? t.pwaTitle : visual === 'qr' ? t.qrTitle : t.cvTitle;
+  const title = visual === 'pwa'
+    ? t.pwaTitle
+    : visual === 'qr'
+      ? t.qrTitle
+      : `${t.cvTitle} — ${visual === 'cv-portfolio' ? t.portfolioModel : t.professionalModel}`;
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
@@ -233,10 +250,12 @@ function ExpandedJourneyVisual({
               <CvBusinessQrVisual language={language} />
             </div>
           )}
-          {visual === 'cv' && (
+          {(visual === 'cv-professional' || visual === 'cv-portfolio') && (
             <img
-              src="/images/cv-business-professionnel-aux-saveurs-anis.png"
-              alt={`${t.cvTitle} — Aux saveurs d’Anis`}
+              src={visual === 'cv-portfolio'
+                ? '/images/cv-business-portfolio-aux-saveurs-anis.png'
+                : '/images/cv-business-professionnel-aux-saveurs-anis.png'}
+              alt={`${title} — Aux saveurs d’Anis`}
               className="max-h-[82dvh] max-w-[calc(100vw-64px)] object-contain"
               decoding="async"
             />
@@ -251,6 +270,11 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
   const t = COPY[language];
   const rtl = language === 'ar';
   const [expandedVisual, setExpandedVisual] = useState<JourneyVisual | null>(null);
+  const [activeCvModel, setActiveCvModel] = useState<CvModel>('professional');
+  const activeCvImage = activeCvModel === 'portfolio'
+    ? '/images/cv-business-portfolio-aux-saveurs-anis.png'
+    : '/images/cv-business-professionnel-aux-saveurs-anis.png';
+  const activeCvLabel = activeCvModel === 'portfolio' ? t.portfolioModel : t.professionalModel;
 
   return (
     <section className="border-y border-[#D5B257]/25 bg-[radial-gradient(circle_at_top,rgba(213,178,87,0.12),transparent_32%),linear-gradient(180deg,#fffdf8_0%,#ffffff_100%)] px-4 py-5 sm:py-6" dir={rtl ? 'rtl' : 'ltr'}>
@@ -291,15 +315,36 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
 
           <article className="w-[180px] text-center">
             <div className="mb-1.5 inline-flex rounded-full bg-[#032D21] px-2.5 py-1 text-[10px] font-black text-[#F4CE55]">{t.cvTitle}</div>
-            <div className="relative mx-auto flex h-[360px] w-[180px] items-center justify-center overflow-hidden">
+            <div className="mb-1 grid w-[180px] grid-cols-2 gap-1 rounded-lg bg-[#032D21]/10 p-1" aria-label={t.cvText}>
+              <button
+                type="button"
+                aria-pressed={activeCvModel === 'professional'}
+                onClick={() => setActiveCvModel('professional')}
+                className={`min-w-0 rounded-md px-1 py-1 text-[8px] font-black leading-3 transition ${activeCvModel === 'professional' ? 'bg-[#032D21] text-[#F4CE55] shadow-sm' : 'bg-white text-[#4A1D43] hover:bg-amber-50'}`}
+              >
+                {t.professionalModel}
+              </button>
+              <button
+                type="button"
+                aria-pressed={activeCvModel === 'portfolio'}
+                onClick={() => setActiveCvModel('portfolio')}
+                className={`min-w-0 rounded-md px-1 py-1 text-[8px] font-black leading-3 transition ${activeCvModel === 'portfolio' ? 'bg-[#032D21] text-[#F4CE55] shadow-sm' : 'bg-white text-[#4A1D43] hover:bg-amber-50'}`}
+              >
+                {t.portfolioModel}
+              </button>
+            </div>
+            <div className="relative mx-auto flex h-[331px] w-[180px] items-center justify-center overflow-hidden">
               <img
-                src="/images/cv-business-professionnel-aux-saveurs-anis.png"
-                alt={`${t.cvTitle} — Aux saveurs d’Anis`}
-                className="h-[374px] w-auto max-w-none object-contain"
+                src={activeCvImage}
+                alt={`${t.cvTitle} — ${activeCvLabel} — Aux saveurs d’Anis`}
+                className="h-[345px] w-auto max-w-none object-contain"
                 loading="lazy"
                 decoding="async"
               />
-              <PreviewButton label={`${t.openPreview} — ${t.cvTitle}`} onClick={() => setExpandedVisual('cv')} />
+              <PreviewButton
+                label={`${t.openPreview} — ${t.cvTitle} — ${activeCvLabel}`}
+                onClick={() => setExpandedVisual(activeCvModel === 'portfolio' ? 'cv-portfolio' : 'cv-professional')}
+              />
             </div>
             <p className="mx-auto mt-2 max-w-[180px] text-[11px] leading-4.5 text-gray-700">{t.cvText}</p>
           </article>
