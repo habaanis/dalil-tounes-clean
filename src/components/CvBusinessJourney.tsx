@@ -171,11 +171,11 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
 
           <article className="w-[180px] text-center">
             <div className="mb-1.5 inline-flex rounded-full bg-[#032D21] px-2.5 py-1 text-[10px] font-black text-[#F4CE55]">{t.cvTitle}</div>
-            <div className="mx-auto flex h-[360px] w-[180px] items-start justify-center overflow-hidden">
+            <div className="mx-auto flex h-[360px] w-[180px] items-center justify-center overflow-hidden">
               <img
                 src="/images/cv-business-professionnel-aux-saveurs-anis.png"
                 alt={`${t.cvTitle} — Aux saveurs d’Anis`}
-                className="h-full w-auto max-w-none object-contain object-top"
+                className="h-[374px] w-auto max-w-none object-contain"
                 loading="lazy"
                 decoding="async"
               />
