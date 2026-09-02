@@ -101,62 +101,16 @@ export function getPresentationModelLabel(language: string, model: PresentationM
   return model === 'professional' ? copy.professional : copy.portfolio;
 }
 
-function ProfessionalMiniature({ selected }: { selected: boolean }) {
+function ModelPreview({
+  src,
+  alt,
+}: {
+  src: string;
+  alt: string;
+}) {
   return (
-    <div
-      aria-hidden="true"
-      className={`flex h-[186px] w-[136px] shrink-0 flex-col overflow-hidden rounded-[20px] border bg-[#052F24] p-2.5 shadow-md max-sm:h-[160px] max-sm:w-[116px] ${selected ? 'border-[#D6AF2E]' : 'border-white/25'}`}
-    >
-      <div className="h-7 rounded-lg border border-white/10 bg-white/10" />
-      <div className="mx-auto -mt-3 h-9 w-9 rounded-full border-2 border-[#D6AF2E] bg-white" />
-      <div className="mx-auto mt-1.5 h-2 w-16 rounded-full bg-[#F4CE55]/85" />
-      <div className="mx-auto mt-1 h-1.5 w-12 rounded-full bg-white/40" />
-      <div className="mt-3 rounded-lg border border-white/10 bg-white/[0.07] p-2">
-        <div className="h-1.5 w-12 rounded-full bg-[#F4CE55]/70" />
-        <div className="mt-2 h-1.5 rounded-full bg-white/75" />
-        <div className="mt-1.5 h-1.5 w-4/5 rounded-full bg-white/40" />
-        <div className="mt-1.5 h-1.5 w-3/5 rounded-full bg-white/25" />
-      </div>
-      <div className="mt-2 space-y-1.5">
-        <div className="h-5 rounded-md border border-white/10 bg-white/[0.08]" />
-        <div className="h-5 rounded-md border border-white/10 bg-white/[0.08]" />
-      </div>
-      <div className="mt-auto grid grid-cols-3 gap-1.5">
-        <div className="h-6 rounded-md bg-[#D6AF2E]" />
-        <div className="h-6 rounded-md bg-white/15" />
-        <div className="h-6 rounded-md bg-white/15" />
-      </div>
-    </div>
-  );
-}
-
-function PortfolioMiniature({ selected }: { selected: boolean }) {
-  return (
-    <div
-      aria-hidden="true"
-      className={`flex h-[186px] w-[136px] shrink-0 flex-col overflow-hidden rounded-[20px] border bg-[#052F24] p-2.5 shadow-md max-sm:h-[160px] max-sm:w-[116px] ${selected ? 'border-[#D6AF2E]' : 'border-white/25'}`}
-    >
-      <div className="h-12 rounded-lg bg-gradient-to-br from-amber-100/55 via-white/20 to-[#D6AF2E]/65" />
-      <div className="mx-auto -mt-4 h-10 w-10 rounded-full border-2 border-[#D6AF2E] bg-white" />
-      <div className="mx-auto mt-1.5 h-2 w-14 rounded-full bg-white/85" />
-      <div className="mx-auto mt-2 flex w-full justify-center gap-1">
-        <div className="h-1.5 w-6 rounded-full bg-[#D6AF2E]" />
-        <div className="h-1.5 w-6 rounded-full bg-white/25" />
-        <div className="h-1.5 w-6 rounded-full bg-white/25" />
-      </div>
-      <div className="mt-3 grid grid-cols-[1.15fr_.85fr] gap-1.5">
-        <div className="h-10 rounded-md bg-gradient-to-br from-white/25 to-white/10" />
-        <div className="space-y-1.5 pt-1">
-          <div className="h-1.5 rounded-full bg-white/70" />
-          <div className="h-1.5 w-4/5 rounded-full bg-white/35" />
-          <div className="h-1.5 w-3/5 rounded-full bg-white/25" />
-        </div>
-      </div>
-      <div className="mt-2 grid grid-cols-3 gap-1.5">
-        <div className="h-8 rounded-md bg-white/20" />
-        <div className="h-8 rounded-md bg-[#D6AF2E]/60" />
-        <div className="h-8 rounded-md bg-white/25" />
-      </div>
+    <div className="flex h-[360px] w-full items-start justify-center overflow-hidden rounded-2xl border border-slate-200 bg-[#F7F5EF] p-2 shadow-inner sm:h-[420px]">
+      <img src={src} alt={alt} className="h-full w-full object-contain object-top" loading="lazy" decoding="async" />
     </div>
   );
 }
@@ -186,15 +140,18 @@ export function CvPresentationModelSelector({
         <p className="mx-auto mt-1.5 max-w-2xl text-sm leading-5 text-slate-600">{copy.subtitle}</p>
       </div>
 
-      <div className="mx-auto mt-4 grid max-w-4xl gap-3 md:grid-cols-2">
+      <div className="mx-auto mt-4 grid max-w-4xl gap-4 md:grid-cols-2">
         <button
           type="button"
           aria-pressed={value === 'professional'}
           onClick={() => onChange('professional')}
-          className={`flex min-h-[214px] items-center gap-4 rounded-2xl border p-3.5 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] max-sm:min-h-[184px] ${value === 'professional' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-sm' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
+          className={`flex flex-col rounded-2xl border p-3.5 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'professional' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
         >
-          <ProfessionalMiniature selected={value === 'professional'} />
-          <span className="min-w-0">
+          <ModelPreview
+            src="/images/cv-business-professionnel-aux-saveurs-anis.png"
+            alt={`${copy.professional} — Aux saveurs d’Anis`}
+          />
+          <span className="mt-3 min-w-0">
             <span className="block text-base font-black text-[#4A123F] sm:text-lg">{copy.professional}</span>
             <span className="mt-1.5 block text-sm leading-5 text-slate-600">{copy.professionalDescription}</span>
           </span>
@@ -204,10 +161,13 @@ export function CvPresentationModelSelector({
           type="button"
           aria-pressed={value === 'portfolio'}
           onClick={() => onChange('portfolio')}
-          className={`flex min-h-[214px] items-center gap-4 rounded-2xl border p-3.5 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] max-sm:min-h-[184px] ${value === 'portfolio' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-sm' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
+          className={`flex flex-col rounded-2xl border p-3.5 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'portfolio' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
         >
-          <PortfolioMiniature selected={value === 'portfolio'} />
-          <span className="min-w-0">
+          <ModelPreview
+            src="/images/cv-business-portfolio-aux-saveurs-anis.png"
+            alt={`${copy.portfolio} — Aux saveurs d’Anis`}
+          />
+          <span className="mt-3 min-w-0">
             <span className="block text-base font-black text-[#4A123F] sm:text-lg">{copy.portfolio}</span>
             <span className="mt-1.5 block text-sm leading-5 text-slate-600">{copy.portfolioDescription}</span>
           </span>

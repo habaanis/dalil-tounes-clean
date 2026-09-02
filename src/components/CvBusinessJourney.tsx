@@ -1,5 +1,5 @@
 import { ArrowRight, Download, Smartphone } from 'lucide-react';
-import { BusinessCardPreview, type BusinessCardPreviewLanguage } from './BusinessCardPreview';
+import type { BusinessCardPreviewLanguage } from './BusinessCardPreview';
 import { CvBusinessQrVisual, AUX_SAVEURS_LOGO } from './CvBusinessQrVisual';
 
 const COPY: Record<BusinessCardPreviewLanguage, {
@@ -159,8 +159,8 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
 
           <article className="w-[180px] text-center">
             <div className="mb-1.5 inline-flex rounded-full bg-[#032D21] px-2.5 py-1 text-[10px] font-black text-[#F4CE55]">{t.qrTitle}</div>
-            <div className="mx-auto h-[360px] w-[180px] overflow-visible">
-              <div className="origin-top-left scale-[0.51] rtl:origin-top-right">
+            <div className="relative mx-auto h-[360px] w-[180px] overflow-hidden">
+              <div className="absolute left-0 top-0 w-[354px] origin-top-left scale-[0.508] rtl:left-auto rtl:right-0 rtl:origin-top-right">
                 <CvBusinessQrVisual language={language} />
               </div>
             </div>
@@ -171,16 +171,14 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
 
           <article className="w-[180px] text-center">
             <div className="mb-1.5 inline-flex rounded-full bg-[#032D21] px-2.5 py-1 text-[10px] font-black text-[#F4CE55]">{t.cvTitle}</div>
-            <div className="mx-auto h-[360px] w-[180px] overflow-hidden">
-              <div className="origin-top-left scale-[0.625] rtl:origin-top-right">
-                <BusinessCardPreview
-                  variant="premium"
-                  size="compact"
-                  language={language}
-                  name="Aux saveurs d’Anis"
-                  category={language === 'ar' ? 'ممون حفلات ومناسبات' : 'Traiteur événementiel'}
-                />
-              </div>
+            <div className="mx-auto flex h-[360px] w-[180px] items-start justify-center overflow-hidden">
+              <img
+                src="/images/cv-business-professionnel-aux-saveurs-anis.png"
+                alt={`${t.cvTitle} — Aux saveurs d’Anis`}
+                className="h-full w-full object-contain object-top"
+                loading="lazy"
+                decoding="async"
+              />
             </div>
             <p className="mx-auto mt-2 max-w-[180px] text-[11px] leading-4.5 text-gray-700">{t.cvText}</p>
           </article>

@@ -14,6 +14,11 @@ import {
 import { SubscriptionRequestForm } from '../components/SubscriptionRequestForm';
 import type { BillingPeriod, CheckoutOffer, SubscriptionPlanCode } from '../components/SubscriptionRequestForm';
 import { BusinessCardPreview } from '../components/BusinessCardPreview';
+import {
+  CvPresentationModelSelector,
+  getPresentationModelLabel,
+  type PresentationModel,
+} from '../components/CvPresentationModelSelector';
 import { useLanguage } from '../context/LanguageContext';
 
 type PreviewType = 'free' | 'artisan' | 'premium' | 'launch' | 'request' | null;
@@ -1158,6 +1163,7 @@ function CreationPlanCard({
   chooseLabel,
   onPreview,
   onRequest,
+  selected = false,
 }: {
   title: string;
   price: string;
@@ -1169,9 +1175,10 @@ function CreationPlanCard({
   chooseLabel: string;
   onPreview: () => void;
   onRequest: () => void;
+  selected?: boolean;
 }) {
   return (
-    <article className="relative flex h-full flex-col overflow-hidden rounded-3xl border-2 border-[#D6AF2E] bg-[#07543F] p-5 text-white shadow-[0_12px_30px_rgba(7,84,63,0.16)] sm:p-6">
+    <article className={`relative flex h-full flex-col overflow-hidden rounded-3xl border-2 bg-[#07543F] p-5 text-white shadow-[0_12px_30px_rgba(7,84,63,0.16)] transition sm:p-6 ${selected ? 'border-white ring-4 ring-[#D6AF2E]' : 'border-[#D6AF2E]'}`}>
       <span className="absolute right-0 top-0 rounded-bl-2xl bg-[#D6AF2E] px-4 py-2 text-[11px] font-black tracking-[0.12em] text-[#07543F]">CV BUSINESS</span>
       <h3 className="mt-8 text-2xl font-bold">{title}</h3>
       <div className="mt-2 flex items-end gap-2 text-[#F4CE55]">
@@ -1204,11 +1211,27 @@ export const Subscription = () => {
     checkoutOffer: CheckoutOffer;
     billingPeriod?: BillingPeriod;
   } | null>(null);
+  const [selectedFormula, setSelectedFormula] = useState<'artisan' | 'premium' | null>(null);
+  const [selectedPresentationModel, setSelectedPresentationModel] = useState<PresentationModel | null>(null);
 
   const closePreview = () => setActivePreview(null);
   const openRequest = (code: SubscriptionPlanCode, label: string, checkoutOffer: CheckoutOffer, billingPeriod?: BillingPeriod) => {
     setSelectedPlan({ code, label, checkoutOffer, billingPeriod });
     setActivePreview('request');
+  };
+  const selectFormula = (formula: 'artisan' | 'premium') => {
+    setSelectedFormula(formula);
+    window.requestAnimationFrame(() => {
+      document.getElementById('cv-presentation-models')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  };
+  const selectedFormulaLabel = selectedFormula
+    ? `${simplifiedOfferCopy[language as OfferLanguage][`${selectedFormula}Title`]} — ${(offerCopy[language as OfferLanguage] ?? offerCopy.fr)[`${selectedFormula}Price`]}`
+    : null;
+  const continueWithModel = () => {
+    if (!selectedFormula || !selectedPresentationModel || !selectedFormulaLabel) return;
+    const modelLabel = getPresentationModelLabel(language, selectedPresentationModel);
+    openRequest(selectedFormula, `${selectedFormulaLabel} — ${modelLabel}`, selectedFormula);
   };
 
   return (
@@ -1293,7 +1316,8 @@ export const Subscription = () => {
     previewLabel={simplifiedOfferCopy[language as OfferLanguage].preview}
     chooseLabel={simplifiedOfferCopy[language as OfferLanguage].chooseArtisan}
     onPreview={() => setActivePreview('artisan')}
-    onRequest={() => openRequest('artisan', `${simplifiedOfferCopy[language as OfferLanguage].artisanTitle} — ${(offerCopy[language as OfferLanguage] ?? offerCopy.fr).artisanPrice}`, 'artisan')}
+    onRequest={() => selectFormula('artisan')}
+    selected={selectedFormula === 'artisan'}
   />
   <CreationPlanCard
     title={simplifiedOfferCopy[language as OfferLanguage].premiumTitle}
@@ -1305,9 +1329,18 @@ export const Subscription = () => {
     previewLabel={simplifiedOfferCopy[language as OfferLanguage].preview}
     chooseLabel={simplifiedOfferCopy[language as OfferLanguage].choosePremium}
     onPreview={() => setActivePreview('premium')}
-    onRequest={() => openRequest('premium', `${simplifiedOfferCopy[language as OfferLanguage].premiumTitle} — ${(offerCopy[language as OfferLanguage] ?? offerCopy.fr).premiumPrice}`, 'premium')}
+    onRequest={() => selectFormula('premium')}
+    selected={selectedFormula === 'premium'}
   />
 </div>
+
+<CvPresentationModelSelector
+  language={language}
+  value={selectedPresentationModel}
+  onChange={setSelectedPresentationModel}
+  selectedFormulaLabel={selectedFormulaLabel}
+  onContinue={continueWithModel}
+/>
 
 <div className="mt-5 rounded-3xl border border-[#D6AF2E]/60 bg-white p-5 shadow-[0_10px_28px_rgba(74,18,63,0.06)] sm:p-6">
   <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
