@@ -15,6 +15,7 @@ import {
 import type { CvBusinessProfile } from '../lib/cvBusinessDalilAdapter';
 import type { ResolvedCvPresentation } from '../lib/cvPresentationEngine';
 import './cvPortfolioPresentation.css';
+import './cvPortfolioSizing.css';
 
 type PortfolioTab = 'home' | 'about' | 'services' | 'gallery' | 'reviews';
 
