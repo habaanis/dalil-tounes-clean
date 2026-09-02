@@ -109,7 +109,7 @@ function ModelPreview({
   alt: string;
 }) {
   return (
-    <div className="flex h-[360px] w-full items-start justify-center overflow-hidden rounded-2xl border border-slate-200 bg-[#F7F5EF] p-2 shadow-inner sm:h-[420px]">
+    <div className="flex h-[180px] w-full items-start justify-center overflow-hidden rounded-xl border border-slate-200 bg-[#F7F5EF] p-1.5 shadow-inner sm:h-[300px] sm:rounded-2xl sm:p-2 md:h-[420px]">
       <img src={src} alt={alt} className="h-full w-full object-contain object-top" loading="lazy" decoding="async" />
     </div>
   );
@@ -133,27 +133,27 @@ export function CvPresentationModelSelector({
   const canContinue = Boolean(selectedFormulaLabel && value);
 
   return (
-    <section id="cv-presentation-models" className="mt-5 rounded-3xl border border-[#D6AF2E]/55 bg-white p-4 shadow-[0_8px_24px_rgba(74,18,63,0.05)] sm:p-5">
+    <section id="cv-presentation-models" className="mt-5 scroll-mt-24 rounded-3xl border border-[#D6AF2E]/55 bg-white p-3 shadow-[0_8px_24px_rgba(74,18,63,0.05)] sm:p-5">
       <div className="text-center">
         <p className="text-[10px] font-black uppercase tracking-[0.16em] text-amber-600">{copy.eyebrow}</p>
         <h3 className="mt-1 text-xl font-black text-[#4A123F] sm:text-2xl">{copy.title}</h3>
         <p className="mx-auto mt-1.5 max-w-2xl text-sm leading-5 text-slate-600">{copy.subtitle}</p>
       </div>
 
-      <div className="mx-auto mt-4 grid max-w-4xl gap-4 md:grid-cols-2">
+      <div className="mx-auto mt-4 grid max-w-4xl grid-cols-2 gap-2 sm:gap-4">
         <button
           type="button"
           aria-pressed={value === 'professional'}
           onClick={() => onChange('professional')}
-          className={`flex flex-col rounded-2xl border p-3.5 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'professional' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
+          className={`flex min-w-0 flex-col rounded-xl border p-2 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] sm:rounded-2xl sm:p-3.5 ${value === 'professional' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
         >
           <ModelPreview
             src="/images/cv-business-portfolio-aux-saveurs-anis.png"
             alt={`${copy.professional} — Aux saveurs d’Anis`}
           />
           <span className="mt-3 min-w-0">
-            <span className="block text-base font-black text-[#4A123F] sm:text-lg">{copy.professional}</span>
-            <span className="mt-1.5 block text-sm leading-5 text-slate-600">{copy.professionalDescription}</span>
+            <span className="block text-sm font-black leading-5 text-[#4A123F] sm:text-lg">{copy.professional}</span>
+            <span className="mt-1.5 hidden text-sm leading-5 text-slate-600 sm:block">{copy.professionalDescription}</span>
           </span>
         </button>
 
@@ -161,20 +161,20 @@ export function CvPresentationModelSelector({
           type="button"
           aria-pressed={value === 'portfolio'}
           onClick={() => onChange('portfolio')}
-          className={`flex flex-col rounded-2xl border p-3.5 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'portfolio' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
+          className={`flex min-w-0 flex-col rounded-xl border p-2 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] sm:rounded-2xl sm:p-3.5 ${value === 'portfolio' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
         >
           <ModelPreview
             src="/images/cv-business-professionnel-aux-saveurs-anis.png"
             alt={`${copy.portfolio} — Aux saveurs d’Anis`}
           />
           <span className="mt-3 min-w-0">
-            <span className="block text-base font-black text-[#4A123F] sm:text-lg">{copy.portfolio}</span>
-            <span className="mt-1.5 block text-sm leading-5 text-slate-600">{copy.portfolioDescription}</span>
+            <span className="block text-sm font-black leading-5 text-[#4A123F] sm:text-lg">{copy.portfolio}</span>
+            <span className="mt-1.5 hidden text-sm leading-5 text-slate-600 sm:block">{copy.portfolioDescription}</span>
           </span>
         </button>
       </div>
 
-      <p className="mx-auto mt-3 max-w-3xl text-center text-xs font-semibold leading-5 text-slate-500">{copy.note}</p>
+      <p className="mx-auto mt-3 hidden max-w-3xl text-center text-xs font-semibold leading-5 text-slate-500 sm:block">{copy.note}</p>
 
       <div className="mx-auto mt-4 flex max-w-4xl flex-col gap-3 rounded-2xl border border-amber-200 bg-amber-50/60 p-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="text-sm leading-5 text-slate-700">
