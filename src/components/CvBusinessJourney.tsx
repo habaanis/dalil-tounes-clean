@@ -8,13 +8,16 @@ const COPY: Record<BusinessCardPreviewLanguage, {
   title: string;
   subtitle: string;
   pwaTitle: string;
+  pwaShort: string;
   pwaText: string;
   installTitle: string;
   installCancel: string;
   installAction: string;
   qrTitle: string;
+  qrShort: string;
   qrText: string;
   cvTitle: string;
+  cvShort: string;
   cvText: string;
   professionalModel: string;
   portfolioModel: string;
@@ -27,13 +30,16 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     title: '3 outils complémentaires, un seul parcours',
     subtitle: 'Votre application vous donne un accès rapide à votre QR Business. Le QR ouvre ensuite votre CV Business professionnel.',
     pwaTitle: '1. Application mobile (PWA)',
+    pwaShort: 'Application',
     pwaText: 'Votre activité accessible depuis l’écran d’accueil comme une application.',
     installTitle: "Installer l’application",
     installCancel: 'Annuler',
     installAction: 'Installer',
     qrTitle: '2. QR Business',
+    qrShort: 'QR Business',
     qrText: 'Présentez, partagez ou imprimez votre QR Business.',
     cvTitle: '3. CV Business',
+    cvShort: 'CV Business',
     cvText: 'Deux modèles au choix : Professionnel ou Portfolio.',
     professionalModel: 'Professionnel',
     portfolioModel: 'Portfolio',
@@ -46,13 +52,16 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     title: '3 أدوات متكاملة، في مسار واحد',
     subtitle: 'يمنحك التطبيق وصولًا سريعًا إلى QR Business، ومنه يتم فتح CV Business المهني الخاص بنشاطك.',
     pwaTitle: '1. تطبيق الهاتف (PWA)',
+    pwaShort: 'التطبيق',
     pwaText: 'نشاطك متاح من الشاشة الرئيسية مثل تطبيق.',
     installTitle: 'تثبيت التطبيق',
     installCancel: 'إلغاء',
     installAction: 'تثبيت',
     qrTitle: '2. QR Business',
+    qrShort: 'QR Business',
     qrText: 'اعرض QR Business أو شاركه أو اطبعه بسهولة.',
     cvTitle: '3. CV Business',
+    cvShort: 'CV Business',
     cvText: 'نموذجان للاختيار: احترافي أو معرض أعمال.',
     professionalModel: 'احترافي',
     portfolioModel: 'معرض أعمال',
@@ -65,13 +74,16 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     title: '3 complementary tools, one simple journey',
     subtitle: 'Your app gives you quick access to your Business QR. The QR then opens your professional Business CV.',
     pwaTitle: '1. Mobile app (PWA)',
+    pwaShort: 'App',
     pwaText: 'Your business is available from the home screen like an app.',
     installTitle: 'Install app',
     installCancel: 'Cancel',
     installAction: 'Install',
     qrTitle: '2. Business QR',
+    qrShort: 'Business QR',
     qrText: 'Show, share or print your Business QR.',
     cvTitle: '3. Business CV',
+    cvShort: 'Business CV',
     cvText: 'Two models to choose from: Professional or Portfolio.',
     professionalModel: 'Professional',
     portfolioModel: 'Portfolio',
@@ -84,13 +96,16 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     title: '3 strumenti complementari, un solo percorso',
     subtitle: "L’app ti dà accesso rapido al QR Business. Il QR apre poi il tuo CV Business professionale.",
     pwaTitle: '1. Applicazione mobile (PWA)',
+    pwaShort: 'Applicazione',
     pwaText: 'La tua attività è accessibile dalla schermata Home come un’app.',
     installTitle: "Installa l’applicazione",
     installCancel: 'Annulla',
     installAction: 'Installa',
     qrTitle: '2. QR Business',
+    qrShort: 'QR Business',
     qrText: 'Mostra, condividi o stampa il tuo QR Business.',
     cvTitle: '3. CV Business',
+    cvShort: 'CV Business',
     cvText: 'Due modelli a scelta: Professionale o Portfolio.',
     professionalModel: 'Professionale',
     portfolioModel: 'Portfolio',
@@ -103,13 +118,16 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     title: '3 взаимосвязанных инструмента, один путь',
     subtitle: 'Приложение даёт быстрый доступ к Business QR, а QR открывает ваш профессиональный Business CV.',
     pwaTitle: '1. Мобильное приложение (PWA)',
+    pwaShort: 'Приложение',
     pwaText: 'Ваш бизнес доступен с главного экрана как приложение.',
     installTitle: 'Установить приложение',
     installCancel: 'Отмена',
     installAction: 'Установить',
     qrTitle: '2. Business QR',
+    qrShort: 'Business QR',
     qrText: 'Показывайте, отправляйте или печатайте ваш Business QR.',
     cvTitle: '3. Business CV',
+    cvShort: 'Business CV',
     cvText: 'Две модели на выбор: Профессиональная или Портфолио.',
     professionalModel: 'Профи',
     portfolioModel: 'Портфолио',
@@ -165,6 +183,7 @@ function PwaPhone({ language }: { language: BusinessCardPreviewLanguage }) {
 
 type CvModel = 'professional' | 'portfolio';
 type JourneyVisual = 'pwa' | 'qr' | 'cv-professional' | 'cv-portfolio';
+type MobileJourneyStep = 'pwa' | 'qr' | 'cv';
 
 function PreviewButton({ label, onClick }: { label: string; onClick: () => void }) {
   return (
@@ -271,10 +290,18 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
   const rtl = language === 'ar';
   const [expandedVisual, setExpandedVisual] = useState<JourneyVisual | null>(null);
   const [activeCvModel, setActiveCvModel] = useState<CvModel>('professional');
+  const [activeMobileStep, setActiveMobileStep] = useState<MobileJourneyStep>('pwa');
   const activeCvImage = activeCvModel === 'portfolio'
     ? '/images/cv-business-professionnel-aux-saveurs-anis.png'
     : '/images/cv-business-portfolio-aux-saveurs-anis.png';
   const activeCvLabel = activeCvModel === 'portfolio' ? t.portfolioModel : t.professionalModel;
+  const mobileSteps: Array<{ id: MobileJourneyStep; label: string }> = [
+    { id: 'pwa', label: t.pwaShort },
+    { id: 'qr', label: t.qrShort },
+    { id: 'cv', label: t.cvShort },
+  ];
+  const mobileStepTitle = activeMobileStep === 'pwa' ? t.pwaTitle : activeMobileStep === 'qr' ? t.qrTitle : t.cvTitle;
+  const mobileStepText = activeMobileStep === 'pwa' ? t.pwaText : activeMobileStep === 'qr' ? t.qrText : t.cvText;
 
   return (
     <section className="border-y border-[#D5B257]/25 bg-[radial-gradient(circle_at_top,rgba(213,178,87,0.12),transparent_32%),linear-gradient(180deg,#fffdf8_0%,#ffffff_100%)] px-4 py-5 sm:py-6" dir={rtl ? 'rtl' : 'ltr'}>
@@ -288,7 +315,81 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
           <p className="mx-auto mt-1 max-w-xl text-xs leading-5 text-gray-600 sm:text-[13px]">{t.subtitle}</p>
         </div>
 
-        <div className="mt-4 grid items-start justify-center gap-y-5 lg:grid-cols-[180px_32px_180px_32px_180px] lg:gap-x-3">
+        <div className="mt-4 lg:hidden">
+          <div className="grid grid-cols-3 gap-1.5" role="tablist" aria-label={t.title}>
+            {mobileSteps.map((step, index) => (
+              <button
+                key={step.id}
+                type="button"
+                role="tab"
+                aria-selected={activeMobileStep === step.id}
+                onClick={() => setActiveMobileStep(step.id)}
+                className={`min-h-11 rounded-xl border px-1.5 py-2 text-[11px] font-black leading-4 transition focus:outline-none focus:ring-2 focus:ring-[#D5B257] ${activeMobileStep === step.id ? 'border-[#032D21] bg-[#032D21] text-[#F4CE55] shadow-sm' : 'border-[#D5B257]/45 bg-white text-[#4A1D43]'}`}
+              >
+                <span className="block text-[9px] opacity-75">{index + 1}</span>
+                {step.label}
+              </button>
+            ))}
+          </div>
+
+          <article className="mt-3 rounded-2xl border border-[#D5B257]/45 bg-white/90 p-3 text-center shadow-sm">
+            <h3 className="text-sm font-black text-[#4A1D43]">{mobileStepTitle}</h3>
+            <p className="mx-auto mt-1 max-w-xs text-xs leading-5 text-gray-600">{mobileStepText}</p>
+
+            {activeMobileStep === 'cv' && (
+              <div className="mx-auto mt-2 grid max-w-[250px] grid-cols-2 gap-1 rounded-lg bg-[#032D21]/10 p-1" aria-label={t.cvText}>
+                <button
+                  type="button"
+                  aria-pressed={activeCvModel === 'professional'}
+                  onClick={() => setActiveCvModel('professional')}
+                  className={`rounded-md px-2 py-1.5 text-[10px] font-black transition ${activeCvModel === 'professional' ? 'bg-[#032D21] text-[#F4CE55]' : 'bg-white text-[#4A1D43]'}`}
+                >
+                  {t.professionalModel}
+                </button>
+                <button
+                  type="button"
+                  aria-pressed={activeCvModel === 'portfolio'}
+                  onClick={() => setActiveCvModel('portfolio')}
+                  className={`rounded-md px-2 py-1.5 text-[10px] font-black transition ${activeCvModel === 'portfolio' ? 'bg-[#032D21] text-[#F4CE55]' : 'bg-white text-[#4A1D43]'}`}
+                >
+                  {t.portfolioModel}
+                </button>
+              </div>
+            )}
+
+            <div className="relative mx-auto mt-2 flex h-[300px] max-w-[260px] items-start justify-center overflow-hidden rounded-xl bg-[#FFFCF7]">
+              {activeMobileStep === 'pwa' && (
+                <div className="h-[300px] w-[150px] overflow-hidden">
+                  <div className="origin-top-left scale-[0.8333]">
+                    <PwaPhone language={language} />
+                  </div>
+                </div>
+              )}
+              {activeMobileStep === 'qr' && (
+                <div className="h-[300px] w-[148px] overflow-hidden">
+                  <div className="w-[354px] origin-top-left scale-[0.416] rtl:origin-top-right">
+                    <CvBusinessQrVisual language={language} />
+                  </div>
+                </div>
+              )}
+              {activeMobileStep === 'cv' && (
+                <img
+                  src={activeCvImage}
+                  alt={`${t.cvTitle} — ${activeCvLabel} — Aux saveurs d’Anis`}
+                  className="h-[300px] w-auto object-contain object-top"
+                  loading="lazy"
+                  decoding="async"
+                />
+              )}
+              <PreviewButton
+                label={`${t.openPreview} — ${mobileStepTitle}`}
+                onClick={() => setExpandedVisual(activeMobileStep === 'cv' ? (activeCvModel === 'portfolio' ? 'cv-portfolio' : 'cv-professional') : activeMobileStep)}
+              />
+            </div>
+          </article>
+        </div>
+
+        <div className="mt-4 hidden items-start justify-center gap-y-5 lg:grid lg:grid-cols-[180px_32px_180px_32px_180px] lg:gap-x-3">
           <article className="w-[180px] text-center">
             <div className="mb-1.5 inline-flex rounded-full bg-[#032D21] px-2.5 py-1 text-[10px] font-black text-[#F4CE55]">{t.pwaTitle}</div>
             <div className="relative mx-auto w-[180px]">
@@ -350,7 +451,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
           </article>
         </div>
 
-        <div className="mx-auto mt-4 flex max-w-2xl items-center justify-center gap-2 rounded-xl border border-[#D5B257]/45 bg-[#032D21] px-3 py-2 text-center text-[11px] font-bold text-white shadow-sm">
+        <div className="mx-auto mt-4 hidden max-w-2xl items-center justify-center gap-2 rounded-xl border border-[#D5B257]/45 bg-[#032D21] px-3 py-2 text-center text-[11px] font-bold text-white shadow-sm lg:flex">
           <Download className="h-3.5 w-3.5 shrink-0 text-[#F4CE55]" aria-hidden="true" />
           <span>{t.summary}</span>
         </div>
