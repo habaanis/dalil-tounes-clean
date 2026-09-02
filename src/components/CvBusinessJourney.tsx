@@ -253,8 +253,8 @@ function ExpandedJourneyVisual({
           {(visual === 'cv-professional' || visual === 'cv-portfolio') && (
             <img
               src={visual === 'cv-portfolio'
-                ? '/images/cv-business-portfolio-aux-saveurs-anis.png'
-                : '/images/cv-business-professionnel-aux-saveurs-anis.png'}
+                ? '/images/cv-business-professionnel-aux-saveurs-anis.png'
+                : '/images/cv-business-portfolio-aux-saveurs-anis.png'}
               alt={`${title} — Aux saveurs d’Anis`}
               className="max-h-[82dvh] max-w-[calc(100vw-64px)] object-contain"
               decoding="async"
@@ -272,8 +272,8 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
   const [expandedVisual, setExpandedVisual] = useState<JourneyVisual | null>(null);
   const [activeCvModel, setActiveCvModel] = useState<CvModel>('professional');
   const activeCvImage = activeCvModel === 'portfolio'
-    ? '/images/cv-business-portfolio-aux-saveurs-anis.png'
-    : '/images/cv-business-professionnel-aux-saveurs-anis.png';
+    ? '/images/cv-business-professionnel-aux-saveurs-anis.png'
+    : '/images/cv-business-portfolio-aux-saveurs-anis.png';
   const activeCvLabel = activeCvModel === 'portfolio' ? t.portfolioModel : t.professionalModel;
 
   return (
