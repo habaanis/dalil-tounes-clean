@@ -1,0 +1,228 @@
+type SupportedLanguage = 'fr' | 'ar' | 'en' | 'it' | 'ru';
+
+export type PresentationModel = 'professional' | 'portfolio';
+
+type Copy = {
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  professional: string;
+  professionalDescription: string;
+  portfolio: string;
+  portfolioDescription: string;
+  note: string;
+  selectedFormula: string;
+  selectedModel: string;
+  chooseFormulaFirst: string;
+  chooseModel: string;
+  continue: string;
+};
+
+const COPY: Record<SupportedLanguage, Copy> = {
+  fr: {
+    eyebrow: 'Étape 2',
+    title: 'Choisissez votre modèle de présentation',
+    subtitle: 'La formule détermine le contenu. Ici, vous choisissez seulement le style de votre CV.',
+    professional: 'Modèle Professionnel',
+    professionalDescription: 'Clair, structuré et direct. Idéal pour présenter rapidement votre activité et vos informations.',
+    portfolio: 'Modèle Portfolio',
+    portfolioDescription: 'Plus visuel, avec davantage de place pour les photos, les réalisations et le savoir-faire.',
+    note: 'Les deux modèles sont disponibles avec CV Artisan et CV Business, sans changement de prix ni de contenu.',
+    selectedFormula: 'Formule',
+    selectedModel: 'Modèle',
+    chooseFormulaFirst: 'Choisissez d’abord CV Artisan ou CV Business ci-dessus.',
+    chooseModel: 'Choisissez ensuite votre modèle de présentation.',
+    continue: 'Continuer avec ce choix',
+  },
+  ar: {
+    eyebrow: 'الخطوة 2',
+    title: 'اختر نموذج العرض',
+    subtitle: 'الصيغة تحدد المحتوى. هنا تختار فقط شكل عرض CV الخاص بك.',
+    professional: 'النموذج المهني',
+    professionalDescription: 'واضح ومنظم ومباشر لعرض نشاطك ومعلوماتك بسرعة.',
+    portfolio: 'نموذج Portfolio',
+    portfolioDescription: 'أكثر اعتمادًا على الصور لإبراز الإنجازات والخبرة والأعمال.',
+    note: 'النموذجان متاحان مع CV Artisan وCV Business دون تغيير في السعر أو المحتوى.',
+    selectedFormula: 'الصيغة',
+    selectedModel: 'النموذج',
+    chooseFormulaFirst: 'اختر أولاً CV Artisan أو CV Business أعلاه.',
+    chooseModel: 'ثم اختر نموذج العرض.',
+    continue: 'متابعة بهذا الاختيار',
+  },
+  en: {
+    eyebrow: 'Step 2',
+    title: 'Choose your presentation model',
+    subtitle: 'Your plan determines the content. Here, you only choose how your CV is presented.',
+    professional: 'Professional Model',
+    professionalDescription: 'Clear, structured and direct. Ideal for presenting your activity and key information quickly.',
+    portfolio: 'Portfolio Model',
+    portfolioDescription: 'More visual, with extra room for photos, completed work and expertise.',
+    note: 'Both models are available with CV Artisan and CV Business, with no change to price or included content.',
+    selectedFormula: 'Plan',
+    selectedModel: 'Model',
+    chooseFormulaFirst: 'First choose CV Artisan or CV Business above.',
+    chooseModel: 'Then choose your presentation model.',
+    continue: 'Continue with this choice',
+  },
+  it: {
+    eyebrow: 'Passaggio 2',
+    title: 'Scegli il modello di presentazione',
+    subtitle: 'La formula determina i contenuti. Qui scegli soltanto lo stile di presentazione del tuo CV.',
+    professional: 'Modello Professionale',
+    professionalDescription: 'Chiaro, strutturato e diretto. Ideale per presentare rapidamente attività e informazioni.',
+    portfolio: 'Modello Portfolio',
+    portfolioDescription: 'Più visivo, con maggiore spazio per foto, realizzazioni e competenze.',
+    note: 'Entrambi i modelli sono disponibili con CV Artisan e CV Business, senza variazioni di prezzo o contenuto.',
+    selectedFormula: 'Formula',
+    selectedModel: 'Modello',
+    chooseFormulaFirst: 'Scegli prima CV Artisan o CV Business qui sopra.',
+    chooseModel: 'Poi scegli il modello di presentazione.',
+    continue: 'Continua con questa scelta',
+  },
+  ru: {
+    eyebrow: 'Шаг 2',
+    title: 'Выберите модель оформления',
+    subtitle: 'Тариф определяет содержание. Здесь вы выбираете только стиль оформления CV.',
+    professional: 'Профессиональная модель',
+    professionalDescription: 'Чёткая, структурированная и прямая подача деятельности и ключевой информации.',
+    portfolio: 'Модель Portfolio',
+    portfolioDescription: 'Более визуальная подача с акцентом на фотографии, работы и профессиональный опыт.',
+    note: 'Обе модели доступны с CV Artisan и CV Business без изменения цены или состава предложения.',
+    selectedFormula: 'Тариф',
+    selectedModel: 'Модель',
+    chooseFormulaFirst: 'Сначала выберите CV Artisan или CV Business выше.',
+    chooseModel: 'Затем выберите модель оформления.',
+    continue: 'Продолжить с этим выбором',
+  },
+};
+
+export function getPresentationModelLabel(language: string, model: PresentationModel): string {
+  const copy = COPY[(language as SupportedLanguage)] ?? COPY.fr;
+  return model === 'professional' ? copy.professional : copy.portfolio;
+}
+
+function ProfessionalMiniature({ selected }: { selected: boolean }) {
+  return (
+    <div
+      aria-hidden="true"
+      className={`flex h-[108px] w-[78px] shrink-0 flex-col overflow-hidden rounded-[16px] border bg-[#052F24] p-2 shadow-sm ${selected ? 'border-[#D6AF2E]' : 'border-white/25'}`}
+    >
+      <div className="h-4 rounded-md bg-white/15" />
+      <div className="mx-auto -mt-1.5 h-7 w-7 rounded-full border-2 border-[#D6AF2E] bg-white" />
+      <div className="mx-auto mt-1 h-1.5 w-10 rounded-full bg-[#F4CE55]/80" />
+      <div className="mt-2 space-y-1.5">
+        <div className="h-1.5 rounded-full bg-white/85" />
+        <div className="h-1.5 w-4/5 rounded-full bg-white/45" />
+        <div className="h-1.5 w-3/5 rounded-full bg-white/30" />
+      </div>
+      <div className="mt-auto grid grid-cols-3 gap-1">
+        <div className="h-4 rounded bg-[#D6AF2E]" />
+        <div className="h-4 rounded bg-white/15" />
+        <div className="h-4 rounded bg-white/15" />
+      </div>
+    </div>
+  );
+}
+
+function PortfolioMiniature({ selected }: { selected: boolean }) {
+  return (
+    <div
+      aria-hidden="true"
+      className={`flex h-[108px] w-[78px] shrink-0 flex-col overflow-hidden rounded-[16px] border bg-[#052F24] p-2 shadow-sm ${selected ? 'border-[#D6AF2E]' : 'border-white/25'}`}
+    >
+      <div className="h-8 rounded-md bg-gradient-to-br from-white/35 to-[#D6AF2E]/45" />
+      <div className="mx-auto -mt-2 h-7 w-7 rounded-full border-2 border-[#D6AF2E] bg-white" />
+      <div className="mx-auto mt-1 h-1.5 w-9 rounded-full bg-white/80" />
+      <div className="mt-2 grid grid-cols-2 gap-1">
+        <div className="h-7 rounded bg-white/20" />
+        <div className="h-7 rounded bg-[#D6AF2E]/55" />
+      </div>
+      <div className="mt-1 grid grid-cols-3 gap-1">
+        <div className="h-4 rounded bg-white/15" />
+        <div className="h-4 rounded bg-white/25" />
+        <div className="h-4 rounded bg-white/15" />
+      </div>
+    </div>
+  );
+}
+
+export function CvPresentationModelSelector({
+  language,
+  value,
+  onChange,
+  selectedFormulaLabel,
+  onContinue,
+}: {
+  language: string;
+  value: PresentationModel | null;
+  onChange: (model: PresentationModel) => void;
+  selectedFormulaLabel: string | null;
+  onContinue: () => void;
+}) {
+  const copy = COPY[(language as SupportedLanguage)] ?? COPY.fr;
+  const selectedModelLabel = value ? getPresentationModelLabel(language, value) : null;
+  const canContinue = Boolean(selectedFormulaLabel && value);
+
+  return (
+    <section id="cv-presentation-models" className="mt-5 rounded-3xl border border-[#D6AF2E]/55 bg-white p-4 shadow-[0_8px_24px_rgba(74,18,63,0.05)] sm:p-5">
+      <div className="text-center">
+        <p className="text-[10px] font-black uppercase tracking-[0.16em] text-amber-600">{copy.eyebrow}</p>
+        <h3 className="mt-1 text-xl font-black text-[#4A123F] sm:text-2xl">{copy.title}</h3>
+        <p className="mx-auto mt-1.5 max-w-2xl text-sm leading-5 text-slate-600">{copy.subtitle}</p>
+      </div>
+
+      <div className="mx-auto mt-4 grid max-w-4xl gap-3 md:grid-cols-2">
+        <button
+          type="button"
+          aria-pressed={value === 'professional'}
+          onClick={() => onChange('professional')}
+          className={`flex min-h-[138px] items-center gap-4 rounded-2xl border p-3 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'professional' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-sm' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
+        >
+          <ProfessionalMiniature selected={value === 'professional'} />
+          <span className="min-w-0">
+            <span className="block text-base font-black text-[#4A123F]">{copy.professional}</span>
+            <span className="mt-1 block text-sm leading-5 text-slate-600">{copy.professionalDescription}</span>
+          </span>
+        </button>
+
+        <button
+          type="button"
+          aria-pressed={value === 'portfolio'}
+          onClick={() => onChange('portfolio')}
+          className={`flex min-h-[138px] items-center gap-4 rounded-2xl border p-3 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'portfolio' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-sm' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
+        >
+          <PortfolioMiniature selected={value === 'portfolio'} />
+          <span className="min-w-0">
+            <span className="block text-base font-black text-[#4A123F]">{copy.portfolio}</span>
+            <span className="mt-1 block text-sm leading-5 text-slate-600">{copy.portfolioDescription}</span>
+          </span>
+        </button>
+      </div>
+
+      <p className="mx-auto mt-3 max-w-3xl text-center text-xs font-semibold leading-5 text-slate-500">{copy.note}</p>
+
+      <div className="mx-auto mt-4 flex max-w-4xl flex-col gap-3 rounded-2xl border border-amber-200 bg-amber-50/60 p-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="text-sm leading-5 text-slate-700">
+          {selectedFormulaLabel ? (
+            <p><strong className="text-[#4A123F]">{copy.selectedFormula} :</strong> {selectedFormulaLabel}</p>
+          ) : (
+            <p>{copy.chooseFormulaFirst}</p>
+          )}
+          {selectedModelLabel ? (
+            <p><strong className="text-[#4A123F]">{copy.selectedModel} :</strong> {selectedModelLabel}</p>
+          ) : (
+            <p>{copy.chooseModel}</p>
+          )}
+        </div>
+        <button
+          type="button"
+          disabled={!canContinue}
+          onClick={onContinue}
+          className="shrink-0 rounded-xl bg-[#07543F] px-5 py-2.5 text-sm font-bold text-white transition hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500"
+        >
+          {copy.continue}
+        </button>
+      </div>
+    </section>
+  );
+}
