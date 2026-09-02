@@ -1,4 +1,5 @@
-import { ArrowRight, Download, Smartphone } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { ArrowRight, Download, Smartphone, X, ZoomIn } from 'lucide-react';
 import type { BusinessCardPreviewLanguage } from './BusinessCardPreview';
 import { CvBusinessQrVisual, AUX_SAVEURS_LOGO } from './CvBusinessQrVisual';
 
@@ -132,9 +133,38 @@ function PwaPhone({ language }: { language: BusinessCardPreviewLanguage }) {
   );
 }
 
+type JourneyPreview = 'pwa' | 'qr' | 'cv';
+
+function ZoomButton({ label, onClick }: { label: string; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="absolute right-2 top-2 z-20 flex h-8 w-8 items-center justify-center rounded-full border border-[#D5B257] bg-white/95 text-[#032D21] shadow-lg transition hover:scale-105 hover:bg-[#F4CE55] focus:outline-none focus:ring-2 focus:ring-[#D5B257]"
+      aria-label={label}
+      title={label}
+    >
+      <ZoomIn className="h-4 w-4" aria-hidden="true" />
+    </button>
+  );
+}
+
 export default function CvBusinessJourney({ language }: { language: BusinessCardPreviewLanguage }) {
   const t = COPY[language];
   const rtl = language === 'ar';
+  const [expandedPreview, setExpandedPreview] = useState<JourneyPreview | null>(null);
+  const zoomLabel = language === 'ar' ? 'تكبير الصورة' : language === 'en' ? 'Enlarge image' : language === 'it' ? 'Ingrandisci immagine' : language === 'ru' ? 'Увеличить изображение' : 'Agrandir l’image';
+
+  useEffect(() => {
+    if (!expandedPreview) return undefined;
+
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setExpandedPreview(null);
+    };
+
+    document.addEventListener('keydown', closeOnEscape);
+    return () => document.removeEventListener('keydown', closeOnEscape);
+  }, [expandedPreview]);
 
   return (
     <section className="border-y border-[#D5B257]/25 bg-[radial-gradient(circle_at_top,rgba(213,178,87,0.12),transparent_32%),linear-gradient(180deg,#fffdf8_0%,#ffffff_100%)] px-4 py-5 sm:py-6" dir={rtl ? 'rtl' : 'ltr'}>
@@ -151,7 +181,10 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
         <div className="mt-4 grid items-start justify-center gap-y-5 lg:grid-cols-[180px_32px_180px_32px_180px] lg:gap-x-3">
           <article className="w-[180px] text-center">
             <div className="mb-1.5 inline-flex rounded-full bg-[#032D21] px-2.5 py-1 text-[10px] font-black text-[#F4CE55]">{t.pwaTitle}</div>
-            <PwaPhone language={language} />
+            <div className="relative mx-auto h-[360px] w-[180px]">
+              <PwaPhone language={language} />
+              <ZoomButton label={`${zoomLabel} — ${t.pwaTitle}`} onClick={() => setExpandedPreview('pwa')} />
+            </div>
             <p className="mx-auto mt-2 max-w-[180px] text-[11px] leading-4.5 text-gray-700">{t.pwaText}</p>
           </article>
 
@@ -159,10 +192,11 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
 
           <article className="w-[180px] text-center">
             <div className="mb-1.5 inline-flex rounded-full bg-[#032D21] px-2.5 py-1 text-[10px] font-black text-[#F4CE55]">{t.qrTitle}</div>
-            <div className="relative mx-auto h-[360px] w-[180px] overflow-hidden">
+            <div className="relative mx-auto h-[360px] w-[180px] overflow-hidden rounded-[28px] border border-[#D5B257]/40 shadow-[0_16px_36px_rgba(0,0,0,0.16)]">
               <div className="absolute left-[2px] top-0 w-[354px] origin-top-left scale-[0.496] rtl:left-auto rtl:right-[2px] rtl:origin-top-right">
                 <CvBusinessQrVisual language={language} />
               </div>
+              <ZoomButton label={`${zoomLabel} — ${t.qrTitle}`} onClick={() => setExpandedPreview('qr')} />
             </div>
             <p className="mx-auto mt-2 max-w-[180px] text-[11px] leading-4.5 text-gray-700">{t.qrText}</p>
           </article>
@@ -171,14 +205,15 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
 
           <article className="w-[180px] text-center">
             <div className="mb-1.5 inline-flex rounded-full bg-[#032D21] px-2.5 py-1 text-[10px] font-black text-[#F4CE55]">{t.cvTitle}</div>
-            <div className="mx-auto flex h-[360px] w-[180px] items-center justify-center overflow-hidden">
+            <div className="relative mx-auto flex h-[360px] w-[180px] items-center justify-center overflow-hidden rounded-[28px] border border-[#D5B257]/40 bg-[#f7f2e9] shadow-[0_16px_36px_rgba(0,0,0,0.16)]">
               <img
                 src="/images/cv-business-professionnel-aux-saveurs-anis.png"
                 alt={`${t.cvTitle} — Aux saveurs d’Anis`}
-                className="h-[374px] w-auto max-w-none object-contain"
+                className="h-[390px] w-auto max-w-none object-contain"
                 loading="lazy"
                 decoding="async"
               />
+              <ZoomButton label={`${zoomLabel} — ${t.cvTitle}`} onClick={() => setExpandedPreview('cv')} />
             </div>
             <p className="mx-auto mt-2 max-w-[180px] text-[11px] leading-4.5 text-gray-700">{t.cvText}</p>
           </article>
@@ -189,6 +224,49 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
           <span>{language === 'ar' ? 'التطبيق = وصول سريع • QR Business = مشاركة فورية • CV Business = العرض المهني الكامل' : 'Application = accès rapide • QR Business = partage immédiat • CV Business = présentation professionnelle complète'}</span>
         </div>
       </div>
+
+      {expandedPreview && (
+        <div
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          aria-label={zoomLabel}
+          onClick={() => setExpandedPreview(null)}
+        >
+          <button
+            type="button"
+            onClick={() => setExpandedPreview(null)}
+            className="absolute right-4 top-4 z-20 flex h-11 w-11 items-center justify-center rounded-full border border-white/60 bg-white text-[#032D21] shadow-xl"
+            aria-label={language === 'ar' ? 'إغلاق' : 'Fermer'}
+          >
+            <X className="h-6 w-6" aria-hidden="true" />
+          </button>
+
+          <div className="flex max-h-[90vh] max-w-[92vw] items-center justify-center" onClick={(event) => event.stopPropagation()}>
+            {expandedPreview === 'pwa' && (
+              <div className="flex h-[540px] w-[270px] items-center justify-center sm:h-[630px] sm:w-[315px]">
+                <div className="scale-150 sm:scale-[1.7]">
+                  <PwaPhone language={language} />
+                </div>
+              </div>
+            )}
+
+            {expandedPreview === 'qr' && (
+              <div className="max-h-[88vh] w-[354px] max-w-[88vw] overflow-auto rounded-[30px] bg-white shadow-2xl">
+                <CvBusinessQrVisual language={language} />
+              </div>
+            )}
+
+            {expandedPreview === 'cv' && (
+              <img
+                src="/images/cv-business-professionnel-aux-saveurs-anis.png"
+                alt={`${t.cvTitle} — Aux saveurs d’Anis`}
+                className="max-h-[88vh] max-w-[88vw] rounded-2xl object-contain shadow-2xl"
+              />
+            )}
+          </div>
+        </div>
+      )}
     </section>
   );
 }
