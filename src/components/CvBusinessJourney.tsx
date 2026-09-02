@@ -119,7 +119,7 @@ function PwaPhone({ language }: { language: BusinessCardPreviewLanguage }) {
   const t = COPY[language];
   const rtl = language === 'ar';
   return (
-    <div className="mx-auto flex h-[360px] w-[180px] flex-col overflow-hidden rounded-[28px] border-[4px] border-[#1b1b1b] bg-[#111820] shadow-[0_16px_36px_rgba(0,0,0,0.22)]" dir={rtl ? 'rtl' : 'ltr'}>
+    <div className="flex h-[360px] w-[180px] flex-col overflow-hidden rounded-[28px] border-[4px] border-[#1b1b1b] bg-[#111820] shadow-[0_16px_36px_rgba(0,0,0,0.22)]" dir={rtl ? 'rtl' : 'ltr'}>
       <div className="flex items-center justify-between px-3.5 pt-2.5 text-[8px] font-bold text-white">
         <span>11:30</span>
         <span>● ● ▬</span>
