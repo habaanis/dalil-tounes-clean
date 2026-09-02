@@ -923,24 +923,19 @@ function ResponsiveFeatureList({
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <>
-      <div className="sm:hidden">
-        <FeatureList items={expanded ? items : items.slice(0, 3)} columns={columns} variant={variant} />
-        {items.length > 3 && (
-          <button
-            type="button"
-            aria-expanded={expanded}
-            onClick={() => setExpanded((current) => !current)}
-            className={`mt-3 text-sm font-bold underline underline-offset-4 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${variant === 'dark' ? 'text-[#F4CE55] decoration-white/50' : 'text-[#4A123F] decoration-[#D6AF2E]'}`}
-          >
-            {expanded ? hideLabel : showLabel}
-          </button>
-        )}
-      </div>
-      <div className="hidden sm:block">
-        <FeatureList items={items} columns={columns} variant={variant} />
-      </div>
-    </>
+    <div>
+      <FeatureList items={expanded ? items : items.slice(0, 3)} columns={columns} variant={variant} />
+      {items.length > 3 && (
+        <button
+          type="button"
+          aria-expanded={expanded}
+          onClick={() => setExpanded((current) => !current)}
+          className={`mt-3 text-sm font-bold underline underline-offset-4 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${variant === 'dark' ? 'text-[#F4CE55] decoration-white/50' : 'text-[#4A123F] decoration-[#D6AF2E]'}`}
+        >
+          {expanded ? hideLabel : showLabel}
+        </button>
+      )}
+    </div>
   );
 }
 
@@ -1278,7 +1273,7 @@ function CreationPlanCard({
   );
 }
 
-export const Subscription = ({ showMobileJourney = true }: { showMobileJourney?: boolean } = {}) => {
+export const Subscription = () => {
   const { language } = useLanguage();
   const isArabic = language === 'ar';
   const copy = subscriptionCopy[language as keyof typeof subscriptionCopy] ?? subscriptionCopy.fr;
@@ -1295,7 +1290,7 @@ export const Subscription = ({ showMobileJourney = true }: { showMobileJourney?:
   } | null>(null);
   const [selectedFormula, setSelectedFormula] = useState<'artisan' | 'premium' | null>(null);
   const [selectedPresentationModel, setSelectedPresentationModel] = useState<PresentationModel | null>(null);
-  const [showSecondaryMobile, setShowSecondaryMobile] = useState(false);
+  const [showSecondaryDetails, setShowSecondaryDetails] = useState(false);
 
   const closePreview = () => setActivePreview(null);
   const openRequest = (code: SubscriptionPlanCode, label: string, checkoutOffer: CheckoutOffer, billingPeriod?: BillingPeriod, presentationModelLabel?: string) => {
@@ -1320,7 +1315,7 @@ export const Subscription = ({ showMobileJourney = true }: { showMobileJourney?:
   return (
     <div className="bg-[#FFFCF7] px-4 py-8 text-slate-900 sm:py-12" dir={isArabic ? 'rtl' : 'ltr'}>
       <main className="mx-auto flex max-w-6xl flex-col">
-        <header className="order-1 mb-2 text-center sm:mb-10 lg:order-none">
+        <header className="order-1 mb-2 text-center sm:mb-10">
           <p className="mb-3 flex items-center justify-center gap-3 text-xs font-black uppercase tracking-[0.2em] text-amber-600">
             <span className="h-px w-8 bg-amber-400" /> {copy.heroEyebrow} <span className="h-px w-8 bg-amber-400" />
           </p>
@@ -1330,7 +1325,7 @@ export const Subscription = ({ showMobileJourney = true }: { showMobileJourney?:
           <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-500 sm:text-base">{copy.heroSubtitle}</p>
         </header>
 
-        <section aria-label={copy.startingSolutions} className="order-3 mx-auto mt-7 max-w-2xl lg:order-none lg:mt-0">
+        <section aria-label={copy.startingSolutions} className="order-3 mx-auto mt-7 max-w-2xl">
           <article className="flex flex-col rounded-3xl border border-[#D6AF2E] bg-white p-5 shadow-[0_12px_30px_rgba(74,18,63,0.07)] sm:p-7">
             <span className="w-fit rounded-full bg-emerald-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-emerald-800">
               {copy.selfService}
@@ -1368,7 +1363,7 @@ export const Subscription = ({ showMobileJourney = true }: { showMobileJourney?:
 
         </section>
 
-        <section aria-labelledby="cv-business-products-title" className="order-2 mt-5 sm:mt-11 lg:order-none">
+        <section aria-labelledby="cv-business-products-title" className="order-2 mt-5 sm:mt-0">
 <div className="mb-6 text-center">
   <p className="text-xs font-black uppercase tracking-[0.18em] text-amber-600">CV BUSINESS DALIL TOUNES</p>
   <h2 id="cv-business-products-title" className="mt-2 text-2xl font-black text-[#4A123F] sm:text-3xl">{simpleCopy.productsTitle}</h2>
@@ -1425,11 +1420,9 @@ export const Subscription = ({ showMobileJourney = true }: { showMobileJourney?:
   />
 </div>
 
-{showMobileJourney && (
-  <div className="mt-5 lg:hidden">
-    <CvBusinessJourney language={language as OfferLanguage} />
-  </div>
-)}
+<div className="mt-5">
+  <CvBusinessJourney language={language as OfferLanguage} />
+</div>
 
 <CvPresentationModelSelector
   language={language}
@@ -1462,14 +1455,14 @@ export const Subscription = ({ showMobileJourney = true }: { showMobileJourney?:
 
         <button
           type="button"
-          aria-expanded={showSecondaryMobile}
-          onClick={() => setShowSecondaryMobile((current) => !current)}
-          className="order-4 mt-5 rounded-xl border border-[#D6AF2E] bg-white px-4 py-3 text-sm font-black text-[#4A123F] shadow-sm lg:hidden"
+          aria-expanded={showSecondaryDetails}
+          onClick={() => setShowSecondaryDetails((current) => !current)}
+          className="order-4 mt-7 rounded-xl border border-[#D6AF2E] bg-white px-4 py-3 text-sm font-black text-[#4A123F] shadow-sm"
         >
-          {showSecondaryMobile ? mobileCopy.hideSecondary : mobileCopy.showSecondary}
+          {showSecondaryDetails ? mobileCopy.hideSecondary : mobileCopy.showSecondary}
         </button>
 
-        <aside className={`${showSecondaryMobile ? 'block' : 'hidden'} order-5 mt-5 rounded-2xl border border-amber-200 bg-white p-5 text-center shadow-sm lg:order-none lg:block`} aria-labelledby="cv-choice-help-title">
+        <aside className={`${showSecondaryDetails ? 'block' : 'hidden'} order-5 mt-5 rounded-2xl border border-amber-200 bg-white p-5 text-center shadow-sm`} aria-labelledby="cv-choice-help-title">
           <h2 id="cv-choice-help-title" className="text-lg font-bold text-[#4A123F]">{essentialCopy.helpTitle}</h2>
           <p className="mx-auto mt-2 max-w-3xl text-sm leading-6 text-slate-700">{essentialCopy.helpText}</p>
           <div className="mt-4 flex flex-wrap justify-center gap-3">
@@ -1482,7 +1475,7 @@ export const Subscription = ({ showMobileJourney = true }: { showMobileJourney?:
           </div>
         </aside>
 
-        <section className={`${showSecondaryMobile ? 'block' : 'hidden'} order-6 mt-5 rounded-3xl bg-gradient-to-r from-[#4A123F] to-[#5F174F] p-5 text-white shadow-xl sm:p-7 lg:order-none lg:block`}>
+        <section className={`${showSecondaryDetails ? 'block' : 'hidden'} order-6 mt-5 rounded-3xl bg-gradient-to-r from-[#4A123F] to-[#5F174F] p-5 text-white shadow-xl sm:p-7`}>
           <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-start gap-4">
               <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-[#D6AF2E] text-[#F0C537]">
@@ -1505,12 +1498,12 @@ export const Subscription = ({ showMobileJourney = true }: { showMobileJourney?:
           </div>
         </section>
 
-        <div className={`${showSecondaryMobile ? 'flex' : 'hidden'} order-7 mt-5 items-center justify-center gap-3 rounded-2xl border border-amber-200 bg-white px-4 py-4 text-center text-sm text-slate-700 lg:order-none lg:flex`}>
+        <div className={`${showSecondaryDetails ? 'flex' : 'hidden'} order-7 mt-5 items-center justify-center gap-3 rounded-2xl border border-amber-200 bg-white px-4 py-4 text-center text-sm text-slate-700`}>
           <Info className="h-5 w-5 shrink-0 text-[#4A123F]" aria-hidden="true" />
           <p>{copy.disclaimer}</p>
         </div>
 
-        <section className={`${showSecondaryMobile ? 'flex' : 'hidden'} order-8 mt-5 flex-col gap-5 rounded-3xl bg-gradient-to-r from-[#4A123F] to-[#5F174F] p-5 text-white shadow-xl sm:flex-row sm:items-center sm:justify-between sm:p-7 lg:order-none lg:flex`}>
+        <section className={`${showSecondaryDetails ? 'flex' : 'hidden'} order-8 mt-5 flex-col gap-5 rounded-3xl bg-gradient-to-r from-[#4A123F] to-[#5F174F] p-5 text-white shadow-xl sm:flex-row sm:items-center sm:justify-between sm:p-7`}>
           <div className="flex items-center gap-4">
             <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-[#D6AF2E] text-[#F0C537]">
               <Rocket className="h-7 w-7" aria-hidden="true" />
