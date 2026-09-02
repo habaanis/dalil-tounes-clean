@@ -1,4 +1,5 @@
-import { ArrowRight, Download, Smartphone } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { ArrowRight, Download, Smartphone, X, ZoomIn } from 'lucide-react';
 import type { BusinessCardPreviewLanguage } from './BusinessCardPreview';
 import { CvBusinessQrVisual, AUX_SAVEURS_LOGO } from './CvBusinessQrVisual';
 
@@ -15,6 +16,9 @@ const COPY: Record<BusinessCardPreviewLanguage, {
   qrText: string;
   cvTitle: string;
   cvText: string;
+  summary: string;
+  openPreview: string;
+  closePreview: string;
 }> = {
   fr: {
     eyebrow: 'Votre CV Business dans votre poche',
@@ -29,6 +33,9 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     qrText: 'Présentez, partagez ou imprimez votre QR Business.',
     cvTitle: '3. CV Business',
     cvText: 'Votre présentation professionnelle complète, toujours accessible.',
+    summary: 'Application = accès rapide • QR Business = partage immédiat • CV Business = présentation professionnelle complète',
+    openPreview: 'Agrandir le visuel',
+    closePreview: 'Fermer le visuel',
   },
   ar: {
     eyebrow: 'CV Business الخاص بك دائمًا معك',
@@ -43,6 +50,9 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     qrText: 'اعرض QR Business أو شاركه أو اطبعه بسهولة.',
     cvTitle: '3. CV Business',
     cvText: 'عرضك المهني الكامل متاح دائمًا.',
+    summary: 'التطبيق = وصول سريع • QR Business = مشاركة فورية • CV Business = العرض المهني الكامل',
+    openPreview: 'تكبير الصورة',
+    closePreview: 'إغلاق الصورة',
   },
   en: {
     eyebrow: 'Your Business CV in your pocket',
@@ -57,6 +67,9 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     qrText: 'Show, share or print your Business QR.',
     cvTitle: '3. Business CV',
     cvText: 'Your complete professional presentation, always accessible.',
+    summary: 'App = quick access • Business QR = instant sharing • Business CV = complete professional presentation',
+    openPreview: 'Enlarge visual',
+    closePreview: 'Close visual',
   },
   it: {
     eyebrow: 'Il tuo CV Business sempre con te',
@@ -71,6 +84,9 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     qrText: 'Mostra, condividi o stampa il tuo QR Business.',
     cvTitle: '3. CV Business',
     cvText: 'La tua presentazione professionale completa, sempre accessibile.',
+    summary: 'App = accesso rapido • QR Business = condivisione immediata • CV Business = presentazione professionale completa',
+    openPreview: 'Ingrandisci il visual',
+    closePreview: 'Chiudi il visual',
   },
   ru: {
     eyebrow: 'Ваш Business CV всегда с вами',
@@ -85,6 +101,9 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     qrText: 'Показывайте, отправляйте или печатайте ваш Business QR.',
     cvTitle: '3. Business CV',
     cvText: 'Ваша полная профессиональная презентация всегда доступна.',
+    summary: 'Приложение = быстрый доступ • Business QR = мгновенная отправка • Business CV = полная профессиональная презентация',
+    openPreview: 'Увеличить изображение',
+    closePreview: 'Закрыть изображение',
   },
 };
 
@@ -132,9 +151,103 @@ function PwaPhone({ language }: { language: BusinessCardPreviewLanguage }) {
   );
 }
 
+type JourneyVisual = 'pwa' | 'qr' | 'cv';
+
+function PreviewButton({ label, onClick }: { label: string; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="absolute right-2 top-2 z-20 grid h-8 w-8 cursor-zoom-in place-items-center rounded-full border border-[#D5B257]/70 bg-white/95 text-[#032D21] shadow-md transition hover:scale-105 hover:bg-white focus:outline-none focus:ring-2 focus:ring-[#D5B257]"
+      aria-label={label}
+      title={label}
+    >
+      <ZoomIn className="h-4 w-4" aria-hidden="true" />
+    </button>
+  );
+}
+
+function ExpandedJourneyVisual({
+  language,
+  visual,
+  onClose,
+}: {
+  language: BusinessCardPreviewLanguage;
+  visual: JourneyVisual;
+  onClose: () => void;
+}) {
+  const t = COPY[language];
+  const title = visual === 'pwa' ? t.pwaTitle : visual === 'qr' ? t.qrTitle : t.cvTitle;
+
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [onClose]);
+
+  return (
+    <div
+      className="fixed inset-0 z-[120] flex items-center justify-center bg-black/75 p-3 backdrop-blur-sm sm:p-6"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={`${t.openPreview} — ${title}`}
+        className="relative max-h-[94dvh] max-w-full overflow-auto rounded-3xl bg-white p-4 shadow-2xl sm:p-5"
+      >
+        <button
+          type="button"
+          onClick={onClose}
+          className="sticky top-0 z-30 ml-auto grid h-10 w-10 place-items-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-md transition hover:border-[#D5B257] hover:text-[#032D21] focus:outline-none focus:ring-2 focus:ring-[#D5B257] rtl:ml-0 rtl:mr-auto"
+          aria-label={t.closePreview}
+          title={t.closePreview}
+          autoFocus
+        >
+          <X className="h-5 w-5" aria-hidden="true" />
+        </button>
+
+        <div className="mt-2 flex min-w-0 justify-center">
+          {visual === 'pwa' && (
+            <div className="h-[486px] w-[243px] overflow-hidden sm:h-[540px] sm:w-[270px]">
+              <div className="origin-top-left scale-[1.35] sm:scale-150">
+                <PwaPhone language={language} />
+              </div>
+            </div>
+          )}
+          {visual === 'qr' && (
+            <div className="pointer-events-none w-[min(354px,calc(100vw-48px))]">
+              <CvBusinessQrVisual language={language} />
+            </div>
+          )}
+          {visual === 'cv' && (
+            <img
+              src="/images/cv-business-professionnel-aux-saveurs-anis.png"
+              alt={`${t.cvTitle} — Aux saveurs d’Anis`}
+              className="max-h-[82dvh] max-w-[calc(100vw-48px)] object-contain"
+              decoding="async"
+            />
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function CvBusinessJourney({ language }: { language: BusinessCardPreviewLanguage }) {
   const t = COPY[language];
   const rtl = language === 'ar';
+  const [expandedVisual, setExpandedVisual] = useState<JourneyVisual | null>(null);
 
   return (
     <section className="border-y border-[#D5B257]/25 bg-[radial-gradient(circle_at_top,rgba(213,178,87,0.12),transparent_32%),linear-gradient(180deg,#fffdf8_0%,#ffffff_100%)] px-4 py-5 sm:py-6" dir={rtl ? 'rtl' : 'ltr'}>
@@ -151,7 +264,10 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
         <div className="mt-4 grid items-start justify-center gap-y-5 lg:grid-cols-[180px_32px_180px_32px_180px] lg:gap-x-3">
           <article className="w-[180px] text-center">
             <div className="mb-1.5 inline-flex rounded-full bg-[#032D21] px-2.5 py-1 text-[10px] font-black text-[#F4CE55]">{t.pwaTitle}</div>
-            <PwaPhone language={language} />
+            <div className="relative mx-auto w-[180px]">
+              <PwaPhone language={language} />
+              <PreviewButton label={`${t.openPreview} — ${t.pwaTitle}`} onClick={() => setExpandedVisual('pwa')} />
+            </div>
             <p className="mx-auto mt-2 max-w-[180px] text-[11px] leading-4.5 text-gray-700">{t.pwaText}</p>
           </article>
 
@@ -163,6 +279,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
               <div className="absolute left-[2px] top-0 w-[354px] origin-top-left scale-[0.496] rtl:left-auto rtl:right-[2px] rtl:origin-top-right">
                 <CvBusinessQrVisual language={language} />
               </div>
+              <PreviewButton label={`${t.openPreview} — ${t.qrTitle}`} onClick={() => setExpandedVisual('qr')} />
             </div>
             <p className="mx-auto mt-2 max-w-[180px] text-[11px] leading-4.5 text-gray-700">{t.qrText}</p>
           </article>
@@ -171,7 +288,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
 
           <article className="w-[180px] text-center">
             <div className="mb-1.5 inline-flex rounded-full bg-[#032D21] px-2.5 py-1 text-[10px] font-black text-[#F4CE55]">{t.cvTitle}</div>
-            <div className="mx-auto flex h-[360px] w-[180px] items-center justify-center overflow-hidden">
+            <div className="relative mx-auto flex h-[360px] w-[180px] items-center justify-center overflow-hidden">
               <img
                 src="/images/cv-business-professionnel-aux-saveurs-anis.png"
                 alt={`${t.cvTitle} — Aux saveurs d’Anis`}
@@ -179,6 +296,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
                 loading="lazy"
                 decoding="async"
               />
+              <PreviewButton label={`${t.openPreview} — ${t.cvTitle}`} onClick={() => setExpandedVisual('cv')} />
             </div>
             <p className="mx-auto mt-2 max-w-[180px] text-[11px] leading-4.5 text-gray-700">{t.cvText}</p>
           </article>
@@ -186,9 +304,17 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
 
         <div className="mx-auto mt-4 flex max-w-2xl items-center justify-center gap-2 rounded-xl border border-[#D5B257]/45 bg-[#032D21] px-3 py-2 text-center text-[11px] font-bold text-white shadow-sm">
           <Download className="h-3.5 w-3.5 shrink-0 text-[#F4CE55]" aria-hidden="true" />
-          <span>{language === 'ar' ? 'التطبيق = وصول سريع • QR Business = مشاركة فورية • CV Business = العرض المهني الكامل' : 'Application = accès rapide • QR Business = partage immédiat • CV Business = présentation professionnelle complète'}</span>
+          <span>{t.summary}</span>
         </div>
       </div>
+
+      {expandedVisual && (
+        <ExpandedJourneyVisual
+          language={language}
+          visual={expandedVisual}
+          onClose={() => setExpandedVisual(null)}
+        />
+      )}
     </section>
   );
 }
