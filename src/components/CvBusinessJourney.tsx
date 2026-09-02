@@ -229,7 +229,7 @@ function ExpandedJourneyVisual({
             </div>
           )}
           {visual === 'qr' && (
-            <div className="pointer-events-none w-[min(354px,calc(100vw-48px))]">
+            <div className="pointer-events-none w-[min(354px,calc(100vw-64px))]">
               <CvBusinessQrVisual language={language} />
             </div>
           )}
@@ -237,7 +237,7 @@ function ExpandedJourneyVisual({
             <img
               src="/images/cv-business-professionnel-aux-saveurs-anis.png"
               alt={`${t.cvTitle} — Aux saveurs d’Anis`}
-              className="max-h-[82dvh] max-w-[calc(100vw-48px)] object-contain"
+              className="max-h-[82dvh] max-w-[calc(100vw-64px)] object-contain"
               decoding="async"
             />
           )}
