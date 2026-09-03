@@ -23,7 +23,7 @@ const safeHttpsUrl = (value: string | null): string => {
 };
 
 export default function handler(request: Request) {
-  const url = new URL(request.url);
+  const url = new URL(request.url, 'https://dalil-tounes.com');
   const id = safeId(url.searchParams.get('id'));
   const name = safeText(url.searchParams.get('name'), 'CV Business');
   const logo = safeHttpsUrl(url.searchParams.get('logo'));
