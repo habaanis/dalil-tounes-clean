@@ -15,6 +15,7 @@ type Copy = {
   selectedModel: string;
   chooseFormulaFirst: string;
   chooseModel: string;
+  swipeModels: string;
   continue: string;
 };
 
@@ -32,6 +33,7 @@ const COPY: Record<SupportedLanguage, Copy> = {
     selectedModel: 'Modèle',
     chooseFormulaFirst: 'Choisissez d’abord CV Business Artisan ou CV Business Premium ci-dessus.',
     chooseModel: 'Choisissez ensuite votre modèle de présentation.',
+    swipeModels: 'Glissez pour voir l’autre modèle',
     continue: 'Continuer avec ce choix',
   },
   ar: {
@@ -47,6 +49,7 @@ const COPY: Record<SupportedLanguage, Copy> = {
     selectedModel: 'النموذج',
     chooseFormulaFirst: 'اختر أولاً CV Business حرفي أو CV Business Premium أعلاه.',
     chooseModel: 'ثم اختر نموذج العرض.',
+    swipeModels: 'اسحب لرؤية النموذج الآخر',
     continue: 'متابعة بهذا الاختيار',
   },
   en: {
@@ -62,6 +65,7 @@ const COPY: Record<SupportedLanguage, Copy> = {
     selectedModel: 'Model',
     chooseFormulaFirst: 'First choose Artisan Business CV or Premium Business CV above.',
     chooseModel: 'Then choose your presentation model.',
+    swipeModels: 'Swipe to see the other model',
     continue: 'Continue with this choice',
   },
   it: {
@@ -77,6 +81,7 @@ const COPY: Record<SupportedLanguage, Copy> = {
     selectedModel: 'Modello',
     chooseFormulaFirst: 'Scegli prima CV Business Artisan o CV Business Premium qui sopra.',
     chooseModel: 'Poi scegli il modello di presentazione.',
+    swipeModels: 'Scorri per vedere l’altro modello',
     continue: 'Continua con questa scelta',
   },
   ru: {
@@ -92,6 +97,7 @@ const COPY: Record<SupportedLanguage, Copy> = {
     selectedModel: 'Модель',
     chooseFormulaFirst: 'Сначала выберите Business CV Artisan или Business CV Premium выше.',
     chooseModel: 'Затем выберите модель оформления.',
+    swipeModels: 'Проведите, чтобы увидеть другую модель',
     continue: 'Продолжить с этим выбором',
   },
 };
@@ -109,7 +115,7 @@ function ModelPreview({
   alt: string;
 }) {
   return (
-    <div className="hidden h-[300px] w-full items-start justify-center overflow-hidden rounded-2xl border border-slate-200 bg-[#F7F5EF] p-2 shadow-inner sm:flex md:h-[420px]">
+    <div className="flex h-[300px] w-full items-start justify-center overflow-hidden rounded-xl border border-slate-200 bg-[#F7F5EF] p-2 shadow-inner sm:rounded-2xl md:h-[420px]">
       <img src={src} alt={alt} className="h-full w-full object-contain object-top" loading="lazy" decoding="async" />
     </div>
   );
@@ -172,12 +178,13 @@ export function CvPresentationModelSelector({
 
       <div className="mx-auto mt-4 max-w-4xl">
         <p className="mb-2 text-sm font-black text-[#4A123F]">2. {copy.selectedModel}</p>
-        <div className="grid grid-cols-2 gap-2 sm:gap-4">
+        <p className="mb-2 text-xs font-semibold text-slate-500 sm:hidden">↔ {copy.swipeModels}</p>
+        <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 sm:grid sm:grid-cols-2 sm:gap-4 sm:overflow-visible sm:pb-0">
         <button
           type="button"
           aria-pressed={value === 'professional'}
           onClick={() => onChange('professional')}
-          className={`flex min-h-20 min-w-0 flex-col justify-center rounded-xl border p-3 text-center transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] sm:min-h-0 sm:justify-start sm:rounded-2xl sm:p-3.5 sm:text-left ${value === 'professional' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
+          className={`flex w-[86%] shrink-0 snap-center flex-col rounded-xl border p-3 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] sm:w-auto sm:min-w-0 sm:rounded-2xl sm:p-3.5 ${value === 'professional' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
         >
           <ModelPreview
             src="/images/cv-business-portfolio-aux-saveurs-anis.png"
@@ -193,7 +200,7 @@ export function CvPresentationModelSelector({
           type="button"
           aria-pressed={value === 'portfolio'}
           onClick={() => onChange('portfolio')}
-          className={`flex min-h-20 min-w-0 flex-col justify-center rounded-xl border p-3 text-center transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] sm:min-h-0 sm:justify-start sm:rounded-2xl sm:p-3.5 sm:text-left ${value === 'portfolio' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
+          className={`flex w-[86%] shrink-0 snap-center flex-col rounded-xl border p-3 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] sm:w-auto sm:min-w-0 sm:rounded-2xl sm:p-3.5 ${value === 'portfolio' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
         >
           <ModelPreview
             src="/images/cv-business-professionnel-aux-saveurs-anis.png"
