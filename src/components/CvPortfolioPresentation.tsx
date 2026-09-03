@@ -139,6 +139,7 @@ export function CvPortfolioPresentation({
     : '';
   const serviceImages = gallery.length > 0 ? gallery : [{ thumbnail: coverImage, full: coverImage }];
   const actionPriority = (href: string) => {
+    if (href.startsWith('/qr-business/')) return -1;
     if (href.startsWith('tel:')) return 0;
     if (href.includes('wa.me') || href.includes('whatsapp')) return 1;
     if (href.includes('maps') || href.includes('google.com/maps')) return 2;
