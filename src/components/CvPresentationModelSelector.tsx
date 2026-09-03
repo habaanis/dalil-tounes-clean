@@ -15,14 +15,15 @@ type Copy = {
   selectedModel: string;
   chooseFormulaFirst: string;
   chooseModel: string;
+  swipeModels: string;
   continue: string;
 };
 
 const COPY: Record<SupportedLanguage, Copy> = {
   fr: {
-    eyebrow: 'Étape 2',
-    title: 'Choisissez votre modèle de présentation',
-    subtitle: 'La formule détermine le contenu. Ici, vous choisissez seulement le style de votre CV.',
+    eyebrow: 'Votre choix',
+    title: 'Composez votre CV Business',
+    subtitle: 'Choisissez votre formule, puis le modèle qui correspond le mieux à votre métier.',
     professional: 'Modèle Professionnel',
     professionalDescription: 'Clair, structuré et direct. Idéal pour présenter rapidement votre activité et vos informations.',
     portfolio: 'Modèle Portfolio',
@@ -32,12 +33,13 @@ const COPY: Record<SupportedLanguage, Copy> = {
     selectedModel: 'Modèle',
     chooseFormulaFirst: 'Choisissez d’abord CV Business Artisan ou CV Business Premium ci-dessus.',
     chooseModel: 'Choisissez ensuite votre modèle de présentation.',
+    swipeModels: 'Glissez pour voir l’autre modèle',
     continue: 'Continuer avec ce choix',
   },
   ar: {
-    eyebrow: 'الخطوة 2',
-    title: 'اختر نموذج العرض',
-    subtitle: 'الصيغة تحدد المحتوى. هنا تختار فقط شكل عرض CV الخاص بك.',
+    eyebrow: 'اختيارك',
+    title: 'كوّن CV Business الخاص بك',
+    subtitle: 'اختر الصيغة، ثم النموذج الأنسب لمهنتك.',
     professional: 'النموذج المهني',
     professionalDescription: 'واضح ومنظم ومباشر لعرض نشاطك ومعلوماتك بسرعة.',
     portfolio: 'نموذج Portfolio',
@@ -47,12 +49,13 @@ const COPY: Record<SupportedLanguage, Copy> = {
     selectedModel: 'النموذج',
     chooseFormulaFirst: 'اختر أولاً CV Business حرفي أو CV Business Premium أعلاه.',
     chooseModel: 'ثم اختر نموذج العرض.',
+    swipeModels: 'اسحب لرؤية النموذج الآخر',
     continue: 'متابعة بهذا الاختيار',
   },
   en: {
-    eyebrow: 'Step 2',
-    title: 'Choose your presentation model',
-    subtitle: 'Your plan determines the content. Here, you only choose how your CV is presented.',
+    eyebrow: 'Your choice',
+    title: 'Build your Business CV',
+    subtitle: 'Choose your plan, then the presentation model that best suits your profession.',
     professional: 'Professional Model',
     professionalDescription: 'Clear, structured and direct. Ideal for presenting your activity and key information quickly.',
     portfolio: 'Portfolio Model',
@@ -62,12 +65,13 @@ const COPY: Record<SupportedLanguage, Copy> = {
     selectedModel: 'Model',
     chooseFormulaFirst: 'First choose Artisan Business CV or Premium Business CV above.',
     chooseModel: 'Then choose your presentation model.',
+    swipeModels: 'Swipe to see the other model',
     continue: 'Continue with this choice',
   },
   it: {
-    eyebrow: 'Passaggio 2',
-    title: 'Scegli il modello di presentazione',
-    subtitle: 'La formula determina i contenuti. Qui scegli soltanto lo stile di presentazione del tuo CV.',
+    eyebrow: 'La tua scelta',
+    title: 'Componi il tuo CV Business',
+    subtitle: 'Scegli la formula, poi il modello più adatto alla tua professione.',
     professional: 'Modello Professionale',
     professionalDescription: 'Chiaro, strutturato e diretto. Ideale per presentare rapidamente attività e informazioni.',
     portfolio: 'Modello Portfolio',
@@ -77,12 +81,13 @@ const COPY: Record<SupportedLanguage, Copy> = {
     selectedModel: 'Modello',
     chooseFormulaFirst: 'Scegli prima CV Business Artisan o CV Business Premium qui sopra.',
     chooseModel: 'Poi scegli il modello di presentazione.',
+    swipeModels: 'Scorri per vedere l’altro modello',
     continue: 'Continua con questa scelta',
   },
   ru: {
-    eyebrow: 'Шаг 2',
-    title: 'Выберите модель оформления',
-    subtitle: 'Тариф определяет содержание. Здесь вы выбираете только стиль оформления CV.',
+    eyebrow: 'Ваш выбор',
+    title: 'Соберите свой Business CV',
+    subtitle: 'Выберите тариф, затем модель оформления, подходящую вашей профессии.',
     professional: 'Профессиональная модель',
     professionalDescription: 'Чёткая, структурированная и прямая подача деятельности и ключевой информации.',
     portfolio: 'Модель Portfolio',
@@ -92,6 +97,7 @@ const COPY: Record<SupportedLanguage, Copy> = {
     selectedModel: 'Модель',
     chooseFormulaFirst: 'Сначала выберите Business CV Artisan или Business CV Premium выше.',
     chooseModel: 'Затем выберите модель оформления.',
+    swipeModels: 'Проведите, чтобы увидеть другую модель',
     continue: 'Продолжить с этим выбором',
   },
 };
@@ -109,7 +115,7 @@ function ModelPreview({
   alt: string;
 }) {
   return (
-    <div className="flex h-[180px] w-full items-start justify-center overflow-hidden rounded-xl border border-slate-200 bg-[#F7F5EF] p-1.5 shadow-inner sm:h-[300px] sm:rounded-2xl sm:p-2 md:h-[420px]">
+    <div className="flex h-[300px] w-full items-start justify-center overflow-hidden rounded-xl border border-slate-200 bg-[#F7F5EF] p-2 shadow-inner sm:rounded-2xl md:h-[420px]">
       <img src={src} alt={alt} className="h-full w-full object-contain object-top" loading="lazy" decoding="async" />
     </div>
   );
@@ -117,12 +123,20 @@ function ModelPreview({
 
 export function CvPresentationModelSelector({
   language,
+  formulaValue,
+  onFormulaChange,
+  artisanLabel,
+  premiumLabel,
   value,
   onChange,
   selectedFormulaLabel,
   onContinue,
 }: {
   language: string;
+  formulaValue: 'artisan' | 'premium' | null;
+  onFormulaChange: (formula: 'artisan' | 'premium') => void;
+  artisanLabel: string;
+  premiumLabel: string;
   value: PresentationModel | null;
   onChange: (model: PresentationModel) => void;
   selectedFormulaLabel: string | null;
@@ -140,12 +154,71 @@ export function CvPresentationModelSelector({
         <p className="mx-auto mt-1.5 max-w-2xl text-sm leading-5 text-slate-600">{copy.subtitle}</p>
       </div>
 
-      <div className="mx-auto mt-4 grid max-w-4xl grid-cols-2 gap-2 sm:gap-4">
+      <div className="mx-auto mt-4 max-w-4xl">
+        <p className="mb-2 text-sm font-black text-[#4A123F]">1. {copy.selectedFormula}</p>
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            aria-pressed={formulaValue === 'artisan'}
+            onClick={() => onFormulaChange('artisan')}
+            className={`min-h-14 rounded-xl border px-3 py-2 text-sm font-black transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${formulaValue === 'artisan' ? 'border-[#D6AF2E] bg-[#07543F] text-white shadow-md' : 'border-slate-200 bg-[#FFFCF7] text-[#4A123F] hover:border-[#D6AF2E]'}`}
+          >
+            {artisanLabel}
+          </button>
+          <button
+            type="button"
+            aria-pressed={formulaValue === 'premium'}
+            onClick={() => onFormulaChange('premium')}
+            className={`min-h-14 rounded-xl border px-3 py-2 text-sm font-black transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${formulaValue === 'premium' ? 'border-[#D6AF2E] bg-[#07543F] text-white shadow-md' : 'border-slate-200 bg-[#FFFCF7] text-[#4A123F] hover:border-[#D6AF2E]'}`}
+          >
+            {premiumLabel}
+          </button>
+        </div>
+      </div>
+
+      <div className="mx-auto mt-4 max-w-4xl">
+        <p className="mb-2 text-sm font-black text-[#4A123F]">2. {copy.selectedModel}</p>
+        <div className="sm:hidden">
+          <div className="grid grid-cols-2 gap-1 rounded-2xl bg-[#F4F0E7] p-1.5">
+            <button
+              type="button"
+              aria-pressed={value === 'professional'}
+              onClick={() => onChange('professional')}
+              className={`min-h-12 rounded-xl px-2 py-2 text-sm font-black transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'professional' ? 'bg-[#4A123F] text-white shadow-sm' : 'bg-white text-[#4A123F]'}`}
+            >
+              {copy.professional}
+            </button>
+            <button
+              type="button"
+              aria-pressed={value === 'portfolio'}
+              onClick={() => onChange('portfolio')}
+              className={`min-h-12 rounded-xl px-2 py-2 text-sm font-black transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'portfolio' ? 'bg-[#4A123F] text-white shadow-sm' : 'bg-white text-[#4A123F]'}`}
+            >
+              {copy.portfolio}
+            </button>
+          </div>
+          <button
+            type="button"
+            onClick={() => onChange(value ?? 'professional')}
+            className={`mt-3 flex w-full justify-center overflow-hidden rounded-2xl border bg-[#F7F5EF] p-2 transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value ? 'border-[#D6AF2E] shadow-md' : 'border-slate-200'}`}
+            aria-label={value === 'portfolio' ? copy.portfolio : copy.professional}
+          >
+            <img
+              src={value === 'portfolio' ? '/images/cv-business-professionnel-aux-saveurs-anis.png' : '/images/cv-business-portfolio-aux-saveurs-anis.png'}
+              alt={`${value === 'portfolio' ? copy.portfolio : copy.professional} — Aux saveurs d’Anis`}
+              className="h-[390px] w-auto max-w-none object-contain object-top"
+              loading="lazy"
+              decoding="async"
+            />
+          </button>
+        </div>
+
+        <div className="hidden grid-cols-2 gap-4 sm:grid">
         <button
           type="button"
           aria-pressed={value === 'professional'}
           onClick={() => onChange('professional')}
-          className={`flex min-w-0 flex-col rounded-xl border p-2 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] sm:rounded-2xl sm:p-3.5 ${value === 'professional' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
+          className={`flex min-w-0 flex-col rounded-2xl border p-3.5 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'professional' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
         >
           <ModelPreview
             src="/images/cv-business-portfolio-aux-saveurs-anis.png"
@@ -161,7 +234,7 @@ export function CvPresentationModelSelector({
           type="button"
           aria-pressed={value === 'portfolio'}
           onClick={() => onChange('portfolio')}
-          className={`flex min-w-0 flex-col rounded-xl border p-2 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] sm:rounded-2xl sm:p-3.5 ${value === 'portfolio' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
+          className={`flex min-w-0 flex-col rounded-2xl border p-3.5 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'portfolio' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
         >
           <ModelPreview
             src="/images/cv-business-professionnel-aux-saveurs-anis.png"
@@ -172,6 +245,7 @@ export function CvPresentationModelSelector({
             <span className="mt-1.5 hidden text-sm leading-5 text-slate-600 sm:block">{copy.portfolioDescription}</span>
           </span>
         </button>
+        </div>
       </div>
 
       <p className="mx-auto mt-3 hidden max-w-3xl text-center text-xs font-semibold leading-5 text-slate-500 sm:block">{copy.note}</p>
@@ -191,9 +265,9 @@ export function CvPresentationModelSelector({
         </div>
         <button
           type="button"
-          disabled={!canContinue}
           onClick={onContinue}
-          className="shrink-0 rounded-xl bg-[#07543F] px-5 py-2.5 text-sm font-bold text-white transition hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500"
+          aria-disabled={!canContinue}
+          className={`shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${canContinue ? 'bg-[#07543F] text-white hover:bg-emerald-800' : 'border border-[#D6AF2E] bg-white text-[#4A123F] hover:bg-amber-50'}`}
         >
           {copy.continue}
         </button>
