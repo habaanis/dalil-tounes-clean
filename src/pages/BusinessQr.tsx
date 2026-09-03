@@ -156,7 +156,7 @@ export default function BusinessQr() {
   const logoUrl = business ? getLogoUrl(business.logo_url) : '';
   const coverUrl = getCoverUrl(business?.image_url);
   const tier = business ? mapSubscriptionToTier(business) : 'gratuit';
-  const legacyPremiumAccess = tier === 'premium' || tier === 'elite' || tier === 'custom';
+  const legacyPremiumAccess = tier === 'artisan' || tier === 'premium' || tier === 'elite' || tier === 'custom';
   const cvBusinessAccess = business?.cv_business_status === 'published';
   const qrAccess = cvBusinessAccess || legacyPremiumAccess;
 
