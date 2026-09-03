@@ -109,7 +109,7 @@ function ModelPreview({
   alt: string;
 }) {
   return (
-    <div className="flex h-[180px] w-full items-start justify-center overflow-hidden rounded-xl border border-slate-200 bg-[#F7F5EF] p-1.5 shadow-inner sm:h-[300px] sm:rounded-2xl sm:p-2 md:h-[420px]">
+    <div className="hidden h-[300px] w-full items-start justify-center overflow-hidden rounded-2xl border border-slate-200 bg-[#F7F5EF] p-2 shadow-inner sm:flex md:h-[420px]">
       <img src={src} alt={alt} className="h-full w-full object-contain object-top" loading="lazy" decoding="async" />
     </div>
   );
@@ -145,7 +145,7 @@ export function CvPresentationModelSelector({
           type="button"
           aria-pressed={value === 'professional'}
           onClick={() => onChange('professional')}
-          className={`flex min-w-0 flex-col rounded-xl border p-2 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] sm:rounded-2xl sm:p-3.5 ${value === 'professional' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
+          className={`flex min-h-20 min-w-0 flex-col justify-center rounded-xl border p-3 text-center transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] sm:min-h-0 sm:justify-start sm:rounded-2xl sm:p-3.5 sm:text-left ${value === 'professional' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
         >
           <ModelPreview
             src="/images/cv-business-portfolio-aux-saveurs-anis.png"
@@ -161,7 +161,7 @@ export function CvPresentationModelSelector({
           type="button"
           aria-pressed={value === 'portfolio'}
           onClick={() => onChange('portfolio')}
-          className={`flex min-w-0 flex-col rounded-xl border p-2 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] sm:rounded-2xl sm:p-3.5 ${value === 'portfolio' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
+          className={`flex min-h-20 min-w-0 flex-col justify-center rounded-xl border p-3 text-center transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] sm:min-h-0 sm:justify-start sm:rounded-2xl sm:p-3.5 sm:text-left ${value === 'portfolio' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
         >
           <ModelPreview
             src="/images/cv-business-professionnel-aux-saveurs-anis.png"
@@ -191,9 +191,9 @@ export function CvPresentationModelSelector({
         </div>
         <button
           type="button"
-          disabled={!canContinue}
           onClick={onContinue}
-          className="shrink-0 rounded-xl bg-[#07543F] px-5 py-2.5 text-sm font-bold text-white transition hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500"
+          aria-disabled={!canContinue}
+          className={`shrink-0 rounded-xl px-5 py-2.5 text-sm font-bold transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${canContinue ? 'bg-[#07543F] text-white hover:bg-emerald-800' : 'border border-[#D6AF2E] bg-white text-[#4A123F] hover:bg-amber-50'}`}
         >
           {copy.continue}
         </button>
