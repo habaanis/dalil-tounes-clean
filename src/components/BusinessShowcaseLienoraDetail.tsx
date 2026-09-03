@@ -1114,7 +1114,7 @@ export default function BusinessShowcaseLienoraDetail() {
         {capabilities.variant === 'premium' && (
           <Link className="dt-qr-action" to={`/qr-business/${business.id}`}>
             <QrCode aria-hidden="true" />
-            {language === 'ar' ? 'عرض رمز QR الخاص بي' : language === 'en' ? 'Present my Business QR' : language === 'it' ? 'Mostra il mio QR Business' : language === 'ru' ? 'Показать мой Business QR' : 'Présenter mon QR Business'}
+            {language === 'ar' ? 'تثبيت أو عرض CV Business' : language === 'en' ? 'Install / present my Business CV' : language === 'it' ? 'Installa / mostra il mio CV Business' : language === 'ru' ? 'Установить / показать Business CV' : 'Installer / présenter mon CV Business'}
           </Link>
         )}
         <button type="button" className="dt-qr-action" onClick={() => void share()}>
@@ -1448,99 +1448,3 @@ export default function BusinessShowcaseLienoraDetail() {
           <div className="dt-showcase-body">
             {(translatedDescription || aboutText) && (
               <section
-                ref={presentationRef}
-                className={`dt-intro dt-presentation-accordion ${presentationOpen ? 'open' : ''} ${expandedIntro ? 'expanded' : ''}`}
-              >
-                <button
-                  type="button"
-                  className="dt-accordion-trigger dt-presentation-trigger"
-                  aria-expanded={presentationOpen}
-                  aria-controls="dt-presentation-panel"
-                  onClick={togglePresentation}
-                >
-                  <span className="dt-presentation-icon" aria-hidden="true">i</span>
-                  <span>{text.presentation}</span>
-                  <span className="dt-presentation-spacer" aria-hidden="true" />
-                  <ChevronRight className="dt-accordion-chevron dt-presentation-chevron" aria-hidden="true" />
-                </button>
-                <div className="dt-presentation-content" id="dt-presentation-panel">
-                  <p className="dt-eyebrow">{text.presentation}</p>
-                  <h2>{visualVariant === 'artisan' ? text.introArtisan : text.introProfessional}</h2>
-                  {presentationSummary && (
-                    <p className="dt-intro-description">{presentationSummary}</p>
-                  )}
-                  {expandedIntro && presentationDetails && (
-                    <div className="dt-about-quote">{presentationDetails}</div>
-                  )}
-                  {(presentationSummary.length > 220 || presentationDetails) && (
-                    <button
-                      type="button"
-                      className="dt-read-intro"
-                      aria-expanded={expandedIntro}
-                      onClick={() => setExpandedIntro(value => !value)}
-                    >
-                      {expandedIntro ? text.readLess : text.readMore}
-                    </button>
-                  )}
-                </div>
-              </section>
-            )}
-
-            <div className="dt-accordion-list">
-              {sections.map(section => (
-                <AccordionSection
-                  config={section}
-                  open={openSection === section.id}
-                  onToggle={() => setOpenSection(current => current === section.id ? null : section.id)}
-                  key={section.id}
-                />
-              ))}
-            </div>
-          </div>
-
-          <p className="dt-powered-by">
-            {language === 'ar' ? 'مدعوم من' : language === 'en' ? 'Powered by' : language === 'it' ? 'Offerto da' : language === 'ru' ? 'При поддержке' : 'Propulsé par'}
-            <img src="/images/logo_dalil_tounes_crop.png" alt="" />
-            Dalil Tounes
-          </p>
-        </article>
-
-        {capabilities.showSimilarBusinesses && (
-          <section className="dt-similar-wrap rounded-2xl bg-[#0f0f0f] p-4">
-            <h2 className="sr-only">{text.similar}</h2>
-            <SimilarBusinesses
-              businessId={business.id}
-              categorie={categoryLabel}
-              ville={business.ville || undefined}
-              gouvernorat={business.gouvernorat || undefined}
-            />
-          </section>
-        )}
-      </div>
-
-      {selectedImage && (
-        <div
-          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/95 p-4"
-          role="dialog"
-          aria-modal="true"
-          onClick={() => setSelectedImage('')}
-        >
-          <button
-            type="button"
-            className="absolute right-5 top-5 flex h-11 w-11 items-center justify-center rounded-full border border-[#D4AF37] bg-[#0f2d23] text-[#F4CE55]"
-            onClick={() => setSelectedImage('')}
-            aria-label={text.reservationClose}
-          >
-            <X aria-hidden="true" />
-          </button>
-          <img
-            src={selectedImage}
-            alt={`${text.gallery}: ${displayName}`}
-            className="max-h-[90vh] max-w-full rounded-xl object-contain"
-            onClick={event => event.stopPropagation()}
-          />
-        </div>
-      )}
-    </main>
-  );
-}
