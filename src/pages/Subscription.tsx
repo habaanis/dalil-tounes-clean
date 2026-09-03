@@ -1236,6 +1236,8 @@ function CreationPlanCard({
   onRequest,
   showBenefitsLabel,
   hideBenefitsLabel,
+  expanded,
+  onToggle,
   selected = false,
 }: {
   title: string;
@@ -1250,10 +1252,12 @@ function CreationPlanCard({
   onRequest: () => void;
   showBenefitsLabel: string;
   hideBenefitsLabel: string;
+  expanded: boolean;
+  onToggle: () => void;
   selected?: boolean;
 }) {
   return (
-    <article className={`relative flex h-full flex-col overflow-hidden rounded-3xl border-2 bg-[#07543F] p-5 text-white shadow-[0_12px_30px_rgba(7,84,63,0.16)] transition sm:p-6 ${selected ? 'border-white ring-4 ring-[#D6AF2E]' : 'border-[#D6AF2E]'}`}>
+    <article className={`relative flex flex-col overflow-hidden rounded-3xl border-2 bg-[#07543F] p-5 text-white shadow-[0_12px_30px_rgba(7,84,63,0.16)] transition sm:p-6 ${selected ? 'border-white ring-4 ring-[#D6AF2E]' : 'border-[#D6AF2E]'}`}>
       <span className="absolute right-0 top-0 rounded-bl-2xl bg-[#D6AF2E] px-4 py-2 text-[11px] font-black tracking-[0.12em] text-[#07543F]">CV BUSINESS</span>
       <h3 className="mt-8 text-2xl font-bold">{title}</h3>
       <div className="mt-2 flex items-end gap-2 text-[#F4CE55]">
@@ -1262,13 +1266,24 @@ function CreationPlanCard({
       <p className="mt-1 text-xs font-bold uppercase tracking-[0.08em] text-emerald-100">{creationLabel}</p>
       <p className="mt-3 text-sm leading-6 text-emerald-50">{intro}</p>
       <p className="mt-3 rounded-xl bg-white/10 px-3 py-2 text-sm font-bold text-white">{firstYearIncluded}</p>
-      <div className="mt-4 flex-1">
-        <ResponsiveFeatureList items={features} showLabel={showBenefitsLabel} hideLabel={hideBenefitsLabel} variant="dark" />
-      </div>
-      <div className="grid gap-2 pt-6 sm:grid-cols-2">
-        <button type="button" onClick={onPreview} className="rounded-xl border border-[#D6AF2E] bg-transparent px-4 py-3 text-sm font-bold text-[#F0C537] transition hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]">{previewLabel}</button>
-        <button type="button" onClick={onRequest} className="rounded-xl bg-[#D6AF2E] px-4 py-3 text-sm font-bold text-[#07543F] transition hover:bg-[#E5C64D] focus:outline-none focus:ring-2 focus:ring-white">{chooseLabel}</button>
-      </div>
+      <button
+        type="button"
+        aria-expanded={expanded}
+        onClick={onToggle}
+        className="mt-4 flex w-full items-center justify-between rounded-xl border border-[#D6AF2E] px-4 py-3 text-left text-sm font-bold text-[#F4CE55] transition hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white"
+      >
+        <span>{expanded ? hideBenefitsLabel : showBenefitsLabel}</span>
+        <ChevronRight className={`h-5 w-5 transition-transform ${expanded ? 'rotate-90' : ''}`} aria-hidden="true" />
+      </button>
+      {expanded && (
+        <div className="mt-4 border-t border-white/15 pt-4">
+          <FeatureList items={features} variant="dark" />
+          <div className="grid gap-2 pt-6 sm:grid-cols-2">
+            <button type="button" onClick={onPreview} className="rounded-xl border border-[#D6AF2E] bg-transparent px-4 py-3 text-sm font-bold text-[#F0C537] transition hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]">{previewLabel}</button>
+            <button type="button" onClick={onRequest} className="rounded-xl bg-[#D6AF2E] px-4 py-3 text-sm font-bold text-[#07543F] transition hover:bg-[#E5C64D] focus:outline-none focus:ring-2 focus:ring-white">{chooseLabel}</button>
+          </div>
+        </div>
+      )}
     </article>
   );
 }
@@ -1289,6 +1304,7 @@ export const Subscription = () => {
     presentationModelLabel?: string;
   } | null>(null);
   const [selectedFormula, setSelectedFormula] = useState<'artisan' | 'premium' | null>(null);
+  const [expandedFormula, setExpandedFormula] = useState<'artisan' | 'premium' | null>(null);
   const [selectedPresentationModel, setSelectedPresentationModel] = useState<PresentationModel | null>(null);
   const [showSecondaryDetails, setShowSecondaryDetails] = useState(false);
 
@@ -1401,6 +1417,8 @@ export const Subscription = () => {
     onRequest={() => selectFormula('artisan')}
     showBenefitsLabel={mobileCopy.showBenefits}
     hideBenefitsLabel={mobileCopy.hideBenefits}
+    expanded={expandedFormula === 'artisan'}
+    onToggle={() => setExpandedFormula((current) => current === 'artisan' ? null : 'artisan')}
     selected={selectedFormula === 'artisan'}
   />
   <CreationPlanCard
@@ -1416,6 +1434,8 @@ export const Subscription = () => {
     onRequest={() => selectFormula('premium')}
     showBenefitsLabel={mobileCopy.showBenefits}
     hideBenefitsLabel={mobileCopy.hideBenefits}
+    expanded={expandedFormula === 'premium'}
+    onToggle={() => setExpandedFormula((current) => current === 'premium' ? null : 'premium')}
     selected={selectedFormula === 'premium'}
   />
 </div>
