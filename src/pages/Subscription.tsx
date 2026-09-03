@@ -1323,7 +1323,14 @@ export const Subscription = () => {
     ? `${simplifiedOfferCopy[language as OfferLanguage][`${selectedFormula}Title`]} — ${(offerCopy[language as OfferLanguage] ?? offerCopy.fr)[`${selectedFormula}Price`]}`
     : null;
   const continueWithModel = () => {
-    if (!selectedFormula || !selectedPresentationModel || !selectedFormulaLabel) return;
+    if (!selectedFormula || !selectedFormulaLabel) {
+      document.getElementById('cv-business-products-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+    if (!selectedPresentationModel) {
+      document.getElementById('cv-presentation-models')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
     const modelLabel = getPresentationModelLabel(language, selectedPresentationModel);
     openRequest(selectedFormula, `${selectedFormulaLabel} — ${modelLabel}`, selectedFormula, undefined, modelLabel);
   };
