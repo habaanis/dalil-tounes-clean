@@ -15,6 +15,7 @@ import {
   Youtube,
   Navigation,
   Download,
+  Smartphone,
   ChevronDown,
   Link as LinkIcon,
   Check,
@@ -2019,6 +2020,26 @@ export const BusinessDetail = ({
                       <Download size={7} />
                       {text.downloadQR}
                     </button>
+
+                    <Link
+                      to={`/qr-business/${business.id}`}
+                      className="flex items-center gap-1 rounded-full px-2 py-1 text-[8px] font-bold transition-all hover:scale-105"
+                      style={{
+                        backgroundColor: colors.gold,
+                        color: colors.background,
+                      }}
+                    >
+                      <Smartphone size={9} aria-hidden="true" />
+                      {language === 'ar'
+                        ? 'تثبيت أو عرض CV Business'
+                        : language === 'en'
+                          ? 'Install / present my Business CV'
+                          : language === 'it'
+                            ? 'Installa / mostra il mio CV Business'
+                            : language === 'ru'
+                              ? 'Установить / показать Business CV'
+                              : 'Installer / présenter mon CV Business'}
+                    </Link>
                   </div>
                 </div>
               </div>
