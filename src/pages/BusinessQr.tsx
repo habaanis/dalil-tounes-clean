@@ -114,7 +114,11 @@ export default function BusinessQr() {
   const [loading, setLoading] = useState(true);
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [shareConfirmed, setShareConfirmed] = useState(false);
-  const [showBrandSplash, setShowBrandSplash] = useState(false);
+  const [showBrandSplash, setShowBrandSplash] = useState(() => {
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+      || (navigator as Navigator & { standalone?: boolean }).standalone === true;
+    return new URLSearchParams(window.location.search).get('source') === 'pwa' || isStandalone;
+  });
 
   useEffect(() => {
     let cancelled = false;
