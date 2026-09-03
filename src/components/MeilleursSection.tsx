@@ -284,11 +284,23 @@ export default function MeilleursSection({
         || normalizedStatus.includes('pro')
         || normalizedStatus.includes('paid');
     }
+    function itemIsCertified(item: MeilleursItem): boolean {
+      const status = item.statut_carte;
+      if (!status) return false;
+      const normalizedStatus = status.toUpperCase();
+      return normalizedStatus.includes('CERTIF') && !normalizedStatus.includes('NON CERTIF');
+    }
+    function itemPriority(item: MeilleursItem): number {
+      const certified = itemIsCertified(item);
+      const premium = itemIsPremium(item);
+      if (certified && premium) return 4;
+      if (certified) return 3;
+      if (premium) return 2;
+      return 1;
+    }
     function sortBusinesses(a: MeilleursItem, b: MeilleursItem): number {
-      if (!useGoogleRecommendationCriteria) {
-        const premiumDiff = Number(itemIsPremium(b)) - Number(itemIsPremium(a));
-        if (premiumDiff !== 0) return premiumDiff;
-      }
+      const priorityDiff = itemPriority(b) - itemPriority(a);
+      if (priorityDiff !== 0) return priorityDiff;
       const ratingDiff = parseRating(b['Note Google Globale']) - parseRating(a['Note Google Globale']);
       if (ratingDiff !== 0) return ratingDiff;
       return parseCount(b['Compteur Avis Google']) - parseCount(a['Compteur Avis Google']);
