@@ -163,8 +163,8 @@ export default function HomeVitrineFirst() {
   const [showPlatformDetails, setShowPlatformDetails] = useState(false);
   const [presentationModel, setPresentationModel] = useState<PresentationModel>('professional');
   const modelImage = presentationModel === 'professional'
-    ? '/images/cv-business-professionnel-aux-saveurs-anis.png'
-    : '/images/cv-business-portfolio-aux-saveurs-anis.png';
+    ? '/images/cv-business-portfolio-aux-saveurs-anis.png'
+    : '/images/cv-business-professionnel-aux-saveurs-anis.png';
 
   return (
     <div dir={rtl ? 'rtl' : 'ltr'}>
@@ -272,8 +272,8 @@ export default function HomeVitrineFirst() {
                   src={modelImage}
                   alt={`${getPresentationModelLabel(lang, presentationModel)} — Aux saveurs d’Anis`}
                   className="h-[310px] w-auto object-contain object-top sm:h-auto sm:max-h-[720px] sm:w-full"
-                  width={presentationModel === 'professional' ? 941 : 888}
-                  height={presentationModel === 'professional' ? 1672 : 1704}
+                  width={presentationModel === 'professional' ? 888 : 941}
+                  height={presentationModel === 'professional' ? 1704 : 1672}
                   decoding="async"
                 />
               </div>
