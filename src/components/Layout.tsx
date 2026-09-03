@@ -190,6 +190,20 @@ export const Layout = ({ children }: LayoutProps) => {
     return location.pathname.startsWith(path);
   };
 
+  const isClientAppRoute =
+    location.pathname.startsWith('/qr-business/') || location.pathname.startsWith('/entreprise/');
+  const isClientAppMode = isClientAppRoute && (
+    new URLSearchParams(location.search).get('source') === 'pwa' || pwaInstalled
+  );
+
+  if (isClientAppMode) {
+    return (
+      <div className={`min-h-screen bg-white ${isRTL ? 'rtl' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
+        {children}
+      </div>
+    );
+  }
+
   return (
     <div className={`min-h-screen bg-white ${isRTL ? 'rtl' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
       <nav className="bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-50">
