@@ -579,6 +579,9 @@ export default function BusinessShowcaseLienoraDetail() {
   const { language } = useLanguage();
   const text = COPY[language] || FR;
   const isRTL = language === 'ar';
+  const isClientAppMode = new URLSearchParams(location.search).get('source') === 'pwa'
+    || window.matchMedia('(display-mode: standalone)').matches
+    || (navigator as Navigator & { standalone?: boolean }).standalone === true;
 
   const [business, setBusiness] = useState<BusinessRecord | null>(null);
   const [loading, setLoading] = useState(true);
@@ -1258,7 +1261,7 @@ export default function BusinessShowcaseLienoraDetail() {
         </div>
       ),
     },
-    capabilities.showPlatformLinks && {
+    !isClientAppMode && capabilities.showPlatformLinks && {
       id: 'platform' as const,
       title: text.platform,
       icon: Building2,
@@ -1519,7 +1522,7 @@ export default function BusinessShowcaseLienoraDetail() {
           </p>
         </article>
 
-        {capabilities.showSimilarBusinesses && (
+        {!isClientAppMode && capabilities.showSimilarBusinesses && (
           <section className="dt-similar-wrap rounded-2xl bg-[#0f0f0f] p-4">
             <h2 className="sr-only">{text.similar}</h2>
             <SimilarBusinesses
