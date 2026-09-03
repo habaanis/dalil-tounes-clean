@@ -114,6 +114,7 @@ export default function BusinessQr() {
   const [loading, setLoading] = useState(true);
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [shareConfirmed, setShareConfirmed] = useState(false);
+  const [showBrandSplash, setShowBrandSplash] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -159,6 +160,18 @@ export default function BusinessQr() {
   const legacyPremiumAccess = tier === 'artisan' || tier === 'premium' || tier === 'elite' || tier === 'custom';
   const cvBusinessAccess = business?.cv_business_status === 'published';
   const qrAccess = cvBusinessAccess || legacyPremiumAccess;
+
+  useEffect(() => {
+    if (!business?.id || !qrAccess) return;
+    const isAppLaunch = new URLSearchParams(window.location.search).get('source') === 'pwa'
+      || window.matchMedia('(display-mode: standalone)').matches
+      || (navigator as Navigator & { standalone?: boolean }).standalone === true;
+    if (!isAppLaunch) return;
+
+    setShowBrandSplash(true);
+    const timer = window.setTimeout(() => setShowBrandSplash(false), 2400);
+    return () => window.clearTimeout(timer);
+  }, [business?.id, qrAccess]);
 
   useEffect(() => {
     if (!business?.id || !qrAccess) return;
@@ -254,6 +267,20 @@ export default function BusinessQr() {
     );
   }
 
+  if (showBrandSplash) {
+    return (
+      <main className="fixed inset-0 z-[10000] grid place-items-center bg-[#032D21] px-6 text-center text-white">
+        <div className="flex flex-col items-center">
+          <div className="grid h-32 w-32 place-items-center overflow-hidden rounded-full border-[3px] border-[#D5B257] bg-[#032D21] p-1 shadow-2xl">
+            <img src={logoUrl} alt={`Logo ${business.nom}`} className="h-full w-full rounded-full object-cover" />
+          </div>
+          <h1 className="mt-5 font-serif text-2xl font-bold">{business.nom}</h1>
+          <p className="mt-2 text-sm text-[#D5B257]">CV Business</p>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="fixed inset-0 z-[10000] overflow-y-auto bg-[#032D21] px-3 py-4 sm:py-6" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       <CvBusinessQrVisual
@@ -269,7 +296,7 @@ export default function BusinessQr() {
         openLabel={text.open}
         scanText={text.scan}
         poweredText={text.powered}
-        openHref={cvPath}
+        openHref={`${cvPath}?source=pwa`}
         onShare={shareBusiness}
         onDownload={downloadPng}
         onInstall={installApp}
