@@ -1,8 +1,9 @@
 import { ArrowRight, CheckCircle2, QrCode, Share2, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BusinessCardPreview, type BusinessCardPreviewLanguage } from '../components/BusinessCardPreview';
+import type { BusinessCardPreviewLanguage } from '../components/BusinessCardPreview';
 import CvBusinessJourney from '../components/CvBusinessJourney';
+import { getPresentationModelLabel, type PresentationModel } from '../components/CvPresentationModelSelector';
 import VisibilityHouseSection from '../components/VisibilityHouseSection';
 import { useLanguage } from '../context/LanguageContext';
 import { Home as PlatformHome } from './Home';
@@ -13,6 +14,7 @@ const COPY: Record<BusinessCardPreviewLanguage, {
   accent: string;
   description: string;
   example: string;
+  modelPrompt: string;
   primary: string;
   secondary: string;
   offerBadge: string;
@@ -33,9 +35,10 @@ const COPY: Record<BusinessCardPreviewLanguage, {
   fr: {
     eyebrow: 'Votre présence professionnelle commence ici',
     title: 'Votre entreprise mérite mieux qu’une simple fiche.',
-    accent: 'Créez votre CV Business professionnel.',
+    accent: 'Créez votre CV Business et choisissez le modèle adapté à votre métier.',
     description: 'Un CV Business vivant qui réunit votre activité, vos services, vos réalisations, vos contacts, vos avis et votre QR Code dans une vitrine élégante, facile à montrer et à partager.',
     example: "Exemple réel de présentation : Aux saveurs d'Anis",
+    modelPrompt: 'Choisissez votre modèle',
     primary: 'Découvrir les offres',
     secondary: 'Découvrir la plateforme',
     offerBadge: 'Offre de bienvenue',
@@ -56,9 +59,10 @@ const COPY: Record<BusinessCardPreviewLanguage, {
   ar: {
     eyebrow: 'حضورك المهني يبدأ من هنا',
     title: 'مؤسستك تستحق أكثر من مجرد بطاقة بسيطة.',
-    accent: 'أنشئ CV Business احترافيًا.',
+    accent: 'أنشئ CV Business واختر النموذج الأنسب لمهنتك.',
     description: 'CV Business حي يجمع نشاطك وخدماتك وإنجازاتك ووسائل الاتصال والآراء ورمز QR في واجهة أنيقة وسهلة العرض والمشاركة.',
     example: "مثال تقديم: Aux saveurs d'Anis",
+    modelPrompt: 'اختر النموذج',
     primary: 'اكتشف العروض',
     secondary: 'اكتشف المنصة',
     offerBadge: 'عرض ترحيبي',
@@ -79,9 +83,10 @@ const COPY: Record<BusinessCardPreviewLanguage, {
   en: {
     eyebrow: 'Your professional presence starts here',
     title: 'Your business deserves more than a simple listing.',
-    accent: 'Create your professional Business CV.',
+    accent: 'Create your Business CV and choose the model that suits your profession.',
     description: 'A living Business CV bringing together your activity, services, work, contact options, reviews and QR Code in one elegant showcase that is easy to present and share.',
     example: "Presentation example: Aux saveurs d'Anis",
+    modelPrompt: 'Choose your model',
     primary: 'Discover the offers',
     secondary: 'Discover the platform',
     offerBadge: 'Welcome offer',
@@ -102,9 +107,10 @@ const COPY: Record<BusinessCardPreviewLanguage, {
   it: {
     eyebrow: 'La tua presenza professionale inizia qui',
     title: 'La tua attività merita più di una semplice scheda.',
-    accent: 'Crea il tuo CV Business professionale.',
+    accent: 'Crea il tuo CV Business e scegli il modello più adatto alla tua attività.',
     description: 'Un CV Business vivo che riunisce attività, servizi, lavori, contatti, recensioni e QR Code in una vetrina elegante, facile da mostrare e condividere.',
     example: "Esempio di presentazione: Aux saveurs d'Anis",
+    modelPrompt: 'Scegli il modello',
     primary: 'Scopri le offerte',
     secondary: 'Scopri la piattaforma',
     offerBadge: 'Offerta di benvenuto',
@@ -125,9 +131,10 @@ const COPY: Record<BusinessCardPreviewLanguage, {
   ru: {
     eyebrow: 'Ваше профессиональное присутствие начинается здесь',
     title: 'Ваш бизнес заслуживает большего, чем простая карточка.',
-    accent: 'Создайте профессиональный Business CV.',
+    accent: 'Создайте Business CV и выберите модель, подходящую вашей профессии.',
     description: 'Живой Business CV объединяет деятельность, услуги, работы, контакты, отзывы и QR-код в одной элегантной витрине, которую легко показывать и делиться.',
     example: "Пример презентации: Aux saveurs d'Anis",
+    modelPrompt: 'Выберите модель',
     primary: 'Посмотреть предложения',
     secondary: 'Открыть платформу',
     offerBadge: 'Приветственное предложение',
@@ -154,6 +161,10 @@ export default function HomeVitrineFirst() {
   const t = COPY[lang];
   const rtl = lang === 'ar';
   const [showPlatformDetails, setShowPlatformDetails] = useState(false);
+  const [presentationModel, setPresentationModel] = useState<PresentationModel>('professional');
+  const modelImage = presentationModel === 'professional'
+    ? '/images/cv-business-professionnel-aux-saveurs-anis.png'
+    : '/images/cv-business-portfolio-aux-saveurs-anis.png';
 
   return (
     <div dir={rtl ? 'rtl' : 'ltr'}>
@@ -240,16 +251,31 @@ export default function HomeVitrineFirst() {
             <div className="absolute -inset-4 rounded-[36px] bg-gradient-to-br from-[#D4AF37]/18 via-transparent to-[#4A1D43]/10 blur-2xl" aria-hidden="true" />
             <div className="relative rounded-[30px] border border-[#D4AF37]/45 bg-white/90 p-4 shadow-[0_28px_70px_rgba(74,29,67,0.16)] backdrop-blur-sm">
               <p className="mb-3 text-center text-[11px] font-bold text-[#4A1D43]">{t.example}</p>
-              <div className="flex h-[310px] justify-center overflow-hidden sm:hidden">
+              <div className="mb-4" role="group" aria-label={t.modelPrompt}>
+                <p className="mb-2 text-center text-xs font-bold text-gray-600">{t.modelPrompt}</p>
+                <div className="grid grid-cols-2 gap-2 rounded-2xl bg-[#F7F2E8] p-1.5">
+                  {(['professional', 'portfolio'] as PresentationModel[]).map((model) => (
+                    <button
+                      key={model}
+                      type="button"
+                      aria-pressed={presentationModel === model}
+                      onClick={() => setPresentationModel(model)}
+                      className={`min-h-11 rounded-xl px-3 py-2 text-xs font-black transition focus:outline-none focus:ring-2 focus:ring-[#D4AF37] sm:text-sm ${presentationModel === model ? 'bg-[#4A1D43] text-white shadow-sm' : 'bg-white text-[#4A1D43] hover:bg-[#FFF8DF]'}`}
+                    >
+                      {getPresentationModelLabel(lang, model)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="flex h-[310px] justify-center overflow-hidden sm:h-auto">
                 <img
-                  src="/images/cv-business-portfolio-aux-saveurs-anis.png"
-                  alt={`${t.example} — ${t.proof1}`}
-                  className="h-[310px] w-auto object-contain object-top"
+                  src={modelImage}
+                  alt={`${getPresentationModelLabel(lang, presentationModel)} — Aux saveurs d’Anis`}
+                  className="h-[310px] w-auto object-contain object-top sm:h-auto sm:max-h-[720px] sm:w-full"
+                  width={presentationModel === 'professional' ? 941 : 888}
+                  height={presentationModel === 'professional' ? 1672 : 1704}
                   decoding="async"
                 />
-              </div>
-              <div className="hidden justify-center sm:flex">
-                <BusinessCardPreview variant="premium" size="compact" interactive language={lang} />
               </div>
             </div>
           </div>
