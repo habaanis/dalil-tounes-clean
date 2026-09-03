@@ -178,13 +178,47 @@ export function CvPresentationModelSelector({
 
       <div className="mx-auto mt-4 max-w-4xl">
         <p className="mb-2 text-sm font-black text-[#4A123F]">2. {copy.selectedModel}</p>
-        <p className="mb-2 text-xs font-semibold text-slate-500 sm:hidden">↔ {copy.swipeModels}</p>
-        <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 sm:grid sm:grid-cols-2 sm:gap-4 sm:overflow-visible sm:pb-0">
+        <div className="sm:hidden">
+          <div className="grid grid-cols-2 gap-1 rounded-2xl bg-[#F4F0E7] p-1.5">
+            <button
+              type="button"
+              aria-pressed={value === 'professional'}
+              onClick={() => onChange('professional')}
+              className={`min-h-12 rounded-xl px-2 py-2 text-sm font-black transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'professional' ? 'bg-[#4A123F] text-white shadow-sm' : 'bg-white text-[#4A123F]'}`}
+            >
+              {copy.professional}
+            </button>
+            <button
+              type="button"
+              aria-pressed={value === 'portfolio'}
+              onClick={() => onChange('portfolio')}
+              className={`min-h-12 rounded-xl px-2 py-2 text-sm font-black transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'portfolio' ? 'bg-[#4A123F] text-white shadow-sm' : 'bg-white text-[#4A123F]'}`}
+            >
+              {copy.portfolio}
+            </button>
+          </div>
+          <button
+            type="button"
+            onClick={() => onChange(value ?? 'professional')}
+            className={`mt-3 flex w-full justify-center overflow-hidden rounded-2xl border bg-[#F7F5EF] p-2 transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value ? 'border-[#D6AF2E] shadow-md' : 'border-slate-200'}`}
+            aria-label={value === 'portfolio' ? copy.portfolio : copy.professional}
+          >
+            <img
+              src={value === 'portfolio' ? '/images/cv-business-professionnel-aux-saveurs-anis.png' : '/images/cv-business-portfolio-aux-saveurs-anis.png'}
+              alt={`${value === 'portfolio' ? copy.portfolio : copy.professional} — Aux saveurs d’Anis`}
+              className="h-[390px] w-auto max-w-none object-contain object-top"
+              loading="lazy"
+              decoding="async"
+            />
+          </button>
+        </div>
+
+        <div className="hidden grid-cols-2 gap-4 sm:grid">
         <button
           type="button"
           aria-pressed={value === 'professional'}
           onClick={() => onChange('professional')}
-          className={`flex w-[86%] shrink-0 snap-center flex-col rounded-xl border p-3 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] sm:w-auto sm:min-w-0 sm:rounded-2xl sm:p-3.5 ${value === 'professional' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
+          className={`flex min-w-0 flex-col rounded-2xl border p-3.5 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'professional' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
         >
           <ModelPreview
             src="/images/cv-business-portfolio-aux-saveurs-anis.png"
@@ -200,7 +234,7 @@ export function CvPresentationModelSelector({
           type="button"
           aria-pressed={value === 'portfolio'}
           onClick={() => onChange('portfolio')}
-          className={`flex w-[86%] shrink-0 snap-center flex-col rounded-xl border p-3 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] sm:w-auto sm:min-w-0 sm:rounded-2xl sm:p-3.5 ${value === 'portfolio' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
+          className={`flex min-w-0 flex-col rounded-2xl border p-3.5 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'portfolio' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
         >
           <ModelPreview
             src="/images/cv-business-professionnel-aux-saveurs-anis.png"
