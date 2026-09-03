@@ -310,7 +310,7 @@ export default function HomeVitrineFirst() {
               type="button"
               aria-expanded={showPlatformDetails}
               onClick={() => setShowPlatformDetails((current) => !current)}
-              className="min-h-10 text-sm font-bold text-[#4A1D43] underline decoration-[#D4AF37] underline-offset-4"
+              className="min-h-10 text-sm font-bold text-[#4A1D43] underline decoration-[#D4AF37] underline-offset-4 lg:hidden"
             >
               {showPlatformDetails ? t.platformDetailsClose : t.platformDetailsOpen}
             </button>
@@ -318,7 +318,7 @@ export default function HomeVitrineFirst() {
         </div>
       </section>
 
-      <div className={showPlatformDetails ? 'block' : 'hidden'}>
+      <div className={showPlatformDetails ? 'block' : 'hidden lg:block'}>
           <VisibilityHouseSection />
 
           <style>{`.platform-home-after-vitrine #maison-visibilite{display:none}`}</style>
