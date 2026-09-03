@@ -22,14 +22,27 @@ const safeHttpsUrl = (value: string | null): string => {
   }
 };
 
-export default function handler(request: Request) {
-  const url = new URL(request.url, 'https://dalil-tounes.com');
-  const id = safeId(url.searchParams.get('id'));
-  const name = safeText(url.searchParams.get('name'), 'CV Business');
-  const logo = safeHttpsUrl(url.searchParams.get('logo'));
+type VercelRequest = {
+  query?: Record<string, string | string[] | undefined>;
+};
+
+type VercelResponse = {
+  status: (code: number) => VercelResponse;
+  setHeader: (name: string, value: string) => void;
+  json: (body: unknown) => void;
+};
+
+const firstQueryValue = (value: string | string[] | undefined): string | null =>
+  Array.isArray(value) ? value[0] || null : value || null;
+
+export default function handler(request: VercelRequest, response: VercelResponse) {
+  const id = safeId(firstQueryValue(request.query?.id));
+  const name = safeText(firstQueryValue(request.query?.name), 'CV Business');
+  const logo = safeHttpsUrl(firstQueryValue(request.query?.logo));
 
   if (!id) {
-    return Response.json({ error: 'Missing business id' }, { status: 400 });
+    response.status(400).json({ error: 'Missing business id' });
+    return;
   }
 
   const startUrl = `/qr-business/${id}?source=pwa`;
@@ -40,8 +53,9 @@ export default function handler(request: Request) {
       ]
     : DALIL_ICONS;
 
-  return new Response(
-    JSON.stringify({
+  response.setHeader('Content-Type', 'application/manifest+json; charset=utf-8');
+  response.setHeader('Cache-Control', 'private, max-age=300');
+  response.status(200).json({
       id: startUrl,
       name,
       short_name: name.slice(0, 30),
@@ -58,13 +72,5 @@ export default function handler(request: Request) {
       icons,
       related_applications: [],
       prefer_related_applications: false,
-    }),
-    {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/manifest+json; charset=utf-8',
-        'Cache-Control': 'private, max-age=300',
-      },
-    },
-  );
+  });
 }
