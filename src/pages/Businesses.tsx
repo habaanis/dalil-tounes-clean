@@ -18,7 +18,6 @@ import { normalizeText, removeArabicDiacritics, extractFrenchName, cleanSearchTe
 import { BusinessCardWithActivity, type BusinessActivity } from '../components/BusinessCardWithActivity';
 import { BusinessCardPreview, type BusinessCardPreviewLanguage } from '../components/BusinessCardPreview';
 import { CvBusinessSharingInfo } from '../components/CvBusinessSharingInfo';
-import { GuideMascot } from '../components/GuideMascot';
 import SearchBar from '../components/SearchBar';
 import { getSubscriptionPriority } from '../lib/subscriptionHelper';
 import {
@@ -111,6 +110,20 @@ const PUBLIC_BUSINESS_NEED_ACTIVITY_TYPES = new Set([
   'business_opportunity',
   'other',
 ]);
+
+const DIRECTORY_NAV_COPY: Record<BusinessCardPreviewLanguage, {
+  search: string;
+  businessCenter: string;
+  professionals: string;
+  showDetails: string;
+  hideDetails: string;
+}> = {
+  fr: { search: 'Rechercher', businessCenter: "Centre d’affaires", professionals: 'Pour les professionnels', showDetails: 'Comprendre le CV Business', hideDetails: 'Masquer les explications' },
+  ar: { search: 'البحث', businessCenter: 'مركز الأعمال', professionals: 'للمهنيين', showDetails: 'فهم الـ CV Business', hideDetails: 'إخفاء الشروحات' },
+  en: { search: 'Search', businessCenter: 'Business centre', professionals: 'For professionals', showDetails: 'Understand the CV Business', hideDetails: 'Hide explanations' },
+  it: { search: 'Cerca', businessCenter: 'Centro d’affari', professionals: 'Per i professionisti', showDetails: 'Capire il CV Business', hideDetails: 'Nascondi le spiegazioni' },
+  ru: { search: 'Поиск', businessCenter: 'Деловой центр', professionals: 'Для профессионалов', showDetails: 'Что такое CV Business', hideDetails: 'Скрыть пояснения' },
+};
 
 const PROFESSIONAL_FAQ = [
   {
@@ -336,6 +349,7 @@ export const Businesses = ({
   const [searchParams] = useSearchParams();
   const t = useTranslation(language);
   const pageT = getBusinessesPageTranslations(language);
+  const directoryCopy = DIRECTORY_NAV_COPY[language as BusinessCardPreviewLanguage] ?? DIRECTORY_NAV_COPY.fr;
   const badgeLegend = getBusinessBadgeLegendTranslations(language);
   const _initCache = readBusinessesCache();
   const [businesses, setBusinesses] = useState<Business[]>((_initCache?.businesses as unknown as Business[]) ?? []);
@@ -349,6 +363,7 @@ export const Businesses = ({
   const suggestionStartedAtRef = useRef(Date.now());
   const [showNeedForm, setShowNeedForm] = useState(false);
   const [showDemoModal, setShowDemoModal] = useState(false);
+  const [showProfessionalDetails, setShowProfessionalDetails] = useState(false);
   const [preselectedBusinessId, setPreselectedBusinessId] = useState<string | null>(null);
   const [searching, setSearching] = useState(false);
   const [pendingSearch, setPendingSearch] = useState(false);
@@ -1234,29 +1249,18 @@ export const Businesses = ({
       )}
 
       <div className="mx-auto flex max-w-7xl flex-col">
-        <section className="px-4 pt-8 pb-12">
+        <section className="px-4 pb-5 pt-6">
           <div className="relative overflow-hidden rounded-[28px] border border-[#D4AF37]/40 bg-gradient-to-br from-[#4A1D43] via-[#6D2B58] to-[#0B5A45] shadow-[0_28px_80px_rgba(74,29,67,0.22)]">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_15%,rgba(212,175,55,0.25),transparent_28%),radial-gradient(circle_at_80%_10%,rgba(255,255,255,0.14),transparent_26%)]" />
-            <div className="relative grid gap-8 lg:grid-cols-[1.05fr_0.95fr] items-center px-5 py-10 sm:px-8 lg:px-12 lg:py-14">
-              <div className="text-white">
-                <p className="mb-4 inline-flex rounded-full border border-[#D4AF37]/50 bg-white/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-[#F7D978]">
-                  {pageT.hero.eyebrow}
-                </p>
-                <h1 className="text-3xl md:text-5xl font-bold leading-tight">
-                  {pageT.hero.title}
+            <div className="relative px-5 py-8 text-center sm:px-8 lg:px-12 lg:py-10">
+              <div className="mx-auto max-w-3xl text-white">
+                <h1 className="text-3xl font-bold leading-tight md:text-4xl">
+                  {pageT.hero.search}
                 </h1>
-                <p className="mt-5 max-w-2xl text-base md:text-lg leading-relaxed text-white/88">
-                  {pageT.hero.description}
+                <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-white/85 md:text-lg">
+                  {pageT.explore.description}
                 </p>
-                <div className="mt-7 flex flex-col sm:flex-row gap-3">
-                  <button
-                    type="button"
-                    onClick={() => navigate('/subscription')}
-                    className="inline-flex items-center justify-center gap-2 rounded-full border border-white/55 bg-white/10 px-6 py-3 text-sm font-bold text-white transition hover:bg-white/18"
-                  >
-                    {pageT.hero.offers}
-                    <ArrowRight className="h-4 w-4" />
-                  </button>
+                <div className="mt-6 flex justify-center">
                   <button
                     type="button"
                     onClick={() => document.getElementById('business-search')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
@@ -1267,21 +1271,19 @@ export const Businesses = ({
                   </button>
                 </div>
               </div>
-
-              <GuideMascot
-                variant="business"
-                pose="hello"
-                position="left"
-                size="md"
-                title={pageT.hero.mascotTitle}
-                message={pageT.hero.mascotMessage}
-                className="bg-white/95 border-white/70 shadow-xl"
-              />
             </div>
           </div>
         </section>
 
-        <section className="px-4 pb-4" aria-labelledby="business-center-title">
+        <nav className="sticky top-16 z-30 order-1 border-y border-[#D4AF37]/25 bg-white/95 px-4 py-2 shadow-sm backdrop-blur" aria-label={pageT.explore.title}>
+          <div className="mx-auto flex max-w-5xl gap-2 overflow-x-auto">
+            <button type="button" onClick={() => document.getElementById('business-search')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="whitespace-nowrap rounded-full bg-[#4A1D43] px-4 py-2 text-sm font-bold text-white">{directoryCopy.search}</button>
+            <button type="button" onClick={() => document.getElementById('business-center')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="whitespace-nowrap rounded-full border border-[#D4AF37]/50 bg-white px-4 py-2 text-sm font-bold text-[#4A1D43]">{directoryCopy.businessCenter}</button>
+            <button type="button" onClick={() => document.getElementById('professional-services')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="whitespace-nowrap rounded-full border border-[#D4AF37]/50 bg-white px-4 py-2 text-sm font-bold text-[#4A1D43]">{directoryCopy.professionals}</button>
+          </div>
+        </nav>
+
+        <section id="business-center" className="order-2 scroll-mt-28 px-4 py-8" aria-labelledby="business-center-title">
           <div className="mx-auto max-w-5xl rounded-3xl border border-[#D4AF37]/25 bg-[#FFFDF6] p-5 sm:p-7">
             <div className="mx-auto max-w-3xl text-center">
               <h2 id="business-center-title" className="text-2xl font-bold text-[#4A1D43] md:text-3xl">
@@ -1310,7 +1312,7 @@ export const Businesses = ({
           </div>
         </section>
 
-        <section className="order-2 px-4 py-8">
+        <section className={`${showProfessionalDetails ? 'block' : 'hidden'} order-4 px-4 py-8`}>
           <div className="max-w-4xl mx-auto">
             <SectionIntro
               eyebrow={pageT.onlinePresence.eyebrow}
@@ -1325,7 +1327,7 @@ export const Businesses = ({
           </div>
         </section>
 
-        <section className="order-2 bg-white px-4 py-10">
+        <section className={`${showProfessionalDetails ? 'block' : 'hidden'} order-4 bg-white px-4 py-10`}>
           <div className="max-w-6xl mx-auto grid gap-8 lg:grid-cols-[1fr_0.9fr] items-start">
             <SectionIntro
               eyebrow={pageT.whyProfile.eyebrow}
@@ -1349,20 +1351,6 @@ export const Businesses = ({
                 {pageT.whyProfile.adviceText}
               </p>
             </div>
-          </div>
-        </section>
-
-        <section className="order-1 px-4 pb-2 pt-4">
-          <div className="max-w-5xl mx-auto">
-            <GuideMascot
-              variant="info"
-              pose="point"
-              position="left"
-              size="sm"
-              title={pageT.explore.mascotTitle}
-              message={pageT.explore.mascotMessage}
-              className="py-4 sm:py-5"
-            />
           </div>
         </section>
 
@@ -1613,7 +1601,23 @@ export const Businesses = ({
           ) : null}
         </div>
 
-        <section className="order-3 px-4 py-8">
+        <section id="professional-services" className="order-3 scroll-mt-28 px-4 py-8">
+          <div className="mx-auto max-w-5xl rounded-3xl border border-[#D4AF37]/35 bg-gradient-to-br from-[#FFF8DF] to-white p-6 text-center shadow-sm sm:p-8">
+            <p className="text-sm font-black uppercase tracking-[0.14em] text-[#B58A18]">{directoryCopy.professionals}</p>
+            <h2 className="mt-2 text-2xl font-bold text-[#4A1D43] md:text-3xl">{pageT.cvBusiness.title}</h2>
+            <p className="mx-auto mt-3 max-w-3xl text-base leading-7 text-gray-600">{pageT.cvBusiness.paragraphs[0]}</p>
+            <div className="mt-5 flex flex-col justify-center gap-3 sm:flex-row">
+              <button type="button" onClick={() => navigate('/subscription')} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#4A1D43] px-5 py-3 text-sm font-bold text-white">
+                {pageT.hero.offers}<ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </button>
+              <button type="button" aria-expanded={showProfessionalDetails} onClick={() => setShowProfessionalDetails((current) => !current)} className="min-h-11 rounded-xl border border-[#D4AF37] bg-white px-5 py-3 text-sm font-bold text-[#4A1D43]">
+                {showProfessionalDetails ? directoryCopy.hideDetails : directoryCopy.showDetails}
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section className={`${showProfessionalDetails ? 'block' : 'hidden'} order-4 px-4 py-8`}>
           <div className="max-w-6xl mx-auto grid gap-8 lg:grid-cols-[0.95fr_1.05fr] items-center">
             <div>
               <SectionIntro eyebrow={pageT.cvBusiness.eyebrow} title={pageT.cvBusiness.title}>
@@ -1644,7 +1648,7 @@ export const Businesses = ({
           </div>
         </section>
 
-        <section className="order-3 bg-white px-4 py-8">
+        <section className={`${showProfessionalDetails ? 'block' : 'hidden'} order-4 bg-white px-4 py-8`}>
           <div className="max-w-5xl mx-auto">
             <SectionIntro
               eyebrow={pageT.consistency.eyebrow}
@@ -1664,7 +1668,7 @@ export const Businesses = ({
           </div>
         </section>
 
-        <section className="order-3 px-4 py-8">
+        <section className={`${showProfessionalDetails ? 'block' : 'hidden'} order-4 px-4 py-8`}>
           <div className="max-w-5xl mx-auto">
             <div className="grid gap-7 lg:grid-cols-[0.95fr_1.05fr] items-start">
               <SectionIntro
@@ -1692,7 +1696,7 @@ export const Businesses = ({
           </div>
         </section>
 
-        <section className="order-3 px-4 py-10">
+        <section className={`${showProfessionalDetails ? 'block' : 'hidden'} order-4 px-4 py-10`}>
           <div className="max-w-6xl mx-auto">
             <div className="text-center max-w-3xl mx-auto">
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#D4AF37] mb-3">{pageT.faq.eyebrow}</p>
@@ -1709,7 +1713,7 @@ export const Businesses = ({
           </div>
         </section>
 
-        <section className="order-3 px-4 py-10">
+        <section className={`${showProfessionalDetails ? 'block' : 'hidden'} order-4 px-4 py-10`}>
           <div className="max-w-5xl mx-auto rounded-3xl border border-[#D4AF37]/35 bg-gradient-to-br from-[#4A1D43] to-[#0B5A45] p-7 md:p-10 text-center text-white shadow-[0_22px_60px_rgba(74,29,67,0.2)]">
             <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#F7D978]">{pageT.finalCta.eyebrow}</p>
             <h2 className="mt-3 text-2xl md:text-4xl font-bold">{pageT.finalCta.title}</h2>

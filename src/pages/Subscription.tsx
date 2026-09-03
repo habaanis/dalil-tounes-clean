@@ -14,6 +14,7 @@ import {
 import { SubscriptionRequestForm } from '../components/SubscriptionRequestForm';
 import type { BillingPeriod, CheckoutOffer, SubscriptionPlanCode } from '../components/SubscriptionRequestForm';
 import { BusinessCardPreview } from '../components/BusinessCardPreview';
+import CvBusinessJourney from '../components/CvBusinessJourney';
 import {
   CvPresentationModelSelector,
   getPresentationModelLabel,
@@ -669,6 +670,44 @@ type SubscriptionCopy = (typeof subscriptionCopy)[keyof typeof subscriptionCopy]
 
 type OfferLanguage = keyof typeof subscriptionCopy;
 
+const mobileSubscriptionCopy: Record<OfferLanguage, {
+  showBenefits: string;
+  hideBenefits: string;
+  showSecondary: string;
+  hideSecondary: string;
+}> = {
+  fr: {
+    showBenefits: 'Voir tout ce qui est inclus',
+    hideBenefits: 'Réduire la liste',
+    showSecondary: 'Voir l’accompagnement et les autres services',
+    hideSecondary: 'Masquer les informations secondaires',
+  },
+  ar: {
+    showBenefits: 'عرض كل ما تتضمنه الصيغة',
+    hideBenefits: 'تقليص القائمة',
+    showSecondary: 'عرض المرافقة والخدمات الأخرى',
+    hideSecondary: 'إخفاء المعلومات الإضافية',
+  },
+  en: {
+    showBenefits: 'See everything included',
+    hideBenefits: 'Show less',
+    showSecondary: 'See support and other services',
+    hideSecondary: 'Hide secondary information',
+  },
+  it: {
+    showBenefits: 'Vedi tutto ciò che è incluso',
+    hideBenefits: 'Riduci la lista',
+    showSecondary: 'Vedi assistenza e altri servizi',
+    hideSecondary: 'Nascondi le informazioni secondarie',
+  },
+  ru: {
+    showBenefits: 'Показать всё включённое',
+    hideBenefits: 'Свернуть список',
+    showSecondary: 'Показать сопровождение и другие услуги',
+    hideSecondary: 'Скрыть дополнительную информацию',
+  },
+};
+
 const essentialCvCopy: Record<OfferLanguage, {
   title: string;
   subtitle: string;
@@ -865,6 +904,38 @@ function FeatureList({
         </li>
       ))}
     </ul>
+  );
+}
+
+function ResponsiveFeatureList({
+  items,
+  showLabel,
+  hideLabel,
+  columns = false,
+  variant = 'light',
+}: {
+  items: string[];
+  showLabel: string;
+  hideLabel: string;
+  columns?: boolean;
+  variant?: 'light' | 'dark';
+}) {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <div>
+      <FeatureList items={expanded ? items : items.slice(0, 3)} columns={columns} variant={variant} />
+      {items.length > 3 && (
+        <button
+          type="button"
+          aria-expanded={expanded}
+          onClick={() => setExpanded((current) => !current)}
+          className={`mt-3 text-sm font-bold underline underline-offset-4 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${variant === 'dark' ? 'text-[#F4CE55] decoration-white/50' : 'text-[#4A123F] decoration-[#D6AF2E]'}`}
+        >
+          {expanded ? hideLabel : showLabel}
+        </button>
+      )}
+    </div>
   );
 }
 
@@ -1163,6 +1234,8 @@ function CreationPlanCard({
   chooseLabel,
   onPreview,
   onRequest,
+  showBenefitsLabel,
+  hideBenefitsLabel,
   selected = false,
 }: {
   title: string;
@@ -1175,6 +1248,8 @@ function CreationPlanCard({
   chooseLabel: string;
   onPreview: () => void;
   onRequest: () => void;
+  showBenefitsLabel: string;
+  hideBenefitsLabel: string;
   selected?: boolean;
 }) {
   return (
@@ -1188,7 +1263,7 @@ function CreationPlanCard({
       <p className="mt-3 text-sm leading-6 text-emerald-50">{intro}</p>
       <p className="mt-3 rounded-xl bg-white/10 px-3 py-2 text-sm font-bold text-white">{firstYearIncluded}</p>
       <div className="mt-4 flex-1">
-        <FeatureList items={features} variant="dark" />
+        <ResponsiveFeatureList items={features} showLabel={showBenefitsLabel} hideLabel={hideBenefitsLabel} variant="dark" />
       </div>
       <div className="grid gap-2 pt-6 sm:grid-cols-2">
         <button type="button" onClick={onPreview} className="rounded-xl border border-[#D6AF2E] bg-transparent px-4 py-3 text-sm font-bold text-[#F0C537] transition hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]">{previewLabel}</button>
@@ -1204,6 +1279,7 @@ export const Subscription = () => {
   const copy = subscriptionCopy[language as keyof typeof subscriptionCopy] ?? subscriptionCopy.fr;
   const essentialCopy = essentialCvCopy[language as OfferLanguage] ?? essentialCvCopy.fr;
   const simpleCopy = simplifiedOfferCopy[language as OfferLanguage] ?? simplifiedOfferCopy.fr;
+  const mobileCopy = mobileSubscriptionCopy[language as OfferLanguage] ?? mobileSubscriptionCopy.fr;
   const [activePreview, setActivePreview] = useState<PreviewType>(null);
   const [selectedPlan, setSelectedPlan] = useState<{
     code: SubscriptionPlanCode;
@@ -1214,6 +1290,7 @@ export const Subscription = () => {
   } | null>(null);
   const [selectedFormula, setSelectedFormula] = useState<'artisan' | 'premium' | null>(null);
   const [selectedPresentationModel, setSelectedPresentationModel] = useState<PresentationModel | null>(null);
+  const [showSecondaryDetails, setShowSecondaryDetails] = useState(false);
 
   const closePreview = () => setActivePreview(null);
   const openRequest = (code: SubscriptionPlanCode, label: string, checkoutOffer: CheckoutOffer, billingPeriod?: BillingPeriod, presentationModelLabel?: string) => {
@@ -1237,8 +1314,8 @@ export const Subscription = () => {
 
   return (
     <div className="bg-[#FFFCF7] px-4 py-8 text-slate-900 sm:py-12" dir={isArabic ? 'rtl' : 'ltr'}>
-      <main className="mx-auto max-w-6xl">
-        <header className="mb-8 text-center sm:mb-10">
+      <main className="mx-auto flex max-w-6xl flex-col">
+        <header className="order-1 mb-2 text-center sm:mb-10">
           <p className="mb-3 flex items-center justify-center gap-3 text-xs font-black uppercase tracking-[0.2em] text-amber-600">
             <span className="h-px w-8 bg-amber-400" /> {copy.heroEyebrow} <span className="h-px w-8 bg-amber-400" />
           </p>
@@ -1248,7 +1325,7 @@ export const Subscription = () => {
           <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-500 sm:text-base">{copy.heroSubtitle}</p>
         </header>
 
-        <section aria-label={copy.startingSolutions} className="mx-auto max-w-2xl">
+        <section aria-label={copy.startingSolutions} className="order-3 mx-auto mt-7 max-w-2xl">
           <article className="flex flex-col rounded-3xl border border-[#D6AF2E] bg-white p-5 shadow-[0_12px_30px_rgba(74,18,63,0.07)] sm:p-7">
             <span className="w-fit rounded-full bg-emerald-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-emerald-800">
               {copy.selfService}
@@ -1262,7 +1339,11 @@ export const Subscription = () => {
             </div>
             <p className="mt-1 text-sm font-bold text-[#4A123F]">{copy.essentialFree}</p>
             <div className="my-5 h-px bg-amber-100" />
-            <FeatureList items={simplifiedOfferCopy[language as OfferLanguage].essentialFeatures} />
+            <ResponsiveFeatureList
+              items={simplifiedOfferCopy[language as OfferLanguage].essentialFeatures}
+              showLabel={mobileCopy.showBenefits}
+              hideLabel={mobileCopy.hideBenefits}
+            />
             <div className="mt-auto grid gap-2 pt-6">
               <a
                 href="/inscription-entreprise"
@@ -1282,7 +1363,7 @@ export const Subscription = () => {
 
         </section>
 
-        <section aria-labelledby="cv-business-products-title" className="mt-9 sm:mt-11">
+        <section aria-labelledby="cv-business-products-title" className="order-2 mt-5 sm:mt-0">
 <div className="mb-6 text-center">
   <p className="text-xs font-black uppercase tracking-[0.18em] text-amber-600">CV BUSINESS DALIL TOUNES</p>
   <h2 id="cv-business-products-title" className="mt-2 text-2xl font-black text-[#4A123F] sm:text-3xl">{simpleCopy.productsTitle}</h2>
@@ -1297,9 +1378,9 @@ export const Subscription = () => {
         {simpleCopy.welcomeBadge}
       </span>
       <h3 className="mt-3 text-xl font-black text-[#4A123F] sm:text-2xl">{simpleCopy.welcomeTitle}</h3>
-      <p className="mt-3 text-sm leading-6 text-slate-700">{simpleCopy.welcomeDescription}</p>
+      <p className="mt-3 hidden text-sm leading-6 text-slate-700 sm:block">{simpleCopy.welcomeDescription}</p>
     </div>
-    <div className="rounded-2xl bg-[#07543F] px-5 py-4 text-center text-white shadow-sm lg:max-w-xs">
+    <div className="hidden rounded-2xl bg-[#07543F] px-5 py-4 text-center text-white shadow-sm sm:block lg:max-w-xs">
       <p className="text-lg font-black leading-6 text-[#F4CE55]">{simpleCopy.welcomeHighlight}</p>
     </div>
   </div>
@@ -1318,6 +1399,8 @@ export const Subscription = () => {
     chooseLabel={simplifiedOfferCopy[language as OfferLanguage].chooseArtisan}
     onPreview={() => setActivePreview('artisan')}
     onRequest={() => selectFormula('artisan')}
+    showBenefitsLabel={mobileCopy.showBenefits}
+    hideBenefitsLabel={mobileCopy.hideBenefits}
     selected={selectedFormula === 'artisan'}
   />
   <CreationPlanCard
@@ -1331,8 +1414,14 @@ export const Subscription = () => {
     chooseLabel={simplifiedOfferCopy[language as OfferLanguage].choosePremium}
     onPreview={() => setActivePreview('premium')}
     onRequest={() => selectFormula('premium')}
+    showBenefitsLabel={mobileCopy.showBenefits}
+    hideBenefitsLabel={mobileCopy.hideBenefits}
     selected={selectedFormula === 'premium'}
   />
+</div>
+
+<div className="mt-5">
+  <CvBusinessJourney language={language as OfferLanguage} />
 </div>
 
 <CvPresentationModelSelector
@@ -1353,13 +1442,27 @@ export const Subscription = () => {
     <div className="text-3xl font-black text-[#07543F]">{simpleCopy.maintenancePrice}</div>
   </div>
   <div className="mt-5">
-    <FeatureList items={simpleCopy.maintenanceFeatures} columns />
+    <ResponsiveFeatureList
+      items={simpleCopy.maintenanceFeatures}
+      showLabel={mobileCopy.showBenefits}
+      hideLabel={mobileCopy.hideBenefits}
+      columns
+    />
   </div>
   <p className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold leading-6 text-[#4A123F]">{simpleCopy.noRenewal}</p>
 </div>
         </section>
 
-        <aside className="mt-5 rounded-2xl border border-amber-200 bg-white p-5 text-center shadow-sm" aria-labelledby="cv-choice-help-title">
+        <button
+          type="button"
+          aria-expanded={showSecondaryDetails}
+          onClick={() => setShowSecondaryDetails((current) => !current)}
+          className="order-4 mt-7 rounded-xl border border-[#D6AF2E] bg-white px-4 py-3 text-sm font-black text-[#4A123F] shadow-sm"
+        >
+          {showSecondaryDetails ? mobileCopy.hideSecondary : mobileCopy.showSecondary}
+        </button>
+
+        <aside className={`${showSecondaryDetails ? 'block' : 'hidden'} order-5 mt-5 rounded-2xl border border-amber-200 bg-white p-5 text-center shadow-sm`} aria-labelledby="cv-choice-help-title">
           <h2 id="cv-choice-help-title" className="text-lg font-bold text-[#4A123F]">{essentialCopy.helpTitle}</h2>
           <p className="mx-auto mt-2 max-w-3xl text-sm leading-6 text-slate-700">{essentialCopy.helpText}</p>
           <div className="mt-4 flex flex-wrap justify-center gap-3">
@@ -1372,7 +1475,7 @@ export const Subscription = () => {
           </div>
         </aside>
 
-        <section className="mt-5 rounded-3xl bg-gradient-to-r from-[#4A123F] to-[#5F174F] p-5 text-white shadow-xl sm:p-7">
+        <section className={`${showSecondaryDetails ? 'block' : 'hidden'} order-6 mt-5 rounded-3xl bg-gradient-to-r from-[#4A123F] to-[#5F174F] p-5 text-white shadow-xl sm:p-7`}>
           <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-start gap-4">
               <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-[#D6AF2E] text-[#F0C537]">
@@ -1395,12 +1498,12 @@ export const Subscription = () => {
           </div>
         </section>
 
-        <div className="mt-5 flex items-center justify-center gap-3 rounded-2xl border border-amber-200 bg-white px-4 py-4 text-center text-sm text-slate-700">
+        <div className={`${showSecondaryDetails ? 'flex' : 'hidden'} order-7 mt-5 items-center justify-center gap-3 rounded-2xl border border-amber-200 bg-white px-4 py-4 text-center text-sm text-slate-700`}>
           <Info className="h-5 w-5 shrink-0 text-[#4A123F]" aria-hidden="true" />
           <p>{copy.disclaimer}</p>
         </div>
 
-        <section className="mt-5 flex flex-col gap-5 rounded-3xl bg-gradient-to-r from-[#4A123F] to-[#5F174F] p-5 text-white shadow-xl sm:flex-row sm:items-center sm:justify-between sm:p-7">
+        <section className={`${showSecondaryDetails ? 'flex' : 'hidden'} order-8 mt-5 flex-col gap-5 rounded-3xl bg-gradient-to-r from-[#4A123F] to-[#5F174F] p-5 text-white shadow-xl sm:flex-row sm:items-center sm:justify-between sm:p-7`}>
           <div className="flex items-center gap-4">
             <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-[#D6AF2E] text-[#F0C537]">
               <Rocket className="h-7 w-7" aria-hidden="true" />
