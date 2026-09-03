@@ -20,9 +20,9 @@ type Copy = {
 
 const COPY: Record<SupportedLanguage, Copy> = {
   fr: {
-    eyebrow: 'Étape 2',
-    title: 'Choisissez votre modèle de présentation',
-    subtitle: 'La formule détermine le contenu. Ici, vous choisissez seulement le style de votre CV.',
+    eyebrow: 'Votre choix',
+    title: 'Composez votre CV Business',
+    subtitle: 'Choisissez votre formule, puis le modèle qui correspond le mieux à votre métier.',
     professional: 'Modèle Professionnel',
     professionalDescription: 'Clair, structuré et direct. Idéal pour présenter rapidement votre activité et vos informations.',
     portfolio: 'Modèle Portfolio',
@@ -35,9 +35,9 @@ const COPY: Record<SupportedLanguage, Copy> = {
     continue: 'Continuer avec ce choix',
   },
   ar: {
-    eyebrow: 'الخطوة 2',
-    title: 'اختر نموذج العرض',
-    subtitle: 'الصيغة تحدد المحتوى. هنا تختار فقط شكل عرض CV الخاص بك.',
+    eyebrow: 'اختيارك',
+    title: 'كوّن CV Business الخاص بك',
+    subtitle: 'اختر الصيغة، ثم النموذج الأنسب لمهنتك.',
     professional: 'النموذج المهني',
     professionalDescription: 'واضح ومنظم ومباشر لعرض نشاطك ومعلوماتك بسرعة.',
     portfolio: 'نموذج Portfolio',
@@ -50,9 +50,9 @@ const COPY: Record<SupportedLanguage, Copy> = {
     continue: 'متابعة بهذا الاختيار',
   },
   en: {
-    eyebrow: 'Step 2',
-    title: 'Choose your presentation model',
-    subtitle: 'Your plan determines the content. Here, you only choose how your CV is presented.',
+    eyebrow: 'Your choice',
+    title: 'Build your Business CV',
+    subtitle: 'Choose your plan, then the presentation model that best suits your profession.',
     professional: 'Professional Model',
     professionalDescription: 'Clear, structured and direct. Ideal for presenting your activity and key information quickly.',
     portfolio: 'Portfolio Model',
@@ -65,9 +65,9 @@ const COPY: Record<SupportedLanguage, Copy> = {
     continue: 'Continue with this choice',
   },
   it: {
-    eyebrow: 'Passaggio 2',
-    title: 'Scegli il modello di presentazione',
-    subtitle: 'La formula determina i contenuti. Qui scegli soltanto lo stile di presentazione del tuo CV.',
+    eyebrow: 'La tua scelta',
+    title: 'Componi il tuo CV Business',
+    subtitle: 'Scegli la formula, poi il modello più adatto alla tua professione.',
     professional: 'Modello Professionale',
     professionalDescription: 'Chiaro, strutturato e diretto. Ideale per presentare rapidamente attività e informazioni.',
     portfolio: 'Modello Portfolio',
@@ -80,9 +80,9 @@ const COPY: Record<SupportedLanguage, Copy> = {
     continue: 'Continua con questa scelta',
   },
   ru: {
-    eyebrow: 'Шаг 2',
-    title: 'Выберите модель оформления',
-    subtitle: 'Тариф определяет содержание. Здесь вы выбираете только стиль оформления CV.',
+    eyebrow: 'Ваш выбор',
+    title: 'Соберите свой Business CV',
+    subtitle: 'Выберите тариф, затем модель оформления, подходящую вашей профессии.',
     professional: 'Профессиональная модель',
     professionalDescription: 'Чёткая, структурированная и прямая подача деятельности и ключевой информации.',
     portfolio: 'Модель Portfolio',
@@ -117,12 +117,20 @@ function ModelPreview({
 
 export function CvPresentationModelSelector({
   language,
+  formulaValue,
+  onFormulaChange,
+  artisanLabel,
+  premiumLabel,
   value,
   onChange,
   selectedFormulaLabel,
   onContinue,
 }: {
   language: string;
+  formulaValue: 'artisan' | 'premium' | null;
+  onFormulaChange: (formula: 'artisan' | 'premium') => void;
+  artisanLabel: string;
+  premiumLabel: string;
   value: PresentationModel | null;
   onChange: (model: PresentationModel) => void;
   selectedFormulaLabel: string | null;
@@ -140,7 +148,31 @@ export function CvPresentationModelSelector({
         <p className="mx-auto mt-1.5 max-w-2xl text-sm leading-5 text-slate-600">{copy.subtitle}</p>
       </div>
 
-      <div className="mx-auto mt-4 grid max-w-4xl grid-cols-2 gap-2 sm:gap-4">
+      <div className="mx-auto mt-4 max-w-4xl">
+        <p className="mb-2 text-sm font-black text-[#4A123F]">1. {copy.selectedFormula}</p>
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            aria-pressed={formulaValue === 'artisan'}
+            onClick={() => onFormulaChange('artisan')}
+            className={`min-h-14 rounded-xl border px-3 py-2 text-sm font-black transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${formulaValue === 'artisan' ? 'border-[#D6AF2E] bg-[#07543F] text-white shadow-md' : 'border-slate-200 bg-[#FFFCF7] text-[#4A123F] hover:border-[#D6AF2E]'}`}
+          >
+            {artisanLabel}
+          </button>
+          <button
+            type="button"
+            aria-pressed={formulaValue === 'premium'}
+            onClick={() => onFormulaChange('premium')}
+            className={`min-h-14 rounded-xl border px-3 py-2 text-sm font-black transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${formulaValue === 'premium' ? 'border-[#D6AF2E] bg-[#07543F] text-white shadow-md' : 'border-slate-200 bg-[#FFFCF7] text-[#4A123F] hover:border-[#D6AF2E]'}`}
+          >
+            {premiumLabel}
+          </button>
+        </div>
+      </div>
+
+      <div className="mx-auto mt-4 max-w-4xl">
+        <p className="mb-2 text-sm font-black text-[#4A123F]">2. {copy.selectedModel}</p>
+        <div className="grid grid-cols-2 gap-2 sm:gap-4">
         <button
           type="button"
           aria-pressed={value === 'professional'}
@@ -172,6 +204,7 @@ export function CvPresentationModelSelector({
             <span className="mt-1.5 hidden text-sm leading-5 text-slate-600 sm:block">{copy.portfolioDescription}</span>
           </span>
         </button>
+        </div>
       </div>
 
       <p className="mx-auto mt-3 hidden max-w-3xl text-center text-xs font-semibold leading-5 text-slate-500 sm:block">{copy.note}</p>
