@@ -4,9 +4,42 @@ import { useNavigate } from 'react-router-dom';
 import type { BusinessCardPreviewLanguage } from '../components/BusinessCardPreview';
 import CvBusinessJourney from '../components/CvBusinessJourney';
 import { getPresentationModelLabel, type PresentationModel } from '../components/CvPresentationModelSelector';
+import SearchBar from '../components/SearchBar';
 import VisibilityHouseSection from '../components/VisibilityHouseSection';
 import { useLanguage } from '../context/LanguageContext';
-import { Home as PlatformHome } from './Home';
+
+const PLATFORM_CATEGORIES: Record<BusinessCardPreviewLanguage, Array<{ label: string; path: string }>> = {
+  fr: [
+    { label: 'Santé', path: '/citizens/sante' },
+    { label: 'Éducation', path: '/education' },
+    { label: 'Commerces', path: '/citizens/shops' },
+    { label: 'Services', path: '/citizens/services' },
+  ],
+  ar: [
+    { label: 'الصحة', path: '/citizens/sante' },
+    { label: 'التعليم', path: '/education' },
+    { label: 'المتاجر', path: '/citizens/shops' },
+    { label: 'الخدمات', path: '/citizens/services' },
+  ],
+  en: [
+    { label: 'Health', path: '/citizens/sante' },
+    { label: 'Education', path: '/education' },
+    { label: 'Shops', path: '/citizens/shops' },
+    { label: 'Services', path: '/citizens/services' },
+  ],
+  it: [
+    { label: 'Salute', path: '/citizens/sante' },
+    { label: 'Istruzione', path: '/education' },
+    { label: 'Negozi', path: '/citizens/shops' },
+    { label: 'Servizi', path: '/citizens/services' },
+  ],
+  ru: [
+    { label: 'Здоровье', path: '/citizens/sante' },
+    { label: 'Образование', path: '/education' },
+    { label: 'Магазины', path: '/citizens/shops' },
+    { label: 'Услуги', path: '/citizens/services' },
+  ],
+};
 
 const COPY: Record<BusinessCardPreviewLanguage, {
   eyebrow: string;
@@ -160,7 +193,6 @@ export default function HomeVitrineFirst() {
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as BusinessCardPreviewLanguage;
   const t = COPY[lang];
   const rtl = lang === 'ar';
-  const [showPlatformDetails, setShowPlatformDetails] = useState(false);
   const [presentationModel, setPresentationModel] = useState<PresentationModel>('professional');
   const modelImage = presentationModel === 'professional'
     ? '/images/cv-business-portfolio-aux-saveurs-anis.png'
@@ -291,41 +323,44 @@ export default function HomeVitrineFirst() {
         </div>
       </section>
 
-      <section className="bg-white px-4 py-7 lg:py-10">
-        <div className="mx-auto max-w-4xl rounded-3xl border border-[#D4AF37]/40 bg-[#FFFCF7] p-5 text-center shadow-sm lg:flex lg:items-center lg:justify-between lg:gap-8 lg:p-7 lg:text-left rtl:lg:text-right">
-          <div>
+      <section className="bg-white px-4 py-8 lg:py-12">
+        <div className="mx-auto max-w-5xl rounded-3xl border border-[#D4AF37]/40 bg-[#FFFCF7] p-5 shadow-sm lg:p-8">
+          <div className="text-center">
             <h2 className="font-serif text-2xl font-bold text-[#2E102A] lg:text-3xl">{t.platformTitle}</h2>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-600 lg:text-base">{t.platformText}</p>
+            <p className="mx-auto mt-2 max-w-2xl text-base leading-7 text-gray-600">{t.platformText}</p>
           </div>
-          <div className="mt-4 grid shrink-0 gap-2 lg:mt-0 lg:min-w-[270px]">
+
+          <div className="mx-auto mt-5 max-w-3xl rounded-2xl border border-[#D4AF37]/35 bg-white p-3">
+            <SearchBar scope="global" autoSearch resultMode="redirectToResults" />
+          </div>
+
+          <div className="mx-auto mt-4 grid max-w-3xl grid-cols-2 gap-2 sm:grid-cols-4">
+            {PLATFORM_CATEGORIES[lang].map((category) => (
+              <button
+                key={category.path}
+                type="button"
+                onClick={() => navigate(category.path)}
+                className="min-h-11 rounded-xl border border-[#D4AF37]/40 bg-white px-3 py-2 text-sm font-bold text-[#4A1D43] transition hover:bg-[#FFF8DF] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]"
+              >
+                {category.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="mt-5 text-center">
             <button
               type="button"
               onClick={() => navigate('/businesses')}
-              className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#4A1D43] px-5 py-3 text-sm font-black text-white"
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#4A1D43] px-6 py-3 text-sm font-black text-white"
             >
               {t.platformCta}
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </button>
-            <button
-              type="button"
-              aria-expanded={showPlatformDetails}
-              onClick={() => setShowPlatformDetails((current) => !current)}
-              className="min-h-10 text-sm font-bold text-[#4A1D43] underline decoration-[#D4AF37] underline-offset-4 lg:hidden"
-            >
-              {showPlatformDetails ? t.platformDetailsClose : t.platformDetailsOpen}
             </button>
           </div>
         </div>
       </section>
 
-      <div className={showPlatformDetails ? 'block' : 'hidden lg:block'}>
-          <VisibilityHouseSection />
-
-          <style>{`.platform-home-after-vitrine #maison-visibilite{display:none}`}</style>
-          <div className="platform-home-after-vitrine">
-            <PlatformHome />
-          </div>
-      </div>
+      <VisibilityHouseSection />
     </div>
   );
 }
