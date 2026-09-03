@@ -1517,7 +1517,7 @@ export const Businesses = ({
               </div>
             </div>
           ) : filteredBusinesses.length > 0 ? (
-            <div className="px-4">
+            <div className="mx-auto max-w-7xl px-4">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-bold text-[#4A1D43]">
                   {hasActiveSearch ? pageT.results.searchResults : pageT.results.featured}
@@ -1551,7 +1551,7 @@ export const Businesses = ({
                   </button>
                 )}
               </div>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
                 {Array.isArray(filteredBusinesses) && filteredBusinesses.slice(0, hasActiveSearch ? filteredBusinesses.length : 3).map((business) => {
                   if (!business || !business.id) return null;
 
