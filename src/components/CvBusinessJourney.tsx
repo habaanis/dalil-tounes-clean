@@ -357,7 +357,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
               </div>
             )}
 
-            <div className="relative mx-auto mt-2 flex h-[300px] max-w-[260px] items-start justify-center overflow-hidden rounded-xl bg-[#FFFCF7]">
+            <div className={`relative mx-auto mt-2 flex items-start justify-center overflow-hidden rounded-xl bg-[#FFFCF7] transition-[height,max-width] ${activeMobileStep === 'cv' ? 'h-[360px] max-w-[300px]' : 'h-[300px] max-w-[260px]'}`}>
               {activeMobileStep === 'pwa' && (
                 <div className="h-[300px] w-[150px] overflow-hidden">
                   <div className="origin-top-left scale-[0.8333]">
@@ -376,7 +376,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
                 <img
                   src={activeCvImage}
                   alt={`${t.cvTitle} — ${activeCvLabel} — Aux saveurs d’Anis`}
-                  className="h-[300px] w-auto object-contain object-top"
+                  className="h-[360px] w-auto max-w-none object-contain object-top"
                   loading="lazy"
                   decoding="async"
                 />
