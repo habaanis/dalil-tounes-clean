@@ -850,6 +850,19 @@ export default function BusinessShowcaseLienoraDetail() {
     : [];
 
   const primaryActions = [
+    {
+      label: language === 'ar'
+        ? 'تثبيت التطبيق'
+        : language === 'en'
+          ? 'Install the app'
+          : language === 'it'
+            ? "Installa l'app"
+            : language === 'ru'
+              ? 'Установить приложение'
+              : "Installer l’application",
+      href: `/qr-business/${business.id}`,
+      icon: Smartphone,
+    },
     hasAction('call') && business.telephone && {
       label: text.call,
       href: `tel:${business.telephone}`,
