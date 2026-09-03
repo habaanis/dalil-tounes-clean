@@ -33,6 +33,7 @@ import {
   Phone,
   QrCode,
   Share2,
+  Smartphone,
   Star,
   X,
   Youtube,
