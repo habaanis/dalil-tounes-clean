@@ -1703,6 +1703,33 @@ export const BusinessDetail = ({
                 </a>
               )}
 
+              {(tier === 'artisan' || tier === 'premium' || tier === 'elite') && (
+                <Link
+                  to={`/qr-business/${business.id}`}
+                  onClick={(e) => e.stopPropagation()}
+                  className="mt-2 inline-flex min-h-10 items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-bold transition-all hover:scale-[1.02]"
+                  style={{
+                    backgroundColor: colors.gold,
+                    color: colors.background,
+                    boxShadow: `0 8px 24px ${colors.gold}30`,
+                    position: 'relative',
+                    zIndex: 100,
+                    pointerEvents: 'auto',
+                  }}
+                >
+                  <Smartphone size={16} aria-hidden="true" />
+                  {language === 'ar'
+                    ? 'تثبيت التطبيق وعرض QR'
+                    : language === 'en'
+                      ? 'Install the app and view QR'
+                      : language === 'it'
+                        ? "Installa l’app e visualizza il QR"
+                        : language === 'ru'
+                          ? 'Установить приложение и открыть QR'
+                          : "Installer l’application et voir le QR"}
+                </Link>
+              )}
+
               {(() => {
                 const rawGoogleRating = business['Note Google Globale'];
                 const numericRating = typeof rawGoogleRating === 'number'
