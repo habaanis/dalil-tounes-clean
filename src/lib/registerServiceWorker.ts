@@ -1,49 +1,37 @@
 // Service Worker Registration
-// Enregistre le service worker pour les fonctionnalités PWA
+// Enregistre le service worker et signale proprement les nouvelles versions.
+
+const UPDATE_KEY = 'dalil-tounes-pwa-update-ready';
+
+function announceUpdate(): void {
+  sessionStorage.setItem(UPDATE_KEY, '1');
+  window.dispatchEvent(new Event('pwa-update-ready'));
+}
 
 export function registerServiceWorker(): void {
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
+      const hadController = Boolean(navigator.serviceWorker.controller);
+
       navigator.serviceWorker
-        .register('/service-worker.js')
+        .register('/service-worker.js', { updateViaCache: 'none' })
         .then((registration) => {
           console.log('[PWA] Service Worker enregistré avec succès:', registration.scope);
 
-          // Vérifier les mises à jour toutes les heures
-          setInterval(() => {
-            registration.update();
-          }, 60 * 60 * 1000);
+          const checkForUpdate = () => registration.update().catch(() => undefined);
+          void checkForUpdate();
 
-          // Écouter les mises à jour du service worker
-          registration.addEventListener('updatefound', () => {
-            const newWorker = registration.installing;
-            if (newWorker) {
-              newWorker.addEventListener('statechange', () => {
-                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  // Nouveau service worker disponible
-                  console.log('[PWA] Nouveau contenu disponible, rechargement requis');
-
-                  // Optionnel : Afficher une notification à l'utilisateur
-                  if (confirm('Une nouvelle version est disponible. Recharger maintenant ?')) {
-                    newWorker.postMessage({ type: 'SKIP_WAITING' });
-                    window.location.reload();
-                  }
-                }
-              });
-            }
+          setInterval(checkForUpdate, 60 * 60 * 1000);
+          document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') void checkForUpdate();
           });
         })
         .catch((error) => {
           console.error('[PWA] Échec de l\'enregistrement du Service Worker:', error);
         });
 
-      // Recharger la page quand le nouveau service worker prend le contrôle
-      let refreshing = false;
       navigator.serviceWorker.addEventListener('controllerchange', () => {
-        if (!refreshing) {
-          refreshing = true;
-          window.location.reload();
-        }
+        if (hadController) announceUpdate();
       });
     });
   } else {
@@ -51,7 +39,6 @@ export function registerServiceWorker(): void {
   }
 }
 
-// Fonction pour désinstaller le service worker (utile pour debug)
 export function unregisterServiceWorker(): Promise<boolean> {
   if ('serviceWorker' in navigator) {
     return navigator.serviceWorker.getRegistrations().then((registrations) => {
@@ -66,7 +53,6 @@ export function unregisterServiceWorker(): Promise<boolean> {
   return Promise.resolve(false);
 }
 
-// Fonction pour nettoyer le cache
 export function clearCache(): Promise<void> {
   if ('caches' in window) {
     return caches.keys().then((cacheNames) => {
@@ -83,20 +69,16 @@ export function clearCache(): Promise<void> {
   return Promise.resolve();
 }
 
-// Fonction pour vérifier si l'app est installée
 export function isAppInstalled(): boolean {
-  // PWA installée si display-mode est standalone
   return window.matchMedia('(display-mode: standalone)').matches ||
          (window.navigator as any).standalone === true;
 }
 
-// Fonction pour demander l'installation de la PWA
 export function promptInstall(): Promise<void> {
   return new Promise((resolve, reject) => {
     let deferredPrompt: any;
 
     window.addEventListener('beforeinstallprompt', (e) => {
-      // Empêcher le prompt par défaut
       e.preventDefault();
       deferredPrompt = e;
     });
