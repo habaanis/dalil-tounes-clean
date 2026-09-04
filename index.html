@@ -27,7 +27,7 @@
     <meta name="twitter:image" content="https://dalil-tounes.com/images/logo_dalil_tounes_crop.png" />
     <meta name="twitter:image:alt" content="Dalil Tounes - Votre booster commercial" />
 
-    <link rel="manifest" href="/manifest.json" />
+    <link rel="manifest" id="app-manifest" />
     <script>
       (function () {
         var match = window.location.pathname.match(/^\/qr-business\/([^/]+)/);
@@ -39,7 +39,7 @@
         var logo = isAuxSaveurs
           ? 'https://ik.imagekit.io/gfdpqvshw/Lienora/client/aux-saveurs-danis/aux-saveurs-danis-logo-v2?updatedAt=1787096555330'
           : '';
-        document.querySelector('link[rel="manifest"]').href =
+        manifest.href =
           '/api/business-manifest?id=' + encodeURIComponent(id) +
           '&name=' + encodeURIComponent(name) +
           '&logo=' + encodeURIComponent(logo);
