@@ -30,8 +30,12 @@
     <link rel="manifest" id="app-manifest" />
     <script>
       (function () {
+        var manifest = document.getElementById('app-manifest');
         var match = window.location.pathname.match(/^\/qr-business\/([^/]+)/);
-        if (!match) return;
+        if (!match) {
+          manifest.href = '/manifest.json';
+          return;
+        }
         document.documentElement.classList.add('client-app-route');
         var isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
         var isAppLaunch = new URLSearchParams(window.location.search).get('source') === 'pwa' || isStandalone;
