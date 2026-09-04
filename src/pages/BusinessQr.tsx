@@ -183,7 +183,7 @@ export default function BusinessQr() {
     const existing = document.querySelector<HTMLLinkElement>('link[rel="manifest"]');
     const link = existing || document.createElement('link');
     link.rel = 'manifest';
-    link.href = `/api/business-manifest?id=${encodeURIComponent(business.id)}&name=${encodeURIComponent(business.nom)}&logo=${encodeURIComponent(logoUrl)}`;
+    link.href = `/api/business-manifest?id=${encodeURIComponent(id || business.id)}&name=${encodeURIComponent(business.nom)}&logo=${encodeURIComponent(logoUrl)}&v=client-2`;
     if (!existing) document.head.appendChild(link);
     document.title = `${business.nom} — CV Business`;
 
@@ -191,7 +191,7 @@ export default function BusinessQr() {
       link.href = '/manifest.json';
       document.title = 'Dalil Tounes — Plateforme des professionnels en Tunisie | CV Business';
     };
-  }, [business?.id, business?.nom, logoUrl, qrAccess]);
+  }, [id, business?.id, business?.nom, logoUrl, qrAccess]);
 
   const downloadPng = () => {
     const svg = document.getElementById('dt-business-qr');
