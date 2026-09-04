@@ -58,7 +58,8 @@ export default function handler(request: VercelRequest, response: VercelResponse
     return;
   }
 
-  const startUrl = `/qr-business/${id}?source=pwa`;
+  const appPath = `/qr-business/${id}`;
+  const startUrl = `${appPath}?source=pwa&app=client`;
   const icons = logo
     ? [
         { src: sizedIconUrl(logo, 192), sizes: '192x192', purpose: 'any' },
@@ -69,12 +70,13 @@ export default function handler(request: VercelRequest, response: VercelResponse
   response.setHeader('Content-Type', 'application/manifest+json; charset=utf-8');
   response.setHeader('Cache-Control', 'private, max-age=300');
   response.status(200).json({
-      id: startUrl,
+      id: appPath,
       name,
       short_name: name.slice(0, 30),
       description: `${name} — CV Business Dalil Tounes`,
       start_url: startUrl,
-      scope: '/',
+      scope: appPath,
+      launch_handler: { client_mode: 'navigate-new' },
       display: 'standalone',
       orientation: 'portrait-primary',
       theme_color: '#032D21',
