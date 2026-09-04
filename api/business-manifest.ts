@@ -32,6 +32,19 @@ type VercelResponse = {
   json: (body: unknown) => void;
 };
 
+const sizedIconUrl = (value: string, size: 192 | 512): string => {
+  if (!value) return '';
+  try {
+    const url = new URL(value);
+    if (url.hostname === 'ik.imagekit.io') {
+      url.searchParams.set('tr', `w-${size},h-${size},fo-auto`);
+    }
+    return url.toString();
+  } catch {
+    return value;
+  }
+};
+
 const firstQueryValue = (value: string | string[] | undefined): string | null =>
   Array.isArray(value) ? value[0] || null : value || null;
 
@@ -48,8 +61,8 @@ export default function handler(request: VercelRequest, response: VercelResponse
   const startUrl = `/qr-business/${id}?source=pwa`;
   const icons = logo
     ? [
-        { src: logo, sizes: '192x192', type: 'image/png', purpose: 'any' },
-        { src: logo, sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
+        { src: sizedIconUrl(logo, 192), sizes: '192x192', purpose: 'any' },
+        { src: sizedIconUrl(logo, 512), sizes: '512x512', purpose: 'any maskable' },
       ]
     : DALIL_ICONS;
 
