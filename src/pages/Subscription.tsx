@@ -15,6 +15,8 @@ import { SubscriptionRequestForm } from '../components/SubscriptionRequestForm';
 import type { BillingPeriod, CheckoutOffer, SubscriptionPlanCode } from '../components/SubscriptionRequestForm';
 import { BusinessCardPreview } from '../components/BusinessCardPreview';
 import CvBusinessJourney from '../components/CvBusinessJourney';
+import { SEOHead } from '../components/SEOHead';
+import StructuredData from '../components/StructuredData';
 import {
   CvPresentationModelSelector,
   getPresentationModelLabel,
@@ -670,6 +672,14 @@ type SubscriptionCopy = (typeof subscriptionCopy)[keyof typeof subscriptionCopy]
 
 type OfferLanguage = keyof typeof subscriptionCopy;
 
+const subscriptionSeoCopy: Record<OfferLanguage, { title: string; description: string; keywords: string }> = {
+  fr: { title: 'CV Business Professionnel ou Portfolio | Dalil Tounes', description: 'Créez votre CV Business en Tunisie. Choisissez la formule Artisan ou Premium, puis le modèle Professionnel ou Portfolio adapté à votre métier.', keywords: 'CV Business Tunisie, modèle Professionnel, modèle Portfolio, CV Business Artisan, CV Business Premium, visibilité professionnelle Tunisie' },
+  ar: { title: 'CV Business احترافي أو Portfolio | دليل تونس', description: 'أنشئ CV Business لنشاطك في تونس. اختر صيغة الحرفي أو Premium، ثم النموذج الاحترافي أو Portfolio الأنسب لمهنتك.', keywords: 'CV Business تونس, نموذج احترافي, نموذج Portfolio, حرفي, Premium, ظهور مهني تونس' },
+  en: { title: 'Professional or Portfolio Business CV | Dalil Tounes', description: 'Create your Business CV in Tunisia. Choose the Artisan or Premium plan, then the Professional or Portfolio model suited to your activity.', keywords: 'Business CV Tunisia, Professional model, Portfolio model, Artisan Business CV, Premium Business CV' },
+  it: { title: 'CV Business Professionale o Portfolio | Dalil Tounes', description: 'Crea il tuo CV Business in Tunisia. Scegli la formula Artisan o Premium, poi il modello Professionale o Portfolio adatto alla tua attività.', keywords: 'CV Business Tunisia, modello Professionale, modello Portfolio, CV Business Artisan, CV Business Premium' },
+  ru: { title: 'Business CV: Профессиональный или Portfolio | Dalil Tounes', description: 'Создайте Business CV в Тунисе: выберите тариф Artisan или Premium, затем Профессиональную модель или Portfolio для своей деятельности.', keywords: 'Business CV Тунис, Профессиональная модель, Portfolio, Business CV Artisan, Business CV Premium' },
+};
+
 const mobileSubscriptionCopy: Record<OfferLanguage, {
   showBenefits: string;
   hideBenefits: string;
@@ -1295,6 +1305,7 @@ export const Subscription = () => {
   const essentialCopy = essentialCvCopy[language as OfferLanguage] ?? essentialCvCopy.fr;
   const simpleCopy = simplifiedOfferCopy[language as OfferLanguage] ?? simplifiedOfferCopy.fr;
   const mobileCopy = mobileSubscriptionCopy[language as OfferLanguage] ?? mobileSubscriptionCopy.fr;
+  const seoCopy = subscriptionSeoCopy[language as OfferLanguage] ?? subscriptionSeoCopy.fr;
   const [activePreview, setActivePreview] = useState<PreviewType>(null);
   const [selectedPlan, setSelectedPlan] = useState<{
     code: SubscriptionPlanCode;
@@ -1334,9 +1345,63 @@ export const Subscription = () => {
     const modelLabel = getPresentationModelLabel(language, selectedPresentationModel);
     openRequest(selectedFormula, `${selectedFormulaLabel} — ${modelLabel}`, selectedFormula, undefined, modelLabel);
   };
+  const subscriptionStructuredData = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebPage',
+      '@id': 'https://dalil-tounes.com/subscription#webpage',
+      url: 'https://dalil-tounes.com/subscription',
+      name: seoCopy.title,
+      description: seoCopy.description,
+      inLanguage: language,
+      mainEntity: { '@id': 'https://dalil-tounes.com/subscription#cv-business' },
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'ProductGroup',
+      '@id': 'https://dalil-tounes.com/subscription#cv-business',
+      name: 'CV Business Dalil Tounes',
+      description: seoCopy.description,
+      category: 'Présentation professionnelle numérique',
+      productGroupID: 'cv-business-dalil-tounes',
+      variesBy: 'https://schema.org/model',
+      brand: { '@type': 'Brand', name: 'Dalil Tounes' },
+      url: 'https://dalil-tounes.com/subscription',
+      hasVariant: [
+        {
+          '@type': 'Product',
+          name: getPresentationModelLabel(language, 'professional'),
+          model: 'Professionnel',
+          image: 'https://dalil-tounes.com/images/cv-business-portfolio-aux-saveurs-anis.png',
+          description: language === 'fr' ? 'Un modèle clair, structuré et direct pour présenter rapidement une activité professionnelle.' : seoCopy.description,
+        },
+        {
+          '@type': 'Product',
+          name: getPresentationModelLabel(language, 'portfolio'),
+          model: 'Portfolio',
+          image: 'https://dalil-tounes.com/images/cv-business-professionnel-aux-saveurs-anis.png',
+          description: language === 'fr' ? 'Un modèle visuel qui donne davantage de place aux photos, aux réalisations et au savoir-faire.' : seoCopy.description,
+        },
+      ],
+      offers: [
+        { '@type': 'Offer', name: simpleCopy.artisanTitle, price: '30', priceCurrency: 'TND', availability: 'https://schema.org/InStock', url: 'https://dalil-tounes.com/subscription#cv-business-products-title' },
+        { '@type': 'Offer', name: simpleCopy.premiumTitle, price: '59', priceCurrency: 'TND', availability: 'https://schema.org/InStock', url: 'https://dalil-tounes.com/subscription#cv-business-products-title' },
+      ],
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Dalil Tounes', item: 'https://dalil-tounes.com/' },
+        { '@type': 'ListItem', position: 2, name: simpleCopy.productsTitle, item: 'https://dalil-tounes.com/subscription' },
+      ],
+    },
+  ];
 
   return (
     <div className="bg-[#FFFCF7] px-4 py-8 text-slate-900 sm:py-12" dir={isArabic ? 'rtl' : 'ltr'}>
+      <SEOHead title={seoCopy.title} description={seoCopy.description} keywords={seoCopy.keywords} canonical="https://dalil-tounes.com/subscription" currentPath="/subscription" />
+      <StructuredData data={subscriptionStructuredData} />
       <main className="mx-auto flex max-w-6xl flex-col">
         <header className="order-1 mb-2 text-center sm:mb-10">
           <p className="mb-3 flex items-center justify-center gap-3 text-xs font-black uppercase tracking-[0.2em] text-amber-600">
