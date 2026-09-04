@@ -28,6 +28,23 @@
     <meta name="twitter:image:alt" content="Dalil Tounes - Votre booster commercial" />
 
     <link rel="manifest" href="/manifest.json" />
+    <script>
+      (function () {
+        var match = window.location.pathname.match(/^\/qr-business\/([^/]+)/);
+        if (!match) return;
+        var id = decodeURIComponent(match[1]);
+        var isAuxSaveurs = id === 'aux-saveurs-d-anis';
+        var name = isAuxSaveurs ? "Aux saveurs d'Anis" : 'CV Business';
+        var logo = isAuxSaveurs
+          ? 'https://ik.imagekit.io/gfdpqvshw/Lienora/client/aux-saveurs-danis/aux-saveurs-danis-logo-v2?updatedAt=1787096555330'
+          : '';
+        document.querySelector('link[rel="manifest"]').href =
+          '/api/business-manifest?id=' + encodeURIComponent(id) +
+          '&name=' + encodeURIComponent(name) +
+          '&logo=' + encodeURIComponent(logo);
+        document.title = name + ' — CV Business';
+      })();
+    </script>
     <meta name="theme-color" content="#D4AF37" />
 
     <link
