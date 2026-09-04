@@ -77,7 +77,7 @@ function parseSousCategories() {
   return result;
 }
 
-function replaceOrInsertMeta(html, { title, description, canonical, robots = 'index, follow' }) {
+function replaceOrInsertMeta(html, { title, description, canonical, robots = 'index, follow', structuredData = [] }) {
   const escapedTitle = htmlEscape(title);
   const escapedDescription = htmlEscape(description);
   const escapedCanonical = htmlEscape(canonical);
@@ -106,6 +106,13 @@ function replaceOrInsertMeta(html, { title, description, canonical, robots = 'in
 
   if (!/<meta\s+property="og:image"/i.test(out)) {
     out = out.replace('</head>', `    <meta property="og:image" content="${DEFAULT_IMAGE}" />\n  </head>`);
+  }
+
+  if (structuredData.length > 0) {
+    const jsonLd = structuredData
+      .map((schema, index) => `    <script id="structured-data-${index}" type="application/ld+json">${JSON.stringify(schema).replaceAll('<', '\\u003c')}</script>`)
+      .join('\n');
+    out = out.replace('</head>', `${jsonLd}\n  </head>`);
   }
 
   return out;
@@ -205,6 +212,56 @@ for (const item of gouvernorats) {
     canonical: `${ORIGIN}${route}`,
   });
 }
+
+const subscriptionRoute = '/subscription';
+const subscriptionCanonical = `${ORIGIN}${subscriptionRoute}`;
+const subscriptionTitle = 'CV Business Professionnel ou Portfolio | Dalil Tounes';
+const subscriptionDescription = 'Créez votre CV Business en Tunisie. Choisissez la formule Artisan ou Premium, puis le modèle Professionnel ou Portfolio adapté à votre métier.';
+writePage(subscriptionRoute, {
+  title: subscriptionTitle,
+  description: subscriptionDescription,
+  canonical: subscriptionCanonical,
+  structuredData: [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebPage',
+      '@id': `${subscriptionCanonical}#webpage`,
+      url: subscriptionCanonical,
+      name: subscriptionTitle,
+      description: subscriptionDescription,
+      inLanguage: 'fr',
+      mainEntity: { '@id': `${subscriptionCanonical}#cv-business` },
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'ProductGroup',
+      '@id': `${subscriptionCanonical}#cv-business`,
+      name: 'CV Business Dalil Tounes',
+      description: subscriptionDescription,
+      category: 'Présentation professionnelle numérique',
+      productGroupID: 'cv-business-dalil-tounes',
+      variesBy: 'https://schema.org/model',
+      brand: { '@type': 'Brand', name: 'Dalil Tounes' },
+      url: subscriptionCanonical,
+      hasVariant: [
+        { '@type': 'Product', name: 'Modèle Professionnel', model: 'Professionnel', image: `${ORIGIN}/images/cv-business-portfolio-aux-saveurs-anis.png`, description: 'Un modèle clair, structuré et direct pour présenter rapidement une activité professionnelle.' },
+        { '@type': 'Product', name: 'Modèle Portfolio', model: 'Portfolio', image: `${ORIGIN}/images/cv-business-professionnel-aux-saveurs-anis.png`, description: 'Un modèle visuel qui donne davantage de place aux photos, aux réalisations et au savoir-faire.' },
+      ],
+      offers: [
+        { '@type': 'Offer', name: 'CV Business Artisan', price: '30', priceCurrency: 'TND', availability: 'https://schema.org/InStock', url: `${subscriptionCanonical}#cv-business-products-title` },
+        { '@type': 'Offer', name: 'CV Business Premium', price: '59', priceCurrency: 'TND', availability: 'https://schema.org/InStock', url: `${subscriptionCanonical}#cv-business-products-title` },
+      ],
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Dalil Tounes', item: `${ORIGIN}/` },
+        { '@type': 'ListItem', position: 2, name: 'CV Business', item: subscriptionCanonical },
+      ],
+    },
+  ],
+});
 
 let businessRows = [];
 try {
