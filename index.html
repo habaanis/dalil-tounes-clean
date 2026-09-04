@@ -32,6 +32,7 @@
       (function () {
         var match = window.location.pathname.match(/^\/qr-business\/([^/]+)/);
         if (!match) return;
+        document.documentElement.classList.add('client-app-route');
         var id = decodeURIComponent(match[1]);
         var isAuxSaveurs = id === 'aux-saveurs-d-anis';
         var name = isAuxSaveurs ? "Aux saveurs d'Anis" : 'CV Business';
@@ -72,6 +73,9 @@
       /* Le root React est caché jusqu'à ce que le skeleton soit retiré :
          garantit un seul et même pixel drapeau visible sans flash entre les deux. */
       #root{opacity:0;transition:opacity 0s}
+      html.client-app-route body{background:#032D21}
+      html.client-app-route #pre-skeleton{display:none!important}
+      html.client-app-route #root{opacity:1!important}
       
       @keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
       .sk{animation:pulse 1.8s ease-in-out infinite;background:#e5e7eb;border-radius:.75rem}
