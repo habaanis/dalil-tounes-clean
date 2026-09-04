@@ -32,6 +32,19 @@ type VercelResponse = {
   json: (body: unknown) => void;
 };
 
+const sizedIconUrl = (value: string, size: 192 | 512): string => {
+  if (!value) return '';
+  try {
+    const url = new URL(value);
+    if (url.hostname === 'ik.imagekit.io') {
+      url.searchParams.set('tr', `w-${size},h-${size},fo-auto`);
+    }
+    return url.toString();
+  } catch {
+    return value;
+  }
+};
+
 const firstQueryValue = (value: string | string[] | undefined): string | null =>
   Array.isArray(value) ? value[0] || null : value || null;
 
@@ -45,23 +58,25 @@ export default function handler(request: VercelRequest, response: VercelResponse
     return;
   }
 
-  const startUrl = `/qr-business/${id}?source=pwa`;
+  const appPath = `/qr-business/${id}`;
+  const startUrl = `${appPath}?source=pwa&app=client`;
   const icons = logo
     ? [
-        { src: logo, sizes: '192x192', type: 'image/png', purpose: 'any' },
-        { src: logo, sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
+        { src: sizedIconUrl(logo, 192), sizes: '192x192', purpose: 'any' },
+        { src: sizedIconUrl(logo, 512), sizes: '512x512', purpose: 'any maskable' },
       ]
     : DALIL_ICONS;
 
   response.setHeader('Content-Type', 'application/manifest+json; charset=utf-8');
-  response.setHeader('Cache-Control', 'private, max-age=300');
+  response.setHeader('Cache-Control', 'no-store, max-age=0');
   response.status(200).json({
-      id: startUrl,
+      id: appPath,
       name,
       short_name: name.slice(0, 30),
       description: `${name} — CV Business Dalil Tounes`,
       start_url: startUrl,
-      scope: '/',
+      scope: appPath,
+      launch_handler: { client_mode: 'navigate-new' },
       display: 'standalone',
       orientation: 'portrait-primary',
       theme_color: '#032D21',

@@ -127,11 +127,11 @@ export default function BusinessQr() {
         setLoading(false);
         return;
       }
-      const { data } = await supabase
+      const baseQuery = supabase
         .from('entreprise')
-        .select('id, nom, slug, ville, categorie, image_url, logo_url, statut_abonnement, cv_business_status')
-        .eq('id', id)
-        .maybeSingle();
+        .select('id, nom, slug, ville, categorie, image_url, logo_url, statut_abonnement, cv_business_status');
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id);
+      const { data } = await (isUuid ? baseQuery.eq('id', id) : baseQuery.eq('slug', id)).maybeSingle();
       if (!cancelled) {
         setBusiness(data as BusinessQrRecord | null);
         setLoading(false);
@@ -183,7 +183,7 @@ export default function BusinessQr() {
     const existing = document.querySelector<HTMLLinkElement>('link[rel="manifest"]');
     const link = existing || document.createElement('link');
     link.rel = 'manifest';
-    link.href = `/api/business-manifest?id=${encodeURIComponent(business.id)}&name=${encodeURIComponent(business.nom)}&logo=${encodeURIComponent(logoUrl)}`;
+    link.href = `/api/business-manifest?id=${encodeURIComponent(id || business.id)}&name=${encodeURIComponent(business.nom)}&logo=${encodeURIComponent(logoUrl)}&v=client-2`;
     if (!existing) document.head.appendChild(link);
     document.title = `${business.nom} — CV Business`;
 
@@ -191,7 +191,7 @@ export default function BusinessQr() {
       link.href = '/manifest.json';
       document.title = 'Dalil Tounes — Plateforme des professionnels en Tunisie | CV Business';
     };
-  }, [business?.id, business?.nom, logoUrl, qrAccess]);
+  }, [id, business?.id, business?.nom, logoUrl, qrAccess]);
 
   const downloadPng = () => {
     const svg = document.getElementById('dt-business-qr');
