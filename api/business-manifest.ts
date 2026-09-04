@@ -68,7 +68,7 @@ export default function handler(request: VercelRequest, response: VercelResponse
     : DALIL_ICONS;
 
   response.setHeader('Content-Type', 'application/manifest+json; charset=utf-8');
-  response.setHeader('Cache-Control', 'private, max-age=300');
+  response.setHeader('Cache-Control', 'no-store, max-age=0');
   response.status(200).json({
       id: appPath,
       name,
