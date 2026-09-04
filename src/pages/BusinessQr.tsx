@@ -127,11 +127,11 @@ export default function BusinessQr() {
         setLoading(false);
         return;
       }
-      const { data } = await supabase
+      const baseQuery = supabase
         .from('entreprise')
-        .select('id, nom, slug, ville, categorie, image_url, logo_url, statut_abonnement, cv_business_status')
-        .eq('id', id)
-        .maybeSingle();
+        .select('id, nom, slug, ville, categorie, image_url, logo_url, statut_abonnement, cv_business_status');
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id);
+      const { data } = await (isUuid ? baseQuery.eq('id', id) : baseQuery.eq('slug', id)).maybeSingle();
       if (!cancelled) {
         setBusiness(data as BusinessQrRecord | null);
         setLoading(false);
