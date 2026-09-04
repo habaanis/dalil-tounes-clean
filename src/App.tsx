@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import AppRouter from './AppRouter';
 import { WelcomeModal } from './components/WelcomeModal';
 import { CheckoutRegistrationBridge } from './components/CheckoutRegistrationBridge';
+import { PwaUpdatePrompt } from './components/PwaUpdatePrompt';
 
 const WELCOME_SEEN_KEY = 'dalilTounes_welcome_seen_v1';
 
@@ -172,6 +173,7 @@ function App() {
   return (
     <>
       <CheckoutRegistrationBridge />
+      <PwaUpdatePrompt />
       <AppRouter />
       <WelcomeModal isOpen={showWelcomeModal} onClose={handleCloseWelcomeModal} />
       {showWelcomeDevButton && (
