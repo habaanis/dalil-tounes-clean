@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { X, ZoomIn } from 'lucide-react';
 
 type SupportedLanguage = 'fr' | 'ar' | 'en' | 'it' | 'ru';
@@ -122,22 +122,66 @@ export function getPresentationModelLabel(language: string, model: PresentationM
   return model === 'professional' ? copy.professional : copy.portfolio;
 }
 
+const PORTFOLIO_COVER = 'https://ik.imagekit.io/gfdpqvshw/Lienora/client/aux-saveurs-danis/aux-saveurs-danis-gastronomie.jpg?updatedAt=1787090066953';
+const PORTFOLIO_LOGO = 'https://ik.imagekit.io/gfdpqvshw/Lienora/client/aux-saveurs-danis/aux-saveurs-danis-logo-v2?updatedAt=1787096555330';
+const PORTFOLIO_PHOTOS = [
+  'https://ik.imagekit.io/gfdpqvshw/Lienora/client/aux-saveurs-danis/aux-saveurs-danis-mariage?updatedAt=1787090066964',
+  'https://ik.imagekit.io/gfdpqvshw/Lienora/client/aux-saveurs-danis/aux-saveurs-danis-amuse-bouche.jpg?updatedAt=1787090516040',
+  'https://ik.imagekit.io/gfdpqvshw/Lienora/client/aux-saveurs-danis/aux-saveurs-danis-evenement.jpg?updatedAt=1787090429737',
+];
+
+function PortfolioPreviewCard() {
+  return (
+    <div className="h-full w-full overflow-hidden rounded-[18px] border border-[#D4AF37] bg-[#012B22] text-white shadow-xl">
+      <div className="relative h-[32%] min-h-[92px] overflow-hidden">
+        <img src={PORTFOLIO_COVER} alt="" className="h-full w-full object-cover" loading="lazy" decoding="async" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#012B22]" />
+        <img src={PORTFOLIO_LOGO} alt="" className="absolute bottom-0 left-1/2 h-14 w-14 -translate-x-1/2 rounded-full border-2 border-[#D4AF37] bg-[#012B22] object-cover" loading="lazy" decoding="async" />
+      </div>
+      <div className="px-3 pb-3 pt-2 text-center">
+        <span className="rounded-full border border-[#D4AF37]/70 px-2 py-1 text-[7px] font-bold text-[#F4CE55]">Traiteur événementiel</span>
+        <div className="mt-2 rounded-xl border border-[#D4AF37]/50 p-2">
+          <small className="text-[6px] font-black tracking-[0.16em] text-[#F4CE55]">CV PORTFOLIO</small>
+          <strong className="mt-1 block font-serif text-sm leading-tight">Aux saveurs d’Anis</strong>
+          <span className="mt-1 block text-[7px]">★ 5,0 · 27 avis Google</span>
+          <span className="block text-[7px] text-emerald-100">Sousse, Tunisie</span>
+        </div>
+        <div className="mt-2 grid grid-cols-3 gap-1 text-[6px]">
+          <span className="rounded-md border border-[#D4AF37]/40 py-2">Appeler</span>
+          <span className="rounded-md border border-[#D4AF37]/40 py-2">Ajouter contact</span>
+          <span className="rounded-md border border-[#D4AF37]/40 py-2">Itinéraire</span>
+        </div>
+        <div className="mt-2 grid grid-cols-3 gap-1">
+          {PORTFOLIO_PHOTOS.map((photo, index) => (
+            <div className="overflow-hidden rounded-md border border-[#D4AF37]/50 bg-[#063E31]" key={photo}>
+              <img src={photo} alt="" className="h-12 w-full object-cover" loading="lazy" decoding="async" />
+              <span className="block truncate px-1 py-1 text-[6px] text-[#F4CE55]">{['Mariages', 'Réceptions', 'Événements'][index]}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function ModelPreview({
   src,
   alt,
   enlargeLabel,
   onEnlarge,
   liveSrc,
+  children,
 }: {
   src: string;
   alt: string;
   enlargeLabel: string;
   onEnlarge: () => void;
   liveSrc?: string;
+  children?: ReactNode;
 }) {
   return (
     <div className="group relative flex h-[300px] w-full items-start justify-center overflow-hidden rounded-xl border border-slate-200 bg-[#F7F5EF] p-2 shadow-inner sm:rounded-2xl md:h-[420px]">
-      {liveSrc ? (
+      {children ? children : liveSrc ? (
         <div className="pointer-events-none h-full w-[184px] overflow-hidden transition duration-300 group-hover:scale-[1.06]">
           <iframe
             title={alt}
@@ -267,14 +311,7 @@ export function CvPresentationModelSelector({
             aria-label={value === 'portfolio' ? copy.portfolio : copy.professional}
           >
             {value === 'portfolio' ? (
-              <div className="pointer-events-none h-[390px] w-[169px] overflow-hidden">
-                <iframe
-                  title={`${copy.portfolio} — Aux saveurs d’Anis`}
-                  src="/entreprise/sousse/aux-saveurs-d-anis?preview-model=portfolio&source=pwa&lang=fr"
-                  className="h-[900px] w-[390px] origin-top-left scale-[0.433] border-0"
-                  loading="lazy"
-                />
-              </div>
+              <PortfolioPreviewCard />
             ) : (
               <img
                 src="/images/cv-business-portfolio-aux-saveurs-anis.png"
@@ -317,8 +354,9 @@ export function CvPresentationModelSelector({
             alt={`${copy.portfolio} — Aux saveurs d’Anis`}
             enlargeLabel={`${copy.enlarge} — ${copy.portfolio}`}
             onEnlarge={() => setExpandedModel('portfolio')}
-            liveSrc="/entreprise/sousse/aux-saveurs-d-anis?preview-model=portfolio&source=pwa&lang=fr"
-          />
+          >
+            <PortfolioPreviewCard />
+          </ModelPreview>
           <span className="mt-3 min-w-0">
             <span className="block text-sm font-black leading-5 text-[#4A123F] sm:text-lg">{copy.portfolio}</span>
             <span className="mt-1.5 hidden text-sm leading-5 text-slate-600 sm:block">{copy.portfolioDescription}</span>
@@ -371,11 +409,9 @@ export function CvPresentationModelSelector({
               <X className="h-5 w-5" aria-hidden="true" />
             </button>
             {expandedModel === 'portfolio' ? (
-              <iframe
-                title={`${copy.portfolio} — Aux saveurs d’Anis`}
-                src="/entreprise/sousse/aux-saveurs-d-anis?preview-model=portfolio&source=pwa&lang=fr"
-                className="mt-1 h-[82dvh] w-[min(430px,calc(100vw-48px))] border-0"
-              />
+              <div className="mt-1 h-[82dvh] w-[min(430px,calc(100vw-48px))]">
+                <PortfolioPreviewCard />
+              </div>
             ) : (
               <img
                 src="/images/cv-business-portfolio-aux-saveurs-anis.png"
