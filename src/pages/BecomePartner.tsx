@@ -51,7 +51,7 @@ export default function BecomePartner() {
           <small className="mt-4 block text-gray-500">{t.note}</small>
         </div>
         <div className="relative mx-auto h-[390px] w-full max-w-lg" aria-label={t.solutionTitle}>
-          <div className="absolute start-[7%] top-8 h-[340px] w-[210px] -rotate-6 rounded-[30px] border-[7px] border-[#07392E] bg-gradient-to-b from-[#07392E] to-[#005B44] p-5 text-white shadow-2xl"><span className="text-xs font-bold uppercase tracking-widest text-[#F4CE55]">{t.professional}</span><p className="mt-16 text-2xl font-bold leading-tight">{t.professionalText}</p></div>
+          <div className="absolute start-[7%] top-8 h-[340px] w-[210px] -rotate-6 rounded-[30px] border-[7px] border-[#07392E] bg-gradient-to-b from-[#07392E] to-[#005B44] p-5 text-white shadow-2xl"><span className="text-xs font-bold uppercase tracking-widest text-[#F4CE55]">{t.professional}</span><p className="mt-14 line-clamp-5 text-xl font-bold leading-tight">{t.professionalText}</p></div>
           <div className="absolute end-[5%] top-0 h-[340px] w-[210px] rotate-6 rounded-[30px] border-[7px] border-[#4A1D43] bg-[#FFF8E6] p-5 shadow-2xl"><span className="text-xs font-bold uppercase tracking-widest text-[#9A7419]">{t.portfolio}</span><div className="mt-7 grid grid-cols-2 gap-2">{[1,2,3,4].map(value => <i key={value} className="h-24 rounded-xl bg-gradient-to-br from-[#D4AF37] to-[#4A1D43]"/>)}</div></div>
         </div>
       </div>
