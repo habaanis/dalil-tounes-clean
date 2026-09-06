@@ -145,7 +145,12 @@ export function CvPortfolioPresentation({
     if (href.includes('maps') || href.includes('google.com/maps')) return 2;
     return 3;
   };
-  const featuredActions = [...actions].sort((a, b) => actionPriority(a.href) - actionPriority(b.href)).slice(0, 3);
+  const hasPrimaryContact = presentation.visibleActions.includes('add_contact');
+  const isWhatsAppAction = (href: string) => href.includes('wa.me') || href.includes('whatsapp');
+  const featuredActions = [...actions]
+    .filter(action => !(hasPrimaryContact && isWhatsAppAction(action.href)))
+    .sort((a, b) => actionPriority(a.href) - actionPriority(b.href))
+    .slice(0, hasPrimaryContact ? 2 : 3);
   const secondaryActions = actions.filter(action => !featuredActions.includes(action));
 
   const tabs = useMemo(() => [
@@ -242,13 +247,18 @@ export function CvPortfolioPresentation({
             </div>
           </header>
 
-          {featuredActions.length > 0 && (
+          {(featuredActions.length > 0 || hasPrimaryContact) && (
             <section className="cvp-actions" aria-label="Actions">
               {featuredActions.map(({ label, href, icon: Icon, external }) => (
                 <a href={href} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined} key={label}>
                   <Icon /><span>{label}</span>
                 </a>
               ))}
+              {hasPrimaryContact && (
+                <button type="button" onClick={onDownloadContact}>
+                  <Contact /><span>{copy.addContact}</span>
+                </button>
+              )}
             </section>
           )}
 
@@ -288,7 +298,6 @@ export function CvPortfolioPresentation({
                 <section className="cvp-extra-actions">
                   {presentation.visibleActions.includes('reservation') && bookingContent && <button type="button" onClick={() => setBookingOpen(value => !value)}><CalendarDays />{copy.book}</button>}
                   {(profile.contact.whatsapp || profile.contact.email) && <button type="button" onClick={onQuote}><FileText />{copy.quote}</button>}
-                  {presentation.visibleActions.includes('add_contact') && <button type="button" onClick={onDownloadContact}><Contact />{copy.addContact}</button>}
                 </section>
               </>
             )}
