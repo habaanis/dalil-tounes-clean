@@ -267,14 +267,13 @@ export function CvPresentationModelSelector({
             aria-label={value === 'portfolio' ? copy.portfolio : copy.professional}
           >
             {value === 'portfolio' ? (
-              <div className="pointer-events-none h-[390px] w-[169px] overflow-hidden">
-                <iframe
-                  title={`${copy.portfolio} — Aux saveurs d’Anis`}
-                  src="/entreprise/sousse/aux-saveurs-d-anis?preview-model=portfolio&source=pwa&lang=fr"
-                  className="h-[900px] w-[390px] origin-top-left scale-[0.433] border-0"
-                  loading="lazy"
-                />
-              </div>
+              <img
+                src="/images/cv-portfolio-aux-saveurs-anis-original.svg"
+                alt={`${copy.portfolio} — Aux saveurs d’Anis`}
+                className="h-[390px] w-auto max-w-none object-contain object-top"
+                loading="lazy"
+                decoding="async"
+              />
             ) : (
               <img
                 src="/images/cv-business-portfolio-aux-saveurs-anis.png"
@@ -313,11 +312,10 @@ export function CvPresentationModelSelector({
           className={`flex min-w-0 flex-col rounded-2xl border p-3.5 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'portfolio' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
         >
           <ModelPreview
-            src="/images/cv-business-professionnel-aux-saveurs-anis.png"
+            src="/images/cv-portfolio-aux-saveurs-anis-original.svg"
             alt={`${copy.portfolio} — Aux saveurs d’Anis`}
             enlargeLabel={`${copy.enlarge} — ${copy.portfolio}`}
             onEnlarge={() => setExpandedModel('portfolio')}
-            liveSrc="/entreprise/sousse/aux-saveurs-d-anis?preview-model=portfolio&source=pwa&lang=fr"
           />
           <span className="mt-3 min-w-0">
             <span className="block text-sm font-black leading-5 text-[#4A123F] sm:text-lg">{copy.portfolio}</span>
@@ -371,10 +369,11 @@ export function CvPresentationModelSelector({
               <X className="h-5 w-5" aria-hidden="true" />
             </button>
             {expandedModel === 'portfolio' ? (
-              <iframe
-                title={`${copy.portfolio} — Aux saveurs d’Anis`}
-                src="/entreprise/sousse/aux-saveurs-d-anis?preview-model=portfolio&source=pwa&lang=fr"
-                className="mt-1 h-[82dvh] w-[min(430px,calc(100vw-48px))] border-0"
+              <img
+                src="/images/cv-portfolio-aux-saveurs-anis-original.svg"
+                alt={`${copy.portfolio} — Aux saveurs d’Anis`}
+                className="mx-auto mt-1 max-h-[82dvh] max-w-[calc(100vw-48px)] object-contain object-top"
+                decoding="async"
               />
             ) : (
               <img
