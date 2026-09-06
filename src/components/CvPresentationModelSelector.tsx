@@ -1,3 +1,6 @@
+import { useEffect, useState } from 'react';
+import { X, ZoomIn } from 'lucide-react';
+
 type SupportedLanguage = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 
 export type PresentationModel = 'professional' | 'portfolio';
@@ -17,6 +20,8 @@ type Copy = {
   chooseModel: string;
   swipeModels: string;
   continue: string;
+  enlarge: string;
+  close: string;
 };
 
 const COPY: Record<SupportedLanguage, Copy> = {
@@ -35,6 +40,8 @@ const COPY: Record<SupportedLanguage, Copy> = {
     chooseModel: 'Choisissez ensuite votre modèle de présentation.',
     swipeModels: 'Glissez pour voir l’autre modèle',
     continue: 'Continuer avec ce choix',
+    enlarge: 'Agrandir le modèle',
+    close: 'Fermer',
   },
   ar: {
     eyebrow: 'اختيارك',
@@ -51,6 +58,8 @@ const COPY: Record<SupportedLanguage, Copy> = {
     chooseModel: 'ثم اختر نموذج العرض.',
     swipeModels: 'اسحب لرؤية النموذج الآخر',
     continue: 'متابعة بهذا الاختيار',
+    enlarge: 'تكبير النموذج',
+    close: 'إغلاق',
   },
   en: {
     eyebrow: 'Your choice',
@@ -67,6 +76,8 @@ const COPY: Record<SupportedLanguage, Copy> = {
     chooseModel: 'Then choose your presentation model.',
     swipeModels: 'Swipe to see the other model',
     continue: 'Continue with this choice',
+    enlarge: 'Enlarge model',
+    close: 'Close',
   },
   it: {
     eyebrow: 'La tua scelta',
@@ -83,6 +94,8 @@ const COPY: Record<SupportedLanguage, Copy> = {
     chooseModel: 'Poi scegli il modello di presentazione.',
     swipeModels: 'Scorri per vedere l’altro modello',
     continue: 'Continua con questa scelta',
+    enlarge: 'Ingrandisci il modello',
+    close: 'Chiudi',
   },
   ru: {
     eyebrow: 'Ваш выбор',
@@ -99,6 +112,8 @@ const COPY: Record<SupportedLanguage, Copy> = {
     chooseModel: 'Затем выберите модель оформления.',
     swipeModels: 'Проведите, чтобы увидеть другую модель',
     continue: 'Продолжить с этим выбором',
+    enlarge: 'Увеличить модель',
+    close: 'Закрыть',
   },
 };
 
@@ -110,13 +125,29 @@ export function getPresentationModelLabel(language: string, model: PresentationM
 function ModelPreview({
   src,
   alt,
+  enlargeLabel,
+  onEnlarge,
 }: {
   src: string;
   alt: string;
+  enlargeLabel: string;
+  onEnlarge: () => void;
 }) {
   return (
-    <div className="flex h-[300px] w-full items-start justify-center overflow-hidden rounded-xl border border-slate-200 bg-[#F7F5EF] p-2 shadow-inner sm:rounded-2xl md:h-[420px]">
-      <img src={src} alt={alt} className="h-full w-full object-contain object-top" loading="lazy" decoding="async" />
+    <div className="group relative flex h-[300px] w-full items-start justify-center overflow-hidden rounded-xl border border-slate-200 bg-[#F7F5EF] p-2 shadow-inner sm:rounded-2xl md:h-[420px]">
+      <img src={src} alt={alt} className="h-full w-full object-contain object-top transition duration-300 group-hover:scale-[1.06]" loading="lazy" decoding="async" />
+      <button
+        type="button"
+        onClick={(event) => {
+          event.stopPropagation();
+          onEnlarge();
+        }}
+        className="absolute right-3 top-3 grid h-10 w-10 place-items-center rounded-full border border-[#D6AF2E]/70 bg-white/95 text-[#07543F] shadow-md transition hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]"
+        aria-label={enlargeLabel}
+        title={enlargeLabel}
+      >
+        <ZoomIn className="h-5 w-5" aria-hidden="true" />
+      </button>
     </div>
   );
 }
@@ -143,8 +174,23 @@ export function CvPresentationModelSelector({
   onContinue: () => void;
 }) {
   const copy = COPY[(language as SupportedLanguage)] ?? COPY.fr;
+  const [expandedModel, setExpandedModel] = useState<PresentationModel | null>(null);
   const selectedModelLabel = value ? getPresentationModelLabel(language, value) : null;
   const canContinue = Boolean(selectedFormulaLabel && value);
+
+  useEffect(() => {
+    if (!expandedModel) return;
+    const previousOverflow = document.body.style.overflow;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setExpandedModel(null);
+    };
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [expandedModel]);
 
   return (
     <section id="cv-presentation-models" className="mt-5 scroll-mt-24 rounded-3xl border border-[#D6AF2E]/55 bg-white p-3 shadow-[0_8px_24px_rgba(74,18,63,0.05)] sm:p-5">
@@ -199,7 +245,11 @@ export function CvPresentationModelSelector({
           </div>
           <button
             type="button"
-            onClick={() => onChange(value ?? 'professional')}
+            onClick={() => {
+              const currentModel = value ?? 'professional';
+              onChange(currentModel);
+              setExpandedModel(currentModel);
+            }}
             className={`mt-3 flex w-full justify-center overflow-hidden rounded-2xl border bg-[#F7F5EF] p-2 transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value ? 'border-[#D6AF2E] shadow-md' : 'border-slate-200'}`}
             aria-label={value === 'portfolio' ? copy.portfolio : copy.professional}
           >
@@ -223,6 +273,8 @@ export function CvPresentationModelSelector({
           <ModelPreview
             src="/images/cv-business-portfolio-aux-saveurs-anis.png"
             alt={`${copy.professional} — Aux saveurs d’Anis`}
+            enlargeLabel={`${copy.enlarge} — ${copy.professional}`}
+            onEnlarge={() => setExpandedModel('professional')}
           />
           <span className="mt-3 min-w-0">
             <span className="block text-sm font-black leading-5 text-[#4A123F] sm:text-lg">{copy.professional}</span>
@@ -239,6 +291,8 @@ export function CvPresentationModelSelector({
           <ModelPreview
             src="/images/cv-business-professionnel-aux-saveurs-anis.png"
             alt={`${copy.portfolio} — Aux saveurs d’Anis`}
+            enlargeLabel={`${copy.enlarge} — ${copy.portfolio}`}
+            onEnlarge={() => setExpandedModel('portfolio')}
           />
           <span className="mt-3 min-w-0">
             <span className="block text-sm font-black leading-5 text-[#4A123F] sm:text-lg">{copy.portfolio}</span>
@@ -272,6 +326,34 @@ export function CvPresentationModelSelector({
           {copy.continue}
         </button>
       </div>
+
+      {expandedModel && (
+        <div
+          className="fixed inset-0 z-[140] flex items-center justify-center bg-black/75 p-3 backdrop-blur-sm sm:p-6"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setExpandedModel(null);
+          }}
+        >
+          <div role="dialog" aria-modal="true" aria-label={`${copy.enlarge} — ${getPresentationModelLabel(language, expandedModel)}`} className="relative max-h-[94dvh] max-w-full overflow-auto rounded-3xl bg-white p-3 shadow-2xl sm:p-5">
+            <button
+              type="button"
+              onClick={() => setExpandedModel(null)}
+              className="sticky top-0 z-10 ml-auto grid h-11 w-11 place-items-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-md focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] rtl:ml-0 rtl:mr-auto"
+              aria-label={copy.close}
+              title={copy.close}
+              autoFocus
+            >
+              <X className="h-5 w-5" aria-hidden="true" />
+            </button>
+            <img
+              src={expandedModel === 'portfolio' ? '/images/cv-business-professionnel-aux-saveurs-anis.png' : '/images/cv-business-portfolio-aux-saveurs-anis.png'}
+              alt={`${getPresentationModelLabel(language, expandedModel)} — Aux saveurs d’Anis`}
+              className="mx-auto mt-1 max-h-[82dvh] max-w-[calc(100vw-48px)] object-contain object-top"
+              decoding="async"
+            />
+          </div>
+        </div>
+      )}
     </section>
   );
 }
