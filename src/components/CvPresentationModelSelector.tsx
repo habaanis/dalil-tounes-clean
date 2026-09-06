@@ -268,7 +268,7 @@ export function CvPresentationModelSelector({
           >
             {value === 'portfolio' ? (
               <img
-                src="/images/cv-portfolio-aux-saveurs-anis-original.svg"
+                src="/images/cv-portfolio-aux-saveurs-anis-original.svg?v=2"
                 alt={`${copy.portfolio} — Aux saveurs d’Anis`}
                 className="h-[390px] w-auto max-w-none object-contain object-top"
                 loading="lazy"
@@ -312,7 +312,7 @@ export function CvPresentationModelSelector({
           className={`flex min-w-0 flex-col rounded-2xl border p-3.5 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'portfolio' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
         >
           <ModelPreview
-            src="/images/cv-portfolio-aux-saveurs-anis-original.svg"
+            src="/images/cv-portfolio-aux-saveurs-anis-original.svg?v=2"
             alt={`${copy.portfolio} — Aux saveurs d’Anis`}
             enlargeLabel={`${copy.enlarge} — ${copy.portfolio}`}
             onEnlarge={() => setExpandedModel('portfolio')}
@@ -370,7 +370,7 @@ export function CvPresentationModelSelector({
             </button>
             {expandedModel === 'portfolio' ? (
               <img
-                src="/images/cv-portfolio-aux-saveurs-anis-original.svg"
+                src="/images/cv-portfolio-aux-saveurs-anis-original.svg?v=2"
                 alt={`${copy.portfolio} — Aux saveurs d’Anis`}
                 className="mx-auto mt-1 max-h-[82dvh] max-w-[calc(100vw-48px)] object-contain object-top"
                 decoding="async"
