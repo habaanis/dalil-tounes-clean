@@ -22,6 +22,7 @@ type Copy = {
   continue: string;
   enlarge: string;
   close: string;
+  testModel: string;
 };
 
 const COPY: Record<SupportedLanguage, Copy> = {
@@ -42,6 +43,7 @@ const COPY: Record<SupportedLanguage, Copy> = {
     continue: 'Continuer avec ce choix',
     enlarge: 'Agrandir le modèle',
     close: 'Fermer',
+    testModel: 'Tester les boutons du modèle',
   },
   ar: {
     eyebrow: 'اختيارك',
@@ -60,6 +62,7 @@ const COPY: Record<SupportedLanguage, Copy> = {
     continue: 'متابعة بهذا الاختيار',
     enlarge: 'تكبير النموذج',
     close: 'إغلاق',
+    testModel: 'جرّب أزرار النموذج',
   },
   en: {
     eyebrow: 'Your choice',
@@ -78,6 +81,7 @@ const COPY: Record<SupportedLanguage, Copy> = {
     continue: 'Continue with this choice',
     enlarge: 'Enlarge model',
     close: 'Close',
+    testModel: 'Test the model buttons',
   },
   it: {
     eyebrow: 'La tua scelta',
@@ -96,6 +100,7 @@ const COPY: Record<SupportedLanguage, Copy> = {
     continue: 'Continua con questa scelta',
     enlarge: 'Ingrandisci il modello',
     close: 'Chiudi',
+    testModel: 'Prova i pulsanti del modello',
   },
   ru: {
     eyebrow: 'Ваш выбор',
@@ -114,6 +119,7 @@ const COPY: Record<SupportedLanguage, Copy> = {
     continue: 'Продолжить с этим выбором',
     enlarge: 'Увеличить модель',
     close: 'Закрыть',
+    testModel: 'Проверить кнопки модели',
   },
 };
 
@@ -383,6 +389,14 @@ export function CvPresentationModelSelector({
                 decoding="async"
               />
             )}
+            <a
+              href={`/entreprise/sousse/aux-saveurs-d-anis?preview-model=${expandedModel}&source=subscription&lang=${language}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mx-auto mt-3 flex min-h-11 w-full items-center justify-center rounded-xl bg-[#07543F] px-5 py-2.5 text-center text-sm font-bold text-white transition hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]"
+            >
+              {copy.testModel}
+            </a>
           </div>
         </div>
       )}
