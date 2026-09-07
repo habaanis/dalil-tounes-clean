@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { FormEvent, ReactNode } from 'react';
-import { ArrowRight, BadgeCheck, Briefcase, Check, Handshake, MapPin, Megaphone, Presentation, Users } from 'lucide-react';
+import { ArrowRight, BadgeCheck, Briefcase, Check, Handshake, MapPin, Megaphone, Presentation, Users, ZoomIn, X } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { partnerPageCopy } from '../i18n/partnerPage';
 import { PARTNERSHIP_RATES } from '../config/partnership';
@@ -17,6 +17,7 @@ export default function BecomePartner() {
   const [form, setForm] = useState(emptyForm);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
   const [success, setSuccess] = useState(false);
+  const [modelZoom, setModelZoom] = useState<null | { src: string; label: string }>(null);
 
   useEffect(() => {
     document.title = t.seoTitle;
@@ -51,8 +52,16 @@ export default function BecomePartner() {
           <small className="mt-4 block text-gray-500">{t.note}</small>
         </div>
         <div className="relative mx-auto h-[430px] w-full max-w-lg" aria-label={t.solutionTitle}>
-          <figure className="absolute start-[8%] top-8 w-[210px] -rotate-5 overflow-hidden rounded-[28px] border-[5px] border-[#07392E] bg-white shadow-2xl"><img className="block h-[370px] w-full object-cover object-top" src="/images/cv-business-professionnel-aux-saveurs-anis.png" alt={t.professional}/><figcaption className="absolute start-3 top-3 rounded-full bg-[#07392E] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#F4CE55]">{t.professional}</figcaption></figure>
-          <figure className="absolute end-[6%] top-0 w-[210px] rotate-5 overflow-hidden rounded-[28px] border-[5px] border-[#4A1D43] bg-white shadow-2xl"><img className="block h-[370px] w-full object-cover object-top" src="/images/cv-business-portfolio-aux-saveurs-anis.png" alt={t.portfolio}/><figcaption className="absolute start-3 top-3 rounded-full bg-[#4A1D43] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#F4CE55]">{t.portfolio}</figcaption></figure>
+          <figure className="absolute start-[8%] top-8 w-[210px] -rotate-5 overflow-hidden rounded-[28px] border-[5px] border-[#07392E] bg-white shadow-2xl">
+            <img className="block h-[370px] w-full object-contain object-top" src="/images/cv-business-professionnel-aux-saveurs-anis.png" alt={t.professional}/>
+            <figcaption className="absolute start-3 top-3 rounded-full bg-[#07392E] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#F4CE55]">{t.professional}</figcaption>
+            <button type="button" onClick={() => setModelZoom({src:'/images/cv-business-professionnel-aux-saveurs-anis.png',label:t.professional})} className="absolute bottom-3 end-3 z-10 flex min-h-11 items-center gap-2 rounded-full border-2 border-[#F4CE55] bg-[#07392E] px-3 text-xs font-bold text-white shadow-xl" aria-label={`${t.professional} — agrandir`}><ZoomIn size={18}/><span className="hidden sm:inline">Agrandir</span></button>
+          </figure>
+          <figure className="absolute end-[6%] top-0 w-[210px] rotate-5 overflow-hidden rounded-[28px] border-[5px] border-[#4A1D43] bg-white shadow-2xl">
+            <img className="block h-[370px] w-full object-contain object-top" src="/images/cv-business-portfolio-aux-saveurs-anis.png" alt={t.portfolio}/>
+            <figcaption className="absolute start-3 top-3 rounded-full bg-[#4A1D43] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#F4CE55]">{t.portfolio}</figcaption>
+            <button type="button" onClick={() => setModelZoom({src:'/images/cv-business-portfolio-aux-saveurs-anis.png',label:t.portfolio})} className="absolute bottom-3 end-3 z-10 flex min-h-11 items-center gap-2 rounded-full border-2 border-[#F4CE55] bg-[#4A1D43] px-3 text-xs font-bold text-white shadow-xl" aria-label={`${t.portfolio} — agrandir`}><ZoomIn size={18}/><span className="hidden sm:inline">Agrandir</span></button>
+          </figure>
         </div>
       </div>
     </section>
@@ -102,6 +111,12 @@ export default function BecomePartner() {
       </div>
     </section>
     <Section eyebrow={t.faqEyebrow} title={t.faqTitle}><div className="border-t border-gray-200">{t.faq.map(([q,a])=><details key={q} className="border-b border-gray-200 py-4"><summary className="cursor-pointer font-bold text-[#4A1D43]">{q}</summary><p className="mt-3 max-w-3xl leading-7 text-gray-600">{a}</p></details>)}</div></Section>
+    {modelZoom && <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 p-3 sm:p-6" role="dialog" aria-modal="true" aria-label={modelZoom.label} onClick={() => setModelZoom(null)}>
+      <div className="relative flex max-h-[94vh] max-w-[94vw] flex-col items-center overflow-hidden rounded-3xl bg-white p-3 shadow-2xl sm:p-5" onClick={event => event.stopPropagation()}>
+        <button type="button" onClick={() => setModelZoom(null)} className="absolute end-4 top-4 z-10 grid h-12 w-12 place-items-center rounded-full border-2 border-[#D4AF37] bg-white text-[#4A1D43] shadow-lg" aria-label="Fermer"><X size={25}/></button>
+        <img src={modelZoom.src} alt={modelZoom.label} className="max-h-[86vh] max-w-full object-contain"/>
+      </div>
+    </div>}
     <section className="bg-[#4A1D43] px-4 py-16 text-center text-white"><h2 className="text-3xl font-bold md:text-5xl">{t.finalTitle}</h2><p className="mx-auto mt-4 max-w-2xl leading-8 text-white/80">{t.finalText}</p><a href="#partenaire-formulaire" className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#D4AF37] px-6 py-3 font-bold text-[#241020]">{t.cta}<ArrowRight size={18}/></a></section>
   </div>;
 }
