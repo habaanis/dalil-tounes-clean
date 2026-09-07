@@ -50,9 +50,9 @@ export default function BecomePartner() {
           <a href="#partenaire-formulaire" className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#005B44] px-6 py-3 font-bold text-white shadow-lg transition hover:-translate-y-0.5">{t.cta}<ArrowRight size={18}/></a>
           <small className="mt-4 block text-gray-500">{t.note}</small>
         </div>
-        <div className="relative mx-auto h-[390px] w-full max-w-lg" aria-label={t.solutionTitle}>
-          <div className="absolute start-[7%] top-8 h-[340px] w-[210px] -rotate-6 rounded-[30px] border-[7px] border-[#07392E] bg-gradient-to-b from-[#07392E] to-[#005B44] p-5 text-white shadow-2xl"><span className="text-xs font-bold uppercase tracking-widest text-[#F4CE55]">{t.professional}</span><p className="mt-14 line-clamp-5 text-xl font-bold leading-tight">{t.professionalText}</p></div>
-          <div className="absolute end-[5%] top-0 h-[340px] w-[210px] rotate-6 rounded-[30px] border-[7px] border-[#4A1D43] bg-[#FFF8E6] p-5 shadow-2xl"><span className="text-xs font-bold uppercase tracking-widest text-[#9A7419]">{t.portfolio}</span><div className="mt-7 grid grid-cols-2 gap-2">{[1,2,3,4].map(value => <i key={value} className="h-24 rounded-xl bg-gradient-to-br from-[#D4AF37] to-[#4A1D43]"/>)}</div></div>
+        <div className="relative mx-auto h-[430px] w-full max-w-lg" aria-label={t.solutionTitle}>
+          <figure className="absolute start-[8%] top-8 w-[210px] -rotate-5 overflow-hidden rounded-[28px] border-[5px] border-[#07392E] bg-white shadow-2xl"><img className="block h-[370px] w-full object-cover object-top" src="/images/cv-business-professionnel-aux-saveurs-anis.png" alt={t.professional}/><figcaption className="absolute start-3 top-3 rounded-full bg-[#07392E] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#F4CE55]">{t.professional}</figcaption></figure>
+          <figure className="absolute end-[6%] top-0 w-[210px] rotate-5 overflow-hidden rounded-[28px] border-[5px] border-[#4A1D43] bg-white shadow-2xl"><img className="block h-[370px] w-full object-cover object-top" src="/images/cv-business-portfolio-aux-saveurs-anis.png" alt={t.portfolio}/><figcaption className="absolute start-3 top-3 rounded-full bg-[#4A1D43] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#F4CE55]">{t.portfolio}</figcaption></figure>
         </div>
       </div>
     </section>
