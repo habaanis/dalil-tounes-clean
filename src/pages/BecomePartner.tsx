@@ -51,16 +51,16 @@ export default function BecomePartner() {
           <a href="#partenaire-formulaire" className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#005B44] px-6 py-3 font-bold text-white shadow-lg transition hover:-translate-y-0.5">{t.cta}<ArrowRight size={18}/></a>
           <small className="mt-4 block text-gray-500">{t.note}</small>
         </div>
-        <div className="relative mx-auto h-[430px] w-full max-w-lg" aria-label={t.solutionTitle}>
-          <figure className="absolute start-[8%] top-8 w-[210px] -rotate-5 overflow-hidden rounded-[28px] border-[5px] border-[#07392E] bg-white shadow-2xl">
-            <img className="block h-[370px] w-full object-contain object-top" src="/images/cv-business-professionnel-aux-saveurs-anis.png" alt={t.professional}/>
+        <div className="mx-auto grid w-full max-w-md grid-cols-2 items-center gap-5 px-2" aria-label={t.solutionTitle}>
+          <figure className="relative w-full -rotate-2 overflow-hidden rounded-[28px] border-[5px] border-[#07392E] bg-white shadow-2xl">
+            <img className="block h-[390px] w-full object-contain object-top" src="/images/cv-business-portfolio-aux-saveurs-anis.png" alt={t.professional}/>
             <figcaption className="absolute start-3 top-3 rounded-full bg-[#07392E] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#F4CE55]">{t.professional}</figcaption>
-            <button type="button" onClick={() => setModelZoom({src:'/images/cv-business-professionnel-aux-saveurs-anis.png',label:t.professional})} className="absolute bottom-3 end-3 z-10 flex min-h-11 items-center gap-2 rounded-full border-2 border-[#F4CE55] bg-[#07392E] px-3 text-xs font-bold text-white shadow-xl" aria-label={`${t.professional} — agrandir`}><ZoomIn size={18}/><span className="hidden sm:inline">Agrandir</span></button>
+            <button type="button" onClick={() => setModelZoom({src:'/images/cv-business-portfolio-aux-saveurs-anis.png',label:t.professional})} className="absolute bottom-3 end-3 z-10 flex min-h-11 items-center gap-2 rounded-full border-2 border-[#F4CE55] bg-[#07392E] px-3 text-xs font-bold text-white shadow-xl" aria-label={`${t.professional} — agrandir`}><ZoomIn size={18}/><span className="hidden sm:inline">Agrandir</span></button>
           </figure>
-          <figure className="absolute end-[6%] top-0 w-[210px] rotate-5 overflow-hidden rounded-[28px] border-[5px] border-[#4A1D43] bg-white shadow-2xl">
-            <img className="block h-[370px] w-full object-contain object-top" src="/images/cv-business-portfolio-aux-saveurs-anis.png" alt={t.portfolio}/>
+          <figure className="relative w-full rotate-2 overflow-hidden rounded-[28px] border-[5px] border-[#4A1D43] bg-white shadow-2xl">
+            <img className="block h-[390px] w-full object-contain object-top" src="/images/cv-business-professionnel-aux-saveurs-anis.png" alt={t.portfolio}/>
             <figcaption className="absolute start-3 top-3 rounded-full bg-[#4A1D43] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#F4CE55]">{t.portfolio}</figcaption>
-            <button type="button" onClick={() => setModelZoom({src:'/images/cv-business-portfolio-aux-saveurs-anis.png',label:t.portfolio})} className="absolute bottom-3 end-3 z-10 flex min-h-11 items-center gap-2 rounded-full border-2 border-[#F4CE55] bg-[#4A1D43] px-3 text-xs font-bold text-white shadow-xl" aria-label={`${t.portfolio} — agrandir`}><ZoomIn size={18}/><span className="hidden sm:inline">Agrandir</span></button>
+            <button type="button" onClick={() => setModelZoom({src:'/images/cv-business-professionnel-aux-saveurs-anis.png',label:t.portfolio})} className="absolute bottom-3 end-3 z-10 flex min-h-11 items-center gap-2 rounded-full border-2 border-[#F4CE55] bg-[#4A1D43] px-3 text-xs font-bold text-white shadow-xl" aria-label={`${t.portfolio} — agrandir`}><ZoomIn size={18}/><span className="hidden sm:inline">Agrandir</span></button>
           </figure>
         </div>
       </div>
