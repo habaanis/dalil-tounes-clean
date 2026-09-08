@@ -77,6 +77,7 @@ const Auth = lazy(() => import('./pages/Auth'));
 const CandidateDashboard = lazy(() => import('./pages/CandidateDashboard'));
 const CompanyDashboard = lazy(() => import('./pages/CompanyDashboard'));
 const Concept = lazy(() => import('./pages/Concept'));
+const BecomePartner = lazy(() => import('./pages/BecomePartner'));
 const PourquoiDalilTounes = lazy(() => import('./pages/PourquoiDalilTounes'));
 const Blog = lazy(() => import('./pages/blog/Blog'));
 const BlogPost = lazy(() => import('./pages/blog/BlogPost'));
@@ -195,6 +196,7 @@ function AppRouter() {
           <Route path="/abonnement" element={<Subscription />} />
           <Route path="/paiement/confirmation" element={<PaiementConfirmation />} />
           <Route path="/concept" element={<Concept />} />
+          <Route path="/devenir-partenaire" element={<BecomePartner />} />
           <Route path="/notre-concept" element={<Concept />} />
           <Route path="/pourquoi-dalil-tounes" element={<PourquoiDalilTounes />} />
           <Route path="/blog" element={<Blog />} />
