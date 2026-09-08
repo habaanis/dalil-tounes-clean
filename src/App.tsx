@@ -118,6 +118,7 @@ function App() {
         'abonnement': '/subscription',
         'concept': '/concept',
         'notre-concept': '/concept',
+        'devenir-partenaire': '/devenir-partenaire',
         'autour-de-moi': '/around-me',
         'around-me': '/around-me',
         'auth': '/auth',
