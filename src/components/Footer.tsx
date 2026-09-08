@@ -8,6 +8,7 @@ import { getFooterRequestTranslations } from '../lib/footerRequestTranslations';
 import { useRTL } from '../lib/useRTL';
 import { supabase } from '../lib/BoltDatabase';
 import { notifyAdmin } from '../lib/notifyAdmin';
+import { partnerPageCopy } from '../i18n/partnerPage';
 
 const EmailContact: React.FC = () => {
   const { language } = useLanguage();
@@ -346,6 +347,7 @@ const Footer: React.FC = () => {
             <ul className="space-y-2.5">
               <li><Link to="/subscription" className={footerLink}>{staticCopy.offers}</Link></li>
               <li><Link to="/businesses" className={footerLink}>{staticCopy.businesses}</Link></li>
+              <li><Link to="/devenir-partenaire" className={footerLink}>{partnerPageCopy[language === 'ar' ? 'ar' : 'fr'].footerLink}</Link></li>
               {/* Future link: "Pourquoi créer une fiche professionnelle" */}
             </ul>
           </div>

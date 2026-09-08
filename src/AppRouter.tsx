@@ -94,6 +94,7 @@ const GouvernoratPage = lazy(() => import('./pages/seo/GouvernoratPage'));
 const SuggestBusiness = lazy(() => import('./pages/SuggestBusiness').then(m => ({ default: m.SuggestBusiness })));
 const BusinessRegistration = lazy(() => import('./pages/BusinessRegistration'));
 const CardPreview = lazy(() => import('./pages/CardPreview'));
+const BecomePartner = lazy(() => import('./pages/BecomePartner'));
 
 const PageLoader = () => (
   <div className="min-h-screen bg-white" aria-hidden="true">
@@ -237,6 +238,7 @@ function AppRouter() {
           <Route path="/politique-confidentialite" element={<PrivacyPolicy />} />
           <Route path="/plan-du-site" element={<SitemapPage />} />
           <Route path="/info-avis" element={<InfoAvis />} />
+          <Route path="/devenir-partenaire" element={<BecomePartner />} />
 
           <Route path="/ville/:villeSlug" element={<VillePage />} />
           <Route path="/secteur/:secteurSlug" element={<SecteurPage />} />
