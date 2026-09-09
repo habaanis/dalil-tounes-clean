@@ -77,11 +77,14 @@ export const Layout = ({ children }: LayoutProps) => {
   const showAdminLink = isAdmin || import.meta.env.DEV || import.meta.env.VITE_SHOW_ADMIN_LINK === 'true';
 
   const tx = t as any;
+  const publicNavLabels =
+    language === 'ar' ? { discover: 'اكتشف', partners: 'الشركاء', contact: 'اتصل بنا' } :
+    language === 'en' ? { discover: 'Discover', partners: 'Partners', contact: 'Contact' } :
+    language === 'it' ? { discover: 'Scopri', partners: 'Partner', contact: 'Contatti' } :
+    language === 'ru' ? { discover: 'Узнать', partners: 'Партнёры', contact: 'Контакты' } :
+    { discover: 'Découvrir', partners: 'Partenaires', contact: 'Contact' };
+
   const navigationStructure: NavItem[] = [
-    {
-      label: t.nav.home || 'Accueil',
-      path: '/',
-    },
     ...(isAdmin
       ? [
           {
@@ -130,16 +133,24 @@ export const Layout = ({ children }: LayoutProps) => {
           } as NavItem,
         ]),
     {
+      label: publicNavLabels.discover,
+      path: '/concept',
+      children: [
+        { label: tx.navExtra?.concept || 'Notre Concept', path: '/concept' },
+        { label: tx.navExtra?.blog || 'Articles', path: '/blog' },
+      ],
+    },
+    {
       label: t.nav.subscription || 'Abonnement',
       path: '/subscription',
     },
     {
-      label: tx.navExtra?.concept || 'Notre Concept',
-      path: '/concept',
+      label: publicNavLabels.partners,
+      path: '/devenir-partenaire',
     },
     {
-      label: tx.navExtra?.blog || 'Articles',
-      path: '/blog',
+      label: publicNavLabels.contact,
+      path: '/contact',
     },
   ];
 
@@ -231,7 +242,7 @@ export const Layout = ({ children }: LayoutProps) => {
               </span>
             </Link>
 
-            <div className="hidden md:flex items-center gap-6">
+            <div className="hidden md:flex items-center gap-4 xl:gap-6">
               {navigationStructure.map((navItem, index) => (
                 <div
                   key={index}
