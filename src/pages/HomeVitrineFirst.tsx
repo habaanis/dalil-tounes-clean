@@ -49,6 +49,7 @@ const COPY: Record<BusinessCardPreviewLanguage, {
   example: string;
   modelPrompt: string;
   primary: string;
+  information: string;
   secondary: string;
   offerBadge: string;
   offerTitle: string;
@@ -73,6 +74,7 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     example: "Exemple réel de présentation : Aux saveurs d'Anis",
     modelPrompt: 'Choisissez votre modèle',
     primary: 'Découvrir les offres',
+    information: 'Demander des informations',
     secondary: 'Découvrir la plateforme',
     offerBadge: 'Offre de bienvenue',
     offerTitle: '3 ans de CV Business — 2 années offertes',
@@ -97,6 +99,7 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     example: "مثال تقديم: Aux saveurs d'Anis",
     modelPrompt: 'اختر النموذج',
     primary: 'اكتشف العروض',
+    information: 'طلب معلومات',
     secondary: 'اكتشف المنصة',
     offerBadge: 'عرض ترحيبي',
     offerTitle: '3 سنوات من CV Business — سنتان مجانًا',
@@ -121,6 +124,7 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     example: "Presentation example: Aux saveurs d'Anis",
     modelPrompt: 'Choose your model',
     primary: 'Discover the offers',
+    information: 'Request information',
     secondary: 'Discover the platform',
     offerBadge: 'Welcome offer',
     offerTitle: '3 years of Business CV — 2 years free',
@@ -145,6 +149,7 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     example: "Esempio di presentazione: Aux saveurs d'Anis",
     modelPrompt: 'Scegli il modello',
     primary: 'Scopri le offerte',
+    information: 'Richiedi informazioni',
     secondary: 'Scopri la piattaforma',
     offerBadge: 'Offerta di benvenuto',
     offerTitle: '3 anni di CV Business — 2 anni offerti',
@@ -169,6 +174,7 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     example: "Пример презентации: Aux saveurs d'Anis",
     modelPrompt: 'Выберите модель',
     primary: 'Посмотреть предложения',
+    information: 'Запросить информацию',
     secondary: 'Открыть платформу',
     offerBadge: 'Приветственное предложение',
     offerTitle: '3 года Business CV — 2 года бесплатно',
@@ -243,8 +249,15 @@ export default function HomeVitrineFirst() {
               </button>
               <button
                 type="button"
-                onClick={() => navigate('/businesses')}
+                onClick={() => navigate('/contact')}
                 className="inline-flex min-h-12 items-center justify-center rounded-xl border border-[#D4AF37] bg-white px-5 py-3 text-sm font-bold text-[#4A1D43] transition hover:bg-[#FFF8DF] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]"
+              >
+                {t.information}
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate('/businesses')}
+                className="inline-flex min-h-12 items-center justify-center rounded-xl px-3 py-3 text-sm font-bold text-[#4A1D43] underline decoration-[#D4AF37] underline-offset-4 transition hover:text-[#6A315F] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]"
               >
                 {t.secondary}
               </button>
