@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ArrowRight, Download, Smartphone, X, ZoomIn } from 'lucide-react';
+import { ArrowRight, Download, PlayCircle, Smartphone, X, ZoomIn } from 'lucide-react';
 import type { BusinessCardPreviewLanguage } from './BusinessCardPreview';
 import { CvBusinessQrVisual, AUX_SAVEURS_LOGO } from './CvBusinessQrVisual';
 
@@ -136,6 +136,19 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     closePreview: 'Закрыть изображение',
   },
 };
+
+const VIDEO_COPY = {
+  fr: {
+    button: 'Voir la vidéo',
+    title: 'Découvrez Dalil Tounes en vidéo',
+    close: 'Fermer la vidéo',
+  },
+  ar: {
+    button: 'شاهد الفيديو',
+    title: 'اكتشف دليل تونس بالفيديو',
+    close: 'إغلاق الفيديو',
+  },
+} as const;
 
 function JourneyArrow({ rtl }: { rtl: boolean }) {
   return (
@@ -289,8 +302,14 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
   const t = COPY[language];
   const rtl = language === 'ar';
   const [expandedVisual, setExpandedVisual] = useState<JourneyVisual | null>(null);
+  const [videoOpen, setVideoOpen] = useState(false);
   const [activeCvModel, setActiveCvModel] = useState<CvModel>('professional');
   const [activeMobileStep, setActiveMobileStep] = useState<MobileJourneyStep>('pwa');
+  const videoLanguage = language === 'fr' || language === 'ar' ? language : null;
+  const videoCopy = videoLanguage ? VIDEO_COPY[videoLanguage] : null;
+  const videoSrc = videoLanguage === 'ar'
+    ? 'https://static.metricool.com/video/4610595/202609/0a154ec0c4a44fb7.mp4'
+    : 'https://static.metricool.com/video/4610595/202609/eaaff4e56ccf4aba.mp4';
   const activeCvImage = activeCvModel === 'portfolio'
     ? '/images/cv-business-professionnel-aux-saveurs-anis.png'
     : '/images/cv-business-portfolio-aux-saveurs-anis.png';
@@ -303,6 +322,25 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
   const mobileStepTitle = activeMobileStep === 'pwa' ? t.pwaTitle : activeMobileStep === 'qr' ? t.qrTitle : t.cvTitle;
   const mobileStepText = activeMobileStep === 'pwa' ? t.pwaText : activeMobileStep === 'qr' ? t.qrText : t.cvText;
 
+  useEffect(() => {
+    if (!videoOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    const previousDocumentOverflow = document.documentElement.style.overflow;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setVideoOpen(false);
+    };
+
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.documentElement.style.overflow = previousDocumentOverflow;
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [videoOpen]);
+
   return (
     <section className="border-y border-[#D5B257]/25 bg-[radial-gradient(circle_at_top,rgba(213,178,87,0.12),transparent_32%),linear-gradient(180deg,#fffdf8_0%,#ffffff_100%)] px-4 py-5 sm:py-6" dir={rtl ? 'rtl' : 'ltr'}>
       <div className="mx-auto max-w-[900px]">
@@ -313,6 +351,17 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
           </div>
           <h2 className="mt-2 font-serif text-2xl font-bold text-[#2E102A] sm:text-[28px]">{t.title}</h2>
           <p className="mx-auto mt-1 max-w-xl text-xs leading-5 text-gray-600 sm:text-[13px]">{t.subtitle}</p>
+          {videoCopy && (
+            <button
+              type="button"
+              onClick={() => setVideoOpen(true)}
+              className="mt-3 inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-[#D5B257] bg-[#032D21] px-5 py-2.5 text-sm font-black text-[#F4CE55] shadow-md transition hover:-translate-y-0.5 hover:bg-[#064634] hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#D5B257] focus:ring-offset-2"
+              aria-haspopup="dialog"
+            >
+              <PlayCircle className="h-5 w-5" aria-hidden="true" />
+              {videoCopy.button}
+            </button>
+          )}
         </div>
 
         <div className="mt-4 lg:hidden">
@@ -463,6 +512,47 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
           visual={expandedVisual}
           onClose={() => setExpandedVisual(null)}
         />
+      )}
+
+      {videoOpen && videoCopy && (
+        <div
+          className="fixed inset-0 z-[130] flex items-center justify-center bg-black/80 p-3 backdrop-blur-sm sm:p-6"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setVideoOpen(false);
+          }}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label={videoCopy.title}
+            className="relative flex max-h-[95dvh] w-full max-w-[430px] flex-col overflow-hidden rounded-3xl border border-[#D5B257]/70 bg-[#FFFCF7] shadow-2xl"
+          >
+            <div className="flex items-center justify-between gap-3 border-b border-[#D5B257]/35 px-4 py-3">
+              <h3 className="text-sm font-black text-[#2E102A] sm:text-base">{videoCopy.title}</h3>
+              <button
+                type="button"
+                onClick={() => setVideoOpen(false)}
+                className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-[#D5B257]/60 bg-white text-[#032D21] transition hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-[#D5B257]"
+                aria-label={videoCopy.close}
+                title={videoCopy.close}
+                autoFocus
+              >
+                <X className="h-5 w-5" aria-hidden="true" />
+              </button>
+            </div>
+            <div className="min-h-0 flex-1 bg-black">
+              <video
+                className="mx-auto max-h-[82dvh] w-full bg-black object-contain"
+                controls
+                playsInline
+                preload="none"
+                src={videoSrc}
+              >
+                {videoCopy.title}
+              </video>
+            </div>
+          </div>
+        </div>
       )}
     </section>
   );
