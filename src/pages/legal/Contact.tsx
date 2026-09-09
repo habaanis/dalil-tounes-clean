@@ -1,5 +1,6 @@
 import React from 'react';
 import { Mail, MessageCircle } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 import { BusinessRegistrationRequestForm } from '../../components/BusinessRegistrationRequestForm';
 import { useLanguage } from '../../context/LanguageContext';
 
@@ -49,10 +50,50 @@ const COPY: Record<PublicLanguage, {
   },
 };
 
+const PARTNER_COPY: typeof COPY = {
+  fr: {
+    eyebrow: 'Candidature partenaire',
+    title: 'Devenez partenaire Dalil Tounes',
+    subtitle: 'Débutant motivé ou commercial expérimenté : présentez votre activité actuelle, votre zone et le réseau professionnel que vous connaissez. Aucun paiement ne vous sera demandé.',
+    formTitle: 'Présentez votre candidature',
+    emailLabel: 'Vous préférez nous écrire directement ?',
+  },
+  ar: {
+    eyebrow: 'ترشح شريك',
+    title: 'ولّي شريك دليل تونس',
+    subtitle: 'مبتدئ متحمس ولا عندك خبرة في البيع؟ عرّفنا بنشاطك الحالي، جهتك، والمهنيين اللي تعرفهم. ما ثماش حتى خلاص مطلوب منك.',
+    formTitle: 'قدّم ترشحك',
+    emailLabel: 'تفضّل تراسلنا مباشرة؟',
+  },
+  en: {
+    eyebrow: 'Partner application',
+    title: 'Become a Dalil Tounes partner',
+    subtitle: 'Motivated beginner or experienced salesperson: tell us about your current activity, area and professional network. No payment is required.',
+    formTitle: 'Submit your application',
+    emailLabel: 'Prefer to email us directly?',
+  },
+  it: {
+    eyebrow: 'Candidatura partner',
+    title: 'Diventa partner di Dalil Tounes',
+    subtitle: 'Principiante motivato o commerciale esperto: presentaci la tua attività, la tua zona e la tua rete professionale. Non è richiesto alcun pagamento.',
+    formTitle: 'Presenta la tua candidatura',
+    emailLabel: 'Preferisci scriverci direttamente?',
+  },
+  ru: {
+    eyebrow: 'Заявка партнёра',
+    title: 'Станьте партнёром Dalil Tounes',
+    subtitle: 'Мотивированный новичок или опытный специалист: расскажите о своей деятельности, регионе и профессиональных контактах. Оплата не требуется.',
+    formTitle: 'Подайте заявку',
+    emailLabel: 'Предпочитаете написать нам напрямую?',
+  },
+};
+
 const Contact: React.FC = () => {
   const { language } = useLanguage();
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as PublicLanguage;
-  const copy = COPY[lang];
+  const [searchParams] = useSearchParams();
+  const isPartnerRequest = searchParams.get('objet') === 'partenariat';
+  const copy = isPartnerRequest ? PARTNER_COPY[lang] : COPY[lang];
   const rtl = lang === 'ar';
 
   return (
