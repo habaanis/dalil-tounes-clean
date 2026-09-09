@@ -525,7 +525,8 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
             role="dialog"
             aria-modal="true"
             aria-label={videoCopy.title}
-            className="relative flex max-h-[95dvh] w-full max-w-[430px] flex-col overflow-hidden rounded-3xl border border-[#D5B257]/70 bg-[#FFFCF7] shadow-2xl"
+            className="relative flex max-h-[95dvh] flex-col overflow-hidden rounded-3xl border border-[#D5B257]/70 bg-[#FFFCF7] shadow-2xl"
+            style={{ width: 'min(430px, 46.125dvh, calc(100vw - 24px))' }}
           >
             <div className="flex items-center justify-between gap-3 border-b border-[#D5B257]/35 px-4 py-3">
               <h3 className="text-sm font-black text-[#2E102A] sm:text-base">{videoCopy.title}</h3>
@@ -540,9 +541,9 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
                 <X className="h-5 w-5" aria-hidden="true" />
               </button>
             </div>
-            <div className="min-h-0 flex-1 bg-black">
+            <div className="min-h-0 bg-black">
               <video
-                className="mx-auto max-h-[82dvh] w-full bg-black object-contain"
+                className="mx-auto aspect-[9/16] max-h-[82dvh] w-full bg-black object-contain"
                 controls
                 playsInline
                 preload="none"
