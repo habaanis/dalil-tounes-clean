@@ -26,6 +26,12 @@ interface LayoutProps {
   children: ReactNode;
 }
 
+type InstallPromptEvent = Event & {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+};
+type InstallPromptWindow = Window & { __dalilInstallPrompt?: InstallPromptEvent };
+
 export const Layout = ({ children }: LayoutProps) => {
   const { language } = useLanguage();
   const t = useTranslation(language);
@@ -39,8 +45,11 @@ export const Layout = ({ children }: LayoutProps) => {
   const isAdmin = !!user?.email && ADMIN_EMAILS.includes(user.email.toLowerCase());
 
   // PWA install banner state
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState<InstallPromptEvent | null>(
+    () => (window as InstallPromptWindow).__dalilInstallPrompt || null,
+  );
   const [showIOSGuide, setShowIOSGuide] = useState(false);
+  const [showInstallGuide, setShowInstallGuide] = useState<'android' | 'desktop' | null>(null);
   const [pwaInstalled, setPwaInstalled] = useState(false);
 
   const pwaDetectPlatform = (): 'android' | 'ios' | 'other' => {
@@ -55,23 +64,44 @@ export const Layout = ({ children }: LayoutProps) => {
       setPwaInstalled(true);
       return;
     }
-    const handler = (e: Event) => { e.preventDefault(); setDeferredPrompt(e); };
+    const handler = (e: Event) => {
+      e.preventDefault();
+      const promptEvent = e as InstallPromptEvent;
+      (window as InstallPromptWindow).__dalilInstallPrompt = promptEvent;
+      setDeferredPrompt(promptEvent);
+    };
+    const installedHandler = () => {
+      (window as InstallPromptWindow).__dalilInstallPrompt = undefined;
+      setDeferredPrompt(null);
+      setPwaInstalled(true);
+    };
     window.addEventListener('beforeinstallprompt', handler);
-    window.addEventListener('appinstalled', () => setPwaInstalled(true));
-    return () => window.removeEventListener('beforeinstallprompt', handler);
+    window.addEventListener('appinstalled', installedHandler);
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handler);
+      window.removeEventListener('appinstalled', installedHandler);
+    };
   }, []);
 
   const handleInstallApp = async () => {
     const platform = pwaDetectPlatform();
     if (platform === 'ios') { setShowIOSGuide(true); return; }
-    if (deferredPrompt) {
-      await deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') setPwaInstalled(true);
-      setDeferredPrompt(null);
-    } else {
-      handleNavigateToSubscription();
+    const promptEvent = deferredPrompt || (window as InstallPromptWindow).__dalilInstallPrompt || null;
+    if (promptEvent) {
+      try {
+        await promptEvent.prompt();
+        const { outcome } = await promptEvent.userChoice;
+        if (outcome === 'accepted') setPwaInstalled(true);
+        else setShowInstallGuide(platform === 'android' ? 'android' : 'desktop');
+      } catch {
+        setShowInstallGuide(platform === 'android' ? 'android' : 'desktop');
+      } finally {
+        (window as InstallPromptWindow).__dalilInstallPrompt = undefined;
+        setDeferredPrompt(null);
+      }
+      return;
     }
+    setShowInstallGuide(platform === 'android' ? 'android' : 'desktop');
   };
 
   const showAdminLink = isAdmin || import.meta.env.DEV || import.meta.env.VITE_SHOW_ADMIN_LINK === 'true';
@@ -163,11 +193,6 @@ export const Layout = ({ children }: LayoutProps) => {
     setShowMobileMenu(false);
     setMobileExpandedMenu(null);
     navigate(path);
-  };
-
-  const handleNavigateToSubscription = () => {
-    navigate('/subscription');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // Prefetch des données home + businesses au ralenti après le premier rendu,
@@ -432,6 +457,7 @@ export const Layout = ({ children }: LayoutProps) => {
                     <button
                       type="button"
                       onClick={handleInstallApp}
+                      aria-label="Installer Dalil Tounes"
                       className="underline decoration-2 decoration-gray-900/40 underline-offset-2 hover:decoration-gray-900 transition-colors cursor-pointer bg-transparent border-none p-0 m-0 font-bold text-gray-900 text-sm md:text-base"
                     >
                       Dalil Tounes
@@ -439,7 +465,7 @@ export const Layout = ({ children }: LayoutProps) => {
                     {' '}sur mobile + inscriptions gratuites !
                   </p>
                   <p className="hidden md:block text-xs text-gray-800">
-                    Cliquez sur "Dalil Tounes" pour installer l'application sur votre mobile.
+                    Cliquez pour installer l'application. Si Chrome ne la propose pas, un guide s'affichera.
                   </p>
                 </div>
               </div>
@@ -494,6 +520,40 @@ export const Layout = ({ children }: LayoutProps) => {
         </div>
       )}
 
+      {showInstallGuide && (
+        <div
+          className="fixed inset-0 bg-black/70 z-[99999] flex items-end sm:items-center justify-center p-4"
+          onClick={(e) => e.target === e.currentTarget && setShowInstallGuide(null)}
+        >
+          <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden" role="dialog" aria-modal="true" aria-labelledby="install-guide-title">
+            <div className="bg-[#4A1D43] px-5 py-4 flex items-center justify-between">
+              <h3 id="install-guide-title" className="text-base font-semibold text-[#D4AF37]">
+                Installer Dalil Tounes
+              </h3>
+              <button onClick={() => setShowInstallGuide(null)} className="p-1 text-gray-300 hover:text-white transition" aria-label="Fermer">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-5 space-y-4">
+              {showInstallGuide === 'android' ? (
+                <>
+                  <GuideStep number="1">Ouvrez le menu ⋮ de Chrome.</GuideStep>
+                  <GuideStep number="2">Choisissez « Installer l'application » ou « Ajouter à l'écran d'accueil ».</GuideStep>
+                  <GuideStep number="3">Confirmez l'installation.</GuideStep>
+                </>
+              ) : (
+                <>
+                  <GuideStep number="1">Dans Chrome, ouvrez le menu ⋮ en haut à droite.</GuideStep>
+                  <GuideStep number="2">Choisissez « Enregistrer et partager », puis « Installer Dalil Tounes ».</GuideStep>
+                  <p className="text-sm leading-6 text-gray-600">Pour l'installer sur votre téléphone, ouvrez directement <strong>dalil-tounes.com</strong> sur ce téléphone.</p>
+                </>
+              )}
+              <p className="text-xs text-gray-400 text-center pt-2 border-t border-gray-100">L'installation est gratuite et ne passe pas par le paiement.</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       <main className={`min-h-[calc(100vh-5rem)] overflow-x-hidden ${location.pathname === '/' ? '' : 'pt-[96px] sm:pt-[104px]'}`}>{children}</main>
 
       <Suspense fallback={null}>
@@ -507,3 +567,12 @@ export const Layout = ({ children }: LayoutProps) => {
     </div>
   );
 };
+
+function GuideStep({ number, children }: { number: string; children: ReactNode }) {
+  return (
+    <div className="flex items-start gap-3">
+      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#4A1D43] text-[#D4AF37] flex items-center justify-center text-sm font-bold">{number}</div>
+      <p className="pt-1 text-sm font-medium text-gray-900">{children}</p>
+    </div>
+  );
+}
