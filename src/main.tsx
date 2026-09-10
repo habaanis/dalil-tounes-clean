@@ -40,6 +40,20 @@ const isBoltWebContainer =
 // Utiliser HashRouter pour Bolt/WebContainer, BrowserRouter pour localhost et production
 const Router = isBoltWebContainer ? HashRouter : BrowserRouter;
 
+// Capture la proposition d'installation le plus tôt possible. Le composant
+// Layout peut être monté après l'événement `beforeinstallprompt` sur certains
+// navigateurs, ce qui rendrait sinon le bouton d'installation inactif.
+type InstallPromptEvent = Event & {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+};
+type InstallPromptWindow = Window & { __dalilInstallPrompt?: InstallPromptEvent };
+const installPromptWindow = window as InstallPromptWindow;
+installPromptWindow.addEventListener('beforeinstallprompt', (event) => {
+  event.preventDefault();
+  installPromptWindow.__dalilInstallPrompt = event as InstallPromptEvent;
+});
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Router>
