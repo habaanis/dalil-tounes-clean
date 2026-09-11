@@ -1,6 +1,8 @@
 import { Phone, MapPin, Users, Clock, Star, Ambulance, Car } from 'lucide-react';
 import { motion } from 'framer-motion';
 import SignatureCard from './SignatureCard';
+import { useLanguage } from '../context/LanguageContext';
+import { useTranslationExtended } from '../lib/useTranslationExtended';
 
 interface MedicalTransportCardProps {
   provider: {
@@ -21,6 +23,11 @@ interface MedicalTransportCardProps {
 }
 
 export default function MedicalTransportCard({ provider }: MedicalTransportCardProps) {
+  const { language } = useLanguage();
+  const te = useTranslationExtended(language);
+  const mt = te.medicalTransport!;
+  const isRTL = language === 'ar';
+
   const isAmbulance = provider.vehicle_type?.toLowerCase().includes('ambulance');
   const isTaxi = provider.vehicle_type?.toLowerCase().includes('taxi') ||
                  provider.vehicle_type?.toLowerCase().includes('louage');
@@ -38,9 +45,9 @@ export default function MedicalTransportCard({ provider }: MedicalTransportCardP
       <SignatureCard isPremium={isPremium} className="p-5">
         {/* Badge Premium */}
         {isPremium && (
-          <div className="absolute -top-2 -right-2 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg z-10">
+          <div className={`absolute -top-2 ${isRTL ? '-left-2' : '-right-2'} bg-gradient-to-r from-yellow-400 to-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg z-10`}>
             <Star className="w-3 h-3 fill-white" />
-            PREMIUM
+            {mt.cardPremium}
           </div>
         )}
 
@@ -83,7 +90,7 @@ export default function MedicalTransportCard({ provider }: MedicalTransportCardP
           {isTaxi && provider.capacite_passagers && (
             <div className={`flex items-center gap-2 text-sm ${isPremium ? 'text-gray-200' : 'text-gray-700'}`}>
               <Users className={`w-4 h-4 ${isPremium ? 'text-[#D4AF37]' : 'text-gray-500'}`} />
-              <span className="font-medium">Capacité: {provider.capacite_passagers} passagers</span>
+              <span className="font-medium">{te.interpolate(mt.cardCapacity, { count: provider.capacite_passagers })}</span>
             </div>
           )}
 
@@ -91,14 +98,14 @@ export default function MedicalTransportCard({ provider }: MedicalTransportCardP
           {provider.est_disponible_nuit && (
             <div className="flex items-center gap-2 text-sm">
               <Clock className="w-4 h-4 text-green-600" />
-              <span className={`font-medium ${isPremium ? 'text-green-400' : 'text-green-700'}`}>Disponible 24h/7j</span>
+              <span className={`font-medium ${isPremium ? 'text-green-400' : 'text-green-700'}`}>{mt.cardAvailable247}</span>
             </div>
           )}
 
           {/* Zone de couverture */}
           {provider.zone_couverture && (
             <div className={`text-xs ${isPremium ? 'text-gray-300' : 'text-gray-600'}`}>
-              <span className="font-medium">Zone:</span> {provider.zone_couverture}
+              <span className="font-medium">{mt.cardZone}</span> {provider.zone_couverture}
             </div>
           )}
         </div>
@@ -117,7 +124,7 @@ export default function MedicalTransportCard({ provider }: MedicalTransportCardP
           >
             <div className="flex items-center justify-center gap-2">
               <Phone className="w-5 h-5" />
-              <span>Appeler maintenant</span>
+              <span>{mt.cardCallNow}</span>
             </div>
             <div className="text-xs mt-1 opacity-90">{phoneNumber}</div>
           </a>

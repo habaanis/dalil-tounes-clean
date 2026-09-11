@@ -2,6 +2,8 @@ import { useRef, useState } from 'react';
 import { Check, Loader, X } from 'lucide-react';
 import { Toast } from './Toast';
 import { submitLegacySuggestion } from '../lib/businessRegistration';
+import { useLanguage } from '../context/LanguageContext';
+import { useTranslationExtended } from '../lib/useTranslationExtended';
 
 interface MedicalTransportRegistrationFormProps {
   onSuccess?: () => void;
@@ -19,6 +21,11 @@ export default function MedicalTransportRegistrationForm({
   onSuccess,
   onCancel,
 }: MedicalTransportRegistrationFormProps) {
+  const { language } = useLanguage();
+  const te = useTranslationExtended(language);
+  const mt = te.medicalTransport!;
+  const isRTL = language === 'ar';
+
   const startedAtRef = useRef(Date.now());
   const [loading, setLoading] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -48,25 +55,25 @@ export default function MedicalTransportRegistrationForm({
     const message = formData.message.trim();
 
     if (!title) {
-      showNotification('Le titre de votre demande est obligatoire.', 'error');
+      showNotification(mt.errorTitleRequired, 'error');
       return false;
     }
 
     if (!phone && !email) {
-      showNotification('Merci d’indiquer au moins un téléphone ou un email.', 'error');
+      showNotification(mt.errorContactRequired, 'error');
       return false;
     }
 
     if (email) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
-        showNotification('Format email invalide.', 'error');
+        showNotification(mt.errorEmailInvalid, 'error');
         return false;
       }
     }
 
     if (!message) {
-      showNotification('Merci de décrire brièvement votre demande.', 'error');
+      showNotification(mt.errorMessageRequired, 'error');
       return false;
     }
 
@@ -98,7 +105,7 @@ export default function MedicalTransportRegistrationForm({
       const message = formData.message.trim();
 
       await submitLegacySuggestion({
-        language: 'fr',
+        language,
         sourcePage: 'medical-transport',
         legacyType: 'medical_transport',
         title,
@@ -108,10 +115,7 @@ export default function MedicalTransportRegistrationForm({
         elapsedMs: Date.now() - startedAtRef.current,
       });
 
-      showNotification(
-        'Demande envoyée avec succès ! Notre équipe vous contactera rapidement.',
-        'success'
-      );
+      showNotification(mt.successMessage, 'success');
 
       resetForm();
       startedAtRef.current = Date.now();
@@ -121,7 +125,7 @@ export default function MedicalTransportRegistrationForm({
       }, 1800);
     } catch (err) {
       console.error('[MedicalTransportRegistrationForm] Error:', err);
-      showNotification('Une erreur est survenue. Veuillez réessayer.', 'error');
+      showNotification(mt.errorMessage, 'error');
     } finally {
       setLoading(false);
     }
@@ -136,18 +140,17 @@ export default function MedicalTransportRegistrationForm({
         onClose={() => setShowToast(false)}
       />
 
-      <div className="p-6 md:p-8">
+      <div className="p-6 md:p-8" dir={isRTL ? 'rtl' : 'ltr'}>
         <div className="text-center mb-8">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-            Demande d’information / inscription
+            {mt.formTitle}
           </h2>
           <p className="text-gray-600 max-w-xl mx-auto">
-            Une question, une inscription comme prestataire de transport médical ou une demande professionnelle ?
-            Envoyez-nous votre demande, notre équipe vous contactera rapidement.
+            {mt.formSubtitle}
           </p>
-          <div className="mt-4 bg-blue-50 border-l-4 border-blue-500 p-4 mx-auto max-w-lg">
+          <div className={`mt-4 bg-blue-50 ${isRTL ? 'border-r-4' : 'border-l-4'} border-blue-500 p-4 mx-auto max-w-lg`}>
             <p className="text-sm font-medium text-blue-800">
-              Remplissez cette demande rapide. Les informations détaillées seront finalisées avec notre équipe.
+              {mt.formHint}
             </p>
           </div>
         </div>
@@ -155,13 +158,13 @@ export default function MedicalTransportRegistrationForm({
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="bg-gray-50 rounded-xl p-5">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Votre demande
+              {mt.yourRequest}
             </h3>
 
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Titre de votre demande *
+                  {mt.titleLabel}
                 </label>
                 <input
                   type="text"
@@ -169,47 +172,47 @@ export default function MedicalTransportRegistrationForm({
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Ex : inscription transport médical, ambulance privée, taxi médical..."
+                  placeholder={mt.titlePlaceholder}
                 />
               </div>
 
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Téléphone
+                    {mt.phoneLabel}
                   </label>
                   <input
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="+216 XX XXX XXX"
+                    placeholder={mt.phonePlaceholder}
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Email
+                    {mt.emailLabel}
                   </label>
                   <input
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="votre@email.com"
+                    placeholder={mt.emailPlaceholder}
                   />
                 </div>
               </div>
 
               <p className="text-xs text-gray-500">
-                Merci d’indiquer au moins un moyen de contact : téléphone ou email.
+                {mt.contactHint}
               </p>
             </div>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Message *
+              {mt.messageLabel}
             </label>
             <textarea
               required
@@ -217,7 +220,7 @@ export default function MedicalTransportRegistrationForm({
               value={formData.message}
               onChange={(e) => setFormData({ ...formData, message: e.target.value })}
               className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Décrivez votre demande, votre activité, votre véhicule, votre zone de service ou votre question..."
+              placeholder={mt.messagePlaceholder}
             />
           </div>
 
@@ -229,7 +232,7 @@ export default function MedicalTransportRegistrationForm({
                 className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition flex items-center justify-center gap-2"
               >
                 <X className="w-5 h-5" />
-                Annuler
+                {mt.cancelBtn}
               </button>
             )}
 
@@ -241,12 +244,12 @@ export default function MedicalTransportRegistrationForm({
               {loading ? (
                 <>
                   <Loader className="w-5 h-5 animate-spin" />
-                  Envoi en cours...
+                  {mt.sendingBtn}
                 </>
               ) : (
                 <>
                   <Check className="w-5 h-5" />
-                  Envoyer ma demande
+                  {mt.submitBtn}
                 </>
               )}
             </button>

@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { Heart, Baby, Building2, Phone, Shield, AlertCircle, CheckCircle, FileText, Clock, Download, ExternalLink, ChevronRight } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
+import { useTranslationExtended } from '../lib/useTranslationExtended';
 import { getStructureImageUrl } from '../lib/imageUtils';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -29,7 +30,10 @@ interface Demarche {
 export default function CitizensServices() {
   const { language } = useLanguage();
   const t = useTranslation(language);
+  const te = useTranslationExtended(language);
   const ss = t.citizens.socialServices;
+  const cs = te.citizens!.services!;
+  const isRTL = language === 'ar';
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState<'bureaux' | 'demarches' | 'social'>('bureaux');
@@ -235,12 +239,16 @@ export default function CitizensServices() {
       switch (language) {
         case 'ar': return demarche.nom_ar || demarche.nom;
         case 'en': return demarche.nom_en || demarche.nom;
+        case 'it': return demarche.nom_en || demarche.nom;
+        case 'ru': return demarche.nom_en || demarche.nom;
         default: return demarche.nom;
       }
     } else {
       switch (language) {
         case 'ar': return demarche.description_ar || demarche.description;
         case 'en': return demarche.description_en || demarche.description;
+        case 'it': return demarche.description_en || demarche.description;
+        case 'ru': return demarche.description_en || demarche.description;
         default: return demarche.description;
       }
     }
@@ -250,6 +258,8 @@ export default function CitizensServices() {
     switch (language) {
       case 'ar': return demarche.pieces_requises_ar || demarche.pieces_requises;
       case 'en': return demarche.pieces_requises_en || demarche.pieces_requises;
+      case 'it': return demarche.pieces_requises_en || demarche.pieces_requises;
+      case 'ru': return demarche.pieces_requises_en || demarche.pieces_requises;
       default: return demarche.pieces_requises;
     }
   };
@@ -262,9 +272,9 @@ export default function CitizensServices() {
             onClick={() => setSelectedDemarche(null)}
             className="inline-flex items-center gap-2 mb-6 text-gray-400 hover:text-gray-700 transition-colors duration-200 group"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="transition-transform duration-200 group-hover:-translate-x-0.5"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={`transition-transform duration-200 ${isRTL ? 'group-hover:translate-x-0.5 rotate-180' : 'group-hover:-translate-x-0.5'}`}><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
             <span className="text-xs font-light tracking-widest uppercase">
-              {language === 'fr' ? 'Retour' : language === 'ar' ? 'رجوع' : 'Back'}
+              {te.common!.back}
             </span>
           </button>
 
@@ -285,7 +295,7 @@ export default function CitizensServices() {
                 <div className="flex items-center gap-2 text-[#4A1D43] mb-2">
                   <Clock className="w-5 h-5" />
                   <span className="font-semibold">
-                    {language === 'fr' ? 'Délai de traitement' : language === 'ar' ? 'مدة المعالجة' : 'Processing time'}
+                    {cs.processingTime}
                   </span>
                 </div>
                 <p className="text-gray-900 font-medium">{selectedDemarche.delai_traitement}</p>
@@ -295,7 +305,7 @@ export default function CitizensServices() {
                 <div className="flex items-center gap-2 text-[#4A1D43] mb-2">
                   <CheckCircle className="w-5 h-5" />
                   <span className="font-semibold">
-                    {language === 'fr' ? 'Coût' : language === 'ar' ? 'التكلفة' : 'Cost'}
+                    {cs.cost}
                   </span>
                 </div>
                 <p className="text-gray-900 font-medium">{selectedDemarche.cout}</p>
@@ -309,7 +319,7 @@ export default function CitizensServices() {
                   className="font-bold text-lg"
                   style={{ fontFamily: "'Playfair Display', serif" }}
                 >
-                  {language === 'fr' ? 'Pièces Requises' : language === 'ar' ? 'الوثائق المطلوبة' : 'Required Documents'}
+                  {cs.requiredDocuments}
                 </span>
               </div>
               <ul className="space-y-3">
@@ -328,7 +338,7 @@ export default function CitizensServices() {
               <div className="flex items-center gap-2 text-[#4A1D43] mb-2">
                 <Building2 className="w-5 h-5" />
                 <span className="font-semibold">
-                  {language === 'fr' ? 'Service compétent' : language === 'ar' ? 'الخدمة المختصة' : 'Competent service'}
+                  {cs.competentService}
                 </span>
               </div>
               <p className="text-gray-700">{selectedDemarche.service_competent}</p>
@@ -345,7 +355,7 @@ export default function CitizensServices() {
                       className="flex items-center justify-center gap-2 px-6 py-3 bg-[#4A1D43] text-[#D4AF37] rounded-lg hover:bg-[#D4AF37] hover:text-[#4A1D43] transition font-semibold border-2 border-[#D4AF37]"
                     >
                       <Download className="w-5 h-5" />
-                      {language === 'fr' ? 'Télécharger le formulaire PDF' : language === 'ar' ? 'تحميل النموذج PDF' : 'Download PDF form'}
+                      {cs.downloadPdfForm}
                     </a>
                   )}
                   {selectedDemarche.formulaire_url && (
@@ -356,7 +366,7 @@ export default function CitizensServices() {
                       className="flex items-center justify-center gap-2 px-6 py-3 bg-[#4A1D43] text-[#D4AF37] rounded-lg hover:bg-[#D4AF37] hover:text-[#4A1D43] transition font-semibold border-2 border-[#D4AF37]"
                     >
                       <ExternalLink className="w-5 h-5" />
-                      {language === 'fr' ? 'Accéder au formulaire en ligne' : language === 'ar' ? 'الوصول إلى النموذج عبر الإنترنت' : 'Access online form'}
+                      {cs.accessOnlineForm}
                     </a>
                   )}
                 </div>
@@ -364,9 +374,7 @@ export default function CitizensServices() {
                   <div className="flex items-start gap-3">
                     <AlertCircle className="w-5 h-5 text-yellow-700 flex-shrink-0 mt-0.5" />
                     <p className="text-sm text-yellow-800 leading-relaxed">
-                      {language === 'fr' ? 'Attention : Vérifiez toujours la validité de ce formulaire auprès de l\'administration concernée avant de vous déplacer.' :
-                       language === 'ar' ? 'تحذير: يرجى دائماً التحقق من صحة هذا النموذج مع الإدارة المعنية قبل التنقل.' :
-                       'Warning: Always verify the validity of this form with the relevant administration before traveling.'}
+                      {cs.verifyWarning}
                     </p>
                   </div>
                 </div>
@@ -385,10 +393,10 @@ export default function CitizensServices() {
       <section className="relative w-full h-[220px] overflow-hidden">
         <button
           onClick={() => navigate('/citizens')}
-          className="absolute top-4 left-4 z-10 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm text-[#4A1D43] px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-white transition-colors shadow-sm"
+          className={`absolute top-4 ${isRTL ? 'right-4' : 'left-4'} z-10 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm text-[#4A1D43] px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-white transition-colors shadow-sm`}
         >
-          <ChevronRight className="w-4 h-4" />
-          {language === 'fr' ? 'Retour' : language === 'ar' ? 'رجوع' : language === 'en' ? 'Back' : 'Indietro'}
+          <ChevronRight className={`w-4 h-4 ${isRTL ? 'rotate-180' : ''}`} />
+          {te.common!.back}
         </button>
         <div className={`absolute inset-0 bg-gradient-to-br from-gray-200 via-gray-100 to-white transition-opacity duration-500 ${imageLoaded && !imageError ? 'opacity-0' : 'opacity-100'}`}></div>
 
@@ -420,10 +428,7 @@ export default function CitizensServices() {
                   textShadow: '0 4px 12px rgba(0,0,0,0.8), 0 2px 4px rgba(0,0,0,0.6)'
                 }}
               >
-                {language === 'fr' ? 'Services Citoyens' :
-                 language === 'ar' ? 'خدمات المواطنين' :
-                 language === 'en' ? 'Citizen Services' :
-                 'Servizi al Cittadino'}
+                {cs.title}
               </h1>
               <p
                 className="text-sm md:text-base font-light text-white/95 leading-relaxed max-w-3xl mx-auto"
@@ -434,7 +439,8 @@ export default function CitizensServices() {
                 {language === 'fr' ? 'La Tunisie dispose d\'un réseau de services sociaux dédiés au soutien des familles, à l\'accès aux soins et à la protection de l\'enfance. Découvrez les programmes nationaux et les structures locales qui vous accompagnent.' :
                  language === 'ar' ? 'تمتلك تونس شبكة من الخدمات الاجتماعية المخصصة لدعم الأسر والوصول إلى الرعاية الصحية وحماية الطفل. اكتشف البرامج الوطنية والهياكل المحلية التي ترافقك.' :
                  language === 'en' ? 'Tunisia has a network of social services dedicated to supporting families, access to care and child protection. Discover the national programs and local structures that support you.' :
-                 'La Tunisia ha una rete di servizi sociali dedicati al sostegno delle famiglie, all\'accesso alle cure e alla protezione dell\'infanzia. Scopri i programmi nazionali e le strutture locali che ti accompagnano.'}
+                 language === 'it' ? 'La Tunisia ha una rete di servizi sociali dedicati al sostegno delle famiglie, all\'accesso alle cure e alla protezione dell\'infanzia. Scopri i programmi nazionali e le strutture locali che ti accompagnano.' :
+                 'Тунис имеет сеть социальных услуг, посвященных поддержке семей, доступу к медицинскому обслуживанию и защите детей. Откройте для себя национальные программы и местные структуры, которые вас сопровождают.'}
               </p>
             </motion.div>
           </div>
@@ -459,7 +465,8 @@ export default function CitizensServices() {
                 {language === 'fr' ? 'Bureaux' :
                  language === 'ar' ? 'المكاتب' :
                  language === 'en' ? 'Offices' :
-                 'Uffici'}
+                 language === 'it' ? 'Uffici' :
+                 'Офисы'}
               </span>
             </button>
             <button
@@ -476,7 +483,8 @@ export default function CitizensServices() {
                 {language === 'fr' ? 'Démarches' :
                  language === 'ar' ? 'الإجراءات' :
                  language === 'en' ? 'Procedures' :
-                 'Procedure'}
+                 language === 'it' ? 'Procedure' :
+                 'Процедуры'}
               </span>
             </button>
             <button
@@ -493,7 +501,8 @@ export default function CitizensServices() {
                 {language === 'fr' ? 'Social' :
                  language === 'ar' ? 'الشؤون الاجتماعية' :
                  language === 'en' ? 'Social' :
-                 'Sociale'}
+                 language === 'it' ? 'Sociale' :
+                 'Социальные услуги'}
               </span>
             </button>
           </div>
@@ -516,7 +525,8 @@ export default function CitizensServices() {
             language === 'fr' ? 'services citoyens' :
             language === 'ar' ? 'خدمات المواطنين' :
             language === 'en' ? 'citizen services' :
-            'servizi al cittadino'
+            language === 'it' ? 'servizi al cittadino' :
+            'услуги для граждан'
           }
           listePage="services citoyens"
           accentColor="#4A1D43"
@@ -524,19 +534,22 @@ export default function CitizensServices() {
             language === 'fr' ? 'Entreprises les plus recommandées par les clients' :
             language === 'ar' ? 'المؤسسات الأكثر توصية من قبل العملاء' :
             language === 'en' ? 'Most recommended businesses by customers' :
-            'Aziende piu raccomandate dai clienti'
+            language === 'it' ? 'Aziende più raccomandate dai clienti' :
+            'Самые рекомендуемые клиентами компании'
           }
           blogArticle={{
             title:
               language === 'fr' ? 'Activités à faire en famille en Tunisie' :
               language === 'ar' ? 'أنشطة عائلية في تونس' :
               language === 'en' ? 'Family activities to do in Tunisia' :
-              'Attività da fare in famiglia in Tunisia',
+              language === 'it' ? 'Attività da fare in famiglia in Tunisia' :
+              'Семейные мероприятия в Тунисе',
             excerpt:
               language === 'fr' ? 'Sorties, sports, culture : découvrez les meilleures activités pour passer de bons moments en famille.' :
               language === 'ar' ? 'نزهات، رياضة، ثقافة: اكتشف أفضل الأنشطة لقضاء أوقات ممتعة مع العائلة.' :
               language === 'en' ? 'Outings, sports, culture: discover the best activities to enjoy quality time with your family.' :
-              'Uscite, sport, cultura: scopri le migliori attività per trascorrere bei momenti in famiglia.',
+              language === 'it' ? 'Uscite, sport, cultura: scopri le migliori attività per trascorrere bei momenti in famiglia.' :
+              'Прогулки, спорт, культура: откройте для себя лучшие мероприятия для качественного времяпрепровождения с семьей.',
             slug: "activites-en-famille"
           }}
         />
@@ -550,16 +563,10 @@ export default function CitizensServices() {
               className="text-xl font-bold text-[#4A1D43] mb-2 text-center"
               style={{ fontFamily: "'Playfair Display', serif" }}
             >
-              {language === 'fr' ? 'Démarches Administratives' :
-               language === 'ar' ? 'الإجراءات الإدارية' :
-               language === 'en' ? 'Administrative Procedures' :
-               'Procedure Amministrative'}
+              {cs.proceduresTitle}
             </h2>
             <p className="text-center text-gray-600 mb-3 max-w-3xl mx-auto text-xs">
-              {language === 'fr' ? 'Retrouvez toutes les informations pour vos démarches : documents requis, délais, coûts et services compétents.' :
-               language === 'ar' ? 'اعثر على جميع المعلومات لإجراءاتك: الوثائق المطلوبة والمواعيد النهائية والتكاليف والخدمات المختصة.' :
-               language === 'en' ? 'Find all the information for your procedures: required documents, deadlines, costs and competent services.' :
-               'Trova tutte le informazioni per le tue procedure: documenti richiesti, scadenze, costi e servizi competenti.'}
+              {cs.proceduresSubtitle}
             </p>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -590,7 +597,7 @@ export default function CitizensServices() {
                     <div className="flex items-center gap-1 text-[#4A1D43]">
                       <FileText className="w-3 h-3" />
                       <span className="font-medium">
-                        {getTranslatedPieces(demarche).length} {language === 'fr' ? 'pièces' : language === 'ar' ? 'وثائق' : 'docs'}
+                        {getTranslatedPieces(demarche).length} {te.common!.pieces}
                       </span>
                     </div>
                     <div className="flex items-center gap-1 text-[#4A1D43]">
@@ -777,10 +784,7 @@ export default function CitizensServices() {
           <section className="px-4 py-3 bg-[#4A1D43] border-t-2 border-[#D4AF37]">
             <div className="max-w-4xl mx-auto text-center">
               <p className="text-sm text-[#D4AF37] font-medium">
-                {language === 'fr' ? 'Ensemble, construisons une société plus juste et plus solidaire pour tous les Tunisiens.' :
-                 language === 'ar' ? 'معا، لنبني مجتمعا أكثر عدلا وتضامنا لجميع التونسيين.' :
-                 language === 'en' ? 'Together, let\'s build a more just and supportive society for all Tunisians.' :
-                 'Insieme, costruiamo una società più giusta e solidale per tutti i tunisini.'}
+                {cs.together}
               </p>
             </div>
           </section>

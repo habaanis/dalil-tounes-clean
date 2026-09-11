@@ -15,3 +15,16 @@ export const SANTE_CATEGORIES = [
   { value: 'Polyclinique', label: 'Polyclinique' },
   { value: 'Vétérinaire', label: 'Vétérinaire' },
 ];
+
+export function getSanteCategoryLabel(value: string, language?: string): string {
+  if (!language) {
+    const category = SANTE_CATEGORIES.find(cat => cat.value === value);
+    return category ? category.label : value;
+  }
+  const { translationExtensions } = require('./i18nExtensions');
+  const ext = translationExtensions[language];
+  const labels = ext?.categoryLabels?.sante;
+  if (labels && labels[value]) return labels[value];
+  const category = SANTE_CATEGORIES.find(cat => cat.value === value);
+  return category ? category.label : value;
+}

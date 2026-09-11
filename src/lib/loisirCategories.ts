@@ -8,3 +8,15 @@ export const LOISIRS_CATEGORIES_KEYS = [
 ] as const;
 
 export type LoisirCategory = typeof LOISIRS_CATEGORIES_KEYS[number]['value'];
+
+export function getLoisirCategoryLabel(value: string, language?: string): string {
+  if (!language) {
+    const cat = LOISIRS_CATEGORIES_KEYS.find(c => c.value === value);
+    return cat ? cat.value : value;
+  }
+  const { translationExtensions } = require('./i18nExtensions');
+  const ext = translationExtensions[language];
+  const labels = ext?.categoryLabels?.loisir;
+  if (labels && labels[value]) return labels[value];
+  return value;
+}
