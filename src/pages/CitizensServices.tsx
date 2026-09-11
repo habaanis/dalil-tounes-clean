@@ -14,12 +14,18 @@ interface Demarche {
   nom: string;
   nom_ar?: string;
   nom_en?: string;
+  nom_it?: string;
+  nom_ru?: string;
   description: string;
   description_ar?: string;
   description_en?: string;
+  description_it?: string;
+  description_ru?: string;
   pieces_requises: string[];
   pieces_requises_ar?: string[];
   pieces_requises_en?: string[];
+  pieces_requises_it?: string[];
+  pieces_requises_ru?: string[];
   delai_traitement: string;
   cout: string;
   service_competent: string;
@@ -57,9 +63,13 @@ export default function CitizensServices() {
       nom: 'Carte d\'identité nationale',
       nom_ar: 'بطاقة التعريف الوطنية',
       nom_en: 'National ID Card',
+      nom_it: 'Carta d'identità nazionale',
+      nom_ru: 'Национальное удостоверение личности',
       description: 'Obtention ou renouvellement de la carte d\'identité nationale pour les citoyens tunisiens.',
       description_ar: 'الحصول على بطاقة التعريف الوطنية أو تجديدها للمواطنين التونسيين.',
       description_en: 'Obtain or renew the national ID card for Tunisian citizens.',
+      description_it: 'Rilascio o rinnovo della carta d'identità nazionale per i cittadini tunisini.',
+      description_ru: 'Получение или продление национального удостоверения личности для граждан Туниса.',
       pieces_requises: [
         'Acte de naissance (original + 2 photocopies)',
         'Certificat de résidence (moins de 3 mois)',
@@ -78,6 +88,18 @@ export default function CitizensServices() {
         '2 recent ID photos',
         'Old ID card (if renewal)'
       ],
+      pieces_requises_it: [
+        'Atto di nascita (originale + 2 copie)',
+        'Certificato di residenza (meno di 3 mesi)',
+        '2 foto tessera recenti',
+        'Vecchia carta d'identità (in caso di rinnovo)'
+      ],
+      pieces_requises_ru: [
+        'Свидетельство о рождении (оригинал + 2 копии)',
+        'Справка о месте жительства (не старше 3 месяцев)',
+        '2 недавние фотографии',
+        'Старое удостоверение личности (при продлении)'
+      ],
       delai_traitement: '15 jours ouvrables',
       cout: '10 TND',
       service_competent: 'Mairie / Municipalité',
@@ -89,9 +111,13 @@ export default function CitizensServices() {
       nom: 'Passeport biométrique',
       nom_ar: 'جواز السفر البيومتري',
       nom_en: 'Biometric Passport',
+      nom_it: 'Passaporto biometrico',
+      nom_ru: 'Биометрический паспорт',
       description: 'Demande de passeport biométrique pour voyages internationaux.',
       description_ar: 'طلب جواز سفر بيومتري للسفر الدولي.',
       description_en: 'Apply for a biometric passport for international travel.',
+      description_it: 'Richiesta di passaporto biometrico per viaggi internazionali.',
+      description_ru: 'Оформление биометрического паспорта для международных поездок.',
       pieces_requises: [
         'Carte d\'identité nationale en cours de validité',
         'Extrait de naissance (n°12) original',
@@ -113,6 +139,20 @@ export default function CitizensServices() {
         '4 biometric standard ID photos',
         'Old passport (if renewal)'
       ],
+      pieces_requises_it: [
+        'Carta d'identità nazionale in corso di validità',
+        'Estratto di nascita (n°12) originale',
+        'Certificato di residenza (meno di 3 mesi)',
+        '4 foto tessera in formato biometrico',
+        'Vecchio passaporto (in caso di rinnovo)'
+      ],
+      pieces_requises_ru: [
+        'Действующее национальное удостоверение личности',
+        'Оригинал свидетельства о рождении (№12)',
+        'Справка о месте жительства (не старше 3 месяцев)',
+        '4 фотографии в биометрическом формате',
+        'Старый паспорт (при продлении)'
+      ],
       delai_traitement: '3 à 6 semaines',
       cout: '100 TND (ordinaire) / 150 TND (urgent)',
       service_competent: 'Préfecture / Direction Générale de la Sûreté Nationale',
@@ -124,9 +164,13 @@ export default function CitizensServices() {
       nom: 'Acte de naissance (Extrait n°12)',
       nom_ar: 'شهادة ميلاد (نسخة رقم 12)',
       nom_en: 'Birth Certificate (Extract n°12)',
+      nom_it: 'Atto di nascita (Estratto n°12)',
+      nom_ru: 'Свидетельство о рождении (Выписка №12)',
       description: 'Obtention d\'un extrait d\'acte de naissance officiel.',
       description_ar: 'الحصول على نسخة رسمية من عقد الميلاد.',
       description_en: 'Obtain an official birth certificate extract.',
+      description_it: 'Ottenere un estratto ufficiale dell'atto di nascita.',
+      description_ru: 'Получение официальной выписки из свидетельства о рождении.',
       pieces_requises: [
         'Carte d\'identité du demandeur',
         'Formulaire de demande rempli',
@@ -142,6 +186,16 @@ export default function CitizensServices() {
         'Completed application form',
         'Stamp fees'
       ],
+      pieces_requises_it: [
+        'Carta d'identità del richiedente',
+        'Modulo di richiesta compilato',
+        'Diritti di bollo'
+      ],
+      pieces_requises_ru: [
+        'Удостоверение личности заявителя',
+        'Заполненная форма заявления',
+        'Гербовый сбор'
+      ],
       delai_traitement: 'Immédiat à 48h',
       cout: '2 TND',
       service_competent: 'Mairie / Bureau d\'État Civil',
@@ -153,9 +207,13 @@ export default function CitizensServices() {
       nom: 'Certificat de résidence',
       nom_ar: 'شهادة إقامة',
       nom_en: 'Residence Certificate',
+      nom_it: 'Certificato di residenza',
+      nom_ru: 'Справка о месте жительства',
       description: 'Document attestant votre lieu de résidence actuel.',
       description_ar: 'وثيقة تثبت مكان إقامتك الحالي.',
       description_en: 'Document certifying your current place of residence.',
+      description_it: 'Documento che attesta il tuo luogo di residenza attuale.',
+      description_ru: 'Документ, подтверждающий ваше текущее место жительства.',
       pieces_requises: [
         'Carte d\'identité nationale',
         'Justificatif de domicile (facture STEG, SONEDE ou quittance de loyer)',
@@ -171,6 +229,16 @@ export default function CitizensServices() {
         'Proof of address (STEG, SONEDE bill or rent receipt)',
         'Physical presence required'
       ],
+      pieces_requises_it: [
+        'Carta d'identità nazionale',
+        'Prova di indirizzo (bolletta STEG, SONEDE o ricevuta d'affitto)',
+        'Presenza fisica obbligatoria'
+      ],
+      pieces_requises_ru: [
+        'Национальное удостоверение личности',
+        'Подтверждение адреса (счёт STEG, SONEDE или квитанция об аренде)',
+        'Личное присутствие обязательно'
+      ],
       delai_traitement: 'Immédiat',
       cout: 'Gratuit',
       service_competent: 'Omda / Cheikh',
@@ -182,9 +250,13 @@ export default function CitizensServices() {
       nom: 'Extrait de casier judiciaire (Bulletin n°3)',
       nom_ar: 'بطاقة السوابق العدلية (النشرة رقم 3)',
       nom_en: 'Criminal Record Extract (Bulletin n°3)',
+      nom_it: 'Certificato penale (Estratto n°3)',
+      nom_ru: 'Справка о судимости (Выписка №3)',
       description: 'Document attestant l\'absence de condamnations pénales.',
       description_ar: 'وثيقة تثبت عدم وجود سوابق عدلية.',
       description_en: 'Document certifying the absence of criminal convictions.',
+      description_it: 'Documento che attesta l'assenza di condanne penali.',
+      description_ru: 'Документ, подтверждающий отсутствие судимостей.',
       pieces_requises: [
         'Carte d\'identité nationale',
         'Timbre fiscal de 1 TND',
@@ -200,6 +272,16 @@ export default function CitizensServices() {
         '1 TND fiscal stamp',
         'Application form'
       ],
+      pieces_requises_it: [
+        'Carta d'identità nazionale',
+        'Bollo fiscale da 1 TND',
+        'Modulo di richiesta'
+      ],
+      pieces_requises_ru: [
+        'Национальное удостоверение личности',
+        'Гербовая марка на 1 TND',
+        'Форма заявления'
+      ],
       delai_traitement: '3 à 7 jours',
       cout: '1 TND',
       service_competent: 'Tribunal de Première Instance',
@@ -211,9 +293,13 @@ export default function CitizensServices() {
       nom: 'Certificat de vie',
       nom_ar: 'شهادة حياة',
       nom_en: 'Life Certificate',
+      nom_it: 'Certificato di vita',
+      nom_ru: 'Справка о факте нахождения в живых',
       description: 'Document attestant que vous êtes en vie (souvent requis pour les retraités).',
       description_ar: 'وثيقة تثبت أنك على قيد الحياة (مطلوبة عادة للمتقاعدين).',
       description_en: 'Document certifying that you are alive (often required for retirees).',
+      description_it: 'Documento che attesta che sei in vita (spesso richiesto per i pensionati).',
+      description_ru: 'Документ, подтверждающий, что вы живы (часто требуется для пенсионеров).',
       pieces_requises: [
         'Carte d\'identité nationale',
         'Présence physique obligatoire'
@@ -225,6 +311,14 @@ export default function CitizensServices() {
       pieces_requises_en: [
         'National ID card',
         'Physical presence required'
+      ],
+      pieces_requises_it: [
+        'Carta d'identità nazionale',
+        'Presenza fisica obbligatoria'
+      ],
+      pieces_requises_ru: [
+        'Национальное удостоверение личности',
+        'Личное присутствие обязательно'
       ],
       delai_traitement: 'Immédiat',
       cout: 'Gratuit',
@@ -239,16 +333,16 @@ export default function CitizensServices() {
       switch (language) {
         case 'ar': return demarche.nom_ar || demarche.nom;
         case 'en': return demarche.nom_en || demarche.nom;
-        case 'it': return demarche.nom_en || demarche.nom;
-        case 'ru': return demarche.nom_en || demarche.nom;
+        case 'it': return demarche.nom_it || demarche.nom;
+        case 'ru': return demarche.nom_ru || demarche.nom;
         default: return demarche.nom;
       }
     } else {
       switch (language) {
         case 'ar': return demarche.description_ar || demarche.description;
         case 'en': return demarche.description_en || demarche.description;
-        case 'it': return demarche.description_en || demarche.description;
-        case 'ru': return demarche.description_en || demarche.description;
+        case 'it': return demarche.description_it || demarche.description;
+        case 'ru': return demarche.description_ru || demarche.description;
         default: return demarche.description;
       }
     }
@@ -258,8 +352,8 @@ export default function CitizensServices() {
     switch (language) {
       case 'ar': return demarche.pieces_requises_ar || demarche.pieces_requises;
       case 'en': return demarche.pieces_requises_en || demarche.pieces_requises;
-      case 'it': return demarche.pieces_requises_en || demarche.pieces_requises;
-      case 'ru': return demarche.pieces_requises_en || demarche.pieces_requises;
+      case 'it': return demarche.pieces_requises_it || demarche.pieces_requises;
+      case 'ru': return demarche.pieces_requises_ru || demarche.pieces_requises;
       default: return demarche.pieces_requises;
     }
   };
