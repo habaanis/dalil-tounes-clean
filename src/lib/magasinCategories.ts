@@ -37,19 +37,3 @@ export const MAGASIN_CATEGORIES = [
   { value: 'Restaurant', label: 'Restaurant' },
   { value: 'Cuisine tunisienne', label: 'Cuisine tunisienne' },
 ];
-
-/**
- * Helper pour obtenir le label traduit d'une catégorie à partir de sa value
- */
-export function getMagasinCategoryLabel(value: string, language?: string): string {
-  if (!language) {
-    const category = MAGASIN_CATEGORIES.find(cat => cat.value === value);
-    return category ? category.label : value;
-  }
-  const { translationExtensions } = require('./i18nExtensions');
-  const ext = translationExtensions[language];
-  const labels = ext?.categoryLabels?.magasin;
-  if (labels && labels[value]) return labels[value];
-  const category = MAGASIN_CATEGORIES.find(cat => cat.value === value);
-  return category ? category.label : value;
-}
