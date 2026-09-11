@@ -10,6 +10,8 @@ import { supabase } from '../lib/BoltDatabase';
 import { notifyAdmin } from '../lib/notifyAdmin';
 import { partnerPageCopy } from '../i18n/partnerPage';
 
+const footerLink = 'text-gray-400 hover:text-[#D4AF37] focus-visible:text-[#D4AF37] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#111111] rounded-sm transition-colors duration-200 text-sm leading-relaxed';
+
 const EmailContact: React.FC = () => {
   const { language } = useLanguage();
   const te = useTranslationExtended(language);
@@ -17,7 +19,7 @@ const EmailContact: React.FC = () => {
   const [showTooltip, setShowTooltip] = useState(false);
   const [copied, setCopied] = useState(false);
   const email = 'contact@dalil-tounes.com';
-  const subject = 'Demande de renseignements - Dalil Tounes';
+  const subject = te.footer?.emailSubject || 'Demande de renseignements - Dalil Tounes';
 
   const handleCopy = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -73,83 +75,25 @@ const EmailContact: React.FC = () => {
   );
 };
 
-const footerLink = 'text-gray-400 hover:text-[#D4AF37] focus-visible:text-[#D4AF37] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#111111] rounded-sm transition-colors duration-200 text-sm leading-relaxed';
-
-const footerStaticCopy = {
-  fr: {
-    discover: 'Découvrir Dalil Tounes',
-    why: 'Pourquoi Dalil Tounes',
-    how: 'Comment fonctionne Dalil Tounes',
-    articles: 'Articles',
-    professionals: 'Professionnels',
-    offers: 'Nos offres',
-    businesses: 'Entreprises',
-    reviews: 'Avis & recommandations',
-    rights: 'Tous droits réservés.',
-    request: 'Demande d’information / inscription',
-    slogan: 'Ne soyez pas seulement présent, soyez trouvable.',
-  },
-  ar: {
-    discover: 'اكتشف Dalil Tounes',
-    why: 'لماذا Dalil Tounes',
-    how: 'كيف يعمل Dalil Tounes',
-    articles: 'المقالات',
-    professionals: 'المهنيون',
-    offers: 'عروضنا',
-    businesses: 'المؤسسات',
-    reviews: 'الآراء والتوصيات',
-    rights: 'جميع الحقوق محفوظة.',
-    request: 'طلب معلومات / تسجيل',
-    slogan: 'لا تكتفِ بالحضور، كن سهل العثور عليك.',
-  },
-  en: {
-    discover: 'Discover Dalil Tounes',
-    why: 'Why Dalil Tounes',
-    how: 'How Dalil Tounes works',
-    articles: 'Articles',
-    professionals: 'Professionals',
-    offers: 'Our offers',
-    businesses: 'Businesses',
-    reviews: 'Reviews & recommendations',
-    rights: 'All rights reserved.',
-    request: 'Information request / registration',
-    slogan: 'Do not just be present, be easy to find.',
-  },
-  it: {
-    discover: 'Scopri Dalil Tounes',
-    why: 'Perché Dalil Tounes',
-    how: 'Come funziona Dalil Tounes',
-    articles: 'Articoli',
-    professionals: 'Professionisti',
-    offers: 'Le nostre offerte',
-    businesses: 'Attività',
-    reviews: 'Recensioni e raccomandazioni',
-    rights: 'Tutti i diritti riservati.',
-    request: 'Richiesta di informazioni / registrazione',
-    slogan: 'Non limitarti a essere presente, fatti trovare.',
-  },
-  ru: {
-    discover: 'Откройте для себя Dalil Tounes',
-    why: 'Почему Dalil Tounes',
-    how: 'Как работает Dalil Tounes',
-    articles: 'Статьи',
-    professionals: 'Профессионалам',
-    offers: 'Наши предложения',
-    businesses: 'Организации',
-    reviews: 'Отзывы и рекомендации',
-    rights: 'Все права защищены.',
-    request: 'Запрос информации / регистрация',
-    slogan: 'Не просто присутствуйте — будьте заметны и доступны для поиска.',
-  },
-} as const;
 
 const Footer: React.FC = () => {
   const { language } = useLanguage();
   const t = useTranslation(language);
   const te = useTranslationExtended(language);
   const { isRTL } = useRTL();
-  const staticCopy = footerStaticCopy[language] ?? footerStaticCopy.fr;
   const formT = getFooterRequestTranslations(language);
+  const f = te.footer;
+  const slogan = f?.slogan || 'Ne soyez pas seulement présent, soyez trouvable.';
+  const discover = f?.discover || 'Découvrir Dalil Tounes';
+  const why = f?.why || 'Pourquoi Dalil Tounes';
+  const how = f?.how || 'Comment fonctionne Dalil Tounes';
+  const articles = f?.articles || 'Articles';
+  const professionals = f?.professionals || 'Professionnels';
+  const offers = f?.offers || 'Nos offres';
+  const businessesLabel = f?.businesses || t.nav.businesses;
+  const reviews = f?.reviews || 'Avis & recommandations';
+  const rights = f?.rights || 'Tous droits réservés.';
+  const request = f?.request || 'Demande d’information / inscription';
 
   const [showRequestForm, setShowRequestForm] = useState(false);
   const [requestForm, setRequestForm] = useState({
@@ -265,7 +209,7 @@ const Footer: React.FC = () => {
 
         <div className="bg-gradient-to-r from-[#4A1D43]/80 to-[#5A2D53]/80 rounded-lg p-3.5 mb-12 border border-[#D4AF37]/50 shadow-[0_2px_20px_rgba(212,175,55,0.12)]">
           <p className="text-center text-white text-sm md:text-base font-medium" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-            {staticCopy.slogan}
+            {slogan}
           </p>
         </div>
 
@@ -273,17 +217,17 @@ const Footer: React.FC = () => {
 
           <div className="lg:col-span-1">
             <h3 className="text-base font-semibold mb-3 text-white tracking-wide" style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.1rem' }}>
-              {te.footer?.dalilTounes || 'Dalil Tounes'}
+              {f?.dalilTounes || 'Dalil Tounes'}
             </h3>
             <p className="text-gray-500 text-xs leading-relaxed">
-              {te.footer?.platformDescription || 'La plateforme de référence pour trouver tous les établissements et services en Tunisie.'}
+              {f?.platformDescription || 'La plateforme de référence pour trouver tous les établissements et services en Tunisie.'}
             </p>
             <div className="mt-5 flex flex-col gap-2.5">
               <a
                 href="https://www.facebook.com/daliltounes"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label={te.footer?.followFacebook || 'Suivez-nous sur Facebook'}
+                aria-label={f?.followFacebook || 'Suivez-nous sur Facebook'}
                 className="inline-flex items-center gap-2 text-gray-400 hover:text-[#D4AF37] transition-colors text-xs"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
@@ -293,7 +237,7 @@ const Footer: React.FC = () => {
                 href="https://www.instagram.com/dalil.tounes/"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label={te.footer?.followInstagram || 'Suivez-nous sur Instagram'}
+                aria-label={f?.followInstagram || 'Suivez-nous sur Instagram'}
                 className="inline-flex items-center gap-2 text-gray-400 hover:text-[#D4AF37] transition-colors text-xs"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" fill="none" stroke="currentColor" strokeWidth="2"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
@@ -304,75 +248,75 @@ const Footer: React.FC = () => {
 
           <div>
             <h4 className="text-xs font-semibold mb-4 text-gray-300 uppercase tracking-widest" style={{ letterSpacing: '0.12em' }}>
-              {te.footer?.navigation || 'Navigation'}
+              {f?.navigation || 'Navigation'}
             </h4>
             <ul className="space-y-2.5">
-              <li><Link to="/" className={footerLink}>{te.footer?.home || t.nav.home}</Link></li>
-              <li><Link to="/entreprises" className={footerLink}>{te.footer?.businesses || t.nav.businesses}</Link></li>
-              <li><Link to="/emplois" className={footerLink}>{te.footer?.jobs || t.nav.jobs}</Link></li>
-              <li><Link to="/notre-concept" className={footerLink}>{te.footer?.concept || 'Notre Concept'}</Link></li>
-              <li><Link to="/blog" className={footerLink}>{te.footer?.blog || 'Articles'}</Link></li>
-              <li><Link to="/abonnement" className={footerLink}>{te.footer?.subscriptions || t.nav.subscription}</Link></li>
+              <li><Link to="/" className={footerLink}>{f?.home || t.nav.home}</Link></li>
+              <li><Link to="/entreprises" className={footerLink}>{f?.businesses || t.nav.businesses}</Link></li>
+              <li><Link to="/emplois" className={footerLink}>{f?.jobs || t.nav.jobs}</Link></li>
+              <li><Link to="/notre-concept" className={footerLink}>{f?.concept || 'Notre Concept'}</Link></li>
+              <li><Link to="/blog" className={footerLink}>{f?.blog || 'Articles'}</Link></li>
+              <li><Link to="/abonnement" className={footerLink}>{f?.subscriptions || t.nav.subscription}</Link></li>
             </ul>
           </div>
 
           <div>
             <h4 className="text-xs font-semibold mb-4 text-gray-300 uppercase tracking-widest" style={{ letterSpacing: '0.12em' }}>
-              {te.footer?.citizens || t.nav.citizens}
+              {f?.citizens || t.nav.citizens}
             </h4>
             <ul className="space-y-2.5">
-              <li><Link to="/citizens/health" className={footerLink}>{te.footer?.health || 'Santé'}</Link></li>
-              <li><Link to="/education" className={footerLink}>{te.footer?.education || 'Éducation'}</Link></li>
-              <li><Link to="/citizens/services" className={footerLink}>{te.footer?.publicServices || 'Services Publics'}</Link></li>
-              <li><Link to="/citizens/shops" className={footerLink}>{te.footer?.shops || 'Commerces & Magasins'}</Link></li>
-              <li><Link to="/citizens/leisure" className={footerLink}>{te.footer?.leisure || 'Loisirs & Événements'}</Link></li>
+              <li><Link to="/citizens/health" className={footerLink}>{f?.health || 'Santé'}</Link></li>
+              <li><Link to="/education" className={footerLink}>{f?.education || 'Éducation'}</Link></li>
+              <li><Link to="/citizens/services" className={footerLink}>{f?.publicServices || 'Services Publics'}</Link></li>
+              <li><Link to="/citizens/shops" className={footerLink}>{f?.shops || 'Commerces & Magasins'}</Link></li>
+              <li><Link to="/citizens/leisure" className={footerLink}>{f?.leisure || 'Loisirs & Événements'}</Link></li>
             </ul>
           </div>
 
           <div>
             <h4 className="text-xs font-semibold mb-4 text-gray-300 uppercase tracking-widest" style={{ letterSpacing: '0.12em' }}>
-              {staticCopy.discover}
+              {discover}
             </h4>
             <ul className="space-y-2.5">
-              <li><Link to="/pourquoi-dalil-tounes" className={footerLink}>{staticCopy.why}</Link></li>
-              <li><Link to="/concept" className={footerLink}>{staticCopy.how}</Link></li>
-              <li><Link to="/blog" className={footerLink}>{staticCopy.articles}</Link></li>
+              <li><Link to="/pourquoi-dalil-tounes" className={footerLink}>{why}</Link></li>
+              <li><Link to="/concept" className={footerLink}>{how}</Link></li>
+              <li><Link to="/blog" className={footerLink}>{articles}</Link></li>
             </ul>
           </div>
 
           <div>
             <h4 className="text-xs font-semibold mb-4 text-gray-300 uppercase tracking-widest" style={{ letterSpacing: '0.12em' }}>
-              {staticCopy.professionals}
+              {professionals}
             </h4>
             <ul className="space-y-2.5">
-              <li><Link to="/subscription" className={footerLink}>{staticCopy.offers}</Link></li>
+              <li><Link to="/subscription" className={footerLink}>{offers}</Link></li>
               <li><Link to="/devenir-partenaire" className={footerLink}>{partnerPageCopy[language === 'ar' ? 'ar' : 'fr'].footerLink}</Link></li>
-              <li><Link to="/businesses" className={footerLink}>{staticCopy.businesses}</Link></li>
+              <li><Link to="/businesses" className={footerLink}>{businessesLabel}</Link></li>
               {/* Future link: "Pourquoi créer une fiche professionnelle" */}
             </ul>
           </div>
 
           <div>
             <h4 className="text-xs font-semibold mb-4 text-gray-300 uppercase tracking-widest" style={{ letterSpacing: '0.12em' }}>
-              {te.footer?.legalInfo || 'Informations légales'}
+              {f?.legalInfo || 'Informations légales'}
             </h4>
             <ul className="space-y-2.5">
-              <li><Link to="/mentions-legales" className={footerLink}>{te.footer?.legalNotice || 'Mentions légales'}</Link></li>
-              <li><Link to="/cgu" className={footerLink}>{te.footer?.cgu || 'CGU'}</Link></li>
-              <li><Link to="/politique-confidentialite" className={footerLink}>{te.footer?.privacy || 'Confidentialité'}</Link></li>
-              <li><Link to="/plan-du-site" className={footerLink}>{te.footer?.sitemap || 'Plan du site'}</Link></li>
-              <li><Link to="/info-avis" className={footerLink}>{staticCopy.reviews}</Link></li>
+              <li><Link to="/mentions-legales" className={footerLink}>{f?.legalNotice || 'Mentions légales'}</Link></li>
+              <li><Link to="/cgu" className={footerLink}>{f?.cgu || 'CGU'}</Link></li>
+              <li><Link to="/politique-confidentialite" className={footerLink}>{f?.privacy || 'Confidentialité'}</Link></li>
+              <li><Link to="/plan-du-site" className={footerLink}>{f?.sitemap || 'Plan du site'}</Link></li>
+              <li><Link to="/info-avis" className={footerLink}>{reviews}</Link></li>
             </ul>
           </div>
 
           <div>
             <h4 className="text-xs font-semibold mb-4 text-gray-300 uppercase tracking-widest" style={{ letterSpacing: '0.12em' }}>
-              {te.footer?.contact || 'Contact'}
+              {f?.contact || 'Contact'}
             </h4>
             <div className="space-y-3">
               <EmailContact />
               <p className="text-xs text-gray-600 leading-relaxed pt-1">
-                {te.footer?.digitalGuide || 'Le guide digital des établissements et services en Tunisie'}
+                {f?.digitalGuide || 'Le guide digital des établissements et services en Tunisie'}
               </p>
             </div>
           </div>
@@ -382,7 +326,7 @@ const Footer: React.FC = () => {
         <div className="border-t border-gray-800 mt-12 pt-6">
           <div className={`flex flex-col md:flex-row justify-between items-center gap-4 ${isRTL ? 'md:flex-row-reverse' : ''}`}>
             <p className="text-gray-600 text-xs">
-              © 2025 Dalil Tounes. {staticCopy.rights}
+              © 2025 Dalil Tounes. {rights}
             </p>
             <button
               type="button"
@@ -390,7 +334,7 @@ const Footer: React.FC = () => {
               className="inline-block px-6 py-2.5 bg-transparent hover:bg-[#D4AF37] text-[#D4AF37] hover:text-black font-medium text-sm rounded-lg transition-all duration-200 border border-[#D4AF37]/60 hover:border-[#D4AF37]"
               style={{ letterSpacing: '0.03em' }}
             >
-              {staticCopy.request}
+              {request}
             </button>
           </div>
         </div>

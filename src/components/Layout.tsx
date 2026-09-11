@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from '../lib/i18n';
+import { useTranslationExtended } from '../lib/useTranslationExtended';
 import AdminNotifications from './AdminNotifications';
 
 const ADMIN_EMAILS = ['contact@dalil-tounes.com', 'zenanis75@hotmail.com'];
@@ -107,22 +108,22 @@ export const Layout = ({ children }: LayoutProps) => {
   const showAdminLink = isAdmin || import.meta.env.DEV || import.meta.env.VITE_SHOW_ADMIN_LINK === 'true';
 
   const tx = t as any;
-  const publicNavLabels =
-    language === 'ar' ? { discover: 'اكتشف', partners: 'الشركاء', contact: 'اتصل بنا' } :
-    language === 'en' ? { discover: 'Discover', partners: 'Partners', contact: 'Contact' } :
-    language === 'it' ? { discover: 'Scopri', partners: 'Partner', contact: 'Contatti' } :
-    language === 'ru' ? { discover: 'Узнать', partners: 'Партнёры', contact: 'Контакты' } :
-    { discover: 'Découvrir', partners: 'Partenaires', contact: 'Contact' };
+  const te = useTranslationExtended(language);
+  const publicNavLabels = {
+    discover: te.navLabels?.discover || 'Découvrir',
+    partners: te.navLabels?.partners || 'Partenaires',
+    contact: te.navLabels?.contact || 'Contact',
+  };
 
   const navigationStructure: NavItem[] = [
     ...(isAdmin
       ? [
           {
-            label: 'Espace Admin',
+            label: te.adminNav?.adminSpace || 'Espace Admin',
             path: '/admin/commercial',
             children: [
-              { label: 'Gestion Commerciaux', path: '/admin/commercial?tab=wallet' },
-              { label: 'Suivi des Versements', path: '/admin/commercial?tab=versements' },
+              { label: te.adminNav?.commercialManagement || 'Gestion Commerciaux', path: '/admin/commercial?tab=wallet' },
+              { label: te.adminNav?.paymentsTracking || 'Suivi des Versements', path: '/admin/commercial?tab=versements' },
             ],
           } as NavItem,
         ]
@@ -251,7 +252,7 @@ export const Layout = ({ children }: LayoutProps) => {
                   <source srcSet="/images/logo_dalil_tounes_sceau_luxe.webp" type="image/webp" width="140" height="140" />
                   <img
                     src="/images/logo_dalil_tounes_sceau_luxe.png"
-                    alt="Logo Dalil Tounes - Plateforme des établissements en Tunisie"
+                    alt={te.pwa?.logoAlt || 'Logo Dalil Tounes - Plateforme des établissements en Tunisie'}
                     className="w-full h-full object-cover"
                     style={{ objectPosition: 'center', borderRadius: '50%' }}
                     width="140"
@@ -336,7 +337,7 @@ export const Layout = ({ children }: LayoutProps) => {
               type="button"
               onClick={() => setShowMobileMenu(!showMobileMenu)}
               className="md:hidden p-2 text-gray-700 hover:text-orange-600"
-              aria-label={showMobileMenu ? 'Fermer le menu principal' : 'Ouvrir le menu principal'}
+              aria-label={showMobileMenu ? (te.pwa?.closeMenu || 'Fermer le menu principal') : (te.pwa?.openMenu || 'Ouvrir le menu principal')}
               aria-expanded={showMobileMenu}
             >
               {showMobileMenu ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -457,24 +458,24 @@ export const Layout = ({ children }: LayoutProps) => {
                     <button
                       type="button"
                       onClick={handleInstallApp}
-                      aria-label="Installer Dalil Tounes"
+                      aria-label={te.pwa?.installApp || 'Installer Dalil Tounes'}
                       className="underline decoration-2 decoration-gray-900/40 underline-offset-2 hover:decoration-gray-900 transition-colors cursor-pointer bg-transparent border-none p-0 m-0 font-bold text-gray-900 text-sm md:text-base"
                     >
                       Dalil Tounes
                     </button>
-                    {' '}sur mobile + inscriptions gratuites !
+                    {' '}{te.pwa?.installOnMobile || 'sur mobile + inscriptions gratuites !'}
                   </p>
                   <p className="hidden md:block text-xs text-gray-800">
-                    Cliquez pour installer l'application. Si Chrome ne la propose pas, un guide s'affichera.
+                    {te.pwa?.installHint || "Cliquez pour installer l'application. Si Chrome ne la propose pas, un guide s'affichera."}
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => navigate('/concept')}
                 className="flex-shrink-0 px-3 py-1.5 md:px-6 md:py-2.5 bg-gray-900 text-white text-sm md:text-base font-bold rounded-lg md:hover:bg-gray-800 md:hover:scale-105 md:transition-all md:duration-200 md:shadow-md whitespace-nowrap"
-                aria-label="Venez nous connaître"
+                aria-label={te.pwa?.visitUs || 'Venez nous connaître'}
               >
-                {language === 'ar' ? 'ايجاو تعرفوا علينا' : 'Venez nous connaître'}
+                {te.pwa?.visitUs || 'Venez nous connaître'}
               </button>
             </div>
           </div>
@@ -489,9 +490,9 @@ export const Layout = ({ children }: LayoutProps) => {
           <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden">
             <div className="bg-[#4A1D43] px-5 py-4 flex items-center justify-between">
               <h3 className="text-base font-semibold text-[#D4AF37]">
-                Installer sur iPhone / iPad
+                {te.pwa?.installIosTitle || 'Installer sur iPhone / iPad'}
               </h3>
-              <button onClick={() => setShowIOSGuide(false)} className="p-1 text-gray-300 hover:text-white transition" aria-label="Fermer">
+              <button onClick={() => setShowIOSGuide(false)} className="p-1 text-gray-300 hover:text-white transition" aria-label={te.pwa?.close || 'Fermer'}>
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -499,22 +500,22 @@ export const Layout = ({ children }: LayoutProps) => {
               <div className="flex items-start gap-3">
                 <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#4A1D43] text-[#D4AF37] flex items-center justify-center text-sm font-bold">1</div>
                 <div>
-                  <p className="text-sm font-medium text-gray-900">Appuyez sur le bouton Partager</p>
+                  <p className="text-sm font-medium text-gray-900">{te.pwa?.installIosStep1 || 'Appuyez sur le bouton Partager'}</p>
                   <div className="flex items-center gap-1.5 mt-1">
                     <Share className="w-4 h-4 text-[#007AFF]" />
-                    <span className="text-xs text-gray-500">en bas de Safari</span>
+                    <span className="text-xs text-gray-500">{te.pwa?.installIosStep1Hint || 'en bas de Safari'}</span>
                   </div>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#4A1D43] text-[#D4AF37] flex items-center justify-center text-sm font-bold">2</div>
-                <p className="text-sm font-medium text-gray-900">Choisissez "Sur l'ecran d'accueil"</p>
+                <p className="text-sm font-medium text-gray-900">{te.pwa?.installIosStep2 || 'Choisissez "Sur l\'ecran d\'accueil"'}</p>
               </div>
               <div className="flex items-start gap-3">
                 <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#4A1D43] text-[#D4AF37] flex items-center justify-center text-sm font-bold">3</div>
-                <p className="text-sm font-medium text-gray-900">Confirmez en appuyant sur "Ajouter"</p>
+                <p className="text-sm font-medium text-gray-900">{te.pwa?.installIosStep3 || 'Confirmez en appuyant sur "Ajouter"'}</p>
               </div>
-              <p className="text-xs text-gray-400 text-center pt-2 border-t border-gray-100">Fonctionne uniquement avec Safari</p>
+              <p className="text-xs text-gray-400 text-center pt-2 border-t border-gray-100">{te.pwa?.installIosNote || 'Fonctionne uniquement avec Safari'}</p>
             </div>
           </div>
         </div>
@@ -528,27 +529,27 @@ export const Layout = ({ children }: LayoutProps) => {
           <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden" role="dialog" aria-modal="true" aria-labelledby="install-guide-title">
             <div className="bg-[#4A1D43] px-5 py-4 flex items-center justify-between">
               <h3 id="install-guide-title" className="text-base font-semibold text-[#D4AF37]">
-                Installer Dalil Tounes
+                {te.pwa?.installAndroidTitle || 'Installer Dalil Tounes'}
               </h3>
-              <button onClick={() => setShowInstallGuide(null)} className="p-1 text-gray-300 hover:text-white transition" aria-label="Fermer">
+              <button onClick={() => setShowInstallGuide(null)} className="p-1 text-gray-300 hover:text-white transition" aria-label={te.pwa?.close || 'Fermer'}>
                 <X className="w-5 h-5" />
               </button>
             </div>
             <div className="p-5 space-y-4">
               {showInstallGuide === 'android' ? (
                 <>
-                  <GuideStep number="1">Ouvrez le menu ⋮ de Chrome.</GuideStep>
-                  <GuideStep number="2">Choisissez « Installer l'application » ou « Ajouter à l'écran d'accueil ».</GuideStep>
-                  <GuideStep number="3">Confirmez l'installation.</GuideStep>
+                  <GuideStep number="1">{te.pwa?.installAndroidStep1 || 'Ouvrez le menu ⋮ de Chrome.'}</GuideStep>
+                  <GuideStep number="2">{te.pwa?.installAndroidStep2 || 'Choisissez « Installer l\'application » ou « Ajouter à l\'écran d\'accueil ».'}</GuideStep>
+                  <GuideStep number="3">{te.pwa?.installAndroidStep3 || 'Confirmez l\'installation.'}</GuideStep>
                 </>
               ) : (
                 <>
-                  <GuideStep number="1">Dans Chrome, ouvrez le menu ⋮ en haut à droite.</GuideStep>
-                  <GuideStep number="2">Choisissez « Enregistrer et partager », puis « Installer Dalil Tounes ».</GuideStep>
-                  <p className="text-sm leading-6 text-gray-600">Pour l'installer sur votre téléphone, ouvrez directement <strong>dalil-tounes.com</strong> sur ce téléphone.</p>
+                  <GuideStep number="1">{te.pwa?.installDesktopStep1 || 'Dans Chrome, ouvrez le menu ⋮ en haut à droite.'}</GuideStep>
+                  <GuideStep number="2">{te.pwa?.installDesktopStep2 || 'Choisissez « Enregistrer et partager », puis « Installer Dalil Tounes ».'}</GuideStep>
+                  <p className="text-sm leading-6 text-gray-600">{te.pwa?.installDesktopHint || 'Pour l\'installer sur votre téléphone, ouvrez directement <strong>dalil-tounes.com</strong> sur ce téléphone.'}</p>
                 </>
               )}
-              <p className="text-xs text-gray-400 text-center pt-2 border-t border-gray-100">L'installation est gratuite et ne passe pas par le paiement.</p>
+              <p className="text-xs text-gray-400 text-center pt-2 border-t border-gray-100">{te.pwa?.installFreeNote || 'L\'installation est gratuite et ne passe pas par le paiement.'}</p>
             </div>
           </div>
         </div>

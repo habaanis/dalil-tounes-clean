@@ -122,6 +122,7 @@ export const translationExtensions = {
     // === FOOTER ===
     footer: {
       email: "Adresse e-mail :",
+      emailSubject: "Demande de renseignements - Dalil Tounes",
       copied: "Copié !",
       copyAddress: "Copier l'adresse",
       dalilTounes: "Dalil Tounes",
@@ -152,6 +153,16 @@ export const translationExtensions = {
       sitemap: "Plan du site",
       followFacebook: "Suivez-nous sur Facebook",
       followInstagram: "Suivez-nous sur Instagram",
+      slogan: "Ne soyez pas seulement présent, soyez trouvable.",
+      discover: "Découvrir Dalil Tounes",
+      why: "Pourquoi Dalil Tounes",
+      how: "Comment fonctionne Dalil Tounes",
+      articles: "Articles",
+      professionals: "Professionnels",
+      offers: "Nos offres",
+      reviews: "Avis & recommandations",
+      rights: "Tous droits réservés.",
+      request: "Demande d'information / inscription",
     },
 
     // === LAYOUT / NAVIGATION ===
@@ -161,6 +172,46 @@ export const translationExtensions = {
       quickSourcing: "Sourcing Rapide",
       aroundMe: "Autour de moi",
       admin: "Admin",
+    },
+
+    // === NAV LABELS ===
+    navLabels: {
+      discover: "Découvrir",
+      partners: "Partenaires",
+      contact: "Contact",
+    },
+
+    // === ADMIN NAV ===
+    adminNav: {
+      adminSpace: "Espace Admin",
+      commercialManagement: "Gestion Commerciaux",
+      paymentsTracking: "Suivi des Versements",
+    },
+
+    // === PWA INSTALL ===
+    pwa: {
+      installApp: "Installer Dalil Tounes",
+      installOnMobile: "sur mobile + inscriptions gratuites !",
+      installHint: "Cliquez pour installer l'application. Si Chrome ne la propose pas, un guide s'affichera.",
+      visitUs: "Venez nous connaître",
+      logoAlt: "Logo Dalil Tounes - Plateforme des établissements en Tunisie",
+      closeMenu: "Fermer le menu principal",
+      openMenu: "Ouvrir le menu principal",
+      close: "Fermer",
+      installIosTitle: "Installer sur iPhone / iPad",
+      installIosStep1: "Appuyez sur le bouton Partager",
+      installIosStep1Hint: "en bas de Safari",
+      installIosStep2: "Choisissez \"Sur l'ecran d'accueil\"",
+      installIosStep3: "Confirmez en appuyant sur \"Ajouter\"",
+      installIosNote: "Fonctionne uniquement avec Safari",
+      installAndroidTitle: "Installer Dalil Tounes",
+      installAndroidStep1: "Ouvrez le menu ⋮ de Chrome.",
+      installAndroidStep2: "Choisissez « Installer l'application » ou « Ajouter à l'écran d'accueil ».",
+      installAndroidStep3: "Confirmez l'installation.",
+      installDesktopStep1: "Dans Chrome, ouvrez le menu ⋮ en haut à droite.",
+      installDesktopStep2: "Choisissez « Enregistrer et partager », puis « Installer Dalil Tounes ».",
+      installDesktopHint: "Pour l'installer sur votre téléphone, ouvrez directement **dalil-tounes.com** sur ce téléphone.",
+      installFreeNote: "L'installation est gratuite et ne passe pas par le paiement.",
     },
 
     // === COMMON / SHARED ===
@@ -297,6 +348,7 @@ export const translationExtensions = {
 
     footer: {
       email: "البريد الإلكتروني:",
+      emailSubject: "طلب معلومات - دليل تونس",
       copied: "تم النسخ!",
       copyAddress: "نسخ العنوان",
       dalilTounes: "دليل تونس",
@@ -327,6 +379,16 @@ export const translationExtensions = {
       sitemap: "خريطة الموقع",
       followFacebook: "تابعنا على فيسبوك",
       followInstagram: "تابعنا على إنستغرام",
+      slogan: "لا تكتفِ بالحضور، كن سهل العثور عليك.",
+      discover: "اكتشف Dalil Tounes",
+      why: "لماذا Dalil Tounes",
+      how: "كيف يعمل Dalil Tounes",
+      articles: "المقالات",
+      professionals: "المهنيون",
+      offers: "عروضنا",
+      reviews: "الآراء والتوصيات",
+      rights: "جميع الحقوق محفوظة.",
+      request: "طلب معلومات / تسجيل",
     },
 
     layout: {
@@ -335,6 +397,43 @@ export const translationExtensions = {
       quickSourcing: "البحث السريع",
       aroundMe: "حولي",
       admin: "الإدارة",
+    },
+
+    navLabels: {
+      discover: "اكتشف",
+      partners: "الشركاء",
+      contact: "اتصل بنا",
+    },
+
+    adminNav: {
+      adminSpace: "مساحة الإدارة",
+      commercialManagement: "إدارة المندوبين",
+      paymentsTracking: "متابعة المدفوعات",
+    },
+
+    pwa: {
+      installApp: "تثبيت Dalil Tounes",
+      installOnMobile: "على الهاتف + تسجيلات مجانية!",
+      installHint: "انقر لتثبيت التطبيق. إذا لم يقترح Chrome ذلك، سيظهر دليل.",
+      visitUs: "تعرفوا علينا",
+      logoAlt: "شعار دليل تونس - منصة المؤسسات في تونس",
+      closeMenu: "إغلاق القائمة الرئيسية",
+      openMenu: "فتح القائمة الرئيسية",
+      close: "إغلاق",
+      installIosTitle: "التثبيت على iPhone / iPad",
+      installIosStep1: "اضغط على زر المشاركة",
+      installIosStep1Hint: "في أسفل Safari",
+      installIosStep2: "اختر \"على الشاشة الرئيسية\"",
+      installIosStep3: "أكد بالضغط على \"إضافة\"",
+      installIosNote: "يعمل فقط مع Safari",
+      installAndroidTitle: "تثبيت Dalil Tounes",
+      installAndroidStep1: "افتح قائمة ⋮ في Chrome.",
+      installAndroidStep2: "اختر « تثبيت التطبيق » أو « إضافة إلى الشاشة الرئيسية ».",
+      installAndroidStep3: "أكد التثبيت.",
+      installDesktopStep1: "في Chrome، افتح قائمة ⋮ في أعلى اليمين.",
+      installDesktopStep2: "اختر « حفظ ومشاركة »، ثم « تثبيت Dalil Tounes ».",
+      installDesktopHint: "لتثبيته على هاتفك، افتح **dalil-tounes.com** مباشرة على هذا الهاتف.",
+      installFreeNote: "التثبيت مجاني ولا يتطلب الدفع.",
     },
 
     common: {
@@ -470,6 +569,7 @@ export const translationExtensions = {
 
     footer: {
       email: "Email address:",
+      emailSubject: "Information request - Dalil Tounes",
       copied: "Copied!",
       copyAddress: "Copy address",
       dalilTounes: "Dalil Tounes",
@@ -500,6 +600,16 @@ export const translationExtensions = {
       sitemap: "Sitemap",
       followFacebook: "Follow us on Facebook",
       followInstagram: "Follow us on Instagram",
+      slogan: "Do not just be present, be easy to find.",
+      discover: "Discover Dalil Tounes",
+      why: "Why Dalil Tounes",
+      how: "How Dalil Tounes works",
+      articles: "Articles",
+      professionals: "Professionals",
+      offers: "Our offers",
+      reviews: "Reviews & recommendations",
+      rights: "All rights reserved.",
+      request: "Information request / registration",
     },
 
     layout: {
@@ -508,6 +618,43 @@ export const translationExtensions = {
       quickSourcing: "Quick Sourcing",
       aroundMe: "Around Me",
       admin: "Admin",
+    },
+
+    navLabels: {
+      discover: "Discover",
+      partners: "Partners",
+      contact: "Contact",
+    },
+
+    adminNav: {
+      adminSpace: "Admin Space",
+      commercialManagement: "Commercial Management",
+      paymentsTracking: "Payments Tracking",
+    },
+
+    pwa: {
+      installApp: "Install Dalil Tounes",
+      installOnMobile: "on mobile + free registrations!",
+      installHint: "Click to install the app. If Chrome doesn't prompt, a guide will appear.",
+      visitUs: "Come visit us",
+      logoAlt: "Dalil Tounes Logo - Platform for establishments in Tunisia",
+      closeMenu: "Close main menu",
+      openMenu: "Open main menu",
+      close: "Close",
+      installIosTitle: "Install on iPhone / iPad",
+      installIosStep1: "Tap the Share button",
+      installIosStep1Hint: "at the bottom of Safari",
+      installIosStep2: "Choose \"Add to Home Screen\"",
+      installIosStep3: "Confirm by tapping \"Add\"",
+      installIosNote: "Only works with Safari",
+      installAndroidTitle: "Install Dalil Tounes",
+      installAndroidStep1: "Open the Chrome menu ⋮ .",
+      installAndroidStep2: "Choose \"Install app\" or \"Add to Home screen\".",
+      installAndroidStep3: "Confirm the installation.",
+      installDesktopStep1: "In Chrome, open the menu ⋮ at the top right.",
+      installDesktopStep2: "Choose \"Save and share\", then \"Install Dalil Tounes\".",
+      installDesktopHint: "To install on your phone, open **dalil-tounes.com** directly on this phone.",
+      installFreeNote: "Installation is free and does not require payment.",
     },
 
     common: {
@@ -643,6 +790,7 @@ export const translationExtensions = {
 
     footer: {
       email: "Indirizzo email:",
+      emailSubject: "Richiesta di informazioni - Dalil Tounes",
       copied: "Copiato!",
       copyAddress: "Copia indirizzo",
       dalilTounes: "Dalil Tounes",
@@ -664,6 +812,25 @@ export const translationExtensions = {
       digitalGuide: "La guida digitale agli stabilimenti e servizi in Tunisia",
       copyright: "© 2024 Dalil Tounes. Tutti i diritti riservati.",
       registerEstablishment: "Registra il mio stabilimento",
+      concept: "Il Nostro Concetto",
+      blog: "Blog",
+      legalInfo: "Informazioni legali",
+      legalNotice: "Note legali",
+      cgu: "Termini di utilizzo",
+      privacy: "Privacy",
+      sitemap: "Mappa del sito",
+      followFacebook: "Seguici su Facebook",
+      followInstagram: "Seguici su Instagram",
+      slogan: "Non limitarti a essere presente, fatti trovare.",
+      discover: "Scopri Dalil Tounes",
+      why: "Perché Dalil Tounes",
+      how: "Come funziona Dalil Tounes",
+      articles: "Articoli",
+      professionals: "Professionisti",
+      offers: "Le nostre offerte",
+      reviews: "Recensioni e raccomandazioni",
+      rights: "Tutti i diritti riservati.",
+      request: "Richiesta di informazioni / registrazione",
     },
 
     layout: {
@@ -672,6 +839,43 @@ export const translationExtensions = {
       quickSourcing: "Sourcing Rapido",
       aroundMe: "Intorno a Me",
       admin: "Admin",
+    },
+
+    navLabels: {
+      discover: "Scopri",
+      partners: "Partner",
+      contact: "Contatti",
+    },
+
+    adminNav: {
+      adminSpace: "Spazio Admin",
+      commercialManagement: "Gestione Commerciali",
+      paymentsTracking: "Monitoraggio Pagamenti",
+    },
+
+    pwa: {
+      installApp: "Installa Dalil Tounes",
+      installOnMobile: "su mobile + registrazioni gratuite!",
+      installHint: "Clicca per installare l'app. Se Chrome non la propone, apparirà una guida.",
+      visitUs: "Vieni a trovarci",
+      logoAlt: "Logo Dalil Tounes - Piattaforma per stabilimenti in Tunisia",
+      closeMenu: "Chiudi menu principale",
+      openMenu: "Apri menu principale",
+      close: "Chiudi",
+      installIosTitle: "Installa su iPhone / iPad",
+      installIosStep1: "Tocca il pulsante Condividi",
+      installIosStep1Hint: "in basso a Safari",
+      installIosStep2: "Scegli \"Aggiungi a schermata Home\"",
+      installIosStep3: "Conferma toccando \"Aggiungi\"",
+      installIosNote: "Funziona solo con Safari",
+      installAndroidTitle: "Installa Dalil Tounes",
+      installAndroidStep1: "Apri il menu ⋮ di Chrome.",
+      installAndroidStep2: "Scegli « Installa l'app » o « Aggiungi a schermata Home ».",
+      installAndroidStep3: "Conferma l'installazione.",
+      installDesktopStep1: "In Chrome, apri il menu ⋮ in alto a destra.",
+      installDesktopStep2: "Scegli « Salva e condividi », poi « Installa Dalil Tounes ».",
+      installDesktopHint: "Per installarlo sul telefono, apri **dalil-tounes.com** direttamente su questo telefono.",
+      installFreeNote: "L'installazione è gratuita e non richiede pagamento.",
     },
 
     common: {
@@ -807,6 +1011,7 @@ export const translationExtensions = {
 
     footer: {
       email: "Адрес электронной почты:",
+      emailSubject: "Запрос информации - Dalil Tounes",
       copied: "Скопировано!",
       copyAddress: "Скопировать адрес",
       dalilTounes: "Dalil Tounes",
@@ -828,6 +1033,25 @@ export const translationExtensions = {
       digitalGuide: "Цифровой справочник учреждений и услуг в Тунисе",
       copyright: "© 2024 Dalil Tounes. Все права защищены.",
       registerEstablishment: "Зарегистрировать мое учреждение",
+      concept: "Наша концепция",
+      blog: "Блог",
+      legalInfo: "Правовая информация",
+      legalNotice: "Правовые уведомления",
+      cgu: "Условия использования",
+      privacy: "Конфиденциальность",
+      sitemap: "Карта сайта",
+      followFacebook: "Следите за нами в Facebook",
+      followInstagram: "Следите за нами в Instagram",
+      slogan: "Не просто присутствуйте — будьте заметны и доступны для поиска.",
+      discover: "Откройте для себя Dalil Tounes",
+      why: "Почему Dalil Tounes",
+      how: "Как работает Dalil Tounes",
+      articles: "Статьи",
+      professionals: "Профессионалам",
+      offers: "Наши предложения",
+      reviews: "Отзывы и рекомендации",
+      rights: "Все права защищены.",
+      request: "Запрос информации / регистрация",
     },
 
     layout: {
@@ -836,6 +1060,43 @@ export const translationExtensions = {
       quickSourcing: "Быстрый поиск",
       aroundMe: "Рядом со мной",
       admin: "Админ",
+    },
+
+    navLabels: {
+      discover: "Узнать",
+      partners: "Партнёры",
+      contact: "Контакты",
+    },
+
+    adminNav: {
+      adminSpace: "Пространство администратора",
+      commercialManagement: "Управление коммерческими",
+      paymentsTracking: "Отслеживание платежей",
+    },
+
+    pwa: {
+      installApp: "Установить Dalil Tounes",
+      installOnMobile: "на мобильный + бесплатная регистрация!",
+      installHint: "Нажмите, чтобы установить приложение. Если Chrome не предложит, появится руководство.",
+      visitUs: "Приходите к нам",
+      logoAlt: "Логотип Dalil Tounes - Платформа учреждений в Тунисе",
+      closeMenu: "Закрыть главное меню",
+      openMenu: "Открыть главное меню",
+      close: "Закрыть",
+      installIosTitle: "Установить на iPhone / iPad",
+      installIosStep1: "Нажмите кнопку «Поделиться»",
+      installIosStep1Hint: "внизу Safari",
+      installIosStep2: "Выберите «На экран Домой»",
+      installIosStep3: "Подтвердите, нажав «Добавить»",
+      installIosNote: "Работает только с Safari",
+      installAndroidTitle: "Установить Dalil Tounes",
+      installAndroidStep1: "Откройте меню ⋮ в Chrome.",
+      installAndroidStep2: "Выберите «Установить приложение» или «Добавить на главный экран».",
+      installAndroidStep3: "Подтвердите установку.",
+      installDesktopStep1: "В Chrome откройте меню ⋮ в правом верхнем углу.",
+      installDesktopStep2: "Выберите «Сохранить и поделиться», затем «Установить Dalil Tounes».",
+      installDesktopHint: "Чтобы установить на телефон, откройте **dalil-tounes.com** прямо на этом телефоне.",
+      installFreeNote: "Установка бесплатна и не требует оплаты.",
     },
 
     common: {
