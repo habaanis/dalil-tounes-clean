@@ -38,24 +38,24 @@
 .dt-cover::after { background: linear-gradient(180deg, rgba(0, 0, 0, 0.02), rgba(0, 20, 15, 0.14)) !important; }
 .dt-identity {
   z-index: 2 !important;
-  width: 78% !important;
-  margin: -46px auto 12px !important;
-  padding: 0 10px 8px !important;
+  width: 70% !important;
+  margin: -34px auto 12px !important;
+  padding: 0 8px 5px !important;
   border-color: rgba(212, 175, 55, 0.82) !important;
   border-radius: 18px !important;
   background: linear-gradient(150deg, rgba(255, 253, 246, 0.98), rgba(247, 239, 211, 0.97)) !important;
   box-shadow: 0 16px 34px rgba(0, 35, 27, 0.28), 0 0 0 1px rgba(255, 255, 255, 0.48) inset !important;
   color: #0f2d23 !important;
 }
-.dt-logo { width: 58px !important; height: 58px !important; margin: -29px auto 4px !important; border-width: 3px !important; background: #fff8df !important; }
-.dt-logo img { padding: 6px !important; }
-.dt-activity-pill { padding: 2px 10px !important; border-color: rgba(212, 175, 55, 0.9) !important; background: #0f3a2d !important; color: #f4ce55 !important; font-size: 7px !important; }
-.dt-identity-panel { max-width: 310px !important; margin-top: 3px !important; padding: 3px 6px 4px !important; border: 0 !important; background: transparent !important; }
-.dt-product-label { color: #8a6913 !important; font-size: 7px !important; }
-.dt-identity-panel h1 { margin: 1px 0 3px !important; color: #0f2d23 !important; font-size: clamp(1.12rem, 4.6vw, 1.48rem) !important; line-height: 1.02 !important; }
-.dt-professional-badge { padding: 2px 8px !important; border-color: rgba(138, 105, 19, 0.58) !important; background: rgba(212, 175, 55, 0.14) !important; color: #72520a !important; font-size: 7px !important; }
-.dt-slogan { margin: 3px 0 2px !important; color: #8a6913 !important; font-size: 0.64rem !important; }
-.dt-location, .dt-rating { margin-top: 3px !important; gap: 4px !important; color: #24483d !important; font-size: 0.65rem !important; }
+.dt-logo { width: 48px !important; height: 48px !important; margin: -24px auto 3px !important; border-width: 3px !important; background: #fff8df !important; }
+.dt-logo img { padding: 4px !important; }
+.dt-activity-pill { padding: 2px 8px !important; border-color: rgba(212, 175, 55, 0.9) !important; background: #0f3a2d !important; color: #f4ce55 !important; font-size: 7px !important; }
+.dt-identity-panel { max-width: 280px !important; margin-top: 2px !important; padding: 2px 4px 2px !important; border: 0 !important; background: transparent !important; }
+.dt-product-label { color: #8a6913 !important; font-size: 6px !important; }
+.dt-identity-panel h1 { margin: 1px 0 3px !important; color: #0f2d23 !important; font-size: clamp(1rem, 4.1vw, 1.3rem) !important; line-height: 1.02 !important; }
+.dt-professional-badge { padding: 1px 7px !important; border-color: rgba(138, 105, 19, 0.58) !important; background: rgba(212, 175, 55, 0.14) !important; color: #72520a !important; font-size: 7px !important; }
+.dt-slogan { margin: 2px 0 1px !important; color: #8a6913 !important; font-size: 0.58rem !important; }
+.dt-location, .dt-rating { margin-top: 2px !important; gap: 3px !important; color: #24483d !important; font-size: 0.58rem !important; }
 .dt-location svg, .dt-rating svg { width: 12px !important; height: 12px !important; }
 .dt-actions { padding: 7px 7px 8px !important; }
 .dt-primary-actions { gap: 4px !important; }
@@ -159,9 +159,9 @@
   .dt-showcase-page { padding-left: 6px !important; padding-right: 6px !important; }
   .dt-showcase-wrap { max-width: 390px !important; }
   .dt-cover { height: 190px !important; }
-  .dt-identity { width: 84% !important; margin-top: -38px !important; padding-inline: 7px !important; }
-  .dt-logo { width: 54px !important; height: 54px !important; margin-top: -27px !important; }
-  .dt-identity-panel h1 { font-size: 1.28rem !important; }
+  .dt-identity { width: 76% !important; margin-top: -30px !important; padding-inline: 6px !important; }
+  .dt-logo { width: 46px !important; height: 46px !important; margin-top: -23px !important; }
+  .dt-identity-panel h1 { font-size: 1.08rem !important; }
   .dt-primary-action { min-height: 43px !important; }
   .dt-accordion-trigger { min-height: 38px !important; }
   .dt-qr-card { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; text-align: left !important; }
