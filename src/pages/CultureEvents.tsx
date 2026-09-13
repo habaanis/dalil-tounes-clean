@@ -58,7 +58,18 @@ export default function CultureEvents() {
       },
       buyTickets: 'Réserver',
       noEvents: 'Aucun événement',
-      loading: 'Chargement...'
+      loading: 'Chargement...',
+      eventSingular: 'événement',
+      eventPlural: 'événements',
+      secteurLabels: {
+        'Saveurs & Traditions': 'Saveurs & Traditions',
+        'Musée & Patrimoine': 'Musée & Patrimoine',
+        'Escapades & Nature': 'Escapades & Nature',
+        'Festivals & artisanat': 'Festivals & artisanat',
+        'Sport & Aventure': 'Sport & Aventure',
+        'Art & Culture': 'Art & Culture',
+        'Sorties & Soirées': 'Sorties & Soirées',
+      },
     },
     en: {
       title: 'Cultural Agenda',
@@ -82,7 +93,18 @@ export default function CultureEvents() {
       },
       buyTickets: 'Book Now',
       noEvents: 'No events',
-      loading: 'Loading...'
+      loading: 'Loading...',
+      eventSingular: 'event',
+      eventPlural: 'events',
+      secteurLabels: {
+        'Saveurs & Traditions': 'Flavours & Traditions',
+        'Musée & Patrimoine': 'Museums & Heritage',
+        'Escapades & Nature': 'Nature Getaways',
+        'Festivals & artisanat': 'Festivals & Crafts',
+        'Sport & Aventure': 'Sport & Adventure',
+        'Art & Culture': 'Art & Culture',
+        'Sorties & Soirées': 'Outings & Nightlife',
+      },
     },
     ar: {
       title: 'الأجندة الثقافية',
@@ -106,7 +128,18 @@ export default function CultureEvents() {
       },
       buyTickets: 'احجز الآن',
       noEvents: 'لا توجد فعاليات',
-      loading: 'جاري التحميل...'
+      loading: 'جاري التحميل...',
+      eventSingular: 'فعالية',
+      eventPlural: 'فعاليات',
+      secteurLabels: {
+        'Saveurs & Traditions': 'النكهات والتقاليد',
+        'Musée & Patrimoine': 'المتاحف والتراث',
+        'Escapades & Nature': 'رحلات وطبيعة',
+        'Festivals & artisanat': 'مهرجانات وحرف',
+        'Sport & Aventure': 'رياضة ومغامرة',
+        'Art & Culture': 'فن وثقافة',
+        'Sorties & Soirées': 'خروجات وسهرات',
+      },
     },
     it: {
       title: 'Agenda Culturale',
@@ -130,7 +163,18 @@ export default function CultureEvents() {
       },
       buyTickets: 'Prenota Ora',
       noEvents: 'Nessun evento',
-      loading: 'Caricamento...'
+      loading: 'Caricamento...',
+      eventSingular: 'evento',
+      eventPlural: 'eventi',
+      secteurLabels: {
+        'Saveurs & Traditions': 'Sapori & Tradizioni',
+        'Musée & Patrimoine': 'Musei & Patrimonio',
+        'Escapades & Nature': 'Escursioni & Natura',
+        'Festivals & artisanat': 'Festival & Artigianato',
+        'Sport & Aventure': 'Sport & Avventura',
+        'Art & Culture': 'Arte & Cultura',
+        'Sorties & Soirées': 'Uscite & Vita notturna',
+      },
     },
     ru: {
       title: 'Культурная Программа',
@@ -154,7 +198,18 @@ export default function CultureEvents() {
       },
       buyTickets: 'Забронировать',
       noEvents: 'Нет событий',
-      loading: 'Загрузка...'
+      loading: 'Загрузка...',
+      eventSingular: 'событие',
+      eventPlural: 'событий',
+      secteurLabels: {
+        'Saveurs & Traditions': 'Вкусы и традиции',
+        'Musée & Patrimoine': 'Музеи и наследие',
+        'Escapades & Nature': 'Природа и поездки',
+        'Festivals & artisanat': 'Фестивали и ремёсла',
+        'Sport & Aventure': 'Спорт и приключения',
+        'Art & Culture': 'Искусство и культура',
+        'Sorties & Soirées': 'Отдых и вечерняя жизнь',
+      },
     }
   };
 
@@ -251,11 +306,14 @@ export default function CultureEvents() {
                 className="px-6 py-3 rounded-xl border-2 border-[#D4AF37]/30 bg-white/10 backdrop-blur-sm text-white font-medium focus:border-[#D4AF37] focus:ring-4 focus:ring-[#D4AF37]/20 outline-none transition-all hover:bg-white/15"
               >
                 <option value="all" className="bg-[#1a1f3a] text-white">{t.allTypes}</option>
-                {SECTEURS_CULTURE.map((secteur) => (
-                  <option key={secteur} value={secteur} className="bg-[#1a1f3a] text-white">
-                    {secteur}
-                  </option>
-                ))}
+                {SECTEURS_CULTURE.map((secteur) => {
+                  const label = t.secteurLabels?.[secteur] || secteur;
+                  return (
+                    <option key={secteur} value={secteur} className="bg-[#1a1f3a] text-white">
+                      {label}
+                    </option>
+                  );
+                })}
               </select>
             </div>
           </div>
@@ -273,7 +331,7 @@ export default function CultureEvents() {
                     {t.premiumAgenda.weekly.badge}
                   </h2>
                   <span className="px-4 py-2 bg-cyan-500/20 text-cyan-300 rounded-full font-bold text-xl border-2 border-cyan-400">
-                    {weeklyEvents.length} événement{weeklyEvents.length > 1 ? 's' : ''}
+                    {weeklyEvents.length} {weeklyEvents.length > 1 ? t.eventPlural : t.eventSingular}
                   </span>
                 </div>
                 {weeklyEvents.length > 0 ? (
@@ -303,7 +361,7 @@ export default function CultureEvents() {
                     {t.premiumAgenda.monthly.badge}
                   </h2>
                   <span className="px-4 py-2 bg-emerald-500/20 text-emerald-300 rounded-full font-bold text-xl border-2 border-emerald-400">
-                    {monthlyEvents.length} événement{monthlyEvents.length > 1 ? 's' : ''}
+                    {monthlyEvents.length} {monthlyEvents.length > 1 ? t.eventPlural : t.eventSingular}
                   </span>
                 </div>
                 {monthlyEvents.length > 0 ? (
@@ -333,7 +391,7 @@ export default function CultureEvents() {
                     {t.premiumAgenda.annual.badge}
                   </h2>
                   <span className="px-4 py-2 bg-[#D4AF37]/20 text-[#FFD700] rounded-full font-bold text-xl border-2 border-[#FFD700]">
-                    {annualEvents.length} événement{annualEvents.length > 1 ? 's' : ''}
+                    {annualEvents.length} {annualEvents.length > 1 ? t.eventPlural : t.eventSingular}
                   </span>
                 </div>
                 {annualEvents.length > 0 ? (

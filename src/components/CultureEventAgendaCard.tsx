@@ -1,5 +1,19 @@
 import { Calendar, MapPin, Ticket } from 'lucide-react';
 import { analyzeTicketLink, getPrixValue } from '../lib/ticketLinkAnalyzer';
+import { useLanguage } from '../context/LanguageContext';
+import type { Language } from '../lib/i18n';
+
+const DATE_LOCALES: Record<Language, string> = {
+  fr: 'fr-FR', ar: 'ar-TN', en: 'en-GB', it: 'it-IT', ru: 'ru-RU',
+};
+
+const COPY: Record<Language, { freeEntry: string; moreInfoOnSite: string }> = {
+  fr: { freeEntry: '🎁 Entrée Libre', moreInfoOnSite: "📍 Plus d'infos sur place" },
+  ar: { freeEntry: '🎁 دخول مجاني', moreInfoOnSite: '📍 مزيد من المعلومات في الموقع' },
+  en: { freeEntry: '🎁 Free Entry', moreInfoOnSite: '📍 More info on site' },
+  it: { freeEntry: '🎁 Ingresso Libero', moreInfoOnSite: '📍 Più info sul posto' },
+  ru: { freeEntry: '🎁 Свободный вход', moreInfoOnSite: '📍 Подробности на месте' },
+};
 
 interface CultureEventAgendaCardProps {
   event: {
@@ -20,6 +34,11 @@ interface CultureEventAgendaCardProps {
 }
 
 const CultureEventAgendaCard = ({ event, type, badge, noEventText, buttonText }: CultureEventAgendaCardProps) => {
+  const { language } = useLanguage();
+  const isRTL = language === 'ar';
+  const locale = DATE_LOCALES[language] || 'fr-FR';
+  const c = COPY[language] || COPY.fr;
+
   const colors = {
     weekly: {
       border: 'border-cyan-500/30 hover:border-cyan-400/60',
@@ -63,9 +82,9 @@ const CultureEventAgendaCard = ({ event, type, badge, noEventText, buttonText }:
     };
 
     if (fin && debut.toDateString() !== fin.toDateString()) {
-      return `${debut.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })} - ${fin.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}`;
+      return `${debut.toLocaleDateString(locale, { day: 'numeric', month: 'long' })} - ${fin.toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' })}`;
     }
-    return debut.toLocaleDateString('fr-FR', options);
+    return debut.toLocaleDateString(locale, options);
   };
 
   if (!event) {
@@ -115,9 +134,8 @@ const CultureEventAgendaCard = ({ event, type, badge, noEventText, buttonText }:
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-transparent to-transparent pointer-events-none"></div>
 
-        {/* Badge catégorie - gauche */}
         {event.secteur_evenement && (
-          <div className="absolute top-3 left-3 z-10">
+          <div className={`absolute top-3 ${isRTL ? 'right-3' : 'left-3'} z-10`}>
             <div className="bg-black/40 backdrop-blur-md rounded-lg px-3 py-1.5 shadow-lg">
               <span className="text-white text-xs font-medium">
                 {event.secteur_evenement}
@@ -168,7 +186,7 @@ const CultureEventAgendaCard = ({ event, type, badge, noEventText, buttonText }:
                 rel="noopener noreferrer"
                 className={`block w-full py-2.5 ${linkAnalysis.colorClass} text-white rounded-xl font-semibold text-center hover:shadow-xl transition-all hover:scale-105 text-sm`}
               >
-                <Ticket className="w-4 h-4 inline mr-2" />
+                <Ticket className={`w-4 h-4 inline ${isRTL ? 'ml-2' : 'mr-2'}`} />
                 {linkAnalysis.text}
               </a>
             );
@@ -177,7 +195,7 @@ const CultureEventAgendaCard = ({ event, type, badge, noEventText, buttonText }:
           return (
             <div className="flex justify-center">
               <span className="px-4 py-2 bg-white/5 text-gray-300 rounded-lg text-sm font-medium border border-white/10">
-                {getPrixValue(event.prix) === 0 ? '🎁 Entrée Libre' : '📍 Plus d\'infos sur place'}
+                {getPrixValue(event.prix) === 0 ? c.freeEntry : c.moreInfoOnSite}
               </span>
             </div>
           );

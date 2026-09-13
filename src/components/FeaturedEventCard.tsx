@@ -1,5 +1,7 @@
 import { Calendar, MapPin, Users } from 'lucide-react';
 import { SafeImage } from './SafeImage';
+import { useLanguage } from '../context/LanguageContext';
+import type { Language } from '../lib/i18n';
 
 export interface FeaturedEvent {
   id: string;
@@ -27,44 +29,69 @@ interface FeaturedEventCardProps {
   onClick?: () => void;
 }
 
-const formatEventDate = (eventDate: string | null, endDate?: string | null): string => {
-  if (!eventDate) return '';
+const COPY: Record<Language, {
+  from: string;
+  to: string;
+  organizedBy: string;
+  viewDetails: string;
+}> = {
+  fr: { from: 'Du', to: 'au', organizedBy: 'Organisé par', viewDetails: 'Voir les détails' },
+  ar: { from: 'من', to: 'إلى', organizedBy: 'نظّمها', viewDetails: 'عرض التفاصيل' },
+  en: { from: 'From', to: 'to', organizedBy: 'Organized by', viewDetails: 'View details' },
+  it: { from: 'Dal', to: 'al', organizedBy: 'Organizzato da', viewDetails: 'Vedi dettagli' },
+  ru: { from: 'С', to: 'по', organizedBy: 'Организатор:', viewDetails: 'Подробнее' },
+};
 
+const DATE_LOCALES: Record<Language, string> = {
+  fr: 'fr-FR', ar: 'ar-TN', en: 'en-GB', it: 'it-IT', ru: 'ru-RU',
+};
+
+const formatEventDate = (
+  eventDate: string | null,
+  endDate?: string | null,
+  lang: Language = 'fr',
+): string => {
+  if (!eventDate) return '';
+  const locale = DATE_LOCALES[lang];
   const start = new Date(eventDate);
   const isValidStart = !isNaN(start.getTime());
 
   if (!endDate) {
-    return isValidStart ? start.toLocaleDateString() : eventDate;
+    return isValidStart ? start.toLocaleDateString(locale) : eventDate;
   }
 
   const end = new Date(endDate);
   const isValidEnd = !isNaN(end.getTime());
 
   if (isValidStart && isValidEnd) {
-    return `Du ${start.toLocaleDateString()} au ${end.toLocaleDateString()}`;
+    const c = COPY[lang];
+    return `${c.from} ${start.toLocaleDateString(locale)} ${c.to} ${end.toLocaleDateString(locale)}`;
   }
 
-  return isValidStart ? start.toLocaleDateString() : eventDate;
+  return isValidStart ? start.toLocaleDateString(locale) : eventDate;
 };
 
 export const FeaturedEventCard = ({ event, onClick }: FeaturedEventCardProps) => {
-  const dateDisplay = event.event_period_label || formatEventDate(event.event_date, event.end_date);
+  const { language } = useLanguage();
+  const isRTL = language === 'ar';
+  const c = COPY[language] || COPY.fr;
+  const dateDisplay = event.event_period_label || formatEventDate(event.event_date, event.end_date, language);
 
   return (
     <div
       onClick={onClick}
-      className="
+      className={`
         min-w-[260px] max-w-xs
         bg-white
         rounded-xl
         px-4 py-4
-        text-left
+        ${isRTL ? 'text-right' : 'text-left'}
         hover:shadow-md
         hover:-translate-y-0.5
         transition-all
         cursor-pointer
         flex-shrink-0
-      "
+      `}
       style={{ border: '2px solid #D4AF37' }}
     >
       {event.image_url && (
@@ -109,13 +136,13 @@ export const FeaturedEventCard = ({ event, onClick }: FeaturedEventCardProps) =>
       {event.organizer && (
         <div className="flex items-center gap-1 text-xs text-gray-500 mb-3">
           <Users className="w-3 h-3 flex-shrink-0" />
-          <span className="truncate">Organisé par {event.organizer}</span>
+          <span className="truncate">{c.organizedBy} {event.organizer}</span>
         </div>
       )}
 
       <div className="text-sm text-orange-600 font-medium flex items-center gap-1">
-        <span>Voir les détails</span>
-        <span>→</span>
+        <span>{c.viewDetails}</span>
+        <span className={isRTL ? 'rotate-180' : ''}>→</span>
       </div>
     </div>
   );

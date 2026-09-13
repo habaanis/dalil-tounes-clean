@@ -644,6 +644,18 @@ export default function CitizensLeisure() {
     return typeMap[type] || MapPinned;
   };
 
+  const eventTypeLabels: Record<string, Record<string, string>> = {
+    fr: { 'Cinéma': 'Cinéma', 'Cinema': 'Cinéma', 'Concert': 'Concert', 'Festival': 'Festival', 'Sport': 'Sport', 'Plage': 'Plage', 'Beach': 'Plage', 'Restaurant': 'Restaurant', 'Exposition': 'Exposition', 'Exhibition': 'Exposition' },
+    ar: { 'Cinéma': 'سينما', 'Cinema': 'سينما', 'Concert': 'حفلة موسيقية', 'Festival': 'مهرجان', 'Sport': 'رياضة', 'Plage': 'شاطئ', 'Beach': 'شاطئ', 'Restaurant': 'مطعم', 'Exposition': 'معرض', 'Exhibition': 'معرض' },
+    en: { 'Cinéma': 'Cinema', 'Cinema': 'Cinema', 'Concert': 'Concert', 'Festival': 'Festival', 'Sport': 'Sport', 'Plage': 'Beach', 'Beach': 'Beach', 'Restaurant': 'Restaurant', 'Exposition': 'Exhibition', 'Exhibition': 'Exhibition' },
+    it: { 'Cinéma': 'Cinema', 'Cinema': 'Cinema', 'Concert': 'Concerto', 'Festival': 'Festival', 'Sport': 'Sport', 'Plage': 'Spiaggia', 'Beach': 'Spiaggia', 'Restaurant': 'Ristorante', 'Exposition': 'Esposizione', 'Exhibition': 'Esposizione' },
+    ru: { 'Cinéma': 'Кино', 'Cinema': 'Кино', 'Concert': 'Концерт', 'Festival': 'Фестиваль', 'Sport': 'Спорт', 'Plage': 'Пляж', 'Beach': 'Пляж', 'Restaurant': 'Ресторан', 'Exposition': 'Выставка', 'Exhibition': 'Выставка' },
+  };
+
+  const getEventTypeLabel = (type: string): string => {
+    return eventTypeLabels[language]?.[type] || type;
+  };
+
   const scrollCarousel = (direction: 'left' | 'right') => {
     if (carouselRef.current) {
       const scrollAmount = 320;
@@ -991,10 +1003,10 @@ export default function CitizensLeisure() {
                           ⭐ VIP
                         </span>
                       </div>
-                      <div className="absolute bottom-3 left-3">
+                      <div className={`absolute bottom-3 ${language === 'ar' ? 'right-3' : 'left-3'}`}>
                         <div className="flex items-center gap-2 text-white">
                           <TypeIcon className="w-4 h-4" />
-                          <span className="font-semibold text-xs">{event.type_evenement}</span>
+                          <span className="font-semibold text-xs">{getEventTypeLabel(event.type_evenement)}</span>
                         </div>
                       </div>
                     </div>
@@ -1027,7 +1039,7 @@ export default function CitizensLeisure() {
                           className="block w-full py-2 bg-[#4A1D43] hover:bg-[#5A2D53] text-white rounded-lg font-bold text-center hover:shadow-xl transition-all hover:scale-105 text-sm"
                           style={{ border: '2px solid #D4AF37' }}
                         >
-                          <Ticket className="w-4 h-4 inline mr-2" />
+                          <Ticket className={`w-4 h-4 inline ${language === 'ar' ? 'ml-2' : 'mr-2'}`} />
                           {t.buyTickets}
                         </a>
                       )}
@@ -1069,7 +1081,7 @@ export default function CitizensLeisure() {
           <div className="space-y-4">
             {/* Search Bar */}
             <div className="relative">
-              <div className="absolute left-3 top-1/2 -translate-y-1/2 bg-[#4A1D43] rounded-full p-1">
+              <div className={`absolute ${language === 'ar' ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 bg-[#4A1D43] rounded-full p-1`}>
                 <Search className="w-3.5 h-3.5 text-white" />
               </div>
               <input
@@ -1080,7 +1092,7 @@ export default function CitizensLeisure() {
                 data-search-bar="true"
                 data-search-scope="loisir"
                 data-component-name="CitizensLeisure-Search"
-                className="w-full pl-10 pr-4 py-2 rounded-lg border border-[#D4AF37]/30 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 outline-none transition-all text-sm shadow-sm"
+                className={`w-full ${language === 'ar' ? 'pr-10 pl-4' : 'pl-10 pr-4'} py-2 rounded-lg border border-[#D4AF37]/30 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 outline-none transition-all text-sm shadow-sm`}
               />
             </div>
 

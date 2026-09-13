@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Calendar, MapPin, ArrowRight, ChevronLeft, ChevronRight, Tag } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
+import type { Language } from '../lib/i18n';
 import { supabase } from '../lib/BoltDatabase';
 import { SafeImage } from './SafeImage';
 
@@ -18,15 +19,37 @@ interface FeaturedEvent {
   event_type?: string | null;
 }
 
+const COPY: Record<Language, {
+  title: string;
+  dateTBD: string;
+  from: string;
+  to: string;
+  prevEvent: string;
+  nextEvent: string;
+  goToEvent: string;
+}> = {
+  fr: { title: 'Ils font bouger la Tunisie', dateTBD: 'Date à venir', from: 'Du', to: 'au', prevEvent: 'Événement précédent', nextEvent: 'Événement suivant', goToEvent: "Aller à l'événement" },
+  ar: { title: 'هم يحركون تونس', dateTBD: 'التاريخ قادم', from: 'من', to: 'إلى', prevEvent: 'الفعالية السابقة', nextEvent: 'الفعالية التالية', goToEvent: 'الذهاب إلى الفعالية' },
+  en: { title: 'They move Tunisia', dateTBD: 'Date to come', from: 'From', to: 'to', prevEvent: 'Previous event', nextEvent: 'Next event', goToEvent: 'Go to event' },
+  it: { title: 'Muovono la Tunisia', dateTBD: 'Data da definire', from: 'Dal', to: 'al', prevEvent: 'Evento precedente', nextEvent: 'Evento successivo', goToEvent: "Vai all'evento" },
+  ru: { title: 'Они двигают Тунис', dateTBD: 'Дата будет объявлена', from: 'С', to: 'по', prevEvent: 'Предыдущее событие', nextEvent: 'Следующее событие', goToEvent: 'Перейти к событию' },
+};
+
+const DATE_LOCALES: Record<Language, string> = {
+  fr: 'fr-FR', ar: 'ar-TN', en: 'en-GB', it: 'it-IT', ru: 'ru-RU',
+};
+
 export const FeaturedEventsCarousel = () => {
   const { language } = useLanguage();
   const t = useTranslation(language);
+  const isRTL = language === 'ar';
+  const c = COPY[language] || COPY.fr;
+  const locale = DATE_LOCALES[language] || 'fr-FR';
 
   const [events, setEvents] = useState<FeaturedEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // 🔄 Charger les événements mis en avant
   useEffect(() => {
     const fetchEvents = async () => {
       setLoading(true);
@@ -49,15 +72,12 @@ export const FeaturedEventsCarousel = () => {
 
         const cleaned = (data || []).filter((event) => {
           if (!event.event_date && !event.end_date) return true;
-
           const start = event.event_date ? new Date(event.event_date) : null;
           const end = event.end_date ? new Date(event.end_date) : start;
-
           if (!end || isNaN(end.getTime())) return true;
           return end >= today;
         });
 
-        // Si le filtre ne renvoie rien mais qu'il y a des données, on affiche tout
         if (cleaned.length === 0 && (data || []).length > 0) {
           setEvents(data as FeaturedEvent[]);
         } else {
@@ -74,13 +94,11 @@ export const FeaturedEventsCarousel = () => {
     fetchEvents();
   }, []);
 
-  // 🎞️ Auto-défilement
   useEffect(() => {
     if (events.length <= 1) return;
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % events.length);
-    }, 8000); // 8 secondes
-
+    }, 8000);
     return () => clearInterval(interval);
   }, [events.length]);
 
@@ -95,7 +113,6 @@ export const FeaturedEventsCarousel = () => {
   };
 
   if (loading || events.length === 0) {
-    // Si tu préfères, on peut mettre un petit skeleton ici plus tard
     return null;
   }
 
@@ -107,14 +124,14 @@ export const FeaturedEventsCarousel = () => {
       if (!value) return '';
       const d = new Date(value);
       if (isNaN(d.getTime())) return value;
-      return d.toLocaleDateString();
+      return d.toLocaleDateString(locale);
     };
 
     const startLabel = format(ev.event_date);
     const endLabel = format(ev.end_date || null);
 
     if (startLabel && endLabel && startLabel !== endLabel) {
-      return `Du ${startLabel} au ${endLabel}`;
+      return `${c.from} ${startLabel} ${c.to} ${endLabel}`;
     }
     return startLabel || endLabel || '';
   };
@@ -133,7 +150,7 @@ export const FeaturedEventsCarousel = () => {
     <div className="max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg md:text-xl font-light text-gray-900">
-          Ils font bouger la Tunisie
+          {c.title}
         </h3>
         {events.length > 1 && (
           <div className="flex items-center gap-2">
@@ -141,17 +158,17 @@ export const FeaturedEventsCarousel = () => {
               type="button"
               onClick={goPrev}
               className="p-2 rounded-full bg-white hover:bg-gray-50 transition-all duration-300 shadow-[0_2px_10px_rgba(0,0,0,0.08)] hover:shadow-[0_4px_15px_rgba(0,0,0,0.12)]"
-              aria-label="Événement précédent"
+              aria-label={c.prevEvent}
             >
-              <ChevronLeft className="w-5 h-5 text-gray-700" />
+              {isRTL ? <ChevronRight className="w-5 h-5 text-gray-700" /> : <ChevronLeft className="w-5 h-5 text-gray-700" />}
             </button>
             <button
               type="button"
               onClick={goNext}
               className="p-2 rounded-full bg-white hover:bg-gray-50 transition-all duration-300 shadow-[0_2px_10px_rgba(0,0,0,0.08)] hover:shadow-[0_4px_15px_rgba(0,0,0,0.12)]"
-              aria-label="Événement suivant"
+              aria-label={c.nextEvent}
             >
-              <ChevronRight className="w-5 h-5 text-gray-700" />
+              {isRTL ? <ChevronLeft className="w-5 h-5 text-gray-700" /> : <ChevronRight className="w-5 h-5 text-gray-700" />}
             </button>
           </div>
         )}
@@ -166,7 +183,6 @@ export const FeaturedEventsCarousel = () => {
           maxHeight: '280px'
         }}
       >
-        {/* Image de fond avec traitement premium */}
         {event.image_url && (
           <div className="absolute inset-0">
             <SafeImage
@@ -183,7 +199,6 @@ export const FeaturedEventsCarousel = () => {
           </div>
         )}
 
-        {/* Overlay de cohérence colorimétrique */}
         <div
           className="absolute inset-0 transition-opacity duration-500"
           style={{
@@ -193,16 +208,13 @@ export const FeaturedEventsCarousel = () => {
           }}
         />
 
-        {/* Overlay dégradé gauche pour lisibilité */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent transition-opacity duration-500" />
+        <div className={`absolute inset-0 bg-gradient-to-r ${isRTL ? 'from-transparent via-black/40 to-black/70' : 'from-black/70 via-black/40 to-transparent'} transition-opacity duration-500`} />
 
-        {/* Contenu superposé */}
         <div className="relative h-full flex flex-col justify-between p-3 md:p-4 text-white">
-          {/* En-tête avec badges */}
           <div className="flex flex-wrap items-center gap-1.5 mb-1.5">
             <span className="px-2.5 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-medium text-white flex items-center gap-1.5 shadow-lg" style={{ border: '1px solid #D4AF37' }}>
               <Calendar className="w-3.5 h-3.5" />
-              {dateLabel || 'Date à venir'}
+              {dateLabel || c.dateTBD}
             </span>
             {typeLabel && (
               <span className="px-2.5 py-1 rounded-full bg-[#4A1D43]/80 backdrop-blur-md text-[10px] font-medium text-white flex items-center gap-1.5">
@@ -212,9 +224,7 @@ export const FeaturedEventsCarousel = () => {
             )}
           </div>
 
-          {/* Contenu principal */}
           <div className="flex-1 flex flex-col justify-center max-w-2xl">
-            {/* Localisation */}
             {event.city && (
               <div className="flex items-center gap-1.5 mb-1.5">
                 <MapPin className="w-3.5 h-3.5 text-[#D4AF37]" />
@@ -225,12 +235,10 @@ export const FeaturedEventsCarousel = () => {
               </div>
             )}
 
-            {/* Titre */}
             <h4 className="text-base md:text-lg font-bold text-white mb-1.5 line-clamp-2 drop-shadow-lg">
               {event.event_name}
             </h4>
 
-            {/* Description */}
             {event.short_description && (
               <p className="text-xs md:text-sm text-gray-100 mb-1.5 line-clamp-2 leading-relaxed drop-shadow-md">
                 {event.short_description}
@@ -238,7 +246,6 @@ export const FeaturedEventsCarousel = () => {
             )}
           </div>
 
-          {/* Footer avec bouton et pagination */}
           <div className="flex items-center justify-between gap-3">
             {event.registration_url && (
               <a
@@ -249,7 +256,7 @@ export const FeaturedEventsCarousel = () => {
                 style={{ border: '1px solid #D4AF37' }}
               >
                 {t.businessEvents.eventCard.learnMore}
-                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className={`w-3.5 h-3.5 group-hover:translate-x-1 transition-transform ${isRTL ? 'rotate-180' : ''}`} />
               </a>
             )}
 
@@ -266,7 +273,7 @@ export const FeaturedEventsCarousel = () => {
                         : 'bg-white/40 w-1.5 hover:bg-white/60'
                     }`}
                     style={index === currentIndex ? { backgroundColor: '#D4AF37' } : {}}
-                    aria-label={`Aller à l'événement ${index + 1}`}
+                    aria-label={`${c.goToEvent} ${index + 1}`}
                   />
                 ))}
               </div>
@@ -279,4 +286,3 @@ export const FeaturedEventsCarousel = () => {
 };
 
 export default FeaturedEventsCarousel;
-

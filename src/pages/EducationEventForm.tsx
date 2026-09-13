@@ -43,7 +43,7 @@ export const EducationEventForm = () => {
         ville: null,
         contact_suggere: `${formData.phone}${formData.phone && formData.email ? ' - ' : ''}${formData.email}`,
         raison_suggestion: formData.message,
-        submission_lang: 'fr',
+        submission_lang: language,
       };
 
       const { error } = await supabase.from('suggestions_entreprises').insert([payload]);
@@ -94,16 +94,16 @@ export const EducationEventForm = () => {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">{t.phone}</label>
                 <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <input type="tel" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="+216 XX XXX XXX" />
+                  <Phone className={`absolute ${language === 'ar' ? 'right-3' : 'left-3'} top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400`} />
+                  <input type="tel" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} className={`w-full ${language === 'ar' ? 'pr-11 pl-4' : 'pl-11 pr-4'} py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent`} placeholder="+216 XX XXX XXX" />
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">{t.email}</label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder={t.emailPlaceholder} />
+                  <Mail className={`absolute ${language === 'ar' ? 'right-3' : 'left-3'} top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400`} />
+                  <input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className={`w-full ${language === 'ar' ? 'pr-11 pl-4' : 'pl-11 pr-4'} py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent`} placeholder={t.emailPlaceholder} />
                 </div>
               </div>
             </div>
@@ -111,8 +111,8 @@ export const EducationEventForm = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">{t.description}</label>
               <div className="relative">
-                <MessageSquare className="absolute left-3 top-4 w-5 h-5 text-gray-400" />
-                <textarea required rows={6} value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })} className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none" placeholder={t.descriptionPlaceholder} />
+                <MessageSquare className={`absolute ${language === 'ar' ? 'right-3' : 'left-3'} top-4 w-5 h-5 text-gray-400`} />
+                <textarea required rows={6} value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })} className={`w-full ${language === 'ar' ? 'pr-11 pl-4' : 'pl-11 pr-4'} py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none`} placeholder={t.descriptionPlaceholder} />
               </div>
             </div>
 
