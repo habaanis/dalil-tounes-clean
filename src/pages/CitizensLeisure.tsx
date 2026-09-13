@@ -998,7 +998,7 @@ export default function CitizensLeisure() {
                         />
                       )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
-                      <div className="absolute top-3 left-3 flex gap-2">
+                      <div className={`absolute top-3 ${language === 'ar' ? 'right-3' : 'left-3'} flex gap-2`}>
                         <span className="px-2.5 py-1 bg-[#D4AF37] text-[#4A1D43] font-bold text-xs rounded-full shadow-lg">
                           ⭐ VIP
                         </span>
