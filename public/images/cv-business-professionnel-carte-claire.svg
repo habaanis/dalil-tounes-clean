@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="410" height="845" viewBox="0 0 410 845" role="img" aria-labelledby="title desc">
+  <title id="title">CV Business Professionnel Dalil Tounes</title>
+  <desc id="desc">Aperçu du modèle professionnel avec grande photo et carte d'identité claire compacte.</desc>
+  <defs>
+    <linearGradient id="shell" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#06382d"/><stop offset="1" stop-color="#011f1a"/></linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fffdf6"/><stop offset="1" stop-color="#f7efd3"/></linearGradient>
+    <clipPath id="cover"><rect x="6" y="6" width="398" height="255" rx="12"/></clipPath>
+    <filter id="shadow"><feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#001b15" flood-opacity=".35"/></filter>
+  </defs>
+  <rect x="1" y="1" width="408" height="843" rx="17" fill="url(#shell)" stroke="#d4af37" stroke-width="2"/>
+  <image href="https://ik.imagekit.io/gfdpqvshw/Lienora/client/aux-saveurs-danis/Aux-saveurs-danis-dessert-assiette?updatedAt=1787090066955?tr=w-800,h-600,fo-auto,q-85,f-auto" x="6" y="6" width="398" height="255" preserveAspectRatio="xMidYMid slice" clip-path="url(#cover)"/>
+  <rect x="62" y="221" width="286" height="142" rx="18" fill="url(#card)" stroke="#d4af37" filter="url(#shadow)"/>
+  <circle cx="205" cy="221" r="22" fill="#fff8df" stroke="#f4ce55" stroke-width="3"/>
+  <circle cx="205" cy="221" r="16" fill="#07392e"/><text x="205" y="225" text-anchor="middle" fill="#f4ce55" font-size="9" font-family="Georgia" font-weight="700">DT</text>
+  <rect x="150" y="245" width="110" height="16" rx="8" fill="#0f3a2d" stroke="#d4af37"/>
+  <text x="205" y="256" text-anchor="middle" fill="#f4ce55" font-size="7" font-family="Arial" font-weight="700">TRAITEUR ÉVÉNEMENTIEL</text>
+  <text x="205" y="278" text-anchor="middle" fill="#8a6913" font-size="7" font-family="Arial" font-weight="700" letter-spacing="1.2">CV BUSINESS PREMIUM</text>
+  <text x="205" y="307" text-anchor="middle" fill="#0f2d23" font-size="22" font-family="Georgia" font-weight="700">Aux saveurs d’Anis</text>
+  <rect x="145" y="318" width="120" height="15" rx="7" fill="#f3e8bd" stroke="#b9942d"/>
+  <text x="205" y="328" text-anchor="middle" fill="#72520a" font-size="7" font-family="Arial" font-weight="700">★ CERTIFIÉ DALIL TOUNES</text>
+  <text x="205" y="346" text-anchor="middle" fill="#8a6913" font-size="10" font-family="Arial" font-weight="700">Alimentation · Sousse</text>
+  <g fill="#07392e" stroke="#d4af37">
+    <rect x="12" y="382" width="92" height="50" rx="7"/><rect x="110" y="382" width="92" height="50" rx="7"/><rect x="208" y="382" width="92" height="50" rx="7"/><rect x="306" y="382" width="92" height="50" rx="7"/>
+    <rect x="12" y="438" width="92" height="46" rx="7"/><rect x="110" y="438" width="92" height="46" rx="7"/>
+    <rect x="12" y="492" width="190" height="38" rx="7"/><rect x="208" y="492" width="190" height="38" rx="7"/>
+  </g>
+  <g fill="#f4ce55" font-family="Arial" font-size="8" font-weight="700" text-anchor="middle">
+    <text x="58" y="412">Installer l’application</text><text x="156" y="412">Appeler</text><text x="254" y="412">WhatsApp</text><text x="352" y="412">E-mail</text>
+    <text x="58" y="466">Itinéraire</text><text x="156" y="466">Site web</text><text x="107" y="516">Réserver</text><text x="303" y="516">Ajouter aux contacts</text>
+  </g>
+  <g fill="#07392e" stroke="#d4af37">
+    <rect x="12" y="550" width="386" height="52" rx="8"/><rect x="12" y="608" width="386" height="52" rx="8"/><rect x="12" y="666" width="386" height="52" rx="8"/><rect x="12" y="724" width="386" height="52" rx="8"/><rect x="12" y="782" width="386" height="46" rx="8"/>
+  </g>
+  <g fill="#fffdf6" font-family="Arial" font-size="12" font-weight="700">
+    <text x="34" y="582">Présentation</text><text x="34" y="640">Services proposés</text><text x="34" y="698">Photos et réalisations</text><text x="34" y="756">Horaires</text><text x="34" y="811">Informations pratiques</text>
+  </g>
+  <g fill="#f4ce55" font-family="Arial" font-size="18" text-anchor="middle"><text x="380" y="583">›</text><text x="380" y="641">›</text><text x="380" y="699">›</text><text x="380" y="757">›</text><text x="380" y="812">›</text></g>
+</svg>
