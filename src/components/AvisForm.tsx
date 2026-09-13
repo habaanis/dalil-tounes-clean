@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Star, Send, X, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
 import { supabase } from '../lib/BoltDatabase';
 import { useLanguage } from '../context/LanguageContext';
-import { useTranslation } from '../lib/i18n';
 
 interface AvisFormProps {
   sellerId: string;
@@ -11,9 +10,106 @@ interface AvisFormProps {
   onCancel: () => void;
 }
 
+const copy = {
+  fr: {
+    ratingLabel: 'Votre note *',
+    commentLabel: 'Votre commentaire *',
+    commentPlaceholder: 'Partagez votre expérience avec ce vendeur... (500 caractères max)',
+    charsCount: 'caractères',
+    cancel: 'Annuler',
+    publishing: 'Publication...',
+    submit: 'Publier l'avis',
+    errorSelectRating: 'Veuillez sélectionner une note',
+    errorCommentRequired: 'Veuillez écrire un commentaire',
+    errorLoginRequired: 'Vous devez être connecté pour laisser un avis',
+    errorAlreadyReviewed: 'Vous avez déjà laissé un avis pour cette annonce',
+    errorSelfReview: 'Vous ne pouvez pas noter votre propre annonce',
+    errorInvalidRating: 'La note doit être entre 1 et 5',
+    successPublished: 'Votre avis a été publié avec succès !',
+    errorOccurred: 'Une erreur est survenue. Veuillez réessayer.',
+    ratings: ['Très mauvais', 'Mauvais', 'Moyen', 'Bon', 'Excellent'],
+  },
+  en: {
+    ratingLabel: 'Your rating *',
+    commentLabel: 'Your comment *',
+    commentPlaceholder: 'Share your experience with this seller... (500 characters max)',
+    charsCount: 'characters',
+    cancel: 'Cancel',
+    publishing: 'Publishing...',
+    submit: 'Publish review',
+    errorSelectRating: 'Please select a rating',
+    errorCommentRequired: 'Please write a comment',
+    errorLoginRequired: 'You must be logged in to leave a review',
+    errorAlreadyReviewed: 'You have already reviewed this ad',
+    errorSelfReview: 'You cannot rate your own ad',
+    errorInvalidRating: 'Rating must be between 1 and 5',
+    successPublished: 'Your review has been published successfully!',
+    errorOccurred: 'An error occurred. Please try again.',
+    ratings: ['Very bad', 'Bad', 'Average', 'Good', 'Excellent'],
+  },
+  ar: {
+    ratingLabel: 'تقييمك *',
+    commentLabel: 'تعليقك *',
+    commentPlaceholder: 'شارك تجربتك مع هذا البائع... (500 حرف كحد أقصى)',
+    charsCount: 'حرف',
+    cancel: 'إلغاء',
+    publishing: 'جاري النشر...',
+    submit: 'نشر التقييم',
+    errorSelectRating: 'يرجى اختيار تقييم',
+    errorCommentRequired: 'يرجى كتابة تعليق',
+    errorLoginRequired: 'يجب تسجيل الدخول لترك تقييم',
+    errorAlreadyReviewed: 'لقد قمت بالفعل بترك تقييم لهذا الإعلان',
+    errorSelfReview: 'لا يمكنك تقييم إعلانك الخاص',
+    errorInvalidRating: 'يجب أن يكون التقييم بين 1 و 5',
+    successPublished: 'تم نشر تقييمك بنجاح!',
+    errorOccurred: 'حدث خطأ. يرجى المحاولة مرة أخرى.',
+    ratings: ['سيء جداً', 'سيء', 'متوسط', 'جيد', 'ممتاز'],
+  },
+  it: {
+    ratingLabel: 'Il tuo voto *',
+    commentLabel: 'Il tuo commento *',
+    commentPlaceholder: 'Condividi la tua esperienza con questo venditore... (max 500 caratteri)',
+    charsCount: 'caratteri',
+    cancel: 'Annulla',
+    publishing: 'Pubblicazione...',
+    submit: 'Pubblica recensione',
+    errorSelectRating: 'Seleziona un voto',
+    errorCommentRequired: 'Scrivi un commento',
+    errorLoginRequired: 'Devi essere loggato per lasciare una recensione',
+    errorAlreadyReviewed: 'Hai già lasciato una recensione per questo annuncio',
+    errorSelfReview: 'Non puoi valutare il tuo annuncio',
+    errorInvalidRating: 'Il voto deve essere tra 1 e 5',
+    successPublished: 'La tua recensione è stata pubblicata con successo!',
+    errorOccurred: 'Si è verificato un errore. Riprova.',
+    ratings: ['Pessimo', 'Brutto', 'Medio', 'Buono', 'Eccellente'],
+  },
+  ru: {
+    ratingLabel: 'Ваша оценка *',
+    commentLabel: 'Ваш комментарий *',
+    commentPlaceholder: 'Поделитесь своим опытом работы с этим продавцом... (макс. 500 символов)',
+    charsCount: 'символов',
+    cancel: 'Отмена',
+    publishing: 'Публикация...',
+    submit: 'Опубликовать отзыв',
+    errorSelectRating: 'Пожалуйста, выберите оценку',
+    errorCommentRequired: 'Пожалуйста, напишите комментарий',
+    errorLoginRequired: 'Вы должны войти, чтобы оставить отзыв',
+    errorAlreadyReviewed: 'Вы уже оставили отзыв для этого объявления',
+    errorSelfReview: 'Вы не можете оценить своё объявление',
+    errorInvalidRating: 'Оценка должна быть от 1 до 5',
+    successPublished: 'Ваш отзыв успешно опубликован!',
+    errorOccurred: 'Произошла ошибка. Попробуйте снова.',
+    ratings: ['Очень плохо', 'Плохо', 'Средне', 'Хорошо', 'Отлично'],
+  },
+};
+
+type Lang = keyof typeof copy;
+
 export default function AvisForm({ sellerId, announcementId, onSuccess, onCancel }: AvisFormProps) {
   const { language } = useLanguage();
-  const t = useTranslation(language);
+  const t = copy[language as Lang] || copy.fr;
+  const isRTL = language === 'ar';
+
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [comment, setComment] = useState('');
@@ -33,28 +129,26 @@ export default function AvisForm({ sellerId, announcementId, onSuccess, onCancel
     e.preventDefault();
 
     if (rating === 0) {
-      showToastMessage('error', 'Veuillez sélectionner une note');
+      showToastMessage('error', t.errorSelectRating);
       return;
     }
 
     if (!comment.trim()) {
-      showToastMessage('error', t.avis.error.commentRequired);
+      showToastMessage('error', t.errorCommentRequired);
       return;
     }
 
     setLoading(true);
 
     try {
-      // Get current user
       const { data: { user } } = await supabase.auth.getUser();
 
       if (!user) {
-        showToastMessage('error', 'Vous devez être connecté pour laisser un avis');
+        showToastMessage('error', t.errorLoginRequired);
         setLoading(false);
         return;
       }
 
-      // Check if user already reviewed this announcement
       const { data: existingReview } = await supabase
         .from('avis_vendeur')
         .select('id')
@@ -63,19 +157,17 @@ export default function AvisForm({ sellerId, announcementId, onSuccess, onCancel
         .single();
 
       if (existingReview) {
-        showToastMessage('error', 'Vous avez déjà laissé un avis pour cette annonce');
+        showToastMessage('error', t.errorAlreadyReviewed);
         setLoading(false);
         return;
       }
 
-      // Check if user is not the seller
       if (user.email === sellerId) {
-        showToastMessage('error', 'Vous ne pouvez pas noter votre propre annonce');
+        showToastMessage('error', t.errorSelfReview);
         setLoading(false);
         return;
       }
 
-      // Préparer les données pour Supabase - STRICTE CORRESPONDANCE avec les colonnes
       const avisData = {
         annonce_id: announcementId,
         vendeur_email: sellerId,
@@ -84,55 +176,31 @@ export default function AvisForm({ sellerId, announcementId, onSuccess, onCancel
         commentaire: comment.trim()
       };
 
-      // LOG DE DÉBOGAGE - Données prêtes pour Supabase
-      console.log('=== DONNÉES PRÊTES POUR SUPABASE ===');
-      console.log('Formulaire AvisForm - Avis Vendeur');
-      console.log('Données formatées:', JSON.stringify(avisData, null, 2));
-      console.log('Types des champs:');
-      console.log('- annonce_id (uuid):', typeof avisData.annonce_id, avisData.annonce_id);
-      console.log('- vendeur_email (string):', typeof avisData.vendeur_email, avisData.vendeur_email);
-      console.log('- evaluateur_email (string):', typeof avisData.evaluateur_email, avisData.evaluateur_email);
-      console.log('- note (number):', typeof avisData.note, avisData.note);
-      console.log('- commentaire (string):', typeof avisData.commentaire, avisData.commentaire);
-      console.log('=====================================');
-
-      // Validation
       if (avisData.note < 1 || avisData.note > 5) {
-        console.error('❌ ERREUR: La note doit être entre 1 et 5');
-        showToastMessage('error', 'La note doit être entre 1 et 5');
+        showToastMessage('error', t.errorInvalidRating);
         setLoading(false);
         return;
       }
 
-      console.log('✅ Validation réussie. Envoi à Supabase...');
-
-      // Insert review
       const { error: insertError } = await supabase
         .from('avis_vendeur')
         .insert([avisData]);
 
       if (insertError) {
-        console.error('❌ ERREUR Supabase:', insertError);
-        console.error('Code:', insertError.code);
-        console.error('Message:', insertError.message);
-        console.error('Details:', insertError.details);
         throw insertError;
       }
 
-      console.log('✅ SUCCÈS: Avis vendeur créé dans Supabase');
-      showToastMessage('success', 'Votre avis a été publié avec succès !');
+      showToastMessage('success', t.successPublished);
 
-      // Reset form
       setRating(0);
       setComment('');
 
-      // Wait a bit before calling onSuccess to show the toast
       setTimeout(() => {
         onSuccess();
       }, 1500);
     } catch (error: any) {
-      console.error('❌ ERREUR INATTENDUE:', error);
-      showToastMessage('error', t.common.error.occurred);
+      console.error('Erreur avis:', error);
+      showToastMessage('error', t.errorOccurred);
     } finally {
       setLoading(false);
     }
@@ -165,26 +233,22 @@ export default function AvisForm({ sellerId, announcementId, onSuccess, onCancel
 
   return (
     <>
-      <form onSubmit={handleSubmit} className="p-6 space-y-6">
+      <form onSubmit={handleSubmit} className="p-6 space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-3">
-            Votre note *
+            {t.ratingLabel}
           </label>
           {renderStars()}
           {rating > 0 && (
             <p className="text-sm text-gray-600 mt-2">
-              {rating === 1 && '⭐ Très mauvais'}
-              {rating === 2 && '⭐⭐ Mauvais'}
-              {rating === 3 && '⭐⭐⭐ Moyen'}
-              {rating === 4 && '⭐⭐⭐⭐ Bon'}
-              {rating === 5 && '⭐⭐⭐⭐⭐ Excellent'}
+              {'⭐'.repeat(rating)} {t.ratings[rating - 1]}
             </p>
           )}
         </div>
 
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Votre commentaire *
+            {t.commentLabel}
           </label>
           <textarea
             value={comment}
@@ -192,11 +256,11 @@ export default function AvisForm({ sellerId, announcementId, onSuccess, onCancel
             rows={4}
             maxLength={500}
             className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#D62828] focus:ring-4 focus:ring-orange-100 outline-none transition-all resize-none"
-            placeholder="Partagez votre expérience avec ce vendeur... (500 caractères max)"
+            placeholder={t.commentPlaceholder}
             required
           />
-          <p className="text-xs text-gray-500 mt-1 text-right">
-            {comment.length} / 500 caractères
+          <p className={`text-xs text-gray-500 mt-1 ${isRTL ? 'text-left' : 'text-right'}`}>
+            {comment.length} / 500 {t.charsCount}
           </p>
         </div>
 
@@ -208,7 +272,7 @@ export default function AvisForm({ sellerId, announcementId, onSuccess, onCancel
             disabled={loading}
           >
             <X className="w-5 h-5" />
-            {t.common.cancel}
+            {t.cancel}
           </button>
           <button
             type="submit"
@@ -218,21 +282,20 @@ export default function AvisForm({ sellerId, announcementId, onSuccess, onCancel
             {loading ? (
               <>
                 <Loader2 className="w-5 h-5 animate-spin" />
-                Publication...
+                {t.publishing}
               </>
             ) : (
               <>
                 <Send className="w-5 h-5" />
-                Publier l'avis
+                {t.submit}
               </>
             )}
           </button>
         </div>
       </form>
 
-      {/* Toast Notification */}
       {showToast && (
-        <div className="fixed bottom-8 right-8 z-[100] animate-slide-up">
+        <div className={`fixed ${isRTL ? 'left-8' : 'right-8'} bottom-8 z-[100] animate-slide-up`}>
           <div
             className={`flex items-center gap-3 px-6 py-4 rounded-xl shadow-2xl ${
               toastType === 'success'

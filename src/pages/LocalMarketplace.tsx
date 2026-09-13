@@ -50,6 +50,10 @@ const translations = {
     rule3: 'Système simple pour signaler une annonce suspecte',
     noResults: 'Aucune annonce trouvée',
     loading: 'Chargement...',
+    urgentOnly: 'Urgent uniquement',
+    errorLoading: 'Erreur de chargement des annonces',
+    errorSearching: 'Erreur de recherche',
+    bannerAlt: 'Petites Annonces',
     tnd: 'TND',
     views: 'vues',
     contact: 'Contacter',
@@ -83,6 +87,10 @@ const translations = {
     rule3: 'Simple system to report suspicious ads',
     noResults: 'No ads found',
     loading: 'Loading...',
+    urgentOnly: 'Urgent only',
+    errorLoading: 'Error loading ads',
+    errorSearching: 'Search error',
+    bannerAlt: 'Classified Ads',
     tnd: 'TND',
     views: 'views',
     contact: 'Contact',
@@ -116,6 +124,10 @@ const translations = {
     rule3: 'نظام بسيط للإبلاغ عن إعلان مشبوه',
     noResults: 'لم يتم العثور على إعلانات',
     loading: 'جاري التحميل...',
+    urgentOnly: 'عاجل فقط',
+    errorLoading: 'خطأ في تحميل الإعلانات',
+    errorSearching: 'خطأ في البحث',
+    bannerAlt: 'إعلانات صغيرة',
     tnd: 'دينار',
     views: 'مشاهدة',
     contact: 'اتصل',
@@ -149,6 +161,10 @@ const translations = {
     rule3: 'Sistema semplice per segnalare un annuncio sospetto',
     noResults: 'Nessun annuncio trovato',
     loading: 'Caricamento...',
+    urgentOnly: 'Solo urgenti',
+    errorLoading: 'Errore di caricamento degli annunci',
+    errorSearching: 'Errore di ricerca',
+    bannerAlt: 'Piccoli Annunci',
     tnd: 'TND',
     views: 'visualizzazioni',
     contact: 'Contatta',
@@ -182,6 +198,10 @@ const translations = {
     rule3: 'Простая система для сообщения о подозрительных объявлениях',
     noResults: 'Объявления не найдены',
     loading: 'Загрузка...',
+    urgentOnly: 'Только срочные',
+    errorLoading: 'Ошибка загрузки объявлений',
+    errorSearching: 'Ошибка поиска',
+    bannerAlt: 'Объявления',
     tnd: 'ТНД',
     views: 'просмотров',
     contact: 'Связаться',
@@ -259,7 +279,7 @@ export default function LocalMarketplace() {
       setAnnouncements(data || []);
     } catch (err: any) {
       console.error('Error fetching announcements:', err);
-      setError('Erreur de chargement des annonces');
+      setError(t.errorLoading);
     } finally {
       setLoading(false);
     }
@@ -303,7 +323,7 @@ export default function LocalMarketplace() {
       setAnnouncements(data || []);
     } catch (err: any) {
       console.error('Error searching announcements:', err);
-      setError('Erreur de recherche');
+      setError(t.errorSearching);
     } finally {
       setLoading(false);
     }
@@ -317,7 +337,7 @@ export default function LocalMarketplace() {
           <div className="relative h-80">
             <img
               src={getSupabaseImageUrl('petite annonce.jpg')}
-              alt="Petites Annonces"
+              alt={t.bannerAlt}
               className="w-full h-full object-cover"
             decoding="async"
             />
@@ -410,7 +430,7 @@ export default function LocalMarketplace() {
                 className="w-4 h-4 text-[#D62828] focus:ring-[#D62828] rounded"
               />
               <Zap className="w-4 h-4 text-red-500" />
-              <span className="text-sm font-medium">Urgent uniquement</span>
+              <span className="text-sm font-medium">{t.urgentOnly}</span>
             </label>
           </div>
         </div>

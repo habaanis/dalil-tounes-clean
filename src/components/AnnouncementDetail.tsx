@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { X, ChevronLeft, ChevronRight, MapPin, Tag, Calendar, Phone, Share2, Flag, DollarSign, Heart, Star, TrendingUp, Zap, CheckCircle, AlertCircle, MessageCircle } from 'lucide-react';
 import { supabase } from '../lib/BoltDatabase';
 import { useLanguage } from '../context/LanguageContext';
-import { useTranslation } from '../lib/i18n';
 import NegotiationModal from './NegotiationModal';
 import ReportModal from './ReportModal';
 import AvisSection from './AvisSection';
@@ -33,9 +32,150 @@ interface Announcement {
   user_email: string;
 }
 
+const copy = {
+  fr: {
+    loading: 'Chargement...',
+    urgent: '🔥 URGENT',
+    negotiate: 'Prix à négocier',
+    topSeller: 'Top Vendeur',
+    verified: '✓ Vérifié',
+    category: 'Catégorie',
+    published: 'Publié',
+    views: 'Vues',
+    sellerActions: 'Actions vendeur',
+    bumpAd: 'Remonter l'annonce',
+    processing: 'Traitement...',
+    disableUrgent: 'Désactiver URGENT',
+    enableUrgent: 'Activer URGENT',
+    cooldownHint: 'Actions gratuites avec cooldown : Remonter (7 jours) • URGENT (3 jours)',
+    contactWhatsApp: 'Contacter le Vendeur via WhatsApp',
+    call: 'Appeler',
+    makeOffer: 'Faire une offre',
+    report: 'Signaler',
+    linkCopied: 'Lien copié !',
+    mustLogin: 'Vous devez être connecté',
+    errorOccurred: 'Une erreur est survenue',
+    lessThanHour: 'Il y a moins d'une heure',
+    hoursAgo: 'Il y a {n}h',
+    daysAgo: 'Il y a {n}j',
+    whatsappMessage: 'Bonjour, je suis intéressé par votre annonce : {title} ({price} TND)',
+  },
+  en: {
+    loading: 'Loading...',
+    urgent: '🔥 URGENT',
+    negotiate: 'Price negotiable',
+    topSeller: 'Top Seller',
+    verified: '✓ Verified',
+    category: 'Category',
+    published: 'Posted',
+    views: 'Views',
+    sellerActions: 'Seller actions',
+    bumpAd: 'Bump ad',
+    processing: 'Processing...',
+    disableUrgent: 'Disable URGENT',
+    enableUrgent: 'Enable URGENT',
+    cooldownHint: 'Free actions with cooldown: Bump (7 days) • URGENT (3 days)',
+    contactWhatsApp: 'Contact Seller via WhatsApp',
+    call: 'Call',
+    makeOffer: 'Make an offer',
+    report: 'Report',
+    linkCopied: 'Link copied!',
+    mustLogin: 'You must be logged in',
+    errorOccurred: 'An error occurred',
+    lessThanHour: 'Less than an hour ago',
+    hoursAgo: '{n}h ago',
+    daysAgo: '{n}d ago',
+    whatsappMessage: 'Hello, I'm interested in your ad: {title} ({price} TND)',
+  },
+  ar: {
+    loading: 'جاري التحميل...',
+    urgent: '🔥 عاجل',
+    negotiate: 'السعر قابل للتفاوض',
+    topSeller: 'أفضل بائع',
+    verified: '✓ موثق',
+    category: 'الفئة',
+    published: 'نُشر',
+    views: 'المشاهدات',
+    sellerActions: 'إجراءات البائع',
+    bumpAd: 'إعادة رفع الإعلان',
+    processing: 'جاري المعالجة...',
+    disableUrgent: 'إلغاء عاجل',
+    enableUrgent: 'تفعيل عاجل',
+    cooldownHint: 'إجراءات مجانية مع فترة انتظار: رفع (7 أيام) • عاجل (3 أيام)',
+    contactWhatsApp: 'تواصل مع البائع عبر واتساب',
+    call: 'اتصل',
+    makeOffer: 'تقديم عرض',
+    report: 'إبلاغ',
+    linkCopied: 'تم نسخ الرابط!',
+    mustLogin: 'يجب تسجيل الدخول',
+    errorOccurred: 'حدث خطأ',
+    lessThanHour: 'منذ أقل من ساعة',
+    hoursAgo: 'منذ {n} س',
+    daysAgo: 'منذ {n} ي',
+    whatsappMessage: 'مرحباً، أنا مهتم بإعلانك: {title} ({price} دينار)',
+  },
+  it: {
+    loading: 'Caricamento...',
+    urgent: '🔥 URGENTE',
+    negotiate: 'Prezzo trattabile',
+    topSeller: 'Top Venditore',
+    verified: '✓ Verificato',
+    category: 'Categoria',
+    published: 'Pubblicato',
+    views: 'Visualizzazioni',
+    sellerActions: 'Azioni venditore',
+    bumpAd: 'Rimuove annuncio in alto',
+    processing: 'Elaborazione...',
+    disableUrgent: 'Disattiva URGENTE',
+    enableUrgent: 'Attiva URGENTE',
+    cooldownHint: 'Azioni gratuite con cooldown: Rimozione (7 giorni) • URGENTE (3 giorni)',
+    contactWhatsApp: 'Contatta venditore via WhatsApp',
+    call: 'Chiama',
+    makeOffer: 'Fai un'offerta',
+    report: 'Segnala',
+    linkCopied: 'Link copiato!',
+    mustLogin: 'Devi effettuare l'accesso',
+    errorOccurred: 'Si è verificato un errore',
+    lessThanHour: 'Meno di un'ora fa',
+    hoursAgo: '{n}h fa',
+    daysAgo: '{n}g fa',
+    whatsappMessage: 'Ciao, sono interessato al tuo annuncio: {title} ({price} TND)',
+  },
+  ru: {
+    loading: 'Загрузка...',
+    urgent: '🔥 СРОЧНО',
+    negotiate: 'Цена договорная',
+    topSeller: 'Лучший продавец',
+    verified: '✓ Проверен',
+    category: 'Категория',
+    published: 'Опубликовано',
+    views: 'Просмотры',
+    sellerActions: 'Действия продавца',
+    bumpAd: 'Поднять объявление',
+    processing: 'Обработка...',
+    disableUrgent: 'Отключить СРОЧНО',
+    enableUrgent: 'Включить СРОЧНО',
+    cooldownHint: 'Бесплатные действия с перезарядкой: Поднять (7 дней) • СРОЧНО (3 дня)',
+    contactWhatsApp: 'Связаться с продавцом через WhatsApp',
+    call: 'Позвонить',
+    makeOffer: 'Сделать предложение',
+    report: 'Пожаловаться',
+    linkCopied: 'Ссылка скопирована!',
+    mustLogin: 'Вы должны войти в систему',
+    errorOccurred: 'Произошла ошибка',
+    lessThanHour: 'Менее часа назад',
+    hoursAgo: '{n}ч назад',
+    daysAgo: '{n}д назад',
+    whatsappMessage: 'Здравствуйте, меня интересует ваше объявление: {title} ({price} ТНД)',
+  },
+};
+
+type Lang = keyof typeof copy;
+
 export default function AnnouncementDetail({ announcementId, onClose }: AnnouncementDetailProps) {
   const { language } = useLanguage();
-  const t = useTranslation(language);
+  const t = copy[language as Lang] || copy.fr;
+  const isRTL = language === 'ar';
   const [announcement, setAnnouncement] = useState<Announcement | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -123,7 +263,7 @@ export default function AnnouncementDetail({ announcementId, onClose }: Announce
         break;
       default:
         navigator.clipboard.writeText(url);
-        setToastMessage('Lien copié !');
+        setToastMessage(t.linkCopied);
         setToastType('success');
         setShowToast(true);
         return;
@@ -139,10 +279,11 @@ export default function AnnouncementDetail({ announcementId, onClose }: Announce
     const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
     const diffDays = Math.floor(diffHours / 24);
 
-    if (diffHours < 1) return 'Il y a moins d\'une heure';
-    if (diffHours < 24) return `Il y a ${diffHours}h`;
-    if (diffDays < 7) return `Il y a ${diffDays}j`;
-    return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+    if (diffHours < 1) return t.lessThanHour;
+    if (diffHours < 24) return t.hoursAgo.replace('{n}', String(diffHours));
+    if (diffDays < 7) return t.daysAgo.replace('{n}', String(diffDays));
+    const locale = language === 'ar' ? 'ar-TN' : language === 'en' ? 'en-GB' : language === 'it' ? 'it-IT' : language === 'ru' ? 'ru-RU' : 'fr-FR';
+    return date.toLocaleDateString(locale, { day: 'numeric', month: 'short' });
   };
 
   const nextImage = () => {
@@ -175,7 +316,7 @@ export default function AnnouncementDetail({ announcementId, onClose }: Announce
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        showToastMessage('error', 'Vous devez être connecté');
+        showToastMessage('error', t.mustLogin);
         setActionLoading(false);
         return;
       }
@@ -195,14 +336,14 @@ export default function AnnouncementDetail({ announcementId, onClose }: Announce
         }, 1500);
       } else {
         if (result.hours_remaining) {
-          showToastMessage('error', `${result.message} : ${result.hours_remaining}h restantes`);
+          showToastMessage('error', `${result.message} : ${result.hours_remaining}h`);
         } else {
           showToastMessage('error', result.message);
         }
       }
     } catch (error: any) {
       console.error('Erreur bump:', error);
-      showToastMessage('error', 'Une erreur est survenue');
+      showToastMessage('error', t.errorOccurred);
     } finally {
       setActionLoading(false);
     }
@@ -213,7 +354,7 @@ export default function AnnouncementDetail({ announcementId, onClose }: Announce
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        showToastMessage('error', 'Vous devez être connecté');
+        showToastMessage('error', t.mustLogin);
         setActionLoading(false);
         return;
       }
@@ -236,14 +377,14 @@ export default function AnnouncementDetail({ announcementId, onClose }: Announce
         }, 1500);
       } else {
         if (result.hours_remaining) {
-          showToastMessage('error', `${result.message} : ${result.hours_remaining}h restantes`);
+          showToastMessage('error', `${result.message} : ${result.hours_remaining}h`);
         } else {
           showToastMessage('error', result.message);
         }
       }
     } catch (error: any) {
       console.error('Erreur urgent:', error);
-      showToastMessage('error', 'Une erreur est survenue');
+      showToastMessage('error', t.errorOccurred);
     } finally {
       setActionLoading(false);
     }
@@ -254,7 +395,7 @@ export default function AnnouncementDetail({ announcementId, onClose }: Announce
       <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
         <div className="bg-white rounded-lg p-8">
           <div className="w-16 h-16 border-4 border-[#D62828] border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="mt-4 text-gray-600">Chargement...</p>
+          <p className="mt-4 text-gray-600">{t.loading}</p>
         </div>
       </div>
     );
@@ -275,14 +416,14 @@ export default function AnnouncementDetail({ announcementId, onClose }: Announce
         onClose={() => setShowToast(false)}
       />
 
-      <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 overflow-y-auto">
+      <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 overflow-y-auto" dir={isRTL ? 'rtl' : 'ltr'}>
         <div className="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
           {/* Header */}
           <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 rounded-t-3xl flex items-center justify-between z-10">
             <div className="flex items-center gap-3">
               {announcement.urgent && (
                 <span className="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse">
-                  🔥 URGENT
+                  {t.urgent}
                 </span>
               )}
               <h2 className="text-xl font-bold text-gray-900">{announcement.title}</h2>
@@ -316,15 +457,15 @@ export default function AnnouncementDetail({ announcementId, onClose }: Announce
                 <>
                   <button
                     onClick={prevImage}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-all"
+                    className={`absolute ${isRTL ? 'right-4' : 'left-4'} top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-all`}
                   >
-                    <ChevronLeft className="w-6 h-6" />
+                    {isRTL ? <ChevronRight className="w-6 h-6" /> : <ChevronLeft className="w-6 h-6" />}
                   </button>
                   <button
                     onClick={nextImage}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-all"
+                    className={`absolute ${isRTL ? 'left-4' : 'right-4'} top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-all`}
                   >
-                    <ChevronRight className="w-6 h-6" />
+                    {isRTL ? <ChevronLeft className="w-6 h-6" /> : <ChevronRight className="w-6 h-6" />}
                   </button>
 
                   {/* Image indicators */}
@@ -352,7 +493,7 @@ export default function AnnouncementDetail({ announcementId, onClose }: Announce
                 {announcement.price > 0 ? (
                   <>{announcement.price.toLocaleString('fr-FR')} <span className="text-xl">TND</span></>
                 ) : (
-                  <span className="text-2xl text-gray-600">Prix à négocier</span>
+                  <span className="text-2xl text-gray-600">{t.negotiate}</span>
                 )}
               </div>
 
@@ -387,12 +528,12 @@ export default function AnnouncementDetail({ announcementId, onClose }: Announce
                   {announcement.vendeur_badge === 'top_vendeur' && (
                     <span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1">
                       <Star className="w-4 h-4 fill-current" />
-                      Top Vendeur
+                      {t.topSeller}
                     </span>
                   )}
                   {announcement.vendeur_badge === 'verifie' && (
                     <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-bold">
-                      ✓ Vérifié
+                      {t.verified}
                     </span>
                   )}
                   {announcement.vendeur_note > 0 && (
@@ -410,7 +551,7 @@ export default function AnnouncementDetail({ announcementId, onClose }: Announce
               <div className="flex items-center gap-3 bg-gray-50 p-4 rounded-xl">
                 <MapPin className="w-5 h-5 text-[#D62828]" />
                 <div>
-                  <p className="text-xs text-gray-500">{t.common.fields.locationLabel}</p>
+                  <p className="text-xs text-gray-500">{t.category === 'Catégorie' ? 'Localisation' : 'Location'}</p>
                   <p className="font-semibold">{announcement.city}</p>
                 </div>
               </div>
@@ -418,7 +559,7 @@ export default function AnnouncementDetail({ announcementId, onClose }: Announce
               <div className="flex items-center gap-3 bg-gray-50 p-4 rounded-xl">
                 <Tag className="w-5 h-5 text-[#D62828]" />
                 <div>
-                  <p className="text-xs text-gray-500">Catégorie</p>
+                  <p className="text-xs text-gray-500">{t.category}</p>
                   <p className="font-semibold">{announcement.category}</p>
                 </div>
               </div>
@@ -426,7 +567,7 @@ export default function AnnouncementDetail({ announcementId, onClose }: Announce
               <div className="flex items-center gap-3 bg-gray-50 p-4 rounded-xl">
                 <Calendar className="w-5 h-5 text-[#D62828]" />
                 <div>
-                  <p className="text-xs text-gray-500">Publié</p>
+                  <p className="text-xs text-gray-500">{t.published}</p>
                   <p className="font-semibold">{formatDate(announcement.date_publication)}</p>
                 </div>
               </div>
@@ -434,7 +575,7 @@ export default function AnnouncementDetail({ announcementId, onClose }: Announce
               <div className="flex items-center gap-3 bg-gray-50 p-4 rounded-xl">
                 <span className="text-[#D62828] text-xl">👁️</span>
                 <div>
-                  <p className="text-xs text-gray-500">Vues</p>
+                  <p className="text-xs text-gray-500">{t.views}</p>
                   <p className="font-semibold">{announcement.vues}</p>
                 </div>
               </div>
@@ -442,7 +583,7 @@ export default function AnnouncementDetail({ announcementId, onClose }: Announce
 
             {/* Description */}
             <div className="bg-gradient-to-br from-gray-50 to-white p-6 rounded-xl border border-gray-100">
-              <h3 className="font-bold text-lg mb-3">{t.common.fields.descriptionLabel}</h3>
+              <h3 className="font-bold text-lg mb-3">{t.category === 'Catégorie' ? 'Description' : 'Description'}</h3>
               <p className="text-gray-700 whitespace-pre-line leading-relaxed">
                 {announcement.description}
               </p>
@@ -453,7 +594,7 @@ export default function AnnouncementDetail({ announcementId, onClose }: Announce
               <div className="bg-gradient-to-br from-purple-50 to-indigo-50 p-6 rounded-xl border-2 border-purple-200">
                 <h3 className="font-bold text-lg mb-4 text-purple-900 flex items-center gap-2">
                   <Star className="w-5 h-5" />
-                  Actions vendeur
+                  {t.sellerActions}
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <button
@@ -462,7 +603,7 @@ export default function AnnouncementDetail({ announcementId, onClose }: Announce
                     className="flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <TrendingUp className="w-5 h-5" />
-                    {actionLoading ? 'Traitement...' : 'Remonter l\'annonce'}
+                    {actionLoading ? t.processing : t.bumpAd}
                   </button>
 
                   <button
@@ -475,11 +616,11 @@ export default function AnnouncementDetail({ announcementId, onClose }: Announce
                     }`}
                   >
                     <Zap className="w-5 h-5" />
-                    {actionLoading ? 'Traitement...' : announcement.urgent ? 'Désactiver URGENT' : 'Activer URGENT'}
+                    {actionLoading ? t.processing : announcement.urgent ? t.disableUrgent : t.enableUrgent}
                   </button>
                 </div>
                 <p className="text-xs text-gray-600 mt-3 text-center">
-                  Actions gratuites avec cooldown : Remonter (7 jours) • URGENT (3 jours)
+                  {t.cooldownHint}
                 </p>
               </div>
             )}
@@ -490,13 +631,13 @@ export default function AnnouncementDetail({ announcementId, onClose }: Announce
                 {/* WhatsApp Contact Button - Primary CTA */}
                 <div className="pt-4 border-t border-gray-200">
                   <a
-                    href={`https://wa.me/${announcement.contact_tel.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Bonjour, je suis intéressé par votre annonce : ${announcement.title} (${announcement.price} TND)`)}`}
+                    href={`https://wa.me/${announcement.contact_tel.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(t.whatsappMessage.replace('{title}', announcement.title).replace('{price}', String(announcement.price)))}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center gap-3 bg-gradient-to-r from-[#25D366] to-[#128C7E] text-white px-6 py-5 rounded-xl font-bold hover:shadow-xl transition-all w-full text-lg"
                   >
                     <MessageCircle className="w-6 h-6" />
-                    Contacter le Vendeur via WhatsApp
+                    {t.contactWhatsApp}
                   </a>
                 </div>
 
@@ -506,7 +647,7 @@ export default function AnnouncementDetail({ announcementId, onClose }: Announce
                     className="flex items-center justify-center gap-2 bg-gradient-to-r from-[#D62828] to-[#b91c1c] text-white px-6 py-4 rounded-xl font-bold hover:shadow-xl transition-all"
                   >
                     <Phone className="w-5 h-5" />
-                    Appeler
+                    {t.call}
                   </button>
 
                   <button
@@ -514,7 +655,7 @@ export default function AnnouncementDetail({ announcementId, onClose }: Announce
                     className="flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-4 rounded-xl font-bold hover:shadow-xl transition-all"
                   >
                     <DollarSign className="w-5 h-5" />
-                    Faire une offre
+                    {t.makeOffer}
                   </button>
 
                   <button
@@ -522,7 +663,7 @@ export default function AnnouncementDetail({ announcementId, onClose }: Announce
                     className="flex items-center justify-center gap-2 bg-gray-100 text-gray-700 px-6 py-4 rounded-xl font-semibold hover:bg-gray-200 transition-all"
                   >
                     <Flag className="w-5 h-5" />
-                    Signaler
+                    {t.report}
                   </button>
                 </div>
               </>
@@ -557,7 +698,7 @@ export default function AnnouncementDetail({ announcementId, onClose }: Announce
 
       {/* Toast Notification */}
       {showToast && (
-        <div className="fixed bottom-8 right-8 z-[100] animate-slide-up">
+        <div className={`fixed ${isRTL ? 'left-8' : 'right-8'} bottom-8 z-[100] animate-slide-up`}>
           <div
             className={`flex items-center gap-3 px-6 py-4 rounded-xl shadow-2xl ${
               toastType === 'success'

@@ -32,12 +32,16 @@ export default function FilterChips({
       clearAll: {
         fr: 'Effacer tout',
         ar: 'مسح الكل',
-        en: 'Clear all'
+        en: 'Clear all',
+        it: 'Cancella tutto',
+        ru: 'Очистить всё'
       },
       filterBy: {
         fr: 'Filtrer par :',
         ar: 'تصفية حسب:',
-        en: 'Filter by:'
+        en: 'Filter by:',
+        it: 'Filtra per:',
+        ru: 'Фильтр по:'
       }
     };
     return labels[key]?.[language] || labels[key]?.['fr'] || key;

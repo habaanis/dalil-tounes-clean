@@ -54,7 +54,14 @@ const translations = {
     buy: 'Looking for',
     exchange: 'Exchange',
     noPhoto: 'No photo',
-    postedOn: 'Posted on'
+    postedOn: 'Posted on',
+    urgent: 'URGENT',
+    makeOffer: 'Make an offer',
+    share: 'Share',
+    report: 'Report',
+    newSeller: 'New',
+    verified: 'Verified',
+    topSeller: 'Top Seller'
   },
   ar: {
     tnd: 'دينار',
@@ -64,7 +71,14 @@ const translations = {
     buy: 'أبحث عن',
     exchange: 'تبادل',
     noPhoto: 'لا توجد صورة',
-    postedOn: 'نشر في'
+    postedOn: 'نشر في',
+    urgent: 'عاجل',
+    makeOffer: 'تقديم عرض',
+    share: 'مشاركة',
+    report: 'إبلاغ',
+    newSeller: 'جديد',
+    verified: 'موثق',
+    topSeller: 'أفضل بائع'
   },
   it: {
     tnd: 'TND',
@@ -74,7 +88,14 @@ const translations = {
     buy: 'Cerco',
     exchange: 'Scambio',
     noPhoto: 'Nessuna foto',
-    postedOn: 'Pubblicato il'
+    postedOn: 'Pubblicato il',
+    urgent: 'URGENTE',
+    makeOffer: 'Fai un'offerta',
+    share: 'Condividi',
+    report: 'Segnala',
+    newSeller: 'Nuovo',
+    verified: 'Verificato',
+    topSeller: 'Top Venditore'
   },
   ru: {
     tnd: 'ТНД',
@@ -84,7 +105,14 @@ const translations = {
     buy: 'Ищу',
     exchange: 'Обмен',
     noPhoto: 'Нет фото',
-    postedOn: 'Опубликовано'
+    postedOn: 'Опубликовано',
+    urgent: 'СРОЧНО',
+    makeOffer: 'Сделать предложение',
+    share: 'Поделиться',
+    report: 'Пожаловаться',
+    newSeller: 'Новый',
+    verified: 'Проверен',
+    topSeller: 'Лучший продавец'
   }
 };
 
@@ -99,7 +127,7 @@ export default function AnnouncementCard({ announcement, language }: Announcemen
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString(language === 'ar' ? 'ar-TN' : language === 'en' ? 'en-US' : 'fr-FR', {
+    return date.toLocaleDateString(language === 'ar' ? 'ar-TN' : language === 'en' ? 'en-GB' : language === 'it' ? 'it-IT' : language === 'ru' ? 'ru-RU' : 'fr-FR', {
       year: 'numeric',
       month: 'short',
       day: 'numeric'

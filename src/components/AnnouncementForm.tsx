@@ -34,6 +34,10 @@ const translations = {
     success: 'Votre annonce a été publiée avec succès !',
     error: 'Une erreur s\'est produite',
     required: 'Tous les champs sont obligatoires',
+    priceInvalid: 'Le prix doit être un nombre valide',
+    emailInvalid: 'Format email invalide',
+    unknownError: 'Erreur inconnue',
+    photo: 'Photo',
     categories: {
       vehicles: 'Véhicules',
       house: 'Maison & Jardin',
@@ -67,6 +71,10 @@ const translations = {
     success: 'Your ad has been published successfully!',
     error: 'An error occurred',
     required: 'All fields are required',
+    priceInvalid: 'Price must be a valid number',
+    emailInvalid: 'Invalid email format',
+    unknownError: 'Unknown error',
+    photo: 'Photo',
     categories: {
       vehicles: 'Vehicles',
       house: 'House & Garden',
@@ -100,6 +108,10 @@ const translations = {
     success: 'تم نشر إعلانك بنجاح!',
     error: 'حدث خطأ',
     required: 'جميع الحقول مطلوبة',
+    priceInvalid: 'يجب أن يكون السعر رقماً صالحاً',
+    emailInvalid: 'صيغة بريد إلكتروني غير صالحة',
+    unknownError: 'خطأ غير معروف',
+    photo: 'صورة',
     categories: {
       vehicles: 'المركبات',
       house: 'المنزل والحديقة',
@@ -133,6 +145,10 @@ const translations = {
     success: 'Il tuo annuncio è stato pubblicato con successo!',
     error: 'Si è verificato un errore',
     required: 'Tutti i campi sono obbligatori',
+    priceInvalid: 'Il prezzo deve essere un numero valido',
+    emailInvalid: 'Formato email non valido',
+    unknownError: 'Errore sconosciuto',
+    photo: 'Foto',
     categories: {
       vehicles: 'Veicoli',
       house: 'Casa e Giardino',
@@ -166,6 +182,10 @@ const translations = {
     success: 'Ваше объявление успешно опубликовано!',
     error: 'Произошла ошибка',
     required: 'Все поля обязательны',
+    priceInvalid: 'Цена должна быть действительным числом',
+    emailInvalid: 'Неверный формат email',
+    unknownError: 'Неизвестная ошибка',
+    photo: 'Фото',
     categories: {
       vehicles: 'Транспорт',
       house: 'Дом и сад',
@@ -272,7 +292,7 @@ export default function AnnouncementForm({ onClose, onSuccess, language }: Annou
       // Validation du prix
       if (isNaN(annonceData.prix) || annonceData.prix < 0) {
         console.error('❌ ERREUR: Le prix doit être un nombre positif');
-        setError('Le prix doit être un nombre valide');
+        setError(t.priceInvalid);
         setLoading(false);
         return;
       }
@@ -282,7 +302,7 @@ export default function AnnouncementForm({ onClose, onSuccess, language }: Annou
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(annonceData.user_email)) {
           console.error('❌ ERREUR: Format email invalide:', annonceData.user_email);
-          setError('Format email invalide');
+          setError(t.emailInvalid);
           setLoading(false);
           return;
         }
@@ -310,7 +330,7 @@ export default function AnnouncementForm({ onClose, onSuccess, language }: Annou
       onSuccess();
     } catch (err: any) {
       console.error('❌ ERREUR INATTENDUE:', err);
-      setError(`${t.error}: ${err.message || 'Erreur inconnue'}`);
+      setError(`${t.error}: ${err.message || t.unknownError}`);
     } finally {
       setLoading(false);
     }
@@ -402,7 +422,7 @@ export default function AnnouncementForm({ onClose, onSuccess, language }: Annou
             <div className="flex flex-wrap gap-4">
               {photos.map((photo, index) => (
                 <div key={index} className="relative w-24 h-24">
-                  <OptimizedImage src={photo} alt={`Photo ${index + 1}`} className="w-full h-full object-cover rounded-lg" />
+                  <OptimizedImage src={photo} alt={`${t.photo} ${index + 1}`} className="w-full h-full object-cover rounded-lg" />
                   <button
                     type="button"
                     onClick={() => setPhotos(photos.filter((_, i) => i !== index))}

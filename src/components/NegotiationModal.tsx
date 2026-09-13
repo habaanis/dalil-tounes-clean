@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { X, DollarSign, Loader2 } from 'lucide-react';
 import { supabase } from '../lib/BoltDatabase';
+import { useLanguage } from '../context/LanguageContext';
 
 interface NegotiationModalProps {
   announcementId: string;
@@ -8,7 +9,121 @@ interface NegotiationModalProps {
   onClose: () => void;
 }
 
+const copy = {
+  fr: {
+    title: 'Faire une offre',
+    currentPrice: 'Prix actuel',
+    yourOffer: 'Votre offre (TND) *',
+    offerPlaceholder: 'Entrez votre prix',
+    suggestions: 'Suggestions:',
+    messageLabel: 'Message (optionnel)',
+    messagePlaceholder: 'Expliquez votre offre (état de l'objet souhaité, modalités de paiement...)',
+    nameLabel: 'Votre nom *',
+    phoneLabel: 'Téléphone *',
+    phonePlaceholder: '+216',
+    emailLabel: 'Email (optionnel)',
+    cancel: 'Annuler',
+    sending: 'Envoi...',
+    submit: 'Envoyer l'offre',
+    successTitle: 'Offre envoyée !',
+    successText: 'Le vendeur a reçu votre proposition et vous contactera bientôt.',
+    errorRequired: 'Veuillez remplir tous les champs obligatoires',
+    errorInvalidPrice: 'Veuillez entrer un prix valide',
+    errorOccurred: 'Une erreur est survenue. Veuillez réessayer.',
+  },
+  en: {
+    title: 'Make an offer',
+    currentPrice: 'Current price',
+    yourOffer: 'Your offer (TND) *',
+    offerPlaceholder: 'Enter your price',
+    suggestions: 'Suggestions:',
+    messageLabel: 'Message (optional)',
+    messagePlaceholder: 'Explain your offer (item condition, payment method...)',
+    nameLabel: 'Your name *',
+    phoneLabel: 'Phone *',
+    phonePlaceholder: '+216',
+    emailLabel: 'Email (optional)',
+    cancel: 'Cancel',
+    sending: 'Sending...',
+    submit: 'Send offer',
+    successTitle: 'Offer sent!',
+    successText: 'The seller has received your proposal and will contact you soon.',
+    errorRequired: 'Please fill in all required fields',
+    errorInvalidPrice: 'Please enter a valid price',
+    errorOccurred: 'An error occurred. Please try again.',
+  },
+  ar: {
+    title: 'تقديم عرض',
+    currentPrice: 'السعر الحالي',
+    yourOffer: 'عرضك (دينار) *',
+    offerPlaceholder: 'أدخل سعرك',
+    suggestions: 'اقتراحات:',
+    messageLabel: 'رسالة (اختياري)',
+    messagePlaceholder: 'اشرح عرضك (حالة المنتج، طريقة الدفع...)',
+    nameLabel: 'اسمك *',
+    phoneLabel: 'الهاتف *',
+    phonePlaceholder: '+216',
+    emailLabel: 'البريد الإلكتروني (اختياري)',
+    cancel: 'إلغاء',
+    sending: 'جاري الإرسال...',
+    submit: 'إرسال العرض',
+    successTitle: 'تم إرسال العرض!',
+    successText: 'استلم البائع عرضك وسيتواصل معك قريباً.',
+    errorRequired: 'يرجى ملء جميع الحقول المطلوبة',
+    errorInvalidPrice: 'يرجى إدخال سعر صالح',
+    errorOccurred: 'حدث خطأ. يرجى المحاولة مرة أخرى.',
+  },
+  it: {
+    title: 'Fai un'offerta',
+    currentPrice: 'Prezzo attuale',
+    yourOffer: 'La tua offerta (TND) *',
+    offerPlaceholder: 'Inserisci il tuo prezzo',
+    suggestions: 'Suggerimenti:',
+    messageLabel: 'Messaggio (opzionale)',
+    messagePlaceholder: 'Spiega la tua offerta (condizioni dell'oggetto, metodo di pagamento...)',
+    nameLabel: 'Il tuo nome *',
+    phoneLabel: 'Telefono *',
+    phonePlaceholder: '+216',
+    emailLabel: 'Email (opzionale)',
+    cancel: 'Annulla',
+    sending: 'Invio...',
+    submit: 'Invia offerta',
+    successTitle: 'Offerta inviata!',
+    successText: 'Il venditore ha ricevuto la tua proposta e ti contatterà presto.',
+    errorRequired: 'Compila tutti i campi obbligatori',
+    errorInvalidPrice: 'Inserisci un prezzo valido',
+    errorOccurred: 'Si è verificato un errore. Riprova.',
+  },
+  ru: {
+    title: 'Сделать предложение',
+    currentPrice: 'Текущая цена',
+    yourOffer: 'Ваше предложение (ТНД) *',
+    offerPlaceholder: 'Введите цену',
+    suggestions: 'Предложения:',
+    messageLabel: 'Сообщение (необязательно)',
+    messagePlaceholder: 'Объясните ваше предложение (состояние товара, способ оплаты...)',
+    nameLabel: 'Ваше имя *',
+    phoneLabel: 'Телефон *',
+    phonePlaceholder: '+216',
+    emailLabel: 'Email (необязательно)',
+    cancel: 'Отмена',
+    sending: 'Отправка...',
+    submit: 'Отправить предложение',
+    successTitle: 'Предложение отправлено!',
+    successText: 'Продавец получил ваше предложение и скоро свяжется с вами.',
+    errorRequired: 'Пожалуйста, заполните все обязательные поля',
+    errorInvalidPrice: 'Пожалуйста, введите действительную цену',
+    errorOccurred: 'Произошла ошибка. Попробуйте снова.',
+  },
+};
+
+type Lang = keyof typeof copy;
+
 export default function NegotiationModal({ announcementId, currentPrice, onClose }: NegotiationModalProps) {
+  const { language } = useLanguage();
+  const t = copy[language as Lang] || copy.fr;
+  const isRTL = language === 'ar';
+
   const [formData, setFormData] = useState({
     prix_propose: '',
     message: '',
@@ -25,13 +140,13 @@ export default function NegotiationModal({ announcementId, currentPrice, onClose
     setError('');
 
     if (!formData.prix_propose || !formData.offrant_nom || !formData.offrant_tel) {
-      setError('Veuillez remplir tous les champs obligatoires');
+      setError(t.errorRequired);
       return;
     }
 
     const proposedPrice = parseFloat(formData.prix_propose);
     if (isNaN(proposedPrice) || proposedPrice <= 0) {
-      setError('Veuillez entrer un prix valide');
+      setError(t.errorInvalidPrice);
       return;
     }
 
@@ -55,7 +170,7 @@ export default function NegotiationModal({ announcementId, currentPrice, onClose
       }, 2000);
     } catch (err: any) {
       console.error('Erreur envoi offre:', err);
-      setError('Une erreur est survenue. Veuillez réessayer.');
+      setError(t.errorOccurred);
     } finally {
       setLoading(false);
     }
@@ -68,10 +183,10 @@ export default function NegotiationModal({ announcementId, currentPrice, onClose
   ];
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60] p-4">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60] p-4" dir={isRTL ? 'rtl' : 'ltr'}>
       <div className="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 rounded-t-3xl flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-900">Faire une offre</h2>
+          <h2 className="text-xl font-bold text-gray-900">{t.title}</h2>
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -88,8 +203,8 @@ export default function NegotiationModal({ announcementId, currentPrice, onClose
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Offre envoyée !</h3>
-              <p className="text-gray-600">Le vendeur a reçu votre proposition et vous contactera bientôt.</p>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">{t.successTitle}</h3>
+              <p className="text-gray-600">{t.successText}</p>
             </div>
           ) : (
             <>
@@ -100,7 +215,7 @@ export default function NegotiationModal({ announcementId, currentPrice, onClose
               )}
 
               <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl">
-                <p className="text-sm text-gray-600 mb-2">Prix actuel</p>
+                <p className="text-sm text-gray-600 mb-2">{t.currentPrice}</p>
                 <p className="text-3xl font-bold text-gray-900">
                   {currentPrice.toLocaleString('fr-FR')} <span className="text-lg">TND</span>
                 </p>
@@ -108,24 +223,23 @@ export default function NegotiationModal({ announcementId, currentPrice, onClose
 
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Votre offre (TND) *
+                  {t.yourOffer}
                 </label>
                 <div className="relative">
-                  <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <DollarSign className={`absolute ${isRTL ? 'right-4' : 'left-4'} top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400`} />
                   <input
                     type="number"
                     step="0.001"
                     value={formData.prix_propose}
                     onChange={(e) => setFormData({ ...formData, prix_propose: e.target.value })}
-                    className="w-full pl-12 pr-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#D62828] focus:ring-4 focus:ring-orange-100 outline-none transition-all"
-                    placeholder="Entrez votre prix"
+                    className={`w-full ${isRTL ? 'pr-12 pl-4' : 'pl-12 pr-4'} py-3 rounded-xl border-2 border-gray-200 focus:border-[#D62828] focus:ring-4 focus:ring-orange-100 outline-none transition-all`}
+                    placeholder={t.offerPlaceholder}
                     required
                   />
                 </div>
 
-                {/* Suggested prices */}
                 <div className="flex gap-2 mt-3">
-                  <p className="text-xs text-gray-500 mt-1">Suggestions:</p>
+                  <p className="text-xs text-gray-500 mt-1">{t.suggestions}</p>
                   {suggestedPrices.map((price) => (
                     <button
                       key={price}
@@ -141,21 +255,21 @@ export default function NegotiationModal({ announcementId, currentPrice, onClose
 
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Message (optionnel)
+                  {t.messageLabel}
                 </label>
                 <textarea
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   rows={4}
                   className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#D62828] focus:ring-4 focus:ring-orange-100 outline-none transition-all resize-none"
-                  placeholder="Expliquez votre offre (état de l'objet souhaité, modalités de paiement...)"
+                  placeholder={t.messagePlaceholder}
                 />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Votre nom *
+                    {t.nameLabel}
                   </label>
                   <input
                     type="text"
@@ -168,14 +282,14 @@ export default function NegotiationModal({ announcementId, currentPrice, onClose
 
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Téléphone *
+                    {t.phoneLabel}
                   </label>
                   <input
                     type="tel"
                     value={formData.offrant_tel}
                     onChange={(e) => setFormData({ ...formData, offrant_tel: e.target.value })}
                     className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#D62828] focus:ring-4 focus:ring-orange-100 outline-none transition-all"
-                    placeholder="+216"
+                    placeholder={t.phonePlaceholder}
                     required
                   />
                 </div>
@@ -183,7 +297,7 @@ export default function NegotiationModal({ announcementId, currentPrice, onClose
 
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Email (optionnel)
+                  {t.emailLabel}
                 </label>
                 <input
                   type="email"
@@ -199,7 +313,7 @@ export default function NegotiationModal({ announcementId, currentPrice, onClose
                   onClick={onClose}
                   className="flex-1 px-6 py-3 rounded-xl border-2 border-gray-300 font-semibold hover:bg-gray-50 transition-colors"
                 >
-                  Annuler
+                  {t.cancel}
                 </button>
                 <button
                   type="submit"
@@ -209,10 +323,10 @@ export default function NegotiationModal({ announcementId, currentPrice, onClose
                   {loading ? (
                     <>
                       <Loader2 className="w-5 h-5 animate-spin" />
-                      Envoi...
+                      {t.sending}
                     </>
                   ) : (
-                    'Envoyer l\'offre'
+                    t.submit
                   )}
                 </button>
               </div>
