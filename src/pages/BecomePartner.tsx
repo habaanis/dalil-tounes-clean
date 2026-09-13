@@ -35,9 +35,9 @@ export default function BecomePartner() {
         </div>
         <div className="mx-auto grid w-full max-w-[440px] grid-cols-2 items-center gap-3" aria-label={t.solutionTitle}>
           <figure className="relative h-[390px] w-full -rotate-2 overflow-hidden rounded-[28px] border-[5px] border-[#07392E] bg-white shadow-2xl">
-            <img className="block h-full w-full object-contain object-top" src="/images/cv-business-portfolio-aux-saveurs-anis.png" alt={t.professional}/>
+            <img className="block h-full w-full object-contain object-top" src="/images/cv-business-professionnel-carte-claire.svg" alt={t.professional}/>
             <figcaption className="absolute start-3 top-3 rounded-full bg-[#07392E] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#F4CE55]">{t.professional}</figcaption>
-            <button type="button" onClick={() => setModelZoom({src:'/images/cv-business-portfolio-aux-saveurs-anis.png',label:t.professional})} className="absolute bottom-3 end-3 z-10 flex min-h-11 items-center gap-2 rounded-full border-2 border-[#F4CE55] bg-[#07392E] px-3 text-xs font-bold text-white shadow-xl" aria-label={`${t.professional} — agrandir`}><ZoomIn size={18}/><span className="hidden sm:inline">Agrandir</span></button>
+            <button type="button" onClick={() => setModelZoom({src:'/images/cv-business-professionnel-carte-claire.svg',label:t.professional})} className="absolute bottom-3 end-3 z-10 flex min-h-11 items-center gap-2 rounded-full border-2 border-[#F4CE55] bg-[#07392E] px-3 text-xs font-bold text-white shadow-xl" aria-label={`${t.professional} — agrandir`}><ZoomIn size={18}/><span className="hidden sm:inline">Agrandir</span></button>
           </figure>
           <figure className="relative h-[390px] w-full rotate-2 overflow-hidden rounded-[28px] border-[5px] border-[#4A1D43] bg-white shadow-2xl">
             <img className="block h-full w-full object-contain object-top" src="/images/cv-business-professionnel-aux-saveurs-anis.png" alt={t.portfolio}/>
