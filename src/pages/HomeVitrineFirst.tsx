@@ -201,7 +201,7 @@ export default function HomeVitrineFirst() {
   const rtl = lang === 'ar';
   const [presentationModel, setPresentationModel] = useState<PresentationModel>('professional');
   const modelImage = presentationModel === 'professional'
-    ? '/images/cv-business-portfolio-aux-saveurs-anis.png'
+    ? '/images/cv-business-professionnel-carte-claire.png'
     : '/images/cv-business-professionnel-aux-saveurs-anis.png';
 
   return (
