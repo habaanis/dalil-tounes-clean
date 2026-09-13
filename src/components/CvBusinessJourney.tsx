@@ -286,7 +286,7 @@ function ExpandedJourneyVisual({
             <img
               src={visual === 'cv-portfolio'
                 ? '/images/cv-business-professionnel-aux-saveurs-anis.png'
-                : '/images/cv-business-professionnel-carte-claire.svg'}
+                : '/images/cv-business-portfolio-aux-saveurs-anis.png'}
               alt={`${title} — Aux saveurs d’Anis`}
               className="max-h-[82dvh] max-w-[calc(100vw-64px)] object-contain"
               decoding="async"
@@ -312,7 +312,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
     : 'https://static.metricool.com/video/4610595/202609/eaaff4e56ccf4aba.mp4';
   const activeCvImage = activeCvModel === 'portfolio'
     ? '/images/cv-business-professionnel-aux-saveurs-anis.png'
-    : '/images/cv-business-professionnel-carte-claire.svg';
+    : '/images/cv-business-portfolio-aux-saveurs-anis.png';
   const activeCvLabel = activeCvModel === 'portfolio' ? t.portfolioModel : t.professionalModel;
   const mobileSteps: Array<{ id: MobileJourneyStep; label: string }> = [
     { id: 'pwa', label: t.pwaShort },

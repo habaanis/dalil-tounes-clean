@@ -282,7 +282,7 @@ export function CvPresentationModelSelector({
               />
             ) : (
               <img
-                src="/images/cv-business-professionnel-carte-claire.svg"
+                src="/images/cv-business-portfolio-aux-saveurs-anis.png"
                 alt={`${copy.professional} — Aux saveurs d’Anis`}
                 className="h-[390px] w-auto max-w-none object-contain object-top"
                 loading="lazy"
@@ -300,7 +300,7 @@ export function CvPresentationModelSelector({
           className={`flex min-w-0 flex-col rounded-2xl border p-3.5 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'professional' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
         >
           <ModelPreview
-            src="/images/cv-business-professionnel-carte-claire.svg"
+            src="/images/cv-business-portfolio-aux-saveurs-anis.png"
             alt={`${copy.professional} — Aux saveurs d’Anis`}
             enlargeLabel={`${copy.enlarge} — ${copy.professional}`}
             onEnlarge={() => setExpandedModel('professional')}
@@ -383,7 +383,7 @@ export function CvPresentationModelSelector({
               />
             ) : (
               <img
-                src="/images/cv-business-professionnel-carte-claire.svg"
+                src="/images/cv-business-portfolio-aux-saveurs-anis.png"
                 alt={`${copy.professional} — Aux saveurs d’Anis`}
                 className="mx-auto mt-1 max-h-[82dvh] max-w-[calc(100vw-48px)] object-contain object-top"
                 decoding="async"
