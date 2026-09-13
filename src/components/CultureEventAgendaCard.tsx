@@ -2,6 +2,7 @@ import { Calendar, MapPin, Ticket } from 'lucide-react';
 import { analyzeTicketLink, getPrixValue } from '../lib/ticketLinkAnalyzer';
 import { useLanguage } from '../context/LanguageContext';
 import type { Language } from '../lib/i18n';
+import { getCultureSecteurLabel } from '../lib/cultureEventCategories';
 
 const DATE_LOCALES: Record<Language, string> = {
   fr: 'fr-FR', ar: 'ar-TN', en: 'en-GB', it: 'it-IT', ru: 'ru-RU',
@@ -138,7 +139,7 @@ const CultureEventAgendaCard = ({ event, type, badge, noEventText, buttonText }:
           <div className={`absolute top-3 ${isRTL ? 'right-3' : 'left-3'} z-10`}>
             <div className="bg-black/40 backdrop-blur-md rounded-lg px-3 py-1.5 shadow-lg">
               <span className="text-white text-xs font-medium">
-                {event.secteur_evenement}
+                {getCultureSecteurLabel(event.secteur_evenement, language)}
               </span>
             </div>
           </div>
