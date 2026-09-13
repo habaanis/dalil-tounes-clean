@@ -79,7 +79,7 @@ export default function BecomePartner() {
     <Section eyebrow={t.faqEyebrow} title={t.faqTitle}><div className="border-t border-gray-200">{t.faq.map(([q,a])=><details key={q} className="border-b border-gray-200 py-4"><summary className="cursor-pointer font-bold text-[#4A1D43]">{q}</summary><p className="mt-3 max-w-3xl leading-7 text-gray-600">{a}</p></details>)}</div></Section>
     {modelZoom && <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 p-3 sm:p-6" role="dialog" aria-modal="true" aria-label={modelZoom.label} onClick={() => setModelZoom(null)}>
       <div className="relative flex max-h-[94vh] max-w-[94vw] flex-col items-center overflow-hidden rounded-3xl bg-white p-3 shadow-2xl sm:p-5" onClick={event => event.stopPropagation()}>
-        <button type="button" onClick={() => setModelZoom(null)} className="absolute end-4 top-4 z-10 grid h-12 w-12 place-items-center rounded-full border-2 border-[#D4AF37] bg-white text-[#4A1D43] shadow-lg" aria-label="Fermer"><X size={25}/></button>
+        <button type="button" onClick={() => setModelZoom(null)} className="absolute end-4 top-4 z-10 grid h-12 w-12 place-items-center rounded-full border-2 border-[#D4AF37] bg-white text-[#4A1D43] shadow-lg" aria-label={rtl ? 'إغلاق' : language === 'en' ? 'Close' : language === 'it' ? 'Chiudi' : language === 'ru' ? 'Закрыть' : 'Fermer'}><X size={25}/></button>
         <img src={modelZoom.src} alt={modelZoom.label} className="max-h-[86vh] max-w-full object-contain"/>
       </div>
     </div>}

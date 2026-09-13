@@ -193,8 +193,11 @@ export const BusinessEvents = () => {
   });
 
 
+  const isRTL = language === 'ar';
+  const dateLocale = language === 'ar' ? 'ar-TN' : language === 'en' ? 'en' : language === 'it' ? 'it' : language === 'ru' ? 'ru' : 'fr';
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white" dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Hero Section */}
       <motion.div
         initial={{ opacity: 0 }}
@@ -435,13 +438,13 @@ export const BusinessEvents = () => {
 
                                   const start = new Date(event.event_date);
                                   const startLabel = !isNaN(start.getTime())
-                                    ? start.toLocaleDateString()
+                                    ? start.toLocaleDateString(dateLocale)
                                     : event.event_date;
 
                                   if (event.end_date) {
                                     const end = new Date(event.end_date);
                                     const endLabel = !isNaN(end.getTime())
-                                      ? end.toLocaleDateString()
+                                      ? end.toLocaleDateString(dateLocale)
                                       : event.end_date;
 
                                     return `${pageT.from} ${startLabel} ${pageT.to} ${endLabel}`;
@@ -473,7 +476,7 @@ export const BusinessEvents = () => {
                           className="inline-flex items-center gap-1 text-[#800020] font-medium hover:gap-2 transition-all text-xs mb-2"
                         >
                           <span>{t.businessEvents.eventCard.learnMore}</span>
-                          <span>→</span>
+                          <span className={isRTL ? 'rotate-180 inline-block' : ''}>→</span>
                         </a>
                       )}
 

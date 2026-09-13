@@ -92,7 +92,7 @@ export default function BusinessSearchCardV2({
           decoding="async"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#064332]/70 via-transparent to-black/5" />
-        <span className="absolute left-3 top-1.5 text-[9px] font-black uppercase tracking-[0.12em] text-[#E5B92F] drop-shadow-sm">
+        <span className={`absolute top-1.5 text-[9px] font-black uppercase tracking-[0.12em] text-[#E5B92F] drop-shadow-sm ${isRTL ? 'right-3' : 'left-3'}`}>
           {tier === 'premium' ? text.premium : text.artisan}
         </span>
       </div>

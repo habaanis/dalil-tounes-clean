@@ -100,7 +100,7 @@ export default function JobCard({ job, onClick }: JobCardProps) {
 
         <div className="flex items-center md:items-start">
           <button className="px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:shadow-lg hover:from-orange-600 hover:to-orange-700 transition-all font-medium whitespace-nowrap">
-            {t.common?.viewDetails || 'Voir l\'offre'}
+            {t.common?.viewDetails || (language === 'ar' ? 'عرض الوظيفة' : language === 'en' ? 'View offer' : language === 'it' ? 'Vedi offerta' : language === 'ru' ? 'Просмотреть вакансию' : 'Voir l\'offre')}
           </button>
         </div>
       </div>

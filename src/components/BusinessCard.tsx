@@ -105,7 +105,13 @@ export const BusinessCard = ({ business, onClick, showGoogleRating = false }: Bu
           }
         }}
         className="h-full cursor-pointer rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/60"
-        aria-label={`Voir les détails de ${displayName}`}
+        aria-label={
+          language === 'ar' ? `عرض تفاصيل ${displayName}`
+          : language === 'en' ? `View details for ${displayName}`
+          : language === 'it' ? `Vedi i dettagli di ${displayName}`
+          : language === 'ru' ? `Подробнее о ${displayName}`
+          : `Voir les détails de ${displayName}`
+        }
       >
         <GratuitCard
           name={displayName}

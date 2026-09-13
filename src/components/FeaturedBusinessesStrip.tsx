@@ -48,24 +48,28 @@ function getTextsForVariant(variant: NormalizedVariant, lang: string) {
       ar: { title: 'هم يحرّكون تونس', subtitle: 'مجموعة مختارة من المؤسسات والمحلات والخدمات التي تعكس الثراء الاقتصادي للبلاد.' },
       en: { title: 'They move Tunisia forward', subtitle: 'A selection of businesses, shops and services that illustrate the country\'s economic richness.' },
       it: { title: 'Fanno muovere la Tunisia', subtitle: 'Una selezione di aziende, negozi e servizi che illustrano la ricchezza economica del paese.' },
+      ru: { title: 'Они двигают Тунис вперёд', subtitle: 'Подборка предприятий, магазинов и услуг, отражающих экономическое богатство страны.' },
     },
     businesses: {
       fr: { title: 'Entreprises qui bougent', subtitle: 'Des prestataires et services B2B pour accompagner les professionnels et les projets.' },
       ar: { title: 'مؤسسات نشطة', subtitle: 'مزودو خدمات B2B لمرافقة المهنيين والمشاريع.' },
       en: { title: 'Businesses on the move', subtitle: 'B2B providers and services to support professionals and projects.' },
       it: { title: 'Aziende in movimento', subtitle: 'Fornitori e servizi B2B per accompagnare professionisti e progetti.' },
+      ru: { title: 'Активные предприятия', subtitle: 'B2B-провайдеры и услуги для поддержки профессионалов и проектов.' },
     },
     citizens: {
       fr: { title: 'Près de chez vous', subtitle: 'Les professionnels et services utiles à votre quotidien, partout en Tunisie.' },
       ar: { title: 'بالقرب منك', subtitle: 'المهنيون والخدمات المفيدة لحياتك اليومية في جميع أنحاء تونس.' },
       en: { title: 'Near you', subtitle: 'Professionals and services useful for your daily life, throughout Tunisia.' },
       it: { title: 'Vicino a te', subtitle: 'Professionisti e servizi utili per la tua vita quotidiana, in tutta la Tunisia.' },
+      ru: { title: 'Рядом с вами', subtitle: 'Профессионалы и услуги для вашей повседневной жизни по всему Тунису.' },
     },
     shops: {
       fr: { title: 'Commerces & boutiques', subtitle: 'Faites votre shopping en Tunisie : commerces de proximité, artisans et magasins.' },
       ar: { title: 'محلات ومتاجر', subtitle: 'تسوّق في تونس: محلات الجوار والحرفيون والمتاجر.' },
       en: { title: 'Shops & boutiques', subtitle: 'Shop in Tunisia: local shops, artisans and stores.' },
       it: { title: 'Negozi e boutique', subtitle: 'Fai shopping in Tunisia: negozi di prossimità, artigiani e commerci.' },
+      ru: { title: 'Магазины и бутики', subtitle: 'Покупки в Тунисе: местные магазины, ремесленники и торговые точки.' },
     },
   };
   return dict[variant]?.[lang] || dict[variant]?.fr || { title: '', subtitle: '' };
@@ -116,13 +120,28 @@ export const FeaturedBusinessesStrip = ({ variant }: FeaturedBusinessesStripProp
 
   const { title, subtitle } = getTextsForVariant(normalized, language);
 
+  const loadingTexts: Record<string, string> = {
+    fr: 'Chargement des établissements en vedette...',
+    ar: 'جارٍ تحميل المؤسسات المميزة...',
+    en: 'Loading featured establishments...',
+    it: 'Caricamento degli esercizi in evidenza...',
+    ru: 'Загрузка рекомендуемых заведений...',
+  };
+  const emptyTexts: Record<string, string> = {
+    fr: 'Aucun établissement à afficher pour le moment.',
+    ar: 'لا توجد مؤسسات للعرض حالياً.',
+    en: 'No establishments to display at this time.',
+    it: 'Nessun esercizio da mostrare al momento.',
+    ru: 'На данный момент нет заведений для отображения.',
+  };
+
   if (loading) {
     return (
       <section className="py-6">
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex items-center gap-3 text-sm text-gray-500">
             <div className="w-5 h-5 border-2 border-[#D4AF37] border-t-transparent rounded-full animate-spin" />
-            <span>Chargement des établissements en vedette...</span>
+            <span>{loadingTexts[language] || loadingTexts.fr}</span>
           </div>
         </div>
       </section>
@@ -133,7 +152,7 @@ export const FeaturedBusinessesStrip = ({ variant }: FeaturedBusinessesStripProp
     return (
       <section className="py-6">
         <div className="max-w-6xl mx-auto px-4">
-          <p className="text-sm text-gray-500">Aucun établissement à afficher pour le moment.</p>
+          <p className="text-sm text-gray-500">{emptyTexts[language] || emptyTexts.fr}</p>
         </div>
       </section>
     );
