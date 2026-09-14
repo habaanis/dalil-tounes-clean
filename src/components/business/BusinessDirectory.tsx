@@ -490,12 +490,12 @@ export default function BusinessDirectory({ mode, title, subtitle }: BusinessDir
             {loadingMore ? (
               <div className="flex items-center gap-2 text-orange-600">
                 <Loader className="w-5 h-5 animate-spin" />
-                <span className="text-sm font-medium">Chargement...</span>
+                <span className="text-sm font-medium">{language === 'fr' ? 'Chargement...' : language === 'ar' ? 'جارٍ التحميل...' : language === 'en' ? 'Loading...' : language === 'it' ? 'Caricamento...' : 'Загрузка...'}</span>
               </div>
             ) : (
               <div className="text-center">
                 <ChevronDown className="w-6 h-6 text-gray-400 animate-bounce mx-auto" />
-                <p className="text-xs text-gray-500 mt-2">Faites défiler pour voir plus</p>
+                <p className="text-xs text-gray-500 mt-2">{language === 'fr' ? 'Faites défiler pour voir plus' : language === 'ar' ? 'مرر لرؤية المزيد' : language === 'en' ? 'Scroll to see more' : language === 'it' ? 'Scorri per vedere di più' : 'Прокрутите для просмотра'}</p>
               </div>
             )}
           </div>
@@ -505,7 +505,7 @@ export default function BusinessDirectory({ mode, title, subtitle }: BusinessDir
         {filteredBusinesses.length > 0 && !hasMore && (
           <div className="text-center py-8">
             <p className="text-sm text-gray-500">
-              Tous les résultats ont été chargés ({filteredBusinesses.length} entreprise{filteredBusinesses.length > 1 ? 's' : ''})
+              {language === 'fr' ? `Tous les résultats ont été chargés (${filteredBusinesses.length})` : language === 'ar' ? `تم تحميل جميع النتائج (${filteredBusinesses.length})` : language === 'en' ? `All results loaded (${filteredBusinesses.length})` : language === 'it' ? `Tutti i risultati caricati (${filteredBusinesses.length})` : `Все результаты загружены (${filteredBusinesses.length})`}
             </p>
           </div>
         )}

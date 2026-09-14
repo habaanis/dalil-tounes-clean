@@ -221,7 +221,7 @@ export default function BannerAdsCarousel({ variant, onOpenForm }: BannerAdsCaro
               goToPrevious();
             }}
             className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-md transition-all hover:scale-110 z-10"
-            aria-label="Précédent"
+            aria-label={language === 'fr' ? 'Précédent' : language === 'ar' ? 'السابق' : language === 'en' ? 'Previous' : language === 'it' ? 'Precedente' : 'Предыдущий'}
           >
             <ChevronLeft className="w-5 h-5 text-gray-800" />
           </button>
@@ -232,7 +232,7 @@ export default function BannerAdsCarousel({ variant, onOpenForm }: BannerAdsCaro
               goToNext();
             }}
             className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-md transition-all hover:scale-110 z-10"
-            aria-label="Suivant"
+            aria-label={language === 'fr' ? 'Suivant' : language === 'ar' ? 'التالي' : language === 'en' ? 'Next' : language === 'it' ? 'Successivo' : 'Следующий'}
           >
             <ChevronRight className="w-5 h-5 text-gray-800" />
           </button>
@@ -250,7 +250,7 @@ export default function BannerAdsCarousel({ variant, onOpenForm }: BannerAdsCaro
                     ? 'bg-white w-6'
                     : 'bg-white/50 hover:bg-white/80 w-2'
                 }`}
-                aria-label={`Aller à la slide ${idx + 1}`}
+                aria-label={`${language === 'fr' ? 'Aller à la slide' : language === 'ar' ? 'اذهب إلى الشريحة' : language === 'en' ? 'Go to slide' : language === 'it' ? 'Vai alla slide' : 'Перейти к слайду'} ${idx + 1}`}
               />
             ))}
           </div>

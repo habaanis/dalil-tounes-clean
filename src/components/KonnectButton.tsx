@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Loader2, CreditCard } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 interface KonnectButtonProps {
   amount: number;
@@ -14,10 +15,13 @@ export function KonnectButton({
   amount,
   entrepriseId,
   plan,
-  label = 'Payer avec Konnect',
+  label,
   disabled = false,
   onInitiate,
 }: KonnectButtonProps) {
+  const { language } = useLanguage();
+  const defaultLabel = language === 'fr' ? 'Payer avec Konnect' : language === 'ar' ? 'ادفع مع Konnect' : language === 'en' ? 'Pay with Konnect' : language === 'it' ? 'Paga con Konnect' : 'Оплатить через Konnect';
+  const btnLabel = label || defaultLabel;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,7 +32,7 @@ export function KonnectButton({
 
     try {
       if (!onInitiate) {
-        setError('Konnect sera disponible prochainement.');
+  setError(language === 'fr' ? 'Konnect sera disponible prochainement.' : language === 'ar' ? 'Konnect سيكون متاحاً قريباً.' : language === 'en' ? 'Konnect will be available soon.' : language === 'it' ? 'Konnect sarà disponibile a breve.' : 'Konnect скоро будет доступен.');
         return;
       }
       const redirectUrl = await onInitiate({ amount, entrepriseId, plan });
@@ -36,9 +40,9 @@ export function KonnectButton({
         window.location.href = redirectUrl;
         return;
       }
-      setError("Impossible d'initialiser le paiement.");
+setError(language === 'fr' ? "Impossible d'initialiser le paiement." : language === 'ar' ? 'تعذير تهيئة الدفع.' : language === 'en' ? 'Unable to initialize payment.' : language === 'it' ? 'Impossibile inizializzare il pagamento.' : 'Не удалось инициализировать оплату.');
     } catch {
-      setError('Une erreur est survenue. Veuillez reessayer.');
+setError(language === 'fr' ? 'Une erreur est survenue. Veuillez réessayer.' : language === 'ar' ? 'حدث خطأ. يرجى المحاولة مرة أخرى.' : language === 'en' ? 'An error occurred. Please try again.' : language === 'it' ? 'Si è verificato un errore. Riprova.' : 'Произошла ошибка. Попробуйте ещё раз.');
     } finally {
       setLoading(false);
     }
@@ -55,12 +59,12 @@ export function KonnectButton({
         {loading ? (
           <>
             <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
-            <span>Initialisation...</span>
+            <span>{language === 'fr' ? 'Initialisation...' : language === 'ar' ? 'جارٍ التهيئة...' : language === 'en' ? 'Initializing...' : language === 'it' ? 'Inizializzazione...' : 'Инициализация...'}</span>
           </>
         ) : (
           <>
             <CreditCard className="h-5 w-5" aria-hidden="true" />
-            <span>{label}</span>
+            <span>{btnLabel}</span>
           </>
         )}
       </button>

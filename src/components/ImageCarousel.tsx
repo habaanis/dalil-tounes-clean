@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLanguage } from '../context/LanguageContext';
 
 interface CarouselSlide {
   id: string;
@@ -15,6 +16,7 @@ interface ImageCarouselProps {
 }
 
 export default function ImageCarousel({ slides, autoPlayInterval = 5000 }: ImageCarouselProps) {
+  const { language } = useLanguage();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(0);
 
@@ -106,7 +108,7 @@ export default function ImageCarousel({ slides, autoPlayInterval = 5000 }: Image
           handlePrev();
         }}
         className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110 z-10"
-        aria-label="Précédent"
+        aria-label={language === 'fr' ? 'Précédent' : language === 'ar' ? 'السابق' : language === 'en' ? 'Previous' : language === 'it' ? 'Precedente' : 'Предыдущий'}
       >
         <ChevronLeft className="w-6 h-6 text-gray-800" />
       </button>
@@ -117,7 +119,7 @@ export default function ImageCarousel({ slides, autoPlayInterval = 5000 }: Image
           handleNext();
         }}
         className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110 z-10"
-        aria-label="Suivant"
+        aria-label={language === 'fr' ? 'Suivant' : language === 'ar' ? 'التالي' : language === 'en' ? 'Next' : language === 'it' ? 'Successivo' : 'Следующий'}
       >
         <ChevronRight className="w-6 h-6 text-gray-800" />
       </button>
@@ -137,7 +139,7 @@ export default function ImageCarousel({ slides, autoPlayInterval = 5000 }: Image
                 ? 'bg-white w-6'
                 : 'bg-white/50 hover:bg-white/80'
             }`}
-            aria-label={`Aller à la slide ${idx + 1}`}
+            aria-label={`${language === 'fr' ? 'Aller à la slide' : language === 'ar' ? 'اذهب إلى الشريحة' : language === 'en' ? 'Go to slide' : language === 'it' ? 'Vai alla slide' : 'Перейти к слайду'} ${idx + 1}`}
           />
         ))}
       </div>

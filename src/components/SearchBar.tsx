@@ -533,7 +533,7 @@ export default function SearchBar({
             onClick={() => goTo(url)}
           >
             <span>➡️</span>
-            <span>Voir tout dans {label}</span>
+            <span>{language === 'fr' ? `Voir tout dans ${label}` : language === 'ar' ? `عرض الكل في ${label}` : language === 'en' ? `See all in ${label}` : language === 'it' ? `Vedi tutto in ${label}` : `Все в ${label}`}</span>
           </li>
         );
       }
@@ -663,15 +663,15 @@ export default function SearchBar({
             ) : (
               !loadingEnt && q.trim().length >= MIN_CHARS && (
                 <li className="py-4 text-center text-gray-500">
-                  Aucun résultat trouvé
+                  {language === 'fr' ? 'Aucun résultat trouvé' : language === 'ar' ? 'لم يتم العثور على نتائج' : language === 'en' ? 'No results found' : language === 'it' ? 'Nessun risultato trovato' : 'Результатов не найдено'}
                 </li>
               )
             )}
           </ul>
           <div className="text-xs text-gray-500 pt-1">
-            {loadingEnt && <span>Chargement...</span>}
-            {!loadingEnt && ent.length > 0 && <span>Entreprises: {ent.length}</span>}
-            {errEnt && <span className="text-red-600">Erreur: {errEnt}</span>}
+            {loadingEnt && <span>{language === 'fr' ? 'Chargement...' : language === 'ar' ? 'جارٍ التحميل...' : language === 'en' ? 'Loading...' : language === 'it' ? 'Caricamento...' : 'Загрузка...'}</span>}
+            {!loadingEnt && ent.length > 0 && <span>{language === 'fr' ? 'Entreprises' : language === 'ar' ? 'الشركات' : language === 'en' ? 'Businesses' : language === 'it' ? 'Aziende' : 'Компании'}: {ent.length}</span>}
+            {errEnt && <span className="text-red-600">{language === 'fr' ? 'Erreur' : language === 'ar' ? 'خطأ' : language === 'en' ? 'Error' : language === 'it' ? 'Errore' : 'Ошибка'}</span>}
           </div>
         </div>,
         document.body

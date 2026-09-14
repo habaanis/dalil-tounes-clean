@@ -3,8 +3,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { Tables } from '../lib/dbTables';
 import { buildEntrepriseUrl } from '../lib/slugify';
+import { useLanguage } from '../context/LanguageContext';
 
 export function LegacyBusinessRedirect() {
+  const { language } = useLanguage();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [notFound, setNotFound] = useState(false);
@@ -61,7 +63,7 @@ export function LegacyBusinessRedirect() {
   if (notFound) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
-        <p className="text-gray-600">Entreprise introuvable</p>
+        <p className="text-gray-600">{language === 'fr' ? 'Entreprise introuvable' : language === 'ar' ? 'الشركة غير موجودة' : language === 'en' ? 'Business not found' : language === 'it' ? 'Azienda non trovata' : 'Компания не найдена'}</p>
       </div>
     );
   }

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ChevronLeft, ChevronRight, X, Image as ImageIcon, Maximize2 } from 'lucide-react';
 import { ImageWithFallback } from './ImageWithFallback';
 import { getGalleryImageUrls } from '../lib/imagekitUtils';
+import { useLanguage } from '../context/LanguageContext';
 
 interface ImageGalleryProps {
   imageUrls: string | null | undefined;
@@ -13,6 +14,7 @@ interface ImageGalleryProps {
 }
 
 export const ImageGallery = ({ imageUrls, altText, className = '', maxPhotos, height = '120px', objectFit = 'contain' }: ImageGalleryProps) => {
+  const { language } = useLanguage();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showFullscreen, setShowFullscreen] = useState(false);
 
@@ -61,7 +63,7 @@ export const ImageGallery = ({ imageUrls, altText, className = '', maxPhotos, he
         <button
           onClick={() => setShowFullscreen(true)}
           className="absolute top-2 right-2 bg-black/60 hover:bg-black/80 text-white p-1 rounded backdrop-blur-sm transition-all"
-          title="Agrandir"
+          title={language === 'fr' ? 'Agrandir' : language === 'ar' ? 'تكبير' : language === 'en' ? 'Enlarge' : language === 'it' ? 'Ingrandisci' : 'Увеличить'}
         >
           <Maximize2 size={12} />
         </button>
@@ -80,7 +82,7 @@ export const ImageGallery = ({ imageUrls, altText, className = '', maxPhotos, he
                 goToPrevious();
               }}
               className="absolute left-1 top-1/2 -translate-y-1/2 bg-gradient-to-r from-[#4A1D43] to-[#5A2D53] hover:from-[#5A2D53] hover:to-[#6A3D63] text-[#D4AF37] p-1 rounded-full shadow-xl transition-all hover:scale-110"
-              title="Image précédente"
+              title={language === 'fr' ? 'Image précédente' : language === 'ar' ? 'الصورة السابقة' : language === 'en' ? 'Previous image' : language === 'it' ? 'Immagine precedente' : 'Предыдущее фото'}
             >
               <ChevronLeft size={16} />
             </button>
@@ -90,7 +92,7 @@ export const ImageGallery = ({ imageUrls, altText, className = '', maxPhotos, he
                 goToNext();
               }}
               className="absolute right-1 top-1/2 -translate-y-1/2 bg-gradient-to-r from-[#4A1D43] to-[#5A2D53] hover:from-[#5A2D53] hover:to-[#6A3D63] text-[#D4AF37] p-1 rounded-full shadow-xl transition-all hover:scale-110"
-              title="Image suivante"
+              title={language === 'fr' ? 'Image suivante' : language === 'ar' ? 'الصورة التالية' : language === 'en' ? 'Next image' : language === 'it' ? 'Immagine successiva' : 'Следующее фото'}
             >
               <ChevronRight size={16} />
             </button>
@@ -108,7 +110,7 @@ export const ImageGallery = ({ imageUrls, altText, className = '', maxPhotos, he
           <button
             onClick={() => setShowFullscreen(false)}
             className="absolute top-6 right-6 bg-gradient-to-r from-[#4A1D43] to-[#5A2D53] text-[#D4AF37] hover:scale-110 p-3 rounded-full shadow-2xl transition-all z-10"
-            title="Fermer"
+            title={language === 'fr' ? 'Fermer' : language === 'ar' ? 'إغلاق' : language === 'en' ? 'Close' : language === 'it' ? 'Chiudi' : 'Закрыть'}
           >
             <X size={28} />
           </button>
@@ -133,7 +135,7 @@ export const ImageGallery = ({ imageUrls, altText, className = '', maxPhotos, he
                     goToPrevious();
                   }}
                   className="absolute left-6 top-1/2 -translate-y-1/2 bg-gradient-to-r from-[#4A1D43] to-[#5A2D53] hover:from-[#5A2D53] hover:to-[#6A3D63] text-[#D4AF37] p-4 rounded-full shadow-2xl transition-all hover:scale-110"
-                  title="Image précédente"
+                  title={language === 'fr' ? 'Image précédente' : language === 'ar' ? 'الصورة السابقة' : language === 'en' ? 'Previous image' : language === 'it' ? 'Immagine precedente' : 'Предыдущее фото'}
                 >
                   <ChevronLeft size={32} />
                 </button>
@@ -143,14 +145,14 @@ export const ImageGallery = ({ imageUrls, altText, className = '', maxPhotos, he
                     goToNext();
                   }}
                   className="absolute right-6 top-1/2 -translate-y-1/2 bg-gradient-to-r from-[#4A1D43] to-[#5A2D53] hover:from-[#5A2D53] hover:to-[#6A3D63] text-[#D4AF37] p-4 rounded-full shadow-2xl transition-all hover:scale-110"
-                  title="Image suivante"
+                  title={language === 'fr' ? 'Image suivante' : language === 'ar' ? 'الصورة التالية' : language === 'en' ? 'Next image' : language === 'it' ? 'Immagine successiva' : 'Следующее фото'}
                 >
                   <ChevronRight size={32} />
                 </button>
 
                 {/* Compteur en plein écran */}
                 <div className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-gradient-to-r from-[#4A1D43] to-[#5A2D53] text-[#D4AF37] px-6 py-3 rounded-full shadow-2xl font-medium">
-                  Photo {currentIndex + 1} sur {thumbnailUrls.length}
+                  {language === 'fr' ? `Photo ${currentIndex + 1} sur ${thumbnailUrls.length}` : language === 'ar' ? `صورة ${currentIndex + 1} من ${thumbnailUrls.length}` : language === 'en' ? `Photo ${currentIndex + 1} of ${thumbnailUrls.length}` : language === 'it' ? `Foto ${currentIndex + 1} di ${thumbnailUrls.length}` : `Фото ${currentIndex + 1} из ${thumbnailUrls.length}`}
                 </div>
 
                 {/* Miniatures en bas (plein écran) */}

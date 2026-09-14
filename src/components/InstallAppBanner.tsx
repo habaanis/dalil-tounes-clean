@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Download, X, Share } from 'lucide-react';
 import { isAppInstalled } from '../lib/registerServiceWorker';
 import { supabase } from '../lib/supabaseClient';
+import { useLanguage } from '../context/LanguageContext';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
@@ -34,6 +35,7 @@ function trackDownloadEvent(actionType: string, deviceType: string) {
 }
 
 export default function InstallAppBanner() {
+  const { language } = useLanguage();
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showIOSGuide, setShowIOSGuide] = useState(false);
   const [dismissed, setDismissed] = useState(false);
@@ -100,12 +102,12 @@ export default function InstallAppBanner() {
 
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-white leading-tight">
-            Installer Dalil Tounes
+            {language === 'fr' ? 'Installer Dalil Tounes' : language === 'ar' ? 'تثبيت دليل تونس' : language === 'en' ? 'Install Dalil Tounes' : language === 'it' ? 'Installa Dalil Tounes' : 'Установить Dalil Tounes'}
           </p>
           <p className="text-xs text-gray-300 mt-0.5 leading-snug">
             {platform === 'ios'
-              ? 'Ajoutez l\'app sur votre iPhone'
-              : 'Accès rapide depuis votre mobile'}
+              ? (language === 'fr' ? "Ajoutez l'app sur votre iPhone" : language === 'ar' ? 'أضف التطبيق على iPhone' : language === 'en' ? 'Add the app to your iPhone' : language === 'it' ? "Aggiungi l'app al tuo iPhone" : 'Добавьте приложение на iPhone')
+              : (language === 'fr' ? 'Accès rapide depuis votre mobile' : language === 'ar' ? 'وصول سريع من هاتفك' : language === 'en' ? 'Quick access from your mobile' : language === 'it' ? 'Accesso rapido dal tuo mobile' : 'Быстрый доступ с телефона')}
           </p>
         </div>
 
@@ -113,13 +115,13 @@ export default function InstallAppBanner() {
           onClick={handleInstallClick}
           className="flex-shrink-0 px-3.5 py-2 bg-[#D4AF37] text-[#4A1D43] text-xs font-bold rounded-lg hover:bg-[#E5C048] transition-colors"
         >
-          Installer
+          {language === 'fr' ? 'Installer' : language === 'ar' ? 'تثبيت' : language === 'en' ? 'Install' : language === 'it' ? 'Installa' : 'Установить'}
         </button>
 
         <button
           onClick={handleDismiss}
           className="flex-shrink-0 p-1.5 text-gray-400 hover:text-white transition-colors"
-          aria-label="Fermer"
+          aria-label={language === 'fr' ? 'Fermer' : language === 'ar' ? 'إغلاق' : language === 'en' ? 'Close' : language === 'it' ? 'Chiudi' : 'Закрыть'}
         >
           <X className="w-4 h-4" />
         </button>
@@ -133,12 +135,12 @@ export default function InstallAppBanner() {
           <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden">
             <div className="bg-[#4A1D43] px-5 py-4 flex items-center justify-between">
               <h3 className="text-base font-semibold text-[#D4AF37]">
-                Installer sur iPhone / iPad
+                {language === 'fr' ? 'Installer sur iPhone / iPad' : language === 'ar' ? 'التثبيت على iPhone / iPad' : language === 'en' ? 'Install on iPhone / iPad' : language === 'it' ? 'Installa su iPhone / iPad' : 'Установить на iPhone / iPad'}
               </h3>
               <button
                 onClick={() => setShowIOSGuide(false)}
                 className="p-1 text-gray-300 hover:text-white transition"
-                aria-label="Fermer"
+                aria-label={language === 'fr' ? 'Fermer' : language === 'ar' ? 'إغلاق' : language === 'en' ? 'Close' : language === 'it' ? 'Chiudi' : 'Закрыть'}
               >
                 <X className="w-5 h-5" />
               </button>
@@ -151,11 +153,11 @@ export default function InstallAppBanner() {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-900">
-                    Appuyez sur le bouton Partager
+                    {language === 'fr' ? 'Appuyez sur le bouton Partager' : language === 'ar' ? 'اضغط على زر المشاركة' : language === 'en' ? 'Tap the Share button' : language === 'it' ? 'Tocca il pulsante Condividi' : 'Нажмите кнопку «Поделиться»'}
                   </p>
                   <div className="flex items-center gap-1.5 mt-1">
                     <Share className="w-4 h-4 text-[#007AFF]" />
-                    <span className="text-xs text-gray-500">en bas de Safari</span>
+                    <span className="text-xs text-gray-500">{language === 'fr' ? 'en bas de Safari' : language === 'ar' ? 'في أسفل Safari' : language === 'en' ? 'at the bottom of Safari' : language === 'it' ? 'in fondo a Safari' : 'внизу Safari'}</span>
                   </div>
                 </div>
               </div>
@@ -166,10 +168,10 @@ export default function InstallAppBanner() {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-900">
-                    Faites defiler et appuyez sur
+                    {language === 'fr' ? 'Faites défiler et appuyez sur' : language === 'ar' ? 'مرر واضغط على' : language === 'en' ? 'Scroll and tap' : language === 'it' ? 'Scorri e tocca' : 'Прокрутите и нажмите'}
                   </p>
                   <p className="text-sm font-semibold text-[#4A1D43] mt-0.5">
-                    "Sur l'ecran d'accueil"
+                    {language === 'fr' ? "Sur l'écran d'accueil" : language === 'ar' ? 'على الشاشة الرئيسية' : language === 'en' ? 'Add to Home Screen' : language === 'it' ? 'Aggiungi a schermata Home' : 'На главный экран'}
                   </p>
                 </div>
               </div>
@@ -180,16 +182,16 @@ export default function InstallAppBanner() {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-900">
-                    Confirmez en appuyant sur "Ajouter"
+                    {language === 'fr' ? 'Confirmez en appuyant sur « Ajouter »' : language === 'ar' ? 'أكد بالضغط على «إضافة»' : language === 'en' ? 'Confirm by tapping « Add »' : language === 'it' ? 'Conferma toccando « Aggiungi »' : 'Подтвердите, нажав «Добавить»'}
                   </p>
                   <p className="text-xs text-gray-500 mt-0.5">
-                    L'icone Dalil Tounes apparaitra sur votre ecran d'accueil
+                    {language === 'fr' ? "L'icône Dalil Tounes apparaîtra sur votre écran d'accueil" : language === 'ar' ? 'سيظهر رمز دليل تونس على شاشتك الرئيسية' : language === 'en' ? 'The Dalil Tounes icon will appear on your home screen' : language === 'it' ? "L'icona Dalil Tounes apparirà sulla schermata Home" : 'Иконка Dalil Tounes появится на главном экране'}
                   </p>
                 </div>
               </div>
 
               <p className="text-xs text-gray-400 text-center pt-2 border-t border-gray-100">
-                Fonctionne uniquement avec Safari
+                {language === 'fr' ? 'Fonctionne uniquement avec Safari' : language === 'ar' ? 'يعمل فقط مع Safari' : language === 'en' ? 'Works only with Safari' : language === 'it' ? 'Funziona solo con Safari' : 'Работает только в Safari'}
               </p>
             </div>
           </div>

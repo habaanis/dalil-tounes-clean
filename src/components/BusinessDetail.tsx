@@ -155,7 +155,7 @@ function getAboutText(business: any): string {
   ).trim();
 }
 
-function renderStatutCarteBadge(statut_carte: string | null | undefined) {
+function renderStatutCarteBadge(statut_carte: string | null | undefined, lang: string = 'fr') {
   if (!statut_carte) return null;
 
   const normalized = normalizeText(statut_carte);
@@ -172,8 +172,15 @@ function renderStatutCarteBadge(statut_carte: string | null | undefined) {
 
   if (isNonCertified) return null;
 
+  const certifiedLabels: Record<string, string> = {
+    fr: '⭐ CERTIFIÉ DALIL TOUNES',
+    en: '⭐ CERTIFIED DALIL TOUNES',
+    ar: '⭐ معتمد من دليل تونس',
+    it: '⭐ CERTIFICATO DALIL TOUNES',
+    ru: '⭐ СЕРТИФИЦИРОВАНО DALIL TOUNES',
+  };
   const label = isCertified
-    ? '⭐ CERTIFIÉ DALIL TOUNES'
+    ? (certifiedLabels[lang] || certifiedLabels.fr)
     : statut_carte;
 
   return (
@@ -1461,7 +1468,7 @@ export const BusinessDetail = ({
                     fontWeight: '300',
                     zIndex: 10,
                   }}
-                  aria-label="Fermer"
+                  aria-label={language === 'fr' ? 'Fermer' : language === 'ar' ? 'إغلاق' : language === 'en' ? 'Close' : language === 'it' ? 'Chiudi' : 'Закрыть'}
                 >
                   ×
                 </button>
@@ -1522,16 +1529,16 @@ export const BusinessDetail = ({
                 className="text-lg md:text-xl font-bold tracking-tight leading-tight text-white"
                 dir={isArabicDisplay ? 'rtl' : 'ltr'}
               >
-                {displayName}{business.ville ? ` à ${business.ville}` : ''}
+                {displayName}{business.ville ? ` ${language === 'fr' ? 'à' : language === 'ar' ? 'في' : language === 'en' ? 'in' : language === 'it' ? 'a' : 'в'} ${business.ville}` : ''}
               </h1>
 
-              {renderStatutCarteBadge(business.statut_carte)}
+              {renderStatutCarteBadge(business.statut_carte, language)}
 
               <button
                 onClick={copyLink}
                 className="flex-shrink-0 transition-all hover:scale-110"
                 style={{ color: linkCopied ? '#10B981' : colors.gold }}
-                title={linkCopied ? text.linkCopied : 'Copier le lien'}
+                title={linkCopied ? text.linkCopied : (language === 'fr' ? 'Copier le lien' : language === 'ar' ? 'نسخ الرابط' : language === 'en' ? 'Copy link' : language === 'it' ? 'Copia link' : 'Копировать ссылку')}
               >
                 {linkCopied ? <Check size={16} /> : <LinkIcon size={16} />}
               </button>
@@ -1587,7 +1594,7 @@ export const BusinessDetail = ({
                       fontStyle: 'italic',
                     }}
                   >
-                    Adresse non renseignée{business.ville ? ` · ${business.ville}` : ''}
+                    {language === 'fr' ? 'Adresse non renseignée' : language === 'ar' ? 'العنوان غير مُدخل' : language === 'en' ? 'Address not provided' : language === 'it' ? 'Indirizzo non indicato' : 'Адрес не указан'}{business.ville ? ` · ${business.ville}` : ''}
                   </span>
                 )}
 
@@ -1760,7 +1767,7 @@ export const BusinessDetail = ({
                     />
                     <span>{numericRating.toFixed(1)} / 5</span>
                     {Number.isFinite(reviewCount) && reviewCount > 0 && (
-                      <span style={{ opacity: 0.85 }}>({reviewCount} avis)</span>
+                      <span style={{ opacity: 0.85 }}>({reviewCount} {language === 'fr' ? 'avis' : language === 'ar' ? 'تقييم' : language === 'en' ? 'reviews' : language === 'it' ? 'recensioni' : 'отзывов'})</span>
                     )}
 
                     {business['Lien Avis Google'] && (
@@ -1784,9 +1791,9 @@ export const BusinessDetail = ({
                           position: 'relative',
                           zIndex: 100,
                         }}
-                        title="Lire les avis Google"
+                        title={language === 'fr' ? 'Lire les avis Google' : language === 'ar' ? 'اقرأ تقييمات Google' : language === 'en' ? 'Read Google reviews' : language === 'it' ? 'Leggi le recensioni Google' : 'Читать отзывы Google'}
                       >
-                        (Lire les avis)
+                        ({language === 'fr' ? 'Lire les avis' : language === 'ar' ? 'اقرأ' : language === 'en' ? 'Read' : language === 'it' ? 'Leggi' : 'Читать'})
                       </a>
                     )}
                   </div>
@@ -1844,7 +1851,7 @@ export const BusinessDetail = ({
                     pointerEvents: 'auto',
                   }}
                 >
-                  ... Lire la suite
+                  {language === 'fr' ? '... Lire la suite' : language === 'ar' ? '... اقرأ المزيد' : language === 'en' ? '... Read more' : language === 'it' ? '... Leggi di più' : '... Читать далее'}
                 </button>
               </div>
             )}
@@ -1860,7 +1867,7 @@ export const BusinessDetail = ({
 
             {showAddressModal && (
               <InfoModal
-                title="Adresse"
+                title={language === 'fr' ? 'Adresse' : language === 'ar' ? 'العنوان' : language === 'en' ? 'Address' : language === 'it' ? 'Indirizzo' : 'Адрес'}
                 content={[business.adresse, business.ville, business.gouvernorat].filter(Boolean).join('\n')}
                 accentColor={colors.gold}
                 onClose={() => setShowAddressModal(false)}
@@ -2212,7 +2219,7 @@ export const BusinessDetail = ({
                   title={business.site_web}
                 >
                   <Globe size={9} strokeWidth={3} />
-                  <span className="truncate max-w-[80px]">Site web</span>
+                  <span className="truncate max-w-[80px]">{language === 'fr' ? 'Site web' : language === 'ar' ? 'موقع' : language === 'en' ? 'Website' : language === 'it' ? 'Sito' : 'Сайт'}</span>
                 </button>
               )}
             </div>
@@ -2314,7 +2321,7 @@ export const BusinessDetail = ({
                     zIndex: 50,
                     pointerEvents: 'auto',
                   }}
-                  title="Nous contacter sur Messenger"
+                  title={language === 'fr' ? 'Nous contacter sur Messenger' : language === 'ar' ? 'تواصل معنا على ماسنجر' : language === 'en' ? 'Contact us on Messenger' : language === 'it' ? 'Contattaci su Messenger' : 'Связаться с нами в Messenger'}
                 >
                   <span className="text-white text-xs font-bold">M</span>
                 </a>
@@ -2341,7 +2348,7 @@ export const BusinessDetail = ({
 
       {!preview && business?.id && (
         <div className="px-1 mt-3">
-          <h2 className="sr-only">Avis clients</h2>
+          <h2 className="sr-only">{language === 'fr' ? 'Avis clients' : language === 'ar' ? 'آراء العملاء' : language === 'en' ? 'Customer reviews' : language === 'it' ? 'Recensioni clienti' : 'Отзывы клиентов'}</h2>
           <BusinessReviews entrepriseId={business.id} />
         </div>
       )}
@@ -2353,14 +2360,14 @@ export const BusinessDetail = ({
         if (!seoMetier && !seoVille) return null;
         return (
           <div className="px-1 mt-6 pt-4 border-t border-gray-800 space-y-3">
-            <h2 className="sr-only">Voir aussi</h2>
+            <h2 className="sr-only">{language === 'fr' ? 'Voir aussi' : language === 'ar' ? 'انظر أيضاً' : language === 'en' ? 'See also' : language === 'it' ? 'Vedi anche' : 'Смотрите также'}</h2>
             {seoVille && (
               <Link
                 to={`/ville/${seoVille.slug}`}
                 className="flex items-center gap-2 text-xs text-gray-400 hover:text-[#D4AF37] transition-colors"
               >
                 <MapPin size={13} className="text-[#D4AF37] shrink-0" />
-                <span>Tous les professionnels a {seoVille.label}</span>
+                <span>{language === 'fr' ? `Tous les professionnels à ${seoVille.label}` : language === 'ar' ? `جميع المحترفين في ${seoVille.label}` : language === 'en' ? `All professionals in ${seoVille.label}` : language === 'it' ? `Tutti i professionisti a ${seoVille.label}` : `Все специалисты в ${seoVille.label}`}</span>
               </Link>
             )}
             {seoMetier && (
@@ -2369,7 +2376,7 @@ export const BusinessDetail = ({
                 className="flex items-center gap-2 text-xs text-gray-400 hover:text-[#D4AF37] transition-colors"
               >
                 <ArrowLeft size={13} className="text-[#D4AF37] shrink-0 rotate-180" />
-                <span>Tous les {seoMetier.label.toLowerCase()}s en Tunisie</span>
+                <span>{language === 'fr' ? `Tous les ${seoMetier.label.toLowerCase()}s en Tunisie` : language === 'ar' ? `جميع ${seoMetier.label} في تونس` : language === 'en' ? `All ${seoMetier.label} in Tunisia` : language === 'it' ? `Tutti i ${seoMetier.label} in Tunisia` : `Все ${seoMetier.label} в Тунисе`}</span>
               </Link>
             )}
             {seoMetier && seoVille && (
@@ -2378,7 +2385,7 @@ export const BusinessDetail = ({
                 className="flex items-center gap-2 text-xs text-gray-400 hover:text-[#D4AF37] transition-colors"
               >
                 <ArrowLeft size={13} className="text-[#D4AF37] shrink-0 rotate-180" />
-                <span>{seoMetier.label} a {seoVille.label}</span>
+                <span>{language === 'fr' ? `${seoMetier.label} à ${seoVille.label}` : language === 'ar' ? `${seoMetier.label} في ${seoVille.label}` : language === 'en' ? `${seoMetier.label} in ${seoVille.label}` : language === 'it' ? `${seoMetier.label} a ${seoVille.label}` : `${seoMetier.label} в ${seoVille.label}`}</span>
               </Link>
             )}
           </div>
@@ -2387,7 +2394,7 @@ export const BusinessDetail = ({
 
       {!preview && business && !asModal && actualBusinessId && (
         <div className="px-1">
-          <h2 className="sr-only">Entreprises similaires</h2>
+          <h2 className="sr-only">{language === 'fr' ? 'Entreprises similaires' : language === 'ar' ? 'شركات مماثلة' : language === 'en' ? 'Similar businesses' : language === 'it' ? 'Aziende simili' : 'Похожие компании'}</h2>
           <Suspense fallback={null}>
             <SimilarBusinesses
               businessId={actualBusinessId}

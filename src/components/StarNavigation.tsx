@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useLanguage } from '../context/LanguageContext';
 import {
   Building2,
   Users,
@@ -25,13 +26,22 @@ interface StarNavigationProps {
 }
 
 export default function StarNavigation({ onNavigate }: StarNavigationProps) {
-  // Configuration des boutons de navigation - CATÉGORIES CITOYENS UNIQUEMENT
+  const { language } = useLanguage();
+  const labels: Record<string, Record<string, string>> = {
+    fr: { sante: 'Santé', education: 'Éducation', magasin: 'Magasins & marché local', admin: 'Administratif', loisir: 'Loisirs & évènements', citoyens: 'Citoyens', services: 'Services citoyens' },
+    en: { sante: 'Health', education: 'Education', magasin: 'Shops & local market', admin: 'Administrative', loisir: 'Leisure & events', citoyens: 'Citizens', services: 'Citizen services' },
+    ar: { sante: 'الصحة', education: 'التعليم', magasin: 'المتاجر والسوق المحلي', admin: 'إداري', loisir: 'الترفيه والفعاليات', citoyens: 'المواطنون', services: 'خدمات المواطنين' },
+    it: { sante: 'Salute', education: 'Educazione', magasin: 'Negozi e mercato locale', admin: 'Amministrativo', loisir: 'Tempo libero ed eventi', citoyens: 'Cittadini', services: 'Servizi cittadini' },
+    ru: { sante: 'Здоровье', education: 'Образование', magasin: 'Магазины и местный рынок', admin: 'Административные', loisir: 'Досуг и события', citoyens: 'Граждане', services: 'Гражданские услуги' },
+  };
+  const L = labels[language as string] || labels.fr;
+
   const navButtons: NavButton[] = [
-    { id: 'sante', label: 'Santé', icon: HeartPulse, link: '#/citizens/sante', color: 'from-red-500 to-red-600' },
-    { id: 'education', label: 'Éducation', icon: GraduationCap, link: '#/education', color: 'from-cyan-500 to-cyan-600' },
-    { id: 'magasin', label: 'Magasins & marché local', icon: ShoppingBag, link: '#/citizens/shops', color: 'from-emerald-500 to-emerald-600' },
-    { id: 'admin', label: 'Administratif', icon: Landmark, link: '#/citizens/services', color: 'from-yellow-500 to-yellow-600' },
-    { id: 'loisir', label: 'Loisirs & évènements', icon: PartyPopper, link: '#/citizens/leisure', color: 'from-pink-500 to-pink-600' },
+    { id: 'sante', label: L.sante, icon: HeartPulse, link: '#/citizens/sante', color: 'from-red-500 to-red-600' },
+    { id: 'education', label: L.education, icon: GraduationCap, link: '#/education', color: 'from-cyan-500 to-cyan-600' },
+    { id: 'magasin', label: L.magasin, icon: ShoppingBag, link: '#/citizens/shops', color: 'from-emerald-500 to-emerald-600' },
+    { id: 'admin', label: L.admin, icon: Landmark, link: '#/citizens/services', color: 'from-yellow-500 to-yellow-600' },
+    { id: 'loisir', label: L.loisir, icon: PartyPopper, link: '#/citizens/leisure', color: 'from-pink-500 to-pink-600' },
   ];
 
   return (
@@ -47,13 +57,13 @@ export default function StarNavigation({ onNavigate }: StarNavigationProps) {
         >
           <a
             href="#/"
-            aria-label="Services pour les citoyens"
+            aria-label={L.services}
             className="w-28 h-28 rounded-full bg-gradient-to-br from-[#D62828] to-[#b91c1c] shadow-2xl flex flex-col items-center justify-center text-white hover:scale-105 transition-transform group cursor-pointer"
           >
             <Users className="w-8 h-8 mb-1 group-hover:scale-110 transition-transform" />
-            <span className="text-lg font-bold">Citoyens</span>
+            <span className="text-lg font-bold">{L.citoyens}</span>
             <span className="text-[10px] mt-0.5 text-center px-2 opacity-90">
-              Services citoyens
+              {L.services}
             </span>
           </a>
         </motion.div>
@@ -86,7 +96,7 @@ export default function StarNavigation({ onNavigate }: StarNavigationProps) {
             >
               <button
                 onClick={() => window.location.hash = button.link}
-                aria-label={`Accéder à ${button.label}`}
+                aria-label={`${language === 'fr' ? 'Accéder à' : language === 'ar' ? 'الوصول إلى' : language === 'en' ? 'Go to' : language === 'it' ? 'Vai a' : 'Перейти к'} ${button.label}`}
                 className={`w-20 h-20 rounded-full bg-gradient-to-br ${button.color} shadow-xl flex flex-col items-center justify-center text-white hover:scale-110 transition-all group relative cursor-pointer`}
               >
                 {/* Connecting Line */}
@@ -119,13 +129,13 @@ export default function StarNavigation({ onNavigate }: StarNavigationProps) {
         >
           <a
             href="#/"
-            aria-label="Services pour les citoyens"
+            aria-label={L.services}
             className="w-24 h-24 rounded-full bg-gradient-to-br from-[#D62828] to-[#b91c1c] shadow-2xl flex flex-col items-center justify-center text-white hover:scale-105 transition-transform cursor-pointer"
           >
             <Users className="w-6 h-6 mb-0.5" />
-            <span className="text-base font-bold">Citoyens</span>
+            <span className="text-base font-bold">{L.citoyens}</span>
             <span className="text-[10px] mt-0.5 text-center px-2 opacity-90">
-              Services citoyens
+              {L.services}
             </span>
           </a>
         </motion.div>
@@ -138,7 +148,7 @@ export default function StarNavigation({ onNavigate }: StarNavigationProps) {
               <motion.button
                 key={button.id}
                 onClick={() => window.location.hash = button.link}
-                aria-label={`Accéder à ${button.label}`}
+                aria-label={`${language === 'fr' ? 'Accéder à' : language === 'ar' ? 'الوصول إلى' : language === 'en' ? 'Go to' : language === 'it' ? 'Vai a' : 'Перейти к'} ${button.label}`}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: idx * 0.05 }}

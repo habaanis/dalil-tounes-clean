@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLanguage } from '../context/LanguageContext';
 
 interface InfoModalProps {
   title: string;
@@ -8,6 +9,7 @@ interface InfoModalProps {
 }
 
 export const InfoModal = ({ title, content, accentColor = '#D4AF37', onClose }: InfoModalProps) => {
+  const { language } = useLanguage();
   return (
     <div
       className="fixed inset-0 z-[99999] flex items-center justify-center p-4"
@@ -33,7 +35,7 @@ export const InfoModal = ({ title, content, accentColor = '#D4AF37', onClose }: 
           <button
             onClick={(e) => { e.stopPropagation(); onClose(); }}
             style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '22px', lineHeight: 1, color: '#aaa', padding: 0, fontWeight: '300', flexShrink: 0 }}
-            aria-label="Fermer"
+            aria-label={language === 'fr' ? 'Fermer' : language === 'ar' ? 'إغلاق' : language === 'en' ? 'Close' : language === 'it' ? 'Chiudi' : 'Закрыть'}
           >
             ×
           </button>
@@ -64,7 +66,7 @@ export const InfoModal = ({ title, content, accentColor = '#D4AF37', onClose }: 
             letterSpacing: '0.05em',
           }}
         >
-          Fermer
+          {language === 'fr' ? 'Fermer' : language === 'ar' ? 'إغلاق' : language === 'en' ? 'Close' : language === 'it' ? 'Chiudi' : 'Закрыть'}
         </button>
       </div>
 

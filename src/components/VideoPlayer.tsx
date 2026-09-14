@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Video, Play, ExternalLink } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 interface VideoPlayerProps {
   videoUrls: string | null | undefined;
@@ -8,6 +9,7 @@ interface VideoPlayerProps {
 }
 
 export const VideoPlayer = ({ videoUrls, maxVideos, className = '' }: VideoPlayerProps) => {
+  const { language } = useLanguage();
   const [activeVideo, setActiveVideo] = useState(0);
 
   if (!videoUrls || !videoUrls.trim()) {
@@ -65,11 +67,11 @@ export const VideoPlayer = ({ videoUrls, maxVideos, className = '' }: VideoPlaye
         <div className="flex items-center gap-2">
           <Video size={18} className="text-[#D4AF37]" />
           <h3 className="text-base font-semibold text-[#4A1D43]">
-            Vidéos
+            {language === 'fr' ? 'Vidéos' : language === 'ar' ? 'فيديوهات' : language === 'en' ? 'Videos' : language === 'it' ? 'Video' : 'Видео'}
           </h3>
         </div>
         <div className="text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-          {videoLinks.length} {videoLinks.length === 1 ? 'vidéo' : 'vidéos'}
+          {videoLinks.length} {videoLinks.length === 1 ? (language === 'fr' ? 'vidéo' : language === 'ar' ? 'فيديو' : language === 'en' ? 'video' : language === 'it' ? 'video' : 'видео') : (language === 'fr' ? 'vidéos' : language === 'ar' ? 'فيديوهات' : language === 'en' ? 'videos' : language === 'it' ? 'video' : 'видео')}
         </div>
       </div>
 
@@ -81,7 +83,7 @@ export const VideoPlayer = ({ videoUrls, maxVideos, className = '' }: VideoPlaye
               className="absolute inset-0 w-full h-full"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
-              title={`Vidéo ${activeVideo + 1}`}
+              title={`${language === 'fr' ? 'Vidéo' : language === 'ar' ? 'فيديو' : language === 'en' ? 'Video' : language === 'it' ? 'Video' : 'Видео'} ${activeVideo + 1}`}
             />
           </div>
 
@@ -98,7 +100,7 @@ export const VideoPlayer = ({ videoUrls, maxVideos, className = '' }: VideoPlaye
                         ? 'border-[#D4AF37] ring-2 ring-[#D4AF37]/30 shadow-lg scale-105'
                         : 'border-gray-200 opacity-70 hover:opacity-100'
                     }`}
-                    title={`Vidéo ${index + 1}`}
+                    title={`${language === 'fr' ? 'Vidéo' : language === 'ar' ? 'فيديو' : language === 'en' ? 'Video' : language === 'it' ? 'Video' : 'Видео'} ${index + 1}`}
                   >
                     {thumbEmbedUrl ? (
                       <div className="w-full h-full bg-gray-900 flex items-center justify-center">
@@ -127,8 +129,8 @@ export const VideoPlayer = ({ videoUrls, maxVideos, className = '' }: VideoPlaye
               <ExternalLink size={28} className="text-[#D4AF37]" />
             </div>
             <div>
-              <h4 className="font-semibold text-[#4A1D43] mb-1">Voir la vidéo</h4>
-              <p className="text-sm text-gray-600 mb-3">Cette vidéo s'ouvre sur une plateforme externe</p>
+              <h4 className="font-semibold text-[#4A1D43] mb-1">{language === 'fr' ? 'Voir la vidéo' : language === 'ar' ? 'شاهد الفيديو' : language === 'en' ? 'Watch video' : language === 'it' ? 'Guarda il video' : 'Смотреть видео'}</h4>
+              <p className="text-sm text-gray-600 mb-3">{language === 'fr' ? "Cette vidéo s'ouvre sur une plateforme externe" : language === 'ar' ? 'يفتح هذا الفيديو على منصة خارجية' : language === 'en' ? 'This video opens on an external platform' : language === 'it' ? 'Questo video si apre su una piattaforma esterna' : 'Это видео открывается на внешней платформе'}</p>
               <a
                 href={videoLinks[activeVideo]}
                 target="_blank"
@@ -136,7 +138,7 @@ export const VideoPlayer = ({ videoUrls, maxVideos, className = '' }: VideoPlaye
                 className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#4A1D43] to-[#5A2D53] hover:from-[#5A2D53] hover:to-[#6A3D63] text-[#D4AF37] rounded-lg transition-all hover:scale-105 shadow-lg"
               >
                 <Play size={18} />
-                Regarder la vidéo
+                {language === 'fr' ? 'Regarder la vidéo' : language === 'ar' ? 'مشاهدة الفيديو' : language === 'en' ? 'Watch video' : language === 'it' ? 'Guarda il video' : 'Смотреть видео'}
               </a>
             </div>
           </div>

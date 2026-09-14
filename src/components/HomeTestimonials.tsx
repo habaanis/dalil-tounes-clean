@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Star, Quote, Loader2 } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
+import { useLanguage } from '../context/LanguageContext';
 
 interface Testimonial {
   id: string;
@@ -11,6 +12,7 @@ interface Testimonial {
 }
 
 export default function HomeTestimonials() {
+  const { language } = useLanguage();
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -61,7 +63,7 @@ export default function HomeTestimonials() {
     return (
       <div className="flex items-center justify-center py-10 text-gray-400">
         <Loader2 className="w-5 h-5 animate-spin" />
-        <span className="ml-2 text-sm">Chargement des témoignages...</span>
+        <span className="ml-2 text-sm">{language === 'fr' ? 'Chargement des témoignages...' : language === 'ar' ? 'جارٍ تحميل الشهادات...' : language === 'en' ? 'Loading testimonials...' : language === 'it' ? 'Caricamento testimonianze...' : 'Загрузка отзывов...'}</span>
       </div>
     );
   }
@@ -69,7 +71,7 @@ export default function HomeTestimonials() {
   if (error) {
     return (
       <div className="text-center py-8 text-gray-400 text-sm">
-        Témoignages momentanément indisponibles.
+        {language === 'fr' ? 'Témoignages momentanément indisponibles.' : language === 'ar' ? 'الشهادات غير متاحة مؤقتاً.' : language === 'en' ? 'Testimonials temporarily unavailable.' : language === 'it' ? 'Testimonianze temporaneamente non disponibili.' : 'Отзывы временно недоступны.'}
       </div>
     );
   }
@@ -77,7 +79,7 @@ export default function HomeTestimonials() {
   if (testimonials.length === 0) {
     return (
       <div className="text-center py-8 text-gray-400 text-sm">
-        Aucun témoignage pour le moment.
+        {language === 'fr' ? 'Aucun témoignage pour le moment.' : language === 'ar' ? 'لا توجد شهادات حالياً.' : language === 'en' ? 'No testimonials yet.' : language === 'it' ? 'Nessuna testimonianza per ora.' : 'Пока нет отзывов.'}
       </div>
     );
   }
@@ -96,7 +98,7 @@ export default function HomeTestimonials() {
           </p>
           <div className="flex items-center justify-between pt-3 border-t border-gray-100">
             <p className="text-xs font-semibold text-[#4A1D43]">
-              {t.auteur && t.auteur.trim() ? t.auteur : 'Anonyme'}
+              {t.auteur && t.auteur.trim() ? t.auteur : (language === 'fr' ? 'Anonyme' : language === 'ar' ? 'مجهول' : language === 'en' ? 'Anonymous' : language === 'it' ? 'Anonimo' : 'Аноним')}
             </p>
             <time className="text-[11px] text-gray-400">
               {new Date(t.created_at).toLocaleDateString('fr-FR', {
