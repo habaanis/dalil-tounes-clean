@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { X, ZoomIn } from 'lucide-react';
+import { ProfessionalPreviewInline, PortfolioPreviewInline, EnlargedPreviewInline } from './CvPreviewInline';
 
 type SupportedLanguage = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 
@@ -128,49 +129,22 @@ export function getPresentationModelLabel(language: string, model: PresentationM
   return model === 'professional' ? copy.professional : copy.portfolio;
 }
 
-const professionalPreviewByLanguage: Record<string, string> = {
-  fr: '/cv-preview/index.html?lang=fr&model=professional',
-  ar: '/cv-preview/index.html?lang=ar&model=professional',
-  en: '/cv-preview/index.html?lang=en&model=professional',
-  it: '/cv-preview/index.html?lang=it&model=professional',
-  ru: '/cv-preview/index.html?lang=ru&model=professional',
-};
-
-const portfolioPreviewByLanguage: Record<string, string> = {
-  fr: '/cv-preview/index.html?lang=fr&model=portfolio',
-  ar: '/cv-preview/index.html?lang=ar&model=portfolio',
-  en: '/cv-preview/index.html?lang=en&model=portfolio',
-  it: '/cv-preview/index.html?lang=it&model=portfolio',
-  ru: '/cv-preview/index.html?lang=ru&model=portfolio',
-};
-
 function ModelPreview({
-  src,
   alt,
   enlargeLabel,
   onEnlarge,
-  liveSrc,
+  children,
 }: {
-  src: string;
   alt: string;
   enlargeLabel: string;
   onEnlarge: () => void;
-  liveSrc?: string;
+  children: React.ReactNode;
 }) {
   return (
     <div className="group relative flex h-[300px] w-full items-start justify-center overflow-hidden rounded-xl border border-slate-200 bg-[#F7F5EF] p-2 shadow-inner sm:rounded-2xl md:h-[420px]">
-      {liveSrc ? (
-        <div className="pointer-events-none h-full w-[184px] overflow-hidden transition duration-300 group-hover:scale-[1.06]">
-          <iframe
-            title={alt}
-            src={liveSrc}
-            className="h-[900px] w-[390px] origin-top-left scale-[0.47] border-0"
-            loading="lazy"
-          />
-        </div>
-      ) : (
-        <img src={src} alt={alt} className="h-full w-full object-contain object-top transition duration-300 group-hover:scale-[1.06]" loading="lazy" decoding="async" />
-      )}
+      <div className="pointer-events-none h-full w-[184px] overflow-hidden transition duration-300 group-hover:scale-[1.06]">
+        {children}
+      </div>
       <button
         type="button"
         onClick={(event) => {
@@ -289,12 +263,9 @@ export function CvPresentationModelSelector({
             aria-label={value === 'portfolio' ? copy.portfolio : copy.professional}
           >
             <div className="pointer-events-none h-[390px] w-[184px] overflow-hidden">
-              <iframe
-                title={`${value === 'portfolio' ? copy.portfolio : copy.professional} — Aux saveurs d’Anis`}
-                src={(value === 'portfolio' ? portfolioPreviewByLanguage : professionalPreviewByLanguage)[language as string] ?? (value === 'portfolio' ? portfolioPreviewByLanguage.fr : professionalPreviewByLanguage.fr)}
-                className="h-[830px] w-[390px] origin-top-left scale-[0.47] border-0"
-                loading="lazy"
-              />
+              {value === 'portfolio'
+                ? <PortfolioPreviewInline language={language} />
+                : <ProfessionalPreviewInline language={language} />}
             </div>
           </button>
         </div>
@@ -307,12 +278,12 @@ export function CvPresentationModelSelector({
           className={`flex min-w-0 flex-col rounded-2xl border p-3.5 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'professional' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
         >
           <ModelPreview
-            src="/images/cv-business-portfolio-aux-saveurs-anis.png"
             alt={`${copy.professional} — Aux saveurs d’Anis`}
             enlargeLabel={`${copy.enlarge} — ${copy.professional}`}
             onEnlarge={() => setExpandedModel('professional')}
-            liveSrc={professionalPreviewByLanguage[language as string] ?? professionalPreviewByLanguage.fr}
-          />
+          >
+            <ProfessionalPreviewInline language={language} />
+          </ModelPreview>
           <span className="mt-3 min-w-0">
             <span className="block text-sm font-black leading-5 text-[#4A123F] sm:text-lg">{copy.professional}</span>
             <span className="mt-1.5 hidden text-sm leading-5 text-slate-600 sm:block">{copy.professionalDescription}</span>
@@ -326,12 +297,12 @@ export function CvPresentationModelSelector({
           className={`flex min-w-0 flex-col rounded-2xl border p-3.5 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'portfolio' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
         >
           <ModelPreview
-            src="/images/cv-portfolio-aux-saveurs-anis-original.svg?v=2"
             alt={`${copy.portfolio} — Aux saveurs d’Anis`}
             enlargeLabel={`${copy.enlarge} — ${copy.portfolio}`}
             onEnlarge={() => setExpandedModel('portfolio')}
-            liveSrc={portfolioPreviewByLanguage[language as string] ?? portfolioPreviewByLanguage.fr}
-          />
+          >
+            <PortfolioPreviewInline language={language} />
+          </ModelPreview>
           <span className="mt-3 min-w-0">
             <span className="block text-sm font-black leading-5 text-[#4A123F] sm:text-lg">{copy.portfolio}</span>
             <span className="mt-1.5 hidden text-sm leading-5 text-slate-600 sm:block">{copy.portfolioDescription}</span>
@@ -384,12 +355,7 @@ export function CvPresentationModelSelector({
               <X className="h-5 w-5" aria-hidden="true" />
             </button>
             <div className="mx-auto mt-1 max-h-[82dvh] overflow-hidden rounded-xl" style={{ width: '390px', maxWidth: 'calc(100vw - 48px)' }}>
-              <iframe
-                title={`${expandedModel === 'portfolio' ? copy.portfolio : copy.professional} — Aux saveurs d’Anis`}
-                src={(expandedModel === 'portfolio' ? portfolioPreviewByLanguage : professionalPreviewByLanguage)[language as string] ?? (expandedModel === 'portfolio' ? portfolioPreviewByLanguage.fr : professionalPreviewByLanguage.fr)}
-                className="h-[830px] w-[390px] border-0"
-                loading="lazy"
-              />
+              <EnlargedPreviewInline model={expandedModel} language={language} />
             </div>
             <a
               href={`/entreprise/sousse/aux-saveurs-d-anis?preview-model=${expandedModel}&source=subscription&lang=${language}`}

@@ -61,6 +61,13 @@ type PreviewCopy = {
   phone: string;
   qrText: string;
   powered: string;
+  servicesList: [string, string, string];
+  hoursText: string;
+  galleryCaption: string;
+  practicalAddress: string;
+  practicalPhone: string;
+  practicalEmail: string;
+  reviewsText: string;
 };
 
 const COPY: Record<BusinessCardPreviewLanguage, PreviewCopy> = {
@@ -70,6 +77,13 @@ const COPY: Record<BusinessCardPreviewLanguage, PreviewCopy> = {
     services: 'Services proposés', photos: 'Photos et réalisations', hours: 'Horaires', practical: 'Informations pratiques', reviews: 'Avis clients', sharing: 'QR Code et partage',
     call: 'Appeler', whatsapp: 'WhatsApp', email: 'E-mail', directions: 'Itinéraire', website: 'Site web', socialNetworks: 'Réseaux sociaux', twoNetworksChoice: '2 réseaux au choix', book: 'Réserver', addContact: 'Ajouter aux contacts', contactNotice: 'Coordonnées fournies par le professionnel.',
     address: 'Adresse', phone: 'Téléphone', qrText: 'Scannez ce CV Business pour l’ouvrir directement.', powered: 'Propulsé par 🇹🇳 Dalil Tounes',
+    servicesList: ['Buffets & événements', 'Cuisine sur mesure', 'Réceptions privées'],
+    hoursText: 'Lun–SAM : 10:00–18:00',
+    galleryCaption: 'Réalisation',
+    practicalAddress: 'Sousse, Tunisie',
+    practicalPhone: '+216 XX XXX XXX',
+    practicalEmail: 'contact@exemple.tn',
+    reviewsText: 'Google · 5.0/5 · 27 avis',
   },
   ar: {
     productPremium: 'CV BUSINESS PREMIUM', productArtisan: 'CV BUSINESS ARTISAN', certified: '★ موثّق من دليل تونس',
@@ -77,6 +91,13 @@ const COPY: Record<BusinessCardPreviewLanguage, PreviewCopy> = {
     services: 'الخدمات المقترحة', photos: 'الصور والإنجازات', hours: 'أوقات العمل', practical: 'معلومات عملية', reviews: 'آراء العملاء', sharing: 'رمز QR والمشاركة',
     call: 'اتصال', whatsapp: 'واتساب', email: 'البريد الإلكتروني', directions: 'الاتجاهات', website: 'الموقع الإلكتروني', socialNetworks: 'شبكات التواصل', twoNetworksChoice: 'شبكتان من اختيارك', book: 'حجز', addContact: 'إضافة إلى جهات الاتصال', contactNotice: 'بيانات الاتصال مقدمة من المهني.',
     address: 'العنوان', phone: 'الهاتف', qrText: 'امسح رمز CV Business لفتحه مباشرة.', powered: 'بدعم من 🇹🇳 دليل تونس',
+    servicesList: ['بوفيهات ومناسبات', 'مأكولات حسب الطلب', 'استقبالات خاصة'],
+    hoursText: 'الإثنين–السبت: 10:00–18:00',
+    galleryCaption: 'إنجاز',
+    practicalAddress: 'سوسة، تونس',
+    practicalPhone: '+216 XX XXX XXX',
+    practicalEmail: 'contact@exemple.tn',
+    reviewsText: 'Google · 5.0/5 · 27 رأي',
   },
   en: {
     productPremium: 'PREMIUM BUSINESS CV', productArtisan: 'ARTISAN BUSINESS CV', certified: '★ DALIL TOUNES CERTIFIED',
@@ -84,6 +105,13 @@ const COPY: Record<BusinessCardPreviewLanguage, PreviewCopy> = {
     services: 'Services', photos: 'Photos and work', hours: 'Opening hours', practical: 'Practical information', reviews: 'Customer reviews', sharing: 'QR Code and sharing',
     call: 'Call', whatsapp: 'WhatsApp', email: 'Email', directions: 'Directions', website: 'Website', socialNetworks: 'Social networks', twoNetworksChoice: '2 networks of your choice', book: 'Book', addContact: 'Add to contacts', contactNotice: 'Contact details provided by the professional.',
     address: 'Address', phone: 'Phone', qrText: 'Scan this Business CV to open it directly.', powered: 'Powered by 🇹🇳 Dalil Tounes',
+    servicesList: ['Events & buffets', 'Custom cuisine', 'Private receptions'],
+    hoursText: 'Mon–Sat: 10:00–18:00',
+    galleryCaption: 'Work',
+    practicalAddress: 'Sousse, Tunisia',
+    practicalPhone: '+216 XX XXX XXX',
+    practicalEmail: 'contact@example.tn',
+    reviewsText: 'Google · 5.0/5 · 27 reviews',
   },
   it: {
     productPremium: 'CV BUSINESS PREMIUM', productArtisan: 'CV BUSINESS ARTISAN', certified: '★ CERTIFICATO DALIL TOUNES',
@@ -91,6 +119,13 @@ const COPY: Record<BusinessCardPreviewLanguage, PreviewCopy> = {
     services: 'Servizi proposti', photos: 'Foto e realizzazioni', hours: 'Orari', practical: 'Informazioni pratiche', reviews: 'Recensioni', sharing: 'QR Code e condivisione',
     call: 'Chiama', whatsapp: 'WhatsApp', email: 'Email', directions: 'Indicazioni', website: 'Sito web', socialNetworks: 'Social network', twoNetworksChoice: '2 social a scelta', book: 'Prenota', addContact: 'Aggiungi ai contatti', contactNotice: 'Contatti forniti dal professionista.',
     address: 'Indirizzo', phone: 'Telefono', qrText: 'Scansiona questo CV Business per aprirlo direttamente.', powered: 'Offerto da 🇹🇳 Dalil Tounes',
+    servicesList: ['Buffet ed eventi', 'Cucina su misura', 'Ricevimenti privati'],
+    hoursText: 'Lun–Sab: 10:00–18:00',
+    galleryCaption: 'Realizzazione',
+    practicalAddress: 'Sousse, Tunisia',
+    practicalPhone: '+216 XX XXX XXX',
+    practicalEmail: 'contact@esempio.tn',
+    reviewsText: 'Google · 5.0/5 · 27 recensioni',
   },
   ru: {
     productPremium: 'PREMIUM BUSINESS CV', productArtisan: 'ARTISAN BUSINESS CV', certified: '★ ПРОВЕРЕНО DALIL TOUNES',
@@ -98,6 +133,13 @@ const COPY: Record<BusinessCardPreviewLanguage, PreviewCopy> = {
     services: 'Услуги', photos: 'Фотографии и работы', hours: 'Часы работы', practical: 'Практическая информация', reviews: 'Отзывы клиентов', sharing: 'QR-код и публикация',
     call: 'Позвонить', whatsapp: 'WhatsApp', email: 'Email', directions: 'Маршрут', website: 'Сайт', socialNetworks: 'Социальные сети', twoNetworksChoice: '2 сети на выбор', book: 'Забронировать', addContact: 'Добавить в контакты', contactNotice: 'Контакты предоставлены профессионалом.',
     address: 'Адрес', phone: 'Телефон', qrText: 'Сканируйте Business CV, чтобы открыть его напрямую.', powered: 'На платформе 🇹🇳 Dalil Tounes',
+    servicesList: ['Буфеты и мероприятия', 'Кухня на заказ', 'Частные приёмы'],
+    hoursText: 'Пн–Сб: 10:00–18:00',
+    galleryCaption: 'Работа',
+    practicalAddress: 'Сус, Тунис',
+    practicalPhone: '+216 XX XXX XXX',
+    practicalEmail: 'contact@example.tn',
+    reviewsText: 'Google · 5.0/5 · 27 отзывов',
   },
 };
 
@@ -158,7 +200,7 @@ export default function BusinessCardPreview({
         {galleryImages.map((image, index) => (
           <figure className={`dt-preview-gallery-item dt-preview-gallery-item-${index + 1}`} key={`${image}-${index}`}>
             <img src={image} alt={`${name} - réalisation ${index + 1}`} />
-            <figcaption>Réalisation {index + 1}</figcaption>
+            <figcaption>{t.galleryCaption} {index + 1}</figcaption>
           </figure>
         ))}
       </div>
