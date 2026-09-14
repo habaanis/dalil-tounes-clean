@@ -68,7 +68,14 @@ const LeisureEventProposalForm: React.FC<LeisureEventProposalFormProps> = ({ onC
       const cleanPhone = formData.whatsapp.replace(/\D/g, '');
       const phoneNumber = cleanPhone.startsWith('216') ? cleanPhone : `216${cleanPhone}`;
 
-      const whatsappMessage = `Bonjour, je souhaite valider l'inscription de ${formData.prenom} pour ${formData.nom_evenement}`;
+      const whatsappMessages = {
+        fr: `Bonjour, je souhaite valider l'inscription de ${formData.prenom} pour ${formData.nom_evenement}`,
+        en: `Hello, I would like to validate the registration of ${formData.prenom} for ${formData.nom_evenement}`,
+        ar: `مرحباً، أرغب في تأكيد تسجيل ${formData.prenom} لـ ${formData.nom_evenement}`,
+        it: `Salve, vorrei convalidare l'iscrizione di ${formData.prenom} per ${formData.nom_evenement}`,
+        ru: `Здравствуйте, я хотел бы подтвердить регистрацию ${formData.prenom} для ${formData.nom_evenement}`,
+      } as const;
+      const whatsappMessage = whatsappMessages[language as keyof typeof whatsappMessages] || whatsappMessages.fr;
       const whatsappLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(whatsappMessage)}`;
 
       const inscriptionData = {
@@ -149,7 +156,7 @@ const LeisureEventProposalForm: React.FC<LeisureEventProposalFormProps> = ({ onC
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4" dir={language === 'ar' ? 'rtl' : 'ltr'}>
         <div className="bg-[#F8F9FA] rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" style={{ border: '2px solid #D4AF37' }}>
           <div className="sticky top-0 bg-gradient-to-r from-[#4A1D43] via-[#6B2A5C] to-[#4A1D43] p-6 flex items-center justify-between rounded-t-3xl">
             <div>
@@ -166,7 +173,7 @@ const LeisureEventProposalForm: React.FC<LeisureEventProposalFormProps> = ({ onC
           </div>
 
           <form onSubmit={handleSubmit} className="p-6 space-y-5">
-            <div className="bg-[#F8F9FA] p-4 mb-6 rounded-xl" style={{ borderLeft: '4px solid #D4AF37' }}>
+            <div className="bg-[#F8F9FA] p-4 mb-6 rounded-xl" style={{ [language === 'ar' ? 'borderRight' : 'borderLeft']: '4px solid #D4AF37' } as React.CSSProperties}>
               <p className="text-sm font-medium text-[#4A1D43]">
                 {copy.intro}
               </p>

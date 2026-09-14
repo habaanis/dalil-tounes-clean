@@ -12,6 +12,7 @@ interface QuoteFormProps {
 export const QuoteForm = ({ onClose }: QuoteFormProps) => {
   const { language } = useLanguage();
   const t = useTranslation(language);
+  const isRTL = language === 'ar';
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -110,7 +111,7 @@ export const QuoteForm = ({ onClose }: QuoteFormProps) => {
 
   if (showSuccess) {
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+      <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" dir={isRTL ? 'rtl' : 'ltr'}>
         <div className="bg-white rounded-lg p-8 max-w-md w-full text-center">
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <svg className="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -126,7 +127,7 @@ export const QuoteForm = ({ onClose }: QuoteFormProps) => {
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 overflow-y-auto" dir={isRTL ? 'rtl' : 'ltr'}>
       <div className="bg-white rounded-lg max-w-2xl w-full my-8">
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div>

@@ -4,7 +4,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
 import { getPartnerSearchOfferTranslations } from '../lib/partnerSearchOfferTranslations';
 import { supabase } from '../lib/supabaseClient';
-import { Handshake, Network, TrendingUp, Send, CheckCircle, XCircle, ArrowLeft } from 'lucide-react';
+import { Handshake, Network, TrendingUp, Send, CheckCircle, XCircle, ArrowLeft, ArrowRight } from 'lucide-react';
 import { Toast } from '../components/Toast';
 
 const FEATURE_LABELS = {
@@ -50,7 +50,17 @@ export const PartnerSearch = () => {
   const { language } = useLanguage();
   const t = useTranslation(language);
   const offerT = getPartnerSearchOfferTranslations(language);
-  const featureLabels = FEATURE_LABELS[language];
+  const featureLabels = FEATURE_LABELS[language as keyof typeof FEATURE_LABELS] || FEATURE_LABELS.fr;
+  const isRTL = language === 'ar';
+
+  const uiCopy = {
+    fr: { emailLabel: 'Email', errorUnknown: 'Erreur inconnue lors de l\'envoi', errorUnexpected: 'Une erreur inattendue est survenue', requiredFields: 'Veuillez remplir tous les champs obligatoires', invalidEmailFormat: 'Format email invalide', successOffer: 'Votre offre de service a été publiée avec succès !' },
+    en: { emailLabel: 'Email', errorUnknown: 'Unknown error while sending', errorUnexpected: 'An unexpected error occurred', requiredFields: 'Please fill in all required fields', invalidEmailFormat: 'Invalid email format', successOffer: 'Your service offer has been published successfully!' },
+    ar: { emailLabel: 'البريد الإلكتروني', errorUnknown: 'خطأ غير معروف أثناء الإرسال', errorUnexpected: 'حدث خطأ غير متوقع', requiredFields: 'يرجى ملء جميع الحقول المطلوبة', invalidEmailFormat: 'صيغة بريد إلكتروني غير صالحة', successOffer: 'تم نشر عرض خدمتك بنجاح!' },
+    it: { emailLabel: 'Email', errorUnknown: 'Errore sconosciuto durante l\'invio', errorUnexpected: 'Si è verificato un errore imprevisto', requiredFields: 'Compila tutti i campi obbligatori', invalidEmailFormat: 'Formato email non valido', successOffer: 'La tua offerta di servizio è stata pubblicata con successo!' },
+    ru: { emailLabel: 'Email', errorUnknown: 'Неизвестная ошибка при отправке', errorUnexpected: 'Произошла непредвиденная ошибка', requiredFields: 'Пожалуйста, заполните все обязательные поля', invalidEmailFormat: 'Неверный формат email', successOffer: 'Ваше предложение услуги успешно опубликовано!' },
+  } as const;
+  const ui = uiCopy[language as keyof typeof uiCopy] || uiCopy.fr;
 
   const [formData, setFormData] = useState({
     profileType: '',
@@ -137,7 +147,7 @@ ${formData.description}
 
       if (error) {
         console.error('[PartnerRequests] ❌ Insert ERROR', error);
-        setErrorMessage(error.message || 'Erreur inconnue lors de l\'envoi');
+        setErrorMessage(error.message || ui.errorUnknown);
         setSubmitStatus('error');
         return;
       }
@@ -161,7 +171,7 @@ ${formData.description}
       setTimeout(() => setSubmitStatus('idle'), 5000);
     } catch (error: any) {
       console.error('[PartnerRequests] ❌ Exception caught:', error);
-      setErrorMessage(error?.message || 'Une erreur inattendue est survenue');
+      setErrorMessage(error?.message || ui.errorUnexpected);
       setSubmitStatus('error');
       setTimeout(() => setSubmitStatus('idle'), 5000);
     } finally {
@@ -199,7 +209,7 @@ ${offerFormData.description.trim()}
           !offerFormData.description.trim() || !offerFormData.email.trim() ||
           !offerFormData.phone.trim() || !offerFormData.city.trim()) {
         console.error('❌ ERREUR: Champs obligatoires manquants');
-        setOfferErrorMessage('Veuillez remplir tous les champs obligatoires');
+        setOfferErrorMessage(ui.requiredFields);
         setOfferSubmitStatus('error');
         setIsSubmittingOffer(false);
         return;
@@ -209,7 +219,7 @@ ${offerFormData.description.trim()}
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(offerFormData.email.trim())) {
         console.error('❌ ERREUR: Format email invalide');
-        setOfferErrorMessage('Format email invalide');
+        setOfferErrorMessage(ui.invalidEmailFormat);
         setOfferSubmitStatus('error');
         setIsSubmittingOffer(false);
         return;
@@ -236,11 +246,11 @@ ${offerFormData.description.trim()}
 
       if (error) {
         console.error('❌ ERREUR Supabase:', error);
-        setOfferErrorMessage(error.message || 'Erreur inconnue lors de l\'envoi');
+        setOfferErrorMessage(error.message || ui.errorUnknown);
         setOfferSubmitStatus('error');
 
         // Toast d'erreur
-        setToastMessage(`Erreur: ${error.message}`);
+        setToastMessage(`${ui.errorUnknown}: ${error.message}`);
         setToastType('error');
         setShowToast(true);
         return;
@@ -253,7 +263,7 @@ ${offerFormData.description.trim()}
       setOfferSubmitStatus('success');
 
       // Toast de succès
-      setToastMessage('Votre offre de service a été publiée avec succès !');
+      setToastMessage(ui.successOffer);
       setToastType('success');
       setShowToast(true);
 
@@ -275,11 +285,11 @@ ${offerFormData.description.trim()}
       }, 2000);
     } catch (error: any) {
       console.error('❌ ERREUR INATTENDUE:', error);
-      setOfferErrorMessage(error?.message || 'Une erreur inattendue est survenue');
+      setOfferErrorMessage(error?.message || ui.errorUnexpected);
       setOfferSubmitStatus('error');
 
       // Toast d'erreur
-      setToastMessage('Une erreur inattendue est survenue');
+      setToastMessage(ui.errorUnexpected);
       setToastType('error');
       setShowToast(true);
     } finally {
@@ -288,7 +298,7 @@ ${offerFormData.description.trim()}
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50" dir={isRTL ? 'rtl' : 'ltr'}>
       <Toast
         message={toastMessage}
         type={toastType}
@@ -550,7 +560,7 @@ ${offerFormData.description.trim()}
                       <span className="text-sm font-medium">{offerT.sendError}</span>
                     </div>
                     {errorMessage && (
-                      <p className="text-xs text-red-600 ml-7">{errorMessage}</p>
+                      <p className={`text-xs text-red-600 ${isRTL ? 'mr-7' : 'ml-7'}`}>{errorMessage}</p>
                     )}
                   </motion.div>
                 )}
@@ -591,7 +601,7 @@ ${offerFormData.description.trim()}
                       onClick={() => setShowOfferForm(false)}
                       className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
                     >
-                      <ArrowLeft className="w-4 h-4 text-[#800020]" />
+                      {isRTL ? <ArrowRight className="w-4 h-4 text-[#800020]" /> : <ArrowLeft className="w-4 h-4 text-[#800020]" />}
                     </button>
                     <h3 className="text-lg font-semibold text-[#4A1D43]">{offerT.title}</h3>
                   </div>
@@ -687,7 +697,7 @@ ${offerFormData.description.trim()}
 
                     <div>
                       <label className="block text-sm font-medium text-[#4A1D43] mb-1.5">
-                        Email <span className="text-[#800020]">*</span>
+                        {ui.emailLabel} <span className="text-[#800020]">*</span>
                       </label>
                       <input
                         type="email"

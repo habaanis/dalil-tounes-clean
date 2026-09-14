@@ -1,20 +1,35 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useLanguage } from '../../context/LanguageContext';
 
 interface UnderConstructionProps {
   title: string;
   subtitle?: string;
 }
 
+const copy = {
+  fr: { badge: 'Page en construction', message: 'Cette page sera bientôt disponible. Merci pour votre patience.', backHome: "Retour à l'accueil" },
+  en: { badge: 'Page under construction', message: 'This page will be available soon. Thank you for your patience.', backHome: 'Back to home' },
+  ar: { badge: 'الصفحة قيد الإنشاء', message: 'ستكون هذه الصفحة متاحة قريباً. شكراً لصبرك.', backHome: 'العودة إلى الرئيسية' },
+  it: { badge: 'Pagina in costruzione', message: 'Questa pagina sarà presto disponibile. Grazie per la tua pazienza.', backHome: 'Torna alla home' },
+  ru: { badge: 'Страница в разработке', message: 'Эта страница скоро будет доступна. Спасибо за ваше терпение.', backHome: 'На главную' },
+};
+
+type Lang = keyof typeof copy;
+
 const UnderConstruction: React.FC<UnderConstructionProps> = ({ title, subtitle }) => {
+  const { language } = useLanguage();
+  const t = copy[language as Lang] || copy.fr;
+  const isRTL = language === 'ar';
+
   return (
-    <div className="min-h-screen bg-[#111111] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[#111111] flex items-center justify-center px-4" dir={isRTL ? 'rtl' : 'ltr'}>
       <div className="max-w-lg w-full text-center">
         <div
           className="inline-block mb-6 px-4 py-1.5 rounded-full border border-[#D4AF37]/40 text-[#D4AF37] text-xs font-medium tracking-widest uppercase"
           style={{ fontFamily: "'Cormorant Garamond', serif", letterSpacing: '0.15em' }}
         >
-          Page en construction
+          {t.badge}
         </div>
 
         <h1
@@ -33,7 +48,7 @@ const UnderConstruction: React.FC<UnderConstructionProps> = ({ title, subtitle }
         <div className="w-16 h-px bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent mx-auto mb-8" />
 
         <p className="text-gray-500 text-sm mb-8">
-          Cette page sera bientôt disponible. Merci pour votre patience.
+          {t.message}
         </p>
 
         <Link
@@ -41,7 +56,7 @@ const UnderConstruction: React.FC<UnderConstructionProps> = ({ title, subtitle }
           className="inline-block px-8 py-3 border border-[#D4AF37]/60 text-[#D4AF37] text-sm font-medium rounded-lg hover:bg-[#D4AF37] hover:text-black transition-all duration-200"
           style={{ letterSpacing: '0.05em' }}
         >
-          Retour à l'accueil
+          {t.backHome}
         </Link>
       </div>
     </div>

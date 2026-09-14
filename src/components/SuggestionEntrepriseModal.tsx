@@ -13,7 +13,7 @@ interface SuggestionEntrepriseModalProps {
 }
 
 export const SuggestionEntrepriseModal = ({ isOpen, onClose }: SuggestionEntrepriseModalProps) => {
-  const { label, placeholder, button, message, submission_lang } = useFormTranslation();
+  const { label, placeholder, button, message, submission_lang, language } = useFormTranslation();
   const { getCategory } = useCategoryTranslation();
 
   const [formData, setFormData] = useState({
@@ -172,6 +172,7 @@ export const SuggestionEntrepriseModal = ({ isOpen, onClose }: SuggestionEntrepr
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
             onClick={onClose}
+            dir={language === 'ar' ? 'rtl' : 'ltr'}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
@@ -281,7 +282,7 @@ export const SuggestionEntrepriseModal = ({ isOpen, onClose }: SuggestionEntrepr
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Téléphone 2 (optionnel)
+                      {label('telephone')} 2 ({language === 'ar' ? 'اختياري' : language === 'en' ? 'optional' : language === 'it' ? 'facoltativo' : language === 'ru' ? 'необязательно' : 'optionnel'})
                     </label>
                     <input
                       type="text"
@@ -309,7 +310,7 @@ export const SuggestionEntrepriseModal = ({ isOpen, onClose }: SuggestionEntrepr
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Email 2 (optionnel)
+                      {label('email')} 2 ({language === 'ar' ? 'اختياري' : language === 'en' ? 'optional' : language === 'it' ? 'facoltativo' : language === 'ru' ? 'необязательно' : 'optionnel'})
                     </label>
                     <input
                       type="email"

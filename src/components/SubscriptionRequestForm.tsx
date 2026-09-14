@@ -814,6 +814,7 @@ export function SubscriptionRequestForm({
       preferredContactMethod: form.preferredContactMethod,
       preferredContactTime: form.preferredContactTime,
       message: cleanMultiline([
+        // Internal admin-only label — not user-visible, intentionally kept in French
         presentationModelLabel ? `Modèle de présentation choisi : ${presentationModelLabel}` : '',
         form.message,
       ].filter(Boolean).join('\n')),

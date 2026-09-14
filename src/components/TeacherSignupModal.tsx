@@ -43,7 +43,7 @@ export default function TeacherSignupModal({ isOpen, onClose }: Props) {
       setShowToast(true);
       return;
     }
-    setToastMessage('Demande envoyée avec succès ! Merci de votre contribution.');
+    setToastMessage(language === 'ar' ? 'تم إرسال الطلب بنجاح! شكراً على مساهمتك.' : language === 'en' ? 'Request sent successfully! Thank you for your contribution.' : language === 'it' ? 'Richiesta inviata con successo! Grazie per il tuo contributo.' : language === 'ru' ? 'Заявка отправлена успешно! Спасибо за ваш вклад.' : 'Demande envoyée avec succès ! Merci de votre contribution.');
     setToastType('success');
     setShowToast(true);
     setForm({
@@ -68,7 +68,7 @@ export default function TeacherSignupModal({ isOpen, onClose }: Props) {
         onClose={() => setShowToast(false)}
       />
 
-      <div className="fixed inset-0 z-[60] bg-black/30 flex items-center justify-center p-4">
+      <div className="fixed inset-0 z-[60] bg-black/30 flex items-center justify-center p-4" dir={language === 'ar' ? 'rtl' : 'ltr'}>
         <div className="w-full max-w-lg bg-white rounded-2xl border border-gray-200 shadow-xl">
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <h3 className="text-lg font-medium text-gray-900">{t.education.modal.title}</h3>
