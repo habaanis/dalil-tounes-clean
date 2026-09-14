@@ -29,7 +29,15 @@ const copy = {
     errorEmailInvalid: 'Email invalide',
     success: 'Alerte créée avec succès ! Vous serez notifié par email.',
     errorOccurred: 'Une erreur est survenue. Veuillez réessayer.',
-    categories: ['Véhicules', 'Maison & Jardin', 'Électronique', 'Immobilier', 'Sport & Loisirs', 'Vêtements', 'Services'],
+    categories: [
+      { value: 'Véhicules', label: 'Véhicules' },
+      { value: 'Maison & Jardin', label: 'Maison & Jardin' },
+      { value: 'Électronique', label: 'Électronique' },
+      { value: 'Immobilier', label: 'Immobilier' },
+      { value: 'Sport & Loisirs', label: 'Sport & Loisirs' },
+      { value: 'Vêtements', label: 'Vêtements' },
+      { value: 'Services', label: 'Services' },
+    ],
   },
   en: {
     title: 'Create an alert',
@@ -55,7 +63,15 @@ const copy = {
     errorEmailInvalid: 'Invalid email',
     success: 'Alert created successfully! You will be notified by email.',
     errorOccurred: 'An error occurred. Please try again.',
-    categories: ['Véhicules', 'Maison & Jardin', 'Électronique', 'Immobilier', 'Sport & Loisirs', 'Vêtements', 'Services'],
+    categories: [
+      { value: 'Véhicules', label: 'Vehicles' },
+      { value: 'Maison & Jardin', label: 'House & Garden' },
+      { value: 'Électronique', label: 'Electronics' },
+      { value: 'Immobilier', label: 'Real Estate' },
+      { value: 'Sport & Loisirs', label: 'Sports & Leisure' },
+      { value: 'Vêtements', label: 'Clothing' },
+      { value: 'Services', label: 'Services' },
+    ],
   },
   ar: {
     title: 'إنشاء تنبيه',
@@ -81,7 +97,15 @@ const copy = {
     errorEmailInvalid: 'بريد إلكتروني غير صالح',
     success: 'تم إنشاء التنبيه بنجاح! سيتم إشعارك عبر البريد الإلكتروني.',
     errorOccurred: 'حدث خطأ. يرجى المحاولة مرة أخرى.',
-    categories: ['Véhicules', 'Maison & Jardin', 'Électronique', 'Immobilier', 'Sport & Loisirs', 'Vêtements', 'Services'],
+    categories: [
+      { value: 'Véhicules', label: 'المركبات' },
+      { value: 'Maison & Jardin', label: 'المنزل والحديقة' },
+      { value: 'Électronique', label: 'الإلكترونيات' },
+      { value: 'Immobilier', label: 'العقارات' },
+      { value: 'Sport & Loisirs', label: 'الرياضة والترفيه' },
+      { value: 'Vêtements', label: 'الملابس' },
+      { value: 'Services', label: 'الخدمات' },
+    ],
   },
   it: {
     title: 'Crea un avviso',
@@ -107,7 +131,15 @@ const copy = {
     errorEmailInvalid: 'Email non valida',
     success: 'Avviso creato con successo! Riceverai notifiche via email.',
     errorOccurred: 'Si è verificato un errore. Riprova.',
-    categories: ['Véhicules', 'Maison & Jardin', 'Électronique', 'Immobilier', 'Sport & Loisirs', 'Vêtements', 'Services'],
+    categories: [
+      { value: 'Véhicules', label: 'Veicoli' },
+      { value: 'Maison & Jardin', label: 'Casa e Giardino' },
+      { value: 'Électronique', label: 'Elettronica' },
+      { value: 'Immobilier', label: 'Immobiliare' },
+      { value: 'Sport & Loisirs', label: 'Sport e Tempo Libero' },
+      { value: 'Vêtements', label: 'Abbigliamento' },
+      { value: 'Services', label: 'Servizi' },
+    ],
   },
   ru: {
     title: 'Создать оповещение',
@@ -133,7 +165,15 @@ const copy = {
     errorEmailInvalid: 'Неверный email',
     success: 'Оповещение успешно создано! Вы будете уведомлены по email.',
     errorOccurred: 'Произошла ошибка. Попробуйте снова.',
-    categories: ['Véhicules', 'Maison & Jardin', 'Électronique', 'Immobilier', 'Sport & Loisirs', 'Vêtements', 'Services'],
+    categories: [
+      { value: 'Véhicules', label: 'Транспорт' },
+      { value: 'Maison & Jardin', label: 'Дом и сад' },
+      { value: 'Électronique', label: 'Электроника' },
+      { value: 'Immobilier', label: 'Недвижимость' },
+      { value: 'Sport & Loisirs', label: 'Спорт и досуг' },
+      { value: 'Vêtements', label: 'Одежда' },
+      { value: 'Services', label: 'Услуги' },
+    ],
   },
 };
 
@@ -282,8 +322,8 @@ export default function AlerteRechercheForm() {
               >
                 <option value="">{t.allCategories}</option>
                 {t.categories.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
+                  <option key={cat.value} value={cat.value}>
+                    {cat.label}
                   </option>
                 ))}
               </select>
