@@ -1,6 +1,7 @@
 import React from 'react';
 import StructuredData from '../StructuredData';
 import { generateFAQSchema } from '../../lib/structuredDataSchemas';
+import { useRTL } from '../../lib/useRTL';
 
 export interface FAQItem {
   question: string;
@@ -14,6 +15,8 @@ interface SeoFAQProps {
 }
 
 const SeoFAQ: React.FC<SeoFAQProps> = ({ title, questions, includeSchema = true }) => {
+  const { isRTL } = useRTL();
+
   if (questions.length === 0) return null;
 
   return (
@@ -30,10 +33,10 @@ const SeoFAQ: React.FC<SeoFAQProps> = ({ title, questions, includeSchema = true 
           {questions.map((faq, i) => (
             <details key={i} className="group">
               <summary className="cursor-pointer text-sm text-gray-400 hover:text-white transition-colors py-2 list-none flex items-start gap-2">
-                <span className="text-[#D4AF37] mt-0.5 shrink-0">&#9656;</span>
+                <span className="text-[#D4AF37] mt-0.5 shrink-0">{isRTL ? '\u25C2' : '\u25B6'}</span>
                 <span>{faq.question}</span>
               </summary>
-              <p className="text-xs text-gray-500 leading-relaxed pl-5 pb-3">{faq.answer}</p>
+              <p className={`text-xs text-gray-500 leading-relaxed ${isRTL ? 'pr-5' : 'pl-5'} pb-3`}>{faq.answer}</p>
             </details>
           ))}
         </div>

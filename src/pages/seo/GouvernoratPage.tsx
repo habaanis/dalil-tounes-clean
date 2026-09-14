@@ -15,13 +15,23 @@ import {
   SEO_GOUVERNORATS,
   SEO_SECTEURS,
   SEO_METIERS,
+  getGouvernoratLabel,
+  getVilleLabel,
+  getMetierLabel,
+  getSecteurLabel,
 } from '../../lib/seoLandingData';
 import { usePaginatedSeoGouvernorat } from '../../hooks/usePaginatedSeoGouvernorat';
 import { getGouvernoratSeoMeta } from '../../lib/seoMetaTemplates';
+import { useLanguage } from '../../context/LanguageContext';
+import { useRTL } from '../../lib/useRTL';
+import { getSeoPageTranslations } from '../../lib/seoPageTranslations';
 
 const GouvernoratPage: React.FC = () => {
   const { gouvernoratSlug } = useParams<{ gouvernoratSlug: string }>();
   const gouvernorat = gouvernoratSlug ? findGouvernoratBySlug(gouvernoratSlug) : undefined;
+  const { language } = useLanguage();
+  const { isRTL } = useRTL();
+  const t = getSeoPageTranslations(language);
 
   const { businesses, total, loading, loadingMore, hasMore, loadMore } =
     usePaginatedSeoGouvernorat(gouvernorat?.slug, 20);
@@ -30,6 +40,7 @@ const GouvernoratPage: React.FC = () => {
     return <Navigate to="/" replace />;
   }
 
+  const gouvLabel = getGouvernoratLabel(gouvernorat, language);
   const villes = getVillesByGouvernorat(gouvernorat.slug);
   const otherGouvernorats = SEO_GOUVERNORATS.filter(g => g.slug !== gouvernorat.slug).slice(0, 10);
   const popularMetiers = SEO_METIERS.filter(m =>
@@ -44,16 +55,16 @@ const GouvernoratPage: React.FC = () => {
 
   const faqData = [
     {
-      question: `Quels types d'entreprises trouve-t-on dans le gouvernorat de ${gouvernorat.label} ?`,
-      answer: `Dalil Tounes référence tous types d'entreprises dans le gouvernorat de ${gouvernorat.label} : professionnels de santé, artisans, commerces, restaurants, services juridiques et bien plus encore.`,
+      question: t.faqWhatBusinessesGovernorate(gouvernorat.label),
+      answer: t.faqWhatBusinessesGovernorateAnswer(gouvernorat.label),
     },
     {
-      question: `Comment trouver un professionnel dans le gouvernorat de ${gouvernorat.label} ?`,
-      answer: `Utilisez la barre de recherche Dalil Tounes ou parcourez les villes et métiers ci-dessous. Vous pouvez filtrer par ville${villes.length > 0 ? ` (${villes.slice(0, 3).map(v => v.label).join(', ')}...)` : ''} ou par métier.`,
+      question: t.faqFindGovernorateProfessional(gouvernorat.label),
+      answer: t.faqFindGovernorateProfessionalAnswer(gouvernorat.label, villes.length > 0 ? villes.slice(0, 3).map(v => v.label).join(', ') : ''),
     },
     {
-      question: `Combien de villes sont référencées dans le gouvernorat de ${gouvernorat.label} ?`,
-      answer: `Dalil Tounes couvre ${villes.length > 0 ? `${villes.length} villes dans le gouvernorat de ${gouvernorat.label}, dont ${villes.map(v => v.label).join(', ')}` : `les principales villes du gouvernorat de ${gouvernorat.label}`}. De nouvelles localités sont ajoutées régulièrement.`,
+      question: t.faqHowManyCitiesGovernorate(gouvernorat.label),
+      answer: t.faqHowManyCitiesGovernorateAnswer(villes.length, gouvernorat.label, villes.length > 0 ? villes.map(v => v.label).join(', ') : ''),
     },
   ];
 
@@ -79,6 +90,8 @@ const GouvernoratPage: React.FC = () => {
 
   const faqSchema = generateFAQSchema(faqData);
 
+  const ArrowIcon = ArrowRight;
+
   return (
     <>
       <SEOHead
@@ -91,7 +104,7 @@ const GouvernoratPage: React.FC = () => {
 
       <StructuredData data={[schemaData, breadcrumbSchema, faqSchema]} />
 
-      <div className="min-h-screen bg-[#0f0f0f]">
+      <div className="min-h-screen bg-[#0f0f0f]" dir={isRTL ? 'rtl' : 'ltr'}>
         {/* Hero */}
         <div
           className="relative py-16 px-4 overflow-hidden"
@@ -109,19 +122,19 @@ const GouvernoratPage: React.FC = () => {
           <div className="container mx-auto max-w-5xl relative">
             <Breadcrumb
               items={[
-                { label: 'Accueil', href: '/' },
-                { label: 'Entreprises', href: '/entreprises' },
-                { label: `Gouvernorat de ${gouvernorat.label}` },
+                { label: t.breadcrumbHome, href: '/' },
+                { label: t.breadcrumbBusinesses, href: '/entreprises' },
+                { label: t.breadcrumbGovernorate(gouvLabel) },
               ]}
             />
 
             <div className="flex items-center gap-3 mb-4">
-              <span className="inline-block px-3 py-1 rounded-full border border-[#D4AF37]/40 text-[#D4AF37] text-xs font-medium tracking-widest uppercase">
-                Gouvernorat
+              <span className={`inline-block px-3 py-1 rounded-full border border-[#D4AF37]/40 text-[#D4AF37] text-xs font-medium ${isRTL ? '' : 'tracking-widest uppercase'}`}>
+                {t.badgeGovernorate}
               </span>
               <span className="flex items-center gap-1 text-sm text-gray-500">
                 <MapPin className="w-3.5 h-3.5 text-[#D4AF37]" />
-                Tunisie
+                {t.tunisia}
               </span>
             </div>
 
@@ -131,8 +144,8 @@ const GouvernoratPage: React.FC = () => {
                 fontFamily: "'Playfair Display', 'Cormorant Garamond', serif",
               }}
             >
-              Entreprises et services dans le gouvernorat de{' '}
-              <span className="text-[#D4AF37]">{gouvernorat.label}</span>
+              {t.businessesInGovernorate('')}{' '}
+              <span className="text-[#D4AF37]">{gouvLabel}</span>
             </h1>
 
             <p className="text-gray-400 text-base md:text-lg max-w-2xl leading-relaxed">
@@ -144,8 +157,7 @@ const GouvernoratPage: React.FC = () => {
                 <div className="flex items-center gap-2 text-sm text-gray-500">
                   <Search className="w-4 h-4 text-[#D4AF37]" />
                   <span>
-                    {total} entreprise{total !== 1 ? 's' : ''} référencée
-                    {total !== 1 ? 's' : ''}
+                    {t.businessCount(total)}
                   </span>
                 </div>
               )}
@@ -153,7 +165,7 @@ const GouvernoratPage: React.FC = () => {
                 <div className="flex items-center gap-2 text-sm text-gray-500">
                   <MapPin className="w-4 h-4 text-[#D4AF37]" />
                   <span>
-                    {villes.length} ville{villes.length !== 1 ? 's' : ''}
+                    {t.cityCount(villes.length)}
                   </span>
                 </div>
               )}
@@ -172,10 +184,10 @@ const GouvernoratPage: React.FC = () => {
           {villes.length > 0 && (
             <div className="mb-10">
               <h2
-                className="text-xs font-semibold text-gray-400 mb-4 uppercase tracking-wider"
-                style={{ letterSpacing: '0.1em' }}
+                className={`text-xs font-semibold text-gray-400 mb-4 uppercase tracking-wider`}
+                style={{ letterSpacing: isRTL ? '0' : '0.1em' }}
               >
-                Villes du gouvernorat de {gouvernorat.label}
+                {t.citiesInGovernorate(gouvLabel)}
               </h2>
               <div className="flex flex-wrap gap-2">
                 {villes.map(v => (
@@ -184,7 +196,7 @@ const GouvernoratPage: React.FC = () => {
                     to={`/ville/${v.slug}`}
                     className="px-4 py-2 rounded-full border border-gray-700 hover:border-[#D4AF37]/60 text-gray-400 hover:text-[#D4AF37] text-sm transition-all duration-200"
                   >
-                    {v.label}
+                    {getVilleLabel(v, language)}
                   </Link>
                 ))}
               </div>
@@ -194,10 +206,10 @@ const GouvernoratPage: React.FC = () => {
           {/* Metiers populaires */}
           <div className="mb-10">
             <h2
-              className="text-xs font-semibold text-gray-400 mb-4 uppercase tracking-wider"
-              style={{ letterSpacing: '0.1em' }}
+              className={`text-xs font-semibold text-gray-400 mb-4 uppercase tracking-wider`}
+              style={{ letterSpacing: isRTL ? '0' : '0.1em' }}
             >
-              Métiers populaires
+              {t.popularTrades}
             </h2>
             <div className="flex flex-wrap gap-2">
               {popularMetiers.map(m => {
@@ -211,7 +223,7 @@ const GouvernoratPage: React.FC = () => {
                     to={href}
                     className="px-4 py-2 rounded-full border border-gray-700 hover:border-[#D4AF37]/60 text-gray-400 hover:text-[#D4AF37] text-sm transition-all duration-200"
                   >
-                    {m.label}
+                    {getMetierLabel(m, language)}
                   </Link>
                 );
               })}
@@ -242,14 +254,14 @@ const GouvernoratPage: React.FC = () => {
                   className="text-xl font-semibold text-white"
                   style={{ fontFamily: "'Playfair Display', serif" }}
                 >
-                  {total} résultat{total !== 1 ? 's' : ''}
+                  {t.resultsCount(total)}
                 </h2>
                 <Link
                   to={`/entreprises?gouvernorat=${encodeURIComponent(gouvernorat.label)}`}
                   className="flex items-center gap-1 text-sm text-[#D4AF37] hover:underline"
                 >
-                  Tous les professionnels
-                  <ArrowRight className="w-4 h-4" />
+                  {t.allProfessionals}
+                  <ArrowIcon className={`w-4 h-4 ${isRTL ? 'rotate-180' : ''}`} />
                 </Link>
               </div>
 
@@ -269,13 +281,12 @@ const GouvernoratPage: React.FC = () => {
               )}
 
               <p className="text-center text-[11px] text-gray-500 mt-6 leading-relaxed">
-                Les résultats affichés reposent sur des critères automatisés (avis
-                publics, notes Google, complétude de la fiche).{' '}
+                {t.disclaimer}{' '}
                 <Link
                   to="/info-avis"
                   className="text-[#D4AF37] hover:underline"
                 >
-                  En savoir plus
+                  {t.learnMore}
                 </Link>
               </p>
             </>
@@ -285,17 +296,16 @@ const GouvernoratPage: React.FC = () => {
                 <AlertCircle className="w-8 h-8 text-gray-600" />
               </div>
               <h2 className="text-xl font-semibold text-white mb-3">
-                Aucune entreprise dans le gouvernorat de {gouvernorat.label} pour
-                l'instant
+                {t.noResultsGovernorate(gouvLabel)}
               </h2>
               <p className="text-gray-500 text-sm mb-8">
-                Référencez votre établissement gratuitement dès maintenant.
+                {t.registerEstablishmentFree}
               </p>
               <Link
                 to="/abonnement"
                 className="inline-block px-8 py-3 bg-[#D4AF37] text-black text-sm font-semibold rounded-lg hover:bg-[#c9a42e] transition-all"
               >
-                Inscrire mon établissement
+                {t.registerEstablishment}
               </Link>
             </div>
           )}
@@ -306,7 +316,7 @@ const GouvernoratPage: React.FC = () => {
               className="text-lg font-semibold text-white mb-4"
               style={{ fontFamily: "'Playfair Display', serif" }}
             >
-              Secteurs populaires
+              {t.badgeSector === 'Secteur' ? 'Secteurs populaires' : t.popularTrades}
             </h2>
             <div className="flex flex-wrap gap-2">
               {popularSecteurs.map(s => (
@@ -315,7 +325,7 @@ const GouvernoratPage: React.FC = () => {
                   to={`/secteur/${s.slug}`}
                   className="px-3 py-1.5 rounded-full border border-gray-700 hover:border-[#D4AF37]/50 text-gray-400 hover:text-[#D4AF37] text-xs transition-all"
                 >
-                  {s.label}
+                  {getSecteurLabel(s, language)}
                 </Link>
               ))}
             </div>
@@ -327,7 +337,7 @@ const GouvernoratPage: React.FC = () => {
               className="text-lg font-semibold text-white mb-4"
               style={{ fontFamily: "'Playfair Display', serif" }}
             >
-              Autres gouvernorats
+              {t.otherGovernorates}
             </h2>
             <div className="flex flex-wrap gap-2">
               {otherGouvernorats.map(g => (
@@ -336,7 +346,7 @@ const GouvernoratPage: React.FC = () => {
                   to={`/gouvernorat/${g.slug}`}
                   className="px-3 py-1.5 rounded-full border border-gray-700 hover:border-[#D4AF37]/50 text-gray-400 hover:text-[#D4AF37] text-xs transition-all"
                 >
-                  {g.label}
+                  {getGouvernoratLabel(g, language)}
                 </Link>
               ))}
             </div>
@@ -344,7 +354,7 @@ const GouvernoratPage: React.FC = () => {
 
           {/* FAQ */}
           <SeoFAQ
-            title={`Questions fréquentes - Gouvernorat de ${gouvernorat.label}`}
+            title={t.faqTitleGovernorate(gouvernorat.label)}
             questions={faqData}
             includeSchema={false}
           />

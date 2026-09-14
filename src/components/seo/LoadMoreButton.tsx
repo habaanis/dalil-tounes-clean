@@ -1,5 +1,7 @@
 import React from 'react';
 import { ChevronDown, Loader2 } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
+import { getSeoPageTranslations } from '../../lib/seoPageTranslations';
 
 interface LoadMoreButtonProps {
   onClick: () => void;
@@ -9,6 +11,9 @@ interface LoadMoreButtonProps {
 }
 
 const LoadMoreButton: React.FC<LoadMoreButtonProps> = ({ onClick, loading, shown, total }) => {
+  const { language } = useLanguage();
+  const t = getSeoPageTranslations(language);
+
   return (
     <div className="mt-8 flex flex-col items-center gap-3">
       <button
@@ -19,17 +24,17 @@ const LoadMoreButton: React.FC<LoadMoreButtonProps> = ({ onClick, loading, shown
         {loading ? (
           <>
             <Loader2 className="w-4 h-4 animate-spin" />
-            Chargement...
+            {t.loadingMore}
           </>
         ) : (
           <>
-            Voir plus d'entreprises
+            {t.seeMore}
             <ChevronDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />
           </>
         )}
       </button>
       <span className="text-xs text-gray-600">
-        {shown} sur {total} entreprises
+        {t.shownOfTotal(shown, total)}
       </span>
     </div>
   );

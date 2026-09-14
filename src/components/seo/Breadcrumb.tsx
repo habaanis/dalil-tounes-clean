@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, ChevronLeft } from 'lucide-react';
+import { useRTL } from '../../lib/useRTL';
 
 export interface BreadcrumbItem {
   label: string;
@@ -12,11 +13,14 @@ interface BreadcrumbProps {
 }
 
 const Breadcrumb: React.FC<BreadcrumbProps> = ({ items }) => {
+  const { isRTL } = useRTL();
+  const Separator = isRTL ? ChevronLeft : ChevronRight;
+
   return (
     <nav aria-label="Fil d'Ariane" className="flex items-center flex-wrap gap-1 text-xs text-gray-500 mb-8">
       {items.map((item, i) => (
         <React.Fragment key={i}>
-          {i > 0 && <ChevronRight className="w-3 h-3 text-gray-700 flex-shrink-0" />}
+          {i > 0 && <Separator className="w-3 h-3 text-gray-700 flex-shrink-0" />}
           {item.href && i < items.length - 1 ? (
             <Link
               to={item.href}

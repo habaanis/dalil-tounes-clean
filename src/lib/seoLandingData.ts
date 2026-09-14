@@ -1,21 +1,33 @@
 import { generateSlug } from './slugify';
+import type { Language } from './i18n';
+
+export type LocalizedLabels = {
+  fr: string;
+  ar: string;
+  en: string;
+  it: string;
+  ru: string;
+};
 
 export interface MetierEntry {
   slug: string;
   label: string;
   value: string;
   secteur?: string;
+  labels?: LocalizedLabels;
 }
 
 export interface VilleEntry {
   slug: string;
   label: string;
   gouvernorat: string;
+  labels?: LocalizedLabels;
 }
 
 export interface SousCategorieEntry {
   slug: string;
   label: string;
+  labels?: LocalizedLabels;
 }
 
 export const SEO_METIERS: MetierEntry[] = [
@@ -321,6 +333,7 @@ export interface SecteurEntry {
   label: string;
   description: string;
   keywords: string[];
+  labels?: LocalizedLabels;
 }
 
 export const SEO_SECTEURS: SecteurEntry[] = [
@@ -374,6 +387,7 @@ export interface GouvernoratEntry {
   label: string;
   description: string;
   keywords: string[];
+  labels?: LocalizedLabels;
 }
 
 export const SEO_GOUVERNORATS: GouvernoratEntry[] = [
@@ -463,6 +477,31 @@ export function getSecteurSlugFromLabel(label: string): string | undefined {
 
 export function findMetierBySlug(slug: string): MetierEntry | undefined {
   return SEO_METIERS.find(m => m.slug === slug);
+}
+
+export function getMetierLabel(metier: MetierEntry, lang: Language): string {
+  if (metier.labels && lang in metier.labels) return metier.labels[lang];
+  return metier.label;
+}
+
+export function getVilleLabel(ville: VilleEntry, lang: Language): string {
+  if (ville.labels && lang in ville.labels) return ville.labels[lang];
+  return ville.label;
+}
+
+export function getSecteurLabel(secteur: SecteurEntry, lang: Language): string {
+  if (secteur.labels && lang in secteur.labels) return secteur.labels[lang];
+  return secteur.label;
+}
+
+export function getGouvernoratLabel(gouvernorat: GouvernoratEntry, lang: Language): string {
+  if (gouvernorat.labels && lang in gouvernorat.labels) return gouvernorat.labels[lang];
+  return gouvernorat.label;
+}
+
+export function getSousCategorieLabel(sousCat: SousCategorieEntry, lang: Language): string {
+  if (sousCat.labels && lang in sousCat.labels) return sousCat.labels[lang];
+  return sousCat.label;
 }
 
 export function findMetierByValue(value: string): MetierEntry | undefined {

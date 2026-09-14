@@ -6,16 +6,22 @@ import SearchBar from '../../components/SearchBar';
 import Breadcrumb from '../../components/seo/Breadcrumb';
 import SeoBusinessCard from '../../components/seo/SeoBusinessCard';
 import LoadMoreButton from '../../components/seo/LoadMoreButton';
-import { findMetierBySlug, SEO_VILLES, SEO_METIERS } from '../../lib/seoLandingData';
+import { findMetierBySlug, SEO_VILLES, SEO_METIERS, getMetierLabel, getVilleLabel } from '../../lib/seoLandingData';
 import { getMetierSeoMeta } from '../../lib/seoMetaTemplates';
 import { usePaginatedSeoBusinesses } from '../../hooks/usePaginatedSeoBusinesses';
 import StructuredData from '../../components/StructuredData';
 import { generateBreadcrumbSchema } from '../../lib/structuredDataSchemas';
 import SeoFAQ from '../../components/seo/SeoFAQ';
+import { useLanguage } from '../../context/LanguageContext';
+import { useRTL } from '../../lib/useRTL';
+import { getSeoPageTranslations } from '../../lib/seoPageTranslations';
 
 const MetierPage: React.FC = () => {
   const { metierSlug } = useParams<{ metierSlug: string }>();
   const metier = metierSlug ? findMetierBySlug(metierSlug) : undefined;
+  const { language } = useLanguage();
+  const { isRTL } = useRTL();
+  const t = getSeoPageTranslations(language);
 
   const { businesses, total, loading, loadingMore, hasMore, loadMore } = usePaginatedSeoBusinesses(
     { metier: metier?.value, pageSize: 20 },
@@ -26,15 +32,17 @@ const MetierPage: React.FC = () => {
     return <Navigate to="/" replace />;
   }
 
+  const metierLabel = getMetierLabel(metier, language);
+
   const seo = getMetierSeoMeta(metier.label, metier.slug, metier.secteur);
   const pageTitle = seo.title;
   const pageDescription = seo.description;
   const pageKeywords = seo.keywords;
 
   const faqData = [
-    { question: `Comment trouver un ${metier.label.toLowerCase()} en Tunisie ?`, answer: `Utilisez la barre de recherche Dalil Tounes ou parcourez la liste ci-dessous. Vous pouvez également filtrer par ville pour trouver un ${metier.label.toLowerCase()} proche de chez vous.` },
-    { question: `Les avis sur les ${metier.label.toLowerCase()}s sont-ils fiables ?`, answer: `Les notes affichées proviennent des avis Google publics. Dalil Tounes n'attribue aucune note et n'effectue aucun classement éditorial. Les résultats sont triés selon des critères automatisés : avis, complétude de la fiche et présence de photos.` },
-    { question: `Comment inscrire mon cabinet ou établissement de ${metier.label.toLowerCase()} sur Dalil Tounes ?`, answer: `Vous pouvez référencer votre établissement gratuitement sur Dalil Tounes. Rendez-vous sur la page Abonnement pour découvrir les options de mise en avant disponibles.` },
+    { question: t.faqHowToFindTradeTunisia(metier.label), answer: t.faqHowToFindTradeTunisiaAnswer(metier.label) },
+    { question: t.faqReliableTrade(metier.label), answer: t.faqReliableTradeAnswer },
+    { question: t.faqRegisterTrade(metier.label), answer: t.faqRegisterTradeAnswer },
   ];
 
   const schemaData = {
@@ -58,6 +66,8 @@ const MetierPage: React.FC = () => {
     ? SEO_METIERS.filter(m => m.slug !== metier.slug && m.secteur !== metier.secteur).slice(0, 12 - otherMetiers.length)
     : [];
 
+  const ArrowIcon = ArrowRight;
+
   return (
     <>
       <SEOHead
@@ -70,7 +80,7 @@ const MetierPage: React.FC = () => {
 
       <StructuredData data={[schemaData, breadcrumbSchema]} />
 
-      <div className="min-h-screen bg-[#0f0f0f]">
+      <div className="min-h-screen bg-[#0f0f0f]" dir={isRTL ? 'rtl' : 'ltr'}>
         <div
           className="relative py-16 px-4 overflow-hidden"
           style={{
@@ -86,13 +96,13 @@ const MetierPage: React.FC = () => {
           <div className="container mx-auto max-w-5xl relative">
             <Breadcrumb
               items={[
-                { label: 'Accueil', href: '/' },
-                { label: 'Entreprises', href: '/entreprises' },
-                { label: metier.label },
+                { label: t.breadcrumbHome, href: '/' },
+                { label: t.breadcrumbBusinesses, href: '/entreprises' },
+                { label: metierLabel },
               ]}
             />
 
-            <span className="inline-block mb-4 px-3 py-1 rounded-full border border-[#D4AF37]/40 text-[#D4AF37] text-xs font-medium tracking-widest uppercase">
+            <span className={`inline-block mb-4 px-3 py-1 rounded-full border border-[#D4AF37]/40 text-[#D4AF37] text-xs font-medium ${isRTL ? '' : 'tracking-widest uppercase'}`}>
               {metier.secteur}
             </span>
 
@@ -100,7 +110,7 @@ const MetierPage: React.FC = () => {
               className="text-3xl md:text-5xl font-bold text-white mb-4 leading-tight"
               style={{ fontFamily: "'Playfair Display', 'Cormorant Garamond', serif" }}
             >
-              <span className="text-[#D4AF37]">{metier.label}</span> en Tunisie
+              <span className="text-[#D4AF37]">{metierLabel}</span> {t.tunisia ? '' : ''}{t.tradeInTunisia('').replace(t.tradeInTunisia(''), '')}
             </h1>
 
             <p className="text-gray-400 text-base md:text-lg max-w-2xl leading-relaxed">
@@ -110,7 +120,7 @@ const MetierPage: React.FC = () => {
             {!loading && (
               <div className="flex items-center gap-2 mt-6 text-sm text-gray-500">
                 <Search className="w-4 h-4 text-[#D4AF37]" />
-                <span>{total} établissement{total !== 1 ? 's' : ''} référencé{total !== 1 ? 's' : ''}</span>
+                <span>{t.establishmentCountListed(total)}</span>
               </div>
             )}
           </div>
@@ -122,11 +132,8 @@ const MetierPage: React.FC = () => {
           </div>
 
           <div className="mb-10">
-            <h2
-              className="text-base font-semibold text-gray-400 mb-4 uppercase tracking-wider text-xs"
-              style={{ letterSpacing: '0.1em' }}
-            >
-              Chercher par ville
+            <h2 className={`text-xs font-semibold text-gray-400 mb-4 uppercase tracking-wider`} style={{ letterSpacing: isRTL ? '0' : '0.1em' }}>
+              {t.searchByCity}
             </h2>
             <div className="flex flex-wrap gap-2">
               {popularVilles.map(ville => (
@@ -135,7 +142,7 @@ const MetierPage: React.FC = () => {
                   to={`/${metier.slug}-${ville.slug}`}
                   className="px-4 py-2 rounded-full border border-gray-700 hover:border-[#D4AF37]/60 text-gray-400 hover:text-[#D4AF37] text-sm transition-all duration-200"
                 >
-                  {ville.label}
+                  {getVilleLabel(ville, language)}
                 </Link>
               ))}
             </div>
@@ -164,14 +171,14 @@ const MetierPage: React.FC = () => {
                   className="text-xl font-semibold text-white"
                   style={{ fontFamily: "'Playfair Display', serif" }}
                 >
-                  {total} résultat{total !== 1 ? 's' : ''}
+                  {t.resultsCount(total)}
                 </h2>
                 <Link
                   to={`/entreprises?categorie=${encodeURIComponent(metier.value)}`}
                   className="flex items-center gap-1 text-sm text-[#D4AF37] hover:underline"
                 >
-                  Tous les professionnels
-                  <ArrowRight className="w-4 h-4" />
+                  {t.allProfessionals}
+                  <ArrowIcon className={`w-4 h-4 ${isRTL ? 'rotate-180' : ''}`} />
                 </Link>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -190,8 +197,8 @@ const MetierPage: React.FC = () => {
               )}
 
               <p className="text-center text-[11px] text-gray-500 mt-6 leading-relaxed">
-                Les résultats affichés reposent sur des critères automatisés (avis publics, notes Google, complétude de la fiche).{' '}
-                <Link to="/info-avis" className="text-[#D4AF37] hover:underline">En savoir plus</Link>
+                {t.disclaimer}{' '}
+                <Link to="/info-avis" className="text-[#D4AF37] hover:underline">{t.learnMore}</Link>
               </p>
             </>
           ) : (
@@ -200,16 +207,16 @@ const MetierPage: React.FC = () => {
                 <AlertCircle className="w-8 h-8 text-gray-600" />
               </div>
               <h2 className="text-xl font-semibold text-white mb-3">
-                Aucun {metier.label} référencé pour l'instant
+                {t.noResultsTrade(metierLabel)}
               </h2>
               <p className="text-gray-500 text-sm mb-8">
-                Soyez le premier à inscrire votre établissement.
+                {t.beFirstToRegister}
               </p>
               <Link
                 to="/abonnement"
                 className="inline-block px-8 py-3 bg-[#D4AF37] text-black text-sm font-semibold rounded-lg hover:bg-[#c9a42e] transition-all"
               >
-                Inscrire mon établissement
+                {t.registerEstablishment}
               </Link>
             </div>
           )}
@@ -220,7 +227,7 @@ const MetierPage: React.FC = () => {
                 className="text-lg font-semibold text-white mb-4"
                 style={{ fontFamily: "'Playfair Display', serif" }}
               >
-                Métiers associés
+                {t.associatedTrades}
               </h2>
               <div className="flex flex-wrap gap-2">
                 {[...otherMetiers, ...otherSectorMetiers].map(m => (
@@ -229,14 +236,14 @@ const MetierPage: React.FC = () => {
                     to={`/metier/${m.slug}`}
                     className="px-3 py-1.5 rounded-full border border-gray-700 hover:border-[#D4AF37]/50 text-gray-400 hover:text-[#D4AF37] text-xs transition-all"
                   >
-                    {m.label}
+                    {getMetierLabel(m, language)}
                   </Link>
                 ))}
               </div>
             </div>
           )}
 
-          <SeoFAQ title={`Questions fréquentes - ${metier.label}`} questions={faqData} />
+          <SeoFAQ title={t.faqTitle(metier.label)} questions={faqData} />
         </div>
       </div>
     </>

@@ -8,6 +8,7 @@ import { getSupabaseImageUrl } from '../../lib/imageUtils';
 import { extractFrenchName } from '../../lib/textNormalization';
 import { useLanguage } from '../../context/LanguageContext';
 import { getPublicComponentTranslations } from '../../lib/publicComponentTranslations';
+import { useRTL } from '../../lib/useRTL';
 
 interface TopRecommendedSectionProps {
   ville: string;
@@ -23,6 +24,7 @@ function parseRating(raw: unknown): number {
 }
 
 function StarRating({ value }: { value: number }) {
+  const { isRTL } = useRTL();
   const stars = Math.round(value * 2) / 2;
   return (
     <span className="flex items-center gap-0.5">
@@ -32,7 +34,7 @@ function StarRating({ value }: { value: number }) {
           className={`w-3.5 h-3.5 ${i <= stars ? 'text-[#D4AF37] fill-[#D4AF37]' : 'text-gray-300'}`}
         />
       ))}
-      <span className="ml-1 text-xs text-gray-600 font-medium">{value.toFixed(1)}</span>
+      <span className={`${isRTL ? 'mr-1' : 'ml-1'} text-xs text-gray-600 font-medium`}>{value.toFixed(1)}</span>
     </span>
   );
 }
@@ -48,6 +50,7 @@ function RecommendedCard({
   onClick: () => void;
   ratingUnavailable: string;
 }) {
+  const { isRTL } = useRTL();
   const name = extractFrenchName(biz.nom);
   const rating = parseRating(biz['Note Google Globale']);
   const cats = biz['catégorie'] || [];
@@ -67,7 +70,7 @@ function RecommendedCard({
     >
       {rank <= 3 && (
         <div
-          className="absolute top-3 left-3 z-10 w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-md"
+          className={`absolute top-3 ${isRTL ? 'right-3' : 'left-3'} z-10 w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-md`}
           style={{ backgroundColor: rank === 1 ? '#D4AF37' : rank === 2 ? '#9CA3AF' : '#CD7F32' }}
         >
           {rank}

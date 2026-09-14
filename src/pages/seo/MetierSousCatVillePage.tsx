@@ -6,16 +6,22 @@ import SearchBar from '../../components/SearchBar';
 import Breadcrumb from '../../components/seo/Breadcrumb';
 import SeoBusinessCard from '../../components/seo/SeoBusinessCard';
 import LoadMoreButton from '../../components/seo/LoadMoreButton';
-import { parseSeoSlug, SEO_SOUS_CATEGORIES, SEO_VILLES } from '../../lib/seoLandingData';
+import { parseSeoSlug, SEO_SOUS_CATEGORIES, SEO_VILLES, getMetierLabel, getVilleLabel, getSousCategorieLabel } from '../../lib/seoLandingData';
 import { getMetierSousCatVilleSeoMeta } from '../../lib/seoMetaTemplates';
 import { usePaginatedSeoBusinesses } from '../../hooks/usePaginatedSeoBusinesses';
 import StructuredData from '../../components/StructuredData';
 import { generateBreadcrumbSchema } from '../../lib/structuredDataSchemas';
 import SeoFAQ from '../../components/seo/SeoFAQ';
+import { useLanguage } from '../../context/LanguageContext';
+import { useRTL } from '../../lib/useRTL';
+import { getSeoPageTranslations } from '../../lib/seoPageTranslations';
 
 const MetierSousCatVillePage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const parsed = slug ? parseSeoSlug(slug) : null;
+  const { language } = useLanguage();
+  const { isRTL } = useRTL();
+  const t = getSeoPageTranslations(language);
 
   const sousCategorieParsed = parsed?.type === 'metier-souscategorie-ville' ? parsed.sousCategorie : null;
 
@@ -35,6 +41,10 @@ const MetierSousCatVillePage: React.FC = () => {
 
   const { metier, ville } = parsed;
   const sousCategorie = sousCategorieParsed;
+
+  const metierLabel = getMetierLabel(metier, language);
+  const villeLabel = getVilleLabel(ville, language);
+  const sousCatLabel = sousCategorie ? getSousCategorieLabel(sousCategorie, language) : null;
 
   const seo = getMetierSousCatVilleSeoMeta(metier.label, sousCategorie?.label || null, ville.label, slug!, metier.secteur);
   const pageTitle = seo.title;
@@ -63,17 +73,19 @@ const MetierSousCatVillePage: React.FC = () => {
 
   const faqData = sousCategorie
     ? [
-        { question: `Comment trouver un ${metier.label.toLowerCase()} ${sousCategorie.label} à ${ville.label} ?`, answer: `Consultez la liste ci-dessous ou utilisez la barre de recherche Dalil Tounes pour trouver un ${metier.label.toLowerCase()} spécialisé en ${sousCategorie.label} à ${ville.label}.` },
-        { question: `Les ${metier.label.toLowerCase()}s ${sousCategorie.label} à ${ville.label} sont-ils vérifiés ?`, answer: `Les informations proviennent de sources publiques ou sont communiquées par les professionnels. Les notes affichées sont basées sur les avis Google publics.` },
+        { question: t.faqFindTradeSubcatCity(metier.label, sousCategorie.label, ville.label), answer: t.faqFindTradeSubcatCityAnswer(metier.label, sousCategorie.label, ville.label) },
+        { question: t.faqTradeSubcatVerified(metier.label, sousCategorie.label, ville.label), answer: t.faqTradeSubcatVerifiedAnswer },
       ]
     : [
-        { question: `Comment trouver un ${metier.label.toLowerCase()} à ${ville.label} ?`, answer: `Consultez la liste ci-dessous ou utilisez la barre de recherche Dalil Tounes. Les résultats sont triés par note Google et complétude de la fiche.` },
-        { question: `Combien de ${metier.label.toLowerCase()}s sont référencés à ${ville.label} ?`, answer: `Dalil Tounes référence les ${metier.label.toLowerCase()}s disponibles à ${ville.label} et dans le gouvernorat de ${ville.gouvernorat}. De nouveaux établissements sont ajoutés régulièrement.` },
+        { question: t.faqHowToFindTradeCity(metier.label, ville.label), answer: t.faqHowToFindTradeCityAnswer },
+        { question: t.faqHowManyTradeCity(metier.label, ville.label), answer: t.faqHowManyTradeCityAnswer(metier.label, ville.label, ville.gouvernorat) },
       ];
 
   const sousCats = SEO_SOUS_CATEGORIES[metier.slug] ?? [];
 
   const otherVilles = SEO_VILLES.filter(v => v.slug !== ville.slug).slice(0, 8);
+
+  const ArrowIcon = ArrowRight;
 
   return (
     <>
@@ -87,7 +99,7 @@ const MetierSousCatVillePage: React.FC = () => {
 
       <StructuredData data={[schemaData, breadcrumbSchema]} />
 
-      <div className="min-h-screen bg-[#0f0f0f]">
+      <div className="min-h-screen bg-[#0f0f0f]" dir={isRTL ? 'rtl' : 'ltr'}>
         <div
           className="relative py-16 px-4 overflow-hidden"
           style={{
@@ -103,25 +115,25 @@ const MetierSousCatVillePage: React.FC = () => {
           <div className="container mx-auto max-w-5xl relative">
             <Breadcrumb
               items={[
-                { label: 'Accueil', href: '/' },
-                { label: 'Entreprises', href: '/entreprises' },
-                { label: metier.label, href: `/${metier.slug}` },
+                { label: t.breadcrumbHome, href: '/' },
+                { label: t.breadcrumbBusinesses, href: '/entreprises' },
+                { label: metierLabel, href: `/${metier.slug}` },
                 ...(sousCategorie
                   ? [
-                      { label: sousCategorie.label, href: `/${metier.slug}-${sousCategorie.slug}-${ville.slug}` },
-                      { label: ville.label },
+                      { label: sousCatLabel || sousCategorie.label, href: `/${metier.slug}-${sousCategorie.slug}-${ville.slug}` },
+                      { label: villeLabel },
                     ]
-                  : [{ label: ville.label }]),
+                  : [{ label: villeLabel }]),
               ]}
             />
 
             <div className="flex items-center gap-3 mb-4">
-              <span className="inline-block px-3 py-1 rounded-full border border-[#D4AF37]/40 text-[#D4AF37] text-xs font-medium tracking-widest uppercase">
+              <span className={`inline-block px-3 py-1 rounded-full border border-[#D4AF37]/40 text-[#D4AF37] text-xs font-medium ${isRTL ? '' : 'tracking-widest uppercase'}`}>
                 {metier.secteur}
               </span>
               {sousCategorie && (
                 <span className="inline-block px-3 py-1 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[#D4AF37] text-xs font-medium">
-                  {sousCategorie.label}
+                  {sousCatLabel || sousCategorie.label}
                 </span>
               )}
             </div>
@@ -130,11 +142,11 @@ const MetierSousCatVillePage: React.FC = () => {
               className="text-3xl md:text-5xl font-bold text-white mb-4 leading-tight"
               style={{ fontFamily: "'Playfair Display', 'Cormorant Garamond', serif" }}
             >
-              {metier.label}
+              {metierLabel}
               {sousCategorie && (
-                <span className="text-[#D4AF37]"> {sousCategorie.label}</span>
+                <span className="text-[#D4AF37]"> {sousCatLabel || sousCategorie.label}</span>
               )}{' '}
-              à <span className={sousCategorie ? 'text-white' : 'text-[#D4AF37]'}>{ville.label}</span>
+              {villeLabel.includes(' ') ? '' : ''}<span className={sousCategorie ? 'text-white' : 'text-[#D4AF37]'}>{villeLabel}</span>
             </h1>
 
             <p className="text-gray-400 text-base md:text-lg max-w-2xl leading-relaxed">
@@ -144,13 +156,13 @@ const MetierSousCatVillePage: React.FC = () => {
             <div className="flex flex-wrap gap-3 mt-8">
               <div className="flex items-center gap-2 text-sm text-gray-500">
                 <MapPin className="w-4 h-4 text-[#D4AF37]" />
-                <span>{ville.label}, Tunisie</span>
+                <span>{t.cityTunisia(villeLabel)}</span>
               </div>
               {!loading && (
                 <div className="flex items-center gap-2 text-sm text-gray-500">
                   <Search className="w-4 h-4 text-[#D4AF37]" />
                   <span>
-                    {total} établissement{total !== 1 ? 's' : ''} trouvé{total !== 1 ? 's' : ''}
+                    {t.establishmentCountFound(total)}
                   </span>
                 </div>
               )}
@@ -185,14 +197,14 @@ const MetierSousCatVillePage: React.FC = () => {
                   className="text-xl font-semibold text-white"
                   style={{ fontFamily: "'Playfair Display', serif" }}
                 >
-                  {total} résultat{total !== 1 ? 's' : ''}
+                  {t.resultsCount(total)}
                 </h2>
                 <Link
                   to={`/entreprises?categorie=${encodeURIComponent(metier.value)}&gouvernorat=${encodeURIComponent(ville.gouvernorat)}`}
                   className="flex items-center gap-1 text-sm text-[#D4AF37] hover:underline"
                 >
-                  Voir tous les professionnels
-                  <ArrowRight className="w-4 h-4" />
+                  {t.viewAllProfessionals}
+                  <ArrowIcon className={`w-4 h-4 ${isRTL ? 'rotate-180' : ''}`} />
                 </Link>
               </div>
 
@@ -212,8 +224,8 @@ const MetierSousCatVillePage: React.FC = () => {
               )}
 
               <p className="text-center text-[11px] text-gray-500 mt-6 leading-relaxed">
-                Les résultats affichés reposent sur des critères automatisés (avis publics, notes Google, complétude de la fiche).{' '}
-                <Link to="/info-avis" className="text-[#D4AF37] hover:underline">En savoir plus</Link>
+                {t.disclaimer}{' '}
+                <Link to="/info-avis" className="text-[#D4AF37] hover:underline">{t.learnMore}</Link>
               </p>
             </>
           ) : (
@@ -223,13 +235,13 @@ const MetierSousCatVillePage: React.FC = () => {
               </div>
               <h2 className="text-xl font-semibold text-white mb-3">
                 {sousCategorie
-                  ? `Aucun ${metier.label} spécialisé en ${sousCategorie.label} à ${ville.label} pour le moment.`
-                  : `Aucun résultat pour ${metier.label} à ${ville.label}`}
+                  ? t.noResultsTradeSubcat(metierLabel, sousCatLabel || sousCategorie.label, villeLabel)
+                  : t.noResultsTradeCity(metierLabel, villeLabel)}
               </h2>
               <p className="text-gray-500 text-sm mb-8 max-w-md mx-auto">
                 {sousCategorie
-                  ? `Essayez une recherche plus générale ou consultez tous les ${metier.label.toLowerCase()}s à ${ville.label}.`
-                  : `Aucun établissement n'a encore été référencé. Explorez tous les professionnels pour plus d'options.`}
+                  ? t.exploreAllProfessionals
+                  : t.noEstablishmentReferenced}
               </p>
               <div className="flex flex-wrap gap-3 justify-center">
                 {sousCategorie && (
@@ -237,14 +249,14 @@ const MetierSousCatVillePage: React.FC = () => {
                     to={`/${metier.slug}-${ville.slug}`}
                     className="inline-block px-6 py-3 border border-[#D4AF37]/60 text-[#D4AF37] text-sm font-medium rounded-lg hover:bg-[#D4AF37] hover:text-black transition-all"
                   >
-                    Tous les {metier.label.toLowerCase()}s à {ville.label}
+                    {t.allTradesInCity(metierLabel, villeLabel)}
                   </Link>
                 )}
                 <Link
                   to="/entreprises"
                   className="inline-block px-6 py-3 border border-gray-700 text-gray-400 text-sm font-medium rounded-lg hover:border-gray-500 hover:text-white transition-all"
                 >
-                  Voir tous les professionnels
+                  {t.viewAllProfessionals}
                 </Link>
               </div>
             </div>
@@ -256,7 +268,7 @@ const MetierSousCatVillePage: React.FC = () => {
                 className="text-lg font-semibold text-white mb-4"
                 style={{ fontFamily: "'Playfair Display', serif" }}
               >
-                Spécialisations disponibles à {ville.label}
+                {t.specializationsAvailable(villeLabel)}
               </h2>
               <div className="flex flex-wrap gap-2">
                 {sousCats.map(sc => (
@@ -269,7 +281,7 @@ const MetierSousCatVillePage: React.FC = () => {
                         : 'border-gray-700 hover:border-[#D4AF37]/50 text-gray-400 hover:text-[#D4AF37]'
                     }`}
                   >
-                    {metier.label} {sc.label}
+                    {metierLabel} {getSousCategorieLabel(sc, language)}
                   </Link>
                 ))}
               </div>
@@ -281,7 +293,7 @@ const MetierSousCatVillePage: React.FC = () => {
               className="text-lg font-semibold text-white mb-4"
               style={{ fontFamily: "'Playfair Display', serif" }}
             >
-              {metier.label} dans d'autres villes
+              {t.tradeInOtherCities(metierLabel)}
             </h2>
             <div className="flex flex-wrap gap-2">
               {otherVilles.map(v => (
@@ -294,7 +306,7 @@ const MetierSousCatVillePage: React.FC = () => {
                   }
                   className="px-3 py-1.5 rounded-full border border-gray-700 hover:border-[#D4AF37]/50 text-gray-400 hover:text-[#D4AF37] text-xs transition-all"
                 >
-                  {metier.label} {v.label}
+                  {t.tradeCity(metierLabel, getVilleLabel(v, language))}
                 </Link>
               ))}
             </div>
@@ -302,8 +314,8 @@ const MetierSousCatVillePage: React.FC = () => {
 
           <SeoFAQ
             title={sousCategorie
-              ? `Questions fréquentes - ${metier.label} ${sousCategorie.label} à ${ville.label}`
-              : `Questions fréquentes - ${metier.label} à ${ville.label}`
+              ? t.faqTitleTradeSubcatCity(metier.label, sousCategorie.label, ville.label)
+              : t.faqTitleTradeCity(metier.label, ville.label)
             }
             questions={faqData}
           />

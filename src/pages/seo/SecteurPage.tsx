@@ -14,13 +14,22 @@ import {
   getMetiersBySecteur,
   SEO_SECTEURS,
   SEO_VILLES,
+  getSecteurLabel,
+  getMetierLabel,
+  getVilleLabel,
 } from '../../lib/seoLandingData';
 import { usePaginatedSeoSecteur } from '../../hooks/usePaginatedSeoSecteur';
 import { getSecteurSeoMeta } from '../../lib/seoMetaTemplates';
+import { useLanguage } from '../../context/LanguageContext';
+import { useRTL } from '../../lib/useRTL';
+import { getSeoPageTranslations } from '../../lib/seoPageTranslations';
 
 const SecteurPage: React.FC = () => {
   const { secteurSlug } = useParams<{ secteurSlug: string }>();
   const secteur = secteurSlug ? findSecteurBySlug(secteurSlug) : undefined;
+  const { language } = useLanguage();
+  const { isRTL } = useRTL();
+  const t = getSeoPageTranslations(language);
 
   const { businesses, total, loading, loadingMore, hasMore, loadMore } =
     usePaginatedSeoSecteur(secteur?.slug, 20);
@@ -29,6 +38,7 @@ const SecteurPage: React.FC = () => {
     return <Navigate to="/" replace />;
   }
 
+  const secteurLabel = getSecteurLabel(secteur, language);
   const metiers = getMetiersBySecteur(secteur.slug);
   const popularVilles = SEO_VILLES.slice(0, 12);
   const otherSecteurs = SEO_SECTEURS.filter(s => s.slug !== secteur.slug).slice(0, 10);
@@ -40,16 +50,16 @@ const SecteurPage: React.FC = () => {
 
   const faqData = [
     {
-      question: `Comment trouver un professionnel du secteur ${secteur.label} en Tunisie ?`,
-      answer: `Utilisez la barre de recherche Dalil Tounes ou parcourez les métiers du secteur ${secteur.label} ci-dessous. Vous pouvez également filtrer par ville pour trouver un professionnel proche de chez vous.`,
+      question: t.faqFindSectorProfessional(secteur.label),
+      answer: t.faqFindSectorProfessionalAnswer(secteur.label),
     },
     {
-      question: `Quels métiers sont disponibles dans le secteur ${secteur.label} ?`,
-      answer: `Dalil Tounes référence ${metiers.length} métiers dans le secteur ${secteur.label}, dont ${metiers.slice(0, 4).map(m => m.label).join(', ')}${metiers.length > 4 ? ' et bien d\'autres' : ''}.`,
+      question: t.faqWhatTradesInSector(secteur.label),
+      answer: t.faqWhatTradesInSectorAnswer(metiers.length, metiers.slice(0, 4).map(m => m.label).join(', ')),
     },
     {
-      question: `Les entreprises du secteur ${secteur.label} sont-elles vérifiées ?`,
-      answer: `Les données proviennent de sources publiques ou sont communiquées par les professionnels. Les notes affichées sont basées sur les avis Google publics. Dalil Tounes n'attribue aucune note et n'effectue aucun classement éditorial.`,
+      question: t.faqSectorVerified(secteur.label),
+      answer: t.faqSectorVerifiedAnswer,
     },
   ];
 
@@ -74,6 +84,8 @@ const SecteurPage: React.FC = () => {
 
   const faqSchema = generateFAQSchema(faqData);
 
+  const ArrowIcon = ArrowRight;
+
   return (
     <>
       <SEOHead
@@ -86,7 +98,7 @@ const SecteurPage: React.FC = () => {
 
       <StructuredData data={[schemaData, breadcrumbSchema, faqSchema]} />
 
-      <div className="min-h-screen bg-[#0f0f0f]">
+      <div className="min-h-screen bg-[#0f0f0f]" dir={isRTL ? 'rtl' : 'ltr'}>
         {/* Hero */}
         <div
           className="relative py-16 px-4 overflow-hidden"
@@ -104,14 +116,14 @@ const SecteurPage: React.FC = () => {
           <div className="container mx-auto max-w-5xl relative">
             <Breadcrumb
               items={[
-                { label: 'Accueil', href: '/' },
-                { label: 'Entreprises', href: '/entreprises' },
-                { label: secteur.label },
+                { label: t.breadcrumbHome, href: '/' },
+                { label: t.breadcrumbBusinesses, href: '/entreprises' },
+                { label: secteurLabel },
               ]}
             />
 
-            <span className="inline-block mb-4 px-3 py-1 rounded-full border border-[#D4AF37]/40 text-[#D4AF37] text-xs font-medium tracking-widest uppercase">
-              Secteur
+            <span className={`inline-block mb-4 px-3 py-1 rounded-full border border-[#D4AF37]/40 text-[#D4AF37] text-xs font-medium ${isRTL ? '' : 'tracking-widest uppercase'}`}>
+              {t.badgeSector}
             </span>
 
             <h1
@@ -120,7 +132,7 @@ const SecteurPage: React.FC = () => {
                 fontFamily: "'Playfair Display', 'Cormorant Garamond', serif",
               }}
             >
-              <span className="text-[#D4AF37]">{secteur.label}</span> en Tunisie
+              <span className="text-[#D4AF37]">{secteurLabel}</span> {t.tunisia}
             </h1>
 
             <p className="text-gray-400 text-base md:text-lg max-w-2xl leading-relaxed">
@@ -132,15 +144,14 @@ const SecteurPage: React.FC = () => {
                 <div className="flex items-center gap-2 text-sm text-gray-500">
                   <Search className="w-4 h-4 text-[#D4AF37]" />
                   <span>
-                    {total} entreprise{total !== 1 ? 's' : ''} dans ce secteur
+                    {t.businessCountInSector(total)}
                   </span>
                 </div>
               )}
               <div className="flex items-center gap-2 text-sm text-gray-500">
                 <span className="text-[#D4AF37]">{metiers.length}</span>
                 <span>
-                  métier{metiers.length !== 1 ? 's' : ''} référencé
-                  {metiers.length !== 1 ? 's' : ''}
+                  {t.tradeCount(metiers.length)}
                 </span>
               </div>
             </div>
@@ -158,10 +169,10 @@ const SecteurPage: React.FC = () => {
           {metiers.length > 0 && (
             <div className="mb-10">
               <h2
-                className="text-xs font-semibold text-gray-400 mb-4 uppercase tracking-wider"
-                style={{ letterSpacing: '0.1em' }}
+                className={`text-xs font-semibold text-gray-400 mb-4 uppercase tracking-wider`}
+                style={{ letterSpacing: isRTL ? '0' : '0.1em' }}
               >
-                Métiers du secteur {secteur.label}
+                {t.tradesInSector(secteurLabel)}
               </h2>
               <div className="flex flex-wrap gap-2">
                 {metiers.map(m => (
@@ -170,7 +181,7 @@ const SecteurPage: React.FC = () => {
                     to={`/metier/${m.slug}`}
                     className="px-4 py-2 rounded-full border border-gray-700 hover:border-[#D4AF37]/60 text-gray-400 hover:text-[#D4AF37] text-sm transition-all duration-200"
                   >
-                    {m.label}
+                    {getMetierLabel(m, language)}
                   </Link>
                 ))}
               </div>
@@ -201,14 +212,14 @@ const SecteurPage: React.FC = () => {
                   className="text-xl font-semibold text-white"
                   style={{ fontFamily: "'Playfair Display', serif" }}
                 >
-                  {total} résultat{total !== 1 ? 's' : ''}
+                  {t.resultsCount(total)}
                 </h2>
                 <Link
                   to="/entreprises"
                   className="flex items-center gap-1 text-sm text-[#D4AF37] hover:underline"
                 >
-                  Tous les professionnels
-                  <ArrowRight className="w-4 h-4" />
+                  {t.allProfessionals}
+                  <ArrowIcon className={`w-4 h-4 ${isRTL ? 'rotate-180' : ''}`} />
                 </Link>
               </div>
 
@@ -228,13 +239,12 @@ const SecteurPage: React.FC = () => {
               )}
 
               <p className="text-center text-[11px] text-gray-500 mt-6 leading-relaxed">
-                Les résultats affichés reposent sur des critères automatisés (avis
-                publics, notes Google, complétude de la fiche).{' '}
+                {t.disclaimer}{' '}
                 <Link
                   to="/info-avis"
                   className="text-[#D4AF37] hover:underline"
                 >
-                  En savoir plus
+                  {t.learnMore}
                 </Link>
               </p>
             </>
@@ -244,16 +254,16 @@ const SecteurPage: React.FC = () => {
                 <AlertCircle className="w-8 h-8 text-gray-600" />
               </div>
               <h2 className="text-xl font-semibold text-white mb-3">
-                Aucune entreprise dans le secteur {secteur.label} pour l'instant
+                {t.noResultsSector(secteurLabel)}
               </h2>
               <p className="text-gray-500 text-sm mb-8">
-                Référencez votre établissement gratuitement dès maintenant.
+                {t.registerEstablishmentFree}
               </p>
               <Link
                 to="/abonnement"
                 className="inline-block px-8 py-3 bg-[#D4AF37] text-black text-sm font-semibold rounded-lg hover:bg-[#c9a42e] transition-all"
               >
-                Inscrire mon établissement
+                {t.registerEstablishment}
               </Link>
             </div>
           )}
@@ -264,7 +274,7 @@ const SecteurPage: React.FC = () => {
               className="text-lg font-semibold text-white mb-4"
               style={{ fontFamily: "'Playfair Display', serif" }}
             >
-              {secteur.label} par ville
+              {t.sectorByCity(secteurLabel)}
             </h2>
             <div className="flex flex-wrap gap-2">
               {popularVilles.map(v => {
@@ -275,7 +285,7 @@ const SecteurPage: React.FC = () => {
                     to={`/${firstMetier.slug}-${v.slug}`}
                     className="px-3 py-1.5 rounded-full border border-gray-700 hover:border-[#D4AF37]/50 text-gray-400 hover:text-[#D4AF37] text-xs transition-all"
                   >
-                    {v.label}
+                    {getVilleLabel(v, language)}
                   </Link>
                 ) : null;
               })}
@@ -288,7 +298,7 @@ const SecteurPage: React.FC = () => {
               className="text-lg font-semibold text-white mb-4"
               style={{ fontFamily: "'Playfair Display', serif" }}
             >
-              Autres secteurs
+              {t.otherSectors}
             </h2>
             <div className="flex flex-wrap gap-2">
               {otherSecteurs.map(s => (
@@ -297,7 +307,7 @@ const SecteurPage: React.FC = () => {
                   to={`/secteur/${s.slug}`}
                   className="px-3 py-1.5 rounded-full border border-gray-700 hover:border-[#D4AF37]/50 text-gray-400 hover:text-[#D4AF37] text-xs transition-all"
                 >
-                  {s.label}
+                  {getSecteurLabel(s, language)}
                 </Link>
               ))}
             </div>
@@ -305,7 +315,7 @@ const SecteurPage: React.FC = () => {
 
           {/* FAQ */}
           <SeoFAQ
-            title={`Questions fréquentes - ${secteur.label}`}
+            title={t.faqTitle(secteur.label)}
             questions={faqData}
             includeSchema={false}
           />

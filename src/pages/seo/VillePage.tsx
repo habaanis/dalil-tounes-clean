@@ -6,17 +6,23 @@ import SearchBar from '../../components/SearchBar';
 import Breadcrumb from '../../components/seo/Breadcrumb';
 import SeoBusinessCard from '../../components/seo/SeoBusinessCard';
 import LoadMoreButton from '../../components/seo/LoadMoreButton';
-import { findVilleBySlug, SEO_METIERS, SEO_VILLES } from '../../lib/seoLandingData';
+import { findVilleBySlug, SEO_METIERS, SEO_VILLES, getMetierLabel, getVilleLabel } from '../../lib/seoLandingData';
 import { getVilleSeoMeta } from '../../lib/seoMetaTemplates';
 import { usePaginatedSeoBusinesses } from '../../hooks/usePaginatedSeoBusinesses';
 import StructuredData from '../../components/StructuredData';
 import { generateBreadcrumbSchema } from '../../lib/structuredDataSchemas';
 import SeoFAQ from '../../components/seo/SeoFAQ';
 import TopRecommendedSection from '../../components/seo/TopRecommendedSection';
+import { useLanguage } from '../../context/LanguageContext';
+import { useRTL } from '../../lib/useRTL';
+import { getSeoPageTranslations } from '../../lib/seoPageTranslations';
 
 const VillePage: React.FC = () => {
   const { villeSlug } = useParams<{ villeSlug: string }>();
   const ville = villeSlug ? findVilleBySlug(villeSlug) : undefined;
+  const { language } = useLanguage();
+  const { isRTL } = useRTL();
+  const t = getSeoPageTranslations(language);
 
   const { businesses, total, loading, loadingMore, hasMore, loadMore } = usePaginatedSeoBusinesses(
     { city: ville?.label, pageSize: 20 },
@@ -27,15 +33,17 @@ const VillePage: React.FC = () => {
     return <Navigate to="/" replace />;
   }
 
+  const villeLabel = getVilleLabel(ville, language);
+
   const seo = getVilleSeoMeta(ville.label, ville.slug);
   const pageTitle = seo.title;
   const pageDescription = seo.description;
   const pageKeywords = seo.keywords;
 
   const faqData = [
-    { question: `Comment trouver un professionnel à ${ville.label} ?`, answer: `Utilisez la barre de recherche Dalil Tounes ou parcourez les catégories disponibles pour ${ville.label}. Vous pouvez filtrer par métier : médecin, avocat, plombier, coiffeur, restaurant et bien d'autres.` },
-    { question: `Quels types d'entreprises sont référencées à ${ville.label} ?`, answer: `Dalil Tounes référence tous types d'établissements à ${ville.label} : professionnels de santé, artisans, commerces, restaurants, hôtels, services juridiques, beauté et bien-être, et plus encore.` },
-    { question: `Les informations des entreprises à ${ville.label} sont-elles fiables ?`, answer: `Les données proviennent de sources publiques ou sont communiquées par les entreprises elles-mêmes. Les notes affichées sont basées sur les avis Google publics. Dalil Tounes n'attribue aucune note et n'effectue aucun classement éditorial.` },
+    { question: t.faqHowToFindProfessionalCity(ville.label), answer: t.faqHowToFindProfessionalCityAnswer(ville.label) },
+    { question: t.faqWhatBusinessesCity(ville.label), answer: t.faqWhatBusinessesCityAnswer(ville.label) },
+    { question: t.faqReliableCity(ville.label), answer: t.faqReliableCityAnswer },
   ];
 
   const otherVilles = SEO_VILLES.filter(v => v.slug !== ville.slug).slice(0, 12);
@@ -67,6 +75,8 @@ const VillePage: React.FC = () => {
     ['medecin', 'dentiste', 'avocat', 'restaurant', 'coiffeur', 'pharmacie', 'garage', 'hotel', 'notaire', 'expert-comptable', 'architecte', 'plombier'].includes(m.slug)
   );
 
+  const ArrowIcon = isRTL ? ArrowRight : ArrowRight;
+
   return (
     <>
       <SEOHead
@@ -79,7 +89,7 @@ const VillePage: React.FC = () => {
 
       <StructuredData data={[schemaData, breadcrumbSchema]} />
 
-      <div className="min-h-screen bg-[#0f0f0f]">
+      <div className="min-h-screen bg-[#0f0f0f]" dir={isRTL ? 'rtl' : 'ltr'}>
         <div
           className="relative py-16 px-4 overflow-hidden"
           style={{
@@ -95,22 +105,22 @@ const VillePage: React.FC = () => {
           <div className="container mx-auto max-w-5xl relative">
             <Breadcrumb
               items={[
-                { label: 'Accueil', href: '/' },
-                { label: 'Entreprises', href: '/entreprises' },
-                { label: ville.label },
+                { label: t.breadcrumbHome, href: '/' },
+                { label: t.breadcrumbBusinesses, href: '/entreprises' },
+                { label: villeLabel },
               ]}
             />
 
-            <span className="inline-block mb-4 px-3 py-1 rounded-full border border-[#D4AF37]/40 text-[#D4AF37] text-xs font-medium tracking-widest uppercase">
-              {ville.gouvernorat}, Tunisie
+            <span className={`inline-block mb-4 px-3 py-1 rounded-full border border-[#D4AF37]/40 text-[#D4AF37] text-xs font-medium ${isRTL ? '' : 'tracking-widest uppercase'}`}>
+              {ville.gouvernorat}, {t.tunisia}
             </span>
 
             <h1
               className="text-3xl md:text-5xl font-bold text-white mb-4 leading-tight"
               style={{ fontFamily: "'Playfair Display', 'Cormorant Garamond', serif" }}
             >
-              Plateforme{' '}
-              <span className="text-[#D4AF37]">{ville.label}</span>
+              {t.platform('')}{' '}
+              <span className="text-[#D4AF37]">{villeLabel}</span>
             </h1>
 
             <p className="text-gray-400 text-base md:text-lg max-w-2xl leading-relaxed">
@@ -120,7 +130,7 @@ const VillePage: React.FC = () => {
             {!loading && (
               <div className="flex items-center gap-2 mt-6 text-sm text-gray-500">
                 <Search className="w-4 h-4 text-[#D4AF37]" />
-                <span>{total} établissement{total !== 1 ? 's' : ''} trouvé{total !== 1 ? 's' : ''}</span>
+                <span>{t.establishmentCountFound(total)}</span>
               </div>
             )}
           </div>
@@ -132,8 +142,8 @@ const VillePage: React.FC = () => {
           </div>
 
           <div className="mb-10">
-            <h2 className="text-xs font-semibold text-gray-400 mb-4 uppercase tracking-wider" style={{ letterSpacing: '0.1em' }}>
-              Chercher par métier à {ville.label}
+            <h2 className={`text-xs font-semibold text-gray-400 mb-4 uppercase tracking-wider ${isRTL ? '' : 'uppercase'}`} style={{ letterSpacing: isRTL ? '0' : '0.1em' }}>
+              {t.searchByTrade} {villeLabel}
             </h2>
             <div className="flex flex-wrap gap-2">
               {popularMetiers.map(metier => (
@@ -142,7 +152,7 @@ const VillePage: React.FC = () => {
                   to={`/${metier.slug}-${ville.slug}`}
                   className="px-4 py-2 rounded-full border border-gray-700 hover:border-[#D4AF37]/60 text-gray-400 hover:text-[#D4AF37] text-sm transition-all duration-200"
                 >
-                  {metier.label}
+                  {getMetierLabel(metier, language)}
                 </Link>
               ))}
             </div>
@@ -173,14 +183,14 @@ const VillePage: React.FC = () => {
                   className="text-xl font-semibold text-white"
                   style={{ fontFamily: "'Playfair Display', serif" }}
                 >
-                  {total} résultat{total !== 1 ? 's' : ''}
+                  {t.resultsCount(total)}
                 </h2>
                 <Link
                   to={`/entreprises?gouvernorat=${encodeURIComponent(ville.gouvernorat)}`}
                   className="flex items-center gap-1 text-sm text-[#D4AF37] hover:underline"
                 >
-                  Tous les professionnels
-                  <ArrowRight className="w-4 h-4" />
+                  {t.allProfessionals}
+                  <ArrowIcon className={`w-4 h-4 ${isRTL ? 'rotate-180' : ''}`} />
                 </Link>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -204,23 +214,23 @@ const VillePage: React.FC = () => {
                 <AlertCircle className="w-8 h-8 text-gray-600" />
               </div>
               <h2 className="text-xl font-semibold text-white mb-3">
-                Aucun établissement à {ville.label} pour l'instant
+                {t.noResultsCity(villeLabel)}
               </h2>
               <p className="text-gray-500 text-sm mb-8">
-                Référencez votre établissement gratuitement dès maintenant.
+                {t.registerEstablishmentFree}
               </p>
               <Link
                 to="/abonnement"
                 className="inline-block px-8 py-3 bg-[#D4AF37] text-black text-sm font-semibold rounded-lg hover:bg-[#c9a42e] transition-all"
               >
-                Inscrire mon établissement
+                {t.registerEstablishment}
               </Link>
             </div>
           )}
           {businesses.length > 0 && (
             <p className="text-center text-[11px] text-gray-500 mt-6 leading-relaxed">
-              Les résultats affichés reposent sur des critères automatisés (avis publics, notes Google, complétude de la fiche).{' '}
-              <Link to="/info-avis" className="text-[#D4AF37] hover:underline">En savoir plus</Link>
+              {t.disclaimer}{' '}
+              <Link to="/info-avis" className="text-[#D4AF37] hover:underline">{t.learnMore}</Link>
             </p>
           )}
 
@@ -229,7 +239,7 @@ const VillePage: React.FC = () => {
               className="text-lg font-semibold text-white mb-4"
               style={{ fontFamily: "'Playfair Display', serif" }}
             >
-              Autres villes en Tunisie
+              {t.otherCities}
             </h2>
             <div className="flex flex-wrap gap-2">
               {otherVilles.map(v => (
@@ -238,13 +248,13 @@ const VillePage: React.FC = () => {
                   to={`/ville/${v.slug}`}
                   className="px-3 py-1.5 rounded-full border border-gray-700 hover:border-[#D4AF37]/50 text-gray-400 hover:text-[#D4AF37] text-xs transition-all"
                 >
-                  {v.label}
+                  {getVilleLabel(v, language)}
                 </Link>
               ))}
             </div>
           </div>
 
-          <SeoFAQ title={`Questions fréquentes - ${ville.label}`} questions={faqData} />
+          <SeoFAQ title={t.faqTitle(ville.label)} questions={faqData} />
         </div>
       </div>
     </>
