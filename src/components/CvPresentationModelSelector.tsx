@@ -128,6 +128,22 @@ export function getPresentationModelLabel(language: string, model: PresentationM
   return model === 'professional' ? copy.professional : copy.portfolio;
 }
 
+const professionalPreviewByLanguage: Record<string, string> = {
+  fr: '/cv-preview/index.html?lang=fr&model=professional',
+  ar: '/cv-preview/index.html?lang=ar&model=professional',
+  en: '/cv-preview/index.html?lang=en&model=professional',
+  it: '/cv-preview/index.html?lang=it&model=professional',
+  ru: '/cv-preview/index.html?lang=ru&model=professional',
+};
+
+const portfolioPreviewByLanguage: Record<string, string> = {
+  fr: '/cv-preview/index.html?lang=fr&model=portfolio',
+  ar: '/cv-preview/index.html?lang=ar&model=portfolio',
+  en: '/cv-preview/index.html?lang=en&model=portfolio',
+  it: '/cv-preview/index.html?lang=it&model=portfolio',
+  ru: '/cv-preview/index.html?lang=ru&model=portfolio',
+};
+
 function ModelPreview({
   src,
   alt,
@@ -272,23 +288,14 @@ export function CvPresentationModelSelector({
             className={`mt-3 flex w-full justify-center overflow-hidden rounded-2xl border bg-[#F7F5EF] p-2 transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value ? 'border-[#D6AF2E] shadow-md' : 'border-slate-200'}`}
             aria-label={value === 'portfolio' ? copy.portfolio : copy.professional}
           >
-            {value === 'portfolio' ? (
-              <img
-                src="/images/cv-portfolio-aux-saveurs-anis-original.svg?v=2"
-                alt={`${copy.portfolio} — Aux saveurs d’Anis`}
-                className="h-[390px] w-auto max-w-none object-contain object-top"
+            <div className="pointer-events-none h-[390px] w-[184px] overflow-hidden">
+              <iframe
+                title={`${value === 'portfolio' ? copy.portfolio : copy.professional} — Aux saveurs d’Anis`}
+                src={(value === 'portfolio' ? portfolioPreviewByLanguage : professionalPreviewByLanguage)[language as string] ?? (value === 'portfolio' ? portfolioPreviewByLanguage.fr : professionalPreviewByLanguage.fr)}
+                className="h-[830px] w-[390px] origin-top-left scale-[0.47] border-0"
                 loading="lazy"
-                decoding="async"
               />
-            ) : (
-              <img
-                src="/images/cv-business-portfolio-aux-saveurs-anis.png"
-                alt={`${copy.professional} — Aux saveurs d’Anis`}
-                className="h-[390px] w-auto max-w-none object-contain object-top"
-                loading="lazy"
-                decoding="async"
-              />
-            )}
+            </div>
           </button>
         </div>
 
@@ -304,6 +311,7 @@ export function CvPresentationModelSelector({
             alt={`${copy.professional} — Aux saveurs d’Anis`}
             enlargeLabel={`${copy.enlarge} — ${copy.professional}`}
             onEnlarge={() => setExpandedModel('professional')}
+            liveSrc={professionalPreviewByLanguage[language as string] ?? professionalPreviewByLanguage.fr}
           />
           <span className="mt-3 min-w-0">
             <span className="block text-sm font-black leading-5 text-[#4A123F] sm:text-lg">{copy.professional}</span>
@@ -322,6 +330,7 @@ export function CvPresentationModelSelector({
             alt={`${copy.portfolio} — Aux saveurs d’Anis`}
             enlargeLabel={`${copy.enlarge} — ${copy.portfolio}`}
             onEnlarge={() => setExpandedModel('portfolio')}
+            liveSrc={portfolioPreviewByLanguage[language as string] ?? portfolioPreviewByLanguage.fr}
           />
           <span className="mt-3 min-w-0">
             <span className="block text-sm font-black leading-5 text-[#4A123F] sm:text-lg">{copy.portfolio}</span>
@@ -374,21 +383,14 @@ export function CvPresentationModelSelector({
             >
               <X className="h-5 w-5" aria-hidden="true" />
             </button>
-            {expandedModel === 'portfolio' ? (
-              <img
-                src="/images/cv-portfolio-aux-saveurs-anis-original.svg?v=2"
-                alt={`${copy.portfolio} — Aux saveurs d’Anis`}
-                className="mx-auto mt-1 max-h-[82dvh] max-w-[calc(100vw-48px)] object-contain object-top"
-                decoding="async"
+            <div className="mx-auto mt-1 max-h-[82dvh] overflow-hidden rounded-xl" style={{ width: '390px', maxWidth: 'calc(100vw - 48px)' }}>
+              <iframe
+                title={`${expandedModel === 'portfolio' ? copy.portfolio : copy.professional} — Aux saveurs d’Anis`}
+                src={(expandedModel === 'portfolio' ? portfolioPreviewByLanguage : professionalPreviewByLanguage)[language as string] ?? (expandedModel === 'portfolio' ? portfolioPreviewByLanguage.fr : professionalPreviewByLanguage.fr)}
+                className="h-[830px] w-[390px] border-0"
+                loading="lazy"
               />
-            ) : (
-              <img
-                src="/images/cv-business-portfolio-aux-saveurs-anis.png"
-                alt={`${copy.professional} — Aux saveurs d’Anis`}
-                className="mx-auto mt-1 max-h-[82dvh] max-w-[calc(100vw-48px)] object-contain object-top"
-                decoding="async"
-              />
-            )}
+            </div>
             <a
               href={`/entreprise/sousse/aux-saveurs-d-anis?preview-model=${expandedModel}&source=subscription&lang=${language}`}
               target="_blank"
