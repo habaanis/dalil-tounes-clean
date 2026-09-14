@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { X, ZoomIn } from 'lucide-react';
-import { ProfessionalPreviewInline, PortfolioPreviewInline, EnlargedPreviewInline } from './CvPreviewInline';
 
 type SupportedLanguage = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 
@@ -38,9 +37,9 @@ const COPY: Record<SupportedLanguage, Copy> = {
     note: 'Les deux modèles sont disponibles avec CV Business Artisan et CV Business Premium, sans changement de prix ni de contenu.',
     selectedFormula: 'Formule',
     selectedModel: 'Modèle',
-    chooseFormulaFirst: 'Choisissez d’abord CV Business Artisan ou CV Business Premium ci-dessus.',
+    chooseFormulaFirst: "Choisissez d'abord CV Business Artisan ou CV Business Premium ci-dessus.",
     chooseModel: 'Choisissez ensuite votre modèle de présentation.',
-    swipeModels: 'Glissez pour voir l’autre modèle',
+    swipeModels: "Glissez pour voir l'autre modèle",
     continue: 'Continuer avec ce choix',
     enlarge: 'Agrandir le modèle',
     close: 'Fermer',
@@ -86,7 +85,7 @@ const COPY: Record<SupportedLanguage, Copy> = {
   },
   it: {
     eyebrow: 'La tua scelta',
-    title: 'Componi il tuo CV Business',
+    title: 'Componi il tuo CV business',
     subtitle: 'Scegli la formula, poi il modello più adatto alla tua professione.',
     professional: 'Modello Professionale',
     professionalDescription: 'Chiaro, strutturato e diretto. Ideale per presentare rapidamente attività e informazioni.',
@@ -97,7 +96,7 @@ const COPY: Record<SupportedLanguage, Copy> = {
     selectedModel: 'Modello',
     chooseFormulaFirst: 'Scegli prima CV Business Artisan o CV Business Premium qui sopra.',
     chooseModel: 'Poi scegli il modello di presentazione.',
-    swipeModels: 'Scorri per vedere l’altro modello',
+    swipeModels: "Scorri per vedere l'altro modello",
     continue: 'Continua con questa scelta',
     enlarge: 'Ingrandisci il modello',
     close: 'Chiudi',
@@ -124,27 +123,34 @@ const COPY: Record<SupportedLanguage, Copy> = {
   },
 };
 
+const PROFESSIONAL_IMAGE = '/images/cv-business-portfolio-aux-saveurs-anis.png';
+const PORTFOLIO_IMAGE = '/images/cv-portfolio-aux-saveurs-anis-original.svg?v=2';
+
 export function getPresentationModelLabel(language: string, model: PresentationModel): string {
   const copy = COPY[(language as SupportedLanguage)] ?? COPY.fr;
   return model === 'professional' ? copy.professional : copy.portfolio;
 }
 
 function ModelPreview({
+  src,
   alt,
   enlargeLabel,
   onEnlarge,
-  children,
 }: {
+  src: string;
   alt: string;
   enlargeLabel: string;
   onEnlarge: () => void;
-  children: React.ReactNode;
 }) {
   return (
     <div className="group relative flex h-[300px] w-full items-start justify-center overflow-hidden rounded-xl border border-slate-200 bg-[#F7F5EF] p-2 shadow-inner sm:rounded-2xl md:h-[420px]">
-      <div className="pointer-events-none h-full w-[184px] overflow-hidden transition duration-300 group-hover:scale-[1.06]">
-        {children}
-      </div>
+      <img
+        src={src}
+        alt={alt}
+        className="h-full w-full object-contain object-top transition duration-300 group-hover:scale-[1.06]"
+        loading="lazy"
+        decoding="async"
+      />
       <button
         type="button"
         onClick={(event) => {
@@ -200,6 +206,9 @@ export function CvPresentationModelSelector({
       document.removeEventListener('keydown', closeOnEscape);
     };
   }, [expandedModel]);
+
+  const currentImage = expandedModel === 'portfolio' ? PORTFOLIO_IMAGE : PROFESSIONAL_IMAGE;
+  const mobileImage = value === 'portfolio' ? PORTFOLIO_IMAGE : PROFESSIONAL_IMAGE;
 
   return (
     <section id="cv-presentation-models" className="mt-5 scroll-mt-24 rounded-3xl border border-[#D6AF2E]/55 bg-white p-3 shadow-[0_8px_24px_rgba(74,18,63,0.05)] sm:p-5">
@@ -262,11 +271,13 @@ export function CvPresentationModelSelector({
             className={`mt-3 flex w-full justify-center overflow-hidden rounded-2xl border bg-[#F7F5EF] p-2 transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value ? 'border-[#D6AF2E] shadow-md' : 'border-slate-200'}`}
             aria-label={value === 'portfolio' ? copy.portfolio : copy.professional}
           >
-            <div className="pointer-events-none h-[390px] w-[184px] overflow-hidden">
-              {value === 'portfolio'
-                ? <PortfolioPreviewInline language={language} />
-                : <ProfessionalPreviewInline language={language} />}
-            </div>
+            <img
+              src={mobileImage}
+              alt={`${value === 'portfolio' ? copy.portfolio : copy.professional} — Aux saveurs d'Anis`}
+              className="h-[390px] w-auto max-w-none object-contain object-top"
+              loading="lazy"
+              decoding="async"
+            />
           </button>
         </div>
 
@@ -278,12 +289,11 @@ export function CvPresentationModelSelector({
           className={`flex min-w-0 flex-col rounded-2xl border p-3.5 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'professional' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
         >
           <ModelPreview
-            alt={`${copy.professional} — Aux saveurs d’Anis`}
+            src={PROFESSIONAL_IMAGE}
+            alt={`${copy.professional} — Aux saveurs d'Anis`}
             enlargeLabel={`${copy.enlarge} — ${copy.professional}`}
             onEnlarge={() => setExpandedModel('professional')}
-          >
-            <ProfessionalPreviewInline language={language} />
-          </ModelPreview>
+          />
           <span className="mt-3 min-w-0">
             <span className="block text-sm font-black leading-5 text-[#4A123F] sm:text-lg">{copy.professional}</span>
             <span className="mt-1.5 hidden text-sm leading-5 text-slate-600 sm:block">{copy.professionalDescription}</span>
@@ -297,12 +307,11 @@ export function CvPresentationModelSelector({
           className={`flex min-w-0 flex-col rounded-2xl border p-3.5 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'portfolio' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
         >
           <ModelPreview
-            alt={`${copy.portfolio} — Aux saveurs d’Anis`}
+            src={PORTFOLIO_IMAGE}
+            alt={`${copy.portfolio} — Aux saveurs d'Anis`}
             enlargeLabel={`${copy.enlarge} — ${copy.portfolio}`}
             onEnlarge={() => setExpandedModel('portfolio')}
-          >
-            <PortfolioPreviewInline language={language} />
-          </ModelPreview>
+          />
           <span className="mt-3 min-w-0">
             <span className="block text-sm font-black leading-5 text-[#4A123F] sm:text-lg">{copy.portfolio}</span>
             <span className="mt-1.5 hidden text-sm leading-5 text-slate-600 sm:block">{copy.portfolioDescription}</span>
@@ -354,9 +363,12 @@ export function CvPresentationModelSelector({
             >
               <X className="h-5 w-5" aria-hidden="true" />
             </button>
-            <div className="mx-auto mt-1 max-h-[82dvh] overflow-hidden rounded-xl" style={{ width: '390px', maxWidth: 'calc(100vw - 48px)' }}>
-              <EnlargedPreviewInline model={expandedModel} language={language} />
-            </div>
+            <img
+              src={currentImage}
+              alt={`${expandedModel === 'portfolio' ? copy.portfolio : copy.professional} — Aux saveurs d'Anis`}
+              className="mx-auto mt-1 max-h-[82dvh] max-w-[calc(100vw-48px)] object-contain object-top"
+              decoding="async"
+            />
             <a
               href={`/entreprise/sousse/aux-saveurs-d-anis?preview-model=${expandedModel}&source=subscription&lang=${language}`}
               target="_blank"
