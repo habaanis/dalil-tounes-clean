@@ -50,15 +50,15 @@ const SecteurPage: React.FC = () => {
 
   const faqData = [
     {
-      question: t.faqFindSectorProfessional(secteur.label),
-      answer: t.faqFindSectorProfessionalAnswer(secteur.label),
+      question: t.faqFindSectorProfessional(secteurLabel),
+      answer: t.faqFindSectorProfessionalAnswer(secteurLabel),
     },
     {
-      question: t.faqWhatTradesInSector(secteur.label),
-      answer: t.faqWhatTradesInSectorAnswer(metiers.length, metiers.slice(0, 4).map(m => m.label).join(', ')),
+      question: t.faqWhatTradesInSector(secteurLabel),
+      answer: t.faqWhatTradesInSectorAnswer(metiers.length, metiers.slice(0, 4).map(m => getMetierLabel(m, language)).join(', ')),
     },
     {
-      question: t.faqSectorVerified(secteur.label),
+      question: t.faqSectorVerified(secteurLabel),
       answer: t.faqSectorVerifiedAnswer,
     },
   ];
@@ -315,7 +315,7 @@ const SecteurPage: React.FC = () => {
 
           {/* FAQ */}
           <SeoFAQ
-            title={t.faqTitle(secteur.label)}
+            title={t.faqTitle(secteurLabel)}
             questions={faqData}
             includeSchema={false}
           />

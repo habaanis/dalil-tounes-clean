@@ -44,8 +44,8 @@ const MetierVillePage: React.FC = () => {
   const sortedBusinesses = businesses;
 
   const faqData = [
-    { question: t.faqHowToFindTradeCity(metier.label, ville.label), answer: t.faqHowToFindTradeCityAnswer },
-    { question: t.faqHowManyTradeCity(metier.label, ville.label), answer: t.faqHowManyTradeCityAnswer(metier.label, ville.label, ville.gouvernorat) },
+    { question: t.faqHowToFindTradeCity(metierLabel, villeLabel), answer: t.faqHowToFindTradeCityAnswer },
+    { question: t.faqHowManyTradeCity(metierLabel, villeLabel), answer: t.faqHowManyTradeCityAnswer(metierLabel, villeLabel, ville.gouvernorat) },
   ];
 
   const schemaData = {
@@ -233,7 +233,7 @@ const MetierVillePage: React.FC = () => {
             </div>
           </div>
 
-          <SeoFAQ title={t.faqTitleTradeCity(metier.label, ville.label)} questions={faqData} />
+          <SeoFAQ title={t.faqTitleTradeCity(metierLabel, villeLabel)} questions={faqData} />
         </div>
       </div>
     </>

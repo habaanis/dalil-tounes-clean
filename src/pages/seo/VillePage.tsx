@@ -41,9 +41,9 @@ const VillePage: React.FC = () => {
   const pageKeywords = seo.keywords;
 
   const faqData = [
-    { question: t.faqHowToFindProfessionalCity(ville.label), answer: t.faqHowToFindProfessionalCityAnswer(ville.label) },
-    { question: t.faqWhatBusinessesCity(ville.label), answer: t.faqWhatBusinessesCityAnswer(ville.label) },
-    { question: t.faqReliableCity(ville.label), answer: t.faqReliableCityAnswer },
+    { question: t.faqHowToFindProfessionalCity(villeLabel), answer: t.faqHowToFindProfessionalCityAnswer(villeLabel) },
+    { question: t.faqWhatBusinessesCity(villeLabel), answer: t.faqWhatBusinessesCityAnswer(villeLabel) },
+    { question: t.faqReliableCity(villeLabel), answer: t.faqReliableCityAnswer },
   ];
 
   const otherVilles = SEO_VILLES.filter(v => v.slug !== ville.slug).slice(0, 12);
@@ -254,7 +254,7 @@ const VillePage: React.FC = () => {
             </div>
           </div>
 
-          <SeoFAQ title={t.faqTitle(ville.label)} questions={faqData} />
+          <SeoFAQ title={t.faqTitle(villeLabel)} questions={faqData} />
         </div>
       </div>
     </>

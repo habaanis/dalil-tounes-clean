@@ -73,12 +73,12 @@ const MetierSousCatVillePage: React.FC = () => {
 
   const faqData = sousCategorie
     ? [
-        { question: t.faqFindTradeSubcatCity(metier.label, sousCategorie.label, ville.label), answer: t.faqFindTradeSubcatCityAnswer(metier.label, sousCategorie.label, ville.label) },
-        { question: t.faqTradeSubcatVerified(metier.label, sousCategorie.label, ville.label), answer: t.faqTradeSubcatVerifiedAnswer },
+        { question: t.faqFindTradeSubcatCity(metierLabel, sousCatLabel || sousCategorie.label, villeLabel), answer: t.faqFindTradeSubcatCityAnswer(metierLabel, sousCatLabel || sousCategorie.label, villeLabel) },
+        { question: t.faqTradeSubcatVerified(metierLabel, sousCatLabel || sousCategorie.label, villeLabel), answer: t.faqTradeSubcatVerifiedAnswer },
       ]
     : [
-        { question: t.faqHowToFindTradeCity(metier.label, ville.label), answer: t.faqHowToFindTradeCityAnswer },
-        { question: t.faqHowManyTradeCity(metier.label, ville.label), answer: t.faqHowManyTradeCityAnswer(metier.label, ville.label, ville.gouvernorat) },
+        { question: t.faqHowToFindTradeCity(metierLabel, villeLabel), answer: t.faqHowToFindTradeCityAnswer },
+        { question: t.faqHowManyTradeCity(metierLabel, villeLabel), answer: t.faqHowManyTradeCityAnswer(metierLabel, villeLabel, ville.gouvernorat) },
       ];
 
   const sousCats = SEO_SOUS_CATEGORIES[metier.slug] ?? [];
@@ -314,8 +314,8 @@ const MetierSousCatVillePage: React.FC = () => {
 
           <SeoFAQ
             title={sousCategorie
-              ? t.faqTitleTradeSubcatCity(metier.label, sousCategorie.label, ville.label)
-              : t.faqTitleTradeCity(metier.label, ville.label)
+              ? t.faqTitleTradeSubcatCity(metierLabel, sousCatLabel || sousCategorie.label, villeLabel)
+              : t.faqTitleTradeCity(metierLabel, villeLabel)
             }
             questions={faqData}
           />

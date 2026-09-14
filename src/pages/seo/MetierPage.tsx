@@ -40,9 +40,9 @@ const MetierPage: React.FC = () => {
   const pageKeywords = seo.keywords;
 
   const faqData = [
-    { question: t.faqHowToFindTradeTunisia(metier.label), answer: t.faqHowToFindTradeTunisiaAnswer(metier.label) },
-    { question: t.faqReliableTrade(metier.label), answer: t.faqReliableTradeAnswer },
-    { question: t.faqRegisterTrade(metier.label), answer: t.faqRegisterTradeAnswer },
+    { question: t.faqHowToFindTradeTunisia(metierLabel), answer: t.faqHowToFindTradeTunisiaAnswer(metierLabel) },
+    { question: t.faqReliableTrade(metierLabel), answer: t.faqReliableTradeAnswer },
+    { question: t.faqRegisterTrade(metierLabel), answer: t.faqRegisterTradeAnswer },
   ];
 
   const schemaData = {
@@ -243,7 +243,7 @@ const MetierPage: React.FC = () => {
             </div>
           )}
 
-          <SeoFAQ title={t.faqTitle(metier.label)} questions={faqData} />
+          <SeoFAQ title={t.faqTitle(metierLabel)} questions={faqData} />
         </div>
       </div>
     </>

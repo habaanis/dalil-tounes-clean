@@ -55,16 +55,16 @@ const GouvernoratPage: React.FC = () => {
 
   const faqData = [
     {
-      question: t.faqWhatBusinessesGovernorate(gouvernorat.label),
-      answer: t.faqWhatBusinessesGovernorateAnswer(gouvernorat.label),
+      question: t.faqWhatBusinessesGovernorate(gouvLabel),
+      answer: t.faqWhatBusinessesGovernorateAnswer(gouvLabel),
     },
     {
-      question: t.faqFindGovernorateProfessional(gouvernorat.label),
-      answer: t.faqFindGovernorateProfessionalAnswer(gouvernorat.label, villes.length > 0 ? villes.slice(0, 3).map(v => v.label).join(', ') : ''),
+      question: t.faqFindGovernorateProfessional(gouvLabel),
+      answer: t.faqFindGovernorateProfessionalAnswer(gouvLabel, villes.length > 0 ? villes.slice(0, 3).map(v => getVilleLabel(v, language)).join(', ') : ''),
     },
     {
-      question: t.faqHowManyCitiesGovernorate(gouvernorat.label),
-      answer: t.faqHowManyCitiesGovernorateAnswer(villes.length, gouvernorat.label, villes.length > 0 ? villes.map(v => v.label).join(', ') : ''),
+      question: t.faqHowManyCitiesGovernorate(gouvLabel),
+      answer: t.faqHowManyCitiesGovernorateAnswer(villes.length, gouvLabel, villes.length > 0 ? villes.map(v => getVilleLabel(v, language)).join(', ') : ''),
     },
   ];
 
@@ -354,7 +354,7 @@ const GouvernoratPage: React.FC = () => {
 
           {/* FAQ */}
           <SeoFAQ
-            title={t.faqTitleGovernorate(gouvernorat.label)}
+            title={t.faqTitleGovernorate(gouvLabel)}
             questions={faqData}
             includeSchema={false}
           />
