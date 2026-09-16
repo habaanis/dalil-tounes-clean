@@ -8,6 +8,7 @@ import {
   Images,
   Info,
   MapPin,
+  Search,
   Star,
   Store,
   type LucideIcon,
@@ -70,6 +71,8 @@ type Copy = {
   book: string;
   quote: string;
   addContact: string;
+  moreActions: string;
+  moreActionsSummary: string;
   certified: string;
   poweredBy: string;
 };
@@ -81,6 +84,7 @@ const COPY: Record<string, Copy> = {
     viewAll: 'Voir tout', ourWork: 'Nos réalisations', noPhotos: 'Aucune photo disponible.',
     openingHours: 'Horaires', practical: 'Informations pratiques', book: 'Réserver',
     quote: 'Demander un devis', addContact: 'Ajouter aux contacts', certified: 'Certifié Dalil Tounes',
+    moreActions: 'Plus d’actions', moreActionsSummary: 'WhatsApp · E-mail · Réserver · Avis',
     poweredBy: 'Propulsé par Dalil Tounes',
   },
   ar: {
@@ -88,6 +92,7 @@ const COPY: Record<string, Copy> = {
     aboutUs: 'من نحن', learnMore: 'اكتشف المزيد', ourServices: 'خدماتنا', viewAll: 'عرض الكل',
     ourWork: 'أعمالنا', noPhotos: 'لا توجد صور متاحة.', openingHours: 'أوقات العمل',
     practical: 'معلومات عملية', book: 'احجز', quote: 'طلب عرض سعر', addContact: 'إضافة إلى جهات الاتصال',
+    moreActions: 'المزيد من الإجراءات', moreActionsSummary: 'واتساب · البريد · الحجز · الآراء',
     certified: 'معتمد من دليل تونس', poweredBy: 'بدعم من دليل تونس',
   },
   en: {
@@ -96,6 +101,7 @@ const COPY: Record<string, Copy> = {
     ourWork: 'Our work', noPhotos: 'No photos available.', openingHours: 'Opening hours',
     practical: 'Practical information', book: 'Book', quote: 'Request a quote',
     addContact: 'Add to contacts', certified: 'Certified by Dalil Tounes', poweredBy: 'Powered by Dalil Tounes',
+    moreActions: 'More actions', moreActionsSummary: 'WhatsApp · E-mail · Booking · Reviews',
   },
   it: {
     home: 'Home', about: 'Chi siamo', services: 'Servizi', photos: 'Foto', reviews: 'Recensioni',
@@ -103,6 +109,7 @@ const COPY: Record<string, Copy> = {
     ourWork: 'I nostri lavori', noPhotos: 'Nessuna foto disponibile.', openingHours: 'Orari',
     practical: 'Informazioni pratiche', book: 'Prenota', quote: 'Richiedi un preventivo',
     addContact: 'Aggiungi ai contatti', certified: 'Certificato da Dalil Tounes', poweredBy: 'Offerto da Dalil Tounes',
+    moreActions: 'Altre azioni', moreActionsSummary: 'WhatsApp · E-mail · Prenota · Recensioni',
   },
   ru: {
     home: 'Главная', about: 'О нас', services: 'Услуги', photos: 'Фото', reviews: 'Отзывы',
@@ -110,6 +117,7 @@ const COPY: Record<string, Copy> = {
     ourWork: 'Наши работы', noPhotos: 'Фотографии отсутствуют.', openingHours: 'Часы работы',
     practical: 'Практическая информация', book: 'Забронировать', quote: 'Запросить смету',
     addContact: 'Добавить в контакты', certified: 'Сертифицировано Dalil Tounes', poweredBy: 'Работает на Dalil Tounes',
+    moreActions: 'Другие действия', moreActionsSummary: 'WhatsApp · E-mail · Бронь · Отзывы',
   },
 };
 
@@ -158,6 +166,7 @@ export function CvPortfolioPresentation({
   const [activeTab, setActiveTab] = useState<PortfolioTab>('home');
   const [expandedAbout, setExpandedAbout] = useState(false);
   const [bookingOpen, setBookingOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
   const isRTL = language === 'ar';
   const hasSection = (section: ResolvedCvPresentation['visibleSections'][number]) =>
     presentation.visibleSections.includes(section);
@@ -188,6 +197,16 @@ export function CvPortfolioPresentation({
         .sort((a, b) => actionPriority(a.href) - actionPriority(b.href))
         .slice(0, hasPrimaryContact ? 2 : 3);
   const secondaryActions = actions.filter(action => !featuredActions.includes(action));
+  const callAction = actions.find(action => action.href.startsWith('tel:'));
+  const directionsAction = actions.find(action =>
+    action.href.includes('maps') || action.href.includes('google.com/maps'),
+  );
+  const previewExtraActions = actions.filter(action =>
+    !action.href.startsWith('/qr-business/')
+      && action !== callAction
+      && action !== directionsAction,
+  );
+  const previewGallery = gallery.slice(0, 4);
 
   const tabs = useMemo(() => [
     { id: 'home' as const, label: copy.home, icon: Home, visible: true },
@@ -199,6 +218,7 @@ export function CvPortfolioPresentation({
 
   const goTo = (tab: PortfolioTab) => {
     setActiveTab(tab);
+    if (embeddedPreview) return;
     window.requestAnimationFrame(() => {
       document.getElementById('cv-portfolio-content')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
@@ -257,6 +277,124 @@ export function CvPortfolioPresentation({
       ) : <p>{copy.noPhotos}</p>}
     </section>
   );
+
+  if (embeddedPreview) {
+    return (
+      <div
+        className="cvp-page cvp-page--embedded cvp-page--lienora"
+        dir={isRTL ? 'rtl' : 'ltr'}
+        style={PORTFOLIO_PALETTE_THEMES[palette || 'prestige']}
+      >
+        <article className="cvp-lienora-card">
+          <div className="cvp-lienora-cover"><img src={coverImage} alt="" loading="eager" decoding="async" /></div>
+          <img className="cvp-lienora-logo" src={logoImage} alt={`Logo ${profile.identity.name}`} />
+
+          <div className="cvp-lienora-main">
+            <span className="cvp-lienora-activity">✦ {profile.identity.activity}</span>
+            <section className="cvp-lienora-identity">
+              <small>{productLabel}</small>
+              <h1>{profile.identity.name}</h1>
+              {(profile.reviews.rating > 0 || profile.reviews.count > 0) && (
+                <div className="cvp-lienora-rating">
+                  <Star fill="currentColor" />
+                  {profile.reviews.rating > 0 && <b>{profile.reviews.rating.toFixed(1)}</b>}
+                  {profile.reviews.count > 0 && <span>{profile.reviews.count} {copy.reviews.toLowerCase()}</span>}
+                </div>
+              )}
+              {(profile.location.city || profile.location.governorate) && (
+                <p><MapPin />{[profile.location.city, profile.location.governorate].filter(Boolean).join(', ')}</p>
+              )}
+            </section>
+
+            <section className="cvp-lienora-actions" aria-label="Actions">
+              {callAction && (() => {
+                const Icon = callAction.icon;
+                return <a href={callAction.href}><Icon /><span>{callAction.label}</span></a>;
+              })()}
+              {hasPrimaryContact && <button type="button" onClick={onDownloadContact}><Contact /><span>{copy.addContact}</span></button>}
+              {directionsAction && (() => {
+                const Icon = directionsAction.icon;
+                return <a href={directionsAction.href} target="_blank" rel="noopener noreferrer"><Icon /><span>{directionsAction.label}</span></a>;
+              })()}
+            </section>
+
+            <button className="cvp-lienora-more" type="button" onClick={() => setMoreOpen(open => !open)} aria-expanded={moreOpen}>
+              <b>{copy.moreActions}</b><small>{copy.moreActionsSummary}</small>
+            </button>
+            {moreOpen && (
+              <div className="cvp-lienora-extra-actions">
+                {previewExtraActions.map(({ label, href, icon: Icon, external }) => (
+                  <a href={href} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined} key={label}>
+                    <Icon />{label}
+                  </a>
+                ))}
+                {presentation.visibleActions.includes('reservation') && bookingContent && (
+                  <button type="button" onClick={() => setBookingOpen(value => !value)}><CalendarDays />{copy.book}</button>
+                )}
+                {(profile.contact.whatsapp || profile.contact.email) && (
+                  <button type="button" onClick={onQuote}><FileText />{copy.quote}</button>
+                )}
+              </div>
+            )}
+
+            <nav className="cvp-lienora-tabs" aria-label="Navigation du CV Portfolio">
+              {tabs.map(({ id, label, icon: Icon }) => (
+                <button type="button" className={activeTab === id ? 'active' : ''} onClick={() => goTo(id)} key={id}>
+                  <Icon /><span>{label}</span>
+                </button>
+              ))}
+            </nav>
+
+            <div className="cvp-lienora-content">
+              {activeTab === 'home' && (
+                <>
+                  {hasSection('about') && (
+                    <section className="cvp-lienora-about">
+                      <div><h2>{copy.aboutUs}</h2><p>{description}</p></div>
+                      {gallery[0] && (
+                        <button type="button" className="cvp-lienora-zoom" onClick={() => onSelectImage(gallery[0].full)}>
+                          <img src={gallery[0].thumbnail} alt={profile.identity.name} loading="lazy" decoding="async" /><Search />
+                        </button>
+                      )}
+                    </section>
+                  )}
+                  {hasSection('services') && previewGallery.length > 0 && (
+                    <section className="cvp-lienora-services">
+                      <header><h2>{copy.ourServices}</h2><button type="button" onClick={() => goTo('services')}>{copy.viewAll} ›</button></header>
+                      <div>
+                        {previewGallery.map((item, index) => (
+                          <article key={`${item.thumbnail}-${index}`}>
+                            <button type="button" className="cvp-lienora-zoom" onClick={() => onSelectImage(item.full)}>
+                              <img src={item.thumbnail} alt={profile.services[index] || profile.identity.activity} loading="lazy" decoding="async" /><Search />
+                            </button>
+                            {profile.services[index] && <b>{profile.services[index]}</b>}
+                          </article>
+                        ))}
+                      </div>
+                    </section>
+                  )}
+                </>
+              )}
+              {activeTab === 'about' && aboutBlock}
+              {activeTab === 'services' && servicesBlock}
+              {activeTab === 'gallery' && galleryBlock}
+              {activeTab === 'reviews' && (
+                <section className="cvp-section cvp-review-panel">
+                  <Star fill="currentColor" />
+                  <h2>{profile.reviews.rating ? `${profile.reviews.rating.toFixed(1)} / 5` : copy.reviews}</h2>
+                  {profile.reviews.count > 0 && <p>{profile.reviews.count} {copy.reviews.toLowerCase()}</p>}
+                  {profile.reviews.url && <a href={profile.reviews.url} target="_blank" rel="noopener noreferrer">{copy.reviews}<ChevronRight /></a>}
+                </section>
+              )}
+              {bookingOpen && bookingContent && <section className="cvp-booking">{bookingContent}</section>}
+              {notice && <p className="cvp-notice" role="status">{notice}</p>}
+            </div>
+          </div>
+          <p className="cvp-lienora-credit">{copy.poweredBy}</p>
+        </article>
+      </div>
+    );
+  }
 
   return (
     <div
