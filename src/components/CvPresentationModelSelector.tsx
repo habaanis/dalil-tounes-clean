@@ -1,4 +1,4 @@
-import { useEffect, useState, type CSSProperties } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { Check, Palette, X, ZoomIn } from 'lucide-react';
 import BusinessShowcaseLienoraDetail from './BusinessShowcaseLienoraDetail';
 
@@ -180,7 +180,7 @@ export const PALETTE_IDS: PaletteId[] = ['prestige', 'ivory', 'night'];
 
 export const PALETTE_SWATCHES: Record<PaletteId, { bg: string; accent: string; text: string }> = {
   prestige: { bg: '#042d24', accent: '#D4AF37', text: '#F4CE55' },
-  ivory: { bg: '#fff3d8', accent: '#c89b4a', text: '#5b214f' },
+  ivory: { bg: '#FFFFF0', accent: '#D4AF37', text: '#3B3126' },
   night: { bg: '#10243a', accent: '#e5c486', text: '#f8f1e4' },
 };
 
@@ -242,17 +242,57 @@ function RealPalettePreview({
   expanded?: boolean;
 }) {
   const previewUrl = `/entreprise/sousse/aux-saveurs-d-anis?preview-model=${model}&palette=${palette}&source=subscription&lang=${language}`;
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [fitScale, setFitScale] = useState(1);
+
+  useEffect(() => {
+    if (!expanded) return;
+
+    const viewport = viewportRef.current;
+    const content = contentRef.current;
+    if (!viewport || !content) return;
+
+    const updateScale = () => {
+      const naturalWidth = content.scrollWidth;
+      const naturalHeight = content.scrollHeight;
+      if (!naturalWidth || !naturalHeight) return;
+
+      setFitScale(Math.min(
+        viewport.clientWidth / naturalWidth,
+        viewport.clientHeight / naturalHeight,
+        1,
+      ));
+    };
+
+    const resizeObserver = new ResizeObserver(updateScale);
+    resizeObserver.observe(viewport);
+    resizeObserver.observe(content);
+    updateScale();
+    window.addEventListener('resize', updateScale);
+
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener('resize', updateScale);
+    };
+  }, [expanded, model, palette]);
 
   return (
     <div
+      ref={viewportRef}
       className={expanded
-        ? 'mx-auto h-[68dvh] max-h-[650px] min-h-[460px] w-full overflow-hidden rounded-2xl border border-[#D6AF2E]/70 bg-[#F7F5EF] shadow-inner'
+        ? 'relative mx-auto h-[70dvh] max-h-[700px] min-h-[480px] w-full overflow-hidden rounded-2xl border border-[#D4AF37]/70 bg-[#F7F5EF] shadow-inner'
         : 'mx-auto h-[450px] w-[292px] max-w-full overflow-hidden rounded-[26px] border-2 border-[#D6AF2E]/70 bg-[#F7F5EF] shadow-lg'}
     >
       <div
+        ref={contentRef}
         key={previewUrl}
-        className={expanded ? 'h-auto w-full overflow-hidden bg-white' : 'w-[584px] origin-top-left bg-white'}
-        style={expanded ? undefined : ({ zoom: 0.5 } as CSSProperties)}
+        className={expanded
+          ? 'pointer-events-auto absolute left-1/2 top-0 w-[584px] bg-white'
+          : 'w-[584px] origin-top-left bg-white'}
+        style={expanded
+          ? ({ transform: `translateX(-50%) scale(${fitScale})`, transformOrigin: 'top center' } as CSSProperties)
+          : ({ zoom: 0.5 } as CSSProperties)}
       >
         <BusinessShowcaseLienoraDetail
           embeddedPreview

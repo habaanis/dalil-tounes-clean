@@ -28,10 +28,10 @@ const PORTFOLIO_PALETTE_THEMES: Record<PortfolioPalette, CSSProperties> = {
     '--cvp-badge': '#087051', '--cvp-overlay': 'rgba(0,45,39,.95)', '--cvp-accent': '#e8bd43',
   } as CSSProperties,
   ivory: {
-    '--cvp-page': '#fffaf0', '--cvp-text': '#3d3326', '--cvp-shell-start': '#fffdf6',
-    '--cvp-shell-mid': '#fff3d8', '--cvp-shell-end': '#f3dfb6', '--cvp-identity-start': '#fffdf6',
-    '--cvp-identity-end': '#f3dfb6', '--cvp-panel': '#ead19d', '--cvp-action': 'rgba(255,250,240,.78)',
-    '--cvp-badge': '#d6ab51', '--cvp-overlay': 'rgba(61,51,38,.62)', '--cvp-accent': '#b88620',
+    '--cvp-page': '#FFFFF0', '--cvp-text': '#3B3126', '--cvp-shell-start': '#FFFFF8',
+    '--cvp-shell-mid': '#FFFFF0', '--cvp-shell-end': '#F4E4B7', '--cvp-identity-start': '#FFFFF8',
+    '--cvp-identity-end': '#F4E4B7', '--cvp-panel': '#F0D999', '--cvp-action': 'rgba(255,255,240,.82)',
+    '--cvp-badge': '#D4AF37', '--cvp-overlay': 'rgba(59,49,38,.62)', '--cvp-accent': '#D4AF37',
   } as CSSProperties,
   night: {
     '--cvp-page': '#06101d', '--cvp-text': '#f8f1e4', '--cvp-shell-start': '#1d3a5a',
