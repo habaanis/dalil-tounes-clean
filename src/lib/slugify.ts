@@ -61,3 +61,17 @@ export function buildEntrepriseShareUrl(business: EntrepriseForUrl): string {
   const domain = typeof window !== 'undefined' ? window.location.origin : '';
   return `${domain}${path}`;
 }
+
+const SHARE_DOMAIN = 'https://dalil-tounes.com';
+
+export function buildShortShareUrl(business: EntrepriseForUrl): string {
+  const businessSlug = business.slug || generateSlug(business.nom || business.name || '');
+  if (!businessSlug) return '';
+  return `${SHARE_DOMAIN}/p/${businessSlug}`;
+}
+
+export function buildShortSharePath(business: EntrepriseForUrl): string {
+  const businessSlug = business.slug || generateSlug(business.nom || business.name || '');
+  if (!businessSlug) return '';
+  return `/p/${businessSlug}`;
+}

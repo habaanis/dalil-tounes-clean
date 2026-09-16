@@ -36,7 +36,7 @@ const SimilarBusinesses = lazy(() => import('../components/seo/SimilarBusinesses
 import EntrepriseAvisForm from '../components/EntrepriseAvisForm';
 import BusinessReviews from '../components/BusinessReviews';
 import Breadcrumb from '../components/seo/Breadcrumb';
-import { buildEntrepriseUrl, buildEntrepriseShareUrl, generateSlug, extractShortIdFromSlug } from '../lib/slugify';
+import { buildEntrepriseUrl, buildEntrepriseShareUrl, buildShortShareUrl, generateSlug, extractShortIdFromSlug } from '../lib/slugify';
 import { cleanAltText, extractFrenchName, cleanArabicField } from '../lib/textNormalization';
 import { SEOHead } from './SEOHead';
 import { getBusinessSeoMeta } from '../lib/seoMetaTemplates';
@@ -796,7 +796,7 @@ export const BusinessDetail = ({
 
   const downloadQRCode = async () => {
     if (!business) return;
-    const url = business.qr_code_url || window.location.href;
+    const url = business.qr_code_url || getBusinessShareUrl() || window.location.href;
     const size = 1024;
     const margin = 4;
 
@@ -840,7 +840,7 @@ export const BusinessDetail = ({
 
   const getBusinessShareUrl = () => {
     if (!business) return '';
-    return buildEntrepriseShareUrl(business);
+    return buildShortShareUrl(business) || buildEntrepriseShareUrl(business);
   };
 
   const copyLink = () => {
@@ -2032,7 +2032,7 @@ export const BusinessDetail = ({
                       ) : (
                         <Suspense fallback={<div style={{ width: 88, height: 88, background: '#FFF' }} />}>
                           <QRCodeSVG
-                            value={business.qr_code_url || window.location.href}
+                            value={business.qr_code_url || getBusinessShareUrl() || window.location.href}
                             size={88}
                             level="M"
                             includeMargin={true}

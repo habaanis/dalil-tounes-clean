@@ -46,6 +46,7 @@ import { mapSubscriptionToTier } from '../lib/subscriptionTiers';
 import { getBusinessShowcaseCapabilities } from '../lib/businessShowcaseConfig';
 import {
   buildEntrepriseUrl,
+  buildShortShareUrl,
   extractShortIdFromSlug,
   generateSlug,
 } from '../lib/slugify';
@@ -823,6 +824,7 @@ export default function BusinessShowcaseLienoraDetail() {
   const slogan = cvProfile.identity.slogan;
   const canonicalPath = buildEntrepriseUrl(business);
   const canonicalUrl = `https://dalil-tounes.com${canonicalPath}`;
+  const shortShareUrl = buildShortShareUrl(business) || canonicalUrl;
   const coverImage = getCoverImageUrl(business.image_url);
   const logoImage = getLogoUrl(business.logo_url);
   const mapsUrl = cvProfile.location.directionsUrl;
@@ -957,7 +959,7 @@ export default function BusinessShowcaseLienoraDetail() {
 
   const copyLink = async () => {
     try {
-      await navigator.clipboard.writeText(canonicalUrl);
+      await navigator.clipboard.writeText(shortShareUrl);
       setCopied(true);
       setNotice(text.copied);
       window.setTimeout(() => setCopied(false), 1800);
@@ -972,7 +974,7 @@ export default function BusinessShowcaseLienoraDetail() {
         await navigator.share({
           title: displayName,
           text: slogan || translatedDescription,
-          url: canonicalUrl,
+          url: shortShareUrl,
         });
       } else {
         await copyLink();
@@ -995,7 +997,7 @@ export default function BusinessShowcaseLienoraDetail() {
         ? `ADR;TYPE=WORK:;;${escape(business.adresse)};${escape(String(business.ville || ''))};;;Tunisie`
         : '',
       websiteUrl ? `URL:${websiteUrl}` : '',
-      `NOTE:CV Business Dalil Tounes - ${canonicalUrl}`,
+      `NOTE:CV Business Dalil Tounes - ${shortShareUrl}`,
       'END:VCARD',
     ].filter(Boolean).join('\r\n');
     const blob = new Blob([vcard], { type: 'text/vcard;charset=utf-8' });
@@ -1183,7 +1185,7 @@ export default function BusinessShowcaseLienoraDetail() {
             decoding="async"
           />
         ) : (
-          <QRCodeSVG value={canonicalUrl} size={100} level="M" title={`QR Code de ${displayName}`} />
+          <QRCodeSVG value={shortShareUrl} size={100} level="M" title={`QR Code de ${displayName}`} />
         )}
       </div>
       <div className="dt-qr-actions">
