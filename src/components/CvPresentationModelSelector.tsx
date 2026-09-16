@@ -364,7 +364,7 @@ function PalettePreviewCard({
 }) {
   const sw = PALETTE_SWATCHES[palette];
   return (
-    <article className={`relative overflow-hidden rounded-2xl border bg-white p-2 transition ${selected ? 'border-[#D6AF2E] shadow-md ring-2 ring-[#D6AF2E]/20' : 'border-slate-200 hover:border-[#D6AF2E]/60'}`}>
+    <article className={`relative min-w-[82%] snap-center overflow-hidden rounded-2xl border bg-white p-2 transition sm:min-w-0 ${selected ? 'border-[#D6AF2E] shadow-md ring-2 ring-[#D6AF2E]/20' : 'border-slate-200 hover:border-[#D6AF2E]/60'}`}>
       <button
         type="button"
         aria-pressed={selected}
@@ -579,7 +579,7 @@ export function CvPresentationModelSelector({
         {showPalettePanel && (
           <div className="mt-2 rounded-2xl border border-amber-200 bg-amber-50/40 p-3">
             <p className="mb-2 text-xs font-bold text-slate-600">{copy.paletteLabel}</p>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 sm:grid sm:grid-cols-3 sm:overflow-visible sm:pb-0">
               {PALETTE_IDS.map((id) => (
                 <PalettePreviewCard
                   key={id}
