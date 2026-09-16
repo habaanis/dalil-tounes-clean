@@ -1,6 +1,5 @@
 import { useEffect, useState, type CSSProperties } from 'react';
 import { Check, Palette, X, ZoomIn } from 'lucide-react';
-import { Route, Routes } from 'react-router-dom';
 import BusinessShowcaseLienoraDetail from './BusinessShowcaseLienoraDetail';
 
 type SupportedLanguage = 'fr' | 'ar' | 'en' | 'it' | 'ru';
@@ -255,12 +254,13 @@ function RealPalettePreview({
         className={expanded ? 'h-full w-full overflow-y-auto bg-white' : 'w-[584px] origin-top-left bg-white'}
         style={expanded ? undefined : ({ zoom: 0.5 } as CSSProperties)}
       >
-        <Routes location={previewUrl}>
-          <Route
-            path="/entreprise/:villeSlug/:slug"
-            element={<BusinessShowcaseLienoraDetail embeddedPreview />}
-          />
-        </Routes>
+        <BusinessShowcaseLienoraDetail
+          embeddedPreview
+          previewSlug="aux-saveurs-d-anis"
+          previewVilleSlug="sousse"
+          previewPalette={palette}
+          previewPresentationModel={model}
+        />
       </div>
     </div>
   );
