@@ -229,167 +229,64 @@ function ModelPreview({
   );
 }
 
-const PALETTE_PREVIEW_THEMES: Record<PaletteId, {
-  page: string;
-  shell: string;
-  panel: string;
-  panelSoft: string;
-  accent: string;
-  ink: string;
-}> = {
-  prestige: {
-    page: '#eef1ef',
-    shell: 'linear-gradient(145deg, #042d24, #07543f 55%, #031d18)',
-    panel: '#07543f',
-    panelSoft: '#0b493b',
-    accent: '#d4af37',
-    ink: '#fff9df',
-  },
-  ivory: {
-    page: '#fffdf6',
-    shell: 'linear-gradient(145deg, #fff3d8, #fffaf0 55%, #f8e6bd)',
-    panel: '#fffaf0',
-    panelSoft: '#fff3d8',
-    accent: '#c89b4a',
-    ink: '#3b1934',
-  },
-  night: {
-    page: '#06101d',
-    shell: 'linear-gradient(145deg, #071321, #10243a 55%, #06101d)',
-    panel: '#1d3a5a',
-    panelSoft: '#172f4b',
-    accent: '#e5c486',
-    ink: '#f8f1e4',
-  },
-};
-
-function PalettePreviewVisual({
+function RealPalettePreview({
   palette,
   model,
+  language,
   expanded = false,
 }: {
   palette: PaletteId;
   model: PresentationModel;
+  language: string;
   expanded?: boolean;
 }) {
-  const theme = PALETTE_PREVIEW_THEMES[palette];
-  const sourceImage = model === 'portfolio' ? PORTFOLIO_IMAGE : PROFESSIONAL_IMAGE;
+  const previewUrl = `/entreprise/sousse/aux-saveurs-d-anis?preview-model=${model}&palette=${palette}&source=subscription&lang=${language}`;
 
   return (
     <div
-      className={`relative w-full overflow-hidden ${expanded ? 'h-[66dvh] min-h-[470px] rounded-[28px]' : 'h-48 rounded-xl'}`}
-      style={{ background: theme.page, color: theme.ink }}
-      aria-hidden="true"
+      className={expanded
+        ? 'mx-auto h-[72dvh] max-h-[720px] min-h-[480px] w-full overflow-hidden rounded-2xl border border-[#D6AF2E]/70 bg-[#F7F5EF] shadow-inner'
+        : 'mx-auto h-[520px] w-[292px] max-w-full overflow-hidden rounded-[26px] border-2 border-[#D6AF2E]/70 bg-[#F7F5EF] shadow-lg'}
     >
-      <div className={`${expanded ? 'h-[30%]' : 'h-[34%]'} relative overflow-hidden`} style={{ background: theme.shell }}>
-        <img
-          src={sourceImage}
-          alt=""
-          className="absolute inset-0 h-full w-full object-cover object-top opacity-25 grayscale"
-          loading="lazy"
-          decoding="async"
-        />
-        <div
-          className={`absolute left-1/2 -translate-x-1/2 rounded-full border-2 ${expanded ? 'bottom-4 h-16 w-16' : 'bottom-2 h-8 w-8'}`}
-          style={{ borderColor: theme.accent, background: theme.panel }}
-        />
-      </div>
-
-      <div className={`${expanded ? '-mt-3 px-5 pb-5' : '-mt-2 px-2 pb-2'} relative`}>
-        <div
-          className={`${expanded ? 'rounded-2xl px-5 py-4' : 'rounded-lg px-2 py-1.5'} border text-center shadow-sm`}
-          style={{ borderColor: theme.accent, background: theme.panel, color: theme.ink }}
-        >
-          <div className={`${expanded ? 'text-base' : 'text-[8px]'} font-black`}>Aux saveurs d’Anis</div>
-          <div className={`${expanded ? 'mt-1 text-xs' : 'mt-0.5 text-[6px]'} font-semibold opacity-80`}>
-            {model === 'portfolio' ? 'CV Portfolio' : 'CV Business'}
-          </div>
-        </div>
-
-        <div className={`${expanded ? 'mt-4 grid-cols-4 gap-2' : 'mt-2 grid-cols-4 gap-1'} grid`}>
-          {Array.from({ length: 4 }).map((_, index) => (
-            <span
-              key={index}
-              className={`${expanded ? 'h-14 rounded-xl' : 'h-6 rounded'} border`}
-              style={{ borderColor: theme.accent, background: theme.panelSoft }}
-            />
-          ))}
-        </div>
-
-        {model === 'portfolio' && (
-          <div className={`${expanded ? 'mt-4 gap-2' : 'mt-2 gap-1'} grid grid-cols-3`}>
-            {Array.from({ length: 3 }).map((_, index) => (
-              <span
-                key={index}
-                className={`${expanded ? 'h-24 rounded-xl' : 'h-8 rounded'} border bg-cover bg-top opacity-90`}
-                style={{
-                  borderColor: theme.accent,
-                  backgroundImage: `linear-gradient(${theme.panel}55, ${theme.panel}55), url(${sourceImage})`,
-                }}
-              />
-            ))}
-          </div>
-        )}
-
-        <div className={`${expanded ? 'mt-4 gap-3' : 'mt-2 gap-1'} grid`}>
-          {Array.from({ length: model === 'portfolio' ? 3 : 4 }).map((_, index) => (
-            <span
-              key={index}
-              className={`${expanded ? 'h-12 rounded-xl' : 'h-4 rounded'} border`}
-              style={{ borderColor: theme.accent, background: theme.panel }}
-            />
-          ))}
-        </div>
-      </div>
+      <iframe
+        key={previewUrl}
+        title={`${model === 'portfolio' ? 'CV Portfolio' : 'CV Business'} — ${getPaletteLabel(language, palette)}`}
+        src={previewUrl}
+        className={expanded
+          ? 'h-full w-full border-0 bg-white'
+          : 'h-[860px] w-[390px] origin-top-left scale-[0.744] border-0 bg-white'}
+        loading="lazy"
+      />
     </div>
   );
 }
 
-function PalettePreviewCard({
+function PaletteChoice({
   palette,
-  model,
   selected,
   label,
-  previewLabel,
   onSelect,
-  onEnlarge,
 }: {
   palette: PaletteId;
-  model: PresentationModel;
   selected: boolean;
   label: string;
-  previewLabel: string;
   onSelect: () => void;
-  onEnlarge: () => void;
 }) {
   const sw = PALETTE_SWATCHES[palette];
   return (
-    <article className={`relative min-w-[82%] snap-center overflow-hidden rounded-2xl border bg-white p-2 transition sm:min-w-0 ${selected ? 'border-[#D6AF2E] shadow-md ring-2 ring-[#D6AF2E]/20' : 'border-slate-200 hover:border-[#D6AF2E]/60'}`}>
-      <button
-        type="button"
-        aria-pressed={selected}
-        onClick={onSelect}
-        className="block w-full rounded-xl text-left focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]"
-      >
-        <PalettePreviewVisual palette={palette} model={model} />
-        <span className="mt-2 flex min-h-9 items-center gap-2 px-1 text-xs font-black text-slate-700">
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-slate-200" style={{ background: sw.bg }}>
-            <span className="block h-3 w-3 rounded-full" style={{ background: sw.accent }} />
-          </span>
-          <span className="min-w-0 flex-1 leading-4">{label}</span>
-          {selected && <Check className="h-4 w-4 shrink-0 text-[#07543F]" aria-hidden="true" />}
-        </span>
-      </button>
-      <button
-        type="button"
-        onClick={onEnlarge}
-        className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full border border-white/70 bg-white/95 text-[#07543F] shadow-md transition hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]"
-        aria-label={`${previewLabel} — ${label}`}
-        title={`${previewLabel} — ${label}`}
-      >
-        <ZoomIn className="h-4 w-4" aria-hidden="true" />
-      </button>
-    </article>
+    <button
+      type="button"
+      role="radio"
+      aria-checked={selected}
+      onClick={onSelect}
+      className={`flex min-h-16 items-center gap-2 rounded-xl border-2 px-3 py-2 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${selected ? 'border-[#D6AF2E] bg-white shadow-sm' : 'border-transparent bg-white/70 hover:border-[#D6AF2E]/50'}`}
+    >
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200" style={{ background: sw.bg }}>
+        <span className="block h-4 w-4 rounded-full" style={{ background: sw.accent }} />
+      </span>
+      <span className="min-w-0 flex-1 text-xs font-black leading-4 text-slate-700">{label}</span>
+      {selected && <Check className="h-4 w-4 shrink-0 text-[#07543F]" aria-hidden="true" />}
+    </button>
   );
 }
 
@@ -579,24 +476,35 @@ export function CvPresentationModelSelector({
         {showPalettePanel && (
           <div className="mt-2 rounded-2xl border border-amber-200 bg-amber-50/40 p-3">
             <p className="mb-2 text-xs font-bold text-slate-600">{copy.paletteLabel}</p>
-            <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 sm:grid sm:grid-cols-3 sm:overflow-visible sm:pb-0">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-3" role="radiogroup" aria-label={copy.paletteLabel}>
               {PALETTE_IDS.map((id) => (
-                <PalettePreviewCard
+                <PaletteChoice
                   key={id}
                   palette={id}
-                  model={value ?? 'business'}
                   selected={paletteValue === id}
                   label={getPaletteLabel(language, id)}
-                  previewLabel={copy.palettePreview}
                   onSelect={() => onPaletteChange(id)}
-                  onEnlarge={() => {
-                    onPaletteChange(id);
-                    setExpandedPalette(id);
-                  }}
                 />
               ))}
             </div>
-            <p className="mt-2 text-xs font-semibold text-slate-500">{copy.paletteIncluded}</p>
+
+            <div className="relative mx-auto mt-4 w-fit max-w-full">
+              <RealPalettePreview
+                palette={paletteValue}
+                model={value ?? 'business'}
+                language={language}
+              />
+              <button
+                type="button"
+                onClick={() => setExpandedPalette(paletteValue)}
+                className="absolute right-3 top-3 grid h-11 w-11 place-items-center rounded-full border-2 border-white bg-[#D6AF2E] text-[#07543F] shadow-lg transition hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#07543F]"
+                aria-label={`${copy.palettePreview} — ${selectedPaletteLabel}`}
+                title={`${copy.palettePreview} — ${selectedPaletteLabel}`}
+              >
+                <ZoomIn className="h-5 w-5" aria-hidden="true" />
+              </button>
+            </div>
+            <p className="mt-3 text-center text-xs font-semibold text-slate-500">{copy.paletteIncluded}</p>
           </div>
         )}
       </div>
@@ -670,18 +578,23 @@ export function CvPresentationModelSelector({
             if (event.target === event.currentTarget) setExpandedPalette(null);
           }}
         >
-          <div role="dialog" aria-modal="true" aria-label={`${copy.palettePreview} — ${getPaletteLabel(language, expandedPalette)}`} className="relative w-full max-w-md rounded-3xl bg-white p-3 shadow-2xl sm:p-5">
+          <div role="dialog" aria-modal="true" aria-label={`${copy.palettePreview} — ${getPaletteLabel(language, expandedPalette)}`} className="relative w-full max-w-[430px] rounded-3xl bg-white p-3 shadow-2xl sm:p-4">
             <button
               type="button"
               onClick={() => setExpandedPalette(null)}
-              className="absolute right-5 top-5 z-10 grid h-11 w-11 place-items-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-md focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] rtl:left-5 rtl:right-auto"
+              className="absolute right-5 top-5 z-10 grid h-11 w-11 place-items-center rounded-full border border-[#D6AF2E] bg-white text-slate-700 shadow-md focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] rtl:left-5 rtl:right-auto"
               aria-label={copy.close}
               title={copy.close}
               autoFocus
             >
               <X className="h-5 w-5" aria-hidden="true" />
             </button>
-            <PalettePreviewVisual palette={expandedPalette} model={value ?? 'business'} expanded />
+            <RealPalettePreview
+              palette={expandedPalette}
+              model={value ?? 'business'}
+              language={language}
+              expanded
+            />
             <div className="mt-3 flex items-center justify-between gap-3 rounded-xl bg-slate-50 px-3 py-2">
               <span className="text-sm font-black text-[#4A123F]">{getPaletteLabel(language, expandedPalette)}</span>
               <span className="text-xs font-bold text-slate-500">{value === 'portfolio' ? copy.portfolio : copy.business}</span>
