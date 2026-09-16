@@ -53,8 +53,6 @@ export function buildSuggestionRow(form: NormalizedRegistrationRequest): Record<
       facebook_url: form.facebook || null,
       instagram_url: form.instagram || null,
       submission_lang: form.language,
-      modele_cv: form.presentationModel || null,
-      palette_cv: form.palette || null,
     };
   }
 
@@ -130,8 +128,6 @@ export function buildDetailedMessage(form: NormalizedRegistrationRequest): strin
       `Moment préféré: ${contactTimeLabel(form.preferredContactTime)}`,
       form.message ? `Précision: ${form.message}` : 'Précision: Aucune',
       'Consentement: Oui',
-      form.presentationModel ? `Modèle CV: ${form.presentationModel}` : '',
-      form.palette ? `Palette: ${form.palette}` : '',
     ].filter(Boolean).join('\n');
   }
 
@@ -206,8 +202,6 @@ export function buildNotificationPayload(form: NormalizedRegistrationRequest, id
         Message: form.message || 'Aucune précision complémentaire',
         Consentement: form.consent ? 'Oui' : 'Non',
         Langue: form.language,
-        'Modèle CV': form.presentationModel || 'Non renseigné',
-        Palette: form.palette || 'Non renseigné',
       },
       admin_url: '/admin/premium',
     };
