@@ -611,7 +611,11 @@ function AccordionSection({
   );
 }
 
-export default function BusinessShowcaseLienoraDetail() {
+export default function BusinessShowcaseLienoraDetail({
+  embeddedPreview = false,
+}: {
+  embeddedPreview?: boolean;
+} = {}) {
   const { id: urlId, slug: urlSlug, villeSlug: urlVilleSlug } = useParams<{
     id?: string;
     slug?: string;
@@ -657,7 +661,7 @@ export default function BusinessShowcaseLienoraDetail() {
   );
   const capabilities = useMemo(() => getBusinessShowcaseCapabilities(tier), [tier]);
 
-  useViewTracking(capabilities.variant === 'directory' ? undefined : business?.id);
+  useViewTracking(embeddedPreview || capabilities.variant === 'directory' ? undefined : business?.id);
 
   useEffect(() => {
     let cancelled = false;
@@ -1325,18 +1329,20 @@ export default function BusinessShowcaseLienoraDetail() {
   if (resolvedPresentation.style === 'portfolio') {
     return (
       <main dir={isRTL ? 'rtl' : 'ltr'}>
-        <SEOHead
-          title={seo.title}
-          description={seo.description}
-          keywords={seo.keywords}
-          image={coverImage}
-          canonical={canonicalUrl}
-          currentPath={canonicalPath}
-          type="website"
-          author={displayName}
-          noindex={!isPublished(business.statut_validation)}
-        />
-        <StructuredData data={[localBusinessSchema, breadcrumbSchema]} />
+        {!embeddedPreview && <>
+          <SEOHead
+            title={seo.title}
+            description={seo.description}
+            keywords={seo.keywords}
+            image={coverImage}
+            canonical={canonicalUrl}
+            currentPath={canonicalPath}
+            type="website"
+            author={displayName}
+            noindex={!isPublished(business.statut_validation)}
+          />
+          <StructuredData data={[localBusinessSchema, breadcrumbSchema]} />
+        </>}
         <CvPortfolioPresentation
           language={language}
           profile={cvProfile}
@@ -1353,6 +1359,8 @@ export default function BusinessShowcaseLienoraDetail() {
           onDownloadContact={downloadContact}
           onSelectImage={setSelectedImage}
           notice={contactNotice}
+          hideBack={embeddedPreview}
+          palette={activePalette}
         />
         {selectedImage && (
           <div
@@ -1383,23 +1391,25 @@ export default function BusinessShowcaseLienoraDetail() {
 
   return (
     <main className="dt-showcase-page" style={themeVariables(visualVariant, activePalette)} dir={isRTL ? 'rtl' : 'ltr'}>
-      <SEOHead
-        title={seo.title}
-        description={seo.description}
-        keywords={seo.keywords}
-        image={coverImage}
-        canonical={canonicalUrl}
-        currentPath={canonicalPath}
-        type="website"
-        author={displayName}
-        noindex={!isPublished(business.statut_validation)}
-      />
-      <StructuredData data={[localBusinessSchema, breadcrumbSchema]} />
+      {!embeddedPreview && <>
+        <SEOHead
+          title={seo.title}
+          description={seo.description}
+          keywords={seo.keywords}
+          image={coverImage}
+          canonical={canonicalUrl}
+          currentPath={canonicalPath}
+          type="website"
+          author={displayName}
+          noindex={!isPublished(business.statut_validation)}
+        />
+        <StructuredData data={[localBusinessSchema, breadcrumbSchema]} />
+      </>}
 
       <div className="dt-showcase-wrap">
-        <button type="button" className="dt-back-button" onClick={handleBack}>
+        {!embeddedPreview && <button type="button" className="dt-back-button" onClick={handleBack}>
           <ArrowLeft aria-hidden="true" />{text.back}
-        </button>
+        </button>}
 
         <article className="dt-showcase">
           <header>
