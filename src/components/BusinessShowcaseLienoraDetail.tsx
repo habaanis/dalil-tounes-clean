@@ -963,6 +963,10 @@ export default function BusinessShowcaseLienoraDetail({
     },
   ].filter((action): action is ActionConfig => Boolean(action));
 
+  const displayedPrimaryActions = embeddedPreview
+    ? primaryActions.filter(action => [text.call, text.email, text.directions].includes(action.label)).slice(0, 3)
+    : primaryActions;
+
   const copyLink = async () => {
     try {
       await navigator.clipboard.writeText(shortShareUrl);
@@ -1273,7 +1277,7 @@ export default function BusinessShowcaseLienoraDetail({
       icon: Info,
       content: practicalContent,
     },
-    hasAction('reservation') && {
+    !embeddedPreview && hasAction('reservation') && {
       id: 'booking' as const,
       title: text.booking,
       icon: CalendarDays,
@@ -1303,7 +1307,7 @@ export default function BusinessShowcaseLienoraDetail({
         />
       ),
     },
-    hasSection('reviews') && {
+    !embeddedPreview && hasSection('reviews') && {
       id: 'reviews' as const,
       title: text.reviews,
       icon: Star,
@@ -1317,7 +1321,7 @@ export default function BusinessShowcaseLienoraDetail({
         </div>
       ),
     },
-    !isClientAppMode && capabilities.showPlatformLinks && {
+    !embeddedPreview && !isClientAppMode && capabilities.showPlatformLinks && {
       id: 'platform' as const,
       title: text.platform,
       icon: Building2,
@@ -1336,7 +1340,7 @@ export default function BusinessShowcaseLienoraDetail({
         </div>
       ) : <p className="dt-empty-copy">{text.noPlatformLinks}</p>,
     },
-    (capabilities.showQrCode || capabilities.showShareTools) && {
+    !embeddedPreview && (capabilities.showQrCode || capabilities.showShareTools) && {
       id: 'sharing' as const,
       title: text.sharing,
       icon: QrCode,
@@ -1480,14 +1484,14 @@ export default function BusinessShowcaseLienoraDetail({
           </header>
 
           <section className="dt-actions" aria-label="Actions">
-            {primaryActions.length > 0 && (
+            {displayedPrimaryActions.length > 0 && (
               <div
                 className="dt-primary-actions"
                 style={{
-                  gridTemplateColumns: `repeat(${Math.min(primaryActions.length, 4)}, minmax(0, 1fr))`,
+                  gridTemplateColumns: `repeat(${Math.min(displayedPrimaryActions.length + (embeddedPreview ? 1 : 0), 4)}, minmax(0, 1fr))`,
                 }}
               >
-                {primaryActions.map(action => {
+                {displayedPrimaryActions.map(action => {
                   const Icon = action.icon;
                   return (
                     <a
@@ -1502,9 +1506,15 @@ export default function BusinessShowcaseLienoraDetail({
                     </a>
                   );
                 })}
+                {embeddedPreview && (
+                  <button type="button" className="dt-primary-action" onClick={downloadContact}>
+                    <Contact aria-hidden="true" />
+                    <span>{text.addContact}</span>
+                  </button>
+                )}
               </div>
             )}
-            <div className="dt-secondary-actions">
+            {!embeddedPreview && <div className="dt-secondary-actions">
               {(hasAction('reservation') || whatsappUrl || business.email) && (
                 <button
                   type="button"
@@ -1520,7 +1530,7 @@ export default function BusinessShowcaseLienoraDetail({
               <button type="button" className="dt-secondary-action" onClick={downloadContact}>
                 <Contact aria-hidden="true" />{text.addContact}
               </button>
-            </div>
+            </div>}
             <p className="dt-action-notice" role="status" aria-live="polite">{contactNotice}</p>
           </section>
 
