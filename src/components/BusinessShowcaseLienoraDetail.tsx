@@ -613,14 +613,25 @@ function AccordionSection({
 
 export default function BusinessShowcaseLienoraDetail({
   embeddedPreview = false,
+  previewSlug,
+  previewVilleSlug,
+  previewPalette,
+  previewPresentationModel,
 }: {
   embeddedPreview?: boolean;
+  previewSlug?: string;
+  previewVilleSlug?: string;
+  previewPalette?: PaletteId;
+  previewPresentationModel?: 'business' | 'portfolio';
 } = {}) {
-  const { id: urlId, slug: urlSlug, villeSlug: urlVilleSlug } = useParams<{
+  const routeParams = useParams<{
     id?: string;
     slug?: string;
     villeSlug?: string;
   }>();
+  const urlId = embeddedPreview ? undefined : routeParams.id;
+  const urlSlug = embeddedPreview ? previewSlug : routeParams.slug;
+  const urlVilleSlug = embeddedPreview ? previewVilleSlug : routeParams.villeSlug;
   const navigate = useNavigate();
   const location = useLocation();
   const { language } = useLanguage();
@@ -733,7 +744,7 @@ export default function BusinessShowcaseLienoraDetail({
 
         setBusiness(record);
         const canonicalPath = buildEntrepriseUrl(record);
-        if (canonicalPath !== '/' && location.pathname !== canonicalPath) {
+        if (!embeddedPreview && canonicalPath !== '/' && location.pathname !== canonicalPath) {
           navigate(canonicalPath, { replace: true });
         }
       } catch (error) {
@@ -748,7 +759,7 @@ export default function BusinessShowcaseLienoraDetail({
     return () => {
       cancelled = true;
     };
-  }, [location.pathname, navigate, urlId, urlSlug, urlVilleSlug]);
+  }, [embeddedPreview, location.pathname, navigate, urlId, urlSlug, urlVilleSlug]);
 
   if (loading) {
     return (
@@ -776,7 +787,9 @@ export default function BusinessShowcaseLienoraDetail({
 
   const visualVariant = capabilities.variant === 'artisan' ? 'artisan' : 'premium';
   const storedPalette = resolvePaletteId((business as Record<string, unknown>)?.palette_cv);
-  const previewPaletteParam = new URLSearchParams(location.search).get('palette');
+  const previewPaletteParam = embeddedPreview
+    ? previewPalette
+    : new URLSearchParams(location.search).get('palette');
   const previewPalette = resolvePaletteId(previewPaletteParam);
   const activePalette = previewPalette || storedPalette;
   const storedPresentationModel = [
@@ -785,8 +798,10 @@ export default function BusinessShowcaseLienoraDetail({
     business.modele_cv,
     business.cv_model,
   ].map(value => String(value || '').trim()).find(Boolean)?.toLowerCase() || '';
-  const previewPresentationModel = new URLSearchParams(location.search).get('preview-model');
-  const presentationStyle = previewPresentationModel === 'portfolio' || storedPresentationModel.includes('portfolio')
+  const previewModel = embeddedPreview
+    ? previewPresentationModel
+    : new URLSearchParams(location.search).get('preview-model');
+  const presentationStyle = previewModel === 'portfolio' || storedPresentationModel.includes('portfolio')
     ? 'portfolio'
     : 'business';
   const cvProfile = adaptDalilBusiness(business, {
