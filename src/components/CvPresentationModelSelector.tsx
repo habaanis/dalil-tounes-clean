@@ -338,17 +338,31 @@ export function CvPresentationModelSelector({
 
   useEffect(() => {
     if (!expandedModel && !expandedPalette) return;
-    const previousOverflow = document.body.style.overflow;
+    const scrollY = window.scrollY;
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousBodyPosition = document.body.style.position;
+    const previousBodyTop = document.body.style.top;
+    const previousBodyWidth = document.body.style.width;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
     const closeOnEscape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setExpandedModel(null);
         setExpandedPalette(null);
       }
     };
+    document.documentElement.style.overflow = 'hidden';
     document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = '100%';
     document.addEventListener('keydown', closeOnEscape);
     return () => {
-      document.body.style.overflow = previousOverflow;
+      document.documentElement.style.overflow = previousHtmlOverflow;
+      document.body.style.overflow = previousBodyOverflow;
+      document.body.style.position = previousBodyPosition;
+      document.body.style.top = previousBodyTop;
+      document.body.style.width = previousBodyWidth;
+      window.scrollTo(0, scrollY);
       document.removeEventListener('keydown', closeOnEscape);
     };
   }, [expandedModel, expandedPalette]);
@@ -586,7 +600,7 @@ export function CvPresentationModelSelector({
 
       {expandedPalette && (
         <div
-          className="fixed inset-0 z-[145] flex items-start justify-center overflow-y-auto bg-[#021410]/80 p-0 backdrop-blur-md sm:p-6"
+          className="fixed inset-0 z-[145] flex items-start justify-center overflow-hidden bg-[#021410]/80 p-0 backdrop-blur-md sm:p-6"
           onMouseDown={(event) => {
             if (event.target === event.currentTarget) setExpandedPalette(null);
           }}
@@ -595,7 +609,7 @@ export function CvPresentationModelSelector({
             role="dialog"
             aria-modal="true"
             aria-label={`${copy.palettePreview} — ${getPaletteLabel(language, expandedPalette)}`}
-            className="relative my-auto min-h-full w-full min-w-0 overflow-hidden bg-[#F8F6F0] shadow-2xl sm:min-h-0 sm:rounded-[22px] sm:border sm:border-[#C89B4A]/55"
+            className="relative my-auto h-dvh w-full min-w-0 overflow-y-auto overscroll-contain bg-[#F8F6F0] shadow-2xl sm:h-auto sm:max-h-[calc(100dvh-48px)] sm:rounded-[22px] sm:border sm:border-[#C89B4A]/55"
             style={{ maxWidth: '760px' }}
           >
             <header className="sticky top-0 z-20 flex min-h-16 items-center justify-between gap-4 border-b border-[#A07E3E]/25 bg-white px-4 py-2.5 sm:min-h-[70px] sm:px-5 sm:py-3">
