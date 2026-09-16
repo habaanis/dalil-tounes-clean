@@ -18,6 +18,28 @@ import './cvPortfolioPresentation.css';
 import './cvPortfolioSizing.css';
 
 type PortfolioTab = 'home' | 'about' | 'services' | 'gallery' | 'reviews';
+type PortfolioPalette = 'prestige' | 'ivory' | 'night';
+
+const PORTFOLIO_PALETTE_THEMES: Record<PortfolioPalette, CSSProperties> = {
+  prestige: {
+    '--cvp-page': '#eef1ef', '--cvp-text': '#f7f4ec', '--cvp-shell-start': '#005044',
+    '--cvp-shell-mid': '#002f2b', '--cvp-shell-end': '#001d1b', '--cvp-identity-start': '#004e42',
+    '--cvp-identity-end': '#002723', '--cvp-panel': '#003c35', '--cvp-action': 'rgba(0,74,61,.55)',
+    '--cvp-badge': '#087051', '--cvp-overlay': 'rgba(0,45,39,.95)', '--cvp-accent': '#e8bd43',
+  } as CSSProperties,
+  ivory: {
+    '--cvp-page': '#fffaf0', '--cvp-text': '#fffaf0', '--cvp-shell-start': '#6b2a5d',
+    '--cvp-shell-mid': '#512044', '--cvp-shell-end': '#3b1934', '--cvp-identity-start': '#6b2a5d',
+    '--cvp-identity-end': '#512044', '--cvp-panel': '#5b214f', '--cvp-action': 'rgba(91,33,79,.72)',
+    '--cvp-badge': '#b88620', '--cvp-overlay': 'rgba(81,32,68,.95)', '--cvp-accent': '#e0b65f',
+  } as CSSProperties,
+  night: {
+    '--cvp-page': '#06101d', '--cvp-text': '#f8f1e4', '--cvp-shell-start': '#1d3a5a',
+    '--cvp-shell-mid': '#10243a', '--cvp-shell-end': '#06101d', '--cvp-identity-start': '#1d3a5a',
+    '--cvp-identity-end': '#172f4b', '--cvp-panel': '#172f4b', '--cvp-action': 'rgba(29,58,90,.72)',
+    '--cvp-badge': '#1d3a5a', '--cvp-overlay': 'rgba(16,36,58,.95)', '--cvp-accent': '#e5c486',
+  } as CSSProperties,
+};
 
 type PortfolioAction = {
   label: string;
@@ -107,6 +129,8 @@ export interface CvPortfolioPresentationProps {
   onDownloadContact: () => void;
   onSelectImage: (url: string) => void;
   notice: string;
+  hideBack?: boolean;
+  palette?: PortfolioPalette | null;
 }
 
 export function CvPortfolioPresentation({
@@ -125,6 +149,8 @@ export function CvPortfolioPresentation({
   onDownloadContact,
   onSelectImage,
   notice,
+  hideBack = false,
+  palette = 'prestige',
 }: CvPortfolioPresentationProps) {
   const copy = COPY[language] || COPY.fr;
   const [activeTab, setActiveTab] = useState<PortfolioTab>('home');
@@ -226,10 +252,10 @@ export function CvPortfolioPresentation({
     <div
       className="cvp-page"
       dir={isRTL ? 'rtl' : 'ltr'}
-      style={{ '--cvp-accent': '#e8bd43', '--cvp-deep': '#003d35' } as CSSProperties}
+      style={PORTFOLIO_PALETTE_THEMES[palette || 'prestige']}
     >
       <div className="cvp-shell">
-        <button type="button" className="cvp-back" onClick={onBack}>‹ <span>{copy.home}</span></button>
+        {!hideBack && <button type="button" className="cvp-back" onClick={onBack}>‹ <span>{copy.home}</span></button>}
         <article className="cvp-card">
           <header className="cvp-header">
             <div className="cvp-cover"><img src={coverImage} alt={profile.identity.name} loading="eager" decoding="async" /></div>
