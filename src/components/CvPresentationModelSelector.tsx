@@ -1,5 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import { Check, Palette, X, ZoomIn } from 'lucide-react';
+import { Route, Routes } from 'react-router-dom';
+import BusinessShowcaseLienoraDetail from './BusinessShowcaseLienoraDetail';
 
 type SupportedLanguage = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 
@@ -248,15 +250,18 @@ function RealPalettePreview({
         ? 'mx-auto h-[72dvh] max-h-[720px] min-h-[480px] w-full overflow-hidden rounded-2xl border border-[#D6AF2E]/70 bg-[#F7F5EF] shadow-inner'
         : 'mx-auto h-[520px] w-[292px] max-w-full overflow-hidden rounded-[26px] border-2 border-[#D6AF2E]/70 bg-[#F7F5EF] shadow-lg'}
     >
-      <iframe
+      <div
         key={previewUrl}
-        title={`${model === 'portfolio' ? 'CV Portfolio' : 'CV Business'} — ${getPaletteLabel(language, palette)}`}
-        src={previewUrl}
-        className={expanded
-          ? 'h-full w-full border-0 bg-white'
-          : 'h-[860px] w-[390px] origin-top-left scale-[0.744] border-0 bg-white'}
-        loading="lazy"
-      />
+        className={expanded ? 'h-full w-full overflow-y-auto bg-white' : 'w-[584px] origin-top-left bg-white'}
+        style={expanded ? undefined : ({ zoom: 0.5 } as CSSProperties)}
+      >
+        <Routes location={previewUrl}>
+          <Route
+            path="/entreprise/:villeSlug/:slug"
+            element={<BusinessShowcaseLienoraDetail embeddedPreview />}
+          />
+        </Routes>
+      </div>
     </div>
   );
 }
