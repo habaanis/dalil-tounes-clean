@@ -101,16 +101,6 @@ function getFullImageUrl(url?: string | null): string {
   return `${supabaseUrl}/storage/v1/object/public/entreprises/${finalUrl}`;
 }
 
-function isQrCodeImageUrl(url: string): boolean {
-  const lower = url.toLowerCase();
-  if (/\.(png|jpg|jpeg|webp|svg|gif)(\?|$)/.test(lower)) return true;
-  if (lower.includes('api.qrserver.com')) return true;
-  if (lower.includes('imagekit.io')) return true;
-  if (lower.includes('supabase.co/storage')) return true;
-  if (lower.includes('qr-code') || lower.includes('qrcode')) return true;
-  return false;
-}
-
 function isPhoneDisplayable(value: string, whatsappField?: string): boolean {
   const digits = value.replace(/\D/g, '');
   if (digits.length < 4) return false;
@@ -796,7 +786,7 @@ export const BusinessDetail = ({
 
   const downloadQRCode = async () => {
     if (!business) return;
-    const url = business.qr_code_url || getBusinessShareUrl() || window.location.href;
+    const url = getBusinessShareUrl() || window.location.href;
     const size = 1024;
     const margin = 4;
 
@@ -2019,28 +2009,16 @@ export const BusinessDetail = ({
                 >
                   <div className="flex flex-col items-center gap-1 pt-2 pb-1">
                     <div ref={qrCodeRef} className="inline-block rounded bg-white" style={{ padding: '3px' }}>
-                      {business.qr_code_url && isQrCodeImageUrl(business.qr_code_url) ? (
-                        <img
-                          src={business.qr_code_url}
-                          alt={`QR Code ${business.nom}`}
-                          width={88}
-                          height={88}
-                          loading="lazy"
-                          decoding="async"
-                          style={{ display: 'block', width: '88px', height: '88px', objectFit: 'contain' }}
+                      <Suspense fallback={<div style={{ width: 88, height: 88, background: '#FFF' }} />}>
+                        <QRCodeSVG
+                          value={getBusinessShareUrl() || window.location.href}
+                          size={88}
+                          level="M"
+                          includeMargin={true}
+                          fgColor="#000000"
+                          bgColor="#FFFFFF"
                         />
-                      ) : (
-                        <Suspense fallback={<div style={{ width: 88, height: 88, background: '#FFF' }} />}>
-                          <QRCodeSVG
-                            value={business.qr_code_url || getBusinessShareUrl() || window.location.href}
-                            size={88}
-                            level="M"
-                            includeMargin={true}
-                            fgColor="#000000"
-                            bgColor="#FFFFFF"
-                          />
-                        </Suspense>
-                      )}
+                      </Suspense>
                     </div>
 
                     <button

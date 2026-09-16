@@ -470,19 +470,6 @@ const buildWhatsAppUrl = (value: unknown): string => {
   return `https://wa.me/${normalized}`;
 };
 
-const isQrCodeImageUrl = (value: unknown): boolean => {
-  const url = String(value || '').trim().toLowerCase();
-  if (!url) return false;
-  return (
-    /\.(png|jpe?g|webp|svg|gif)(\?|$)/.test(url) ||
-    url.includes('api.qrserver.com') ||
-    url.includes('imagekit.io') ||
-    url.includes('supabase.co/storage') ||
-    url.includes('/qr-code') ||
-    url.includes('/qrcode')
-  );
-};
-
 const isPublished = (value: unknown): boolean => {
   const normalized = normalizeForComparison(value);
   return normalized === 'publie' || normalized === 'published';
@@ -843,9 +830,6 @@ export default function BusinessShowcaseLienoraDetail() {
     thumbnail,
     full: galleryFull[index] || thumbnail,
   }));
-  const qrImageUrl = isQrCodeImageUrl(business.qr_code_url)
-    ? String(business.qr_code_url)
-    : '';
   const certification = String(business.statut_carte || '').trim();
   const activityPill = serviceItems[0] || categoryLabel || displayName;
   const contactNotice = notice || text.contactNotice;
@@ -1175,18 +1159,7 @@ export default function BusinessShowcaseLienoraDetail() {
         <p>{text.qrDescription}</p>
       </div>
       <div className="dt-qr-wrap">
-        {qrImageUrl ? (
-          <img
-            src={qrImageUrl}
-            alt={`QR Code de ${displayName}`}
-            width={100}
-            height={100}
-            loading="lazy"
-            decoding="async"
-          />
-        ) : (
-          <QRCodeSVG value={shortShareUrl} size={100} level="M" title={`QR Code de ${displayName}`} />
-        )}
+        <QRCodeSVG value={shortShareUrl} size={100} level="M" title={`QR Code de ${displayName}`} />
       </div>
       <div className="dt-qr-actions">
         {capabilities.variant === 'premium' && (
