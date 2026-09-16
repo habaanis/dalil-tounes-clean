@@ -583,7 +583,13 @@ export function CvPresentationModelSelector({
             if (event.target === event.currentTarget) setExpandedPalette(null);
           }}
         >
-          <div role="dialog" aria-modal="true" aria-label={`${copy.palettePreview} — ${getPaletteLabel(language, expandedPalette)}`} className="relative w-full max-w-[430px] rounded-3xl bg-white p-3 shadow-2xl sm:p-4">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label={`${copy.palettePreview} — ${getPaletteLabel(language, expandedPalette)}`}
+            className="relative min-w-0 overflow-hidden rounded-3xl bg-white p-3 shadow-2xl sm:p-4"
+            style={{ width: 'min(430px, calc(100vw - 24px))' }}
+          >
             <button
               type="button"
               onClick={() => setExpandedPalette(null)}
