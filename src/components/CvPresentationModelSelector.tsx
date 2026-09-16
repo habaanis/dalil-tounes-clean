@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import { Check, Palette, X, ZoomIn } from 'lucide-react';
+import BusinessShowcaseLienoraDetail from './BusinessShowcaseLienoraDetail';
 
 type SupportedLanguage = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 
@@ -31,6 +32,7 @@ type Copy = {
   night: string;
   paletteIncluded: string;
   palettePreview: string;
+  enlargedPreview: string;
   selectedPalette: string;
 };
 
@@ -60,6 +62,7 @@ const COPY: Record<SupportedLanguage, Copy> = {
     night: 'Bleu Nuit & Champagne',
     paletteIncluded: 'Palette incluse',
     palettePreview: 'Aperçu',
+    enlargedPreview: 'APERÇU AGRANDI',
     selectedPalette: 'Palette',
   },
   ar: {
@@ -87,6 +90,7 @@ const COPY: Record<SupportedLanguage, Copy> = {
     night: 'الأزرق الليلي والشامبانيا',
     paletteIncluded: 'لوحة ألوان مشمولة',
     palettePreview: 'معاينة',
+    enlargedPreview: 'معاينة مكبرة',
     selectedPalette: 'اللوحة',
   },
   en: {
@@ -114,6 +118,7 @@ const COPY: Record<SupportedLanguage, Copy> = {
     night: 'Night Blue & Champagne',
     paletteIncluded: 'Palette included',
     palettePreview: 'Preview',
+    enlargedPreview: 'ENLARGED PREVIEW',
     selectedPalette: 'Palette',
   },
   it: {
@@ -141,6 +146,7 @@ const COPY: Record<SupportedLanguage, Copy> = {
     night: 'Blu Notte & Champagne',
     paletteIncluded: 'Palette inclusa',
     palettePreview: 'Anteprima',
+    enlargedPreview: 'ANTEPRIMA INGRANDITA',
     selectedPalette: 'Palette',
   },
   ru: {
@@ -168,6 +174,7 @@ const COPY: Record<SupportedLanguage, Copy> = {
     night: 'Ночной синий и шампань',
     paletteIncluded: 'Палитра включена',
     palettePreview: 'Предпросмотр',
+    enlargedPreview: 'УВЕЛИЧЕННЫЙ ПРОСМОТР',
     selectedPalette: 'Палитра',
   },
 };
@@ -179,7 +186,7 @@ export const PALETTE_IDS: PaletteId[] = ['prestige', 'ivory', 'night'];
 
 export const PALETTE_SWATCHES: Record<PaletteId, { bg: string; accent: string; text: string }> = {
   prestige: { bg: '#042d24', accent: '#D4AF37', text: '#F4CE55' },
-  ivory: { bg: '#fff3d8', accent: '#c89b4a', text: '#5b214f' },
+  ivory: { bg: '#FFFFF0', accent: '#D4AF37', text: '#3B3126' },
   night: { bg: '#10243a', accent: '#e5c486', text: '#f8f1e4' },
 };
 
@@ -229,20 +236,69 @@ function ModelPreview({
   );
 }
 
-function PaletteSwatch({ palette, selected, label, onClick }: { palette: PaletteId; selected: boolean; label: string; onClick: () => void }) {
+function RealPalettePreview({
+  palette,
+  model,
+  language,
+  expanded = false,
+}: {
+  palette: PaletteId;
+  model: PresentationModel;
+  language: string;
+  expanded?: boolean;
+}) {
+  const previewUrl = `/entreprise/sousse/aux-saveurs-d-anis?preview-model=${model}&palette=${palette}&source=subscription&lang=${language}`;
+
+  return (
+    <div
+      className={expanded
+        ? 'mx-auto w-full bg-[#F8F6F0]'
+        : 'mx-auto h-[450px] w-[292px] max-w-full overflow-hidden rounded-[26px] border-2 border-[#D6AF2E]/70 bg-[#F7F5EF] shadow-lg'}
+    >
+      <div
+        key={previewUrl}
+        className={expanded
+          ? 'pointer-events-auto w-full bg-[#F8F6F0]'
+          : 'w-[584px] origin-top-left bg-white'}
+        style={expanded ? undefined : ({ zoom: 0.5 } as CSSProperties)}
+      >
+        <BusinessShowcaseLienoraDetail
+          embeddedPreview
+          previewSlug="aux-saveurs-d-anis"
+          previewVilleSlug="sousse"
+          previewPalette={palette}
+          previewPresentationModel={model}
+        />
+      </div>
+    </div>
+  );
+}
+
+function PaletteChoice({
+  palette,
+  selected,
+  label,
+  onSelect,
+}: {
+  palette: PaletteId;
+  selected: boolean;
+  label: string;
+  onSelect: () => void;
+}) {
   const sw = PALETTE_SWATCHES[palette];
   return (
     <button
       type="button"
-      aria-pressed={selected}
-      onClick={onClick}
-      className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-bold transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${selected ? 'border-[#D6AF2E] bg-amber-50 shadow-sm' : 'border-slate-200 bg-white hover:border-[#D6AF2E]/60'}`}
+      role="radio"
+      aria-checked={selected}
+      onClick={onSelect}
+      className={`flex min-h-16 items-center gap-2 rounded-xl border-2 px-3 py-2 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${selected ? 'border-[#D6AF2E] bg-white shadow-sm' : 'border-transparent bg-white/70 hover:border-[#D6AF2E]/50'}`}
     >
-      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-slate-200" style={{ background: sw.bg }}>
-        <span className="block h-3 w-3 rounded-full" style={{ background: sw.accent }} />
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200" style={{ background: sw.bg }}>
+        <span className="block h-4 w-4 rounded-full" style={{ background: sw.accent }} />
       </span>
-      <span className="min-w-0 truncate text-slate-700">{label}</span>
-      {selected && <Check className="h-3.5 w-3.5 shrink-0 text-[#07543F]" aria-hidden="true" />}
+      <span className="min-w-0 flex-1 text-xs font-black leading-4 text-slate-700">{label}</span>
+      {selected && <Check className="h-4 w-4 shrink-0 text-[#07543F]" aria-hidden="true" />}
     </button>
   );
 }
@@ -274,24 +330,42 @@ export function CvPresentationModelSelector({
 }) {
   const copy = COPY[(language as SupportedLanguage)] ?? COPY.fr;
   const [expandedModel, setExpandedModel] = useState<PresentationModel | null>(null);
+  const [expandedPalette, setExpandedPalette] = useState<PaletteId | null>(null);
   const [showPalettePanel, setShowPalettePanel] = useState(false);
   const selectedModelLabel = value ? getPresentationModelLabel(language, value) : null;
   const selectedPaletteLabel = getPaletteLabel(language, paletteValue);
   const canContinue = Boolean(selectedFormulaLabel && value);
 
   useEffect(() => {
-    if (!expandedModel) return;
-    const previousOverflow = document.body.style.overflow;
+    if (!expandedModel && !expandedPalette) return;
+    const scrollY = window.scrollY;
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousBodyPosition = document.body.style.position;
+    const previousBodyTop = document.body.style.top;
+    const previousBodyWidth = document.body.style.width;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
     const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setExpandedModel(null);
+      if (event.key === 'Escape') {
+        setExpandedModel(null);
+        setExpandedPalette(null);
+      }
     };
+    document.documentElement.style.overflow = 'hidden';
     document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = '100%';
     document.addEventListener('keydown', closeOnEscape);
     return () => {
-      document.body.style.overflow = previousOverflow;
+      document.documentElement.style.overflow = previousHtmlOverflow;
+      document.body.style.overflow = previousBodyOverflow;
+      document.body.style.position = previousBodyPosition;
+      document.body.style.top = previousBodyTop;
+      document.body.style.width = previousBodyWidth;
+      window.scrollTo(0, scrollY);
       document.removeEventListener('keydown', closeOnEscape);
     };
-  }, [expandedModel]);
+  }, [expandedModel, expandedPalette]);
 
   const currentImage = expandedModel === 'portfolio' ? PORTFOLIO_IMAGE : PROFESSIONAL_IMAGE;
   const mobileImage = value === 'portfolio' ? PORTFOLIO_IMAGE : PROFESSIONAL_IMAGE;
@@ -429,18 +503,35 @@ export function CvPresentationModelSelector({
         {showPalettePanel && (
           <div className="mt-2 rounded-2xl border border-amber-200 bg-amber-50/40 p-3">
             <p className="mb-2 text-xs font-bold text-slate-600">{copy.paletteLabel}</p>
-            <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-3" role="radiogroup" aria-label={copy.paletteLabel}>
               {PALETTE_IDS.map((id) => (
-                <PaletteSwatch
+                <PaletteChoice
                   key={id}
                   palette={id}
                   selected={paletteValue === id}
                   label={getPaletteLabel(language, id)}
-                  onClick={() => onPaletteChange(id)}
+                  onSelect={() => onPaletteChange(id)}
                 />
               ))}
             </div>
-            <p className="mt-2 text-xs font-semibold text-slate-500">{copy.paletteIncluded}</p>
+
+            <div className="relative mx-auto mt-4 w-fit max-w-full">
+              <RealPalettePreview
+                palette={paletteValue}
+                model={value ?? 'business'}
+                language={language}
+              />
+              <button
+                type="button"
+                onClick={() => setExpandedPalette(paletteValue)}
+                className="absolute right-3 top-3 grid h-11 w-11 place-items-center rounded-full border-2 border-white bg-[#D6AF2E] text-[#07543F] shadow-lg transition hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#07543F]"
+                aria-label={`${copy.palettePreview} — ${selectedPaletteLabel}`}
+                title={`${copy.palettePreview} — ${selectedPaletteLabel}`}
+              >
+                <ZoomIn className="h-5 w-5" aria-hidden="true" />
+              </button>
+            </div>
+            <p className="mt-3 text-center text-xs font-semibold text-slate-500">{copy.paletteIncluded}</p>
           </div>
         )}
       </div>
@@ -503,6 +594,46 @@ export function CvPresentationModelSelector({
             >
               {copy.testModel}
             </a>
+          </div>
+        </div>
+      )}
+
+      {expandedPalette && (
+        <div
+          className="fixed inset-0 z-[145] flex items-start justify-center overflow-hidden bg-[#021410]/80 p-0 backdrop-blur-md sm:p-6"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setExpandedPalette(null);
+          }}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label={`${copy.palettePreview} — ${getPaletteLabel(language, expandedPalette)}`}
+            className="relative my-auto h-dvh w-full min-w-0 overflow-y-auto overscroll-contain bg-[#F8F6F0] shadow-2xl sm:h-auto sm:max-h-[calc(100dvh-48px)] sm:rounded-[22px] sm:border sm:border-[#C89B4A]/55"
+            style={{ maxWidth: '760px' }}
+          >
+            <header className="sticky top-0 z-20 flex min-h-16 items-center justify-between gap-4 border-b border-[#A07E3E]/25 bg-white px-4 py-2.5 sm:min-h-[70px] sm:px-5 sm:py-3">
+              <div className="flex min-w-0 flex-col gap-0.5">
+                <small className="text-[0.65rem] font-black tracking-[0.13em] text-[#9A722C]">{copy.enlargedPreview}</small>
+                <strong className="truncate font-serif text-base font-bold text-[#0A2F27] sm:text-lg">{getPaletteLabel(language, expandedPalette)} · {value === 'portfolio' ? copy.portfolio : copy.business}</strong>
+              </div>
+              <button
+                type="button"
+                onClick={() => setExpandedPalette(null)}
+                className="grid h-11 w-11 shrink-0 place-items-center rounded-full border-0 bg-[#0B392F] text-white focus:outline-none focus:ring-2 focus:ring-[#D4AF37]"
+                aria-label={copy.close}
+                title={copy.close}
+                autoFocus
+              >
+                <X className="h-5 w-5" aria-hidden="true" />
+              </button>
+            </header>
+            <RealPalettePreview
+              palette={expandedPalette}
+              model={value ?? 'business'}
+              language={language}
+              expanded
+            />
           </div>
         </div>
       )}

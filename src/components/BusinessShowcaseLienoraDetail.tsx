@@ -479,6 +479,7 @@ type PaletteId = 'prestige' | 'ivory' | 'night';
 
 const PALETTE_THEMES: Record<PaletteId, CSSProperties> = {
   prestige: {
+    '--dt-copy': '#ffffff',
     '--dt-page': '#eef1ef',
     '--dt-ink': '#0f2d23',
     '--dt-accent': '#F4CE55',
@@ -500,27 +501,29 @@ const PALETTE_THEMES: Record<PaletteId, CSSProperties> = {
     '--dt-action-end': '#011f1a',
   } as CSSProperties,
   ivory: {
-    '--dt-page': '#fffaf0',
-    '--dt-ink': '#5b214f',
-    '--dt-accent': '#c89b4a',
-    '--dt-border': '#b88620',
-    '--dt-muted': '#fff3d8',
-    '--dt-glow': 'rgba(91, 33, 79, 0.22)',
-    '--dt-glow-soft': 'rgba(200, 155, 74, 0.18)',
-    '--dt-shell-start': '#fffdf6',
-    '--dt-shell-mid': '#fff3d8',
-    '--dt-shell-end': '#fffaf0',
-    '--dt-identity-start': '#5b214ffa',
-    '--dt-identity-end': '#512044fc',
-    '--dt-panel-start': '#5b214feb',
-    '--dt-panel-end': '#512044f0',
-    '--dt-panel-dark': '#512044',
-    '--dt-badge-start': '#c89b4a',
-    '--dt-badge-end': '#b88620',
-    '--dt-action-start': '#5b214f',
-    '--dt-action-end': '#3b1934',
+    '--dt-page': '#FFFFF0',
+    '--dt-copy': '#3d3326',
+    '--dt-ink': '#3d3326',
+    '--dt-accent': '#D4AF37',
+    '--dt-border': '#D4AF37',
+    '--dt-muted': '#7a674b',
+    '--dt-glow': 'rgba(212, 175, 55, 0.20)',
+    '--dt-glow-soft': 'rgba(212, 175, 55, 0.14)',
+    '--dt-shell-start': '#FFFFF8',
+    '--dt-shell-mid': '#FFFFF0',
+    '--dt-shell-end': '#F4E4B7',
+    '--dt-identity-start': '#FFFFF8fa',
+    '--dt-identity-end': '#F4E4B7fc',
+    '--dt-panel-start': '#FFFFF0eb',
+    '--dt-panel-end': '#F0D999f0',
+    '--dt-panel-dark': '#F4E4B7',
+    '--dt-badge-start': '#E2C45F',
+    '--dt-badge-end': '#D4AF37',
+    '--dt-action-start': '#FFFFF8',
+    '--dt-action-end': '#F0D999',
   } as CSSProperties,
   night: {
+    '--dt-copy': '#ffffff',
     '--dt-page': '#06101d',
     '--dt-ink': '#f8f1e4',
     '--dt-accent': '#e5c486',
@@ -611,12 +614,27 @@ function AccordionSection({
   );
 }
 
-export default function BusinessShowcaseLienoraDetail() {
-  const { id: urlId, slug: urlSlug, villeSlug: urlVilleSlug } = useParams<{
+export default function BusinessShowcaseLienoraDetail({
+  embeddedPreview = false,
+  previewSlug,
+  previewVilleSlug,
+  previewPalette,
+  previewPresentationModel,
+}: {
+  embeddedPreview?: boolean;
+  previewSlug?: string;
+  previewVilleSlug?: string;
+  previewPalette?: PaletteId;
+  previewPresentationModel?: 'business' | 'portfolio';
+} = {}) {
+  const routeParams = useParams<{
     id?: string;
     slug?: string;
     villeSlug?: string;
   }>();
+  const urlId = embeddedPreview ? undefined : routeParams.id;
+  const urlSlug = embeddedPreview ? previewSlug : routeParams.slug;
+  const urlVilleSlug = embeddedPreview ? previewVilleSlug : routeParams.villeSlug;
   const navigate = useNavigate();
   const location = useLocation();
   const { language } = useLanguage();
@@ -657,7 +675,7 @@ export default function BusinessShowcaseLienoraDetail() {
   );
   const capabilities = useMemo(() => getBusinessShowcaseCapabilities(tier), [tier]);
 
-  useViewTracking(capabilities.variant === 'directory' ? undefined : business?.id);
+  useViewTracking(embeddedPreview || capabilities.variant === 'directory' ? undefined : business?.id);
 
   useEffect(() => {
     let cancelled = false;
@@ -729,7 +747,7 @@ export default function BusinessShowcaseLienoraDetail() {
 
         setBusiness(record);
         const canonicalPath = buildEntrepriseUrl(record);
-        if (canonicalPath !== '/' && location.pathname !== canonicalPath) {
+        if (!embeddedPreview && canonicalPath !== '/' && location.pathname !== canonicalPath) {
           navigate(canonicalPath, { replace: true });
         }
       } catch (error) {
@@ -744,7 +762,7 @@ export default function BusinessShowcaseLienoraDetail() {
     return () => {
       cancelled = true;
     };
-  }, [location.pathname, navigate, urlId, urlSlug, urlVilleSlug]);
+  }, [embeddedPreview, location.pathname, navigate, urlId, urlSlug, urlVilleSlug]);
 
   if (loading) {
     return (
@@ -772,17 +790,21 @@ export default function BusinessShowcaseLienoraDetail() {
 
   const visualVariant = capabilities.variant === 'artisan' ? 'artisan' : 'premium';
   const storedPalette = resolvePaletteId((business as Record<string, unknown>)?.palette_cv);
-  const previewPaletteParam = new URLSearchParams(location.search).get('palette');
-  const previewPalette = resolvePaletteId(previewPaletteParam);
-  const activePalette = previewPalette || storedPalette;
+  const previewPaletteParam = embeddedPreview
+    ? previewPalette
+    : new URLSearchParams(location.search).get('palette');
+  const resolvedPreviewPalette = resolvePaletteId(previewPaletteParam);
+  const activePalette = resolvedPreviewPalette || storedPalette;
   const storedPresentationModel = [
     business.modele_presentation,
     business.presentation_model,
     business.modele_cv,
     business.cv_model,
   ].map(value => String(value || '').trim()).find(Boolean)?.toLowerCase() || '';
-  const previewPresentationModel = new URLSearchParams(location.search).get('preview-model');
-  const presentationStyle = previewPresentationModel === 'portfolio' || storedPresentationModel.includes('portfolio')
+  const previewModel = embeddedPreview
+    ? previewPresentationModel
+    : new URLSearchParams(location.search).get('preview-model');
+  const presentationStyle = previewModel === 'portfolio' || storedPresentationModel.includes('portfolio')
     ? 'portfolio'
     : 'business';
   const cvProfile = adaptDalilBusiness(business, {
@@ -940,6 +962,10 @@ export default function BusinessShowcaseLienoraDetail() {
       external: true,
     },
   ].filter((action): action is ActionConfig => Boolean(action));
+
+  const displayedPrimaryActions = embeddedPreview
+    ? primaryActions.filter(action => [text.call, text.email, text.directions].includes(action.label)).slice(0, 3)
+    : primaryActions;
 
   const copyLink = async () => {
     try {
@@ -1251,7 +1277,7 @@ export default function BusinessShowcaseLienoraDetail() {
       icon: Info,
       content: practicalContent,
     },
-    hasAction('reservation') && {
+    !embeddedPreview && hasAction('reservation') && {
       id: 'booking' as const,
       title: text.booking,
       icon: CalendarDays,
@@ -1281,7 +1307,7 @@ export default function BusinessShowcaseLienoraDetail() {
         />
       ),
     },
-    hasSection('reviews') && {
+    !embeddedPreview && hasSection('reviews') && {
       id: 'reviews' as const,
       title: text.reviews,
       icon: Star,
@@ -1295,7 +1321,7 @@ export default function BusinessShowcaseLienoraDetail() {
         </div>
       ),
     },
-    !isClientAppMode && capabilities.showPlatformLinks && {
+    !embeddedPreview && !isClientAppMode && capabilities.showPlatformLinks && {
       id: 'platform' as const,
       title: text.platform,
       icon: Building2,
@@ -1314,7 +1340,7 @@ export default function BusinessShowcaseLienoraDetail() {
         </div>
       ) : <p className="dt-empty-copy">{text.noPlatformLinks}</p>,
     },
-    (capabilities.showQrCode || capabilities.showShareTools) && {
+    !embeddedPreview && (capabilities.showQrCode || capabilities.showShareTools) && {
       id: 'sharing' as const,
       title: text.sharing,
       icon: QrCode,
@@ -1325,18 +1351,20 @@ export default function BusinessShowcaseLienoraDetail() {
   if (resolvedPresentation.style === 'portfolio') {
     return (
       <main dir={isRTL ? 'rtl' : 'ltr'}>
-        <SEOHead
-          title={seo.title}
-          description={seo.description}
-          keywords={seo.keywords}
-          image={coverImage}
-          canonical={canonicalUrl}
-          currentPath={canonicalPath}
-          type="website"
-          author={displayName}
-          noindex={!isPublished(business.statut_validation)}
-        />
-        <StructuredData data={[localBusinessSchema, breadcrumbSchema]} />
+        {!embeddedPreview && <>
+          <SEOHead
+            title={seo.title}
+            description={seo.description}
+            keywords={seo.keywords}
+            image={coverImage}
+            canonical={canonicalUrl}
+            currentPath={canonicalPath}
+            type="website"
+            author={displayName}
+            noindex={!isPublished(business.statut_validation)}
+          />
+          <StructuredData data={[localBusinessSchema, breadcrumbSchema]} />
+        </>}
         <CvPortfolioPresentation
           language={language}
           profile={cvProfile}
@@ -1353,6 +1381,9 @@ export default function BusinessShowcaseLienoraDetail() {
           onDownloadContact={downloadContact}
           onSelectImage={setSelectedImage}
           notice={contactNotice}
+          hideBack={embeddedPreview}
+          embeddedPreview={embeddedPreview}
+          palette={activePalette}
         />
         {selectedImage && (
           <div
@@ -1382,24 +1413,26 @@ export default function BusinessShowcaseLienoraDetail() {
   }
 
   return (
-    <main className="dt-showcase-page" style={themeVariables(visualVariant, activePalette)} dir={isRTL ? 'rtl' : 'ltr'}>
-      <SEOHead
-        title={seo.title}
-        description={seo.description}
-        keywords={seo.keywords}
-        image={coverImage}
-        canonical={canonicalUrl}
-        currentPath={canonicalPath}
-        type="website"
-        author={displayName}
-        noindex={!isPublished(business.statut_validation)}
-      />
-      <StructuredData data={[localBusinessSchema, breadcrumbSchema]} />
+    <main className={`dt-showcase-page${embeddedPreview ? ' dt-showcase-page--embedded' : ''}`} style={themeVariables(visualVariant, activePalette)} dir={isRTL ? 'rtl' : 'ltr'}>
+      {!embeddedPreview && <>
+        <SEOHead
+          title={seo.title}
+          description={seo.description}
+          keywords={seo.keywords}
+          image={coverImage}
+          canonical={canonicalUrl}
+          currentPath={canonicalPath}
+          type="website"
+          author={displayName}
+          noindex={!isPublished(business.statut_validation)}
+        />
+        <StructuredData data={[localBusinessSchema, breadcrumbSchema]} />
+      </>}
 
       <div className="dt-showcase-wrap">
-        <button type="button" className="dt-back-button" onClick={handleBack}>
+        {!embeddedPreview && <button type="button" className="dt-back-button" onClick={handleBack}>
           <ArrowLeft aria-hidden="true" />{text.back}
-        </button>
+        </button>}
 
         <article className="dt-showcase">
           <header>
@@ -1452,14 +1485,14 @@ export default function BusinessShowcaseLienoraDetail() {
           </header>
 
           <section className="dt-actions" aria-label="Actions">
-            {primaryActions.length > 0 && (
+            {displayedPrimaryActions.length > 0 && (
               <div
                 className="dt-primary-actions"
                 style={{
-                  gridTemplateColumns: `repeat(${Math.min(primaryActions.length, 4)}, minmax(0, 1fr))`,
+                  gridTemplateColumns: `repeat(${Math.min(displayedPrimaryActions.length + (embeddedPreview ? 1 : 0), 4)}, minmax(0, 1fr))`,
                 }}
               >
-                {primaryActions.map(action => {
+                {displayedPrimaryActions.map(action => {
                   const Icon = action.icon;
                   return (
                     <a
@@ -1474,9 +1507,15 @@ export default function BusinessShowcaseLienoraDetail() {
                     </a>
                   );
                 })}
+                {embeddedPreview && (
+                  <button type="button" className="dt-primary-action" onClick={downloadContact}>
+                    <Contact aria-hidden="true" />
+                    <span>{text.addContact}</span>
+                  </button>
+                )}
               </div>
             )}
-            <div className="dt-secondary-actions">
+            {!embeddedPreview && <div className="dt-secondary-actions">
               {(hasAction('reservation') || whatsappUrl || business.email) && (
                 <button
                   type="button"
@@ -1492,7 +1531,7 @@ export default function BusinessShowcaseLienoraDetail() {
               <button type="button" className="dt-secondary-action" onClick={downloadContact}>
                 <Contact aria-hidden="true" />{text.addContact}
               </button>
-            </div>
+            </div>}
             <p className="dt-action-notice" role="status" aria-live="polite">{contactNotice}</p>
           </section>
 
@@ -1556,7 +1595,7 @@ export default function BusinessShowcaseLienoraDetail() {
           </p>
         </article>
 
-        {!isClientAppMode && capabilities.showSimilarBusinesses && (
+        {!embeddedPreview && !isClientAppMode && capabilities.showSimilarBusinesses && (
           <section className="dt-similar-wrap rounded-2xl bg-[#0f0f0f] p-4">
             <h2 className="sr-only">{text.similar}</h2>
             <SimilarBusinesses
