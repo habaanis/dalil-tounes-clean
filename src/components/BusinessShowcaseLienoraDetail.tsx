@@ -790,8 +790,8 @@ export default function BusinessShowcaseLienoraDetail({
   const previewPaletteParam = embeddedPreview
     ? previewPalette
     : new URLSearchParams(location.search).get('palette');
-  const previewPalette = resolvePaletteId(previewPaletteParam);
-  const activePalette = previewPalette || storedPalette;
+  const resolvedPreviewPalette = resolvePaletteId(previewPaletteParam);
+  const activePalette = resolvedPreviewPalette || storedPalette;
   const storedPresentationModel = [
     business.modele_presentation,
     business.presentation_model,
