@@ -30,6 +30,8 @@ export interface RawRegistrationRequest {
   message?: unknown;
   consent?: unknown;
   legacyType?: unknown;
+  presentationModel?: unknown;
+  palette?: unknown;
 }
 
 export interface NormalizedRegistrationRequest {
@@ -62,6 +64,8 @@ export interface NormalizedRegistrationRequest {
   message: string;
   consent: boolean;
   legacyType: 'general' | 'medical_transport' | '';
+  presentationModel: string;
+  palette: string;
 }
 
 export type ValidationResult =
@@ -230,6 +234,8 @@ export function validateRegistrationRequest(raw: RawRegistrationRequest): Valida
         message,
         consent: false,
         legacyType,
+        presentationModel: '',
+        palette: '',
       },
     };
   }
@@ -331,6 +337,8 @@ export function validateRegistrationRequest(raw: RawRegistrationRequest): Valida
         message,
         consent,
         legacyType: '',
+        presentationModel: singleLine(raw.presentationModel, 30),
+        palette: singleLine(raw.palette, 30),
       },
     };
   }
@@ -393,6 +401,8 @@ export function validateRegistrationRequest(raw: RawRegistrationRequest): Valida
       message,
       consent,
       legacyType: '',
+      presentationModel: '',
+      palette: '',
     },
   };
 }

@@ -34,6 +34,7 @@ interface SubscriptionRequestFormProps {
   initialBillingPeriod?: BillingPeriod;
   creationMode?: boolean;
   presentationModelLabel?: string;
+  paletteLabel?: string;
   onCancel?: () => void;
   onSuccess?: () => void;
 }
@@ -675,6 +676,7 @@ export function SubscriptionRequestForm({
   initialBillingPeriod,
   creationMode = false,
   presentationModelLabel,
+  paletteLabel,
   onCancel,
   onSuccess,
 }: SubscriptionRequestFormProps) {
@@ -816,6 +818,7 @@ export function SubscriptionRequestForm({
       message: cleanMultiline([
         // Internal admin-only label — not user-visible, intentionally kept in French
         presentationModelLabel ? `Modèle de présentation choisi : ${presentationModelLabel}` : '',
+        paletteLabel ? `Palette choisie : ${paletteLabel}` : '',
         form.message,
       ].filter(Boolean).join('\n')),
       consent: form.consent,

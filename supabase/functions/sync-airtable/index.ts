@@ -177,6 +177,8 @@ const FIELD_VARIANTS = {
   sous_categories_clean: ["sous_categories_clean", "Sous-catégories clean"],
   services: ["services", "Services"],
   qr_code_url: ["qr_code_url", "QR Code URL", "QR Code Preuve 2"],
+  palette_cv: ["palette_cv", "Palette CV", "Palette de vitrine"],
+  modele_cv: ["modele_cv", "Modèle CV", "Modèle de CV", "modele_presentation", "Modèle de présentation", "presentation_model", "cv_model"],
   theme_culturel: ["theme_culturel", "thème culturel", "Thème Culturel"],
   secteur_evenement: ["secteur_evenement", "Secteur Événement"],
   liste_pages: ["liste pages", "Liste Pages", "liste_pages"],
@@ -421,6 +423,8 @@ function mapRecord(record: AirtableRecord): EnterprisePayload {
 
   setIfPresent(payload, "services", textValue(pick("services")));
   setIfPresent(payload, "qr_code_url", textValue(pick("qr_code_url")));
+  setIfPresent(payload, "palette_cv", textValue(pick("palette_cv")));
+  setIfPresent(payload, "modele_cv", textValue(pick("modele_cv")));
   setIfPresent(payload, "theme_culturel", textValue(pick("theme_culturel")));
   setIfPresent(payload, "secteur_evenement", textValue(pick("secteur_evenement")));
   setIfPresent(payload, "liste_pages", textArrayValue(pick("liste_pages")));

@@ -199,8 +199,8 @@ export default function HomeVitrineFirst() {
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as BusinessCardPreviewLanguage;
   const t = COPY[lang];
   const rtl = lang === 'ar';
-  const [presentationModel, setPresentationModel] = useState<PresentationModel>('professional');
-  const modelImage = presentationModel === 'professional'
+  const [presentationModel, setPresentationModel] = useState<PresentationModel>('business');
+  const modelImage = presentationModel === 'business'
     ? '/images/cv-business-portfolio-aux-saveurs-anis.png'
     : '/images/cv-business-professionnel-aux-saveurs-anis.png';
 
@@ -299,7 +299,7 @@ export default function HomeVitrineFirst() {
               <div className="mb-4" role="group" aria-label={t.modelPrompt}>
                 <p className="mb-2 text-center text-xs font-bold text-gray-600">{t.modelPrompt}</p>
                 <div className="grid grid-cols-2 gap-2 rounded-2xl bg-[#F7F2E8] p-1.5">
-                  {(['professional', 'portfolio'] as PresentationModel[]).map((model) => (
+                  {(['business', 'portfolio'] as PresentationModel[]).map((model) => (
                     <button
                       key={model}
                       type="button"
@@ -317,8 +317,8 @@ export default function HomeVitrineFirst() {
                   src={modelImage}
                   alt={`${getPresentationModelLabel(lang, presentationModel)} — Aux saveurs d’Anis`}
                   className="h-[310px] w-auto object-contain object-top sm:h-auto sm:max-h-[720px] sm:w-full"
-                  width={presentationModel === 'professional' ? 888 : 941}
-                  height={presentationModel === 'professional' ? 1704 : 1672}
+                  width={presentationModel === 'business' ? 888 : 941}
+                  height={presentationModel === 'business' ? 1704 : 1672}
                   decoding="async"
                 />
               </div>

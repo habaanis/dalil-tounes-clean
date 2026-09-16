@@ -487,32 +487,10 @@ const isPublished = (value: unknown): boolean => {
   return normalized === 'publie' || normalized === 'published';
 };
 
-const themeVariables = (variant: 'artisan' | 'premium'): CSSProperties => {
-  if (variant === 'artisan') {
-    return {
-      '--dt-page': '#f3eeee',
-      '--dt-ink': '#5f1111',
-      '--dt-accent': '#FCA5A5',
-      '--dt-border': '#DC2626',
-      '--dt-muted': '#FECACA',
-      '--dt-glow': 'rgba(185, 28, 28, 0.28)',
-      '--dt-glow-soft': 'rgba(239, 68, 68, 0.18)',
-      '--dt-shell-start': '#290707',
-      '--dt-shell-mid': '#4f1515',
-      '--dt-shell-end': '#190303',
-      '--dt-identity-start': '#5f1717fa',
-      '--dt-identity-end': '#250707fc',
-      '--dt-panel-start': '#641b1beb',
-      '--dt-panel-end': '#270707f0',
-      '--dt-panel-dark': '#2d0808',
-      '--dt-badge-start': '#9f1239',
-      '--dt-badge-end': '#be123c',
-      '--dt-action-start': '#681c1c',
-      '--dt-action-end': '#2e0808',
-    } as CSSProperties;
-  }
+type PaletteId = 'prestige' | 'ivory' | 'night';
 
-  return {
+const PALETTE_THEMES: Record<PaletteId, CSSProperties> = {
+  prestige: {
     '--dt-page': '#eef1ef',
     '--dt-ink': '#0f2d23',
     '--dt-accent': '#F4CE55',
@@ -532,7 +510,84 @@ const themeVariables = (variant: 'artisan' | 'premium'): CSSProperties => {
     '--dt-badge-end': '#087a50',
     '--dt-action-start': '#06382d',
     '--dt-action-end': '#011f1a',
-  } as CSSProperties;
+  } as CSSProperties,
+  ivory: {
+    '--dt-page': '#fffaf0',
+    '--dt-ink': '#5b214f',
+    '--dt-accent': '#c89b4a',
+    '--dt-border': '#b88620',
+    '--dt-muted': '#fff3d8',
+    '--dt-glow': 'rgba(91, 33, 79, 0.22)',
+    '--dt-glow-soft': 'rgba(200, 155, 74, 0.18)',
+    '--dt-shell-start': '#fffdf6',
+    '--dt-shell-mid': '#fff3d8',
+    '--dt-shell-end': '#fffaf0',
+    '--dt-identity-start': '#5b214ffa',
+    '--dt-identity-end': '#512044fc',
+    '--dt-panel-start': '#5b214feb',
+    '--dt-panel-end': '#512044f0',
+    '--dt-panel-dark': '#512044',
+    '--dt-badge-start': '#c89b4a',
+    '--dt-badge-end': '#b88620',
+    '--dt-action-start': '#5b214f',
+    '--dt-action-end': '#3b1934',
+  } as CSSProperties,
+  night: {
+    '--dt-page': '#06101d',
+    '--dt-ink': '#f8f1e4',
+    '--dt-accent': '#e5c486',
+    '--dt-border': '#e5c486',
+    '--dt-muted': '#1d3a5a',
+    '--dt-glow': 'rgba(29, 58, 90, 0.34)',
+    '--dt-glow-soft': 'rgba(229, 196, 134, 0.18)',
+    '--dt-shell-start': '#071321',
+    '--dt-shell-mid': '#10243a',
+    '--dt-shell-end': '#06101d',
+    '--dt-identity-start': '#1d3a5afa',
+    '--dt-identity-end': '#172f4bfc',
+    '--dt-panel-start': '#1d3a5aeb',
+    '--dt-panel-end': '#172f4bf0',
+    '--dt-panel-dark': '#172f4b',
+    '--dt-badge-start': '#1d3a5a',
+    '--dt-badge-end': '#172f4b',
+    '--dt-action-start': '#1d3a5a',
+    '--dt-action-end': '#06101d',
+  } as CSSProperties,
+};
+
+const ARTISAN_THEME: CSSProperties = {
+  '--dt-page': '#f3eeee',
+  '--dt-ink': '#5f1111',
+  '--dt-accent': '#FCA5A5',
+  '--dt-border': '#DC2626',
+  '--dt-muted': '#FECACA',
+  '--dt-glow': 'rgba(185, 28, 28, 0.28)',
+  '--dt-glow-soft': 'rgba(239, 68, 68, 0.18)',
+  '--dt-shell-start': '#290707',
+  '--dt-shell-mid': '#4f1515',
+  '--dt-shell-end': '#190303',
+  '--dt-identity-start': '#5f1717fa',
+  '--dt-identity-end': '#250707fc',
+  '--dt-panel-start': '#641b1beb',
+  '--dt-panel-end': '#270707f0',
+  '--dt-panel-dark': '#2d0808',
+  '--dt-badge-start': '#9f1239',
+  '--dt-badge-end': '#be123c',
+  '--dt-action-start': '#681c1c',
+  '--dt-action-end': '#2e0808',
+} as CSSProperties;
+
+function resolvePaletteId(value: unknown): PaletteId | null {
+  const normalized = String(value || '').trim().toLowerCase();
+  if (normalized === 'prestige' || normalized === 'ivory' || normalized === 'night') return normalized;
+  return null;
+}
+
+const themeVariables = (variant: 'artisan' | 'premium', palette?: PaletteId | null): CSSProperties => {
+  if (variant === 'artisan' && !palette) return ARTISAN_THEME;
+  if (palette) return PALETTE_THEMES[palette];
+  if (variant === 'artisan') return ARTISAN_THEME;
+  return PALETTE_THEMES.prestige;
 };
 
 function AccordionSection({
@@ -728,6 +783,10 @@ export default function BusinessShowcaseLienoraDetail() {
   }
 
   const visualVariant = capabilities.variant === 'artisan' ? 'artisan' : 'premium';
+  const storedPalette = resolvePaletteId((business as Record<string, unknown>)?.palette_cv);
+  const previewPaletteParam = new URLSearchParams(location.search).get('palette');
+  const previewPalette = resolvePaletteId(previewPaletteParam);
+  const activePalette = previewPalette || storedPalette;
   const storedPresentationModel = [
     business.modele_presentation,
     business.presentation_model,
@@ -1348,7 +1407,7 @@ export default function BusinessShowcaseLienoraDetail() {
   }
 
   return (
-    <main className="dt-showcase-page" style={themeVariables(visualVariant)} dir={isRTL ? 'rtl' : 'ltr'}>
+    <main className="dt-showcase-page" style={themeVariables(visualVariant, activePalette)} dir={isRTL ? 'rtl' : 'ltr'}>
       <SEOHead
         title={seo.title}
         description={seo.description}

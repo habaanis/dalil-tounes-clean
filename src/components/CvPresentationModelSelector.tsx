@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react';
-import { X, ZoomIn } from 'lucide-react';
+import { Check, Palette, X, ZoomIn } from 'lucide-react';
 
 type SupportedLanguage = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 
-export type PresentationModel = 'professional' | 'portfolio';
+export type PresentationModel = 'business' | 'portfolio';
+export type PaletteId = 'prestige' | 'ivory' | 'night';
 
 type Copy = {
   eyebrow: string;
   title: string;
   subtitle: string;
-  professional: string;
-  professionalDescription: string;
+  business: string;
+  businessDescription: string;
   portfolio: string;
   portfolioDescription: string;
   note: string;
@@ -23,6 +24,14 @@ type Copy = {
   enlarge: string;
   close: string;
   testModel: string;
+  customizeColors: string;
+  paletteLabel: string;
+  prestige: string;
+  ivory: string;
+  night: string;
+  paletteIncluded: string;
+  palettePreview: string;
+  selectedPalette: string;
 };
 
 const COPY: Record<SupportedLanguage, Copy> = {
@@ -30,9 +39,9 @@ const COPY: Record<SupportedLanguage, Copy> = {
     eyebrow: 'Votre choix',
     title: 'Composez votre CV Business',
     subtitle: 'Choisissez votre formule, puis le modèle qui correspond le mieux à votre métier.',
-    professional: 'Modèle Professionnel',
-    professionalDescription: 'Clair, structuré et direct. Idéal pour présenter rapidement votre activité et vos informations.',
-    portfolio: 'Modèle Portfolio',
+    business: 'CV Business',
+    businessDescription: 'Clair, structuré et direct. Idéal pour présenter rapidement votre activité et vos informations.',
+    portfolio: 'CV Portfolio',
     portfolioDescription: 'Plus visuel, avec davantage de place pour les photos, les réalisations et le savoir-faire.',
     note: 'Les deux modèles sont disponibles avec CV Business Artisan et CV Business Premium, sans changement de prix ni de contenu.',
     selectedFormula: 'Formule',
@@ -44,14 +53,22 @@ const COPY: Record<SupportedLanguage, Copy> = {
     enlarge: 'Agrandir le modèle',
     close: 'Fermer',
     testModel: 'Tester les boutons du modèle',
+    customizeColors: 'Personnaliser les couleurs',
+    paletteLabel: 'Palette',
+    prestige: 'Vert Prestige',
+    ivory: 'Ivoire & Or',
+    night: 'Bleu Nuit & Champagne',
+    paletteIncluded: 'Palette incluse',
+    palettePreview: 'Aperçu',
+    selectedPalette: 'Palette',
   },
   ar: {
     eyebrow: 'اختيارك',
     title: 'كوّن CV Business الخاص بك',
     subtitle: 'اختر الصيغة، ثم النموذج الأنسب لمهنتك.',
-    professional: 'النموذج المهني',
-    professionalDescription: 'واضح ومنظم ومباشر لعرض نشاطك ومعلوماتك بسرعة.',
-    portfolio: 'نموذج Portfolio',
+    business: 'CV Business',
+    businessDescription: 'واضح ومنظم ومباشر لعرض نشاطك ومعلوماتك بسرعة.',
+    portfolio: 'CV Portfolio',
     portfolioDescription: 'أكثر اعتمادًا على الصور لإبراز الإنجازات والخبرة والأعمال.',
     note: 'النموذجان متاحان مع CV Business حرفي وCV Business Premium دون تغيير في السعر أو المحتوى.',
     selectedFormula: 'الصيغة',
@@ -63,14 +80,22 @@ const COPY: Record<SupportedLanguage, Copy> = {
     enlarge: 'تكبير النموذج',
     close: 'إغلاق',
     testModel: 'جرّب أزرار النموذج',
+    customizeColors: 'تخصيص الألوان',
+    paletteLabel: 'لوحة الألوان',
+    prestige: 'الأخضر الفاخر',
+    ivory: 'العاج والذهب',
+    night: 'الأزرق الليلي والشامبانيا',
+    paletteIncluded: 'لوحة ألوان مشمولة',
+    palettePreview: 'معاينة',
+    selectedPalette: 'اللوحة',
   },
   en: {
     eyebrow: 'Your choice',
     title: 'Build your Business CV',
     subtitle: 'Choose your plan, then the presentation model that best suits your profession.',
-    professional: 'Professional Model',
-    professionalDescription: 'Clear, structured and direct. Ideal for presenting your activity and key information quickly.',
-    portfolio: 'Portfolio Model',
+    business: 'Business CV',
+    businessDescription: 'Clear, structured and direct. Ideal for presenting your activity and key information quickly.',
+    portfolio: 'Portfolio CV',
     portfolioDescription: 'More visual, with extra room for photos, completed work and expertise.',
     note: 'Both models are available with Artisan Business CV and Premium Business CV, with no change to price or included content.',
     selectedFormula: 'Plan',
@@ -82,14 +107,22 @@ const COPY: Record<SupportedLanguage, Copy> = {
     enlarge: 'Enlarge model',
     close: 'Close',
     testModel: 'Test the model buttons',
+    customizeColors: 'Customize colors',
+    paletteLabel: 'Palette',
+    prestige: 'Green Prestige',
+    ivory: 'Ivory & Gold',
+    night: 'Night Blue & Champagne',
+    paletteIncluded: 'Palette included',
+    palettePreview: 'Preview',
+    selectedPalette: 'Palette',
   },
   it: {
     eyebrow: 'La tua scelta',
     title: 'Componi il tuo CV business',
     subtitle: 'Scegli la formula, poi il modello più adatto alla tua professione.',
-    professional: 'Modello Professionale',
-    professionalDescription: 'Chiaro, strutturato e diretto. Ideale per presentare rapidamente attività e informazioni.',
-    portfolio: 'Modello Portfolio',
+    business: 'CV Business',
+    businessDescription: 'Chiaro, strutturato e diretto. Ideale per presentare rapidamente attività e informazioni.',
+    portfolio: 'CV Portfolio',
     portfolioDescription: 'Più visivo, con maggiore spazio per foto, realizzazioni e competenze.',
     note: 'Entrambi i modelli sono disponibili con CV Business Artisan e CV Business Premium, senza variazioni di prezzo o contenuto.',
     selectedFormula: 'Formula',
@@ -101,14 +134,22 @@ const COPY: Record<SupportedLanguage, Copy> = {
     enlarge: 'Ingrandisci il modello',
     close: 'Chiudi',
     testModel: 'Prova i pulsanti del modello',
+    customizeColors: 'Personalizza i colori',
+    paletteLabel: 'Palette',
+    prestige: 'Verde Prestige',
+    ivory: 'Avorio & Oro',
+    night: 'Blu Notte & Champagne',
+    paletteIncluded: 'Palette inclusa',
+    palettePreview: 'Anteprima',
+    selectedPalette: 'Palette',
   },
   ru: {
     eyebrow: 'Ваш выбор',
     title: 'Соберите свой Business CV',
     subtitle: 'Выберите тариф, затем модель оформления, подходящую вашей профессии.',
-    professional: 'Профессиональная модель',
-    professionalDescription: 'Чёткая, структурированная и прямая подача деятельности и ключевой информации.',
-    portfolio: 'Модель Portfolio',
+    business: 'CV Business',
+    businessDescription: 'Чёткая, структурированная и прямая подача деятельности и ключевой информации.',
+    portfolio: 'CV Portfolio',
     portfolioDescription: 'Более визуальная подача с акцентом на фотографии, работы и профессиональный опыт.',
     note: 'Обе модели доступны с Business CV Artisan и Business CV Premium без изменения цены или состава предложения.',
     selectedFormula: 'Тариф',
@@ -120,15 +161,36 @@ const COPY: Record<SupportedLanguage, Copy> = {
     enlarge: 'Увеличить модель',
     close: 'Закрыть',
     testModel: 'Проверить кнопки модели',
+    customizeColors: 'Настроить цвета',
+    paletteLabel: 'Палитра',
+    prestige: 'Зеленый Престиж',
+    ivory: 'Слоновая кость и золото',
+    night: 'Ночной синий и шампань',
+    paletteIncluded: 'Палитра включена',
+    palettePreview: 'Предпросмотр',
+    selectedPalette: 'Палитра',
   },
 };
 
 const PROFESSIONAL_IMAGE = '/images/cv-business-portfolio-aux-saveurs-anis.png';
 const PORTFOLIO_IMAGE = '/images/cv-portfolio-aux-saveurs-anis-original.svg?v=2';
 
+export const PALETTE_IDS: PaletteId[] = ['prestige', 'ivory', 'night'];
+
+export const PALETTE_SWATCHES: Record<PaletteId, { bg: string; accent: string; text: string }> = {
+  prestige: { bg: '#042d24', accent: '#D4AF37', text: '#F4CE55' },
+  ivory: { bg: '#fff3d8', accent: '#c89b4a', text: '#5b214f' },
+  night: { bg: '#10243a', accent: '#e5c486', text: '#f8f1e4' },
+};
+
 export function getPresentationModelLabel(language: string, model: PresentationModel): string {
   const copy = COPY[(language as SupportedLanguage)] ?? COPY.fr;
-  return model === 'professional' ? copy.professional : copy.portfolio;
+  return model === 'business' ? copy.business : copy.portfolio;
+}
+
+export function getPaletteLabel(language: string, palette: PaletteId): string {
+  const copy = COPY[(language as SupportedLanguage)] ?? COPY.fr;
+  return copy[palette];
 }
 
 function ModelPreview({
@@ -167,6 +229,24 @@ function ModelPreview({
   );
 }
 
+function PaletteSwatch({ palette, selected, label, onClick }: { palette: PaletteId; selected: boolean; label: string; onClick: () => void }) {
+  const sw = PALETTE_SWATCHES[palette];
+  return (
+    <button
+      type="button"
+      aria-pressed={selected}
+      onClick={onClick}
+      className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-bold transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${selected ? 'border-[#D6AF2E] bg-amber-50 shadow-sm' : 'border-slate-200 bg-white hover:border-[#D6AF2E]/60'}`}
+    >
+      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-slate-200" style={{ background: sw.bg }}>
+        <span className="block h-3 w-3 rounded-full" style={{ background: sw.accent }} />
+      </span>
+      <span className="min-w-0 truncate text-slate-700">{label}</span>
+      {selected && <Check className="h-3.5 w-3.5 shrink-0 text-[#07543F]" aria-hidden="true" />}
+    </button>
+  );
+}
+
 export function CvPresentationModelSelector({
   language,
   formulaValue,
@@ -177,6 +257,8 @@ export function CvPresentationModelSelector({
   onChange,
   selectedFormulaLabel,
   onContinue,
+  paletteValue,
+  onPaletteChange,
 }: {
   language: string;
   formulaValue: 'artisan' | 'premium' | null;
@@ -187,10 +269,14 @@ export function CvPresentationModelSelector({
   onChange: (model: PresentationModel) => void;
   selectedFormulaLabel: string | null;
   onContinue: () => void;
+  paletteValue: PaletteId;
+  onPaletteChange: (palette: PaletteId) => void;
 }) {
   const copy = COPY[(language as SupportedLanguage)] ?? COPY.fr;
   const [expandedModel, setExpandedModel] = useState<PresentationModel | null>(null);
+  const [showPalettePanel, setShowPalettePanel] = useState(false);
   const selectedModelLabel = value ? getPresentationModelLabel(language, value) : null;
+  const selectedPaletteLabel = getPaletteLabel(language, paletteValue);
   const canContinue = Boolean(selectedFormulaLabel && value);
 
   useEffect(() => {
@@ -246,11 +332,11 @@ export function CvPresentationModelSelector({
           <div className="grid grid-cols-2 gap-1 rounded-2xl bg-[#F4F0E7] p-1.5">
             <button
               type="button"
-              aria-pressed={value === 'professional'}
-              onClick={() => onChange('professional')}
-              className={`min-h-12 rounded-xl px-2 py-2 text-sm font-black transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'professional' ? 'bg-[#4A123F] text-white shadow-sm' : 'bg-white text-[#4A123F]'}`}
+              aria-pressed={value === 'business'}
+              onClick={() => onChange('business')}
+              className={`min-h-12 rounded-xl px-2 py-2 text-sm font-black transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'business' ? 'bg-[#4A123F] text-white shadow-sm' : 'bg-white text-[#4A123F]'}`}
             >
-              {copy.professional}
+              {copy.business}
             </button>
             <button
               type="button"
@@ -264,16 +350,16 @@ export function CvPresentationModelSelector({
           <button
             type="button"
             onClick={() => {
-              const currentModel = value ?? 'professional';
+              const currentModel = value ?? 'business';
               onChange(currentModel);
               setExpandedModel(currentModel);
             }}
             className={`mt-3 flex w-full justify-center overflow-hidden rounded-2xl border bg-[#F7F5EF] p-2 transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value ? 'border-[#D6AF2E] shadow-md' : 'border-slate-200'}`}
-            aria-label={value === 'portfolio' ? copy.portfolio : copy.professional}
+            aria-label={value === 'portfolio' ? copy.portfolio : copy.business}
           >
             <img
               src={mobileImage}
-              alt={`${value === 'portfolio' ? copy.portfolio : copy.professional} — Aux saveurs d'Anis`}
+              alt={`${value === 'portfolio' ? copy.portfolio : copy.business} — Aux saveurs d'Anis`}
               className="h-[390px] w-auto max-w-none object-contain object-top"
               loading="lazy"
               decoding="async"
@@ -284,19 +370,19 @@ export function CvPresentationModelSelector({
         <div className="hidden grid-cols-2 gap-4 sm:grid">
         <button
           type="button"
-          aria-pressed={value === 'professional'}
-          onClick={() => onChange('professional')}
-          className={`flex min-w-0 flex-col rounded-2xl border p-3.5 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'professional' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
+          aria-pressed={value === 'business'}
+          onClick={() => onChange('business')}
+          className={`flex min-w-0 flex-col rounded-2xl border p-3.5 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'business' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
         >
           <ModelPreview
             src={PROFESSIONAL_IMAGE}
-            alt={`${copy.professional} — Aux saveurs d'Anis`}
-            enlargeLabel={`${copy.enlarge} — ${copy.professional}`}
-            onEnlarge={() => setExpandedModel('professional')}
+            alt={`${copy.business} — Aux saveurs d'Anis`}
+            enlargeLabel={`${copy.enlarge} — ${copy.business}`}
+            onEnlarge={() => setExpandedModel('business')}
           />
           <span className="mt-3 min-w-0">
-            <span className="block text-sm font-black leading-5 text-[#4A123F] sm:text-lg">{copy.professional}</span>
-            <span className="mt-1.5 hidden text-sm leading-5 text-slate-600 sm:block">{copy.professionalDescription}</span>
+            <span className="block text-sm font-black leading-5 text-[#4A123F] sm:text-lg">{copy.business}</span>
+            <span className="mt-1.5 hidden text-sm leading-5 text-slate-600 sm:block">{copy.businessDescription}</span>
           </span>
         </button>
 
@@ -320,6 +406,45 @@ export function CvPresentationModelSelector({
         </div>
       </div>
 
+      <div className="mx-auto mt-4 max-w-4xl">
+        <button
+          type="button"
+          aria-expanded={showPalettePanel}
+          aria-pressed={showPalettePanel}
+          onClick={() => setShowPalettePanel((prev) => !prev)}
+          className="flex w-full items-center justify-between rounded-xl border border-[#D6AF2E]/50 bg-[#FFFCF7] px-4 py-3 text-sm font-black text-[#4A123F] transition hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]"
+        >
+          <span className="flex items-center gap-2">
+            <Palette className="h-4 w-4 text-[#D6AF2E]" aria-hidden="true" />
+            {copy.customizeColors}
+          </span>
+          <span className="flex items-center gap-2">
+            <span className="flex h-6 w-6 items-center justify-center rounded-lg border border-slate-200" style={{ background: PALETTE_SWATCHES[paletteValue].bg }}>
+              <span className="block h-2.5 w-2.5 rounded-full" style={{ background: PALETTE_SWATCHES[paletteValue].accent }} />
+            </span>
+            <span className="text-xs font-bold text-slate-600">{selectedPaletteLabel}</span>
+          </span>
+        </button>
+
+        {showPalettePanel && (
+          <div className="mt-2 rounded-2xl border border-amber-200 bg-amber-50/40 p-3">
+            <p className="mb-2 text-xs font-bold text-slate-600">{copy.paletteLabel}</p>
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+              {PALETTE_IDS.map((id) => (
+                <PaletteSwatch
+                  key={id}
+                  palette={id}
+                  selected={paletteValue === id}
+                  label={getPaletteLabel(language, id)}
+                  onClick={() => onPaletteChange(id)}
+                />
+              ))}
+            </div>
+            <p className="mt-2 text-xs font-semibold text-slate-500">{copy.paletteIncluded}</p>
+          </div>
+        )}
+      </div>
+
       <p className="mx-auto mt-3 hidden max-w-3xl text-center text-xs font-semibold leading-5 text-slate-500 sm:block">{copy.note}</p>
 
       <div className="mx-auto mt-4 flex max-w-4xl flex-col gap-3 rounded-2xl border border-amber-200 bg-amber-50/60 p-3 sm:flex-row sm:items-center sm:justify-between">
@@ -334,6 +459,7 @@ export function CvPresentationModelSelector({
           ) : (
             <p>{copy.chooseModel}</p>
           )}
+          <p><strong className="text-[#4A123F]">{copy.selectedPalette} :</strong> {selectedPaletteLabel}</p>
         </div>
         <button
           type="button"
@@ -365,12 +491,12 @@ export function CvPresentationModelSelector({
             </button>
             <img
               src={currentImage}
-              alt={`${expandedModel === 'portfolio' ? copy.portfolio : copy.professional} — Aux saveurs d'Anis`}
+              alt={`${expandedModel === 'portfolio' ? copy.portfolio : copy.business} — Aux saveurs d'Anis`}
               className="mx-auto mt-1 max-h-[82dvh] max-w-[calc(100vw-48px)] object-contain object-top"
               decoding="async"
             />
             <a
-              href={`/entreprise/sousse/aux-saveurs-d-anis?preview-model=${expandedModel}&source=subscription&lang=${language}`}
+              href={`/entreprise/sousse/aux-saveurs-d-anis?preview-model=${expandedModel === 'portfolio' ? 'portfolio' : 'business'}&source=subscription&lang=${language}`}
               target="_blank"
               rel="noopener noreferrer"
               className="mx-auto mt-3 flex min-h-11 w-full items-center justify-center rounded-xl bg-[#07543F] px-5 py-2.5 text-center text-sm font-bold text-white transition hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]"

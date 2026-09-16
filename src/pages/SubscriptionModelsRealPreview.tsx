@@ -2,10 +2,10 @@ import { useState } from 'react';
 
 export default function SubscriptionModelsRealPreview() {
   const [formula, setFormula] = useState<'artisan' | 'business'>('artisan');
-  const [model, setModel] = useState<'professional' | 'portfolio'>('professional');
+  const [model, setModel] = useState<'business' | 'portfolio'>('business');
 
   const formulaLabel = formula === 'artisan' ? 'CV Artisan' : 'CV Business';
-  const modelLabel = model === 'professional' ? 'Modèle Professionnel' : 'Modèle Portfolio';
+  const modelLabel = model === 'business' ? 'CV Business' : 'CV Portfolio';
 
   return (
     <main className="min-h-screen bg-[#fffaf3] px-4 py-8 text-slate-800">
@@ -48,21 +48,21 @@ export default function SubscriptionModelsRealPreview() {
           </div>
 
           <div className="mx-auto mt-6 grid max-w-5xl gap-5 lg:grid-cols-2">
-            <article className={`rounded-2xl border p-4 transition ${model === 'professional' ? 'border-[#D6AF2E] bg-amber-50/60' : 'border-slate-200 bg-white'}`}>
-              <button type="button" onClick={() => setModel('professional')} className="block w-full text-left">
+            <article className={`rounded-2xl border p-4 transition ${model === 'business' ? 'border-[#D6AF2E] bg-amber-50/60' : 'border-slate-200 bg-white'}`}>
+              <button type="button" onClick={() => setModel('business')} className="block w-full text-left">
                 <div className="mb-3 flex items-center justify-between gap-3">
                   <div>
-                    <h3 className="text-lg font-black text-[#4A123F]">Modèle Professionnel</h3>
+                    <h3 className="text-lg font-black text-[#4A123F]">CV Business</h3>
                     <p className="text-sm text-slate-600">Le CV Business actuel, affiché directement depuis le site.</p>
                   </div>
-                  <span className={`h-5 w-5 rounded-full border-2 ${model === 'professional' ? 'border-[#07543F] bg-[#07543F] shadow-[inset_0_0_0_4px_white]' : 'border-slate-300'}`} />
+                  <span className={`h-5 w-5 rounded-full border-2 ${model === 'business' ? 'border-[#07543F] bg-[#07543F] shadow-[inset_0_0_0_4px_white]' : 'border-slate-300'}`} />
                 </div>
               </button>
 
               <div className="mx-auto h-[520px] w-[292px] overflow-hidden rounded-[28px] border-2 border-[#D6AF2E]/80 bg-[#052F24] shadow-lg sm:w-[310px]">
                 <iframe
                   title="CV Business réel — Aux Saveurs d'Anis"
-                  src="/entreprise/sousse/aux-saveurs-d-anis?preview-model=professional"
+                  src="/entreprise/sousse/aux-saveurs-d-anis?preview-model=business"
                   className="h-[860px] w-[390px] origin-top-left scale-[0.795] border-0 sm:scale-[0.795]"
                 />
               </div>

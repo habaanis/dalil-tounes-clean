@@ -18,7 +18,9 @@ import CvBusinessJourney from '../components/CvBusinessJourney';
 import {
   CvPresentationModelSelector,
   getPresentationModelLabel,
+  getPaletteLabel,
   type PresentationModel,
+  type PaletteId,
 } from '../components/CvPresentationModelSelector';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -1302,15 +1304,17 @@ export const Subscription = () => {
     checkoutOffer: CheckoutOffer;
     billingPeriod?: BillingPeriod;
     presentationModelLabel?: string;
+    paletteLabel?: string;
   } | null>(null);
   const [selectedFormula, setSelectedFormula] = useState<'artisan' | 'premium' | null>(null);
   const [expandedFormula, setExpandedFormula] = useState<'artisan' | 'premium' | null>(null);
   const [selectedPresentationModel, setSelectedPresentationModel] = useState<PresentationModel | null>(null);
+  const [selectedPalette, setSelectedPalette] = useState<PaletteId>('prestige');
   const [showSecondaryDetails, setShowSecondaryDetails] = useState(false);
 
   const closePreview = () => setActivePreview(null);
-  const openRequest = (code: SubscriptionPlanCode, label: string, checkoutOffer: CheckoutOffer, billingPeriod?: BillingPeriod, presentationModelLabel?: string) => {
-    setSelectedPlan({ code, label, checkoutOffer, billingPeriod, presentationModelLabel });
+  const openRequest = (code: SubscriptionPlanCode, label: string, checkoutOffer: CheckoutOffer, billingPeriod?: BillingPeriod, presentationModelLabel?: string, paletteLabel?: string) => {
+    setSelectedPlan({ code, label, checkoutOffer, billingPeriod, presentationModelLabel, paletteLabel });
     setActivePreview('request');
   };
   const selectFormula = (formula: 'artisan' | 'premium') => {
@@ -1332,7 +1336,8 @@ export const Subscription = () => {
       return;
     }
     const modelLabel = getPresentationModelLabel(language, selectedPresentationModel);
-    openRequest(selectedFormula, `${selectedFormulaLabel} — ${modelLabel}`, selectedFormula, undefined, modelLabel);
+    const paletteLabel = getPaletteLabel(language, selectedPalette);
+    openRequest(selectedFormula, `${selectedFormulaLabel} — ${modelLabel} — ${paletteLabel}`, selectedFormula, undefined, modelLabel, paletteLabel);
   };
 
   return (
@@ -1457,6 +1462,8 @@ export const Subscription = () => {
   onChange={setSelectedPresentationModel}
   selectedFormulaLabel={selectedFormulaLabel}
   onContinue={continueWithModel}
+  paletteValue={selectedPalette}
+  onPaletteChange={setSelectedPalette}
 />
 
 <div className="mt-5">
@@ -1622,6 +1629,7 @@ export const Subscription = () => {
               initialBillingPeriod={selectedPlan.billingPeriod}
               creationMode={selectedPlan.code === 'artisan' || selectedPlan.code === 'premium'}
               presentationModelLabel={selectedPlan.presentationModelLabel}
+              paletteLabel={selectedPlan.paletteLabel}
               onCancel={closePreview}
             />
           </div>

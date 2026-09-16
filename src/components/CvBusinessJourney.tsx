@@ -194,8 +194,8 @@ function PwaPhone({ language }: { language: BusinessCardPreviewLanguage }) {
   );
 }
 
-type CvModel = 'professional' | 'portfolio';
-type JourneyVisual = 'pwa' | 'qr' | 'cv-professional' | 'cv-portfolio';
+type CvModel = 'business' | 'portfolio';
+type JourneyVisual = 'pwa' | 'qr' | 'cv-business' | 'cv-portfolio';
 type MobileJourneyStep = 'pwa' | 'qr' | 'cv';
 
 function PreviewButton({ label, onClick }: { label: string; onClick: () => void }) {
@@ -282,7 +282,7 @@ function ExpandedJourneyVisual({
               <CvBusinessQrVisual language={language} />
             </div>
           )}
-          {(visual === 'cv-professional' || visual === 'cv-portfolio') && (
+          {(visual === 'cv-business' || visual === 'cv-portfolio') && (
             <img
               src={visual === 'cv-portfolio'
                 ? '/images/cv-business-professionnel-aux-saveurs-anis.png'
@@ -303,7 +303,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
   const rtl = language === 'ar';
   const [expandedVisual, setExpandedVisual] = useState<JourneyVisual | null>(null);
   const [videoOpen, setVideoOpen] = useState(false);
-  const [activeCvModel, setActiveCvModel] = useState<CvModel>('professional');
+  const [activeCvModel, setActiveCvModel] = useState<CvModel>('business');
   const [activeMobileStep, setActiveMobileStep] = useState<MobileJourneyStep>('pwa');
   const videoLanguage = language === 'fr' || language === 'ar' ? language : null;
   const videoCopy = videoLanguage ? VIDEO_COPY[videoLanguage] : null;
@@ -389,9 +389,9 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
               <div className="mx-auto mt-2 grid max-w-[250px] grid-cols-2 gap-1 rounded-lg bg-[#032D21]/10 p-1" aria-label={t.cvText}>
                 <button
                   type="button"
-                  aria-pressed={activeCvModel === 'professional'}
-                  onClick={() => setActiveCvModel('professional')}
-                  className={`rounded-md px-2 py-1.5 text-[10px] font-black transition ${activeCvModel === 'professional' ? 'bg-[#032D21] text-[#F4CE55]' : 'bg-white text-[#4A1D43]'}`}
+                  aria-pressed={activeCvModel === 'business'}
+                  onClick={() => setActiveCvModel('business')}
+                  className={`rounded-md px-2 py-1.5 text-[10px] font-black transition ${activeCvModel === 'business' ? 'bg-[#032D21] text-[#F4CE55]' : 'bg-white text-[#4A1D43]'}`}
                 >
                   {t.professionalModel}
                 </button>
@@ -432,7 +432,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
               )}
               <PreviewButton
                 label={`${t.openPreview} — ${mobileStepTitle}`}
-                onClick={() => setExpandedVisual(activeMobileStep === 'cv' ? (activeCvModel === 'portfolio' ? 'cv-portfolio' : 'cv-professional') : activeMobileStep)}
+                onClick={() => setExpandedVisual(activeMobileStep === 'cv' ? (activeCvModel === 'portfolio' ? 'cv-portfolio' : 'cv-business') : activeMobileStep)}
               />
             </div>
           </article>
@@ -468,9 +468,9 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
             <div className="mb-1 grid w-[180px] grid-cols-2 gap-1 rounded-lg bg-[#032D21]/10 p-1" aria-label={t.cvText}>
               <button
                 type="button"
-                aria-pressed={activeCvModel === 'professional'}
-                onClick={() => setActiveCvModel('professional')}
-                className={`min-w-0 rounded-md px-1 py-1 text-[8px] font-black leading-3 transition ${activeCvModel === 'professional' ? 'bg-[#032D21] text-[#F4CE55] shadow-sm' : 'bg-white text-[#4A1D43] hover:bg-amber-50'}`}
+                aria-pressed={activeCvModel === 'business'}
+                onClick={() => setActiveCvModel('business')}
+                className={`min-w-0 rounded-md px-1 py-1 text-[8px] font-black leading-3 transition ${activeCvModel === 'business' ? 'bg-[#032D21] text-[#F4CE55] shadow-sm' : 'bg-white text-[#4A1D43] hover:bg-amber-50'}`}
               >
                 {t.professionalModel}
               </button>

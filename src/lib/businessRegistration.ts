@@ -31,6 +31,8 @@ export interface BusinessRegistrationRequest {
   message: string;
   consent?: boolean;
   legacyType?: 'general' | 'medical_transport';
+  presentationModel?: string;
+  palette?: string;
 }
 
 export interface LegacySuggestionRequest {
