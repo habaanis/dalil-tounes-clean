@@ -1382,6 +1382,7 @@ export default function BusinessShowcaseLienoraDetail({
           onSelectImage={setSelectedImage}
           notice={contactNotice}
           hideBack={embeddedPreview}
+          embeddedPreview={embeddedPreview}
           palette={activePalette}
         />
         {selectedImage && (

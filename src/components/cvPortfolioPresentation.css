@@ -7,6 +7,14 @@
 .cvp-page--embedded {
   min-height: auto;
 }
+.cvp-page--embedded .cvp-cover {
+  height: auto;
+  aspect-ratio: 16 / 9;
+  max-height: 390px;
+}
+.cvp-page--embedded .cvp-cover img {
+  object-position: center 58%;
+}
 .cvp-shell {
   width: min(100%, 760px);
   margin: 0 auto;
@@ -143,6 +151,9 @@
   grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
   gap: 12px;
   padding: 26px 24px 18px;
+}
+.cvp-actions--preview {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 .cvp-actions a,
 .cvp-actions button,
@@ -393,6 +404,15 @@
     padding-right: 12px;
     padding-left: 12px;
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .cvp-actions.cvp-actions--preview {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .cvp-actions--preview a,
+  .cvp-actions--preview button {
+    gap: 5px;
+    padding: 8px 4px;
+    font-size: 0.68rem;
   }
   .cvp-actions a,
   .cvp-actions button {

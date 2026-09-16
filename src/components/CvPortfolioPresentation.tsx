@@ -130,6 +130,7 @@ export interface CvPortfolioPresentationProps {
   onSelectImage: (url: string) => void;
   notice: string;
   hideBack?: boolean;
+  embeddedPreview?: boolean;
   palette?: PortfolioPalette | null;
 }
 
@@ -150,6 +151,7 @@ export function CvPortfolioPresentation({
   onSelectImage,
   notice,
   hideBack = false,
+  embeddedPreview = false,
   palette = 'prestige',
 }: CvPortfolioPresentationProps) {
   const copy = COPY[language] || COPY.fr;
@@ -173,10 +175,18 @@ export function CvPortfolioPresentation({
   };
   const hasPrimaryContact = presentation.visibleActions.includes('add_contact');
   const isWhatsAppAction = (href: string) => href.includes('wa.me') || href.includes('whatsapp');
-  const featuredActions = [...actions]
-    .filter(action => !(hasPrimaryContact && isWhatsAppAction(action.href)))
-    .sort((a, b) => actionPriority(a.href) - actionPriority(b.href))
-    .slice(0, hasPrimaryContact ? 2 : 3);
+  const previewActions = actions.filter(action =>
+    action.href.startsWith('tel:')
+      || action.href.startsWith('mailto:')
+      || action.href.includes('maps')
+      || action.href.includes('google.com/maps'),
+  );
+  const featuredActions = embeddedPreview
+    ? previewActions.slice(0, 3)
+    : [...actions]
+        .filter(action => !(hasPrimaryContact && isWhatsAppAction(action.href)))
+        .sort((a, b) => actionPriority(a.href) - actionPriority(b.href))
+        .slice(0, hasPrimaryContact ? 2 : 3);
   const secondaryActions = actions.filter(action => !featuredActions.includes(action));
 
   const tabs = useMemo(() => [
@@ -274,7 +284,7 @@ export function CvPortfolioPresentation({
           </header>
 
           {(featuredActions.length > 0 || hasPrimaryContact) && (
-            <section className="cvp-actions" aria-label="Actions">
+            <section className={`cvp-actions${embeddedPreview ? ' cvp-actions--preview' : ''}`} aria-label="Actions">
               {featuredActions.map(({ label, href, icon: Icon, external }) => (
                 <a href={href} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined} key={label}>
                   <Icon /><span>{label}</span>
@@ -297,7 +307,11 @@ export function CvPortfolioPresentation({
           </nav>
 
           <div className={`cvp-content cvp-content-${activeTab}`} id="cv-portfolio-content">
-            {activeTab === 'home' && <>{hasSection('about') && aboutBlock}{hasSection('services') && servicesBlock}</>}
+            {activeTab === 'home' && <>
+              {hasSection('about') && aboutBlock}
+              {hasSection('services') && servicesBlock}
+              {embeddedPreview && hasSection('gallery') && galleryBlock}
+            </>}
             {activeTab === 'about' && aboutBlock}
             {activeTab === 'services' && servicesBlock}
             {activeTab === 'gallery' && galleryBlock}
