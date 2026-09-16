@@ -4,6 +4,9 @@
   padding: 16px;
   color: var(--cvp-text);
 }
+.cvp-page--embedded {
+  min-height: auto;
+}
 .cvp-shell {
   width: min(100%, 760px);
   margin: 0 auto;

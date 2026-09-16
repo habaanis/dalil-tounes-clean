@@ -246,12 +246,12 @@ function RealPalettePreview({
   return (
     <div
       className={expanded
-        ? 'mx-auto h-[72dvh] max-h-[720px] min-h-[480px] w-full overflow-hidden rounded-2xl border border-[#D6AF2E]/70 bg-[#F7F5EF] shadow-inner'
-        : 'mx-auto h-[520px] w-[292px] max-w-full overflow-hidden rounded-[26px] border-2 border-[#D6AF2E]/70 bg-[#F7F5EF] shadow-lg'}
+        ? 'mx-auto h-[68dvh] max-h-[650px] min-h-[460px] w-full overflow-hidden rounded-2xl border border-[#D6AF2E]/70 bg-[#F7F5EF] shadow-inner'
+        : 'mx-auto h-[450px] w-[292px] max-w-full overflow-hidden rounded-[26px] border-2 border-[#D6AF2E]/70 bg-[#F7F5EF] shadow-lg'}
     >
       <div
         key={previewUrl}
-        className={expanded ? 'h-full w-full overflow-y-auto bg-white' : 'w-[584px] origin-top-left bg-white'}
+        className={expanded ? 'h-auto w-full overflow-hidden bg-white' : 'w-[584px] origin-top-left bg-white'}
         style={expanded ? undefined : ({ zoom: 0.5 } as CSSProperties)}
       >
         <BusinessShowcaseLienoraDetail

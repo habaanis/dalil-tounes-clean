@@ -479,6 +479,7 @@ type PaletteId = 'prestige' | 'ivory' | 'night';
 
 const PALETTE_THEMES: Record<PaletteId, CSSProperties> = {
   prestige: {
+    '--dt-copy': '#ffffff',
     '--dt-page': '#eef1ef',
     '--dt-ink': '#0f2d23',
     '--dt-accent': '#F4CE55',
@@ -501,26 +502,28 @@ const PALETTE_THEMES: Record<PaletteId, CSSProperties> = {
   } as CSSProperties,
   ivory: {
     '--dt-page': '#fffaf0',
-    '--dt-ink': '#5b214f',
-    '--dt-accent': '#c89b4a',
+    '--dt-copy': '#3d3326',
+    '--dt-ink': '#3d3326',
+    '--dt-accent': '#b88620',
     '--dt-border': '#b88620',
-    '--dt-muted': '#fff3d8',
-    '--dt-glow': 'rgba(91, 33, 79, 0.22)',
-    '--dt-glow-soft': 'rgba(200, 155, 74, 0.18)',
+    '--dt-muted': '#7a674b',
+    '--dt-glow': 'rgba(200, 155, 74, 0.20)',
+    '--dt-glow-soft': 'rgba(200, 155, 74, 0.14)',
     '--dt-shell-start': '#fffdf6',
     '--dt-shell-mid': '#fff3d8',
-    '--dt-shell-end': '#fffaf0',
-    '--dt-identity-start': '#5b214ffa',
-    '--dt-identity-end': '#512044fc',
-    '--dt-panel-start': '#5b214feb',
-    '--dt-panel-end': '#512044f0',
-    '--dt-panel-dark': '#512044',
-    '--dt-badge-start': '#c89b4a',
+    '--dt-shell-end': '#f3dfb6',
+    '--dt-identity-start': '#fffdf6fa',
+    '--dt-identity-end': '#f3dfb6fc',
+    '--dt-panel-start': '#fffaf0eb',
+    '--dt-panel-end': '#ead19df0',
+    '--dt-panel-dark': '#f3dfb6',
+    '--dt-badge-start': '#d6ab51',
     '--dt-badge-end': '#b88620',
-    '--dt-action-start': '#5b214f',
-    '--dt-action-end': '#3b1934',
+    '--dt-action-start': '#fffaf0',
+    '--dt-action-end': '#ead19d',
   } as CSSProperties,
   night: {
+    '--dt-copy': '#ffffff',
     '--dt-page': '#06101d',
     '--dt-ink': '#f8f1e4',
     '--dt-accent': '#e5c486',
@@ -1405,7 +1408,7 @@ export default function BusinessShowcaseLienoraDetail({
   }
 
   return (
-    <main className="dt-showcase-page" style={themeVariables(visualVariant, activePalette)} dir={isRTL ? 'rtl' : 'ltr'}>
+    <main className={`dt-showcase-page${embeddedPreview ? ' dt-showcase-page--embedded' : ''}`} style={themeVariables(visualVariant, activePalette)} dir={isRTL ? 'rtl' : 'ltr'}>
       {!embeddedPreview && <>
         <SEOHead
           title={seo.title}
@@ -1581,7 +1584,7 @@ export default function BusinessShowcaseLienoraDetail({
           </p>
         </article>
 
-        {!isClientAppMode && capabilities.showSimilarBusinesses && (
+        {!embeddedPreview && !isClientAppMode && capabilities.showSimilarBusinesses && (
           <section className="dt-similar-wrap rounded-2xl bg-[#0f0f0f] p-4">
             <h2 className="sr-only">{text.similar}</h2>
             <SimilarBusinesses

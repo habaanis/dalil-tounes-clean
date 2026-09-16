@@ -28,10 +28,10 @@ const PORTFOLIO_PALETTE_THEMES: Record<PortfolioPalette, CSSProperties> = {
     '--cvp-badge': '#087051', '--cvp-overlay': 'rgba(0,45,39,.95)', '--cvp-accent': '#e8bd43',
   } as CSSProperties,
   ivory: {
-    '--cvp-page': '#fffaf0', '--cvp-text': '#fffaf0', '--cvp-shell-start': '#6b2a5d',
-    '--cvp-shell-mid': '#512044', '--cvp-shell-end': '#3b1934', '--cvp-identity-start': '#6b2a5d',
-    '--cvp-identity-end': '#512044', '--cvp-panel': '#5b214f', '--cvp-action': 'rgba(91,33,79,.72)',
-    '--cvp-badge': '#b88620', '--cvp-overlay': 'rgba(81,32,68,.95)', '--cvp-accent': '#e0b65f',
+    '--cvp-page': '#fffaf0', '--cvp-text': '#3d3326', '--cvp-shell-start': '#fffdf6',
+    '--cvp-shell-mid': '#fff3d8', '--cvp-shell-end': '#f3dfb6', '--cvp-identity-start': '#fffdf6',
+    '--cvp-identity-end': '#f3dfb6', '--cvp-panel': '#ead19d', '--cvp-action': 'rgba(255,250,240,.78)',
+    '--cvp-badge': '#d6ab51', '--cvp-overlay': 'rgba(61,51,38,.62)', '--cvp-accent': '#b88620',
   } as CSSProperties,
   night: {
     '--cvp-page': '#06101d', '--cvp-text': '#f8f1e4', '--cvp-shell-start': '#1d3a5a',
@@ -250,7 +250,7 @@ export function CvPortfolioPresentation({
 
   return (
     <div
-      className="cvp-page"
+      className={`cvp-page${hideBack ? ' cvp-page--embedded' : ''}`}
       dir={isRTL ? 'rtl' : 'ltr'}
       style={PORTFOLIO_PALETTE_THEMES[palette || 'prestige']}
     >
