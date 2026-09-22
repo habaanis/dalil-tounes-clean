@@ -844,6 +844,12 @@ export function SubscriptionRequestForm({
   };
 
   const checkoutSelection = (() => {
+    if (creationMode && planKind === 'artisan') {
+      return { offer: 'artisan_creation', eur: '8,90 €', tnd: '30 TND', period: '', priceLabel: checkoutCopy.stripeEquivalent };
+    }
+    if (creationMode && planKind === 'premium') {
+      return { offer: 'premium_creation', eur: '17,90 €', tnd: '59 TND', period: '', priceLabel: checkoutCopy.stripeEquivalent };
+    }
     if (planKind === 'cv') {
       if (form.requestedPaymentSchedule !== 'one_payment') return null;
       const amount = CHECKOUT_AMOUNTS[checkoutOffer as 'cv_essential' | 'cv_complete']?.oneTime;
@@ -1041,7 +1047,7 @@ export function SubscriptionRequestForm({
             <strong className="mt-1 block text-base text-[#4A1D43]">{selectedPlanLabel}</strong>
             {planKind !== 'cv' && checkoutSelection && 'tnd' in checkoutSelection && (
               <div className="mt-3 border-t border-[#D4AF37]/30 pt-3 text-sm text-slate-700">
-                <p className="font-bold text-[#07543F]">{selectedPlanLabel} — {checkoutSelection.period}</p>
+                <p className="font-bold text-[#07543F]">{selectedPlanLabel}{checkoutSelection.period ? ` — ${checkoutSelection.period}` : ''}</p>
                 <p className="mt-1"><span className="font-semibold">{checkoutSelection.priceLabel} :</span> {checkoutSelection.tnd}</p>
                 <p><span className="font-semibold">{checkoutCopy.stripeEquivalent} :</span> {checkoutSelection.eur}</p>
               </div>
@@ -1163,7 +1169,13 @@ export function SubscriptionRequestForm({
               <p className="mt-1 font-semibold">{checkoutCopy.installmentsNotice}</p>
             </div>
           )}
-          {!creationMode && checkoutSelection && (
+          {creationMode && (
+            <div className="rounded-xl border border-[#D4AF37]/40 bg-[#FFF9E8] px-4 py-3 text-sm leading-6 text-[#4A1D43]">
+              <p className="font-bold">{language === 'fr' ? 'Choisissez librement votre mode de règlement.' : language === 'ar' ? 'اختر طريقة الدفع التي تناسبك.' : language === 'it' ? 'Scegli liberamente il metodo di pagamento.' : language === 'ru' ? 'Выберите удобный способ оплаты.' : 'Choose your preferred payment method.'}</p>
+              <p className="mt-1">{language === 'fr' ? 'Carte internationale : paiement immédiat et sécurisé. Pour D17 ou virement bancaire, envoyez la demande : notre équipe vous transmettra les instructions.' : language === 'ar' ? 'البطاقة الدولية: دفع فوري وآمن. بالنسبة إلى D17 أو التحويل البنكي، أرسل الطلب وسيرسل لك فريقنا التعليمات.' : language === 'it' ? 'Carta internazionale: pagamento immediato e sicuro. Per D17 o bonifico, invia la richiesta e il nostro team ti comunicherà le istruzioni.' : language === 'ru' ? 'Международная карта: мгновенная безопасная оплата. Для D17 или банковского перевода отправьте заявку, и команда пришлёт инструкции.' : 'International card: immediate secure payment. For D17 or bank transfer, send the request and our team will provide the instructions.'}</p>
+            </div>
+          )}
+          {checkoutSelection && (
             <button
               type="button"
               onClick={openStripeCheckout}
