@@ -58,8 +58,8 @@ export default function SeparationPreview() {
             <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-5 text-center md:flex-row md:text-left">
               <div>
                 <p className="text-xs font-black uppercase tracking-[0.16em] text-[#F1D783]">Vous êtes professionnel ?</p>
-                <h2 className="mt-2 font-serif text-2xl font-bold md:text-3xl">Présentez votre activité avec un CV Business Dalil Tounes.</h2>
-                <p className="mt-2 text-sm text-white/80">CV Business, CV Portfolio et QR Business dans un espace dédié.</p>
+                <h2 className="mt-2 max-w-3xl font-serif text-2xl font-bold md:text-3xl">Donnez à votre activité une présentation claire et partageable avec le CV Business Dalil Tounes.</h2>
+                <p className="mt-2 text-sm text-white/80">Découvrez le CV Business, le CV Portfolio et le QR Business dans leur espace dédié.</p>
               </div>
               <button type="button" onClick={() => setView('cv')} className="inline-flex min-h-12 shrink-0 items-center gap-2 rounded-xl bg-[#D4AF37] px-6 py-3 text-sm font-black text-[#2E102A]">
                 Découvrir le CV Business <ArrowRight className="h-4 w-4" />
@@ -97,8 +97,8 @@ export default function SeparationPreview() {
           <section className="bg-[#2E102A] px-4 py-7 text-white">
             <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left">
               <div>
-                <h2 className="font-serif text-2xl font-bold">Vous cherchez plutôt une entreprise ?</h2>
-                <p className="mt-1 text-sm text-white/80">Retournez à la plateforme et à l’annuaire Dalil Tounes.</p>
+                <p className="text-xs font-black uppercase tracking-[0.16em] text-[#F1D783]">Vous cherchez une entreprise ou un service en Tunisie ?</p>
+                <h2 className="mt-2 max-w-3xl font-serif text-2xl font-bold">Retrouvez les activités référencées sur la plateforme Dalil Tounes.</h2>
               </div>
               <button type="button" onClick={() => setView('platform')} className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-[#D4AF37] px-5 py-3 text-sm font-black text-[#F1D783]">
                 <Search className="h-4 w-4" /> Explorer la plateforme
