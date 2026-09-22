@@ -45,10 +45,10 @@ const COPY: Record<SupportedLanguage, Copy> = {
     businessDescription: 'Clair, structuré et direct. Idéal pour présenter rapidement votre activité et vos informations.',
     portfolio: 'CV Portfolio',
     portfolioDescription: 'Plus visuel, avec davantage de place pour les photos, les réalisations et le savoir-faire.',
-    note: 'Les deux modèles sont disponibles avec CV Business Artisan et CV Business Premium, sans changement de prix ni de contenu.',
+    note: 'Les deux modèles sont disponibles avec la Formule Artisan et la Formule Premium, sans changement de prix ni de contenu.',
     selectedFormula: 'Formule',
     selectedModel: 'Modèle',
-    chooseFormulaFirst: "Choisissez d'abord CV Business Artisan ou CV Business Premium ci-dessus.",
+    chooseFormulaFirst: "Choisissez d'abord la Formule Artisan ou la Formule Premium ci-dessus.",
     chooseModel: 'Choisissez ensuite votre modèle de présentation.',
     swipeModels: "Glissez pour voir l'autre modèle",
     continue: 'Continuer avec ce choix',
@@ -73,10 +73,10 @@ const COPY: Record<SupportedLanguage, Copy> = {
     businessDescription: 'واضح ومنظم ومباشر لعرض نشاطك ومعلوماتك بسرعة.',
     portfolio: 'CV Portfolio',
     portfolioDescription: 'أكثر اعتمادًا على الصور لإبراز الإنجازات والخبرة والأعمال.',
-    note: 'النموذجان متاحان مع CV Business حرفي وCV Business Premium دون تغيير في السعر أو المحتوى.',
+    note: 'النموذجان متاحان مع صيغة الحرفي وصيغة Premium دون تغيير في السعر أو المحتوى.',
     selectedFormula: 'الصيغة',
     selectedModel: 'النموذج',
-    chooseFormulaFirst: 'اختر أولاً CV Business حرفي أو CV Business Premium أعلاه.',
+    chooseFormulaFirst: 'اختر أولاً صيغة الحرفي أو صيغة Premium أعلاه.',
     chooseModel: 'ثم اختر نموذج العرض.',
     swipeModels: 'اسحب لرؤية النموذج الآخر',
     continue: 'متابعة بهذا الاختيار',
@@ -101,10 +101,10 @@ const COPY: Record<SupportedLanguage, Copy> = {
     businessDescription: 'Clear, structured and direct. Ideal for presenting your activity and key information quickly.',
     portfolio: 'Portfolio CV',
     portfolioDescription: 'More visual, with extra room for photos, completed work and expertise.',
-    note: 'Both models are available with Artisan Business CV and Premium Business CV, with no change to price or included content.',
+    note: 'Both models are available with the Artisan Plan and Premium Plan, with no change to price or included content.',
     selectedFormula: 'Plan',
     selectedModel: 'Model',
-    chooseFormulaFirst: 'First choose Artisan Business CV or Premium Business CV above.',
+    chooseFormulaFirst: 'First choose the Artisan Plan or Premium Plan above.',
     chooseModel: 'Then choose your presentation model.',
     swipeModels: 'Swipe to see the other model',
     continue: 'Continue with this choice',
@@ -129,10 +129,10 @@ const COPY: Record<SupportedLanguage, Copy> = {
     businessDescription: 'Chiaro, strutturato e diretto. Ideale per presentare rapidamente attività e informazioni.',
     portfolio: 'CV Portfolio',
     portfolioDescription: 'Più visivo, con maggiore spazio per foto, realizzazioni e competenze.',
-    note: 'Entrambi i modelli sono disponibili con CV Business Artisan e CV Business Premium, senza variazioni di prezzo o contenuto.',
+    note: 'Entrambi i modelli sono disponibili con la Formula Artisan e la Formula Premium, senza variazioni di prezzo o contenuto.',
     selectedFormula: 'Formula',
     selectedModel: 'Modello',
-    chooseFormulaFirst: 'Scegli prima CV Business Artisan o CV Business Premium qui sopra.',
+    chooseFormulaFirst: 'Scegli prima la Formula Artisan o la Formula Premium qui sopra.',
     chooseModel: 'Poi scegli il modello di presentazione.',
     swipeModels: "Scorri per vedere l'altro modello",
     continue: 'Continua con questa scelta',
@@ -157,10 +157,10 @@ const COPY: Record<SupportedLanguage, Copy> = {
     businessDescription: 'Чёткая, структурированная и прямая подача деятельности и ключевой информации.',
     portfolio: 'CV Portfolio',
     portfolioDescription: 'Более визуальная подача с акцентом на фотографии, работы и профессиональный опыт.',
-    note: 'Обе модели доступны с Business CV Artisan и Business CV Premium без изменения цены или состава предложения.',
+    note: 'Обе модели доступны с тарифами Artisan и Premium без изменения цены или состава предложения.',
     selectedFormula: 'Тариф',
     selectedModel: 'Модель',
-    chooseFormulaFirst: 'Сначала выберите Business CV Artisan или Business CV Premium выше.',
+    chooseFormulaFirst: 'Сначала выберите тариф Artisan или Premium выше.',
     chooseModel: 'Затем выберите модель оформления.',
     swipeModels: 'Проведите, чтобы увидеть другую модель',
     continue: 'Продолжить с этим выбором',
@@ -179,8 +179,8 @@ const COPY: Record<SupportedLanguage, Copy> = {
   },
 };
 
-const PROFESSIONAL_IMAGE = '/images/cv-business-portfolio-aux-saveurs-anis.png';
-const PORTFOLIO_IMAGE = '/images/cv-portfolio-aux-saveurs-anis-original.svg?v=2';
+const PROFESSIONAL_IMAGE = '/images/cv-business-professionnel-aux-saveurs-anis.png';
+const PORTFOLIO_IMAGE = '/images/cv-business-portfolio-aux-saveurs-anis.png';
 
 export const PALETTE_IDS: PaletteId[] = ['prestige', 'ivory', 'night'];
 
