@@ -108,11 +108,20 @@ export function CheckoutRegistrationBridge() {
         instagram: readValue(form, 'instagram'),
         whatsapp: readValue(form, 'whatsapp'),
         selectedPlatforms: [],
-        requestedBillingPeriod: selectedPlan === 'cv_business' ? '' : readCheckedValue(form, 'requestedBillingPeriod'),
+        // The production registration validator still expects a legacy billing
+        // period for Artisan/Premium. Creation checkouts are one-time payments;
+        // keep the compatibility value internal until the validator is migrated.
+        requestedBillingPeriod: selectedPlan === 'cv_business'
+          ? ''
+          : (offer.endsWith('_creation') ? 'monthly' : readCheckedValue(form, 'requestedBillingPeriod')),
         requestedPaymentSchedule: readCheckedValue(form, 'requestedPaymentSchedule'),
         preferredContactMethod: readCheckedValue(form, 'preferredContactMethod'),
         preferredContactTime: readCheckedValue(form, 'preferredContactTime'),
-        message: readValue(form, 'message'),
+        message: [
+          offer === 'artisan_creation' ? 'Commande en ligne — Formule Artisan — paiement unique 30 TND' : '',
+          offer === 'premium_creation' ? 'Commande en ligne — Formule Premium — paiement unique 59 TND' : '',
+          readValue(form, 'message'),
+        ].filter(Boolean).join('\n'),
         consent: readChecked(form, 'consent'),
       };
 
