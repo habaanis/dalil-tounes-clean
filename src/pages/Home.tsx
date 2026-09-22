@@ -316,7 +316,7 @@ export const Home = ({ onNavigate, onNavigateToBusiness }: HomeProps = {}) => {
         </div>
       </section>
 
-      <VisibilityHouseSection />
+      <VisibilityHouseSection totalCount={totalCount} loading={loading} />
 
       {/* 3. Barre de recherche — le SDK Supabase (chunk vendor-supabase)
            ne se charge qu'au premier focus/clic pour ne pas pénaliser le LCP mobile. */}

@@ -811,12 +811,15 @@ export function SubscriptionRequestForm({
       instagram: normalizeWebAddress(form.instagram, 'instagram'),
       whatsapp: form.whatsapp.trim() ? normalizePhone(form.whatsapp) : '',
       selectedPlatforms: form.selectedPlatforms,
-      requestedBillingPeriod: creationMode || planKind === 'cv' ? '' : form.requestedBillingPeriod,
+      // Temporary compatibility with the deployed registration validator. The
+      // visible offer and the admin note below remain explicitly one-time.
+      requestedBillingPeriod: creationMode ? 'monthly' : planKind === 'cv' ? '' : form.requestedBillingPeriod,
       requestedPaymentSchedule: form.requestedPaymentSchedule,
       preferredContactMethod: form.preferredContactMethod,
       preferredContactTime: form.preferredContactTime,
       message: cleanMultiline([
         // Internal admin-only label — not user-visible, intentionally kept in French
+        creationMode ? `OFFRE ACTUELLE — paiement unique — ${planKind === 'artisan' ? 'Formule Artisan 30 TND' : 'Formule Premium 59 TND'} — ne pas traiter comme un abonnement mensuel` : '',
         presentationModelLabel ? `Modèle de présentation choisi : ${presentationModelLabel}` : '',
         paletteLabel ? `Palette choisie : ${paletteLabel}` : '',
         form.message,
@@ -1041,7 +1044,7 @@ export function SubscriptionRequestForm({
             <strong className="mt-1 block text-base text-[#4A1D43]">{selectedPlanLabel}</strong>
             {planKind !== 'cv' && checkoutSelection && 'tnd' in checkoutSelection && (
               <div className="mt-3 border-t border-[#D4AF37]/30 pt-3 text-sm text-slate-700">
-                <p className="font-bold text-[#07543F]">{selectedPlanLabel} — {checkoutSelection.period}</p>
+                <p className="font-bold text-[#07543F]">{selectedPlanLabel}{checkoutSelection.period ? ` — ${checkoutSelection.period}` : ''}</p>
                 <p className="mt-1"><span className="font-semibold">{checkoutSelection.priceLabel} :</span> {checkoutSelection.tnd}</p>
                 <p><span className="font-semibold">{checkoutCopy.stripeEquivalent} :</span> {checkoutSelection.eur}</p>
               </div>
@@ -1161,6 +1164,13 @@ export function SubscriptionRequestForm({
             <div className="rounded-xl border border-[#D4AF37]/40 bg-[#FFF9E8] px-4 py-3 text-sm leading-6 text-[#4A1D43]">
               <p>{checkoutCopy.currencyNotice}</p>
               <p className="mt-1 font-semibold">{checkoutCopy.installmentsNotice}</p>
+            </div>
+          )}
+          {creationMode && (
+            <div className="rounded-2xl border border-[#D4AF37]/55 bg-[#FFF9E8] p-4 text-sm leading-6 text-[#4A1D43]">
+              <p className="text-base font-black">{language === 'fr' ? 'Commande et paiement en dinars tunisiens' : language === 'ar' ? 'الطلب والدفع بالدينار التونسي' : language === 'it' ? 'Ordine e pagamento in dinari tunisini' : language === 'ru' ? 'Заказ и оплата в тунисских динарах' : 'Order and payment in Tunisian dinars'}</p>
+              <p className="mt-2">{language === 'fr' ? `Montant : ${planKind === 'artisan' ? '30 TND' : '59 TND'}. Envoyez d’abord votre demande ci-dessous. Notre équipe vous transmettra ensuite les instructions de règlement BIAT en privé par WhatsApp.` : language === 'ar' ? `المبلغ: ${planKind === 'artisan' ? '30 د.ت' : '59 د.ت'}. أرسل طلبك أولاً أدناه، ثم يرسل لك فريقنا تعليمات الدفع عبر BIAT بشكل خاص على واتساب.` : language === 'it' ? `Importo: ${planKind === 'artisan' ? '30 TND' : '59 TND'}. Invia prima la richiesta qui sotto; il nostro team ti comunicherà privatamente su WhatsApp le istruzioni BIAT.` : language === 'ru' ? `Сумма: ${planKind === 'artisan' ? '30 TND' : '59 TND'}. Сначала отправьте заявку ниже, затем команда лично пришлёт инструкции BIAT в WhatsApp.` : `Amount: ${planKind === 'artisan' ? '30 TND' : '59 TND'}. First send your request below; our team will then privately send the BIAT payment instructions via WhatsApp.`}</p>
+              <p className="mt-2 font-semibold">{language === 'fr' ? 'Aucune coordonnée bancaire n’est publiée sur le site. La création commence après vérification du règlement.' : language === 'ar' ? 'لا يتم نشر أي بيانات بنكية على الموقع. يبدأ العمل بعد التحقق من الدفع.' : language === 'it' ? 'Nessun dato bancario viene pubblicato sul sito. La creazione inizia dopo la verifica del pagamento.' : language === 'ru' ? 'Банковские реквизиты на сайте не публикуются. Работа начинается после проверки оплаты.' : 'No bank details are published on the website. Creation starts after payment verification.'}</p>
             </div>
           )}
           {!creationMode && checkoutSelection && (
