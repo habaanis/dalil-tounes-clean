@@ -36,6 +36,11 @@ const Subscription = lazy(() => import('./pages/SubscriptionWithJourney'));
 const PaiementConfirmation = lazy(() => import('./pages/PaiementConfirmation'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
+function HomeRoute() {
+  const { search } = useLocation();
+  return new URLSearchParams(search).get('preview') === 'separation' ? <SeparationPreview /> : <Home />;
+}
+
 const Businesses = lazy(() => import('./pages/Businesses').then(m => ({ default: m.Businesses })));
 const Citizens = lazy(() => import('./pages/Citizens'));
 const CitizensHealth = lazy(() => import('./pages/CitizensHealth'));
@@ -137,7 +142,7 @@ function AppRouter() {
       <ScrollToTop />
       <Suspense fallback={<PageLoader />}>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<HomeRoute />} />
 
           <Route path="/citizens" element={<Citizens />} />
           <Route path="/citizens/health" element={<CitizensHealth />} />
