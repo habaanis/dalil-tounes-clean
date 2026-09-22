@@ -367,8 +367,10 @@ export function CvPresentationModelSelector({
     };
   }, [expandedModel, expandedPalette]);
 
-  const currentImage = expandedModel === 'portfolio' ? PORTFOLIO_IMAGE : PROFESSIONAL_IMAGE;
-  const mobileImage = value === 'portfolio' ? PORTFOLIO_IMAGE : PROFESSIONAL_IMAGE;
+  // The phone-first visual is the photo-led Portfolio model; the long,
+  // structured visual is the Business model.
+  const currentImage = expandedModel === 'portfolio' ? PROFESSIONAL_IMAGE : PORTFOLIO_IMAGE;
+  const mobileImage = value === 'portfolio' ? PROFESSIONAL_IMAGE : PORTFOLIO_IMAGE;
 
   return (
     <section id="cv-presentation-models" className="mt-5 scroll-mt-24 rounded-3xl border border-[#D6AF2E]/55 bg-white p-3 shadow-[0_8px_24px_rgba(74,18,63,0.05)] sm:p-5">
@@ -444,30 +446,12 @@ export function CvPresentationModelSelector({
         <div className="hidden grid-cols-2 gap-4 sm:grid">
         <button
           type="button"
-          aria-pressed={value === 'business'}
-          onClick={() => onChange('business')}
-          className={`flex min-w-0 flex-col rounded-2xl border p-3.5 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'business' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
-        >
-          <ModelPreview
-            src={PROFESSIONAL_IMAGE}
-            alt={`${copy.business} — Aux saveurs d'Anis`}
-            enlargeLabel={`${copy.enlarge} — ${copy.business}`}
-            onEnlarge={() => setExpandedModel('business')}
-          />
-          <span className="mt-3 min-w-0">
-            <span className="block text-sm font-black leading-5 text-[#4A123F] sm:text-lg">{copy.business}</span>
-            <span className="mt-1.5 hidden text-sm leading-5 text-slate-600 sm:block">{copy.businessDescription}</span>
-          </span>
-        </button>
-
-        <button
-          type="button"
           aria-pressed={value === 'portfolio'}
           onClick={() => onChange('portfolio')}
           className={`flex min-w-0 flex-col rounded-2xl border p-3.5 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'portfolio' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
         >
           <ModelPreview
-            src={PORTFOLIO_IMAGE}
+            src={PROFESSIONAL_IMAGE}
             alt={`${copy.portfolio} — Aux saveurs d'Anis`}
             enlargeLabel={`${copy.enlarge} — ${copy.portfolio}`}
             onEnlarge={() => setExpandedModel('portfolio')}
@@ -475,6 +459,24 @@ export function CvPresentationModelSelector({
           <span className="mt-3 min-w-0">
             <span className="block text-sm font-black leading-5 text-[#4A123F] sm:text-lg">{copy.portfolio}</span>
             <span className="mt-1.5 hidden text-sm leading-5 text-slate-600 sm:block">{copy.portfolioDescription}</span>
+          </span>
+        </button>
+
+        <button
+          type="button"
+          aria-pressed={value === 'business'}
+          onClick={() => onChange('business')}
+          className={`flex min-w-0 flex-col rounded-2xl border p-3.5 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'business' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
+        >
+          <ModelPreview
+            src={PORTFOLIO_IMAGE}
+            alt={`${copy.business} — Aux saveurs d'Anis`}
+            enlargeLabel={`${copy.enlarge} — ${copy.business}`}
+            onEnlarge={() => setExpandedModel('business')}
+          />
+          <span className="mt-3 min-w-0">
+            <span className="block text-sm font-black leading-5 text-[#4A123F] sm:text-lg">{copy.business}</span>
+            <span className="mt-1.5 hidden text-sm leading-5 text-slate-600 sm:block">{copy.businessDescription}</span>
           </span>
         </button>
         </div>
