@@ -7,6 +7,7 @@ import { getPresentationModelLabel, type PresentationModel } from '../components
 import SearchBar from '../components/SearchBar';
 import VisibilityHouseSection from '../components/VisibilityHouseSection';
 import { useLanguage } from '../context/LanguageContext';
+import { useHomeData } from '../hooks/useHomeData';
 
 const PLATFORM_CATEGORIES: Record<BusinessCardPreviewLanguage, Array<{ label: string; path: string }>> = {
   fr: [
@@ -195,6 +196,7 @@ const COPY: Record<BusinessCardPreviewLanguage, {
 
 export default function HomeVitrineFirst() {
   const { language } = useLanguage();
+  const { totalCount, loading } = useHomeData();
   const navigate = useNavigate();
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as BusinessCardPreviewLanguage;
   const t = COPY[lang];
@@ -373,7 +375,7 @@ export default function HomeVitrineFirst() {
         </div>
       </section>
 
-      <VisibilityHouseSection />
+      <VisibilityHouseSection totalCount={totalCount} loading={loading} />
     </div>
   );
 }
