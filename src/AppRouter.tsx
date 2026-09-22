@@ -31,6 +31,7 @@ function RetiredMarketplaceRedirect() {
 }
 
 const Home = lazy(() => import('./pages/HomeVitrineFirst'));
+const SeparationPreview = lazy(() => import('./pages/SeparationPreview'));
 const Subscription = lazy(() => import('./pages/SubscriptionWithJourney'));
 const PaiementConfirmation = lazy(() => import('./pages/PaiementConfirmation'));
 const NotFound = lazy(() => import('./pages/NotFound'));
@@ -193,6 +194,7 @@ function AppRouter() {
 
           <Route path="/inscription-entreprise" element={<BusinessRegistration />} />
           <Route path="/subscription" element={<Subscription />} />
+          <Route path="/preview/separation-plateforme-cv" element={<SeparationPreview />} />
           <Route path="/abonnement" element={<Subscription />} />
           <Route path="/paiement/confirmation" element={<PaiementConfirmation />} />
           <Route path="/concept" element={<Concept />} />
