@@ -243,6 +243,7 @@ function billingPeriodLabel(value: string): string {
     monthly: 'Mensuel',
     annual: 'Annuel',
     advice: 'Conseil demandé',
+    one_time: 'Création — paiement unique',
   }[value] || value;
 }
 

@@ -128,7 +128,7 @@ const PLATFORMS = new Set([
   'other',
   'none',
 ]);
-const BILLING_PERIODS = new Set(['monthly', 'annual', 'advice']);
+const BILLING_PERIODS = new Set(['monthly', 'annual', 'advice', 'one_time']);
 const SUBSCRIPTION_PLANS = new Set(['cv_business', 'artisan', 'premium']);
 const CV_PAYMENT_SCHEDULES = new Set([
   'one_payment',

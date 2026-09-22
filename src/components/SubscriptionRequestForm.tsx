@@ -1,4 +1,4 @@
-import { useRef, useState, type ChangeEvent, type FormEvent, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ChangeEvent, type FormEvent, type ReactNode } from 'react';
 import { ArrowLeft, ArrowRight, CheckCircle2, Send } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import {
@@ -689,6 +689,7 @@ export function SubscriptionRequestForm({
   const startedAtRef = useRef(Date.now());
   const requestIdRef = useRef(createRequestId());
   const submittingRef = useRef(false);
+  const feedbackRef = useRef<HTMLDivElement>(null);
   const [step, setStep] = useState<1 | 2>(1);
   const [form, setForm] = useState<SubscriptionFormState>(() => ({
     ...INITIAL_STATE,
@@ -699,6 +700,12 @@ export function SubscriptionRequestForm({
   const [submitted, setSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [openingCheckout, setOpeningCheckout] = useState(false);
+
+  useEffect(() => {
+    if (!errorMessage && !submitted) return;
+    feedbackRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    feedbackRef.current?.focus({ preventScroll: true });
+  }, [errorMessage, submitted]);
 
   const setField = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = event.target;
@@ -811,9 +818,7 @@ export function SubscriptionRequestForm({
       instagram: normalizeWebAddress(form.instagram, 'instagram'),
       whatsapp: form.whatsapp.trim() ? normalizePhone(form.whatsapp) : '',
       selectedPlatforms: form.selectedPlatforms,
-      // Temporary compatibility with the deployed registration validator. The
-      // visible offer and the admin note below remain explicitly one-time.
-      requestedBillingPeriod: creationMode ? 'monthly' : planKind === 'cv' ? '' : form.requestedBillingPeriod,
+      requestedBillingPeriod: creationMode ? 'one_time' : planKind === 'cv' ? '' : form.requestedBillingPeriod,
       requestedPaymentSchedule: form.requestedPaymentSchedule,
       preferredContactMethod: form.preferredContactMethod,
       preferredContactTime: form.preferredContactTime,
@@ -915,16 +920,18 @@ export function SubscriptionRequestForm({
         </div>
       </div>
 
-      {submitted && (
-        <div className="flex items-center gap-2 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800" role="status">
-          <CheckCircle2 className="h-5 w-5" aria-hidden="true" />
-          {copy.success}
-        </div>
-      )}
-
-      {errorMessage && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800" role="alert" aria-live="assertive">
-          {errorMessage}
+      {(submitted || errorMessage) && (
+        <div ref={feedbackRef} tabIndex={-1} className="focus:outline-none">
+          {submitted ? (
+            <div className="flex items-center gap-2 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800" role="status" aria-live="polite">
+              <CheckCircle2 className="h-5 w-5" aria-hidden="true" />
+              {copy.success}
+            </div>
+          ) : (
+            <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800" role="alert" aria-live="assertive">
+              {errorMessage}
+            </div>
+          )}
         </div>
       )}
 
