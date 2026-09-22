@@ -3,11 +3,14 @@ type CheckoutOffer =
   | 'artisan_annual'
   | 'premium_monthly'
   | 'premium_annual'
+  | 'artisan_creation'
+  | 'premium_creation'
   | 'cv_essential'
   | 'cv_complete';
 
 type PriceExpectation = {
-  priceId: string;
+  priceId?: string;
+  productName?: string;
   mode: 'payment' | 'subscription';
   unitAmount: number;
   interval?: 'month' | 'year';
@@ -18,6 +21,8 @@ const PRICE_CONFIG: Record<CheckoutOffer, PriceExpectation> = {
   artisan_annual: { priceId: 'price_1U0ic4P0Sa7CREYIn2Tb78b0', mode: 'subscription', unitAmount: 8900, interval: 'year' },
   premium_monthly: { priceId: 'price_1TtSnBP0Sa7CREYI5JPtxP57', mode: 'subscription', unitAmount: 1790, interval: 'month' },
   premium_annual: { priceId: 'price_1U0iXAP0Sa7CREYIwfRnDgP3', mode: 'subscription', unitAmount: 17500, interval: 'year' },
+  artisan_creation: { productName: 'Dalil Tounes — Formule Artisan', mode: 'payment', unitAmount: 890 },
+  premium_creation: { productName: 'Dalil Tounes — Formule Premium', mode: 'payment', unitAmount: 1790 },
   cv_essential: { priceId: 'price_1U0hpWP0Sa7CREYIK1SsoDNn', mode: 'payment', unitAmount: 2300 },
   cv_complete: { priceId: 'price_1U0i8jP0Sa7CREYI5PilQZeQ', mode: 'payment', unitAmount: 5900 },
 };
@@ -83,17 +88,19 @@ export default async function handler(request: Request) {
 
   const offer = payload.offer as CheckoutOffer;
   const expected = PRICE_CONFIG[offer];
-  const priceResponse = await stripeRequest(`prices/${expected.priceId}`, secretKey);
-  if (!priceResponse.ok) return json({ error: 'Unable to validate Stripe price' }, 502);
+  if (expected.priceId) {
+    const priceResponse = await stripeRequest(`prices/${expected.priceId}`, secretKey);
+    if (!priceResponse.ok) return json({ error: 'Unable to validate Stripe price' }, 502);
 
-  const price = await priceResponse.json() as StripePrice;
-  const interval = price.recurring?.interval;
-  const validPrice = price.active
-    && price.currency.toLowerCase() === 'eur'
-    && price.unit_amount === expected.unitAmount
-    && (expected.mode === 'payment' ? price.recurring === null : interval === expected.interval);
+    const price = await priceResponse.json() as StripePrice;
+    const interval = price.recurring?.interval;
+    const validPrice = price.active
+      && price.currency.toLowerCase() === 'eur'
+      && price.unit_amount === expected.unitAmount
+      && (expected.mode === 'payment' ? price.recurring === null : interval === expected.interval);
 
-  if (!validPrice) return json({ error: 'Stripe price configuration does not match the expected offer' }, 409);
+    if (!validPrice) return json({ error: 'Stripe price configuration does not match the expected offer' }, 409);
+  }
 
   const origin = checkoutOrigin(request);
   const orderRef = safeReference(payload.orderRef || payload.requestId);
@@ -107,13 +114,20 @@ export default async function handler(request: Request) {
 
   const form = new URLSearchParams({
     mode: expected.mode,
-    'line_items[0][price]': expected.priceId,
     'line_items[0][quantity]': '1',
     success_url: successUrl.toString(),
     cancel_url: cancelUrl.toString(),
     locale: 'auto',
     'metadata[dalil_tounes_offer]': offer,
   });
+
+  if (expected.priceId) {
+    form.set('line_items[0][price]', expected.priceId);
+  } else {
+    form.set('line_items[0][price_data][currency]', 'eur');
+    form.set('line_items[0][price_data][unit_amount]', String(expected.unitAmount));
+    form.set('line_items[0][price_data][product_data][name]', expected.productName || 'Dalil Tounes');
+  }
 
   if (orderRef) {
     form.set('client_reference_id', orderRef);
