@@ -22,6 +22,7 @@
     { "source": "/dashboard/:path*", "destination": "/index.html" },
     { "source": "/inscription-entreprise", "destination": "/index.html" },
     { "source": "/subscription", "destination": "/index.html" },
+    { "source": "/cv-business", "destination": "/index.html" },
     { "source": "/paiement/:path*", "destination": "/index.html" },
     { "source": "/concept", "destination": "/index.html" },
     { "source": "/pourquoi-dalil-tounes", "destination": "/index.html" },
