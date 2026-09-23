@@ -30,16 +30,12 @@ function RetiredMarketplaceRedirect() {
   return <Navigate to={{ pathname: '/citizens', search }} replace />;
 }
 
-const Home = lazy(() => import('./pages/HomeVitrineFirst'));
 const SeparationPreview = lazy(() => import('./pages/SeparationPreview'));
+const PlatformHome = lazy(() => import('./pages/SeparationPreview').then(m => ({ default: m.PlatformHome })));
+const CvBusinessHome = lazy(() => import('./pages/SeparationPreview').then(m => ({ default: m.CvBusinessHome })));
 const Subscription = lazy(() => import('./pages/SubscriptionWithJourney'));
 const PaiementConfirmation = lazy(() => import('./pages/PaiementConfirmation'));
 const NotFound = lazy(() => import('./pages/NotFound'));
-
-function HomeRoute() {
-  const { search } = useLocation();
-  return new URLSearchParams(search).get('preview') === 'separation' ? <SeparationPreview /> : <Home />;
-}
 
 const Businesses = lazy(() => import('./pages/Businesses').then(m => ({ default: m.Businesses })));
 const Citizens = lazy(() => import('./pages/Citizens'));
@@ -142,7 +138,7 @@ function AppRouter() {
       <ScrollToTop />
       <Suspense fallback={<PageLoader />}>
         <Routes>
-          <Route path="/" element={<HomeRoute />} />
+          <Route path="/" element={<PlatformHome />} />
 
           <Route path="/citizens" element={<Citizens />} />
           <Route path="/citizens/health" element={<CitizensHealth />} />
@@ -199,6 +195,7 @@ function AppRouter() {
 
           <Route path="/inscription-entreprise" element={<BusinessRegistration />} />
           <Route path="/subscription" element={<Subscription />} />
+          <Route path="/cv-business" element={<CvBusinessHome />} />
           <Route path="/preview/separation-plateforme-cv" element={<SeparationPreview />} />
           <Route path="/abonnement" element={<Subscription />} />
           <Route path="/paiement/confirmation" element={<PaiementConfirmation />} />
