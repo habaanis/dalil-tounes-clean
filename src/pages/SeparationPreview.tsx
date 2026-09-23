@@ -1,11 +1,13 @@
-import { ArrowRight, Building2, MapPin, QrCode, Search, Share2, Sparkles } from 'lucide-react';
+import { ArrowRight, Building2, MapPin, QrCode, Search, Share2, Smartphone, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { BusinessCard } from '../components/BusinessCard';
 import CvBusinessJourney from '../components/CvBusinessJourney';
 import SearchBar from '../components/SearchBar';
 import VisibilityHouseSection from '../components/VisibilityHouseSection';
 import { useLanguage } from '../context/LanguageContext';
 import { useHomeData } from '../hooks/useHomeData';
+import { extractFrenchName } from '../lib/textNormalization';
 
 type Lang = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 
@@ -13,6 +15,9 @@ const COPY: Record<Lang, {
   previewNotice: string; platformTab: string; cvTab: string; platformLabel: string;
   platformTitle: string; platformDescription: string; categories: Array<[string, string]>;
   professionalEyebrow: string; platformPromoTitle: string; platformPromoText: string;
+  networkProof: (count: string) => string; loadingCount: string;
+  miniAppTitle: string; miniAppText: string; miniAppHighlights: string;
+  certifiedTitle: string; certifiedSubtitle: string; certifiedLoading: string;
   discoverCv: string; cvLabel: string; cvTitle: string; cvSubtitle: string;
   cvDescription: string; offers: string; information: string; example: string;
   cardEyebrow: string; cardTitle: string; cardIntro: string; qrBenefit: string;
@@ -25,9 +30,16 @@ const COPY: Record<Lang, {
     platformLabel: 'Plateforme et annuaire tunisien', platformTitle: 'Trouvez les entreprises et les services dont vous avez besoin en Tunisie.',
     platformDescription: 'Recherchez une activité, découvrez les professionnels référencés et contactez-les directement.',
     categories: [['Santé', '/citizens/sante'], ['Éducation', '/education'], ['Commerces', '/citizens/shops'], ['Services', '/citizens/services']],
+    networkProof: (count) => `Déjà ${count} activités référencées. Faites entrer la vôtre dans la Maison Dalil Tounes.`, loadingCount: "Chargement du nombre d'activités",
     professionalEyebrow: 'Vous êtes professionnel ?',
     platformPromoTitle: 'Donnez à votre activité une présentation claire et partageable avec le CV Business Dalil Tounes.',
     platformPromoText: 'Présentez toutes vos informations, partagez-les par lien ou QR Code et renforcez votre présence sur Dalil Tounes ainsi que votre visibilité sur Google.',
+    miniAppTitle: 'Votre entreprise vous accompagne partout',
+    miniAppText: "Votre CV Business s’installe sur l’écran d’accueil de votre téléphone comme une mini-application web personnalisée à votre entreprise. Ouvrez-la en un geste pour présenter votre activité, afficher votre QR Business et partager vos informations avec vos clients.",
+    miniAppHighlights: 'Mini-application installable • QR Business toujours disponible • partage immédiat',
+    certifiedTitle: 'Des CV Business certifiés, déjà visibles sur Dalil Tounes',
+    certifiedSubtitle: 'Découvrez de vrais professionnels référencés sur la plateforme et ouvrez leur présentation.',
+    certifiedLoading: 'Chargement des CV Business certifiés…',
     discoverCv: 'Découvrir le CV Business', cvLabel: 'Espace professionnel Dalil Tounes', cvTitle: 'Votre entreprise mérite mieux qu’une simple fiche.',
     cvSubtitle: 'Créez votre CV Business et choisissez le modèle adapté à votre métier.',
     cvDescription: 'Réunissez votre activité, vos services, vos réalisations, vos contacts et votre QR Code dans une présentation professionnelle facile à partager.',
@@ -48,8 +60,15 @@ const COPY: Record<Lang, {
     platformLabel: 'منصة ودليل مهني تونسي', platformTitle: 'اعثر على الشركات والخدمات التي تحتاجها في تونس.',
     platformDescription: 'ابحث عن نشاط، واكتشف المهنيين المدرجين وتواصل معهم مباشرة.',
     categories: [['الصحة', '/citizens/sante'], ['التعليم', '/education'], ['المتاجر', '/citizens/shops'], ['الخدمات', '/citizens/services']],
+    networkProof: (count) => `تم إدراج ${count} نشاطاً بالفعل. أضف نشاطك إلى بيت دليل تونس.`, loadingCount: 'جارٍ تحميل عدد الأنشطة',
     professionalEyebrow: 'هل أنت مهني؟', platformPromoTitle: 'امنح نشاطك عرضاً واضحاً وسهل المشاركة مع CV Business من دليل تونس.',
     platformPromoText: 'اعرض كل معلوماتك وشاركها عبر رابط أو رمز QR، وعزّز حضورك على دليل تونس وظهور نشاطك على Google.',
+    miniAppTitle: 'مؤسستك ترافقك أينما ذهبت',
+    miniAppText: 'يمكن تثبيت CV Business على الشاشة الرئيسية لهاتفك كتطبيق ويب مصغر ومخصص لمؤسستك. افتحه بلمسة واحدة لعرض نشاطك وإظهار QR Business ومشاركة معلوماتك مع عملائك.',
+    miniAppHighlights: 'تطبيق مصغر قابل للتثبيت • QR Business متاح دائماً • مشاركة فورية',
+    certifiedTitle: 'نماذج CV Business موثّقة ومتاحة بالفعل على دليل تونس',
+    certifiedSubtitle: 'اكتشف مهنيين حقيقيين مدرجين على المنصة وافتح عرضهم المهني.',
+    certifiedLoading: 'جارٍ تحميل نماذج CV Business الموثّقة…',
     discoverCv: 'اكتشف CV Business', cvLabel: 'الفضاء المهني لدليل تونس', cvTitle: 'شركتك تستحق أكثر من مجرد بطاقة بسيطة.',
     cvSubtitle: 'أنشئ CV Business واختر النموذج الأنسب لمهنتك.',
     cvDescription: 'اجمع نشاطك وخدماتك وإنجازاتك ووسائل الاتصال ورمز QR في عرض مهني سهل المشاركة.',
@@ -69,8 +88,15 @@ const COPY: Record<Lang, {
     platformLabel: 'Tunisian platform and directory', platformTitle: 'Find the businesses and services you need in Tunisia.',
     platformDescription: 'Search for an activity, discover listed professionals and contact them directly.',
     categories: [['Health', '/citizens/sante'], ['Education', '/education'], ['Shops', '/citizens/shops'], ['Services', '/citizens/services']],
+    networkProof: (count) => `${count} activities are already listed. Bring yours into the Dalil Tounes House.`, loadingCount: 'Loading the number of activities',
     professionalEyebrow: 'Are you a professional?', platformPromoTitle: 'Give your activity a clear, shareable presentation with the Dalil Tounes Business CV.',
     platformPromoText: 'Present all your information, share it by link or QR code and strengthen your presence on Dalil Tounes and your visibility on Google.',
+    miniAppTitle: 'Take your business everywhere',
+    miniAppText: 'Your Business CV installs on your phone’s home screen as a mini web app personalized for your business. Open it in one tap to present your activity, display your Business QR and share your information with clients.',
+    miniAppHighlights: 'Installable mini app • Business QR always available • instant sharing',
+    certifiedTitle: 'Certified Business CVs already visible on Dalil Tounes',
+    certifiedSubtitle: 'Discover real professionals listed on the platform and open their presentation.',
+    certifiedLoading: 'Loading certified Business CVs…',
     discoverCv: 'Discover the Business CV', cvLabel: 'Dalil Tounes professional space', cvTitle: 'Your business deserves more than a simple listing.',
     cvSubtitle: 'Create your Business CV and choose the model that suits your profession.',
     cvDescription: 'Bring together your activity, services, work, contact details and QR code in a professional presentation that is easy to share.',
@@ -90,8 +116,15 @@ const COPY: Record<Lang, {
     platformLabel: 'Piattaforma e directory tunisina', platformTitle: 'Trova le imprese e i servizi di cui hai bisogno in Tunisia.',
     platformDescription: 'Cerca un’attività, scopri i professionisti presenti e contattali direttamente.',
     categories: [['Salute', '/citizens/sante'], ['Istruzione', '/education'], ['Negozi', '/citizens/shops'], ['Servizi', '/citizens/services']],
+    networkProof: (count) => `Già ${count} attività registrate. Porta anche la tua nella Casa Dalil Tounes.`, loadingCount: 'Caricamento del numero di attività',
     professionalEyebrow: 'Sei un professionista?', platformPromoTitle: 'Dai alla tua attività una presentazione chiara e condivisibile con il CV Business Dalil Tounes.',
     platformPromoText: 'Presenta tutte le tue informazioni, condividile tramite link o QR Code e rafforza la tua presenza su Dalil Tounes e la tua visibilità su Google.',
+    miniAppTitle: 'La tua impresa ti accompagna ovunque',
+    miniAppText: 'Il CV Business si installa sulla schermata Home del telefono come una mini web app personalizzata per la tua impresa. Aprila con un gesto per presentare l’attività, mostrare il QR Business e condividere le informazioni con i clienti.',
+    miniAppHighlights: 'Mini app installabile • QR Business sempre disponibile • condivisione immediata',
+    certifiedTitle: 'CV Business certificati già visibili su Dalil Tounes',
+    certifiedSubtitle: 'Scopri veri professionisti presenti sulla piattaforma e apri la loro presentazione.',
+    certifiedLoading: 'Caricamento dei CV Business certificati…',
     discoverCv: 'Scopri il CV Business', cvLabel: 'Spazio professionale Dalil Tounes', cvTitle: 'La tua impresa merita più di una semplice scheda.',
     cvSubtitle: 'Crea il tuo CV Business e scegli il modello adatto alla tua professione.',
     cvDescription: 'Riunisci attività, servizi, lavori, contatti e QR Code in una presentazione professionale facile da condividere.',
@@ -111,8 +144,15 @@ const COPY: Record<Lang, {
     platformLabel: 'Тунисская платформа и каталог', platformTitle: 'Найдите нужные компании и услуги в Тунисе.',
     platformDescription: 'Ищите виды деятельности, находите представленных специалистов и связывайтесь с ними напрямую.',
     categories: [['Здоровье', '/citizens/sante'], ['Образование', '/education'], ['Магазины', '/citizens/shops'], ['Услуги', '/citizens/services']],
+    networkProof: (count) => `Уже ${count} видов деятельности представлены на платформе. Добавьте свой в Дом Dalil Tounes.`, loadingCount: 'Загрузка количества видов деятельности',
     professionalEyebrow: 'Вы профессионал?', platformPromoTitle: 'Представьте свою деятельность понятно и удобно с Business CV Dalil Tounes.',
     platformPromoText: 'Покажите всю информацию, делитесь ею по ссылке или QR-коду и укрепляйте присутствие на Dalil Tounes и видимость в Google.',
+    miniAppTitle: 'Ваша компания всегда с вами',
+    miniAppText: 'Business CV устанавливается на главный экран телефона как персонализированное мини-веб-приложение вашей компании. Откройте его одним касанием, чтобы представить деятельность, показать Business QR и поделиться информацией с клиентами.',
+    miniAppHighlights: 'Устанавливаемое мини-приложение • Business QR всегда под рукой • мгновенная отправка',
+    certifiedTitle: 'Сертифицированные Business CV уже представлены на Dalil Tounes',
+    certifiedSubtitle: 'Познакомьтесь с реальными специалистами на платформе и откройте их презентации.',
+    certifiedLoading: 'Загрузка сертифицированных Business CV…',
     discoverCv: 'Открыть Business CV', cvLabel: 'Профессиональное пространство Dalil Tounes', cvTitle: 'Ваш бизнес заслуживает большего, чем простая карточка.',
     cvSubtitle: 'Создайте Business CV и выберите модель для своей профессии.',
     cvDescription: 'Объедините деятельность, услуги, работы, контакты и QR-код в профессиональной презентации, которой легко поделиться.',
@@ -136,7 +176,9 @@ function SeparationExperience({ fixedView }: { fixedView?: 'platform' | 'cv' }) 
   const { language } = useLanguage();
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as Lang;
   const t = COPY[lang];
-  const { totalCount, loading } = useHomeData();
+  const { partners, totalCount, loading } = useHomeData();
+  const displayedCount = totalCount > 0 ? totalCount : 1894;
+  const localizedCount = new Intl.NumberFormat(lang === 'ar' ? 'ar-TN' : lang).format(displayedCount);
 
   return (
     <div dir={lang === 'ar' ? 'rtl' : 'ltr'} className="bg-white text-slate-900">
@@ -158,18 +200,26 @@ function SeparationExperience({ fixedView }: { fixedView?: 'platform' | 'cv' }) 
               <h1 className="mx-auto mt-5 max-w-3xl font-serif text-4xl font-bold leading-tight text-[#2E102A] md:text-6xl">{t.platformTitle}</h1>
               <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-gray-600 md:text-lg">{t.platformDescription}</p>
               <div className="mx-auto mt-7 max-w-3xl rounded-2xl border border-[#D4AF37]/40 bg-white p-3 shadow-[0_18px_45px_rgba(74,29,67,0.10)]"><SearchBar scope="global" autoSearch resultMode="redirectToResults" /></div>
-              <div className="mx-auto mt-4 grid max-w-3xl grid-cols-2 gap-2 sm:grid-cols-4">{t.categories.map(([label, href]) => <a key={href} href={href} className="min-h-11 rounded-xl border border-[#D4AF37]/40 bg-white px-3 py-3 text-sm font-bold text-[#4A1D43] transition hover:bg-[#FFF8DF]">{label}</a>)}</div>
+              <p className="mx-auto mt-4 max-w-3xl rounded-2xl border border-[#D4AF37]/55 bg-[#FFF8E6] px-4 py-3 text-base font-black leading-relaxed text-[#4A1D43] shadow-sm md:text-xl">{loading ? <span className="inline-block h-6 w-96 max-w-full animate-pulse rounded bg-[#D4AF37]/15" aria-label={t.loadingCount} /> : t.networkProof(localizedCount)}</p>
+              <div className="mx-auto mt-3 grid max-w-3xl grid-cols-2 gap-2 sm:grid-cols-4">{t.categories.map(([label, href]) => <a key={href} href={href} className="min-h-11 rounded-xl border border-[#D4AF37]/40 bg-white px-3 py-3 text-sm font-bold text-[#4A1D43] transition hover:bg-[#FFF8DF]">{label}</a>)}</div>
             </div>
           </section>
 
-          <VisibilityHouseSection totalCount={totalCount} loading={loading} />
-
-          <section className="bg-[#2E102A] px-4 py-9 text-white">
-            <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-6 text-center md:flex-row md:text-left rtl:md:text-right">
-              <div><p className="text-xs font-black uppercase tracking-[0.16em] text-[#F1D783]">{t.professionalEyebrow}</p><h2 className="mt-2 max-w-3xl font-serif text-2xl font-bold md:text-3xl">{t.platformPromoTitle}</h2><p className="mt-3 max-w-3xl text-sm leading-6 text-white/85 md:text-base">{t.platformPromoText}</p></div>
-              <button type="button" onClick={() => fixedView ? navigate('/cv-business') : setPreviewView('cv')} className="inline-flex min-h-12 shrink-0 items-center gap-2 rounded-xl bg-[#D4AF37] px-6 py-3 text-sm font-black text-[#2E102A]">{t.discoverCv} <ArrowRight className={`h-4 w-4 ${lang === 'ar' ? 'rotate-180' : ''}`} /></button>
+          <section className="bg-[#2E102A] px-4 py-8 text-white md:py-10">
+            <div className="mx-auto grid max-w-5xl items-center gap-6 md:grid-cols-[1fr_280px] md:gap-8">
+              <div className="text-center md:text-left rtl:md:text-right"><p className="text-xs font-black uppercase tracking-[0.16em] text-[#F1D783]">{t.professionalEyebrow}</p><h2 className="mt-2 max-w-3xl font-serif text-2xl font-bold md:text-3xl">{t.platformPromoTitle}</h2><p className="mt-3 max-w-3xl text-base leading-7 text-white/85">{t.platformPromoText}</p><div className="mt-4 rounded-2xl border border-[#D4AF37]/45 bg-white/10 p-4 text-left rtl:text-right"><div className="flex items-center gap-2"><Smartphone className="h-5 w-5 shrink-0 text-[#F1D783]" aria-hidden="true" /><h3 className="font-serif text-lg font-bold text-[#F1D783]">{t.miniAppTitle}</h3></div><p className="mt-2 text-sm leading-6 text-white/90">{t.miniAppText}</p><p className="mt-3 text-xs font-black leading-5 text-[#F1D783]">{t.miniAppHighlights}</p></div><button type="button" onClick={() => fixedView ? navigate('/cv-business') : setPreviewView('cv')} className="mt-5 inline-flex min-h-12 items-center gap-2 rounded-xl bg-[#D4AF37] px-6 py-3 text-sm font-black text-[#2E102A]">{t.discoverCv} <ArrowRight className={`h-4 w-4 ${lang === 'ar' ? 'rotate-180' : ''}`} /></button></div>
+              <div className="mx-auto w-full max-w-[280px] rounded-[24px] border border-[#D4AF37]/60 bg-white/95 p-3 shadow-[0_20px_55px_rgba(0,0,0,0.28)]"><p className="mb-2 text-center text-xs font-bold text-[#4A1D43]">{t.example}</p><div className="flex h-[270px] justify-center overflow-hidden"><img src="/images/cv-business-portfolio-aux-saveurs-anis.png" alt={`${t.example} — CV Business`} className="h-[270px] w-auto object-contain object-top" loading="lazy" decoding="async" /></div></div>
             </div>
           </section>
+
+          <section className="bg-white px-4 py-9 md:py-11">
+            <div className="mx-auto max-w-6xl">
+              <div className="mb-5 text-center"><h2 className="font-serif text-2xl font-bold text-[#2E102A] md:text-3xl">{t.certifiedTitle}</h2><p className="mx-auto mt-2 max-w-3xl text-sm leading-6 text-gray-600 md:text-base">{t.certifiedSubtitle}</p></div>
+              {loading ? <div className="grid grid-cols-2 gap-3 lg:grid-cols-4" aria-label={t.certifiedLoading}>{[0, 1, 2, 3].map((item) => <div key={item} className="h-[220px] animate-pulse rounded-2xl border border-gray-100 bg-gray-100" />)}</div> : <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">{partners.slice(0, 4).map((biz) => <div key={biz.id} className="min-w-0"><BusinessCard business={{ id: biz.id, name: extractFrenchName(biz.nom), category: Array.isArray(biz.sous_categories) ? (biz.sous_categories as unknown as string[]).join(', ') : (biz.sous_categories || ''), ville: biz.ville, gouvernorat: biz.gouvernorat, statut_abonnement: biz.statut_abonnement, niveau_priorite_abonnement: biz.niveau_priorite_abonnement, imageUrl: biz.image_url, logoUrl: biz.logo_url, horaires_ok: biz.horaires_ok, telephone: biz.telephone, statut_carte: biz.statut_carte, name_ar: biz.name_ar, description_ar: biz.description_ar }} onClick={() => navigate(`/business/${biz.id}`)} /></div>)}</div>}
+            </div>
+          </section>
+
+          <VisibilityHouseSection totalCount={totalCount} loading={loading} showNetworkProof={false} />
         </>
       ) : (
         <>
