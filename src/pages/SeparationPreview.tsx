@@ -1,11 +1,13 @@
 import { ArrowRight, Building2, MapPin, QrCode, Search, Share2, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { BusinessCard } from '../components/BusinessCard';
 import CvBusinessJourney from '../components/CvBusinessJourney';
 import SearchBar from '../components/SearchBar';
 import VisibilityHouseSection from '../components/VisibilityHouseSection';
 import { useLanguage } from '../context/LanguageContext';
 import { useHomeData } from '../hooks/useHomeData';
+import { extractFrenchName } from '../lib/textNormalization';
 
 type Lang = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 
@@ -13,6 +15,7 @@ const COPY: Record<Lang, {
   previewNotice: string; platformTab: string; cvTab: string; platformLabel: string;
   platformTitle: string; platformDescription: string; categories: Array<[string, string]>;
   professionalEyebrow: string; platformPromoTitle: string; platformPromoText: string;
+  certifiedTitle: string; certifiedSubtitle: string; certifiedLoading: string;
   discoverCv: string; cvLabel: string; cvTitle: string; cvSubtitle: string;
   cvDescription: string; offers: string; information: string; example: string;
   cardEyebrow: string; cardTitle: string; cardIntro: string; qrBenefit: string;
@@ -28,6 +31,9 @@ const COPY: Record<Lang, {
     professionalEyebrow: 'Vous êtes professionnel ?',
     platformPromoTitle: 'Donnez à votre activité une présentation claire et partageable avec le CV Business Dalil Tounes.',
     platformPromoText: 'Présentez toutes vos informations, partagez-les par lien ou QR Code et renforcez votre présence sur Dalil Tounes ainsi que votre visibilité sur Google.',
+    certifiedTitle: 'Des CV Business certifiés, déjà visibles sur Dalil Tounes',
+    certifiedSubtitle: 'Découvrez de vrais professionnels référencés sur la plateforme et ouvrez leur présentation.',
+    certifiedLoading: 'Chargement des CV Business certifiés…',
     discoverCv: 'Découvrir le CV Business', cvLabel: 'Espace professionnel Dalil Tounes', cvTitle: 'Votre entreprise mérite mieux qu’une simple fiche.',
     cvSubtitle: 'Créez votre CV Business et choisissez le modèle adapté à votre métier.',
     cvDescription: 'Réunissez votre activité, vos services, vos réalisations, vos contacts et votre QR Code dans une présentation professionnelle facile à partager.',
@@ -50,6 +56,9 @@ const COPY: Record<Lang, {
     categories: [['الصحة', '/citizens/sante'], ['التعليم', '/education'], ['المتاجر', '/citizens/shops'], ['الخدمات', '/citizens/services']],
     professionalEyebrow: 'هل أنت مهني؟', platformPromoTitle: 'امنح نشاطك عرضاً واضحاً وسهل المشاركة مع CV Business من دليل تونس.',
     platformPromoText: 'اعرض كل معلوماتك وشاركها عبر رابط أو رمز QR، وعزّز حضورك على دليل تونس وظهور نشاطك على Google.',
+    certifiedTitle: 'نماذج CV Business موثّقة ومتاحة بالفعل على دليل تونس',
+    certifiedSubtitle: 'اكتشف مهنيين حقيقيين مدرجين على المنصة وافتح عرضهم المهني.',
+    certifiedLoading: 'جارٍ تحميل نماذج CV Business الموثّقة…',
     discoverCv: 'اكتشف CV Business', cvLabel: 'الفضاء المهني لدليل تونس', cvTitle: 'شركتك تستحق أكثر من مجرد بطاقة بسيطة.',
     cvSubtitle: 'أنشئ CV Business واختر النموذج الأنسب لمهنتك.',
     cvDescription: 'اجمع نشاطك وخدماتك وإنجازاتك ووسائل الاتصال ورمز QR في عرض مهني سهل المشاركة.',
@@ -71,6 +80,9 @@ const COPY: Record<Lang, {
     categories: [['Health', '/citizens/sante'], ['Education', '/education'], ['Shops', '/citizens/shops'], ['Services', '/citizens/services']],
     professionalEyebrow: 'Are you a professional?', platformPromoTitle: 'Give your activity a clear, shareable presentation with the Dalil Tounes Business CV.',
     platformPromoText: 'Present all your information, share it by link or QR code and strengthen your presence on Dalil Tounes and your visibility on Google.',
+    certifiedTitle: 'Certified Business CVs already visible on Dalil Tounes',
+    certifiedSubtitle: 'Discover real professionals listed on the platform and open their presentation.',
+    certifiedLoading: 'Loading certified Business CVs…',
     discoverCv: 'Discover the Business CV', cvLabel: 'Dalil Tounes professional space', cvTitle: 'Your business deserves more than a simple listing.',
     cvSubtitle: 'Create your Business CV and choose the model that suits your profession.',
     cvDescription: 'Bring together your activity, services, work, contact details and QR code in a professional presentation that is easy to share.',
@@ -92,6 +104,9 @@ const COPY: Record<Lang, {
     categories: [['Salute', '/citizens/sante'], ['Istruzione', '/education'], ['Negozi', '/citizens/shops'], ['Servizi', '/citizens/services']],
     professionalEyebrow: 'Sei un professionista?', platformPromoTitle: 'Dai alla tua attività una presentazione chiara e condivisibile con il CV Business Dalil Tounes.',
     platformPromoText: 'Presenta tutte le tue informazioni, condividile tramite link o QR Code e rafforza la tua presenza su Dalil Tounes e la tua visibilità su Google.',
+    certifiedTitle: 'CV Business certificati già visibili su Dalil Tounes',
+    certifiedSubtitle: 'Scopri veri professionisti presenti sulla piattaforma e apri la loro presentazione.',
+    certifiedLoading: 'Caricamento dei CV Business certificati…',
     discoverCv: 'Scopri il CV Business', cvLabel: 'Spazio professionale Dalil Tounes', cvTitle: 'La tua impresa merita più di una semplice scheda.',
     cvSubtitle: 'Crea il tuo CV Business e scegli il modello adatto alla tua professione.',
     cvDescription: 'Riunisci attività, servizi, lavori, contatti e QR Code in una presentazione professionale facile da condividere.',
@@ -113,6 +128,9 @@ const COPY: Record<Lang, {
     categories: [['Здоровье', '/citizens/sante'], ['Образование', '/education'], ['Магазины', '/citizens/shops'], ['Услуги', '/citizens/services']],
     professionalEyebrow: 'Вы профессионал?', platformPromoTitle: 'Представьте свою деятельность понятно и удобно с Business CV Dalil Tounes.',
     platformPromoText: 'Покажите всю информацию, делитесь ею по ссылке или QR-коду и укрепляйте присутствие на Dalil Tounes и видимость в Google.',
+    certifiedTitle: 'Сертифицированные Business CV уже представлены на Dalil Tounes',
+    certifiedSubtitle: 'Познакомьтесь с реальными специалистами на платформе и откройте их презентации.',
+    certifiedLoading: 'Загрузка сертифицированных Business CV…',
     discoverCv: 'Открыть Business CV', cvLabel: 'Профессиональное пространство Dalil Tounes', cvTitle: 'Ваш бизнес заслуживает большего, чем простая карточка.',
     cvSubtitle: 'Создайте Business CV и выберите модель для своей профессии.',
     cvDescription: 'Объедините деятельность, услуги, работы, контакты и QR-код в профессиональной презентации, которой легко поделиться.',
@@ -136,7 +154,7 @@ function SeparationExperience({ fixedView }: { fixedView?: 'platform' | 'cv' }) 
   const { language } = useLanguage();
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as Lang;
   const t = COPY[lang];
-  const { totalCount, loading } = useHomeData();
+  const { partners, totalCount, loading } = useHomeData();
 
   return (
     <div dir={lang === 'ar' ? 'rtl' : 'ltr'} className="bg-white text-slate-900">
@@ -162,14 +180,21 @@ function SeparationExperience({ fixedView }: { fixedView?: 'platform' | 'cv' }) 
             </div>
           </section>
 
-          <VisibilityHouseSection totalCount={totalCount} loading={loading} />
-
-          <section className="bg-[#2E102A] px-4 py-9 text-white">
-            <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-6 text-center md:flex-row md:text-left rtl:md:text-right">
-              <div><p className="text-xs font-black uppercase tracking-[0.16em] text-[#F1D783]">{t.professionalEyebrow}</p><h2 className="mt-2 max-w-3xl font-serif text-2xl font-bold md:text-3xl">{t.platformPromoTitle}</h2><p className="mt-3 max-w-3xl text-sm leading-6 text-white/85 md:text-base">{t.platformPromoText}</p></div>
-              <button type="button" onClick={() => fixedView ? navigate('/cv-business') : setPreviewView('cv')} className="inline-flex min-h-12 shrink-0 items-center gap-2 rounded-xl bg-[#D4AF37] px-6 py-3 text-sm font-black text-[#2E102A]">{t.discoverCv} <ArrowRight className={`h-4 w-4 ${lang === 'ar' ? 'rotate-180' : ''}`} /></button>
+          <section className="bg-[#2E102A] px-4 py-8 text-white md:py-10">
+            <div className="mx-auto grid max-w-5xl items-center gap-6 md:grid-cols-[1fr_280px] md:gap-8">
+              <div className="text-center md:text-left rtl:md:text-right"><p className="text-xs font-black uppercase tracking-[0.16em] text-[#F1D783]">{t.professionalEyebrow}</p><h2 className="mt-2 max-w-3xl font-serif text-2xl font-bold md:text-3xl">{t.platformPromoTitle}</h2><p className="mt-3 max-w-3xl text-base leading-7 text-white/85">{t.platformPromoText}</p><button type="button" onClick={() => fixedView ? navigate('/cv-business') : setPreviewView('cv')} className="mt-5 inline-flex min-h-12 items-center gap-2 rounded-xl bg-[#D4AF37] px-6 py-3 text-sm font-black text-[#2E102A]">{t.discoverCv} <ArrowRight className={`h-4 w-4 ${lang === 'ar' ? 'rotate-180' : ''}`} /></button></div>
+              <div className="mx-auto w-full max-w-[280px] rounded-[24px] border border-[#D4AF37]/60 bg-white/95 p-3 shadow-[0_20px_55px_rgba(0,0,0,0.28)]"><p className="mb-2 text-center text-xs font-bold text-[#4A1D43]">{t.example}</p><div className="flex h-[270px] justify-center overflow-hidden"><img src="/images/cv-business-portfolio-aux-saveurs-anis.png" alt="CV Business réel Aux saveurs d’Anis" className="h-[270px] w-auto object-contain object-top" loading="lazy" decoding="async" /></div></div>
             </div>
           </section>
+
+          <section className="bg-white px-4 py-9 md:py-11">
+            <div className="mx-auto max-w-6xl">
+              <div className="mb-5 text-center"><h2 className="font-serif text-2xl font-bold text-[#2E102A] md:text-3xl">{t.certifiedTitle}</h2><p className="mx-auto mt-2 max-w-3xl text-sm leading-6 text-gray-600 md:text-base">{t.certifiedSubtitle}</p></div>
+              {loading ? <div className="grid grid-cols-2 gap-3 lg:grid-cols-4" aria-label={t.certifiedLoading}>{[0, 1, 2, 3].map((item) => <div key={item} className="h-[220px] animate-pulse rounded-2xl border border-gray-100 bg-gray-100" />)}</div> : <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">{partners.slice(0, 4).map((biz) => <div key={biz.id} className="min-w-0 cursor-pointer" onClick={() => navigate(`/business/${biz.id}`)}><BusinessCard business={{ id: biz.id, name: extractFrenchName(biz.nom), category: Array.isArray(biz.sous_categories) ? (biz.sous_categories as unknown as string[]).join(', ') : (biz.sous_categories || ''), ville: biz.ville, gouvernorat: biz.gouvernorat, statut_abonnement: biz.statut_abonnement, niveau_priorite_abonnement: biz.niveau_priorite_abonnement, imageUrl: biz.image_url, logoUrl: biz.logo_url, horaires_ok: biz.horaires_ok, telephone: biz.telephone, statut_carte: biz.statut_carte, name_ar: biz.name_ar, description_ar: biz.description_ar }} onClick={() => navigate(`/business/${biz.id}`)} /></div>)}</div>}
+            </div>
+          </section>
+
+          <VisibilityHouseSection totalCount={totalCount} loading={loading} />
         </>
       ) : (
         <>
