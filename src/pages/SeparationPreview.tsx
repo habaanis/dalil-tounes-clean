@@ -1,5 +1,6 @@
 import { ArrowRight, Building2, MapPin, QrCode, Search, Share2, Sparkles } from 'lucide-react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import CvBusinessJourney from '../components/CvBusinessJourney';
 import SearchBar from '../components/SearchBar';
 import VisibilityHouseSection from '../components/VisibilityHouseSection';
@@ -128,8 +129,10 @@ const COPY: Record<Lang, {
   },
 };
 
-export default function SeparationPreview() {
-  const [view, setView] = useState<'platform' | 'cv'>('platform');
+function SeparationExperience({ fixedView }: { fixedView?: 'platform' | 'cv' }) {
+  const [previewView, setPreviewView] = useState<'platform' | 'cv'>('platform');
+  const navigate = useNavigate();
+  const view = fixedView ?? previewView;
   const { language } = useLanguage();
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as Lang;
   const t = COPY[lang];
@@ -137,15 +140,15 @@ export default function SeparationPreview() {
 
   return (
     <div dir={lang === 'ar' ? 'rtl' : 'ltr'} className="bg-white text-slate-900">
-      <div className="sticky top-0 z-40 border-b border-[#D4AF37]/35 bg-white/95 px-4 py-3 backdrop-blur">
+      {!fixedView && <div className="sticky top-0 z-40 border-b border-[#D4AF37]/35 bg-white/95 px-4 py-3 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-3">
           <p className="hidden text-sm font-bold text-[#4A1D43] sm:block">{t.previewNotice}</p>
           <div className="grid w-full grid-cols-2 gap-2 rounded-2xl bg-[#F7F2E8] p-1.5 sm:w-auto">
-            <button type="button" onClick={() => setView('platform')} className={`rounded-xl px-4 py-2.5 text-sm font-black transition ${view === 'platform' ? 'bg-[#4A1D43] text-white shadow-sm' : 'bg-white text-[#4A1D43]'}`}>{t.platformTab}</button>
-            <button type="button" onClick={() => setView('cv')} className={`rounded-xl px-4 py-2.5 text-sm font-black transition ${view === 'cv' ? 'bg-[#4A1D43] text-white shadow-sm' : 'bg-white text-[#4A1D43]'}`}>{t.cvTab}</button>
+            <button type="button" onClick={() => setPreviewView('platform')} className={`rounded-xl px-4 py-2.5 text-sm font-black transition ${view === 'platform' ? 'bg-[#4A1D43] text-white shadow-sm' : 'bg-white text-[#4A1D43]'}`}>{t.platformTab}</button>
+            <button type="button" onClick={() => setPreviewView('cv')} className={`rounded-xl px-4 py-2.5 text-sm font-black transition ${view === 'cv' ? 'bg-[#4A1D43] text-white shadow-sm' : 'bg-white text-[#4A1D43]'}`}>{t.cvTab}</button>
           </div>
         </div>
-      </div>
+      </div>}
 
       {view === 'platform' ? (
         <>
@@ -164,7 +167,7 @@ export default function SeparationPreview() {
           <section className="bg-[#2E102A] px-4 py-9 text-white">
             <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-6 text-center md:flex-row md:text-left rtl:md:text-right">
               <div><p className="text-xs font-black uppercase tracking-[0.16em] text-[#F1D783]">{t.professionalEyebrow}</p><h2 className="mt-2 max-w-3xl font-serif text-2xl font-bold md:text-3xl">{t.platformPromoTitle}</h2><p className="mt-3 max-w-3xl text-sm leading-6 text-white/85 md:text-base">{t.platformPromoText}</p></div>
-              <button type="button" onClick={() => setView('cv')} className="inline-flex min-h-12 shrink-0 items-center gap-2 rounded-xl bg-[#D4AF37] px-6 py-3 text-sm font-black text-[#2E102A]">{t.discoverCv} <ArrowRight className={`h-4 w-4 ${lang === 'ar' ? 'rotate-180' : ''}`} /></button>
+              <button type="button" onClick={() => fixedView ? navigate('/cv-business') : setPreviewView('cv')} className="inline-flex min-h-12 shrink-0 items-center gap-2 rounded-xl bg-[#D4AF37] px-6 py-3 text-sm font-black text-[#2E102A]">{t.discoverCv} <ArrowRight className={`h-4 w-4 ${lang === 'ar' ? 'rotate-180' : ''}`} /></button>
             </div>
           </section>
         </>
@@ -188,9 +191,21 @@ export default function SeparationPreview() {
 
           <CvBusinessJourney language={lang} />
 
-          <section className="bg-[#2E102A] px-4 py-7 text-white"><div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left rtl:sm:text-right"><div><p className="text-xs font-black uppercase tracking-[0.16em] text-[#F1D783]">{t.searchEyebrow}</p><h2 className="mt-2 max-w-3xl font-serif text-2xl font-bold">{t.searchTitle}</h2></div><button type="button" onClick={() => setView('platform')} className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-[#D4AF37] px-5 py-3 text-sm font-black text-[#F1D783]"><Search className="h-4 w-4" /> {t.explorePlatform}</button></div></section>
+          <section className="bg-[#2E102A] px-4 py-7 text-white"><div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left rtl:sm:text-right"><div><p className="text-xs font-black uppercase tracking-[0.16em] text-[#F1D783]">{t.searchEyebrow}</p><h2 className="mt-2 max-w-3xl font-serif text-2xl font-bold">{t.searchTitle}</h2></div><button type="button" onClick={() => fixedView ? navigate('/') : setPreviewView('platform')} className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-[#D4AF37] px-5 py-3 text-sm font-black text-[#F1D783]"><Search className="h-4 w-4" /> {t.explorePlatform}</button></div></section>
         </>
       )}
     </div>
   );
+}
+
+export function PlatformHome() {
+  return <SeparationExperience fixedView="platform" />;
+}
+
+export function CvBusinessHome() {
+  return <SeparationExperience fixedView="cv" />;
+}
+
+export default function SeparationPreview() {
+  return <SeparationExperience />;
 }
