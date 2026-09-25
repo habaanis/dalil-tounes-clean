@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { supabase, supabaseUrl } from '../lib/supabaseClient';
-import { buildEntrepriseUrl, generateSlug } from '../lib/slugify';
+import { buildEntrepriseUrl, buildShortSharePath, generateSlug } from '../lib/slugify';
 import { getLogoUrl } from '../lib/logoUtils';
 import { mapSubscriptionToTier } from '../lib/subscriptionTiers';
 import { HERO_IMAGE_URL } from '../constants/images';
@@ -13,6 +13,7 @@ interface BusinessQrRecord {
   id: string;
   nom: string;
   slug?: string | null;
+  slug_court?: string | null;
   ville?: string | null;
   categorie?: string | null;
   name_ar?: string | null;
@@ -140,7 +141,7 @@ export default function BusinessQr() {
       }
       const baseQuery = supabase
         .from('entreprise')
-        .select('id, nom, slug, ville, categorie, name_ar, name_en, name_it, name_ru, categorie_ar, image_url, logo_url, statut_abonnement, cv_business_status');
+        .select('id, nom, slug, slug_court, ville, categorie, name_ar, name_en, name_it, name_ru, categorie_ar, image_url, logo_url, statut_abonnement, cv_business_status');
       const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id);
       const { data } = await (isUuid ? baseQuery.eq('id', id) : baseQuery.eq('slug', id)).maybeSingle();
       if (!cancelled) {
@@ -167,7 +168,10 @@ export default function BusinessQr() {
     };
   }, []);
 
-  const cvPath = useMemo(() => business ? buildEntrepriseUrl(business) : '/entreprises', [business]);
+  const cvPath = useMemo(
+    () => business ? buildShortSharePath(business) || buildEntrepriseUrl(business) : '/entreprises',
+    [business],
+  );
   const displayName = business
     ? String(getMultilingualField(business, 'nom', language) || business.nom)
     : '';

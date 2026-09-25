@@ -39,6 +39,7 @@ const ENTERPRISE_COLUMNS = new Set([
   "video_url",
   "image_couverture",
   "slug",
+  "slug_court",
   "search_text",
   "mots cles recherche",
   "synonymes_seo",
@@ -126,6 +127,7 @@ const FIELD_VARIANTS = {
   video_url: ["video_url", "Video_URL", "Vidéo", "Video", "video"],
   image_couverture: ["image_couverture", "Image couverture", "Image Couverture"],
   slug: ["slug", "Slug"],
+  slug_court: ["Slug public court", "slug_court", "Public slug"],
   search_text: ["search_text", "Search Text"],
   mots_cles_recherche: ["mots cles recherche", "Mots clés recherche", "mots_cles_recherche"],
   synonymes_seo: ["synonymes_seo", "Synonymes_SEO", "Synonymes SEO"],
@@ -372,6 +374,7 @@ function mapRecord(record: AirtableRecord): EnterprisePayload {
   setIfPresent(payload, "image_couverture", urlValue(pick("image_couverture")));
 
   setIfPresent(payload, "slug", textValue(pick("slug")));
+  setIfPresent(payload, "slug_court", textValue(pick("slug_court")));
   setIfPresent(payload, "search_text", textValue(pick("search_text")));
   setIfPresent(payload, "mots cles recherche", textValue(pick("mots_cles_recherche")));
   setIfPresent(payload, "synonymes_seo", textValue(pick("synonymes_seo")));

@@ -36,6 +36,7 @@ export function isValidSlug(slug: string): boolean {
 
 interface EntrepriseForUrl {
   slug?: string | null;
+  slug_court?: string | null;
   nom?: string | null;
   name?: string | null;
   ville?: string | null;
@@ -65,12 +66,16 @@ export function buildEntrepriseShareUrl(business: EntrepriseForUrl): string {
 const SHARE_DOMAIN = 'https://dalil-tounes.com';
 
 export function buildShortShareUrl(business: EntrepriseForUrl): string {
+  const publicSlug = business.slug_court?.trim();
+  if (publicSlug) return `${SHARE_DOMAIN}/cv/${publicSlug}`;
   const businessSlug = business.slug || generateSlug(business.nom || business.name || '');
   if (!businessSlug) return '';
   return `${SHARE_DOMAIN}/p/${businessSlug}`;
 }
 
 export function buildShortSharePath(business: EntrepriseForUrl): string {
+  const publicSlug = business.slug_court?.trim();
+  if (publicSlug) return `/cv/${publicSlug}`;
   const businessSlug = business.slug || generateSlug(business.nom || business.name || '');
   if (!businessSlug) return '';
   return `/p/${businessSlug}`;

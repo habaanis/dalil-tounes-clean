@@ -161,6 +161,7 @@ function AppRouter() {
           <Route path="/entreprise/id/:id" element={<BusinessDetail />} />
           <Route path="/entreprise/:villeSlug/:slug" element={<BusinessDetail />} />
           <Route path="/entreprise/:slug" element={<BusinessDetail />} />
+          <Route path="/cv/:slug" element={<BusinessDetail />} />
           <Route path="/p/:slug" element={<BusinessDetail />} />
           <Route path="/qr-business/:id" element={<BusinessQr />} />
 

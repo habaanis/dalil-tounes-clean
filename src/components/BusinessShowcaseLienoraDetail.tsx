@@ -95,6 +95,7 @@ interface BusinessRecord {
   id: string;
   nom: string;
   slug?: string | null;
+  slug_court?: string | null;
   ville?: string | null;
   gouvernorat?: string | null;
   adresse?: string | null;
@@ -720,6 +721,18 @@ export default function BusinessShowcaseLienoraDetail({
           record = data as BusinessRecord | null;
         }
 
+        const isShortCvPath = location.pathname.startsWith('/cv/');
+
+        if (!record && urlSlug && isShortCvPath) {
+          const normalizedSlug = urlSlug.trim().toLowerCase();
+          const { data } = await supabase
+            .from('entreprise')
+            .select('*')
+            .eq('slug_court', normalizedSlug)
+            .maybeSingle();
+          record = data as BusinessRecord | null;
+        }
+
         if (!record && urlSlug) {
           const airtableId = urlSlug.match(/(rec[a-z0-9]+)$/i)?.[1];
           if (airtableId) {
@@ -762,7 +775,8 @@ export default function BusinessShowcaseLienoraDetail({
 
         setBusiness(record);
         const canonicalPath = buildEntrepriseUrl(record);
-        if (!embeddedPreview && canonicalPath !== '/' && location.pathname !== canonicalPath) {
+        const keepPublicShortPath = location.pathname.startsWith('/cv/') && Boolean(record.slug_court);
+        if (!embeddedPreview && !keepPublicShortPath && canonicalPath !== '/' && location.pathname !== canonicalPath) {
           navigate({ pathname: canonicalPath, search: location.search }, { replace: true });
         }
       } catch (error) {
