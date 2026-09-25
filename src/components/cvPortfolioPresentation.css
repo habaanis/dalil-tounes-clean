@@ -384,7 +384,7 @@
   background: var(--cvp-page);
 }
 .cvp-lienora-shell {
-  width: min(344px, 100%);
+  width: min(430px, 100%);
   margin: 0 auto;
 }
 .cvp-lienora-card {
@@ -400,7 +400,7 @@
 }
 .cvp-lienora-cover {
   position: relative;
-  height: 230px;
+  height: 184px;
   background: var(--cvp-panel);
 }
 .cvp-lienora-cover img {
@@ -419,10 +419,10 @@
 .cvp-lienora-logo {
   position: absolute;
   z-index: 3;
-  top: 176px;
+  top: 141px;
   left: 50%;
-  width: 94px;
-  height: 94px;
+  width: 82px;
+  height: 82px;
   transform: translateX(-50%);
   overflow: hidden;
   border: 3px solid var(--cvp-accent);
@@ -431,24 +431,24 @@
   object-fit: cover;
 }
 .cvp-lienora-main {
-  padding: 50px 16px 18px;
+  padding: 42px 14px 14px;
 }
 .cvp-lienora-activity {
   display: table;
   max-width: 100%;
-  margin: 0 auto 12px;
+  margin: 0 auto 9px;
   border: 1px solid var(--cvp-accent);
   border-radius: 999px;
-  padding: 7px 14px;
+  padding: 6px 12px;
   color: var(--cvp-accent);
-  font-size: 0.78rem;
+  font-size: 0.74rem;
   font-weight: 800;
 }
 .cvp-lienora-identity {
   border: 1px solid color-mix(in srgb, var(--cvp-accent) 55%, transparent);
-  border-radius: 17px;
+  border-radius: 15px;
   background: rgba(0, 0, 0, 0.08);
-  padding: 13px 10px;
+  padding: 10px 8px;
   text-align: center;
 }
 .cvp-lienora-identity small {
@@ -459,9 +459,9 @@
   text-transform: uppercase;
 }
 .cvp-lienora-identity h1 {
-  margin: 7px 0;
+  margin: 5px 0;
   color: var(--cvp-text);
-  font: 700 1.8rem/1.05 Georgia, serif;
+  font: 700 1.55rem/1.05 Georgia, serif;
 }
 .cvp-lienora-rating,
 .cvp-lienora-identity p {
@@ -478,19 +478,19 @@
   color: var(--cvp-accent);
 }
 .cvp-lienora-identity p {
-  margin: 8px 0 0;
+  margin: 6px 0 0;
 }
 .cvp-lienora-actions {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 7px;
-  margin: 14px 0 8px;
+  gap: 6px;
+  margin: 10px 0 6px;
 }
 .cvp-lienora-actions a,
 .cvp-lienora-actions button {
   display: flex;
   min-width: 0;
-  min-height: 52px;
+  min-height: 44px;
   align-items: center;
   justify-content: center;
   gap: 5px;
@@ -499,7 +499,7 @@
   background: var(--cvp-action);
   padding: 5px;
   color: var(--cvp-text);
-  font-size: 0.66rem;
+  font-size: 0.62rem;
   font-weight: 800;
   text-align: center;
   text-decoration: none;
@@ -516,11 +516,11 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   border: 1px solid color-mix(in srgb, var(--cvp-accent) 32%, transparent);
   border-radius: 9px;
   background: transparent;
-  padding: 9px 10px;
+  padding: 7px 9px;
   color: var(--cvp-accent);
   cursor: pointer;
 }
@@ -536,12 +536,12 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 6px;
-  margin: 0 0 13px;
+  margin: 0 0 10px;
 }
 .cvp-lienora-extra-actions a,
 .cvp-lienora-extra-actions button {
   display: flex;
-  min-height: 38px;
+  min-height: 34px;
   align-items: center;
   justify-content: center;
   gap: 5px;
@@ -561,19 +561,19 @@
 .cvp-lienora-tabs {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  margin: 10px 0 14px;
+  margin: 8px 0 10px;
   border-bottom: 1px solid color-mix(in srgb, var(--cvp-text) 12%, transparent);
-  padding-bottom: 8px;
+  padding-bottom: 6px;
 }
 .cvp-lienora-tabs button {
   display: flex;
   min-width: 0;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
+  gap: 2px;
   border: 0;
   background: none;
-  padding: 3px 0;
+  padding: 2px 0;
   color: var(--cvp-text);
   font-size: 0.53rem;
   opacity: 0.7;
@@ -595,20 +595,20 @@
 }
 .cvp-lienora-about {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 96px;
+  grid-template-columns: minmax(0, 1fr) 84px;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 .cvp-lienora-about p {
   display: -webkit-box;
   overflow: hidden;
   margin: 0;
   color: var(--cvp-text);
-  font-size: 0.62rem;
-  line-height: 1.55;
+  font-size: 0.59rem;
+  line-height: 1.45;
   opacity: 0.92;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 6;
+  -webkit-line-clamp: 5;
 }
 .cvp-lienora-zoom {
   position: relative;
@@ -622,8 +622,8 @@
 }
 .cvp-lienora-about .cvp-lienora-zoom,
 .cvp-lienora-about img {
-  width: 96px;
-  height: 96px;
+  width: 84px;
+  height: 84px;
   border-radius: 10px;
 }
 .cvp-lienora-zoom img {
@@ -645,7 +645,7 @@
   color: var(--cvp-accent);
 }
 .cvp-lienora-services {
-  margin-top: 16px;
+  margin-top: 12px;
 }
 .cvp-lienora-services header {
   display: flex;
@@ -662,7 +662,7 @@
 .cvp-lienora-services > div {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 7px;
+  gap: 6px;
 }
 .cvp-lienora-services article {
   min-width: 0;
@@ -672,13 +672,13 @@
   background: var(--cvp-panel);
 }
 .cvp-lienora-services .cvp-lienora-zoom {
-  height: 80px;
+  height: 64px;
 }
 .cvp-lienora-services article b {
   display: block;
   overflow: hidden;
-  padding: 6px 5px;
-  font-size: 0.5rem;
+  padding: 5px 4px;
+  font-size: 0.48rem;
   font-weight: 600;
   line-height: 1.1;
   text-overflow: ellipsis;
@@ -696,7 +696,7 @@
 }
 .cvp-lienora-credit {
   margin: 0;
-  padding: 0 12px 14px;
+  padding: 0 10px 10px;
   color: var(--cvp-text);
   font-size: 0.52rem;
   text-align: center;
