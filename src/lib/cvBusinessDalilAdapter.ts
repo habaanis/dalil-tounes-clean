@@ -20,6 +20,7 @@ export interface DalilBusinessRecord {
   name_it?: string | null;
   name_ru?: string | null;
   categorie?: string | string[] | null;
+  categorie_ar?: string | string[] | null;
   sous_categories_texte?: string | null;
   sous_categories_clean?: string | null;
   slogan?: string | null;
@@ -34,6 +35,9 @@ export interface DalilBusinessRecord {
   services_it?: string | null;
   services_ru?: string | null;
   a_propos?: string | null;
+  a_propos_ar?: string | null;
+  ville_ar?: string | null;
+  gouvernorat_ar?: string | null;
   logo_url?: string | null;
   image_couverture?: string | null;
   image_url?: string | null;
@@ -140,7 +144,7 @@ const uniqueNonEmpty = (values: string[]): string[] => {
 };
 
 const splitList = (value: unknown): string[] => {
-  const values = Array.isArray(value) ? value : String(value || '').split(/[,;\n\r]+/);
+  const values = Array.isArray(value) ? value : String(value || '').split(/[,،;\n\r]+/);
   return uniqueNonEmpty(
     values
       .map(item => cleanText(String(item)))
@@ -234,9 +238,18 @@ const buildSocialLinks = (
 
 const getTranslatedText = (
   record: DalilBusinessRecord,
-  field: 'nom' | 'description' | 'services',
+  field: 'nom' | 'description' | 'services' | 'categorie' | 'a_propos' | 'ville' | 'gouvernorat',
   language: Language,
 ): string => cleanText(getMultilingualField(record, field, language, true));
+
+const getExplicitTranslation = (
+  record: DalilBusinessRecord,
+  field: 'a_propos',
+  language: Language,
+): string => {
+  if (language === 'fr') return cleanText(record[field]);
+  return cleanText(record[`${field}_${language}`]);
+};
 
 const isCertified = (record: DalilBusinessRecord): boolean => {
   if (record.verifie === true || record.is_local_verified === true) return true;
@@ -256,7 +269,9 @@ export function adaptDalilBusiness(
     throw new Error('Un CV Business Dalil doit avoir un identifiant et un nom.');
   }
 
-  const activityItems = splitList(record.categorie);
+  const activityItems = splitList(
+    getTranslatedText(record, 'categorie', options.language),
+  );
   const fallbackServices = splitList(
     record.sous_categories_clean || record.sous_categories_texte,
   );
@@ -278,6 +293,9 @@ export function adaptDalilBusiness(
   const countValue = numericValue(record['Compteur Avis Google']);
   const reviewCount = countValue && countValue > 0 ? Math.floor(countValue) : 0;
   const certified = isCertified(record);
+  const translatedDescription = getTranslatedText(record, 'description', options.language);
+  const translatedAbout = getExplicitTranslation(record, 'a_propos', options.language)
+    || (options.language === 'fr' ? cleanText(record.a_propos) : translatedDescription);
 
   return {
     identity: {
@@ -288,8 +306,8 @@ export function adaptDalilBusiness(
         || activityItems.join(', '),
     },
     presentation: {
-      description: getTranslatedText(record, 'description', options.language),
-      about: cleanText(record.a_propos),
+      description: translatedDescription,
+      about: translatedAbout,
     },
     media: {
       logo: cleanMediaUrl(record.logo_url),
@@ -308,8 +326,8 @@ export function adaptDalilBusiness(
     },
     location: {
       address: cleanText(record.adresse),
-      city: cleanText(record.ville),
-      governorate: cleanText(record.gouvernorat),
+      city: getTranslatedText(record, 'ville', options.language),
+      governorate: getTranslatedText(record, 'gouvernorat', options.language),
       directionsUrl: buildDirectionsUrl(record),
     },
     hours: cleanText(record.horaires_ok),

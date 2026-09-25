@@ -171,6 +171,11 @@ export function CvPortfolioPresentation({
   palette = 'prestige',
 }: CvPortfolioPresentationProps) {
   const copy = COPY[language] || COPY.fr;
+  const localizedProductLabel = language === 'ar'
+    ? (presentation.style === 'portfolio' ? 'الملف المهني المصوّر' : 'الملف المهني للأعمال')
+    : productLabel;
+  const actionsAriaLabel = language === 'ar' ? 'الإجراءات' : 'Actions';
+  const navigationAriaLabel = language === 'ar' ? 'التنقل في الملف المهني المصوّر' : 'Navigation du CV Portfolio';
   const [activeTab, setActiveTab] = useState<PortfolioTab>('home');
   const [expandedAbout, setExpandedAbout] = useState(false);
   const [bookingOpen, setBookingOpen] = useState(false);
@@ -282,7 +287,7 @@ export function CvPortfolioPresentation({
           <div className="cvp-lienora-main">
             <span className="cvp-lienora-activity">✦ {profile.identity.activity}</span>
             <section className="cvp-lienora-identity">
-              <small>{productLabel}</small>
+              <small>{localizedProductLabel}</small>
               <h1>{profile.identity.name}</h1>
               {(reviewRating > 0 || reviewCount > 0) && (
                 <div className="cvp-lienora-rating">
@@ -292,11 +297,11 @@ export function CvPortfolioPresentation({
                 </div>
               )}
               {(profile.location.city || profile.location.governorate) && (
-                <p><MapPin />{[profile.location.city, profile.location.governorate].filter(Boolean).join(', ')}</p>
+                <p><MapPin />{[profile.location.city, profile.location.governorate].filter(Boolean).join(language === 'ar' ? '، ' : ', ')}</p>
               )}
             </section>
 
-            <section className="cvp-lienora-actions" aria-label="Actions">
+            <section className="cvp-lienora-actions" aria-label={actionsAriaLabel}>
               {callAction && (() => {
                 const Icon = callAction.icon;
                 return <a href={callAction.href}><Icon /><span>{callAction.label}</span></a>;
@@ -333,7 +338,7 @@ export function CvPortfolioPresentation({
               </div>
             )}
 
-            <nav className="cvp-lienora-tabs" aria-label="Navigation du CV Portfolio">
+            <nav className="cvp-lienora-tabs" aria-label={navigationAriaLabel}>
               {tabs.map(({ id, label, icon: Icon }) => (
                 <button type="button" className={activeTab === id ? 'active' : ''} onClick={() => goTo(id)} key={id}>
                   <Icon /><span>{label}</span>

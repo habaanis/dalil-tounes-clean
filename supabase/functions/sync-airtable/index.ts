@@ -73,6 +73,11 @@ const ENTERPRISE_COLUMNS = new Set([
   "name_it",
   "name_ru",
   "description_ar",
+  "a_propos_ar",
+  "services_ar",
+  "categorie_ar",
+  "ville_ar",
+  "gouvernorat_ar",
   "description_en",
   "description_it",
   "description_ru",
@@ -160,6 +165,11 @@ const FIELD_VARIANTS = {
   name_it: ["name_it", "Nom IT"],
   name_ru: ["name_ru", "Nom RU"],
   description_ar: ["description_ar", "Description AR"],
+  a_propos_ar: ["a_propos_ar", "À propos AR", "A propos AR"],
+  services_ar: ["services_ar", "Services AR"],
+  categorie_ar: ["categorie_ar", "Catégorie AR", "Categorie AR"],
+  ville_ar: ["ville_ar", "Ville AR"],
+  gouvernorat_ar: ["gouvernorat_ar", "Gouvernorat AR"],
   description_en: ["description_en", "Description EN"],
   description_it: ["description_it", "Description IT"],
   description_ru: ["description_ru", "Description RU"],
@@ -402,6 +412,11 @@ function mapRecord(record: AirtableRecord): EnterprisePayload {
   setIfPresent(payload, "name_it", textValue(pick("name_it")));
   setIfPresent(payload, "name_ru", textValue(pick("name_ru")));
   setIfPresent(payload, "description_ar", textValue(pick("description_ar")));
+  setIfPresent(payload, "a_propos_ar", textValue(pick("a_propos_ar")));
+  setIfPresent(payload, "services_ar", textValue(pick("services_ar")));
+  setIfPresent(payload, "categorie_ar", textValue(pick("categorie_ar")));
+  setIfPresent(payload, "ville_ar", textValue(pick("ville_ar")));
+  setIfPresent(payload, "gouvernorat_ar", textValue(pick("gouvernorat_ar")));
   setIfPresent(payload, "description_en", textValue(pick("description_en")));
   setIfPresent(payload, "description_it", textValue(pick("description_it")));
   setIfPresent(payload, "description_ru", textValue(pick("description_ru")));
