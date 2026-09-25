@@ -80,6 +80,7 @@ import {
   translateOpenStatus,
 } from '../lib/horaireUtils';
 import { useViewTracking } from '../hooks/useViewTracking';
+import { useCategoryTranslation } from '../hooks/useCategoryTranslation';
 import { SEOHead } from './SEOHead';
 import StructuredData from './StructuredData';
 import BusinessReviews from './BusinessReviews';
@@ -638,6 +639,7 @@ export default function BusinessShowcaseLienoraDetail({
   const navigate = useNavigate();
   const location = useLocation();
   const { language } = useLanguage();
+  const { getCategory } = useCategoryTranslation();
   const text = COPY[language] || FR;
   const isRTL = language === 'ar';
   const isClientAppMode = new URLSearchParams(location.search).get('source') === 'pwa'
@@ -807,10 +809,29 @@ export default function BusinessShowcaseLienoraDetail({
   const presentationStyle = previewModel === 'portfolio' || storedPresentationModel.includes('portfolio')
     ? 'portfolio'
     : 'business';
-  const cvProfile = adaptDalilBusiness(business, {
+  const adaptedProfile = adaptDalilBusiness(business, {
     language,
     style: presentationStyle,
   });
+  const knownCity = findVilleByLabel(String(business.ville || ''));
+  const knownGovernorate = findGouvernoratBySlug(generateSlug(String(business.gouvernorat || '')));
+  const cvProfile = {
+    ...adaptedProfile,
+    identity: {
+      ...adaptedProfile.identity,
+      activity: adaptedProfile.identity.activity
+        .split(',')
+        .map(value => value.trim())
+        .filter(Boolean)
+        .map(getCategory)
+        .join(language === 'ar' ? '، ' : ', '),
+    },
+    location: {
+      ...adaptedProfile.location,
+      city: knownCity?.labels?.[language] || adaptedProfile.location.city,
+      governorate: knownGovernorate?.labels?.[language] || adaptedProfile.location.governorate,
+    },
+  };
   const resolvedPresentation = resolveCvPresentation({
     brand: 'dalil_tounes',
     style: cvProfile.display.style,
