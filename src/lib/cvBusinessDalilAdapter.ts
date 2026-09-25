@@ -144,7 +144,7 @@ const uniqueNonEmpty = (values: string[]): string[] => {
 };
 
 const splitList = (value: unknown): string[] => {
-  const values = Array.isArray(value) ? value : String(value || '').split(/[,;\n\r]+/);
+  const values = Array.isArray(value) ? value : String(value || '').split(/[,،;\n\r]+/);
   return uniqueNonEmpty(
     values
       .map(item => cleanText(String(item)))
