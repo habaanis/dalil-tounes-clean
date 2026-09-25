@@ -171,6 +171,9 @@ export function CvPortfolioPresentation({
   palette = 'prestige',
 }: CvPortfolioPresentationProps) {
   const copy = COPY[language] || COPY.fr;
+  const localizedProductLabel = language === 'ar'
+    ? (presentation.style === 'portfolio' ? 'الملف المهني المصوّر' : 'الملف المهني للأعمال')
+    : productLabel;
   const [activeTab, setActiveTab] = useState<PortfolioTab>('home');
   const [expandedAbout, setExpandedAbout] = useState(false);
   const [bookingOpen, setBookingOpen] = useState(false);
@@ -282,7 +285,7 @@ export function CvPortfolioPresentation({
           <div className="cvp-lienora-main">
             <span className="cvp-lienora-activity">✦ {profile.identity.activity}</span>
             <section className="cvp-lienora-identity">
-              <small>{productLabel}</small>
+              <small>{localizedProductLabel}</small>
               <h1>{profile.identity.name}</h1>
               {(reviewRating > 0 || reviewCount > 0) && (
                 <div className="cvp-lienora-rating">
