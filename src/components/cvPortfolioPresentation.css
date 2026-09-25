@@ -383,9 +383,13 @@
   padding: 0;
   background: var(--cvp-page);
 }
+.cvp-lienora-shell {
+  width: min(430px, 100%);
+  margin: 0 auto;
+}
 .cvp-lienora-card {
   position: relative;
-  width: min(430px, 100%);
+  width: 100%;
   margin: 0 auto;
   overflow: hidden;
   border: 2px solid var(--cvp-accent);
