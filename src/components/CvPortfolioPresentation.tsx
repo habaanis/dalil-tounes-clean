@@ -1,4 +1,4 @@
-import { useMemo, useState, type CSSProperties, type ReactNode } from 'react';
+import { useState, type CSSProperties, type ReactNode } from 'react';
 import {
   CalendarDays,
   ChevronRight,
@@ -71,6 +71,8 @@ type Copy = {
   book: string;
   quote: string;
   addContact: string;
+  viewReviews: string;
+  giveReview: string;
   moreActions: string;
   moreActionsSummary: string;
   certified: string;
@@ -84,6 +86,7 @@ const COPY: Record<string, Copy> = {
     viewAll: 'Voir tout', ourWork: 'Nos réalisations', noPhotos: 'Aucune photo disponible.',
     openingHours: 'Horaires', practical: 'Informations pratiques', book: 'Réserver',
     quote: 'Demander un devis', addContact: 'Ajouter aux contacts', certified: 'Certifié Dalil Tounes',
+    viewReviews: 'Voir les avis', giveReview: 'Donner un avis',
     moreActions: 'Plus d’actions', moreActionsSummary: 'WhatsApp · E-mail · Réserver · Avis',
     poweredBy: 'Propulsé par Dalil Tounes',
   },
@@ -92,6 +95,7 @@ const COPY: Record<string, Copy> = {
     aboutUs: 'من نحن', learnMore: 'اكتشف المزيد', ourServices: 'خدماتنا', viewAll: 'عرض الكل',
     ourWork: 'أعمالنا', noPhotos: 'لا توجد صور متاحة.', openingHours: 'أوقات العمل',
     practical: 'معلومات عملية', book: 'احجز', quote: 'طلب عرض سعر', addContact: 'إضافة إلى جهات الاتصال',
+    viewReviews: 'عرض الآراء', giveReview: 'إضافة رأي',
     moreActions: 'المزيد من الإجراءات', moreActionsSummary: 'واتساب · البريد · الحجز · الآراء',
     certified: 'معتمد من دليل تونس', poweredBy: 'بدعم من دليل تونس',
   },
@@ -101,6 +105,7 @@ const COPY: Record<string, Copy> = {
     ourWork: 'Our work', noPhotos: 'No photos available.', openingHours: 'Opening hours',
     practical: 'Practical information', book: 'Book', quote: 'Request a quote',
     addContact: 'Add to contacts', certified: 'Certified by Dalil Tounes', poweredBy: 'Powered by Dalil Tounes',
+    viewReviews: 'View reviews', giveReview: 'Leave a review',
     moreActions: 'More actions', moreActionsSummary: 'WhatsApp · E-mail · Booking · Reviews',
   },
   it: {
@@ -109,6 +114,7 @@ const COPY: Record<string, Copy> = {
     ourWork: 'I nostri lavori', noPhotos: 'Nessuna foto disponibile.', openingHours: 'Orari',
     practical: 'Informazioni pratiche', book: 'Prenota', quote: 'Richiedi un preventivo',
     addContact: 'Aggiungi ai contatti', certified: 'Certificato da Dalil Tounes', poweredBy: 'Offerto da Dalil Tounes',
+    viewReviews: 'Vedi le recensioni', giveReview: 'Lascia una recensione',
     moreActions: 'Altre azioni', moreActionsSummary: 'WhatsApp · E-mail · Prenota · Recensioni',
   },
   ru: {
@@ -117,6 +123,7 @@ const COPY: Record<string, Copy> = {
     ourWork: 'Наши работы', noPhotos: 'Фотографии отсутствуют.', openingHours: 'Часы работы',
     practical: 'Практическая информация', book: 'Забронировать', quote: 'Запросить смету',
     addContact: 'Добавить в контакты', certified: 'Сертифицировано Dalil Tounes', poweredBy: 'Работает на Dalil Tounes',
+    viewReviews: 'Посмотреть отзывы', giveReview: 'Оставить отзыв',
     moreActions: 'Другие действия', moreActionsSummary: 'WhatsApp · E-mail · Бронь · Отзывы',
   },
 };
@@ -128,11 +135,12 @@ export interface CvPortfolioPresentationProps {
   coverImage: string;
   logoImage: string;
   productLabel: string;
-  certification: string;
+  certification?: string;
   actions: PortfolioAction[];
   gallery: GalleryItem[];
   onBack: () => void;
   bookingContent?: ReactNode;
+  reviewsContent?: ReactNode;
   onQuote: () => void;
   onDownloadContact: () => void;
   onSelectImage: (url: string) => void;
@@ -149,11 +157,11 @@ export function CvPortfolioPresentation({
   coverImage,
   logoImage,
   productLabel,
-  certification,
   actions,
   gallery,
   onBack,
   bookingContent,
+  reviewsContent,
   onQuote,
   onDownloadContact,
   onSelectImage,
@@ -171,50 +179,31 @@ export function CvPortfolioPresentation({
   const hasSection = (section: ResolvedCvPresentation['visibleSections'][number]) =>
     presentation.visibleSections.includes(section);
   const description = profile.presentation.about || profile.presentation.description;
+  const reviewRating = profile.reviews.rating || 0;
+  const reviewCount = profile.reviews.count || 0;
   const extraDescription = profile.presentation.about && profile.presentation.description !== profile.presentation.about
     ? profile.presentation.description
     : '';
   const serviceImages = gallery.length > 0 ? gallery : [{ thumbnail: coverImage, full: coverImage }];
-  const actionPriority = (href: string) => {
-    if (href.startsWith('/qr-business/')) return -1;
-    if (href.startsWith('tel:')) return 0;
-    if (href.includes('wa.me') || href.includes('whatsapp')) return 1;
-    if (href.includes('maps') || href.includes('google.com/maps')) return 2;
-    return 3;
-  };
   const hasPrimaryContact = presentation.visibleActions.includes('add_contact');
-  const isWhatsAppAction = (href: string) => href.includes('wa.me') || href.includes('whatsapp');
-  const previewActions = actions.filter(action =>
-    action.href.startsWith('tel:')
-      || action.href.startsWith('mailto:')
-      || action.href.includes('maps')
-      || action.href.includes('google.com/maps'),
-  );
-  const featuredActions = embeddedPreview
-    ? previewActions.slice(0, 3)
-    : [...actions]
-        .filter(action => !(hasPrimaryContact && isWhatsAppAction(action.href)))
-        .sort((a, b) => actionPriority(a.href) - actionPriority(b.href))
-        .slice(0, hasPrimaryContact ? 2 : 3);
-  const secondaryActions = actions.filter(action => !featuredActions.includes(action));
   const callAction = actions.find(action => action.href.startsWith('tel:'));
   const directionsAction = actions.find(action =>
     action.href.includes('maps') || action.href.includes('google.com/maps'),
   );
-  const previewExtraActions = actions.filter(action =>
+  const extraActions = actions.filter(action =>
     !action.href.startsWith('/qr-business/')
       && action !== callAction
       && action !== directionsAction,
   );
-  const previewGallery = gallery.slice(0, 4);
+  const portfolioGallery = gallery.slice(0, 4);
 
-  const tabs = useMemo(() => [
+  const tabs = [
     { id: 'home' as const, label: copy.home, icon: Home, visible: true },
     { id: 'about' as const, label: copy.about, icon: Info, visible: hasSection('about') },
     { id: 'services' as const, label: copy.services, icon: Store, visible: hasSection('services') },
     { id: 'gallery' as const, label: copy.photos, icon: Images, visible: hasSection('gallery') },
     { id: 'reviews' as const, label: copy.reviews, icon: Star, visible: hasSection('reviews') },
-  ].filter(tab => tab.visible), [copy, presentation.visibleSections]);
+  ].filter(tab => tab.visible);
 
   const goTo = (tab: PortfolioTab) => {
     setActiveTab(tab);
@@ -278,13 +267,14 @@ export function CvPortfolioPresentation({
     </section>
   );
 
-  if (embeddedPreview) {
-    return (
-      <div
-        className="cvp-page cvp-page--embedded cvp-page--lienora"
-        dir={isRTL ? 'rtl' : 'ltr'}
-        style={PORTFOLIO_PALETTE_THEMES[palette || 'prestige']}
-      >
+  return (
+    <div
+      className={`cvp-page cvp-page--lienora${embeddedPreview || hideBack ? ' cvp-page--embedded' : ''}`}
+      dir={isRTL ? 'rtl' : 'ltr'}
+      style={PORTFOLIO_PALETTE_THEMES[palette || 'prestige']}
+    >
+      <div className="cvp-lienora-shell">
+        {!hideBack && <button type="button" className="cvp-back" onClick={onBack}>‹ <span>{copy.home}</span></button>}
         <article className="cvp-lienora-card">
           <div className="cvp-lienora-cover"><img src={coverImage} alt="" loading="eager" decoding="async" /></div>
           <img className="cvp-lienora-logo" src={logoImage} alt={`Logo ${profile.identity.name}`} />
@@ -294,11 +284,11 @@ export function CvPortfolioPresentation({
             <section className="cvp-lienora-identity">
               <small>{productLabel}</small>
               <h1>{profile.identity.name}</h1>
-              {(profile.reviews.rating > 0 || profile.reviews.count > 0) && (
+              {(reviewRating > 0 || reviewCount > 0) && (
                 <div className="cvp-lienora-rating">
                   <Star fill="currentColor" />
-                  {profile.reviews.rating > 0 && <b>{profile.reviews.rating.toFixed(1)}</b>}
-                  {profile.reviews.count > 0 && <span>{profile.reviews.count} {copy.reviews.toLowerCase()}</span>}
+                  {reviewRating > 0 && <b>{reviewRating.toFixed(1)}</b>}
+                  {reviewCount > 0 && <span>{reviewCount} {copy.reviews.toLowerCase()}</span>}
                 </div>
               )}
               {(profile.location.city || profile.location.governorate) && (
@@ -323,7 +313,7 @@ export function CvPortfolioPresentation({
             </button>
             {moreOpen && (
               <div className="cvp-lienora-extra-actions">
-                {previewExtraActions.map(({ label, href, icon: Icon, external }) => (
+                {extraActions.map(({ label, href, icon: Icon, external }) => (
                   <a href={href} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined} key={label}>
                     <Icon />{label}
                   </a>
@@ -333,6 +323,12 @@ export function CvPortfolioPresentation({
                 )}
                 {(profile.contact.whatsapp || profile.contact.email) && (
                   <button type="button" onClick={onQuote}><FileText />{copy.quote}</button>
+                )}
+                {profile.reviews.url && (
+                  <a href={profile.reviews.url} target="_blank" rel="noopener noreferrer"><Star />{copy.viewReviews}</a>
+                )}
+                {reviewsContent && (
+                  <button type="button" onClick={() => { setMoreOpen(false); goTo('reviews'); }}><FileText />{copy.giveReview}</button>
                 )}
               </div>
             )}
@@ -358,11 +354,11 @@ export function CvPortfolioPresentation({
                       )}
                     </section>
                   )}
-                  {hasSection('services') && previewGallery.length > 0 && (
+                  {hasSection('services') && portfolioGallery.length > 0 && (
                     <section className="cvp-lienora-services">
                       <header><h2>{copy.ourServices}</h2><button type="button" onClick={() => goTo('services')}>{copy.viewAll} ›</button></header>
                       <div>
-                        {previewGallery.map((item, index) => (
+                        {portfolioGallery.map((item, index) => (
                           <article key={`${item.thumbnail}-${index}`}>
                             <button type="button" className="cvp-lienora-zoom" onClick={() => onSelectImage(item.full)}>
                               <img src={item.thumbnail} alt={profile.services[index] || profile.identity.activity} loading="lazy" decoding="async" /><Search />
@@ -381,108 +377,17 @@ export function CvPortfolioPresentation({
               {activeTab === 'reviews' && (
                 <section className="cvp-section cvp-review-panel">
                   <Star fill="currentColor" />
-                  <h2>{profile.reviews.rating ? `${profile.reviews.rating.toFixed(1)} / 5` : copy.reviews}</h2>
-                  {profile.reviews.count > 0 && <p>{profile.reviews.count} {copy.reviews.toLowerCase()}</p>}
+                  <h2>{reviewRating ? `${reviewRating.toFixed(1)} / 5` : copy.reviews}</h2>
+                  {reviewCount > 0 && <p>{reviewCount} {copy.reviews.toLowerCase()}</p>}
                   {profile.reviews.url && <a href={profile.reviews.url} target="_blank" rel="noopener noreferrer">{copy.reviews}<ChevronRight /></a>}
                 </section>
               )}
+              {activeTab === 'reviews' && reviewsContent && <section className="cvp-section">{reviewsContent}</section>}
               {bookingOpen && bookingContent && <section className="cvp-booking">{bookingContent}</section>}
               {notice && <p className="cvp-notice" role="status">{notice}</p>}
             </div>
           </div>
           <p className="cvp-lienora-credit">{copy.poweredBy}</p>
-        </article>
-      </div>
-    );
-  }
-
-  return (
-    <div
-      className={`cvp-page${hideBack ? ' cvp-page--embedded' : ''}`}
-      dir={isRTL ? 'rtl' : 'ltr'}
-      style={PORTFOLIO_PALETTE_THEMES[palette || 'prestige']}
-    >
-      <div className="cvp-shell">
-        {!hideBack && <button type="button" className="cvp-back" onClick={onBack}>‹ <span>{copy.home}</span></button>}
-        <article className="cvp-card">
-          <header className="cvp-header">
-            <div className="cvp-cover"><img src={coverImage} alt={profile.identity.name} loading="eager" decoding="async" /></div>
-            <div className="cvp-identity">
-              <div className="cvp-logo"><img src={logoImage} alt={`Logo ${profile.identity.name}`} /></div>
-              <span className="cvp-activity">✦ {profile.identity.activity}</span>
-              <div className="cvp-name-panel">
-                <small>{productLabel}</small>
-                <h1>{profile.identity.name}</h1>
-                {profile.certification.certified && <strong>★ {certification || copy.certified}</strong>}
-                {(profile.location.city || profile.location.governorate) && (
-                  <p><MapPin />{[profile.location.city, profile.location.governorate].filter(Boolean).join(', ')}</p>
-                )}
-              </div>
-            </div>
-          </header>
-
-          {(featuredActions.length > 0 || hasPrimaryContact) && (
-            <section className={`cvp-actions${embeddedPreview ? ' cvp-actions--preview' : ''}`} aria-label="Actions">
-              {featuredActions.map(({ label, href, icon: Icon, external }) => (
-                <a href={href} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined} key={label}>
-                  <Icon /><span>{label}</span>
-                </a>
-              ))}
-              {hasPrimaryContact && (
-                <button type="button" onClick={onDownloadContact}>
-                  <Contact /><span>{copy.addContact}</span>
-                </button>
-              )}
-            </section>
-          )}
-
-          <nav className="cvp-tabs" aria-label="Navigation du CV Portfolio">
-            {tabs.map(({ id, label, icon: Icon }) => (
-              <button type="button" className={activeTab === id ? 'active' : ''} onClick={() => goTo(id)} key={id}>
-                <Icon /><span>{label}</span>
-              </button>
-            ))}
-          </nav>
-
-          <div className={`cvp-content cvp-content-${activeTab}`} id="cv-portfolio-content">
-            {activeTab === 'home' && <>
-              {hasSection('about') && aboutBlock}
-              {hasSection('services') && servicesBlock}
-              {embeddedPreview && hasSection('gallery') && galleryBlock}
-            </>}
-            {activeTab === 'about' && aboutBlock}
-            {activeTab === 'services' && servicesBlock}
-            {activeTab === 'gallery' && galleryBlock}
-            {activeTab === 'reviews' && (
-              <section className="cvp-section cvp-review-panel">
-                <Star fill="currentColor" />
-                <h2>{profile.reviews.rating ? `${profile.reviews.rating.toFixed(1)} / 5` : copy.reviews}</h2>
-                {profile.reviews.count > 0 && <p>{profile.reviews.count} {copy.reviews.toLowerCase()}</p>}
-                {profile.reviews.url && <a href={profile.reviews.url} target="_blank" rel="noopener noreferrer">{copy.reviews}<ChevronRight /></a>}
-              </section>
-            )}
-
-            {activeTab !== 'home' && (
-              <>
-                {secondaryActions.length > 0 && (
-                  <section className="cvp-actions cvp-secondary-actions" aria-label={copy.practical}>
-                    {secondaryActions.map(({ label, href, icon: Icon, external }) => (
-                      <a href={href} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined} key={label}>
-                        <Icon /><span>{label}</span>
-                      </a>
-                    ))}
-                  </section>
-                )}
-                <section className="cvp-extra-actions">
-                  {presentation.visibleActions.includes('reservation') && bookingContent && <button type="button" onClick={() => setBookingOpen(value => !value)}><CalendarDays />{copy.book}</button>}
-                  {(profile.contact.whatsapp || profile.contact.email) && <button type="button" onClick={onQuote}><FileText />{copy.quote}</button>}
-                </section>
-              </>
-            )}
-            {bookingOpen && bookingContent && <section className="cvp-booking">{bookingContent}</section>}
-            {notice && <p className="cvp-notice" role="status">{notice}</p>}
-          </div>
-          {activeTab !== 'home' && <footer className="cvp-footer">{copy.poweredBy}</footer>}
         </article>
       </div>
     </div>
