@@ -48,10 +48,28 @@ const sizedIconUrl = (value: string, size: 192 | 512): string => {
 const firstQueryValue = (value: string | string[] | undefined): string | null =>
   Array.isArray(value) ? value[0] || null : value || null;
 
+type SupportedLanguage = 'fr' | 'ar' | 'en' | 'it' | 'ru';
+
+const getLanguage = (value: string | null): SupportedLanguage => {
+  const language = String(value || '').trim().toLowerCase();
+  return ['fr', 'ar', 'en', 'it', 'ru'].includes(language)
+    ? language as SupportedLanguage
+    : 'fr';
+};
+
+const PRODUCT_LABELS: Record<SupportedLanguage, string> = {
+  fr: 'CV Business',
+  ar: 'السيرة المهنية',
+  en: 'Business CV',
+  it: 'CV Business',
+  ru: 'Business CV',
+};
+
 export default function handler(request: VercelRequest, response: VercelResponse) {
   const id = safeId(firstQueryValue(request.query?.id));
   const name = safeText(firstQueryValue(request.query?.name), 'CV Business');
   const logo = safeHttpsUrl(firstQueryValue(request.query?.logo));
+  const lang = getLanguage(firstQueryValue(request.query?.lang));
 
   if (!id) {
     response.status(400).json({ error: 'Missing business id' });
@@ -59,7 +77,7 @@ export default function handler(request: VercelRequest, response: VercelResponse
   }
 
   const appPath = `/qr-business/${id}`;
-  const startUrl = `${appPath}?source=pwa&app=client`;
+  const startUrl = `${appPath}?source=pwa&app=client&lang=${lang}`;
   const icons = logo
     ? [
         { src: sizedIconUrl(logo, 192), sizes: '192x192', purpose: 'any' },
@@ -73,7 +91,7 @@ export default function handler(request: VercelRequest, response: VercelResponse
       id: appPath,
       name,
       short_name: name.slice(0, 30),
-      description: `${name} — CV Business Dalil Tounes`,
+      description: `${name} — ${PRODUCT_LABELS[lang]} Dalil Tounes`,
       start_url: startUrl,
       scope: appPath,
       launch_handler: { client_mode: 'navigate-new' },
@@ -81,8 +99,8 @@ export default function handler(request: VercelRequest, response: VercelResponse
       orientation: 'portrait-primary',
       theme_color: '#032D21',
       background_color: '#032D21',
-      lang: 'fr',
-      dir: 'auto',
+      lang,
+      dir: lang === 'ar' ? 'rtl' : 'ltr',
       categories: ['business'],
       icons,
       related_applications: [],

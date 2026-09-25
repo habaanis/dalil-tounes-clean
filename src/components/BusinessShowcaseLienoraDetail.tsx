@@ -145,6 +145,7 @@ interface ShowcaseCopy {
   practical: string;
   booking: string;
   reviews: string;
+  viewReviews: string;
   leaveReview: string;
   platform: string;
   sharing: string;
@@ -206,6 +207,7 @@ const FR: ShowcaseCopy = {
   practical: 'Informations pratiques',
   booking: 'Réservation',
   reviews: 'Avis clients',
+  viewReviews: 'Voir les avis',
   leaveReview: 'Donner un avis',
   platform: 'Dans Dalil Tounes',
   sharing: 'QR Code et partage',
@@ -269,6 +271,7 @@ const COPY: Record<string, ShowcaseCopy> = {
     practical: 'Practical information',
     booking: 'Booking',
     reviews: 'Customer reviews',
+    viewReviews: 'View reviews',
     leaveReview: 'Leave a review',
     platform: 'On Dalil Tounes',
     sharing: 'QR Code and sharing',
@@ -312,6 +315,7 @@ const COPY: Record<string, ShowcaseCopy> = {
     practical: 'معلومات عملية',
     booking: 'الحجز',
     reviews: 'آراء العملاء',
+    viewReviews: 'عرض الآراء',
     leaveReview: 'أضف رأيك',
     platform: 'على دليل تونس',
     sharing: 'رمز QR والمشاركة',
@@ -355,6 +359,8 @@ const COPY: Record<string, ShowcaseCopy> = {
     practical: 'Informazioni pratiche',
     booking: 'Prenotazione',
     reviews: 'Recensioni',
+    viewReviews: 'Vedi le recensioni',
+    leaveReview: 'Lascia una recensione',
     platform: 'Su Dalil Tounes',
     sharing: 'QR Code e condivisione',
     call: 'Chiama',
@@ -393,6 +399,8 @@ const COPY: Record<string, ShowcaseCopy> = {
     practical: 'Практическая информация',
     booking: 'Бронирование',
     reviews: 'Отзывы клиентов',
+    viewReviews: 'Посмотреть отзывы',
+    leaveReview: 'Оставить отзыв',
     platform: 'На Dalil Tounes',
     sharing: 'QR-код и публикация',
     call: 'Позвонить',
@@ -463,11 +471,13 @@ const normalizeExternalUrl = (value: unknown): string => {
 const buildWhatsAppUrl = (value: unknown): string => {
   const digits = String(value || '').replace(/\D/g, '');
   if (!digits) return '';
+  const localDigits = digits.startsWith('0') ? digits.slice(1) : digits;
   const normalized = digits.startsWith('216')
     ? digits
-    : digits.startsWith('0')
-      ? `216${digits.slice(1)}`
-      : `216${digits}`;
+    : localDigits.length === 8
+      ? `216${localDigits}`
+      : '';
+  if (normalized.length !== 11) return '';
   return `https://wa.me/${normalized}`;
 };
 
@@ -570,8 +580,11 @@ const ARTISAN_THEME: CSSProperties = {
 } as CSSProperties;
 
 function resolvePaletteId(value: unknown): PaletteId | null {
-  const normalized = String(value || '').trim().toLowerCase();
+  const normalized = normalizeForComparison(value);
   if (normalized === 'prestige' || normalized === 'ivory' || normalized === 'night') return normalized;
+  if (normalized.includes('ivoire')) return 'ivory';
+  if (normalized.includes('nuit') || normalized.includes('champagne')) return 'night';
+  if (normalized.includes('vert')) return 'prestige';
   return null;
 }
 
@@ -750,7 +763,7 @@ export default function BusinessShowcaseLienoraDetail({
         setBusiness(record);
         const canonicalPath = buildEntrepriseUrl(record);
         if (!embeddedPreview && canonicalPath !== '/' && location.pathname !== canonicalPath) {
-          navigate(canonicalPath, { replace: true });
+          navigate({ pathname: canonicalPath, search: location.search }, { replace: true });
         }
       } catch (error) {
         console.error('[BusinessShowcaseLienoraDetail] Unable to load business:', error);
@@ -764,7 +777,7 @@ export default function BusinessShowcaseLienoraDetail({
     return () => {
       cancelled = true;
     };
-  }, [embeddedPreview, location.pathname, navigate, urlId, urlSlug, urlVilleSlug]);
+  }, [embeddedPreview, location.pathname, location.search, navigate, urlId, urlSlug, urlVilleSlug]);
 
   if (loading) {
     return (
@@ -809,9 +822,13 @@ export default function BusinessShowcaseLienoraDetail({
   const previewModel = embeddedPreview
     ? previewPresentationModel
     : new URLSearchParams(location.search).get('preview-model');
-  const presentationStyle = previewModel === 'portfolio' || storedPresentationModel.includes('portfolio')
+  const presentationStyle = previewModel === 'portfolio'
     ? 'portfolio'
-    : 'business';
+    : previewModel === 'business'
+      ? 'business'
+      : storedPresentationModel.includes('portfolio')
+        ? 'portfolio'
+        : 'business';
   const adaptedProfile = adaptDalilBusiness(business, {
     language,
     style: presentationStyle,
@@ -861,7 +878,9 @@ export default function BusinessShowcaseLienoraDetail({
   const coverImage = getCoverImageUrl(business.image_url);
   const logoImage = getLogoUrl(business.logo_url);
   const mapsUrl = cvProfile.location.directionsUrl;
-  const whatsappUrl = buildWhatsAppUrl(business.whatsapp || business.telephone);
+  const explicitWhatsappUrl = buildWhatsAppUrl(business.whatsapp);
+  const whatsappUrl = explicitWhatsappUrl
+    || (!String(business.whatsapp || '').trim() ? buildWhatsAppUrl(business.telephone) : '');
   const websiteUrl = hasAction('website') ? cvProfile.contact.website : '';
   const rating = cvProfile.reviews.rating || 0;
   const googleReviewCount = cvProfile.reviews.count;
@@ -943,18 +962,19 @@ export default function BusinessShowcaseLienoraDetail({
       ].filter(link => link.href).slice(0, capabilities.variant === 'artisan' ? 2 : undefined)
     : [];
 
+  const installLabel = language === 'ar'
+    ? 'تثبيت التطبيق'
+    : language === 'en'
+      ? 'Install the app'
+      : language === 'it'
+        ? "Installa l'app"
+        : language === 'ru'
+          ? 'Установить приложение'
+          : "Installer l’application";
   const primaryActions = [
     {
-      label: language === 'ar'
-        ? 'تثبيت التطبيق'
-        : language === 'en'
-          ? 'Install the app'
-          : language === 'it'
-            ? "Installa l'app"
-            : language === 'ru'
-              ? 'Установить приложение'
-              : "Installer l’application",
-      href: `/qr-business/${business.id}`,
+      label: installLabel,
+      href: `/qr-business/${business.id}?lang=${language}`,
       icon: Smartphone,
     },
     hasAction('call') && business.telephone && {
@@ -988,7 +1008,7 @@ export default function BusinessShowcaseLienoraDetail({
   ].filter((action): action is ActionConfig => Boolean(action));
 
   const displayedPrimaryActions = embeddedPreview
-    ? primaryActions.filter(action => [text.call, text.email, text.directions].includes(action.label)).slice(0, 3)
+    ? primaryActions.filter(action => [installLabel, text.call, text.whatsapp, text.email, text.directions].includes(action.label))
     : primaryActions;
 
   const copyLink = async () => {
@@ -1061,6 +1081,16 @@ export default function BusinessShowcaseLienoraDetail({
     setOpenSection('booking');
     window.setTimeout(() => {
       document.getElementById('dt-section-booking')?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    }, 50);
+  };
+
+  const openReviews = () => {
+    setOpenSection('reviews');
+    window.setTimeout(() => {
+      document.getElementById('dt-section-reviews')?.scrollIntoView({
         behavior: 'smooth',
         block: 'center',
       });
@@ -1213,7 +1243,7 @@ export default function BusinessShowcaseLienoraDetail({
       </div>
       <div className="dt-qr-actions">
         {capabilities.variant === 'premium' && (
-          <Link className="dt-qr-action" to={`/qr-business/${business.id}`}>
+          <Link className="dt-qr-action" to={`/qr-business/${business.id}?lang=${language}`}>
             <QrCode aria-hidden="true" />
             {language === 'ar' ? 'تثبيت أو عرض CV Business' : language === 'en' ? 'Install / present my Business CV' : language === 'it' ? 'Installa / mostra il mio CV Business' : language === 'ru' ? 'Установить / показать Business CV' : 'Installer / présenter mon CV Business'}
           </Link>
@@ -1556,6 +1586,21 @@ export default function BusinessShowcaseLienoraDetail({
               <button type="button" className="dt-secondary-action" onClick={downloadContact}>
                 <Contact aria-hidden="true" />{text.addContact}
               </button>
+              {hasSection('reviews') && cvProfile.reviews.url && (
+                <a
+                  className="dt-secondary-action"
+                  href={cvProfile.reviews.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Star aria-hidden="true" />{text.viewReviews}
+                </a>
+              )}
+              {hasSection('reviews') && (
+                <button type="button" className="dt-secondary-action" onClick={openReviews}>
+                  <FileText aria-hidden="true" />{text.leaveReview}
+                </button>
+              )}
             </div>}
             <p className="dt-action-notice" role="status" aria-live="polite">{contactNotice}</p>
           </section>

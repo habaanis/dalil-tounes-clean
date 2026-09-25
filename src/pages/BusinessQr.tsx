@@ -7,6 +7,7 @@ import { getLogoUrl } from '../lib/logoUtils';
 import { mapSubscriptionToTier } from '../lib/subscriptionTiers';
 import { HERO_IMAGE_URL } from '../constants/images';
 import { CvBusinessQrVisual } from '../components/CvBusinessProductVisuals';
+import { getMultilingualField } from '../lib/databaseI18n';
 
 interface BusinessQrRecord {
   id: string;
@@ -14,6 +15,11 @@ interface BusinessQrRecord {
   slug?: string | null;
   ville?: string | null;
   categorie?: string | null;
+  name_ar?: string | null;
+  name_en?: string | null;
+  name_it?: string | null;
+  name_ru?: string | null;
+  categorie_ar?: string | null;
   image_url?: string | null;
   logo_url?: string | null;
   statut_abonnement?: string | null;
@@ -27,6 +33,7 @@ interface BeforeInstallPromptEvent extends Event {
 
 const COPY = {
   fr: {
+    product: 'CV Business',
     scan: 'Scannez ce QR pour ouvrir directement le CV Business.',
     share: 'Partager',
     shared: 'Lien copié',
@@ -41,6 +48,7 @@ const COPY = {
     back: 'Retour au CV Business',
   },
   ar: {
+    product: 'السيرة المهنية',
     scan: 'امسح رمز QR لفتح السيرة المهنية مباشرة.',
     share: 'مشاركة',
     shared: 'تم نسخ الرابط',
@@ -55,6 +63,7 @@ const COPY = {
     back: 'العودة إلى السيرة المهنية',
   },
   en: {
+    product: 'Business CV',
     scan: 'Scan this QR to open the Business CV directly.',
     share: 'Share',
     shared: 'Link copied',
@@ -69,6 +78,7 @@ const COPY = {
     back: 'Back to Business CV',
   },
   it: {
+    product: 'CV Business',
     scan: 'Scansiona questo QR per aprire direttamente il CV Business.',
     share: 'Condividi',
     shared: 'Link copiato',
@@ -83,6 +93,7 @@ const COPY = {
     back: 'Torna al CV Business',
   },
   ru: {
+    product: 'Business CV',
     scan: 'Отсканируйте QR-код, чтобы сразу открыть Business CV.',
     share: 'Поделиться',
     shared: 'Ссылка скопирована',
@@ -129,7 +140,7 @@ export default function BusinessQr() {
       }
       const baseQuery = supabase
         .from('entreprise')
-        .select('id, nom, slug, ville, categorie, image_url, logo_url, statut_abonnement, cv_business_status');
+        .select('id, nom, slug, ville, categorie, name_ar, name_en, name_it, name_ru, categorie_ar, image_url, logo_url, statut_abonnement, cv_business_status');
       const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id);
       const { data } = await (isUuid ? baseQuery.eq('id', id) : baseQuery.eq('slug', id)).maybeSingle();
       if (!cancelled) {
@@ -157,7 +168,13 @@ export default function BusinessQr() {
   }, []);
 
   const cvPath = useMemo(() => business ? buildEntrepriseUrl(business) : '/entreprises', [business]);
-  const cvUrl = `https://dalil-tounes.com${cvPath}`;
+  const displayName = business
+    ? String(getMultilingualField(business, 'nom', language) || business.nom)
+    : '';
+  const displayCategory = business
+    ? String(getMultilingualField(business, 'categorie', language) || business.categorie || '')
+    : '';
+  const cvUrl = `https://dalil-tounes.com${cvPath}?lang=${language}`;
   const logoUrl = business ? getLogoUrl(business.logo_url) : '';
   const coverUrl = getCoverUrl(business?.image_url);
   const tier = business ? mapSubscriptionToTier(business) : 'gratuit';
@@ -183,15 +200,15 @@ export default function BusinessQr() {
     const existing = document.querySelector<HTMLLinkElement>('link[rel="manifest"]');
     const link = existing || document.createElement('link');
     link.rel = 'manifest';
-    link.href = `/api/business-manifest?id=${encodeURIComponent(id || business.id)}&name=${encodeURIComponent(business.nom)}&logo=${encodeURIComponent(logoUrl)}&v=client-2`;
+    link.href = `/api/business-manifest?id=${encodeURIComponent(id || business.id)}&name=${encodeURIComponent(displayName)}&logo=${encodeURIComponent(logoUrl)}&lang=${language}&v=client-3`;
     if (!existing) document.head.appendChild(link);
-    document.title = `${business.nom} — CV Business`;
+    document.title = `${displayName} — ${text.product}`;
 
     return () => {
       link.href = '/manifest.json';
       document.title = 'Dalil Tounes — Plateforme des professionnels en Tunisie | CV Business';
     };
-  }, [id, business?.id, business?.nom, logoUrl, qrAccess]);
+  }, [id, business?.id, displayName, language, logoUrl, qrAccess, text.product]);
 
   const downloadPng = () => {
     const svg = document.getElementById('dt-business-qr');
@@ -218,8 +235,8 @@ export default function BusinessQr() {
   const shareBusiness = async () => {
     if (!business) return;
     const shareData = {
-      title: business.nom,
-      text: `${business.nom} — CV Business Dalil Tounes`,
+      title: displayName,
+      text: `${displayName} — ${text.product} Dalil Tounes`,
       url: cvUrl,
     };
 
@@ -276,10 +293,10 @@ export default function BusinessQr() {
       <main className="fixed inset-0 z-[10000] grid place-items-center bg-[#032D21] px-6 text-center text-white">
         <div className="flex flex-col items-center">
           <div className="grid h-32 w-32 place-items-center overflow-hidden rounded-full border-[3px] border-[#D5B257] bg-[#032D21] p-1 shadow-2xl">
-            <img src={logoUrl} alt={`Logo ${business.nom}`} className="h-full w-full rounded-full object-cover" />
+            <img src={logoUrl} alt={`Logo ${displayName}`} className="h-full w-full rounded-full object-cover" />
           </div>
-          <h1 className="mt-5 font-serif text-2xl font-bold">{business.nom}</h1>
-          <p className="mt-2 text-sm text-[#D5B257]">CV Business</p>
+          <h1 className="mt-5 font-serif text-2xl font-bold">{displayName}</h1>
+          <p className="mt-2 text-sm text-[#D5B257]">{text.product}</p>
         </div>
       </main>
     );
@@ -289,8 +306,8 @@ export default function BusinessQr() {
     <main className="fixed inset-0 z-[10000] overflow-y-auto bg-[#032D21] px-3 py-4 sm:py-6" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       <CvBusinessQrVisual
         language={language}
-        name={business.nom}
-        category={business.categorie || undefined}
+        name={displayName}
+        category={displayCategory || undefined}
         coverImage={coverUrl}
         logo={logoUrl}
         qrValue={cvUrl}
@@ -300,7 +317,7 @@ export default function BusinessQr() {
         openLabel={text.open}
         scanText={text.scan}
         poweredText={text.powered}
-        openHref={`${cvPath}?source=pwa`}
+        openHref={`${cvPath}?source=pwa&lang=${language}`}
         onShare={shareBusiness}
         onDownload={downloadPng}
         onInstall={installApp}

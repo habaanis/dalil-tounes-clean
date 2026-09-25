@@ -41,6 +41,10 @@
         var isAppLaunch = new URLSearchParams(window.location.search).get('source') === 'pwa' || isStandalone;
         if (isAppLaunch) document.documentElement.classList.add('client-app-launch');
         var id = decodeURIComponent(match[1]);
+        var requestedLanguage = new URLSearchParams(window.location.search).get('lang');
+        var lang = ['fr', 'ar', 'en', 'it', 'ru'].indexOf(requestedLanguage) >= 0 ? requestedLanguage : 'fr';
+        document.documentElement.lang = lang;
+        document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
         var isAuxSaveurs = id === 'aux-saveurs-d-anis';
         var name = isAuxSaveurs ? "Aux saveurs d'Anis" : 'CV Business';
         var logo = isAuxSaveurs
@@ -50,7 +54,8 @@
           '/api/business-manifest?id=' + encodeURIComponent(id) +
           '&name=' + encodeURIComponent(name) +
           '&logo=' + encodeURIComponent(logo) +
-          '&v=client-2';
+          '&lang=' + encodeURIComponent(lang) +
+          '&v=client-3';
         document.title = name + ' — CV Business';
       })();
     </script>
@@ -266,12 +271,37 @@
   <body>
     <div id="client-boot-screen" aria-hidden="true">
       <div>
-        <img src="https://ik.imagekit.io/gfdpqvshw/Lienora/client/aux-saveurs-danis/aux-saveurs-danis-logo-v2?updatedAt=1787096555330" alt="">
-        <strong>Aux saveurs d'Anis</strong>
-        <span>CV Business</span>
+        <img id="client-boot-logo" src="/images/logo_dalil_tounes_crop.png" alt="">
+        <strong id="client-boot-name">Dalil Tounes</strong>
+        <span id="client-boot-product">CV Business</span>
       </div>
     </div>
     <script>
+      (function () {
+        var match = window.location.pathname.match(/^\/qr-business\/([^/]+)/);
+        if (!match) return;
+        var id = decodeURIComponent(match[1]);
+        var requestedLanguage = new URLSearchParams(window.location.search).get('lang');
+        var lang = ['fr', 'ar', 'en', 'it', 'ru'].indexOf(requestedLanguage) >= 0 ? requestedLanguage : 'fr';
+        var productLabels = {
+          fr: 'CV Business',
+          ar: 'السيرة المهنية',
+          en: 'Business CV',
+          it: 'CV Business',
+          ru: 'Business CV'
+        };
+        var isAuxSaveurs = id === 'aux-saveurs-d-anis';
+        var logo = document.getElementById('client-boot-logo');
+        var name = document.getElementById('client-boot-name');
+        var product = document.getElementById('client-boot-product');
+        if (isAuxSaveurs) {
+          logo.src = 'https://ik.imagekit.io/gfdpqvshw/Lienora/client/aux-saveurs-danis/aux-saveurs-danis-logo-v2?updatedAt=1787096555330';
+          name.textContent = "Aux saveurs d'Anis";
+        } else {
+          name.textContent = productLabels[lang];
+        }
+        product.textContent = productLabels[lang];
+      })();
       window.setTimeout(function () {
         var boot = document.getElementById('client-boot-screen');
         if (boot) boot.remove();

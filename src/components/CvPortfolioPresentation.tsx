@@ -87,7 +87,7 @@ const COPY: Record<string, Copy> = {
     openingHours: 'Horaires', practical: 'Informations pratiques', book: 'Réserver',
     quote: 'Demander un devis', addContact: 'Ajouter aux contacts', certified: 'Certifié Dalil Tounes',
     viewReviews: 'Voir les avis', giveReview: 'Donner un avis',
-    moreActions: 'Plus d’actions', moreActionsSummary: 'WhatsApp · E-mail · Réserver · Avis',
+    moreActions: 'Plus d’actions', moreActionsSummary: 'Installer · WhatsApp · E-mail · Réserver · Avis',
     poweredBy: 'Propulsé par Dalil Tounes',
   },
   ar: {
@@ -96,7 +96,7 @@ const COPY: Record<string, Copy> = {
     ourWork: 'أعمالنا', noPhotos: 'لا توجد صور متاحة.', openingHours: 'أوقات العمل',
     practical: 'معلومات عملية', book: 'احجز', quote: 'طلب عرض سعر', addContact: 'إضافة إلى جهات الاتصال',
     viewReviews: 'عرض الآراء', giveReview: 'إضافة رأي',
-    moreActions: 'المزيد من الإجراءات', moreActionsSummary: 'واتساب · البريد · الحجز · الآراء',
+    moreActions: 'المزيد من الإجراءات', moreActionsSummary: 'تثبيت · واتساب · البريد · الحجز · الآراء',
     certified: 'معتمد من دليل تونس', poweredBy: 'بدعم من دليل تونس',
   },
   en: {
@@ -106,7 +106,7 @@ const COPY: Record<string, Copy> = {
     practical: 'Practical information', book: 'Book', quote: 'Request a quote',
     addContact: 'Add to contacts', certified: 'Certified by Dalil Tounes', poweredBy: 'Powered by Dalil Tounes',
     viewReviews: 'View reviews', giveReview: 'Leave a review',
-    moreActions: 'More actions', moreActionsSummary: 'WhatsApp · E-mail · Booking · Reviews',
+    moreActions: 'More actions', moreActionsSummary: 'Install · WhatsApp · E-mail · Booking · Reviews',
   },
   it: {
     home: 'Home', about: 'Chi siamo', services: 'Servizi', photos: 'Foto', reviews: 'Recensioni',
@@ -115,7 +115,7 @@ const COPY: Record<string, Copy> = {
     practical: 'Informazioni pratiche', book: 'Prenota', quote: 'Richiedi un preventivo',
     addContact: 'Aggiungi ai contatti', certified: 'Certificato da Dalil Tounes', poweredBy: 'Offerto da Dalil Tounes',
     viewReviews: 'Vedi le recensioni', giveReview: 'Lascia una recensione',
-    moreActions: 'Altre azioni', moreActionsSummary: 'WhatsApp · E-mail · Prenota · Recensioni',
+    moreActions: 'Altre azioni', moreActionsSummary: 'Installa · WhatsApp · E-mail · Prenota · Recensioni',
   },
   ru: {
     home: 'Главная', about: 'О нас', services: 'Услуги', photos: 'Фото', reviews: 'Отзывы',
@@ -124,7 +124,7 @@ const COPY: Record<string, Copy> = {
     practical: 'Практическая информация', book: 'Забронировать', quote: 'Запросить смету',
     addContact: 'Добавить в контакты', certified: 'Сертифицировано Dalil Tounes', poweredBy: 'Работает на Dalil Tounes',
     viewReviews: 'Посмотреть отзывы', giveReview: 'Оставить отзыв',
-    moreActions: 'Другие действия', moreActionsSummary: 'WhatsApp · E-mail · Бронь · Отзывы',
+    moreActions: 'Другие действия', moreActionsSummary: 'Установить · WhatsApp · E-mail · Бронь · Отзывы',
   },
 };
 
@@ -196,8 +196,7 @@ export function CvPortfolioPresentation({
     action.href.includes('maps') || action.href.includes('google.com/maps'),
   );
   const extraActions = actions.filter(action =>
-    !action.href.startsWith('/qr-business/')
-      && action !== callAction
+    action !== callAction
       && action !== directionsAction,
   );
   const portfolioGallery = gallery.slice(0, 4);

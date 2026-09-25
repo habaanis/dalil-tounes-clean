@@ -589,7 +589,7 @@ export function CvPresentationModelSelector({
               decoding="async"
             />
             <a
-              href={`/entreprise/sousse/aux-saveurs-d-anis?preview-model=${expandedModel === 'portfolio' ? 'portfolio' : 'business'}&source=subscription&lang=${language}`}
+              href={`/entreprise/sousse/aux-saveurs-d-anis?preview-model=${expandedModel === 'portfolio' ? 'portfolio' : 'business'}&palette=${paletteValue}&source=subscription&lang=${language}`}
               target="_blank"
               rel="noopener noreferrer"
               className="mx-auto mt-3 flex min-h-11 w-full items-center justify-center rounded-xl bg-[#07543F] px-5 py-2.5 text-center text-sm font-bold text-white transition hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]"
