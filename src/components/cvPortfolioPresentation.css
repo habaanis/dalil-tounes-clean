@@ -384,7 +384,7 @@
   background: var(--cvp-page);
 }
 .cvp-lienora-shell {
-  width: min(430px, 100%);
+  width: min(344px, 100%);
   margin: 0 auto;
 }
 .cvp-lienora-card {
