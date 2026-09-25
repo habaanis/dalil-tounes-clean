@@ -1377,6 +1377,7 @@ export default function BusinessShowcaseLienoraDetail({
           gallery={galleryItems}
           onBack={handleBack}
           bookingContent={sections.find(section => section.id === 'booking')?.content}
+          reviewsContent={sections.find(section => section.id === 'reviews')?.content}
           onQuote={requestQuote}
           onDownloadContact={downloadContact}
           onSelectImage={setSelectedImage}
