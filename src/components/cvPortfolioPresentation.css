@@ -445,10 +445,11 @@
   font-weight: 800;
 }
 .cvp-lienora-identity {
-  border: 1px solid color-mix(in srgb, var(--cvp-accent) 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cvp-accent) 72%, transparent);
   border-radius: 15px;
-  background: rgba(0, 0, 0, 0.08);
+  background: linear-gradient(145deg, #fffaf0 0%, #f2e6c7 100%);
   padding: 8px;
+  color: #0b3b34;
   text-align: center;
 }
 .cvp-lienora-identity small {
@@ -460,12 +461,13 @@
 }
 .cvp-lienora-identity h1 {
   margin: 3px 0;
-  color: var(--cvp-text);
+  color: #0b3b34;
   font: 700 1.48rem/1.05 Georgia, serif;
 }
 .cvp-lienora-rating,
 .cvp-lienora-identity p {
   display: flex;
+  color: #0b3b34;
   align-items: center;
   justify-content: center;
   gap: 5px;
