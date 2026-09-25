@@ -190,6 +190,7 @@ export const SEO_VILLES: VilleEntry[] = [
   { slug: 'la-marsa', label: 'La Marsa', gouvernorat: 'Tunis', labels: { fr: 'La Marsa', ar: 'المرسى', en: 'La Marsa', it: 'La Marsa', ru: 'Ла-Марса' } },
   { slug: 'carthage', label: 'Carthage', gouvernorat: 'Tunis', labels: { fr: 'Carthage', ar: 'قرطاج', en: 'Carthage', it: 'Cartagine', ru: 'Карфаген' } },
   { slug: 'ariana', label: 'Ariana', gouvernorat: 'Ariana', labels: { fr: 'Ariana', ar: 'أريانة', en: 'Ariana', it: 'Ariana', ru: 'Ариана' } },
+  { slug: 'soukra', label: 'Soukra', gouvernorat: 'Ariana', labels: { fr: 'Soukra', ar: 'سكرة', en: 'Soukra', it: 'Soukra', ru: 'Сукра' } },
   { slug: 'ennasr', label: 'Ennasr', gouvernorat: 'Ariana', labels: { fr: 'Ennasr', ar: 'النصر', en: 'Ennasr', it: 'Ennasr', ru: 'Эн-Наср' } },
   { slug: 'el-menzah', label: 'El Menzah', gouvernorat: 'Ariana', labels: { fr: 'El Menzah', ar: 'المنزه', en: 'El Menzah', it: 'El Menzah', ru: 'Эль-Мензах' } },
   { slug: 'ben-arous', label: 'Ben Arous', gouvernorat: 'Ben Arous', labels: { fr: 'Ben Arous', ar: 'بن عروس', en: 'Ben Arous', it: 'Ben Arous', ru: 'Бен-Арусс' } },
