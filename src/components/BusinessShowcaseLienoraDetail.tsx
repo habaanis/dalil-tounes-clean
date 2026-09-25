@@ -791,6 +791,9 @@ export default function BusinessShowcaseLienoraDetail({
   }
 
   const visualVariant = capabilities.variant === 'artisan' ? 'artisan' : 'premium';
+  const localizedBusinessProductLabel = language === 'ar'
+    ? (visualVariant === 'artisan' ? 'الملف المهني للحرفي' : 'الملف المهني المميّز')
+    : capabilities.productLabel;
   const storedPalette = resolvePaletteId((business as Record<string, unknown>)?.palette_cv);
   const previewPaletteParam = embeddedPreview
     ? previewPalette
@@ -1482,18 +1485,18 @@ export default function BusinessShowcaseLienoraDetail({
               </div>
               <span className="dt-activity-pill">⚒ {activityPill}</span>
               <div className="dt-identity-panel">
-                <small className="dt-product-label">{capabilities.productLabel}</small>
+                <small className="dt-product-label">{localizedBusinessProductLabel}</small>
                 <h1>{displayName}</h1>
                 <strong className="dt-professional-badge">
                   {certification || `★ ${text.professional}`}
                 </strong>
                 {slogan && <p className="dt-slogan">{slogan}</p>}
-                {(business.ville || business.gouvernorat) && (
+                {(cvProfile.location.city || cvProfile.location.governorate) && (
                   <p className="dt-location">
                     <MapPin aria-hidden="true" />
-                    {[business.ville, business.gouvernorat]
+                    {[cvProfile.location.city, cvProfile.location.governorate]
                       .filter((value, index, values) => value && values.indexOf(value) === index)
-                      .join(', ')}
+                      .join(language === 'ar' ? '، ' : ', ')}
                   </p>
                 )}
                 {rating > 0 && (
