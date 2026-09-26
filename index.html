@@ -37,12 +37,14 @@
           return;
         }
         document.documentElement.classList.add('client-app-route');
-        var isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-        var isAppLaunch = new URLSearchParams(window.location.search).get('source') === 'pwa' || isStandalone;
-        if (isAppLaunch) document.documentElement.classList.add('client-app-launch');
+        var params = new URLSearchParams(window.location.search);
         var id = decodeURIComponent(match[1]);
-        var requestedLanguage = new URLSearchParams(window.location.search).get('lang');
+        var requestedLanguage = params.get('lang');
         var lang = ['fr', 'ar', 'en', 'it', 'ru'].indexOf(requestedLanguage) >= 0 ? requestedLanguage : 'fr';
+        var requestedPalette = params.get('palette');
+        var palette = ['prestige', 'ivory', 'night'].indexOf(requestedPalette) >= 0 ? requestedPalette : 'prestige';
+        var paletteBackgrounds = { prestige: '#032D21', ivory: '#FFF8E7', night: '#10243A' };
+        document.documentElement.style.setProperty('--client-app-bg', paletteBackgrounds[palette]);
         document.documentElement.lang = lang;
         document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
         var isAuxSaveurs = id === 'aux-saveurs-d-anis';
@@ -55,7 +57,8 @@
           '&name=' + encodeURIComponent(name) +
           '&logo=' + encodeURIComponent(logo) +
           '&lang=' + encodeURIComponent(lang) +
-          '&v=client-3';
+          '&palette=' + encodeURIComponent(palette) +
+          '&v=client-4';
         document.title = name + ' — CV Business';
       })();
     </script>
@@ -86,18 +89,9 @@
       /* Le root React est caché jusqu'à ce que le skeleton soit retiré :
          garantit un seul et même pixel drapeau visible sans flash entre les deux. */
       #root{opacity:0;transition:opacity 0s}
-      html.client-app-route body{background:#032D21}
+      html.client-app-route body{background:var(--client-app-bg,#032D21)}
       html.client-app-route #pre-skeleton{display:none!important}
       html.client-app-route #root{opacity:1!important}
-      #client-boot-screen{display:none}
-      html.client-app-launch #client-boot-screen{
-        position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;
-        background:#032D21;color:#fff;text-align:center;font-family:ui-sans-serif,system-ui,sans-serif
-      }
-      #client-boot-screen img{width:128px;height:128px;border-radius:9999px;object-fit:cover;border:3px solid #D5B257;padding:4px}
-      #client-boot-screen strong{display:block;margin-top:20px;font-family:Georgia,serif;font-size:24px}
-      #client-boot-screen span{display:block;margin-top:8px;color:#D5B257;font-size:14px}
-      
       @keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
       .sk{animation:pulse 1.8s ease-in-out infinite;background:#e5e7eb;border-radius:.75rem}
 
@@ -269,44 +263,6 @@
     </script>
   </head>
   <body>
-    <div id="client-boot-screen" aria-hidden="true">
-      <div>
-        <img id="client-boot-logo" src="/images/logo_dalil_tounes_crop.png" alt="">
-        <strong id="client-boot-name">Dalil Tounes</strong>
-        <span id="client-boot-product">CV Business</span>
-      </div>
-    </div>
-    <script>
-      (function () {
-        var match = window.location.pathname.match(/^\/qr-business\/([^/]+)/);
-        if (!match) return;
-        var id = decodeURIComponent(match[1]);
-        var requestedLanguage = new URLSearchParams(window.location.search).get('lang');
-        var lang = ['fr', 'ar', 'en', 'it', 'ru'].indexOf(requestedLanguage) >= 0 ? requestedLanguage : 'fr';
-        var productLabels = {
-          fr: 'CV Business',
-          ar: 'السيرة المهنية',
-          en: 'Business CV',
-          it: 'CV Business',
-          ru: 'Business CV'
-        };
-        var isAuxSaveurs = id === 'aux-saveurs-d-anis';
-        var logo = document.getElementById('client-boot-logo');
-        var name = document.getElementById('client-boot-name');
-        var product = document.getElementById('client-boot-product');
-        if (isAuxSaveurs) {
-          logo.src = 'https://ik.imagekit.io/gfdpqvshw/Lienora/client/aux-saveurs-danis/aux-saveurs-danis-logo-v2?updatedAt=1787096555330';
-          name.textContent = "Aux saveurs d'Anis";
-        } else {
-          name.textContent = productLabels[lang];
-        }
-        product.textContent = productLabels[lang];
-      })();
-      window.setTimeout(function () {
-        var boot = document.getElementById('client-boot-screen');
-        if (boot) boot.remove();
-      }, 3200);
-    </script>
     <div id="pre-skeleton">
       <div id="pre-nav">
         <div class="sk" style="width:120px;height:28px"></div>
