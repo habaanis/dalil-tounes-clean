@@ -38,6 +38,7 @@ const sizedIconUrl = (value: string, size: 192 | 512): string => {
     const url = new URL(value);
     if (url.hostname === 'ik.imagekit.io') {
       url.searchParams.set('tr', `w-${size},h-${size},fo-auto`);
+      url.searchParams.set('dt-app', '4');
     }
     return url.toString();
   } catch {
@@ -49,6 +50,18 @@ const firstQueryValue = (value: string | string[] | undefined): string | null =>
   Array.isArray(value) ? value[0] || null : value || null;
 
 type SupportedLanguage = 'fr' | 'ar' | 'en' | 'it' | 'ru';
+type PaletteId = 'prestige' | 'ivory' | 'night';
+
+const PALETTE_COLORS: Record<PaletteId, { theme: string; background: string }> = {
+  prestige: { theme: '#032D21', background: '#032D21' },
+  ivory: { theme: '#FFF8E7', background: '#FFF8E7' },
+  night: { theme: '#10243A', background: '#10243A' },
+};
+
+const getPalette = (value: string | null): PaletteId => {
+  const normalized = String(value || '').trim().toLowerCase();
+  return normalized === 'ivory' || normalized === 'night' ? normalized : 'prestige';
+};
 
 const getLanguage = (value: string | null): SupportedLanguage => {
   const language = String(value || '').trim().toLowerCase();
@@ -70,6 +83,7 @@ export default function handler(request: VercelRequest, response: VercelResponse
   const name = safeText(firstQueryValue(request.query?.name), 'CV Business');
   const logo = safeHttpsUrl(firstQueryValue(request.query?.logo));
   const lang = getLanguage(firstQueryValue(request.query?.lang));
+  const palette = getPalette(firstQueryValue(request.query?.palette));
 
   if (!id) {
     response.status(400).json({ error: 'Missing business id' });
@@ -77,7 +91,7 @@ export default function handler(request: VercelRequest, response: VercelResponse
   }
 
   const appPath = `/qr-business/${id}`;
-  const startUrl = `${appPath}?source=pwa&app=client&lang=${lang}`;
+  const startUrl = `${appPath}?source=pwa&app=client&lang=${lang}&palette=${palette}`;
   const icons = logo
     ? [
         { src: sizedIconUrl(logo, 192), sizes: '192x192', purpose: 'any' },
@@ -97,8 +111,8 @@ export default function handler(request: VercelRequest, response: VercelResponse
       launch_handler: { client_mode: 'navigate-new' },
       display: 'standalone',
       orientation: 'portrait-primary',
-      theme_color: '#032D21',
-      background_color: '#032D21',
+      theme_color: PALETTE_COLORS[palette].theme,
+      background_color: PALETTE_COLORS[palette].background,
       lang,
       dir: lang === 'ar' ? 'rtl' : 'ltr',
       categories: ['business'],
