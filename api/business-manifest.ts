@@ -38,7 +38,7 @@ const sizedIconUrl = (value: string, size: 192 | 512): string => {
     const url = new URL(value);
     if (url.hostname === 'ik.imagekit.io') {
       url.searchParams.set('tr', `w-${size},h-${size},fo-auto`);
-      url.searchParams.set('dt-app', '4');
+      url.searchParams.set('dt-app', '5');
     }
     return url.toString();
   } catch {
@@ -51,6 +51,7 @@ const firstQueryValue = (value: string | string[] | undefined): string | null =>
 
 type SupportedLanguage = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 type PaletteId = 'prestige' | 'ivory' | 'night';
+type CvModel = 'business' | 'portfolio';
 
 const PALETTE_COLORS: Record<PaletteId, { theme: string; background: string }> = {
   prestige: { theme: '#032D21', background: '#032D21' },
@@ -70,12 +71,15 @@ const getLanguage = (value: string | null): SupportedLanguage => {
     : 'fr';
 };
 
-const PRODUCT_LABELS: Record<SupportedLanguage, string> = {
-  fr: 'CV Business',
-  ar: 'السيرة المهنية',
-  en: 'Business CV',
-  it: 'CV Business',
-  ru: 'Business CV',
+const getModel = (value: string | null): CvModel =>
+  String(value || '').trim().toLowerCase().includes('portfolio') ? 'portfolio' : 'business';
+
+const PRODUCT_LABELS: Record<SupportedLanguage, Record<CvModel, string>> = {
+  fr: { business: 'CV Business', portfolio: 'CV Portfolio' },
+  ar: { business: 'CV Business', portfolio: 'CV Portfolio' },
+  en: { business: 'CV Business', portfolio: 'CV Portfolio' },
+  it: { business: 'CV Business', portfolio: 'CV Portfolio' },
+  ru: { business: 'CV Business', portfolio: 'CV Portfolio' },
 };
 
 export default function handler(request: VercelRequest, response: VercelResponse) {
@@ -84,6 +88,7 @@ export default function handler(request: VercelRequest, response: VercelResponse
   const logo = safeHttpsUrl(firstQueryValue(request.query?.logo));
   const lang = getLanguage(firstQueryValue(request.query?.lang));
   const palette = getPalette(firstQueryValue(request.query?.palette));
+  const model = getModel(firstQueryValue(request.query?.model));
 
   if (!id) {
     response.status(400).json({ error: 'Missing business id' });
@@ -105,7 +110,7 @@ export default function handler(request: VercelRequest, response: VercelResponse
       id: appPath,
       name,
       short_name: name.slice(0, 30),
-      description: `${name} — ${PRODUCT_LABELS[lang]} Dalil Tounes`,
+      description: `${name} — ${PRODUCT_LABELS[lang][model]} Dalil Tounes`,
       start_url: startUrl,
       scope: appPath,
       launch_handler: { client_mode: 'navigate-new' },
