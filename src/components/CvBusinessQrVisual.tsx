@@ -41,6 +41,7 @@ export type CvBusinessQrVisualProps = {
   openLabel?: string;
   scanText?: string;
   poweredText?: string;
+  productLabel?: string;
   openHref?: string;
   onShare?: () => void;
   onDownload?: () => void;
@@ -53,7 +54,7 @@ export type CvBusinessQrVisualProps = {
 export function CvBusinessQrVisual({
   language = 'fr', name, category, coverImage = AUX_SAVEURS_COVER, logo = AUX_SAVEURS_LOGO,
   qrValue = DEMO_URL, shareLabel, downloadLabel, addLabel, openLabel, scanText, poweredText,
-  openHref, onShare, onDownload, onInstall, qrId, interactive = false, palette,
+  openHref, onShare, onDownload, onInstall, qrId, interactive = false, palette, productLabel,
 }: CvBusinessQrVisualProps) {
   const t = copy[language] ?? copy.fr;
   const theme = getCvPaletteTheme(palette);
@@ -67,7 +68,7 @@ export function CvBusinessQrVisual({
   ];
 
   return (
-    <section dir={isRtl ? 'rtl' : 'ltr'} aria-label={`${displayName} — QR Business`}
+    <section dir={isRtl ? 'rtl' : 'ltr'} aria-label={`${displayName} — ${productLabel || 'CV Business'}`}
       className="mx-auto w-full max-w-[354px] rounded-[28px] border-[2px] px-[15px] pb-[16px] pt-[13px] shadow-[0_14px_34px_rgba(0,0,0,0.16)]"
       style={{ backgroundColor: theme.surface, borderColor: theme.border, color: theme.text }}>
       <div className="overflow-hidden rounded-[18px] border" style={{ backgroundColor: theme.surfaceAlt, borderColor: `${theme.border}99` }}>
