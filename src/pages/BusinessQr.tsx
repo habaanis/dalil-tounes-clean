@@ -8,6 +8,7 @@ import { mapSubscriptionToTier } from '../lib/subscriptionTiers';
 import { HERO_IMAGE_URL } from '../constants/images';
 import { CvBusinessQrVisual } from '../components/CvBusinessProductVisuals';
 import { getMultilingualField } from '../lib/databaseI18n';
+import { getCvPaletteTheme } from '../lib/cvPalette';
 
 interface BusinessQrRecord {
   id: string;
@@ -25,6 +26,7 @@ interface BusinessQrRecord {
   logo_url?: string | null;
   statut_abonnement?: string | null;
   cv_business_status?: string | null;
+  palette_cv?: string | null;
 }
 
 interface BeforeInstallPromptEvent extends Event {
@@ -131,6 +133,8 @@ export default function BusinessQr() {
       || (navigator as Navigator & { standalone?: boolean }).standalone === true;
     return new URLSearchParams(window.location.search).get('source') === 'pwa' || isStandalone;
   });
+  const launchPalette = new URLSearchParams(window.location.search).get('palette');
+  const paletteTheme = getCvPaletteTheme(business?.palette_cv || launchPalette);
 
   useEffect(() => {
     let cancelled = false;
@@ -141,7 +145,7 @@ export default function BusinessQr() {
       }
       const baseQuery = supabase
         .from('entreprise')
-        .select('id, nom, slug, slug_court, ville, categorie, name_ar, name_en, name_it, name_ru, categorie_ar, image_url, logo_url, statut_abonnement, cv_business_status');
+        .select('id, nom, slug, slug_court, ville, categorie, name_ar, name_en, name_it, name_ru, categorie_ar, image_url, logo_url, statut_abonnement, cv_business_status, palette_cv');
       const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id);
       const { data } = await (isUuid ? baseQuery.eq('id', id) : baseQuery.eq('slug', id)).maybeSingle();
       if (!cancelled) {
@@ -204,7 +208,7 @@ export default function BusinessQr() {
     const existing = document.querySelector<HTMLLinkElement>('link[rel="manifest"]');
     const link = existing || document.createElement('link');
     link.rel = 'manifest';
-    link.href = `/api/business-manifest?id=${encodeURIComponent(id || business.id)}&name=${encodeURIComponent(displayName)}&logo=${encodeURIComponent(logoUrl)}&lang=${language}&v=client-3`;
+    link.href = `/api/business-manifest?id=${encodeURIComponent(id || business.id)}&name=${encodeURIComponent(displayName)}&logo=${encodeURIComponent(logoUrl)}&lang=${language}&palette=${paletteTheme.id}&v=client-4`;
     if (!existing) document.head.appendChild(link);
     document.title = `${displayName} — ${text.product}`;
 
@@ -212,7 +216,15 @@ export default function BusinessQr() {
       link.href = '/manifest.json';
       document.title = 'Dalil Tounes — Plateforme des professionnels en Tunisie | CV Business';
     };
-  }, [id, business?.id, displayName, language, logoUrl, qrAccess, text.product]);
+  }, [id, business?.id, displayName, language, logoUrl, paletteTheme.id, qrAccess, text.product]);
+
+  useEffect(() => {
+    const meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+    if (!meta) return;
+    const previous = meta.content;
+    meta.content = paletteTheme.page;
+    return () => { meta.content = previous; };
+  }, [paletteTheme.page]);
 
   const downloadPng = () => {
     const svg = document.getElementById('dt-business-qr');
@@ -278,7 +290,7 @@ export default function BusinessQr() {
   };
 
   if (loading) {
-    return <div className="fixed inset-0 z-[10000] grid place-items-center bg-[#032D21] text-white">{text.loading}</div>;
+    return <div className="fixed inset-0 z-[10000] grid place-items-center" style={{ backgroundColor: paletteTheme.page, color: paletteTheme.text }}>{text.loading}</div>;
   }
 
   if (!business || !qrAccess) {
@@ -294,20 +306,20 @@ export default function BusinessQr() {
 
   if (showBrandSplash) {
     return (
-      <main className="fixed inset-0 z-[10000] grid place-items-center bg-[#032D21] px-6 text-center text-white">
+      <main className="fixed inset-0 z-[10000] grid place-items-center px-6 text-center" style={{ backgroundColor: paletteTheme.page, color: paletteTheme.text }}>
         <div className="flex flex-col items-center">
-          <div className="grid h-32 w-32 place-items-center overflow-hidden rounded-full border-[3px] border-[#D5B257] bg-[#032D21] p-1 shadow-2xl">
+          <div className="grid h-32 w-32 place-items-center overflow-hidden rounded-full border-[3px] p-1 shadow-2xl" style={{ backgroundColor: paletteTheme.surface, borderColor: paletteTheme.border }}>
             <img src={logoUrl} alt={`Logo ${displayName}`} className="h-full w-full rounded-full object-cover" />
           </div>
           <h1 className="mt-5 font-serif text-2xl font-bold">{displayName}</h1>
-          <p className="mt-2 text-sm text-[#D5B257]">{text.product}</p>
+          <p className="mt-2 text-sm" style={{ color: paletteTheme.accent }}>{text.product}</p>
         </div>
       </main>
     );
   }
 
   return (
-    <main className="fixed inset-0 z-[10000] overflow-y-auto bg-[#032D21] px-3 py-4 sm:py-6" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+    <main className="fixed inset-0 z-[10000] overflow-y-auto px-3 py-4 sm:py-6" style={{ backgroundColor: paletteTheme.page }} dir={language === 'ar' ? 'rtl' : 'ltr'}>
       <CvBusinessQrVisual
         language={language}
         name={displayName}
@@ -326,6 +338,7 @@ export default function BusinessQr() {
         onDownload={downloadPng}
         onInstall={installApp}
         qrId="dt-business-qr"
+        palette={paletteTheme.id}
         interactive
       />
     </main>
