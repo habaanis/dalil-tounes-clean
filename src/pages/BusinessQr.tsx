@@ -26,6 +26,7 @@ interface BusinessQrRecord {
   logo_url?: string | null;
   statut_abonnement?: string | null;
   cv_business_status?: string | null;
+  modele_cv?: string | null;
   palette_cv?: string | null;
 }
 
@@ -112,6 +113,31 @@ const COPY = {
   },
 } as const;
 
+type CvModel = 'business' | 'portfolio';
+
+const MODEL_COPY = {
+  fr: {
+    business: { product: 'CV Business', scan: 'Scannez ce QR pour ouvrir directement le CV Business.', open: 'Ouvrir le CV Business' },
+    portfolio: { product: 'CV Portfolio', scan: 'Scannez ce QR pour découvrir directement le CV Portfolio.', open: 'Ouvrir le CV Portfolio' },
+  },
+  ar: {
+    business: { product: 'CV Business', scan: 'امسح رمز QR لفتح CV Business مباشرة.', open: 'فتح CV Business' },
+    portfolio: { product: 'CV Portfolio', scan: 'امسح رمز QR لاكتشاف CV Portfolio مباشرة.', open: 'فتح CV Portfolio' },
+  },
+  en: {
+    business: { product: 'CV Business', scan: 'Scan this QR to open the CV Business directly.', open: 'Open the CV Business' },
+    portfolio: { product: 'CV Portfolio', scan: 'Scan this QR to discover the CV Portfolio directly.', open: 'Open the CV Portfolio' },
+  },
+  it: {
+    business: { product: 'CV Business', scan: 'Scansiona questo QR per aprire direttamente il CV Business.', open: 'Apri il CV Business' },
+    portfolio: { product: 'CV Portfolio', scan: 'Scansiona questo QR per scoprire direttamente il CV Portfolio.', open: 'Apri il CV Portfolio' },
+  },
+  ru: {
+    business: { product: 'CV Business', scan: 'Отсканируйте QR-код, чтобы сразу открыть CV Business.', open: 'Открыть CV Business' },
+    portfolio: { product: 'CV Portfolio', scan: 'Отсканируйте QR-код, чтобы сразу открыть CV Portfolio.', open: 'Открыть CV Portfolio' },
+  },
+} as const;
+
 function getCoverUrl(value?: string | null): string {
   if (!value?.trim()) return HERO_IMAGE_URL;
   const first = value.split(',')[0]?.trim();
@@ -135,6 +161,10 @@ export default function BusinessQr() {
   });
   const launchPalette = new URLSearchParams(window.location.search).get('palette');
   const paletteTheme = getCvPaletteTheme(business?.palette_cv || launchPalette);
+  const cvModel: CvModel = String(business?.modele_cv || '').toLowerCase().includes('portfolio')
+    ? 'portfolio'
+    : 'business';
+  const modelText = MODEL_COPY[language as keyof typeof MODEL_COPY]?.[cvModel] || MODEL_COPY.fr[cvModel];
 
   useEffect(() => {
     let cancelled = false;
@@ -145,7 +175,7 @@ export default function BusinessQr() {
       }
       const baseQuery = supabase
         .from('entreprise')
-        .select('id, nom, slug, slug_court, ville, categorie, name_ar, name_en, name_it, name_ru, categorie_ar, image_url, logo_url, statut_abonnement, cv_business_status, palette_cv');
+        .select('id, nom, slug, slug_court, ville, categorie, name_ar, name_en, name_it, name_ru, categorie_ar, image_url, logo_url, statut_abonnement, cv_business_status, modele_cv, palette_cv');
       const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id);
       const { data } = await (isUuid ? baseQuery.eq('id', id) : baseQuery.eq('slug', id)).maybeSingle();
       if (!cancelled) {
@@ -208,15 +238,15 @@ export default function BusinessQr() {
     const existing = document.querySelector<HTMLLinkElement>('link[rel="manifest"]');
     const link = existing || document.createElement('link');
     link.rel = 'manifest';
-    link.href = `/api/business-manifest?id=${encodeURIComponent(id || business.id)}&name=${encodeURIComponent(displayName)}&logo=${encodeURIComponent(logoUrl)}&lang=${language}&palette=${paletteTheme.id}&v=client-4`;
+    link.href = `/api/business-manifest?id=${encodeURIComponent(id || business.id)}&name=${encodeURIComponent(displayName)}&logo=${encodeURIComponent(logoUrl)}&lang=${language}&palette=${paletteTheme.id}&model=${cvModel}&v=client-5`;
     if (!existing) document.head.appendChild(link);
-    document.title = `${displayName} — ${text.product}`;
+    document.title = `${displayName} — ${modelText.product}`;
 
     return () => {
       link.href = '/manifest.json';
       document.title = 'Dalil Tounes — Plateforme des professionnels en Tunisie | CV Business';
     };
-  }, [id, business?.id, displayName, language, logoUrl, paletteTheme.id, qrAccess, text.product]);
+  }, [id, business?.id, cvModel, displayName, language, logoUrl, modelText.product, paletteTheme.id, qrAccess]);
 
   useEffect(() => {
     const meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
@@ -241,7 +271,7 @@ export default function BusinessQr() {
       context.fillRect(0, 0, canvas.width, canvas.height);
       context.drawImage(image, 0, 0, canvas.width, canvas.height);
       const link = document.createElement('a');
-      link.download = `qr-business-${generateSlug(business?.nom || 'dalil-tounes')}.png`;
+      link.download = `qr-${cvModel}-${generateSlug(business?.nom || 'dalil-tounes')}.png`;
       link.href = canvas.toDataURL('image/png');
       link.click();
     };
@@ -252,7 +282,7 @@ export default function BusinessQr() {
     if (!business) return;
     const shareData = {
       title: displayName,
-      text: `${displayName} — ${text.product} Dalil Tounes`,
+      text: `${displayName} — ${modelText.product} Dalil Tounes`,
       url: cvUrl,
     };
 
@@ -312,7 +342,7 @@ export default function BusinessQr() {
             <img src={logoUrl} alt={`Logo ${displayName}`} className="h-full w-full rounded-full object-cover" />
           </div>
           <h1 className="mt-5 font-serif text-2xl font-bold">{displayName}</h1>
-          <p className="mt-2 text-sm" style={{ color: paletteTheme.accent }}>{text.product}</p>
+          <p className="mt-2 text-sm" style={{ color: paletteTheme.accent }}>{modelText.product}</p>
         </div>
       </main>
     );
@@ -330,8 +360,9 @@ export default function BusinessQr() {
         shareLabel={shareConfirmed ? text.shared : text.share}
         downloadLabel={text.download}
         addLabel={text.install}
-        openLabel={text.open}
-        scanText={text.scan}
+        openLabel={modelText.open}
+        scanText={modelText.scan}
+        productLabel={modelText.product}
         poweredText={text.powered}
         openHref={`${cvPath}?source=pwa&lang=${language}`}
         onShare={shareBusiness}
