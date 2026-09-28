@@ -893,8 +893,7 @@ export default function BusinessShowcaseLienoraDetail({
   const logoImage = getLogoUrl(business.logo_url);
   const mapsUrl = cvProfile.location.directionsUrl;
   const explicitWhatsappUrl = buildWhatsAppUrl(business.whatsapp);
-  const whatsappUrl = explicitWhatsappUrl
-    || (!String(business.whatsapp || '').trim() ? buildWhatsAppUrl(business.telephone) : '');
+  const whatsappUrl = explicitWhatsappUrl || buildWhatsAppUrl(business.telephone);
   const websiteUrl = hasAction('website') ? cvProfile.contact.website : '';
   const rating = cvProfile.reviews.rating || 0;
   const googleReviewCount = cvProfile.reviews.count;
@@ -966,14 +965,17 @@ export default function BusinessShowcaseLienoraDetail({
     return normalizedSector.includes(normalizedLabel) || normalizedLabel.includes(normalizedSector);
   });
 
-  const socialLinks = hasSection('social_links')
+  const socialLinks: ActionConfig[] = hasSection('social_links')
     ? [
         { label: 'Instagram', href: normalizeExternalUrl(business['Lien Instagram']), icon: Instagram },
         { label: 'Facebook', href: normalizeExternalUrl(business['lien facebook']), icon: Facebook },
         { label: 'LinkedIn', href: normalizeExternalUrl(business['Lien LinkedIn']), icon: Linkedin },
         { label: 'YouTube', href: normalizeExternalUrl(business['Lien YouTube']), icon: Youtube },
         { label: 'TikTok', href: normalizeExternalUrl(business['Lien TikTok']), icon: Music2 },
-      ].filter(link => link.href).slice(0, capabilities.variant === 'artisan' ? 2 : undefined)
+      ]
+        .filter(link => link.href)
+        .slice(0, capabilities.variant === 'artisan' ? 2 : undefined)
+        .map(link => ({ ...link, external: true }))
     : [];
 
   const installLabel = language === 'ar'
@@ -1020,6 +1022,8 @@ export default function BusinessShowcaseLienoraDetail({
       external: true,
     },
   ].filter((action): action is ActionConfig => Boolean(action));
+
+  const portfolioActions: ActionConfig[] = [...primaryActions, ...socialLinks];
 
   const displayedPrimaryActions = embeddedPreview
     ? primaryActions.filter(action => [installLabel, text.call, text.whatsapp, text.email, text.directions].includes(action.label))
@@ -1441,7 +1445,7 @@ export default function BusinessShowcaseLienoraDetail({
           logoImage={logoImage}
           productLabel={resolvedPresentation.productName}
           certification={certification}
-          actions={primaryActions}
+          actions={portfolioActions}
           gallery={galleryItems}
           onBack={handleBack}
           bookingContent={sections.find(section => section.id === 'booking')?.content}
