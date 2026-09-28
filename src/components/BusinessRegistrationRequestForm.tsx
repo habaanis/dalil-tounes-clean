@@ -19,6 +19,7 @@ import {
   normalizeWebAddress,
   type RegistrationMode,
 } from '../lib/businessRegistrationValidation';
+import { trackMetaEvent } from '../lib/metaPixel';
 
 interface BusinessRegistrationRequestFormProps {
   mode?: RegistrationMode;
@@ -487,7 +488,12 @@ export function BusinessRegistrationRequestForm({
             consent: form.consent,
           };
 
-      await submitBusinessRegistration(request);
+      const response = await submitBusinessRegistration(request);
+      if (!response.duplicate) {
+        trackMetaEvent(isSubscription ? 'Lead' : 'CompleteRegistration', {
+          content_name: isSubscription ? 'Information request' : 'Business registration',
+        });
+      }
       setSubmitted(true);
       onSuccess?.();
     } catch (error) {
