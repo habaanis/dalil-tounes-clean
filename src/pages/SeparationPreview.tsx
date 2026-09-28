@@ -15,7 +15,7 @@ const COPY: Record<Lang, {
   previewNotice: string; platformTab: string; cvTab: string; platformLabel: string;
   platformTitle: string; platformDescription: string; categories: Array<[string, string]>;
   professionalEyebrow: string; platformPromoTitle: string; platformPromoText: string;
-  networkProof: (count: string) => string; loadingCount: string;
+  networkProof: (count: string) => string; certifiedProof: (count: string) => string; loadingCount: string;
   miniAppTitle: string; miniAppText: string; miniAppHighlights: string;
   certifiedTitle: string; certifiedSubtitle: string; certifiedLoading: string;
   discoverCv: string; cvLabel: string; cvTitle: string; cvSubtitle: string;
@@ -30,7 +30,8 @@ const COPY: Record<Lang, {
     platformLabel: 'Plateforme et annuaire tunisien', platformTitle: 'Trouvez les entreprises et les services dont vous avez besoin en Tunisie.',
     platformDescription: 'Recherchez une activité, découvrez les professionnels référencés et contactez-les directement.',
     categories: [['Santé', '/citizens/sante'], ['Éducation', '/education'], ['Commerces', '/citizens/shops'], ['Services', '/citizens/services']],
-    networkProof: (count) => `Déjà ${count} activités référencées. Faites entrer la vôtre dans la Maison Dalil Tounes.`, loadingCount: "Chargement du nombre d'activités",
+    networkProof: (count) => `Déjà ${count} activités référencées. Faites entrer la vôtre dans la Maison Dalil Tounes.`,
+    certifiedProof: (count) => `dont ${count} établissements certifiés Dalil Tounes.`, loadingCount: "Chargement du nombre d'activités",
     professionalEyebrow: 'Vous êtes professionnel ?',
     platformPromoTitle: 'Donnez à votre activité une présentation claire et partageable avec le CV Business Dalil Tounes.',
     platformPromoText: 'Présentez toutes vos informations, partagez-les par lien ou QR Code et renforcez votre présence sur Dalil Tounes ainsi que votre visibilité sur Google.',
@@ -60,7 +61,8 @@ const COPY: Record<Lang, {
     platformLabel: 'منصة ودليل مهني تونسي', platformTitle: 'اعثر على الشركات والخدمات التي تحتاجها في تونس.',
     platformDescription: 'ابحث عن نشاط، واكتشف المهنيين المدرجين وتواصل معهم مباشرة.',
     categories: [['الصحة', '/citizens/sante'], ['التعليم', '/education'], ['المتاجر', '/citizens/shops'], ['الخدمات', '/citizens/services']],
-    networkProof: (count) => `تم إدراج ${count} نشاطاً بالفعل. أضف نشاطك إلى بيت دليل تونس.`, loadingCount: 'جارٍ تحميل عدد الأنشطة',
+    networkProof: (count) => `تم إدراج ${count} نشاطاً بالفعل. أضف نشاطك إلى بيت دليل تونس.`,
+    certifiedProof: (count) => `من بينها ${count} مؤسسة موثّقة من دليل تونس.`, loadingCount: 'جارٍ تحميل عدد الأنشطة',
     professionalEyebrow: 'هل أنت مهني؟', platformPromoTitle: 'امنح نشاطك عرضاً واضحاً وسهل المشاركة مع CV Business من دليل تونس.',
     platformPromoText: 'اعرض كل معلوماتك وشاركها عبر رابط أو رمز QR، وعزّز حضورك على دليل تونس وظهور نشاطك على Google.',
     miniAppTitle: 'مؤسستك ترافقك أينما ذهبت',
@@ -88,7 +90,8 @@ const COPY: Record<Lang, {
     platformLabel: 'Tunisian platform and directory', platformTitle: 'Find the businesses and services you need in Tunisia.',
     platformDescription: 'Search for an activity, discover listed professionals and contact them directly.',
     categories: [['Health', '/citizens/sante'], ['Education', '/education'], ['Shops', '/citizens/shops'], ['Services', '/citizens/services']],
-    networkProof: (count) => `${count} activities are already listed. Bring yours into the Dalil Tounes House.`, loadingCount: 'Loading the number of activities',
+    networkProof: (count) => `${count} activities are already listed. Bring yours into the Dalil Tounes House.`,
+    certifiedProof: (count) => `including ${count} Dalil Tounes certified businesses.`, loadingCount: 'Loading the number of activities',
     professionalEyebrow: 'Are you a professional?', platformPromoTitle: 'Give your activity a clear, shareable presentation with the Dalil Tounes Business CV.',
     platformPromoText: 'Present all your information, share it by link or QR code and strengthen your presence on Dalil Tounes and your visibility on Google.',
     miniAppTitle: 'Take your business everywhere',
@@ -116,7 +119,8 @@ const COPY: Record<Lang, {
     platformLabel: 'Piattaforma e directory tunisina', platformTitle: 'Trova le imprese e i servizi di cui hai bisogno in Tunisia.',
     platformDescription: 'Cerca un’attività, scopri i professionisti presenti e contattali direttamente.',
     categories: [['Salute', '/citizens/sante'], ['Istruzione', '/education'], ['Negozi', '/citizens/shops'], ['Servizi', '/citizens/services']],
-    networkProof: (count) => `Già ${count} attività registrate. Porta anche la tua nella Casa Dalil Tounes.`, loadingCount: 'Caricamento del numero di attività',
+    networkProof: (count) => `Già ${count} attività registrate. Porta anche la tua nella Casa Dalil Tounes.`,
+    certifiedProof: (count) => `di cui ${count} attività certificate da Dalil Tounes.`, loadingCount: 'Caricamento del numero di attività',
     professionalEyebrow: 'Sei un professionista?', platformPromoTitle: 'Dai alla tua attività una presentazione chiara e condivisibile con il CV Business Dalil Tounes.',
     platformPromoText: 'Presenta tutte le tue informazioni, condividile tramite link o QR Code e rafforza la tua presenza su Dalil Tounes e la tua visibilità su Google.',
     miniAppTitle: 'La tua impresa ti accompagna ovunque',
@@ -144,7 +148,8 @@ const COPY: Record<Lang, {
     platformLabel: 'Тунисская платформа и каталог', platformTitle: 'Найдите нужные компании и услуги в Тунисе.',
     platformDescription: 'Ищите виды деятельности, находите представленных специалистов и связывайтесь с ними напрямую.',
     categories: [['Здоровье', '/citizens/sante'], ['Образование', '/education'], ['Магазины', '/citizens/shops'], ['Услуги', '/citizens/services']],
-    networkProof: (count) => `Уже ${count} видов деятельности представлены на платформе. Добавьте свой в Дом Dalil Tounes.`, loadingCount: 'Загрузка количества видов деятельности',
+    networkProof: (count) => `Уже ${count} видов деятельности представлены на платформе. Добавьте свой в Дом Dalil Tounes.`,
+    certifiedProof: (count) => `из них ${count} компаний сертифицированы Dalil Tounes.`, loadingCount: 'Загрузка количества видов деятельности',
     professionalEyebrow: 'Вы профессионал?', platformPromoTitle: 'Представьте свою деятельность понятно и удобно с Business CV Dalil Tounes.',
     platformPromoText: 'Покажите всю информацию, делитесь ею по ссылке или QR-коду и укрепляйте присутствие на Dalil Tounes и видимость в Google.',
     miniAppTitle: 'Ваша компания всегда с вами',
@@ -176,9 +181,10 @@ function SeparationExperience({ fixedView }: { fixedView?: 'platform' | 'cv' }) 
   const { language } = useLanguage();
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as Lang;
   const t = COPY[lang];
-  const { partners, totalCount, loading } = useHomeData();
+  const { partners, totalCount, certifiedCount, loading } = useHomeData();
   const displayedCount = totalCount > 0 ? totalCount : 1894;
   const localizedCount = new Intl.NumberFormat(lang === 'ar' ? 'ar-TN' : lang).format(displayedCount);
+  const localizedCertifiedCount = new Intl.NumberFormat(lang === 'ar' ? 'ar-TN' : lang).format(certifiedCount);
 
   return (
     <div dir={lang === 'ar' ? 'rtl' : 'ltr'} className="bg-white text-slate-900">
@@ -200,7 +206,10 @@ function SeparationExperience({ fixedView }: { fixedView?: 'platform' | 'cv' }) 
               <h1 className="mx-auto mt-5 max-w-3xl font-serif text-4xl font-bold leading-tight text-[#2E102A] md:text-6xl">{t.platformTitle}</h1>
               <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-gray-600 md:text-lg">{t.platformDescription}</p>
               <div className="mx-auto mt-7 max-w-3xl rounded-2xl border border-[#D4AF37]/40 bg-white p-3 shadow-[0_18px_45px_rgba(74,29,67,0.10)]"><SearchBar scope="global" autoSearch resultMode="redirectToResults" /></div>
-              <p className="mx-auto mt-4 max-w-3xl rounded-2xl border border-[#D4AF37]/55 bg-[#FFF8E6] px-4 py-3 text-base font-black leading-relaxed text-[#4A1D43] shadow-sm md:text-xl">{loading ? <span className="inline-block h-6 w-96 max-w-full animate-pulse rounded bg-[#D4AF37]/15" aria-label={t.loadingCount} /> : t.networkProof(localizedCount)}</p>
+              <div className="mx-auto mt-4 max-w-3xl rounded-2xl border border-[#D4AF37]/55 bg-[#FFF8E6] px-4 py-3 text-[#4A1D43] shadow-sm">
+                <p className="text-base font-black leading-relaxed md:text-xl">{loading ? <span className="inline-block h-6 w-96 max-w-full animate-pulse rounded bg-[#D4AF37]/15" aria-label={t.loadingCount} /> : t.networkProof(localizedCount)}</p>
+                <p className="mt-1 text-sm font-bold text-[#9A7416] md:text-base">{loading ? <span className="inline-block h-5 w-48 max-w-full animate-pulse rounded bg-[#D4AF37]/15" /> : t.certifiedProof(localizedCertifiedCount)}</p>
+              </div>
               <div className="mx-auto mt-3 grid max-w-3xl grid-cols-2 gap-2 sm:grid-cols-4">{t.categories.map(([label, href]) => <a key={href} href={href} className="min-h-11 rounded-xl border border-[#D4AF37]/40 bg-white px-3 py-3 text-sm font-bold text-[#4A1D43] transition hover:bg-[#FFF8DF]">{label}</a>)}</div>
             </div>
           </section>
