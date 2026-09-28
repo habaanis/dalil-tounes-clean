@@ -108,6 +108,7 @@ Deno.serve(async (request: Request) => {
           email: text(fields["Email du client"], 320),
           stage: text(fields["Étape du dossier"], 100),
           link: httpUrl(fields["Lien de l’aperçu"]),
+          linkedBusiness: Array.isArray(fields["Fiche entreprise liée"]) && fields["Fiche entreprise liée"].length > 0,
         })),
       });
     }
@@ -115,6 +116,14 @@ Deno.serve(async (request: Request) => {
       const id = search.get("record_id") || "";
       if (!/^rec[a-zA-Z0-9]{10,24}$/.test(id)) return reply({ error: "Dossier invalide" }, 400);
       const row = await airtable(`/${id}`, airtableToken) as AirtableRow;
+      const linked = row.fields["Fiche entreprise liée"];
+      let businessUrl = "";
+      if (Array.isArray(linked) && linked.length === 1 && typeof linked[0] === "string") {
+        try {
+          const business = await airtable(`/${linked[0]}`, airtableToken, undefined, BUSINESS_TABLE_ID) as AirtableRow;
+          businessUrl = httpUrl(business.fields["Lien public Dalil Tounes"]);
+        } catch { /* Keep the client dossier readable even if its business link needs repair. */ }
+      }
       const { data: existing } = await admin
         .from("business_previews").select("content")
         .eq("airtable_record_id", id).maybeSingle();
@@ -130,6 +139,8 @@ Deno.serve(async (request: Request) => {
           formula: text(row.fields["Formule demandée"], 100),
           palette: text(row.fields["Palette demandée"], 100),
           link: httpUrl(row.fields["Lien de l’aperçu"]),
+          linkedBusiness: Array.isArray(linked) && linked.length > 0,
+          businessUrl,
         },
         preview: existing?.content || null,
       });
@@ -143,8 +154,29 @@ Deno.serve(async (request: Request) => {
       if (!["Paiement vérifié", "Prêt à publier"].includes(stage)) {
         return reply({ error: "Vérifiez le paiement dans le suivi client avant de publier." }, 409);
       }
-      if (Array.isArray(row.fields["Fiche entreprise liée"]) && row.fields["Fiche entreprise liée"].length) {
-        return reply({ error: "Ce dossier est déjà lié à une fiche entreprise." }, 409);
+      const linked = row.fields["Fiche entreprise liée"];
+      if (Array.isArray(linked) && linked.length) {
+        // Existing customers already have their business record. Complete their
+        // paid dossier without creating another business or sending an email.
+        if (linked.length !== 1 || typeof linked[0] !== "string" ||
+            !/^rec[a-zA-Z0-9]{10,24}$/.test(linked[0])) {
+          return reply({ error: "Vérifiez la fiche entreprise liée à ce dossier." }, 409);
+        }
+        const existing = await airtable(`/${linked[0]}`, airtableToken, undefined, BUSINESS_TABLE_ID) as AirtableRow;
+        const publicUrl = httpUrl(existing.fields["Lien public Dalil Tounes"]);
+        const { data: live, error: liveError } = await admin.from("entreprise")
+          .select("id,statut_publication").eq("id_airtable", linked[0]).maybeSingle();
+        if (liveError || !live || !publicUrl ||
+            text(existing.fields["Statut de publication"]) !== "Publié" ||
+            live.statut_publication !== "Publié") {
+          return reply({ error: "Cette fiche liée doit être synchronisée et publiée avant de clôturer le dossier." }, 409);
+        }
+        await airtable(`/${recordId}`, airtableToken, {
+          method: "PATCH", body: JSON.stringify({ fields: {
+            "Étape du dossier": "Publié", "Publié le": new Date().toISOString(),
+          } }),
+        });
+        return reply({ id: linked[0], url: publicUrl, existingBusiness: true });
       }
       const formula = `{registration_requests}="${recordId}"`;
       const old = await airtable(`?filterByFormula=${encodeURIComponent(formula)}&pageSize=1`,

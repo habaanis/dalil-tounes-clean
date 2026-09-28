@@ -2,7 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase, supabaseAnonKey, supabaseUrl } from '../lib/supabaseClient';
 
-type ClientRow = { id: string; name: string; email: string; stage: string; link: string };
+type ClientRow = { id: string; name: string; email: string; stage: string; link: string; linkedBusiness?: boolean; businessUrl?: string };
 type Draft = Record<string, string>;
 const fields: { key: string; label: string; multiline?: boolean }[] = [
   { key: 'nom', label: 'Nom de l’établissement' },
@@ -80,7 +80,7 @@ export default function AdminBusinessPreviews() {
     try {
       const data = await call(`?record_id=${encodeURIComponent(row.id)}`);
       const item = data.record;
-      setSelected({ ...row, stage: item.stage || row.stage });
+      setSelected({ ...row, stage: item.stage || row.stage, linkedBusiness: item.linkedBusiness, businessUrl: item.businessUrl });
       setLink(item.link || '');
       setPublishedUrl('');
       setPrivateRequest(item.request || '');
@@ -114,7 +114,9 @@ export default function AdminBusinessPreviews() {
   };
 
   const publish = async () => {
-    if (!selected || !window.confirm('Le paiement est vérifié et le client a donné son accord : publier cette fiche ?')) return;
+    if (!selected || !window.confirm(selected.linkedBusiness
+      ? 'Le paiement est vérifié : terminer ce dossier avec la fiche existante ?'
+      : 'Le paiement est vérifié et le client a donné son accord : publier cette fiche ?')) return;
     setBusy(true);
     setStatus('');
     try {
@@ -123,7 +125,9 @@ export default function AdminBusinessPreviews() {
       });
       setPublishedUrl(data.url);
       setSelected({ ...selected, stage: 'Publié' });
-      setStatus(data.warning || 'Fiche publiée. L’email de lancement attend toujours votre validation.');
+      setStatus(data.warning || (data.existingBusiness
+        ? 'Dossier terminé avec la fiche existante. L’email de lancement attend toujours votre validation.'
+        : 'Fiche publiée. L’email de lancement attend toujours votre validation.'));
     } catch (error) {
       setStatus(error instanceof Error ? error.message : 'Erreur de publication');
     } finally {
@@ -150,14 +154,20 @@ export default function AdminBusinessPreviews() {
           {selected ? <form onSubmit={save} className="space-y-5 rounded-2xl bg-white p-6 shadow-sm">
             <h2 className="text-xl font-semibold">{selected.name}</h2>
             <p className="text-sm font-semibold">Étape du dossier : {selected.stage || 'Demande reçue'}</p>
-            <p className="text-sm text-slate-600">La présentation reste privée. Modifier une fiche conserve son lien si celui-ci est enregistré dans Airtable.</p>
-            <p className="text-sm text-amber-800">Pour un aperçu en arabe, remplissez aussi les textes en arabe avant d’envoyer le lien.</p>
+            {selected.linkedBusiness ? <div className="rounded-xl bg-blue-50 p-4 text-sm text-blue-950">
+              <p className="font-semibold">Cette entreprise possède déjà une fiche. Aucune nouvelle fiche ne sera créée.</p>
+              {selected.businessUrl && <a className="mt-2 block break-all text-blue-700 underline" href={selected.businessUrl} target="_blank" rel="noopener noreferrer">Voir sa fiche actuelle : {selected.businessUrl}</a>}
+              <p className="mt-2">Corrigez ses informations dans la fiche entreprise Airtable. Attendez de vérifier le paiement avant de terminer ce dossier.</p>
+            </div> : <>
+              <p className="text-sm text-slate-600">La présentation reste privée. Modifier une fiche conserve son lien si celui-ci est enregistré dans Airtable.</p>
+              <p className="text-sm text-amber-800">Pour un aperçu en arabe, remplissez aussi les textes en arabe avant d’envoyer le lien.</p>
+            </>}
             <div className="rounded-xl bg-slate-100 p-4 text-sm">
               <strong>Informations reçues du client (internes)</strong>
               <p className="mt-2">Email : {selected.email || '—'} · Téléphone : {privatePhone || '—'}</p>
               {privateRequest && <p className="mt-2 whitespace-pre-line">{privateRequest}</p>}
             </div>
-            <div className="grid gap-4 md:grid-cols-2">
+            {!selected.linkedBusiness && <><div className="grid gap-4 md:grid-cols-2">
               {fields.map(({ key, label, multiline }) => <label key={key} className={`block text-sm font-medium ${multiline ? 'md:col-span-2' : ''}`}>
                 {label}
                 {multiline
@@ -184,10 +194,12 @@ export default function AdminBusinessPreviews() {
                 <p className="mt-2 text-sm">Lien client prévu après mise en ligne : {link}</p>
               </> : <a className="text-blue-700 underline" href={link} target="_blank" rel="noopener noreferrer">{link}</a>}
               <p className="mt-2 text-sm">Le lien suit la langue choisie dans Airtable : ?lang=ar pour l’arabe, ?lang=fr pour le français.</p>
-            </div>}
+            </div>}</>}
             {['Paiement vérifié', 'Prêt à publier'].includes(selected.stage) && <div className="rounded-xl border border-blue-200 p-4">
-              <p className="mb-3 text-sm">Publier après accord du client et paiement vérifié. Une fiche sera créée dans « entreprise » et liée à ce dossier.</p>
-              <button type="button" disabled={busy} onClick={publish} className="rounded-xl bg-blue-900 px-6 py-3 font-semibold text-white disabled:opacity-50">Publier la fiche</button>
+              <p className="mb-3 text-sm">{selected.linkedBusiness
+                ? 'Paiement vérifié : terminer ce dossier avec sa fiche existante, sans en créer une autre.'
+                : 'Publier après accord du client et paiement vérifié. Une fiche sera créée dans « entreprise » et liée à ce dossier.'}</p>
+              <button type="button" disabled={busy} onClick={publish} className="rounded-xl bg-blue-900 px-6 py-3 font-semibold text-white disabled:opacity-50">{selected.linkedBusiness ? 'Terminer le dossier' : 'Publier la fiche'}</button>
             </div>}
             {publishedUrl && <p className="break-all text-sm">Fiche publiée : <a className="text-blue-700 underline" href={publishedUrl} target="_blank" rel="noopener noreferrer">{publishedUrl}</a></p>}
           </form> : <p className="text-slate-600">Sélectionnez un dossier pour préparer sa fiche.</p>}
