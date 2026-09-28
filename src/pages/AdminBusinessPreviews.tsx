@@ -30,6 +30,8 @@ export default function AdminBusinessPreviews() {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [link, setLink] = useState('');
+  const [privateRequest, setPrivateRequest] = useState('');
+  const [privatePhone, setPrivatePhone] = useState('');
 
   const call = async (path: string, options: RequestInit = {}) => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -61,9 +63,10 @@ export default function AdminBusinessPreviews() {
       const item = data.record;
       setSelected(row);
       setLink(item.link || '');
+      setPrivateRequest(item.request || '');
+      setPrivatePhone(item.phone || '');
       setDraft(data.preview || {
-        nom: item.name, telephone: item.phone, email: item.email,
-        description: item.request, modele_cv: item.model || 'Business',
+        nom: item.name, modele_cv: item.model || 'Business',
         palette_cv: item.palette || 'Prestige', formule_commerciale: item.formula || '',
       });
     } catch (error) {
@@ -106,6 +109,11 @@ export default function AdminBusinessPreviews() {
           {selected ? <form onSubmit={save} className="space-y-5 rounded-2xl bg-white p-6 shadow-sm">
             <h2 className="text-xl font-semibold">{selected.name}</h2>
             <p className="text-sm text-slate-600">La présentation reste privée. Modifier une fiche conserve son lien si celui-ci est enregistré dans Airtable.</p>
+            <div className="rounded-xl bg-slate-100 p-4 text-sm">
+              <strong>Informations reçues du client (internes)</strong>
+              <p className="mt-2">Email : {selected.email || '—'} · Téléphone : {privatePhone || '—'}</p>
+              {privateRequest && <p className="mt-2 whitespace-pre-line">{privateRequest}</p>}
+            </div>
             <div className="grid gap-4 md:grid-cols-2">
               {fields.map(({ key, label, multiline }) => <label key={key} className={`block text-sm font-medium ${multiline ? 'md:col-span-2' : ''}`}>
                 {label}

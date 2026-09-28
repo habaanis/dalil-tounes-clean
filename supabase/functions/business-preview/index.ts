@@ -149,9 +149,9 @@ Deno.serve(async (request: Request) => {
         ville: text(input.ville, 200),
         gouvernorat: text(input.gouvernorat, 200),
         adresse: text(input.adresse, 500),
-        telephone: text(input.telephone, 80) || text(row.fields["Téléphone du client"], 80),
+        telephone: text(input.telephone, 80),
         whatsapp: text(input.whatsapp, 80),
-        email: text(input.email, 320) || text(row.fields["Email du client"], 320),
+        email: text(input.email, 320),
         site_web: httpUrl(input.site_web),
         image_url: httpUrl(input.image_url),
         logo_url: httpUrl(input.logo_url),
@@ -183,8 +183,15 @@ Deno.serve(async (request: Request) => {
       }, { onConflict: "airtable_record_id" });
       if (error) throw error;
       try {
+        const fields: Record<string, string> = {
+          "Lien de l’aperçu": link,
+          "Fiche préparée le": new Date().toISOString(),
+        };
+        if (row.fields["Étape du dossier"] === "Demande reçue") {
+          fields["Étape du dossier"] = "Fiche en préparation";
+        }
         await airtable(`/${recordId}`, airtableToken, {
-          method: "PATCH", body: JSON.stringify({ fields: { "Lien de l’aperçu": link } }),
+          method: "PATCH", body: JSON.stringify({ fields }),
         });
       } catch {
         return reply({ link, warning: "Lien créé, mais non enregistré dans Airtable. Copiez-le depuis cette page." });
