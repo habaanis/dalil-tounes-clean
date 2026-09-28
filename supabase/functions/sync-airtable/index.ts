@@ -410,6 +410,14 @@ function mapRecord(record: AirtableRecord): EnterprisePayload {
   setIfPresent(payload, "palette_cv", cvPaletteValue(pick("palette_cv")));
   setIfPresent(payload, "formule_commerciale", textValue(pick("formule_commerciale")));
   setIfPresent(payload, "statut_publication", textValue(pick("statut_publication")));
+  const commercialPlan = normalizedChoice(pick("formule_commerciale"));
+  if (commercialPlan.includes("artisan")) {
+    setIfPresent(payload, "statut_abonnement", "Artisan");
+  } else if (commercialPlan.includes("premium")) {
+    setIfPresent(payload, "statut_abonnement", "Premium");
+  } else if (commercialPlan.includes("presence essentielle")) {
+    setIfPresent(payload, "statut_abonnement", "Gratuit");
+  }
   setIfPresent(payload, "search_text", textValue(pick("search_text")));
   setIfPresent(payload, "mots cles recherche", textValue(pick("mots_cles_recherche")));
   setIfPresent(payload, "synonymes_seo", textValue(pick("synonymes_seo")));
