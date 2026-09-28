@@ -753,6 +753,15 @@ Deno.serve(async (req: Request) => {
       supabase,
       records.map((record) => record.id),
     );
+    // A new Airtable card may already have the UUID used in its QR link.
+    // Preserve it at first insertion; never replace an existing Supabase ID.
+    records.forEach((record, index) => {
+      if (existingByAirtableId.has(record.id)) return;
+      const publicId = textValue(record.fields.id);
+      if (publicId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(publicId)) {
+        mapped[index].id = publicId;
+      }
+    });
     const analysis = analyzeRecords(records, mapped, existingByAirtableId);
     const violations = guardViolations(analysis);
     const unknownAirtableFields = findUnusedAirtableFields(records);

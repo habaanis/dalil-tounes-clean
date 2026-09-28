@@ -30,6 +30,7 @@ export default function AdminBusinessPreviews() {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [link, setLink] = useState('');
+  const [publishedUrl, setPublishedUrl] = useState('');
   const [privateRequest, setPrivateRequest] = useState('');
   const [privatePhone, setPrivatePhone] = useState('');
 
@@ -61,8 +62,9 @@ export default function AdminBusinessPreviews() {
     try {
       const data = await call(`?record_id=${encodeURIComponent(row.id)}`);
       const item = data.record;
-      setSelected(row);
+      setSelected({ ...row, stage: item.stage || row.stage });
       setLink(item.link || '');
+      setPublishedUrl('');
       setPrivateRequest(item.request || '');
       setPrivatePhone(item.phone || '');
       setDraft(data.preview || {
@@ -84,9 +86,28 @@ export default function AdminBusinessPreviews() {
     try {
       const data = await call('', { method: 'POST', body: JSON.stringify({ recordId: selected.id, preview: draft }) });
       setLink(data.link);
+      if (selected.stage === 'Demande reçue') setSelected({ ...selected, stage: 'Fiche en préparation' });
       setStatus(data.warning || 'Aperçu enregistré. Le lien est aussi dans le dossier Airtable.');
     } catch (error) {
       setStatus(error instanceof Error ? error.message : 'Erreur');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const publish = async () => {
+    if (!selected || !window.confirm('Le paiement est vérifié et le client a donné son accord : publier cette fiche ?')) return;
+    setBusy(true);
+    setStatus('');
+    try {
+      const data = await call('?admin=publish', {
+        method: 'POST', body: JSON.stringify({ recordId: selected.id }),
+      });
+      setPublishedUrl(data.url);
+      setSelected({ ...selected, stage: 'Publié' });
+      setStatus(data.warning || 'Fiche publiée. L’email de lancement attend toujours votre validation.');
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : 'Erreur de publication');
     } finally {
       setBusy(false);
     }
@@ -108,6 +129,7 @@ export default function AdminBusinessPreviews() {
           </nav>
           {selected ? <form onSubmit={save} className="space-y-5 rounded-2xl bg-white p-6 shadow-sm">
             <h2 className="text-xl font-semibold">{selected.name}</h2>
+            <p className="text-sm font-semibold">Étape du dossier : {selected.stage || 'Demande reçue'}</p>
             <p className="text-sm text-slate-600">La présentation reste privée. Modifier une fiche conserve son lien si celui-ci est enregistré dans Airtable.</p>
             <div className="rounded-xl bg-slate-100 p-4 text-sm">
               <strong>Informations reçues du client (internes)</strong>
@@ -134,6 +156,11 @@ export default function AdminBusinessPreviews() {
             </div>
             <button disabled={busy} className="rounded-xl bg-emerald-900 px-6 py-3 font-semibold text-white disabled:opacity-50">{busy ? 'Enregistrement…' : 'Enregistrer et obtenir le lien'}</button>
             {link && <div className="break-all rounded-xl border border-emerald-300 bg-emerald-50 p-4"><p className="mb-2 font-semibold">Lien privé du client (valable 30 jours)</p><a className="text-blue-700 underline" href={link} target="_blank" rel="noopener noreferrer">{link}</a><p className="mt-2 text-sm">Ajoutez ?lang=fr au lien pour le français. L’arabe est affiché par défaut.</p></div>}
+            {['Paiement vérifié', 'Prêt à publier'].includes(selected.stage) && <div className="rounded-xl border border-blue-200 p-4">
+              <p className="mb-3 text-sm">Publier après accord du client et paiement vérifié. Une fiche sera créée dans « entreprise » et liée à ce dossier.</p>
+              <button type="button" disabled={busy} onClick={publish} className="rounded-xl bg-blue-900 px-6 py-3 font-semibold text-white disabled:opacity-50">Publier la fiche</button>
+            </div>}
+            {publishedUrl && <p className="break-all text-sm">Fiche publiée : <a className="text-blue-700 underline" href={publishedUrl} target="_blank" rel="noopener noreferrer">{publishedUrl}</a></p>}
           </form> : <p className="text-slate-600">Sélectionnez un dossier pour préparer sa fiche.</p>}
         </div>
       )}

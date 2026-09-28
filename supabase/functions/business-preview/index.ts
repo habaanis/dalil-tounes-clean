@@ -3,6 +3,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 
 const BASE_ID = "app9Q828Splwvm4jW";
 const TABLE_ID = "tbl28xvuFDmbrgu5f";
+const BUSINESS_TABLE_ID = "tbl8B6aiFeUe0hoQS";
 const PUBLIC_ORIGIN = "https://dalil-tounes.com";
 const headers = {
   "Access-Control-Allow-Origin": "*",
@@ -39,8 +40,8 @@ const randomToken = () =>
     .map((byte) => byte.toString(16).padStart(2, "0")).join("");
 
 type AirtableRow = { id: string; fields: Record<string, unknown> };
-const airtable = async (path: string, token: string, init?: RequestInit) => {
-  const response = await fetch(`https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}${path}`, {
+const airtable = async (path: string, token: string, init?: RequestInit, tableId = TABLE_ID) => {
+  const response = await fetch(`https://api.airtable.com/v0/${BASE_ID}/${tableId}${path}`, {
     ...init,
     headers: {
       Authorization: `Bearer ${token}`,
@@ -121,6 +122,7 @@ Deno.serve(async (request: Request) => {
         record: {
           id,
           name: text(row.fields["Nom de l’établissement"], 200),
+          stage: text(row.fields["Étape du dossier"], 100),
           email: text(row.fields["Email du client"], 320),
           phone: text(row.fields["Téléphone du client"], 80),
           request: text(row.fields["Demande du client"], 5000),
@@ -131,6 +133,109 @@ Deno.serve(async (request: Request) => {
         },
         preview: existing?.content || null,
       });
+    }
+    if (request.method === "POST" && search.get("admin") === "publish") {
+      const body = await request.json();
+      const recordId = text(body.recordId, 40);
+      if (!/^rec[a-zA-Z0-9]{10,24}$/.test(recordId)) return reply({ error: "Dossier invalide" }, 400);
+      const row = await airtable(`/${recordId}`, airtableToken) as AirtableRow;
+      const stage = text(row.fields["Étape du dossier"]);
+      if (!["Paiement vérifié", "Prêt à publier"].includes(stage)) {
+        return reply({ error: "Vérifiez le paiement dans le suivi client avant de publier." }, 409);
+      }
+      if (Array.isArray(row.fields["Fiche entreprise liée"]) && row.fields["Fiche entreprise liée"].length) {
+        return reply({ error: "Ce dossier est déjà lié à une fiche entreprise." }, 409);
+      }
+      const formula = `{registration_requests}="${recordId}"`;
+      const old = await airtable(`?filterByFormula=${encodeURIComponent(formula)}&pageSize=1`,
+        airtableToken, undefined, BUSINESS_TABLE_ID) as { records: AirtableRow[] };
+      if (old.records.length) {
+        return reply({ error: "Une fiche entreprise existe déjà pour ce dossier. Reliez-la dans Airtable." }, 409);
+      }
+      const { data: preview, error: previewError } = await admin.from("business_previews")
+        .select("content").eq("airtable_record_id", recordId).maybeSingle();
+      if (previewError || !preview) return reply({ error: "Préparez d’abord un aperçu client." }, 409);
+      const content = preview.content as Record<string, unknown>;
+      const name = text(content.nom, 200);
+      const city = text(content.ville, 200);
+      const email = text(content.email, 320);
+      const description = text(content.description, 5000);
+      const model = /portfolio/i.test(text(content.modele_cv)) ? "Portfolio" : "Business";
+      const paletteChoice = /night|nuit|bleu/i.test(text(content.palette_cv))
+        ? "Bleu Nuit & Champagne"
+        : /ivory|ivoire/i.test(text(content.palette_cv)) ? "Ivoire & Or" : "Vert Prestige";
+      const offer = text(content.formule_commerciale, 100);
+      if (!name || !city || !email || description.length < 10 ||
+          !["Présence essentielle", "Artisan — 30 TND", "Premium — 59 TND"].includes(offer)) {
+        return reply({ error: "Nom, ville, email professionnel, présentation et formule sont requis avant publication." }, 400);
+      }
+      const uuid = crypto.randomUUID();
+      const businessFields: Record<string, unknown> = {
+        nom: name,
+        id: uuid,
+        ville: city,
+        description,
+        email_professionnel: email,
+        "Modèle de vitrine": model,
+        "Palette de vitrine": paletteChoice,
+        "Formule commerciale": offer,
+        "Statut de publication": "Publié",
+        registration_requests: recordId,
+        langue: text(row.fields["Langue de l’email"]) === "Français" ? "fr" : "ar",
+      };
+      const copy: Record<string, string> = {
+        adresse: text(content.adresse, 500),
+        gouvernorat: text(content.gouvernorat, 200),
+        telephone1: text(content.telephone, 80),
+        "Numéro Whatsapp": text(content.whatsapp, 80),
+        site_web: httpUrl(content.site_web),
+        a_propos: text(content.a_propos, 5000),
+        image_url: httpUrl(content.image_url),
+        logo_url: httpUrl(content.logo_url),
+        "lien facebook": httpUrl(content.lien_facebook),
+        "Lien Instagram": httpUrl(content.lien_instagram),
+      };
+      for (const [key, value] of Object.entries(copy)) if (value) businessFields[key] = value;
+      const created = await airtable("", airtableToken, {
+        method: "POST", body: JSON.stringify({ fields: businessFields }),
+      }, BUSINESS_TABLE_ID) as AirtableRow;
+      // Link the source immediately, so retrying cannot silently create a duplicate.
+      await airtable(`/${recordId}`, airtableToken, {
+        method: "PATCH", body: JSON.stringify({ fields: { "Fiche entreprise liée": [created.id] } }),
+      });
+      const tier = offer.startsWith("Artisan") ? "Artisan" :
+        offer.startsWith("Premium") ? "Premium" : "Gratuit";
+      const { error: syncError } = await admin.from("entreprise").upsert({
+        id: uuid,
+        id_airtable: created.id,
+        nom: name,
+        ville: city,
+        description,
+        email,
+        categorie: text(content.categorie) ? [text(content.categorie, 200)] : null,
+        services: text(content.services, 5000) || null,
+        a_propos: text(content.a_propos, 5000) || null,
+        statut_abonnement: tier,
+        statut_publication: "Publié",
+        modele_cv: model.toLowerCase(),
+        palette_cv: paletteChoice === "Ivoire & Or" ? "ivory" :
+          paletteChoice === "Bleu Nuit & Champagne" ? "night" : "prestige",
+        formule_commerciale: offer,
+      }, { onConflict: "id_airtable" });
+      if (syncError) throw syncError;
+      try {
+        await airtable(`/${recordId}`, airtableToken, {
+          method: "PATCH",
+          body: JSON.stringify({ fields: {
+            "Étape du dossier": "Publié",
+            "Publié le": new Date().toISOString(),
+          } }),
+        });
+      } catch {
+        return reply({ id: created.id, url: `${PUBLIC_ORIGIN}/qr-business/${uuid}`,
+          warning: "Fiche publiée. Mettez l’étape du dossier sur « Publié » dans Airtable." });
+      }
+      return reply({ id: created.id, url: `${PUBLIC_ORIGIN}/qr-business/${uuid}` });
     }
     if (request.method === "POST") {
       const body = await request.json();
