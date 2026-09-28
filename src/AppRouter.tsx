@@ -97,6 +97,8 @@ const GouvernoratPage = lazy(() => import('./pages/seo/GouvernoratPage'));
 const SuggestBusiness = lazy(() => import('./pages/SuggestBusiness').then(m => ({ default: m.SuggestBusiness })));
 const BusinessRegistration = lazy(() => import('./pages/BusinessRegistration'));
 const CardPreview = lazy(() => import('./pages/CardPreview'));
+const BusinessPrivatePreview = lazy(() => import('./pages/BusinessPrivatePreview'));
+const AdminBusinessPreviews = lazy(() => import('./pages/AdminBusinessPreviews'));
 
 const PageLoader = () => (
   <div className="min-h-screen bg-white" aria-hidden="true">
@@ -164,6 +166,7 @@ function AppRouter() {
           <Route path="/cv/:slug" element={<BusinessDetail />} />
           <Route path="/p/:slug" element={<BusinessDetail />} />
           <Route path="/qr-business/:id" element={<BusinessQr />} />
+          <Route path="/apercu/:token" element={<BusinessPrivatePreview />} />
 
           <Route path="/jobs" element={<Jobs />} />
           <Route path="/emploi" element={<Jobs />} />
@@ -232,6 +235,7 @@ function AppRouter() {
           <Route path="/commercial" element={<AdminCommercial />} />
           <Route path="/admin/downloads" element={<AdminDownloads />} />
           <Route path="/admin/business-needs" element={<AdminBusinessNeeds />} />
+          <Route path="/admin/apercus" element={<AdminBusinessPreviews />} />
 
           <Route path="/card-preview" element={<CardPreview />} />
           <Route path="/searchDebug" element={<SearchDebug />} />
