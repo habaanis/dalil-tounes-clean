@@ -2,6 +2,7 @@ import { useState, type CSSProperties, type ReactNode } from 'react';
 import {
   CalendarDays,
   ChevronRight,
+  Clock3,
   Contact,
   FileText,
   Home,
@@ -141,6 +142,9 @@ export interface CvPortfolioPresentationProps {
   onBack: () => void;
   bookingContent?: ReactNode;
   reviewsContent?: ReactNode;
+  hoursContent?: ReactNode;
+  hoursBadge?: string;
+  practicalContent?: ReactNode;
   onQuote: () => void;
   onDownloadContact: () => void;
   onSelectImage: (url: string) => void;
@@ -162,6 +166,9 @@ export function CvPortfolioPresentation({
   onBack,
   bookingContent,
   reviewsContent,
+  hoursContent,
+  hoursBadge,
+  practicalContent,
   onQuote,
   onDownloadContact,
   onSelectImage,
@@ -344,6 +351,32 @@ export function CvPortfolioPresentation({
                 </button>
               ))}
             </nav>
+
+            {(hoursContent || practicalContent) && (
+              <div className="cvp-lienora-information">
+                {hoursContent && (
+                  <details>
+                    <summary>
+                      <span><Clock3 aria-hidden="true" />{copy.openingHours}</span>
+                      <span className="cvp-lienora-information-status">
+                        {hoursBadge && <b>{hoursBadge}</b>}
+                        <ChevronRight aria-hidden="true" />
+                      </span>
+                    </summary>
+                    <div className="cvp-lienora-information-content">{hoursContent}</div>
+                  </details>
+                )}
+                {practicalContent && (
+                  <details>
+                    <summary>
+                      <span><Info aria-hidden="true" />{copy.practical}</span>
+                      <ChevronRight aria-hidden="true" />
+                    </summary>
+                    <div className="cvp-lienora-information-content">{practicalContent}</div>
+                  </details>
+                )}
+              </div>
+            )}
 
             <div className="cvp-lienora-content">
               {activeTab === 'home' && (
