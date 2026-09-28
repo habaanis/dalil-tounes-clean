@@ -7,10 +7,17 @@ const fields: { key: string; label: string; multiline?: boolean }[] = [
   { key: 'nom', label: 'Nom de l’établissement' },
   { key: 'categorie', label: 'Activité / catégorie' },
   { key: 'description', label: 'Présentation courte', multiline: true },
+  { key: 'nom_ar', label: 'Nom en arabe' },
+  { key: 'description_ar', label: 'Présentation en arabe', multiline: true },
   { key: 'a_propos', label: 'À propos', multiline: true },
+  { key: 'a_propos_ar', label: 'À propos en arabe', multiline: true },
   { key: 'services', label: 'Services', multiline: true },
+  { key: 'services_ar', label: 'Services en arabe', multiline: true },
+  { key: 'categorie_ar', label: 'Activité en arabe' },
   { key: 'ville', label: 'Ville' },
+  { key: 'ville_ar', label: 'Ville en arabe' },
   { key: 'gouvernorat', label: 'Gouvernorat' },
+  { key: 'gouvernorat_ar', label: 'Gouvernorat en arabe' },
   { key: 'adresse', label: 'Adresse' },
   { key: 'telephone', label: 'Téléphone' },
   { key: 'whatsapp', label: 'WhatsApp' },
@@ -131,6 +138,7 @@ export default function AdminBusinessPreviews() {
             <h2 className="text-xl font-semibold">{selected.name}</h2>
             <p className="text-sm font-semibold">Étape du dossier : {selected.stage || 'Demande reçue'}</p>
             <p className="text-sm text-slate-600">La présentation reste privée. Modifier une fiche conserve son lien si celui-ci est enregistré dans Airtable.</p>
+            <p className="text-sm text-amber-800">Pour un aperçu en arabe, remplissez aussi les textes en arabe avant d’envoyer le lien.</p>
             <div className="rounded-xl bg-slate-100 p-4 text-sm">
               <strong>Informations reçues du client (internes)</strong>
               <p className="mt-2">Email : {selected.email || '—'} · Téléphone : {privatePhone || '—'}</p>

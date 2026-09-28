@@ -5,7 +5,9 @@ import { supabaseAnonKey, supabaseUrl } from '../lib/supabaseClient';
 
 type Preview = {
   nom: string; categorie: string; description: string; services: string; a_propos: string;
+  nom_ar?: string; categorie_ar?: string; description_ar?: string; services_ar?: string; a_propos_ar?: string;
   ville: string; gouvernorat: string; adresse: string; telephone: string; whatsapp: string;
+  ville_ar?: string; gouvernorat_ar?: string;
   email: string; site_web: string; image_url: string; logo_url: string;
   lien_facebook: string; lien_instagram: string; modele_cv: string;
   palette_cv: string; formule_commerciale: string;
@@ -65,7 +67,9 @@ export default function BusinessPrivatePreview() {
   if (loading) return <main className="min-h-[70vh] p-12 text-center">{french ? 'Chargement de l’aperçu…' : 'جار تحميل المعاينة…'}</main>;
   if (!preview) return <main className="min-h-[70vh] p-12 text-center">{french ? 'Ce lien est invalide ou a expiré. Demandez un nouveau lien à Dalil Tounes.' : 'هذا الرابط غير صالح أو انتهت صلاحيته. اطلب رابطاً جديداً من دليل تونس.'}</main>;
 
-  const location = [preview.adresse, preview.ville, preview.gouvernorat].filter(Boolean).join('، ');
+  const local = (field: keyof Preview, arabicField: keyof Preview) =>
+    (!french && preview[arabicField]) || preview[field] || '';
+  const location = [preview.adresse, local('ville', 'ville_ar'), local('gouvernorat', 'gouvernorat_ar')].filter(Boolean).join('، ');
   const cards = [
     { href: preview.telephone ? `tel:${preview.telephone.replace(/[^+\d]/g, '')}` : '', icon: Phone, title: french ? 'Appeler' : 'اتصال' },
     { href: preview.whatsapp ? `https://wa.me/${preview.whatsapp.replace(/\D/g, '')}` : '', icon: MessageCircle, title: 'WhatsApp' },
@@ -90,14 +94,14 @@ export default function BusinessPrivatePreview() {
             <p className="mb-2 text-sm font-semibold uppercase tracking-wider" style={{ color: accent }}>
               {portfolio ? (french ? 'Modèle Portfolio' : 'نموذج Portfolio') : (french ? 'Modèle Professionnel' : 'النموذج المهني')}
             </p>
-            <h1 className="text-4xl font-bold">{preview.nom}</h1>
-            {preview.categorie && <p className="mt-3 text-lg">{preview.categorie}</p>}
-            {preview.description && <p className="mt-6 whitespace-pre-line leading-relaxed">{preview.description}</p>}
+            <h1 className="text-4xl font-bold">{local('nom', 'nom_ar')}</h1>
+            {local('categorie', 'categorie_ar') && <p className="mt-3 text-lg">{local('categorie', 'categorie_ar')}</p>}
+            {local('description', 'description_ar') && <p className="mt-6 whitespace-pre-line leading-relaxed">{local('description', 'description_ar')}</p>}
           </div>
         </section>
         <div className="mt-7 grid gap-6 md:grid-cols-2">
-          {preview.a_propos && <section className="rounded-3xl bg-white p-7 shadow-sm"><h2 className="mb-3 text-xl font-bold">{french ? 'À propos' : 'من نحن'}</h2><p className="whitespace-pre-line leading-relaxed">{preview.a_propos}</p></section>}
-          {preview.services && <section className="rounded-3xl bg-white p-7 shadow-sm"><h2 className="mb-3 text-xl font-bold">{french ? 'Services' : 'الخدمات'}</h2><p className="whitespace-pre-line leading-relaxed">{preview.services}</p></section>}
+          {local('a_propos', 'a_propos_ar') && <section className="rounded-3xl bg-white p-7 shadow-sm"><h2 className="mb-3 text-xl font-bold">{french ? 'À propos' : 'من نحن'}</h2><p className="whitespace-pre-line leading-relaxed">{local('a_propos', 'a_propos_ar')}</p></section>}
+          {local('services', 'services_ar') && <section className="rounded-3xl bg-white p-7 shadow-sm"><h2 className="mb-3 text-xl font-bold">{french ? 'Services' : 'الخدمات'}</h2><p className="whitespace-pre-line leading-relaxed">{local('services', 'services_ar')}</p></section>}
         </div>
         {location && <p className="mt-7 flex items-center gap-2 rounded-3xl bg-white p-6"><MapPin aria-hidden="true" />{location}</p>}
         {cards.length > 0 && <div className="mt-7 grid grid-cols-2 gap-3 md:grid-cols-4">
