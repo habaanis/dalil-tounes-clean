@@ -86,7 +86,7 @@ export default function AdminBusinessPreviews() {
     try {
       const data = await call('', { method: 'POST', body: JSON.stringify({ recordId: selected.id, preview: draft }) });
       setLink(data.link);
-      if (selected.stage === 'Demande reçue') setSelected({ ...selected, stage: 'Fiche en préparation' });
+      if (!data.warning && selected.stage === 'Demande reçue') setSelected({ ...selected, stage: 'Fiche en préparation' });
       setStatus(data.warning || 'Aperçu enregistré. Le lien est aussi dans le dossier Airtable.');
     } catch (error) {
       setStatus(error instanceof Error ? error.message : 'Erreur');
