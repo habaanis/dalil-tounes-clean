@@ -37,79 +37,79 @@ interface BeforeInstallPromptEvent extends Event {
 
 const COPY = {
   fr: {
-    product: 'CV Business',
-    scan: 'Scannez ce QR pour ouvrir directement le CV Business.',
+    product: 'Modèle Professionnel',
+    scan: 'Scannez ce QR pour ouvrir directement la présentation.',
     share: 'Partager',
     shared: 'Lien copié',
     download: 'Télécharger',
     install: "Ajouter à l’écran d’accueil",
-    open: 'Ouvrir le CV Business',
+    open: 'Ouvrir la présentation',
     powered: 'Propulsé par Dalil Tounes',
     installIos: 'iPhone : ouvrez cette page dans Safari, puis Partager → Ajouter à l’écran d’accueil.',
     installAndroid: 'Android : ouvrez cette page dans Chrome, puis Menu → Ajouter à l’écran d’accueil ou Installer.',
     loading: 'Chargement du QR Business…',
-    unavailable: "Ce QR Business sera disponible lorsque le CV Business sera publié.",
-    back: 'Retour au CV Business',
+    unavailable: 'Ce QR code sera disponible lorsque la présentation sera publiée.',
+    back: 'Retour à la présentation',
   },
   ar: {
-    product: 'السيرة المهنية',
-    scan: 'امسح رمز QR لفتح السيرة المهنية مباشرة.',
+    product: 'النموذج المهني',
+    scan: 'امسح رمز QR لفتح العرض المهني مباشرة.',
     share: 'مشاركة',
     shared: 'تم نسخ الرابط',
     download: 'تنزيل',
     install: 'إضافة إلى الشاشة الرئيسية',
-    open: 'فتح السيرة المهنية',
+    open: 'فتح العرض المهني',
     powered: 'بدعم من دليل تونس',
     installIos: 'iPhone: افتح هذه الصفحة في Safari، ثم مشاركة ← إضافة إلى الشاشة الرئيسية.',
     installAndroid: 'Android: افتح هذه الصفحة في Chrome، ثم القائمة ← إضافة إلى الشاشة الرئيسية أو تثبيت.',
     loading: 'جارٍ تحميل رمز QR…',
-    unavailable: 'سيصبح QR Business متاحًا عند نشر CV Business.',
-    back: 'العودة إلى السيرة المهنية',
+    unavailable: 'سيصبح رمز QR متاحًا عند نشر العرض المهني.',
+    back: 'العودة إلى العرض المهني',
   },
   en: {
-    product: 'Business CV',
-    scan: 'Scan this QR to open the Business CV directly.',
+    product: 'Professional Model',
+    scan: 'Scan this QR to open the presentation directly.',
     share: 'Share',
     shared: 'Link copied',
     download: 'Download',
     install: 'Add to home screen',
-    open: 'Open Business CV',
+    open: 'Open presentation',
     powered: 'Powered by Dalil Tounes',
     installIos: 'iPhone: open this page in Safari, then Share → Add to Home Screen.',
     installAndroid: 'Android: open this page in Chrome, then Menu → Add to Home Screen or Install.',
     loading: 'Loading Business QR…',
-    unavailable: 'This Business QR will be available once the Business CV is published.',
-    back: 'Back to Business CV',
+    unavailable: 'This QR code will be available once the presentation is published.',
+    back: 'Back to presentation',
   },
   it: {
-    product: 'CV Business',
-    scan: 'Scansiona questo QR per aprire direttamente il CV Business.',
+    product: 'Modello Professionale',
+    scan: 'Scansiona questo QR per aprire direttamente la presentazione.',
     share: 'Condividi',
     shared: 'Link copiato',
     download: 'Scarica',
     install: 'Aggiungi alla schermata Home',
-    open: 'Apri il CV Business',
+    open: 'Apri la presentazione',
     powered: 'Powered by Dalil Tounes',
     installIos: 'iPhone: apri questa pagina in Safari, quindi Condividi → Aggiungi alla schermata Home.',
     installAndroid: 'Android: apri questa pagina in Chrome, quindi Menu → Aggiungi alla schermata Home o Installa.',
     loading: 'Caricamento QR Business…',
-    unavailable: 'Il QR Business sarà disponibile quando il CV Business sarà pubblicato.',
-    back: 'Torna al CV Business',
+    unavailable: 'Questo codice QR sarà disponibile quando la presentazione sarà pubblicata.',
+    back: 'Torna alla presentazione',
   },
   ru: {
-    product: 'Business CV',
-    scan: 'Отсканируйте QR-код, чтобы сразу открыть Business CV.',
+    product: 'Профессиональная модель',
+    scan: 'Отсканируйте QR-код, чтобы сразу открыть презентацию.',
     share: 'Поделиться',
     shared: 'Ссылка скопирована',
     download: 'Скачать',
     install: 'Добавить на главный экран',
-    open: 'Открыть Business CV',
+    open: 'Открыть презентацию',
     powered: 'При поддержке Dalil Tounes',
     installIos: 'iPhone: откройте эту страницу в Safari, затем Поделиться → На экран «Домой».',
     installAndroid: 'Android: откройте эту страницу в Chrome, затем Меню → Добавить на главный экран или Установить.',
     loading: 'Загрузка Business QR…',
-    unavailable: 'Business QR станет доступен после публикации Business CV.',
-    back: 'Назад к Business CV',
+    unavailable: 'QR-код станет доступен после публикации презентации.',
+    back: 'Назад к презентации',
   },
 } as const;
 
@@ -117,24 +117,24 @@ type CvModel = 'business' | 'portfolio';
 
 const MODEL_COPY = {
   fr: {
-    business: { product: 'CV Business', scan: 'Scannez ce QR pour ouvrir directement le CV Business.', open: 'Ouvrir le CV Business' },
-    portfolio: { product: 'CV Portfolio', scan: 'Scannez ce QR pour découvrir directement le CV Portfolio.', open: 'Ouvrir le CV Portfolio' },
+    business: { product: 'Modèle Professionnel', scan: 'Scannez ce QR pour ouvrir directement le Modèle Professionnel.', open: 'Ouvrir le Modèle Professionnel' },
+    portfolio: { product: 'Modèle Portfolio', scan: 'Scannez ce QR pour découvrir directement le Modèle Portfolio.', open: 'Ouvrir le Modèle Portfolio' },
   },
   ar: {
-    business: { product: 'CV Business', scan: 'امسح رمز QR لفتح CV Business مباشرة.', open: 'فتح CV Business' },
-    portfolio: { product: 'CV Portfolio', scan: 'امسح رمز QR لاكتشاف CV Portfolio مباشرة.', open: 'فتح CV Portfolio' },
+    business: { product: 'النموذج المهني', scan: 'امسح رمز QR لفتح النموذج المهني مباشرة.', open: 'فتح النموذج المهني' },
+    portfolio: { product: 'نموذج Portfolio', scan: 'امسح رمز QR لاكتشاف نموذج Portfolio مباشرة.', open: 'فتح نموذج Portfolio' },
   },
   en: {
-    business: { product: 'CV Business', scan: 'Scan this QR to open the CV Business directly.', open: 'Open the CV Business' },
-    portfolio: { product: 'CV Portfolio', scan: 'Scan this QR to discover the CV Portfolio directly.', open: 'Open the CV Portfolio' },
+    business: { product: 'Professional Model', scan: 'Scan this QR to open the Professional Model directly.', open: 'Open the Professional Model' },
+    portfolio: { product: 'Portfolio Model', scan: 'Scan this QR to discover the Portfolio Model directly.', open: 'Open the Portfolio Model' },
   },
   it: {
-    business: { product: 'CV Business', scan: 'Scansiona questo QR per aprire direttamente il CV Business.', open: 'Apri il CV Business' },
-    portfolio: { product: 'CV Portfolio', scan: 'Scansiona questo QR per scoprire direttamente il CV Portfolio.', open: 'Apri il CV Portfolio' },
+    business: { product: 'Modello Professionale', scan: 'Scansiona questo QR per aprire direttamente il Modello Professionale.', open: 'Apri il Modello Professionale' },
+    portfolio: { product: 'Modello Portfolio', scan: 'Scansiona questo QR per scoprire direttamente il Modello Portfolio.', open: 'Apri il Modello Portfolio' },
   },
   ru: {
-    business: { product: 'CV Business', scan: 'Отсканируйте QR-код, чтобы сразу открыть CV Business.', open: 'Открыть CV Business' },
-    portfolio: { product: 'CV Portfolio', scan: 'Отсканируйте QR-код, чтобы сразу открыть CV Portfolio.', open: 'Открыть CV Portfolio' },
+    business: { product: 'Профессиональная модель', scan: 'Отсканируйте QR-код, чтобы сразу открыть профессиональную модель.', open: 'Открыть профессиональную модель' },
+    portfolio: { product: 'Модель Портфолио', scan: 'Отсканируйте QR-код, чтобы сразу открыть модель Портфолио.', open: 'Открыть модель Портфолио' },
   },
 } as const;
 
@@ -244,7 +244,7 @@ export default function BusinessQr() {
 
     return () => {
       link.href = '/manifest.json';
-      document.title = 'Dalil Tounes — Plateforme des professionnels en Tunisie | CV Business';
+      document.title = 'Dalil Tounes — Plateforme des professionnels en Tunisie';
     };
   }, [id, business?.id, cvModel, displayName, language, logoUrl, modelText.product, paletteTheme.id, qrAccess]);
 

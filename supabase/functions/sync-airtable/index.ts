@@ -42,6 +42,8 @@ const ENTERPRISE_COLUMNS = new Set([
   "slug_court",
   "modele_cv",
   "palette_cv",
+  "formule_commerciale",
+  "statut_publication",
   "search_text",
   "mots cles recherche",
   "synonymes_seo",
@@ -132,6 +134,8 @@ const FIELD_VARIANTS = {
   slug_court: ["Slug public court", "slug_court", "Public slug"],
   modele_cv: ["Modèle de vitrine", "Modele de vitrine", "modele_cv", "Modèle CV"],
   palette_cv: ["Palette de vitrine", "palette_cv", "Palette CV"],
+  formule_commerciale: ["Formule commerciale", "formule_commerciale"],
+  statut_publication: ["Statut de publication", "statut_publication"],
   search_text: ["search_text", "Search Text"],
   mots_cles_recherche: ["mots cles recherche", "Mots clés recherche", "mots_cles_recherche"],
   synonymes_seo: ["synonymes_seo", "Synonymes_SEO", "Synonymes SEO"],
@@ -404,6 +408,16 @@ function mapRecord(record: AirtableRecord): EnterprisePayload {
   setIfPresent(payload, "slug_court", textValue(pick("slug_court")));
   setIfPresent(payload, "modele_cv", cvModelValue(pick("modele_cv")));
   setIfPresent(payload, "palette_cv", cvPaletteValue(pick("palette_cv")));
+  setIfPresent(payload, "formule_commerciale", textValue(pick("formule_commerciale")));
+  setIfPresent(payload, "statut_publication", textValue(pick("statut_publication")));
+  const commercialPlan = normalizedChoice(pick("formule_commerciale"));
+  if (commercialPlan.includes("artisan")) {
+    setIfPresent(payload, "statut_abonnement", "Artisan");
+  } else if (commercialPlan.includes("premium")) {
+    setIfPresent(payload, "statut_abonnement", "Premium");
+  } else if (commercialPlan.includes("presence essentielle")) {
+    setIfPresent(payload, "statut_abonnement", "Gratuit");
+  }
   setIfPresent(payload, "search_text", textValue(pick("search_text")));
   setIfPresent(payload, "mots cles recherche", textValue(pick("mots_cles_recherche")));
   setIfPresent(payload, "synonymes_seo", textValue(pick("synonymes_seo")));
@@ -739,6 +753,15 @@ Deno.serve(async (req: Request) => {
       supabase,
       records.map((record) => record.id),
     );
+    // A new Airtable card may already have the UUID used in its QR link.
+    // Preserve it at first insertion; never replace an existing Supabase ID.
+    records.forEach((record, index) => {
+      if (existingByAirtableId.has(record.id)) return;
+      const publicId = textValue(record.fields.id);
+      if (publicId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(publicId)) {
+        mapped[index].id = publicId;
+      }
+    });
     const analysis = analyzeRecords(records, mapped, existingByAirtableId);
     const violations = guardViolations(analysis);
     const unknownAirtableFields = findUnusedAirtableFields(records);

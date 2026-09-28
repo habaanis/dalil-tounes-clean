@@ -5,6 +5,7 @@
     { "source": "/business/:path*", "destination": "/index.html" },
     { "source": "/entreprise/:path*", "destination": "/index.html" },
     { "source": "/qr-business/:path*", "destination": "/index.html" },
+    { "source": "/apercu/:path*", "destination": "/index.html" },
     { "source": "/p/:slug", "destination": "/index.html" },
     { "source": "/cv/:slug", "destination": "/index.html" },
     { "source": "/jobs", "destination": "/index.html" },
@@ -54,6 +55,13 @@
     { "source": "/devenir-partenaire", "destination": "/index.html" }
   ],
   "headers": [
+    {
+      "source": "/apercu/:path*",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" },
+        { "key": "Cache-Control", "value": "private, no-store" }
+      ]
+    },
     {
       "source": "/sitemap.xml",
       "headers": [
