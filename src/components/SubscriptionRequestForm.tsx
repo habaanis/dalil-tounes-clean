@@ -19,6 +19,7 @@ import {
   normalizeWebAddress,
   type SelectOption,
 } from '../lib/businessRegistrationValidation';
+import { trackMetaEvent } from '../lib/metaPixel';
 
 type SupportedLanguage = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 export type SubscriptionPlanCode = 'cv_business' | 'artisan' | 'premium';
@@ -833,7 +834,10 @@ export function SubscriptionRequestForm({
     };
 
     try {
-      await submitBusinessRegistration(request);
+      const response = await submitBusinessRegistration(request);
+      if (!response.duplicate) {
+        trackMetaEvent('Lead', { content_name: 'Business offer request' });
+      }
       setSubmitted(true);
       onSuccess?.();
     } catch (error) {
