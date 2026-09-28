@@ -307,7 +307,8 @@ Deno.serve(async (request: Request) => {
         .from("business_previews").select("token_hash")
         .eq("airtable_record_id", recordId).maybeSingle();
       if (!token || await sha256(token) !== existing?.token_hash) token = randomToken();
-      const link = `${PUBLIC_ORIGIN}/apercu/${token}`;
+      const previewLanguage = text(row.fields["Langue de l’email"]) === "Français" ? "fr" : "ar";
+      const link = `${PUBLIC_ORIGIN}/apercu/${token}?lang=${previewLanguage}`;
       const { error } = await admin.from("business_previews").upsert({
         airtable_record_id: recordId,
         token_hash: await sha256(token),

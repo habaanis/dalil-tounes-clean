@@ -163,7 +163,7 @@ export default function AdminBusinessPreviews() {
               </label>
             </div>
             <button disabled={busy} className="rounded-xl bg-emerald-900 px-6 py-3 font-semibold text-white disabled:opacity-50">{busy ? 'Enregistrement…' : 'Enregistrer et obtenir le lien'}</button>
-            {link && <div className="break-all rounded-xl border border-emerald-300 bg-emerald-50 p-4"><p className="mb-2 font-semibold">Lien privé du client (valable 30 jours)</p><a className="text-blue-700 underline" href={link} target="_blank" rel="noopener noreferrer">{link}</a><p className="mt-2 text-sm">Ajoutez ?lang=fr au lien pour le français. L’arabe est affiché par défaut.</p></div>}
+            {link && <div className="break-all rounded-xl border border-emerald-300 bg-emerald-50 p-4"><p className="mb-2 font-semibold">Lien privé du client (valable 30 jours)</p><a className="text-blue-700 underline" href={link} target="_blank" rel="noopener noreferrer">{link}</a><p className="mt-2 text-sm">Le lien suit la langue choisie dans Airtable : ?lang=ar pour l’arabe, ?lang=fr pour le français.</p></div>}
             {['Paiement vérifié', 'Prêt à publier'].includes(selected.stage) && <div className="rounded-xl border border-blue-200 p-4">
               <p className="mb-3 text-sm">Publier après accord du client et paiement vérifié. Une fiche sera créée dans « entreprise » et liée à ce dossier.</p>
               <button type="button" disabled={busy} onClick={publish} className="rounded-xl bg-blue-900 px-6 py-3 font-semibold text-white disabled:opacity-50">Publier la fiche</button>
