@@ -590,6 +590,79 @@
   font-weight: 800;
   opacity: 1;
 }
+.cvp-lienora-information {
+  display: grid;
+  gap: 6px;
+  margin: 0 0 10px;
+}
+.cvp-lienora-information details {
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--cvp-accent) 45%, transparent);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--cvp-panel) 84%, transparent);
+}
+.cvp-lienora-information summary {
+  display: flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  color: var(--cvp-text);
+  font-size: 0.68rem;
+  font-weight: 800;
+  list-style: none;
+  cursor: pointer;
+}
+.cvp-lienora-information summary::-webkit-details-marker {
+  display: none;
+}
+.cvp-lienora-information summary > span {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 7px;
+}
+.cvp-lienora-information summary svg {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 auto;
+  color: var(--cvp-accent);
+}
+.cvp-lienora-information-status b {
+  border: 1px solid color-mix(in srgb, var(--cvp-accent) 45%, transparent);
+  border-radius: 999px;
+  padding: 3px 7px;
+  color: var(--cvp-accent);
+  font-size: 0.56rem;
+}
+.cvp-lienora-information summary > svg,
+.cvp-lienora-information-status > svg {
+  transition: transform 160ms ease;
+}
+.cvp-lienora-information details[open] .cvp-lienora-information-status > svg,
+.cvp-lienora-information details[open] summary > svg {
+  transform: rotate(90deg);
+}
+.cvp-lienora-information-content {
+  border-top: 1px solid color-mix(in srgb, var(--cvp-accent) 24%, transparent);
+  padding: 9px 10px 10px;
+  color: var(--cvp-text);
+  font-size: 0.68rem;
+}
+.cvp-lienora-information-content .dt-info-list,
+.cvp-lienora-information-content .dt-hours {
+  display: grid;
+  gap: 6px;
+}
+.cvp-lienora-information-content .dt-info-row,
+.cvp-lienora-information-content .dt-hour-row {
+  color: var(--cvp-text);
+}
+.cvp-lienora-information-content .dt-info-row a,
+.cvp-lienora-information-content .dt-social-link {
+  color: var(--cvp-accent);
+}
 .cvp-lienora-content h2 {
   margin: 0 0 7px;
   color: var(--cvp-accent);

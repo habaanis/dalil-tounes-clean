@@ -1450,6 +1450,11 @@ export default function BusinessShowcaseLienoraDetail({
           onBack={handleBack}
           bookingContent={sections.find(section => section.id === 'booking')?.content}
           reviewsContent={sections.find(section => section.id === 'reviews')?.content}
+          hoursContent={sections.find(section => section.id === 'hours')?.content}
+          hoursBadge={schedule?.isCurrentlyOpen
+            ? translateOpenStatus(language)
+            : schedule ? translateClosedStatus(language) : undefined}
+          practicalContent={sections.find(section => section.id === 'practical')?.content}
           onQuote={requestQuote}
           onDownloadContact={downloadContact}
           onSelectImage={setSelectedImage}
