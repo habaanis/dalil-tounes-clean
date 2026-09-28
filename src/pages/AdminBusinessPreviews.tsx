@@ -1,4 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react';
+import { Link } from 'react-router-dom';
 import { supabase, supabaseAnonKey, supabaseUrl } from '../lib/supabaseClient';
 
 type ClientRow = { id: string; name: string; email: string; stage: string; link: string };
@@ -28,6 +29,16 @@ const fields: { key: string; label: string; multiline?: boolean }[] = [
   { key: 'lien_facebook', label: 'Facebook (URL)' },
   { key: 'lien_instagram', label: 'Instagram (URL)' },
 ];
+
+const testPreviewLink = (publicLink: string) => {
+  try {
+    const url = new URL(publicLink);
+    if (!/^\/apercu\/[0-9a-f]{64}$/.test(url.pathname)) return '';
+    return new URL(url.pathname + url.search, window.location.origin).href;
+  } catch {
+    return '';
+  }
+};
 
 export default function AdminBusinessPreviews() {
   const [records, setRecords] = useState<ClientRow[]>([]);
@@ -125,6 +136,8 @@ export default function AdminBusinessPreviews() {
       <h1 className="text-3xl font-bold">Aperçus privés — Dalil Tounes</h1>
       <p className="mt-3 text-slate-600">Choisissez un dossier client, complétez sa présentation puis partagez le lien d’aperçu. La fiche publique se prépare après votre validation du paiement.</p>
       {status && <p role="status" className="my-5 rounded-xl bg-amber-100 p-4">{status}</p>}
+      {status === 'Connectez-vous avec votre compte administrateur.' &&
+        <Link className="inline-block rounded-xl bg-blue-900 px-5 py-3 font-semibold text-white" to="/connexion">Se connecter</Link>}
       {loading ? <p className="mt-8">Chargement des dossiers…</p> : (
         <div className="mt-8 grid gap-8 md:grid-cols-[260px_1fr]">
           <nav aria-label="Dossiers clients" className="max-h-[65vh] space-y-2 overflow-y-auto">
@@ -163,7 +176,15 @@ export default function AdminBusinessPreviews() {
               </label>
             </div>
             <button disabled={busy} className="rounded-xl bg-emerald-900 px-6 py-3 font-semibold text-white disabled:opacity-50">{busy ? 'Enregistrement…' : 'Enregistrer et obtenir le lien'}</button>
-            {link && <div className="break-all rounded-xl border border-emerald-300 bg-emerald-50 p-4"><p className="mb-2 font-semibold">Lien privé du client (valable 30 jours)</p><a className="text-blue-700 underline" href={link} target="_blank" rel="noopener noreferrer">{link}</a><p className="mt-2 text-sm">Le lien suit la langue choisie dans Airtable : ?lang=ar pour l’arabe, ?lang=fr pour le français.</p></div>}
+            {link && <div className="break-all rounded-xl border border-emerald-300 bg-emerald-50 p-4">
+              <p className="mb-2 font-semibold">Lien privé du client (valable 30 jours)</p>
+              {window.location.origin !== new URL(link).origin ? <>
+                <p className="mb-2 text-sm">La page est encore en version de test. Ce lien de test permet de contrôler l’aperçu ; attendez la mise en ligne avant de communiquer le lien Dalil Tounes au client.</p>
+                {testPreviewLink(link) && <a className="text-blue-700 underline" href={testPreviewLink(link)} target="_blank" rel="noopener noreferrer">Ouvrir l’aperçu sur la version de test</a>}
+                <p className="mt-2 text-sm">Lien client prévu après mise en ligne : {link}</p>
+              </> : <a className="text-blue-700 underline" href={link} target="_blank" rel="noopener noreferrer">{link}</a>}
+              <p className="mt-2 text-sm">Le lien suit la langue choisie dans Airtable : ?lang=ar pour l’arabe, ?lang=fr pour le français.</p>
+            </div>}
             {['Paiement vérifié', 'Prêt à publier'].includes(selected.stage) && <div className="rounded-xl border border-blue-200 p-4">
               <p className="mb-3 text-sm">Publier après accord du client et paiement vérifié. Une fiche sera créée dans « entreprise » et liée à ce dossier.</p>
               <button type="button" disabled={busy} onClick={publish} className="rounded-xl bg-blue-900 px-6 py-3 font-semibold text-white disabled:opacity-50">Publier la fiche</button>

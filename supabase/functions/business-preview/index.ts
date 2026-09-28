@@ -206,6 +206,9 @@ Deno.serve(async (request: Request) => {
       const created = await airtable("", airtableToken, {
         method: "POST", body: JSON.stringify({ fields: businessFields }),
       }, BUSINESS_TABLE_ID) as AirtableRow;
+      // Airtable calculates the same public link used by the launch email.
+      // Do not present the QR endpoint as the business presentation link.
+      let publicUrl = httpUrl(created.fields["Lien public Dalil Tounes"]);
       // Link the source immediately, so retrying cannot silently create a duplicate.
       await airtable(`/${recordId}`, airtableToken, {
         method: "PATCH", body: JSON.stringify({ fields: { "Fiche entreprise liée": [created.id] } }),
@@ -246,6 +249,14 @@ Deno.serve(async (request: Request) => {
         formule_commerciale: offer,
       }, { onConflict: "id_airtable" });
       if (syncError) throw syncError;
+      if (!publicUrl) {
+        try {
+          const refreshed = await airtable(`/${created.id}`, airtableToken, undefined, BUSINESS_TABLE_ID) as AirtableRow;
+          publicUrl = httpUrl(refreshed.fields["Lien public Dalil Tounes"]);
+        } catch { /* The new business remains published; explain the missing link below. */ }
+      }
+      const resultUrl = publicUrl || `${PUBLIC_ORIGIN}/qr-business/${uuid}`;
+      const linkWarning = publicUrl ? "" : " Vérifiez le lien public dans Airtable avant de prévenir le client ; le lien affiché ouvre le QR code.";
       try {
         await airtable(`/${recordId}`, airtableToken, {
           method: "PATCH",
@@ -255,10 +266,11 @@ Deno.serve(async (request: Request) => {
           } }),
         });
       } catch {
-        return reply({ id: created.id, url: `${PUBLIC_ORIGIN}/qr-business/${uuid}`,
-          warning: "Fiche publiée. Mettez l’étape du dossier sur « Publié » dans Airtable." });
+        return reply({ id: created.id, url: resultUrl,
+          warning: `Fiche publiée. Mettez l’étape du dossier sur « Publié » dans Airtable.${linkWarning}` });
       }
-      return reply({ id: created.id, url: `${PUBLIC_ORIGIN}/qr-business/${uuid}` });
+      return reply({ id: created.id, url: resultUrl,
+        ...(linkWarning ? { warning: `Fiche publiée.${linkWarning}` } : {}) });
     }
     if (request.method === "POST") {
       const body = await request.json();
