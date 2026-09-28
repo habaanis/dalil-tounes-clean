@@ -187,6 +187,8 @@ export function CvPortfolioPresentation({
   const [expandedAbout, setExpandedAbout] = useState(false);
   const [bookingOpen, setBookingOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
+  const [hoursOpen, setHoursOpen] = useState(false);
+  const [practicalOpen, setPracticalOpen] = useState(false);
   const isRTL = language === 'ar';
   const hasSection = (section: ResolvedCvPresentation['visibleSections'][number]) =>
     presentation.visibleSections.includes(section);
@@ -355,25 +357,41 @@ export function CvPortfolioPresentation({
             {(hoursContent || practicalContent) && (
               <div className="cvp-lienora-information">
                 {hoursContent && (
-                  <details>
-                    <summary>
+                  <section className={`cvp-lienora-information-item${hoursOpen ? ' is-open' : ''}`}>
+                    <button
+                      type="button"
+                      className="cvp-lienora-information-toggle"
+                      onClick={() => setHoursOpen(open => !open)}
+                      aria-expanded={hoursOpen}
+                      aria-controls="cvp-portfolio-hours"
+                    >
                       <span><Clock3 aria-hidden="true" />{copy.openingHours}</span>
                       <span className="cvp-lienora-information-status">
                         {hoursBadge && <b>{hoursBadge}</b>}
                         <ChevronRight aria-hidden="true" />
                       </span>
-                    </summary>
-                    <div className="cvp-lienora-information-content">{hoursContent}</div>
-                  </details>
+                    </button>
+                    {hoursOpen && (
+                      <div id="cvp-portfolio-hours" className="cvp-lienora-information-content">{hoursContent}</div>
+                    )}
+                  </section>
                 )}
                 {practicalContent && (
-                  <details>
-                    <summary>
+                  <section className={`cvp-lienora-information-item${practicalOpen ? ' is-open' : ''}`}>
+                    <button
+                      type="button"
+                      className="cvp-lienora-information-toggle"
+                      onClick={() => setPracticalOpen(open => !open)}
+                      aria-expanded={practicalOpen}
+                      aria-controls="cvp-portfolio-practical"
+                    >
                       <span><Info aria-hidden="true" />{copy.practical}</span>
                       <ChevronRight aria-hidden="true" />
-                    </summary>
-                    <div className="cvp-lienora-information-content">{practicalContent}</div>
-                  </details>
+                    </button>
+                    {practicalOpen && (
+                      <div id="cvp-portfolio-practical" className="cvp-lienora-information-content">{practicalContent}</div>
+                    )}
+                  </section>
                 )}
               </div>
             )}

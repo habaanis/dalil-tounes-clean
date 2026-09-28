@@ -595,35 +595,36 @@
   gap: 6px;
   margin: 0 0 10px;
 }
-.cvp-lienora-information details {
+.cvp-lienora-information-item {
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--cvp-accent) 45%, transparent);
   border-radius: 10px;
   background: color-mix(in srgb, var(--cvp-panel) 84%, transparent);
 }
-.cvp-lienora-information summary {
+.cvp-lienora-information-toggle {
   display: flex;
+  width: 100%;
   min-height: 42px;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
+  border: 0;
+  background: transparent;
   padding: 8px 10px;
   color: var(--cvp-text);
+  font-family: inherit;
   font-size: 0.68rem;
   font-weight: 800;
-  list-style: none;
+  text-align: start;
   cursor: pointer;
 }
-.cvp-lienora-information summary::-webkit-details-marker {
-  display: none;
-}
-.cvp-lienora-information summary > span {
+.cvp-lienora-information-toggle > span {
   display: flex;
   min-width: 0;
   align-items: center;
   gap: 7px;
 }
-.cvp-lienora-information summary svg {
+.cvp-lienora-information-toggle svg {
   width: 17px;
   height: 17px;
   flex: 0 0 auto;
@@ -636,12 +637,12 @@
   color: var(--cvp-accent);
   font-size: 0.56rem;
 }
-.cvp-lienora-information summary > svg,
+.cvp-lienora-information-toggle > svg,
 .cvp-lienora-information-status > svg {
   transition: transform 160ms ease;
 }
-.cvp-lienora-information details[open] .cvp-lienora-information-status > svg,
-.cvp-lienora-information details[open] summary > svg {
+.cvp-lienora-information-item.is-open .cvp-lienora-information-status > svg,
+.cvp-lienora-information-item.is-open .cvp-lienora-information-toggle > svg {
   transform: rotate(90deg);
 }
 .cvp-lienora-information-content {
