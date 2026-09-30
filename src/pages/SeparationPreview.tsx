@@ -185,6 +185,11 @@ function SeparationExperience({ fixedView }: { fixedView?: 'platform' | 'cv' }) 
   const displayedCount = totalCount > 0 ? totalCount : 1894;
   const localizedCount = new Intl.NumberFormat(lang === 'ar' ? 'ar-TN' : lang).format(displayedCount);
   const localizedCertifiedCount = new Intl.NumberFormat(lang === 'ar' ? 'ar-TN' : lang).format(certifiedCount);
+  const heroVideoSrc = lang === 'fr'
+    ? 'https://static.metricool.com/video/4610595/202609/eaaff4e56ccf4aba.mp4'
+    : lang === 'ar'
+      ? 'https://static.metricool.com/video/4610595/202609/0a154ec0c4a44fb7.mp4'
+      : null;
 
   return (
     <div dir={lang === 'ar' ? 'rtl' : 'ltr'} className="bg-white text-slate-900">
@@ -235,7 +240,7 @@ function SeparationExperience({ fixedView }: { fixedView?: 'platform' | 'cv' }) 
           <section className="border-b border-[#D4AF37]/25 bg-[radial-gradient(circle_at_top_left,rgba(212,175,55,0.18),transparent_28%),linear-gradient(135deg,#fffdf8_0%,#ffffff_52%,#f7f0f5_100%)] px-4 py-8 md:py-14">
             <div className="mx-auto grid max-w-[1180px] items-center gap-8 lg:grid-cols-[1fr_0.72fr]">
               <div><div className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/45 bg-white px-3 py-1.5 text-xs font-black uppercase tracking-[0.14em] text-[#4A1D43] shadow-sm"><Sparkles className="h-4 w-4 text-[#D4AF37]" /> {t.cvLabel}</div><h1 className="mt-5 font-serif text-4xl font-bold leading-tight text-[#2E102A] md:text-5xl">{t.cvTitle}</h1><p className="mt-3 font-serif text-2xl font-bold leading-tight text-[#B58A18] md:text-3xl">{t.cvSubtitle}</p><p className="mt-5 max-w-xl text-base leading-7 text-gray-600">{t.cvDescription}</p><div className="mt-6 flex flex-wrap gap-3"><a href="/subscription" className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-[#4A1D43] px-5 py-3 text-sm font-black text-white">{t.offers} <ArrowRight className={`h-4 w-4 ${lang === 'ar' ? 'rotate-180' : ''}`} /></a><a href="/contact" className="inline-flex min-h-12 items-center rounded-xl border border-[#D4AF37] bg-white px-5 py-3 text-sm font-bold text-[#4A1D43]">{t.information}</a></div></div>
-              <div className="rounded-[30px] border border-[#D4AF37]/45 bg-white/90 p-4 shadow-[0_28px_70px_rgba(74,29,67,0.16)]"><p className="mb-3 text-center text-xs font-bold text-[#4A1D43]">{t.example}</p><div className="flex h-[390px] justify-center overflow-hidden"><img src="/images/cv-business-portfolio-aux-saveurs-anis.png" alt="CV Business Aux saveurs d’Anis" className="h-[390px] w-auto object-contain object-top" /></div></div>
+              <div className="rounded-[30px] border border-[#D4AF37]/45 bg-white/90 p-4 shadow-[0_28px_70px_rgba(74,29,67,0.16)]"><p className="mb-3 text-center text-xs font-bold text-[#4A1D43]">{t.example}</p><div className="flex h-[390px] items-center justify-center overflow-hidden rounded-[18px] bg-[#032D21]">{heroVideoSrc ? <video key={heroVideoSrc} src={heroVideoSrc} controls playsInline preload="metadata" poster="/images/cv-business-portfolio-aux-saveurs-anis.png" className="h-[390px] w-auto max-w-full object-contain" aria-label={t.example} /> : <img src="/images/cv-business-portfolio-aux-saveurs-anis.png" alt="CV Business Aux saveurs d’Anis" className="h-[390px] w-auto object-contain object-top" />}</div></div>
             </div>
           </section>
 
