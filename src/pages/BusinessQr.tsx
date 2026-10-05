@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { supabase, supabaseUrl } from '../lib/supabaseClient';
 import { buildEntrepriseUrl, buildShortSharePath, generateSlug } from '../lib/slugify';
@@ -9,7 +9,12 @@ import { HERO_IMAGE_URL } from '../constants/images';
 import { CvBusinessQrVisual } from '../components/CvBusinessProductVisuals';
 import { getMultilingualField } from '../lib/databaseI18n';
 import { getCvPaletteTheme } from '../lib/cvPalette';
-import { buildClientAppUrl, buildClientCvUrl } from '../lib/clientAppUrl';
+import {
+  buildClientAppUrl,
+  buildClientCvUrl,
+  getClientAppIdentifier,
+  isDedicatedClientHostname,
+} from '../lib/clientAppUrl';
 
 interface BusinessQrRecord {
   id: string;
@@ -36,6 +41,8 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
 }
 
+type InstallPromptWindow = Window & { __dalilInstallPrompt?: BeforeInstallPromptEvent };
+
 const COPY = {
   fr: {
     product: 'CV Business',
@@ -44,10 +51,12 @@ const COPY = {
     shared: 'Lien copié',
     download: 'Télécharger',
     install: "Ajouter à l’écran d’accueil",
+    openBrowser: 'Ouvrir dans Chrome / Safari',
     open: 'Ouvrir le CV Business',
     powered: 'Propulsé par Dalil Tounes',
     installIos: 'iPhone : ouvrez cette page dans Safari, puis Partager → Ajouter à l’écran d’accueil.',
     installAndroid: 'Android : ouvrez cette page dans Chrome, puis Menu → Ajouter à l’écran d’accueil ou Installer.',
+    installInApp: 'Cette page est ouverte dans le navigateur intégré de WhatsApp. Ouvrez le menu ⋮ puis « Ouvrir dans Chrome » sur Android, ou ouvrez ce lien dans Safari sur iPhone.',
     loading: 'Chargement du QR Business…',
     unavailable: "Ce QR Business sera disponible lorsque le CV Business sera publié.",
     back: 'Retour au CV Business',
@@ -59,10 +68,12 @@ const COPY = {
     shared: 'تم نسخ الرابط',
     download: 'تنزيل',
     install: 'إضافة إلى الشاشة الرئيسية',
+    openBrowser: 'فتح في Chrome / Safari',
     open: 'فتح السيرة المهنية',
     powered: 'بدعم من دليل تونس',
     installIos: 'iPhone: افتح هذه الصفحة في Safari، ثم مشاركة ← إضافة إلى الشاشة الرئيسية.',
     installAndroid: 'Android: افتح هذه الصفحة في Chrome، ثم القائمة ← إضافة إلى الشاشة الرئيسية أو تثبيت.',
+    installInApp: 'هذه الصفحة مفتوحة داخل متصفح WhatsApp. افتح القائمة ⋮ ثم اختر الفتح في Chrome على Android، أو افتح الرابط في Safari على iPhone.',
     loading: 'جارٍ تحميل رمز QR…',
     unavailable: 'سيصبح QR Business متاحًا عند نشر CV Business.',
     back: 'العودة إلى السيرة المهنية',
@@ -74,10 +85,12 @@ const COPY = {
     shared: 'Link copied',
     download: 'Download',
     install: 'Add to home screen',
+    openBrowser: 'Open in Chrome / Safari',
     open: 'Open Business CV',
     powered: 'Powered by Dalil Tounes',
     installIos: 'iPhone: open this page in Safari, then Share → Add to Home Screen.',
     installAndroid: 'Android: open this page in Chrome, then Menu → Add to Home Screen or Install.',
+    installInApp: 'This page is open inside WhatsApp. Use the ⋮ menu and choose Open in Chrome on Android, or open the link in Safari on iPhone.',
     loading: 'Loading Business QR…',
     unavailable: 'This Business QR will be available once the Business CV is published.',
     back: 'Back to Business CV',
@@ -89,10 +102,12 @@ const COPY = {
     shared: 'Link copiato',
     download: 'Scarica',
     install: 'Aggiungi alla schermata Home',
+    openBrowser: 'Apri in Chrome / Safari',
     open: 'Apri il CV Business',
     powered: 'Powered by Dalil Tounes',
     installIos: 'iPhone: apri questa pagina in Safari, quindi Condividi → Aggiungi alla schermata Home.',
     installAndroid: 'Android: apri questa pagina in Chrome, quindi Menu → Aggiungi alla schermata Home o Installa.',
+    installInApp: 'Questa pagina è aperta nel browser interno di WhatsApp. Usa il menu ⋮ e scegli Apri in Chrome su Android, oppure apri il link in Safari su iPhone.',
     loading: 'Caricamento QR Business…',
     unavailable: 'Il QR Business sarà disponibile quando il CV Business sarà pubblicato.',
     back: 'Torna al CV Business',
@@ -104,10 +119,12 @@ const COPY = {
     shared: 'Ссылка скопирована',
     download: 'Скачать',
     install: 'Добавить на главный экран',
+    openBrowser: 'Открыть в Chrome / Safari',
     open: 'Открыть Business CV',
     powered: 'При поддержке Dalil Tounes',
     installIos: 'iPhone: откройте эту страницу в Safari, затем Поделиться → На экран «Домой».',
     installAndroid: 'Android: откройте эту страницу в Chrome, затем Меню → Добавить на главный экран или Установить.',
+    installInApp: 'Страница открыта во встроенном браузере WhatsApp. В меню ⋮ выберите «Открыть в Chrome» на Android или откройте ссылку в Safari на iPhone.',
     loading: 'Загрузка Business QR…',
     unavailable: 'Business QR станет доступен после публикации Business CV.',
     back: 'Назад к Business CV',
@@ -148,12 +165,16 @@ function getCoverUrl(value?: string | null): string {
 }
 
 export default function BusinessQr() {
-  const { id } = useParams<{ id: string }>();
+  const { id, slug } = useParams<{ id?: string; slug?: string }>();
+  const identifier = id || slug || '';
+  const navigate = useNavigate();
   const { language } = useLanguage();
   const text = COPY[language as keyof typeof COPY] || COPY.fr;
   const [business, setBusiness] = useState<BusinessQrRecord | null>(null);
   const [loading, setLoading] = useState(true);
-  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(
+    () => (window as InstallPromptWindow).__dalilInstallPrompt || null,
+  );
   const [shareConfirmed, setShareConfirmed] = useState(false);
   const [showBrandSplash, setShowBrandSplash] = useState(() => {
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches
@@ -166,40 +187,68 @@ export default function BusinessQr() {
     ? 'portfolio'
     : 'business';
   const modelText = MODEL_COPY[language as keyof typeof MODEL_COPY]?.[cvModel] || MODEL_COPY.fr[cvModel];
+  const userAgent = navigator.userAgent || '';
+  const isIos = /iphone|ipad|ipod/i.test(userAgent);
+  const isAndroid = /android/i.test(userAgent);
+  const isInAppBrowser = /WhatsApp|FBAN|FBAV|Instagram|Line\/|;\s*wv\b/i.test(userAgent);
 
   useEffect(() => {
     let cancelled = false;
     const load = async () => {
-      if (!id) {
+      if (!identifier) {
         setLoading(false);
         return;
       }
-      const baseQuery = supabase
+      const selectBusiness = () => supabase
         .from('entreprise')
         .select('id, nom, slug, slug_court, ville, categorie, name_ar, name_en, name_it, name_ru, categorie_ar, image_url, logo_url, statut_abonnement, cv_business_status, modele_cv, palette_cv');
-      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id);
-      const { data } = await (isUuid ? baseQuery.eq('id', id) : baseQuery.eq('slug', id)).maybeSingle();
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(identifier);
+      let data: BusinessQrRecord | null = null;
+
+      if (isUuid) {
+        const result = await selectBusiness().eq('id', identifier).maybeSingle();
+        data = result.data as BusinessQrRecord | null;
+      } else {
+        const shortResult = await selectBusiness().eq('slug_court', identifier).maybeSingle();
+        data = shortResult.data as BusinessQrRecord | null;
+        if (!data) {
+          const slugResult = await selectBusiness().eq('slug', identifier).maybeSingle();
+          data = slugResult.data as BusinessQrRecord | null;
+        }
+      }
       if (!cancelled) {
-        setBusiness(data as BusinessQrRecord | null);
+        setBusiness(data);
         setLoading(false);
       }
     };
     void load();
     return () => { cancelled = true; };
-  }, [id]);
+  }, [identifier]);
 
   useEffect(() => {
-    if (!id) return;
+    if (!identifier) return;
     if (window.location.hostname !== 'dalil-tounes.com' && window.location.hostname !== 'www.dalil-tounes.com') return;
-    window.location.replace(buildClientAppUrl(id, language));
-  }, [id, language]);
+    window.location.replace(buildClientAppUrl(identifier, language));
+  }, [identifier, language]);
+
+  useEffect(() => {
+    if (!business || !isDedicatedClientHostname(window.location.hostname)) return;
+    const personalizedUrl = new URL(buildClientAppUrl(business, language));
+    if (window.location.pathname === personalizedUrl.pathname) return;
+    navigate(`${personalizedUrl.pathname}${personalizedUrl.search}`, { replace: true });
+  }, [business, language, navigate]);
 
   useEffect(() => {
     const handleBeforeInstall = (event: Event) => {
       event.preventDefault();
-      setInstallPrompt(event as BeforeInstallPromptEvent);
+      const promptEvent = event as BeforeInstallPromptEvent;
+      (window as InstallPromptWindow).__dalilInstallPrompt = promptEvent;
+      setInstallPrompt(promptEvent);
     };
-    const handleInstalled = () => setInstallPrompt(null);
+    const handleInstalled = () => {
+      (window as InstallPromptWindow).__dalilInstallPrompt = undefined;
+      setInstallPrompt(null);
+    };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstall);
     window.addEventListener('appinstalled', handleInstalled);
@@ -219,7 +268,8 @@ export default function BusinessQr() {
   const displayCategory = business
     ? String(getMultilingualField(business, 'categorie', language) || business.categorie || '')
     : '';
-  const cvUrl = buildClientCvUrl(business?.id || id || '', language, paletteTheme.id);
+  const clientIdentifier = business ? getClientAppIdentifier(business) : identifier;
+  const cvUrl = buildClientCvUrl(business || identifier, language, paletteTheme.id);
   const logoUrl = business ? getLogoUrl(business.logo_url) : '';
   const coverUrl = getCoverUrl(business?.image_url);
   const tier = business ? mapSubscriptionToTier(business) : 'gratuit';
@@ -245,7 +295,7 @@ export default function BusinessQr() {
     const existing = document.querySelector<HTMLLinkElement>('link[rel="manifest"]');
     const link = existing || document.createElement('link');
     link.rel = 'manifest';
-    link.href = `/api/business-manifest?id=${encodeURIComponent(id || business.id)}&name=${encodeURIComponent(displayName)}&logo=${encodeURIComponent(logoUrl)}&lang=${language}&palette=${paletteTheme.id}&model=${cvModel}&v=client-5`;
+    link.href = `/api/business-manifest?id=${encodeURIComponent(clientIdentifier)}&app_slug=${encodeURIComponent(clientIdentifier)}&name=${encodeURIComponent(displayName)}&logo=${encodeURIComponent(logoUrl)}&lang=${language}&palette=${paletteTheme.id}&model=${cvModel}&v=client-7`;
     if (!existing) document.head.appendChild(link);
     document.title = `${displayName} — ${modelText.product}`;
 
@@ -253,7 +303,7 @@ export default function BusinessQr() {
       link.href = '/manifest.json';
       document.title = 'Dalil Tounes — Plateforme des professionnels en Tunisie | CV Business';
     };
-  }, [id, business?.id, cvModel, displayName, language, logoUrl, modelText.product, paletteTheme.id, qrAccess]);
+  }, [business?.id, clientIdentifier, cvModel, displayName, language, logoUrl, modelText.product, paletteTheme.id, qrAccess]);
 
   useEffect(() => {
     const meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
@@ -315,6 +365,15 @@ export default function BusinessQr() {
   };
 
   const installApp = async () => {
+    if (isInAppBrowser) {
+      window.alert(text.installInApp);
+      if (isAndroid && business) {
+        const externalUrl = new URL(buildClientAppUrl(business, language));
+        window.location.href = `intent://${externalUrl.host}${externalUrl.pathname}${externalUrl.search}#Intent;scheme=https;action=android.intent.action.VIEW;end`;
+      }
+      return;
+    }
+
     if (installPrompt) {
       await installPrompt.prompt();
       const choice = await installPrompt.userChoice;
@@ -322,7 +381,6 @@ export default function BusinessQr() {
       return;
     }
 
-    const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
     window.alert(isIos ? text.installIos : text.installAndroid);
   };
 
@@ -366,7 +424,7 @@ export default function BusinessQr() {
         qrValue={cvUrl}
         shareLabel={shareConfirmed ? text.shared : text.share}
         downloadLabel={text.download}
-        addLabel={text.install}
+        addLabel={isInAppBrowser ? text.openBrowser : text.install}
         openLabel={modelText.open}
         scanText={modelText.scan}
         productLabel={modelText.product}

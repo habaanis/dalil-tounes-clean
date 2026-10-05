@@ -52,7 +52,11 @@ import {
 } from '../lib/slugify';
 import { getCoverImageUrl, getGalleryImageUrls } from '../lib/imagekitUtils';
 import { getLogoUrl } from '../lib/logoUtils';
-import { buildClientAppUrl, buildClientCvUrl } from '../lib/clientAppUrl';
+import {
+  buildClientAppUrl,
+  buildClientCvUrl,
+  isDedicatedClientHostname,
+} from '../lib/clientAppUrl';
 import { adaptDalilBusiness } from '../lib/cvBusinessDalilAdapter';
 import {
   dalilCapabilitiesToPresentationEntitlements,
@@ -657,7 +661,8 @@ export default function BusinessShowcaseLienoraDetail({
   const { getCategory } = useCategoryTranslation();
   const text = COPY[language] || FR;
   const isRTL = language === 'ar';
-  const isDedicatedClientRoute = location.pathname.startsWith('/qr-business/');
+  const isDedicatedClientRoute = location.pathname.startsWith('/qr-business/')
+    || isDedicatedClientHostname(window.location.hostname);
   const isClientAppMode = isDedicatedClientRoute
     || new URLSearchParams(location.search).get('source') === 'pwa'
     || window.matchMedia('(display-mode: standalone)').matches
@@ -726,7 +731,7 @@ export default function BusinessShowcaseLienoraDetail({
 
         const isShortCvPath = location.pathname.startsWith('/cv/');
 
-        if (!record && urlSlug && isShortCvPath) {
+        if (!record && urlSlug && (isShortCvPath || isDedicatedClientRoute)) {
           const normalizedSlug = urlSlug.trim().toLowerCase();
           const { data } = await supabase
             .from('entreprise')
@@ -892,7 +897,7 @@ export default function BusinessShowcaseLienoraDetail({
   const canonicalPath = buildEntrepriseUrl(business);
   const canonicalUrl = `https://dalil-tounes.com${canonicalPath}`;
   const shortShareUrl = isDedicatedClientRoute
-    ? buildClientCvUrl(business.id, language, activePalette)
+    ? buildClientCvUrl(business, language, activePalette)
     : buildShortShareUrl(business) || canonicalUrl;
   const coverImage = getCoverImageUrl(business.image_url);
   const logoImage = getLogoUrl(business.logo_url);
@@ -995,7 +1000,7 @@ export default function BusinessShowcaseLienoraDetail({
   const primaryActions = [
     {
       label: installLabel,
-      href: buildClientAppUrl(business.id, language),
+      href: buildClientAppUrl(business, language),
       icon: Smartphone,
     },
     hasAction('call') && business.telephone && {
@@ -1122,7 +1127,8 @@ export default function BusinessShowcaseLienoraDetail({
 
   const handleBack = () => {
     if (isDedicatedClientRoute) {
-      navigate(`/qr-business/${encodeURIComponent(business.id)}?lang=${language}&source=pwa&palette=${activePalette}`);
+      const clientAppUrl = new URL(buildClientAppUrl(business, language));
+      navigate(`${clientAppUrl.pathname}${clientAppUrl.search}`);
       return;
     }
     if (window.history.length > 1) navigate(-1);
@@ -1270,7 +1276,7 @@ export default function BusinessShowcaseLienoraDetail({
       </div>
       <div className="dt-qr-actions">
         {capabilities.variant === 'premium' && (
-          <a className="dt-qr-action" href={buildClientAppUrl(business.id, language)}>
+          <a className="dt-qr-action" href={buildClientAppUrl(business, language)}>
             <QrCode aria-hidden="true" />
             {language === 'ar' ? 'تثبيت أو عرض CV Business' : language === 'en' ? 'Install / present my Business CV' : language === 'it' ? 'Installa / mostra il mio CV Business' : language === 'ru' ? 'Установить / показать Business CV' : 'Installer / présenter mon CV Business'}
           </a>

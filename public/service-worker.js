@@ -2,7 +2,7 @@
 // Version: 1.4.0
 // Strategie: Network-First pour le HTML, cache valide uniquement pour les assets
 
-const CACHE_VERSION = 'v6';
+const CACHE_VERSION = 'v7';
 const STATIC_CACHE = `dalil-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `dalil-dynamic-${CACHE_VERSION}`;
 

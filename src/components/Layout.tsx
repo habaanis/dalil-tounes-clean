@@ -10,6 +10,7 @@ const ADMIN_EMAILS = ['contact@dalil-tounes.com', 'zenanis75@hotmail.com'];
 import { Menu, X, ChevronDown, ChevronRight, Download, Share } from 'lucide-react';
 import LanguageSelector from './LanguageSelector';
 import { WhatsAppSupport } from './WhatsAppSupport';
+import { isDedicatedClientHostname } from '../lib/clientAppUrl';
 
 // Tout ce qui est hors viewport initial est chargé paresseusement : ces
 // composants ne doivent pas peser sur le premier bundle route-based.
@@ -229,9 +230,10 @@ export const Layout = ({ children }: LayoutProps) => {
 
   const isQrBusinessRoute = location.pathname.startsWith('/qr-business/');
   const isEntrepriseAppRoute = location.pathname.startsWith('/entreprise/');
-  const isDedicatedClientHost = window.location.hostname === 'app.dalil-tounes.com';
+  const isDedicatedClientHost = isDedicatedClientHostname(window.location.hostname);
+  const isDedicatedClientRoute = isDedicatedClientHost && location.pathname !== '/';
   const isPwaLaunch = new URLSearchParams(location.search).get('source') === 'pwa' || pwaInstalled;
-  const isClientAppMode = (isDedicatedClientHost && isQrBusinessRoute)
+  const isClientAppMode = isDedicatedClientRoute
     || ((isQrBusinessRoute || isEntrepriseAppRoute) && isPwaLaunch);
 
   if (isClientAppMode) {

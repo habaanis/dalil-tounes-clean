@@ -4,6 +4,7 @@ import AppRouter from './AppRouter';
 import { WelcomeModal } from './components/WelcomeModal';
 import { CheckoutRegistrationBridge } from './components/CheckoutRegistrationBridge';
 import { PwaUpdatePrompt } from './components/PwaUpdatePrompt';
+import { isDedicatedClientHostname } from './lib/clientAppUrl';
 
 const WELCOME_SEEN_KEY = 'dalilTounes_welcome_seen_v1';
 
@@ -39,7 +40,8 @@ function App() {
   // Détection de l'environnement
   const isHashRouter = window.location.hash.startsWith('#/') || import.meta.env.DEV;
   const isEmbeddedClientPreview = new URLSearchParams(location.search).get('source') === 'pwa';
-  const showWelcomeModal = !isEmbeddedClientPreview && !welcomeDismissed && shouldShowWelcomeForPath(location.pathname);
+  const isDedicatedClientApp = isDedicatedClientHostname(window.location.hostname) && location.pathname !== '/';
+  const showWelcomeModal = !isDedicatedClientApp && !isEmbeddedClientPreview && !welcomeDismissed && shouldShowWelcomeForPath(location.pathname);
   const showWelcomeDevButton = import.meta.env.DEV && isLocalhost;
 
   const handleCloseWelcomeModal = () => {

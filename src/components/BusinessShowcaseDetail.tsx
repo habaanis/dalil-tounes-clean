@@ -14,6 +14,7 @@ import {
 import { supabase } from '../lib/supabaseClient';
 import { mapSubscriptionToTier } from '../lib/subscriptionTiers';
 import { generateLocalBusinessSchema } from '../lib/structuredDataSchemas';
+import { buildClientAppUrl, isDedicatedClientHostname } from '../lib/clientAppUrl';
 import GratuitCard from './GratuitCard';
 import { SEOHead } from './SEOHead';
 import StructuredData from './StructuredData';
@@ -24,6 +25,7 @@ interface BusinessRecord {
   id: string;
   nom: string;
   slug?: string | null;
+  slug_court?: string | null;
   ville?: string | null;
   gouvernorat?: string | null;
   adresse?: string | null;
@@ -110,6 +112,8 @@ export default function BusinessShowcaseDetail() {
 
       try {
         let record: BusinessRecord | null = null;
+        const isClientAppPath = location.pathname.startsWith('/qr-business/')
+          || isDedicatedClientHostname(window.location.hostname);
         const fullUuid = urlId || urlSlug?.match(
           /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i,
         )?.[0];
@@ -119,6 +123,16 @@ export default function BusinessShowcaseDetail() {
             .from('entreprise')
             .select('*')
             .eq('id', fullUuid)
+            .maybeSingle();
+          record = data as BusinessRecord | null;
+        }
+
+        if (!record && urlSlug && isClientAppPath) {
+          const normalizedSlug = urlSlug.trim().toLowerCase();
+          const { data } = await supabase
+            .from('entreprise')
+            .select('*')
+            .eq('slug_court', normalizedSlug)
             .maybeSingle();
           record = data as BusinessRecord | null;
         }
@@ -167,7 +181,6 @@ export default function BusinessShowcaseDetail() {
         setBusiness(record);
 
         const canonicalPath = buildEntrepriseUrl(record);
-        const isClientAppPath = location.pathname.startsWith('/qr-business/');
         if (!isClientAppPath && canonicalPath !== '/' && location.pathname !== canonicalPath) {
           navigate(`${canonicalPath}${location.search}`, { replace: true });
         }
@@ -247,8 +260,9 @@ export default function BusinessShowcaseDetail() {
   };
 
   const handleBack = () => {
-    if (location.pathname.startsWith('/qr-business/')) {
-      navigate(`/qr-business/${encodeURIComponent(business.id)}?lang=${language}&source=pwa`);
+    if (location.pathname.startsWith('/qr-business/') || isDedicatedClientHostname(window.location.hostname)) {
+      const clientAppUrl = new URL(buildClientAppUrl(business, language));
+      navigate(`${clientAppUrl.pathname}${clientAppUrl.search}`);
       return;
     }
     if (window.history.length > 1) navigate(-1);
