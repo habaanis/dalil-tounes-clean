@@ -178,7 +178,7 @@ function App() {
   return (
     <>
       <CheckoutRegistrationBridge />
-      <PwaUpdatePrompt />
+      {!isDedicatedClientApp && <PwaUpdatePrompt />}
       <AppRouter />
       <WelcomeModal isOpen={showWelcomeModal} onClose={handleCloseWelcomeModal} />
       {showWelcomeDevButton && (
