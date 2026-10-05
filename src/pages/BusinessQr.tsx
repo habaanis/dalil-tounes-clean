@@ -295,7 +295,7 @@ export default function BusinessQr() {
     const existing = document.querySelector<HTMLLinkElement>('link[rel="manifest"]');
     const link = existing || document.createElement('link');
     link.rel = 'manifest';
-    link.href = `/api/business-manifest?id=${encodeURIComponent(clientIdentifier)}&app_slug=${encodeURIComponent(clientIdentifier)}&name=${encodeURIComponent(displayName)}&logo=${encodeURIComponent(logoUrl)}&lang=${language}&palette=${paletteTheme.id}&model=${cvModel}&v=client-8`;
+    link.href = `/api/business-manifest?id=${encodeURIComponent(clientIdentifier)}&app_slug=${encodeURIComponent(clientIdentifier)}&name=${encodeURIComponent(displayName)}&logo=${encodeURIComponent(logoUrl)}&lang=${language}&palette=${paletteTheme.id}&model=${cvModel}&v=client-9`;
     if (!existing) document.head.appendChild(link);
     document.title = `${displayName} — ${modelText.product}`;
 

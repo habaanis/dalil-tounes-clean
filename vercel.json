@@ -105,6 +105,12 @@
   ],
   "redirects": [
     {
+      "source": "/",
+      "has": [{ "type": "host", "value": "app.dalil-tounes.com" }],
+      "destination": "https://dalil-tounes.com",
+      "permanent": false
+    },
+    {
       "source": "/cv/:slug",
       "has": [{ "type": "host", "value": "dalil-tounes.com" }],
       "destination": "https://app.dalil-tounes.com/:slug/cv",

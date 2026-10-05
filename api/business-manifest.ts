@@ -40,8 +40,8 @@ const sizedIconUrl = (value: string, size: 192 | 512): string => {
   try {
     const url = new URL(value);
     if (url.hostname === 'ik.imagekit.io') {
-      url.searchParams.set('tr', `w-${size},h-${size},fo-auto`);
-      url.searchParams.set('dt-app', '5');
+      url.searchParams.set('tr', `w-${size},h-${size},fo-auto,f-png`);
+      url.searchParams.set('dt-app', '6');
     }
     return url.toString();
   } catch {
@@ -173,13 +173,13 @@ export default async function handler(request: VercelRequest, response: VercelRe
     ? `/${encodeURIComponent(resolvedAppSlug)}`
     : `/qr-business/${encodeURIComponent(id)}`;
   const startUrl = `${appPath}?source=pwa&app=client&lang=${lang}&palette=${palette}`;
-  const shortName = name.length <= 30
+  const shortName = name.length <= 12
     ? name
-    : name.split(/\s+/).slice(0, 2).join(' ').slice(0, 30);
+    : name.split(/\s+/).slice(0, 2).join(' ').slice(0, 12);
   const icons = logo
-    ? [
-        { src: sizedIconUrl(logo, 192), sizes: '192x192', purpose: 'any' },
-        { src: sizedIconUrl(logo, 512), sizes: '512x512', purpose: 'any maskable' },
+      ? [
+        { src: sizedIconUrl(logo, 192), sizes: '192x192', type: 'image/png', purpose: 'any' },
+        { src: sizedIconUrl(logo, 512), sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
       ]
     : DALIL_ICONS;
 
