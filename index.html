@@ -26,6 +26,7 @@
     <meta name="twitter:image" content="https://dalil-tounes.com/images/logo_dalil_tounes_crop.png" />
     <meta name="twitter:image:alt" content="Dalil Tounes - Votre booster commercial" />
 
+    <meta name="theme-color" id="app-theme-color" content="#D4AF37" />
     <link rel="manifest" id="app-manifest" />
     <script>
       (function () {
@@ -55,13 +56,14 @@
         var palette = ['prestige', 'ivory', 'night'].indexOf(requestedPalette) >= 0 ? requestedPalette : 'prestige';
         var paletteBackgrounds = { prestige: '#032D21', ivory: '#FFF8E7', night: '#10243A' };
         document.documentElement.style.setProperty('--client-app-bg', paletteBackgrounds[palette]);
+        document.getElementById('app-theme-color').content = paletteBackgrounds[palette];
         document.documentElement.lang = lang;
         document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
         manifest.href =
           '/api/business-manifest?id=' + encodeURIComponent(id) +
           '&lang=' + encodeURIComponent(lang) +
           (requestedPalette ? '&palette=' + encodeURIComponent(palette) : '') +
-          '&v=client-9';
+          '&v=client-10';
         document.title = shortMatch
           ? id.split('-').map(function (word) {
               return word.charAt(0).toUpperCase() + word.slice(1);
@@ -69,8 +71,6 @@
           : 'CV Business';
       })();
     </script>
-    <meta name="theme-color" content="#D4AF37" />
-
     <link
       rel="preload"
       as="image"
