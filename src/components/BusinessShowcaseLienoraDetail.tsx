@@ -13,6 +13,7 @@ import {
   Building2,
   CalendarDays,
   Check,
+  ChevronLeft,
   ChevronRight,
   Clock3,
   Contact,
@@ -631,6 +632,113 @@ function AccordionSection({
         </div>
       )}
     </section>
+  );
+}
+
+function GalleryLightbox({
+  images,
+  selectedImage,
+  onSelectImage,
+  onClose,
+  title,
+  closeLabel,
+  language,
+}: {
+  images: Array<{ full: string }>;
+  selectedImage: string;
+  onSelectImage: (url: string) => void;
+  onClose: () => void;
+  title: string;
+  closeLabel: string;
+  language: string;
+}) {
+  const touchStartX = useRef<number | null>(null);
+  const currentIndex = Math.max(0, images.findIndex(image => image.full === selectedImage));
+  const canNavigate = images.length > 1;
+  const previousLabel = language === 'ar' ? 'الصورة السابقة' : 'Photo précédente';
+  const nextLabel = language === 'ar' ? 'الصورة التالية' : 'Photo suivante';
+
+  const showAtOffset = (offset: number) => {
+    if (!canNavigate) return;
+    const nextIndex = (currentIndex + offset + images.length) % images.length;
+    onSelectImage(images[nextIndex].full);
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+      if (event.key === 'ArrowLeft') showAtOffset(-1);
+      if (event.key === 'ArrowRight') showAtOffset(1);
+    };
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  });
+
+  const handleTouchEnd = (event: React.TouchEvent<HTMLDivElement>) => {
+    const startX = touchStartX.current;
+    touchStartX.current = null;
+    if (startX === null || !canNavigate) return;
+    const distance = event.changedTouches[0].clientX - startX;
+    if (Math.abs(distance) < 45) return;
+    showAtOffset(distance > 0 ? -1 : 1);
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-[9999] flex touch-pan-y items-center justify-center bg-black/95 p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-label={title}
+      onClick={onClose}
+      onTouchStart={event => { touchStartX.current = event.touches[0].clientX; }}
+      onTouchEnd={handleTouchEnd}
+    >
+      <button
+        type="button"
+        className="absolute right-5 top-5 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-[#D4AF37] bg-[#0f2d23] text-[#F4CE55]"
+        onClick={event => { event.stopPropagation(); onClose(); }}
+        aria-label={closeLabel}
+      >
+        <X aria-hidden="true" />
+      </button>
+      {canNavigate && (
+        <button
+          type="button"
+          className="absolute left-3 z-10 flex h-12 w-12 items-center justify-center rounded-full border border-[#D4AF37] bg-[#0f2d23]/95 text-[#F4CE55] shadow-lg sm:left-6"
+          onClick={event => { event.stopPropagation(); showAtOffset(-1); }}
+          aria-label={previousLabel}
+        >
+          <ChevronLeft aria-hidden="true" />
+        </button>
+      )}
+      <img
+        src={selectedImage}
+        alt={`${title} ${currentIndex + 1}`}
+        className="max-h-[86vh] max-w-full select-none rounded-xl object-contain"
+        draggable={false}
+        onClick={event => event.stopPropagation()}
+      />
+      {canNavigate && (
+        <>
+          <button
+            type="button"
+            className="absolute right-3 z-10 flex h-12 w-12 items-center justify-center rounded-full border border-[#D4AF37] bg-[#0f2d23]/95 text-[#F4CE55] shadow-lg sm:right-6"
+            onClick={event => { event.stopPropagation(); showAtOffset(1); }}
+            aria-label={nextLabel}
+          >
+            <ChevronRight aria-hidden="true" />
+          </button>
+          <span className="absolute bottom-5 rounded-full bg-black/70 px-3 py-1 text-sm font-semibold text-white">
+            {currentIndex + 1} / {images.length}
+          </span>
+        </>
+      )}
+    </div>
   );
 }
 
@@ -1482,27 +1590,15 @@ export default function BusinessShowcaseLienoraDetail({
           palette={activePalette}
         />
         {selectedImage && (
-          <div
-            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/95 p-4"
-            role="dialog"
-            aria-modal="true"
-            onClick={() => setSelectedImage('')}
-          >
-            <button
-              type="button"
-              className="absolute right-5 top-5 flex h-11 w-11 items-center justify-center rounded-full border border-[#D4AF37] bg-[#0f2d23] text-[#F4CE55]"
-              onClick={() => setSelectedImage('')}
-              aria-label={text.reservationClose}
-            >
-              <X aria-hidden="true" />
-            </button>
-            <img
-              src={selectedImage}
-              alt={`${text.gallery}: ${displayName}`}
-              className="max-h-[90vh] max-w-full rounded-xl object-contain"
-              onClick={event => event.stopPropagation()}
-            />
-          </div>
+          <GalleryLightbox
+            images={galleryItems}
+            selectedImage={selectedImage}
+            onSelectImage={setSelectedImage}
+            onClose={() => setSelectedImage('')}
+            title={`${text.gallery}: ${displayName}`}
+            closeLabel={text.reservationClose}
+            language={language}
+          />
         )}
       </main>
     );
@@ -1720,27 +1816,15 @@ export default function BusinessShowcaseLienoraDetail({
       </div>
 
       {selectedImage && (
-        <div
-          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/95 p-4"
-          role="dialog"
-          aria-modal="true"
-          onClick={() => setSelectedImage('')}
-        >
-          <button
-            type="button"
-            className="absolute right-5 top-5 flex h-11 w-11 items-center justify-center rounded-full border border-[#D4AF37] bg-[#0f2d23] text-[#F4CE55]"
-            onClick={() => setSelectedImage('')}
-            aria-label={text.reservationClose}
-          >
-            <X aria-hidden="true" />
-          </button>
-          <img
-            src={selectedImage}
-            alt={`${text.gallery}: ${displayName}`}
-            className="max-h-[90vh] max-w-full rounded-xl object-contain"
-            onClick={event => event.stopPropagation()}
-          />
-        </div>
+        <GalleryLightbox
+          images={galleryItems}
+          selectedImage={selectedImage}
+          onSelectImage={setSelectedImage}
+          onClose={() => setSelectedImage('')}
+          title={`${text.gallery}: ${displayName}`}
+          closeLabel={text.reservationClose}
+          language={language}
+        />
       )}
     </main>
   );
