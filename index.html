@@ -3,7 +3,6 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dalil Tounes — Plateforme des professionnels en Tunisie | CV Business</title>
     <meta name="description" content="Dalil Tounes est la plateforme tunisienne qui développe le CV Business des professionnels. Découvrez entreprises, artisans, commerces, services et professionnels partout en Tunisie." />
     <meta name="keywords" content="annuaire tunisie, entreprises tunisie, dalil tounes, professionnels tunisie, commerces tunisie, santé tunisie, éducation tunisie, emploi tunisie, avocat tunisie, médecin tunisie, restaurant tunisie, plombier tunisie" />
 
@@ -39,6 +38,7 @@
           : null;
         var match = legacyMatch || shortMatch;
         if (!match) {
+          document.title = 'Dalil Tounes — Plateforme des professionnels en Tunisie | CV Business';
           manifest.href = '/manifest.json';
           return;
         }
@@ -61,7 +61,7 @@
           '/api/business-manifest?id=' + encodeURIComponent(id) +
           '&lang=' + encodeURIComponent(lang) +
           (requestedPalette ? '&palette=' + encodeURIComponent(palette) : '') +
-          '&v=client-7';
+          '&v=client-8';
         document.title = shortMatch
           ? id.split('-').map(function (word) {
               return word.charAt(0).toUpperCase() + word.slice(1);

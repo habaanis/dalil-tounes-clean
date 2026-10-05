@@ -65,6 +65,13 @@
   ],
   "headers": [
     {
+      "source": "/service-worker.js",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" },
+        { "key": "Service-Worker-Allowed", "value": "/" }
+      ]
+    },
+    {
       "source": "/sitemap.xml",
       "headers": [
         { "key": "Content-Type", "value": "application/xml" },
@@ -97,6 +104,18 @@
     }
   ],
   "redirects": [
+    {
+      "source": "/cv/:slug",
+      "has": [{ "type": "host", "value": "dalil-tounes.com" }],
+      "destination": "https://app.dalil-tounes.com/:slug/cv",
+      "permanent": false
+    },
+    {
+      "source": "/qr-business/:path*",
+      "has": [{ "type": "host", "value": "dalil-tounes.com" }],
+      "destination": "https://app.dalil-tounes.com/qr-business/:path*",
+      "permanent": false
+    },
     {
       "source": "/:path*",
       "has": [{ "type": "host", "value": "www.dalil-tounes.com" }],

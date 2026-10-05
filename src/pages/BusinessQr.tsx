@@ -295,11 +295,12 @@ export default function BusinessQr() {
     const existing = document.querySelector<HTMLLinkElement>('link[rel="manifest"]');
     const link = existing || document.createElement('link');
     link.rel = 'manifest';
-    link.href = `/api/business-manifest?id=${encodeURIComponent(clientIdentifier)}&app_slug=${encodeURIComponent(clientIdentifier)}&name=${encodeURIComponent(displayName)}&logo=${encodeURIComponent(logoUrl)}&lang=${language}&palette=${paletteTheme.id}&model=${cvModel}&v=client-7`;
+    link.href = `/api/business-manifest?id=${encodeURIComponent(clientIdentifier)}&app_slug=${encodeURIComponent(clientIdentifier)}&name=${encodeURIComponent(displayName)}&logo=${encodeURIComponent(logoUrl)}&lang=${language}&palette=${paletteTheme.id}&model=${cvModel}&v=client-8`;
     if (!existing) document.head.appendChild(link);
     document.title = `${displayName} — ${modelText.product}`;
 
     return () => {
+      if (isDedicatedClientHostname(window.location.hostname)) return;
       link.href = '/manifest.json';
       document.title = 'Dalil Tounes — Plateforme des professionnels en Tunisie | CV Business';
     };
