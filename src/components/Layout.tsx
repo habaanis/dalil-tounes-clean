@@ -227,11 +227,12 @@ export const Layout = ({ children }: LayoutProps) => {
     return location.pathname.startsWith(path);
   };
 
-  const isClientAppRoute =
-    location.pathname.startsWith('/qr-business/') || location.pathname.startsWith('/entreprise/');
-  const isClientAppMode = isClientAppRoute && (
-    new URLSearchParams(location.search).get('source') === 'pwa' || pwaInstalled
-  );
+  const isQrBusinessRoute = location.pathname.startsWith('/qr-business/');
+  const isEntrepriseAppRoute = location.pathname.startsWith('/entreprise/');
+  const isDedicatedClientHost = window.location.hostname === 'app.dalil-tounes.com';
+  const isPwaLaunch = new URLSearchParams(location.search).get('source') === 'pwa' || pwaInstalled;
+  const isClientAppMode = (isDedicatedClientHost && isQrBusinessRoute)
+    || ((isQrBusinessRoute || isEntrepriseAppRoute) && isPwaLaunch);
 
   if (isClientAppMode) {
     return (

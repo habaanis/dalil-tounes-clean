@@ -52,7 +52,7 @@ import {
 } from '../lib/slugify';
 import { getCoverImageUrl, getGalleryImageUrls } from '../lib/imagekitUtils';
 import { getLogoUrl } from '../lib/logoUtils';
-import { buildClientAppUrl } from '../lib/clientAppUrl';
+import { buildClientAppUrl, buildClientCvUrl } from '../lib/clientAppUrl';
 import { adaptDalilBusiness } from '../lib/cvBusinessDalilAdapter';
 import {
   dalilCapabilitiesToPresentationEntitlements,
@@ -657,7 +657,9 @@ export default function BusinessShowcaseLienoraDetail({
   const { getCategory } = useCategoryTranslation();
   const text = COPY[language] || FR;
   const isRTL = language === 'ar';
-  const isClientAppMode = new URLSearchParams(location.search).get('source') === 'pwa'
+  const isDedicatedClientRoute = location.pathname.startsWith('/qr-business/');
+  const isClientAppMode = isDedicatedClientRoute
+    || new URLSearchParams(location.search).get('source') === 'pwa'
     || window.matchMedia('(display-mode: standalone)').matches
     || (navigator as Navigator & { standalone?: boolean }).standalone === true;
 
@@ -777,7 +779,7 @@ export default function BusinessShowcaseLienoraDetail({
         setBusiness(record);
         const canonicalPath = buildEntrepriseUrl(record);
         const keepPublicShortPath = location.pathname.startsWith('/cv/') && Boolean(record.slug_court);
-        if (!embeddedPreview && !keepPublicShortPath && canonicalPath !== '/' && location.pathname !== canonicalPath) {
+        if (!embeddedPreview && !isDedicatedClientRoute && !keepPublicShortPath && canonicalPath !== '/' && location.pathname !== canonicalPath) {
           navigate({ pathname: canonicalPath, search: location.search }, { replace: true });
         }
       } catch (error) {
@@ -792,7 +794,7 @@ export default function BusinessShowcaseLienoraDetail({
     return () => {
       cancelled = true;
     };
-  }, [embeddedPreview, location.pathname, location.search, navigate, urlId, urlSlug, urlVilleSlug]);
+  }, [embeddedPreview, isDedicatedClientRoute, location.pathname, location.search, navigate, urlId, urlSlug, urlVilleSlug]);
 
   if (loading) {
     return (
@@ -889,7 +891,9 @@ export default function BusinessShowcaseLienoraDetail({
   const slogan = cvProfile.identity.slogan;
   const canonicalPath = buildEntrepriseUrl(business);
   const canonicalUrl = `https://dalil-tounes.com${canonicalPath}`;
-  const shortShareUrl = buildShortShareUrl(business) || canonicalUrl;
+  const shortShareUrl = isDedicatedClientRoute
+    ? buildClientCvUrl(business.id, language, activePalette)
+    : buildShortShareUrl(business) || canonicalUrl;
   const coverImage = getCoverImageUrl(business.image_url);
   const logoImage = getLogoUrl(business.logo_url);
   const mapsUrl = cvProfile.location.directionsUrl;
@@ -1117,6 +1121,10 @@ export default function BusinessShowcaseLienoraDetail({
   };
 
   const handleBack = () => {
+    if (isDedicatedClientRoute) {
+      navigate(`/qr-business/${encodeURIComponent(business.id)}?lang=${language}&source=pwa&palette=${activePalette}`);
+      return;
+    }
     if (window.history.length > 1) navigate(-1);
     else navigate('/entreprises');
   };

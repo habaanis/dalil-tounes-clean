@@ -9,7 +9,7 @@ import { HERO_IMAGE_URL } from '../constants/images';
 import { CvBusinessQrVisual } from '../components/CvBusinessProductVisuals';
 import { getMultilingualField } from '../lib/databaseI18n';
 import { getCvPaletteTheme } from '../lib/cvPalette';
-import { buildClientAppUrl } from '../lib/clientAppUrl';
+import { buildClientAppUrl, buildClientCvUrl } from '../lib/clientAppUrl';
 
 interface BusinessQrRecord {
   id: string;
@@ -219,7 +219,7 @@ export default function BusinessQr() {
   const displayCategory = business
     ? String(getMultilingualField(business, 'categorie', language) || business.categorie || '')
     : '';
-  const cvUrl = `https://dalil-tounes.com${cvPath}?lang=${language}`;
+  const cvUrl = buildClientCvUrl(business?.id || id || '', language, paletteTheme.id);
   const logoUrl = business ? getLogoUrl(business.logo_url) : '';
   const coverUrl = getCoverUrl(business?.image_url);
   const tier = business ? mapSubscriptionToTier(business) : 'gratuit';
@@ -371,7 +371,7 @@ export default function BusinessQr() {
         scanText={modelText.scan}
         productLabel={modelText.product}
         poweredText={text.powered}
-        openHref={`${cvUrl}&source=pwa`}
+        openHref={cvUrl}
         onShare={shareBusiness}
         onDownload={downloadPng}
         onInstall={installApp}

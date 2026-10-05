@@ -5,3 +5,15 @@ export function buildClientAppUrl(businessId: string, language?: string): string
   if (language) url.searchParams.set('lang', language);
   return url.toString();
 }
+
+export function buildClientCvUrl(
+  businessId: string,
+  language?: string,
+  palette?: string,
+): string {
+  const url = new URL(`/qr-business/${encodeURIComponent(businessId)}/cv`, CLIENT_APP_ORIGIN);
+  url.searchParams.set('source', 'pwa');
+  if (language) url.searchParams.set('lang', language);
+  if (palette) url.searchParams.set('palette', palette);
+  return url.toString();
+}
