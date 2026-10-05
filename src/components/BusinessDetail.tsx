@@ -1086,6 +1086,7 @@ export const BusinessDetail = ({
             telephone={business.telephone}
             language={language}
             statut_carte={business.statut_carte}
+            detailView
           />
         </div>
       )}
