@@ -2,6 +2,8 @@
 // Enregistre le service worker et signale proprement les nouvelles versions.
 
 const UPDATE_KEY = 'dalil-tounes-pwa-update-ready';
+const CLIENT_APP_HOST = 'app.dalil-tounes.com';
+const CLIENT_RELOAD_KEY = 'dalil-client-sw-reloaded-v8';
 
 function announceUpdate(): void {
   sessionStorage.setItem(UPDATE_KEY, '1');
@@ -14,7 +16,7 @@ export function registerServiceWorker(): void {
       const hadController = Boolean(navigator.serviceWorker.controller);
 
       navigator.serviceWorker
-        .register('/service-worker.js', { updateViaCache: 'none' })
+        .register('/service-worker.js?v=8', { updateViaCache: 'none' })
         .then((registration) => {
           console.log('[PWA] Service Worker enregistré avec succès:', registration.scope);
 
@@ -31,7 +33,18 @@ export function registerServiceWorker(): void {
         });
 
       navigator.serviceWorker.addEventListener('controllerchange', () => {
-        if (hadController) announceUpdate();
+        if (!hadController) return;
+
+        if (
+          window.location.hostname === CLIENT_APP_HOST
+          && sessionStorage.getItem(CLIENT_RELOAD_KEY) !== '1'
+        ) {
+          sessionStorage.setItem(CLIENT_RELOAD_KEY, '1');
+          window.location.reload();
+          return;
+        }
+
+        announceUpdate();
       });
     });
   } else {
