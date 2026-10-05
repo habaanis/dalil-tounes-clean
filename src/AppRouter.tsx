@@ -141,11 +141,22 @@ const PageLoader = () => (
   </div>
 );
 
+const ClientPageLoader = () => (
+  <div
+    className="fixed inset-0 z-[10000]"
+    aria-hidden="true"
+    style={{ backgroundColor: 'var(--client-app-bg, #032D21)' }}
+  />
+);
+
 function AppRouter() {
+  const isClientAppRoute = isDedicatedClientHostname(window.location.hostname)
+    && window.location.pathname !== '/';
+
   return (
     <Layout>
       <ScrollToTop />
-      <Suspense fallback={<PageLoader />}>
+      <Suspense fallback={isClientAppRoute ? <ClientPageLoader /> : <PageLoader />}>
         <Routes>
           <Route path="/" element={<PlatformHome />} />
 

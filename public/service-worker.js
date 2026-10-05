@@ -2,14 +2,13 @@
 // Version: 1.4.0
 // Strategie: Network-First pour le HTML, cache valide uniquement pour les assets
 
-const CACHE_VERSION = 'v8';
+const CACHE_VERSION = 'v9';
 const STATIC_CACHE = `dalil-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `dalil-dynamic-${CACHE_VERSION}`;
 
-const STATIC_ASSETS = [
-  '/manifest.json',
-  '/offline.html',
-];
+const STATIC_ASSETS = self.location.hostname === 'app.dalil-tounes.com'
+  ? ['/offline.html']
+  : ['/manifest.json', '/offline.html'];
 
 const ASSET_RE = /\.(js|css|png|jpg|jpeg|webp|svg|gif|woff|woff2|ttf|eot)$/;
 
