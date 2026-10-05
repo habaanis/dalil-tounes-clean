@@ -9,6 +9,7 @@ import './businessShowcasePreviewEnhancements.css';
 type BusinessRecord = {
   id?: string | null;
   slug?: string | null;
+  slug_court?: string | null;
   nom?: string | null;
   ville?: string | null;
   google_url?: string | null;
@@ -80,6 +81,15 @@ export default function BusinessShowcaseLienoraEnhanced() {
 
       if (id) {
         const { data } = await supabase.from('entreprise').select('*').eq('id', id).maybeSingle();
+        record = data as BusinessRecord | null;
+      }
+
+      if (!record && slug) {
+        const { data } = await supabase
+          .from('entreprise')
+          .select('*')
+          .eq('slug_court', slug.trim().toLowerCase())
+          .maybeSingle();
         record = data as BusinessRecord | null;
       }
 

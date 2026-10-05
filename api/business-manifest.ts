@@ -57,7 +57,10 @@ type PaletteId = 'prestige' | 'ivory' | 'night';
 type CvModel = 'business' | 'portfolio';
 
 type BusinessManifestRecord = {
+  id?: string | null;
   nom?: string | null;
+  slug?: string | null;
+  slug_court?: string | null;
   name_ar?: string | null;
   name_en?: string | null;
   name_it?: string | null;
@@ -112,11 +115,11 @@ const localizedBusinessName = (business: BusinessManifestRecord | null, language
 
 async function fetchBusiness(id: string): Promise<BusinessManifestRecord | null> {
   const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id);
-  const filters: Array<'id' | 'slug' | 'slug_court'> = isUuid ? ['id'] : ['slug', 'slug_court'];
+  const filters: Array<'id' | 'slug' | 'slug_court'> = isUuid ? ['id'] : ['slug_court', 'slug'];
 
   for (const field of filters) {
     const query = new URLSearchParams({
-      select: 'nom,name_ar,name_en,name_it,name_ru,logo_url,palette_cv,modele_cv',
+      select: 'id,nom,slug,slug_court,name_ar,name_en,name_it,name_ru,logo_url,palette_cv,modele_cv',
       [field]: `eq.${id}`,
       limit: '1',
     });
@@ -141,6 +144,7 @@ async function fetchBusiness(id: string): Promise<BusinessManifestRecord | null>
 export default async function handler(request: VercelRequest, response: VercelResponse) {
   const id = safeId(firstQueryValue(request.query?.id));
   const lang = getLanguage(firstQueryValue(request.query?.lang));
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id);
 
   if (!id) {
     response.status(400).json({ error: 'Missing business id' });
@@ -151,6 +155,7 @@ export default async function handler(request: VercelRequest, response: VercelRe
   const requestedLogo = safeHttpsUrl(firstQueryValue(request.query?.logo));
   const requestedPalette = firstQueryValue(request.query?.palette);
   const requestedModel = firstQueryValue(request.query?.model);
+  const requestedAppSlug = safeId(firstQueryValue(request.query?.app_slug));
   const hasPersonalName = Boolean(requestedName && requestedName.toLowerCase() !== 'cv business');
   const business = hasPersonalName && requestedLogo && requestedPalette && requestedModel
     ? null
@@ -162,8 +167,15 @@ export default async function handler(request: VercelRequest, response: VercelRe
   const palette = getPalette(requestedPalette || business?.palette_cv || null);
   const model = getModel(requestedModel || business?.modele_cv || null);
 
-  const appPath = `/qr-business/${encodeURIComponent(id)}`;
+  const resolvedAppSlug = requestedAppSlug
+    || safeId(business?.slug_court || business?.slug || (!isUuid ? id : null));
+  const appPath = resolvedAppSlug
+    ? `/${encodeURIComponent(resolvedAppSlug)}`
+    : `/qr-business/${encodeURIComponent(id)}`;
   const startUrl = `${appPath}?source=pwa&app=client&lang=${lang}&palette=${palette}`;
+  const shortName = name.length <= 30
+    ? name
+    : name.split(/\s+/).slice(0, 2).join(' ').slice(0, 30);
   const icons = logo
     ? [
         { src: sizedIconUrl(logo, 192), sizes: '192x192', purpose: 'any' },
@@ -176,8 +188,8 @@ export default async function handler(request: VercelRequest, response: VercelRe
   response.status(200).json({
       id: appPath,
       name,
-      short_name: name.slice(0, 30),
-      description: `${name} — ${PRODUCT_LABELS[lang][model]} Dalil Tounes`,
+      short_name: shortName,
+      description: `${name} — ${PRODUCT_LABELS[lang][model]}`,
       start_url: startUrl,
       scope: appPath,
       launch_handler: { client_mode: 'navigate-new' },

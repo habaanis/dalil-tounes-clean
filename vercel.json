@@ -5,6 +5,16 @@
     { "source": "/business/:path*", "destination": "/index.html" },
     { "source": "/entreprise/:path*", "destination": "/index.html" },
     { "source": "/qr-business/:path*", "destination": "/index.html" },
+    {
+      "source": "/:clientSlug([a-z0-9-]+)",
+      "has": [{ "type": "host", "value": "app.dalil-tounes.com" }],
+      "destination": "/index.html"
+    },
+    {
+      "source": "/:clientSlug([a-z0-9-]+)/cv",
+      "has": [{ "type": "host", "value": "app.dalil-tounes.com" }],
+      "destination": "/index.html"
+    },
     { "source": "/p/:slug", "destination": "/index.html" },
     { "source": "/cv/:slug", "destination": "/index.html" },
     { "source": "/jobs", "destination": "/index.html" },

@@ -31,12 +31,18 @@
     <script>
       (function () {
         var manifest = document.getElementById('app-manifest');
-        var match = window.location.pathname.match(/^\/qr-business\/([^/]+)/);
+        var hostname = window.location.hostname;
+        var isClientHost = hostname === 'app.dalil-tounes.com';
+        var legacyMatch = window.location.pathname.match(/^\/qr-business\/([^/]+)/);
+        var shortMatch = isClientHost
+          ? window.location.pathname.match(/^\/([a-z0-9-]+)(?:\/cv)?\/?$/i)
+          : null;
+        var match = legacyMatch || shortMatch;
         if (!match) {
           manifest.href = '/manifest.json';
           return;
         }
-        if (window.location.hostname === 'dalil-tounes.com' || window.location.hostname === 'www.dalil-tounes.com') {
+        if (hostname === 'dalil-tounes.com' || hostname === 'www.dalil-tounes.com') {
           window.location.replace('https://app.dalil-tounes.com' + window.location.pathname + window.location.search + window.location.hash);
           return;
         }
@@ -55,8 +61,12 @@
           '/api/business-manifest?id=' + encodeURIComponent(id) +
           '&lang=' + encodeURIComponent(lang) +
           (requestedPalette ? '&palette=' + encodeURIComponent(palette) : '') +
-          '&v=client-6';
-        document.title = 'CV Business';
+          '&v=client-7';
+        document.title = shortMatch
+          ? id.split('-').map(function (word) {
+              return word.charAt(0).toUpperCase() + word.slice(1);
+            }).join(' ')
+          : 'CV Business';
       })();
     </script>
     <meta name="theme-color" content="#D4AF37" />

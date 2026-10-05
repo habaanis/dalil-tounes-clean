@@ -2,6 +2,7 @@ import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { lazy, Suspense, useEffect } from 'react';
 import { Layout } from './components/Layout';
 import SearchBar from './components/SearchBar';
+import { isDedicatedClientHostname } from './lib/clientAppUrl';
 
 if (typeof window !== 'undefined') {
   (window as any).__DALIL_SEARCHBAR_STATIC__ = SearchBar;
@@ -98,6 +99,14 @@ const SuggestBusiness = lazy(() => import('./pages/SuggestBusiness').then(m => (
 const BusinessRegistration = lazy(() => import('./pages/BusinessRegistration'));
 const CardPreview = lazy(() => import('./pages/CardPreview'));
 
+function ClientCvRoute() {
+  return isDedicatedClientHostname(window.location.hostname) ? <BusinessDetail /> : <NotFound />;
+}
+
+function RootSlugRoute() {
+  return isDedicatedClientHostname(window.location.hostname) ? <BusinessQr /> : <MetierSousCatVillePage />;
+}
+
 const PageLoader = () => (
   <div className="min-h-screen bg-white" aria-hidden="true">
     <div className="py-4 px-4">
@@ -165,6 +174,7 @@ function AppRouter() {
           <Route path="/p/:slug" element={<BusinessDetail />} />
           <Route path="/qr-business/:id/cv" element={<BusinessDetail />} />
           <Route path="/qr-business/:id" element={<BusinessQr />} />
+          <Route path="/:slug/cv" element={<ClientCvRoute />} />
 
           <Route path="/jobs" element={<Jobs />} />
           <Route path="/emploi" element={<Jobs />} />
@@ -250,7 +260,7 @@ function AppRouter() {
           <Route path="/secteur/:secteurSlug" element={<SecteurPage />} />
           <Route path="/gouvernorat/:gouvernoratSlug" element={<GouvernoratPage />} />
           <Route path="/metier/:metierSlug" element={<MetierPage />} />
-          <Route path="/:slug" element={<MetierSousCatVillePage />} />
+          <Route path="/:slug" element={<RootSlugRoute />} />
 
           <Route path="/#/*" element={<Navigate to="/" replace />} />
           <Route path="*" element={<NotFound />} />
