@@ -167,7 +167,8 @@ export default function BusinessShowcaseDetail() {
         setBusiness(record);
 
         const canonicalPath = buildEntrepriseUrl(record);
-        if (canonicalPath !== '/' && location.pathname !== canonicalPath) {
+        const isClientAppPath = location.pathname.startsWith('/qr-business/');
+        if (!isClientAppPath && canonicalPath !== '/' && location.pathname !== canonicalPath) {
           navigate(`${canonicalPath}${location.search}`, { replace: true });
         }
       } catch (error) {
@@ -246,6 +247,10 @@ export default function BusinessShowcaseDetail() {
   };
 
   const handleBack = () => {
+    if (location.pathname.startsWith('/qr-business/')) {
+      navigate(`/qr-business/${encodeURIComponent(business.id)}?lang=${language}&source=pwa`);
+      return;
+    }
     if (window.history.length > 1) navigate(-1);
     else navigate('/entreprises');
   };
