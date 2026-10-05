@@ -932,6 +932,9 @@ export default function BusinessShowcaseLienoraDetail({
     },
     canonicalUrl,
   );
+  const pageTitle = isDedicatedClientRoute
+    ? `${displayName} — ${resolvedPresentation.productName}`
+    : seo.title;
 
   const localBusinessSchema = {
     ...generateLocalBusinessSchema({
@@ -1440,7 +1443,7 @@ export default function BusinessShowcaseLienoraDetail({
       <main dir={isRTL ? 'rtl' : 'ltr'}>
         {!embeddedPreview && <>
           <SEOHead
-            title={seo.title}
+            title={pageTitle}
             description={seo.description}
             keywords={seo.keywords}
             image={coverImage}
@@ -1509,7 +1512,7 @@ export default function BusinessShowcaseLienoraDetail({
     <main className={`dt-showcase-page${embeddedPreview ? ' dt-showcase-page--embedded' : ''}`} style={themeVariables(visualVariant, activePalette)} dir={isRTL ? 'rtl' : 'ltr'}>
       {!embeddedPreview && <>
         <SEOHead
-          title={seo.title}
+          title={pageTitle}
           description={seo.description}
           keywords={seo.keywords}
           image={coverImage}

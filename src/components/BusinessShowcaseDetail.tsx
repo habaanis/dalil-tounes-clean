@@ -234,6 +234,9 @@ export default function BusinessShowcaseDetail() {
     },
     canonicalUrl,
   );
+  const pageTitle = isDedicatedClientHostname(window.location.hostname)
+    ? `${displayName} — ${text.freeProfile}`
+    : seo.title;
 
   const structuredData = {
     ...generateLocalBusinessSchema({
@@ -272,7 +275,7 @@ export default function BusinessShowcaseDetail() {
   return (
     <main className="min-h-screen bg-[#F5F5F5] px-4 py-6" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       <SEOHead
-        title={seo.title}
+        title={pageTitle}
         description={seo.description}
         keywords={seo.keywords}
         image={business.logo_url || business.image_url || undefined}
