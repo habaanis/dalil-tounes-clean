@@ -66,6 +66,7 @@ import { HERO_IMAGE_URL } from '../constants/images';
 import { findMetierByValue, findVilleByLabel } from '../lib/seoLandingData';
 import GratuitCard from '../components/GratuitCard';
 import ReservationForm from '../components/ReservationForm';
+import { buildClientAppUrl } from '../lib/clientAppUrl';
 
 function TikTokIcon({ className = 'text-white', size = 10 }: { className?: string; size?: number }) {
   return (
@@ -1701,8 +1702,8 @@ export const BusinessDetail = ({
               )}
 
               {(tier === 'artisan' || tier === 'premium' || tier === 'elite') && (
-                <Link
-                  to={`/qr-business/${business.id}`}
+                <a
+                  href={buildClientAppUrl(business.id, language)}
                   onClick={(e) => e.stopPropagation()}
                   className="mt-2 inline-flex min-h-10 items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-bold transition-all hover:scale-[1.02]"
                   style={{
@@ -1724,7 +1725,7 @@ export const BusinessDetail = ({
                         : language === 'ru'
                           ? 'Установить приложение и открыть QR'
                           : "Installer l’application et voir le QR"}
-                </Link>
+                </a>
               )}
 
               {(() => {
@@ -2033,8 +2034,8 @@ export const BusinessDetail = ({
                       {text.downloadQR}
                     </button>
 
-                    <Link
-                      to={`/qr-business/${business.id}`}
+                    <a
+                      href={buildClientAppUrl(business.id, language)}
                       className="flex items-center gap-1 rounded-full px-2 py-1 text-[8px] font-bold transition-all hover:scale-105"
                       style={{
                         backgroundColor: colors.gold,
@@ -2051,7 +2052,7 @@ export const BusinessDetail = ({
                             : language === 'ru'
                               ? 'Установить / показать Business CV'
                               : 'Installer / présenter mon CV Business'}
-                    </Link>
+                    </a>
                   </div>
                 </div>
               </div>

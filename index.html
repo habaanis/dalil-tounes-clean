@@ -36,6 +36,10 @@
           manifest.href = '/manifest.json';
           return;
         }
+        if (window.location.hostname === 'dalil-tounes.com' || window.location.hostname === 'www.dalil-tounes.com') {
+          window.location.replace('https://app.dalil-tounes.com' + window.location.pathname + window.location.search + window.location.hash);
+          return;
+        }
         document.documentElement.classList.add('client-app-route');
         var params = new URLSearchParams(window.location.search);
         var id = decodeURIComponent(match[1]);
@@ -47,19 +51,12 @@
         document.documentElement.style.setProperty('--client-app-bg', paletteBackgrounds[palette]);
         document.documentElement.lang = lang;
         document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-        var isAuxSaveurs = id === 'aux-saveurs-d-anis';
-        var name = isAuxSaveurs ? "Aux saveurs d'Anis" : 'CV Business';
-        var logo = isAuxSaveurs
-          ? 'https://ik.imagekit.io/gfdpqvshw/Lienora/client/aux-saveurs-danis/aux-saveurs-danis-logo-v2?updatedAt=1787096555330'
-          : '';
         manifest.href =
           '/api/business-manifest?id=' + encodeURIComponent(id) +
-          '&name=' + encodeURIComponent(name) +
-          '&logo=' + encodeURIComponent(logo) +
           '&lang=' + encodeURIComponent(lang) +
-          '&palette=' + encodeURIComponent(palette) +
-          '&v=client-4';
-        document.title = name + ' — CV Business';
+          (requestedPalette ? '&palette=' + encodeURIComponent(palette) : '') +
+          '&v=client-6';
+        document.title = 'CV Business';
       })();
     </script>
     <meta name="theme-color" content="#D4AF37" />

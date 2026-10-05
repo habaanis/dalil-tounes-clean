@@ -52,6 +52,7 @@ import {
 } from '../lib/slugify';
 import { getCoverImageUrl, getGalleryImageUrls } from '../lib/imagekitUtils';
 import { getLogoUrl } from '../lib/logoUtils';
+import { buildClientAppUrl } from '../lib/clientAppUrl';
 import { adaptDalilBusiness } from '../lib/cvBusinessDalilAdapter';
 import {
   dalilCapabilitiesToPresentationEntitlements,
@@ -990,7 +991,7 @@ export default function BusinessShowcaseLienoraDetail({
   const primaryActions = [
     {
       label: installLabel,
-      href: `/qr-business/${business.id}?lang=${language}`,
+      href: buildClientAppUrl(business.id, language),
       icon: Smartphone,
     },
     hasAction('call') && business.telephone && {
@@ -1261,10 +1262,10 @@ export default function BusinessShowcaseLienoraDetail({
       </div>
       <div className="dt-qr-actions">
         {capabilities.variant === 'premium' && (
-          <Link className="dt-qr-action" to={`/qr-business/${business.id}?lang=${language}`}>
+          <a className="dt-qr-action" href={buildClientAppUrl(business.id, language)}>
             <QrCode aria-hidden="true" />
             {language === 'ar' ? 'تثبيت أو عرض CV Business' : language === 'en' ? 'Install / present my Business CV' : language === 'it' ? 'Installa / mostra il mio CV Business' : language === 'ru' ? 'Установить / показать Business CV' : 'Installer / présenter mon CV Business'}
-          </Link>
+          </a>
         )}
         <button type="button" className="dt-qr-action" onClick={() => void share()}>
           <Share2 aria-hidden="true" />{text.share}

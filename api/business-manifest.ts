@@ -3,8 +3,11 @@ const DALIL_ICONS = [
   { src: '/icons/icon-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
 ];
 
+const SUPABASE_URL = process.env.VITE_SUPABASE_URL || 'https://kmvjegbtroksjqaqliyv.supabase.co';
+const SUPABASE_ANON_KEY = process.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImttdmplZ2J0cm9rc2pxYXFsaXl2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4MDA1NTEsImV4cCI6MjA2NzM3NjU1MX0.MbU7b-HWQBwlYtbJeE7_ABvrGhuhzeAuqvkcVvvoE1o';
+
 const safeId = (value: string | null): string =>
-  String(value || '').trim().replace(/[^a-zA-Z0-9-]/g, '');
+  String(value || '').trim().replace(/[^a-zA-Z0-9\u00C0-\u024F-]/g, '').slice(0, 160);
 
 const safeText = (value: string | null, fallback: string): string => {
   const text = String(value || '').trim().replace(/[<>]/g, '');
@@ -53,6 +56,17 @@ type SupportedLanguage = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 type PaletteId = 'prestige' | 'ivory' | 'night';
 type CvModel = 'business' | 'portfolio';
 
+type BusinessManifestRecord = {
+  nom?: string | null;
+  name_ar?: string | null;
+  name_en?: string | null;
+  name_it?: string | null;
+  name_ru?: string | null;
+  logo_url?: string | null;
+  palette_cv?: string | null;
+  modele_cv?: string | null;
+};
+
 const PALETTE_COLORS: Record<PaletteId, { theme: string; background: string }> = {
   prestige: { theme: '#032D21', background: '#032D21' },
   ivory: { theme: '#FFF8E7', background: '#FFF8E7' },
@@ -82,20 +96,73 @@ const PRODUCT_LABELS: Record<SupportedLanguage, Record<CvModel, string>> = {
   ru: { business: 'CV Business', portfolio: 'CV Portfolio' },
 };
 
-export default function handler(request: VercelRequest, response: VercelResponse) {
+const localizedBusinessName = (business: BusinessManifestRecord | null, language: SupportedLanguage): string | null => {
+  if (!business) return null;
+  const localized = language === 'ar'
+    ? business.name_ar
+    : language === 'en'
+      ? business.name_en
+      : language === 'it'
+        ? business.name_it
+        : language === 'ru'
+          ? business.name_ru
+          : business.nom;
+  return localized || business.nom || null;
+};
+
+async function fetchBusiness(id: string): Promise<BusinessManifestRecord | null> {
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id);
+  const filters: Array<'id' | 'slug' | 'slug_court'> = isUuid ? ['id'] : ['slug', 'slug_court'];
+
+  for (const field of filters) {
+    const query = new URLSearchParams({
+      select: 'nom,name_ar,name_en,name_it,name_ru,logo_url,palette_cv,modele_cv',
+      [field]: `eq.${id}`,
+      limit: '1',
+    });
+    try {
+      const result = await fetch(`${SUPABASE_URL}/rest/v1/entreprise?${query.toString()}`, {
+        headers: {
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        },
+      });
+      if (!result.ok) continue;
+      const rows = await result.json() as BusinessManifestRecord[];
+      if (rows[0]) return rows[0];
+    } catch {
+      // The manifest remains valid with generic fallbacks if Supabase is unavailable.
+    }
+  }
+
+  return null;
+}
+
+export default async function handler(request: VercelRequest, response: VercelResponse) {
   const id = safeId(firstQueryValue(request.query?.id));
-  const name = safeText(firstQueryValue(request.query?.name), 'CV Business');
-  const logo = safeHttpsUrl(firstQueryValue(request.query?.logo));
   const lang = getLanguage(firstQueryValue(request.query?.lang));
-  const palette = getPalette(firstQueryValue(request.query?.palette));
-  const model = getModel(firstQueryValue(request.query?.model));
 
   if (!id) {
     response.status(400).json({ error: 'Missing business id' });
     return;
   }
 
-  const appPath = `/qr-business/${id}`;
+  const requestedName = safeText(firstQueryValue(request.query?.name), '');
+  const requestedLogo = safeHttpsUrl(firstQueryValue(request.query?.logo));
+  const requestedPalette = firstQueryValue(request.query?.palette);
+  const requestedModel = firstQueryValue(request.query?.model);
+  const hasPersonalName = Boolean(requestedName && requestedName.toLowerCase() !== 'cv business');
+  const business = hasPersonalName && requestedLogo && requestedPalette && requestedModel
+    ? null
+    : await fetchBusiness(id);
+  const name = requestedName && requestedName.toLowerCase() !== 'cv business'
+    ? requestedName
+    : safeText(localizedBusinessName(business, lang), 'CV Business');
+  const logo = requestedLogo || safeHttpsUrl(business?.logo_url || null);
+  const palette = getPalette(requestedPalette || business?.palette_cv || null);
+  const model = getModel(requestedModel || business?.modele_cv || null);
+
+  const appPath = `/qr-business/${encodeURIComponent(id)}`;
   const startUrl = `${appPath}?source=pwa&app=client&lang=${lang}&palette=${palette}`;
   const icons = logo
     ? [

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { supabase, supabaseUrl } from '../lib/supabaseClient';
 import { buildEntrepriseUrl, buildShortSharePath, generateSlug } from '../lib/slugify';
@@ -9,6 +9,7 @@ import { HERO_IMAGE_URL } from '../constants/images';
 import { CvBusinessQrVisual } from '../components/CvBusinessProductVisuals';
 import { getMultilingualField } from '../lib/databaseI18n';
 import { getCvPaletteTheme } from '../lib/cvPalette';
+import { buildClientAppUrl } from '../lib/clientAppUrl';
 
 interface BusinessQrRecord {
   id: string;
@@ -188,6 +189,12 @@ export default function BusinessQr() {
   }, [id]);
 
   useEffect(() => {
+    if (!id) return;
+    if (window.location.hostname !== 'dalil-tounes.com' && window.location.hostname !== 'www.dalil-tounes.com') return;
+    window.location.replace(buildClientAppUrl(id, language));
+  }, [id, language]);
+
+  useEffect(() => {
     const handleBeforeInstall = (event: Event) => {
       event.preventDefault();
       setInstallPrompt(event as BeforeInstallPromptEvent);
@@ -328,7 +335,7 @@ export default function BusinessQr() {
       <div className="fixed inset-0 z-[10000] grid place-items-center overflow-y-auto bg-[#F6F7F4] px-4 text-center">
         <div className="max-w-md rounded-3xl border border-[#D4AF37]/40 bg-white p-8 shadow-xl">
           <p className="text-gray-700">{text.unavailable}</p>
-          <Link to={cvPath} className="mt-5 inline-flex rounded-full bg-[#0B4B3E] px-5 py-2.5 font-semibold text-white">{text.back}</Link>
+          <a href={`https://dalil-tounes.com${cvPath}?lang=${language}`} className="mt-5 inline-flex rounded-full bg-[#0B4B3E] px-5 py-2.5 font-semibold text-white">{text.back}</a>
         </div>
       </div>
     );
@@ -364,7 +371,7 @@ export default function BusinessQr() {
         scanText={modelText.scan}
         productLabel={modelText.product}
         poweredText={text.powered}
-        openHref={`${cvPath}?source=pwa&lang=${language}`}
+        openHref={`${cvUrl}&source=pwa`}
         onShare={shareBusiness}
         onDownload={downloadPng}
         onInstall={installApp}

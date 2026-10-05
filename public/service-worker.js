@@ -1,8 +1,8 @@
 // Dalil Tounes Service Worker
-// Version: 1.3.0
+// Version: 1.4.0
 // Strategie: Network-First pour le HTML, cache valide uniquement pour les assets
 
-const CACHE_VERSION = 'v5';
+const CACHE_VERSION = 'v6';
 const STATIC_CACHE = `dalil-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `dalil-dynamic-${CACHE_VERSION}`;
 
@@ -80,8 +80,33 @@ async function deleteOldCaches() {
 }
 
 async function clearRuntimeCaches() {
+  await caches.delete(DYNAMIC_CACHE);
+}
+
+async function clearAllCaches() {
   const names = await caches.keys();
-  await Promise.all(names.map((n) => caches.delete(n)));
+  await Promise.all(names.map((name) => caches.delete(name)));
+}
+
+async function getOfflineResponse() {
+  const cached = await caches.match('/offline.html');
+  if (cached) return cached;
+
+  try {
+    const response = await fetch('/offline.html', { cache: 'reload' });
+    if (response.ok) {
+      const copy = response.clone();
+      caches.open(STATIC_CACHE).then((cache) => cache.put('/offline.html', copy));
+      return response;
+    }
+  } catch {
+    // Fall through to a readable inline response.
+  }
+
+  return new Response(
+    '<!doctype html><html lang="fr"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Connexion indisponible</title><body style="margin:0;min-height:100vh;display:grid;place-items:center;background:#032D21;color:#fff;font-family:system-ui,sans-serif;text-align:center;padding:24px"><main><h1>Connexion indisponible</h1><p>Vérifiez votre connexion puis relancez l’application.</p></main></body></html>',
+    { status: 503, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
+  );
 }
 
 self.addEventListener('install', (event) => {
@@ -107,8 +132,7 @@ self.addEventListener('fetch', (event) => {
   if (isHtmlRequest(request)) {
     event.respondWith(
       fetch(request)
-        .catch(() => caches.match('/offline.html'))
-        .then((r) => r || new Response('Offline', { status: 503, statusText: 'Service Unavailable' }))
+        .catch(() => getOfflineResponse())
     );
     return;
   }
@@ -164,7 +188,7 @@ self.addEventListener('message', (event) => {
   }
   if (event.data && event.data.type === 'CLEAR_CACHE') {
     event.waitUntil(
-      clearRuntimeCaches()
+      clearAllCaches()
     );
   }
 });
