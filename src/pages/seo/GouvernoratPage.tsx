@@ -3,6 +3,7 @@ import { useParams, Link, Navigate } from 'react-router-dom';
 import { Search, MapPin, ArrowRight, AlertCircle } from 'lucide-react';
 import { SEOHead } from '../../components/SEOHead';
 import SearchBar from '../../components/SearchBar';
+import TopRecommendedSection from '../../components/seo/TopRecommendedSection';
 import Breadcrumb from '../../components/seo/Breadcrumb';
 import SeoBusinessCard from '../../components/seo/SeoBusinessCard';
 import LoadMoreButton from '../../components/seo/LoadMoreButton';
@@ -179,6 +180,8 @@ const GouvernoratPage: React.FC = () => {
           <div className="mb-8 bg-[#1a1a1a] rounded-xl p-4 border border-[#D4AF37]/30">
             <SearchBar scope="global" />
           </div>
+
+          <TopRecommendedSection gouvernoratSlug={gouvernorat.slug} contextLabel={gouvLabel} sectionId={gouvernorat.slug} />
 
           {/* Villes */}
           {villes.length > 0 && (

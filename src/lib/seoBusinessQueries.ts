@@ -299,42 +299,49 @@ function parseCount(raw: unknown): number {
   return isNaN(n) ? 0 : n;
 }
 
-export async function fetchTopRecommendedByCity(
-  ville: string,
-  limit: number = 6,
+export interface RecommendedScope {
+  city?: string;
+  metier?: string;
+  sousCategorie?: string;
+  secteurSlug?: string;
+  gouvernoratSlug?: string;
+}
+
+/** Recommendations use public ratings only, independently of paid subscriptions. */
+export async function fetchTopRecommended(
+  scope: RecommendedScope,
+  limit = 10,
+  signal?: AbortSignal,
 ): Promise<RecommendedBusiness[]> {
-  if (!ville) return [];
-
-  const { data, error } = await supabase
-    .from('entreprise')
-    .select(SIMILAR_SELECT)
-    .ilike('ville', `%${ville}%`)
-    .not('"Note Google Globale"', 'is', null)
+  if (!Object.values(scope).some(Boolean)) return [];
+  let query = supabase.from('entreprise').select(SIMILAR_SELECT)
     .gte('"Note Google Globale"', MIN_RATING)
-    .gte('"Compteur Avis Google"', MIN_REVIEWS)
+    .gte('"Compteur Avis Google"', MIN_REVIEWS);
+
+  // Exact city matching prevents a city's list from including a different locality.
+  if (scope.city) query = query.ilike('ville', scope.city.trim());
+  if (scope.metier) query = query.ilike('sous_categories_texte', `%${scope.metier}%`);
+  if (scope.sousCategorie) query = query.ilike('sous_categories_texte', `%${scope.sousCategorie}%`);
+  if (scope.secteurSlug) {
+    const metiers = getMetiersBySecteur(scope.secteurSlug);
+    if (!metiers.length) return [];
+    query = query.or(metiers.map(m => `sous_categories_texte.ilike.%${m.value}%`).join(','));
+  }
+  if (scope.gouvernoratSlug) {
+    const gouv = findGouvernoratBySlug(scope.gouvernoratSlug);
+    if (!gouv) return [];
+    query = query.ilike('gouvernorat', gouv.label);
+  }
+  query = query
     .order('"Note Google Globale"', { ascending: false, nullsFirst: false })
-    .limit(50);
-
-  if (error || !data || data.length === 0) return [];
-
-  const villeNorm = ville.toLowerCase().trim();
-  const allRows = (data as Record<string, unknown>[]).map(mapEntrepriseRow);
-  const rows = allRows.filter((r) => {
-    const v = (r.ville || '').toLowerCase().trim();
-    return v === villeNorm || v.startsWith(villeNorm + ' ') || v.startsWith(villeNorm + ',') || v.endsWith(' ' + villeNorm);
-  });
-  if (rows.length === 0) return [];
-
-  const scored: RecommendedBusiness[] = rows.map((biz) => {
-    const rating = parseRating(biz['Note Google Globale']);
-    return { ...biz, confidenceScore: rating };
-  });
-
-  scored.sort((a, b) => {
-    const ratingDiff = b.confidenceScore - a.confidenceScore;
-    if (ratingDiff !== 0) return ratingDiff;
-    return parseCount(b['Compteur Avis Google']) - parseCount(a['Compteur Avis Google']);
-  });
-
-  return scored.slice(0, limit);
+    .order('"Compteur Avis Google"', { ascending: false, nullsFirst: false })
+    .order('id', { ascending: true })
+    .limit(limit);
+  if (signal) query = query.abortSignal(signal);
+  const { data, error } = await query;
+  if (error) throw error;
+  return (data || []).map(row => {
+    const biz = mapEntrepriseRow(row as Record<string, unknown>);
+    return { ...biz, confidenceScore: parseRating(biz['Note Google Globale']) };
+  }).filter(biz => biz.confidenceScore >= MIN_RATING && parseCount(biz['Compteur Avis Google']) >= MIN_REVIEWS);
 }
