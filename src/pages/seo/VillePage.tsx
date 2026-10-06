@@ -141,6 +141,8 @@ const VillePage: React.FC = () => {
             <SearchBar scope="global" />
           </div>
 
+          <TopRecommendedSection city={ville.label} contextLabel={villeLabel} sectionId={ville.slug} />
+
           <div className="mb-10">
             <h2 className={`text-xs font-semibold text-gray-400 mb-4 uppercase tracking-wider ${isRTL ? '' : 'uppercase'}`} style={{ letterSpacing: isRTL ? '0' : '0.1em' }}>
               {t.searchByTrade} {villeLabel}
@@ -158,7 +160,7 @@ const VillePage: React.FC = () => {
             </div>
           </div>
 
-          <TopRecommendedSection ville={ville.label} villeSlug={ville.slug} />
+
 
           <div className="w-full h-px bg-gray-800 mb-10" />
 
