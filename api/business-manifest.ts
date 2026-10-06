@@ -173,9 +173,9 @@ export default async function handler(request: VercelRequest, response: VercelRe
     ? `/${encodeURIComponent(resolvedAppSlug)}`
     : `/qr-business/${encodeURIComponent(id)}`;
   const startUrl = `${appPath}?source=pwa&app=client&lang=${lang}&palette=${palette}`;
-  const shortName = name.length <= 12
+  const shortName = name.length <= 24
     ? name
-    : name.split(/\s+/).slice(0, 2).join(' ').slice(0, 12);
+    : name.split(/\s+/).slice(0, 2).join(' ').slice(0, 24);
   const icons = logo
       ? [
         { src: sizedIconUrl(logo, 192), sizes: '192x192', type: 'image/png', purpose: 'any' },
