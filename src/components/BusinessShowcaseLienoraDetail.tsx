@@ -653,10 +653,57 @@ function GalleryLightbox({
   language: string;
 }) {
   const touchStartX = useRef<number | null>(null);
+  const imageLoads = useRef(new Map<string, Promise<void>>());
+  const [displayedImage, setDisplayedImage] = useState('');
+  const [imageError, setImageError] = useState(false);
   const currentIndex = Math.max(0, images.findIndex(image => image.full === selectedImage));
+  const displayedIndex = Math.max(0, images.findIndex(image => image.full === displayedImage));
   const canNavigate = images.length > 1;
   const previousLabel = language === 'ar' ? 'الصورة السابقة' : 'Photo précédente';
   const nextLabel = language === 'ar' ? 'الصورة التالية' : 'Photo suivante';
+
+  useEffect(() => {
+    let cancelled = false;
+    const loadImage = (url: string) => {
+      const existing = imageLoads.current.get(url);
+      if (existing) return existing;
+      const pending = new Promise<void>((resolve, reject) => {
+        const image = new Image();
+        const timeout = window.setTimeout(() => {
+          image.onload = null;
+          image.onerror = null;
+          reject(new Error('Image loading timed out'));
+        }, 15000);
+        image.onload = () => {
+          window.clearTimeout(timeout);
+          image.decode().then(resolve, reject);
+        };
+        image.onerror = () => {
+          window.clearTimeout(timeout);
+          reject(new Error('Image could not be loaded'));
+        };
+        image.src = url;
+      });
+      imageLoads.current.set(url, pending);
+      // Allow retry after a failed request, including a later navigation back.
+      void pending.catch(() => imageLoads.current.delete(url));
+      return pending;
+    };
+    setImageError(false);
+    void loadImage(selectedImage).then(() => {
+      if (!cancelled) setDisplayedImage(selectedImage);
+    }).catch(() => {
+      if (!cancelled) setImageError(true);
+    });
+    // Prepare both directions without downloading the whole gallery at once.
+    if (images.length > 1) {
+      for (const offset of [-1, 1]) {
+        const index = (currentIndex + offset + images.length) % images.length;
+        void loadImage(images[index].full).catch(() => {});
+      }
+    }
+    return () => { cancelled = true; };
+  }, [selectedImage, images, currentIndex]);
 
   const showAtOffset = (offset: number) => {
     if (!canNavigate) return;
@@ -716,13 +763,20 @@ function GalleryLightbox({
           <ChevronLeft aria-hidden="true" />
         </button>
       )}
-      <img
-        src={selectedImage}
-        alt={`${title} ${currentIndex + 1}`}
+      {displayedImage && <img
+        src={displayedImage}
+        alt={`${title} ${displayedIndex + 1}`}
         className="max-h-[86vh] max-w-full select-none rounded-xl object-contain"
         draggable={false}
         onClick={event => event.stopPropagation()}
-      />
+      />}
+      {(displayedImage !== selectedImage || imageError) && (
+        <span role="status" className="absolute bottom-16 rounded-full bg-black/80 px-4 py-2 text-sm text-white">
+          {imageError
+            ? (language === 'ar' ? 'تعذّر تحميل الصورة. اختاروا صورة أخرى.' : 'Photo indisponible. Choisissez une autre photo.')
+            : (language === 'ar' ? 'جارٍ تحميل الصورة…' : 'Chargement de la photo…')}
+        </span>
+      )}
       {canNavigate && (
         <>
           <button
@@ -734,7 +788,7 @@ function GalleryLightbox({
             <ChevronRight aria-hidden="true" />
           </button>
           <span className="absolute bottom-5 rounded-full bg-black/70 px-3 py-1 text-sm font-semibold text-white">
-            {currentIndex + 1} / {images.length}
+            {displayedImage ? displayedIndex + 1 : '—'} / {images.length}
           </span>
         </>
       )}
