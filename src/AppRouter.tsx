@@ -2,6 +2,8 @@ import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { lazy, Suspense, useEffect } from 'react';
 import { Layout } from './components/Layout';
 import SearchBar from './components/SearchBar';
+import LanguageSelector from './components/LanguageSelector';
+import { getCvPaletteTheme } from './lib/cvPalette';
 import { isDedicatedClientHostname } from './lib/clientAppUrl';
 
 if (typeof window !== 'undefined') {
@@ -100,7 +102,20 @@ const BusinessRegistration = lazy(() => import('./pages/BusinessRegistration'));
 const CardPreview = lazy(() => import('./pages/CardPreview'));
 
 function ClientCvRoute() {
-  return isDedicatedClientHostname(window.location.hostname) ? <BusinessDetail /> : <NotFound />;
+  const { search } = useLocation();
+  if (!isDedicatedClientHostname(window.location.hostname)) return <NotFound />;
+  const theme = getCvPaletteTheme(new URLSearchParams(search).get('palette'));
+
+  return (
+    <>
+      <div style={{ backgroundColor: theme.page }}>
+        <div className="mx-auto flex w-full max-w-6xl justify-end px-4 py-2" dir="ltr">
+          <LanguageSelector clientApp />
+        </div>
+      </div>
+      <BusinessDetail />
+    </>
+  );
 }
 
 function RootSlugRoute() {
