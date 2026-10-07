@@ -2,6 +2,8 @@ import { Download, ExternalLink, Home, Share2 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import type { BusinessCardPreviewLanguage } from './BusinessCardPreviewBase';
 import { getCvPaletteTheme, type CvPaletteId } from '../lib/cvPalette';
+import { isDedicatedClientHostname } from '../lib/clientAppUrl';
+import LanguageSelector from './LanguageSelector';
 
 export const AUX_SAVEURS_COVER =
   'https://ik.imagekit.io/gfdpqvshw/Lienora/client/aux-saveurs-danis/aux-saveurs-danis-gastronomie.jpg?updatedAt=1787090066953';
@@ -61,6 +63,9 @@ export function CvBusinessQrVisual({
   const isRtl = language === 'ar';
   const displayName = name || t.name;
   const displayCategory = category || t.category;
+  const showClientLanguageSelector = interactive && typeof window !== 'undefined'
+    && (isDedicatedClientHostname(window.location.hostname)
+      || window.location.pathname.startsWith('/qr-business/'));
   const actions = [
     { icon: Share2, label: shareLabel || t.share, action: onShare },
     { icon: Download, label: downloadLabel || t.download, action: onDownload },
@@ -68,6 +73,12 @@ export function CvBusinessQrVisual({
   ];
 
   return (
+    <>
+      {showClientLanguageSelector && (
+        <div className="mx-auto mb-3 flex w-full max-w-[354px] justify-end" dir="ltr">
+          <LanguageSelector clientApp />
+        </div>
+      )}
     <section dir={isRtl ? 'rtl' : 'ltr'} aria-label={`${displayName} — ${productLabel || 'CV Business'}`}
       className="mx-auto w-full max-w-[354px] rounded-[28px] border-[2px] px-[15px] pb-[16px] pt-[13px] shadow-[0_14px_34px_rgba(0,0,0,0.16)]"
       style={{ backgroundColor: theme.surface, borderColor: theme.border, color: theme.text }}>
@@ -117,6 +128,7 @@ export function CvBusinessQrVisual({
         <span>{poweredText || t.powered}</span>
       </p>
     </section>
+    </>
   );
 }
 
