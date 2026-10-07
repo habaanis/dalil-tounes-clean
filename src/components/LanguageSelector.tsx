@@ -1,9 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Globe2 } from 'lucide-react';
 import FlagIcon from './FlagIcon';
 
-const LanguageSelector = () => {
+interface LanguageSelectorProps {
+  clientApp?: boolean;
+}
+
+const LanguageSelector = ({ clientApp = false }: LanguageSelectorProps) => {
   const { language, setLanguage } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -28,6 +32,41 @@ const LanguageSelector = () => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Same language state and saved translations as the site. The native control
+  // stays small, keyboard-accessible and usable inside an installed mini-app.
+  if (clientApp) {
+    const accessibleLabel = language === 'ar'
+      ? 'لغة التطبيق'
+      : language === 'en' ? 'App language' : 'Langue de l’application';
+    const hasClientLanguage = language === 'fr' || language === 'ar' || language === 'en';
+
+    return (
+      <label
+        data-client-language-selector
+        dir="ltr"
+        className="relative inline-flex items-center gap-2 rounded-md border border-gray-200 bg-white px-2.5 text-gray-700 shadow-sm focus-within:ring-2 focus-within:ring-[#D4AF37]"
+        style={{ fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" }}
+      >
+        <Globe2 className="pointer-events-none h-4 w-4 shrink-0" aria-hidden="true" />
+        <select
+          aria-label={accessibleLabel}
+          value={language}
+          onChange={event => {
+            const next = event.target.value;
+            if (next === 'fr' || next === 'ar' || next === 'en') setLanguage(next);
+          }}
+          className="min-h-[44px] cursor-pointer appearance-none bg-transparent py-1.5 pr-5 text-sm font-medium text-gray-700 outline-none"
+        >
+          {!hasClientLanguage && <option value={language} disabled>{currentLang.label}</option>}
+          <option value="fr" lang="fr">Français</option>
+          <option value="ar" lang="ar" dir="rtl">العربية</option>
+          <option value="en" lang="en">English</option>
+        </select>
+        <ChevronDown className="pointer-events-none absolute right-2.5 h-3.5 w-3.5 text-gray-400" aria-hidden="true" />
+      </label>
+    );
+  }
 
   return (
     <div className="relative" ref={dropdownRef}>
