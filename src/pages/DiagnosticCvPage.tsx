@@ -40,14 +40,14 @@ const recommend = (selected: string[]): Recommendation => {
   return business - portfolio >= 2 ? 'business' : portfolio - business >= 2 ? 'portfolio' : 'both';
 };
 const demos = [{name:'CV Business',detail:'Présentation de l’activité, des services et des contacts.'},{name:'CV Portfolio',detail:'Une place importante pour les produits, photos et réalisations.'}];
-export function DiagnosticPage() {
+export default function DiagnosticCvPage() {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<string[][]>(() => questions.map(() => []));
   const [view, setView] = useState<'questions'|'result'|'request'|'thanks'>('questions');
   const [contact, setContact] = useState<'whatsapp'|'email'|'telephone'>('whatsapp');
   const [activity, setActivity] = useState('');
   const [contactValue, setContactValue] = useState('');
-  const [privacy, setPrivacy] = useState(false);
+  
   const started = useRef(false);
   useEffect(() => { diagnosticEvent('view'); }, []);
   const begin = () => { if (!started.current) { started.current = true; diagnosticEvent('start'); } };
@@ -120,9 +120,9 @@ export function DiagnosticPage() {
         <label className="ln-field">Votre activité<input value={activity} onChange={e=>setActivity(e.target.value)} placeholder="Ex. traiteur, consultant" required/></label>
         <label className="ln-field">Moyen de contact préféré<select value={contact} onChange={e=>{setContact(e.target.value as typeof contact);setContactValue('');}}><option value="whatsapp">WhatsApp</option><option value="email">E-mail</option><option value="telephone">Téléphone</option></select></label>
         <label className="ln-field">{contact==='email'?'Adresse e-mail':'Numéro de téléphone'}<input type={contact==='email'?'email':'tel'} value={contactValue} onChange={e=>setContactValue(e.target.value)} required/></label>
-        <label className="ln-field" style={{fontWeight:400}}><input style={{width:'auto',display:'inline',marginRight:8}} type="checkbox" checked={privacy} onChange={e=>setPrivacy(e.target.checked)}/>J’accepte de transmettre ces informations à Dalil Tounes pour recevoir une réponse à ma demande.</label>
+
         <p className="ln-muted">Vos réponses ne sont pas enregistrées par cette version de travail. <Link to="/politique-confidentialite">Confidentialité</Link></p>
-        <div className="ln-actions"><button className="ln-btn alt" onClick={()=>setView('result')}>← Retour</button><a className="ln-btn" aria-disabled={!privacy||!activity.trim()||!contactValue.trim()} style={!privacy||!activity.trim()||!contactValue.trim()?{opacity:.45,pointerEvents:'none'}:{}} href={undefined} onClick={e=>e.preventDefault()}>Envoi en préparation</a></div>
+        <div className="ln-actions"><button className="ln-btn alt" onClick={()=>setView('result')}>← Retour</button><button type="button" className="ln-btn" disabled>Envoi en préparation</button></div>
       </> : <>
         <h1>Merci d’avoir participé !</h1><p>Vous pouvez continuer à découvrir les modèles Dalil Tounes sans communiquer vos coordonnées.</p><button className="ln-btn" onClick={()=>setView('result')}>Revoir mon résultat</button>
       </>}
