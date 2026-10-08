@@ -100,6 +100,7 @@ const GouvernoratPage = lazy(() => import('./pages/seo/GouvernoratPage'));
 const SuggestBusiness = lazy(() => import('./pages/SuggestBusiness').then(m => ({ default: m.SuggestBusiness })));
 const BusinessRegistration = lazy(() => import('./pages/BusinessRegistration'));
 const CardPreview = lazy(() => import('./pages/CardPreview'));
+const DiagnosticCvPage = lazy(() => import('./pages/DiagnosticCvPage'));
 
 function ClientCvRoute() {
   const { search } = useLocation();
@@ -234,6 +235,7 @@ function AppRouter() {
           <Route path="/inscription-entreprise" element={<BusinessRegistration />} />
           <Route path="/subscription" element={<Subscription />} />
           <Route path="/cv-business" element={<CvBusinessHome />} />
+          <Route path="/diagnostic-cv" element={<DiagnosticCvPage />} />
           <Route path="/preview/separation-plateforme-cv" element={<SeparationPreview />} />
           <Route path="/abonnement" element={<Subscription />} />
           <Route path="/paiement/confirmation" element={<PaiementConfirmation />} />
