@@ -44,10 +44,7 @@ export default function DiagnosticCvPage() {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<string[][]>(() => questions.map(() => []));
   const [view, setView] = useState<'questions'|'result'|'request'|'thanks'>('questions');
-  const [contact, setContact] = useState<'whatsapp'|'email'|'telephone'>('whatsapp');
-  const [activity, setActivity] = useState('');
-  const [contactValue, setContactValue] = useState('');
-  
+
   const started = useRef(false);
   useEffect(() => { diagnosticEvent('view'); }, []);
   const begin = () => { if (!started.current) { started.current = true; diagnosticEvent('start'); } };
@@ -111,18 +108,14 @@ export default function DiagnosticCvPage() {
         <p>{description}</p><p className="ln-muted">Cette orientation vous aide à découvrir les modèles. Elle ne constitue pas une évaluation de votre entreprise.</p>
         <h2>Découvrez les présentations</h2>
         {demos.map((d,i)=><div className="ln-demo" key={d.name}><h3>{d.name} {result!=='both' && ((result==='business'&&i===0)||(result==='portfolio'&&i===1))?'· Recommandée':''}</h3><p>{d.detail}</p><p className="ln-muted">Une véritable démonstration Dalil Tounes correspondant à ce modèle sera reliée ici après vérification.</p></div>)}
-        <p><a href="/cv-business" target="_blank" rel="noopener noreferrer" onClick={()=>diagnosticEvent('demo_opened',{demo:'aux-saveurs-danis',recommendation:result})}>Découvrir le CV Business Dalil Tounes ↗</a></p>
+        <p><a href="/cv-business" target="_blank" rel="noopener noreferrer" onClick={()=>diagnosticEvent('demo_opened',{demo:'cv-business-dalil',recommendation:result})}>Découvrir le CV Business Dalil Tounes ↗</a></p>
         <h2>Souhaitez-vous recevoir un exemple adapté à votre activité ?</h2>
         <div className="ln-actions"><button className="ln-btn" onClick={()=>{diagnosticEvent('request_yes',{recommendation:result});setView('request');}}>Oui, recevoir un exemple</button><button className="ln-btn alt" onClick={()=>{diagnosticEvent('request_no',{recommendation:result});setView('thanks');}}>Non, merci</button></div>
       </> : view === 'request' ? <>
         <p className="ln-eyebrow">Étape facultative</p><h1>Recevoir un exemple adapté à votre activité</h1>
         <p>Aucun paiement n'est demandé. Le formulaire d'envoi sera raccordé avant publication. Aucune donnée n'est envoyée depuis cette version de travail.</p>
-        <label className="ln-field">Votre activité<input value={activity} onChange={e=>setActivity(e.target.value)} placeholder="Ex. traiteur, consultant" required/></label>
-        <label className="ln-field">Moyen de contact préféré<select value={contact} onChange={e=>{setContact(e.target.value as typeof contact);setContactValue('');}}><option value="whatsapp">WhatsApp</option><option value="email">E-mail</option><option value="telephone">Téléphone</option></select></label>
-        <label className="ln-field">{contact==='email'?'Adresse e-mail':'Numéro de téléphone'}<input type={contact==='email'?'email':'tel'} value={contactValue} onChange={e=>setContactValue(e.target.value)} required/></label>
-
         <p className="ln-muted">Vos réponses ne sont pas enregistrées par cette version de travail. <Link to="/politique-confidentialite">Confidentialité</Link></p>
-        <div className="ln-actions"><button className="ln-btn alt" onClick={()=>setView('result')}>← Retour</button><button type="button" className="ln-btn" disabled>Envoi en préparation</button></div>
+        <div className="ln-actions"><button className="ln-btn alt" onClick={()=>setView('result')}>← Retour aux résultats</button></div>
       </> : <>
         <h1>Merci d’avoir participé !</h1><p>Vous pouvez continuer à découvrir les modèles Dalil Tounes sans communiquer vos coordonnées.</p><button className="ln-btn" onClick={()=>setView('result')}>Revoir mon résultat</button>
       </>}
