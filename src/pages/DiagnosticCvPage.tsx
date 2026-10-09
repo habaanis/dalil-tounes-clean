@@ -218,6 +218,44 @@ export default function DiagnosticCvPage() {
   const [answers, setAnswers] = useState<number[][]>(() => questions.map(() => []));
   const [view, setView] = useState<'questions'|'result'|'request'|'thanks'>('questions');
   const [hesitations, setHesitations] = useState<number[]>([]);
+  const [studyConsent,setStudyConsent] = useState(false);
+  const [captchaToken,setCaptchaToken] = useState('');
+  const [sendStatus,setSendStatus] = useState<'idle'|'sending'|'sent'|'error'>('idle');
+  const [sendError,setSendError] = useState('');
+  const tokenSiteKey = (import.meta.env.VITE_DALIL_DIAGNOSTIC_TURNSTILE_SITE_KEY as string | undefined) || '';
+  const endpoint = (import.meta.env.VITE_DALIL_DIAGNOSTIC_ENDPOINT as string | undefined) || '';
+  const captchaHost = useRef<HTMLDivElement>(null);
+  const sessionId=useRef<string>(crypto.randomUUID().replace(/-/g,''));
+  useEffect(()=>{
+    if(view!=='result'||!studyConsent||!tokenSiteKey||!captchaHost.current||sendStatus==='sent')return;
+    let cancelled=false;
+    const render=()=>{
+      if(cancelled||!captchaHost.current||captchaHost.current.childElementCount)return;
+      const turnstile=(window as any).turnstile;
+      if(!turnstile)return;
+      turnstile.render(captchaHost.current,{sitekey:tokenSiteKey,callback:(token:string)=>setCaptchaToken(token),'expired-callback':()=>setCaptchaToken(''),'error-callback':()=>setCaptchaToken('')});
+    };
+    if(!(window as any).turnstile){
+      const id='dalil-diagnostic-turnstile-script';
+      if(!document.getElementById(id)){const script=document.createElement('script');script.id=id;script.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';script.async=true;script.onload=render;document.head.appendChild(script);}
+      else document.getElementById(id)?.addEventListener('load',render,{once:true});
+    }else render();
+    return()=>{cancelled=true};
+  },[view,studyConsent,tokenSiteKey,sendStatus]);
+  async function submitStudy(){
+    if(!studyConsent||!captchaToken||!endpoint||sendStatus==='sending')return;
+    setSendStatus('sending');setSendError('');
+    try{
+      const query=new URLSearchParams(window.location.search);
+      const resp=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+        consent:true,turnstileToken:captchaToken,session:sessionId.current,answers,
+        result,language:lang,source:query.get('utm_source')||'direct',campaign:query.get('utm_campaign')||''
+      })});
+      if(!resp.ok)throw new Error('save_error');
+      setSendStatus('sent');emit('study_saved',{language:lang});
+    }catch{setSendStatus('error');setSendError(lang==='ar'?'تعذر إرسال الإجابات الآن. يمكنك متابعة اكتشاف النموذج دون إرسالها.':lang==='en'?'Responses could not be saved right now. You may still explore your result.':"L'enregistrement n'a pas abouti. Vous pouvez continuer à découvrir votre résultat sans envoyer vos réponses.");}
+  }
+
   const rd = resultDetails[lang];
   const started = useRef(false);
   useEffect(() => { emit('view',{language:lang}); }, [lang]);
@@ -366,6 +404,18 @@ export default function DiagnosticCvPage() {
 
         <p><a href="/cv-business" target="_blank" rel="noopener noreferrer" onClick={()=>emit('demo_opened',{demo:'cv-business-dalil',language:lang})}>{t.actual}</a></p>
         <p><Link to="/contact" className="action alt" onClick={()=>emit('contact_opened',{language:lang,source:'diagnostic_result'})}>{rd.directContact}</Link></p>
+        <section className="result-section" aria-label="Participation à l'étude">
+          <h2>{lang==='ar'?'هل ترغب في المشاركة في دراسة احتياجات المهنيين؟':lang==='en'?'Help us understand professionals’ needs':'Aidez-nous à comprendre les besoins des professionnels'}</h2>
+          <p className="muted">{lang==='ar'?'يمكن إرسال إجاباتك دون اسم أو رقم هاتف، إذا وافقت. هذه الخطوة اختيارية.':lang==='en'?'You may send your answers anonymously, if you agree. This step is optional.':'Avec votre accord, vous pouvez envoyer vos réponses sans nom ni numéro de téléphone. Cette étape est facultative.'}</p>
+          <label style={{display:'flex',alignItems:'flex-start',gap:10,margin:'14px 0'}}>
+            <input type="checkbox" checked={studyConsent} onChange={e=>{setStudyConsent(e.target.checked);setSendStatus('idle');setCaptchaToken('')}}/>
+            <span>{lang==='ar'?'أوافق على إرسال إجاباتي المجهولة لاستعمالها في دراسة الاحتياجات.':lang==='en'?'I agree to submit my anonymous responses for the needs study.':"J'accepte de transmettre mes réponses anonymes pour l'étude des besoins."}</span>
+          </label>
+          {studyConsent&&<div ref={captchaHost} style={{minHeight:60}} aria-label="Vérification anti-robots"/>}
+          {sendStatus==='sent'?<p role="status" style={{color:'#286742',fontWeight:700}}>{lang==='ar'?'تم تسجيل إجاباتك، شكراً!':lang==='en'?'Responses saved. Thank you!':'Vos réponses sont enregistrées, merci !'}</p>:<button type="button" className="action" disabled={!endpoint||!tokenSiteKey||!studyConsent||!captchaToken||sendStatus==='sending'} onClick={submitStudy}>{lang==='ar'?'إرسال إجاباتي':lang==='en'?'Send anonymous answers':'Envoyer mes réponses anonymes'}</button>}
+          {(!endpoint||!tokenSiteKey)&&<p className="muted">{lang==='ar'?'جمع الإجابات غير مفعل بعد.':lang==='en'?'Response collection is not yet active.':"L'enregistrement des réponses n'est pas encore activé."}</p>}
+          {sendError&&<p role="alert" className="muted">{sendError}</p>}
+        </section>
         <h2>{t.ask}</h2><div className="actions"><Link to="/contact" className="action" onClick={()=>{emit('request_yes',{language:lang,hesitations:hesitations.join(',')});emit('contact_opened',{language:lang,source:'diagnostic_request'});}}>{t.yes}</Link><button type="button" className="action alt" onClick={()=>{emit('request_no',{language:lang,hesitations:hesitations.join(',')});setView('thanks');}}>{t.no}</button></div>
       </>:view==='request'?<>
         <h1>{t.request}</h1><p>{t.notReady}</p><p><Link to="/politique-confidentialite">{t.privacy}</Link></p>
