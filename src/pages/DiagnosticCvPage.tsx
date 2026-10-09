@@ -264,7 +264,7 @@ export default function DiagnosticCvPage() {
         <button type="button" className="choice all" aria-pressed={allChecked} onClick={()=>toggle(-1)}>✓ {t.all}</button></div>
         <div className="actions"><button type="button" className="action alt" disabled={step===0} onClick={()=>setStep(i=>i-1)}>{t.back}</button><button type="button" className="action" disabled={!selection.length} onClick={next}>{step===5?t.show:t.next}</button></div>
       </>:view==='result'?<>
-        <p className="muted">{t.done}</p><h1>{resultTitle} {result==='both'?t.matchBoth:t.matchOne}</h1><p>{summary}</p><p className="muted">{t.disclaimer}</p><h2>{t.discover}</h2>
+        <p className="muted">{t.done}</p><h1>{resultTitle} {result==='both'?t.matchBoth:t.matchOne}</h1><p>{summary}</p><p className="muted">{t.disclaimer}</p><div className="actions"><a href="/cv-business" target="_blank" rel="noopener noreferrer" className="action alt" onClick={()=>emit('demo_opened',{demo:'cv-business-dalil',language:lang})}>{t.actual}</a><Link to="/contact" className="action" onClick={()=>emit('contact_opened',{language:lang,source:'diagnostic_result_top'})}>{rd.directContact}</Link></div><h2>{t.discover}</h2>
         {(['business','portfolio'] as const).map((model,i)=><div className="demo" key={model}><strong>{i===0?'CV Business':'CV Portfolio'} {result===model?'· '+t.recommended:''}</strong><p>{i===0?t.demoB:t.demoP}</p><p className="muted">{t.demoNotice}</p></div>)}
 
         <section className="result-section" aria-labelledby="dt-diagnostic-all-features">
@@ -300,7 +300,7 @@ export default function DiagnosticCvPage() {
 
         <p><a href="/cv-business" target="_blank" rel="noopener noreferrer" onClick={()=>emit('demo_opened',{demo:'cv-business-dalil',language:lang})}>{t.actual}</a></p>
         <p><Link to="/contact" className="action alt" onClick={()=>emit('contact_opened',{language:lang,source:'diagnostic_result'})}>{rd.directContact}</Link></p>
-        <h2>{t.ask}</h2><div className="actions"><button type="button" className="action" onClick={()=>{emit('request_yes',{language:lang,hesitations:hesitations.join(',')});setView('request');}}>{t.yes}</button><button type="button" className="action alt" onClick={()=>{emit('request_no',{language:lang,hesitations:hesitations.join(',')});setView('thanks');}}>{t.no}</button></div>
+        <h2>{t.ask}</h2><div className="actions"><Link to="/contact" className="action" onClick={()=>{emit('request_yes',{language:lang,hesitations:hesitations.join(',')});emit('contact_opened',{language:lang,source:'diagnostic_request'});}}>{t.yes}</Link><button type="button" className="action alt" onClick={()=>{emit('request_no',{language:lang,hesitations:hesitations.join(',')});setView('thanks');}}>{t.no}</button></div>
       </>:view==='request'?<>
         <h1>{t.request}</h1><p>{t.notReady}</p><p><Link to="/politique-confidentialite">{t.privacy}</Link></p>
         <p><Link to="/contact" className="action" onClick={()=>emit('contact_opened',{language:lang,source:'diagnostic_request'})}>{rd.directContact}</Link></p>
