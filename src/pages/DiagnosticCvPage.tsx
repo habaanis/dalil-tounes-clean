@@ -171,6 +171,28 @@ const resultDetails: Record<Lang, ResultDetailCopy> = {
   },
 };
 
+
+const introCopy: Record<Lang, {title:string;desc:string;time:string;free:string}> = {
+  fr: {
+    title: 'Quel CV professionnel correspond à votre activité ?',
+    desc: 'Répondez à six questions simples pour découvrir le CV Business, le CV Portfolio ou les deux. Un choix à la fois, plusieurs réponses possibles.',
+    time: '6 questions rapides',
+    free: 'Gratuit et sans engagement',
+  },
+  en: {
+    title: 'Which professional CV suits your activity?',
+    desc: 'Answer six simple questions to discover Business CV, Portfolio CV or both. One question at a time, multiple answers possible.',
+    time: '6 quick questions',
+    free: 'Free, no commitment',
+  },
+  ar: {
+    title: 'أي ملف مهني يناسب نشاطك؟',
+    desc: 'أجب عن ستة أسئلة بسيطة لاكتشاف CV Business أو CV Portfolio أو كليهما. سؤال واحد في كل مرحلة مع إمكانية اختيار عدة إجابات.',
+    time: '6 أسئلة سريعة',
+    free: 'مجاني ودون التزام',
+  },
+};
+
 type Questionnaire = {fr:string[]; en:string[]; ar:string[]; exclusive?:number};
 const questions: Questionnaire[] = [{"fr":["Comment présentez-vous votre activité aujourd’hui ?","Bouche-à-oreille","Réseaux sociaux","Site internet","Carte de visite","Pas encore"],"en":["How do you currently present your business?","Word of mouth","Social media","Website","Business card","Not yet"],"ar":["كيف تقدم نشاطك حالياً؟","التوصيات الشفهية","شبكات التواصل الاجتماعي","موقع إلكتروني","بطاقة عمل","ليس بعد"],"exclusive":4},{"fr":["Qu’aimeriez-vous faciliter pour vos clients ?","Me contacter","Comprendre mes services","Voir mon travail","Me localiser","Consulter les avis"],"en":["What would you like to make easier for customers?","Contact me","Understand my services","See my work","Find my location","Read reviews"],"ar":["ما الذي تريد تسهيله على حرفائك؟","التواصل معي","فهم خدماتي","مشاهدة أعمالي","العثور على موقعي","الاطلاع على التقييمات"]},{"fr":["Qu’avez-vous surtout envie de montrer ?","Mon activité","Mes services","Mes réalisations","Mes produits","Mes références"],"en":["What do you most want to showcase?","My business","My services","My work","My products","My references"],"ar":["ما الذي ترغب في إبرازه بشكل أساسي؟","نشاطي","خدماتي","أعمالي المنجزة","منتجاتي","مراجعي المهنية"]},{"fr":["Qu’utilisez-vous déjà pour présenter votre travail ?","Photos","Vidéos","Exemples de projets","Présentation écrite","Pas encore de contenu"],"en":["What content do you already use?","Photos","Videos","Project examples","Written introduction","No content yet"],"ar":["ما المحتوى الذي تستخدمه حالياً للتعريف بعملك؟","صور","فيديوهات","أمثلة لمشاريع","نبذة مكتوبة","لا أملك محتوى بعد"],"exclusive":4},{"fr":["Comment aimeriez-vous partager votre présentation ?","Lien direct","QR Business","WhatsApp","E-mail","Réseaux sociaux"],"en":["How would you like to share your presentation?","Direct link","QR Business","WhatsApp","Email","Social media"],"ar":["كيف ترغب في مشاركة ملفك المهني؟","رابط مباشر","رمز QR Business","واتساب","البريد الإلكتروني","شبكات التواصل الاجتماعي"]},{"fr":["Que souhaitez-vous découvrir maintenant ?","Voir un exemple","Recevoir un exemple adapté","Mieux comprendre","Pas maintenant"],"en":["What would you like to do next?","See an example","Request a tailored example","Learn more","Not now"],"ar":["ماذا ترغب في اكتشافه الآن؟","مشاهدة مثال","طلب مثال مخصص","معرفة المزيد","ليس الآن"],"exclusive":3}];
 const recommend = (values: number[]): Recommendation => {
@@ -191,6 +213,7 @@ export default function DiagnosticCvPage() {
     return param === 'ar' || param === 'en' ? param : 'fr';
   });
   const t = copy[lang];
+  const intro = introCopy[lang];
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<number[][]>(() => questions.map(() => []));
   const [view, setView] = useState<'questions'|'result'|'request'|'thanks'>('questions');
@@ -221,42 +244,85 @@ export default function DiagnosticCvPage() {
   const summary = result==='business'?t.descB:result==='portfolio'?t.descP:t.descBoth;
   return <main className="dt-diagnostic" dir={lang==='ar'?'rtl':'ltr'} lang={lang}>
     <style>{`
-      .dt-diagnostic{font-family:inherit;min-height:75vh;padding:38px 14px;color:#153d38;background:#f6f8f5}
-      .dt-diagnostic .panel{max-width:720px;margin:0 auto;padding:clamp(20px,5vw,40px);border-radius:20px;background:#fff;border:1px solid #dfe7e3}
+      .dt-diagnostic{font-family:inherit;min-height:75vh;padding:38px 14px;color:#3b2022;background:#fffdfa8ef}
+      .dt-diagnostic .panel{max-width:720px;margin:0 auto;padding:clamp(20px,5vw,40px);border-radius:20px;background:#fffdfa;border:1px solid #edddcb}
       .dt-diagnostic h1{font-size:clamp(24px,4vw,36px);line-height:1.3;margin:15px 0}
-      .dt-diagnostic p{line-height:1.65}.dt-diagnostic .muted{color:#566b66;font-size:14px}
+      .dt-diagnostic p{line-height:1.65}.dt-diagnostic .muted{color:#74635b;font-size:14px}
       .dt-diagnostic .top{display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap}
-      .dt-diagnostic .top select{background:#fff;color:inherit;border:1px solid #a9bcb3;border-radius:9px;padding:9px}
+      .dt-diagnostic .top select{background:#fffdfa;color:inherit;border:1px solid #cbbcaf;border-radius:9px;padding:9px}
       .dt-diagnostic .progress{display:flex;gap:6px;margin:24px 0}
-      .dt-diagnostic .progress span{height:7px;flex:1;border-radius:8px;background:#dfe6e3}
-      .dt-diagnostic .progress span.active{background:#26775c}
+      .dt-diagnostic .progress span{height:7px;flex:1;border-radius:8px;background:#ecdcc9}
+      .dt-diagnostic .progress span.active{background:#b51c2f}
       .dt-diagnostic .options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:24px 0}
       .dt-diagnostic button{font:inherit;cursor:pointer}
-      .dt-diagnostic .choice{background:white;color:inherit;border:1px solid #bacbc2;border-radius:11px;min-height:62px;padding:14px;text-align:start}
-      .dt-diagnostic .choice[aria-pressed=true]{background:#e2f3ea;border-color:#24704f;font-weight:700}
+      .dt-diagnostic .choice{background:white;color:inherit;border:1px solid #decbbf;border-radius:11px;min-height:62px;padding:14px;text-align:start}
+      .dt-diagnostic .choice[aria-pressed=true]{background:#fff0e5;border-color:#b51c2f;font-weight:700}
       .dt-diagnostic .choice.all{grid-column:1/-1}
       .dt-diagnostic .actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
-      .dt-diagnostic .action{padding:13px 20px;border-radius:10px;border:1px solid #26775c;background:#26775c;color:white;text-decoration:none}
-      .dt-diagnostic .action.alt{color:#26775c;background:transparent}
+      .dt-diagnostic .action{padding:13px 20px;border-radius:10px;border:1px solid #b51c2f;background:#b51c2f;color:white;text-decoration:none}
+      .dt-diagnostic .action.alt{color:#b51c2f;background:transparent}
       .dt-diagnostic button:disabled{opacity:.45;cursor:not-allowed}
-      .dt-diagnostic :focus-visible{outline:3px solid #66ad91;outline-offset:2px}
-      .dt-diagnostic .demo{border:1px solid #dfe7e3;border-radius:12px;padding:15px;margin:12px 0}
-      .dt-diagnostic .result-section{padding:20px 0;border-top:1px solid #e2e8e3;margin-top:24px}
+      .dt-diagnostic :focus-visible{outline:3px solid #dcb466;outline-offset:2px}
+      .dt-diagnostic .demo{border:1px solid #edddcb;border-radius:12px;padding:15px;margin:12px 0}
+      .dt-diagnostic .result-section{padding:20px 0;border-top:1px solid #e9d8c5;margin-top:24px}
       .dt-diagnostic .result-section h2{font-size:clamp(19px,3vw,24px);line-height:1.3;margin:0 0 12px;font-weight:750}
       .dt-diagnostic .result-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-      .dt-diagnostic .result-card{border:1px solid #dce7e1;border-radius:12px;padding:16px;background:#fafcf9}
+      .dt-diagnostic .result-card{border:1px solid #ead6c7;border-radius:12px;padding:16px;background:#fff9f0}
       .dt-diagnostic .result-card h3{font-size:18px;font-weight:750;margin:0 0 9px}
       .dt-diagnostic .result-list{margin:12px 0;padding-inline-start:23px;display:grid;gap:10px;line-height:1.55;font-size:14px}
-      .dt-diagnostic .result-list li::marker{color:#287b55}
+      .dt-diagnostic .result-list li::marker{color:#b51c2f}
       .dt-diagnostic .hesitations{display:grid;grid-template-columns:1fr;gap:8px;margin:12px 0}
-      .dt-diagnostic .hesitation-choice{display:flex;align-items:center;gap:10px;text-align:start;background:#fff;border:1px solid #bbcec4;border-radius:10px;padding:12px;color:inherit}
-      .dt-diagnostic .hesitation-choice[aria-pressed=true]{border-color:#25734f;background:#e6f3e9;font-weight:650}
+      .dt-diagnostic .hesitation-choice{display:flex;align-items:center;gap:10px;text-align:start;background:#fffdfa;border:1px solid #ddc8bd;border-radius:10px;padding:12px;color:inherit}
+      .dt-diagnostic .hesitation-choice[aria-pressed=true]{border-color:#b51c2f;background:#fff0e5;font-weight:650}
       @media(max-width:540px){.dt-diagnostic .result-grid{grid-template-columns:1fr}}
       @media(max-width:540px){.dt-diagnostic .options{grid-template-columns:1fr}.dt-diagnostic .action{flex:1}}
+
+      .dt-diagnostic{background:radial-gradient(circle at 88% 1%, #fff0da 0, transparent 48%),linear-gradient(180deg,#fff8ed 0%,#fff5e8 100%);padding:clamp(16px,4vw,38px) 14px 64px;color:#3b2022}
+      .dt-diagnostic .panel{max-width:840px;box-shadow:0 18px 55px #632f2310;border-color:#eed7bf}
+      .dt-diagnostic .brand-lockup{display:flex;align-items:center;gap:10px;min-width:0}
+      .dt-diagnostic .brand-logo{height:62px;width:auto;max-width:210px;object-fit:contain}
+      .dt-diagnostic .top{padding-bottom:16px;border-bottom:1px solid #f2e1d0}
+      .dt-diagnostic .top label{font-size:13px;font-weight:650;color:#6b4243}
+      .dt-diagnostic .top select{min-height:40px;border:1px solid #d7c0ab}
+      .dt-diagnostic .welcome-strip{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:17px 22px 13px;margin-top:20px;border-radius:15px;background:linear-gradient(105deg,#fff0e0,#fff9ee);border:1px solid #f3dfc6}
+      .dt-diagnostic .welcome-strip .intro-copy{max-width:580px}
+      .dt-diagnostic .welcome-strip h2{font-weight:800;font-size:clamp(19px,3.6vw,26px);margin:8px 0;color:#681e2c;line-height:1.3}
+      .dt-diagnostic .welcome-strip p{font-size:14px;color:#6b4c48;line-height:1.5;margin:5px 0}
+      .dt-diagnostic .intro-badges{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+      .dt-diagnostic .intro-badges span{font-size:12px;padding:6px 10px;border-radius:50px;background:#fffdf7;color:#793d29;border:1px solid #eed9c0;font-weight:650}
+      .dt-diagnostic .mascot{height:130px;width:124px;object-fit:contain;flex-shrink:0}
+      .dt-diagnostic .choice{background:#fff;color:#3b2022;box-shadow:0 2px 6px #6f382008;transition:border-color .15s,background .15s}
+      .dt-diagnostic .choice:hover{border-color:#b51c2f;background:#fff7ee}
+      .dt-diagnostic .choice[aria-pressed=true]{background:#fff0e6;border-color:#b51c2f;color:#8d1526}
+      .dt-diagnostic .action{background:#b51c2f;border-color:#b51c2f;color:#fff;display:inline-flex;align-items:center;justify-content:center;text-align:center;font-weight:700;min-height:48px;box-shadow:0 3px 6px #79282d17}
+      .dt-diagnostic .action.alt{background:#fffdf9;color:#9c2232;border-color:#c44149}
+      .dt-diagnostic .action:hover:not(:disabled){filter:brightness(.96)}
+      .dt-diagnostic .progress span.active{background:#b51c2f}
+      .dt-diagnostic h1{color:#3b2022;font-weight:800}
+      .dt-diagnostic .result-section h2{color:#761c2a}
+      .dt-diagnostic .result-list li::marker{color:#b51c2f}
+      .dt-diagnostic .result-card{background:#fffaf3}
+      @media(max-width:540px){
+        .dt-diagnostic .top{align-items:flex-start}
+        .dt-diagnostic .brand-logo{height:52px;max-width:155px}
+        .dt-diagnostic .welcome-strip{padding:14px 12px}
+        .dt-diagnostic .mascot{height:92px;width:80px}
+        .dt-diagnostic .welcome-strip h2{font-size:19px}
+        .dt-diagnostic .intro-badges span{font-size:11px}
+        .dt-diagnostic .panel{padding:18px}
+      }
     `}</style>
     <div className="panel">
-      <div className="top"><strong>{t.brand}</strong><label>{t.language} <select aria-label={t.language} value={lang} onChange={e=>setLang(e.target.value as Lang)}><option value="fr">Français</option><option value="en">English</option><option value="ar">العربية</option></select></label></div>
+      <div className="top"><div className="brand-lockup"><img className="brand-logo" src="/images/logo_dalil_tounes_crop.png" alt="Dalil Tounes" /></div><label>{t.language} <select aria-label={t.language} value={lang} onChange={e=>setLang(e.target.value as Lang)}><option value="fr">Français</option><option value="en">English</option><option value="ar">العربية</option></select></label></div>
       {view==='questions'?<>
+        <div className="welcome-strip">
+          <div className="intro-copy">
+            <h2>{intro.title}</h2>
+            <p>{intro.desc}</p>
+            <div className="intro-badges"><span>✓ {intro.time}</span><span>✓ {intro.free}</span></div>
+          </div>
+          <img className="mascot" src="/images/mascotte-dalil-transparent.webp" alt="" aria-hidden="true" width="124" height="130" decoding="async" />
+        </div>
         <div className="progress" aria-label={t.question+' '+(step+1)+' / 6'}>{questions.map((_,i)=><span key={i} className={i<=step?'active':''}/>)}</div>
         <p className="muted">{t.question} {step+1} / 6 · {t.multiple}</p>
         <h1>{current[lang][0]}</h1><p className="muted">{t.instruction}</p>
