@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { BusinessCardPreviewLanguage } from '../components/BusinessCardPreview';
 import CvBusinessJourney from '../components/CvBusinessJourney';
-import CvCapabilitiesSection from '../components/CvCapabilitiesSection';
 import { getPresentationModelLabel, type PresentationModel } from '../components/CvPresentationModelSelector';
 import SearchBar from '../components/SearchBar';
 import VisibilityHouseSection from '../components/VisibilityHouseSection';
@@ -329,8 +328,6 @@ export default function HomeVitrineFirst() {
           </div>
         </div>
       </section>
-
-      <CvCapabilitiesSection language={lang} />
 
       <CvBusinessJourney language={lang} />
 
