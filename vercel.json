@@ -2,6 +2,7 @@
   "rewrites": [
     { "source": "/recherche", "destination": "/index.html" },
     { "source": "/businesses", "destination": "/index.html" },
+    { "source": "/entreprises-certifiees", "destination": "/index.html" },
     { "source": "/business/:path*", "destination": "/index.html" },
     { "source": "/entreprise/:path*", "destination": "/index.html" },
     { "source": "/qr-business/:path*", "destination": "/index.html" },
