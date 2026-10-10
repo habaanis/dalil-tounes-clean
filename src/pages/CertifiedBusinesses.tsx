@@ -9,7 +9,7 @@ import { extractFrenchName } from '../lib/textNormalization';
 
 type Row = Record<string, any>;
 const CERTIFIED_LABEL = '⭐ CERTIFIÉ DALIL TOUNES';
-const PAGE_SIZE = 12;
+const PAGE_SIZE = 8;
 
 export default function CertifiedBusinesses() {
   const navigate = useNavigate();
