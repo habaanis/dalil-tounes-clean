@@ -68,7 +68,7 @@ function add(route, priority = '0.7', changefreq = 'weekly', lastmod = TODAY) {
 }
 
 const corePages = [
-  ['/', '1.0', 'daily'], ['/businesses', '0.9', 'daily'], ['/jobs', '0.8', 'daily'],
+  ['/', '1.0', 'daily'], ['/businesses', '0.9', 'daily'], ['/entreprises-certifiees', '0.85', 'weekly'], ['/jobs', '0.8', 'daily'],
   ['/citizens', '0.8', 'weekly'], ['/citizens/health', '0.8', 'weekly'], ['/citizens/leisure', '0.8', 'weekly'],
   ['/citizens/admin', '0.7', 'weekly'], ['/citizens/shops', '0.8', 'weekly'], ['/citizens/services', '0.8', 'weekly'],
   ['/citizens/tourism', '0.8', 'weekly'], ['/education', '0.8', 'weekly'], ['/culture-events', '0.8', 'daily'],

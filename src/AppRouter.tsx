@@ -100,6 +100,7 @@ const GouvernoratPage = lazy(() => import('./pages/seo/GouvernoratPage'));
 const SuggestBusiness = lazy(() => import('./pages/SuggestBusiness').then(m => ({ default: m.SuggestBusiness })));
 const BusinessRegistration = lazy(() => import('./pages/BusinessRegistration'));
 const CardPreview = lazy(() => import('./pages/CardPreview'));
+const CertifiedBusinesses = lazy(() => import('./pages/CertifiedBusinesses'));
 
 function ClientCvRoute() {
   const { search } = useLocation();
@@ -191,6 +192,7 @@ function AppRouter() {
 
           <Route path="/businesses" element={<Businesses />} />
           <Route path="/entreprises" element={<Businesses />} />
+          <Route path="/entreprises-certifiees" element={<CertifiedBusinesses />} />
           <Route path="/business/:id/:slug?" element={<LegacyBusinessRedirect />} />
           <Route path="/entreprises/:id/:slug?" element={<LegacyBusinessRedirect />} />
           <Route path="/entreprise/id/:id" element={<BusinessDetail />} />

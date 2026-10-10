@@ -173,6 +173,13 @@ const sousCategories = parseSousCategories();
 const secteurs = parseEntries(extractArrayBlock('SEO_SECTEURS', 'const SECTEUR_LABEL_TO_SLUG'), true);
 const gouvernorats = parseEntries(extractArrayBlock('SEO_GOUVERNORATS', 'export const SEO_'), true);
 
+writePage('/entreprises-certifiees', {
+  title: 'Entreprises certifiées en Tunisie | Dalil Tounes',
+  description: 'Découvrez les entreprises et professionnels certifiés sur Dalil Tounes. Recherchez par nom, ville ou activité et consultez leur présentation professionnelle.',
+  canonical: `${ORIGIN}/entreprises-certifiees`,
+});
+
+
 for (const item of metiers) {
   const route = `/metier/${item.slug}`;
   writePage(route, {

@@ -229,10 +229,21 @@ function SeparationExperience({ fixedView }: { fixedView?: 'platform' | 'cv' }) 
 
           <CvCapabilitiesSection language={lang} />
 
-          <section className="bg-white px-4 py-9 md:py-11">
-            <div className="mx-auto max-w-6xl">
-              <div className="mb-5 text-center"><h2 className="font-serif text-2xl font-bold text-[#2E102A] md:text-3xl">{t.certifiedTitle}</h2><p className="mx-auto mt-2 max-w-3xl text-sm leading-6 text-gray-600 md:text-base">{t.certifiedSubtitle}</p></div>
-              {loading ? <div className="grid grid-cols-2 gap-3 lg:grid-cols-4" aria-label={t.certifiedLoading}>{[0, 1, 2, 3].map((item) => <div key={item} className="h-[220px] animate-pulse rounded-2xl border border-gray-100 bg-gray-100" />)}</div> : <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">{partners.slice(0, 4).map((biz) => <div key={biz.id} className="min-w-0"><BusinessCard business={{ id: biz.id, name: extractFrenchName(biz.nom), category: Array.isArray(biz.sous_categories) ? (biz.sous_categories as unknown as string[]).join(', ') : (biz.sous_categories || ''), ville: biz.ville, gouvernorat: biz.gouvernorat, statut_abonnement: biz.statut_abonnement, niveau_priorite_abonnement: biz.niveau_priorite_abonnement, imageUrl: biz.image_url, logoUrl: biz.logo_url, horaires_ok: biz.horaires_ok, telephone: biz.telephone, statut_carte: biz.statut_carte, name_ar: biz.name_ar, description_ar: biz.description_ar }} onClick={() => navigate(`/business/${biz.id}`)} /></div>)}</div>}
+          <section className="bg-white px-4 py-8 md:py-10">
+            <div className="mx-auto max-w-5xl rounded-3xl border border-[#D4AF37]/35 bg-[#FFFCF7] p-5 text-center shadow-sm md:p-7">
+              <p className="text-xs font-black uppercase tracking-[0.16em] text-[#B58A18]">
+                {loading ? '—' : t.certifiedProof(localizedCertifiedCount)}
+              </p>
+              <h2 className="mt-2 font-serif text-2xl font-bold text-[#2E102A] md:text-3xl">{t.certifiedTitle}</h2>
+              <p className="mx-auto mt-2 max-w-3xl text-sm leading-6 text-gray-600 md:text-base">{t.certifiedSubtitle}</p>
+              <button
+                type="button"
+                onClick={() => navigate('/entreprises-certifiees')}
+                className="mt-5 inline-flex min-h-12 items-center gap-2 rounded-xl bg-[#4A1D43] px-6 py-3 text-sm font-black text-white transition hover:-translate-y-0.5 hover:bg-[#5B2553]"
+              >
+                {lang === 'ar' ? 'عرض المؤسسات الموثّقة' : lang === 'en' ? 'View certified businesses' : lang === 'it' ? 'Vedi le aziende certificate' : lang === 'ru' ? 'Посмотреть сертифицированные компании' : 'Voir les entreprises certifiées'}
+                <ArrowRight className={`h-4 w-4 ${lang === 'ar' ? 'rotate-180' : ''}`} />
+              </button>
             </div>
           </section>
 
