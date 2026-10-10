@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BusinessCard } from '../components/BusinessCard';
 import CvCapabilitiesSection from '../components/CvCapabilitiesSection';
+import { SEOHead } from '../components/SEOHead';
 import { useLanguage } from '../context/LanguageContext';
 import { supabase } from '../lib/supabaseClient';
 import { extractFrenchName } from '../lib/textNormalization';
@@ -66,8 +67,25 @@ export default function CertifiedBusinesses() {
     document.getElementById('cv-benefits')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
+  const seoTitle = lang === 'ar'
+    ? 'المؤسسات الموثّقة في تونس | دليل تونس'
+    : 'Entreprises certifiées en Tunisie | Dalil Tounes';
+  const seoDescription = lang === 'ar'
+    ? 'اكتشف المؤسسات والمهنيين الموثّقين على دليل تونس، وابحث حسب الاسم أو المدينة أو النشاط واطّلع على بطاقاتهم المهنية.'
+    : 'Découvrez les entreprises et professionnels certifiés sur Dalil Tounes. Recherchez par nom, ville ou activité et consultez leur présentation professionnelle.';
+
   return (
-    <div dir={lang === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-[#FBF8F0]">
+    <>
+      <SEOHead
+        title={seoTitle}
+        description={seoDescription}
+        keywords={lang === 'ar'
+          ? 'مؤسسات موثقة تونس, دليل تونس, شركات تونس, مهنيين تونس, CV Business'
+          : 'entreprises certifiées Tunisie, professionnels Tunisie, entreprises Dalil Tounes, CV Business Tunisie, annuaire entreprises Tunisie'}
+        canonical="https://dalil-tounes.com/entreprises-certifiees"
+        currentPath="/entreprises-certifiees"
+      />
+      <div dir={lang === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-[#FBF8F0]">
       <section className="relative overflow-hidden border-b border-[#D4AF37]/30 px-4 py-7 md:py-9">
         <img src="/images/entreprise_banner.webp" alt="" className="absolute inset-0 h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#032D21]/92 via-[#032D21]/76 to-[#032D21]/42" />
@@ -195,6 +213,7 @@ export default function CertifiedBusinesses() {
       <div id="cv-benefits" className="scroll-mt-24">
         <CvCapabilitiesSection language={lang} />
       </div>
-    </div>
+      </div>
+    </>
   );
 }
