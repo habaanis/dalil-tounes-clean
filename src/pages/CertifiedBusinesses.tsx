@@ -107,6 +107,25 @@ export default function CertifiedBusinesses() {
                 </button>
               </div>
 
+              <div className="mx-auto mb-6 max-w-3xl rounded-3xl border border-[#D4AF37]/45 bg-white px-5 py-5 text-center shadow-[0_12px_30px_rgba(74,29,67,0.07)] md:px-7 md:py-6">
+                <h2 className="font-serif text-xl font-bold text-[#2E102A] md:text-2xl">
+                  {lang === 'ar' ? 'هل تريد نفس البطاقة المهنية ونفس المزايا؟' : 'Vous voulez la même carte professionnelle et les mêmes avantages ?'}
+                </h2>
+                <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-gray-600">
+                  {lang === 'ar'
+                    ? 'اكتشف ما يتضمنه CV Business من دليل تونس وكيف يمكن أن يساعدك على تقديم نشاطك ومشاركته بسهولة.'
+                    : 'Découvrez ce que comprend le CV Business Dalil Tounes et comment il peut vous aider à présenter et partager votre activité.'}
+                </p>
+                <button
+                  type="button"
+                  onClick={scrollToBenefits}
+                  className="mt-4 inline-flex min-h-10 items-center gap-2 rounded-xl bg-[#A51A30] px-5 py-2.5 text-sm font-black text-white transition hover:bg-[#851528]"
+                >
+                  {lang === 'ar' ? 'عرض مزايا CV Business' : 'Voir les avantages du CV Business'}
+                  <ArrowDown className="h-4 w-4" />
+                </button>
+              </div>
+
               <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
                 {visibleRows.map((biz) => (
                   <BusinessCard
@@ -168,24 +187,6 @@ export default function CertifiedBusinesses() {
                 </div>
               )}
 
-              <div className="mx-auto mt-7 max-w-3xl rounded-3xl border border-[#D4AF37]/45 bg-white px-5 py-5 text-center shadow-[0_12px_30px_rgba(74,29,67,0.07)] md:px-7 md:py-6">
-                <h2 className="font-serif text-xl font-bold text-[#2E102A] md:text-2xl">
-                  {lang === 'ar' ? 'هل تريد نفس البطاقة المهنية ونفس المزايا؟' : 'Vous voulez la même carte professionnelle et les mêmes avantages ?'}
-                </h2>
-                <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-gray-600">
-                  {lang === 'ar'
-                    ? 'اكتشف ما يتضمنه CV Business من دليل تونس وكيف يمكن أن يساعدك على تقديم نشاطك ومشاركته بسهولة.'
-                    : 'Découvrez ce que comprend le CV Business Dalil Tounes et comment il peut vous aider à présenter et partager votre activité.'}
-                </p>
-                <button
-                  type="button"
-                  onClick={scrollToBenefits}
-                  className="mt-4 inline-flex min-h-10 items-center gap-2 rounded-xl bg-[#A51A30] px-5 py-2.5 text-sm font-black text-white transition hover:bg-[#851528]"
-                >
-                  {lang === 'ar' ? 'عرض مزايا CV Business' : 'Voir les avantages du CV Business'}
-                  <ArrowDown className="h-4 w-4" />
-                </button>
-              </div>
             </>
           )}
         </div>
