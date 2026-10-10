@@ -48,7 +48,9 @@ const details = {
     ],
     "note": "Les possibilités dépendent de la formule choisie, des informations transmises et des options activées. Le CV Business et le CV Portfolio présentent les mêmes fonctions essentielles sous deux formats différents.",
     "cta": "Découvrir le CV Business",
-    "contact": "Demander des informations"
+    "contact": "Demander des informations",
+    "personalTitle": "Vous souhaitez apporter votre touche personnelle à votre CV professionnel ?",
+    "personalText": "Choisissez les boutons adaptés à votre métier parmi les fonctions disponibles. Vos textes, photos et services peuvent évoluer ; pour une demande particulière, voyons ensemble ce qui est possible."
   },
   "en": {
     "label": "More than a business listing",
@@ -95,7 +97,9 @@ const details = {
     ],
     "note": "Available features depend on your plan, supplied information and enabled options. Business and Portfolio offer essential functions in different layouts.",
     "cta": "Discover Business CV",
-    "contact": "Request information"
+    "contact": "Request information",
+    "personalTitle": "Want to add your personal touch to your professional CV?",
+    "personalText": "Choose buttons suited to your work from the available features. Your texts, photos and services can be updated; if you have a special request, let's explore what is possible together."
   },
   "ar": {
     "label": "أكثر من مجرد بطاقة تعريف",
@@ -142,7 +146,9 @@ const details = {
     ],
     "note": "تعتمد الإمكانيات على الصيغة المختارة والمعلومات المقدمة والإعدادات المفعلة. يقدّم النموذجان Business وPortfolio الوظائف الأساسية بتصميمين مختلفين.",
     "cta": "اكتشف CV Business",
-    "contact": "طلب معلومات"
+    "contact": "طلب معلومات",
+    "personalTitle": "تحب تزيد لمستك الخاصة على ملفك المهني؟",
+    "personalText": "اختار الأزرار المناسبة لمهنتك من الإمكانيات المتوفرة. تنجم تحدّث النصوص والصور والخدمات، وإذا عندك فكرة خاصة نتناقشوا معاك في إمكانية تنفيذها."
   },
   "it": {
     "label": "Molto più di una scheda",
@@ -189,7 +195,9 @@ const details = {
     ],
     "note": "Le funzioni dipendono dal piano, dai dati forniti e dalle opzioni configurate. Business e Portfolio propongono i servizi essenziali con presentazioni diverse.",
     "cta": "Scopri CV Business",
-    "contact": "Richiedi informazioni"
+    "contact": "Richiedi informazioni",
+    "personalTitle": "Vuoi aggiungere il tuo tocco personale al tuo CV professionale?",
+    "personalText": "Scegli i pulsanti adatti alla tua attività fra le opzioni disponibili. Testi, foto e servizi possono essere aggiornati; parliamo insieme delle richieste particolari."
   },
   "ru": {
     "label": "Больше, чем обычная карточка",
@@ -236,7 +244,9 @@ const details = {
     ],
     "note": "Функции зависят от тарифа, предоставленных данных и настроек. Business и Portfolio предлагают основные возможности в разном оформлении.",
     "cta": "Узнать о CV Business",
-    "contact": "Запросить информацию"
+    "contact": "Запросить информацию",
+    "personalTitle": "Хотите добавить индивидуальности вашему профессиональному CV?",
+    "personalText": "Выбирайте кнопки под задачи вашего бизнеса среди доступных функций. Тексты, фото и услуги можно обновлять; особые запросы обсуждаются отдельно."
   }
 } as const;
 
@@ -255,6 +265,10 @@ export default function CvCapabilitiesSection({ language }: {language: BusinessC
           <h3 className="font-serif text-xl font-bold leading-snug text-[#971A30] sm:text-2xl">{group.title}</h3>
           <ul className="mt-4 grid gap-3">{group.items.map(item=><li key={item} className="flex items-start gap-2.5 text-sm leading-6 text-[#3D302E] sm:text-base sm:leading-7"><CheckCircle2 className="mt-1 h-4 w-4 flex-none text-[#B48A36]" aria-hidden="true"/><span>{item}</span></li>)}</ul>
         </article>)}
+      </div>
+      <div className="mt-6 rounded-2xl border border-[#DDC38E] bg-[#FFF0DE] p-5 sm:p-7">
+        <h3 className="font-serif text-xl font-bold text-[#8F182A] sm:text-2xl">{content.personalTitle}</h3>
+        <p className="mt-2 max-w-4xl text-sm leading-7 text-[#4B3E38] sm:text-base">{content.personalText}</p>
       </div>
       <p className="mx-auto mt-6 max-w-3xl text-center text-sm leading-6 text-[#71635A]">{content.note}</p>
       <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
