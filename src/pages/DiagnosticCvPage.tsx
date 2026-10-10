@@ -222,8 +222,8 @@ export default function DiagnosticCvPage() {
   const [captchaToken,setCaptchaToken] = useState('');
   const [sendStatus,setSendStatus] = useState<'idle'|'sending'|'sent'|'error'>('idle');
   const [sendError,setSendError] = useState('');
-  const tokenSiteKey = (import.meta.env.VITE_DALIL_DIAGNOSTIC_TURNSTILE_SITE_KEY as string | undefined) || '';
-  const endpoint = (import.meta.env.VITE_DALIL_DIAGNOSTIC_ENDPOINT as string | undefined) || '';
+  const tokenSiteKey = (import.meta.env.VITE_DALIL_DIAGNOSTIC_TURNSTILE_SITE_KEY as string | undefined) || '0x4AAAAAAFS6-VHc6ZsY4I51';
+  const endpoint = (import.meta.env.VITE_DALIL_DIAGNOSTIC_ENDPOINT as string | undefined) || 'https://kmvjegbtroksjqaqliyv.supabase.co/functions/v1/diagnostic-cv-airtable';
   const captchaHost = useRef<HTMLDivElement>(null);
   const sessionId=useRef<string>(crypto.randomUUID().replace(/-/g,''));
   useEffect(()=>{
