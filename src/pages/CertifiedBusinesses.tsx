@@ -109,7 +109,7 @@ export default function CertifiedBusinesses() {
 
               <div className="mx-auto mb-6 max-w-3xl rounded-3xl border border-[#D4AF37]/45 bg-white px-5 py-5 text-center shadow-[0_12px_30px_rgba(74,29,67,0.07)] md:px-7 md:py-6">
                 <h2 className="font-serif text-xl font-bold text-[#2E102A] md:text-2xl">
-                  {lang === 'ar' ? 'هل تريد نفس البطاقة المهنية ونفس المزايا؟' : 'Vous voulez la même carte professionnelle et les mêmes avantages ?'}
+                  {lang === 'ar' ? 'هل تريد نفس البطاقة المهنية ونفس المزايا؟' : 'Vous voulez la même carte professionnelle et les mêmes avantages que nos entreprises certifiées ?'}
                 </h2>
                 <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-gray-600">
                   {lang === 'ar'
