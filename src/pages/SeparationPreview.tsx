@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BusinessCard } from '../components/BusinessCard';
 import CvBusinessJourney from '../components/CvBusinessJourney';
+import CvCapabilitiesSection from '../components/CvCapabilitiesSection';
 import SearchBar from '../components/SearchBar';
 import VisibilityHouseSection from '../components/VisibilityHouseSection';
 import { useLanguage } from '../context/LanguageContext';
@@ -226,6 +227,8 @@ function SeparationExperience({ fixedView }: { fixedView?: 'platform' | 'cv' }) 
             </div>
           </section>
 
+          <CvCapabilitiesSection language={lang} />
+
           <section className="bg-white px-4 py-9 md:py-11">
             <div className="mx-auto max-w-6xl">
               <div className="mb-5 text-center"><h2 className="font-serif text-2xl font-bold text-[#2E102A] md:text-3xl">{t.certifiedTitle}</h2><p className="mx-auto mt-2 max-w-3xl text-sm leading-6 text-gray-600 md:text-base">{t.certifiedSubtitle}</p></div>
@@ -252,6 +255,8 @@ function SeparationExperience({ fixedView }: { fixedView?: 'platform' | 'cv' }) 
               <div className="mt-5 rounded-2xl bg-[#2E102A] p-5 text-white md:p-6"><h3 className="font-serif text-xl font-bold text-[#F1D783] md:text-2xl">{t.visibilityTitle}</h3><p className="mt-2 max-w-5xl text-sm leading-6 text-white/85 md:text-base">{t.visibilityText}</p></div>
             </div>
           </section>
+
+          <CvCapabilitiesSection language={lang} />
 
           <CvBusinessJourney language={lang} />
 
