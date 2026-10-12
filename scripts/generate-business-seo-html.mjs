@@ -218,10 +218,11 @@ async function fetchBusinesses() {
   return rows;
 }
 
-function replaceMeta(html, { title, description, canonical, image, structuredData }) {
+function replaceMeta(html, { title, description, canonical, ogUrl = canonical, image, structuredData }) {
   const escapedTitle = htmlEscape(title);
   const escapedDescription = htmlEscape(description);
   const escapedCanonical = htmlEscape(canonical);
+  const escapedOgUrl = htmlEscape(ogUrl);
   const escapedImage = htmlEscape(image || DEFAULT_IMAGE);
 
   let out = html
@@ -229,7 +230,7 @@ function replaceMeta(html, { title, description, canonical, image, structuredDat
     .replace(/<meta\s+name="description"\s+content="[^"]*"\s*\/?\s*>/i, `<meta name="description" content="${escapedDescription}" />`)
     .replace(/<meta\s+property="og:title"\s+content="[^"]*"\s*\/?\s*>/i, `<meta property="og:title" content="${escapedTitle}" />`)
     .replace(/<meta\s+property="og:description"\s+content="[^"]*"\s*\/?\s*>/i, `<meta property="og:description" content="${escapedDescription}" />`)
-    .replace(/<meta\s+property="og:url"\s+content="[^"]*"\s*\/?\s*>/i, `<meta property="og:url" content="${escapedCanonical}" />`)
+    .replace(/<meta\s+property="og:url"\s+content="[^"]*"\s*\/?\s*>/i, `<meta property="og:url" content="${escapedOgUrl}" />`)
     .replace(/<meta\s+property="og:image"\s+content="[^"]*"\s*\/?\s*>/i, `<meta property="og:image" content="${escapedImage}" />`)
     .replace(/<meta\s+property="og:image:alt"\s+content="[^"]*"\s*\/?\s*>/i, `<meta property="og:image:alt" content="${escapedTitle}" />`)
     .replace(/<meta\s+name="twitter:title"\s+content="[^"]*"\s*\/?\s*>/i, `<meta name="twitter:title" content="${escapedTitle}" />`)
@@ -324,6 +325,19 @@ function buildSeo(business) {
   return { route, title, description, canonical, image, structuredData };
 }
 
+function buildShareHtml(seo, shareUrl) {
+  const redirectTarget = JSON.stringify(seo.canonical).replaceAll('</script', '<\\/script');
+  return replaceMeta(baseHtml, { ...seo, ogUrl: shareUrl })
+    .replace(
+      /<meta\s+name="robots"\s+content="[^"]*"\s*\/?\s*>/i,
+      '<meta name="robots" content="noindex, follow" />',
+    )
+    .replace(
+      '</head>',
+      `    <script data-dalil-share-redirect>window.location.replace(${redirectTarget});</script>\n  </head>`,
+    );
+}
+
 const businesses = await fetchBusinesses();
 let generated = 0;
 let skipped = 0;
@@ -340,6 +354,18 @@ for (const business of businesses) {
   const dir = path.join(distDir, ...cleanRoute.split('/'));
   fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(path.join(dir, 'index.html'), replaceMeta(baseHtml, seo));
+
+  // Fresh, stable share URL for rich-link clients (Apple Mail, WhatsApp, etc.).
+  // It exposes the same company-specific metadata, then redirects humans to the canonical profile.
+  const shareSlug = slugify(business.nom);
+  if (shareSlug) {
+    const shareRoute = `/partage/${shareSlug}`;
+    const shareUrl = `${ORIGIN}${shareRoute}`;
+    const shareDir = path.join(distDir, ...shareRoute.replace(/^\/+|\/+$/g, '').split('/'));
+    fs.mkdirSync(shareDir, { recursive: true });
+    fs.writeFileSync(path.join(shareDir, 'index.html'), buildShareHtml(seo, shareUrl));
+  }
+
   generated += 1;
   if (seo.structuredData.openingHoursSpecification?.length) withHours += 1;
   if (seo.structuredData.sameAs?.some((url) => !url.includes(business.site_web || '__none__'))) withSocialProfiles += 1;
