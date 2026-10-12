@@ -6,6 +6,8 @@ import {
   Contact,
   FileText,
   Home,
+  QrCode,
+  Share2,
   Images,
   Info,
   MapPin,
@@ -71,6 +73,10 @@ type Copy = {
   practical: string;
   book: string;
   quote: string;
+  requestInfo: string;
+  myQr: string;
+  share: string;
+  socialNetworks: string;
   addContact: string;
   viewReviews: string;
   giveReview: string;
@@ -86,7 +92,7 @@ const COPY: Record<string, Copy> = {
     aboutUs: 'À propos de nous', learnMore: 'En savoir plus', ourServices: 'Nos services',
     viewAll: 'Voir tout', ourWork: 'Nos réalisations', noPhotos: 'Aucune photo disponible.',
     openingHours: 'Horaires', practical: 'Informations pratiques', book: 'Réserver',
-    quote: 'Demander un devis', addContact: 'Ajouter aux contacts', certified: 'Certifié Dalil Tounes',
+    quote: 'Demander un devis', requestInfo: 'Demander une information', myQr: 'Mon QR Business', share: 'Partager', socialNetworks: 'Réseaux', addContact: 'Ajouter aux contacts', certified: 'Certifié Dalil Tounes',
     viewReviews: 'Voir les avis', giveReview: 'Donner un avis',
     moreActions: 'Plus d’actions', moreActionsSummary: 'Installer · WhatsApp · E-mail · Réserver · Avis',
     poweredBy: 'Propulsé par Dalil Tounes',
@@ -95,7 +101,7 @@ const COPY: Record<string, Copy> = {
     home: 'الرئيسية', about: 'من نحن', services: 'الخدمات', photos: 'الصور', reviews: 'الآراء',
     aboutUs: 'من نحن', learnMore: 'اكتشف المزيد', ourServices: 'خدماتنا', viewAll: 'عرض الكل',
     ourWork: 'أعمالنا', noPhotos: 'لا توجد صور متاحة.', openingHours: 'أوقات العمل',
-    practical: 'معلومات عملية', book: 'احجز', quote: 'طلب عرض سعر', addContact: 'إضافة إلى جهات الاتصال',
+    practical: 'معلومات عملية', book: 'احجز', quote: 'طلب عرض سعر', requestInfo: 'طلب معلومات', myQr: 'رمز QR الخاص بي', share: 'مشاركة', socialNetworks: 'شبكات التواصل', addContact: 'إضافة إلى جهات الاتصال',
     viewReviews: 'عرض الآراء', giveReview: 'إضافة رأي',
     moreActions: 'المزيد من الإجراءات', moreActionsSummary: 'تثبيت · واتساب · البريد · الحجز · الآراء',
     certified: 'معتمد من دليل تونس', poweredBy: 'بدعم من دليل تونس',
@@ -104,7 +110,7 @@ const COPY: Record<string, Copy> = {
     home: 'Home', about: 'About', services: 'Services', photos: 'Photos', reviews: 'Reviews',
     aboutUs: 'About us', learnMore: 'Learn more', ourServices: 'Our services', viewAll: 'View all',
     ourWork: 'Our work', noPhotos: 'No photos available.', openingHours: 'Opening hours',
-    practical: 'Practical information', book: 'Book', quote: 'Request a quote',
+    practical: 'Practical information', book: 'Book', quote: 'Request a quote', requestInfo: 'Request information', myQr: 'My Business QR', share: 'Share', socialNetworks: 'Social networks',
     addContact: 'Add to contacts', certified: 'Certified by Dalil Tounes', poweredBy: 'Powered by Dalil Tounes',
     viewReviews: 'View reviews', giveReview: 'Leave a review',
     moreActions: 'More actions', moreActionsSummary: 'Install · WhatsApp · E-mail · Booking · Reviews',
@@ -113,7 +119,7 @@ const COPY: Record<string, Copy> = {
     home: 'Home', about: 'Chi siamo', services: 'Servizi', photos: 'Foto', reviews: 'Recensioni',
     aboutUs: 'Chi siamo', learnMore: 'Scopri di più', ourServices: 'I nostri servizi', viewAll: 'Vedi tutto',
     ourWork: 'I nostri lavori', noPhotos: 'Nessuna foto disponibile.', openingHours: 'Orari',
-    practical: 'Informazioni pratiche', book: 'Prenota', quote: 'Richiedi un preventivo',
+    practical: 'Informazioni pratiche', book: 'Prenota', quote: 'Richiedi un preventivo', requestInfo: 'Richiedi informazioni', myQr: 'Il mio QR Business', share: 'Condividi', socialNetworks: 'Social network',
     addContact: 'Aggiungi ai contatti', certified: 'Certificato da Dalil Tounes', poweredBy: 'Offerto da Dalil Tounes',
     viewReviews: 'Vedi le recensioni', giveReview: 'Lascia una recensione',
     moreActions: 'Altre azioni', moreActionsSummary: 'Installa · WhatsApp · E-mail · Prenota · Recensioni',
@@ -122,7 +128,7 @@ const COPY: Record<string, Copy> = {
     home: 'Главная', about: 'О нас', services: 'Услуги', photos: 'Фото', reviews: 'Отзывы',
     aboutUs: 'О нас', learnMore: 'Узнать больше', ourServices: 'Наши услуги', viewAll: 'Показать все',
     ourWork: 'Наши работы', noPhotos: 'Фотографии отсутствуют.', openingHours: 'Часы работы',
-    practical: 'Практическая информация', book: 'Забронировать', quote: 'Запросить смету',
+    practical: 'Практическая информация', book: 'Забронировать', quote: 'Запросить смету', requestInfo: 'Запросить информацию', myQr: 'Мой Business QR', share: 'Поделиться', socialNetworks: 'Соцсети',
     addContact: 'Добавить в контакты', certified: 'Сертифицировано Dalil Tounes', poweredBy: 'Работает на Dalil Tounes',
     viewReviews: 'Посмотреть отзывы', giveReview: 'Оставить отзыв',
     moreActions: 'Другие действия', moreActionsSummary: 'Установить · WhatsApp · E-mail · Бронь · Отзывы',
@@ -146,6 +152,10 @@ export interface CvPortfolioPresentationProps {
   hoursBadge?: string;
   practicalContent?: ReactNode;
   onQuote: () => void;
+  onShowQr: () => void;
+  onShare: () => void;
+  sharingContent?: ReactNode;
+  socialActions?: PortfolioAction[];
   onDownloadContact: () => void;
   onSelectImage: (url: string) => void;
   notice: string;
@@ -170,6 +180,10 @@ export function CvPortfolioPresentation({
   hoursBadge,
   practicalContent,
   onQuote,
+  onShowQr,
+  onShare,
+  sharingContent,
+  socialActions = [],
   onDownloadContact,
   onSelectImage,
   notice,
@@ -189,6 +203,8 @@ export function CvPortfolioPresentation({
   const [moreOpen, setMoreOpen] = useState(false);
   const [hoursOpen, setHoursOpen] = useState(false);
   const [practicalOpen, setPracticalOpen] = useState(false);
+  const [qrOpen, setQrOpen] = useState(false);
+  const [socialOpen, setSocialOpen] = useState(false);
   const isRTL = language === 'ar';
   const hasSection = (section: ResolvedCvPresentation['visibleSections'][number]) =>
     presentation.visibleSections.includes(section);
@@ -335,8 +351,18 @@ export function CvPortfolioPresentation({
                   <button type="button" onClick={() => setBookingOpen(value => !value)}><CalendarDays />{copy.book}</button>
                 )}
                 {(profile.contact.whatsapp || profile.contact.email) && (
-                  <button type="button" onClick={onQuote}><FileText />{copy.quote}</button>
+                  <button type="button" onClick={onQuote}><FileText />{copy.requestInfo}</button>
                 )}
+                {sharingContent && (
+                  <button type="button" onClick={() => { onShowQr(); setQrOpen(open => !open); }}><QrCode />{copy.myQr}</button>
+                )}
+                <button type="button" onClick={onShare}><Share2 />{copy.share}</button>
+                {socialActions.length > 0 && (
+                  <button type="button" onClick={() => setSocialOpen(open => !open)}><Share2 />{copy.socialNetworks}</button>
+                )}
+                {socialOpen && socialActions.map(({ label, href, icon: Icon }) => (
+                  <a href={href} target="_blank" rel="noopener noreferrer" key={label}><Icon />{label}</a>
+                ))}
                 {profile.reviews.url && (
                   <a href={profile.reviews.url} target="_blank" rel="noopener noreferrer"><Star />{copy.viewReviews}</a>
                 )}
@@ -345,6 +371,7 @@ export function CvPortfolioPresentation({
                 )}
               </div>
             )}
+            {qrOpen && sharingContent && <section className="cvp-booking">{sharingContent}</section>}
 
             <nav className="cvp-lienora-tabs" aria-label={navigationAriaLabel}>
               {tabs.map(({ id, label, icon: Icon }) => (
