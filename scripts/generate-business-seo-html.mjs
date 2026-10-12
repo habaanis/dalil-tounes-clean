@@ -204,11 +204,12 @@ async function fetchBusinesses() {
   return rows;
 }
 
-function replaceMeta(html, { title, description, canonical, image, structuredData }) {
+function replaceMeta(html, { title, description, canonical, image, icon, structuredData }) {
   const escapedTitle = htmlEscape(title);
   const escapedDescription = htmlEscape(description);
   const escapedCanonical = htmlEscape(canonical);
   const escapedImage = htmlEscape(image || DEFAULT_IMAGE);
+  const escapedIcon = htmlEscape(icon || image || DEFAULT_IMAGE);
 
   let out = html
     .replace(/<title>[\s\S]*?<\/title>/i, `<title>${escapedTitle}</title>`)
@@ -220,6 +221,17 @@ function replaceMeta(html, { title, description, canonical, image, structuredDat
     .replace(/<meta\s+name="twitter:title"\s+content="[^"]*"\s*\/?\s*>/i, `<meta name="twitter:title" content="${escapedTitle}" />`)
     .replace(/<meta\s+name="twitter:description"\s+content="[^"]*"\s*\/?\s*>/i, `<meta name="twitter:description" content="${escapedDescription}" />`)
     .replace(/<meta\s+name="twitter:image"\s+content="[^"]*"\s*\/?\s*>/i, `<meta name="twitter:image" content="${escapedImage}" />`);
+
+  // Rich-link clients can render a compact card using the page icon instead of og:image.
+  // Give every business page its own icon so Apple Mail and similar clients do not fall
+  // back to the generic Dalil Tounes favicon.
+  out = out
+    .replace(/<link\s+rel="(?:shortcut )?icon"[^>]*>/gi, '')
+    .replace(/<link\s+rel="apple-touch-icon"[^>]*>/gi, '')
+    .replace(
+      '</head>',
+      `    <link rel="icon" href="${escapedIcon}" />\n    <link rel="apple-touch-icon" href="${escapedIcon}" />\n  </head>`,
+    );
 
   if (/<link\s+rel="canonical"/i.test(out)) {
     out = out.replace(/<link\s+rel="canonical"\s+href="[^"]*"\s*\/?\s*>/i, `<link rel="canonical" href="${escapedCanonical}" />`);
@@ -264,6 +276,7 @@ function buildSeo(business) {
   titleParts.push('Dalil Tounes');
   const title = truncate(titleParts.join(' | '), 70);
   const image = firstImage(business.image_url) || firstImage(business.logo_url) || DEFAULT_IMAGE;
+  const icon = firstImage(business.logo_url) || firstImage(business.image_url) || DEFAULT_IMAGE;
 
   const address = {};
   if (cleanText(business.adresse)) address.streetAddress = cleanText(business.adresse);
@@ -298,7 +311,7 @@ function buildSeo(business) {
     ...(openingHoursSpecification.length > 0 ? { openingHoursSpecification } : {}),
   };
 
-  return { route, title, description, canonical, image, structuredData };
+  return { route, title, description, canonical, image, icon, structuredData };
 }
 
 const businesses = await fetchBusinesses();
