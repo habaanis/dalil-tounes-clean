@@ -57,6 +57,20 @@ function firstImage(value) {
   return match ? match.replace(/[\\]+$/, '') : '';
 }
 
+function ogImage(value) {
+  const image = firstImage(value);
+  if (!image) return '';
+  try {
+    const url = new URL(image);
+    if (url.hostname === 'ik.imagekit.io' || url.hostname === 'imagekit.io') {
+      return `${url.origin}${url.pathname}?tr=w-1200,h-630,fo-auto,q-85,f-auto`;
+    }
+    return image;
+  } catch {
+    return image;
+  }
+}
+
 function firstActivity(business) {
   const specialty = cleanText(business.sous_categories_texte)
     .replace(/^\{\}|^\[\]$/, '')
@@ -204,12 +218,11 @@ async function fetchBusinesses() {
   return rows;
 }
 
-function replaceMeta(html, { title, description, canonical, image, icon, structuredData }) {
+function replaceMeta(html, { title, description, canonical, image, structuredData }) {
   const escapedTitle = htmlEscape(title);
   const escapedDescription = htmlEscape(description);
   const escapedCanonical = htmlEscape(canonical);
   const escapedImage = htmlEscape(image || DEFAULT_IMAGE);
-  const escapedIcon = htmlEscape(icon || image || DEFAULT_IMAGE);
 
   let out = html
     .replace(/<title>[\s\S]*?<\/title>/i, `<title>${escapedTitle}</title>`)
@@ -218,20 +231,18 @@ function replaceMeta(html, { title, description, canonical, image, icon, structu
     .replace(/<meta\s+property="og:description"\s+content="[^"]*"\s*\/?\s*>/i, `<meta property="og:description" content="${escapedDescription}" />`)
     .replace(/<meta\s+property="og:url"\s+content="[^"]*"\s*\/?\s*>/i, `<meta property="og:url" content="${escapedCanonical}" />`)
     .replace(/<meta\s+property="og:image"\s+content="[^"]*"\s*\/?\s*>/i, `<meta property="og:image" content="${escapedImage}" />`)
+    .replace(/<meta\s+property="og:image:alt"\s+content="[^"]*"\s*\/?\s*>/i, `<meta property="og:image:alt" content="${escapedTitle}" />`)
     .replace(/<meta\s+name="twitter:title"\s+content="[^"]*"\s*\/?\s*>/i, `<meta name="twitter:title" content="${escapedTitle}" />`)
     .replace(/<meta\s+name="twitter:description"\s+content="[^"]*"\s*\/?\s*>/i, `<meta name="twitter:description" content="${escapedDescription}" />`)
-    .replace(/<meta\s+name="twitter:image"\s+content="[^"]*"\s*\/?\s*>/i, `<meta name="twitter:image" content="${escapedImage}" />`);
+    .replace(/<meta\s+name="twitter:image"\s+content="[^"]*"\s*\/?\s*>/i, `<meta name="twitter:image" content="${escapedImage}" />`)
+    .replace(/<meta\s+name="twitter:image:alt"\s+content="[^"]*"\s*\/?\s*>/i, `<meta name="twitter:image:alt" content="${escapedTitle}" />`);
 
-  // Rich-link clients can render a compact card using the page icon instead of og:image.
-  // Give every business page its own icon so Apple Mail and similar clients do not fall
-  // back to the generic Dalil Tounes favicon.
-  out = out
-    .replace(/<link\s+rel="(?:shortcut )?icon"[^>]*>/gi, '')
-    .replace(/<link\s+rel="apple-touch-icon"[^>]*>/gi, '')
-    .replace(
+  if (!/<meta\s+property="og:image:secure_url"/i.test(out)) {
+    out = out.replace(
       '</head>',
-      `    <link rel="icon" href="${escapedIcon}" />\n    <link rel="apple-touch-icon" href="${escapedIcon}" />\n  </head>`,
+      `    <meta property="og:image:secure_url" content="${escapedImage}" />\n  </head>`,
     );
+  }
 
   if (/<link\s+rel="canonical"/i.test(out)) {
     out = out.replace(/<link\s+rel="canonical"\s+href="[^"]*"\s*\/?\s*>/i, `<link rel="canonical" href="${escapedCanonical}" />`);
@@ -275,8 +286,7 @@ function buildSeo(business) {
   if (city) titleParts.push(city);
   titleParts.push('Dalil Tounes');
   const title = truncate(titleParts.join(' | '), 70);
-  const image = firstImage(business.image_url) || firstImage(business.logo_url) || DEFAULT_IMAGE;
-  const icon = firstImage(business.logo_url) || firstImage(business.image_url) || DEFAULT_IMAGE;
+  const image = ogImage(business.image_url) || ogImage(business.logo_url) || DEFAULT_IMAGE;
 
   const address = {};
   if (cleanText(business.adresse)) address.streetAddress = cleanText(business.adresse);
@@ -311,7 +321,7 @@ function buildSeo(business) {
     ...(openingHoursSpecification.length > 0 ? { openingHoursSpecification } : {}),
   };
 
-  return { route, title, description, canonical, image, icon, structuredData };
+  return { route, title, description, canonical, image, structuredData };
 }
 
 const businesses = await fetchBusinesses();
