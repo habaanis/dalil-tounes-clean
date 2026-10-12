@@ -167,6 +167,9 @@ interface ShowcaseCopy {
   copied: string;
   addContact: string;
   requestQuote: string;
+  requestInfo: string;
+  myQr: string;
+  socialNetworks: string;
   book: string;
   professional: string;
   contactNotice: string;
@@ -229,6 +232,9 @@ const FR: ShowcaseCopy = {
   copied: 'Lien copié',
   addContact: 'Ajouter aux contacts',
   requestQuote: 'Demander un devis',
+  requestInfo: 'Demander une information',
+  myQr: 'Mon QR Business',
+  socialNetworks: 'Réseaux',
   book: 'Réserver',
   professional: 'Professionnel de proximité',
   contactNotice: 'Coordonnées fournies par le professionnel.',
@@ -292,6 +298,9 @@ const COPY: Record<string, ShowcaseCopy> = {
     copied: 'Link copied',
     addContact: 'Add to contacts',
     requestQuote: 'Request a quote',
+    requestInfo: 'Request information',
+    myQr: 'My Business QR',
+    socialNetworks: 'Social networks',
     book: 'Book',
     professional: 'Local professional',
     contactNotice: 'Contact details provided by the professional.',
@@ -336,6 +345,9 @@ const COPY: Record<string, ShowcaseCopy> = {
     copied: 'تم نسخ الرابط',
     addContact: 'إضافة إلى جهات الاتصال',
     requestQuote: 'طلب عرض سعر',
+    requestInfo: 'طلب معلومات',
+    myQr: 'رمز QR الخاص بي',
+    socialNetworks: 'شبكات التواصل',
     book: 'حجز',
     professional: 'مهني قريب منكم',
     contactNotice: 'بيانات الاتصال مقدمة من المهني.',
@@ -379,6 +391,9 @@ const COPY: Record<string, ShowcaseCopy> = {
     copied: 'Link copiato',
     addContact: 'Aggiungi ai contatti',
     requestQuote: 'Richiedi un preventivo',
+    requestInfo: 'Richiedi informazioni',
+    myQr: 'Il mio QR Business',
+    socialNetworks: 'Social network',
     book: 'Prenota',
     professional: 'Professionista locale',
     contactNotice: 'Contatti forniti dal professionista.',
@@ -419,6 +434,9 @@ const COPY: Record<string, ShowcaseCopy> = {
     copied: 'Ссылка скопирована',
     addContact: 'Добавить в контакты',
     requestQuote: 'Запросить цену',
+    requestInfo: 'Запросить информацию',
+    myQr: 'Мой Business QR',
+    socialNetworks: 'Соцсети',
     book: 'Забронировать',
     professional: 'Местный профессионал',
     contactNotice: 'Контакты предоставлены профессионалом.',
@@ -839,6 +857,7 @@ export default function BusinessShowcaseLienoraDetail({
   const [notice, setNotice] = useState('');
   const [copied, setCopied] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
+  const [socialOpen, setSocialOpen] = useState(false);
   const presentationRef = useRef<HTMLElement>(null);
 
   const togglePresentation = () => {
@@ -1061,6 +1080,9 @@ export default function BusinessShowcaseLienoraDetail({
   const shortShareUrl = isDedicatedClientRoute
     ? buildClientCvUrl(business, language, activePalette)
     : buildShortShareUrl(business) || canonicalUrl;
+  const richShareUrl = isDedicatedClientRoute
+    ? shortShareUrl
+    : `https://dalil-tounes.com/partage/${generateSlug(displayName)}`;
   const coverImage = getCoverImageUrl(business.image_url);
   const logoImage = getLogoUrl(business.logo_url);
   const mapsUrl = cvProfile.location.directionsUrl;
@@ -1198,7 +1220,7 @@ export default function BusinessShowcaseLienoraDetail({
     },
   ].filter((action): action is ActionConfig => Boolean(action));
 
-  const portfolioActions: ActionConfig[] = [...primaryActions, ...socialLinks];
+  const portfolioActions: ActionConfig[] = [...primaryActions];
 
   const displayedPrimaryActions = embeddedPreview
     ? primaryActions.filter(action => [installLabel, text.call, text.whatsapp, text.email, text.directions].includes(action.label))
@@ -1206,7 +1228,7 @@ export default function BusinessShowcaseLienoraDetail({
 
   const copyLink = async () => {
     try {
-      await navigator.clipboard.writeText(shortShareUrl);
+      await navigator.clipboard.writeText(richShareUrl);
       setCopied(true);
       setNotice(text.copied);
       window.setTimeout(() => setCopied(false), 1800);
@@ -1221,7 +1243,7 @@ export default function BusinessShowcaseLienoraDetail({
         await navigator.share({
           title: displayName,
           text: slogan || translatedDescription,
-          url: shortShareUrl,
+          url: richShareUrl,
         });
       } else {
         await copyLink();
@@ -1258,16 +1280,29 @@ export default function BusinessShowcaseLienoraDetail({
   };
 
   const requestQuote = () => {
-    const message = `Bonjour ${displayName}, je souhaite obtenir plus d'informations sur vos services.`;
+    const message = language === 'ar'
+      ? `السلام عليكم ${displayName}، أود الحصول على مزيد من المعلومات حول خدماتكم.`
+      : `Bonjour ${displayName}, je souhaite obtenir plus d'informations sur vos services.`;
+    const subject = text.requestInfo;
+    if (business.email) {
+      window.location.href = `mailto:${business.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
+      return;
+    }
     if (whatsappUrl) {
       window.open(`${whatsappUrl}?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
       return;
     }
-    if (business.email) {
-      window.location.href = `mailto:${business.email}?subject=${encodeURIComponent(text.requestQuote)}&body=${encodeURIComponent(message)}`;
-      return;
-    }
     setNotice(text.contactNotice);
+  };
+
+  const openSharing = () => {
+    setOpenSection('sharing');
+    window.setTimeout(() => {
+      document.getElementById('dt-section-sharing')?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    }, 50);
   };
 
   const openBooking = () => {
@@ -1636,6 +1671,10 @@ export default function BusinessShowcaseLienoraDetail({
             : schedule ? translateClosedStatus(language) : undefined}
           practicalContent={sections.find(section => section.id === 'practical')?.content}
           onQuote={requestQuote}
+          onShowQr={() => setOpenSection('sharing')}
+          onShare={() => void share()}
+          sharingContent={sharingContent}
+          socialActions={socialLinks}
           onDownloadContact={downloadContact}
           onSelectImage={setSelectedImage}
           notice={contactNotice}
@@ -1762,18 +1801,37 @@ export default function BusinessShowcaseLienoraDetail({
               </div>
             )}
             {!embeddedPreview && <div className="dt-secondary-actions">
-              {(hasAction('reservation') || whatsappUrl || business.email) && (
-                <button
-                  type="button"
-                  className="dt-secondary-action"
-                  onClick={hasAction('reservation') ? openBooking : requestQuote}
-                >
-                  {hasAction('reservation')
-                    ? <CalendarDays aria-hidden="true" />
-                    : <FileText aria-hidden="true" />}
-                  {hasAction('reservation') ? text.book : text.requestQuote}
+              {(business.email || whatsappUrl) && (
+                <button type="button" className="dt-secondary-action" onClick={requestQuote}>
+                  <FileText aria-hidden="true" />{text.requestInfo}
                 </button>
               )}
+              {hasAction('reservation') && (
+                <button type="button" className="dt-secondary-action" onClick={openBooking}>
+                  <CalendarDays aria-hidden="true" />{text.book}
+                </button>
+              )}
+              {(capabilities.showQrCode || capabilities.showShareTools) && (
+                <button type="button" className="dt-secondary-action" onClick={openSharing}>
+                  <QrCode aria-hidden="true" />{text.myQr}
+                </button>
+              )}
+              <button type="button" className="dt-secondary-action" onClick={() => void share()}>
+                <Share2 aria-hidden="true" />{text.share}
+              </button>
+              {socialLinks.length > 0 && (
+                <button type="button" className="dt-secondary-action" onClick={() => setSocialOpen(open => !open)} aria-expanded={socialOpen}>
+                  <Share2 aria-hidden="true" />{text.socialNetworks}
+                </button>
+              )}
+              {socialOpen && socialLinks.map(link => {
+                const Icon = link.icon;
+                return (
+                  <a className="dt-secondary-action" href={link.href} target="_blank" rel="noopener noreferrer" key={link.label}>
+                    <Icon aria-hidden="true" />{link.label}
+                  </a>
+                );
+              })}
               <button type="button" className="dt-secondary-action" onClick={downloadContact}>
                 <Contact aria-hidden="true" />{text.addContact}
               </button>
