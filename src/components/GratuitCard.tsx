@@ -31,12 +31,15 @@ const CARD_COPY: Record<string, { certified: string; nonCertified: string; detai
 };
 
 function renderStatutCarteBadge(statut_carte: string | null | undefined, language: string, localize: boolean) {
-  if (!statut_carte) return null;
-  const isNonCertified = statut_carte === '⚠️ NON CERTIFIÉ';
+  // Airtable is the single source of truth: no implied certification.
+  const normalized = String(statut_carte || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase().trim();
+  const isCertified = normalized.includes('CERTIFIE DALIL TOUNES') && !normalized.includes('NON CERTIFIE');
+  const isNonCertified = normalized.includes('NON CERTIFIE');
+  if (!isCertified && !isNonCertified) return null;
   const copy = CARD_COPY[language] || CARD_COPY.fr;
   const label = localize
-    ? `${isNonCertified ? '⚠️ ' : '✓ '}${isNonCertified ? copy.nonCertified : copy.certified}`
-    : statut_carte;
+    ? `${isCertified ? '⭐ ' : '⚠️ '}${isCertified ? copy.certified : copy.nonCertified}`
+    : isCertified ? '⭐ CERTIFIÉ DALIL TOUNES' : '⚠️ NON CERTIFIÉ';
   return (
     <span style={{
       display: 'inline-block',
