@@ -312,14 +312,8 @@ export default function BusinessShowcaseDetail() {
             telephone={business.telephone}
             language={language}
             statut_carte={business.statut_carte}
-            description_ar={business.description_ar}
+            showDetailsLink={false}
           />
-
-          {displayDescription && (
-            <p className="mt-4 whitespace-pre-line rounded-xl bg-[#FAFAF7] p-3 text-sm leading-6 text-gray-700">
-              {displayDescription}
-            </p>
-          )}
         </section>
       </div>
     </main>
