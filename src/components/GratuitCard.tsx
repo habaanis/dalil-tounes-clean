@@ -17,6 +17,7 @@ interface GratuitCardProps {
   statut_carte?: string | null;
   description_ar?: string | null;
   showGoogleRating?: boolean;
+  showDetailsLink?: boolean;
   googleRating?: string | number | null;
   googleReviewCount?: string | number | null;
 }
@@ -67,6 +68,7 @@ export default function GratuitCard({
   statut_carte,
   description_ar,
   showGoogleRating = false,
+  showDetailsLink = true,
   googleRating,
   googleReviewCount,
 }: GratuitCardProps) {
@@ -158,9 +160,11 @@ export default function GratuitCard({
             )}
           </div>
         )}
-        <span style={{ fontSize: '12px', fontWeight: 700, color: '#AD8B22', letterSpacing: '0.01em', textAlign: 'center' }}>
-          {showGoogleRating ? cardCopy.details : cardCopy.details} →
-        </span>
+        {showDetailsLink && (
+          <span style={{ fontSize: '12px', fontWeight: 700, color: '#AD8B22', letterSpacing: '0.01em', textAlign: 'center' }}>
+            {cardCopy.details} →
+          </span>
+        )}
       </div>
     </div>
   );
