@@ -159,6 +159,20 @@ export default function BusinessShowcaseDetail() {
           record = chooseByCity((data || []) as BusinessRecord[]);
         }
 
+        // Some legacy Airtable slugs contain punctuation (e.g. parentheses).
+        // Search suggestions use clean name slugs, so resolve both forms safely.
+        if (!record && urlSlug && urlVilleSlug) {
+          const { data: cityRows } = await supabase
+            .from('entreprise')
+            .select('*')
+            .ilike('ville', urlVilleSlug.replace(/-/g, ' '))
+            .limit(500);
+          record = ((cityRows || []) as BusinessRecord[]).find(row =>
+            generateSlug(row.nom || '') === generateSlug(urlSlug)
+            || generateSlug(row.slug || '') === generateSlug(urlSlug)
+          ) || null;
+        }
+
         if (!record && urlSlug) {
           const shortId = extractShortIdFromSlug(urlSlug);
           if (shortId) {
