@@ -52,7 +52,6 @@ const subscriptionCopy = {
       'Téléphone ou WhatsApp',
       "Horaires d'ouverture",
       'Courte description',
-      "Logo de l'activité",
       'Présence dans la recherche Dalil Tounes',
     ],
     addActivity: 'Ajouter mon activité',
@@ -130,7 +129,7 @@ const subscriptionCopy = {
     demoHours: 'Lundi : 08:00–18:00\nMardi : 08:00–18:00\nMercredi : 08:00–18:00\nJeudi : 08:00–18:00\nVendredi : 08:00–18:00\nSamedi : 09:00–13:00\nDimanche : Fermé',
     contactDalil: 'Contacter Dalil Tounes',
     call: 'Appeler',
-    essentialPreviewText: "Une carte gratuite avec le logo et les informations essentielles de l'activité, sans galerie ni portfolio.",
+    essentialPreviewText: "Une carte gratuite avec le nom, l'activité, la ville, le téléphone et les horaires, sans logo ni galerie.",
     artisanPreviewText: 'Carte simple pour présenter clairement les informations essentielles. Aucun accès à une fiche Premium détaillée.',
     viewDetails: 'Voir les détails',
     premiumDemoDescription: 'Découvrez comment fonctionne une fiche professionnelle sur Dalil Tounes.',
@@ -304,7 +303,6 @@ const subscriptionCopy = {
       'Phone or WhatsApp',
       'Opening hours',
       'Short description',
-      'Business logo',
       'Visibility in Dalil Tounes search',
     ],
     addActivity: 'Add my business',
@@ -382,7 +380,7 @@ const subscriptionCopy = {
     demoHours: 'Monday: 08:00–18:00\nTuesday: 08:00–18:00\nWednesday: 08:00–18:00\nThursday: 08:00–18:00\nFriday: 08:00–18:00\nSaturday: 09:00–13:00\nSunday: Closed',
     contactDalil: 'Contact Dalil Tounes',
     call: 'Call',
-    essentialPreviewText: 'A free card with the logo and essential business information, without a gallery or portfolio.',
+    essentialPreviewText: 'A free card with business name, activity, city, phone and hours, without a logo or gallery.',
     artisanPreviewText: 'A simple card that clearly presents essential information. It does not include access to a detailed Premium profile.',
     viewDetails: 'View details',
     premiumDemoDescription: 'Discover how a professional profile works on Dalil Tounes.',
@@ -430,7 +428,6 @@ const subscriptionCopy = {
       'Telefono o WhatsApp',
       'Orari di apertura',
       'Breve descrizione',
-      'Logo dell’attività',
       'Presenza nella ricerca Dalil Tounes',
     ],
     addActivity: 'Aggiungi la mia attività',
@@ -508,7 +505,7 @@ const subscriptionCopy = {
     demoHours: 'Lunedì: 08:00–18:00\nMartedì: 08:00–18:00\nMercoledì: 08:00–18:00\nGiovedì: 08:00–18:00\nVenerdì: 08:00–18:00\nSabato: 09:00–13:00\nDomenica: Chiuso',
     contactDalil: 'Contatta Dalil Tounes',
     call: 'Chiama',
-    essentialPreviewText: 'Una scheda gratuita con il logo e le informazioni essenziali dell’attività, senza galleria né portfolio.',
+    essentialPreviewText: 'Una scheda gratuita con nome, attività, città, telefono e orari, senza logo né galleria.',
     artisanPreviewText: 'Una scheda semplice per presentare chiaramente le informazioni essenziali. Non include l’accesso a una scheda Premium dettagliata.',
     viewDetails: 'Vedi i dettagli',
     premiumDemoDescription: 'Scopri come funziona una scheda professionale su Dalil Tounes.',
@@ -1041,9 +1038,6 @@ function DemoLogo({ alt, src = LOGO_PATH }: { alt: string; src?: string }) {
 function EssentialCardPreview({ copy, previewText }: { copy: SubscriptionCopy; previewText: string }) {
   return (
     <div className="mx-auto max-w-lg rounded-[26px] border-[3px] border-[#D6AF2E] bg-white p-5 text-slate-800 shadow-xl sm:p-7">
-      <div className="mb-5 flex justify-center">
-        <DemoLogo alt={copy.demoName} />
-      </div>
       <h3 className="text-xl font-bold sm:text-2xl">{copy.demoName}</h3>
       <p className="mt-1 font-semibold text-[#C89E19]">{copy.demoCategory}</p>
       <p className="mt-3 flex items-center gap-2 text-slate-600">
@@ -1358,9 +1352,7 @@ export const Subscription = () => {
             <span className="w-fit rounded-full bg-emerald-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-emerald-800">
               {copy.selfService}
             </span>
-            <div className="my-5 flex h-20 w-20 items-center justify-center rounded-full border border-dashed border-[#4A123F]/35 text-center text-[10px] font-bold uppercase text-[#4A123F]">
-              {copy.yourLogo.split('\n').map((line) => <span key={line}>{line}<br /></span>)}
-            </div>
+
             <h2 className="text-2xl font-bold text-[#4A123F]">{copy.essentialTitle}</h2>
             <div className="mt-3 flex items-end gap-2 text-[#07543F]">
               <span className="text-4xl font-black">0</span><span className="pb-1 font-bold">TND</span>
