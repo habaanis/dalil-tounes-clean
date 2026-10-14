@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { MapPin, Clock, Phone } from 'lucide-react';
+import { Clock, Phone } from 'lucide-react';
 import { isCurrentlyOpen, translateOpenStatus, translateClosedStatus } from '../lib/horaireUtils';
-import { getLogoUrl, getLogoStyle, getLogoContainerStyle } from '../lib/logoUtils';
 import { cleanArabicField } from '../lib/textNormalization';
 import GoogleRatingSummary from './GoogleRatingSummary';
 
@@ -93,24 +92,12 @@ export default function GratuitCard({
     >
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', textAlign: 'center', flex: 1 }}>
 
-        {/* Logo */}
-        <div className="w-8 h-8" style={{ ...getLogoContainerStyle('#D4AF37', '2px'), flexShrink: 0 }}>
-          <img
-            src={getLogoUrl(logoUrl)}
-            alt={`Logo ${name}${locationLabel ? ` à ${locationLabel}` : ''} - Plateforme des établissements en Tunisie`}
-            className="w-full h-full"
-            style={getLogoStyle(logoUrl)}
-            loading="lazy"
-            decoding="async"
-            width={32}
-            height={32}
-          />
-        </div>
-
         {/* Nom */}
         <p style={{ fontSize: '14px', fontWeight: '700', color: '#1A1A1A', lineHeight: '1.3', margin: 0, letterSpacing: '-0.01em', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', direction: /[\u0600-\u06FF]/.test(name) ? 'rtl' : 'ltr' }}>
           {name}
         </p>
+        {category && <p style={{ fontSize: '12px', color: '#475569', margin: 0 }}>{category}</p>}
+        {locationLabel && <p style={{ fontSize: '12px', color: '#475569', margin: 0 }}>{locationLabel}</p>}
         {renderStatutCarteBadge(statut_carte, language, showGoogleRating)}
         {showGoogleRating && (
           <GoogleRatingSummary
@@ -128,6 +115,8 @@ export default function GratuitCard({
 
         {allKeywords.length > 0 && <span className="sr-only">{allKeywords.join(' ')}</span>}
 
+        {/* Horaires de la présence essentielle */}
+        {horaires_ok && <p style={{ fontSize: '11px', color: '#475569', whiteSpace: 'pre-line', margin: 0, maxHeight: '72px', overflow: 'auto' }}>{horaires_ok}</p>}
         {/* Statut ouvert/fermé */}
         {horaires_ok && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
