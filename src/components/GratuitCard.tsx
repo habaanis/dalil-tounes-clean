@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Clock, Phone } from 'lucide-react';
+import { Clock, Phone, ChevronDown } from 'lucide-react';
 import { isCurrentlyOpen, translateOpenStatus, translateClosedStatus } from '../lib/horaireUtils';
 import { cleanArabicField } from '../lib/textNormalization';
 import GoogleRatingSummary from './GoogleRatingSummary';
@@ -71,6 +71,7 @@ export default function GratuitCard({
   googleReviewCount,
 }: GratuitCardProps) {
   const [showPhone, setShowPhone] = useState(false);
+  const [showHours, setShowHours] = useState(false);
   const locationLabel = ville || gouvernorat || '';
   const isOpen = isCurrentlyOpen(horaires_ok ?? null);
   const cardCopy = CARD_COPY[language] || CARD_COPY.fr;
@@ -115,55 +116,50 @@ export default function GratuitCard({
 
         {allKeywords.length > 0 && <span className="sr-only">{allKeywords.join(' ')}</span>}
 
-        {/* Horaires de la présence essentielle */}
-        {horaires_ok && <p style={{ fontSize: '11px', color: '#475569', whiteSpace: 'pre-line', margin: 0, maxHeight: '72px', overflow: 'auto' }}>{horaires_ok}</p>}
-        {/* Statut ouvert/fermé */}
+        {/* Les horaires ne s'affichent qu'au clic pour garder une carte compacte. */}
         {horaires_ok && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <Clock size={11} style={{ color: isOpen ? '#10B981' : '#EF4444', flexShrink: 0 }} />
-            <span style={{ fontSize: '11px', fontWeight: '700', color: isOpen ? '#10B981' : '#EF4444' }}>
-              {isOpen ? translateOpenStatus(language) : translateClosedStatus(language)}
-            </span>
+          <div style={{ width: '100%', marginTop: '10px' }}>
+            <button
+              type="button"
+              aria-expanded={showHours}
+              onClick={(e) => { e.stopPropagation(); setShowHours((previous) => !previous); }}
+              style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '10px 14px', background: '#FAF8F3', border: '1px solid #E7D9B4', borderRadius: '10px', color: '#4A1D43', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}
+            >
+              <Clock size={15} aria-hidden="true" />
+              {language === 'ar' ? (showHours ? 'إخفاء ساعات العمل' : 'عرض ساعات العمل') : language === 'en' ? (showHours ? 'Hide hours' : 'View opening hours') : language === 'it' ? (showHours ? 'Nascondi orari' : 'Vedi orari') : language === 'ru' ? (showHours ? 'Скрыть часы работы' : 'Часы работы') : (showHours ? 'Masquer les horaires' : 'Voir les horaires')}
+              <ChevronDown size={15} aria-hidden="true" style={{ transform: showHours ? 'rotate(180deg)' : undefined, transition: 'transform 0.2s' }} />
+            </button>
+            {showHours && (
+              <div style={{ marginTop: '8px', padding: '12px', background: '#FFFFFF', border: '1px solid #E7D9B4', borderRadius: '10px', textAlign: 'left' }} onClick={(e) => e.stopPropagation()}>
+                <p style={{ fontSize: '12px', lineHeight: '1.7', color: '#334155', whiteSpace: 'pre-line', margin: 0 }}>{horaires_ok}</p>
+              </div>
+            )}
           </div>
         )}
       </div>
 
-      {/* Téléphone + bouton "Voir les détails" épinglés en bas */}
-      <div style={{ marginTop: 'auto', paddingTop: '6px', borderTop: '1px solid rgba(212,175,55,0.25)' }}>
+      {/* Téléphone sous les horaires : une action claire et accessible. */}
+      <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid rgba(212,175,55,0.25)', display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {telephone && (
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '6px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '7px' }}>
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); setShowPhone((previous) => !previous); }}
+              aria-expanded={showPhone}
+              style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '10px 14px', background: '#4A1D43', border: '1px solid #4A1D43', borderRadius: '10px', color: '#FFFFFF', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}
+            >
+              <Phone size={15} aria-hidden="true" />
+              {showPhone ? cardCopy.hidePhone : cardCopy.showPhone}
+            </button>
             {showPhone && (
-              <a
-                href={`tel:${telephone}`}
-                onClick={(e) => e.stopPropagation()}
-                style={{ fontSize: '11px', fontWeight: '600', color: '#D4AF37', textDecoration: 'none', background: 'rgba(212,175,55,0.08)', borderRadius: '6px', padding: '2px 6px', border: '1px solid rgba(212,175,55,0.3)', marginRight: '6px' }}
-              >
+              <a href={`tel:${telephone.replace(/[^+\\d]/g, '')}`} onClick={(e) => e.stopPropagation()} style={{ textAlign: 'center', padding: '8px', fontSize: '14px', fontWeight: 700, color: '#4A1D43', textDecoration: 'underline', borderRadius: '8px', background: '#FAF8F3' }}>
                 {telephone}
               </a>
             )}
-            <button
-              onClick={(e) => { e.stopPropagation(); setShowPhone(!showPhone); }}
-              style={{
-                background: showPhone ? '#D4AF37' : 'rgba(212,175,55,0.1)',
-                border: '1.5px solid #D4AF37',
-                borderRadius: '50%',
-                width: '28px',
-                height: '28px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                transition: 'background 0.2s ease',
-                flexShrink: 0,
-              }}
-              title={showPhone ? cardCopy.hidePhone : cardCopy.showPhone}
-            >
-              <Phone size={13} style={{ color: showPhone ? '#FFFFFF' : '#D4AF37' }} />
-            </button>
           </div>
         )}
-        <span style={{ fontSize: '13px', fontWeight: '700', color: '#D4AF37', letterSpacing: '0.01em' }}>
-          {showGoogleRating ? cardCopy.details : 'Voir les détails'} →
+        <span style={{ fontSize: '12px', fontWeight: 700, color: '#AD8B22', letterSpacing: '0.01em', textAlign: 'center' }}>
+          {showGoogleRating ? cardCopy.details : cardCopy.details} →
         </span>
       </div>
     </div>
