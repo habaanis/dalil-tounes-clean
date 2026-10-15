@@ -401,6 +401,17 @@ export default function SearchBar({
   };
 
   const goToResults = (item?: ResultItem) => {
+    const query = item ? getResultLabel(item) : q.trim();
+    if (isGlobal && !item && query) {
+      const intent = detectIntent(query);
+      if (intent.categorie && intent.shouldRedirect) {
+        const params = new URLSearchParams();
+        params.set('q', query);
+        if (city.trim()) params.set('ville', city.trim());
+        goTo(`${getCategoryRoute(intent.categorie)}?${params.toString()}`);
+        return;
+      }
+    }
     const url = buildEntrepriseUrl({
       q: item ? getResultLabel(item) : q.trim() || undefined,
       ville: city.trim() || undefined,
@@ -506,6 +517,8 @@ export default function SearchBar({
     if (!showSeeAllItem) return null;
 
     if (resultMode === 'redirectToResults' && q.trim().length >= 2) {
+      const intent = isGlobal ? detectIntent(q.trim()) : null;
+      const categoryLabel = intent?.categorie && intent.shouldRedirect ? getCategoryDisplayName(intent.categorie) : null;
       return (
         <li
           className="py-2.5 px-2 font-medium cursor-pointer hover:bg-gray-50 rounded transition text-gray-700 flex items-center gap-2"
@@ -513,7 +526,7 @@ export default function SearchBar({
           onClick={() => goToResults()}
         >
           <span>➡️</span>
-          <span>{t(language as Lang, 'search.seeAll')}</span>
+          <span>{categoryLabel ? (language === 'fr' ? `Voir dans ${categoryLabel}` : language === 'ar' ? `عرض في ${categoryLabel}` : language === 'en' ? `See in ${categoryLabel}` : t(language as Lang, 'search.seeAll')) : t(language as Lang, 'search.seeAll')}</span>
         </li>
       );
     }
