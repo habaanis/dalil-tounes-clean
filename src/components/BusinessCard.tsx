@@ -57,7 +57,7 @@ interface BusinessCardProps {
  * - Gratuit conserve la carte annuaire historique ;
  * - Artisan et Premium utilisent la BusinessCard compacte validée.
  *
- * Toutes les variantes ouvrent la fiche entreprise via le même onClick.
+ * Les fiches gratuites sont utilisables directement sans navigation ; les CV payants restent ouvrables.
  * Aucun champ Airtable/Supabase ni droit d'abonnement n'est modifié ici.
  */
 export const BusinessCard = ({ business, onClick, showGoogleRating = false }: BusinessCardProps) => {
@@ -94,25 +94,7 @@ export const BusinessCard = ({ business, onClick, showGoogleRating = false }: Bu
 
   if (tier === 'gratuit') {
     return (
-      <div
-        role="button"
-        tabIndex={0}
-        onClick={onClick}
-        onKeyDown={(event) => {
-          if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            onClick();
-          }
-        }}
-        className="h-full cursor-pointer rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/60"
-        aria-label={
-          language === 'ar' ? `عرض تفاصيل ${displayName}`
-          : language === 'en' ? `View details for ${displayName}`
-          : language === 'it' ? `Vedi i dettagli di ${displayName}`
-          : language === 'ru' ? `Подробнее о ${displayName}`
-          : `Voir les détails de ${displayName}`
-        }
-      >
+      <div className="h-full rounded-2xl">
         <GratuitCard
           name={displayName}
           logoUrl={business.logoUrl}
@@ -126,6 +108,7 @@ export const BusinessCard = ({ business, onClick, showGoogleRating = false }: Bu
           statut_carte={business.statut_carte}
           description_ar={language === 'ar' ? business.description_ar || null : null}
           showGoogleRating={showGoogleRating}
+          showDetailsLink={false}
           googleRating={business['Note Google Globale'] ?? business.note_google}
           googleReviewCount={business['Compteur Avis Google'] ?? business.nombre_avis}
         />
