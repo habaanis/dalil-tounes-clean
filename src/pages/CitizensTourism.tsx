@@ -153,12 +153,12 @@ const journeyCopy: Record<PublicLanguage, {
     bookletTitle: 'Le livret pratique des expatriés',
     bookletText: 'Une version détaillée avec checklists, budgets et démarches pas à pas est en préparation.',
     visitTopics: [
-      { title: 'Villages & patrimoine', text: 'Découvrir des lieux de caractère, des médinas, des villages et un patrimoine moins connu.', href: '/recherche?q=guide%20touristique' },
-      { title: 'Nature & randonnées', text: 'Trouver des activités de plein air, des accompagnateurs et des excursions locales.', href: '/recherche?q=randonn%C3%A9e' },
-      { title: 'Artisanat & savoir-faire', text: 'Rencontrer les artisans et découvrir les métiers, ateliers et créations des régions.', href: '/recherche?q=artisanat' },
-      { title: 'Saveurs & marchés locaux', text: 'Explorer les produits, tables, marchés et spécialités qui font vivre les territoires.', href: '/citizens/shops' },
-      { title: 'Culture & événements', text: 'Repérer les fêtes, festivals, expositions et rendez-vous près de votre destination.', href: '/citizens/leisure' },
-      { title: 'Séjours & expériences locales', text: 'Trouver des hébergements, guides et activités pour construire un séjour plus personnel.', href: '/recherche?q=h%C3%A9bergement%20tourisme' },
+      { title: 'Villages & patrimoine', text: 'Découvrir des lieux de caractère, des médinas, des villages et un patrimoine moins connu.', href: '/citizens/tourism/guide/villages-patrimoine' },
+      { title: 'Nature & randonnées', text: 'Trouver des activités de plein air, des accompagnateurs et des excursions locales.', href: '/citizens/tourism/guide/nature-randonnees' },
+      { title: 'Artisanat & savoir-faire', text: 'Rencontrer les artisans et découvrir les métiers, ateliers et créations des régions.', href: '/citizens/tourism/guide/artisanat-savoir-faire' },
+      { title: 'Saveurs & marchés locaux', text: 'Explorer les produits, tables, marchés et spécialités qui font vivre les territoires.', href: '/citizens/tourism/guide/marches-gastronomie' },
+      { title: 'Culture & événements', text: 'Repérer les fêtes, festivals, expositions et rendez-vous près de votre destination.', href: '/citizens/tourism/guide/fetes-evenements' },
+      { title: 'Séjours & expériences locales', text: 'Trouver des hébergements, guides et activités pour construire un séjour plus personnel.', href: '/citizens/tourism/guide/hebergements-experiences' },
     ],
     settleTopics: [
       { title: 'Visa, séjour & résidence', text: 'Vérifier les conditions selon votre nationalité et votre situation avant le départ.', href: 'https://www.diplomatie.gov.tn/', external: true },
@@ -177,12 +177,12 @@ const journeyCopy: Record<PublicLanguage, {
     settleTitle: 'الاستعداد للاستقرار في تونس', settleIntro: 'معلومات مبسطة لفهم الإجراءات والعثور على الخدمات المناسبة.',
     discover: 'اكتشف', official: 'مصدر رسمي', bookletTitle: 'الدليل العملي للمقيمين الأجانب', bookletText: 'نسخة مفصلة تتضمن قوائم التحقق والميزانيات والإجراءات خطوة بخطوة قيد الإعداد.',
     visitTopics: [
-      { title: 'القرى والتراث', text: 'اكتشف المدن العتيقة والقرى والمواقع ذات الطابع المحلي الأصيل.', href: '/recherche?q=%D8%AF%D9%84%D9%8A%D9%84%20%D8%B3%D9%8A%D8%A7%D8%AD%D9%8A' },
-      { title: 'الطبيعة والمشي', text: 'ابحث عن أنشطة في الطبيعة ورحلات ومرافقين محليين.', href: '/recherche?q=%D8%B1%D8%AD%D9%84%D8%A7%D8%AA' },
-      { title: 'الحرف والمعارف المحلية', text: 'تعرّف على الحرفيين والورشات وإبداعات مختلف الجهات.', href: '/recherche?q=%D8%B5%D9%86%D8%A7%D8%B9%D8%A7%D8%AA%20%D8%AA%D9%82%D9%84%D9%8A%D8%AF%D9%8A%D8%A9' },
-      { title: 'النكهات والأسواق المحلية', text: 'اكتشف المنتجات والمطاعم والأسواق والاختصاصات المحلية.', href: '/citizens/shops' },
-      { title: 'الثقافة والفعاليات', text: 'اعثر على المهرجانات والمعارض والمواعيد القريبة من وجهتك.', href: '/citizens/leisure' },
-      { title: 'إقامات وتجارب محلية', text: 'ابحث عن إقامة أو دليل أو نشاط لبناء رحلة أكثر خصوصية.', href: '/recherche?q=%D8%A5%D9%82%D8%A7%D9%85%D8%A9%20%D8%B3%D9%8A%D8%A7%D8%AD%D8%A9' },
+      { title: 'القرى والتراث', text: 'اكتشف المدن العتيقة والقرى والمواقع ذات الطابع المحلي الأصيل.', href: '/citizens/tourism/guide/villages-patrimoine' },
+      { title: 'الطبيعة والمشي', text: 'ابحث عن أنشطة في الطبيعة ورحلات ومرافقين محليين.', href: '/citizens/tourism/guide/nature-randonnees' },
+      { title: 'الحرف والمعارف المحلية', text: 'تعرّف على الحرفيين والورشات وإبداعات مختلف الجهات.', href: '/citizens/tourism/guide/artisanat-savoir-faire' },
+      { title: 'النكهات والأسواق المحلية', text: 'اكتشف المنتجات والمطاعم والأسواق والاختصاصات المحلية.', href: '/citizens/tourism/guide/marches-gastronomie' },
+      { title: 'الثقافة والفعاليات', text: 'اعثر على المهرجانات والمعارض والمواعيد القريبة من وجهتك.', href: '/citizens/tourism/guide/fetes-evenements' },
+      { title: 'إقامات وتجارب محلية', text: 'ابحث عن إقامة أو دليل أو نشاط لبناء رحلة أكثر خصوصية.', href: '/citizens/tourism/guide/hebergements-experiences' },
     ],
     settleTopics: [
       { title: 'التأشيرة والإقامة', text: 'تحقق من الشروط حسب جنسيتك ووضعيتك قبل السفر.', href: 'https://www.diplomatie.gov.tn/', external: true },
@@ -200,12 +200,12 @@ const journeyCopy: Record<PublicLanguage, {
     settleTitle: 'Prepare your move to Tunisia', settleIntro: 'Simple guidance to understand procedures and find the right local services.', discover: 'Discover', official: 'Official source',
     bookletTitle: 'The practical expatriate handbook', bookletText: 'A detailed version with checklists, budgets and step-by-step procedures is being prepared.',
     visitTopics: [
-      { title: 'Villages & heritage', text: 'Discover characterful places, medinas, villages and lesser-known heritage.', href: '/recherche?q=tourist%20guide' },
-      { title: 'Nature & hiking', text: 'Find outdoor activities, local guides and excursions.', href: '/recherche?q=hiking' },
-      { title: 'Crafts & local skills', text: 'Meet craftspeople and discover regional workshops and creations.', href: '/recherche?q=crafts' },
-      { title: 'Flavours & local markets', text: 'Explore local products, food, markets and regional specialities.', href: '/citizens/shops' },
-      { title: 'Culture & events', text: 'Find festivals, exhibitions and events near your destination.', href: '/citizens/leisure' },
-      { title: 'Local stays & experiences', text: 'Find accommodation, guides and activities for a more personal trip.', href: '/recherche?q=accommodation%20tourism' },
+      { title: 'Villages & heritage', text: 'Discover characterful places, medinas, villages and lesser-known heritage.', href: '/citizens/tourism/guide/villages-patrimoine' },
+      { title: 'Nature & hiking', text: 'Find outdoor activities, local guides and excursions.', href: '/citizens/tourism/guide/nature-randonnees' },
+      { title: 'Crafts & local skills', text: 'Meet craftspeople and discover regional workshops and creations.', href: '/citizens/tourism/guide/artisanat-savoir-faire' },
+      { title: 'Flavours & local markets', text: 'Explore local products, food, markets and regional specialities.', href: '/citizens/tourism/guide/marches-gastronomie' },
+      { title: 'Culture & events', text: 'Find festivals, exhibitions and events near your destination.', href: '/citizens/tourism/guide/fetes-evenements' },
+      { title: 'Local stays & experiences', text: 'Find accommodation, guides and activities for a more personal trip.', href: '/citizens/tourism/guide/hebergements-experiences' },
     ],
     settleTopics: [
       { title: 'Visa, stay & residence', text: 'Check the conditions for your nationality and situation before departure.', href: 'https://www.diplomatie.gov.tn/', external: true },
@@ -223,12 +223,12 @@ const journeyCopy: Record<PublicLanguage, {
     settleTitle: 'Preparare il trasferimento in Tunisia', settleIntro: 'Indicazioni semplici per capire le procedure e trovare i servizi giusti.', discover: 'Scopri', official: 'Fonte ufficiale',
     bookletTitle: 'La guida pratica per espatriati', bookletText: 'È in preparazione una versione dettagliata con checklist, budget e procedure passo dopo passo.',
     visitTopics: [
-      { title: 'Borghi e patrimonio', text: 'Scopri medine, borghi e un patrimonio locale meno conosciuto.', href: '/recherche?q=guida%20turistica' },
-      { title: 'Natura ed escursioni', text: 'Trova attività all’aria aperta, guide ed escursioni locali.', href: '/recherche?q=escursioni' },
-      { title: 'Artigianato e saperi', text: 'Incontra artigiani e scopri laboratori e creazioni regionali.', href: '/recherche?q=artigianato' },
-      { title: 'Sapori e mercati locali', text: 'Esplora prodotti, tavole, mercati e specialità regionali.', href: '/citizens/shops' },
-      { title: 'Cultura ed eventi', text: 'Trova festival, mostre ed eventi vicino alla destinazione.', href: '/citizens/leisure' },
-      { title: 'Soggiorni ed esperienze locali', text: 'Trova alloggi, guide e attività per un viaggio più personale.', href: '/recherche?q=alloggio%20turismo' },
+      { title: 'Borghi e patrimonio', text: 'Scopri medine, borghi e un patrimonio locale meno conosciuto.', href: '/citizens/tourism/guide/villages-patrimoine' },
+      { title: 'Natura ed escursioni', text: 'Trova attività all’aria aperta, guide ed escursioni locali.', href: '/citizens/tourism/guide/nature-randonnees' },
+      { title: 'Artigianato e saperi', text: 'Incontra artigiani e scopri laboratori e creazioni regionali.', href: '/citizens/tourism/guide/artisanat-savoir-faire' },
+      { title: 'Sapori e mercati locali', text: 'Esplora prodotti, tavole, mercati e specialità regionali.', href: '/citizens/tourism/guide/marches-gastronomie' },
+      { title: 'Cultura ed eventi', text: 'Trova festival, mostre ed eventi vicino alla destinazione.', href: '/citizens/tourism/guide/fetes-evenements' },
+      { title: 'Soggiorni ed esperienze locali', text: 'Trova alloggi, guide e attività per un viaggio più personale.', href: '/citizens/tourism/guide/hebergements-experiences' },
     ],
     settleTopics: [
       { title: 'Visto, soggiorno e residenza', text: 'Verifica le condizioni per nazionalità e situazione prima della partenza.', href: 'https://www.diplomatie.gov.tn/', external: true },
@@ -246,12 +246,12 @@ const journeyCopy: Record<PublicLanguage, {
     settleTitle: 'Подготовить переезд в Тунис', settleIntro: 'Простые ориентиры по процедурам и полезным местным услугам.', discover: 'Подробнее', official: 'Официальный источник',
     bookletTitle: 'Практический справочник экспата', bookletText: 'Готовится подробная версия с чек-листами, бюджетами и пошаговыми процедурами.',
     visitTopics: [
-      { title: 'Деревни и наследие', text: 'Откройте медины, деревни и менее известное местное наследие.', href: '/recherche?q=tourist%20guide' },
-      { title: 'Природа и походы', text: 'Найдите активный отдых, местных гидов и экскурсии.', href: '/recherche?q=hiking' },
-      { title: 'Ремёсла и мастерство', text: 'Познакомьтесь с мастерами и региональными мастерскими.', href: '/recherche?q=crafts' },
-      { title: 'Вкусы и рынки', text: 'Исследуйте продукты, рынки и региональную кухню.', href: '/citizens/shops' },
-      { title: 'Культура и события', text: 'Найдите фестивали, выставки и события рядом.', href: '/citizens/leisure' },
-      { title: 'Местный отдых и впечатления', text: 'Найдите жильё, гидов и занятия для индивидуальной поездки.', href: '/recherche?q=accommodation%20tourism' },
+      { title: 'Деревни и наследие', text: 'Откройте медины, деревни и менее известное местное наследие.', href: '/citizens/tourism/guide/villages-patrimoine' },
+      { title: 'Природа и походы', text: 'Найдите активный отдых, местных гидов и экскурсии.', href: '/citizens/tourism/guide/nature-randonnees' },
+      { title: 'Ремёсла и мастерство', text: 'Познакомьтесь с мастерами и региональными мастерскими.', href: '/citizens/tourism/guide/artisanat-savoir-faire' },
+      { title: 'Вкусы и рынки', text: 'Исследуйте продукты, рынки и региональную кухню.', href: '/citizens/tourism/guide/marches-gastronomie' },
+      { title: 'Культура и события', text: 'Найдите фестивали, выставки и события рядом.', href: '/citizens/tourism/guide/fetes-evenements' },
+      { title: 'Местный отдых и впечатления', text: 'Найдите жильё, гидов и занятия для индивидуальной поездки.', href: '/citizens/tourism/guide/hebergements-experiences' },
     ],
     settleTopics: [
       { title: 'Виза, пребывание и ВНЖ', text: 'Проверьте условия для вашего гражданства и ситуации до поездки.', href: 'https://www.diplomatie.gov.tn/', external: true },
@@ -382,20 +382,27 @@ export default function CitizensTourism() {
           </div>
 
           <div className="mt-4 grid gap-2 sm:grid-cols-2">
-            {topics.map((topic, topicIndex) => (
+            {topics.map((topic, topicIndex) => journeyMode === 'visit' ? (
+              <Link key={topic.title} to={topic.href} className="group rounded-xl border border-[#D4AF37]/45 bg-[#FFFDF8] px-3 py-3 transition hover:border-[#D4AF37] hover:shadow-sm">
+                <div className="flex items-center justify-between gap-3 text-sm font-semibold text-[#4A1D43]">
+                  <span>{topic.title}</span>
+                  <ChevronDown className={`h-4 w-4 flex-shrink-0 -rotate-90 text-[#D4AF37] ${isRTL ? 'rotate-90' : ''}`} aria-hidden="true" />
+                </div>
+                <p className="mt-1.5 text-xs leading-relaxed text-gray-600">{topic.text}</p>
+                <ul className="mt-2 flex flex-wrap gap-1.5" aria-label={topic.title}>
+                  {visitExamples[lang][topicIndex].slice(0, 3).map((example) => (
+                    <li key={example} className="rounded-full border border-[#D4AF37]/35 bg-white px-2.5 py-1 text-[11px] leading-tight text-gray-700">{example}</li>
+                  ))}
+                </ul>
+                <span className="mt-2 inline-flex text-xs font-semibold text-[#4A1D43] underline decoration-[#D4AF37] underline-offset-2">{journey.discover}</span>
+              </Link>
+            ) : (
               <details key={topic.title} className="group rounded-xl border border-[#D4AF37]/45 bg-[#FFFDF8] px-3 py-2.5 open:border-[#D4AF37]">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-[#4A1D43] [&::-webkit-details-marker]:hidden">
                   <span>{topic.title}</span>
                   <ChevronDown className="h-4 w-4 flex-shrink-0 text-[#D4AF37] transition-transform group-open:rotate-180" aria-hidden="true" />
                 </summary>
                 <p className="mt-2 text-xs leading-relaxed text-gray-600">{topic.text}</p>
-                {journeyMode === 'visit' && (
-                  <ul className="mt-2 flex flex-wrap gap-1.5" aria-label={topic.title}>
-                    {visitExamples[lang][topicIndex].map((example) => (
-                      <li key={example} className="rounded-full border border-[#D4AF37]/35 bg-white px-2.5 py-1 text-[11px] leading-tight text-gray-700">{example}</li>
-                    ))}
-                  </ul>
-                )}
                 {'external' in topic && topic.external ? (
                   <a href={topic.href} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-[#4A1D43] underline decoration-[#D4AF37] underline-offset-2">
                     {journey.official}<ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
