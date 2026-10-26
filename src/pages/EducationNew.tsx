@@ -4,7 +4,8 @@ import {
   MapPin,
   ChevronDown,
   Clock,
-  Calendar
+  Calendar,
+  ExternalLink
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { supabase } from '../lib/supabaseClient';
@@ -574,10 +575,19 @@ const dateLocales = {
   ru: 'ru-RU'
 } as const;
 
+const educationOfficialLinks = {
+  fr: { title: 'Démarches et informations officielles', labels: ['Inscription scolaire en ligne', "Ministère de l'Éducation", 'Enseignement supérieur et universités'] },
+  ar: { title: 'إجراءات ومعلومات رسمية', labels: ['الترسيم المدرسي عن بعد', 'وزارة التربية', 'التعليم العالي والجامعات'] },
+  en: { title: 'Official information and procedures', labels: ['Online school registration', 'Ministry of Education', 'Higher education and universities'] },
+  it: { title: 'Informazioni e procedure ufficiali', labels: ['Iscrizione scolastica online', "Ministero dell'Istruzione", 'Istruzione superiore e università'] },
+  ru: { title: 'Официальная информация и процедуры', labels: ['Онлайн-регистрация в школе', 'Министерство образования', 'Высшее образование и университеты'] },
+} as const;
+
 export default function EducationNew() {
   const { language } = useLanguage();
   const t = educationPageTranslations[language as keyof typeof educationPageTranslations] || educationPageTranslations.fr;
   const dateLocale = dateLocales[language as keyof typeof dateLocales] || dateLocales.fr;
+  const official = educationOfficialLinks[language as keyof typeof educationOfficialLinks] || educationOfficialLinks.fr;
   const isRTL = language === 'ar';
 
   const [jobOffers, setJobOffers] = useState<JobOffer[]>([]);
@@ -750,6 +760,22 @@ export default function EducationNew() {
               <ChevronDown className={`w-4 h-4 ${isRTL ? 'rotate-90' : '-rotate-90'}`} aria-hidden="true" />
             </button>
           </motion.div>
+        </div>
+      </section>
+
+      <section className="max-w-5xl mx-auto px-4 pb-8" aria-labelledby="official-education-links">
+        <h2 id="official-education-links" className="text-xl font-semibold text-[#4A1D43] text-center mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>{official.title}</h2>
+        <div className="grid gap-3 md:grid-cols-3">
+          {[
+            { label: official.labels[0], href: 'https://inscription.education.tn/' },
+            { label: official.labels[1], href: 'https://www.education.gov.tn/?lang=fr' },
+            { label: official.labels[2], href: 'https://www.mes.tn/' },
+          ].map((link) => (
+            <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between gap-3 rounded-xl border border-[#D4AF37] bg-white p-4 text-sm font-semibold text-[#4A1D43] hover:bg-[#D4AF37]/10 transition-colors">
+              <span>{link.label}</span>
+              <ExternalLink className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+            </a>
+          ))}
         </div>
       </section>
 
