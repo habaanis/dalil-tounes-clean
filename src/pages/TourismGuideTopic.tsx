@@ -1,10 +1,23 @@
-import { ArrowLeft, ExternalLink, MapPin, Search } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowLeft, CalendarDays, ExternalLink, Info, MapPin, Navigation, Search, X } from 'lucide-react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { SEOHead } from '../components/SEOHead';
 
-type Place = { name: string; region: string; text: string; tags: string[] };
+type Place = {
+  name: string;
+  region: string;
+  text: string;
+  tags: string[];
+  image?: string;
+  photoSource?: string;
+  mapQuery?: string;
+  bestTime?: string;
+  practical?: string;
+};
 type Topic = { title: string; intro: string; query: string; source?: string; places: Place[] };
+
+const commonsImage = (file: string) => `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(file)}?width=900`;
 
 const topics: Record<string, Topic> = {
   'villages-patrimoine': {
@@ -27,22 +40,22 @@ const topics: Record<string, Topic> = {
     query: 'randonnée guide excursion nature',
     source: 'https://www.discovertunisia.com/en/discover',
     places: [
-      { name: 'Aïn Draham et les forêts de Kroumirie', region: 'Jendouba', text: 'Un paysage forestier dense de chênes-lièges et de reliefs, adapté aux promenades et randonnées accompagnées.', tags: ['forêt', 'montagne'] },
-      { name: 'Beni M’Tir', region: 'Jendouba', text: 'Village de montagne entouré de forêts, de vallées et de points de vue sur le Nord-Ouest.', tags: ['forêt', 'village'] },
-      { name: 'Parc national d’El Feija', region: 'Jendouba', text: 'Massif forestier du Nord-Ouest connu pour ses paysages naturels et sa biodiversité.', tags: ['parc national', 'forêt'] },
-      { name: 'Parc national de l’Ichkeul', region: 'Bizerte', text: 'Lac, marais et montagne composent une grande zone naturelle importante pour les oiseaux migrateurs.', tags: ['lac', 'oiseaux'] },
-      { name: 'Cap Serrat et Sejnane', region: 'Bizerte', text: 'Une région où se rencontrent littoral sauvage, collines, forêts et savoir-faire ruraux.', tags: ['littoral', 'forêt'] },
-      { name: 'Djebel Zaghouan', region: 'Zaghouan', text: 'Massif calcaire dominant la région, apprécié pour les sentiers, les panoramas et les sources.', tags: ['montagne', 'randonnée'] },
-      { name: 'Parc national de Boukornine', region: 'Ben Arous', text: 'Montagne proche du Grand Tunis offrant des itinéraires nature et des vues sur le golfe.', tags: ['parc national', 'Grand Tunis'] },
-      { name: 'Djebel Chambi', region: 'Kasserine', text: 'Le plus haut sommet de Tunisie, dans un environnement montagneux à aborder avec préparation et renseignements locaux.', tags: ['sommet', 'montagne'] },
-      { name: 'Chebika', region: 'Tozeur', text: 'Oasis de montagne où l’eau descend entre les roches, avec palmeraie, sentiers et points de vue.', tags: ['oasis', 'cascade'] },
-      { name: 'Tamerza', region: 'Tozeur', text: 'Paysages de montagne, cascades et gorges aux portes du Sahara.', tags: ['gorge', 'oasis'] },
-      { name: 'Canyon de Midès', region: 'Tozeur', text: 'Ravin spectaculaire creusé dans un plateau rocheux près de la frontière algérienne.', tags: ['canyon', 'ravin'] },
-      { name: 'Sidi Bouhlel', region: 'Tozeur', text: 'Canyon désertique aux falaises minérales, à découvrir de préférence avec un accompagnement local.', tags: ['canyon', 'désert'] },
-      { name: 'Chott el-Jérid', region: 'Kébili / Tozeur', text: 'Immense étendue saline dont les couleurs et mirages changent selon la lumière et la saison.', tags: ['chott', 'paysage'] },
-      { name: 'Douz et le Grand Erg Oriental', region: 'Kébili', text: 'Porte du désert pour découvrir les dunes et organiser une sortie saharienne encadrée.', tags: ['dunes', 'Sahara'] },
-      { name: 'Ksar Ghilane', region: 'Kébili', text: 'Oasis aux portes des grandes dunes, point de départ d’expériences dans le désert.', tags: ['oasis', 'dunes'] },
-      { name: 'Massif du Dahar', region: 'Tataouine / Médenine', text: 'Montagnes, plateaux désertiques, villages berbères et ksour forment des itinéraires très variés.', tags: ['montagne', 'désert'] },
+      { name: 'Aïn Draham et les forêts de Kroumirie', region: 'Jendouba', text: 'Un paysage forestier dense de chênes-lièges et de reliefs, adapté aux promenades et randonnées accompagnées.', tags: ['forêt', 'montagne'], image: commonsImage('Foret de pin et de chenes à Ain Draham.jpg'), photoSource: 'https://commons.wikimedia.org/wiki/File:Foret_de_pin_et_de_chenes_%C3%A0_Ain_Draham.jpg', mapQuery: 'Aïn Draham Tunisie', bestTime: 'Automne et printemps ; hiver pour l’ambiance brumeuse.', practical: 'Prévoir chaussures adhérentes et vêtements chauds : pluie et brouillard peuvent arriver rapidement.' },
+      { name: 'Beni M’Tir', region: 'Jendouba', text: 'Village de montagne entouré de forêts, de vallées et de points de vue sur le Nord-Ouest.', tags: ['forêt', 'village'], image: commonsImage('Beni Mtir village.jpg'), photoSource: 'https://commons.wikimedia.org/wiki/File:Beni_Mtir_village.jpg', mapQuery: 'Beni M Tir Tunisie', bestTime: 'Printemps et automne.', practical: 'Le village et le barrage se découvrent tranquillement ; vérifiez les accès avant une randonnée isolée.' },
+      { name: 'Parc national d’El Feija', region: 'Jendouba', text: 'Massif forestier du Nord-Ouest connu pour ses paysages naturels et sa biodiversité.', tags: ['parc national', 'forêt'], image: commonsImage('01 Feija national park.jpg'), photoSource: 'https://commons.wikimedia.org/wiki/File:01_Feija_national_park.jpg', mapQuery: 'Parc national El Feija Tunisie', bestTime: 'Printemps et automne.', practical: 'Renseignez-vous localement sur les horaires, autorisations et secteurs accessibles avant le départ.' },
+      { name: 'Parc national de l’Ichkeul', region: 'Bizerte', text: 'Lac, marais et montagne composent une grande zone naturelle importante pour les oiseaux migrateurs.', tags: ['lac', 'oiseaux'], image: commonsImage('201echkkell5.jpg'), photoSource: 'https://commons.wikimedia.org/wiki/File:201echkkell5.jpg', mapQuery: 'Parc national Ichkeul Tunisie', bestTime: 'Automne et hiver pour l’observation des oiseaux.', practical: 'Jumelles utiles ; respectez les sentiers et les zones naturelles protégées.' },
+      { name: 'Cap Serrat et Sejnane', region: 'Bizerte', text: 'Une région où se rencontrent littoral sauvage, collines, forêts et savoir-faire ruraux.', tags: ['littoral', 'forêt'], image: commonsImage('Cap Serrat Bizerte.jpg'), photoSource: 'https://commons.wikimedia.org/wiki/Category:Cap_Serrat', mapQuery: 'Cap Serrat Tunisie', bestTime: 'Printemps, début d’été et automne.', practical: 'Certaines routes sont sinueuses ou peu équipées : prévoyez eau, carburant et réseau hors ligne.' },
+      { name: 'Djebel Zaghouan', region: 'Zaghouan', text: 'Massif calcaire dominant la région, apprécié pour les sentiers, les panoramas et les sources.', tags: ['montagne', 'randonnée'], image: commonsImage('Djebel Zaghouan.jpg'), photoSource: 'https://commons.wikimedia.org/wiki/Category:Zaghouan', mapQuery: 'Djebel Zaghouan Tunisie', bestTime: 'Automne, hiver doux et printemps.', practical: 'Choisissez un parcours adapté à votre niveau et évitez les heures les plus chaudes.' },
+      { name: 'Parc national de Boukornine', region: 'Ben Arous', text: 'Montagne proche du Grand Tunis offrant des itinéraires nature et des vues sur le golfe.', tags: ['parc national', 'Grand Tunis'], image: commonsImage('Bougarnine au lever du soleil.jpg'), photoSource: 'https://commons.wikimedia.org/wiki/File:Bougarnine_au_lever_du_soleil.jpg', mapQuery: 'Parc national Boukornine Tunisie', bestTime: 'Automne à printemps.', practical: 'Vérifiez l’ouverture et les accès autorisés ; partez tôt avec eau et protection solaire.' },
+      { name: 'Djebel Chambi', region: 'Kasserine', text: 'Le plus haut sommet de Tunisie, dans un environnement montagneux à aborder avec préparation et renseignements locaux.', tags: ['sommet', 'montagne'], image: commonsImage('Jebel Chambi.jpg'), photoSource: 'https://commons.wikimedia.org/wiki/Category:Jebel_ech_Chambi', mapQuery: 'Djebel Chambi Tunisie', bestTime: 'Printemps et automne, selon les conditions locales.', practical: 'Consultez impérativement les autorités et guides locaux sur l’accessibilité et la sécurité avant tout déplacement.' },
+      { name: 'Chebika', region: 'Tozeur', text: 'Oasis de montagne où l’eau descend entre les roches, avec palmeraie, sentiers et points de vue.', tags: ['oasis', 'cascade'], image: commonsImage('Abandoned Chebika Village and Oasis.jpg'), photoSource: 'https://commons.wikimedia.org/wiki/File:Abandoned_Chebika_Village_and_Oasis.jpg', mapQuery: 'Oasis Chebika Tozeur Tunisie', bestTime: 'Octobre à avril.', practical: 'Bonnes chaussures, eau et chapeau ; les pierres peuvent être glissantes près des sources.' },
+      { name: 'Tamerza', region: 'Tozeur', text: 'Paysages de montagne, cascades et gorges aux portes du Sahara.', tags: ['gorge', 'oasis'], image: commonsImage('Tamerza waterfall.jpg'), photoSource: 'https://commons.wikimedia.org/wiki/Category:Tamerza', mapQuery: 'Cascade Tamerza Tunisie', bestTime: 'Octobre à avril.', practical: 'La chaleur devient forte en journée ; combinez la visite avec Chebika et Midès avec un accompagnateur local.' },
+      { name: 'Canyon de Midès', region: 'Tozeur', text: 'Ravin spectaculaire creusé dans un plateau rocheux près de la frontière algérienne.', tags: ['canyon', 'ravin'], image: commonsImage('Mides canyon Tunisia.jpg'), photoSource: 'https://commons.wikimedia.org/wiki/Category:Mid%C3%A8s', mapQuery: 'Canyon Midès Tunisie', bestTime: 'Octobre à avril.', practical: 'Site proche de la frontière : restez sur les parcours autorisés et renseignez-vous sur les conditions locales.' },
+      { name: 'Sidi Bouhlel', region: 'Tozeur', text: 'Canyon désertique aux falaises minérales, à découvrir de préférence avec un accompagnement local.', tags: ['canyon', 'désert'], image: commonsImage('Sidi Bouhlel canyon.jpg'), photoSource: 'https://commons.wikimedia.org/wiki/Category:Sidi_Bouhlel', mapQuery: 'Sidi Bouhlel canyon Tunisie', bestTime: 'Octobre à avril.', practical: 'Terrain isolé : privilégiez une excursion encadrée et ne partez pas sans eau ni moyen de communication.' },
+      { name: 'Chott el-Jérid', region: 'Kébili / Tozeur', text: 'Immense étendue saline dont les couleurs et mirages changent selon la lumière et la saison.', tags: ['chott', 'paysage'], image: commonsImage('Chott el Djerid.jpg'), photoSource: 'https://commons.wikimedia.org/wiki/Category:Chott_el_Djerid', mapQuery: 'Chott el Jérid Tunisie', bestTime: 'Octobre à avril, tôt le matin ou avant le coucher du soleil.', practical: 'Ne quittez pas la route ou les zones aménagées : la croûte saline peut être instable.' },
+      { name: 'Douz et le Grand Erg Oriental', region: 'Kébili', text: 'Porte du désert pour découvrir les dunes et organiser une sortie saharienne encadrée.', tags: ['dunes', 'Sahara'], image: commonsImage('Dunes near Douz Tunisia.jpg'), photoSource: 'https://commons.wikimedia.org/wiki/Category:Douz', mapQuery: 'Douz Tunisie', bestTime: 'Novembre à mars.', practical: 'Pour entrer dans les dunes, choisissez un guide reconnu et vérifiez météo, véhicule et moyens de communication.' },
+      { name: 'Ksar Ghilane', region: 'Kébili', text: 'Oasis aux portes des grandes dunes, point de départ d’expériences dans le désert.', tags: ['oasis', 'dunes'], image: commonsImage('Ksar Ghilane, Tunisia (Unsplash).jpg'), photoSource: 'https://commons.wikimedia.org/wiki/File:Ksar_Ghilane,_Tunisia_(Unsplash).jpg', mapQuery: 'Ksar Ghilane Tunisie', bestTime: 'Octobre à avril.', practical: 'La route est longue et les services espacés : vérifiez carburant, eau et état du véhicule.' },
+      { name: 'Massif du Dahar', region: 'Tataouine / Médenine', text: 'Montagnes, plateaux désertiques, villages berbères et ksour forment des itinéraires très variés.', tags: ['montagne', 'désert'], image: commonsImage('Dahar Tunisia.jpg'), photoSource: 'https://commons.wikimedia.org/wiki/Category:Dahar', mapQuery: 'Dahar Tataouine Tunisie', bestTime: 'Octobre à avril.', practical: 'Le territoire est vaste : préparez une boucle précise et privilégiez un guide pour les pistes et villages éloignés.' },
     ],
   },
   'artisanat-savoir-faire': {
@@ -90,16 +103,17 @@ const topics: Record<string, Topic> = {
 };
 
 const labels = {
-  fr: { back: 'Retour à Tourisme & Expatriation', useful: 'À savoir', note: 'Pour les zones isolées, montagneuses ou désertiques, vérifiez la météo, l’accès et les conditions locales. Faites appel à un guide lorsque le terrain l’exige.', pros: 'Trouver les professionnels et services associés', source: 'Consulter la source touristique officielle' },
-  ar: { back: 'العودة إلى السياحة والإقامة', useful: 'معلومة مهمة', note: 'بالنسبة إلى المناطق المعزولة أو الجبلية أو الصحراوية، تحقق من الطقس والطريق والظروف المحلية واستعن بدليل عند الحاجة.', pros: 'البحث عن المهنيين والخدمات المرتبطة', source: 'الاطلاع على المصدر السياحي الرسمي' },
-  en: { back: 'Back to Tourism & Expatriation', useful: 'Good to know', note: 'For remote, mountain or desert areas, check weather, access and local conditions. Use a guide where the terrain requires it.', pros: 'Find related professionals and services', source: 'View the official tourism source' },
-  it: { back: 'Torna a Turismo ed Espatrio', useful: 'Da sapere', note: 'Per zone isolate, montane o desertiche, verifica meteo, accesso e condizioni locali. Affidati a una guida quando necessario.', pros: 'Trova professionisti e servizi collegati', source: 'Consulta la fonte turistica ufficiale' },
-  ru: { back: 'Назад к туризму и переезду', useful: 'Полезно знать', note: 'Для удалённых, горных и пустынных районов проверяйте погоду, доступ и местные условия. При необходимости обращайтесь к гиду.', pros: 'Найти специалистов и услуги', source: 'Открыть официальный туристический источник' },
+  fr: { back: 'Retour à Tourisme & Expatriation', useful: 'À savoir', note: 'Pour les zones isolées, montagneuses ou désertiques, vérifiez la météo, l’accès et les conditions locales. Faites appel à un guide lorsque le terrain l’exige.', pros: 'Trouver les professionnels et services associés', source: 'Consulter la source touristique officielle', discover: 'Voir la fiche', route: 'Itinéraire', period: 'Meilleure période', practical: 'Conseil pratique', photo: 'Source de la photo', close: 'Fermer' },
+  ar: { back: 'العودة إلى السياحة والإقامة', useful: 'معلومة مهمة', note: 'بالنسبة إلى المناطق المعزولة أو الجبلية أو الصحراوية، تحقق من الطقس والطريق والظروف المحلية واستعن بدليل عند الحاجة.', pros: 'البحث عن المهنيين والخدمات المرتبطة', source: 'الاطلاع على المصدر السياحي الرسمي', discover: 'عرض التفاصيل', route: 'المسار', period: 'أفضل فترة', practical: 'نصيحة عملية', photo: 'مصدر الصورة', close: 'إغلاق' },
+  en: { back: 'Back to Tourism & Expatriation', useful: 'Good to know', note: 'For remote, mountain or desert areas, check weather, access and local conditions. Use a guide where the terrain requires it.', pros: 'Find related professionals and services', source: 'View the official tourism source', discover: 'View details', route: 'Directions', period: 'Best time', practical: 'Practical advice', photo: 'Photo source', close: 'Close' },
+  it: { back: 'Torna a Turismo ed Espatrio', useful: 'Da sapere', note: 'Per zone isolate, montane o desertiche, verifica meteo, accesso e condizioni locali. Affidati a una guida quando necessario.', pros: 'Trova professionisti e servizi collegati', source: 'Consulta la fonte turistica ufficiale', discover: 'Vedi dettagli', route: 'Itinerario', period: 'Periodo migliore', practical: 'Consiglio pratico', photo: 'Fonte foto', close: 'Chiudi' },
+  ru: { back: 'Назад к туризму и переезду', useful: 'Полезно знать', note: 'Для удалённых, горных или пустынных районов проверяйте погоду, доступ и местные условия. При необходимости обращайтесь к гиду.', pros: 'Найти специалистов и услуги', source: 'Открыть официальный туристический источник', discover: 'Подробнее', route: 'Маршрут', period: 'Лучшее время', practical: 'Практический совет', photo: 'Источник фото', close: 'Закрыть' },
 } as const;
 
 export default function TourismGuideTopic() {
   const { slug } = useParams();
   const { language } = useLanguage();
+  const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as keyof typeof labels;
   const topic = slug ? topics[slug] : undefined;
   if (!topic) return <Navigate to="/citizens/tourism" replace />;
@@ -116,10 +130,14 @@ export default function TourismGuideTopic() {
         </header>
         <section className="mt-5 grid gap-3 sm:grid-cols-2">
           {topic.places.map((place) => (
-            <article key={place.name} className="rounded-xl border border-[#D4AF37]/45 bg-white p-4 shadow-sm">
-              <div className="flex items-start justify-between gap-3"><h2 className="text-base font-semibold text-[#4A1D43]">{place.name}</h2><span className="inline-flex items-center gap-1 text-[11px] text-gray-500"><MapPin className="h-3.5 w-3.5 text-[#D4AF37]" />{place.region}</span></div>
-              <p className="mt-2 text-xs leading-relaxed text-gray-600">{place.text}</p>
-              <div className="mt-3 flex flex-wrap gap-1.5">{place.tags.map((tag) => <span key={tag} className="rounded-full bg-[#D4AF37]/10 px-2 py-1 text-[10px] text-[#4A1D43]">{tag}</span>)}</div>
+            <article key={place.name} className="overflow-hidden rounded-xl border border-[#D4AF37]/45 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+              {place.image && <img src={place.image} alt={place.name} loading="lazy" className="h-36 w-full object-cover" onError={(event) => { event.currentTarget.src = '/images/drapeau-tunisie.webp'; event.currentTarget.className = 'h-36 w-full bg-gray-50 object-contain p-6'; }} />}
+              <div className="p-4">
+                <div className="flex items-start justify-between gap-3"><h2 className="text-base font-semibold text-[#4A1D43]">{place.name}</h2><span className="inline-flex shrink-0 items-center gap-1 text-[11px] text-gray-500"><MapPin className="h-3.5 w-3.5 text-[#D4AF37]" />{place.region}</span></div>
+                <p className="mt-2 text-xs leading-relaxed text-gray-600">{place.text}</p>
+                <div className="mt-3 flex flex-wrap gap-1.5">{place.tags.map((tag) => <span key={tag} className="rounded-full bg-[#D4AF37]/10 px-2 py-1 text-[10px] text-[#4A1D43]">{tag}</span>)}</div>
+                {(place.mapQuery || place.practical) && <button type="button" onClick={() => setSelectedPlace(place)} className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-[#4A1D43] hover:text-[#D4AF37]"><Info className="h-3.5 w-3.5" />{ui.discover}</button>}
+              </div>
             </article>
           ))}
         </section>
@@ -129,6 +147,27 @@ export default function TourismGuideTopic() {
           {topic.source && <a href={topic.source} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 rounded-lg border border-[#D4AF37]/60 bg-white px-4 py-2.5 text-sm font-semibold text-[#4A1D43]"><ExternalLink className="h-4 w-4" />{ui.source}</a>}
         </div>
       </main>
+      {selectedPlace && (
+        <div className="fixed inset-0 z-[100] flex items-end justify-center bg-black/55 p-0 sm:items-center sm:p-4" role="dialog" aria-modal="true" aria-label={selectedPlace.name} onMouseDown={(event) => { if (event.target === event.currentTarget) setSelectedPlace(null); }}>
+          <div className="max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-t-2xl bg-white shadow-2xl sm:rounded-2xl">
+            <div className="relative">
+              {selectedPlace.image && <img src={selectedPlace.image} alt={selectedPlace.name} className="h-48 w-full object-cover sm:h-56" onError={(event) => { event.currentTarget.src = '/images/drapeau-tunisie.webp'; event.currentTarget.className = 'h-48 w-full bg-gray-50 object-contain p-8 sm:h-56'; }} />}
+              <button type="button" onClick={() => setSelectedPlace(null)} aria-label={ui.close} className="absolute right-3 top-3 rounded-full bg-white/95 p-2 text-[#4A1D43] shadow"><X className="h-4 w-4" /></button>
+            </div>
+            <div className="p-5">
+              <div className="flex items-start justify-between gap-3"><h2 className="text-xl font-semibold text-[#4A1D43]">{selectedPlace.name}</h2><span className="inline-flex shrink-0 items-center gap-1 text-xs text-gray-500"><MapPin className="h-3.5 w-3.5 text-[#D4AF37]" />{selectedPlace.region}</span></div>
+              <p className="mt-2 text-sm leading-relaxed text-gray-600">{selectedPlace.text}</p>
+              {selectedPlace.bestTime && <div className="mt-4 flex gap-3 rounded-lg bg-[#FFF9E9] p-3"><CalendarDays className="mt-0.5 h-4 w-4 shrink-0 text-[#B38A16]" /><div><p className="text-xs font-semibold text-[#4A1D43]">{ui.period}</p><p className="mt-0.5 text-xs leading-relaxed text-gray-600">{selectedPlace.bestTime}</p></div></div>}
+              {selectedPlace.practical && <div className="mt-2 flex gap-3 rounded-lg bg-gray-50 p-3"><Info className="mt-0.5 h-4 w-4 shrink-0 text-[#4A1D43]" /><div><p className="text-xs font-semibold text-[#4A1D43]">{ui.practical}</p><p className="mt-0.5 text-xs leading-relaxed text-gray-600">{selectedPlace.practical}</p></div></div>}
+              <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+                {selectedPlace.mapQuery && <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectedPlace.mapQuery)}`} target="_blank" rel="noopener noreferrer" className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-[#4A1D43] px-4 py-2.5 text-sm font-semibold text-[#D4AF37]"><Navigation className="h-4 w-4" />{ui.route}</a>}
+                <Link to={`/recherche?q=${encodeURIComponent(`${topic.query} ${selectedPlace.region}`)}`} className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg border border-[#D4AF37] px-4 py-2.5 text-center text-xs font-semibold text-[#4A1D43]"><Search className="h-4 w-4" />{ui.pros}</Link>
+              </div>
+              {selectedPlace.photoSource && <a href={selectedPlace.photoSource} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1 text-[10px] text-gray-400 hover:text-[#4A1D43]"><ExternalLink className="h-3 w-3" />{ui.photo}</a>}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
