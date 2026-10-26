@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Phone, Building2, X, Plus, Search } from 'lucide-react';
+import { Phone, Building2, X, Plus, Search, ExternalLink } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
 import LocationSelectTunisie from '../components/LocationSelectTunisie';
@@ -48,6 +48,8 @@ const COPY: Record<PublicLanguage, {
   preferredTitle: string;
   preferredSubtitle: string;
   transportPrompt: string;
+  officialTitle: string;
+  officialLinks: [string, string, string];
 }> = {
   fr: {
     back: 'Retour',
@@ -77,6 +79,8 @@ const COPY: Record<PublicLanguage, {
     preferredTitle: 'Les professionnels de santé recommandés près de chez vous',
     preferredSubtitle: 'Médecins, spécialistes et services de santé évalués par leurs patients',
     transportPrompt: 'Sélectionnez vos critères puis lancez la recherche.',
+    officialTitle: 'Services de santé officiels utiles',
+    officialLinks: ['Mon espace et mes démarches CNAM', 'Trouver un bureau CNAM', 'Ministère de la Santé'],
   },
   ar: {
     back: 'رجوع',
@@ -106,6 +110,8 @@ const COPY: Record<PublicLanguage, {
     preferredTitle: 'المهنيون الصحيون الموصى بهم بالقرب منك',
     preferredSubtitle: 'أطباء وأخصائيون وخدمات صحية قيّمها مرضاهم',
     transportPrompt: 'اختر معاييرك ثم ابدأ البحث.',
+    officialTitle: 'خدمات صحية رسمية مفيدة',
+    officialLinks: ['فضاء المضمون الاجتماعي وخدمات CNAM', 'العثور على مكتب CNAM', 'وزارة الصحة'],
   },
   en: {
     back: 'Back',
@@ -135,6 +141,8 @@ const COPY: Record<PublicLanguage, {
     preferredTitle: 'Recommended healthcare professionals near you',
     preferredSubtitle: 'Doctors, specialists and health services rated by their patients',
     transportPrompt: 'Select your criteria, then start the search.',
+    officialTitle: 'Useful official health services',
+    officialLinks: ['CNAM account and procedures', 'Find a CNAM office', 'Ministry of Health'],
   },
   it: {
     back: 'Indietro',
@@ -164,6 +172,8 @@ const COPY: Record<PublicLanguage, {
     preferredTitle: 'Professionisti sanitari consigliati vicino a te',
     preferredSubtitle: 'Medici, specialisti e servizi sanitari valutati dai loro pazienti',
     transportPrompt: 'Seleziona i criteri, quindi avvia la ricerca.',
+    officialTitle: 'Servizi sanitari ufficiali utili',
+    officialLinks: ['Area personale e pratiche CNAM', 'Trova un ufficio CNAM', 'Ministero della Salute'],
   },
   ru: {
     back: 'Назад',
@@ -193,6 +203,8 @@ const COPY: Record<PublicLanguage, {
     preferredTitle: 'Рекомендуемые медицинские специалисты рядом с вами',
     preferredSubtitle: 'Врачи, специалисты и медицинские службы по оценкам пациентов',
     transportPrompt: 'Выберите критерии и запустите поиск.',
+    officialTitle: 'Полезные официальные медицинские сервисы',
+    officialLinks: ['Личный кабинет и услуги CNAM', 'Найти отделение CNAM', 'Министерство здравоохранения'],
   },
 };
 
@@ -381,6 +393,24 @@ export default function CitizensHealth({}: CitizensHealthProps) {
           <div className="bg-white rounded-xl border border-[#D4AF37] p-4 hover:shadow-lg transition-all duration-300"><h4 className="text-sm font-medium text-[#4A1D43] mb-1.5" style={{ fontFamily: "'Playfair Display', serif" }}>{t.health.info.cnamTitle}</h4><p className="text-xs text-gray-700">{t.health.info.cnamBody}</p></div>
           <div className="bg-white rounded-xl border border-[#D4AF37] p-4 hover:shadow-lg transition-all duration-300"><h4 className="text-sm font-medium text-[#4A1D43] mb-1.5" style={{ fontFamily: "'Playfair Display', serif" }}>{t.health.info.csbTitle}</h4><p className="text-xs text-gray-700">{t.health.info.csbBody}</p></div>
           <div className="bg-white rounded-xl border border-[#D4AF37] p-4 hover:shadow-lg transition-all duration-300"><h4 className="text-sm font-medium text-[#4A1D43] mb-1.5" style={{ fontFamily: "'Playfair Display', serif" }}>{t.health.info.tipsTitle}</h4><p className="text-xs text-gray-700">{t.health.info.tipsBody}</p></div>
+        </div>
+      </section>
+
+      <section className="px-4 pb-12" aria-labelledby="official-health-links">
+        <div className="max-w-5xl mx-auto">
+          <h2 id="official-health-links" className="text-xl font-semibold text-[#4A1D43] text-center mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>{c.officialTitle}</h2>
+          <div className="grid gap-3 md:grid-cols-3">
+            {[
+              { label: c.officialLinks[0], href: 'https://www.cnam.nat.tn/services-en-ligne.jsp' },
+              { label: c.officialLinks[1], href: 'https://www.cnam.nat.tn/ar_bureauxMap.jsp' },
+              { label: c.officialLinks[2], href: 'https://www.sante.gov.tn/' },
+            ].map((link) => (
+              <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between gap-3 rounded-xl border border-[#D4AF37] bg-white p-4 text-sm font-semibold text-[#4A1D43] hover:bg-[#D4AF37]/10 transition-colors">
+                <span>{link.label}</span>
+                <ExternalLink className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+              </a>
+            ))}
+          </div>
         </div>
       </section>
     </div>
