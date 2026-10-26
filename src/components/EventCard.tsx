@@ -92,16 +92,18 @@ const EventCard: React.FC<EventCardProps> = ({
 
       <div className="flex flex-col md:flex-row">
       <div className="relative w-full md:w-48 h-40 md:h-auto bg-gradient-to-br from-[#4A1D43] via-[#6B2A5C] to-[#D4AF37] overflow-hidden group md:flex-shrink-0">
-        {image_url && (
-          <img
-            src={image_url}
-            alt={titre}
-            className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 cursor-pointer"
-            onClick={onImageClick}
-            loading="lazy"
-            decoding="async"
-          />
-        )}
+        <img
+          src={image_url?.split(',')[0]?.trim() || '/images/drapeau-tunisie.webp'}
+          alt={image_url ? titre : `Drapeau de la Tunisie — ${titre}`}
+          className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 cursor-pointer"
+          onClick={onImageClick}
+          onError={(event) => {
+            const image = event.currentTarget;
+            if (!image.src.endsWith('/images/drapeau-tunisie.webp')) image.src = '/images/drapeau-tunisie.webp';
+          }}
+          loading="lazy"
+          decoding="async"
+        />
 
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
 
