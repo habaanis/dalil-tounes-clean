@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import SearchBar from '../components/SearchBar';
 import { getSupabaseImageUrl } from '../lib/imageUtils';
 import MeilleursSection from '../components/MeilleursSection';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { SEOHead } from '../components/SEOHead';
+import { ChevronDown, Compass, ExternalLink, Home } from 'lucide-react';
 
 type PublicLanguage = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 
@@ -125,11 +127,153 @@ const copy: Record<PublicLanguage, {
 
 const QUICK_LINK_PATHS = ['/citizens/services', '/citizens/health', '/education', '/emplois'] as const;
 
+type JourneyMode = 'visit' | 'settle';
+
+const journeyCopy: Record<PublicLanguage, {
+  visitTab: string;
+  settleTab: string;
+  visitTitle: string;
+  visitIntro: string;
+  settleTitle: string;
+  settleIntro: string;
+  discover: string;
+  official: string;
+  bookletTitle: string;
+  bookletText: string;
+  visitTopics: Array<{ title: string; text: string; href: string }>;
+  settleTopics: Array<{ title: string; text: string; href: string; external?: boolean }>;
+}> = {
+  fr: {
+    visitTab: 'Visiter autrement', settleTab: "S’installer en Tunisie",
+    visitTitle: 'La Tunisie hors des sentiers battus',
+    visitIntro: 'Explorez les territoires, les savoir-faire et les expériences locales, au-delà des circuits les plus connus.',
+    settleTitle: 'Préparer son installation en Tunisie',
+    settleIntro: 'Des repères simples pour comprendre les démarches et trouver les bons services sur place.',
+    discover: 'Découvrir', official: 'Source officielle',
+    bookletTitle: 'Le livret pratique des expatriés',
+    bookletText: 'Une version détaillée avec checklists, budgets et démarches pas à pas est en préparation.',
+    visitTopics: [
+      { title: 'Villages & patrimoine', text: 'Découvrir des lieux de caractère, des médinas, des villages et un patrimoine moins connu.', href: '/recherche?q=guide%20touristique' },
+      { title: 'Nature & randonnées', text: 'Trouver des activités de plein air, des accompagnateurs et des excursions locales.', href: '/recherche?q=randonn%C3%A9e' },
+      { title: 'Artisanat & savoir-faire', text: 'Rencontrer les artisans et découvrir les métiers, ateliers et créations des régions.', href: '/recherche?q=artisanat' },
+      { title: 'Saveurs & marchés locaux', text: 'Explorer les produits, tables, marchés et spécialités qui font vivre les territoires.', href: '/citizens/shops' },
+      { title: 'Culture & événements', text: 'Repérer les fêtes, festivals, expositions et rendez-vous près de votre destination.', href: '/citizens/leisure' },
+      { title: 'Séjours & expériences locales', text: 'Trouver des hébergements, guides et activités pour construire un séjour plus personnel.', href: '/recherche?q=h%C3%A9bergement%20tourisme' },
+    ],
+    settleTopics: [
+      { title: 'Visa, séjour & résidence', text: 'Vérifier les conditions selon votre nationalité et votre situation avant le départ.', href: 'https://www.diplomatie.gov.tn/', external: true },
+      { title: 'Logement & déménagement', text: 'Rechercher un logement, un déménageur ou un professionnel pour faciliter votre arrivée.', href: '/recherche?q=immobilier%20d%C3%A9m%C3%A9nagement' },
+      { title: 'Santé & assurance', text: 'Identifier les médecins, cliniques, assurances et services de santé utiles.', href: '/citizens/health' },
+      { title: 'École & scolarité', text: 'Comparer les établissements et retrouver les informations scolaires essentielles.', href: '/education' },
+      { title: 'Banque, change & fiscalité', text: 'Consulter les services financiers et vérifier les règles officielles applicables.', href: 'https://www.finances.gov.tn/fr/e-services', external: true },
+      { title: 'Véhicule, biens & douane', text: 'Vérifier les formalités avant d’importer un véhicule ou vos effets personnels.', href: 'https://www.douane.gov.tn/particuliers-2/', external: true },
+      { title: 'Travail & création d’entreprise', text: 'Trouver des opportunités et les organismes utiles pour développer un projet.', href: 'https://investintunisia.tn/', external: true },
+      { title: 'Vie quotidienne', text: 'Téléphone, Internet, commerces et services : retrouver les professionnels proches de vous.', href: '/recherche?q=services%20quotidien' },
+    ],
+  },
+  ar: {
+    visitTab: 'اكتشف تونس بطريقة مختلفة', settleTab: 'الاستقرار في تونس',
+    visitTitle: 'تونس خارج المسارات المعتادة', visitIntro: 'اكتشف الجهات والحرف والتجارب المحلية بعيداً عن المسارات الأكثر شهرة.',
+    settleTitle: 'الاستعداد للاستقرار في تونس', settleIntro: 'معلومات مبسطة لفهم الإجراءات والعثور على الخدمات المناسبة.',
+    discover: 'اكتشف', official: 'مصدر رسمي', bookletTitle: 'الدليل العملي للمقيمين الأجانب', bookletText: 'نسخة مفصلة تتضمن قوائم التحقق والميزانيات والإجراءات خطوة بخطوة قيد الإعداد.',
+    visitTopics: [
+      { title: 'القرى والتراث', text: 'اكتشف المدن العتيقة والقرى والمواقع ذات الطابع المحلي الأصيل.', href: '/recherche?q=%D8%AF%D9%84%D9%8A%D9%84%20%D8%B3%D9%8A%D8%A7%D8%AD%D9%8A' },
+      { title: 'الطبيعة والمشي', text: 'ابحث عن أنشطة في الطبيعة ورحلات ومرافقين محليين.', href: '/recherche?q=%D8%B1%D8%AD%D9%84%D8%A7%D8%AA' },
+      { title: 'الحرف والمعارف المحلية', text: 'تعرّف على الحرفيين والورشات وإبداعات مختلف الجهات.', href: '/recherche?q=%D8%B5%D9%86%D8%A7%D8%B9%D8%A7%D8%AA%20%D8%AA%D9%82%D9%84%D9%8A%D8%AF%D9%8A%D8%A9' },
+      { title: 'النكهات والأسواق المحلية', text: 'اكتشف المنتجات والمطاعم والأسواق والاختصاصات المحلية.', href: '/citizens/shops' },
+      { title: 'الثقافة والفعاليات', text: 'اعثر على المهرجانات والمعارض والمواعيد القريبة من وجهتك.', href: '/citizens/leisure' },
+      { title: 'إقامات وتجارب محلية', text: 'ابحث عن إقامة أو دليل أو نشاط لبناء رحلة أكثر خصوصية.', href: '/recherche?q=%D8%A5%D9%82%D8%A7%D9%85%D8%A9%20%D8%B3%D9%8A%D8%A7%D8%AD%D8%A9' },
+    ],
+    settleTopics: [
+      { title: 'التأشيرة والإقامة', text: 'تحقق من الشروط حسب جنسيتك ووضعيتك قبل السفر.', href: 'https://www.diplomatie.gov.tn/', external: true },
+      { title: 'السكن والانتقال', text: 'ابحث عن سكن أو شركة نقل أو مهني لتسهيل وصولك.', href: '/recherche?q=%D8%B9%D9%82%D8%A7%D8%B1%D8%A7%D8%AA%20%D9%86%D9%82%D9%84' },
+      { title: 'الصحة والتأمين', text: 'اعثر على الأطباء والمصحات والتأمينات والخدمات الصحية.', href: '/citizens/health' },
+      { title: 'المدرسة والتعليم', text: 'قارن المؤسسات واعثر على المعلومات المدرسية الأساسية.', href: '/education' },
+      { title: 'البنك والصرف والجباية', text: 'اطلع على الخدمات المالية والقواعد الرسمية المعمول بها.', href: 'https://www.finances.gov.tn/fr/e-services', external: true },
+      { title: 'السيارة والأمتعة والديوانة', text: 'تحقق من الإجراءات قبل توريد سيارة أو أمتعتك الشخصية.', href: 'https://www.douane.gov.tn/particuliers-2/', external: true },
+      { title: 'العمل وبعث مشروع', text: 'اعثر على الفرص والهياكل المفيدة لتطوير مشروعك.', href: 'https://investintunisia.tn/', external: true },
+      { title: 'الحياة اليومية', text: 'الهاتف والإنترنت والمتاجر والخدمات القريبة منك.', href: '/recherche?q=%D8%AE%D8%AF%D9%85%D8%A7%D8%AA%20%D9%8A%D9%88%D9%85%D9%8A%D8%A9' },
+    ],
+  },
+  en: {
+    visitTab: 'Visit differently', settleTab: 'Settle in Tunisia', visitTitle: 'Tunisia off the beaten track', visitIntro: 'Explore local places, skills and experiences beyond the best-known routes.',
+    settleTitle: 'Prepare your move to Tunisia', settleIntro: 'Simple guidance to understand procedures and find the right local services.', discover: 'Discover', official: 'Official source',
+    bookletTitle: 'The practical expatriate handbook', bookletText: 'A detailed version with checklists, budgets and step-by-step procedures is being prepared.',
+    visitTopics: [
+      { title: 'Villages & heritage', text: 'Discover characterful places, medinas, villages and lesser-known heritage.', href: '/recherche?q=tourist%20guide' },
+      { title: 'Nature & hiking', text: 'Find outdoor activities, local guides and excursions.', href: '/recherche?q=hiking' },
+      { title: 'Crafts & local skills', text: 'Meet craftspeople and discover regional workshops and creations.', href: '/recherche?q=crafts' },
+      { title: 'Flavours & local markets', text: 'Explore local products, food, markets and regional specialities.', href: '/citizens/shops' },
+      { title: 'Culture & events', text: 'Find festivals, exhibitions and events near your destination.', href: '/citizens/leisure' },
+      { title: 'Local stays & experiences', text: 'Find accommodation, guides and activities for a more personal trip.', href: '/recherche?q=accommodation%20tourism' },
+    ],
+    settleTopics: [
+      { title: 'Visa, stay & residence', text: 'Check the conditions for your nationality and situation before departure.', href: 'https://www.diplomatie.gov.tn/', external: true },
+      { title: 'Housing & moving', text: 'Find housing and professionals who can help with your arrival.', href: '/recherche?q=property%20moving' },
+      { title: 'Health & insurance', text: 'Find doctors, clinics, insurers and useful health services.', href: '/citizens/health' },
+      { title: 'School & education', text: 'Compare institutions and find essential school information.', href: '/education' },
+      { title: 'Banking, exchange & tax', text: 'Find financial services and check the applicable official rules.', href: 'https://www.finances.gov.tn/fr/e-services', external: true },
+      { title: 'Vehicle, belongings & customs', text: 'Check formalities before importing a vehicle or personal belongings.', href: 'https://www.douane.gov.tn/particuliers-2/', external: true },
+      { title: 'Work & starting a business', text: 'Find opportunities and useful organisations for developing a project.', href: 'https://investintunisia.tn/', external: true },
+      { title: 'Daily life', text: 'Phone, Internet, shops and nearby services for everyday needs.', href: '/recherche?q=daily%20services' },
+    ],
+  },
+  it: {
+    visitTab: 'Visitare diversamente', settleTab: 'Trasferirsi in Tunisia', visitTitle: 'La Tunisia fuori dai sentieri battuti', visitIntro: 'Esplora luoghi, saperi ed esperienze locali oltre gli itinerari più noti.',
+    settleTitle: 'Preparare il trasferimento in Tunisia', settleIntro: 'Indicazioni semplici per capire le procedure e trovare i servizi giusti.', discover: 'Scopri', official: 'Fonte ufficiale',
+    bookletTitle: 'La guida pratica per espatriati', bookletText: 'È in preparazione una versione dettagliata con checklist, budget e procedure passo dopo passo.',
+    visitTopics: [
+      { title: 'Borghi e patrimonio', text: 'Scopri medine, borghi e un patrimonio locale meno conosciuto.', href: '/recherche?q=guida%20turistica' },
+      { title: 'Natura ed escursioni', text: 'Trova attività all’aria aperta, guide ed escursioni locali.', href: '/recherche?q=escursioni' },
+      { title: 'Artigianato e saperi', text: 'Incontra artigiani e scopri laboratori e creazioni regionali.', href: '/recherche?q=artigianato' },
+      { title: 'Sapori e mercati locali', text: 'Esplora prodotti, tavole, mercati e specialità regionali.', href: '/citizens/shops' },
+      { title: 'Cultura ed eventi', text: 'Trova festival, mostre ed eventi vicino alla destinazione.', href: '/citizens/leisure' },
+      { title: 'Soggiorni ed esperienze locali', text: 'Trova alloggi, guide e attività per un viaggio più personale.', href: '/recherche?q=alloggio%20turismo' },
+    ],
+    settleTopics: [
+      { title: 'Visto, soggiorno e residenza', text: 'Verifica le condizioni per nazionalità e situazione prima della partenza.', href: 'https://www.diplomatie.gov.tn/', external: true },
+      { title: 'Casa e trasloco', text: 'Trova alloggi e professionisti per facilitare l’arrivo.', href: '/recherche?q=immobiliare%20trasloco' },
+      { title: 'Salute e assicurazione', text: 'Trova medici, cliniche, assicurazioni e servizi sanitari.', href: '/citizens/health' },
+      { title: 'Scuola e istruzione', text: 'Confronta gli istituti e trova informazioni scolastiche essenziali.', href: '/education' },
+      { title: 'Banca, cambio e fiscalità', text: 'Trova servizi finanziari e verifica le regole ufficiali.', href: 'https://www.finances.gov.tn/fr/e-services', external: true },
+      { title: 'Veicolo, beni e dogana', text: 'Verifica le formalità prima di importare un veicolo o beni personali.', href: 'https://www.douane.gov.tn/particuliers-2/', external: true },
+      { title: 'Lavoro e impresa', text: 'Trova opportunità e organismi utili per sviluppare un progetto.', href: 'https://investintunisia.tn/', external: true },
+      { title: 'Vita quotidiana', text: 'Telefono, Internet, negozi e servizi utili vicino a te.', href: '/recherche?q=servizi%20quotidiani' },
+    ],
+  },
+  ru: {
+    visitTab: 'Открыть другую Тунис', settleTab: 'Переехать в Тунис', visitTitle: 'Тунис вдали от привычных маршрутов', visitIntro: 'Исследуйте местные места, ремёсла и впечатления за пределами известных маршрутов.',
+    settleTitle: 'Подготовить переезд в Тунис', settleIntro: 'Простые ориентиры по процедурам и полезным местным услугам.', discover: 'Подробнее', official: 'Официальный источник',
+    bookletTitle: 'Практический справочник экспата', bookletText: 'Готовится подробная версия с чек-листами, бюджетами и пошаговыми процедурами.',
+    visitTopics: [
+      { title: 'Деревни и наследие', text: 'Откройте медины, деревни и менее известное местное наследие.', href: '/recherche?q=tourist%20guide' },
+      { title: 'Природа и походы', text: 'Найдите активный отдых, местных гидов и экскурсии.', href: '/recherche?q=hiking' },
+      { title: 'Ремёсла и мастерство', text: 'Познакомьтесь с мастерами и региональными мастерскими.', href: '/recherche?q=crafts' },
+      { title: 'Вкусы и рынки', text: 'Исследуйте продукты, рынки и региональную кухню.', href: '/citizens/shops' },
+      { title: 'Культура и события', text: 'Найдите фестивали, выставки и события рядом.', href: '/citizens/leisure' },
+      { title: 'Местный отдых и впечатления', text: 'Найдите жильё, гидов и занятия для индивидуальной поездки.', href: '/recherche?q=accommodation%20tourism' },
+    ],
+    settleTopics: [
+      { title: 'Виза, пребывание и ВНЖ', text: 'Проверьте условия для вашего гражданства и ситуации до поездки.', href: 'https://www.diplomatie.gov.tn/', external: true },
+      { title: 'Жильё и переезд', text: 'Найдите жильё и специалистов, которые помогут с переездом.', href: '/recherche?q=property%20moving' },
+      { title: 'Здоровье и страхование', text: 'Найдите врачей, клиники, страховые компании и медицинские услуги.', href: '/citizens/health' },
+      { title: 'Школа и образование', text: 'Сравните учреждения и найдите важную информацию об обучении.', href: '/education' },
+      { title: 'Банк, обмен и налоги', text: 'Найдите финансовые услуги и проверьте официальные правила.', href: 'https://www.finances.gov.tn/fr/e-services', external: true },
+      { title: 'Автомобиль, вещи и таможня', text: 'Проверьте формальности перед ввозом автомобиля или личных вещей.', href: 'https://www.douane.gov.tn/particuliers-2/', external: true },
+      { title: 'Работа и бизнес', text: 'Найдите возможности и организации для развития проекта.', href: 'https://investintunisia.tn/', external: true },
+      { title: 'Повседневная жизнь', text: 'Телефон, Интернет, магазины и полезные услуги рядом.', href: '/recherche?q=daily%20services' },
+    ],
+  },
+};
+
 export default function CitizensTourism() {
   const { language } = useLanguage();
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as PublicLanguage;
   const t = copy[lang];
+  const journey = journeyCopy[lang];
   const isRTL = lang === 'ar';
+  const [journeyMode, setJourneyMode] = useState<JourneyMode>('visit');
+  const topics = journeyMode === 'visit' ? journey.visitTopics : journey.settleTopics;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50" dir={isRTL ? 'rtl' : 'ltr'}>
@@ -179,24 +323,58 @@ export default function CitizensTourism() {
       </section>
 
       <section className="px-4 pt-6">
-        <div className="max-w-5xl mx-auto rounded-2xl border border-[#D4AF37]/50 bg-white px-5 py-5 shadow-sm">
-          <div className="text-center">
-            <h2 className="text-xl font-semibold text-[#4A0404]" style={{ fontFamily: "'Playfair Display', serif" }}>
-              {t.expatTitle}
-            </h2>
-            <p className="mt-1.5 text-sm leading-relaxed text-gray-600">{t.expatIntro}</p>
+        <div className="max-w-5xl mx-auto rounded-2xl border border-[#D4AF37]/50 bg-white px-3 py-4 sm:px-5 shadow-sm">
+          <div className="flex justify-center gap-2" role="tablist" aria-label={t.title}>
+            <button type="button" role="tab" aria-selected={journeyMode === 'visit'} onClick={() => setJourneyMode('visit')} className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 text-xs sm:text-sm font-semibold transition-colors ${journeyMode === 'visit' ? 'border-[#D4AF37] bg-[#4A1D43] text-[#D4AF37]' : 'border-[#D4AF37]/50 bg-white text-[#4A1D43] hover:bg-[#D4AF37]/10'}`}>
+              <Compass className="h-4 w-4" aria-hidden="true" />{journey.visitTab}
+            </button>
+            <button type="button" role="tab" aria-selected={journeyMode === 'settle'} onClick={() => setJourneyMode('settle')} className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 text-xs sm:text-sm font-semibold transition-colors ${journeyMode === 'settle' ? 'border-[#D4AF37] bg-[#4A1D43] text-[#D4AF37]' : 'border-[#D4AF37]/50 bg-white text-[#4A1D43] hover:bg-[#D4AF37]/10'}`}>
+              <Home className="h-4 w-4" aria-hidden="true" />{journey.settleTab}
+            </button>
           </div>
-          <nav className="mt-4 flex flex-wrap justify-center gap-2" aria-label={t.expatTitle}>
-            {QUICK_LINK_PATHS.map((path, index) => (
-              <Link
-                key={path}
-                to={path}
-                className="rounded-full border border-[#D4AF37]/60 bg-[#D4AF37]/10 px-4 py-2 text-sm font-medium text-[#4A0404] transition-colors hover:border-[#D4AF37] hover:bg-[#D4AF37]/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]"
-              >
-                {t.quickLinks[index]}
-              </Link>
+
+          <div className="mt-4 text-center">
+            <h2 className="text-xl font-semibold text-[#4A0404]" style={{ fontFamily: "'Playfair Display', serif" }}>{journeyMode === 'visit' ? journey.visitTitle : journey.settleTitle}</h2>
+            <p className="mx-auto mt-1.5 max-w-2xl text-sm leading-relaxed text-gray-600">{journeyMode === 'visit' ? journey.visitIntro : journey.settleIntro}</p>
+          </div>
+
+          <div className="mt-4 grid gap-2 sm:grid-cols-2">
+            {topics.map((topic) => (
+              <details key={topic.title} className="group rounded-xl border border-[#D4AF37]/45 bg-[#FFFDF8] px-3 py-2.5 open:border-[#D4AF37]">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-[#4A1D43] [&::-webkit-details-marker]:hidden">
+                  <span>{topic.title}</span>
+                  <ChevronDown className="h-4 w-4 flex-shrink-0 text-[#D4AF37] transition-transform group-open:rotate-180" aria-hidden="true" />
+                </summary>
+                <p className="mt-2 text-xs leading-relaxed text-gray-600">{topic.text}</p>
+                {'external' in topic && topic.external ? (
+                  <a href={topic.href} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-[#4A1D43] underline decoration-[#D4AF37] underline-offset-2">
+                    {journey.official}<ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+                  </a>
+                ) : (
+                  <Link to={topic.href} className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-[#4A1D43] underline decoration-[#D4AF37] underline-offset-2">
+                    {journey.discover}
+                  </Link>
+                )}
+              </details>
             ))}
-          </nav>
+          </div>
+
+          {journeyMode === 'settle' && (
+            <div className="mt-4 rounded-xl border border-dashed border-[#D4AF37] bg-white px-4 py-3 text-center">
+              <h3 className="text-sm font-semibold text-[#4A1D43]">{journey.bookletTitle}</h3>
+              <p className="mt-1 text-xs leading-relaxed text-gray-600">{journey.bookletText}</p>
+            </div>
+          )}
+
+          {journeyMode === 'settle' && (
+            <nav className="mt-4 flex flex-wrap justify-center gap-2" aria-label={t.expatTitle}>
+              {QUICK_LINK_PATHS.map((path, index) => (
+                <Link key={path} to={path} className="rounded-full border border-[#D4AF37]/50 px-3 py-1.5 text-xs font-medium text-[#4A0404] hover:bg-[#D4AF37]/10">
+                  {t.quickLinks[index]}
+                </Link>
+              ))}
+            </nav>
+          )}
         </div>
       </section>
 
