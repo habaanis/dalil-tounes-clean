@@ -266,6 +266,49 @@ const journeyCopy: Record<PublicLanguage, {
   },
 };
 
+const visitExamples: Record<PublicLanguage, string[][]> = {
+  fr: [
+    ['Takrouna et Kesra', 'Chenini et Douiret', 'Matmata et ses habitats troglodytes', 'Ksour du Dahar'],
+    ['Forêts de Kroumirie et Aïn Draham', 'Parc national de l’Ichkeul', 'Djebel Zaghouan', 'Canyons de Midès, Tamerza et Chebika', 'Dunes de Douz et Ksar Ghilane'],
+    ['Poterie des femmes de Sejnane', 'Céramique de Nabeul', 'Tapis de Kairouan', 'Tissages du Dahar et de Djerba', 'Bijoux et objets des médinas'],
+    ['Marché de Nabeul', 'Souks de Kairouan', 'Houmt Souk à Djerba', 'Marché central de Sfax', 'Cuisine des médinas et produits des oasis'],
+    ['Festival du Sahara à Douz', 'Festival symphonique d’El Jem', 'Festival du Malouf à Testour', 'Jazz à Tabarka', 'Mouled à Kairouan'],
+    ['Maisons d’hôtes dans les médinas', 'Écolodges du Nord-Ouest', 'Campements dans le désert', 'Hébergements troglodytes à Matmata', 'Séjours ruraux au Cap Bon et à Zaghouan'],
+  ],
+  ar: [
+    ['تكرونة وكسرى', 'شنني ودويرات', 'مطماطة ومساكنها المحفورة', 'قصور جبال الظاهر'],
+    ['غابات خمير وعين دراهم', 'الحديقة الوطنية بإشكل', 'جبل زغوان', 'أخاديد ميداس وتمغزة والشبيكة', 'كثبان دوز وقصر غيلان'],
+    ['فخار نساء سجنان', 'خزف نابل', 'زرابي القيروان', 'منسوجات الظاهر وجربة', 'حلي ومنتجات المدن العتيقة'],
+    ['سوق نابل', 'أسواق القيروان', 'حومة السوق بجربة', 'السوق المركزية بصفاقس', 'مأكولات المدن العتيقة ومنتجات الواحات'],
+    ['مهرجان الصحراء بدوز', 'مهرجان الجم للموسيقى السمفونية', 'مهرجان المالوف بتستور', 'جاز طبرقة', 'المولد بالقيروان'],
+    ['دور ضيافة في المدن العتيقة', 'نزل بيئية في الشمال الغربي', 'مخيمات صحراوية', 'إقامات محفورة بمطماطة', 'إقامات ريفية بالوطن القبلي وزغوان'],
+  ],
+  en: [
+    ['Takrouna and Kesra', 'Chenini and Douiret', 'Matmata and its troglodyte homes', 'Ksour of the Dahar'],
+    ['Kroumirie forests and Aïn Draham', 'Ichkeul National Park', 'Jebel Zaghouan', 'Midès, Tamerza and Chebika canyons', 'Douz dunes and Ksar Ghilane'],
+    ['Sejnane women’s pottery', 'Nabeul ceramics', 'Kairouan carpets', 'Dahar and Djerba weaving', 'Medina jewellery and crafts'],
+    ['Nabeul market', 'Kairouan souks', 'Houmt Souk in Djerba', 'Sfax central market', 'Medina food and oasis produce'],
+    ['Douz Sahara Festival', 'El Jem Symphonic Festival', 'Testour Malouf Festival', 'Tabarka Jazz', 'Mouled in Kairouan'],
+    ['Medina guest houses', 'North-West eco-lodges', 'Desert camps', 'Troglodyte stays in Matmata', 'Rural stays in Cap Bon and Zaghouan'],
+  ],
+  it: [
+    ['Takrouna e Kesra', 'Chenini e Douiret', 'Matmata e le case troglodite', 'Ksour del Dahar'],
+    ['Foreste della Kroumirie e Aïn Draham', 'Parco nazionale di Ichkeul', 'Jebel Zaghouan', 'Canyon di Midès, Tamerza e Chebika', 'Dune di Douz e Ksar Ghilane'],
+    ['Ceramica delle donne di Sejnane', 'Ceramica di Nabeul', 'Tappeti di Kairouan', 'Tessuti del Dahar e di Djerba', 'Gioielli e artigianato delle medine'],
+    ['Mercato di Nabeul', 'Souk di Kairouan', 'Houmt Souk a Djerba', 'Mercato centrale di Sfax', 'Cucina delle medine e prodotti delle oasi'],
+    ['Festival del Sahara di Douz', 'Festival sinfonico di El Jem', 'Festival del Malouf di Testour', 'Jazz a Tabarka', 'Mouled a Kairouan'],
+    ['Guest house nelle medine', 'Ecolodge del Nord-Ovest', 'Campi nel deserto', 'Alloggi trogloditi a Matmata', 'Soggiorni rurali nel Cap Bon e a Zaghouan'],
+  ],
+  ru: [
+    ['Такруна и Кесра', 'Шенини и Дуирет', 'Матмата и троглодитские жилища', 'Ксуры Дахара'],
+    ['Леса Крумирии и Айн-Драхам', 'Национальный парк Ишкёль', 'Джебель-Загуан', 'Каньоны Мидес, Тамерза и Шебика', 'Дюны Дуза и Ксар-Гилан'],
+    ['Керамика женщин Седжнана', 'Керамика Набеля', 'Ковры Кайруана', 'Ткачество Дахара и Джербы', 'Украшения и ремёсла медин'],
+    ['Рынок Набеля', 'Суки Кайруана', 'Хумт-Сук на Джербе', 'Центральный рынок Сфакса', 'Кухня медин и продукты оазисов'],
+    ['Фестиваль Сахары в Дузе', 'Симфонический фестиваль Эль-Джема', 'Фестиваль малуфа в Тестуре', 'Джаз в Табарке', 'Маулид в Кайруане'],
+    ['Гостевые дома в мединах', 'Эколоджи Северо-Запада', 'Лагеря в пустыне', 'Троглодитские отели Матматы', 'Сельский отдых на Кап-Бон и в Загуане'],
+  ],
+};
+
 export default function CitizensTourism() {
   const { language } = useLanguage();
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as PublicLanguage;
@@ -339,13 +382,20 @@ export default function CitizensTourism() {
           </div>
 
           <div className="mt-4 grid gap-2 sm:grid-cols-2">
-            {topics.map((topic) => (
+            {topics.map((topic, topicIndex) => (
               <details key={topic.title} className="group rounded-xl border border-[#D4AF37]/45 bg-[#FFFDF8] px-3 py-2.5 open:border-[#D4AF37]">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-[#4A1D43] [&::-webkit-details-marker]:hidden">
                   <span>{topic.title}</span>
                   <ChevronDown className="h-4 w-4 flex-shrink-0 text-[#D4AF37] transition-transform group-open:rotate-180" aria-hidden="true" />
                 </summary>
                 <p className="mt-2 text-xs leading-relaxed text-gray-600">{topic.text}</p>
+                {journeyMode === 'visit' && (
+                  <ul className="mt-2 flex flex-wrap gap-1.5" aria-label={topic.title}>
+                    {visitExamples[lang][topicIndex].map((example) => (
+                      <li key={example} className="rounded-full border border-[#D4AF37]/35 bg-white px-2.5 py-1 text-[11px] leading-tight text-gray-700">{example}</li>
+                    ))}
+                  </ul>
+                )}
                 {'external' in topic && topic.external ? (
                   <a href={topic.href} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-[#4A1D43] underline decoration-[#D4AF37] underline-offset-2">
                     {journey.official}<ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
