@@ -99,7 +99,7 @@ export default function CitizensAdmin() {
     fr: {
       title: 'Services Publics',
       subtitle: 'Vos Démarches Sans Stress',
-      description: 'Fini les attentes inutiles et les documents manquants. Trouvez les bureaux, les horaires, les numéros de contact, et la liste exacte des pièces requises pour toutes vos démarches à Mahdia et en Tunisie. Votre guide pour une administration efficace.',
+      description: 'Préparez vos démarches en Tunisie : trouvez les services compétents, les coordonnées utiles et les pièces à prévoir avant de vous déplacer.',
       backButton: 'Retour aux services citoyens',
       citizen: 'Citoyen Tunisien',
       expat: 'Expatrié / Résident Étranger',
@@ -110,7 +110,7 @@ export default function CitizensAdmin() {
       openNow: 'Ouvert Maintenant',
       allServices: 'Tous les services',
       infoTitle: 'Informations importantes',
-      infoText: 'Les horaires d\'ouverture des administrations sont généralement de 8h à 13h et de 14h à 17h. Pensez à apporter les originaux et photocopies de vos documents.',
+      infoText: 'Les horaires, pièces demandées et tarifs peuvent évoluer selon le service et la période. Vérifiez toujours les informations sur le portail officiel ou auprès de l’administration concernée avant de vous déplacer.',
       demarchesTitle: 'Démarches Administratives',
       etablissementsTitle: 'Bureaux et Services',
       noDemarches: 'Aucune démarche trouvée',
@@ -123,6 +123,9 @@ export default function CitizensAdmin() {
       rne: 'Registre National des Entreprises',
       ejustice: 'Services judiciaires en ligne',
       passport: 'Rendez-vous passeport en ligne',
+      sicad: 'Toutes les démarches administratives — SICAD',
+      cnss: 'Sécurité sociale et services CNSS',
+      finances: 'Impôts et services en ligne',
       processingTime: 'Délai de traitement',
       cost: 'Coût',
       requiredDocs: 'Pièces Requises',
@@ -146,7 +149,7 @@ export default function CitizensAdmin() {
     en: {
       title: 'Public Services',
       subtitle: 'Your Stress-Free Procedures',
-      description: 'No more unnecessary waiting and missing documents. Find offices, hours, contact numbers, and the exact list of required documents for all your procedures in Mahdia and Tunisia. Your guide to efficient administration.',
+      description: 'Prepare your procedures in Tunisia: find the relevant services, useful contact details and documents to check before travelling.',
       backButton: 'Back to citizen services',
       citizen: 'Tunisian Citizen',
       expat: 'Expatriate / Foreign Resident',
@@ -157,7 +160,7 @@ export default function CitizensAdmin() {
       openNow: 'Open Now',
       allServices: 'All services',
       infoTitle: 'Important information',
-      infoText: 'Administration opening hours are generally from 8am to 1pm and 2pm to 5pm. Remember to bring originals and photocopies of your documents.',
+      infoText: 'Opening hours, required documents and fees may change depending on the service and period. Always check the official portal or contact the relevant administration before travelling.',
       demarchesTitle: 'Administrative Procedures',
       etablissementsTitle: 'Offices and Services',
       noDemarches: 'No procedure found',
@@ -170,6 +173,9 @@ export default function CitizensAdmin() {
       rne: 'National Business Register',
       ejustice: 'Online judicial services',
       passport: 'Online passport appointment',
+      sicad: 'All administrative procedures — SICAD',
+      cnss: 'Social security and CNSS services',
+      finances: 'Taxes and online services',
       processingTime: 'Processing time',
       cost: 'Cost',
       requiredDocs: 'Required Documents',
@@ -193,7 +199,7 @@ export default function CitizensAdmin() {
     ar: {
       title: 'الخدمات العامة',
       subtitle: 'إجراءاتك دون ضغط',
-      description: 'لا مزيد من الانتظار غير الضروري والوثائق المفقودة. ابحث عن المكاتب والجداول الزمنية وأرقام الاتصال والقائمة الدقيقة للوثائق المطلوبة لجميع إجراءاتك في المهدية وتونس. دليلك للإدارة الفعالة.',
+      description: 'حضّر إجراءاتك في تونس: اعثر على المصالح المختصة وبيانات الاتصال والوثائق التي يجب التثبت منها قبل التنقل.',
       backButton: 'العودة إلى خدمات المواطن',
       citizen: 'مواطن تونسي',
       expat: 'مغترب / مقيم أجنبي',
@@ -204,7 +210,7 @@ export default function CitizensAdmin() {
       openNow: 'مفتوح الآن',
       allServices: 'جميع الخدمات',
       infoTitle: 'معلومات مهمة',
-      infoText: 'ساعات عمل الإدارات عموماً من 8 صباحاً إلى 1 ظهراً ومن 2 ظهراً إلى 5 مساءً. تذكر إحضار النسخ الأصلية والنسخ الضوئية من وثائقك.',
+      infoText: 'قد تتغير التوقيتات والوثائق المطلوبة والمعاليم حسب المصلحة والفترة. تحقق دائماً من البوابة الرسمية أو اتصل بالإدارة المعنية قبل التنقل.',
       demarchesTitle: 'الإجراءات الإدارية',
       etablissementsTitle: 'المكاتب والخدمات',
       noDemarches: 'لم يتم العثور على إجراءات',
@@ -217,6 +223,9 @@ export default function CitizensAdmin() {
       rne: 'السجل الوطني للمؤسسات',
       ejustice: 'الخدمات القضائية عبر الإنترنت',
       passport: 'موعد جواز السفر عبر الإنترنت',
+      sicad: 'جميع الإجراءات الإدارية — SICAD',
+      cnss: 'الضمان الاجتماعي وخدمات CNSS',
+      finances: 'الأداءات والخدمات عن بعد',
       processingTime: 'مدة المعالجة',
       cost: 'التكلفة',
       requiredDocs: 'الوثائق المطلوبة',
@@ -240,7 +249,7 @@ export default function CitizensAdmin() {
     it: {
       title: 'Servizi Pubblici',
       subtitle: 'Le tue procedure senza stress',
-      description: 'Basta con attese inutili e documenti mancanti. Trova uffici, orari, numeri di contatto e l\'elenco esatto dei documenti richiesti per tutte le tue procedure a Mahdia e in Tunisia. La tua guida per un\'amministrazione efficiente.',
+      description: 'Prepara le tue pratiche in Tunisia: trova i servizi competenti, i contatti utili e i documenti da verificare prima di spostarti.',
       backButton: 'Torna ai servizi cittadini',
       citizen: 'Cittadino Tunisino',
       expat: 'Espatriato / Residente Straniero',
@@ -251,7 +260,7 @@ export default function CitizensAdmin() {
       openNow: 'Aperto Ora',
       allServices: 'Tutti i servizi',
       infoTitle: 'Informazioni importanti',
-      infoText: 'Gli orari di apertura delle amministrazioni sono generalmente dalle 8:00 alle 13:00 e dalle 14:00 alle 17:00. Ricordati di portare i documenti originali e le fotocopie.',
+      infoText: 'Orari, documenti richiesti e tariffe possono cambiare secondo il servizio e il periodo. Verifica sempre il portale ufficiale o contatta l’amministrazione competente prima di spostarti.',
       demarchesTitle: 'Procedure Amministrative',
       etablissementsTitle: 'Uffici e Servizi',
       noDemarches: 'Nessuna procedura trovata',
@@ -264,6 +273,9 @@ export default function CitizensAdmin() {
       rne: 'Registro Nazionale delle Imprese',
       ejustice: 'Servizi giudiziari online',
       passport: 'Prenotazione appuntamento online',
+      sicad: 'Tutte le procedure amministrative — SICAD',
+      cnss: 'Previdenza sociale e servizi CNSS',
+      finances: 'Imposte e servizi online',
       processingTime: 'Tempo di elaborazione',
       cost: 'Costo',
       requiredDocs: 'Documenti Richiesti',
@@ -287,7 +299,7 @@ export default function CitizensAdmin() {
     ru: {
       title: 'Государственные Услуги',
       subtitle: 'Ваши процедуры без стресса',
-      description: 'Больше никаких ненужных ожиданий и отсутствующих документов. Найдите офисы, расписания, контактные номера и точный список необходимых документов для всех ваших процедур в Махдии и Тунисе. Ваш путеводитель по эффективной администрации.',
+      description: 'Подготовьте административные процедуры в Тунисе: найдите нужные службы, контакты и документы, которые следует проверить перед визитом.',
       backButton: 'Вернуться к услугам для граждан',
       citizen: 'Тунисский гражданин',
       expat: 'Экспатриант / Иностранный резидент',
@@ -298,7 +310,7 @@ export default function CitizensAdmin() {
       openNow: 'Открыто Сейчас',
       allServices: 'Все услуги',
       infoTitle: 'Важная информация',
-      infoText: 'Часы работы администраций обычно с 8:00 до 13:00 и с 14:00 до 17:00. Не забудьте принести оригиналы и ксерокопии ваших документов.',
+      infoText: 'Часы работы, необходимые документы и сборы могут меняться в зависимости от службы и периода. Перед визитом всегда проверяйте сведения на официальном портале или у соответствующей администрации.',
       demarchesTitle: 'Административные процедуры',
       etablissementsTitle: 'Офисы и услуги',
       noDemarches: 'Процедур не найдено',
@@ -311,6 +323,9 @@ export default function CitizensAdmin() {
       rne: 'Национальный реестр предприятий',
       ejustice: 'Онлайн судебные услуги',
       passport: 'Онлайн запись на прием',
+      sicad: 'Все административные процедуры — SICAD',
+      cnss: 'Социальное обеспечение и услуги CNSS',
+      finances: 'Налоги и онлайн-сервисы',
       processingTime: 'Время обработки',
       cost: 'Стоимость',
       requiredDocs: 'Необходимые документы',
@@ -775,6 +790,33 @@ export default function CitizensAdmin() {
               <div>
                 <h3 className="font-semibold text-[#4A1D43] text-sm">{t.passport}</h3>
               </div>
+            </a>
+            <a
+              href="https://www.sicad.gov.tn/Fr/Prestations_57_3"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white rounded-lg border border-[#D4AF37] p-3 hover:bg-[#D4AF37]/10 hover:shadow-md transition-all flex items-start gap-2"
+            >
+              <ExternalLink className="w-4 h-4 text-[#4A1D43] flex-shrink-0 mt-0.5" />
+              <div><h3 className="font-semibold text-[#4A1D43] text-sm">{t.sicad}</h3></div>
+            </a>
+            <a
+              href="https://www.cnss.tn/fr/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white rounded-lg border border-[#D4AF37] p-3 hover:bg-[#D4AF37]/10 hover:shadow-md transition-all flex items-start gap-2"
+            >
+              <ExternalLink className="w-4 h-4 text-[#4A1D43] flex-shrink-0 mt-0.5" />
+              <div><h3 className="font-semibold text-[#4A1D43] text-sm">{t.cnss}</h3></div>
+            </a>
+            <a
+              href="https://www.finances.gov.tn/fr/e-services"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white rounded-lg border border-[#D4AF37] p-3 hover:bg-[#D4AF37]/10 hover:shadow-md transition-all flex items-start gap-2"
+            >
+              <ExternalLink className="w-4 h-4 text-[#4A1D43] flex-shrink-0 mt-0.5" />
+              <div><h3 className="font-semibold text-[#4A1D43] text-sm">{t.finances}</h3></div>
             </a>
           </div>
         </div>
