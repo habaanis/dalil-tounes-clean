@@ -47,6 +47,7 @@ const CitizensLeisure = lazy(() => import('./pages/CitizensLeisure'));
 const CitizensShops = lazy(() => import('./pages/CitizensShops'));
 const CitizensServices = lazy(() => import('./pages/CitizensServicesLocalized'));
 const CitizensTourism = lazy(() => import('./pages/CitizensTourism'));
+const TourismGuideTopic = lazy(() => import('./pages/TourismGuideTopic'));
 const CultureEvents = lazy(() => import('./pages/CultureEvents'));
 const Jobs = lazy(() => import('./pages/Jobs').then(m => ({ default: m.Jobs })));
 const PartnerSearch = lazy(() => import('./pages/PartnerSearch').then(m => ({ default: m.PartnerSearch })));
@@ -187,6 +188,7 @@ function AppRouter() {
           <Route path="/citizens/services" element={<CitizensServices />} />
           <Route path="/citizens/tourism" element={<CitizensTourism />} />
           <Route path="/citizens/tourisme" element={<CitizensTourism />} />
+          <Route path="/citizens/tourism/guide/:slug" element={<TourismGuideTopic />} />
 
           <Route path="/recherche" element={<Businesses />} />
 
