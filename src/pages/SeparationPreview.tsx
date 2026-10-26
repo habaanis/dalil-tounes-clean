@@ -175,13 +175,86 @@ const COPY: Record<Lang, {
   },
 };
 
+const HOME_ECOSYSTEM_COPY: Record<Lang, {
+  title: string; hint: string; items: Array<{ icon: string; title: string; text: string; href: string }>;
+  cvBusiness: string; cvPortfolio: string; cvAdvantageTitle: string; cvAdvantageText: string;
+}> = {
+  fr: {
+    title: 'Tout Dalil Tounes, en un coup d’œil', hint: 'Choisissez la rubrique qui vous intéresse',
+    items: [
+      { icon: '🇹🇳', title: 'Services citoyens', text: 'Santé, éducation, démarches et quotidien', href: '/citizens/services' },
+      { icon: '📅', title: 'Agenda', text: 'Les prochains événements près de chez vous', href: '/citizens/leisure' },
+      { icon: '💼', title: 'Emploi', text: 'Offres actives et entreprises qui recrutent', href: '/emplois' },
+      { icon: '📖', title: 'Guides pratiques', text: 'Des réponses utiles par thématique', href: '/blog' },
+      { icon: '🤝', title: 'Besoins professionnels', text: 'Demandes, stocks et partenariats B2B', href: '/besoins-professionnels' },
+    ],
+    cvBusiness: 'CV Business', cvPortfolio: 'CV Portfolio',
+    cvAdvantageTitle: 'Votre avantage dans l’écosystème Dalil Tounes',
+    cvAdvantageText: 'Votre entreprise reste visible dans les recherches et les pages qui correspondent à son activité. Avec un CV Business, les visiteurs découvrent immédiatement vos services, vos photos, vos horaires et tous les moyens de vous contacter.',
+  },
+  ar: {
+    title: 'كل دليل تونس بنظرة واحدة', hint: 'اختر القسم الذي يهمّك',
+    items: [
+      { icon: '🇹🇳', title: 'خدمات المواطن', text: 'الصحة والتعليم والإجراءات والحياة اليومية', href: '/citizens/services' },
+      { icon: '📅', title: 'الأجندة', text: 'الفعاليات القادمة بالقرب منك', href: '/citizens/leisure' },
+      { icon: '💼', title: 'التشغيل', text: 'عروض عمل ومؤسسات تنتدب', href: '/emplois' },
+      { icon: '📖', title: 'أدلة عملية', text: 'إجابات مفيدة حسب الموضوع', href: '/blog' },
+      { icon: '🤝', title: 'احتياجات مهنية', text: 'طلبات ومخزون وشراكات بين المؤسسات', href: '/besoins-professionnels' },
+    ],
+    cvBusiness: 'CV Business', cvPortfolio: 'CV Portfolio',
+    cvAdvantageTitle: 'ميزتك داخل منظومة دليل تونس',
+    cvAdvantageText: 'تبقى مؤسستك ظاهرة في البحث والصفحات المناسبة لنشاطها. ومع CV Business يكتشف الزائر فوراً خدماتك وصورك وأوقات العمل وكل وسائل الاتصال بك.',
+  },
+  en: {
+    title: 'All of Dalil Tounes at a glance', hint: 'Choose the section you need',
+    items: [
+      { icon: '🇹🇳', title: 'Citizen services', text: 'Health, education, procedures and daily life', href: '/citizens/services' },
+      { icon: '📅', title: 'Events', text: 'Upcoming events near you', href: '/citizens/leisure' },
+      { icon: '💼', title: 'Jobs', text: 'Active opportunities and hiring businesses', href: '/emplois' },
+      { icon: '📖', title: 'Practical guides', text: 'Useful answers by topic', href: '/blog' },
+      { icon: '🤝', title: 'Business needs', text: 'Requests, stock and B2B partnerships', href: '/besoins-professionnels' },
+    ],
+    cvBusiness: 'Business CV', cvPortfolio: 'Portfolio CV',
+    cvAdvantageTitle: 'Your advantage in the Dalil Tounes ecosystem',
+    cvAdvantageText: 'Your business remains visible in searches and the pages relevant to its activity. With a Business CV, visitors immediately see your services, photos, opening hours and every way to contact you.',
+  },
+  it: {
+    title: 'Tutto Dalil Tounes a colpo d’occhio', hint: 'Scegli la sezione che ti interessa',
+    items: [
+      { icon: '🇹🇳', title: 'Servizi ai cittadini', text: 'Salute, istruzione, pratiche e vita quotidiana', href: '/citizens/services' },
+      { icon: '📅', title: 'Agenda', text: 'I prossimi eventi vicino a te', href: '/citizens/leisure' },
+      { icon: '💼', title: 'Lavoro', text: 'Offerte attive e imprese che assumono', href: '/emplois' },
+      { icon: '📖', title: 'Guide pratiche', text: 'Risposte utili per argomento', href: '/blog' },
+      { icon: '🤝', title: 'Esigenze professionali', text: 'Richieste, stock e partnership B2B', href: '/besoins-professionnels' },
+    ],
+    cvBusiness: 'CV Business', cvPortfolio: 'CV Portfolio',
+    cvAdvantageTitle: 'Il tuo vantaggio nell’ecosistema Dalil Tounes',
+    cvAdvantageText: 'La tua impresa rimane visibile nelle ricerche e nelle pagine pertinenti alla sua attività. Con un CV Business, i visitatori scoprono subito servizi, foto, orari e tutti i modi per contattarti.',
+  },
+  ru: {
+    title: 'Весь Dalil Tounes с первого взгляда', hint: 'Выберите нужный раздел',
+    items: [
+      { icon: '🇹🇳', title: 'Услуги для граждан', text: 'Здоровье, образование, процедуры и повседневная жизнь', href: '/citizens/services' },
+      { icon: '📅', title: 'Афиша', text: 'Ближайшие события рядом с вами', href: '/citizens/leisure' },
+      { icon: '💼', title: 'Работа', text: 'Актуальные вакансии и компании-работодатели', href: '/emplois' },
+      { icon: '📖', title: 'Практические гиды', text: 'Полезные ответы по темам', href: '/blog' },
+      { icon: '🤝', title: 'Потребности бизнеса', text: 'Запросы, запасы и B2B-партнёрства', href: '/besoins-professionnels' },
+    ],
+    cvBusiness: 'Business CV', cvPortfolio: 'Portfolio CV',
+    cvAdvantageTitle: 'Ваше преимущество в экосистеме Dalil Tounes',
+    cvAdvantageText: 'Компания остаётся видимой в поиске и подходящих разделах. Business CV сразу показывает посетителям услуги, фотографии, часы работы и все способы связи.',
+  },
+};
+
 function SeparationExperience({ fixedView }: { fixedView?: 'platform' | 'cv' }) {
   const [previewView, setPreviewView] = useState<'platform' | 'cv'>('platform');
+  const [platformCvModel, setPlatformCvModel] = useState<'business' | 'portfolio'>('business');
   const navigate = useNavigate();
   const view = fixedView ?? previewView;
   const { language } = useLanguage();
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as Lang;
   const t = COPY[lang];
+  const ecosystem = HOME_ECOSYSTEM_COPY[lang];
   const { partners, totalCount, certifiedCount, loading } = useHomeData();
   const displayedCount = totalCount > 0 ? totalCount : 1894;
   const localizedCount = new Intl.NumberFormat(lang === 'ar' ? 'ar-TN' : lang).format(displayedCount);
@@ -217,13 +290,26 @@ function SeparationExperience({ fixedView }: { fixedView?: 'platform' | 'cv' }) 
                 <p className="mt-1 text-sm font-bold text-[#9A7416] md:text-base">{loading ? <span className="inline-block h-5 w-48 max-w-full animate-pulse rounded bg-[#D4AF37]/15" /> : t.certifiedProof(localizedCertifiedCount)}</p>
               </div>
               <div className="mx-auto mt-3 grid max-w-3xl grid-cols-2 gap-2 sm:grid-cols-4">{t.categories.map(([label, href]) => <a key={href} href={href} className="min-h-11 rounded-xl border border-[#D4AF37]/40 bg-white px-3 py-3 text-sm font-bold text-[#4A1D43] transition hover:bg-[#FFF8DF]">{label}</a>)}</div>
+              <div className="mx-auto mt-5 max-w-5xl rounded-2xl border border-[#D4AF37]/40 bg-white/90 p-3 text-left shadow-[0_14px_35px_rgba(74,29,67,0.08)] rtl:text-right sm:p-4">
+                <div className="flex flex-col gap-1 px-1 pb-3 sm:flex-row sm:items-end sm:justify-between">
+                  <h2 className="font-serif text-lg font-bold text-[#2E102A] sm:text-xl">{ecosystem.title}</h2>
+                  <p className="text-xs font-semibold text-[#9A7416]">{ecosystem.hint}</p>
+                </div>
+                <div className="grid grid-cols-2 gap-2 lg:grid-cols-5">
+                  {ecosystem.items.map(item => <button key={item.href} type="button" onClick={() => navigate(item.href)} className="group min-h-[92px] rounded-xl border border-[#E5D4B0] bg-[#FFFCF7] p-3 text-left transition hover:-translate-y-0.5 hover:border-[#B48A36] hover:bg-[#FFF8E6] focus:outline-none focus:ring-2 focus:ring-[#B48A36] rtl:text-right">
+                    <span className="text-lg" aria-hidden="true">{item.icon}</span>
+                    <span className="mt-1 block text-sm font-black leading-5 text-[#4A1D43]">{item.title}</span>
+                    <span className="mt-1 hidden text-xs leading-4 text-gray-600 sm:block">{item.text}</span>
+                  </button>)}
+                </div>
+              </div>
             </div>
           </section>
 
           <section className="bg-[#2E102A] px-4 py-8 text-white md:py-10">
             <div className="mx-auto grid max-w-5xl items-center gap-6 md:grid-cols-[1fr_280px] md:gap-8">
-              <div className="text-center md:text-left rtl:md:text-right"><p className="text-xs font-black uppercase tracking-[0.16em] text-[#F1D783]">{t.professionalEyebrow}</p><h2 className="mt-2 max-w-3xl font-serif text-2xl font-bold md:text-3xl">{t.platformPromoTitle}</h2><p className="mt-3 max-w-3xl text-base leading-7 text-white/85">{t.platformPromoText}</p><div className="mt-4 rounded-2xl border border-[#D4AF37]/45 bg-white/10 p-4 text-left rtl:text-right"><div className="flex items-center gap-2"><Smartphone className="h-5 w-5 shrink-0 text-[#F1D783]" aria-hidden="true" /><h3 className="font-serif text-lg font-bold text-[#F1D783]">{t.miniAppTitle}</h3></div><p className="mt-2 text-sm leading-6 text-white/90">{t.miniAppText}</p><p className="mt-3 text-xs font-black leading-5 text-[#F1D783]">{t.miniAppHighlights}</p></div><button type="button" onClick={() => fixedView ? navigate('/cv-business') : setPreviewView('cv')} className="mt-5 inline-flex min-h-12 items-center gap-2 rounded-xl bg-[#D4AF37] px-6 py-3 text-sm font-black text-[#2E102A]">{t.discoverCv} <ArrowRight className={`h-4 w-4 ${lang === 'ar' ? 'rotate-180' : ''}`} /></button></div>
-              <div className="mx-auto w-full max-w-[280px] rounded-[24px] border border-[#D4AF37]/60 bg-white/95 p-3 shadow-[0_20px_55px_rgba(0,0,0,0.28)]"><p className="mb-2 text-center text-xs font-bold text-[#4A1D43]">{t.example}</p><div className="flex h-[270px] justify-center overflow-hidden"><img src="/images/cv-business-portfolio-aux-saveurs-anis.png" alt={`${t.example} — CV Business`} className="h-[270px] w-auto object-contain object-top" loading="lazy" decoding="async" /></div></div>
+              <div className="text-center md:text-left rtl:md:text-right"><p className="text-xs font-black uppercase tracking-[0.16em] text-[#F1D783]">{t.professionalEyebrow}</p><h2 className="mt-2 max-w-3xl font-serif text-2xl font-bold md:text-3xl">{t.platformPromoTitle}</h2><p className="mt-3 max-w-3xl text-base leading-7 text-white/85">{t.platformPromoText}</p><div className="mt-4 rounded-2xl border border-[#D4AF37]/55 bg-[#D4AF37]/10 p-4 text-left rtl:text-right"><h3 className="font-serif text-lg font-bold text-[#F1D783]">{ecosystem.cvAdvantageTitle}</h3><p className="mt-2 text-sm leading-6 text-white/90">{ecosystem.cvAdvantageText}</p></div><div className="mt-4 rounded-2xl border border-[#D4AF37]/45 bg-white/10 p-4 text-left rtl:text-right"><div className="flex items-center gap-2"><Smartphone className="h-5 w-5 shrink-0 text-[#F1D783]" aria-hidden="true" /><h3 className="font-serif text-lg font-bold text-[#F1D783]">{t.miniAppTitle}</h3></div><p className="mt-2 text-sm leading-6 text-white/90">{t.miniAppText}</p><p className="mt-3 text-xs font-black leading-5 text-[#F1D783]">{t.miniAppHighlights}</p></div><button type="button" onClick={() => fixedView ? navigate('/cv-business') : setPreviewView('cv')} className="mt-5 inline-flex min-h-12 items-center gap-2 rounded-xl bg-[#D4AF37] px-6 py-3 text-sm font-black text-[#2E102A]">{t.discoverCv} <ArrowRight className={`h-4 w-4 ${lang === 'ar' ? 'rotate-180' : ''}`} /></button></div>
+              <div className="mx-auto w-full max-w-[280px] rounded-[24px] border border-[#D4AF37]/60 bg-white/95 p-3 shadow-[0_20px_55px_rgba(0,0,0,0.28)]"><p className="mb-2 text-center text-xs font-bold text-[#4A1D43]">{t.example}</p><div className="mb-2 grid grid-cols-2 gap-1.5 rounded-xl bg-[#F5EEE5] p-1"><button type="button" onClick={() => setPlatformCvModel('business')} aria-pressed={platformCvModel === 'business'} className={`rounded-lg px-2 py-2 text-[11px] font-black transition ${platformCvModel === 'business' ? 'bg-[#4A1D43] text-white shadow-sm' : 'bg-white text-[#4A1D43]'}`}>{ecosystem.cvBusiness}</button><button type="button" onClick={() => setPlatformCvModel('portfolio')} aria-pressed={platformCvModel === 'portfolio'} className={`rounded-lg px-2 py-2 text-[11px] font-black transition ${platformCvModel === 'portfolio' ? 'bg-[#4A1D43] text-white shadow-sm' : 'bg-white text-[#4A1D43]'}`}>{ecosystem.cvPortfolio}</button></div><div className="flex h-[270px] justify-center overflow-hidden"><img key={platformCvModel} src={platformCvModel === 'business' ? '/images/cv-business-portfolio-aux-saveurs-anis.png' : '/images/cv-portfolio-aux-saveurs-anis-original.svg'} alt={`${t.example} — ${platformCvModel === 'business' ? ecosystem.cvBusiness : ecosystem.cvPortfolio}`} className="h-[270px] w-auto object-contain object-top" loading="lazy" decoding="async" /></div></div>
             </div>
           </section>
 
