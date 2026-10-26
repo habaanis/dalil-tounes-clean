@@ -19,6 +19,7 @@ type Place = {
 };
 type Topic = { title: string; intro: string; query: string; source?: string; places: Place[] };
 type Circuit = { name: string; subtitle: string; stages: string[]; duration: string; distance: string; bestTime: string; advice: string; mapQuery: string; slugs: string[] };
+type VisitInfo = { duration: string; level: string; car: string; family: string; guide: string };
 
 const commonsImage = (file: string) => `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(file)}?width=900`;
 
@@ -36,6 +37,23 @@ const unescoTentative = new Set([
 const unescoStatus = (place: Place) => unescoWorldHeritage.has(place.name)
   ? 'world'
   : unescoTentative.has(place.name) ? 'tentative' : null;
+
+const getVisitInfo = (place: Place, slug?: string): VisitInfo => {
+  const words = `${place.name} ${place.tags.join(' ')}`.toLocaleLowerCase('fr');
+  const isVillage = slug === 'villages-patrimoine';
+  const isDesert = ['désert', 'sahara', 'dunes', 'chott'].some((word) => words.includes(word));
+  const isCanyon = ['canyon', 'ravin', 'gorge'].some((word) => words.includes(word));
+  const isPark = words.includes('parc national');
+  const isMountain = ['montagne', 'massif', 'djebel', 'sommet'].some((word) => words.includes(word));
+  const isOasis = ['oasis', 'palmeraie'].some((word) => words.includes(word));
+
+  if (isVillage) return { duration: '2 à 4 h', level: 'Facile à modéré', car: 'Accès ou stationnement à proximité', family: 'Oui, avec vigilance dans les ruelles', guide: 'Recommandé pour l’histoire locale' };
+  if (isDesert || isCanyon) return { duration: 'Une demi-journée', level: 'Modéré, terrain irrégulier', car: 'Accès à vérifier selon la route', family: 'Selon l’âge et les conditions', guide: 'Fortement recommandé' };
+  if (isPark) return { duration: 'Une demi-journée à 1 jour', level: 'Variable selon le parcours', car: 'Accès et ouverture à vérifier', family: 'Oui sur les parcours adaptés', guide: 'Recommandé hors sentiers aménagés' };
+  if (isMountain) return { duration: '3 à 6 h', level: 'Modéré à soutenu', car: 'Accès routier jusqu’aux abords', family: 'Pour enfants habitués à marcher', guide: 'Recommandé pour les longs parcours' };
+  if (isOasis) return { duration: '2 à 4 h', level: 'Facile à modéré', car: 'Accès à proximité', family: 'Oui, avec surveillance', guide: 'Utile pour comprendre l’oasis' };
+  return { duration: '2 à 4 h', level: 'Facile à modéré', car: 'Accès à vérifier localement', family: 'Oui, selon le parcours', guide: 'Utile pour enrichir la visite' };
+};
 
 const circuits: Circuit[] = [
   { name: 'Les oasis de montagne', subtitle: 'Sources, cascades et canyon du Jérid', stages: ['Chebika', 'Tamerza', 'Midès'], duration: '2 jours conseillés', distance: 'Environ 45 km entre les étapes', bestTime: 'Octobre à avril', advice: 'Prenez le temps de marcher autour de chaque oasis, d’observer les sources et de rencontrer les habitants. Prévoyez eau et chaussures stables ; un guide local est conseillé hors des zones aménagées.', mapQuery: 'Chebika Tamerza Midès Tunisie', slugs: ['nature-randonnees'] },
@@ -231,6 +249,7 @@ export default function TourismGuideTopic() {
               <div className="flex items-start justify-between gap-3"><h2 className="text-xl font-semibold text-[#4A1D43]">{selectedPlace.name}</h2><span className="inline-flex shrink-0 items-center gap-1 text-xs text-gray-500"><MapPin className="h-3.5 w-3.5 text-[#D4AF37]" />{selectedPlace.region}</span></div>
               <p className="mt-2 text-sm leading-relaxed text-gray-600">{selectedPlace.text}</p>
               {selectedPlace.history && <div className="mt-4 rounded-lg border-l-2 border-[#D4AF37] bg-[#FFFDF8] p-3"><p className="text-xs font-semibold text-[#4A1D43]">{ui.history}</p><p className="mt-1 text-xs leading-relaxed text-gray-600">{selectedPlace.history}</p></div>}
+              <div className="mt-4"><p className="text-xs font-semibold text-[#4A1D43]">Préparer la visite</p><div className="mt-2 grid grid-cols-2 gap-2 text-[11px]"><div className="rounded-lg bg-gray-50 p-2.5"><p className="font-semibold text-[#4A1D43]">Durée conseillée</p><p className="mt-0.5 text-gray-600">{getVisitInfo(selectedPlace, slug).duration}</p></div><div className="rounded-lg bg-gray-50 p-2.5"><p className="font-semibold text-[#4A1D43]">Niveau</p><p className="mt-0.5 text-gray-600">{getVisitInfo(selectedPlace, slug).level}</p></div><div className="rounded-lg bg-gray-50 p-2.5"><p className="font-semibold text-[#4A1D43]">Accès en voiture</p><p className="mt-0.5 text-gray-600">{getVisitInfo(selectedPlace, slug).car}</p></div><div className="rounded-lg bg-gray-50 p-2.5"><p className="font-semibold text-[#4A1D43]">Avec des enfants</p><p className="mt-0.5 text-gray-600">{getVisitInfo(selectedPlace, slug).family}</p></div><div className="col-span-2 rounded-lg bg-[#FFF9E9] p-2.5"><p className="font-semibold text-[#4A1D43]">Accompagnement</p><p className="mt-0.5 text-gray-600">{getVisitInfo(selectedPlace, slug).guide}</p></div></div><p className="mt-2 text-[9px] leading-relaxed text-gray-400">Informations indicatives : vérifiez toujours la météo, l’ouverture, l’état des accès et les conditions locales avant le départ.</p></div>
               {selectedPlace.bestTime && <div className="mt-4 flex gap-3 rounded-lg bg-[#FFF9E9] p-3"><CalendarDays className="mt-0.5 h-4 w-4 shrink-0 text-[#B38A16]" /><div><p className="text-xs font-semibold text-[#4A1D43]">{ui.period}</p><p className="mt-0.5 text-xs leading-relaxed text-gray-600">{selectedPlace.bestTime}</p></div></div>}
               {selectedPlace.practical && <div className="mt-2 flex gap-3 rounded-lg bg-gray-50 p-3"><Info className="mt-0.5 h-4 w-4 shrink-0 text-[#4A1D43]" /><div><p className="text-xs font-semibold text-[#4A1D43]">{ui.practical}</p><p className="mt-0.5 text-xs leading-relaxed text-gray-600">{selectedPlace.practical}</p></div></div>}
               <div className="mt-4 flex flex-col gap-2 sm:flex-row">
