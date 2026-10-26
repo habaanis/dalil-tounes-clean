@@ -194,6 +194,11 @@ const labels = {
   ru: { back: 'Назад к туризму и переезду', useful: 'Полезно знать', note: 'Для удалённых, горных или пустынных районов проверяйте погоду, доступ и местные условия. При необходимости обращайтесь к гиду.', pros: 'Найти специалистов и услуги', source: 'Открыть официальный туристический источник', discover: 'Подробнее', route: 'Маршрут', period: 'Лучшее время', practical: 'Практический совет', history: 'Немного истории', photo: 'Источник фото', close: 'Закрыть' },
 } as const;
 
+const topicNotes: Record<string, string> = {
+  'artisanat-savoir-faire': 'Les ateliers sont aussi des lieux de travail. Vérifiez les horaires, demandez avant de photographier et privilégiez les pièces dont l’origine et la technique sont expliquées.',
+  'marches-gastronomie': 'Les horaires, les jours de marché et les arrivages peuvent changer. Venez plutôt le matin, vérifiez les prix et les conditions de conservation des produits frais.',
+};
+
 export default function TourismGuideTopic() {
   const { slug } = useParams();
   const { language } = useLanguage();
@@ -232,7 +237,7 @@ export default function TourismGuideTopic() {
             </article>
           ))}
         </section>
-        <aside className="mt-5 rounded-xl border border-[#D4AF37] bg-[#FFFDF8] p-4"><h2 className="text-sm font-semibold text-[#4A1D43]">{ui.useful}</h2><p className="mt-1 text-xs leading-relaxed text-gray-600">{ui.note}</p></aside>
+        <aside className="mt-5 rounded-xl border border-[#D4AF37] bg-[#FFFDF8] p-4"><h2 className="text-sm font-semibold text-[#4A1D43]">{ui.useful}</h2><p className="mt-1 text-xs leading-relaxed text-gray-600">{slug && topicNotes[slug] ? topicNotes[slug] : ui.note}</p></aside>
         <div className="mt-5 flex flex-col gap-2 sm:flex-row">
           <Link to={`/recherche?q=${encodeURIComponent(topic.query)}`} className="inline-flex items-center justify-center gap-2 rounded-lg border border-[#D4AF37] bg-[#4A1D43] px-4 py-2.5 text-sm font-semibold text-[#D4AF37]"><Search className="h-4 w-4" />{ui.pros}</Link>
           {topic.source && <a href={topic.source} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 rounded-lg border border-[#D4AF37]/60 bg-white px-4 py-2.5 text-sm font-semibold text-[#4A1D43]"><ExternalLink className="h-4 w-4" />{ui.source}</a>}
