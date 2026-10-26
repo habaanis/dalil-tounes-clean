@@ -759,7 +759,7 @@ export default function CitizensLeisure() {
                 </div>
                 <div className="relative h-24 overflow-hidden">
                   <img
-                    src={(weeklyEvent.image_url?.split(',')[0]?.trim()) || "https://images.pexels.com/photos/1762578/pexels-photo-1762578.jpeg?auto=compress&cs=tinysrgb&w=600"}
+                    src={(weeklyEvent.image_url?.split(',')[0]?.trim()) || '/images/drapeau-tunisie.webp'}
                     alt={getTranslatedText(weeklyEvent, 'titre')}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   decoding="async"
@@ -818,7 +818,7 @@ export default function CitizensLeisure() {
                 </div>
                 <div className="relative h-24 overflow-hidden">
                   <img
-                    src={(monthlyEvent.image_url?.split(',')[0]?.trim()) || "https://images.pexels.com/photos/3010168/pexels-photo-3010168.jpeg?auto=compress&cs=tinysrgb&w=600"}
+                    src={(monthlyEvent.image_url?.split(',')[0]?.trim()) || '/images/drapeau-tunisie.webp'}
                     alt={getTranslatedText(monthlyEvent, 'titre')}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   decoding="async"
@@ -877,7 +877,7 @@ export default function CitizensLeisure() {
                 </div>
                 <div className="relative h-24 overflow-hidden">
                   <img
-                    src={(annualEvent.image_url?.split(',')[0]?.trim()) || "https://images.pexels.com/photos/8349107/pexels-photo-8349107.jpeg?auto=compress&cs=tinysrgb&w=600"}
+                    src={(annualEvent.image_url?.split(',')[0]?.trim()) || '/images/drapeau-tunisie.webp'}
                     alt={getTranslatedText(annualEvent, 'titre')}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   decoding="async"
@@ -988,15 +988,17 @@ export default function CitizensLeisure() {
                     style={{ border: '2px solid #D4AF37' }}
                   >
                     <div className="relative h-32 bg-gradient-to-br from-gray-200 to-gray-300">
-                      {event.image_url && (
-                        <img
-                          src={event.image_url.split(',')[0].trim()}
-                          alt={getTranslatedText(event, 'titre')}
-                          className="absolute inset-0 w-full h-full object-cover"
-                          loading="lazy"
+                      <img
+                        src={event.image_url?.split(',')[0]?.trim() || '/images/drapeau-tunisie.webp'}
+                        alt={event.image_url ? getTranslatedText(event, 'titre') : `Drapeau de la Tunisie — ${getTranslatedText(event, 'titre')}`}
+                        className="absolute inset-0 w-full h-full object-cover"
+                        onError={(imageEvent) => {
+                          const image = imageEvent.currentTarget;
+                          if (!image.src.endsWith('/images/drapeau-tunisie.webp')) image.src = '/images/drapeau-tunisie.webp';
+                        }}
+                        loading="lazy"
                         decoding="async"
-                        />
-                      )}
+                      />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
                       <div className={`absolute top-3 ${language === 'ar' ? 'right-3' : 'left-3'} flex gap-2`}>
                         <span className="px-2.5 py-1 bg-[#D4AF37] text-[#4A1D43] font-bold text-xs rounded-full shadow-lg">
