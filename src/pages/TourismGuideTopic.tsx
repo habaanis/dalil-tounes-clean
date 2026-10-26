@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ArrowLeft, CalendarDays, ExternalLink, Info, MapPin, Navigation, Search, X } from 'lucide-react';
+import { ArrowLeft, CalendarDays, ExternalLink, Info, MapPin, Navigation, Route, Search, X } from 'lucide-react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { SEOHead } from '../components/SEOHead';
@@ -18,6 +18,7 @@ type Place = {
   landscapes?: string[];
 };
 type Topic = { title: string; intro: string; query: string; source?: string; places: Place[] };
+type Circuit = { name: string; subtitle: string; stages: string[]; duration: string; distance: string; bestTime: string; advice: string; mapQuery: string; slugs: string[] };
 
 const commonsImage = (file: string) => `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(file)}?width=900`;
 
@@ -35,6 +36,15 @@ const unescoTentative = new Set([
 const unescoStatus = (place: Place) => unescoWorldHeritage.has(place.name)
   ? 'world'
   : unescoTentative.has(place.name) ? 'tentative' : null;
+
+const circuits: Circuit[] = [
+  { name: 'Les oasis de montagne', subtitle: 'Sources, cascades et canyon du Jérid', stages: ['Chebika', 'Tamerza', 'Midès'], duration: '1 journée', distance: 'Environ 45 km entre les étapes', bestTime: 'Octobre à avril', advice: 'Partez tôt, prévoyez eau et chaussures stables. Un guide local est conseillé pour les passages hors des zones aménagées.', mapQuery: 'Chebika Tamerza Midès Tunisie', slugs: ['nature-randonnees'] },
+  { name: 'Les villages du Dahar', subtitle: 'Habitats perchés et mémoire amazighe', stages: ['Chenini', 'Douiret', 'Guermessa'], duration: '1 journée complète', distance: 'Environ 70 km selon le parcours', bestTime: 'Octobre à avril', advice: 'Les accès sont escarpés et exposés au soleil. Privilégiez un accompagnateur local pour comprendre les villages et choisir les bons chemins.', mapQuery: 'Chenini Douiret Guermessa Tunisie', slugs: ['villages-patrimoine'] },
+  { name: 'La route des ksour', subtitle: 'Ghorfas et greniers collectifs du Sud', stages: ['Ksar Hadada', 'Tataouine', 'Ksar Ouled Soltane'], duration: 'Une demi-journée à 1 journée', distance: 'Environ 55 km selon le départ', bestTime: 'Octobre à avril', advice: 'Vérifiez les horaires des sites et ateliers. Ne montez pas sur les parties fragiles des ghorfas.', mapQuery: 'Ksar Hadada Tataouine Ksar Ouled Soltane Tunisie', slugs: ['villages-patrimoine'] },
+  { name: 'Les forêts du Nord-Ouest', subtitle: 'Villages, barrages et massif forestier', stages: ['Aïn Draham', 'Beni M’Tir', 'El Feija'], duration: '1 à 2 jours', distance: 'Environ 85 km selon les accès', bestTime: 'Printemps et automne', advice: 'La pluie et le brouillard peuvent modifier les conditions. Vérifiez l’accès au parc d’El Feija avant le départ.', mapQuery: 'Aïn Draham Beni M Tir El Feija Tunisie', slugs: ['nature-randonnees'] },
+  { name: 'Autour de Matmata', subtitle: 'Troglodytes, crêtes et villages du Sud-Est', stages: ['Matmata', 'Tamezret', 'Toujane'], duration: '1 journée', distance: 'Environ 50 km entre les étapes', bestTime: 'Octobre à avril', advice: 'Respectez les maisons encore habitées et demandez toujours l’autorisation avant d’entrer ou de photographier.', mapQuery: 'Matmata Tamezret Toujane Tunisie', slugs: ['villages-patrimoine'] },
+  { name: 'Les oasis du Jérid', subtitle: 'Palmeraies, médinas et paysages oasiens', stages: ['Tozeur', 'Nefta', 'Degache'], duration: '1 à 2 jours', distance: 'Environ 55 km pour la boucle', bestTime: 'Octobre à avril', advice: 'Prenez le temps de découvrir les palmeraies à pied avec un acteur local et respectez les canaux ainsi que les parcelles cultivées.', mapQuery: 'Tozeur Nefta Degache Tunisie', slugs: ['nature-randonnees'] },
+];
 
 const matchesLandscape = (place: Place, filter: string) => {
   if (filter === 'all') return true;
@@ -152,14 +162,16 @@ export default function TourismGuideTopic() {
   const { slug } = useParams();
   const { language } = useLanguage();
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
+  const [selectedCircuit, setSelectedCircuit] = useState<Circuit | null>(null);
   const [activeFilter, setActiveFilter] = useState('all');
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as keyof typeof labels;
   const topic = slug ? topics[slug] : undefined;
-  useEffect(() => { setSelectedPlace(null); setActiveFilter('all'); }, [slug]);
+  useEffect(() => { setSelectedPlace(null); setSelectedCircuit(null); setActiveFilter('all'); }, [slug]);
   if (!topic) return <Navigate to="/citizens/tourism" replace />;
   const ui = labels[lang];
   const isRTL = lang === 'ar';
   const visiblePlaces = topic.places.filter((place) => slug !== 'nature-randonnees' || matchesLandscape(place, activeFilter));
+  const visibleCircuits = circuits.filter((circuit) => slug && circuit.slugs.includes(slug));
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50" dir={isRTL ? 'rtl' : 'ltr'}>
       <SEOHead title={`${topic.title} | Dalil Tounes`} description={topic.intro} canonical={`https://dalil-tounes.com/citizens/tourism/guide/${slug}`} currentPath={`/citizens/tourism/guide/${slug}`} />
@@ -169,6 +181,7 @@ export default function TourismGuideTopic() {
           <h1 className="text-2xl sm:text-3xl font-semibold text-[#4A1D43]" style={{ fontFamily: "'Playfair Display', serif" }}>{topic.title}</h1>
           <p className="mt-2 max-w-3xl text-sm leading-relaxed text-gray-600">{topic.intro}</p>
         </header>
+        {visibleCircuits.length > 0 && <section className="mt-5"><div className="mb-3 flex items-center gap-2"><Route className="h-4 w-4 text-[#D4AF37]" /><h2 className="text-sm font-semibold text-[#4A1D43]">Itinéraires conseillés</h2></div><div className="grid gap-2 sm:grid-cols-3">{visibleCircuits.map((circuit) => <button key={circuit.name} type="button" onClick={() => setSelectedCircuit(circuit)} className="group rounded-xl border border-[#D4AF37]/40 bg-white p-3 text-left shadow-sm transition hover:border-[#D4AF37] hover:shadow-md"><div className="flex items-start justify-between gap-2"><span className="text-xs font-semibold text-[#4A1D43]">{circuit.name}</span><span className="shrink-0 rounded-full bg-[#D4AF37]/10 px-2 py-0.5 text-[9px] text-[#4A1D43]">{circuit.duration}</span></div><p className="mt-1 text-[10px] leading-relaxed text-gray-500">{circuit.subtitle}</p><p className="mt-2 text-[10px] font-medium text-[#8A6A12]">{circuit.stages.join(' → ')}</p></button>)}</div></section>}
         {slug === 'nature-randonnees' && <div className="mt-4 flex gap-2 overflow-x-auto pb-1" aria-label="Filtrer par paysage">{landscapeFilters.map((filter) => <button key={filter.id} type="button" onClick={() => setActiveFilter(filter.id)} aria-pressed={activeFilter === filter.id} className={`shrink-0 rounded-full border px-3 py-1.5 text-xs font-medium transition ${activeFilter === filter.id ? 'border-[#4A1D43] bg-[#4A1D43] text-white' : 'border-[#D4AF37]/50 bg-white text-[#4A1D43] hover:border-[#D4AF37]'}`}>{filter.label}</button>)}</div>}
         <section className="mt-5 grid gap-3 sm:grid-cols-2">
           {visiblePlaces.map((place) => (
@@ -189,6 +202,18 @@ export default function TourismGuideTopic() {
           {topic.source && <a href={topic.source} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 rounded-lg border border-[#D4AF37]/60 bg-white px-4 py-2.5 text-sm font-semibold text-[#4A1D43]"><ExternalLink className="h-4 w-4" />{ui.source}</a>}
         </div>
       </main>
+      {selectedCircuit && (
+        <div className="fixed inset-0 z-[100] flex items-end justify-center bg-black/55 p-0 sm:items-center sm:p-4" role="dialog" aria-modal="true" aria-label={selectedCircuit.name} onMouseDown={(event) => { if (event.target === event.currentTarget) setSelectedCircuit(null); }}>
+          <div className="max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-t-2xl bg-white p-5 shadow-2xl sm:rounded-2xl">
+            <div className="flex items-start justify-between gap-4"><div><p className="text-[10px] font-semibold uppercase tracking-wider text-[#B38A16]">Itinéraire conseillé</p><h2 className="mt-1 text-xl font-semibold text-[#4A1D43]">{selectedCircuit.name}</h2><p className="mt-1 text-xs text-gray-500">{selectedCircuit.subtitle}</p></div><button type="button" onClick={() => setSelectedCircuit(null)} aria-label={ui.close} className="rounded-full bg-gray-50 p-2 text-[#4A1D43]"><X className="h-4 w-4" /></button></div>
+            <div className="mt-5 flex items-center overflow-x-auto pb-1">{selectedCircuit.stages.map((stage, index) => <div key={stage} className="flex shrink-0 items-center"><span className="rounded-full border border-[#D4AF37] bg-[#FFFDF8] px-3 py-1.5 text-xs font-semibold text-[#4A1D43]">{stage}</span>{index < selectedCircuit.stages.length - 1 && <span className="mx-2 text-[#D4AF37]">→</span>}</div>)}</div>
+            <div className="mt-4 grid grid-cols-2 gap-2"><div className="rounded-lg bg-[#FFF9E9] p-3"><p className="text-[10px] font-semibold text-[#4A1D43]">Durée conseillée</p><p className="mt-1 text-xs text-gray-600">{selectedCircuit.duration}</p></div><div className="rounded-lg bg-[#FFF9E9] p-3"><p className="text-[10px] font-semibold text-[#4A1D43]">Distance indicative</p><p className="mt-1 text-xs text-gray-600">{selectedCircuit.distance}</p></div><div className="col-span-2 rounded-lg bg-gray-50 p-3"><p className="text-[10px] font-semibold text-[#4A1D43]">Meilleure période</p><p className="mt-1 text-xs text-gray-600">{selectedCircuit.bestTime}</p></div></div>
+            <div className="mt-3 flex gap-3 rounded-lg border-l-2 border-[#D4AF37] bg-[#FFFDF8] p-3"><Info className="mt-0.5 h-4 w-4 shrink-0 text-[#4A1D43]" /><p className="text-xs leading-relaxed text-gray-600">{selectedCircuit.advice}</p></div>
+            <p className="mt-3 text-[10px] leading-relaxed text-gray-400">Les distances sont indicatives et peuvent varier selon le point de départ, la route choisie et les accès ouverts.</p>
+            <div className="mt-4 flex flex-col gap-2 sm:flex-row"><a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectedCircuit.mapQuery)}`} target="_blank" rel="noopener noreferrer" className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-[#4A1D43] px-4 py-2.5 text-sm font-semibold text-[#D4AF37]"><Navigation className="h-4 w-4" />Voir le parcours</a><Link to={`/recherche?q=${encodeURIComponent(`guide excursion ${selectedCircuit.stages.join(' ')}`)}`} className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg border border-[#D4AF37] px-4 py-2.5 text-center text-xs font-semibold text-[#4A1D43]"><Search className="h-4 w-4" />Guides et services</Link></div>
+          </div>
+        </div>
+      )}
       {selectedPlace && (
         <div className="fixed inset-0 z-[100] flex items-end justify-center bg-black/55 p-0 sm:items-center sm:p-4" role="dialog" aria-modal="true" aria-label={selectedPlace.name} onMouseDown={(event) => { if (event.target === event.currentTarget) setSelectedPlace(null); }}>
           <div className="max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-t-2xl bg-white shadow-2xl sm:rounded-2xl">
