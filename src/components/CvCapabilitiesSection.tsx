@@ -1,5 +1,6 @@
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import type { BusinessCardPreviewLanguage } from './BusinessCardPreview';
 
 const details = {
@@ -250,9 +251,34 @@ const details = {
   }
 } as const;
 
+const interactionCopy: Record<BusinessCardPreviewLanguage, { more: string; back: string; dialogLabel: string }> = {
+  fr: { more: 'Voir les informations', back: 'Retour', dialogLabel: 'Informations détaillées sur cet avantage' },
+  ar: { more: 'عرض التفاصيل', back: 'رجوع', dialogLabel: 'تفاصيل هذه الميزة' },
+  en: { more: 'View details', back: 'Back', dialogLabel: 'Detailed information about this benefit' },
+  it: { more: 'Vedi i dettagli', back: 'Indietro', dialogLabel: 'Informazioni dettagliate su questo vantaggio' },
+  ru: { more: 'Подробнее', back: 'Назад', dialogLabel: 'Подробная информация об этом преимуществе' },
+};
+
 /** Public-facing benefits section; no diagnostic form and no lead collection. */
 export default function CvCapabilitiesSection({ language }: {language: BusinessCardPreviewLanguage}) {
   const content = details[language] ?? details.fr;
+  const ui = interactionCopy[language] ?? interactionCopy.fr;
+  const [selectedGroup, setSelectedGroup] = useState<(typeof content.groups)[number] | null>(null);
+
+  useEffect(() => {
+    if (!selectedGroup) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setSelectedGroup(null);
+    };
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [selectedGroup]);
+
   return <section className="bg-[#FFF9F1] px-4 py-12 sm:py-16" aria-labelledby="dt-home-cv-capabilities">
     <div className="mx-auto max-w-6xl">
       <div className="mx-auto max-w-3xl text-center">
@@ -260,11 +286,12 @@ export default function CvCapabilitiesSection({ language }: {language: BusinessC
         <h2 id="dt-home-cv-capabilities" className="mt-3 font-serif text-2xl font-extrabold leading-tight text-[#8F182A] sm:text-4xl">{content.title}</h2>
         <p className="mx-auto mt-3 max-w-2xl text-base leading-7 text-[#60514C]">{content.intro}</p>
       </div>
-      <div className="mt-8 grid gap-4 md:grid-cols-2">
-        {content.groups.map(group=><article key={group.title} className="rounded-2xl border border-[#E9D6BA] bg-[#FFFDF9] p-5 shadow-[0_10px_30px_rgba(102,30,41,0.06)] sm:p-7">
+      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {content.groups.map(group=><button type="button" key={group.title} onClick={() => setSelectedGroup(group)} className="group rounded-2xl border border-[#E9D6BA] bg-[#FFFDF9] p-5 text-left shadow-[0_10px_30px_rgba(102,30,41,0.06)] transition hover:-translate-y-1 hover:border-[#B48A36] hover:shadow-[0_14px_34px_rgba(102,30,41,0.10)] focus:outline-none focus:ring-2 focus:ring-[#B48A36] rtl:text-right sm:p-6">
           <h3 className="font-serif text-xl font-bold leading-snug text-[#971A30] sm:text-2xl">{group.title}</h3>
-          <ul className="mt-4 grid gap-3">{group.items.map(item=><li key={item} className="flex items-start gap-2.5 text-sm leading-6 text-[#3D302E] sm:text-base sm:leading-7"><CheckCircle2 className="mt-1 h-4 w-4 flex-none text-[#B48A36]" aria-hidden="true"/><span>{item}</span></li>)}</ul>
-        </article>)}
+          <p className="mt-3 text-sm leading-6 text-[#60514C]">{group.items[0]}</p>
+          <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-extrabold text-[#9A7416] group-hover:text-[#6E2732]">{ui.more}<ArrowRight className={`h-3.5 w-3.5 ${language === 'ar' ? 'rotate-180' : ''}`} aria-hidden="true" /></span>
+        </button>)}
       </div>
       <div className="mt-6 rounded-2xl border border-[#DDC38E] bg-[#FFF0DE] p-5 sm:p-7">
         <h3 className="font-serif text-xl font-bold text-[#8F182A] sm:text-2xl">{content.personalTitle}</h3>
@@ -276,5 +303,13 @@ export default function CvCapabilitiesSection({ language }: {language: BusinessC
         <Link to="/contact" className="inline-flex min-h-11 items-center justify-center rounded-xl border border-[#B48A36] bg-white px-6 py-3 text-sm font-bold text-[#6E2732] hover:bg-[#FFF3DB]">{content.contact}</Link>
       </div>
     </div>
+    {selectedGroup && <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#24131F]/70 p-4 backdrop-blur-sm" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setSelectedGroup(null); }}>
+      <div role="dialog" aria-modal="true" aria-label={ui.dialogLabel} className="max-h-[88vh] w-full max-w-2xl overflow-y-auto rounded-3xl border border-[#D4AF37] bg-[#FFFDF9] p-5 shadow-[0_28px_80px_rgba(0,0,0,0.35)] sm:p-8">
+        <p className="text-xs font-extrabold uppercase tracking-widest text-[#A47B2F]">{content.label}</p>
+        <h3 className="mt-2 font-serif text-2xl font-bold text-[#8F182A] sm:text-3xl">{selectedGroup.title}</h3>
+        <ul className="mt-5 grid gap-1">{selectedGroup.items.map(item=><li key={item} className="flex items-start gap-2.5 border-b border-[#E9D6BA]/70 py-3 text-sm leading-6 text-[#3D302E] last:border-0 sm:text-base sm:leading-7"><CheckCircle2 className="mt-1 h-4 w-4 flex-none text-[#B48A36]" aria-hidden="true"/><span>{item}</span></li>)}</ul>
+        <button type="button" autoFocus onClick={() => setSelectedGroup(null)} className="mt-5 inline-flex min-h-11 items-center justify-center rounded-xl border border-[#D4AF37] bg-[#4A1D43] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#5B2553]">← {ui.back}</button>
+      </div>
+    </div>}
   </section>;
 }
