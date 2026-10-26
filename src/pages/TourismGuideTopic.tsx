@@ -26,6 +26,16 @@ const landscapeFilters = [
   { id: 'lac', label: 'Lacs' }, { id: 'canyon', label: 'Canyons' }, { id: 'oasis', label: 'Oasis' }, { id: 'désert', label: 'Désert' },
 ];
 
+const unescoWorldHeritage = new Set(['Parc national de l’Ichkeul']);
+const unescoTentative = new Set([
+  'Chenini', 'Douiret', 'Matmata', 'Tamezret', 'Guermessa', 'Ksar Ouled Soltane',
+  'Parc national d’El Feija', 'Chott el-Jérid', 'Oasis littorale de Gabès',
+]);
+
+const unescoStatus = (place: Place) => unescoWorldHeritage.has(place.name)
+  ? 'world'
+  : unescoTentative.has(place.name) ? 'tentative' : null;
+
 const matchesLandscape = (place: Place, filter: string) => {
   if (filter === 'all') return true;
   const searchable = `${place.name} ${place.text} ${place.tags.join(' ')}`.toLocaleLowerCase('fr');
@@ -163,7 +173,7 @@ export default function TourismGuideTopic() {
         <section className="mt-5 grid gap-3 sm:grid-cols-2">
           {visiblePlaces.map((place) => (
             <article key={place.name} className="overflow-hidden rounded-xl border border-[#D4AF37]/45 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-              {place.image && <img src={place.image} alt={place.name} loading="lazy" className="h-36 w-full object-cover" onError={(event) => { event.currentTarget.src = '/images/drapeau-tunisie.webp'; event.currentTarget.className = 'h-36 w-full bg-gray-50 object-contain p-6'; }} />}
+              {place.image && <div className="relative"><img src={place.image} alt={place.name} loading="lazy" className="h-36 w-full object-cover" onError={(event) => { event.currentTarget.src = '/images/drapeau-tunisie.webp'; event.currentTarget.className = 'h-36 w-full bg-gray-50 object-contain p-6'; }} />{unescoStatus(place) && <span className={`absolute right-2 top-2 rounded-full border px-2 py-1 text-[9px] font-semibold shadow-sm backdrop-blur-sm ${unescoStatus(place) === 'world' ? 'border-[#D4AF37] bg-[#4A1D43]/95 text-[#F8E7A1]' : 'border-white/80 bg-white/95 text-[#4A1D43]'}`}>{unescoStatus(place) === 'world' ? 'UNESCO · Patrimoine mondial' : 'UNESCO · Liste indicative'}</span>}</div>}
               <div className="p-4">
                 <div className="flex items-start justify-between gap-3"><h2 className="text-base font-semibold text-[#4A1D43]">{place.name}</h2><span className="inline-flex shrink-0 items-center gap-1 text-[11px] text-gray-500"><MapPin className="h-3.5 w-3.5 text-[#D4AF37]" />{place.region}</span></div>
                 <p className="mt-2 text-xs leading-relaxed text-gray-600">{place.text}</p>
