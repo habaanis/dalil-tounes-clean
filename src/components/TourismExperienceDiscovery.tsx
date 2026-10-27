@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin } from 'lucide-react';
+import { openCraftPhotoCatalog } from '../data/openCraftPhotoCatalog';
 import { supabase } from '../lib/supabaseClient';
 import { UNESCO_TUNISIA_WORLD_HERITAGE, UNESCO_TUNISIA_INTANGIBLE, UNESCO_SOURCES } from '../data/tunisiaUnesco';
 
@@ -181,6 +182,16 @@ export default function TourismExperienceDiscovery() {
       <button type="button" disabled={page === totalPages} onClick={() => setPage(p => Math.min(totalPages, p + 1))} className="rounded-lg border border-[#D4AF37] px-3 py-2 text-sm disabled:opacity-40">Suivant</button>
     </nav>}
 
+    <div className="mt-8 rounded-2xl border border-[#D4AF37]/40 bg-[#FFF9EF] p-4">
+      <h3 className="text-lg font-semibold text-[#4A1D43]">🎨 Savoir-faire en images</h3>
+      <p className="mt-1 text-xs text-gray-600">Des photographies authentiques des métiers de Sejnane, Nabeul et Kairouan. Elles illustrent les traditions locales, et non les entreprises référencées.</p>
+      <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
+        {openCraftPhotoCatalog.filter(photo => ['Poterie de Sejnane', 'Plat traditionnel de Sejnane', 'Potier au travail à Nabeul', 'Artisane ou artisan peignant une assiette', 'Tisserande de Kairouan', 'Tapis Margoum dans le souk'].includes(photo.title)).map(photo => <a href={photo.source} target="_blank" rel="noopener noreferrer" key={photo.filename} className="group overflow-hidden rounded-xl bg-white shadow-sm">
+          <img loading="lazy" src={'https://commons.wikimedia.org/wiki/Special:FilePath/' + encodeURIComponent(photo.filename) + '?width=450'} alt={photo.title} className="h-28 w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+          <div className="p-2"><p className="text-xs font-semibold text-[#4A1D43]">{photo.title}</p><p className="mt-1 text-[10px] text-gray-600">{photo.author} · {photo.license}</p></div>
+        </a>)}
+      </div>
+    </div>
     {galleryItems.length > 0 && <p className="mt-4 text-[11px] text-gray-500">Crédits des photographies régionales : {[...ADDITIONAL_PHOTOS, ...CRAFT_PHOTOS, ...REGION_PHOTOS].map((p,i) => <span key={p.source}>{i > 0 ? " · " : ""}<a className="underline" href={p.source} target="_blank" rel="noopener noreferrer">{p.credit}</a></span>)}</p>}
     {selected && <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 px-4 py-6" role="presentation" onClick={() => setSelected(null)}>
       <section role="dialog" aria-modal="true" aria-label="Détails de l'expérience" className="max-h-[88vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white p-5 shadow-xl sm:p-7" onClick={e => e.stopPropagation()}>
