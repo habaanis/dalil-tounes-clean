@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import SearchBar from '../components/SearchBar';
-import { getSupabaseImageUrl } from '../lib/imageUtils';
 import TourismExperienceDiscovery from '../components/TourismExperienceDiscovery';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
