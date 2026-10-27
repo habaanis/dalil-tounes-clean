@@ -381,9 +381,9 @@ export default function CitizensTourism() {
             <p className="mx-auto mt-1.5 max-w-2xl text-sm leading-relaxed text-gray-600">{journeyMode === 'visit' ? journey.visitIntro : journey.settleIntro}</p>
           </div>
 
-          <div className="mt-4 grid gap-2 sm:grid-cols-2">
+          <div className="mt-4 grid grid-cols-2 gap-2 lg:grid-cols-3">
             {topics.map((topic, topicIndex) => journeyMode === 'visit' ? (
-              <Link key={topic.title} to={topic.href} className="group rounded-xl border border-[#D4AF37]/45 bg-[#FFFDF8] px-3 py-3 transition hover:border-[#D4AF37] hover:shadow-sm">
+              <Link key={topic.title} to={topic.href} className="group min-w-0 rounded-xl border border-[#D4AF37]/45 bg-[#FFFDF8] px-2.5 py-2.5 sm:px-3 sm:py-3 transition hover:border-[#D4AF37] hover:shadow-sm">
                 <div className="flex items-center justify-between gap-3 text-sm font-semibold text-[#4A1D43]">
                   <span>{topic.title}</span>
                   <ChevronDown className={`h-4 w-4 flex-shrink-0 -rotate-90 text-[#D4AF37] ${isRTL ? 'rotate-90' : ''}`} aria-hidden="true" />
