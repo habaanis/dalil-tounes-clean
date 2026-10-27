@@ -381,20 +381,22 @@ export default function CitizensTourism() {
             <p className="mx-auto mt-1.5 max-w-2xl text-sm leading-relaxed text-gray-600">{journeyMode === 'visit' ? journey.visitIntro : journey.settleIntro}</p>
           </div>
 
-          <div className="mt-4 grid grid-cols-2 gap-2 lg:grid-cols-3">
+          {journeyMode === 'visit' && <p className="mt-3 text-center text-xs font-semibold tracking-wide text-[#A45A27]">✨ Six façons de vivre la Tunisie, pas seulement de la visiter</p>}
+          <div className="mt-4 grid grid-cols-2 gap-2.5 lg:grid-cols-3">
             {topics.map((topic, topicIndex) => journeyMode === 'visit' ? (
-              <Link key={topic.title} to={topic.href} className="group min-w-0 rounded-xl border border-[#D4AF37]/45 bg-[#FFFDF8] px-2.5 py-2.5 sm:px-3 sm:py-3 transition hover:border-[#D4AF37] hover:shadow-sm">
+              <Link key={topic.title} to={topic.href} className={`group relative min-w-0 overflow-hidden rounded-2xl border border-white/70 px-2.5 py-3 sm:px-4 sm:py-4 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#4A1D43] ${["bg-gradient-to-br from-[#FFF2D8] via-[#FFE8C6] to-[#FBE5CA]", "bg-gradient-to-br from-[#E7F4E8] via-[#D9EEE2] to-[#F3F6DB]", "bg-gradient-to-br from-[#FFF1E5] via-[#FFE0D1] to-[#FCEACB]", "bg-gradient-to-br from-[#FBE9D9] via-[#FFF2D8] to-[#F5DFBA]", "bg-gradient-to-br from-[#F4E8FA] via-[#FCE8EB] to-[#FFEBD9]", "bg-gradient-to-br from-[#DDF2F5] via-[#E5F4F0] to-[#FFF2DA]"][topicIndex % 6]}`}`>
+                <div className="mb-2 flex items-center justify-between"><span className="text-2xl sm:text-3xl" aria-hidden="true">{['🏛️','🌿','🧶','🍲','🎉','🏡'][topicIndex] || '🇹🇳'}</span><span className="rounded-full bg-white/65 px-2 py-0.5 text-[10px] font-semibold text-[#784626]">Explorer</span></div>
                 <div className="flex items-center justify-between gap-3 text-sm font-semibold text-[#4A1D43]">
                   <span>{topic.title}</span>
                   <ChevronDown className={`h-4 w-4 flex-shrink-0 -rotate-90 text-[#D4AF37] ${isRTL ? 'rotate-90' : ''}`} aria-hidden="true" />
                 </div>
                 <p className="mt-1.5 text-xs leading-relaxed text-gray-600">{topic.text}</p>
-                <ul className="mt-2 flex flex-wrap gap-1.5" aria-label={topic.title}>
+                <ul className="mt-2 hidden flex-wrap gap-1.5 sm:flex" aria-label={topic.title}>
                   {visitExamples[lang][topicIndex].slice(0, 3).map((example) => (
                     <li key={example} className="rounded-full border border-[#D4AF37]/35 bg-white px-2.5 py-1 text-[11px] leading-tight text-gray-700">{example}</li>
                   ))}
                 </ul>
-                <span className="mt-2 inline-flex text-xs font-semibold text-[#4A1D43] underline decoration-[#D4AF37] underline-offset-2">{journey.discover}</span>
+                <span className="mt-3 inline-flex rounded-full bg-white/75 px-3 py-1.5 text-xs font-semibold text-[#5B2345] shadow-sm transition group-hover:bg-white">{journey.discover}</span>
               </Link>
             ) : (
               <details key={topic.title} className="group rounded-xl border border-[#D4AF37]/45 bg-[#FFFDF8] px-3 py-2.5 open:border-[#D4AF37]">
