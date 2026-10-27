@@ -9,6 +9,11 @@ type LocalExperience = {
   description: string | null; a_propos: string | null; image_url: string | null;
 };
 
+const CRAFT_PHOTOS = [
+  { test: /groupement du tourisme alternatif.*kairouan/i, url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Tisserande_Kairouan.jpg?width=900', label: 'Tisserande traditionnelle de Kairouan · illustration du savoir-faire régional', credit: 'Photo publiée sur Wikimedia Commons · licence indiquée sur la source', source: 'https://commons.wikimedia.org/wiki/File:Tisserande_Kairouan.jpg' },
+  { test: /etnafes/i, url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Kerwen_04.jpg?width=900', label: 'Artisanat du tapis à Kairouan · illustration régionale', credit: 'Hommi2020 · Wikimedia Commons', source: 'https://commons.wikimedia.org/wiki/File:Kerwen_04.jpg' },
+  { test: /jebel oueslat/i, url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Kerwen_09.jpg?width=900', label: 'Savoir-faire des tapis dans les souks de Kairouan · illustration régionale', credit: 'Hommi2020 · Wikimedia Commons', source: 'https://commons.wikimedia.org/wiki/File:Kerwen_09.jpg' },
+];
 const REGION_PHOTOS = [
   { test: /a[iï]n draham|kroumirie/i, url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Forest_A%C3%AFn_Draham.jpg?width=900', label: 'Forêt d’Aïn Draham · vue de la région', credit: 'Smailtn · CC0', source: 'https://commons.wikimedia.org/wiki/File:Forest_A%C3%AFn_Draham.jpg' },
   { test: /chenini|gab[eè]s/i, url: 'https://commons.wikimedia.org/wiki/Special:FilePath/%D9%88%D8%A7%D8%AD%D8%A9_%D8%B4%D9%86%D9%86%D9%8A_%D8%A8%D9%82%D8%A7%D8%A8%D8%B3.JPG?width=900', label: 'Oasis de Chenini (Gabès) · vue de la région', credit: 'Krimi awatef · CC BY-SA 4.0', source: 'https://commons.wikimedia.org/wiki/File:%D9%88%D8%A7%D8%AD%D8%A9_%D8%B4%D9%86%D9%86%D9%8A_%D8%A8%D9%82%D8%A7%D8%A8%D8%B3.JPG' },
@@ -24,7 +29,7 @@ const REGION_PHOTOS = [
 ];
 function regionPhoto(item: LocalExperience) {
   const area = [item.nom,item.ville,item.gouvernorat].filter(Boolean).join(' ');
-  return REGION_PHOTOS.find(photo => photo.test.test(area));
+  return CRAFT_PHOTOS.find(photo => photo.test.test(area)) || REGION_PHOTOS.find(photo => photo.test.test(area));
 }
 
 const PAGE_SIZE = 6;
@@ -157,7 +162,7 @@ export default function TourismExperienceDiscovery() {
       <button type="button" disabled={page === totalPages} onClick={() => setPage(p => Math.min(totalPages, p + 1))} className="rounded-lg border border-[#D4AF37] px-3 py-2 text-sm disabled:opacity-40">Suivant</button>
     </nav>}
 
-    {galleryItems.length > 0 && <p className="mt-4 text-[11px] text-gray-500">Crédits des photographies régionales : {REGION_PHOTOS.map((p,i) => <span key={p.source}>{i > 0 ? " · " : ""}<a className="underline" href={p.source} target="_blank" rel="noopener noreferrer">{p.credit}</a></span>)}</p>}
+    {galleryItems.length > 0 && <p className="mt-4 text-[11px] text-gray-500">Crédits des photographies régionales : {[...CRAFT_PHOTOS, ...REGION_PHOTOS].map((p,i) => <span key={p.source}>{i > 0 ? " · " : ""}<a className="underline" href={p.source} target="_blank" rel="noopener noreferrer">{p.credit}</a></span>)}</p>}
     {selected && <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 px-4 py-6" role="presentation" onClick={() => setSelected(null)}>
       <section role="dialog" aria-modal="true" aria-label="Détails de l'expérience" className="max-h-[88vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white p-5 shadow-xl sm:p-7" onClick={e => e.stopPropagation()}>
         <div className="flex items-start justify-between gap-4"><div><p className="text-xs font-semibold uppercase tracking-wide text-[#966A28]">Visiter autrement · Expérience locale</p><h2 className="mt-1 text-2xl font-semibold text-[#4A0404]">{selected.nom}</h2><p className="mt-2 text-sm text-gray-600">{[selected.ville,selected.gouvernorat].filter(Boolean).join(' · ')}</p></div><button type="button" aria-label="Fermer" onClick={() => setSelected(null)} className="rounded-full bg-gray-100 px-3 py-2">✕</button></div>
