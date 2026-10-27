@@ -672,6 +672,12 @@ export default function CitizensLeisure() {
       dir={language === 'ar' ? 'rtl' : 'ltr'}
       style={language === 'ar' ? { fontFamily: "'Amiri', 'Cairo', 'Tajawal', serif" } : {}}
     >
+      <div className="mx-auto max-w-7xl px-4 pt-5">
+        <a href="/citizens/tourism?type=festival" className="flex items-center justify-between gap-4 rounded-2xl border border-[#D4AF37] bg-white p-4 text-[#4A1D43] shadow-sm hover:bg-amber-50">
+          <span><strong className="block">🎨 Festivals culturels de Tunisie</strong><span className="mt-1 block text-sm">Découvrez les festivals régionaux et leur patrimoine, même hors des dates de l'agenda.</span></span>
+          <span className="shrink-0 text-sm font-semibold">Voir les festivals →</span>
+        </a>
+      </div>
       <SEOHead
         title={t.seoTitle}
         description={t.description}
