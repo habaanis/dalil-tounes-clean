@@ -44,6 +44,8 @@ export default function TourismExperienceDiscovery() {
   const [kind, setKind] = useState('all');
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState<LocalExperience | null>(null);
+  const [rotation, setRotation] = useState(0);
+  const [paused, setPaused] = useState(false);
   const [unescoOnly, setUnescoOnly] = useState(false);
   useEffect(() => {
     let active = true;
@@ -62,6 +64,20 @@ export default function TourismExperienceDiscovery() {
     void load();
     return () => { active = false; };
   }, []);
+  const gallery = useMemo(() => items.filter(item => item.image_url && /^https:\/\//i.test(item.image_url)), [items]);
+  useEffect(() => {
+    if (paused || gallery.length < 2 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const interval = window.setInterval(() => setRotation(n => n + 1), 12000);
+    return () => window.clearInterval(interval);
+  }, [paused, gallery.length]);
+  const galleryItems = useMemo(() => {
+    if (!gallery.length) return [];
+    return Array.from({ length: Math.min(6, gallery.length) }, (_, n) => gallery[(rotation + n) % gallery.length]);
+  }, [gallery, rotation]);
+  const renderGalleryCard = (item: LocalExperience, index: number) => <button key={item.id + '-' + index} type="button" onClick={() => setSelected(item)} className="group relative block w-full overflow-hidden rounded-2xl border-2 border-white shadow-lg transition-transform duration-300 hover:z-10 hover:scale-105 focus-visible:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500" aria-label={'Découvrir ' + item.nom}>
+    <img src={item.image_url || ''} alt={item.nom || 'Découverte locale'} loading="lazy" className="h-32 w-full object-cover sm:h-40" />
+    <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 to-transparent px-3 pb-3 pt-10 text-left text-xs font-semibold text-white">{item.nom}</span>
+  </button>;
   const regions = useMemo(() => [...new Set(items.map(i => i.gouvernorat).filter((x): x is string => !!x))].sort((a,b)=>a.localeCompare(b, 'fr')), [items]);
   const matches = useMemo(() => items.filter(item => {
     if (region && item.gouvernorat !== region) return false;
@@ -73,7 +89,12 @@ export default function TourismExperienceDiscovery() {
   useEffect(() => { setPage(1); }, [query, region, kind, unescoOnly]);
   const totalPages = Math.ceil(matches.length / PAGE_SIZE);
   const pageItems = matches.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-  return <section className="mx-auto max-w-5xl px-4 py-7" aria-label="Découvrir les expériences locales">
+  return <section className="mx-auto max-w-7xl px-4 py-7" aria-label="Découvrir les expériences locales">
+    {galleryItems.length > 0 && <div className="mb-5 flex items-center justify-between"><p className="text-sm font-semibold text-[#4A1D43]">📸 À découvrir dans notre répertoire</p><button type="button" onClick={() => setPaused(p => !p)} className="rounded-full border border-[#D4AF37] px-3 py-1 text-xs">{paused ? 'Reprendre le défilement' : 'Mettre en pause'}</button></div>}
+    {galleryItems.length > 0 && <div className="mb-5 flex gap-3 overflow-x-auto pb-3 lg:hidden" aria-label="Galerie des expériences">{galleryItems.map((item,i) => <div key={item.id + i} className="w-40 shrink-0">{renderGalleryCard(item,i)}</div>)}</div>}
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(120px,1fr)_minmax(0,4fr)_minmax(120px,1fr)]">
+      <aside className="hidden space-y-4 pt-8 lg:block" aria-label="Découvertes à gauche">{galleryItems.slice(0,3).map((item,i)=>renderGalleryCard(item,i))}</aside>
+      <div className="min-w-0">
     <div className="rounded-2xl border border-[#D4AF37]/60 bg-white p-4 shadow-sm sm:p-6">
       <h2 className="text-xl font-semibold text-[#4A0404]">Rencontrez la Tunisie autrement</h2>
       <p className="mt-1 text-sm text-gray-600">Artisans, producteurs, guides et expériences authentiques.</p>
@@ -117,5 +138,8 @@ export default function TourismExperienceDiscovery() {
         <Link to={'/business/'+encodeURIComponent(selected.id)} className="mt-5 inline-flex rounded-xl bg-[#4A1D43] px-5 py-3 text-sm font-semibold text-white">Voir la fiche essentielle et les contacts →</Link>
       </section>
     </div>}
+      </div>
+      <aside className="hidden space-y-4 pt-8 lg:block" aria-label="Découvertes à droite">{galleryItems.slice(3,6).map((item,i)=>renderGalleryCard(item,i+3))}</aside>
+    </div>
   </section>;
 }
