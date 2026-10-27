@@ -75,10 +75,11 @@ function uniqueExperiences(rows: LocalExperience[]) {
 const categories = [
   ['all', 'Toutes les expériences'], ['artisanat', 'Artisanat'], ['nature', 'Nature et randonnées'],
   ['gastronomie', 'Gastronomie'], ['agriculture', 'Fermes et terroir'],
-  ['patrimoine', 'Patrimoine'], ['hebergement', 'Hébergements']
+  ['patrimoine', 'Patrimoine'], ['festival', 'Festivals culturels'], ['hebergement', 'Hébergements']
 ] as const;
 function classify(e: LocalExperience) {
   const v = [e.nom, e.description, e.a_propos].filter(Boolean).join(' ').toLocaleLowerCase();
+  if (/festival|fête culturelle|fete culturelle/.test(v)) return 'festival';
   if (/h.bergement|g.te|maison d.h.te|colodge|campement/.test(v)) return 'hebergement';
   if (/randonn|guide|trek|montagne|sp.l.olog|for.t|excursion/.test(v)) return 'nature';
   if (/cuisine|gastronom|repas|restaurant|table d.h.te|p.tisser/.test(v)) return 'gastronomie';
@@ -92,7 +93,7 @@ export default function TourismExperienceDiscovery() {
   const [error, setError] = useState(false);
   const [query, setQuery] = useState('');
   const [region, setRegion] = useState('');
-  const [kind, setKind] = useState('all');
+  const [kind, setKind] = useState(() => new URLSearchParams(window.location.search).get('type') === 'festival' ? 'festival' : 'all');
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState<LocalExperience | null>(null);
   const [rotation, setRotation] = useState(0);
