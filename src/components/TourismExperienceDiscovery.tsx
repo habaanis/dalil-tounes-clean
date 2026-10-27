@@ -8,6 +8,18 @@ type LocalExperience = {
   id: string; nom: string | null; ville: string | null; gouvernorat: string | null;
   description: string | null; a_propos: string | null; image_url: string | null;
 };
+
+const REGION_PHOTOS = [
+  { test: /a[iï]n draham|kroumirie/i, url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Forest_A%C3%AFn_Draham.jpg?width=900', label: 'Forêt d’Aïn Draham · vue de la région', credit: 'Smailtn · CC0', source: 'https://commons.wikimedia.org/wiki/File:Forest_A%C3%AFn_Draham.jpg' },
+  { test: /chenini|gab[eè]s/i, url: 'https://commons.wikimedia.org/wiki/Special:FilePath/%D9%88%D8%A7%D8%AD%D8%A9_%D8%B4%D9%86%D9%86%D9%8A_%D8%A8%D9%82%D8%A7%D8%A8%D8%B3.JPG?width=900', label: 'Oasis de Chenini (Gabès) · vue de la région', credit: 'Krimi awatef · CC BY-SA 4.0', source: 'https://commons.wikimedia.org/wiki/File:%D9%88%D8%A7%D8%AD%D8%A9_%D8%B4%D9%86%D9%86%D9%8A_%D8%A8%D9%82%D8%A7%D8%A8%D8%B3.JPG' },
+  { test: /makthar|maktar/i, url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Site_archeologique_de_Makthar.jpg?width=900', label: 'Site archéologique de Makthar · vue de la région', credit: 'skander zarrad · CC BY-SA 4.0', source: 'https://commons.wikimedia.org/wiki/File:Site_archeologique_de_Makthar.jpg' },
+  { test: /kesra/i, url: 'https://commons.wikimedia.org/wiki/Special:FilePath/La_ville_de_kesra.jpg?width=900', label: 'Kesra · vue de la région', credit: 'Mohamedkouka · CC BY 4.0', source: 'https://commons.wikimedia.org/wiki/File:La_ville_de_kesra.jpg' },
+];
+function regionPhoto(item: LocalExperience) {
+  const area = [item.nom,item.ville,item.gouvernorat].filter(Boolean).join(' ');
+  return REGION_PHOTOS.find(photo => photo.test.test(area));
+}
+
 const PAGE_SIZE = 6;
 // UNESCO status is recorded only for individually verified experiences, never inferred from a governorate.
 const verifiedUnescoExperienceIds = new Set<string>();
@@ -64,7 +76,7 @@ export default function TourismExperienceDiscovery() {
     void load();
     return () => { active = false; };
   }, []);
-  const gallery = useMemo(() => items.filter(item => item.image_url && /^https:\/\//i.test(item.image_url)), [items]);
+  const gallery = useMemo(() => items.filter(item => Boolean(item.image_url || regionPhoto(item))), [items]);
   useEffect(() => {
     if (paused || gallery.length < 2 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const interval = window.setInterval(() => setRotation(n => n + 1), 12000);
@@ -75,8 +87,8 @@ export default function TourismExperienceDiscovery() {
     return Array.from({ length: Math.min(6, gallery.length) }, (_, n) => gallery[(rotation + n) % gallery.length]);
   }, [gallery, rotation]);
   const renderGalleryCard = (item: LocalExperience, index: number) => <button key={item.id + '-' + index} type="button" onClick={() => setSelected(item)} className="group relative block w-full overflow-hidden rounded-2xl border-2 border-white shadow-lg transition-transform duration-300 hover:z-10 hover:scale-105 focus-visible:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500" aria-label={'Découvrir ' + item.nom}>
-    <img src={item.image_url || ''} alt={item.nom || 'Découverte locale'} loading="lazy" className="h-32 w-full object-cover sm:h-40" />
-    <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 to-transparent px-3 pb-3 pt-10 text-left text-xs font-semibold text-white">{item.nom}</span>
+    <img src={item.image_url || regionPhoto(item)?.url || ''} alt={item.image_url ? (item.nom || 'Expérience locale') : (regionPhoto(item)?.label || 'Paysage tunisien')} loading="lazy" className="h-32 w-full object-cover sm:h-40" />
+    <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 to-transparent px-3 pb-3 pt-10 text-left text-xs font-semibold text-white">{item.nom}<span className="mt-1 block text-[10px] font-normal">{item.image_url ? 'Photo de la fiche' : regionPhoto(item)?.label}</span></span>
   </button>;
   const regions = useMemo(() => [...new Set(items.map(i => i.gouvernorat).filter((x): x is string => !!x))].sort((a,b)=>a.localeCompare(b, 'fr')), [items]);
   const matches = useMemo(() => items.filter(item => {
@@ -90,6 +102,7 @@ export default function TourismExperienceDiscovery() {
   const totalPages = Math.ceil(matches.length / PAGE_SIZE);
   const pageItems = matches.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
   return <section className="mx-auto max-w-7xl px-4 py-7" aria-label="Découvrir les expériences locales">
+    {galleryItems.length > 0 && <p className="mb-3 text-[11px] text-gray-500">Les paysages illustrent les régions ; ils ne représentent pas nécessairement les établissements.</p>}
     {galleryItems.length > 0 && <div className="mb-5 flex items-center justify-between"><p className="text-sm font-semibold text-[#4A1D43]">📸 À découvrir dans notre répertoire</p><button type="button" onClick={() => setPaused(p => !p)} className="rounded-full border border-[#D4AF37] px-3 py-1 text-xs">{paused ? 'Reprendre le défilement' : 'Mettre en pause'}</button></div>}
     {galleryItems.length > 0 && <div className="mb-5 flex gap-3 overflow-x-auto pb-3 lg:hidden" aria-label="Galerie des expériences">{galleryItems.map((item,i) => <div key={item.id + i} className="w-40 shrink-0">{renderGalleryCard(item,i)}</div>)}</div>}
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(120px,1fr)_minmax(0,4fr)_minmax(120px,1fr)]">
@@ -127,6 +140,7 @@ export default function TourismExperienceDiscovery() {
       <button type="button" disabled={page === totalPages} onClick={() => setPage(p => Math.min(totalPages, p + 1))} className="rounded-lg border border-[#D4AF37] px-3 py-2 text-sm disabled:opacity-40">Suivant</button>
     </nav>}
 
+    {galleryItems.length > 0 && <p className="mt-4 text-[11px] text-gray-500">Crédits des photographies régionales : {REGION_PHOTOS.map((p,i) => <span key={p.source}>{i > 0 ? " · " : ""}<a className="underline" href={p.source} target="_blank" rel="noopener noreferrer">{p.credit}</a></span>)}</p>}
     {selected && <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 px-4 py-6" role="presentation" onClick={() => setSelected(null)}>
       <section role="dialog" aria-modal="true" aria-label="Détails de l'expérience" className="max-h-[88vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white p-5 shadow-xl sm:p-7" onClick={e => e.stopPropagation()}>
         <div className="flex items-start justify-between gap-4"><div><p className="text-xs font-semibold uppercase tracking-wide text-[#966A28]">Visiter autrement · Expérience locale</p><h2 className="mt-1 text-2xl font-semibold text-[#4A0404]">{selected.nom}</h2><p className="mt-2 text-sm text-gray-600">{[selected.ville,selected.gouvernorat].filter(Boolean).join(' · ')}</p></div><button type="button" aria-label="Fermer" onClick={() => setSelected(null)} className="rounded-full bg-gray-100 px-3 py-2">✕</button></div>
