@@ -38,6 +38,19 @@ function regionPhoto(item: LocalExperience) {
   return ADDITIONAL_PHOTOS.find(photo => photo.test.test(area)) || CRAFT_PHOTOS.find(photo => photo.test.test(area)) || REGION_PHOTOS.find(photo => photo.test.test(area));
 }
 
+// A verified regional illustration is acceptable on a discovery card, but never presented as a photo of the business.
+const GOVERNORATE_PHOTOS: Record<string, typeof REGION_PHOTOS[number]> = {
+  'Jendouba': REGION_PHOTOS[0], 'Gabès': REGION_PHOTOS[1], 'Siliana': REGION_PHOTOS[2],
+  'Tozeur': REGION_PHOTOS[4], 'Kairouan': REGION_PHOTOS[7], 'Kasserine': REGION_PHOTOS[8],
+  'Kébili': ADDITIONAL_PHOTOS[2], 'Béja': ADDITIONAL_PHOTOS[1], 'Sfax': ADDITIONAL_PHOTOS[0],
+  'Tataouine': REGION_PHOTOS[9],
+};
+function cardPhoto(item: LocalExperience) {
+  if (item.image_url) return { url: item.image_url, label: 'Photographie de la fiche', official: true };
+  const regional = regionPhoto(item) || GOVERNORATE_PHOTOS[item.gouvernorat || ''];
+  return regional ? { url: regional.url, label: regional.label, official: false } : null;
+}
+
 const PAGE_SIZE = 6;
 // UNESCO status is recorded only for individually verified experiences, never inferred from a governorate.
 const verifiedUnescoExperienceIds = new Set<string>();
@@ -159,7 +172,7 @@ export default function TourismExperienceDiscovery() {
     <h3 className="mt-7 mb-4 text-xl font-semibold text-[#4A0404]">Expériences locales {!loading && !error && '(' + matches.length + ')'}</h3>
     {loading ? <p className="py-8 text-gray-600">Chargement des expériences…</p> : error ? <p role="alert" className="py-8 text-red-700">Le répertoire n'est pas disponible pour le moment.</p> : matches.length === 0 ? <p className="rounded-xl bg-white p-6 text-gray-600">Aucune expérience publiée ne correspond à ces critères.</p> :
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{pageItems.map(item=><article key={item.id} className="overflow-hidden rounded-xl border border-gray-200 bg-white">
-      <div className="flex h-28 items-center justify-center bg-[#e6eae3]">{item.image_url ? <img src={item.image_url} alt="" className="h-full w-full object-cover" loading="lazy" /> : <span role="img" aria-label="Drapeau tunisien" className="text-5xl">🇹🇳</span>}</div>
+      <div className="relative flex h-36 items-center justify-center overflow-hidden bg-[#e6eae3]">{cardPhoto(item) ? <><img src={cardPhoto(item)!.url} alt={cardPhoto(item)!.label} className="h-full w-full object-cover transition-transform duration-300 hover:scale-105" loading="lazy" /><span className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/75 to-transparent px-3 pb-2 pt-6 text-[10px] text-white">{cardPhoto(item)!.official ? "Photo de la fiche" : "Vue de la région · illustration"}</span></> : <span className="text-sm font-medium text-[#4A1D43]">Découverte locale 🇹🇳</span>}</div>
       <div className="p-4"><p className="flex items-center gap-1 text-xs text-gray-500"><MapPin size={13}/>{[item.ville,item.gouvernorat].filter(Boolean).join(' · ')}</p><h4 className="mt-2 font-semibold">{item.nom}</h4><p className="mt-2 line-clamp-3 text-sm text-gray-700">{item.description || item.a_propos || 'Découvrez ce savoir-faire local.'}</p><p className="mt-3 text-xs font-medium text-[#7C591E]">À contacter à l'avance avant tout déplacement</p><button type="button" onClick={() => setSelected(item)} className="mt-3 inline-block text-sm font-semibold text-[#4A1D43] underline">Découvrir l'expérience</button></div>
     </article>)}</div>}
     {!loading && !error && totalPages > 1 && <nav aria-label="Pages des expériences" className="mt-6 flex flex-wrap items-center justify-center gap-2">
