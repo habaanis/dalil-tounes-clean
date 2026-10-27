@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import SearchBar from '../components/SearchBar';
 import { getSupabaseImageUrl } from '../lib/imageUtils';
-import MeilleursSection from '../components/MeilleursSection';
+import TourismExperienceDiscovery from '../components/TourismExperienceDiscovery';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { SEOHead } from '../components/SEOHead';
@@ -435,20 +435,8 @@ export default function CitizensTourism() {
         </div>
       </section>
 
-      <div className="max-w-5xl mx-auto px-4 py-8">
-        <MeilleursSection
-          secteurLabel={t.sector}
-          listePage="tourisme local & expatriation"
-          accentColor="#4A0404"
-          sectionTitle={t.recommended}
-          useGoogleRecommendationCriteria
-          includeRecommendedInTotal={false}
-          allReferencedLabel={t.allReferenced}
-          searchOtherLabel={t.searchOther}
-          searchQuery={t.searchQuery}
-          blogArticle={{ title: t.articleTitle, excerpt: t.articleExcerpt, slug: 'guide-tourisme-tunisie' }}
-        />
-      </div>
+      {journeyMode === 'visit' && <TourismExperienceDiscovery />}
+
     </div>
   );
 }
