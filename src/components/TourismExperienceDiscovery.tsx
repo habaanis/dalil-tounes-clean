@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
+import { UNESCO_TUNISIA_WORLD_HERITAGE, UNESCO_TUNISIA_INTANGIBLE, UNESCO_SOURCES } from '../data/tunisiaUnesco';
 
 type LocalExperience = {
   id: string; nom: string | null; ville: string | null; gouvernorat: string | null;
@@ -82,7 +83,15 @@ export default function TourismExperienceDiscovery() {
         <label className="text-sm">Type d'expérience<select value={kind} onChange={e=>setKind(e.target.value)} className="mt-1 block w-full rounded-xl border border-gray-300 bg-white px-3 py-3">{categories.map(([key,label])=><option key={key} value={key}>{label}</option>)}</select></label>
       </div>
       <label className="mt-4 flex items-center gap-2 text-sm"><input type="checkbox" checked={unescoOnly} onChange={e=>setUnescoOnly(e.target.checked)} className="h-4 w-4" />Patrimoine UNESCO vérifié uniquement</label>
-      {unescoOnly && <p className="mt-2 text-xs text-gray-600">Seules les expériences dont le lien avec une inscription UNESCO a été confirmé apparaissent. Aucune fiche du lot actuel n’a encore ce statut.</p>}
+      {unescoOnly && <p className="mt-2 text-xs text-gray-600">Seules les expériences dont le lien avec une inscription UNESCO a été confirmé apparaissent. Aucune fiche du lot actuel n’a encore ce statut.</p>
+      <details className="mt-3 text-sm text-gray-700">
+        <summary className="cursor-pointer text-[#4A1D43] underline">Consulter les patrimoines UNESCO vérifiés en Tunisie</summary>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          <div><strong>Patrimoine mondial</strong><p className="mt-1 text-xs">{UNESCO_TUNISIA_WORLD_HERITAGE.map(x => x.name).join(' · ')}</p><a href={UNESCO_SOURCES.world} target="_blank" rel="noopener noreferrer" className="mt-1 inline-block text-xs underline">Liste officielle UNESCO</a></div>
+          <div><strong>Patrimoine immatériel</strong><p className="mt-1 text-xs">{UNESCO_TUNISIA_INTANGIBLE.map(x => x.name).join(' · ')}</p><a href={UNESCO_SOURCES.intangible} target="_blank" rel="noopener noreferrer" className="mt-1 inline-block text-xs underline">Liste officielle UNESCO</a></div>
+        </div>
+        <p className="mt-2 text-xs text-gray-600">Une inscription concerne un site ou un savoir-faire, pas automatiquement une entreprise proche ou un artisan pratiquant un métier similaire.</p>
+      </details>}
     </div>
     <h3 className="mt-7 mb-4 text-xl font-semibold text-[#4A0404]">Expériences locales {!loading && !error && '(' + matches.length + ')'}</h3>
     {loading ? <p className="py-8 text-gray-600">Chargement des expériences…</p> : error ? <p role="alert" className="py-8 text-red-700">Le répertoire n'est pas disponible pour le moment.</p> : matches.length === 0 ? <p className="rounded-xl bg-white p-6 text-gray-600">Aucune expérience publiée ne correspond à ces critères.</p> :
