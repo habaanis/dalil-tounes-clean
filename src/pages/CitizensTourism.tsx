@@ -328,12 +328,13 @@ export default function CitizensTourism() {
       />
       <section className="relative w-full h-[280px] overflow-hidden">
         <img
-          src={getSupabaseImageUrl('entreprise_banner.webp')}
+          src="https://commons.wikimedia.org/wiki/Special:FilePath/Sidi_bou_said_port.jpg?width=1600"
           alt={t.heroAlt}
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover object-center"
           decoding="async"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#4A1D43]/80 via-[#4A1D43]/70 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#4A1D43]/75 via-[#4A1D43]/60 to-[#4A1D43]/25" />
+        <a className="absolute bottom-1 right-2 z-10 text-[10px] text-white/85 underline" href="https://commons.wikimedia.org/wiki/File:Sidi_bou_said_port.jpg" target="_blank" rel="noopener noreferrer" aria-label="Crédit photo Rania Haddad, licence CC BY-SA 4.0">Photo : Rania Haddad · CC BY-SA 4.0</a>
 
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-4 py-6">
           <h1 className="text-3xl md:text-4xl font-semibold mb-2 drop-shadow-lg text-[#D4AF37]">{t.title}</h1>
