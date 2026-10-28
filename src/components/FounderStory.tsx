@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 
 const story = {
@@ -8,6 +9,8 @@ const story = {
 } as const;
 export function FounderStory({full=false}:{full?:boolean}) {
  const { language } = useLanguage();
+ const { hash } = useLocation();
+ useEffect(() => { if (full && hash === '#histoire-fondateur') { const frame = requestAnimationFrame(() => document.getElementById('histoire-fondateur')?.scrollIntoView({behavior:'auto',block:'start'})); return () => cancelAnimationFrame(frame); } }, [full, hash]);
  const t = story[language === 'ar' ? 'ar' : language === 'fr' ? 'fr' : 'en'];
  return <section className="bg-white px-4 py-10 md:py-16" aria-label={t.title}>
   <div className="mx-auto grid max-w-6xl gap-6 rounded-3xl border border-[#D4AF37]/40 bg-[#FFFCF7] p-5 shadow-sm md:grid-cols-[190px_1fr] md:p-8">
