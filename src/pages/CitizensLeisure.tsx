@@ -677,6 +677,10 @@ export default function CitizensLeisure() {
           <span><strong className="block">🎨 Festivals culturels de Tunisie</strong><span className="mt-1 block text-sm">Découvrez les festivals régionaux et leur patrimoine, même hors des dates de l'agenda.</span></span>
           <span className="shrink-0 text-sm font-semibold">Voir les festivals →</span>
         </a>
+        <a href="/citizens/tourism?type=plongee" className="mt-3 flex items-center justify-between gap-4 rounded-2xl border border-[#D4AF37] bg-white p-4 text-[#4A1D43] shadow-sm hover:bg-amber-50">
+          <span><strong className="block">🤿 Plongée sous-marine et loisirs nautiques</strong><span className="mt-1 block text-sm">Découvrez les clubs, baptêmes et expériences de plongée référencés en Tunisie.</span></span>
+          <span className="shrink-0 text-sm font-semibold">Voir les clubs →</span>
+        </a>
       </div>
       <SEOHead
         title={t.seoTitle}
