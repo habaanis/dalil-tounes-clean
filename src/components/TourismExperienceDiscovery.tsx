@@ -48,7 +48,7 @@ const GOVERNORATE_PHOTOS: Record<string, typeof REGION_PHOTOS[number]> = {
 };
 function cardPhoto(item: LocalExperience) {
   const image = firstValidImage(item.image_url);
-  if (image) return { url: image, label: 'Photographie de la fiche', official: true };
+  if (image && !/Design_Assets_Dalil_Tounes\/banner\/drapeau-tunisie/i.test(image)) return { url: image, label: 'Photographie de la fiche', official: true };
   const regional = regionPhoto(item) || GOVERNORATE_PHOTOS[item.gouvernorat || ''];
   return regional ? { url: regional.url, label: regional.label, official: false } : null;
 }
@@ -94,7 +94,7 @@ export default function TourismExperienceDiscovery() {
   const [error, setError] = useState(false);
   const [query, setQuery] = useState('');
   const [region, setRegion] = useState('');
-  const [kind, setKind] = useState(() => new URLSearchParams(window.location.search).get('type') === 'festival' ? 'festival' : 'all');
+  const [kind, setKind] = useState(() => (['festival', 'plongee'].includes(new URLSearchParams(window.location.search).get('type') || '') ? new URLSearchParams(window.location.search).get('type')! : 'all'));
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState<LocalExperience | null>(null);
   const [rotation, setRotation] = useState(0);
