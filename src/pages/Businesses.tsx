@@ -68,6 +68,12 @@ interface Business {
   'Compteur Avis Google'?: string | number | null;
   name_ar?: string | null;
   description_ar?: string | null;
+  description_en?: string | null;
+  description_it?: string | null;
+  description_ru?: string | null;
+  name_en?: string | null;
+  name_it?: string | null;
+  name_ru?: string | null;
 }
 
 interface BusinessesProps {
@@ -98,7 +104,7 @@ interface BusinessNeedActivityRow {
   created_at: string | null;
 }
 
-const ENTREPRISE_SELECT_FIELDS = 'id, nom, sous_categories_texte, sous_categories_clean, categorie, gouvernorat, ville, adresse, telephone, email, site_web, description, a_propos, services, image_url, logo_url, statut_abonnement, "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, statut_carte, "Note Google Globale", "Compteur Avis Google", name_ar, description_ar, slug';
+const ENTREPRISE_SELECT_FIELDS = 'id, nom, sous_categories_texte, sous_categories_clean, categorie, gouvernorat, ville, adresse, telephone, email, site_web, description, a_propos, services, image_url, logo_url, statut_abonnement, "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, statut_carte, "Note Google Globale", "Compteur Avis Google", name_ar, name_en, name_it, name_ru, description_ar, description_en, description_it, description_ru, slug';
 
 const PUBLIC_BUSINESS_NEED_ACTIVITY_TYPES = new Set([
   'supplier_search',
@@ -873,7 +879,7 @@ export const Businesses = ({
         phone: item.telephone || '',
         email: item.email || '',
         website: item.site_web || '',
-        description: item.description || '',
+        description: (language === 'ar' && item.description_ar || language === 'en' && item.description_en || language === 'it' && item.description_it || language === 'ru' && item.description_ru || item.description || ''),
         a_propos: item.a_propos || null,
         services: item.services || '',
         imageUrl: item.image_url || null,
@@ -896,6 +902,12 @@ export const Businesses = ({
         'Compteur Avis Google': item['Compteur Avis Google'] ?? null,
         name_ar: item.name_ar ? cleanArabicField(item.name_ar) : null,
         description_ar: item.description_ar ? cleanArabicField(item.description_ar) : null,
+        description_en: item.description_en || null,
+        description_it: item.description_it || null,
+        description_ru: item.description_ru || null,
+        name_en: item.name_en || null,
+        name_it: item.name_it || null,
+        name_ru: item.name_ru || null,
       }));
 
       mappedData.sort((a, b) => {
@@ -1058,7 +1070,7 @@ export const Businesses = ({
         phone: item.telephone || '',
         email: item.email || '',
         website: item.site_web || '',
-        description: item.description || '',
+        description: (language === 'ar' && item.description_ar || language === 'en' && item.description_en || language === 'it' && item.description_it || language === 'ru' && item.description_ru || item.description || ''),
         a_propos: item.a_propos || null,
         services: item.services || '',
         imageUrl: item.image_url || null,
@@ -1080,6 +1092,12 @@ export const Businesses = ({
         'Compteur Avis Google': item['Compteur Avis Google'] ?? null,
         name_ar: item.name_ar ? cleanArabicField(item.name_ar) : null,
         description_ar: item.description_ar ? cleanArabicField(item.description_ar) : null,
+        description_en: item.description_en || null,
+        description_it: item.description_it || null,
+        description_ru: item.description_ru || null,
+        name_en: item.name_en || null,
+        name_it: item.name_it || null,
+        name_ru: item.name_ru || null,
       }));
 
       console.log(`[DEBUG] Mapping terminé: ${mappedData.length} entreprises`);
