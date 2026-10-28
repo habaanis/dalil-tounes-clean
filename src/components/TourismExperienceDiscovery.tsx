@@ -163,7 +163,7 @@ export default function TourismExperienceDiscovery() {
       <h2 className="text-xl font-semibold text-[#4A0404]">Rencontrez la Tunisie autrement</h2>
       <p className="mt-1 text-sm text-gray-600">Artisans, producteurs, guides et expériences authentiques.</p>
       <label htmlFor="local-search" className="mt-4 block text-sm font-medium">Que souhaitez-vous découvrir ?</label>
-      <input id="local-search" className="mt-1 w-full rounded-xl border border-gray-300 px-3 py-3" placeholder="Artisan, village, savoir-faire..." value={query} onChange={e=>setQuery(e.target.value)} />
+      <input id="local-search" className="mt-1 w-full rounded-xl border border-gray-300 px-3 py-3" placeholder="Artisan, festival, plongée sous-marine, village..." value={query} onChange={e=>setQuery(e.target.value)} />
       <div className="mt-3 grid gap-3 sm:grid-cols-2">
         <label className="text-sm">Région<select value={region} onChange={e=>setRegion(e.target.value)} className="mt-1 block w-full rounded-xl border border-gray-300 bg-white px-3 py-3"><option value="">Toute la Tunisie</option>{regions.map(r=><option key={r} value={r}>{r}</option>)}</select></label>
         <label className="text-sm">Type d'expérience<select value={kind} onChange={e=>setKind(e.target.value)} className="mt-1 block w-full rounded-xl border border-gray-300 bg-white px-3 py-3">{categories.map(([key,label])=><option key={key} value={key}>{label}</option>)}</select></label>
