@@ -175,7 +175,7 @@ export default function TourismExperienceDiscovery() {
       <h2 className="text-xl font-semibold text-[#4A0404]">{tr.title}</h2>
       <p className="mt-1 text-sm text-gray-600">{tr.subtitle}</p>
       <label htmlFor="local-search" className="mt-4 block text-sm font-medium">{tr.searchLabel}</label>
-      <input id="local-search" className="mt-1 w-full rounded-xl border border-gray-300 px-3 py-3" placeholder=tr.placeholder value={query} onChange={e=>setQuery(e.target.value)} />
+      <input id="local-search" className="mt-1 w-full rounded-xl border border-gray-300 px-3 py-3" placeholder={tr.placeholder} value={query} onChange={e=>setQuery(e.target.value)} />
       <div className="mt-3 grid gap-3 sm:grid-cols-2">
         <label className="text-sm">{tr.region}<select value={region} onChange={e=>setRegion(e.target.value)} className="mt-1 block w-full rounded-xl border border-gray-300 bg-white px-3 py-3"><option value="">{tr.allTunisia}</option>{regions.map(r=><option key={r} value={r}>{r}</option>)}</select></label>
         <label className="text-sm">{tr.kind}<select value={kind} onChange={e=>setKind(e.target.value)} className="mt-1 block w-full rounded-xl border border-gray-300 bg-white px-3 py-3">{categories.map(([key,label])=><option key={key} value={key}>{tr[label]}</option>)}</select></label>
@@ -216,7 +216,7 @@ export default function TourismExperienceDiscovery() {
     {galleryItems.length > 0 && <p className="mt-4 text-[11px] text-gray-500">Crédits des photographies régionales : {[...ADDITIONAL_PHOTOS, ...CRAFT_PHOTOS, ...REGION_PHOTOS].map((p,i) => <span key={p.source}>{i > 0 ? " · " : ""}<a className="underline" href={p.source} target="_blank" rel="noopener noreferrer">{p.credit}</a></span>)}</p>}
     {selected && <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 px-4 py-6" role="presentation" onClick={() => setSelected(null)}>
       <section role="dialog" aria-modal="true" aria-label="Détails de l'expérience" className="max-h-[88vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white p-5 shadow-xl sm:p-7" onClick={e => e.stopPropagation()}>
-        <div className="flex items-start justify-between gap-4"><div><p className="text-xs font-semibold uppercase tracking-wide text-[#966A28]">{tr.modalLabel}</p><h2 className="mt-1 text-2xl font-semibold text-[#4A0404]">{selected.nom}</h2><p className="mt-2 text-sm text-gray-600">{[selected.ville,selected.gouvernorat].filter(Boolean).join(' · ')}</p></div><button type="button" aria-label=tr.close onClick={() => setSelected(null)} className="rounded-full bg-gray-100 px-3 py-2">✕</button></div>
+        <div className="flex items-start justify-between gap-4"><div><p className="text-xs font-semibold uppercase tracking-wide text-[#966A28]">{tr.modalLabel}</p><h2 className="mt-1 text-2xl font-semibold text-[#4A0404]">{selected.nom}</h2><p className="mt-2 text-sm text-gray-600">{[selected.ville,selected.gouvernorat].filter(Boolean).join(' · ')}</p></div><button type="button" aria-label={tr.close} onClick={() => setSelected(null)} className="rounded-full bg-gray-100 px-3 py-2">✕</button></div>
         {businessPhoto(selected.image_url) && <img src={businessPhoto(selected.image_url) || ''} alt="" className="mt-4 max-h-60 w-full rounded-xl object-cover" />}
         <h3 className="mt-5 text-lg font-semibold">{tr.story}</h3>
         <p className="mt-2 whitespace-pre-line text-sm leading-7 text-gray-700">{selected.description || selected.a_propos || 'Présentation à compléter.'}</p>
