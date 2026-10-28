@@ -75,11 +75,12 @@ function uniqueExperiences(rows: LocalExperience[]) {
 const categories = [
   ['all', 'Toutes les expériences'], ['artisanat', 'Artisanat'], ['nature', 'Nature et randonnées'],
   ['gastronomie', 'Gastronomie'], ['agriculture', 'Fermes et terroir'],
-  ['patrimoine', 'Patrimoine'], ['festival', 'Festivals culturels'], ['hebergement', 'Hébergements']
+  ['patrimoine', 'Patrimoine'], ['festival', 'Festivals culturels'], ['plongee', 'Plongée sous-marine'], ['hebergement', 'Hébergements']
 ] as const;
 function classify(e: LocalExperience) {
   const v = [e.nom, e.description, e.a_propos].filter(Boolean).join(' ').toLocaleLowerCase();
   if (/festival|fête culturelle|fete culturelle/.test(v)) return 'festival';
+  if (/plong.e|diving|scuba|snorkel|bapt.me sous.marin|centre subaquatique/.test(v)) return 'plongee';
   if (/h.bergement|g.te|maison d.h.te|colodge|campement/.test(v)) return 'hebergement';
   if (/randonn|guide|trek|montagne|sp.l.olog|for.t|excursion/.test(v)) return 'nature';
   if (/cuisine|gastronom|repas|restaurant|table d.h.te|p.tisser/.test(v)) return 'gastronomie';
