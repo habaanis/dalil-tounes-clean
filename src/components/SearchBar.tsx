@@ -403,7 +403,7 @@ export default function SearchBar({
   const goToResults = (item?: ResultItem) => {
     const query = item ? getResultLabel(item) : q.trim();
     // Tourism experiences are catalogued separately from the general business results.
-    if (scope === 'tourism' && /\\b(plong[eé]e?|diving|scuba|snorkel|sous[- ]marine?)\\b/i.test(query)) {
+    if (scope === 'tourism' && /\b(plong\w*|plong[eé]e|diving|scuba|snorkel|sous[- ]marin\w*)\b/i.test(query)) {
       goTo('/citizens/tourism?type=plongee');
       return;
     }
