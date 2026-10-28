@@ -7,6 +7,7 @@ import CvCapabilitiesSection from '../components/CvCapabilitiesSection';
 import SearchBar from '../components/SearchBar';
 import VisibilityHouseSection from '../components/VisibilityHouseSection';
 import { useLanguage } from '../context/LanguageContext';
+import { FounderStory } from '../components/FounderStory';
 import { useHomeData } from '../hooks/useHomeData';
 import { extractFrenchName } from '../lib/textNormalization';
 
@@ -312,6 +313,8 @@ function SeparationExperience({ fixedView }: { fixedView?: 'platform' | 'cv' }) 
               <div className="mx-auto w-full max-w-[280px] rounded-[24px] border border-[#D4AF37]/60 bg-white/95 p-3 shadow-[0_20px_55px_rgba(0,0,0,0.28)]"><p className="mb-2 text-center text-xs font-bold text-[#4A1D43]">{t.example}</p><div className="mb-2 grid grid-cols-2 gap-1.5 rounded-xl bg-[#F5EEE5] p-1"><button type="button" onClick={() => setPlatformCvModel('business')} aria-pressed={platformCvModel === 'business'} className={`rounded-lg px-2 py-2 text-[11px] font-black transition ${platformCvModel === 'business' ? 'bg-[#4A1D43] text-white shadow-sm' : 'bg-white text-[#4A1D43]'}`}>{ecosystem.cvBusiness}</button><button type="button" onClick={() => setPlatformCvModel('portfolio')} aria-pressed={platformCvModel === 'portfolio'} className={`rounded-lg px-2 py-2 text-[11px] font-black transition ${platformCvModel === 'portfolio' ? 'bg-[#4A1D43] text-white shadow-sm' : 'bg-white text-[#4A1D43]'}`}>{ecosystem.cvPortfolio}</button></div><div className="flex h-[270px] justify-center overflow-hidden"><img key={platformCvModel} src={platformCvModel === 'business' ? '/images/cv-business-portfolio-aux-saveurs-anis.png' : '/images/cv-portfolio-aux-saveurs-anis-original.svg'} alt={`${t.example} — ${platformCvModel === 'business' ? ecosystem.cvBusiness : ecosystem.cvPortfolio}`} className="h-[270px] w-auto object-contain object-top" loading="lazy" decoding="async" /></div></div>
             </div>
           </section>
+
+          <FounderStory />
 
           <CvCapabilitiesSection language={lang} />
 
