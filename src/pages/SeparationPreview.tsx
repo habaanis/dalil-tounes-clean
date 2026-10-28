@@ -7,6 +7,7 @@ import CvCapabilitiesSection from '../components/CvCapabilitiesSection';
 import SearchBar from '../components/SearchBar';
 import VisibilityHouseSection from '../components/VisibilityHouseSection';
 import { useLanguage } from '../context/LanguageContext';
+import { FounderStory } from '../components/FounderStory';
 import { useHomeData } from '../hooks/useHomeData';
 import { extractFrenchName } from '../lib/textNormalization';
 
@@ -332,6 +333,8 @@ function SeparationExperience({ fixedView }: { fixedView?: 'platform' | 'cv' }) 
               </button>
             </div>
           </section>
+
+          <FounderStory />
 
           <VisibilityHouseSection totalCount={totalCount} loading={loading} showNetworkProof={false} />
         </>
