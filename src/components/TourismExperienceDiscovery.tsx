@@ -12,7 +12,7 @@ const additionalTranslations = {"fr":{"fallback":"Découvrez cette expérience l
 
 type LocalExperience = {
   id: string; nom: string | null; ville: string | null; gouvernorat: string | null;
-  description: string | null; description_ar?: string | null; description_en?: string | null; description_it?: string | null; description_ru?: string | null; a_propos: string | null; image_url: string | null;
+  description: string | null; description_ar?: string | null; description_en?: string | null; description_it?: string | null; description_ru?: string | null; name_ar?: string | null; name_en?: string | null; name_it?: string | null; name_ru?: string | null; a_propos: string | null; image_url: string | null;
 };
 
 const CRAFT_PHOTOS = [
@@ -104,6 +104,10 @@ export default function TourismExperienceDiscovery() {
   const tr = translations[lang];
   const extra = additionalTranslations[lang];
   const rtl = lang === 'ar';
+  const localizedName = (item: LocalExperience) => {
+    const name = lang === 'fr' ? null : item[`name_${lang}` as keyof LocalExperience];
+    return typeof name === 'string' && name.trim() ? name : (item.nom || '');
+  };
   const localizedDescription = (item: LocalExperience) => {
     const translated = lang === 'fr' ? null : item[`description_${lang}` as keyof LocalExperience];
     return typeof translated === 'string' && translated.trim() ? translated : (item.description || item.a_propos || extra.fallback);
@@ -123,7 +127,7 @@ export default function TourismExperienceDiscovery() {
     let active = true;
     async function load() {
       const { data, error } = await supabase.from('entreprise')
-        .select('id,nom,ville,gouvernorat,description,description_ar,description_en,description_it,description_ru,a_propos,image_url')
+        .select('id,nom,ville,gouvernorat,description,description_ar,description_en,description_it,description_ru,name_ar,name_en,name_it,name_ru,a_propos,image_url')
         .contains('liste_pages', ['tourisme local & expatriation'])
         .contains('categorie', ['tourisme&expatriation'])
         .eq('approved', true).eq('statut_publication', 'Publié')
@@ -156,9 +160,9 @@ export default function TourismExperienceDiscovery() {
     return Array.from({ length: Math.min(16, gallery.length) }, (_, n) => gallery[(rotation + n) % gallery.length]);
   }, [gallery, rotation]);
   const gallerySplit = Math.ceil(galleryItems.length / 2);
-  const renderGalleryCard = (item: LocalExperience, index: number) => <button key={item.id + '-' + index} type="button" onClick={() => setSelected(item)} className={`group relative block w-full overflow-hidden rounded-2xl border-2 border-white shadow-lg transition-transform duration-300 hover:z-20 hover:scale-110 ${index === 0 ? "" : "-mt-4"} ${index % 2 ? "rotate-2" : "-rotate-2"} hover:rotate-0 focus-visible:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500` } aria-label={'Découvrir ' + item.nom}>
+  const renderGalleryCard = (item: LocalExperience, index: number) => <button key={item.id + '-' + index} type="button" onClick={() => setSelected(item)} className={`group relative block w-full overflow-hidden rounded-2xl border-2 border-white shadow-lg transition-transform duration-300 hover:z-20 hover:scale-110 ${index === 0 ? "" : "-mt-4"} ${index % 2 ? "rotate-2" : "-rotate-2"} hover:rotate-0 focus-visible:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500` } aria-label={tr.discover + ' ' + localizedName(item)}>
     <img src={businessPhoto(item.image_url) || regionPhoto(item)?.url || ''} alt={businessPhoto(item.image_url) ? (item.nom || 'Expérience locale') : (regionPhoto(item)?.label || 'Paysage tunisien')} loading="lazy" className="h-32 w-full object-cover sm:h-40" />
-    <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 to-transparent px-3 pb-3 pt-10 text-left text-xs font-semibold text-white">{item.nom}<span className="mt-1 block text-[10px] font-normal">{businessPhoto(item.image_url) ? tr.businessPhoto : regionPhoto(item)?.label}</span></span>
+    <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 to-transparent px-3 pb-3 pt-10 text-left text-xs font-semibold text-white">{localizedName(item)}<span className="mt-1 block text-[10px] font-normal">{businessPhoto(item.image_url) ? tr.businessPhoto : regionPhoto(item)?.label}</span></span>
   </button>;
   const regions = useMemo(() => [...new Set(items.map(i => i.gouvernorat).filter((x): x is string => !!x))].sort((a,b)=>a.localeCompare(b, 'fr')), [items]);
   const matches = useMemo(() => items.filter(item => {
@@ -202,7 +206,7 @@ export default function TourismExperienceDiscovery() {
     {loading ? <p className="py-8 text-gray-600">{tr.loading}</p> : error ? <p role="alert" className="py-8 text-red-700">{extra.unavailable}</p> : matches.length === 0 ? <p className="rounded-xl bg-white p-6 text-gray-600">{tr.none}</p> :
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{pageItems.map(item=><article key={item.id} className="overflow-hidden rounded-xl border border-gray-200 bg-white">
       <div className="relative flex h-36 items-center justify-center overflow-hidden bg-[#e6eae3]">{cardPhoto(item) ? <><img src={cardPhoto(item)!.url} alt={cardPhoto(item)!.label} className="h-full w-full object-cover transition-transform duration-300 hover:scale-105" loading="lazy" /><span className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/75 to-transparent px-3 pb-2 pt-6 text-[10px] text-white">{cardPhoto(item)!.official ? tr.businessPhoto : tr.regionPhoto}</span></> : <span className="text-sm font-medium text-[#4A1D43]">{tr.localDiscovery} 🇹🇳</span>}</div>
-      <div className="p-4"><p className="flex items-center gap-1 text-xs text-gray-500"><MapPin size={13}/>{[item.ville,item.gouvernorat].filter(Boolean).join(' · ')}</p><h4 className="mt-2 font-semibold">{item.nom}</h4><p className="mt-2 line-clamp-3 text-sm text-gray-700">{localizedDescription(item)}</p><p className="mt-3 text-xs font-medium text-[#7C591E]">{tr.contactAhead}</p><button type="button" onClick={() => setSelected(item)} className="mt-3 inline-block text-sm font-semibold text-[#4A1D43] underline">{tr.discoverExperience}</button></div>
+      <div className="p-4"><p className="flex items-center gap-1 text-xs text-gray-500"><MapPin size={13}/>{[item.ville,item.gouvernorat].filter(Boolean).join(' · ')}</p><h4 className="mt-2 font-semibold">{localizedName(item)}</h4><p className="mt-2 line-clamp-3 text-sm text-gray-700">{localizedDescription(item)}</p><p className="mt-3 text-xs font-medium text-[#7C591E]">{tr.contactAhead}</p><button type="button" onClick={() => setSelected(item)} className="mt-3 inline-block text-sm font-semibold text-[#4A1D43] underline">{tr.discoverExperience}</button></div>
     </article>)}</div>}
     {!loading && !error && totalPages > 1 && <nav aria-label="Pages des expériences" className="mt-6 flex flex-wrap items-center justify-center gap-2">
       <button type="button" disabled={page === 1} onClick={() => setPage(p => Math.max(1, p - 1))} className="rounded-lg border border-[#D4AF37] px-3 py-2 text-sm disabled:opacity-40">{tr.previous}</button>
@@ -223,7 +227,7 @@ export default function TourismExperienceDiscovery() {
     {galleryItems.length > 0 && <p className="mt-4 text-[11px] text-gray-500">Crédits des photographies régionales : {[...ADDITIONAL_PHOTOS, ...CRAFT_PHOTOS, ...REGION_PHOTOS].map((p,i) => <span key={p.source}>{i > 0 ? " · " : ""}<a className="underline" href={p.source} target="_blank" rel="noopener noreferrer">{p.credit}</a></span>)}</p>}
     {selected && <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 px-4 py-6" role="presentation" onClick={() => setSelected(null)}>
       <section role="dialog" aria-modal="true" aria-label="Détails de l'expérience" className="max-h-[88vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white p-5 shadow-xl sm:p-7" onClick={e => e.stopPropagation()}>
-        <div className="flex items-start justify-between gap-4"><div><p className="text-xs font-semibold uppercase tracking-wide text-[#966A28]">{tr.modalLabel}</p><h2 className="mt-1 text-2xl font-semibold text-[#4A0404]">{selected.nom}</h2><p className="mt-2 text-sm text-gray-600">{[selected.ville,selected.gouvernorat].filter(Boolean).join(' · ')}</p></div><button type="button" aria-label={tr.close} onClick={() => setSelected(null)} className="rounded-full bg-gray-100 px-3 py-2">✕</button></div>
+        <div className="flex items-start justify-between gap-4"><div><p className="text-xs font-semibold uppercase tracking-wide text-[#966A28]">{tr.modalLabel}</p><h2 className="mt-1 text-2xl font-semibold text-[#4A0404]">{localizedName(selected)}</h2><p className="mt-2 text-sm text-gray-600">{[selected.ville,selected.gouvernorat].filter(Boolean).join(' · ')}</p></div><button type="button" aria-label={tr.close} onClick={() => setSelected(null)} className="rounded-full bg-gray-100 px-3 py-2">✕</button></div>
         {businessPhoto(selected.image_url) && <img src={businessPhoto(selected.image_url) || ''} alt="" className="mt-4 max-h-60 w-full rounded-xl object-cover" />}
         <h3 className="mt-5 text-lg font-semibold">{tr.story}</h3>
         <p className="mt-2 whitespace-pre-line text-sm leading-7 text-gray-700">{localizedDescription(selected)}</p>
