@@ -314,8 +314,6 @@ function SeparationExperience({ fixedView }: { fixedView?: 'platform' | 'cv' }) 
             </div>
           </section>
 
-          <FounderStory />
-
           <CvCapabilitiesSection language={lang} />
 
           <section className="bg-white px-4 py-8 md:py-10">
@@ -335,6 +333,8 @@ function SeparationExperience({ fixedView }: { fixedView?: 'platform' | 'cv' }) 
               </button>
             </div>
           </section>
+
+          <FounderStory />
 
           <VisibilityHouseSection totalCount={totalCount} loading={loading} showNetworkProof={false} />
         </>
