@@ -23,3 +23,9 @@ Avant toute création/modification : auditer Airtable, Supabase, GitHub, Vercel 
 Ne pas publier les brouillons faute de preuve actuelle de visite; garder les contacts à confirmer.
 Ne pas prétendre qu'une modification est en production sans vérifier le déploiement.
 Maintenir un bilan des travaux terminés et des dépendances restantes.
+
+## Réutilisation sur les autres rubriques — décision confirmée
+Le parcours découverte (filtres, géolocalisation, suggestions à proximité, statut de fiabilité, favoris et partage) doit être conçu comme des composants réutilisables, et déployé progressivement sur S'installer en Tunisie, Loisirs & événements et les services citoyens lorsque c'est pertinent. Ne pas créer de carte GPS ou de système de favoris parallèle ; auditer les composants existants avant tout développement.
+
+## Contrôle du 29 octobre 2026 — Siliana / Kasserine / Gafsa
+Six anciennes copies Supabase sans identifiant Airtable, auparavant approuvées, ont été désactivées pour éviter les doublons : ZINA Oliveraie, Esparto, Artisan'Art by Hermassi, Salha Tounsi, Visit Siliana et Association 2AS. Les fiches synchronisées Airtable restent les références. Gafsa nécessite encore une recherche de contacts fiables avant toute publication.
