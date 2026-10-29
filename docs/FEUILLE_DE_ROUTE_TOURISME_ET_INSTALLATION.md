@@ -29,3 +29,9 @@ Le parcours découverte (filtres, géolocalisation, suggestions à proximité, s
 
 ## Contrôle du 29 octobre 2026 — Siliana / Kasserine / Gafsa
 Six anciennes copies Supabase sans identifiant Airtable, auparavant approuvées, ont été désactivées pour éviter les doublons : ZINA Oliveraie, Esparto, Artisan'Art by Hermassi, Salha Tounsi, Visit Siliana et Association 2AS. Les fiches synchronisées Airtable restent les références. Gafsa nécessite encore une recherche de contacts fiables avant toute publication.
+
+## Clôture de la première phase — 29 octobre 2026
+Bilan vérifié des fiches principales liées à Airtable pour Siliana/Kasserine/Gafsa : 6 publiées, 6 en brouillon (Siliana 4/3, Kasserine 2/1, Gafsa 0/2). Les anciennes copies non reliées à Airtable ne sont pas comptées. La synchronisation du téléphone du Hub Design Gafsa (+216 22 182 112) a été confirmée dans Supabase. **Clôture de la phase de collecte initiale seulement** : ne pas publier les brouillons sans preuve de contact et de conditions d'accueil. Conserver une liste des contacts manquants et des photos authentiques à ajouter.
+
+## Démarrage de « S'installer en Tunisie » — audit préalable
+Le routeur src/AppRouter.tsx expose déjà /citizens, /citizens/services, /citizens/health, /citizens/shops, /citizens/leisure et /citizens/tourism. La carte /around-me existe également. Avant toute nouvelle page ou rubrique : examiner les composants et données existants, choisir le point d'entrée le plus pertinent et construire une classification des besoins (logement, démarches, banque, santé, éducation, mobilité, entrepreneuriat, quotidien) fondée sur les entreprises vérifiées. Les pages existantes restent intactes jusqu'à audit UX et affectations Airtable/Supabase.
