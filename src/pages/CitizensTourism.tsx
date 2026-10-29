@@ -126,6 +126,59 @@ const copy: Record<PublicLanguage, {
 
 const QUICK_LINK_PATHS = ['/citizens/services', '/citizens/health', '/education', '/emplois'] as const;
 
+const settleServiceIntros: Record<PublicLanguage, string[]> = {
+  fr: [
+    'Vous trouverez : les démarches de visa et de titre de séjour, les autorités compétentes et les documents à préparer.',
+    'Vous trouverez : des pistes pour rechercher un logement, une agence immobilière ou un déménageur référencé.',
+    'Vous trouverez : des médecins généralistes, spécialistes, dentistes, hôpitaux, cliniques et pharmacies sur la page Santé.',
+    'Vous trouverez : les établissements scolaires et les informations utiles pour inscrire un enfant ou poursuivre ses études.',
+    'Vous trouverez : des repères pour les comptes bancaires, les transferts, le change et les démarches fiscales.',
+    'Vous trouverez : les démarches liées aux véhicules, aux bagages et aux effets personnels, avec accès aux informations douanières.',
+    'Vous trouverez : des ressources pour chercher un emploi, créer une entreprise et identifier les organismes utiles.',
+    'Vous trouverez : commerces, téléphonie, accès Internet et services utiles à proximité de votre lieu de vie.'
+  ],
+  ar: [
+    'ستجد معلومات عن التأشيرات والإقامة والجهات المختصة والوثائق اللازمة.',
+    'ستجد وسائل البحث عن سكن ووكالات عقارية وشركات نقل مدرجة.',
+    'ستجد أطباء عامين وأخصائيين وأطباء أسنان ومستشفيات ومصحات وصيدليات في صفحة الصحة.',
+    'ستجد المؤسسات التعليمية ومعلومات التسجيل ومتابعة الدراسة.',
+    'ستجد معلومات عن الحسابات البنكية والتحويلات والصرف والإجراءات الجبائية.',
+    'ستجد إجراءات السيارات والأمتعة والممتلكات الشخصية وروابط المعلومات الديوانية.',
+    'ستجد موارد للبحث عن عمل وبعث مشروع والتواصل مع الهياكل المعنية.',
+    'ستجد المتاجر والاتصالات والإنترنت والخدمات اليومية القريبة منك.'
+  ],
+  en: [
+    'Find visa and residence procedures, responsible authorities and documents to prepare.',
+    'Find ways to search for housing, estate agents and listed moving providers.',
+    'Find general practitioners, specialists, dentists, hospitals, clinics and pharmacies on the Health page.',
+    'Find schools, education providers and practical information about enrolment.',
+    'Find guidance on bank accounts, transfers, currency exchange and tax procedures.',
+    'Find vehicle, luggage and personal belongings procedures and links to customs information.',
+    'Find resources for jobs, starting a business and the relevant support organisations.',
+    'Find shops, mobile and internet providers and everyday services near your home.'
+  ],
+  it: [
+    'Troverai procedure per visti e soggiorno, autorità competenti e documenti da preparare.',
+    'Troverai come cercare casa, agenzie immobiliari e imprese di trasloco presenti nell’elenco.',
+    'Troverai medici di base, specialisti, dentisti, ospedali, cliniche e farmacie nella pagina Salute.',
+    'Troverai scuole, istituti e informazioni pratiche per le iscrizioni.',
+    'Troverai indicazioni su conti bancari, trasferimenti, cambio e adempimenti fiscali.',
+    'Troverai formalità per veicoli, bagagli e beni personali, con collegamenti alle informazioni doganali.',
+    'Troverai risorse per il lavoro, l’avvio di un’impresa e gli enti di supporto.',
+    'Troverai negozi, telefonia, Internet e servizi quotidiani nelle vicinanze.'
+  ],
+  ru: [
+    'Здесь собраны сведения о визах, видах на жительство, компетентных органах и необходимых документах.',
+    'Здесь можно найти варианты поиска жилья, агентств недвижимости и перевозчиков из каталога.',
+    'В разделе «Здоровье» можно искать терапевтов, специалистов, стоматологов, больницы, клиники и аптеки.',
+    'Здесь можно найти школы, образовательные учреждения и сведения о поступлении.',
+    'Здесь собраны сведения о банковских счетах, переводах, обмене валют и налоговых процедурах.',
+    'Здесь можно узнать о правилах ввоза автомобилей, багажа и личных вещей и перейти к таможенной информации.',
+    'Здесь собраны ресурсы для поиска работы, открытия бизнеса и обращения в профильные организации.',
+    'Здесь можно найти магазины, мобильную связь, Интернет и повседневные услуги рядом.'
+  ]
+};
+
 const settleActionLabels: Record<PublicLanguage, string[]> = {
   fr: ['Consulter les formalités de séjour (site officiel)', 'Rechercher des professionnels du logement', 'Rechercher un médecin, un hôpital ou une clinique sur la page Santé', 'Accéder à la page Éducation', 'Consulter les services fiscaux officiels', 'Consulter les formalités douanières officielles', 'Consulter les ressources officielles pour entreprendre', 'Rechercher des commerces et services du quotidien'],
   ar: ['الاطلاع على إجراءات الإقامة الرسمية', 'البحث عن خدمات السكن', 'البحث عن طبيب أو مستشفى أو مصحة في صفحة الصحة', 'الانتقال إلى صفحة التعليم', 'الاطلاع على الخدمات الجبائية الرسمية', 'الاطلاع على الإجراءات الديوانية الرسمية', 'الاطلاع على موارد الاستثمار الرسمية', 'البحث عن المتاجر والخدمات اليومية'],
@@ -412,7 +465,8 @@ export default function CitizensTourism() {
                   <span>{topic.title}</span>
                   <ChevronDown className="h-4 w-4 flex-shrink-0 text-[#D4AF37] transition-transform group-open:rotate-180" aria-hidden="true" />
                 </summary>
-                <p className="mt-2 text-xs leading-relaxed text-gray-600">{topic.text}</p>
+                <p className="mt-2 text-xs font-medium leading-relaxed text-[#4A1D43]">{settleServiceIntros[lang][topicIndex]}</p>
+                <p className="mt-1.5 text-xs leading-relaxed text-gray-600">{topic.text}</p>
                 {'external' in topic && topic.external ? (
                   <a href={topic.href} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-[#4A1D43] underline decoration-[#D4AF37] underline-offset-2">
                     {settleActionLabels[lang][topicIndex]}<ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
