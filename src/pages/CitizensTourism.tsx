@@ -160,7 +160,7 @@ const journeyCopy: Record<PublicLanguage, {
       { title: 'Séjours & expériences locales', text: 'Trouver des hébergements, guides et activités pour construire un séjour plus personnel.', href: '/citizens/tourism/guide/hebergements-experiences' },
     ],
     settleTopics: [
-      { title: 'Visa, séjour & résidence', text: 'Vérifier les conditions selon votre nationalité et votre situation avant le départ.', href: 'https://www.diplomatie.gov.tn/', external: true },
+      { title: 'Visa, séjour & résidence', text: 'Avant le départ : vérifier les exigences de visa selon votre nationalité auprès du consulat tunisien. Pour une installation durable : consulter les pièces de la carte de séjour (passeport, justificatif d’hébergement et documents liés au travail, aux études ou à la situation familiale). Les règles varient selon votre situation ; confirmer auprès des autorités.', href: 'https://services.interieur.gov.tn/wap/fr/docs/demarches/05.html', external: true },
       { title: 'Logement & déménagement', text: 'Rechercher un logement, un déménageur ou un professionnel pour faciliter votre arrivée.', href: '/recherche?q=immobilier%20d%C3%A9m%C3%A9nagement' },
       { title: 'Santé & assurance', text: 'Identifier les médecins, cliniques, assurances et services de santé utiles.', href: '/citizens/health' },
       { title: 'École & scolarité', text: 'Comparer les établissements et retrouver les informations scolaires essentielles.', href: '/education' },
@@ -184,7 +184,7 @@ const journeyCopy: Record<PublicLanguage, {
       { title: 'إقامات وتجارب محلية', text: 'ابحث عن إقامة أو دليل أو نشاط لبناء رحلة أكثر خصوصية.', href: '/citizens/tourism/guide/hebergements-experiences' },
     ],
     settleTopics: [
-      { title: 'التأشيرة والإقامة', text: 'تحقق من الشروط حسب جنسيتك ووضعيتك قبل السفر.', href: 'https://www.diplomatie.gov.tn/', external: true },
+      { title: 'التأشيرة والإقامة', text: 'تحقق من الشروط حسب جنسيتك ووضعيتك قبل السفر.', href: 'https://services.interieur.gov.tn/wap/fr/docs/demarches/05.html', external: true },
       { title: 'السكن والانتقال', text: 'ابحث عن سكن أو شركة نقل أو مهني لتسهيل وصولك.', href: '/recherche?q=%D8%B9%D9%82%D8%A7%D8%B1%D8%A7%D8%AA%20%D9%86%D9%82%D9%84' },
       { title: 'الصحة والتأمين', text: 'اعثر على الأطباء والمصحات والتأمينات والخدمات الصحية.', href: '/citizens/health' },
       { title: 'المدرسة والتعليم', text: 'قارن المؤسسات واعثر على المعلومات المدرسية الأساسية.', href: '/education' },
@@ -207,7 +207,7 @@ const journeyCopy: Record<PublicLanguage, {
       { title: 'Local stays & experiences', text: 'Find accommodation, guides and activities for a more personal trip.', href: '/citizens/tourism/guide/hebergements-experiences' },
     ],
     settleTopics: [
-      { title: 'Visa, stay & residence', text: 'Check the conditions for your nationality and situation before departure.', href: 'https://www.diplomatie.gov.tn/', external: true },
+      { title: 'Visa, stay & residence', text: 'Check the conditions for your nationality and situation before departure.', href: 'https://services.interieur.gov.tn/wap/fr/docs/demarches/05.html', external: true },
       { title: 'Housing & moving', text: 'Find housing and professionals who can help with your arrival.', href: '/recherche?q=property%20moving' },
       { title: 'Health & insurance', text: 'Find doctors, clinics, insurers and useful health services.', href: '/citizens/health' },
       { title: 'School & education', text: 'Compare institutions and find essential school information.', href: '/education' },
@@ -230,7 +230,7 @@ const journeyCopy: Record<PublicLanguage, {
       { title: 'Soggiorni ed esperienze locali', text: 'Trova alloggi, guide e attività per un viaggio più personale.', href: '/citizens/tourism/guide/hebergements-experiences' },
     ],
     settleTopics: [
-      { title: 'Visto, soggiorno e residenza', text: 'Verifica le condizioni per nazionalità e situazione prima della partenza.', href: 'https://www.diplomatie.gov.tn/', external: true },
+      { title: 'Visto, soggiorno e residenza', text: 'Verifica le condizioni per nazionalità e situazione prima della partenza.', href: 'https://services.interieur.gov.tn/wap/fr/docs/demarches/05.html', external: true },
       { title: 'Casa e trasloco', text: 'Trova alloggi e professionisti per facilitare l’arrivo.', href: '/recherche?q=immobiliare%20trasloco' },
       { title: 'Salute e assicurazione', text: 'Trova medici, cliniche, assicurazioni e servizi sanitari.', href: '/citizens/health' },
       { title: 'Scuola e istruzione', text: 'Confronta gli istituti e trova informazioni scolastiche essenziali.', href: '/education' },
@@ -253,7 +253,7 @@ const journeyCopy: Record<PublicLanguage, {
       { title: 'Местный отдых и впечатления', text: 'Найдите жильё, гидов и занятия для индивидуальной поездки.', href: '/citizens/tourism/guide/hebergements-experiences' },
     ],
     settleTopics: [
-      { title: 'Виза, пребывание и ВНЖ', text: 'Проверьте условия для вашего гражданства и ситуации до поездки.', href: 'https://www.diplomatie.gov.tn/', external: true },
+      { title: 'Виза, пребывание и ВНЖ', text: 'Проверьте условия для вашего гражданства и ситуации до поездки.', href: 'https://services.interieur.gov.tn/wap/fr/docs/demarches/05.html', external: true },
       { title: 'Жильё и переезд', text: 'Найдите жильё и специалистов, которые помогут с переездом.', href: '/recherche?q=property%20moving' },
       { title: 'Здоровье и страхование', text: 'Найдите врачей, клиники, страховые компании и медицинские услуги.', href: '/citizens/health' },
       { title: 'Школа и образование', text: 'Сравните учреждения и найдите важную информацию об обучении.', href: '/education' },
