@@ -205,6 +205,8 @@ async function fetchBusinesses() {
       'select',
       'slug,nom,ville,categorie,sous_categories_texte,description,logo_url,image_url,telephone,adresse,site_web,email,horaires_ok,"lien facebook","Lien Instagram","Lien TikTok","Lien LinkedIn","Lien YouTube"'
     );
+    endpoint.searchParams.set('approved', 'eq.true');
+    endpoint.searchParams.set('statut_publication', 'eq.Publié');
     endpoint.searchParams.set('limit', String(pageSize));
     endpoint.searchParams.set('offset', String(offset));
     const response = await fetch(endpoint, {
