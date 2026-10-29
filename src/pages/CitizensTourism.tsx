@@ -126,6 +126,14 @@ const copy: Record<PublicLanguage, {
 
 const QUICK_LINK_PATHS = ['/citizens/services', '/citizens/health', '/education', '/emplois'] as const;
 
+const settleActionLabels: Record<PublicLanguage, string[]> = {
+  fr: ['Consulter les formalités de séjour (site officiel)', 'Rechercher des professionnels du logement', 'Rechercher un médecin, un hôpital ou une clinique sur la page Santé', 'Accéder à la page Éducation', 'Consulter les services fiscaux officiels', 'Consulter les formalités douanières officielles', 'Consulter les ressources officielles pour entreprendre', 'Rechercher des commerces et services du quotidien'],
+  ar: ['الاطلاع على إجراءات الإقامة الرسمية', 'البحث عن خدمات السكن', 'البحث عن طبيب أو مستشفى أو مصحة في صفحة الصحة', 'الانتقال إلى صفحة التعليم', 'الاطلاع على الخدمات الجبائية الرسمية', 'الاطلاع على الإجراءات الديوانية الرسمية', 'الاطلاع على موارد الاستثمار الرسمية', 'البحث عن المتاجر والخدمات اليومية'],
+  en: ['View official residence procedures', 'Search housing and moving providers', 'Search for a doctor, hospital or clinic on the Health page', 'Go to the Education page', 'View official tax services', 'View official customs procedures', 'View official business and investment resources', 'Search everyday shops and services'],
+  it: ['Consultare le procedure ufficiali di soggiorno', 'Cercare professionisti per casa e trasloco', 'Cerca un medico, ospedale o clinica nella pagina Salute', 'Aprire la pagina Istruzione', 'Consultare i servizi fiscali ufficiali', 'Consultare le procedure doganali ufficiali', 'Consultare le risorse ufficiali per le imprese', 'Cercare negozi e servizi quotidiani'],
+  ru: ['Открыть официальные правила пребывания', 'Найти специалистов по жилью и переезду', 'Найти врача, больницу или клинику на странице «Здоровье»', 'Перейти на страницу «Образование»', 'Открыть официальные налоговые сервисы', 'Открыть официальные таможенные правила', 'Открыть официальные ресурсы для бизнеса', 'Найти магазины и повседневные услуги'],
+};
+
 type JourneyMode = 'visit' | 'settle';
 
 const journeyCopy: Record<PublicLanguage, {
@@ -407,11 +415,11 @@ export default function CitizensTourism() {
                 <p className="mt-2 text-xs leading-relaxed text-gray-600">{topic.text}</p>
                 {'external' in topic && topic.external ? (
                   <a href={topic.href} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-[#4A1D43] underline decoration-[#D4AF37] underline-offset-2">
-                    {journey.official}<ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+                    {settleActionLabels[lang][topicIndex]}<ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
                   </a>
                 ) : (
                   <Link to={topic.href} className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-[#4A1D43] underline decoration-[#D4AF37] underline-offset-2">
-                    {topic.href === '/citizens/health' ? ({ fr: 'Rechercher un médecin, un hôpital ou une clinique sur la page Santé', ar: 'البحث عن طبيب أو مستشفى أو مصحة في صفحة الصحة', en: 'Search for a doctor, hospital or clinic on the Health page', it: 'Cerca un medico, ospedale o clinica nella pagina Salute', ru: 'Найти врача, больницу или клинику на странице «Здоровье»' }[lang]) : journey.discover}
+                    {settleActionLabels[lang][topicIndex]}
                   </Link>
                 )}
               </details>
