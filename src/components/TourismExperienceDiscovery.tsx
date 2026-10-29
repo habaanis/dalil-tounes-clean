@@ -169,15 +169,15 @@ export default function TourismExperienceDiscovery() {
     if (region && item.gouvernorat !== region) return false;
     if (unescoOnly && !verifiedUnescoExperienceIds.has(item.id)) return false;
     if (kind !== 'all' && classify(item) !== kind) return false;
-    const text = [item.nom,item.ville,item.gouvernorat,item.description,item.a_propos].filter(Boolean).join(' ').toLocaleLowerCase();
+    const text = [item.nom, localizedName(item), item.ville, item.gouvernorat, item.description, localizedDescription(item), item.a_propos].filter(Boolean).join(' ').toLocaleLowerCase();
     return !query.trim() || text.includes(query.trim().toLocaleLowerCase());
-  }), [items, query, region, kind, unescoOnly]);
+  }), [items, query, region, kind, unescoOnly, lang]);
   useEffect(() => { setPage(1); }, [query, region, kind, unescoOnly]);
   const totalPages = Math.ceil(matches.length / PAGE_SIZE);
   const pageItems = matches.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
   return <section dir={rtl ? 'rtl' : 'ltr'} lang={lang} className="mx-auto max-w-7xl px-4 py-7" aria-label="Découvrir les expériences locales">
     {galleryItems.length > 0 && <p className="mb-3 text-[11px] text-gray-500">{extra.note}</p>}
-    {galleryItems.length > 0 && <div className="mb-5 flex items-center justify-between"><p className="text-sm font-semibold text-[#4A1D43]">📸 À découvrir dans notre répertoire</p><button type="button" onClick={() => setPaused(p => !p)} className="rounded-full border border-[#D4AF37] px-3 py-1 text-xs">{paused ? tr.resume : tr.pause}</button></div>}
+    {galleryItems.length > 0 && <div className="mb-5 flex items-center justify-between"><p className="text-sm font-semibold text-[#4A1D43]">📸 {tr.gallery}</p><button type="button" onClick={() => setPaused(p => !p)} className="rounded-full border border-[#D4AF37] px-3 py-1 text-xs">{paused ? tr.resume : tr.pause}</button></div>}
     {galleryItems.length > 0 && <div className="mb-5 flex gap-3 overflow-x-auto pb-3 lg:hidden" aria-label="Galerie des expériences">{galleryItems.map((item,i) => <div key={item.id + i} className="w-40 shrink-0">{renderGalleryCard(item,i)}</div>)}</div>}
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(120px,1fr)_minmax(0,4fr)_minmax(120px,1fr)]">
       <aside className="hidden flex-col items-stretch gap-0 pt-8 lg:flex" aria-label="Découvertes à gauche">{galleryItems.slice(0,gallerySplit).map((item,i)=>renderGalleryCard(item,i))}</aside>
