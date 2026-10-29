@@ -411,7 +411,7 @@ export default function CitizensTourism() {
                   </a>
                 ) : (
                   <Link to={topic.href} className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-[#4A1D43] underline decoration-[#D4AF37] underline-offset-2">
-                    {journey.discover}
+                    {topic.href === '/citizens/health' ? ({ fr: 'Rechercher un médecin, un hôpital ou une clinique sur la page Santé', ar: 'البحث عن طبيب أو مستشفى أو مصحة في صفحة الصحة', en: 'Search for a doctor, hospital or clinic on the Health page', it: 'Cerca un medico, ospedale o clinica nella pagina Salute', ru: 'Найти врача, больницу или клинику на странице «Здоровье»' }[lang]) : journey.discover}
                   </Link>
                 )}
               </details>
