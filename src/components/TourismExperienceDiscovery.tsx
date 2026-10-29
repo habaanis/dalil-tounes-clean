@@ -129,7 +129,6 @@ export default function TourismExperienceDiscovery() {
       const { data, error } = await supabase.from('entreprise')
         .select('id,nom,ville,gouvernorat,description,description_ar,description_en,description_it,description_ru,name_ar,name_en,name_it,name_ru,a_propos,image_url')
         .contains('liste_pages', ['tourisme local & expatriation'])
-        .contains('categorie', ['tourisme&expatriation'])
         .eq('approved', true).eq('statut_publication', 'Publié')
         .order('nom', { ascending: true }).limit(500);
       if (!active) return;
