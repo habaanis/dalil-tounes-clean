@@ -180,11 +180,11 @@ const settleServiceIntros: Record<PublicLanguage, string[]> = {
 };
 
 const settleActionLabels: Record<PublicLanguage, string[]> = {
-  fr: ['Consulter les formalités de séjour (site officiel)', 'Rechercher des professionnels du logement', 'Rechercher un médecin, un hôpital ou une clinique sur la page Santé', 'Accéder à la page Éducation', 'Consulter les services fiscaux officiels', 'Consulter les formalités douanières officielles', 'Consulter les ressources officielles pour entreprendre', 'Rechercher des commerces et services du quotidien'],
-  ar: ['الاطلاع على إجراءات الإقامة الرسمية', 'البحث عن خدمات السكن', 'البحث عن طبيب أو مستشفى أو مصحة في صفحة الصحة', 'الانتقال إلى صفحة التعليم', 'الاطلاع على الخدمات الجبائية الرسمية', 'الاطلاع على الإجراءات الديوانية الرسمية', 'الاطلاع على موارد الاستثمار الرسمية', 'البحث عن المتاجر والخدمات اليومية'],
-  en: ['View official residence procedures', 'Search housing and moving providers', 'Search for a doctor, hospital or clinic on the Health page', 'Go to the Education page', 'View official tax services', 'View official customs procedures', 'View official business and investment resources', 'Search everyday shops and services'],
-  it: ['Consultare le procedure ufficiali di soggiorno', 'Cercare professionisti per casa e trasloco', 'Cerca un medico, ospedale o clinica nella pagina Salute', 'Aprire la pagina Istruzione', 'Consultare i servizi fiscali ufficiali', 'Consultare le procedure doganali ufficiali', 'Consultare le risorse ufficiali per le imprese', 'Cercare negozi e servizi quotidiani'],
-  ru: ['Открыть официальные правила пребывания', 'Найти специалистов по жилью и переезду', 'Найти врача, больницу или клинику на странице «Здоровье»', 'Перейти на страницу «Образование»', 'Открыть официальные налоговые сервисы', 'Открыть официальные таможенные правила', 'Открыть официальные ресурсы для бизнеса', 'Найти магазины и повседневные услуги'],
+  fr: ['Consulter les formalités de séjour (site officiel)', 'Ouvrir l’annuaire pour rechercher un professionnel du logement', 'Rechercher un médecin, un hôpital ou une clinique sur la page Santé', 'Accéder à la page Éducation', 'Consulter les services fiscaux officiels', 'Consulter les formalités douanières officielles', 'Consulter les ressources officielles pour entreprendre', 'Consulter la page Commerces et magasins'],
+  ar: ['الاطلاع على إجراءات الإقامة الرسمية', 'فتح الدليل للبحث عن خدمات السكن', 'البحث عن طبيب أو مستشفى أو مصحة في صفحة الصحة', 'الانتقال إلى صفحة التعليم', 'الاطلاع على الخدمات الجبائية الرسمية', 'الاطلاع على الإجراءات الديوانية الرسمية', 'الاطلاع على موارد الاستثمار الرسمية', 'الانتقال إلى صفحة المتاجر والمحلات'],
+  en: ['View official residence procedures', 'Open the directory to search for housing and moving providers', 'Search for a doctor, hospital or clinic on the Health page', 'Go to the Education page', 'View official tax services', 'View official customs procedures', 'View official business and investment resources', 'Browse the Shops page'],
+  it: ['Consultare le procedure ufficiali di soggiorno', 'Aprire l’elenco per cercare casa e trasloco', 'Cerca un medico, ospedale o clinica nella pagina Salute', 'Aprire la pagina Istruzione', 'Consultare i servizi fiscali ufficiali', 'Consultare le procedure doganali ufficiali', 'Consultare le risorse ufficiali per le imprese', 'Aprire la pagina Negozi'],
+  ru: ['Открыть официальные правила пребывания', 'Открыть каталог для поиска услуг жилья и переезда', 'Найти врача, больницу или клинику на странице «Здоровье»', 'Перейти на страницу «Образование»', 'Открыть официальные налоговые сервисы', 'Открыть официальные таможенные правила', 'Открыть официальные ресурсы для бизнеса', 'Открыть страницу магазинов'],
 };
 
 type JourneyMode = 'visit' | 'settle';
@@ -222,13 +222,13 @@ const journeyCopy: Record<PublicLanguage, {
     ],
     settleTopics: [
       { title: 'Visa, séjour & résidence', text: 'Avant le départ : vérifier les exigences de visa selon votre nationalité auprès du consulat tunisien. Pour une installation durable : consulter les pièces de la carte de séjour (passeport, justificatif d’hébergement et documents liés au travail, aux études ou à la situation familiale). Les règles varient selon votre situation ; confirmer auprès des autorités.', href: 'https://services.interieur.gov.tn/wap/fr/docs/demarches/05.html', external: true },
-      { title: 'Logement & déménagement', text: 'Avant de signer un bail : vérifier le quartier, le budget total, les charges, les conditions du contrat et les justificatifs demandés. Pour déménager, demander un devis détaillé et vérifier les formalités éventuelles de douane. Rechercher ensuite les professionnels locaux.', href: '/recherche?q=immobilier%20d%C3%A9m%C3%A9nagement' },
+      { title: 'Logement & déménagement', text: 'Avant de signer un bail : vérifier le quartier, le budget total, les charges, les conditions du contrat et les justificatifs demandés. Pour déménager, demander un devis détaillé et vérifier les formalités éventuelles de douane. Rechercher ensuite les professionnels locaux.', href: '/recherche' },
       { title: 'Santé & assurance', text: 'Avant de partir, vérifier la couverture santé et l’assistance rapatriement selon votre situation, les exclusions, les plafonds et les modalités de remboursement. Préparer ordonnances et documents médicaux utiles ; rechercher ensuite médecins, cliniques et pharmacies sur la page Santé.', href: '/citizens/health' },
       { title: 'École & scolarité', text: 'Comparer les établissements et retrouver les informations scolaires essentielles.', href: '/education' },
       { title: 'Banque, change & fiscalité', text: 'Consulter les services financiers et vérifier les règles officielles applicables.', href: 'https://www.finances.gov.tn/fr/e-services', external: true },
       { title: 'Véhicule, biens & douane', text: 'Vérifier les formalités avant d’importer un véhicule ou vos effets personnels.', href: 'https://www.douane.gov.tn/particuliers-2/', external: true },
       { title: 'Travail & création d’entreprise', text: 'Trouver des opportunités et les organismes utiles pour développer un projet.', href: 'https://investintunisia.tn/', external: true },
-      { title: 'Vie quotidienne', text: 'Téléphone, Internet, commerces et services : retrouver les professionnels proches de vous.', href: '/recherche?q=services%20quotidien' },
+      { title: 'Vie quotidienne', text: 'Téléphone, Internet, commerces et services : retrouver les professionnels proches de vous.', href: '/citizens/shops' },
     ],
   },
   ar: {
@@ -246,13 +246,13 @@ const journeyCopy: Record<PublicLanguage, {
     ],
     settleTopics: [
       { title: 'التأشيرة والإقامة', text: 'تحقق من الشروط حسب جنسيتك ووضعيتك قبل السفر.', href: 'https://services.interieur.gov.tn/wap/fr/docs/demarches/05.html', external: true },
-      { title: 'السكن والانتقال', text: 'قبل توقيع عقد الإيجار، تحقّق من الحيّ والتكلفة الإجمالية والمصاريف وشروط العقد والوثائق المطلوبة. اطلب عرض سعر مفصلاً للنقل وتحقّق من الإجراءات الجمركية عند الحاجة، ثم ابحث عن المهنيين المحليين.', href: '/recherche?q=%D8%B9%D9%82%D8%A7%D8%B1%D8%A7%D8%AA%20%D9%86%D9%82%D9%84' },
+      { title: 'السكن والانتقال', text: 'قبل توقيع عقد الإيجار، تحقّق من الحيّ والتكلفة الإجمالية والمصاريف وشروط العقد والوثائق المطلوبة. اطلب عرض سعر مفصلاً للنقل وتحقّق من الإجراءات الجمركية عند الحاجة، ثم ابحث عن المهنيين المحليين.', href: '/recherche' },
       { title: 'الصحة والتأمين', text: 'قبل السفر، تحقّق من التغطية الصحية والمساعدة على العودة إلى بلدك حسب وضعيتك، والاستثناءات وحدود التغطية وشروط استرجاع المصاريف. حضّر الوصفات والوثائق الطبية المهمة، ثم ابحث عن الأطباء والمصحات والصيدليات في صفحة الصحة.', href: '/citizens/health' },
       { title: 'المدرسة والتعليم', text: 'قارن المؤسسات واعثر على المعلومات المدرسية الأساسية.', href: '/education' },
       { title: 'البنك والصرف والجباية', text: 'اطلع على الخدمات المالية والقواعد الرسمية المعمول بها.', href: 'https://www.finances.gov.tn/fr/e-services', external: true },
       { title: 'السيارة والأمتعة والديوانة', text: 'تحقق من الإجراءات قبل توريد سيارة أو أمتعتك الشخصية.', href: 'https://www.douane.gov.tn/particuliers-2/', external: true },
       { title: 'العمل وبعث مشروع', text: 'اعثر على الفرص والهياكل المفيدة لتطوير مشروعك.', href: 'https://investintunisia.tn/', external: true },
-      { title: 'الحياة اليومية', text: 'الهاتف والإنترنت والمتاجر والخدمات القريبة منك.', href: '/recherche?q=%D8%AE%D8%AF%D9%85%D8%A7%D8%AA%20%D9%8A%D9%88%D9%85%D9%8A%D8%A9' },
+      { title: 'الحياة اليومية', text: 'الهاتف والإنترنت والمتاجر والخدمات القريبة منك.', href: '/citizens/shops' },
     ],
   },
   en: {
@@ -269,13 +269,13 @@ const journeyCopy: Record<PublicLanguage, {
     ],
     settleTopics: [
       { title: 'Visa, stay & residence', text: 'Check the conditions for your nationality and situation before departure.', href: 'https://services.interieur.gov.tn/wap/fr/docs/demarches/05.html', external: true },
-      { title: 'Housing & moving', text: 'Before signing a lease, check the area, total budget, fees, contract terms and required documents. Request a detailed moving quote and verify any customs requirements before searching for local providers.', href: '/recherche?q=property%20moving' },
+      { title: 'Housing & moving', text: 'Before signing a lease, check the area, total budget, fees, contract terms and required documents. Request a detailed moving quote and verify any customs requirements before searching for local providers.', href: '/recherche' },
       { title: 'Health & insurance', text: 'Before moving, check your health coverage and medical repatriation assistance, including exclusions, limits and reimbursement rules. Keep prescriptions and key medical records handy, then find doctors, clinics and pharmacies on the Health page.', href: '/citizens/health' },
       { title: 'School & education', text: 'Compare institutions and find essential school information.', href: '/education' },
       { title: 'Banking, exchange & tax', text: 'Find financial services and check the applicable official rules.', href: 'https://www.finances.gov.tn/fr/e-services', external: true },
       { title: 'Vehicle, belongings & customs', text: 'Check formalities before importing a vehicle or personal belongings.', href: 'https://www.douane.gov.tn/particuliers-2/', external: true },
       { title: 'Work & starting a business', text: 'Find opportunities and useful organisations for developing a project.', href: 'https://investintunisia.tn/', external: true },
-      { title: 'Daily life', text: 'Phone, Internet, shops and nearby services for everyday needs.', href: '/recherche?q=daily%20services' },
+      { title: 'Daily life', text: 'Phone, Internet, shops and nearby services for everyday needs.', href: '/citizens/shops' },
     ],
   },
   it: {
@@ -292,13 +292,13 @@ const journeyCopy: Record<PublicLanguage, {
     ],
     settleTopics: [
       { title: 'Visto, soggiorno e residenza', text: 'Verifica le condizioni per nazionalità e situazione prima della partenza.', href: 'https://services.interieur.gov.tn/wap/fr/docs/demarches/05.html', external: true },
-      { title: 'Casa e trasloco', text: 'Prima di firmare un contratto, verifica zona, budget totale, spese, condizioni e documenti richiesti. Chiedi un preventivo dettagliato per il trasloco e verifica le eventuali formalità doganali.', href: '/recherche?q=immobiliare%20trasloco' },
+      { title: 'Casa e trasloco', text: 'Prima di firmare un contratto, verifica zona, budget totale, spese, condizioni e documenti richiesti. Chiedi un preventivo dettagliato per il trasloco e verifica le eventuali formalità doganali.', href: '/recherche' },
       { title: 'Salute e assicurazione', text: 'Prima di partire, verifica copertura sanitaria e assistenza al rimpatrio, comprese esclusioni, massimali e rimborsi. Prepara ricette e documenti medici utili, poi cerca medici, cliniche e farmacie nella pagina Salute.', href: '/citizens/health' },
       { title: 'Scuola e istruzione', text: 'Confronta gli istituti e trova informazioni scolastiche essenziali.', href: '/education' },
       { title: 'Banca, cambio e fiscalità', text: 'Trova servizi finanziari e verifica le regole ufficiali.', href: 'https://www.finances.gov.tn/fr/e-services', external: true },
       { title: 'Veicolo, beni e dogana', text: 'Verifica le formalità prima di importare un veicolo o beni personali.', href: 'https://www.douane.gov.tn/particuliers-2/', external: true },
       { title: 'Lavoro e impresa', text: 'Trova opportunità e organismi utili per sviluppare un progetto.', href: 'https://investintunisia.tn/', external: true },
-      { title: 'Vita quotidiana', text: 'Telefono, Internet, negozi e servizi utili vicino a te.', href: '/recherche?q=servizi%20quotidiani' },
+      { title: 'Vita quotidiana', text: 'Telefono, Internet, negozi e servizi utili vicino a te.', href: '/citizens/shops' },
     ],
   },
   ru: {
@@ -315,13 +315,13 @@ const journeyCopy: Record<PublicLanguage, {
     ],
     settleTopics: [
       { title: 'Виза, пребывание и ВНЖ', text: 'Проверьте условия для вашего гражданства и ситуации до поездки.', href: 'https://services.interieur.gov.tn/wap/fr/docs/demarches/05.html', external: true },
-      { title: 'Жильё и переезд', text: 'Перед подписанием договора проверьте район, полную стоимость, дополнительные расходы, условия аренды и документы. Запросите подробную смету переезда и проверьте таможенные требования.', href: '/recherche?q=property%20moving' },
+      { title: 'Жильё и переезд', text: 'Перед подписанием договора проверьте район, полную стоимость, дополнительные расходы, условия аренды и документы. Запросите подробную смету переезда и проверьте таможенные требования.', href: '/recherche' },
       { title: 'Здоровье и страхование', text: 'До переезда проверьте медицинскую страховку и помощь с медицинской репатриацией, исключения, лимиты и порядок возмещения. Подготовьте рецепты и важные медицинские документы, затем найдите врачей, клиники и аптеки в разделе «Здоровье».', href: '/citizens/health' },
       { title: 'Школа и образование', text: 'Сравните учреждения и найдите важную информацию об обучении.', href: '/education' },
       { title: 'Банк, обмен и налоги', text: 'Найдите финансовые услуги и проверьте официальные правила.', href: 'https://www.finances.gov.tn/fr/e-services', external: true },
       { title: 'Автомобиль, вещи и таможня', text: 'Проверьте формальности перед ввозом автомобиля или личных вещей.', href: 'https://www.douane.gov.tn/particuliers-2/', external: true },
       { title: 'Работа и бизнес', text: 'Найдите возможности и организации для развития проекта.', href: 'https://investintunisia.tn/', external: true },
-      { title: 'Повседневная жизнь', text: 'Телефон, Интернет, магазины и полезные услуги рядом.', href: '/recherche?q=daily%20services' },
+      { title: 'Повседневная жизнь', text: 'Телефон, Интернет, магазины и полезные услуги рядом.', href: '/citizens/shops' },
     ],
   },
 };
