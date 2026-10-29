@@ -108,6 +108,8 @@ async function fetchBusinesses() {
   for (let offset = 0; ; offset += pageSize) {
     const endpoint = new URL(`${supabaseUrl.replace(/\/$/, '')}/rest/v1/entreprise`);
     endpoint.searchParams.set('select', 'slug,nom,ville,updated_at,is_premium');
+    endpoint.searchParams.set('approved', 'eq.true');
+    endpoint.searchParams.set('statut_publication', 'eq.Publié');
     endpoint.searchParams.set('order', 'updated_at.desc.nullslast');
     endpoint.searchParams.set('limit', String(pageSize));
     endpoint.searchParams.set('offset', String(offset));
@@ -142,7 +144,7 @@ try {
     businessCount += 1;
   }
 } catch (error) {
-  console.warn(`[sitemap] Entreprises dynamiques non chargées: ${error instanceof Error ? error.message : String(error)}`);
+  throw new Error(`[sitemap] Échec de chargement des entreprises publiques : ${error instanceof Error ? error.message : String(error)}`);
 }
 
 const xml = [
