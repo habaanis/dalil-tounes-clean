@@ -1,3 +1,4 @@
+import { cachedShowcaseRecord, rememberShowcaseRecord } from '../lib/showcaseRecordCache';
 import {
   useEffect,
   useMemo,
@@ -896,12 +897,12 @@ export default function BusinessShowcaseLienoraDetail({
       setFailed(false);
 
       try {
-        let record: BusinessRecord | null = null;
+        let record: BusinessRecord | null = cachedShowcaseRecord(urlId || urlSlug) as BusinessRecord | null;
         const fullUuid = urlId || urlSlug?.match(
           /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i,
         )?.[0];
 
-        if (fullUuid) {
+        if (!record && fullUuid) {
           const { data } = await supabase
             .from('entreprise')
             .select('*')
@@ -962,6 +963,7 @@ export default function BusinessShowcaseLienoraDetail({
           return;
         }
 
+        rememberShowcaseRecord(record as Record<string, unknown>);
         setBusiness(record);
         const canonicalPath = buildEntrepriseUrl(record);
         const keepPublicShortPath = location.pathname.startsWith('/cv/') && Boolean(record.slug_court);
