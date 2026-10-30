@@ -119,3 +119,13 @@ Décision utilisateur : conserver l'idée en backlog, **ne pas la développer ma
 - Chaque année : relire **toutes les rubriques** (résidence/visas, logement et achat immobilier, santé, écoles, banque/change/fiscalité, importation de véhicules/meubles/matériel professionnel, travail/entreprise, vie quotidienne), contrôler les sources officielles, documents, délais, frais, conditions, contacts et liens QR, puis préparer une nouvelle édition actualisée.
 - Garder des parcours ludiques et utiles : choix par profil, checklists, acteurs, documents, « Mon prochain pas », liens vers annuaire. Avertissement clair : informations non contractuelles, susceptibles de changer entre éditions, à confirmer auprès des autorités et professionnels avant toute décision.
 - Le PDF reste en phase de conception : **ne pas annoncer la parution d'une édition sans création effective**. Le suivi récurrent doit être à l'échelle de l'almanach complet.
+
+
+## Communication à préparer après finalisation du site (30/10/2026)
+**Statut : EN ATTENTE — ne rien publier ni programmer dans Metricool avant validation finale du parcours, contenus et liens.**
+
+Deux publications/campagnes distinctes, chacune en **français et en arabe** :
+1. **Présentation « S'installer en Tunisie »** : expliquer les huit rubriques, les fenêtres pratiques mobiles, les parcours selon profil, les documents à préparer et les flèches vers les professionnels. Préparer versions FR/AR, mais diffusion différée jusqu'à finalisation et tests.
+2. **Présentation du site Dalil Tounes dans son ensemble (priorité éditoriale)** : expliquer **les liens logiques entre les pages et leurs contenus**, pas seulement énumérer les rubriques. Illustrer des parcours réels : découverte sur page d'accueil/recherche → catégories (Citoyens : santé, éducation, services, commerces ; Tourisme : visiter autrement et s'installer ; Entreprises et profils CV Business/Portfolio ; loisirs/événements selon pages réellement opérationnelles) → fiches de professionnels → contact. Souligner qu'une entreprise peut apparaître sur plusieurs rubriques pertinentes. Vérifier avant rédaction les noms, routes et disponibilités effectivement publiées.
+- Format privilégié : **mini-BD illustrée adulte et professionnelle**, plusieurs cases courtes, logique visuelle de navigation avec flèches, version FR et version AR séparées ; éventuel carrousel explicatif si davantage de parcours sont nécessaires. Ne pas faire passer les fonctions en projet pour des fonctions déjà disponibles.
+- Préparer maquette, texte et traductions **seulement au stade final**, après audit fonctionnel des liens, avec validation utilisateur avant programmation.
