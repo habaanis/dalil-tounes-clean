@@ -398,7 +398,7 @@ export default function BusinessQr() {
   };
 
   if (loading) {
-    return <div className="fixed inset-0 z-[10000] grid place-items-center" style={{ backgroundColor: paletteTheme.page, color: paletteTheme.text }}>{text.loading}</div>;
+    return <div className="fixed inset-0 z-[10000] grid place-items-center" style={{ backgroundColor: paletteTheme.page, color: paletteTheme.text }}></div>;
   }
 
   if (!business || !qrAccess) {
@@ -418,10 +418,10 @@ export default function BusinessQr() {
 
   return (
     <main className="fixed inset-0 z-[10000] overflow-y-auto px-3 py-4 sm:py-6" style={{ backgroundColor: paletteTheme.page }} dir={language === 'ar' ? 'rtl' : 'ltr'}>
-      {qrAccess && <div className="mx-auto mb-3 flex max-w-lg items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm" style={{backgroundColor:paletteTheme.surface,color:paletteTheme.text}}>
+      {qrAccess && <div className="mx-auto mb-2 flex max-w-xs items-center justify-center gap-1 rounded-full px-2 py-1 text-xs" style={{backgroundColor:paletteTheme.surface,color:paletteTheme.text}}>
         <span>{language === 'ar' ? 'افتتاح التطبيق' : 'Ouverture'}</span>
-        <button type="button" className="rounded-lg border px-3 py-2" style={{borderColor:paletteTheme.border,backgroundColor:openingStyle === 'photo' ? paletteTheme.border : 'transparent'}} onClick={() => chooseOpeningStyle('photo')}>A · Photo</button>
-        <button type="button" className="rounded-lg border px-3 py-2" style={{borderColor:paletteTheme.border,backgroundColor:openingStyle === 'framed' ? paletteTheme.border : 'transparent'}} onClick={() => chooseOpeningStyle('framed')}>B · Prestige</button>
+        <button type="button" className="rounded-full border px-2 py-1 text-xs" style={{borderColor:paletteTheme.border,backgroundColor:openingStyle === 'photo' ? paletteTheme.border : 'transparent'}} onClick={() => chooseOpeningStyle('photo')}>A</button>
+        <button type="button" className="rounded-lg border px-3 py-2" style={{borderColor:paletteTheme.border,backgroundColor:openingStyle === 'framed' ? paletteTheme.border : 'transparent'}} onClick={() => chooseOpeningStyle('framed')}>B</button>
         <button type="button" className="underline" onClick={() => setShowBrandSplash(true)}>{language === 'ar' ? 'معاينة' : 'Voir'}</button>
       </div>}
       <CvBusinessQrVisual
