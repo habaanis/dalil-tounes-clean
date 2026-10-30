@@ -112,3 +112,10 @@ Décision utilisateur : conserver l'idée en backlog, **ne pas la développer ma
 - Sources officielles de départ : https://www.douane.gov.tn/admission-temporaire/ ; https://www.douane.gov.tn/residence-secondaire/1000/ ; https://www.douane.gov.tn/js-support-ticket-controlpanel/faq/72/ ; https://www.douane.gov.tn/retour-provisoire/ ; et Code des douanes (régime matériel professionnel).
 - **Contrôle annuel obligatoire** : réexaminer les informations, liens, conditions, droits et taxes, âges maximaux, durées et formulaires ; noter la date de vérification et mettre à jour le site et le PDF lors de sa publication. Avertir que la réglementation peut changer *entre* deux contrôles, et renvoyer systématiquement vers les autorités avant décision/expédition.
 - Le PDF reste différé ; conserver ces spécifications pour sa production future.
+
+
+### Concept éditorial : almanach annuel « S'installer en Tunisie » (30/10/2026)
+- **Clarification de la décision** : la révision **annuelle concerne l'intégralité du guide PDF**, pas seulement la douane. Le concevoir comme un almanach pratique millésimé (« Édition 2027 », « Édition 2028 »…), avec date de dernière mise à jour et historique des principales évolutions.
+- Chaque année : relire **toutes les rubriques** (résidence/visas, logement et achat immobilier, santé, écoles, banque/change/fiscalité, importation de véhicules/meubles/matériel professionnel, travail/entreprise, vie quotidienne), contrôler les sources officielles, documents, délais, frais, conditions, contacts et liens QR, puis préparer une nouvelle édition actualisée.
+- Garder des parcours ludiques et utiles : choix par profil, checklists, acteurs, documents, « Mon prochain pas », liens vers annuaire. Avertissement clair : informations non contractuelles, susceptibles de changer entre éditions, à confirmer auprès des autorités et professionnels avant toute décision.
+- Le PDF reste en phase de conception : **ne pas annoncer la parution d'une édition sans création effective**. Le suivi récurrent doit être à l'échelle de l'almanach complet.
