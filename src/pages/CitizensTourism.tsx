@@ -195,6 +195,34 @@ const bankingGuide: Record<PublicLanguage, { title: string; steps: string[]; cau
   ru: { title: 'С чего начать?', steps: ['Уточните свой статус: резидент, нерезидент или тунисец, проживающий за границей.', 'Узнайте в банке, какие счета доступны и какие документы необходимы.', 'Перед переводом средств или покупкой недвижимости проверьте требования к подтверждению происхождения средств и валютные правила.', 'По налоговым вопросам используйте официальные сервисы и получите консультацию с учётом своей ситуации.'], caution: 'Правила, документы и сборы могут меняться. Уточняйте требования в банке и государственных органах.', banks: 'Найти банк', exchange: 'Найти обменный пункт' }
 };
 
+const customsGuide: Record<PublicLanguage, { title: string; paths: { title: string; text: string; href: string; link: string }[]; caution: string }> = {
+  fr: { title: 'Que souhaitez-vous apporter en Tunisie ?', paths: [
+    { title: 'Ma voiture personnelle', text: 'Séjour temporaire, installation ou retour définitif : le régime et les conditions changent selon votre statut. Préparez carte grise, justificatif de propriété et pièces d’identité. L’âge autorisé dépend du dispositif.', href: 'https://www.douane.gov.tn/admission-temporaire/', link: 'Véhicule : règles officielles' },
+    { title: 'Mes meubles et effets personnels', text: 'Dressez un inventaire avec quantités et valeurs. Les effets personnels, un déménagement et des biens à caractère commercial n’obéissent pas aux mêmes règles.', href: 'https://www.douane.gov.tn/declaration-des-effets-personnels/', link: 'Préparer la déclaration des effets' },
+    { title: 'Mon matériel professionnel', text: 'Décrivez l’usage, la quantité, l’origine et la valeur de chaque équipement ; demandez à la Douane si une autorisation, une taxation ou un régime spécifique s’applique.', href: 'https://www.douane.gov.tn/particuliers-2/', link: 'Contacter les services douaniers' }
+  ], caution: 'Ne commandez pas de transport ou de véhicule sur la seule base de cette rubrique. Âges limites, franchises, délais et justificatifs varient et peuvent évoluer : demandez confirmation écrite aux services compétents.' },
+  ar: { title: 'ماذا تريد أن تجلب معك إلى تونس؟', paths: [
+    { title: 'سيارتي الشخصية', text: 'تختلف الشروط حسب الإقامة المؤقتة أو الانتقال أو العودة النهائية. حضّر البطاقة الرمادية ووثيقة الملكية والهوية، وتحقق من عمر السيارة المسموح.', href: 'https://www.douane.gov.tn/admission-temporaire/', link: 'القواعد الرسمية للسيارات' },
+    { title: 'الأثاث والأغراض الشخصية', text: 'حضّر قائمة مفصلة بالأغراض والكميات والقيم. تختلف الإجراءات بين الأمتعة الشخصية وأثاث الانتقال والبضائع التجارية.', href: 'https://www.douane.gov.tn/declaration-des-effets-personnels/', link: 'التصريح المسبق بالأغراض' },
+    { title: 'المعدات المهنية', text: 'حدد نوع المعدات واستعمالها وقيمتها واسأل الديوانة عن التراخيص والمعاليم والنظام المناسب.', href: 'https://www.douane.gov.tn/particuliers-2/', link: 'الخدمات الديوانية الرسمية' }
+  ], caution: 'تختلف الشروط والإعفاءات والآجال حسب وضعيتك وقد تتغير. تأكد من الديوانة قبل الشراء أو الشحن.' },
+  en: { title: 'What are you bringing into Tunisia?', paths: [
+    { title: 'My own car', text: 'Temporary stay, relocation and permanent return can follow different rules. Prepare the registration certificate, proof of ownership and ID; check age limits for your specific status.', href: 'https://www.douane.gov.tn/admission-temporaire/', link: 'Official vehicle rules' },
+    { title: 'Furniture and personal belongings', text: 'Prepare an itemized inventory with quantities and values. Personal luggage, household removals and commercial goods have different rules.', href: 'https://www.douane.gov.tn/declaration-des-effets-personnels/', link: 'Prepare a belongings declaration' },
+    { title: 'Professional equipment', text: 'List what each item is used for, its value and origin; ask customs about permits, taxes and the appropriate import regime.', href: 'https://www.douane.gov.tn/particuliers-2/', link: 'Official customs services' }
+  ], caution: 'Rules, vehicle age limits, exemptions and deadlines vary and may change. Confirm with customs before buying or shipping.' },
+  it: { title: 'Che cosa vuoi portare in Tunisia?', paths: [
+    { title: 'La mia automobile', text: 'Soggiorno temporaneo, trasferimento e ritorno definitivo hanno regole diverse. Prepara libretto, prova di proprietà e documenti; verifica i limiti di età.', href: 'https://www.douane.gov.tn/admission-temporaire/', link: 'Regole ufficiali per i veicoli' },
+    { title: 'Mobili ed effetti personali', text: 'Prepara un inventario con quantità e valori. Bagagli personali, trasloco e merci commerciali seguono procedure diverse.', href: 'https://www.douane.gov.tn/declaration-des-effets-personnels/', link: 'Preparare la dichiarazione' },
+    { title: 'Attrezzature professionali', text: 'Indica uso, origine e valore degli strumenti e verifica permessi e imposte con la dogana.', href: 'https://www.douane.gov.tn/particuliers-2/', link: 'Servizi doganali ufficiali' }
+  ], caution: 'Norme, età dei veicoli, franchigie e scadenze possono cambiare. Chiedi conferma alla dogana prima di acquistare o spedire.' },
+  ru: { title: 'Что вы планируете ввезти в Тунис?', paths: [
+    { title: 'Личный автомобиль', text: 'Временный приезд, переезд и окончательное возвращение регулируются по-разному. Подготовьте документы на автомобиль, подтверждение собственности и удостоверение личности.', href: 'https://www.douane.gov.tn/admission-temporaire/', link: 'Официальные правила для автомобилей' },
+    { title: 'Мебель и личные вещи', text: 'Составьте опись с количеством и стоимостью. Багаж, имущество при переезде и коммерческие товары регулируются по-разному.', href: 'https://www.douane.gov.tn/declaration-des-effets-personnels/', link: 'Декларация личных вещей' },
+    { title: 'Профессиональное оборудование', text: 'Уточните назначение, происхождение и стоимость оборудования, а также разрешения и пошлины в таможне.', href: 'https://www.douane.gov.tn/particuliers-2/', link: 'Официальные таможенные сервисы' }
+  ], caution: 'Правила, возрастные ограничения, льготы и сроки могут меняться. Уточняйте их в таможне до покупки или отправки.' }
+};
+
 type JourneyMode = 'visit' | 'settle';
 
 const journeyCopy: Record<PublicLanguage, {
@@ -460,6 +488,21 @@ export default function CitizensTourism() {
                   <ChevronDown className={`h-4 w-4 flex-shrink-0 -rotate-90 text-[#D4AF37] ${isRTL ? 'rotate-90' : ''}`} aria-hidden="true" />
                 </div>
                 <p className="mt-1.5 text-xs leading-relaxed text-gray-600">{topic.text}</p>
+                {topicIndex === 5 && (
+                  <div className="mt-3 rounded-lg border border-[#D4AF37]/30 bg-white p-3">
+                    <p className="text-xs font-semibold text-[#4A1D43]">{customsGuide[lang].title}</p>
+                    <div className="mt-2 space-y-3">
+                      {customsGuide[lang].paths.map((path) => (
+                        <div key={path.title}>
+                          <p className="text-xs font-semibold text-[#4A1D43]">{path.title}</p>
+                          <p className="mt-1 text-xs leading-relaxed text-gray-700">{path.text}</p>
+                          <a href={path.href} target="_blank" rel="noopener noreferrer" className="mt-1 inline-flex items-center gap-1 text-xs font-medium text-[#4A1D43] underline decoration-[#D4AF37] underline-offset-2">{path.link}<ExternalLink className="h-3 w-3" aria-hidden="true" /></a>
+                        </div>
+                      ))}
+                    </div>
+                    <p className="mt-3 text-[11px] leading-relaxed text-gray-600">{customsGuide[lang].caution}</p>
+                  </div>
+                )}
                 {topicIndex === 4 && (
                   <div className="mt-3 rounded-lg border border-[#D4AF37]/30 bg-white p-3">
                     <p className="text-xs font-semibold text-[#4A1D43]">{bankingGuide[lang].title}</p>
