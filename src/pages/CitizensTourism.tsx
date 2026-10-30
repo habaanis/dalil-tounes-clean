@@ -520,11 +520,12 @@ export default function CitizensTourism() {
                 <span className="mt-3 inline-flex rounded-full bg-white/75 px-3 py-1.5 text-xs font-semibold text-[#5B2345] shadow-sm transition group-hover:bg-white">{journey.discover}</span>
               </Link>
             ) : (
-              <details key={topic.title} className="group rounded-xl border border-[#D4AF37]/45 bg-[#FFFDF8] px-3 py-2.5 open:border-[#D4AF37]">
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-[#4A1D43] [&::-webkit-details-marker]:hidden">
+              <details key={topic.title} className="group min-w-0 rounded-xl border border-[#D4AF37]/45 bg-[#FFFDF8] px-3 py-2.5 open:border-[#D4AF37] max-md:open:fixed max-md:open:inset-x-3 max-md:open:top-[10dvh] max-md:open:bottom-[10dvh] max-md:open:z-[100] max-md:open:flex max-md:open:flex-col max-md:open:overflow-hidden max-md:open:bg-white max-md:open:p-0 max-md:open:shadow-2xl">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-[#4A1D43] [&::-webkit-details-marker]:hidden max-md:group-open:shrink-0 max-md:group-open:border-b max-md:group-open:border-[#D4AF37]/30 max-md:group-open:bg-[#FFFDF8] max-md:group-open:px-4 max-md:group-open:py-4">
                   <span>{topic.title}</span>
-                  <ChevronDown className="h-4 w-4 flex-shrink-0 text-[#D4AF37] transition-transform group-open:rotate-180" aria-hidden="true" />
+                  <span className="flex shrink-0 items-center gap-1.5"><span className="hidden text-[11px] font-semibold text-[#4A1D43] max-md:group-open:inline">{({fr:'Fermer',ar:'إغلاق',en:'Close',it:'Chiudi',ru:'Закрыть'} as Record<PublicLanguage, string>)[lang]}</span><ChevronDown className="h-4 w-4 text-[#D4AF37] transition-transform group-open:rotate-180" aria-hidden="true" /></span>
                 </summary>
+                <div className="max-md:group-open:min-h-0 max-md:group-open:flex-1 max-md:group-open:overflow-y-auto max-md:group-open:overscroll-contain max-md:group-open:px-4 max-md:group-open:pb-6">
                 <p className="mt-2 text-xs font-medium leading-relaxed text-[#4A1D43]">{settleServiceIntros[lang][topicIndex]}</p>
                 <p className="mt-1.5 text-xs leading-relaxed text-gray-600">{topic.text}</p>
                 {([1, 2, 7].includes(topicIndex)) && (
@@ -588,6 +589,7 @@ export default function CitizensTourism() {
                   </div>
                 )}
 
+                </div>
               </details>
             ))}
           </div>
