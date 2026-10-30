@@ -53,3 +53,11 @@ Décision utilisateur : conserver l'idée en backlog, **ne pas la développer ma
 - Ajouter une rubrique **« Acheter un bien immobilier en Tunisie »** dans le futur guide PDF, sans lancer la production du PDF maintenant.
 - Contenu envisagé : étapes de l'achat, rôle du notaire et de l'agence, titres fonciers, vérifications juridiques, frais et taxes, particularités pour les étrangers/non-résidents, financement et transfert des fonds, recours aux sources administratives officielles actualisées. Ne pas présenter un conseil juridique comme universel ; vérifier selon nationalité, statut et nature du terrain.
 - Relier à l'annuaire immobilier existant ; ne pas créer de doublon de section/site.
+
+
+### Guide PDF immobilier — parcours documentaire acheteur (décision du 30/10/2026)
+- Concevoir à terme un **parcours opérationnel d'achat immobilier en Tunisie**, plutôt qu'un exposé général : intervenants (agence, avocat, professionnel chargé de l'acte, expert immobilier, banque, administrations), ordre des démarches et rôles respectifs.
+- Chaque étape précise les **documents à fournir**, **par qui**, **à qui**, **qui les contrôle/valide**, **où les obtenir**, **durées de validité ou ancienneté demandée lorsque vérifiable**, et **moment de présentation**.
+- Inclure une checklist « dossier prêt avant le premier rendez-vous à l'agence », **avec son accord**, et distinguer pièces acheteur, vendeur et bien immobilier. Exemples à étudier : titre foncier / « titre bleu », identité, preuve d'origine des fonds, documents bancaires, procuration, attestations, autorisations administratives selon situation.
+- Séparer obligations légales selon nationalité, résidence, zone/type de bien et exigences propres aux professionnels ; sourcer auprès des autorités tunisiennes et professionnels compétents. Ne pas inventer de durées ni proposer le dépôt centralisé de documents sensibles sur Dalil Tounes sans protection adaptée.
+- **Ne pas produire le PDF maintenant** : idée et cahier des charges conservés pour une phase ultérieure.
