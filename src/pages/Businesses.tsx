@@ -999,6 +999,9 @@ export const Businesses = ({
       if (!selectedBusinessId && selectedCategory === 'finance') {
         console.log(`[DEBUG] Filtre Finance avec sous_categories:`, FINANCE_SUBCATEGORIES);
         query = query.or(FINANCE_SUBCATEGORIES.map(c => `sous_categories_texte.ilike.%${c}%`).join(','));
+      } else if (!selectedBusinessId && selectedCategory === 'immobilier') {
+        // La catégorie métier est un tableau; ne pas filtrer uniquement par la sous-catégorie texte.
+        query = query.contains('categorie', ['Immobilier']);
       } else if (!selectedBusinessId && selectedCategory) {
         console.log(`[DEBUG] Filtre Catégorie: "${selectedCategory}"`);
         query = query.ilike('sous_categories_texte', `%${selectedCategory}%`);
