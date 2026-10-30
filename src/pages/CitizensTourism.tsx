@@ -543,10 +543,7 @@ export default function CitizensTourism() {
                     <ol className="mt-2 list-decimal space-y-1.5 ps-4 text-xs leading-relaxed text-gray-700">
                       {schoolWorkGuides[lang].workSteps.map(step => <li key={step}>{step}</li>)}
                     </ol>
-                    <div className="mt-2 flex flex-wrap gap-3">
-                      <a href="https://home.registre-entreprises.tn/formalites/" target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-[#4A1D43] underline decoration-[#D4AF37] underline-offset-2">{schoolWorkGuides[lang].registerLink}</a>
-                      <a href="https://www.tunisieindustrie.nat.tn/fr/doc.asp?mcat=16&mrub=186&msrub=267" target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-[#4A1D43] underline decoration-[#D4AF37] underline-offset-2">{schoolWorkGuides[lang].apiLink}</a>
-                    </div>
+
                     <p className="mt-2 text-[11px] leading-relaxed text-gray-600">{schoolWorkGuides[lang].workNote}</p>
                   </div>
                 )}
@@ -558,7 +555,6 @@ export default function CitizensTourism() {
                         <div key={path.title}>
                           <p className="text-xs font-semibold text-[#4A1D43]">{path.title}</p>
                           <p className="mt-1 text-xs leading-relaxed text-gray-700">{path.text}</p>
-                          <a href={path.href} target="_blank" rel="noopener noreferrer" className="mt-1 inline-flex items-center gap-1 text-xs font-medium text-[#4A1D43] underline decoration-[#D4AF37] underline-offset-2">{path.link}<ExternalLink className="h-3 w-3" aria-hidden="true" /></a>
                         </div>
                       ))}
                     </div>
@@ -572,10 +568,7 @@ export default function CitizensTourism() {
                       {bankingGuide[lang].steps.map((step) => <li key={step}>{step}</li>)}
                     </ol>
                     <p className="mt-2 text-[11px] leading-relaxed text-gray-600">{bankingGuide[lang].caution}</p>
-                    <div className="mt-3 flex flex-wrap gap-3">
-                      <Link className="text-xs font-semibold text-[#4A1D43] underline decoration-[#D4AF37] underline-offset-2" to="/recherche?q=banque">{bankingGuide[lang].banks}</Link>
-                      <Link className="text-xs font-semibold text-[#4A1D43] underline decoration-[#D4AF37] underline-offset-2" to="/recherche?q=change">{bankingGuide[lang].exchange}</Link>
-                    </div>
+
                   </div>
                 )}
 
