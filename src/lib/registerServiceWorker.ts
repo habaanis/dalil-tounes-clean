@@ -39,13 +39,23 @@ export function registerServiceWorker(): void {
       navigator.serviceWorker.addEventListener('controllerchange', () => {
         if (!hadController) return;
 
-        if (
-          window.location.hostname === CLIENT_APP_HOST
-          && sessionStorage.getItem(CLIENT_RELOAD_KEY) !== '1'
-        ) {
-          sessionStorage.setItem(CLIENT_RELOAD_KEY, '1');
-          window.location.reload();
-          return;
+        if (window.location.hostname === CLIENT_APP_HOST) {
+          let alreadyReloaded = false;
+          try {
+            alreadyReloaded = sessionStorage.getItem(CLIENT_RELOAD_KEY) === '1';
+          } catch {
+            // Storage can be denied in restricted browsers.
+            alreadyReloaded = true;
+          }
+          if (!alreadyReloaded) {
+            try {
+              sessionStorage.setItem(CLIENT_RELOAD_KEY, '1');
+              window.location.reload();
+              return;
+            } catch {
+              // Avoid an uncontrolled reload loop if storage is unavailable.
+            }
+          }
         }
 
         announceUpdate();
