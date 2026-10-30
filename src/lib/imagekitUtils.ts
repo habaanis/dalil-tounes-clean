@@ -13,11 +13,11 @@ export const ImageKitTransforms = {
   CARD_LOGO: 'tr=w-400,h-300,fo-auto,q-85,f-auto',
 
   // Galerie photo (BusinessDetail) — WebP auto
-  GALLERY_THUMBNAIL: 'tr=w-500,h-400,fo-auto,q-85,f-auto',
+  GALLERY_THUMBNAIL: 'tr=w-440,h-352,fo-auto,q-78,f-auto',
   GALLERY_FULL: 'tr=w-1000,f-auto',
 
   // Images de couverture — WebP auto, max 800px
-  COVER_IMAGE: 'tr=w-800,h-600,fo-auto,q-85,f-auto',
+  COVER_IMAGE: 'tr=w-720,h-540,fo-auto,q-78,f-auto',
 
   // Vignettes petites — WebP auto
   THUMBNAIL_SMALL: 'tr=w-200,h-150,fo-auto,q-80,f-auto',
