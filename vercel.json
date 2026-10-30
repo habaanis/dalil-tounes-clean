@@ -1,149 +1,447 @@
 {
   "rewrites": [
-    { "source": "/recherche", "destination": "/index.html" },
-    { "source": "/businesses", "destination": "/index.html" },
-    { "source": "/entreprises-certifiees", "destination": "/index.html" },
-    { "source": "/business/:path*", "destination": "/index.html" },
-    { "source": "/entreprise/:path*", "destination": "/index.html" },
-    { "source": "/qr-business/:path*", "destination": "/index.html" },
+    {
+      "source": "/apercu-ouverture-prestige",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/recherche",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/businesses",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/entreprises-certifiees",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/business/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/entreprise/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/qr-business/:path*",
+      "destination": "/index.html"
+    },
     {
       "source": "/:clientSlug([a-z0-9-]+)",
-      "has": [{ "type": "host", "value": "app.dalil-tounes.com" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "app.dalil-tounes.com"
+        }
+      ],
       "destination": "/index.html"
     },
     {
       "source": "/:clientSlug([a-z0-9-]+)/cv",
-      "has": [{ "type": "host", "value": "app.dalil-tounes.com" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "app.dalil-tounes.com"
+        }
+      ],
       "destination": "/index.html"
     },
-    { "source": "/p/:slug", "destination": "/index.html" },
-    { "source": "/cv/:slug", "destination": "/index.html" },
-    { "source": "/jobs", "destination": "/index.html" },
-    { "source": "/emplois/:path*", "destination": "/index.html" },
-    { "source": "/citizens", "destination": "/index.html" },
-    { "source": "/citizens/:path*", "destination": "/index.html" },
-    { "source": "/education", "destination": "/index.html" },
-    { "source": "/education-event-form", "destination": "/index.html" },
-    { "source": "/culture-events", "destination": "/index.html" },
-    { "source": "/around-me", "destination": "/index.html" },
-    { "source": "/auth", "destination": "/index.html" },
-    { "source": "/login", "destination": "/index.html" },
-    { "source": "/signup", "destination": "/index.html" },
-    { "source": "/connexion", "destination": "/index.html" },
-    { "source": "/inscription", "destination": "/index.html" },
-    { "source": "/dashboard/:path*", "destination": "/index.html" },
-    { "source": "/inscription-entreprise", "destination": "/index.html" },
-    { "source": "/subscription", "destination": "/index.html" },
-    { "source": "/cv-business", "destination": "/index.html" },
-    { "source": "/paiement/:path*", "destination": "/index.html" },
-    { "source": "/concept", "destination": "/index.html" },
-    { "source": "/pourquoi-dalil-tounes", "destination": "/index.html" },
-    { "source": "/blog", "destination": "/index.html" },
-    { "source": "/blog/:slug", "destination": "/index.html" },
-    { "source": "/partner-search", "destination": "/index.html" },
-    { "source": "/partner-directory", "destination": "/index.html" },
-    { "source": "/business-events", "destination": "/index.html" },
-    { "source": "/besoins-professionnels", "destination": "/index.html" },
-    { "source": "/besoins-professionnels/public", "destination": "/index.html" },
-    { "source": "/transport-inscription", "destination": "/index.html" },
-    { "source": "/candidate-profile", "destination": "/index.html" },
-    { "source": "/candidates", "destination": "/index.html" },
-    { "source": "/candidats", "destination": "/index.html" },
-    { "source": "/business-list", "destination": "/index.html" },
-    { "source": "/suggest-business", "destination": "/index.html" },
-    { "source": "/admin/:path*", "destination": "/index.html" },
-    { "source": "/commercial", "destination": "/index.html" },
-    { "source": "/card-preview", "destination": "/index.html" },
-    { "source": "/searchDebug", "destination": "/index.html" },
-    { "source": "/debug/:path*", "destination": "/index.html" },
-    { "source": "/contact", "destination": "/index.html" },
-    { "source": "/mentions-legales", "destination": "/index.html" },
-    { "source": "/cgu", "destination": "/index.html" },
-    { "source": "/politique-confidentialite", "destination": "/index.html" },
-    { "source": "/plan-du-site", "destination": "/index.html" },
-    { "source": "/info-avis", "destination": "/index.html" },
-    { "source": "/devenir-partenaire", "destination": "/index.html" }
+    {
+      "source": "/p/:slug",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/cv/:slug",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/jobs",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/emplois/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/citizens",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/citizens/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/education",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/education-event-form",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/culture-events",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/around-me",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/auth",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/login",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/signup",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/connexion",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/inscription",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/dashboard/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/inscription-entreprise",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/subscription",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/cv-business",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/paiement/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/concept",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/pourquoi-dalil-tounes",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/blog",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/blog/:slug",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/partner-search",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/partner-directory",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/business-events",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/besoins-professionnels",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/besoins-professionnels/public",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/transport-inscription",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/candidate-profile",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/candidates",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/candidats",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/business-list",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/suggest-business",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/admin/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/commercial",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/card-preview",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/searchDebug",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/debug/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contact",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/mentions-legales",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/cgu",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/politique-confidentialite",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/plan-du-site",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/info-avis",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/devenir-partenaire",
+      "destination": "/index.html"
+    }
   ],
   "headers": [
     {
       "source": "/service-worker.js",
       "headers": [
-        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" },
-        { "key": "Service-Worker-Allowed", "value": "/" }
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        },
+        {
+          "key": "Service-Worker-Allowed",
+          "value": "/"
+        }
       ]
     },
     {
       "source": "/sitemap.xml",
       "headers": [
-        { "key": "Content-Type", "value": "application/xml" },
-        { "key": "Cache-Control", "value": "public, max-age=3600, s-maxage=3600" }
+        {
+          "key": "Content-Type",
+          "value": "application/xml"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, s-maxage=3600"
+        }
       ]
     },
     {
       "source": "/robots.txt",
-      "headers": [{ "key": "Content-Type", "value": "text/plain" }]
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/plain"
+        }
+      ]
     },
     {
       "source": "/assets/(.*)",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
     },
     {
       "source": "/fonts/(.*)",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
     },
     {
       "source": "/images/(.*)",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=604800, stale-while-revalidate=86400" }]
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=604800, stale-while-revalidate=86400"
+        }
+      ]
     },
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "DENY" },
-        { "key": "X-XSS-Protection", "value": "1; mode=block" }
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        }
       ]
     }
   ],
   "redirects": [
     {
       "source": "/",
-      "has": [{ "type": "host", "value": "app.dalil-tounes.com" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "app.dalil-tounes.com"
+        }
+      ],
       "destination": "https://dalil-tounes.com",
       "permanent": false
     },
     {
       "source": "/cv/:slug",
-      "has": [{ "type": "host", "value": "dalil-tounes.com" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "dalil-tounes.com"
+        }
+      ],
       "destination": "https://app.dalil-tounes.com/:slug/cv",
       "permanent": false
     },
     {
       "source": "/qr-business/:path*",
-      "has": [{ "type": "host", "value": "dalil-tounes.com" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "dalil-tounes.com"
+        }
+      ],
       "destination": "https://app.dalil-tounes.com/qr-business/:path*",
       "permanent": false
     },
     {
       "source": "/:path*",
-      "has": [{ "type": "host", "value": "www.dalil-tounes.com" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "www.dalil-tounes.com"
+        }
+      ],
       "destination": "https://dalil-tounes.com/:path*",
       "permanent": true
     },
-    { "source": "/entreprises", "destination": "/businesses", "permanent": true },
-    { "source": "/emploi", "destination": "/jobs", "permanent": true },
-    { "source": "/emplois", "destination": "/jobs", "permanent": true },
-    { "source": "/citizens/sante", "destination": "/citizens/health", "permanent": true },
-    { "source": "/citizens/loisirs", "destination": "/citizens/leisure", "permanent": true },
-    { "source": "/citizens/magasins", "destination": "/citizens/shops", "permanent": true },
-    { "source": "/citizens/tourisme", "destination": "/citizens/tourism", "permanent": true },
-    { "source": "/evenements", "destination": "/culture-events", "permanent": true },
-    { "source": "/marketplace", "destination": "/citizens", "permanent": true },
-    { "source": "/marche-local", "destination": "/citizens", "permanent": true },
-    { "source": "/local-marketplace", "destination": "/citizens", "permanent": true },
-    { "source": "/autour-de-moi", "destination": "/around-me", "permanent": true },
-    { "source": "/abonnement", "destination": "/subscription", "permanent": true },
-    { "source": "/notre-concept", "destination": "/concept", "permanent": true },
-    { "source": "/annuaire-partenaires", "destination": "/partner-directory", "permanent": true },
-    { "source": "/#/:path*", "destination": "/:path*", "permanent": true }
+    {
+      "source": "/entreprises",
+      "destination": "/businesses",
+      "permanent": true
+    },
+    {
+      "source": "/emploi",
+      "destination": "/jobs",
+      "permanent": true
+    },
+    {
+      "source": "/emplois",
+      "destination": "/jobs",
+      "permanent": true
+    },
+    {
+      "source": "/citizens/sante",
+      "destination": "/citizens/health",
+      "permanent": true
+    },
+    {
+      "source": "/citizens/loisirs",
+      "destination": "/citizens/leisure",
+      "permanent": true
+    },
+    {
+      "source": "/citizens/magasins",
+      "destination": "/citizens/shops",
+      "permanent": true
+    },
+    {
+      "source": "/citizens/tourisme",
+      "destination": "/citizens/tourism",
+      "permanent": true
+    },
+    {
+      "source": "/evenements",
+      "destination": "/culture-events",
+      "permanent": true
+    },
+    {
+      "source": "/marketplace",
+      "destination": "/citizens",
+      "permanent": true
+    },
+    {
+      "source": "/marche-local",
+      "destination": "/citizens",
+      "permanent": true
+    },
+    {
+      "source": "/local-marketplace",
+      "destination": "/citizens",
+      "permanent": true
+    },
+    {
+      "source": "/autour-de-moi",
+      "destination": "/around-me",
+      "permanent": true
+    },
+    {
+      "source": "/abonnement",
+      "destination": "/subscription",
+      "permanent": true
+    },
+    {
+      "source": "/notre-concept",
+      "destination": "/concept",
+      "permanent": true
+    },
+    {
+      "source": "/annuaire-partenaires",
+      "destination": "/partner-directory",
+      "permanent": true
+    },
+    {
+      "source": "/#/:path*",
+      "destination": "/:path*",
+      "permanent": true
+    }
   ]
 }
