@@ -84,3 +84,11 @@ Décision utilisateur : conserver l'idée en backlog, **ne pas la développer ma
 - Prévoir deux profondeurs de lecture (parcours rapide et parcours détaillé), étapes concrètes, listes à cocher, « qui contacter / quels documents / où les obtenir / qui vérifie / quand », exemples, liens et QR utiles, section « Mon prochain pas ».
 - Signaler systématiquement que les démarches, pièces, règles, tarifs, délais et décisions peuvent évoluer et doivent être **confirmés auprès des organismes officiels et professionnels compétents avant engagement** ; dates de vérification et sources.
 - Ne pas héberger les dossiers sensibles sans dispositif approprié. La rédaction et la production du PDF sont différées.
+
+
+### Banque, change et fiscalité — priorité aux démarches (30/10/2026)
+- Le cœur de la rubrique « S’installer en Tunisie » doit être **l'accompagnement dans les démarches**, et non une accumulation de banques et bureaux de change.
+- **Ne pas supprimer** les banques et bureaux de change : garder une sélection utile et géographiquement accessible, en privilégiant les établissements bien renseignés et dont les avis sont suffisamment nombreux et fiables (contrôle des notes et volumes d'avis, sans présenter les avis comme une garantie).
+- Mettre en avant : ouverture de comptes selon le statut (résident, non-résident, TRE), transferts de fonds internationaux, justificatifs, change réglementé, financement immobilier et formalités fiscales ; distinguer les règles selon situation et citer les sources officielles actualisées.
+- Garder des liens vers les établissements sélectionnés en complément des explications. Vérifier les fiches existantes Airtable avant tout ajout et ne pas créer de doublons.
+- Présentation envisagée : démarche expliquée en premier, puis « Où effectuer cette démarche ? » avec liens pertinents vers les banques/bureaux de change.
