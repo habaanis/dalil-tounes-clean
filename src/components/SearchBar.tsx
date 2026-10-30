@@ -104,6 +104,7 @@ export default function SearchBar({
   const [errEnt, setErrEnt] = React.useState<string | null>(null);
   const [errVille, setErrVille] = React.useState<string | null>(null);
   const searchSequence = React.useRef(0);
+  const citySequence = React.useRef(0);
   const tEnt = React.useRef<number | null>(null);
   const tVille = React.useRef<number | null>(null);
   const tAutoSearch = React.useRef<number | null>(null);
@@ -348,6 +349,7 @@ export default function SearchBar({
   const onChangeCity = (e: React.ChangeEvent<HTMLInputElement>) => {
     const v = e.currentTarget.value ?? '';
     setCity(v);
+    const cityRequestId = ++citySequence.current;
     if (tVille.current) window.clearTimeout(tVille.current);
     tVille.current = window.setTimeout(async () => {
       if (v.trim().length < MIN_CHARS) {
@@ -382,9 +384,9 @@ export default function SearchBar({
           return true;
         });
 
-        setVilles(unique.slice(0, 8));
+        if (cityRequestId === citySequence.current) setVilles(unique.slice(0, 8));
       } finally {
-        setLoadingVille(false);
+        if (cityRequestId === citySequence.current) setLoadingVille(false);
       }
     }, 350);
   };
