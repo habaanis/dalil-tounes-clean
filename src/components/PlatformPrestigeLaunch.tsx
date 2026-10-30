@@ -17,13 +17,13 @@ export function PlatformPrestigeLaunch() {
   useEffect(() => {
     if (!visible) return;
     // Never prevent the visitor from accessing Dalil Tounes.
-    const safety = window.setTimeout(() => setVisible(false), 4200);
+    const safety = window.setTimeout(() => setVisible(false), 8500);
     return () => window.clearTimeout(safety);
   }, [visible]);
 
   useEffect(() => {
     if (!visible || !imageReady) return;
-    const timeout = window.setTimeout(() => setVisible(false), 2200);
+    const timeout = window.setTimeout(() => setVisible(false), 5200);
     return () => window.clearTimeout(timeout);
   }, [visible, imageReady]);
 
