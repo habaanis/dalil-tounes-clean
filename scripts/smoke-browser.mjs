@@ -82,7 +82,7 @@ try {
     const result = page.locator('body li.cursor-pointer').first();
     await result.waitFor({state:'visible',timeout:15000});
     await result.click();
-    await page.waitForURL(/\\/entreprise\\/id\\//, {timeout:15000});
+    await page.waitForURL(url => url.pathname.startsWith('/entreprise/id/'), {timeout:15000});
     await page.locator('#root').waitFor({state:'visible',timeout:12000});
     if (searchErrors.length) throw new Error(searchErrors.join(' | '));
     console.log('PASS Search suggestion -> Business detail');
