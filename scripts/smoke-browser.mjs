@@ -69,6 +69,29 @@ try {
       page.off('pageerror',listener);
     }
   }
+  // Search -> suggestion -> business detail. Uses a broad term to avoid test-specific records.
+  const searchErrors = [];
+  const onSearchError = (error) => searchErrors.push(error.message);
+  page.on('pageerror', onSearchError);
+  try {
+    await page.goto(new URL('/recherche', base).toString(), {waitUntil:'domcontentloaded',timeout:20000});
+    const queryInput = page.locator('[data-component-name="SearchBar"] input').first();
+    await queryInput.waitFor({state:'visible',timeout:15000});
+    await queryInput.fill('restaurant');
+    // Suggestions are rendered through a portal outside the SearchBar DOM subtree.
+    const result = page.locator('body li.cursor-pointer').first();
+    await result.waitFor({state:'visible',timeout:15000});
+    await result.click();
+    await page.waitForURL(/\\/entreprise\\/id\\//, {timeout:15000});
+    await page.locator('#root').waitFor({state:'visible',timeout:12000});
+    if (searchErrors.length) throw new Error(searchErrors.join(' | '));
+    console.log('PASS Search suggestion -> Business detail');
+  } catch(error) {
+    failed++;
+    console.log('FAIL Search suggestion -> Business detail: ' + error.message);
+  } finally {
+    page.off('pageerror',onSearchError);
+  }
 } finally {
   await browser.close();
 }
