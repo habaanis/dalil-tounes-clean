@@ -1,8 +1,8 @@
 // Dalil Tounes Service Worker
-// Version: 1.4.1
+// Version: 1.4.2
 // Strategie: Network-First pour le HTML, cache valide uniquement pour les assets
 
-const CACHE_VERSION = 'v13';
+const CACHE_VERSION = 'v14';
 const STATIC_CACHE = `dalil-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `dalil-dynamic-${CACHE_VERSION}`;
 
