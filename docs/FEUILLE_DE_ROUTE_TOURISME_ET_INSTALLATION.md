@@ -69,3 +69,11 @@ Décision utilisateur : conserver l'idée en backlog, **ne pas la développer ma
 - Préciser que **toute décision finale et toute information déterminante doivent être vérifiées** auprès des administrations tunisiennes compétentes et des professionnels concernés (agence, avocat, notaire, banque, expert), selon le profil de l'acheteur et le bien.
 - Pour les pièces documentaires, ne fournir une durée de validité que si elle est sourcée et datée ; sinon indiquer « à confirmer auprès du service compétent ».
 - Prévoir cet avertissement en introduction et au niveau des étapes sensibles, sans rendre le guide alarmiste. **Production du PDF toujours reportée**.
+
+
+### Guide PDF — expérience ludique, utile et prudence documentaire (validation du 30/10/2026)
+- Le futur guide **ne doit pas être seulement lisible** : concevoir une expérience pratique, visuelle et engageante, avec parcours étape par étape, checklists à cocher, tableaux « qui fait quoi », schémas de décision, exemples concrets, espaces pour noter ses démarches et éventuellement liens/QR vers sources officielles ou annuaire Dalil Tounes.
+- Pour l'achat immobilier, faciliter un **dossier préparatoire à remettre à une agence avec son accord**, sans inciter à envoyer spontanément des pièces personnelles sensibles ; distinguer clairement pièces de l'acheteur, du vendeur et du bien.
+- **Prudence juridique et administrative obligatoire :** toujours signaler que réglementation, frais, exigences, délais, documents et décisions définitives peuvent varier ou évoluer ; inviter le lecteur à **revérifier les informations les plus récentes auprès des autorités et professionnels compétents avant toute décision, signature ou paiement**.
+- Indiquer date de dernière vérification, sources officielles et limites du guide ; ne jamais présenter les durées de validité ou obligations comme acquises sans source fiable. Adapter le parcours au statut (nationalité/résidence), au type de bien et à l'opération.
+- **Ne pas lancer la réalisation du PDF à ce stade** ; conserver ces critères pour la phase dédiée.
