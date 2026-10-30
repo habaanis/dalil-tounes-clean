@@ -495,7 +495,7 @@ export default function CitizensTourism() {
         </div>
       </section>
 
-      {journeyMode === 'settle' && <section className="py-2 px-4 relative z-[9999]" style={{ overflow: 'visible' }}>
+      {journeyMode === 'settle' && <section className="py-2 px-4 relative z-0" style={{ overflow: 'visible' }}>
         <div className="max-w-5xl mx-auto" style={{ overflow: 'visible' }}>
           <div className="bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-[#D4AF37] p-2.5 md:p-3" style={{ overflow: 'visible' }}>
             <SearchBar
@@ -553,9 +553,9 @@ export default function CitizensTourism() {
                 <div className="mt-3 flex items-start gap-2">
                   <p className="min-w-0 flex-1 text-xs font-medium leading-relaxed text-[#4A1D43]">{settleServiceIntros[lang][topicIndex]}</p>
                   {SETTLEMENT_SERVICE_PATHS[topicIndex] && (
-                    <Link to={SETTLEMENT_SERVICE_PATHS[topicIndex]} aria-label={settlementServiceLinkLabels[lang] + ' — ' + topic.title} title={settlementServiceLinkLabels[lang]} className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#D4AF37]/60 bg-[#FFF8E8] text-[#4A1D43] transition hover:bg-[#F3E2B5] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#4A1D43]">
+                    <a href={SETTLEMENT_SERVICE_PATHS[topicIndex]} aria-label={settlementServiceLinkLabels[lang] + ' — ' + topic.title} title={settlementServiceLinkLabels[lang]} className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#D4AF37]/60 bg-[#FFF8E8] text-[#4A1D43] transition hover:bg-[#F3E2B5] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#4A1D43]">
                       <ExternalLink className="h-4 w-4" aria-hidden="true" />
-                    </Link>
+                    </a>
                   )}
                 </div>
                 <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-[#7C5A31]">{({fr:'À faire',ar:'الخطوات',en:'What to do',it:'Cosa fare',ru:'Что делать'} as Record<PublicLanguage, string>)[lang]}</p>
