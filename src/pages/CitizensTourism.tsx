@@ -534,8 +534,8 @@ export default function CitizensTourism() {
                   <span className="flex shrink-0 items-center gap-1.5"><span className="hidden text-[11px] font-semibold text-[#4A1D43] max-md:group-open:inline">{({fr:'Fermer',ar:'إغلاق',en:'Close',it:'Chiudi',ru:'Закрыть'} as Record<PublicLanguage, string>)[lang]}</span><ChevronDown className="h-4 w-4 text-[#D4AF37] transition-transform group-open:rotate-180" aria-hidden="true" /></span>
                 </summary>
                 <div className="max-md:group-open:min-h-0 max-md:group-open:flex-1 max-md:group-open:overflow-y-auto max-md:group-open:overscroll-contain max-md:group-open:px-4 max-md:group-open:pb-6">
-                <p className="mt-2 text-xs font-medium leading-relaxed text-[#4A1D43]">{settleServiceIntros[lang][topicIndex]}</p>
-                <p className="mt-1.5 text-xs leading-relaxed text-gray-600">{topic.text}</p>
+                <p className="mt-3 text-xs font-medium leading-relaxed text-[#4A1D43]">{settleServiceIntros[lang][topicIndex]}</p>
+                <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-[#7C5A31]">{({fr:'À faire',ar:'الخطوات',en:'What to do',it:'Cosa fare',ru:'Что делать'} as Record<PublicLanguage, string>)[lang]}</p>
                 {([1, 2, 7].includes(topicIndex)) && (
                   <div className="mt-3 rounded-lg border border-[#D4AF37]/30 bg-white p-3">
                     <ol className="list-decimal space-y-1.5 ps-4 text-xs leading-relaxed text-gray-700">
@@ -600,7 +600,9 @@ export default function CitizensTourism() {
                   <div className="mt-3 rounded-lg border border-[#D4AF37]/30 bg-[#FFFDF8] p-3">
                     <p className="text-xs font-semibold text-[#4A1D43]">{settlementPrep[lang].heading}</p>
                     <p className="mt-1.5 text-xs leading-relaxed text-gray-700">{settlementPrep[lang].items[topicIndex]}</p>
-                    <p className="mt-1.5 text-[11px] leading-relaxed text-gray-500">{settlementPrep[lang].disclaimer}</p>
+                  </div>
+                  <p className="mt-3 border-t border-[#D4AF37]/20 pt-2 text-[11px] leading-relaxed text-gray-500">{settlementPrep[lang].disclaimer}</p>
+                  <div className="hidden">
                   </div>
                 </div>
               </details>
