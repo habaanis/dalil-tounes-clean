@@ -107,9 +107,12 @@ export default function BusinessShowcaseLienoraEnhanced() {
       if (!cancelled) { if (record) rememberShowcaseRecord(record); setBusiness(record); }
     };
 
-    void load();
+    // The detail component renders the CV immediately; its Google reviews
+    // enhancement is secondary and must not compete for the initial network.
+    const timer = window.setTimeout(() => { void load(); }, 1200);
     return () => {
       cancelled = true;
+      window.clearTimeout(timer);
     };
   }, [id, slug]);
 
