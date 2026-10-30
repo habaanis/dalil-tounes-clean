@@ -1,3 +1,4 @@
+import { cachedShowcaseRecord, rememberShowcaseRecord } from '../lib/showcaseRecordCache';
 import { useEffect, useMemo, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
@@ -111,14 +112,14 @@ export default function BusinessShowcaseDetail() {
       setFailed(false);
 
       try {
-        let record: BusinessRecord | null = null;
+        let record: BusinessRecord | null = cachedShowcaseRecord(urlId || urlSlug) as BusinessRecord | null;
         const isClientAppPath = location.pathname.startsWith('/qr-business/')
           || isDedicatedClientHostname(window.location.hostname);
         const fullUuid = urlId || urlSlug?.match(
           /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i,
         )?.[0];
 
-        if (fullUuid) {
+        if (!record && fullUuid) {
           const { data } = await supabase
             .from('entreprise')
             .select('*')
@@ -192,6 +193,7 @@ export default function BusinessShowcaseDetail() {
           return;
         }
 
+        rememberShowcaseRecord(record as Record<string, unknown>);
         setBusiness(record);
 
         const canonicalPath = buildEntrepriseUrl(record);
