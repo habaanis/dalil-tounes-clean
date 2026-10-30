@@ -617,10 +617,10 @@ export default function CitizensTourism() {
                     <p className="text-xs font-semibold text-[#4A1D43]">{customsGuide[lang].title}</p>
                     <div className="mt-2 space-y-3">
                       {customsGuide[lang].paths.map((path) => (
-                        <div key={path.title}>
-                          <p className="text-xs font-semibold text-[#4A1D43]">{path.title}</p>
-                          <p className="mt-1 text-xs leading-relaxed text-gray-700">{path.text}</p>
-                        </div>
+                        <details key={path.title} className="rounded-md border border-[#D4AF37]/25 bg-[#FFFDF8] p-2">
+                          <summary className="cursor-pointer text-xs font-semibold text-[#4A1D43]">{path.title}</summary>
+                          <p className="mt-2 text-xs leading-relaxed text-gray-700">{path.text}</p>
+                        </details>
                       ))}
                     </div>
                     <p className="mt-3 text-[11px] leading-relaxed text-gray-600">{customsGuide[lang].caution}</p>
