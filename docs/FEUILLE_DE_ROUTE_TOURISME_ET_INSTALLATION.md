@@ -61,3 +61,11 @@ Décision utilisateur : conserver l'idée en backlog, **ne pas la développer ma
 - Inclure une checklist « dossier prêt avant le premier rendez-vous à l'agence », **avec son accord**, et distinguer pièces acheteur, vendeur et bien immobilier. Exemples à étudier : titre foncier / « titre bleu », identité, preuve d'origine des fonds, documents bancaires, procuration, attestations, autorisations administratives selon situation.
 - Séparer obligations légales selon nationalité, résidence, zone/type de bien et exigences propres aux professionnels ; sourcer auprès des autorités tunisiennes et professionnels compétents. Ne pas inventer de durées ni proposer le dépôt centralisé de documents sensibles sur Dalil Tounes sans protection adaptée.
 - **Ne pas produire le PDF maintenant** : idée et cahier des charges conservés pour une phase ultérieure.
+
+
+### Principe de prudence du futur PDF immobilier — validé le 30/10/2026
+- Le PDF est un **guide pratique d'orientation**, non un avis juridique, fiscal ou bancaire et non une garantie d'exhaustivité.
+- Afficher clairement une **date de mise à jour** et avertir que les lois, autorisations, procédures, pièces exigées, tarifs et délais peuvent changer.
+- Préciser que **toute décision finale et toute information déterminante doivent être vérifiées** auprès des administrations tunisiennes compétentes et des professionnels concernés (agence, avocat, notaire, banque, expert), selon le profil de l'acheteur et le bien.
+- Pour les pièces documentaires, ne fournir une durée de validité que si elle est sourcée et datée ; sinon indiquer « à confirmer auprès du service compétent ».
+- Prévoir cet avertissement en introduction et au niveau des étapes sensibles, sans rendre le guide alarmiste. **Production du PDF toujours reportée**.
