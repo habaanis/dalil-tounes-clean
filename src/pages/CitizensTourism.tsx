@@ -223,6 +223,14 @@ const customsGuide: Record<PublicLanguage, { title: string; paths: { title: stri
   ], caution: 'Правила, возрастные ограничения, льготы и сроки могут меняться. Уточняйте их в таможне до покупки или отправки.' }
 };
 
+const schoolWorkGuides: Record<PublicLanguage, { schoolTitle: string; schoolSteps: string[]; schoolNote: string; workTitle: string; workSteps: string[]; workNote: string; registerLink: string; apiLink: string }> = {
+  fr: { schoolTitle: 'Préparer une inscription scolaire', schoolSteps: ['Choisissez le système : public tunisien, privé, international ou français, puis identifiez les écoles de la région.', 'Demandez directement les conditions d’admission, la disponibilité des places et le calendrier.', 'Préparez les bulletins scolaires, pièces d’identité et autres justificatifs demandés, avec traductions ou équivalences si nécessaires.'], schoolNote: 'Les documents et priorités d’admission varient selon l’établissement et le niveau : obtenez sa liste actualisée avant tout déménagement.', workTitle: 'Travailler ou créer son activité', workSteps: ['Distinguez emploi salarié, activité indépendante et création de société ; les règles dépendent notamment de votre nationalité et de votre statut.', 'Pour créer une activité, vérifiez les autorisations éventuelles, la déclaration d’existence fiscale et l’immatriculation au RNE.', 'Préparez le type d’activité, une adresse/domiciliation et les justificatifs demandés ; confirmez le régime social et fiscal avant de démarrer.'], workNote: 'Conditions d’emploi des étrangers, autorisations, formalités et tarifs peuvent changer : vérifiez auprès des autorités compétentes.', registerLink: 'Formalités du registre des entreprises', apiLink: 'Guichet unique pour créer une entreprise' },
+  ar: { schoolTitle: 'الاستعداد للتسجيل المدرسي', schoolSteps: ['اختر نوع التعليم: العمومي أو الخاص أو الدولي أو الفرنسي، وابحث عن المدارس القريبة.', 'اسأل المؤسسة عن شروط القبول والأماكن المتوفرة ومواعيد التسجيل.', 'حضّر الكشوف المدرسية ووثائق الهوية وما تطلبه المؤسسة من ترجمات أو معادلات.'], schoolNote: 'تختلف الوثائق ومواعيد التسجيل حسب المؤسسة والمستوى. تأكد من القائمة الحديثة قبل الانتقال.', workTitle: 'العمل أو إنشاء مشروع', workSteps: ['حدّد هل تريد العمل بأجر أو نشاطاً فردياً أو تأسيس شركة، وتحقق من شروط إقامتك وجنسيتك.', 'عند إنشاء مشروع تحقق من التراخيص والتصريح بالوجود الجبائي والتسجيل بالسجل الوطني للمؤسسات.', 'حضّر وصف النشاط والعنوان والوثائق المطلوبة، واسأل عن الالتزامات الجبائية والاجتماعية.'], workNote: 'قد تتغير شروط عمل الأجانب والتراخيص والإجراءات والمعاليم. تأكد لدى الإدارات المعنية.', registerLink: 'إجراءات السجل الوطني للمؤسسات', apiLink: 'الشباك الموحد لإنشاء مؤسسة' },
+  en: { schoolTitle: 'Prepare a school enrolment', schoolSteps: ['Choose a public, private, international or French curriculum and identify schools in your area.', 'Ask the school about eligibility, available places, enrolment dates and fees.', 'Prepare school reports, identity documents and any translations or equivalency documents the school requests.'], schoolNote: 'Requirements vary by school and grade. Get an up-to-date checklist directly from the school before moving.', workTitle: 'Work or set up a business', workSteps: ['Distinguish employment, self-employment and company formation; your nationality and residence status matter.', 'Check business permits, tax registration and registration with Tunisia’s National Business Register (RNE).', 'Prepare a business activity description, address and supporting documents; confirm tax and social-security rules first.'], workNote: 'Work permits, eligibility, procedures and fees may change. Confirm with the relevant authorities.', registerLink: 'Business-register procedures', apiLink: 'Business creation one-stop shop' },
+  it: { schoolTitle: 'Preparare l’iscrizione scolastica', schoolSteps: ['Scegli tra scuola pubblica, privata, internazionale o francese e cerca gli istituti nella tua zona.', 'Chiedi requisiti, posti disponibili, scadenze e costi direttamente alla scuola.', 'Prepara pagelle, documenti di identità ed eventuali traduzioni o equipollenze richieste.'], schoolNote: 'I requisiti variano in base alla scuola e alla classe: richiedi l’elenco aggiornato prima del trasferimento.', workTitle: 'Lavorare o avviare un’attività', workSteps: ['Distingui lavoro dipendente, autonomo e costituzione di società: contano nazionalità e residenza.', 'Verifica autorizzazioni, dichiarazione fiscale di inizio attività e iscrizione al registro RNE.', 'Prepara descrizione dell’attività, indirizzo e documenti, verificando regime fiscale e previdenziale.'], workNote: 'Permessi, procedure e costi possono cambiare. Verifica con le autorità competenti.', registerLink: 'Procedure del registro imprese', apiLink: 'Sportello unico per le imprese' },
+  ru: { schoolTitle: 'Подготовка к поступлению в школу', schoolSteps: ['Выберите государственную, частную, международную или французскую школу и найдите варианты рядом.', 'Уточните в школе условия приема, наличие мест, сроки и стоимость.', 'Подготовьте табели, удостоверения личности и необходимые переводы или подтверждение эквивалентности.'], schoolNote: 'Требования зависят от школы и класса. Перед переездом запросите актуальный перечень документов.', workTitle: 'Работа или открытие бизнеса', workSteps: ['Различайте работу по найму, самозанятость и создание компании: важны гражданство и статус пребывания.', 'Проверьте разрешения, постановку на налоговый учет и регистрацию в реестре предприятий RNE.', 'Подготовьте описание деятельности, адрес и необходимые документы; уточните налоговые и социальные обязательства.'], workNote: 'Разрешения на работу, процедуры и сборы могут изменяться. Уточняйте в компетентных органах.', registerLink: 'Регистрация предприятия в RNE', apiLink: 'Единое окно создания бизнеса' }
+};
+
 type JourneyMode = 'visit' | 'settle';
 
 const journeyCopy: Record<PublicLanguage, {
@@ -488,6 +496,28 @@ export default function CitizensTourism() {
                   <ChevronDown className={`h-4 w-4 flex-shrink-0 -rotate-90 text-[#D4AF37] ${isRTL ? 'rotate-90' : ''}`} aria-hidden="true" />
                 </div>
                 <p className="mt-1.5 text-xs leading-relaxed text-gray-600">{topic.text}</p>
+                {topicIndex === 3 && (
+                  <div className="mt-3 rounded-lg border border-[#D4AF37]/30 bg-white p-3">
+                    <p className="text-xs font-semibold text-[#4A1D43]">{schoolWorkGuides[lang].schoolTitle}</p>
+                    <ol className="mt-2 list-decimal space-y-1.5 ps-4 text-xs leading-relaxed text-gray-700">
+                      {schoolWorkGuides[lang].schoolSteps.map(step => <li key={step}>{step}</li>)}
+                    </ol>
+                    <p className="mt-2 text-[11px] leading-relaxed text-gray-600">{schoolWorkGuides[lang].schoolNote}</p>
+                  </div>
+                )}
+                {topicIndex === 6 && (
+                  <div className="mt-3 rounded-lg border border-[#D4AF37]/30 bg-white p-3">
+                    <p className="text-xs font-semibold text-[#4A1D43]">{schoolWorkGuides[lang].workTitle}</p>
+                    <ol className="mt-2 list-decimal space-y-1.5 ps-4 text-xs leading-relaxed text-gray-700">
+                      {schoolWorkGuides[lang].workSteps.map(step => <li key={step}>{step}</li>)}
+                    </ol>
+                    <div className="mt-2 flex flex-wrap gap-3">
+                      <a href="https://home.registre-entreprises.tn/formalites/" target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-[#4A1D43] underline decoration-[#D4AF37] underline-offset-2">{schoolWorkGuides[lang].registerLink}</a>
+                      <a href="https://www.tunisieindustrie.nat.tn/fr/doc.asp?mcat=16&mrub=186&msrub=267" target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-[#4A1D43] underline decoration-[#D4AF37] underline-offset-2">{schoolWorkGuides[lang].apiLink}</a>
+                    </div>
+                    <p className="mt-2 text-[11px] leading-relaxed text-gray-600">{schoolWorkGuides[lang].workNote}</p>
+                  </div>
+                )}
                 {topicIndex === 5 && (
                   <div className="mt-3 rounded-lg border border-[#D4AF37]/30 bg-white p-3">
                     <p className="text-xs font-semibold text-[#4A1D43]">{customsGuide[lang].title}</p>
