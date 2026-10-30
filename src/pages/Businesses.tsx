@@ -482,10 +482,14 @@ export const Businesses = ({
       setBusinessActivitiesByCompany(grouped);
     }
 
-    fetchBusinessNeedActivities();
+    // Let the visible business results start loading before this secondary activity feed.
+    const activityDelay = window.setTimeout(() => {
+      if (active) void fetchBusinessNeedActivities();
+    }, 700);
 
     return () => {
       active = false;
+      window.clearTimeout(activityDelay);
     };
   }, []);
 
