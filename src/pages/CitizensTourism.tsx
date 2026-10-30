@@ -175,7 +175,7 @@ const settleServiceIntros: Record<PublicLanguage, string[]> = {
   ],
   it: [
     'Scopri i passaggi per visto e soggiorno e prepara i documenti adatti alla tua situazione.',
-    'Prepara la ricerca di casa; la freccia apre l'elenco delle agenzie immobiliari.',
+    'Prepara la ricerca di casa; la freccia apre la lista delle agenzie immobiliari.',
     'Troverai medici di base, specialisti, dentisti, ospedali, cliniche e farmacie nella pagina Salute.',
     'Troverai scuole, istituti e informazioni pratiche per le iscrizioni.',
     'Troverai indicazioni su conti bancari, trasferimenti, cambio e adempimenti fiscali.',
