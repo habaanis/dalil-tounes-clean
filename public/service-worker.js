@@ -16,6 +16,9 @@ const ASSET_RE = /\.(js|css|png|jpg|jpeg|webp|svg|gif|woff|woff2|ttf|eot)$/;
 function shouldBypass(request) {
   const url = new URL(request.url);
 
+  // Do not cache any third-party resources or responses.
+  if (url.origin !== self.location.origin) return true;
+
   // Never intercept non-GET requests (POST reservations, etc.)
   if (request.method !== 'GET') return true;
 
