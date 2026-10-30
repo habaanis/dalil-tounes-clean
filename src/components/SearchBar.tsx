@@ -362,17 +362,18 @@ export default function SearchBar({
         const variants = expandCityVariants(v, language as Lang);
         const allCities: VilleItem[] = [];
 
-        for (const variant of variants) {
-          const resp = await supabase
+        // Resolve the spelling variants together rather than one network round-trip at a time.
+        const responses = await Promise.all(variants.map((variant) =>
+          supabase
             .from(Tables.CITIES)
             .select('nom')
             .ilike('nom', like(variant))
             .order('nom', { ascending: true })
-            .limit(8);
-
-          if (resp.data) {
-            allCities.push(...resp.data.map((row: { nom: string }) => ({ ville: row.nom })));
-          }
+            .limit(8)
+        ));
+        if (cityRequestId !== citySequence.current) return;
+        for (const resp of responses) {
+          if (resp.data) allCities.push(...resp.data.map((row: { nom: string }) => ({ ville: row.nom })));
           if (resp.error) setErrVille(resp.error.message);
         }
 
