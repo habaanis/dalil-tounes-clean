@@ -187,6 +187,14 @@ const settleActionLabels: Record<PublicLanguage, string[]> = {
   ru: ['Открыть официальные правила пребывания', 'Открыть каталог для поиска услуг жилья и переезда', 'Найти врача, больницу или клинику на странице «Здоровье»', 'Перейти на страницу «Образование»', 'Открыть официальные налоговые сервисы', 'Открыть официальные таможенные правила', 'Открыть официальные ресурсы для бизнеса', 'Открыть страницу магазинов'],
 };
 
+const bankingGuide: Record<PublicLanguage, { title: string; steps: string[]; caution: string; banks: string; exchange: string }> = {
+  fr: { title: 'Par où commencer ?', steps: ['Identifiez votre situation : résident, non-résident ou Tunisien résidant à l’étranger.', 'Demandez à la banque quels comptes sont accessibles à votre statut et quelles pièces elle exige.', 'Avant un virement international ou un achat immobilier, vérifiez les justificatifs d’origine des fonds et les règles de change.', 'Pour les impôts, utilisez les services officiels et demandez un avis adapté à votre situation.'], caution: 'Règles, documents et frais peuvent évoluer : confirmez toujours les exigences auprès de la banque et des autorités compétentes avant toute opération.', banks: 'Trouver une banque', exchange: 'Rechercher un bureau de change' },
+  ar: { title: 'من أين تبدأ؟', steps: ['حدّد وضعيتك: مقيم أو غير مقيم أو تونسي مقيم بالخارج.', 'اسأل البنك عن أنواع الحسابات المتاحة والوثائق المطلوبة حسب وضعيتك.', 'قبل تحويل الأموال أو شراء عقار، تحقّق من إثبات مصدر الأموال وقواعد الصرف.', 'للإجراءات الجبائية، راجع الخدمات الرسمية واطلب مشورة مناسبة لوضعيتك.'], caution: 'قد تتغير القواعد والوثائق والمعاليم. تأكّد من البنك والجهات الرسمية قبل أي إجراء.', banks: 'البحث عن بنك', exchange: 'البحث عن مكتب صرف' },
+  en: { title: 'Where should you start?', steps: ['Identify your status: resident, non-resident or Tunisian living abroad.', 'Ask the bank which accounts suit your status and which documents it requires.', 'Before transferring funds or buying property, check proof-of-funds requirements and exchange-control rules.', 'For tax matters, consult official services and seek advice specific to your situation.'], caution: 'Rules, documents and fees may change. Confirm current requirements with the bank and relevant authorities before acting.', banks: 'Find a bank', exchange: 'Find a currency exchange office' },
+  it: { title: 'Da dove iniziare?', steps: ['Definisci il tuo status: residente, non residente o tunisino residente all’estero.', 'Chiedi alla banca quali conti sono disponibili e quali documenti richiede.', 'Prima di trasferimenti o acquisti immobiliari, verifica le prove dell’origine dei fondi e le regole valutarie.', 'Per il fisco, consulta i servizi ufficiali e chiedi indicazioni adeguate alla tua situazione.'], caution: 'Norme, documenti e costi possono cambiare. Verifica sempre con banca e autorità competenti.', banks: 'Cerca una banca', exchange: 'Cerca un ufficio di cambio' },
+  ru: { title: 'С чего начать?', steps: ['Уточните свой статус: резидент, нерезидент или тунисец, проживающий за границей.', 'Узнайте в банке, какие счета доступны и какие документы необходимы.', 'Перед переводом средств или покупкой недвижимости проверьте требования к подтверждению происхождения средств и валютные правила.', 'По налоговым вопросам используйте официальные сервисы и получите консультацию с учётом своей ситуации.'], caution: 'Правила, документы и сборы могут меняться. Уточняйте требования в банке и государственных органах.', banks: 'Найти банк', exchange: 'Найти обменный пункт' }
+};
+
 type JourneyMode = 'visit' | 'settle';
 
 const journeyCopy: Record<PublicLanguage, {
@@ -452,6 +460,19 @@ export default function CitizensTourism() {
                   <ChevronDown className={`h-4 w-4 flex-shrink-0 -rotate-90 text-[#D4AF37] ${isRTL ? 'rotate-90' : ''}`} aria-hidden="true" />
                 </div>
                 <p className="mt-1.5 text-xs leading-relaxed text-gray-600">{topic.text}</p>
+                {topicIndex === 4 && (
+                  <div className="mt-3 rounded-lg border border-[#D4AF37]/30 bg-white p-3">
+                    <p className="text-xs font-semibold text-[#4A1D43]">{bankingGuide[lang].title}</p>
+                    <ol className="mt-2 list-decimal space-y-1.5 ps-4 text-xs leading-relaxed text-gray-700">
+                      {bankingGuide[lang].steps.map((step) => <li key={step}>{step}</li>)}
+                    </ol>
+                    <p className="mt-2 text-[11px] leading-relaxed text-gray-600">{bankingGuide[lang].caution}</p>
+                    <div className="mt-3 flex flex-wrap gap-3">
+                      <Link className="text-xs font-semibold text-[#4A1D43] underline decoration-[#D4AF37] underline-offset-2" to="/recherche?q=banque">{bankingGuide[lang].banks}</Link>
+                      <Link className="text-xs font-semibold text-[#4A1D43] underline decoration-[#D4AF37] underline-offset-2" to="/recherche?q=change">{bankingGuide[lang].exchange}</Link>
+                    </div>
+                  </div>
+                )}
                 <ul className="mt-2 hidden flex-wrap gap-1.5 sm:flex" aria-label={topic.title}>
                   {visitExamples[lang][topicIndex].slice(0, 3).map((example) => (
                     <li key={example} className="rounded-full border border-[#D4AF37]/35 bg-white px-2.5 py-1 text-[11px] leading-tight text-gray-700">{example}</li>
