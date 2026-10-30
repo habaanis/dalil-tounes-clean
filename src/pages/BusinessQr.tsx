@@ -35,6 +35,7 @@ interface BusinessQrRecord {
   cv_business_status?: string | null;
   modele_cv?: string | null;
   palette_cv?: string | null;
+  opening_style?: 'photo' | 'framed' | null;
 }
 
 interface BeforeInstallPromptEvent extends Event {
@@ -182,10 +183,7 @@ export default function BusinessQr() {
       || (navigator as Navigator & { standalone?: boolean }).standalone === true;
     return new URLSearchParams(window.location.search).get('source') === 'pwa' || isStandalone;
   });
-  const [openingStyle, setOpeningStyle] = useState<ClientOpeningStyle>(() => {
-    try { return localStorage.getItem('dalil:client-opening-style:' + identifier) === 'framed' ? 'framed' : 'photo'; }
-    catch { return 'photo'; }
-  });
+  const [openingStyle, setOpeningStyle] = useState<ClientOpeningStyle>('photo');
   const launchPalette = new URLSearchParams(window.location.search).get('palette');
   const paletteTheme = getCvPaletteTheme(business?.palette_cv || launchPalette);
   const cvModel: CvModel = String(business?.modele_cv || '').toLowerCase().includes('portfolio')
@@ -206,7 +204,7 @@ export default function BusinessQr() {
       }
       const selectBusiness = () => supabase
         .from('entreprise')
-        .select('id, nom, slug, slug_court, ville, categorie, name_ar, name_en, name_it, name_ru, categorie_ar, image_url, logo_url, statut_abonnement, cv_business_status, modele_cv, palette_cv');
+        .select('id, nom, slug, slug_court, ville, categorie, name_ar, name_en, name_it, name_ru, categorie_ar, image_url, logo_url, statut_abonnement, cv_business_status, modele_cv, palette_cv, opening_style');
       const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(identifier);
       let data: BusinessQrRecord | null = null;
 
@@ -275,11 +273,11 @@ export default function BusinessQr() {
     : '';
   const clientIdentifier = business ? getClientAppIdentifier(business) : identifier;
   useEffect(() => {
-    try { setOpeningStyle(localStorage.getItem('dalil:client-opening-style:' + identifier) === 'framed' ? 'framed' : 'photo'); } catch { /* storage optional */ }
-  }, [identifier]);
+    setOpeningStyle(business?.opening_style === 'framed' ? 'framed' : 'photo');
+  }, [business?.id, business?.opening_style]);
   const chooseOpeningStyle = (style: ClientOpeningStyle) => {
+    // Preview only. Persisting the company's selection requires authorized admin access.
     setOpeningStyle(style);
-    try { localStorage.setItem('dalil:client-opening-style:' + identifier, style); } catch { /* storage optional */ }
   };
   const cvUrl = buildClientCvUrl(business || identifier, language, paletteTheme.id);
   const logoUrl = business ? getLogoUrl(business.logo_url) : '';
