@@ -25,7 +25,12 @@ export default class ErrorBoundary extends Component<Props, State> {
 
   render() {
     if (this.state.hasError) {
-      const lang = (typeof window !== 'undefined' && localStorage.getItem('dalil-lang')) || 'fr';
+      let lang = 'fr';
+      try {
+        if (typeof window !== 'undefined') lang = window.localStorage.getItem('dalil-lang') || 'fr';
+      } catch {
+        // Browsers may deny storage access; always keep the recovery screen usable.
+      }
       const msgs: Record<string, { title: string; desc: string; btn: string }> = {
         fr: { title: 'Une erreur est survenue', desc: 'Nous sommes désolés pour ce désagrément. Veuillez recharger la page pour continuer.', btn: 'Recharger la page' },
         en: { title: 'An error occurred', desc: 'We apologize for the inconvenience. Please reload the page to continue.', btn: 'Reload page' },
