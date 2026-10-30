@@ -56,14 +56,16 @@ installPromptWindow.addEventListener('beforeinstallprompt', (event) => {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <Router>
-      <LanguageProvider>
-        <AuthProvider>
-          <App />
-          <ScrollToTopButton />
-        </AuthProvider>
-      </LanguageProvider>
-    </Router>
+    <ErrorBoundary>
+      <Router>
+        <LanguageProvider>
+          <AuthProvider>
+            <App />
+            <ScrollToTopButton />
+          </AuthProvider>
+        </LanguageProvider>
+      </Router>
+    </ErrorBoundary>
   </StrictMode>
 );
 
