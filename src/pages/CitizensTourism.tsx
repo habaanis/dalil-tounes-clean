@@ -231,6 +231,14 @@ const schoolWorkGuides: Record<PublicLanguage, { schoolTitle: string; schoolStep
   ru: { schoolTitle: 'Подготовка к поступлению в школу', schoolSteps: ['Выберите государственную, частную, международную или французскую школу и найдите варианты рядом.', 'Уточните в школе условия приема, наличие мест, сроки и стоимость.', 'Подготовьте табели, удостоверения личности и необходимые переводы или подтверждение эквивалентности.'], schoolNote: 'Требования зависят от школы и класса. Перед переездом запросите актуальный перечень документов.', workTitle: 'Работа или открытие бизнеса', workSteps: ['Различайте работу по найму, самозанятость и создание компании: важны гражданство и статус пребывания.', 'Проверьте разрешения, постановку на налоговый учет и регистрацию в реестре предприятий RNE.', 'Подготовьте описание деятельности, адрес и необходимые документы; уточните налоговые и социальные обязательства.'], workNote: 'Разрешения на работу, процедуры и сборы могут изменяться. Уточняйте в компетентных органах.', registerLink: 'Регистрация предприятия в RNE', apiLink: 'Единое окно создания бизнеса' }
 };
 
+const residenceGuide: Record<PublicLanguage, { title: string; steps: string[]; caution: string }> = {
+  fr: { title: 'Préparer votre séjour selon votre situation', steps: ['Avant de partir : vérifiez auprès du consulat tunisien les conditions d’entrée et de visa selon votre nationalité et la durée prévue.', 'Pour un séjour prolongé : renseignez-vous sur le titre de séjour et les pièces requises selon votre motif (retraite, emploi, études, regroupement familial ou activité).', 'Préparez un passeport valide, les justificatifs d’hébergement et de ressources ainsi que les documents propres à votre situation, uniquement selon la liste communiquée par les autorités.', 'Avant l’échéance : vérifiez les délais de dépôt, les renouvellements et les démarches auprès des autorités locales compétentes.'], caution: 'Aucune durée de séjour ni liste de pièces n’est universelle. Les règles dépendent notamment de la nationalité, du statut et du motif du séjour ; confirmez-les avant le départ.' },
+  ar: { title: 'حضّر إقامتك حسب وضعيتك', steps: ['قبل السفر، تحقّق من شروط الدخول والتأشيرة حسب الجنسية والمدة لدى القنصلية التونسية.', 'للإقامة الطويلة، اطلب شروط بطاقة الإقامة حسب سبب الإقامة: تقاعد أو عمل أو دراسة أو عائلة أو نشاط.', 'حضّر جواز السفر وإثبات السكن والموارد والوثائق المطلوبة وفق القائمة الرسمية.', 'تحقّق من آجال إيداع الملف وتجديد الإقامة لدى السلطات المختصة.'], caution: 'لا توجد مدة أو قائمة وثائق موحّدة للجميع. تختلف الإجراءات حسب الجنسية والوضعية والغرض من الإقامة.' },
+  en: { title: 'Plan your stay according to your status', steps: ['Before travelling, check entry and visa requirements with a Tunisian consulate for your nationality and intended stay.', 'For longer stays, ask which residence permit applies to your purpose: retirement, employment, studies, family or business.', 'Prepare your passport, proof of accommodation and means of support, plus only the documents confirmed by the responsible authority.', 'Check application deadlines, renewals and local procedures well before your permission expires.'], caution: 'There is no universal permitted stay or document list. Requirements vary by nationality, status and reason for staying; verify before travel.' },
+  it: { title: 'Prepara il soggiorno in base alla tua situazione', steps: ['Prima di partire, verifica con il consolato tunisino ingresso e visto in base a nazionalità e durata.', 'Per soggiorni lunghi, chiedi quale permesso sia richiesto per pensione, lavoro, studio, famiglia o attività.', 'Prepara passaporto, alloggio, risorse economiche e i documenti indicati dall’autorità competente.', 'Controlla scadenze, rinnovi e procedure locali in anticipo.'], caution: 'Non esiste una durata né un elenco di documenti valido per tutti: verifica le regole secondo nazionalità e motivo del soggiorno.' },
+  ru: { title: 'Подготовьте пребывание с учетом вашего статуса', steps: ['До поездки уточните в консульстве Туниса правила въезда и визы для вашего гражданства и срока пребывания.', 'Для длительного проживания выясните условия ВНЖ для пенсионеров, работников, студентов, семьи или предпринимателей.', 'Подготовьте паспорт, подтверждение жилья и средств, а также документы по официальному списку.', 'Заранее уточните сроки подачи и продления разрешения.'], caution: 'Единого срока пребывания и списка документов для всех нет: правила зависят от гражданства, статуса и цели поездки.' }
+};
+
 type JourneyMode = 'visit' | 'settle';
 
 const journeyCopy: Record<PublicLanguage, {
@@ -496,6 +504,15 @@ export default function CitizensTourism() {
                   <ChevronDown className={`h-4 w-4 flex-shrink-0 -rotate-90 text-[#D4AF37] ${isRTL ? 'rotate-90' : ''}`} aria-hidden="true" />
                 </div>
                 <p className="mt-1.5 text-xs leading-relaxed text-gray-600">{topic.text}</p>
+                {topicIndex === 0 && (
+                  <div className="mt-3 rounded-lg border border-[#D4AF37]/30 bg-white p-3">
+                    <p className="text-xs font-semibold text-[#4A1D43]">{residenceGuide[lang].title}</p>
+                    <ol className="mt-2 list-decimal space-y-1.5 ps-4 text-xs leading-relaxed text-gray-700">
+                      {residenceGuide[lang].steps.map(step => <li key={step}>{step}</li>)}
+                    </ol>
+                    <p className="mt-2 text-[11px] leading-relaxed text-gray-600">{residenceGuide[lang].caution}</p>
+                  </div>
+                )}
                 {topicIndex === 3 && (
                   <div className="mt-3 rounded-lg border border-[#D4AF37]/30 bg-white p-3">
                     <p className="text-xs font-semibold text-[#4A1D43]">{schoolWorkGuides[lang].schoolTitle}</p>
