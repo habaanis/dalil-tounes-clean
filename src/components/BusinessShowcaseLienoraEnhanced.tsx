@@ -1,3 +1,4 @@
+import { cachedShowcaseRecord, rememberShowcaseRecord } from '../lib/showcaseRecordCache';
 import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
@@ -77,9 +78,9 @@ export default function BusinessShowcaseLienoraEnhanced() {
     let cancelled = false;
 
     const load = async () => {
-      let record: BusinessRecord | null = null;
+      let record: BusinessRecord | null = cachedShowcaseRecord(id || slug) as BusinessRecord | null;
 
-      if (id) {
+      if (!record && id) {
         const { data } = await supabase.from('entreprise').select('*').eq('id', id).maybeSingle();
         record = data as BusinessRecord | null;
       }
@@ -103,7 +104,7 @@ export default function BusinessShowcaseLienoraEnhanced() {
         record = data as BusinessRecord | null;
       }
 
-      if (!cancelled) setBusiness(record);
+      if (!cancelled) { if (record) rememberShowcaseRecord(record); setBusiness(record); }
     };
 
     void load();
