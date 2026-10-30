@@ -45,6 +45,30 @@ try {
   } finally {
     page.off('pageerror', onNavigationError);
   }
+  // Check links from the settlement guide to all supported service categories.
+  for (const destination of ['/citizens/health', '/education', '/emplois', '/citizens/shops']) {
+    const errors = [];
+    const listener = (error) => errors.push(error.message);
+    page.on('pageerror', listener);
+    try {
+      await page.goto(new URL('/citizens/tourism', base).toString(), {waitUntil:'domcontentloaded',timeout:20000});
+      const settle = page.locator('[role="tab"]').nth(1);
+      await settle.waitFor({state:'visible',timeout:15000});
+      await settle.click();
+      const link = page.locator('nav a[href="' + destination + '"]').first();
+      await link.waitFor({state:'visible',timeout:12000});
+      await link.click();
+      await page.waitForURL('**' + destination, {timeout:15000});
+      await page.locator('#root').waitFor({state:'visible',timeout:12000});
+      if (errors.length) throw new Error(errors.join(' | '));
+      console.log('PASS Settlement -> ' + destination);
+    } catch(error) {
+      failed++;
+      console.log('FAIL Settlement -> ' + destination + ': ' + error.message);
+    } finally {
+      page.off('pageerror',listener);
+    }
+  }
 } finally {
   await browser.close();
 }
