@@ -25,6 +25,26 @@ try {
       page.off('pageerror', onError);
     }
   }
+  // Interactive route: Tourisme -> S'installer -> Santé, then Education.
+  const navigationErrors = [];
+  const onNavigationError = (error) => navigationErrors.push(error.message);
+  page.on('pageerror', onNavigationError);
+  try {
+    await page.goto(new URL('/citizens/tourism', base).toString(), { waitUntil: 'domcontentloaded', timeout: 20000 });
+    const settleTab = page.locator('[role="tab"]').nth(1);
+    await settleTab.waitFor({ state: 'visible', timeout: 15000 });
+    await settleTab.click();
+    if (await settleTab.getAttribute('aria-selected') !== 'true') throw new Error('Settlement tab did not activate');
+    await page.locator('nav a[href="/citizens/health"]').first().click();
+    await page.waitForURL('**/citizens/health', { timeout: 15000 });
+    if (navigationErrors.length) throw new Error(navigationErrors.join(' | '));
+    console.log('PASS Tourism -> Settlement -> Health navigation');
+  } catch (error) {
+    console.log('FAIL Tourism -> Settlement -> Health navigation: ' + error.message);
+    failed++;
+  } finally {
+    page.off('pageerror', onNavigationError);
+  }
 } finally {
   await browser.close();
 }
