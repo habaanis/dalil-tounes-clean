@@ -349,6 +349,10 @@ export default function SearchBar({
   const onChangeCity = (e: React.ChangeEvent<HTMLInputElement>) => {
     const v = e.currentTarget.value ?? '';
     setCity(v);
+    // A city change also invalidates any business suggestions for the previous city.
+    searchSequence.current += 1;
+    setEnt([]);
+    setLoadingEnt(false);
     const cityRequestId = ++citySequence.current;
     if (tVille.current) window.clearTimeout(tVille.current);
     // Hide outdated suggestions and loading state immediately while typing.
