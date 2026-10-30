@@ -297,7 +297,7 @@ export default function BusinessQr() {
     if (!isAppLaunch) return;
 
     setShowBrandSplash(true);
-    const timer = window.setTimeout(() => setShowBrandSplash(false), 3000);
+    const timer = window.setTimeout(() => setShowBrandSplash(false), 1800);
     return () => window.clearTimeout(timer);
   }, [business?.id, qrAccess]);
 
