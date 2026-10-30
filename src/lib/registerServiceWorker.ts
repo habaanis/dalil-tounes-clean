@@ -3,7 +3,7 @@
 
 const UPDATE_KEY = 'dalil-tounes-pwa-update-ready';
 const CLIENT_APP_HOST = 'app.dalil-tounes.com';
-const CLIENT_RELOAD_KEY = 'dalil-client-sw-reloaded-v13';
+const CLIENT_RELOAD_KEY = 'dalil-client-sw-reloaded-v14';
 
 function announceUpdate(): void {
   try {
@@ -20,7 +20,7 @@ export function registerServiceWorker(): void {
       const hadController = Boolean(navigator.serviceWorker.controller);
 
       navigator.serviceWorker
-        .register('/service-worker.js?v=13', { updateViaCache: 'none' })
+        .register('/service-worker.js?v=14', { updateViaCache: 'none' })
         .then((registration) => {
           console.log('[PWA] Service Worker enregistré avec succès:', registration.scope);
 
