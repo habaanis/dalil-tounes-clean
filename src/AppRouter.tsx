@@ -33,6 +33,7 @@ function RetiredMarketplaceRedirect() {
   return <Navigate to={{ pathname: '/citizens', search }} replace />;
 }
 
+const PrestigeOpeningPreview = lazy(() => import('./pages/PrestigeOpeningPreview'));
 const SeparationPreview = lazy(() => import('./pages/SeparationPreview'));
 const PlatformHome = lazy(() => import('./pages/SeparationPreview').then(m => ({ default: m.PlatformHome })));
 const CvBusinessHome = lazy(() => import('./pages/SeparationPreview').then(m => ({ default: m.CvBusinessHome })));
@@ -176,6 +177,7 @@ function AppRouter() {
       <Suspense fallback={isClientAppRoute ? <ClientPageLoader /> : <PageLoader />}>
         <Routes>
           <Route path="/" element={<PlatformHome />} />
+          <Route path="/apercu-ouverture-prestige" element={<PrestigeOpeningPreview />} />
 
           <Route path="/citizens" element={<Citizens />} />
           <Route path="/citizens/health" element={<CitizensHealth />} />
