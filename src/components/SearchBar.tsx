@@ -351,11 +351,12 @@ export default function SearchBar({
     setCity(v);
     const cityRequestId = ++citySequence.current;
     if (tVille.current) window.clearTimeout(tVille.current);
+    // Hide outdated suggestions and loading state immediately while typing.
+    setVilles([]);
+    setLoadingVille(false);
+    setErrVille(null);
+    if (v.trim().length < MIN_CHARS) return;
     tVille.current = window.setTimeout(async () => {
-      if (v.trim().length < MIN_CHARS) {
-        setVilles([]);
-        return;
-      }
       setLoadingVille(true);
       setErrVille(null);
       try {
