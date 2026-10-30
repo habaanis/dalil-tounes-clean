@@ -6,7 +6,11 @@ const CLIENT_APP_HOST = 'app.dalil-tounes.com';
 const CLIENT_RELOAD_KEY = 'dalil-client-sw-reloaded-v13';
 
 function announceUpdate(): void {
-  sessionStorage.setItem(UPDATE_KEY, '1');
+  try {
+    sessionStorage.setItem(UPDATE_KEY, '1');
+  } catch {
+    // Storage may be unavailable in private or restricted browser contexts.
+  }
   window.dispatchEvent(new Event('pwa-update-ready'));
 }
 
