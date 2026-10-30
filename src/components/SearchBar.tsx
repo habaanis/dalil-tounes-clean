@@ -385,6 +385,11 @@ export default function SearchBar({
         });
 
         if (cityRequestId === citySequence.current) setVilles(unique.slice(0, 8));
+      } catch (error) {
+        if (cityRequestId === citySequence.current) {
+          setErrVille(error instanceof Error ? error.message : 'Recherche de ville indisponible');
+          setVilles([]);
+        }
       } finally {
         if (cityRequestId === citySequence.current) setLoadingVille(false);
       }
