@@ -327,7 +327,7 @@ export default function SearchBar({
     if (tEnt.current) window.clearTimeout(tEnt.current);
     tEnt.current = window.setTimeout(() => {
       runSearch(v, city, certFilter);
-    }, 100);
+    }, 300);
   };
 
   React.useEffect(() => {
@@ -335,7 +335,7 @@ export default function SearchBar({
     if (tEnt.current) window.clearTimeout(tEnt.current);
     tEnt.current = window.setTimeout(() => {
       runSearch(q, city, certFilter);
-    }, 50);
+    }, 250);
   }, [certFilter, city]);
 
   const onChangeCity = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -379,7 +379,7 @@ export default function SearchBar({
       } finally {
         setLoadingVille(false);
       }
-    }, 200);
+    }, 350);
   };
 
   React.useEffect(() => {
