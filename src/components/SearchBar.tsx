@@ -245,7 +245,7 @@ export default function SearchBar({
 
         let query = supabase
           .from(Tables.ENTREPRISE)
-          .select('*')
+          .select('id, nom, ville, gouvernorat, adresse, description, sous_categories_texte, sous_categories_clean, categorie, name_ar, services, statut_carte, "mots cles recherche", "Note Google Globale"')
           .not('nom', 'is', null)
           .neq('nom', '')
           .or(orParts.join(','))
