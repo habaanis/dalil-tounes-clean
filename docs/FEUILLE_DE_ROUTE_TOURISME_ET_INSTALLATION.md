@@ -92,3 +92,13 @@ Décision utilisateur : conserver l'idée en backlog, **ne pas la développer ma
 - Mettre en avant : ouverture de comptes selon le statut (résident, non-résident, TRE), transferts de fonds internationaux, justificatifs, change réglementé, financement immobilier et formalités fiscales ; distinguer les règles selon situation et citer les sources officielles actualisées.
 - Garder des liens vers les établissements sélectionnés en complément des explications. Vérifier les fiches existantes Airtable avant tout ajout et ne pas créer de doublons.
 - Présentation envisagée : démarche expliquée en premier, puis « Où effectuer cette démarche ? » avec liens pertinents vers les banques/bureaux de change.
+
+
+### Futur PDF — importer véhicule, meubles et matériel professionnel (validation du 30/10/2026)
+- Développer la rubrique « Véhicule, biens et douane » en trois parcours interactifs : (1) venir avec sa voiture / importation ou admission temporaire, (2) déménager des meubles et effets personnels, (3) transporter du matériel et des équipements professionnels.
+- Pour les véhicules : présenter les conditions selon la nationalité, résidence et statut (notamment TRE/FCR le cas échéant), limites d'âge du véhicule **uniquement après vérification officielle et datée**, propriété, durée de présence autorisée, réexportation, immatriculation, fiscalité, permis et assurance.
+- Pour les meubles : conditions du déménagement, inventaire détaillé, justificatifs de résidence, documents du transporteur, éventuelles franchises, restrictions et formalités à l'arrivée.
+- Pour le matériel professionnel : distinguer usage personnel/professionnel, importation temporaire/définitive, statut de l'activité, documents, autorisations spécifiques, taxes et contraintes réglementaires.
+- Même méthode ludique que le reste du guide : question initiale « que souhaitez-vous faire venir ? », étapes, tableau qui fait quoi, documents/validité/organisme, checklist imprimable, erreurs fréquentes, coûts à vérifier et bloc « Mon prochain pas ».
+- Ne jamais promettre une exonération, une limite d'âge ou un avantage fiscal sans vérifier les conditions exactes auprès de la Douane tunisienne et autorités compétentes au moment de l'opération ; avertir que règles et seuils peuvent évoluer. Inclure les sources officielles et dates de mise à jour.
+- La rédaction du PDF reste différée ; conserver cette spécification pour sa conception ultérieure.
