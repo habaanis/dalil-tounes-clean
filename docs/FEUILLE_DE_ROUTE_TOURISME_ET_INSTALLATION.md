@@ -102,3 +102,13 @@ Décision utilisateur : conserver l'idée en backlog, **ne pas la développer ma
 - Même méthode ludique que le reste du guide : question initiale « que souhaitez-vous faire venir ? », étapes, tableau qui fait quoi, documents/validité/organisme, checklist imprimable, erreurs fréquentes, coûts à vérifier et bloc « Mon prochain pas ».
 - Ne jamais promettre une exonération, une limite d'âge ou un avantage fiscal sans vérifier les conditions exactes auprès de la Douane tunisienne et autorités compétentes au moment de l'opération ; avertir que règles et seuils peuvent évoluer. Inclure les sources officielles et dates de mise à jour.
 - La rédaction du PDF reste différée ; conserver cette spécification pour sa conception ultérieure.
+
+
+### Véhicules, meubles et matériel professionnel — guide pratique et révision annuelle (30/10/2026)
+- Pour le parcours « S’installer en Tunisie » et le futur PDF, créer une rubrique **« Qu'apportez-vous en Tunisie ? »** distinguant : voiture personnelle (admission temporaire, installation définitive, régime FCR/TRE selon cas), meubles et effets personnels, matériel/équipement professionnel.
+- Concevoir des choix simples par profil : nationalité, résident ou non, retour provisoire/définitif, type de biens, âge de la voiture, destination/utilisation des biens.
+- Pour chaque branche : documents, conditions d'éligibilité, âge/valeur/quantité si applicables, délais, interdictions, organisme compétent, points à vérifier avant achat/expédition, checklist de préparation et « Mon prochain pas ».
+- **Ne pas généraliser les plafonds** : selon Douane Tunisienne, certains dispositifs pour étrangers venant s'installer fixent une limite de 3 ans pour la voiture, tandis que les régimes TRE/FCR, les objets mobiliers et le matériel professionnel obéissent à d'autres conditions.
+- Sources officielles de départ : https://www.douane.gov.tn/admission-temporaire/ ; https://www.douane.gov.tn/residence-secondaire/1000/ ; https://www.douane.gov.tn/js-support-ticket-controlpanel/faq/72/ ; https://www.douane.gov.tn/retour-provisoire/ ; et Code des douanes (régime matériel professionnel).
+- **Contrôle annuel obligatoire** : réexaminer les informations, liens, conditions, droits et taxes, âges maximaux, durées et formulaires ; noter la date de vérification et mettre à jour le site et le PDF lors de sa publication. Avertir que la réglementation peut changer *entre* deux contrôles, et renvoyer systématiquement vers les autorités avant décision/expédition.
+- Le PDF reste différé ; conserver ces spécifications pour sa production future.
