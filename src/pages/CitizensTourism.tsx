@@ -144,52 +144,52 @@ const QUICK_LINK_PATHS = ['/citizens/services', '/citizens/health', '/education'
 
 const settleServiceIntros: Record<PublicLanguage, string[]> = {
   fr: [
-    'Vous trouverez : les démarches de visa et de titre de séjour, les autorités compétentes et les documents à préparer.',
-    'Vous trouverez : des pistes pour rechercher un logement, une agence immobilière ou un déménageur référencé.',
+    'Comprenez les étapes du visa et de la résidence, puis préparez les justificatifs adaptés à votre situation.',
+    'Préparez votre recherche de logement ; la flèche permet de consulter les agences immobilières référencées.',
     'Vous trouverez : des médecins généralistes, spécialistes, dentistes, hôpitaux, cliniques et pharmacies sur la page Santé.',
     'Vous trouverez : les établissements scolaires et les informations utiles pour inscrire un enfant ou poursuivre ses études.',
     'Vous trouverez : des repères pour les comptes bancaires, les transferts, le change et les démarches fiscales.',
-    'Vous trouverez : les démarches liées aux véhicules, aux bagages et aux effets personnels, avec accès aux informations douanières.',
+    'Comprenez les trois situations : véhicule personnel, déménagement et matériel professionnel, avant de vérifier les règles douanières.',
     'Vous trouverez : des ressources pour chercher un emploi, créer une entreprise et identifier les organismes utiles.',
     'Vous trouverez : commerces, téléphonie, accès Internet et services utiles à proximité de votre lieu de vie.'
   ],
   ar: [
-    'ستجد معلومات عن التأشيرات والإقامة والجهات المختصة والوثائق اللازمة.',
-    'ستجد وسائل البحث عن سكن ووكالات عقارية وشركات نقل مدرجة.',
+    'افهم خطوات التأشيرة والإقامة والوثائق التي ينبغي تحضيرها بحسب وضعيتك.',
+    'حضّر بحثك عن سكن؛ يتيح السهم الاطلاع على الوكالات العقارية المدرجة.',
     'ستجد أطباء عامين وأخصائيين وأطباء أسنان ومستشفيات ومصحات وصيدليات في صفحة الصحة.',
     'ستجد المؤسسات التعليمية ومعلومات التسجيل ومتابعة الدراسة.',
     'ستجد معلومات عن الحسابات البنكية والتحويلات والصرف والإجراءات الجبائية.',
-    'ستجد إجراءات السيارات والأمتعة والممتلكات الشخصية وروابط المعلومات الديوانية.',
+    'تعرّف على ثلاث حالات: السيارة الشخصية والأثاث والمعدات المهنية قبل التحقق من القواعد الديوانية.',
     'ستجد موارد للبحث عن عمل وبعث مشروع والتواصل مع الهياكل المعنية.',
     'ستجد المتاجر والاتصالات والإنترنت والخدمات اليومية القريبة منك.'
   ],
   en: [
-    'Find visa and residence procedures, responsible authorities and documents to prepare.',
-    'Find ways to search for housing, estate agents and listed moving providers.',
+    'Understand visa and residence steps, then prepare documents relevant to your situation.',
+    'Prepare your housing search; use the arrow to view listed real-estate agencies.',
     'Find general practitioners, specialists, dentists, hospitals, clinics and pharmacies on the Health page.',
     'Find schools, education providers and practical information about enrolment.',
     'Find guidance on bank accounts, transfers, currency exchange and tax procedures.',
-    'Find vehicle, luggage and personal belongings procedures and links to customs information.',
+    'Understand the three paths—personal vehicle, household move and professional equipment—before checking customs rules.',
     'Find resources for jobs, starting a business and the relevant support organisations.',
     'Find shops, mobile and internet providers and everyday services near your home.'
   ],
   it: [
-    'Troverai procedure per visti e soggiorno, autorità competenti e documenti da preparare.',
-    'Troverai come cercare casa, agenzie immobiliari e imprese di trasloco presenti nell’elenco.',
+    'Scopri i passaggi per visto e soggiorno e prepara i documenti adatti alla tua situazione.',
+    'Prepara la ricerca di casa; la freccia apre l'elenco delle agenzie immobiliari.',
     'Troverai medici di base, specialisti, dentisti, ospedali, cliniche e farmacie nella pagina Salute.',
     'Troverai scuole, istituti e informazioni pratiche per le iscrizioni.',
     'Troverai indicazioni su conti bancari, trasferimenti, cambio e adempimenti fiscali.',
-    'Troverai formalità per veicoli, bagagli e beni personali, con collegamenti alle informazioni doganali.',
+    'Esamina i tre percorsi: automobile, trasloco e attrezzature professionali, poi verifica le norme doganali.',
     'Troverai risorse per il lavoro, l’avvio di un’impresa e gli enti di supporto.',
     'Troverai negozi, telefonia, Internet e servizi quotidiani nelle vicinanze.'
   ],
   ru: [
-    'Здесь собраны сведения о визах, видах на жительство, компетентных органах и необходимых документах.',
-    'Здесь можно найти варианты поиска жилья, агентств недвижимости и перевозчиков из каталога.',
+    'Узнайте основные шаги получения визы и вида на жительство и подготовьте документы для вашей ситуации.',
+    'Подготовьтесь к поиску жилья; стрелка открывает каталог агентств недвижимости.',
     'В разделе «Здоровье» можно искать терапевтов, специалистов, стоматологов, больницы, клиники и аптеки.',
     'Здесь можно найти школы, образовательные учреждения и сведения о поступлении.',
     'Здесь собраны сведения о банковских счетах, переводах, обмене валют и налоговых процедурах.',
-    'Здесь можно узнать о правилах ввоза автомобилей, багажа и личных вещей и перейти к таможенной информации.',
+    'Изучите три сценария: личный автомобиль, переезд и профессиональное оборудование, затем уточните таможенные правила.',
     'Здесь собраны ресурсы для поиска работы, открытия бизнеса и обращения в профильные организации.',
     'Здесь можно найти магазины, мобильную связь, Интернет и повседневные услуги рядом.'
   ]
