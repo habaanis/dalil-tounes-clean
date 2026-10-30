@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { lazy, Suspense, useEffect } from 'react';
+import { Component, lazy, Suspense, useEffect } from 'react';
 import { Layout } from './components/Layout';
 import SearchBar from './components/SearchBar';
 import LanguageSelector from './components/LanguageSelector';
@@ -167,13 +167,46 @@ const ClientPageLoader = () => (
   />
 );
 
+class RouteLoadBoundary extends Component<{ children: React.ReactNode; routeKey: string }, { failed: boolean }> {
+  state = { failed: false };
+
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+
+  componentDidCatch(error: Error) {
+    console.error('[Dalil Tounes] Page loading failed:', error);
+  }
+
+  componentDidUpdate(previous: { routeKey: string }) {
+    if (previous.routeKey !== this.props.routeKey && this.state.failed) {
+      this.setState({ failed: false });
+    }
+  }
+
+  render() {
+    if (this.state.failed) {
+      return (
+        <main className="mx-auto my-12 max-w-lg rounded-xl border border-[#D4AF37]/40 bg-white p-6 text-center" role="alert">
+          <h2 className="text-xl font-semibold text-[#4A1D43]">La page ne s'est pas chargée</h2>
+          <p className="mt-3 text-sm text-gray-700">Une erreur temporaire de chargement est survenue. Vous pouvez réessayer.</p>
+          <button type="button" className="mt-4 rounded-lg bg-[#4A1D43] px-5 py-2.5 text-sm font-semibold text-white" onClick={() => window.location.reload()}>Réessayer</button>
+        </main>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 function AppRouter() {
+  const location = useLocation();
   const isClientAppRoute = isDedicatedClientHostname(window.location.hostname)
     && window.location.pathname !== '/';
 
   return (
     <Layout>
       <ScrollToTop />
+      <RouteLoadBoundary routeKey={location.pathname}>
       <Suspense fallback={isClientAppRoute ? <ClientPageLoader /> : <PageLoader />}>
         <Routes>
           <Route path="/" element={<PlatformHome />} />
@@ -298,6 +331,7 @@ function AppRouter() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
+      </RouteLoadBoundary>
     </Layout>
   );
 }
