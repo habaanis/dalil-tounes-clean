@@ -124,6 +124,22 @@ const copy: Record<PublicLanguage, {
   },
 };
 
+const SETTLEMENT_SERVICE_PATHS: Record<number, string> = {
+  1: '/recherche?categorie=immobilier',
+  2: '/citizens/health',
+  3: '/education',
+  4: '/recherche?q=banque',
+  6: '/emplois',
+  7: '/citizens/shops',
+};
+const settlementServiceLinkLabels: Record<PublicLanguage, string> = {
+  fr: 'Voir les professionnels',
+  ar: 'عرض المهنيين والخدمات',
+  en: 'Find local services',
+  it: 'Trova i professionisti',
+  ru: 'Найти специалистов',
+};
+
 const QUICK_LINK_PATHS = ['/citizens/services', '/citizens/health', '/education', '/emplois'] as const;
 
 const settleServiceIntros: Record<PublicLanguage, string[]> = {
@@ -534,7 +550,14 @@ export default function CitizensTourism() {
                   <span className="flex shrink-0 items-center gap-1.5"><span className="hidden text-[11px] font-semibold text-[#4A1D43] max-md:group-open:inline">{({fr:'Fermer',ar:'إغلاق',en:'Close',it:'Chiudi',ru:'Закрыть'} as Record<PublicLanguage, string>)[lang]}</span><ChevronDown className="h-4 w-4 text-[#D4AF37] transition-transform group-open:rotate-180" aria-hidden="true" /></span>
                 </summary>
                 <div className="max-md:group-open:min-h-0 max-md:group-open:flex-1 max-md:group-open:overflow-y-auto max-md:group-open:overscroll-contain max-md:group-open:px-4 max-md:group-open:pb-6">
-                <p className="mt-3 text-xs font-medium leading-relaxed text-[#4A1D43]">{settleServiceIntros[lang][topicIndex]}</p>
+                <div className="mt-3 flex items-start gap-2">
+                  <p className="min-w-0 flex-1 text-xs font-medium leading-relaxed text-[#4A1D43]">{settleServiceIntros[lang][topicIndex]}</p>
+                  {SETTLEMENT_SERVICE_PATHS[topicIndex] && (
+                    <Link to={SETTLEMENT_SERVICE_PATHS[topicIndex]} aria-label={settlementServiceLinkLabels[lang] + ' — ' + topic.title} title={settlementServiceLinkLabels[lang]} className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#D4AF37]/60 bg-[#FFF8E8] text-[#4A1D43] transition hover:bg-[#F3E2B5] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#4A1D43]">
+                      <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                    </Link>
+                  )}
+                </div>
                 <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-[#7C5A31]">{({fr:'À faire',ar:'الخطوات',en:'What to do',it:'Cosa fare',ru:'Что делать'} as Record<PublicLanguage, string>)[lang]}</p>
                 {([1, 2, 7].includes(topicIndex)) && (
                   <div className="mt-3 rounded-lg border border-[#D4AF37]/30 bg-white p-3">
