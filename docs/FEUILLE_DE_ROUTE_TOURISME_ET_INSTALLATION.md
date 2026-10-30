@@ -77,3 +77,10 @@ Décision utilisateur : conserver l'idée en backlog, **ne pas la développer ma
 - **Prudence juridique et administrative obligatoire :** toujours signaler que réglementation, frais, exigences, délais, documents et décisions définitives peuvent varier ou évoluer ; inviter le lecteur à **revérifier les informations les plus récentes auprès des autorités et professionnels compétents avant toute décision, signature ou paiement**.
 - Indiquer date de dernière vérification, sources officielles et limites du guide ; ne jamais présenter les durées de validité ou obligations comme acquises sans source fiable. Adapter le parcours au statut (nationalité/résidence), au type de bien et à l'opération.
 - **Ne pas lancer la réalisation du PDF à ce stade** ; conserver ces critères pour la phase dédiée.
+
+
+### Règle transversale pour TOUTES les rubriques du futur PDF (30/10/2026)
+- Appliquer à chaque rubrique (santé, scolarité, banque, fiscalité, logement, travail, véhicule, vie quotidienne, etc.) la même approche **utile, ludique et prudente** que pour l'achat immobilier.
+- Prévoir deux profondeurs de lecture (parcours rapide et parcours détaillé), étapes concrètes, listes à cocher, « qui contacter / quels documents / où les obtenir / qui vérifie / quand », exemples, liens et QR utiles, section « Mon prochain pas ».
+- Signaler systématiquement que les démarches, pièces, règles, tarifs, délais et décisions peuvent évoluer et doivent être **confirmés auprès des organismes officiels et professionnels compétents avant engagement** ; dates de vérification et sources.
+- Ne pas héberger les dossiers sensibles sans dispositif approprié. La rédaction et la production du PDF sont différées.
