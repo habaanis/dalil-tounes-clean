@@ -222,7 +222,7 @@ const journeyCopy: Record<PublicLanguage, {
     ],
     settleTopics: [
       { title: 'Visa, séjour & résidence', text: 'Avant le départ : vérifier les exigences de visa selon votre nationalité auprès du consulat tunisien. Pour une installation durable : consulter les pièces de la carte de séjour (passeport, justificatif d’hébergement et documents liés au travail, aux études ou à la situation familiale). Les règles varient selon votre situation ; confirmer auprès des autorités.', href: 'https://services.interieur.gov.tn/wap/fr/docs/demarches/05.html', external: true },
-      { title: 'Logement & déménagement', text: 'Avant de signer un bail : vérifier le quartier, le budget total, les charges, les conditions du contrat et les justificatifs demandés. Pour déménager, demander un devis détaillé et vérifier les formalités éventuelles de douane. Rechercher ensuite les professionnels locaux.', href: '/recherche?q=immobilier' },
+      { title: 'Logement & déménagement', text: 'Avant de signer un bail : vérifier le quartier, le budget total, les charges, les conditions du contrat et les justificatifs demandés. Pour déménager, demander un devis détaillé et vérifier les formalités éventuelles de douane. Rechercher ensuite les professionnels locaux.', href: '/recherche?categorie=immobilier' },
       { title: 'Santé & assurance', text: 'Avant de partir, vérifier la couverture santé et l’assistance rapatriement selon votre situation, les exclusions, les plafonds et les modalités de remboursement. Préparer ordonnances et documents médicaux utiles ; rechercher ensuite médecins, cliniques et pharmacies sur la page Santé.', href: '/citizens/health' },
       { title: 'École & scolarité', text: 'Comparer les établissements et retrouver les informations scolaires essentielles.', href: '/education' },
       { title: 'Banque, change & fiscalité', text: 'Consulter les services financiers et vérifier les règles officielles applicables.', href: 'https://www.finances.gov.tn/fr/e-services', external: true },
@@ -246,7 +246,7 @@ const journeyCopy: Record<PublicLanguage, {
     ],
     settleTopics: [
       { title: 'التأشيرة والإقامة', text: 'تحقق من الشروط حسب جنسيتك ووضعيتك قبل السفر.', href: 'https://services.interieur.gov.tn/wap/fr/docs/demarches/05.html', external: true },
-      { title: 'السكن والانتقال', text: 'قبل توقيع عقد الإيجار، تحقّق من الحيّ والتكلفة الإجمالية والمصاريف وشروط العقد والوثائق المطلوبة. اطلب عرض سعر مفصلاً للنقل وتحقّق من الإجراءات الجمركية عند الحاجة، ثم ابحث عن المهنيين المحليين.', href: '/recherche?q=immobilier' },
+      { title: 'السكن والانتقال', text: 'قبل توقيع عقد الإيجار، تحقّق من الحيّ والتكلفة الإجمالية والمصاريف وشروط العقد والوثائق المطلوبة. اطلب عرض سعر مفصلاً للنقل وتحقّق من الإجراءات الجمركية عند الحاجة، ثم ابحث عن المهنيين المحليين.', href: '/recherche?categorie=immobilier' },
       { title: 'الصحة والتأمين', text: 'قبل السفر، تحقّق من التغطية الصحية والمساعدة على العودة إلى بلدك حسب وضعيتك، والاستثناءات وحدود التغطية وشروط استرجاع المصاريف. حضّر الوصفات والوثائق الطبية المهمة، ثم ابحث عن الأطباء والمصحات والصيدليات في صفحة الصحة.', href: '/citizens/health' },
       { title: 'المدرسة والتعليم', text: 'قارن المؤسسات واعثر على المعلومات المدرسية الأساسية.', href: '/education' },
       { title: 'البنك والصرف والجباية', text: 'اطلع على الخدمات المالية والقواعد الرسمية المعمول بها.', href: 'https://www.finances.gov.tn/fr/e-services', external: true },
@@ -269,7 +269,7 @@ const journeyCopy: Record<PublicLanguage, {
     ],
     settleTopics: [
       { title: 'Visa, stay & residence', text: 'Check the conditions for your nationality and situation before departure.', href: 'https://services.interieur.gov.tn/wap/fr/docs/demarches/05.html', external: true },
-      { title: 'Housing & moving', text: 'Before signing a lease, check the area, total budget, fees, contract terms and required documents. Request a detailed moving quote and verify any customs requirements before searching for local providers.', href: '/recherche?q=immobilier' },
+      { title: 'Housing & moving', text: 'Before signing a lease, check the area, total budget, fees, contract terms and required documents. Request a detailed moving quote and verify any customs requirements before searching for local providers.', href: '/recherche?categorie=immobilier' },
       { title: 'Health & insurance', text: 'Before moving, check your health coverage and medical repatriation assistance, including exclusions, limits and reimbursement rules. Keep prescriptions and key medical records handy, then find doctors, clinics and pharmacies on the Health page.', href: '/citizens/health' },
       { title: 'School & education', text: 'Compare institutions and find essential school information.', href: '/education' },
       { title: 'Banking, exchange & tax', text: 'Find financial services and check the applicable official rules.', href: 'https://www.finances.gov.tn/fr/e-services', external: true },
@@ -292,7 +292,7 @@ const journeyCopy: Record<PublicLanguage, {
     ],
     settleTopics: [
       { title: 'Visto, soggiorno e residenza', text: 'Verifica le condizioni per nazionalità e situazione prima della partenza.', href: 'https://services.interieur.gov.tn/wap/fr/docs/demarches/05.html', external: true },
-      { title: 'Casa e trasloco', text: 'Prima di firmare un contratto, verifica zona, budget totale, spese, condizioni e documenti richiesti. Chiedi un preventivo dettagliato per il trasloco e verifica le eventuali formalità doganali.', href: '/recherche?q=immobilier' },
+      { title: 'Casa e trasloco', text: 'Prima di firmare un contratto, verifica zona, budget totale, spese, condizioni e documenti richiesti. Chiedi un preventivo dettagliato per il trasloco e verifica le eventuali formalità doganali.', href: '/recherche?categorie=immobilier' },
       { title: 'Salute e assicurazione', text: 'Prima di partire, verifica copertura sanitaria e assistenza al rimpatrio, comprese esclusioni, massimali e rimborsi. Prepara ricette e documenti medici utili, poi cerca medici, cliniche e farmacie nella pagina Salute.', href: '/citizens/health' },
       { title: 'Scuola e istruzione', text: 'Confronta gli istituti e trova informazioni scolastiche essenziali.', href: '/education' },
       { title: 'Banca, cambio e fiscalità', text: 'Trova servizi finanziari e verifica le regole ufficiali.', href: 'https://www.finances.gov.tn/fr/e-services', external: true },
@@ -315,7 +315,7 @@ const journeyCopy: Record<PublicLanguage, {
     ],
     settleTopics: [
       { title: 'Виза, пребывание и ВНЖ', text: 'Проверьте условия для вашего гражданства и ситуации до поездки.', href: 'https://services.interieur.gov.tn/wap/fr/docs/demarches/05.html', external: true },
-      { title: 'Жильё и переезд', text: 'Перед подписанием договора проверьте район, полную стоимость, дополнительные расходы, условия аренды и документы. Запросите подробную смету переезда и проверьте таможенные требования.', href: '/recherche?q=immobilier' },
+      { title: 'Жильё и переезд', text: 'Перед подписанием договора проверьте район, полную стоимость, дополнительные расходы, условия аренды и документы. Запросите подробную смету переезда и проверьте таможенные требования.', href: '/recherche?categorie=immobilier' },
       { title: 'Здоровье и страхование', text: 'До переезда проверьте медицинскую страховку и помощь с медицинской репатриацией, исключения, лимиты и порядок возмещения. Подготовьте рецепты и важные медицинские документы, затем найдите врачей, клиники и аптеки в разделе «Здоровье».', href: '/citizens/health' },
       { title: 'Школа и образование', text: 'Сравните учреждения и найдите важную информацию об обучении.', href: '/education' },
       { title: 'Банк, обмен и налоги', text: 'Найдите финансовые услуги и проверьте официальные правила.', href: 'https://www.finances.gov.tn/fr/e-services', external: true },
