@@ -198,12 +198,14 @@ export default function SearchBar({
 
     if (trimmedValue.length < MIN_CHARS) {
       setEnt([]);
+      setLoadingEnt(false);
       return;
     }
 
     const cacheKey = `${normalizeText(trimmedValue)}-${cityValue}-${scope}-${cert}`;
     if (cache.current.has(cacheKey)) {
       setEnt(cache.current.get(cacheKey)!);
+      setLoadingEnt(false);
       return;
     }
 
@@ -226,6 +228,8 @@ export default function SearchBar({
         }
 
         const resp = await query;
+        if (requestId !== searchSequence.current) return;
+        if (resp.error) throw resp.error;
         allResults = resp.data || [];
       } else {
         const words = normalizeText(trimmedValue).split(/\s+/).filter(w => w.length >= 2);
@@ -332,6 +336,8 @@ export default function SearchBar({
     setQ(v);
     searchSequence.current += 1;
     setEnt([]);
+    setLoadingEnt(false);
+    setErrEnt(null);
     if (tEnt.current) window.clearTimeout(tEnt.current);
     tEnt.current = window.setTimeout(() => {
       runSearch(v, city, certFilter);
