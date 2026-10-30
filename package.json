@@ -8,7 +8,8 @@
     "build": "vite build && node scripts/generate-seo-html.mjs && node scripts/generate-business-seo-html.mjs && node scripts/generate-sitemap.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit -p tsconfig.app.json"
+    "typecheck": "tsc --noEmit -p tsconfig.app.json",
+    "smoke:routes": "node scripts/smoke-public-routes.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",
