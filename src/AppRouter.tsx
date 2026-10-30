@@ -77,6 +77,7 @@ const AdminInscriptionsLoisirs = lazy(() => import('./pages/AdminInscriptionsLoi
 const AdminAvis = lazy(() => import('./pages/AdminAvis'));
 const SuperModeration = lazy(() => import('./pages/SuperModeration'));
 const AdminPremium = lazy(() => import('./pages/AdminPremium'));
+const AdminOpeningModels = lazy(() => import('./pages/AdminOpeningModels'));
 const AdminCommercial = lazy(() => import('./pages/AdminCommercial'));
 const AdminDownloads = lazy(() => import('./pages/AdminDownloads'));
 const AdminBusinessNeeds = lazy(() => import('./pages/AdminBusinessNeeds'));
@@ -303,6 +304,7 @@ function AppRouter() {
           <Route path="/admin/avis" element={<AdminAvis />} />
           <Route path="/admin/super-moderation" element={<SuperModeration />} />
           <Route path="/admin/premium" element={<AdminPremium />} />
+          <Route path="/admin/opening-models" element={<AdminOpeningModels />} />
           <Route path="/admin/abonnements" element={<AdminPremium />} />
           <Route path="/admin/commercial" element={<AdminCommercial />} />
           <Route path="/commercial" element={<AdminCommercial />} />
