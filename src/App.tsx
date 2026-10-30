@@ -4,6 +4,7 @@ import AppRouter from './AppRouter';
 import { WelcomeModal } from './components/WelcomeModal';
 import { CheckoutRegistrationBridge } from './components/CheckoutRegistrationBridge';
 import { PwaUpdatePrompt } from './components/PwaUpdatePrompt';
+import { PlatformPrestigeLaunch } from './components/PlatformPrestigeLaunch';
 import { isDedicatedClientHostname } from './lib/clientAppUrl';
 
 const WELCOME_SEEN_KEY = 'dalilTounes_welcome_seen_v1';
@@ -178,6 +179,7 @@ function App() {
   return (
     <>
       <CheckoutRegistrationBridge />
+      <PlatformPrestigeLaunch />
       {!isDedicatedClientApp && <PwaUpdatePrompt />}
       <AppRouter />
       <WelcomeModal isOpen={showWelcomeModal} onClose={handleCloseWelcomeModal} />
