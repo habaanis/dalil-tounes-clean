@@ -351,6 +351,7 @@ export default function SearchBar({
     setCity(v);
     // A city change also invalidates any business suggestions for the previous city.
     searchSequence.current += 1;
+    if (tEnt.current) window.clearTimeout(tEnt.current);
     setEnt([]);
     setLoadingEnt(false);
     const cityRequestId = ++citySequence.current;
