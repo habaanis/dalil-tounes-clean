@@ -47,3 +47,9 @@ Le routeur ne possède pas encore de page dédiée explicite « S'installer en T
 
 ## Idée mise de côté — guide PDF payant « S'installer en Tunisie » (à reprendre plus tard)
 Décision utilisateur : conserver l'idée en backlog, **ne pas la développer maintenant**. Concept : guide complet téléchargeable, huit chapitres correspondant aux rubriques existantes, démarches détaillées et sourcées, checklists, formalités de santé/assurance/rapatriement et remboursements selon le statut, liens officiels et date de vérification. Prix de lancement évoqué : 14,90 € (simple hypothèse, non validée). Ne pas créer pour l'instant de PDF, de paiement ni de lien d'achat. Garder gratuitement les informations essentielles et d'urgence. Priorité immédiate : poursuivre les améliorations des huit accordéons de la page existante « S'installer en Tunisie » et leurs redirections explicites.
+
+
+### Guide PDF « S’installer en Tunisie » — idée retenue (30 octobre 2026)
+- Ajouter une rubrique **« Acheter un bien immobilier en Tunisie »** dans le futur guide PDF, sans lancer la production du PDF maintenant.
+- Contenu envisagé : étapes de l'achat, rôle du notaire et de l'agence, titres fonciers, vérifications juridiques, frais et taxes, particularités pour les étrangers/non-résidents, financement et transfert des fonds, recours aux sources administratives officielles actualisées. Ne pas présenter un conseil juridique comme universel ; vérifier selon nationalité, statut et nature du terrain.
+- Relier à l'annuaire immobilier existant ; ne pas créer de doublon de section/site.
