@@ -602,8 +602,7 @@ export default function CitizensTourism() {
                     <p className="mt-1.5 text-xs leading-relaxed text-gray-700">{settlementPrep[lang].items[topicIndex]}</p>
                   </div>
                   <p className="mt-3 border-t border-[#D4AF37]/20 pt-2 text-[11px] leading-relaxed text-gray-500">{settlementPrep[lang].disclaimer}</p>
-                  <div className="hidden">
-                  </div>
+
                 </div>
               </details>
             ))}
