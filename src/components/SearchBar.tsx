@@ -103,6 +103,7 @@ export default function SearchBar({
   const [loadingVille, setLoadingVille] = React.useState(false);
   const [errEnt, setErrEnt] = React.useState<string | null>(null);
   const [errVille, setErrVille] = React.useState<string | null>(null);
+  const searchSequence = React.useRef(0);
   const tEnt = React.useRef<number | null>(null);
   const tVille = React.useRef<number | null>(null);
   const tAutoSearch = React.useRef<number | null>(null);
@@ -191,6 +192,7 @@ export default function SearchBar({
   }
 
   const runSearch = React.useCallback(async (qValue: string, cityValue: string, cert: CertFilter) => {
+    const requestId = ++searchSequence.current;
     const trimmedValue = qValue.trim();
 
     if (trimmedValue.length < MIN_CHARS) {
@@ -261,6 +263,7 @@ export default function SearchBar({
         }
 
         const resp = await query;
+        if (requestId !== searchSequence.current) return;
 
         if (resp.error) {
           console.error('[Search] query error:', resp.error);
@@ -305,6 +308,7 @@ export default function SearchBar({
         console.log('[Search] scored results:', allResults.map((r: any) => ({ nom: r.nom, score: r._score, ville: r.ville })));
       }
 
+      if (requestId !== searchSequence.current) return;
       cache.current.set(cacheKey, allResults);
       if (cache.current.size > 50) {
         const firstKey = cache.current.keys().next().value;
@@ -313,17 +317,20 @@ export default function SearchBar({
 
       setEnt(allResults);
     } catch (err) {
+      if (requestId !== searchSequence.current) return;
       console.error('[Search] error:', err);
       setErrEnt(err instanceof Error ? err.message : 'Erreur de recherche');
       setEnt([]);
     } finally {
-      setLoadingEnt(false);
+      if (requestId === searchSequence.current) setLoadingEnt(false);
     }
   }, [scope, metier]);
 
   const onChangeQ = (e: React.ChangeEvent<HTMLInputElement>) => {
     const v = e.currentTarget.value ?? '';
     setQ(v);
+    searchSequence.current += 1;
+    setEnt([]);
     if (tEnt.current) window.clearTimeout(tEnt.current);
     tEnt.current = window.setTimeout(() => {
       runSearch(v, city, certFilter);
