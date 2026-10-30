@@ -9,6 +9,7 @@ import { HERO_IMAGE_URL } from '../constants/images';
 import { CvBusinessQrVisual } from '../components/CvBusinessProductVisuals';
 import { getMultilingualField } from '../lib/databaseI18n';
 import { getCvPaletteTheme } from '../lib/cvPalette';
+import ClientOpeningSplash, { type ClientOpeningStyle } from '../components/ClientOpeningSplash';
 import {
   buildClientAppUrl,
   buildClientCvUrl,
@@ -181,6 +182,10 @@ export default function BusinessQr() {
       || (navigator as Navigator & { standalone?: boolean }).standalone === true;
     return new URLSearchParams(window.location.search).get('source') === 'pwa' || isStandalone;
   });
+  const [openingStyle, setOpeningStyle] = useState<ClientOpeningStyle>(() => {
+    try { return localStorage.getItem('dalil:client-opening-style:' + identifier) === 'framed' ? 'framed' : 'photo'; }
+    catch { return 'photo'; }
+  });
   const launchPalette = new URLSearchParams(window.location.search).get('palette');
   const paletteTheme = getCvPaletteTheme(business?.palette_cv || launchPalette);
   const cvModel: CvModel = String(business?.modele_cv || '').toLowerCase().includes('portfolio')
@@ -269,6 +274,13 @@ export default function BusinessQr() {
     ? String(getMultilingualField(business, 'categorie', language) || business.categorie || '')
     : '';
   const clientIdentifier = business ? getClientAppIdentifier(business) : identifier;
+  useEffect(() => {
+    try { setOpeningStyle(localStorage.getItem('dalil:client-opening-style:' + identifier) === 'framed' ? 'framed' : 'photo'); } catch { /* storage optional */ }
+  }, [identifier]);
+  const chooseOpeningStyle = (style: ClientOpeningStyle) => {
+    setOpeningStyle(style);
+    try { localStorage.setItem('dalil:client-opening-style:' + identifier, style); } catch { /* storage optional */ }
+  };
   const cvUrl = buildClientCvUrl(business || identifier, language, paletteTheme.id);
   const logoUrl = business ? getLogoUrl(business.logo_url) : '';
   const coverUrl = getCoverUrl(business?.image_url);
@@ -401,21 +413,17 @@ export default function BusinessQr() {
   }
 
   if (showBrandSplash) {
-    return (
-      <main className="fixed inset-0 z-[10000] grid place-items-center px-6 text-center" style={{ backgroundColor: paletteTheme.page, color: paletteTheme.text }}>
-        <div className="flex flex-col items-center">
-          <div className="grid h-32 w-32 place-items-center overflow-hidden rounded-full border-[3px] p-1 shadow-2xl" style={{ backgroundColor: paletteTheme.surface, borderColor: paletteTheme.border }}>
-            <img src={logoUrl} alt={`Logo ${displayName}`} className="h-full w-full rounded-full object-cover" />
-          </div>
-          <h1 className="mt-5 font-serif text-2xl font-bold">{displayName}</h1>
-          <p className="mt-2 text-sm" style={{ color: paletteTheme.accent }}>{modelText.product}</p>
-        </div>
-      </main>
-    );
+    return <ClientOpeningSplash name={displayName} product={modelText.product} logo={logoUrl} cover={coverUrl} palette={paletteTheme} style={openingStyle} onSkip={() => setShowBrandSplash(false)} />;
   }
 
   return (
     <main className="fixed inset-0 z-[10000] overflow-y-auto px-3 py-4 sm:py-6" style={{ backgroundColor: paletteTheme.page }} dir={language === 'ar' ? 'rtl' : 'ltr'}>
+      {qrAccess && <div className="mx-auto mb-3 flex max-w-lg items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm" style={{backgroundColor:paletteTheme.surface,color:paletteTheme.text}}>
+        <span>{language === 'ar' ? 'افتتاح التطبيق' : 'Ouverture'}</span>
+        <button type="button" className="rounded-lg border px-3 py-2" style={{borderColor:paletteTheme.border,backgroundColor:openingStyle === 'photo' ? paletteTheme.border : 'transparent'}} onClick={() => chooseOpeningStyle('photo')}>A · Photo</button>
+        <button type="button" className="rounded-lg border px-3 py-2" style={{borderColor:paletteTheme.border,backgroundColor:openingStyle === 'framed' ? paletteTheme.border : 'transparent'}} onClick={() => chooseOpeningStyle('framed')}>B · Prestige</button>
+        <button type="button" className="underline" onClick={() => setShowBrandSplash(true)}>{language === 'ar' ? 'معاينة' : 'Voir'}</button>
+      </div>}
       <CvBusinessQrVisual
         language={language}
         name={displayName}
