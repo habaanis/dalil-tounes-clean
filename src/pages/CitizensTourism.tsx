@@ -504,6 +504,21 @@ export default function CitizensTourism() {
                   <ChevronDown className={`h-4 w-4 flex-shrink-0 -rotate-90 text-[#D4AF37] ${isRTL ? 'rotate-90' : ''}`} aria-hidden="true" />
                 </div>
                 <p className="mt-1.5 text-xs leading-relaxed text-gray-600">{topic.text}</p>
+                <ul className="mt-2 hidden flex-wrap gap-1.5 sm:flex" aria-label={topic.title}>
+                  {visitExamples[lang][topicIndex].slice(0, 3).map((example) => (
+                    <li key={example} className="rounded-full border border-[#D4AF37]/35 bg-white px-2.5 py-1 text-[11px] leading-tight text-gray-700">{example}</li>
+                  ))}
+                </ul>
+                <span className="mt-3 inline-flex rounded-full bg-white/75 px-3 py-1.5 text-xs font-semibold text-[#5B2345] shadow-sm transition group-hover:bg-white">{journey.discover}</span>
+              </Link>
+            ) : (
+              <details key={topic.title} className="group rounded-xl border border-[#D4AF37]/45 bg-[#FFFDF8] px-3 py-2.5 open:border-[#D4AF37]">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-[#4A1D43] [&::-webkit-details-marker]:hidden">
+                  <span>{topic.title}</span>
+                  <ChevronDown className="h-4 w-4 flex-shrink-0 text-[#D4AF37] transition-transform group-open:rotate-180" aria-hidden="true" />
+                </summary>
+                <p className="mt-2 text-xs font-medium leading-relaxed text-[#4A1D43]">{settleServiceIntros[lang][topicIndex]}</p>
+                <p className="mt-1.5 text-xs leading-relaxed text-gray-600">{topic.text}</p>
                 {topicIndex === 0 && (
                   <div className="mt-3 rounded-lg border border-[#D4AF37]/30 bg-white p-3">
                     <p className="text-xs font-semibold text-[#4A1D43]">{residenceGuide[lang].title}</p>
@@ -563,30 +578,7 @@ export default function CitizensTourism() {
                     </div>
                   </div>
                 )}
-                <ul className="mt-2 hidden flex-wrap gap-1.5 sm:flex" aria-label={topic.title}>
-                  {visitExamples[lang][topicIndex].slice(0, 3).map((example) => (
-                    <li key={example} className="rounded-full border border-[#D4AF37]/35 bg-white px-2.5 py-1 text-[11px] leading-tight text-gray-700">{example}</li>
-                  ))}
-                </ul>
-                <span className="mt-3 inline-flex rounded-full bg-white/75 px-3 py-1.5 text-xs font-semibold text-[#5B2345] shadow-sm transition group-hover:bg-white">{journey.discover}</span>
-              </Link>
-            ) : (
-              <details key={topic.title} className="group rounded-xl border border-[#D4AF37]/45 bg-[#FFFDF8] px-3 py-2.5 open:border-[#D4AF37]">
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-[#4A1D43] [&::-webkit-details-marker]:hidden">
-                  <span>{topic.title}</span>
-                  <ChevronDown className="h-4 w-4 flex-shrink-0 text-[#D4AF37] transition-transform group-open:rotate-180" aria-hidden="true" />
-                </summary>
-                <p className="mt-2 text-xs font-medium leading-relaxed text-[#4A1D43]">{settleServiceIntros[lang][topicIndex]}</p>
-                <p className="mt-1.5 text-xs leading-relaxed text-gray-600">{topic.text}</p>
-                {'external' in topic && topic.external ? (
-                  <a href={topic.href} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-[#4A1D43] underline decoration-[#D4AF37] underline-offset-2">
-                    {settleActionLabels[lang][topicIndex]}<ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
-                  </a>
-                ) : (
-                  <Link to={topic.href} className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-[#4A1D43] underline decoration-[#D4AF37] underline-offset-2">
-                    {settleActionLabels[lang][topicIndex]}
-                  </Link>
-                )}
+
               </details>
             ))}
           </div>
