@@ -22,6 +22,9 @@ function shouldBypass(request) {
   // Never intercept Supabase (API, Edge Functions, storage)
   if (url.hostname.includes('supabase.co')) return true;
 
+  // Never cache dynamic first-party API responses (including business manifests).
+  if (url.pathname.startsWith('/api/')) return true;
+
   // Never intercept Edge Function paths served via our own origin proxy
   if (url.pathname.startsWith('/functions/v1/')) return true;
 
