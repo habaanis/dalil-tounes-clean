@@ -457,7 +457,7 @@ export default function SearchBar({
       return;
     }
 
-    goTo(`#/entreprises/${item.id}`);
+    goTo(`/entreprise/id/${encodeURIComponent(item.id)}`);
   };
 
   const triggerNavigation = (query: string, villeParam: string) => {
