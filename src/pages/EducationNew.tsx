@@ -35,7 +35,7 @@ interface EducationEvent {
 const translations = {
   fr: {
     title: "Éducation & Formation : Trouvez l'établissement idéal",
-    welcome: "Votre guide complet pour l'éducation en Tunisie. De la maternelle à l'université, et pour la formation continue, Dalil Tounes vous aide à choisir le meilleur parcours. Comparez les programmes, consultez les avis des parents, et inscrivez vos enfants en toute confiance.",
+    welcome: "Recherchez et comparez les établissements scolaires, universitaires et de formation en Tunisie. Consultez les programmes, les informations disponibles et les contacts pour préparer votre choix.",
     searchPlaceholder: "École primaire, Lycée, Cours de langue, Université...",
     cityPlaceholder: "Dans quelle ville / délégation ?",
     yourAddress: "Votre adresse pour calculer les distances",
@@ -137,7 +137,7 @@ const translations = {
   },
   en: {
     title: "Education & Training: Find the Ideal Institution",
-    welcome: "Your complete guide to education in Tunisia. From kindergarten to university, and for all continuous training, Dalil Tounes helps you choose the best path. Compare programs, check parent reviews, and register your children with confidence.",
+    welcome: "Find and compare schools, universities and training providers in Tunisia. Explore available programmes, information and contacts to help you choose.",
     searchPlaceholder: "Primary School, High School, Language Course, University...",
     cityPlaceholder: "In which city / delegation?",
     yourAddress: "Your address to calculate distances",
@@ -239,7 +239,7 @@ const translations = {
   },
   ar: {
     title: "التعليم والتكوين: اعثر على المؤسسة المثالية",
-    welcome: "دليلك الشامل للتعليم في تونس. من رياض الأطفال إلى الجامعة، ومروراً بالتدريب المستمر، يساعدك دليل تونس على اختيار المسار الأفضل. قارن البرامج، واطلع على آراء أولياء الأمور، وسجل أطفالك بثقة.",
+    welcome: "ابحث عن المدارس والجامعات ومراكز التكوين في تونس وقارن بينها. اطلع على البرامج والمعلومات المتوفرة ووسائل الاتصال لاختيار المؤسسة المناسبة.",
     searchPlaceholder: "مدرسة ابتدائية، معهد، دروس لغة، جامعة...",
     cityPlaceholder: "في أي مدينة / ولاية؟",
     yourAddress: "عنوانك لحساب المسافات",
@@ -359,7 +359,7 @@ const educationPageTranslations = {
   },
   it: {
     title: "Istruzione e formazione: trova l'istituto ideale",
-    welcome: "La tua guida completa all'istruzione in Tunisia. Dalla scuola dell'infanzia all'università e alla formazione continua, Dalil Tounes ti aiuta a scegliere il percorso migliore. Confronta i programmi, consulta le recensioni dei genitori e iscrivi i tuoi figli con fiducia.",
+    welcome: "Cerca e confronta scuole, università ed enti di formazione in Tunisia. Consulta programmi, informazioni disponibili e contatti per scegliere con più consapevolezza.",
     searchPlaceholder: 'Scuola primaria, liceo, corso di lingua, università...',
     cityPlaceholder: 'In quale città / delegazione?',
     yourAddress: 'Il tuo indirizzo per calcolare le distanze',
@@ -463,7 +463,7 @@ const educationPageTranslations = {
   },
   ru: {
     title: 'Образование и обучение: найдите подходящее учебное заведение',
-    welcome: 'Ваш полный путеводитель по образованию в Тунисе. От детского сада до университета и непрерывного обучения — Dalil Tounes поможет выбрать лучший путь. Сравнивайте программы, читайте отзывы родителей и уверенно записывайте детей на обучение.',
+    welcome: 'Ищите и сравнивайте школы, университеты и учебные центры Туниса. Изучайте программы, доступную информацию и контакты, чтобы выбрать подходящее учреждение.',
     searchPlaceholder: 'Начальная школа, лицей, языковые курсы, университет...',
     cityPlaceholder: 'В каком городе / делегации?',
     yourAddress: 'Ваш адрес для расчёта расстояний',
