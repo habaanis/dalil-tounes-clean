@@ -27,7 +27,7 @@ export default function ClientOpeningSplash({ name, product, logo, cover, palett
       <div className="absolute inset-x-0 top-[25%] bottom-[25%] overflow-hidden" style={{clipPath:'polygon(0 21%,8% 20%,18% 17%,28% 12%,40% 7%,52% 4%,64% 4%,76% 7%,88% 13%,100% 18%,100% 80%,90% 79%,80% 82%,70% 88%,58% 94%,46% 96%,34% 95%,22% 91%,10% 86%,0 82%)',filter:'brightness(1.13) contrast(1.07) saturate(1.13)'}}><img src={cover} alt="" className="h-full w-full object-cover"/></div>
       <div className="absolute left-[-7%] right-[-7%] top-[22%] h-[12%] rounded-[50%] border-t-[8px] border-[#e6bf68] -rotate-[6deg]" style={{filter:'drop-shadow(0 1px 2px #ffe3a182) drop-shadow(0 0 7px #d9a43d80)'}} />
       <div className="absolute left-[-7%] right-[-7%] bottom-[19%] h-[12%] rounded-[50%] border-t-[8px] border-[#e6bf68] rotate-[6deg]" style={{filter:'drop-shadow(0 1px 2px #ffe3a182) drop-shadow(0 0 7px #d9a43d80)'}} />
-    </>
+    </>}
     <div className="relative z-10 flex flex-col items-center">
       {logo && <div className={`grid place-items-center overflow-hidden rounded-full border-[4px] shadow-2xl ${isFramed ? "h-[185px] w-[185px] max-w-[49vw] bg-[#fffdf6] p-4" : "h-28 w-28 p-1"}`} style={{backgroundColor:palette.surface,borderColor:palette.border}}>
         <img src={logo} alt="" className="h-full w-full rounded-full object-contain" />
