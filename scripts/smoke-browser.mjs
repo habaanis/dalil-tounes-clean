@@ -69,7 +69,7 @@ try {
       page.off('pageerror',listener);
     }
   }
-  // Search -> suggestion -> business detail. Uses a broad term to avoid test-specific records.
+  // Search -> suggestion -> filtered business cards (the actual /recherche behavior).
   const searchErrors = [];
   const onSearchError = (error) => searchErrors.push(error.message);
   page.on('pageerror', onSearchError);
@@ -78,17 +78,19 @@ try {
     const queryInput = page.locator('[data-component-name="SearchBar"] input').first();
     await queryInput.waitFor({state:'visible',timeout:15000});
     await queryInput.fill('restaurant');
-    // Suggestions are rendered through a portal outside the SearchBar DOM subtree.
     const result = page.locator('body li.cursor-pointer').first();
     await result.waitFor({state:'visible',timeout:15000});
+    const selectedName = (await result.locator('.font-medium').first().innerText()).trim();
     await result.click();
-    await page.waitForURL(url => url.pathname.startsWith('/entreprise/id/'), {timeout:15000});
-    await page.locator('#root').waitFor({state:'visible',timeout:12000});
+    await page.waitForURL(url => url.pathname === '/recherche', {timeout:10000});
+    await page.waitForTimeout(300);
+    const filteredQuery = await queryInput.inputValue();
+    if (!selectedName || !filteredQuery) throw new Error('Selecting suggestion did not retain a search term');
     if (searchErrors.length) throw new Error(searchErrors.join(' | '));
-    console.log('PASS Search suggestion -> Business detail');
+    console.log('PASS Search suggestion -> filtered businesses');
   } catch(error) {
     failed++;
-    console.log('FAIL Search suggestion -> Business detail: ' + error.message);
+    console.log('FAIL Search suggestion -> filtered businesses: ' + error.message);
   } finally {
     page.off('pageerror',onSearchError);
   }
