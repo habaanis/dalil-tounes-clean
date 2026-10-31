@@ -270,18 +270,31 @@ export default function SearchBar({
         const resp = await query;
         if (requestId !== searchSequence.current) return;
 
+        // Keep name suggestions available when the broad multi-column query fails.
+        // Avoid empty autocomplete due to one malformed/unsupported searchable field.
+        let searchRows = resp.data || [];
         if (resp.error) {
-          console.error('[Search] query error:', resp.error);
-          setErrEnt(resp.error.message);
-          setEnt([]);
-          setLoadingEnt(false);
-          return;
+          console.error('[Search] broad query error, attempting safe name fallback:', resp.error);
+          const fallback = await supabase
+            .from(Tables.ENTREPRISE)
+            .select('id, nom, ville, gouvernorat, categorie, statut_carte')
+            .not('nom', 'is', null)
+            .ilike('nom', `%${trimmedValue}%`)
+            .limit(30);
+          if (requestId !== searchSequence.current) return;
+          if (fallback.error) {
+            setErrEnt(fallback.error.message);
+            setEnt([]);
+            setLoadingEnt(false);
+            return;
+          }
+          searchRows = fallback.data || [];
         }
 
-        console.log('[Search] raw Supabase results:', resp.data?.length,
+        console.log('[Search] raw Supabase results:', searchRows.length,
           resp.data?.slice(0, 5).map((r: any) => ({ nom: r.nom, ville: r.ville, gouvernorat: r.gouvernorat })));
 
-        const rawRows = resp.data || [];
+        const rawRows = searchRows;
 
         let scored = rawRows.map((row: any) => {
           const s = scoreResult(row, words);
