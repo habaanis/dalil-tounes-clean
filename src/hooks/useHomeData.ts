@@ -75,7 +75,24 @@ export function useHomeData(): HomeData {
       timeoutId = window.setTimeout(runFetch, 300);
     }
 
+    // Refresh when returning to an existing tab, so desktop/mobile converge.
+    // Visibility events are throttled to avoid duplicate Supabase requests.
+    let lastRefresh = 0;
+    const refreshOnReturn = () => {
+      if (document.visibilityState !== 'visible') return;
+      const now = Date.now();
+      if (now - lastRefresh < 60_000) return;
+      lastRefresh = now;
+      revalidateHomeData().catch(() => {
+        // Keep the last valid count; a failed network request must not invent zeroes.
+      });
+    };
+    document.addEventListener('visibilitychange', refreshOnReturn);
+    window.addEventListener('focus', refreshOnReturn);
+
     return () => {
+      document.removeEventListener('visibilitychange', refreshOnReturn);
+      window.removeEventListener('focus', refreshOnReturn);
       unsub();
       if (idleId !== undefined && typeof w.cancelIdleCallback === 'function') w.cancelIdleCallback(idleId);
       if (timeoutId !== undefined) window.clearTimeout(timeoutId);
