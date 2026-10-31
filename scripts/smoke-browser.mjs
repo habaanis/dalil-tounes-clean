@@ -90,7 +90,7 @@ try {
     const card = page.locator('article.group.cursor-pointer').first();
     await card.waitFor({state:'visible',timeout:15000});
     await card.click();
-    await page.waitForURL(url => /^\\/(entreprise|entreprises|business)\\//.test(url.pathname), {timeout:15000});
+    await page.waitForURL(url => ['/entreprise/', '/entreprises/', '/business/'].some(prefix => url.pathname.startsWith(prefix)), {timeout:15000});
     await page.locator('#root').waitFor({state:'visible',timeout:12000});
     if (searchErrors.length) throw new Error(searchErrors.join(' | '));
     console.log('PASS Search suggestion -> filtered card -> Business detail');
