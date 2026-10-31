@@ -15,7 +15,7 @@ const normalize = (value: unknown): string => {
 };
 
 const visitType = (business: BusinessLike): 'artisan' | 'activity' | 'lodging' | 'site' | null => {
-  const tags = normalize([business.nom, business.categorie, business.sous_categories, business.description, business.liste_pages].join(' '));
+  const tags = normalize([business.nom, business.categorie, business.sous_categories].join(' '));
   if (/artisan|artisanat|atelier|tissage|poterie|vannerie|tressage|producteur|ferme|apicult|huilerie|palmeraie|terroir/.test(tags)) return 'artisan';
   if (/guide local|guide touristique|plongee|randonnee|experience locale|excursion/.test(tags)) return 'activity';
   if (/gite|maison d.hotes|ecolodge|hebergement rural|campement/.test(tags)) return 'lodging';
