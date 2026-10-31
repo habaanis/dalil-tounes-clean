@@ -46,7 +46,7 @@ try {
     page.off('pageerror', onNavigationError);
   }
   // Check links from the settlement guide to all supported service categories.
-  for (const destination of ['/citizens/health', '/education', '/emplois', '/citizens/shops']) {
+  for (const destination of ['/citizens/services', '/citizens/health', '/education', '/emplois']) {
     const errors = [];
     const listener = (error) => errors.push(error.message);
     page.on('pageerror', listener);
@@ -83,7 +83,6 @@ try {
     const selectedName = (await result.locator('.font-medium').first().innerText()).trim();
     await result.click();
     await page.waitForURL(url => url.pathname === '/recherche', {timeout:10000});
-    await page.waitForTimeout(300);
     const filteredQuery = await queryInput.inputValue();
     if (!selectedName || !filteredQuery) throw new Error('Selecting suggestion did not retain a search term');
     // The filtered listing renders clickable BusinessSearchCardV2 articles.
