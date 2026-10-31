@@ -204,11 +204,13 @@ async function doFetch(): Promise<HomeQueryResult> {
 
     supabase
       .from('entreprise')
-      .select('id', { count: 'exact', head: true }),
+      .select('id', { count: 'exact' })
+      .limit(1),
 
     supabase
       .from('entreprise')
-      .select('id', { count: 'exact', head: true })
+      .select('id', { count: 'exact' })
+      .limit(1)
       .eq('statut_carte', CERTIFIED_LABEL),
   ]);
 
