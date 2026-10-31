@@ -1,9 +1,19 @@
 // Browser smoke test: npm run smoke:browser (requires Playwright Chromium installed).
 import { chromium } from 'playwright';
+import { mkdir } from 'node:fs/promises';
 const base = process.env.SMOKE_BASE_URL || 'https://dalil-tounes.com';
 const routes = ['/', '/recherche', '/citizens', '/citizens/health', '/education', '/citizens/shops', '/citizens/services', '/citizens/tourism', '/emplois'];
 const browser = await chromium.launch({ headless: true });
 let failed = 0;
+const captureFailure = async (page, label) => {
+  try {
+    await mkdir('smoke-artifacts', { recursive: true });
+    const name = label.replace(/[^a-z0-9-]/gi, '-').toLowerCase().slice(0, 90);
+    await page.screenshot({ path: `smoke-artifacts/${name}.png`, fullPage: true, timeout: 5000 });
+  } catch (error) {
+    console.log(`Screenshot unavailable for ${label}: ${error.message}`);
+  }
+};
 try {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   for (const route of routes) {
@@ -17,10 +27,11 @@ try {
       const visible = await page.locator('#root').evaluate(node => Boolean(node.textContent?.trim()) && node.getBoundingClientRect().height > 0);
       const ok = Boolean(response?.ok() && visible && errors.length === 0);
       console.log(`${ok ? 'PASS' : 'FAIL'} ${route} ${Date.now()-started}ms ${errors.join(' | ')}`);
-      if (!ok) failed++;
+      if (!ok) { failed++; await captureFailure(page, `route-${route}`); }
     } catch (error) {
       console.log(`FAIL ${route}: ${error.message}`);
       failed++;
+      await captureFailure(page, `route-${route}`);
     } finally {
       page.off('pageerror', onError);
     }
@@ -42,6 +53,7 @@ try {
   } catch (error) {
     console.log('FAIL Tourism -> Settlement -> Health navigation: ' + error.message);
     failed++;
+    await captureFailure(page, 'settlement-health');
   } finally {
     page.off('pageerror', onNavigationError);
   }
@@ -65,6 +77,7 @@ try {
     } catch(error) {
       failed++;
       console.log('FAIL Settlement -> ' + destination + ': ' + error.message);
+      await captureFailure(page, `settlement-${destination}`);
     } finally {
       page.off('pageerror',listener);
     }
@@ -96,6 +109,7 @@ try {
   } catch(error) {
     failed++;
     console.log('FAIL Search suggestion -> filtered businesses: ' + error.message);
+    await captureFailure(page, 'search-business-details');
   } finally {
     page.off('pageerror',onSearchError);
   }
