@@ -1,7 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../lib/supabaseClient';
+import { supabaseUrl, supabaseAnonKey } from '../lib/supabaseClient';
+import { createClient } from '@supabase/supabase-js';
+
+// Public search must not inherit a stale authenticated browser session.
+const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+});
 import { Tables } from '../lib/dbTables';
 import { detectIntent, getCategoryRoute, getCategoryDisplayName, PageCategorie } from '../lib/intentDetection';
 import { FORCE_ENTERPRISE_ONLY } from '../config/searchMode';
@@ -135,11 +141,7 @@ export default function SearchBar({
   const GLOBAL_RAW_RESULT_LIMIT = 150;
   const CATEGORY_RAW_RESULT_LIMIT = 40;
 
-  const OR_SAFE_FIELDS = [
-    'nom', 'ville', 'gouvernorat', 'adresse', 'description',
-    'sous_categories_texte', 'sous_categories_clean',
-    'name_ar', 'services', '"mots cles recherche"',
-  ];
+  const OR_SAFE_FIELDS = ['nom', 'ville', 'gouvernorat', 'description', 'sous_categories_texte'];
 
   function rowToSearchableText(row: any): string {
     const textFields = [
@@ -252,7 +254,7 @@ export default function SearchBar({
 
         let query = supabase
           .from(Tables.ENTREPRISE)
-          .select('id, nom, ville, gouvernorat, adresse, description, sous_categories_texte, sous_categories_clean, categorie, name_ar, services, statut_carte, "mots cles recherche", "Note Google Globale"')
+          .select('id, nom, ville, gouvernorat, adresse, description, sous_categories_texte, sous_categories_clean, categorie, name_ar, services, statut_carte')
           .not('nom', 'is', null)
           .neq('nom', '')
           .or(orParts.join(','))
@@ -264,7 +266,8 @@ export default function SearchBar({
         }
 
         if (scope === 'magasin') {
-          query = query.eq('"page commerce local"', true);
+          // Public autocomplete should not fail if optional commerce flag differs.
+          // Filtering is applied by the destination page.
         }
 
         const resp = await query;
