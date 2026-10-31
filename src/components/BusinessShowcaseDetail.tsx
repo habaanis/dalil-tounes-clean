@@ -17,6 +17,7 @@ import { mapSubscriptionToTier } from '../lib/subscriptionTiers';
 import { generateLocalBusinessSchema } from '../lib/structuredDataSchemas';
 import { buildClientAppUrl, isDedicatedClientHostname } from '../lib/clientAppUrl';
 import GratuitCard from './GratuitCard';
+import VisitBeforeTravelAdvice from './VisitBeforeTravelAdvice';
 import { SEOHead } from './SEOHead';
 import StructuredData from './StructuredData';
 import BusinessShowcaseLienoraEnhanced from './BusinessShowcaseLienoraEnhanced';
@@ -228,7 +229,7 @@ export default function BusinessShowcaseDetail() {
   }
 
   if (tier !== 'gratuit') {
-    return <BusinessShowcaseLienoraEnhanced />;
+    return <><BusinessShowcaseLienoraEnhanced /><VisitBeforeTravelAdvice business={business} language={language} /></>;
   }
 
   const displayName = String(
@@ -330,6 +331,7 @@ export default function BusinessShowcaseDetail() {
             statut_carte={business.statut_carte}
             showDetailsLink={false}
           />
+          <VisitBeforeTravelAdvice business={business} language={language} />
         </section>
       </div>
     </main>
