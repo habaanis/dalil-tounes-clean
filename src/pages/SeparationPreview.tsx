@@ -257,9 +257,10 @@ function SeparationExperience({ fixedView }: { fixedView?: 'platform' | 'cv' }) 
   const t = COPY[lang];
   const ecosystem = HOME_ECOSYSTEM_COPY[lang];
   const { partners, totalCount, certifiedCount, loading } = useHomeData();
-  const displayedCount = totalCount > 0 ? totalCount : 1894;
-  const localizedCount = new Intl.NumberFormat(lang === 'ar' ? 'ar-TN' : lang).format(displayedCount);
-  const localizedCertifiedCount = new Intl.NumberFormat(lang === 'ar' ? 'ar-TN' : lang).format(certifiedCount);
+  // Never present a historical hard-coded number as a live network count.
+  const countsAvailable = totalCount > 0;
+  const localizedCount = countsAvailable ? new Intl.NumberFormat(lang === 'ar' ? 'ar-TN' : lang).format(totalCount) : '—';
+  const localizedCertifiedCount = countsAvailable ? new Intl.NumberFormat(lang === 'ar' ? 'ar-TN' : lang).format(certifiedCount) : '—';
   const heroVideoSrc = lang === 'fr'
     ? 'https://static.metricool.com/video/4610595/202609/eaaff4e56ccf4aba.mp4'
     : lang === 'ar'
