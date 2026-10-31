@@ -86,8 +86,14 @@ try {
     await page.waitForTimeout(300);
     const filteredQuery = await queryInput.inputValue();
     if (!selectedName || !filteredQuery) throw new Error('Selecting suggestion did not retain a search term');
+    // The filtered listing renders clickable BusinessSearchCardV2 articles.
+    const card = page.locator('article.group.cursor-pointer').first();
+    await card.waitFor({state:'visible',timeout:15000});
+    await card.click();
+    await page.waitForURL(url => /^\\/(entreprise|entreprises|business)\\//.test(url.pathname), {timeout:15000});
+    await page.locator('#root').waitFor({state:'visible',timeout:12000});
     if (searchErrors.length) throw new Error(searchErrors.join(' | '));
-    console.log('PASS Search suggestion -> filtered businesses');
+    console.log('PASS Search suggestion -> filtered card -> Business detail');
   } catch(error) {
     failed++;
     console.log('FAIL Search suggestion -> filtered businesses: ' + error.message);
