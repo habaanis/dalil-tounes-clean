@@ -249,6 +249,11 @@ async function doFetch(): Promise<HomeQueryResult> {
     console.error('[homeDataPrefetch] certifiedRes error:', certifiedRes.error);
   }
 
+  // Do not cache failed count queries as real zero counts.
+  if (countRes.error || certifiedRes.error || countRes.count == null || certifiedRes.count == null) {
+    throw new Error('[homeDataPrefetch] Business counters unavailable; preserving last known valid values');
+  }
+
   const rawRows = (listRes.data as Record<string, unknown>[] | null) ?? [];
   let allMapped = rawRows.map(mapHomeBusinessRow);
 
