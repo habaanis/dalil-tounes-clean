@@ -9,8 +9,14 @@
 import { getSubscriptionPriority } from './subscriptionHelper';
 
 async function getSupabase() {
-  const m = await import('./supabaseClient');
-  return m.supabase;
+  // Public homepage figures must not depend on an old browser login session.
+  const [{ createClient }, m] = await Promise.all([
+    import('@supabase/supabase-js'),
+    import('./supabaseClient'),
+  ]);
+  return createClient(m.supabaseUrl, m.supabaseAnonKey, {
+    auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+  });
 }
 
 export interface HomeBusinessRow {
