@@ -80,6 +80,15 @@ export default function GratuitCard({
   const locationLabel = ville || gouvernorat || '';
   const isOpen = isCurrentlyOpen(horaires_ok ?? null);
   const cardCopy = CARD_COPY[language] || CARD_COPY.fr;
+  const missingCopy: Record<string, { phone: string; hours: string }> = {
+    fr: { phone: 'Téléphone : non renseigné', hours: 'Horaires : non renseignés' },
+    ar: { phone: 'الهاتف: غير متوفر', hours: 'ساعات العمل: غير متوفرة' },
+    en: { phone: 'Phone: not provided', hours: 'Hours: not provided' },
+    it: { phone: 'Telefono: non indicato', hours: 'Orari: non indicati' },
+    ru: { phone: 'Телефон: не указан', hours: 'Часы работы: не указаны' },
+  };
+  const missing = missingCopy[language] || missingCopy.fr;
+
 
   return (
     <div
@@ -141,6 +150,11 @@ export default function GratuitCard({
             )}
           </div>
         )}
+        {!horaires_ok?.trim() && (
+          <p style={{ fontSize: '11px', color: '#6B7280', marginTop: '8px' }}>
+            <Clock size={13} aria-hidden="true" style={{ display: 'inline', verticalAlign: 'middle', marginRight: '4px' }} />{missing.hours}
+          </p>
+        )}
       </div>
 
       {/* Téléphone sous les horaires : une action claire et accessible. */}
@@ -162,6 +176,12 @@ export default function GratuitCard({
               </a>
             )}
           </div>
+        )}
+        {!telephone?.trim() && (
+          <span style={{ fontSize: '12px', color: '#6B7280', textAlign: 'center' }}>
+            <Phone size={13} aria-hidden="true" style={{ display: 'inline', verticalAlign: 'middle', marginRight: '5px' }} />
+            {missing.phone}
+          </span>
         )}
         {showDetailsLink && (
           <span style={{ fontSize: '12px', fontWeight: 700, color: '#AD8B22', letterSpacing: '0.01em', textAlign: 'center' }}>
