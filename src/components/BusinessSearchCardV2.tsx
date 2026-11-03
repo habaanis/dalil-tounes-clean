@@ -76,6 +76,15 @@ export default function BusinessSearchCardV2({
   const today = business.horaires_ok
     ? formatTodayScheduleText(getTodaySchedule(business.horaires_ok), language)
     : '';
+  const missingLabels: Record<string, { phone: string; hours: string }> = {
+    fr: { phone: 'Téléphone non renseigné', hours: 'Horaires non renseignés' },
+    ar: { phone: 'الهاتف غير متوفر', hours: 'ساعات العمل غير متوفرة' },
+    en: { phone: 'Phone not provided', hours: 'Hours not provided' },
+    it: { phone: 'Telefono non indicato', hours: 'Orari non indicati' },
+    ru: { phone: 'Телефон не указан', hours: 'Часы работы не указаны' },
+  };
+  const missing = missingLabels[language] || missingLabels.fr;
+
 
   return (
     <article
@@ -142,6 +151,13 @@ export default function BusinessSearchCardV2({
           </div>
         )}
 
+        {!phone.trim() && (
+          <p className="mt-1 flex items-center gap-1 text-[9px] text-emerald-50/70">
+            <Phone className="h-2.5 w-2.5 shrink-0" aria-hidden="true" />
+            {missing.phone}
+          </p>
+        )}
+
         {business.horaires_ok && (
           <div className="mt-1 border-t border-[#D4AF37]/30 pt-1 text-[8px]">
             <div className="flex items-center gap-1">
@@ -152,6 +168,13 @@ export default function BusinessSearchCardV2({
             </div>
             {today && <p className="mt-0.5 line-clamp-1 text-emerald-50/80">{today}</p>}
           </div>
+        )}
+
+        {!business.horaires_ok?.trim() && (
+          <p className="mt-1 flex items-center gap-1 border-t border-[#D4AF37]/30 pt-1 text-[9px] text-emerald-50/70">
+            <Clock3 className="h-2.5 w-2.5 shrink-0" aria-hidden="true" />
+            {missing.hours}
+          </p>
         )}
 
         <button
