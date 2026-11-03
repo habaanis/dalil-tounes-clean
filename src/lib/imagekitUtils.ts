@@ -82,7 +82,7 @@ export function parseImageUrls(imageUrlString: string | null | undefined): strin
   // Les noms de fichiers (notamment Wikimedia Commons) peuvent contenir des virgules.
   // Ne découper qu'avant une nouvelle URL complète ou un chemin absolu.
   return imageUrlString
-    .split(/,(?=\\s*(?:https?:\\/\\/|\\/))/i)
+    .split(/,(?=\s*(?:https?:\/\/|\/))/i)
     .map(url => url.trim())
     .filter(url => url.length > 0);
 }
