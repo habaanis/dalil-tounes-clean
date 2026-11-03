@@ -58,7 +58,8 @@ interface CacheEntry extends HomeQueryResult {
 
 const CACHE_KEY = 'home_data_v14';
 const STALE_TIME = 5 * 60_000;
-const GC_TIME = 60 * 60_000;
+// Keep the last verified counts for 30 days when Supabase is temporarily unavailable.
+const GC_TIME = 30 * 24 * 60 * 60_000;
 
 const FIELDS = '*';
 
@@ -76,15 +77,18 @@ export function readHomeCache(): (HomeQueryResult & { fresh: boolean }) | null {
     const entry: CacheEntry = JSON.parse(raw);
     const age = Date.now() - entry.ts;
 
-    if (age > GC_TIME) {
+    if (!Number.isFinite(entry.ts) || age < 0 || age > GC_TIME ||
+      !Number.isSafeInteger(entry.totalCount) || entry.totalCount <= 0 ||
+      !Number.isSafeInteger(entry.certifiedCount) || entry.certifiedCount < 0 ||
+      entry.certifiedCount > entry.totalCount) {
       localStorage.removeItem(CACHE_KEY);
       return null;
     }
 
     return {
-      partners: entry.partners,
+      partners: Array.isArray(entry.partners) ? entry.partners : [],
       totalCount: entry.totalCount,
-      certifiedCount: entry.certifiedCount ?? 0,
+      certifiedCount: entry.certifiedCount,
       fresh: age < STALE_TIME,
     };
   } catch {
