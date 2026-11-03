@@ -37,7 +37,7 @@ const stayFilters = [
   { id: 'mer', label: 'Mer & îles', ar: 'بحر وجزر' },
 ];
 
-const unescoWorldHeritage = new Set(['Parc national de l’Ichkeul']);
+const unescoWorldHeritage = new Set(['Parc national de l’Ichkeul', 'Patrimoine insulaire de Djerba']);
 const unescoIntangible = new Set(['Poterie modelée de Sejnane', 'Harissa du Cap Bon et marché de Nabeul', 'Couscous et traditions régionales']);
 const unescoTentative = new Set([
   'Chenini', 'Douiret', 'Matmata', 'Tamezret', 'Guermessa', 'Ksar Ouled Soltane',
