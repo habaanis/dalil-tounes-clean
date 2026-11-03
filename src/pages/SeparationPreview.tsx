@@ -288,8 +288,8 @@ function SeparationExperience({ fixedView }: { fixedView?: 'platform' | 'cv' }) 
               <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-gray-600 md:text-lg">{t.platformDescription}</p>
               <div className="mx-auto mt-7 max-w-3xl rounded-2xl border border-[#D4AF37]/40 bg-white p-3 shadow-[0_18px_45px_rgba(74,29,67,0.10)]"><SearchBar scope="global" autoSearch resultMode="redirectToResults" /></div>
               <div className="mx-auto mt-4 max-w-3xl rounded-2xl border border-[#D4AF37]/55 bg-[#FFF8E6] px-4 py-3 text-[#4A1D43] shadow-sm">
-                <p className="text-base font-black leading-relaxed md:text-xl">{loading ? <span className="inline-block h-6 w-96 max-w-full animate-pulse rounded bg-[#D4AF37]/15" aria-label={t.loadingCount} /> : countsAvailable ? t.networkProof(localizedCount) : t.loadingCount}</p>
-                <p className="mt-1 text-sm font-bold text-[#9A7416] md:text-base">{loading ? <span className="inline-block h-5 w-48 max-w-full animate-pulse rounded bg-[#D4AF37]/15" /> : countsAvailable ? t.certifiedProof(localizedCertifiedCount) : t.certifiedLoading}</p>
+                <p className="text-base font-black leading-relaxed md:text-xl">{countsAvailable ? t.networkProof(localizedCount) : <span className="text-sm font-semibold opacity-70" role="status">{t.loadingCount}</span>}</p>
+                <p className="mt-1 text-sm font-bold text-[#9A7416] md:text-base">{countsAvailable ? t.certifiedProof(localizedCertifiedCount) : <span className="text-sm font-medium opacity-70" role="status">{t.certifiedLoading}</span>}</p>
               </div>
               <div className="mx-auto mt-3 grid max-w-3xl grid-cols-2 gap-2 sm:grid-cols-4">{t.categories.map(([label, href]) => <a key={href} href={href} className="min-h-11 rounded-xl border border-[#D4AF37]/40 bg-white px-3 py-3 text-sm font-bold text-[#4A1D43] transition hover:bg-[#FFF8DF]">{label}</a>)}</div>
               <div className="mx-auto mt-5 max-w-5xl rounded-2xl border border-[#D4AF37]/40 bg-white/90 p-3 text-left shadow-[0_14px_35px_rgba(74,29,67,0.08)] rtl:text-right sm:p-4">
@@ -320,7 +320,7 @@ function SeparationExperience({ fixedView }: { fixedView?: 'platform' | 'cv' }) 
           <section className="bg-white px-4 py-8 md:py-10">
             <div className="mx-auto max-w-5xl rounded-3xl border border-[#D4AF37]/35 bg-[#FFFCF7] p-5 text-center shadow-sm md:p-7">
               <p className="text-xs font-black uppercase tracking-[0.16em] text-[#B58A18]">
-                {loading ? '—' : countsAvailable ? t.certifiedProof(localizedCertifiedCount) : t.certifiedLoading}
+                {countsAvailable ? t.certifiedProof(localizedCertifiedCount) : t.certifiedLoading}
               </p>
               <h2 className="mt-2 font-serif text-2xl font-bold text-[#2E102A] md:text-3xl">{t.certifiedTitle}</h2>
               <p className="mx-auto mt-2 max-w-3xl text-sm leading-6 text-gray-600 md:text-base">{t.certifiedSubtitle}</p>
