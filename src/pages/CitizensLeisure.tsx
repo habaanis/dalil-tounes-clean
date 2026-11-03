@@ -673,14 +673,31 @@ export default function CitizensLeisure() {
       style={language === 'ar' ? { fontFamily: "'Amiri', 'Cairo', 'Tajawal', serif" } : {}}
     >
       <div className="mx-auto max-w-7xl px-4 pt-5">
-        <a href="/citizens/tourism?type=festival" className="flex items-center justify-between gap-4 rounded-2xl border border-[#D4AF37] bg-white p-4 text-[#4A1D43] shadow-sm hover:bg-amber-50">
+        <a href="/citizens/tourism/guide/fetes-evenements" className="flex items-center justify-between gap-4 rounded-2xl border border-[#D4AF37] bg-white p-4 text-[#4A1D43] shadow-sm hover:bg-amber-50">
           <span><strong className="block">🎨 Festivals culturels de Tunisie</strong><span className="mt-1 block text-sm">Découvrez les festivals régionaux et leur patrimoine, même hors des dates de l'agenda.</span></span>
           <span className="shrink-0 text-sm font-semibold">Voir les festivals →</span>
         </a>
-        <a href="/citizens/tourism?type=plongee" className="mt-3 flex items-center justify-between gap-4 rounded-2xl border border-[#D4AF37] bg-white p-4 text-[#4A1D43] shadow-sm hover:bg-amber-50">
+        <a href="/citizens/tourism" className="mt-3 flex items-center justify-between gap-4 rounded-2xl border border-[#D4AF37] bg-white p-4 text-[#4A1D43] shadow-sm hover:bg-amber-50">
           <span><strong className="block">🤿 Plongée sous-marine et loisirs nautiques</strong><span className="mt-1 block text-sm">Découvrez les clubs, baptêmes et expériences de plongée référencés en Tunisie.</span></span>
           <span className="shrink-0 text-sm font-semibold">Voir les clubs →</span>
         </a>
+        <section className="mt-4 rounded-2xl border border-[#D4AF37]/65 bg-white p-4 text-[#4A1D43] shadow-sm" aria-label="Découvertes culturelles régionales">
+          <h2 className="mb-1 text-base font-bold">{language === 'ar' ? 'اكتشف الجهات التونسية' : language === 'en' ? 'Explore Tunisia by region' : 'Découvrir les régions autrement'}</h2>
+          <p className="mb-3 text-xs text-gray-600">{language === 'ar' ? 'ثقافة، تراث، حرف وتجارب محلية. تأكد من تواريخ المهرجانات والزيارات قبل التنقل.' : language === 'en' ? 'Cultural sites, craftsmanship and local experiences. Check event dates and visits before travelling.' : 'Patrimoine, artisanat et expériences locales. Les dates des festivals et les possibilités de visite sont à vérifier.'}</p>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              { name: 'Siliana · Kasserine · Gafsa', href: '/citizens/tourism/guide/nature-randonnees', hint: 'Montagnes, oasis et patrimoine rural' },
+              { name: 'Gabès · Matmata', href: '/citizens/tourism/guide/villages-patrimoine', hint: 'Oasis, villages et habitat troglodyte' },
+              { name: 'Djerba · Médenine', href: '/citizens/tourism/guide/artisanat-savoir-faire', hint: 'Poterie, menzels et culture insulaire' },
+              { name: 'Sfax · Kerkennah', href: '/citizens/tourism/guide/marches-gastronomie', hint: 'Gastronomie, pêche et artisanat' }
+            ].map((item) => (
+              <a key={item.name} href={item.href} className="rounded-xl border border-[#D4AF37]/45 bg-[#FBF8EF] p-3 transition hover:bg-amber-50">
+                <strong className="block text-sm">{item.name}</strong>
+                <span className="mt-1 block text-xs text-gray-600">{item.hint}</span>
+              </a>
+            ))}
+          </div>
+        </section>
       </div>
       <SEOHead
         title={t.seoTitle}
