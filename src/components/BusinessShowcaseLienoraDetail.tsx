@@ -98,6 +98,22 @@ import VideoPlayer from './VideoPlayer';
 import { CvPortfolioPresentation } from './CvPortfolioPresentation';
 import './businessShowcaseLienora.css';
 
+// Les fiches historiques peuvent réunir plusieurs numéros dans un seul champ.
+// Un lien tel: ne doit jamais contenir toute la liste.
+const individualPhones = (raw?: string | null): string[] =>
+  String(raw || '')
+    .split(/\s*[;,/]\s*/)
+    .map(part => part.replace(/[^+0-9]/g, '').replace(/(?!^)\+/g, ''))
+    .filter(part => {
+      const digits = part.replace(/\D/g, '');
+      return digits.length >= 8 && digits.length <= 14;
+    });
+
+const validEmail = (raw?: string | null): string =>
+  /^\S+@\S+\.\S+$/.test(String(raw || '').trim())
+    ? String(raw).trim()
+    : '';
+
 interface BusinessRecord {
   id: string;
   nom: string;
@@ -1089,7 +1105,12 @@ export default function BusinessShowcaseLienoraDetail({
   const logoImage = getLogoUrl(business.logo_url);
   const mapsUrl = cvProfile.location.directionsUrl;
   const explicitWhatsappUrl = buildWhatsAppUrl(business.whatsapp);
-  const whatsappUrl = explicitWhatsappUrl || buildWhatsAppUrl(business.telephone);
+  const phoneNumbers = Array.from(new Set([
+    ...individualPhones(business.telephone),
+    ...individualPhones(business.telephone2),
+  ]));
+  const publicEmail = validEmail(business.email);
+  const whatsappUrl = explicitWhatsappUrl || buildWhatsAppUrl(phoneNumbers[0] || '');
   const websiteUrl = hasAction('website') ? cvProfile.contact.website : '';
   const rating = cvProfile.reviews.rating || 0;
   const googleReviewCount = cvProfile.reviews.count;
@@ -1192,9 +1213,9 @@ export default function BusinessShowcaseLienoraDetail({
       href: buildClientAppUrl(business, language),
       icon: Smartphone,
     },
-    hasAction('call') && business.telephone && {
+    hasAction('call') && phoneNumbers.length > 0 && {
       label: text.call,
-      href: `tel:${business.telephone}`,
+      href: `tel:${phoneNumbers[0]}`,
       icon: Phone,
     },
     hasAction('whatsapp') && whatsappUrl && {
@@ -1203,9 +1224,9 @@ export default function BusinessShowcaseLienoraDetail({
       icon: MessageCircle,
       external: true,
     },
-    hasAction('email') && business.email && {
+    hasAction('email') && publicEmail && {
       label: text.email,
-      href: `mailto:${business.email}`,
+      href: `mailto:${publicEmail}`,
       icon: Mail,
     },
     hasAction('directions') && mapsUrl && {
@@ -1262,8 +1283,8 @@ export default function BusinessShowcaseLienoraDetail({
       'VERSION:3.0',
       `FN:${escape(displayName)}`,
       `ORG:${escape(displayName)}`,
-      business.telephone ? `TEL;TYPE=WORK:${business.telephone}` : '',
-      business.email ? `EMAIL:${business.email}` : '',
+      ...phoneNumbers.map(phone => `TEL;TYPE=WORK:${phone}`),
+      publicEmail ? `EMAIL:${publicEmail}` : '',
       business.adresse
         ? `ADR;TYPE=WORK:;;${escape(business.adresse)};${escape(String(business.ville || ''))};;;Tunisie`
         : '',
@@ -1286,8 +1307,8 @@ export default function BusinessShowcaseLienoraDetail({
       ? `السلام عليكم ${displayName}، أود الحصول على مزيد من المعلومات حول خدماتكم.`
       : `Bonjour ${displayName}, je souhaite obtenir plus d'informations sur vos services.`;
     const subject = text.requestInfo;
-    if (business.email) {
-      window.location.href = `mailto:${business.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
+    if (publicEmail) {
+      window.location.href = `mailto:${publicEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
       return;
     }
     if (whatsappUrl) {
