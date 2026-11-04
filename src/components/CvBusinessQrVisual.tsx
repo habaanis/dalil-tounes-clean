@@ -96,6 +96,13 @@ export function CvBusinessQrVisual({
         <p className="mt-[4px] text-[13px] font-medium leading-tight" style={{ color: theme.accent }}>{displayCategory}</p>
         <p className="mx-auto mt-[12px] max-w-[264px] text-[13px] leading-[1.42]" style={{ color: theme.muted }}>{scanText || t.scan}</p>
       </div>
+      {openHref && (
+        <a href={openHref}
+          className="mx-auto mt-[14px] flex min-h-[48px] w-[252px] items-center justify-center gap-2 rounded-[11px] border px-4 py-2.5 text-[14px] font-bold no-underline"
+          style={{ borderColor: theme.border, backgroundColor: theme.border, color: theme.surface }}>
+          <ExternalLink size={17} strokeWidth={1.8} aria-hidden="true" />{openLabel || t.open}
+        </a>
+      )}
       <div className="mx-auto mt-[14px] w-[226px] rounded-[16px] p-[10px] shadow-[0_7px_18px_rgba(0,0,0,0.14)]" style={{ backgroundColor: theme.qrBackground }}>
         <div className="relative mx-auto h-[206px] w-[206px]">
           <QRCodeSVG id={qrId} value={qrValue} size={206} level="H" includeMargin={false} bgColor={theme.qrBackground} fgColor={theme.qrForeground} />
@@ -114,15 +121,7 @@ export function CvBusinessQrVisual({
           </button>
         ))}
       </div>
-      {openHref ? (
-        <a href={openHref} className="mx-auto mt-[8px] flex min-h-[45px] w-[252px] items-center justify-center gap-2 rounded-[11px] border px-4 py-2.5 text-[14px] font-bold no-underline" style={{ borderColor: theme.border, color: theme.text }}>
-          <ExternalLink size={17} strokeWidth={1.8} aria-hidden="true" />{openLabel || t.open}
-        </a>
-      ) : (
-        <div className="mx-auto mt-[8px] flex min-h-[45px] w-[252px] items-center justify-center gap-2 rounded-[11px] border px-4 py-2.5 text-[14px] font-bold" style={{ borderColor: theme.border, color: theme.text }}>
-          <ExternalLink size={17} strokeWidth={1.8} aria-hidden="true" />{openLabel || t.open}
-        </div>
-      )}
+
       <p className="mb-0 mt-[15px] flex items-center justify-center gap-1.5 text-center text-[10px] font-normal" style={{ color: theme.muted }}>
         <img src="/images/logo_dalil_tounes_sceau_luxe.png" alt="" className="h-[17px] w-[17px] rounded-full object-cover" />
         <span>{poweredText || t.powered}</span>
