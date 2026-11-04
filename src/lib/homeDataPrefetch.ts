@@ -56,7 +56,7 @@ interface CacheEntry extends HomeQueryResult {
   ts: number;
 }
 
-const CACHE_KEY = 'home_data_v14';
+const CACHE_KEY = 'home_data_v15';
 const STALE_TIME = 5 * 60_000;
 // Keep the last verified counts for 30 days when Supabase is temporarily unavailable.
 const GC_TIME = 30 * 24 * 60 * 60_000;
@@ -209,19 +209,26 @@ async function doFetch(): Promise<HomeQueryResult> {
       .select(FIELDS)
       .not('nom', 'is', null)
       .neq('nom', '')
+      .or('statut_publication.is.null,statut_publication.eq.Publié')
       .eq('statut_carte', CERTIFIED_LABEL)
       .limit(CERTIFIED_FETCH_LIMIT),
 
     supabase
       .from('entreprise')
       .select('id', { count: 'exact' })
+      .not('nom', 'is', null)
+      .neq('nom', '')
+      .or('statut_publication.is.null,statut_publication.eq.Publié')
       .limit(1),
 
     supabase
       .from('entreprise')
       .select('id', { count: 'exact' })
-      .limit(1)
-      .eq('statut_carte', CERTIFIED_LABEL),
+      .not('nom', 'is', null)
+      .neq('nom', '')
+      .or('statut_publication.is.null,statut_publication.eq.Publié')
+      .eq('statut_carte', CERTIFIED_LABEL)
+      .limit(1),
   ]);
 
   console.log('[HOME-DIAG] countRes', {
@@ -275,6 +282,7 @@ async function doFetch(): Promise<HomeQueryResult> {
       .select(FIELDS)
       .not('nom', 'is', null)
       .neq('nom', '')
+      .or('statut_publication.is.null,statut_publication.eq.Publié')
       .order('nom', { ascending: true })
       .limit(CERTIFIED_FETCH_LIMIT);
 
