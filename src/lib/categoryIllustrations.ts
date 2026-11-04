@@ -112,11 +112,11 @@ export function isRealBusinessPhoto(value?: string | null): boolean {
 
 /** Les images Wikimedia de la base sont des illustrations, non des photos fournies par le client. */
 export function isWikimediaIllustration(value?: string | null): boolean {
-  return /commons\\.wikimedia\\.org\\/wiki\\/special:file(path)?\\//i.test(value || '');
+  return /commons\.wikimedia\.org\/wiki\/special:file(path)?\//i.test(value || '');
 }
 
 export function getWikimediaCreditUrl(value?: string | null): string | null {
   if (!isWikimediaIllustration(value)) return null;
   const url = (value || '').split('?')[0];
-  return url.replace(/\\/wiki\\/Special:FilePath\\//i, '/wiki/File:');
+  return url.replace(/\/wiki\/Special:FilePath\//i, '/wiki/File:');
 }
