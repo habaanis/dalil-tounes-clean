@@ -98,6 +98,7 @@ export const BusinessCard = ({ business, onClick, showGoogleRating = false }: Bu
         <GratuitCard
           name={displayName}
           logoUrl={business.logoUrl}
+          imageUrl={business.imageUrl}
           category={translatedCategory}
           ville={business.ville}
           gouvernorat={business.gouvernorat || undefined}
