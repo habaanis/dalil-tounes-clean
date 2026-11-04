@@ -51,7 +51,7 @@ const COPY = {
     scan: 'Scannez ce QR pour ouvrir directement le CV Business.',
     share: 'Partager',
     shared: 'Lien copié',
-    download: 'Télécharger',
+    download: 'Enregistrer le QR',
     install: "Ajouter à l’écran d’accueil",
     openBrowser: 'Ouvrir dans Chrome / Safari',
     open: 'Ouvrir le CV Business',
@@ -68,7 +68,7 @@ const COPY = {
     scan: 'امسح رمز QR لفتح السيرة المهنية مباشرة.',
     share: 'مشاركة',
     shared: 'تم نسخ الرابط',
-    download: 'تنزيل',
+    download: 'حفظ رمز QR',
     install: 'إضافة إلى الشاشة الرئيسية',
     openBrowser: 'فتح في Chrome / Safari',
     open: 'فتح السيرة المهنية',
@@ -85,7 +85,7 @@ const COPY = {
     scan: 'Scan this QR to open the Business CV directly.',
     share: 'Share',
     shared: 'Link copied',
-    download: 'Download',
+    download: 'Save QR image',
     install: 'Add to home screen',
     openBrowser: 'Open in Chrome / Safari',
     open: 'Open Business CV',
@@ -102,7 +102,7 @@ const COPY = {
     scan: 'Scansiona questo QR per aprire direttamente il CV Business.',
     share: 'Condividi',
     shared: 'Link copiato',
-    download: 'Scarica',
+    download: 'Salva il QR',
     install: 'Aggiungi alla schermata Home',
     openBrowser: 'Apri in Chrome / Safari',
     open: 'Apri il CV Business',
@@ -119,7 +119,7 @@ const COPY = {
     scan: 'Отсканируйте QR-код, чтобы сразу открыть Business CV.',
     share: 'Поделиться',
     shared: 'Ссылка скопирована',
-    download: 'Скачать',
+    download: 'Сохранить QR',
     install: 'Добавить на главный экран',
     openBrowser: 'Открыть в Chrome / Safari',
     open: 'Открыть Business CV',
@@ -376,20 +376,32 @@ export default function BusinessQr() {
   };
 
   const installApp = async () => {
+    // Les navigateurs internes (WhatsApp, Facebook, Instagram) ne savent
+    // généralement pas installer une PWA. Reprendre dans Chrome/Safari.
     if (isInAppBrowser) {
       window.alert(text.installInApp);
       if (isAndroid && business) {
         const externalUrl = new URL(buildClientAppUrl(business, language));
-        window.location.href = `intent://${externalUrl.host}${externalUrl.pathname}${externalUrl.search}#Intent;scheme=https;action=android.intent.action.VIEW;end`;
+        window.location.href = `intent://${externalUrl.host}${externalUrl.pathname}${externalUrl.search}#Intent;scheme=https;package=com.android.chrome;action=android.intent.action.VIEW;S.browser_fallback_url=${encodeURIComponent(externalUrl.toString())};end`;
       }
       return;
     }
 
+    // Éviter d'utiliser un prompt conservé pour un autre CV du même onglet.
+    // Chrome ne propose l'installation que lorsque la PWA courante est éligible.
     if (installPrompt) {
-      await installPrompt.prompt();
-      const choice = await installPrompt.userChoice;
-      if (choice.outcome === 'accepted') setInstallPrompt(null);
-      return;
+      try {
+        await installPrompt.prompt();
+        const choice = await installPrompt.userChoice;
+        if (choice.outcome === 'accepted') {
+          (window as InstallPromptWindow).__dalilInstallPrompt = undefined;
+          setInstallPrompt(null);
+        }
+        return;
+      } catch {
+        setInstallPrompt(null);
+        (window as InstallPromptWindow).__dalilInstallPrompt = undefined;
+      }
     }
 
     window.alert(isIos ? text.installIos : text.installAndroid);
@@ -422,6 +434,19 @@ export default function BusinessQr() {
         <button type="button" className="rounded-lg border px-3 py-2" style={{borderColor:paletteTheme.border,backgroundColor:openingStyle === 'framed' ? paletteTheme.border : 'transparent'}} onClick={() => chooseOpeningStyle('framed')}>B</button>
         <button type="button" className="underline" onClick={() => setShowBrandSplash(true)}>{language === 'ar' ? 'معاينة' : 'Voir'}</button>
       </div>}
+      {isInAppBrowser && (
+        <div role="status" className="mx-auto mb-3 max-w-[354px] rounded-xl border border-amber-400/70 px-3 py-2 text-center text-xs leading-relaxed" style={{ color: paletteTheme.text, backgroundColor: paletteTheme.surface }}>
+          {language === 'fr'
+            ? 'Pour installer ce CV sur Android, ouvrez cette page dans Chrome via le menu ⋮ de WhatsApp. « Enregistrer le QR » télécharge seulement le code QR.'
+            : language === 'en'
+              ? 'To install this Business CV, use the WhatsApp ⋮ menu to open the page in Chrome. Saving the QR only downloads its image.'
+              : language === 'ar'
+                ? 'لتثبيت هذا الملف، افتح الصفحة في Chrome من قائمة واتساب ⋮. حفظ رمز QR ينزّل الصورة فقط.'
+                : language === 'it'
+                  ? 'Per installare il CV, apri questa pagina in Chrome dal menu ⋮ di WhatsApp. Salvare il QR scarica solo l’immagine.'
+                  : 'Для установки откройте страницу в Chrome через меню ⋮ WhatsApp. Сохранение QR скачивает только изображение.'}
+        </div>
+      )}
       <CvBusinessQrVisual
         language={language}
         name={displayName}
