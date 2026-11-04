@@ -4,7 +4,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { MapPin } from 'lucide-react';
 import { openCraftPhotoCatalog } from '../data/openCraftPhotoCatalog';
 import { supabase } from '../lib/supabaseClient';
-import { getCategoryIllustration, isRealBusinessPhoto } from '../lib/categoryIllustrations';
+import { getCategoryIllustration, isRealBusinessPhoto, isWikimediaIllustration } from '../lib/categoryIllustrations';
 import { parseImageUrls } from '../lib/imagekitUtils';
 import { UNESCO_TUNISIA_WORLD_HERITAGE, UNESCO_TUNISIA_INTANGIBLE, UNESCO_SOURCES } from '../data/tunisiaUnesco';
 
@@ -56,6 +56,10 @@ const GOVERNORATE_PHOTOS: Record<string, typeof REGION_PHOTOS[number]> = {
 function cardPhoto(item: LocalExperience) {
   const image = businessPhoto(item.image_url);
   if (image) return { url: image, label: 'Photographie de la fiche', official: true };
+  if (isWikimediaIllustration(item.image_url)) {
+    const illustrated = parseImageUrls(item.image_url).find(url => /^https?:\/\//i.test(url));
+    if (illustrated) return { url: illustrated, label: 'Illustration documentaire', official: false };
+  }
   const métier = getCategoryIllustration(item.categorie, item.nom);
   if (métier) return { url: métier.url, label: métier.label + ' · illustration', official: false };
   const regional = regionPhoto(item) || GOVERNORATE_PHOTOS[item.gouvernorat || ''];
@@ -155,7 +159,7 @@ export default function TourismExperienceDiscovery() {
   const gallery = useMemo(() => {
     const used = new Set<string>();
     return items.filter(item => {
-      const photo = businessPhoto(item.image_url) || regionPhoto(item)?.url;
+      const photo = cardPhoto(item)?.url;
       if (!photo || used.has(photo)) return false;
       used.add(photo);
       return true;
@@ -172,8 +176,8 @@ export default function TourismExperienceDiscovery() {
   }, [gallery, rotation]);
   const gallerySplit = Math.ceil(galleryItems.length / 2);
   const renderGalleryCard = (item: LocalExperience, index: number) => <button key={item.id + '-' + index} type="button" onClick={() => setSelected(item)} className={`group relative block w-full overflow-hidden rounded-2xl border-2 border-white shadow-lg transition-transform duration-300 hover:z-20 hover:scale-110 ${index === 0 ? "" : "-mt-4"} ${index % 2 ? "rotate-2" : "-rotate-2"} hover:rotate-0 focus-visible:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500` } aria-label={tr.discover + ' ' + localizedName(item)}>
-    <img src={businessPhoto(item.image_url) || regionPhoto(item)?.url || ''} alt={businessPhoto(item.image_url) ? (item.nom || 'Expérience locale') : (regionPhoto(item)?.label || 'Paysage tunisien')} loading="lazy" className="h-32 w-full object-cover sm:h-40" />
-    <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 to-transparent px-3 pb-3 pt-10 text-left text-xs font-semibold text-white">{localizedName(item)}<span className="mt-1 block text-[10px] font-normal">{businessPhoto(item.image_url) ? tr.businessPhoto : regionPhoto(item)?.label}</span></span>
+    <img src={cardPhoto(item)?.url || ''} alt={cardPhoto(item)?.label || 'Paysage tunisien'} loading="lazy" className="h-32 w-full object-cover sm:h-40" />
+    <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 to-transparent px-3 pb-3 pt-10 text-left text-xs font-semibold text-white">{localizedName(item)}<span className="mt-1 block text-[10px] font-normal">{cardPhoto(item)?.official ? tr.businessPhoto : cardPhoto(item)?.label}</span></span>
   </button>;
   const regions = useMemo(() => [...new Set(items.map(i => i.gouvernorat).filter((x): x is string => !!x))].sort((a,b)=>a.localeCompare(b, 'fr')), [items]);
   const matches = useMemo(() => items.filter(item => {
@@ -258,7 +262,7 @@ export default function TourismExperienceDiscovery() {
     {selected && <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 px-4 py-6" role="presentation" onClick={() => setSelected(null)}>
       <section role="dialog" aria-modal="true" aria-label="Détails de l'expérience" className="max-h-[88vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white p-5 shadow-xl sm:p-7" onClick={e => e.stopPropagation()}>
         <div className="flex items-start justify-between gap-4"><div><p className="text-xs font-semibold uppercase tracking-wide text-[#966A28]">{tr.modalLabel}</p><h2 className="mt-1 text-2xl font-semibold text-[#4A0404]">{localizedName(selected)}</h2><p className="mt-2 text-sm text-gray-600">{[selected.ville,selected.gouvernorat].filter(Boolean).join(' · ')}</p></div><button type="button" aria-label={tr.close} onClick={() => setSelected(null)} className="rounded-full bg-gray-100 px-3 py-2">✕</button></div>
-        {businessPhoto(selected.image_url) && <img src={businessPhoto(selected.image_url) || ''} alt="" className="mt-4 max-h-60 w-full rounded-xl object-cover" />}
+        {cardPhoto(selected) && <img src={cardPhoto(selected)?.url || ''} alt={cardPhoto(selected)?.label || ''} className="mt-4 max-h-60 w-full rounded-xl object-cover" />}
         <h3 className="mt-5 text-lg font-semibold">{tr.story}</h3>
         <p className="mt-2 whitespace-pre-line text-sm leading-7 text-gray-700">{localizedDescription(selected)}</p>
         {selected.a_propos && selected.a_propos !== selected.description && <><h3 className="mt-5 text-lg font-semibold">{tr.about}</h3><p className="mt-2 whitespace-pre-line text-sm leading-7 text-gray-700">{selected.a_propos}</p></>}
