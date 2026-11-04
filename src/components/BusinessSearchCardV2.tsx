@@ -76,7 +76,7 @@ export default function BusinessSearchCardV2({
   const unconfirmedHours = /à confirmer|a confirmer|indicatif|annuaire|non communiqué|non renseigne|non renseigné/i.test(business.horaires_ok || '');
   // Une description libre ne doit jamais être interprétée comme « Fermé ».
   const canShowLiveStatus = Boolean(todaySchedule && !unconfirmedHours &&
-    (/(\\d{1,2}(?:[.:h]\\d{2})?)\\s*(?:[-–—>àa]|to)\\s*(\\d{1,2}(?:[.:h]\\d{2})?)/i.test(todaySchedule.hours) ||
+    (/(\d{1,2}(?:[.:h]\d{2})?)\s*(?:[-–—>àa]|to)\s*(\d{1,2}(?:[.:h]\d{2})?)/i.test(todaySchedule.hours) ||
       /fermé|closed|مغلق/i.test(todaySchedule.hours)));
   const openNow = canShowLiveStatus ? isCurrentlyOpen(business.horaires_ok) : null;
   const today = todaySchedule ? formatTodayScheduleText(todaySchedule, language) : '';
