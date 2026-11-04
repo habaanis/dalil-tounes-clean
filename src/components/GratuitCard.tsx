@@ -4,7 +4,7 @@ import { isCurrentlyOpen, translateOpenStatus, translateClosedStatus } from '../
 import { cleanArabicField } from '../lib/textNormalization';
 import GoogleRatingSummary from './GoogleRatingSummary';
 import { getCoverImageUrl } from '../lib/imagekitUtils';
-import { getCategoryIllustration, isRealBusinessPhoto } from '../lib/categoryIllustrations';
+import { getCategoryIllustration, isRealBusinessPhoto, isWikimediaIllustration, getWikimediaCreditUrl } from '../lib/categoryIllustrations';
 
 interface GratuitCardProps {
   name: string;
@@ -86,7 +86,9 @@ export default function GratuitCard({
   const cardCopy = CARD_COPY[language] || CARD_COPY.fr;
   const illustration = getCategoryIllustration(category, name);
   const realPhoto = isRealBusinessPhoto(imageUrl);
-  const cover = realPhoto ? getCoverImageUrl(imageUrl) : illustration?.url;
+  const existingIllustration = isWikimediaIllustration(imageUrl);
+  const cover = realPhoto || existingIllustration ? getCoverImageUrl(imageUrl) : illustration?.url;
+  const illustrationSource = existingIllustration ? getWikimediaCreditUrl(imageUrl) : illustration?.source;
   const missingCopy: Record<string, { phone: string; hours: string }> = {
     fr: { phone: 'Téléphone : non renseigné', hours: 'Horaires : non renseignés' },
     ar: { phone: 'الهاتف: غير متوفر', hours: 'ساعات العمل: غير متوفرة' },
@@ -116,18 +118,18 @@ export default function GratuitCard({
         <div style={{ height: '66px', flexShrink: 0, position: 'relative', marginBottom: '8px', overflow: 'hidden', borderRadius: '10px', background: '#F2F0EA' }}>
           <img
             src={cover}
-            alt={realPhoto ? name : illustration?.label || name}
+            alt={realPhoto ? name : existingIllustration ? 'Illustration du métier' : illustration?.label || name}
             loading="lazy"
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             onError={event => { event.currentTarget.onerror = null; event.currentTarget.src = '/images/placeholder.jpg'; }}
           />
-          {!realPhoto && illustration && (
+          {!realPhoto && illustrationSource && (
             <a
-              href={illustration.source}
+              href={illustrationSource}
               target="_blank"
               rel="noopener noreferrer"
               onClick={event => event.stopPropagation()}
-              title={illustration.author + ' · ' + illustration.licence}
+              title={existingIllustration ? 'Illustration Wikimedia Commons' : (illustration?.author || '') + ' · ' + (illustration?.licence || '')}
               style={{ position: 'absolute', bottom: 0, right: 0, padding: '2px 6px', background: 'rgba(0,0,0,0.65)', color: '#fff', fontSize: '9px' }}
             >{language === 'ar' ? 'صورة توضيحية' : language === 'en' ? 'Illustration' : 'Illustration du métier'}</a>
           )}
