@@ -99,6 +99,11 @@ export default function BusinessSearchCardV2({
           className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.015]"
           loading="lazy"
           decoding="async"
+          onError={(event) => {
+            // Une source externe indisponible ne doit jamais laisser une carte cassée.
+            event.currentTarget.onerror = null;
+            event.currentTarget.src = '/images/placeholder.jpg';
+          }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#064332]/70 via-transparent to-black/5" />
         <span className={`absolute top-1.5 text-[9px] font-black uppercase tracking-[0.12em] text-[#E5B92F] drop-shadow-sm ${isRTL ? 'right-3' : 'left-3'}`}>
