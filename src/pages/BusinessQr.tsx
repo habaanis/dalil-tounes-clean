@@ -57,7 +57,7 @@ const COPY = {
     open: 'Ouvrir le CV Business',
     powered: 'Propulsé par Dalil Tounes',
     installIos: 'iPhone : ouvrez cette page dans Safari, puis Partager → Ajouter à l’écran d’accueil.',
-    installAndroid: 'Android : ouvrez cette page dans Chrome, puis Menu → Ajouter à l’écran d’accueil ou Installer.',
+    installAndroid: 'Android : dans Chrome, utilisez ⋮ → Ajouter à l’écran d’accueil. Si Chrome dit « déjà installée » pour un autre CV, c’est un problème connu de Chrome avec plusieurs mini-applications sur le même domaine. Ne supprimez pas vos applications. Ouvrez le CV directement ou essayez Microsoft Edge → Ajouter à l’écran d’accueil.',
     installInApp: 'Cette page est ouverte dans le navigateur intégré de WhatsApp. Ouvrez le menu ⋮ puis « Ouvrir dans Chrome » sur Android, ou ouvrez ce lien dans Safari sur iPhone.',
     loading: 'Chargement du QR Business…',
     unavailable: "Ce QR Business sera disponible lorsque le CV Business sera publié.",
@@ -91,7 +91,7 @@ const COPY = {
     open: 'Open Business CV',
     powered: 'Powered by Dalil Tounes',
     installIos: 'iPhone: open this page in Safari, then Share → Add to Home Screen.',
-    installAndroid: 'Android: open this page in Chrome, then Menu → Add to Home Screen or Install.',
+    installAndroid: 'Android: in Chrome, use ⋮ → Add to Home Screen. If Chrome says «already installed» for another CV, keep your existing apps: this is a known Chrome issue with multiple PWAs on one domain. Open the CV directly, or try Microsoft Edge → Add to Home Screen.',
     installInApp: 'This page is open inside WhatsApp. Use the ⋮ menu and choose Open in Chrome on Android, or open the link in Safari on iPhone.',
     loading: 'Loading Business QR…',
     unavailable: 'This Business QR will be available once the Business CV is published.',
@@ -108,7 +108,7 @@ const COPY = {
     open: 'Apri il CV Business',
     powered: 'Powered by Dalil Tounes',
     installIos: 'iPhone: apri questa pagina in Safari, quindi Condividi → Aggiungi alla schermata Home.',
-    installAndroid: 'Android: apri questa pagina in Chrome, quindi Menu → Aggiungi alla schermata Home o Installa.',
+    installAndroid: 'Android: in Chrome usa ⋮ → Aggiungi alla schermata Home. Se Chrome dice già installata, non disinstallare altre app. Apri il CV direttamente o prova Microsoft Edge.',
     installInApp: 'Questa pagina è aperta nel browser interno di WhatsApp. Usa il menu ⋮ e scegli Apri in Chrome su Android, oppure apri il link in Safari su iPhone.',
     loading: 'Caricamento QR Business…',
     unavailable: 'Il QR Business sarà disponibile quando il CV Business sarà pubblicato.',
@@ -125,7 +125,7 @@ const COPY = {
     open: 'Открыть Business CV',
     powered: 'При поддержке Dalil Tounes',
     installIos: 'iPhone: откройте эту страницу в Safari, затем Поделиться → На экран «Домой».',
-    installAndroid: 'Android: откройте эту страницу в Chrome, затем Меню → Добавить на главный экран или Установить.',
+    installAndroid: 'Android: в Chrome откройте ⋮ → Добавить на главный экран. Если Chrome сообщает «уже установлено», не удаляйте другие приложения. Откройте CV напрямую или попробуйте Microsoft Edge.',
     installInApp: 'Страница открыта во встроенном браузере WhatsApp. В меню ⋮ выберите «Открыть в Chrome» на Android или откройте ссылку в Safari на iPhone.',
     loading: 'Загрузка Business QR…',
     unavailable: 'Business QR станет доступен после публикации Business CV.',
@@ -280,6 +280,12 @@ export default function BusinessQr() {
     setOpeningStyle(style);
   };
   const cvUrl = buildClientCvUrl(business || identifier, language, paletteTheme.id);
+  // Vue de contrôle sur un AUTRE domaine que la PWA cliente.
+  // Le navigateur peut bloquer plusieurs installations sous app.dalil-tounes.com ;
+  // cette page reste accessible, sans être capturée par une autre mini-application.
+  const browserCvUrl = business
+    ? `https://dalil-tounes.com/entreprise/id/${encodeURIComponent(business.id)}?lang=${encodeURIComponent(language)}`
+    : cvUrl;
   const logoUrl = business ? getLogoUrl(business.logo_url) : '';
   const coverUrl = getCoverUrl(business?.image_url);
   const tier = business ? mapSubscriptionToTier(business) : 'gratuit';
@@ -461,7 +467,7 @@ export default function BusinessQr() {
         scanText={modelText.scan}
         productLabel={modelText.product}
         poweredText={text.powered}
-        openHref={cvUrl}
+        openHref={browserCvUrl}
         onShare={shareBusiness}
         onDownload={downloadPng}
         onInstall={installApp}
