@@ -74,7 +74,7 @@ const COPY = {
     open: 'فتح السيرة المهنية',
     powered: 'بدعم من دليل تونس',
     installIos: 'iPhone: افتح هذه الصفحة في Safari، ثم مشاركة ← إضافة إلى الشاشة الرئيسية.',
-    installAndroid: 'Android: افتح هذه الصفحة في Chrome، ثم القائمة ← إضافة إلى الشاشة الرئيسية أو تثبيت.',
+    installAndroid: 'Android: في Chrome افتح القائمة ⋮ ثم إضافة إلى الشاشة الرئيسية. إذا ظهر أن التطبيق مثبت مسبقاً، احتفظ بالتطبيقات الحالية وافتح السيرة مباشرة أو جرّب Microsoft Edge.',
     installInApp: 'هذه الصفحة مفتوحة داخل متصفح WhatsApp. افتح القائمة ⋮ ثم اختر الفتح في Chrome على Android، أو افتح الرابط في Safari على iPhone.',
     loading: 'جارٍ تحميل رمز QR…',
     unavailable: 'سيصبح QR Business متاحًا عند نشر CV Business.',
