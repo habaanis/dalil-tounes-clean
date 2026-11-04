@@ -12,7 +12,7 @@ const additionalTranslations = {"fr":{"fallback":"Découvrez cette expérience l
 
 type LocalExperience = {
   id: string; nom: string | null; ville: string | null; gouvernorat: string | null;
-  description: string | null; description_ar?: string | null; description_en?: string | null; description_it?: string | null; description_ru?: string | null; name_ar?: string | null; name_en?: string | null; name_it?: string | null; name_ru?: string | null; a_propos: string | null; image_url: string | null;
+  description: string | null; description_ar?: string | null; description_en?: string | null; description_it?: string | null; description_ru?: string | null; name_ar?: string | null; name_en?: string | null; name_it?: string | null; name_ru?: string | null; a_propos: string | null; image_url: string | null; categorie?: string[] | null;
 };
 
 const CRAFT_PHOTOS = [
@@ -70,6 +70,19 @@ function firstValidImage(value: string | null) {
 }
 
 const PAGE_SIZE = 6;
+// Une carte classée « tourisme & expatriation » n'est pas automatiquement une expérience.
+function isLocalExperience(item: LocalExperience): boolean {
+  const name = (item.nom || '').toLocaleLowerCase('fr');
+  const categories = (item.categorie || []).join(' ').toLocaleLowerCase('fr');
+  const description = (item.description || '').toLocaleLowerCase('fr');
+  if (/immobili|real estate|re\/?max|tecnocasa|agence fonci.re|snit/i.test(name + ' ' + categories)) return false;
+  if (/agence immobili.re|transactions? immobili.res?|vente et location de biens/i.test(description)) return false;
+  if (/artisanal|terroir|loisirs|divertissement|h.bergement|gastronomie/i.test(categories)) return true;
+  if (!/tourisme|expatriation/i.test(categories)) return false;
+  // Les services administratifs ou commerciaux ne sont pas des expériences touristiques.
+  return /artisan|atelier|potier|tiss|festival|randonn|guide tourist|visite guid.e|trek|montagne|excursion|plong.e|diving|snorkel|h.bergement|g.te|maison d.h.te|campement|restaurant|cuisine|gastronom|terroir|ferme|oliv|oasis|palmeraie|patrimoine|arch.olog|association.*culture|savoir.faire|p.che|p.cheur|charfia|menzel|ksar|mus.e|tourisme authentique/i.test(name + ' ' + description);
+}
+
 // UNESCO status is recorded only for individually verified experiences, never inferred from a governorate.
 const verifiedUnescoExperienceIds = new Set<string>();
 function uniqueExperiences(rows: LocalExperience[]) {
@@ -121,18 +134,19 @@ export default function TourismExperienceDiscovery() {
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState<LocalExperience | null>(null);
   const [rotation, setRotation] = useState(0);
+  const [experienceRotation, setExperienceRotation] = useState(0);
   const [paused, setPaused] = useState(false);
   const [unescoOnly, setUnescoOnly] = useState(false);
   useEffect(() => {
     let active = true;
     async function load() {
       const { data, error } = await supabase.from('entreprise')
-        .select('id,nom,ville,gouvernorat,description,description_ar,description_en,description_it,description_ru,name_ar,name_en,name_it,name_ru,a_propos,image_url')
+        .select('id,nom,ville,gouvernorat,description,description_ar,description_en,description_it,description_ru,name_ar,name_en,name_it,name_ru,a_propos,image_url,categorie')
         .contains('liste_pages', ['tourisme local & expatriation'])
         .eq('approved', true).eq('statut_publication', 'Publié')
         .order('nom', { ascending: true }).limit(500);
       if (!active) return;
-      setItems(uniqueExperiences((data || []) as LocalExperience[]));
+      setItems(uniqueExperiences(((data || []) as LocalExperience[]).filter(isLocalExperience)));
       setError(Boolean(error));
       setLoading(false);
     }
@@ -173,7 +187,20 @@ export default function TourismExperienceDiscovery() {
   }), [items, query, region, kind, unescoOnly, lang]);
   useEffect(() => { setPage(1); }, [query, region, kind, unescoOnly]);
   const totalPages = Math.ceil(matches.length / PAGE_SIZE);
-  const pageItems = matches.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  // Rotation des découvertes toutes les 45 s, uniquement sur la première page sans filtres.
+  // Dès qu'un visiteur cherche, filtre ou navigue, l'ordre devient stable.
+  const rotationEnabled = !query.trim() && !region && kind === 'all' && !unescoOnly && page === 1;
+  useEffect(() => {
+    if (!rotationEnabled || matches.length <= PAGE_SIZE || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const timer = window.setInterval(() => setExperienceRotation(n => n + 1), 45000);
+    return () => window.clearInterval(timer);
+  }, [rotationEnabled, matches.length]);
+  const orderedMatches = useMemo(() => {
+    if (!rotationEnabled || matches.length <= PAGE_SIZE) return matches;
+    const offset = (experienceRotation * PAGE_SIZE) % matches.length;
+    return [...matches.slice(offset), ...matches.slice(0, offset)];
+  }, [matches, experienceRotation, rotationEnabled]);
+  const pageItems = orderedMatches.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
   return <section dir={rtl ? 'rtl' : 'ltr'} lang={lang} className="mx-auto max-w-7xl px-4 py-7" aria-label="Découvrir les expériences locales">
     {galleryItems.length > 0 && <p className="mb-3 text-[11px] text-gray-500">{extra.note}</p>}
     {galleryItems.length > 0 && <div className="mb-5 flex items-center justify-between"><p className="text-sm font-semibold text-[#4A1D43]">📸 {tr.gallery}</p><button type="button" onClick={() => setPaused(p => !p)} className="rounded-full border border-[#D4AF37] px-3 py-1 text-xs">{paused ? tr.resume : tr.pause}</button></div>}
@@ -217,13 +244,19 @@ export default function TourismExperienceDiscovery() {
       <h3 className="text-lg font-semibold text-[#4A1D43]">{tr.craftGallery}</h3>
       <p className="mt-1 text-xs text-gray-600">Des photographies authentiques des métiers de Sejnane, Nabeul et Kairouan. Elles illustrent les traditions locales, et non les entreprises référencées.</p>
       <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
-        {openCraftPhotoCatalog.filter(photo => ['Poterie de Sejnane', 'Plat traditionnel de Sejnane', 'Potier au travail à Nabeul', 'Artisane ou artisan peignant une assiette', 'Tisserande de Kairouan', 'Tapis Margoum dans le souk'].includes(photo.title)).map(photo => <a href={photo.source} target="_blank" rel="noopener noreferrer" key={photo.filename} className="group overflow-hidden rounded-xl bg-white shadow-sm">
-          <img loading="lazy" src={'https://commons.wikimedia.org/wiki/Special:FilePath/' + encodeURIComponent(photo.filename) + '?width=450'} alt={photo.title} className="h-28 w-full object-cover transition-transform duration-300 group-hover:scale-105" />
-          <div className="p-2"><p className="text-xs font-semibold text-[#4A1D43]">{photo.title}</p><p className="mt-1 text-[10px] text-gray-600">{photo.author} · {photo.license}</p></div>
-        </a>)}
+        {openCraftPhotoCatalog.filter(photo => ['Poterie de Sejnane', 'Plat traditionnel de Sejnane', 'Potier au travail à Nabeul', 'Artisane ou artisan peignant une assiette', 'Tisserande de Kairouan', 'Tapis Margoum dans le souk'].includes(photo.title)).map(photo => <figure key={photo.filename} className="overflow-hidden rounded-xl bg-white shadow-sm">
+          <img loading="lazy" src={'https://commons.wikimedia.org/wiki/Special:FilePath/' + encodeURIComponent(photo.filename) + '?width=450'} alt={photo.title} className="h-28 w-full object-cover" />
+          <figcaption className="p-2 text-xs font-semibold text-[#4A1D43]">{photo.title}</figcaption>
+        </figure>)}
       </div>
     </div>
-    {galleryItems.length > 0 && <p className="mt-4 text-[11px] text-gray-500">Crédits des photographies régionales : {[...ADDITIONAL_PHOTOS, ...CRAFT_PHOTOS, ...REGION_PHOTOS].map((p,i) => <span key={p.source}>{i > 0 ? " · " : ""}<a className="underline" href={p.source} target="_blank" rel="noopener noreferrer">{p.credit}</a></span>)}</p>}
+    <details className="mt-3 rounded-lg border border-[#D4AF37]/30 bg-white/70 p-3 text-xs text-gray-600">
+        <summary className="cursor-pointer font-medium text-[#4A1D43]">{lang === 'ar' ? 'حقوق الصور ومصادرها' : lang === 'en' ? 'Photo credits and sources' : lang === 'it' ? 'Crediti e fonti delle fotografie' : lang === 'ru' ? 'Авторы и источники фотографий' : 'Crédits et sources des photographies'}</summary>
+        <div className="mt-3 flex flex-col gap-1.5">
+          {openCraftPhotoCatalog.filter(photo => ['Poterie de Sejnane', 'Plat traditionnel de Sejnane', 'Potier au travail à Nabeul', 'Artisane ou artisan peignant une assiette', 'Tisserande de Kairouan', 'Tapis Margoum dans le souk'].includes(photo.title)).map(photo => <a key={photo.filename} href={photo.source} target="_blank" rel="noopener noreferrer" className="underline">{photo.title} — {photo.author} · {photo.license}</a>)}
+          {galleryItems.length > 0 && [...ADDITIONAL_PHOTOS, ...CRAFT_PHOTOS, ...REGION_PHOTOS].map(photo => <a key={photo.source} href={photo.source} target="_blank" rel="noopener noreferrer" className="underline">{photo.label} — {photo.credit}</a>)}
+        </div>
+      </details>
     {selected && <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 px-4 py-6" role="presentation" onClick={() => setSelected(null)}>
       <section role="dialog" aria-modal="true" aria-label="Détails de l'expérience" className="max-h-[88vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white p-5 shadow-xl sm:p-7" onClick={e => e.stopPropagation()}>
         <div className="flex items-start justify-between gap-4"><div><p className="text-xs font-semibold uppercase tracking-wide text-[#966A28]">{tr.modalLabel}</p><h2 className="mt-1 text-2xl font-semibold text-[#4A0404]">{localizedName(selected)}</h2><p className="mt-2 text-sm text-gray-600">{[selected.ville,selected.gouvernorat].filter(Boolean).join(' · ')}</p></div><button type="button" aria-label={tr.close} onClick={() => setSelected(null)} className="rounded-full bg-gray-100 px-3 py-2">✕</button></div>
