@@ -107,5 +107,16 @@ export function getCategoryIllustration(
 export function isRealBusinessPhoto(value?: string | null): boolean {
   if (!value?.trim()) return false;
   const normalized = value.toLowerCase();
-  return !/drapeau-tunisie|images\/placeholder\.|default-business|placeholder\./.test(normalized);
+  return !/drapeau-tunisie|images\/placeholder\.|default-business|placeholder\.|commons\.wikimedia\.org\/wiki\/special:file(path)?\//.test(normalized);
+}
+
+/** Les images Wikimedia de la base sont des illustrations, non des photos fournies par le client. */
+export function isWikimediaIllustration(value?: string | null): boolean {
+  return /commons\\.wikimedia\\.org\\/wiki\\/special:file(path)?\\//i.test(value || '');
+}
+
+export function getWikimediaCreditUrl(value?: string | null): string | null {
+  if (!isWikimediaIllustration(value)) return null;
+  const url = (value || '').split('?')[0];
+  return url.replace(/\\/wiki\\/Special:FilePath\\//i, '/wiki/File:');
 }
