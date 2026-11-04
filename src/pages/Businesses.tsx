@@ -825,6 +825,7 @@ export const Businesses = ({
         .select(ENTREPRISE_SELECT_FIELDS)
         .not('nom', 'is', null)
         .neq('nom', '')
+        .or('statut_publication.is.null,statut_publication.eq.Publié')
         .order('nom', { ascending: true })
         .limit(10);
 
@@ -967,6 +968,7 @@ export const Businesses = ({
         .select(ENTREPRISE_SELECT_FIELDS)
         .not('nom', 'is', null)
         .neq('nom', '')
+        .or('statut_publication.is.null,statut_publication.eq.Publié')
         .order('nom', { ascending: true })
         .limit(30);
 
