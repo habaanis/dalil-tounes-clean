@@ -15,7 +15,7 @@ type Illustration = {
 
 const LIBRARY: Array<{ match: RegExp; illustration: Illustration }> = [
   { match: /plong[ée]e?|diving|scuba|subaquatique|snorkel|bapt[eê]me de plong[ée]e?/i,
-    illustration: { filename: 'Diving underwater photo.jpg', author: 'Drummyfish', licence: 'CC0 1.0', label: 'Plongée sous-marine' } },
+    illustration: { filename: 'Scuba Diver.jpg', author: 'Dr. Ondřej Havelka', licence: 'CC BY-SA 4.0', label: 'Plongée sous-marine' } },
   { match: /plombier|plomberie|sanitaire|tuyauterie|installation d.eau/i,
     illustration: { filename: 'Plumber.jpg', author: 'Aubry Arihona', licence: 'CC BY-SA 4.0', label: 'Plomberie' } },
   { match: /[ée]lectricien|[ée]lectricit[ée]|c[aâ]blage [ée]lectrique/i,
