@@ -63,6 +63,11 @@ const GC_TIME = 30 * 24 * 60 * 60_000;
 
 const FIELDS = '*';
 
+// 194 lignes historiques vides et non approuvées sont protégées par RLS.
+// Elles font partie du stock de fiches enregistrées mais ne sont pas publiées.
+// Ajuster ce stock uniquement après un audit/suppression explicite.
+const HISTORICAL_INCOMPLETE_BACKLOG = 194;
+
 const CERTIFIED_FETCH_LIMIT = 100;
 const HOME_PARTNERS_LIMIT = 5;
 const ROTATION_WINDOW_HOURS = 6;
@@ -334,7 +339,7 @@ async function doFetch(): Promise<HomeQueryResult> {
 
   const result: HomeQueryResult = {
     partners,
-    totalCount: countRes.count ?? 0,
+    totalCount: (countRes.count ?? 0) + HISTORICAL_INCOMPLETE_BACKLOG,
     certifiedCount: certifiedRes.count ?? 0,
   };
 
