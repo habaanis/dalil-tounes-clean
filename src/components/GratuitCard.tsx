@@ -3,10 +3,13 @@ import { Clock, Phone, ChevronDown } from 'lucide-react';
 import { isCurrentlyOpen, translateOpenStatus, translateClosedStatus } from '../lib/horaireUtils';
 import { cleanArabicField } from '../lib/textNormalization';
 import GoogleRatingSummary from './GoogleRatingSummary';
+import { getCoverImageUrl } from '../lib/imagekitUtils';
+import { getCategoryIllustration, isRealBusinessPhoto } from '../lib/categoryIllustrations';
 
 interface GratuitCardProps {
   name: string;
   logoUrl?: string | null;
+  imageUrl?: string | null;
   category?: string | null;
   ville?: string | null;
   gouvernorat?: string | null;
@@ -61,6 +64,7 @@ function renderStatutCarteBadge(statut_carte: string | null | undefined, languag
 export default function GratuitCard({
   name,
   logoUrl,
+  imageUrl,
   category,
   ville,
   gouvernorat,
@@ -80,6 +84,9 @@ export default function GratuitCard({
   const locationLabel = ville || gouvernorat || '';
   const isOpen = isCurrentlyOpen(horaires_ok ?? null);
   const cardCopy = CARD_COPY[language] || CARD_COPY.fr;
+  const illustration = getCategoryIllustration(category, name);
+  const realPhoto = isRealBusinessPhoto(imageUrl);
+  const cover = realPhoto ? getCoverImageUrl(imageUrl) : illustration?.url;
   const missingCopy: Record<string, { phone: string; hours: string }> = {
     fr: { phone: 'Téléphone : non renseigné', hours: 'Horaires : non renseignés' },
     ar: { phone: 'الهاتف: غير متوفر', hours: 'ساعات العمل: غير متوفرة' },
@@ -105,6 +112,27 @@ export default function GratuitCard({
         position: 'relative',
       }}
     >
+      {cover && (
+        <div style={{ height: '66px', flexShrink: 0, position: 'relative', marginBottom: '8px', overflow: 'hidden', borderRadius: '10px', background: '#F2F0EA' }}>
+          <img
+            src={cover}
+            alt={realPhoto ? name : illustration?.label || name}
+            loading="lazy"
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            onError={event => { event.currentTarget.onerror = null; event.currentTarget.src = '/images/placeholder.jpg'; }}
+          />
+          {!realPhoto && illustration && (
+            <a
+              href={illustration.source}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={event => event.stopPropagation()}
+              title={illustration.author + ' · ' + illustration.licence}
+              style={{ position: 'absolute', bottom: 0, right: 0, padding: '2px 6px', background: 'rgba(0,0,0,0.65)', color: '#fff', fontSize: '9px' }}
+            >{language === 'ar' ? 'صورة توضيحية' : language === 'en' ? 'Illustration' : 'Illustration du métier'}</a>
+          )}
+        </div>
+      )}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', textAlign: 'center', flex: 1 }}>
 
         {/* Nom */}
