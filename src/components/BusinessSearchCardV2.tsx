@@ -3,6 +3,7 @@ import { getCoverImageUrl } from '../lib/imagekitUtils';
 import { getLogoUrl } from '../lib/logoUtils';
 import { isCurrentlyOpen, formatTodayScheduleText, getTodaySchedule } from '../lib/horaireUtils';
 import GoogleRatingSummary from './GoogleRatingSummary';
+import { getCategoryIllustration, isRealBusinessPhoto } from '../lib/categoryIllustrations';
 
 interface BusinessSearchCardV2Props {
   business: {
@@ -69,8 +70,15 @@ export default function BusinessSearchCardV2({
 }: BusinessSearchCardV2Props) {
   const text = COPY[language] || COPY.fr;
   const isRTL = language === 'ar';
-  const cover = getCoverImageUrl(business.imageUrl || business.logoUrl || undefined);
-  const logo = getLogoUrl(business.logoUrl || business.imageUrl || undefined);
+  const illustration = getCategoryIllustration(
+    [business.category, business.categorie, categoryLabel].filter(Boolean).join(' '),
+    business.name || displayName,
+  );
+  const hasRealCover = isRealBusinessPhoto(business.imageUrl);
+  // La photo du professionnel prime toujours sur l'image de sa catégorie.
+  const cover = hasRealCover ? getCoverImageUrl(business.imageUrl) :
+    illustration?.url || getCoverImageUrl(business.logoUrl);
+  const logo = getLogoUrl(business.logoUrl);
   const phone = business.telephone || business.phone || '';
   const todaySchedule = business.horaires_ok ? getTodaySchedule(business.horaires_ok) : null;
   const unconfirmedHours = /à confirmer|a confirmer|indicatif|annuaire|non communiqué|non renseigne|non renseigné/i.test(business.horaires_ok || '');
@@ -99,7 +107,7 @@ export default function BusinessSearchCardV2({
       <div className="relative h-[58px] overflow-hidden border-b border-[#D4AF37]/35">
         <img
           src={cover}
-          alt={displayName}
+          alt={hasRealCover ? displayName : illustration?.label || displayName}
           className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.015]"
           loading="lazy"
           decoding="async"
@@ -110,6 +118,18 @@ export default function BusinessSearchCardV2({
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#064332]/70 via-transparent to-black/5" />
+        {!hasRealCover && illustration && (
+          <a
+            href={illustration.source}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={`Illustration du métier — ${illustration.author}, ${illustration.licence}`}
+            onClick={(event) => event.stopPropagation()}
+            className="absolute bottom-0 right-1 rounded-t bg-black/60 px-1.5 py-0.5 text-[8px] text-white/90 underline"
+          >
+            {language === 'ar' ? 'صورة توضيحية' : language === 'en' ? 'Illustration' : 'Illustration du métier'}
+          </a>
+        )}
         <span className={`absolute top-1.5 text-[9px] font-black uppercase tracking-[0.12em] text-[#E5B92F] drop-shadow-sm ${isRTL ? 'right-3' : 'left-3'}`}>
           {tier === 'premium' ? text.premium : text.artisan}
         </span>
