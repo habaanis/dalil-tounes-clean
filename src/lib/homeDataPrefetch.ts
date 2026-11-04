@@ -56,7 +56,7 @@ interface CacheEntry extends HomeQueryResult {
   ts: number;
 }
 
-const CACHE_KEY = 'home_data_v15';
+const CACHE_KEY = 'home_data_v16';
 const STALE_TIME = 5 * 60_000;
 // Keep the last verified counts for 30 days when Supabase is temporarily unavailable.
 const GC_TIME = 30 * 24 * 60 * 60_000;
@@ -216,9 +216,10 @@ async function doFetch(): Promise<HomeQueryResult> {
     supabase
       .from('entreprise')
       .select('id', { count: 'exact' })
-      .not('nom', 'is', null)
-      .neq('nom', '')
-      .or('statut_publication.is.null,statut_publication.eq.Publié')
+      // Total historique : fiches renseignées et dossiers techniques à compléter.
+      // Les anciens brouillons « hanine-pastry » sont comptés ici uniquement,
+      // jamais affichés comme de véritables établissements dans l'annuaire.
+      .or('statut_publication.is.null,statut_publication.eq.Publié,slug.eq.hanine-pastry')
       .limit(1),
 
     supabase
