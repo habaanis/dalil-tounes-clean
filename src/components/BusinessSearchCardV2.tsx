@@ -72,10 +72,14 @@ export default function BusinessSearchCardV2({
   const cover = getCoverImageUrl(business.imageUrl || business.logoUrl || undefined);
   const logo = getLogoUrl(business.logoUrl || business.imageUrl || undefined);
   const phone = business.telephone || business.phone || '';
-  const openNow = business.horaires_ok ? isCurrentlyOpen(business.horaires_ok) : null;
-  const today = business.horaires_ok
-    ? formatTodayScheduleText(getTodaySchedule(business.horaires_ok), language)
-    : '';
+  const todaySchedule = business.horaires_ok ? getTodaySchedule(business.horaires_ok) : null;
+  const unconfirmedHours = /à confirmer|a confirmer|indicatif|annuaire|non communiqué|non renseigne|non renseigné/i.test(business.horaires_ok || '');
+  // Une description libre ne doit jamais être interprétée comme « Fermé ».
+  const canShowLiveStatus = Boolean(todaySchedule && !unconfirmedHours &&
+    (/(\\d{1,2}(?:[.:h]\\d{2})?)\\s*(?:[-–—>àa]|to)\\s*(\\d{1,2}(?:[.:h]\\d{2})?)/i.test(todaySchedule.hours) ||
+      /fermé|closed|مغلق/i.test(todaySchedule.hours)));
+  const openNow = canShowLiveStatus ? isCurrentlyOpen(business.horaires_ok) : null;
+  const today = todaySchedule ? formatTodayScheduleText(todaySchedule, language) : '';
   const missingLabels: Record<string, { phone: string; hours: string }> = {
     fr: { phone: 'Téléphone non renseigné', hours: 'Horaires non renseignés' },
     ar: { phone: 'الهاتف غير متوفر', hours: 'ساعات العمل غير متوفرة' },
@@ -166,9 +170,9 @@ export default function BusinessSearchCardV2({
         {business.horaires_ok && (
           <div className="mt-1 border-t border-[#D4AF37]/30 pt-1 text-[8px]">
             <div className="flex items-center gap-1">
-              <Clock3 className={`h-2.5 w-2.5 shrink-0 ${openNow ? 'text-emerald-300' : 'text-red-400'}`} />
-              <span className={`font-extrabold ${openNow ? 'text-emerald-300' : 'text-red-400'}`}>
-                {openNow ? text.open : text.closed}
+              <Clock3 className={`h-2.5 w-2.5 shrink-0 ${openNow === null ? 'text-emerald-50/70' : openNow ? 'text-emerald-300' : 'text-red-400'}`} />
+              <span className={`font-extrabold ${openNow === null ? 'text-emerald-50/80' : openNow ? 'text-emerald-300' : 'text-red-400'}`}>
+                {openNow === null ? (language === 'ar' ? 'أوقات العمل بحاجة للتأكيد' : language === 'en' ? 'Hours to confirm' : language === 'it' ? 'Orari da confermare' : language === 'ru' ? 'Часы уточняются' : 'Horaires à confirmer') : openNow ? text.open : text.closed}
               </span>
             </div>
             {today && <p className="mt-0.5 line-clamp-1 text-emerald-50/80">{today}</p>}
