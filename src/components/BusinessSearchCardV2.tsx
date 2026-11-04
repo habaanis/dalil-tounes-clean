@@ -3,7 +3,7 @@ import { getCoverImageUrl } from '../lib/imagekitUtils';
 import { getLogoUrl } from '../lib/logoUtils';
 import { isCurrentlyOpen, formatTodayScheduleText, getTodaySchedule } from '../lib/horaireUtils';
 import GoogleRatingSummary from './GoogleRatingSummary';
-import { getCategoryIllustration, isRealBusinessPhoto } from '../lib/categoryIllustrations';
+import { getCategoryIllustration, isRealBusinessPhoto, isWikimediaIllustration, getWikimediaCreditUrl } from '../lib/categoryIllustrations';
 
 interface BusinessSearchCardV2Props {
   business: {
@@ -75,9 +75,13 @@ export default function BusinessSearchCardV2({
     business.name || displayName,
   );
   const hasRealCover = isRealBusinessPhoto(business.imageUrl);
-  // La photo du professionnel prime toujours sur l'image de sa catégorie.
-  const cover = hasRealCover ? getCoverImageUrl(business.imageUrl) :
+  const existingIllustration = isWikimediaIllustration(business.imageUrl);
+  // Les illustrations déjà enregistrées dans Supabase priment sur la bibliothèque métier.
+  const cover = hasRealCover || existingIllustration ? getCoverImageUrl(business.imageUrl) :
     illustration?.url || getCoverImageUrl(business.logoUrl);
+  const illustrationSource = existingIllustration
+    ? getWikimediaCreditUrl(business.imageUrl)
+    : illustration?.source;
   const logo = getLogoUrl(business.logoUrl);
   const phone = business.telephone || business.phone || '';
   const todaySchedule = business.horaires_ok ? getTodaySchedule(business.horaires_ok) : null;
@@ -107,7 +111,7 @@ export default function BusinessSearchCardV2({
       <div className="relative h-[58px] overflow-hidden border-b border-[#D4AF37]/35">
         <img
           src={cover}
-          alt={hasRealCover ? displayName : illustration?.label || displayName}
+          alt={hasRealCover ? displayName : existingIllustration ? 'Illustration du métier' : illustration?.label || displayName}
           className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.015]"
           loading="lazy"
           decoding="async"
@@ -118,12 +122,12 @@ export default function BusinessSearchCardV2({
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#064332]/70 via-transparent to-black/5" />
-        {!hasRealCover && illustration && (
+        {!hasRealCover && illustrationSource && (
           <a
-            href={illustration.source}
+            href={illustrationSource}
             target="_blank"
             rel="noopener noreferrer"
-            title={`Illustration du métier — ${illustration.author}, ${illustration.licence}`}
+            title={existingIllustration ? 'Image illustrative Wikimedia Commons' : `Illustration du métier — ${illustration?.author}, ${illustration?.licence}`}
             onClick={(event) => event.stopPropagation()}
             className="absolute bottom-0 right-1 rounded-t bg-black/60 px-1.5 py-0.5 text-[8px] text-white/90 underline"
           >
