@@ -16,6 +16,7 @@ import InstallAppBanner from '../components/InstallAppBanner';
 import SearchBar from '../components/SearchBar';
 import VisibilityHouseSection from '../components/VisibilityHouseSection';
 import { getHomeJobsResidualTranslations } from '../lib/homeJobsResidualTranslations';
+import './DalilMobileHome.css';
 
 // Tous les composants lourds (liste Premium, Avis, Témoignages)
 // sont chargés paresseusement afin de ne pas bloquer le rendu du Hero / LCP.
@@ -54,6 +55,16 @@ export const Home = ({ onNavigate, onNavigateToBusiness }: HomeProps = {}) => {
   // interagit (scroll / focus / click) — le premier des deux.
   const [belowFoldReady, setBelowFoldReady] = useState(false);
   const [searchArmed, setSearchArmed] = useState(false);
+  const [isPhone, setIsPhone] = useState(() => typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches);
+  const [showFullMobile, setShowFullMobile] = useState(false);
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 767px)');
+    const onChange = (event: MediaQueryListEvent) => setIsPhone(event.matches);
+    setIsPhone(media.matches);
+    media.addEventListener('change', onChange);
+    return () => media.removeEventListener('change', onChange);
+  }, []);
+
   const [showRequestForm, setShowRequestForm] = useState(false);
   const [requestForm, setRequestForm] = useState({
     title: '',
@@ -186,8 +197,67 @@ export const Home = ({ onNavigate, onNavigateToBusiness }: HomeProps = {}) => {
     }
   };
 
+  if (isPhone && !showFullMobile) {
+    const mobileText = language === 'ar'
+      ? { kicker: 'دليل تونس', title: 'اكتشف تونس في مكان واحد', intro: 'الشركات والخدمات والتجارب المحلية، في متناول يدك.', search: 'ابحث عن شركة أو خدمة', tourism: 'اكتشف تونس', business: 'استكشف الشركات', more: 'لماذا دليل تونس؟', full: 'عرض الصفحة الكاملة', searchPlaceholder: 'ابحث عن نشاط أو مدينة...' }
+      : language === 'en'
+        ? { kicker: 'Dalil Tounes', title: 'Find what matters in Tunisia', intro: 'Businesses, useful services and local experiences in one place.', search: 'Find a business or service', tourism: 'Explore Tunisia', business: 'Browse businesses', more: 'Why Dalil Tounes?', full: 'View the full homepage', searchPlaceholder: 'Search by business or city...' }
+        : { kicker: 'Dalil Tounes', title: 'La Tunisie à portée de clic', intro: 'Entreprises, services utiles et expériences locales, au même endroit.', search: 'Rechercher une entreprise', tourism: 'Visiter la Tunisie', business: 'Voir les entreprises', more: 'Pourquoi Dalil Tounes ?', full: 'Voir la page complète', searchPlaceholder: 'Rechercher un métier ou une ville...' };
+    return (
+      <div>
+        <SEOHead
+          title={getHomeSeoMeta().title}
+          description={getHomeSeoMeta().description}
+          keywords={getHomeSeoMeta().keywords}
+          canonical={getHomeSeoMeta().canonical}
+          currentPath="/"
+        />
+        <StructuredData data={[generateOrganizationSchema(), generateWebSiteSchema()]} />
+        <main className="dalil-mobile-express" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+          <section className="dme-hero">
+            <p className="dme-kicker">{mobileText.kicker}</p>
+            <h1>{mobileText.title}</h1>
+            <p>{mobileText.intro}</p>
+          </section>
+          <section className="dme-search" aria-label={mobileText.search}>
+            <h2>{mobileText.search}</h2>
+            {isSearchBarAllowed('home') && (searchArmed ? (
+              <Suspense fallback={<div style={{ minHeight: 48 }} />}>
+                <SearchBar scope="global" autoSearch resultMode="redirectToResults" />
+              </Suspense>
+            ) : (
+              <button
+                type="button"
+                className="dme-armed"
+                onPointerDown={() => setSearchArmed(true)}
+                onFocus={() => setSearchArmed(true)}
+                onClick={() => setSearchArmed(true)}
+              >
+                {mobileText.searchPlaceholder}
+              </button>
+            ))}
+          </section>
+          <section className="dme-count" aria-label="Réseau Dalil Tounes">
+            <CompanyCountCard language={language} totalCount={totalCount} certifiedCount={certifiedCount} loading={loading} />
+          </section>
+          <nav className="dme-links" aria-label="Accès rapides">
+            <a href="/businesses">{mobileText.business}</a>
+            <a href="/citizens/tourism">{mobileText.tourism}</a>
+          </nav>
+          <details className="dme-more">
+            <summary>{mobileText.more}<ChevronRight aria-hidden="true" className="h-4 w-4" /></summary>
+            <p>{residualT.purposeDescription}</p>
+            <a href="/pourquoi-dalil-tounes">{residualT.purposeCta}</a>
+          </details>
+          <button type="button" className="dme-full" onClick={() => setShowFullMobile(true)}>{mobileText.full}</button>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div>
+      {isPhone && <button type="button" className="dme-return" onClick={() => setShowFullMobile(false)}>{language === 'ar' ? 'العودة إلى الصفحة المختصرة' : language === 'en' ? 'Back to quick view' : 'Retour à la version courte'}</button>}
       <SEOHead
         title={getHomeSeoMeta().title}
         description={getHomeSeoMeta().description}
