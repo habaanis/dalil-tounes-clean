@@ -41,6 +41,11 @@ export const Home = ({ onNavigate, onNavigateToBusiness }: HomeProps = {}) => {
   const { language } = useLanguage();
   const t = useTranslation(language);
   const residualT = getHomeJobsResidualTranslations(language).home;
+  const homeLabels = language === 'ar'
+    ? { more: 'عرض بقية المزايا', less: 'إخفاء التفاصيل', search: 'البحث عن مؤسسة' }
+    : language === 'en'
+      ? { more: 'See all benefits', less: 'Show less', search: 'Find a business' }
+      : { more: 'Voir la suite', less: 'Réduire', search: 'Rechercher un professionnel' };
   const navigate = useNavigate();
   const { partners, totalCount, certifiedCount, loading } = useHomeData();
 
@@ -237,6 +242,17 @@ export const Home = ({ onNavigate, onNavigateToBusiness }: HomeProps = {}) => {
         </div>
       </section>
 
+      <div className="mx-auto flex max-w-6xl justify-center px-4 pb-2">
+        <button
+          type="button"
+          onClick={() => document.getElementById('dalil-home-search')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+          className="inline-flex items-center gap-2 rounded-xl border border-[#D4AF37] bg-[#4A1D43] px-5 py-2.5 text-sm font-semibold text-[#D4AF37] transition hover:bg-[#5A2D53] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D4AF37]"
+        >
+          <Search className="h-4 w-4" aria-hidden="true" />
+          {homeLabels.search}
+        </button>
+      </div>
+
       {/* 2. {residualT.purposeTitle} */}
       <section id="section-pourquoi" className="py-3 px-4 bg-white scroll-mt-24">
         <div className="max-w-6xl mx-auto">
@@ -256,7 +272,13 @@ export const Home = ({ onNavigate, onNavigateToBusiness }: HomeProps = {}) => {
             </button>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-2">
+          <details className="group mt-3">
+            <summary className="mx-auto inline-flex cursor-pointer list-none items-center gap-2 rounded-xl border border-[#D4AF37] px-4 py-2.5 text-sm font-semibold text-[#4A1D43] transition hover:bg-[#D4AF37]/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4A1D43] [&::-webkit-details-marker]:hidden">
+              <span className="group-open:hidden">{homeLabels.more}</span>
+              <span className="hidden group-open:inline">{homeLabels.less}</span>
+              <ChevronRight className="h-4 w-4 transition-transform group-open:rotate-90" aria-hidden="true" />
+            </summary>
+            <div className="mt-4 grid gap-2 text-start md:grid-cols-2 lg:grid-cols-4">
             <div className="group bg-white rounded-xl p-3 border border-[#D4AF37] hover:shadow-[0_6px_20px_rgba(74,29,67,0.12)] transition-all duration-300 hover:scale-105">
               <div className="w-8 h-8 bg-transparent rounded-lg flex items-center justify-center mb-2 group-hover:bg-[#D4AF37]/10 transition-colors">
                 <Search className="w-3.5 h-3.5 text-[#4A1D43]" />
@@ -312,7 +334,8 @@ export const Home = ({ onNavigate, onNavigateToBusiness }: HomeProps = {}) => {
                 <ChevronRight className="w-3 h-3" aria-hidden="true" />
               </button>
             </div>
-          </div>
+            </div>
+          </details>
         </div>
       </section>
 
@@ -320,7 +343,7 @@ export const Home = ({ onNavigate, onNavigateToBusiness }: HomeProps = {}) => {
 
       {/* 3. Barre de recherche — le SDK Supabase (chunk vendor-supabase)
            ne se charge qu'au premier focus/clic pour ne pas pénaliser le LCP mobile. */}
-      <section className="py-2 px-4 relative z-[1000] overflow-visible">
+      <section id="dalil-home-search" className="scroll-mt-24 py-2 px-4 relative z-[1000] overflow-visible">
         <div className="max-w-5xl mx-auto relative z-[1001] overflow-visible">
           {isSearchBarAllowed('home') && (
             <div className="bg-white rounded-xl border border-[#D4AF37] p-2.5 md:p-3 relative overflow-visible md:shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
