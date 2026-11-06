@@ -138,10 +138,6 @@ export default function CvProfessionalLanding() {
     document.title = t.title + ' | Dalil Tounes';
     return () => { document.title = previousTitle; };
   }, [t.title]);
-  const chooseFormula = (formula: 'artisan' | 'premium') => {
-    setSelectedFormula(formula);
-    window.requestAnimationFrame(() => document.getElementById('cv-presentation-models')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
-  };
   const continueWithModel = () => {
     if (!selectedFormula || !selectedModel) {
       document.getElementById('cv-presentation-models')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -190,7 +186,7 @@ export default function CvProfessionalLanding() {
                 <summary className="flex min-h-12 cursor-pointer items-center justify-between gap-3 px-4 py-3 text-sm font-bold text-[#815E28] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#986F25]">{t.more}<ChevronDown className="h-5 w-5 shrink-0 group-open:rotate-180" aria-hidden="true"/></summary>
                 <ul className="space-y-3 border-t border-[#D9C69F] px-4 py-4">{features.map(item => <li key={item} className="flex items-start gap-2 text-sm leading-6 text-[#594F57]"><Check className="mt-1 h-4 w-4 shrink-0 text-[#4A1D43]" aria-hidden="true"/>{item}</li>)}</ul>
               </details>
-              <button type="button" onClick={() => chooseFormula(formula)} className="mt-5 inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#D4AF37] px-4 py-3 text-center text-sm font-bold text-[#30162E]">{isPremium ? offers.choosePremium : offers.chooseArtisan}<ArrowRight className="h-4 w-4" aria-hidden="true"/></button>
+              
             </article>;
           })}
         </div>
@@ -207,6 +203,10 @@ export default function CvProfessionalLanding() {
           paletteValue={palette}
           onPaletteChange={setPalette}
         />
+        <div className="mx-auto mt-3 grid max-w-4xl gap-3 sm:grid-cols-2">
+          {(['portfolio', 'business'] as const).map(model => <a key={model} href={`/entreprise/sousse/aux-saveurs-d-anis?preview-model=${model}&palette=${palette}&source=cv-landing&lang=${lang}`} target="_blank" rel="noopener noreferrer" className="flex min-h-12 items-center justify-center gap-2 rounded-xl border border-[#D3B474] bg-[#FFF9EA] px-4 py-3 text-center text-sm font-bold text-[#4A1D43] hover:bg-[#F8EDCF]">{({fr: 'Tester le CV', ar: 'جرّب', en: 'Try', it: 'Prova', ru: 'Открыть'} as Record<Lang,string>)[lang]} {model === 'portfolio' ? t.portfolio : t.business}<ArrowRight size={17} aria-hidden="true" /></a>)}
+        </div>
+
         <details className="group mt-5 rounded-[18px] border border-[#DAC395] bg-white">
           <summary className="flex min-h-14 cursor-pointer items-center justify-between gap-3 p-4 font-bold text-[#4A1D43] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B58C3C]">
             <span>{offers.maintenanceTitle} · {offers.maintenancePrice} · {offers.maintenanceTiming}</span><ChevronDown className="h-5 w-5 shrink-0 group-open:rotate-180" aria-hidden="true"/>
