@@ -424,13 +424,8 @@ export function CvPresentationModelSelector({
                     <span>{model === 'business' ? copy.business : copy.portfolio}</span>
                     <span className="text-xs font-semibold text-[#866224]">{value === model ? '✓' : '○'}</span>
                   </button>
-                  <div className="overflow-hidden rounded-xl border border-[#D6AF2E]/50 bg-white">
-                    <iframe
-                      title={`${model === 'business' ? copy.business : copy.portfolio} — Aux saveurs d’Anis`}
-                      src={`/entreprise/sousse/aux-saveurs-d-anis?preview-model=${model}&palette=${paletteValue}&source=subscription&lang=${language}`}
-                      className="block h-[550px] w-full bg-white sm:h-[590px]"
-                      loading="lazy"
-                    />
+                  <div role="region" aria-label={`${model === 'business' ? copy.business : copy.portfolio} — démonstration interactive`} tabIndex={0} className="h-[550px] overflow-y-auto overscroll-contain rounded-xl border border-[#D6AF2E]/50 bg-white sm:h-[590px]">
+                    <RealPalettePreview palette={paletteValue} model={model} language={language} expanded />
                   </div>
                   <p className="mt-2 text-center text-xs text-slate-600">{model === 'business' ? copy.businessDescription : copy.portfolioDescription}</p>
                 </div>
