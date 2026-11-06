@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { ArrowRight, Check, ChevronDown } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { CvPresentationModelSelector, type PaletteId, type PresentationModel } from '../components/CvPresentationModelSelector';
 import CvCapabilitiesSection from '../components/CvCapabilitiesSection';
+import { SubscriptionRequestForm } from '../components/SubscriptionRequestForm';
+import { getPresentationModelLabel, getPaletteLabel } from '../components/CvPresentationModelSelector';
 import { simplifiedOfferCopy, offerCopy } from './Subscription';
 
 type Lang = 'fr' | 'ar' | 'en' | 'it' | 'ru';
@@ -129,7 +131,7 @@ export default function CvProfessionalLanding() {
   const t = COPY[lang];
   const offers = simplifiedOfferCopy[lang];
   const pricing = offerCopy[lang];
-  const navigate = useNavigate();
+  const [requestOpen, setRequestOpen] = useState(false);
   const [selectedFormula, setSelectedFormula] = useState<'artisan' | 'premium' | null>(null);
   const [selectedModel, setSelectedModel] = useState<PresentationModel | null>(null);
   const [palette, setPalette] = useState<PaletteId>('prestige');
@@ -151,8 +153,8 @@ export default function CvProfessionalLanding() {
       document.getElementById('cv-presentation-models')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       return;
     }
-    const params = new URLSearchParams({ formula: selectedFormula, model: selectedModel, palette });
-    navigate(`/subscription?${params.toString()}#cv-presentation-models`);
+    setRequestOpen(true);
+    window.requestAnimationFrame(() => document.getElementById('demande-cv')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
   };
   return <main dir={isRtl ? 'rtl' : 'ltr'} className="min-h-screen bg-[#FFFCF8] text-[#30162E]">
     <section className="bg-[radial-gradient(circle_at_top_right,rgba(212,175,55,0.17),transparent_38%),linear-gradient(155deg,#fffdfa,#f9f1f5)] px-4 py-8 sm:py-10">
@@ -228,6 +230,28 @@ export default function CvProfessionalLanding() {
         </div>
       </div>
     </section>
+
+
+    {requestOpen && selectedFormula && selectedModel && <section id="demande-cv" className="scroll-mt-20 border-t border-[#E1CFB0] bg-[#FFFBF3] px-4 py-8 sm:py-10">
+      <div className="mx-auto max-w-3xl rounded-2xl border border-[#D5B979] bg-white p-4 shadow-sm sm:p-6">
+        <div className="mb-4 flex items-start justify-between gap-4">
+          <div>
+            <h2 className="font-serif text-xl font-bold text-[#4A1D43]">{t.inquire}</h2>
+            <p className="mt-1 text-sm leading-6 text-[#625A60]">{selectedFormula === 'artisan' ? offers.artisanTitle : offers.premiumTitle} · {selectedFormula === 'artisan' ? pricing.artisanPrice : pricing.premiumPrice} · {selectedModel === 'business' ? t.business : t.portfolio}</p>
+          </div>
+          <button type="button" onClick={() => setRequestOpen(false)} className="rounded-lg border border-[#D5B979] px-3 py-2 text-sm font-bold text-[#4A1D43]" aria-label={lang === 'fr' ? 'Fermer le formulaire' : 'Close'}>×</button>
+        </div>
+        <SubscriptionRequestForm
+          selectedPlan={selectedFormula}
+          selectedPlanLabel={`${selectedFormula === 'artisan' ? offers.artisanTitle : offers.premiumTitle} — ${selectedFormula === 'artisan' ? pricing.artisanPrice : pricing.premiumPrice}`}
+          checkoutOffer={selectedFormula}
+          creationMode
+          presentationModelLabel={getPresentationModelLabel(lang, selectedModel)}
+          paletteLabel={getPaletteLabel(lang, palette)}
+          onCancel={() => setRequestOpen(false)}
+        />
+      </div>
+    </section>}
 
     {cvVideoSrc && <section className="border-t border-[#E8DABF] bg-[#FFFBF5] px-4 py-9 sm:py-12">
       <div className="mx-auto max-w-5xl">
