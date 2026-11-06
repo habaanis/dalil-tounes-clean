@@ -24,7 +24,7 @@ const translations = {
     sub: 'A network that grows every day',
   },
   ar: {
-    before: 'انضمت بالفعل ',
+    before: 'تم تسجيل ',
     after: ' بطاقة في قاعدة بيانات دليل تونس (منشورة أو قيد الإعداد).',
     certified: 'منها',
     certifiedAfter: ' معتمدة',
