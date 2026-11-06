@@ -17,6 +17,7 @@ import { buildEntrepriseUrl } from '../lib/url';
 import { useLanguage } from '../context/LanguageContext';
 import { t, isRTL, type Lang } from '../lib/i18n';
 import { normalizeText } from '../lib/textNormalization';
+import { dedupeByAirtableId } from '../lib/dedupeByAirtableId';
 import LocationSelectTunisie from './LocationSelectTunisie';
 
 type CertFilter = '' | 'certifie' | 'non_certifie';
@@ -194,6 +195,13 @@ export default function SearchBar({
     return score;
   }
 
+  function trustPriority(row: any): number {
+    if (String(row.cv_business_status || '').toLowerCase() === 'published' || row.cv_business_published_at) return 2;
+    const rating = Number(row['Note Google Globale'] || 0);
+    const reviews = Number(row['Compteur Avis Google'] || 0);
+    return rating >= 4 && reviews >= 5 ? 1 : 0;
+  }
+
   const runSearch = React.useCallback(async (qValue: string, cityValue: string, cert: CertFilter) => {
     const requestId = ++searchSequence.current;
     const trimmedValue = qValue.trim();
@@ -254,10 +262,12 @@ export default function SearchBar({
 
         let query = supabase
           .from(Tables.ENTREPRISE)
-          .select('id, nom, ville, gouvernorat, adresse, description, sous_categories_texte, sous_categories_clean, categorie, name_ar, services, statut_carte')
+          .select('id, id_airtable, nom, ville, gouvernorat, adresse, description, sous_categories_texte, sous_categories_clean, categorie, name_ar, services, statut_carte, cv_business_status, cv_business_published_at, "Note Google Globale", "Compteur Avis Google"')
           .not('nom', 'is', null)
           .neq('nom', '')
           .or(orParts.join(','))
+          .order('cv_business_status', { ascending: false, nullsFirst: false })
+          .order('"Compteur Avis Google"', { ascending: false, nullsFirst: false })
           .limit(isGlobal ? GLOBAL_RAW_RESULT_LIMIT : CATEGORY_RAW_RESULT_LIMIT);
 
         if (cityTrimmed.length > 0) {
@@ -280,10 +290,12 @@ export default function SearchBar({
           console.error('[Search] broad query error, attempting safe name fallback:', resp.error);
           const fallback = await supabase
             .from(Tables.ENTREPRISE)
-            .select('id, nom, ville, gouvernorat, categorie, statut_carte')
+            .select('id, id_airtable, nom, ville, gouvernorat, categorie, statut_carte, cv_business_status, cv_business_published_at, "Note Google Globale", "Compteur Avis Google"')
             .not('nom', 'is', null)
             .ilike('nom', `%${trimmedValue}%`)
-            .limit(30);
+            .order('cv_business_status', { ascending: false, nullsFirst: false })
+            .order('"Compteur Avis Google"', { ascending: false, nullsFirst: false })
+            .limit(50);
           if (requestId !== searchSequence.current) return;
           if (fallback.error) {
             setErrEnt(fallback.error.message);
@@ -297,7 +309,7 @@ export default function SearchBar({
         console.log('[Search] raw Supabase results:', searchRows.length,
           resp.data?.slice(0, 5).map((r: any) => ({ nom: r.nom, ville: r.ville, gouvernorat: r.gouvernorat })));
 
-        const rawRows = searchRows;
+        const rawRows = dedupeByAirtableId(searchRows as { id: string; id_airtable?: string | null }[]);
 
         let scored = rawRows.map((row: any) => {
           const s = scoreResult(row, words);
@@ -313,7 +325,13 @@ export default function SearchBar({
           console.log('[Search] multi-word filter:', beforeFilter, '->', scored.length);
         }
 
-        scored.sort((a: any, b: any) => b._score - a._score);
+        scored.sort((a: any, b: any) => {
+          const trustDiff = trustPriority(b) - trustPriority(a);
+          if (trustDiff) return trustDiff;
+          const relevanceDiff = b._score - a._score;
+          if (relevanceDiff) return relevanceDiff;
+          return Number(b['Compteur Avis Google'] || 0) - Number(a['Compteur Avis Google'] || 0);
+        });
 
         if (cert) {
           scored = scored.filter((r: any) => {
