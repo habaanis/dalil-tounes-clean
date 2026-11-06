@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowRight, Check, ChevronDown, QrCode, Smartphone } from 'lucide-react';
+import { ArrowRight, Check, ChevronDown } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { CvPresentationModelSelector, type PaletteId, type PresentationModel } from '../components/CvPresentationModelSelector';
 import { simplifiedOfferCopy, offerCopy } from './Subscription';
@@ -218,16 +218,6 @@ export default function CvProfessionalLanding() {
           <div><strong className="text-base text-[#4A1D43]">{t.free} · 0 TND</strong><p className="mt-1 text-sm leading-6 text-[#665D64]">{offers.essentialPreviewText}</p></div>
           <Link to="/inscription-entreprise" className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl border border-[#BA9853] px-4 py-2 text-sm font-bold text-[#4A1D43]">{t.register}<ArrowRight className="h-4 w-4"/></Link>
         </div>
-      </div>
-    </section>
-
-    <section className="bg-[#F8F2EA] px-4 py-12 sm:py-14">
-      <div className="mx-auto grid max-w-6xl gap-7 md:grid-cols-2 md:items-start">
-        <div><h2 className="font-serif text-3xl font-bold">{t.featuresTitle}</h2><div className="mt-5 flex flex-wrap gap-2"><span className="rounded-full border border-[#D8C197] bg-white px-3 py-2 text-sm font-bold"><Smartphone className="me-2 inline-block h-4 w-4" />Mini-application</span><span className="rounded-full border border-[#D8C197] bg-white px-3 py-2 text-sm font-bold"><QrCode className="me-2 inline-block h-4 w-4" />QR Business</span></div></div>
-        <details className="group rounded-2xl border border-[#DDC99E] bg-white p-4 sm:p-5">
-          <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-4 font-bold text-[#4A1D43] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#9F782C]">{t.more}<ChevronDown size={20} className="group-open:rotate-180" /></summary>
-          <ul className="mt-3 space-y-3 border-t border-[#E8DFD2] pt-4">{t.features.map(item => <li key={item} className="flex items-start gap-2 text-sm leading-6 text-[#514B52]"><Check className="mt-1 h-4 w-4 shrink-0 text-[#9A751D]" />{item}</li>)}</ul>
-        </details>
       </div>
     </section>
 
