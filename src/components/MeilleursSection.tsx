@@ -297,6 +297,9 @@ export default function MeilleursSection({
           .from(Tables.ENTREPRISE)
           .select(SELECT_FIELDS)
           .filter('liste_pages', 'cs', `{${listePage}}`)
+          // Approved and published, or previously published Essentials awaiting approval backfill.
+          // Excludes refused/draft records without hiding the legacy published Essentials.
+          .or('and(approved.eq.true,statut_validation.eq.publie),and(approved.is.null,statut_validation.eq.publie,statut_publication.eq.Publié)')
           .order('"Note Google Globale"', { ascending: false, nullsFirst: false });
 
         if (fetchError) {
