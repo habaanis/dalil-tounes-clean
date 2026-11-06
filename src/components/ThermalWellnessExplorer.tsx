@@ -32,11 +32,12 @@ const labels = {
 const kindOf = (place: ThermalPlace): ThermalKind =>
   /royal.tulip/i.test(place.nom) ? 'bien-etre' : 'thermalisme';
 
-export default function ThermalWellnessExplorer() {
+export default function ThermalWellnessExplorer({ initialKind = 'thermalisme' }: { initialKind?: ThermalKind }) {
   const { language } = useLanguage();
   const lang = (language in labels ? language : 'fr') as keyof typeof labels;
   const text = labels[lang];
-  const [kind, setKind] = useState<ThermalKind>('thermalisme');
+  const [kind, setKind] = useState<ThermalKind>(initialKind);
+  useEffect(() => { setKind(initialKind); }, [initialKind]);
   const [region, setRegion] = useState('');
   const [query, setQuery] = useState('');
   const [places, setPlaces] = useState<ThermalPlace[]>([]);
