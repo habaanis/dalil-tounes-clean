@@ -134,6 +134,13 @@ export default function CvProfessionalLanding() {
   const [selectedModel, setSelectedModel] = useState<PresentationModel | null>(null);
   const [palette, setPalette] = useState<PaletteId>('prestige');
   const isRtl = lang === 'ar';
+  // Reuse the already published FR/AR presentation video from the former CV page.
+  const cvVideoSrc = lang === 'fr'
+    ? 'https://static.metricool.com/video/4610595/202609/eaaff4e56ccf4aba.mp4'
+    : lang === 'ar'
+      ? 'https://static.metricool.com/video/4610595/202609/0a154ec0c4a44fb7.mp4'
+      : null;
+
   useEffect(() => {
     const previousTitle = document.title;
     document.title = t.title + ' | Dalil Tounes';
@@ -221,6 +228,15 @@ export default function CvProfessionalLanding() {
         </div>
       </div>
     </section>
+
+    {cvVideoSrc && <section className="border-t border-[#E8DABF] bg-[#FFFBF5] px-4 py-9 sm:py-12">
+      <div className="mx-auto max-w-5xl">
+        <h2 className="mb-4 text-center font-serif text-2xl font-bold text-[#4A1D43] sm:text-3xl">{lang === 'ar' ? 'شاهد كيف يعمل CV الخاص بك' : 'Découvrez votre CV en vidéo'}</h2>
+        <div className="mx-auto max-w-[520px] rounded-2xl border border-[#D5BA83] bg-white p-3 shadow-sm">
+          <video key={cvVideoSrc} src={cvVideoSrc} controls playsInline preload="metadata" poster="/images/cv-business-portfolio-aux-saveurs-anis.png" className="mx-auto block max-h-[420px] w-full rounded-xl bg-[#052B22] object-contain" aria-label={lang === 'ar' ? 'فيديو تقديم CV المهني' : 'Vidéo de présentation des CV professionnels'} />
+        </div>
+      </div>
+    </section>}
 
     <CvCapabilitiesSection language={lang} compact />
 
