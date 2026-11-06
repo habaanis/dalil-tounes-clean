@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
-import SEOHead from '../components/SEOHead';
+import { SEOHead } from '../components/SEOHead';
 import ThermalWellnessExplorer from '../components/ThermalWellnessExplorer';
 
 const copy = {
