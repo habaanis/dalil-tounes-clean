@@ -730,7 +730,10 @@ export default function CitizensTourism() {
         </div>
       </section>
 
-      {journeyMode === 'visit' && <TourismExperienceDiscovery />}
+      {journeyMode === 'visit' && <>
+        <div className="mx-auto max-w-5xl px-4 pt-4"><Link to="/citizens/tourism/thermalisme" className="block rounded-xl border border-[#D4AF37] bg-[#FFF8E8] px-4 py-3 text-center text-sm font-semibold text-[#4A1D43] hover:bg-[#F3E2B5]">♨️ {lang === 'ar' ? 'الحمامات المعدنية والعيون الطبيعية والرفاه' : lang === 'en' ? 'Thermal baths, natural springs & wellness' : lang === 'it' ? 'Terme, sorgenti naturali e benessere' : lang === 'ru' ? 'Термальные источники и отдых' : 'Thermalisme, sources naturelles et bien-être'}</Link></div>
+        <TourismExperienceDiscovery />
+      </>}
 
     </div>
   );
