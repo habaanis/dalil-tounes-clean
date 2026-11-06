@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Check, ChevronDown, Palette, QrCode, Smartphone, X } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { RealPalettePreview, getPaletteLabel, PALETTE_IDS, PALETTE_SWATCHES, type PaletteId } from '../components/CvPresentationModelSelector';
+import { simplifiedOfferCopy, offerCopy } from './Subscription';
 
 type Lang = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 type Model = 'business' | 'portfolio';
@@ -131,6 +132,8 @@ export default function CvProfessionalLanding() {
   const { language } = useLanguage();
   const lang: Lang = language in COPY ? language as Lang : 'fr';
   const t = COPY[lang];
+  const offers = simplifiedOfferCopy[lang];
+  const pricing = offerCopy[lang];
   const [activeModel, setActiveModel] = useState<Model>('business');
   const [palette, setPalette] = useState<PaletteId>('prestige');
   const [zoom, setZoom] = useState(false);
@@ -153,9 +156,10 @@ export default function CvProfessionalLanding() {
         <Link to="/" className="text-sm font-semibold text-[#70466B] underline underline-offset-4">{t.returnHome}</Link>
         <div className="grid items-center gap-8 lg:grid-cols-[1.08fr_.92fr] lg:gap-12">
           <div>
-        <p className="mt-8 text-xs font-black uppercase tracking-[0.16em] text-[#9F782C]">{t.eyebrow}</p>
-        <h1 className="mt-3 max-w-4xl font-serif text-4xl font-bold leading-[1.14] sm:text-5xl lg:text-[3.45rem]">{t.title}</h1>
-        <p className="mt-5 max-w-3xl text-base leading-8 text-[#655B63] sm:text-lg">{t.intro}</p>
+        <p className="mt-8 inline-flex rounded-full bg-[#4A1D43] px-4 py-2 text-xs font-black uppercase tracking-[0.12em] text-[#F4D58A]">{offers.welcomeBadge}</p>
+        <h1 className="mt-4 max-w-4xl font-serif text-3xl font-bold leading-[1.14] sm:text-4xl lg:text-[3.1rem]">{offers.welcomeTitle}</h1>
+        <p className="mt-4 max-w-3xl text-sm leading-7 text-[#655B63] sm:text-base">{offers.welcomeDescription}</p>
+        <p className="mt-3 max-w-3xl text-sm leading-7 text-[#655B63]">{t.intro}</p>
 
             <div className="mt-6 flex flex-wrap gap-3">
               <a href="#modeles" className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-[#4A1D43] px-5 py-3 text-sm font-bold text-white shadow-sm hover:bg-[#64305B]">{t.modelTitle}<ArrowRight size={16}/></a>
@@ -170,17 +174,42 @@ export default function CvProfessionalLanding() {
 
           </div>
         </div>
-        <div className="mt-10 grid gap-3 md:grid-cols-2">
-          <article className="rounded-[20px] border border-[#E3D6BF] bg-white/90 p-5 shadow-[0_8px_24px_rgba(45,18,40,.04)] sm:p-6">
-            <div className="flex items-center justify-between gap-3"><h2 className="font-serif text-2xl font-bold">{t.free}</h2><span className="rounded-full bg-[#E6F4EB] px-3 py-1 text-sm font-black text-[#17633E]">{lang === 'ar' ? 'مجاني' : lang === 'en' ? 'Free' : lang === 'it' ? 'Gratis' : lang === 'ru' ? 'Бесплатно' : 'Gratuit'}</span></div>
-            <p className="mt-3 min-h-[58px] text-sm leading-6 text-[#665D64]">{t.freeDesc}</p>
-            <Link to="/inscription-entreprise" className="mt-5 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-[#AE8639] px-4 py-3 text-sm font-bold text-[#4A1D43] hover:bg-[#FFF6DE]">{t.register}<ArrowRight size={17} aria-hidden="true" /></Link>
-          </article>
-          <article className="rounded-[20px] border border-[#C5A66A] bg-[#4A1D43] p-5 text-white shadow-[0_12px_35px_rgba(45,18,40,.12)] sm:p-6">
-            <h2 className="font-serif text-2xl font-bold text-[#FFE1A0]">{t.paid}</h2>
-            <p className="mt-3 min-h-[58px] text-sm leading-6 text-white/85">{t.paidDesc}</p>
-            <Link to="/contact" className="mt-5 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#D4AF37] px-4 py-3 text-sm font-black text-[#2E102A] hover:bg-[#E3C166]">{t.inquire}<ArrowRight size={17} aria-hidden="true" /></Link>
-          </article>
+        <div className="mt-8 rounded-[20px] border border-[#D3B16F] bg-[#07543F] p-5 text-[#FFF9E9] shadow-[0_12px_30px_rgba(7,84,63,.12)] sm:p-6">
+          <p className="font-serif text-lg font-bold leading-7 text-[#F7DA8B]">{offers.welcomeHighlight}</p>
+          <p className="mt-3 text-sm font-semibold leading-7 text-white/90">{offers.welcomePayment}</p>
+        </div>
+        <div id="formules" className="mt-6 grid gap-4 md:grid-cols-2">
+          {(['artisan', 'premium'] as const).map(formula => {
+            const isPremium = formula === 'premium';
+            const features = isPremium ? pricing.premiumFeatures : offers.artisanFeatures;
+            return <article key={formula} className="flex min-w-0 flex-col rounded-[20px] border border-[#C8A557] bg-[#07543F] p-5 text-white shadow-[0_10px_26px_rgba(7,84,63,.11)] sm:p-6">
+              <p className="text-xs font-black uppercase tracking-[.13em] text-[#EAC76A]">CV BUSINESS</p>
+              <h2 className="mt-3 font-serif text-2xl font-bold">{isPremium ? offers.premiumTitle : offers.artisanTitle}</h2>
+              <p className="mt-2 text-3xl font-black text-[#F4D56E]">{isPremium ? pricing.premiumPrice : pricing.artisanPrice}</p>
+              <p className="mt-1 text-xs font-bold uppercase tracking-wide text-white/80">{offers.creationLabel}</p>
+              <p className="mt-3 min-h-[50px] text-sm leading-6 text-white/90">{isPremium ? offers.premiumIntro : offers.artisanIntro}</p>
+              <p className="mt-3 rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-xs font-semibold leading-5">{offers.firstYearIncluded}</p>
+              <details className="group mt-4 rounded-xl border border-[#D5B360]/65">
+                <summary className="flex min-h-12 cursor-pointer items-center justify-between gap-3 px-4 py-3 text-sm font-bold text-[#F6D783] focus-visible:outline focus-visible:outline-2 focus-visible:outline-white">{t.more}<ChevronDown className="h-5 w-5 shrink-0 group-open:rotate-180" aria-hidden="true"/></summary>
+                <ul className="space-y-3 border-t border-white/20 px-4 py-4">{features.map(item => <li key={item} className="flex items-start gap-2 text-sm leading-6 text-white/90"><Check className="mt-1 h-4 w-4 shrink-0 text-[#F4D56E]" aria-hidden="true"/>{item}</li>)}</ul>
+              </details>
+              <Link to="/subscription#cv-business-products-title" className="mt-5 inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#D4AF37] px-4 py-3 text-center text-sm font-bold text-[#1C4237]">{isPremium ? offers.choosePremium : offers.chooseArtisan}<ArrowRight className="h-4 w-4" aria-hidden="true"/></Link>
+            </article>;
+          })}
+        </div>
+        <details className="group mt-5 rounded-[18px] border border-[#DAC395] bg-white">
+          <summary className="flex min-h-14 cursor-pointer items-center justify-between gap-3 p-4 font-bold text-[#4A1D43] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B58C3C]">
+            <span>{offers.maintenanceTitle} · {offers.maintenancePrice} · {offers.maintenanceTiming}</span><ChevronDown className="h-5 w-5 shrink-0 group-open:rotate-180" aria-hidden="true"/>
+          </summary>
+          <div className="border-t border-[#E5D6B6] px-4 pb-5">
+            <p className="mt-4 text-sm leading-7 text-[#5A555A]">{offers.maintenanceIntro}</p>
+            <ul className="mt-3 grid gap-2 sm:grid-cols-2">{offers.maintenanceFeatures.map(item => <li key={item} className="flex items-start gap-2 text-sm leading-6 text-[#5A555A]"><Check className="mt-1 h-4 w-4 shrink-0 text-[#98762F]" aria-hidden="true"/>{item}</li>)}</ul>
+            <p className="mt-4 rounded-xl bg-[#FFF5DD] p-3 text-sm leading-6 text-[#4A1D43]">{offers.noRenewal}</p>
+          </div>
+        </details>
+        <div className="mt-5 flex flex-col justify-between gap-3 rounded-[16px] border border-[#E2D6BE] bg-white p-4 sm:flex-row sm:items-center">
+          <div><strong className="text-base text-[#4A1D43]">{t.free} · 0 TND</strong><p className="mt-1 text-sm leading-6 text-[#665D64]">{offers.essentialPreviewText}</p></div>
+          <Link to="/inscription-entreprise" className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl border border-[#BA9853] px-4 py-2 text-sm font-bold text-[#4A1D43]">{t.register}<ArrowRight className="h-4 w-4"/></Link>
         </div>
       </div>
     </section>
@@ -235,12 +264,6 @@ export default function CvProfessionalLanding() {
       <div className="mx-auto max-w-6xl">
         <h2 className="font-serif text-3xl font-bold">{t.stagesTitle}</h2>
         <div className="mt-6 grid gap-3 md:grid-cols-3">{t.stages.map((stage,index) => <div key={index} className="rounded-2xl border border-[#E2D0B0] bg-white p-5"><span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#D4AF37] font-bold text-[#30162E]">{index+1}</span><p className="mt-4 text-sm leading-7 text-[#554B51]">{stage}</p></div>)}</div>
-        <div className="mt-7 rounded-2xl border border-[#DCC393] bg-[#FFFAF0] p-5 sm:p-7">
-          <h3 className="font-serif text-2xl font-bold">{t.priceTitle}</h3>
-          <p className="mt-3 font-semibold leading-7">{t.installments}</p>
-          <p className="mt-2 text-sm leading-7 text-[#5E585D]">{t.priceNote}</p>
-          <Link to="/contact" className="mt-5 inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#4A1D43] px-5 py-3 text-sm font-bold text-white hover:bg-[#602957]">{t.seeOffers}<ArrowRight size={17} /></Link>
-        </div>
       </div>
     </section>
 
