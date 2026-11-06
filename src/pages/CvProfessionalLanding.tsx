@@ -155,38 +155,38 @@ export default function CvProfessionalLanding() {
     navigate(`/subscription?${params.toString()}#cv-presentation-models`);
   };
   return <main dir={isRtl ? 'rtl' : 'ltr'} className="min-h-screen bg-[#FFFCF8] text-[#30162E]">
-    <section className="bg-[radial-gradient(circle_at_top_right,rgba(212,175,55,0.17),transparent_38%),linear-gradient(155deg,#fffdfa,#f9f1f5)] px-4 py-12 sm:py-16">
+    <section className="bg-[radial-gradient(circle_at_top_right,rgba(212,175,55,0.17),transparent_38%),linear-gradient(155deg,#fffdfa,#f9f1f5)] px-4 py-8 sm:py-10">
       <div className="mx-auto max-w-6xl">
         <Link to="/" className="text-sm font-semibold text-[#70466B] underline underline-offset-4">{t.returnHome}</Link>
         <div className="max-w-4xl">
           <p className="mt-8 inline-flex rounded-full bg-[#4A1D43] px-4 py-2 text-xs font-black uppercase tracking-[0.12em] text-[#F4D58A]">{offers.welcomeBadge}</p>
-          <h1 className="mt-4 max-w-4xl font-serif text-3xl font-bold leading-[1.14] sm:text-4xl lg:text-[3.1rem]">{offers.welcomeTitle}</h1>
-          <p className="mt-4 max-w-3xl text-sm leading-7 text-[#655B63] sm:text-base">{offers.welcomeDescription}</p>
+          <h1 className="mt-4 max-w-4xl font-serif text-[1.9rem] font-bold leading-[1.15] sm:text-[2.25rem] lg:text-[2.55rem]">{offers.welcomeTitle}</h1>
+          <p className="mt-3 max-w-3xl text-sm leading-6 text-[#655B63] sm:text-[0.95rem]">{offers.welcomeDescription}</p>
           <p className="mt-3 max-w-3xl text-sm leading-7 text-[#655B63]">{t.intro}</p>
           <Link to="/contact" className="mt-6 inline-flex min-h-12 items-center gap-2 rounded-xl border border-[#D1B57B] bg-white px-5 py-3 text-sm font-bold text-[#4A1D43]">{t.inquire}<ArrowRight size={16} /></Link>
         </div>
-        <section className="px-4 pt-7 pb-1 sm:pt-9 sm:pb-3" aria-labelledby="cv-trial-title">
-      <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-5 rounded-2xl border border-[#D7BB7F] bg-[#FFFAEF] p-5 sm:flex-row sm:items-center sm:p-7">
+        <section className="px-1 pt-5 pb-1 sm:pt-6 sm:pb-2" aria-labelledby="cv-trial-title">
+      <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-5 rounded-xl border border-[#D7BB7F] bg-[#FFFAEF] p-4 sm:flex-row sm:items-center sm:p-5">
         <div className="max-w-2xl">
           <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#9A7029]">14 JOURS · 14 DAYS</p>
-          <h2 id="cv-trial-title" className="mt-2 font-serif text-2xl font-bold sm:text-3xl">{t.trialTitle}</h2>
+          <h2 id="cv-trial-title" className="mt-2 font-serif text-xl font-bold sm:text-2xl">{t.trialTitle}</h2>
           <p className="mt-3 text-sm leading-7 text-[#5A555A]">{t.trialDesc}</p>
         </div>
         <Link to="/contact" className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-[#4A1D43] px-5 py-3 text-sm font-bold text-white hover:bg-[#602957]">{t.trialCta}<ArrowRight size={17} aria-hidden="true" /></Link>
       </div>
         </section>
-        <div className="mt-8 rounded-[20px] border border-[#D3B16F] bg-[#FFF9ED] p-5 text-[#3E1D36] shadow-[0_12px_30px_rgba(7,84,63,.12)] sm:p-6">
-          <p className="font-serif text-lg font-bold leading-7 text-[#4A1D43]">{offers.welcomeHighlight}</p>
+        <div className="mt-5 rounded-xl border border-[#D3B16F] bg-[#FFF9ED] p-4 text-[#3E1D36] shadow-[0_12px_30px_rgba(7,84,63,.12)] sm:p-6">
+          <p className="font-serif text-base font-bold leading-6 text-[#4A1D43]">{offers.welcomeHighlight}</p>
           <p className="mt-3 text-sm font-semibold leading-7 text-[#594F57]">{offers.welcomePayment}</p>
         </div>
-        <div id="formules" className="mt-6 grid gap-4 md:grid-cols-2">
+        <div id="formules" className="mt-4 grid gap-3 md:grid-cols-2">
           {(['artisan', 'premium'] as const).map(formula => {
             const isPremium = formula === 'premium';
             const features = isPremium ? pricing.premiumFeatures : offers.artisanFeatures;
             return <article key={formula} className="flex min-w-0 flex-col rounded-[20px] border border-[#C8A557] bg-[#FFF9ED] p-5 text-[#35172F] shadow-[0_10px_26px_rgba(7,84,63,.11)] sm:p-6">
               <p className="text-xs font-black uppercase tracking-[.13em] text-[#986F25]">CV BUSINESS</p>
-              <h2 className="mt-3 font-serif text-2xl font-bold">{isPremium ? offers.premiumTitle : offers.artisanTitle}</h2>
-              <p className="mt-2 text-3xl font-black text-[#4A1D43]">{isPremium ? pricing.premiumPrice : pricing.artisanPrice}</p>
+              <h2 className="mt-2 font-serif text-xl font-bold">{isPremium ? offers.premiumTitle : offers.artisanTitle}</h2>
+              <p className="mt-1 text-[1.7rem] font-black text-[#4A1D43]">{isPremium ? pricing.premiumPrice : pricing.artisanPrice}</p>
               <p className="mt-1 text-xs font-bold uppercase tracking-wide text-[#645861]">{offers.creationLabel}</p>
               <p className="mt-3 min-h-[50px] text-sm leading-6 text-[#594F57]">{isPremium ? offers.premiumIntro : offers.artisanIntro}</p>
               <p className="mt-3 rounded-xl border border-[#D9C69F] bg-[#F8F0DE] px-3 py-2 text-xs font-semibold leading-5">{offers.firstYearIncluded}</p>
@@ -240,16 +240,16 @@ export default function CvProfessionalLanding() {
 
     <CvCapabilitiesSection language={lang} compact />
 
-    <section className="px-4 py-12 sm:py-16">
+    <section className="px-4 py-8 sm:py-10">
       <div className="mx-auto max-w-6xl">
-        <h2 className="font-serif text-3xl font-bold">{t.stagesTitle}</h2>
+        <h2 className="font-serif text-2xl font-bold">{t.stagesTitle}</h2>
         <div className="mt-6 grid gap-3 md:grid-cols-3">{t.stages.map((stage,index) => <div key={index} className="rounded-2xl border border-[#E2D0B0] bg-white p-5"><span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#D4AF37] font-bold text-[#30162E]">{index+1}</span><p className="mt-4 text-sm leading-7 text-[#554B51]">{stage}</p></div>)}</div>
       </div>
     </section>
 
     <section className="bg-[#35162F] px-4 py-12 text-white">
       <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-5 sm:flex-row sm:items-center">
-        <div><h2 className="font-serif text-3xl font-bold text-[#F8D78D]">{t.finalTitle}</h2><p className="mt-3 max-w-2xl text-sm leading-7 text-white/80">{t.finalText}</p></div>
+        <div><h2 className="font-serif text-2xl font-bold text-[#F8D78D]">{t.finalTitle}</h2><p className="mt-3 max-w-2xl text-sm leading-7 text-white/80">{t.finalText}</p></div>
         <Link to="/contact" className="inline-flex min-h-12 shrink-0 items-center gap-2 rounded-xl bg-[#D4AF37] px-5 py-3 text-sm font-bold text-[#30162E]">{t.inquire}<ArrowRight size={17} /></Link>
       </div>
     </section>
