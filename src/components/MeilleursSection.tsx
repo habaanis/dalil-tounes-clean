@@ -599,7 +599,7 @@ export default function MeilleursSection({
       <div className="max-w-5xl mx-auto px-4 pb-6">
         <p className="text-center text-[11px] text-gray-400 leading-relaxed">
           {useGoogleRecommendationCriteria
-            ? tx('rankingDisclosure', 'Les recommandations reposent uniquement sur les notes et avis publics disponibles sur Google. Dalil Tounes n’attribue aucune note.')
+            ? tx('rankingDisclosure', 'Les recommandations exigent au moins 4/5 et 5 avis Google. Les CV publiés sont prioritaires ; Dalil Tounes n’attribue aucune note.')
             : 'Les classements affichés privilégient les CV publiés, puis le nombre d’avis et les notes Google.'}{' '}
           <Link to="/info-avis" className="text-[#D4AF37] hover:underline">
             {useGoogleRecommendationCriteria ? tx('learnMore', 'En savoir plus') : 'En savoir plus'}
