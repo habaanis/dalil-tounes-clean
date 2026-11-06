@@ -125,6 +125,10 @@
       "destination": "/index.html"
     },
     {
+      "source": "/decouvrir-nos-cv",
+      "destination": "/index.html"
+    },
+    {
       "source": "/paiement/:path*",
       "destination": "/index.html"
     },
