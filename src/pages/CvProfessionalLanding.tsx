@@ -33,8 +33,8 @@ const COPY: Record<Lang, Texts> = {
     features: ['Présentation de votre activité et de vos services', 'Photos, réalisations et informations pratiques', 'Téléphone, itinéraire, horaires et réseaux sociaux', 'Un lien personnel et un QR Business à partager', 'Un accès depuis l’écran d’accueil du téléphone'],
     more: 'Voir toutes les possibilités', stagesTitle: 'Nous nous occupons de la création',
     stages: ['Vous nous expliquez votre activité et choisissez le modèle.', 'Nous préparons votre CV et organisons les informations avec vous.', 'Vous vérifiez l’aperçu, puis nous finalisons et publions après règlement complet.'],
-    priceTitle: 'CV accompagné · 199 TND', installments: 'Paiement possible en 1 fois (199 TND), 2 fois (100 + 99 TND) ou 3 fois (67 + 66 + 66 TND).',
-    priceNote: 'Les modalités et les éventuels services complémentaires sont confirmés dans le parcours de demande. La publication définitive intervient après le paiement complet.',
+    priceTitle: 'CV Business · offres à 30 TND et 59 TND', installments: 'Offres présentées avec trois années de présence incluses, selon les conditions de chaque formule.',
+    priceNote: 'Tarifs indiqués à titre de présentation des offres déjà convenues. Les caractéristiques précises sont confirmées avec Dalil Tounes avant toute commande ou paiement.',
     finalTitle: 'Parlons de votre projet.', finalText: 'Vous n’avez pas besoin de préparer seul votre CV. Décrivez votre activité : nous vous accompagnons pour choisir la présentation adaptée.',
     returnHome: 'Retour à l’annuaire', seeOffers: 'Voir les formules et la demande'
   },
@@ -52,8 +52,8 @@ const COPY: Record<Lang, Texts> = {
     features: ['تعريف بنشاطك وخدماتك', 'صور وإنجازات ومعلومات عملية', 'الهاتف والموقع والأوقات والشبكات الاجتماعية', 'رابط شخصي ورمز QR Business للمشاركة', 'وصول من شاشة الهاتف الرئيسية'],
     more: 'عرض جميع المزايا', stagesTitle: 'نرافقك في إعداد السيرة',
     stages: ['تشرح لنا نشاطك وتختار النموذج.', 'نعدّ العرض وننظم المعلومات معك.', 'تراجع المعاينة ثم ننشر بعد إتمام الدفع.'],
-    priceTitle: 'سيرة مهنية بمرافقة · 199 د.ت', installments: 'الدفع مرة واحدة 199 د.ت، أو 100 + 99، أو 67 + 66 + 66 د.ت.',
-    priceNote: 'نؤكد شروط الدفع والخدمات الإضافية أثناء الطلب. يتم النشر النهائي بعد الدفع الكامل.',
+    priceTitle: 'CV Business · عروض 30 و59 د.ت', installments: 'تشمل العروض ثلاث سنوات من الظهور حسب شروط كل صيغة.',
+    priceNote: 'يتم تأكيد تفاصيل العرض مع فريق دليل تونس قبل الطلب أو أي دفع.',
     finalTitle: 'لنتحدث عن مشروعك.', finalText: 'لا تحتاج إلى إعداد سيرتك المهنية وحدك. أخبرنا عن نشاطك وسنساعدك على اختيار العرض الأنسب.',
     returnHome: 'العودة إلى الدليل', seeOffers: 'العروض وطلب الإنشاء'
   },
@@ -71,8 +71,8 @@ const COPY: Record<Lang, Texts> = {
     features: ['Business introduction and services', 'Photos, work examples and practical details', 'Phone, directions, hours and social networks', 'Personal link and shareable Business QR', 'Quick access from a phone home screen'],
     more: 'See all benefits', stagesTitle: 'We help create your CV',
     stages: ['Tell us about your business and choose a model.', 'We prepare and organize your presentation with you.', 'Review the preview; we publish after full payment.'],
-    priceTitle: 'Assisted CV · 199 TND', installments: 'Pay once (199 TND), twice (100 + 99 TND), or in three installments (67 + 66 + 66 TND).',
-    priceNote: 'Payment terms and optional services are confirmed during the request. Final publication follows full payment.',
+    priceTitle: 'Business CV · 30 TND and 59 TND offers', installments: 'Three years of listing are included, subject to the terms of each offer.',
+    priceNote: 'The exact scope and terms are confirmed with the Dalil Tounes team before any order or payment.',
     finalTitle: 'Tell us about your project.', finalText: 'You do not have to build your CV alone. Tell us about your business and we will help you choose the right presentation.',
     returnHome: 'Back to directory', seeOffers: 'Offers and request form'
   },
@@ -90,8 +90,8 @@ const COPY: Record<Lang, Texts> = {
     features: ['Presentazione dell’attività e dei servizi', 'Foto, lavori e informazioni utili', 'Telefono, indicazioni, orari e social network', 'Link personale e QR Business da condividere', 'Accesso rapido dalla schermata iniziale'],
     more: 'Scopri tutti i vantaggi', stagesTitle: 'Ci occupiamo della creazione',
     stages: ['Descrivi l’attività e scegli il modello.', 'Prepariamo e organizziamo i contenuti insieme a te.', 'Verifichi l’anteprima; pubblichiamo dopo il pagamento completo.'],
-    priceTitle: 'CV assistito · 199 TND', installments: 'Pagamento unico 199 TND, in 2 rate (100 + 99 TND) o in 3 rate (67 + 66 + 66 TND).',
-    priceNote: 'Condizioni e servizi opzionali vengono confermati durante la richiesta. Pubblicazione dopo il saldo completo.',
+    priceTitle: 'CV Business · offerte da 30 e 59 TND', installments: 'Tre anni di presenza inclusi secondo le condizioni di ciascuna offerta.',
+    priceNote: 'I dettagli delle offerte vengono confermati con il team Dalil Tounes prima dell’ordine o del pagamento.',
     finalTitle: 'Parliamo del tuo progetto.', finalText: 'Non devi creare il CV da solo. Raccontaci la tua attività e ti aiuteremo a scegliere la presentazione adatta.',
     returnHome: 'Torna all’elenco', seeOffers: 'Offerte e richiesta'
   },
@@ -109,8 +109,8 @@ const COPY: Record<Lang, Texts> = {
     features: ['Описание бизнеса и услуг', 'Фото, работы и полезные сведения', 'Телефон, маршрут, часы работы и соцсети', 'Личная ссылка и QR Business для обмена', 'Быстрый доступ с главного экрана телефона'],
     more: 'Все возможности', stagesTitle: 'Мы поможем создать CV',
     stages: ['Расскажите о бизнесе и выберите модель.', 'Мы подготовим презентацию вместе с вами.', 'Вы проверите пример; публикация после полной оплаты.'],
-    priceTitle: 'CV с поддержкой · 199 TND', installments: 'Оплата 199 TND сразу, в 2 платежа (100 + 99 TND) или 3 платежа (67 + 66 + 66 TND).',
-    priceNote: 'Условия оплаты и дополнительные услуги уточняются при обращении. Публикация после полной оплаты.',
+    priceTitle: 'CV Business · предложения 30 и 59 TND', installments: 'Три года размещения включены согласно условиям каждого предложения.',
+    priceNote: 'Точные условия уточняются с командой Dalil Tounes до заказа или оплаты.',
     finalTitle: 'Обсудим ваш проект.', finalText: 'Не нужно создавать CV самостоятельно. Расскажите о бизнесе — мы поможем подобрать оформление.',
     returnHome: 'К каталогу', seeOffers: 'Предложения и заявка'
   }
@@ -157,7 +157,7 @@ export default function CvProfessionalLanding() {
           <article className="rounded-2xl border border-[#E2BC70] bg-[#4A1D43] p-5 text-white sm:p-6">
             <h2 className="font-serif text-2xl font-bold text-[#FFE1A0]">{t.paid}</h2>
             <p className="mt-3 min-h-[58px] text-sm leading-6 text-white/85">{t.paidDesc}</p>
-            <Link to="/subscription" className="mt-5 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#D4AF37] px-4 py-3 text-sm font-black text-[#2E102A] hover:bg-[#E3C166]">{t.inquire}<ArrowRight size={17} aria-hidden="true" /></Link>
+            <Link to="/contact" className="mt-5 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#D4AF37] px-4 py-3 text-sm font-black text-[#2E102A] hover:bg-[#E3C166]">{t.inquire}<ArrowRight size={17} aria-hidden="true" /></Link>
           </article>
         </div>
       </div>
@@ -204,7 +204,7 @@ export default function CvProfessionalLanding() {
           <h3 className="font-serif text-2xl font-bold">{t.priceTitle}</h3>
           <p className="mt-3 font-semibold leading-7">{t.installments}</p>
           <p className="mt-2 text-sm leading-7 text-[#5E585D]">{t.priceNote}</p>
-          <Link to="/subscription" className="mt-5 inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#4A1D43] px-5 py-3 text-sm font-bold text-white hover:bg-[#602957]">{t.seeOffers}<ArrowRight size={17} /></Link>
+          <Link to="/contact" className="mt-5 inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#4A1D43] px-5 py-3 text-sm font-bold text-white hover:bg-[#602957]">{t.seeOffers}<ArrowRight size={17} /></Link>
         </div>
       </div>
     </section>
@@ -212,7 +212,7 @@ export default function CvProfessionalLanding() {
     <section className="bg-[#35162F] px-4 py-12 text-white">
       <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-5 sm:flex-row sm:items-center">
         <div><h2 className="font-serif text-3xl font-bold text-[#F8D78D]">{t.finalTitle}</h2><p className="mt-3 max-w-2xl text-sm leading-7 text-white/80">{t.finalText}</p></div>
-        <Link to="/subscription" className="inline-flex min-h-12 shrink-0 items-center gap-2 rounded-xl bg-[#D4AF37] px-5 py-3 text-sm font-bold text-[#30162E]">{t.inquire}<ArrowRight size={17} /></Link>
+        <Link to="/contact" className="inline-flex min-h-12 shrink-0 items-center gap-2 rounded-xl bg-[#D4AF37] px-5 py-3 text-sm font-bold text-[#30162E]">{t.inquire}<ArrowRight size={17} /></Link>
       </div>
     </section>
 
