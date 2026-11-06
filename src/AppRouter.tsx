@@ -36,7 +36,6 @@ function RetiredMarketplaceRedirect() {
 const PrestigeOpeningPreview = lazy(() => import('./pages/PrestigeOpeningPreview'));
 const SeparationPreview = lazy(() => import('./pages/SeparationPreview'));
 const PlatformHome = lazy(() => import('./pages/SeparationPreview').then(m => ({ default: m.PlatformHome })));
-const CvBusinessHome = lazy(() => import('./pages/SeparationPreview').then(m => ({ default: m.CvBusinessHome })));
 const CvProfessionalLanding = lazy(() => import('./pages/CvProfessionalLanding'));
 const Subscription = lazy(() => import('./pages/SubscriptionWithJourney'));
 const PaiementConfirmation = lazy(() => import('./pages/PaiementConfirmation'));
@@ -277,7 +276,7 @@ function AppRouter() {
 
           <Route path="/inscription-entreprise" element={<BusinessRegistration />} />
           <Route path="/subscription" element={<Subscription />} />
-          <Route path="/cv-business" element={<CvBusinessHome />} />
+          <Route path="/cv-business" element={<Navigate to="/decouvrir-nos-cv" replace />} />
           <Route path="/decouvrir-nos-cv" element={<CvProfessionalLanding />} />
           <Route path="/preview/separation-plateforme-cv" element={<SeparationPreview />} />
           <Route path="/abonnement" element={<Subscription />} />
