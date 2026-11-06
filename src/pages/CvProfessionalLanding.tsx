@@ -130,7 +130,6 @@ export default function CvProfessionalLanding() {
   const [palette, setPalette] = useState<PaletteId>('prestige');
   const [zoom, setZoom] = useState(false);
   const isRtl = lang === 'ar';
-  const active = MODELS.find(item => item.id === activeModel)!;
   useEffect(() => {
     const previousTitle = document.title;
     document.title = t.title + ' | Dalil Tounes';
