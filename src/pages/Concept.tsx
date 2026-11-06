@@ -134,7 +134,7 @@ export function ConceptHomeSummary() {
   const { language } = useLanguage();
   const lang = (language in copy ? language : 'fr') as Language;
   const t = copy[lang];
-  return <section className="border-y border-[#E7D8B6] bg-[#FFFCF6] px-4 py-8 md:py-10" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+  return <section id="comment-ca-marche" className="scroll-mt-20 border-y border-[#E7D8B6] bg-[#FFFCF6] px-4 py-8 md:py-10" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
     <div className="mx-auto max-w-5xl">
       <h2 className="text-center font-serif text-2xl font-bold text-[#4A1D43] md:text-3xl">{t.pathsTitle}</h2>
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
