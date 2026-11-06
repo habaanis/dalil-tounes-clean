@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, Check, ChevronDown } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { CvPresentationModelSelector, type PaletteId, type PresentationModel } from '../components/CvPresentationModelSelector';
+import CvCapabilitiesSection from '../components/CvCapabilitiesSection';
 import { simplifiedOfferCopy, offerCopy } from './Subscription';
 
 type Lang = 'fr' | 'ar' | 'en' | 'it' | 'ru';
@@ -220,6 +221,8 @@ export default function CvProfessionalLanding() {
         </div>
       </div>
     </section>
+
+    <CvCapabilitiesSection language={lang} compact />
 
     <section className="px-4 py-12 sm:py-16">
       <div className="mx-auto max-w-6xl">
