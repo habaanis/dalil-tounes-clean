@@ -174,26 +174,36 @@ export default function CvProfessionalLanding() {
 
           </div>
         </div>
-        <div className="mt-8 rounded-[20px] border border-[#D3B16F] bg-[#07543F] p-5 text-[#FFF9E9] shadow-[0_12px_30px_rgba(7,84,63,.12)] sm:p-6">
-          <p className="font-serif text-lg font-bold leading-7 text-[#F7DA8B]">{offers.welcomeHighlight}</p>
-          <p className="mt-3 text-sm font-semibold leading-7 text-white/90">{offers.welcomePayment}</p>
+        <section className="px-4 pt-7 pb-1 sm:pt-9 sm:pb-3" aria-labelledby="cv-trial-title">
+      <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-5 rounded-2xl border border-[#D7BB7F] bg-[#FFFAEF] p-5 sm:flex-row sm:items-center sm:p-7">
+        <div className="max-w-2xl">
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#9A7029]">14 JOURS · 14 DAYS</p>
+          <h2 id="cv-trial-title" className="mt-2 font-serif text-2xl font-bold sm:text-3xl">{t.trialTitle}</h2>
+          <p className="mt-3 text-sm leading-7 text-[#5A555A]">{t.trialDesc}</p>
+        </div>
+        <Link to="/contact" className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-[#4A1D43] px-5 py-3 text-sm font-bold text-white hover:bg-[#602957]">{t.trialCta}<ArrowRight size={17} aria-hidden="true" /></Link>
+      </div>
+        </section>
+        <div className="mt-8 rounded-[20px] border border-[#D3B16F] bg-[#FFF9ED] p-5 text-[#3E1D36] shadow-[0_12px_30px_rgba(7,84,63,.12)] sm:p-6">
+          <p className="font-serif text-lg font-bold leading-7 text-[#4A1D43]">{offers.welcomeHighlight}</p>
+          <p className="mt-3 text-sm font-semibold leading-7 text-[#594F57]">{offers.welcomePayment}</p>
         </div>
         <div id="formules" className="mt-6 grid gap-4 md:grid-cols-2">
           {(['artisan', 'premium'] as const).map(formula => {
             const isPremium = formula === 'premium';
             const features = isPremium ? pricing.premiumFeatures : offers.artisanFeatures;
-            return <article key={formula} className="flex min-w-0 flex-col rounded-[20px] border border-[#C8A557] bg-[#07543F] p-5 text-white shadow-[0_10px_26px_rgba(7,84,63,.11)] sm:p-6">
-              <p className="text-xs font-black uppercase tracking-[.13em] text-[#EAC76A]">CV BUSINESS</p>
+            return <article key={formula} className="flex min-w-0 flex-col rounded-[20px] border border-[#C8A557] bg-[#FFF9ED] p-5 text-white shadow-[0_10px_26px_rgba(7,84,63,.11)] sm:p-6">
+              <p className="text-xs font-black uppercase tracking-[.13em] text-[#986F25]">CV BUSINESS</p>
               <h2 className="mt-3 font-serif text-2xl font-bold">{isPremium ? offers.premiumTitle : offers.artisanTitle}</h2>
-              <p className="mt-2 text-3xl font-black text-[#F4D56E]">{isPremium ? pricing.premiumPrice : pricing.artisanPrice}</p>
-              <p className="mt-1 text-xs font-bold uppercase tracking-wide text-white/80">{offers.creationLabel}</p>
-              <p className="mt-3 min-h-[50px] text-sm leading-6 text-white/90">{isPremium ? offers.premiumIntro : offers.artisanIntro}</p>
-              <p className="mt-3 rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-xs font-semibold leading-5">{offers.firstYearIncluded}</p>
-              <details className="group mt-4 rounded-xl border border-[#D5B360]/65">
-                <summary className="flex min-h-12 cursor-pointer items-center justify-between gap-3 px-4 py-3 text-sm font-bold text-[#F6D783] focus-visible:outline focus-visible:outline-2 focus-visible:outline-white">{t.more}<ChevronDown className="h-5 w-5 shrink-0 group-open:rotate-180" aria-hidden="true"/></summary>
-                <ul className="space-y-3 border-t border-white/20 px-4 py-4">{features.map(item => <li key={item} className="flex items-start gap-2 text-sm leading-6 text-white/90"><Check className="mt-1 h-4 w-4 shrink-0 text-[#F4D56E]" aria-hidden="true"/>{item}</li>)}</ul>
+              <p className="mt-2 text-3xl font-black text-[#4A1D43]">{isPremium ? pricing.premiumPrice : pricing.artisanPrice}</p>
+              <p className="mt-1 text-xs font-bold uppercase tracking-wide text-[#645861]">{offers.creationLabel}</p>
+              <p className="mt-3 min-h-[50px] text-sm leading-6 text-[#594F57]">{isPremium ? offers.premiumIntro : offers.artisanIntro}</p>
+              <p className="mt-3 rounded-xl border border-[#D9C69F] bg-[#F8F0DE] px-3 py-2 text-xs font-semibold leading-5">{offers.firstYearIncluded}</p>
+              <details className="group mt-4 rounded-xl border border-[#D2B77A]">
+                <summary className="flex min-h-12 cursor-pointer items-center justify-between gap-3 px-4 py-3 text-sm font-bold text-[#815E28] focus-visible:outline focus-visible:outline-2 focus-visible:outline-white">{t.more}<ChevronDown className="h-5 w-5 shrink-0 group-open:rotate-180" aria-hidden="true"/></summary>
+                <ul className="space-y-3 border-t border-[#D9C69F] px-4 py-4">{features.map(item => <li key={item} className="flex items-start gap-2 text-sm leading-6 text-[#594F57]"><Check className="mt-1 h-4 w-4 shrink-0 text-[#4A1D43]" aria-hidden="true"/>{item}</li>)}</ul>
               </details>
-              <Link to="/subscription#cv-business-products-title" className="mt-5 inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#D4AF37] px-4 py-3 text-center text-sm font-bold text-[#1C4237]">{isPremium ? offers.choosePremium : offers.chooseArtisan}<ArrowRight className="h-4 w-4" aria-hidden="true"/></Link>
+              <Link to="/subscription#cv-business-products-title" className="mt-5 inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#D4AF37] px-4 py-3 text-center text-sm font-bold text-[#30162E]">{isPremium ? offers.choosePremium : offers.chooseArtisan}<ArrowRight className="h-4 w-4" aria-hidden="true"/></Link>
             </article>;
           })}
         </div>
@@ -250,16 +260,6 @@ export default function CvProfessionalLanding() {
       </div>
     </section>
 
-    <section className="px-4 py-8 sm:py-10" aria-labelledby="cv-trial-title">
-      <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-5 rounded-2xl border border-[#D7BB7F] bg-[#FFFAEF] p-5 sm:flex-row sm:items-center sm:p-7">
-        <div className="max-w-2xl">
-          <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#9A7029]">14 JOURS · 14 DAYS</p>
-          <h2 id="cv-trial-title" className="mt-2 font-serif text-2xl font-bold sm:text-3xl">{t.trialTitle}</h2>
-          <p className="mt-3 text-sm leading-7 text-[#5A555A]">{t.trialDesc}</p>
-        </div>
-        <Link to="/contact" className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-[#4A1D43] px-5 py-3 text-sm font-bold text-white hover:bg-[#602957]">{t.trialCta}<ArrowRight size={17} aria-hidden="true" /></Link>
-      </div>
-    </section>
     <section className="px-4 py-12 sm:py-16">
       <div className="mx-auto max-w-6xl">
         <h2 className="font-serif text-3xl font-bold">{t.stagesTitle}</h2>
@@ -269,7 +269,7 @@ export default function CvProfessionalLanding() {
 
     <section className="bg-[#35162F] px-4 py-12 text-white">
       <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-5 sm:flex-row sm:items-center">
-        <div><h2 className="font-serif text-3xl font-bold text-[#F8D78D]">{t.finalTitle}</h2><p className="mt-3 max-w-2xl text-sm leading-7 text-white/80">{t.finalText}</p></div>
+        <div><h2 className="font-serif text-3xl font-bold text-[#F8D78D]">{t.finalTitle}</h2><p className="mt-3 max-w-2xl text-sm leading-7 text-[#645861]">{t.finalText}</p></div>
         <Link to="/contact" className="inline-flex min-h-12 shrink-0 items-center gap-2 rounded-xl bg-[#D4AF37] px-5 py-3 text-sm font-bold text-[#30162E]">{t.inquire}<ArrowRight size={17} /></Link>
       </div>
     </section>
