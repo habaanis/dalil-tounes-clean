@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Check, ChevronDown, ExternalLink, QrCode, Smartphone, X } from 'lucide-react';
+import { ArrowRight, Check, ChevronDown, Palette, QrCode, Smartphone, X } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { RealPalettePreview, getPaletteLabel, PALETTE_IDS, PALETTE_SWATCHES, type PaletteId } from '../components/CvPresentationModelSelector';
 
 type Lang = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 type Model = 'business' | 'portfolio';
@@ -118,7 +119,7 @@ const COPY: Record<Lang, Texts> = {
 
 const MODELS: { id: Model; src: string }[] = [
   { id: 'business', src: '/images/cv-business-portfolio-aux-saveurs-anis.png' },
-  { id: 'portfolio', src: '/images/cv-portfolio-aux-saveurs-anis-original.svg' }
+  { id: 'portfolio', src: '/images/cv-business-professionnel-aux-saveurs-anis.png' }
 ];
 
 export default function CvProfessionalLanding() {
@@ -126,6 +127,7 @@ export default function CvProfessionalLanding() {
   const lang: Lang = language in COPY ? language as Lang : 'fr';
   const t = COPY[lang];
   const [activeModel, setActiveModel] = useState<Model>('business');
+  const [palette, setPalette] = useState<PaletteId>('prestige');
   const [zoom, setZoom] = useState(false);
   const isRtl = lang === 'ar';
   const active = MODELS.find(item => item.id === activeModel)!;
@@ -159,7 +161,7 @@ export default function CvProfessionalLanding() {
           <div className="mx-auto w-full max-w-[385px]">
                     <div className="mx-auto max-w-[385px] rounded-[28px] border border-[#DBC18C] bg-white p-4 shadow-[0_20px_48px_rgba(55,22,49,0.10)]">
           <div className="flex justify-between gap-3 pb-3"><strong className="font-serif text-lg">{activeModel === 'business' ? t.business : t.portfolio}</strong><button type="button" className="text-sm font-bold text-[#795A22] underline underline-offset-4" onClick={() => setZoom(true)}>{t.preview}</button></div>
-          <div className="flex h-[350px] sm:h-[395px] items-center justify-center overflow-hidden rounded-xl bg-[#052B22]"><img src={active.src} alt={activeModel === 'business' ? t.business : t.portfolio} className="h-full w-auto max-w-full object-contain" /></div>
+          <div className="flex min-h-[465px] items-start justify-center overflow-hidden rounded-2xl bg-[#F8F6F0] p-2"><RealPalettePreview palette={palette} model={activeModel} language={lang} /></div>
         </div>
 
           </div>
@@ -195,6 +197,12 @@ export default function CvProfessionalLanding() {
             </button>;
           })}
         </div>
+        <details className="group mx-auto mt-5 max-w-3xl rounded-2xl border border-[#DDC99E] bg-[#FFFDF8]">
+          <summary className="flex min-h-12 cursor-pointer items-center justify-between gap-2 px-4 py-3 text-sm font-bold text-[#4A1D43] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#AA853B]"><span className="inline-flex items-center gap-2"><Palette size={17} />{({ fr: 'Découvrir les palettes', ar: 'اكتشف الألوان', en: 'Explore colour themes', it: 'Scopri le palette', ru: 'Варианты оформления' } as Record<Lang,string>)[lang]}</span><ChevronDown size={17} className="group-open:rotate-180"/></summary>
+          <div className="grid gap-2 border-t border-[#E8D6B7] p-3 sm:grid-cols-3">
+            {PALETTE_IDS.map(id => <button key={id} type="button" aria-pressed={palette === id} onClick={() => setPalette(id)} className={`flex min-h-12 items-center gap-3 rounded-xl border px-3 py-2 text-start text-xs font-bold ${palette === id ? 'border-[#A67B34] bg-[#FFF3DC]' : 'border-[#E7D7BB] bg-white'}`}><span className="h-7 w-7 shrink-0 rounded-full border border-[#D6C6A4]" style={{ background: PALETTE_SWATCHES[id].bg }} /><span>{getPaletteLabel(lang, id)}</span></button>)}
+          </div>
+        </details>
         <p className="mt-3 text-center text-xs text-[#726875]">{t.demoNotice}</p>
       </div>
     </section>
@@ -230,9 +238,9 @@ export default function CvProfessionalLanding() {
     </section>
 
     {zoom && <div role="dialog" aria-modal="true" aria-label={t.preview} className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4" onClick={() => setZoom(false)}>
-      <div className="relative flex h-[min(92vh,900px)] w-full max-w-[650px] items-center justify-center" onClick={event => event.stopPropagation()}>
+      <div className="relative flex h-[min(92vh,900px)] w-full max-w-[650px] items-center justify-center rounded-2xl bg-[#F8F6F0] p-4" onClick={event => event.stopPropagation()}>
         <button type="button" autoFocus className="absolute right-2 top-2 z-10 inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-bold text-[#30162E]" onClick={() => setZoom(false)}><X size={18} />{t.close}</button>
-        <img className="max-h-full max-w-full object-contain" src={active.src} alt={activeModel === 'business' ? t.business : t.portfolio} />
+        <div className="h-full max-h-[85vh] w-full overflow-auto rounded-xl bg-[#F8F6F0]"><RealPalettePreview palette={palette} model={activeModel} language={lang} expanded /></div>
       </div>
     </div>}
   </main>;
