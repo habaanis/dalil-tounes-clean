@@ -284,7 +284,7 @@ export default function CvCapabilitiesSection({ language, compact = false }: {la
       <div className="mx-auto max-w-6xl">
         <h2 id="dt-cv-capabilities-compact" className="font-serif text-xl font-bold text-[#4A1D43] sm:text-2xl">{content.title}</h2>
         <p className="mt-1 max-w-3xl text-sm leading-6 text-[#675D62]">{content.intro}</p>
-        <div className="mt-4 grid gap-2 sm:grid-cols-2">
+        <div className="mt-4 columns-1 gap-2 sm:columns-2 [&>details]:mb-2 [&>details]:break-inside-avoid">
           {content.groups.map((group) => <details key={group.title} className="group min-w-0 rounded-xl border border-[#E2D2B5] bg-white">
             <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-bold text-[#4A1D43] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B48A36] [&::-webkit-details-marker]:hidden">
               <span>{group.title}</span><span aria-hidden="true" className="shrink-0 text-lg text-[#98712C] group-open:rotate-180">⌄</span>
