@@ -7,6 +7,7 @@ import LocationSelectTunisie from '../components/LocationSelectTunisie';
 import VehicleTypeAutocomplete from '../components/VehicleTypeAutocomplete';
 import MeilleursSection from '../components/MeilleursSection';
 import SearchBar from '../components/SearchBar';
+import ThermalWellnessExplorer from '../components/ThermalWellnessExplorer';
 import MedicalTransportCard from '../components/MedicalTransportCard';
 import MedicalTransportRegistrationForm from '../components/MedicalTransportRegistrationForm';
 import { supabase } from '../lib/supabaseClient';
@@ -287,6 +288,8 @@ export default function CitizensHealth({}: CitizensHealthProps) {
           </div>
         </div>
       </section>
+
+      <ThermalWellnessExplorer />
 
       <section className="py-8 bg-white">
         <MeilleursSection
