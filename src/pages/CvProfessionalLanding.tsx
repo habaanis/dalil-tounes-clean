@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowRight, Check, ChevronDown, Palette, QrCode, Smartphone, X } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { ArrowRight, Check, ChevronDown, QrCode, Smartphone } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
-import { RealPalettePreview, getPaletteLabel, PALETTE_IDS, PALETTE_SWATCHES, type PaletteId } from '../components/CvPresentationModelSelector';
+import { CvPresentationModelSelector, type PaletteId, type PresentationModel } from '../components/CvPresentationModelSelector';
 import { simplifiedOfferCopy, offerCopy } from './Subscription';
 
 type Lang = 'fr' | 'ar' | 'en' | 'it' | 'ru';
@@ -123,56 +123,44 @@ const COPY: Record<Lang, Texts> = {
   }
 };
 
-const MODELS: { id: Model; src: string }[] = [
-  { id: 'business', src: '/images/cv-business-portfolio-aux-saveurs-anis.png' },
-  { id: 'portfolio', src: '/images/cv-business-professionnel-aux-saveurs-anis.png' }
-];
-
 export default function CvProfessionalLanding() {
   const { language } = useLanguage();
   const lang: Lang = language in COPY ? language as Lang : 'fr';
   const t = COPY[lang];
   const offers = simplifiedOfferCopy[lang];
   const pricing = offerCopy[lang];
-  const [activeModel, setActiveModel] = useState<Model>('business');
+  const navigate = useNavigate();
+  const [selectedFormula, setSelectedFormula] = useState<'artisan' | 'premium' | null>(null);
+  const [selectedModel, setSelectedModel] = useState<PresentationModel | null>(null);
   const [palette, setPalette] = useState<PaletteId>('prestige');
-  const [zoom, setZoom] = useState(false);
   const isRtl = lang === 'ar';
   useEffect(() => {
     const previousTitle = document.title;
     document.title = t.title + ' | Dalil Tounes';
     return () => { document.title = previousTitle; };
   }, [t.title]);
-  useEffect(() => {
-    if (!zoom) return;
-    const onEscape = (event: KeyboardEvent) => { if (event.key === 'Escape') setZoom(false); };
-    window.addEventListener('keydown', onEscape);
-    return () => window.removeEventListener('keydown', onEscape);
-  }, [zoom]);
-
+  const chooseFormula = (formula: 'artisan' | 'premium') => {
+    setSelectedFormula(formula);
+    window.requestAnimationFrame(() => document.getElementById('cv-presentation-models')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  };
+  const continueWithModel = () => {
+    if (!selectedFormula || !selectedModel) {
+      document.getElementById('cv-presentation-models')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+    const params = new URLSearchParams({ formula: selectedFormula, model: selectedModel, palette });
+    navigate(`/subscription?${params.toString()}#cv-presentation-models`);
+  };
   return <main dir={isRtl ? 'rtl' : 'ltr'} className="min-h-screen bg-[#FFFCF8] text-[#30162E]">
     <section className="bg-[radial-gradient(circle_at_top_right,rgba(212,175,55,0.17),transparent_38%),linear-gradient(155deg,#fffdfa,#f9f1f5)] px-4 py-12 sm:py-16">
       <div className="mx-auto max-w-6xl">
         <Link to="/" className="text-sm font-semibold text-[#70466B] underline underline-offset-4">{t.returnHome}</Link>
-        <div className="grid items-center gap-8 lg:grid-cols-[1.08fr_.92fr] lg:gap-12">
-          <div>
-        <p className="mt-8 inline-flex rounded-full bg-[#4A1D43] px-4 py-2 text-xs font-black uppercase tracking-[0.12em] text-[#F4D58A]">{offers.welcomeBadge}</p>
-        <h1 className="mt-4 max-w-4xl font-serif text-3xl font-bold leading-[1.14] sm:text-4xl lg:text-[3.1rem]">{offers.welcomeTitle}</h1>
-        <p className="mt-4 max-w-3xl text-sm leading-7 text-[#655B63] sm:text-base">{offers.welcomeDescription}</p>
-        <p className="mt-3 max-w-3xl text-sm leading-7 text-[#655B63]">{t.intro}</p>
-
-            <div className="mt-6 flex flex-wrap gap-3">
-              <a href="#modeles" className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-[#4A1D43] px-5 py-3 text-sm font-bold text-white shadow-sm hover:bg-[#64305B]">{t.modelTitle}<ArrowRight size={16}/></a>
-              <Link to="/contact" className="inline-flex min-h-12 items-center rounded-xl border border-[#D1B57B] bg-white px-5 py-3 text-sm font-bold text-[#4A1D43]">{t.inquire}</Link>
-            </div>
-          </div>
-          <div className="mx-auto w-full max-w-[385px]">
-                    <div className="mx-auto max-w-[385px] rounded-[28px] border border-[#DBC18C] bg-white p-4 shadow-[0_20px_48px_rgba(55,22,49,0.10)]">
-          <div className="flex justify-between gap-3 pb-3"><strong className="font-serif text-lg">{activeModel === 'business' ? t.business : t.portfolio}</strong><button type="button" className="text-sm font-bold text-[#795A22] underline underline-offset-4" onClick={() => setZoom(true)}>{t.preview}</button></div>
-          <div className="flex min-h-[465px] items-start justify-center overflow-hidden rounded-2xl bg-[#F8F6F0] p-2"><RealPalettePreview palette={palette} model={activeModel} language={lang} /></div>
-        </div>
-
-          </div>
+        <div className="max-w-4xl">
+          <p className="mt-8 inline-flex rounded-full bg-[#4A1D43] px-4 py-2 text-xs font-black uppercase tracking-[0.12em] text-[#F4D58A]">{offers.welcomeBadge}</p>
+          <h1 className="mt-4 max-w-4xl font-serif text-3xl font-bold leading-[1.14] sm:text-4xl lg:text-[3.1rem]">{offers.welcomeTitle}</h1>
+          <p className="mt-4 max-w-3xl text-sm leading-7 text-[#655B63] sm:text-base">{offers.welcomeDescription}</p>
+          <p className="mt-3 max-w-3xl text-sm leading-7 text-[#655B63]">{t.intro}</p>
+          <Link to="/contact" className="mt-6 inline-flex min-h-12 items-center gap-2 rounded-xl border border-[#D1B57B] bg-white px-5 py-3 text-sm font-bold text-[#4A1D43]">{t.inquire}<ArrowRight size={16} /></Link>
         </div>
         <section className="px-4 pt-7 pb-1 sm:pt-9 sm:pb-3" aria-labelledby="cv-trial-title">
       <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-5 rounded-2xl border border-[#D7BB7F] bg-[#FFFAEF] p-5 sm:flex-row sm:items-center sm:p-7">
@@ -203,10 +191,23 @@ export default function CvProfessionalLanding() {
                 <summary className="flex min-h-12 cursor-pointer items-center justify-between gap-3 px-4 py-3 text-sm font-bold text-[#815E28] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#986F25]">{t.more}<ChevronDown className="h-5 w-5 shrink-0 group-open:rotate-180" aria-hidden="true"/></summary>
                 <ul className="space-y-3 border-t border-[#D9C69F] px-4 py-4">{features.map(item => <li key={item} className="flex items-start gap-2 text-sm leading-6 text-[#594F57]"><Check className="mt-1 h-4 w-4 shrink-0 text-[#4A1D43]" aria-hidden="true"/>{item}</li>)}</ul>
               </details>
-              <Link to="/subscription#cv-business-products-title" className="mt-5 inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#D4AF37] px-4 py-3 text-center text-sm font-bold text-[#30162E]">{isPremium ? offers.choosePremium : offers.chooseArtisan}<ArrowRight className="h-4 w-4" aria-hidden="true"/></Link>
+              <button type="button" onClick={() => chooseFormula(formula)} className="mt-5 inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#D4AF37] px-4 py-3 text-center text-sm font-bold text-[#30162E]">{isPremium ? offers.choosePremium : offers.chooseArtisan}<ArrowRight className="h-4 w-4" aria-hidden="true"/></button>
             </article>;
           })}
         </div>
+        <CvPresentationModelSelector
+          language={lang}
+          formulaValue={selectedFormula}
+          onFormulaChange={setSelectedFormula}
+          artisanLabel={`${offers.artisanTitle} — ${pricing.artisanPrice}`}
+          premiumLabel={`${offers.premiumTitle} — ${pricing.premiumPrice}`}
+          value={selectedModel}
+          onChange={setSelectedModel}
+          selectedFormulaLabel={selectedFormula ? `${selectedFormula === 'artisan' ? offers.artisanTitle : offers.premiumTitle} — ${selectedFormula === 'artisan' ? pricing.artisanPrice : pricing.premiumPrice}` : null}
+          onContinue={continueWithModel}
+          paletteValue={palette}
+          onPaletteChange={setPalette}
+        />
         <details className="group mt-5 rounded-[18px] border border-[#DAC395] bg-white">
           <summary className="flex min-h-14 cursor-pointer items-center justify-between gap-3 p-4 font-bold text-[#4A1D43] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B58C3C]">
             <span>{offers.maintenanceTitle} · {offers.maintenancePrice} · {offers.maintenanceTiming}</span><ChevronDown className="h-5 w-5 shrink-0 group-open:rotate-180" aria-hidden="true"/>
@@ -221,32 +222,6 @@ export default function CvProfessionalLanding() {
           <div><strong className="text-base text-[#4A1D43]">{t.free} · 0 TND</strong><p className="mt-1 text-sm leading-6 text-[#665D64]">{offers.essentialPreviewText}</p></div>
           <Link to="/inscription-entreprise" className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl border border-[#BA9853] px-4 py-2 text-sm font-bold text-[#4A1D43]">{t.register}<ArrowRight className="h-4 w-4"/></Link>
         </div>
-      </div>
-    </section>
-
-    <section className="px-4 py-12 sm:py-16" id="modeles">
-      <div className="mx-auto max-w-6xl">
-        <p className="text-xs font-black uppercase tracking-[0.16em] text-[#A17A32]">{t.modelEyebrow}</p>
-        <h2 className="mt-2 max-w-3xl font-serif text-3xl font-bold sm:text-4xl">{t.modelTitle}</h2>
-        <p className="mt-3 max-w-3xl leading-7 text-[#605A62]">{t.modelIntro}</p>
-        <div className="mt-7 grid gap-3 md:grid-cols-2">
-          {MODELS.map((model, index) => {
-            const selected = activeModel === model.id;
-            const name = model.id === 'business' ? t.business : t.portfolio;
-            const description = model.id === 'business' ? t.businessDesc : t.portfolioDesc;
-            return <button key={model.id} type="button" aria-pressed={selected} onClick={() => { setActiveModel(model.id); setZoom(true); }} className={`flex min-h-[145px] w-full items-center gap-4 rounded-[20px] border p-4 text-start transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9F782C] sm:p-5 ${selected ? 'border-[#B18D48] bg-[#FFF7E9]' : 'border-[#E5D8C5] bg-white hover:border-[#BD9A5B]'}`}>
-              <img src={model.src} alt="" className="h-28 w-20 shrink-0 rounded-xl border border-[#CFB782] bg-[#073027] object-contain" loading="lazy"/>
-              <span className="min-w-0 flex-1"><span className="block text-xs font-black tracking-widest text-[#A47C36]">0{index+1}</span><strong className="mt-1 block font-serif text-xl text-[#361831]">{name}</strong><span className="mt-1 block text-sm leading-6 text-[#625965]">{description}</span><span className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-[#8B622B]">{t.preview}<ArrowRight size={14}/></span></span>
-            </button>;
-          })}
-        </div>
-        <details className="group mx-auto mt-5 max-w-3xl rounded-2xl border border-[#DDC99E] bg-[#FFFDF8]">
-          <summary className="flex min-h-12 cursor-pointer items-center justify-between gap-2 px-4 py-3 text-sm font-bold text-[#4A1D43] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#AA853B]"><span className="inline-flex items-center gap-2"><Palette size={17} />{({ fr: 'Découvrir les palettes', ar: 'اكتشف الألوان', en: 'Explore colour themes', it: 'Scopri le palette', ru: 'Варианты оформления' } as Record<Lang,string>)[lang]}</span><ChevronDown size={17} className="group-open:rotate-180"/></summary>
-          <div className="grid gap-2 border-t border-[#E8D6B7] p-3 sm:grid-cols-3">
-            {PALETTE_IDS.map(id => <button key={id} type="button" aria-pressed={palette === id} onClick={() => setPalette(id)} className={`flex min-h-12 items-center gap-3 rounded-xl border px-3 py-2 text-start text-xs font-bold ${palette === id ? 'border-[#A67B34] bg-[#FFF3DC]' : 'border-[#E7D7BB] bg-white'}`}><span className="h-7 w-7 shrink-0 rounded-full border border-[#D6C6A4]" style={{ background: PALETTE_SWATCHES[id].bg }} /><span>{getPaletteLabel(lang, id)}</span></button>)}
-          </div>
-        </details>
-        <p className="mt-3 text-center text-xs text-[#726875]">{t.demoNotice}</p>
       </div>
     </section>
 
@@ -274,11 +249,5 @@ export default function CvProfessionalLanding() {
       </div>
     </section>
 
-    {zoom && <div role="dialog" aria-modal="true" aria-label={t.preview} className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4" onClick={() => setZoom(false)}>
-      <div className="relative flex h-[min(92vh,900px)] w-full max-w-[650px] items-center justify-center rounded-2xl bg-[#F8F6F0] p-4" onClick={event => event.stopPropagation()}>
-        <button type="button" autoFocus className="absolute right-2 top-2 z-10 inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-bold text-[#30162E]" onClick={() => setZoom(false)}><X size={18} />{t.close}</button>
-        <div className="h-full max-h-[85vh] w-full overflow-auto rounded-xl bg-[#F8F6F0]"><RealPalettePreview palette={palette} model={activeModel} language={lang} expanded /></div>
-      </div>
-    </div>}
   </main>;
 }
