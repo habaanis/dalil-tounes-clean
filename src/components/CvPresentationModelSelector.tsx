@@ -236,7 +236,7 @@ function ModelPreview({
   );
 }
 
-function RealPalettePreview({
+export function RealPalettePreview({
   palette,
   model,
   language,
