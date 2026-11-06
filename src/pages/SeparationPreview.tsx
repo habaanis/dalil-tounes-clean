@@ -1,4 +1,4 @@
-import { ArrowRight, Building2, MapPin, QrCode, Search, Share2, Smartphone, Sparkles } from 'lucide-react';
+import { ArrowRight, Building2, MapPin, QrCode, Search, Share2, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BusinessCard } from '../components/BusinessCard';
@@ -249,7 +249,6 @@ const HOME_ECOSYSTEM_COPY: Record<Lang, {
 
 function SeparationExperience({ fixedView }: { fixedView?: 'platform' | 'cv' }) {
   const [previewView, setPreviewView] = useState<'platform' | 'cv'>('platform');
-  const [platformCvModel, setPlatformCvModel] = useState<'business' | 'portfolio'>('business');
   const navigate = useNavigate();
   const view = fixedView ?? previewView;
   const { language } = useLanguage();
@@ -308,19 +307,16 @@ function SeparationExperience({ fixedView }: { fixedView?: 'platform' | 'cv' }) 
             </div>
           </section>
 
-          <section className="bg-[#2E102A] px-4 py-8 text-white md:py-10">
-            <div className="mx-auto grid max-w-5xl items-center gap-6 md:grid-cols-[1fr_280px] md:gap-8">
-              <div className="text-center md:text-left rtl:md:text-right"><p className="text-xs font-black uppercase tracking-[0.16em] text-[#F1D783]">{t.professionalEyebrow}</p><h2 className="mt-2 max-w-3xl font-serif text-2xl font-bold md:text-3xl">{t.platformPromoTitle}</h2><p className="mt-3 max-w-3xl text-base leading-7 text-white/85">{t.platformPromoText}</p><details className="group mt-4 rounded-2xl border border-[#D4AF37]/45 bg-white/5 text-left rtl:text-right">
-  <summary className="flex min-h-12 cursor-pointer items-center justify-between gap-3 px-4 py-3 text-sm font-black text-[#F1D783] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#F1D783]">
-    <span>{({fr: 'Découvrir les avantages du CV Business', ar: 'اكتشف مزايا السيرة المهنية', en: 'Discover the Business CV benefits', it: 'Scopri i vantaggi del CV Business', ru: 'Узнать о преимуществах Business CV'} as Record<Lang,string>)[lang]}</span><span aria-hidden="true" className="text-lg group-open:rotate-180">⌄</span>
-  </summary>
-  <div className="space-y-3 border-t border-[#D4AF37]/25 px-3 pb-3"><div className="mt-4 rounded-2xl border border-[#D4AF37]/55 bg-[#D4AF37]/10 p-4 text-left rtl:text-right"><h3 className="font-serif text-lg font-bold text-[#F1D783]">{ecosystem.cvAdvantageTitle}</h3><p className="mt-2 text-sm leading-6 text-white/90">{ecosystem.cvAdvantageText}</p></div><div className="mt-4 rounded-2xl border border-[#D4AF37]/45 bg-white/10 p-4 text-left rtl:text-right"><div className="flex items-center gap-2"><Smartphone className="h-5 w-5 shrink-0 text-[#F1D783]" aria-hidden="true" /><h3 className="font-serif text-lg font-bold text-[#F1D783]">{t.miniAppTitle}</h3></div><p className="mt-2 text-sm leading-6 text-white/90">{t.miniAppText}</p><p className="mt-3 text-xs font-black leading-5 text-[#F1D783]">{t.miniAppHighlights}</p></div></div>
-</details><button type="button" onClick={() => navigate('/decouvrir-nos-cv')} className="mt-5 inline-flex min-h-12 items-center gap-2 rounded-xl bg-[#D4AF37] px-6 py-3 text-sm font-black text-[#2E102A]">{t.discoverCv} <ArrowRight className={`h-4 w-4 ${lang === 'ar' ? 'rotate-180' : ''}`} /></button></div>
-              <div className="mx-auto w-full max-w-[280px] rounded-[24px] border border-[#D4AF37]/60 bg-white/95 p-3 shadow-[0_20px_55px_rgba(0,0,0,0.28)]"><p className="mb-2 text-center text-xs font-bold text-[#4A1D43]">{t.example}</p><div className="mb-2 grid grid-cols-2 gap-1.5 rounded-xl bg-[#F5EEE5] p-1"><button type="button" onClick={() => setPlatformCvModel('business')} aria-pressed={platformCvModel === 'business'} className={`rounded-lg px-2 py-2 text-[11px] font-black transition ${platformCvModel === 'business' ? 'bg-[#4A1D43] text-white shadow-sm' : 'bg-white text-[#4A1D43]'}`}>{ecosystem.cvBusiness}</button><button type="button" onClick={() => setPlatformCvModel('portfolio')} aria-pressed={platformCvModel === 'portfolio'} className={`rounded-lg px-2 py-2 text-[11px] font-black transition ${platformCvModel === 'portfolio' ? 'bg-[#4A1D43] text-white shadow-sm' : 'bg-white text-[#4A1D43]'}`}>{ecosystem.cvPortfolio}</button></div><div className="flex h-[270px] justify-center overflow-hidden"><img key={platformCvModel} src={platformCvModel === 'business' ? '/images/cv-business-portfolio-aux-saveurs-anis.png' : '/images/cv-portfolio-aux-saveurs-anis-original.svg'} alt={`${t.example} — ${platformCvModel === 'business' ? ecosystem.cvBusiness : ecosystem.cvPortfolio}`} className="h-[270px] w-auto object-contain object-top" loading="lazy" decoding="async" /></div></div>
+          <section className="bg-[#2E102A] px-4 py-6 text-white md:py-8">
+            <div className="mx-auto flex max-w-5xl flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+              <div className="max-w-2xl">
+                <p className="text-xs font-black uppercase tracking-[0.16em] text-[#F1D783]">{t.professionalEyebrow}</p>
+                <h2 className="mt-2 font-serif text-xl font-bold md:text-2xl">{({fr:'Votre entreprise sur Dalil Tounes, gratuitement ou avec un CV professionnel.',ar:'مؤسستك على دليل تونس مجاناً أو مع سيرة مهنية خاصة.',en:'Your business on Dalil Tounes, free or with a professional CV.',it:'La tua attività su Dalil Tounes, gratis o con CV professionale.',ru:'Ваша компания на Dalil Tounes — бесплатно или с профессиональным CV.'} as Record<Lang,string>)[lang]}</h2>
+                <p className="mt-2 text-sm leading-6 text-white/85">{({fr:'La Présence essentielle est gratuite. Pour aller plus loin, découvrez les CV Business et Portfolio, leurs modèles et leurs conditions.',ar:'الحضور الأساسي مجاني. اكتشف CV Business وCV Portfolio ونماذجهما وشروطهما.',en:'Essential presence is free. Discover Business and Portfolio CVs, their models and terms.',it:'La presenza essenziale è gratuita. Scopri i CV Business e Portfolio e le relative condizioni.',ru:'Базовое размещение бесплатно. Узнайте о моделях Business и Portfolio CV.'} as Record<Lang,string>)[lang]}</p>
+              </div>
+              <button type="button" onClick={() => navigate('/decouvrir-nos-cv')} className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-[#D4AF37] px-5 py-3 text-sm font-black text-[#2E102A]">{t.discoverCv}<ArrowRight className="h-4 w-4" /></button>
             </div>
           </section>
-
-          <CvCapabilitiesSection language={lang} />
 
           <section className="bg-white px-4 py-8 md:py-10">
             <div className="mx-auto max-w-5xl rounded-3xl border border-[#D4AF37]/35 bg-[#FFFCF7] p-5 text-center shadow-sm md:p-7">
