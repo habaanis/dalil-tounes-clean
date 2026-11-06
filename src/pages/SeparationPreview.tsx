@@ -292,19 +292,19 @@ function SeparationExperience({ fixedView }: { fixedView?: 'platform' | 'cv' }) 
                 <p className="mt-1 text-sm font-bold text-[#9A7416] md:text-base">{countsAvailable ? t.certifiedProof(localizedCertifiedCount) : <span className="text-sm font-medium opacity-70" role="status">{t.certifiedLoading}</span>}</p>
               </div>
               <div className="mx-auto mt-3 grid max-w-3xl grid-cols-2 gap-2 sm:grid-cols-4">{t.categories.map(([label, href]) => <a key={href} href={href} className="min-h-11 rounded-xl border border-[#D4AF37]/40 bg-white px-3 py-3 text-sm font-bold text-[#4A1D43] transition hover:bg-[#FFF8DF]">{label}</a>)}</div>
-              <div className="mx-auto mt-5 max-w-5xl rounded-2xl border border-[#D4AF37]/40 bg-white/90 p-3 text-left shadow-[0_14px_35px_rgba(74,29,67,0.08)] rtl:text-right sm:p-4">
-                <div className="flex flex-col gap-1 px-1 pb-3 sm:flex-row sm:items-end sm:justify-between">
-                  <h2 className="font-serif text-lg font-bold text-[#2E102A] sm:text-xl">{ecosystem.title}</h2>
-                  <p className="text-xs font-semibold text-[#9A7416]">{ecosystem.hint}</p>
-                </div>
-                <div className="grid grid-cols-2 gap-2 lg:grid-cols-5">
+              <details className="group mx-auto mt-5 max-w-5xl rounded-2xl border border-[#D4AF37]/40 bg-white/90 text-left shadow-[0_14px_35px_rgba(74,29,67,0.08)] rtl:text-right">
+                <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-[#4A1D43] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B48A36] [&::-webkit-details-marker]:hidden">
+                  <span className="flex flex-col gap-1"><strong className="font-serif text-lg sm:text-xl">{ecosystem.title}</strong><span className="text-xs font-semibold text-[#9A7416]">{ecosystem.hint}</span></span>
+                  <span aria-hidden="true" className="text-xl font-black text-[#B48A36] group-open:rotate-180">⌄</span>
+                </summary>
+                <div className="grid grid-cols-2 gap-2 border-t border-[#D4AF37]/20 p-3 sm:p-4 lg:grid-cols-5">
                   {ecosystem.items.map(item => <button key={item.href} type="button" onClick={() => navigate(item.href)} className="group min-h-[92px] rounded-xl border border-[#E5D4B0] bg-[#FFFCF7] p-3 text-left transition hover:-translate-y-0.5 hover:border-[#B48A36] hover:bg-[#FFF8E6] focus:outline-none focus:ring-2 focus:ring-[#B48A36] rtl:text-right">
                     <span className="text-lg" aria-hidden="true">{item.icon}</span>
                     <span className="mt-1 block text-sm font-black leading-5 text-[#4A1D43]">{item.title}</span>
-                    <span className="mt-1 hidden text-xs leading-4 text-gray-600 sm:block">{item.text}</span>
+                    <span className="mt-1 block text-xs leading-4 text-gray-600">{item.text}</span>
                   </button>)}
                 </div>
-              </div>
+              </details>
             </div>
           </section>
 
