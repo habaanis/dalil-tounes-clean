@@ -165,16 +165,12 @@ export const Layout = ({ children }: LayoutProps) => {
           } as NavItem,
         ]),
     {
-      label: publicNavLabels.discover,
-      path: '/concept',
-      children: [
-        { label: tx.navExtra?.concept || 'Notre Concept', path: '/concept' },
-        { label: tx.navExtra?.blog || 'Articles', path: '/blog' },
-      ],
+      label: tx.navExtra?.blog || 'Articles',
+      path: '/blog',
     },
     {
-      label: t.nav.subscription || 'Abonnement',
-      path: '/subscription',
+      label: ({fr:'CV professionnels',ar:'السير المهنية',en:'Professional CVs',it:'CV professionali',ru:'Профессиональные CV'} as Record<string,string>)[language] || 'CV professionnels',
+      path: '/decouvrir-nos-cv',
     },
     {
       label: publicNavLabels.partners,
@@ -474,7 +470,7 @@ export const Layout = ({ children }: LayoutProps) => {
                 </div>
               </div>
               <button
-                onClick={() => navigate('/concept')}
+                onClick={() => navigate('/')}
                 className="flex-shrink-0 px-3 py-1.5 md:px-6 md:py-2.5 bg-gray-900 text-white text-sm md:text-base font-bold rounded-lg md:hover:bg-gray-800 md:hover:scale-105 md:transition-all md:duration-200 md:shadow-md whitespace-nowrap"
                 aria-label={te.pwa?.visitUs || 'Venez nous connaître'}
               >
