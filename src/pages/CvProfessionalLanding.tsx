@@ -148,13 +148,16 @@ export default function CvProfessionalLanding() {
     document.title = t.title + ' | Dalil Tounes';
     return () => { document.title = previousTitle; };
   }, [t.title]);
+  useEffect(() => {
+    if (requestOpen) window.requestAnimationFrame(() => document.getElementById('demande-cv')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  }, [requestOpen]);
+  const scrollToModels = () => document.getElementById('cv-presentation-models')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   const continueWithModel = () => {
     if (!selectedFormula || !selectedModel) {
       document.getElementById('cv-presentation-models')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       return;
     }
     setRequestOpen(true);
-    window.requestAnimationFrame(() => document.getElementById('demande-cv')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
   };
   return <main dir={isRtl ? 'rtl' : 'ltr'} className="min-h-screen bg-[#FFFCF8] text-[#30162E]">
     <section className="bg-[radial-gradient(circle_at_top_right,rgba(212,175,55,0.17),transparent_38%),linear-gradient(155deg,#fffdfa,#f9f1f5)] px-4 py-8 sm:py-10">
@@ -165,7 +168,7 @@ export default function CvProfessionalLanding() {
           <h1 className="mt-4 max-w-4xl font-serif text-[1.9rem] font-bold leading-[1.15] sm:text-[2.25rem] lg:text-[2.55rem]">{offers.welcomeTitle}</h1>
           <p className="mt-3 max-w-3xl text-sm leading-6 text-[#655B63] sm:text-[0.95rem]">{offers.welcomeDescription}</p>
           <p className="mt-3 max-w-3xl text-sm leading-7 text-[#655B63]">{t.intro}</p>
-          <Link to="/contact" className="mt-6 inline-flex min-h-12 items-center gap-2 rounded-xl border border-[#D1B57B] bg-white px-5 py-3 text-sm font-bold text-[#4A1D43]">{t.inquire}<ArrowRight size={16} /></Link>
+          <button type="button" onClick={scrollToModels} className="mt-6 inline-flex min-h-12 items-center gap-2 rounded-xl border border-[#D1B57B] bg-white px-5 py-3 text-sm font-bold text-[#4A1D43]">{t.inquire}<ArrowRight size={16} /></button>
         </div>
         <section className="px-1 pt-5 pb-1 sm:pt-6 sm:pb-2" aria-labelledby="cv-trial-title">
       <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-5 rounded-xl border border-[#D7BB7F] bg-[#FFFAEF] p-4 sm:flex-row sm:items-center sm:p-5">
@@ -274,7 +277,7 @@ export default function CvProfessionalLanding() {
     <section className="bg-[#35162F] px-4 py-12 text-white">
       <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-5 sm:flex-row sm:items-center">
         <div><h2 className="font-serif text-2xl font-bold text-[#F8D78D]">{t.finalTitle}</h2><p className="mt-3 max-w-2xl text-sm leading-7 text-white/80">{t.finalText}</p></div>
-        <Link to="/contact" className="inline-flex min-h-12 shrink-0 items-center gap-2 rounded-xl bg-[#D4AF37] px-5 py-3 text-sm font-bold text-[#30162E]">{t.inquire}<ArrowRight size={17} /></Link>
+        <button type="button" onClick={scrollToModels} className="inline-flex min-h-12 shrink-0 items-center gap-2 rounded-xl bg-[#D4AF37] px-5 py-3 text-sm font-bold text-[#30162E]">{t.inquire}<ArrowRight size={17} /></button>
       </div>
     </section>
 
