@@ -33,8 +33,8 @@ const COPY: Record<Lang, Texts> = {
     features: ['Présentation de votre activité et de vos services', 'Photos, réalisations et informations pratiques', 'Téléphone, itinéraire, horaires et réseaux sociaux', 'Un lien personnel et un QR Business à partager', 'Un accès depuis l’écran d’accueil du téléphone'],
     more: 'Voir toutes les possibilités', stagesTitle: 'Nous nous occupons de la création',
     stages: ['Vous nous expliquez votre activité et choisissez le modèle.', 'Nous préparons votre CV et organisons les informations avec vous.', 'Vous vérifiez l’aperçu, puis nous finalisons et publions après règlement complet.'],
-    priceTitle: 'CV Business · offres à 30 TND et 59 TND', installments: 'Offres présentées avec trois années de présence incluses, selon les conditions de chaque formule.',
-    priceNote: 'Tarifs indiqués à titre de présentation des offres déjà convenues. Les caractéristiques précises sont confirmées avec Dalil Tounes avant toute commande ou paiement.',
+    priceTitle: 'Les formules CV Business et Portfolio', installments: 'Choisissez le modèle qui correspond à votre activité. Nous précisons ensemble les tarifs et les conditions avant toute commande.',
+    priceNote: 'Aucun règlement sur cette page de présentation. Le tarif et les prestations précises seront confirmés avec vous avant toute commande.',
     finalTitle: 'Parlons de votre projet.', finalText: 'Vous n’avez pas besoin de préparer seul votre CV. Décrivez votre activité : nous vous accompagnons pour choisir la présentation adaptée.',
     returnHome: 'Retour à l’annuaire', seeOffers: 'Voir les formules et la demande'
   },
@@ -52,7 +52,7 @@ const COPY: Record<Lang, Texts> = {
     features: ['تعريف بنشاطك وخدماتك', 'صور وإنجازات ومعلومات عملية', 'الهاتف والموقع والأوقات والشبكات الاجتماعية', 'رابط شخصي ورمز QR Business للمشاركة', 'وصول من شاشة الهاتف الرئيسية'],
     more: 'عرض جميع المزايا', stagesTitle: 'نرافقك في إعداد السيرة',
     stages: ['تشرح لنا نشاطك وتختار النموذج.', 'نعدّ العرض وننظم المعلومات معك.', 'تراجع المعاينة ثم ننشر بعد إتمام الدفع.'],
-    priceTitle: 'CV Business · عروض 30 و59 د.ت', installments: 'تشمل العروض ثلاث سنوات من الظهور حسب شروط كل صيغة.',
+    priceTitle: 'عروض CV Business وCV Portfolio', installments: 'اختر العرض الأنسب لنشاطك. نؤكد معك الأسعار والشروط قبل أي طلب.',
     priceNote: 'يتم تأكيد تفاصيل العرض مع فريق دليل تونس قبل الطلب أو أي دفع.',
     finalTitle: 'لنتحدث عن مشروعك.', finalText: 'لا تحتاج إلى إعداد سيرتك المهنية وحدك. أخبرنا عن نشاطك وسنساعدك على اختيار العرض الأنسب.',
     returnHome: 'العودة إلى الدليل', seeOffers: 'العروض وطلب الإنشاء'
@@ -71,7 +71,7 @@ const COPY: Record<Lang, Texts> = {
     features: ['Business introduction and services', 'Photos, work examples and practical details', 'Phone, directions, hours and social networks', 'Personal link and shareable Business QR', 'Quick access from a phone home screen'],
     more: 'See all benefits', stagesTitle: 'We help create your CV',
     stages: ['Tell us about your business and choose a model.', 'We prepare and organize your presentation with you.', 'Review the preview; we publish after full payment.'],
-    priceTitle: 'Business CV · 30 TND and 59 TND offers', installments: 'Three years of listing are included, subject to the terms of each offer.',
+    priceTitle: 'Business CV and Portfolio CV offers', installments: 'Choose the model that suits your business. We confirm prices and terms together before any order.',
     priceNote: 'The exact scope and terms are confirmed with the Dalil Tounes team before any order or payment.',
     finalTitle: 'Tell us about your project.', finalText: 'You do not have to build your CV alone. Tell us about your business and we will help you choose the right presentation.',
     returnHome: 'Back to directory', seeOffers: 'Offers and request form'
@@ -90,7 +90,7 @@ const COPY: Record<Lang, Texts> = {
     features: ['Presentazione dell’attività e dei servizi', 'Foto, lavori e informazioni utili', 'Telefono, indicazioni, orari e social network', 'Link personale e QR Business da condividere', 'Accesso rapido dalla schermata iniziale'],
     more: 'Scopri tutti i vantaggi', stagesTitle: 'Ci occupiamo della creazione',
     stages: ['Descrivi l’attività e scegli il modello.', 'Prepariamo e organizziamo i contenuti insieme a te.', 'Verifichi l’anteprima; pubblichiamo dopo il pagamento completo.'],
-    priceTitle: 'CV Business · offerte da 30 e 59 TND', installments: 'Tre anni di presenza inclusi secondo le condizioni di ciascuna offerta.',
+    priceTitle: 'Offerte CV Business e Portfolio', installments: 'Scegli il modello più adatto. Confermiamo prezzi e condizioni insieme prima di ogni ordine.',
     priceNote: 'I dettagli delle offerte vengono confermati con il team Dalil Tounes prima dell’ordine o del pagamento.',
     finalTitle: 'Parliamo del tuo progetto.', finalText: 'Non devi creare il CV da solo. Raccontaci la tua attività e ti aiuteremo a scegliere la presentazione adatta.',
     returnHome: 'Torna all’elenco', seeOffers: 'Offerte e richiesta'
@@ -109,7 +109,7 @@ const COPY: Record<Lang, Texts> = {
     features: ['Описание бизнеса и услуг', 'Фото, работы и полезные сведения', 'Телефон, маршрут, часы работы и соцсети', 'Личная ссылка и QR Business для обмена', 'Быстрый доступ с главного экрана телефона'],
     more: 'Все возможности', stagesTitle: 'Мы поможем создать CV',
     stages: ['Расскажите о бизнесе и выберите модель.', 'Мы подготовим презентацию вместе с вами.', 'Вы проверите пример; публикация после полной оплаты.'],
-    priceTitle: 'CV Business · предложения 30 и 59 TND', installments: 'Три года размещения включены согласно условиям каждого предложения.',
+    priceTitle: 'Предложения Business CV и Portfolio CV', installments: 'Выберите подходящий вариант. Цены и условия подтверждаем до оформления заказа.',
     priceNote: 'Точные условия уточняются с командой Dalil Tounes до заказа или оплаты.',
     finalTitle: 'Обсудим ваш проект.', finalText: 'Не нужно создавать CV самостоятельно. Расскажите о бизнесе — мы поможем подобрать оформление.',
     returnHome: 'К каталогу', seeOffers: 'Предложения и заявка'
