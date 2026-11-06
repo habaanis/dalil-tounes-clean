@@ -15,7 +15,7 @@ type Texts = {
   preview: string; close: string; demoNotice: string; featuresTitle: string;
   features: string[]; more: string; stagesTitle: string; stages: string[];
   priceTitle: string; installments: string; priceNote: string; finalTitle: string; finalText: string;
-  returnHome: string; seeOffers: string;
+  returnHome: string; seeOffers: string; trialTitle: string; trialDesc: string; trialCta: string;
 };
 
 const COPY: Record<Lang, Texts> = {
@@ -37,6 +37,7 @@ const COPY: Record<Lang, Texts> = {
     priceTitle: 'Les formules CV Business et Portfolio', installments: 'Choisissez le modèle qui correspond à votre activité. Nous précisons ensemble les tarifs et les conditions avant toute commande.',
     priceNote: 'Aucun règlement sur cette page de présentation. Le tarif et les prestations précises seront confirmés avec vous avant toute commande.',
     finalTitle: 'Parlons de votre projet.', finalText: 'Vous n’avez pas besoin de préparer seul votre CV. Décrivez votre activité : nous vous accompagnons pour choisir la présentation adaptée.',
+    trialTitle: "Essayez votre CV professionnel pendant 14 jours", trialDesc: "Essai privé, sans engagement et sans obligation d’achat. Échangez avec notre équipe pour organiser votre démonstration avant de choisir une formule.", trialCta: "Demander mon essai de 14 jours",
     returnHome: 'Retour à l’annuaire', seeOffers: 'Voir les formules et la demande'
   },
   ar: {
@@ -56,6 +57,7 @@ const COPY: Record<Lang, Texts> = {
     priceTitle: 'عروض CV Business وCV Portfolio', installments: 'اختر العرض الأنسب لنشاطك. نؤكد معك الأسعار والشروط قبل أي طلب.',
     priceNote: 'يتم تأكيد تفاصيل العرض مع فريق دليل تونس قبل الطلب أو أي دفع.',
     finalTitle: 'لنتحدث عن مشروعك.', finalText: 'لا تحتاج إلى إعداد سيرتك المهنية وحدك. أخبرنا عن نشاطك وسنساعدك على اختيار العرض الأنسب.',
+    trialTitle: "جرّب سيرتك المهنية لمدة 14 يوماً", trialDesc: "تجربة خاصة دون التزام أو إلزام بالشراء. تواصل مع فريقنا لتنظيم التجربة قبل اختيار العرض.", trialCta: "اطلب تجربة 14 يوماً",
     returnHome: 'العودة إلى الدليل', seeOffers: 'العروض وطلب الإنشاء'
   },
   en: {
@@ -75,6 +77,7 @@ const COPY: Record<Lang, Texts> = {
     priceTitle: 'Business CV and Portfolio CV offers', installments: 'Choose the model that suits your business. We confirm prices and terms together before any order.',
     priceNote: 'The exact scope and terms are confirmed with the Dalil Tounes team before any order or payment.',
     finalTitle: 'Tell us about your project.', finalText: 'You do not have to build your CV alone. Tell us about your business and we will help you choose the right presentation.',
+    trialTitle: "Try your professional CV for 14 days", trialDesc: "Private trial with no commitment or obligation to buy. Contact our team to arrange your trial before choosing an offer.", trialCta: "Request my 14-day trial",
     returnHome: 'Back to directory', seeOffers: 'Offers and request form'
   },
   it: {
@@ -94,6 +97,7 @@ const COPY: Record<Lang, Texts> = {
     priceTitle: 'Offerte CV Business e Portfolio', installments: 'Scegli il modello più adatto. Confermiamo prezzi e condizioni insieme prima di ogni ordine.',
     priceNote: 'I dettagli delle offerte vengono confermati con il team Dalil Tounes prima dell’ordine o del pagamento.',
     finalTitle: 'Parliamo del tuo progetto.', finalText: 'Non devi creare il CV da solo. Raccontaci la tua attività e ti aiuteremo a scegliere la presentazione adatta.',
+    trialTitle: "Prova il tuo CV professionale per 14 giorni", trialDesc: "Prova privata senza impegno né obbligo di acquisto. Contatta il nostro team prima di scegliere un’offerta.", trialCta: "Richiedi la prova di 14 giorni",
     returnHome: 'Torna all’elenco', seeOffers: 'Offerte e richiesta'
   },
   ru: {
@@ -113,6 +117,7 @@ const COPY: Record<Lang, Texts> = {
     priceTitle: 'Предложения Business CV и Portfolio CV', installments: 'Выберите подходящий вариант. Цены и условия подтверждаем до оформления заказа.',
     priceNote: 'Точные условия уточняются с командой Dalil Tounes до заказа или оплаты.',
     finalTitle: 'Обсудим ваш проект.', finalText: 'Не нужно создавать CV самостоятельно. Расскажите о бизнесе — мы поможем подобрать оформление.',
+    trialTitle: "Попробуйте профессиональное CV в течение 14 дней", trialDesc: "Частный пробный период без обязательств и необходимости покупки. Свяжитесь с командой, чтобы организовать демонстрацию.", trialCta: "Запросить пробный период 14 дней",
     returnHome: 'К каталогу', seeOffers: 'Предложения и заявка'
   }
 };
@@ -216,6 +221,16 @@ export default function CvProfessionalLanding() {
       </div>
     </section>
 
+    <section className="px-4 py-8 sm:py-10" aria-labelledby="cv-trial-title">
+      <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-5 rounded-2xl border border-[#D7BB7F] bg-[#FFFAEF] p-5 sm:flex-row sm:items-center sm:p-7">
+        <div className="max-w-2xl">
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#9A7029]">14 JOURS · 14 DAYS</p>
+          <h2 id="cv-trial-title" className="mt-2 font-serif text-2xl font-bold sm:text-3xl">{t.trialTitle}</h2>
+          <p className="mt-3 text-sm leading-7 text-[#5A555A]">{t.trialDesc}</p>
+        </div>
+        <Link to="/contact" className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-[#4A1D43] px-5 py-3 text-sm font-bold text-white hover:bg-[#602957]">{t.trialCta}<ArrowRight size={17} aria-hidden="true" /></Link>
+      </div>
+    </section>
     <section className="px-4 py-12 sm:py-16">
       <div className="mx-auto max-w-6xl">
         <h2 className="font-serif text-3xl font-bold">{t.stagesTitle}</h2>
