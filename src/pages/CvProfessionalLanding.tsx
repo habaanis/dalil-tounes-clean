@@ -145,16 +145,32 @@ export default function CvProfessionalLanding() {
     <section className="bg-[radial-gradient(circle_at_top_right,rgba(212,175,55,0.17),transparent_38%),linear-gradient(155deg,#fffdfa,#f9f1f5)] px-4 py-12 sm:py-16">
       <div className="mx-auto max-w-6xl">
         <Link to="/" className="text-sm font-semibold text-[#70466B] underline underline-offset-4">{t.returnHome}</Link>
-        <p className="mt-8 text-xs font-black uppercase tracking-[0.18em] text-[#9F782C]">{t.eyebrow}</p>
-        <h1 className="mt-3 max-w-4xl font-serif text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">{t.title}</h1>
+        <div className="grid items-center gap-8 lg:grid-cols-[1.08fr_.92fr] lg:gap-12">
+          <div>
+        <p className="mt-8 text-xs font-black uppercase tracking-[0.16em] text-[#9F782C]">{t.eyebrow}</p>
+        <h1 className="mt-3 max-w-4xl font-serif text-4xl font-bold leading-[1.14] sm:text-5xl lg:text-[3.45rem]">{t.title}</h1>
         <p className="mt-5 max-w-3xl text-base leading-8 text-[#655B63] sm:text-lg">{t.intro}</p>
-        <div className="mt-8 grid gap-4 md:grid-cols-2">
-          <article className="rounded-2xl border border-[#DFCBA2] bg-white p-5 sm:p-6">
+
+            <div className="mt-6 flex flex-wrap gap-3">
+              <a href="#modeles" className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-[#4A1D43] px-5 py-3 text-sm font-bold text-white shadow-sm hover:bg-[#64305B]">{t.modelTitle}<ArrowRight size={16}/></a>
+              <Link to="/contact" className="inline-flex min-h-12 items-center rounded-xl border border-[#D1B57B] bg-white px-5 py-3 text-sm font-bold text-[#4A1D43]">{t.inquire}</Link>
+            </div>
+          </div>
+          <div className="mx-auto w-full max-w-[385px]">
+                    <div className="mx-auto max-w-[385px] rounded-[28px] border border-[#DBC18C] bg-white p-4 shadow-[0_20px_48px_rgba(55,22,49,0.10)]">
+          <div className="flex justify-between gap-3 pb-3"><strong className="font-serif text-lg">{activeModel === 'business' ? t.business : t.portfolio}</strong><button type="button" className="text-sm font-bold text-[#795A22] underline underline-offset-4" onClick={() => setZoom(true)}>{t.preview}</button></div>
+          <div className="flex h-[350px] sm:h-[395px] items-center justify-center overflow-hidden rounded-xl bg-[#052B22]"><img src={active.src} alt={activeModel === 'business' ? t.business : t.portfolio} className="h-full w-auto max-w-full object-contain" /></div>
+        </div>
+
+          </div>
+        </div>
+        <div className="mt-10 grid gap-3 md:grid-cols-2">
+          <article className="rounded-[20px] border border-[#E3D6BF] bg-white/90 p-5 shadow-[0_8px_24px_rgba(45,18,40,.04)] sm:p-6">
             <div className="flex items-center justify-between gap-3"><h2 className="font-serif text-2xl font-bold">{t.free}</h2><span className="rounded-full bg-[#E6F4EB] px-3 py-1 text-sm font-black text-[#17633E]">{lang === 'ar' ? 'مجاني' : lang === 'en' ? 'Free' : lang === 'it' ? 'Gratis' : lang === 'ru' ? 'Бесплатно' : 'Gratuit'}</span></div>
             <p className="mt-3 min-h-[58px] text-sm leading-6 text-[#665D64]">{t.freeDesc}</p>
             <Link to="/inscription-entreprise" className="mt-5 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-[#AE8639] px-4 py-3 text-sm font-bold text-[#4A1D43] hover:bg-[#FFF6DE]">{t.register}<ArrowRight size={17} aria-hidden="true" /></Link>
           </article>
-          <article className="rounded-2xl border border-[#E2BC70] bg-[#4A1D43] p-5 text-white sm:p-6">
+          <article className="rounded-[20px] border border-[#C5A66A] bg-[#4A1D43] p-5 text-white shadow-[0_12px_35px_rgba(45,18,40,.12)] sm:p-6">
             <h2 className="font-serif text-2xl font-bold text-[#FFE1A0]">{t.paid}</h2>
             <p className="mt-3 min-h-[58px] text-sm leading-6 text-white/85">{t.paidDesc}</p>
             <Link to="/contact" className="mt-5 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#D4AF37] px-4 py-3 text-sm font-black text-[#2E102A] hover:bg-[#E3C166]">{t.inquire}<ArrowRight size={17} aria-hidden="true" /></Link>
@@ -168,19 +184,16 @@ export default function CvProfessionalLanding() {
         <p className="text-xs font-black uppercase tracking-[0.16em] text-[#A17A32]">{t.modelEyebrow}</p>
         <h2 className="mt-2 max-w-3xl font-serif text-3xl font-bold sm:text-4xl">{t.modelTitle}</h2>
         <p className="mt-3 max-w-3xl leading-7 text-[#605A62]">{t.modelIntro}</p>
-        <div className="mt-7 grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-          {MODELS.map(model => {
+        <div className="mt-7 grid gap-3 md:grid-cols-2">
+          {MODELS.map((model, index) => {
+            const selected = activeModel === model.id;
             const name = model.id === 'business' ? t.business : t.portfolio;
             const description = model.id === 'business' ? t.businessDesc : t.portfolioDesc;
-            return <button key={model.id} type="button" aria-pressed={activeModel === model.id} onClick={() => setActiveModel(model.id)} className={`flex min-w-0 items-center gap-4 rounded-2xl border p-4 text-start transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9F782C] ${activeModel === model.id ? 'border-[#A3782B] bg-[#FFF7E8] shadow-sm' : 'border-[#E5D7BF] bg-white hover:border-[#B9975B]'}`}>
-              <img src={model.src} alt="" className="h-28 w-20 shrink-0 rounded-lg bg-[#052B22] object-contain" loading="lazy" />
-              <span><strong className="block font-serif text-lg">{name}</strong><span className="mt-1 block text-sm leading-6 text-[#625A62]">{description}</span><span className="mt-3 block text-xs font-bold text-[#95702A]">{activeModel === model.id ? '●' : '○'} {name}</span></span>
+            return <button key={model.id} type="button" aria-pressed={selected} onClick={() => { setActiveModel(model.id); setZoom(true); }} className={`flex min-h-[145px] w-full items-center gap-4 rounded-[20px] border p-4 text-start transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9F782C] sm:p-5 ${selected ? 'border-[#B18D48] bg-[#FFF7E9]' : 'border-[#E5D8C5] bg-white hover:border-[#BD9A5B]'}`}>
+              <img src={model.src} alt="" className="h-28 w-20 shrink-0 rounded-xl border border-[#CFB782] bg-[#073027] object-contain" loading="lazy"/>
+              <span className="min-w-0 flex-1"><span className="block text-xs font-black tracking-widest text-[#A47C36]">0{index+1}</span><strong className="mt-1 block font-serif text-xl text-[#361831]">{name}</strong><span className="mt-1 block text-sm leading-6 text-[#625965]">{description}</span><span className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-[#8B622B]">{t.preview}<ArrowRight size={14}/></span></span>
             </button>;
           })}
-        </div>
-        <div className="mx-auto mt-5 max-w-[440px] rounded-[26px] border border-[#DBC18C] bg-white p-4 shadow-[0_20px_48px_rgba(55,22,49,0.10)]">
-          <div className="flex justify-between gap-3 pb-3"><strong className="font-serif text-lg">{activeModel === 'business' ? t.business : t.portfolio}</strong><button type="button" className="text-sm font-bold text-[#795A22] underline underline-offset-4" onClick={() => setZoom(true)}>{t.preview}</button></div>
-          <div className="flex h-[390px] items-center justify-center overflow-hidden rounded-xl bg-[#052B22]"><img src={active.src} alt={activeModel === 'business' ? t.business : t.portfolio} className="h-full w-auto max-w-full object-contain" /></div>
         </div>
         <p className="mt-3 text-center text-xs text-[#726875]">{t.demoNotice}</p>
       </div>
