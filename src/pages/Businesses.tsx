@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
+import { dedupeByAirtableId } from '../lib/dedupeByAirtableId';
 import { useTranslation } from '../lib/i18n';
 import { getBusinessesPageTranslations } from '../lib/businessesPageTranslations';
 import { getBusinessBadgeLegendTranslations } from '../lib/businessBadgeLegendTranslations';
@@ -106,7 +107,7 @@ interface BusinessNeedActivityRow {
   created_at: string | null;
 }
 
-const ENTREPRISE_SELECT_FIELDS = 'id, nom, sous_categories_texte, sous_categories_clean, categorie, gouvernorat, ville, adresse, telephone, email, site_web, description, a_propos, services, image_url, logo_url, statut_abonnement, cv_business_status, cv_business_published_at, "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, statut_carte, "Note Google Globale", "Compteur Avis Google", name_ar, name_en, name_it, name_ru, description_ar, description_en, description_it, description_ru, slug';
+const ENTREPRISE_SELECT_FIELDS = 'id, id_airtable, nom, sous_categories_texte, sous_categories_clean, categorie, gouvernorat, ville, adresse, telephone, email, site_web, description, a_propos, services, image_url, logo_url, statut_abonnement, cv_business_status, cv_business_published_at, "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, statut_carte, "Note Google Globale", "Compteur Avis Google", name_ar, name_en, name_it, name_ru, description_ar, description_en, description_it, description_ru, slug';
 
 const PUBLIC_BUSINESS_NEED_ACTIVITY_TYPES = new Set([
   'supplier_search',
@@ -848,8 +849,11 @@ export const Businesses = ({
         .not('nom', 'is', null)
         .neq('nom', '')
         .or('statut_publication.is.null,statut_publication.eq.Publié')
+        // Rank before limiting: otherwise the first alphabetical entries hide trusted CVs.
+        .order('cv_business_status', { ascending: false, nullsFirst: false })
+        .order('"Compteur Avis Google"', { ascending: false, nullsFirst: false })
         .order('nom', { ascending: true })
-        .limit(10);
+        .limit(200);
 
       if (pageCategorie) {
         console.log(`[DEBUG] Filtre pageCategorie appliqué: "${pageCategorie}"`);
@@ -892,7 +896,7 @@ export const Businesses = ({
         });
       }
 
-      const mappedData = (data || []).map((item: any) => ({
+      const mappedData = dedupeByAirtableId((data || []) as { id: string; id_airtable?: string | null }[]).map((item: any) => ({
         id: item.id,
         name: extractFrenchName(item.nom),
         category: getCategoryLabel(item),
@@ -986,8 +990,11 @@ export const Businesses = ({
         .not('nom', 'is', null)
         .neq('nom', '')
         .or('statut_publication.is.null,statut_publication.eq.Publié')
+        // Rank before limiting: otherwise the first alphabetical entries hide trusted CVs.
+        .order('cv_business_status', { ascending: false, nullsFirst: false })
+        .order('"Compteur Avis Google"', { ascending: false, nullsFirst: false })
         .order('nom', { ascending: true })
-        .limit(30);
+        .limit(300);
 
       if (selectedBusinessId) {
         console.log(`[DEBUG] Filtre ID entreprise: "${selectedBusinessId}"`);
@@ -1082,7 +1089,7 @@ export const Businesses = ({
         console.log('[DEBUG] item.nom brut (toutes entreprises):', (data as any[]).map((d: any) => d.nom));
       }
 
-      let mappedData = (data || []).map((item: any) => ({
+      let mappedData = dedupeByAirtableId((data || []) as { id: string; id_airtable?: string | null }[]).map((item: any) => ({
         id: item.id,
         name: extractFrenchName(item.nom),
         category: getCategoryLabel(item),
