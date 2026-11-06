@@ -56,17 +56,13 @@ interface CacheEntry extends HomeQueryResult {
   ts: number;
 }
 
-const CACHE_KEY = 'home_data_v17';
+const CACHE_KEY = 'home_data_v18';
 const STALE_TIME = 5 * 60_000;
 // Keep the last verified counts for 30 days when Supabase is temporarily unavailable.
 const GC_TIME = 30 * 24 * 60 * 60_000;
 
 const FIELDS = '*';
 
-// 194 lignes historiques vides et non approuvées sont protégées par RLS.
-// Elles font partie du stock de fiches enregistrées mais ne sont pas publiées.
-// Ajuster ce stock uniquement après un audit/suppression explicite.
-const HISTORICAL_INCOMPLETE_BACKLOG = 194;
 
 const CERTIFIED_FETCH_LIMIT = 100;
 const HOME_PARTNERS_LIMIT = 5;
@@ -208,7 +204,7 @@ async function doFetch(): Promise<HomeQueryResult> {
 
   console.log('[HOME-DIAG] CERTIFIED_LABEL =', JSON.stringify(CERTIFIED_LABEL));
 
-  const [listRes, countRes, certifiedRes] = await Promise.all([
+  const [listRes, totalRes, certifiedRes] = await Promise.all([
     supabase
       .from('entreprise')
       .select(FIELDS)
@@ -218,14 +214,9 @@ async function doFetch(): Promise<HomeQueryResult> {
       .eq('statut_carte', CERTIFIED_LABEL)
       .limit(CERTIFIED_FETCH_LIMIT),
 
-    supabase
-      .from('entreprise')
-      .select('id', { count: 'exact' })
-      // Total historique : fiches renseignées et dossiers techniques à compléter.
-      // Les anciens brouillons « hanine-pastry » sont comptés ici uniquement,
-      // jamais affichés comme de véritables établissements dans l'annuaire.
-      .or('statut_publication.is.null,statut_publication.eq.Publié,slug.eq.hanine-pastry')
-      .limit(1),
+    // Expose only the aggregate total, including drafts excluded from public RLS.
+    // Never give anonymous clients SELECT access to unpublished business records.
+    supabase.rpc('get_enterprise_record_count'),
 
     supabase
       .from('entreprise')
@@ -237,11 +228,11 @@ async function doFetch(): Promise<HomeQueryResult> {
       .limit(1),
   ]);
 
-  console.log('[HOME-DIAG] countRes', {
-    count: countRes.count,
-    status: countRes.status,
-    statusText: countRes.statusText,
-    error: countRes.error,
+  console.log('[HOME-DIAG] totalRes', {
+    count: totalRes.data,
+    status: totalRes.status,
+    statusText: totalRes.statusText,
+    error: totalRes.error,
   });
 
   console.log('[HOME-DIAG] certifiedRes', {
@@ -266,8 +257,8 @@ async function doFetch(): Promise<HomeQueryResult> {
     console.error('[homeDataPrefetch] listRes error:', listRes.error);
   }
 
-  if (countRes.error) {
-    console.error('[homeDataPrefetch] countRes error:', countRes.error);
+  if (totalRes.error) {
+    console.error('[homeDataPrefetch] totalRes error:', totalRes.error);
   }
 
   if (certifiedRes.error) {
@@ -275,7 +266,8 @@ async function doFetch(): Promise<HomeQueryResult> {
   }
 
   // Do not cache failed count queries as real zero counts.
-  if (countRes.error || certifiedRes.error || countRes.count == null || certifiedRes.count == null) {
+  const totalCount = Number(totalRes.data);
+  if (totalRes.error || certifiedRes.error || !Number.isSafeInteger(totalCount) || totalCount <= 0 || certifiedRes.count == null) {
     throw new Error('[homeDataPrefetch] Business counters unavailable; preserving last known valid values');
   }
 
@@ -339,7 +331,7 @@ async function doFetch(): Promise<HomeQueryResult> {
 
   const result: HomeQueryResult = {
     partners,
-    totalCount: (countRes.count ?? 0) + HISTORICAL_INCOMPLETE_BACKLOG,
+    totalCount,
     certifiedCount: certifiedRes.count ?? 0,
   };
 
