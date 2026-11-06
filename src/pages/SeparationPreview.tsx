@@ -176,77 +176,6 @@ const COPY: Record<Lang, {
   },
 };
 
-const HOME_ECOSYSTEM_COPY: Record<Lang, {
-  title: string; hint: string; items: Array<{ icon: string; title: string; text: string; href: string }>;
-  cvBusiness: string; cvPortfolio: string; cvAdvantageTitle: string; cvAdvantageText: string;
-}> = {
-  fr: {
-    title: 'Tout Dalil Tounes, en un coup d’œil', hint: 'Choisissez la rubrique qui vous intéresse',
-    items: [
-      { icon: '🇹🇳', title: 'Services citoyens', text: 'Santé, éducation, démarches et quotidien', href: '/citizens/services' },
-      { icon: '📅', title: 'Agenda', text: 'Les prochains événements près de chez vous', href: '/citizens/leisure' },
-      { icon: '💼', title: 'Emploi', text: 'Offres actives et entreprises qui recrutent', href: '/emplois' },
-      { icon: '📖', title: 'Guides pratiques', text: 'Des réponses utiles par thématique', href: '/blog' },
-      { icon: '🤝', title: 'Besoins professionnels', text: 'Demandes, stocks et partenariats B2B', href: '/besoins-professionnels' },
-    ],
-    cvBusiness: 'CV Business', cvPortfolio: 'CV Portfolio',
-    cvAdvantageTitle: 'Votre avantage dans l’écosystème Dalil Tounes',
-    cvAdvantageText: 'Votre entreprise reste visible dans les recherches et les pages qui correspondent à son activité. Avec un CV Business, les visiteurs découvrent immédiatement vos services, vos photos, vos horaires et tous les moyens de vous contacter.',
-  },
-  ar: {
-    title: 'كل دليل تونس بنظرة واحدة', hint: 'اختر القسم الذي يهمّك',
-    items: [
-      { icon: '🇹🇳', title: 'خدمات المواطن', text: 'الصحة والتعليم والإجراءات والحياة اليومية', href: '/citizens/services' },
-      { icon: '📅', title: 'الأجندة', text: 'الفعاليات القادمة بالقرب منك', href: '/citizens/leisure' },
-      { icon: '💼', title: 'التشغيل', text: 'عروض عمل ومؤسسات تنتدب', href: '/emplois' },
-      { icon: '📖', title: 'أدلة عملية', text: 'إجابات مفيدة حسب الموضوع', href: '/blog' },
-      { icon: '🤝', title: 'احتياجات مهنية', text: 'طلبات ومخزون وشراكات بين المؤسسات', href: '/besoins-professionnels' },
-    ],
-    cvBusiness: 'CV Business', cvPortfolio: 'CV Portfolio',
-    cvAdvantageTitle: 'ميزتك داخل منظومة دليل تونس',
-    cvAdvantageText: 'تبقى مؤسستك ظاهرة في البحث والصفحات المناسبة لنشاطها. ومع CV Business يكتشف الزائر فوراً خدماتك وصورك وأوقات العمل وكل وسائل الاتصال بك.',
-  },
-  en: {
-    title: 'All of Dalil Tounes at a glance', hint: 'Choose the section you need',
-    items: [
-      { icon: '🇹🇳', title: 'Citizen services', text: 'Health, education, procedures and daily life', href: '/citizens/services' },
-      { icon: '📅', title: 'Events', text: 'Upcoming events near you', href: '/citizens/leisure' },
-      { icon: '💼', title: 'Jobs', text: 'Active opportunities and hiring businesses', href: '/emplois' },
-      { icon: '📖', title: 'Practical guides', text: 'Useful answers by topic', href: '/blog' },
-      { icon: '🤝', title: 'Business needs', text: 'Requests, stock and B2B partnerships', href: '/besoins-professionnels' },
-    ],
-    cvBusiness: 'Business CV', cvPortfolio: 'Portfolio CV',
-    cvAdvantageTitle: 'Your advantage in the Dalil Tounes ecosystem',
-    cvAdvantageText: 'Your business remains visible in searches and the pages relevant to its activity. With a Business CV, visitors immediately see your services, photos, opening hours and every way to contact you.',
-  },
-  it: {
-    title: 'Tutto Dalil Tounes a colpo d’occhio', hint: 'Scegli la sezione che ti interessa',
-    items: [
-      { icon: '🇹🇳', title: 'Servizi ai cittadini', text: 'Salute, istruzione, pratiche e vita quotidiana', href: '/citizens/services' },
-      { icon: '📅', title: 'Agenda', text: 'I prossimi eventi vicino a te', href: '/citizens/leisure' },
-      { icon: '💼', title: 'Lavoro', text: 'Offerte attive e imprese che assumono', href: '/emplois' },
-      { icon: '📖', title: 'Guide pratiche', text: 'Risposte utili per argomento', href: '/blog' },
-      { icon: '🤝', title: 'Esigenze professionali', text: 'Richieste, stock e partnership B2B', href: '/besoins-professionnels' },
-    ],
-    cvBusiness: 'CV Business', cvPortfolio: 'CV Portfolio',
-    cvAdvantageTitle: 'Il tuo vantaggio nell’ecosistema Dalil Tounes',
-    cvAdvantageText: 'La tua impresa rimane visibile nelle ricerche e nelle pagine pertinenti alla sua attività. Con un CV Business, i visitatori scoprono subito servizi, foto, orari e tutti i modi per contattarti.',
-  },
-  ru: {
-    title: 'Весь Dalil Tounes с первого взгляда', hint: 'Выберите нужный раздел',
-    items: [
-      { icon: '🇹🇳', title: 'Услуги для граждан', text: 'Здоровье, образование, процедуры и повседневная жизнь', href: '/citizens/services' },
-      { icon: '📅', title: 'Афиша', text: 'Ближайшие события рядом с вами', href: '/citizens/leisure' },
-      { icon: '💼', title: 'Работа', text: 'Актуальные вакансии и компании-работодатели', href: '/emplois' },
-      { icon: '📖', title: 'Практические гиды', text: 'Полезные ответы по темам', href: '/blog' },
-      { icon: '🤝', title: 'Потребности бизнеса', text: 'Запросы, запасы и B2B-партнёрства', href: '/besoins-professionnels' },
-    ],
-    cvBusiness: 'Business CV', cvPortfolio: 'Portfolio CV',
-    cvAdvantageTitle: 'Ваше преимущество в экосистеме Dalil Tounes',
-    cvAdvantageText: 'Компания остаётся видимой в поиске и подходящих разделах. Business CV сразу показывает посетителям услуги, фотографии, часы работы и все способы связи.',
-  },
-};
-
 function SeparationExperience({ fixedView }: { fixedView?: 'platform' | 'cv' }) {
   const [previewView, setPreviewView] = useState<'platform' | 'cv'>('platform');
   const navigate = useNavigate();
@@ -254,7 +183,6 @@ function SeparationExperience({ fixedView }: { fixedView?: 'platform' | 'cv' }) 
   const { language } = useLanguage();
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as Lang;
   const t = COPY[lang];
-  const ecosystem = HOME_ECOSYSTEM_COPY[lang];
   const { partners, totalCount, certifiedCount, loading } = useHomeData();
   // Never present a historical hard-coded number as a live network count.
   const countsAvailable = totalCount > 0;
@@ -291,48 +219,13 @@ function SeparationExperience({ fixedView }: { fixedView?: 'platform' | 'cv' }) 
                 <p className="mt-1 text-sm font-bold text-[#9A7416] md:text-base">{countsAvailable ? t.certifiedProof(localizedCertifiedCount) : <span className="text-sm font-medium opacity-70" role="status">{t.certifiedLoading}</span>}</p>
               </div>
               <div className="mx-auto mt-3 grid max-w-3xl grid-cols-2 gap-2 sm:grid-cols-4">{t.categories.map(([label, href]) => <a key={href} href={href} className="min-h-11 rounded-xl border border-[#D4AF37]/40 bg-white px-3 py-3 text-sm font-bold text-[#4A1D43] transition hover:bg-[#FFF8DF]">{label}</a>)}</div>
-              <details className="group mx-auto mt-5 max-w-5xl rounded-2xl border border-[#D4AF37]/40 bg-white/90 text-left shadow-[0_14px_35px_rgba(74,29,67,0.08)] rtl:text-right">
-                <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-[#4A1D43] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B48A36] [&::-webkit-details-marker]:hidden">
-                  <span className="flex flex-col gap-1"><strong className="font-serif text-lg sm:text-xl">{ecosystem.title}</strong><span className="text-xs font-semibold text-[#9A7416]">{ecosystem.hint}</span></span>
-                  <span aria-hidden="true" className="text-xl font-black text-[#B48A36] group-open:rotate-180">⌄</span>
-                </summary>
-                <div className="grid grid-cols-2 gap-2 border-t border-[#D4AF37]/20 p-3 sm:p-4 lg:grid-cols-5">
-                  {ecosystem.items.map(item => <button key={item.href} type="button" onClick={() => navigate(item.href)} className="group min-h-[92px] rounded-xl border border-[#E5D4B0] bg-[#FFFCF7] p-3 text-left transition hover:-translate-y-0.5 hover:border-[#B48A36] hover:bg-[#FFF8E6] focus:outline-none focus:ring-2 focus:ring-[#B48A36] rtl:text-right">
-                    <span className="text-lg" aria-hidden="true">{item.icon}</span>
-                    <span className="mt-1 block text-sm font-black leading-5 text-[#4A1D43]">{item.title}</span>
-                    <span className="mt-1 block text-xs leading-4 text-gray-600">{item.text}</span>
-                  </button>)}
-                </div>
-              </details>
-            </div>
-          </section>
-
-          <section className="bg-[#2E102A] px-4 py-6 text-white md:py-8">
-            <div className="mx-auto flex max-w-5xl flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-              <div className="max-w-2xl">
-                <p className="text-xs font-black uppercase tracking-[0.16em] text-[#F1D783]">{t.professionalEyebrow}</p>
-                <h2 className="mt-2 font-serif text-xl font-bold md:text-2xl">{({fr:'Votre entreprise sur Dalil Tounes, gratuitement ou avec un CV professionnel.',ar:'مؤسستك على دليل تونس مجاناً أو مع سيرة مهنية خاصة.',en:'Your business on Dalil Tounes, free or with a professional CV.',it:'La tua attività su Dalil Tounes, gratis o con CV professionale.',ru:'Ваша компания на Dalil Tounes — бесплатно или с профессиональным CV.'} as Record<Lang,string>)[lang]}</h2>
-                <p className="mt-2 text-sm leading-6 text-white/85">{({fr:'La Présence essentielle est gratuite. Pour aller plus loin, découvrez les CV Business et Portfolio, leurs modèles et leurs conditions.',ar:'الحضور الأساسي مجاني. اكتشف CV Business وCV Portfolio ونماذجهما وشروطهما.',en:'Essential presence is free. Discover Business and Portfolio CVs, their models and terms.',it:'La presenza essenziale è gratuita. Scopri i CV Business e Portfolio e le relative condizioni.',ru:'Базовое размещение бесплатно. Узнайте о моделях Business и Portfolio CV.'} as Record<Lang,string>)[lang]}</p>
+              <div className="mx-auto mt-4 flex max-w-3xl flex-wrap items-center justify-center gap-x-3 gap-y-2 text-xs text-[#655C63]">
+                <span>{({fr:'Professionnel ?',ar:'هل أنت مهني؟',en:'Business owner?',it:'Sei un professionista?',ru:'Вы предприниматель?'} as Record<Lang,string>)[lang]}</span>
+                <button type="button" onClick={() => navigate('/inscription-entreprise')} className="font-bold text-[#4A1D43] underline underline-offset-4">{({fr:'Présence gratuite',ar:'ظهور مجاني',en:'Free listing',it:'Presenza gratuita',ru:'Бесплатное размещение'} as Record<Lang,string>)[lang]}</button>
+                <span aria-hidden="true">·</span>
+                <button type="button" onClick={() => navigate('/decouvrir-nos-cv')} className="font-bold text-[#4A1D43] underline underline-offset-4">{({fr:'CV Business et Portfolio',ar:'CV Business و Portfolio',en:'Business and Portfolio CV',it:'CV Business e Portfolio',ru:'Business и Portfolio CV'} as Record<Lang,string>)[lang]}</button>
               </div>
-              <button type="button" onClick={() => navigate('/decouvrir-nos-cv')} className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-[#D4AF37] px-5 py-3 text-sm font-black text-[#2E102A]">{t.discoverCv}<ArrowRight className="h-4 w-4" /></button>
-            </div>
-          </section>
 
-          <section className="bg-white px-4 py-8 md:py-10">
-            <div className="mx-auto max-w-5xl rounded-3xl border border-[#D4AF37]/35 bg-[#FFFCF7] p-5 text-center shadow-sm md:p-7">
-              <p className="text-xs font-black uppercase tracking-[0.16em] text-[#B58A18]">
-                {countsAvailable ? t.certifiedProof(localizedCertifiedCount) : t.certifiedLoading}
-              </p>
-              <h2 className="mt-2 font-serif text-2xl font-bold text-[#2E102A] md:text-3xl">{t.certifiedTitle}</h2>
-              <p className="mx-auto mt-2 max-w-3xl text-sm leading-6 text-gray-600 md:text-base">{t.certifiedSubtitle}</p>
-              <button
-                type="button"
-                onClick={() => navigate('/entreprises-certifiees')}
-                className="mt-5 inline-flex min-h-12 items-center gap-2 rounded-xl bg-[#4A1D43] px-6 py-3 text-sm font-black text-white transition hover:-translate-y-0.5 hover:bg-[#5B2553]"
-              >
-                {lang === 'ar' ? 'عرض المؤسسات الموثّقة' : lang === 'en' ? 'View certified businesses' : lang === 'it' ? 'Vedi le aziende certificate' : lang === 'ru' ? 'Посмотреть сертифицированные компании' : 'Voir les entreprises certifiées'}
-                <ArrowRight className={`h-4 w-4 ${lang === 'ar' ? 'rotate-180' : ''}`} />
-              </button>
             </div>
           </section>
 
