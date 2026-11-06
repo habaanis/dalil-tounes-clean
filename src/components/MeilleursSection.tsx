@@ -26,6 +26,8 @@ interface MeilleursItem {
   is_premium?: boolean;
   statut_abonnement?: string | null;
   statut_carte?: string | null;
+  cv_business_status?: string | null;
+  cv_business_published_at?: string | null;
   categorie?: string | null;
 }
 
@@ -273,44 +275,23 @@ export default function MeilleursSection({
       const n = typeof raw === 'number' ? raw : parseInt(String(raw).replace(/[^\d]/g, ''), 10);
       return isNaN(n) ? 0 : n;
     }
-    function itemIsPremium(item: MeilleursItem): boolean {
-      if (item.is_premium === true) return true;
-      const subscriptionStatus = item.statut_abonnement;
-      if (!subscriptionStatus) return false;
-      const normalizedStatus = subscriptionStatus.toLowerCase().trim();
-      return normalizedStatus.includes('premium')
-        || normalizedStatus.includes('elite')
-        || normalizedStatus.includes('artisan')
-        || normalizedStatus.includes('pro')
-        || normalizedStatus.includes('paid');
-    }
-    function itemIsCertified(item: MeilleursItem): boolean {
-      const status = item.statut_carte;
-      if (!status) return false;
-      const normalizedStatus = status.toUpperCase();
-      return normalizedStatus.includes('CERTIF') && !normalizedStatus.includes('NON CERTIF');
-    }
-    function itemPriority(item: MeilleursItem): number {
-      const certified = itemIsCertified(item);
-      const premium = itemIsPremium(item);
-      if (certified && premium) return 4;
-      if (certified) return 3;
-      if (premium) return 2;
-      return 1;
+    function hasPublishedCv(item: MeilleursItem): boolean {
+      return (item.cv_business_status || '').toLowerCase() === 'published'
+        || Boolean(item.cv_business_published_at);
     }
     function sortBusinesses(a: MeilleursItem, b: MeilleursItem): number {
-      const priorityDiff = itemPriority(b) - itemPriority(a);
-      if (priorityDiff !== 0) return priorityDiff;
-      const ratingDiff = parseRating(b['Note Google Globale']) - parseRating(a['Note Google Globale']);
-      if (ratingDiff !== 0) return ratingDiff;
-      return parseCount(b['Compteur Avis Google']) - parseCount(a['Compteur Avis Google']);
+      // CV first, then the number of Google reviews, then the rating.
+      if (hasPublishedCv(a) !== hasPublishedCv(b)) return hasPublishedCv(b) ? 1 : -1;
+      const countDiff = parseCount(b['Compteur Avis Google']) - parseCount(a['Compteur Avis Google']);
+      if (countDiff) return countDiff;
+      return parseRating(b['Note Google Globale']) - parseRating(a['Note Google Globale']);
     }
 
     async function fetchData() {
       setLoadingTop(true);
       setLoadingAll(true);
       try {
-        const SELECT_FIELDS = `id, nom, ville, gouvernorat, logo_url, image_url, sous_categories_texte, slug, qr_code_url, "Note Google Globale", "Compteur Avis Google", adresse, telephone, description, is_premium, statut_abonnement, horaires_ok, categorie, statut_carte`;
+        const SELECT_FIELDS = `id, nom, ville, gouvernorat, logo_url, image_url, sous_categories_texte, slug, qr_code_url, "Note Google Globale", "Compteur Avis Google", adresse, telephone, description, is_premium, statut_abonnement, horaires_ok, categorie, statut_carte, cv_business_status, cv_business_published_at`;
 
         const { data, error: fetchError } = await supabase
           .from(Tables.ENTREPRISE)
@@ -414,7 +395,7 @@ export default function MeilleursSection({
             <p className="text-xs text-gray-400 mt-0.5">{tx('bestSubtitle', 'Les mieux notés par la communauté')}</p>
             {useGoogleRecommendationCriteria && (
               <p className="text-[11px] text-gray-400 mt-1">
-                {tx('rankingCriteria', 'Note Google ≥ 4/5 et au moins 5 avis, triés par note puis par nombre d’avis')}
+                {tx('rankingCriteria', 'Note Google ≥ 4/5 et au moins 5 avis ; CV publié prioritaire, puis nombre d’avis et note')}
               </p>
             )}
           </div>
@@ -619,7 +600,7 @@ export default function MeilleursSection({
         <p className="text-center text-[11px] text-gray-400 leading-relaxed">
           {useGoogleRecommendationCriteria
             ? tx('rankingDisclosure', 'Les recommandations reposent uniquement sur les notes et avis publics disponibles sur Google. Dalil Tounes n’attribue aucune note.')
-            : 'Les classements affichés reposent sur des critères automatisés (avis publics, notes Google, complétude de la fiche).'}{' '}
+            : 'Les classements affichés privilégient les CV publiés, puis le nombre d’avis et les notes Google.'}{' '}
           <Link to="/info-avis" className="text-[#D4AF37] hover:underline">
             {useGoogleRecommendationCriteria ? tx('learnMore', 'En savoir plus') : 'En savoir plus'}
           </Link>
