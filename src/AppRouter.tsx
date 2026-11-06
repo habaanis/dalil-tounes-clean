@@ -37,7 +37,6 @@ const PrestigeOpeningPreview = lazy(() => import('./pages/PrestigeOpeningPreview
 const SeparationPreview = lazy(() => import('./pages/SeparationPreview'));
 const PlatformHome = lazy(() => import('./pages/SeparationPreview').then(m => ({ default: m.PlatformHome })));
 const CvProfessionalLanding = lazy(() => import('./pages/CvProfessionalLanding'));
-const Subscription = lazy(() => import('./pages/SubscriptionWithJourney'));
 const PaiementConfirmation = lazy(() => import('./pages/PaiementConfirmation'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
@@ -85,7 +84,6 @@ const AdminBusinessNeeds = lazy(() => import('./pages/AdminBusinessNeeds'));
 const Auth = lazy(() => import('./pages/Auth'));
 const CandidateDashboard = lazy(() => import('./pages/CandidateDashboard'));
 const CompanyDashboard = lazy(() => import('./pages/CompanyDashboard'));
-const Concept = lazy(() => import('./pages/Concept'));
 const BecomePartner = lazy(() => import('./pages/BecomePartner'));
 const PourquoiDalilTounes = lazy(() => import('./pages/PourquoiDalilTounes'));
 const Blog = lazy(() => import('./pages/blog/Blog'));
@@ -275,15 +273,15 @@ function AppRouter() {
           <Route path="/dashboard/entreprise" element={<CompanyDashboard />} />
 
           <Route path="/inscription-entreprise" element={<BusinessRegistration />} />
-          <Route path="/subscription" element={<Subscription />} />
+          <Route path="/subscription" element={<Navigate to="/decouvrir-nos-cv" replace />} />
           <Route path="/cv-business" element={<Navigate to="/decouvrir-nos-cv" replace />} />
           <Route path="/decouvrir-nos-cv" element={<CvProfessionalLanding />} />
           <Route path="/preview/separation-plateforme-cv" element={<SeparationPreview />} />
-          <Route path="/abonnement" element={<Subscription />} />
+          <Route path="/abonnement" element={<Navigate to="/decouvrir-nos-cv" replace />} />
           <Route path="/paiement/confirmation" element={<PaiementConfirmation />} />
-          <Route path="/concept" element={<Concept />} />
+          <Route path="/concept" element={<Navigate to="/#comment-ca-marche" replace />} />
           <Route path="/devenir-partenaire" element={<BecomePartner />} />
-          <Route path="/notre-concept" element={<Concept />} />
+          <Route path="/notre-concept" element={<Navigate to="/#comment-ca-marche" replace />} />
           <Route path="/pourquoi-dalil-tounes" element={<PourquoiDalilTounes />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
