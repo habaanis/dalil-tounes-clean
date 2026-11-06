@@ -8,6 +8,7 @@ import VehicleTypeAutocomplete from '../components/VehicleTypeAutocomplete';
 import MeilleursSection from '../components/MeilleursSection';
 import SearchBar from '../components/SearchBar';
 import ThermalWellnessExplorer from '../components/ThermalWellnessExplorer';
+import { Link } from 'react-router-dom';
 import MedicalTransportCard from '../components/MedicalTransportCard';
 import MedicalTransportRegistrationForm from '../components/MedicalTransportRegistrationForm';
 import { supabase } from '../lib/supabaseClient';
@@ -289,6 +290,7 @@ export default function CitizensHealth({}: CitizensHealthProps) {
         </div>
       </section>
 
+      <div className="mx-auto max-w-5xl px-4 pt-3 text-right"><Link to="/citizens/health/thermalisme" className="text-sm font-semibold text-[#4A1D43] underline">♨️ {language === 'ar' ? 'اكتشف قسم المياه الحارة والعيون الطبيعية' : language === 'en' ? 'Explore thermal baths and natural springs' : 'Découvrir la sous-page Thermalisme, sources naturelles et bien-être'}</Link></div>
       <ThermalWellnessExplorer />
 
       <section className="py-8 bg-white">
