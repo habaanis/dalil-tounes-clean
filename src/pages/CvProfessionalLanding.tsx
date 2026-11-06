@@ -202,11 +202,8 @@ export default function CvProfessionalLanding() {
           onContinue={continueWithModel}
           paletteValue={palette}
           onPaletteChange={setPalette}
+          liveModelPreviews
         />
-        <div className="mx-auto mt-3 grid max-w-4xl gap-3 sm:grid-cols-2">
-          {(['portfolio', 'business'] as const).map(model => <a key={model} href={`/entreprise/sousse/aux-saveurs-d-anis?preview-model=${model}&palette=${palette}&source=cv-landing&lang=${lang}`} target="_blank" rel="noopener noreferrer" className="flex min-h-12 items-center justify-center gap-2 rounded-xl border border-[#D3B474] bg-[#FFF9EA] px-4 py-3 text-center text-sm font-bold text-[#4A1D43] hover:bg-[#F8EDCF]">{({fr: 'Tester le CV', ar: 'جرّب', en: 'Try', it: 'Prova', ru: 'Открыть'} as Record<Lang,string>)[lang]} {model === 'portfolio' ? t.portfolio : t.business}<ArrowRight size={17} aria-hidden="true" /></a>)}
-        </div>
-
         <details className="group mt-5 rounded-[18px] border border-[#DAC395] bg-white">
           <summary className="flex min-h-14 cursor-pointer items-center justify-between gap-3 p-4 font-bold text-[#4A1D43] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B58C3C]">
             <span>{offers.maintenanceTitle} · {offers.maintenancePrice} · {offers.maintenanceTiming}</span><ChevronDown className="h-5 w-5 shrink-0 group-open:rotate-180" aria-hidden="true"/>
