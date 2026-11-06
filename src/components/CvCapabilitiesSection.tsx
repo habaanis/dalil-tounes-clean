@@ -260,7 +260,7 @@ const interactionCopy: Record<BusinessCardPreviewLanguage, { more: string; back:
 };
 
 /** Public-facing benefits section; no diagnostic form and no lead collection. */
-export default function CvCapabilitiesSection({ language }: {language: BusinessCardPreviewLanguage}) {
+export default function CvCapabilitiesSection({ language, compact = false }: {language: BusinessCardPreviewLanguage; compact?: boolean}) {
   const content = details[language] ?? details.fr;
   const ui = interactionCopy[language] ?? interactionCopy.fr;
   const [selectedGroup, setSelectedGroup] = useState<(typeof content.groups)[number] | null>(null);
@@ -278,6 +278,30 @@ export default function CvCapabilitiesSection({ language }: {language: BusinessC
       document.removeEventListener('keydown', closeOnEscape);
     };
   }, [selectedGroup]);
+
+  if (compact) {
+    return <section className="border-y border-[#E7D9BC] bg-[#FFFCF7] px-4 py-7 sm:py-9" aria-labelledby="dt-cv-capabilities-compact">
+      <div className="mx-auto max-w-6xl">
+        <h2 id="dt-cv-capabilities-compact" className="font-serif text-xl font-bold text-[#4A1D43] sm:text-2xl">{content.title}</h2>
+        <p className="mt-1 max-w-3xl text-sm leading-6 text-[#675D62]">{content.intro}</p>
+        <div className="mt-4 columns-1 gap-2 sm:columns-2 [&>details]:mb-2 [&>details]:break-inside-avoid">
+          {content.groups.map((group) => <details key={group.title} className="group min-w-0 rounded-xl border border-[#E2D2B5] bg-white">
+            <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-bold text-[#4A1D43] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B48A36] [&::-webkit-details-marker]:hidden">
+              <span>{group.title}</span><span aria-hidden="true" className="shrink-0 text-lg text-[#98712C] group-open:rotate-180">⌄</span>
+            </summary>
+            <ul className="space-y-2 border-t border-[#EEE1CB] px-4 py-3">
+              {group.items.map((item) => <li key={item} className="flex items-start gap-2 text-sm leading-6 text-[#5C5055]"><CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-[#B48A36]" aria-hidden="true" /><span>{item}</span></li>)}
+            </ul>
+          </details>)}
+        </div>
+        <details className="group mt-3 rounded-xl border border-[#E2D2B5] bg-[#FFF9ED]">
+          <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-bold text-[#4A1D43] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B48A36] [&::-webkit-details-marker]:hidden"><span>{content.personalTitle}</span><span aria-hidden="true" className="text-lg text-[#98712C] group-open:rotate-180">⌄</span></summary>
+          <p className="border-t border-[#EEE1CB] px-4 py-3 text-sm leading-6 text-[#5C5055]">{content.personalText}</p>
+        </details>
+        <p className="mt-3 text-xs leading-5 text-[#73686C]">{content.note}</p>
+      </div>
+    </section>;
+  }
 
   return <section className="bg-[#FFF9F1] px-4 py-12 sm:py-16" aria-labelledby="dt-home-cv-capabilities">
     <div className="mx-auto max-w-6xl">

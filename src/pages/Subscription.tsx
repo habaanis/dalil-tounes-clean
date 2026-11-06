@@ -767,7 +767,7 @@ const essentialCvCopy: Record<OfferLanguage, {
   },
 };
 
-const offerCopy: Record<OfferLanguage, {
+export const offerCopy: Record<OfferLanguage, {
   artisanPrice: string;
   premiumPrice: string;
   perMonth: string;
@@ -1055,7 +1055,7 @@ function EssentialCardPreview({ copy, previewText }: { copy: SubscriptionCopy; p
   );
 }
 
-const simplifiedOfferCopy: Record<OfferLanguage, {
+export const simplifiedOfferCopy: Record<OfferLanguage, {
   productsTitle: string;
   productsSubtitle: string;
   welcomeBadge: string;

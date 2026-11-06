@@ -236,7 +236,7 @@ function ModelPreview({
   );
 }
 
-function RealPalettePreview({
+export function RealPalettePreview({
   palette,
   model,
   language,
@@ -315,6 +315,7 @@ export function CvPresentationModelSelector({
   onContinue,
   paletteValue,
   onPaletteChange,
+  liveModelPreviews = false,
 }: {
   language: string;
   formulaValue: 'artisan' | 'premium' | null;
@@ -327,6 +328,7 @@ export function CvPresentationModelSelector({
   onContinue: () => void;
   paletteValue: PaletteId;
   onPaletteChange: (palette: PaletteId) => void;
+  liveModelPreviews?: boolean;
 }) {
   const copy = COPY[(language as SupportedLanguage)] ?? COPY.fr;
   const [expandedModel, setExpandedModel] = useState<PresentationModel | null>(null);
@@ -404,6 +406,34 @@ export function CvPresentationModelSelector({
 
       <div className="mx-auto mt-4 max-w-4xl">
         <p className="mb-2 text-sm font-black text-[#4A123F]">2. {copy.selectedModel}</p>
+        {liveModelPreviews ? (
+          <>
+            <div className="mb-3 grid grid-cols-2 gap-2 sm:hidden">
+              {(['portfolio', 'business'] as const).map(model => (
+                <button key={model} type="button" aria-pressed={value === model} onClick={() => onChange(model)}
+                  className={`min-h-12 rounded-xl border px-3 py-2 text-sm font-bold ${value === model ? 'border-[#D6AF2E] bg-[#4A123F] text-white' : 'border-[#E1D2AF] bg-[#FFFCF7] text-[#4A123F]'}`}>
+                  {model === 'business' ? copy.business : copy.portfolio}
+                </button>
+              ))}
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {(['portfolio', 'business'] as const).map(model => (
+                <div key={model} className={`${(value ?? 'portfolio') === model ? '' : 'hidden sm:block'} min-w-0 rounded-2xl border p-3 ${value === model ? 'border-[#D6AF2E] bg-amber-50/50' : 'border-[#E1D2AF] bg-[#FFFCF7]'}`}>
+                  <button type="button" aria-pressed={value === model} onClick={() => onChange(model)}
+                    className="mb-3 flex min-h-10 w-full items-center justify-between rounded-xl px-2 text-start text-base font-black text-[#4A123F] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#D6AF2E]">
+                    <span>{model === 'business' ? copy.business : copy.portfolio}</span>
+                    <span className="text-xs font-semibold text-[#866224]">{value === model ? '✓' : '○'}</span>
+                  </button>
+                  <div role="region" aria-label={`${model === 'business' ? copy.business : copy.portfolio} — démonstration interactive`} tabIndex={0} className="h-[550px] overflow-y-auto overscroll-contain rounded-xl border border-[#D6AF2E]/50 bg-white sm:h-[590px]">
+                    <RealPalettePreview palette={paletteValue} model={model} language={language} expanded />
+                  </div>
+                  <p className="mt-2 text-center text-xs text-slate-600">{model === 'business' ? copy.businessDescription : copy.portfolioDescription}</p>
+                </div>
+              ))}
+            </div>
+          </>
+        ) : (
+          <>
         <div className="sm:hidden">
           <div className="grid grid-cols-2 gap-1 rounded-2xl bg-[#F4F0E7] p-1.5">
             <button
@@ -480,6 +510,9 @@ export function CvPresentationModelSelector({
           </span>
         </button>
         </div>
+
+          </>
+        )}
       </div>
 
       <div className="mx-auto mt-4 max-w-4xl">
@@ -564,7 +597,7 @@ export function CvPresentationModelSelector({
         </button>
       </div>
 
-      {expandedModel && (
+      {!liveModelPreviews && expandedModel && (
         <div
           className="fixed inset-0 z-[140] flex items-center justify-center bg-black/75 p-3 backdrop-blur-sm sm:p-6"
           onMouseDown={(event) => {
