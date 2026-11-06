@@ -129,6 +129,41 @@ const copy: Record<Language, ConceptCopy> = {
   },
 };
 
+/** Compact home integration. Full /concept route is retained for existing external links and SEO. */
+export function ConceptHomeSummary() {
+  const { language } = useLanguage();
+  const lang = (language in copy ? language : 'fr') as Language;
+  const t = copy[lang];
+  return <section className="border-y border-[#E7D8B6] bg-[#FFFCF6] px-4 py-7 md:py-9" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+    <div className="mx-auto max-w-5xl">
+      <details className="group rounded-2xl border border-[#DDC99F] bg-white shadow-sm">
+        <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-[#4A1D43] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#AE852C] [&::-webkit-details-marker]:hidden">
+          <span><strong className="block font-serif text-lg md:text-xl">{t.heroTitleBefore} Dalil Tounes{t.heroTitleAfter}</strong><span className="mt-1 block text-xs text-[#6E6268]">{t.howTitle}</span></span>
+          <span className="shrink-0 text-xl text-[#AE852C] group-open:rotate-180" aria-hidden="true">⌄</span>
+        </summary>
+        <div className="border-t border-[#E9DFC8] px-4 pb-5">
+          <p className="mt-4 max-w-3xl text-sm leading-7 text-[#625A60]">{t.heroDescription}</p>
+          <div className="mt-4 grid gap-3 sm:grid-cols-3">
+            {[t.steps[0], t.steps[2], t.steps[3]].map((step, index) => <article key={step.title} className="rounded-xl border border-[#E8DAC1] bg-[#FFFCF8] p-3">
+              <span className="text-xs font-black text-[#98712C]">{index + 1}</span>
+              <h3 className="mt-1 text-sm font-bold text-[#4A1D43]">{step.title}</h3>
+              <p className="mt-2 text-xs leading-6 text-[#615961]">{step.solution}</p>
+            </article>)}
+          </div>
+          <details className="mt-3 rounded-xl border border-[#E8DAC1] bg-[#FFF9EE]">
+            <summary className="cursor-pointer px-4 py-3 text-sm font-bold text-[#4A1D43]">{t.visionTitle}</summary>
+            <p className="px-4 pb-4 text-sm leading-7 text-[#615961]">{t.conclusion}</p>
+          </details>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <Link to="/entreprises" className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-[#C6A660] px-4 py-2 text-sm font-bold text-[#4A1D43]">{t.trySearch}<ArrowRight className="h-4 w-4"/></Link>
+            <Link to="/decouvrir-nos-cv" className="inline-flex min-h-10 items-center gap-2 rounded-lg bg-[#4A1D43] px-4 py-2 text-sm font-bold text-white">{t.offers}<ArrowRight className="h-4 w-4"/></Link>
+          </div>
+        </div>
+      </details>
+    </div>
+  </section>;
+}
+
 export default function Concept() {
   const currentPath = useHreflangPath();
   const { language } = useLanguage();
