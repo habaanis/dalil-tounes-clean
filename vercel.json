@@ -121,6 +121,10 @@
       "destination": "/index.html"
     },
     {
+      "source": "/decouvrir-nos-cv",
+      "destination": "/index.html"
+    },
+    {
       "source": "/cv-business",
       "destination": "/index.html"
     },
