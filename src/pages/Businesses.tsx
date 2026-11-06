@@ -49,6 +49,8 @@ interface Business {
   gouvernorat?: string;
   secteur?: string;
   statut_abonnement?: string | null;
+  cv_business_status?: string | null;
+  cv_business_published_at?: string | null;
   niveau_priorite_abonnement?: number | null;
   badges?: string[];
   mots_cles_recherche?: string;
@@ -104,7 +106,7 @@ interface BusinessNeedActivityRow {
   created_at: string | null;
 }
 
-const ENTREPRISE_SELECT_FIELDS = 'id, nom, sous_categories_texte, sous_categories_clean, categorie, gouvernorat, ville, adresse, telephone, email, site_web, description, a_propos, services, image_url, logo_url, statut_abonnement, "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, statut_carte, "Note Google Globale", "Compteur Avis Google", name_ar, name_en, name_it, name_ru, description_ar, description_en, description_it, description_ru, slug';
+const ENTREPRISE_SELECT_FIELDS = 'id, nom, sous_categories_texte, sous_categories_clean, categorie, gouvernorat, ville, adresse, telephone, email, site_web, description, a_propos, services, image_url, logo_url, statut_abonnement, cv_business_status, cv_business_published_at, "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, statut_carte, "Note Google Globale", "Compteur Avis Google", name_ar, name_en, name_it, name_ru, description_ar, description_en, description_it, description_ru, slug';
 
 const PUBLIC_BUSINESS_NEED_ACTIVITY_TYPES = new Set([
   'supplier_search',
@@ -331,14 +333,34 @@ function hasActivity(business: Record<string, any>): boolean {
   return !!(business.imageUrl || business.logoUrl || (business.description && business.description.trim()) || business.horaires_ok);
 }
 
+// A CV published on Dalil Tounes is the primary trust and visibility signal.
+// A paid subscription without a published CV does not by itself outrank user reviews.
+function hasPublishedCv(business: Record<string, any>): boolean {
+  return String(business.cv_business_status || '').toLowerCase() === 'published'
+    || Boolean(business.cv_business_published_at);
+}
+function ratingValue(business: Record<string, any>): number {
+  const n = Number(String(business.note_google ?? business['Note Google Globale'] ?? '').replace(',', '.'));
+  return Number.isFinite(n) ? n : 0;
+}
+function reviewCount(business: Record<string, any>): number {
+  const n = Number(business.nombre_avis ?? business['Compteur Avis Google'] ?? 0);
+  return Number.isFinite(n) && n > 0 ? n : 0;
+}
 function getBusinessSortScore(business: Record<string, any>): number {
-  const certified = isCertifiedDalilTounes(business.statut_carte);
-  const premium = isPaidSubscription(business.statut_abonnement);
-  if (certified && premium) return 5;
-  if (certified) return 4;
-  if (premium) return 3;
-  if (hasActivity(business)) return 2;
+  if (hasPublishedCv(business)) return 3;
+  if (ratingValue(business) >= 4 && reviewCount(business) >= 5) return 2;
   return 1;
+}
+function compareBusinessesByTrust(a: Record<string, any>, b: Record<string, any>): number {
+  const group = getBusinessSortScore(b) - getBusinessSortScore(a);
+  if (group) return group;
+  // A significant volume of good reviews gives more confidence than a handful.
+  const count = reviewCount(b) - reviewCount(a);
+  if (count) return count;
+  const rating = ratingValue(b) - ratingValue(a);
+  if (rating) return rating;
+  return String(a.name || '').localeCompare(String(b.name || ''), 'fr');
 }
 
 export const Businesses = ({
@@ -890,6 +912,8 @@ export const Businesses = ({
         imageUrl: item.image_url || null,
         logoUrl: item.logo_url || null,
         statut_abonnement: item.statut_abonnement || null,
+        cv_business_status: item.cv_business_status || null,
+        cv_business_published_at: item.cv_business_published_at || null,
         niveau_priorite_abonnement: null,
         badges: [],
         mots_cles_recherche: item['mots cles recherche'] || '',
@@ -915,14 +939,7 @@ export const Businesses = ({
         name_ru: item.name_ru || null,
       }));
 
-      mappedData.sort((a, b) => {
-        const scoreA = getBusinessSortScore(a);
-        const scoreB = getBusinessSortScore(b);
-        if (scoreB !== scoreA) return scoreB - scoreA;
-        const priorityA = getSubscriptionPriority(a.statut_abonnement);
-        const priorityB = getSubscriptionPriority(b.statut_abonnement);
-        return priorityB - priorityA;
-      });
+      mappedData.sort(compareBusinessesByTrust);
 
       console.log(`[DEBUG] ✅ Mapping terminé: ${mappedData.length} entreprises`);
       console.log('═══════════════════════════════════════\n');
@@ -1085,6 +1102,8 @@ export const Businesses = ({
         imageUrl: item.image_url || null,
         logoUrl: item.logo_url || null,
         statut_abonnement: item.statut_abonnement || null,
+        cv_business_status: item.cv_business_status || null,
+        cv_business_published_at: item.cv_business_published_at || null,
         niveau_priorite_abonnement: null,
         badges: [],
         mots_cles_recherche: item['mots cles recherche'] || '',
@@ -1151,15 +1170,8 @@ export const Businesses = ({
         console.log(`\n[Recherche Multi-colonnes] ✅ Résultats filtrés: ${mappedData.length}`);
       }
 
-      // Trier par priorité (Certifié+Premium > Certifié > Premium > Activité > Autres)
-      mappedData.sort((a, b) => {
-        const scoreA = getBusinessSortScore(a);
-        const scoreB = getBusinessSortScore(b);
-        if (scoreB !== scoreA) return scoreB - scoreA;
-        const priorityA = getSubscriptionPriority(a.statut_abonnement);
-        const priorityB = getSubscriptionPriority(b.statut_abonnement);
-        return priorityB - priorityA;
-      });
+      // Trier par priorité (CV publié > avis Google fiables > autres).
+      mappedData.sort(compareBusinessesByTrust);
 
       console.log('═══════════════════════════════════════\n');
 
