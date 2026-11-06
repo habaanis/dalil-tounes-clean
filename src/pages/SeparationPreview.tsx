@@ -1,5 +1,5 @@
 import { ArrowRight, Building2, MapPin, QrCode, Search, Share2, Smartphone, Sparkles } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BusinessCard } from '../components/BusinessCard';
 import CvBusinessJourney from '../components/CvBusinessJourney';
@@ -256,10 +256,38 @@ function SeparationExperience({ fixedView }: { fixedView?: 'platform' | 'cv' }) 
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as Lang;
   const t = COPY[lang];
   const ecosystem = HOME_ECOSYSTEM_COPY[lang];
-  const { partners, totalCount, certifiedCount, loading } = useHomeData();
-  // Never present a historical hard-coded number as a live network count.
-  const countsAvailable = totalCount > 0;
-  const localizedCount = countsAvailable ? new Intl.NumberFormat(lang === 'ar' ? 'ar-TN' : lang).format(totalCount) : '—';
+  const { totalCount, certifiedCount, loading } = useHomeData();
+  // The actual public landing page is PlatformHome (not the legacy Home.tsx).
+  // Read the authoritative aggregate directly; never display the old 2 351 total
+  // from a stale client cache while the current RPC is still loading.
+  const [verifiedTotal, setVerifiedTotal] = useState<number | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    const refresh = async () => {
+      try {
+        const [{ createClient }, cfg] = await Promise.all([
+          import('@supabase/supabase-js'),
+          import('../lib/supabaseClient'),
+        ]);
+        const client = createClient(cfg.supabaseUrl, cfg.supabaseAnonKey, {
+          auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+        });
+        const { data, error } = await client.rpc('get_enterprise_record_count');
+        const count = Number(data);
+        if (!error && Number.isSafeInteger(count) && count > 0 && !cancelled) {
+          setVerifiedTotal(count);
+        }
+      } catch {
+        // Keep the count hidden on an unavailable network, not an obsolete total.
+      }
+    };
+    void refresh();
+    const onFocus = () => { void refresh(); };
+    window.addEventListener('focus', onFocus);
+    return () => { cancelled = true; window.removeEventListener('focus', onFocus); };
+  }, []);
+  const countsAvailable = verifiedTotal !== null;
+  const localizedCount = countsAvailable ? new Intl.NumberFormat(lang === 'ar' ? 'ar-TN' : lang).format(verifiedTotal) : '—';
   const localizedCertifiedCount = countsAvailable ? new Intl.NumberFormat(lang === 'ar' ? 'ar-TN' : lang).format(certifiedCount) : '—';
   const heroVideoSrc = lang === 'fr'
     ? 'https://static.metricool.com/video/4610595/202609/eaaff4e56ccf4aba.mp4'
@@ -337,7 +365,7 @@ function SeparationExperience({ fixedView }: { fixedView?: 'platform' | 'cv' }) 
 
           <FounderStory />
 
-          <VisibilityHouseSection totalCount={totalCount} loading={loading} showNetworkProof={false} />
+          <VisibilityHouseSection totalCount={verifiedTotal ?? 0} loading={verifiedTotal === null} showNetworkProof={false} />
         </>
       ) : (
         <>
