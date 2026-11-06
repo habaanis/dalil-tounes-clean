@@ -44,6 +44,7 @@ const NotFound = lazy(() => import('./pages/NotFound'));
 const Businesses = lazy(() => import('./pages/Businesses').then(m => ({ default: m.Businesses })));
 const Citizens = lazy(() => import('./pages/Citizens'));
 const CitizensHealth = lazy(() => import('./pages/CitizensHealth'));
+const ThermalismPage = lazy(() => import('./pages/ThermalismPage'));
 const CitizensLeisure = lazy(() => import('./pages/CitizensLeisure'));
 const CitizensShops = lazy(() => import('./pages/CitizensShops'));
 const CitizensServices = lazy(() => import('./pages/CitizensServicesLocalized'));
@@ -216,6 +217,8 @@ function AppRouter() {
           <Route path="/citizens" element={<Citizens />} />
           <Route path="/citizens/health" element={<CitizensHealth />} />
           <Route path="/citizens/sante" element={<CitizensHealth />} />
+          <Route path="/citizens/health/thermalisme" element={<ThermalismPage />} />
+          <Route path="/citizens/tourism/thermalisme" element={<ThermalismPage />} />
           <Route path="/citizens/admin" element={<CitizenServicesRedirect />} />
           <Route path="/citizens/leisure" element={<CitizensLeisure />} />
           <Route path="/citizens/loisirs" element={<CitizensLeisure />} />
