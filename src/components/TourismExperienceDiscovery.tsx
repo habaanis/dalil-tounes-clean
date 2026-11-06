@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { MapPin } from 'lucide-react';
+import { dedupeByAirtableId } from '../lib/dedupeByAirtableId';
 import ThermalWellnessExplorer from './ThermalWellnessExplorer';
 import { openCraftPhotoCatalog } from '../data/openCraftPhotoCatalog';
 import { supabase } from '../lib/supabaseClient';
@@ -14,7 +15,7 @@ const translations = {"fr":{"thermalisme":"Thermalisme","sourcesNaturelles":"Sou
 const additionalTranslations = {"fr":{"fallback":"Découvrez cette expérience locale.","unavailable":"Le répertoire est momentanément indisponible.","note":"Les paysages illustrent les régions et ne représentent pas nécessairement les établissements.","verification":"Le lien UNESCO est confirmé uniquement pour les expériences vérifiées.","before":"Contactez l'établissement pour confirmer les horaires et les activités.","ready":"Présentation à compléter."},"ar":{"fallback":"اكتشف هذه التجربة المحلية.","unavailable":"الدليل غير متاح مؤقتًا.","note":"الصور توضح المناطق ولا تمثل بالضرورة المنشآت.","verification":"لا يُنسب تصنيف اليونسكو إلا إلى التجارب التي تم التحقق منها.","before":"اتصل بالمنشأة للتأكد من المواعيد والأنشطة.","ready":"التعريف قيد الاستكمال."},"en":{"fallback":"Discover this local experience.","unavailable":"The directory is temporarily unavailable.","note":"Regional landscapes do not necessarily depict the listed businesses.","verification":"UNESCO status is assigned only to verified experiences.","before":"Contact the business to confirm opening times and activities.","ready":"Description to be completed."},"it":{"fallback":"Scopri questa esperienza locale.","unavailable":"La guida non è temporaneamente disponibile.","note":"Le immagini regionali non rappresentano necessariamente le attività elencate.","verification":"Il riconoscimento UNESCO riguarda solo esperienze verificate.","before":"Contatta la struttura per confermare orari e attività.","ready":"Descrizione da completare."},"ru":{"fallback":"Откройте для себя местный опыт.","unavailable":"Каталог временно недоступен.","note":"Пейзажи региона не обязательно изображают указанные организации.","verification":"Статус ЮНЕСКО указывается только для проверенных объектов.","before":"Уточните время и мероприятия у организации.","ready":"Описание будет добавлено."}};
 
 type LocalExperience = {
-  id: string; nom: string | null; ville: string | null; gouvernorat: string | null;
+  id: string; id_airtable?: string | null; nom: string | null; ville: string | null; gouvernorat: string | null;
   description: string | null; description_ar?: string | null; description_en?: string | null; description_it?: string | null; description_ru?: string | null; name_ar?: string | null; name_en?: string | null; name_it?: string | null; name_ru?: string | null; a_propos: string | null; image_url: string | null; categorie?: string[] | null;
 };
 
@@ -148,12 +149,12 @@ export default function TourismExperienceDiscovery() {
     let active = true;
     async function load() {
       const { data, error } = await supabase.from('entreprise')
-        .select('id,nom,ville,gouvernorat,description,description_ar,description_en,description_it,description_ru,name_ar,name_en,name_it,name_ru,a_propos,image_url,categorie')
+        .select('id,id_airtable,nom,ville,gouvernorat,description,description_ar,description_en,description_it,description_ru,name_ar,name_en,name_it,name_ru,a_propos,image_url,categorie')
         .contains('liste_pages', ['tourisme local & expatriation'])
         .eq('approved', true).eq('statut_publication', 'Publié')
         .order('nom', { ascending: true }).limit(500);
       if (!active) return;
-      setItems(uniqueExperiences(((data || []) as LocalExperience[]).filter(isLocalExperience)));
+      setItems(uniqueExperiences(dedupeByAirtableId(((data || []) as LocalExperience[]).filter(isLocalExperience))));
       setError(Boolean(error));
       setLoading(false);
     }
