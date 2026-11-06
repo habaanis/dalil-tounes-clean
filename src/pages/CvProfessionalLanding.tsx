@@ -6,7 +6,6 @@ import { CvPresentationModelSelector, type PaletteId, type PresentationModel } f
 import { simplifiedOfferCopy, offerCopy } from './Subscription';
 
 type Lang = 'fr' | 'ar' | 'en' | 'it' | 'ru';
-type Model = 'business' | 'portfolio';
 
 type Texts = {
   eyebrow: string; title: string; intro: string; free: string; freeDesc: string;
