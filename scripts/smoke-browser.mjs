@@ -104,7 +104,7 @@ try {
     await queryInput.fill('restaurant');
     const result = page.locator('body li.cursor-pointer').filter({has: page.locator('.font-medium')}).first();
     await result.waitFor({state:'visible',timeout:15000});
-    const selectedName = (await result.locator('.font-medium').first().innerText()).trim();
+    const selectedName = await result.locator('.font-medium').first().evaluate(node => Array.from(node.childNodes).filter(child => child.nodeType === 3).map(child => child.textContent || '').join('').trim());
     await result.click();
     await page.waitForURL(url => url.pathname === '/recherche', {timeout:10000});
     const filteredQuery = await queryInput.inputValue();
