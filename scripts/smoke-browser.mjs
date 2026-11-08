@@ -97,6 +97,10 @@ try {
     await page.goto(new URL('/recherche', base).toString(), {waitUntil:'domcontentloaded',timeout:20000});
     const queryInput = page.locator('[data-component-name="SearchBar"] input').first();
     await queryInput.waitFor({state:'visible',timeout:15000});
+    // Center the input before opening its fixed-position suggestion panel.
+    // Filling a below-the-fold input alone can leave that panel outside the viewport.
+    await queryInput.evaluate(node => node.scrollIntoView({block:'center'}));
+    await queryInput.click();
     await queryInput.fill('restaurant');
     const result = page.locator('body li.cursor-pointer').filter({has: page.locator('.font-medium')}).first();
     await result.waitFor({state:'visible',timeout:15000});
