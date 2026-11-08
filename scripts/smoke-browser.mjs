@@ -109,14 +109,25 @@ try {
     await page.waitForURL(url => url.pathname === '/recherche', {timeout:10000});
     const filteredQuery = await queryInput.inputValue();
     if (!selectedName || !filteredQuery) throw new Error('Selecting suggestion did not retain a search term');
-    // The filtered listing renders clickable BusinessSearchCardV2 articles.
-    const card = page.locator('article.group.cursor-pointer').first();
-    await card.waitFor({state:'visible',timeout:15000});
-    await card.click();
+    // Free directory cards intentionally have no detail navigation.
+    // Verify that selecting a suggestion produces its filtered entry.
+    await page.getByText(selectedName, {exact:true}).first().waitFor({state:'visible',timeout:15000});
+    if (searchErrors.length) throw new Error(searchErrors.join(' | '));
+    console.log('PASS Search suggestion -> filtered directory entry');
+    // Paid CV cards expose a separate, explicit detail action.
+    await queryInput.evaluate(node => node.scrollIntoView({block:'center'}));
+    await queryInput.click();
+    await queryInput.fill('Academy');
+    const paidSuggestion = page.locator('body li.cursor-pointer').filter({hasText:'Academy Arrachida Group'}).first();
+    await paidSuggestion.waitFor({state:'visible',timeout:15000});
+    await paidSuggestion.click();
+    const paidCard = page.locator('article.group.cursor-pointer').filter({hasText:'Academy Arrachida Group'}).first();
+    await paidCard.waitFor({state:'visible',timeout:15000});
+    await paidCard.getByRole('button', {name:/Voir les détails/}).click();
     await page.waitForURL(url => ['/entreprise/', '/entreprises/', '/business/'].some(prefix => url.pathname.startsWith(prefix)), {timeout:15000});
     await page.locator('#root').waitFor({state:'visible',timeout:12000});
     if (searchErrors.length) throw new Error(searchErrors.join(' | '));
-    console.log('PASS Search suggestion -> filtered card -> Business detail');
+    console.log('PASS Paid CV search -> Business detail');
   } catch(error) {
     failed++;
     console.log('FAIL Search suggestion -> filtered businesses: ' + error.message);
