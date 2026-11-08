@@ -5,6 +5,12 @@ const base = process.env.SMOKE_BASE_URL || 'https://dalil-tounes.com';
 const routes = ['/', '/recherche', '/citizens', '/citizens/health', '/education', '/citizens/shops', '/citizens/services', '/citizens/tourism', '/emplois'];
 const browser = await chromium.launch({ headless: true });
 let failed = 0;
+const completeWelcome = async (page) => {
+  const dialog = page.locator('[role="dialog"][aria-labelledby="welcome-title"]');
+  try { await dialog.waitFor({state:'visible',timeout:2500}); } catch { return; }
+  await dialog.getByRole('button', {name:'Choisir Français', exact:true}).click();
+  await dialog.waitFor({state:'hidden',timeout:5000});
+};
 const captureFailure = async (page, label) => {
   try {
     await mkdir('smoke-artifacts', { recursive: true });
@@ -36,6 +42,7 @@ try {
       page.off('pageerror', onError);
     }
   }
+  await completeWelcome(page);
   // Interactive route: Tourisme -> S'installer -> Santé, then Education.
   const navigationErrors = [];
   const onNavigationError = (error) => navigationErrors.push(error.message);
@@ -91,7 +98,7 @@ try {
     const queryInput = page.locator('[data-component-name="SearchBar"] input').first();
     await queryInput.waitFor({state:'visible',timeout:15000});
     await queryInput.fill('restaurant');
-    const result = page.locator('body li.cursor-pointer').first();
+    const result = page.locator('body li.cursor-pointer').filter({has: page.locator('.font-medium')}).first();
     await result.waitFor({state:'visible',timeout:15000});
     const selectedName = (await result.locator('.font-medium').first().innerText()).trim();
     await result.click();
