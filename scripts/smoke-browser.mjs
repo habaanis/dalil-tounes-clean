@@ -114,7 +114,10 @@ try {
     await page.getByText(selectedName, {exact:true}).first().waitFor({state:'visible',timeout:15000});
     if (searchErrors.length) throw new Error(searchErrors.join(' | '));
     console.log('PASS Search suggestion -> filtered directory entry');
+    // Start the independent paid-CV journey from its directory entry point.
     // Paid CV cards expose a separate, explicit detail action.
+    await page.goto(new URL('/recherche', base).toString(), {waitUntil:'domcontentloaded',timeout:20000});
+    await queryInput.waitFor({state:'visible',timeout:15000});
     await queryInput.evaluate(node => node.scrollIntoView({block:'center'}));
     await queryInput.click();
     await queryInput.fill('Academy');
