@@ -2,9 +2,24 @@
 import { chromium } from 'playwright';
 import { mkdir } from 'node:fs/promises';
 const base = process.env.SMOKE_BASE_URL || 'https://dalil-tounes.com';
+console.log(`Browser smoke target: ${new URL(base).origin}`);
 const routes = ['/', '/recherche', '/citizens', '/citizens/health', '/education', '/citizens/shops', '/citizens/services', '/citizens/tourism', '/emplois'];
 const browser = await chromium.launch({ headless: true });
 let failed = 0;
+let passed = 0;
+const expectedChecks = routes.length + 1 + 4 + 2;
+const assertPageContent = async (page) => {
+  // The shared navigation can render while a lazy route is still blank.
+  const main = page.locator('main').first();
+  await main.waitFor({ state: 'visible', timeout: 15000 });
+  await main.getByRole('heading').first().waitFor({ state: 'visible', timeout: 15000 });
+};
+const completeWelcome = async (page) => {
+  const dialog = page.locator('[role="dialog"][aria-labelledby="welcome-title"]');
+  try { await dialog.waitFor({state:'visible',timeout:2500}); } catch { return; }
+  await dialog.getByRole('button', {name:'Choisir Français', exact:true}).click();
+  await dialog.waitFor({state:'hidden',timeout:5000});
+};
 const captureFailure = async (page, label) => {
   try {
     await mkdir('smoke-artifacts', { recursive: true });
@@ -23,11 +38,12 @@ try {
     const started = Date.now();
     try {
       const response = await page.goto(new URL(route, base).toString(), { waitUntil: 'domcontentloaded', timeout: 20000 });
-      await page.locator('#root').waitFor({ state: 'visible', timeout: 12000 });
+      await assertPageContent(page);
       const visible = await page.locator('#root').evaluate(node => Boolean(node.textContent?.trim()) && node.getBoundingClientRect().height > 0);
       const ok = Boolean(response?.ok() && visible && errors.length === 0);
       console.log(`${ok ? 'PASS' : 'FAIL'} ${route} ${Date.now()-started}ms ${errors.join(' | ')}`);
-      if (!ok) { failed++; await captureFailure(page, `route-${route}`); }
+      if (ok) passed++;
+      else { failed++; await captureFailure(page, `route-${route}`); }
     } catch (error) {
       console.log(`FAIL ${route}: ${error.message}`);
       failed++;
@@ -36,6 +52,7 @@ try {
       page.off('pageerror', onError);
     }
   }
+  await completeWelcome(page);
   // Interactive route: Tourisme -> S'installer -> Santé, then Education.
   const navigationErrors = [];
   const onNavigationError = (error) => navigationErrors.push(error.message);
@@ -48,8 +65,10 @@ try {
     if (await settleTab.getAttribute('aria-selected') !== 'true') throw new Error('Settlement tab did not activate');
     await page.locator('nav a[href="/citizens/health"]').first().click();
     await page.waitForURL('**/citizens/health', { timeout: 15000 });
+    await assertPageContent(page);
     if (navigationErrors.length) throw new Error(navigationErrors.join(' | '));
     console.log('PASS Tourism -> Settlement -> Health navigation');
+    passed++;
   } catch (error) {
     console.log('FAIL Tourism -> Settlement -> Health navigation: ' + error.message);
     failed++;
@@ -71,9 +90,10 @@ try {
       await link.waitFor({state:'visible',timeout:12000});
       await link.click();
       await page.waitForURL('**' + destination, {timeout:15000});
-      await page.locator('#root').waitFor({state:'visible',timeout:12000});
+      await assertPageContent(page);
       if (errors.length) throw new Error(errors.join(' | '));
       console.log('PASS Settlement -> ' + destination);
+      passed++;
     } catch(error) {
       failed++;
       console.log('FAIL Settlement -> ' + destination + ': ' + error.message);
@@ -90,22 +110,43 @@ try {
     await page.goto(new URL('/recherche', base).toString(), {waitUntil:'domcontentloaded',timeout:20000});
     const queryInput = page.locator('[data-component-name="SearchBar"] input').first();
     await queryInput.waitFor({state:'visible',timeout:15000});
+    // Center the input before opening its fixed-position suggestion panel.
+    // Filling a below-the-fold input alone can leave that panel outside the viewport.
+    await queryInput.evaluate(node => node.scrollIntoView({block:'center'}));
+    await queryInput.click();
     await queryInput.fill('restaurant');
-    const result = page.locator('body li.cursor-pointer').first();
+    const result = page.locator('body li.cursor-pointer').filter({has: page.locator('.font-medium')}).first();
     await result.waitFor({state:'visible',timeout:15000});
-    const selectedName = (await result.locator('.font-medium').first().innerText()).trim();
+    const selectedName = await result.locator('.font-medium').first().evaluate(node => Array.from(node.childNodes).filter(child => child.nodeType === 3).map(child => child.textContent || '').join('').trim());
     await result.click();
     await page.waitForURL(url => url.pathname === '/recherche', {timeout:10000});
     const filteredQuery = await queryInput.inputValue();
-    if (!selectedName || !filteredQuery) throw new Error('Selecting suggestion did not retain a search term');
-    // The filtered listing renders clickable BusinessSearchCardV2 articles.
-    const card = page.locator('article.group.cursor-pointer').first();
-    await card.waitFor({state:'visible',timeout:15000});
-    await card.click();
-    await page.waitForURL(url => ['/entreprise/', '/entreprises/', '/business/'].some(prefix => url.pathname.startsWith(prefix)), {timeout:15000});
-    await page.locator('#root').waitFor({state:'visible',timeout:12000});
+    if (!selectedName || filteredQuery.trim() !== selectedName) throw new Error('Selecting suggestion did not retain the selected business name');
+    // Free directory cards intentionally have no detail navigation.
+    // Verify that selecting a suggestion produces its filtered entry.
+    // Suggestions are portalled to body: scope this check to the actual route.
+    await page.locator('main').first().getByText(selectedName, {exact:true}).first().waitFor({state:'visible',timeout:15000});
     if (searchErrors.length) throw new Error(searchErrors.join(' | '));
-    console.log('PASS Search suggestion -> filtered card -> Business detail');
+    console.log('PASS Search suggestion -> filtered directory entry');
+    passed++;
+    // Start the independent paid-CV journey from its directory entry point.
+    // Paid CV cards expose a separate, explicit detail action.
+    await page.goto(new URL('/recherche', base).toString(), {waitUntil:'domcontentloaded',timeout:20000});
+    await queryInput.waitFor({state:'visible',timeout:15000});
+    await queryInput.evaluate(node => node.scrollIntoView({block:'center'}));
+    await queryInput.click();
+    await queryInput.fill('Academy');
+    const paidSuggestion = page.locator('body li.cursor-pointer').filter({hasText:'Academy Arrachida Group'}).first();
+    await paidSuggestion.waitFor({state:'visible',timeout:15000});
+    await paidSuggestion.click();
+    const paidCard = page.locator('article.group.cursor-pointer').filter({hasText:'Academy Arrachida Group'}).first();
+    await paidCard.waitFor({state:'visible',timeout:15000});
+    await paidCard.getByRole('button', {name:/Voir les détails/}).click();
+    await page.waitForURL(url => ['/entreprise/', '/entreprises/', '/business/'].some(prefix => url.pathname.startsWith(prefix)), {timeout:15000});
+    await page.getByRole('heading', {name:'Academy Arrachida Group', exact:true}).waitFor({state:'visible',timeout:15000});
+    if (searchErrors.length) throw new Error(searchErrors.join(' | '));
+    console.log('PASS Paid CV search -> Business detail');
+    passed++;
   } catch(error) {
     failed++;
     console.log('FAIL Search suggestion -> filtered businesses: ' + error.message);
@@ -116,4 +157,5 @@ try {
 } finally {
   await browser.close();
 }
-if (failed) process.exitCode = 1;
+console.log(`${passed}/${expectedChecks} browser checks passed; ${failed} failed`);
+if (failed || passed !== expectedChecks) process.exitCode = 1;
