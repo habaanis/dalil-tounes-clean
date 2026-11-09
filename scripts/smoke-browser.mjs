@@ -2,6 +2,7 @@
 import { chromium } from 'playwright';
 import { mkdir } from 'node:fs/promises';
 const base = process.env.SMOKE_BASE_URL || 'https://dalil-tounes.com';
+console.log(`Browser smoke target: ${new URL(base).origin}`);
 const routes = ['/', '/recherche', '/citizens', '/citizens/health', '/education', '/citizens/shops', '/citizens/services', '/citizens/tourism', '/emplois'];
 const browser = await chromium.launch({ headless: true });
 let failed = 0;
