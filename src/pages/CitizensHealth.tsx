@@ -263,10 +263,10 @@ export default function CitizensHealth({}: CitizensHealthProps) {
   return (
     <div className="public-surface min-h-screen bg-gradient-to-b from-white to-gray-50" dir={isRTL ? 'rtl' : 'ltr'}>
       <section className="relative w-full overflow-hidden rounded-b-3xl shadow-lg">
-        <img src={getSupabaseImageUrl('sante.jpg')} alt={c.heroAlt} className="w-full h-[240px] object-cover" decoding="async" />
-        <div className="absolute inset-0 bg-gradient-to-br from-[#4A1D43]/40 to-[#6B2D5C]/30" />
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
-          <motion.h1 initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }} className="text-4xl md:text-5xl font-light text-[#D4AF37] mb-3 drop-shadow-lg" style={{ fontFamily: "'Playfair Display', serif" }}>
+        <img src={getSupabaseImageUrl('sante.jpg')} alt={c.heroAlt} className="absolute inset-0 w-full h-full object-cover" decoding="async" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#35172f]/80 to-[#35172f]/70" />
+        <div className="relative min-h-[220px] flex flex-col items-center justify-center text-center px-4 py-7">
+          <motion.h1 initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }} className="public-title text-4xl md:text-5xl font-light text-[#D4AF37] mb-3 drop-shadow-lg" style={{ fontFamily: "'Playfair Display', serif" }}>
             {c.pageTitle}
           </motion.h1>
           <motion.p initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6, delay: 0.1 }} className="text-base md:text-lg font-light text-white/95 max-w-3xl leading-relaxed drop-shadow-lg">
@@ -329,7 +329,7 @@ export default function CitizensHealth({}: CitizensHealthProps) {
           <div className="relative h-32 rounded-xl overflow-hidden mb-4 shadow-lg border border-[#D4AF37]">
             <img src={getSupabaseImageUrl('sante_banner.webp')} alt={c.transportAlt} className="w-full h-full object-cover" decoding="async" />
             <div className="absolute inset-0 bg-gradient-to-r from-[#4A1D43]/90 to-[#6B2D5C]/80" />
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
+            <div className="relative min-h-[220px] flex flex-col items-center justify-center text-center px-4 py-7">
               <h2 className="public-heading text-xl md:text-2xl font-light text-[#D4AF37] mb-1 drop-shadow-lg" style={{ fontFamily: "'Playfair Display', serif" }}>🚑 {c.transportTitle}</h2>
               <p className="text-white/95 text-xs md:text-sm font-light max-w-2xl mx-auto drop-shadow leading-snug">{c.transportSubtitle}</p>
             </div>

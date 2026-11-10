@@ -114,14 +114,14 @@ export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
         currentPath="/citizens/shops"
       />
       <section
-        className="relative w-full overflow-hidden rounded-b-2xl shadow-md h-[300px] bg-cover"
+        className="relative w-full overflow-hidden rounded-b-2xl shadow-md min-h-[220px] bg-cover"
         style={{
           backgroundImage: 'linear-gradient(to top, rgba(74, 29, 67, 0.8), rgba(74, 29, 67, 0.3), transparent), url(/images/cat_magasin.jpg.jpg)',
           backgroundSize: 'cover',
           backgroundPosition: 'center 30%'
         }}
       >
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-4 py-6">
+        <div className="relative min-h-[220px] flex flex-col items-center justify-center text-center text-white px-4 py-7">
           <h1 className="public-title text-3xl md:text-4xl font-semibold mb-2 drop-shadow-lg text-[#D4AF37]">{t.title}</h1>
           <p className="text-sm md:text-base font-light text-white/95 max-w-3xl leading-relaxed drop-shadow-lg">{t.intro}</p>
         </div>

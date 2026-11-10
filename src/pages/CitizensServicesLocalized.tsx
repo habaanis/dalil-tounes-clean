@@ -353,10 +353,10 @@ export default function CitizensServicesLocalized() {
         canonical="https://dalil-tounes.com/citizens/services"
         currentPath="/citizens/services"
       />
-      <section className="relative h-[240px] overflow-hidden">
+      <section className="relative min-h-[220px] overflow-hidden">
         <img src={getStructureImageUrl('/images/service-social.jpg')} alt={c.title} className="absolute inset-0 w-full h-full object-cover" loading="lazy" decoding="async" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#4A1D43]/90 via-[#4A1D43]/75 to-[#D4AF37]/30" />
-        <div className="relative h-full flex items-center justify-center px-4 text-center text-white">
+        <div className="relative min-h-[220px] flex items-center justify-center px-4 py-7 text-center text-white">
           <div className="max-w-4xl"><h1 className="public-title text-3xl md:text-4xl font-medium mb-3 text-[#D4AF37]">{c.title}</h1><p className="text-sm md:text-base leading-relaxed">{c.intro}</p></div>
         </div>
       </section>

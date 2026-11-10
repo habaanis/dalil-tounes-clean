@@ -278,38 +278,38 @@ export default function CultureEvents() {
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-          <div className="text-center mb-16">
+          <div className="text-center mb-8">
             <div className="flex justify-center mb-6">
               <div className="relative">
                 <div className="absolute inset-0 bg-[#D4AF37] blur-2xl opacity-30 rounded-full"></div>
-                <Calendar className="relative w-20 h-20 text-[#D4AF37] drop-shadow-sm" />
+                <Calendar className="relative w-10 h-10 text-[#806336] drop-shadow-sm" />
               </div>
             </div>
 
-            <h1 className="public-title text-5xl md:text-6xl font-medium text-white mb-4 drop-shadow-sm">
+            <h1 className="public-title text-5xl md:text-6xl font-medium text-[#35172f] mb-4 drop-shadow-sm">
               {t.title}
             </h1>
-            <p className="text-xl text-[#D4AF37] font-semibold mb-4">
+            <p className="text-xl text-[#806336] font-semibold mb-4">
               {t.subtitle}
             </p>
-            <p className="text-gray-300 text-lg max-w-3xl mx-auto leading-relaxed">
+            <p className="text-[#6c6068] text-lg max-w-3xl mx-auto leading-relaxed">
               {t.description}
             </p>
 
             <div className="flex justify-center items-center gap-3 mt-8">
-              <label className="text-white font-semibold text-sm">
+              <label className="text-[#35172f] font-semibold text-sm">
                 {t.filterLabel}
               </label>
               <select
                 value={selectedSecteur}
                 onChange={(e) => setSelectedSecteur(e.target.value)}
-                className="px-6 py-3 rounded-xl border-2 border-[#D4AF37]/30 bg-white/10 backdrop-blur-sm text-white font-medium focus:border-[#D4AF37] focus:ring-4 focus:ring-[#D4AF37]/20 outline-none transition-all hover:bg-white/15"
+                className="px-6 py-3 rounded-xl border-2 border-[#D4AF37]/30 bg-white/10 backdrop-blur-sm text-[#35172f] font-medium focus:border-[#D4AF37] focus:ring-4 focus:ring-[#D4AF37]/20 outline-none transition-all hover:bg-white/15"
               >
-                <option value="all" className="bg-[#1a1f3a] text-white">{t.allTypes}</option>
+                <option value="all" className="bg-[#fffdf9] text-[#35172f]">{t.allTypes}</option>
                 {SECTEURS_CULTURE.map((secteur) => {
                   const label = t.secteurLabels?.[secteur] || secteur;
                   return (
-                    <option key={secteur} value={secteur} className="bg-[#1a1f3a] text-white">
+                    <option key={secteur} value={secteur} className="bg-[#fffdf9] text-[#35172f]">
                       {label}
                     </option>
                   );
@@ -321,21 +321,21 @@ export default function CultureEvents() {
           {loading ? (
             <div className="text-center py-12">
               <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#D4AF37]"></div>
-              <p className="text-gray-300 mt-4">{t.loading}</p>
+              <p className="text-[#6c6068] mt-4">{t.loading}</p>
             </div>
           ) : (
-            <div className="space-y-16 max-w-7xl mx-auto">
+            <div className="space-y-10 max-w-7xl mx-auto">
               <div>
                 <div className="flex justify-center items-center gap-4 mb-4">
-                  <h2 className="public-heading text-3xl font-medium text-cyan-400 text-center">
+                  <h2 className="public-heading text-3xl font-medium text-[#35172f] text-center">
                     {t.premiumAgenda.weekly.badge}
                   </h2>
-                  <span className="px-4 py-2 bg-cyan-500/20 text-cyan-300 rounded-full font-medium text-xl border-2 border-cyan-400">
+                  <span className="px-4 py-2 bg-[#f3eddf] text-[#35172f] rounded-full font-medium text-xl border-2 border-[#d9c9a4]">
                     {weeklyEvents.length} {weeklyEvents.length > 1 ? t.eventPlural : t.eventSingular}
                   </span>
                 </div>
                 {weeklyEvents.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                     {weeklyEvents.map((event) => (
                       <CultureEventAgendaCard
                         key={event.id}
@@ -348,7 +348,7 @@ export default function CultureEvents() {
                     ))}
                   </div>
                 ) : (
-                  <div className="text-center py-10 text-gray-400">
+                  <div className="text-center py-10 text-[#6c6068]">
                     <Calendar className="w-12 h-12 mx-auto mb-4 opacity-30" />
                     <p>{t.noEvents}</p>
                   </div>
@@ -357,15 +357,15 @@ export default function CultureEvents() {
 
               <div>
                 <div className="flex justify-center items-center gap-4 mb-4">
-                  <h2 className="public-heading text-3xl font-medium text-emerald-400 text-center">
+                  <h2 className="public-heading text-3xl font-medium text-[#35172f] text-center">
                     {t.premiumAgenda.monthly.badge}
                   </h2>
-                  <span className="px-4 py-2 bg-emerald-500/20 text-emerald-300 rounded-full font-medium text-xl border-2 border-emerald-400">
+                  <span className="px-4 py-2 bg-[#f3eddf] text-[#35172f] rounded-full font-medium text-xl border-2 border-[#d9c9a4]">
                     {monthlyEvents.length} {monthlyEvents.length > 1 ? t.eventPlural : t.eventSingular}
                   </span>
                 </div>
                 {monthlyEvents.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                     {monthlyEvents.map((event) => (
                       <CultureEventAgendaCard
                         key={event.id}
@@ -378,7 +378,7 @@ export default function CultureEvents() {
                     ))}
                   </div>
                 ) : (
-                  <div className="text-center py-10 text-gray-400">
+                  <div className="text-center py-10 text-[#6c6068]">
                     <Calendar className="w-12 h-12 mx-auto mb-4 opacity-30" />
                     <p>{t.noEvents}</p>
                   </div>
@@ -387,15 +387,15 @@ export default function CultureEvents() {
 
               <div>
                 <div className="flex justify-center items-center gap-4 mb-4">
-                  <h2 className="public-heading text-3xl font-medium text-[#FFD700] text-center">
+                  <h2 className="public-heading text-3xl font-medium text-[#806336] text-center">
                     {t.premiumAgenda.annual.badge}
                   </h2>
-                  <span className="px-4 py-2 bg-[#D4AF37]/20 text-[#FFD700] rounded-full font-medium text-xl border-2 border-[#FFD700]">
+                  <span className="px-4 py-2 bg-[#D4AF37]/20 text-[#806336] rounded-full font-medium text-xl border-2 border-[#d9c9a4]">
                     {annualEvents.length} {annualEvents.length > 1 ? t.eventPlural : t.eventSingular}
                   </span>
                 </div>
                 {annualEvents.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                     {annualEvents.map((event) => (
                       <CultureEventAgendaCard
                         key={event.id}
@@ -408,7 +408,7 @@ export default function CultureEvents() {
                     ))}
                   </div>
                 ) : (
-                  <div className="text-center py-10 text-gray-400">
+                  <div className="text-center py-10 text-[#6c6068]">
                     <Calendar className="w-12 h-12 mx-auto mb-4 opacity-30" />
                     <p>{t.noEvents}</p>
                   </div>
