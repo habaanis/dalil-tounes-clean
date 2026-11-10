@@ -38,8 +38,8 @@ Inventaire des motifs déclarés dans AppRouter ; les pages dynamiques représen
 | /emploi | Jobs | Public |
 | /emplois | Jobs | Public |
 | /emplois/publier | PublishJob | Public |
-| /emplois/mes-recommandations | CandidateJobMatches | Public |
-| /emplois/:jobId/candidats | JobCandidateMatches | Public |
+| /emplois/mes-recommandations | CandidateJobMatches | Privé — exclu |
+| /emplois/:jobId/candidats | JobCandidateMatches | Privé — exclu |
 | /education | Education | Public |
 | /education-event-form | EducationEventForm | Public |
 | /culture-events | CultureEvents | Public |

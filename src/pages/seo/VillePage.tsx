@@ -102,7 +102,7 @@ const VillePage: React.FC = () => {
               backgroundImage: 'radial-gradient(circle at 50% 50%, #D4AF37 0%, transparent 60%)',
             }}
           />
-          <div className="container mx-auto max-w-5xl relative">
+          <div className="public-seo-container mx-auto max-w-5xl relative">
             <Breadcrumb
               items={[
                 { label: t.breadcrumbHome, href: '/' },
@@ -136,7 +136,7 @@ const VillePage: React.FC = () => {
           </div>
         </div>
 
-        <div className="container mx-auto max-w-5xl px-4 py-8">
+        <div className="public-seo-container mx-auto max-w-5xl px-4 py-8">
           <div className="mb-8 bg-[#fffdf9] rounded-xl p-4 border border-[#D4AF37]/30">
             <SearchBar scope="global" />
           </div>

@@ -85,3 +85,4 @@
 .public-page [data-public-form] :is(input, textarea) { background: white; color: var(--public-ink); border-color: var(--public-gold); }
 .public-page [data-public-form] button[type="submit"] { background: #42213b; color: white; box-shadow: none; border-width: 1px; }
 .public-page .public-surface { background: var(--public-ivory); }
+.public-page .public-seo-container { width: 100%; max-width: 64rem; margin-inline: auto; }
