@@ -129,7 +129,7 @@ const copy: Record<Language, ConceptCopy> = {
   },
 };
 
-export default function Concept() {
+export default function Concept({ embedded = false }: { embedded?: boolean }) {
   const currentPath = useHreflangPath();
   const { language } = useLanguage();
   const t = copy[language] || copy.fr;
@@ -137,7 +137,7 @@ export default function Concept() {
 
   return (
     <div className="min-h-screen bg-white" dir={isRTL ? 'rtl' : 'ltr'}>
-      <StructuredData data={[{ '@context': 'https://schema.org', '@type': 'AboutPage', name: t.breadcrumbCurrent, description: t.seoDescription, url: 'https://dalil-tounes.com/concept' }, { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: t.breadcrumbHome, item: 'https://dalil-tounes.com/' }, { '@type': 'ListItem', position: 2, name: t.breadcrumbCurrent }] }]} />
+      {!embedded && <><StructuredData data={[{ '@context': 'https://schema.org', '@type': 'AboutPage', name: t.breadcrumbCurrent, description: t.seoDescription, url: 'https://dalil-tounes.com/concept' }, { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: t.breadcrumbHome, item: 'https://dalil-tounes.com/' }, { '@type': 'ListItem', position: 2, name: t.breadcrumbCurrent }] }]} />
       <SEOHead title={t.seoTitle} description={t.seoDescription} keywords={t.seoKeywords} image="/images/pourquoi-business-card.png" type="website" canonical="https://dalil-tounes.com/concept" currentPath={currentPath} />
 
       <div className="max-w-5xl mx-auto px-4 pt-6"><Breadcrumb items={[{ label: t.breadcrumbHome, href: '/' }, { label: t.breadcrumbCurrent }]} /></div>
@@ -147,6 +147,7 @@ export default function Concept() {
         <div className="relative z-10 mx-auto max-w-4xl px-6 py-12 text-center"><h1 className="mb-4 text-3xl font-bold leading-tight text-white drop-shadow-lg sm:text-4xl md:text-5xl">{t.heroTitleBefore} <span className="text-[#D4AF37]">Dalil Tounes</span>{t.heroTitleAfter}</h1><p className="mx-auto max-w-3xl text-base leading-relaxed text-gray-100 drop-shadow sm:text-lg">{t.heroDescription}</p></div>
       </section>
 
+      </>}
       <section className="px-4 pt-7"><div className="mx-auto max-w-5xl"><GuideMascot variant="welcome" pose="hello" position="left" size="sm" title={t.mascotTitle} message={t.mascotMessage} /></div></section>
 
       <section className="px-4 py-10">

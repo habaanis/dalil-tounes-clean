@@ -254,9 +254,9 @@ const Footer: React.FC = () => {
               <li><Link to="/" className={footerLink}>{f?.home || t.nav.home}</Link></li>
               <li><Link to="/entreprises" className={footerLink}>{f?.businesses || t.nav.businesses}</Link></li>
               <li><Link to="/emplois" className={footerLink}>{f?.jobs || t.nav.jobs}</Link></li>
-              <li><Link to="/notre-concept" className={footerLink}>{f?.concept || 'Notre Concept'}</Link></li>
+              <li><Link to="/subscription#concept" className={footerLink}>{f?.concept || 'Notre Concept'}</Link></li>
               <li><Link to="/blog" className={footerLink}>{f?.blog || 'Articles'}</Link></li>
-              <li><Link to="/abonnement" className={footerLink}>{f?.subscriptions || t.nav.subscription}</Link></li>
+              <li><Link to="/subscription" className={footerLink}>{f?.subscriptions || t.nav.subscription}</Link></li>
             </ul>
           </div>
 
@@ -279,7 +279,7 @@ const Footer: React.FC = () => {
             </h4>
             <ul className="space-y-2.5">
               <li><Link to="/pourquoi-dalil-tounes" className={footerLink}>{why}</Link></li>
-              <li><Link to="/concept" className={footerLink}>{how}</Link></li>
+              <li><Link to="/subscription#concept" className={footerLink}>{how}</Link></li>
               <li><Link to="/blog" className={footerLink}>{articles}</Link></li>
             </ul>
           </div>

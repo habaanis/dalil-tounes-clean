@@ -11,11 +11,33 @@ if (typeof window !== 'undefined') {
 }
 
 function ScrollToTop() {
-  const { pathname } = useLocation();
+  const { pathname, hash } = useLocation();
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
+    if (!hash) { window.scrollTo(0, 0); return; }
+    // Lazy route content can mount after the location changes.
+    let observer: MutationObserver | undefined;
+    const reveal = () => {
+      const target = document.getElementById(decodeURIComponent(hash.slice(1)));
+      if (!target) return false;
+      for (let node: HTMLElement | null = target; node; node = node.parentElement) {
+        if (node instanceof HTMLDetailsElement) node.open = true;
+      }
+      target.scrollIntoView({ block: 'start' });
+      observer?.disconnect();
+      return true;
+    };
+    if (reveal()) return;
+    observer = new MutationObserver(reveal);
+    observer.observe(document.getElementById('root') ?? document.body, { childList: true, subtree: true });
+    const timer = window.setTimeout(() => observer?.disconnect(), 10000);
+    return () => { observer?.disconnect(); window.clearTimeout(timer); };
+  }, [pathname, hash]);
   return null;
+}
+
+function CommercialRedirect({ section }: { section?: string }) {
+  const { search, hash } = useLocation();
+  return <Navigate to={{ pathname: '/subscription', search, hash: hash || (section ? `#${section}` : '') }} replace />;
 }
 
 function CitizenServicesRedirect() {
@@ -85,7 +107,6 @@ const AdminBusinessNeeds = lazy(() => import('./pages/AdminBusinessNeeds'));
 const Auth = lazy(() => import('./pages/Auth'));
 const CandidateDashboard = lazy(() => import('./pages/CandidateDashboard'));
 const CompanyDashboard = lazy(() => import('./pages/CompanyDashboard'));
-const Concept = lazy(() => import('./pages/Concept'));
 const BecomePartner = lazy(() => import('./pages/BecomePartner'));
 const PourquoiDalilTounes = lazy(() => import('./pages/PourquoiDalilTounes'));
 const Blog = lazy(() => import('./pages/blog/Blog'));
@@ -278,11 +299,11 @@ function AppRouter() {
           <Route path="/subscription" element={<Subscription />} />
           <Route path="/cv-business" element={<CvBusinessHome />} />
           <Route path="/preview/separation-plateforme-cv" element={<SeparationPreview />} />
-          <Route path="/abonnement" element={<Subscription />} />
+          <Route path="/abonnement" element={<CommercialRedirect />} />
           <Route path="/paiement/confirmation" element={<PaiementConfirmation />} />
-          <Route path="/concept" element={<Concept />} />
+          <Route path="/concept" element={<CommercialRedirect section="concept" />} />
           <Route path="/devenir-partenaire" element={<BecomePartner />} />
-          <Route path="/notre-concept" element={<Concept />} />
+          <Route path="/notre-concept" element={<CommercialRedirect section="concept" />} />
           <Route path="/pourquoi-dalil-tounes" element={<PourquoiDalilTounes />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />

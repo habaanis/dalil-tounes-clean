@@ -1,15 +1,17 @@
-import { ArrowRight, Building2, MapPin, QrCode, Search, Share2, Smartphone, Sparkles } from 'lucide-react';
+import { EssentialPresence } from '../components/EssentialPresence';
+import { siteStructureCopy } from '../lib/siteStructureCopy';
+import { SEOHead } from '../components/SEOHead';
+import StructuredData from '../components/StructuredData';
+import { getHomeSeoMeta } from '../lib/seoMetaTemplates';
+import { generateOrganizationSchema, generateWebSiteSchema } from '../lib/structuredDataSchemas';
+import { ArrowRight, Building2, MapPin, QrCode, Search, Share2, Sparkles } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BusinessCard } from '../components/BusinessCard';
 import CvBusinessJourney from '../components/CvBusinessJourney';
 import CvCapabilitiesSection from '../components/CvCapabilitiesSection';
 import SearchBar from '../components/SearchBar';
-import VisibilityHouseSection from '../components/VisibilityHouseSection';
 import { useLanguage } from '../context/LanguageContext';
-import { FounderStory } from '../components/FounderStory';
 import { useHomeData } from '../hooks/useHomeData';
-import { extractFrenchName } from '../lib/textNormalization';
 
 type Lang = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 
@@ -247,21 +249,23 @@ const HOME_ECOSYSTEM_COPY: Record<Lang, {
   },
 };
 
-function SeparationExperience({ fixedView }: { fixedView?: 'platform' | 'cv' }) {
+function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'platform' | 'cv'; embedded?: boolean }) {
   const [previewView, setPreviewView] = useState<'platform' | 'cv'>('platform');
-  const [platformCvModel, setPlatformCvModel] = useState<'business' | 'portfolio'>('business');
   const navigate = useNavigate();
   const view = fixedView ?? previewView;
   const { language } = useLanguage();
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as Lang;
   const t = COPY[lang];
   const ecosystem = HOME_ECOSYSTEM_COPY[lang];
-  const { totalCount, certifiedCount, loading } = useHomeData();
+  const { certifiedCount } = useHomeData();
+  const structure = siteStructureCopy[lang];
+  const CvHeading = embedded ? 'h3' : 'h1';
   // The actual public landing page is PlatformHome (not the legacy Home.tsx).
   // Read the authoritative aggregate directly; never display the old 2 351 total
   // from a stale client cache while the current RPC is still loading.
   const [verifiedTotal, setVerifiedTotal] = useState<number | null>(null);
   useEffect(() => {
+    if (view !== 'platform') return;
     let cancelled = false;
     const refresh = async () => {
       try {
@@ -285,7 +289,7 @@ function SeparationExperience({ fixedView }: { fixedView?: 'platform' | 'cv' }) 
     const onFocus = () => { void refresh(); };
     window.addEventListener('focus', onFocus);
     return () => { cancelled = true; window.removeEventListener('focus', onFocus); };
-  }, []);
+  }, [view]);
   const countsAvailable = verifiedTotal !== null;
   const localizedCount = countsAvailable ? new Intl.NumberFormat(lang === 'ar' ? 'ar-TN' : lang).format(verifiedTotal) : '—';
   const localizedCertifiedCount = countsAvailable ? new Intl.NumberFormat(lang === 'ar' ? 'ar-TN' : lang).format(certifiedCount) : '—';
@@ -297,6 +301,8 @@ function SeparationExperience({ fixedView }: { fixedView?: 'platform' | 'cv' }) 
 
   return (
     <div dir={lang === 'ar' ? 'rtl' : 'ltr'} className="bg-white text-slate-900">
+      {view === 'platform' && <><SEOHead {...getHomeSeoMeta()} currentPath="/" /><StructuredData data={[generateOrganizationSchema(), generateWebSiteSchema()]} /></>}
+      {!embedded && view === 'cv' && <SEOHead title={`${structure.products} | Dalil Tounes`} description={t.cvDescription} canonical="https://dalil-tounes.com/cv-business" currentPath="/cv-business" />}
       {!fixedView && <div className="sticky top-0 z-40 border-b border-[#D4AF37]/35 bg-white/95 px-4 py-3 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-3">
           <p className="hidden text-sm font-bold text-[#4A1D43] sm:block">{t.previewNotice}</p>
@@ -309,22 +315,19 @@ function SeparationExperience({ fixedView }: { fixedView?: 'platform' | 'cv' }) 
 
       {view === 'platform' ? (
         <>
-          <section className="border-b border-[#D4AF37]/25 bg-[radial-gradient(circle_at_top_left,rgba(212,175,55,0.18),transparent_28%),linear-gradient(135deg,#fffdf8_0%,#ffffff_52%,#f7f0f5_100%)] px-4 py-10 md:py-16">
+          <section className="border-b border-[#D4AF37]/25 bg-[radial-gradient(circle_at_top_left,rgba(212,175,55,0.18),transparent_28%),linear-gradient(135deg,#fffdf8_0%,#ffffff_52%,#f7f0f5_100%)] px-4 py-6 md:py-8">
             <div className="mx-auto max-w-5xl text-center">
               <div className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/45 bg-white px-3 py-1.5 text-xs font-black uppercase tracking-[0.14em] text-[#4A1D43] shadow-sm"><Building2 className="h-4 w-4 text-[#D4AF37]" /> {t.platformLabel}</div>
-              <h1 className="mx-auto mt-5 max-w-3xl font-serif text-4xl font-bold leading-tight text-[#2E102A] md:text-6xl">{t.platformTitle}</h1>
+              <h1 className="mx-auto mt-5 max-w-3xl font-serif text-3xl font-bold leading-tight text-[#2E102A] md:text-4xl">{t.platformTitle}</h1>
               <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-gray-600 md:text-lg">{t.platformDescription}</p>
               <div className="mx-auto mt-7 max-w-3xl rounded-2xl border border-[#D4AF37]/40 bg-white p-3 shadow-[0_18px_45px_rgba(74,29,67,0.10)]"><SearchBar scope="global" autoSearch resultMode="redirectToResults" /></div>
               <div className="mx-auto mt-4 max-w-3xl rounded-2xl border border-[#D4AF37]/55 bg-[#FFF8E6] px-4 py-3 text-[#4A1D43] shadow-sm">
                 <p className="text-base font-black leading-relaxed md:text-xl">{countsAvailable ? t.networkProof(localizedCount) : <span className="text-sm font-semibold opacity-70" role="status">{t.loadingCount}</span>}</p>
                 <p className="mt-1 text-sm font-bold text-[#9A7416] md:text-base">{countsAvailable ? t.certifiedProof(localizedCertifiedCount) : <span className="text-sm font-medium opacity-70" role="status">{t.certifiedLoading}</span>}</p>
               </div>
-              <div className="mx-auto mt-3 grid max-w-3xl grid-cols-2 gap-2 sm:grid-cols-4">{t.categories.map(([label, href]) => <a key={href} href={href} className="min-h-11 rounded-xl border border-[#D4AF37]/40 bg-white px-3 py-3 text-sm font-bold text-[#4A1D43] transition hover:bg-[#FFF8DF]">{label}</a>)}</div>
-              <div className="mx-auto mt-5 max-w-5xl rounded-2xl border border-[#D4AF37]/40 bg-white/90 p-3 text-left shadow-[0_14px_35px_rgba(74,29,67,0.08)] rtl:text-right sm:p-4">
-                <div className="flex flex-col gap-1 px-1 pb-3 sm:flex-row sm:items-end sm:justify-between">
-                  <h2 className="font-serif text-lg font-bold text-[#2E102A] sm:text-xl">{ecosystem.title}</h2>
-                  <p className="text-xs font-semibold text-[#9A7416]">{ecosystem.hint}</p>
-                </div>
+              <nav className="mx-auto mt-3 grid max-w-3xl grid-cols-2 gap-2 sm:grid-cols-4" aria-label={structure.platform}>{t.categories.map(([label, href]) => <a key={href} href={href} className="min-h-11 rounded-xl border border-[#D4AF37]/40 bg-white px-3 py-3 text-sm font-bold text-[#4A1D43] transition hover:bg-[#FFF8DF]">{label}</a>)}<a href="/citizens/tourism" className="rounded-xl border border-[#D4AF37]/40 p-3 text-sm font-bold text-[#4A1D43]">{structure.visit}</a><a href="/citizens/tourism?tab=settle" className="rounded-xl border border-[#D4AF37]/40 p-3 text-sm font-bold text-[#4A1D43]">{structure.settle}</a></nav>
+              <details className="mx-auto mt-4 max-w-5xl rounded-2xl border border-[#D4AF37]/40 bg-white/90 p-3 text-left shadow-[0_14px_35px_rgba(74,29,67,0.08)] rtl:text-right sm:p-4">
+                <summary className="cursor-pointer py-2 font-bold text-[#4A1D43]">{structure.services}</summary>
                 <div className="grid grid-cols-2 gap-2 lg:grid-cols-5">
                   {ecosystem.items.map(item => <button key={item.href} type="button" onClick={() => navigate(item.href)} className="group min-h-[92px] rounded-xl border border-[#E5D4B0] bg-[#FFFCF7] p-3 text-left transition hover:-translate-y-0.5 hover:border-[#B48A36] hover:bg-[#FFF8E6] focus:outline-none focus:ring-2 focus:ring-[#B48A36] rtl:text-right">
                     <span className="text-lg" aria-hidden="true">{item.icon}</span>
@@ -332,46 +335,24 @@ function SeparationExperience({ fixedView }: { fixedView?: 'platform' | 'cv' }) 
                     <span className="mt-1 hidden text-xs leading-4 text-gray-600 sm:block">{item.text}</span>
                   </button>)}
                 </div>
-              </div>
+              </details>
             </div>
           </section>
 
-          <section className="bg-[#2E102A] px-4 py-8 text-white md:py-10">
-            <div className="mx-auto grid max-w-5xl items-center gap-6 md:grid-cols-[1fr_280px] md:gap-8">
-              <div className="text-center md:text-left rtl:md:text-right"><p className="text-xs font-black uppercase tracking-[0.16em] text-[#F1D783]">{t.professionalEyebrow}</p><h2 className="mt-2 max-w-3xl font-serif text-2xl font-bold md:text-3xl">{t.platformPromoTitle}</h2><p className="mt-3 max-w-3xl text-base leading-7 text-white/85">{t.platformPromoText}</p><div className="mt-4 rounded-2xl border border-[#D4AF37]/55 bg-[#D4AF37]/10 p-4 text-left rtl:text-right"><h3 className="font-serif text-lg font-bold text-[#F1D783]">{ecosystem.cvAdvantageTitle}</h3><p className="mt-2 text-sm leading-6 text-white/90">{ecosystem.cvAdvantageText}</p></div><div className="mt-4 rounded-2xl border border-[#D4AF37]/45 bg-white/10 p-4 text-left rtl:text-right"><div className="flex items-center gap-2"><Smartphone className="h-5 w-5 shrink-0 text-[#F1D783]" aria-hidden="true" /><h3 className="font-serif text-lg font-bold text-[#F1D783]">{t.miniAppTitle}</h3></div><p className="mt-2 text-sm leading-6 text-white/90">{t.miniAppText}</p><p className="mt-3 text-xs font-black leading-5 text-[#F1D783]">{t.miniAppHighlights}</p></div><button type="button" onClick={() => fixedView ? navigate('/cv-business') : setPreviewView('cv')} className="mt-5 inline-flex min-h-12 items-center gap-2 rounded-xl bg-[#D4AF37] px-6 py-3 text-sm font-black text-[#2E102A]">{t.discoverCv} <ArrowRight className={`h-4 w-4 ${lang === 'ar' ? 'rotate-180' : ''}`} /></button></div>
-              <div className="mx-auto w-full max-w-[280px] rounded-[24px] border border-[#D4AF37]/60 bg-white/95 p-3 shadow-[0_20px_55px_rgba(0,0,0,0.28)]"><p className="mb-2 text-center text-xs font-bold text-[#4A1D43]">{t.example}</p><div className="mb-2 grid grid-cols-2 gap-1.5 rounded-xl bg-[#F5EEE5] p-1"><button type="button" onClick={() => setPlatformCvModel('business')} aria-pressed={platformCvModel === 'business'} className={`rounded-lg px-2 py-2 text-[11px] font-black transition ${platformCvModel === 'business' ? 'bg-[#4A1D43] text-white shadow-sm' : 'bg-white text-[#4A1D43]'}`}>{ecosystem.cvBusiness}</button><button type="button" onClick={() => setPlatformCvModel('portfolio')} aria-pressed={platformCvModel === 'portfolio'} className={`rounded-lg px-2 py-2 text-[11px] font-black transition ${platformCvModel === 'portfolio' ? 'bg-[#4A1D43] text-white shadow-sm' : 'bg-white text-[#4A1D43]'}`}>{ecosystem.cvPortfolio}</button></div><div className="flex h-[270px] justify-center overflow-hidden"><img key={platformCvModel} src={platformCvModel === 'business' ? '/images/cv-business-portfolio-aux-saveurs-anis.png' : '/images/cv-portfolio-aux-saveurs-anis-original.svg'} alt={`${t.example} — ${platformCvModel === 'business' ? ecosystem.cvBusiness : ecosystem.cvPortfolio}`} className="h-[270px] w-auto object-contain object-top" loading="lazy" decoding="async" /></div></div>
-            </div>
-          </section>
-
-          <CvCapabilitiesSection language={lang} />
-
-          <section className="bg-white px-4 py-8 md:py-10">
-            <div className="mx-auto max-w-5xl rounded-3xl border border-[#D4AF37]/35 bg-[#FFFCF7] p-5 text-center shadow-sm md:p-7">
-              <p className="text-xs font-black uppercase tracking-[0.16em] text-[#B58A18]">
-                {countsAvailable ? t.certifiedProof(localizedCertifiedCount) : t.certifiedLoading}
-              </p>
-              <h2 className="mt-2 font-serif text-2xl font-bold text-[#2E102A] md:text-3xl">{t.certifiedTitle}</h2>
-              <p className="mx-auto mt-2 max-w-3xl text-sm leading-6 text-gray-600 md:text-base">{t.certifiedSubtitle}</p>
-              <button
-                type="button"
-                onClick={() => navigate('/entreprises-certifiees')}
-                className="mt-5 inline-flex min-h-12 items-center gap-2 rounded-xl bg-[#4A1D43] px-6 py-3 text-sm font-black text-white transition hover:-translate-y-0.5 hover:bg-[#5B2553]"
-              >
-                {lang === 'ar' ? 'عرض المؤسسات الموثّقة' : lang === 'en' ? 'View certified businesses' : lang === 'it' ? 'Vedi le aziende certificate' : lang === 'ru' ? 'Посмотреть сертифицированные компании' : 'Voir les entreprises certifiées'}
-                <ArrowRight className={`h-4 w-4 ${lang === 'ar' ? 'rotate-180' : ''}`} />
-              </button>
-            </div>
-          </section>
-
-          <FounderStory />
-
-          <VisibilityHouseSection totalCount={verifiedTotal ?? 0} loading={verifiedTotal === null} showNetworkProof={false} />
+          <div className="mx-auto max-w-5xl space-y-5 px-4 py-6">
+            <EssentialPresence />
+            <section className="rounded-2xl bg-[#2E102A] p-5 text-white" aria-label={structure.products}>
+              <h2 className="font-serif text-xl font-bold">CV Business · CV Portfolio</h2>
+              <p className="mt-2 text-sm leading-6 text-white/85">{structure.cvIntro}</p>
+              <a href="/subscription#cv-professionnels" className="mt-4 inline-flex min-h-11 items-center rounded-xl border border-[#D4AF37] px-4 py-2 text-sm font-bold text-[#F1D783]">{structure.prices} <ArrowRight className="ms-2 h-4 w-4" aria-hidden="true" /></a>
+            </section>
+          </div>
         </>
       ) : (
         <>
           <section className="border-b border-[#D4AF37]/25 bg-[radial-gradient(circle_at_top_left,rgba(212,175,55,0.18),transparent_28%),linear-gradient(135deg,#fffdf8_0%,#ffffff_52%,#f7f0f5_100%)] px-4 py-8 md:py-14">
             <div className="mx-auto grid max-w-[1180px] items-center gap-8 lg:grid-cols-[1fr_0.72fr]">
-              <div><div className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/45 bg-white px-3 py-1.5 text-xs font-black uppercase tracking-[0.14em] text-[#4A1D43] shadow-sm"><Sparkles className="h-4 w-4 text-[#D4AF37]" /> {t.cvLabel}</div><h1 className="mt-5 font-serif text-4xl font-bold leading-tight text-[#2E102A] md:text-5xl">{t.cvTitle}</h1><p className="mt-3 font-serif text-2xl font-bold leading-tight text-[#B58A18] md:text-3xl">{t.cvSubtitle}</p><p className="mt-5 max-w-xl text-base leading-7 text-gray-600">{t.cvDescription}</p><div className="mt-6 flex flex-wrap gap-3"><a href="/subscription" className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-[#4A1D43] px-5 py-3 text-sm font-black text-white">{t.offers} <ArrowRight className={`h-4 w-4 ${lang === 'ar' ? 'rotate-180' : ''}`} /></a><a href="/contact" className="inline-flex min-h-12 items-center rounded-xl border border-[#D4AF37] bg-white px-5 py-3 text-sm font-bold text-[#4A1D43]">{t.information}</a></div></div>
+              <div><div className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/45 bg-white px-3 py-1.5 text-xs font-black uppercase tracking-[0.14em] text-[#4A1D43] shadow-sm"><Sparkles className="h-4 w-4 text-[#D4AF37]" /> {t.cvLabel}</div><CvHeading className="mt-5 font-serif text-4xl font-bold leading-tight text-[#2E102A] md:text-5xl">{t.cvTitle}</CvHeading><p className="mt-3 font-serif text-2xl font-bold leading-tight text-[#B58A18] md:text-3xl">{t.cvSubtitle}</p><p className="mt-5 max-w-xl text-base leading-7 text-gray-600">{t.cvDescription}</p><div className="mt-6 flex flex-wrap gap-3"><a href="/subscription" className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-[#4A1D43] px-5 py-3 text-sm font-black text-white">{t.offers} <ArrowRight className={`h-4 w-4 ${lang === 'ar' ? 'rotate-180' : ''}`} /></a><a href="/contact" className="inline-flex min-h-12 items-center rounded-xl border border-[#D4AF37] bg-white px-5 py-3 text-sm font-bold text-[#4A1D43]">{t.information}</a></div></div>
               <div className="rounded-[30px] border border-[#D4AF37]/45 bg-white/90 p-4 shadow-[0_28px_70px_rgba(74,29,67,0.16)]"><p className="mb-3 text-center text-xs font-bold text-[#4A1D43]">{t.example}</p><div className="flex h-[390px] items-center justify-center overflow-hidden rounded-[18px] bg-[#032D21]">{heroVideoSrc ? <video key={heroVideoSrc} src={heroVideoSrc} controls playsInline preload="metadata" poster="/images/cv-business-portfolio-aux-saveurs-anis.png" className="h-[390px] w-auto max-w-full object-contain" aria-label={t.example} /> : <img src="/images/cv-business-portfolio-aux-saveurs-anis.png" alt="CV Business Aux saveurs d’Anis" className="h-[390px] w-auto object-contain object-top" />}</div></div>
             </div>
           </section>
@@ -400,8 +381,8 @@ export function PlatformHome() {
   return <SeparationExperience fixedView="platform" />;
 }
 
-export function CvBusinessHome() {
-  return <SeparationExperience fixedView="cv" />;
+export function CvBusinessHome({ embedded = false }: { embedded?: boolean }) {
+  return <SeparationExperience fixedView="cv" embedded={embedded} />;
 }
 
 export default function SeparationPreview() {

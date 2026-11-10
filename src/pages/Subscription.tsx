@@ -1,3 +1,9 @@
+import Concept from './Concept';
+import { FounderStory } from '../components/FounderStory';
+import { CvBusinessHome } from './SeparationPreview';
+import { EssentialPresence } from '../components/EssentialPresence';
+import { siteStructureCopy } from '../lib/siteStructureCopy';
+import { SEOHead } from '../components/SEOHead';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import {
   Check,
@@ -1286,6 +1292,7 @@ function CreationPlanCard({
 
 export const Subscription = () => {
   const { language } = useLanguage();
+  const structure = siteStructureCopy[language];
   const isArabic = language === 'ar';
   const copy = subscriptionCopy[language as keyof typeof subscriptionCopy] ?? subscriptionCopy.fr;
   const essentialCopy = essentialCvCopy[language as OfferLanguage] ?? essentialCvCopy.fr;
@@ -1313,6 +1320,8 @@ export const Subscription = () => {
   };
   const selectFormula = (formula: 'artisan' | 'premium') => {
     setSelectedFormula(formula);
+    const models = document.getElementById('modeles');
+    if (models instanceof HTMLDetailsElement) models.open = true;
     window.requestAnimationFrame(() => {
       document.getElementById('cv-presentation-models')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
@@ -1336,60 +1345,57 @@ export const Subscription = () => {
 
   return (
     <div className="bg-[#FFFCF7] px-4 py-8 text-slate-900 sm:py-12" dir={isArabic ? 'rtl' : 'ltr'}>
-      <main className="mx-auto flex max-w-6xl flex-col">
+      <div className="mx-auto max-w-6xl">
+        <SEOHead title={`${structure.professional} | ${structure.products} | Dalil Tounes`} description={`${structure.freeIntro} ${structure.cvIntro}`} canonical="https://dalil-tounes.com/subscription" currentPath="/subscription" />
         <header className="order-1 mb-2 text-center sm:mb-10">
           <p className="mb-3 flex items-center justify-center gap-3 text-xs font-black uppercase tracking-[0.2em] text-amber-600">
             <span className="h-px w-8 bg-amber-400" /> {copy.heroEyebrow} <span className="h-px w-8 bg-amber-400" />
           </p>
           <h1 className="text-3xl font-black tracking-tight text-[#4A123F] sm:text-4xl lg:text-5xl">
-            {copy.heroTitle}
+            {structure.professional}
           </h1>
-          <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-500 sm:text-base">{copy.heroSubtitle}</p>
+          <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-500 sm:text-base">{structure.freeIntro}</p>
         </header>
 
-        <section aria-label={copy.startingSolutions} className="order-3 mx-auto mt-7 max-w-2xl">
-          <article className="flex flex-col rounded-3xl border border-[#D6AF2E] bg-white p-5 shadow-[0_12px_30px_rgba(74,18,63,0.07)] sm:p-7">
-            <span className="w-fit rounded-full bg-emerald-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-emerald-800">
-              {copy.selfService}
-            </span>
-
-            <h2 className="text-2xl font-bold text-[#4A123F]">{copy.essentialTitle}</h2>
-            <div className="mt-3 flex items-end gap-2 text-[#07543F]">
-              <span className="text-4xl font-black">0</span><span className="pb-1 font-bold">TND</span>
-            </div>
-            <p className="mt-1 text-sm font-bold text-[#4A123F]">{copy.essentialFree}</p>
-            <div className="my-5 h-px bg-amber-100" />
-            <ResponsiveFeatureList
-              items={simplifiedOfferCopy[language as OfferLanguage].essentialFeatures}
-              showLabel={mobileCopy.showBenefits}
-              hideLabel={mobileCopy.hideBenefits}
-            />
-            <div className="mt-auto grid gap-2 pt-6">
-              <a
-                href="/inscription-entreprise"
-                className="rounded-xl border-2 border-[#4A123F]/20 bg-white px-4 py-3 text-center text-sm font-bold text-[#4A123F] transition hover:border-[#D6AF2E] hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]"
-              >
-                {copy.addActivity}
-              </a>
-              <button
-                type="button"
-                onClick={() => setActivePreview('free')}
-                className="rounded-xl px-4 py-2 text-sm font-semibold text-slate-500 underline decoration-[#D6AF2E] underline-offset-4 transition hover:text-[#4A123F] focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]"
-              >
-                {copy.previewCard}
-              </button>
-            </div>
-          </article>
-
+        <nav className="mb-5 flex flex-wrap justify-center gap-3 text-sm font-bold text-[#4A1D43]" aria-label={structure.professional}>
+          <a href="#presence-essentielle">{structure.essential}</a><a href="#concept">{structure.concept}</a><a href="#cv-professionnels">{structure.products}</a><a href="#offres">{structure.offers}</a>
+        </nav>
+        <EssentialPresence registration />
+        <button type="button" onClick={() => setActivePreview('free')} className="mt-3 min-h-11 rounded-xl border border-[#D4AF37] px-4 py-2 text-sm font-bold text-[#4A1D43]">{copy.previewCard}</button>
+        <section id="concept" className="my-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-5">
+          <h2 className="font-serif text-xl font-bold text-[#4A1D43]">Dalil Tounes</h2>
+          <p className="my-3 text-sm leading-6 text-slate-600">{structure.intro}</p>
+          <details className="rounded-xl border border-[#D4AF37]/40 p-3"><summary className="cursor-pointer font-bold text-[#4A1D43]">{structure.concept}</summary><Concept embedded /></details>
+          <details id="histoire-fondateur" className="mt-3 scroll-mt-32 rounded-xl border border-[#D4AF37]/40 p-3"><summary className="cursor-pointer font-bold text-[#4A1D43]">{structure.story}</summary><FounderStory full /></details>
         </section>
-
-        <section aria-labelledby="cv-business-products-title" className="order-2 mt-5 sm:mt-0">
+        <section id="cv-professionnels" className="my-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-5">
+          <h2 className="font-serif text-xl font-bold text-[#4A1D43]">CV Business · CV Portfolio</h2>
+          <p className="my-3 text-sm leading-6 text-slate-600">{structure.cvIntro}</p>
+          <details><summary className="cursor-pointer font-bold text-[#4A1D43]">{structure.details}</summary><CvBusinessHome embedded /></details>
+        </section>
+        <section id="offres" aria-labelledby="cv-business-products-title" className="order-2 mt-5 sm:mt-0">
 <div className="mb-6 text-center">
   <p className="text-xs font-black uppercase tracking-[0.18em] text-amber-600">CV BUSINESS DALIL TOUNES</p>
   <h2 id="cv-business-products-title" className="mt-2 text-2xl font-black text-[#4A123F] sm:text-3xl">{simpleCopy.productsTitle}</h2>
   <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-slate-600">{simpleCopy.productsSubtitle}</p>
 </div>
 
+<details id="modeles" className="mb-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-4">
+  <summary className="cursor-pointer font-bold text-[#4A1D43]">{structure.models}</summary>
+<CvPresentationModelSelector
+  language={language}
+  formulaValue={selectedFormula}
+  onFormulaChange={setSelectedFormula}
+  artisanLabel={`${simplifiedOfferCopy[language as OfferLanguage].artisanTitle} — ${(offerCopy[language as OfferLanguage] ?? offerCopy.fr).artisanPrice}`}
+  premiumLabel={`${simplifiedOfferCopy[language as OfferLanguage].premiumTitle} — ${(offerCopy[language as OfferLanguage] ?? offerCopy.fr).premiumPrice}`}
+  value={selectedPresentationModel}
+  onChange={setSelectedPresentationModel}
+  selectedFormulaLabel={selectedFormulaLabel}
+  onContinue={continueWithModel}
+  paletteValue={selectedPalette}
+  onPaletteChange={setSelectedPalette}
+/>
+</details>
 <div className="mb-6 overflow-hidden rounded-3xl border border-[#D6AF2E]/60 bg-gradient-to-br from-[#FFF8DF] via-white to-emerald-50 p-5 shadow-[0_12px_30px_rgba(74,18,63,0.07)] sm:p-7">
   <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
     <div className="max-w-3xl">
@@ -1444,23 +1450,9 @@ export const Subscription = () => {
   />
 </div>
 
-<CvPresentationModelSelector
-  language={language}
-  formulaValue={selectedFormula}
-  onFormulaChange={setSelectedFormula}
-  artisanLabel={`${simplifiedOfferCopy[language as OfferLanguage].artisanTitle} — ${(offerCopy[language as OfferLanguage] ?? offerCopy.fr).artisanPrice}`}
-  premiumLabel={`${simplifiedOfferCopy[language as OfferLanguage].premiumTitle} — ${(offerCopy[language as OfferLanguage] ?? offerCopy.fr).premiumPrice}`}
-  value={selectedPresentationModel}
-  onChange={setSelectedPresentationModel}
-  selectedFormulaLabel={selectedFormulaLabel}
-  onContinue={continueWithModel}
-  paletteValue={selectedPalette}
-  onPaletteChange={setSelectedPalette}
-/>
 
-<div className="mt-5">
-  <CvBusinessJourney language={language as OfferLanguage} />
-</div>
+
+<details className="mt-5 rounded-2xl border border-[#D4AF37]/50 bg-white p-4"><summary className="cursor-pointer font-bold text-[#4A1D43]">{structure.details}</summary><CvBusinessJourney language={language as OfferLanguage} /></details>
 
 <div className="mt-5 rounded-3xl border border-[#D6AF2E]/60 bg-white p-5 shadow-[0_10px_28px_rgba(74,18,63,0.06)] sm:p-6">
   <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
@@ -1550,7 +1542,7 @@ export const Subscription = () => {
             {copy.ctaButton} <ChevronRight className="h-4 w-4" aria-hidden="true" />
           </a>
         </section>
-      </main>
+      </div>
 
       {activePreview === 'free' && (
         <Modal title={copy.previewEssentialTitle} onClose={closePreview} closeLabel={copy.closeModal} size="compact">

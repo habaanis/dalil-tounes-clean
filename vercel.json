@@ -448,7 +448,7 @@
     },
     {
       "source": "/notre-concept",
-      "destination": "/concept",
+      "destination": "/subscription#concept",
       "permanent": true
     },
     {
@@ -459,6 +459,11 @@
     {
       "source": "/#/:path*",
       "destination": "/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/concept",
+      "destination": "/subscription#concept",
       "permanent": true
     }
   ]

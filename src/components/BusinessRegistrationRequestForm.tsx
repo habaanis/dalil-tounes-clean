@@ -1,3 +1,4 @@
+import { siteStructureCopy } from '../lib/siteStructureCopy';
 import { useRef, useState, type ChangeEvent, type FormEvent, type ReactNode } from 'react';
 import { CheckCircle2, Send, ShieldCheck } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
@@ -30,6 +31,7 @@ interface BusinessRegistrationRequestFormProps {
 
 interface FormState {
   title: string;
+  openingHours: string;
   companyName: string;
   managerName: string;
   phone: string;
@@ -50,6 +52,7 @@ interface FormState {
 
 const INITIAL_PUBLIC_STATE: FormState = {
   title: '',
+  openingHours: '',
   companyName: '',
   managerName: '',
   phone: '',
@@ -484,7 +487,7 @@ export function BusinessRegistrationRequestForm({
             instagram: normalizeWebAddress(form.instagram, 'instagram'),
             whatsapp: form.whatsapp.trim() ? normalizePhone(form.whatsapp) : '',
             description: cleanMultiline(form.description),
-            message: cleanMultiline(form.message),
+            message: cleanMultiline([form.message, form.openingHours.trim() ? `${siteStructureCopy[language].fields[4]}: ${form.openingHours.trim()}` : ''].filter(Boolean).join('\n\n')),
             consent: form.consent,
           };
 
@@ -752,6 +755,10 @@ export function BusinessRegistrationRequestForm({
                 </option>
               ))}
             </select>
+          </FieldLabel>
+
+          <FieldLabel label={siteStructureCopy[language].fields[4]}>
+            <input name="openingHours" type="text" maxLength={300} value={form.openingHours} onChange={setField} className={inputClassName} />
           </FieldLabel>
 
           <FieldLabel label={text.description}>
