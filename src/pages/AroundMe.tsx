@@ -265,7 +265,7 @@ export default function AroundMe() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+      <div className="public-surface min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
         <div className="text-center">
           <Loader className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
           <p className="text-lg text-gray-700">{t.loading}</p>
@@ -276,10 +276,10 @@ export default function AroundMe() {
 
   if (error || !userLocation) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-red-50 to-orange-100 flex items-center justify-center px-4">
-        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md text-center">
+      <div className="public-surface min-h-screen bg-gradient-to-br from-red-50 to-orange-100 flex items-center justify-center px-4">
+        <div className="bg-white rounded-xl shadow-sm p-8 max-w-md text-center">
           <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">{t.geoError}</h2>
+          <h2 className="public-heading text-2xl font-medium text-gray-900 mb-2">{t.geoError}</h2>
           <p className="text-gray-600">{error || t.geoPermission}</p>
         </div>
       </div>
@@ -287,13 +287,13 @@ export default function AroundMe() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="public-surface min-h-screen bg-[#fcfaf5]">
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3 mb-2">
             <Target className="w-8 h-8" />
-            <h1 className="text-3xl font-bold">{t.title}</h1>
+            <h1 className="public-title text-3xl font-medium">{t.title}</h1>
           </div>
           <p className="text-blue-100">{t.subtitle}</p>
 
@@ -366,7 +366,7 @@ export default function AroundMe() {
                 <Popup>
                   <div className="text-center py-2">
                     <div className="text-2xl mb-2">📍</div>
-                    <p className="font-bold text-blue-600 text-base">{t.yourPosition}</p>
+                    <p className="font-medium text-blue-600 text-base">{t.yourPosition}</p>
                     <p className="text-xs text-gray-500 mt-1">GPS: {userLocation[0].toFixed(5)}, {userLocation[1].toFixed(5)}</p>
                   </div>
                 </Popup>
@@ -384,7 +384,7 @@ export default function AroundMe() {
                   >
                     <Popup>
                       <div className="min-w-[200px]">
-                        <h3 className="font-bold text-gray-900 mb-1">{business.nom}</h3>
+                        <h3 className="font-medium text-gray-900 mb-1">{business.nom}</h3>
                         {business.categorie && (
                           <p className="text-sm text-gray-600 mb-1">{business.categorie}</p>
                         )}
@@ -437,7 +437,7 @@ export default function AroundMe() {
             {etablissements.map((business) => (
               <div
                 key={business.id}
-                className={`bg-white rounded-xl shadow-md overflow-hidden transition-all hover:shadow-xl cursor-pointer ${
+                className={`bg-white rounded-xl shadow-md overflow-hidden transition-all hover:shadow-sm cursor-pointer ${
                   selectedId === business.id ? 'ring-2 ring-blue-500' : ''
                 }`}
                 onClick={() => {
@@ -448,7 +448,7 @@ export default function AroundMe() {
                 }}
               >
                 <div className="p-4">
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">{business.nom}</h3>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">{business.nom}</h3>
                   {business.categorie && (
                     <p className="text-sm text-gray-600 mb-2 flex items-center gap-1">
                       <Star className="w-4 h-4 text-orange-500" />

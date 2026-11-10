@@ -21,10 +21,10 @@ export default function NotFound() {
         noindex
         currentPath={window.location.pathname}
       />
-      <main className="min-h-[70vh] bg-white px-4 py-20" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+      <main className="min-h-[70vh] bg-white px-4 py-12" dir={language === 'ar' ? 'rtl' : 'ltr'}>
         <div className="mx-auto max-w-2xl text-center">
           <div className="mb-5 text-sm font-semibold uppercase tracking-[0.2em] text-[#D4AF37]">{t.error}</div>
-          <h1 className="mb-4 text-3xl font-bold text-[#4A1D43] md:text-5xl">{t.title}</h1>
+          <h1 className="public-title mb-4 text-3xl font-medium text-[#4A1D43] md:text-5xl">{t.title}</h1>
           <p className="mx-auto mb-8 max-w-xl text-gray-600">{t.text}</p>
           <div className="flex flex-wrap justify-center gap-3">
             <Link

@@ -106,7 +106,7 @@ export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
   const isRTL = lang === 'ar';
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="public-surface min-h-screen bg-gradient-to-b from-white to-gray-50" dir={isRTL ? 'rtl' : 'ltr'}>
       <SEOHead
         title={t.seoTitle}
         description={t.intro}
@@ -122,7 +122,7 @@ export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
         }}
       >
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-4 py-6">
-          <h1 className="text-3xl md:text-4xl font-semibold mb-2 drop-shadow-lg text-[#D4AF37]">{t.title}</h1>
+          <h1 className="public-title text-3xl md:text-4xl font-semibold mb-2 drop-shadow-lg text-[#D4AF37]">{t.title}</h1>
           <p className="text-sm md:text-base font-light text-white/95 max-w-3xl leading-relaxed drop-shadow-lg">{t.intro}</p>
         </div>
       </section>
@@ -160,7 +160,7 @@ export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
           <div className="absolute inset-0 bg-gradient-to-r from-[#4A0404] via-[#8B0000] to-[#4A0404]/60" />
           <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-3 p-5">
             <div className={isRTL ? 'text-right' : 'text-left'}>
-              <h3 className="text-lg font-bold text-white mb-1 drop-shadow" style={{ fontFamily: "'Cormorant Garamond', serif" }}>{t.slogan}</h3>
+              <h3 className="text-lg font-medium text-white mb-1 drop-shadow" style={{ fontFamily: "'Cormorant Garamond', serif" }}>{t.slogan}</h3>
               <p className="text-sm text-white/90 font-light leading-snug">{t.offerText}</p>
             </div>
             <button
@@ -169,7 +169,7 @@ export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
                 else navigate('/subscription');
                 scrollToWithOffsetDelayed('form-inscription-entreprise', 100, 300);
               }}
-              className="flex items-center gap-2 bg-white text-[#4A0404] px-5 py-2.5 rounded-lg font-semibold hover:bg-[#D4AF37] hover:text-white hover:shadow-xl hover:scale-105 transition-all duration-300 whitespace-nowrap shadow-md text-sm"
+              className="flex items-center gap-2 bg-white text-[#4A0404] px-5 py-2.5 rounded-lg font-semibold hover:bg-[#D4AF37] hover:text-white hover:shadow-sm hover:scale-105 transition-all duration-300 whitespace-nowrap shadow-md text-sm"
             >
               {t.offerButton}
               <ChevronRight className={`w-4 h-4 ${isRTL ? 'rotate-180' : ''}`} />

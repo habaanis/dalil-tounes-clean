@@ -69,10 +69,10 @@ export default function Auth({ onNavigate }: AuthProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-50 py-12 px-4" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+    <div className="public-surface min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-50 py-12 px-4" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Dalil Tounes</h1>
+          <h1 className="public-title text-4xl font-medium text-gray-900 mb-2">Dalil Tounes</h1>
           <p className="text-xl text-gray-600">{t.subtitle}</p>
         </div>
 

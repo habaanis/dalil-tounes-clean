@@ -63,14 +63,14 @@ export default function BusinessRegistration() {
   }, [text.description, text.documentTitle]);
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA] px-4 pb-14 sm:px-6 lg:px-8">
+    <div className="public-surface min-h-screen bg-[#fcfaf5] px-4 pb-14 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl">
-        <section className="overflow-hidden rounded-3xl border border-[#D4AF37]/40 bg-gradient-to-br from-[#4A1D43] via-[#632652] to-[#0B5A45] px-5 py-9 text-white shadow-[0_24px_70px_rgba(74,29,67,0.18)] sm:px-8 sm:py-12 lg:px-12">
+        <section className="overflow-hidden rounded-xl border border-[#D4AF37]/40 bg-gradient-to-br from-[#4A1D43] via-[#632652] to-[#0B5A45] px-5 py-9 text-white shadow-[0_24px_70px_rgba(74,29,67,0.18)] sm:px-8 sm:py-12 lg:px-12">
           <div className="max-w-3xl">
-            <p className="inline-flex rounded-full border border-[#D4AF37]/50 bg-white/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-[#F7D978]">
+            <p className="inline-flex rounded-full border border-[#D4AF37]/50 bg-white/10 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.16em] text-[#F7D978]">
               {text.eyebrow}
             </p>
-            <h1 className="mt-5 text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">{text.title}</h1>
+            <h1 className="public-title mt-5 text-3xl font-medium leading-tight sm:text-4xl lg:text-5xl">{text.title}</h1>
             <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/90 sm:text-lg">{text.subtitle}</p>
             <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/75 sm:text-base">{text.intro}</p>
 
@@ -83,13 +83,13 @@ export default function BusinessRegistration() {
         </section>
 
         <section className="mx-auto mt-6 grid max-w-5xl gap-5 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
-          <div className="rounded-3xl border border-[#D4AF37]/35 bg-white p-5 shadow-sm sm:p-8">
+          <div className="rounded-xl border border-[#D4AF37]/35 bg-white p-5 shadow-sm sm:p-8">
             <div className="mb-6">
               <div className="flex items-center gap-3">
                 <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#4A1D43] text-[#D4AF37]">
                   <Building2 className="h-5 w-5" aria-hidden="true" />
                 </span>
-                <h2 className="text-xl font-bold text-[#4A1D43] sm:text-2xl">{text.formTitle}</h2>
+                <h2 className="public-heading text-xl font-medium text-[#4A1D43] sm:text-2xl">{text.formTitle}</h2>
               </div>
               <p className="mt-3 text-sm leading-relaxed text-gray-600">{text.formHint}</p>
             </div>
@@ -97,11 +97,11 @@ export default function BusinessRegistration() {
             <BusinessRegistrationRequestForm mode="company_registration" />
           </div>
 
-          <aside className="rounded-3xl border border-[#D4AF37]/30 bg-[#FFFDF7] p-5 shadow-sm lg:sticky lg:top-28">
+          <aside className="rounded-xl border border-[#D4AF37]/30 bg-[#FFFDF7] p-5 shadow-sm lg:sticky lg:top-28">
             <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#D4AF37]/15 text-[#4A1D43]">
               <CheckCircle2 className="h-5 w-5" aria-hidden="true" />
             </div>
-            <h2 className="mt-4 text-lg font-bold text-[#4A1D43]">{text.privacyTitle}</h2>
+            <h2 className="public-heading mt-4 text-lg font-medium text-[#4A1D43]">{text.privacyTitle}</h2>
             <p className="mt-2 text-sm leading-relaxed text-gray-600">{text.privacyText}</p>
           </aside>
         </section>
@@ -118,7 +118,7 @@ function TrustItem({
   label: string;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-sm font-semibold text-white/95 backdrop-blur-sm">
+    <div className="flex items-center gap-3 rounded-xl border border-white/15 bg-white/10 px-4 py-3 text-sm font-semibold text-white/95 backdrop-blur-sm">
       <Icon className="h-5 w-5 flex-none text-[#F7D978]" aria-hidden="true" />
       <span>{label}</span>
     </div>

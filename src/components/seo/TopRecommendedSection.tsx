@@ -143,7 +143,7 @@ export default function TopRecommendedSection({ contextLabel, sectionId, city, m
           <Trophy className="w-5 h-5 text-[#D4AF37]" />
         </div>
         <div>
-          <h2 id={`top-recommended-${sectionId}`} className="text-lg md:text-xl font-bold text-white leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>
+          <h2 id={`top-recommended-${sectionId}`} className="public-heading text-lg md:text-xl font-medium text-[#35172f] leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>
             {t.title} <span className="text-[#D4AF37]">— {contextLabel}</span>
           </h2>
           <p className="text-xs text-gray-400 mt-2">{t.criteria}</p>

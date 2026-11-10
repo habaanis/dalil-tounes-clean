@@ -270,8 +270,8 @@ export default function CultureEvents() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0a0e27] via-[#1a1f3a] to-[#0f1729]">
-      <div className="relative py-20 overflow-hidden">
+    <div className="public-surface min-h-screen bg-gradient-to-b from-[#0a0e27] via-[#1a1f3a] to-[#0f1729]">
+      <div className="relative py-12 overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-20"></div>
         </div>
@@ -282,11 +282,11 @@ export default function CultureEvents() {
             <div className="flex justify-center mb-6">
               <div className="relative">
                 <div className="absolute inset-0 bg-[#D4AF37] blur-2xl opacity-30 rounded-full"></div>
-                <Calendar className="relative w-20 h-20 text-[#D4AF37] drop-shadow-2xl" />
+                <Calendar className="relative w-20 h-20 text-[#D4AF37] drop-shadow-sm" />
               </div>
             </div>
 
-            <h1 className="text-5xl md:text-6xl font-bold text-white mb-4 drop-shadow-2xl">
+            <h1 className="public-title text-5xl md:text-6xl font-medium text-white mb-4 drop-shadow-sm">
               {t.title}
             </h1>
             <p className="text-xl text-[#D4AF37] font-semibold mb-4">
@@ -319,7 +319,7 @@ export default function CultureEvents() {
           </div>
 
           {loading ? (
-            <div className="text-center py-20">
+            <div className="text-center py-12">
               <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#D4AF37]"></div>
               <p className="text-gray-300 mt-4">{t.loading}</p>
             </div>
@@ -327,10 +327,10 @@ export default function CultureEvents() {
             <div className="space-y-16 max-w-7xl mx-auto">
               <div>
                 <div className="flex justify-center items-center gap-4 mb-4">
-                  <h2 className="text-3xl font-bold text-cyan-400 text-center">
+                  <h2 className="public-heading text-3xl font-medium text-cyan-400 text-center">
                     {t.premiumAgenda.weekly.badge}
                   </h2>
-                  <span className="px-4 py-2 bg-cyan-500/20 text-cyan-300 rounded-full font-bold text-xl border-2 border-cyan-400">
+                  <span className="px-4 py-2 bg-cyan-500/20 text-cyan-300 rounded-full font-medium text-xl border-2 border-cyan-400">
                     {weeklyEvents.length} {weeklyEvents.length > 1 ? t.eventPlural : t.eventSingular}
                   </span>
                 </div>
@@ -357,10 +357,10 @@ export default function CultureEvents() {
 
               <div>
                 <div className="flex justify-center items-center gap-4 mb-4">
-                  <h2 className="text-3xl font-bold text-emerald-400 text-center">
+                  <h2 className="public-heading text-3xl font-medium text-emerald-400 text-center">
                     {t.premiumAgenda.monthly.badge}
                   </h2>
-                  <span className="px-4 py-2 bg-emerald-500/20 text-emerald-300 rounded-full font-bold text-xl border-2 border-emerald-400">
+                  <span className="px-4 py-2 bg-emerald-500/20 text-emerald-300 rounded-full font-medium text-xl border-2 border-emerald-400">
                     {monthlyEvents.length} {monthlyEvents.length > 1 ? t.eventPlural : t.eventSingular}
                   </span>
                 </div>
@@ -387,10 +387,10 @@ export default function CultureEvents() {
 
               <div>
                 <div className="flex justify-center items-center gap-4 mb-4">
-                  <h2 className="text-3xl font-bold text-[#FFD700] text-center">
+                  <h2 className="public-heading text-3xl font-medium text-[#FFD700] text-center">
                     {t.premiumAgenda.annual.badge}
                   </h2>
-                  <span className="px-4 py-2 bg-[#D4AF37]/20 text-[#FFD700] rounded-full font-bold text-xl border-2 border-[#FFD700]">
+                  <span className="px-4 py-2 bg-[#D4AF37]/20 text-[#FFD700] rounded-full font-medium text-xl border-2 border-[#FFD700]">
                     {annualEvents.length} {annualEvents.length > 1 ? t.eventPlural : t.eventSingular}
                   </span>
                 </div>

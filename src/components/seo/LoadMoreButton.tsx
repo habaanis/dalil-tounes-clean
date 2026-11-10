@@ -19,7 +19,7 @@ const LoadMoreButton: React.FC<LoadMoreButtonProps> = ({ onClick, loading, shown
       <button
         onClick={onClick}
         disabled={loading}
-        className="group flex items-center gap-2 px-8 py-3 rounded-xl border border-[#D4AF37]/50 text-[#D4AF37] text-sm font-medium hover:bg-[#D4AF37]/10 hover:border-[#D4AF37] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="group flex items-center gap-2 px-8 py-3 rounded-xl border border-[#D4AF37]/50 text-[#806336] text-sm font-medium hover:bg-[#D4AF37]/10 hover:border-[#D4AF37] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {loading ? (
           <>

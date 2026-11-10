@@ -298,7 +298,7 @@ ${offerFormData.description.trim()}
   };
 
   return (
-    <div className="min-h-screen bg-gray-50" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="public-surface min-h-screen bg-[#fcfaf5]" dir={isRTL ? 'rtl' : 'ltr'}>
       <Toast
         message={toastMessage}
         type={toastType}
@@ -324,7 +324,7 @@ ${offerFormData.description.trim()}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.15, duration: 0.5 }}
           >
-            <h1 className="text-3xl md:text-4xl font-serif text-[#D4AF37] mb-3" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>
+            <h1 className="public-title text-3xl md:text-4xl font-serif text-[#D4AF37] mb-3" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>
               {t.partnerSearch.title}
             </h1>
             <p className="text-base text-white/90 font-light mb-2">
@@ -387,7 +387,7 @@ ${offerFormData.description.trim()}
             className="bg-white rounded-xl shadow-md border border-[#D4AF37]/20 p-4 mb-8"
           >
             <div className="mb-6">
-              <h2 className="text-xl font-semibold text-[#4A1D43] mb-3 border-b border-[#D4AF37]/30 pb-2">
+              <h2 className="public-heading text-xl font-semibold text-[#4A1D43] mb-3 border-b border-[#D4AF37]/30 pb-2">
                 {t.partnerSearch.form.title}
               </h2>
               <p className="text-sm text-gray-600 leading-relaxed">

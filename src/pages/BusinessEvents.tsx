@@ -197,7 +197,7 @@ export const BusinessEvents = () => {
   const dateLocale = language === 'ar' ? 'ar-TN' : language === 'en' ? 'en' : language === 'it' ? 'it' : language === 'ru' ? 'ru' : 'fr';
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="public-surface min-h-screen bg-gradient-to-b from-gray-50 to-white" dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Hero Section */}
       <motion.div
         initial={{ opacity: 0 }}
@@ -216,7 +216,7 @@ export const BusinessEvents = () => {
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.2, duration: 0.6 }}
           >
-            <h1 className="text-4xl md:text-5xl font-light text-white mb-4" style={{ lineHeight: '1.2', fontFamily: "'Playfair Display', serif" }}>
+            <h1 className="public-title text-4xl md:text-5xl font-light text-white mb-4" style={{ lineHeight: '1.2', fontFamily: "'Playfair Display', serif" }}>
               {t.businessEvents.title}
             </h1>
             <p className="text-lg text-white/90 font-light mb-6">
@@ -377,7 +377,7 @@ export const BusinessEvents = () => {
           ) : filteredEvents.length === 0 ? (
             <div className="text-center py-16 px-4">
               <div className="max-w-2xl mx-auto">
-                <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-12 border-2 border-gray-100">
+                <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-12 border-2 border-gray-100">
                   <p className="text-xl text-gray-600 font-light">
                     {pageT.empty}
                   </p>
@@ -395,7 +395,7 @@ export const BusinessEvents = () => {
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.1, duration: 0.5 }}
                     whileHover={{ scale: 1.03, y: -5 }}
-                    className={`bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all ${
+                    className={`bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-sm transition-all ${
                       event.featured ? 'border-2 border-[#D4AF37]' : 'border border-gray-200'
                     }`}
                   >
@@ -538,7 +538,7 @@ export const BusinessEvents = () => {
       </section>
 
       {/* Submit Form Section */}
-      <section className="py-12 px-4 bg-gray-50">
+      <section className="py-12 px-4 bg-[#fcfaf5]">
         <div className="max-w-3xl mx-auto">
           <motion.div
             initial={{ y: 30, opacity: 0 }}
@@ -547,7 +547,7 @@ export const BusinessEvents = () => {
             transition={{ duration: 0.6 }}
           >
             <div className="text-center mb-6">
-              <h2 className="text-3xl font-light text-[#4A1D43] mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
+              <h2 className="public-heading text-3xl font-light text-[#4A1D43] mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
                 {pageT.formTitle}
               </h2>
               <p className="text-gray-600">
@@ -567,7 +567,7 @@ export const BusinessEvents = () => {
                 </motion.button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="relative z-50 bg-white rounded-2xl p-8 shadow-lg space-y-6">
+              <form onSubmit={handleSubmit} className="relative z-50 bg-white rounded-xl p-8 shadow-lg space-y-6">
                 <div className="text-center mb-2">
                   <p className="text-sm text-gray-600">
                     {pageT.formHelp}
@@ -662,7 +662,7 @@ export const BusinessEvents = () => {
                   <button
                     type="button"
                     onClick={() => setShowForm(false)}
-                    className="px-6 py-3 border border-[#D4AF37] text-gray-700 rounded-lg hover:bg-gray-50 transition-all"
+                    className="px-6 py-3 border border-[#D4AF37] text-gray-700 rounded-lg hover:bg-[#fcfaf5] transition-all"
                   >
                     {t.common.cancel}
                   </button>

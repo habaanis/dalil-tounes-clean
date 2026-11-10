@@ -15,10 +15,10 @@ export default function ThermalismPage() {
   const { language } = useLanguage();
   const lang = (language in copy ? language : 'fr') as keyof typeof copy;
   const c = copy[lang];
-  return <main dir={lang === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-[#FFFDF8] pb-12">
+  return <main dir={lang === 'ar' ? 'rtl' : 'ltr'} className="public-surface min-h-screen bg-[#fcfaf5] pb-12">
     <SEOHead title={c.heading + ' | Dalil Tounes'} description={c.intro} canonical="https://dalil-tounes.com/citizens/health/thermalisme" currentPath="/citizens/health/thermalisme" />
     <header className="bg-[#4A1D43] px-4 py-8 text-center text-white">
-      <h1 className="text-2xl font-semibold text-[#D4AF37] sm:text-3xl">♨️ {c.heading}</h1>
+      <h1 className="public-title text-2xl font-semibold text-[#D4AF37] sm:text-3xl">♨️ {c.heading}</h1>
       <p className="mx-auto mt-2 max-w-3xl text-sm">{c.intro}</p>
     </header>
     <nav className="mx-auto mt-5 flex max-w-5xl flex-wrap justify-center gap-3 px-4" aria-label={c.heading}>

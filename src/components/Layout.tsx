@@ -1,4 +1,5 @@
 import '../styles/premiumPlatform.css';
+import { usesPublicPageTheme } from '../lib/publicPageTheme';
 import { ReactNode, useEffect, useState, lazy, Suspense } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
@@ -230,7 +231,7 @@ export const Layout = ({ children }: LayoutProps) => {
     return location.pathname.startsWith(path);
   };
 
-  const premiumChrome = ['/', '/citizens', '/citizens/tourism', '/citizens/tourisme', '/subscription'].includes(location.pathname);
+  const premiumChrome = usesPublicPageTheme(location.pathname, isDedicatedClientHostname(window.location.hostname));
   const isQrBusinessRoute = location.pathname.startsWith('/qr-business/');
   const isEntrepriseAppRoute = location.pathname.startsWith('/entreprise/');
   const isDedicatedClientHost = isDedicatedClientHostname(window.location.hostname);
@@ -563,7 +564,7 @@ export const Layout = ({ children }: LayoutProps) => {
         </div>
       )}
 
-      <main className={`min-h-[calc(100vh-5rem)] overflow-x-hidden ${location.pathname === '/' ? '' : 'pt-[96px] sm:pt-[104px]'}`}>{children}</main>
+      <main className={`${premiumChrome ? 'public-page' : ''} min-h-[calc(100vh-5rem)] overflow-x-hidden ${location.pathname === '/' ? '' : 'pt-[96px] sm:pt-[104px]'}`}>{children}</main>
 
       <Suspense fallback={null}>
         <SocialBar />

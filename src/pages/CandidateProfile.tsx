@@ -41,7 +41,7 @@ export default function CandidateProfile() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center public-surface min-h-screen">
         <div className="inline-block w-8 h-8 border-2 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
@@ -50,10 +50,10 @@ export default function CandidateProfile() {
   const userId = user?.id || anonymousUserId;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white py-16 px-4">
+    <div className="public-surface min-h-screen bg-gradient-to-b from-[#fcfaf5] to-[#fffdf9] py-16 px-4">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-light text-gray-900 mb-2">
+          <h1 className="public-title text-3xl md:text-4xl font-light text-gray-900 mb-2">
             {t.candidate?.title || 'Déposer mon CV'}
           </h1>
           <p className="text-gray-600">
@@ -63,7 +63,7 @@ export default function CandidateProfile() {
 
         <div className="bg-gradient-to-r from-amber-50 to-yellow-50 border-2 border-amber-200 rounded-lg p-4 mb-8">
           <div className="flex items-start gap-3">
-            <span className="px-2 py-1 bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-900 text-xs font-bold rounded-full">
+            <span className="px-2 py-1 bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-900 text-xs font-medium rounded-full">
               PREMIUM
             </span>
             <div className="flex-1">
@@ -77,11 +77,11 @@ export default function CandidateProfile() {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+        <div className="bg-white rounded-xl shadow-lg p-6 md:p-8">
           <CandidateForm userId={userId} />
         </div>
 
-        <div className="mt-8 bg-gray-50 rounded-lg p-6">
+        <div className="mt-8 bg-[#fcfaf5] rounded-lg p-6">
           <h3 className="text-lg font-medium text-gray-900 mb-3">
             {t.candidate?.help?.title || 'Conseils pour un CV efficace'}
           </h3>

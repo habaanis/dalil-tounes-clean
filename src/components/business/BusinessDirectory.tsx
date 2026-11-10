@@ -196,10 +196,10 @@ export default function BusinessDirectory({ mode, title, subtitle }: BusinessDir
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white py-16 px-4">
+      <div className="min-h-screen bg-[#fcfaf5] py-10 px-4">
         <div className="max-w-5xl mx-auto">
           <div className="flex items-center justify-center py-20">
-            <Loader className="w-8 h-8 animate-spin text-orange-600" />
+            <Loader className="w-8 h-8 animate-spin text-[#806336]" />
           </div>
         </div>
       </div>
@@ -208,7 +208,7 @@ export default function BusinessDirectory({ mode, title, subtitle }: BusinessDir
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white py-16 px-4">
+      <div className="min-h-screen bg-[#fcfaf5] py-10 px-4">
         <div className="max-w-5xl mx-auto">
           <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
             <p className="text-red-800">{error}</p>
@@ -219,13 +219,13 @@ export default function BusinessDirectory({ mode, title, subtitle }: BusinessDir
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white py-16 px-4">
+    <div className="min-h-screen bg-[#fcfaf5] py-10 px-4">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-3">
-            <Building2 className="w-8 h-8 text-orange-600" />
-            <h1 className="text-3xl md:text-4xl font-light text-gray-900">
+            <Building2 className="w-8 h-8 text-[#806336]" />
+            <h1 className="public-title text-3xl md:text-4xl font-light text-[#35172f]">
               {displayTitle}
             </h1>
           </div>
@@ -245,7 +245,7 @@ export default function BusinessDirectory({ mode, title, subtitle }: BusinessDir
 
         {/* Filtres */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">
+          <h3 className="text-lg font-medium text-[#35172f] mb-4">
             {t.business?.directory?.filters?.title || 'Filtres de recherche'}
           </h3>
           <div className="grid md:grid-cols-3 gap-4">
@@ -261,7 +261,7 @@ export default function BusinessDirectory({ mode, title, subtitle }: BusinessDir
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder={t.business?.directory?.filters?.searchPlaceholder || 'Nom, service, catégorie...'}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#806336] focus:border-[#806336]"
                 />
               </div>
             </div>
@@ -274,7 +274,7 @@ export default function BusinessDirectory({ mode, title, subtitle }: BusinessDir
               <select
                 value={selectedCity}
                 onChange={(e) => setSelectedCity(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#806336] focus:border-[#806336]"
               >
                 <option value="">{t.business?.directory?.filters?.allCities || 'Toutes les villes'}</option>
                 {cities.map((city) => (
@@ -293,7 +293,7 @@ export default function BusinessDirectory({ mode, title, subtitle }: BusinessDir
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#806336] focus:border-[#806336]"
               >
                 <option value="">{t.business?.directory?.filters?.allCategories || 'Toutes les catégories'}</option>
                 {categories.map((cat) => (
@@ -314,7 +314,7 @@ export default function BusinessDirectory({ mode, title, subtitle }: BusinessDir
                   setSelectedCity('');
                   setSelectedCategory('');
                 }}
-                className="text-sm text-orange-600 hover:text-orange-700 font-medium"
+                className="text-sm text-[#806336] hover:text-orange-700 font-medium"
               >
                 {t.business?.directory?.filters?.reset || 'Réinitialiser les filtres'}
               </button>
@@ -473,7 +473,7 @@ export default function BusinessDirectory({ mode, title, subtitle }: BusinessDir
                         ? 'bg-[#D4AF37] text-[#064E3B] hover:bg-[#C4A027]'
                         : tier === 'elite'
                         ? 'bg-[#D4AF37] text-[#121212] hover:bg-[#C4A027]'
-                        : 'text-[#D4AF37] border-2 border-[#D4AF37] hover:bg-[#D4AF37] hover:text-gray-900'
+                        : 'text-[#D4AF37] border-2 border-[#D4AF37] hover:bg-[#D4AF37] hover:text-[#35172f]'
                     }`}>
                       {t.business?.directory?.card?.viewDetails || 'Voir la fiche'}
                     </button>
@@ -488,7 +488,7 @@ export default function BusinessDirectory({ mode, title, subtitle }: BusinessDir
         {filteredBusinesses.length > 0 && hasMore && (
           <div ref={observerTarget} className="flex justify-center py-8">
             {loadingMore ? (
-              <div className="flex items-center gap-2 text-orange-600">
+              <div className="flex items-center gap-2 text-[#806336]">
                 <Loader className="w-5 h-5 animate-spin" />
                 <span className="text-sm font-medium">{language === 'fr' ? 'Chargement...' : language === 'ar' ? 'جارٍ التحميل...' : language === 'en' ? 'Loading...' : language === 'it' ? 'Caricamento...' : 'Загрузка...'}</span>
               </div>
@@ -512,7 +512,7 @@ export default function BusinessDirectory({ mode, title, subtitle }: BusinessDir
 
         {/* Help Section */}
         <div className="mt-12 bg-gray-50 rounded-lg p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-3">
+          <h3 className="text-lg font-medium text-[#35172f] mb-3">
             {mode === 'partner'
               ? t.business?.partnerSearch?.help?.title || 'Comment trouver le bon partenaire ?'
               : t.business?.directory?.help?.title || 'Comment utiliser la plateforme ?'}

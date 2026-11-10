@@ -86,17 +86,17 @@ const Sitemap: React.FC = () => {
   const isRTL = lang === 'ar';
 
   return (
-    <div className="min-h-screen bg-[#111111] px-4 py-16" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="public-surface min-h-screen bg-[#111111] px-4 py-16" dir={isRTL ? 'rtl' : 'ltr'}>
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-12">
           <div className="inline-block mb-4 px-4 py-1.5 rounded-full border border-[#D4AF37]/40 text-[#D4AF37] text-xs font-medium tracking-widest uppercase" style={{ letterSpacing: '0.15em' }}>{copy.badge}</div>
-          <h1 className="text-3xl md:text-4xl font-bold text-white" style={{ fontFamily: "'Cormorant Garamond', serif" }}>{copy.title}</h1>
+          <h1 className="public-title text-3xl md:text-4xl font-medium text-white" style={{ fontFamily: "'Cormorant Garamond', serif" }}>{copy.title}</h1>
           <div className="w-16 h-px bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent mx-auto mt-6" />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           {copy.sections.map((section) => (
             <div key={section.title}>
-              <h2 className="text-sm font-semibold text-[#D4AF37] uppercase tracking-widest mb-4" style={{ letterSpacing: '0.1em' }}>{section.title}</h2>
+              <h2 className="public-heading text-sm font-semibold text-[#D4AF37] uppercase tracking-widest mb-4" style={{ letterSpacing: '0.1em' }}>{section.title}</h2>
               <ul className="space-y-2">
                 {section.links.map((link) => (
                   <li key={link.to}><Link to={link.to} className="text-gray-400 hover:text-[#D4AF37] text-sm transition-colors">{link.label}</Link></li>

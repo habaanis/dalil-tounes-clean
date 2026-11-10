@@ -173,9 +173,9 @@ function SectionIntro({
   return (
     <div className="max-w-3xl">
       {eyebrow && (
-        <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[#D4AF37]">{eyebrow}</p>
+        <p className="mb-3 text-xs font-medium uppercase tracking-[0.18em] text-[#D4AF37]">{eyebrow}</p>
       )}
-      <h2 className="text-2xl font-bold leading-tight text-[#4A1D43] md:text-3xl">{title}</h2>
+      <h2 className="public-heading text-2xl font-medium leading-tight text-[#4A1D43] md:text-3xl">{title}</h2>
       {children && <div className="mt-4 space-y-3 text-sm leading-relaxed text-gray-600 md:text-base">{children}</div>}
     </div>
   );
@@ -216,9 +216,9 @@ function BusinessCenterCard({
       <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#D4AF37]/12 text-[#800020]">
         <Icon className="h-5 w-5" />
       </span>
-      <h3 className="mt-4 text-lg font-bold text-[#4A1D43]">{title}</h3>
+      <h3 className="mt-4 text-lg font-medium text-[#4A1D43]">{title}</h3>
       <p className="mt-2 flex-1 text-sm leading-relaxed text-gray-600">{description}</p>
-      <span className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-[#800020]">
+      <span className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-[#800020]">
         {cta}
         {to && <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" />}
       </span>
@@ -227,7 +227,7 @@ function BusinessCenterCard({
 
   if (!to) {
     return (
-      <div className="flex h-full flex-col rounded-2xl border border-[#D4AF37]/30 bg-white p-5 shadow-sm" aria-disabled="true">
+      <div className="flex h-full flex-col rounded-xl border border-[#D4AF37]/30 bg-white p-5 shadow-sm" aria-disabled="true">
         {content}
       </div>
     );
@@ -236,7 +236,7 @@ function BusinessCenterCard({
   return (
     <Link
       to={to}
-      className="group flex h-full flex-col rounded-2xl border border-[#D4AF37]/30 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-[#D4AF37] hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/60"
+      className="group flex h-full flex-col rounded-xl border border-[#D4AF37]/30 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-[#D4AF37] hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/60"
     >
       {content}
     </Link>
@@ -1278,7 +1278,7 @@ export const Businesses = ({
   })) : [];
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA]">
+    <div className="public-surface min-h-screen bg-[#fcfaf5]">
       <SEOHead
         title={pageT.seo.title}
         description={pageT.seo.description}
@@ -1296,21 +1296,21 @@ export const Businesses = ({
 
       <div className="mx-auto flex max-w-7xl flex-col">
         <section className="px-4 pb-5 pt-6">
-          <div className="relative overflow-hidden rounded-[28px] border border-[#D4AF37]/40 bg-gradient-to-br from-[#4A1D43] via-[#6D2B58] to-[#0B5A45] shadow-[0_28px_80px_rgba(74,29,67,0.22)]">
+          <div className="relative overflow-hidden rounded-xl border border-[#d9c9a4] bg-gradient-to-br from-[#fffdf9] to-[#f3eddf] shadow-sm">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_15%,rgba(212,175,55,0.25),transparent_28%),radial-gradient(circle_at_80%_10%,rgba(255,255,255,0.14),transparent_26%)]" />
             <div className="relative px-5 py-8 text-center sm:px-8 lg:px-12 lg:py-10">
-              <div className="mx-auto max-w-3xl text-white">
-                <h1 className="text-3xl font-bold leading-tight md:text-4xl">
+              <div className="mx-auto max-w-3xl text-[#35172f]">
+                <h1 className="public-title text-3xl font-medium leading-tight md:text-4xl">
                   {pageT.hero.search}
                 </h1>
-                <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-white/85 md:text-lg">
+                <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-[#6c6068] md:text-lg">
                   {pageT.explore.description}
                 </p>
                 <div className="mt-6 flex justify-center">
                   <button
                     type="button"
                     onClick={() => document.getElementById('business-search')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-[#D4AF37] px-6 py-3 text-sm font-bold text-[#4A1D43] shadow-lg transition hover:bg-[#F0CD5A]"
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-[#D4AF37] px-6 py-3 text-sm font-medium text-[#4A1D43] shadow-lg transition hover:bg-[#F0CD5A]"
                   >
                     {pageT.hero.search}
                     <Search className="h-4 w-4" />
@@ -1323,16 +1323,16 @@ export const Businesses = ({
 
         <nav className="sticky top-16 z-30 order-1 border-y border-[#D4AF37]/25 bg-white/95 px-4 py-2 shadow-sm backdrop-blur" aria-label={pageT.explore.title}>
           <div className="mx-auto flex max-w-5xl gap-2 overflow-x-auto">
-            <button type="button" onClick={() => document.getElementById('business-search')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="whitespace-nowrap rounded-full bg-[#4A1D43] px-4 py-2 text-sm font-bold text-white">{directoryCopy.search}</button>
-            <button type="button" onClick={() => document.getElementById('business-center')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="whitespace-nowrap rounded-full border border-[#D4AF37]/50 bg-white px-4 py-2 text-sm font-bold text-[#4A1D43]">{directoryCopy.businessCenter}</button>
-            <button type="button" onClick={() => document.getElementById('professional-services')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="whitespace-nowrap rounded-full border border-[#D4AF37]/50 bg-white px-4 py-2 text-sm font-bold text-[#4A1D43]">{directoryCopy.professionals}</button>
+            <button type="button" onClick={() => document.getElementById('business-search')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="whitespace-nowrap rounded-full bg-[#4A1D43] px-4 py-2 text-sm font-medium text-white">{directoryCopy.search}</button>
+            <button type="button" onClick={() => document.getElementById('business-center')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="whitespace-nowrap rounded-full border border-[#D4AF37]/50 bg-white px-4 py-2 text-sm font-medium text-[#4A1D43]">{directoryCopy.businessCenter}</button>
+            <button type="button" onClick={() => document.getElementById('professional-services')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="whitespace-nowrap rounded-full border border-[#D4AF37]/50 bg-white px-4 py-2 text-sm font-medium text-[#4A1D43]">{directoryCopy.professionals}</button>
           </div>
         </nav>
 
         <section id="business-center" className="order-2 scroll-mt-28 px-4 py-8" aria-labelledby="business-center-title">
-          <div className="mx-auto max-w-5xl rounded-3xl border border-[#D4AF37]/25 bg-[#FFFDF6] p-5 sm:p-7">
+          <div className="mx-auto max-w-5xl rounded-xl border border-[#D4AF37]/25 bg-[#FFFDF6] p-5 sm:p-7">
             <div className="mx-auto max-w-3xl text-center">
-              <h2 id="business-center-title" className="text-2xl font-bold text-[#4A1D43] md:text-3xl">
+              <h2 id="business-center-title" className="public-heading text-2xl font-medium text-[#4A1D43] md:text-3xl">
                 {pageT.businessCenter.title}
               </h2>
               <p className="mt-3 text-sm leading-relaxed text-gray-600 md:text-base">
@@ -1386,12 +1386,12 @@ export const Businesses = ({
               <p>{pageT.whyProfile.paragraphs[4]}</p>
             </SectionIntro>
 
-            <div className="rounded-2xl border border-[#D4AF37]/30 bg-[#FFFDF6] p-5 shadow-sm">
+            <div className="rounded-xl border border-[#D4AF37]/30 bg-[#FFFDF6] p-5 shadow-sm">
               <div className="flex items-center gap-3">
                 <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#D4AF37]/15 text-[#D4AF37]">
                   <ShieldCheck className="h-5 w-5" />
                 </span>
-                <h3 className="text-lg font-bold text-[#4A1D43]">{pageT.whyProfile.adviceTitle}</h3>
+                <h3 className="text-lg font-medium text-[#4A1D43]">{pageT.whyProfile.adviceTitle}</h3>
               </div>
               <p className="mt-4 text-sm leading-relaxed text-gray-700">
                 {pageT.whyProfile.adviceText}
@@ -1404,7 +1404,7 @@ export const Businesses = ({
         <section id="business-search" className="relative z-0 order-1 scroll-mt-28 px-4 py-6">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-5">
-              <h2 className="text-xl md:text-2xl font-bold text-[#4A1D43]">{pageT.explore.title}</h2>
+              <h2 className="public-heading text-xl md:text-2xl font-medium text-[#4A1D43]">{pageT.explore.title}</h2>
               <p className="mt-3 text-sm md:text-base text-gray-600 max-w-3xl mx-auto leading-relaxed">
                 {pageT.explore.description}
               </p>
@@ -1469,19 +1469,19 @@ export const Businesses = ({
 
         <div className="order-1 mx-auto mb-4 flex max-w-5xl flex-col gap-2 px-4 text-xs text-gray-600 sm:flex-row sm:flex-wrap sm:justify-center" dir={language === 'ar' ? 'rtl' : 'ltr'}>
           <span className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/35 bg-white px-3 py-2 shadow-sm">
-            <span className="font-black text-[#4A1D43]">Premium / Artisan</span>
+            <span className="font-medium text-[#4A1D43]">Premium / Artisan</span>
             <span aria-hidden="true">—</span>
             <span>{badgeLegend.service.replace(/^Premium \/ Artisan\s*:\s*/i, '')}</span>
           </span>
           <span className="inline-flex items-center gap-2 rounded-full border border-emerald-700/20 bg-white px-3 py-2 shadow-sm">
-            <span className="font-black text-emerald-800">{language === 'ar' ? 'موثّق' : language === 'en' ? 'Certified' : language === 'it' ? 'Certificato' : language === 'ru' ? 'Проверено' : 'Certifié'}</span>
+            <span className="font-medium text-emerald-800">{language === 'ar' ? 'موثّق' : language === 'en' ? 'Certified' : language === 'it' ? 'Certificato' : language === 'ru' ? 'Проверено' : 'Certifié'}</span>
             <span aria-hidden="true">—</span>
             <span>{badgeLegend.certified.replace(/^[^:：]+[:：]\s*/, '')}</span>
           </span>
         </div>
 
         {/* Affichage des résultats : avec ou sans recherche active */}
-        <div ref={resultsRef} className="relative z-10 order-1 mb-10 bg-[#F8F9FA]">
+        <div ref={resultsRef} className="relative z-10 order-1 mb-10 bg-[#fcfaf5]">
           {(loading || searching || pendingSearch) ? (
             <div className="text-center py-12">
               <div className="inline-block w-8 h-8 border-2 border-[#D4AF37] border-t-transparent rounded-full animate-spin"></div>
@@ -1490,7 +1490,7 @@ export const Businesses = ({
           ) : filteredBusinesses.length === 0 && hasActiveSearch ? (
             <div className="px-4 py-12 text-center">
               <Building2 className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-              <h3 className="text-lg font-bold text-[#4A1D43]">
+              <h3 className="text-lg font-medium text-[#4A1D43]">
                 {language === 'ar'
                   ? 'لم يتم العثور على أي مؤسسة لهذا البحث'
                   : language === 'en'
@@ -1533,7 +1533,7 @@ export const Businesses = ({
                       });
                     }, 50);
                   }}
-                  className="inline-flex items-center justify-center rounded-full bg-[#D4AF37] px-5 py-2.5 text-sm font-bold text-[#4A1D43] transition hover:bg-[#F0CD5A]"
+                  className="inline-flex items-center justify-center rounded-full bg-[#D4AF37] px-5 py-2.5 text-sm font-medium text-[#4A1D43] transition hover:bg-[#F0CD5A]"
                 >
                   {language === 'ar'
                     ? 'إعادة ضبط البحث'
@@ -1565,7 +1565,7 @@ export const Businesses = ({
           ) : filteredBusinesses.length > 0 ? (
             <div className="mx-auto max-w-7xl px-4">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-bold text-[#4A1D43]">
+                <h3 className="text-lg font-medium text-[#4A1D43]">
                   {hasActiveSearch ? pageT.results.searchResults : pageT.results.featured}
                   <span className="ms-2 text-sm text-gray-500 font-normal">
                     ({hasActiveSearch ? filteredBusinesses.length : Math.min(3, filteredBusinesses.length)} {filteredBusinesses.length > 1 ? pageT.results.businessPlural : pageT.results.businessSingular})
@@ -1648,15 +1648,15 @@ export const Businesses = ({
         </div>
 
         <section id="professional-services" className="order-3 scroll-mt-28 px-4 py-8">
-          <div className="mx-auto max-w-5xl rounded-3xl border border-[#D4AF37]/35 bg-gradient-to-br from-[#FFF8DF] to-white p-6 text-center shadow-sm sm:p-8">
-            <p className="text-sm font-black uppercase tracking-[0.14em] text-[#B58A18]">{directoryCopy.professionals}</p>
-            <h2 className="mt-2 text-2xl font-bold text-[#4A1D43] md:text-3xl">{pageT.cvBusiness.title}</h2>
+          <div className="mx-auto max-w-5xl rounded-xl border border-[#D4AF37]/35 bg-gradient-to-br from-[#FFF8DF] to-white p-6 text-center shadow-sm sm:p-8">
+            <p className="text-sm font-medium uppercase tracking-[0.14em] text-[#B58A18]">{directoryCopy.professionals}</p>
+            <h2 className="public-heading mt-2 text-2xl font-medium text-[#4A1D43] md:text-3xl">{pageT.cvBusiness.title}</h2>
             <p className="mx-auto mt-3 max-w-3xl text-base leading-7 text-gray-600">{pageT.cvBusiness.paragraphs[0]}</p>
             <div className="mt-5 flex flex-col justify-center gap-3 sm:flex-row">
-              <button type="button" onClick={() => navigate('/subscription')} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#4A1D43] px-5 py-3 text-sm font-bold text-white">
+              <button type="button" onClick={() => navigate('/subscription')} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#4A1D43] px-5 py-3 text-sm font-medium text-white">
                 {pageT.hero.offers}<ArrowRight className="h-4 w-4" aria-hidden="true" />
               </button>
-              <button type="button" aria-expanded={showProfessionalDetails} onClick={() => setShowProfessionalDetails((current) => !current)} className="min-h-11 rounded-xl border border-[#D4AF37] bg-white px-5 py-3 text-sm font-bold text-[#4A1D43]">
+              <button type="button" aria-expanded={showProfessionalDetails} onClick={() => setShowProfessionalDetails((current) => !current)} className="min-h-11 rounded-xl border border-[#D4AF37] bg-white px-5 py-3 text-sm font-medium text-[#4A1D43]">
                 {showProfessionalDetails ? directoryCopy.hideDetails : directoryCopy.showDetails}
               </button>
             </div>
@@ -1685,7 +1685,7 @@ export const Businesses = ({
               <button
                 type="button"
                 onClick={() => setShowDemoModal(true)}
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-[#D4AF37] bg-white px-5 py-2.5 text-sm font-bold text-[#4A1D43] shadow-sm transition hover:bg-[#FFF8E1] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/60"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-[#D4AF37] bg-white px-5 py-2.5 text-sm font-medium text-[#4A1D43] shadow-sm transition hover:bg-[#FFF8E1] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/60"
               >
                 {pageT.cvBusiness.viewLarge}
                 <ArrowRight className="h-4 w-4" />
@@ -1706,7 +1706,7 @@ export const Businesses = ({
             </SectionIntro>
             <div className="mt-6 grid gap-3 md:grid-cols-3">
               {pageT.consistency.benefits.map((item: string) => (
-                <div key={item} className="rounded-2xl border border-[#D4AF37]/20 bg-[#FFFDF6] px-4 py-3 text-sm font-semibold text-[#4A1D43]">
+                <div key={item} className="rounded-xl border border-[#D4AF37]/20 bg-[#FFFDF6] px-4 py-3 text-sm font-semibold text-[#4A1D43]">
                   {item}
                 </div>
               ))}
@@ -1722,16 +1722,16 @@ export const Businesses = ({
                 title={pageT.customerJourney.title}
               >
                 <p>{pageT.customerJourney.description}</p>
-                <div className="mt-5 rounded-2xl border border-[#D4AF37]/25 bg-white p-4 text-sm text-gray-700 shadow-sm">
-                  <span className="font-bold text-[#4A1D43]">{pageT.customerJourney.dalilLabel}</span>
+                <div className="mt-5 rounded-xl border border-[#D4AF37]/25 bg-white p-4 text-sm text-gray-700 shadow-sm">
+                  <span className="font-medium text-[#4A1D43]">{pageT.customerJourney.dalilLabel}</span>
                   {pageT.customerJourney.dalilMessage}
                 </div>
               </SectionIntro>
 
               <div className="space-y-3">
                 {pageT.customerJourney.steps.map((item: string, index: number) => (
-                  <div key={item} className="flex gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
-                    <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[#D4AF37]/15 text-sm font-bold text-[#4A1D43]">
+                  <div key={item} className="flex gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+                    <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[#D4AF37]/15 text-sm font-medium text-[#4A1D43]">
                       {index + 1}
                     </span>
                     <p className="text-sm leading-relaxed text-gray-700">{item}</p>
@@ -1745,13 +1745,13 @@ export const Businesses = ({
         <section className={`${showProfessionalDetails ? 'block' : 'hidden'} order-4 px-4 py-10`}>
           <div className="max-w-6xl mx-auto">
             <div className="text-center max-w-3xl mx-auto">
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#D4AF37] mb-3">{pageT.faq.eyebrow}</p>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#4A1D43]">{pageT.faq.title}</h2>
+              <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#D4AF37] mb-3">{pageT.faq.eyebrow}</p>
+              <h2 className="public-heading text-2xl md:text-3xl font-medium text-[#4A1D43]">{pageT.faq.title}</h2>
             </div>
             <div className="mt-8 grid gap-4 md:grid-cols-2">
               {pageT.faq.items.map((item: { question: string; answer: string }) => (
-                <div key={item.question} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-                  <h3 className="text-base font-bold text-[#4A1D43]">{item.question}</h3>
+                <div key={item.question} className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+                  <h3 className="text-base font-medium text-[#4A1D43]">{item.question}</h3>
                   <p className="mt-3 text-sm leading-relaxed text-gray-600">{item.answer}</p>
                 </div>
               ))}
@@ -1760,9 +1760,9 @@ export const Businesses = ({
         </section>
 
         <section className={`${showProfessionalDetails ? 'block' : 'hidden'} order-4 px-4 py-10`}>
-          <div className="max-w-5xl mx-auto rounded-3xl border border-[#D4AF37]/35 bg-gradient-to-br from-[#4A1D43] to-[#0B5A45] p-7 md:p-10 text-center text-white shadow-[0_22px_60px_rgba(74,29,67,0.2)]">
-            <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#F7D978]">{pageT.finalCta.eyebrow}</p>
-            <h2 className="mt-3 text-2xl md:text-4xl font-bold">{pageT.finalCta.title}</h2>
+          <div className="max-w-5xl mx-auto rounded-xl border border-[#D4AF37]/35 bg-gradient-to-br from-[#4A1D43] to-[#0B5A45] p-7 md:p-10 text-center text-white shadow-[0_22px_60px_rgba(74,29,67,0.2)]">
+            <p className="text-sm font-medium uppercase tracking-[0.18em] text-[#F7D978]">{pageT.finalCta.eyebrow}</p>
+            <h2 className="public-heading mt-3 text-2xl md:text-4xl font-medium">{pageT.finalCta.title}</h2>
             <p className="mt-4 max-w-2xl mx-auto text-sm md:text-base leading-relaxed text-white/85">
               {pageT.finalCta.description}
             </p>
@@ -1772,7 +1772,7 @@ export const Businesses = ({
             <button
               type="button"
               onClick={() => navigate('/subscription')}
-              className="mt-7 inline-flex items-center justify-center gap-2 rounded-full bg-[#D4AF37] px-7 py-3 text-sm font-bold text-[#4A1D43] shadow-lg transition hover:bg-[#F0CD5A]"
+              className="mt-7 inline-flex items-center justify-center gap-2 rounded-full bg-[#D4AF37] px-7 py-3 text-sm font-medium text-[#4A1D43] shadow-lg transition hover:bg-[#F0CD5A]"
             >
               {pageT.finalCta.button}
               <ArrowRight className="h-4 w-4" />
@@ -1791,9 +1791,9 @@ export const Businesses = ({
             }}
           >
             <div className="relative max-h-[calc(100vh-32px)] w-fit max-w-[95vw] overflow-y-auto overflow-x-hidden">
-              <div className="relative mb-3 rounded-2xl border border-white/70 bg-white/95 px-12 py-4 text-center shadow-2xl backdrop-blur">
+              <div className="relative mb-3 rounded-xl border border-white/70 bg-white/95 px-12 py-4 text-center shadow-sm backdrop-blur">
                 <div className="mx-auto max-w-sm">
-                  <h2 id="business-demo-modal-title" className="text-lg font-bold text-[#4A1D43]">
+                  <h2 id="business-demo-modal-title" className="public-heading text-lg font-medium text-[#4A1D43]">
                     {pageT.demo.title}
                   </h2>
                   <p className="mt-1 text-sm leading-relaxed text-gray-600">
@@ -1803,7 +1803,7 @@ export const Businesses = ({
                 <button
                   type="button"
                   onClick={() => setShowDemoModal(false)}
-                  className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 text-gray-600 transition hover:bg-gray-50 hover:text-[#4A1D43] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/60"
+                  className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 text-gray-600 transition hover:bg-[#fcfaf5] hover:text-[#4A1D43] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/60"
                   aria-label={pageT.demo.close}
                 >
                   <X className="h-5 w-5" />
@@ -1816,10 +1816,10 @@ export const Businesses = ({
 
         {showSuggestForm && (
           <div className="fixed inset-0 bg-black/80 z-[99999] flex items-center justify-center p-4" onClick={(e) => e.target === e.currentTarget && setShowSuggestForm(false)}>
-            <div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative z-[100000]">
+            <div className="bg-white rounded-lg shadow-sm max-w-2xl w-full max-h-[90vh] overflow-y-auto relative z-[100000]">
               <div className="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center">
                 <div>
-                  <h2 className="text-xl font-medium text-gray-900">{pageT.form.title}</h2>
+                  <h2 className="public-heading text-xl font-medium text-gray-900">{pageT.form.title}</h2>
                   <p className="text-sm text-gray-600 mt-1">
                     {pageT.form.description}
                   </p>
@@ -1889,7 +1889,7 @@ export const Businesses = ({
                       setShowSuggestForm(false);
                       if (onCloseSuggestionForm) onCloseSuggestionForm();
                     }}
-                    className="flex-1 px-4 py-2 text-sm border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"
+                    className="flex-1 px-4 py-2 text-sm border border-gray-300 text-gray-700 rounded-md hover:bg-[#fcfaf5]"
                   >
                     {t.common.cancel}
                   </button>

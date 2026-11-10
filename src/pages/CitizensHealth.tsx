@@ -261,7 +261,7 @@ export default function CitizensHealth({}: CitizensHealthProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="public-surface min-h-screen bg-gradient-to-b from-white to-gray-50" dir={isRTL ? 'rtl' : 'ltr'}>
       <section className="relative w-full overflow-hidden rounded-b-3xl shadow-lg">
         <img src={getSupabaseImageUrl('sante.jpg')} alt={c.heroAlt} className="w-full h-[240px] object-cover" decoding="async" />
         <div className="absolute inset-0 bg-gradient-to-br from-[#4A1D43]/40 to-[#6B2D5C]/30" />
@@ -308,12 +308,12 @@ export default function CitizensHealth({}: CitizensHealthProps) {
         <div className="max-w-5xl mx-auto">
           <div className="bg-gradient-to-br from-[#4A1D43]/5 to-[#D4AF37]/5 border border-[#D4AF37] rounded-xl px-3 py-3 shadow-lg">
             <div className="text-center mb-2">
-              <h2 className="text-xl font-light text-[#4A1D43]" style={{ fontFamily: "'Playfair Display', serif" }}>{t.health.emergency.title}</h2>
+              <h2 className="public-heading text-xl font-light text-[#4A1D43]" style={{ fontFamily: "'Playfair Display', serif" }}>{t.health.emergency.title}</h2>
               <p className="text-[10px] text-gray-600 mt-0.5">{t.health.emergency.subtitle}</p>
             </div>
             <div className="flex flex-col md:flex-row justify-center gap-2">
               {emergencyNumbers.map((n) => (
-                <a key={n.num} href={`tel:${n.num}`} className="bg-[#4A1D43] hover:bg-[#5A2D53] rounded-lg px-3 py-2 border border-[#D4AF37] transition-all duration-300 flex flex-col items-center shadow-md hover:shadow-xl w-full md:w-[140px]">
+                <a key={n.num} href={`tel:${n.num}`} className="bg-[#4A1D43] hover:bg-[#5A2D53] rounded-lg px-3 py-2 border border-[#D4AF37] transition-all duration-300 flex flex-col items-center shadow-md hover:shadow-sm w-full md:w-[140px]">
                   <Phone className="w-4 h-4 text-[#D4AF37] mb-1" />
                   <div className="text-lg font-semibold text-[#D4AF37] leading-none">{n.num}</div>
                   <div className="text-[10px] text-white/90 mt-1">{n.label}</div>
@@ -330,7 +330,7 @@ export default function CitizensHealth({}: CitizensHealthProps) {
             <img src={getSupabaseImageUrl('sante_banner.webp')} alt={c.transportAlt} className="w-full h-full object-cover" decoding="async" />
             <div className="absolute inset-0 bg-gradient-to-r from-[#4A1D43]/90 to-[#6B2D5C]/80" />
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
-              <h2 className="text-xl md:text-2xl font-light text-[#D4AF37] mb-1 drop-shadow-lg" style={{ fontFamily: "'Playfair Display', serif" }}>🚑 {c.transportTitle}</h2>
+              <h2 className="public-heading text-xl md:text-2xl font-light text-[#D4AF37] mb-1 drop-shadow-lg" style={{ fontFamily: "'Playfair Display', serif" }}>🚑 {c.transportTitle}</h2>
               <p className="text-white/95 text-xs md:text-sm font-light max-w-2xl mx-auto drop-shadow leading-snug">{c.transportSubtitle}</p>
             </div>
           </div>
@@ -370,11 +370,11 @@ export default function CitizensHealth({}: CitizensHealthProps) {
             </div>
           )}
 
-          <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }} className="mt-8 bg-gradient-to-br from-[#4A1D43]/5 to-[#D4AF37]/5 border-2 border-[#D4AF37] rounded-2xl p-6 text-center shadow-lg">
+          <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }} className="mt-8 bg-gradient-to-br from-[#4A1D43]/5 to-[#D4AF37]/5 border-2 border-[#D4AF37] rounded-xl p-6 text-center shadow-lg">
             <div className="max-w-2xl mx-auto">
               <h3 className="text-2xl font-light text-[#4A1D43] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>{c.ctaTitle}</h3>
               <p className="text-gray-700 text-sm mb-4 leading-relaxed">{c.ctaText}</p>
-              <button onClick={() => setShowTransportModal(true)} className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#4A1D43] text-[#D4AF37] text-sm font-semibold border border-[#D4AF37] hover:bg-[#5A2D53] hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+              <button onClick={() => setShowTransportModal(true)} className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#4A1D43] text-[#D4AF37] text-sm font-semibold border border-[#D4AF37] hover:bg-[#5A2D53] hover:shadow-sm transition-all duration-300 transform hover:scale-105">
                 <Plus className="w-4 h-4" />{c.ctaButton}
               </button>
             </div>
@@ -384,7 +384,7 @@ export default function CitizensHealth({}: CitizensHealthProps) {
 
       {showTransportModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
-          <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="relative bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+          <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="relative bg-white rounded-xl shadow-sm max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <button aria-label={c.close} title={c.close} onClick={() => setShowTransportModal(false)} className={`sticky top-4 z-10 p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition ${isRTL ? 'left-4 float-left' : 'right-4 float-right'}`}>
               <X className="w-5 h-5 text-gray-600" />
             </button>
@@ -403,7 +403,7 @@ export default function CitizensHealth({}: CitizensHealthProps) {
 
       <section className="px-4 pb-12" aria-labelledby="official-health-links">
         <div className="max-w-5xl mx-auto">
-          <h2 id="official-health-links" className="text-xl font-semibold text-[#4A1D43] text-center mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>{c.officialTitle}</h2>
+          <h2 id="official-health-links" className="public-heading text-xl font-semibold text-[#4A1D43] text-center mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>{c.officialTitle}</h2>
           <div className="grid gap-3 md:grid-cols-3">
             {[
               { label: c.officialLinks[0], href: 'https://www.cnam.nat.tn/services-en-ligne.jsp' },

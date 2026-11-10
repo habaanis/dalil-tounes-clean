@@ -660,7 +660,7 @@ export default function SearchBar({
     <form
       ref={formRef}
       onSubmit={onSubmit}
-      className={`relative w-full ${className ?? ''}`}
+      className={`public-search relative w-full ${className ?? ''}`}
       data-search-bar="true"
       data-search-scope={isGlobal ? 'entreprise-ville' : `entreprise-ville:${scope}`}
       data-component-name="SearchBar"
