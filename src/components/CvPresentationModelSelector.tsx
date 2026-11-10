@@ -387,7 +387,7 @@ export function CvPresentationModelSelector({
             type="button"
             aria-pressed={formulaValue === 'artisan'}
             onClick={() => onFormulaChange('artisan')}
-            className={`min-h-14 rounded-xl border px-3 py-2 text-sm font-black transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${formulaValue === 'artisan' ? 'border-[#D6AF2E] bg-[#07543F] text-white shadow-md' : 'border-slate-200 bg-[#FFFCF7] text-[#4A123F] hover:border-[#D6AF2E]'}`}
+            className={`min-h-14 rounded-xl border px-3 py-2 text-sm font-black transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${formulaValue === 'artisan' ? 'border-[#C8A557] bg-[#F8F0DE] text-[#35172F] shadow-md' : 'border-slate-200 bg-[#FFFCF7] text-[#4A123F] hover:border-[#D6AF2E]'}`}
           >
             {artisanLabel}
           </button>
@@ -395,7 +395,7 @@ export function CvPresentationModelSelector({
             type="button"
             aria-pressed={formulaValue === 'premium'}
             onClick={() => onFormulaChange('premium')}
-            className={`min-h-14 rounded-xl border px-3 py-2 text-sm font-black transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${formulaValue === 'premium' ? 'border-[#D6AF2E] bg-[#07543F] text-white shadow-md' : 'border-slate-200 bg-[#FFFCF7] text-[#4A123F] hover:border-[#D6AF2E]'}`}
+            className={`min-h-14 rounded-xl border px-3 py-2 text-sm font-black transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${formulaValue === 'premium' ? 'border-[#C8A557] bg-[#F8F0DE] text-[#35172F] shadow-md' : 'border-slate-200 bg-[#FFFCF7] text-[#4A123F] hover:border-[#D6AF2E]'}`}
           >
             {premiumLabel}
           </button>

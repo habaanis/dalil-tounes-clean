@@ -1249,30 +1249,30 @@ function CreationPlanCard({
   selected?: boolean;
 }) {
   return (
-    <article className={`relative flex flex-col overflow-hidden rounded-3xl border-2 bg-[#07543F] p-5 text-white shadow-[0_12px_30px_rgba(7,84,63,0.16)] transition sm:p-6 ${selected ? 'border-white ring-4 ring-[#D6AF2E]' : 'border-[#D6AF2E]'}`}>
-      <span className="absolute right-0 top-0 rounded-bl-2xl bg-[#D6AF2E] px-4 py-2 text-[11px] font-black tracking-[0.12em] text-[#07543F]">CV BUSINESS</span>
+    <article className={`relative flex flex-col overflow-hidden rounded-3xl border-2 bg-[#FFF9ED] p-5 text-[#35172F] shadow-[0_12px_30px_rgba(7,84,63,0.16)] transition sm:p-6 ${selected ? 'border-[#C8A557] ring-4 ring-[#D6AF2E]' : 'border-[#D6AF2E]'}`}>
+      <span className="absolute right-0 top-0 rounded-bl-2xl bg-[#D6AF2E] px-4 py-2 text-[11px] font-black tracking-[0.12em] text-[#30162E]">CV BUSINESS</span>
       <h3 className="mt-8 text-2xl font-bold">{title}</h3>
-      <div className="mt-2 flex items-end gap-2 text-[#F4CE55]">
+      <div className="mt-2 flex items-end gap-2 text-[#815E28]">
         <span className="text-4xl font-black">{price}</span>
       </div>
-      <p className="mt-1 text-xs font-bold uppercase tracking-[0.08em] text-emerald-100">{creationLabel}</p>
-      <p className="mt-3 text-sm leading-6 text-emerald-50">{intro}</p>
-      <p className="mt-3 rounded-xl bg-white/10 px-3 py-2 text-sm font-bold text-white">{firstYearIncluded}</p>
+      <p className="mt-1 text-xs font-bold uppercase tracking-[0.08em] text-[#645861]">{creationLabel}</p>
+      <p className="mt-3 text-sm leading-6 text-[#594F57]">{intro}</p>
+      <p className="mt-3 rounded-xl bg-[#F8F0DE] px-3 py-2 text-sm font-bold text-[#35172F]">{firstYearIncluded}</p>
       <button
         type="button"
         aria-expanded={expanded}
         onClick={onToggle}
-        className="mt-4 flex w-full items-center justify-between rounded-xl border border-[#D6AF2E] px-4 py-3 text-left text-sm font-bold text-[#F4CE55] transition hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white"
+        className="mt-4 flex w-full items-center justify-between rounded-xl border border-[#D6AF2E] px-4 py-3 text-left text-sm font-bold text-[#815E28] transition hover:bg-[#F8F0DE] focus:outline-none focus:ring-2 focus:ring-[#986F25]"
       >
         <span>{expanded ? hideBenefitsLabel : showBenefitsLabel}</span>
         <ChevronRight className={`h-5 w-5 transition-transform ${expanded ? 'rotate-90' : ''}`} aria-hidden="true" />
       </button>
       {expanded && (
-        <div className="mt-4 border-t border-white/15 pt-4">
-          <FeatureList items={features} variant="dark" />
+        <div className="mt-4 border-t border-[#D9C69F] pt-4">
+          <FeatureList items={features} variant="light" />
           <div className="grid gap-2 pt-6 sm:grid-cols-2">
-            <button type="button" onClick={onPreview} className="rounded-xl border border-[#D6AF2E] bg-transparent px-4 py-3 text-sm font-bold text-[#F0C537] transition hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]">{previewLabel}</button>
-            <button type="button" onClick={onRequest} className="rounded-xl bg-[#D6AF2E] px-4 py-3 text-sm font-bold text-[#07543F] transition hover:bg-[#E5C64D] focus:outline-none focus:ring-2 focus:ring-white">{chooseLabel}</button>
+            <button type="button" onClick={onPreview} className="rounded-xl border border-[#D6AF2E] bg-transparent px-4 py-3 text-sm font-bold text-[#815E28] transition hover:bg-[#F8F0DE] focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]">{previewLabel}</button>
+            <button type="button" onClick={onRequest} className="rounded-xl bg-[#D6AF2E] px-4 py-3 text-sm font-bold text-[#30162E] transition hover:bg-[#E5C64D] focus:outline-none focus:ring-2 focus:ring-[#986F25]">{chooseLabel}</button>
           </div>
         </div>
       )}
@@ -1389,7 +1389,7 @@ export const Subscription = () => {
   onPaletteChange={setSelectedPalette}
 />
 </details>
-<div className="mb-6 overflow-hidden rounded-3xl border border-[#D6AF2E]/60 bg-gradient-to-br from-[#FFF8DF] via-white to-emerald-50 p-5 shadow-[0_12px_30px_rgba(74,18,63,0.07)] sm:p-7">
+<div className="mb-6 overflow-hidden rounded-3xl border border-[#D6AF2E]/60 bg-gradient-to-br from-[#FFF8DF] via-white to-[#FFF9ED] p-5 shadow-[0_12px_30px_rgba(74,18,63,0.07)] sm:p-7">
   <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
     <div className="max-w-3xl">
       <span className="inline-flex items-center gap-2 rounded-full bg-[#4A123F] px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-white">
@@ -1399,8 +1399,8 @@ export const Subscription = () => {
       <h3 className="mt-3 text-xl font-black text-[#4A123F] sm:text-2xl">{simpleCopy.welcomeTitle}</h3>
       <p className="mt-3 hidden text-sm leading-6 text-slate-700 sm:block">{simpleCopy.welcomeDescription}</p>
     </div>
-    <div className="hidden rounded-2xl bg-[#07543F] px-5 py-4 text-center text-white shadow-sm sm:block lg:max-w-xs">
-      <p className="text-lg font-black leading-6 text-[#F4CE55]">{simpleCopy.welcomeHighlight}</p>
+    <div className="hidden rounded-2xl border border-[#D3B16F] bg-[#FFF9ED] px-5 py-4 text-center text-[#4A1D43] shadow-sm sm:block lg:max-w-xs">
+      <p className="text-lg font-black leading-6 text-[#4A1D43]">{simpleCopy.welcomeHighlight}</p>
     </div>
   </div>
   <p className="mt-4 rounded-2xl border border-[#D6AF2E]/45 bg-white px-4 py-3 text-sm font-black leading-6 text-[#4A123F]">{simpleCopy.welcomePayment}</p>
@@ -1454,7 +1454,7 @@ export const Subscription = () => {
       <h3 className="mt-3 text-2xl font-bold text-[#4A123F]">{simpleCopy.maintenanceTitle}</h3>
       <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">{simpleCopy.maintenanceIntro}</p>
     </div>
-    <div className="text-3xl font-black text-[#07543F]">{simpleCopy.maintenancePrice}</div>
+    <div className="text-3xl font-black text-[#4A1D43]">{simpleCopy.maintenancePrice}</div>
   </div>
   <div className="mt-5">
     <ResponsiveFeatureList

@@ -2,6 +2,9 @@ import type { Language } from './i18n';
 
 export const siteStructureCopy = {
   "fr": {
+    "homeCvTitle": "Vous souhaitez attirer plus de clients et faire connaître votre activité ?",
+    "homeCvText": "Gagnez en visibilité, inspirez confiance et partagez votre activité avec un lien professionnel ou un QR Code.",
+    "homeCvAction": "Découvrir les CV Business et Portfolio",
     "professional": "Espace professionnel",
     "essential": "Présence Essentielle gratuite",
     "freeIntro": "Inscrivez gratuitement votre activité sur Dalil Tounes.",
@@ -28,6 +31,9 @@ export const siteStructureCopy = {
     "services": "Services et informations utiles"
   },
   "ar": {
+    "homeCvTitle": "هل ترغب في جذب المزيد من العملاء والتعريف بنشاطك؟",
+    "homeCvText": "عزّز ظهور نشاطك، وابنِ الثقة وشاركه عبر رابط مهني أو رمز QR.",
+    "homeCvAction": "اكتشف CV Business وCV Portfolio",
     "professional": "الفضاء المهني",
     "essential": "الحضور الأساسي المجاني",
     "freeIntro": "سجّل نشاطك مجاناً على دليل تونس.",
@@ -54,6 +60,9 @@ export const siteStructureCopy = {
     "services": "الخدمات والمعلومات المفيدة"
   },
   "en": {
+    "homeCvTitle": "Would you like to attract more customers and make your business known?",
+    "homeCvText": "Build visibility and trust, and share your business with a professional link or QR code.",
+    "homeCvAction": "Discover Business and Portfolio CVs",
     "professional": "Professional space",
     "essential": "Free Essential Presence",
     "freeIntro": "List your activity on Dalil Tounes for free.",
@@ -80,6 +89,9 @@ export const siteStructureCopy = {
     "services": "Useful services and information"
   },
   "it": {
+    "homeCvTitle": "Vuoi attirare più clienti e far conoscere la tua attività?",
+    "homeCvText": "Aumenta la visibilità, ispira fiducia e condividi la tua attività con un link professionale o un codice QR.",
+    "homeCvAction": "Scopri i CV Business e Portfolio",
     "professional": "Spazio professionale",
     "essential": "Presenza Essenziale gratuita",
     "freeIntro": "Iscrivi gratuitamente la tua attività su Dalil Tounes.",
@@ -106,6 +118,9 @@ export const siteStructureCopy = {
     "services": "Servizi e informazioni utili"
   },
   "ru": {
+    "homeCvTitle": "Хотите привлечь больше клиентов и рассказать о своей деятельности?",
+    "homeCvText": "Повышайте узнаваемость, укрепляйте доверие и делитесь своей деятельностью через профессиональную ссылку или QR-код.",
+    "homeCvAction": "Открыть Business CV и Portfolio CV",
     "professional": "Для профессионалов",
     "essential": "Бесплатное базовое присутствие",
     "freeIntro": "Добавьте свою деятельность на Dalil Tounes бесплатно.",

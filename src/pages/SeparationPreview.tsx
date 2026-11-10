@@ -343,9 +343,13 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
           <div className="mx-auto max-w-5xl space-y-5 px-4 py-6">
             <EssentialPresence />
             <section className="rounded-2xl bg-[#2E102A] p-5 text-white" aria-label={structure.products}>
-              <h2 className="font-serif text-xl font-bold">CV Business · CV Portfolio</h2>
-              <p className="mt-2 text-sm leading-6 text-white/85">{structure.cvIntro}</p>
-              <a href="/subscription#cv-professionnels" className="mt-4 inline-flex min-h-11 items-center rounded-xl border border-[#D4AF37] px-4 py-2 text-sm font-bold text-[#F1D783]">{structure.prices} <ArrowRight className="ms-2 h-4 w-4" aria-hidden="true" /></a>
+              <p className="text-xs font-bold uppercase tracking-wide text-[#F1D783]">CV Business · CV Portfolio</p>
+              <h2 className="mt-2 max-w-3xl font-serif text-xl font-bold sm:text-2xl">{structure.homeCvTitle}</h2>
+              <p className="mt-2 text-sm leading-6 text-white/85">{structure.homeCvText}</p>
+              <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              <a href="/subscription#presence-essentielle" className="inline-flex min-h-11 items-center justify-center rounded-xl bg-[#FFF9ED] px-4 py-3 text-center text-sm font-bold text-[#35172F]">{structure.freeAction}</a>
+              <a href="/subscription#modeles" className="inline-flex min-h-11 items-center justify-center rounded-xl border border-[#D4AF37] px-4 py-3 text-center text-sm font-bold text-[#F1D783]">{structure.homeCvAction} <ArrowRight className="ms-2 h-4 w-4 shrink-0" aria-hidden="true" /></a>
+              </div>
             </section>
           </div>
         </>
