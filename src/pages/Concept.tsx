@@ -166,7 +166,7 @@ export default function Concept({ embedded = false }: { embedded?: boolean }) {
               <p className="mt-4 text-sm font-black uppercase tracking-[0.12em] text-emerald-800">{t.professionalLabel}</p>
               <h3 className="mt-2 text-xl font-bold text-[#2E102A]">{t.businessTitle}</h3>
               <p className="mt-3 text-base leading-7 text-gray-600">{t.businessDescription}</p>
-              <Link to="/abonnement" className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-xl bg-[#07543F] px-5 py-3 text-sm font-bold text-white">{t.offers}<ArrowRight className={`h-4 w-4 ${isRTL ? 'rotate-180' : ''}`} /></Link>
+              <Link to="/subscription#offres" className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-xl bg-[#07543F] px-5 py-3 text-sm font-bold text-white">{t.offers}<ArrowRight className={`h-4 w-4 ${isRTL ? 'rotate-180' : ''}`} /></Link>
             </article>
           </div>
         </div>
@@ -194,7 +194,7 @@ export default function Concept({ embedded = false }: { embedded?: boolean }) {
           <div className="mt-6 flex flex-wrap justify-center gap-2">{t.flowSteps.map((label) => <span key={label} className="rounded-full border border-white/20 bg-white/10 px-3 py-2 text-sm font-semibold">{label}</span>)}</div>
         </div>
       </section>
-      <section className="py-8 px-4 border-t border-gray-100"><div className="max-w-3xl mx-auto"><nav className="flex flex-wrap justify-center gap-4 text-sm"><Link to="/entreprises" className="text-[#D4AF37] hover:underline font-medium">{t.searchProfessional}</Link><Link to="/pourquoi-dalil-tounes" className="text-[#D4AF37] hover:underline font-medium">{t.why}</Link><Link to="/abonnement" className="text-[#D4AF37] hover:underline font-medium">{t.businessOffers}</Link><Link to="/contact" className="text-[#D4AF37] hover:underline font-medium">{t.contact}</Link></nav></div></section>
+      <section className="py-8 px-4 border-t border-gray-100"><div className="max-w-3xl mx-auto"><nav className="flex flex-wrap justify-center gap-4 text-sm"><Link to="/entreprises" className="text-[#D4AF37] hover:underline font-medium">{t.searchProfessional}</Link><Link to="/pourquoi-dalil-tounes" className="text-[#D4AF37] hover:underline font-medium">{t.why}</Link><Link to="/subscription#offres" className="text-[#D4AF37] hover:underline font-medium">{t.businessOffers}</Link><Link to="/contact" className="text-[#D4AF37] hover:underline font-medium">{t.contact}</Link></nav></div></section>
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import StructuredData from '../components/StructuredData';
 import Concept from './Concept';
 import { FounderStory } from '../components/FounderStory';
 import { CvBusinessHome } from './SeparationPreview';
@@ -33,7 +34,6 @@ import { useLanguage } from '../context/LanguageContext';
 type PreviewType = 'free' | 'artisan' | 'premium' | 'launch' | 'request' | null;
 type ModalSize = 'preview' | 'compact' | 'medium' | 'large';
 
-const LOGO_PATH = '/images/logo_dalil_tounes_sceau_luxe.webp';
 const MODAL_SIZE_CLASS_NAME: Record<ModalSize, string> = {
   preview: 'w-[min(500px,calc(100vw-16px))] sm:w-[min(500px,calc(100vw-32px))]',
   compact: 'w-[min(700px,calc(100vw-24px))] sm:w-[min(700px,calc(100vw-48px))]',
@@ -1031,16 +1031,6 @@ function Modal({
   );
 }
 
-function DemoLogo({ alt, src = LOGO_PATH }: { alt: string; src?: string }) {
-  return (
-    <img
-      src={src}
-      alt={alt}
-      className="h-20 w-20 rounded-full border-4 border-[#D6AF2E] bg-white object-cover shadow-lg"
-    />
-  );
-}
-
 function EssentialCardPreview({ copy, previewText }: { copy: SubscriptionCopy; previewText: string }) {
   return (
     <div className="mx-auto max-w-lg rounded-[26px] border-[3px] border-[#D6AF2E] bg-white p-5 text-slate-800 shadow-xl sm:p-7">
@@ -1346,6 +1336,7 @@ export const Subscription = () => {
   return (
     <div className="bg-[#FFFCF7] px-4 py-8 text-slate-900 sm:py-12" dir={isArabic ? 'rtl' : 'ltr'}>
       <div className="mx-auto max-w-6xl">
+        <StructuredData data={{ '@context': 'https://schema.org', '@type': 'AboutPage', name: structure.professional, description: structure.intro, url: 'https://dalil-tounes.com/subscription' }} />
         <SEOHead title={`${structure.professional} | ${structure.products} | Dalil Tounes`} description={`${structure.freeIntro} ${structure.cvIntro}`} canonical="https://dalil-tounes.com/subscription" currentPath="/subscription" />
         <header className="order-1 mb-2 text-center sm:mb-10">
           <p className="mb-3 flex items-center justify-center gap-3 text-xs font-black uppercase tracking-[0.2em] text-amber-600">
