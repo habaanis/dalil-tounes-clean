@@ -80,7 +80,10 @@ export async function submitBusinessRegistration(
   const timeoutId = window.setTimeout(() => controller.abort(), 20_000);
 
   try {
-    const response = await fetch(`${supabaseUrl}/functions/v1/submit-company-registration`, {
+    const endpoint = window.location.hostname.endsWith('.vercel.app')
+      ? '/api/preview-company-registration'
+      : `${supabaseUrl}/functions/v1/submit-company-registration`;
+    const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -15,7 +15,6 @@ function ScrollToTop() {
   useEffect(() => {
     if (!hash) { window.scrollTo(0, 0); return; }
     // Lazy route content can mount after the location changes.
-    let observer: MutationObserver | undefined;
     const reveal = () => {
       const target = document.getElementById(decodeURIComponent(hash.slice(1)));
       if (!target) return false;
@@ -23,14 +22,15 @@ function ScrollToTop() {
         if (node instanceof HTMLDetailsElement) node.open = true;
       }
       target.scrollIntoView({ block: 'start' });
-      observer?.disconnect();
       return true;
     };
     if (reveal()) return;
-    observer = new MutationObserver(reveal);
+    const observer = new MutationObserver(() => {
+      if (reveal()) observer.disconnect();
+    });
     observer.observe(document.getElementById('root') ?? document.body, { childList: true, subtree: true });
-    const timer = window.setTimeout(() => observer?.disconnect(), 10000);
-    return () => { observer?.disconnect(); window.clearTimeout(timer); };
+    const timer = window.setTimeout(() => observer.disconnect(), 10000);
+    return () => { observer.disconnect(); window.clearTimeout(timer); };
   }, [pathname, hash]);
   return null;
 }

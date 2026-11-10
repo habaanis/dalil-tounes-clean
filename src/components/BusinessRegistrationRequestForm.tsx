@@ -8,6 +8,7 @@ import {
   type BusinessRegistrationRequest,
 } from '../lib/businessRegistration';
 import {
+  buildEssentialRegistrationMessage,
   BUSINESS_SECTORS,
   TUNISIA_GOVERNORATES,
   cleanMultiline,
@@ -487,7 +488,7 @@ export function BusinessRegistrationRequestForm({
             instagram: normalizeWebAddress(form.instagram, 'instagram'),
             whatsapp: form.whatsapp.trim() ? normalizePhone(form.whatsapp) : '',
             description: cleanMultiline(form.description),
-            message: cleanMultiline([form.message, form.openingHours.trim() ? `${siteStructureCopy[language].fields[4]}: ${form.openingHours.trim()}` : ''].filter(Boolean).join('\n\n')),
+            message: buildEssentialRegistrationMessage(form.message, form.openingHours, siteStructureCopy[language].fields[4]),
             consent: form.consent,
           };
 
