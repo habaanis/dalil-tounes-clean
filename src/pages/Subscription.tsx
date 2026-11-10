@@ -1349,13 +1349,15 @@ export const Subscription = () => {
         </header>
 
         <nav className="mb-5 flex flex-wrap justify-center gap-3 text-sm font-bold text-[#4A1D43]" aria-label={structure.professional}>
-          <a href="#presence-essentielle">{structure.essential}</a><a href="#concept">{structure.concept}</a><a href="#cv-professionnels">{structure.products}</a><a href="#offres">{structure.offers}</a>
+          <a href="#presence-essentielle">{structure.essential}</a><a href="#concept">{structure.concept}</a><a href="#cv-professionnels">{structure.products}</a><a href="#modeles">{structure.models}</a><a href="#offres">{structure.offers}</a>
         </nav>
         <EssentialPresence registration />
+        <p className="mt-3 text-sm font-semibold text-emerald-800">{copy.essentialFree}</p>
         <button type="button" onClick={() => setActivePreview('free')} className="mt-3 min-h-11 rounded-xl border border-[#D4AF37] px-4 py-2 text-sm font-bold text-[#4A1D43]">{copy.previewCard}</button>
         <section id="concept" className="my-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-5">
           <h2 className="font-serif text-xl font-bold text-[#4A1D43]">Dalil Tounes</h2>
           <p className="my-3 text-sm leading-6 text-slate-600">{structure.intro}</p>
+          <p className="my-3 text-sm leading-6 text-slate-600">{copy.heroSubtitle}</p>
           <details className="rounded-xl border border-[#D4AF37]/40 p-3"><summary className="cursor-pointer font-bold text-[#4A1D43]">{structure.concept}</summary><Concept embedded /></details>
           <details id="histoire-fondateur" className="mt-3 scroll-mt-32 rounded-xl border border-[#D4AF37]/40 p-3"><summary className="cursor-pointer font-bold text-[#4A1D43]">{structure.story}</summary><FounderStory full /></details>
         </section>
