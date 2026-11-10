@@ -148,6 +148,7 @@ export default function Concept({ embedded = false }: { embedded?: boolean }) {
       </section>
 
       </>}
+      {embedded && <p className="mx-auto max-w-5xl px-4 pt-5 text-sm leading-6 text-slate-600">{t.heroDescription}</p>}
       <section className="px-4 pt-7"><div className="mx-auto max-w-5xl"><GuideMascot variant="welcome" pose="hello" position="left" size="sm" title={t.mascotTitle} message={t.mascotMessage} /></div></section>
 
       <section className="px-4 py-10">

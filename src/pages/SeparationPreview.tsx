@@ -1,3 +1,4 @@
+import VisibilityHouseSection from '../components/VisibilityHouseSection';
 import { EssentialPresence } from '../components/EssentialPresence';
 import { siteStructureCopy } from '../lib/siteStructureCopy';
 import { SEOHead } from '../components/SEOHead';
@@ -364,6 +365,15 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
               <p className="mt-5 max-w-5xl rounded-2xl border border-[#D4AF37]/25 bg-white px-4 py-3 text-sm leading-6 text-gray-700">{t.physicalCard}</p>
               <div className="mt-5 rounded-2xl bg-[#2E102A] p-5 text-white md:p-6"><h3 className="font-serif text-xl font-bold text-[#F1D783] md:text-2xl">{t.visibilityTitle}</h3><p className="mt-2 max-w-5xl text-sm leading-6 text-white/85 md:text-base">{t.visibilityText}</p></div>
             </div>
+          </section>
+
+          <section className="mx-auto max-w-5xl space-y-4 px-4 py-5">
+            <h2 className="font-serif text-xl font-bold text-[#4A1D43]">{t.miniAppTitle}</h2>
+            <p className="text-sm leading-6 text-slate-600">{t.miniAppText}</p>
+            <p className="text-sm font-bold text-[#9A7416]">{t.miniAppHighlights}</p>
+            <h3 className="font-bold text-[#4A1D43]">{ecosystem.cvAdvantageTitle}</h3>
+            <p className="text-sm leading-6 text-slate-600">{ecosystem.cvAdvantageText}</p>
+            <details className="rounded-2xl border border-[#D4AF37]/40 p-4"><summary className="cursor-pointer font-bold text-[#4A1D43]">{structure.details}</summary><VisibilityHouseSection showNetworkProof={false} /></details>
           </section>
 
           <CvCapabilitiesSection language={lang} />
