@@ -297,7 +297,7 @@ function PaletteChoice({
       <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200" style={{ background: sw.bg }}>
         <span className="block h-4 w-4 rounded-full" style={{ background: sw.accent }} />
       </span>
-      <span className="min-w-0 flex-1 text-xs font-black leading-4 text-slate-700">{label}</span>
+      <span className="min-w-0 flex-1 text-xs font-medium leading-4 text-slate-700">{label}</span>
       {selected && <Check className="h-4 w-4 shrink-0 text-[#07543F]" aria-hidden="true" />}
     </button>
   );
@@ -375,19 +375,19 @@ export function CvPresentationModelSelector({
   return (
     <section id="cv-presentation-models" className="mt-5 scroll-mt-24 rounded-3xl border border-[#D6AF2E]/55 bg-white p-3 shadow-[0_8px_24px_rgba(74,18,63,0.05)] sm:p-5">
       <div className="text-center">
-        <p className="text-[10px] font-black uppercase tracking-[0.16em] text-amber-600">{copy.eyebrow}</p>
-        <h3 className="mt-1 text-xl font-black text-[#4A123F] sm:text-2xl">{copy.title}</h3>
+        <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-amber-600">{copy.eyebrow}</p>
+        <h3 className="mt-1 text-xl font-medium text-[#4A123F] sm:text-2xl">{copy.title}</h3>
         <p className="mx-auto mt-1.5 max-w-2xl text-sm leading-5 text-slate-600">{copy.subtitle}</p>
       </div>
 
       <div className="mx-auto mt-4 max-w-4xl">
-        <p className="mb-2 text-sm font-black text-[#4A123F]">1. {copy.selectedFormula}</p>
+        <p className="mb-2 text-sm font-medium text-[#4A123F]">1. {copy.selectedFormula}</p>
         <div className="grid grid-cols-2 gap-2">
           <button
             type="button"
             aria-pressed={formulaValue === 'artisan'}
             onClick={() => onFormulaChange('artisan')}
-            className={`min-h-14 rounded-xl border px-3 py-2 text-sm font-black transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${formulaValue === 'artisan' ? 'border-[#C8A557] bg-[#F8F0DE] text-[#35172F] shadow-md' : 'border-slate-200 bg-[#FFFCF7] text-[#4A123F] hover:border-[#D6AF2E]'}`}
+            className={`min-h-14 rounded-xl border px-3 py-2 text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${formulaValue === 'artisan' ? 'border-[#C8A557] bg-[#F8F0DE] text-[#35172F] shadow-md' : 'border-slate-200 bg-[#FFFCF7] text-[#4A123F] hover:border-[#D6AF2E]'}`}
           >
             {artisanLabel}
           </button>
@@ -395,7 +395,7 @@ export function CvPresentationModelSelector({
             type="button"
             aria-pressed={formulaValue === 'premium'}
             onClick={() => onFormulaChange('premium')}
-            className={`min-h-14 rounded-xl border px-3 py-2 text-sm font-black transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${formulaValue === 'premium' ? 'border-[#C8A557] bg-[#F8F0DE] text-[#35172F] shadow-md' : 'border-slate-200 bg-[#FFFCF7] text-[#4A123F] hover:border-[#D6AF2E]'}`}
+            className={`min-h-14 rounded-xl border px-3 py-2 text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${formulaValue === 'premium' ? 'border-[#C8A557] bg-[#F8F0DE] text-[#35172F] shadow-md' : 'border-slate-200 bg-[#FFFCF7] text-[#4A123F] hover:border-[#D6AF2E]'}`}
           >
             {premiumLabel}
           </button>
@@ -403,14 +403,14 @@ export function CvPresentationModelSelector({
       </div>
 
       <div className="mx-auto mt-4 max-w-4xl">
-        <p className="mb-2 text-sm font-black text-[#4A123F]">2. {copy.selectedModel}</p>
+        <p className="mb-2 text-sm font-medium text-[#4A123F]">2. {copy.selectedModel}</p>
         <div className="sm:hidden">
           <div className="grid grid-cols-2 gap-1 rounded-2xl bg-[#F4F0E7] p-1.5">
             <button
               type="button"
               aria-pressed={value === 'business'}
               onClick={() => onChange('business')}
-              className={`min-h-12 rounded-xl px-2 py-2 text-sm font-black transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'business' ? 'bg-[#4A123F] text-white shadow-sm' : 'bg-white text-[#4A123F]'}`}
+              className={`min-h-12 rounded-xl px-2 py-2 text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'business' ? 'bg-[#4A123F] text-white shadow-sm' : 'bg-white text-[#4A123F]'}`}
             >
               {copy.business}
             </button>
@@ -418,7 +418,7 @@ export function CvPresentationModelSelector({
               type="button"
               aria-pressed={value === 'portfolio'}
               onClick={() => onChange('portfolio')}
-              className={`min-h-12 rounded-xl px-2 py-2 text-sm font-black transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'portfolio' ? 'bg-[#4A123F] text-white shadow-sm' : 'bg-white text-[#4A123F]'}`}
+              className={`min-h-12 rounded-xl px-2 py-2 text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'portfolio' ? 'bg-[#4A123F] text-white shadow-sm' : 'bg-white text-[#4A123F]'}`}
             >
               {copy.portfolio}
             </button>
@@ -454,7 +454,7 @@ export function CvPresentationModelSelector({
             onEnlarge={() => setExpandedModel('portfolio')}
           />
           <button type="button" aria-pressed={value === 'portfolio'} onClick={() => onChange('portfolio')} className="mt-3 min-h-11 min-w-0 rounded-lg text-start focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#D6AF2E]">
-            <span className="block text-sm font-black leading-5 text-[#4A123F] sm:text-lg">{copy.portfolio}</span>
+            <span className="block text-sm font-medium leading-5 text-[#4A123F] sm:text-lg">{copy.portfolio}</span>
             <span className="mt-1.5 hidden text-sm leading-5 text-slate-600 sm:block">{copy.portfolioDescription}</span>
           </button>
         </article>
@@ -469,7 +469,7 @@ export function CvPresentationModelSelector({
             onEnlarge={() => setExpandedModel('business')}
           />
           <button type="button" aria-pressed={value === 'business'} onClick={() => onChange('business')} className="mt-3 min-h-11 min-w-0 rounded-lg text-start focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#D6AF2E]">
-            <span className="block text-sm font-black leading-5 text-[#4A123F] sm:text-lg">{copy.business}</span>
+            <span className="block text-sm font-medium leading-5 text-[#4A123F] sm:text-lg">{copy.business}</span>
             <span className="mt-1.5 hidden text-sm leading-5 text-slate-600 sm:block">{copy.businessDescription}</span>
           </button>
         </article>
@@ -482,7 +482,7 @@ export function CvPresentationModelSelector({
           aria-expanded={showPalettePanel}
           aria-pressed={showPalettePanel}
           onClick={() => setShowPalettePanel((prev) => !prev)}
-          className="flex w-full items-center justify-between rounded-xl border border-[#D6AF2E]/50 bg-[#FFFCF7] px-4 py-3 text-sm font-black text-[#4A123F] transition hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]"
+          className="flex w-full items-center justify-between rounded-xl border border-[#D6AF2E]/50 bg-[#FFFCF7] px-4 py-3 text-sm font-medium text-[#4A123F] transition hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]"
         >
           <span className="flex items-center gap-2">
             <Palette className="h-4 w-4 text-[#D6AF2E]" aria-hidden="true" />
@@ -610,7 +610,7 @@ export function CvPresentationModelSelector({
           >
             <header className="sticky top-0 z-20 flex min-h-16 items-center justify-between gap-4 border-b border-[#A07E3E]/25 bg-white px-4 py-2.5 sm:min-h-[70px] sm:px-5 sm:py-3">
               <div className="flex min-w-0 flex-col gap-0.5">
-                <small className="text-[0.65rem] font-black tracking-[0.13em] text-[#9A722C]">{copy.enlargedPreview}</small>
+                <small className="text-[0.65rem] font-medium tracking-[0.13em] text-[#9A722C]">{copy.enlargedPreview}</small>
                 <strong className="truncate font-serif text-base font-bold text-[#0A2F27] sm:text-lg">{getPaletteLabel(language, expandedPalette)} · {value === 'portfolio' ? copy.portfolio : copy.business}</strong>
               </div>
               <button
