@@ -129,7 +129,7 @@ const copy: Record<Language, ConceptCopy> = {
   },
 };
 
-export default function Concept() {
+export default function Concept({ embedded = false }: { embedded?: boolean }) {
   const currentPath = useHreflangPath();
   const { language } = useLanguage();
   const t = copy[language] || copy.fr;
@@ -137,7 +137,7 @@ export default function Concept() {
 
   return (
     <div className="min-h-screen bg-white" dir={isRTL ? 'rtl' : 'ltr'}>
-      <StructuredData data={[{ '@context': 'https://schema.org', '@type': 'AboutPage', name: t.breadcrumbCurrent, description: t.seoDescription, url: 'https://dalil-tounes.com/concept' }, { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: t.breadcrumbHome, item: 'https://dalil-tounes.com/' }, { '@type': 'ListItem', position: 2, name: t.breadcrumbCurrent }] }]} />
+      {!embedded && <><StructuredData data={[{ '@context': 'https://schema.org', '@type': 'AboutPage', name: t.breadcrumbCurrent, description: t.seoDescription, url: 'https://dalil-tounes.com/concept' }, { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: t.breadcrumbHome, item: 'https://dalil-tounes.com/' }, { '@type': 'ListItem', position: 2, name: t.breadcrumbCurrent }] }]} />
       <SEOHead title={t.seoTitle} description={t.seoDescription} keywords={t.seoKeywords} image="/images/pourquoi-business-card.png" type="website" canonical="https://dalil-tounes.com/concept" currentPath={currentPath} />
 
       <div className="max-w-5xl mx-auto px-4 pt-6"><Breadcrumb items={[{ label: t.breadcrumbHome, href: '/' }, { label: t.breadcrumbCurrent }]} /></div>
@@ -147,6 +147,8 @@ export default function Concept() {
         <div className="relative z-10 mx-auto max-w-4xl px-6 py-12 text-center"><h1 className="mb-4 text-3xl font-bold leading-tight text-white drop-shadow-lg sm:text-4xl md:text-5xl">{t.heroTitleBefore} <span className="text-[#D4AF37]">Dalil Tounes</span>{t.heroTitleAfter}</h1><p className="mx-auto max-w-3xl text-base leading-relaxed text-gray-100 drop-shadow sm:text-lg">{t.heroDescription}</p></div>
       </section>
 
+      </>}
+      {embedded && <p className="mx-auto max-w-5xl px-4 pt-5 text-sm leading-6 text-slate-600">{t.heroDescription}</p>}
       <section className="px-4 pt-7"><div className="mx-auto max-w-5xl"><GuideMascot variant="welcome" pose="hello" position="left" size="sm" title={t.mascotTitle} message={t.mascotMessage} /></div></section>
 
       <section className="px-4 py-10">
@@ -165,7 +167,7 @@ export default function Concept() {
               <p className="mt-4 text-sm font-black uppercase tracking-[0.12em] text-emerald-800">{t.professionalLabel}</p>
               <h3 className="mt-2 text-xl font-bold text-[#2E102A]">{t.businessTitle}</h3>
               <p className="mt-3 text-base leading-7 text-gray-600">{t.businessDescription}</p>
-              <Link to="/abonnement" className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-xl bg-[#07543F] px-5 py-3 text-sm font-bold text-white">{t.offers}<ArrowRight className={`h-4 w-4 ${isRTL ? 'rotate-180' : ''}`} /></Link>
+              <Link to="/subscription#offres" className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-xl bg-[#07543F] px-5 py-3 text-sm font-bold text-white">{t.offers}<ArrowRight className={`h-4 w-4 ${isRTL ? 'rotate-180' : ''}`} /></Link>
             </article>
           </div>
         </div>
@@ -193,7 +195,7 @@ export default function Concept() {
           <div className="mt-6 flex flex-wrap justify-center gap-2">{t.flowSteps.map((label) => <span key={label} className="rounded-full border border-white/20 bg-white/10 px-3 py-2 text-sm font-semibold">{label}</span>)}</div>
         </div>
       </section>
-      <section className="py-8 px-4 border-t border-gray-100"><div className="max-w-3xl mx-auto"><nav className="flex flex-wrap justify-center gap-4 text-sm"><Link to="/entreprises" className="text-[#D4AF37] hover:underline font-medium">{t.searchProfessional}</Link><Link to="/pourquoi-dalil-tounes" className="text-[#D4AF37] hover:underline font-medium">{t.why}</Link><Link to="/abonnement" className="text-[#D4AF37] hover:underline font-medium">{t.businessOffers}</Link><Link to="/contact" className="text-[#D4AF37] hover:underline font-medium">{t.contact}</Link></nav></div></section>
+      <section className="py-8 px-4 border-t border-gray-100"><div className="max-w-3xl mx-auto"><nav className="flex flex-wrap justify-center gap-4 text-sm"><Link to="/entreprises" className="text-[#D4AF37] hover:underline font-medium">{t.searchProfessional}</Link><Link to="/pourquoi-dalil-tounes" className="text-[#D4AF37] hover:underline font-medium">{t.why}</Link><Link to="/subscription#offres" className="text-[#D4AF37] hover:underline font-medium">{t.businessOffers}</Link><Link to="/contact" className="text-[#D4AF37] hover:underline font-medium">{t.contact}</Link></nav></div></section>
     </div>
   );
 }

@@ -491,7 +491,7 @@ export default function CitizensTourism() {
   const t = copy[lang];
   const journey = journeyCopy[lang];
   const isRTL = lang === 'ar';
-  const [journeyMode, setJourneyMode] = useState<JourneyMode>('visit');
+  const [journeyMode, setJourneyMode] = useState<JourneyMode>(() => new URLSearchParams(window.location.search).get('tab') === 'settle' ? 'settle' : 'visit');
   const topics = journeyMode === 'visit' ? journey.visitTopics : journey.settleTopics;
 
   return (

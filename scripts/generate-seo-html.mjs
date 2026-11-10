@@ -173,6 +173,12 @@ const sousCategories = parseSousCategories();
 const secteurs = parseEntries(extractArrayBlock('SEO_SECTEURS', 'const SECTEUR_LABEL_TO_SLUG'), true);
 const gouvernorats = parseEntries(extractArrayBlock('SEO_GOUVERNORATS', 'export const SEO_'), true);
 
+writePage('/subscription', {
+  title: 'Espace professionnel | CV Business et CV Portfolio | Dalil Tounes',
+  description: 'Inscrivez gratuitement votre activité avec la Présence Essentielle. Découvrez notre concept, les modèles CV Business et CV Portfolio et les tarifs existants.',
+  canonical: `${ORIGIN}/subscription`,
+});
+
 writePage('/entreprises-certifiees', {
   title: 'Entreprises certifiées en Tunisie | Dalil Tounes',
   description: 'Découvrez les entreprises et professionnels certifiés sur Dalil Tounes. Recherchez par nom, ville ou activité et consultez leur présentation professionnelle.',

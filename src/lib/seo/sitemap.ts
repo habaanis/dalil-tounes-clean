@@ -89,11 +89,6 @@ export const staticPages: SitemapURL[] = [
     loc: '/subscription',
     changefreq: 'monthly',
     priority: 0.7
-  },
-  {
-    loc: '/concept',
-    changefreq: 'monthly',
-    priority: 0.6
   }
 ];
 

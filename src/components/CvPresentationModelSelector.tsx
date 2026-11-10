@@ -444,10 +444,7 @@ export function CvPresentationModelSelector({
         </div>
 
         <div className="hidden grid-cols-2 gap-4 sm:grid">
-        <button
-          type="button"
-          aria-pressed={value === 'portfolio'}
-          onClick={() => onChange('portfolio')}
+        <article
           className={`flex min-w-0 flex-col rounded-2xl border p-3.5 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'portfolio' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
         >
           <ModelPreview
@@ -456,16 +453,13 @@ export function CvPresentationModelSelector({
             enlargeLabel={`${copy.enlarge} — ${copy.portfolio}`}
             onEnlarge={() => setExpandedModel('portfolio')}
           />
-          <span className="mt-3 min-w-0">
+          <button type="button" aria-pressed={value === 'portfolio'} onClick={() => onChange('portfolio')} className="mt-3 min-h-11 min-w-0 rounded-lg text-start focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#D6AF2E]">
             <span className="block text-sm font-black leading-5 text-[#4A123F] sm:text-lg">{copy.portfolio}</span>
             <span className="mt-1.5 hidden text-sm leading-5 text-slate-600 sm:block">{copy.portfolioDescription}</span>
-          </span>
-        </button>
+          </button>
+        </article>
 
-        <button
-          type="button"
-          aria-pressed={value === 'business'}
-          onClick={() => onChange('business')}
+        <article
           className={`flex min-w-0 flex-col rounded-2xl border p-3.5 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'business' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
         >
           <ModelPreview
@@ -474,11 +468,11 @@ export function CvPresentationModelSelector({
             enlargeLabel={`${copy.enlarge} — ${copy.business}`}
             onEnlarge={() => setExpandedModel('business')}
           />
-          <span className="mt-3 min-w-0">
+          <button type="button" aria-pressed={value === 'business'} onClick={() => onChange('business')} className="mt-3 min-h-11 min-w-0 rounded-lg text-start focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#D6AF2E]">
             <span className="block text-sm font-black leading-5 text-[#4A123F] sm:text-lg">{copy.business}</span>
             <span className="mt-1.5 hidden text-sm leading-5 text-slate-600 sm:block">{copy.businessDescription}</span>
-          </span>
-        </button>
+          </button>
+        </article>
         </div>
       </div>
 

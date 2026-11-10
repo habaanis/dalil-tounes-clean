@@ -137,3 +137,11 @@ function stripControlCharacters(value: string, preserveLayout: boolean): string 
     return character;
   }).join('');
 }
+
+/** Keep opening hours within the deployed registration endpoint's 1,200-character message limit. */
+export function buildEssentialRegistrationMessage(message: string, openingHours: string, hoursLabel: string): string {
+  const hours = cleanMultiline(openingHours).slice(0, 300);
+  const prefix = hours ? `${hoursLabel}: ${hours}` : '';
+  const detail = cleanMultiline(message);
+  return [prefix, detail].filter(Boolean).join('\n\n').slice(0, 1200);
+}

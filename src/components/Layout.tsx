@@ -10,6 +10,7 @@ const ADMIN_EMAILS = ['contact@dalil-tounes.com', 'zenanis75@hotmail.com'];
 import { Menu, X, ChevronDown, ChevronRight, Download, Share } from 'lucide-react';
 import LanguageSelector from './LanguageSelector';
 import { WhatsAppSupport } from './WhatsAppSupport';
+import { siteStructureCopy } from '../lib/siteStructureCopy';
 import { isDedicatedClientHostname } from '../lib/clientAppUrl';
 
 // Tout ce qui est hors viewport initial est chargé paresseusement : ces
@@ -111,11 +112,11 @@ export const Layout = ({ children }: LayoutProps) => {
   const tx = t as any;
   const te = useTranslationExtended(language);
   const publicNavLabels = {
-    discover: te.navLabels?.discover || 'Découvrir',
     partners: te.navLabels?.partners || 'Partenaires',
     contact: te.navLabels?.contact || 'Contact',
   };
 
+  const structure = siteStructureCopy[language];
   const navigationStructure: NavItem[] = [
     ...(isAdmin
       ? [
@@ -149,7 +150,9 @@ export const Layout = ({ children }: LayoutProps) => {
         { label: tx.navExtra?.servicesCitoyens || 'Services Citoyens', path: '/citizens/services' },
         { label: t.navMenu?.citizens?.shops || 'Commerces & Magasins', path: '/citizens/shops' },
         { label: t.navMenu?.citizens?.leisure || 'Loisirs & Événements', path: '/citizens/leisure' },
-        { label: tx.navExtra?.tourism || 'Tourisme Local & Expatriation', path: '/citizens/tourism' },
+        { label: structure.visit, path: '/citizens/tourism' },
+        { label: structure.settle, path: '/citizens/tourism?tab=settle' },
+        { label: tx.navExtra?.blog || 'Articles', path: '/blog' },
       ],
     },
     ...(isAdmin
@@ -165,16 +168,14 @@ export const Layout = ({ children }: LayoutProps) => {
           } as NavItem,
         ]),
     {
-      label: publicNavLabels.discover,
-      path: '/concept',
-      children: [
-        { label: tx.navExtra?.concept || 'Notre Concept', path: '/concept' },
-        { label: tx.navExtra?.blog || 'Articles', path: '/blog' },
-      ],
-    },
-    {
-      label: t.nav.subscription || 'Abonnement',
+      label: structure.professional,
       path: '/subscription',
+      children: [
+        { label: structure.essential, path: '/subscription#presence-essentielle' },
+        { label: 'CV Business', path: '/subscription#cv-professionnels' },
+        { label: 'CV Portfolio', path: '/subscription#modeles' },
+        { label: structure.offers, path: '/subscription#offres' },
+      ],
     },
     {
       label: publicNavLabels.partners,
@@ -375,6 +376,8 @@ export const Layout = ({ children }: LayoutProps) => {
                       )}
                       {navItem.children && (
                         <button
+                          aria-label={navItem.label}
+                          aria-expanded={mobileExpandedMenu === navItem.label}
                           onClick={() => setMobileExpandedMenu(mobileExpandedMenu === navItem.label ? null : navItem.label)}
                           className="px-3 py-2 rounded-lg text-gray-600 hover:bg-orange-50 transition-colors"
                         >
@@ -474,11 +477,11 @@ export const Layout = ({ children }: LayoutProps) => {
                 </div>
               </div>
               <button
-                onClick={() => navigate('/concept')}
+                onClick={() => navigate('/subscription#presence-essentielle')}
                 className="flex-shrink-0 px-3 py-1.5 md:px-6 md:py-2.5 bg-gray-900 text-white text-sm md:text-base font-bold rounded-lg md:hover:bg-gray-800 md:hover:scale-105 md:transition-all md:duration-200 md:shadow-md whitespace-nowrap"
-                aria-label={te.pwa?.visitUs || 'Venez nous connaître'}
+                aria-label={structure.freeAction}
               >
-                {te.pwa?.visitUs || 'Venez nous connaître'}
+                {structure.freeAction}
               </button>
             </div>
           </div>
