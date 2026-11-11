@@ -51,13 +51,14 @@ export interface HomeQueryResult {
   partners: HomeBusinessRow[];
   totalCount: number;
   certifiedCount: number;
+  legacyCertifiedCount: number;
 }
 
 interface CacheEntry extends HomeQueryResult {
   ts: number;
 }
 
-const CACHE_KEY = 'home_data_v19';
+const CACHE_KEY = 'home_data_v20';
 const STALE_TIME = 5 * 60_000;
 // Keep the last verified counts for 30 days when Supabase is temporarily unavailable.
 const GC_TIME = 30 * 24 * 60 * 60_000;
@@ -82,7 +83,9 @@ export function readHomeCache(): (HomeQueryResult & { fresh: boolean }) | null {
     if (!Number.isFinite(entry.ts) || age < 0 || age > GC_TIME ||
       !Number.isSafeInteger(entry.totalCount) || entry.totalCount <= 0 ||
       !Number.isSafeInteger(entry.certifiedCount) || entry.certifiedCount < 0 ||
-      entry.certifiedCount > entry.totalCount) {
+      entry.certifiedCount > entry.totalCount ||
+      !Number.isSafeInteger(entry.legacyCertifiedCount) || entry.legacyCertifiedCount < 0 ||
+      entry.legacyCertifiedCount > entry.totalCount) {
       localStorage.removeItem(CACHE_KEY);
       return null;
     }
@@ -91,6 +94,7 @@ export function readHomeCache(): (HomeQueryResult & { fresh: boolean }) | null {
       partners: Array.isArray(entry.partners) ? entry.partners : [],
       totalCount: entry.totalCount,
       certifiedCount: entry.certifiedCount,
+      legacyCertifiedCount: entry.legacyCertifiedCount,
       fresh: age < STALE_TIME,
     };
   } catch {
@@ -206,7 +210,7 @@ async function doFetch(): Promise<HomeQueryResult> {
 
   console.log('[HOME-DIAG] CERTIFIED_LABEL =', JSON.stringify(CERTIFIED_LABEL));
 
-  const [listRes, totalRes, certifiedRes] = await Promise.all([
+  const [listRes, totalRes, certifiedRes, legacyCertifiedRes] = await Promise.all([
     supabase
       .from('entreprise')
       .select(FIELDS)
@@ -228,6 +232,15 @@ async function doFetch(): Promise<HomeQueryResult> {
       .or('statut_publication.is.null,statut_publication.eq.Publié')
       .eq('cv_business_status', 'published')
       .limit(1),
+
+    // Historical certification label, kept separate from published CV certification.
+    supabase
+      .from('entreprise')
+      .select('id', { count: 'exact', head: true })
+      .not('nom', 'is', null)
+      .neq('nom', '')
+      .or('statut_publication.is.null,statut_publication.eq.Publié')
+      .eq('statut_carte', CERTIFIED_LABEL),
   ]);
 
   console.log('[HOME-DIAG] totalRes', {
@@ -269,7 +282,7 @@ async function doFetch(): Promise<HomeQueryResult> {
 
   // Do not cache failed count queries as real zero counts.
   const totalCount = Number(totalRes.data);
-  if (totalRes.error || certifiedRes.error || !Number.isSafeInteger(totalCount) || totalCount <= 0 || certifiedRes.count == null) {
+  if (totalRes.error || certifiedRes.error || legacyCertifiedRes.error || !Number.isSafeInteger(totalCount) || totalCount <= 0 || certifiedRes.count == null || legacyCertifiedRes.count == null) {
     throw new Error('[homeDataPrefetch] Business counters unavailable; preserving last known valid values');
   }
 
@@ -335,6 +348,7 @@ async function doFetch(): Promise<HomeQueryResult> {
     partners,
     totalCount,
     certifiedCount: certifiedRes.count ?? 0,
+    legacyCertifiedCount: legacyCertifiedRes.count ?? 0,
   };
 
   console.log('[HOME-DIAG] final HomeQueryResult =', {
@@ -399,6 +413,7 @@ export function revalidateHomeData(): Promise<HomeQueryResult> {
 function sameResult(a: HomeQueryResult, b: HomeQueryResult): boolean {
   if (a.totalCount !== b.totalCount) return false;
   if (a.certifiedCount !== b.certifiedCount) return false;
+  if (a.legacyCertifiedCount !== b.legacyCertifiedCount) return false;
   if (a.partners.length !== b.partners.length) return false;
 
   for (let i = 0; i < a.partners.length; i++) {
