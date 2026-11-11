@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { supabase } from '../lib/supabaseClient';
+import { isPlatformAppMode } from '../lib/platformAppMode';
 
 type ThermalKind = 'thermalisme' | 'sources-naturelles' | 'bien-etre';
 type ThermalPlace = { id: string; nom: string; ville: string | null; gouvernorat: string | null; description: string | null; slug: string | null };
@@ -60,6 +61,56 @@ export default function ThermalWellnessExplorer({ initialKind = 'thermalisme' }:
   const regions = useMemo(() => [...new Set(places.map(p => p.gouvernorat).filter((x): x is string => !!x))].sort(), [places]);
   const filtered = useMemo(() => places.filter(p => kindOf(p) === kind && (!region || p.gouvernorat === region) &&
     (!query || [p.nom,p.ville,p.gouvernorat,p.description].join(' ').toLocaleLowerCase().includes(query.toLocaleLowerCase()))), [places,kind,region,query]);
+  if (isPlatformAppMode()) {
+    const categories = [
+      { key: 'thermalisme' as const, label: text.thermal },
+      { key: 'sources-naturelles' as const, label: text.natural },
+      { key: 'bien-etre' as const, label: text.wellness },
+    ];
+    const filterLabel = lang === 'fr' ? 'Affiner la recherche' : lang === 'ar' ? 'تصفية البحث' : lang === 'en' ? 'Refine search' : lang === 'it' ? 'Filtra la ricerca' : 'Уточнить поиск';
+    const openLabel = lang === 'fr' ? 'Ouvrir la fiche' : text.detail;
+    const naturalList = NATURAL_SOURCES.filter(name => !query || name.toLocaleLowerCase().includes(query.toLocaleLowerCase()));
+    return <section data-platform-thermalism className="space-y-3 px-3 py-3" dir={lang === 'ar' ? 'rtl' : 'ltr'} aria-label={text.title}>
+      <div role="group" aria-label={text.kind} className="grid grid-cols-3 gap-1.5 rounded-xl bg-[#F5EEDF] p-1.5">
+        {categories.map(c => <button key={c.key} type="button" onClick={() => { setKind(c.key); setRegion(''); setQuery(''); }}
+          aria-pressed={kind === c.key}
+          className={`min-h-12 rounded-lg px-1 py-2 text-center text-[11px] font-medium leading-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A17D36] ${kind === c.key ? 'bg-[#4A1D43] text-white shadow-sm' : 'bg-white text-[#4A1D43]'}`}>{c.label}</button>)}
+      </div>
+      <details className="group rounded-xl border border-[#D4AF37]/45 bg-white px-3 py-2">
+        <summary className="flex min-h-10 cursor-pointer list-none items-center justify-between text-sm font-semibold text-[#4A1D43] [&::-webkit-details-marker]:hidden">
+          {filterLabel}<span aria-hidden="true" className="text-[#A17D36] group-open:rotate-180">⌄</span>
+        </summary>
+        <div className="space-y-2 border-t border-[#E9DBC4] pb-1 pt-3">
+          {kind !== 'sources-naturelles' && <label className="block text-xs font-medium text-[#4A1D43]">{text.region}
+            <select value={region} onChange={e => setRegion(e.target.value)} className="mt-1 block min-h-11 w-full rounded-lg border border-[#D4AF37]/60 bg-white px-3 text-sm">
+              <option value="">{text.all}</option>{regions.map(name => <option key={name} value={name}>{name}</option>)}
+            </select>
+          </label>}
+          <label className="block text-xs font-medium text-[#4A1D43]">{text.search}
+            <input value={query} onChange={e => setQuery(e.target.value)} className="mt-1 block min-h-11 w-full rounded-lg border border-[#D4AF37]/60 px-3 text-sm" placeholder={text.search} />
+          </label>
+        </div>
+      </details>
+      {kind === 'sources-naturelles' ? <>
+        <div className="rounded-xl bg-[#FFF8E9] p-3 text-xs leading-5 text-[#6F5D43]">{text.naturalNote}</div>
+        <div className="space-y-2">{naturalList.map(name => <div key={name} className="rounded-xl border border-[#E6D6B9] bg-white p-3 text-sm font-medium text-[#4A1D43]">♨️ {name}</div>)}</div>
+      </> : loading ? <p role="status" className="p-3 text-sm text-[#594052]">{text.loading}</p>
+        : error ? <p role="alert" className="p-3 text-sm text-[#594052]">{text.none}</p>
+        : filtered.length === 0 ? <p className="rounded-xl border border-[#D4AF37]/40 bg-white p-3 text-sm text-[#594052]">{text.none}</p>
+        : <div className="space-y-2" aria-live="polite">
+          {filtered.map(place => <article key={place.id} className="rounded-xl border border-[#E6D6B9] bg-white p-3">
+            <Link to={'/entreprise/id/' + encodeURIComponent(place.id)} className="flex min-h-12 items-center justify-between gap-2">
+              <span className="min-w-0">
+                <span className="block text-sm font-semibold leading-5 text-[#4A1D43]">{place.nom}</span>
+                <span className="mt-1 block text-xs text-[#756B70]">{[place.ville, place.gouvernorat].filter(Boolean).join(' · ')}</span>
+              </span>
+              <span aria-label={openLabel} className="shrink-0 text-lg text-[#A17D36]" aria-hidden="true">›</span>
+            </Link>
+          </article>)}
+        </div>}
+      <p className="rounded-xl bg-[#F8F2E6] p-3 text-xs leading-5 text-[#675B61]">{text.caution}</p>
+    </section>;
+  }
   return <section dir={lang === 'ar' ? 'rtl' : 'ltr'} className="mx-auto my-5 max-w-5xl rounded-2xl border border-[#D4AF37]/60 bg-white p-4 shadow-sm sm:p-6" aria-label={text.title}>
     <h2 className="text-lg font-semibold text-[#4A1D43]">♨️ {text.title}</h2>
     <p className="mt-1 text-sm text-gray-600">{text.intro}</p>
