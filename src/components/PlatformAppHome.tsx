@@ -1,6 +1,4 @@
-import { Link } from 'react-router-dom';
 import { FounderStory } from './FounderStory';
-import { Search, ArrowRight, Star, ShieldCheck } from 'lucide-react';
 import SearchBar from './SearchBar';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -15,7 +13,7 @@ const COPY: Record<Lang, {
 }> = {
   fr: {
     headline: 'La Tunisie à portée de main', intro: 'Trouvez une entreprise, un service ou une découverte près de chez vous.',
-    search: 'Rechercher en Tunisie', count: n => `${n} fiches enregistrées`, certified: n => `${n} entreprises certifiées`,
+    search: 'Rechercher en Tunisie', count: () => 'Fiches enregistrées', certified: () => 'CV certifiés',
     citizens: 'Citoyens', citizensDetail: 'Santé, éducation, services et commerces',
     tourism: 'Tourisme & Expat', tourismDetail: 'Visites, régions et installation en Tunisie',
     businesses: 'Entreprises', businessesDetail: 'Présence gratuite et CV professionnels',
@@ -27,7 +25,7 @@ const COPY: Record<Lang, {
   },
   ar: {
     headline: 'تونس الكل في يدك', intro: 'اكتشف مؤسسات وخدمات وأماكن في تونس.',
-    search: 'ابحث في تونس', count: n => `${n} مؤسسة مسجلة`, certified: n => `${n} مؤسسة موثّقة`,
+    search: 'ابحث في تونس', count: () => 'مؤسسات مسجلة', certified: () => 'CV موثّقة',
     citizens: 'المواطنون', citizensDetail: 'الصحة والتعليم والخدمات والمحلات',
     tourism: 'السياحة والمقيمون', tourismDetail: 'جهات وزيارات وإقامة في تونس',
     businesses: 'المؤسسات', businessesDetail: 'حضور مجاني وسيرة مهنية رقمية',
@@ -39,7 +37,7 @@ const COPY: Record<Lang, {
   },
   en: {
     headline: 'Tunisia at your fingertips', intro: 'Find businesses, services and local discoveries across Tunisia.',
-    search: 'Search Tunisia', count: n => `${n} listed records`, certified: n => `${n} certified businesses`,
+    search: 'Search Tunisia', count: () => 'Registered listings', certified: () => 'Certified CVs',
     citizens: 'Citizens', citizensDetail: 'Health, education, services and shops',
     tourism: 'Travel & Expat', tourismDetail: 'Explore Tunisia and plan your stay',
     businesses: 'Businesses', businessesDetail: 'Free listing and professional CVs',
@@ -51,7 +49,7 @@ const COPY: Record<Lang, {
   },
   it: {
     headline: 'La Tunisia a portata di mano', intro: 'Trova imprese, servizi e luoghi da scoprire.',
-    search: 'Cerca in Tunisia', count: n => `${n} schede registrate`, certified: n => `${n} imprese certificate`,
+    search: 'Cerca in Tunisia', count: () => 'Schede registrate', certified: () => 'CV certificati',
     citizens: 'Cittadini', citizensDetail: 'Salute, istruzione, servizi e negozi',
     tourism: 'Turismo & Expat', tourismDetail: 'Scopri il paese e organizza il soggiorno',
     businesses: 'Imprese', businessesDetail: 'Presenza gratuita e CV professionali',
@@ -63,7 +61,7 @@ const COPY: Record<Lang, {
   },
   ru: {
     headline: 'Тунис под рукой', intro: 'Найдите компании, услуги и интересные места.',
-    search: 'Поиск по Тунису', count: n => `${n} записей`, certified: n => `${n} сертифицированных компаний`,
+    search: 'Поиск по Тунису', count: () => 'Зарегистрировано', certified: () => 'CV с сертификатом',
     citizens: 'Гражданам', citizensDetail: 'Здоровье, образование, услуги и магазины',
     tourism: 'Туризм и переезд', tourismDetail: 'Откройте Тунис и планируйте пребывание',
     businesses: 'Компаниям', businessesDetail: 'Бесплатная запись и профессиональные CV',
@@ -91,20 +89,17 @@ export default function PlatformAppHome({ totalCount, certifiedCount }: {
       <h2 className="mb-2 font-serif text-base font-medium text-[#35172F]">{t.search}</h2>
       <SearchBar scope="global" autoSearch resultMode="redirectToResults" />
     </section>
-    {(totalCount || certifiedCount) && <div className="flex flex-wrap gap-x-4 gap-y-1 px-2 text-xs text-[#76616A]" aria-live="polite">
-      {totalCount && <span>{t.count(totalCount)}</span>}
-      {certifiedCount && <span>{t.certified(certifiedCount)}</span>}
-    </div>}
-    <section className="rounded-2xl border border-[#E4D6B8] bg-white p-4">
-      <div className="flex items-center gap-2"><Search className="h-4 w-4 text-[#A17D36]" />
-        <h2 className="font-serif text-base font-medium text-[#45243A]">{t.recommend}</h2></div>
-      <p className="mt-2 text-sm leading-5 text-[#70656B]">{t.recommendDetail}</p>
-      <div className="mt-3 flex flex-wrap gap-2 text-[11px] text-[#725D42]">
-        <span className="inline-flex items-center gap-1 rounded-full bg-[#FBF5EA] px-2 py-1"><Star className="h-3 w-3" />{t.review}</span>
-        <span className="inline-flex items-center gap-1 rounded-full bg-[#FBF5EA] px-2 py-1"><ShieldCheck className="h-3 w-3" />{t.certifiedHint}</span>
+    <section aria-label={t.count(totalCount ?? '')} className="grid grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] gap-2" aria-live="polite">
+      <div className="flex min-h-[108px] flex-col items-center justify-center rounded-2xl border border-[#B38C3E]/60 bg-[#4A1D43] px-3 py-4 text-center shadow-[0_5px_15px_rgba(74,29,67,0.12)]">
+        <strong className="text-3xl font-semibold tracking-tight text-[#F3D58A] tabular-nums sm:text-4xl">{totalCount ?? '—'}</strong>
+        <span className="mt-1 text-xs font-medium leading-4 text-white">{t.count(totalCount ?? '')}</span>
       </div>
-      <Link to="/entreprises" className="mt-3 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[#45243A] underline decoration-[#B99143] underline-offset-4">{t.search}<ArrowRight className="h-4 w-4 rtl:rotate-180" /></Link>
+      <div className="flex min-h-[108px] flex-col items-center justify-center rounded-2xl border border-[#D4AF37]/55 bg-[#FFF6E2] px-2 py-4 text-center shadow-sm">
+        <strong className="text-3xl font-semibold tracking-tight text-[#4A1D43] tabular-nums sm:text-4xl">{certifiedCount ?? '—'}</strong>
+        <span className="mt-1 text-xs font-medium leading-4 text-[#6D5061]">{t.certified(certifiedCount ?? '')}</span>
+      </div>
     </section>
+
     <FounderStory compact />
 
   </div>;
