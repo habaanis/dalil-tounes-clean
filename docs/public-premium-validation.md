@@ -42,11 +42,56 @@ Les classes public-title/public-heading sont opt-in : elles ne ciblent pas les t
 
 ## Points séparés / limites
 
-- Sélection « Certifiés » non concluante dans le navigateur de secours : elle reste visuellement sur « Tous ». Le même comportement a été reproduit sur la prévisualisation de #198. La logique de recherche n’a pas changé ; ce contrôle doit être confirmé dans le navigateur connecté avant validation de fusion. Aucune règle de filtre n’a été modifiée pour contourner ce résultat.
+- Réserve historique de certification : levée par le correctif ciblé et les tests du 11 novembre ci-dessous. Les anciennes captures ne représentent pas ce correctif.
 - Traductions historiques : descriptions/secteur de certaines pages SEO restent en français en AR ; inscription entreprise ne possède que FR/AR et retombe en FR en EN/IT/RU. Contenus préservés conformément au périmètre graphique.
 - Performances : délais HTTP ponctuels observés ; pas de mesure Lighthouse/Core Web Vitals ni de validation sur appareil physique. Les durées réseau de cet environnement ne constituent pas un benchmark utilisateur.
 - Le navigateur connecté a cessé de répondre en fin de recette ; les pages légales et l’écran de géolocalisation ont été contrôlés avec le navigateur de secours.
 
 ## Verdict
 
-Rendu prêt pour validation visuelle. **NON PRÊT À FUSIONNER** tant que le contrôle interactif de certification n’est pas clos et que la validation utilisateur n’est pas donnée. PR laissée en brouillon. Aucune fusion, production, écriture Airtable/Supabase, modification Stripe ou activation d’automatisation.
+Validation technique du correctif terminée sur tests automatisés ; prêt pour revue finale, avec les limites ci-dessous. PR laissée en brouillon, sans autorisation de fusion ou publication. Aucune écriture Airtable/Supabase, modification Stripe ou activation d’automatisation.
+
+
+## Correctif ciblé de certification — 11 novembre 2026
+
+Référence avant correction : PR #199 `8a4a0df6decfa8ea14f5558619840339e353cb55`, fondée sur PR #198 `3b6e3d6a9ce43abbd3e7b5a88fd68bcd56d67999`.
+
+Le sélecteur SearchBar gardait son état local « Tous » alors que Businesses appliquait le filtre de l’URL. Businesses transmet maintenant son filtre appliqué au sélecteur. Un changement de ce filtre resynchronise la sélection avant le rendu des enfants ; les choix locaux restent interactifs tant que le filtre appliqué ne change pas. `aria-pressed` expose également la sélection. Aucun traitement des résultats n’est modifié.
+
+### Preuves conservées
+
+La comparaison navigateur antérieure entre #198 et #199 a observé les mêmes résultats : 37 certifiés, 200 non certifiés (limite de requête), 12 certifiés à Mahdia, 3 fiches mises en avant après réinitialisation. Le défaut visuel était présent sur les deux versions et préexistait à #198. Ces nombres sont des observations antérieures sur données évolutives, pas des assertions ni de nouvelles mesures après correction.
+
+### Tests ajoutés et exécutés
+
+Commande reproductible, avec React 18.3.1 et react-test-renderer 18.3.1 installés dans un répertoire isolé :
+
+```sh
+npm install --prefix /tmp/dalil-cert-tests --no-package-lock --ignore-scripts react@18.3.1 react-test-renderer@18.3.1
+CERT_TEST_RUNTIME=/tmp/dalil-cert-tests/package.json node --test scripts/certification-filter.test.mjs scripts/public-presentation-integrity.test.mjs scripts/public-theme.test.mjs scripts/pr197-regressions.test.mjs
+```
+
+**15/15 tests réussis** : 8 nouveaux contrôles de certification et les 7 contrôles existants.
+
+- Certifiés et Non certifiés : hydratation après navigation, sélection visuelle et paramètre soumis.
+- Certifiés + Mahdia : paramètres combinés et ville préservés lors d’un rendu supplémentaire.
+- Rechargement : démontage/remontage avec hydratation depuis les trois variantes d’URL.
+- Réinitialisation : retour à Tous et absence du paramètre de certification au prochain envoi.
+- Choix local et autres barres de recherche : comportement interactif conservé.
+- Intégrité : Businesses est strictement identique à la référence avant correction, hors la seule liaison de propriété. Requêtes, filtres combinés, classement, données, traitement des URL et réinitialisation sont inchangés.
+- Le contrôle AST des pages autorise uniquement cette nouvelle propriété, dont il vérifie la valeur exacte ; tous les autres contrôles sont conservés.
+
+Contre-épreuve : la même suite de certification sur l’ancien SearchBar échoue sur les quatre tests navigation certifié/non certifié, combinaison Mahdia et rechargement (4 échecs / 4 succès). Elle vérifie la couleur effectivement sélectionnée, pas seulement le nouvel attribut d’accessibilité.
+
+### Compilation et diagnostics
+
+- `vite build` réussi (8,86 s). Cette exécution compile l’application ; les générateurs SEO du build complet ne sont pas réexécutés, leurs preuves antérieures restent conservées.
+- TypeScript : 202 diagnostics historiques, identiques avant/après après normalisation des numéros de ligne. Le contrôle global reste en échec préexistant.
+- ESLint des deux fichiers applicatifs modifiés : 87 erreurs / 6 avertissements historiques identiques avant/après par fichier, règle, message et sévérité. Aucun diagnostic ajouté ; le lint global n’est pas déclaré vert.
+- Aucun changement de dépendance applicative, de fichier généré, de données, d’harmonisation ou de configuration du dépôt.
+
+### Limites et verdict final
+
+La nouvelle suite exécute le véritable composant React et le véritable fragment d’hydratation URL, avec routeur, géolocalisation et fournisseur de données simulés. Le rechargement est un remontage React, pas un rechargement de navigateur de la version déployée. Aucune nouvelle recette visuelle de la version corrigée déployée : aucune publication demandée ni effectuée. Les tests ne constituent pas une nouvelle mesure des résultats Supabase.
+
+**Correctif ciblé validé automatiquement, prêt pour revue finale de la PR #199.** #198 reste inchangée ; le correctif est porté par #199 au-dessus de #198. Les 43 pages harmonisées sont conservées. Ni fusion ni publication autorisée.

@@ -1416,6 +1416,7 @@ export const Businesses = ({
                 enabled
                 resultMode="filterCards"
                 onResultSelect={handleSearchBarResultSelect}
+                appliedCertificationFilter={filterStatutCarte}
                 preferredTitle={pageT.explore.preferredTitle}
                 preferredSubtitle={pageT.explore.preferredSubtitle}
               />

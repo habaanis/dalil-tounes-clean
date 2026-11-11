@@ -9,7 +9,11 @@ function semantic(source,path){
  const sf=ts.createSourceFile(path,source,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX);
  const result=ts.transform(sf,[context=>root=>{
   const visit=node=>{
-   if(ts.isJsxAttributes(node))return ts.factory.updateJsxAttributes(node,node.properties.filter(p=>!ts.isJsxAttribute(p)||!['className','style'].includes(p.name.getText(sf))));
+   if(path==='src/pages/Businesses.tsx' && ts.isJsxAttribute(node) && node.name.getText(sf)==='appliedCertificationFilter') {
+    assert.equal(node.initializer?.getText(sf), '{filterStatutCarte}');
+    return undefined;
+   }
+   if(ts.isJsxAttributes(node))return ts.visitEachChild(ts.factory.updateJsxAttributes(node,node.properties.filter(p=>!ts.isJsxAttribute(p)||!['className','style'].includes(p.name.getText(sf)))),visit,context);
    return ts.visitEachChild(node,visit,context);
   };
   return ts.visitNode(root,visit);

@@ -78,6 +78,7 @@ type Props = {
   onResultSelect?: (item: ResultItem, context: ResultSelectContext) => void;
   preferredTitle?: string;
   preferredSubtitle?: string;
+  appliedCertificationFilter?: CertFilter;
 };
 
 export default function SearchBar({
@@ -92,6 +93,7 @@ export default function SearchBar({
   onResultSelect,
   preferredTitle,
   preferredSubtitle,
+  appliedCertificationFilter,
 }: Props) {
   if (!enabled) return null;
 
@@ -103,7 +105,16 @@ export default function SearchBar({
   const [q, setQ] = React.useState('');
   const [city, setCity] = React.useState('');
   const [metier] = React.useState('');
-  const [certFilter, setCertFilter] = React.useState<CertFilter>('');
+  const [certSelection, setCertSelection] = React.useState(() => ({
+    applied: appliedCertificationFilter,
+    value: appliedCertificationFilter ?? '' as CertFilter,
+  }));
+  // Reset the local draft only when the applied page filter changes.
+  if (certSelection.applied !== appliedCertificationFilter) {
+    setCertSelection({ applied: appliedCertificationFilter, value: appliedCertificationFilter ?? '' });
+  }
+  const certFilter = certSelection.value;
+  const setCertFilter = (value: CertFilter) => setCertSelection({ applied: appliedCertificationFilter, value });
   const [ent, setEnt] = React.useState<ResultItem[]>([]);
   const [villes, setVilles] = React.useState<VilleItem[]>([]);
   const [loadingEnt, setLoadingEnt] = React.useState(false);
@@ -792,6 +803,7 @@ export default function SearchBar({
             key={value}
             type="button"
             onClick={() => setCertFilter(value)}
+            aria-pressed={certFilter === value}
             className="flex-1 px-2 py-2 text-xs font-medium transition-colors whitespace-nowrap"
             style={{
               backgroundColor: certFilter === value
