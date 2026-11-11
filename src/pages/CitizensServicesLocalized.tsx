@@ -6,6 +6,8 @@ import { getStructureImageUrl } from '../lib/imageUtils';
 import SearchBar from '../components/SearchBar';
 import MeilleursSection from '../components/MeilleursSection';
 import { SEOHead } from '../components/SEOHead';
+import { isPlatformAppMode } from '../lib/platformAppMode';
+import { DALIL_MASCOT_IMAGE } from '../lib/dalilMascotImage';
 
 type Lang = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 type Tab = 'bureaux' | 'demarches' | 'social';
@@ -294,6 +296,7 @@ export default function CitizensServicesLocalized() {
   const procedures = VERIFIED_PROCEDURES[lang];
   const labels = UI_LABELS[lang];
   const isRTL = lang === 'ar';
+  const inPlatformApp = isPlatformAppMode();
   const [activeTab, setActiveTab] = useState<Tab>('bureaux');
   const [selectedProcedure, setSelectedProcedure] = useState<number | null>(null);
   const [samu, protection, police, children, women] = EMERGENCY_LABELS[lang];
@@ -341,6 +344,104 @@ export default function CitizensServicesLocalized() {
             <div className="mt-5 p-4 bg-yellow-50 border border-yellow-300 rounded-lg text-sm text-yellow-900 flex items-start gap-2"><AlertCircle className="w-5 h-5 flex-shrink-0" />{c.warning}</div>
           </div>
         </div>
+      </div>
+    );
+  }
+
+  if (inPlatformApp) {
+    const chooseTab = (tab: Tab) => setActiveTab(current => current === tab ? 'none' as Tab : tab);
+    return (
+      <div className="public-surface min-h-screen bg-[#FFFCF7] pb-4" dir={isRTL ? 'rtl' : 'ltr'}>
+        <SEOHead title={labels.seoTitle} description={c.intro}
+          canonical="https://dalil-tounes.com/citizens/services" currentPath="/citizens/services" />
+
+        <section className="relative mx-3 mt-2 overflow-hidden rounded-xl border border-[#D4AF37]/50 bg-[#4A1D43]">
+          <img src={getStructureImageUrl('/images/service-social.jpg')} alt="" aria-hidden="true"
+            className="absolute inset-0 h-full w-full object-cover opacity-25" loading="lazy" decoding="async" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#4A1D43]/95 to-[#4A1D43]/65" />
+          <div className="relative flex min-h-[122px] items-center gap-3 px-3 py-3">
+            <div className="min-w-0 flex-1">
+              <h1 className="font-serif text-xl font-medium leading-6 text-[#F8E9C9]">{c.title}</h1>
+              <p className="mt-1 line-clamp-3 text-xs leading-5 text-white/90">{c.intro}</p>
+            </div>
+            <img src={DALIL_MASCOT_IMAGE} alt="Mascotte Dalil Tounes"
+              className="h-[94px] w-[90px] shrink-0 rounded-xl border border-[#D4AF37]/40 bg-white/95 object-contain" loading="lazy" decoding="async" />
+          </div>
+        </section>
+
+        <section className="relative z-20 mx-3 mt-3 rounded-xl border border-[#D4AF37]/40 bg-white p-3">
+          <SearchBar scope="services" intentEnabled={false} enabled resultMode="redirectToResults"
+            preferredTitle={c.searchTitle} preferredSubtitle={c.searchSubtitle} />
+        </section>
+
+        <nav className="mx-3 mt-3 grid grid-cols-3 gap-2" aria-label={c.title}>
+          {([
+            { id: 'bureaux' as Tab, icon: Building2, label: c.tabs.offices },
+            { id: 'demarches' as Tab, icon: FileText, label: c.tabs.procedures },
+            { id: 'social' as Tab, icon: Heart, label: c.tabs.social },
+          ]).map(({id,icon:Icon,label}) => (
+            <button key={id} type="button" onClick={() => chooseTab(id)} aria-expanded={activeTab === id}
+              className={`flex min-h-[78px] flex-col items-center justify-center gap-2 rounded-xl border px-1.5 py-2 text-center text-xs font-semibold leading-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A17D36] ${activeTab === id ? 'border-[#A17D36] bg-[#4A1D43] text-white' : 'border-[#E2D2B2] bg-white text-[#4A1D43]'}`}>
+              <Icon className={`h-5 w-5 ${activeTab === id ? 'text-[#F3D58A]' : 'text-[#A17D36]'}`} aria-hidden="true" />
+              <span>{label}</span>
+            </button>
+          ))}
+        </nav>
+
+        {activeTab === 'bureaux' && <section className="mx-3 mt-3 rounded-xl bg-white py-2">
+          <h2 className="px-3 pb-1 font-serif text-base font-semibold text-[#4A1D43]">{c.officesTitle}</h2>
+          <p className="px-3 pb-2 text-xs leading-5 text-[#756873]">{c.officesIntro}</p>
+          <MeilleursSection secteurLabel={c.sector} listePage="services citoyens"
+            accentColor="#4A1D43" sectionTitle={c.recommended}
+            useGoogleRecommendationCriteria excludedKeywords={SERVICE_EXCLUDED_KEYWORDS}
+            hideSearchCta />
+        </section>}
+
+        {activeTab === 'demarches' && <section className="mx-3 mt-3 space-y-3">
+          <p className="px-1 text-xs text-[#70636D]">{c.proceduresIntro}</p>
+          <div className="space-y-2">
+            {procedures.map((item,index) => <button type="button" key={item.title}
+              onClick={() => setSelectedProcedure(index)}
+              className="flex min-h-14 w-full items-center justify-between gap-3 rounded-xl border border-[#E2D2B2] bg-white p-3 text-start focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A17D36]">
+              <span className="min-w-0"><strong className="block text-sm font-medium text-[#4A1D43]">{item.title}</strong>
+                <span className="mt-1 block text-xs text-[#70636D]">{item.documents.length} {c.pieces} · {item.delay}</span></span>
+              <ChevronDown aria-hidden="true" className={`h-4 w-4 shrink-0 text-[#A17D36] ${isRTL ? 'rotate-90' : '-rotate-90'}`} />
+            </button>)}
+          </div>
+          <p className="rounded-xl bg-[#F8F2E6] p-3 text-xs leading-5 text-[#695E65]">{c.warning}</p>
+        </section>}
+
+        {activeTab === 'social' && <section className="mx-3 mt-3 space-y-3">
+          <h2 className="font-serif text-base font-semibold text-[#4A1D43]">{c.socialTitle}</h2>
+          <p className="text-xs text-[#756873]">{c.socialIntro}</p>
+          <div className="grid grid-cols-2 gap-2">
+            {emergencyNumbers.map(({ label, number, icon: Icon }) =>
+              <a key={number} href={`tel:${number}`}
+                className="flex min-h-[76px] items-center gap-2 rounded-xl border border-[#D4AF37]/70 bg-[#4A1D43] px-3 py-2">
+                <Icon className="h-4 w-4 shrink-0 text-[#F3D58A]" aria-hidden="true" />
+                <span><strong className="block text-lg leading-6 text-[#F3D58A]">{number}</strong>
+                  <span className="block text-[11px] leading-4 text-white">{label}</span></span>
+              </a>)}
+          </div>
+          <details className="rounded-xl border border-[#D4AF37]/45 bg-white p-3">
+            <summary className="min-h-11 cursor-pointer font-semibold text-sm text-[#4A1D43]">{c.socialTitle} — {SOCIAL_PROGRAMS[lang].length}</summary>
+            <div className="mt-2 grid gap-2">
+              {SOCIAL_PROGRAMS[lang].map(item => <SocialCard key={item.title} title={item.title} body={item.body} />)}
+            </div>
+          </details>
+        </section>}
+
+        <details className="mx-3 mt-4 rounded-xl border border-[#D4AF37]/45 bg-white p-3">
+          <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-2 text-sm font-semibold text-[#4A1D43]">
+            <span>{c.usefulLinksTitle}</span><ChevronDown className="h-4 w-4 text-[#A17D36]" aria-hidden="true" />
+          </summary>
+          <div className="mt-2 grid gap-2 border-t border-[#E2D2B2] pt-3">
+            {OFFICIAL_LINKS.map(link => <a key={link.url} href={link.url} target="_blank" rel="noopener noreferrer"
+              className="flex min-h-11 items-center justify-between gap-2 rounded-xl border border-[#E2D2B2] px-3 text-xs font-medium text-[#4A1D43]">
+              {c.officialLinks[link.key]}<ExternalLink className="h-4 w-4 shrink-0 text-[#A17D36]" aria-hidden="true" />
+            </a>)}
+          </div>
+        </details>
       </div>
     );
   }
