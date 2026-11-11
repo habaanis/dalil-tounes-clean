@@ -1,4 +1,5 @@
 import { applyCertificationFilter } from '../lib/businessCertification';
+import { isPlatformAppMode } from '../lib/platformAppMode';
 import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
@@ -376,6 +377,7 @@ export const Businesses = ({
   const { language } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
+  const inPlatformApp = isPlatformAppMode();
   const [searchParams] = useSearchParams();
   const t = useTranslation(language);
   const pageT = getBusinessesPageTranslations(language);
@@ -1271,7 +1273,7 @@ export const Businesses = ({
   })) : [];
 
   return (
-    <div className="public-surface min-h-screen bg-[#fcfaf5]">
+    <div className={`public-surface min-h-screen bg-[#fcfaf5] ${inPlatformApp ? "platform-app-directory" : ""}`}>
       <SEOHead
         title={pageT.seo.title}
         description={pageT.seo.description}
@@ -1288,7 +1290,7 @@ export const Businesses = ({
       )}
 
       <div className="mx-auto flex max-w-7xl flex-col">
-        <section className="px-4 pb-5 pt-6">
+        <section className={`${inPlatformApp ? "hidden" : ""} px-4 pb-5 pt-6`}>
           <div className="relative overflow-hidden rounded-xl border border-[#d9c9a4] bg-gradient-to-br from-[#fffdf9] to-[#f3eddf] shadow-sm">
             <div
               aria-hidden="true"
@@ -1323,7 +1325,7 @@ export const Businesses = ({
           </div>
         </section>
 
-        <nav className="sticky top-16 z-30 order-1 border-y border-[#D4AF37]/25 bg-white/95 px-4 py-2 shadow-sm backdrop-blur" aria-label={pageT.explore.title}>
+        <nav className={`${inPlatformApp ? "hidden" : ""} sticky top-16 z-30 order-1 border-y border-[#D4AF37]/25 bg-white/95 px-4 py-2 shadow-sm backdrop-blur`} aria-label={pageT.explore.title}>
           <div className="mx-auto flex max-w-5xl gap-2 overflow-x-auto">
             <button type="button" onClick={() => document.getElementById('business-search')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="whitespace-nowrap rounded-full bg-[#4A1D43] px-4 py-2 text-sm font-medium text-white">{directoryCopy.search}</button>
             <button type="button" onClick={() => document.getElementById('business-center')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="whitespace-nowrap rounded-full border border-[#D4AF37]/50 bg-white px-4 py-2 text-sm font-medium text-[#4A1D43]">{directoryCopy.businessCenter}</button>
@@ -1331,7 +1333,7 @@ export const Businesses = ({
           </div>
         </nav>
 
-        <section id="business-center" className="order-2 scroll-mt-28 px-4 py-8" aria-labelledby="business-center-title">
+        <section id="business-center" className={`${inPlatformApp ? "hidden" : ""} order-2 scroll-mt-28 px-4 py-8`} aria-labelledby="business-center-title">
           <div className="mx-auto max-w-5xl rounded-xl border border-[#D4AF37]/25 bg-[#FFFDF6] p-5 sm:p-7">
             <div className="mx-auto max-w-3xl text-center">
               <h2 id="business-center-title" className="public-heading text-2xl font-medium text-[#4A1D43] md:text-3xl">
@@ -1360,7 +1362,7 @@ export const Businesses = ({
           </div>
         </section>
 
-        <section className={`${showProfessionalDetails ? 'block' : 'hidden'} order-4 px-4 py-8`}>
+        <section className={`${inPlatformApp ? 'hidden' : showProfessionalDetails ? 'block' : 'hidden'} order-4 px-4 py-8`}>
           <div className="max-w-4xl mx-auto">
             <SectionIntro
               eyebrow={pageT.onlinePresence.eyebrow}
@@ -1375,7 +1377,7 @@ export const Businesses = ({
           </div>
         </section>
 
-        <section className={`${showProfessionalDetails ? 'block' : 'hidden'} order-4 bg-white px-4 py-10`}>
+        <section className={`${inPlatformApp ? 'hidden' : showProfessionalDetails ? 'block' : 'hidden'} order-4 bg-white px-4 py-10`}>
           <div className="max-w-6xl mx-auto grid gap-8 lg:grid-cols-[1fr_0.9fr] items-start">
             <SectionIntro
               eyebrow={pageT.whyProfile.eyebrow}
@@ -1403,10 +1405,10 @@ export const Businesses = ({
         </section>
 
         {/* SearchBar Entreprises */}
-        <section id="business-search" className="relative z-0 order-1 scroll-mt-28 px-4 py-6">
+        <section id="business-search" className={`relative z-0 order-1 scroll-mt-28 px-4 ${inPlatformApp ? "py-4" : "py-6"}`}>
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-5">
-              <h2 className="public-heading text-xl md:text-2xl font-medium text-[#4A1D43]">{pageT.explore.title}</h2>
+              <h2 className="public-heading text-xl md:text-2xl font-medium text-[#4A1D43]">{inPlatformApp ? (language === 'ar' ? 'ابحث عن مهني أو خدمة' : language === 'en' ? 'Find a professional or service' : language === 'it' ? 'Trova un professionista o un servizio' : language === 'ru' ? 'Найти специалиста или услугу' : 'Trouver un professionnel ou un service') : pageT.explore.title}</h2>
               <p className="mt-3 text-sm md:text-base text-gray-600 max-w-3xl mx-auto leading-relaxed">
                 {pageT.explore.description}
               </p>
@@ -1651,7 +1653,7 @@ export const Businesses = ({
           ) : null}
         </div>
 
-        <section id="professional-services" className="order-3 scroll-mt-28 px-4 py-8">
+        <section id="professional-services" className={`${inPlatformApp ? "hidden" : ""} order-3 scroll-mt-28 px-4 py-8`}>
           <div className="mx-auto max-w-5xl rounded-xl border border-[#D4AF37]/35 bg-gradient-to-br from-[#FFF8DF] to-white p-6 text-center shadow-sm sm:p-8">
             <p className="text-sm font-medium uppercase tracking-[0.14em] text-[#B58A18]">{directoryCopy.professionals}</p>
             <h2 className="public-heading mt-2 text-2xl font-medium text-[#4A1D43] md:text-3xl">{pageT.cvBusiness.title}</h2>
@@ -1667,7 +1669,7 @@ export const Businesses = ({
           </div>
         </section>
 
-        <section className={`${showProfessionalDetails ? 'block' : 'hidden'} order-4 px-4 py-8`}>
+        <section className={`${inPlatformApp ? 'hidden' : showProfessionalDetails ? 'block' : 'hidden'} order-4 px-4 py-8`}>
           <div className="max-w-6xl mx-auto grid gap-8 lg:grid-cols-[0.95fr_1.05fr] items-center">
             <div>
               <SectionIntro eyebrow={pageT.cvBusiness.eyebrow} title={pageT.cvBusiness.title}>
@@ -1698,7 +1700,7 @@ export const Businesses = ({
           </div>
         </section>
 
-        <section className={`${showProfessionalDetails ? 'block' : 'hidden'} order-4 bg-white px-4 py-8`}>
+        <section className={`${inPlatformApp ? 'hidden' : showProfessionalDetails ? 'block' : 'hidden'} order-4 bg-white px-4 py-8`}>
           <div className="max-w-5xl mx-auto">
             <SectionIntro
               eyebrow={pageT.consistency.eyebrow}
@@ -1718,7 +1720,7 @@ export const Businesses = ({
           </div>
         </section>
 
-        <section className={`${showProfessionalDetails ? 'block' : 'hidden'} order-4 px-4 py-8`}>
+        <section className={`${inPlatformApp ? 'hidden' : showProfessionalDetails ? 'block' : 'hidden'} order-4 px-4 py-8`}>
           <div className="max-w-5xl mx-auto">
             <div className="grid gap-7 lg:grid-cols-[0.95fr_1.05fr] items-start">
               <SectionIntro
@@ -1746,7 +1748,7 @@ export const Businesses = ({
           </div>
         </section>
 
-        <section className={`${showProfessionalDetails ? 'block' : 'hidden'} order-4 px-4 py-10`}>
+        <section className={`${inPlatformApp ? 'hidden' : showProfessionalDetails ? 'block' : 'hidden'} order-4 px-4 py-10`}>
           <div className="max-w-6xl mx-auto">
             <div className="text-center max-w-3xl mx-auto">
               <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#D4AF37] mb-3">{pageT.faq.eyebrow}</p>
@@ -1763,7 +1765,7 @@ export const Businesses = ({
           </div>
         </section>
 
-        <section className={`${showProfessionalDetails ? 'block' : 'hidden'} order-4 px-4 py-10`}>
+        <section className={`${inPlatformApp ? 'hidden' : showProfessionalDetails ? 'block' : 'hidden'} order-4 px-4 py-10`}>
           <div className="max-w-5xl mx-auto rounded-xl border border-[#D4AF37]/35 bg-gradient-to-br from-[#4A1D43] to-[#0B5A45] p-7 md:p-10 text-center text-white shadow-[0_22px_60px_rgba(74,29,67,0.2)]">
             <p className="text-sm font-medium uppercase tracking-[0.18em] text-[#F7D978]">{pageT.finalCta.eyebrow}</p>
             <h2 className="public-heading mt-3 text-2xl md:text-4xl font-medium">{pageT.finalCta.title}</h2>
