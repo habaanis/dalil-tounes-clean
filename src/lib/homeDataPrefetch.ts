@@ -32,6 +32,7 @@ export interface HomeBusinessRow {
   horaires_ok: string | null;
   telephone: string | null;
   statut_carte: string | null;
+  cv_business_status?: string | null;
   name_ar: string | null;
   description_ar: string | null;
 
@@ -56,7 +57,7 @@ interface CacheEntry extends HomeQueryResult {
   ts: number;
 }
 
-const CACHE_KEY = 'home_data_v18';
+const CACHE_KEY = 'home_data_v19';
 const STALE_TIME = 5 * 60_000;
 // Keep the last verified counts for 30 days when Supabase is temporarily unavailable.
 const GC_TIME = 30 * 24 * 60 * 60_000;
@@ -183,6 +184,7 @@ function mapHomeBusinessRow(r: Record<string, unknown>): HomeBusinessRow {
     horaires_ok: (r.horaires_ok as string | null) ?? null,
     telephone: (r.telephone as string | null) ?? null,
     statut_carte: (r.statut_carte as string | null) ?? null,
+    cv_business_status: (r.cv_business_status as string | null) ?? null,
 
     name_ar: (r.name_ar as string | null) ?? null,
     description_ar: (r.description_ar as string | null) ?? null,
@@ -224,7 +226,7 @@ async function doFetch(): Promise<HomeQueryResult> {
       .not('nom', 'is', null)
       .neq('nom', '')
       .or('statut_publication.is.null,statut_publication.eq.Publié')
-      .eq('statut_carte', CERTIFIED_LABEL)
+      .eq('cv_business_status', 'published')
       .limit(1),
   ]);
 

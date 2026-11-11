@@ -1,3 +1,5 @@
+import { isCertifiedBusiness, CERTIFIED_LABEL } from '../lib/businessCertification';
+import GoogleRatingSummary from './GoogleRatingSummary';
 import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
@@ -164,7 +166,7 @@ function renderStatutCarteBadge(statut_carte: string | null | undefined, lang: s
   if (isNonCertified) return null;
 
   const certifiedLabels: Record<string, string> = {
-    fr: '⭐ CERTIFIÉ DALIL TOUNES',
+    fr: 'Certifiée Dalil Tounes',
     en: '⭐ CERTIFIED DALIL TOUNES',
     ar: '⭐ معتمد من دليل تونس',
     it: '⭐ CERTIFICATO DALIL TOUNES',
@@ -239,6 +241,7 @@ function normalizeBusiness(business: any): any {
     logo_url: getLogoUrl(business.logo_url || business.logoUrl),
     statut_abonnement: business.statut_abonnement || null,
     statut_carte: business.statut_carte || null,
+    cv_business_status: business.cv_business_status || null,
     'Lien Instagram': business['Lien Instagram'] || business.instagram,
     'Lien TikTok': business['Lien TikTok'] || business.tiktok,
     'Lien LinkedIn': business['Lien LinkedIn'] || business.linkedin,
@@ -351,6 +354,7 @@ interface Business {
   logo_url?: string;
   statut_abonnement?: string | null;
   statut_carte?: string | null;
+  cv_business_status?: string | null;
   'Lien Instagram'?: string;
   'Lien TikTok'?: string;
   'Lien LinkedIn'?: string;
@@ -1078,6 +1082,7 @@ export const BusinessDetail = ({
       {tier === 'gratuit' && (
         <div className="flex justify-center py-4">
           <GratuitCard
+            cv_business_status={business.cv_business_status}
             name={displayName}
             logoUrl={business.logo_url}
             category={translatedCategory}
@@ -1086,7 +1091,9 @@ export const BusinessDetail = ({
             horaires_ok={business.horaires_ok}
             telephone={business.telephone}
             language={language}
-            statut_carte={business.statut_carte}
+            statut_carte={isCertifiedBusiness(business) ? CERTIFIED_LABEL : null}
+            googleRating={business['Note Google Globale']}
+            googleReviewCount={business['Compteur Avis Google']}
             showDetailsLink={false}
           />
         </div>
@@ -1524,7 +1531,7 @@ export const BusinessDetail = ({
                 {displayName}{business.ville ? ` ${language === 'fr' ? 'à' : language === 'ar' ? 'في' : language === 'en' ? 'in' : language === 'it' ? 'a' : 'в'} ${business.ville}` : ''}
               </h1>
 
-              {renderStatutCarteBadge(business.statut_carte, language)}
+              {renderStatutCarteBadge(isCertifiedBusiness(business) ? CERTIFIED_LABEL : null, language)}
 
               <button
                 onClick={copyLink}
@@ -1762,6 +1769,7 @@ export const BusinessDetail = ({
                       <span style={{ opacity: 0.85 }}>({reviewCount} {language === 'fr' ? 'avis' : language === 'ar' ? 'تقييم' : language === 'en' ? 'reviews' : language === 'it' ? 'recensioni' : 'отзывов'})</span>
                     )}
 
+                    <GoogleRatingSummary trustOnly rating={rawGoogleRating} reviewCount={rawGoogleReviewCount} language={language} />
                     {business['Lien Avis Google'] && (
                       <a
                         href={business['Lien Avis Google']}

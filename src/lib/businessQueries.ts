@@ -45,6 +45,7 @@ export const BUSINESS_COLUMNS = `
   score_avis,
   whatsapp,
   statut_carte,
+  cv_business_status,
   name_ar,
   description_ar,
   slug

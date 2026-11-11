@@ -1,3 +1,4 @@
+import { applyCertificationFilter } from '../lib/businessCertification';
 import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
@@ -860,11 +861,7 @@ export const Businesses = ({
         query = query.or(`sous_categories_texte.ilike.%${pageCategorie}%,sous_categories_clean.ilike.%${pageCategorie}%`);
       }
 
-      if (filterStatutCarte === 'certifie') {
-        query = (query as any).ilike('statut_carte', '%CERTIF%').not('statut_carte', 'ilike', '%NON CERTIF%');
-      } else if (filterStatutCarte === 'non_certifie') {
-        query = (query as any).ilike('statut_carte', '%NON CERTIF%');
-      }
+      query = applyCertificationFilter(query, filterStatutCarte);
 
       console.log('[DEBUG] Exécution de la requête Supabase...');
       const { data, error } = await query;
@@ -1047,11 +1044,7 @@ export const Businesses = ({
         query = query.eq('"page commerce local"', true);
       }
 
-      if (!selectedBusinessId && filterStatutCarte === 'certifie') {
-        query = (query as any).ilike('statut_carte', '%CERTIF%').not('statut_carte', 'ilike', '%NON CERTIF%');
-      } else if (!selectedBusinessId && filterStatutCarte === 'non_certifie') {
-        query = (query as any).ilike('statut_carte', '%NON CERTIF%');
-      }
+      if (!selectedBusinessId) query = applyCertificationFilter(query, filterStatutCarte);
 
       console.log('[DEBUG] Exécution de la requête Supabase...');
       const { data, error } = await query;
@@ -1620,6 +1613,7 @@ export const Businesses = ({
                         telephone: business.phone || null,
                         horaires_ok: business.horaires_ok,
                         statut_carte: business.statut_carte || null,
+                        cv_business_status: business.cv_business_status,
                         note_google: business.note_google ?? business['Note Google Globale'] ?? null,
                         nombre_avis: business.nombre_avis ?? business['Compteur Avis Google'] ?? null,
                         'Note Google Globale': business['Note Google Globale'] ?? business.note_google ?? null,

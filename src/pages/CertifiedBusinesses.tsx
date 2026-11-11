@@ -9,7 +9,6 @@ import { supabase } from '../lib/supabaseClient';
 import { extractFrenchName } from '../lib/textNormalization';
 
 type Row = Record<string, any>;
-const CERTIFIED_LABEL = '⭐ CERTIFIÉ DALIL TOUNES';
 const PAGE_SIZE = 8;
 
 export default function CertifiedBusinesses() {
@@ -26,7 +25,7 @@ export default function CertifiedBusinesses() {
     supabase
       .from('entreprise')
       .select('*')
-      .eq('statut_carte', CERTIFIED_LABEL)
+      .eq('cv_business_status', 'published')
       .order('nom', { ascending: true })
       .limit(100)
       .then(({ data, error }) => {
@@ -161,6 +160,7 @@ export default function CertifiedBusinesses() {
                       horaires_ok: biz.horaires_ok || null,
                       telephone: biz.telephone || biz.telephone1 || null,
                       statut_carte: biz.statut_carte || null,
+                      cv_business_status: biz.cv_business_status,
                       name_ar: biz.name_ar || null,
                       description_ar: biz.description_ar || null,
                     }}

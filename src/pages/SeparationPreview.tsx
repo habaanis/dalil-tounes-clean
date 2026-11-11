@@ -1,3 +1,4 @@
+import { FounderStory } from '../components/FounderStory';
 import VisibilityHouseSection from '../components/VisibilityHouseSection';
 import { EssentialPresence } from '../components/EssentialPresence';
 import { siteStructureCopy } from '../lib/siteStructureCopy';
@@ -349,6 +350,8 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
               </details>
             </div>
           </section>
+
+          <FounderStory />
 
           <div className="mx-auto max-w-5xl space-y-5 px-4 py-6">
             <EssentialPresence />

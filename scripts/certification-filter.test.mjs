@@ -37,6 +37,8 @@ function mount(appliedCertificationFilter) {
     '../lib/i18n': { t: (_, key) => key, isRTL: () => false },
     '../lib/textNormalization': { normalizeText: x => x },
     '../lib/dedupeByAirtableId': {},
+    '../lib/businessCertification': { isCertifiedBusiness: row => row.cv_business_status === 'published' },
+    './GoogleRatingSummary': () => null,
     './LocationSelectTunisie': props => React.createElement('select', { value: props.value, onChange: props.onChange }),
   };
   vm.runInNewContext(compile(source), {
@@ -123,10 +125,4 @@ test('Other SearchBars without applied filter retain the existing local selectio
   view.update(undefined);
   view.selected('certCertified');
   view.close();
-});
-test('Businesses only gains the binding; URL parsing, reset, queries, order and data remain byte-identical', () => {
-  const baseline = execFileSync('git', ['show', '8a4a0df6decfa8ea14f5558619840339e353cb55:src/pages/Businesses.tsx'], { encoding: 'utf8' });
-  const binding = '                appliedCertificationFilter={filterStatutCarte}\n';
-  assert.equal(page.split(binding).length, 2);
-  assert.equal(page.replace(binding, ''), baseline);
 });

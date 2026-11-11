@@ -1,3 +1,4 @@
+import { isCertifiedBusiness, CERTIFIED_LABEL } from '../lib/businessCertification';
 import GratuitCard from './GratuitCard';
 import BusinessSearchCardV2 from './BusinessSearchCardV2';
 import { useLanguage } from '../context/LanguageContext';
@@ -30,6 +31,7 @@ interface BusinessCardProps {
     'Compteur Avis Google'?: string | number | null;
     score_avis?: string | number | null;
     statut_carte?: string | null;
+    cv_business_status?: string | null;
     name_ar?: string | null;
     name_en?: string | null;
     name_it?: string | null;
@@ -60,7 +62,7 @@ interface BusinessCardProps {
  * Les fiches gratuites sont utilisables directement sans navigation ; les CV payants restent ouvrables.
  * Aucun champ Airtable/Supabase ni droit d'abonnement n'est modifié ici.
  */
-export const BusinessCard = ({ business, onClick, showGoogleRating = false }: BusinessCardProps) => {
+export const BusinessCard = ({ business, onClick, showGoogleRating = true }: BusinessCardProps) => {
   const { language } = useLanguage();
   const { getCategory } = useCategoryTranslation();
 
@@ -96,6 +98,7 @@ export const BusinessCard = ({ business, onClick, showGoogleRating = false }: Bu
     return (
       <div className="h-full rounded-2xl">
         <GratuitCard
+          cv_business_status={business.cv_business_status}
           name={displayName}
           logoUrl={business.logoUrl}
           imageUrl={business.imageUrl}
@@ -106,7 +109,7 @@ export const BusinessCard = ({ business, onClick, showGoogleRating = false }: Bu
           telephone={business.telephone || business.phone}
           language={language}
           allKeywords={allKeywords}
-          statut_carte={business.statut_carte}
+          statut_carte={isCertifiedBusiness(business) ? CERTIFIED_LABEL : null}
           description_ar={language === 'ar' ? business.description_ar || null : null}
           showGoogleRating={showGoogleRating}
           showDetailsLink={false}

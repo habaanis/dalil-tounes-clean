@@ -52,6 +52,7 @@ interface BusinessRecord {
   statut_abonnement?: string | null;
   statut_validation?: string | null;
   statut_carte?: string | null;
+  cv_business_status?: string | null;
   latitude?: number | string | null;
   longitude?: number | string | null;
   id_airtable?: string | null;
@@ -320,6 +321,7 @@ export default function BusinessShowcaseDetail() {
           </p>
 
           <GratuitCard
+            cv_business_status={business.cv_business_status}
             name={displayName}
             logoUrl={business.logo_url}
             category={categoryLabel}
@@ -329,6 +331,8 @@ export default function BusinessShowcaseDetail() {
             telephone={business.telephone}
             language={language}
             statut_carte={business.statut_carte}
+            googleRating={business['Note Google Globale'] as number | string | null}
+            googleReviewCount={business['Compteur Avis Google'] as number | string | null}
             showDetailsLink={false}
           />
           <VisitBeforeTravelAdvice business={business} language={language} />

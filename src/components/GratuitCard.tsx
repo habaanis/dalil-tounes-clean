@@ -1,3 +1,4 @@
+import { isCertifiedBusiness, CERTIFIED_LABEL } from '../lib/businessCertification';
 import { useState } from 'react';
 import { Clock, Phone, ChevronDown } from 'lucide-react';
 import { isCurrentlyOpen, translateOpenStatus, translateClosedStatus } from '../lib/horaireUtils';
@@ -18,6 +19,7 @@ interface GratuitCardProps {
   language: string;
   allKeywords?: string[];
   statut_carte?: string | null;
+  cv_business_status?: string | null;
   description_ar?: string | null;
   showGoogleRating?: boolean;
   showDetailsLink?: boolean;
@@ -26,7 +28,7 @@ interface GratuitCardProps {
 }
 
 const CARD_COPY: Record<string, { certified: string; nonCertified: string; details: string; showPhone: string; hidePhone: string }> = {
-  fr: { certified: 'CERTIFIÉ', nonCertified: 'NON CERTIFIÉ', details: 'Voir les détails', showPhone: 'Afficher le numéro', hidePhone: 'Masquer le numéro' },
+  fr: { certified: 'Certifiée Dalil Tounes', nonCertified: 'NON CERTIFIÉ', details: 'Voir les détails', showPhone: 'Afficher le numéro', hidePhone: 'Masquer le numéro' },
   ar: { certified: 'معتمد', nonCertified: 'غير معتمد', details: 'عرض التفاصيل', showPhone: 'عرض الرقم', hidePhone: 'إخفاء الرقم' },
   en: { certified: 'CERTIFIED', nonCertified: 'NON-CERTIFIED', details: 'View details', showPhone: 'Show phone number', hidePhone: 'Hide phone number' },
   it: { certified: 'CERTIFICATO', nonCertified: 'NON CERTIFICATO', details: 'Vedi i dettagli', showPhone: 'Mostra il numero', hidePhone: 'Nascondi il numero' },
@@ -34,15 +36,15 @@ const CARD_COPY: Record<string, { certified: string; nonCertified: string; detai
 };
 
 function renderStatutCarteBadge(statut_carte: string | null | undefined, language: string, localize: boolean) {
-  // Airtable is the single source of truth: no implied certification.
+  // Receives only the label derived from current CV publication.
   const normalized = String(statut_carte || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase().trim();
-  const isCertified = normalized.includes('CERTIFIE DALIL TOUNES') && !normalized.includes('NON CERTIFIE');
+  const isCertified = /CERTIFIEE? DALIL TOUNES/.test(normalized) && !normalized.includes('NON CERTIFIE');
   const isNonCertified = normalized.includes('NON CERTIFIE');
   if (!isCertified && !isNonCertified) return null;
   const copy = CARD_COPY[language] || CARD_COPY.fr;
   const label = localize
     ? `${isCertified ? '⭐ ' : '⚠️ '}${isCertified ? copy.certified : copy.nonCertified}`
-    : isCertified ? '⭐ CERTIFIÉ DALIL TOUNES' : '⚠️ NON CERTIFIÉ';
+    : isCertified ? 'Certifiée Dalil Tounes' : '⚠️ NON CERTIFIÉ';
   return (
     <span style={{
       display: 'inline-block',
@@ -72,9 +74,9 @@ export default function GratuitCard({
   telephone,
   language,
   allKeywords = [],
-  statut_carte,
+  cv_business_status,
   description_ar,
-  showGoogleRating = false,
+  showGoogleRating = true,
   showDetailsLink = true,
   googleRating,
   googleReviewCount,
@@ -143,7 +145,7 @@ export default function GratuitCard({
         </p>
         {category && <p style={{ fontSize: '12px', color: '#475569', margin: 0 }}>{category}</p>}
         {locationLabel && <p style={{ fontSize: '12px', color: '#475569', margin: 0 }}>{locationLabel}</p>}
-        {renderStatutCarteBadge(statut_carte, language, showGoogleRating)}
+        {renderStatutCarteBadge(isCertifiedBusiness({ cv_business_status }) ? CERTIFIED_LABEL : null, language, showGoogleRating)}
         {showGoogleRating && (
           <GoogleRatingSummary
             rating={googleRating}

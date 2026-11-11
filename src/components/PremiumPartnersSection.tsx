@@ -76,6 +76,7 @@ export const PremiumPartnersSection = ({ onCardClick, partners, loading }: Premi
                     horaires_ok: biz.horaires_ok,
                     telephone: biz.telephone,
                     statut_carte: biz.statut_carte,
+                    cv_business_status: biz.cv_business_status,
                     name_ar: biz.name_ar,
                     description_ar: biz.description_ar,
                   }}
