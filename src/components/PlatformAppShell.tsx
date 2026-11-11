@@ -11,19 +11,19 @@ const APP_COPY: Record<AppLang, {
   more: string; menu: string; close: string; jobs: string; events: string;
   partners: string; blog: string; contact: string;
 }> = {
-  fr: { home: 'Accueil', search: 'Chercher', citizens: 'Citoyens', discover: 'Découvrir', pros: 'Pros',
+  fr: { home: 'Accueil', search: 'Chercher', citizens: 'Citoyens', discover: 'Tourisme & Expat', pros: 'Pros',
     more: 'Plus de rubriques', menu: 'Ouvrir le menu', close: 'Fermer le menu', jobs: 'Emploi',
     events: 'Événements', partners: 'Partenaires', blog: 'Guides & articles', contact: 'Contact' },
-  ar: { home: 'الرئيسية', search: 'بحث', citizens: 'مواطنون', discover: 'اكتشف', pros: 'مهنيون',
+  ar: { home: 'الرئيسية', search: 'بحث', citizens: 'مواطنون', discover: 'سياحة ومقيمون', pros: 'مهنيون',
     more: 'أقسام أخرى', menu: 'فتح القائمة', close: 'إغلاق القائمة', jobs: 'الشغل',
     events: 'الفعاليات', partners: 'الشركاء', blog: 'مقالات وأدلة', contact: 'اتصل بنا' },
-  en: { home: 'Home', search: 'Search', citizens: 'Citizens', discover: 'Explore', pros: 'Business',
+  en: { home: 'Home', search: 'Search', citizens: 'Citizens', discover: 'Tourism & Expat', pros: 'Business',
     more: 'More sections', menu: 'Open menu', close: 'Close menu', jobs: 'Jobs',
     events: 'Events', partners: 'Partners', blog: 'Guides & articles', contact: 'Contact' },
-  it: { home: 'Home', search: 'Cerca', citizens: 'Cittadini', discover: 'Scopri', pros: 'Imprese',
+  it: { home: 'Home', search: 'Cerca', citizens: 'Cittadini', discover: 'Turismo & Expat', pros: 'Imprese',
     more: 'Altre sezioni', menu: 'Apri menu', close: 'Chiudi menu', jobs: 'Lavoro',
     events: 'Eventi', partners: 'Partner', blog: 'Guide e articoli', contact: 'Contatti' },
-  ru: { home: 'Главная', search: 'Поиск', citizens: 'Граждане', discover: 'Открыть', pros: 'Бизнес',
+  ru: { home: 'Главная', search: 'Поиск', citizens: 'Граждане', discover: 'Туризм & экспат', pros: 'Бизнес',
     more: 'Другие разделы', menu: 'Открыть меню', close: 'Закрыть меню', jobs: 'Работа',
     events: 'События', partners: 'Партнёры', blog: 'Статьи и гиды', contact: 'Контакты' },
 };
@@ -89,9 +89,9 @@ export default function PlatformAppShell({ children }: { children: ReactNode }) 
         <div className="mx-auto grid max-w-xl grid-cols-5 items-stretch px-1">
           {tabs.map(({ label, to, icon: Icon, active }) => (
             <Link key={to} to={to} aria-current={active ? 'page' : undefined}
-              className={`flex min-h-[64px] flex-col items-center justify-center gap-1 rounded-lg px-0.5 text-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-[#B99143] ${active ? 'font-semibold text-[#45243A]' : 'font-medium text-[#806F79]'}`}>
+              className={`flex min-h-[70px] flex-col items-center justify-center gap-1 rounded-lg px-0.5 text-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-[#B99143] ${active ? 'font-semibold text-[#45243A]' : 'font-medium text-[#806F79]'}`}>
               <Icon className={`h-5 w-5 ${active ? 'text-[#A17D36]' : ''}`} strokeWidth={active ? 2 : 1.6} aria-hidden="true" />
-              <span className="text-[10px] leading-3">{label}</span>
+              <span className="max-w-full break-words px-0.5 text-[9px] leading-[1.15] sm:text-[10px]">{label}</span>
             </Link>
           ))}
         </div>
