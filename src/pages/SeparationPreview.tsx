@@ -36,7 +36,7 @@ const COPY: Record<Lang, {
     platformLabel: 'Plateforme et annuaire tunisien', platformTitle: 'Trouvez les entreprises et les services dont vous avez besoin en Tunisie.',
     platformDescription: 'Recherchez une activité, découvrez les professionnels référencés et contactez-les directement.',
     categories: [['Santé', '/citizens/sante'], ['Éducation', '/education'], ['Commerces', '/citizens/shops'], ['Services', '/citizens/services']],
-    networkProof: (count) => `Déjà ${count} fiches enregistrées, dont des dossiers à compléter. Découvrez les activités publiées sur Dalil Tounes.`,
+    networkProof: (count) => `Déjà ${count} fiches enregistrées. Découvrez les activités publiées sur Dalil Tounes.`,
     certifiedProof: (count) => `dont ${count} établissements certifiés Dalil Tounes.`, loadingCount: "Chargement du nombre d'activités",
     professionalEyebrow: 'Vous êtes professionnel ?',
     platformPromoTitle: 'Donnez à votre activité une présentation claire et partageable avec le CV Business Dalil Tounes.',
