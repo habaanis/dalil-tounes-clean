@@ -1,6 +1,6 @@
 import { lazy, Suspense, useState } from 'react';
 import { motion } from 'framer-motion';
-import { AlertCircle, Baby, Building2, CheckCircle, Clock, ExternalLink, FileText, Heart, Phone, Shield, X, type LucideIcon } from 'lucide-react';
+import { AlertCircle, Baby, Building2, CheckCircle, ChevronDown, Clock, ExternalLink, FileText, Heart, Phone, Shield, X, type LucideIcon } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { getStructureImageUrl } from '../lib/imageUtils';
 const SearchBar = lazy(() => import('../components/SearchBar'));
