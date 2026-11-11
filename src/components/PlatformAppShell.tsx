@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Building2, Compass, Home, Menu, Search, Users, X } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { ArrowLeft, Building2, Compass, Home, Menu, Search, Users, X } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import LanguageSelector from './LanguageSelector';
 import PlatformAppSectionHub, { getPlatformHub } from './PlatformAppSectionHub';
@@ -8,28 +8,29 @@ import PlatformAppSectionHub, { getPlatformHub } from './PlatformAppSectionHub';
 type AppLang = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 const APP_COPY: Record<AppLang, {
   home: string; search: string; citizens: string; discover: string; pros: string;
-  more: string; menu: string; close: string; jobs: string; events: string;
+  more: string; menu: string; close: string; back: string; jobs: string; events: string;
   partners: string; blog: string; contact: string;
 }> = {
   fr: { home: 'Accueil', search: 'Chercher', citizens: 'Citoyens', discover: 'Tourisme & Expat', pros: 'Pros',
-    more: 'Plus de rubriques', menu: 'Ouvrir le menu', close: 'Fermer le menu', jobs: 'Emploi',
+    more: 'Plus de rubriques', menu: 'Ouvrir le menu', close: 'Fermer le menu', back: 'Retour', jobs: 'Emploi',
     events: 'Événements', partners: 'Partenaires', blog: 'Guides & articles', contact: 'Contact' },
   ar: { home: 'الرئيسية', search: 'بحث', citizens: 'مواطنون', discover: 'سياحة ومقيمون', pros: 'مهنيون',
-    more: 'أقسام أخرى', menu: 'فتح القائمة', close: 'إغلاق القائمة', jobs: 'الشغل',
+    more: 'أقسام أخرى', menu: 'فتح القائمة', close: 'إغلاق القائمة', back: 'رجوع', jobs: 'الشغل',
     events: 'الفعاليات', partners: 'الشركاء', blog: 'مقالات وأدلة', contact: 'اتصل بنا' },
   en: { home: 'Home', search: 'Search', citizens: 'Citizens', discover: 'Tourism & Expat', pros: 'Business',
-    more: 'More sections', menu: 'Open menu', close: 'Close menu', jobs: 'Jobs',
+    more: 'More sections', menu: 'Open menu', close: 'Close menu', back: 'Back', jobs: 'Jobs',
     events: 'Events', partners: 'Partners', blog: 'Guides & articles', contact: 'Contact' },
   it: { home: 'Home', search: 'Cerca', citizens: 'Cittadini', discover: 'Turismo & Expat', pros: 'Imprese',
-    more: 'Altre sezioni', menu: 'Apri menu', close: 'Chiudi menu', jobs: 'Lavoro',
+    more: 'Altre sezioni', menu: 'Apri menu', close: 'Chiudi menu', back: 'Indietro', jobs: 'Lavoro',
     events: 'Eventi', partners: 'Partner', blog: 'Guide e articoli', contact: 'Contatti' },
   ru: { home: 'Главная', search: 'Поиск', citizens: 'Граждане', discover: 'Туризм & экспат', pros: 'Бизнес',
-    more: 'Другие разделы', menu: 'Открыть меню', close: 'Закрыть меню', jobs: 'Работа',
+    more: 'Другие разделы', menu: 'Открыть меню', close: 'Закрыть меню', back: 'Назад', jobs: 'Работа',
     events: 'События', partners: 'Партнёры', blog: 'Статьи и гиды', contact: 'Контакты' },
 };
 
 export default function PlatformAppShell({ children }: { children: ReactNode }) {
   const location = useLocation();
+  const navigate = useNavigate();
   const { language } = useLanguage();
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as AppLang;
   const copy = APP_COPY[lang];
@@ -83,7 +84,19 @@ export default function PlatformAppShell({ children }: { children: ReactNode }) 
         </nav>}
       </header>
 
-      <main id="platform-app-content" className="mx-auto min-h-[calc(100vh-9rem)] max-w-xl overflow-x-clip pb-[calc(5.8rem+env(safe-area-inset-bottom))]">{useCompactHub && hub ? <PlatformAppSectionHub kind={hub} /> : children}</main>
+      <main id="platform-app-content" className="mx-auto min-h-[calc(100vh-9rem)] max-w-xl overflow-x-clip pb-[calc(5.8rem+env(safe-area-inset-bottom))]">
+        {location.pathname !== '/' && <div className="px-3 pt-2">
+          <button type="button" onClick={() => {
+            const index = (window.history.state as { idx?: number } | null)?.idx;
+            if (typeof index === 'number' && index > 0) navigate(-1);
+            else navigate('/', { replace: true });
+          }} className="inline-flex min-h-11 items-center gap-2 rounded-lg px-2 text-sm font-medium text-[#45243A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A17D36]" aria-label={copy.back}>
+            <ArrowLeft className={`h-4 w-4 ${rtl ? 'rotate-180' : ''}`} aria-hidden="true" />
+            {copy.back}
+          </button>
+        </div>}
+        {useCompactHub && hub ? <PlatformAppSectionHub kind={hub} /> : children}
+      </main>
 
       <nav data-platform-app-tabs aria-label={copy.more} className="fixed inset-x-0 bottom-0 z-50 border-t border-[#D4AF37]/40 bg-white/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-5px_22px_rgba(53,23,47,0.08)] backdrop-blur">
         <div className="mx-auto grid max-w-xl grid-cols-5 items-stretch px-1">
