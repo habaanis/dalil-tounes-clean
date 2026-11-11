@@ -495,14 +495,14 @@ export default function CitizensTourism() {
   const topics = journeyMode === 'visit' ? journey.visitTopics : journey.settleTopics;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="premium-page min-h-screen" dir={isRTL ? 'rtl' : 'ltr'}>
       <SEOHead
         title={t.seoTitle}
         description={t.intro}
         canonical="https://dalil-tounes.com/citizens/tourism"
         currentPath="/citizens/tourism"
       />
-      <section className="relative w-full h-[280px] overflow-hidden">
+      <section className="relative mx-auto max-w-6xl h-[220px] sm:h-[240px] overflow-hidden sm:rounded-2xl sm:mt-6">
         <img
           src="https://commons.wikimedia.org/wiki/Special:FilePath/Sidi_bou_said_port.jpg?width=1600"
           alt={t.heroAlt}
@@ -513,15 +513,15 @@ export default function CitizensTourism() {
         <a className="absolute bottom-1 right-2 z-10 text-[10px] text-white/85 underline" href="https://commons.wikimedia.org/wiki/File:Sidi_bou_said_port.jpg" target="_blank" rel="noopener noreferrer" aria-label="Crédit photo Rania Haddad, licence CC BY-SA 4.0">Photo : Rania Haddad · CC BY-SA 4.0</a>
 
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-4 py-6">
-          <h1 className="text-3xl md:text-4xl font-semibold mb-2 drop-shadow-lg text-[#D4AF37]">{t.title}</h1>
+          <h1 className="font-serif text-2xl md:text-3xl font-normal mb-2 drop-shadow-lg text-[#FFF9ED]">{t.title}</h1>
           <p className="text-sm md:text-base font-light text-white/95 max-w-3xl leading-relaxed drop-shadow-lg">{t.intro}</p>
         </div>
       </section>
 
-      <section className="py-6 px-4 bg-white">
+      <section className="py-4 px-4">
         <div className="max-w-2xl mx-auto text-center">
-          <p className="text-lg md:text-xl font-light mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
-            <span className="text-[#4A0404]">{t.slogan}</span>
+          <p className="text-base md:text-lg font-normal mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <span className="text-[#4A1D43]">{t.slogan}</span>
           </p>
           <div className="flex justify-center"><div className="w-[40px] h-[1px] bg-[#D4AF37]" /></div>
         </div>
@@ -554,15 +554,15 @@ export default function CitizensTourism() {
           </div>
 
           <div className="mt-4 text-center">
-            <h2 className="text-xl font-semibold text-[#4A0404]" style={{ fontFamily: "'Playfair Display', serif" }}>{journeyMode === 'visit' ? journey.visitTitle : journey.settleTitle}</h2>
+            <h2 className="text-xl font-semibold text-[#4A1D43]" style={{ fontFamily: "'Playfair Display', serif" }}>{journeyMode === 'visit' ? journey.visitTitle : journey.settleTitle}</h2>
             <p className="mx-auto mt-1.5 max-w-2xl text-sm leading-relaxed text-gray-600">{journeyMode === 'visit' ? journey.visitIntro : journey.settleIntro}</p>
           </div>
 
           {journeyMode === 'visit' && <p className="mt-3 text-center text-xs font-semibold tracking-wide text-[#A45A27]">✨ Six façons de vivre la Tunisie, pas seulement de la visiter</p>}
           <div className="mt-4 grid grid-cols-2 gap-2.5 lg:grid-cols-3">
             {topics.map((topic, topicIndex) => journeyMode === 'visit' ? (
-              <Link key={topic.title} to={topic.href} className={`group relative min-w-0 overflow-hidden rounded-2xl border border-white/70 px-2.5 py-3 sm:px-4 sm:py-4 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#4A1D43] ${["bg-[#FFF0DB]","bg-[#E6F3E6]","bg-[#FFE9D7]","bg-[#F9EDD9]","bg-[#F3E9FA]","bg-[#E2F3F2]"][topicIndex % 6]}`}> 
-                <div className="mb-2 flex items-center justify-between"><span className="text-2xl sm:text-3xl" aria-hidden="true">{['🏛️','🌿','🧶','🍲','🎉','🏡'][topicIndex] || '🇹🇳'}</span><span className="rounded-full bg-white/65 px-2 py-0.5 text-[10px] font-semibold text-[#784626]">Explorer</span></div>
+              <Link key={topic.title} to={topic.href} className={`group relative min-w-0 overflow-hidden rounded-2xl border border-[#D9C9A4] px-2.5 py-3 sm:px-4 sm:py-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#4A1D43] bg-[#FFFCF7]`}>
+                <div className="mb-2 flex items-center justify-between"><span className="text-xl sm:text-2xl" aria-hidden="true">{['🏛️','🌿','🧶','🍲','🎉','🏡'][topicIndex] || '🇹🇳'}</span><span className="rounded-full bg-white/65 px-2 py-0.5 text-[10px] font-semibold text-[#784626]">Explorer</span></div>
                 <div className="flex items-center justify-between gap-3 text-sm font-semibold text-[#4A1D43]">
                   <span>{topic.title}</span>
                   <ChevronDown className={`h-4 w-4 flex-shrink-0 -rotate-90 text-[#D4AF37] ${isRTL ? 'rotate-90' : ''}`} aria-hidden="true" />
@@ -721,7 +721,7 @@ export default function CitizensTourism() {
           {journeyMode === 'settle' && (
             <nav className="mt-4 flex flex-wrap justify-center gap-2" aria-label={t.expatTitle}>
               {QUICK_LINK_PATHS.map((path, index) => (
-                <Link key={path} to={path} className="rounded-full border border-[#D4AF37]/50 px-3 py-1.5 text-xs font-medium text-[#4A0404] hover:bg-[#D4AF37]/10">
+                <Link key={path} to={path} className="rounded-full border border-[#D4AF37]/50 px-3 py-1.5 text-xs font-medium text-[#4A1D43] hover:bg-[#D4AF37]/10">
                   {t.quickLinks[index]}
                 </Link>
               ))}

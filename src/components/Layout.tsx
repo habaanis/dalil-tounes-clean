@@ -1,3 +1,4 @@
+import '../styles/premiumPlatform.css';
 import { ReactNode, useEffect, useState, lazy, Suspense } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
@@ -229,6 +230,7 @@ export const Layout = ({ children }: LayoutProps) => {
     return location.pathname.startsWith(path);
   };
 
+  const premiumChrome = ['/', '/citizens', '/citizens/tourism', '/citizens/tourisme', '/subscription'].includes(location.pathname);
   const isQrBusinessRoute = location.pathname.startsWith('/qr-business/');
   const isEntrepriseAppRoute = location.pathname.startsWith('/entreprise/');
   const isDedicatedClientHost = isDedicatedClientHostname(window.location.hostname);
@@ -246,7 +248,7 @@ export const Layout = ({ children }: LayoutProps) => {
   }
 
   return (
-    <div className={`min-h-screen bg-white ${isRTL ? 'rtl' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className={`min-h-screen bg-white ${premiumChrome ? 'premium-chrome' : ''} ${isRTL ? 'rtl' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
       <nav className="bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -454,7 +456,7 @@ export const Layout = ({ children }: LayoutProps) => {
       </Suspense>
 
       {location.pathname === '/' && (
-        <div className="bg-yellow-400 border-b border-yellow-500 mt-16">
+        <div className="premium-install bg-yellow-400 border-b border-yellow-500 mt-16">
           <div className="max-w-7xl mx-auto px-4 py-2.5 md:py-3">
             <div className="flex items-center justify-between gap-3 md:gap-4">
               <div className="flex items-center gap-2 flex-1 min-w-0">

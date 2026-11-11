@@ -1,0 +1,34 @@
+/* Scoped to platform landing pages. Client CVs and mini-apps never receive
+   premium-chrome; palette previews keep their own presentation styles. */
+.premium-page { background: #fcfaf5; color: #35172f; }
+.premium-home-hero { border-bottom: 1px solid #e6dcc5; background: linear-gradient(145deg, #fcfaf5, #fffdf9); }
+.premium-universes { max-width: 64rem; margin: 1.5rem auto 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; text-align: start; }
+.premium-universe { display: flex; align-items: center; gap: .85rem; padding: 1.25rem 1rem; border: 1px solid #d9c9a4; border-radius: 14px; background: #fffdf9; color: #35172f; box-shadow: 0 3px 14px #35172f05; transition: border-color .18s, background .18s; }
+.premium-universe:hover { background: #f7f0e2; border-color: #aa8d50; }
+.premium-universe:focus-visible { outline: 2px solid #806336; outline-offset: 3px; }
+.premium-universe-icon { width: 1.5rem; height: 1.5rem; flex-shrink: 0; color: #92733b; }
+.premium-universe-title { display: block; font-family: Georgia, serif; font-size: 1.15rem; font-weight: 400; line-height: 1.4; }
+.premium-universe-copy { display: block; margin-top: .3rem; font-size: .75rem; line-height: 1.6; color: #6c6068; }
+.premium-universe-arrow { margin-inline-start: auto; width: 1rem; height: 1rem; flex-shrink: 0; color: #92733b; }
+[dir="rtl"] .premium-universe-arrow { transform: rotate(180deg); }
+.premium-chrome > nav { background: #fffdf9f5; border-color: #e6dcc5; }
+.premium-chrome > nav a, .premium-chrome > nav button { font-weight: 500; }
+.premium-chrome > nav a:hover, .premium-chrome > nav button:hover { color: #7c6335; }
+.premium-chrome .premium-install { background: #f2ebdc; border-color: #e1d3b5; }
+.premium-chrome .premium-install button { font-size: .8rem; font-weight: 500; }
+.premium-chrome .premium-install button.bg-gray-900 { background: #42213b; box-shadow: none; }
+.premium-chrome footer { background: #2e1a2a; border-color: #59464e; padding-top: 2rem; }
+.premium-chrome footer > div > div:first-child { background: transparent; border: 0; border-bottom: 1px solid #b69b624d; border-radius: 0; box-shadow: none; margin-bottom: 1.5rem; padding-bottom: 1.25rem; }
+.premium-chrome footer .gap-10 { gap: 1.5rem; }
+.premium-chrome footer .text-gray-400, .premium-chrome footer .text-gray-500 { color: #d1c3cd; }
+.premium-chrome footer > div > .grid .text-gray-600,
+.premium-chrome footer > div > .border-t p.text-gray-600 { color: #c8bbc4; }
+.premium-chrome footer h4 { color: #dfcda4; font-weight: 500; letter-spacing: .035em; }
+@media (max-width: 639px) {
+  .premium-universes { grid-template-columns: 1fr; gap: .6rem; margin-top: 1rem; }
+  .premium-universe { padding: .9rem 1rem; }
+  .premium-universe-title { font-size: 1.05rem; }
+  .premium-chrome footer > div > .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .premium-chrome footer a { overflow-wrap: anywhere; }
+}
+@media (prefers-reduced-motion: reduce) { .premium-universe { transition: none; } }

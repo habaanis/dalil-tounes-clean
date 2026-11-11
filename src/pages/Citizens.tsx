@@ -150,7 +150,7 @@ export default function Citizens() {
   }));
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white px-4 pb-24 pt-16" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="premium-page min-h-screen px-4 pb-12 pt-6" dir={isRTL ? 'rtl' : 'ltr'}>
       <StructuredData data={generateCollectionPageSchema(t.schemaTitle, t.schemaDescription, citizensItems)} />
 
       <div className="mx-auto max-w-6xl">
@@ -158,19 +158,19 @@ export default function Citizens() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="relative mb-8 overflow-hidden rounded-3xl border border-[#D4AF37]/30"
+          className="relative mb-6 overflow-hidden rounded-2xl border border-[#D4AF37]/30"
         >
           <div className="absolute inset-0 z-0">
             <picture>
               <source srcSet={HERO_IMAGE_URL} type="image/webp" />
-              <img src={HERO_IMAGE_JPG_URL} alt={t.flagAlt} className="h-full w-full object-cover opacity-35" loading="lazy" decoding="async" />
+              <img src={HERO_IMAGE_JPG_URL} alt={t.flagAlt} className="h-full w-full object-cover opacity-10" loading="lazy" decoding="async" />
             </picture>
           </div>
           <div className="absolute inset-0 bg-white/65" />
 
-          <div className="relative z-10 px-5 py-8 text-center sm:px-8 md:py-10">
-            <h1 className="text-3xl font-bold text-[#4A1D43] md:text-5xl" style={{ fontFamily: "'Playfair Display', serif" }}>{t.title}</h1>
-            <p className="mx-auto mt-3 max-w-3xl text-base leading-7 text-gray-700 md:text-lg">{t.subtitle}</p>
+          <div className="relative z-10 px-5 py-6 text-center sm:px-8 md:py-7">
+            <h1 className="text-2xl font-normal text-[#4A1D43] md:text-3xl" style={{ fontFamily: "'Playfair Display', serif" }}>{t.title}</h1>
+            <p className="mx-auto mt-3 max-w-3xl text-sm leading-6 text-gray-700 md:text-base">{t.subtitle}</p>
           </div>
         </motion.div>
 
@@ -191,18 +191,18 @@ export default function Citizens() {
         )}
 
         <motion.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }} aria-labelledby="citizen-categories">
-          <h2 id="citizen-categories" className="mb-4 text-center text-2xl font-bold text-[#4A1D43] md:text-3xl" style={{ fontFamily: "'Playfair Display', serif" }}>{t.chooseTitle}</h2>
+          <h2 id="citizen-categories" className="mb-4 text-center text-xl font-normal text-[#4A1D43] md:text-2xl" style={{ fontFamily: "'Playfair Display', serif" }}>{t.chooseTitle}</h2>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-5">
             {CATEGORY_ROUTES.map((category, index) => (
               <Link
                 key={category.key}
                 to={category.route}
-                className="group relative h-32 overflow-hidden rounded-2xl border border-[#D4AF37]/70 bg-[#4A1D43] shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:ring-offset-2 sm:h-40 md:h-44"
+                className="group relative h-28 overflow-hidden rounded-2xl border border-[#D4AF37]/70 bg-[#4A1D43] shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:ring-offset-2 sm:h-32 md:h-36"
               >
                 <img src={getSupabaseImageUrl(category.image)} alt="" className="absolute inset-0 h-full w-full object-cover brightness-[0.65]" loading="lazy" decoding="async" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent" />
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 p-3 sm:p-4">
-                  <h3 className={`text-base font-bold leading-tight text-white md:text-lg ${isRTL ? 'text-right' : 'text-left'}`} style={{ textShadow: '0 2px 8px rgba(0, 0, 0, 0.7)' }}>
+                  <h3 className={`text-base font-medium leading-tight text-white md:text-lg ${isRTL ? 'text-right' : 'text-left'}`} style={{ textShadow: '0 2px 8px rgba(0, 0, 0, 0.7)' }}>
                     {t.categories[index]}
                   </h3>
                 </div>

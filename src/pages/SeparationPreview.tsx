@@ -5,7 +5,7 @@ import { SEOHead } from '../components/SEOHead';
 import StructuredData from '../components/StructuredData';
 import { getHomeSeoMeta } from '../lib/seoMetaTemplates';
 import { generateOrganizationSchema, generateWebSiteSchema } from '../lib/structuredDataSchemas';
-import { ArrowRight, Building2, MapPin, QrCode, Search, Share2, Sparkles } from 'lucide-react';
+import { ArrowRight, Users, Compass, Building2, MapPin, QrCode, Search, Share2, Sparkles } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CvBusinessJourney from '../components/CvBusinessJourney';
@@ -301,7 +301,7 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
       : null;
 
   return (
-    <div dir={lang === 'ar' ? 'rtl' : 'ltr'} className="bg-white text-slate-900">
+    <div dir={lang === 'ar' ? 'rtl' : 'ltr'} className={view === 'platform' ? "premium-page premium-home" : "bg-white text-slate-900"}>
       {view === 'platform' && <><SEOHead {...getHomeSeoMeta()} currentPath="/" /><StructuredData data={[generateOrganizationSchema(), generateWebSiteSchema()]} /></>}
       {!embedded && view === 'cv' && <SEOHead title={`${structure.products} | Dalil Tounes`} description={t.cvDescription} canonical="https://dalil-tounes.com/cv-business" currentPath="/cv-business" />}
       {!fixedView && <div className="sticky top-0 z-40 border-b border-[#D4AF37]/35 bg-white/95 px-4 py-3 backdrop-blur">
@@ -316,23 +316,33 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
 
       {view === 'platform' ? (
         <>
-          <section className="border-b border-[#D4AF37]/25 bg-[radial-gradient(circle_at_top_left,rgba(212,175,55,0.18),transparent_28%),linear-gradient(135deg,#fffdf8_0%,#ffffff_52%,#f7f0f5_100%)] px-4 py-6 md:py-8">
+          <section className="premium-home-hero px-4 py-6 md:py-8">
             <div className="mx-auto max-w-5xl text-center">
-              <div className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/45 bg-white px-3 py-1.5 text-xs font-black uppercase tracking-[0.14em] text-[#4A1D43] shadow-sm"><Building2 className="h-4 w-4 text-[#D4AF37]" /> {t.platformLabel}</div>
-              <h1 className="mx-auto mt-5 max-w-3xl font-serif text-3xl font-bold leading-tight text-[#2E102A] md:text-4xl">{t.platformTitle}</h1>
-              <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-gray-600 md:text-lg">{t.platformDescription}</p>
-              <div className="mx-auto mt-7 max-w-3xl rounded-2xl border border-[#D4AF37]/40 bg-white p-3 shadow-[0_18px_45px_rgba(74,29,67,0.10)]"><SearchBar scope="global" autoSearch resultMode="redirectToResults" /></div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/45 bg-white px-3 py-1.5 text-xs font-medium uppercase tracking-[0.14em] text-[#4A1D43] shadow-sm"><Building2 className="h-4 w-4 text-[#D4AF37]" /> {t.platformLabel}</div>
+              <h1 className="mx-auto mt-4 max-w-3xl font-serif text-2xl font-normal leading-tight text-[#2E102A] md:text-3xl">{t.platformTitle}</h1>
+              <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-gray-600 md:text-base">{t.platformDescription}</p>
+              <div className="mx-auto mt-4 max-w-3xl rounded-2xl border border-[#D4AF37]/40 bg-white p-3 shadow-sm"><SearchBar scope="global" autoSearch resultMode="redirectToResults" /></div>
               <div className="mx-auto mt-4 max-w-3xl rounded-2xl border border-[#D4AF37]/55 bg-[#FFF8E6] px-4 py-3 text-[#4A1D43] shadow-sm">
-                <p className="text-base font-black leading-relaxed md:text-xl">{countsAvailable ? t.networkProof(localizedCount) : <span className="text-sm font-semibold opacity-70" role="status">{t.loadingCount}</span>}</p>
-                <p className="mt-1 text-sm font-bold text-[#9A7416] md:text-base">{countsAvailable ? t.certifiedProof(localizedCertifiedCount) : <span className="text-sm font-medium opacity-70" role="status">{t.certifiedLoading}</span>}</p>
+                <p className="text-base font-medium leading-relaxed md:text-base">{countsAvailable ? t.networkProof(localizedCount) : <span className="text-sm font-semibold opacity-70" role="status">{t.loadingCount}</span>}</p>
+                <p className="mt-1 text-sm font-medium text-[#9A7416] md:text-base">{countsAvailable ? t.certifiedProof(localizedCertifiedCount) : <span className="text-sm font-medium opacity-70" role="status">{t.certifiedLoading}</span>}</p>
               </div>
-              <nav className="mx-auto mt-3 grid max-w-3xl grid-cols-2 gap-2 sm:grid-cols-4" aria-label={structure.platform}>{t.categories.map(([label, href]) => <a key={href} href={href} className="min-h-11 rounded-xl border border-[#D4AF37]/40 bg-white px-3 py-3 text-sm font-bold text-[#4A1D43] transition hover:bg-[#FFF8DF]">{label}</a>)}<a href="/citizens/tourism" className="rounded-xl border border-[#D4AF37]/40 p-3 text-sm font-bold text-[#4A1D43]">{structure.visit}</a><a href="/citizens/tourism?tab=settle" className="rounded-xl border border-[#D4AF37]/40 p-3 text-sm font-bold text-[#4A1D43]">{structure.settle}</a></nav>
-              <details className="mx-auto mt-4 max-w-5xl rounded-2xl border border-[#D4AF37]/40 bg-white/90 p-3 text-left shadow-[0_14px_35px_rgba(74,29,67,0.08)] rtl:text-right sm:p-4">
-                <summary className="cursor-pointer py-2 font-bold text-[#4A1D43]">{structure.services}</summary>
+              <nav className="premium-universes" aria-label={structure.platform}>
+                {structure.universes.map((universe, index) => {
+                  const Icon = [Users, Compass, Building2][index];
+                  const href = ['/citizens', '/citizens/tourism', '/subscription'][index];
+                  return <a key={href} href={href} className="premium-universe">
+                    <Icon className="premium-universe-icon" strokeWidth={1.4} aria-hidden="true" />
+                    <span><span className="premium-universe-title">{universe.title}</span><span className="premium-universe-copy">{universe.text}</span></span>
+                    <ArrowRight className="premium-universe-arrow" aria-hidden="true" />
+                  </a>;
+                })}
+              </nav>
+              <details className="mx-auto mt-4 max-w-5xl rounded-2xl border border-[#D4AF37]/40 bg-white/90 p-3 text-left shadow-sm rtl:text-right sm:p-4">
+                <summary className="cursor-pointer py-2 font-medium text-[#4A1D43]">{structure.services}</summary>
                 <div className="grid grid-cols-2 gap-2 lg:grid-cols-5">
                   {ecosystem.items.map(item => <button key={item.href} type="button" onClick={() => navigate(item.href)} className="group min-h-[92px] rounded-xl border border-[#E5D4B0] bg-[#FFFCF7] p-3 text-left transition hover:-translate-y-0.5 hover:border-[#B48A36] hover:bg-[#FFF8E6] focus:outline-none focus:ring-2 focus:ring-[#B48A36] rtl:text-right">
                     <span className="text-lg" aria-hidden="true">{item.icon}</span>
-                    <span className="mt-1 block text-sm font-black leading-5 text-[#4A1D43]">{item.title}</span>
+                    <span className="mt-1 block text-sm font-medium leading-5 text-[#4A1D43]">{item.title}</span>
                     <span className="mt-1 hidden text-xs leading-4 text-gray-600 sm:block">{item.text}</span>
                   </button>)}
                 </div>
@@ -343,9 +353,13 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
           <div className="mx-auto max-w-5xl space-y-5 px-4 py-6">
             <EssentialPresence />
             <section className="rounded-2xl bg-[#2E102A] p-5 text-white" aria-label={structure.products}>
-              <h2 className="font-serif text-xl font-bold">CV Business · CV Portfolio</h2>
-              <p className="mt-2 text-sm leading-6 text-white/85">{structure.cvIntro}</p>
-              <a href="/subscription#cv-professionnels" className="mt-4 inline-flex min-h-11 items-center rounded-xl border border-[#D4AF37] px-4 py-2 text-sm font-bold text-[#F1D783]">{structure.prices} <ArrowRight className="ms-2 h-4 w-4" aria-hidden="true" /></a>
+              <p className="text-xs font-medium uppercase tracking-wide text-[#F1D783]">CV Business · CV Portfolio</p>
+              <h2 className="mt-2 max-w-3xl font-serif text-xl font-medium sm:text-2xl">{structure.homeCvTitle}</h2>
+              <p className="mt-2 text-sm leading-6 text-white/85">{structure.homeCvText}</p>
+              <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              <a href="/subscription#presence-essentielle" className="inline-flex min-h-11 items-center justify-center rounded-xl bg-[#FFF9ED] px-4 py-3 text-center text-sm font-medium text-[#35172F]">{structure.freeAction}</a>
+              <a href="/subscription#modeles" className="inline-flex min-h-11 items-center justify-center rounded-xl border border-[#D4AF37] px-4 py-3 text-center text-sm font-medium text-[#F1D783]">{structure.homeCvAction} <ArrowRight className="ms-2 h-4 w-4 shrink-0" aria-hidden="true" /></a>
+              </div>
             </section>
           </div>
         </>
