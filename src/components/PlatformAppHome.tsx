@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { BriefcaseBusiness, Compass, Search, Users, ArrowRight, Star, ShieldCheck } from 'lucide-react';
+import { Building2, Compass, Search, Users, ArrowRight, Star, ShieldCheck } from 'lucide-react';
 import SearchBar from './SearchBar';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -83,7 +83,7 @@ export default function PlatformAppHome({ totalCount, certifiedCount }: {
   const universes = [
     { to: '/citizens', icon: Users, title: t.citizens, detail: t.citizensDetail },
     { to: '/citizens/tourism', icon: Compass, title: t.tourism, detail: t.tourismDetail },
-    { to: '/subscription', icon: BriefcaseBusiness, title: t.businesses, detail: t.businessesDetail },
+    { to: '/subscription', icon: Building2, title: t.businesses, detail: t.businessesDetail },
   ];
   return <div className="space-y-4 px-3 py-4">
     <section className="rounded-2xl border border-[#D4AF37]/55 bg-gradient-to-br from-[#FFFCF7] to-[#F8F1E5] px-4 py-5">
