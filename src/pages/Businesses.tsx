@@ -1290,13 +1290,22 @@ export const Businesses = ({
       <div className="mx-auto flex max-w-7xl flex-col">
         <section className="px-4 pb-5 pt-6">
           <div className="relative overflow-hidden rounded-xl border border-[#d9c9a4] bg-gradient-to-br from-[#fffdf9] to-[#f3eddf] shadow-sm">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_15%,rgba(212,175,55,0.25),transparent_28%),radial-gradient(circle_at_80%_10%,rgba(255,255,255,0.14),transparent_26%)]" />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 bg-[#ce1126]"
+            >
+              <div
+                className="absolute inset-y-0 left-1/2 h-full -translate-x-1/2 bg-cover bg-center"
+                style={{ aspectRatio: '946 / 630', backgroundImage: "url('/images/drapeau-tunisie.webp')", maskImage: 'linear-gradient(to right, transparent, black 18%, black 82%, transparent)' }}
+              />
+              <div className="absolute inset-0 bg-[#2e102a]/40" />
+            </div>
             <div className="relative px-5 py-8 text-center sm:px-8 lg:px-12 lg:py-10">
-              <div className="mx-auto max-w-3xl text-[#35172f]">
-                <h1 className="public-title text-3xl font-medium leading-tight md:text-4xl">
+              <div className="mx-auto max-w-3xl text-white [text-shadow:0_1px_4px_rgba(0,0,0,0.45)]">
+                <h1 className="public-title text-3xl font-medium leading-tight !text-white md:text-4xl">
                   {pageT.hero.search}
                 </h1>
-                <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-[#6c6068] md:text-lg">
+                <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-white md:text-lg">
                   {pageT.explore.description}
                 </p>
                 <div className="mt-6 flex justify-center">
