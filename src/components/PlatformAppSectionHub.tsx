@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ChevronDown } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { DALIL_MASCOT_IMAGE } from '../lib/dalilMascotImage';
 
 type Lang = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 type Hub = 'citizens' | 'tourism' | 'pros';
@@ -112,9 +113,13 @@ export default function PlatformAppSectionHub({ kind }: { kind: Hub }) {
   const copy = COPY[lang];
 
   return <div data-platform-app-hub={kind} className="space-y-4 px-3 py-4">
-    <section className="rounded-2xl border border-[#D4AF37]/45 bg-[#FFF9EF] p-4">
-      <h1 className="font-serif text-xl font-medium text-[#35172F]">{copy.titles[kind]}</h1>
-      <p className="mt-2 text-sm leading-5 text-[#6A5B64]">{copy.intros[kind]}</p>
+    <section className="flex items-center gap-3 rounded-2xl border border-[#D4AF37]/45 bg-[#FFF9EF] p-3">
+      <div className="min-w-0 flex-1">
+        <h1 className="font-serif text-xl font-medium text-[#35172F]">{copy.titles[kind]}</h1>
+        <p className="mt-1 text-xs leading-5 text-[#6A5B64]">{copy.intros[kind]}</p>
+      </div>
+      <img src={DALIL_MASCOT_IMAGE} alt="" aria-hidden="true" decoding="async" loading="lazy"
+        className="h-[76px] w-[70px] shrink-0 rounded-xl bg-white object-contain" />
     </section>
 
     {kind === 'citizens' && <div className="space-y-3">
