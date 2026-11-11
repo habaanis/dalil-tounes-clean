@@ -13,6 +13,8 @@ import MeilleursSection from '../components/MeilleursSection';
 import { getSupabaseImageUrl } from '../lib/imageUtils';
 import SearchBar from '../components/SearchBar';
 import { Link } from 'react-router-dom';
+import { isPlatformAppMode } from '../lib/platformAppMode';
+import EducationAppMenu, { type EducationAppPanel } from '../components/EducationAppMenu';
 
 interface JobOffer {
   id: string;
@@ -589,6 +591,8 @@ export default function EducationNew() {
   const dateLocale = dateLocales[language as keyof typeof dateLocales] || dateLocales.fr;
   const official = educationOfficialLinks[language as keyof typeof educationOfficialLinks] || educationOfficialLinks.fr;
   const isRTL = language === 'ar';
+  const inPlatformApp = isPlatformAppMode();
+  const [openAppPanel, setOpenAppPanel] = useState<EducationAppPanel | null>(null);
 
   const [jobOffers, setJobOffers] = useState<JobOffer[]>([]);
   const [educationEvents, setEducationEvents] = useState<EducationEvent[]>([]);
@@ -654,7 +658,7 @@ export default function EducationNew() {
     <div className="public-surface min-h-screen bg-gradient-to-b from-blue-50 to-white" dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Hero Section with Background Image */}
       <section
-        className="relative text-white pb-10 px-4 bg-cover bg-center bg-no-repeat"
+        className={`${inPlatformApp ? "hidden" : ""} relative text-white pb-10 px-4 bg-cover bg-center bg-no-repeat`}
         style={{
           backgroundImage: `linear-gradient(rgba(74, 29, 67, 0.6), rgba(74, 29, 67, 0.6)), url(${getSupabaseImageUrl('classe-ecole.jpg')})`
         }}
@@ -675,6 +679,10 @@ export default function EducationNew() {
         </div>
       </section>
 
+      {inPlatformApp && <section className="mx-3 mt-3 rounded-xl border border-[#D4AF37]/45 bg-[#FFF9EF] p-3">
+        <h1 className="font-serif text-xl font-medium text-[#4A1D43]">{language === 'fr' ? 'Éducation & formation' : language === 'ar' ? 'التعليم والتكوين' : language === 'en' ? 'Education & training' : language === 'it' ? 'Istruzione e formazione' : 'Образование и обучение'}</h1>
+        <p className="mt-1 text-xs leading-5 text-[#695D67]">{t.welcome}</p>
+      </section>}
       {/* SearchBar Éducation */}
       <section className="py-2 px-4 relative z-[9999]" style={{ overflow: 'visible' }}>
         <div className="max-w-5xl mx-auto" style={{ overflow: 'visible' }}>
@@ -691,23 +699,25 @@ export default function EducationNew() {
         </div>
       </section>
 
+      {inPlatformApp && <EducationAppMenu activePanel={openAppPanel} onToggle={panel => setOpenAppPanel(current => current === panel ? null : panel)} />}
       {/* Meilleurs établissements + article blog */}
-      <section className="py-8 bg-white">
+      <section className={`${inPlatformApp && openAppPanel !== "recommended" ? "hidden" : ""} ${inPlatformApp ? "bg-white px-2 py-2" : "bg-white py-8"}`}>
         <MeilleursSection
           secteurLabel={t.meilleurs.secteurLabel}
           listePage="éducation"
           accentColor="#4A1D43"
           sectionTitle={t.meilleurs.sectionTitle}
-          blogArticle={{
+          blogArticle={inPlatformApp ? undefined : {
             title: t.meilleurs.blogTitle,
             excerpt: t.meilleurs.blogExcerpt,
             slug: "bien-choisir-son-ecole"
           }}
           useGoogleRecommendationCriteria
+          hideSearchCta={inPlatformApp}
         />
       </section>
 
-      <section className="max-w-5xl mx-auto px-4 pb-8" aria-label={t.eventBanner.title}>
+      <section className={`${inPlatformApp && openAppPanel !== "events" ? "hidden" : ""} max-w-5xl mx-auto px-4 pb-8`} aria-label={t.eventBanner.title}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -763,7 +773,12 @@ export default function EducationNew() {
         </div>
       </section>
 
-      <section className="max-w-5xl mx-auto px-4 pb-8" aria-labelledby="official-education-links">
+      {inPlatformApp && openAppPanel === 'procedures' && <section className="mx-3 mb-3 rounded-xl border border-[#D4AF37]/45 bg-[#FFFAF1] p-3">
+        <h2 className="text-sm font-semibold text-[#4A1D43]">{t.adminBlock.title}</h2>
+        <p className="mt-1 text-xs text-[#6C5E66]">{t.adminBlock.desc}</p>
+        <Link to="/citizens/services" className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-[#4A1D43] underline decoration-[#D4AF37] underline-offset-4">{t.adminBlock.link}</Link>
+      </section>}
+      <section className={`${inPlatformApp && openAppPanel !== "procedures" ? "hidden" : ""} max-w-5xl mx-auto px-4 pb-8`} aria-labelledby="official-education-links">
         <h2 id="official-education-links" className="public-heading text-xl font-semibold text-[#4A1D43] text-center mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>{official.title}</h2>
         <div className="grid gap-3 md:grid-cols-3">
           {[
@@ -780,7 +795,7 @@ export default function EducationNew() {
       </section>
 
       {/* Bloc Carrières dans l'Éducation - Version compacte */}
-      <section className="max-w-7xl mx-auto px-4 pb-6">
+      <section className={`${inPlatformApp && openAppPanel !== "careers" ? "hidden" : ""} max-w-7xl mx-auto px-4 pb-6`}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -823,7 +838,7 @@ export default function EducationNew() {
       </section>
 
       {/* Section Événements Éducation (en bas avec ancre) - Version ultra compacte */}
-      <section id="education-events-section" className="max-w-7xl mx-auto px-4 pb-6 scroll-mt-24">
+      <section id="education-events-section" className={`${inPlatformApp && openAppPanel !== "events" ? "hidden" : ""} max-w-7xl mx-auto px-4 pb-6 scroll-mt-24`}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
