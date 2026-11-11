@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Building2, Compass, Search, Users, ArrowRight, Star, ShieldCheck } from 'lucide-react';
+import { Search, ArrowRight, Star, ShieldCheck } from 'lucide-react';
 import SearchBar from './SearchBar';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -80,11 +80,6 @@ export default function PlatformAppHome({ totalCount, certifiedCount }: {
   const { language } = useLanguage();
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as Lang;
   const t = COPY[lang];
-  const universes = [
-    { to: '/citizens', icon: Users, title: t.citizens, detail: t.citizensDetail },
-    { to: '/citizens/tourism', icon: Compass, title: t.tourism, detail: t.tourismDetail },
-    { to: '/subscription', icon: Building2, title: t.businesses, detail: t.businessesDetail },
-  ];
   return <div className="space-y-4 px-3 py-4">
     <section className="rounded-2xl border border-[#D4AF37]/55 bg-gradient-to-br from-[#FFFCF7] to-[#F8F1E5] px-4 py-5">
       <p className="text-xs font-semibold tracking-wide text-[#9D7731]">🇹🇳 DALIL TOUNES</p>
@@ -99,15 +94,6 @@ export default function PlatformAppHome({ totalCount, certifiedCount }: {
       {totalCount && <span>{t.count(totalCount)}</span>}
       {certifiedCount && <span>{t.certified(certifiedCount)}</span>}
     </div>}
-    <nav className="space-y-2" aria-label={t.more}>
-      {universes.map(({ to, icon: Icon, title, detail }) => <Link key={to} to={to}
-        className="flex min-h-[76px] items-center gap-3 rounded-2xl border border-[#E4D6B8] bg-white p-3 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B99143]">
-        <span className="rounded-xl bg-[#F8F0E1] p-2.5"><Icon className="h-6 w-6 text-[#A17D36]" strokeWidth={1.5} /></span>
-        <span className="min-w-0 flex-1"><span className="block text-sm font-semibold text-[#45243A]">{title}</span>
-          <span className="mt-1 block text-xs leading-4 text-[#766D71]">{detail}</span></span>
-        <ArrowRight className="h-4 w-4 shrink-0 text-[#A17D36] rtl:rotate-180" />
-      </Link>)}
-    </nav>
     <section className="rounded-2xl border border-[#E4D6B8] bg-white p-4">
       <div className="flex items-center gap-2"><Search className="h-4 w-4 text-[#A17D36]" />
         <h2 className="font-serif text-base font-medium text-[#45243A]">{t.recommend}</h2></div>
@@ -123,10 +109,6 @@ export default function PlatformAppHome({ totalCount, certifiedCount }: {
       <p className="mt-2 text-sm leading-6 text-[#70656B]">{t.founderDetail}</p>
       <Link to="/pourquoi-dalil-tounes#histoire-fondateur" className="mt-2 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[#45243A]">{t.founderAction}<ArrowRight className="h-4 w-4 rtl:rotate-180" /></Link>
     </section>
-    <section className="rounded-2xl bg-[#35172F] p-4 text-white">
-      <h2 className="font-serif text-lg font-medium">{t.free}</h2>
-      <p className="mt-2 text-sm text-white/85">{t.freeDetail}</p>
-      <Link to="/subscription" className="mt-3 inline-flex min-h-11 items-center rounded-xl border border-[#D4AF37] px-4 text-sm font-semibold text-[#F1D783]">{t.freeAction}</Link>
-    </section>
+
   </div>;
 }
