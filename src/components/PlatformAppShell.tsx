@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Building2, Compass, Home, Menu, Search, Users, X } from 'lucide-react';
+import { ArrowLeft, Building2, Compass, Facebook, Home, Instagram, Menu, MessageCircle, Search, Users, X } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import LanguageSelector from './LanguageSelector';
 import PlatformAppSectionHub, { getPlatformHub } from './PlatformAppSectionHub';
@@ -83,6 +83,24 @@ export default function PlatformAppShell({ children }: { children: ReactNode }) 
           </div>
         </nav>}
       </header>
+
+      {location.pathname === '/' && <div aria-label="Réseaux sociaux Dalil Tounes" className="mx-auto flex max-w-xl items-center justify-end gap-2 px-3 pt-2">
+        <a href="https://www.facebook.com/daliltounes/" target="_blank" rel="noopener noreferrer"
+          aria-label="Facebook Dalil Tounes (nouvel onglet)"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#D4AF37]/45 bg-white text-[#4A1D43] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A17D36]">
+          <Facebook aria-hidden="true" className="h-4 w-4" />
+        </a>
+        <a href="https://www.instagram.com/dalil.tounes/" target="_blank" rel="noopener noreferrer"
+          aria-label="Instagram Dalil Tounes (nouvel onglet)"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#D4AF37]/45 bg-white text-[#4A1D43] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A17D36]">
+          <Instagram aria-hidden="true" className="h-4 w-4" />
+        </a>
+        <a href="https://wa.me/21627642252" target="_blank" rel="noopener noreferrer"
+          aria-label="WhatsApp Dalil Tounes (nouvel onglet)"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#D4AF37]/45 bg-white text-[#4A1D43] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A17D36]">
+          <MessageCircle aria-hidden="true" className="h-4 w-4" />
+        </a>
+      </div>}
 
       <main id="platform-app-content" className="mx-auto min-h-[calc(100vh-9rem)] max-w-xl overflow-x-clip pb-[calc(5.8rem+env(safe-area-inset-bottom))]">
         {location.pathname !== '/' && <div className="px-3 pt-2">
