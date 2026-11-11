@@ -278,6 +278,10 @@ export default function CitizensHealth({}: CitizensHealthProps) {
         </div>
       </section>
 
+      {inPlatformApp && <div className="px-3 pt-3">        <div className="rounded-xl border border-[#D4AF37]/40 bg-[#FFFBF4] p-3">
+          <h1 className="font-serif text-xl font-medium text-[#4A1D43]">{c.pageTitle}</h1>
+          <p className="mt-1 text-xs text-[#6D6070]">{t.health.hero.description}</p>
+        </div></div>}
       <section className="py-2 px-4 relative z-[9999]" style={{ overflow: 'visible' }}>
         <div className="max-w-5xl mx-auto" style={{ overflow: 'visible' }}>
           <div className="bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-[#D4AF37] p-2.5 md:p-3" style={{ overflow: 'visible' }}>
@@ -294,10 +298,7 @@ export default function CitizensHealth({}: CitizensHealthProps) {
       </section>
 
       {inPlatformApp && <section data-platform-health-shortcuts className="space-y-3 px-3 pt-4">
-        <div className="rounded-xl border border-[#D4AF37]/40 bg-[#FFFBF4] p-3">
-          <h1 className="font-serif text-xl font-medium text-[#4A1D43]">{c.pageTitle}</h1>
-          <p className="mt-1 text-xs text-[#6D6070]">{t.health.hero.description}</p>
-        </div>
+
         <div className="grid grid-cols-2 gap-2">
           <Link to="/citizens/health/thermalisme" className="flex min-h-14 items-center gap-2 rounded-xl border border-[#D4AF37]/50 bg-white px-3 text-xs font-semibold text-[#4A1D43]">♨️ {lang === 'fr' ? 'Thermalisme et sources' : lang === 'ar' ? 'الحمامات والعيون' : lang === 'en' ? 'Thermal baths & springs' : lang === 'it' ? 'Terme e sorgenti' : 'Термальные источники'}</Link>
           <button type="button" onClick={() => setOpenPanel(p => p === 'recommended' ? null : 'recommended')} aria-expanded={openPanel === 'recommended'} className="min-h-14 rounded-xl border border-[#D4AF37]/50 bg-white px-3 text-xs font-semibold text-[#4A1D43]">{c.bestTitle}</button>
@@ -316,6 +317,7 @@ export default function CitizensHealth({}: CitizensHealthProps) {
           sectionTitle={c.bestTitle}
           useGoogleRecommendationCriteria
           blogArticle={{ title: c.guideTitle, excerpt: c.guideExcerpt, slug: 'comment-choisir-son-medecin' }}
+          hideSearchCta={inPlatformApp}
         />
       </section>
 
