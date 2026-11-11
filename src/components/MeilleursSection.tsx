@@ -48,6 +48,7 @@ interface MeilleursProps {
   includeRecommendedInTotal?: boolean;
   excludedKeywords?: readonly string[];
   allowedCategories?: readonly string[];
+  requiredSubcategoryKeywords?: readonly string[];
   allReferencedLabel?: string;
   searchOtherLabel?: string;
   hideSearchCta?: boolean;
@@ -254,6 +255,7 @@ export default function MeilleursSection({
   includeRecommendedInTotal = true,
   excludedKeywords = EMPTY_EXCLUDED_KEYWORDS,
   allowedCategories = EMPTY_EXCLUDED_KEYWORDS,
+  requiredSubcategoryKeywords = EMPTY_EXCLUDED_KEYWORDS,
   allReferencedLabel,
   searchOtherLabel,
   hideSearchCta = false,
@@ -329,9 +331,14 @@ export default function MeilleursSection({
           const categories = Array.isArray(item.categorie) ? item.categorie : [item.categorie];
           return categories.some(value => typeof value === 'string' && allowed.includes(normalizeCategory(value)));
         });
+        const requiredKeywords = requiredSubcategoryKeywords.map(normalizeCategory);
+        const typedItems = requiredKeywords.length === 0 ? categoryItems : categoryItems.filter(item => {
+          const subs = Array.isArray(item.sous_categories) ? item.sous_categories : [item.sous_categories];
+          return subs.some(value => typeof value === 'string' && requiredKeywords.some(k => normalizeCategory(value).includes(k)));
+        });
         const all = normalizedExcludedKeywords.length === 0
-          ? categoryItems
-          : categoryItems.filter((item) => {
+          ? typedItems
+          : typedItems.filter((item) => {
               const searchableText = [
                 item.nom,
                 item.categorie,
@@ -371,7 +378,7 @@ export default function MeilleursSection({
 
     fetchData();
     setPage(0);
-  }, [excludedKeywords, allowedCategories, listePage, useGoogleRecommendationCriteria]);
+  }, [excludedKeywords, allowedCategories, requiredSubcategoryKeywords, listePage, useGoogleRecommendationCriteria]);
 
   const totalPages = Math.ceil(allItems.length / PAGE_SIZE);
   const pagedItems = allItems.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
