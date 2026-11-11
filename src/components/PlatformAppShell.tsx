@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { BriefcaseBusiness, Compass, Home, Menu, Search, Users, X } from 'lucide-react';
+import { Building2, Compass, Home, Menu, Search, Users, X } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import LanguageSelector from './LanguageSelector';
 
@@ -41,7 +41,7 @@ export default function PlatformAppShell({ children }: { children: ReactNode }) 
     { label: copy.search, to: '/entreprises', icon: Search, active: /^\/(entreprises|businesses|recherche)(?:\/|$)/.test(location.pathname) },
     { label: copy.citizens, to: '/citizens', icon: Users, active: /^\/citizens(?:\/|$)/.test(location.pathname) && !/^\/citizens\/tourism(?:\/|$)/.test(location.pathname) },
     { label: copy.discover, to: '/citizens/tourism', icon: Compass, active: /^\/citizens\/tourism(?:\/|$)/.test(location.pathname) },
-    { label: copy.pros, to: '/subscription', icon: BriefcaseBusiness, active: /^\/(subscription|cv-business|inscription-entreprise|abonnement)(?:\/|$)/.test(location.pathname) },
+    { label: copy.pros, to: '/subscription', icon: Building2, active: /^\/(subscription|cv-business|inscription-entreprise|abonnement)(?:\/|$)/.test(location.pathname) },
   ];
 
   const extra = [
