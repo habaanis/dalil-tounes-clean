@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { FounderStory } from './FounderStory';
 import { Search, ArrowRight, Star, ShieldCheck } from 'lucide-react';
 import SearchBar from './SearchBar';
 import { useLanguage } from '../context/LanguageContext';
@@ -104,11 +105,7 @@ export default function PlatformAppHome({ totalCount, certifiedCount }: {
       </div>
       <Link to="/entreprises" className="mt-3 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[#45243A] underline decoration-[#B99143] underline-offset-4">{t.search}<ArrowRight className="h-4 w-4 rtl:rotate-180" /></Link>
     </section>
-    <section className="rounded-2xl border border-[#D4AF37]/40 bg-[#FFFCF7] p-4">
-      <h2 className="font-serif text-lg font-medium text-[#45243A]">{t.founder}</h2>
-      <p className="mt-2 text-sm leading-6 text-[#70656B]">{t.founderDetail}</p>
-      <Link to="/pourquoi-dalil-tounes#histoire-fondateur" className="mt-2 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[#45243A]">{t.founderAction}<ArrowRight className="h-4 w-4 rtl:rotate-180" /></Link>
-    </section>
+    <FounderStory compact />
 
   </div>;
 }
