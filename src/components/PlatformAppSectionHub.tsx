@@ -1,5 +1,5 @@
-import { Link, useLocation } from 'react-router-dom';
-import { ArrowRight, ChevronDown } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { ChevronDown } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 type Lang = 'fr' | 'ar' | 'en' | 'it' | 'ru';
@@ -105,11 +105,9 @@ function HubLinks({ items, topics }: { items: Entry[]; topics: Record<string, st
 }
 
 export default function PlatformAppSectionHub({ kind }: { kind: Hub }) {
-  const location = useLocation();
   const { language } = useLanguage();
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as Lang;
   const copy = COPY[lang];
-  const fullLink = { pathname: location.pathname, search: '?app-full=1' };
 
   return <div data-platform-app-hub={kind} className="space-y-4 px-3 py-4">
     <section className="rounded-2xl border border-[#D4AF37]/45 bg-[#FFF9EF] p-4">
@@ -151,11 +149,6 @@ export default function PlatformAppSectionHub({ kind }: { kind: Hub }) {
       </details>
     </div>}
 
-    <div className="rounded-xl border border-[#E5D7BE] bg-white px-3 py-3">
-      <p className="text-xs text-[#776B71]">{copy.hint}</p>
-      <Link to={fullLink} className="mt-2 inline-flex min-h-11 items-center gap-2 text-sm font-medium text-[#45243A] underline decoration-[#B99143] underline-offset-4">
-        {copy.all}<ArrowRight aria-hidden="true" className="h-4 w-4 rtl:rotate-180" />
-      </Link>
-    </div>
+
   </div>;
 }
