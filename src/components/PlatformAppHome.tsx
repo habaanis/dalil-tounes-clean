@@ -1,4 +1,5 @@
 import { FounderStory } from './FounderStory';
+import { DALIL_MASCOT_IMAGE } from '../lib/dalilMascotImage';
 import SearchBar from './SearchBar';
 import { Building2, ShieldCheck, Star } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
@@ -81,10 +82,16 @@ export default function PlatformAppHome({ totalCount, legacyCertifiedCount, reco
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as Lang;
   const t = COPY[lang];
   return <div className="space-y-4 px-3 py-4">
-    <section className="rounded-2xl border border-[#D4AF37]/55 bg-gradient-to-br from-[#FFFCF7] to-[#F8F1E5] px-4 py-5">
-      <p className="text-xs font-semibold tracking-wide text-[#9D7731]">🇹🇳 DALIL TOUNES</p>
-      <h1 className="mt-2 font-serif text-2xl font-medium leading-tight text-[#35172F]">{t.headline}</h1>
-      <p className="mt-2 text-sm leading-6 text-[#665565]">{t.intro}</p>
+    <section className="rounded-2xl border border-[#D4AF37]/55 bg-gradient-to-br from-[#FFFCF7] to-[#F8F1E5] px-3 py-4">
+      <div className="flex items-center gap-2">
+        <div className="min-w-0 flex-1">
+          <p className="text-xs font-semibold tracking-wide text-[#9D7731]">🇹🇳 DALIL TOUNES</p>
+          <h1 className="mt-1 font-serif text-xl font-medium leading-tight text-[#35172F]">{t.headline}</h1>
+          <p className="mt-1 text-xs leading-5 text-[#665565]">{t.intro}</p>
+        </div>
+        <img src={DALIL_MASCOT_IMAGE} alt="Mascotte Dalil Tounes"
+          className="h-[82px] w-[76px] shrink-0 rounded-xl border border-[#D4AF37]/35 bg-white object-contain" loading="lazy" decoding="async" />
+      </div>
     </section>
     <section className="rounded-xl border border-[#D4AF37]/30 bg-white px-3 py-3 text-center" aria-label="Dalil Tounes et CV professionnels">
       <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-[#A17D36]">{lang === 'fr' ? 'Vous êtes professionnel ?' : lang === 'ar' ? 'عندك مؤسسة؟' : lang === 'en' ? 'Are you a professional?' : lang === 'it' ? 'Sei un professionista?' : 'Вы профессионал?'}</p>
