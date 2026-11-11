@@ -1,4 +1,6 @@
 import { FounderStory } from '../components/FounderStory';
+import PlatformAppHome from '../components/PlatformAppHome';
+import { isPlatformAppMode } from '../lib/platformAppMode';
 import VisibilityHouseSection from '../components/VisibilityHouseSection';
 import { EssentialPresence } from '../components/EssentialPresence';
 import { siteStructureCopy } from '../lib/siteStructureCopy';
@@ -300,6 +302,15 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
     : lang === 'ar'
       ? 'https://static.metricool.com/video/4610595/202609/0a154ec0c4a44fb7.mp4'
       : null;
+
+  if (view === 'platform' && fixedView === 'platform' && isPlatformAppMode() && !embedded) {
+    return <>
+      <SEOHead {...getHomeSeoMeta()} currentPath="/" />
+      <StructuredData data={[generateOrganizationSchema(), generateWebSiteSchema()]} />
+      <PlatformAppHome totalCount={countsAvailable ? localizedCount : null}
+        certifiedCount={countsAvailable ? localizedCertifiedCount : null} />
+    </>;
+  }
 
   return (
     <div dir={lang === 'ar' ? 'rtl' : 'ltr'} className={view === 'platform' ? "premium-page premium-home" : "bg-white text-slate-900"}>
