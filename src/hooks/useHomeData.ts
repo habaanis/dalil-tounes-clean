@@ -14,6 +14,7 @@ interface HomeData {
   partners: HomeBusinessRow[];
   totalCount: number;
   certifiedCount: number;
+  legacyCertifiedCount: number;
   loading: boolean;
 }
 
@@ -24,13 +25,14 @@ export function useHomeData(): HomeData {
       partners: cached?.partners ?? [],
       totalCount: cached?.totalCount ?? 0,
       certifiedCount: cached?.certifiedCount ?? 0,
+      legacyCertifiedCount: cached?.legacyCertifiedCount ?? 0,
       loading: cached === null,
     };
   });
 
   useEffect(() => {
     const unsub = subscribeHomeData((result: HomeQueryResult) => {
-      setState({ partners: result.partners, totalCount: result.totalCount, certifiedCount: result.certifiedCount, loading: false });
+      setState({ partners: result.partners, totalCount: result.totalCount, certifiedCount: result.certifiedCount, legacyCertifiedCount: result.legacyCertifiedCount, loading: false });
     });
 
     // On diffère le fetch au-delà du premier rendu pour ne pas concurrencer
@@ -52,7 +54,7 @@ export function useHomeData(): HomeData {
       if (!hasCache) {
         prefetchHomeData()
           .then((result) => {
-            setState({ partners: result.partners, totalCount: result.totalCount, certifiedCount: result.certifiedCount, loading: false });
+            setState({ partners: result.partners, totalCount: result.totalCount, certifiedCount: result.certifiedCount, legacyCertifiedCount: result.legacyCertifiedCount, loading: false });
           })
           .catch(() => {
             setState((s) => ({ ...s, loading: false }));
