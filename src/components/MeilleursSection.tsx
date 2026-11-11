@@ -49,6 +49,7 @@ interface MeilleursProps {
   excludedKeywords?: readonly string[];
   allReferencedLabel?: string;
   searchOtherLabel?: string;
+  hideSearchCta?: boolean;
 }
 
 const PAGE_SIZE = 4;
@@ -253,6 +254,7 @@ export default function MeilleursSection({
   excludedKeywords = EMPTY_EXCLUDED_KEYWORDS,
   allReferencedLabel,
   searchOtherLabel,
+  hideSearchCta = false,
 }: MeilleursProps) {
   const navigate = useNavigate();
   const { language } = useLanguage();
@@ -588,7 +590,7 @@ export default function MeilleursSection({
       )}
 
       {/* === CTA Recherche === */}
-      <section className="max-w-5xl mx-auto px-4 pb-4">
+      {!hideSearchCta && <section className="max-w-5xl mx-auto px-4 pb-4">
         <div className="text-center">
           <button
             onClick={() => navigate(`/recherche?q=${encodeURIComponent(searchTarget)}`)}
@@ -600,7 +602,7 @@ export default function MeilleursSection({
           </button>
           <p className="text-xs text-gray-400 mt-2">{tx('searchOtherHint', 'Affiner par ville, spécialité, disponibilité...')}</p>
         </div>
-      </section>
+      </section>}
 
       <div className="max-w-5xl mx-auto px-4 pb-6">
         <p className="text-center text-[11px] text-gray-400 leading-relaxed">
