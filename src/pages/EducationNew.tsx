@@ -15,6 +15,7 @@ import SearchBar from '../components/SearchBar';
 import { Link } from 'react-router-dom';
 import { isPlatformAppMode } from '../lib/platformAppMode';
 import EducationAppMenu, { type EducationAppPanel } from '../components/EducationAppMenu';
+import { DALIL_MASCOT_IMAGE } from '../lib/dalilMascotImage';
 
 interface JobOffer {
   id: string;
@@ -679,9 +680,19 @@ export default function EducationNew() {
         </div>
       </section>
 
-      {inPlatformApp && <section className="mx-3 mt-3 rounded-xl border border-[#D4AF37]/45 bg-[#FFF9EF] p-3">
-        <h1 className="font-serif text-xl font-medium text-[#4A1D43]">{language === 'fr' ? 'Éducation & formation' : language === 'ar' ? 'التعليم والتكوين' : language === 'en' ? 'Education & training' : language === 'it' ? 'Istruzione e formazione' : 'Образование и обучение'}</h1>
-        <p className="mt-1 text-xs leading-5 text-[#695D67]">{t.welcome}</p>
+      {inPlatformApp && <section className="relative mx-3 mt-3 overflow-hidden rounded-xl border border-[#D4AF37]/45 bg-[#4A1D43]">
+        <img src={getSupabaseImageUrl('classe-ecole.jpg')} alt="" aria-hidden="true"
+          loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover opacity-20" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#4A1D43]/95 to-[#4A1D43]/65" />
+        <div className="relative flex min-h-[120px] items-center gap-3 p-3">
+          <div className="min-w-0 flex-1">
+            <h1 className="font-serif text-xl font-medium leading-6 text-[#F8E9C9]">{language === 'fr' ? 'Éducation & formation' : language === 'ar' ? 'التعليم والتكوين' : language === 'en' ? 'Education & training' : language === 'it' ? 'Istruzione e formazione' : 'Образование и обучение'}</h1>
+            <p className="mt-1 line-clamp-3 text-xs leading-5 text-white/90">{t.welcome}</p>
+          </div>
+          <img src={DALIL_MASCOT_IMAGE} alt="Mascotte Dalil Tounes"
+            className="h-[94px] w-[90px] shrink-0 rounded-xl border border-[#D4AF37]/40 bg-white/95 object-contain"
+            loading="lazy" decoding="async" />
+        </div>
       </section>}
       {/* SearchBar Éducation */}
       <section className="py-2 px-4 relative z-[9999]" style={{ overflow: 'visible' }}>
