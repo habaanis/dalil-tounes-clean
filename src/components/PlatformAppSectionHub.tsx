@@ -117,15 +117,9 @@ export default function PlatformAppSectionHub({ kind }: { kind: Hub }) {
       <p className="mt-2 text-sm leading-5 text-[#6A5B64]">{copy.intros[kind]}</p>
     </section>
 
-    {kind === 'citizens' && <>
-      <HubLinks items={CITIZEN_LINKS.slice(0, 2)} topics={copy.topics} />
-      <details className="group rounded-2xl border border-[#D4AF37]/40 bg-white p-3">
-        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 px-1 font-medium text-[#45243A] [&::-webkit-details-marker]:hidden">
-          {copy.moreTopics}<ChevronDown aria-hidden="true" className="h-5 w-5 shrink-0 text-[#A17D36] transition-transform group-open:rotate-180" />
-        </summary>
-        <div className="pt-2"><HubLinks items={CITIZEN_LINKS.slice(2)} topics={copy.topics} /></div>
-      </details>
-    </>}
+    {kind === 'citizens' && <div className="space-y-3">
+      <HubLinks items={CITIZEN_LINKS} topics={copy.topics} />
+    </div>}
     {kind === 'pros' && <>
       <HubLinks items={PRO_LINKS.slice(0, 2)} topics={copy.topics} />
       <details className="group rounded-2xl border border-[#D4AF37]/40 bg-white p-3">
