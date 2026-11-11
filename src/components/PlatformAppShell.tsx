@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Building2, Compass, Home, Menu, Search, Users, X } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import LanguageSelector from './LanguageSelector';
+import PlatformAppSectionHub, { getPlatformHub } from './PlatformAppSectionHub';
 
 type AppLang = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 const APP_COPY: Record<AppLang, {
@@ -33,8 +34,13 @@ export default function PlatformAppShell({ children }: { children: ReactNode }) 
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as AppLang;
   const copy = APP_COPY[lang];
   const rtl = lang === 'ar';
+  const hub = getPlatformHub(location.pathname);
+  const useCompactHub = hub !== null && new URLSearchParams(location.search).get('app-full') !== '1';
   const [menuOpen, setMenuOpen] = useState(false);
-  useEffect(() => setMenuOpen(false), [location.pathname]);
+  useEffect(() => setMenuOpen(false), [location.pathname, location.search]);
+  useEffect(() => {
+    if (useCompactHub) window.scrollTo({ top: 0, left: 0 });
+  }, [useCompactHub, location.pathname]);
 
   const tabs = [
     { label: copy.home, to: '/', icon: Home, active: location.pathname === '/' },
@@ -77,7 +83,7 @@ export default function PlatformAppShell({ children }: { children: ReactNode }) 
         </nav>}
       </header>
 
-      <main id="platform-app-content" className="mx-auto min-h-[calc(100vh-9rem)] max-w-xl overflow-x-clip pb-[calc(5.8rem+env(safe-area-inset-bottom))]">{children}</main>
+      <main id="platform-app-content" className="mx-auto min-h-[calc(100vh-9rem)] max-w-xl overflow-x-clip pb-[calc(5.8rem+env(safe-area-inset-bottom))]">{useCompactHub && hub ? <PlatformAppSectionHub kind={hub} /> : children}</main>
 
       <nav data-platform-app-tabs aria-label={copy.more} className="fixed inset-x-0 bottom-0 z-50 border-t border-[#D4AF37]/40 bg-white/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-5px_22px_rgba(53,23,47,0.08)] backdrop-blur">
         <div className="mx-auto grid max-w-xl grid-cols-5 items-stretch px-1">
