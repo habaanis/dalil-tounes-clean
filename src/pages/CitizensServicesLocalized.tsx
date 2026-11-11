@@ -297,7 +297,7 @@ export default function CitizensServicesLocalized() {
   const labels = UI_LABELS[lang];
   const isRTL = lang === 'ar';
   const inPlatformApp = isPlatformAppMode();
-  const [activeTab, setActiveTab] = useState<Tab>('bureaux');
+  const [activeTab, setActiveTab] = useState<Tab | null>(inPlatformApp ? null : 'bureaux');
   const [selectedProcedure, setSelectedProcedure] = useState<number | null>(null);
   const [samu, protection, police, children, women] = EMERGENCY_LABELS[lang];
 
@@ -349,7 +349,7 @@ export default function CitizensServicesLocalized() {
   }
 
   if (inPlatformApp) {
-    const chooseTab = (tab: Tab) => setActiveTab(current => current === tab ? 'none' as Tab : tab);
+    const chooseTab = (tab: Tab) => setActiveTab(current => current === tab ? null : tab);
     return (
       <div className="public-surface min-h-screen bg-[#FFFCF7] pb-4" dir={isRTL ? 'rtl' : 'ltr'}>
         <SEOHead title={labels.seoTitle} description={c.intro}
