@@ -15,6 +15,7 @@ interface HomeData {
   totalCount: number;
   certifiedCount: number;
   legacyCertifiedCount: number;
+  recommendedCount: number | null;
   loading: boolean;
 }
 
@@ -26,13 +27,14 @@ export function useHomeData(): HomeData {
       totalCount: cached?.totalCount ?? 0,
       certifiedCount: cached?.certifiedCount ?? 0,
       legacyCertifiedCount: cached?.legacyCertifiedCount ?? 0,
+      recommendedCount: cached?.recommendedCount ?? null,
       loading: cached === null,
     };
   });
 
   useEffect(() => {
     const unsub = subscribeHomeData((result: HomeQueryResult) => {
-      setState({ partners: result.partners, totalCount: result.totalCount, certifiedCount: result.certifiedCount, legacyCertifiedCount: result.legacyCertifiedCount, loading: false });
+      setState({ partners: result.partners, totalCount: result.totalCount, certifiedCount: result.certifiedCount, legacyCertifiedCount: result.legacyCertifiedCount, recommendedCount: result.recommendedCount, loading: false });
     });
 
     // On diffère le fetch au-delà du premier rendu pour ne pas concurrencer
@@ -54,7 +56,7 @@ export function useHomeData(): HomeData {
       if (!hasCache) {
         prefetchHomeData()
           .then((result) => {
-            setState({ partners: result.partners, totalCount: result.totalCount, certifiedCount: result.certifiedCount, legacyCertifiedCount: result.legacyCertifiedCount, loading: false });
+            setState({ partners: result.partners, totalCount: result.totalCount, certifiedCount: result.certifiedCount, legacyCertifiedCount: result.legacyCertifiedCount, recommendedCount: result.recommendedCount, loading: false });
           })
           .catch(() => {
             setState((s) => ({ ...s, loading: false }));
