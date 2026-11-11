@@ -1472,7 +1472,7 @@ export const Businesses = ({
           </div>
         )}
 
-        <div className="order-1 mx-auto mb-4 flex max-w-5xl flex-col gap-2 px-4 text-xs text-gray-600 sm:flex-row sm:flex-wrap sm:justify-center" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+        <div className={`${inPlatformApp ? "hidden" : "flex"} order-1 mx-auto mb-4 max-w-5xl flex-col gap-2 px-4 text-xs text-gray-600 sm:flex-row sm:flex-wrap sm:justify-center`} dir={language === 'ar' ? 'rtl' : 'ltr'}>
           <span className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/35 bg-white px-3 py-2 shadow-sm">
             <span className="font-medium text-[#4A1D43]">Premium / Artisan</span>
             <span aria-hidden="true">—</span>
