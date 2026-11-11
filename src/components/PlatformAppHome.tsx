@@ -6,7 +6,7 @@ import { useLanguage } from '../context/LanguageContext';
 type Lang = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 const COPY: Record<Lang, {
   headline: string; intro: string; search: string; count: (n: string) => string;
-  certified: (n: string) => string; legacyCertified: (n: string) => string; recommended: (n: string) => string; discoverCopy: string; citizens: string; citizensDetail: string;
+  certified: (n: string) => string; legacyCertified: (n: string) => string; recommended: (n: string) => string; recommendedRule: string; discoverCopy: string; citizens: string; citizensDetail: string;
   tourism: string; tourismDetail: string; businesses: string; businessesDetail: string;
   recommend: string; recommendDetail: string; review: string; certifiedHint: string;
   founder: string; founderDetail: string; founderAction: string;
@@ -14,7 +14,7 @@ const COPY: Record<Lang, {
 }> = {
   fr: {
     headline: 'La Tunisie à portée de main', intro: 'Trouvez une entreprise, un service ou une découverte près de chez vous.',
-    search: 'Rechercher en Tunisie', count: n => `Déjà ${n} fiches enregistrées.`, certified: n => `${n} CV Business ou Portfolio publiés.`, legacyCertified: n => `${n} fiches portant la mention « Certifié Dalil Tounes ».`, recommended: n => `${n} entreprises recommandées par les clients.`,   discoverCopy: 'Découvrez les activités publiées sur Dalil Tounes.',
+    search: 'Rechercher en Tunisie', count: n => `Déjà ${n} fiches enregistrées.`, certified: n => `${n} CV Business ou Portfolio publiés.`, legacyCertified: n => `${n} fiches portant la mention « Certifié Dalil Tounes ».`, recommended: n => `${n} entreprises recommandées par les clients.`,   discoverCopy: 'Découvrez les activités publiées sur Dalil Tounes.', recommendedRule: 'Note Google d’au moins 4/5 et minimum 5 avis.',
     citizens: 'Citoyens', citizensDetail: 'Santé, éducation, services et commerces',
     tourism: 'Tourisme & Expat', tourismDetail: 'Visites, régions et installation en Tunisie',
     businesses: 'Entreprises', businessesDetail: 'Présence gratuite et CV professionnels',
@@ -26,7 +26,7 @@ const COPY: Record<Lang, {
   },
   ar: {
     headline: 'تونس الكل في يدك', intro: 'اكتشف مؤسسات وخدمات وأماكن في تونس.',
-    search: 'ابحث في تونس', count: n => `تم تسجيل ${n} مؤسسة.`, certified: n => `${n} ملفات CV منشورة.`, legacyCertified: n => `${n} بطاقات تحمل علامة « موثّق من دليل تونس ».`, recommended: n => `${n} مؤسسات موصى بها من الحرفاء.`,   discoverCopy: 'اكتشف الأنشطة المنشورة على دليل تونس.',
+    search: 'ابحث في تونس', count: n => `تم تسجيل ${n} مؤسسة.`, certified: n => `${n} ملفات CV منشورة.`, legacyCertified: n => `${n} بطاقات تحمل علامة « موثّق من دليل تونس ».`, recommended: n => `${n} مؤسسات موصى بها من الحرفاء.`,   discoverCopy: 'اكتشف الأنشطة المنشورة على دليل تونس.', recommendedRule: 'تقييم Google لا يقل عن 4/5 وبـ5 تقييمات على الأقل.',
     citizens: 'المواطنون', citizensDetail: 'الصحة والتعليم والخدمات والمحلات',
     tourism: 'السياحة والمقيمون', tourismDetail: 'جهات وزيارات وإقامة في تونس',
     businesses: 'المؤسسات', businessesDetail: 'حضور مجاني وسيرة مهنية رقمية',
@@ -38,7 +38,7 @@ const COPY: Record<Lang, {
   },
   en: {
     headline: 'Tunisia at your fingertips', intro: 'Find businesses, services and local discoveries across Tunisia.',
-    search: 'Search Tunisia', count: n => `Already ${n} businesses registered.`, certified: n => `${n} published Business or Portfolio CVs.`, legacyCertified: n => `${n} listings carrying the “Certified Dalil Tounes” label.`, recommended: n => `${n} businesses recommended by customers.`,   discoverCopy: 'Explore the activities published on Dalil Tounes.',
+    search: 'Search Tunisia', count: n => `Already ${n} businesses registered.`, certified: n => `${n} published Business or Portfolio CVs.`, legacyCertified: n => `${n} listings carrying the “Certified Dalil Tounes” label.`, recommended: n => `${n} businesses recommended by customers.`,   discoverCopy: 'Explore the activities published on Dalil Tounes.', recommendedRule: 'Google rating of at least 4/5 and 5 or more reviews.',
     citizens: 'Citizens', citizensDetail: 'Health, education, services and shops',
     tourism: 'Travel & Expat', tourismDetail: 'Explore Tunisia and plan your stay',
     businesses: 'Businesses', businessesDetail: 'Free listing and professional CVs',
@@ -50,7 +50,7 @@ const COPY: Record<Lang, {
   },
   it: {
     headline: 'La Tunisia a portata di mano', intro: 'Trova imprese, servizi e luoghi da scoprire.',
-    search: 'Cerca in Tunisia', count: n => `Già ${n} schede registrate.`, certified: n => `${n} CV Business o Portfolio pubblicati.`, legacyCertified: n => `${n} schede con la dicitura « Certificato Dalil Tounes ».`, recommended: n => `${n} imprese consigliate dai clienti.`,   discoverCopy: 'Scopri le attività pubblicate su Dalil Tounes.',
+    search: 'Cerca in Tunisia', count: n => `Già ${n} schede registrate.`, certified: n => `${n} CV Business o Portfolio pubblicati.`, legacyCertified: n => `${n} schede con la dicitura « Certificato Dalil Tounes ».`, recommended: n => `${n} imprese consigliate dai clienti.`,   discoverCopy: 'Scopri le attività pubblicate su Dalil Tounes.', recommendedRule: 'Valutazione Google di almeno 4/5 e minimo 5 recensioni.',
     citizens: 'Cittadini', citizensDetail: 'Salute, istruzione, servizi e negozi',
     tourism: 'Turismo & Expat', tourismDetail: 'Scopri il paese e organizza il soggiorno',
     businesses: 'Imprese', businessesDetail: 'Presenza gratuita e CV professionali',
@@ -62,7 +62,7 @@ const COPY: Record<Lang, {
   },
   ru: {
     headline: 'Тунис под рукой', intro: 'Найдите компании, услуги и интересные места.',
-    search: 'Поиск по Тунису', count: n => `Уже зарегистрировано ${n} организаций.`, certified: n => `${n} опубликованных CV Business или Portfolio.`, legacyCertified: n => `${n} карточек с отметкой « Сертифицировано Dalil Tounes ».`, recommended: n => `${n} компаний рекомендуют клиенты.`,   discoverCopy: 'Откройте компании, опубликованные на Dalil Tounes.',
+    search: 'Поиск по Тунису', count: n => `Уже зарегистрировано ${n} организаций.`, certified: n => `${n} опубликованных CV Business или Portfolio.`, legacyCertified: n => `${n} карточек с отметкой « Сертифицировано Dalil Tounes ».`, recommended: n => `${n} компаний рекомендуют клиенты.`,   discoverCopy: 'Откройте компании, опубликованные на Dalil Tounes.', recommendedRule: 'Оценка Google не ниже 4/5 и не менее 5 отзывов.',
     citizens: 'Гражданам', citizensDetail: 'Здоровье, образование, услуги и магазины',
     tourism: 'Туризм и переезд', tourismDetail: 'Откройте Тунис и планируйте пребывание',
     businesses: 'Компаниям', businessesDetail: 'Бесплатная запись и профессиональные CV',
@@ -109,7 +109,7 @@ export default function PlatformAppHome({ totalCount, legacyCertifiedCount, reco
       </div>}
       {recommendedCount !== null && recommendedCount !== undefined && <div className="mt-2 flex items-start gap-2.5 border-t border-[#E6D9BD] pt-2">
         <Star className="mt-0.5 h-4 w-4 shrink-0 text-[#9A793E]" aria-hidden="true" />
-        <p className="text-xs font-medium leading-5 text-[#594052]">{t.recommended(recommendedCount)}</p>
+        <div><p className="text-xs font-medium leading-5 text-[#594052]">{t.recommended(recommendedCount)}</p><p className="mt-0.5 text-[11px] leading-4 text-[#806D76]">{t.recommendedRule}</p></div>
       </div>}
     </section>
 
