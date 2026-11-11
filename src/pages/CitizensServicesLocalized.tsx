@@ -288,8 +288,10 @@ const SERVICE_EXCLUDED_KEYWORDS = [
 const CITIZEN_OFFICE_CATEGORIES = ['État / Service public'] as const;
 const CITIZEN_OFFICE_SUBCATEGORIES = [
   'administration', 'municipalite', 'mairie', 'delegation', 'gouvernorat',
-  'bureau de poste', 'recette des finances', 'guichet', 'service public',
-  'caisse nationale', 'centre administratif',
+  'bureau de poste', 'poste', 'recette des finances', 'guichet', 'service public',
+  'caisse nationale', 'centre administratif', 'direction regionale',
+  'office public', 'agence nationale', 'cnss', 'cnam', 'tribunal', 'commissariat',
+  'administration regionale',
 ] as const;
 
 const OFFICIAL_LINKS = [
