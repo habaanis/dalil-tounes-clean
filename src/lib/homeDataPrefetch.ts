@@ -239,7 +239,8 @@ async function doFetch(): Promise<HomeQueryResult> {
       .select('id', { count: 'exact', head: true })
       .not('nom', 'is', null)
       .neq('nom', '')
-      // Display the older certification mentions separately from published CVs.
+      .or('statut_publication.is.null,statut_publication.eq.Publié')
+      // Count the earlier certification mentions only for dossiers without a published CV.
       .eq('statut_carte', CERTIFIED_LABEL)
       .or('cv_business_status.is.null,cv_business_status.neq.published'),
   ]);
