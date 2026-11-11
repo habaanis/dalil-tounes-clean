@@ -183,7 +183,7 @@ const COPY: Record<Lang, PageCopy> = {
 
 const CIN_SOURCE = 'https://services.interieur.gov.tn/';
 const PASSPORT_SOURCE = 'https://services.interieur.gov.tn/';
-const B3_SOURCE = 'https://b3.interieur.gov.tn/ar/demande';
+const B3_SOURCE = 'https://b3.interieur.gov.tn/demande';
 
 const VERIFIED_PROCEDURES: Record<Lang, ProcedureCopy[]> = {
   fr: [
