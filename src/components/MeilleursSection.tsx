@@ -47,6 +47,7 @@ interface MeilleursProps {
   useGoogleRecommendationCriteria?: boolean;
   includeRecommendedInTotal?: boolean;
   excludedKeywords?: readonly string[];
+  allowedCategories?: readonly string[];
   allReferencedLabel?: string;
   searchOtherLabel?: string;
   hideSearchCta?: boolean;
@@ -252,6 +253,7 @@ export default function MeilleursSection({
   useGoogleRecommendationCriteria = false,
   includeRecommendedInTotal = true,
   excludedKeywords = EMPTY_EXCLUDED_KEYWORDS,
+  allowedCategories = EMPTY_EXCLUDED_KEYWORDS,
   allReferencedLabel,
   searchOtherLabel,
   hideSearchCta = false,
@@ -318,9 +320,18 @@ export default function MeilleursSection({
         const normalizedExcludedKeywords = excludedKeywords.map((keyword) => (
           keyword.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim()
         ));
+        // A page assignment is not sufficient proof of a matching business type:
+        // strict thematic screens may require a controlled Airtable category.
+        const normalizeCategory = (value: string) => value.normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+        const allowed = allowedCategories.map(normalizeCategory);
+        const categoryItems = allowed.length === 0 ? mappedItems : mappedItems.filter(item => {
+          const categories = Array.isArray(item.categorie) ? item.categorie : [item.categorie];
+          return categories.some(value => typeof value === 'string' && allowed.includes(normalizeCategory(value)));
+        });
         const all = normalizedExcludedKeywords.length === 0
-          ? mappedItems
-          : mappedItems.filter((item) => {
+          ? categoryItems
+          : categoryItems.filter((item) => {
               const searchableText = [
                 item.nom,
                 item.categorie,
@@ -360,7 +371,7 @@ export default function MeilleursSection({
 
     fetchData();
     setPage(0);
-  }, [excludedKeywords, listePage, useGoogleRecommendationCriteria]);
+  }, [excludedKeywords, allowedCategories, listePage, useGoogleRecommendationCriteria]);
 
   const totalPages = Math.ceil(allItems.length / PAGE_SIZE);
   const pagedItems = allItems.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
