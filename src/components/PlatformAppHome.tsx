@@ -104,6 +104,10 @@ export default function PlatformAppHome({ totalCount, certifiedCount }: {
       </div>}
     </section>
 
+    <section className="rounded-xl border border-[#D4AF37]/30 bg-white px-3 py-3 text-center" aria-label="Dalil Tounes et CV professionnels">
+      <p className="text-sm font-medium leading-5 text-[#45243A]">{lang === 'ar' ? 'خلّي مؤسستك موجودة في دليل تونس.' : lang === 'en' ? 'Get listed on Dalil Tounes.' : lang === 'it' ? 'Fai conoscere la tua attività su Dalil Tounes.' : lang === 'ru' ? 'Разместите свою компанию на Dalil Tounes.' : 'Soyez répertorié sur Dalil Tounes.'}</p>
+      <p className="mt-1 text-xs leading-5 text-[#76616A]">{lang === 'ar' ? 'أعطي نشاطك حضور أقوى مع CV Business أو CV Portfolio.' : lang === 'en' ? 'Give your business greater impact with a Business or Portfolio CV.' : lang === 'it' ? 'Dai più visibilità alla tua attività con CV Business o Portfolio.' : lang === 'ru' ? 'Покажите своё дело с CV Business или Portfolio.' : 'Donnez plus d’impact à votre activité grâce à votre CV Business ou Portfolio.'}</p>
+    </section>
     <FounderStory compact />
 
   </div>;
