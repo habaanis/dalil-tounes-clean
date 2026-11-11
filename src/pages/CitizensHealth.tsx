@@ -306,7 +306,7 @@ export default function CitizensHealth({}: CitizensHealthProps) {
           <button type="button" onClick={() => setOpenPanel(p => p === 'info' ? null : 'info')} aria-expanded={openPanel === 'info'} className="min-h-14 rounded-xl border border-[#D4AF37]/50 bg-white px-3 text-xs font-semibold text-[#4A1D43]">ℹ️ {c.officialTitle}</button>
         </div>
       </section>}
-      {inPlatformApp && openPanel === 'recommended' && <div className="px-2 pb-2">      <section className={`${inPlatformApp && openPanel !== "recommended" ? "hidden" : ""} py-3 bg-white`}>
+      {(!inPlatformApp || openPanel === 'recommended') && <section className={inPlatformApp ? 'bg-white px-2 py-3' : 'bg-white py-8'}>
         <MeilleursSection
           secteurLabel={c.sector}
           listePage="santé"
@@ -316,7 +316,7 @@ export default function CitizensHealth({}: CitizensHealthProps) {
           blogArticle={inPlatformApp ? undefined : { title: c.guideTitle, excerpt: c.guideExcerpt, slug: 'comment-choisir-son-medecin' }}
           hideSearchCta={inPlatformApp}
         />
-      </section></div>}
+      </section>}
       <div className={inPlatformApp ? 'hidden' : 'mx-auto max-w-5xl px-4 pt-3 text-right'}><Link to="/citizens/health/thermalisme" className="text-sm font-semibold text-[#4A1D43] underline">♨️ {language === 'ar' ? 'اكتشف قسم المياه الحارة والعيون الطبيعية' : language === 'en' ? 'Explore thermal baths and natural springs' : 'Découvrir la sous-page Thermalisme, sources naturelles et bien-être'}</Link></div>
       {!inPlatformApp && <ThermalWellnessExplorer />}
 
