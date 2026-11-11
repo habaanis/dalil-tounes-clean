@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { BriefcaseBusiness, Compass, House, Menu, Search, Users, X } from 'lucide-react';
+import { BriefcaseBusiness, Compass, Home, Menu, Search, Users, X } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import LanguageSelector from './LanguageSelector';
 
@@ -37,7 +37,7 @@ export default function PlatformAppShell({ children }: { children: ReactNode }) 
   useEffect(() => setMenuOpen(false), [location.pathname]);
 
   const tabs = [
-    { label: copy.home, to: '/', icon: House, active: location.pathname === '/' },
+    { label: copy.home, to: '/', icon: Home, active: location.pathname === '/' },
     { label: copy.search, to: '/entreprises', icon: Search, active: /^\/(entreprises|businesses|recherche)(?:\/|$)/.test(location.pathname) },
     { label: copy.citizens, to: '/citizens', icon: Users, active: /^\/citizens(?:\/|$)/.test(location.pathname) && !/^\/citizens\/tourism(?:\/|$)/.test(location.pathname) },
     { label: copy.discover, to: '/citizens/tourism', icon: Compass, active: /^\/citizens\/tourism(?:\/|$)/.test(location.pathname) },
