@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -111,10 +111,11 @@ export function FounderStory({full=false}:{full?:boolean}) {
  const { hash } = useLocation();
  useEffect(() => { if (full && hash === '#histoire-fondateur') { const frame = requestAnimationFrame(() => document.getElementById('histoire-fondateur')?.scrollIntoView({behavior:'auto',block:'start'})); return () => cancelAnimationFrame(frame); } }, [full, hash]);
  const t = story[language === 'ar' ? 'ar' : language === 'fr' ? 'fr' : 'en'];
+ const paragraphs = t.paragraphs.map((paragraph, index) => [4,8,12,16,20].includes(index) ? <h3 key={index} className="mt-8 font-serif text-xl font-bold text-[#4A1D43]">{paragraph}</h3> : <p key={index} className="mt-4 max-w-[72ch] leading-8 text-gray-700">{paragraph}</p>);
  return <section className="bg-white px-4 py-10 md:py-16" aria-label={t.title}>
   <div className="mx-auto grid max-w-5xl gap-6 rounded-3xl border border-[#D4AF37]/40 bg-[#FFFCF7] p-5 shadow-sm md:grid-cols-[190px_1fr] md:p-8">
    <div><img src="https://lienora.fr/brand/anis-haba-founder.jpg" alt="Anis Haba" loading="lazy" className="h-56 w-44 rounded-xl object-cover" /><p className="mt-3 text-sm font-bold text-[#4A1D43]">{t.name}</p></div>
-   <div><p className="text-xs font-semibold uppercase tracking-widest text-[#A58128]">{t.tag}</p><h2 className="mt-2 font-serif text-2xl font-bold text-[#4A1D43] md:text-3xl">{t.title}</h2>{full ? t.paragraphs.map((paragraph, index) => [4,8,12,16,20].includes(index) ? <h3 key={index} className="mt-8 font-serif text-xl font-bold text-[#4A1D43]">{paragraph}</h3> : <p key={index} className="mt-4 max-w-[72ch] leading-8 text-gray-700">{paragraph}</p>) : <p className="mt-4 max-w-[72ch] leading-8 text-gray-700">{t.intro}</p>}{!full && <Link to="/pourquoi-dalil-tounes#histoire-fondateur" className="mt-5 inline-flex rounded-xl border border-[#D4AF37] px-5 py-3 font-semibold text-[#4A1D43] hover:bg-[#FFF4D0]">{t.cta}</Link>}</div>
+   <div><p className="text-xs font-semibold uppercase tracking-widest text-[#A58128]">{t.tag}</p><h2 className="mt-2 font-serif text-2xl font-bold text-[#4A1D43] md:text-3xl">{t.title}</h2>{full ? paragraphs : <><p className="mt-4 max-w-[72ch] leading-8 text-gray-700">{t.intro}</p><details className="group mt-5"><summary className="w-fit cursor-pointer rounded-xl border border-[#D4AF37] px-5 py-3 font-semibold text-[#4A1D43] hover:bg-[#FFF4D0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#4A1D43]">{t.cta}</summary><div className="mt-5 border-t border-[#D4AF37]/30 pt-1">{paragraphs}</div></details></>}</div>
   </div>
  </section>;
 }

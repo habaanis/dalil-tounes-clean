@@ -143,3 +143,13 @@ Vercel : `dpl_ESwCw9aiNdstFgePtDuUvxfpticb`, **READY**, environnement preview (`
 Recette distante de cette version : accueil avec résumé et bouton du fondateur, compteur 3 ; filtre Certifiés sélectionné avec 3 résultats ; mentions Google observées à 4,0/5 et 5 avis, à 5/5 et 35 avis ; aucune mention à 4/5 et 4 avis. Non certifiées : filtre cohérent, aucun badge certifié et mentions d'avis sur les fiches gratuites. Certifiées + Mahdia : aucun résultat, filtre Certifiés conservé après rechargement. Les actions par clic de réinitialisation et de lien du récit n'ont pas permis de confirmer le changement d'URL dans le navigateur distant ; on ne peut pas conclure à partir de ces essais seuls à un défaut produit ou à une validation réussie. Le lien du récit et le comportement de sélection après réinitialisation sont vérifiés par les tests automatisés ; la navigation vers le récit a été observée localement. Ces limites sont conservées dans le verdict.
 
 Verdict : correctif ciblé enregistré, prévisualisation distante disponible et vérifiée, **prêt pour examen visuel avec réserve de recette sur les clics**. PR #199 conservée en brouillon, non fusionnée. Aucun changement de données clients, classement, routes ou identité graphique des 43 pages ; seuls les signaux métier et le résumé d'accueil sont corrigés. Aucune mise en production.
+
+## Histoire dépliable sur l’accueil — 11 novembre 2026
+
+À la demande du propriétaire, le bouton « Découvrir mon histoire » ouvre désormais le récit complet directement sous le résumé de l’accueil. Le contrôle HTML natif details/summary est fermé par défaut, utilisable au clavier, et permet de replier le récit. Aucun changement d’URL. Toutes les chaînes du récit sont conservées à l’identique, ainsi que le mode intégral utilisé dans l’accordéon Abonnement.
+
+Le bloc FounderStory a été retiré uniquement de /pourquoi-dalil-tounes pour éviter le doublon. Les autres textes, liens, métadonnées et la route de cette page sont inchangés. Aucun travail supplémentaire d’harmonisation, aucune modification des fiches ou du classement.
+
+Validation : 21/21 tests réussis ; test existant adapté au récit dépliable fermé par défaut, aux cinq langues/fallbacks, à la conservation intégrale du texte et à la suppression exclusive du bloc sur Pourquoi. Compilation Vite réussie ; diagnostics TypeScript et ESLint ciblés strictement identiques avant/après, aucun nouveau diagnostic. Tests de certification et réinitialisation conservés.
+
+Le propriétaire a confirmé que l’ancien bouton ouvrait correctement Pourquoi Dalil Tounes ; sa demande remplace ce parcours par l’ouverture sur place. Cette modification est poussée en prévisualisation dans #199 ; aucune fusion ni mise en production effectuée dans cette intervention.

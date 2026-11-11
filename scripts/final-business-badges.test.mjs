@@ -68,22 +68,32 @@ test('Actual Essentielle card displays Google badge independently and ignores ol
  assert.ok(!html.includes('Certifiée Dalil Tounes'));
  assert.ok(render(Gratuit,{...free,cv_business_status:'published',statut_carte:'⚠️ NON CERTIFIÉ'}).includes('Certifiée Dalil Tounes'));
 });
-test('Existing founder component renders its summary and existing full-story link, preserving the story source',()=>{
- assert.equal(fs.readFileSync('src/components/FounderStory.tsx','utf8'),execFileSync('git',['show',`${base}:src/components/FounderStory.tsx`],{encoding:'utf8'}));
- const Story=load('src/components/FounderStory.tsx',{'react-router-dom':{useLocation:()=>({hash:''}),Link:({to,children,...props})=>React.createElement('a',{href:to,...props},children)},'../context/LanguageContext':{useLanguage:()=>({language:'fr'})}}).FounderStory;
- const html=render(Story,{});
- assert.ok(html.includes('Découvrir mon histoire'));
- assert.ok(html.includes('/pourquoi-dalil-tounes#histoire-fondateur'));
- assert.ok(html.includes('Le bouche-à-oreille'));
+test('Founder story unfolds inline, preserves all translations and is removed only from the Why page',()=>{
+ const path='src/components/FounderStory.tsx';
+ const source=fs.readFileSync(path,'utf8');
+ const old=execFileSync('git',['show',`${base}:${path}`],{encoding:'utf8'});
+ const copy=s=>s.slice(s.indexOf('const story ='),s.indexOf('export function'));
+ assert.equal(copy(source),copy(old));
+ for(const language of ['fr','ar','en','it','ru']) {
+  const Story=load(path,{'react-router-dom':{useLocation:()=>({hash:''})},'../context/LanguageContext':{useLanguage:()=>({language})}}).FounderStory;
+  const html=render(Story,{});
+  assert.match(html, /<details[^>]*><summary/);
+  assert.doesNotMatch(html, /<details[^>]* open|href=/);
+  const full=render(Story,{full:true});
+  for(const paragraph of full.matchAll(/<(?:p|h3)[^>]*>(.*?)<\/(?:p|h3)>/g)) assert.ok(html.includes(paragraph[1]));
+ }
+ const why='src/pages/PourquoiDalilTounes.tsx';
+ const oldWhy=execFileSync('git',['show',`acb06b9:${why}`],{encoding:'utf8'});
+ assert.equal(fs.readFileSync(why,'utf8'),oldWhy.replace("import { FounderStory } from '../components/FounderStory';\n",'').replace('    <div id="histoire-fondateur" className="scroll-mt-24"><FounderStory full /></div>\n',''));
  assert.ok(fs.readFileSync('src/pages/SeparationPreview.tsx','utf8').includes('<FounderStory />'));
 });
-test('Ranking functions and all premium pages outside the three requested entry points remain byte-identical',()=>{
+test('Ranking functions and all premium pages outside the requested entry points remain byte-identical',()=>{
  const page=fs.readFileSync('src/pages/Businesses.tsx','utf8');
  const old=execFileSync('git',['show',`${base}:src/pages/Businesses.tsx`],{encoding:'utf8'});
  const ranking=s=>s.slice(s.indexOf('function hasPublishedCv('),s.indexOf('export const Businesses'));
  assert.equal(ranking(page),ranking(old));
  const changed=execFileSync('git',['diff','--name-only',base,'--','src/pages'],{encoding:'utf8'}).trim().split('\n');
- assert.deepEqual(changed.sort(),['src/pages/Businesses.tsx','src/pages/CertifiedBusinesses.tsx','src/pages/SeparationPreview.tsx'].sort());
+ assert.deepEqual(changed.sort(),['src/pages/Businesses.tsx','src/pages/CertifiedBusinesses.tsx','src/pages/SeparationPreview.tsx','src/pages/PourquoiDalilTounes.tsx'].sort());
  assert.match(fs.readFileSync('src/lib/homeDataPrefetch.ts','utf8'),/\.select\('id', \{ count: 'exact' \}\)[\s\S]*?\.eq\('cv_business_status', 'published'\)/);
 });
 

@@ -6,6 +6,7 @@ import ts from 'typescript';
 const base='3b6e3d6a9ce43abbd3e7b5a88fd68bcd56d67999';
 const paths=execFileSync('git',['diff','--name-only',base,'--','src/pages'],{encoding:'utf8'}).trim().split('\n').filter(path => path && !['src/pages/SeparationPreview.tsx', 'src/pages/Businesses.tsx', 'src/pages/CertifiedBusinesses.tsx'].includes(path));
 function semantic(source,path){
+ if(path==='src/pages/PourquoiDalilTounes.tsx') source=source.replace("import { FounderStory } from '../components/FounderStory';\n",'').replace('    <div id="histoire-fondateur" className="scroll-mt-24"><FounderStory full /></div>\n','');
  const sf=ts.createSourceFile(path,source,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX);
  const result=ts.transform(sf,[context=>root=>{
   const visit=node=>{
