@@ -261,7 +261,7 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as Lang;
   const t = COPY[lang];
   const ecosystem = HOME_ECOSYSTEM_COPY[lang];
-  const { certifiedCount } = useHomeData();
+  const { certifiedCount, legacyCertifiedCount } = useHomeData();
   const structure = siteStructureCopy[lang];
   const CvHeading = embedded ? 'h3' : 'h1';
   // The actual public landing page is PlatformHome (not the legacy Home.tsx).
@@ -297,6 +297,7 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
   const countsAvailable = verifiedTotal !== null;
   const localizedCount = countsAvailable ? new Intl.NumberFormat(lang === 'ar' ? 'ar-TN' : lang).format(verifiedTotal) : '—';
   const localizedCertifiedCount = countsAvailable ? new Intl.NumberFormat(lang === 'ar' ? 'ar-TN' : lang).format(certifiedCount) : '—';
+  const localizedLegacyCertifiedCount = countsAvailable ? new Intl.NumberFormat(lang === 'ar' ? 'ar-TN' : lang).format(legacyCertifiedCount) : '—';
   const heroVideoSrc = lang === 'fr'
     ? 'https://static.metricool.com/video/4610595/202609/eaaff4e56ccf4aba.mp4'
     : lang === 'ar'
@@ -308,7 +309,8 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
       <SEOHead {...getHomeSeoMeta()} currentPath="/" />
       <StructuredData data={[generateOrganizationSchema(), generateWebSiteSchema()]} />
       <PlatformAppHome totalCount={countsAvailable ? localizedCount : null}
-        certifiedCount={countsAvailable ? localizedCertifiedCount : null} />
+        certifiedCount={countsAvailable ? localizedCertifiedCount : null}
+        legacyCertifiedCount={countsAvailable ? localizedLegacyCertifiedCount : null} />
     </>;
   }
 
