@@ -8,6 +8,7 @@ import VehicleTypeAutocomplete from '../components/VehicleTypeAutocomplete';
 import MeilleursSection from '../components/MeilleursSection';
 import SearchBar from '../components/SearchBar';
 import ThermalWellnessExplorer from '../components/ThermalWellnessExplorer';
+import { isPlatformAppMode } from '../lib/platformAppMode';
 import { Link } from 'react-router-dom';
 import MedicalTransportCard from '../components/MedicalTransportCard';
 import MedicalTransportRegistrationForm from '../components/MedicalTransportRegistrationForm';
@@ -227,6 +228,8 @@ export default function CitizensHealth({}: CitizensHealthProps) {
   const [loadingTransport, setLoadingTransport] = useState(false);
   const [hasSearchedTransport, setHasSearchedTransport] = useState(false);
   const [showTransportModal, setShowTransportModal] = useState(false);
+  const inPlatformApp = isPlatformAppMode();
+  const [openPanel, setOpenPanel] = useState<'recommended' | 'transport' | 'info' | null>(null);
 
   const emergencyNumbers = useMemo(() => ([
     { num: '190', label: t.health.emergency.samu },
@@ -262,7 +265,7 @@ export default function CitizensHealth({}: CitizensHealthProps) {
 
   return (
     <div className="public-surface min-h-screen bg-gradient-to-b from-white to-gray-50" dir={isRTL ? 'rtl' : 'ltr'}>
-      <section className="relative w-full overflow-hidden rounded-b-3xl shadow-lg">
+      <section className={`${inPlatformApp ? "hidden" : ""} relative w-full overflow-hidden rounded-b-3xl shadow-lg`}>
         <img src={getSupabaseImageUrl('sante.jpg')} alt={c.heroAlt} className="absolute inset-0 w-full h-full object-cover" decoding="async" />
         <div className="absolute inset-0 bg-gradient-to-br from-[#35172f]/80 to-[#35172f]/70" />
         <div className="relative min-h-[220px] flex flex-col items-center justify-center text-center px-4 py-7">
@@ -290,10 +293,22 @@ export default function CitizensHealth({}: CitizensHealthProps) {
         </div>
       </section>
 
-      <div className="mx-auto max-w-5xl px-4 pt-3 text-right"><Link to="/citizens/health/thermalisme" className="text-sm font-semibold text-[#4A1D43] underline">♨️ {language === 'ar' ? 'اكتشف قسم المياه الحارة والعيون الطبيعية' : language === 'en' ? 'Explore thermal baths and natural springs' : 'Découvrir la sous-page Thermalisme, sources naturelles et bien-être'}</Link></div>
-      <ThermalWellnessExplorer />
+      {inPlatformApp && <section data-platform-health-shortcuts className="space-y-3 px-3 pt-4">
+        <div className="rounded-xl border border-[#D4AF37]/40 bg-[#FFFBF4] p-3">
+          <h1 className="font-serif text-xl font-medium text-[#4A1D43]">{c.pageTitle}</h1>
+          <p className="mt-1 text-xs text-[#6D6070]">{t.health.hero.description}</p>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <Link to="/citizens/health/thermalisme" className="flex min-h-14 items-center gap-2 rounded-xl border border-[#D4AF37]/50 bg-white px-3 text-xs font-semibold text-[#4A1D43]">♨️ {lang === 'fr' ? 'Thermalisme et sources' : lang === 'ar' ? 'الحمامات والعيون' : lang === 'en' ? 'Thermal baths & springs' : lang === 'it' ? 'Terme e sorgenti' : 'Термальные источники'}</Link>
+          <button type="button" onClick={() => setOpenPanel(p => p === 'recommended' ? null : 'recommended')} aria-expanded={openPanel === 'recommended'} className="min-h-14 rounded-xl border border-[#D4AF37]/50 bg-white px-3 text-xs font-semibold text-[#4A1D43]">{c.bestTitle}</button>
+          <button type="button" onClick={() => setOpenPanel(p => p === 'transport' ? null : 'transport')} aria-expanded={openPanel === 'transport'} className="min-h-14 rounded-xl border border-[#D4AF37]/50 bg-white px-3 text-xs font-semibold text-[#4A1D43]">🚑 {c.transportTitle}</button>
+          <button type="button" onClick={() => setOpenPanel(p => p === 'info' ? null : 'info')} aria-expanded={openPanel === 'info'} className="min-h-14 rounded-xl border border-[#D4AF37]/50 bg-white px-3 text-xs font-semibold text-[#4A1D43]">ℹ️ {c.officialTitle}</button>
+        </div>
+      </section>}
+      <div className={inPlatformApp ? 'hidden' : 'mx-auto max-w-5xl px-4 pt-3 text-right'}><Link to="/citizens/health/thermalisme" className="text-sm font-semibold text-[#4A1D43] underline">♨️ {language === 'ar' ? 'اكتشف قسم المياه الحارة والعيون الطبيعية' : language === 'en' ? 'Explore thermal baths and natural springs' : 'Découvrir la sous-page Thermalisme, sources naturelles et bien-être'}</Link></div>
+      {!inPlatformApp && <ThermalWellnessExplorer />}
 
-      <section className="py-8 bg-white">
+      <section className={`${inPlatformApp && openPanel !== "recommended" ? "hidden" : ""} py-8 bg-white`}>
         <MeilleursSection
           secteurLabel={c.sector}
           listePage="santé"
@@ -324,7 +339,7 @@ export default function CitizensHealth({}: CitizensHealthProps) {
         </div>
       </section>
 
-      <section className="px-4 pb-8">
+      <section className={`${inPlatformApp && openPanel !== "transport" ? "hidden" : ""} px-4 pb-8`}>
         <div className="max-w-7xl mx-auto">
           <div className="relative h-32 rounded-xl overflow-hidden mb-4 shadow-lg border border-[#D4AF37]">
             <img src={getSupabaseImageUrl('sante_banner.webp')} alt={c.transportAlt} className="w-full h-full object-cover" decoding="async" />
@@ -393,7 +408,7 @@ export default function CitizensHealth({}: CitizensHealthProps) {
         </div>
       )}
 
-      <section className="px-4 pb-12">
+      <section className={`${inPlatformApp && openPanel !== "info" ? "hidden" : ""} px-4 pb-12`}>
         <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-3">
           <div className="bg-white rounded-xl border border-[#D4AF37] p-4 hover:shadow-lg transition-all duration-300"><h4 className="text-sm font-medium text-[#4A1D43] mb-1.5" style={{ fontFamily: "'Playfair Display', serif" }}>{t.health.info.cnamTitle}</h4><p className="text-xs text-gray-700">{t.health.info.cnamBody}</p></div>
           <div className="bg-white rounded-xl border border-[#D4AF37] p-4 hover:shadow-lg transition-all duration-300"><h4 className="text-sm font-medium text-[#4A1D43] mb-1.5" style={{ fontFamily: "'Playfair Display', serif" }}>{t.health.info.csbTitle}</h4><p className="text-xs text-gray-700">{t.health.info.csbBody}</p></div>
@@ -401,7 +416,7 @@ export default function CitizensHealth({}: CitizensHealthProps) {
         </div>
       </section>
 
-      <section className="px-4 pb-12" aria-labelledby="official-health-links">
+      <section className={`${inPlatformApp && openPanel !== "info" ? "hidden" : ""} px-4 pb-12`} aria-labelledby="official-health-links">
         <div className="max-w-5xl mx-auto">
           <h2 id="official-health-links" className="public-heading text-xl font-semibold text-[#4A1D43] text-center mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>{c.officialTitle}</h2>
           <div className="grid gap-3 md:grid-cols-3">
