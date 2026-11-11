@@ -68,7 +68,7 @@ const COPY: Record<Lang, PageCopy> = {
     socialTitle: "Aide sociale et numéros d'urgence", socialIntro: 'Retrouvez rapidement les principaux services d’aide et de protection.',
     officesTitle: 'Bureaux & établissements publics', officesIntro: 'Recherchez une administration ou un service public près de chez vous.',
     usefulLinksTitle: 'Liens administratifs officiels',
-    officialLinks: { registry: 'Registre National des Entreprises', justice: 'Services judiciaires en ligne', passport: 'Rendez-vous passeport en ligne' },
+    officialLinks: { registry: 'Portail national des services administratifs', justice: 'Demande de bulletin n°3', passport: 'Ministère de l’Intérieur : formulaires et démarches' },
     together: 'Ensemble, construisons une société plus juste, accessible et solidaire.',
     procedures: [
       { title: "Carte d'identité nationale", description: "Obtention ou renouvellement de la carte d'identité nationale pour les citoyens tunisiens.", documents: ['Acte de naissance (original + 2 photocopies)', 'Certificat de résidence (moins de 3 mois)', "2 photos d'identité récentes", "Ancienne carte d'identité (si renouvellement)"], delay: '15 jours ouvrables', cost: '10 TND', authority: 'Mairie / Municipalité' },
@@ -93,7 +93,7 @@ const COPY: Record<Lang, PageCopy> = {
     socialTitle: 'المساعدة الاجتماعية وأرقام الطوارئ', socialIntro: 'اعثر بسرعة على أهم خدمات المساعدة والحماية.',
     officesTitle: 'المكاتب والمؤسسات العمومية', officesIntro: 'ابحث عن إدارة أو خدمة عمومية قريبة منك.',
     usefulLinksTitle: 'روابط إدارية رسمية',
-    officialLinks: { registry: 'السجل الوطني للمؤسسات', justice: 'الخدمات القضائية عبر الإنترنت', passport: 'حجز موعد جواز السفر عبر الإنترنت' },
+    officialLinks: { registry: 'البوابة الوطنية للخدمات الإدارية', justice: 'طلب بطاقة السوابق العدلية عدد 3', passport: 'وزارة الداخلية: المطبوعة والإجراءات' },
     together: 'معاً، لنبني مجتمعاً أكثر عدلاً وإتاحة وتضامناً.',
     procedures: [
       { title: 'بطاقة التعريف الوطنية', description: 'الحصول على بطاقة التعريف الوطنية أو تجديدها للمواطنين التونسيين.', documents: ['شهادة ميلاد (الأصل + نسختان)', 'شهادة إقامة (أقل من 3 أشهر)', 'صورتان شمسيتان حديثتان', 'بطاقة التعريف القديمة (في حالة التجديد)'], delay: '15 يوم عمل', cost: '10 د.ت', authority: 'البلدية' },
@@ -118,7 +118,7 @@ const COPY: Record<Lang, PageCopy> = {
     socialTitle: 'Social assistance & emergency numbers', socialIntro: 'Quickly find the main assistance and protection services.',
     officesTitle: 'Public offices & institutions', officesIntro: 'Search for a public office or service near you.',
     usefulLinksTitle: 'Official administrative links',
-    officialLinks: { registry: 'National Register of Enterprises', justice: 'Online judicial services', passport: 'Online passport appointments' },
+    officialLinks: { registry: 'National administrative services portal', justice: 'Criminal record certificate (B3)', passport: 'Ministry of Interior: procedures and forms' },
     together: 'Together, let us build a fairer, more accessible and supportive society.',
     procedures: [
       { title: 'National ID Card', description: 'Obtain or renew the national ID card for Tunisian citizens.', documents: ['Birth certificate (original + 2 copies)', 'Residence certificate (less than 3 months)', '2 recent ID photos', 'Old ID card (if renewing)'], delay: '15 working days', cost: '10 TND', authority: 'Municipality' },
@@ -143,7 +143,7 @@ const COPY: Record<Lang, PageCopy> = {
     socialTitle: 'Assistenza sociale e numeri di emergenza', socialIntro: 'Trova rapidamente i principali servizi di assistenza e protezione.',
     officesTitle: 'Uffici ed enti pubblici', officesIntro: 'Cerca un ufficio o un servizio pubblico vicino a te.',
     usefulLinksTitle: 'Link amministrativi ufficiali',
-    officialLinks: { registry: 'Registro Nazionale delle Imprese', justice: 'Servizi giudiziari online', passport: 'Appuntamenti passaporto online' },
+    officialLinks: { registry: 'Portale dei servizi amministrativi', justice: 'Certificato penale (B3)', passport: 'Ministero dell’Interno: pratiche e moduli' },
     together: 'Insieme, costruiamo una società più giusta, accessibile e solidale.',
     procedures: [
       { title: "Carta d'identità nazionale", description: "Rilascio o rinnovo della carta d'identità nazionale per i cittadini tunisini.", documents: ['Certificato di nascita (originale + 2 copie)', 'Certificato di residenza (meno di 3 mesi)', '2 foto tessera recenti', "Vecchia carta d'identità (in caso di rinnovo)"], delay: '15 giorni lavorativi', cost: '10 TND', authority: 'Comune / Municipalità' },
@@ -168,7 +168,7 @@ const COPY: Record<Lang, PageCopy> = {
     socialTitle: 'Социальная помощь и экстренные номера', socialIntro: 'Быстрый доступ к основным службам помощи и защиты.',
     officesTitle: 'Государственные учреждения', officesIntro: 'Найдите государственное учреждение или службу рядом с вами.',
     usefulLinksTitle: 'Официальные административные ссылки',
-    officialLinks: { registry: 'Национальный реестр предприятий', justice: 'Судебные услуги онлайн', passport: 'Онлайн-запись на получение паспорта' },
+    officialLinks: { registry: 'Портал государственных услуг', justice: 'Справка об отсутствии судимости (B3)', passport: 'МВД: документы и процедуры' },
     together: 'Вместе создаём более справедливое, доступное и солидарное общество.',
     procedures: [
       { title: 'Национальное удостоверение личности', description: 'Получение или продление национального удостоверения личности для граждан Туниса.', documents: ['Свидетельство о рождении (оригинал + 2 копии)', 'Справка о месте жительства (не старше 3 месяцев)', '2 свежие фотографии на документы', 'Старое удостоверение личности (при продлении)'], delay: '15 рабочих дней', cost: '10 TND', authority: 'Муниципалитет' },
@@ -181,8 +181,8 @@ const COPY: Record<Lang, PageCopy> = {
   },
 };
 
-const CIN_SOURCE = 'https://services.interieur.gov.tn/wap/fr/docs/demarches/01.html';
-const PASSPORT_SOURCE = 'https://www.sicad.gov.tn/m/Fr/Prestation_Obtention-dun-passeport-pour-la-premiere-fois-ou-son-renouvellement-pour-les-Tunisiens-residents-sur-le-territoire-tunisien_57_3_D1618';
+const CIN_SOURCE = 'https://services.interieur.gov.tn/';
+const PASSPORT_SOURCE = 'https://services.interieur.gov.tn/';
 const B3_SOURCE = 'https://b3.interieur.gov.tn/ar/demande';
 
 const VERIFIED_PROCEDURES: Record<Lang, ProcedureCopy[]> = {
@@ -283,10 +283,19 @@ const SERVICE_EXCLUDED_KEYWORDS = [
   'tendance car',
 ];
 
+// A broad page assignment is not proof that an entry is an administrative office.
+// These values are checked against the synchronized Airtable taxonomy.
+const CITIZEN_OFFICE_CATEGORIES = ['État / Service public'] as const;
+const CITIZEN_OFFICE_SUBCATEGORIES = [
+  'administration', 'municipalite', 'mairie', 'delegation', 'gouvernorat',
+  'bureau de poste', 'recette des finances', 'guichet', 'service public',
+  'caisse nationale', 'centre administratif',
+] as const;
+
 const OFFICIAL_LINKS = [
-  { key: 'registry' as const, url: 'https://www.rne.tn' },
+  { key: 'registry' as const, url: 'https://services.gov.tn/' },
   { key: 'justice' as const, url: B3_SOURCE },
-  { key: 'passport' as const, url: PASSPORT_SOURCE },
+  { key: 'passport' as const, url: 'https://services.interieur.gov.tn/' },
 ];
 
 export default function CitizensServicesLocalized() {
@@ -311,6 +320,7 @@ export default function CitizensServicesLocalized() {
     { label: labels.childProtection, number: '192', icon: Shield },
   ];
 
+  const officialNotice = lang === 'fr' ? 'Site officiel externe : ' : lang === 'ar' ? 'موقع حكومي خارجي: ' : lang === 'en' ? 'Official external website: ' : lang === 'it' ? 'Sito governativo esterno: ' : 'Официальный внешний сайт: ';
   const procedure = selectedProcedure === null ? null : procedures[selectedProcedure];
 
   if (procedure) {
@@ -403,7 +413,9 @@ export default function CitizensServicesLocalized() {
           <Suspense fallback={<p role="status" className="px-3 py-4 text-sm text-[#726571]">…</p>}>
             <MeilleursSection secteurLabel={c.sector} listePage="services citoyens"
               accentColor="#4A1D43" sectionTitle={c.recommended}
-              useGoogleRecommendationCriteria excludedKeywords={SERVICE_EXCLUDED_KEYWORDS}
+              allowedCategories={CITIZEN_OFFICE_CATEGORIES}
+              requiredSubcategoryKeywords={CITIZEN_OFFICE_SUBCATEGORIES}
+              useGoogleRecommendationCriteria={false}
               hideSearchCta />
           </Suspense>
         </section>}
@@ -448,8 +460,10 @@ export default function CitizensServicesLocalized() {
           </summary>
           <div className="mt-2 grid gap-2 border-t border-[#E2D2B2] pt-3">
             {OFFICIAL_LINKS.map(link => <a key={link.url} href={link.url} target="_blank" rel="noopener noreferrer"
-              className="flex min-h-11 items-center justify-between gap-2 rounded-xl border border-[#E2D2B2] px-3 text-xs font-medium text-[#4A1D43]">
-              {c.officialLinks[link.key]}<ExternalLink className="h-4 w-4 shrink-0 text-[#A17D36]" aria-hidden="true" />
+              className="flex min-h-14 items-center justify-between gap-2 rounded-xl border border-[#E2D2B2] px-3 py-2 text-xs font-medium text-[#4A1D43]">
+              <span><span className="block">{c.officialLinks[link.key]}</span>
+                <span className="mt-1 block break-all text-[10px] font-normal text-[#75676B]">{officialNotice}{new URL(link.url).hostname}</span>
+              </span><ExternalLink className="h-4 w-4 shrink-0 text-[#A17D36]" aria-hidden="true" />
             </a>)}
           </div>
         </details>
@@ -532,7 +546,9 @@ export default function CitizensServicesLocalized() {
           <div className="grid gap-3 md:grid-cols-3">
             {OFFICIAL_LINKS.map((link) => (
               <a key={link.url} href={link.url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between gap-3 rounded-xl border border-[#D4AF37] bg-[#FFFDF6] p-4 text-sm font-semibold text-[#4A1D43] hover:bg-[#D4AF37]/10 transition-colors">
-                <span>{c.officialLinks[link.key]}</span>
+                <span><span className="block">{c.officialLinks[link.key]}</span>
+                  <span className="mt-1 block break-all text-[11px] font-normal text-[#75676B]">{officialNotice}{new URL(link.url).hostname}</span>
+                </span>
                 <ExternalLink className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
               </a>
             ))}
