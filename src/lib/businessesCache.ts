@@ -39,6 +39,8 @@ export interface BusinessRow {
   lien_x: string;
   horaires_ok: string | null;
   statut_carte: string | null;
+  cv_business_status?: string | null;
+  cv_business_published_at?: string | null;
   slug: string | null;
   ville: string | null;
   note_google?: string | number | null;
@@ -65,7 +67,7 @@ interface CacheEntry extends BusinessesDefaultData {
 
 // v4 force le renouvellement de l'ancien cache qui pouvait contenir seulement
 // les premières entreprises gratuites classées alphabétiquement.
-const CACHE_KEY   = 'businesses_default_v4';
+const CACHE_KEY   = 'businesses_default_v5';
 const STALE_TIME  = 5 * 60_000;
 const GC_TIME     = 60 * 60_000;
 
@@ -74,7 +76,7 @@ const FIELDS = [
   'adresse', 'telephone', 'email', 'site_web', 'description', 'a_propos', 'services',
   'image_url', 'logo_url', 'statut_abonnement',
   '"mots cles recherche"', '"Lien Instagram"', '"lien facebook"', '"Lien TikTok"',
-  '"Lien LinkedIn"', '"Lien YouTube"', 'lien_x', 'horaires_ok', 'statut_carte',
+  '"Lien LinkedIn"', '"Lien YouTube"', 'lien_x', 'horaires_ok', 'statut_carte', 'cv_business_status', 'cv_business_published_at',
   '"Note Google Globale"', '"Compteur Avis Google"', 'name_ar', 'description_ar', 'slug',
 ].join(', ');
 
@@ -160,6 +162,8 @@ function mapRow(item: Record<string, unknown>): BusinessRow {
     lien_x: (item.lien_x as string) || '',
     horaires_ok: (item.horaires_ok as string | null) ?? null,
     statut_carte: (item.statut_carte as string | null) ?? null,
+    cv_business_status: (item.cv_business_status as string | null) ?? null,
+    cv_business_published_at: (item.cv_business_published_at as string | null) ?? null,
     note_google: (item['Note Google Globale'] as string | number | null) ?? null,
     nombre_avis: (item['Compteur Avis Google'] as string | number | null) ?? null,
     'Note Google Globale': (item['Note Google Globale'] as string | number | null) ?? null,

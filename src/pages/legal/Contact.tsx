@@ -100,23 +100,23 @@ const Contact: React.FC = () => {
     <main dir={rtl ? 'rtl' : 'ltr'} className="min-h-[70vh] bg-[linear-gradient(180deg,#fffdf8_0%,#ffffff_100%)] px-4 py-10 sm:py-14">
       <div className="mx-auto max-w-3xl">
         <header className={rtl ? 'text-right' : 'text-left'}>
-          <div className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/45 bg-white px-3 py-1.5 text-xs font-black uppercase tracking-[0.12em] text-[#4A1D43] shadow-sm">
+          <div className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/45 bg-white px-3 py-1.5 text-xs font-medium uppercase tracking-[0.12em] text-[#4A1D43] shadow-sm">
             <MessageCircle className="h-4 w-4 text-[#D4AF37]" aria-hidden="true" />
             {copy.eyebrow}
           </div>
-          <h1 className="mt-4 font-serif text-3xl font-bold text-[#2E102A] sm:text-4xl">{copy.title}</h1>
+          <h1 className="public-title mt-4 font-serif text-3xl font-medium text-[#2E102A] sm:text-4xl">{copy.title}</h1>
           <p className="mt-3 max-w-2xl text-base leading-7 text-gray-600">{copy.subtitle}</p>
         </header>
 
-        <section className="mt-8 rounded-3xl border border-[#D4AF37]/40 bg-white p-5 shadow-[0_18px_55px_rgba(74,29,67,0.10)] sm:p-8" aria-labelledby="information-form-title">
-          <h2 id="information-form-title" className="mb-5 font-serif text-2xl font-bold text-[#4A1D43]">{copy.formTitle}</h2>
+        <section className="mt-8 rounded-xl border border-[#D4AF37]/40 bg-white p-5 shadow-[0_18px_55px_rgba(74,29,67,0.10)] sm:p-8" aria-labelledby="information-form-title">
+          <h2 id="information-form-title" className="public-heading mb-5 font-serif text-2xl font-medium text-[#4A1D43]">{copy.formTitle}</h2>
           <BusinessRegistrationRequestForm mode="subscription" />
         </section>
 
         <p className="mt-6 flex flex-wrap items-center gap-2 text-sm text-gray-600">
           <Mail className="h-4 w-4 text-[#D4AF37]" aria-hidden="true" />
           <span>{copy.emailLabel}</span>
-          <a className="font-bold text-[#4A1D43] underline decoration-[#D4AF37] underline-offset-4" href="mailto:contact@dalil-tounes.com">contact@dalil-tounes.com</a>
+          <a className="font-medium text-[#4A1D43] underline decoration-[#D4AF37] underline-offset-4" href="mailto:contact@dalil-tounes.com">contact@dalil-tounes.com</a>
         </p>
       </div>
     </main>

@@ -18,6 +18,7 @@ interface LocalBusiness {
   telephone: string | null;
   description: string | null;
   statut_carte: string | null;
+  cv_business_status?: string | null;
   'Note Google Globale': string | number | null;
   'Compteur Avis Google': string | number | null;
   'page commerce local': boolean | null;
@@ -42,7 +43,7 @@ export const LocalBusinessesSection = ({ onCardClick }: LocalBusinessesSectionPr
       try {
         const { data, error } = await supabase
           .from('entreprise')
-          .select('id, nom, ville, gouvernorat, image_url, logo_url, categorie, sous_categories_texte, statut_abonnement, horaires_ok, telephone, description, statut_carte, "Note Google Globale", "Compteur Avis Google", "page commerce local"')
+          .select('id, nom, ville, gouvernorat, image_url, logo_url, categorie, sous_categories_texte, statut_abonnement, horaires_ok, telephone, description, statut_carte, cv_business_status, "Note Google Globale", "Compteur Avis Google", "page commerce local"')
           .eq('"page commerce local"', true)
           .order('created_at', { ascending: false })
           .limit(6);
@@ -107,6 +108,7 @@ export const LocalBusinessesSection = ({ onCardClick }: LocalBusinessesSectionPr
                       logoUrl: business.logo_url,
                       horaires_ok: business.horaires_ok,
                       statut_carte: business.statut_carte,
+                      cv_business_status: business.cv_business_status,
                       note_google: business['Note Google Globale'],
                       nombre_avis: business['Compteur Avis Google'],
                       'Note Google Globale': business['Note Google Globale'],

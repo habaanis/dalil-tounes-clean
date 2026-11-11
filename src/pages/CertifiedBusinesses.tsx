@@ -9,7 +9,6 @@ import { supabase } from '../lib/supabaseClient';
 import { extractFrenchName } from '../lib/textNormalization';
 
 type Row = Record<string, any>;
-const CERTIFIED_LABEL = '⭐ CERTIFIÉ DALIL TOUNES';
 const PAGE_SIZE = 8;
 
 export default function CertifiedBusinesses() {
@@ -26,7 +25,7 @@ export default function CertifiedBusinesses() {
     supabase
       .from('entreprise')
       .select('*')
-      .eq('statut_carte', CERTIFIED_LABEL)
+      .eq('cv_business_status', 'published')
       .order('nom', { ascending: true })
       .limit(100)
       .then(({ data, error }) => {
@@ -85,15 +84,15 @@ export default function CertifiedBusinesses() {
         canonical="https://dalil-tounes.com/entreprises-certifiees"
         currentPath="/entreprises-certifiees"
       />
-      <div dir={lang === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-[#FBF8F0]">
+      <div dir={lang === 'ar' ? 'rtl' : 'ltr'} className="public-surface min-h-screen bg-[#fcfaf5]">
       <section className="relative overflow-hidden border-b border-[#D4AF37]/30 px-4 py-7 md:py-9">
         <img src="/images/entreprise_banner.webp" alt="" className="absolute inset-0 h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#032D21]/92 via-[#032D21]/76 to-[#032D21]/42" />
         <div className="relative mx-auto max-w-6xl">
-          <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[#F1D783]">
+          <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[#F1D783]">
             {loading ? '—' : `${rows.length} ${lang === 'ar' ? 'مؤسسة موثّقة' : 'entreprises certifiées'}`}
           </p>
-          <h1 className="mt-1.5 max-w-3xl font-serif text-3xl font-bold leading-tight text-white md:text-4xl">{title}</h1>
+          <h1 className="public-title mt-1.5 max-w-3xl font-serif text-3xl font-medium leading-tight text-white md:text-4xl">{title}</h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-white/90 md:text-base">{subtitle}</p>
 
           <div className="mt-4 flex max-w-3xl items-center gap-3 rounded-xl border border-white/30 bg-white/95 px-3 py-2 shadow-lg">
@@ -112,21 +111,21 @@ export default function CertifiedBusinesses() {
         <div className="mx-auto max-w-6xl">
           {loading ? (
             <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
-              {Array.from({ length: PAGE_SIZE }).map((_, i) => <div key={i} className="h-[250px] animate-pulse rounded-2xl bg-white shadow-sm" />)}
+              {Array.from({ length: PAGE_SIZE }).map((_, i) => <div key={i} className="h-[250px] animate-pulse rounded-xl bg-white shadow-sm" />)}
             </div>
           ) : (
             <>
               <div className="mb-4 flex items-center justify-between gap-3">
-                <p className="text-sm font-bold text-[#4A1D43]">
+                <p className="text-sm font-medium text-[#4A1D43]">
                   {lang === 'ar' ? `${filtered.length} مؤسسة` : `${filtered.length} entreprises`}
                 </p>
-                <button type="button" onClick={() => navigate('/businesses')} className="inline-flex items-center gap-2 text-sm font-black text-[#B58A18]">
+                <button type="button" onClick={() => navigate('/businesses')} className="inline-flex items-center gap-2 text-sm font-medium text-[#B58A18]">
                   {lang === 'ar' ? 'كل المؤسسات' : 'Toutes les entreprises'} <ArrowRight className="h-4 w-4" />
                 </button>
               </div>
 
-              <div className="mx-auto mb-6 max-w-3xl rounded-3xl border border-[#D4AF37]/45 bg-white px-5 py-5 text-center shadow-[0_12px_30px_rgba(74,29,67,0.07)] md:px-7 md:py-6">
-                <h2 className="font-serif text-xl font-bold text-[#2E102A] md:text-2xl">
+              <div className="mx-auto mb-6 max-w-3xl rounded-xl border border-[#D4AF37]/45 bg-white px-5 py-5 text-center shadow-[0_12px_30px_rgba(74,29,67,0.07)] md:px-7 md:py-6">
+                <h2 className="public-heading font-serif text-xl font-medium text-[#2E102A] md:text-2xl">
                   {lang === 'ar' ? 'هل تريد نفس البطاقة المهنية ونفس المزايا؟' : 'Vous voulez la même carte professionnelle et les mêmes avantages que nos entreprises certifiées ?'}
                 </h2>
                 <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-gray-600">
@@ -137,7 +136,7 @@ export default function CertifiedBusinesses() {
                 <button
                   type="button"
                   onClick={scrollToBenefits}
-                  className="mt-4 inline-flex min-h-10 items-center gap-2 rounded-xl bg-[#A51A30] px-5 py-2.5 text-sm font-black text-white transition hover:bg-[#851528]"
+                  className="mt-4 inline-flex min-h-10 items-center gap-2 rounded-xl bg-[#A51A30] px-5 py-2.5 text-sm font-medium text-white transition hover:bg-[#851528]"
                 >
                   {lang === 'ar' ? 'عرض مزايا CV Business' : 'Voir les avantages du CV Business'}
                   <ArrowDown className="h-4 w-4" />
@@ -161,6 +160,7 @@ export default function CertifiedBusinesses() {
                       horaires_ok: biz.horaires_ok || null,
                       telephone: biz.telephone || biz.telephone1 || null,
                       statut_carte: biz.statut_carte || null,
+                      cv_business_status: biz.cv_business_status,
                       name_ar: biz.name_ar || null,
                       description_ar: biz.description_ar || null,
                     }}
@@ -187,7 +187,7 @@ export default function CertifiedBusinesses() {
                         key={n}
                         type="button"
                         onClick={() => setPage(n)}
-                        className={`h-10 min-w-10 rounded-xl px-3 text-sm font-black transition ${currentPage === n ? 'bg-[#4A1D43] text-white' : 'border border-[#D4AF37]/40 bg-white text-[#4A1D43]'}`}
+                        className={`h-10 min-w-10 rounded-xl px-3 text-sm font-medium transition ${currentPage === n ? 'bg-[#4A1D43] text-white' : 'border border-[#D4AF37]/40 bg-white text-[#4A1D43]'}`}
                       >
                         {n}
                       </button>

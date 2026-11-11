@@ -233,7 +233,7 @@ export default function PaiementConfirmation() {
         {state === 'checking' && (
           <div className="flex flex-col items-center gap-4 text-center">
             <Loader2 className="h-10 w-10 animate-spin text-[#D4AF37]" aria-hidden="true" />
-            <h1 className="text-xl font-semibold text-gray-900">{t.checking}</h1>
+            <h1 className="public-title text-xl font-semibold text-gray-900">{t.checking}</h1>
             <p className="text-sm text-gray-600">{t.checkingHint}</p>
           </div>
         )}
@@ -241,7 +241,7 @@ export default function PaiementConfirmation() {
         {state === 'success' && isCvBusiness && (
           <div className="text-center">
             <CheckCircle2 className="mx-auto h-14 w-14 text-green-600" aria-hidden="true" />
-            <h1 className="mt-4 text-3xl font-bold text-[#4A1D43]">{t.confirmed}</h1>
+            <h1 className="public-title mt-4 text-3xl font-bold text-[#4A1D43]">{t.confirmed}</h1>
             <p className="mx-auto mt-3 max-w-xl text-gray-600">
               {t.cvOrderRecorded}
             </p>
@@ -294,7 +294,7 @@ export default function PaiementConfirmation() {
         {state === 'success' && !isCvBusiness && (
           <div className="flex flex-col items-center gap-4 text-center">
             <CheckCircle2 className="h-12 w-12 text-green-600" aria-hidden="true" />
-            <h1 className="text-2xl font-semibold text-gray-900">{t.confirmed}</h1>
+            <h1 className="public-title text-2xl font-semibold text-gray-900">{t.confirmed}</h1>
             <p className="text-sm text-gray-600">{tier ? t.paymentFor.replace('{tier}', <strong>{tier}</strong> as unknown as string) : t.paymentFor.replace('{tier}', '')}</p>
             <Link to="/" className="mt-2 inline-flex items-center justify-center rounded-xl bg-[#D4AF37] px-5 py-3 font-semibold text-[#1a0a18] hover:bg-[#c9a030]">{t.backHome}</Link>
           </div>
@@ -303,7 +303,7 @@ export default function PaiementConfirmation() {
         {state === 'pending' && (
           <div className="flex flex-col items-center gap-4 text-center">
             <Loader2 className="h-10 w-10 animate-spin text-[#D4AF37]" aria-hidden="true" />
-            <h1 className="text-xl font-semibold text-gray-900">{t.pendingTitle}</h1>
+            <h1 className="public-title text-xl font-semibold text-gray-900">{t.pendingTitle}</h1>
             <p className="text-sm text-gray-600">{t.pendingText}{paymentRef && <> {t.orderRef} : <code className="font-mono">{paymentRef}</code>.</>}</p>
             <button type="button" onClick={() => window.location.reload()} className="mt-2 inline-flex items-center justify-center rounded-xl border border-gray-300 px-5 py-3 font-semibold text-gray-900 hover:bg-gray-50">{t.refresh}</button>
           </div>
@@ -312,7 +312,7 @@ export default function PaiementConfirmation() {
         {state === 'failed' && (
           <div className="flex flex-col items-center gap-4 text-center">
             <XCircle className="h-12 w-12 text-red-600" aria-hidden="true" />
-            <h1 className="text-2xl font-semibold text-gray-900">{t.failedTitle}</h1>
+            <h1 className="public-title text-2xl font-semibold text-gray-900">{t.failedTitle}</h1>
             <p className="text-sm text-gray-600">{t.failedText}</p>
             <Link to="/subscription" className="mt-2 inline-flex items-center justify-center rounded-xl bg-[#D4AF37] px-5 py-3 font-semibold text-[#1a0a18] hover:bg-[#c9a030]">{t.backToOffers}</Link>
           </div>

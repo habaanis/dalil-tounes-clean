@@ -3,23 +3,23 @@ import type { Language } from './i18n';
 const COPY: Record<Language, { service: string; certified: string }> = {
   fr: {
     service: 'Premium / Artisan : niveau de services',
-    certified: 'Certifié : identité et informations vérifiées',
+    certified: 'Certifiée Dalil Tounes : CV Business ou Portfolio publié',
   },
   ar: {
     service: 'Premium / Artisan: مستوى الخدمات',
-    certified: 'موثّق: تم التحقق من الهوية والمعلومات',
+    certified: 'موثّق من دليل تونس: CV Business أو Portfolio منشور',
   },
   en: {
     service: 'Premium / Artisan: service level',
-    certified: 'Certified: identity and information verified',
+    certified: 'Dalil Tounes Certified: published Business or Portfolio CV',
   },
   it: {
     service: 'Premium / Artisan: livello di servizi',
-    certified: 'Certificato: identità e informazioni verificate',
+    certified: 'Certificata Dalil Tounes: CV Business o Portfolio pubblicato',
   },
   ru: {
     service: 'Premium / Artisan: уровень услуг',
-    certified: 'Проверено: личность и информация подтверждены',
+    certified: 'Сертифицировано Dalil Tounes: опубликован CV Business или Portfolio',
   },
 };
 

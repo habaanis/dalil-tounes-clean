@@ -37,7 +37,7 @@ export default function Blog() {
   const heroCopy = blogHeroCopy[language] ?? blogHeroCopy.fr;
 
   return (
-    <div className="min-h-screen bg-white" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="public-surface min-h-screen bg-white" dir={isRTL ? 'rtl' : 'ltr'}>
       <SEOHead
         title={getBlogSeoMeta().title}
         description={getBlogSeoMeta().description}
@@ -52,7 +52,7 @@ export default function Blog() {
             {blog?.tagline || 'Dalil Tounes'}
           </p>
           <h1
-            className="text-4xl md:text-5xl font-light text-gray-900 leading-tight mb-6"
+            className="public-title text-4xl md:text-5xl font-light text-gray-900 leading-tight mb-6"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
             {heroCopy.title}
@@ -75,7 +75,7 @@ export default function Blog() {
                   to={`/blog/${article.slug}`}
                   className="group block"
                 >
-                  <article className="py-10 border-t border-gray-100 grid grid-cols-1 md:grid-cols-[1fr_auto] gap-6 items-start hover:bg-gray-50/50 transition-colors duration-300 px-2 -mx-2 rounded-lg">
+                  <article className="py-10 border-t border-gray-100 grid grid-cols-1 md:grid-cols-[1fr_auto] gap-6 items-start hover:bg-[#fcfaf5]/50 transition-colors duration-300 px-2 -mx-2 rounded-lg">
                     <div className="flex-1">
                       <div className={`flex items-center gap-3 mb-4 ${isRTL ? 'flex-row-reverse justify-end' : ''}`}>
                         <span className="text-xs uppercase tracking-[0.2em] text-[#D4AF37] font-medium">
@@ -89,7 +89,7 @@ export default function Blog() {
                       </div>
 
                       <h2
-                        className="text-xl md:text-2xl font-light text-gray-900 mb-3 group-hover:text-gray-700 transition-colors leading-snug"
+                        className="public-heading text-xl md:text-2xl font-light text-gray-900 mb-3 group-hover:text-gray-700 transition-colors leading-snug"
                         style={{ fontFamily: "'Playfair Display', serif" }}
                       >
                         {tr.title}
@@ -116,7 +116,7 @@ export default function Blog() {
           </div>
 
           {blogArticles.length === 0 && (
-            <div className="text-center py-24">
+            <div className="text-center py-12">
               <BookOpen className="w-10 h-10 text-gray-200 mx-auto mb-4" />
               <p className="text-gray-400 font-light">{blog?.empty || 'Aucun article pour le moment.'}</p>
             </div>

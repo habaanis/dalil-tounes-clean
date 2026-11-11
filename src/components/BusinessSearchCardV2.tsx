@@ -1,3 +1,4 @@
+import { isCertifiedBusiness } from '../lib/businessCertification';
 import { Clock3, Phone } from 'lucide-react';
 import { getCoverImageUrl } from '../lib/imagekitUtils';
 import { getLogoUrl } from '../lib/logoUtils';
@@ -25,6 +26,7 @@ interface BusinessSearchCardV2Props {
     nombre_avis?: string | number | null;
     'Compteur Avis Google'?: string | number | null;
     statut_carte?: string | null;
+    cv_business_status?: string | null;
     google_url?: string | null;
     'BTN_Maps'?: string | null;
     latitude?: number | string | null;
@@ -47,17 +49,14 @@ const COPY: Record<string, {
   closed: string;
   details: string;
 }> = {
-  fr: { artisan: 'ARTISAN', premium: 'PREMIUM', certified: 'Certifié Dalil Tounes', open: 'Ouvert', closed: 'Fermé', details: 'Voir les détails' },
+  fr: { artisan: 'ARTISAN', premium: 'PREMIUM', certified: 'Certifiée Dalil Tounes', open: 'Ouvert', closed: 'Fermé', details: 'Voir les détails' },
   ar: { artisan: 'حرفي', premium: 'PREMIUM', certified: 'موثّق من دليل تونس', open: 'مفتوح', closed: 'مغلق', details: 'عرض التفاصيل' },
   en: { artisan: 'ARTISAN', premium: 'PREMIUM', certified: 'Dalil Tounes Certified', open: 'Open', closed: 'Closed', details: 'View details' },
   it: { artisan: 'ARTISAN', premium: 'PREMIUM', certified: 'Certificato Dalil Tounes', open: 'Aperto', closed: 'Chiuso', details: 'Vedi dettagli' },
   ru: { artisan: 'ARTISAN', premium: 'PREMIUM', certified: 'Проверено Dalil Tounes', open: 'Открыто', closed: 'Закрыто', details: 'Подробнее' },
 };
 
-function isCertified(value: string | null | undefined): boolean {
-  const normalized = String(value || '').toUpperCase();
-  return normalized.includes('CERTIF') && !normalized.includes('NON CERTIF');
-}
+
 
 export default function BusinessSearchCardV2({
   business,
@@ -66,7 +65,7 @@ export default function BusinessSearchCardV2({
   categoryLabel,
   language,
   onClick,
-  showGoogleRating = false,
+  showGoogleRating = true,
 }: BusinessSearchCardV2Props) {
   const text = COPY[language] || COPY.fr;
   const isRTL = language === 'ar';
@@ -150,7 +149,7 @@ export default function BusinessSearchCardV2({
           {displayName}
         </h3>
 
-        {isCertified(business.statut_carte) && (
+        {isCertifiedBusiness(business) && (
           <div className="mt-0.5 inline-flex max-w-full items-center gap-1 rounded-full border border-[#D4AF37]/70 bg-[#064934]/90 px-2 py-0.5 shadow-[inset_0_0_6px_rgba(212,175,55,0.08)]">
             <span className="shrink-0 text-[8px] leading-none text-[#E5B92F]">★</span>
             <span className="truncate text-[7px] font-black uppercase tracking-[0.04em] text-white">

@@ -100,11 +100,11 @@ const MetierSousCatVillePage: React.FC = () => {
 
       <StructuredData data={[schemaData, breadcrumbSchema]} />
 
-      <div className="min-h-screen bg-[#0f0f0f]" dir={isRTL ? 'rtl' : 'ltr'}>
+      <div className="public-surface min-h-screen bg-[#fcfaf5]" dir={isRTL ? 'rtl' : 'ltr'}>
         <div
-          className="relative py-16 px-4 overflow-hidden"
+          className="relative py-10 px-4 overflow-hidden"
           style={{
-            background: 'linear-gradient(135deg, #111111 0%, #1a1008 50%, #111111 100%)',
+            background: 'linear-gradient(135deg, #fcfaf5 0%, #f3eddf 50%, #fcfaf5 100%)',
           }}
         >
           <div
@@ -113,7 +113,7 @@ const MetierSousCatVillePage: React.FC = () => {
               backgroundImage: 'radial-gradient(circle at 30% 50%, #D4AF37 0%, transparent 50%), radial-gradient(circle at 70% 50%, #D4AF37 0%, transparent 50%)',
             }}
           />
-          <div className="container mx-auto max-w-5xl relative">
+          <div className="public-seo-container mx-auto max-w-5xl relative">
             <Breadcrumb
               items={[
                 { label: t.breadcrumbHome, href: '/' },
@@ -129,39 +129,39 @@ const MetierSousCatVillePage: React.FC = () => {
             />
 
             <div className="flex items-center gap-3 mb-4">
-              <span className={`inline-block px-3 py-1 rounded-full border border-[#D4AF37]/40 text-[#D4AF37] text-xs font-medium ${isRTL ? '' : 'tracking-widest uppercase'}`}>
+              <span className={`inline-block px-3 py-1 rounded-full border border-[#D4AF37]/40 text-[#806336] text-xs font-medium ${isRTL ? '' : 'tracking-widest uppercase'}`}>
                 {metier.secteur}
               </span>
               {sousCategorie && (
-                <span className="inline-block px-3 py-1 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[#D4AF37] text-xs font-medium">
+                <span className="inline-block px-3 py-1 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[#806336] text-xs font-medium">
                   {sousCatLabel || sousCategorie.label}
                 </span>
               )}
             </div>
 
             <h1
-              className="text-3xl md:text-5xl font-bold text-white mb-4 leading-tight"
+              className="public-title text-3xl md:text-5xl font-medium text-[#35172f] mb-4 leading-tight"
               style={{ fontFamily: "'Playfair Display', 'Cormorant Garamond', serif" }}
             >
               {metierLabel}
               {sousCategorie && (
-                <span className="text-[#D4AF37]"> {sousCatLabel || sousCategorie.label}</span>
+                <span className="text-[#806336]"> {sousCatLabel || sousCategorie.label}</span>
               )}{' '}
-              {villeLabel.includes(' ') ? '' : ''}<span className={sousCategorie ? 'text-white' : 'text-[#D4AF37]'}>{villeLabel}</span>
+              {villeLabel.includes(' ') ? '' : ''}<span className={sousCategorie ? 'text-[#35172f]' : 'text-[#806336]'}>{villeLabel}</span>
             </h1>
 
-            <p className="text-gray-400 text-base md:text-lg max-w-2xl leading-relaxed">
+            <p className="text-[#6c6068] text-base md:text-lg max-w-2xl leading-relaxed">
               {pageDescription}
             </p>
 
             <div className="flex flex-wrap gap-3 mt-8">
               <div className="flex items-center gap-2 text-sm text-gray-500">
-                <MapPin className="w-4 h-4 text-[#D4AF37]" />
+                <MapPin className="w-4 h-4 text-[#806336]" />
                 <span>{t.cityTunisia(villeLabel)}</span>
               </div>
               {!loading && (
                 <div className="flex items-center gap-2 text-sm text-gray-500">
-                  <Search className="w-4 h-4 text-[#D4AF37]" />
+                  <Search className="w-4 h-4 text-[#806336]" />
                   <span>
                     {t.establishmentCountFound(total)}
                   </span>
@@ -171,8 +171,8 @@ const MetierSousCatVillePage: React.FC = () => {
           </div>
         </div>
 
-        <div className="container mx-auto max-w-5xl px-4 py-8">
-          <div className="mb-8 bg-[#1a1a1a] rounded-xl p-4 border border-[#D4AF37]/30">
+        <div className="public-seo-container mx-auto max-w-5xl px-4 py-8">
+          <div className="mb-8 bg-[#fffdf9] rounded-xl p-4 border border-[#D4AF37]/30">
             <SearchBar scope="global" />
           </div>
 
@@ -181,13 +181,13 @@ const MetierSousCatVillePage: React.FC = () => {
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="bg-[#1a1a1a] rounded-xl p-5 animate-pulse">
+                <div key={i} className="bg-[#fffdf9] rounded-xl p-5 animate-pulse">
                   <div className="flex gap-4">
-                    <div className="w-12 h-12 bg-gray-800 rounded-lg" />
+                    <div className="w-12 h-12 bg-[#eee7d8] rounded-lg" />
                     <div className="flex-1 space-y-2">
-                      <div className="h-4 bg-gray-800 rounded w-3/4" />
-                      <div className="h-3 bg-gray-800 rounded w-1/2" />
-                      <div className="h-3 bg-gray-800 rounded w-2/3" />
+                      <div className="h-4 bg-[#eee7d8] rounded w-3/4" />
+                      <div className="h-3 bg-[#eee7d8] rounded w-1/2" />
+                      <div className="h-3 bg-[#eee7d8] rounded w-2/3" />
                     </div>
                   </div>
                 </div>
@@ -197,14 +197,14 @@ const MetierSousCatVillePage: React.FC = () => {
             <>
               <div className="flex items-center justify-between mb-6">
                 <h2
-                  className="text-xl font-semibold text-white"
+                  className="public-heading text-xl font-semibold text-[#35172f]"
                   style={{ fontFamily: "'Playfair Display', serif" }}
                 >
                   {t.resultsCount(total)}
                 </h2>
                 <Link
                   to={`/entreprises?categorie=${encodeURIComponent(metier.value)}&gouvernorat=${encodeURIComponent(ville.gouvernorat)}`}
-                  className="flex items-center gap-1 text-sm text-[#D4AF37] hover:underline"
+                  className="flex items-center gap-1 text-sm text-[#806336] hover:underline"
                 >
                   {t.viewAllProfessionals}
                   <ArrowIcon className={`w-4 h-4 ${isRTL ? 'rotate-180' : ''}`} />
@@ -228,15 +228,15 @@ const MetierSousCatVillePage: React.FC = () => {
 
               <p className="text-center text-[11px] text-gray-500 mt-6 leading-relaxed">
                 {t.disclaimer}{' '}
-                <Link to="/info-avis" className="text-[#D4AF37] hover:underline">{t.learnMore}</Link>
+                <Link to="/info-avis" className="text-[#806336] hover:underline">{t.learnMore}</Link>
               </p>
             </>
           ) : (
-            <div className="text-center py-16">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-800 mb-6">
+            <div className="text-center py-10">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#eee7d8] mb-6">
                 <AlertCircle className="w-8 h-8 text-gray-600" />
               </div>
-              <h2 className="text-xl font-semibold text-white mb-3">
+              <h2 className="public-heading text-xl font-semibold text-[#35172f] mb-3">
                 {sousCategorie
                   ? t.noResultsTradeSubcat(metierLabel, sousCatLabel || sousCategorie.label, villeLabel)
                   : t.noResultsTradeCity(metierLabel, villeLabel)}
@@ -250,14 +250,14 @@ const MetierSousCatVillePage: React.FC = () => {
                 {sousCategorie && (
                   <Link
                     to={`/${metier.slug}-${ville.slug}`}
-                    className="inline-block px-6 py-3 border border-[#D4AF37]/60 text-[#D4AF37] text-sm font-medium rounded-lg hover:bg-[#D4AF37] hover:text-black transition-all"
+                    className="inline-block px-6 py-3 border border-[#D4AF37]/60 text-[#806336] text-sm font-medium rounded-lg hover:bg-[#D4AF37] hover:text-black transition-all"
                   >
                     {t.allTradesInCity(metierLabel, villeLabel)}
                   </Link>
                 )}
                 <Link
                   to="/entreprises"
-                  className="inline-block px-6 py-3 border border-gray-700 text-gray-400 text-sm font-medium rounded-lg hover:border-gray-500 hover:text-white transition-all"
+                  className="inline-block px-6 py-3 border border-[#d9c9a4] text-[#6c6068] text-sm font-medium rounded-lg hover:border-gray-500 hover:text-[#35172f] transition-all"
                 >
                   {t.viewAllProfessionals}
                 </Link>
@@ -266,9 +266,9 @@ const MetierSousCatVillePage: React.FC = () => {
           )}
 
           {sousCats.length > 0 && (
-            <div className="mt-12 pt-8 border-t border-gray-800">
+            <div className="mt-12 pt-8 border-t border-[#e6dcc5]">
               <h2
-                className="text-lg font-semibold text-white mb-4"
+                className="public-heading text-lg font-semibold text-[#35172f] mb-4"
                 style={{ fontFamily: "'Playfair Display', serif" }}
               >
                 {t.specializationsAvailable(villeLabel)}
@@ -280,8 +280,8 @@ const MetierSousCatVillePage: React.FC = () => {
                     to={`/${metier.slug}-${sc.slug}-${ville.slug}`}
                     className={`px-3 py-1.5 rounded-full border text-xs transition-all ${
                       sousCategorie?.slug === sc.slug
-                        ? 'border-[#D4AF37] bg-[#D4AF37]/10 text-[#D4AF37]'
-                        : 'border-gray-700 hover:border-[#D4AF37]/50 text-gray-400 hover:text-[#D4AF37]'
+                        ? 'border-[#D4AF37] bg-[#D4AF37]/10 text-[#806336]'
+                        : 'border-[#d9c9a4] hover:border-[#D4AF37]/50 text-[#6c6068] hover:text-[#806336]'
                     }`}
                   >
                     {metierLabel} {getSousCategorieLabel(sc, language)}
@@ -291,9 +291,9 @@ const MetierSousCatVillePage: React.FC = () => {
             </div>
           )}
 
-          <div className="mt-10 pt-8 border-t border-gray-800">
+          <div className="mt-10 pt-8 border-t border-[#e6dcc5]">
             <h2
-              className="text-lg font-semibold text-white mb-4"
+              className="public-heading text-lg font-semibold text-[#35172f] mb-4"
               style={{ fontFamily: "'Playfair Display', serif" }}
             >
               {t.tradeInOtherCities(metierLabel)}
@@ -307,7 +307,7 @@ const MetierSousCatVillePage: React.FC = () => {
                       ? `/${metier.slug}-${sousCategorie.slug}-${v.slug}`
                       : `/${metier.slug}-${v.slug}`
                   }
-                  className="px-3 py-1.5 rounded-full border border-gray-700 hover:border-[#D4AF37]/50 text-gray-400 hover:text-[#D4AF37] text-xs transition-all"
+                  className="px-3 py-1.5 rounded-full border border-[#d9c9a4] hover:border-[#D4AF37]/50 text-[#6c6068] hover:text-[#806336] text-xs transition-all"
                 >
                   {t.tradeCity(metierLabel, getVilleLabel(v, language))}
                 </Link>

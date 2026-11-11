@@ -224,7 +224,7 @@ export default function CandidateForm({ userId, onSuccess }: CandidateFormProps)
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
+    <form data-public-form="true" onSubmit={handleSubmit} className="space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
       <div className="mb-2">
         <h3 className="text-xl font-bold text-[#F5F5DC] mb-2">
           {t.title}

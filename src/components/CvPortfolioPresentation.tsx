@@ -1,3 +1,4 @@
+import GoogleRatingSummary from './GoogleRatingSummary';
 import { useState, type CSSProperties, type ReactNode } from 'react';
 import {
   CalendarDays,
@@ -92,7 +93,7 @@ const COPY: Record<string, Copy> = {
     aboutUs: 'À propos de nous', learnMore: 'En savoir plus', ourServices: 'Nos services',
     viewAll: 'Voir tout', ourWork: 'Nos réalisations', noPhotos: 'Aucune photo disponible.',
     openingHours: 'Horaires', practical: 'Informations pratiques', book: 'Réserver',
-    quote: 'Demander un devis', requestInfo: 'Demander une information', myQr: 'Mon QR Business', share: 'Partager', socialNetworks: 'Réseaux', addContact: 'Ajouter aux contacts', certified: 'Certifié Dalil Tounes',
+    quote: 'Demander un devis', requestInfo: 'Demander une information', myQr: 'Mon QR Business', share: 'Partager', socialNetworks: 'Réseaux', addContact: 'Ajouter aux contacts', certified: 'Certifiée Dalil Tounes',
     viewReviews: 'Voir les avis', giveReview: 'Donner un avis',
     moreActions: 'Plus d’actions', moreActionsSummary: 'Installer · WhatsApp · E-mail · Réserver · Avis',
     poweredBy: 'Propulsé par Dalil Tounes',
@@ -171,6 +172,7 @@ export function CvPortfolioPresentation({
   coverImage,
   logoImage,
   productLabel,
+  certification,
   actions,
   gallery,
   onBack,
@@ -313,6 +315,7 @@ export function CvPortfolioPresentation({
             <section className="cvp-lienora-identity">
               <small>{localizedProductLabel}</small>
               <h1>{profile.identity.name}</h1>
+              {certification && <span className="cvp-lienora-activity">{copy.certified}</span>}
               {(reviewRating > 0 || reviewCount > 0) && (
                 <div className="cvp-lienora-rating">
                   <Star fill="currentColor" />
@@ -320,6 +323,7 @@ export function CvPortfolioPresentation({
                   {reviewCount > 0 && <span>{reviewCount} {copy.reviews.toLowerCase()}</span>}
                 </div>
               )}
+              <GoogleRatingSummary trustOnly rating={reviewRating} reviewCount={reviewCount} language={language} />
               {(profile.location.city || profile.location.governorate) && (
                 <p><MapPin />{[profile.location.city, profile.location.governorate].filter(Boolean).join(language === 'ar' ? '، ' : ', ')}</p>
               )}

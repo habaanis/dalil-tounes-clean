@@ -11,7 +11,7 @@ export default function PublishJob() {
   const navigate = useNavigate();
 
   return (
-    <main className="min-h-screen bg-[#4A1D43] px-4 py-16">
+    <main className="public-surface min-h-screen bg-[#fcfaf5] px-4 py-16">
       <SEOHead
         title={copy.publishPageTitle}
         description={copy.publishPageSubtitle}
@@ -21,29 +21,29 @@ export default function PublishJob() {
 
       <div className="mx-auto max-w-4xl">
         <div className="mb-8 text-center">
-          <span className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-[#D4AF37] bg-[#2A1525] text-[#D4AF37]">
+          <span className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-[#D4AF37] bg-[#fffdf9] text-[#806336]">
             <Briefcase className="h-7 w-7" aria-hidden="true" />
           </span>
-          <h1 className="mb-3 font-serif text-3xl font-light text-[#D4AF37] md:text-4xl">
+          <h1 className="public-title mb-3 font-serif text-3xl font-light text-[#806336] md:text-4xl">
             {copy.publishPageTitle}
           </h1>
-          <p className="text-[#E8D5C4]">{copy.publishPageSubtitle}</p>
+          <p className="text-[#6c6068]">{copy.publishPageSubtitle}</p>
         </div>
 
-        <div className="mb-8 rounded-lg border border-[#D4AF37] bg-[#2A1525] p-4">
-          <p className="flex items-start gap-3 text-sm leading-6 text-[#F5F5DC]">
-            <CheckCircle2 className="mt-0.5 h-5 w-5 flex-none text-[#D4AF37]" aria-hidden="true" />
+        <div className="mb-8 rounded-lg border border-[#D4AF37] bg-[#fffdf9] p-4">
+          <p className="flex items-start gap-3 text-sm leading-6 text-[#35172f]">
+            <CheckCircle2 className="mt-0.5 h-5 w-5 flex-none text-[#806336]" aria-hidden="true" />
             <span>{copy.publishPageNotice}</span>
           </p>
         </div>
 
-        <div className="rounded-2xl border border-[#D4AF37] bg-[#1A1A1A] p-6 shadow-2xl md:p-8">
+        <div className="rounded-xl border border-[#D4AF37] bg-[#fffdf9] p-6 shadow-sm md:p-8">
           <JobPostForm mode="employer" onSuccess={() => navigate('/jobs')} />
         </div>
 
-        <div className="mt-8 rounded-lg border border-[#D4AF37] bg-[#2A1525] p-6">
-          <h2 className="mb-3 text-lg font-medium text-[#F5F5DC]">{copy.helpTitle}</h2>
-          <ul className="space-y-2 text-sm text-[#E8D5C4]">
+        <div className="mt-8 rounded-lg border border-[#D4AF37] bg-[#fffdf9] p-6">
+          <h2 className="public-heading mb-3 text-lg font-medium text-[#35172f]">{copy.helpTitle}</h2>
+          <ul className="space-y-2 text-sm text-[#6c6068]">
             {copy.helpTips.map(tip => <li key={tip}>• {tip}</li>)}
           </ul>
         </div>

@@ -1,3 +1,4 @@
+import { FounderStory } from '../components/FounderStory';
 import VisibilityHouseSection from '../components/VisibilityHouseSection';
 import { EssentialPresence } from '../components/EssentialPresence';
 import { siteStructureCopy } from '../lib/siteStructureCopy';
@@ -35,7 +36,7 @@ const COPY: Record<Lang, {
     platformLabel: 'Plateforme et annuaire tunisien', platformTitle: 'Trouvez les entreprises et les services dont vous avez besoin en Tunisie.',
     platformDescription: 'Recherchez une activité, découvrez les professionnels référencés et contactez-les directement.',
     categories: [['Santé', '/citizens/sante'], ['Éducation', '/education'], ['Commerces', '/citizens/shops'], ['Services', '/citizens/services']],
-    networkProof: (count) => `Déjà ${count} fiches enregistrées, dont des dossiers à compléter. Découvrez les activités publiées sur Dalil Tounes.`,
+    networkProof: (count) => `Déjà ${count} fiches enregistrées. Découvrez les activités publiées sur Dalil Tounes.`,
     certifiedProof: (count) => `dont ${count} établissements certifiés Dalil Tounes.`, loadingCount: "Chargement du nombre d'activités",
     professionalEyebrow: 'Vous êtes professionnel ?',
     platformPromoTitle: 'Donnez à votre activité une présentation claire et partageable avec le CV Business Dalil Tounes.',
@@ -350,6 +351,8 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
             </div>
           </section>
 
+          <FounderStory />
+
           <div className="mx-auto max-w-5xl space-y-5 px-4 py-6">
             <EssentialPresence />
             <section className="rounded-2xl bg-[#2E102A] p-5 text-white" aria-label={structure.products}>
@@ -367,14 +370,14 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
         <>
           <section className="border-b border-[#D4AF37]/25 bg-[radial-gradient(circle_at_top_left,rgba(212,175,55,0.18),transparent_28%),linear-gradient(135deg,#fffdf8_0%,#ffffff_52%,#f7f0f5_100%)] px-4 py-8 md:py-14">
             <div className="mx-auto grid max-w-[1180px] items-center gap-8 lg:grid-cols-[1fr_0.72fr]">
-              <div><div className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/45 bg-white px-3 py-1.5 text-xs font-black uppercase tracking-[0.14em] text-[#4A1D43] shadow-sm"><Sparkles className="h-4 w-4 text-[#D4AF37]" /> {t.cvLabel}</div><CvHeading className="mt-5 font-serif text-4xl font-bold leading-tight text-[#2E102A] md:text-5xl">{t.cvTitle}</CvHeading><p className="mt-3 font-serif text-2xl font-bold leading-tight text-[#B58A18] md:text-3xl">{t.cvSubtitle}</p><p className="mt-5 max-w-xl text-base leading-7 text-gray-600">{t.cvDescription}</p><div className="mt-6 flex flex-wrap gap-3"><a href="/subscription" className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-[#4A1D43] px-5 py-3 text-sm font-black text-white">{t.offers} <ArrowRight className={`h-4 w-4 ${lang === 'ar' ? 'rotate-180' : ''}`} /></a><a href="/contact" className="inline-flex min-h-12 items-center rounded-xl border border-[#D4AF37] bg-white px-5 py-3 text-sm font-bold text-[#4A1D43]">{t.information}</a></div></div>
+              <div><div className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/45 bg-white px-3 py-1.5 text-xs font-black uppercase tracking-[0.14em] text-[#4A1D43] shadow-sm"><Sparkles className="h-4 w-4 text-[#D4AF37]" /> {t.cvLabel}</div><CvHeading className="public-title mt-5 font-serif text-4xl font-bold leading-tight text-[#2E102A] md:text-5xl">{t.cvTitle}</CvHeading><p className="mt-3 font-serif text-2xl font-bold leading-tight text-[#B58A18] md:text-3xl">{t.cvSubtitle}</p><p className="mt-5 max-w-xl text-base leading-7 text-gray-600">{t.cvDescription}</p><div className="mt-6 flex flex-wrap gap-3"><a href="/subscription" className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-[#4A1D43] px-5 py-3 text-sm font-black text-white">{t.offers} <ArrowRight className={`h-4 w-4 ${lang === 'ar' ? 'rotate-180' : ''}`} /></a><a href="/contact" className="inline-flex min-h-12 items-center rounded-xl border border-[#D4AF37] bg-white px-5 py-3 text-sm font-bold text-[#4A1D43]">{t.information}</a></div></div>
               <div className="rounded-[30px] border border-[#D4AF37]/45 bg-white/90 p-4 shadow-[0_28px_70px_rgba(74,29,67,0.16)]"><p className="mb-3 text-center text-xs font-bold text-[#4A1D43]">{t.example}</p><div className="flex h-[390px] items-center justify-center overflow-hidden rounded-[18px] bg-[#032D21]">{heroVideoSrc ? <video key={heroVideoSrc} src={heroVideoSrc} controls playsInline preload="metadata" poster="/images/cv-business-portfolio-aux-saveurs-anis.png" className="h-[390px] w-auto max-w-full object-contain" aria-label={t.example} /> : <img src="/images/cv-business-portfolio-aux-saveurs-anis.png" alt="CV Business Aux saveurs d’Anis" className="h-[390px] w-auto object-contain object-top" />}</div></div>
             </div>
           </section>
 
           <section className="bg-white px-4 py-10 md:py-14">
             <div className="mx-auto max-w-6xl rounded-[30px] border border-[#D4AF37]/35 bg-[#FFFCF5] p-5 shadow-[0_20px_55px_rgba(74,29,67,0.08)] md:p-8">
-              <p className="text-xs font-black uppercase tracking-[0.16em] text-[#B58A18]">{t.cardEyebrow}</p><h2 className="mt-2 max-w-4xl font-serif text-3xl font-bold text-[#2E102A] md:text-4xl">{t.cardTitle}</h2><p className="mt-4 max-w-4xl text-base leading-7 text-gray-700">{t.cardIntro}</p>
+              <p className="text-xs font-black uppercase tracking-[0.16em] text-[#B58A18]">{t.cardEyebrow}</p><h2 className="public-heading mt-2 max-w-4xl font-serif text-3xl font-medium text-[#2E102A] md:text-4xl">{t.cardTitle}</h2><p className="mt-4 max-w-4xl text-base leading-7 text-gray-700">{t.cardIntro}</p>
               <div className="mt-6 grid gap-3 md:grid-cols-3"><div className="rounded-2xl border border-[#D4AF37]/25 bg-white p-4"><QrCode className="h-5 w-5 text-[#B58A18]" aria-hidden="true" /><p className="mt-3 text-sm font-semibold leading-6 text-[#4A1D43]">{t.qrBenefit}</p></div><div className="rounded-2xl border border-[#D4AF37]/25 bg-white p-4"><MapPin className="h-5 w-5 text-[#B58A18]" aria-hidden="true" /><p className="mt-3 text-sm font-semibold leading-6 text-[#4A1D43]">{t.informationBenefit}</p></div><div className="rounded-2xl border border-[#D4AF37]/25 bg-white p-4"><Share2 className="h-5 w-5 text-[#B58A18]" aria-hidden="true" /><p className="mt-3 text-sm font-semibold leading-6 text-[#4A1D43]">{t.sharingBenefit}</p></div></div>
               <p className="mt-5 max-w-5xl rounded-2xl border border-[#D4AF37]/25 bg-white px-4 py-3 text-sm leading-6 text-gray-700">{t.physicalCard}</p>
               <div className="mt-5 rounded-2xl bg-[#2E102A] p-5 text-white md:p-6"><h3 className="font-serif text-xl font-bold text-[#F1D783] md:text-2xl">{t.visibilityTitle}</h3><p className="mt-2 max-w-5xl text-sm leading-6 text-white/85 md:text-base">{t.visibilityText}</p></div>

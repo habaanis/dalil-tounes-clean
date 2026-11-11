@@ -651,7 +651,7 @@ export default function EducationNew() {
   }, [eventsCity]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="public-surface min-h-screen bg-gradient-to-b from-blue-50 to-white" dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Hero Section with Background Image */}
       <section
         className="relative text-white pb-10 px-4 bg-cover bg-center bg-no-repeat"
@@ -666,7 +666,7 @@ export default function EducationNew() {
             transition={{ duration: 0.6 }}
             className="mb-3 py-8"
           >
-            <h1 className="text-3xl md:text-4xl font-light mb-2 text-white drop-shadow-lg" style={{ fontFamily: "'Playfair Display', serif" }}>{t.title}</h1>
+            <h1 className="public-title text-3xl md:text-4xl font-light mb-2 text-white drop-shadow-lg" style={{ fontFamily: "'Playfair Display', serif" }}>{t.title}</h1>
             <p className="text-base md:text-lg text-white leading-relaxed max-w-3xl mx-auto drop-shadow-md">
               {t.welcome}
             </p>
@@ -714,7 +714,7 @@ export default function EducationNew() {
           transition={{ duration: 0.6, delay: 0.15 }}
           className="bg-[#FAF9F6] rounded-lg px-3 py-2 mb-6 shadow-sm border border-[#D4AF37]"
         >
-          <h2 className="text-base md:text-lg font-semibold text-[#4A1D43] mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>
+          <h2 className="public-heading text-base md:text-lg font-semibold text-[#4A1D43] mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>
             {t.eventBanner.title}
           </h2>
           <p className="text-xs text-gray-700 leading-snug mb-1.5">{t.eventBanner.desc}</p>
@@ -733,9 +733,9 @@ export default function EducationNew() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-gradient-to-br from-[#4A1D43]/5 to-[#D4AF37]/5 rounded-2xl p-6 border border-[#D4AF37]"
+            className="bg-gradient-to-br from-[#4A1D43]/5 to-[#D4AF37]/5 rounded-xl p-6 border border-[#D4AF37]"
           >
-            <h2 className="text-lg font-semibold text-[#4A1D43] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>{t.adminBlock.title}</h2>
+            <h2 className="public-heading text-lg font-semibold text-[#4A1D43] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>{t.adminBlock.title}</h2>
             <p className="text-sm text-gray-600 mb-4">{t.adminBlock.desc}</p>
             <Link to="/citizens/services" className="inline-flex items-center gap-2 text-[#4A1D43] hover:text-[#D4AF37] font-medium text-sm transition-colors">
               {t.adminBlock.link}
@@ -747,9 +747,9 @@ export default function EducationNew() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="bg-gradient-to-br from-[#4A1D43]/5 to-[#D4AF37]/5 rounded-2xl p-6 border border-[#D4AF37]"
+            className="bg-gradient-to-br from-[#4A1D43]/5 to-[#D4AF37]/5 rounded-xl p-6 border border-[#D4AF37]"
           >
-            <h2 className="text-lg font-semibold text-[#4A1D43] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>{t.partnerBlock.title}</h2>
+            <h2 className="public-heading text-lg font-semibold text-[#4A1D43] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>{t.partnerBlock.title}</h2>
             <p className="text-sm text-gray-600 mb-4">{t.partnerBlock.desc}</p>
             <button
               type="button"
@@ -764,7 +764,7 @@ export default function EducationNew() {
       </section>
 
       <section className="max-w-5xl mx-auto px-4 pb-8" aria-labelledby="official-education-links">
-        <h2 id="official-education-links" className="text-xl font-semibold text-[#4A1D43] text-center mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>{official.title}</h2>
+        <h2 id="official-education-links" className="public-heading text-xl font-semibold text-[#4A1D43] text-center mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>{official.title}</h2>
         <div className="grid gap-3 md:grid-cols-3">
           {[
             { label: official.labels[0], href: 'https://inscription.education.tn/' },
@@ -787,7 +787,7 @@ export default function EducationNew() {
           className="bg-white rounded-xl px-4 py-4 border border-[#D4AF37] shadow-sm"
         >
           <div className="mb-3">
-            <h2 className="text-lg font-semibold text-[#4A1D43] mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>{t.careersBlock.title}</h2>
+            <h2 className="public-heading text-lg font-semibold text-[#4A1D43] mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>{t.careersBlock.title}</h2>
             <p className="text-xs text-gray-600">{t.careersBlock.desc}</p>
           </div>
 
@@ -830,7 +830,7 @@ export default function EducationNew() {
           className="bg-gradient-to-br from-[#4A1D43]/5 to-[#D4AF37]/5 rounded-xl px-3 py-3 border border-[#D4AF37] shadow-sm"
         >
           <div className="mb-2">
-            <h2 className="text-lg font-semibold text-[#4A1D43]" style={{ fontFamily: "'Playfair Display', serif" }}>{t.events.upcoming}</h2>
+            <h2 className="public-heading text-lg font-semibold text-[#4A1D43]" style={{ fontFamily: "'Playfair Display', serif" }}>{t.events.upcoming}</h2>
           </div>
 
           {/* Filtre par ville */}

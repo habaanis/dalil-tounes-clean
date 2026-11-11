@@ -22,9 +22,9 @@ const SeoFAQ: React.FC<SeoFAQProps> = ({ title, questions, includeSchema = true 
   return (
     <>
       {includeSchema && <StructuredData data={generateFAQSchema(questions)} />}
-      <div className="mt-12 pt-8 border-t border-gray-800">
+      <div className="mt-12 pt-8 border-t border-[#e6dcc5]">
         <h2
-          className="text-base font-semibold text-gray-300 mb-4"
+          className="text-base font-semibold text-[#35172f] mb-4"
           style={{ fontFamily: "'Playfair Display', serif" }}
         >
           {title}
@@ -32,8 +32,8 @@ const SeoFAQ: React.FC<SeoFAQProps> = ({ title, questions, includeSchema = true 
         <div className="space-y-4">
           {questions.map((faq, i) => (
             <details key={i} className="group">
-              <summary className="cursor-pointer text-sm text-gray-400 hover:text-white transition-colors py-2 list-none flex items-start gap-2">
-                <span className="text-[#D4AF37] mt-0.5 shrink-0">{isRTL ? '\u25C2' : '\u25B6'}</span>
+              <summary className="cursor-pointer text-sm text-[#6c6068] hover:text-[#35172f] transition-colors py-2 list-none flex items-start gap-2">
+                <span className="text-[#806336] mt-0.5 shrink-0">{isRTL ? '\u25C2' : '\u25B6'}</span>
                 <span>{faq.question}</span>
               </summary>
               <p className={`text-xs text-gray-500 leading-relaxed ${isRTL ? 'pr-5' : 'pl-5'} pb-3`}>{faq.answer}</p>

@@ -1,3 +1,5 @@
+import { isCertifiedBusiness } from '../lib/businessCertification';
+import GoogleRatingSummary from './GoogleRatingSummary';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { useNavigate } from 'react-router-dom';
@@ -78,6 +80,7 @@ type Props = {
   onResultSelect?: (item: ResultItem, context: ResultSelectContext) => void;
   preferredTitle?: string;
   preferredSubtitle?: string;
+  appliedCertificationFilter?: CertFilter;
 };
 
 export default function SearchBar({
@@ -92,6 +95,7 @@ export default function SearchBar({
   onResultSelect,
   preferredTitle,
   preferredSubtitle,
+  appliedCertificationFilter,
 }: Props) {
   if (!enabled) return null;
 
@@ -103,7 +107,16 @@ export default function SearchBar({
   const [q, setQ] = React.useState('');
   const [city, setCity] = React.useState('');
   const [metier] = React.useState('');
-  const [certFilter, setCertFilter] = React.useState<CertFilter>('');
+  const [certSelection, setCertSelection] = React.useState(() => ({
+    applied: appliedCertificationFilter,
+    value: appliedCertificationFilter ?? '' as CertFilter,
+  }));
+  // Reset the local draft only when the applied page filter changes.
+  if (certSelection.applied !== appliedCertificationFilter) {
+    setCertSelection({ applied: appliedCertificationFilter, value: appliedCertificationFilter ?? '' });
+  }
+  const certFilter = certSelection.value;
+  const setCertFilter = (value: CertFilter) => setCertSelection({ applied: appliedCertificationFilter, value });
   const [ent, setEnt] = React.useState<ResultItem[]>([]);
   const [villes, setVilles] = React.useState<VilleItem[]>([]);
   const [loadingEnt, setLoadingEnt] = React.useState(false);
@@ -335,10 +348,8 @@ export default function SearchBar({
 
         if (cert) {
           scored = scored.filter((r: any) => {
-            const sc = normalizeText(r.statut_carte || '');
-            const isNon = sc.includes('non');
-            if (cert === 'certifie') return sc.includes('certifie') && !isNon;
-            if (cert === 'non_certifie') return !sc.includes('certifie') || isNon;
+            if (cert === 'certifie') return isCertifiedBusiness(r);
+            if (cert === 'non_certifie') return !isCertifiedBusiness(r);
             return true;
           });
         }
@@ -660,7 +671,7 @@ export default function SearchBar({
     <form
       ref={formRef}
       onSubmit={onSubmit}
-      className={`relative w-full ${className ?? ''}`}
+      className={`public-search relative w-full ${className ?? ''}`}
       data-search-bar="true"
       data-search-scope={isGlobal ? 'entreprise-ville' : `entreprise-ville:${scope}`}
       data-component-name="SearchBar"
@@ -722,17 +733,11 @@ export default function SearchBar({
                       onClick={() => handleResultClick(item)}
                     >
                       <div className="font-medium">
-                        {typeof item.statut_carte === 'string' && normalizeText(item.statut_carte).includes('certifie dalil tounes') && (
-                          <span className="mr-1 text-[#D4AF37]" aria-label="Certifié Dalil Tounes">⭐</span>
+                        {isCertifiedBusiness(item) && (
+                          <span className="mr-1 text-[#D4AF37]" aria-label="Certifiée Dalil Tounes">⭐</span>
                         )}
                         {displayName}
-                        {(() => {
-                          const googleNote = item['Note Google Globale'] ?? item.note_google_globale;
-                          const num = typeof googleNote === 'number' ? googleNote : googleNote != null ? parseFloat(googleNote) : null;
-                          return typeof num === 'number' && Number.isFinite(num) && num >= 4 ? (
-                            <span className="ml-1 text-[#D4AF37]" aria-label="Note Google >= 4">★</span>
-                          ) : null;
-                        })()}
+                        <GoogleRatingSummary rating={item['Note Google Globale']} reviewCount={item['Compteur Avis Google']} language={language} />
                       </div>
                       <div className="text-xs text-gray-500">{item.ville} · {displayCategory}</div>
                     </li>
@@ -792,6 +797,7 @@ export default function SearchBar({
             key={value}
             type="button"
             onClick={() => setCertFilter(value)}
+            aria-pressed={certFilter === value}
             className="flex-1 px-2 py-2 text-xs font-medium transition-colors whitespace-nowrap"
             style={{
               backgroundColor: certFilter === value

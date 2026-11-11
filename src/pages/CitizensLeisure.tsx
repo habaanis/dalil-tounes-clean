@@ -668,21 +668,21 @@ export default function CitizensLeisure() {
 
   return (
     <div
-      className="min-h-screen bg-[#f5f5dc]"
+      className="public-surface min-h-screen bg-[#fcfaf5]"
       dir={language === 'ar' ? 'rtl' : 'ltr'}
       style={language === 'ar' ? { fontFamily: "'Amiri', 'Cairo', 'Tajawal', serif" } : {}}
     >
       <div className="mx-auto max-w-7xl px-4 pt-5">
-        <a href="/citizens/tourism/guide/fetes-evenements" className="flex items-center justify-between gap-4 rounded-2xl border border-[#D4AF37] bg-white p-4 text-[#4A1D43] shadow-sm hover:bg-amber-50">
+        <a href="/citizens/tourism/guide/fetes-evenements" className="flex items-center justify-between gap-4 rounded-xl border border-[#D4AF37] bg-white p-4 text-[#4A1D43] shadow-sm hover:bg-amber-50">
           <span><strong className="block">🎨 Festivals culturels de Tunisie</strong><span className="mt-1 block text-sm">Découvrez les festivals régionaux et leur patrimoine, même hors des dates de l'agenda.</span></span>
           <span className="shrink-0 text-sm font-semibold">Voir les festivals →</span>
         </a>
-        <a href="/citizens/tourism" className="mt-3 flex items-center justify-between gap-4 rounded-2xl border border-[#D4AF37] bg-white p-4 text-[#4A1D43] shadow-sm hover:bg-amber-50">
+        <a href="/citizens/tourism" className="mt-3 flex items-center justify-between gap-4 rounded-xl border border-[#D4AF37] bg-white p-4 text-[#4A1D43] shadow-sm hover:bg-amber-50">
           <span><strong className="block">🤿 Plongée sous-marine et loisirs nautiques</strong><span className="mt-1 block text-sm">Découvrez les clubs, baptêmes et expériences de plongée référencés en Tunisie.</span></span>
           <span className="shrink-0 text-sm font-semibold">Voir les clubs →</span>
         </a>
-        <section className="mt-4 rounded-2xl border border-[#D4AF37]/65 bg-white p-4 text-[#4A1D43] shadow-sm" aria-label="Découvertes culturelles régionales">
-          <h2 className="mb-1 text-base font-bold">{language === 'ar' ? 'اكتشف الجهات التونسية' : language === 'en' ? 'Explore Tunisia by region' : 'Découvrir les régions autrement'}</h2>
+        <section className="mt-4 rounded-xl border border-[#D4AF37]/65 bg-white p-4 text-[#4A1D43] shadow-sm" aria-label="Découvertes culturelles régionales">
+          <h2 className="public-heading mb-1 text-base font-medium">{language === 'ar' ? 'اكتشف الجهات التونسية' : language === 'en' ? 'Explore Tunisia by region' : 'Découvrir les régions autrement'}</h2>
           <p className="mb-3 text-xs text-gray-600">{language === 'ar' ? 'ثقافة، تراث، حرف وتجارب محلية. تأكد من تواريخ المهرجانات والزيارات قبل التنقل.' : language === 'en' ? 'Cultural sites, craftsmanship and local experiences. Check event dates and visits before travelling.' : 'Patrimoine, artisanat et expériences locales. Les dates des festivals et les possibilités de visite sont à vérifier.'}</p>
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
             {[
@@ -732,7 +732,7 @@ export default function CitizensLeisure() {
               <img
                 src={getSupabaseImageUrl('logo-chechia-dore.png')}
                 alt={leisureAlt.chechia}
-                className="relative w-12 h-12 object-contain drop-shadow-2xl"
+                className="relative w-12 h-12 object-contain drop-shadow-sm"
                 onError={(e) => {
                   e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ccircle cx="50" cy="50" r="45" fill="%23D4AF37"/%3E%3Ctext x="50" y="60" text-anchor="middle" fill="%23fff" font-size="40" font-family="serif"%3E✺%3C/text%3E%3C/svg%3E';
                 }} decoding="async"
@@ -742,7 +742,7 @@ export default function CitizensLeisure() {
 
           {/* Titre Principal */}
           <div className="text-center mb-6">
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold text-[#D4AF37] mb-3" style={{ textShadow: '2px 2px 8px rgba(0,0,0,0.9)' }}>
+            <h1 className="public-title text-2xl md:text-3xl lg:text-4xl font-serif font-medium text-[#D4AF37] mb-3" style={{ textShadow: '2px 2px 8px rgba(0,0,0,0.9)' }}>
               {t.title}
             </h1>
             <p className="text-sm md:text-base text-gray-300 font-light tracking-wide mb-4">
@@ -775,7 +775,7 @@ export default function CitizensLeisure() {
       </section>
 
       {/* Premium Agenda Cards - 3 Columns (hors header, sur fond beige) */}
-      <div className="bg-[#F8F9FA] py-6 border-b border-[#D4AF37]/30">
+      <div className="bg-[#fcfaf5] py-6 border-b border-[#D4AF37]/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* CARTE 1 - L'Hebdo (Affinée) */}
@@ -793,7 +793,7 @@ export default function CitizensLeisure() {
                   />
                 </div>
                 <div className="p-3 space-y-2">
-                  <h3 className="text-sm font-bold text-[#4A1D43] line-clamp-2">
+                  <h3 className="text-sm font-medium text-[#4A1D43] line-clamp-2">
                     {getTranslatedText(weeklyEvent, 'titre')}
                   </h3>
                   <div className="flex items-center gap-1.5 text-[#4A1D43]">
@@ -852,7 +852,7 @@ export default function CitizensLeisure() {
                   />
                 </div>
                 <div className="p-3 space-y-2">
-                  <h3 className="text-sm font-bold text-[#4A1D43] line-clamp-2">
+                  <h3 className="text-sm font-medium text-[#4A1D43] line-clamp-2">
                     {getTranslatedText(monthlyEvent, 'titre')}
                   </h3>
                   <div className="flex items-center gap-1.5 text-[#4A1D43]">
@@ -911,7 +911,7 @@ export default function CitizensLeisure() {
                   />
                 </div>
                 <div className="p-3 space-y-2">
-                  <h3 className="text-sm font-bold text-[#4A1D43] line-clamp-2">
+                  <h3 className="text-sm font-medium text-[#4A1D43] line-clamp-2">
                     {getTranslatedText(annualEvent, 'titre')}
                   </h3>
                   <div className="flex items-center gap-1.5 text-[#4A1D43]">
@@ -963,7 +963,7 @@ export default function CitizensLeisure() {
         <div className="mb-6 text-center">
           <button
             onClick={() => setShowProposalForm(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#4A1D43] hover:bg-[#5A2D53] text-[#D4AF37] hover:text-white rounded-lg font-semibold hover:shadow-xl transition-all hover:scale-105 text-xs"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#4A1D43] hover:bg-[#5A2D53] text-[#D4AF37] hover:text-white rounded-lg font-semibold hover:shadow-sm transition-all hover:scale-105 text-xs"
             style={{ border: '1px solid #D4AF37', fontFamily: "'Playfair Display', serif" }}
           >
             <Plus className="w-3.5 h-3.5 text-[#D4AF37]" />
@@ -975,21 +975,21 @@ export default function CitizensLeisure() {
         {featuredEvents.length > 0 && (
           <div className="mb-10">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-3xl font-bold text-[#4A1D43] flex items-center gap-3">
+              <h2 className="public-heading text-3xl font-medium text-[#4A1D43] flex items-center gap-3">
                 <Sparkles className="w-8 h-8 text-[#D4AF37] animate-pulse" />
                 {t.featured}
               </h2>
               <div className="flex gap-3">
                 <button
                   onClick={() => scrollCarousel('left')}
-                  className="p-3 bg-white rounded-full shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-300"
+                  className="p-3 bg-white rounded-full shadow-lg hover:shadow-sm hover:scale-110 transition-all duration-300"
                   style={{ border: '2px solid #D4AF37' }}
                 >
                   <ChevronLeft className="w-6 h-6 text-[#4A1D43]" />
                 </button>
                 <button
                   onClick={() => scrollCarousel('right')}
-                  className="p-3 bg-white rounded-full shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-300"
+                  className="p-3 bg-white rounded-full shadow-lg hover:shadow-sm hover:scale-110 transition-all duration-300"
                   style={{ border: '2px solid #D4AF37' }}
                 >
                   <ChevronRight className="w-6 h-6 text-[#4A1D43]" />
@@ -1028,7 +1028,7 @@ export default function CitizensLeisure() {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
                       <div className={`absolute top-3 ${language === 'ar' ? 'right-3' : 'left-3'} flex gap-2`}>
-                        <span className="px-2.5 py-1 bg-[#D4AF37] text-[#4A1D43] font-bold text-xs rounded-full shadow-lg">
+                        <span className="px-2.5 py-1 bg-[#D4AF37] text-[#4A1D43] font-medium text-xs rounded-full shadow-lg">
                           ⭐ VIP
                         </span>
                       </div>
@@ -1041,7 +1041,7 @@ export default function CitizensLeisure() {
                     </div>
 
                     <div className="p-3">
-                      <h3 className="text-base font-bold text-gray-900 mb-2.5 line-clamp-2 hover:text-[#D4AF37] transition-colors">
+                      <h3 className="text-base font-medium text-gray-900 mb-2.5 line-clamp-2 hover:text-[#D4AF37] transition-colors">
                         {getTranslatedText(event, 'titre')}
                       </h3>
 
@@ -1056,7 +1056,7 @@ export default function CitizensLeisure() {
                         </div>
                         <div className="flex items-center gap-2 text-sm">
                           <DollarSign className="w-4 h-4 text-[#D4AF37]" />
-                          <span className="font-bold text-[#D4AF37]">{event.prix}</span>
+                          <span className="font-medium text-[#D4AF37]">{event.prix}</span>
                         </div>
                       </div>
 
@@ -1065,7 +1065,7 @@ export default function CitizensLeisure() {
                           href={event.lien_billetterie}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="block w-full py-2 bg-[#4A1D43] hover:bg-[#5A2D53] text-white rounded-lg font-bold text-center hover:shadow-xl transition-all hover:scale-105 text-sm"
+                          className="block w-full py-2 bg-[#4A1D43] hover:bg-[#5A2D53] text-white rounded-lg font-medium text-center hover:shadow-sm transition-all hover:scale-105 text-sm"
                           style={{ border: '2px solid #D4AF37' }}
                         >
                           <Ticket className={`w-4 h-4 inline ${language === 'ar' ? 'ml-2' : 'mr-2'}`} />
@@ -1081,12 +1081,12 @@ export default function CitizensLeisure() {
         )}
 
         <div className="mb-6 text-center">
-          <h2 className="text-2xl font-bold text-[#4A1D43]">{t.tabEvents}</h2>
+          <h2 className="public-heading text-2xl font-medium text-[#4A1D43]">{t.tabEvents}</h2>
           <p className="mt-2 text-sm text-gray-600">{t.eventsIntro}</p>
         </div>
 
         {/* Search and Filters */}
-        <div className="bg-white rounded-2xl shadow-xl p-5 mb-8" style={{ border: '2px solid #D4AF37' }}>
+        <div className="bg-white rounded-xl shadow-sm p-5 mb-8" style={{ border: '2px solid #D4AF37' }}>
           {/* Active Filter Badge */}
           {selectedActivityType !== 'all' && (
             <div className="mb-6 flex items-center gap-3">

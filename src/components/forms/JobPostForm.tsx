@@ -125,7 +125,7 @@ export default function JobPostForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form data-public-form="true" onSubmit={handleSubmit} className="space-y-5">
       <div className="rounded-lg border border-[#D4AF37] bg-[#4A1D43]/20 p-4">
         <p className="text-sm leading-relaxed text-[#E8D5C4]">
           {isEmployer || isCandidateContact ? copy.form.employerIntro : copy.form.candidateIntro}

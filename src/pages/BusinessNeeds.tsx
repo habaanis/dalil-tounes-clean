@@ -123,7 +123,7 @@ function DetailRow({ label, value }: { label: string; value: string | null | und
   if (!value) return null;
 
   return (
-    <div className="grid gap-1 rounded-lg bg-gray-50 p-3 sm:grid-cols-[160px_1fr]">
+    <div className="grid gap-1 rounded-lg bg-[#fcfaf5] p-3 sm:grid-cols-[160px_1fr]">
       <dt className="text-xs font-semibold uppercase tracking-wide text-gray-500">{label}</dt>
       <dd className="text-sm font-medium text-gray-900">{value}</dd>
     </div>
@@ -237,7 +237,7 @@ export default function BusinessNeeds() {
   };
 
   return (
-    <main className="min-h-screen bg-[#F8F6F2]">
+    <main className="public-surface min-h-screen bg-[#F8F6F2]">
       <SEOHead
         title={copy.seoTitle}
         description={copy.seoDescription}
@@ -252,7 +252,7 @@ export default function BusinessNeeds() {
               <Briefcase className="h-4 w-4" aria-hidden="true" />
               {copy.badge}
             </span>
-            <h1 className="text-3xl font-bold tracking-normal text-[#4A1D43] md:text-4xl">
+            <h1 className="public-title text-3xl font-medium tracking-normal text-[#4A1D43] md:text-4xl">
               {copy.title}
             </h1>
             <p className="mt-4 text-base leading-relaxed text-gray-700 md:text-lg">
@@ -286,7 +286,7 @@ export default function BusinessNeeds() {
               <button
                 type="button"
                 onClick={resetFilters}
-                className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:ring-offset-2"
+                className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-[#fcfaf5] focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:ring-offset-2"
               >
                 <RefreshCw className="h-4 w-4" aria-hidden="true" />
                 {copy.filters.reset}
@@ -423,20 +423,20 @@ export default function BusinessNeeds() {
             onClick={() => setSelectedNeed(null)}
             aria-label={copy.modal.close}
           />
-          <div className="relative z-[100000] max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-lg bg-white p-5 shadow-2xl md:p-6">
+          <div className="relative z-[100000] max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-lg bg-white p-5 shadow-sm md:p-6">
             <div className="mb-5 flex items-start justify-between gap-4">
               <div>
                 <span className="mb-3 inline-flex rounded-full border border-[#D4AF37]/40 bg-[#D4AF37]/10 px-3 py-1 text-xs font-semibold text-[#4A1D43]">
                   {copy.typeLabels[selectedNeed.type] || selectedNeed.type}
                 </span>
-                <h2 id="business-need-modal-title" className="text-2xl font-bold text-[#4A1D43]">
+                <h2 id="business-need-modal-title" className="public-heading text-2xl font-medium text-[#4A1D43]">
                   {selectedNeed.title}
                 </h2>
               </div>
               <button
                 type="button"
                 onClick={() => setSelectedNeed(null)}
-                className="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg border border-gray-200 text-gray-600 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]"
+                className="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg border border-gray-200 text-gray-600 transition hover:bg-[#fcfaf5] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]"
                 aria-label={copy.modal.close}
               >
                 <X className="h-5 w-5" aria-hidden="true" />

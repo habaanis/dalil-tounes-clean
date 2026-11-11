@@ -73,18 +73,18 @@ export const EducationEventForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white py-12 px-4" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+    <div className="public-surface min-h-screen bg-gradient-to-b from-blue-50 to-white py-12 px-4" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       <div className="max-w-3xl mx-auto">
         <motion.div initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }}>
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
               <Calendar className="w-8 h-8 text-blue-600" />
             </div>
-            <h1 className="text-3xl font-light text-gray-900 mb-3">{t.title}</h1>
+            <h1 className="public-title text-3xl font-light text-gray-900 mb-3">{t.title}</h1>
             <p className="text-gray-600">{t.intro}</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-8 shadow-lg space-y-6">
+          <form onSubmit={handleSubmit} className="bg-white rounded-xl p-8 shadow-lg space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">{t.requestTitle}</label>
               <input type="text" required value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder={t.titlePlaceholder} />

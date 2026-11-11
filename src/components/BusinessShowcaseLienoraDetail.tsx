@@ -1,3 +1,5 @@
+import GoogleRatingSummary from './GoogleRatingSummary';
+import { isCertifiedBusiness, CERTIFIED_LABEL } from '../lib/businessCertification';
 import { cachedShowcaseRecord, rememberShowcaseRecord } from '../lib/showcaseRecordCache';
 import {
   useEffect,
@@ -141,6 +143,7 @@ interface BusinessRecord {
   statut_abonnement?: string | null;
   statut_validation?: string | null;
   statut_carte?: string | null;
+  cv_business_status?: string | null;
   qr_code_url?: string | null;
   latitude?: number | string | null;
   longitude?: number | string | null;
@@ -1125,7 +1128,7 @@ export default function BusinessShowcaseLienoraDetail({
     thumbnail,
     full: galleryFull[index] || thumbnail,
   }));
-  const certification = String(business.statut_carte || '').trim();
+  const certification = isCertifiedBusiness(business) ? CERTIFIED_LABEL : '';
   const activityPill = serviceItems[0] || categoryLabel || displayName;
   const contactNotice = notice || text.contactNotice;
 
@@ -1782,6 +1785,7 @@ export default function BusinessShowcaseLienoraDetail({
                       .join(language === 'ar' ? '، ' : ', ')}
                   </p>
                 )}
+                <GoogleRatingSummary trustOnly rating={rating} reviewCount={googleReviewCount} language={language} />
                 {rating > 0 && (
                   <p className="dt-rating">
                     <Star aria-hidden="true" fill="currentColor" />

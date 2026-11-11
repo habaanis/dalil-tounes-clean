@@ -320,7 +320,7 @@ const CGU: React.FC = () => {
   const isRTL = lang === 'ar';
 
   return (
-    <div className="min-h-screen bg-white" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="public-surface min-h-screen bg-white" dir={isRTL ? 'rtl' : 'ltr'}>
       <SEOHead title={copy.seoTitle} description={copy.seoDescription} />
 
       <div className="pt-16 pb-10 px-4 border-b border-gray-100">
@@ -328,7 +328,7 @@ const CGU: React.FC = () => {
           <span className="inline-block text-xs uppercase tracking-[0.25em] text-[#D4AF37] font-medium mb-6">
             {copy.eyebrow}
           </span>
-          <h1 className="text-3xl md:text-4xl font-light text-gray-900 leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>
+          <h1 className="public-title text-3xl md:text-4xl font-light text-gray-900 leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>
             {copy.title}
           </h1>
           <p className="mt-4 text-xs text-gray-400">{copy.updated}</p>
@@ -339,7 +339,7 @@ const CGU: React.FC = () => {
       <div className="max-w-3xl mx-auto px-4 py-12 space-y-10 text-gray-700 text-sm leading-relaxed">
         {copy.sections.map((section) => (
           <section key={section.title}>
-            <h2 className="text-base font-semibold text-gray-900 uppercase tracking-wide mb-4">{section.title}</h2>
+            <h2 className="public-heading text-base font-semibold text-gray-900 uppercase tracking-wide mb-4">{section.title}</h2>
 
             {section.warning ? (
               <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg space-y-2">

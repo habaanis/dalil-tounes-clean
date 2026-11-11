@@ -281,20 +281,20 @@ const MentionsLegales: React.FC = () => {
   const listClass = `mt-3 space-y-1 ${isRTL ? 'pr-4 border-r-2' : 'pl-4 border-l-2'} border-[#D4AF37]`;
 
   return (
-    <div className="min-h-screen bg-white" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="public-surface min-h-screen bg-white" dir={isRTL ? 'rtl' : 'ltr'}>
       <SEOHead title={copy.seoTitle} description={copy.seoDescription} />
 
       <div className="pt-16 pb-10 px-4 border-b border-gray-100">
         <div className="max-w-3xl mx-auto text-center">
           <span className="inline-block text-xs uppercase tracking-[0.25em] text-[#D4AF37] font-medium mb-6">{copy.eyebrow}</span>
-          <h1 className="text-3xl md:text-4xl font-light text-gray-900 leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>{copy.title}</h1>
+          <h1 className="public-title text-3xl md:text-4xl font-light text-gray-900 leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>{copy.title}</h1>
           <div className="w-12 h-px bg-[#D4AF37] mx-auto mt-8" />
         </div>
       </div>
 
       <div className="max-w-3xl mx-auto px-4 py-12 space-y-10 text-gray-700 text-sm leading-relaxed">
         <section>
-          <h2 className="text-base font-semibold text-gray-900 uppercase tracking-wide mb-4">{copy.editorTitle}</h2>
+          <h2 className="public-heading text-base font-semibold text-gray-900 uppercase tracking-wide mb-4">{copy.editorTitle}</h2>
           <p>{copy.editorIntro}</p>
           <ul className={listClass}>
             <li><span className="font-medium">{copy.name}</span> Anis Taieb HABA</li>
@@ -307,7 +307,7 @@ const MentionsLegales: React.FC = () => {
         </section>
 
         <section>
-          <h2 className="text-base font-semibold text-gray-900 uppercase tracking-wide mb-4">{copy.hostTitle}</h2>
+          <h2 className="public-heading text-base font-semibold text-gray-900 uppercase tracking-wide mb-4">{copy.hostTitle}</h2>
           <p>{copy.hostIntro}</p>
           <ul className={listClass}>
             <li><span className="font-medium">{copy.company}</span> Namecheap, Inc.</li>
@@ -317,17 +317,17 @@ const MentionsLegales: React.FC = () => {
         </section>
 
         <section>
-          <h2 className="text-base font-semibold text-gray-900 uppercase tracking-wide mb-4">{copy.purposeTitle}</h2>
+          <h2 className="public-heading text-base font-semibold text-gray-900 uppercase tracking-wide mb-4">{copy.purposeTitle}</h2>
           <p>{copy.purposeText}</p>
         </section>
 
         <section>
-          <h2 className="text-base font-semibold text-gray-900 uppercase tracking-wide mb-4">{copy.liabilityTitle}</h2>
+          <h2 className="public-heading text-base font-semibold text-gray-900 uppercase tracking-wide mb-4">{copy.liabilityTitle}</h2>
           {copy.liabilityTexts.map((text, index) => <p key={index} className={index ? 'mt-3' : ''}>{text}</p>)}
         </section>
 
         <section>
-          <h2 className="text-base font-semibold text-gray-900 uppercase tracking-wide mb-4">{copy.healthTitle}</h2>
+          <h2 className="public-heading text-base font-semibold text-gray-900 uppercase tracking-wide mb-4">{copy.healthTitle}</h2>
           <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
             <p className="font-medium text-amber-900 mb-2">{copy.healthLead}</p>
             {copy.healthTexts.map((text, index) => <p key={index} className={`text-amber-800 ${index ? 'mt-2' : ''}`}>{text}</p>)}
@@ -335,19 +335,19 @@ const MentionsLegales: React.FC = () => {
         </section>
 
         <section>
-          <h2 className="text-base font-semibold text-gray-900 uppercase tracking-wide mb-4">{copy.ipTitle}</h2>
+          <h2 className="public-heading text-base font-semibold text-gray-900 uppercase tracking-wide mb-4">{copy.ipTitle}</h2>
           <p>{copy.ipText}</p>
         </section>
 
         <section>
-          <h2 className="text-base font-semibold text-gray-900 uppercase tracking-wide mb-4">{copy.dataTitle}</h2>
+          <h2 className="public-heading text-base font-semibold text-gray-900 uppercase tracking-wide mb-4">{copy.dataTitle}</h2>
           <p>{copy.dataTexts[0]}</p>
           <p className="mt-3">{copy.dataTexts[1]}{' '}<a href="mailto:contact@dalil-tounes.com" className="text-[#D4AF37] hover:underline">contact@dalil-tounes.com</a>.</p>
           <p className="mt-3">{copy.dataTexts[2]}{' '}<a href="/politique-confidentialite" className="text-[#D4AF37] hover:underline">{copy.privacyLink}</a>.</p>
         </section>
 
         <section>
-          <h2 className="text-base font-semibold text-gray-900 uppercase tracking-wide mb-4">{copy.lawTitle}</h2>
+          <h2 className="public-heading text-base font-semibold text-gray-900 uppercase tracking-wide mb-4">{copy.lawTitle}</h2>
           <p>{copy.lawText}</p>
         </section>
 

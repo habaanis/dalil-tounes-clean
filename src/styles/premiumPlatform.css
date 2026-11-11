@@ -32,3 +32,57 @@
   .premium-chrome footer a { overflow-wrap: anywhere; }
 }
 @media (prefers-reduced-motion: reduce) { .premium-universe { transition: none; } }
+
+/* Public route shell. Opt-in heading classes avoid styling embedded CV models.
+   Layout excludes every client route and dedicated client hostname. */
+.public-page {
+  --public-ivory: #fcfaf5;
+  --public-ink: #35172f;
+  --public-muted: #6c6068;
+  --public-gold: #d9c9a4;
+  background: var(--public-ivory);
+  color: var(--public-ink);
+}
+.public-page .public-title {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(1.6rem, 2.8vw, 2.1rem);
+  font-weight: 400;
+  line-height: 1.3;
+  text-wrap: balance;
+}
+.public-page .public-heading {
+  font-weight: 500;
+  line-height: 1.4;
+  text-wrap: balance;
+}
+.public-page .public-heading:is(.text-3xl, .text-4xl, .text-5xl) { font-size: clamp(1.25rem, 2vw, 1.6rem); }
+[dir="rtl"] .public-title, [dir="rtl"] .public-heading {
+  font-family: inherit;
+  letter-spacing: normal;
+  line-height: 1.65;
+}
+@media (max-width: 639px) {
+  .public-page .public-title { font-size: 1.6rem; }
+}
+.public-page .public-search :is(input, select) {
+  border-color: var(--public-gold);
+  color: var(--public-ink);
+  background-color: #fffdf9;
+  min-height: 2.75rem;
+}
+.public-page .public-search :is(input, select):focus-visible {
+  outline: 2px solid #806336;
+  outline-offset: 2px;
+}
+.public-page [data-public-form] {
+  padding: 1.25rem;
+  border: 1px solid var(--public-gold);
+  border-radius: .75rem;
+  background: #fffdf9;
+  color: var(--public-ink);
+}
+.public-page [data-public-form] :is(label, [class~="text-[#F5F5DC]"], [class~="text-[#E8D5C4]"]) { color: var(--public-ink); }
+.public-page [data-public-form] :is(input, textarea) { background: white; color: var(--public-ink); border-color: var(--public-gold); }
+.public-page [data-public-form] button[type="submit"] { background: #42213b; color: white; box-shadow: none; border-width: 1px; }
+.public-page .public-surface { background: var(--public-ivory); }
+.public-page .public-seo-container { width: 100%; max-width: 64rem; margin-inline: auto; }

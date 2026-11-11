@@ -168,7 +168,7 @@ export default function BlogPost() {
   };
 
   return (
-    <div className="min-h-screen bg-white" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="public-surface min-h-screen bg-white" dir={isRTL ? 'rtl' : 'ltr'}>
       <SEOHead
         title={seoTitle}
         description={seoDesc}
@@ -198,7 +198,7 @@ export default function BlogPost() {
             {tr.category}
           </span>
           <h1
-            className="text-3xl md:text-4xl font-light text-gray-900 leading-tight"
+            className="public-title text-3xl md:text-4xl font-light text-gray-900 leading-tight"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
             {tr.title}
@@ -236,8 +236,8 @@ export default function BlogPost() {
           </button>
         </div>
 
-        <section className="mt-8 rounded-2xl border border-[#D4AF37]/25 bg-[#FFFDF6] p-5 shadow-sm" aria-labelledby="article-summary-title">
-          <h2 id="article-summary-title" className="text-sm font-semibold text-[#4A1D43]">
+        <section className="mt-8 rounded-xl border border-[#D4AF37]/25 bg-[#FFFDF6] p-5 shadow-sm" aria-labelledby="article-summary-title">
+          <h2 id="article-summary-title" className="public-heading text-sm font-semibold text-[#4A1D43]">
             Résumé
           </h2>
           <p className="mt-2 text-sm leading-7 text-gray-700 sm:text-base">
@@ -267,7 +267,7 @@ export default function BlogPost() {
         {article.faq && article.faq.length > 0 && (
           <div className="border-t border-gray-200 pt-8 pb-12">
             <h2
-              className="text-lg font-semibold text-gray-900 mb-6"
+              className="public-heading text-lg font-semibold text-gray-900 mb-6"
               style={{ fontFamily: "'Playfair Display', serif" }}
             >
               {ui.faqTitle}
@@ -286,10 +286,10 @@ export default function BlogPost() {
           </div>
         )}
 
-        <section className="mb-10 rounded-2xl border border-[#D4AF37]/25 bg-[#FFFDF6] p-5 sm:p-6" aria-labelledby="article-takeaway-title">
+        <section className="mb-10 rounded-xl border border-[#D4AF37]/25 bg-[#FFFDF6] p-5 sm:p-6" aria-labelledby="article-takeaway-title">
           <h2
             id="article-takeaway-title"
-            className="text-xl font-light text-gray-900"
+            className="public-heading text-xl font-light text-gray-900"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
             À retenir
@@ -302,7 +302,7 @@ export default function BlogPost() {
         {/* CTA final réutilisable */}
         <div className={`rounded-2xl border border-[#D4AF37]/25 bg-gradient-to-br from-[#FFFDF6] to-[#FBF6E8] p-6 sm:p-8 text-center`}>
           <h2
-            className="text-xl sm:text-2xl font-light text-gray-900 leading-snug"
+            className="public-heading text-xl sm:text-2xl font-light text-gray-900 leading-snug"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
             {ui.ctaTitle}
@@ -359,7 +359,7 @@ export default function BlogPost() {
         {related.length > 0 && (
           <div className="mt-12 border-t border-gray-100 pt-10">
             <h2
-              className="text-lg font-semibold text-gray-900 mb-6"
+              className="public-heading text-lg font-semibold text-gray-900 mb-6"
               style={{ fontFamily: "'Playfair Display', serif" }}
             >
               {ui.relatedTitle}
@@ -367,7 +367,7 @@ export default function BlogPost() {
             <div className="space-y-1">
               {related.map(({ a, rtr }) => (
                 <Link key={a.id} to={`/blog/${a.slug}`} className="group block">
-                  <article className={`py-4 border-t border-gray-100 flex items-start gap-3 hover:bg-gray-50/50 transition-colors rounded-lg px-2 -mx-2 ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
+                  <article className={`py-4 border-t border-gray-100 flex items-start gap-3 hover:bg-[#fcfaf5]/50 transition-colors rounded-lg px-2 -mx-2 ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
                     <div className="flex-1">
                       <span className="text-[11px] uppercase tracking-[0.18em] text-[#D4AF37] font-medium">
                         {rtr.category}

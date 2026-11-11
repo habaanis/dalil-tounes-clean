@@ -43,7 +43,7 @@ const CultureEventAgendaCard = ({ event, type, badge, noEventText, buttonText }:
   const colors = {
     weekly: {
       border: 'border-cyan-500/30 hover:border-cyan-400/60',
-      gradient: 'from-cyan-600 to-cyan-500',
+      gradient: 'from-[#42213b] to-[#35172f]',
       shadow: 'hover:shadow-[0_0_30px_rgba(34,211,238,0.3)]',
       text: 'text-cyan-400',
       badge: 'bg-cyan-500/20 text-cyan-300',
@@ -52,7 +52,7 @@ const CultureEventAgendaCard = ({ event, type, badge, noEventText, buttonText }:
     },
     monthly: {
       border: 'border-emerald-500/30 hover:border-emerald-400/60',
-      gradient: 'from-emerald-600 to-emerald-500',
+      gradient: 'from-[#42213b] to-[#35172f]',
       shadow: 'hover:shadow-[0_0_30px_rgba(52,211,153,0.3)]',
       text: 'text-emerald-400',
       badge: 'bg-emerald-500/20 text-emerald-300',
@@ -61,7 +61,7 @@ const CultureEventAgendaCard = ({ event, type, badge, noEventText, buttonText }:
     },
     annual: {
       border: 'border-[#D4AF37]/30 hover:border-[#FFD700]/60',
-      gradient: 'from-[#D4AF37] to-[#FFD700]',
+      gradient: 'from-[#d9c9a4] to-[#e6dcc5]',
       shadow: 'hover:shadow-[0_0_30px_rgba(212,175,55,0.4)]',
       text: 'text-[#FFD700]',
       badge: 'bg-[#D4AF37]/20 text-[#FFD700]',
@@ -90,7 +90,7 @@ const CultureEventAgendaCard = ({ event, type, badge, noEventText, buttonText }:
 
   if (!event) {
     return (
-      <div className={`group relative bg-gradient-to-b from-[#0f172a] to-[#1e293b] rounded-2xl border ${color.border} overflow-hidden opacity-50`}>
+      <div className={`group relative bg-gradient-to-b from-[#fffdf9] to-[#fcfaf5] rounded-xl border ${color.border} overflow-hidden opacity-50`}>
         <div className={`bg-gradient-to-r ${color.gradient} px-6 py-3 text-center`}>
           <span className={`${color.textColor} font-bold text-sm tracking-wider uppercase`}>{badge}</span>
         </div>
@@ -103,12 +103,12 @@ const CultureEventAgendaCard = ({ event, type, badge, noEventText, buttonText }:
   }
 
   return (
-    <div className={`group relative bg-gradient-to-b from-[#0f172a] to-[#1e293b] rounded-2xl border ${color.border} overflow-hidden transition-all duration-500 ${color.shadow} hover:scale-105`}>
+    <div className={`group relative bg-gradient-to-b from-[#fffdf9] to-[#fcfaf5] rounded-xl border ${color.border} overflow-hidden transition-all duration-500 ${color.shadow} hover:border-[#806336]`}>
       <div className={`bg-gradient-to-r ${color.gradient} px-6 py-3 text-center`}>
         <span className={`${color.textColor} font-bold text-sm tracking-wider uppercase`}>{badge}</span>
       </div>
 
-      <div className="relative h-56 overflow-hidden">
+      <div className="relative h-44 overflow-hidden">
         <img
           src={event.image_url?.split(',')[0]?.trim() || '/images/drapeau-tunisie.webp'}
           alt={event.image_url ? event.titre : `Drapeau de la Tunisie — ${event.titre}`}
@@ -134,31 +134,31 @@ const CultureEventAgendaCard = ({ event, type, badge, noEventText, buttonText }:
       </div>
 
       <div className="p-6">
-        <h3 className={`text-2xl font-serif font-bold line-clamp-2 mb-3 ${type === 'annual' ? 'text-transparent bg-gradient-to-r from-[#FFD700] to-[#D4AF37] bg-clip-text' : 'text-white'}`}>
+        <h3 className={`text-xl font-serif font-medium line-clamp-2 mb-3 ${type === 'annual' ? 'text-[#806336]' : 'text-[#35172f]' }`}>
           {event.titre}
         </h3>
 
         {event.description_courte && (
-          <p className="text-gray-300 text-sm line-clamp-2 mb-4">
+          <p className="text-[#6c6068] text-sm line-clamp-2 mb-4">
             {event.description_courte}
           </p>
         )}
 
         <div className="space-y-2.5 text-sm mb-5">
-          <div className="flex items-center gap-2 text-slate-300">
+          <div className="flex items-center gap-2 text-[#6c6068]">
             <Calendar className="w-4 h-4 text-slate-400" />
             <span className="font-medium">{formatEventDate(event.date_debut, event.date_fin)}</span>
           </div>
 
-          <div className="flex items-center gap-2 text-gray-300">
+          <div className="flex items-center gap-2 text-[#6c6068]">
             <MapPin className="w-4 h-4 text-gray-400" />
             <span>{event.ville}</span>
           </div>
 
           {event.prix && (
-            <div className="flex items-center gap-2 text-gray-300">
+            <div className="flex items-center gap-2 text-[#6c6068]">
               <Ticket className="w-4 h-4 text-gray-400" />
-              <span className="font-semibold text-amber-400">{event.prix}</span>
+              <span className="font-semibold text-[#806336]">{event.prix}</span>
             </div>
           )}
         </div>
@@ -172,7 +172,7 @@ const CultureEventAgendaCard = ({ event, type, badge, noEventText, buttonText }:
                 href={event.lien_billetterie}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`block w-full py-2.5 ${linkAnalysis.colorClass} text-white rounded-xl font-semibold text-center hover:shadow-xl transition-all hover:scale-105 text-sm`}
+                className={`block w-full py-2.5 ${linkAnalysis.colorClass} text-white rounded-xl font-semibold text-center hover:shadow-xl transition-all hover:border-[#806336] text-sm`}
               >
                 <Ticket className={`w-4 h-4 inline ${isRTL ? 'ml-2' : 'mr-2'}`} />
                 {linkAnalysis.text}
@@ -182,7 +182,7 @@ const CultureEventAgendaCard = ({ event, type, badge, noEventText, buttonText }:
 
           return (
             <div className="flex justify-center">
-              <span className="px-4 py-2 bg-white/5 text-gray-300 rounded-lg text-sm font-medium border border-white/10">
+              <span className="px-4 py-2 bg-white/5 text-[#6c6068] rounded-lg text-sm font-medium border border-white/10">
                 {getPrixValue(event.prix) === 0 ? c.freeEntry : c.moreInfoOnSite}
               </span>
             </div>

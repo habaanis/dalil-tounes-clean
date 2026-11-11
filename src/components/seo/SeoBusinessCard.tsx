@@ -26,6 +26,7 @@ interface SeoBusinessCardProps {
     niveau_priorite_abonnement?: number | null;
     horaires_ok?: string | null;
     statut_carte?: string | null;
+    cv_business_status?: string | null;
     name_ar?: string | null;
     description_ar?: string | null;
   };
@@ -36,7 +37,7 @@ function toLabel(value: string | string[] | null | undefined): string {
   return value || '';
 }
 
-const SeoBusinessCard: React.FC<SeoBusinessCardProps> = ({ business, showGoogleRating = false }) => {
+const SeoBusinessCard: React.FC<SeoBusinessCardProps> = ({ business, showGoogleRating = true }) => {
   const navigate = useNavigate();
   const categoryLabel =
     toLabel(business.sous_categories) ||
@@ -64,6 +65,7 @@ const SeoBusinessCard: React.FC<SeoBusinessCardProps> = ({ business, showGoogleR
         'Note Google Globale': business['Note Google Globale'] ?? null,
         'Compteur Avis Google': business['Compteur Avis Google'] ?? null,
         statut_carte: business.statut_carte || null,
+        cv_business_status: business.cv_business_status,
         name_ar: business.name_ar || null,
         description_ar: business.description_ar || null,
       }}

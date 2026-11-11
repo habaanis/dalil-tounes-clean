@@ -20,6 +20,7 @@ interface UnifiedBusinessCardProps {
     horaires_ok?: string | null;
     is_premium?: boolean;
     statut_carte?: string | null;
+    cv_business_status?: string | null;
     name_ar?: string | null;
     description_ar?: string | null;
     telephone?: string | null;
@@ -56,6 +57,7 @@ const UnifiedBusinessCard = ({ business, onClick }: UnifiedBusinessCardProps) =>
         logoUrl: business.logo_url || business.logoUrl || null,
         horaires_ok: business.horaires_ok || null,
         statut_carte: business.statut_carte || null,
+        cv_business_status: business.cv_business_status,
         note_google: business['Note Google Globale'] ?? null,
         nombre_avis: business['Compteur Avis Google'] ?? null,
         'Note Google Globale': business['Note Google Globale'] ?? null,

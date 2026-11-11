@@ -24,12 +24,12 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ items }) => {
           {item.href && i < items.length - 1 ? (
             <Link
               to={item.href}
-              className="hover:text-[#D4AF37] transition-colors duration-200 whitespace-nowrap"
+              className="hover:text-[#806336] transition-colors duration-200 whitespace-nowrap"
             >
               {item.label}
             </Link>
           ) : (
-            <span className={i === items.length - 1 ? 'text-[#D4AF37]' : ''}>
+            <span className={i === items.length - 1 ? 'text-[#806336]' : ''}>
               {item.label}
             </span>
           )}

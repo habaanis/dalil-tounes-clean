@@ -1,3 +1,4 @@
+import { isCertifiedBusiness, CERTIFIED_LABEL } from './businessCertification';
 import { getMultilingualField } from './databaseI18n';
 import type { Language } from './i18n';
 
@@ -66,6 +67,7 @@ export interface DalilBusinessRecord {
   'Compteur Avis Google'?: number | string | null;
   'Lien Avis Google'?: string | null;
   statut_carte?: string | null;
+  cv_business_status?: string | null;
   verifie?: boolean | null;
   is_local_verified?: boolean | null;
   [key: string]: unknown;
@@ -251,14 +253,7 @@ const getExplicitTranslation = (
   return cleanText(record[`${field}_${language}`]);
 };
 
-const isCertified = (record: DalilBusinessRecord): boolean => {
-  if (record.verifie === true || record.is_local_verified === true) return true;
-  const status = cleanText(record.statut_carte)
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase();
-  return status.includes('certifie') && !status.includes('non certifie');
-};
+const isCertified = isCertifiedBusiness;
 
 export function adaptDalilBusiness(
   record: DalilBusinessRecord,
@@ -339,7 +334,7 @@ export function adaptDalilBusiness(
     },
     certification: {
       certified,
-      label: certified ? cleanText(record.statut_carte) : '',
+      label: certified ? CERTIFIED_LABEL : '',
     },
     display: {
       brand: 'dalil_tounes',

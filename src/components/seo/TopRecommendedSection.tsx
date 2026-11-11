@@ -101,7 +101,7 @@ function RecommendedCard({
           <p className="text-xs text-gray-500 mb-1.5 truncate">{subCat}</p>
         )}
         {(biz.ville || biz.gouvernorat) && (
-          <p className="text-xs text-gray-400 flex items-center gap-1 mb-2">
+          <p className="text-xs text-[#6c6068] flex items-center gap-1 mb-2">
             <MapPin className="w-3 h-3 text-[#D4AF37] shrink-0" />
             <span className="truncate">{biz.ville || biz.gouvernorat}</span>
           </p>
@@ -143,26 +143,26 @@ export default function TopRecommendedSection({ contextLabel, sectionId, city, m
           <Trophy className="w-5 h-5 text-[#D4AF37]" />
         </div>
         <div>
-          <h2 id={`top-recommended-${sectionId}`} className="text-lg md:text-xl font-bold text-white leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>
-            {t.title} <span className="text-[#D4AF37]">— {contextLabel}</span>
+          <h2 id={`top-recommended-${sectionId}`} className="public-heading text-lg md:text-xl font-medium text-[#35172f] leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>
+            {t.title} <span className="text-[#806336]">— {contextLabel}</span>
           </h2>
-          <p className="text-xs text-gray-400 mt-2">{t.criteria}</p>
+          <p className="text-xs text-[#6c6068] mt-2">{t.criteria}</p>
         </div>
       </div>
 
       {loading ? (
         <div role="status" aria-label={t.loading} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {Array.from({ length: 3 }, (_, i) => <div key={i} className="h-60 bg-gray-800 rounded-2xl animate-pulse motion-reduce:animate-none" />)}
+          {Array.from({ length: 3 }, (_, i) => <div key={i} className="h-60 bg-[#eee7d8] rounded-2xl animate-pulse motion-reduce:animate-none" />)}
         </div>
       ) : failed ? (
-        <div role="status" className="text-center p-8 rounded-2xl border border-gray-700 text-gray-400">
+        <div role="status" className="text-center p-8 rounded-2xl border border-[#d9c9a4] text-[#6c6068]">
           <p>{t.error}</p>
           <button onClick={() => setAttempt(value => value + 1)} className="mt-3 text-[#D4AF37] underline">{t.retry}</button>
         </div>
       ) : items.length === 0 ? (
-        <div className="text-center p-8 bg-gray-50/5 rounded-2xl border border-dashed border-gray-700">
+        <div className="text-center p-8 bg-gray-50/5 rounded-2xl border border-dashed border-[#d9c9a4]">
           <Building2 className="w-8 h-8 text-gray-500 mx-auto mb-3" />
-          <p className="text-sm text-gray-400">{t.empty}</p>
+          <p className="text-sm text-[#6c6068]">{t.empty}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -173,7 +173,7 @@ export default function TopRecommendedSection({ contextLabel, sectionId, city, m
           ))}
         </div>
       )}
-      <p className="text-center text-[11px] text-gray-400 mt-4 leading-relaxed">
+      <p className="text-center text-[11px] text-[#6c6068] mt-4 leading-relaxed">
         {t.disclaimer}{' '}
         <Link to="/info-avis" className="text-[#D4AF37] hover:underline">{publicT.learnMore}</Link>
       </p>
