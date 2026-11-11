@@ -1,11 +1,12 @@
 import { FounderStory } from './FounderStory';
 import SearchBar from './SearchBar';
+import { Building2, ShieldCheck } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 type Lang = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 const COPY: Record<Lang, {
   headline: string; intro: string; search: string; count: (n: string) => string;
-  certified: (n: string) => string; citizens: string; citizensDetail: string;
+  certified: (n: string) => string; discoverCopy: string; citizens: string; citizensDetail: string;
   tourism: string; tourismDetail: string; businesses: string; businessesDetail: string;
   recommend: string; recommendDetail: string; review: string; certifiedHint: string;
   founder: string; founderDetail: string; founderAction: string;
@@ -13,7 +14,7 @@ const COPY: Record<Lang, {
 }> = {
   fr: {
     headline: 'La Tunisie à portée de main', intro: 'Trouvez une entreprise, un service ou une découverte près de chez vous.',
-    search: 'Rechercher en Tunisie', count: () => 'Fiches enregistrées', certified: () => 'CV certifiés',
+    search: 'Rechercher en Tunisie', count: n => `Déjà ${n} fiches enregistrées.`, certified: n => `Dont ${n} établissements certifiés Dalil Tounes.`, discoverCopy: 'Découvrez les activités publiées sur Dalil Tounes.',
     citizens: 'Citoyens', citizensDetail: 'Santé, éducation, services et commerces',
     tourism: 'Tourisme & Expat', tourismDetail: 'Visites, régions et installation en Tunisie',
     businesses: 'Entreprises', businessesDetail: 'Présence gratuite et CV professionnels',
@@ -25,7 +26,7 @@ const COPY: Record<Lang, {
   },
   ar: {
     headline: 'تونس الكل في يدك', intro: 'اكتشف مؤسسات وخدمات وأماكن في تونس.',
-    search: 'ابحث في تونس', count: () => 'مؤسسات مسجلة', certified: () => 'CV موثّقة',
+    search: 'ابحث في تونس', count: n => `تم تسجيل ${n} مؤسسة.`, certified: n => `من بينها ${n} مؤسسات موثّقة من دليل تونس.`, discoverCopy: 'اكتشف الأنشطة المنشورة على دليل تونس.',
     citizens: 'المواطنون', citizensDetail: 'الصحة والتعليم والخدمات والمحلات',
     tourism: 'السياحة والمقيمون', tourismDetail: 'جهات وزيارات وإقامة في تونس',
     businesses: 'المؤسسات', businessesDetail: 'حضور مجاني وسيرة مهنية رقمية',
@@ -37,7 +38,7 @@ const COPY: Record<Lang, {
   },
   en: {
     headline: 'Tunisia at your fingertips', intro: 'Find businesses, services and local discoveries across Tunisia.',
-    search: 'Search Tunisia', count: () => 'Registered listings', certified: () => 'Certified CVs',
+    search: 'Search Tunisia', count: n => `Already ${n} businesses registered.`, certified: n => `Including ${n} Dalil Tounes certified businesses.`, discoverCopy: 'Explore the activities published on Dalil Tounes.',
     citizens: 'Citizens', citizensDetail: 'Health, education, services and shops',
     tourism: 'Travel & Expat', tourismDetail: 'Explore Tunisia and plan your stay',
     businesses: 'Businesses', businessesDetail: 'Free listing and professional CVs',
@@ -49,7 +50,7 @@ const COPY: Record<Lang, {
   },
   it: {
     headline: 'La Tunisia a portata di mano', intro: 'Trova imprese, servizi e luoghi da scoprire.',
-    search: 'Cerca in Tunisia', count: () => 'Schede registrate', certified: () => 'CV certificati',
+    search: 'Cerca in Tunisia', count: n => `Già ${n} schede registrate.`, certified: n => `Di cui ${n} imprese certificate Dalil Tounes.`, discoverCopy: 'Scopri le attività pubblicate su Dalil Tounes.',
     citizens: 'Cittadini', citizensDetail: 'Salute, istruzione, servizi e negozi',
     tourism: 'Turismo & Expat', tourismDetail: 'Scopri il paese e organizza il soggiorno',
     businesses: 'Imprese', businessesDetail: 'Presenza gratuita e CV professionali',
@@ -61,7 +62,7 @@ const COPY: Record<Lang, {
   },
   ru: {
     headline: 'Тунис под рукой', intro: 'Найдите компании, услуги и интересные места.',
-    search: 'Поиск по Тунису', count: () => 'Зарегистрировано', certified: () => 'CV с сертификатом',
+    search: 'Поиск по Тунису', count: n => `Уже зарегистрировано ${n} организаций.`, certified: n => `Из них ${n} сертифицированы Dalil Tounes.`, discoverCopy: 'Откройте компании, опубликованные на Dalil Tounes.',
     citizens: 'Гражданам', citizensDetail: 'Здоровье, образование, услуги и магазины',
     tourism: 'Туризм и переезд', tourismDetail: 'Откройте Тунис и планируйте пребывание',
     businesses: 'Компаниям', businessesDetail: 'Бесплатная запись и профессиональные CV',
@@ -89,15 +90,18 @@ export default function PlatformAppHome({ totalCount, certifiedCount }: {
       <h2 className="mb-2 font-serif text-base font-medium text-[#35172F]">{t.search}</h2>
       <SearchBar scope="global" autoSearch resultMode="redirectToResults" />
     </section>
-    <section aria-label={t.count(totalCount ?? '')} className="grid grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] gap-2" aria-live="polite">
-      <div className="flex min-h-[108px] flex-col items-center justify-center rounded-2xl border border-[#B38C3E]/60 bg-[#4A1D43] px-3 py-4 text-center shadow-[0_5px_15px_rgba(74,29,67,0.12)]">
-        <strong className="text-3xl font-semibold tracking-tight text-[#F3D58A] tabular-nums sm:text-4xl">{totalCount ?? '—'}</strong>
-        <span className="mt-1 text-xs font-medium leading-4 text-white">{t.count(totalCount ?? '')}</span>
+    <section aria-label={t.count(totalCount ?? '—')} className="rounded-xl border border-[#D8C59C] bg-[#FFFBF4] px-3 py-3 shadow-sm" aria-live="polite">
+      <div className="flex items-start gap-2.5">
+        <Building2 className="mt-0.5 h-4 w-4 shrink-0 text-[#9A793E]" aria-hidden="true" />
+        <div className="min-w-0">
+          <p className="text-sm font-semibold leading-5 text-[#45243A]">{totalCount === null || totalCount === undefined ? '—' : t.count(totalCount)}</p>
+          <p className="mt-0.5 text-xs leading-5 text-[#756B70]">{t.discoverCopy}</p>
+        </div>
       </div>
-      <div className="flex min-h-[108px] flex-col items-center justify-center rounded-2xl border border-[#D4AF37]/55 bg-[#FFF6E2] px-2 py-4 text-center shadow-sm">
-        <strong className="text-3xl font-semibold tracking-tight text-[#4A1D43] tabular-nums sm:text-4xl">{certifiedCount ?? '—'}</strong>
-        <span className="mt-1 text-xs font-medium leading-4 text-[#6D5061]">{t.certified(certifiedCount ?? '')}</span>
-      </div>
+      {certifiedCount !== null && certifiedCount !== undefined && <div className="mt-2 flex items-start gap-2.5 border-t border-[#E6D9BD] pt-2">
+        <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#9A793E]" aria-hidden="true" />
+        <p className="text-xs font-medium leading-5 text-[#594052]">{t.certified(certifiedCount)}</p>
+      </div>}
     </section>
 
     <FounderStory compact />
