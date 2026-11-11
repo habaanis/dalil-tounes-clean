@@ -106,12 +106,28 @@ const story = {
     "cta": "اكتشف قصتي"
   }
 } as const;
-export function FounderStory({full=false}:{full?:boolean}) {
+export function FounderStory({full=false,compact=false}:{full?:boolean;compact?:boolean}) {
  const { language } = useLanguage();
  const { hash } = useLocation();
  useEffect(() => { if (full && hash === '#histoire-fondateur') { const frame = requestAnimationFrame(() => document.getElementById('histoire-fondateur')?.scrollIntoView({behavior:'auto',block:'start'})); return () => cancelAnimationFrame(frame); } }, [full, hash]);
  const t = story[language === 'ar' ? 'ar' : language === 'fr' ? 'fr' : 'en'];
  const paragraphs = t.paragraphs.map((paragraph, index) => [4,8,12,16,20].includes(index) ? <h3 key={index} className="mt-8 font-serif text-xl font-bold text-[#4A1D43]">{paragraph}</h3> : <p key={index} className="mt-4 max-w-[72ch] leading-8 text-gray-700">{paragraph}</p>);
+ if (compact) return <section data-platform-app-founder className="rounded-2xl border border-[#D4AF37]/45 bg-white p-3 shadow-sm" aria-label={t.title}>
+   <div className="flex items-start gap-3">
+     <img src="https://lienora.fr/brand/anis-haba-founder.jpg" alt={t.name} loading="lazy" decoding="async" className="h-24 w-20 shrink-0 rounded-xl border border-[#D4AF37]/35 object-cover" />
+     <div className="min-w-0">
+       <p className="text-[10px] font-semibold uppercase tracking-wider text-[#A58128]">{t.tag}</p>
+       <h2 className="mt-1 font-serif text-base font-medium leading-5 text-[#4A1D43]">{t.title}</h2>
+       <p className="mt-2 line-clamp-3 text-xs leading-5 text-[#645665]">{t.intro}</p>
+     </div>
+   </div>
+   <details className="group mt-3 rounded-xl border border-[#D4AF37]/40 bg-[#FFFCF7]">
+     <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between rounded-xl px-3 py-2 text-sm font-semibold text-[#4A1D43] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A58128] [&::-webkit-details-marker]:hidden">
+       {t.cta}<span aria-hidden="true" className="ms-2 text-[#A58128] group-open:rotate-180">⌄</span>
+     </summary>
+     <div className="max-w-full space-y-1 border-t border-[#D4AF37]/30 px-3 pb-4 pt-1 [&_h3]:!mt-5 [&_h3]:!text-base [&_p]:!mt-3 [&_p]:!text-sm [&_p]:!leading-6">{paragraphs}</div>
+   </details>
+ </section>;
  return <section className="bg-white px-4 py-10 md:py-16" aria-label={t.title}>
   <div className="mx-auto grid max-w-5xl gap-6 rounded-3xl border border-[#D4AF37]/40 bg-[#FFFCF7] p-5 shadow-sm md:grid-cols-[190px_1fr] md:p-8">
    <div><img src="https://lienora.fr/brand/anis-haba-founder.jpg" alt="Anis Haba" loading="lazy" className="h-56 w-44 rounded-xl object-cover" /><p className="mt-3 text-sm font-bold text-[#4A1D43]">{t.name}</p></div>
