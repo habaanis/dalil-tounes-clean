@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { motion } from 'framer-motion';
 import { AlertCircle, Baby, Building2, CheckCircle, Clock, ExternalLink, FileText, Heart, Phone, Shield, X, type LucideIcon } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { getStructureImageUrl } from '../lib/imageUtils';
-import SearchBar from '../components/SearchBar';
-import MeilleursSection from '../components/MeilleursSection';
+const SearchBar = lazy(() => import('../components/SearchBar'));
+const MeilleursSection = lazy(() => import('../components/MeilleursSection'));
 import { SEOHead } from '../components/SEOHead';
 import { isPlatformAppMode } from '../lib/platformAppMode';
 import { DALIL_MASCOT_IMAGE } from '../lib/dalilMascotImage';
@@ -299,6 +299,7 @@ export default function CitizensServicesLocalized() {
   const inPlatformApp = isPlatformAppMode();
   const [activeTab, setActiveTab] = useState<Tab | null>(inPlatformApp ? null : 'bureaux');
   const [selectedProcedure, setSelectedProcedure] = useState<number | null>(null);
+  const [showAppSearch, setShowAppSearch] = useState(false);
   const [samu, protection, police, children, women] = EMERGENCY_LABELS[lang];
 
   const emergencyNumbers = [
@@ -370,8 +371,16 @@ export default function CitizensServicesLocalized() {
         </section>
 
         <section className="relative z-20 mx-3 mt-3 rounded-xl border border-[#D4AF37]/40 bg-white p-3">
-          <SearchBar scope="services" intentEnabled={false} enabled resultMode="redirectToResults"
-            preferredTitle={c.searchTitle} preferredSubtitle={c.searchSubtitle} />
+          <button type="button" onClick={() => setShowAppSearch(value => !value)}
+            aria-expanded={showAppSearch}
+            className="flex min-h-12 w-full items-center justify-between gap-2 rounded-xl px-2 text-start text-sm font-semibold text-[#4A1D43] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A17D36]">
+            <span>{c.searchTitle}</span>
+            <span aria-hidden="true" className="text-lg text-[#A17D36]">{showAppSearch ? '⌃' : '⌄'}</span>
+          </button>
+          {showAppSearch && <Suspense fallback={<p role="status" className="px-2 py-3 text-xs text-[#726571]">…</p>}>
+            <SearchBar scope="services" intentEnabled={false} enabled resultMode="redirectToResults"
+              preferredTitle={c.searchTitle} preferredSubtitle={c.searchSubtitle} />
+          </Suspense>}
         </section>
 
         <nav className="mx-3 mt-3 grid grid-cols-3 gap-2" aria-label={c.title}>
@@ -391,10 +400,12 @@ export default function CitizensServicesLocalized() {
         {activeTab === 'bureaux' && <section className="mx-3 mt-3 rounded-xl bg-white py-2">
           <h2 className="px-3 pb-1 font-serif text-base font-semibold text-[#4A1D43]">{c.officesTitle}</h2>
           <p className="px-3 pb-2 text-xs leading-5 text-[#756873]">{c.officesIntro}</p>
-          <MeilleursSection secteurLabel={c.sector} listePage="services citoyens"
-            accentColor="#4A1D43" sectionTitle={c.recommended}
-            useGoogleRecommendationCriteria excludedKeywords={SERVICE_EXCLUDED_KEYWORDS}
-            hideSearchCta />
+          <Suspense fallback={<p role="status" className="px-3 py-4 text-sm text-[#726571]">…</p>}>
+            <MeilleursSection secteurLabel={c.sector} listePage="services citoyens"
+              accentColor="#4A1D43" sectionTitle={c.recommended}
+              useGoogleRecommendationCriteria excludedKeywords={SERVICE_EXCLUDED_KEYWORDS}
+              hideSearchCta />
+          </Suspense>
         </section>}
 
         {activeTab === 'demarches' && <section className="mx-3 mt-3 space-y-3">
@@ -482,27 +493,31 @@ export default function CitizensServicesLocalized() {
           <section className="py-3 px-4">
             <div className="max-w-5xl mx-auto">
               <div className="bg-white rounded-xl border border-[#D4AF37] p-3">
-                <SearchBar
-                  scope="services"
-                  intentEnabled={false}
-                  enabled
-                  resultMode="redirectToResults"
-                  preferredTitle={c.searchTitle}
-                  preferredSubtitle={c.searchSubtitle}
-                />
+                <Suspense fallback={<div className="h-14 animate-pulse rounded-lg bg-[#F5F0E9]" />}>
+                  <SearchBar
+                    scope="services"
+                    intentEnabled={false}
+                    enabled
+                    resultMode="redirectToResults"
+                    preferredTitle={c.searchTitle}
+                    preferredSubtitle={c.searchSubtitle}
+                  />
+                </Suspense>
               </div>
             </div>
           </section>
           <section className="py-6 bg-white">
-            <MeilleursSection
-              secteurLabel={c.sector}
-              listePage="services citoyens"
-              accentColor="#4A1D43"
-              sectionTitle={c.recommended}
-              useGoogleRecommendationCriteria
-              excludedKeywords={SERVICE_EXCLUDED_KEYWORDS}
-              blogArticle={{ title: c.articleTitle, excerpt: c.articleExcerpt, slug: 'activites-en-famille' }}
-            />
+            <Suspense fallback={<div className="h-24 animate-pulse rounded-xl bg-[#F5F0E9]" />}>
+              <MeilleursSection
+                secteurLabel={c.sector}
+                listePage="services citoyens"
+                accentColor="#4A1D43"
+                sectionTitle={c.recommended}
+                useGoogleRecommendationCriteria
+                excludedKeywords={SERVICE_EXCLUDED_KEYWORDS}
+                blogArticle={{ title: c.articleTitle, excerpt: c.articleExcerpt, slug: 'activites-en-famille' }}
+              />
+            </Suspense>
           </section>
         </>
       )}
