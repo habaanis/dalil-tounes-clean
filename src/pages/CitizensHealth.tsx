@@ -306,22 +306,23 @@ export default function CitizensHealth({}: CitizensHealthProps) {
           <button type="button" onClick={() => setOpenPanel(p => p === 'info' ? null : 'info')} aria-expanded={openPanel === 'info'} className="min-h-14 rounded-xl border border-[#D4AF37]/50 bg-white px-3 text-xs font-semibold text-[#4A1D43]">ℹ️ {c.officialTitle}</button>
         </div>
       </section>}
-      <div className={inPlatformApp ? 'hidden' : 'mx-auto max-w-5xl px-4 pt-3 text-right'}><Link to="/citizens/health/thermalisme" className="text-sm font-semibold text-[#4A1D43] underline">♨️ {language === 'ar' ? 'اكتشف قسم المياه الحارة والعيون الطبيعية' : language === 'en' ? 'Explore thermal baths and natural springs' : 'Découvrir la sous-page Thermalisme, sources naturelles et bien-être'}</Link></div>
-      {!inPlatformApp && <ThermalWellnessExplorer />}
-
-      <section className={`${inPlatformApp && openPanel !== "recommended" ? "hidden" : ""} py-8 bg-white`}>
+      {inPlatformApp && openPanel === 'recommended' && <div className="px-2 pb-2">      <section className={`${inPlatformApp && openPanel !== "recommended" ? "hidden" : ""} py-3 bg-white`}>
         <MeilleursSection
           secteurLabel={c.sector}
           listePage="santé"
           accentColor="#4A1D43"
           sectionTitle={c.bestTitle}
           useGoogleRecommendationCriteria
-          blogArticle={{ title: c.guideTitle, excerpt: c.guideExcerpt, slug: 'comment-choisir-son-medecin' }}
+          blogArticle={inPlatformApp ? undefined : { title: c.guideTitle, excerpt: c.guideExcerpt, slug: 'comment-choisir-son-medecin' }}
           hideSearchCta={inPlatformApp}
         />
-      </section>
+      </section></div>}
+      <div className={inPlatformApp ? 'hidden' : 'mx-auto max-w-5xl px-4 pt-3 text-right'}><Link to="/citizens/health/thermalisme" className="text-sm font-semibold text-[#4A1D43] underline">♨️ {language === 'ar' ? 'اكتشف قسم المياه الحارة والعيون الطبيعية' : language === 'en' ? 'Explore thermal baths and natural springs' : 'Découvrir la sous-page Thermalisme, sources naturelles et bien-être'}</Link></div>
+      {!inPlatformApp && <ThermalWellnessExplorer />}
 
-      <section className="px-4 pt-2 pb-4">
+
+
+      <section className={`${inPlatformApp && openPanel !== null ? "hidden" : ""} px-4 pt-2 pb-4`}>
         <div className="max-w-5xl mx-auto">
           <div className="bg-gradient-to-br from-[#4A1D43]/5 to-[#D4AF37]/5 border border-[#D4AF37] rounded-xl px-3 py-3 shadow-lg">
             <div className="text-center mb-2">
