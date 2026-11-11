@@ -38,6 +38,8 @@ const PRO_LINKS: Entry[] = [
   { id: 'models', icon: '🎨', href: '/subscription?app-full=1#modeles' },
   { id: 'offers', icon: '💼', href: '/subscription?app-full=1#offres' },
   { id: 'partners', icon: '🤝', href: '/devenir-partenaire' },
+  { id: 'businessPartners', icon: '🔗', href: '/partner-search' },
+  { id: 'businessNeeds', icon: '📦', href: '/besoins-professionnels' },
 ];
 
 const COPY: Record<Lang, {
@@ -51,7 +53,7 @@ const COPY: Record<Lang, {
     visit: 'Visiter & découvrir', settle: "S’installer & vivre en Tunisie", moreTopics: 'Autres rubriques', all: 'Afficher la page complète', hint: 'Les informations détaillées restent disponibles.',
     topics: { health: 'Santé', education: 'Éducation', services: 'Services citoyens', shops: 'Commerces & magasins', leisure: 'Loisirs & événements', jobs: 'Emploi',
       heritage: 'Villages & patrimoine', nature: 'Nature & randonnées', craft: 'Artisanat & savoir-faire', food: 'Saveurs & marchés', events: 'Culture & événements',
-      stays: 'Séjours & expériences', settle: 'Guide expatriation & installation', free: 'Inscription gratuite', cv: 'CV Business & Portfolio', models: 'Voir les modèles', offers: 'Offres & tarifs', partners: 'Devenir partenaire' },
+      stays: 'Séjours & expériences', settle: 'Guide expatriation & installation', free: 'Inscription gratuite', cv: 'CV Business & Portfolio', models: 'Voir les modèles', offers: 'Offres & tarifs', partners: 'Devenir partenaire', businessPartners: 'Réseau professionnel', businessNeeds: 'Besoins professionnels' },
   },
   ar: {
     titles: { citizens: 'شنوة تحتاج اليوم؟', tourism: 'اكتشف تونس', pros: 'مؤسستك في دليل تونس' },
@@ -59,7 +61,7 @@ const COPY: Record<Lang, {
     visit: 'زيارة واكتشاف', settle: 'الإقامة والعيش في تونس', moreTopics: 'أقسام أخرى', all: 'عرض الصفحة الكاملة', hint: 'التفاصيل الكاملة تبقى متوفرة.',
     topics: { health: 'الصحة', education: 'التعليم', services: 'خدمات المواطن', shops: 'المحلات والمتاجر', leisure: 'الترفيه والفعاليات', jobs: 'الشغل',
       heritage: 'القرى والتراث', nature: 'الطبيعة والمشي', craft: 'الحرف والمعارف', food: 'النكهات والأسواق', events: 'الثقافة والفعاليات',
-      stays: 'الإقامات والتجارب', settle: 'دليل الإقامة والاستقرار', free: 'تسجيل مجاني', cv: 'CV Business وPortfolio', models: 'شوف النماذج', offers: 'العروض والأسعار', partners: 'كن شريك' },
+      stays: 'الإقامات والتجارب', settle: 'دليل الإقامة والاستقرار', free: 'تسجيل مجاني', cv: 'CV Business وPortfolio', models: 'شوف النماذج', offers: 'العروض والأسعار', partners: 'كن شريك', businessPartners: 'شبكة المهنيين', businessNeeds: 'احتياجات المؤسسات' },
   },
   en: {
     titles: { citizens: 'What do you need?', tourism: 'Explore Tunisia', pros: 'Your business on Dalil Tounes' },
@@ -67,7 +69,7 @@ const COPY: Record<Lang, {
     visit: 'Explore & visit', settle: 'Move to & live in Tunisia', moreTopics: 'More topics', all: 'View the full page', hint: 'Full details remain available.',
     topics: { health: 'Health', education: 'Education', services: 'Citizen services', shops: 'Shops & stores', leisure: 'Leisure & events', jobs: 'Jobs',
       heritage: 'Villages & heritage', nature: 'Nature & hiking', craft: 'Crafts & skills', food: 'Food & markets', events: 'Culture & events',
-      stays: 'Stays & experiences', settle: 'Moving & expat guide', free: 'Free business listing', cv: 'Business & Portfolio CV', models: 'Explore models', offers: 'Offers & pricing', partners: 'Become a partner' },
+      stays: 'Stays & experiences', settle: 'Moving & expat guide', free: 'Free business listing', cv: 'Business & Portfolio CV', models: 'Explore models', offers: 'Offers & pricing', partners: 'Become a partner', businessPartners: 'Business network', businessNeeds: 'Business needs' },
   },
   it: {
     titles: { citizens: 'Di cosa hai bisogno?', tourism: 'Scopri la Tunisia', pros: 'La tua impresa su Dalil Tounes' },
@@ -75,7 +77,7 @@ const COPY: Record<Lang, {
     visit: 'Visitare & scoprire', settle: 'Vivere in Tunisia', moreTopics: 'Altre sezioni', all: 'Apri la pagina completa', hint: 'I dettagli sono sempre disponibili.',
     topics: { health: 'Salute', education: 'Istruzione', services: 'Servizi ai cittadini', shops: 'Negozi', leisure: 'Tempo libero & eventi', jobs: 'Lavoro',
       heritage: 'Borghi & patrimonio', nature: 'Natura & escursioni', craft: 'Artigianato', food: 'Sapori & mercati', events: 'Cultura & eventi',
-      stays: 'Soggiorni & esperienze', settle: 'Guida al trasferimento', free: 'Iscrizione gratuita', cv: 'CV Business & Portfolio', models: 'Scopri i modelli', offers: 'Offerte & prezzi', partners: 'Diventa partner' },
+      stays: 'Soggiorni & esperienze', settle: 'Guida al trasferimento', free: 'Iscrizione gratuita', cv: 'CV Business & Portfolio', models: 'Scopri i modelli', offers: 'Offerte & prezzi', partners: 'Diventa partner', businessPartners: 'Rete professionale', businessNeeds: 'Esigenze professionali' },
   },
   ru: {
     titles: { citizens: 'Что вам нужно?', tourism: 'Откройте Тунис', pros: 'Ваш бизнес на Dalil Tounes' },
@@ -83,7 +85,7 @@ const COPY: Record<Lang, {
     visit: 'Путешествия', settle: 'Переезд и жизнь в Тунисе', moreTopics: 'Другие разделы', all: 'Вся страница', hint: 'Полная информация остаётся доступной.',
     topics: { health: 'Здоровье', education: 'Образование', services: 'Услуги гражданам', shops: 'Магазины', leisure: 'Отдых и события', jobs: 'Работа',
       heritage: 'Деревни и наследие', nature: 'Природа и походы', craft: 'Ремёсла', food: 'Еда и рынки', events: 'Культура и события',
-      stays: 'Проживание и экскурсии', settle: 'Переезд и жизнь', free: 'Бесплатная регистрация', cv: 'CV Business & Portfolio', models: 'Модели', offers: 'Предложения и цены', partners: 'Стать партнёром' },
+      stays: 'Проживание и экскурсии', settle: 'Переезд и жизнь', free: 'Бесплатная регистрация', cv: 'CV Business & Portfolio', models: 'Модели', offers: 'Предложения и цены', partners: 'Стать партнёром', businessPartners: 'Партнёрская сеть', businessNeeds: 'Запросы компаний' },
   },
 };
 
