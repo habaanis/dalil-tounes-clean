@@ -14,6 +14,7 @@ import { getSupabaseImageUrl } from '../lib/imageUtils';
 import SearchBar from '../components/SearchBar';
 import { Link } from 'react-router-dom';
 import { isPlatformAppMode } from '../lib/platformAppMode';
+import PlatformAppIntro from '../components/PlatformAppIntro';
 import EducationAppMenu, { type EducationAppPanel } from '../components/EducationAppMenu';
 import { DALIL_MASCOT_IMAGE } from '../lib/dalilMascotImage';
 
@@ -688,6 +689,7 @@ export default function EducationNew() {
           <div className="min-w-0 flex-1">
             <h1 className="font-serif text-xl font-medium leading-6 text-[#F8E9C9]">{language === 'fr' ? 'Éducation & formation' : language === 'ar' ? 'التعليم والتكوين' : language === 'en' ? 'Education & training' : language === 'it' ? 'Istruzione e formazione' : 'Образование и обучение'}</h1>
             <p className="mt-1 line-clamp-3 text-xs leading-5 text-white/90">{t.welcome}</p>
+            <PlatformAppIntro pathname="/education" language={language} detailsOnly />
           </div>
           <img src={DALIL_MASCOT_IMAGE} alt="Mascotte Dalil Tounes"
             className="h-[94px] w-[90px] shrink-0 rounded-xl border border-[#D4AF37]/40 bg-white/95 object-contain"
