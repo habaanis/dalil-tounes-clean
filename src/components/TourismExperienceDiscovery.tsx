@@ -1,3 +1,4 @@
+import { isPlatformAppMode } from '../lib/platformAppMode';
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
@@ -73,7 +74,7 @@ function businessPhoto(value: string | null) {
   return parseImageUrls(value).find(url => /^https?:\/\//i.test(url)) || null;
 }
 
-const PAGE_SIZE = 4;
+const PAGE_SIZE = isPlatformAppMode() ? 4 : 6;
 // Une carte classée « tourisme & expatriation » n'est pas automatiquement une expérience.
 function isLocalExperience(item: LocalExperience): boolean {
   const name = (item.nom || '').toLocaleLowerCase('fr');
