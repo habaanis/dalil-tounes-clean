@@ -112,7 +112,7 @@ export default function PlatformAppShell({ children }: { children: ReactNode }) 
               // A directly opened preview has no in-app history.
               // Return to the logical parent rather than the homepage.
               const path = location.pathname;
-              const fallback = path === '/citizens' ? '/'
+              const fallback = path === '/citizens' || path === '/citizens/tourism' || path === '/citizens/tourisme' ? '/'
                 : path.startsWith('/citizens/') ? '/citizens'
                 : path === '/education' ? '/citizens'
                 : path === '/recherche' && new URLSearchParams(location.search).get('categorie')?.startsWith('shop:')
