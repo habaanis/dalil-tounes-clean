@@ -148,6 +148,7 @@ export default function CitizensLeisure() {
   const [annualEvent, setAnnualEvent] = useState<Evenement | null>(null);
   const [loading, setLoading] = useState(true);
   const carouselRef = useRef<HTMLDivElement>(null);
+  const eventResultsRef = useRef<HTMLDivElement>(null);
   const [hoveredEventId, setHoveredEventId] = useState<string | null>(null);
   const [showProposalForm, setShowProposalForm] = useState(false);
 
@@ -666,13 +667,18 @@ export default function CitizensLeisure() {
     return eventTypeLabels[language]?.[type] || type;
   };
 
-  const EVENT_PAGE_SIZE = 10;
+  // Five visible events on both mobile and desktop; all results remain accessible by pages.
+  const EVENT_PAGE_SIZE = 5;
   const eventPageCount = Math.max(1, Math.ceil(evenements.length / EVENT_PAGE_SIZE));
   const safeEventPage = Math.min(eventPage, eventPageCount - 1);
-  const pagedEvents = inPlatformApp
-    ? evenements.slice(safeEventPage * EVENT_PAGE_SIZE, (safeEventPage + 1) * EVENT_PAGE_SIZE)
-    : evenements;
+  const pagedEvents = evenements.slice(
+    safeEventPage * EVENT_PAGE_SIZE, (safeEventPage + 1) * EVENT_PAGE_SIZE
+  );
   useEffect(() => setEventPage(0), [selectedLocation, selectedTemporalite, selectedPrice, searchQuery, selectedActivityType]);
+  const changeEventPage = (nextPage: number) => {
+    setEventPage(nextPage);
+    window.setTimeout(() => eventResultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 40);
+  };
 
   // The calendar has its own selection and pagination, independent of
   // the event search. Offer only years and months with published future events.
@@ -1351,7 +1357,7 @@ export default function CitizensLeisure() {
             <div className="w-16 h-16 border-4 border-[#4A1D43] border-t-transparent rounded-full animate-spin" />
           </div>
         ) : (
-          <div className={inPlatformApp ? 'flex flex-col gap-3' : 'grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'}>
+          <div ref={eventResultsRef} className={inPlatformApp ? 'flex scroll-mt-24 flex-col gap-3' : 'grid scroll-mt-24 grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'}>
             {evenements.length === 0 ? (
               <div className="col-span-full bg-white rounded-xl p-12 text-center">
                 <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
@@ -1386,14 +1392,14 @@ export default function CitizensLeisure() {
             )}
           </div>
         )}
-        {inPlatformApp && !loading && eventPageCount > 1 && (
+        {!loading && eventPageCount > 1 && (
           <nav aria-label="Pagination événements" className="mt-5 flex items-center justify-center gap-3 border-t border-[#D4AF37]/30 pt-3">
-            <button type="button" disabled={safeEventPage === 0} onClick={() => setEventPage(p => Math.max(0, p - 1))}
+            <button type="button" disabled={safeEventPage === 0} onClick={() => changeEventPage(Math.max(0, safeEventPage - 1))}
               className="min-h-11 rounded-lg border border-[#D4AF37]/50 bg-white px-3 text-xs font-medium text-[#4A1D43] disabled:opacity-40">
               {language === 'ar' ? 'السابق' : language === 'en' ? 'Previous' : language === 'it' ? 'Precedente' : language === 'ru' ? 'Назад' : 'Précédent'}
             </button>
             <span className="text-xs font-semibold tabular-nums">{safeEventPage + 1} / {eventPageCount}</span>
-            <button type="button" disabled={safeEventPage >= eventPageCount - 1} onClick={() => setEventPage(p => Math.min(eventPageCount - 1, p + 1))}
+            <button type="button" disabled={safeEventPage >= eventPageCount - 1} onClick={() => changeEventPage(Math.min(eventPageCount - 1, safeEventPage + 1))}
               className="min-h-11 rounded-lg border border-[#D4AF37]/50 bg-white px-3 text-xs font-medium text-[#4A1D43] disabled:opacity-40">
               {language === 'ar' ? 'التالي' : language === 'en' ? 'Next' : language === 'it' ? 'Successivo' : language === 'ru' ? 'Далее' : 'Suivant'}
             </button>
