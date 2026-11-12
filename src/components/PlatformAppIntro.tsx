@@ -308,13 +308,13 @@ export default function PlatformAppIntro({ pathname, search = '', language, deta
   const copy = CONTENT[key][lang];
   const ui = UI[lang];
   if (detailsOnly) return (
-    <details className="group mt-2 rounded-lg border-t border-[#D4AF37]/30 pt-1">
-      <summary className="inline-flex min-h-9 cursor-pointer list-none items-center gap-1.5 rounded-md text-xs font-semibold text-[#A17D36] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B99143] [&::-webkit-details-marker]:hidden">
+    <details className="group relative z-10 mt-2 w-full rounded-lg border border-[#D8C59C] bg-[#FFF9EC] px-3 py-2 text-[#45243A]">
+      <summary className="inline-flex min-h-9 cursor-pointer list-none items-center gap-1.5 rounded-md text-xs font-semibold text-[#785823] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B99143] [&::-webkit-details-marker]:hidden">
         <span className="group-open:hidden">{ui.more}</span>
         <span className="hidden group-open:inline">{ui.less}</span>
         <ChevronDown aria-hidden="true" className="h-4 w-4 transition-transform group-open:rotate-180" />
       </summary>
-      <p className="mt-1 text-xs leading-5 text-inherit opacity-90">{copy.long}</p>
+      <p className="mt-1 border-t border-[#E8DAC2] pt-2 text-xs leading-5 text-[#45243A]">{copy.long}</p>
     </details>
   );
   return (
