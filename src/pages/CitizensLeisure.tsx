@@ -11,6 +11,8 @@ import LeisureEventProposalForm from '../components/LeisureEventProposalForm';
 import { SECTEURS_CULTURE } from '../lib/cultureEventCategories';
 import MeilleursSection from '../components/MeilleursSection';
 import { SEOHead } from '../components/SEOHead';
+import { isPlatformAppMode } from '../lib/platformAppMode';
+import { DALIL_MASCOT_IMAGE } from '../lib/dalilMascotImage';
 
 const GOUVERNORATS_TUNISIE = [
   'Tunis',
@@ -120,6 +122,9 @@ interface Evenement {
 
 export default function CitizensLeisure() {
   const { language } = useLanguage();
+  const inPlatformApp = isPlatformAppMode();
+  const [appSection, setAppSection] = useState<'recommended' | 'agenda' | 'events'>('events');
+  const [eventPage, setEventPage] = useState(0);
 
   const url = new URL(window.location.href);
   const qParam = (url.searchParams.get('q') || '').trim();
@@ -656,6 +661,14 @@ export default function CitizensLeisure() {
     return eventTypeLabels[language]?.[type] || type;
   };
 
+  const EVENT_PAGE_SIZE = 10;
+  const eventPageCount = Math.max(1, Math.ceil(evenements.length / EVENT_PAGE_SIZE));
+  const safeEventPage = Math.min(eventPage, eventPageCount - 1);
+  const pagedEvents = inPlatformApp
+    ? evenements.slice(safeEventPage * EVENT_PAGE_SIZE, (safeEventPage + 1) * EVENT_PAGE_SIZE)
+    : evenements;
+  useEffect(() => setEventPage(0), [selectedLocation, selectedTemporalite, selectedPrice, searchQuery, selectedActivityType]);
+
   const scrollCarousel = (direction: 'left' | 'right') => {
     if (carouselRef.current) {
       const scrollAmount = 320;
@@ -672,7 +685,33 @@ export default function CitizensLeisure() {
       dir={language === 'ar' ? 'rtl' : 'ltr'}
       style={language === 'ar' ? { fontFamily: "'Amiri', 'Cairo', 'Tajawal', serif" } : {}}
     >
-      <div className="mx-auto max-w-7xl px-4 pt-5">
+      {inPlatformApp && <section className="mx-3 mt-2 rounded-xl border border-[#D4AF37]/45 bg-[#4A1D43] px-3 py-3 text-white">
+        <div className="flex items-center gap-3">
+          <div className="min-w-0 flex-1">
+            <h1 className="font-serif text-xl font-medium text-[#F5DFAC]">{t.title}</h1>
+            <p className="mt-1 line-clamp-3 text-xs leading-5 text-white/90">{t.subtitle}</p>
+          </div>
+          <img src={DALIL_MASCOT_IMAGE} alt="" aria-hidden="true" loading="lazy" decoding="async"
+            className="h-[78px] w-[70px] shrink-0 rounded-lg border border-[#D4AF37]/40 bg-white object-contain" />
+        </div>
+        <nav aria-label={t.title} className="mt-3 grid grid-cols-3 gap-2">
+          {([
+            { id: 'events' as const, fr: 'Événements', ar: 'التظاهرات', en: 'Events', it: 'Eventi', ru: 'События', icon: '📅' },
+            { id: 'recommended' as const, fr: 'Adresses recommandées', ar: 'أماكن مقترحة', en: 'Recommended', it: 'Consigliati', ru: 'Рекомендуют', icon: '⭐' },
+            { id: 'agenda' as const, fr: 'Agenda', ar: 'البرنامج', en: 'Agenda', it: 'Agenda', ru: 'Афиша', icon: '🎟️' },
+          ]).map(item => (
+            <button key={item.id} type="button" aria-pressed={appSection === item.id}
+              onClick={() => setAppSection(item.id)}
+              className={`min-h-14 rounded-lg border px-1.5 py-2 text-center text-[11px] leading-4 ${appSection === item.id
+                ? 'border-[#D4AF37] bg-[#F5DFAC] font-semibold text-[#4A1D43]'
+                : 'border-[#D4AF37]/45 bg-white/10 font-medium text-white'}`}>
+              <span aria-hidden="true" className="mb-1 block text-lg">{item.icon}</span>
+              {item[language as 'fr' | 'ar' | 'en' | 'it' | 'ru'] || item.fr}
+            </button>
+          ))}
+        </nav>
+      </section>}
+      <div className={`${inPlatformApp ? 'hidden' : ''} mx-auto max-w-7xl px-4 pt-5`}>
         <a href="/citizens/tourism/guide/fetes-evenements" className="flex items-center justify-between gap-4 rounded-xl border border-[#D4AF37] bg-white p-4 text-[#4A1D43] shadow-sm hover:bg-amber-50">
           <span><strong className="block">🎨 Festivals culturels de Tunisie</strong><span className="mt-1 block text-sm">Découvrez les festivals régionaux et leur patrimoine, même hors des dates de l'agenda.</span></span>
           <span className="shrink-0 text-sm font-semibold">Voir les festivals →</span>
@@ -706,7 +745,7 @@ export default function CitizensLeisure() {
         currentPath="/citizens/leisure"
       />
       {/* Premium Header Section avec Image Drapeau Tunisien */}
-      <div className="relative py-6 overflow-hidden" style={{ borderBottom: '2px solid #D4AF37' }}>
+      <div className={`${inPlatformApp ? 'hidden' : ''} relative py-6 overflow-hidden`} style={{ borderBottom: '2px solid #D4AF37' }}>
         {/* Image de fond - Drapeau Tunisien */}
         <div className="absolute inset-0">
           <img
@@ -759,7 +798,7 @@ export default function CitizensLeisure() {
         </div>
       </div>
 
-      <section className="px-4 py-8 bg-white">
+      <section className={`${inPlatformApp && appSection !== 'recommended' ? 'hidden' : ''} ${inPlatformApp ? 'bg-white px-2 py-3' : 'px-4 py-8 bg-white'}`}>
         <div className="max-w-5xl mx-auto">
           <MeilleursSection
             secteurLabel={t.sector}
@@ -775,7 +814,7 @@ export default function CitizensLeisure() {
       </section>
 
       {/* Premium Agenda Cards - 3 Columns (hors header, sur fond beige) */}
-      <div className="bg-[#fcfaf5] py-6 border-b border-[#D4AF37]/30">
+      <div className={`${inPlatformApp && appSection !== 'agenda' ? 'hidden' : ''} ${inPlatformApp ? 'bg-[#fcfaf5] px-2 py-3' : 'bg-[#fcfaf5] py-6 border-b border-[#D4AF37]/30'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* CARTE 1 - L'Hebdo (Affinée) */}
@@ -958,7 +997,7 @@ export default function CitizensLeisure() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className={`${inPlatformApp && appSection !== 'events' ? 'hidden' : ''} max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ${inPlatformApp ? 'py-3' : 'py-8'}`}>
         {/* Bouton Proposer un événement */}
         <div className="mb-6 text-center">
           <button
@@ -1193,7 +1232,7 @@ export default function CitizensLeisure() {
                 <p className="text-sm text-gray-400 mt-2">{t.modifyFilters}</p>
               </div>
             ) : (
-              evenements.map((event) => (
+              pagedEvents.map((event) => (
                 <EventCard
                   key={event.id}
                   id={event.id}
@@ -1213,6 +1252,19 @@ export default function CitizensLeisure() {
               ))
             )}
           </div>
+        )}
+        {inPlatformApp && !loading && eventPageCount > 1 && (
+          <nav aria-label="Pagination événements" className="mt-5 flex items-center justify-center gap-3 border-t border-[#D4AF37]/30 pt-3">
+            <button type="button" disabled={safeEventPage === 0} onClick={() => setEventPage(p => Math.max(0, p - 1))}
+              className="min-h-11 rounded-lg border border-[#D4AF37]/50 bg-white px-3 text-xs font-medium text-[#4A1D43] disabled:opacity-40">
+              {language === 'ar' ? 'السابق' : language === 'en' ? 'Previous' : language === 'it' ? 'Precedente' : language === 'ru' ? 'Назад' : 'Précédent'}
+            </button>
+            <span className="text-xs font-semibold tabular-nums">{safeEventPage + 1} / {eventPageCount}</span>
+            <button type="button" disabled={safeEventPage >= eventPageCount - 1} onClick={() => setEventPage(p => Math.min(eventPageCount - 1, p + 1))}
+              className="min-h-11 rounded-lg border border-[#D4AF37]/50 bg-white px-3 text-xs font-medium text-[#4A1D43] disabled:opacity-40">
+              {language === 'ar' ? 'التالي' : language === 'en' ? 'Next' : language === 'it' ? 'Successivo' : language === 'ru' ? 'Далее' : 'Suivant'}
+            </button>
+          </nav>
         )}
       </div>
 
