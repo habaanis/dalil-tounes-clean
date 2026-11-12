@@ -106,8 +106,20 @@ export default function PlatformAppShell({ children }: { children: ReactNode }) 
         {location.pathname !== '/' && <div className="px-3 pt-2">
           <button type="button" onClick={() => {
             const index = (window.history.state as { idx?: number } | null)?.idx;
-            if (typeof index === 'number' && index > 0) navigate(-1);
-            else navigate('/', { replace: true });
+            if (typeof index === 'number' && index > 0) {
+              navigate(-1);
+            } else {
+              // A directly opened preview has no in-app history.
+              // Return to the logical parent rather than the homepage.
+              const path = location.pathname;
+              const fallback = path === '/citizens' ? '/'
+                : path.startsWith('/citizens/') ? '/citizens'
+                : path === '/education' ? '/citizens'
+                : path === '/recherche' && new URLSearchParams(location.search).get('categorie')?.startsWith('shop:')
+                  ? '/citizens/shops'
+                : '/';
+              navigate(fallback, { replace: true });
+            }
           }} className="inline-flex min-h-11 items-center gap-2 rounded-lg px-2 text-sm font-medium text-[#45243A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A17D36]" aria-label={copy.back}>
             <ArrowLeft className={`h-4 w-4 ${rtl ? 'rotate-180' : ''}`} aria-hidden="true" />
             {copy.back}
