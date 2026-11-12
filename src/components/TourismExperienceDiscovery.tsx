@@ -73,7 +73,7 @@ function businessPhoto(value: string | null) {
   return parseImageUrls(value).find(url => /^https?:\/\//i.test(url)) || null;
 }
 
-const PAGE_SIZE = 6;
+const PAGE_SIZE = 4;
 // Une carte classée « tourisme & expatriation » n'est pas automatiquement une expérience.
 function isLocalExperience(item: LocalExperience): boolean {
   const name = (item.nom || '').toLocaleLowerCase('fr');
