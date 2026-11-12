@@ -119,6 +119,7 @@ export const BusinessCard = ({ business, onClick, showGoogleRating = true }: Bus
           description_ar={language === 'ar' ? business.description_ar || null : null}
           showGoogleRating={showGoogleRating}
           showDetailsLink={false}
+          onOpen={isPlatformAppMode() ? onClick : undefined}
           googleRating={business['Note Google Globale'] ?? business.note_google}
           googleReviewCount={business['Compteur Avis Google'] ?? business.nombre_avis}
         />
