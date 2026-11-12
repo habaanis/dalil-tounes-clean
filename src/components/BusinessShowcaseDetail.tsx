@@ -98,7 +98,8 @@ export default function BusinessShowcaseDetail() {
     [business?.statut_abonnement, location.search],
   );
 
-  useViewTracking(tier === 'gratuit' ? business?.id : undefined);
+  const hasPublishedCv = business?.cv_business_status?.toLowerCase() === 'published';
+  useViewTracking(tier === 'gratuit' && !hasPublishedCv ? business?.id : undefined);
 
   useEffect(() => {
     let cancelled = false;
@@ -232,7 +233,9 @@ export default function BusinessShowcaseDetail() {
     return <BusinessShowcaseLienoraEnhanced />;
   }
 
-  if (tier !== 'gratuit') {
+  // A truly published CV must open as a CV even when its legacy
+  // subscription label still says "Gratuit". Do not mutate that label.
+  if (tier !== 'gratuit' || hasPublishedCv) {
     return <><BusinessShowcaseLienoraEnhanced /><VisitBeforeTravelAdvice business={business} language={language} /></>;
   }
 
