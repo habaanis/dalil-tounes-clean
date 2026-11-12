@@ -181,7 +181,7 @@ export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
         </section>
       </>}
       <section
-        className={`${inPlatformApp ? 'hidden' : ''} relative w-full overflow-hidden rounded-b-2xl shadow-md min-h-[220px] bg-cover`
+        className={`${inPlatformApp ? 'hidden' : ''} relative w-full overflow-hidden rounded-b-2xl shadow-md min-h-[220px] bg-cover`}
         style={{
           backgroundImage: 'linear-gradient(to top, rgba(74, 29, 67, 0.8), rgba(74, 29, 67, 0.3), transparent), url(/images/cat_magasin.jpg.jpg)',
           backgroundSize: 'cover',
