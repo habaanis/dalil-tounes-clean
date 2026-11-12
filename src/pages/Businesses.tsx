@@ -1,5 +1,6 @@
 import { applyCertificationFilter } from '../lib/businessCertification';
 import { isPlatformAppMode } from '../lib/platformAppMode';
+import { getShopFilterId, getShopFilterLabel, matchesShopFilter, SHOP_PAGE } from '../lib/shopFilters';
 import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
@@ -983,6 +984,7 @@ export const Businesses = ({
       setSearching(false);
     }, 10000);
     try {
+      const shopFilter = inPlatformApp ? getShopFilterId(selectedCategory) : null;
       let query = supabase
         .from(Tables.ENTREPRISE)
         .select(ENTREPRISE_SELECT_FIELDS)
@@ -994,6 +996,10 @@ export const Businesses = ({
         .order('"Compteur Avis Google"', { ascending: false, nullsFirst: false })
         .order('nom', { ascending: true })
         .limit(300);
+
+      // The shop buttons use the existing page assignment + Airtable categories.
+      // They must not search for a generic word among all businesses.
+      if (shopFilter) query = query.contains('liste_pages', [SHOP_PAGE]);
 
       if (selectedBusinessId) {
         console.log(`[DEBUG] Filtre ID entreprise: "${selectedBusinessId}"`);
@@ -1031,7 +1037,7 @@ export const Businesses = ({
       } else if (!selectedBusinessId && selectedCategory === 'immobilier') {
         // La catégorie métier est un tableau; ne pas filtrer uniquement par la sous-catégorie texte.
         query = query.contains('categorie', ['Immobilier']);
-      } else if (!selectedBusinessId && selectedCategory) {
+      } else if (!selectedBusinessId && selectedCategory && !shopFilter) {
         console.log(`[DEBUG] Filtre Catégorie: "${selectedCategory}"`);
         query = query.ilike('sous_categories_texte', `%${selectedCategory}%`);
       }
@@ -1084,7 +1090,10 @@ export const Businesses = ({
         console.log('[DEBUG] item.nom brut (toutes entreprises):', (data as any[]).map((d: any) => d.nom));
       }
 
-      let mappedData = dedupeByAirtableId((data || []) as { id: string; id_airtable?: string | null }[]).map((item: any) => ({
+      const shopRows = shopFilter
+        ? (data || []).filter((row: any) => matchesShopFilter(row, shopFilter))
+        : (data || []);
+      let mappedData = dedupeByAirtableId(shopRows as { id: string; id_airtable?: string | null }[]).map((item: any) => ({
         id: item.id,
         name: extractFrenchName(item.nom),
         category: getCategoryLabel(item),
@@ -1571,7 +1580,9 @@ export const Businesses = ({
             <div className="mx-auto max-w-7xl px-4">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-medium text-[#4A1D43]">
-                  {hasActiveSearch ? pageT.results.searchResults : pageT.results.featured}
+                  {inPlatformApp && getShopFilterId(selectedCategory)
+                    ? getShopFilterLabel(getShopFilterId(selectedCategory)!, language)
+                    : hasActiveSearch ? pageT.results.searchResults : pageT.results.featured}
                   <span className="ms-2 text-sm text-gray-500 font-normal">
                     ({hasActiveSearch ? filteredBusinesses.length : Math.min(3, filteredBusinesses.length)} {filteredBusinesses.length > 1 ? pageT.results.businessPlural : pageT.results.businessSingular})
                   </span>
