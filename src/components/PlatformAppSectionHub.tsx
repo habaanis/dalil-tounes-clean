@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import { ChevronDown } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
-import PlatformAppIntro from './PlatformAppIntro';
 import { DALIL_MASCOT_IMAGE } from '../lib/dalilMascotImage';
 
 type Lang = 'fr' | 'ar' | 'en' | 'it' | 'ru';
@@ -118,7 +117,6 @@ export default function PlatformAppSectionHub({ kind }: { kind: Hub }) {
       <div className="min-w-0 flex-1">
         <h1 className="font-serif text-xl font-medium text-[#35172F]">{copy.titles[kind]}</h1>
         <p className="mt-1 text-xs leading-5 text-[#6A5B64]">{copy.intros[kind]}</p>
-        <PlatformAppIntro pathname={kind === 'citizens' ? '/citizens' : kind === 'tourism' ? '/citizens/tourism' : '/subscription'} language={lang} detailsOnly />
       </div>
       <img src={DALIL_MASCOT_IMAGE} alt="" aria-hidden="true" decoding="async" loading="lazy"
         className="h-[76px] w-[70px] shrink-0 rounded-xl bg-white object-contain" />
