@@ -1,5 +1,6 @@
 import { applyCertificationFilter } from '../lib/businessCertification';
 import { isPlatformAppMode } from '../lib/platformAppMode';
+import { hasGreenBusinessCard } from '../lib/businessCardPresentation';
 import { getShopFilterId, getShopFilterLabel, matchesShopFilter, SHOP_PAGE } from '../lib/shopFilters';
 import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
@@ -359,8 +360,8 @@ function getBusinessSortScore(business: Record<string, any>): number {
 // Only the actual published status creates a green CV card in the platform app.
 // Use the same field for visibility priority, then existing review ranking.
 function compareAppBusinesses(a: Record<string, any>, b: Record<string, any>): number {
-  const aCv = String(a.cv_business_status || '').toLowerCase() === 'published';
-  const bCv = String(b.cv_business_status || '').toLowerCase() === 'published';
+  const aCv = hasGreenBusinessCard(a);
+  const bCv = hasGreenBusinessCard(b);
   if (aCv !== bCv) return bCv ? 1 : -1;
   const aTrusted = ratingValue(a) >= 4 && reviewCount(a) >= 5;
   const bTrusted = ratingValue(b) >= 4 && reviewCount(b) >= 5;
@@ -424,9 +425,12 @@ export const Businesses = ({
   const [filterStatutCarte, setFilterStatutCarte] = useState<'' | 'certifie' | 'non_certifie'>('');
   const [availableCategories, setAvailableCategories] = useState<Array<{id: string, label: string, count: number}>>([]);
   const [selectedChipCategories, setSelectedChipCategories] = useState<string[]>([]);
+  const [resultPage, setResultPage] = useState(0);
   const [businessActivitiesByCompany, setBusinessActivitiesByCompany] = useState<Record<string, BusinessActivity[]>>({});
 
   const resultsRef = useRef<HTMLDivElement>(null);
+  // Reset pagination for every new search or category selection.
+  useEffect(() => setResultPage(0), [searchTerm, selectedCity, selectedCategory, pageCategorie, selectedChipCategories, filterPremium, filterCommerceLocal, filterStatutCarte]);
 
   // Protection anti-blocage : forcer arrêt du loading après 5s
   useEffect(() => {
@@ -1291,6 +1295,13 @@ export const Businesses = ({
   const categories = Array.isArray(businesses) ? [...new Set(businesses.map((b) => b.category).filter(Boolean))].sort() : [];
 
   const filteredBusinesses = Array.isArray(chipFilteredBusinesses) ? chipFilteredBusinesses : [];
+  // The platform app uses 10 cards per page instead of an endless scroll.
+  const APP_RESULTS_PER_PAGE = 10;
+  const resultPageCount = Math.max(1, Math.ceil(filteredBusinesses.length / APP_RESULTS_PER_PAGE));
+  const safeResultPage = Math.min(resultPage, resultPageCount - 1);
+  const displayedBusinesses = inPlatformApp
+    ? filteredBusinesses.slice(safeResultPage * APP_RESULTS_PER_PAGE, (safeResultPage + 1) * APP_RESULTS_PER_PAGE)
+    : filteredBusinesses.slice(0, hasActiveSearch ? filteredBusinesses.length : 3);
 
   const businessListItems = Array.isArray(businesses) ? businesses.slice(0, 20).map(business => ({
     name: business.name || pageT.seo.unnamedBusiness,
@@ -1630,7 +1641,7 @@ export const Businesses = ({
                 )}
               </div>
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
-                {Array.isArray(filteredBusinesses) && filteredBusinesses.slice(0, hasActiveSearch ? filteredBusinesses.length : 3).map((business) => {
+                {Array.isArray(displayedBusinesses) && displayedBusinesses.map((business) => {
                   if (!business || !business.id) return null;
 
                   return (
@@ -1667,8 +1678,23 @@ export const Businesses = ({
                   );
                 })}
               </div>
+              {inPlatformApp && resultPageCount > 1 && (
+                <nav aria-label="Pagination des entreprises" className="mt-6 flex flex-wrap items-center justify-center gap-2 border-t border-[#E2D3B5] pt-4">
+                  <button type="button" disabled={safeResultPage === 0}
+                    onClick={() => { setResultPage(p => Math.max(0, p - 1)); resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
+                    className="min-h-11 rounded-lg border border-[#D4AF37]/60 bg-white px-3 text-xs font-semibold text-[#4A1D43] disabled:opacity-40">
+                    {language === 'ar' ? 'السابق' : language === 'en' ? 'Previous' : language === 'it' ? 'Precedente' : language === 'ru' ? 'Назад' : 'Précédent'}
+                  </button>
+                  <span className="px-2 text-xs font-medium text-[#4A1D43]">{safeResultPage + 1} / {resultPageCount}</span>
+                  <button type="button" disabled={safeResultPage >= resultPageCount - 1}
+                    onClick={() => { setResultPage(p => Math.min(resultPageCount - 1, p + 1)); resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
+                    className="min-h-11 rounded-lg border border-[#D4AF37]/60 bg-white px-3 text-xs font-semibold text-[#4A1D43] disabled:opacity-40">
+                    {language === 'ar' ? 'التالي' : language === 'en' ? 'Next' : language === 'it' ? 'Successivo' : language === 'ru' ? 'Далее' : 'Suivant'}
+                  </button>
+                </nav>
+              )}
 
-              {!hasActiveSearch && filteredBusinesses.length > 3 && (
+              {!hasActiveSearch && !inPlatformApp && filteredBusinesses.length > 3 && (
                 <div className="mt-6 text-center">
                   <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#D4AF37]/10 rounded-lg text-xs text-[#4A1D43]" style={{ border: '1px solid #D4AF37' }}>
                     <Search className="w-4 h-4" />
