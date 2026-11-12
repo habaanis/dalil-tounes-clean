@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Star, MapPin, ArrowRight, BookOpen, Search, Trophy, Building2 } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
@@ -273,6 +273,11 @@ export default function MeilleursSection({
   const [loadingTop, setLoadingTop] = useState(true);
   const [loadingAll, setLoadingAll] = useState(true);
   const [page, setPage] = useState(0);
+  const listSectionRef = useRef<HTMLElement>(null);
+  const changePage = (nextPage: number) => {
+    setPage(nextPage);
+    if (inPlatformApp) window.setTimeout(() => listSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 30);
+  };
 
   useEffect(() => {
     function parseRating(raw: unknown): number {
@@ -479,7 +484,7 @@ export default function MeilleursSection({
 
       {/* === Section 2 : Tous les établissements === */}
       {(loadingAll || allItems.length > 0) && (
-        <section className="max-w-7xl mx-auto px-4">
+        <section ref={listSectionRef} className="max-w-7xl mx-auto scroll-mt-24 px-4">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center">
@@ -547,7 +552,7 @@ export default function MeilleursSection({
                   {useGoogleRecommendationCriteria && (
                     <button
                       type="button"
-                      onClick={() => setPage((current) => Math.max(0, current - 1))}
+                      onClick={() => changePage(Math.max(0, page - 1))}
                       disabled={page === 0}
                       className="min-h-9 rounded-lg border border-gray-200 bg-white px-3 text-xs font-medium text-gray-700 transition-all hover:border-[#D4AF37] hover:text-[#D4AF37] disabled:cursor-not-allowed disabled:opacity-40"
                     >
@@ -558,7 +563,7 @@ export default function MeilleursSection({
                     <button
                       key={item}
                       type="button"
-                      onClick={() => setPage(item)}
+                      onClick={() => changePage(item)}
                       aria-current={item === page ? 'page' : undefined}
                       className={`w-9 h-9 rounded-lg text-sm font-medium transition-all ${
                         item === page
@@ -574,7 +579,7 @@ export default function MeilleursSection({
                   {useGoogleRecommendationCriteria && (
                     <button
                       type="button"
-                      onClick={() => setPage((current) => Math.min(totalPages - 1, current + 1))}
+                      onClick={() => changePage(Math.min(totalPages - 1, page + 1))}
                       disabled={page === totalPages - 1}
                       className="min-h-9 rounded-lg border border-gray-200 bg-white px-3 text-xs font-medium text-gray-700 transition-all hover:border-[#D4AF37] hover:text-[#D4AF37] disabled:cursor-not-allowed disabled:opacity-40"
                     >
