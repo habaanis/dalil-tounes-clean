@@ -3,7 +3,6 @@ import { DALIL_MASCOT_IMAGE } from '../lib/dalilMascotImage';
 import SearchBar from './SearchBar';
 import { Building2, ShieldCheck, Star } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
-import PlatformAppIntro from './PlatformAppIntro';
 import PlatformAppHelp from './PlatformAppHelp';
 
 type Lang = 'fr' | 'ar' | 'en' | 'it' | 'ru';
@@ -90,7 +89,6 @@ export default function PlatformAppHome({ totalCount, legacyCertifiedCount, reco
           <p className="text-xs font-semibold tracking-wide text-[#9D7731]">🇹🇳 DALIL TOUNES</p>
           <h1 className="mt-1 font-serif text-xl font-medium leading-tight text-[#35172F]">{t.headline}</h1>
           <p className="mt-1 text-xs leading-5 text-[#665565]">{t.intro}</p>
-          <PlatformAppIntro pathname="/" language={lang} detailsOnly />
         </div>
         <img src={DALIL_MASCOT_IMAGE} alt="Mascotte Dalil Tounes"
           className="h-[82px] w-[76px] shrink-0 rounded-xl border border-[#D4AF37]/35 bg-white object-contain" loading="lazy" decoding="async" />
