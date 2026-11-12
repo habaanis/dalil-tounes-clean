@@ -5,6 +5,7 @@ import SearchBar from './components/SearchBar';
 import LanguageSelector from './components/LanguageSelector';
 import { getCvPaletteTheme } from './lib/cvPalette';
 import { isDedicatedClientHostname } from './lib/clientAppUrl';
+import { isPlatformAppMode } from './lib/platformAppMode';
 
 if (typeof window !== 'undefined') {
   (window as any).__DALIL_SEARCHBAR_STATIC__ = SearchBar;
@@ -182,6 +183,16 @@ const PageLoader = () => (
   </div>
 );
 
+// Platform PWA should never briefly show the website's flag hero on route changes.
+const PlatformRouteLoader = () => (
+  <div aria-hidden="true" className="min-h-[130px] bg-[#FFFCF7] px-4 pt-4">
+    <div className="mx-auto max-w-xl space-y-3">
+      <div className="h-4 w-32 rounded-md bg-[#EDE4D4] animate-pulse" />
+      <div className="h-16 rounded-xl border border-[#EDE4D4] bg-[#FFFAF0] animate-pulse" />
+    </div>
+  </div>
+);
+
 const ClientPageLoader = () => (
   <div
     className="fixed inset-0 z-[10000]"
@@ -225,12 +236,13 @@ function AppRouter() {
   const location = useLocation();
   const isClientAppRoute = isDedicatedClientHostname(window.location.hostname)
     && window.location.pathname !== '/';
+  const inPlatformApp = !isClientAppRoute && isPlatformAppMode();
 
   return (
     <Layout>
       <ScrollToTop />
       <RouteLoadBoundary routeKey={location.pathname}>
-      <Suspense fallback={isClientAppRoute ? <ClientPageLoader /> : <PageLoader />}>
+      <Suspense fallback={isClientAppRoute ? <ClientPageLoader /> : inPlatformApp ? <PlatformRouteLoader /> : <PageLoader />}>
         <Routes>
           <Route path="/" element={<PlatformHome />} />
           <Route path="/apercu-ouverture-prestige" element={<PrestigeOpeningPreview />} />
