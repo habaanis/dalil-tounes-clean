@@ -7,7 +7,6 @@ const SearchBar = lazy(() => import('../components/SearchBar'));
 const MeilleursSection = lazy(() => import('../components/MeilleursSection'));
 import { SEOHead } from '../components/SEOHead';
 import { isPlatformAppMode } from '../lib/platformAppMode';
-import PlatformAppIntro from '../components/PlatformAppIntro';
 import { DALIL_MASCOT_IMAGE } from '../lib/dalilMascotImage';
 
 type Lang = 'fr' | 'ar' | 'en' | 'it' | 'ru';
@@ -369,19 +368,9 @@ export default function CitizensServicesLocalized() {
         <SEOHead title={labels.seoTitle} description={c.intro}
           canonical="https://dalil-tounes.com/citizens/services" currentPath="/citizens/services" />
 
-        <section className="relative mx-3 mt-2 overflow-hidden rounded-xl border border-[#D4AF37]/50 bg-[#4A1D43]">
-          <img src={getStructureImageUrl('/images/service-social.jpg')} alt="" aria-hidden="true"
-            className="absolute inset-0 h-full w-full object-cover opacity-25" loading="lazy" decoding="async" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#4A1D43]/95 to-[#4A1D43]/65" />
-          <div className="relative flex min-h-[122px] items-center gap-3 px-3 py-3">
-            <div className="min-w-0 flex-1">
-              <h1 className="font-serif text-xl font-medium leading-6 text-[#F8E9C9]">{c.title}</h1>
-              <p className="mt-1 line-clamp-3 text-xs leading-5 text-white/90">{c.intro}</p>
-              <PlatformAppIntro pathname="/citizens/services" language={lang} detailsOnly />
-            </div>
-            <img src={DALIL_MASCOT_IMAGE} alt="Mascotte Dalil Tounes"
-              className="h-[94px] w-[90px] shrink-0 rounded-xl border border-[#D4AF37]/40 bg-white/95 object-contain" loading="lazy" decoding="async" />
-          </div>
+        <section className="mx-3 mt-2 rounded-xl border border-[#D4AF37]/45 bg-[#FFFDF8] px-3 py-3">
+          <h1 className="font-serif text-xl font-medium leading-6 text-[#4A1D43]">{c.title}</h1>
+          <p className="mt-1 text-xs leading-5 text-[#665565]">{c.intro}</p>
         </section>
 
         <section className="relative z-20 mx-3 mt-3 rounded-xl border border-[#D4AF37]/40 bg-white p-3">
