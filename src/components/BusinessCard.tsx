@@ -1,5 +1,6 @@
 import { isCertifiedBusiness, CERTIFIED_LABEL } from '../lib/businessCertification';
 import { isPlatformAppMode } from '../lib/platformAppMode';
+import { hasGreenBusinessCard } from '../lib/businessCardPresentation';
 import GratuitCard from './GratuitCard';
 import BusinessSearchCardV2 from './BusinessSearchCardV2';
 import { useLanguage } from '../context/LanguageContext';
@@ -91,9 +92,9 @@ export const BusinessCard = ({ business, onClick, showGoogleRating = true }: Bus
   const allKeywords = getAllKeywords(normalizedCategory);
 
   const tier = isPlatformAppMode()
-    // In the platform app the two approved formats are: published CV (green),
-    // or Essential (free). A paid plan alone never creates a published CV.
-    ? (isCertifiedBusiness(business) ? 'premium' : 'gratuit')
+    // Published CVs and verified legacy premium cards share the same green
+    // design. The certification badge still requires an actually published CV.
+    ? (hasGreenBusinessCard(business) ? 'premium' : 'gratuit')
     : mapSubscriptionToTier({
         statut_abonnement: business.statut_abonnement,
         niveau_priorite_abonnement: business.niveau_priorite_abonnement,
