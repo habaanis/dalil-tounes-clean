@@ -3,6 +3,8 @@ import { DALIL_MASCOT_IMAGE } from '../lib/dalilMascotImage';
 import SearchBar from './SearchBar';
 import { Building2, ShieldCheck, Star } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import PlatformAppIntro from './PlatformAppIntro';
+import PlatformAppHelp from './PlatformAppHelp';
 
 type Lang = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 const COPY: Record<Lang, {
@@ -88,20 +90,22 @@ export default function PlatformAppHome({ totalCount, legacyCertifiedCount, reco
           <p className="text-xs font-semibold tracking-wide text-[#9D7731]">🇹🇳 DALIL TOUNES</p>
           <h1 className="mt-1 font-serif text-xl font-medium leading-tight text-[#35172F]">{t.headline}</h1>
           <p className="mt-1 text-xs leading-5 text-[#665565]">{t.intro}</p>
+          <PlatformAppIntro pathname="/" language={lang} detailsOnly />
         </div>
         <img src={DALIL_MASCOT_IMAGE} alt="Mascotte Dalil Tounes"
           className="h-[82px] w-[76px] shrink-0 rounded-xl border border-[#D4AF37]/35 bg-white object-contain" loading="lazy" decoding="async" />
       </div>
+    </section>
+    <section className="relative z-10 rounded-2xl border border-[#D4AF37]/40 bg-white p-3" aria-label={t.search}>
+      <h2 className="mb-2 font-serif text-base font-medium text-[#35172F]">{t.search}</h2>
+      <SearchBar scope="global" autoSearch resultMode="redirectToResults" />
     </section>
     <section className="rounded-xl border border-[#D4AF37]/30 bg-white px-3 py-3 text-center" aria-label="Dalil Tounes et CV professionnels">
       <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-[#A17D36]">{lang === 'fr' ? 'Vous êtes professionnel ?' : lang === 'ar' ? 'عندك مؤسسة؟' : lang === 'en' ? 'Are you a professional?' : lang === 'it' ? 'Sei un professionista?' : 'Вы профессионал?'}</p>
       <p className="text-sm font-medium leading-5 text-[#45243A]">{lang === 'ar' ? 'خلّي مؤسستك موجودة في دليل تونس.' : lang === 'en' ? 'Get listed on Dalil Tounes.' : lang === 'it' ? 'Fai conoscere la tua attività su Dalil Tounes.' : lang === 'ru' ? 'Разместите свою компанию на Dalil Tounes.' : 'Soyez répertorié sur Dalil Tounes.'}</p>
       <p className="mt-1 text-xs leading-5 text-[#76616A]">{lang === 'ar' ? 'أعطي نشاطك حضور أقوى مع CV Business أو CV Portfolio.' : lang === 'en' ? 'Give your business greater impact with a Business or Portfolio CV.' : lang === 'it' ? 'Dai più visibilità alla tua attività con CV Business o Portfolio.' : lang === 'ru' ? 'Покажите своё дело с CV Business или Portfolio.' : 'Donnez plus d’impact à votre activité grâce à votre CV Business ou Portfolio.'}</p>
     </section>
-    <section className="relative z-10 rounded-2xl border border-[#D4AF37]/40 bg-white p-3" aria-label={t.search}>
-      <h2 className="mb-2 font-serif text-base font-medium text-[#35172F]">{t.search}</h2>
-      <SearchBar scope="global" autoSearch resultMode="redirectToResults" />
-    </section>
+    <PlatformAppHelp language={lang} />
     <section aria-label={t.count(totalCount ?? '—')} className="rounded-xl border border-[#D8C59C] bg-[#FFFBF4] px-3 py-3 shadow-sm" aria-live="polite">
       <div className="flex items-start gap-2.5">
         <Building2 className="mt-0.5 h-4 w-4 shrink-0 text-[#9A793E]" aria-hidden="true" />
