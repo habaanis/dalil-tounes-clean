@@ -8,6 +8,7 @@ import SearchBar from '../components/SearchBar';
 import { SEOHead } from '../components/SEOHead';
 import { isPlatformAppMode } from '../lib/platformAppMode';
 import { DALIL_MASCOT_IMAGE } from '../lib/dalilMascotImage';
+import { getShopFilterLabel, type ShopFilterId } from '../lib/shopFilters';
 
 type PublicLanguage = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 
@@ -109,13 +110,13 @@ export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
   const isRTL = lang === 'ar';
   const inPlatformApp = isPlatformAppMode();
   const [showRecommended, setShowRecommended] = useState(false);
-  const shortcutCategories = [
-    { icon: '🛒', label: { fr: 'Alimentation', ar: 'مواد غذائية', en: 'Food shops', it: 'Alimentari', ru: 'Продукты' }, q: 'Alimentation' },
-    { icon: '👗', label: { fr: 'Mode & accessoires', ar: 'ملابس وإكسسوارات', en: 'Fashion & accessories', it: 'Moda e accessori', ru: 'Мода' }, q: 'Mode & Sport' },
-    { icon: '🏡', label: { fr: 'Maison & équipement', ar: 'المنزل والتجهيزات', en: 'Home & equipment', it: 'Casa e attrezzature', ru: 'Дом и товары' }, q: 'Maison & Équipement' },
-    { icon: '✂️', label: { fr: 'Beauté & coiffure', ar: 'الجمال والحلاقة', en: 'Beauty & hair', it: 'Bellezza e parrucchieri', ru: 'Красота' }, q: 'Beauté & Bien-être' },
-    { icon: '💐', label: { fr: 'Fleurs & cadeaux', ar: 'زهور وهدايا', en: 'Flowers & gifts', it: 'Fiori e regali', ru: 'Цветы и подарки' }, q: 'Fleuriste' },
-    { icon: '🏬', label: { fr: 'Tous les commerces', ar: 'جميع المتاجر', en: 'All shops', it: 'Tutti i negozi', ru: 'Все магазины' }, q: '' },
+  const shortcutCategories: Array<{ icon: string; id: ShopFilterId }> = [
+    { icon: '🛒', id: 'food' },
+    { icon: '👗', id: 'fashion' },
+    { icon: '🏡', id: 'home' },
+    { icon: '✂️', id: 'beauty' },
+    { icon: '💐', id: 'flowers' },
+    { icon: '🏬', id: 'all' },
   ];
 
   return (
@@ -151,9 +152,9 @@ export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
           </h2>
           <div className="grid grid-cols-2 gap-2">
             {shortcutCategories.map(item => (
-              <Link key={item.q} to={item.q ? `/recherche?q=${encodeURIComponent(item.q)}` : '/recherche'}
+              <Link key={item.id} to={`/recherche?categorie=${encodeURIComponent('shop:' + item.id)}`}
                 className="flex min-h-[68px] items-center gap-2 rounded-xl border border-[#E4D6B8] bg-white px-3 py-2 text-start text-xs font-medium leading-4 text-[#45243A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A17D36]">
-                <span aria-hidden="true" className="text-xl">{item.icon}</span><span>{item.label[lang]}</span>
+                <span aria-hidden="true" className="text-xl">{item.icon}</span><span>{getShopFilterLabel(item.id, lang)}</span>
               </Link>
             ))}
           </div>
