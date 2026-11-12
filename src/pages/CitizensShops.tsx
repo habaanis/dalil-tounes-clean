@@ -1,10 +1,13 @@
-import { ChevronRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { ChevronDown, ChevronRight } from 'lucide-react';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { scrollToWithOffsetDelayed } from '../lib/scrollUtils';
 import MeilleursSection from '../components/MeilleursSection';
 import { useLanguage } from '../context/LanguageContext';
 import SearchBar from '../components/SearchBar';
 import { SEOHead } from '../components/SEOHead';
+import { isPlatformAppMode } from '../lib/platformAppMode';
+import { DALIL_MASCOT_IMAGE } from '../lib/dalilMascotImage';
 
 type PublicLanguage = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 
@@ -104,6 +107,16 @@ export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as PublicLanguage;
   const t = copy[lang];
   const isRTL = lang === 'ar';
+  const inPlatformApp = isPlatformAppMode();
+  const [showRecommended, setShowRecommended] = useState(false);
+  const shortcutCategories = [
+    { icon: '🛒', label: { fr: 'Alimentation', ar: 'مواد غذائية', en: 'Food shops', it: 'Alimentari', ru: 'Продукты' }, q: 'Alimentation' },
+    { icon: '👗', label: { fr: 'Mode & accessoires', ar: 'ملابس وإكسسوارات', en: 'Fashion & accessories', it: 'Moda e accessori', ru: 'Мода' }, q: 'Mode & Sport' },
+    { icon: '🏡', label: { fr: 'Maison & équipement', ar: 'المنزل والتجهيزات', en: 'Home & equipment', it: 'Casa e attrezzature', ru: 'Дом и товары' }, q: 'Maison & Équipement' },
+    { icon: '✂️', label: { fr: 'Beauté & coiffure', ar: 'الجمال والحلاقة', en: 'Beauty & hair', it: 'Bellezza e parrucchieri', ru: 'Красота' }, q: 'Beauté & Bien-être' },
+    { icon: '💐', label: { fr: 'Fleurs & cadeaux', ar: 'زهور وهدايا', en: 'Flowers & gifts', it: 'Fiori e regali', ru: 'Цветы и подарки' }, q: 'Fleuriste' },
+    { icon: '🏬', label: { fr: 'Tous les commerces', ar: 'جميع المتاجر', en: 'All shops', it: 'Tutti i negozi', ru: 'Все магазины' }, q: '' },
+  ];
 
   return (
     <div className="public-surface min-h-screen bg-gradient-to-b from-white to-gray-50" dir={isRTL ? 'rtl' : 'ltr'}>
@@ -113,8 +126,62 @@ export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
         canonical="https://dalil-tounes.com/citizens/shops"
         currentPath="/citizens/shops"
       />
+      {inPlatformApp && <>
+        <section className="relative mx-3 mt-2 overflow-hidden rounded-xl border border-[#D4AF37]/50 bg-[#4A1D43]">
+          <div aria-hidden="true" className="absolute inset-0 bg-cover bg-center opacity-25" style={{ backgroundImage: "url('/images/cat_magasin.jpg.jpg')" }} />
+          <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-r from-[#4A1D43]/95 to-[#4A1D43]/70" />
+          <div className="relative flex min-h-[116px] items-center gap-3 px-3 py-3">
+            <div className="min-w-0 flex-1">
+              <h1 className="font-serif text-xl font-medium text-[#F5DFAC]">{t.title}</h1>
+              <p className="mt-1 line-clamp-3 text-xs leading-5 text-white/90">{t.intro}</p>
+            </div>
+            <img src={DALIL_MASCOT_IMAGE} alt="" aria-hidden="true" loading="lazy" decoding="async"
+              className="h-[80px] w-[74px] shrink-0 rounded-xl border border-[#D4AF37]/40 bg-white/95 object-contain" />
+          </div>
+        </section>
+
+        <section className="relative z-20 mx-3 mt-3 rounded-xl border border-[#D4AF37]/40 bg-white p-3">
+          <SearchBar scope="magasin" intentEnabled={false} enabled resultMode="redirectToResults"
+            preferredTitle={t.preferredTitle} preferredSubtitle={t.preferredSubtitle} />
+        </section>
+
+        <nav className="mx-3 mt-4" aria-label={t.title}>
+          <h2 className="mb-2 font-serif text-base font-medium text-[#4A1D43]">
+            {lang === 'fr' ? 'Quel commerce recherchez-vous ?' : lang === 'ar' ? 'شنوة نوع المحل اللي تلوّج عليه؟' : lang === 'en' ? 'What type of shop?' : lang === 'it' ? 'Che negozio cerchi?' : 'Какой магазин вы ищете?'}
+          </h2>
+          <div className="grid grid-cols-2 gap-2">
+            {shortcutCategories.map(item => (
+              <Link key={item.q} to={item.q ? `/recherche?q=${encodeURIComponent(item.q)}` : '/recherche'}
+                className="flex min-h-[68px] items-center gap-2 rounded-xl border border-[#E4D6B8] bg-white px-3 py-2 text-start text-xs font-medium leading-4 text-[#45243A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A17D36]">
+                <span aria-hidden="true" className="text-xl">{item.icon}</span><span>{item.label[lang]}</span>
+              </Link>
+            ))}
+          </div>
+        </nav>
+
+        <section className="mx-3 mt-4 overflow-hidden rounded-xl border border-[#D4AF37]/45 bg-white">
+          <button type="button" onClick={() => setShowRecommended(v => !v)}
+            aria-expanded={showRecommended}
+            className="flex min-h-14 w-full items-center justify-between gap-3 px-3 py-2 text-start text-sm font-semibold text-[#4A1D43] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A17D36]">
+            <span>{t.recommended}</span><ChevronDown aria-hidden="true" className={`h-5 w-5 shrink-0 text-[#A17D36] transition-transform ${showRecommended ? 'rotate-180' : ''}`} />
+          </button>
+          {showRecommended && <div className="border-t border-[#E4D6B8] py-3">
+            <MeilleursSection
+              secteurLabel={t.sector}
+              listePage="commerces & magasins"
+              accentColor="#4A1D43"
+              sectionTitle={t.recommended}
+              useGoogleRecommendationCriteria
+              includeRecommendedInTotal={false}
+              allReferencedLabel={t.allReferenced}
+              searchOtherLabel={t.searchOther}
+              hideSearchCta
+            />
+          </div>}
+        </section>
+      </>}
       <section
-        className="relative w-full overflow-hidden rounded-b-2xl shadow-md min-h-[220px] bg-cover"
+        className={`${inPlatformApp ? 'hidden' : ''} relative w-full overflow-hidden rounded-b-2xl shadow-md min-h-[220px] bg-cover`
         style={{
           backgroundImage: 'linear-gradient(to top, rgba(74, 29, 67, 0.8), rgba(74, 29, 67, 0.3), transparent), url(/images/cat_magasin.jpg.jpg)',
           backgroundSize: 'cover',
@@ -127,7 +194,7 @@ export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
         </div>
       </section>
 
-      <section className="py-6 px-4 relative z-[9999]" style={{ overflow: 'visible' }}>
+      {!inPlatformApp && <section className="py-6 px-4 relative z-[9999]" style={{ overflow: 'visible' }}>
         <div className="max-w-5xl mx-auto" style={{ overflow: 'visible' }}>
           <div className="bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-[#D4AF37] p-2.5 md:p-3" style={{ overflow: 'visible' }}>
             <SearchBar
@@ -140,9 +207,9 @@ export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
             />
           </div>
         </div>
-      </section>
+      </section>}
 
-      <div className="max-w-5xl mx-auto px-4 py-8">
+      {!inPlatformApp && <div className="max-w-5xl mx-auto px-4 py-8">
         <div className="py-8">
           <MeilleursSection
             secteurLabel={t.sector}
@@ -176,7 +243,7 @@ export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
             </button>
           </div>
         </div>
-      </div>
+      </div>}
     </div>
   );
 }
