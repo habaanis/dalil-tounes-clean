@@ -7,6 +7,7 @@ import { useLanguage } from '../context/LanguageContext';
 import SearchBar from '../components/SearchBar';
 import { SEOHead } from '../components/SEOHead';
 import { isPlatformAppMode } from '../lib/platformAppMode';
+import PlatformAppIntro from '../components/PlatformAppIntro';
 import { DALIL_MASCOT_IMAGE } from '../lib/dalilMascotImage';
 import { getShopFilterLabel, type ShopFilterId } from '../lib/shopFilters';
 
@@ -135,6 +136,7 @@ export default function CitizensShops({ onNavigate }: CitizensShopsProps = {}) {
             <div className="min-w-0 flex-1">
               <h1 className="font-serif text-xl font-medium text-[#F5DFAC]">{t.title}</h1>
               <p className="mt-1 line-clamp-3 text-xs leading-5 text-white/90">{t.intro}</p>
+              <PlatformAppIntro pathname="/citizens/shops" language={lang} detailsOnly />
             </div>
             <img src={DALIL_MASCOT_IMAGE} alt="" aria-hidden="true" loading="lazy" decoding="async"
               className="h-[80px] w-[74px] shrink-0 rounded-xl border border-[#D4AF37]/40 bg-white/95 object-contain" />
