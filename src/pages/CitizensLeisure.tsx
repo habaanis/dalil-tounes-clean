@@ -851,6 +851,8 @@ export default function CitizensLeisure() {
             accentColor="#4A1D43"
             sectionTitle={inPlatformApp ? (language === 'ar' ? 'أماكن الترفيه الموصى بها من الحرفاء' : language === 'en' ? 'Leisure places recommended by customers' : 'Lieux de loisirs les plus recommandés par les clients') : t.recommended}
             useGoogleRecommendationCriteria
+            itemsPerPage={5}
+            unifiedRecommendedList
             includeRecommendedInTotal
             allReferencedLabel={t.allReferenced}
             searchOtherLabel={t.searchOther}
