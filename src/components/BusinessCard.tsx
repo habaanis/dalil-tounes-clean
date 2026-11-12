@@ -1,4 +1,5 @@
 import { isCertifiedBusiness, CERTIFIED_LABEL } from '../lib/businessCertification';
+import { isPlatformAppMode } from '../lib/platformAppMode';
 import GratuitCard from './GratuitCard';
 import BusinessSearchCardV2 from './BusinessSearchCardV2';
 import { useLanguage } from '../context/LanguageContext';
@@ -89,10 +90,14 @@ export const BusinessCard = ({ business, onClick, showGoogleRating = true }: Bus
   const translatedCategory = getCategory(mainCategory);
   const allKeywords = getAllKeywords(normalizedCategory);
 
-  const tier = mapSubscriptionToTier({
-    statut_abonnement: business.statut_abonnement,
-    niveau_priorite_abonnement: business.niveau_priorite_abonnement,
-  });
+  const tier = isPlatformAppMode()
+    // In the platform app the two approved formats are: published CV (green),
+    // or Essential (free). A paid plan alone never creates a published CV.
+    ? (isCertifiedBusiness(business) ? 'premium' : 'gratuit')
+    : mapSubscriptionToTier({
+        statut_abonnement: business.statut_abonnement,
+        niveau_priorite_abonnement: business.niveau_priorite_abonnement,
+      });
 
   if (tier === 'gratuit') {
     return (
