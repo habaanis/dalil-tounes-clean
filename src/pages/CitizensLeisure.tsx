@@ -126,6 +126,9 @@ export default function CitizensLeisure() {
   const inPlatformApp = isPlatformAppMode();
   const [appSection, setAppSection] = useState<'recommended' | 'agenda' | 'events'>('events');
   const [eventPage, setEventPage] = useState(0);
+  const [calendarYear, setCalendarYear] = useState('all');
+  const [calendarMonth, setCalendarMonth] = useState('all');
+  const [calendarPage, setCalendarPage] = useState(0);
   const [openedEvent, setOpenedEvent] = useState<Evenement | null>(null);
 
   const url = new URL(window.location.href);
@@ -671,6 +674,29 @@ export default function CitizensLeisure() {
     : evenements;
   useEffect(() => setEventPage(0), [selectedLocation, selectedTemporalite, selectedPrice, searchQuery, selectedActivityType]);
 
+  // The calendar has its own selection and pagination, independent of
+  // the event search. Offer only years and months with published future events.
+  const availableCalendarYears = Array.from(new Set(evenements
+    .map(event => new Date(event.date_debut).getFullYear())
+    .filter(year => Number.isFinite(year)))).sort((a, b) => a - b);
+  const availableCalendarMonths = Array.from(new Set(evenements
+    .filter(event => calendarYear === 'all' || String(new Date(event.date_debut).getFullYear()) === calendarYear)
+    .map(event => new Date(event.date_debut).getMonth())
+    .filter(month => Number.isInteger(month) && month >= 0 && month <= 11))).sort((a, b) => a - b);
+  const calendarEvents = evenements.filter(event => {
+    const date = new Date(event.date_debut);
+    if (Number.isNaN(date.getTime())) return false;
+    return (calendarYear === 'all' || String(date.getFullYear()) === calendarYear)
+      && (calendarMonth === 'all' || String(date.getMonth()) === calendarMonth);
+  });
+  const calendarPageCount = Math.max(1, Math.ceil(calendarEvents.length / EVENT_PAGE_SIZE));
+  const safeCalendarPage = Math.min(calendarPage, calendarPageCount - 1);
+  const pagedCalendarEvents = calendarEvents.slice(
+    safeCalendarPage * EVENT_PAGE_SIZE, (safeCalendarPage + 1) * EVENT_PAGE_SIZE
+  );
+  const calendarMonthLabel = (month: number) => new Date(2026, month, 1)
+    .toLocaleDateString(currentDateLocale, { month: 'long' });
+
   const scrollCarousel = (direction: 'left' | 'right') => {
     if (carouselRef.current) {
       const scrollAmount = 320;
@@ -828,26 +854,69 @@ export default function CitizensLeisure() {
 
       {/* Premium Agenda Cards - 3 Columns (hors header, sur fond beige) */}
       {inPlatformApp && appSection === 'agenda' && <section className="px-3 py-4">
-        <h2 className="font-serif text-lg font-medium text-[#421D3B]">{language === 'ar' ? 'رزنامة الفعاليات القادمة' : language === 'en' ? 'Upcoming events calendar' : 'Calendrier des événements à venir'}</h2>
-        <p className="mt-1 text-xs leading-5 text-[#756575]">{language === 'ar' ? 'الفعاليات المنشورة مرتبة حسب الشهر والتاريخ. انقر على أي فعالية للتفاصيل.' : language === 'en' ? 'All listed upcoming events, grouped by month. Open an event for details.' : 'Tous les événements à venir enregistrés, classés par mois et par date. Ouvrez une fiche pour les détails.'}</p>
+        <h2 className="font-serif text-lg font-medium text-[#421D3B]">{language === 'ar' ? 'رزنامة الفعاليات القادمة' : language === 'en' ? 'Upcoming events calendar' : language === 'it' ? 'Calendario dei prossimi eventi' : language === 'ru' ? 'Календарь предстоящих событий' : 'Calendrier des événements à venir'}</h2>
+        <p className="mt-1 text-xs leading-5 text-[#756575]">{language === 'ar' ? 'اختار السنة والشهر باش تلقى الفعالية مباشرة.' : language === 'en' ? 'Select a year and month to find events directly.' : language === 'it' ? 'Scegli anno e mese per trovare subito gli eventi.' : language === 'ru' ? 'Выберите год и месяц, чтобы быстро найти события.' : 'Choisissez une année et un mois pour trouver directement les événements.'}</p>
+
+        <div className="mt-3 rounded-xl border border-[#D7C5A3] bg-[#FFFBF3] p-3">
+          <div className="grid grid-cols-2 gap-2">
+            <label className="flex min-w-0 flex-col gap-1 text-xs font-semibold text-[#4A1D43]">
+              <span>{language === 'ar' ? 'السنة' : language === 'en' ? 'Year' : language === 'it' ? 'Anno' : language === 'ru' ? 'Год' : 'Année'}</span>
+              <select value={calendarYear} onChange={e => {
+                const nextYear = e.target.value;
+                setCalendarYear(nextYear);
+                setCalendarMonth('all');
+                setCalendarPage(0);
+              }}
+                className="min-h-11 w-full min-w-0 rounded-lg border border-[#C7B38D] bg-white px-2 text-sm font-medium text-[#4A1D43] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A17D36]">
+                <option value="all">{language === 'ar' ? 'كل السنوات' : language === 'en' ? 'All years' : language === 'it' ? 'Tutti gli anni' : language === 'ru' ? 'Все годы' : 'Toutes les années'}</option>
+                {availableCalendarYears.map(year => <option key={year} value={String(year)}>{year}</option>)}
+              </select>
+            </label>
+            <label className="flex min-w-0 flex-col gap-1 text-xs font-semibold text-[#4A1D43]">
+              <span>{language === 'ar' ? 'الشهر' : language === 'en' ? 'Month' : language === 'it' ? 'Mese' : language === 'ru' ? 'Месяц' : 'Mois'}</span>
+              <select value={calendarMonth} onChange={e => {
+                setCalendarMonth(e.target.value);
+                setCalendarPage(0);
+              }}
+                className="min-h-11 w-full min-w-0 rounded-lg border border-[#C7B38D] bg-white px-2 text-sm font-medium text-[#4A1D43] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A17D36]">
+                <option value="all">{language === 'ar' ? 'كل الشهور' : language === 'en' ? 'All months' : language === 'it' ? 'Tutti i mesi' : language === 'ru' ? 'Все месяцы' : 'Tous les mois'}</option>
+                {availableCalendarMonths.map(month => <option key={month} value={String(month)}>{calendarMonthLabel(month)}</option>)}
+              </select>
+            </label>
+          </div>
+          <div className="mt-3 flex items-center justify-between gap-2">
+            <p aria-live="polite" className="text-xs font-medium text-[#6D5A66]">
+              {calendarEvents.length} {language === 'ar' ? 'فعالية' : language === 'en' ? 'events' : language === 'it' ? 'eventi' : language === 'ru' ? 'событий' : calendarEvents.length > 1 ? 'événements' : 'événement'}
+            </p>
+            {(calendarYear !== 'all' || calendarMonth !== 'all') && <button type="button" onClick={() => {
+              setCalendarYear('all');
+              setCalendarMonth('all');
+              setCalendarPage(0);
+            }} className="min-h-9 rounded-lg border border-[#D7C5A3] bg-white px-3 text-xs font-semibold text-[#4A1D43]">
+              {language === 'ar' ? 'إظهار الكل' : language === 'en' ? 'Show all' : language === 'it' ? 'Mostra tutti' : language === 'ru' ? 'Показать все' : 'Tout afficher'}
+            </button>}
+          </div>
+        </div>
+
         {loading ? <p className="py-5 text-center text-sm text-[#766673]">{t.loading}</p>
           : evenements.length === 0 ? <p className="py-6 text-sm text-[#766673]">{t.noEvents}</p>
+          : calendarEvents.length === 0 ? <p className="py-6 text-sm text-[#766673]">{language === 'ar' ? 'ما فماش فعاليات مسجلة للفترة هاذي.' : language === 'en' ? 'No events listed for this period.' : language === 'it' ? 'Nessun evento per questo periodo.' : language === 'ru' ? 'На этот период событий нет.' : 'Aucun événement enregistré pour cette période.'}</p>
           : <div className="mt-4 space-y-4">
-              {Array.from(new Set(pagedEvents.map(event => new Date(event.date_debut).toLocaleDateString(currentDateLocale, { month: 'long', year: 'numeric' })))).map(month => (
+              {Array.from(new Set(pagedCalendarEvents.map(event => new Date(event.date_debut).toLocaleDateString(currentDateLocale, { month: 'long', year: 'numeric' })))).map(month => (
                 <div key={month} className="space-y-2">
                   <h3 className="border-b border-[#D7C7A6] pb-1 font-serif text-base font-semibold capitalize text-[#421D3B]">{month}</h3>
-                  {pagedEvents.filter(event => new Date(event.date_debut).toLocaleDateString(currentDateLocale, { month: 'long', year: 'numeric' }) === month)
+                  {pagedCalendarEvents.filter(event => new Date(event.date_debut).toLocaleDateString(currentDateLocale, { month: 'long', year: 'numeric' }) === month)
                     .map(event => <AppLeisureEventCard key={event.id} event={event}
                       title={getTranslatedText(event, 'titre')} description={getTranslatedText(event, 'description')}
                       dateLabel={formatEventDate(event.date_debut, event.date_fin)}
-                      viewLabel={language === 'ar' ? 'شوف التفاصيل' : language === 'en' ? 'View details' : 'Voir la fiche'} onOpen={() => setOpenedEvent(event)} />)}
+                      viewLabel={language === 'ar' ? 'شوف التفاصيل' : language === 'en' ? 'View details' : language === 'it' ? 'Dettagli' : language === 'ru' ? 'Подробнее' : 'Voir la fiche'} onOpen={() => setOpenedEvent(event)} />)}
                 </div>
               ))}
             </div>}
-        {!loading && eventPageCount > 1 && <nav aria-label="Pagination du calendrier" className="mt-4 flex items-center justify-center gap-3">
-          <button type="button" disabled={safeEventPage === 0} onClick={() => setEventPage(p => Math.max(0, p - 1))} className="min-h-11 rounded-lg border border-[#D4AF37]/50 bg-white px-3 text-sm disabled:opacity-40">{language === 'ar' ? 'السابق' : 'Précédent'}</button>
-          <span className="text-xs tabular-nums">{safeEventPage + 1} / {eventPageCount}</span>
-          <button type="button" disabled={safeEventPage >= eventPageCount - 1} onClick={() => setEventPage(p => Math.min(eventPageCount - 1, p + 1))} className="min-h-11 rounded-lg border border-[#D4AF37]/50 bg-white px-3 text-sm disabled:opacity-40">{language === 'ar' ? 'التالي' : 'Suivant'}</button>
+        {!loading && calendarPageCount > 1 && <nav aria-label="Pagination du calendrier" className="mt-4 flex items-center justify-center gap-3">
+          <button type="button" disabled={safeCalendarPage === 0} onClick={() => setCalendarPage(p => Math.max(0, p - 1))} className="min-h-11 rounded-lg border border-[#D4AF37]/50 bg-white px-3 text-sm disabled:opacity-40">{language === 'ar' ? 'السابق' : language === 'en' ? 'Previous' : language === 'it' ? 'Precedente' : language === 'ru' ? 'Назад' : 'Précédent'}</button>
+          <span className="text-xs tabular-nums">{safeCalendarPage + 1} / {calendarPageCount}</span>
+          <button type="button" disabled={safeCalendarPage >= calendarPageCount - 1} onClick={() => setCalendarPage(p => Math.min(calendarPageCount - 1, p + 1))} className="min-h-11 rounded-lg border border-[#D4AF37]/50 bg-white px-3 text-sm disabled:opacity-40">{language === 'ar' ? 'التالي' : language === 'en' ? 'Next' : language === 'it' ? 'Successivo' : language === 'ru' ? 'Далее' : 'Suivant'}</button>
         </nav>}
       </section>}
       <div className={`${inPlatformApp ? 'hidden' : ''} bg-[#fcfaf5] py-6 border-b border-[#D4AF37]/30`}>
