@@ -4,6 +4,7 @@ import { ArrowLeft, Building2, Compass, Facebook, Home, Instagram, Menu, Message
 import { useLanguage } from '../context/LanguageContext';
 import LanguageSelector from './LanguageSelector';
 import PlatformAppSectionHub, { getPlatformHub } from './PlatformAppSectionHub';
+import PlatformAppIntro from './PlatformAppIntro';
 
 type AppLang = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 const APP_COPY: Record<AppLang, {
@@ -193,6 +194,7 @@ export default function PlatformAppShell({ children }: { children: ReactNode }) 
             {copy.back}
           </button>
         </div>}
+        <PlatformAppIntro key={location.pathname + location.search} pathname={location.pathname} search={location.search} language={lang} />
         {useCompactHub && hub ? <PlatformAppSectionHub kind={hub} /> : children}
       </main>
 
