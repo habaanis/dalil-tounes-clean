@@ -1671,7 +1671,12 @@ export const Businesses = ({
                         description_ar: business.description_ar || null,
                       }}
                       onClick={() => {
-                        navigate(buildEntrepriseUrl({ slug: business.slug, nom: business.name, ville: business.ville || business.city, id: business.id }));
+                        if (inPlatformApp) {
+                          // Unique ID avoids opening a different business when legacy slugs collide.
+                          navigate(`/entreprise/id/${business.id}`, { state: { fromPlatformApp: true } });
+                        } else {
+                          navigate(buildEntrepriseUrl({ slug: business.slug, nom: business.name, ville: business.ville || business.city, id: business.id }));
+                        }
                       }}
                       variant="premium"
                     />
