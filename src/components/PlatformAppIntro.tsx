@@ -299,14 +299,24 @@ function resolveIntro(pathname: string, search: string): IntroKey | null {
   return null;
 }
 
-export default function PlatformAppIntro({ pathname, search = '', language }: {
-  pathname: string; search?: string; language: string;
+export default function PlatformAppIntro({ pathname, search = '', language, detailsOnly = false }: {
+  pathname: string; search?: string; language: string; detailsOnly?: boolean;
 }) {
   const key = resolveIntro(pathname, search);
   if (!key) return null;
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as Lang;
   const copy = CONTENT[key][lang];
   const ui = UI[lang];
+  if (detailsOnly) return (
+    <details className="group mt-2 rounded-lg border-t border-[#D4AF37]/30 pt-1">
+      <summary className="inline-flex min-h-9 cursor-pointer list-none items-center gap-1.5 rounded-md text-xs font-semibold text-[#A17D36] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B99143] [&::-webkit-details-marker]:hidden">
+        <span className="group-open:hidden">{ui.more}</span>
+        <span className="hidden group-open:inline">{ui.less}</span>
+        <ChevronDown aria-hidden="true" className="h-4 w-4 transition-transform group-open:rotate-180" />
+      </summary>
+      <p className="mt-1 text-xs leading-5 text-inherit opacity-90">{copy.long}</p>
+    </details>
+  );
   return (
     <section aria-label={ui.label} className="mx-3 mt-2 rounded-xl border border-[#E2D4BB] bg-white px-3 py-2.5 text-[#45243A]">
       <p className="text-xs leading-[1.55] text-[#655562]">{copy.short}</p>
