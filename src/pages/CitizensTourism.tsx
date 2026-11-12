@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import SearchBar from '../components/SearchBar';
 import TourismExperienceDiscovery from '../components/TourismExperienceDiscovery';
+import { isPlatformAppMode } from '../lib/platformAppMode';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { SEOHead } from '../components/SEOHead';
@@ -491,6 +491,7 @@ export default function CitizensTourism() {
   const t = copy[lang];
   const journey = journeyCopy[lang];
   const isRTL = lang === 'ar';
+  const inPlatformApp = isPlatformAppMode();
   const [journeyMode, setJourneyMode] = useState<JourneyMode>(() => new URLSearchParams(window.location.search).get('tab') === 'settle' ? 'settle' : 'visit');
   const [openSettlementTopic, setOpenSettlementTopic] = useState<number | null>(() => { const topic = new URLSearchParams(window.location.search).get('topic'); return topic !== null && /^\d+$/.test(topic) ? Number(topic) : null; });
   const topics = journeyMode === 'visit' ? journey.visitTopics : journey.settleTopics;
@@ -503,7 +504,7 @@ export default function CitizensTourism() {
         canonical="https://dalil-tounes.com/citizens/tourism"
         currentPath="/citizens/tourism"
       />
-      <section className="relative mx-auto max-w-6xl h-[220px] sm:h-[240px] overflow-hidden sm:rounded-2xl sm:mt-6">
+      <section className={`${inPlatformApp ? 'hidden' : 'relative mx-auto max-w-6xl h-[220px] sm:h-[240px] overflow-hidden sm:rounded-2xl sm:mt-6'}`}>
         <img
           src="https://commons.wikimedia.org/wiki/Special:FilePath/Sidi_bou_said_port.jpg?width=1600"
           alt={t.heroAlt}
@@ -519,7 +520,7 @@ export default function CitizensTourism() {
         </div>
       </section>
 
-      <section className="py-4 px-4">
+      <section className={inPlatformApp ? 'hidden' : 'py-4 px-4'}>
         <div className="max-w-2xl mx-auto text-center">
           <p className="text-base md:text-lg font-normal mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
             <span className="text-[#4A1D43]">{t.slogan}</span>
@@ -527,21 +528,6 @@ export default function CitizensTourism() {
           <div className="flex justify-center"><div className="w-[40px] h-[1px] bg-[#D4AF37]" /></div>
         </div>
       </section>
-
-      {journeyMode === 'settle' && <section className="py-2 px-4 relative z-0" style={{ overflow: 'visible' }}>
-        <div className="max-w-5xl mx-auto" style={{ overflow: 'visible' }}>
-          <div className="bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-[#D4AF37] p-2.5 md:p-3" style={{ overflow: 'visible' }}>
-            <SearchBar
-              scope="tourism"
-              intentEnabled={false}
-              enabled
-              resultMode="redirectToResults"
-              preferredTitle={t.preferredTitle}
-              preferredSubtitle={t.preferredSubtitle}
-            />
-          </div>
-        </div>
-      </section>}
 
       <section className="px-4 pt-6">
         <div className="max-w-5xl mx-auto rounded-2xl border border-[#D4AF37]/50 bg-white px-3 py-4 sm:px-5 shadow-sm">
