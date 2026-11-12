@@ -13,6 +13,7 @@ import { SECTEURS_CULTURE } from '../lib/cultureEventCategories';
 import MeilleursSection from '../components/MeilleursSection';
 import { SEOHead } from '../components/SEOHead';
 import { isPlatformAppMode } from '../lib/platformAppMode';
+import PlatformAppIntro from '../components/PlatformAppIntro';
 import { DALIL_MASCOT_IMAGE } from '../lib/dalilMascotImage';
 
 const GOUVERNORATS_TUNISIE = [
@@ -725,6 +726,7 @@ export default function CitizensLeisure() {
             <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.15em] text-[#96743B]">Dalil Tounes · 🇹🇳</p>
             <h1 className="font-serif text-xl font-medium leading-tight">{language === 'ar' ? 'الترفيه والفعاليات في تونس' : language === 'en' ? 'Leisure & events in Tunisia' : language === 'it' ? 'Tempo libero ed eventi in Tunisia' : language === 'ru' ? 'Отдых и события в Тунисе' : 'Loisirs & événements en Tunisie'}</h1>
             <p className="mt-1 text-xs leading-5 text-[#71616E]">{language === 'ar' ? 'خرجات، مهرجانات، معارض وأماكن ترفيه.' : language === 'en' ? 'Outings, festivals, exhibitions and places to explore.' : language === 'it' ? 'Uscite, festival, fiere e luoghi da scoprire.' : language === 'ru' ? 'Афиша, фестивали, выставки и места отдыха.' : 'Sorties, salons, festivals et bonnes adresses pour vos loisirs.'}</p>
+            <PlatformAppIntro pathname="/citizens/leisure" language={language} detailsOnly />
           </div>
           <img src={DALIL_MASCOT_IMAGE} alt="" aria-hidden="true" loading="lazy" decoding="async"
             className="h-[64px] w-[60px] shrink-0 rounded-xl border border-[#D4AF37]/35 bg-white object-contain" />
