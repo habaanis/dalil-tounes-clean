@@ -356,6 +356,22 @@ function getBusinessSortScore(business: Record<string, any>): number {
   if (ratingValue(business) >= 4 && reviewCount(business) >= 5) return 2;
   return 1;
 }
+// Only the actual published status creates a green CV card in the platform app.
+// Use the same field for visibility priority, then existing review ranking.
+function compareAppBusinesses(a: Record<string, any>, b: Record<string, any>): number {
+  const aCv = String(a.cv_business_status || '').toLowerCase() === 'published';
+  const bCv = String(b.cv_business_status || '').toLowerCase() === 'published';
+  if (aCv !== bCv) return bCv ? 1 : -1;
+  const aTrusted = ratingValue(a) >= 4 && reviewCount(a) >= 5;
+  const bTrusted = ratingValue(b) >= 4 && reviewCount(b) >= 5;
+  if (aTrusted !== bTrusted) return bTrusted ? 1 : -1;
+  const count = reviewCount(b) - reviewCount(a);
+  if (count) return count;
+  const rating = ratingValue(b) - ratingValue(a);
+  if (rating) return rating;
+  return String(a.name || '').localeCompare(String(b.name || ''), 'fr');
+}
+
 function compareBusinessesByTrust(a: Record<string, any>, b: Record<string, any>): number {
   const group = getBusinessSortScore(b) - getBusinessSortScore(a);
   if (group) return group;
@@ -943,7 +959,7 @@ export const Businesses = ({
         name_ru: item.name_ru || null,
       }));
 
-      mappedData.sort(compareBusinessesByTrust);
+      mappedData.sort(inPlatformApp ? compareAppBusinesses : compareBusinessesByTrust);
 
       console.log(`[DEBUG] ✅ Mapping terminé: ${mappedData.length} entreprises`);
       console.log('═══════════════════════════════════════\n');
@@ -1182,7 +1198,7 @@ export const Businesses = ({
       }
 
       // Trier par priorité (CV publié > avis Google fiables > autres).
-      mappedData.sort(compareBusinessesByTrust);
+      mappedData.sort(inPlatformApp ? compareAppBusinesses : compareBusinessesByTrust);
 
       console.log('═══════════════════════════════════════\n');
 
