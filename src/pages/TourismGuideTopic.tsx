@@ -1,3 +1,4 @@
+import { isPlatformAppMode } from '../lib/platformAppMode';
 import { useEffect, useState } from 'react';
 import { ArrowLeft, CalendarDays, ExternalLink, Info, MapPin, Navigation, Route, Search, X } from 'lucide-react';
 import { Link, Navigate, useParams } from 'react-router-dom';
@@ -356,8 +357,9 @@ export default function TourismGuideTopic() {
     ? { ...baseTopic, title: arabicTopicCopy[slug].title, intro: arabicTopicCopy[slug].intro, places: baseTopic.places.map((place) => arabicPlaceCopy(place, slug)) }
     : baseTopic;
   const visiblePlaces = topic.places.filter((place) => slug === 'nature-randonnees' ? matchesLandscape(place, activeFilter) : slug === 'hebergements-experiences' ? matchesStay(place, activeFilter) : true);
-  const placesTotalPages = Math.ceil(visiblePlaces.length / 4);
-  const pagedPlaces = visiblePlaces.slice((placesPage - 1) * 4, placesPage * 4);
+  const placesPerPage = isPlatformAppMode() ? 4 : Math.max(1, visiblePlaces.length);
+  const placesTotalPages = Math.ceil(visiblePlaces.length / placesPerPage);
+  const pagedPlaces = visiblePlaces.slice((placesPage - 1) * placesPerPage, placesPage * placesPerPage);
   const visibleCircuits = circuits.filter((circuit) => circuit.slugs.includes(slug)).map((circuit) => isRTL ? {
     ...circuit,
     name: arabicNames[circuit.name] || circuit.name,
