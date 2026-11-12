@@ -7,6 +7,7 @@ const SearchBar = lazy(() => import('../components/SearchBar'));
 const MeilleursSection = lazy(() => import('../components/MeilleursSection'));
 import { SEOHead } from '../components/SEOHead';
 import { isPlatformAppMode } from '../lib/platformAppMode';
+import PlatformAppIntro from '../components/PlatformAppIntro';
 import { DALIL_MASCOT_IMAGE } from '../lib/dalilMascotImage';
 
 type Lang = 'fr' | 'ar' | 'en' | 'it' | 'ru';
@@ -376,6 +377,7 @@ export default function CitizensServicesLocalized() {
             <div className="min-w-0 flex-1">
               <h1 className="font-serif text-xl font-medium leading-6 text-[#F8E9C9]">{c.title}</h1>
               <p className="mt-1 line-clamp-3 text-xs leading-5 text-white/90">{c.intro}</p>
+              <PlatformAppIntro pathname="/citizens/services" language={lang} detailsOnly />
             </div>
             <img src={DALIL_MASCOT_IMAGE} alt="Mascotte Dalil Tounes"
               className="h-[94px] w-[90px] shrink-0 rounded-xl border border-[#D4AF37]/40 bg-white/95 object-contain" loading="lazy" decoding="async" />
