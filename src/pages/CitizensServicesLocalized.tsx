@@ -310,7 +310,6 @@ export default function CitizensServicesLocalized() {
   const inPlatformApp = isPlatformAppMode();
   const [activeTab, setActiveTab] = useState<Tab | null>(inPlatformApp ? null : 'bureaux');
   const [selectedProcedure, setSelectedProcedure] = useState<number | null>(null);
-  const [showAppSearch, setShowAppSearch] = useState(false);
   const [samu, protection, police, children, women] = EMERGENCY_LABELS[lang];
 
   const emergencyNumbers = [
@@ -369,21 +368,21 @@ export default function CitizensServicesLocalized() {
           canonical="https://dalil-tounes.com/citizens/services" currentPath="/citizens/services" />
 
         <section className="mx-3 mt-2 rounded-xl border border-[#D4AF37]/45 bg-[#FFFDF8] px-3 py-3">
-          <h1 className="font-serif text-xl font-medium leading-6 text-[#4A1D43]">{c.title}</h1>
-          <p className="mt-1 text-xs leading-5 text-[#665565]">{c.intro}</p>
+          <div className="flex items-center gap-3">
+            <div className="min-w-0 flex-1">
+              <h1 className="font-serif text-xl font-medium leading-6 text-[#4A1D43]">{c.title}</h1>
+              <p className="mt-1 text-xs leading-5 text-[#665565]">{c.intro}</p>
+            </div>
+            <img src={DALIL_MASCOT_IMAGE} alt="" aria-hidden="true" loading="lazy" decoding="async"
+              className="h-[64px] w-[60px] shrink-0 rounded-xl border border-[#D4AF37]/35 bg-white object-contain" />
+          </div>
         </section>
 
-        <section className="relative z-20 mx-3 mt-3 rounded-xl border border-[#D4AF37]/40 bg-white p-3">
-          <button type="button" onClick={() => setShowAppSearch(value => !value)}
-            aria-expanded={showAppSearch}
-            className="flex min-h-12 w-full items-center justify-between gap-2 rounded-xl px-2 text-start text-sm font-semibold text-[#4A1D43] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A17D36]">
-            <span>{c.searchTitle}</span>
-            <span aria-hidden="true" className="text-lg text-[#A17D36]">{showAppSearch ? '⌃' : '⌄'}</span>
-          </button>
-          {showAppSearch && <Suspense fallback={<p role="status" className="px-2 py-3 text-xs text-[#726571]">…</p>}>
+        <section className="relative z-20 mx-3 mt-3 rounded-xl border border-[#D4AF37]/40 bg-white p-3" style={{ overflow: 'visible' }}>
+          <Suspense fallback={<p role="status" className="px-2 py-3 text-xs text-[#726571]">…</p>}>
             <SearchBar scope="services" intentEnabled={false} enabled resultMode="redirectToResults"
               preferredTitle={c.searchTitle} preferredSubtitle={c.searchSubtitle} />
-          </Suspense>}
+          </Suspense>
         </section>
 
         <nav className="mx-3 mt-3 grid grid-cols-3 gap-2" aria-label={c.title}>
