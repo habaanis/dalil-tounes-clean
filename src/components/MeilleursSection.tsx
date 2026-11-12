@@ -54,6 +54,10 @@ interface MeilleursProps {
   allReferencedLabel?: string;
   searchOtherLabel?: string;
   hideSearchCta?: boolean;
+  /** Optional scoped pagination, for the leisure page without changing other directories. */
+  itemsPerPage?: number;
+  /** Show qualified recommendations as one paginated list instead of a top-4 and remainder. */
+  unifiedRecommendedList?: boolean;
 }
 
 const PAGE_SIZE = 4;
@@ -262,6 +266,8 @@ export default function MeilleursSection({
   allReferencedLabel,
   searchOtherLabel,
   hideSearchCta = false,
+  itemsPerPage,
+  unifiedRecommendedList = false,
 }: MeilleursProps) {
   const navigate = useNavigate();
   const inPlatformApp = isPlatformAppMode();
@@ -276,7 +282,7 @@ export default function MeilleursSection({
   const listSectionRef = useRef<HTMLElement>(null);
   const changePage = (nextPage: number) => {
     setPage(nextPage);
-    if (inPlatformApp) window.setTimeout(() => listSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 30);
+    if (inPlatformApp || unifiedRecommendedList) window.setTimeout(() => listSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 30);
   };
 
   useEffect(() => {
@@ -371,11 +377,13 @@ export default function MeilleursSection({
           : all;
         // In app mode, only qualified businesses may appear under
         // “recommended”, across every page, not just in the first four cards.
-        const top = inPlatformApp ? [] : recommended.slice(0, TOP_COUNT);
+        const top = (inPlatformApp || unifiedRecommendedList) ? [] : recommended.slice(0, TOP_COUNT);
         const topIds = new Set(top.map((item) => item.id));
-        const rest = inPlatformApp && useGoogleRecommendationCriteria
+        const rest = unifiedRecommendedList
           ? recommended
-          : all.filter((item) => !topIds.has(item.id));
+          : inPlatformApp && useGoogleRecommendationCriteria
+            ? recommended
+            : all.filter((item) => !topIds.has(item.id));
 
         setTopItems(top);
         setAllItems(rest);
@@ -390,9 +398,9 @@ export default function MeilleursSection({
 
     fetchData();
     setPage(0);
-  }, [excludedKeywords, allowedCategories, requiredSubcategoryKeywords, listePage, useGoogleRecommendationCriteria, inPlatformApp]);
+  }, [excludedKeywords, allowedCategories, requiredSubcategoryKeywords, listePage, useGoogleRecommendationCriteria, inPlatformApp, unifiedRecommendedList]);
 
-  const activePageSize = inPlatformApp ? APP_PAGE_SIZE : PAGE_SIZE;
+  const activePageSize = itemsPerPage ?? (inPlatformApp ? APP_PAGE_SIZE : PAGE_SIZE);
   const totalPages = Math.ceil(allItems.length / activePageSize);
   const pagedItems = allItems.slice(page * activePageSize, (page + 1) * activePageSize);
   const displayedEstablishmentCount = useGoogleRecommendationCriteria && includeRecommendedInTotal
@@ -417,7 +425,7 @@ export default function MeilleursSection({
   return (
     <div className="space-y-12">
       {/* === Section 1 : Meilleurs === */}
-      <section className={`${inPlatformApp ? 'hidden' : ''} max-w-7xl mx-auto px-4`}>
+      <section className={`${inPlatformApp || unifiedRecommendedList ? 'hidden' : ''} max-w-7xl mx-auto px-4`}>
         <div className="flex items-center gap-3 mb-8">
           <div className="w-9 h-9 rounded-xl bg-[#D4AF37]/15 flex items-center justify-center">
             <Trophy className="w-5 h-5 text-[#D4AF37]" />
@@ -483,7 +491,7 @@ export default function MeilleursSection({
       </section>
 
       {/* === Section 2 : Tous les établissements === */}
-      {(loadingAll || allItems.length > 0) && (
+      {(loadingAll || allItems.length > 0 || unifiedRecommendedList) && (
         <section ref={listSectionRef} className="max-w-7xl mx-auto scroll-mt-24 px-4">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
@@ -495,7 +503,7 @@ export default function MeilleursSection({
                   className="text-xl font-bold leading-tight"
                   style={{ fontFamily: "'Playfair Display', serif", color: accentColor }}
                 >
-                  {inPlatformApp && useGoogleRecommendationCriteria
+                  {(inPlatformApp || unifiedRecommendedList) && useGoogleRecommendationCriteria
                     ? (sectionTitle || 'Entreprises les plus recommandées par les clients')
                     : allReferencedLabel || `${tx('allReferencedPrefix', 'Tous les')} ${secteurLabel} ${tx('allReferencedSuffix', 'référencés')}`}
                 </h2>
@@ -510,6 +518,10 @@ export default function MeilleursSection({
             <div className="flex items-center justify-center py-10">
               <div className="w-7 h-7 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: `${accentColor} transparent ${accentColor} ${accentColor}` }} />
             </div>
+          ) : allItems.length === 0 && unifiedRecommendedList ? (
+            <p className="rounded-xl border border-dashed border-[#D4AF37]/40 bg-white p-5 text-center text-sm text-gray-600">
+              {tx('noRecommended', 'Aucun établissement ne remplit actuellement les critères de recommandation.')}
+            </p>
           ) : (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
