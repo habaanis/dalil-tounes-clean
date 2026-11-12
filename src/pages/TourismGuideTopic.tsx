@@ -344,9 +344,11 @@ export default function TourismGuideTopic() {
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [selectedCircuit, setSelectedCircuit] = useState<Circuit | null>(null);
   const [activeFilter, setActiveFilter] = useState('all');
+  const [placesPage, setPlacesPage] = useState(1);
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as keyof typeof labels;
   const baseTopic = slug ? topics[slug] : undefined;
-  useEffect(() => { setSelectedPlace(null); setSelectedCircuit(null); setActiveFilter('all'); }, [slug]);
+  useEffect(() => { setSelectedPlace(null); setSelectedCircuit(null); setActiveFilter('all'); setPlacesPage(1); }, [slug]);
+  useEffect(() => { setPlacesPage(1); }, [activeFilter]);
   if (!baseTopic || !slug) return <Navigate to="/citizens/tourism" replace />;
   const ui = labels[lang];
   const isRTL = lang === 'ar';
@@ -354,6 +356,8 @@ export default function TourismGuideTopic() {
     ? { ...baseTopic, title: arabicTopicCopy[slug].title, intro: arabicTopicCopy[slug].intro, places: baseTopic.places.map((place) => arabicPlaceCopy(place, slug)) }
     : baseTopic;
   const visiblePlaces = topic.places.filter((place) => slug === 'nature-randonnees' ? matchesLandscape(place, activeFilter) : slug === 'hebergements-experiences' ? matchesStay(place, activeFilter) : true);
+  const placesTotalPages = Math.ceil(visiblePlaces.length / 4);
+  const pagedPlaces = visiblePlaces.slice((placesPage - 1) * 4, placesPage * 4);
   const visibleCircuits = circuits.filter((circuit) => circuit.slugs.includes(slug)).map((circuit) => isRTL ? {
     ...circuit,
     name: arabicNames[circuit.name] || circuit.name,
@@ -378,7 +382,7 @@ export default function TourismGuideTopic() {
         {slug === 'nature-randonnees' && <div className="mt-4 flex gap-2 overflow-x-auto pb-1" aria-label={isRTL ? 'اختيار نوع المنظر' : 'Filtrer par paysage'}>{landscapeFilters.map((filter, index) => <button key={filter.id} type="button" onClick={() => setActiveFilter(filter.id)} aria-pressed={activeFilter === filter.id} className={`shrink-0 rounded-full border px-3 py-1.5 text-xs font-medium transition ${activeFilter === filter.id ? 'border-[#4A1D43] bg-[#4A1D43] text-white' : 'border-[#D4AF37]/50 bg-white text-[#4A1D43] hover:border-[#D4AF37]'}`}>{isRTL ? ['الكل', 'غابات', 'جبال', 'بحيرات', 'أودية عميقة', 'واحات', 'صحراء'][index] : filter.label}</button>)}</div>}
         {slug === 'hebergements-experiences' && <><div className="mt-4 flex gap-2 overflow-x-auto pb-1" aria-label={isRTL ? 'اختيار نوع الإقامة' : 'Filtrer par ambiance'}>{stayFilters.map((filter) => <button key={filter.id} type="button" onClick={() => setActiveFilter(filter.id)} aria-pressed={activeFilter === filter.id} className={`shrink-0 rounded-full border px-3 py-1.5 text-xs font-medium transition ${activeFilter === filter.id ? 'border-[#4A1D43] bg-[#4A1D43] text-white' : 'border-[#D4AF37]/50 bg-white text-[#4A1D43] hover:border-[#D4AF37]'}`}>{isRTL ? filter.ar : filter.label}</button>)}</div><section className="mt-4 rounded-xl border border-[#D4AF37]/35 bg-[#fcfaf5] p-4"><h2 className="public-heading text-sm font-semibold text-[#4A1D43]">{isRTL ? 'قبل الحجز: 4 نقاط مهمّة' : 'Avant de réserver : 4 vérifications utiles'}</h2><div className="mt-3 grid gap-2 text-[11px] text-gray-600 sm:grid-cols-2"><p className="rounded-lg bg-white p-2.5"><strong className="text-[#4A1D43]">1.</strong> {isRTL ? 'السعر الكامل والخدمات والوجبات المشمولة.' : 'Prix total, services et repas réellement inclus.'}</p><p className="rounded-lg bg-white p-2.5"><strong className="text-[#4A1D43]">2.</strong> {isRTL ? 'الطريق والنقل ومكان ركن السيارة.' : 'Accès, transfert et possibilité de stationnement.'}</p><p className="rounded-lg bg-white p-2.5"><strong className="text-[#4A1D43]">3.</strong> {isRTL ? 'التقييمات الحديثة وشروط الإلغاء والدفع.' : 'Avis récents, annulation et conditions de paiement.'}</p><p className="rounded-lg bg-white p-2.5"><strong className="text-[#4A1D43]">4.</strong> {isRTL ? 'المرافقة والسلامة في الصحراء أو المناطق المعزولة.' : 'Encadrement et sécurité en zone isolée ou désertique.'}</p></div></section></>}
         <section className="mt-5 grid gap-3 sm:grid-cols-2">
-          {visiblePlaces.map((place) => (
+          {pagedPlaces.map((place) => (
             <article key={place.name} className="overflow-hidden rounded-xl border border-[#D4AF37]/45 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
               {place.image && <div className="relative"><img src={place.image} alt={place.name} loading="lazy" className="h-36 w-full object-cover" onError={(event) => { event.currentTarget.src = '/images/drapeau-tunisie.webp'; event.currentTarget.className = 'h-36 w-full bg-gray-50 object-contain p-6'; }} />{unescoStatus(baseTopic.places.find((item) => item.image === place.image) || place) && <span className={`absolute right-2 top-2 rounded-full border px-2 py-1 text-[9px] font-semibold shadow-sm backdrop-blur-sm ${unescoStatus(baseTopic.places.find((item) => item.image === place.image) || place) === 'world' || unescoStatus(baseTopic.places.find((item) => item.image === place.image) || place) === 'intangible' ? 'border-[#D4AF37] bg-[#4A1D43]/95 text-[#F8E7A1]' : 'border-white/80 bg-white/95 text-[#4A1D43]'}`}>{isRTL ? (unescoStatus(baseTopic.places.find((item) => item.image === place.image) || place) === 'world' ? 'اليونسكو · تراث عالمي' : unescoStatus(baseTopic.places.find((item) => item.image === place.image) || place) === 'intangible' ? 'اليونسكو · تراث غير مادي' : 'اليونسكو · القائمة التمهيدية') : (unescoStatus(place) === 'world' ? 'UNESCO · Patrimoine mondial' : unescoStatus(place) === 'intangible' ? 'UNESCO · Patrimoine immatériel' : 'UNESCO · Liste indicative')}</span>}</div>}
               <div className="p-4">
@@ -390,6 +394,21 @@ export default function TourismGuideTopic() {
             </article>
           ))}
         </section>
+        {placesTotalPages > 1 && (
+          <nav aria-label={isRTL ? 'صفحات الأماكن' : 'Pages des lieux'} className="mt-4 flex items-center justify-center gap-3">
+            <button type="button" disabled={placesPage === 1}
+              onClick={() => setPlacesPage(page => Math.max(1, page - 1))}
+              className="min-h-11 rounded-xl border border-[#D4AF37]/60 bg-white px-3 py-2 text-xs font-semibold text-[#4A1D43] disabled:opacity-40">
+              {isRTL ? 'السابق' : lang === 'en' ? 'Previous' : lang === 'it' ? 'Precedente' : lang === 'ru' ? 'Назад' : 'Précédent'}
+            </button>
+            <span className="text-xs text-[#665565]">{isRTL ? 'صفحة' : lang === 'en' ? 'Page' : lang === 'it' ? 'Pagina' : lang === 'ru' ? 'Страница' : 'Page'} {placesPage} / {placesTotalPages}</span>
+            <button type="button" disabled={placesPage === placesTotalPages}
+              onClick={() => setPlacesPage(page => Math.min(placesTotalPages, page + 1))}
+              className="min-h-11 rounded-xl border border-[#D4AF37]/60 bg-white px-3 py-2 text-xs font-semibold text-[#4A1D43] disabled:opacity-40">
+              {isRTL ? 'التالي' : lang === 'en' ? 'Next' : lang === 'it' ? 'Successivo' : lang === 'ru' ? 'Далее' : 'Suivant'}
+            </button>
+          </nav>
+        )}
         <aside className="mt-5 rounded-xl border border-[#D4AF37] bg-[#fcfaf5] p-4"><h2 className="public-heading text-sm font-semibold text-[#4A1D43]">{ui.useful}</h2><p className="mt-1 text-xs leading-relaxed text-gray-600">{isRTL ? arabicTopicCopy[slug]?.note : topicNotes[slug] || ui.note}</p></aside>
         {slug === 'hebergements-experiences' && <section className="mt-4 flex flex-col gap-3 rounded-xl border border-[#4A1D43]/15 bg-white p-4 sm:flex-row sm:items-center sm:justify-between"><div><h2 className="public-heading text-sm font-semibold text-[#4A1D43]">{isRTL ? 'عندك دار ضيافة أو نزل ريفي؟' : 'Vous proposez un gîte ou un accueil chez l’habitant ?'}</h2><p className="mt-1 text-[11px] leading-relaxed text-gray-500">{isRTL ? 'سجّل نشاطك في دليل تونس باش يظهر بعد التثبّت من المعلومات.' : 'Proposez votre activité à Dalil Tounes. Elle pourra être intégrée à l’annuaire après vérification des informations.'}</p></div><Link to="/inscription-entreprise" className="inline-flex shrink-0 items-center justify-center rounded-lg border border-[#D4AF37] px-3 py-2 text-xs font-semibold text-[#4A1D43] hover:bg-[#FFF9E9]">{isRTL ? 'تسجيل الإقامة' : 'Inscrire mon hébergement'}</Link></section>}
         <div className="mt-5 flex flex-col gap-2 sm:flex-row">
