@@ -492,7 +492,7 @@ export default function CitizensTourism() {
   const journey = journeyCopy[lang];
   const isRTL = lang === 'ar';
   const [journeyMode, setJourneyMode] = useState<JourneyMode>(() => new URLSearchParams(window.location.search).get('tab') === 'settle' ? 'settle' : 'visit');
-  const [openSettlementTopic, setOpenSettlementTopic] = useState<number | null>(null);
+  const [openSettlementTopic, setOpenSettlementTopic] = useState<number | null>(() => { const topic = new URLSearchParams(window.location.search).get('topic'); return topic !== null && /^\d+$/.test(topic) ? Number(topic) : null; });
   const topics = journeyMode === 'visit' ? journey.visitTopics : journey.settleTopics;
 
   return (
@@ -560,7 +560,7 @@ export default function CitizensTourism() {
           </div>
 
           {journeyMode === 'visit' && <p className="mt-3 text-center text-xs font-semibold tracking-wide text-[#A45A27]">✨ Six façons de vivre la Tunisie, pas seulement de la visiter</p>}
-          <div className="mt-4 grid grid-cols-2 gap-2.5 lg:grid-cols-3">
+          <div className={`mt-4 grid gap-2.5 ${journeyMode === 'settle' && openSettlementTopic !== null ? 'grid-cols-1' : 'grid-cols-2 lg:grid-cols-3'}`}>
             {topics.map((topic, topicIndex) => journeyMode === 'visit' ? (
               <Link key={topic.title} to={topic.href} className={`group relative min-w-0 overflow-hidden rounded-2xl border border-[#D9C9A4] px-2.5 py-3 sm:px-4 sm:py-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#4A1D43] bg-[#FFFCF7]`}>
                 <div className="mb-2 flex items-center justify-between"><span className="text-xl sm:text-2xl" aria-hidden="true">{['🏛️','🌿','🧶','🍲','🎉','🏡'][topicIndex] || '🇹🇳'}</span><span className="rounded-full bg-white/65 px-2 py-0.5 text-[10px] font-semibold text-[#784626]">Explorer</span></div>
@@ -577,7 +577,7 @@ export default function CitizensTourism() {
                 <span className="mt-3 inline-flex rounded-full bg-white/75 px-3 py-1.5 text-xs font-semibold text-[#5B2345] shadow-sm transition group-hover:bg-white">{journey.discover}</span>
               </Link>
             ) : (
-              <details key={topic.title} open={openSettlementTopic === topicIndex} className="group min-w-0 rounded-xl border border-[#D4AF37]/45 bg-[#FFFDF8] px-3 py-2.5 open:border-[#D4AF37] max-md:open:fixed max-md:open:inset-x-3 max-md:open:top-[10dvh] max-md:open:bottom-[10dvh] max-md:open:z-[100] max-md:open:flex max-md:open:flex-col max-md:open:overflow-hidden max-md:open:bg-white max-md:open:p-0 max-md:open:shadow-2xl max-md:open:w-auto">
+              <details key={topic.title} open={openSettlementTopic === topicIndex} className={`group min-w-0 rounded-xl border border-[#D4AF37]/45 bg-[#FFFDF8] px-3 py-2.5 open:border-[#D4AF37] max-md:open:fixed max-md:open:inset-x-3 max-md:open:top-[10dvh] max-md:open:bottom-[10dvh] max-md:open:z-[100] max-md:open:flex max-md:open:flex-col max-md:open:overflow-hidden max-md:open:bg-white max-md:open:p-0 max-md:open:shadow-2xl ${openSettlementTopic !== null && openSettlementTopic !== topicIndex ? 'hidden' : ''} ${openSettlementTopic === topicIndex ? 'col-span-full w-full' : ''}`}>
                 <summary onClick={(event) => { event.preventDefault(); setOpenSettlementTopic(current => current === topicIndex ? null : topicIndex); }} className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-[#4A1D43] [&::-webkit-details-marker]:hidden max-md:group-open:shrink-0 max-md:group-open:border-b max-md:group-open:border-[#D4AF37]/30 max-md:group-open:bg-[#FFFDF8] max-md:group-open:px-4 max-md:group-open:py-4">
                   <span>{topic.title}</span>
                   <span className="flex shrink-0 items-center gap-1.5"><span className="hidden text-[11px] font-semibold text-[#4A1D43] max-md:group-open:inline">{({fr:'Fermer',ar:'إغلاق',en:'Close',it:'Chiudi',ru:'Закрыть'} as Record<PublicLanguage, string>)[lang]}</span><ChevronDown className="h-4 w-4 text-[#D4AF37] transition-transform group-open:rotate-180" aria-hidden="true" /></span>
