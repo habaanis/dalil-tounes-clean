@@ -9,7 +9,6 @@ import MeilleursSection from '../components/MeilleursSection';
 import SearchBar from '../components/SearchBar';
 import ThermalWellnessExplorer from '../components/ThermalWellnessExplorer';
 import { isPlatformAppMode } from '../lib/platformAppMode';
-import PlatformAppIntro from '../components/PlatformAppIntro';
 import { Link } from 'react-router-dom';
 import MedicalTransportCard from '../components/MedicalTransportCard';
 import MedicalTransportRegistrationForm from '../components/MedicalTransportRegistrationForm';
@@ -282,7 +281,6 @@ export default function CitizensHealth({}: CitizensHealthProps) {
       {inPlatformApp && <div className="px-3 pt-3">        <div className="rounded-xl border border-[#D4AF37]/40 bg-[#FFFBF4] p-3">
           <h1 className="font-serif text-xl font-medium text-[#4A1D43]">{c.pageTitle}</h1>
           <p className="mt-1 text-xs text-[#6D6070]">{t.health.hero.description}</p>
-          <PlatformAppIntro pathname="/citizens/health" language={lang} detailsOnly />
         </div></div>}
       <section className="py-2 px-4 relative z-[9999]" style={{ overflow: 'visible' }}>
         <div className="max-w-5xl mx-auto" style={{ overflow: 'visible' }}>
