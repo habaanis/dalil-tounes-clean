@@ -10,6 +10,8 @@ import { extractFrenchName } from '../lib/textNormalization';
 import { useLanguage } from '../context/LanguageContext';
 import { t as translate, type Lang } from '../lib/i18n';
 import SeoBusinessCard from './seo/SeoBusinessCard';
+import { isPlatformAppMode } from '../lib/platformAppMode';
+import { hasGreenBusinessCard } from '../lib/businessCardPresentation';
 
 interface MeilleursItem {
   id: string;
@@ -55,6 +57,7 @@ interface MeilleursProps {
 }
 
 const PAGE_SIZE = 4;
+const APP_PAGE_SIZE = 10;
 const TOP_COUNT = 4;
 const EMPTY_EXCLUDED_KEYWORDS: readonly string[] = [];
 
@@ -261,6 +264,7 @@ export default function MeilleursSection({
   hideSearchCta = false,
 }: MeilleursProps) {
   const navigate = useNavigate();
+  const inPlatformApp = isPlatformAppMode();
   const { language } = useLanguage();
   const lang = language as Lang;
   const tx = (key: string, fallback: string) => (translate as any)(lang, `healthExtra.${key}`) || fallback;
@@ -282,8 +286,7 @@ export default function MeilleursSection({
       return isNaN(n) ? 0 : n;
     }
     function hasPublishedCv(item: MeilleursItem): boolean {
-      return (item.cv_business_status || '').toLowerCase() === 'published'
-        || Boolean(item.cv_business_published_at);
+      return hasGreenBusinessCard(item);
     }
     function sortBusinesses(a: MeilleursItem, b: MeilleursItem): number {
       // CV first, then the number of Google reviews, then the rating.
@@ -361,9 +364,13 @@ export default function MeilleursSection({
               && parseCount(item['Compteur Avis Google']) >= 5
             ))
           : all;
-        const top = recommended.slice(0, TOP_COUNT);
+        // In app mode, only qualified businesses may appear under
+        // “recommended”, across every page, not just in the first four cards.
+        const top = inPlatformApp ? [] : recommended.slice(0, TOP_COUNT);
         const topIds = new Set(top.map((item) => item.id));
-        const rest = all.filter((item) => !topIds.has(item.id));
+        const rest = inPlatformApp && useGoogleRecommendationCriteria
+          ? recommended
+          : all.filter((item) => !topIds.has(item.id));
 
         setTopItems(top);
         setAllItems(rest);
@@ -378,10 +385,11 @@ export default function MeilleursSection({
 
     fetchData();
     setPage(0);
-  }, [excludedKeywords, allowedCategories, requiredSubcategoryKeywords, listePage, useGoogleRecommendationCriteria]);
+  }, [excludedKeywords, allowedCategories, requiredSubcategoryKeywords, listePage, useGoogleRecommendationCriteria, inPlatformApp]);
 
-  const totalPages = Math.ceil(allItems.length / PAGE_SIZE);
-  const pagedItems = allItems.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+  const activePageSize = inPlatformApp ? APP_PAGE_SIZE : PAGE_SIZE;
+  const totalPages = Math.ceil(allItems.length / activePageSize);
+  const pagedItems = allItems.slice(page * activePageSize, (page + 1) * activePageSize);
   const displayedEstablishmentCount = useGoogleRecommendationCriteria && includeRecommendedInTotal
     ? topItems.length + allItems.length
     : allItems.length;
@@ -404,7 +412,7 @@ export default function MeilleursSection({
   return (
     <div className="space-y-12">
       {/* === Section 1 : Meilleurs === */}
-      <section className="max-w-7xl mx-auto px-4">
+      <section className={`${inPlatformApp ? 'hidden' : ''} max-w-7xl mx-auto px-4`}>
         <div className="flex items-center gap-3 mb-8">
           <div className="w-9 h-9 rounded-xl bg-[#D4AF37]/15 flex items-center justify-center">
             <Trophy className="w-5 h-5 text-[#D4AF37]" />
@@ -482,7 +490,9 @@ export default function MeilleursSection({
                   className="text-xl font-bold leading-tight"
                   style={{ fontFamily: "'Playfair Display', serif", color: accentColor }}
                 >
-                  {allReferencedLabel || `${tx('allReferencedPrefix', 'Tous les')} ${secteurLabel} ${tx('allReferencedSuffix', 'référencés')}`}
+                  {inPlatformApp && useGoogleRecommendationCriteria
+                    ? (sectionTitle || 'Entreprises les plus recommandées par les clients')
+                    : allReferencedLabel || `${tx('allReferencedPrefix', 'Tous les')} ${secteurLabel} ${tx('allReferencedSuffix', 'référencés')}`}
                 </h2>
                 {!loadingAll && (
                   <p className="text-xs text-gray-400 mt-0.5">{displayedEstablishmentCount} {displayedEstablishmentCount > 1 ? tx('establishmentPlur', 'établissements') : tx('establishmentSing', 'établissement')}</p>
