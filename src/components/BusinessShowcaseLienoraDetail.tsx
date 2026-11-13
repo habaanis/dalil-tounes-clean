@@ -1830,7 +1830,6 @@ export default function BusinessShowcaseLienoraDetail({
                 )}
               </div>
             )}
-            {boutiqueContent && <div className="dt-boutique-in-actions" style={{display:"flex",justifyContent:"center",padding:"4px 0 10px"}}>{boutiqueContent}</div>}
             {!embeddedPreview && <div className="dt-secondary-actions">
               {(business.email || whatsappUrl) && (
                 <button type="button" className="dt-secondary-action" onClick={requestQuote}>
@@ -1927,14 +1926,16 @@ export default function BusinessShowcaseLienoraDetail({
             )}
 
             <div className="dt-accordion-list">
-              {sections.map(section => (
-                <AccordionSection
-                  config={section}
-                  open={openSection === section.id}
-                  onToggle={() => setOpenSection(current => current === section.id ? null : section.id)}
-                  key={section.id}
-                />
-              ))}
+              {sections.map(section => section.id === 'gallery' && boutiqueContent
+                ? <section className="dt-accordion" key="boutique" style={{padding:'8px 12px',display:'flex',justifyContent:'center'}}>{boutiqueContent}</section>
+                : <AccordionSection
+                    config={section}
+                    open={openSection === section.id}
+                    onToggle={() => setOpenSection(current => current === section.id ? null : section.id)}
+                    key={section.id}
+                  />
+              ) )}
+              {boutiqueContent && !sections.some(section => section.id === 'gallery') && <section className="dt-accordion" style={{padding:'8px 12px',display:'flex',justifyContent:'center'}}>{boutiqueContent}</section>}
             </div>
           </div>
 
