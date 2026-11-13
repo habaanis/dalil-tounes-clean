@@ -316,26 +316,6 @@ export default function CitizensHealth({}: CitizensHealthProps) {
         </details>
       </section>
 
-      <section className="px-4 pt-1 pb-3">
-        <div className="max-w-5xl mx-auto">
-          <div className="bg-gradient-to-br from-[#4A1D43]/5 to-[#D4AF37]/5 border border-[#D4AF37] rounded-xl px-3 py-3 shadow-lg">
-            <div className="text-center mb-2">
-              <h2 className="public-heading text-xl font-light text-[#4A1D43]" style={{ fontFamily: "'Playfair Display', serif" }}>{t.health.emergency.title}</h2>
-              <p className="text-[10px] text-gray-600 mt-0.5">{t.health.emergency.subtitle}</p>
-            </div>
-            <div className="flex flex-col md:flex-row justify-center gap-2">
-              {emergencyNumbers.map((n) => (
-                <a key={n.num} href={`tel:${n.num}`} className="bg-[#4A1D43] hover:bg-[#5A2D53] rounded-lg px-3 py-2 border border-[#D4AF37] transition-all duration-300 flex flex-col items-center shadow-md hover:shadow-sm w-full md:w-[140px]">
-                  <Phone className="w-4 h-4 text-[#D4AF37] mb-1" />
-                  <div className="text-lg font-semibold text-[#D4AF37] leading-none">{n.num}</div>
-                  <div className="text-[10px] text-white/90 mt-1">{n.label}</div>
-                </a>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
       <section className="px-4 pb-3">
         <details className="group mx-auto max-w-5xl overflow-visible rounded-xl border border-[#C9A65D] bg-white">
           <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-semibold text-[#292725] [&::-webkit-details-marker]:hidden">
@@ -461,6 +441,27 @@ export default function CitizensHealth({}: CitizensHealthProps) {
           </div>
         </details>
       </section>
+
+      <section className="px-4 pt-1 pb-7">
+        <div className="max-w-5xl mx-auto">
+          <div className="rounded-xl border border-[#C9A65D] bg-[#FFF9ED] px-3 py-4 shadow-sm">
+            <div className="text-center mb-2">
+              <h2 className="public-heading text-xl font-semibold text-[#292725]" style={{ fontFamily: "'Playfair Display', serif" }}>{t.health.emergency.title}</h2>
+              <p className="text-[10px] text-gray-600 mt-0.5">{t.health.emergency.subtitle}</p>
+            </div>
+            <div className="flex flex-col md:flex-row justify-center gap-2">
+              {emergencyNumbers.map((n) => (
+                <a key={n.num} href={`tel:${n.num}`} className="flex w-full flex-col items-center rounded-lg border border-[#C9A65D] bg-white px-3 py-2 shadow-sm transition hover:bg-[#FFF0DC] md:w-[140px]">
+                  <Phone className="mb-1 h-4 w-4 text-[#B62226]" />
+                  <div className="text-lg font-semibold leading-none text-[#B62226]">{n.num}</div>
+                  <div className="mt-1 text-[10px] text-[#292725]">{n.label}</div>
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
     </div>
   );
 }
