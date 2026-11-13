@@ -26,9 +26,9 @@ const COPY: Record<BusinessCardPreviewLanguage, {
   closePreview: string;
 }> = {
   fr: {
-    eyebrow: 'Votre CV Business dans votre poche',
+    eyebrow: 'Votre mini-appli dans votre poche',
     title: '3 outils complémentaires, un seul parcours',
-    subtitle: 'Votre application vous donne un accès rapide à votre QR Business. Le QR ouvre ensuite votre CV Business professionnel.',
+    subtitle: 'Votre mini-appli et votre QR Business rendent votre présentation accessible et facile à partager.',
     pwaTitle: '1. Application mobile (PWA)',
     pwaShort: 'Application',
     pwaText: 'Votre activité accessible depuis l’écran d’accueil comme une application.',
@@ -48,7 +48,7 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     closePreview: 'Fermer le visuel',
   },
   ar: {
-    eyebrow: 'CV Business الخاص بك دائمًا معك',
+    eyebrow: 'تطبيقك المصغّر دائماً معك',
     title: '3 أدوات متكاملة، في مسار واحد',
     subtitle: 'يمنحك التطبيق وصولًا سريعًا إلى QR Business، ومنه يتم فتح CV Business المهني الخاص بنشاطك.',
     pwaTitle: '1. تطبيق الهاتف (PWA)',
@@ -70,7 +70,7 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     closePreview: 'إغلاق الصورة',
   },
   en: {
-    eyebrow: 'Your Business CV in your pocket',
+    eyebrow: 'Your business mini-app in your pocket',
     title: '3 complementary tools, one simple journey',
     subtitle: 'Your app gives you quick access to your Business QR. The QR then opens your professional Business CV.',
     pwaTitle: '1. Mobile app (PWA)',
@@ -92,7 +92,7 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     closePreview: 'Close visual',
   },
   it: {
-    eyebrow: 'Il tuo CV Business sempre con te',
+    eyebrow: 'La tua mini-app sempre con te',
     title: '3 strumenti complementari, un solo percorso',
     subtitle: "L’app ti dà accesso rapido al QR Business. Il QR apre poi il tuo CV Business professionale.",
     pwaTitle: '1. Applicazione mobile (PWA)',
@@ -114,7 +114,7 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     closePreview: 'Chiudi il visual',
   },
   ru: {
-    eyebrow: 'Ваш Business CV всегда с вами',
+    eyebrow: 'Ваше мини-приложение всегда с вами',
     title: '3 взаимосвязанных инструмента, один путь',
     subtitle: 'Приложение даёт быстрый доступ к Business QR, а QR открывает ваш профессиональный Business CV.',
     pwaTitle: '1. Мобильное приложение (PWA)',
