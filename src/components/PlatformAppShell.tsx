@@ -64,7 +64,7 @@ export default function PlatformAppShell({ children }: { children: ReactNode }) 
       <header className="sticky top-0 z-50 border-b border-[#D4AF37]/40 bg-[#FFFCF7]/95 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-xl items-center justify-between gap-2 px-3">
           <Link to="/" className="inline-flex min-h-11 items-center gap-2 rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B99143]" aria-label="Dalil Tounes">
-            <span aria-hidden="true" className="text-xl">🇹🇳</span>
+            <img src="/icons/dalil-logo-emblem-2026.png?v=2" alt="" aria-hidden="true" className="h-10 w-10 shrink-0 object-contain" width="40" height="40" decoding="async" />
             <span className="font-serif text-base font-semibold tracking-wide text-[#45243A]">Dalil Tounes</span>
           </Link>
           <div className="flex items-center gap-1">
