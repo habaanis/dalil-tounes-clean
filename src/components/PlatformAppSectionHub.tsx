@@ -60,7 +60,7 @@ const COPY: Record<Lang, {
   },
   ar: {
     titles: { citizens: 'شنوة تحتاج اليوم؟', tourism: 'اكتشف تونس', pros: 'مؤسستك في دليل تونس' },
-    intros: { citizens: 'تعرّف على خدمات الصحة والتعليم والإجراءات الإدارية والمحلات. اختر القسم المناسب لحاجتك.', tourism: 'اكتشف الجهات والتراث والتجارب المحلية، أو حضّر إقامتك: السكن والصحة والدراسة والعمل.', pros: 'سجّل مؤسستك مجاناً، وقدّم نشاطك عبر CV Business أو Portfolio، واكتشف النماذج والعروض المتوفرة.' },
+    intros: { citizens: 'تعرّف على خدمات الصحة والتعليم والإجراءات الإدارية والمحلات. اختر القسم المناسب لحاجتك.', tourism: 'اكتشف الجهات والتراث والتجارب المحلية، أو حضّر إقامتك: السكن والصحة والدراسة والعمل.', pros: 'سجّل مؤسستك مجاناً، وأنشئ تطبيقك المصغّر المهني، واكتشف النماذج والعروض المتوفرة.' },
     visit: 'زيارة واكتشاف', settle: 'الإقامة والعيش في تونس', moreTopics: 'أقسام أخرى', all: 'عرض الصفحة الكاملة', hint: 'التفاصيل الكاملة تبقى متوفرة.',
     topics: { housing: 'السكن والاستقرار', residence: 'الإقامة والتصاريح',  health: 'الصحة', education: 'التعليم', services: 'خدمات المواطن', shops: 'المحلات والمتاجر', leisure: 'الترفيه والفعاليات', jobs: 'الشغل',
       heritage: 'القرى والتراث', nature: 'الطبيعة والمشي', craft: 'الحرف والمعارف', food: 'النكهات والأسواق', events: 'الثقافة والفعاليات',
@@ -76,7 +76,7 @@ const COPY: Record<Lang, {
   },
   it: {
     titles: { citizens: 'Di cosa hai bisogno?', tourism: 'Scopri la Tunisia', pros: 'La tua impresa su Dalil Tounes' },
-    intros: { citizens: 'Trova sanità, istruzione, servizi amministrativi e negozi. Seleziona la sezione che ti serve.', tourism: 'Esplora regioni, patrimonio ed esperienze locali, oppure prepara il trasferimento: alloggio, salute, scuola e lavoro.', pros: 'Registra gratuitamente la tua attività, presentala con un CV Business o Portfolio e scopri modelli e offerte.' },
+    intros: { citizens: 'Trova sanità, istruzione, servizi amministrativi e negozi. Seleziona la sezione che ti serve.', tourism: 'Esplora regioni, patrimonio ed esperienze locali, oppure prepara il trasferimento: alloggio, salute, scuola e lavoro.', pros: 'Registra gratuitamente la tua attività, crea la tua mini-app professionale e scopri modelli e offerte.' },
     visit: 'Visitare & scoprire', settle: 'Vivere in Tunisia', moreTopics: 'Altre sezioni', all: 'Apri la pagina completa', hint: 'I dettagli sono sempre disponibili.',
     topics: { housing: 'Casa e sistemazione', residence: 'Soggiorno e residenza',  health: 'Salute', education: 'Istruzione', services: 'Servizi ai cittadini', shops: 'Negozi', leisure: 'Tempo libero & eventi', jobs: 'Lavoro',
       heritage: 'Borghi & patrimonio', nature: 'Natura & escursioni', craft: 'Artigianato', food: 'Sapori & mercati', events: 'Cultura & eventi',
@@ -126,7 +126,7 @@ export default function PlatformAppSectionHub({ kind }: { kind: Hub }) {
     },
     ar: {
       free: "اطلب تسجيل نشاطك مجاناً. أدخل المعلومات الأساسية ليتم التثبت من طلبك.",
-      cv: "قدّم خدماتك وأعمالك وبيانات الاتصال والروابط عبر CV Business أو Portfolio مع رابط ورمز QR.",
+      cv: "تطبيقك المصغّر المهني يجمع خدماتك وأعمالك وبيانات الاتصال والروابط، وتشاركه بسهولة عبر رابط ورمز QR Business.",
       models: "اكتشف نموذجي العرض والألوان المتاحة لاختيار الأنسب لنشاطك.",
       offers: "قارن الخدمات والأسعار قبل إرسال طلبك.",
       partners: "تعرّف على شروط الشراكة التجارية مع دليل تونس.",
@@ -144,7 +144,7 @@ export default function PlatformAppSectionHub({ kind }: { kind: Hub }) {
     },
     it: {
       free: "Richiedi la registrazione gratuita della tua attività con i dati essenziali.",
-      cv: "Presenta servizi, lavori, contatti e link in un CV Business o Portfolio con QR.",
+      cv: "La tua mini-app professionale raccoglie servizi, lavori, contatti e link, ed è facile da condividere con link e QR Business.",
       models: "Scopri i due modelli e le palette disponibili.",
       offers: "Confronta servizi e prezzi prima di inviare una richiesta.",
       partners: "Scopri le condizioni della collaborazione commerciale.",
