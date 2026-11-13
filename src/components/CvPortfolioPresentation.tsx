@@ -153,6 +153,7 @@ export interface CvPortfolioPresentationProps {
   hoursBadge?: string;
   practicalContent?: ReactNode;
   onQuote: () => void;
+  boutiqueContent?: ReactNode;
   onShowQr: () => void;
   onShare: () => void;
   sharingContent?: ReactNode;
@@ -182,6 +183,7 @@ export function CvPortfolioPresentation({
   hoursBadge,
   practicalContent,
   onQuote,
+  boutiqueContent,
   onShowQr,
   onShare,
   sharingContent,
@@ -341,6 +343,7 @@ export function CvPortfolioPresentation({
               })()}
             </section>
 
+            {boutiqueContent && <div className="cvp-boutique-in-actions">{boutiqueContent}</div>}
             <button className="cvp-lienora-more" type="button" onClick={() => setMoreOpen(open => !open)} aria-expanded={moreOpen}>
               <b>{copy.moreActions}</b><small>{copy.moreActionsSummary}</small>
             </button>
