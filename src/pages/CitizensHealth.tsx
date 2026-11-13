@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Phone, Building2, X, Plus, Search, ExternalLink } from 'lucide-react';
+import { Phone, Building2, X, Plus, ExternalLink } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
 import LocationSelectTunisie from '../components/LocationSelectTunisie';
@@ -63,10 +63,10 @@ const COPY: Record<PublicLanguage, {
     guideExcerpt: "Trouver le bon médecin n'est pas toujours simple. Voici les questions à se poser avant de prendre rendez-vous.",
     improving: "Section en cours d'amélioration",
     transportAlt: 'Ambulance et transport médical en Tunisie',
-    transportTitle: 'Transport médical',
-    transportSubtitle: 'Ambulances, taxis médicaux et transports adaptés disponibles 24h/7j. Trouvez rapidement un véhicule ou inscrivez-vous comme prestataire.',
-    governorate: 'Gouvernorat',
-    search: 'Rechercher',
+    transportTitle: 'Trouver un transport médical adapté',
+    transportSubtitle: 'Recherchez un service de transport médical selon votre région et vos besoins.',
+    governorate: 'Choisir un gouvernorat',
+    search: 'Rechercher un transport',
     searching: 'Recherche des prestataires...',
     providerSing: 'prestataire',
     providerPlur: 'prestataires',
@@ -94,9 +94,9 @@ const COPY: Record<PublicLanguage, {
     guideExcerpt: 'اختيار الطبيب المناسب ليس دائماً سهلاً. إليك أهم الأسئلة التي يمكن طرحها قبل حجز موعد.',
     improving: 'نعمل حالياً على تطوير هذا القسم',
     transportAlt: 'سيارة إسعاف ونقل طبي في تونس',
-    transportTitle: 'النقل الطبي',
-    transportSubtitle: 'سيارات إسعاف ونقل طبي وخدمات نقل مهيأة متاحة على مدار الساعة. اعثر بسرعة على وسيلة نقل أو سجّل كمقدم خدمة.',
-    governorate: 'الولاية',
+    transportTitle: 'ابحث عن نقل طبي ملائم',
+    transportSubtitle: 'ابحث عن خدمة نقل طبي حسب ولايتك واحتياجاتك.',
+    governorate: 'اختر الولاية',
     search: 'بحث',
     searching: 'جارٍ البحث عن مقدمي الخدمة...',
     providerSing: 'مقدم خدمة',
@@ -125,9 +125,9 @@ const COPY: Record<PublicLanguage, {
     guideExcerpt: 'Finding the right doctor is not always easy. Here are the key questions to consider before booking an appointment.',
     improving: 'This section is being improved',
     transportAlt: 'Ambulance and medical transport in Tunisia',
-    transportTitle: 'Medical transport',
-    transportSubtitle: 'Ambulances, medical taxis and adapted transport available 24/7. Quickly find a vehicle or register as a provider.',
-    governorate: 'Governorate',
+    transportTitle: 'Find suitable medical transport',
+    transportSubtitle: 'Find a medical transport service based on your region and needs.',
+    governorate: 'Choose a governorate',
     search: 'Search',
     searching: 'Searching for providers...',
     providerSing: 'provider',
@@ -156,8 +156,8 @@ const COPY: Record<PublicLanguage, {
     guideExcerpt: 'Trovare il medico giusto non è sempre semplice. Ecco le domande principali da porsi prima di prenotare una visita.',
     improving: 'Questa sezione è in fase di miglioramento',
     transportAlt: 'Ambulanza e trasporto medico in Tunisia',
-    transportTitle: 'Trasporto medico',
-    transportSubtitle: 'Ambulanze, taxi medici e trasporti adattati disponibili 24 ore su 24. Trova rapidamente un veicolo o registrati come fornitore.',
+    transportTitle: 'Trova un trasporto medico adatto',
+    transportSubtitle: 'Trova un servizio di trasporto medico in base alla tua regione e alle tue esigenze.',
     governorate: 'Governatorato',
     search: 'Cerca',
     searching: 'Ricerca dei fornitori...',
@@ -187,8 +187,8 @@ const COPY: Record<PublicLanguage, {
     guideExcerpt: 'Найти подходящего врача не всегда просто. Вот основные вопросы, которые стоит учесть перед записью на приём.',
     improving: 'Этот раздел сейчас улучшается',
     transportAlt: 'Скорая помощь и медицинский транспорт в Тунисе',
-    transportTitle: 'Медицинский транспорт',
-    transportSubtitle: 'Скорая помощь, медицинские такси и адаптированный транспорт доступны круглосуточно. Найдите транспорт или зарегистрируйтесь как поставщик услуг.',
+    transportTitle: 'Найти подходящий медицинский транспорт',
+    transportSubtitle: 'Найдите услугу медицинского транспорта с учетом региона и ваших потребностей.',
     governorate: 'Губернаторство',
     search: 'Искать',
     searching: 'Поиск поставщиков услуг...',
@@ -297,9 +297,10 @@ export default function CitizensHealth({}: CitizensHealthProps) {
         <MeilleursSection
           secteurLabel={c.sector}
           listePage="santé"
-          accentColor="#4A1D43"
+          accentColor="#B28A44"
           sectionTitle={c.bestTitle}
           useGoogleRecommendationCriteria
+          showSearchCta={false}
           blogArticle={{ title: c.guideTitle, excerpt: c.guideExcerpt, slug: 'comment-choisir-son-medecin' }}
         />
       </section>
@@ -326,34 +327,33 @@ export default function CitizensHealth({}: CitizensHealthProps) {
 
       <section className="px-4 pb-8">
         <div className="max-w-7xl mx-auto">
-          <div className="relative h-32 rounded-xl overflow-hidden mb-4 shadow-lg border border-[#D4AF37]">
-            <img src={getSupabaseImageUrl('sante_banner.webp')} alt={c.transportAlt} className="w-full h-full object-cover" decoding="async" />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#4A1D43]/90 to-[#6B2D5C]/80" />
-            <div className="relative min-h-[220px] flex flex-col items-center justify-center text-center px-4 py-7">
-              <h2 className="public-heading text-xl md:text-2xl font-light text-[#D4AF37] mb-1 drop-shadow-lg" style={{ fontFamily: "'Playfair Display', serif" }}>🚑 {c.transportTitle}</h2>
-              <p className="text-white/95 text-xs md:text-sm font-light max-w-2xl mx-auto drop-shadow leading-snug">{c.transportSubtitle}</p>
+          <div className="relative mb-3 min-h-[150px] overflow-hidden rounded-xl border border-[#C9A65D] bg-[#FFF8EA] shadow-sm sm:min-h-[170px]">
+            <img src={getSupabaseImageUrl('sante_banner.webp')} alt={c.transportAlt} className="absolute inset-0 h-full w-full object-cover object-center opacity-85" decoding="async" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#FFF8EA]/95 via-[#FFF8EA]/90 to-[#FFF8EA]/55" />
+            <div className="relative flex min-h-[150px] flex-col justify-center px-4 py-5 text-start sm:min-h-[170px] sm:px-6">
+              <h2 className="public-heading max-w-lg font-serif text-xl font-semibold leading-tight text-[#292725] md:text-2xl">{c.transportTitle}</h2>
+              <p className="mt-2 max-w-lg text-sm leading-5 text-[#514D47]">{c.transportSubtitle}</p>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl border border-[#D4AF37] p-4 mb-4 flex flex-wrap gap-3 items-end">
-            <div className="flex-1 min-w-[180px]">
-              <LocationSelectTunisie value={transportCity} onChange={setTransportCity} placeholder={c.governorate} className="px-3 py-2 rounded-lg text-sm" />
+          <div className="mb-4 grid gap-3 rounded-xl border border-[#C9A65D] bg-white p-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] sm:items-end sm:p-4">
+            <div className="min-w-0">
+              <label className="mb-1 block text-xs font-semibold text-[#292725]">{c.governorate}</label>
+              <LocationSelectTunisie value={transportCity} onChange={setTransportCity} placeholder={c.governorate} className="rounded-lg text-sm" />
             </div>
-            <div className="flex-1 min-w-[180px]"><VehicleTypeAutocomplete value={vehicleType} onChange={setVehicleType} /></div>
-            <button onClick={() => searchTransport({ gouvernorat: transportCity, vehicleType, urgenceOnly: false })} className="px-5 py-2 bg-[#B62226] text-white border border-[#D4AF37] rounded-lg text-sm font-medium hover:bg-[#931D23] transition-all">{c.search}</button>
+            <div className="min-w-0">
+              <label className="mb-1 block text-xs font-semibold text-[#292725]">{lang === 'ar' ? 'نوع النقل الطبي' : lang === 'en' ? 'Medical transport type' : lang === 'it' ? 'Tipo di trasporto medico' : lang === 'ru' ? 'Тип медицинского транспорта' : 'Type de transport médical'}</label>
+              <VehicleTypeAutocomplete value={vehicleType} onChange={setVehicleType} placeholder={lang === 'ar' ? 'اختر وسيلة النقل' : lang === 'en' ? 'Choose a transport type' : lang === 'it' ? 'Scegli un tipo di trasporto' : lang === 'ru' ? 'Выберите тип транспорта' : 'Choisir un transport adapté'} />
+            </div>
+            <button type="button" onClick={() => searchTransport({ gouvernorat: transportCity, vehicleType, urgenceOnly: false })} className="min-h-11 rounded-lg border border-[#C9A65D] bg-[#B62226] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#931D23]">{c.search}</button>
           </div>
 
           {loadingTransport ? (
             <div className="text-center py-16">
-              <div className="inline-block w-12 h-12 border-4 border-[#4A1D43] border-t-transparent rounded-full animate-spin" />
-              <p className="mt-4 text-[#4A1D43]">{c.searching}</p>
+              <div className="inline-block w-12 h-12 border-4 border-[#C9A65D] border-t-transparent rounded-full animate-spin" />
+              <p className="mt-4 text-[#292725]">{c.searching}</p>
             </div>
-          ) : !hasSearchedTransport ? (
-            <div className="mt-8 text-center py-10 bg-white rounded-xl border border-[#D4AF37]">
-              <Search className="w-12 h-12 text-[#D4AF37]/60 mx-auto mb-3" />
-              <p className="text-sm text-[#4A1D43] font-medium">{c.transportPrompt}</p>
-            </div>
-          ) : transportProviders.length > 0 ? (
+          ) : !hasSearchedTransport ? null : transportProviders.length > 0 ? (
             <div className="mt-8">
               <h3 className="text-2xl font-light text-[#4A1D43] mb-6" style={{ fontFamily: "'Playfair Display', serif" }}>
                 {transportProviders.length} {transportProviders.length > 1 ? c.providerPlur : c.providerSing} {transportProviders.length > 1 ? c.availablePlur : c.availableSing}
@@ -374,7 +374,7 @@ export default function CitizensHealth({}: CitizensHealthProps) {
             <div className="max-w-2xl mx-auto">
               <h3 className="text-2xl font-light text-[#4A1D43] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>{c.ctaTitle}</h3>
               <p className="text-gray-700 text-sm mb-4 leading-relaxed">{c.ctaText}</p>
-              <button onClick={() => setShowTransportModal(true)} className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#4A1D43] text-[#D4AF37] text-sm font-semibold border border-[#D4AF37] hover:bg-[#5A2D53] hover:shadow-sm transition-all duration-300 transform hover:scale-105">
+              <button onClick={() => setShowTransportModal(true)} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-[#C9A65D] bg-[#B62226] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#931D23]">
                 <Plus className="w-4 h-4" />{c.ctaButton}
               </button>
             </div>
