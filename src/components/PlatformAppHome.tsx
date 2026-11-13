@@ -108,7 +108,7 @@ export default function PlatformAppHome({ totalCount, legacyCertifiedCount, reco
       <div className="flex items-start gap-2.5">
         <Building2 className="mt-0.5 h-4 w-4 shrink-0 text-[#B28A44]" aria-hidden="true" />
         <div className="min-w-0">
-          <p className="text-sm font-semibold leading-5 text-[#9B2027]">{totalCount === null || totalCount === undefined ? '—' : t.count(totalCount)}</p>
+          <p className="text-sm font-semibold leading-5 text-[#292725]">{totalCount === null || totalCount === undefined ? '—' : t.count(totalCount)}</p>
           <p className="mt-0.5 text-xs leading-5 text-[#6B6762]">{t.discoverCopy}</p>
         </div>
       </div>
@@ -147,7 +147,7 @@ export default function PlatformAppHome({ totalCount, legacyCertifiedCount, reco
         border-color:#bd9958; box-shadow:0 0 0 1px #bd9958;
       }
       [data-home-color-test="rouge-or-v2"] [data-app-help] details { border-color:#c9a65d; background:#fffdfa; }
-      [data-home-color-test="rouge-or-v2"] [data-app-help] summary { color:#98252a; }
+      [data-home-color-test="rouge-or-v2"] [data-app-help] summary { color:#292725; }
     `}</style>
 
     <FounderStory compact />
