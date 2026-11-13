@@ -87,7 +87,7 @@ export default function PlatformAppHome({ totalCount, legacyCertifiedCount, reco
       <div className="flex items-center gap-2">
         <div className="min-w-0 flex-1">
           <p className="text-xs font-semibold tracking-wide text-[#B62226]">🇹🇳 DALIL TOUNES</p>
-          <h1 className="mt-1 font-serif text-xl font-semibold leading-tight text-[#9B2027]">{t.headline}</h1>
+          <h1 className="mt-1 font-serif text-xl font-semibold leading-tight text-[#242424]">{t.headline}</h1>
           <p className="mt-1 text-xs leading-5 text-[#64605D]">{t.intro}</p>
         </div>
         <img src={DALIL_MASCOT_IMAGE} alt="Mascotte Dalil Tounes"
@@ -95,12 +95,12 @@ export default function PlatformAppHome({ totalCount, legacyCertifiedCount, reco
       </div>
     </section>
     <section className="relative z-10 rounded-2xl border border-[#C9A65D] bg-[#FFFCF8] p-3.5 shadow-[0_2px_14px_rgba(30,25,20,0.03)]" aria-label={t.search}>
-      <h2 className="mb-2 font-serif text-base font-semibold text-[#9B2027]">{t.search}</h2>
+      <h2 className="mb-2 font-serif text-base font-semibold text-[#242424]">{t.search}</h2>
       <SearchBar scope="global" autoSearch resultMode="redirectToResults" />
     </section>
     <section className="rounded-xl border border-[#C9A65D] bg-gradient-to-br from-[#FFF5E7] to-[#FFFCF7] px-4 py-4 text-center shadow-sm" aria-label="Dalil Tounes et mini-appli professionnelle">
-      <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-[#AD242B]">{lang === 'fr' ? 'Vous êtes professionnel ?' : lang === 'ar' ? 'عندك مؤسسة؟' : lang === 'en' ? 'Are you a professional?' : lang === 'it' ? 'Sei un professionista?' : 'Вы профессионал?'}</p>
-      <p className="text-sm font-semibold leading-5 text-[#8A2028]">{lang === 'ar' ? 'خلّي مؤسستك موجودة في دليل تونس.' : lang === 'en' ? 'Get listed on Dalil Tounes.' : lang === 'it' ? 'Fai conoscere la tua attività su Dalil Tounes.' : lang === 'ru' ? 'Разместите свою компанию на Dalil Tounes.' : 'Soyez répertorié sur Dalil Tounes.'}</p>
+      <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-[#242424]">{lang === 'fr' ? 'Vous êtes professionnel ?' : lang === 'ar' ? 'عندك مؤسسة؟' : lang === 'en' ? 'Are you a professional?' : lang === 'it' ? 'Sei un professionista?' : 'Вы профессионал?'}</p>
+      <p className="text-sm font-semibold leading-5 text-[#292929]">{lang === 'ar' ? 'خلّي مؤسستك موجودة في دليل تونس.' : lang === 'en' ? 'Get listed on Dalil Tounes.' : lang === 'it' ? 'Fai conoscere la tua attività su Dalil Tounes.' : lang === 'ru' ? 'Разместите свою компанию на Dalil Tounes.' : 'Soyez répertorié sur Dalil Tounes.'}</p>
       <p className="mt-1 text-xs leading-5 text-[#66615D]">{lang === 'ar' ? 'عزّز حضور نشاطك عبر تطبيق مصغّر مهني خاص بمؤسستك.' : lang === 'en' ? 'Give your business greater impact with your own business mini-app.' : lang === 'it' ? 'Dai più visibilità alla tua attività con una mini-app personalizzata.' : lang === 'ru' ? 'Представьте бизнес с помощью собственного мини-приложения.' : 'Développez votre visibilité avec votre mini-appli professionnelle.'}</p>
     </section>
     <PlatformAppHelp language={lang} />
@@ -130,13 +130,14 @@ export default function PlatformAppHome({ totalCount, legacyCertifiedCount, reco
         box-shadow: 0 3px 16px rgba(84,45,27,.045);
       }
       [data-home-color-test="rouge-or-v2"] [data-platform-app-founder] h2 {
-        color:#9b2027;
+        color:#242424;
       }
       [data-home-color-test="rouge-or-v2"] [data-platform-app-founder] details {
         border-color:#c9a65d; background:white;
       }
-      [data-home-color-test="rouge-or-v2"] [data-platform-app-founder] summary { color:#9b2027; }
-      [data-home-color-test="rouge-or-v2"] [data-platform-app-founder] [class*="text-[#4A1D43]"] { color:#9b2027; }
+      [data-home-color-test="rouge-or-v2"] [data-platform-app-founder] summary { color:#242424; }
+      [data-home-color-test="rouge-or-v2"] [data-platform-app-founder] [class*="text-[#4A1D43]"] { color:#242424; }
+      [data-home-color-test="rouge-or-v2"] [data-platform-app-founder] details h3 { color:#242424; }
       [data-home-color-test="rouge-or-v2"] .public-search button[type="submit"] {
         background:#ad242b; color:white; border-color:#ad242b;
       }
