@@ -840,12 +840,14 @@ export default function BusinessShowcaseLienoraDetail({
   previewVilleSlug,
   previewPalette,
   previewPresentationModel,
+  boutiqueContent,
 }: {
   embeddedPreview?: boolean;
   previewSlug?: string;
   previewVilleSlug?: string;
   previewPalette?: PaletteId;
   previewPresentationModel?: 'business' | 'portfolio';
+  boutiqueContent?: ReactNode;
 } = {}) {
   const routeParams = useParams<{
     id?: string;
@@ -1687,6 +1689,7 @@ export default function BusinessShowcaseLienoraDetail({
           productLabel={resolvedPresentation.productName}
           certification={certification}
           actions={portfolioActions}
+          boutiqueContent={boutiqueContent}
           gallery={galleryItems}
           onBack={handleBack}
           bookingContent={sections.find(section => section.id === 'booking')?.content}
@@ -1827,6 +1830,7 @@ export default function BusinessShowcaseLienoraDetail({
                 )}
               </div>
             )}
+            {boutiqueContent && <div className="dt-boutique-in-actions">{boutiqueContent}</div>}
             {!embeddedPreview && <div className="dt-secondary-actions">
               {(business.email || whatsappUrl) && (
                 <button type="button" className="dt-secondary-action" onClick={requestQuote}>
