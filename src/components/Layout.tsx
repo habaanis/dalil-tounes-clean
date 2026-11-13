@@ -260,22 +260,15 @@ export const Layout = ({ children }: LayoutProps) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Link to="/" className="flex items-center gap-2 cursor-pointer">
-              <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center shadow-sm">
-                <picture>
-                  <source srcSet="/images/logo_dalil_tounes_sceau_luxe.webp" type="image/webp" width="140" height="140" />
-                  <img
-                    src="/images/logo_dalil_tounes_sceau_luxe.png"
-                    alt={te.pwa?.logoAlt || 'Logo Dalil Tounes - Plateforme des établissements en Tunisie'}
-                    className="w-full h-full object-cover"
-                    style={{ objectPosition: 'center', borderRadius: '50%' }}
-                    width="140"
-                    height="140"
-                    fetchpriority="high"
-                    loading="eager"
-                    decoding="async"
-                  />
-                </picture>
-              </div>
+              <img
+                src="/icons/dalil-logo-emblem-2026.png?v=1"
+                alt={te.pwa?.logoAlt || 'Dalil Tounes'}
+                className="h-12 w-12 object-contain shrink-0"
+                width="48"
+                height="48"
+                loading="eager"
+                decoding="async"
+              />
               <span className="text-lg font-semibold text-gray-900">
                 Dalil Tounes
               </span>
