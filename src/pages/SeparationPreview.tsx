@@ -328,15 +328,63 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
   return (
     <div dir={lang === 'ar' ? 'rtl' : 'ltr'} className={view === 'platform' ? "premium-page premium-home" : compactCvApp ? "cv-business-app-type bg-white text-slate-900" : "bg-white text-slate-900"}>
       {compactCvApp && <style>{`
+        /* App-only presentation: retain every section and all original text. */
+        .cv-business-app-type { background: #FFFCF7; color: #4E434B; }
+        .cv-business-app-type > details { box-shadow: none; }
         @media (max-width: 640px) {
-          .cv-business-app-type h1 { font-size: 1.4rem !important; line-height: 1.3 !important; }
-          .cv-business-app-type h2 { font-size: 1.15rem !important; line-height: 1.35 !important; }
-          .cv-business-app-type h3 { font-size: 1rem !important; line-height: 1.4 !important; }
-          .cv-business-app-type p,
-          .cv-business-app-type li { font-size: 0.82rem !important; line-height: 1.55 !important; }
-          .cv-business-app-type a,
-          .cv-business-app-type button,
-          .cv-business-app-type summary { font-size: 0.82rem !important; }
+          .cv-business-app-type section {
+            background: #FFFFFF !important;
+            background-image: none !important;
+            border-color: rgba(185,153,79,0.28) !important;
+            box-shadow: none !important;
+            border-radius: 12px !important;
+            padding: 12px !important;
+          }
+          .cv-business-app-type section > div,
+          .cv-business-app-type section > div > div { gap: 12px !important; }
+          .cv-business-app-type section div[class*="bg-"] {
+            background: #FFFDF8 !important;
+          }
+          .cv-business-app-type h1 {
+            font-size: 1.18rem !important; line-height: 1.4 !important;
+            font-weight: 500 !important; color: #443941 !important; letter-spacing: 0 !important;
+          }
+          .cv-business-app-type h2 {
+            font-size: 1.04rem !important; line-height: 1.4 !important;
+            font-weight: 500 !important; color: #443941 !important;
+          }
+          .cv-business-app-type h3 {
+            font-size: 0.92rem !important; line-height: 1.45 !important;
+            font-weight: 500 !important; color: #4E434B !important;
+          }
+          .cv-business-app-type p, .cv-business-app-type li {
+            font-size: 0.79rem !important; line-height: 1.58 !important;
+            font-weight: 400 !important; color: #635960 !important;
+            letter-spacing: normal !important;
+          }
+          .cv-business-app-type a, .cv-business-app-type button,
+          .cv-business-app-type summary {
+            font-size: 0.78rem !important; font-weight: 500 !important;
+            letter-spacing: normal !important;
+          }
+          .cv-business-app-type a, .cv-business-app-type button {
+            background: #FFFDF8 !important; color: #443941 !important;
+            border: 1px solid rgba(185,153,79,0.4) !important;
+            box-shadow: none !important;
+          }
+          .cv-business-app-type div[class*="rounded-[30px]"],
+          .cv-business-app-type div[class*="rounded-2xl"] {
+            border-radius: 12px !important; box-shadow: none !important;
+          }
+          .cv-business-app-type section [class*="text-white"],
+          .cv-business-app-type section [class*="text-[#F1D783]"] {
+            color: #554B52 !important;
+          }
+          .cv-business-app-type video, .cv-business-app-type img {
+            max-height: 260px; object-fit: contain;
+          }
+          .cv-business-app-type section [class*="h-[390px]"] { height: 260px !important; background: #FFFDF8 !important; }
+          .cv-business-app-type .public-title { margin-top: 8px !important; }
         }
       `}</style>}
       {view === 'platform' && <><SEOHead {...getHomeSeoMeta()} currentPath="/" /><StructuredData data={[generateOrganizationSchema(), generateWebSiteSchema()]} /></>}
