@@ -5,8 +5,8 @@ import type { BusinessCardPreviewLanguage } from './BusinessCardPreview';
 
 const details = {
   "fr": {
-    "label": "Un CV professionnel, bien plus qu'une fiche",
-    "title": "Tout ce que votre CV Dalil Tounes peut faire pour vous",
+    "label": "Votre mini-appli professionnelle, bien plus qu'une fiche",
+    "title": "Tout ce que votre mini-appli peut faire pour vous",
     "intro": "Votre activité, vos réalisations, vos contacts et votre QR Business réunis dans une mini-application simple à montrer et à partager.",
     "groups": [
       {
@@ -48,14 +48,14 @@ const details = {
       }
     ],
     "note": "Les possibilités dépendent de la formule choisie, des informations transmises et des options activées. Le CV Business et le CV Portfolio présentent les mêmes fonctions essentielles sous deux formats différents.",
-    "cta": "Découvrir le CV Business",
+    "cta": "Découvrir votre mini-appli",
     "contact": "Demander des informations",
-    "personalTitle": "Vous souhaitez apporter votre touche personnelle à votre CV professionnel ?",
+    "personalTitle": "Vous souhaitez apporter votre touche personnelle à votre mini-appli ?",
     "personalText": "Choisissez les boutons adaptés à votre métier parmi les fonctions disponibles. Vos textes, photos et services peuvent évoluer ; pour une demande particulière, voyons ensemble ce qui est possible."
   },
   "en": {
     "label": "More than a business listing",
-    "title": "Everything your Dalil Tounes CV can do for you",
+    "title": "Everything your business mini-app can do for you",
     "intro": "Your business, work, contacts and Business QR code together in a professional mini-app, easy to show and share.",
     "groups": [
       {
