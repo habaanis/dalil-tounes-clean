@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { ChevronDown } from 'lucide-react';
+import { useState } from 'react';
+import { ChevronDown, X } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { DALIL_MASCOT_IMAGE } from '../lib/dalilMascotImage';
 
@@ -112,6 +113,71 @@ export default function PlatformAppSectionHub({ kind }: { kind: Hub }) {
   const { language } = useLanguage();
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as Lang;
   const copy = COPY[lang];
+  const [openPro, setOpenPro] = useState<string | null>(null);
+  const proDetails: Record<Lang, Record<string, string>> = {
+    fr: {
+      free: "Demandez gratuitement le référencement de votre activité. Le formulaire recueille les informations essentielles et l'équipe vérifie votre demande.",
+      cv: "Présentez vos services, réalisations, coordonnées et liens dans un CV Business ou Portfolio accessible par lien et QR.",
+      models: "Découvrez les deux présentations, leurs mises en page et leurs palettes pour choisir celle qui convient à votre activité.",
+      offers: "Comparez les prestations proposées et consultez les tarifs avant de faire votre demande.",
+      partners: "Découvrez les conditions pour devenir partenaire commercial de Dalil Tounes.",
+      businessPartners: "Recherchez des professionnels et des partenaires potentiels dans le réseau.",
+      businessNeeds: "Consultez les besoins professionnels publiés sur la plateforme."
+    },
+    ar: {
+      free: "اطلب تسجيل نشاطك مجاناً. أدخل المعلومات الأساسية ليتم التثبت من طلبك.",
+      cv: "قدّم خدماتك وأعمالك وبيانات الاتصال والروابط عبر CV Business أو Portfolio مع رابط ورمز QR.",
+      models: "اكتشف نموذجي العرض والألوان المتاحة لاختيار الأنسب لنشاطك.",
+      offers: "قارن الخدمات والأسعار قبل إرسال طلبك.",
+      partners: "تعرّف على شروط الشراكة التجارية مع دليل تونس.",
+      businessPartners: "ابحث عن مهنيين وشركاء محتملين في الشبكة.",
+      businessNeeds: "اطّلع على احتياجات المؤسسات المنشورة على المنصة."
+    },
+    en: {
+      free: "Request a free business listing. Submit your essential details for review.",
+      cv: "Show your services, work, contact details and links in a Business or Portfolio CV with a shareable link and QR code.",
+      models: "Explore both presentation styles and their available colour palettes.",
+      offers: "Compare services and prices before sending a request.",
+      partners: "Learn about Dalil Tounes commercial partnerships.",
+      businessPartners: "Find professionals and potential partners in the network.",
+      businessNeeds: "Explore published business needs."
+    },
+    it: {
+      free: "Richiedi la registrazione gratuita della tua attività con i dati essenziali.",
+      cv: "Presenta servizi, lavori, contatti e link in un CV Business o Portfolio con QR.",
+      models: "Scopri i due modelli e le palette disponibili.",
+      offers: "Confronta servizi e prezzi prima di inviare una richiesta.",
+      partners: "Scopri le condizioni della collaborazione commerciale.",
+      businessPartners: "Trova professionisti e potenziali partner.",
+      businessNeeds: "Consulta le esigenze professionali pubblicate."
+    },
+    ru: {
+      free: "Подайте заявку на бесплатное размещение компании с основными сведениями.",
+      cv: "Представьте услуги, работы и контакты в Business или Portfolio CV со ссылкой и QR-кодом.",
+      models: "Посмотрите два варианта оформления и цветовые палитры.",
+      offers: "Сравните услуги и цены перед отправкой заявки.",
+      partners: "Узнайте об условиях коммерческого партнёрства.",
+      businessPartners: "Найдите специалистов и потенциальных партнёров.",
+      businessNeeds: "Посмотрите опубликованные бизнес-запросы."
+    }
+  };
+  const openLabels: Record<Lang, string> = {
+    fr: 'Ouvrir la rubrique', ar: 'فتح القسم', en: 'Open section', it: 'Apri la sezione', ru: 'Открыть раздел'
+  };
+  const closeLabels: Record<Lang, string> = {
+    fr: 'Fermer', ar: 'إغلاق', en: 'Close', it: 'Chiudi', ru: 'Закрыть'
+  };
+  const prosActions = PRO_LINKS.filter(item => item.id === 'free' || item.id === 'cv');
+  const prosExtras = PRO_LINKS.filter(item => item.id !== 'free' && item.id !== 'cv');
+  const renderProCards = (items: Entry[]) => <div className="grid grid-cols-2 gap-2">
+    {items.map(item => <button key={item.id} type="button" aria-expanded={openPro === item.id}
+      onClick={() => setOpenPro(current => current === item.id ? null : item.id)}
+      className={`flex min-h-[74px] flex-col items-start justify-between rounded-xl border p-3 text-start shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B99143] ${openPro === item.id ? 'border-[#B99143] bg-[#FFF9EF]' : 'border-[#E5D7BE] bg-white'}`}>
+      <span aria-hidden="true" className="text-xl leading-none">{item.icon}</span>
+      <span className="mt-2 text-sm font-medium leading-5 text-[#45243A]">{copy.topics[item.id]}</span>
+    </button>)}
+  </div>;
+  const selectedPro = PRO_LINKS.find(item => item.id === openPro);
 
   return <div data-platform-app-hub={kind} className="space-y-4 px-3 py-4">
     <section className="flex items-center gap-3 rounded-2xl border border-[#D4AF37]/45 bg-[#FFF9EF] p-3">
@@ -127,13 +193,28 @@ export default function PlatformAppSectionHub({ kind }: { kind: Hub }) {
       <HubLinks items={CITIZEN_LINKS} topics={copy.topics} />
     </div>}
     {kind === 'pros' && <>
-      <HubLinks items={PRO_LINKS.slice(0, 2)} topics={copy.topics} />
+      {renderProCards(prosActions)}
       <details className="group rounded-2xl border border-[#D4AF37]/40 bg-white p-3">
         <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 px-1 font-medium text-[#45243A] [&::-webkit-details-marker]:hidden">
           {copy.moreTopics}<ChevronDown aria-hidden="true" className="h-5 w-5 shrink-0 text-[#A17D36] transition-transform group-open:rotate-180" />
         </summary>
-        <div className="pt-2"><HubLinks items={PRO_LINKS.slice(2)} topics={copy.topics} /></div>
+        <div className="pt-2">{renderProCards(prosExtras)}</div>
       </details>
+      {selectedPro && <section role="region" aria-label={copy.topics[selectedPro.id]}
+        className="rounded-2xl border border-[#D4AF37]/60 bg-[#FFFDF8] p-4 shadow-sm">
+        <div className="flex items-start justify-between gap-3">
+          <h2 className="font-serif text-lg font-semibold text-[#45243A]">{selectedPro.icon} {copy.topics[selectedPro.id]}</h2>
+          <button type="button" onClick={() => setOpenPro(null)} aria-label={closeLabels[lang]}
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#E5D7BE] bg-white text-[#45243A]">
+            <X className="h-5 w-5" aria-hidden="true" />
+          </button>
+        </div>
+        <p className="mt-2 text-sm leading-6 text-[#6A5B64]">{proDetails[lang][selectedPro.id]}</p>
+        <Link to={selectedPro.href}
+          className="mt-4 inline-flex min-h-11 items-center rounded-xl border border-[#D4AF37]/65 bg-[#4A1D43] px-4 py-2 text-sm font-semibold text-white">
+          {openLabels[lang]}
+        </Link>
+      </section>}
     </>}
 
     {kind === 'tourism' && <div className="space-y-3">
