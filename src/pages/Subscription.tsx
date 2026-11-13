@@ -1083,9 +1083,9 @@ const simplifiedOfferCopy: Record<OfferLanguage, {
     productsSubtitle: 'Un prix de création simple, sans abonnement mensuel.',
     welcomeBadge: 'Offre de bienvenue',
     welcomeTitle: 'Notre modèle évolue pour mieux accompagner les professionnels tunisiens',
-    welcomeDescription: 'Nous connaissons les réalités des artisans, des indépendants et des petites entreprises. Dalil Tounes supprime donc les abonnements mensuels : vous réglez une seule fois la création du CV Business de votre choix.',
-    welcomeHighlight: 'La première année est incluse et les deux années suivantes sont offertes : 3 ans de CV Business sans renouvellement à régler, avec votre carte Business et son QR Code.',
-    welcomePayment: 'Seul le prix de création du CV Business choisi est à régler : 30 TND pour Artisan ou 59 TND pour Premium.',
+    welcomeDescription: 'Nous connaissons les réalités des artisans, des indépendants et des petites entreprises. Dalil Tounes supprime donc les abonnements mensuels : vous réglez une seule fois la création de votre mini-appli personnalisée.',
+    welcomeHighlight: 'La première année est incluse et les deux années suivantes sont offertes : 3 ans de mini-appli sans renouvellement à régler, avec votre carte Business et son QR Code.',
+    welcomePayment: 'Seul le prix de création de votre mini-appli est à régler : 30 TND pour Artisan ou 59 TND pour Premium.',
     creationLabel: 'Création — paiement unique',
     firstYearIncluded: '12 mois inclus + 24 mois offerts — 3 ans au total',
     artisanTitle: 'Formule Artisan',
@@ -1093,13 +1093,13 @@ const simplifiedOfferCopy: Record<OfferLanguage, {
     artisanFeatures: ['Présentation légère', 'Activité et services', 'Coordonnées', 'Téléphone et WhatsApp', 'Horaires', '2 réseaux sociaux du professionnel', 'Jusqu’à 5 photos', 'QR Code Business'],
     premiumTitle: 'Formule Premium',
     premiumIntro: 'Le CV Business complet de Dalil Tounes, avec la présentation Premium et les fonctionnalités actuelles de la formule.',
-    maintenanceTitle: 'Maintien annuel du CV Business',
+    maintenanceTitle: 'Maintien annuel de votre mini-appli',
     maintenanceTiming: 'À partir de la 4e année',
     maintenancePrice: '50 TND / an',
-    maintenanceIntro: 'Après les trois années de l’offre de bienvenue, vous choisissez librement de maintenir votre CV Business actif et entretenu.',
+    maintenanceIntro: 'Après les trois années de l’offre de bienvenue, vous choisissez librement de maintenir votre mini-appli active et entretenue.',
     maintenanceFeatures: ['Maintien du CV Business en ligne', 'Hébergement inclus', 'QR Business actif', 'Maintenance technique', 'Mises à jour techniques de la plateforme Dalil Tounes', 'Jusqu’à 10 demandes de modification par an', 'Assistance Dalil Tounes'],
-    noRenewal: 'Sans renouvellement, votre entreprise reste présente gratuitement sur Dalil Tounes avec la Présence essentielle. Les fonctions du CV Business sont désactivées jusqu’à sa réactivation.',
-    preview: 'Aperçu du CV Business',
+    noRenewal: 'Sans renouvellement, votre entreprise reste présente gratuitement sur Dalil Tounes avec la Présence essentielle. Les fonctions de la mini-appli sont désactivées jusqu’à sa réactivation.',
+    preview: 'Aperçu de votre mini-appli',
     chooseArtisan: 'Choisir la Formule Artisan',
     choosePremium: 'Choisir la Formule Premium',
     essentialFeatures: ["Nom de l'activité", 'Activité', 'Ville', 'Téléphone', "Horaires d'ouverture"],
@@ -1164,7 +1164,7 @@ const simplifiedOfferCopy: Record<OfferLanguage, {
     productsSubtitle: 'Un prezzo di creazione semplice, senza abbonamento mensile.',
     welcomeBadge: 'Offerta di benvenuto',
     welcomeTitle: 'Il nostro modello evolve per sostenere meglio i professionisti tunisini',
-    welcomeDescription: 'Conosciamo la realtà di artigiani, indipendenti e piccole imprese. Per questo Dalil Tounes elimina gli abbonamenti mensili: paghi una sola volta la creazione del CV Business che scegli.',
+    welcomeDescription: 'Conosciamo la realtà di artigiani, indipendenti e piccole imprese. Per questo Dalil Tounes elimina gli abbonamenti mensili: paghi una sola volta la creazione della tua mini-app personalizzata.',
     welcomeHighlight: 'Il primo anno è incluso e i due anni successivi sono offerti: 3 anni di CV Business senza rinnovi da pagare, con la tua carta Business e il suo QR Code.',
     welcomePayment: 'Paghi solo il prezzo di creazione del CV Business scelto: 30 TND per Artisan o 59 TND per Premium.',
     creationLabel: 'Creazione — pagamento unico',
@@ -1174,7 +1174,7 @@ const simplifiedOfferCopy: Record<OfferLanguage, {
     artisanFeatures: ['Presentazione leggera', 'Attività e servizi', 'Recapiti', 'Telefono e WhatsApp', 'Orari', '2 social network del cliente', 'Fino a 5 foto', 'QR Code Business'],
     premiumTitle: 'Formula Premium',
     premiumIntro: 'Il CV Business completo di Dalil Tounes con la presentazione Premium e le funzionalità attuali.',
-    maintenanceTitle: 'Mantenimento annuale del CV Business',
+    maintenanceTitle: 'Mantenimento annuale della mini-app',
     maintenanceTiming: 'Dal 4° anno',
     maintenancePrice: '50 TND / anno',
     maintenanceIntro: 'Dopo i tre anni dell’offerta di benvenuto, scegli liberamente se mantenere attivo e curato il tuo CV Business.',
@@ -1380,13 +1380,14 @@ export const Subscription = () => {
           <details id="histoire-fondateur" className="mt-3 scroll-mt-32 rounded-xl border border-[#D4AF37]/40 p-3"><summary className="cursor-pointer font-medium text-[#4A1D43]">{structure.story}</summary><FounderStory full /></details>
         </section>
         <section id="cv-professionnels" className="my-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-5">
-          <h2 className="font-serif text-xl font-medium text-[#4A1D43]">CV Business · CV Portfolio</h2>
+          <h2 className="font-serif text-xl font-medium text-[#4A1D43]">{structure.products}</h2>
+          <p className="mt-1 text-xs text-slate-500">CV Business · CV Portfolio</p>
           <p className="my-3 text-sm leading-6 text-slate-600">{structure.cvIntro}</p>
           <details><summary className="cursor-pointer font-medium text-[#4A1D43]">{structure.details}</summary><CvBusinessHome embedded /></details>
         </section>
         <section id="offres" aria-labelledby="cv-business-products-title" className="order-2 mt-5 sm:mt-0">
 <div className="mb-6 text-center">
-  <p className="text-xs font-medium uppercase tracking-[0.18em] text-amber-600">CV BUSINESS DALIL TOUNES</p>
+  <p className="text-xs font-medium uppercase tracking-[0.18em] text-amber-600">{language === "ar" ? "تطبيقك المصغّر المهني" : language === "en" ? "YOUR BUSINESS MINI-APP" : language === "it" ? "LA TUA MINI-APP PROFESSIONALE" : language === "ru" ? "ВАШЕ МИНИ-ПРИЛОЖЕНИЕ" : "VOTRE MINI-APPLI PROFESSIONNELLE"}</p>
   <h2 id="cv-business-products-title" className="mt-2 text-2xl font-medium text-[#4A123F] sm:text-3xl">{simpleCopy.productsTitle}</h2>
   <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-slate-600">{simpleCopy.productsSubtitle}</p>
 </div>
