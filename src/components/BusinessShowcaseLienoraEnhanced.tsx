@@ -150,5 +150,18 @@ export default function BusinessShowcaseLienoraEnhanced() {
 
   const rawProducts = business?.['boutique_products'];
   const products: BoutiqueProduct[] = Array.isArray(rawProducts) ? rawProducts.filter((item): item is BoutiqueProduct => Boolean(item && typeof item === 'object' && typeof item.id === 'string' && typeof item.title === 'string' && typeof item.imageUrl === 'string' && (item.mode === 'order' || item.mode === 'quote') && item.currency === 'TND')) : [];
-  return <><BusinessShowcaseLienoraDetail />{products.length > 0 && <div className="mx-auto max-w-3xl px-4 pb-8"><BoutiqueInteractive config={{ merchantName: String(business?.nom || ''), whatsapp: String(business?.['whatsapp'] || ''), products, paymentsVerified: business?.['boutique_payments_verified'] === true }} /></div>}</>;
+  const boutiqueDemo = new URLSearchParams(window.location.search).get('boutique-demo') === '1'
+    && (String(business?.nom || '').trim().toLowerCase() === "aux saveurs d'anis")
+    && String(business?.ville || '').toLowerCase() === 'sousse';
+  const images = String(business?.['image_url'] || '').split(/[\\s,]+/).map(value => value.trim()).filter(value => /^https:\/\//.test(value));
+  const pilotProducts: BoutiqueProduct[] = boutiqueDemo
+    ? [
+      { id: 'mariage', title: 'Buffet de mariage', imageUrl: images[1], currency: 'TND', mode: 'quote', description: 'Prestation traiteur sur mesure — devis personnalisé.' },
+      { id: 'plateaux', title: 'Plateaux traiteur', imageUrl: images[3], currency: 'TND', mode: 'quote', description: 'Pour vos événements et repas professionnels.' },
+      { id: 'dessert', title: 'Desserts à l’assiette', imageUrl: images[0], currency: 'TND', mode: 'quote', description: 'Créations et desserts selon votre événement.' },
+      { id: 'bouchees', title: 'Amuse-bouches', imageUrl: images[4], currency: 'TND', mode: 'quote', description: 'Pièces cocktail et propositions sur mesure.' },
+    ].filter(product => Boolean(product.imageUrl))
+    : [];
+  const visibleProducts = boutiqueDemo ? pilotProducts : products;
+  return <><BusinessShowcaseLienoraDetail />{visibleProducts.length > 0 && <div className="mx-auto max-w-3xl px-4 pb-8"><BoutiqueInteractive config={{ merchantName: String(business?.nom || ''), whatsapp: String(business?.['whatsapp'] || ''), products: visibleProducts, paymentsVerified: !boutiqueDemo && business?.['boutique_payments_verified'] === true, demoMode: boutiqueDemo }} /></div>}</>;
 }
