@@ -51,7 +51,7 @@ const COPY: Record<Lang, {
 }> = {
   fr: {
     titles: { citizens: 'De quoi avez-vous besoin ?', tourism: 'Découvrir la Tunisie', pros: 'Votre entreprise sur Dalil Tounes' },
-    intros: { citizens: 'Accédez aux services de santé, à l’éducation, aux démarches administratives et aux commerces. Sélectionnez la rubrique correspondant à votre besoin.', tourism: 'Explorez les régions, le patrimoine et les expériences locales, ou préparez votre installation : séjour, logement, santé, scolarité et travail.', pros: 'Accédez directement à la démarche souhaitée.' },
+    intros: { citizens: 'Accédez aux services de santé, à l’éducation, aux démarches administratives et aux commerces. Sélectionnez la rubrique correspondant à votre besoin.', tourism: 'Explorez les régions, le patrimoine et les expériences locales, ou préparez votre installation : séjour, logement, santé, scolarité et travail.', pros: 'Inscrivez gratuitement votre entreprise, présentez votre activité avec un CV Business ou Portfolio et découvrez les modèles et offres disponibles.' },
     visit: 'Visiter & découvrir', settle: "S’installer & vivre en Tunisie", moreTopics: 'Autres rubriques', all: 'Afficher la page complète', hint: 'Les informations détaillées restent disponibles.',
     topics: { housing: 'Logement & installation', residence: 'Séjour & résidence',  health: 'Santé', education: 'Éducation', services: 'Services citoyens', shops: 'Commerces & magasins', leisure: 'Loisirs & événements', jobs: 'Emploi',
       heritage: 'Villages & patrimoine', nature: 'Nature & randonnées', craft: 'Artisanat & savoir-faire', food: 'Saveurs & marchés', events: 'Culture & événements',
@@ -59,7 +59,7 @@ const COPY: Record<Lang, {
   },
   ar: {
     titles: { citizens: 'شنوة تحتاج اليوم؟', tourism: 'اكتشف تونس', pros: 'مؤسستك في دليل تونس' },
-    intros: { citizens: 'تعرّف على خدمات الصحة والتعليم والإجراءات الإدارية والمحلات. اختر القسم المناسب لحاجتك.', tourism: 'اكتشف الجهات والتراث والتجارب المحلية، أو حضّر إقامتك: السكن والصحة والدراسة والعمل.', pros: 'اختار الخدمة اللي تحتاجها.' },
+    intros: { citizens: 'تعرّف على خدمات الصحة والتعليم والإجراءات الإدارية والمحلات. اختر القسم المناسب لحاجتك.', tourism: 'اكتشف الجهات والتراث والتجارب المحلية، أو حضّر إقامتك: السكن والصحة والدراسة والعمل.', pros: 'سجّل مؤسستك مجاناً، وقدّم نشاطك عبر CV Business أو Portfolio، واكتشف النماذج والعروض المتوفرة.' },
     visit: 'زيارة واكتشاف', settle: 'الإقامة والعيش في تونس', moreTopics: 'أقسام أخرى', all: 'عرض الصفحة الكاملة', hint: 'التفاصيل الكاملة تبقى متوفرة.',
     topics: { housing: 'السكن والاستقرار', residence: 'الإقامة والتصاريح',  health: 'الصحة', education: 'التعليم', services: 'خدمات المواطن', shops: 'المحلات والمتاجر', leisure: 'الترفيه والفعاليات', jobs: 'الشغل',
       heritage: 'القرى والتراث', nature: 'الطبيعة والمشي', craft: 'الحرف والمعارف', food: 'النكهات والأسواق', events: 'الثقافة والفعاليات',
@@ -67,7 +67,7 @@ const COPY: Record<Lang, {
   },
   en: {
     titles: { citizens: 'What do you need?', tourism: 'Explore Tunisia', pros: 'Your business on Dalil Tounes' },
-    intros: { citizens: 'Find health, education, administrative services and local shops. Choose the section you need.', tourism: 'Explore regions, heritage and local experiences, or prepare your move: housing, health, school and work.', pros: 'Choose the service you need.' },
+    intros: { citizens: 'Find health, education, administrative services and local shops. Choose the section you need.', tourism: 'Explore regions, heritage and local experiences, or prepare your move: housing, health, school and work.', pros: 'List your business for free, present it with a Business or Portfolio CV, and explore available designs and offers.' },
     visit: 'Explore & visit', settle: 'Move to & live in Tunisia', moreTopics: 'More topics', all: 'View the full page', hint: 'Full details remain available.',
     topics: { housing: 'Housing & settling in', residence: 'Stay & residence',  health: 'Health', education: 'Education', services: 'Citizen services', shops: 'Shops & stores', leisure: 'Leisure & events', jobs: 'Jobs',
       heritage: 'Villages & heritage', nature: 'Nature & hiking', craft: 'Crafts & skills', food: 'Food & markets', events: 'Culture & events',
@@ -75,7 +75,7 @@ const COPY: Record<Lang, {
   },
   it: {
     titles: { citizens: 'Di cosa hai bisogno?', tourism: 'Scopri la Tunisia', pros: 'La tua impresa su Dalil Tounes' },
-    intros: { citizens: 'Trova sanità, istruzione, servizi amministrativi e negozi. Seleziona la sezione che ti serve.', tourism: 'Esplora regioni, patrimonio ed esperienze locali, oppure prepara il trasferimento: alloggio, salute, scuola e lavoro.', pros: 'Vai direttamente alla sezione desiderata.' },
+    intros: { citizens: 'Trova sanità, istruzione, servizi amministrativi e negozi. Seleziona la sezione che ti serve.', tourism: 'Esplora regioni, patrimonio ed esperienze locali, oppure prepara il trasferimento: alloggio, salute, scuola e lavoro.', pros: 'Registra gratuitamente la tua attività, presentala con un CV Business o Portfolio e scopri modelli e offerte.' },
     visit: 'Visitare & scoprire', settle: 'Vivere in Tunisia', moreTopics: 'Altre sezioni', all: 'Apri la pagina completa', hint: 'I dettagli sono sempre disponibili.',
     topics: { housing: 'Casa e sistemazione', residence: 'Soggiorno e residenza',  health: 'Salute', education: 'Istruzione', services: 'Servizi ai cittadini', shops: 'Negozi', leisure: 'Tempo libero & eventi', jobs: 'Lavoro',
       heritage: 'Borghi & patrimonio', nature: 'Natura & escursioni', craft: 'Artigianato', food: 'Sapori & mercati', events: 'Cultura & eventi',
@@ -83,7 +83,7 @@ const COPY: Record<Lang, {
   },
   ru: {
     titles: { citizens: 'Что вам нужно?', tourism: 'Откройте Тунис', pros: 'Ваш бизнес на Dalil Tounes' },
-    intros: { citizens: 'Найдите медицинские, образовательные, административные услуги и магазины. Выберите нужный раздел.', tourism: 'Исследуйте регионы, наследие и местные впечатления или подготовьте переезд: жильё, здоровье, учёба и работа.', pros: 'Выберите нужный раздел.' },
+    intros: { citizens: 'Найдите медицинские, образовательные, административные услуги и магазины. Выберите нужный раздел.', tourism: 'Исследуйте регионы, наследие и местные впечатления или подготовьте переезд: жильё, здоровье, учёба и работа.', pros: 'Зарегистрируйте компанию бесплатно, представьте её через Business или Portfolio CV и изучите модели и предложения.' },
     visit: 'Путешествия', settle: 'Переезд и жизнь в Тунисе', moreTopics: 'Другие разделы', all: 'Вся страница', hint: 'Полная информация остаётся доступной.',
     topics: { housing: 'Жильё и переезд', residence: 'Проживание и ВНЖ',  health: 'Здоровье', education: 'Образование', services: 'Услуги гражданам', shops: 'Магазины', leisure: 'Отдых и события', jobs: 'Работа',
       heritage: 'Деревни и наследие', nature: 'Природа и походы', craft: 'Ремёсла', food: 'Еда и рынки', events: 'Культура и события',
