@@ -1,9 +1,8 @@
 import { isCertifiedBusiness } from '../lib/businessCertification';
 import { getCvPaletteTheme } from '../lib/cvPalette';
-import { Clock3, Phone } from 'lucide-react';
+import { Phone } from 'lucide-react';
 import { getCoverImageUrl } from '../lib/imagekitUtils';
 import { getLogoUrl } from '../lib/logoUtils';
-import { isCurrentlyOpen, formatTodayScheduleText, getTodaySchedule } from '../lib/horaireUtils';
 import GoogleRatingSummary from './GoogleRatingSummary';
 import { getCategoryIllustration, isRealBusinessPhoto, isWikimediaIllustration, getWikimediaCreditUrl } from '../lib/categoryIllustrations';
 
@@ -86,22 +85,10 @@ export default function BusinessSearchCardV2({
     : illustration?.source;
   const logo = getLogoUrl(business.logoUrl);
   const phone = business.telephone || business.phone || '';
-  const todaySchedule = business.horaires_ok ? getTodaySchedule(business.horaires_ok) : null;
-  const unconfirmedHours = /à confirmer|a confirmer|indicatif|annuaire|non communiqué|non renseigne|non renseigné/i.test(business.horaires_ok || '');
-  // Une description libre ne doit jamais être interprétée comme « Fermé ».
-  const canShowLiveStatus = Boolean(todaySchedule && !unconfirmedHours &&
-    (/(\d{1,2}(?:[.:h]\d{2})?)\s*(?:[-–—>àa]|to)\s*(\d{1,2}(?:[.:h]\d{2})?)/i.test(todaySchedule.hours) ||
-      /fermé|closed|مغلق/i.test(todaySchedule.hours)));
-  const openNow = canShowLiveStatus ? isCurrentlyOpen(business.horaires_ok) : null;
-  const today = todaySchedule ? formatTodayScheduleText(todaySchedule, language) : '';
-  const missingLabels: Record<string, { phone: string; hours: string }> = {
-    fr: { phone: 'Téléphone non renseigné', hours: 'Horaires non renseignés' },
-    ar: { phone: 'الهاتف غير متوفر', hours: 'ساعات العمل غير متوفرة' },
-    en: { phone: 'Phone not provided', hours: 'Hours not provided' },
-    it: { phone: 'Telefono non indicato', hours: 'Orari non indicati' },
-    ru: { phone: 'Телефон не указан', hours: 'Часы работы не указаны' },
+  const missingPhone: Record<string, string> = {
+    fr: 'Téléphone non renseigné', ar: 'الهاتف غير متوفر', en: 'Phone not provided',
+    it: 'Telefono non indicato', ru: 'Телефон не указан',
   };
-  const missing = missingLabels[language] || missingLabels.fr;
   // Select the existing Airtable legacy label and the existing Ivoire & Or theme.
   // Presentation only: no palette/status edits, no new certification.
   const legacyIvory = business.statut_carte === '⭐ CERTIFIÉ DALIL TOUNES';
@@ -206,6 +193,7 @@ export default function BusinessSearchCardV2({
             reviewCount={business['Compteur Avis Google'] ?? business.nombre_avis}
             language={language}
             className="mt-1 text-white"
+            showTrustLabel={!compact}
           />
         )}
 
@@ -224,26 +212,7 @@ export default function BusinessSearchCardV2({
         {!phone.trim() && (
           <p className="mt-1 flex items-center gap-1 text-[9px] text-emerald-50/70">
             <Phone className="h-2.5 w-2.5 shrink-0" aria-hidden="true" />
-            {missing.phone}
-          </p>
-        )}
-
-        {business.horaires_ok && (
-          <div className="mt-1 border-t border-[#D4AF37]/30 pt-1 text-[8px]">
-            <div className="flex items-center gap-1">
-              <Clock3 className={`h-2.5 w-2.5 shrink-0 ${openNow === null ? 'text-emerald-50/70' : openNow ? 'text-emerald-300' : 'text-red-400'}`} />
-              <span className={`font-extrabold ${openNow === null ? 'text-emerald-50/80' : openNow ? 'text-emerald-300' : 'text-red-400'}`}>
-                {openNow === null ? (language === 'ar' ? 'أوقات العمل بحاجة للتأكيد' : language === 'en' ? 'Hours to confirm' : language === 'it' ? 'Orari da confermare' : language === 'ru' ? 'Часы уточняются' : 'Horaires à confirmer') : openNow ? text.open : text.closed}
-              </span>
-            </div>
-            {today && <p className="mt-0.5 line-clamp-1 text-emerald-50/80">{today}</p>}
-          </div>
-        )}
-
-        {!business.horaires_ok?.trim() && (
-          <p className="mt-1 flex items-center gap-1 border-t border-[#D4AF37]/30 pt-1 text-[9px] text-emerald-50/70">
-            <Clock3 className="h-2.5 w-2.5 shrink-0" aria-hidden="true" />
-            {missing.hours}
+            {missingPhone[language] || missingPhone.fr}
           </p>
         )}
 
