@@ -1711,7 +1711,11 @@ export const Businesses = ({
                       onClick={() => {
                         if (inPlatformApp) {
                           // Unique ID avoids opening a different business when legacy slugs collide.
-                          navigate(`/entreprise/id/${business.id}`, { state: { fromPlatformApp: true } });
+                          // Preview-only visual continuity: historical Airtable-certified cards
+                          // open the CV with the EXISTING Ivoire & Or palette, no data mutation.
+                          const isLegacyIvory = business.statut_carte === '⭐ CERTIFIÉ DALIL TOUNES';
+                          const paletteSuffix = isLegacyIvory ? '?palette=ivory' : '';
+                          navigate(`/entreprise/id/${business.id}${paletteSuffix}`, { state: { fromPlatformApp: true } });
                         } else {
                           navigate(buildEntrepriseUrl({ slug: business.slug, nom: business.name, ville: business.ville || business.city, id: business.id }));
                         }
