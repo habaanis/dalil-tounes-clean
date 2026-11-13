@@ -125,43 +125,63 @@ export default function BusinessSearchCardV2({
         .legacy-ivory-card [class*="bg-[#064934]"] { background: ${ivory.surfaceAlt}; }
         .legacy-ivory-card [class*="text-white"] { color: ${ivory.text}; }
       `}</style>}
-      <div className={`relative overflow-hidden border-b border-[#D4AF37]/35 ${compact ? "h-[47px]" : "h-[58px]"}`}>
-        <img
-          src={cover}
-          alt={hasRealCover ? displayName : existingIllustration ? 'Illustration du métier' : illustration?.label || displayName}
-          className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.015]"
-          loading="lazy"
-          decoding="async"
-          onError={(event) => {
-            // Une source externe indisponible ne doit jamais laisser une carte cassée.
-            event.currentTarget.onerror = null;
-            event.currentTarget.src = '/images/placeholder.jpg';
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#064332]/70 via-transparent to-black/5" />
-        {!hasRealCover && illustrationSource && (
-          <a
-            href={illustrationSource}
-            target="_blank"
-            rel="noopener noreferrer"
-            title={existingIllustration ? 'Image illustrative Wikimedia Commons' : `Illustration du métier — ${illustration?.author}, ${illustration?.licence}`}
-            onClick={(event) => event.stopPropagation()}
-            className="absolute bottom-0 right-1 rounded-t bg-black/60 px-1.5 py-0.5 text-[8px] text-white/90 underline"
-          >
-            {language === 'ar' ? 'صورة توضيحية' : language === 'en' ? 'Illustration' : 'Illustration du métier'}
-          </a>
-        )}
-        <span className={`absolute top-1.5 text-[9px] font-black uppercase tracking-[0.12em] text-[#E5B92F] drop-shadow-sm ${isRTL ? 'right-3' : 'left-3'}`}>
-          {tier === 'premium' ? text.premium : text.artisan}
-        </span>
-      </div>
-
-      <div className={`relative pt-0 ${compact ? "px-2.5 pb-1.5" : "px-3 pb-2"}`}>
-        <div className={`${compact ? "-mt-[15px] mb-0" : "-mt-[18px] mb-0.5"} flex justify-center`}>
-          <div className={`flex items-center justify-center overflow-hidden rounded-full border-[3px] border-[#D4AF37] bg-white p-1 shadow-[0_4px_10px_rgba(0,0,0,0.24)] ${compact ? "h-[38px] w-[38px]" : "h-[46px] w-[46px]"}`}>
-            <img src={logo} alt={`Logo ${displayName}`} className="h-full w-full object-contain" loading="lazy" decoding="async" />
-          </div>
+      {compact ? (
+        // In the mobile directory, show ONE visual, never a logo over a short photo.
+        // A real establishment photo wins; otherwise the existing logo stands alone.
+        <div className={`relative overflow-hidden border-b border-[#D4AF37]/35 ${hasRealCover ? "h-[104px]" : "h-[90px]"}`}>
+          {hasRealCover ? (
+            <>
+              <img src={cover} alt={displayName}
+                className="h-full w-full object-cover object-center" loading="lazy" decoding="async"
+                onError={(event) => {
+                  event.currentTarget.onerror = null;
+                  event.currentTarget.src = '/images/placeholder.jpg';
+                }} />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-transparent" />
+            </>
+          ) : (
+            <div className={`flex h-full w-full items-center justify-center ${legacyIvory ? "bg-[#FFF8E7]" : "bg-[#064332]"}`}>
+              <img src={logo} alt={`Logo ${displayName}`}
+                className="h-[74px] max-w-[68%] object-contain" loading="lazy" decoding="async" />
+            </div>
+          )}
+          <span className={`absolute top-2 rounded-full bg-black/55 px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.12em] text-[#F1C65E] ${isRTL ? "right-2" : "left-2"}`}>
+            {tier === 'premium' ? text.premium : text.artisan}
+          </span>
         </div>
+      ) : (
+        <div className="relative h-[58px] overflow-hidden border-b border-[#D4AF37]/35">
+          <img src={cover}
+            alt={hasRealCover ? displayName : existingIllustration ? 'Illustration du métier' : illustration?.label || displayName}
+            className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.015]"
+            loading="lazy" decoding="async"
+            onError={(event) => {
+              event.currentTarget.onerror = null;
+              event.currentTarget.src = '/images/placeholder.jpg';
+            }} />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#064332]/70 via-transparent to-black/5" />
+          {!hasRealCover && illustrationSource && (
+            <a href={illustrationSource} target="_blank" rel="noopener noreferrer"
+              title={existingIllustration ? 'Image illustrative Wikimedia Commons' : `Illustration du métier — ${illustration?.author}, ${illustration?.licence}`}
+              onClick={(event) => event.stopPropagation()}
+              className="absolute bottom-0 right-1 rounded-t bg-black/60 px-1.5 py-0.5 text-[8px] text-white/90 underline">
+              {language === 'ar' ? 'صورة توضيحية' : language === 'en' ? 'Illustration' : 'Illustration du métier'}
+            </a>
+          )}
+          <span className={`absolute top-1.5 text-[9px] font-black uppercase tracking-[0.12em] text-[#E5B92F] drop-shadow-sm ${isRTL ? 'right-3' : 'left-3'}`}>
+            {tier === 'premium' ? text.premium : text.artisan}
+          </span>
+        </div>
+      )}
+
+      <div className={`relative ${compact ? "px-3 pb-2 pt-2" : "px-3 pb-2 pt-0"}`}>
+        {!compact && (
+          <div className="-mt-[18px] mb-0.5 flex justify-center">
+            <div className="flex h-[46px] w-[46px] items-center justify-center overflow-hidden rounded-full border-[3px] border-[#D4AF37] bg-white p-1 shadow-[0_4px_10px_rgba(0,0,0,0.24)]">
+              <img src={logo} alt={`Logo ${displayName}`} className="h-full w-full object-contain" loading="lazy" decoding="async" />
+            </div>
+          </div>
+        )}
 
         <h3 className={`line-clamp-2 font-serif font-bold text-[#E9BD35] ${compact ? "text-[13px] leading-[1.12]" : "text-[15px] leading-[1.03]"}`}>
           {displayName}
