@@ -878,6 +878,7 @@ export default function BusinessShowcaseLienoraDetail({
   const [copied, setCopied] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
   const [socialOpen, setSocialOpen] = useState(false);
+  const [moreActionsOpen, setMoreActionsOpen] = useState(false);
   const presentationRef = useRef<HTMLElement>(null);
 
   const togglePresentation = () => {
@@ -1252,9 +1253,16 @@ export default function BusinessShowcaseLienoraDetail({
 
   const portfolioActions: ActionConfig[] = [...primaryActions];
 
+  // Keep the CV concise like Lienora: four essential actions, the rest in a drawer.
   const displayedPrimaryActions = embeddedPreview
     ? primaryActions.filter(action => [installLabel, text.call, text.whatsapp, text.email, text.directions].includes(action.label))
-    : primaryActions;
+    : primaryActions.slice(0, 4);
+  const extraPrimaryActions = embeddedPreview ? [] : primaryActions.slice(4);
+  const moreActionsLabel = language === 'ar' ? 'المزيد من الخيارات'
+    : language === 'en' ? 'More actions'
+    : language === 'it' ? 'Altre azioni'
+    : language === 'ru' ? 'Другие действия'
+    : "Plus d’actions";
 
   const copyLink = async () => {
     try {
@@ -1831,7 +1839,30 @@ export default function BusinessShowcaseLienoraDetail({
                 )}
               </div>
             )}
-            {!embeddedPreview && <div className="dt-secondary-actions">
+            {!embeddedPreview && (
+              <>
+                <button
+                  type="button"
+                  className="dt-more-actions-trigger dt-secondary-action"
+                  aria-controls="dt-more-actions-panel"
+                  aria-expanded={moreActionsOpen}
+                  onClick={() => setMoreActionsOpen(value => !value)}
+                >
+                  <span className="dt-more-actions-label"><span aria-hidden="true">•••</span> {moreActionsLabel}</span>
+                  <ChevronRight className={moreActionsOpen ? "dt-more-actions-chevron is-open" : "dt-more-actions-chevron"} aria-hidden="true" />
+                </button>
+                {moreActionsOpen && <div className="dt-secondary-actions dt-more-actions-panel" id="dt-more-actions-panel">
+                  {extraPrimaryActions.map(action => {
+                    const Icon = action.icon;
+                    return (
+                      <a key={action.label} className="dt-secondary-action"
+                        href={action.href} target={action.external ? '_blank' : undefined}
+                        rel={action.external ? 'noopener noreferrer' : undefined}>
+                        <Icon aria-hidden="true" />{action.label}
+                      </a>
+                    );
+                  })}
+
               {(business.email || whatsappUrl) && (
                 <button type="button" className="dt-secondary-action" onClick={requestQuote}>
                   <FileText aria-hidden="true" />{text.requestInfo}
@@ -1881,7 +1912,9 @@ export default function BusinessShowcaseLienoraDetail({
                   <FileText aria-hidden="true" />{text.leaveReview}
                 </button>
               )}
-            </div>}
+                </div>}
+              </>
+            )}
             <p className="dt-action-notice" role="status" aria-live="polite">{contactNotice}</p>
           </section>
 
