@@ -89,17 +89,17 @@ export default function PlatformAppShell({ children }: { children: ReactNode }) 
       {location.pathname === '/' && <div aria-label="Réseaux sociaux Dalil Tounes" className="mx-auto flex max-w-xl items-center justify-end gap-2 px-3 pt-2">
         <a href="https://www.facebook.com/daliltounes/" target="_blank" rel="noopener noreferrer"
           aria-label="Facebook Dalil Tounes (nouvel onglet)"
-          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#D4AF37]/45 bg-white text-[#4A1D43] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A17D36]">
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#E0C79E] bg-[#FFF7EB] text-[#A8242D] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B62226]">
           <Facebook aria-hidden="true" className="h-4 w-4" />
         </a>
         <a href="https://www.instagram.com/dalil.tounes/" target="_blank" rel="noopener noreferrer"
           aria-label="Instagram Dalil Tounes (nouvel onglet)"
-          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#D4AF37]/45 bg-white text-[#4A1D43] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A17D36]">
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#E0C79E] bg-[#FFF7EB] text-[#A8242D] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B62226]">
           <Instagram aria-hidden="true" className="h-4 w-4" />
         </a>
         <a href="https://wa.me/21627642252" target="_blank" rel="noopener noreferrer"
           aria-label="WhatsApp Dalil Tounes (nouvel onglet)"
-          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#D4AF37]/45 bg-white text-[#4A1D43] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A17D36]">
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#E0C79E] bg-[#FFF7EB] text-[#A8242D] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B62226]">
           <MessageCircle aria-hidden="true" className="h-4 w-4" />
         </a>
       </div>}
