@@ -331,10 +331,10 @@ export default function HomeVitrineFirst() {
 
       <CvBusinessJourney language={lang} />
 
-      <section className="bg-[#2E102A] px-4 py-6 text-center text-white">
+      <section className="border-y border-[#C9A65D] bg-[#FFF8EA] px-4 py-6 text-center text-[#292725]">
         <div className="mx-auto max-w-4xl">
           <p className="font-serif text-xl font-bold md:text-2xl">{t.bridgeTitle}</p>
-          <p className="mt-1 text-sm font-semibold text-[#F1D783] md:text-base">{t.bridgeText}</p>
+          <p className="mt-1 text-sm font-semibold text-[#826526] md:text-base">{t.bridgeText}</p>
         </div>
       </section>
 
