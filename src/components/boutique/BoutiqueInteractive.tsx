@@ -37,7 +37,6 @@ const safePaymentUrl = (value: string | undefined) => {
 
 export function BoutiqueInteractive({ config }: { config: BoutiqueConfig }) {
   const [selected, setSelected] = useState<BoutiqueProduct | null>(null);
-  const [boutiqueOpen, setBoutiqueOpen] = useState(false);
   const [name, setName] = useState('');
   const [contact, setContact] = useState('');
   const [quantity, setQuantity] = useState(1);
@@ -95,24 +94,18 @@ export function BoutiqueInteractive({ config }: { config: BoutiqueConfig }) {
 
   return (
     <section aria-label="Boutique du professionnel" style={{ padding: '16px 0' }}>
-      <button type="button" aria-expanded={boutiqueOpen} onClick={() => setBoutiqueOpen(current => !current)}
-        style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '13px 16px', border: '1px solid #d4b780', borderRadius: 12, background: '#fffaf0', color: '#4a1d43', fontWeight: 600, cursor: 'pointer' }}>
-        <span>Commander · Boutique & créations</span><span aria-hidden="true">{boutiqueOpen ? '−' : '+'}</span>
-      </button>
-      {config.demoMode && <p style={{fontSize:12,margin:'8px 0',color:'#76501a'}}>Démonstration Aux Saveurs d’Anis : aucune commande réelle et aucun paiement.</p>}
-      {boutiqueOpen && <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,minmax(0,1fr))', gap: 8, marginTop: 12 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,minmax(0,1fr))', gap: 8 }}>
         {config.products.filter(product => product.id && product.title && product.imageUrl).map(product => (
           <button key={product.id} type="button" onClick={() => open(product)}
-            style={{ textAlign: 'left', minWidth: 0, padding: 4, border: '1px solid #d8c8ad', borderRadius: 11, overflow: 'hidden', background: '#fffdf8', color: '#342b25', cursor: 'pointer' }}>
+            aria-label={'Voir ' + product.title}
+            style={{ display: 'flex', flexDirection: 'column', textAlign: 'left', minWidth: 0, padding: 5, border: '1px solid #d8c8ad', borderRadius: 12, overflow: 'hidden', background: '#fffdf8', color: '#342b25', cursor: 'pointer', gap: 5 }}>
             <img src={product.imageUrl} alt={product.title} loading="lazy"
-              style={{ width: '100%', aspectRatio: '1 / 1', objectFit: 'cover', borderRadius: 7 }} />
-            <span style={{ display: 'block', padding: '6px 3px', overflowWrap: 'anywhere', fontSize: 12 }}>
-              <strong style={{ display: 'block' }}>{product.title}</strong>
-              <small>{product.mode === 'quote' ? 'Demander un devis' : formatPrice(product)}</small>
-            </span>
+              style={{ width: '100%', aspectRatio: '1 / 1', objectFit: 'cover', borderRadius: 8 }} />
+            <span style={{ display: 'block', padding: '0 3px', fontSize: 12, fontWeight: 600, overflowWrap: 'anywhere' }}>{product.title}</span>
+            <span style={{ display: 'inline-flex', alignSelf: 'flex-start', padding: '3px 12px', margin: 'auto 2px 3px', borderRadius: 20, border: '1px solid #c9a86a', color: '#74562d', background: '#fffaf0', fontSize: 11, fontWeight: 600 }}>Voir</span>
           </button>
         ))}
-      </div>}
+      </div>
       {selected && (
         <div role="presentation" onMouseDown={() => setSelected(null)}
           style={{ position: 'fixed', inset: 0, zIndex: 9999, background: '#0009', display: 'grid', placeItems: 'center', padding: 16 }}>
