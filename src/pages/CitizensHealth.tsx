@@ -1,13 +1,12 @@
 import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Phone, Building2, X, Plus, ExternalLink } from 'lucide-react';
+import { Phone, Building2, X, Plus, ExternalLink, ChevronDown, ArrowRight } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
 import LocationSelectTunisie from '../components/LocationSelectTunisie';
 import VehicleTypeAutocomplete from '../components/VehicleTypeAutocomplete';
 import MeilleursSection from '../components/MeilleursSection';
 import SearchBar from '../components/SearchBar';
-import ThermalWellnessExplorer from '../components/ThermalWellnessExplorer';
 import { Link } from 'react-router-dom';
 import MedicalTransportCard from '../components/MedicalTransportCard';
 import MedicalTransportRegistrationForm from '../components/MedicalTransportRegistrationForm';
@@ -264,7 +263,7 @@ export default function CitizensHealth({}: CitizensHealthProps) {
     <div className="public-surface min-h-screen bg-gradient-to-b from-white to-gray-50" dir={isRTL ? 'rtl' : 'ltr'}>
       <section className="relative w-full overflow-hidden rounded-b-3xl shadow-lg">
         <img src={getSupabaseImageUrl('sante.jpg')} alt={c.heroAlt} className="absolute inset-0 w-full h-full object-cover" decoding="async" />
-        <div className="absolute inset-0 bg-gradient-to-br from-[#35172f]/80 to-[#35172f]/70" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/55 to-[#3B3426]/60" />
         <div className="relative min-h-[220px] flex flex-col items-center justify-center text-center px-4 py-7">
           <motion.h1 initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }} className="public-title text-4xl md:text-5xl font-light text-[#D4AF37] mb-3 drop-shadow-lg" style={{ fontFamily: "'Playfair Display', serif" }}>
             {c.pageTitle}
@@ -290,22 +289,34 @@ export default function CitizensHealth({}: CitizensHealthProps) {
         </div>
       </section>
 
-      <div className="mx-auto max-w-5xl px-4 pt-3 text-right"><Link to="/citizens/health/thermalisme" className="text-sm font-semibold text-[#4A1D43] underline">♨️ {language === 'ar' ? 'اكتشف قسم المياه الحارة والعيون الطبيعية' : language === 'en' ? 'Explore thermal baths and natural springs' : 'Découvrir la sous-page Thermalisme, sources naturelles et bien-être'}</Link></div>
-      <ThermalWellnessExplorer />
+      <div className="mx-auto max-w-5xl px-4 py-3">
+        <Link to="/citizens/health/thermalisme" className="flex min-h-12 items-center justify-between gap-3 rounded-xl border border-[#C9A65D] bg-[#FFF9ED] px-4 py-3 text-sm font-semibold text-[#292725] transition hover:bg-[#FFF1D7]">
+          <span>♨️ {language === 'ar' ? 'الحمامات المعدنية والعيون الطبيعية والرفاه' : language === 'en' ? 'Thermal baths, natural springs and wellness' : language === 'it' ? 'Terme, sorgenti naturali e benessere' : language === 'ru' ? 'Термальные купальни, источники и отдых' : 'Thermalisme, sources naturelles et bien-être'}</span>
+          <ArrowRight className="h-4 w-4 shrink-0 text-[#9B772D]" aria-hidden="true" />
+        </Link>
+      </div>
 
-      <section className="py-8 bg-white">
-        <MeilleursSection
+      <section className="mx-auto max-w-5xl px-4 pb-3">
+        <details className="group rounded-xl border border-[#C9A65D] bg-white">
+          <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 font-semibold text-[#292725] [&::-webkit-details-marker]:hidden">
+            <span>⭐ {c.bestTitle}</span>
+            <ChevronDown className="h-4 w-4 shrink-0 text-[#B28A44] transition group-open:rotate-180" aria-hidden="true" />
+          </summary>
+          <div className="border-t border-[#C9A65D]/40 pt-3">
+            <MeilleursSection
           secteurLabel={c.sector}
           listePage="santé"
           accentColor="#B28A44"
           sectionTitle={c.bestTitle}
           useGoogleRecommendationCriteria
           showSearchCta={false}
-          blogArticle={{ title: c.guideTitle, excerpt: c.guideExcerpt, slug: 'comment-choisir-son-medecin' }}
-        />
+              blogArticle={{ title: c.guideTitle, excerpt: c.guideExcerpt, slug: 'comment-choisir-son-medecin' }}
+            />
+          </div>
+        </details>
       </section>
 
-      <section className="px-4 pt-2 pb-4">
+      <section className="px-4 pt-1 pb-3">
         <div className="max-w-5xl mx-auto">
           <div className="bg-gradient-to-br from-[#4A1D43]/5 to-[#D4AF37]/5 border border-[#D4AF37] rounded-xl px-3 py-3 shadow-lg">
             <div className="text-center mb-2">
@@ -325,7 +336,7 @@ export default function CitizensHealth({}: CitizensHealthProps) {
         </div>
       </section>
 
-      <section className="px-4 pb-8">
+      <section className="px-4 pb-5">
         <div className="max-w-7xl mx-auto">
           <div className="relative mb-3 min-h-[150px] overflow-hidden rounded-xl border border-[#C9A65D] bg-[#FFF8EA] shadow-sm sm:min-h-[170px]">
             <img src={getSupabaseImageUrl('sante_banner.webp')} alt={c.transportAlt} className="absolute inset-0 h-full w-full object-cover object-center opacity-85" decoding="async" />
@@ -370,15 +381,22 @@ export default function CitizensHealth({}: CitizensHealthProps) {
             </div>
           )}
 
-          <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }} className="mt-8 bg-gradient-to-br from-[#4A1D43]/5 to-[#D4AF37]/5 border-2 border-[#D4AF37] rounded-xl p-6 text-center shadow-lg">
+          <details className="group mt-5 rounded-xl border border-[#C9A65D] bg-[#FFF9ED]">
+            <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-semibold text-[#292725] [&::-webkit-details-marker]:hidden">
+              <span>🚑 {c.ctaTitle}</span><ChevronDown className="h-4 w-4 shrink-0 text-[#B28A44] transition group-open:rotate-180" aria-hidden="true" />
+            </summary>
+            <div className="border-t border-[#C9A65D]/40 p-3">
+          <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }} className="rounded-xl border border-[#C9A65D] bg-[#FFF9ED] px-4 py-3 text-center">
             <div className="max-w-2xl mx-auto">
-              <h3 className="text-2xl font-light text-[#4A1D43] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>{c.ctaTitle}</h3>
-              <p className="text-gray-700 text-sm mb-4 leading-relaxed">{c.ctaText}</p>
+              <h3 className="text-lg font-semibold text-[#292725] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>{c.ctaTitle}</h3>
+              <p className="text-gray-700 text-sm mb-3 leading-relaxed">{c.ctaText}</p>
               <button onClick={() => setShowTransportModal(true)} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-[#C9A65D] bg-[#B62226] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#931D23]">
                 <Plus className="w-4 h-4" />{c.ctaButton}
               </button>
             </div>
           </motion.div>
+            </div>
+          </details>
         </div>
       </section>
 
@@ -393,7 +411,14 @@ export default function CitizensHealth({}: CitizensHealthProps) {
         </div>
       )}
 
-      <section className="px-4 pb-12">
+      <section className="mx-auto max-w-5xl space-y-3 px-4 pb-8">
+        <details className="group rounded-xl border border-[#C9A65D] bg-white">
+          <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-semibold text-[#292725] [&::-webkit-details-marker]:hidden">
+            <span>ℹ️ {lang === 'ar' ? 'معلومات ونصائح صحية' : lang === 'en' ? 'Practical health information' : 'Informations et conseils pratiques'}</span>
+            <ChevronDown className="h-4 w-4 shrink-0 text-[#B28A44] transition group-open:rotate-180" aria-hidden="true" />
+          </summary>
+          <div className="border-t border-[#C9A65D]/40 pt-3">
+      <section className="px-3 pb-3">
         <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-3">
           <div className="bg-white rounded-xl border border-[#D4AF37] p-4 hover:shadow-lg transition-all duration-300"><h4 className="text-sm font-medium text-[#4A1D43] mb-1.5" style={{ fontFamily: "'Playfair Display', serif" }}>{t.health.info.cnamTitle}</h4><p className="text-xs text-gray-700">{t.health.info.cnamBody}</p></div>
           <div className="bg-white rounded-xl border border-[#D4AF37] p-4 hover:shadow-lg transition-all duration-300"><h4 className="text-sm font-medium text-[#4A1D43] mb-1.5" style={{ fontFamily: "'Playfair Display', serif" }}>{t.health.info.csbTitle}</h4><p className="text-xs text-gray-700">{t.health.info.csbBody}</p></div>
@@ -401,7 +426,16 @@ export default function CitizensHealth({}: CitizensHealthProps) {
         </div>
       </section>
 
-      <section className="px-4 pb-12" aria-labelledby="official-health-links">
+
+          </div>
+        </details>
+        <details className="group rounded-xl border border-[#C9A65D] bg-white">
+          <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-semibold text-[#292725] [&::-webkit-details-marker]:hidden">
+            <span>🔗 {c.officialTitle}</span>
+            <ChevronDown className="h-4 w-4 shrink-0 text-[#B28A44] transition group-open:rotate-180" aria-hidden="true" />
+          </summary>
+          <div className="border-t border-[#C9A65D]/40 pt-3">
+      <section className="px-3 pb-3" aria-labelledby="official-health-links">
         <div className="max-w-5xl mx-auto">
           <h2 id="official-health-links" className="public-heading text-xl font-semibold text-[#4A1D43] text-center mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>{c.officialTitle}</h2>
           <div className="grid gap-3 md:grid-cols-3">
@@ -417,6 +451,9 @@ export default function CitizensHealth({}: CitizensHealthProps) {
             ))}
           </div>
         </div>
+      </section>
+          </div>
+        </details>
       </section>
     </div>
   );
