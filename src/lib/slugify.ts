@@ -57,13 +57,13 @@ export function buildEntrepriseUrl(business: EntrepriseForUrl): string {
   return `/p/${businessSlug}`;
 }
 
+const SHARE_DOMAIN = 'https://dalil-tounes.com';
+
+// Customer links must always point to the public domain, not a preview deployment.
 export function buildEntrepriseShareUrl(business: EntrepriseForUrl): string {
   const path = buildEntrepriseUrl(business);
-  const domain = typeof window !== 'undefined' ? window.location.origin : '';
-  return `${domain}${path}`;
+  return `${SHARE_DOMAIN}${path}`;
 }
-
-const SHARE_DOMAIN = 'https://dalil-tounes.com';
 
 export function buildShortShareUrl(business: EntrepriseForUrl): string {
   const publicSlug = business.slug_court?.trim();
