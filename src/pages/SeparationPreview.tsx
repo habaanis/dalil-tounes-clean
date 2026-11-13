@@ -314,6 +314,83 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
     </>;
   }
 
+  // A deliberately short product explanation inside the PWA. The public CV page stays unchanged.
+  if (view === 'cv' && fixedView === 'cv' && isPlatformAppMode() && !embedded) {
+    const mobileText: Record<Lang, { intro: string; business: string; portfolio: string; contact: string; share: string; visibility: string; note: string }> = {
+      fr: {
+        intro: 'Deux présentations professionnelles pour montrer votre activité et faciliter le contact.',
+        business: 'Pour présenter votre entreprise, vos services, vos horaires et vos coordonnées.',
+        portfolio: 'Pour valoriser vos réalisations, vos photos et votre savoir-faire.',
+        contact: 'Contacts et réseaux réunis au même endroit',
+        share: 'Un lien et un QR Business faciles à partager',
+        visibility: 'Une présentation claire accessible sur téléphone',
+        note: 'Choisissez le modèle et la palette adaptés à votre métier depuis la rubrique Professionnels.'
+      },
+      ar: {
+        intro: 'نموذجان مهنيان للتعريف بنشاطك وتسهيل التواصل مع الحرفاء.',
+        business: 'لتقديم المؤسسة والخدمات والأوقات وبيانات الاتصال.',
+        portfolio: 'لعرض الإنجازات والصور والخبرة المهنية.',
+        contact: 'وسائل الاتصال والشبكات في مكان واحد',
+        share: 'رابط ورمز QR سهل المشاركة',
+        visibility: 'عرض واضح على الهاتف',
+        note: 'اختار النموذج والألوان المناسبة من قسم المهنيين.'
+      },
+      en: {
+        intro: 'Two professional presentations to showcase your business and make contact easier.',
+        business: 'Show your business, services, hours and contact details.',
+        portfolio: 'Highlight your work, photos and skills.',
+        contact: 'Contacts and social links in one place',
+        share: 'A shareable link and Business QR',
+        visibility: 'A clear presentation on mobile',
+        note: 'Choose a model and colour palette in the Professionals section.'
+      },
+      it: {
+        intro: 'Due presentazioni professionali per valorizzare la tua attività e facilitare i contatti.',
+        business: 'Presenta attività, servizi, orari e contatti.',
+        portfolio: 'Valorizza lavori, foto e competenze.',
+        contact: 'Contatti e social in un unico posto',
+        share: 'Link e QR Business facili da condividere',
+        visibility: 'Presentazione chiara sul telefono',
+        note: 'Scegli il modello e i colori nella sezione Professionisti.'
+      },
+      ru: {
+        intro: 'Два профессиональных формата для презентации бизнеса и удобной связи.',
+        business: 'Покажите компанию, услуги, часы работы и контакты.',
+        portfolio: 'Представьте проекты, фотографии и опыт.',
+        contact: 'Контакты и соцсети в одном месте',
+        share: 'Ссылка и QR-код для отправки',
+        visibility: 'Удобная презентация на телефоне',
+        note: 'Выберите модель и палитру в разделе для бизнеса.'
+      }
+    };
+    const brief = mobileText[lang];
+    return <div className="min-h-screen bg-[#FFFCF7] px-3 py-3 text-[#45243A]" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+      <SEOHead title={`${structure.products} | Dalil Tounes`} description={t.cvDescription} canonical="https://dalil-tounes.com/cv-business" currentPath="/cv-business" />
+      <section className="rounded-xl border border-[#D4AF37]/45 bg-[#FFFDF8] p-4">
+        <h1 className="font-serif text-xl font-medium">{structure.products}</h1>
+        <p className="mt-2 text-sm leading-6 text-[#665565]">{brief.intro}</p>
+      </section>
+      <div className="mt-3 grid gap-3">
+        <section className="rounded-xl border border-[#D4AF37]/40 bg-white p-4">
+          <h2 className="font-serif text-lg font-semibold">{ecosystem.cvBusiness}</h2>
+          <p className="mt-1 text-sm leading-6 text-[#665565]">{brief.business}</p>
+        </section>
+        <section className="rounded-xl border border-[#D4AF37]/40 bg-white p-4">
+          <h2 className="font-serif text-lg font-semibold">{ecosystem.cvPortfolio}</h2>
+          <p className="mt-1 text-sm leading-6 text-[#665565]">{brief.portfolio}</p>
+        </section>
+      </div>
+      <section className="mt-3 rounded-xl border border-[#D4AF37]/40 bg-white p-4">
+        <ul className="space-y-3 text-sm leading-5 text-[#55424E]">
+          <li className="flex items-start gap-2"><QrCode className="mt-0.5 h-4 w-4 shrink-0 text-[#A17D36]" />{brief.share}</li>
+          <li className="flex items-start gap-2"><Share2 className="mt-0.5 h-4 w-4 shrink-0 text-[#A17D36]" />{brief.contact}</li>
+          <li className="flex items-start gap-2"><MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[#A17D36]" />{brief.visibility}</li>
+        </ul>
+      </section>
+      <p className="mt-3 px-2 text-xs leading-5 text-[#665565]">{brief.note}</p>
+    </div>;
+  }
+
   return (
     <div dir={lang === 'ar' ? 'rtl' : 'ltr'} className={view === 'platform' ? "premium-page premium-home" : "bg-white text-slate-900"}>
       {view === 'platform' && <><SEOHead {...getHomeSeoMeta()} currentPath="/" /><StructuredData data={[generateOrganizationSchema(), generateWebSiteSchema()]} /></>}
