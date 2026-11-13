@@ -75,7 +75,7 @@ export default function GratuitCard({
   cv_business_status,
   description_ar,
   showGoogleRating = true,
-  showDetailsLink = true,
+  showDetailsLink = false,
   googleRating,
   googleReviewCount,
 }: GratuitCardProps) {
