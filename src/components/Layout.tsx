@@ -176,8 +176,8 @@ export const Layout = ({ children }: LayoutProps) => {
       path: '/subscription',
       children: [
         { label: structure.essential, path: '/subscription#presence-essentielle' },
-        { label: 'CV Business', path: '/subscription#cv-professionnels' },
-        { label: 'CV Portfolio', path: '/subscription#modeles' },
+        { label: 'Votre mini-appli', path: '/subscription#cv-professionnels' },
+        { label: 'Voir les modèles', path: '/subscription#modeles' },
         { label: structure.offers, path: '/subscription#offres' },
       ],
     },
