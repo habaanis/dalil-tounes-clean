@@ -1678,7 +1678,7 @@ export const Businesses = ({
                   </button>
                 )}
               </div>
-              <div className={inPlatformApp ? "grid grid-cols-1 justify-items-center gap-3" : "grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4"}>
+              <div className={inPlatformApp ? "grid grid-cols-1 gap-3 sm:grid-cols-2" : "grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4"}>
                 {Array.isArray(displayedBusinesses) && displayedBusinesses.map((business) => {
                   if (!business || !business.id) return null;
 
@@ -1717,6 +1717,7 @@ export const Businesses = ({
                         }
                       }}
                       variant="premium"
+                      compact={inPlatformApp}
                     />
                   );
                 })}
