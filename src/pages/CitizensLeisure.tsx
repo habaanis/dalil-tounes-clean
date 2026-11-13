@@ -1110,7 +1110,7 @@ export default function CitizensLeisure() {
           <div className="space-y-4">
             {/* Search Bar */}
             <div className="relative">
-              <div className={`absolute ${language === 'ar' ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 bg-[#4A1D43] rounded-full p-1`}>
+              <div className={`absolute ${language === 'ar' ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 bg-[#B62226] rounded-full p-1`}>
                 <Search className="w-3.5 h-3.5 text-white" />
               </div>
               <input

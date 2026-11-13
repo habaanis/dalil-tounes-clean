@@ -340,7 +340,7 @@ export default function CitizensHealth({}: CitizensHealthProps) {
               <LocationSelectTunisie value={transportCity} onChange={setTransportCity} placeholder={c.governorate} className="px-3 py-2 rounded-lg text-sm" />
             </div>
             <div className="flex-1 min-w-[180px]"><VehicleTypeAutocomplete value={vehicleType} onChange={setVehicleType} /></div>
-            <button onClick={() => searchTransport({ gouvernorat: transportCity, vehicleType, urgenceOnly: false })} className="px-5 py-2 bg-[#4A1D43] text-[#D4AF37] border border-[#D4AF37] rounded-lg text-sm font-medium hover:bg-[#5A2D53] transition-all">{c.search}</button>
+            <button onClick={() => searchTransport({ gouvernorat: transportCity, vehicleType, urgenceOnly: false })} className="px-5 py-2 bg-[#B62226] text-white border border-[#D4AF37] rounded-lg text-sm font-medium hover:bg-[#931D23] transition-all">{c.search}</button>
           </div>
 
           {loadingTransport ? (
