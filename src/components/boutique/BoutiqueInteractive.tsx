@@ -36,7 +36,7 @@ const labelStyle = { display: 'grid', gap: 4, fontSize: 12, fontWeight: 500 } as
 const fieldStyle = { boxSizing: 'border-box', width: '100%', minWidth: 0, border: '1px solid #d7c7ae', borderRadius: 9, padding: '9px 10px', fontSize: 14, background: '#fff' } as const;
 const iconButton = { background: '#fffaf3', border: '1px solid #d7c7ae', borderRadius: 24, height: 34, minWidth: 34, cursor: 'pointer', color: '#4c3046', fontSize: 20 } as const;
 
-export function BoutiqueInteractive({ config }: { config: BoutiqueConfig }) {
+export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = 'Boutique' }: { config: BoutiqueConfig; triggerClassName?: string; triggerLabel?: string }) {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<BoutiqueProduct | null>(null);
   const [requestOpen, setRequestOpen] = useState(false);
@@ -93,9 +93,9 @@ export function BoutiqueInteractive({ config }: { config: BoutiqueConfig }) {
 
   return <>
     <button type="button" onClick={() => { setOpen(true); setSelected(null); setRequestOpen(false); }}
-      aria-haspopup="dialog"
-      style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 7, padding: '8px 15px', border: '1px solid #d2b276', background: '#fffaf2', color: '#5a3a52', borderRadius: 24, fontSize: 13, fontWeight: 600, lineHeight: 1.2, cursor: 'pointer' }}>
-      <span aria-hidden="true">✦</span> Boutique
+      aria-haspopup="dialog" className={triggerClassName}
+      style={triggerClassName ? undefined : { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 7, padding: '8px 15px', border: '1px solid #d2b276', background: '#fffaf2', color: '#5a3a52', borderRadius: 24, fontSize: 13, fontWeight: 600, lineHeight: 1.2, cursor: 'pointer' }}>
+      <span aria-hidden="true">✦</span><span>{triggerLabel}</span>
     </button>
     {open && <div role="presentation" onMouseDown={close}
       style={{ position: 'fixed', inset: 0, zIndex: 9999, padding: 12, background: 'rgba(15,24,22,.67)', display: 'grid', placeItems: 'center' }}>
