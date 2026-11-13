@@ -82,43 +82,43 @@ export default function PlatformAppHome({ totalCount, legacyCertifiedCount, reco
   const { language } = useLanguage();
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as Lang;
   const t = COPY[lang];
-  return <div className="space-y-4 px-3 py-4">
-    <section className="rounded-2xl border border-[#D4AF37]/55 bg-gradient-to-br from-[#FFFCF7] to-[#F8F1E5] px-3 py-4">
+  return <div data-home-color-test="rouge-or" className="space-y-4 bg-[#FAF9F6] px-3 py-4">
+    <section className="rounded-2xl border border-[#E9E2D7] border-l-[3px] border-l-[#B62226] bg-white px-4 py-5 shadow-[0_4px_20px_rgba(35,32,28,0.035)]">
       <div className="flex items-center gap-2">
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-semibold tracking-wide text-[#9D7731]">🇹🇳 DALIL TOUNES</p>
-          <h1 className="mt-1 font-serif text-xl font-medium leading-tight text-[#35172F]">{t.headline}</h1>
-          <p className="mt-1 text-xs leading-5 text-[#665565]">{t.intro}</p>
+          <p className="text-xs font-semibold tracking-wide text-[#B62226]">🇹🇳 DALIL TOUNES</p>
+          <h1 className="mt-1 font-serif text-xl font-medium leading-tight text-[#242424]">{t.headline}</h1>
+          <p className="mt-1 text-xs leading-5 text-[#64605D]">{t.intro}</p>
         </div>
         <img src={DALIL_MASCOT_IMAGE} alt="Mascotte Dalil Tounes"
-          className="h-[82px] w-[76px] shrink-0 rounded-xl border border-[#D4AF37]/35 bg-white object-contain" loading="lazy" decoding="async" />
+          className="h-[82px] w-[76px] shrink-0 rounded-xl border border-[#EAE1D0] bg-[#FCFAF5] object-contain" loading="lazy" decoding="async" />
       </div>
     </section>
-    <section className="relative z-10 rounded-2xl border border-[#D4AF37]/40 bg-white p-3" aria-label={t.search}>
-      <h2 className="mb-2 font-serif text-base font-medium text-[#35172F]">{t.search}</h2>
+    <section className="relative z-10 rounded-2xl border border-[#E9E4DB] bg-white p-3.5 shadow-[0_2px_14px_rgba(30,25,20,0.03)]" aria-label={t.search}>
+      <h2 className="mb-2 font-serif text-base font-medium text-[#242424]">{t.search}</h2>
       <SearchBar scope="global" autoSearch resultMode="redirectToResults" />
     </section>
-    <section className="rounded-xl border border-[#D4AF37]/30 bg-white px-3 py-3 text-center" aria-label="Dalil Tounes et mini-appli professionnelle">
-      <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-[#A17D36]">{lang === 'fr' ? 'Vous êtes professionnel ?' : lang === 'ar' ? 'عندك مؤسسة؟' : lang === 'en' ? 'Are you a professional?' : lang === 'it' ? 'Sei un professionista?' : 'Вы профессионал?'}</p>
-      <p className="text-sm font-medium leading-5 text-[#45243A]">{lang === 'ar' ? 'خلّي مؤسستك موجودة في دليل تونس.' : lang === 'en' ? 'Get listed on Dalil Tounes.' : lang === 'it' ? 'Fai conoscere la tua attività su Dalil Tounes.' : lang === 'ru' ? 'Разместите свою компанию на Dalil Tounes.' : 'Soyez répertorié sur Dalil Tounes.'}</p>
-      <p className="mt-1 text-xs leading-5 text-[#76616A]">{lang === 'ar' ? 'عزّز حضور نشاطك عبر تطبيق مصغّر مهني خاص بمؤسستك.' : lang === 'en' ? 'Give your business greater impact with your own business mini-app.' : lang === 'it' ? 'Dai più visibilità alla tua attività con una mini-app personalizzata.' : lang === 'ru' ? 'Представьте бизнес с помощью собственного мини-приложения.' : 'Développez votre visibilité avec votre mini-appli professionnelle.'}</p>
+    <section className="rounded-xl border border-[#EFE4D5] bg-[#FFF8F0] px-4 py-4 text-center" aria-label="Dalil Tounes et mini-appli professionnelle">
+      <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-[#A1742D]">{lang === 'fr' ? 'Vous êtes professionnel ?' : lang === 'ar' ? 'عندك مؤسسة؟' : lang === 'en' ? 'Are you a professional?' : lang === 'it' ? 'Sei un professionista?' : 'Вы профессионал?'}</p>
+      <p className="text-sm font-medium leading-5 text-[#292929]">{lang === 'ar' ? 'خلّي مؤسستك موجودة في دليل تونس.' : lang === 'en' ? 'Get listed on Dalil Tounes.' : lang === 'it' ? 'Fai conoscere la tua attività su Dalil Tounes.' : lang === 'ru' ? 'Разместите свою компанию на Dalil Tounes.' : 'Soyez répertorié sur Dalil Tounes.'}</p>
+      <p className="mt-1 text-xs leading-5 text-[#66615D]">{lang === 'ar' ? 'عزّز حضور نشاطك عبر تطبيق مصغّر مهني خاص بمؤسستك.' : lang === 'en' ? 'Give your business greater impact with your own business mini-app.' : lang === 'it' ? 'Dai più visibilità alla tua attività con una mini-app personalizzata.' : lang === 'ru' ? 'Представьте бизнес с помощью собственного мини-приложения.' : 'Développez votre visibilité avec votre mini-appli professionnelle.'}</p>
     </section>
     <PlatformAppHelp language={lang} />
-    <section aria-label={t.count(totalCount ?? '—')} className="rounded-xl border border-[#D8C59C] bg-[#FFFBF4] px-3 py-3 shadow-sm" aria-live="polite">
+    <section aria-label={t.count(totalCount ?? '—')} className="rounded-xl border border-[#ECE5DA] bg-white px-4 py-4 shadow-[0_2px_12px_rgba(30,25,20,0.025)]" aria-live="polite">
       <div className="flex items-start gap-2.5">
-        <Building2 className="mt-0.5 h-4 w-4 shrink-0 text-[#9A793E]" aria-hidden="true" />
+        <Building2 className="mt-0.5 h-4 w-4 shrink-0 text-[#B58A45]" aria-hidden="true" />
         <div className="min-w-0">
-          <p className="text-sm font-semibold leading-5 text-[#45243A]">{totalCount === null || totalCount === undefined ? '—' : t.count(totalCount)}</p>
-          <p className="mt-0.5 text-xs leading-5 text-[#756B70]">{t.discoverCopy}</p>
+          <p className="text-sm font-semibold leading-5 text-[#292929]">{totalCount === null || totalCount === undefined ? '—' : t.count(totalCount)}</p>
+          <p className="mt-0.5 text-xs leading-5 text-[#6B6762]">{t.discoverCopy}</p>
         </div>
       </div>
-      {legacyCertifiedCount !== null && legacyCertifiedCount !== undefined && <div className="mt-2 flex items-start gap-2.5 border-t border-[#E6D9BD] pt-2">
-        <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#9A793E]" aria-hidden="true" />
-        <p className="text-xs font-medium leading-5 text-[#594052]">{t.legacyCertified(legacyCertifiedCount)}</p>
+      {legacyCertifiedCount !== null && legacyCertifiedCount !== undefined && <div className="mt-2 flex items-start gap-2.5 border-t border-[#EEE8E0] pt-2">
+        <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#B58A45]" aria-hidden="true" />
+        <p className="text-xs font-medium leading-5 text-[#44403C]">{t.legacyCertified(legacyCertifiedCount)}</p>
       </div>}
-      {recommendedCount !== null && recommendedCount !== undefined && <div className="mt-2 flex items-start gap-2.5 border-t border-[#E6D9BD] pt-2">
-        <Star className="mt-0.5 h-4 w-4 shrink-0 text-[#9A793E]" aria-hidden="true" />
-        <div><p className="text-xs font-medium leading-5 text-[#594052]">{t.recommended(recommendedCount)}</p><p className="mt-0.5 text-[11px] leading-4 text-[#806D76]">{t.recommendedRule}</p></div>
+      {recommendedCount !== null && recommendedCount !== undefined && <div className="mt-2 flex items-start gap-2.5 border-t border-[#EEE8E0] pt-2">
+        <Star className="mt-0.5 h-4 w-4 shrink-0 text-[#B58A45]" aria-hidden="true" />
+        <div><p className="text-xs font-medium leading-5 text-[#44403C]">{t.recommended(recommendedCount)}</p><p className="mt-0.5 text-[11px] leading-4 text-[#736C66]">{t.recommendedRule}</p></div>
       </div>}
     </section>
 
