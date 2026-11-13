@@ -1464,7 +1464,7 @@ export const Businesses = ({
         <section id="business-search" className={`relative z-0 order-1 scroll-mt-28 px-4 ${inPlatformApp ? "py-4" : "py-6"}`}>
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-5">
-              <h2 className="public-heading text-xl md:text-2xl font-medium text-[#4A1D43]">{inPlatformApp ? (language === 'ar' ? 'ابحث عن مهني أو خدمة' : language === 'en' ? 'Find a professional or service' : language === 'it' ? 'Trova un professionista o un servizio' : language === 'ru' ? 'Найти специалиста или услугу' : 'Trouver un professionnel ou un service') : pageT.explore.title}</h2>
+              <h2 className={`public-heading text-xl md:text-2xl font-medium ${inPlatformApp ? "text-[#B62226]" : "text-[#4A1D43]"}`}>{inPlatformApp ? (language === 'ar' ? 'ابحث عن مهني أو خدمة' : language === 'en' ? 'Find a professional or service' : language === 'it' ? 'Trova un professionista o un servizio' : language === 'ru' ? 'Найти специалиста или услугу' : 'Trouver un professionnel ou un service') : pageT.explore.title}</h2>
               <p className="mt-3 text-sm md:text-base text-gray-600 max-w-3xl mx-auto leading-relaxed">
                 {pageT.explore.description}
               </p>
@@ -1483,6 +1483,24 @@ export const Businesses = ({
             </div>
           </div>
         </section>
+
+        {inPlatformApp && <style>{`
+          /* App search page only: retain existing design on the public website. */
+          .platform-app-directory #business-search .public-search button[type="submit"] {
+            background: #B62226;
+            border-color: #C9A65D;
+            color: #fff;
+          }
+          .platform-app-directory #business-search .public-search button[type="submit"]:hover {
+            background: #92191F;
+          }
+          .platform-app-directory #business-search .public-search input[type="search"] {
+            border-color: #C9A65D;
+          }
+          .platform-app-directory #business-search .public-search > div:last-child > p {
+            color: #292929;
+          }
+        `}</style>}
 
         {/* Tags de filtres actifs - Design Premium */}
         {(searchTerm || selectedCity || selectedCategory) && (
@@ -1660,7 +1678,7 @@ export const Businesses = ({
                   </button>
                 )}
               </div>
-              <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
+              <div className={inPlatformApp ? "grid grid-cols-1 justify-items-center gap-3" : "grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4"}>
                 {Array.isArray(displayedBusinesses) && displayedBusinesses.map((business) => {
                   if (!business || !business.id) return null;
 
