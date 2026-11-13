@@ -326,7 +326,19 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
   }
 
   return (
-    <div dir={lang === 'ar' ? 'rtl' : 'ltr'} className={view === 'platform' ? "premium-page premium-home" : "bg-white text-slate-900"}>
+    <div dir={lang === 'ar' ? 'rtl' : 'ltr'} className={view === 'platform' ? "premium-page premium-home" : compactCvApp ? "cv-business-app-type bg-white text-slate-900" : "bg-white text-slate-900"}>
+      {compactCvApp && <style>{`
+        @media (max-width: 640px) {
+          .cv-business-app-type h1 { font-size: 1.4rem !important; line-height: 1.3 !important; }
+          .cv-business-app-type h2 { font-size: 1.15rem !important; line-height: 1.35 !important; }
+          .cv-business-app-type h3 { font-size: 1rem !important; line-height: 1.4 !important; }
+          .cv-business-app-type p,
+          .cv-business-app-type li { font-size: 0.82rem !important; line-height: 1.55 !important; }
+          .cv-business-app-type a,
+          .cv-business-app-type button,
+          .cv-business-app-type summary { font-size: 0.82rem !important; }
+        }
+      `}</style>}
       {view === 'platform' && <><SEOHead {...getHomeSeoMeta()} currentPath="/" /><StructuredData data={[generateOrganizationSchema(), generateWebSiteSchema()]} /></>}
       {!embedded && view === 'cv' && <SEOHead title={`${structure.products} | Dalil Tounes`} description={t.cvDescription} canonical="https://dalil-tounes.com/cv-business" currentPath="/cv-business" />}
       {!fixedView && <div className="sticky top-0 z-40 border-b border-[#D4AF37]/35 bg-white/95 px-4 py-3 backdrop-blur">
