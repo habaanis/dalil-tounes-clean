@@ -1302,6 +1302,24 @@ export const Subscription = () => {
   const [selectedPresentationModel, setSelectedPresentationModel] = useState<PresentationModel | null>(null);
   const [selectedPalette, setSelectedPalette] = useState<PaletteId>('prestige');
   const [showSecondaryDetails, setShowSecondaryDetails] = useState(false);
+  // Open the requested professional section when coming from an app hub link.
+  useEffect(() => {
+    const openTargetSection = () => {
+      const target = window.location.hash.slice(1);
+      if (target !== 'modeles' && target !== 'offres') return;
+      if (target === 'modeles') {
+        const models = document.getElementById('modeles');
+        if (models instanceof HTMLDetailsElement) models.open = true;
+      }
+      window.requestAnimationFrame(() => {
+        document.getElementById(target)?.scrollIntoView({ block: 'start' });
+      });
+    };
+    openTargetSection();
+    window.addEventListener('hashchange', openTargetSection);
+    return () => window.removeEventListener('hashchange', openTargetSection);
+  }, []);
+
 
   const closePreview = () => setActivePreview(null);
   const openRequest = (code: SubscriptionPlanCode, label: string, checkoutOffer: CheckoutOffer, billingPeriod?: BillingPeriod, presentationModelLabel?: string, paletteLabel?: string) => {
