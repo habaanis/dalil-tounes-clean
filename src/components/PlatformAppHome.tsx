@@ -82,46 +82,71 @@ export default function PlatformAppHome({ totalCount, legacyCertifiedCount, reco
   const { language } = useLanguage();
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as Lang;
   const t = COPY[lang];
-  return <div data-home-color-test="rouge-or" className="space-y-4 bg-[#FAF9F6] px-3 py-4">
-    <section className="rounded-2xl border border-[#E9E2D7] border-l-[3px] border-l-[#B62226] bg-white px-4 py-5 shadow-[0_4px_20px_rgba(35,32,28,0.035)]">
+  return <div data-home-color-test="rouge-or-v2" className="space-y-4 bg-[#FAF9F6] px-3 py-4">
+    <section className="rounded-2xl border border-[#E9E2D7] border-l-[4px] border-l-[#B62226] bg-gradient-to-br from-white via-white to-[#FFF4E6] px-4 py-5 shadow-[0_4px_20px_rgba(35,32,28,0.035)]">
       <div className="flex items-center gap-2">
         <div className="min-w-0 flex-1">
           <p className="text-xs font-semibold tracking-wide text-[#B62226]">🇹🇳 DALIL TOUNES</p>
-          <h1 className="mt-1 font-serif text-xl font-medium leading-tight text-[#242424]">{t.headline}</h1>
+          <h1 className="mt-1 font-serif text-xl font-semibold leading-tight text-[#9B2027]">{t.headline}</h1>
           <p className="mt-1 text-xs leading-5 text-[#64605D]">{t.intro}</p>
         </div>
         <img src={DALIL_MASCOT_IMAGE} alt="Mascotte Dalil Tounes"
           className="h-[82px] w-[76px] shrink-0 rounded-xl border border-[#EAE1D0] bg-[#FCFAF5] object-contain" loading="lazy" decoding="async" />
       </div>
     </section>
-    <section className="relative z-10 rounded-2xl border border-[#E9E4DB] bg-white p-3.5 shadow-[0_2px_14px_rgba(30,25,20,0.03)]" aria-label={t.search}>
-      <h2 className="mb-2 font-serif text-base font-medium text-[#242424]">{t.search}</h2>
+    <section className="relative z-10 rounded-2xl border border-[#E6D9C4] bg-[#FFFCF8] p-3.5 shadow-[0_2px_14px_rgba(30,25,20,0.03)]" aria-label={t.search}>
+      <h2 className="mb-2 font-serif text-base font-semibold text-[#9B2027]">{t.search}</h2>
       <SearchBar scope="global" autoSearch resultMode="redirectToResults" />
     </section>
-    <section className="rounded-xl border border-[#EFE4D5] bg-[#FFF8F0] px-4 py-4 text-center" aria-label="Dalil Tounes et mini-appli professionnelle">
-      <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-[#A1742D]">{lang === 'fr' ? 'Vous êtes professionnel ?' : lang === 'ar' ? 'عندك مؤسسة؟' : lang === 'en' ? 'Are you a professional?' : lang === 'it' ? 'Sei un professionista?' : 'Вы профессионал?'}</p>
-      <p className="text-sm font-medium leading-5 text-[#292929]">{lang === 'ar' ? 'خلّي مؤسستك موجودة في دليل تونس.' : lang === 'en' ? 'Get listed on Dalil Tounes.' : lang === 'it' ? 'Fai conoscere la tua attività su Dalil Tounes.' : lang === 'ru' ? 'Разместите свою компанию на Dalil Tounes.' : 'Soyez répertorié sur Dalil Tounes.'}</p>
+    <section className="rounded-xl border border-[#E4D1B5] bg-gradient-to-br from-[#FFF5E7] to-[#FFFCF7] px-4 py-4 text-center shadow-sm" aria-label="Dalil Tounes et mini-appli professionnelle">
+      <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-[#AD242B]">{lang === 'fr' ? 'Vous êtes professionnel ?' : lang === 'ar' ? 'عندك مؤسسة؟' : lang === 'en' ? 'Are you a professional?' : lang === 'it' ? 'Sei un professionista?' : 'Вы профессионал?'}</p>
+      <p className="text-sm font-semibold leading-5 text-[#8A2028]">{lang === 'ar' ? 'خلّي مؤسستك موجودة في دليل تونس.' : lang === 'en' ? 'Get listed on Dalil Tounes.' : lang === 'it' ? 'Fai conoscere la tua attività su Dalil Tounes.' : lang === 'ru' ? 'Разместите свою компанию на Dalil Tounes.' : 'Soyez répertorié sur Dalil Tounes.'}</p>
       <p className="mt-1 text-xs leading-5 text-[#66615D]">{lang === 'ar' ? 'عزّز حضور نشاطك عبر تطبيق مصغّر مهني خاص بمؤسستك.' : lang === 'en' ? 'Give your business greater impact with your own business mini-app.' : lang === 'it' ? 'Dai più visibilità alla tua attività con una mini-app personalizzata.' : lang === 'ru' ? 'Представьте бизнес с помощью собственного мини-приложения.' : 'Développez votre visibilité avec votre mini-appli professionnelle.'}</p>
     </section>
     <PlatformAppHelp language={lang} />
-    <section aria-label={t.count(totalCount ?? '—')} className="rounded-xl border border-[#ECE5DA] bg-white px-4 py-4 shadow-[0_2px_12px_rgba(30,25,20,0.025)]" aria-live="polite">
+    <section aria-label={t.count(totalCount ?? '—')} className="rounded-xl border border-[#E7D8C1] bg-[#FFFDF9] px-4 py-4 shadow-[0_2px_12px_rgba(30,25,20,0.025)]" aria-live="polite">
       <div className="flex items-start gap-2.5">
-        <Building2 className="mt-0.5 h-4 w-4 shrink-0 text-[#B58A45]" aria-hidden="true" />
+        <Building2 className="mt-0.5 h-4 w-4 shrink-0 text-[#B28A44]" aria-hidden="true" />
         <div className="min-w-0">
-          <p className="text-sm font-semibold leading-5 text-[#292929]">{totalCount === null || totalCount === undefined ? '—' : t.count(totalCount)}</p>
+          <p className="text-sm font-semibold leading-5 text-[#9B2027]">{totalCount === null || totalCount === undefined ? '—' : t.count(totalCount)}</p>
           <p className="mt-0.5 text-xs leading-5 text-[#6B6762]">{t.discoverCopy}</p>
         </div>
       </div>
       {legacyCertifiedCount !== null && legacyCertifiedCount !== undefined && <div className="mt-2 flex items-start gap-2.5 border-t border-[#EEE8E0] pt-2">
-        <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#B58A45]" aria-hidden="true" />
+        <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#B28A44]" aria-hidden="true" />
         <p className="text-xs font-medium leading-5 text-[#44403C]">{t.legacyCertified(legacyCertifiedCount)}</p>
       </div>}
       {recommendedCount !== null && recommendedCount !== undefined && <div className="mt-2 flex items-start gap-2.5 border-t border-[#EEE8E0] pt-2">
-        <Star className="mt-0.5 h-4 w-4 shrink-0 text-[#B58A45]" aria-hidden="true" />
+        <Star className="mt-0.5 h-4 w-4 shrink-0 text-[#B28A44]" aria-hidden="true" />
         <div><p className="text-xs font-medium leading-5 text-[#44403C]">{t.recommended(recommendedCount)}</p><p className="mt-0.5 text-[11px] leading-4 text-[#736C66]">{t.recommendedRule}</p></div>
       </div>}
     </section>
 
+
+    {/* Preview-only visual accents for components shared with the classic site. */}
+    <style>{`
+      [data-home-color-test="rouge-or-v2"] [data-platform-app-founder] {
+        border: 1px solid #e4d1b5; background: linear-gradient(135deg,#fffdfa 0%,#fff7ec 100%);
+        box-shadow: 0 3px 16px rgba(84,45,27,.045);
+      }
+      [data-home-color-test="rouge-or-v2"] [data-platform-app-founder] h2 {
+        color:#9b2027;
+      }
+      [data-home-color-test="rouge-or-v2"] [data-platform-app-founder] details {
+        border-color:#e7d6b9; background:white;
+      }
+      [data-home-color-test="rouge-or-v2"] [data-platform-app-founder] summary { color:#9b2027; }
+      [data-home-color-test="rouge-or-v2"] [data-platform-app-founder] [class*="text-[#4A1D43]"] { color:#9b2027; }
+      [data-home-color-test="rouge-or-v2"] .public-search button[type="submit"] {
+        background:#ad242b; color:white; border-color:#ad242b;
+      }
+      [data-home-color-test="rouge-or-v2"] .public-search button[type="submit"]:hover { background:#8d1c23; }
+      [data-home-color-test="rouge-or-v2"] .public-search input:focus {
+        border-color:#bd9958; box-shadow:0 0 0 1px #bd9958;
+      }
+      [data-home-color-test="rouge-or-v2"] [data-app-help] details { border-color:#e7d6b9; background:#fffdfa; }
+      [data-home-color-test="rouge-or-v2"] [data-app-help] summary { color:#98252a; }
+    `}</style>
 
     <FounderStory compact />
 
