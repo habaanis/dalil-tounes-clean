@@ -8,14 +8,14 @@ const HELP_COPY: Record<AppLang, {
   fr: {
     heading: 'Besoin d’aide sur Dalil Tounes ?', choose: 'Appeler notre équipe',
     french: 'En français · Anis', tunisian: 'En tunisien · Azziz',
-    scope: 'Inscriptions, CV Business / Portfolio et fonctionnement de Dalil Tounes.',
+    scope: 'Inscriptions, mini-appli professionnelle et fonctionnement de Dalil Tounes.',
     exclusion: 'Pour les adresses et horaires des établissements, consultez directement leurs fiches.',
     call: 'Appeler',
   },
   ar: {
     heading: 'تحتاج مساعدة في دليل تونس؟', choose: 'اتصل بفريقنا',
     french: 'بالفرنسية · أنيس', tunisian: 'بالتونسي · عزيز',
-    scope: 'لترسيم المؤسسات، CV Business / Portfolio وكيفاش تستعمل دليل تونس.',
+    scope: 'لتسجيل المؤسسات والتطبيق المصغّر المهني وكيفاش تستعمل دليل تونس.',
     exclusion: 'لعناوين وأوقات خدمة المؤسسات، شوف بطاقاتهم مباشرة.',
     call: 'اتصل',
   },
@@ -29,14 +29,14 @@ const HELP_COPY: Record<AppLang, {
   it: {
     heading: 'Serve aiuto con Dalil Tounes?', choose: 'Chiama il nostro team',
     french: 'In francese · Anis', tunisian: 'In tunisino · Azziz',
-    scope: 'Registrazioni, CV Business / Portfolio e utilizzo di Dalil Tounes.',
+    scope: 'Registrazioni, mini-app professionale e utilizzo di Dalil Tounes.',
     exclusion: 'Per indirizzi e orari delle attività, consulta direttamente le loro schede.',
     call: 'Chiama',
   },
   ru: {
     heading: 'Нужна помощь с Dalil Tounes?', choose: 'Позвонить команде',
     french: 'На французском · Анис', tunisian: 'На тунисском арабском · Азиз',
-    scope: 'Регистрация компаний, CV Business / Portfolio и работа с Dalil Tounes.',
+    scope: 'Регистрация компаний, мини-приложение для бизнеса и работа с Dalil Tounes.',
     exclusion: 'Адреса и часы работы компаний смотрите в их карточках.',
     call: 'Позвонить',
   },
