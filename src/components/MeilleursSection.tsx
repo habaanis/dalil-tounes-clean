@@ -593,7 +593,7 @@ export default function MeilleursSection({
           <button
             onClick={() => navigate(`/recherche?q=${encodeURIComponent(searchTarget)}`)}
             className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-xl font-semibold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
-            style={{ backgroundColor: accentColor, color: '#fff' }}
+            style={{ backgroundColor: '#B62226', color: '#fff', border: '1px solid #C9A65D' }}
           >
             <Search className="w-4 h-4" />
             {searchOtherLabel || `${tx('searchOtherPrefix', "Rechercher d'autres")} ${secteurLabel}`}
