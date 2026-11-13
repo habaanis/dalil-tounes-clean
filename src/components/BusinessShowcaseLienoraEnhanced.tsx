@@ -163,5 +163,14 @@ export default function BusinessShowcaseLienoraEnhanced() {
     ].filter(product => Boolean(product.imageUrl))
     : [];
   const visibleProducts = boutiqueDemo ? pilotProducts : products;
-  return <><BusinessShowcaseLienoraDetail />{visibleProducts.length > 0 && <div className="mx-auto max-w-3xl px-4 pb-8"><BoutiqueInteractive config={{ merchantName: String(business?.nom || ''), whatsapp: String(business?.['whatsapp'] || ''), products: visibleProducts, paymentsVerified: !boutiqueDemo && business?.['boutique_payments_verified'] === true, demoMode: boutiqueDemo }} /></div>}</>;
+  const boutiqueContent = visibleProducts.length > 0
+    ? <BoutiqueInteractive config={{
+        merchantName: String(business?.nom || ''),
+        whatsapp: String(business?.['whatsapp'] || ''),
+        products: visibleProducts,
+        paymentsVerified: !boutiqueDemo && business?.['boutique_payments_verified'] === true,
+        demoMode: boutiqueDemo,
+      }} />
+    : undefined;
+  return <BusinessShowcaseLienoraDetail boutiqueContent={boutiqueContent} />;
 }
