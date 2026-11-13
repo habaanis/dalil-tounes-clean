@@ -9,13 +9,23 @@ import StructuredData from '../components/StructuredData';
 import { getHomeSeoMeta } from '../lib/seoMetaTemplates';
 import { generateOrganizationSchema, generateWebSiteSchema } from '../lib/structuredDataSchemas';
 import { ArrowRight, Users, Compass, Building2, MapPin, QrCode, Search, Share2, Sparkles } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CvBusinessJourney from '../components/CvBusinessJourney';
 import CvCapabilitiesSection from '../components/CvCapabilitiesSection';
 import SearchBar from '../components/SearchBar';
 import { useLanguage } from '../context/LanguageContext';
 import { useHomeData } from '../hooks/useHomeData';
+
+function CvSectionFold({ enabled, title, children, initiallyOpen = false }: { enabled: boolean; title: string; children: ReactNode; initiallyOpen?: boolean }) {
+  if (!enabled) return <>{children}</>;
+  return <details defaultOpen={initiallyOpen} className="mx-3 my-3 overflow-hidden rounded-xl border border-[#D4AF37]/45 bg-white">
+    <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 bg-[#FFFDF8] px-4 py-3 text-sm font-semibold text-[#4A1D43] [&::-webkit-details-marker]:hidden">
+      <span>{title}</span><span aria-hidden="true" className="text-xl text-[#A17D36]">⌄</span>
+    </summary>
+    <div className="border-t border-[#D4AF37]/30">{children}</div>
+  </details>;
+}
 
 type Lang = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 
@@ -264,6 +274,7 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
   const { legacyCertifiedCount, recommendedCount } = useHomeData();
   const structure = siteStructureCopy[lang];
   const CvHeading = embedded ? 'h3' : 'h1';
+  const compactCvApp = view === 'cv' && fixedView === 'cv' && isPlatformAppMode() && !embedded;
   // The actual public landing page is PlatformHome (not the legacy Home.tsx).
   // Read the authoritative aggregate directly; never display the old 2 351 total
   // from a stale client cache while the current RPC is still loading.
@@ -312,83 +323,6 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
         recommendedCount={localizedRecommendedCount}
         legacyCertifiedCount={countsAvailable ? localizedLegacyCertifiedCount : null} />
     </>;
-  }
-
-  // A deliberately short product explanation inside the PWA. The public CV page stays unchanged.
-  if (view === 'cv' && fixedView === 'cv' && isPlatformAppMode() && !embedded) {
-    const mobileText: Record<Lang, { intro: string; business: string; portfolio: string; contact: string; share: string; visibility: string; note: string }> = {
-      fr: {
-        intro: 'Deux présentations professionnelles pour montrer votre activité et faciliter le contact.',
-        business: 'Pour présenter votre entreprise, vos services, vos horaires et vos coordonnées.',
-        portfolio: 'Pour valoriser vos réalisations, vos photos et votre savoir-faire.',
-        contact: 'Contacts et réseaux réunis au même endroit',
-        share: 'Un lien et un QR Business faciles à partager',
-        visibility: 'Une présentation claire accessible sur téléphone',
-        note: 'Choisissez le modèle et la palette adaptés à votre métier depuis la rubrique Professionnels.'
-      },
-      ar: {
-        intro: 'نموذجان مهنيان للتعريف بنشاطك وتسهيل التواصل مع الحرفاء.',
-        business: 'لتقديم المؤسسة والخدمات والأوقات وبيانات الاتصال.',
-        portfolio: 'لعرض الإنجازات والصور والخبرة المهنية.',
-        contact: 'وسائل الاتصال والشبكات في مكان واحد',
-        share: 'رابط ورمز QR سهل المشاركة',
-        visibility: 'عرض واضح على الهاتف',
-        note: 'اختار النموذج والألوان المناسبة من قسم المهنيين.'
-      },
-      en: {
-        intro: 'Two professional presentations to showcase your business and make contact easier.',
-        business: 'Show your business, services, hours and contact details.',
-        portfolio: 'Highlight your work, photos and skills.',
-        contact: 'Contacts and social links in one place',
-        share: 'A shareable link and Business QR',
-        visibility: 'A clear presentation on mobile',
-        note: 'Choose a model and colour palette in the Professionals section.'
-      },
-      it: {
-        intro: 'Due presentazioni professionali per valorizzare la tua attività e facilitare i contatti.',
-        business: 'Presenta attività, servizi, orari e contatti.',
-        portfolio: 'Valorizza lavori, foto e competenze.',
-        contact: 'Contatti e social in un unico posto',
-        share: 'Link e QR Business facili da condividere',
-        visibility: 'Presentazione chiara sul telefono',
-        note: 'Scegli il modello e i colori nella sezione Professionisti.'
-      },
-      ru: {
-        intro: 'Два профессиональных формата для презентации бизнеса и удобной связи.',
-        business: 'Покажите компанию, услуги, часы работы и контакты.',
-        portfolio: 'Представьте проекты, фотографии и опыт.',
-        contact: 'Контакты и соцсети в одном месте',
-        share: 'Ссылка и QR-код для отправки',
-        visibility: 'Удобная презентация на телефоне',
-        note: 'Выберите модель и палитру в разделе для бизнеса.'
-      }
-    };
-    const brief = mobileText[lang];
-    return <div className="min-h-screen bg-[#FFFCF7] px-3 py-3 text-[#45243A]" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
-      <SEOHead title={`${structure.products} | Dalil Tounes`} description={t.cvDescription} canonical="https://dalil-tounes.com/cv-business" currentPath="/cv-business" />
-      <section className="rounded-xl border border-[#D4AF37]/45 bg-[#FFFDF8] p-4">
-        <h1 className="font-serif text-xl font-medium">{structure.products}</h1>
-        <p className="mt-2 text-sm leading-6 text-[#665565]">{brief.intro}</p>
-      </section>
-      <div className="mt-3 grid gap-3">
-        <section className="rounded-xl border border-[#D4AF37]/40 bg-white p-4">
-          <h2 className="font-serif text-lg font-semibold">{ecosystem.cvBusiness}</h2>
-          <p className="mt-1 text-sm leading-6 text-[#665565]">{brief.business}</p>
-        </section>
-        <section className="rounded-xl border border-[#D4AF37]/40 bg-white p-4">
-          <h2 className="font-serif text-lg font-semibold">{ecosystem.cvPortfolio}</h2>
-          <p className="mt-1 text-sm leading-6 text-[#665565]">{brief.portfolio}</p>
-        </section>
-      </div>
-      <section className="mt-3 rounded-xl border border-[#D4AF37]/40 bg-white p-4">
-        <ul className="space-y-3 text-sm leading-5 text-[#55424E]">
-          <li className="flex items-start gap-2"><QrCode className="mt-0.5 h-4 w-4 shrink-0 text-[#A17D36]" />{brief.share}</li>
-          <li className="flex items-start gap-2"><Share2 className="mt-0.5 h-4 w-4 shrink-0 text-[#A17D36]" />{brief.contact}</li>
-          <li className="flex items-start gap-2"><MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[#A17D36]" />{brief.visibility}</li>
-        </ul>
-      </section>
-      <p className="mt-3 px-2 text-xs leading-5 text-[#665565]">{brief.note}</p>
-    </div>;
   }
 
   return (
@@ -458,13 +392,16 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
         </>
       ) : (
         <>
+          <CvSectionFold enabled={compactCvApp} title={t.cvLabel} initiallyOpen>
           <section className="border-b border-[#D4AF37]/25 bg-[radial-gradient(circle_at_top_left,rgba(212,175,55,0.18),transparent_28%),linear-gradient(135deg,#fffdf8_0%,#ffffff_52%,#f7f0f5_100%)] px-4 py-8 md:py-14">
             <div className="mx-auto grid max-w-[1180px] items-center gap-8 lg:grid-cols-[1fr_0.72fr]">
               <div><div className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/45 bg-white px-3 py-1.5 text-xs font-black uppercase tracking-[0.14em] text-[#4A1D43] shadow-sm"><Sparkles className="h-4 w-4 text-[#D4AF37]" /> {t.cvLabel}</div><CvHeading className="public-title mt-5 font-serif text-4xl font-bold leading-tight text-[#2E102A] md:text-5xl">{t.cvTitle}</CvHeading><p className="mt-3 font-serif text-2xl font-bold leading-tight text-[#B58A18] md:text-3xl">{t.cvSubtitle}</p><p className="mt-5 max-w-xl text-base leading-7 text-gray-600">{t.cvDescription}</p><div className="mt-6 flex flex-wrap gap-3"><a href="/subscription" className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-[#4A1D43] px-5 py-3 text-sm font-black text-white">{t.offers} <ArrowRight className={`h-4 w-4 ${lang === 'ar' ? 'rotate-180' : ''}`} /></a><a href="/contact" className="inline-flex min-h-12 items-center rounded-xl border border-[#D4AF37] bg-white px-5 py-3 text-sm font-bold text-[#4A1D43]">{t.information}</a></div></div>
               <div className="rounded-[30px] border border-[#D4AF37]/45 bg-white/90 p-4 shadow-[0_28px_70px_rgba(74,29,67,0.16)]"><p className="mb-3 text-center text-xs font-bold text-[#4A1D43]">{t.example}</p><div className="flex h-[390px] items-center justify-center overflow-hidden rounded-[18px] bg-[#032D21]">{heroVideoSrc ? <video key={heroVideoSrc} src={heroVideoSrc} controls playsInline preload="metadata" poster="/images/cv-business-portfolio-aux-saveurs-anis.png" className="h-[390px] w-auto max-w-full object-contain" aria-label={t.example} /> : <img src="/images/cv-business-portfolio-aux-saveurs-anis.png" alt="CV Business Aux saveurs d’Anis" className="h-[390px] w-auto object-contain object-top" />}</div></div>
             </div>
           </section>
+          </CvSectionFold>
 
+          <CvSectionFold enabled={compactCvApp} title={t.cardTitle}>
           <section className="bg-white px-4 py-10 md:py-14">
             <div className="mx-auto max-w-6xl rounded-[30px] border border-[#D4AF37]/35 bg-[#FFFCF5] p-5 shadow-[0_20px_55px_rgba(74,29,67,0.08)] md:p-8">
               <p className="text-xs font-black uppercase tracking-[0.16em] text-[#B58A18]">{t.cardEyebrow}</p><h2 className="public-heading mt-2 max-w-4xl font-serif text-3xl font-medium text-[#2E102A] md:text-4xl">{t.cardTitle}</h2><p className="mt-4 max-w-4xl text-base leading-7 text-gray-700">{t.cardIntro}</p>
@@ -473,7 +410,9 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
               <div className="mt-5 rounded-2xl bg-[#2E102A] p-5 text-white md:p-6"><h3 className="font-serif text-xl font-bold text-[#F1D783] md:text-2xl">{t.visibilityTitle}</h3><p className="mt-2 max-w-5xl text-sm leading-6 text-white/85 md:text-base">{t.visibilityText}</p></div>
             </div>
           </section>
+          </CvSectionFold>
 
+          <CvSectionFold enabled={compactCvApp} title={t.miniAppTitle}>
           <section className="mx-auto max-w-5xl space-y-4 px-4 py-5">
             <h2 className="font-serif text-xl font-bold text-[#4A1D43]">{t.miniAppTitle}</h2>
             <p className="text-sm leading-6 text-slate-600">{t.miniAppText}</p>
@@ -482,10 +421,15 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
             <p className="text-sm leading-6 text-slate-600">{ecosystem.cvAdvantageText}</p>
             <details className="rounded-2xl border border-[#D4AF37]/40 p-4"><summary className="cursor-pointer font-bold text-[#4A1D43]">{structure.details}</summary><VisibilityHouseSection showNetworkProof={false} /></details>
           </section>
+          </CvSectionFold>
 
+          <CvSectionFold enabled={compactCvApp} title={lang === 'fr' ? 'Fonctionnalités du CV Business' : lang === 'ar' ? 'مميزات CV Business' : lang === 'en' ? 'Business CV features' : lang === 'it' ? 'Funzioni del CV Business' : 'Возможности Business CV'}>
           <CvCapabilitiesSection language={lang} />
+          </CvSectionFold>
 
+          <CvSectionFold enabled={compactCvApp} title={lang === 'fr' ? 'Comment créer votre CV Business ?' : lang === 'ar' ? 'كيفاش تعمل CV Business؟' : lang === 'en' ? 'How to create your Business CV' : lang === 'it' ? 'Come creare il Business CV' : 'Как создать Business CV'}>
           <CvBusinessJourney language={lang} />
+          </CvSectionFold>
 
           <section className="bg-[#2E102A] px-4 py-7 text-white"><div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left rtl:sm:text-right"><div><p className="text-xs font-black uppercase tracking-[0.16em] text-[#F1D783]">{t.searchEyebrow}</p><h2 className="mt-2 max-w-3xl font-serif text-2xl font-bold">{t.searchTitle}</h2></div><button type="button" onClick={() => fixedView ? navigate('/') : setPreviewView('platform')} className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-[#D4AF37] px-5 py-3 text-sm font-black text-[#F1D783]"><Search className="h-4 w-4" /> {t.explorePlatform}</button></div></section>
         </>
