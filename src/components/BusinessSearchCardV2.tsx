@@ -39,6 +39,7 @@ interface BusinessSearchCardV2Props {
   language: string;
   onClick: () => void;
   showGoogleRating?: boolean;
+  compact?: boolean;
 }
 
 const COPY: Record<string, {
@@ -66,6 +67,7 @@ export default function BusinessSearchCardV2({
   language,
   onClick,
   showGoogleRating = true,
+  compact = false,
 }: BusinessSearchCardV2Props) {
   const text = COPY[language] || COPY.fr;
   const isRTL = language === 'ar';
@@ -103,11 +105,11 @@ export default function BusinessSearchCardV2({
 
   return (
     <article
-      className="group relative h-full cursor-pointer overflow-hidden rounded-[18px] border-2 border-[#D4AF37] bg-[linear-gradient(160deg,#07513D_0%,#05412F_55%,#032F26_100%)] text-white shadow-[0_10px_24px_rgba(0,39,30,0.22)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(0,39,30,0.28)]"
+      className={`group relative cursor-pointer overflow-hidden rounded-[18px] border-2 border-[#D4AF37] bg-[linear-gradient(160deg,#07513D_0%,#05412F_55%,#032F26_100%)] text-white shadow-[0_10px_24px_rgba(0,39,30,0.22)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(0,39,30,0.28)] ${compact ? "h-auto" : "h-full"}`}
       onClick={onClick}
       dir={isRTL ? 'rtl' : 'ltr'}
     >
-      <div className="relative h-[58px] overflow-hidden border-b border-[#D4AF37]/35">
+      <div className={`relative overflow-hidden border-b border-[#D4AF37]/35 ${compact ? "h-[47px]" : "h-[58px]"}`}>
         <img
           src={cover}
           alt={hasRealCover ? displayName : existingIllustration ? 'Illustration du métier' : illustration?.label || displayName}
@@ -138,14 +140,14 @@ export default function BusinessSearchCardV2({
         </span>
       </div>
 
-      <div className="relative px-3 pb-2 pt-0">
-        <div className="-mt-[18px] mb-0.5 flex justify-center">
-          <div className="flex h-[46px] w-[46px] items-center justify-center overflow-hidden rounded-full border-[3px] border-[#D4AF37] bg-white p-1 shadow-[0_4px_10px_rgba(0,0,0,0.24)]">
+      <div className={`relative pt-0 ${compact ? "px-2.5 pb-1.5" : "px-3 pb-2"}`}>
+        <div className={`${compact ? "-mt-[15px] mb-0" : "-mt-[18px] mb-0.5"} flex justify-center`}>
+          <div className={`flex items-center justify-center overflow-hidden rounded-full border-[3px] border-[#D4AF37] bg-white p-1 shadow-[0_4px_10px_rgba(0,0,0,0.24)] ${compact ? "h-[38px] w-[38px]" : "h-[46px] w-[46px]"}`}>
             <img src={logo} alt={`Logo ${displayName}`} className="h-full w-full object-contain" loading="lazy" decoding="async" />
           </div>
         </div>
 
-        <h3 className="line-clamp-2 font-serif text-[15px] font-bold leading-[1.03] text-[#E9BD35]">
+        <h3 className={`line-clamp-2 font-serif font-bold text-[#E9BD35] ${compact ? "text-[13px] leading-[1.12]" : "text-[15px] leading-[1.03]"}`}>
           {displayName}
         </h3>
 
@@ -215,7 +217,7 @@ export default function BusinessSearchCardV2({
             event.stopPropagation();
             onClick();
           }}
-          className="mt-1.5 flex min-h-7 w-full items-center justify-start border-t border-[#D4AF37]/30 px-0 pt-1 text-left text-[10px] font-black text-[#E8BD34] transition hover:text-[#F5D76E] rtl:text-right"
+          className={`flex min-h-7 w-full items-center justify-start border-t border-[#D4AF37]/30 px-0 pt-1 text-left text-[10px] font-black text-[#E8BD34] transition hover:text-[#F5D76E] rtl:text-right ${compact ? "mt-0.5" : "mt-1.5"}`}
         >
           {text.details} →
         </button>
