@@ -827,7 +827,7 @@ const offerCopy: Record<OfferLanguage, {
       'Une priorité supérieure dans les résultats — Ta fiche apparaît avant les fiches Artisan et les présences gratuites.',
       'Une présence dans les espaces importants — Page d’accueil, pages liées à ton métier et certaines sélections Dalil Tounes.',
       'Badge Dalil Tounes Certifié — Les informations recueillies et vérifiées sont clairement signalées.',
-      'QR Business à présenter depuis ton téléphone — Ton client le scanne et ouvre directement ton CV Business.',
+      'QR Business à présenter depuis ton téléphone — Ton client le scanne et ouvre directement ta mini-appli.',
       'Jusqu’à 10 photos — Présente plus largement tes produits, ton établissement, ton équipe ou tes réalisations.',
       'Des statistiques plus détaillées — Suis les consultations, clics WhatsApp, appels, visites du site et l’évolution de ta visibilité.',
       'Bouton de réservation ou de demande — Selon ton activité, les visiteurs peuvent demander un rendez-vous, une réservation ou des informations.',
@@ -835,7 +835,7 @@ const offerCopy: Record<OfferLanguage, {
     ],
     cvSectionTitle: 'Bien plus qu’une simple présentation',
     cvSectionParagraphs: [
-      'Ton CV Business devient une véritable carte de visite numérique que tu peux utiliser au quotidien.',
+      'Ta mini-appli devient une véritable carte de visite numérique que tu peux utiliser au quotidien.',
       'Tu peux l’envoyer à tes clients par WhatsApp, e-mail ou message, le partager sur tes réseaux sociaux ou présenter ton entreprise après un premier contact.',
       'Toutes les informations utiles sont réunies sur une page : ton activité, tes services, ton savoir-faire, tes réalisations, tes coordonnées et tes plateformes professionnelles.',
     ],
@@ -848,9 +848,9 @@ const offerCopy: Record<OfferLanguage, {
     ],
     cvActionsIntro: 'Les visiteurs peuvent directement :',
     cvActions: ['t’appeler', 'te contacter sur WhatsApp', 'consulter ton emplacement sur Google Maps', 'visiter ton site internet', 'découvrir tes réseaux sociaux', 'accéder aux autres moyens de contact disponibles'],
-    cvClosing: 'Grâce à son lien personnel et à son QR Code, partage ton CV Business sur tes cartes de visite, tes flyers, ta vitrine ou tes publications. Tu disposes ainsi d’un support professionnel simple à transmettre, facile à consulter et toujours accessible.',
+    cvClosing: 'Grâce à son lien personnel et à son QR Code, partage ta mini-appli sur tes cartes de visite, tes flyers, ta vitrine ou tes publications. Tu disposes ainsi d’un support professionnel simple à transmettre, facile à consulter et toujours accessible.',
     oneTimeService: 'Prestation ponctuelle',
-    cvDistinction: 'Les abonnements concernent ta visibilité, ton suivi et l’accompagnement continu. Le CV Business est une présentation professionnelle complète et structurée, réalisée avec toi.',
+    cvDistinction: 'Les abonnements concernent ta visibilité, ton suivi et l’accompagnement continu. La mini-appli est une présentation professionnelle complète et structurée, réalisée avec toi.',
     eliteTitle: 'Élite Pro', customSolution: 'Solution sur mesure',
     eliteIntro: 'Chaque entreprise a des besoins différents. Échange avec nous afin de construire une solution adaptée à ton organisation, à tes objectifs et à ton budget.',
     contactUs: 'Nous contacter', contactEmail: 'Par e-mail', contactWhatsApp: 'Sur WhatsApp',
@@ -865,7 +865,7 @@ const offerCopy: Record<OfferLanguage, {
     artisanIntro: 'A plan for artisans, independents, shops and small businesses that want a clearer profile and better local visibility.', premiumIntro: 'A plan for businesses that want to go further, reach a wider audience and receive more regular support.',
     artisanFeatures: ['We create your profile with you', 'A clear presentation of your activity', 'All your useful information in one place', 'Up to 5 photos', 'Better visibility in your region', 'A higher position than free profiles', 'Artisan badge', 'Simple statistics', 'Your QR Code', 'You can update your information', 'Support by email or WhatsApp'],
     premiumFeatures: ['A more detailed presentation', 'Wider visibility across Tunisia', 'Higher priority than Artisan and free profiles', 'Presence in important Dalil Tounes spaces', 'Dalil Tounes Certified badge', 'Business QR to present from your phone — your customer scans it and opens your Business CV directly', 'Up to 10 photos', 'More detailed statistics', 'Booking or enquiry button', 'Priority support'],
-    cvSectionTitle: 'Much more than a simple presentation', cvSectionParagraphs: ['Your CV Business becomes a digital business card you can use every day.', 'Send it by WhatsApp, email or message, share it on social media or use it after a first contact.', 'Your activity, services, expertise, work, contact details and professional platforms are gathered on one page.'], cvActionsIntro: 'Visitors can directly:', cvActions: ['call you', 'contact you on WhatsApp', 'open your Google Maps location', 'visit your website', 'discover your social networks', 'use your other contact methods'], cvClosing: 'Its personal link and QR Code make it easy to share on business cards, flyers, your storefront or posts.', oneTimeService: 'One-time service', cvDistinction: 'Subscriptions cover visibility and ongoing support. CV Business is a complete, structured professional presentation created with you.', eliteTitle: 'Elite Pro', customSolution: 'Tailored solution', eliteIntro: 'Every business has different needs. Talk to us to build a solution suited to your organisation, goals and budget.', contactUs: 'Contact us', contactEmail: 'By email', contactWhatsApp: 'On WhatsApp', certifiedDisclaimer: 'This badge confirms the reliability of the displayed information. It does not certify the quality of the products or services offered.', showAllFeatures: 'See all benefits', hideAllFeatures: 'Show fewer benefits', showCvDetails: 'See full service details', hideCvDetails: 'Show fewer details',
+    cvSectionTitle: 'Much more than a simple presentation', cvSectionParagraphs: ['Your business mini-app becomes a digital business card you can use every day.', 'Send it by WhatsApp, email or message, share it on social media or use it after a first contact.', 'Your activity, services, expertise, work, contact details and professional platforms are gathered on one page.'], cvActionsIntro: 'Visitors can directly:', cvActions: ['call you', 'contact you on WhatsApp', 'open your Google Maps location', 'visit your website', 'discover your social networks', 'use your other contact methods'], cvClosing: 'Its personal link and QR Code make it easy to share on business cards, flyers, your storefront or posts.', oneTimeService: 'One-time service', cvDistinction: 'Subscriptions cover visibility and ongoing support. CV Business is a complete, structured professional presentation created with you.', eliteTitle: 'Elite Pro', customSolution: 'Tailored solution', eliteIntro: 'Every business has different needs. Talk to us to build a solution suited to your organisation, goals and budget.', contactUs: 'Contact us', contactEmail: 'By email', contactWhatsApp: 'On WhatsApp', certifiedDisclaimer: 'This badge confirms the reliability of the displayed information. It does not certify the quality of the products or services offered.', showAllFeatures: 'See all benefits', hideAllFeatures: 'Show fewer benefits', showCvDetails: 'See full service details', hideCvDetails: 'Show fewer details',
   },
   ar: {
     showAllFeatures: 'عرض كل المزايا', hideAllFeatures: 'تقليص المزايا', showCvDetails: 'عرض تفاصيل الخدمة كاملة', hideCvDetails: 'تقليص التفاصيل',
@@ -1250,7 +1250,7 @@ function CreationPlanCard({
 }) {
   return (
     <article className={`relative flex flex-col overflow-hidden rounded-3xl border-2 bg-[#FFF9ED] p-5 text-[#35172F] shadow-[0_12px_30px_rgba(7,84,63,0.16)] transition sm:p-6 ${selected ? 'border-[#C8A557] ring-4 ring-[#D6AF2E]' : 'border-[#D6AF2E]'}`}>
-      <span className="absolute right-0 top-0 rounded-bl-2xl bg-[#D6AF2E] px-4 py-2 text-[11px] font-medium tracking-[0.12em] text-[#30162E]">CV BUSINESS</span>
+      <span className="absolute right-0 top-0 rounded-bl-2xl bg-[#D6AF2E] px-4 py-2 text-[11px] font-medium tracking-[0.12em] text-[#30162E]">MINI-APPLI</span>
       <h3 className="mt-8 text-2xl font-medium">{title}</h3>
       <div className="mt-2 flex items-end gap-2 text-[#815E28]">
         <span className="text-3xl font-medium">{price}</span>
