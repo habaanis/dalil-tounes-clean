@@ -115,3 +115,24 @@
 }
 .premium-chrome .public-page a[class*="bg-[#4A1D43]"] :is(span,svg),
 .premium-chrome .public-page button[class*="bg-[#4A1D43]"] :is(span,svg) { color: white; }
+
+/* Finish migrating old dark-plum marketing panels without affecting client CV palettes. */
+.premium-chrome .public-page [class~="bg-[#2E102A]"],
+.premium-chrome .public-page [class~="bg-[#30102A]"],
+.premium-chrome .public-page [class~="bg-[#4A1D43]"]:not(button):not(a) {
+  background: #FFF8EA;
+  color: #292725;
+  border: 1px solid #C9A65D;
+}
+.premium-chrome .public-page [class~="bg-[#2E102A]"] :is(h1,h2,h3,h4,p,span),
+.premium-chrome .public-page [class~="bg-[#30102A]"] :is(h1,h2,h3,h4,p,span) {
+  color: #292725;
+}
+.premium-chrome .public-page [class~="bg-[#2E102A]"] a,
+.premium-chrome .public-page [class~="bg-[#30102A]"] a {
+  color: #292725;
+}
+.premium-chrome .public-page [class~="bg-[#2E102A]"] button,
+.premium-chrome .public-page [class~="bg-[#30102A]"] button {
+  border-color: #C9A65D;
+}
