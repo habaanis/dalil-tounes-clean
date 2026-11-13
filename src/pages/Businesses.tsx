@@ -389,6 +389,8 @@ export const Businesses = ({
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedCity, setSelectedCity] = useState(initialSearchCity || '');
   const [pageCategorie, setPageCategorie] = useState<string | null>(null);
+  const [resultPage, setResultPage] = useState(0);
+  const resultsRef = useRef<HTMLDivElement | null>(null);
   const [showSuggestForm, setShowSuggestForm] = useState(showSuggestionForm);
   const suggestionStartedAtRef = useRef(Date.now());
   const [showNeedForm, setShowNeedForm] = useState(false);
@@ -402,6 +404,10 @@ export const Businesses = ({
   const [loadingPremiumJobs, setLoadingPremiumJobs] = useState(false);
   const [filterPremium, setFilterPremium] = useState(false);
   const [filterCommerceLocal, setFilterCommerceLocal] = useState(false);
+  useEffect(() => { setResultPage(0); }, [
+    searchTerm, selectedBusinessId, selectedCity, selectedCategory, pageCategorie,
+    filterPremium, filterCommerceLocal, filterStatutCarte, selectedChipCategories,
+  ]);
   const [filterStatutCarte, setFilterStatutCarte] = useState<'' | 'certifie' | 'non_certifie'>('');
   const [availableCategories, setAvailableCategories] = useState<Array<{id: string, label: string, count: number}>>([]);
   const [selectedChipCategories, setSelectedChipCategories] = useState<string[]>([]);
@@ -1264,6 +1270,15 @@ export const Businesses = ({
   const categories = Array.isArray(businesses) ? [...new Set(businesses.map((b) => b.category).filter(Boolean))].sort() : [];
 
   const filteredBusinesses = Array.isArray(chipFilteredBusinesses) ? chipFilteredBusinesses : [];
+  const RESULTS_PER_PAGE = 6;
+  const defaultResultCount = Math.min(6, filteredBusinesses.length);
+  const resultCount = hasActiveSearch ? filteredBusinesses.length : defaultResultCount;
+  const resultPageCount = Math.max(1, Math.ceil(resultCount / RESULTS_PER_PAGE));
+  const safeResultPage = Math.min(resultPage, resultPageCount - 1);
+  const displayedBusinesses = filteredBusinesses.slice(
+    safeResultPage * RESULTS_PER_PAGE,
+    Math.min(resultCount, (safeResultPage + 1) * RESULTS_PER_PAGE),
+  );
 
   const businessListItems = Array.isArray(businesses) ? businesses.slice(0, 20).map(business => ({
     name: business.name || pageT.seo.unnamedBusiness,
@@ -1402,11 +1417,15 @@ export const Businesses = ({
           </div>
         </section>
 
+        <style>{`
+          #business-search button[type="submit"] { background: #B62226; color: #fff; border-color: #C9A65D; }
+          #business-search button[type="submit"]:hover { background: #911D23; }
+        `}</style>
         {/* SearchBar Entreprises */}
         <section id="business-search" className="relative z-0 order-1 scroll-mt-28 px-4 py-6">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-5">
-              <h2 className="public-heading text-xl md:text-2xl font-medium text-[#4A1D43]">{pageT.explore.title}</h2>
+              <h2 className="public-heading text-xl md:text-2xl font-semibold text-[#B62226]">{pageT.explore.title}</h2>
               <p className="mt-3 text-sm md:text-base text-gray-600 max-w-3xl mx-auto leading-relaxed">
                 {pageT.explore.description}
               </p>
@@ -1571,7 +1590,7 @@ export const Businesses = ({
                 <h3 className="text-lg font-medium text-[#4A1D43]">
                   {hasActiveSearch ? pageT.results.searchResults : pageT.results.featured}
                   <span className="ms-2 text-sm text-gray-500 font-normal">
-                    ({hasActiveSearch ? filteredBusinesses.length : Math.min(3, filteredBusinesses.length)} {filteredBusinesses.length > 1 ? pageT.results.businessPlural : pageT.results.businessSingular})
+                    ({hasActiveSearch ? filteredBusinesses.length : defaultResultCount} {filteredBusinesses.length > 1 ? pageT.results.businessPlural : pageT.results.businessSingular})
                   </span>
                 </h3>
                 {hasActiveSearch && (
@@ -1600,8 +1619,8 @@ export const Businesses = ({
                   </button>
                 )}
               </div>
-              <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
-                {Array.isArray(filteredBusinesses) && filteredBusinesses.slice(0, hasActiveSearch ? filteredBusinesses.length : 3).map((business) => {
+              <div ref={resultsRef} className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {Array.isArray(displayedBusinesses) && displayedBusinesses.map((business) => {
                   if (!business || !business.id) return null;
 
                   return (
@@ -1631,14 +1650,32 @@ export const Businesses = ({
                         description_ar: business.description_ar || null,
                       }}
                       onClick={() => {
-                        navigate(buildEntrepriseUrl({ slug: business.slug, nom: business.name, ville: business.ville || business.city, id: business.id }));
+                        const isHistoricalIvoryCard = business.statut_carte === '⭐ CERTIFIÉ DALIL TOUNES';
+                        const target = buildEntrepriseUrl({ slug: business.slug, nom: business.name, ville: business.ville || business.city, id: business.id });
+                        navigate(isHistoricalIvoryCard ? `${target}?palette=ivory` : target);
                       }}
                       variant="premium"
+                      compact
                     />
                   );
                 })}
               </div>
 
+              {hasActiveSearch && resultPageCount > 1 && (
+                <nav aria-label="Pagination des entreprises" className="mt-5 flex items-center justify-center gap-3">
+                  <button type="button" disabled={safeResultPage === 0}
+                    onClick={() => { setResultPage(Math.max(0, safeResultPage - 1)); resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
+                    className="min-h-11 rounded-lg border border-[#C9A65D] bg-white px-4 text-sm font-medium text-[#292929] disabled:opacity-40">
+                    {language === 'ar' ? 'السابق' : 'Précédent'}
+                  </button>
+                  <span className="text-sm font-semibold text-[#292929]">{safeResultPage + 1} / {resultPageCount}</span>
+                  <button type="button" disabled={safeResultPage >= resultPageCount - 1}
+                    onClick={() => { setResultPage(Math.min(resultPageCount - 1, safeResultPage + 1)); resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
+                    className="min-h-11 rounded-lg border border-[#C9A65D] bg-white px-4 text-sm font-medium text-[#292929] disabled:opacity-40">
+                    {language === 'ar' ? 'التالي' : 'Suivant'}
+                  </button>
+                </nav>
+              )}
               {!hasActiveSearch && filteredBusinesses.length > 3 && (
                 <div className="mt-6 text-center">
                   <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#D4AF37]/10 rounded-lg text-xs text-[#4A1D43]" style={{ border: '1px solid #D4AF37' }}>
