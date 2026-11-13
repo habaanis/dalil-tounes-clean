@@ -327,12 +327,20 @@ export const Layout = ({ children }: LayoutProps) => {
               ))}
 
               <LanguageSelector />
+              <Suspense fallback={null}>
+                <SocialBar />
+              </Suspense>
 
               {showAdminLink && (
                 <AdminNotifications variant="desktop" />
               )}
             </div>
 
+            <div className="ml-auto mr-2 md:hidden">
+              <Suspense fallback={null}>
+                <SocialBar mobile />
+              </Suspense>
+            </div>
             <button
               type="button"
               onClick={() => setShowMobileMenu(!showMobileMenu)}
@@ -559,9 +567,6 @@ export const Layout = ({ children }: LayoutProps) => {
 
       <main className={`${premiumChrome ? 'public-page' : ''} min-h-[calc(100vh-5rem)] overflow-x-hidden ${location.pathname === '/' ? '' : 'pt-[96px] sm:pt-[104px]'}`}>{children}</main>
 
-      <Suspense fallback={null}>
-        <SocialBar />
-      </Suspense>
       <Suspense fallback={null}>
         <Footer />
       </Suspense>
