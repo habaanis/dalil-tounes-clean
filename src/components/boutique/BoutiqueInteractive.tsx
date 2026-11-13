@@ -17,6 +17,7 @@ export type BoutiqueConfig = {
   whatsapp: string; // International number, without '+'.
   products: BoutiqueProduct[];
   paymentsVerified?: boolean; // Set only after merchant account and destination verification.
+  demoMode?: boolean; // Prevent any customer contact or payment during pilot preview.
 };
 
 const formatPrice = (product: BoutiqueProduct) =>
@@ -63,6 +64,7 @@ export function BoutiqueInteractive({ config }: { config: BoutiqueConfig }) {
 
   const send = () => {
     if (!selected) return;
+    if (config.demoMode) { setError('Mode démonstration : aucun message ni paiement n’est envoyé.'); return; }
     if (!name.trim() || !contact.trim()) {
       setError('Indiquez votre nom et un moyen de contact.');
       return;
@@ -87,7 +89,7 @@ export function BoutiqueInteractive({ config }: { config: BoutiqueConfig }) {
     window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(content), '_blank', 'noopener,noreferrer');
   };
 
-  const paymentUrl = selected?.mode === 'order' && quantity === 1 && config.paymentsVerified
+  const paymentUrl = selected?.mode === 'order' && quantity === 1 && config.paymentsVerified && !config.demoMode
     ? safePaymentUrl(selected.merchantPaymentUrl)
     : '';
 
@@ -97,6 +99,7 @@ export function BoutiqueInteractive({ config }: { config: BoutiqueConfig }) {
         style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '13px 16px', border: '1px solid #d4b780', borderRadius: 12, background: '#fffaf0', color: '#4a1d43', fontWeight: 600, cursor: 'pointer' }}>
         <span>Commander · Boutique & créations</span><span aria-hidden="true">{boutiqueOpen ? '−' : '+'}</span>
       </button>
+      {config.demoMode && <p style={{fontSize:12,margin:'8px 0',color:'#76501a'}}>Démonstration Aux Saveurs d’Anis : aucune commande réelle et aucun paiement.</p>}
       {boutiqueOpen && <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,minmax(0,1fr))', gap: 8, marginTop: 12 }}>
         {config.products.filter(product => product.id && product.title && product.imageUrl).map(product => (
           <button key={product.id} type="button" onClick={() => open(product)}
@@ -142,7 +145,7 @@ export function BoutiqueInteractive({ config }: { config: BoutiqueConfig }) {
             {error && <p role="alert" style={{ color: '#a32626' }}>{error}</p>}
             <button type="button" onClick={send}
               style={{ marginTop: 14, padding: 12, width: '100%', borderRadius: 10, border: 0, background: '#4a1d43', color: 'white', cursor: 'pointer' }}>
-              {selected.mode === 'quote' ? 'Demander un devis sur WhatsApp' : 'Commander sur WhatsApp'}
+              {config.demoMode ? 'Tester ma demande (simulation)' : selected.mode === 'quote' ? 'Demander un devis sur WhatsApp' : 'Commander sur WhatsApp'}
             </button>
             {paymentUrl && (
               <a href={paymentUrl} target="_blank" rel="noopener noreferrer"
