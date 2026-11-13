@@ -1342,7 +1342,7 @@ export const Businesses = ({
                   <button
                     type="button"
                     onClick={() => document.getElementById('business-search')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-[#D4AF37] px-6 py-3 text-sm font-medium text-[#4A1D43] shadow-lg transition hover:bg-[#F0CD5A]"
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-[#B62226] px-6 py-3 text-sm font-medium text-white shadow-lg transition hover:bg-[#931D23]"
                   >
                     {pageT.hero.search}
                     <Search className="h-4 w-4" />
@@ -1355,7 +1355,7 @@ export const Businesses = ({
 
         <nav className="sticky top-16 z-30 order-1 border-y border-[#D4AF37]/25 bg-white/95 px-4 py-2 shadow-sm backdrop-blur" aria-label={pageT.explore.title}>
           <div className="mx-auto flex max-w-5xl gap-2 overflow-x-auto">
-            <button type="button" onClick={() => document.getElementById('business-search')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="whitespace-nowrap rounded-full bg-[#4A1D43] px-4 py-2 text-sm font-medium text-white">{directoryCopy.search}</button>
+            <button type="button" onClick={() => document.getElementById('business-search')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="whitespace-nowrap rounded-full bg-[#B62226] px-4 py-2 text-sm font-medium text-white hover:bg-[#931D23]">{directoryCopy.search}</button>
             <button type="button" onClick={() => document.getElementById('business-center')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="whitespace-nowrap rounded-full border border-[#D4AF37]/50 bg-white px-4 py-2 text-sm font-medium text-[#4A1D43]">{directoryCopy.businessCenter}</button>
             <button type="button" onClick={() => document.getElementById('professional-services')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="whitespace-nowrap rounded-full border border-[#D4AF37]/50 bg-white px-4 py-2 text-sm font-medium text-[#4A1D43]">{directoryCopy.professionals}</button>
           </div>
