@@ -36,6 +36,7 @@ const safePaymentUrl = (value: string | undefined) => {
 
 export function BoutiqueInteractive({ config }: { config: BoutiqueConfig }) {
   const [selected, setSelected] = useState<BoutiqueProduct | null>(null);
+  const [boutiqueOpen, setBoutiqueOpen] = useState(false);
   const [name, setName] = useState('');
   const [contact, setContact] = useState('');
   const [quantity, setQuantity] = useState(1);
@@ -92,20 +93,23 @@ export function BoutiqueInteractive({ config }: { config: BoutiqueConfig }) {
 
   return (
     <section aria-label="Boutique du professionnel" style={{ padding: '16px 0' }}>
-      <h2 style={{ fontSize: '1.2rem', fontWeight: 600, marginBottom: 12 }}>Boutique & créations</h2>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(145px,1fr))', gap: 12 }}>
+      <button type="button" aria-expanded={boutiqueOpen} onClick={() => setBoutiqueOpen(current => !current)}
+        style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '13px 16px', border: '1px solid #d4b780', borderRadius: 12, background: '#fffaf0', color: '#4a1d43', fontWeight: 600, cursor: 'pointer' }}>
+        <span>Commander · Boutique & créations</span><span aria-hidden="true">{boutiqueOpen ? '−' : '+'}</span>
+      </button>
+      {boutiqueOpen && <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,minmax(0,1fr))', gap: 8, marginTop: 12 }}>
         {config.products.filter(product => product.id && product.title && product.imageUrl).map(product => (
           <button key={product.id} type="button" onClick={() => open(product)}
-            style={{ textAlign: 'left', border: '1px solid #d8c8ad', borderRadius: 14, overflow: 'hidden', background: '#fffdf8', color: '#342b25', cursor: 'pointer' }}>
+            style={{ textAlign: 'left', minWidth: 0, padding: 4, border: '1px solid #d8c8ad', borderRadius: 11, overflow: 'hidden', background: '#fffdf8', color: '#342b25', cursor: 'pointer' }}>
             <img src={product.imageUrl} alt={product.title} loading="lazy"
-              style={{ width: '100%', aspectRatio: '1 / 1', objectFit: 'cover' }} />
-            <span style={{ display: 'block', padding: 10 }}>
+              style={{ width: '100%', aspectRatio: '1 / 1', objectFit: 'cover', borderRadius: 7 }} />
+            <span style={{ display: 'block', padding: '6px 3px', overflowWrap: 'anywhere', fontSize: 12 }}>
               <strong style={{ display: 'block' }}>{product.title}</strong>
               <small>{product.mode === 'quote' ? 'Demander un devis' : formatPrice(product)}</small>
             </span>
           </button>
         ))}
-      </div>
+      </div>}
       {selected && (
         <div role="presentation" onMouseDown={() => setSelected(null)}
           style={{ position: 'fixed', inset: 0, zIndex: 9999, background: '#0009', display: 'grid', placeItems: 'center', padding: 16 }}>
@@ -113,8 +117,8 @@ export function BoutiqueInteractive({ config }: { config: BoutiqueConfig }) {
             onMouseDown={event => event.stopPropagation()}
             style={{ width: 'min(100%, 430px)', maxHeight: '90vh', overflowY: 'auto', background: '#fffdf8', borderRadius: 18, padding: 20, color: '#342b25' }}>
             <button type="button" onClick={() => setSelected(null)} aria-label="Fermer"
-              style={{ float: 'right', border: 0, background: 'transparent', fontSize: 24, cursor: 'pointer' }}>×</button>
-            <img src={selected.imageUrl} alt="" style={{ width: '100%', maxHeight: 210, objectFit: 'cover', borderRadius: 12 }} />
+              style={{ float: 'right', border: '1px solid #d8c8ad', borderRadius: 30, background: '#fff', width: 36, height: 36, fontSize: 24, cursor: 'pointer', marginBottom: 8 }}>×</button>
+            <img src={selected.imageUrl} alt="" style={{ width: '100%', maxHeight: 360, aspectRatio: '1 / 1', objectFit: 'contain', background: '#f6f0e6', borderRadius: 12 }} />
             <h3 style={{ fontSize: '1.3rem', margin: '12px 0 4px' }}>{selected.title}</h3>
             {selected.description && <p>{selected.description}</p>}
             <p><strong>{formatPrice(selected)}</strong></p>
