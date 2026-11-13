@@ -70,7 +70,7 @@ const subscriptionCopy = {
     or: 'ou',
     payTwice: '100 TND puis 99 TND',
     payThreeTimes: '67 + 66 + 66 TND',
-    cvPublication: 'Votre mini-appli est préparée pendant les différentes étapes et publié après le paiement complet.',
+    cvPublication: 'Votre mini-appli est préparée pendant les différentes étapes et publiée après le paiement complet.',
     cvFeatures: [
       'Entretien et collecte des informations',
       'Rédaction de la présentation',
@@ -105,7 +105,7 @@ const subscriptionCopy = {
       'Outils pratiques pour améliorer votre présence',
       'Support technique',
     ],
-    premiumIntro: 'Un suivi accompagné pour garder votre CV Business et vos informations à jour.',
+    premiumIntro: 'Un suivi accompagné pour garder votre mini-appli et vos informations à jour.',
     premiumFeatures: [
       'Mises à jour groupées',
       "Ajout d'informations et de photos",
@@ -356,7 +356,7 @@ const subscriptionCopy = {
       'Practical tools to improve your presence',
       'Technical support',
     ],
-    premiumIntro: 'Guided support to keep your CV Business and information up to date.',
+    premiumIntro: 'Guided support to keep your business mini-app and information up to date.',
     premiumFeatures: [
       'Grouped updates',
       'Adding information and photos',
@@ -481,7 +481,7 @@ const subscriptionCopy = {
       'Strumenti pratici per migliorare la tua presenza',
       'Assistenza tecnica',
     ],
-    premiumIntro: 'Assistenza dedicata per mantenere aggiornati il tuo CV Business e le tue informazioni.',
+    premiumIntro: 'Assistenza dedicata per mantenere aggiornati la tua mini-app e i tuoi dati.',
     premiumFeatures: [
       'Aggiornamenti raggruppati',
       'Aggiunta di informazioni e foto',
@@ -607,7 +607,7 @@ const subscriptionCopy = {
       'Практичные инструменты для улучшения вашего присутствия',
       'Техническая поддержка',
     ],
-    premiumIntro: 'Сопровождение для поддержания актуальности вашего CV Business и информации.',
+    premiumIntro: 'Сопровождение для обновления вашего мини-приложения и информации.',
     premiumFeatures: [
       'Пакетные обновления',
       'Добавление информации и фотографий',
