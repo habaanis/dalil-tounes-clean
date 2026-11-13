@@ -1253,11 +1253,19 @@ export default function BusinessShowcaseLienoraDetail({
 
   const portfolioActions: ActionConfig[] = [...primaryActions];
 
-  // Keep the CV concise like Lienora: four essential actions, the rest in a drawer.
+  // Prioritize Lienora's four visible actions: install, call, email, directions.
+  // WhatsApp, website, and any extra action remain available inside the drawer.
+  const priorityActions = [installLabel, text.call, text.email, text.directions];
+  const sortedPrimaryActions = [...primaryActions].sort((first, second) => {
+    const firstPriority = priorityActions.indexOf(first.label);
+    const secondPriority = priorityActions.indexOf(second.label);
+    return (firstPriority < 0 ? priorityActions.length : firstPriority)
+      - (secondPriority < 0 ? priorityActions.length : secondPriority);
+  });
   const displayedPrimaryActions = embeddedPreview
     ? primaryActions.filter(action => [installLabel, text.call, text.whatsapp, text.email, text.directions].includes(action.label))
-    : primaryActions.slice(0, 4);
-  const extraPrimaryActions = embeddedPreview ? [] : primaryActions.slice(4);
+    : sortedPrimaryActions.slice(0, 4);
+  const extraPrimaryActions = embeddedPreview ? [] : sortedPrimaryActions.slice(4);
   const moreActionsLabel = language === 'ar' ? 'المزيد من الخيارات'
     : language === 'en' ? 'More actions'
     : language === 'it' ? 'Altre azioni'
