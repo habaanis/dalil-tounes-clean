@@ -7,26 +7,8 @@
  * CV Business, proche de la reference Lienora, sans modifier les champs.
  */
 .dt-showcase-page {
-  --dt-page: #eef1ef !important;
-  --dt-ink: #0f2d23 !important;
-  --dt-copy: #fffdf4 !important;
-  --dt-accent: #f4ce55 !important;
-  --dt-border: #d4af37 !important;
-  --dt-muted: #b8d2c9 !important;
-  --dt-glow: rgba(20, 111, 77, 0.34) !important;
-  --dt-glow-soft: rgba(17, 92, 67, 0.25) !important;
-  --dt-shell-start: #031d18 !important;
-  --dt-shell-mid: #042d24 !important;
-  --dt-shell-end: #011914 !important;
-  --dt-identity-start: #032a22fa !important;
-  --dt-identity-end: #011915fc !important;
-  --dt-panel-start: #05352aeb !important;
-  --dt-panel-end: #011915f0 !important;
-  --dt-panel-dark: #021e19 !important;
-  --dt-badge-start: #076044 !important;
-  --dt-badge-end: #087a50 !important;
-  --dt-action-start: #06382d !important;
-  --dt-action-end: #011f1a !important;
+  /* The premium CV already supplies its actual palette through themeVariables().
+     Do not force Vert Prestige with !important over Ivoire & Or or Bleu Nuit. */
   padding-top: max(10px, env(safe-area-inset-top)) !important;
   padding-bottom: max(20px, env(safe-area-inset-bottom)) !important;
 }
@@ -50,7 +32,7 @@
 }
 .dt-logo { width: 42px !important; height: 42px !important; margin: -21px auto 1px !important; border-width: 3px !important; background: #fff8df !important; }
 .dt-logo img { padding: 4px !important; }
-.dt-activity-pill { padding: 1px 7px !important; line-height: 1.1 !important; border-color: rgba(212, 175, 55, 0.9) !important; background: #0f3a2d !important; color: #f4ce55 !important; font-size: 7px !important; }
+.dt-activity-pill { padding: 1px 7px !important; line-height: 1.1 !important; border-color: rgba(212, 175, 55, 0.9) !important; background: var(--dt-badge-start) !important; color: var(--dt-accent) !important; font-size: 7px !important; }
 .dt-identity-panel { max-width: 280px !important; margin-top: 1px !important; padding: 0 3px 1px !important; border: 0 !important; background: transparent !important; }
 .dt-product-label { color: #8a6913 !important; font-size: 6px !important; line-height: 1 !important; }
 .dt-identity-panel h1 { margin: 0 0 1px !important; color: #0f2d23 !important; font-size: clamp(0.96rem, 3.9vw, 1.22rem) !important; line-height: 1 !important; }
@@ -116,7 +98,7 @@
   transform: translate(-50%, -50%) !important;
   border: 2px solid #d4af37 !important;
   border-radius: 16px !important;
-  background: linear-gradient(145deg, #052f27, #011914) !important;
+  background: linear-gradient(145deg, var(--dt-panel-start), var(--dt-panel-end)) !important;
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.68), 0 0 0 9999px rgba(0, 0, 0, 0.62) !important;
 }
 #dt-section-booking.open > .dt-accordion-trigger {
@@ -126,8 +108,8 @@
   display: grid !important;
   min-height: 42px !important;
   border-bottom: 1px solid rgba(212, 175, 55, 0.32) !important;
-  background: #042d24 !important;
-  color: #f4ce55 !important;
+  background: var(--dt-panel-dark) !important;
+  color: var(--dt-accent) !important;
 }
 #dt-section-booking.open > .dt-accordion-trigger .dt-accordion-chevron {
   transform: rotate(90deg) !important;
@@ -152,7 +134,7 @@
 .dt-qr-action svg { width: 12px !important; height: 12px !important; }
 .dt-install-help { grid-column: auto !important; width: auto !important; line-height: 1.25 !important; }
 .dt-install-help summary { min-height: 24px !important; justify-content: center !important; text-align: center !important; font-size: 0.55rem !important; }
-.dt-install-help p, .dt-install-help ul { grid-column: 1 / -1 !important; color: #d8eee6 !important; text-align: left !important; }
+ .dt-install-help p, .dt-install-help ul { grid-column: 1 / -1 !important; color: var(--dt-copy) !important; text-align: left !important; }
 .dt-powered-by { margin: 2px 0 5px !important; font-size: 0.52rem !important; }
 .dt-powered-by img { width: 15px !important; height: 15px !important; }
 .dt-similar-wrap { margin-top: 10px !important; }
@@ -170,4 +152,20 @@
   .dt-qr-copy { grid-column: 1 / 3 !important; }
   .dt-qr-wrap { grid-column: 3 !important; margin: 0 !important; }
   .dt-qr-actions, .dt-install-help { grid-column: auto !important; }
+}
+
+/* The existing Ivoire & Or palette must flow through the entire CV, not only its name panel. */
+.dt-showcase-page[data-cv-palette="ivory"] .dt-activity-pill {
+  background: var(--dt-panel-dark) !important;
+  color: var(--dt-ink) !important;
+}
+.dt-showcase-page[data-cv-palette="ivory"] .dt-location,
+.dt-showcase-page[data-cv-palette="ivory"] .dt-rating,
+.dt-showcase-page[data-cv-palette="ivory"] .dt-identity-panel h1 {
+  color: var(--dt-ink) !important;
+}
+.dt-showcase-page[data-cv-palette="ivory"] .dt-accordion-trigger,
+.dt-showcase-page[data-cv-palette="ivory"] .dt-primary-action,
+.dt-showcase-page[data-cv-palette="ivory"] .dt-secondary-action {
+  color: var(--dt-ink);
 }
