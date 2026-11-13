@@ -196,15 +196,39 @@ export default function BusinessSearchCardV2({
           <p className="mt-0.5 line-clamp-1 text-[9.5px] font-semibold text-[#F0C642]">{categoryLabel}</p>
         )}
 
-        {showGoogleRating && (
+        {compact ? (
+          <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5">
+            {showGoogleRating && (
+              <GoogleRatingSummary
+                rating={business['Note Google Globale'] ?? business.note_google}
+                reviewCount={business['Compteur Avis Google'] ?? business.nombre_avis}
+                language={language}
+                className="text-white"
+                showTrustLabel={false}
+              />
+            )}
+            {openNow !== null && (
+              <span
+                className={`inline-flex items-center gap-1 whitespace-nowrap text-[10px] font-bold ${
+                  legacyIvory
+                    ? (openNow ? "text-[#166534]" : "text-[#B4232C]")
+                    : (openNow ? "text-emerald-300" : "text-red-300")
+                }`}
+                aria-label={openNow ? text.open : text.closed}
+              >
+                <span aria-hidden="true" className={`h-1.5 w-1.5 rounded-full ${openNow ? "bg-green-500" : "bg-red-500"}`} />
+                {openNow ? text.open : text.closed}
+              </span>
+            )}
+          </div>
+        ) : showGoogleRating ? (
           <GoogleRatingSummary
             rating={business['Note Google Globale'] ?? business.note_google}
             reviewCount={business['Compteur Avis Google'] ?? business.nombre_avis}
             language={language}
             className="mt-1 text-white"
-            showTrustLabel={!compact}
           />
-        )}
+        ) : null}
 
         {phone && (
           <div className="mt-1" onClick={(event) => event.stopPropagation()}>
