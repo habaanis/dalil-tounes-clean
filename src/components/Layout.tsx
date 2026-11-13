@@ -268,7 +268,7 @@ export const Layout = ({ children }: LayoutProps) => {
               </span>
             </Link>
 
-            <div className="hidden md:flex items-center gap-4 xl:gap-6">
+            <div className="hidden xl:flex items-center gap-4 xl:gap-6">
               {navigationStructure.map((navItem, index) => (
                 <div
                   key={index}
@@ -336,7 +336,7 @@ export const Layout = ({ children }: LayoutProps) => {
               )}
             </div>
 
-            <div className="ml-auto mr-2 md:hidden">
+            <div className="ml-auto mr-2 hidden sm:block xl:hidden">
               <Suspense fallback={null}>
                 <SocialBar mobile />
               </Suspense>
@@ -344,7 +344,7 @@ export const Layout = ({ children }: LayoutProps) => {
             <button
               type="button"
               onClick={() => setShowMobileMenu(!showMobileMenu)}
-              className="md:hidden p-2 text-gray-700 hover:text-orange-600"
+              className="xl:hidden p-2 text-gray-700 hover:text-orange-600"
               aria-label={showMobileMenu ? (te.pwa?.closeMenu || 'Fermer le menu principal') : (te.pwa?.openMenu || 'Ouvrir le menu principal')}
               aria-expanded={showMobileMenu}
             >
@@ -353,7 +353,7 @@ export const Layout = ({ children }: LayoutProps) => {
           </div>
 
           {showMobileMenu && (
-            <div className="md:hidden py-4 border-t border-gray-200">
+            <div className="xl:hidden py-4 border-t border-gray-200">
               <div className="flex flex-col gap-2">
                 {navigationStructure.map((navItem, index) => (
                   <div key={index}>
@@ -444,6 +444,9 @@ export const Layout = ({ children }: LayoutProps) => {
                   </div>
                 )}
 
+                <div className="sm:hidden border-t border-gray-200 mt-2 px-4 pt-3">
+                  <Suspense fallback={null}><SocialBar mobile /></Suspense>
+                </div>
                 <div className="border-t border-gray-200 pt-3 mt-2 px-4">
                   <LanguageSelector />
                 </div>
