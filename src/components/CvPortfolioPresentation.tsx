@@ -233,7 +233,7 @@ export function CvPortfolioPresentation({
   const tabs = [
     { id: 'home' as const, label: copy.home, icon: Home, visible: true },
     { id: 'about' as const, label: copy.about, icon: Info, visible: hasSection('about') },
-    { id: 'services' as const, label: copy.services, icon: Store, visible: hasSection('services') },
+    { id: 'services' as const, label: boutiqueContent ? (language === 'ar' ? 'المتجر' : 'Boutique') : copy.services, icon: Store, visible: Boolean(boutiqueContent) || hasSection('services') },
     { id: 'gallery' as const, label: copy.photos, icon: Images, visible: hasSection('gallery') },
     { id: 'reviews' as const, label: copy.reviews, icon: Star, visible: hasSection('reviews') },
   ].filter(tab => tab.visible);
@@ -343,7 +343,6 @@ export function CvPortfolioPresentation({
               })()}
             </section>
 
-            {boutiqueContent && <div className="cvp-boutique-in-actions">{boutiqueContent}</div>}
             <button className="cvp-lienora-more" type="button" onClick={() => setMoreOpen(open => !open)} aria-expanded={moreOpen}>
               <b>{copy.moreActions}</b><small>{copy.moreActionsSummary}</small>
             </button>
@@ -443,7 +442,7 @@ export function CvPortfolioPresentation({
                       )}
                     </section>
                   )}
-                  {hasSection('services') && portfolioGallery.length > 0 && (
+                  {!boutiqueContent && hasSection('services') && portfolioGallery.length > 0 && (
                     <section className="cvp-lienora-services">
                       <header><h2>{copy.ourServices}</h2><button type="button" onClick={() => goTo('services')}>{copy.viewAll} ›</button></header>
                       <div>
@@ -461,7 +460,7 @@ export function CvPortfolioPresentation({
                 </>
               )}
               {activeTab === 'about' && aboutBlock}
-              {activeTab === 'services' && servicesBlock}
+              {activeTab === 'services' && (boutiqueContent || servicesBlock)}
               {activeTab === 'gallery' && galleryBlock}
               {activeTab === 'reviews' && (
                 <section className="cvp-section cvp-review-panel">
