@@ -151,7 +151,7 @@ const COPY: Record<SupportedLanguage, Copy> = {
   },
   ru: {
     eyebrow: 'Ваш выбор',
-    title: 'Соберите свой Business CV',
+    title: 'Настройте своё мини-приложение',
     subtitle: 'Выберите тариф, затем модель оформления, подходящую вашей профессии.',
     business: 'CV Business',
     businessDescription: 'Чёткая, структурированная и прямая подача деятельности и ключевой информации.',
