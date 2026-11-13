@@ -48,9 +48,9 @@ export const SocialBar = () => {
   const ctx = useContext(LanguageContext);
   const language = ctx?.language ?? 'fr';
   return (
-  <div className="bg-gray-50 border-t border-gray-200 py-6">
+  <div className="bg-[#080808] border-t border-[#303030] py-6">
     <div className="max-w-7xl mx-auto px-4 flex flex-col items-center gap-4">
-      <p className="text-sm font-medium text-gray-500 tracking-wide uppercase">
+      <p className="text-sm font-medium text-[#D4AF37] tracking-wide uppercase">
         {FOLLOW_US_COPY[language] ?? FOLLOW_US_COPY.fr}
       </p>
       <div className="flex items-center gap-4">
@@ -61,7 +61,7 @@ export const SocialBar = () => {
             target="_blank"
             rel="noopener noreferrer"
             aria-label={label}
-            className={`flex items-center justify-center w-12 h-12 rounded-full bg-white border border-gray-200 text-gray-600 shadow-sm hover:text-white hover:shadow-md hover:scale-110 transition-all duration-200 ${color}`}
+            className={`flex items-center justify-center w-12 h-12 rounded-full bg-[#181818] border border-[#6B5A35] text-white shadow-sm hover:text-white hover:shadow-md hover:scale-110 transition-all duration-200 ${color}`}
           >
             {icon}
           </a>
