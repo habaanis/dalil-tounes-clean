@@ -4,8 +4,6 @@ import { Clock, Phone, ChevronDown } from 'lucide-react';
 import { isCurrentlyOpen, translateOpenStatus, translateClosedStatus } from '../lib/horaireUtils';
 import { cleanArabicField } from '../lib/textNormalization';
 import GoogleRatingSummary from './GoogleRatingSummary';
-import { getCoverImageUrl } from '../lib/imagekitUtils';
-import { getCategoryIllustration, isRealBusinessPhoto, isWikimediaIllustration, getWikimediaCreditUrl } from '../lib/categoryIllustrations';
 
 interface GratuitCardProps {
   name: string;
@@ -86,11 +84,6 @@ export default function GratuitCard({
   const locationLabel = ville || gouvernorat || '';
   const isOpen = isCurrentlyOpen(horaires_ok ?? null);
   const cardCopy = CARD_COPY[language] || CARD_COPY.fr;
-  const illustration = getCategoryIllustration(category, name);
-  const realPhoto = isRealBusinessPhoto(imageUrl);
-  const existingIllustration = isWikimediaIllustration(imageUrl);
-  const cover = realPhoto || existingIllustration ? getCoverImageUrl(imageUrl) : illustration?.url;
-  const illustrationSource = existingIllustration ? getWikimediaCreditUrl(imageUrl) : illustration?.source;
   const missingCopy: Record<string, { phone: string; hours: string }> = {
     fr: { phone: 'Téléphone : non renseigné', hours: 'Horaires : non renseignés' },
     ar: { phone: 'الهاتف: غير متوفر', hours: 'ساعات العمل: غير متوفرة' },
@@ -116,27 +109,6 @@ export default function GratuitCard({
         position: 'relative',
       }}
     >
-      {cover && (
-        <div style={{ height: '66px', flexShrink: 0, position: 'relative', marginBottom: '8px', overflow: 'hidden', borderRadius: '10px', background: '#F2F0EA' }}>
-          <img
-            src={cover}
-            alt={realPhoto ? name : existingIllustration ? 'Illustration du métier' : illustration?.label || name}
-            loading="lazy"
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            onError={event => { event.currentTarget.onerror = null; event.currentTarget.src = '/images/placeholder.jpg'; }}
-          />
-          {!realPhoto && illustrationSource && (
-            <a
-              href={illustrationSource}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={event => event.stopPropagation()}
-              title={existingIllustration ? 'Illustration Wikimedia Commons' : (illustration?.author || '') + ' · ' + (illustration?.licence || '')}
-              style={{ position: 'absolute', bottom: 0, right: 0, padding: '2px 6px', background: 'rgba(0,0,0,0.65)', color: '#fff', fontSize: '9px' }}
-            >{language === 'ar' ? 'صورة توضيحية' : language === 'en' ? 'Illustration' : 'Illustration du métier'}</a>
-          )}
-        </div>
-      )}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', textAlign: 'center', flex: 1 }}>
 
         {/* Nom */}
@@ -197,13 +169,13 @@ export default function GratuitCard({
               type="button"
               onClick={(e) => { e.stopPropagation(); setShowPhone((previous) => !previous); }}
               aria-expanded={showPhone}
-              style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '10px 14px', background: '#4A1D43', border: '1px solid #4A1D43', borderRadius: '10px', color: '#FFFFFF', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}
+              style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '10px 14px', background: '#B62226', border: '1px solid #B62226', borderRadius: '10px', color: '#FFFFFF', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}
             >
               <Phone size={15} aria-hidden="true" />
               {showPhone ? cardCopy.hidePhone : cardCopy.showPhone}
             </button>
             {showPhone && (
-              <a href={`tel:${telephone.replace(/[^+\\d]/g, '')}`} onClick={(e) => e.stopPropagation()} style={{ textAlign: 'center', padding: '8px', fontSize: '14px', fontWeight: 700, color: '#4A1D43', textDecoration: 'underline', borderRadius: '8px', background: '#FAF8F3' }}>
+              <a href={`tel:${telephone.replace(/[^+\\d]/g, '')}`} onClick={(e) => e.stopPropagation()} style={{ textAlign: 'center', padding: '8px', fontSize: '14px', fontWeight: 700, color: '#B62226', textDecoration: 'underline', borderRadius: '8px', background: '#FAF8F3' }}>
                 {telephone}
               </a>
             )}
