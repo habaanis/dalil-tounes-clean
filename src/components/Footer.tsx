@@ -204,10 +204,10 @@ const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="bg-[#111111] text-white pt-14 pb-8 border-t border-gray-800/60">
+    <footer className="bg-[#080808] text-white pt-14 pb-8 border-t border-[#2b2b2b]">
       <div className="container mx-auto px-4">
 
-        <div className="bg-gradient-to-r from-[#4A1D43]/80 to-[#5A2D53]/80 rounded-lg p-3.5 mb-12 border border-[#D4AF37]/50 shadow-[0_2px_20px_rgba(212,175,55,0.12)]">
+        <div className="bg-[#111111] rounded-lg p-3.5 mb-12 border border-[#D4AF37]/50 shadow-[0_2px_20px_rgba(212,175,55,0.12)]">
           <p className="text-center text-white text-sm md:text-base font-medium" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
             {slogan}
           </p>
