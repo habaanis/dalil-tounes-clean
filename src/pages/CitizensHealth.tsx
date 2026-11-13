@@ -315,7 +315,8 @@ export default function CitizensHealth({}: CitizensHealthProps) {
         <MeilleursSection
           secteurLabel={c.sector}
           listePage="santé"
-          accentColor="#4A1D43"
+          accentColor="#292725"
+          hideSearchCTA
           sectionTitle={c.bestTitle}
           useGoogleRecommendationCriteria
           blogArticle={{ title: c.guideTitle, excerpt: c.guideExcerpt, slug: 'comment-choisir-son-medecin' }}
