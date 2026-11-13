@@ -1728,7 +1728,7 @@ export default function BusinessShowcaseLienoraDetail({
   }
 
   return (
-    <main className={`dt-showcase-page${embeddedPreview ? ' dt-showcase-page--embedded' : ''}`} style={themeVariables(visualVariant, activePalette)} dir={isRTL ? 'rtl' : 'ltr'}>
+    <main className={`dt-showcase-page${embeddedPreview ? ' dt-showcase-page--embedded' : ''}`} data-cv-palette={activePalette || 'prestige'} style={themeVariables(visualVariant, activePalette)} dir={isRTL ? 'rtl' : 'ltr'}>
       {!embeddedPreview && <>
         <SEOHead
           title={pageTitle}
