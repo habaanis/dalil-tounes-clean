@@ -52,6 +52,7 @@ interface BusinessCardProps {
   onClick: () => void;
   variant?: 'simple' | 'premium';
   showGoogleRating?: boolean;
+  compact?: boolean;
 }
 
 /**
@@ -62,7 +63,7 @@ interface BusinessCardProps {
  * Les fiches gratuites sont utilisables directement sans navigation ; les CV payants restent ouvrables.
  * Aucun champ Airtable/Supabase ni droit d'abonnement n'est modifié ici.
  */
-export const BusinessCard = ({ business, onClick, showGoogleRating = true }: BusinessCardProps) => {
+export const BusinessCard = ({ business, onClick, showGoogleRating = true, compact = false }: BusinessCardProps) => {
   const { language } = useLanguage();
   const { getCategory } = useCategoryTranslation();
 
@@ -130,6 +131,7 @@ export const BusinessCard = ({ business, onClick, showGoogleRating = true }: Bus
       language={language}
       onClick={onClick}
       showGoogleRating={showGoogleRating}
+      compact={compact}
     />
   );
 };
