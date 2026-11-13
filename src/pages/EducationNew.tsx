@@ -696,7 +696,7 @@ export default function EducationNew() {
         <MeilleursSection
           secteurLabel={t.meilleurs.secteurLabel}
           listePage="éducation"
-          accentColor="#4A1D43"
+          accentColor="#B28A44"
           sectionTitle={t.meilleurs.sectionTitle}
           blogArticle={{
             title: t.meilleurs.blogTitle,
