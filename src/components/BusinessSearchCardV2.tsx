@@ -1,4 +1,5 @@
 import { isCertifiedBusiness } from '../lib/businessCertification';
+import { getCvPaletteTheme } from '../lib/cvPalette';
 import { Clock3, Phone } from 'lucide-react';
 import { getCoverImageUrl } from '../lib/imagekitUtils';
 import { getLogoUrl } from '../lib/logoUtils';
@@ -101,14 +102,29 @@ export default function BusinessSearchCardV2({
     ru: { phone: 'Телефон не указан', hours: 'Часы работы не указаны' },
   };
   const missing = missingLabels[language] || missingLabels.fr;
+  // Select the existing Airtable legacy label and the existing Ivoire & Or theme.
+  // Presentation only: no palette/status edits, no new certification.
+  const legacyIvory = business.statut_carte === '⭐ CERTIFIÉ DALIL TOUNES';
+  const ivory = getCvPaletteTheme('Ivoire & Or');
 
 
   return (
     <article
-      className={`group relative cursor-pointer overflow-hidden rounded-[18px] border-2 border-[#D4AF37] bg-[linear-gradient(160deg,#07513D_0%,#05412F_55%,#032F26_100%)] text-white shadow-[0_10px_24px_rgba(0,39,30,0.22)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(0,39,30,0.28)] ${compact ? "h-auto" : "h-full"}`}
+      className={`group relative cursor-pointer overflow-hidden rounded-[18px] border-2 border-[#D4AF37] bg-[linear-gradient(160deg,#07513D_0%,#05412F_55%,#032F26_100%)] text-white shadow-[0_10px_24px_rgba(0,39,30,0.22)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(0,39,30,0.28)] ${legacyIvory ? "bg-[#FFF8E7] text-[#3B3126] legacy-ivory-card" : ""} ${compact ? "h-auto" : "h-full"}`}
+      style={legacyIvory ? { background: ivory.surface, color: ivory.text, borderColor: ivory.border } : undefined}
       onClick={onClick}
       dir={isRTL ? 'rtl' : 'ltr'}
     >
+      {legacyIvory && <style>{`
+        .legacy-ivory-card h3 { color: ${ivory.text}; }
+        .legacy-ivory-card p { color: ${ivory.text}; }
+        .legacy-ivory-card button { color: ${ivory.text}; }
+        .legacy-ivory-card a[href^="tel:"] { background: ${ivory.surfaceAlt}; color: ${ivory.text}; border-color: ${ivory.border}; }
+        .legacy-ivory-card [class*="border-t"] { border-color: ${ivory.border}; }
+        .legacy-ivory-card [class*="text-emerald"] { color: ${ivory.muted}; }
+        .legacy-ivory-card [class*="bg-[#064934]"] { background: ${ivory.surfaceAlt}; }
+        .legacy-ivory-card [class*="text-white"] { color: ${ivory.text}; }
+      `}</style>}
       <div className={`relative overflow-hidden border-b border-[#D4AF37]/35 ${compact ? "h-[47px]" : "h-[58px]"}`}>
         <img
           src={cover}
