@@ -1912,13 +1912,12 @@ export default function BusinessShowcaseLienoraDetail({
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Star aria-hidden="true" />{text.viewReviews}
+                  <Star aria-hidden="true" />
+                  <span>{text.viewReviews}</span>
+                  {rating > 0 && googleReviewCount > 0 && (
+                    <span className="dt-reviews-action-rating">{rating.toFixed(1)} ★ · {googleReviewCount} {language === 'ar' ? 'رأي' : language === 'en' ? 'reviews' : language === 'it' ? 'recensioni' : language === 'ru' ? 'отзывов' : 'avis'}</span>
+                  )}
                 </a>
-              )}
-              {hasSection('reviews') && (
-                <button type="button" className="dt-secondary-action" onClick={openReviews}>
-                  <FileText aria-hidden="true" />{text.leaveReview}
-                </button>
               )}
                 </div>}
               </>
@@ -1968,7 +1967,7 @@ export default function BusinessShowcaseLienoraDetail({
             )}
 
             <div className="dt-accordion-list">
-              {sections.map(section => (
+              {sections.filter(section => section.id !== 'reviews').map(section => (
                 <AccordionSection
                   config={section}
                   open={openSection === section.id}
