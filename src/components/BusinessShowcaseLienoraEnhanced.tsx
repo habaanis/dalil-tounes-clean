@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { useLanguage } from '../context/LanguageContext';
 import { getPublicComponentTranslations } from '../lib/publicComponentTranslations';
+import { BoutiqueInteractive, type BoutiqueProduct } from './boutique/BoutiqueInteractive';
 import BusinessShowcaseLienoraDetail from './BusinessShowcaseLienoraDetail';
 import './businessShowcasePreviewEnhancements.css';
 
@@ -147,5 +148,7 @@ export default function BusinessShowcaseLienoraEnhanced() {
     return () => observer.disconnect();
   }, [reviewsUrl, text.googleReviews]);
 
-  return <BusinessShowcaseLienoraDetail />;
+  const rawProducts = business?.['boutique_products'];
+  const products: BoutiqueProduct[] = Array.isArray(rawProducts) ? rawProducts.filter((item): item is BoutiqueProduct => Boolean(item && typeof item === 'object' && typeof item.id === 'string' && typeof item.title === 'string' && typeof item.imageUrl === 'string' && (item.mode === 'order' || item.mode === 'quote') && item.currency === 'TND')) : [];
+  return <><BusinessShowcaseLienoraDetail />{products.length > 0 && <div className="mx-auto max-w-3xl px-4 pb-8"><BoutiqueInteractive config={{ merchantName: String(business?.nom || ''), whatsapp: String(business?.['whatsapp'] || ''), products, paymentsVerified: business?.['boutique_payments_verified'] === true }} /></div>}</>;
 }
