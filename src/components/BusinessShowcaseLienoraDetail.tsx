@@ -1934,7 +1934,7 @@ export default function BusinessShowcaseLienoraDetail({
                     onToggle={() => setOpenSection(current => current === section.id ? null : section.id)}
                     key={section.id}
                   />
-              ) )}
+              )}
               {boutiqueContent && !sections.some(section => section.id === 'gallery') && <section className="dt-accordion" style={{padding:'8px 12px',display:'flex',justifyContent:'center'}}>{boutiqueContent}</section>}
             </div>
           </div>
