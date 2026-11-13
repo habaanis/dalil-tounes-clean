@@ -23,7 +23,7 @@ const COPY: Record<Lang, {
     recommend: 'Trouver des professionnels', recommendDetail: 'Explorez les entreprises selon les métiers, les villes et les avis.',
     review: 'Avis Google indépendants des offres', certifiedHint: 'CV Business ou Portfolio publié',
     founder: 'Pourquoi j’ai créé Dalil Tounes', founderDetail: 'Faire découvrir les bons professionnels, les services utiles et les richesses de toute la Tunisie.',
-    founderAction: 'Découvrir mon histoire', free: 'Vous êtes professionnel ?', freeDetail: 'Faites connaître votre activité gratuitement ou découvrez les CV professionnels.',
+    founderAction: 'Découvrir mon histoire', free: 'Vous êtes professionnel ?', freeDetail: 'Faites connaître votre activité gratuitement ou créez votre mini-appli professionnelle.',
     freeAction: 'Découvrir les offres', more: 'Tous les services',
   },
   ar: {
