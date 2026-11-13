@@ -39,7 +39,7 @@ type Copy = {
 const COPY: Record<SupportedLanguage, Copy> = {
   fr: {
     eyebrow: 'Votre choix',
-    title: 'Composez votre CV Business',
+    title: 'Personnalisez votre mini-appli',
     subtitle: 'Choisissez votre formule, puis le modèle qui correspond le mieux à votre métier.',
     business: 'CV Business',
     businessDescription: 'Clair, structuré et direct. Idéal pour présenter rapidement votre activité et vos informations.',
@@ -67,7 +67,7 @@ const COPY: Record<SupportedLanguage, Copy> = {
   },
   ar: {
     eyebrow: 'اختيارك',
-    title: 'كوّن CV Business الخاص بك',
+    title: 'خصّص تطبيقك المصغّر',
     subtitle: 'اختر الصيغة، ثم النموذج الأنسب لمهنتك.',
     business: 'CV Business',
     businessDescription: 'واضح ومنظم ومباشر لعرض نشاطك ومعلوماتك بسرعة.',
@@ -95,7 +95,7 @@ const COPY: Record<SupportedLanguage, Copy> = {
   },
   en: {
     eyebrow: 'Your choice',
-    title: 'Build your Business CV',
+    title: 'Personalise your business mini-app',
     subtitle: 'Choose your plan, then the presentation model that best suits your profession.',
     business: 'Business CV',
     businessDescription: 'Clear, structured and direct. Ideal for presenting your activity and key information quickly.',
@@ -123,7 +123,7 @@ const COPY: Record<SupportedLanguage, Copy> = {
   },
   it: {
     eyebrow: 'La tua scelta',
-    title: 'Componi il tuo CV business',
+    title: 'Personalizza la tua mini-app',
     subtitle: 'Scegli la formula, poi il modello più adatto alla tua professione.',
     business: 'CV Business',
     businessDescription: 'Chiaro, strutturato e diretto. Ideale per presentare rapidamente attività e informazioni.',
