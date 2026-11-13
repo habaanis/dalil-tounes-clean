@@ -1316,7 +1316,7 @@ export const Businesses = ({
 
   const filteredBusinesses = Array.isArray(chipFilteredBusinesses) ? chipFilteredBusinesses : [];
   // The platform app uses 10 cards per page instead of an endless scroll.
-  const APP_RESULTS_PER_PAGE = 10;
+  const APP_RESULTS_PER_PAGE = 6;
   const resultPageCount = Math.max(1, Math.ceil(filteredBusinesses.length / APP_RESULTS_PER_PAGE));
   const safeResultPage = Math.min(resultPage, resultPageCount - 1);
   const displayedBusinesses = inPlatformApp
