@@ -252,6 +252,28 @@
   height: 15px;
 }
 
+/* Compact Lienora-style disclosure: secondary actions appear only when requested. */
+.dt-more-actions-trigger {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  text-align: start;
+  margin-top: 7px;
+  padding-inline: 12px;
+  background: linear-gradient(145deg, var(--dt-action-start), var(--dt-action-end));
+}
+.dt-more-actions-label { display: inline-flex; align-items: center; gap: 10px; }
+.dt-more-actions-label > span { font-size: 14px; line-height: 1; letter-spacing: 0.12em; }
+.dt-more-actions-chevron {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  transition: transform .18s ease;
+}
+.dt-more-actions-chevron.is-open { transform: rotate(90deg); }
+.dt-more-actions-panel { margin-top: 5px; }
+@media (prefers-reduced-motion: reduce) { .dt-more-actions-chevron { transition: none; } }
+
 .dt-action-notice {
   min-height: 14px;
   margin: 7px 0 0;
