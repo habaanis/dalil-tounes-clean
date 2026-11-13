@@ -1,4 +1,6 @@
 import { isCertifiedBusiness, CERTIFIED_LABEL } from '../lib/businessCertification';
+import { isPlatformAppMode } from '../lib/platformAppMode';
+import { hasGreenBusinessCard } from '../lib/businessCardPresentation';
 import GratuitCard from './GratuitCard';
 import BusinessSearchCardV2 from './BusinessSearchCardV2';
 import { useLanguage } from '../context/LanguageContext';
@@ -89,10 +91,14 @@ export const BusinessCard = ({ business, onClick, showGoogleRating = true }: Bus
   const translatedCategory = getCategory(mainCategory);
   const allKeywords = getAllKeywords(normalizedCategory);
 
-  const tier = mapSubscriptionToTier({
-    statut_abonnement: business.statut_abonnement,
-    niveau_priorite_abonnement: business.niveau_priorite_abonnement,
-  });
+  const tier = isPlatformAppMode()
+    // Published CVs and verified legacy premium cards share the same green
+    // design. The certification badge still requires an actually published CV.
+    ? (hasGreenBusinessCard(business) ? 'premium' : 'gratuit')
+    : mapSubscriptionToTier({
+        statut_abonnement: business.statut_abonnement,
+        niveau_priorite_abonnement: business.niveau_priorite_abonnement,
+      });
 
   if (tier === 'gratuit') {
     return (
@@ -113,6 +119,7 @@ export const BusinessCard = ({ business, onClick, showGoogleRating = true }: Bus
           description_ar={language === 'ar' ? business.description_ar || null : null}
           showGoogleRating={showGoogleRating}
           showDetailsLink={false}
+          onOpen={isPlatformAppMode() ? onClick : undefined}
           googleRating={business['Note Google Globale'] ?? business.note_google}
           googleReviewCount={business['Compteur Avis Google'] ?? business.nombre_avis}
         />

@@ -98,7 +98,8 @@ export default function BusinessShowcaseDetail() {
     [business?.statut_abonnement, location.search],
   );
 
-  useViewTracking(tier === 'gratuit' ? business?.id : undefined);
+  const hasPublishedCv = business?.cv_business_status?.toLowerCase() === 'published';
+  useViewTracking(tier === 'gratuit' && !hasPublishedCv ? business?.id : undefined);
 
   useEffect(() => {
     let cancelled = false;
@@ -199,7 +200,10 @@ export default function BusinessShowcaseDetail() {
         setBusiness(record);
 
         const canonicalPath = buildEntrepriseUrl(record);
-        if (!isClientAppPath && canonicalPath !== '/' && location.pathname !== canonicalPath) {
+        // App result cards deliberately open the exact UUID to avoid duplicate
+        // slugs resolving to another company; preserve that in-app navigation.
+        const fromPlatformApp = (location.state as { fromPlatformApp?: boolean } | null)?.fromPlatformApp === true;
+        if (!isClientAppPath && !fromPlatformApp && canonicalPath !== '/' && location.pathname !== canonicalPath) {
           navigate(`${canonicalPath}${location.search}`, { replace: true });
         }
       } catch (error) {
@@ -229,7 +233,9 @@ export default function BusinessShowcaseDetail() {
     return <BusinessShowcaseLienoraEnhanced />;
   }
 
-  if (tier !== 'gratuit') {
+  // A truly published CV must open as a CV even when its legacy
+  // subscription label still says "Gratuit". Do not mutate that label.
+  if (tier !== 'gratuit' || hasPublishedCv) {
     return <><BusinessShowcaseLienoraEnhanced /><VisitBeforeTravelAdvice business={business} language={language} /></>;
   }
 

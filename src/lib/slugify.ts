@@ -57,13 +57,14 @@ export function buildEntrepriseUrl(business: EntrepriseForUrl): string {
   return `/p/${businessSlug}`;
 }
 
+const SHARE_DOMAIN = 'https://dalil-tounes.com';
+
+// Always share public client links, even when browsing a Vercel preview.
+// Preview domains are temporary and should never end up on cards or QR materials.
 export function buildEntrepriseShareUrl(business: EntrepriseForUrl): string {
   const path = buildEntrepriseUrl(business);
-  const domain = typeof window !== 'undefined' ? window.location.origin : '';
-  return `${domain}${path}`;
+  return `${SHARE_DOMAIN}${path}`;
 }
-
-const SHARE_DOMAIN = 'https://dalil-tounes.com';
 
 export function buildShortShareUrl(business: EntrepriseForUrl): string {
   const publicSlug = business.slug_court?.trim();

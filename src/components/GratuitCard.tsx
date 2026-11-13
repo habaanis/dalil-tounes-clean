@@ -23,6 +23,7 @@ interface GratuitCardProps {
   description_ar?: string | null;
   showGoogleRating?: boolean;
   showDetailsLink?: boolean;
+  onOpen?: () => void;
   googleRating?: string | number | null;
   googleReviewCount?: string | number | null;
 }
@@ -78,6 +79,7 @@ export default function GratuitCard({
   description_ar,
   showGoogleRating = true,
   showDetailsLink = true,
+  onOpen,
   googleRating,
   googleReviewCount,
 }: GratuitCardProps) {
@@ -215,7 +217,15 @@ export default function GratuitCard({
             {missing.phone}
           </span>
         )}
-        {showDetailsLink && (
+        {onOpen ? (
+          <button
+            type="button"
+            onClick={onOpen}
+            className="min-h-11 w-full rounded-lg border border-[#D4AF37]/60 bg-[#FFF9EC] px-3 py-2 text-sm font-semibold text-[#4A1D43] hover:bg-[#F8EDCF] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A17D36]"
+          >
+            {cardCopy.details} →
+          </button>
+        ) : showDetailsLink && (
           <span style={{ fontSize: '12px', fontWeight: 700, color: '#AD8B22', letterSpacing: '0.01em', textAlign: 'center' }}>
             {cardCopy.details} →
           </span>

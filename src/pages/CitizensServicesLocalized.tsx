@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { motion } from 'framer-motion';
-import { AlertCircle, Baby, Building2, CheckCircle, Clock, ExternalLink, FileText, Heart, Phone, Shield, X, type LucideIcon } from 'lucide-react';
+import { AlertCircle, Baby, Building2, CheckCircle, ChevronDown, Clock, ExternalLink, FileText, Heart, Phone, Shield, X, type LucideIcon } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { getStructureImageUrl } from '../lib/imageUtils';
-import SearchBar from '../components/SearchBar';
-import MeilleursSection from '../components/MeilleursSection';
+const SearchBar = lazy(() => import('../components/SearchBar'));
+const MeilleursSection = lazy(() => import('../components/MeilleursSection'));
 import { SEOHead } from '../components/SEOHead';
+import { isPlatformAppMode } from '../lib/platformAppMode';
+import { DALIL_MASCOT_IMAGE } from '../lib/dalilMascotImage';
 
 type Lang = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 type Tab = 'bureaux' | 'demarches' | 'social';
@@ -66,7 +68,7 @@ const COPY: Record<Lang, PageCopy> = {
     socialTitle: "Aide sociale et numéros d'urgence", socialIntro: 'Retrouvez rapidement les principaux services d’aide et de protection.',
     officesTitle: 'Bureaux & établissements publics', officesIntro: 'Recherchez une administration ou un service public près de chez vous.',
     usefulLinksTitle: 'Liens administratifs officiels',
-    officialLinks: { registry: 'Registre National des Entreprises', justice: 'Services judiciaires en ligne', passport: 'Rendez-vous passeport en ligne' },
+    officialLinks: { registry: 'Portail national des services administratifs', justice: 'Demande de bulletin n°3', passport: 'Ministère de l’Intérieur : formulaires et démarches' },
     together: 'Ensemble, construisons une société plus juste, accessible et solidaire.',
     procedures: [
       { title: "Carte d'identité nationale", description: "Obtention ou renouvellement de la carte d'identité nationale pour les citoyens tunisiens.", documents: ['Acte de naissance (original + 2 photocopies)', 'Certificat de résidence (moins de 3 mois)', "2 photos d'identité récentes", "Ancienne carte d'identité (si renouvellement)"], delay: '15 jours ouvrables', cost: '10 TND', authority: 'Mairie / Municipalité' },
@@ -91,7 +93,7 @@ const COPY: Record<Lang, PageCopy> = {
     socialTitle: 'المساعدة الاجتماعية وأرقام الطوارئ', socialIntro: 'اعثر بسرعة على أهم خدمات المساعدة والحماية.',
     officesTitle: 'المكاتب والمؤسسات العمومية', officesIntro: 'ابحث عن إدارة أو خدمة عمومية قريبة منك.',
     usefulLinksTitle: 'روابط إدارية رسمية',
-    officialLinks: { registry: 'السجل الوطني للمؤسسات', justice: 'الخدمات القضائية عبر الإنترنت', passport: 'حجز موعد جواز السفر عبر الإنترنت' },
+    officialLinks: { registry: 'البوابة الوطنية للخدمات الإدارية', justice: 'طلب بطاقة السوابق العدلية عدد 3', passport: 'وزارة الداخلية: المطبوعة والإجراءات' },
     together: 'معاً، لنبني مجتمعاً أكثر عدلاً وإتاحة وتضامناً.',
     procedures: [
       { title: 'بطاقة التعريف الوطنية', description: 'الحصول على بطاقة التعريف الوطنية أو تجديدها للمواطنين التونسيين.', documents: ['شهادة ميلاد (الأصل + نسختان)', 'شهادة إقامة (أقل من 3 أشهر)', 'صورتان شمسيتان حديثتان', 'بطاقة التعريف القديمة (في حالة التجديد)'], delay: '15 يوم عمل', cost: '10 د.ت', authority: 'البلدية' },
@@ -116,7 +118,7 @@ const COPY: Record<Lang, PageCopy> = {
     socialTitle: 'Social assistance & emergency numbers', socialIntro: 'Quickly find the main assistance and protection services.',
     officesTitle: 'Public offices & institutions', officesIntro: 'Search for a public office or service near you.',
     usefulLinksTitle: 'Official administrative links',
-    officialLinks: { registry: 'National Register of Enterprises', justice: 'Online judicial services', passport: 'Online passport appointments' },
+    officialLinks: { registry: 'National administrative services portal', justice: 'Criminal record certificate (B3)', passport: 'Ministry of Interior: procedures and forms' },
     together: 'Together, let us build a fairer, more accessible and supportive society.',
     procedures: [
       { title: 'National ID Card', description: 'Obtain or renew the national ID card for Tunisian citizens.', documents: ['Birth certificate (original + 2 copies)', 'Residence certificate (less than 3 months)', '2 recent ID photos', 'Old ID card (if renewing)'], delay: '15 working days', cost: '10 TND', authority: 'Municipality' },
@@ -141,7 +143,7 @@ const COPY: Record<Lang, PageCopy> = {
     socialTitle: 'Assistenza sociale e numeri di emergenza', socialIntro: 'Trova rapidamente i principali servizi di assistenza e protezione.',
     officesTitle: 'Uffici ed enti pubblici', officesIntro: 'Cerca un ufficio o un servizio pubblico vicino a te.',
     usefulLinksTitle: 'Link amministrativi ufficiali',
-    officialLinks: { registry: 'Registro Nazionale delle Imprese', justice: 'Servizi giudiziari online', passport: 'Appuntamenti passaporto online' },
+    officialLinks: { registry: 'Portale dei servizi amministrativi', justice: 'Certificato penale (B3)', passport: 'Ministero dell’Interno: pratiche e moduli' },
     together: 'Insieme, costruiamo una società più giusta, accessibile e solidale.',
     procedures: [
       { title: "Carta d'identità nazionale", description: "Rilascio o rinnovo della carta d'identità nazionale per i cittadini tunisini.", documents: ['Certificato di nascita (originale + 2 copie)', 'Certificato di residenza (meno di 3 mesi)', '2 foto tessera recenti', "Vecchia carta d'identità (in caso di rinnovo)"], delay: '15 giorni lavorativi', cost: '10 TND', authority: 'Comune / Municipalità' },
@@ -166,7 +168,7 @@ const COPY: Record<Lang, PageCopy> = {
     socialTitle: 'Социальная помощь и экстренные номера', socialIntro: 'Быстрый доступ к основным службам помощи и защиты.',
     officesTitle: 'Государственные учреждения', officesIntro: 'Найдите государственное учреждение или службу рядом с вами.',
     usefulLinksTitle: 'Официальные административные ссылки',
-    officialLinks: { registry: 'Национальный реестр предприятий', justice: 'Судебные услуги онлайн', passport: 'Онлайн-запись на получение паспорта' },
+    officialLinks: { registry: 'Портал государственных услуг', justice: 'Справка об отсутствии судимости (B3)', passport: 'МВД: документы и процедуры' },
     together: 'Вместе создаём более справедливое, доступное и солидарное общество.',
     procedures: [
       { title: 'Национальное удостоверение личности', description: 'Получение или продление национального удостоверения личности для граждан Туниса.', documents: ['Свидетельство о рождении (оригинал + 2 копии)', 'Справка о месте жительства (не старше 3 месяцев)', '2 свежие фотографии на документы', 'Старое удостоверение личности (при продлении)'], delay: '15 рабочих дней', cost: '10 TND', authority: 'Муниципалитет' },
@@ -179,9 +181,9 @@ const COPY: Record<Lang, PageCopy> = {
   },
 };
 
-const CIN_SOURCE = 'https://services.interieur.gov.tn/wap/fr/docs/demarches/01.html';
-const PASSPORT_SOURCE = 'https://www.sicad.gov.tn/m/Fr/Prestation_Obtention-dun-passeport-pour-la-premiere-fois-ou-son-renouvellement-pour-les-Tunisiens-residents-sur-le-territoire-tunisien_57_3_D1618';
-const B3_SOURCE = 'https://b3.interieur.gov.tn/ar/demande';
+const CIN_SOURCE = 'https://services.interieur.gov.tn/';
+const PASSPORT_SOURCE = 'https://services.interieur.gov.tn/';
+const B3_SOURCE = 'https://b3.interieur.gov.tn/demande';
 
 const VERIFIED_PROCEDURES: Record<Lang, ProcedureCopy[]> = {
   fr: [
@@ -281,10 +283,21 @@ const SERVICE_EXCLUDED_KEYWORDS = [
   'tendance car',
 ];
 
+// A broad page assignment is not proof that an entry is an administrative office.
+// These values are checked against the synchronized Airtable taxonomy.
+const CITIZEN_OFFICE_CATEGORIES = ['État / Service public'] as const;
+const CITIZEN_OFFICE_SUBCATEGORIES = [
+  'administration', 'municipalite', 'mairie', 'delegation', 'gouvernorat',
+  'bureau de poste', 'poste', 'recette des finances', 'guichet', 'service public',
+  'caisse nationale', 'centre administratif', 'direction regionale',
+  'office public', 'agence nationale', 'cnss', 'cnam', 'tribunal', 'commissariat',
+  'administration regionale',
+] as const;
+
 const OFFICIAL_LINKS = [
-  { key: 'registry' as const, url: 'https://www.rne.tn' },
+  { key: 'registry' as const, url: 'https://services.gov.tn/' },
   { key: 'justice' as const, url: B3_SOURCE },
-  { key: 'passport' as const, url: PASSPORT_SOURCE },
+  { key: 'passport' as const, url: 'https://services.interieur.gov.tn/' },
 ];
 
 export default function CitizensServicesLocalized() {
@@ -294,7 +307,8 @@ export default function CitizensServicesLocalized() {
   const procedures = VERIFIED_PROCEDURES[lang];
   const labels = UI_LABELS[lang];
   const isRTL = lang === 'ar';
-  const [activeTab, setActiveTab] = useState<Tab>('bureaux');
+  const inPlatformApp = isPlatformAppMode();
+  const [activeTab, setActiveTab] = useState<Tab | null>(inPlatformApp ? null : 'bureaux');
   const [selectedProcedure, setSelectedProcedure] = useState<number | null>(null);
   const [samu, protection, police, children, women] = EMERGENCY_LABELS[lang];
 
@@ -307,6 +321,7 @@ export default function CitizensServicesLocalized() {
     { label: labels.childProtection, number: '192', icon: Shield },
   ];
 
+  const officialNotice = lang === 'fr' ? 'Site officiel externe : ' : lang === 'ar' ? 'موقع حكومي خارجي: ' : lang === 'en' ? 'Official external website: ' : lang === 'it' ? 'Sito governativo esterno: ' : 'Официальный внешний сайт: ';
   const procedure = selectedProcedure === null ? null : procedures[selectedProcedure];
 
   if (procedure) {
@@ -341,6 +356,109 @@ export default function CitizensServicesLocalized() {
             <div className="mt-5 p-4 bg-yellow-50 border border-yellow-300 rounded-lg text-sm text-yellow-900 flex items-start gap-2"><AlertCircle className="w-5 h-5 flex-shrink-0" />{c.warning}</div>
           </div>
         </div>
+      </div>
+    );
+  }
+
+  if (inPlatformApp) {
+    const chooseTab = (tab: Tab) => setActiveTab(current => current === tab ? null : tab);
+    return (
+      <div className="public-surface min-h-screen bg-[#FFFCF7] pb-4" dir={isRTL ? 'rtl' : 'ltr'}>
+        <SEOHead title={labels.seoTitle} description={c.intro}
+          canonical="https://dalil-tounes.com/citizens/services" currentPath="/citizens/services" />
+
+        <section className="mx-3 mt-2 rounded-xl border border-[#D4AF37]/45 bg-[#FFFDF8] px-3 py-3">
+          <div className="flex items-center gap-3">
+            <div className="min-w-0 flex-1">
+              <h1 className="font-serif text-xl font-medium leading-6 text-[#4A1D43]">{c.title}</h1>
+              <p className="mt-1 text-xs leading-5 text-[#665565]">{c.intro}</p>
+            </div>
+            <img src={DALIL_MASCOT_IMAGE} alt="" aria-hidden="true" loading="lazy" decoding="async"
+              className="h-[64px] w-[60px] shrink-0 rounded-xl border border-[#D4AF37]/35 bg-white object-contain" />
+          </div>
+        </section>
+
+        <section className="relative z-20 mx-3 mt-3 rounded-xl border border-[#D4AF37]/40 bg-white p-3" style={{ overflow: 'visible' }}>
+          <Suspense fallback={<p role="status" className="px-2 py-3 text-xs text-[#726571]">…</p>}>
+            <SearchBar scope="services" intentEnabled={false} enabled resultMode="redirectToResults"
+              preferredTitle={c.searchTitle} preferredSubtitle={c.searchSubtitle} />
+          </Suspense>
+        </section>
+
+        <nav className="mx-3 mt-3 grid grid-cols-3 gap-2" aria-label={c.title}>
+          {([
+            { id: 'bureaux' as Tab, icon: Building2, label: c.tabs.offices },
+            { id: 'demarches' as Tab, icon: FileText, label: c.tabs.procedures },
+            { id: 'social' as Tab, icon: Heart, label: c.tabs.social },
+          ]).map(({id,icon:Icon,label}) => (
+            <button key={id} type="button" onClick={() => chooseTab(id)} aria-expanded={activeTab === id}
+              className={`flex min-h-[78px] flex-col items-center justify-center gap-2 rounded-xl border px-1.5 py-2 text-center text-xs font-semibold leading-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A17D36] ${activeTab === id ? 'border-[#A17D36] bg-[#4A1D43] text-white' : 'border-[#E2D2B2] bg-white text-[#4A1D43]'}`}>
+              <Icon className={`h-5 w-5 ${activeTab === id ? 'text-[#F3D58A]' : 'text-[#A17D36]'}`} aria-hidden="true" />
+              <span>{label}</span>
+            </button>
+          ))}
+        </nav>
+
+        {activeTab === 'bureaux' && <section className="mx-3 mt-3 rounded-xl bg-white py-2">
+          <h2 className="px-3 pb-1 font-serif text-base font-semibold text-[#4A1D43]">{c.officesTitle}</h2>
+          <p className="px-3 pb-2 text-xs leading-5 text-[#756873]">{c.officesIntro}</p>
+          <Suspense fallback={<p role="status" className="px-3 py-4 text-sm text-[#726571]">…</p>}>
+            <MeilleursSection secteurLabel={c.sector} listePage="services citoyens"
+              accentColor="#4A1D43" sectionTitle={c.recommended}
+              allowedCategories={CITIZEN_OFFICE_CATEGORIES}
+              requiredSubcategoryKeywords={CITIZEN_OFFICE_SUBCATEGORIES}
+              useGoogleRecommendationCriteria={false}
+              hideSearchCta />
+          </Suspense>
+        </section>}
+
+        {activeTab === 'demarches' && <section className="mx-3 mt-3 space-y-3">
+          <p className="px-1 text-xs text-[#70636D]">{c.proceduresIntro}</p>
+          <div className="space-y-2">
+            {procedures.map((item,index) => <button type="button" key={item.title}
+              onClick={() => setSelectedProcedure(index)}
+              className="flex min-h-14 w-full items-center justify-between gap-3 rounded-xl border border-[#E2D2B2] bg-white p-3 text-start focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A17D36]">
+              <span className="min-w-0"><strong className="block text-sm font-medium text-[#4A1D43]">{item.title}</strong>
+                <span className="mt-1 block text-xs text-[#70636D]">{item.documents.length} {c.pieces} · {item.delay}</span></span>
+              <ChevronDown aria-hidden="true" className={`h-4 w-4 shrink-0 text-[#A17D36] ${isRTL ? 'rotate-90' : '-rotate-90'}`} />
+            </button>)}
+          </div>
+          <p className="rounded-xl bg-[#F8F2E6] p-3 text-xs leading-5 text-[#695E65]">{c.warning}</p>
+        </section>}
+
+        {activeTab === 'social' && <section className="mx-3 mt-3 space-y-3">
+          <h2 className="font-serif text-base font-semibold text-[#4A1D43]">{c.socialTitle}</h2>
+          <p className="text-xs text-[#756873]">{c.socialIntro}</p>
+          <div className="grid grid-cols-2 gap-2">
+            {emergencyNumbers.map(({ label, number, icon: Icon }) =>
+              <a key={number} href={`tel:${number}`}
+                className="flex min-h-[76px] items-center gap-2 rounded-xl border border-[#D4AF37]/70 bg-[#4A1D43] px-3 py-2">
+                <Icon className="h-4 w-4 shrink-0 text-[#F3D58A]" aria-hidden="true" />
+                <span><strong className="block text-lg leading-6 text-[#F3D58A]">{number}</strong>
+                  <span className="block text-[11px] leading-4 text-white">{label}</span></span>
+              </a>)}
+          </div>
+          <details className="rounded-xl border border-[#D4AF37]/45 bg-white p-3">
+            <summary className="min-h-11 cursor-pointer font-semibold text-sm text-[#4A1D43]">{c.socialTitle} — {SOCIAL_PROGRAMS[lang].length}</summary>
+            <div className="mt-2 grid gap-2">
+              {SOCIAL_PROGRAMS[lang].map(item => <SocialCard key={item.title} title={item.title} body={item.body} />)}
+            </div>
+          </details>
+        </section>}
+
+        <details className="mx-3 mt-4 rounded-xl border border-[#D4AF37]/45 bg-white p-3">
+          <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-2 text-sm font-semibold text-[#4A1D43]">
+            <span>{c.usefulLinksTitle}</span><ChevronDown className="h-4 w-4 text-[#A17D36]" aria-hidden="true" />
+          </summary>
+          <div className="mt-2 grid gap-2 border-t border-[#E2D2B2] pt-3">
+            {OFFICIAL_LINKS.map(link => <a key={link.url} href={link.url} target="_blank" rel="noopener noreferrer"
+              className="flex min-h-14 items-center justify-between gap-2 rounded-xl border border-[#E2D2B2] px-3 py-2 text-xs font-medium text-[#4A1D43]">
+              <span><span className="block">{c.officialLinks[link.key]}</span>
+                <span className="mt-1 block break-all text-[10px] font-normal text-[#75676B]">{officialNotice}{new URL(link.url).hostname}</span>
+              </span><ExternalLink className="h-4 w-4 shrink-0 text-[#A17D36]" aria-hidden="true" />
+            </a>)}
+          </div>
+        </details>
       </div>
     );
   }
@@ -381,27 +499,31 @@ export default function CitizensServicesLocalized() {
           <section className="py-3 px-4">
             <div className="max-w-5xl mx-auto">
               <div className="bg-white rounded-xl border border-[#D4AF37] p-3">
-                <SearchBar
-                  scope="services"
-                  intentEnabled={false}
-                  enabled
-                  resultMode="redirectToResults"
-                  preferredTitle={c.searchTitle}
-                  preferredSubtitle={c.searchSubtitle}
-                />
+                <Suspense fallback={<div className="h-14 animate-pulse rounded-lg bg-[#F5F0E9]" />}>
+                  <SearchBar
+                    scope="services"
+                    intentEnabled={false}
+                    enabled
+                    resultMode="redirectToResults"
+                    preferredTitle={c.searchTitle}
+                    preferredSubtitle={c.searchSubtitle}
+                  />
+                </Suspense>
               </div>
             </div>
           </section>
           <section className="py-6 bg-white">
-            <MeilleursSection
-              secteurLabel={c.sector}
-              listePage="services citoyens"
-              accentColor="#4A1D43"
-              sectionTitle={c.recommended}
-              useGoogleRecommendationCriteria
-              excludedKeywords={SERVICE_EXCLUDED_KEYWORDS}
-              blogArticle={{ title: c.articleTitle, excerpt: c.articleExcerpt, slug: 'activites-en-famille' }}
-            />
+            <Suspense fallback={<div className="h-24 animate-pulse rounded-xl bg-[#F5F0E9]" />}>
+              <MeilleursSection
+                secteurLabel={c.sector}
+                listePage="services citoyens"
+                accentColor="#4A1D43"
+                sectionTitle={c.recommended}
+                useGoogleRecommendationCriteria
+                excludedKeywords={SERVICE_EXCLUDED_KEYWORDS}
+                blogArticle={{ title: c.articleTitle, excerpt: c.articleExcerpt, slug: 'activites-en-famille' }}
+              />
+            </Suspense>
           </section>
         </>
       )}
@@ -416,7 +538,9 @@ export default function CitizensServicesLocalized() {
           <div className="grid gap-3 md:grid-cols-3">
             {OFFICIAL_LINKS.map((link) => (
               <a key={link.url} href={link.url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between gap-3 rounded-xl border border-[#D4AF37] bg-[#FFFDF6] p-4 text-sm font-semibold text-[#4A1D43] hover:bg-[#D4AF37]/10 transition-colors">
-                <span>{c.officialLinks[link.key]}</span>
+                <span><span className="block">{c.officialLinks[link.key]}</span>
+                  <span className="mt-1 block break-all text-[11px] font-normal text-[#75676B]">{officialNotice}{new URL(link.url).hostname}</span>
+                </span>
                 <ExternalLink className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
               </a>
             ))}

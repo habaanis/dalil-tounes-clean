@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BusinessCard } from '../BusinessCard';
 import { buildEntrepriseUrl } from '../../lib/slugify';
+import { isPlatformAppMode } from '../../lib/platformAppMode';
 
 interface SeoBusinessCardProps {
   showGoogleRating?: boolean;
@@ -70,12 +71,16 @@ const SeoBusinessCard: React.FC<SeoBusinessCardProps> = ({ business, showGoogleR
         description_ar: business.description_ar || null,
       }}
       onClick={() => {
-        navigate(buildEntrepriseUrl({
-          slug: business.slug,
-          nom: business.nom,
-          ville: business.ville,
-          id: business.id,
-        }));
+        if (isPlatformAppMode()) {
+          navigate(`/entreprise/id/${business.id}`, { state: { fromPlatformApp: true } });
+        } else {
+          navigate(buildEntrepriseUrl({
+            slug: business.slug,
+            nom: business.nom,
+            ville: business.ville,
+            id: business.id,
+          }));
+        }
       }}
       showGoogleRating={showGoogleRating}
     />

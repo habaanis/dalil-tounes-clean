@@ -1,4 +1,7 @@
 import { applyCertificationFilter } from '../lib/businessCertification';
+import { isPlatformAppMode } from '../lib/platformAppMode';
+import { hasGreenBusinessCard } from '../lib/businessCardPresentation';
+import { getShopFilterId, getShopFilterLabel, matchesShopFilter, SHOP_PAGE } from '../lib/shopFilters';
 import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
@@ -128,11 +131,11 @@ const DIRECTORY_NAV_COPY: Record<BusinessCardPreviewLanguage, {
   showDetails: string;
   hideDetails: string;
 }> = {
-  fr: { search: 'Rechercher', businessCenter: "Centre d’affaires", professionals: 'Pour les professionnels', showDetails: 'Comprendre le CV Business', hideDetails: 'Masquer les explications' },
-  ar: { search: 'البحث', businessCenter: 'مركز الأعمال', professionals: 'للمهنيين', showDetails: 'فهم الـ CV Business', hideDetails: 'إخفاء الشروحات' },
-  en: { search: 'Search', businessCenter: 'Business centre', professionals: 'For professionals', showDetails: 'Understand the CV Business', hideDetails: 'Hide explanations' },
-  it: { search: 'Cerca', businessCenter: 'Centro d’affari', professionals: 'Per i professionisti', showDetails: 'Capire il CV Business', hideDetails: 'Nascondi le spiegazioni' },
-  ru: { search: 'Поиск', businessCenter: 'Деловой центр', professionals: 'Для профессионалов', showDetails: 'Что такое CV Business', hideDetails: 'Скрыть пояснения' },
+  fr: { search: 'Rechercher', businessCenter: "Centre d’affaires", professionals: 'Pour les professionnels', showDetails: 'Découvrir la mini-appli professionnelle', hideDetails: 'Masquer les explications' },
+  ar: { search: 'البحث', businessCenter: 'مركز الأعمال', professionals: 'للمهنيين', showDetails: 'اكتشف التطبيق المصغّر المهني', hideDetails: 'إخفاء الشروحات' },
+  en: { search: 'Search', businessCenter: 'Business centre', professionals: 'For professionals', showDetails: 'Explore the business mini-app', hideDetails: 'Hide explanations' },
+  it: { search: 'Cerca', businessCenter: 'Centro d’affari', professionals: 'Per i professionisti', showDetails: 'Scopri la mini-app professionale', hideDetails: 'Nascondi le spiegazioni' },
+  ru: { search: 'Поиск', businessCenter: 'Деловой центр', professionals: 'Для профессионалов', showDetails: 'Узнать о мини-приложении', hideDetails: 'Скрыть пояснения' },
 };
 
 const PROFESSIONAL_FAQ = [
@@ -354,6 +357,22 @@ function getBusinessSortScore(business: Record<string, any>): number {
   if (ratingValue(business) >= 4 && reviewCount(business) >= 5) return 2;
   return 1;
 }
+// Only the actual published status creates a green CV card in the platform app.
+// Use the same field for visibility priority, then existing review ranking.
+function compareAppBusinesses(a: Record<string, any>, b: Record<string, any>): number {
+  const aCv = hasGreenBusinessCard(a);
+  const bCv = hasGreenBusinessCard(b);
+  if (aCv !== bCv) return bCv ? 1 : -1;
+  const aTrusted = ratingValue(a) >= 4 && reviewCount(a) >= 5;
+  const bTrusted = ratingValue(b) >= 4 && reviewCount(b) >= 5;
+  if (aTrusted !== bTrusted) return bTrusted ? 1 : -1;
+  const count = reviewCount(b) - reviewCount(a);
+  if (count) return count;
+  const rating = ratingValue(b) - ratingValue(a);
+  if (rating) return rating;
+  return String(a.name || '').localeCompare(String(b.name || ''), 'fr');
+}
+
 function compareBusinessesByTrust(a: Record<string, any>, b: Record<string, any>): number {
   const group = getBusinessSortScore(b) - getBusinessSortScore(a);
   if (group) return group;
@@ -376,6 +395,7 @@ export const Businesses = ({
   const { language } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
+  const inPlatformApp = isPlatformAppMode();
   const [searchParams] = useSearchParams();
   const t = useTranslation(language);
   const pageT = getBusinessesPageTranslations(language);
@@ -405,9 +425,12 @@ export const Businesses = ({
   const [filterStatutCarte, setFilterStatutCarte] = useState<'' | 'certifie' | 'non_certifie'>('');
   const [availableCategories, setAvailableCategories] = useState<Array<{id: string, label: string, count: number}>>([]);
   const [selectedChipCategories, setSelectedChipCategories] = useState<string[]>([]);
+  const [resultPage, setResultPage] = useState(0);
   const [businessActivitiesByCompany, setBusinessActivitiesByCompany] = useState<Record<string, BusinessActivity[]>>({});
 
   const resultsRef = useRef<HTMLDivElement>(null);
+  // Reset pagination for every new search or category selection.
+  useEffect(() => setResultPage(0), [searchTerm, selectedCity, selectedCategory, pageCategorie, selectedChipCategories, filterPremium, filterCommerceLocal, filterStatutCarte]);
 
   // Protection anti-blocage : forcer arrêt du loading après 5s
   useEffect(() => {
@@ -940,7 +963,7 @@ export const Businesses = ({
         name_ru: item.name_ru || null,
       }));
 
-      mappedData.sort(compareBusinessesByTrust);
+      mappedData.sort(inPlatformApp ? compareAppBusinesses : compareBusinessesByTrust);
 
       console.log(`[DEBUG] ✅ Mapping terminé: ${mappedData.length} entreprises`);
       console.log('═══════════════════════════════════════\n');
@@ -981,6 +1004,7 @@ export const Businesses = ({
       setSearching(false);
     }, 10000);
     try {
+      const shopFilter = inPlatformApp ? getShopFilterId(selectedCategory) : null;
       let query = supabase
         .from(Tables.ENTREPRISE)
         .select(ENTREPRISE_SELECT_FIELDS)
@@ -992,6 +1016,10 @@ export const Businesses = ({
         .order('"Compteur Avis Google"', { ascending: false, nullsFirst: false })
         .order('nom', { ascending: true })
         .limit(300);
+
+      // The shop buttons use the existing page assignment + Airtable categories.
+      // They must not search for a generic word among all businesses.
+      if (shopFilter) query = query.contains('liste_pages', [SHOP_PAGE]);
 
       if (selectedBusinessId) {
         console.log(`[DEBUG] Filtre ID entreprise: "${selectedBusinessId}"`);
@@ -1029,7 +1057,7 @@ export const Businesses = ({
       } else if (!selectedBusinessId && selectedCategory === 'immobilier') {
         // La catégorie métier est un tableau; ne pas filtrer uniquement par la sous-catégorie texte.
         query = query.contains('categorie', ['Immobilier']);
-      } else if (!selectedBusinessId && selectedCategory) {
+      } else if (!selectedBusinessId && selectedCategory && !shopFilter) {
         console.log(`[DEBUG] Filtre Catégorie: "${selectedCategory}"`);
         query = query.ilike('sous_categories_texte', `%${selectedCategory}%`);
       }
@@ -1082,7 +1110,10 @@ export const Businesses = ({
         console.log('[DEBUG] item.nom brut (toutes entreprises):', (data as any[]).map((d: any) => d.nom));
       }
 
-      let mappedData = dedupeByAirtableId((data || []) as { id: string; id_airtable?: string | null }[]).map((item: any) => ({
+      const shopRows = shopFilter
+        ? (data || []).filter((row: any) => matchesShopFilter(row, shopFilter))
+        : (data || []);
+      let mappedData = dedupeByAirtableId(shopRows as { id: string; id_airtable?: string | null }[]).map((item: any) => ({
         id: item.id,
         name: extractFrenchName(item.nom),
         category: getCategoryLabel(item),
@@ -1171,7 +1202,7 @@ export const Businesses = ({
       }
 
       // Trier par priorité (CV publié > avis Google fiables > autres).
-      mappedData.sort(compareBusinessesByTrust);
+      mappedData.sort(inPlatformApp ? compareAppBusinesses : compareBusinessesByTrust);
 
       console.log('═══════════════════════════════════════\n');
 
@@ -1264,6 +1295,13 @@ export const Businesses = ({
   const categories = Array.isArray(businesses) ? [...new Set(businesses.map((b) => b.category).filter(Boolean))].sort() : [];
 
   const filteredBusinesses = Array.isArray(chipFilteredBusinesses) ? chipFilteredBusinesses : [];
+  // The platform app uses 10 cards per page instead of an endless scroll.
+  const APP_RESULTS_PER_PAGE = 10;
+  const resultPageCount = Math.max(1, Math.ceil(filteredBusinesses.length / APP_RESULTS_PER_PAGE));
+  const safeResultPage = Math.min(resultPage, resultPageCount - 1);
+  const displayedBusinesses = inPlatformApp
+    ? filteredBusinesses.slice(safeResultPage * APP_RESULTS_PER_PAGE, (safeResultPage + 1) * APP_RESULTS_PER_PAGE)
+    : filteredBusinesses.slice(0, hasActiveSearch ? filteredBusinesses.length : 3);
 
   const businessListItems = Array.isArray(businesses) ? businesses.slice(0, 20).map(business => ({
     name: business.name || pageT.seo.unnamedBusiness,
@@ -1271,7 +1309,7 @@ export const Businesses = ({
   })) : [];
 
   return (
-    <div className="public-surface min-h-screen bg-[#fcfaf5]">
+    <div className={`public-surface min-h-screen bg-[#fcfaf5] ${inPlatformApp ? "platform-app-directory" : ""}`}>
       <SEOHead
         title={pageT.seo.title}
         description={pageT.seo.description}
@@ -1288,7 +1326,7 @@ export const Businesses = ({
       )}
 
       <div className="mx-auto flex max-w-7xl flex-col">
-        <section className="px-4 pb-5 pt-6">
+        <section className={`${inPlatformApp ? "hidden" : ""} px-4 pb-5 pt-6`}>
           <div className="relative overflow-hidden rounded-xl border border-[#d9c9a4] bg-gradient-to-br from-[#fffdf9] to-[#f3eddf] shadow-sm">
             <div
               aria-hidden="true"
@@ -1323,7 +1361,7 @@ export const Businesses = ({
           </div>
         </section>
 
-        <nav className="sticky top-16 z-30 order-1 border-y border-[#D4AF37]/25 bg-white/95 px-4 py-2 shadow-sm backdrop-blur" aria-label={pageT.explore.title}>
+        <nav className={`${inPlatformApp ? "hidden" : ""} sticky top-16 z-30 order-1 border-y border-[#D4AF37]/25 bg-white/95 px-4 py-2 shadow-sm backdrop-blur`} aria-label={pageT.explore.title}>
           <div className="mx-auto flex max-w-5xl gap-2 overflow-x-auto">
             <button type="button" onClick={() => document.getElementById('business-search')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="whitespace-nowrap rounded-full bg-[#4A1D43] px-4 py-2 text-sm font-medium text-white">{directoryCopy.search}</button>
             <button type="button" onClick={() => document.getElementById('business-center')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="whitespace-nowrap rounded-full border border-[#D4AF37]/50 bg-white px-4 py-2 text-sm font-medium text-[#4A1D43]">{directoryCopy.businessCenter}</button>
@@ -1331,7 +1369,7 @@ export const Businesses = ({
           </div>
         </nav>
 
-        <section id="business-center" className="order-2 scroll-mt-28 px-4 py-8" aria-labelledby="business-center-title">
+        <section id="business-center" className={`${inPlatformApp ? "hidden" : ""} order-2 scroll-mt-28 px-4 py-8`} aria-labelledby="business-center-title">
           <div className="mx-auto max-w-5xl rounded-xl border border-[#D4AF37]/25 bg-[#FFFDF6] p-5 sm:p-7">
             <div className="mx-auto max-w-3xl text-center">
               <h2 id="business-center-title" className="public-heading text-2xl font-medium text-[#4A1D43] md:text-3xl">
@@ -1360,7 +1398,7 @@ export const Businesses = ({
           </div>
         </section>
 
-        <section className={`${showProfessionalDetails ? 'block' : 'hidden'} order-4 px-4 py-8`}>
+        <section className={`${inPlatformApp ? 'hidden' : showProfessionalDetails ? 'block' : 'hidden'} order-4 px-4 py-8`}>
           <div className="max-w-4xl mx-auto">
             <SectionIntro
               eyebrow={pageT.onlinePresence.eyebrow}
@@ -1375,7 +1413,7 @@ export const Businesses = ({
           </div>
         </section>
 
-        <section className={`${showProfessionalDetails ? 'block' : 'hidden'} order-4 bg-white px-4 py-10`}>
+        <section className={`${inPlatformApp ? 'hidden' : showProfessionalDetails ? 'block' : 'hidden'} order-4 bg-white px-4 py-10`}>
           <div className="max-w-6xl mx-auto grid gap-8 lg:grid-cols-[1fr_0.9fr] items-start">
             <SectionIntro
               eyebrow={pageT.whyProfile.eyebrow}
@@ -1403,10 +1441,10 @@ export const Businesses = ({
         </section>
 
         {/* SearchBar Entreprises */}
-        <section id="business-search" className="relative z-0 order-1 scroll-mt-28 px-4 py-6">
+        <section id="business-search" className={`relative z-0 order-1 scroll-mt-28 px-4 ${inPlatformApp ? "py-4" : "py-6"}`}>
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-5">
-              <h2 className="public-heading text-xl md:text-2xl font-medium text-[#4A1D43]">{pageT.explore.title}</h2>
+              <h2 className="public-heading text-xl md:text-2xl font-medium text-[#4A1D43]">{inPlatformApp ? (language === 'ar' ? 'ابحث عن مهني أو خدمة' : language === 'en' ? 'Find a professional or service' : language === 'it' ? 'Trova un professionista o un servizio' : language === 'ru' ? 'Найти специалиста или услугу' : 'Trouver un professionnel ou un service') : pageT.explore.title}</h2>
               <p className="mt-3 text-sm md:text-base text-gray-600 max-w-3xl mx-auto leading-relaxed">
                 {pageT.explore.description}
               </p>
@@ -1470,7 +1508,7 @@ export const Businesses = ({
           </div>
         )}
 
-        <div className="order-1 mx-auto mb-4 flex max-w-5xl flex-col gap-2 px-4 text-xs text-gray-600 sm:flex-row sm:flex-wrap sm:justify-center" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+        <div className={`${inPlatformApp ? "hidden" : "flex"} order-1 mx-auto mb-4 max-w-5xl flex-col gap-2 px-4 text-xs text-gray-600 sm:flex-row sm:flex-wrap sm:justify-center`} dir={language === 'ar' ? 'rtl' : 'ltr'}>
           <span className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/35 bg-white px-3 py-2 shadow-sm">
             <span className="font-medium text-[#4A1D43]">Premium / Artisan</span>
             <span aria-hidden="true">—</span>
@@ -1569,7 +1607,9 @@ export const Businesses = ({
             <div className="mx-auto max-w-7xl px-4">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-medium text-[#4A1D43]">
-                  {hasActiveSearch ? pageT.results.searchResults : pageT.results.featured}
+                  {inPlatformApp && getShopFilterId(selectedCategory)
+                    ? getShopFilterLabel(getShopFilterId(selectedCategory)!, language)
+                    : hasActiveSearch ? pageT.results.searchResults : pageT.results.featured}
                   <span className="ms-2 text-sm text-gray-500 font-normal">
                     ({hasActiveSearch ? filteredBusinesses.length : Math.min(3, filteredBusinesses.length)} {filteredBusinesses.length > 1 ? pageT.results.businessPlural : pageT.results.businessSingular})
                   </span>
@@ -1601,7 +1641,7 @@ export const Businesses = ({
                 )}
               </div>
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
-                {Array.isArray(filteredBusinesses) && filteredBusinesses.slice(0, hasActiveSearch ? filteredBusinesses.length : 3).map((business) => {
+                {Array.isArray(displayedBusinesses) && displayedBusinesses.map((business) => {
                   if (!business || !business.id) return null;
 
                   return (
@@ -1631,15 +1671,35 @@ export const Businesses = ({
                         description_ar: business.description_ar || null,
                       }}
                       onClick={() => {
-                        navigate(buildEntrepriseUrl({ slug: business.slug, nom: business.name, ville: business.ville || business.city, id: business.id }));
+                        if (inPlatformApp) {
+                          // Unique ID avoids opening a different business when legacy slugs collide.
+                          navigate(`/entreprise/id/${business.id}`, { state: { fromPlatformApp: true } });
+                        } else {
+                          navigate(buildEntrepriseUrl({ slug: business.slug, nom: business.name, ville: business.ville || business.city, id: business.id }));
+                        }
                       }}
                       variant="premium"
                     />
                   );
                 })}
               </div>
+              {inPlatformApp && resultPageCount > 1 && (
+                <nav aria-label="Pagination des entreprises" className="mt-6 flex flex-wrap items-center justify-center gap-2 border-t border-[#E2D3B5] pt-4">
+                  <button type="button" disabled={safeResultPage === 0}
+                    onClick={() => { setResultPage(p => Math.max(0, p - 1)); resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
+                    className="min-h-11 rounded-lg border border-[#D4AF37]/60 bg-white px-3 text-xs font-semibold text-[#4A1D43] disabled:opacity-40">
+                    {language === 'ar' ? 'السابق' : language === 'en' ? 'Previous' : language === 'it' ? 'Precedente' : language === 'ru' ? 'Назад' : 'Précédent'}
+                  </button>
+                  <span className="px-2 text-xs font-medium text-[#4A1D43]">{safeResultPage + 1} / {resultPageCount}</span>
+                  <button type="button" disabled={safeResultPage >= resultPageCount - 1}
+                    onClick={() => { setResultPage(p => Math.min(resultPageCount - 1, p + 1)); resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
+                    className="min-h-11 rounded-lg border border-[#D4AF37]/60 bg-white px-3 text-xs font-semibold text-[#4A1D43] disabled:opacity-40">
+                    {language === 'ar' ? 'التالي' : language === 'en' ? 'Next' : language === 'it' ? 'Successivo' : language === 'ru' ? 'Далее' : 'Suivant'}
+                  </button>
+                </nav>
+              )}
 
-              {!hasActiveSearch && filteredBusinesses.length > 3 && (
+              {!hasActiveSearch && !inPlatformApp && filteredBusinesses.length > 3 && (
                 <div className="mt-6 text-center">
                   <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#D4AF37]/10 rounded-lg text-xs text-[#4A1D43]" style={{ border: '1px solid #D4AF37' }}>
                     <Search className="w-4 h-4" />
@@ -1651,7 +1711,7 @@ export const Businesses = ({
           ) : null}
         </div>
 
-        <section id="professional-services" className="order-3 scroll-mt-28 px-4 py-8">
+        <section id="professional-services" className={`${inPlatformApp ? "hidden" : ""} order-3 scroll-mt-28 px-4 py-8`}>
           <div className="mx-auto max-w-5xl rounded-xl border border-[#D4AF37]/35 bg-gradient-to-br from-[#FFF8DF] to-white p-6 text-center shadow-sm sm:p-8">
             <p className="text-sm font-medium uppercase tracking-[0.14em] text-[#B58A18]">{directoryCopy.professionals}</p>
             <h2 className="public-heading mt-2 text-2xl font-medium text-[#4A1D43] md:text-3xl">{pageT.cvBusiness.title}</h2>
@@ -1667,7 +1727,7 @@ export const Businesses = ({
           </div>
         </section>
 
-        <section className={`${showProfessionalDetails ? 'block' : 'hidden'} order-4 px-4 py-8`}>
+        <section className={`${inPlatformApp ? 'hidden' : showProfessionalDetails ? 'block' : 'hidden'} order-4 px-4 py-8`}>
           <div className="max-w-6xl mx-auto grid gap-8 lg:grid-cols-[0.95fr_1.05fr] items-center">
             <div>
               <SectionIntro eyebrow={pageT.cvBusiness.eyebrow} title={pageT.cvBusiness.title}>
@@ -1698,7 +1758,7 @@ export const Businesses = ({
           </div>
         </section>
 
-        <section className={`${showProfessionalDetails ? 'block' : 'hidden'} order-4 bg-white px-4 py-8`}>
+        <section className={`${inPlatformApp ? 'hidden' : showProfessionalDetails ? 'block' : 'hidden'} order-4 bg-white px-4 py-8`}>
           <div className="max-w-5xl mx-auto">
             <SectionIntro
               eyebrow={pageT.consistency.eyebrow}
@@ -1718,7 +1778,7 @@ export const Businesses = ({
           </div>
         </section>
 
-        <section className={`${showProfessionalDetails ? 'block' : 'hidden'} order-4 px-4 py-8`}>
+        <section className={`${inPlatformApp ? 'hidden' : showProfessionalDetails ? 'block' : 'hidden'} order-4 px-4 py-8`}>
           <div className="max-w-5xl mx-auto">
             <div className="grid gap-7 lg:grid-cols-[0.95fr_1.05fr] items-start">
               <SectionIntro
@@ -1746,7 +1806,7 @@ export const Businesses = ({
           </div>
         </section>
 
-        <section className={`${showProfessionalDetails ? 'block' : 'hidden'} order-4 px-4 py-10`}>
+        <section className={`${inPlatformApp ? 'hidden' : showProfessionalDetails ? 'block' : 'hidden'} order-4 px-4 py-10`}>
           <div className="max-w-6xl mx-auto">
             <div className="text-center max-w-3xl mx-auto">
               <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#D4AF37] mb-3">{pageT.faq.eyebrow}</p>
@@ -1763,7 +1823,7 @@ export const Businesses = ({
           </div>
         </section>
 
-        <section className={`${showProfessionalDetails ? 'block' : 'hidden'} order-4 px-4 py-10`}>
+        <section className={`${inPlatformApp ? 'hidden' : showProfessionalDetails ? 'block' : 'hidden'} order-4 px-4 py-10`}>
           <div className="max-w-5xl mx-auto rounded-xl border border-[#D4AF37]/35 bg-gradient-to-br from-[#4A1D43] to-[#0B5A45] p-7 md:p-10 text-center text-white shadow-[0_22px_60px_rgba(74,29,67,0.2)]">
             <p className="text-sm font-medium uppercase tracking-[0.18em] text-[#F7D978]">{pageT.finalCta.eyebrow}</p>
             <h2 className="public-heading mt-3 text-2xl md:text-4xl font-medium">{pageT.finalCta.title}</h2>

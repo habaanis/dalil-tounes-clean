@@ -65,11 +65,11 @@ const copy: Record<Language, ConceptCopy> = {
     steps: [
       { emoji: '🔎', title: 'Tu recherches un professionnel', problem: "Aujourd'hui, il n'est pas toujours facile de trouver rapidement un professionnel de confiance.", solution: "Il te suffit d'indiquer un métier, une activité ou une ville pour commencer ta recherche.", component: 'searchbar' },
       { emoji: '📋', title: 'Dalil Tounes te propose plusieurs résultats', problem: 'Les informations importantes sont souvent dispersées ou difficiles à consulter rapidement.', solution: 'En quelques secondes, découvre les professionnels correspondant à ta recherche grâce aux Business Cards.', component: 'businesscard' },
-      { emoji: '📄', title: 'Tu ouvres une fiche complète', problem: 'Tu dois parfois consulter plusieurs sites ou applications pour réunir toutes les informations utiles.', solution: 'Le CV Business rassemble les informations essentielles sur une seule fiche : horaires, téléphone, GPS, photos, services, avis, réservation, QR Code et bien plus encore.', component: 'cvbusiness' },
+      { emoji: '📄', title: 'Tu ouvres une fiche complète', problem: 'Tu dois parfois consulter plusieurs sites ou applications pour réunir toutes les informations utiles.', solution: 'La mini-appli professionnelle rassemble les informations essentielles sur une seule fiche : horaires, téléphone, GPS, photos, services, avis, réservation, QR Code et bien plus encore.', component: 'cvbusiness' },
       { emoji: '📞', title: 'Tu contactes facilement le professionnel', problem: 'Trouver le bon numéro, les horaires ou la localisation peut faire perdre du temps.', solution: 'Depuis la fiche, tu peux appeler, réserver, utiliser le GPS ou contacter directement le professionnel.', component: null },
       { emoji: '⭐', title: 'Tu poursuis ta recherche si tu le souhaites', problem: null, solution: "Dalil Tounes peut également te proposer d'autres professionnels correspondant à ta recherche afin de t'aider à trouver celui qui répond le mieux à tes besoins.", component: null },
     ],
-    flowSteps: ['Business Card', 'CV Business', 'Plus de visibilité', 'Plus de contacts', "Plus d'opportunités"],
+    flowSteps: ['Business Card', 'Mini-appli', 'Plus de visibilité', 'Plus de contacts', "Plus d'opportunités"],
   },
   en: {
     seoTitle: 'How does Dalil Tounes work? | Professional search in Tunisia', seoDescription: 'Discover how Dalil Tounes helps citizens find professionals and businesses grow their visibility in Tunisia.', seoKeywords: 'Dalil Tounes, professionals Tunisia, businesses Tunisia, Business CV, professional visibility',
@@ -79,11 +79,11 @@ const copy: Record<Language, ConceptCopy> = {
     steps: [
       { emoji: '🔎', title: 'You search for a professional', problem: 'It is not always easy to quickly find a trusted professional.', solution: 'Simply enter a trade, activity or city to start your search.', component: 'searchbar' },
       { emoji: '📋', title: 'Dalil Tounes shows several results', problem: 'Important information is often scattered or difficult to review quickly.', solution: 'In seconds, discover professionals matching your search through Business Cards.', component: 'businesscard' },
-      { emoji: '📄', title: 'You open a complete profile', problem: 'You sometimes need several websites or apps to gather all the useful information.', solution: 'The Business CV brings together key information in one profile: opening hours, phone, GPS, photos, services, reviews, booking, QR Code and more.', component: 'cvbusiness' },
+      { emoji: '📄', title: 'You open a complete profile', problem: 'You sometimes need several websites or apps to gather all the useful information.', solution: 'The business mini-app brings together key information in one profile: opening hours, phone, GPS, photos, services, reviews, booking, QR Code and more.', component: 'cvbusiness' },
       { emoji: '📞', title: 'You easily contact the professional', problem: 'Finding the right number, opening hours or location can take time.', solution: 'From the profile, you can call, book, use GPS or contact the professional directly.', component: null },
       { emoji: '⭐', title: 'Continue searching if you wish', problem: null, solution: 'Dalil Tounes can also suggest other professionals matching your search so you can find the one that best meets your needs.', component: null },
     ],
-    flowSteps: ['Business Card', 'Business CV', 'More visibility', 'More contacts', 'More opportunities'],
+    flowSteps: ['Business Card', 'Mini-app', 'More visibility', 'More contacts', 'More opportunities'],
   },
   ar: {
     seoTitle: 'كيف تعمل Dalil Tounes؟ | البحث عن المهنيين في تونس', seoDescription: 'اكتشف كيف تساعد Dalil Tounes المواطنين على العثور على المهنيين وتساعد المؤسسات على تطوير حضورها في تونس.', seoKeywords: 'Dalil Tounes، مهنيون تونس، مؤسسات تونس، السيرة المهنية، الظهور الرقمي',
@@ -93,11 +93,11 @@ const copy: Record<Language, ConceptCopy> = {
     steps: [
       { emoji: '🔎', title: 'تبحث عن مهني', problem: 'ليس من السهل دائماً العثور بسرعة على مهني موثوق.', solution: 'يكفي إدخال المهنة أو النشاط أو المدينة لبدء البحث.', component: 'searchbar' },
       { emoji: '📋', title: 'تعرض لك Dalil Tounes عدة نتائج', problem: 'غالباً ما تكون المعلومات المهمة متفرقة أو صعبة المراجعة بسرعة.', solution: 'في ثوانٍ، اكتشف المهنيين المطابقين لبحثك عبر بطاقات Business Card.', component: 'businesscard' },
-      { emoji: '📄', title: 'تفتح ملفاً متكاملاً', problem: 'قد تحتاج إلى عدة مواقع أو تطبيقات لجمع كل المعلومات المفيدة.', solution: 'يجمع CV Business المعلومات الأساسية في ملف واحد: التوقيت، الهاتف، GPS، الصور، الخدمات، الآراء، الحجز، QR Code والمزيد.', component: 'cvbusiness' },
+      { emoji: '📄', title: 'تفتح ملفاً متكاملاً', problem: 'قد تحتاج إلى عدة مواقع أو تطبيقات لجمع كل المعلومات المفيدة.', solution: 'يجمع التطبيق المصغّر المهني المعلومات الأساسية في ملف واحد: التوقيت، الهاتف، GPS، الصور، الخدمات، الآراء، الحجز، QR Code والمزيد.', component: 'cvbusiness' },
       { emoji: '📞', title: 'تتواصل بسهولة مع المهني', problem: 'قد يستغرق العثور على الرقم الصحيح أو التوقيت أو الموقع وقتاً.', solution: 'من الملف يمكنك الاتصال أو الحجز أو استخدام GPS أو التواصل مباشرة مع المهني.', component: null },
       { emoji: '⭐', title: 'تواصل البحث إذا رغبت', problem: null, solution: 'يمكن لـ Dalil Tounes أيضاً اقتراح مهنيين آخرين مطابقين لبحثك لمساعدتك على اختيار الأنسب لاحتياجاتك.', component: null },
     ],
-    flowSteps: ['Business Card', 'CV Business', 'ظهور أكبر', 'اتصالات أكثر', 'فرص أكثر'],
+    flowSteps: ['Business Card', 'تطبيق مصغّر', 'ظهور أكبر', 'اتصالات أكثر', 'فرص أكثر'],
   },
   it: {
     seoTitle: 'Come funziona Dalil Tounes? | Ricerca professionale in Tunisia', seoDescription: 'Scopri come Dalil Tounes aiuta i cittadini a trovare professionisti e le imprese a sviluppare la propria visibilità in Tunisia.', seoKeywords: 'Dalil Tounes, professionisti Tunisia, imprese Tunisia, CV Business, visibilità professionale',
@@ -107,11 +107,11 @@ const copy: Record<Language, ConceptCopy> = {
     steps: [
       { emoji: '🔎', title: 'Cerchi un professionista', problem: 'Non è sempre facile trovare rapidamente un professionista affidabile.', solution: 'Basta indicare un mestiere, un’attività o una città per iniziare la ricerca.', component: 'searchbar' },
       { emoji: '📋', title: 'Dalil Tounes propone più risultati', problem: 'Le informazioni importanti sono spesso sparse o difficili da consultare rapidamente.', solution: 'In pochi secondi scopri i professionisti corrispondenti alla ricerca tramite le Business Card.', component: 'businesscard' },
-      { emoji: '📄', title: 'Apri un profilo completo', problem: 'A volte servono più siti o app per raccogliere tutte le informazioni utili.', solution: 'Il CV Business raccoglie in un unico profilo orari, telefono, GPS, foto, servizi, recensioni, prenotazione, QR Code e molto altro.', component: 'cvbusiness' },
+      { emoji: '📄', title: 'Apri un profilo completo', problem: 'A volte servono più siti o app per raccogliere tutte le informazioni utili.', solution: 'La mini-app professionale raccoglie in un unico profilo orari, telefono, GPS, foto, servizi, recensioni, prenotazione, QR Code e molto altro.', component: 'cvbusiness' },
       { emoji: '📞', title: 'Contatti facilmente il professionista', problem: 'Trovare il numero giusto, gli orari o la posizione può far perdere tempo.', solution: 'Dal profilo puoi chiamare, prenotare, usare il GPS o contattare direttamente il professionista.', component: null },
       { emoji: '⭐', title: 'Continui la ricerca se vuoi', problem: null, solution: 'Dalil Tounes può proporti altri professionisti compatibili con la ricerca per aiutarti a trovare quello più adatto alle tue esigenze.', component: null },
     ],
-    flowSteps: ['Business Card', 'CV Business', 'Più visibilità', 'Più contatti', 'Più opportunità'],
+    flowSteps: ['Business Card', 'Mini-app', 'Più visibilità', 'Più contatti', 'Più opportunità'],
   },
   ru: {
     seoTitle: 'Как работает Dalil Tounes? | Поиск специалистов в Тунисе', seoDescription: 'Узнайте, как Dalil Tounes помогает жителям находить специалистов, а компаниям развивать видимость в Тунисе.', seoKeywords: 'Dalil Tounes, специалисты Тунис, компании Тунис, Business CV, профессиональная видимость',
@@ -121,11 +121,11 @@ const copy: Record<Language, ConceptCopy> = {
     steps: [
       { emoji: '🔎', title: 'Вы ищете специалиста', problem: 'Быстро найти надежного специалиста не всегда просто.', solution: 'Укажите профессию, вид деятельности или город, чтобы начать поиск.', component: 'searchbar' },
       { emoji: '📋', title: 'Dalil Tounes показывает несколько результатов', problem: 'Важная информация часто разбросана или ее сложно быстро сравнить.', solution: 'За несколько секунд найдите специалистов, соответствующих запросу, с помощью Business Card.', component: 'businesscard' },
-      { emoji: '📄', title: 'Вы открываете полный профиль', problem: 'Иногда приходится открывать несколько сайтов и приложений, чтобы собрать полезную информацию.', solution: 'Business CV объединяет часы работы, телефон, GPS, фото, услуги, отзывы, бронирование, QR Code и многое другое в одном профиле.', component: 'cvbusiness' },
+      { emoji: '📄', title: 'Вы открываете полный профиль', problem: 'Иногда приходится открывать несколько сайтов и приложений, чтобы собрать полезную информацию.', solution: 'Мини-приложение объединяет часы работы, телефон, GPS, фото, услуги, отзывы, бронирование, QR Code и многое другое в одном профиле.', component: 'cvbusiness' },
       { emoji: '📞', title: 'Вы легко связываетесь со специалистом', problem: 'Поиск правильного номера, времени работы или адреса может занимать время.', solution: 'Из профиля можно позвонить, забронировать, открыть GPS или напрямую связаться со специалистом.', component: null },
       { emoji: '⭐', title: 'Продолжайте поиск при необходимости', problem: null, solution: 'Dalil Tounes также может предложить других специалистов по вашему запросу, чтобы помочь выбрать наиболее подходящего.', component: null },
     ],
-    flowSteps: ['Business Card', 'Business CV', 'Больше видимости', 'Больше контактов', 'Больше возможностей'],
+    flowSteps: ['Business Card', 'Мини-приложение', 'Больше видимости', 'Больше контактов', 'Больше возможностей'],
   },
 };
 

@@ -47,7 +47,8 @@ export default function GoogleRatingSummary({
 }: GoogleRatingSummaryProps) {
   const normalizedRating = Math.min(5, Math.max(0, parseNumber(rating)));
   const normalizedReviewCount = parseReviewCount(reviewCount);
-  if (normalizedRating <= 0) return null;
+  // A stored average without any documented reviews is not a verifiable Google score.
+  if (normalizedRating <= 0 || normalizedReviewCount < 1) return null;
 
   const copy = REVIEW_LABELS[language] || REVIEW_LABELS.fr;
   const trustLabels = TRUST_LABELS[language] || TRUST_LABELS.fr;

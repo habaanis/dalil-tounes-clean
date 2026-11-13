@@ -19,7 +19,7 @@ const story = {
       "C'est comme ça que j'ai commencé à imaginer Dalil Tounes.",
       "Mais trouver une entreprise ne suffit pas toujours",
       "Je me suis aussi dit qu'une fois le professionnel trouvé, il fallait pouvoir découvrir ce qu'il fait réellement : voir son travail, ses services, ses réalisations, ses photos… Parce qu'avant de contacter quelqu'un, on aime bien savoir à qui on a affaire.",
-      "C'est pour cela que j'ai voulu intégrer les CV Business et CV Portfolio. L'entreprise peut présenter son activité, mais aussi garder cette présentation sur son téléphone et la partager avec un lien ou un QR Business.",
+      "C'est pour cela que j'ai voulu proposer une mini-appli personnalisée, avec deux modèles : CV Business et CV Portfolio. L'entreprise peut présenter son activité, mais aussi garder cette présentation sur son téléphone et la partager avec un lien ou un QR Business.",
       "Pour moi, c'était important que Dalil Tounes serve aussi bien à celui qui cherche un professionnel qu'à celui qui souhaite faire connaître son travail.",
       "Et puis, il y a toute la Tunisie…",
       "En avançant sur le projet, je me suis rendu compte que je ne voulais pas m'arrêter aux entreprises. Quand on parle de la Tunisie, on pense souvent à ses plages, à ses hôtels, à ses grandes villes. Mais la Tunisie, ce n'est pas seulement ça.",
@@ -53,7 +53,7 @@ const story = {
       "That's how I began imagining Dalil Tounes.",
       "But finding a business isn't always enough",
       "Once you've found someone, you also want to see what they actually do: their work, services, projects and photos. Because before contacting someone, it's only natural to want to know who you're dealing with.",
-      "That's why I wanted to introduce CV Business and CV Portfolio. A business can present its activity, keep that presentation on its phone, and share it through a link or a QR Business.",
+      "That's why I wanted to offer a personalised mini-app, with two presentation models: Business CV and Portfolio CV. A business can present its activity, keep that presentation on its phone, and share it through a link or a QR Business.",
       "It mattered to me that Dalil Tounes should help both people looking for a professional and those wanting to show what they do.",
       "And then there is the whole of Tunisia…",
       "As the project developed, I realised I didn't want to stop at businesses. When people talk about Tunisia, they often think of its beaches, hotels and big cities. But there is so much more to the country.",
@@ -87,7 +87,7 @@ const story = {
       "وهكّا بديت نتخيّل مشروع دليل تونس.",
       "أما تلقى مؤسسة وحده موش ديما يكفي",
       "بعد ما تلقى المهني، تحب زادة تشوف شنوة يخدم بالضبط: الخدمات متاعه، إنجازاته، تصاوير خدمته… خاطر قبل ما تتصل بحد، تحب تعرف مع شكون باش تتعامل.",
-      "على خاطر هذا حبيت نضيف CV Business وCV Portfolio. المؤسسة تنجم تقدّم نشاطها، وتخلي العرض متاعها ديما في تليفونها، وتشاركه برابط أو برمز QR Business.",
+      "على خاطر هذا حبيت نوفر تطبيق مصغّر مهني خاص بكل مؤسسة، بنموذجين CV Business وCV Portfolio. المؤسسة تنجم تقدّم نشاطها، وتخلي العرض متاعها ديما في تليفونها، وتشاركه برابط أو برمز QR Business.",
       "بالنسبة ليا، كان مهم أن دليل تونس ينفع الزوز: اللي يفتّش على مهني، واللي يحب يعرّف الناس بخدمته.",
       "وزيد، تونس فيها برشا حاجات أخرى…",
       "مع تقدّم المشروع، فهمت اللي ما نحبّش نوقف عند المؤسسات فقط. كي نحكيو على تونس، نفكّروا عادة في الشواطئ والنزل والمدن الكبيرة. أما تونس موش كان هاذم.",
@@ -106,12 +106,28 @@ const story = {
     "cta": "اكتشف قصتي"
   }
 } as const;
-export function FounderStory({full=false}:{full?:boolean}) {
+export function FounderStory({full=false,compact=false}:{full?:boolean;compact?:boolean}) {
  const { language } = useLanguage();
  const { hash } = useLocation();
  useEffect(() => { if (full && hash === '#histoire-fondateur') { const frame = requestAnimationFrame(() => document.getElementById('histoire-fondateur')?.scrollIntoView({behavior:'auto',block:'start'})); return () => cancelAnimationFrame(frame); } }, [full, hash]);
  const t = story[language === 'ar' ? 'ar' : language === 'fr' ? 'fr' : 'en'];
  const paragraphs = t.paragraphs.map((paragraph, index) => [4,8,12,16,20].includes(index) ? <h3 key={index} className="mt-8 font-serif text-xl font-bold text-[#4A1D43]">{paragraph}</h3> : <p key={index} className="mt-4 max-w-[72ch] leading-8 text-gray-700">{paragraph}</p>);
+ if (compact) return <section data-platform-app-founder className="rounded-2xl border border-[#D4AF37]/45 bg-white p-3 shadow-sm" aria-label={t.title}>
+   <div className="flex items-start gap-3">
+     <img src="https://lienora.fr/brand/anis-haba-founder.jpg" alt={t.name} loading="lazy" decoding="async" className="h-24 w-20 shrink-0 rounded-xl border border-[#D4AF37]/35 object-cover" />
+     <div className="min-w-0">
+       <p className="text-[10px] font-semibold uppercase tracking-wider text-[#A58128]">{t.tag}</p>
+       <h2 className="mt-1 font-serif text-base font-medium leading-5 text-[#4A1D43]">{t.title}</h2>
+       <p className="mt-2 line-clamp-3 text-xs leading-5 text-[#645665]">{t.intro}</p>
+     </div>
+   </div>
+   <details className="group mt-3 rounded-xl border border-[#D4AF37]/40 bg-[#FFFCF7]">
+     <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between rounded-xl px-3 py-2 text-sm font-semibold text-[#4A1D43] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A58128] [&::-webkit-details-marker]:hidden">
+       {t.cta}<span aria-hidden="true" className="ms-2 text-[#A58128] group-open:rotate-180">⌄</span>
+     </summary>
+     <div className="max-w-full space-y-1 border-t border-[#D4AF37]/30 px-3 pb-4 pt-1 [&_h3]:!mt-5 [&_h3]:!text-base [&_p]:!mt-3 [&_p]:!text-sm [&_p]:!leading-6">{paragraphs}</div>
+   </details>
+ </section>;
  return <section className="bg-white px-4 py-10 md:py-16" aria-label={t.title}>
   <div className="mx-auto grid max-w-5xl gap-6 rounded-3xl border border-[#D4AF37]/40 bg-[#FFFCF7] p-5 shadow-sm md:grid-cols-[190px_1fr] md:p-8">
    <div><img src="https://lienora.fr/brand/anis-haba-founder.jpg" alt="Anis Haba" loading="lazy" className="h-56 w-44 rounded-xl object-cover" /><p className="mt-3 text-sm font-bold text-[#4A1D43]">{t.name}</p></div>

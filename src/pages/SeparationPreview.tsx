@@ -1,4 +1,6 @@
 import { FounderStory } from '../components/FounderStory';
+import PlatformAppHome from '../components/PlatformAppHome';
+import { isPlatformAppMode } from '../lib/platformAppMode';
 import VisibilityHouseSection from '../components/VisibilityHouseSection';
 import { EssentialPresence } from '../components/EssentialPresence';
 import { siteStructureCopy } from '../lib/siteStructureCopy';
@@ -6,14 +8,24 @@ import { SEOHead } from '../components/SEOHead';
 import StructuredData from '../components/StructuredData';
 import { getHomeSeoMeta } from '../lib/seoMetaTemplates';
 import { generateOrganizationSchema, generateWebSiteSchema } from '../lib/structuredDataSchemas';
-import { ArrowRight, Users, Compass, Building2, MapPin, QrCode, Search, Share2, Sparkles } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { ArrowRight, Users, Compass, Building2, MapPin, QrCode, Search, Share2, Sparkles, Play, X } from 'lucide-react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CvBusinessJourney from '../components/CvBusinessJourney';
 import CvCapabilitiesSection from '../components/CvCapabilitiesSection';
 import SearchBar from '../components/SearchBar';
 import { useLanguage } from '../context/LanguageContext';
 import { useHomeData } from '../hooks/useHomeData';
+
+function CvSectionFold({ enabled, title, children, initiallyOpen = false }: { enabled: boolean; title: string; children: ReactNode; initiallyOpen?: boolean }) {
+  if (!enabled) return <>{children}</>;
+  return <details defaultOpen={initiallyOpen} className="mx-3 my-3 overflow-hidden rounded-xl border border-[#D4AF37]/45 bg-white">
+    <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 bg-[#FFFDF8] px-4 py-3 text-sm font-semibold text-[#4A1D43] [&::-webkit-details-marker]:hidden">
+      <span>{title}</span><span aria-hidden="true" className="text-xl text-[#A17D36]">⌄</span>
+    </summary>
+    <div className="border-t border-[#D4AF37]/30">{children}</div>
+  </details>;
+}
 
 type Lang = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 
@@ -32,150 +44,150 @@ const COPY: Record<Lang, {
   searchTitle: string; explorePlatform: string;
 }> = {
   fr: {
-    previewNotice: 'Maquette de séparation — aucun changement publié', platformTab: 'Accueil plateforme', cvTab: 'Espace CV Business',
+    previewNotice: 'Maquette de séparation — aucun changement publié', platformTab: 'Accueil plateforme', cvTab: 'Votre mini-appli',
     platformLabel: 'Plateforme et annuaire tunisien', platformTitle: 'Trouvez les entreprises et les services dont vous avez besoin en Tunisie.',
     platformDescription: 'Recherchez une activité, découvrez les professionnels référencés et contactez-les directement.',
     categories: [['Santé', '/citizens/sante'], ['Éducation', '/education'], ['Commerces', '/citizens/shops'], ['Services', '/citizens/services']],
     networkProof: (count) => `Déjà ${count} fiches enregistrées. Découvrez les activités publiées sur Dalil Tounes.`,
     certifiedProof: (count) => `dont ${count} établissements certifiés Dalil Tounes.`, loadingCount: "Chargement du nombre d'activités",
     professionalEyebrow: 'Vous êtes professionnel ?',
-    platformPromoTitle: 'Donnez à votre activité une présentation claire et partageable avec le CV Business Dalil Tounes.',
+    platformPromoTitle: 'Donnez à votre activité sa mini-appli professionnelle : claire, personnalisée et facile à partager.',
     platformPromoText: 'Présentez toutes vos informations, partagez-les par lien ou QR Code et renforcez votre présence sur Dalil Tounes ainsi que votre visibilité sur Google.',
     miniAppTitle: 'Votre entreprise vous accompagne partout',
-    miniAppText: "Votre CV Business s’installe sur l’écran d’accueil de votre téléphone comme une mini-application web personnalisée à votre entreprise. Ouvrez-la en un geste pour présenter votre activité, afficher votre QR Business et partager vos informations avec vos clients.",
+    miniAppText: "Votre mini-appli s’installe sur l’écran d’accueil de votre téléphone comme une mini-application web personnalisée à votre entreprise. Ouvrez-la en un geste pour présenter votre activité, afficher votre QR Business et partager vos informations avec vos clients.",
     miniAppHighlights: 'Mini-application installable • QR Business toujours disponible • partage immédiat',
     certifiedTitle: 'Des CV Business certifiés, déjà visibles sur Dalil Tounes',
     certifiedSubtitle: 'Découvrez de vrais professionnels référencés sur la plateforme et ouvrez leur présentation.',
     certifiedLoading: 'Chargement des CV Business certifiés…',
-    discoverCv: 'Découvrir le CV Business', cvLabel: 'Espace professionnel Dalil Tounes', cvTitle: 'Votre entreprise mérite mieux qu’une simple fiche.',
-    cvSubtitle: 'Créez votre CV Business et choisissez le modèle adapté à votre métier.',
+    discoverCv: 'Découvrir votre mini-appli', cvLabel: 'Espace professionnel Dalil Tounes', cvTitle: 'Votre entreprise mérite mieux qu’une simple fiche.',
+    cvSubtitle: 'Créez votre mini-appli professionnelle et choisissez le modèle adapté à votre métier.',
     cvDescription: 'Réunissez votre activité, vos services, vos réalisations, vos contacts et votre QR Code dans une présentation professionnelle facile à partager.',
     offers: 'Découvrir les offres', information: 'Demander des informations', example: 'Exemple réel : Aux saveurs d’Anis',
     cardEyebrow: 'Votre carte professionnelle, toujours avec vous', cardTitle: 'Présentez, partagez et faites connaître votre entreprise.',
-    cardIntro: 'Lors d’un rendez-vous, d’une rencontre ou d’un événement, votre QR Business donne immédiatement accès à votre CV Business.',
+    cardIntro: 'Lors d’un rendez-vous, d’une rencontre ou d’un événement, votre QR Business donne immédiatement accès à votre mini-appli.',
     qrBenefit: 'Un QR Code à présenter, imprimer ou faire scanner.',
     informationBenefit: 'Présentation, services, réalisations, photos, adresse, téléphone, WhatsApp, GPS et liens utiles réunis au même endroit.',
     sharingBenefit: 'Un lien facile à envoyer et à partager avec vos clients et vos contacts.',
     physicalCard: 'Vous n’avez plus besoin de distribuer systématiquement une carte de visite physique. Vous pouvez aussi y imprimer votre QR Business pour relier le papier à votre présentation numérique.',
     visibilityTitle: 'Une présence plus facile à retrouver',
-    visibilityText: 'Votre CV Business enrichit votre présence sur Dalil Tounes. Sa présentation structurée et accessible en ligne donne également à Google davantage d’informations pour comprendre et référencer votre activité. Le positionnement dans les résultats dépend ensuite des critères propres à Google.',
+    visibilityText: 'Votre mini-appli enrichit votre présence sur Dalil Tounes. Sa présentation structurée et accessible en ligne donne également à Google davantage d’informations pour comprendre et référencer votre activité. Le positionnement dans les résultats dépend ensuite des critères propres à Google.',
     searchEyebrow: 'Vous cherchez une entreprise ou un service en Tunisie ?', searchTitle: 'Retrouvez les activités référencées sur la plateforme Dalil Tounes.',
     explorePlatform: 'Explorer la plateforme',
   },
   ar: {
-    previewNotice: 'نموذج الفصل — لم يتم نشر أي تغيير', platformTab: 'واجهة المنصة', cvTab: 'فضاء CV Business',
+    previewNotice: 'نموذج الفصل — لم يتم نشر أي تغيير', platformTab: 'واجهة المنصة', cvTab: 'تطبيقك المصغّر',
     platformLabel: 'منصة ودليل مهني تونسي', platformTitle: 'اعثر على الشركات والخدمات التي تحتاجها في تونس.',
     platformDescription: 'ابحث عن نشاط، واكتشف المهنيين المدرجين وتواصل معهم مباشرة.',
     categories: [['الصحة', '/citizens/sante'], ['التعليم', '/education'], ['المتاجر', '/citizens/shops'], ['الخدمات', '/citizens/services']],
     networkProof: (count) => `تم تسجيل ${count} بطاقة، من بينها ملفات لا تزال قيد الاستكمال. اكتشف الأنشطة المنشورة على دليل تونس.`,
     certifiedProof: (count) => `من بينها ${count} مؤسسة موثّقة من دليل تونس.`, loadingCount: 'جارٍ تحميل عدد الأنشطة',
-    professionalEyebrow: 'هل أنت مهني؟', platformPromoTitle: 'امنح نشاطك عرضاً واضحاً وسهل المشاركة مع CV Business من دليل تونس.',
+    professionalEyebrow: 'هل أنت مهني؟', platformPromoTitle: 'أنشئ تطبيقاً مصغّراً خاصاً بمؤسستك، واضحاً وسهل المشاركة.',
     platformPromoText: 'اعرض كل معلوماتك وشاركها عبر رابط أو رمز QR، وعزّز حضورك على دليل تونس وظهور نشاطك على Google.',
     miniAppTitle: 'مؤسستك ترافقك أينما ذهبت',
-    miniAppText: 'يمكن تثبيت CV Business على الشاشة الرئيسية لهاتفك كتطبيق ويب مصغر ومخصص لمؤسستك. افتحه بلمسة واحدة لعرض نشاطك وإظهار QR Business ومشاركة معلوماتك مع عملائك.',
+    miniAppText: 'يمكن تثبيت تطبيقك المصغّر على الشاشة الرئيسية لهاتفك كتطبيق ويب مصغر ومخصص لمؤسستك. افتحه بلمسة واحدة لعرض نشاطك وإظهار QR Business ومشاركة معلوماتك مع عملائك.',
     miniAppHighlights: 'تطبيق مصغر قابل للتثبيت • QR Business متاح دائماً • مشاركة فورية',
     certifiedTitle: 'نماذج CV Business موثّقة ومتاحة بالفعل على دليل تونس',
     certifiedSubtitle: 'اكتشف مهنيين حقيقيين مدرجين على المنصة وافتح عرضهم المهني.',
     certifiedLoading: 'جارٍ تحميل نماذج CV Business الموثّقة…',
-    discoverCv: 'اكتشف CV Business', cvLabel: 'الفضاء المهني لدليل تونس', cvTitle: 'شركتك تستحق أكثر من مجرد بطاقة بسيطة.',
-    cvSubtitle: 'أنشئ CV Business واختر النموذج الأنسب لمهنتك.',
+    discoverCv: 'اكتشف تطبيقك المصغّر', cvLabel: 'الفضاء المهني لدليل تونس', cvTitle: 'شركتك تستحق أكثر من مجرد بطاقة بسيطة.',
+    cvSubtitle: 'أنشئ تطبيقك المصغّر واختر النموذج الأنسب لمهنتك.',
     cvDescription: 'اجمع نشاطك وخدماتك وإنجازاتك ووسائل الاتصال ورمز QR في عرض مهني سهل المشاركة.',
     offers: 'اكتشف العروض', information: 'اطلب معلومات', example: 'مثال حقيقي: Aux saveurs d’Anis',
     cardEyebrow: 'بطاقتك المهنية معك دائماً', cardTitle: 'قدّم شركتك وشاركها واجعلها معروفة.',
-    cardIntro: 'أثناء موعد أو لقاء أو فعالية، يتيح QR Business الوصول فوراً إلى CV Business الخاص بك.',
+    cardIntro: 'أثناء موعد أو لقاء أو فعالية، يتيح QR Business الوصول فوراً إلى تطبيقك المصغّر.',
     qrBenefit: 'رمز QR يمكنك عرضه أو طباعته أو جعله قابلاً للمسح.',
     informationBenefit: 'العرض والخدمات والإنجازات والصور والعنوان والهاتف وWhatsApp والموقع عبر GPS والروابط المفيدة في مكان واحد.',
     sharingBenefit: 'رابط سهل الإرسال والمشاركة مع عملائك ومعارفك.',
     physicalCard: 'لم تعد مضطراً إلى توزيع بطاقة ورقية في كل مرة. ويمكنك أيضاً طباعة QR Business عليها لربط البطاقة بعرضك الرقمي.',
     visibilityTitle: 'حضور يسهل العثور عليه',
-    visibilityText: 'يعزّز CV Business حضورك على دليل تونس. كما يمنح عرضه المنظم والمتاح على الإنترنت Google معلومات أكثر لفهم نشاطك وفهرسته. ويبقى ترتيب النتائج خاضعاً لمعايير Google الخاصة.',
+    visibilityText: 'يعزّز تطبيقك المصغّر حضورك على دليل تونس. كما يمنح عرضه المنظم والمتاح على الإنترنت Google معلومات أكثر لفهم نشاطك وفهرسته. ويبقى ترتيب النتائج خاضعاً لمعايير Google الخاصة.',
     searchEyebrow: 'هل تبحث عن شركة أو خدمة في تونس؟', searchTitle: 'اكتشف الأنشطة المدرجة على منصة دليل تونس.', explorePlatform: 'استكشف المنصة',
   },
   en: {
-    previewNotice: 'Separation preview — no changes published', platformTab: 'Platform home', cvTab: 'Business CV space',
+    previewNotice: 'Separation preview — no changes published', platformTab: 'Platform home', cvTab: 'Your business mini-app',
     platformLabel: 'Tunisian platform and directory', platformTitle: 'Find the businesses and services you need in Tunisia.',
     platformDescription: 'Search for an activity, discover listed professionals and contact them directly.',
     categories: [['Health', '/citizens/sante'], ['Education', '/education'], ['Shops', '/citizens/shops'], ['Services', '/citizens/services']],
     networkProof: (count) => `${count} records registered, including files still being completed. Explore the published businesses on Dalil Tounes.`,
     certifiedProof: (count) => `including ${count} Dalil Tounes certified businesses.`, loadingCount: 'Loading the number of activities',
-    professionalEyebrow: 'Are you a professional?', platformPromoTitle: 'Give your activity a clear, shareable presentation with the Dalil Tounes Business CV.',
+    professionalEyebrow: 'Are you a professional?', platformPromoTitle: 'Give your business a personalised mini-app that is clear and easy to share.',
     platformPromoText: 'Present all your information, share it by link or QR code and strengthen your presence on Dalil Tounes and your visibility on Google.',
     miniAppTitle: 'Take your business everywhere',
-    miniAppText: 'Your Business CV installs on your phone’s home screen as a mini web app personalized for your business. Open it in one tap to present your activity, display your Business QR and share your information with clients.',
+    miniAppText: 'Your business mini-app installs on your phone’s home screen as a mini web app personalized for your business. Open it in one tap to present your activity, display your Business QR and share your information with clients.',
     miniAppHighlights: 'Installable mini app • Business QR always available • instant sharing',
     certifiedTitle: 'Certified Business CVs already visible on Dalil Tounes',
     certifiedSubtitle: 'Discover real professionals listed on the platform and open their presentation.',
     certifiedLoading: 'Loading certified Business CVs…',
-    discoverCv: 'Discover the Business CV', cvLabel: 'Dalil Tounes professional space', cvTitle: 'Your business deserves more than a simple listing.',
-    cvSubtitle: 'Create your Business CV and choose the model that suits your profession.',
+    discoverCv: 'Discover your business mini-app', cvLabel: 'Dalil Tounes professional space', cvTitle: 'Your business deserves more than a simple listing.',
+    cvSubtitle: 'Create your business mini-app and choose the model that suits your profession.',
     cvDescription: 'Bring together your activity, services, work, contact details and QR code in a professional presentation that is easy to share.',
     offers: 'Discover the offers', information: 'Request information', example: 'Real example: Aux saveurs d’Anis',
     cardEyebrow: 'Your professional card, always with you', cardTitle: 'Present, share and promote your business.',
-    cardIntro: 'At a meeting, appointment or event, your Business QR gives immediate access to your Business CV.',
+    cardIntro: 'At a meeting, appointment or event, your Business QR gives immediate access to your mini-app.',
     qrBenefit: 'A QR code to show, print or scan.',
     informationBenefit: 'Presentation, services, work, photos, address, phone, WhatsApp, GPS and useful links brought together in one place.',
     sharingBenefit: 'A link that is easy to send and share with clients and contacts.',
     physicalCard: 'You no longer need to hand out a physical business card every time. You can also print your Business QR on it to connect paper with your digital presentation.',
     visibilityTitle: 'A presence that is easier to find',
-    visibilityText: 'Your Business CV enriches your presence on Dalil Tounes. Its structured, accessible online presentation also gives Google more information to understand and index your activity. Ranking in results then depends on Google’s own criteria.',
+    visibilityText: 'Your business mini-app enriches your presence on Dalil Tounes. Its structured, accessible online presentation also gives Google more information to understand and index your activity. Ranking in results then depends on Google’s own criteria.',
     searchEyebrow: 'Looking for a business or service in Tunisia?', searchTitle: 'Find listed activities on the Dalil Tounes platform.', explorePlatform: 'Explore the platform',
   },
   it: {
-    previewNotice: 'Anteprima della separazione — nessuna modifica pubblicata', platformTab: 'Home piattaforma', cvTab: 'Spazio CV Business',
+    previewNotice: 'Anteprima della separazione — nessuna modifica pubblicata', platformTab: 'Home piattaforma', cvTab: 'La tua mini-app',
     platformLabel: 'Piattaforma e directory tunisina', platformTitle: 'Trova le imprese e i servizi di cui hai bisogno in Tunisia.',
     platformDescription: 'Cerca un’attività, scopri i professionisti presenti e contattali direttamente.',
     categories: [['Salute', '/citizens/sante'], ['Istruzione', '/education'], ['Negozi', '/citizens/shops'], ['Servizi', '/citizens/services']],
     networkProof: (count) => `${count} schede registrate, incluse quelle ancora da completare. Scopri le attività pubblicate su Dalil Tounes.`,
     certifiedProof: (count) => `di cui ${count} attività certificate da Dalil Tounes.`, loadingCount: 'Caricamento del numero di attività',
-    professionalEyebrow: 'Sei un professionista?', platformPromoTitle: 'Dai alla tua attività una presentazione chiara e condivisibile con il CV Business Dalil Tounes.',
+    professionalEyebrow: 'Sei un professionista?', platformPromoTitle: 'Dai alla tua attività una mini-app personalizzata, chiara e facile da condividere.',
     platformPromoText: 'Presenta tutte le tue informazioni, condividile tramite link o QR Code e rafforza la tua presenza su Dalil Tounes e la tua visibilità su Google.',
     miniAppTitle: 'La tua impresa ti accompagna ovunque',
-    miniAppText: 'Il CV Business si installa sulla schermata Home del telefono come una mini web app personalizzata per la tua impresa. Aprila con un gesto per presentare l’attività, mostrare il QR Business e condividere le informazioni con i clienti.',
+    miniAppText: 'La tua mini-app si installa sulla schermata Home del telefono come una mini web app personalizzata per la tua impresa. Aprila con un gesto per presentare l’attività, mostrare il QR Business e condividere le informazioni con i clienti.',
     miniAppHighlights: 'Mini app installabile • QR Business sempre disponibile • condivisione immediata',
     certifiedTitle: 'CV Business certificati già visibili su Dalil Tounes',
     certifiedSubtitle: 'Scopri veri professionisti presenti sulla piattaforma e apri la loro presentazione.',
     certifiedLoading: 'Caricamento dei CV Business certificati…',
-    discoverCv: 'Scopri il CV Business', cvLabel: 'Spazio professionale Dalil Tounes', cvTitle: 'La tua impresa merita più di una semplice scheda.',
-    cvSubtitle: 'Crea il tuo CV Business e scegli il modello adatto alla tua professione.',
+    discoverCv: 'Scopri la tua mini-app', cvLabel: 'Spazio professionale Dalil Tounes', cvTitle: 'La tua impresa merita più di una semplice scheda.',
+    cvSubtitle: 'Crea la tua mini-app e scegli il modello adatto alla tua professione.',
     cvDescription: 'Riunisci attività, servizi, lavori, contatti e QR Code in una presentazione professionale facile da condividere.',
     offers: 'Scopri le offerte', information: 'Richiedi informazioni', example: 'Esempio reale: Aux saveurs d’Anis',
     cardEyebrow: 'La tua carta professionale, sempre con te', cardTitle: 'Presenta, condividi e fai conoscere la tua impresa.',
-    cardIntro: 'Durante un appuntamento, un incontro o un evento, il tuo QR Business dà accesso immediato al tuo CV Business.',
+    cardIntro: 'Durante un appuntamento, un incontro o un evento, il tuo QR Business apre subito la tua mini-app.',
     qrBenefit: 'Un QR Code da mostrare, stampare o far scansionare.',
     informationBenefit: 'Presentazione, servizi, lavori, foto, indirizzo, telefono, WhatsApp, GPS e link utili riuniti in un solo posto.',
     sharingBenefit: 'Un link facile da inviare e condividere con clienti e contatti.',
     physicalCard: 'Non devi più distribuire ogni volta un biglietto da visita fisico. Puoi anche stamparvi il QR Business per collegare la carta alla tua presentazione digitale.',
     visibilityTitle: 'Una presenza più facile da trovare',
-    visibilityText: 'Il CV Business arricchisce la tua presenza su Dalil Tounes. La sua presentazione strutturata e accessibile online offre anche a Google più informazioni per comprendere e indicizzare la tua attività. Il posizionamento dipende poi dai criteri propri di Google.',
+    visibilityText: 'La tua mini-app arricchisce la tua presenza su Dalil Tounes. La sua presentazione strutturata e accessibile online offre anche a Google più informazioni per comprendere e indicizzare la tua attività. Il posizionamento dipende poi dai criteri propri di Google.',
     searchEyebrow: 'Cerchi un’impresa o un servizio in Tunisia?', searchTitle: 'Trova le attività presenti sulla piattaforma Dalil Tounes.', explorePlatform: 'Esplora la piattaforma',
   },
   ru: {
-    previewNotice: 'Макет разделения — изменения не опубликованы', platformTab: 'Главная платформы', cvTab: 'Раздел Business CV',
+    previewNotice: 'Макет разделения — изменения не опубликованы', platformTab: 'Главная платформы', cvTab: 'Ваше мини-приложение',
     platformLabel: 'Тунисская платформа и каталог', platformTitle: 'Найдите нужные компании и услуги в Тунисе.',
     platformDescription: 'Ищите виды деятельности, находите представленных специалистов и связывайтесь с ними напрямую.',
     categories: [['Здоровье', '/citizens/sante'], ['Образование', '/education'], ['Магазины', '/citizens/shops'], ['Услуги', '/citizens/services']],
     networkProof: (count) => `Зарегистрировано ${count} карточек, включая незаполненные. Изучите опубликованные организации на Dalil Tounes.`,
     certifiedProof: (count) => `из них ${count} компаний сертифицированы Dalil Tounes.`, loadingCount: 'Загрузка количества видов деятельности',
-    professionalEyebrow: 'Вы профессионал?', platformPromoTitle: 'Представьте свою деятельность понятно и удобно с Business CV Dalil Tounes.',
+    professionalEyebrow: 'Вы профессионал?', platformPromoTitle: 'Представьте свой бизнес с помощью понятного и удобного мини-приложения.',
     platformPromoText: 'Покажите всю информацию, делитесь ею по ссылке или QR-коду и укрепляйте присутствие на Dalil Tounes и видимость в Google.',
     miniAppTitle: 'Ваша компания всегда с вами',
-    miniAppText: 'Business CV устанавливается на главный экран телефона как персонализированное мини-веб-приложение вашей компании. Откройте его одним касанием, чтобы представить деятельность, показать Business QR и поделиться информацией с клиентами.',
+    miniAppText: 'Ваше мини-приложение устанавливается на главный экран телефона как персонализированное мини-веб-приложение вашей компании. Откройте его одним касанием, чтобы представить деятельность, показать Business QR и поделиться информацией с клиентами.',
     miniAppHighlights: 'Устанавливаемое мини-приложение • Business QR всегда под рукой • мгновенная отправка',
     certifiedTitle: 'Сертифицированные Business CV уже представлены на Dalil Tounes',
     certifiedSubtitle: 'Познакомьтесь с реальными специалистами на платформе и откройте их презентации.',
     certifiedLoading: 'Загрузка сертифицированных Business CV…',
-    discoverCv: 'Открыть Business CV', cvLabel: 'Профессиональное пространство Dalil Tounes', cvTitle: 'Ваш бизнес заслуживает большего, чем простая карточка.',
-    cvSubtitle: 'Создайте Business CV и выберите модель для своей профессии.',
+    discoverCv: 'Узнать о мини-приложении', cvLabel: 'Профессиональное пространство Dalil Tounes', cvTitle: 'Ваш бизнес заслуживает большего, чем простая карточка.',
+    cvSubtitle: 'Создайте мини-приложение и выберите модель для своей профессии.',
     cvDescription: 'Объедините деятельность, услуги, работы, контакты и QR-код в профессиональной презентации, которой легко поделиться.',
     offers: 'Посмотреть предложения', information: 'Запросить информацию', example: 'Реальный пример: Aux saveurs d’Anis',
     cardEyebrow: 'Ваша профессиональная карточка всегда с вами', cardTitle: 'Представляйте, делитесь и продвигайте свою компанию.',
-    cardIntro: 'На встрече, переговорах или мероприятии ваш Business QR мгновенно открывает Business CV.',
+    cardIntro: 'На встрече, переговорах или мероприятии ваш Business QR мгновенно открывает мини-приложение.',
     qrBenefit: 'QR-код, который можно показать, распечатать или отсканировать.',
     informationBenefit: 'Презентация, услуги, работы, фотографии, адрес, телефон, WhatsApp, GPS и полезные ссылки в одном месте.',
     sharingBenefit: 'Ссылка, которую легко отправить клиентам и контактам.',
     physicalCard: 'Больше не нужно каждый раз раздавать бумажную визитку. На ней также можно напечатать Business QR и связать её с цифровой презентацией.',
     visibilityTitle: 'Присутствие, которое легче найти',
-    visibilityText: 'Business CV делает ваше присутствие на Dalil Tounes более полным. Структурированная онлайн-презентация также даёт Google больше информации для понимания и индексирования вашей деятельности. Позиция в результатах зависит от собственных критериев Google.',
+    visibilityText: 'Мини-приложение делает ваше присутствие на Dalil Tounes более полным. Структурированная онлайн-презентация также даёт Google больше информации для понимания и индексирования вашей деятельности. Позиция в результатах зависит от собственных критериев Google.',
     searchEyebrow: 'Ищете компанию или услугу в Тунисе?', searchTitle: 'Найдите представленные виды деятельности на платформе Dalil Tounes.', explorePlatform: 'Перейти на платформу',
   },
 };
@@ -195,7 +207,7 @@ const HOME_ECOSYSTEM_COPY: Record<Lang, {
     ],
     cvBusiness: 'CV Business', cvPortfolio: 'CV Portfolio',
     cvAdvantageTitle: 'Votre avantage dans l’écosystème Dalil Tounes',
-    cvAdvantageText: 'Votre entreprise reste visible dans les recherches et les pages qui correspondent à son activité. Avec un CV Business, les visiteurs découvrent immédiatement vos services, vos photos, vos horaires et tous les moyens de vous contacter.',
+    cvAdvantageText: 'Votre entreprise reste visible dans les recherches et les pages qui correspondent à son activité. Avec votre mini-appli, les visiteurs découvrent immédiatement vos services, vos photos, vos horaires et tous les moyens de vous contacter.',
   },
   ar: {
     title: 'كل دليل تونس بنظرة واحدة', hint: 'اختر القسم الذي يهمّك',
@@ -208,7 +220,7 @@ const HOME_ECOSYSTEM_COPY: Record<Lang, {
     ],
     cvBusiness: 'CV Business', cvPortfolio: 'CV Portfolio',
     cvAdvantageTitle: 'ميزتك داخل منظومة دليل تونس',
-    cvAdvantageText: 'تبقى مؤسستك ظاهرة في البحث والصفحات المناسبة لنشاطها. ومع CV Business يكتشف الزائر فوراً خدماتك وصورك وأوقات العمل وكل وسائل الاتصال بك.',
+    cvAdvantageText: 'تبقى مؤسستك ظاهرة في البحث والصفحات المناسبة لنشاطها. ومع تطبيقك المصغّر يكتشف الزائر فوراً خدماتك وصورك وأوقات العمل وكل وسائل الاتصال بك.',
   },
   en: {
     title: 'All of Dalil Tounes at a glance', hint: 'Choose the section you need',
@@ -221,7 +233,7 @@ const HOME_ECOSYSTEM_COPY: Record<Lang, {
     ],
     cvBusiness: 'Business CV', cvPortfolio: 'Portfolio CV',
     cvAdvantageTitle: 'Your advantage in the Dalil Tounes ecosystem',
-    cvAdvantageText: 'Your business remains visible in searches and the pages relevant to its activity. With a Business CV, visitors immediately see your services, photos, opening hours and every way to contact you.',
+    cvAdvantageText: 'Your business remains visible in searches and the pages relevant to its activity. With your mini-app, visitors immediately see your services, photos, opening hours and every way to contact you.',
   },
   it: {
     title: 'Tutto Dalil Tounes a colpo d’occhio', hint: 'Scegli la sezione che ti interessa',
@@ -234,7 +246,7 @@ const HOME_ECOSYSTEM_COPY: Record<Lang, {
     ],
     cvBusiness: 'CV Business', cvPortfolio: 'CV Portfolio',
     cvAdvantageTitle: 'Il tuo vantaggio nell’ecosistema Dalil Tounes',
-    cvAdvantageText: 'La tua impresa rimane visibile nelle ricerche e nelle pagine pertinenti alla sua attività. Con un CV Business, i visitatori scoprono subito servizi, foto, orari e tutti i modi per contattarti.',
+    cvAdvantageText: 'La tua impresa rimane visibile nelle ricerche e nelle pagine pertinenti alla sua attività. Con la tua mini-app, i visitatori scoprono subito servizi, foto, orari e tutti i modi per contattarti.',
   },
   ru: {
     title: 'Весь Dalil Tounes с первого взгляда', hint: 'Выберите нужный раздел',
@@ -247,7 +259,7 @@ const HOME_ECOSYSTEM_COPY: Record<Lang, {
     ],
     cvBusiness: 'Business CV', cvPortfolio: 'Portfolio CV',
     cvAdvantageTitle: 'Ваше преимущество в экосистеме Dalil Tounes',
-    cvAdvantageText: 'Компания остаётся видимой в поиске и подходящих разделах. Business CV сразу показывает посетителям услуги, фотографии, часы работы и все способы связи.',
+    cvAdvantageText: 'Компания остаётся видимой в поиске и подходящих разделах. Мини-приложение сразу показывает посетителям услуги, фотографии, часы работы и все способы связи.',
   },
 };
 
@@ -259,9 +271,17 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as Lang;
   const t = COPY[lang];
   const ecosystem = HOME_ECOSYSTEM_COPY[lang];
-  const { certifiedCount } = useHomeData();
+  const { legacyCertifiedCount, recommendedCount } = useHomeData();
   const structure = siteStructureCopy[lang];
   const CvHeading = embedded ? 'h3' : 'h1';
+  const compactCvApp = view === 'cv' && fixedView === 'cv' && isPlatformAppMode() && !embedded;
+  const [videoOpen, setVideoOpen] = useState(false);
+  useEffect(() => {
+    if (!videoOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => { if (event.key === 'Escape') setVideoOpen(false); };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [videoOpen]);
   // The actual public landing page is PlatformHome (not the legacy Home.tsx).
   // Read the authoritative aggregate directly; never display the old 2 351 total
   // from a stale client cache while the current RPC is still loading.
@@ -294,15 +314,95 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
   }, [view]);
   const countsAvailable = verifiedTotal !== null;
   const localizedCount = countsAvailable ? new Intl.NumberFormat(lang === 'ar' ? 'ar-TN' : lang).format(verifiedTotal) : '—';
-  const localizedCertifiedCount = countsAvailable ? new Intl.NumberFormat(lang === 'ar' ? 'ar-TN' : lang).format(certifiedCount) : '—';
+  const localizedRecommendedCount = countsAvailable && recommendedCount !== null ? new Intl.NumberFormat(lang === 'ar' ? 'ar-TN' : lang).format(recommendedCount) : null;
+  const localizedLegacyCertifiedCount = countsAvailable ? new Intl.NumberFormat(lang === 'ar' ? 'ar-TN' : lang).format(legacyCertifiedCount) : '—';
   const heroVideoSrc = lang === 'fr'
     ? 'https://static.metricool.com/video/4610595/202609/eaaff4e56ccf4aba.mp4'
     : lang === 'ar'
       ? 'https://static.metricool.com/video/4610595/202609/0a154ec0c4a44fb7.mp4'
       : null;
 
+  if (view === 'platform' && fixedView === 'platform' && isPlatformAppMode() && !embedded) {
+    return <>
+      <SEOHead {...getHomeSeoMeta()} currentPath="/" />
+      <StructuredData data={[generateOrganizationSchema(), generateWebSiteSchema()]} />
+      <PlatformAppHome totalCount={countsAvailable ? localizedCount : null}
+        recommendedCount={localizedRecommendedCount}
+        legacyCertifiedCount={countsAvailable ? localizedLegacyCertifiedCount : null} />
+    </>;
+  }
+
   return (
-    <div dir={lang === 'ar' ? 'rtl' : 'ltr'} className={view === 'platform' ? "premium-page premium-home" : "bg-white text-slate-900"}>
+    <div dir={lang === 'ar' ? 'rtl' : 'ltr'} className={view === 'platform' ? "premium-page premium-home" : compactCvApp ? "cv-business-app-type bg-white text-slate-900" : "bg-white text-slate-900"}>
+      {compactCvApp && <style>{`
+        /* App-only typography and surfaces, regardless of the preview viewport width. */
+        .cv-business-app-type { background: #FFFCF7; color: #443941; }
+        .cv-business-app-type section {
+          background: #FFFFFF !important;
+          background-image: none !important;
+          border-color: rgba(185,153,79,0.28) !important;
+          box-shadow: none !important;
+          border-radius: 12px !important;
+          padding: 12px !important;
+        }
+        .cv-business-app-type section > div,
+        .cv-business-app-type section > div > div { gap: 12px !important; }
+        .cv-business-app-type h1,
+        .cv-business-app-type .public-title {
+          font-size: 1.18rem !important;
+          line-height: 1.38 !important;
+          font-weight: 500 !important;
+          letter-spacing: 0 !important;
+          color: #443941 !important;
+          margin-top: 8px !important;
+        }
+        .cv-business-app-type h2,
+        .cv-business-app-type .public-heading {
+          font-size: 1.04rem !important;
+          line-height: 1.42 !important;
+          font-weight: 500 !important;
+          color: #443941 !important;
+        }
+        .cv-business-app-type h3 {
+          font-size: 0.92rem !important;
+          line-height: 1.45 !important;
+          font-weight: 500 !important;
+          color: #4E434B !important;
+        }
+        .cv-business-app-type p,
+        .cv-business-app-type li {
+          font-size: 0.79rem !important;
+          line-height: 1.58 !important;
+          font-weight: 400 !important;
+          letter-spacing: normal !important;
+          color: #635960 !important;
+        }
+        .cv-business-app-type a,
+        .cv-business-app-type button,
+        .cv-business-app-type summary {
+          font-size: 0.78rem !important;
+          font-weight: 500 !important;
+          letter-spacing: normal !important;
+        }
+        .cv-business-app-type a,
+        .cv-business-app-type button {
+          background: #FFFDF8 !important;
+          color: #443941 !important;
+          border: 1px solid rgba(185,153,79,0.4) !important;
+          box-shadow: none !important;
+        }
+        .cv-business-app-type [class*="shadow-"] { box-shadow: none !important; }
+        .cv-business-app-type div[class*="bg-"] { background-color: #FFFDF8 !important; background-image: none !important; }
+        .cv-business-app-type section [class*="text-white"],
+        .cv-business-app-type section [class*="text-[#F1D783]"] { color: #554B52 !important; }
+        .cv-business-app-type video,
+        .cv-business-app-type img { max-height: 260px; object-fit: contain; }
+        .cv-business-app-type section [class*="h-[390px]"] { height: 260px !important; }
+        .cv-business-app-type [class*="rounded-[30px]"] { border-radius: 12px !important; }
+        .cv-business-app-type details > summary { color: #443941 !important; }
+        .cv-business-app-type [class*="font-black"],
+        .cv-business-app-type [class*="font-bold"] { font-weight: 500 !important; }
+      `}</style>}
       {view === 'platform' && <><SEOHead {...getHomeSeoMeta()} currentPath="/" /><StructuredData data={[generateOrganizationSchema(), generateWebSiteSchema()]} /></>}
       {!embedded && view === 'cv' && <SEOHead title={`${structure.products} | Dalil Tounes`} description={t.cvDescription} canonical="https://dalil-tounes.com/cv-business" currentPath="/cv-business" />}
       {!fixedView && <div className="sticky top-0 z-40 border-b border-[#D4AF37]/35 bg-white/95 px-4 py-3 backdrop-blur">
@@ -368,13 +468,26 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
         </>
       ) : (
         <>
+          {compactCvApp && <section className="mx-3 mt-3 rounded-xl border border-[#D4AF37]/40 bg-[#FFFDF8] px-3 py-3">
+            <h1 className="font-serif text-base font-medium text-[#443941]">{({ fr: "Créez votre mini-application professionnelle", ar: "أنشئ تطبيقك المصغّر المهني", en: "Create your own business mini-app", it: "Crea la tua mini-app professionale", ru: "Создайте собственное мини-приложение для бизнеса" } as Record<Lang, string>)[lang]}</h1>
+            <p className="mt-1 text-xs leading-5 text-[#655C62]">{({
+              fr: 'Une mini-application personnalisée, à l’image de votre entreprise, pour valoriser votre activité, élargir votre visibilité et toucher de nouveaux clients. Facile à partager grâce à son lien et son QR Business.',
+              ar: 'تطبيق مصغّر خاص بنشاطك وبهوية مؤسستك، يساعدك على إبراز خدماتك وتوسيع انتشارك والوصول إلى حرفاء جدد. تشاركه بسهولة عبر رابط ورمز QR Business.',
+              en: 'A personalised mini-app reflecting your business, designed to showcase your services, expand your reach and connect with new customers. Easy to share with a link and Business QR code.',
+              it: 'Una mini-app personalizzata per la tua impresa, per valorizzare i servizi, ampliare la visibilità e raggiungere nuovi clienti. Facile da condividere con un link e un QR Business.',
+              ru: 'Персональное мини-приложение в стиле вашей компании поможет представить услуги, расширить охват и привлечь новых клиентов. Им легко поделиться по ссылке и QR-коду Business.'
+            } as Record<Lang, string>)[lang]}</p>
+          </section>}
+          <CvSectionFold enabled={compactCvApp} title={compactCvApp ? ({fr:'Votre mini-appli',ar:'تطبيقك المصغّر',en:'Your mini-app',it:'La tua mini-app',ru:'Ваше мини-приложение'} as Record<Lang,string>)[lang] : t.cvLabel} initiallyOpen>
           <section className="border-b border-[#D4AF37]/25 bg-[radial-gradient(circle_at_top_left,rgba(212,175,55,0.18),transparent_28%),linear-gradient(135deg,#fffdf8_0%,#ffffff_52%,#f7f0f5_100%)] px-4 py-8 md:py-14">
             <div className="mx-auto grid max-w-[1180px] items-center gap-8 lg:grid-cols-[1fr_0.72fr]">
               <div><div className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/45 bg-white px-3 py-1.5 text-xs font-black uppercase tracking-[0.14em] text-[#4A1D43] shadow-sm"><Sparkles className="h-4 w-4 text-[#D4AF37]" /> {t.cvLabel}</div><CvHeading className="public-title mt-5 font-serif text-4xl font-bold leading-tight text-[#2E102A] md:text-5xl">{t.cvTitle}</CvHeading><p className="mt-3 font-serif text-2xl font-bold leading-tight text-[#B58A18] md:text-3xl">{t.cvSubtitle}</p><p className="mt-5 max-w-xl text-base leading-7 text-gray-600">{t.cvDescription}</p><div className="mt-6 flex flex-wrap gap-3"><a href="/subscription" className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-[#4A1D43] px-5 py-3 text-sm font-black text-white">{t.offers} <ArrowRight className={`h-4 w-4 ${lang === 'ar' ? 'rotate-180' : ''}`} /></a><a href="/contact" className="inline-flex min-h-12 items-center rounded-xl border border-[#D4AF37] bg-white px-5 py-3 text-sm font-bold text-[#4A1D43]">{t.information}</a></div></div>
-              <div className="rounded-[30px] border border-[#D4AF37]/45 bg-white/90 p-4 shadow-[0_28px_70px_rgba(74,29,67,0.16)]"><p className="mb-3 text-center text-xs font-bold text-[#4A1D43]">{t.example}</p><div className="flex h-[390px] items-center justify-center overflow-hidden rounded-[18px] bg-[#032D21]">{heroVideoSrc ? <video key={heroVideoSrc} src={heroVideoSrc} controls playsInline preload="metadata" poster="/images/cv-business-portfolio-aux-saveurs-anis.png" className="h-[390px] w-auto max-w-full object-contain" aria-label={t.example} /> : <img src="/images/cv-business-portfolio-aux-saveurs-anis.png" alt="CV Business Aux saveurs d’Anis" className="h-[390px] w-auto object-contain object-top" />}</div></div>
+              <div className="rounded-[30px] border border-[#D4AF37]/45 bg-white/90 p-4 shadow-[0_28px_70px_rgba(74,29,67,0.16)]"><p className="mb-3 text-center text-xs font-bold text-[#4A1D43]">{t.example}</p><div className="flex h-[390px] items-center justify-center overflow-hidden rounded-[18px] bg-[#032D21]">{compactCvApp ? <button type="button" onClick={() => setVideoOpen(true)} aria-label={lang === 'fr' ? 'Agrandir la vidéo de présentation' : lang === 'ar' ? 'تكبير فيديو العرض' : lang === 'en' ? 'Enlarge the presentation video' : lang === 'it' ? 'Ingrandisci il video' : 'Открыть видео'} className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-xl bg-[#FFFDF8]"><img src="/images/cv-business-portfolio-aux-saveurs-anis.png" alt={t.example} className="h-full w-full object-contain" /><span className="absolute inset-0 flex items-center justify-center bg-black/15"><span className="flex h-14 w-14 items-center justify-center rounded-full bg-white/95 text-[#4A1D43] shadow"><Play className="h-6 w-6" fill="currentColor" aria-hidden="true" /></span></span></button> : heroVideoSrc ? <video key={heroVideoSrc} src={heroVideoSrc} controls playsInline preload="metadata" poster="/images/cv-business-portfolio-aux-saveurs-anis.png" className="h-[390px] w-auto max-w-full object-contain" aria-label={t.example} /> : <img src="/images/cv-business-portfolio-aux-saveurs-anis.png" alt="CV Business Aux saveurs d’Anis" className="h-[390px] w-auto object-contain object-top" />}</div></div>
             </div>
           </section>
+          </CvSectionFold>
 
+          <CvSectionFold enabled={compactCvApp} title={t.cardTitle}>
           <section className="bg-white px-4 py-10 md:py-14">
             <div className="mx-auto max-w-6xl rounded-[30px] border border-[#D4AF37]/35 bg-[#FFFCF5] p-5 shadow-[0_20px_55px_rgba(74,29,67,0.08)] md:p-8">
               <p className="text-xs font-black uppercase tracking-[0.16em] text-[#B58A18]">{t.cardEyebrow}</p><h2 className="public-heading mt-2 max-w-4xl font-serif text-3xl font-medium text-[#2E102A] md:text-4xl">{t.cardTitle}</h2><p className="mt-4 max-w-4xl text-base leading-7 text-gray-700">{t.cardIntro}</p>
@@ -383,7 +496,9 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
               <div className="mt-5 rounded-2xl bg-[#2E102A] p-5 text-white md:p-6"><h3 className="font-serif text-xl font-bold text-[#F1D783] md:text-2xl">{t.visibilityTitle}</h3><p className="mt-2 max-w-5xl text-sm leading-6 text-white/85 md:text-base">{t.visibilityText}</p></div>
             </div>
           </section>
+          </CvSectionFold>
 
+          <CvSectionFold enabled={compactCvApp} title={t.miniAppTitle}>
           <section className="mx-auto max-w-5xl space-y-4 px-4 py-5">
             <h2 className="font-serif text-xl font-bold text-[#4A1D43]">{t.miniAppTitle}</h2>
             <p className="text-sm leading-6 text-slate-600">{t.miniAppText}</p>
@@ -392,14 +507,27 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
             <p className="text-sm leading-6 text-slate-600">{ecosystem.cvAdvantageText}</p>
             <details className="rounded-2xl border border-[#D4AF37]/40 p-4"><summary className="cursor-pointer font-bold text-[#4A1D43]">{structure.details}</summary><VisibilityHouseSection showNetworkProof={false} /></details>
           </section>
+          </CvSectionFold>
 
+          <CvSectionFold enabled={compactCvApp} title={lang === 'fr' ? 'Fonctionnalités de votre mini-appli' : lang === 'ar' ? 'مميزات تطبيقك المصغّر' : lang === 'en' ? 'Your mini-app features' : lang === 'it' ? 'Funzioni della tua mini-app' : 'Возможности мини-приложения'}>
           <CvCapabilitiesSection language={lang} />
+          </CvSectionFold>
 
+          <CvSectionFold enabled={compactCvApp} title={lang === 'fr' ? 'Comment créer votre mini-appli ?' : lang === 'ar' ? 'كيفاش تعمل تطبيقك المصغّر؟' : lang === 'en' ? 'How to create your mini-app' : lang === 'it' ? 'Come creare la tua mini-app' : 'Как создать мини-приложение'}>
           <CvBusinessJourney language={lang} />
+          </CvSectionFold>
 
           <section className="bg-[#2E102A] px-4 py-7 text-white"><div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left rtl:sm:text-right"><div><p className="text-xs font-black uppercase tracking-[0.16em] text-[#F1D783]">{t.searchEyebrow}</p><h2 className="mt-2 max-w-3xl font-serif text-2xl font-bold">{t.searchTitle}</h2></div><button type="button" onClick={() => fixedView ? navigate('/') : setPreviewView('platform')} className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-[#D4AF37] px-5 py-3 text-sm font-black text-[#F1D783]"><Search className="h-4 w-4" /> {t.explorePlatform}</button></div></section>
         </>
       )}
+      {compactCvApp && videoOpen && <div role="presentation" className="fixed inset-0 z-[200] flex items-center justify-center bg-black/75 p-3" onMouseDown={(event) => { if (event.target === event.currentTarget) setVideoOpen(false); }}>
+        <div role="dialog" aria-modal="true" aria-label={t.example} className="relative w-full max-w-3xl rounded-2xl border border-[#D4AF37]/50 bg-[#FFFDF8] p-3 shadow-xl">
+          <button type="button" onClick={() => setVideoOpen(false)} aria-label={lang === 'fr' ? 'Fermer la vidéo' : lang === 'ar' ? 'إغلاق الفيديو' : lang === 'en' ? 'Close video' : lang === 'it' ? 'Chiudi il video' : 'Закрыть видео'}
+            className="absolute right-2 top-2 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-[#D4AF37]/50 bg-white text-[#4A1D43]"><X className="h-5 w-5" /></button>
+          <p className="mb-3 pr-12 text-sm font-medium text-[#4A1D43]">{t.example}</p>
+          {heroVideoSrc ? <video key={heroVideoSrc} src={heroVideoSrc} poster="/images/cv-business-portfolio-aux-saveurs-anis.png" controls autoPlay playsInline preload="metadata" className="max-h-[78dvh] w-full rounded-xl bg-black object-contain" /> : <img src="/images/cv-business-portfolio-aux-saveurs-anis.png" alt={t.example} className="max-h-[78dvh] w-full rounded-xl object-contain" />}
+        </div>
+      </div>}
     </div>
   );
 }

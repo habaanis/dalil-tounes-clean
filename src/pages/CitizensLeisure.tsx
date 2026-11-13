@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Search, MapPin, Calendar, DollarSign, Ticket, Music, Sparkles, PartyPopper, ChevronLeft, ChevronRight, Camera, Waves, Utensils, Film, MapPinned, Plus } from 'lucide-react';
+import { Search, MapPin, Calendar, DollarSign, Ticket, Music, Sparkles, PartyPopper, ChevronLeft, ChevronRight, Camera, Waves, Utensils, Film, MapPinned, Plus, X, ExternalLink } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { supabase } from '../lib/BoltDatabase';
 import { useLanguage } from '../context/LanguageContext';
@@ -7,10 +7,13 @@ import { Language } from '../lib/i18n';
 import { getSupabaseImageUrl } from '../lib/imageUtils';
 import { HERO_IMAGE_URL } from '../constants/images';
 import EventCard from '../components/EventCard';
+import AppLeisureEventCard from '../components/AppLeisureEventCard';
 import LeisureEventProposalForm from '../components/LeisureEventProposalForm';
 import { SECTEURS_CULTURE } from '../lib/cultureEventCategories';
 import MeilleursSection from '../components/MeilleursSection';
 import { SEOHead } from '../components/SEOHead';
+import { isPlatformAppMode } from '../lib/platformAppMode';
+import { DALIL_MASCOT_IMAGE } from '../lib/dalilMascotImage';
 
 const GOUVERNORATS_TUNISIE = [
   'Tunis',
@@ -120,6 +123,13 @@ interface Evenement {
 
 export default function CitizensLeisure() {
   const { language } = useLanguage();
+  const inPlatformApp = isPlatformAppMode();
+  const [appSection, setAppSection] = useState<'recommended' | 'agenda' | 'events'>('events');
+  const [eventPage, setEventPage] = useState(0);
+  const [calendarYear, setCalendarYear] = useState('all');
+  const [calendarMonth, setCalendarMonth] = useState('all');
+  const [calendarPage, setCalendarPage] = useState(0);
+  const [openedEvent, setOpenedEvent] = useState<Evenement | null>(null);
 
   const url = new URL(window.location.href);
   const qParam = (url.searchParams.get('q') || '').trim();
@@ -138,6 +148,7 @@ export default function CitizensLeisure() {
   const [annualEvent, setAnnualEvent] = useState<Evenement | null>(null);
   const [loading, setLoading] = useState(true);
   const carouselRef = useRef<HTMLDivElement>(null);
+  const eventResultsRef = useRef<HTMLDivElement>(null);
   const [hoveredEventId, setHoveredEventId] = useState<string | null>(null);
   const [showProposalForm, setShowProposalForm] = useState(false);
 
@@ -656,6 +667,42 @@ export default function CitizensLeisure() {
     return eventTypeLabels[language]?.[type] || type;
   };
 
+  // Five visible events on both mobile and desktop; all results remain accessible by pages.
+  const EVENT_PAGE_SIZE = 5;
+  const eventPageCount = Math.max(1, Math.ceil(evenements.length / EVENT_PAGE_SIZE));
+  const safeEventPage = Math.min(eventPage, eventPageCount - 1);
+  const pagedEvents = evenements.slice(
+    safeEventPage * EVENT_PAGE_SIZE, (safeEventPage + 1) * EVENT_PAGE_SIZE
+  );
+  useEffect(() => setEventPage(0), [selectedLocation, selectedTemporalite, selectedPrice, searchQuery, selectedActivityType]);
+  const changeEventPage = (nextPage: number) => {
+    setEventPage(nextPage);
+    window.setTimeout(() => eventResultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 40);
+  };
+
+  // The calendar has its own selection and pagination, independent of
+  // the event search. Offer only years and months with published future events.
+  const availableCalendarYears = Array.from(new Set(evenements
+    .map(event => new Date(event.date_debut).getFullYear())
+    .filter(year => Number.isFinite(year)))).sort((a, b) => a - b);
+  const availableCalendarMonths = Array.from(new Set(evenements
+    .filter(event => calendarYear === 'all' || String(new Date(event.date_debut).getFullYear()) === calendarYear)
+    .map(event => new Date(event.date_debut).getMonth())
+    .filter(month => Number.isInteger(month) && month >= 0 && month <= 11))).sort((a, b) => a - b);
+  const calendarEvents = evenements.filter(event => {
+    const date = new Date(event.date_debut);
+    if (Number.isNaN(date.getTime())) return false;
+    return (calendarYear === 'all' || String(date.getFullYear()) === calendarYear)
+      && (calendarMonth === 'all' || String(date.getMonth()) === calendarMonth);
+  });
+  const calendarPageCount = Math.max(1, Math.ceil(calendarEvents.length / EVENT_PAGE_SIZE));
+  const safeCalendarPage = Math.min(calendarPage, calendarPageCount - 1);
+  const pagedCalendarEvents = calendarEvents.slice(
+    safeCalendarPage * EVENT_PAGE_SIZE, (safeCalendarPage + 1) * EVENT_PAGE_SIZE
+  );
+  const calendarMonthLabel = (month: number) => new Date(2026, month, 1)
+    .toLocaleDateString(currentDateLocale, { month: 'long' });
+
   const scrollCarousel = (direction: 'left' | 'right') => {
     if (carouselRef.current) {
       const scrollAmount = 320;
@@ -672,7 +719,43 @@ export default function CitizensLeisure() {
       dir={language === 'ar' ? 'rtl' : 'ltr'}
       style={language === 'ar' ? { fontFamily: "'Amiri', 'Cairo', 'Tajawal', serif" } : {}}
     >
-      <div className="mx-auto max-w-7xl px-4 pt-5">
+      {inPlatformApp && <section className="mx-3 mt-2 rounded-2xl border border-[#E3D4B8] bg-[#FFFDF8] px-3 py-4 text-[#421D3B]">
+        <div className="flex items-center gap-3">
+          <div className="min-w-0 flex-1">
+            <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.15em] text-[#96743B]">Dalil Tounes · 🇹🇳</p>
+            <h1 className="font-serif text-xl font-medium leading-tight">{language === 'ar' ? 'الترفيه والفعاليات في تونس' : language === 'en' ? 'Leisure & events in Tunisia' : language === 'it' ? 'Tempo libero ed eventi in Tunisia' : language === 'ru' ? 'Отдых и события в Тунисе' : 'Loisirs & événements en Tunisie'}</h1>
+            <p className="mt-1 text-xs leading-5 text-[#71616E]">{language === 'ar' ? 'خرجات، مهرجانات، معارض وأماكن ترفيه.' : language === 'en' ? 'Outings, festivals, exhibitions and places to explore.' : language === 'it' ? 'Uscite, festival, fiere e luoghi da scoprire.' : language === 'ru' ? 'Афиша, фестивали, выставки и места отдыха.' : 'Sorties, salons, festivals et bonnes adresses pour vos loisirs.'}</p>
+          </div>
+          <img src={DALIL_MASCOT_IMAGE} alt="" aria-hidden="true" loading="lazy" decoding="async"
+            className="h-[64px] w-[60px] shrink-0 rounded-xl border border-[#D4AF37]/35 bg-white object-contain" />
+        </div>
+        <nav aria-label={t.title} className="mt-3 grid grid-cols-3 gap-1.5">
+          {([
+            { id: 'events' as const, fr: 'Événements à venir', ar: 'الفعاليات القادمة', en: 'Upcoming events', it: 'Prossimi eventi', ru: 'Скоро', icon: '📅' },
+            { id: 'recommended' as const, fr: 'Lieux de loisirs recommandés', ar: 'أماكن ترفيه موصى بها', en: 'Top leisure places', it: 'Luoghi consigliati', ru: 'Места отдыха', icon: '⭐' },
+            { id: 'agenda' as const, fr: 'Calendrier des événements', ar: 'رزنامة الفعاليات', en: 'Event calendar', it: 'Calendario eventi', ru: 'Календарь', icon: '🗓️' },
+          ]).map(item => (
+            <button key={item.id} type="button" aria-pressed={appSection === item.id}
+              onClick={() => {
+                setAppSection(item.id);
+                if (item.id === 'agenda') {
+                  setSearchQuery('');
+                  setSelectedLocation('all');
+                  setSelectedTemporalite('all');
+                  setSelectedPrice('all');
+                  setSelectedActivityType('all');
+                }
+              }}
+              className={`flex min-h-[68px] min-w-0 flex-col items-center justify-center gap-1 rounded-xl border px-1.5 py-2 text-center text-[11px] font-medium leading-[1.2] ${appSection === item.id
+                ? 'border-[#D4AF37] bg-[#4A1D43] text-white'
+                : 'border-[#DFD0B7] bg-white text-[#4A1D43]'}`}>
+              <span aria-hidden="true" className="text-base">{item.icon}</span>
+              <span>{item[language as 'fr' | 'ar' | 'en' | 'it' | 'ru'] || item.fr}</span>
+            </button>
+          ))}
+        </nav>
+      </section>}
+      <div className={`${inPlatformApp ? 'hidden' : ''} mx-auto max-w-7xl px-4 pt-5`}>
         <a href="/citizens/tourism/guide/fetes-evenements" className="flex items-center justify-between gap-4 rounded-xl border border-[#D4AF37] bg-white p-4 text-[#4A1D43] shadow-sm hover:bg-amber-50">
           <span><strong className="block">🎨 Festivals culturels de Tunisie</strong><span className="mt-1 block text-sm">Découvrez les festivals régionaux et leur patrimoine, même hors des dates de l'agenda.</span></span>
           <span className="shrink-0 text-sm font-semibold">Voir les festivals →</span>
@@ -706,7 +789,7 @@ export default function CitizensLeisure() {
         currentPath="/citizens/leisure"
       />
       {/* Premium Header Section avec Image Drapeau Tunisien */}
-      <div className="relative py-6 overflow-hidden" style={{ borderBottom: '2px solid #D4AF37' }}>
+      <div className={`${inPlatformApp ? 'hidden' : ''} relative py-6 overflow-hidden`} style={{ borderBottom: '2px solid #D4AF37' }}>
         {/* Image de fond - Drapeau Tunisien */}
         <div className="absolute inset-0">
           <img
@@ -759,14 +842,17 @@ export default function CitizensLeisure() {
         </div>
       </div>
 
-      <section className="px-4 py-8 bg-white">
+      <section className={`${inPlatformApp && appSection !== 'recommended' ? 'hidden' : ''} ${inPlatformApp ? 'bg-white px-2 py-3' : 'px-4 py-8 bg-white'}`}>
+        {inPlatformApp && <p className="mb-3 px-2 text-xs leading-5 text-[#766673]">{language === 'ar' ? 'أماكن ترفيه وخروجات: المقترحات هنا عندها تقييم Google 4/5 على الأقل و5 آراء على الأقل.' : language === 'en' ? 'Places to go out and enjoy leisure activities, with at least 4/5 on Google and 5 customer reviews.' : 'Lieux de sorties et de loisirs avec une note Google d’au moins 4/5 et 5 avis clients minimum.'}</p>}
         <div className="max-w-5xl mx-auto">
           <MeilleursSection
             secteurLabel={t.sector}
             listePage="loisirs & évènements"
             accentColor="#4A1D43"
-            sectionTitle={t.recommended}
+            sectionTitle={inPlatformApp ? (language === 'ar' ? 'أماكن الترفيه الموصى بها من الحرفاء' : language === 'en' ? 'Leisure places recommended by customers' : 'Lieux de loisirs les plus recommandés par les clients') : t.recommended}
             useGoogleRecommendationCriteria
+            itemsPerPage={5}
+            unifiedRecommendedList
             includeRecommendedInTotal
             allReferencedLabel={t.allReferenced}
             searchOtherLabel={t.searchOther}
@@ -775,7 +861,73 @@ export default function CitizensLeisure() {
       </section>
 
       {/* Premium Agenda Cards - 3 Columns (hors header, sur fond beige) */}
-      <div className="bg-[#fcfaf5] py-6 border-b border-[#D4AF37]/30">
+      {inPlatformApp && appSection === 'agenda' && <section className="px-3 py-4">
+        <h2 className="font-serif text-lg font-medium text-[#421D3B]">{language === 'ar' ? 'رزنامة الفعاليات القادمة' : language === 'en' ? 'Upcoming events calendar' : language === 'it' ? 'Calendario dei prossimi eventi' : language === 'ru' ? 'Календарь предстоящих событий' : 'Calendrier des événements à venir'}</h2>
+        <p className="mt-1 text-xs leading-5 text-[#756575]">{language === 'ar' ? 'اختار السنة والشهر باش تلقى الفعالية مباشرة.' : language === 'en' ? 'Select a year and month to find events directly.' : language === 'it' ? 'Scegli anno e mese per trovare subito gli eventi.' : language === 'ru' ? 'Выберите год и месяц, чтобы быстро найти события.' : 'Choisissez une année et un mois pour trouver directement les événements.'}</p>
+
+        <div className="mt-3 rounded-xl border border-[#D7C5A3] bg-[#FFFBF3] p-3">
+          <div className="grid grid-cols-2 gap-2">
+            <label className="flex min-w-0 flex-col gap-1 text-xs font-semibold text-[#4A1D43]">
+              <span>{language === 'ar' ? 'السنة' : language === 'en' ? 'Year' : language === 'it' ? 'Anno' : language === 'ru' ? 'Год' : 'Année'}</span>
+              <select value={calendarYear} onChange={e => {
+                const nextYear = e.target.value;
+                setCalendarYear(nextYear);
+                setCalendarMonth('all');
+                setCalendarPage(0);
+              }}
+                className="min-h-11 w-full min-w-0 rounded-lg border border-[#C7B38D] bg-white px-2 text-sm font-medium text-[#4A1D43] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A17D36]">
+                <option value="all">{language === 'ar' ? 'كل السنوات' : language === 'en' ? 'All years' : language === 'it' ? 'Tutti gli anni' : language === 'ru' ? 'Все годы' : 'Toutes les années'}</option>
+                {availableCalendarYears.map(year => <option key={year} value={String(year)}>{year}</option>)}
+              </select>
+            </label>
+            <label className="flex min-w-0 flex-col gap-1 text-xs font-semibold text-[#4A1D43]">
+              <span>{language === 'ar' ? 'الشهر' : language === 'en' ? 'Month' : language === 'it' ? 'Mese' : language === 'ru' ? 'Месяц' : 'Mois'}</span>
+              <select value={calendarMonth} onChange={e => {
+                setCalendarMonth(e.target.value);
+                setCalendarPage(0);
+              }}
+                className="min-h-11 w-full min-w-0 rounded-lg border border-[#C7B38D] bg-white px-2 text-sm font-medium text-[#4A1D43] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A17D36]">
+                <option value="all">{language === 'ar' ? 'كل الشهور' : language === 'en' ? 'All months' : language === 'it' ? 'Tutti i mesi' : language === 'ru' ? 'Все месяцы' : 'Tous les mois'}</option>
+                {availableCalendarMonths.map(month => <option key={month} value={String(month)}>{calendarMonthLabel(month)}</option>)}
+              </select>
+            </label>
+          </div>
+          <div className="mt-3 flex items-center justify-between gap-2">
+            <p aria-live="polite" className="text-xs font-medium text-[#6D5A66]">
+              {calendarEvents.length} {language === 'ar' ? 'فعالية' : language === 'en' ? 'events' : language === 'it' ? 'eventi' : language === 'ru' ? 'событий' : calendarEvents.length > 1 ? 'événements' : 'événement'}
+            </p>
+            {(calendarYear !== 'all' || calendarMonth !== 'all') && <button type="button" onClick={() => {
+              setCalendarYear('all');
+              setCalendarMonth('all');
+              setCalendarPage(0);
+            }} className="min-h-9 rounded-lg border border-[#D7C5A3] bg-white px-3 text-xs font-semibold text-[#4A1D43]">
+              {language === 'ar' ? 'إظهار الكل' : language === 'en' ? 'Show all' : language === 'it' ? 'Mostra tutti' : language === 'ru' ? 'Показать все' : 'Tout afficher'}
+            </button>}
+          </div>
+        </div>
+
+        {loading ? <p className="py-5 text-center text-sm text-[#766673]">{t.loading}</p>
+          : evenements.length === 0 ? <p className="py-6 text-sm text-[#766673]">{t.noEvents}</p>
+          : calendarEvents.length === 0 ? <p className="py-6 text-sm text-[#766673]">{language === 'ar' ? 'ما فماش فعاليات مسجلة للفترة هاذي.' : language === 'en' ? 'No events listed for this period.' : language === 'it' ? 'Nessun evento per questo periodo.' : language === 'ru' ? 'На этот период событий нет.' : 'Aucun événement enregistré pour cette période.'}</p>
+          : <div className="mt-4 space-y-4">
+              {Array.from(new Set(pagedCalendarEvents.map(event => new Date(event.date_debut).toLocaleDateString(currentDateLocale, { month: 'long', year: 'numeric' })))).map(month => (
+                <div key={month} className="space-y-2">
+                  <h3 className="border-b border-[#D7C7A6] pb-1 font-serif text-base font-semibold capitalize text-[#421D3B]">{month}</h3>
+                  {pagedCalendarEvents.filter(event => new Date(event.date_debut).toLocaleDateString(currentDateLocale, { month: 'long', year: 'numeric' }) === month)
+                    .map(event => <AppLeisureEventCard key={event.id} event={event}
+                      title={getTranslatedText(event, 'titre')} description={getTranslatedText(event, 'description')}
+                      dateLabel={formatEventDate(event.date_debut, event.date_fin)}
+                      viewLabel={language === 'ar' ? 'شوف التفاصيل' : language === 'en' ? 'View details' : language === 'it' ? 'Dettagli' : language === 'ru' ? 'Подробнее' : 'Voir la fiche'} onOpen={() => setOpenedEvent(event)} />)}
+                </div>
+              ))}
+            </div>}
+        {!loading && calendarPageCount > 1 && <nav aria-label="Pagination du calendrier" className="mt-4 flex items-center justify-center gap-3">
+          <button type="button" disabled={safeCalendarPage === 0} onClick={() => setCalendarPage(p => Math.max(0, p - 1))} className="min-h-11 rounded-lg border border-[#D4AF37]/50 bg-white px-3 text-sm disabled:opacity-40">{language === 'ar' ? 'السابق' : language === 'en' ? 'Previous' : language === 'it' ? 'Precedente' : language === 'ru' ? 'Назад' : 'Précédent'}</button>
+          <span className="text-xs tabular-nums">{safeCalendarPage + 1} / {calendarPageCount}</span>
+          <button type="button" disabled={safeCalendarPage >= calendarPageCount - 1} onClick={() => setCalendarPage(p => Math.min(calendarPageCount - 1, p + 1))} className="min-h-11 rounded-lg border border-[#D4AF37]/50 bg-white px-3 text-sm disabled:opacity-40">{language === 'ar' ? 'التالي' : language === 'en' ? 'Next' : language === 'it' ? 'Successivo' : language === 'ru' ? 'Далее' : 'Suivant'}</button>
+        </nav>}
+      </section>}
+      <div className={`${inPlatformApp ? 'hidden' : ''} bg-[#fcfaf5] py-6 border-b border-[#D4AF37]/30`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* CARTE 1 - L'Hebdo (Affinée) */}
@@ -958,7 +1110,106 @@ export default function CitizensLeisure() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className={`${inPlatformApp && appSection !== 'events' ? 'hidden' : ''} max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ${inPlatformApp ? 'py-3' : 'py-8'}`}>
+        <div className={inPlatformApp ? 'mb-3 text-start' : 'mb-6 text-center'}>
+          <h2 className={inPlatformApp ? 'public-heading text-lg font-medium text-[#4A1D43]' : 'public-heading text-2xl font-medium text-[#4A1D43]'}>{t.tabEvents}</h2>
+          <p className={inPlatformApp ? 'mt-1 text-xs leading-5 text-gray-600' : 'mt-2 text-sm text-gray-600'}>{t.eventsIntro}</p>
+        </div>
+
+        {/* Search and Filters */}
+        <div className={inPlatformApp ? 'mb-4 rounded-xl border border-[#D4AF37]/60 bg-white p-3 shadow-sm' : 'bg-white rounded-xl shadow-sm p-5 mb-8'} style={inPlatformApp ? undefined : { border: '2px solid #D4AF37' }}>
+          {/* Active Filter Badge */}
+          {selectedActivityType !== 'all' && (
+            <div className="mb-6 flex items-center gap-3">
+              <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#4A1D43] text-white rounded-full font-semibold text-sm shadow-lg">
+                {t.activeFilter}: {ACTIVITY_LABELS[language][selectedActivityType] || selectedActivityType}
+              </span>
+              <button
+                onClick={() => {
+                  setSelectedActivityType('all');
+                  const cleanUrl = new URL(window.location.href);
+                  cleanUrl.searchParams.delete('category');
+                  window.history.replaceState({}, '', `${cleanUrl.pathname}${cleanUrl.search}`);
+                }}
+                className="text-sm text-gray-600 hover:text-[#4A1D43] underline"
+              >
+                {t.clearFilter}
+              </button>
+            </div>
+          )}
+
+          <div className="space-y-4">
+            {/* Search Bar */}
+            <div className="relative">
+              <div className={`absolute ${language === 'ar' ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 bg-[#4A1D43] rounded-full p-1`}>
+                <Search className="w-3.5 h-3.5 text-white" />
+              </div>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={t.searchPlaceholder}
+                data-search-bar="true"
+                data-search-scope="loisir"
+                data-component-name="CitizensLeisure-Search"
+                className={`w-full ${language === 'ar' ? 'pr-10 pl-4' : 'pl-10 pr-4'} py-2 rounded-lg border border-[#D4AF37]/30 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 outline-none transition-all text-sm shadow-sm`}
+              />
+            </div>
+
+            {/* Filters */}
+            <div className={inPlatformApp ? 'grid grid-cols-2 gap-2' : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3'}>
+              {/* Location Filter */}
+              <select
+                value={selectedLocation}
+                onChange={(e) => setSelectedLocation(e.target.value)}
+                className="px-3 py-2 rounded-lg border border-[#D4AF37]/30 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 outline-none bg-white font-medium shadow-sm transition-all hover:shadow-md max-h-96 overflow-y-auto text-xs"
+              >
+                <option value="all">{t.locationAll}</option>
+                {GOUVERNORATS_TUNISIE.map((gouvernorat) => (
+                  <option key={gouvernorat} value={gouvernorat}>
+                    {gouvernorat}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={selectedActivityType}
+                onChange={(e) => setSelectedActivityType(e.target.value)}
+                className="px-3 py-2 rounded-lg border border-[#D4AF37]/30 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 outline-none bg-white font-medium shadow-sm transition-all hover:shadow-md text-xs"
+              >
+                <option value="all">🎨 {t.activityAll}</option>
+                {SECTEURS_CULTURE.map((secteur) => (
+                  <option key={secteur} value={secteur}>
+                    {ACTIVITY_LABELS[language][secteur] || secteur}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={selectedTemporalite}
+                onChange={(e) => setSelectedTemporalite(e.target.value)}
+                className="px-3 py-2 rounded-lg border border-[#D4AF37]/30 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 outline-none bg-white font-medium shadow-sm transition-all hover:shadow-md text-xs"
+              >
+                <option value="all">📅 {t.temporaliteAll}</option>
+                <option value="hebdo">📆 {t.temporaliteWeekly}</option>
+                <option value="mensuel">🗓️ {t.temporaliteMonthly}</option>
+                <option value="annuel">⭐ {t.temporaliteAnnual}</option>
+              </select>
+
+              {/* Price Filter */}
+              <select
+                value={selectedPrice}
+                onChange={(e) => setSelectedPrice(e.target.value)}
+                className="px-3 py-2 rounded-lg border border-[#D4AF37]/30 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 outline-none bg-white font-medium shadow-sm transition-all hover:shadow-md text-xs"
+              >
+                <option value="all">{t.priceAll}</option>
+                <option value="Gratuit">{t.priceFree}</option>
+                <option value="Payant">{t.pricePaid}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
         {/* Bouton Proposer un événement */}
         <div className="mb-6 text-center">
           <button
@@ -971,8 +1222,30 @@ export default function CitizensLeisure() {
           </button>
         </div>
 
-        {/* Featured Events Carousel - Netflix Style */}
-        {featuredEvents.length > 0 && (
+        {/* Compact mobile preview: the old VIP carousel remains on the desktop site only. */}
+        {inPlatformApp && featuredEvents.length > 0
+          && !searchQuery && selectedLocation === 'all'
+          && selectedTemporalite === 'all' && selectedPrice === 'all'
+          && selectedActivityType === 'all' && (
+          <section className="mb-5 space-y-2" aria-label={t.featured}>
+            <div className="flex items-center justify-between gap-2">
+              <h2 className="flex items-center gap-2 text-sm font-semibold text-[#4A1D43]">
+                <Sparkles className="h-4 w-4 text-[#B99143]" aria-hidden="true" />{t.featured}
+              </h2>
+              <span className="rounded-full bg-[#FAF0D8] px-2 py-1 text-[10px] font-semibold text-[#77571C]">⭐ À la une</span>
+            </div>
+            {featuredEvents.slice(0, 2).map(event => (
+              <AppLeisureEventCard key={event.id} event={event}
+                title={getTranslatedText(event, 'titre')}
+                description={getTranslatedText(event, 'description')}
+                dateLabel={formatEventDate(event.date_debut, event.date_fin)}
+                viewLabel={language === 'ar' ? 'شوف التفاصيل' : language === 'en' ? 'View details' : language === 'it' ? 'Dettagli' : language === 'ru' ? 'Подробнее' : 'Voir la fiche'}
+                onOpen={() => setOpenedEvent(event)} />
+            ))}
+          </section>
+        )}
+        {/* Existing featured carousel kept for the website, unchanged. */}
+        {!inPlatformApp && featuredEvents.length > 0 && (
           <div className="mb-10">
             <div className="flex items-center justify-between mb-6">
               <h2 className="public-heading text-3xl font-medium text-[#4A1D43] flex items-center gap-3">
@@ -1080,112 +1353,13 @@ export default function CitizensLeisure() {
           </div>
         )}
 
-        <div className="mb-6 text-center">
-          <h2 className="public-heading text-2xl font-medium text-[#4A1D43]">{t.tabEvents}</h2>
-          <p className="mt-2 text-sm text-gray-600">{t.eventsIntro}</p>
-        </div>
-
-        {/* Search and Filters */}
-        <div className="bg-white rounded-xl shadow-sm p-5 mb-8" style={{ border: '2px solid #D4AF37' }}>
-          {/* Active Filter Badge */}
-          {selectedActivityType !== 'all' && (
-            <div className="mb-6 flex items-center gap-3">
-              <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#4A1D43] text-white rounded-full font-semibold text-sm shadow-lg">
-                {t.activeFilter}: {ACTIVITY_LABELS[language][selectedActivityType] || selectedActivityType}
-              </span>
-              <button
-                onClick={() => {
-                  setSelectedActivityType('all');
-                  const cleanUrl = new URL(window.location.href);
-                  cleanUrl.searchParams.delete('category');
-                  window.history.replaceState({}, '', `${cleanUrl.pathname}${cleanUrl.search}`);
-                }}
-                className="text-sm text-gray-600 hover:text-[#4A1D43] underline"
-              >
-                {t.clearFilter}
-              </button>
-            </div>
-          )}
-
-          <div className="space-y-4">
-            {/* Search Bar */}
-            <div className="relative">
-              <div className={`absolute ${language === 'ar' ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 bg-[#4A1D43] rounded-full p-1`}>
-                <Search className="w-3.5 h-3.5 text-white" />
-              </div>
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={t.searchPlaceholder}
-                data-search-bar="true"
-                data-search-scope="loisir"
-                data-component-name="CitizensLeisure-Search"
-                className={`w-full ${language === 'ar' ? 'pr-10 pl-4' : 'pl-10 pr-4'} py-2 rounded-lg border border-[#D4AF37]/30 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 outline-none transition-all text-sm shadow-sm`}
-              />
-            </div>
-
-            {/* Filters */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-              {/* Location Filter */}
-              <select
-                value={selectedLocation}
-                onChange={(e) => setSelectedLocation(e.target.value)}
-                className="px-3 py-2 rounded-lg border border-[#D4AF37]/30 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 outline-none bg-white font-medium shadow-sm transition-all hover:shadow-md max-h-96 overflow-y-auto text-xs"
-              >
-                <option value="all">{t.locationAll}</option>
-                {GOUVERNORATS_TUNISIE.map((gouvernorat) => (
-                  <option key={gouvernorat} value={gouvernorat}>
-                    {gouvernorat}
-                  </option>
-                ))}
-              </select>
-
-              <select
-                value={selectedActivityType}
-                onChange={(e) => setSelectedActivityType(e.target.value)}
-                className="px-3 py-2 rounded-lg border border-[#D4AF37]/30 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 outline-none bg-white font-medium shadow-sm transition-all hover:shadow-md text-xs"
-              >
-                <option value="all">🎨 {t.activityAll}</option>
-                {SECTEURS_CULTURE.map((secteur) => (
-                  <option key={secteur} value={secteur}>
-                    {ACTIVITY_LABELS[language][secteur] || secteur}
-                  </option>
-                ))}
-              </select>
-
-              <select
-                value={selectedTemporalite}
-                onChange={(e) => setSelectedTemporalite(e.target.value)}
-                className="px-3 py-2 rounded-lg border border-[#D4AF37]/30 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 outline-none bg-white font-medium shadow-sm transition-all hover:shadow-md text-xs"
-              >
-                <option value="all">📅 {t.temporaliteAll}</option>
-                <option value="hebdo">📆 {t.temporaliteWeekly}</option>
-                <option value="mensuel">🗓️ {t.temporaliteMonthly}</option>
-                <option value="annuel">⭐ {t.temporaliteAnnual}</option>
-              </select>
-
-              {/* Price Filter */}
-              <select
-                value={selectedPrice}
-                onChange={(e) => setSelectedPrice(e.target.value)}
-                className="px-3 py-2 rounded-lg border border-[#D4AF37]/30 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 outline-none bg-white font-medium shadow-sm transition-all hover:shadow-md text-xs"
-              >
-                <option value="all">{t.priceAll}</option>
-                <option value="Gratuit">{t.priceFree}</option>
-                <option value="Payant">{t.pricePaid}</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
         {/* Results */}
         {loading ? (
           <div className="flex items-center justify-center py-12">
             <div className="w-16 h-16 border-4 border-[#4A1D43] border-t-transparent rounded-full animate-spin" />
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div ref={eventResultsRef} className={inPlatformApp ? 'flex scroll-mt-24 flex-col gap-3' : 'grid scroll-mt-24 grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'}>
             {evenements.length === 0 ? (
               <div className="col-span-full bg-white rounded-xl p-12 text-center">
                 <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
@@ -1193,7 +1367,13 @@ export default function CitizensLeisure() {
                 <p className="text-sm text-gray-400 mt-2">{t.modifyFilters}</p>
               </div>
             ) : (
-              evenements.map((event) => (
+              pagedEvents.map((event) => inPlatformApp ? (
+                <AppLeisureEventCard key={event.id} event={event}
+                  title={getTranslatedText(event, 'titre')} description={getTranslatedText(event, 'description')}
+                  dateLabel={formatEventDate(event.date_debut, event.date_fin)}
+                  viewLabel={language === 'ar' ? 'شوف التفاصيل' : language === 'en' ? 'View details' : language === 'it' ? 'Dettagli' : language === 'ru' ? 'Подробнее' : 'Voir la fiche'}
+                  onOpen={() => setOpenedEvent(event)} />
+              ) : (
                 <EventCard
                   key={event.id}
                   id={event.id}
@@ -1214,8 +1394,48 @@ export default function CitizensLeisure() {
             )}
           </div>
         )}
+        {!loading && eventPageCount > 1 && (
+          <nav aria-label="Pagination événements" className="mt-5 flex items-center justify-center gap-3 border-t border-[#D4AF37]/30 pt-3">
+            <button type="button" disabled={safeEventPage === 0} onClick={() => changeEventPage(Math.max(0, safeEventPage - 1))}
+              className="min-h-11 rounded-lg border border-[#D4AF37]/50 bg-white px-3 text-xs font-medium text-[#4A1D43] disabled:opacity-40">
+              {language === 'ar' ? 'السابق' : language === 'en' ? 'Previous' : language === 'it' ? 'Precedente' : language === 'ru' ? 'Назад' : 'Précédent'}
+            </button>
+            <span className="text-xs font-semibold tabular-nums">{safeEventPage + 1} / {eventPageCount}</span>
+            <button type="button" disabled={safeEventPage >= eventPageCount - 1} onClick={() => changeEventPage(Math.min(eventPageCount - 1, safeEventPage + 1))}
+              className="min-h-11 rounded-lg border border-[#D4AF37]/50 bg-white px-3 text-xs font-medium text-[#4A1D43] disabled:opacity-40">
+              {language === 'ar' ? 'التالي' : language === 'en' ? 'Next' : language === 'it' ? 'Successivo' : language === 'ru' ? 'Далее' : 'Suivant'}
+            </button>
+          </nav>
+        )}
       </div>
 
+      {inPlatformApp && openedEvent && (
+        <div role="presentation" className="fixed inset-0 z-[90] flex items-end justify-center bg-[#251624]/70 p-2 sm:items-center sm:p-4"
+          onClick={() => setOpenedEvent(null)}>
+          <section role="dialog" aria-modal="true" aria-labelledby="app-leisure-detail-title"
+            className="max-h-[88dvh] w-full max-w-lg overflow-y-auto rounded-2xl border border-[#D4AF37]/60 bg-[#FFFCF7] p-4 shadow-2xl"
+            onClick={e => e.stopPropagation()}>
+            <div className="mb-3 flex items-start justify-between gap-3">
+              <h2 id="app-leisure-detail-title" className="min-w-0 font-serif text-lg font-semibold leading-6 text-[#421D3B]">{getTranslatedText(openedEvent, 'titre')}</h2>
+              <button type="button" onClick={() => setOpenedEvent(null)} aria-label={language === 'ar' ? 'إغلاق' : 'Fermer'}
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[#E1D1B6] bg-white"><X className="h-5 w-5" /></button>
+            </div>
+            {openedEvent.image_url && <img src={openedEvent.image_url.split(',')[0].trim()} alt="" className="mb-3 h-40 w-full rounded-xl object-cover" onError={e => { e.currentTarget.style.display = 'none'; }} />}
+            <div className="space-y-2 text-sm leading-6 text-[#604D5D]">
+              <p><Calendar className="me-2 inline h-4 w-4 text-[#96743B]" />{formatEventDate(openedEvent.date_debut, openedEvent.date_fin)}</p>
+              <p><MapPin className="me-2 inline h-4 w-4 text-[#96743B]" />{[openedEvent.lieu, openedEvent.localisation_ville].filter(Boolean).join(' · ')}</p>
+              {openedEvent.type_evenement && <p className="font-medium text-[#421D3B]">{getEventTypeLabel(openedEvent.type_evenement)}</p>}
+              {openedEvent.prix && <p>{openedEvent.prix}</p>}
+              {openedEvent.organisateur && <p>{language === 'ar' ? 'تنظيم' : 'Organisé par'} {openedEvent.organisateur}</p>}
+              <p className="whitespace-pre-line break-words">{getTranslatedText(openedEvent, 'description')}</p>
+            </div>
+            {isSafeTicketLink(openedEvent.lien_billetterie) && <a href={openedEvent.lien_billetterie} target="_blank" rel="noopener noreferrer"
+              className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-xl bg-[#4A1D43] px-4 py-2 text-sm font-semibold text-white">
+              <ExternalLink className="h-4 w-4" />{t.buyTickets}
+            </a>}
+          </section>
+        </div>
+      )}
       {showProposalForm && (
         <LeisureEventProposalForm onClose={() => setShowProposalForm(false)} />
       )}

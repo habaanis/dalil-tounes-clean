@@ -2,6 +2,8 @@ import '../styles/premiumPlatform.css';
 import { usesPublicPageTheme } from '../lib/publicPageTheme';
 import { ReactNode, useEffect, useState, lazy, Suspense } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { isPlatformAppMode } from '../lib/platformAppMode';
+import PlatformAppShell from './PlatformAppShell';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from '../lib/i18n';
@@ -174,8 +176,8 @@ export const Layout = ({ children }: LayoutProps) => {
       path: '/subscription',
       children: [
         { label: structure.essential, path: '/subscription#presence-essentielle' },
-        { label: 'CV Business', path: '/subscription#cv-professionnels' },
-        { label: 'CV Portfolio', path: '/subscription#modeles' },
+        { label: 'Votre mini-appli', path: '/subscription#cv-professionnels' },
+        { label: 'Voir les modèles', path: '/subscription#modeles' },
         { label: structure.offers, path: '/subscription#offres' },
       ],
     },
@@ -239,6 +241,10 @@ export const Layout = ({ children }: LayoutProps) => {
   const isPwaLaunch = new URLSearchParams(location.search).get('source') === 'pwa' || pwaInstalled;
   const isClientAppMode = isDedicatedClientRoute
     || ((isQrBusinessRoute || isEntrepriseAppRoute) && isPwaLaunch);
+
+  if (isPlatformAppMode()) {
+    return <PlatformAppShell>{children}</PlatformAppShell>;
+  }
 
   if (isClientAppMode) {
     return (

@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import SearchBar from '../components/SearchBar';
 import TourismExperienceDiscovery from '../components/TourismExperienceDiscovery';
+import { isPlatformAppMode } from '../lib/platformAppMode';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { SEOHead } from '../components/SEOHead';
@@ -491,7 +491,9 @@ export default function CitizensTourism() {
   const t = copy[lang];
   const journey = journeyCopy[lang];
   const isRTL = lang === 'ar';
+  const inPlatformApp = isPlatformAppMode();
   const [journeyMode, setJourneyMode] = useState<JourneyMode>(() => new URLSearchParams(window.location.search).get('tab') === 'settle' ? 'settle' : 'visit');
+  const [openSettlementTopic, setOpenSettlementTopic] = useState<number | null>(() => { const topic = new URLSearchParams(window.location.search).get('topic'); return topic !== null && /^\d+$/.test(topic) ? Number(topic) : null; });
   const topics = journeyMode === 'visit' ? journey.visitTopics : journey.settleTopics;
 
   return (
@@ -502,7 +504,7 @@ export default function CitizensTourism() {
         canonical="https://dalil-tounes.com/citizens/tourism"
         currentPath="/citizens/tourism"
       />
-      <section className="relative mx-auto max-w-6xl h-[220px] sm:h-[240px] overflow-hidden sm:rounded-2xl sm:mt-6">
+      <section className={`${inPlatformApp ? 'hidden' : 'relative mx-auto max-w-6xl h-[220px] sm:h-[240px] overflow-hidden sm:rounded-2xl sm:mt-6'}`}>
         <img
           src="https://commons.wikimedia.org/wiki/Special:FilePath/Sidi_bou_said_port.jpg?width=1600"
           alt={t.heroAlt}
@@ -518,7 +520,7 @@ export default function CitizensTourism() {
         </div>
       </section>
 
-      <section className="py-4 px-4">
+      <section className={inPlatformApp ? 'hidden' : 'py-4 px-4'}>
         <div className="max-w-2xl mx-auto text-center">
           <p className="text-base md:text-lg font-normal mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
             <span className="text-[#4A1D43]">{t.slogan}</span>
@@ -527,28 +529,13 @@ export default function CitizensTourism() {
         </div>
       </section>
 
-      {journeyMode === 'settle' && <section className="py-2 px-4 relative z-0" style={{ overflow: 'visible' }}>
-        <div className="max-w-5xl mx-auto" style={{ overflow: 'visible' }}>
-          <div className="bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-[#D4AF37] p-2.5 md:p-3" style={{ overflow: 'visible' }}>
-            <SearchBar
-              scope="tourism"
-              intentEnabled={false}
-              enabled
-              resultMode="redirectToResults"
-              preferredTitle={t.preferredTitle}
-              preferredSubtitle={t.preferredSubtitle}
-            />
-          </div>
-        </div>
-      </section>}
-
       <section className="px-4 pt-6">
         <div className="max-w-5xl mx-auto rounded-2xl border border-[#D4AF37]/50 bg-white px-3 py-4 sm:px-5 shadow-sm">
           <div className="flex justify-center gap-2" role="tablist" aria-label={t.title}>
-            <button type="button" role="tab" aria-selected={journeyMode === 'visit'} onClick={() => setJourneyMode('visit')} className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 text-xs sm:text-sm font-semibold transition-colors ${journeyMode === 'visit' ? 'border-[#D4AF37] bg-[#4A1D43] text-[#D4AF37]' : 'border-[#D4AF37]/50 bg-white text-[#4A1D43] hover:bg-[#D4AF37]/10'}`}>
+            <button type="button" role="tab" aria-selected={journeyMode === 'visit'} onClick={() => { setJourneyMode('visit'); setOpenSettlementTopic(null); }} className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 text-xs sm:text-sm font-semibold transition-colors ${journeyMode === 'visit' ? 'border-[#D4AF37] bg-[#4A1D43] text-[#D4AF37]' : 'border-[#D4AF37]/50 bg-white text-[#4A1D43] hover:bg-[#D4AF37]/10'}`}>
               <Compass className="h-4 w-4" aria-hidden="true" />{journey.visitTab}
             </button>
-            <button type="button" role="tab" aria-selected={journeyMode === 'settle'} onClick={() => setJourneyMode('settle')} className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 text-xs sm:text-sm font-semibold transition-colors ${journeyMode === 'settle' ? 'border-[#D4AF37] bg-[#4A1D43] text-[#D4AF37]' : 'border-[#D4AF37]/50 bg-white text-[#4A1D43] hover:bg-[#D4AF37]/10'}`}>
+            <button type="button" role="tab" aria-selected={journeyMode === 'settle'} onClick={() => { setJourneyMode('settle'); setOpenSettlementTopic(null); }} className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 text-xs sm:text-sm font-semibold transition-colors ${journeyMode === 'settle' ? 'border-[#D4AF37] bg-[#4A1D43] text-[#D4AF37]' : 'border-[#D4AF37]/50 bg-white text-[#4A1D43] hover:bg-[#D4AF37]/10'}`}>
               <Home className="h-4 w-4" aria-hidden="true" />{journey.settleTab}
             </button>
           </div>
@@ -559,7 +546,7 @@ export default function CitizensTourism() {
           </div>
 
           {journeyMode === 'visit' && <p className="mt-3 text-center text-xs font-semibold tracking-wide text-[#A45A27]">✨ Six façons de vivre la Tunisie, pas seulement de la visiter</p>}
-          <div className="mt-4 grid grid-cols-2 gap-2.5 lg:grid-cols-3">
+          <div className={`mt-4 grid gap-2.5 ${journeyMode === 'settle' && openSettlementTopic !== null ? 'grid-cols-1' : 'grid-cols-2 lg:grid-cols-3'}`}>
             {topics.map((topic, topicIndex) => journeyMode === 'visit' ? (
               <Link key={topic.title} to={topic.href} className={`group relative min-w-0 overflow-hidden rounded-2xl border border-[#D9C9A4] px-2.5 py-3 sm:px-4 sm:py-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#4A1D43] bg-[#FFFCF7]`}>
                 <div className="mb-2 flex items-center justify-between"><span className="text-xl sm:text-2xl" aria-hidden="true">{['🏛️','🌿','🧶','🍲','🎉','🏡'][topicIndex] || '🇹🇳'}</span><span className="rounded-full bg-white/65 px-2 py-0.5 text-[10px] font-semibold text-[#784626]">Explorer</span></div>
@@ -576,8 +563,8 @@ export default function CitizensTourism() {
                 <span className="mt-3 inline-flex rounded-full bg-white/75 px-3 py-1.5 text-xs font-semibold text-[#5B2345] shadow-sm transition group-hover:bg-white">{journey.discover}</span>
               </Link>
             ) : (
-              <details key={topic.title} className="group min-w-0 rounded-xl border border-[#D4AF37]/45 bg-[#FFFDF8] px-3 py-2.5 open:border-[#D4AF37] max-md:open:fixed max-md:open:inset-x-3 max-md:open:top-[10dvh] max-md:open:bottom-[10dvh] max-md:open:z-[100] max-md:open:flex max-md:open:flex-col max-md:open:overflow-hidden max-md:open:bg-white max-md:open:p-0 max-md:open:shadow-2xl">
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-[#4A1D43] [&::-webkit-details-marker]:hidden max-md:group-open:shrink-0 max-md:group-open:border-b max-md:group-open:border-[#D4AF37]/30 max-md:group-open:bg-[#FFFDF8] max-md:group-open:px-4 max-md:group-open:py-4">
+              <details key={topic.title} open={openSettlementTopic === topicIndex} className={`group min-w-0 rounded-xl border border-[#D4AF37]/45 bg-[#FFFDF8] px-3 py-2.5 open:border-[#D4AF37] max-md:open:fixed max-md:open:inset-x-3 max-md:open:top-[10dvh] max-md:open:bottom-[10dvh] max-md:open:z-[100] max-md:open:flex max-md:open:flex-col max-md:open:overflow-hidden max-md:open:bg-white max-md:open:p-0 max-md:open:shadow-2xl ${openSettlementTopic !== null && openSettlementTopic !== topicIndex ? 'hidden' : ''} ${openSettlementTopic === topicIndex ? 'col-span-full w-full' : ''}`}>
+                <summary onClick={(event) => { event.preventDefault(); setOpenSettlementTopic(current => current === topicIndex ? null : topicIndex); }} className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-[#4A1D43] [&::-webkit-details-marker]:hidden max-md:group-open:shrink-0 max-md:group-open:border-b max-md:group-open:border-[#D4AF37]/30 max-md:group-open:bg-[#FFFDF8] max-md:group-open:px-4 max-md:group-open:py-4">
                   <span>{topic.title}</span>
                   <span className="flex shrink-0 items-center gap-1.5"><span className="hidden text-[11px] font-semibold text-[#4A1D43] max-md:group-open:inline">{({fr:'Fermer',ar:'إغلاق',en:'Close',it:'Chiudi',ru:'Закрыть'} as Record<PublicLanguage, string>)[lang]}</span><ChevronDown className="h-4 w-4 text-[#D4AF37] transition-transform group-open:rotate-180" aria-hidden="true" /></span>
                 </summary>

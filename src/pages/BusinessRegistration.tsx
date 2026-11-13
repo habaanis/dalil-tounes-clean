@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import { Building2, CheckCircle2, CreditCard, Smartphone, type LucideIcon } from 'lucide-react';
 import { BusinessRegistrationRequestForm } from '../components/BusinessRegistrationRequestForm';
 import { useLanguage } from '../context/LanguageContext';
+import { isPlatformAppMode } from '../lib/platformAppMode';
+import { DALIL_MASCOT_IMAGE } from '../lib/dalilMascotImage';
 
 const PAGE_COPY = {
   fr: {
@@ -45,6 +47,7 @@ const PAGE_COPY = {
 export default function BusinessRegistration() {
   const { language } = useLanguage();
   const text = language === 'ar' ? PAGE_COPY.ar : PAGE_COPY.fr;
+  const inPlatformApp = isPlatformAppMode();
 
   useEffect(() => {
     const previousTitle = document.title;
@@ -65,7 +68,15 @@ export default function BusinessRegistration() {
   return (
     <div className="public-surface min-h-screen bg-[#fcfaf5] px-4 pb-14 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl">
-        <section className="overflow-hidden rounded-xl border border-[#D4AF37]/40 bg-gradient-to-br from-[#4A1D43] via-[#632652] to-[#0B5A45] px-5 py-9 text-white shadow-[0_24px_70px_rgba(74,29,67,0.18)] sm:px-8 sm:py-12 lg:px-12">
+        {inPlatformApp && <section className="mt-3 flex items-center gap-3 rounded-xl border border-[#D4AF37]/45 bg-[#FFFDF8] p-3">
+          <div className="min-w-0 flex-1">
+            <h1 className="font-serif text-xl font-medium text-[#4A1D43]">{text.title}</h1>
+            <p className="mt-1 text-xs leading-5 text-[#665565]">{text.intro}</p>
+          </div>
+          <img src={DALIL_MASCOT_IMAGE} alt="" aria-hidden="true" loading="lazy" decoding="async"
+            className="h-[64px] w-[60px] shrink-0 rounded-xl border border-[#D4AF37]/35 bg-white object-contain" />
+        </section>}
+        <section className={`${inPlatformApp ? 'hidden' : ''} overflow-hidden rounded-xl border border-[#D4AF37]/40 bg-gradient-to-br from-[#4A1D43] via-[#632652] to-[#0B5A45] px-5 py-9 text-white shadow-[0_24px_70px_rgba(74,29,67,0.18)] sm:px-8 sm:py-12 lg:px-12`}>
           <div className="max-w-3xl">
             <p className="inline-flex rounded-full border border-[#D4AF37]/50 bg-white/10 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.16em] text-[#F7D978]">
               {text.eyebrow}

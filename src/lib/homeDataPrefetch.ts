@@ -51,13 +51,15 @@ export interface HomeQueryResult {
   partners: HomeBusinessRow[];
   totalCount: number;
   certifiedCount: number;
+  legacyCertifiedCount: number;
+  recommendedCount: number | null;
 }
 
 interface CacheEntry extends HomeQueryResult {
   ts: number;
 }
 
-const CACHE_KEY = 'home_data_v19';
+const CACHE_KEY = 'home_data_v22';
 const STALE_TIME = 5 * 60_000;
 // Keep the last verified counts for 30 days when Supabase is temporarily unavailable.
 const GC_TIME = 30 * 24 * 60 * 60_000;
@@ -82,7 +84,10 @@ export function readHomeCache(): (HomeQueryResult & { fresh: boolean }) | null {
     if (!Number.isFinite(entry.ts) || age < 0 || age > GC_TIME ||
       !Number.isSafeInteger(entry.totalCount) || entry.totalCount <= 0 ||
       !Number.isSafeInteger(entry.certifiedCount) || entry.certifiedCount < 0 ||
-      entry.certifiedCount > entry.totalCount) {
+      entry.certifiedCount > entry.totalCount ||
+      !Number.isSafeInteger(entry.legacyCertifiedCount) || entry.legacyCertifiedCount < 0 ||
+      entry.legacyCertifiedCount > entry.totalCount ||
+      (entry.recommendedCount !== null && (!Number.isSafeInteger(entry.recommendedCount) || entry.recommendedCount < 0 || entry.recommendedCount > entry.totalCount))) {
       localStorage.removeItem(CACHE_KEY);
       return null;
     }
@@ -91,6 +96,8 @@ export function readHomeCache(): (HomeQueryResult & { fresh: boolean }) | null {
       partners: Array.isArray(entry.partners) ? entry.partners : [],
       totalCount: entry.totalCount,
       certifiedCount: entry.certifiedCount,
+      legacyCertifiedCount: entry.legacyCertifiedCount,
+      recommendedCount: entry.recommendedCount,
       fresh: age < STALE_TIME,
     };
   } catch {
@@ -206,7 +213,7 @@ async function doFetch(): Promise<HomeQueryResult> {
 
   console.log('[HOME-DIAG] CERTIFIED_LABEL =', JSON.stringify(CERTIFIED_LABEL));
 
-  const [listRes, totalRes, certifiedRes] = await Promise.all([
+  const [listRes, totalRes, certifiedRes, legacyCertifiedRes, recommendedRes] = await Promise.all([
     supabase
       .from('entreprise')
       .select(FIELDS)
@@ -228,6 +235,28 @@ async function doFetch(): Promise<HomeQueryResult> {
       .or('statut_publication.is.null,statut_publication.eq.Publié')
       .eq('cv_business_status', 'published')
       .limit(1),
+
+    // Historical certification label, kept separate from published CV certification.
+    supabase
+      .from('entreprise')
+      .select('id', { count: 'exact', head: true })
+      .not('nom', 'is', null)
+      .neq('nom', '')
+      .or('statut_publication.is.null,statut_publication.eq.Publié')
+      // Count the earlier certification mentions only for dossiers without a published CV.
+      .eq('statut_carte', CERTIFIED_LABEL)
+      .or('cv_business_status.is.null,cv_business_status.neq.published'),
+
+    // Count publicly eligible businesses meeting the existing Google-review
+    // recommendation rule. No client records or unpublished details are exposed.
+    supabase
+      .from('entreprise')
+      .select('id', { count: 'exact', head: true })
+      .not('nom', 'is', null)
+      .neq('nom', '')
+      .or('and(approved.eq.true,statut_validation.eq.publie),and(approved.is.null,statut_publication.eq.Publié),and(approved.eq.true,statut_publication.eq.Publié)')
+      .gte('"Note Google Globale"', 4)
+      .gte('"Compteur Avis Google"', 5),
   ]);
 
   console.log('[HOME-DIAG] totalRes', {
@@ -269,7 +298,7 @@ async function doFetch(): Promise<HomeQueryResult> {
 
   // Do not cache failed count queries as real zero counts.
   const totalCount = Number(totalRes.data);
-  if (totalRes.error || certifiedRes.error || !Number.isSafeInteger(totalCount) || totalCount <= 0 || certifiedRes.count == null) {
+  if (totalRes.error || certifiedRes.error || legacyCertifiedRes.error || !Number.isSafeInteger(totalCount) || totalCount <= 0 || certifiedRes.count == null || legacyCertifiedRes.count == null) {
     throw new Error('[homeDataPrefetch] Business counters unavailable; preserving last known valid values');
   }
 
@@ -335,6 +364,8 @@ async function doFetch(): Promise<HomeQueryResult> {
     partners,
     totalCount,
     certifiedCount: certifiedRes.count ?? 0,
+    legacyCertifiedCount: legacyCertifiedRes.count ?? 0,
+    recommendedCount: recommendedRes.error ? null : recommendedRes.count,
   };
 
   console.log('[HOME-DIAG] final HomeQueryResult =', {
@@ -399,6 +430,8 @@ export function revalidateHomeData(): Promise<HomeQueryResult> {
 function sameResult(a: HomeQueryResult, b: HomeQueryResult): boolean {
   if (a.totalCount !== b.totalCount) return false;
   if (a.certifiedCount !== b.certifiedCount) return false;
+  if (a.legacyCertifiedCount !== b.legacyCertifiedCount) return false;
+  if (a.recommendedCount !== b.recommendedCount) return false;
   if (a.partners.length !== b.partners.length) return false;
 
   for (let i = 0; i < a.partners.length; i++) {

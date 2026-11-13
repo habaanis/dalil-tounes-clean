@@ -8,6 +8,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MeilleursSection from '../components/MeilleursSection';
 import SearchBar from '../components/SearchBar';
+import { isPlatformAppMode } from '../lib/platformAppMode';
+import { DALIL_MASCOT_IMAGE } from '../lib/dalilMascotImage';
 
 interface Demarche {
   id: string;
@@ -40,6 +42,7 @@ export default function CitizensServices() {
   const ss = t.citizens.socialServices;
   const cs = te.citizens!.services!;
   const isRTL = language === 'ar';
+  const inPlatformApp = isPlatformAppMode();
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState<'bureaux' | 'demarches' | 'social'>('bureaux');
@@ -483,8 +486,35 @@ export default function CitizensServices() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
 
-      {/* Hero Banner Bordeaux/Or - Compact */}
-      <section className="relative w-full h-[220px] overflow-hidden">
+      {inPlatformApp && (
+        <>
+          <section className="mx-3 mt-3 rounded-xl border border-[#D4AF37]/45 bg-[#FFFDF8] px-3 py-3 text-[#4A1D43]">
+            <div className="flex items-center gap-3">
+              <div className="min-w-0 flex-1">
+                <h1 className="font-serif text-xl font-medium leading-6">
+                  {cs.title}
+                </h1>
+                <p className="mt-1 text-xs leading-5 text-[#665565]">
+                  {language === 'fr' ? 'Retrouvez les bureaux, les démarches et les services sociaux en Tunisie.' :
+                   language === 'ar' ? 'اكتشف المكاتب والإجراءات والخدمات الاجتماعية في تونس.' :
+                   language === 'en' ? 'Find public offices, procedures and social services in Tunisia.' :
+                   language === 'it' ? 'Trova uffici, pratiche e servizi sociali in Tunisia.' :
+                   'Найдите государственные учреждения, процедуры и социальные службы Туниса.'}
+                </p>
+              </div>
+              <img src={DALIL_MASCOT_IMAGE} alt="" aria-hidden="true" loading="lazy" decoding="async"
+                className="h-[64px] w-[60px] shrink-0 rounded-xl border border-[#D4AF37]/35 bg-white object-contain" />
+            </div>
+          </section>
+          <section className="relative z-20 mx-3 mt-3 rounded-xl border border-[#D4AF37]/40 bg-white p-2.5"
+            style={{ overflow: 'visible' }}>
+            <SearchBar scope="services" intentEnabled={false} enabled resultMode="redirectToResults" />
+          </section>
+        </>
+      )}
+
+      {/* Original banner reserved for the classic website. */}
+      <section className={`${inPlatformApp ? 'hidden' : ''} relative w-full h-[220px] overflow-hidden`}>
         <button
           onClick={() => navigate('/citizens')}
           className={`absolute top-4 ${isRTL ? 'right-4' : 'left-4'} z-10 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm text-[#4A1D43] px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-white transition-colors shadow-sm`}
@@ -542,7 +572,7 @@ export default function CitizensServices() {
       </section>
 
       {/* Système d'Onglets 3 tabs Bordeaux/Or - Sticky */}
-      <section className="sticky top-[60px] z-10 px-4 py-2 bg-white border-b border-[#D4AF37] shadow-sm">
+      <section className={`${inPlatformApp ? 'relative top-auto' : 'sticky top-[60px]'} z-10 px-4 py-2 bg-white border-b border-[#D4AF37] shadow-sm`}>
         <div className="max-w-5xl mx-auto">
           <div className="flex gap-2 justify-center flex-wrap">
             <button
@@ -603,14 +633,14 @@ export default function CitizensServices() {
         </div>
       </section>
 
-      {/* SearchBar Services */}
-      <section className="py-2 px-4 relative z-[9999]" style={{ overflow: 'visible' }}>
+      {/* Keep the existing search position on the classic website only. */}
+      {!inPlatformApp && <section className="py-2 px-4 relative z-[9999]" style={{ overflow: 'visible' }}>
         <div className="max-w-5xl mx-auto" style={{ overflow: 'visible' }}>
           <div className="bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-[#D4AF37] p-2.5 md:p-3" style={{ overflow: 'visible' }}>
             <SearchBar scope="services" intentEnabled={false} enabled resultMode="redirectToResults" />
           </div>
         </div>
-      </section>
+      </section>}
 
       {/* Meilleurs services citoyens + article blog */}
       <section className="py-8 bg-white">
