@@ -478,7 +478,7 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
               ru: 'Персональное мини-приложение в стиле вашей компании поможет представить услуги, расширить охват и привлечь новых клиентов. Им легко поделиться по ссылке и QR-коду Business.'
             } as Record<Lang, string>)[lang]}</p>
           </section>}
-          <CvSectionFold enabled={compactCvApp} title={t.cvLabel} initiallyOpen>
+          <CvSectionFold enabled={compactCvApp} title={compactCvApp ? ({fr:'Votre mini-appli',ar:'تطبيقك المصغّر',en:'Your mini-app',it:'La tua mini-app',ru:'Ваше мини-приложение'} as Record<Lang,string>)[lang] : t.cvLabel} initiallyOpen>
           <section className="border-b border-[#D4AF37]/25 bg-[radial-gradient(circle_at_top_left,rgba(212,175,55,0.18),transparent_28%),linear-gradient(135deg,#fffdf8_0%,#ffffff_52%,#f7f0f5_100%)] px-4 py-8 md:py-14">
             <div className="mx-auto grid max-w-[1180px] items-center gap-8 lg:grid-cols-[1fr_0.72fr]">
               <div><div className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/45 bg-white px-3 py-1.5 text-xs font-black uppercase tracking-[0.14em] text-[#4A1D43] shadow-sm"><Sparkles className="h-4 w-4 text-[#D4AF37]" /> {t.cvLabel}</div><CvHeading className="public-title mt-5 font-serif text-4xl font-bold leading-tight text-[#2E102A] md:text-5xl">{t.cvTitle}</CvHeading><p className="mt-3 font-serif text-2xl font-bold leading-tight text-[#B58A18] md:text-3xl">{t.cvSubtitle}</p><p className="mt-5 max-w-xl text-base leading-7 text-gray-600">{t.cvDescription}</p><div className="mt-6 flex flex-wrap gap-3"><a href="/subscription" className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-[#4A1D43] px-5 py-3 text-sm font-black text-white">{t.offers} <ArrowRight className={`h-4 w-4 ${lang === 'ar' ? 'rotate-180' : ''}`} /></a><a href="/contact" className="inline-flex min-h-12 items-center rounded-xl border border-[#D4AF37] bg-white px-5 py-3 text-sm font-bold text-[#4A1D43]">{t.information}</a></div></div>
@@ -509,11 +509,11 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
           </section>
           </CvSectionFold>
 
-          <CvSectionFold enabled={compactCvApp} title={lang === 'fr' ? 'Fonctionnalités du CV Business' : lang === 'ar' ? 'مميزات CV Business' : lang === 'en' ? 'Business CV features' : lang === 'it' ? 'Funzioni del CV Business' : 'Возможности Business CV'}>
+          <CvSectionFold enabled={compactCvApp} title={lang === 'fr' ? 'Fonctionnalités de votre mini-appli' : lang === 'ar' ? 'مميزات تطبيقك المصغّر' : lang === 'en' ? 'Your mini-app features' : lang === 'it' ? 'Funzioni della tua mini-app' : 'Возможности мини-приложения'}>
           <CvCapabilitiesSection language={lang} />
           </CvSectionFold>
 
-          <CvSectionFold enabled={compactCvApp} title={lang === 'fr' ? 'Comment créer votre CV Business ?' : lang === 'ar' ? 'كيفاش تعمل CV Business؟' : lang === 'en' ? 'How to create your Business CV' : lang === 'it' ? 'Come creare il Business CV' : 'Как создать Business CV'}>
+          <CvSectionFold enabled={compactCvApp} title={lang === 'fr' ? 'Comment créer votre mini-appli ?' : lang === 'ar' ? 'كيفاش تعمل تطبيقك المصغّر؟' : lang === 'en' ? 'How to create your mini-app' : lang === 'it' ? 'Come creare la tua mini-app' : 'Как создать мини-приложение'}>
           <CvBusinessJourney language={lang} />
           </CvSectionFold>
 
