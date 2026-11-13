@@ -17,12 +17,12 @@
 .premium-chrome .premium-install { background: #f2ebdc; border-color: #e1d3b5; }
 .premium-chrome .premium-install button { font-size: .8rem; font-weight: 500; }
 .premium-chrome .premium-install button.bg-gray-900 { background: #42213b; box-shadow: none; }
-.premium-chrome footer { background: #2e1a2a; border-color: #59464e; padding-top: 2rem; }
+.premium-chrome footer { background: #080808; border-color: #2b2b2b; padding-top: 2rem; }
 .premium-chrome footer > div > div:first-child { background: transparent; border: 0; border-bottom: 1px solid #b69b624d; border-radius: 0; box-shadow: none; margin-bottom: 1.5rem; padding-bottom: 1.25rem; }
 .premium-chrome footer .gap-10 { gap: 1.5rem; }
-.premium-chrome footer .text-gray-400, .premium-chrome footer .text-gray-500 { color: #d1c3cd; }
+.premium-chrome footer .text-gray-400, .premium-chrome footer .text-gray-500 { color: #d0d0d0; }
 .premium-chrome footer > div > .grid .text-gray-600,
-.premium-chrome footer > div > .border-t p.text-gray-600 { color: #c8bbc4; }
+.premium-chrome footer > div > .border-t p.text-gray-600 { color: #c8c8c8; }
 .premium-chrome footer h4 { color: #dfcda4; font-weight: 500; letter-spacing: .035em; }
 @media (max-width: 639px) {
   .premium-universes { grid-template-columns: 1fr; gap: .6rem; margin-top: 1rem; }
