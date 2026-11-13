@@ -1532,12 +1532,12 @@ export default function BusinessShowcaseLienoraDetail({
   );
 
   const sections = [
-    hasSection('services') && {
+    (boutiqueContent || hasSection('services')) && {
       id: 'services' as const,
-      title: text.services,
+      title: boutiqueContent ? (language === 'ar' ? 'المتجر' : 'Boutique') : text.services,
       icon: Briefcase,
-      badge: String(serviceItems.length),
-      content: serviceItems.length > 0 ? (
+      badge: boutiqueContent ? undefined : String(serviceItems.length),
+      content: boutiqueContent || (serviceItems.length > 0 ? (
         <div className="dt-service-grid">
           {serviceItems.map((service, index) => (
             <div className="dt-service-item" key={`${service}-${index}`}>
@@ -1546,7 +1546,7 @@ export default function BusinessShowcaseLienoraDetail({
             </div>
           ))}
         </div>
-      ) : <p className="dt-empty-copy">{text.noServices}</p>,
+      ) : <p className="dt-empty-copy">{text.noServices}</p>),
     },
     galleryContent && {
       id: 'gallery' as const,
@@ -1830,7 +1830,6 @@ export default function BusinessShowcaseLienoraDetail({
                 )}
               </div>
             )}
-            {boutiqueContent && <div className="dt-boutique-in-actions">{boutiqueContent}</div>}
             {!embeddedPreview && <div className="dt-secondary-actions">
               {(business.email || whatsappUrl) && (
                 <button type="button" className="dt-secondary-action" onClick={requestQuote}>
