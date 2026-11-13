@@ -63,7 +63,7 @@ interface BusinessCardProps {
  * Les fiches gratuites sont utilisables directement sans navigation ; les CV payants restent ouvrables.
  * Aucun champ Airtable/Supabase ni droit d'abonnement n'est modifié ici.
  */
-export const BusinessCard = ({ business, onClick, showGoogleRating = true, compact = false }: BusinessCardProps) => {
+export const BusinessCard = ({ business, onClick, showGoogleRating = true, compact = true }: BusinessCardProps) => {
   const { language } = useLanguage();
   const { getCategory } = useCategoryTranslation();
 
