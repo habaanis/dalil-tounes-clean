@@ -153,7 +153,7 @@ export default function BusinessShowcaseLienoraEnhanced() {
   const boutiqueDemo = new URLSearchParams(window.location.search).get('boutique-demo') === '1'
     && (String(business?.nom || '').trim().toLowerCase() === "aux saveurs d'anis")
     && String(business?.ville || '').toLowerCase() === 'sousse';
-  const images = String(business?.['image_url'] || '').split(/[\\s,]+/).map(value => value.trim()).filter(value => /^https:\/\//.test(value));
+  const images = (String(business?.['image_url'] || '').match(/https:\/\/[^\s,]+/g) || []).map(url => url.trim());
   const pilotProducts: BoutiqueProduct[] = boutiqueDemo
     ? [
       { id: 'mariage', title: 'Buffet de mariage', imageUrl: images[1], currency: 'TND', mode: 'quote', description: 'Prestation traiteur sur mesure — devis personnalisé.' },
