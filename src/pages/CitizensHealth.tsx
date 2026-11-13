@@ -336,8 +336,13 @@ export default function CitizensHealth({}: CitizensHealthProps) {
         </div>
       </section>
 
-      <section className="px-4 pb-5">
-        <div className="max-w-7xl mx-auto">
+      <section className="px-4 pb-3">
+        <details className="group mx-auto max-w-5xl overflow-visible rounded-xl border border-[#C9A65D] bg-white">
+          <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-semibold text-[#292725] [&::-webkit-details-marker]:hidden">
+            <span>🚑 {c.transportTitle}</span>
+            <ChevronDown className="h-4 w-4 shrink-0 text-[#B28A44] transition group-open:rotate-180" aria-hidden="true" />
+          </summary>
+          <div className="border-t border-[#C9A65D]/40 px-3 pb-3 pt-3">
           <div className="relative mb-3 min-h-[150px] overflow-hidden rounded-xl border border-[#C9A65D] bg-[#FFF8EA] shadow-sm sm:min-h-[170px]">
             <img src={getSupabaseImageUrl('sante_banner.webp')} alt={c.transportAlt} className="absolute inset-0 h-full w-full object-cover object-center opacity-85" decoding="async" />
             <div className="absolute inset-0 bg-gradient-to-r from-[#FFF8EA]/95 via-[#FFF8EA]/90 to-[#FFF8EA]/55" />
@@ -397,7 +402,8 @@ export default function CitizensHealth({}: CitizensHealthProps) {
           </motion.div>
             </div>
           </details>
-        </div>
+          </div>
+        </details>
       </section>
 
       {showTransportModal && (
