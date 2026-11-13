@@ -715,15 +715,15 @@ export default function EducationNew() {
         />
       </section>
 
+        </div>
+      </details>
+
       <details className="group mx-auto mb-3 max-w-5xl rounded-xl border border-[#C9A65D] bg-white">
         <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-semibold text-[#292725] [&::-webkit-details-marker]:hidden">
           <span>📅 {t.eventBanner.title}</span>
           <ChevronDown className="h-4 w-4 shrink-0 text-[#B28A44] transition group-open:rotate-180" aria-hidden="true" />
         </summary>
         <div className="border-t border-[#C9A65D]/40 pt-3">
-        </div>
-      </details>
-
       <section className="max-w-5xl mx-auto px-4 pb-8" aria-label={t.eventBanner.title}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -780,15 +780,15 @@ export default function EducationNew() {
         </div>
       </section>
 
+        </div>
+      </details>
+
       <details className="group mx-auto mb-3 max-w-5xl rounded-xl border border-[#C9A65D] bg-white">
         <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-semibold text-[#292725] [&::-webkit-details-marker]:hidden">
           <span>🔗 {official.title}</span>
           <ChevronDown className="h-4 w-4 shrink-0 text-[#B28A44] transition group-open:rotate-180" aria-hidden="true" />
         </summary>
         <div className="border-t border-[#C9A65D]/40 pt-3">
-        </div>
-      </details>
-
       <section className="max-w-5xl mx-auto px-4 pb-8" aria-labelledby="official-education-links">
         <h2 id="official-education-links" className="public-heading text-xl font-semibold text-[#292725] text-center mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>{official.title}</h2>
         <div className="grid gap-3 md:grid-cols-3">
@@ -805,15 +805,15 @@ export default function EducationNew() {
         </div>
       </section>
 
+        </div>
+      </details>
+
       <details className="group mx-auto mb-3 max-w-5xl rounded-xl border border-[#C9A65D] bg-white">
         <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-semibold text-[#292725] [&::-webkit-details-marker]:hidden">
           <span>💼 {t.careersBlock.title}</span>
           <ChevronDown className="h-4 w-4 shrink-0 text-[#B28A44] transition group-open:rotate-180" aria-hidden="true" />
         </summary>
         <div className="border-t border-[#C9A65D]/40 pt-3">
-        </div>
-      </details>
-
       {/* Bloc Carrières dans l'Éducation - Version compacte */}
       <section className="max-w-7xl mx-auto px-4 pb-6">
         <motion.div
@@ -857,15 +857,15 @@ export default function EducationNew() {
         </motion.div>
       </section>
 
+        </div>
+      </details>
+
       <details ref={eventsDetailsRef} className="group mx-auto mb-3 max-w-5xl rounded-xl border border-[#C9A65D] bg-white">
         <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-semibold text-[#292725] [&::-webkit-details-marker]:hidden">
           <span>🗓️ {t.events.upcoming}</span>
           <ChevronDown className="h-4 w-4 shrink-0 text-[#B28A44] transition group-open:rotate-180" aria-hidden="true" />
         </summary>
         <div className="border-t border-[#C9A65D]/40 pt-3">
-        </div>
-      </details>
-
       {/* Section Événements Éducation (en bas avec ancre) - Version ultra compacte */}
       <section id="education-events-section" className="max-w-7xl mx-auto px-4 pb-6 scroll-mt-24">
         <motion.div
