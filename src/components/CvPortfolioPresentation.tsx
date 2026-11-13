@@ -472,6 +472,7 @@ export function CvPortfolioPresentation({
                   )}
                 </>
               )}
+              {activeTab === 'home' && hasSection('services') && portfolioGallery.length === 0 && profile.services.length > 0 && servicesBlock}
               {activeTab === 'about' && aboutBlock}
               {activeTab === 'services' && servicesBlock}
               {activeTab === 'gallery' && galleryBlock}
