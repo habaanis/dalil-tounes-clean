@@ -8,7 +8,7 @@ import { SEOHead } from '../components/SEOHead';
 import StructuredData from '../components/StructuredData';
 import { getHomeSeoMeta } from '../lib/seoMetaTemplates';
 import { generateOrganizationSchema, generateWebSiteSchema } from '../lib/structuredDataSchemas';
-import { ArrowRight, Users, Compass, Building2, MapPin, QrCode, Search, Share2, Sparkles } from 'lucide-react';
+import { ArrowRight, Users, Compass, Building2, MapPin, QrCode, Search, Share2, Sparkles, Play, X } from 'lucide-react';
 import { useEffect, useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CvBusinessJourney from '../components/CvBusinessJourney';
@@ -275,6 +275,13 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
   const structure = siteStructureCopy[lang];
   const CvHeading = embedded ? 'h3' : 'h1';
   const compactCvApp = view === 'cv' && fixedView === 'cv' && isPlatformAppMode() && !embedded;
+  const [videoOpen, setVideoOpen] = useState(false);
+  useEffect(() => {
+    if (!videoOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => { if (event.key === 'Escape') setVideoOpen(false); };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [videoOpen]);
   // The actual public landing page is PlatformHome (not the legacy Home.tsx).
   // Read the authoritative aggregate directly; never display the old 2 351 total
   // from a stale client cache while the current RPC is still loading.
@@ -461,11 +468,21 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
         </>
       ) : (
         <>
+          {compactCvApp && <section className="mx-3 mt-3 rounded-xl border border-[#D4AF37]/40 bg-[#FFFDF8] px-3 py-3">
+            <h1 className="font-serif text-base font-medium text-[#443941]">CV Business &amp; Portfolio</h1>
+            <p className="mt-1 text-xs leading-5 text-[#655C62]">{({
+              fr: 'Présentez votre activité, partagez vos réalisations et facilitez le contact avec vos clients. Découvrez les possibilités dans les rubriques ci-dessous.',
+              ar: 'عرّف بنشاطك وأعمالك وسهّل تواصل الحرفاء معك. اكتشف التفاصيل في الأقسام التالية.',
+              en: 'Showcase your business and work, and make it easier for customers to reach you. Explore the sections below.',
+              it: 'Presenta la tua attività e i tuoi lavori e facilita i contatti con i clienti. Scopri le sezioni qui sotto.',
+              ru: 'Представьте свой бизнес и работы и упростите связь с клиентами. Подробности в разделах ниже.'
+            } as Record<Lang, string>)[lang]}</p>
+          </section>}
           <CvSectionFold enabled={compactCvApp} title={t.cvLabel} initiallyOpen>
           <section className="border-b border-[#D4AF37]/25 bg-[radial-gradient(circle_at_top_left,rgba(212,175,55,0.18),transparent_28%),linear-gradient(135deg,#fffdf8_0%,#ffffff_52%,#f7f0f5_100%)] px-4 py-8 md:py-14">
             <div className="mx-auto grid max-w-[1180px] items-center gap-8 lg:grid-cols-[1fr_0.72fr]">
               <div><div className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/45 bg-white px-3 py-1.5 text-xs font-black uppercase tracking-[0.14em] text-[#4A1D43] shadow-sm"><Sparkles className="h-4 w-4 text-[#D4AF37]" /> {t.cvLabel}</div><CvHeading className="public-title mt-5 font-serif text-4xl font-bold leading-tight text-[#2E102A] md:text-5xl">{t.cvTitle}</CvHeading><p className="mt-3 font-serif text-2xl font-bold leading-tight text-[#B58A18] md:text-3xl">{t.cvSubtitle}</p><p className="mt-5 max-w-xl text-base leading-7 text-gray-600">{t.cvDescription}</p><div className="mt-6 flex flex-wrap gap-3"><a href="/subscription" className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-[#4A1D43] px-5 py-3 text-sm font-black text-white">{t.offers} <ArrowRight className={`h-4 w-4 ${lang === 'ar' ? 'rotate-180' : ''}`} /></a><a href="/contact" className="inline-flex min-h-12 items-center rounded-xl border border-[#D4AF37] bg-white px-5 py-3 text-sm font-bold text-[#4A1D43]">{t.information}</a></div></div>
-              <div className="rounded-[30px] border border-[#D4AF37]/45 bg-white/90 p-4 shadow-[0_28px_70px_rgba(74,29,67,0.16)]"><p className="mb-3 text-center text-xs font-bold text-[#4A1D43]">{t.example}</p><div className="flex h-[390px] items-center justify-center overflow-hidden rounded-[18px] bg-[#032D21]">{heroVideoSrc ? <video key={heroVideoSrc} src={heroVideoSrc} controls playsInline preload="metadata" poster="/images/cv-business-portfolio-aux-saveurs-anis.png" className="h-[390px] w-auto max-w-full object-contain" aria-label={t.example} /> : <img src="/images/cv-business-portfolio-aux-saveurs-anis.png" alt="CV Business Aux saveurs d’Anis" className="h-[390px] w-auto object-contain object-top" />}</div></div>
+              <div className="rounded-[30px] border border-[#D4AF37]/45 bg-white/90 p-4 shadow-[0_28px_70px_rgba(74,29,67,0.16)]"><p className="mb-3 text-center text-xs font-bold text-[#4A1D43]">{t.example}</p><div className="flex h-[390px] items-center justify-center overflow-hidden rounded-[18px] bg-[#032D21]">{compactCvApp ? <button type="button" onClick={() => setVideoOpen(true)} aria-label={lang === 'fr' ? 'Agrandir la vidéo de présentation' : lang === 'ar' ? 'تكبير فيديو العرض' : lang === 'en' ? 'Enlarge the presentation video' : lang === 'it' ? 'Ingrandisci il video' : 'Открыть видео'} className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-xl bg-[#FFFDF8]"><img src="/images/cv-business-portfolio-aux-saveurs-anis.png" alt={t.example} className="h-full w-full object-contain" /><span className="absolute inset-0 flex items-center justify-center bg-black/15"><span className="flex h-14 w-14 items-center justify-center rounded-full bg-white/95 text-[#4A1D43] shadow"><Play className="h-6 w-6" fill="currentColor" aria-hidden="true" /></span></span></button> : heroVideoSrc ? <video key={heroVideoSrc} src={heroVideoSrc} controls playsInline preload="metadata" poster="/images/cv-business-portfolio-aux-saveurs-anis.png" className="h-[390px] w-auto max-w-full object-contain" aria-label={t.example} /> : <img src="/images/cv-business-portfolio-aux-saveurs-anis.png" alt="CV Business Aux saveurs d’Anis" className="h-[390px] w-auto object-contain object-top" />}</div></div>
             </div>
           </section>
           </CvSectionFold>
@@ -503,6 +520,14 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
           <section className="bg-[#2E102A] px-4 py-7 text-white"><div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left rtl:sm:text-right"><div><p className="text-xs font-black uppercase tracking-[0.16em] text-[#F1D783]">{t.searchEyebrow}</p><h2 className="mt-2 max-w-3xl font-serif text-2xl font-bold">{t.searchTitle}</h2></div><button type="button" onClick={() => fixedView ? navigate('/') : setPreviewView('platform')} className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-[#D4AF37] px-5 py-3 text-sm font-black text-[#F1D783]"><Search className="h-4 w-4" /> {t.explorePlatform}</button></div></section>
         </>
       )}
+      {compactCvApp && videoOpen && <div role="presentation" className="fixed inset-0 z-[200] flex items-center justify-center bg-black/75 p-3" onMouseDown={(event) => { if (event.target === event.currentTarget) setVideoOpen(false); }}>
+        <div role="dialog" aria-modal="true" aria-label={t.example} className="relative w-full max-w-3xl rounded-2xl border border-[#D4AF37]/50 bg-[#FFFDF8] p-3 shadow-xl">
+          <button type="button" onClick={() => setVideoOpen(false)} aria-label={lang === 'fr' ? 'Fermer la vidéo' : lang === 'ar' ? 'إغلاق الفيديو' : lang === 'en' ? 'Close video' : lang === 'it' ? 'Chiudi il video' : 'Закрыть видео'}
+            className="absolute right-2 top-2 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-[#D4AF37]/50 bg-white text-[#4A1D43]"><X className="h-5 w-5" /></button>
+          <p className="mb-3 pr-12 text-sm font-medium text-[#4A1D43]">{t.example}</p>
+          {heroVideoSrc ? <video key={heroVideoSrc} src={heroVideoSrc} poster="/images/cv-business-portfolio-aux-saveurs-anis.png" controls autoPlay playsInline preload="metadata" className="max-h-[78dvh] w-full rounded-xl bg-black object-contain" /> : <img src="/images/cv-business-portfolio-aux-saveurs-anis.png" alt={t.example} className="max-h-[78dvh] w-full rounded-xl object-contain" />}
+        </div>
+      </div>}
     </div>
   );
 }
