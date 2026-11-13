@@ -469,13 +469,13 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
       ) : (
         <>
           {compactCvApp && <section className="mx-3 mt-3 rounded-xl border border-[#D4AF37]/40 bg-[#FFFDF8] px-3 py-3">
-            <h1 className="font-serif text-base font-medium text-[#443941]">CV Business &amp; Portfolio</h1>
+            <h1 className="font-serif text-base font-medium text-[#443941]">{({ fr: "Créez votre mini-application professionnelle", ar: "أنشئ تطبيقك المصغّر المهني", en: "Create your own business mini-app", it: "Crea la tua mini-app professionale", ru: "Создайте собственное мини-приложение для бизнеса" } as Record<Lang, string>)[lang]}</h1>
             <p className="mt-1 text-xs leading-5 text-[#655C62]">{({
-              fr: 'Présentez votre activité, partagez vos réalisations et facilitez le contact avec vos clients. Découvrez les possibilités dans les rubriques ci-dessous.',
-              ar: 'عرّف بنشاطك وأعمالك وسهّل تواصل الحرفاء معك. اكتشف التفاصيل في الأقسام التالية.',
-              en: 'Showcase your business and work, and make it easier for customers to reach you. Explore the sections below.',
-              it: 'Presenta la tua attività e i tuoi lavori e facilita i contatti con i clienti. Scopri le sezioni qui sotto.',
-              ru: 'Представьте свой бизнес и работы и упростите связь с клиентами. Подробности в разделах ниже.'
+              fr: 'Une mini-application personnalisée, à l’image de votre entreprise, pour valoriser votre activité, élargir votre visibilité et toucher de nouveaux clients. Facile à partager grâce à son lien et son QR Business.',
+              ar: 'تطبيق مصغّر خاص بنشاطك وبهوية مؤسستك، يساعدك على إبراز خدماتك وتوسيع انتشارك والوصول إلى حرفاء جدد. تشاركه بسهولة عبر رابط ورمز QR Business.',
+              en: 'A personalised mini-app reflecting your business, designed to showcase your services, expand your reach and connect with new customers. Easy to share with a link and Business QR code.',
+              it: 'Una mini-app personalizzata per la tua impresa, per valorizzare i servizi, ampliare la visibilità e raggiungere nuovi clienti. Facile da condividere con un link e un QR Business.',
+              ru: 'Персональное мини-приложение в стиле вашей компании поможет представить услуги, расширить охват и привлечь новых клиентов. Им легко поделиться по ссылке и QR-коду Business.'
             } as Record<Lang, string>)[lang]}</p>
           </section>}
           <CvSectionFold enabled={compactCvApp} title={t.cvLabel} initiallyOpen>
