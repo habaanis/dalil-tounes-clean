@@ -97,7 +97,7 @@ const details = {
       }
     ],
     "note": "Available features depend on your plan, supplied information and enabled options. Business and Portfolio offer essential functions in different layouts.",
-    "cta": "Discover Business CV",
+    "cta": "Discover your business mini-app",
     "contact": "Request information",
     "personalTitle": "Want to add your personal touch to your professional CV?",
     "personalText": "Choose buttons suited to your work from the available features. Your texts, photos and services can be updated; if you have a special request, let's explore what is possible together."
@@ -146,7 +146,7 @@ const details = {
       }
     ],
     "note": "تعتمد الإمكانيات على الصيغة المختارة والمعلومات المقدمة والإعدادات المفعلة. يقدّم النموذجان Business وPortfolio الوظائف الأساسية بتصميمين مختلفين.",
-    "cta": "اكتشف CV Business",
+    "cta": "اكتشف تطبيقك المصغّر",
     "contact": "طلب معلومات",
     "personalTitle": "تحب تزيد لمستك الخاصة على ملفك المهني؟",
     "personalText": "اختار الأزرار المناسبة لمهنتك من الإمكانيات المتوفرة. تنجم تحدّث النصوص والصور والخدمات، وإذا عندك فكرة خاصة نتناقشوا معاك في إمكانية تنفيذها."
@@ -195,7 +195,7 @@ const details = {
       }
     ],
     "note": "Le funzioni dipendono dal piano, dai dati forniti e dalle opzioni configurate. Business e Portfolio propongono i servizi essenziali con presentazioni diverse.",
-    "cta": "Scopri CV Business",
+    "cta": "Scopri la tua mini-app",
     "contact": "Richiedi informazioni",
     "personalTitle": "Vuoi aggiungere il tuo tocco personale al tuo CV professionale?",
     "personalText": "Scegli i pulsanti adatti alla tua attività fra le opzioni disponibili. Testi, foto e servizi possono essere aggiornati; parliamo insieme delle richieste particolari."
@@ -244,7 +244,7 @@ const details = {
       }
     ],
     "note": "Функции зависят от тарифа, предоставленных данных и настроек. Business и Portfolio предлагают основные возможности в разном оформлении.",
-    "cta": "Узнать о CV Business",
+    "cta": "Узнать о вашем мини-приложении",
     "contact": "Запросить информацию",
     "personalTitle": "Хотите добавить индивидуальности вашему профессиональному CV?",
     "personalText": "Выбирайте кнопки под задачи вашего бизнеса среди доступных функций. Тексты, фото и услуги можно обновлять; особые запросы обсуждаются отдельно."
