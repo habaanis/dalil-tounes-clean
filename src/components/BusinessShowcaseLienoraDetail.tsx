@@ -1125,11 +1125,12 @@ export default function BusinessShowcaseLienoraDetail({
   const rating = cvProfile.reviews.rating || 0;
   const googleReviewCount = cvProfile.reviews.count;
   const schedule = business.horaires_ok ? getParsedSchedule(business.horaires_ok) : null;
-  const galleryThumbs = capabilities.showGallery
-    ? getGalleryImageUrls(business.image_url, 'thumbnail').slice(0, capabilities.maxPhotos)
+  const hasRealGallery = Boolean(String(business.image_url || '').trim());
+  const galleryThumbs = capabilities.showGallery && hasRealGallery
+    ? getGalleryImageUrls(business.image_url, 'thumbnail').filter(url => !url.endsWith('/placeholder.jpg')).slice(0, capabilities.maxPhotos)
     : [];
-  const galleryFull = capabilities.showGallery
-    ? getGalleryImageUrls(business.image_url, 'full').slice(0, capabilities.maxPhotos)
+  const galleryFull = capabilities.showGallery && hasRealGallery
+    ? getGalleryImageUrls(business.image_url, 'full').filter(url => !url.endsWith('/placeholder.jpg')).slice(0, capabilities.maxPhotos)
     : [];
   const galleryItems = galleryThumbs.map((thumbnail, index) => ({
     thumbnail,
@@ -1715,9 +1716,9 @@ export default function BusinessShowcaseLienoraDetail({
           bookingContent={sections.find(section => section.id === 'booking')?.content}
           reviewsContent={sections.find(section => section.id === 'reviews')?.content}
           hoursContent={sections.find(section => section.id === 'hours')?.content}
-          hoursBadge={schedule?.isCurrentlyOpen
-            ? translateOpenStatus(language)
-            : schedule ? translateClosedStatus(language) : undefined}
+          hoursBadge={schedule?.todaySchedule
+            ? (schedule.isCurrentlyOpen ? translateOpenStatus(language) : translateClosedStatus(language))
+            : undefined}
           practicalContent={sections.find(section => section.id === 'practical')?.content}
           onQuote={requestQuote}
           onShowQr={() => setOpenSection('sharing')}
