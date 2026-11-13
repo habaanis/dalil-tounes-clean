@@ -1,13 +1,12 @@
 import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Phone, Building2, X, Plus, Search, ExternalLink } from 'lucide-react';
+import { Phone, Building2, X, Plus, ExternalLink, ChevronDown, ArrowRight } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
 import LocationSelectTunisie from '../components/LocationSelectTunisie';
 import VehicleTypeAutocomplete from '../components/VehicleTypeAutocomplete';
 import MeilleursSection from '../components/MeilleursSection';
 import SearchBar from '../components/SearchBar';
-import ThermalWellnessExplorer from '../components/ThermalWellnessExplorer';
 import { Link } from 'react-router-dom';
 import MedicalTransportCard from '../components/MedicalTransportCard';
 import MedicalTransportRegistrationForm from '../components/MedicalTransportRegistrationForm';
@@ -63,10 +62,10 @@ const COPY: Record<PublicLanguage, {
     guideExcerpt: "Trouver le bon médecin n'est pas toujours simple. Voici les questions à se poser avant de prendre rendez-vous.",
     improving: "Section en cours d'amélioration",
     transportAlt: 'Ambulance et transport médical en Tunisie',
-    transportTitle: 'Transport médical',
-    transportSubtitle: 'Ambulances, taxis médicaux et transports adaptés disponibles 24h/7j. Trouvez rapidement un véhicule ou inscrivez-vous comme prestataire.',
-    governorate: 'Gouvernorat',
-    search: 'Rechercher',
+    transportTitle: 'Trouver un transport médical adapté',
+    transportSubtitle: 'Recherchez un service de transport médical selon votre région et vos besoins.',
+    governorate: 'Choisir un gouvernorat',
+    search: 'Rechercher un transport',
     searching: 'Recherche des prestataires...',
     providerSing: 'prestataire',
     providerPlur: 'prestataires',
@@ -94,9 +93,9 @@ const COPY: Record<PublicLanguage, {
     guideExcerpt: 'اختيار الطبيب المناسب ليس دائماً سهلاً. إليك أهم الأسئلة التي يمكن طرحها قبل حجز موعد.',
     improving: 'نعمل حالياً على تطوير هذا القسم',
     transportAlt: 'سيارة إسعاف ونقل طبي في تونس',
-    transportTitle: 'النقل الطبي',
-    transportSubtitle: 'سيارات إسعاف ونقل طبي وخدمات نقل مهيأة متاحة على مدار الساعة. اعثر بسرعة على وسيلة نقل أو سجّل كمقدم خدمة.',
-    governorate: 'الولاية',
+    transportTitle: 'ابحث عن نقل طبي ملائم',
+    transportSubtitle: 'ابحث عن خدمة نقل طبي حسب ولايتك واحتياجاتك.',
+    governorate: 'اختر الولاية',
     search: 'بحث',
     searching: 'جارٍ البحث عن مقدمي الخدمة...',
     providerSing: 'مقدم خدمة',
@@ -125,9 +124,9 @@ const COPY: Record<PublicLanguage, {
     guideExcerpt: 'Finding the right doctor is not always easy. Here are the key questions to consider before booking an appointment.',
     improving: 'This section is being improved',
     transportAlt: 'Ambulance and medical transport in Tunisia',
-    transportTitle: 'Medical transport',
-    transportSubtitle: 'Ambulances, medical taxis and adapted transport available 24/7. Quickly find a vehicle or register as a provider.',
-    governorate: 'Governorate',
+    transportTitle: 'Find suitable medical transport',
+    transportSubtitle: 'Find a medical transport service based on your region and needs.',
+    governorate: 'Choose a governorate',
     search: 'Search',
     searching: 'Searching for providers...',
     providerSing: 'provider',
@@ -156,8 +155,8 @@ const COPY: Record<PublicLanguage, {
     guideExcerpt: 'Trovare il medico giusto non è sempre semplice. Ecco le domande principali da porsi prima di prenotare una visita.',
     improving: 'Questa sezione è in fase di miglioramento',
     transportAlt: 'Ambulanza e trasporto medico in Tunisia',
-    transportTitle: 'Trasporto medico',
-    transportSubtitle: 'Ambulanze, taxi medici e trasporti adattati disponibili 24 ore su 24. Trova rapidamente un veicolo o registrati come fornitore.',
+    transportTitle: 'Trova un trasporto medico adatto',
+    transportSubtitle: 'Trova un servizio di trasporto medico in base alla tua regione e alle tue esigenze.',
     governorate: 'Governatorato',
     search: 'Cerca',
     searching: 'Ricerca dei fornitori...',
@@ -187,8 +186,8 @@ const COPY: Record<PublicLanguage, {
     guideExcerpt: 'Найти подходящего врача не всегда просто. Вот основные вопросы, которые стоит учесть перед записью на приём.',
     improving: 'Этот раздел сейчас улучшается',
     transportAlt: 'Скорая помощь и медицинский транспорт в Тунисе',
-    transportTitle: 'Медицинский транспорт',
-    transportSubtitle: 'Скорая помощь, медицинские такси и адаптированный транспорт доступны круглосуточно. Найдите транспорт или зарегистрируйтесь как поставщик услуг.',
+    transportTitle: 'Найти подходящий медицинский транспорт',
+    transportSubtitle: 'Найдите услугу медицинского транспорта с учетом региона и ваших потребностей.',
     governorate: 'Губернаторство',
     search: 'Искать',
     searching: 'Поиск поставщиков услуг...',
@@ -264,7 +263,7 @@ export default function CitizensHealth({}: CitizensHealthProps) {
     <div className="public-surface min-h-screen bg-gradient-to-b from-white to-gray-50" dir={isRTL ? 'rtl' : 'ltr'}>
       <section className="relative w-full overflow-hidden rounded-b-3xl shadow-lg">
         <img src={getSupabaseImageUrl('sante.jpg')} alt={c.heroAlt} className="absolute inset-0 w-full h-full object-cover" decoding="async" />
-        <div className="absolute inset-0 bg-gradient-to-br from-[#35172f]/80 to-[#35172f]/70" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/55 to-[#3B3426]/60" />
         <div className="relative min-h-[220px] flex flex-col items-center justify-center text-center px-4 py-7">
           <motion.h1 initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }} className="public-title text-4xl md:text-5xl font-light text-[#D4AF37] mb-3 drop-shadow-lg" style={{ fontFamily: "'Playfair Display', serif" }}>
             {c.pageTitle}
@@ -290,70 +289,67 @@ export default function CitizensHealth({}: CitizensHealthProps) {
         </div>
       </section>
 
-      <div className="mx-auto max-w-5xl px-4 pt-3 text-right"><Link to="/citizens/health/thermalisme" className="text-sm font-semibold text-[#4A1D43] underline">♨️ {language === 'ar' ? 'اكتشف قسم المياه الحارة والعيون الطبيعية' : language === 'en' ? 'Explore thermal baths and natural springs' : 'Découvrir la sous-page Thermalisme, sources naturelles et bien-être'}</Link></div>
-      <ThermalWellnessExplorer />
+      <div className="mx-auto max-w-5xl px-4 py-3">
+        <Link to="/citizens/health/thermalisme" className="flex min-h-12 items-center justify-between gap-3 rounded-xl border border-[#C9A65D] bg-[#FFF9ED] px-4 py-3 text-sm font-semibold text-[#292725] transition hover:bg-[#FFF1D7]">
+          <span>♨️ {language === 'ar' ? 'الحمامات المعدنية والعيون الطبيعية والرفاه' : language === 'en' ? 'Thermal baths, natural springs and wellness' : language === 'it' ? 'Terme, sorgenti naturali e benessere' : language === 'ru' ? 'Термальные купальни, источники и отдых' : 'Thermalisme, sources naturelles et bien-être'}</span>
+          <ArrowRight className="h-4 w-4 shrink-0 text-[#9B772D]" aria-hidden="true" />
+        </Link>
+      </div>
 
-      <section className="py-8 bg-white">
-        <MeilleursSection
+      <section className="mx-auto max-w-5xl px-4 pb-3">
+        <details className="group rounded-xl border border-[#C9A65D] bg-white">
+          <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 font-semibold text-[#292725] [&::-webkit-details-marker]:hidden">
+            <span>⭐ {c.bestTitle}</span>
+            <ChevronDown className="h-4 w-4 shrink-0 text-[#B28A44] transition group-open:rotate-180" aria-hidden="true" />
+          </summary>
+          <div className="border-t border-[#C9A65D]/40 pt-3">
+            <MeilleursSection
           secteurLabel={c.sector}
           listePage="santé"
-          accentColor="#4A1D43"
+          accentColor="#B28A44"
           sectionTitle={c.bestTitle}
           useGoogleRecommendationCriteria
-          blogArticle={{ title: c.guideTitle, excerpt: c.guideExcerpt, slug: 'comment-choisir-son-medecin' }}
-        />
-      </section>
-
-      <section className="px-4 pt-2 pb-4">
-        <div className="max-w-5xl mx-auto">
-          <div className="bg-gradient-to-br from-[#4A1D43]/5 to-[#D4AF37]/5 border border-[#D4AF37] rounded-xl px-3 py-3 shadow-lg">
-            <div className="text-center mb-2">
-              <h2 className="public-heading text-xl font-light text-[#4A1D43]" style={{ fontFamily: "'Playfair Display', serif" }}>{t.health.emergency.title}</h2>
-              <p className="text-[10px] text-gray-600 mt-0.5">{t.health.emergency.subtitle}</p>
-            </div>
-            <div className="flex flex-col md:flex-row justify-center gap-2">
-              {emergencyNumbers.map((n) => (
-                <a key={n.num} href={`tel:${n.num}`} className="bg-[#4A1D43] hover:bg-[#5A2D53] rounded-lg px-3 py-2 border border-[#D4AF37] transition-all duration-300 flex flex-col items-center shadow-md hover:shadow-sm w-full md:w-[140px]">
-                  <Phone className="w-4 h-4 text-[#D4AF37] mb-1" />
-                  <div className="text-lg font-semibold text-[#D4AF37] leading-none">{n.num}</div>
-                  <div className="text-[10px] text-white/90 mt-1">{n.label}</div>
-                </a>
-              ))}
-            </div>
+          showSearchCta={false}
+              blogArticle={{ title: c.guideTitle, excerpt: c.guideExcerpt, slug: 'comment-choisir-son-medecin' }}
+            />
           </div>
-        </div>
+        </details>
       </section>
 
-      <section className="px-4 pb-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="relative h-32 rounded-xl overflow-hidden mb-4 shadow-lg border border-[#D4AF37]">
-            <img src={getSupabaseImageUrl('sante_banner.webp')} alt={c.transportAlt} className="w-full h-full object-cover" decoding="async" />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#4A1D43]/90 to-[#6B2D5C]/80" />
-            <div className="relative min-h-[220px] flex flex-col items-center justify-center text-center px-4 py-7">
-              <h2 className="public-heading text-xl md:text-2xl font-light text-[#D4AF37] mb-1 drop-shadow-lg" style={{ fontFamily: "'Playfair Display', serif" }}>🚑 {c.transportTitle}</h2>
-              <p className="text-white/95 text-xs md:text-sm font-light max-w-2xl mx-auto drop-shadow leading-snug">{c.transportSubtitle}</p>
+      <section className="px-4 pb-3">
+        <details className="group mx-auto max-w-5xl overflow-visible rounded-xl border border-[#C9A65D] bg-white">
+          <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-semibold text-[#292725] [&::-webkit-details-marker]:hidden">
+            <span>🚑 {c.transportTitle}</span>
+            <ChevronDown className="h-4 w-4 shrink-0 text-[#B28A44] transition group-open:rotate-180" aria-hidden="true" />
+          </summary>
+          <div className="border-t border-[#C9A65D]/40 px-3 pb-3 pt-3">
+          <div className="relative mb-3 min-h-[150px] overflow-hidden rounded-xl border border-[#C9A65D] bg-[#FFF8EA] shadow-sm sm:min-h-[170px]">
+            <img src={getSupabaseImageUrl('sante_banner.webp')} alt={c.transportAlt} className="absolute inset-0 h-full w-full object-cover object-center opacity-85" decoding="async" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#FFF8EA]/95 via-[#FFF8EA]/90 to-[#FFF8EA]/55" />
+            <div className="relative flex min-h-[150px] flex-col justify-center px-4 py-5 text-start sm:min-h-[170px] sm:px-6">
+              <h2 className="public-heading max-w-lg font-serif text-xl font-semibold leading-tight text-[#292725] md:text-2xl">{c.transportTitle}</h2>
+              <p className="mt-2 max-w-lg text-sm leading-5 text-[#514D47]">{c.transportSubtitle}</p>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl border border-[#D4AF37] p-4 mb-4 flex flex-wrap gap-3 items-end">
-            <div className="flex-1 min-w-[180px]">
-              <LocationSelectTunisie value={transportCity} onChange={setTransportCity} placeholder={c.governorate} className="px-3 py-2 rounded-lg text-sm" />
+          <div className="mb-4 grid gap-3 rounded-xl border border-[#C9A65D] bg-white p-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] sm:items-end sm:p-4">
+            <div className="min-w-0">
+              <label className="mb-1 block text-xs font-semibold text-[#292725]">{c.governorate}</label>
+              <LocationSelectTunisie value={transportCity} onChange={setTransportCity} placeholder={c.governorate} className="rounded-lg text-sm" />
             </div>
-            <div className="flex-1 min-w-[180px]"><VehicleTypeAutocomplete value={vehicleType} onChange={setVehicleType} /></div>
-            <button onClick={() => searchTransport({ gouvernorat: transportCity, vehicleType, urgenceOnly: false })} className="px-5 py-2 bg-[#B62226] text-white border border-[#D4AF37] rounded-lg text-sm font-medium hover:bg-[#931D23] transition-all">{c.search}</button>
+            <div className="min-w-0">
+              <label className="mb-1 block text-xs font-semibold text-[#292725]">{lang === 'ar' ? 'نوع النقل الطبي' : lang === 'en' ? 'Medical transport type' : lang === 'it' ? 'Tipo di trasporto medico' : lang === 'ru' ? 'Тип медицинского транспорта' : 'Type de transport médical'}</label>
+              <VehicleTypeAutocomplete value={vehicleType} onChange={setVehicleType} placeholder={lang === 'ar' ? 'اختر وسيلة النقل' : lang === 'en' ? 'Choose a transport type' : lang === 'it' ? 'Scegli un tipo di trasporto' : lang === 'ru' ? 'Выберите тип транспорта' : 'Choisir un transport adapté'} />
+            </div>
+            <button type="button" onClick={() => searchTransport({ gouvernorat: transportCity, vehicleType, urgenceOnly: false })} className="min-h-11 rounded-lg border border-[#C9A65D] bg-[#B62226] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#931D23]">{c.search}</button>
           </div>
 
           {loadingTransport ? (
             <div className="text-center py-16">
-              <div className="inline-block w-12 h-12 border-4 border-[#4A1D43] border-t-transparent rounded-full animate-spin" />
-              <p className="mt-4 text-[#4A1D43]">{c.searching}</p>
+              <div className="inline-block w-12 h-12 border-4 border-[#C9A65D] border-t-transparent rounded-full animate-spin" />
+              <p className="mt-4 text-[#292725]">{c.searching}</p>
             </div>
-          ) : !hasSearchedTransport ? (
-            <div className="mt-8 text-center py-10 bg-white rounded-xl border border-[#D4AF37]">
-              <Search className="w-12 h-12 text-[#D4AF37]/60 mx-auto mb-3" />
-              <p className="text-sm text-[#4A1D43] font-medium">{c.transportPrompt}</p>
-            </div>
-          ) : transportProviders.length > 0 ? (
+          ) : !hasSearchedTransport ? null : transportProviders.length > 0 ? (
             <div className="mt-8">
               <h3 className="text-2xl font-light text-[#4A1D43] mb-6" style={{ fontFamily: "'Playfair Display', serif" }}>
                 {transportProviders.length} {transportProviders.length > 1 ? c.providerPlur : c.providerSing} {transportProviders.length > 1 ? c.availablePlur : c.availableSing}
@@ -370,16 +366,24 @@ export default function CitizensHealth({}: CitizensHealthProps) {
             </div>
           )}
 
-          <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }} className="mt-8 bg-gradient-to-br from-[#4A1D43]/5 to-[#D4AF37]/5 border-2 border-[#D4AF37] rounded-xl p-6 text-center shadow-lg">
+          <details className="group mt-5 rounded-xl border border-[#C9A65D] bg-[#FFF9ED]">
+            <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-semibold text-[#292725] [&::-webkit-details-marker]:hidden">
+              <span>🚑 {c.ctaTitle}</span><ChevronDown className="h-4 w-4 shrink-0 text-[#B28A44] transition group-open:rotate-180" aria-hidden="true" />
+            </summary>
+            <div className="border-t border-[#C9A65D]/40 p-3">
+          <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }} className="rounded-xl border border-[#C9A65D] bg-[#FFF9ED] px-4 py-3 text-center">
             <div className="max-w-2xl mx-auto">
-              <h3 className="text-2xl font-light text-[#4A1D43] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>{c.ctaTitle}</h3>
-              <p className="text-gray-700 text-sm mb-4 leading-relaxed">{c.ctaText}</p>
-              <button onClick={() => setShowTransportModal(true)} className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#4A1D43] text-[#D4AF37] text-sm font-semibold border border-[#D4AF37] hover:bg-[#5A2D53] hover:shadow-sm transition-all duration-300 transform hover:scale-105">
+              <h3 className="text-lg font-semibold text-[#292725] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>{c.ctaTitle}</h3>
+              <p className="text-gray-700 text-sm mb-3 leading-relaxed">{c.ctaText}</p>
+              <button onClick={() => setShowTransportModal(true)} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-[#C9A65D] bg-[#B62226] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#931D23]">
                 <Plus className="w-4 h-4" />{c.ctaButton}
               </button>
             </div>
           </motion.div>
-        </div>
+            </div>
+          </details>
+          </div>
+        </details>
       </section>
 
       {showTransportModal && (
@@ -393,7 +397,14 @@ export default function CitizensHealth({}: CitizensHealthProps) {
         </div>
       )}
 
-      <section className="px-4 pb-12">
+      <section className="mx-auto max-w-5xl space-y-3 px-4 pb-8">
+        <details className="group rounded-xl border border-[#C9A65D] bg-white">
+          <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-semibold text-[#292725] [&::-webkit-details-marker]:hidden">
+            <span>ℹ️ {lang === 'ar' ? 'معلومات ونصائح صحية' : lang === 'en' ? 'Practical health information' : 'Informations et conseils pratiques'}</span>
+            <ChevronDown className="h-4 w-4 shrink-0 text-[#B28A44] transition group-open:rotate-180" aria-hidden="true" />
+          </summary>
+          <div className="border-t border-[#C9A65D]/40 pt-3">
+      <section className="px-3 pb-3">
         <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-3">
           <div className="bg-white rounded-xl border border-[#D4AF37] p-4 hover:shadow-lg transition-all duration-300"><h4 className="text-sm font-medium text-[#4A1D43] mb-1.5" style={{ fontFamily: "'Playfair Display', serif" }}>{t.health.info.cnamTitle}</h4><p className="text-xs text-gray-700">{t.health.info.cnamBody}</p></div>
           <div className="bg-white rounded-xl border border-[#D4AF37] p-4 hover:shadow-lg transition-all duration-300"><h4 className="text-sm font-medium text-[#4A1D43] mb-1.5" style={{ fontFamily: "'Playfair Display', serif" }}>{t.health.info.csbTitle}</h4><p className="text-xs text-gray-700">{t.health.info.csbBody}</p></div>
@@ -401,7 +412,16 @@ export default function CitizensHealth({}: CitizensHealthProps) {
         </div>
       </section>
 
-      <section className="px-4 pb-12" aria-labelledby="official-health-links">
+
+          </div>
+        </details>
+        <details className="group rounded-xl border border-[#C9A65D] bg-white">
+          <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-semibold text-[#292725] [&::-webkit-details-marker]:hidden">
+            <span>🔗 {c.officialTitle}</span>
+            <ChevronDown className="h-4 w-4 shrink-0 text-[#B28A44] transition group-open:rotate-180" aria-hidden="true" />
+          </summary>
+          <div className="border-t border-[#C9A65D]/40 pt-3">
+      <section className="px-3 pb-3" aria-labelledby="official-health-links">
         <div className="max-w-5xl mx-auto">
           <h2 id="official-health-links" className="public-heading text-xl font-semibold text-[#4A1D43] text-center mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>{c.officialTitle}</h2>
           <div className="grid gap-3 md:grid-cols-3">
@@ -418,6 +438,30 @@ export default function CitizensHealth({}: CitizensHealthProps) {
           </div>
         </div>
       </section>
+          </div>
+        </details>
+      </section>
+
+      <section className="px-4 pt-1 pb-7">
+        <div className="max-w-5xl mx-auto">
+          <div className="rounded-xl border border-[#C9A65D] bg-[#FFF9ED] px-3 py-4 shadow-sm">
+            <div className="text-center mb-2">
+              <h2 className="public-heading text-xl font-semibold text-[#292725]" style={{ fontFamily: "'Playfair Display', serif" }}>{t.health.emergency.title}</h2>
+              <p className="text-[10px] text-gray-600 mt-0.5">{t.health.emergency.subtitle}</p>
+            </div>
+            <div className="flex flex-col md:flex-row justify-center gap-2">
+              {emergencyNumbers.map((n) => (
+                <a key={n.num} href={`tel:${n.num}`} className="flex w-full flex-col items-center rounded-lg border border-[#C9A65D] bg-white px-3 py-2 shadow-sm transition hover:bg-[#FFF0DC] md:w-[140px]">
+                  <Phone className="mb-1 h-4 w-4 text-[#B62226]" />
+                  <div className="text-lg font-semibold leading-none text-[#B62226]">{n.num}</div>
+                  <div className="mt-1 text-[10px] text-[#292725]">{n.label}</div>
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
     </div>
   );
 }
