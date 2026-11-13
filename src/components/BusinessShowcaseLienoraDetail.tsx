@@ -840,12 +840,14 @@ export default function BusinessShowcaseLienoraDetail({
   previewVilleSlug,
   previewPalette,
   previewPresentationModel,
+  boutiqueContent,
 }: {
   embeddedPreview?: boolean;
   previewSlug?: string;
   previewVilleSlug?: string;
   previewPalette?: PaletteId;
   previewPresentationModel?: 'business' | 'portfolio';
+  boutiqueContent?: ReactNode;
 } = {}) {
   const routeParams = useParams<{
     id?: string;
@@ -1707,6 +1709,7 @@ export default function BusinessShowcaseLienoraDetail({
           productLabel={resolvedPresentation.productName}
           certification={certification}
           actions={portfolioActions}
+          boutiqueContent={boutiqueContent}
           gallery={galleryItems}
           onBack={handleBack}
           bookingContent={sections.find(section => section.id === 'booking')?.content}
@@ -1968,14 +1971,16 @@ export default function BusinessShowcaseLienoraDetail({
             )}
 
             <div className="dt-accordion-list">
-              {sections.map(section => (
-                <AccordionSection
-                  config={section}
-                  open={openSection === section.id}
-                  onToggle={() => setOpenSection(current => current === section.id ? null : section.id)}
-                  key={section.id}
-                />
-              ))}
+              {sections.map(section => section.id === 'gallery' && boutiqueContent
+                ? <section className="dt-accordion" key="boutique" style={{padding:'8px 12px',display:'flex',justifyContent:'center'}}>{boutiqueContent}</section>
+                : <AccordionSection
+                    config={section}
+                    open={openSection === section.id}
+                    onToggle={() => setOpenSection(current => current === section.id ? null : section.id)}
+                    key={section.id}
+                  />
+              )}
+              {boutiqueContent && !sections.some(section => section.id === 'gallery') && <section className="dt-accordion" style={{padding:'8px 12px',display:'flex',justifyContent:'center'}}>{boutiqueContent}</section>}
             </div>
           </div>
 

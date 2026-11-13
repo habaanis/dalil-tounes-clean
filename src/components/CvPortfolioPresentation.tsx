@@ -1,5 +1,5 @@
 import GoogleRatingSummary from './GoogleRatingSummary';
-import { useState, type CSSProperties, type ReactNode } from 'react';
+import { cloneElement, isValidElement, useState, type CSSProperties, type ReactElement, type ReactNode } from 'react';
 import {
   CalendarDays,
   ChevronRight,
@@ -153,6 +153,7 @@ export interface CvPortfolioPresentationProps {
   hoursBadge?: string;
   practicalContent?: ReactNode;
   onQuote: () => void;
+  boutiqueContent?: ReactNode;
   onShowQr: () => void;
   onShare: () => void;
   sharingContent?: ReactNode;
@@ -182,6 +183,7 @@ export function CvPortfolioPresentation({
   hoursBadge,
   practicalContent,
   onQuote,
+  boutiqueContent,
   onShowQr,
   onShare,
   sharingContent,
@@ -232,7 +234,7 @@ export function CvPortfolioPresentation({
     { id: 'home' as const, label: copy.home, icon: Home, visible: true },
     { id: 'about' as const, label: copy.about, icon: Info, visible: hasSection('about') },
     { id: 'services' as const, label: copy.services, icon: Store, visible: hasSection('services') },
-    { id: 'gallery' as const, label: copy.photos, icon: Images, visible: hasSection('gallery') },
+    { id: 'gallery' as const, label: copy.photos, icon: Images, visible: Boolean(boutiqueContent) || hasSection('gallery') },
     { id: 'reviews' as const, label: copy.reviews, icon: Star, visible: hasSection('reviews') },
   ].filter(tab => tab.visible);
 
@@ -378,11 +380,18 @@ export function CvPortfolioPresentation({
             {qrOpen && sharingContent && <section className="cvp-booking">{sharingContent}</section>}
 
             <nav className="cvp-lienora-tabs" aria-label={navigationAriaLabel}>
-              {tabs.map(({ id, label, icon: Icon }) => (
-                <button type="button" className={activeTab === id ? 'active' : ''} onClick={() => goTo(id)} key={id}>
-                  <Icon /><span>{label}</span>
-                </button>
-              ))}
+              {tabs.map(({ id, label, icon: Icon }) => id === 'gallery' && boutiqueContent
+                ? <span key="gallery-boutique" style={{ display: 'contents' }}>
+                    {isValidElement(boutiqueContent)
+                      ? cloneElement(boutiqueContent as ReactElement<{ triggerClassName?: string; triggerIcon?: ReactNode; triggerLabel?: string }>, {
+                          triggerClassName: 'cvp-native-boutique-tab', triggerIcon: <Images aria-hidden="true" />, triggerLabel: language === 'ar' ? 'المتجر' : 'Boutique',
+                        })
+                      : boutiqueContent}
+                  </span>
+                : <button type="button" className={activeTab === id ? 'active' : ''} onClick={() => goTo(id)} key={id}>
+                    <Icon /><span>{label}</span>
+                  </button>
+              )}
             </nav>
 
             {(hoursContent || practicalContent) && (
