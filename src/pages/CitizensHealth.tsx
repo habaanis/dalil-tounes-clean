@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Phone, Building2, X, Plus, Search, ExternalLink } from 'lucide-react';
+import { Phone, Building2, X, Plus, ExternalLink } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
 import LocationSelectTunisie from '../components/LocationSelectTunisie';
@@ -50,6 +50,9 @@ const COPY: Record<PublicLanguage, {
   preferredTitle: string;
   preferredSubtitle: string;
   transportPrompt: string;
+  transportFormTitle: string;
+  transportFormDescription: string;
+  vehicleQuestion: string;
   officialTitle: string;
   officialLinks: [string, string, string];
 }> = {
@@ -65,8 +68,8 @@ const COPY: Record<PublicLanguage, {
     transportAlt: 'Ambulance et transport médical en Tunisie',
     transportTitle: 'Transport médical',
     transportSubtitle: 'Ambulances, taxis médicaux et transports adaptés disponibles 24h/7j. Trouvez rapidement un véhicule ou inscrivez-vous comme prestataire.',
-    governorate: 'Gouvernorat',
-    search: 'Rechercher',
+    governorate: 'Dans quel gouvernorat ?',
+    search: 'Rechercher un transport',
     searching: 'Recherche des prestataires...',
     providerSing: 'prestataire',
     providerPlur: 'prestataires',
@@ -81,6 +84,9 @@ const COPY: Record<PublicLanguage, {
     preferredTitle: 'Les professionnels de santé recommandés près de chez vous',
     preferredSubtitle: 'Médecins, spécialistes et services de santé évalués par leurs patients',
     transportPrompt: 'Sélectionnez vos critères puis lancez la recherche.',
+    transportFormTitle: 'Trouver un transport médical adapté',
+    transportFormDescription: 'Recherchez un service de transport médical selon votre région et vos besoins.',
+    vehicleQuestion: 'Quel type de transport recherchez-vous ?',
     officialTitle: 'Services de santé officiels utiles',
     officialLinks: ['Mon espace et mes démarches CNAM', 'Trouver un bureau CNAM', 'Ministère de la Santé'],
   },
@@ -112,6 +118,9 @@ const COPY: Record<PublicLanguage, {
     preferredTitle: 'المهنيون الصحيون الموصى بهم بالقرب منك',
     preferredSubtitle: 'أطباء وأخصائيون وخدمات صحية قيّمها مرضاهم',
     transportPrompt: 'اختر معاييرك ثم ابدأ البحث.',
+    transportFormTitle: 'العثور على نقل طبي مناسب',
+    transportFormDescription: 'ابحث عن خدمة نقل طبي حسب منطقتك واحتياجاتك.',
+    vehicleQuestion: 'ما نوع النقل الذي تبحث عنه؟',
     officialTitle: 'خدمات صحية رسمية مفيدة',
     officialLinks: ['فضاء المضمون الاجتماعي وخدمات CNAM', 'العثور على مكتب CNAM', 'وزارة الصحة'],
   },
@@ -143,6 +152,9 @@ const COPY: Record<PublicLanguage, {
     preferredTitle: 'Recommended healthcare professionals near you',
     preferredSubtitle: 'Doctors, specialists and health services rated by their patients',
     transportPrompt: 'Select your criteria, then start the search.',
+    transportFormTitle: 'Find suitable medical transport',
+    transportFormDescription: 'Search for a medical transport service based on your region and needs.',
+    vehicleQuestion: 'What type of transport do you need?',
     officialTitle: 'Useful official health services',
     officialLinks: ['CNAM account and procedures', 'Find a CNAM office', 'Ministry of Health'],
   },
@@ -174,6 +186,9 @@ const COPY: Record<PublicLanguage, {
     preferredTitle: 'Professionisti sanitari consigliati vicino a te',
     preferredSubtitle: 'Medici, specialisti e servizi sanitari valutati dai loro pazienti',
     transportPrompt: 'Seleziona i criteri, quindi avvia la ricerca.',
+    transportFormTitle: 'Trova un trasporto medico adatto',
+    transportFormDescription: 'Cerca un servizio di trasporto medico in base alla tua zona e alle tue esigenze.',
+    vehicleQuestion: 'Che tipo di trasporto cerchi?',
     officialTitle: 'Servizi sanitari ufficiali utili',
     officialLinks: ['Area personale e pratiche CNAM', 'Trova un ufficio CNAM', 'Ministero della Salute'],
   },
@@ -205,6 +220,9 @@ const COPY: Record<PublicLanguage, {
     preferredTitle: 'Рекомендуемые медицинские специалисты рядом с вами',
     preferredSubtitle: 'Врачи, специалисты и медицинские службы по оценкам пациентов',
     transportPrompt: 'Выберите критерии и запустите поиск.',
+    transportFormTitle: 'Найти подходящий медицинский транспорт',
+    transportFormDescription: 'Найдите медицинский транспорт с учетом региона и ваших потребностей.',
+    vehicleQuestion: 'Какой вид транспорта вам нужен?',
     officialTitle: 'Полезные официальные медицинские сервисы',
     officialLinks: ['Личный кабинет и услуги CNAM', 'Найти отделение CNAM', 'Министерство здравоохранения'],
   },
@@ -326,21 +344,25 @@ export default function CitizensHealth({}: CitizensHealthProps) {
 
       <section className="px-4 pb-8">
         <div className="max-w-7xl mx-auto">
-          <div className="relative h-32 rounded-xl overflow-hidden mb-4 shadow-lg border border-[#D4AF37]">
+          <div className="relative h-36 md:h-40 rounded-xl overflow-hidden mb-3 shadow-sm border border-[#C9A65D]">
             <img src={getSupabaseImageUrl('sante_banner.webp')} alt={c.transportAlt} className="w-full h-full object-cover" decoding="async" />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#4A1D43]/90 to-[#6B2D5C]/80" />
-            <div className="relative min-h-[220px] flex flex-col items-center justify-center text-center px-4 py-7">
-              <h2 className="public-heading text-xl md:text-2xl font-light text-[#D4AF37] mb-1 drop-shadow-lg" style={{ fontFamily: "'Playfair Display', serif" }}>🚑 {c.transportTitle}</h2>
-              <p className="text-white/95 text-xs md:text-sm font-light max-w-2xl mx-auto drop-shadow leading-snug">{c.transportSubtitle}</p>
+            <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/35 to-transparent" />
+            <div className="relative h-full flex flex-col items-start justify-center text-left px-4 md:px-6 py-3">
+              <h2 className="public-heading text-lg md:text-2xl font-medium text-white mb-1 drop-shadow" style={{ fontFamily: "'Playfair Display', serif" }}>🚑 {c.transportTitle}</h2>
+              <p className="text-white/95 text-xs md:text-sm font-normal max-w-lg drop-shadow leading-snug">{c.transportSubtitle}</p>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl border border-[#D4AF37] p-4 mb-4 flex flex-wrap gap-3 items-end">
-            <div className="flex-1 min-w-[180px]">
+          <div className="bg-white rounded-xl border border-[#C9A65D] p-3 md:p-4 mb-3">
+            <h3 className="text-base md:text-lg font-semibold text-[#292725]">{c.transportFormTitle}</h3>
+            <p className="text-xs md:text-sm text-gray-600 mt-1 mb-3">{c.transportFormDescription}</p>
+            <div className="flex flex-col md:flex-row gap-3 items-end">
+            <div className="flex-1 min-w-[180px] w-full">
               <LocationSelectTunisie value={transportCity} onChange={setTransportCity} placeholder={c.governorate} className="px-3 py-2 rounded-lg text-sm" />
             </div>
-            <div className="flex-1 min-w-[180px]"><VehicleTypeAutocomplete value={vehicleType} onChange={setVehicleType} /></div>
-            <button onClick={() => searchTransport({ gouvernorat: transportCity, vehicleType, urgenceOnly: false })} className="px-5 py-2 bg-[#B62226] text-white border border-[#D4AF37] rounded-lg text-sm font-medium hover:bg-[#931D23] transition-all">{c.search}</button>
+            <div className="flex-1 min-w-[180px] w-full"><VehicleTypeAutocomplete value={vehicleType} onChange={setVehicleType} placeholder={c.vehicleQuestion} /></div>
+            <button onClick={() => searchTransport({ gouvernorat: transportCity, vehicleType, urgenceOnly: false })} className="px-5 py-2 bg-[#B62226] text-white border border-[#D4AF37] rounded-lg text-sm font-medium hover:bg-[#931D23] transition-all w-full md:w-auto">{c.search}</button>
+            </div>
           </div>
 
           {loadingTransport ? (
@@ -348,12 +370,7 @@ export default function CitizensHealth({}: CitizensHealthProps) {
               <div className="inline-block w-12 h-12 border-4 border-[#4A1D43] border-t-transparent rounded-full animate-spin" />
               <p className="mt-4 text-[#4A1D43]">{c.searching}</p>
             </div>
-          ) : !hasSearchedTransport ? (
-            <div className="mt-8 text-center py-10 bg-white rounded-xl border border-[#D4AF37]">
-              <Search className="w-12 h-12 text-[#D4AF37]/60 mx-auto mb-3" />
-              <p className="text-sm text-[#4A1D43] font-medium">{c.transportPrompt}</p>
-            </div>
-          ) : transportProviders.length > 0 ? (
+          ) : !hasSearchedTransport ? null : transportProviders.length > 0 ? (
             <div className="mt-8">
               <h3 className="text-2xl font-light text-[#4A1D43] mb-6" style={{ fontFamily: "'Playfair Display', serif" }}>
                 {transportProviders.length} {transportProviders.length > 1 ? c.providerPlur : c.providerSing} {transportProviders.length > 1 ? c.availablePlur : c.availableSing}
@@ -370,11 +387,11 @@ export default function CitizensHealth({}: CitizensHealthProps) {
             </div>
           )}
 
-          <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }} className="mt-8 bg-gradient-to-br from-[#4A1D43]/5 to-[#D4AF37]/5 border-2 border-[#D4AF37] rounded-xl p-6 text-center shadow-lg">
+          <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }} className="mt-8 bg-gradient-to-br from-[#FCFAF5] to-white border border-[#C9A65D] rounded-xl p-6 text-center shadow-lg">
             <div className="max-w-2xl mx-auto">
-              <h3 className="text-2xl font-light text-[#4A1D43] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>{c.ctaTitle}</h3>
+              <h3 className="text-xl font-medium text-[#292725] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>{c.ctaTitle}</h3>
               <p className="text-gray-700 text-sm mb-4 leading-relaxed">{c.ctaText}</p>
-              <button onClick={() => setShowTransportModal(true)} className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#4A1D43] text-[#D4AF37] text-sm font-semibold border border-[#D4AF37] hover:bg-[#5A2D53] hover:shadow-sm transition-all duration-300 transform hover:scale-105">
+              <button onClick={() => setShowTransportModal(true)} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#B62226] text-white text-sm font-semibold border border-[#C9A65D] hover:bg-[#931D23] hover:shadow-sm transition-all duration-300 transform hover:scale-105">
                 <Plus className="w-4 h-4" />{c.ctaButton}
               </button>
             </div>
