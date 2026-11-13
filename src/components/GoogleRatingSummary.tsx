@@ -6,6 +6,7 @@ interface GoogleRatingSummaryProps {
   language: string;
   className?: string;
   trustOnly?: boolean;
+  showTrustLabel?: boolean;
 }
 
 const REVIEW_LABELS: Record<string, { singular: string; plural: string; aria: string; outOfFive: string }> = {
@@ -44,10 +45,12 @@ export default function GoogleRatingSummary({
   language,
   className = '',
   trustOnly = false,
+  showTrustLabel = true,
 }: GoogleRatingSummaryProps) {
   const normalizedRating = Math.min(5, Math.max(0, parseNumber(rating)));
   const normalizedReviewCount = parseReviewCount(reviewCount);
-  if (normalizedRating <= 0) return null;
+  // A stored average without any documented reviews is not a verifiable Google score.
+  if (normalizedRating <= 0 || normalizedReviewCount < 1) return null;
 
   const copy = REVIEW_LABELS[language] || REVIEW_LABELS.fr;
   const trustLabels = TRUST_LABELS[language] || TRUST_LABELS.fr;
@@ -66,7 +69,7 @@ export default function GoogleRatingSummary({
       <span>{normalizedRating.toFixed(1)}</span>
       <span aria-hidden="true">·</span>
       <span>{normalizedReviewCount} {reviewLabel}</span>
-      {trustLabel && <span className="basis-full text-[10px]">{trustLabel}</span>}
+      {showTrustLabel && trustLabel && <span className="basis-full text-[10px]">{trustLabel}</span>}
     </div>
   );
 }
