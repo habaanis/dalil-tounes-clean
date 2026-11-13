@@ -62,18 +62,18 @@ export default function PlatformAppShell({ children }: { children: ReactNode }) 
   ];
 
   return (
-    <div data-platform-app-shell className={homeColorTest ? "min-h-screen bg-[#FAF9F6] text-[#292929]" : "min-h-screen bg-[#FFFCF7] text-[#35172F]"} dir={rtl ? 'rtl' : 'ltr'}>
+    <div data-platform-app-shell className={homeColorTest ? "min-h-screen bg-[#FAF9F6] text-[#292929]" : "min-h-screen bg-[#FFFCF7] text-[#292725]"} dir={rtl ? 'rtl' : 'ltr'}>
       <header className={homeColorTest ? "sticky top-0 z-50 border-b border-[#EBE3D7] bg-white/95 backdrop-blur" : "sticky top-0 z-50 border-b border-[#D4AF37]/40 bg-[#FFFCF7]/95 backdrop-blur"}>
         <div className="mx-auto flex h-14 max-w-xl items-center justify-between gap-2 px-3">
           <Link to="/" className="inline-flex min-h-11 items-center gap-2 rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B99143]" aria-label="Dalil Tounes">
             <img src="/icons/dalil-logo-emblem-2026.png?v=2" alt="" aria-hidden="true" className="h-10 w-10 shrink-0 object-contain" width="40" height="40" decoding="async" />
-            <span className={homeColorTest ? "font-serif text-base font-semibold tracking-wide text-[#262626]" : "font-serif text-base font-semibold tracking-wide text-[#45243A]"}>Dalil Tounes</span>
+            <span className={homeColorTest ? "font-serif text-base font-semibold tracking-wide text-[#262626]" : "font-serif text-base font-semibold tracking-wide text-[#292725]"}>Dalil Tounes</span>
           </Link>
           <div className="flex items-center gap-1">
             <LanguageSelector />
             <button type="button" onClick={() => setMenuOpen(v => !v)} aria-expanded={menuOpen}
               aria-controls="dalil-platform-app-more" aria-label={menuOpen ? copy.close : copy.menu}
-              className={homeColorTest ? "inline-flex h-11 w-11 items-center justify-center rounded-xl border border-[#EAE1D6] bg-white text-[#333] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B62226]" : "inline-flex h-11 w-11 items-center justify-center rounded-xl border border-[#E4D6B8] bg-white text-[#45243A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B99143]"}>
+              className={homeColorTest ? "inline-flex h-11 w-11 items-center justify-center rounded-xl border border-[#EAE1D6] bg-white text-[#333] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B62226]" : "inline-flex h-11 w-11 items-center justify-center rounded-xl border border-[#C9A65D] bg-white text-[#292725] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B99143]"}>
               {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
@@ -81,7 +81,7 @@ export default function PlatformAppShell({ children }: { children: ReactNode }) 
         {menuOpen && <nav id="dalil-platform-app-more" aria-label={copy.more} className="mx-auto max-w-xl border-t border-[#E4D6B8] bg-white px-3 py-2">
           <div className="grid grid-cols-2 gap-2">
             {extra.map(item => <Link key={item.to} to={item.to} onClick={() => setMenuOpen(false)}
-              className="flex min-h-11 items-center rounded-xl border border-[#E4D6B8] px-3 text-sm font-medium text-[#45243A]">{item.label}</Link>)}
+              className="flex min-h-11 items-center rounded-xl border border-[#C9A65D] px-3 text-sm font-medium text-[#292725]">{item.label}</Link>)}
           </div>
         </nav>}
       </header>
@@ -127,7 +127,7 @@ export default function PlatformAppShell({ children }: { children: ReactNode }) 
                 : '/';
               navigate(fallback, { replace: true });
             }
-          }} className="inline-flex min-h-11 items-center gap-2 rounded-lg px-2 text-sm font-medium text-[#45243A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A17D36]" aria-label={copy.back}>
+          }} className="inline-flex min-h-11 items-center gap-2 rounded-lg px-2 text-sm font-medium text-[#292725] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A17D36]" aria-label={copy.back}>
             <ArrowLeft className={`h-4 w-4 ${rtl ? 'rotate-180' : ''}`} aria-hidden="true" />
             {copy.back}
           </button>
@@ -135,11 +135,11 @@ export default function PlatformAppShell({ children }: { children: ReactNode }) 
         {useCompactHub && hub ? <PlatformAppSectionHub kind={hub} /> : children}
       </main>
 
-      <nav data-platform-app-tabs aria-label={copy.more} className={homeColorTest ? "fixed inset-x-0 bottom-0 z-50 border-t border-[#E9E4DD] bg-white/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_16px_rgba(30,25,20,0.045)] backdrop-blur" : "fixed inset-x-0 bottom-0 z-50 border-t border-[#D4AF37]/40 bg-white/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-5px_22px_rgba(53,23,47,0.08)] backdrop-blur"}>
+      <nav data-platform-app-tabs aria-label={copy.more} className={homeColorTest ? "fixed inset-x-0 bottom-0 z-50 border-t border-[#E9E4DD] bg-white/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_16px_rgba(30,25,20,0.045)] backdrop-blur" : "fixed inset-x-0 bottom-0 z-50 border-t border-[#D4AF37]/40 bg-white/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-5px_22px_rgba(30,25,20,0.06)] backdrop-blur"}>
         <div className="mx-auto grid max-w-xl grid-cols-5 items-stretch px-1">
           {tabs.map(({ label, to, icon: Icon, active }) => (
             <Link key={to} to={to} aria-current={active ? 'page' : undefined}
-              className={`flex min-h-[70px] flex-col items-center justify-center gap-1 rounded-lg px-0.5 text-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-[#B99143] ${homeColorTest ? (active ? 'font-semibold text-[#B62226]' : 'font-medium text-[#79736F]') : (active ? 'font-semibold text-[#45243A]' : 'font-medium text-[#806F79]')}`}>
+              className={`flex min-h-[70px] flex-col items-center justify-center gap-1 rounded-lg px-0.5 text-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-[#B99143] ${homeColorTest ? (active ? 'font-semibold text-[#B62226]' : 'font-medium text-[#79736F]') : (active ? 'font-semibold text-[#B28A44]' : 'font-medium text-[#69635B]')}`}>
               <Icon className={`h-5 w-5 ${active ? (homeColorTest ? 'text-[#B62226]' : 'text-[#A17D36]') : ''}`} strokeWidth={active ? 2 : 1.6} aria-hidden="true" />
               <span className="max-w-full break-words px-0.5 text-[9px] leading-[1.15] sm:text-[10px]">{label}</span>
             </Link>
