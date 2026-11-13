@@ -390,7 +390,6 @@ export const Businesses = ({
   const [selectedCity, setSelectedCity] = useState(initialSearchCity || '');
   const [pageCategorie, setPageCategorie] = useState<string | null>(null);
   const [resultPage, setResultPage] = useState(0);
-  const resultsRef = useRef<HTMLDivElement | null>(null);
   const [showSuggestForm, setShowSuggestForm] = useState(showSuggestionForm);
   const suggestionStartedAtRef = useRef(Date.now());
   const [showNeedForm, setShowNeedForm] = useState(false);
@@ -404,13 +403,14 @@ export const Businesses = ({
   const [loadingPremiumJobs, setLoadingPremiumJobs] = useState(false);
   const [filterPremium, setFilterPremium] = useState(false);
   const [filterCommerceLocal, setFilterCommerceLocal] = useState(false);
+  const [filterStatutCarte, setFilterStatutCarte] = useState<'' | 'certifie' | 'non_certifie'>('');
+  const [availableCategories, setAvailableCategories] = useState<Array<{id: string, label: string, count: number}>>([]);
+  const [selectedChipCategories, setSelectedChipCategories] = useState<string[]>([]);
   useEffect(() => { setResultPage(0); }, [
     searchTerm, selectedBusinessId, selectedCity, selectedCategory, pageCategorie,
     filterPremium, filterCommerceLocal, filterStatutCarte, selectedChipCategories,
   ]);
-  const [filterStatutCarte, setFilterStatutCarte] = useState<'' | 'certifie' | 'non_certifie'>('');
-  const [availableCategories, setAvailableCategories] = useState<Array<{id: string, label: string, count: number}>>([]);
-  const [selectedChipCategories, setSelectedChipCategories] = useState<string[]>([]);
+
   const [businessActivitiesByCompany, setBusinessActivitiesByCompany] = useState<Record<string, BusinessActivity[]>>({});
 
   const resultsRef = useRef<HTMLDivElement>(null);
