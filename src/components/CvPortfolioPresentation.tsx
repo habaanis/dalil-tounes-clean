@@ -234,7 +234,7 @@ export function CvPortfolioPresentation({
     { id: 'home' as const, label: copy.home, icon: Home, visible: true },
     { id: 'about' as const, label: copy.about, icon: Info, visible: hasSection('about') },
     { id: 'services' as const, label: copy.services, icon: Store, visible: hasSection('services') },
-    { id: 'gallery' as const, label: copy.photos, icon: Images, visible: hasSection('gallery') },
+    { id: 'gallery' as const, label: copy.photos, icon: Images, visible: !boutiqueContent && hasSection('gallery') },
     { id: 'reviews' as const, label: copy.reviews, icon: Star, visible: hasSection('reviews') },
   ].filter(tab => tab.visible);
 
@@ -343,7 +343,6 @@ export function CvPortfolioPresentation({
               })()}
             </section>
 
-            {boutiqueContent && <div className="cvp-boutique-in-actions" style={{display:"flex",justifyContent:"center",margin:"8px 0"}}>{boutiqueContent}</div>}
             <button className="cvp-lienora-more" type="button" onClick={() => setMoreOpen(open => !open)} aria-expanded={moreOpen}>
               <b>{copy.moreActions}</b><small>{copy.moreActionsSummary}</small>
             </button>
@@ -386,6 +385,7 @@ export function CvPortfolioPresentation({
                   <Icon /><span>{label}</span>
                 </button>
               ))}
+              {boutiqueContent && <div className="cvp-boutique-tab" style={{display:'flex',alignItems:'center',justifyContent:'center'}}>{boutiqueContent}</div>}
             </nav>
 
             {(hoursContent || practicalContent) && (
