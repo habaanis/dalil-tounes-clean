@@ -365,6 +365,21 @@ function compareBusinessesByTrust(a: Record<string, any>, b: Record<string, any>
   return String(a.name || '').localeCompare(String(b.name || ''), 'fr');
 }
 
+// Traverse every public directory row in stable batches; a client-side result page
+// must not silently omit records beyond the old 200/300 row API cap.
+async function fetchAllDirectoryRows(query: any): Promise<{ data: any[]; error: any }> {
+  const pageSize = 500;
+  const rows: any[] = [];
+  for (let offset = 0; ; offset += pageSize) {
+    const { data, error } = await query.range(offset, offset + pageSize - 1);
+    if (error) return { data: [], error };
+    const current = Array.isArray(data) ? data : [];
+    rows.push(...current);
+    if (current.length < pageSize) break;
+  }
+  return { data: rows, error: null };
+}
+
 export const Businesses = ({
   showSuggestionForm = false,
   onCloseSuggestionForm,
@@ -860,7 +875,7 @@ export const Businesses = ({
         .order('cv_business_status', { ascending: false, nullsFirst: false })
         .order('"Compteur Avis Google"', { ascending: false, nullsFirst: false })
         .order('nom', { ascending: true })
-        .limit(200);
+        .order('id', { ascending: true });
 
       if (pageCategorie) {
         console.log(`[DEBUG] Filtre pageCategorie appliqué: "${pageCategorie}"`);
@@ -870,7 +885,7 @@ export const Businesses = ({
       query = applyCertificationFilter(query, filterStatutCarte);
 
       console.log('[DEBUG] Exécution de la requête Supabase...');
-      const { data, error } = await query;
+      const { data, error } = await fetchAllDirectoryRows(query);
 
       if (error) {
         console.error('❌ [ERREUR CRITIQUE] Échec de la requête Supabase:');
@@ -997,7 +1012,7 @@ export const Businesses = ({
         .order('cv_business_status', { ascending: false, nullsFirst: false })
         .order('"Compteur Avis Google"', { ascending: false, nullsFirst: false })
         .order('nom', { ascending: true })
-        .limit(300);
+        .order('id', { ascending: true });
 
       if (selectedBusinessId) {
         console.log(`[DEBUG] Filtre ID entreprise: "${selectedBusinessId}"`);
@@ -1053,7 +1068,7 @@ export const Businesses = ({
       if (!selectedBusinessId) query = applyCertificationFilter(query, filterStatutCarte);
 
       console.log('[DEBUG] Exécution de la requête Supabase...');
-      const { data, error } = await query;
+      const { data, error } = await fetchAllDirectoryRows(query);
 
       if (error) {
         console.error('❌ [ERREUR CRITIQUE RECHERCHE] Échec de la requête Supabase:');
