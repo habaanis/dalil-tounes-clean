@@ -170,7 +170,13 @@ export default function PlatformAppSectionHub({ kind }: { kind: Hub }) {
   const prosActions = PRO_LINKS.filter(item => item.id === 'free' || item.id === 'cv');
   const prosExtras = PRO_LINKS.filter(item => item.id !== 'free' && item.id !== 'cv');
   const renderProCards = (items: Entry[]) => <div className="grid grid-cols-2 gap-2">
-    {items.map(item => <button key={item.id} type="button" aria-expanded={openPro === item.id}
+    {items.map(item => item.id === 'free'
+      ? <Link key={item.id} to={item.href}
+          className="flex min-h-[74px] flex-col items-start justify-between rounded-xl border border-[#E5D7BE] bg-white p-3 text-start shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B99143]">
+          <span aria-hidden="true" className="text-xl leading-none">{item.icon}</span>
+          <span className="mt-2 text-sm font-medium leading-5 text-[#45243A]">{copy.topics[item.id]}</span>
+        </Link>
+      : <button key={item.id} type="button" aria-expanded={openPro === item.id}
       onClick={() => setOpenPro(current => current === item.id ? null : item.id)}
       className={`flex min-h-[74px] flex-col items-start justify-between rounded-xl border p-3 text-start shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B99143] ${openPro === item.id ? 'border-[#B99143] bg-[#FFF9EF]' : 'border-[#E5D7BE] bg-white'}`}>
       <span aria-hidden="true" className="text-xl leading-none">{item.icon}</span>
@@ -210,10 +216,7 @@ export default function PlatformAppSectionHub({ kind }: { kind: Hub }) {
           </button>
         </div>
         <p className="mt-2 text-sm leading-6 text-[#6A5B64]">{proDetails[lang][selectedPro.id]}</p>
-        <Link to={selectedPro.href}
-          className="mt-4 inline-flex min-h-11 items-center rounded-xl border border-[#D4AF37]/65 bg-[#4A1D43] px-4 py-2 text-sm font-semibold text-white">
-          {openLabels[lang]}
-        </Link>
+
       </section>}
     </>}
 
