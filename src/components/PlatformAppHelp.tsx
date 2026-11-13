@@ -46,7 +46,7 @@ export default function PlatformAppHelp({ language }: { language: string }) {
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as AppLang;
   const helpCopy = HELP_COPY[lang];
   return (
-<div data-app-help className="mx-auto max-w-xl px-0 pt-0">
+<div data-app-help className="mx-auto max-w-xl px-3 pt-2">
         <details className="group rounded-xl border border-[#D4AF37]/40 bg-white px-3 py-2">
           <summary className="flex min-h-9 cursor-pointer list-none items-center justify-between gap-2 text-xs font-semibold text-[#45243A] [&::-webkit-details-marker]:hidden">
             <span className="inline-flex items-center gap-2"><Phone className="h-4 w-4 text-[#A17D36]" aria-hidden="true" />{helpCopy.heading}</span>
