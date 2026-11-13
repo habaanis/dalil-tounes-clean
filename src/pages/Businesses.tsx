@@ -384,6 +384,21 @@ function compareBusinessesByTrust(a: Record<string, any>, b: Record<string, any>
   return String(a.name || '').localeCompare(String(b.name || ''), 'fr');
 }
 
+// Read all matching public rows in stable batches for the application directory.
+// This avoids presenting only the first 200/300 Supabase rows as all results.
+async function fetchAllDirectoryRows(query: any): Promise<{ data: any[]; error: any }> {
+  const chunkSize = 500;
+  const rows: any[] = [];
+  for (let offset = 0; ; offset += chunkSize) {
+    const { data, error } = await query.range(offset, offset + chunkSize - 1);
+    if (error) return { data: [], error };
+    const batch = Array.isArray(data) ? data : [];
+    rows.push(...batch);
+    if (batch.length < chunkSize) break;
+  }
+  return { data: rows, error: null };
+}
+
 export const Businesses = ({
   showSuggestionForm = false,
   onCloseSuggestionForm,
@@ -401,7 +416,7 @@ export const Businesses = ({
   const pageT = getBusinessesPageTranslations(language);
   const directoryCopy = DIRECTORY_NAV_COPY[language as BusinessCardPreviewLanguage] ?? DIRECTORY_NAV_COPY.fr;
   const badgeLegend = getBusinessBadgeLegendTranslations(language);
-  const _initCache = readBusinessesCache();
+  const _initCache = inPlatformApp ? null : readBusinessesCache();
   const [businesses, setBusinesses] = useState<Business[]>((_initCache?.businesses as unknown as Business[]) ?? []);
   const [loading, setLoading] = useState(_initCache === null);
   const [searchTerm, setSearchTerm] = useState(initialSearchKeyword || '');
@@ -720,6 +735,7 @@ export const Businesses = ({
 
   // Abonnement au cache — reçoit les données dès qu'elles arrivent (premier chargement ou invalidation)
   useEffect(() => {
+    if (inPlatformApp) return; // The small homepage prefetch is not a complete directory.
     const unsub = subscribeBusinessesData((result) => {
       setBusinesses(result.businesses as unknown as Business[]);
       setPremiumJobs(result.premiumJobs);
@@ -877,7 +893,7 @@ export const Businesses = ({
         .order('cv_business_status', { ascending: false, nullsFirst: false })
         .order('"Compteur Avis Google"', { ascending: false, nullsFirst: false })
         .order('nom', { ascending: true })
-        .limit(200);
+        .order('id', { ascending: true });
 
       if (pageCategorie) {
         console.log(`[DEBUG] Filtre pageCategorie appliqué: "${pageCategorie}"`);
@@ -887,7 +903,9 @@ export const Businesses = ({
       query = applyCertificationFilter(query, filterStatutCarte);
 
       console.log('[DEBUG] Exécution de la requête Supabase...');
-      const { data, error } = await query;
+      const { data, error } = inPlatformApp
+        ? await fetchAllDirectoryRows(query)
+        : await query.limit(200);
 
       if (error) {
         console.error('❌ [ERREUR CRITIQUE] Échec de la requête Supabase:');
@@ -1015,7 +1033,7 @@ export const Businesses = ({
         .order('cv_business_status', { ascending: false, nullsFirst: false })
         .order('"Compteur Avis Google"', { ascending: false, nullsFirst: false })
         .order('nom', { ascending: true })
-        .limit(300);
+        .order('id', { ascending: true });
 
       // The shop buttons use the existing page assignment + Airtable categories.
       // They must not search for a generic word among all businesses.
@@ -1075,7 +1093,9 @@ export const Businesses = ({
       if (!selectedBusinessId) query = applyCertificationFilter(query, filterStatutCarte);
 
       console.log('[DEBUG] Exécution de la requête Supabase...');
-      const { data, error } = await query;
+      const { data, error } = inPlatformApp
+        ? await fetchAllDirectoryRows(query)
+        : await query.limit(300);
 
       if (error) {
         console.error('❌ [ERREUR CRITIQUE RECHERCHE] Échec de la requête Supabase:');
