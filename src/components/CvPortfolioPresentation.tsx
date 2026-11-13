@@ -316,7 +316,7 @@ export function CvPortfolioPresentation({
           ) : <div aria-hidden="true" style={{ height: "100%", display: "grid", placeItems: "center", background: "linear-gradient(140deg,#0f5845,#00352f)" }}><Store size={68} color="#d9bd67" /></div>}</div>
           {logoImage && !logoImage.includes("logo_dalil_tounes") ? (
             <img className="cvp-lienora-logo" src={logoImage} alt={`Logo ${profile.identity.name}`} onError={event => { event.currentTarget.style.display = "none"; }} />
-          ) : <div className="cvp-lienora-logo" aria-label={profile.identity.name} style={{ display: "grid", placeItems: "center", background: "#f6eed7", color: "#064538", fontWeight: 800, fontSize: 22, borderRadius: "50%" }}>{profile.identity.name.split(/\\s+/).map(word => word[0]).join("").slice(0,2)}</div>}
+          ) : <div className="cvp-lienora-logo" aria-label={profile.identity.name} style={{ display: "grid", placeItems: "center", background: "#f6eed7", color: "#064538", fontWeight: 800, fontSize: 22, borderRadius: "50%" }}>{profile.identity.name.split(/\s+/).map(word => word[0]).join("").slice(0,2)}</div>}
 
           <div className="cvp-lienora-main">
             <span className="cvp-lienora-activity">✦ {profile.identity.activity}</span>
