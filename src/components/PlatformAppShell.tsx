@@ -9,23 +9,23 @@ type AppLang = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 const APP_COPY: Record<AppLang, {
   home: string; search: string; citizens: string; discover: string; pros: string;
   more: string; menu: string; close: string; back: string; jobs: string; events: string;
-  partners: string; blog: string; contact: string;
+  partners: string; blog: string; contact: string; account: string;
 }> = {
   fr: { home: 'Accueil', search: 'Chercher', citizens: 'Citoyens', discover: 'Tourisme & Expat', pros: 'Pros',
     more: 'Plus de rubriques', menu: 'Ouvrir le menu', close: 'Fermer le menu', back: 'Retour', jobs: 'Emploi',
-    events: 'Événements', partners: 'Partenaires', blog: 'Guides & articles', contact: 'Contact' },
+    events: 'Événements', partners: 'Partenaires', blog: 'Guides & articles', contact: 'Contact', account: 'My account', account: 'Mon compte' },
   ar: { home: 'الرئيسية', search: 'بحث', citizens: 'مواطنون', discover: 'سياحة ومقيمون', pros: 'مهنيون',
     more: 'أقسام أخرى', menu: 'فتح القائمة', close: 'إغلاق القائمة', back: 'رجوع', jobs: 'الشغل',
-    events: 'الفعاليات', partners: 'الشركاء', blog: 'مقالات وأدلة', contact: 'اتصل بنا' },
+    events: 'الفعاليات', partners: 'الشركاء', blog: 'مقالات وأدلة', contact: 'اتصل بنا', account: 'حسابي المهني' },
   en: { home: 'Home', search: 'Search', citizens: 'Citizens', discover: 'Tourism & Expat', pros: 'Business',
     more: 'More sections', menu: 'Open menu', close: 'Close menu', back: 'Back', jobs: 'Jobs',
     events: 'Events', partners: 'Partners', blog: 'Guides & articles', contact: 'Contact' },
   it: { home: 'Home', search: 'Cerca', citizens: 'Cittadini', discover: 'Turismo & Expat', pros: 'Imprese',
     more: 'Altre sezioni', menu: 'Apri menu', close: 'Chiudi menu', back: 'Indietro', jobs: 'Lavoro',
-    events: 'Eventi', partners: 'Partner', blog: 'Guide e articoli', contact: 'Contatti' },
+    events: 'Eventi', partners: 'Partner', blog: 'Guide e articoli', contact: 'Contatti', account: 'Il mio account' },
   ru: { home: 'Главная', search: 'Поиск', citizens: 'Граждане', discover: 'Туризм & экспат', pros: 'Бизнес',
     more: 'Другие разделы', menu: 'Открыть меню', close: 'Закрыть меню', back: 'Назад', jobs: 'Работа',
-    events: 'События', partners: 'Партнёры', blog: 'Статьи и гиды', contact: 'Контакты' },
+    events: 'События', partners: 'Партнёры', blog: 'Статьи и гиды', contact: 'Контакты', account: 'Мой кабинет' },
 };
 
 export default function PlatformAppShell({ children }: { children: ReactNode }) {
@@ -59,6 +59,7 @@ export default function PlatformAppShell({ children }: { children: ReactNode }) 
     { label: copy.partners, to: '/devenir-partenaire' },
     { label: copy.blog, to: '/blog' },
     { label: copy.contact, to: '/contact' },
+    { label: copy.account, to: '/dashboard/entreprise' },
   ];
 
   return (
