@@ -203,6 +203,8 @@ export function CvPortfolioPresentation({
   const [expandedAbout, setExpandedAbout] = useState(false);
   const [homeAboutOpen, setHomeAboutOpen] = useState(false);
   const [homePhotosOpen, setHomePhotosOpen] = useState(false);
+  const [homeReviewsOpen, setHomeReviewsOpen] = useState(false);
+  const [writeReviewOpen, setWriteReviewOpen] = useState(false);
   const [bookingOpen, setBookingOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const [hoursOpen, setHoursOpen] = useState(false);
@@ -234,7 +236,7 @@ export function CvPortfolioPresentation({
     { id: 'about' as const, label: copy.about, icon: Info, visible: false },
     { id: 'services' as const, label: copy.services, icon: Store, visible: hasSection('services') },
     { id: 'gallery' as const, label: copy.photos, icon: Images, visible: Boolean(boutiqueContent) },
-    { id: 'reviews' as const, label: copy.reviews, icon: Star, visible: hasSection('reviews') },
+    { id: 'reviews' as const, label: copy.reviews, icon: Star, visible: false },
   ].filter(tab => tab.visible);
 
   const goTo = (tab: PortfolioTab) => {
@@ -364,12 +366,6 @@ export function CvPortfolioPresentation({
                 {socialOpen && socialActions.map(({ label, href, icon: Icon }) => (
                   <a href={href} target="_blank" rel="noopener noreferrer" key={label}><Icon />{label}</a>
                 ))}
-                {profile.reviews.url && (
-                  <a href={profile.reviews.url} target="_blank" rel="noopener noreferrer"><Star />{copy.viewReviews}</a>
-                )}
-                {reviewsContent && (
-                  <button type="button" onClick={() => { setMoreOpen(false); goTo('reviews'); }}><FileText />{copy.giveReview}</button>
-                )}
               </div>
             )}
             {bookingOpen && bookingContent && <section className="cvp-booking">{bookingContent}</section>}
@@ -445,6 +441,32 @@ export function CvPortfolioPresentation({
                       {homeAboutOpen && <div id="cvp-about-expanded" className="cvp-compact-body">{aboutBlock}</div>}
                     </section>
                   )}
+                  {hasSection('reviews') && (reviewRating > 0 || reviewCount > 0 || Boolean(profile.reviews.url) || Boolean(reviewsContent)) && (
+                    <section className="cvp-compact-section">
+                      <button type="button" className="cvp-compact-trigger" onClick={() => setHomeReviewsOpen(open => !open)}
+                        aria-expanded={homeReviewsOpen} aria-controls="cvp-reviews-expanded">
+                        <span><Star aria-hidden="true" />{language === 'ar' ? 'آراء الحرفاء' : language === 'en' ? 'Customer reviews' : 'Avis clients'}</span>
+                        <span className="cvp-compact-trailing">
+                          {reviewRating > 0 && <small>{reviewRating.toFixed(1)} ★</small>}
+                          {reviewCount > 0 && <small>{reviewCount} {copy.reviews.toLowerCase()}</small>}
+                          <ChevronRight className={homeReviewsOpen ? 'cvp-compact-chevron open' : 'cvp-compact-chevron'} aria-hidden="true" />
+                        </span>
+                      </button>
+                      {homeReviewsOpen && <div id="cvp-reviews-expanded" className="cvp-compact-body cvp-compact-reviews">
+                        {profile.reviews.url && <a className="cvp-compact-review-link" href={profile.reviews.url} target="_blank" rel="noopener noreferrer">
+                          <Star aria-hidden="true" />{copy.viewReviews}
+                        </a>}
+                        {reviewsContent && <>
+                          <button className="cvp-compact-review-link" type="button"
+                            onClick={() => setWriteReviewOpen(open => !open)} aria-expanded={writeReviewOpen}
+                            aria-controls="cvp-write-review"><FileText aria-hidden="true" />{copy.giveReview}
+                            <ChevronRight className={writeReviewOpen ? 'cvp-compact-chevron open' : 'cvp-compact-chevron'} aria-hidden="true" />
+                          </button>
+                          {writeReviewOpen && <div id="cvp-write-review">{reviewsContent}</div>}
+                        </>}
+                      </div>}
+                    </section>
+                  )}
                   {hasSection('gallery') && gallery.length > 0 && (
                     <section className="cvp-compact-section">
                       <button type="button" className="cvp-compact-trigger" onClick={() => setHomePhotosOpen(open => !open)}
@@ -462,15 +484,6 @@ export function CvPortfolioPresentation({
               {activeTab === 'about' && aboutBlock}
               {activeTab === 'services' && servicesBlock}
               {activeTab === 'gallery' && galleryBlock}
-              {activeTab === 'reviews' && (
-                <section className="cvp-section cvp-review-panel">
-                  <Star fill="currentColor" />
-                  <h2>{reviewRating ? `${reviewRating.toFixed(1)} / 5` : copy.reviews}</h2>
-                  {reviewCount > 0 && <p>{reviewCount} {copy.reviews.toLowerCase()}</p>}
-                  {profile.reviews.url && <a href={profile.reviews.url} target="_blank" rel="noopener noreferrer">{copy.reviews}<ChevronRight /></a>}
-                </section>
-              )}
-              {activeTab === 'reviews' && reviewsContent && <section className="cvp-section">{reviewsContent}</section>}
               {notice && <p className="cvp-notice" role="status">{notice}</p>}
             </div>
           </div>
