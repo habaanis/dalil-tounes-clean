@@ -33,5 +33,5 @@ Toutes les corrections doivent être effectuées dans Airtable puis vérifiées 
 - Enregistrements : `recKhwzq8l1uRhYSI` DAR KLIF ; `recvb5B009QCgyu0T` Hachfi Real Estate ; `recEaFq7BH4A6Bcp0` HOME IN TUNISIA ; `recIgqTCiFYlDajb7` STE ALPINIA de promotion immobilière.
 - Justification : catégorie Immobilier ; sous-catégorie Agence Immobilière pour les trois premiers, dénomination `promotion immobilière` pour le dernier.
 - Statuts inchangés : `terminer la saisi`, `statut_publication=NULL`; `approved` NULL ou false selon la fiche.
-- Premier contrôle Supabase : champs `liste_pages` encore à NULL ; synchronisation en attente de confirmation.
+- Premier contrôle Supabase : champs `liste_pages` encore à NULL ; second contrôle : **synchronisation confirmée pour les 4 fiches** avec les trois pages, statuts inchangés.
 - Retour arrière : rétablir `liste pages` vide dans Airtable pour ces 4 records, vérifier Supabase ensuite.
