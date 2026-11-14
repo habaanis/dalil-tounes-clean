@@ -240,13 +240,13 @@ export const Home = ({ onNavigate, onNavigateToBusiness }: HomeProps = {}) => {
           <section className="dme-count" aria-label="Réseau Dalil Tounes">
             <CompanyCountCard language={language} totalCount={totalCount} certifiedCount={certifiedCount} loading={loading} />
           </section>
-          <nav className="dme-links" aria-label="Accès rapides">
-            <a href="/businesses">{mobileText.business}</a>
-            <a href="/citizens/tourism">{mobileText.tourism}</a>
-          </nav>
           <details className="dme-more">
             <summary>{mobileText.more}<ChevronRight aria-hidden="true" className="h-4 w-4" /></summary>
             <p>{residualT.purposeDescription}</p>
+            <nav className="dme-links" aria-label="Accès rapides">
+              <a href="/businesses">{mobileText.business}</a>
+              <a href="/citizens/tourism">{mobileText.tourism}</a>
+            </nav>
             <a href="/pourquoi-dalil-tounes">{residualT.purposeCta}</a>
           </details>
           <button type="button" className="dme-full" onClick={() => setShowFullMobile(true)}>{mobileText.full}</button>
