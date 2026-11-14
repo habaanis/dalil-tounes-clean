@@ -1392,7 +1392,7 @@ export const Subscription = () => {
 <div className="mb-6 overflow-hidden rounded-3xl border border-[#D6AF2E]/60 bg-gradient-to-br from-[#FFF8DF] via-white to-[#FFF9ED] p-5 shadow-[0_12px_30px_rgba(74,18,63,0.07)] sm:p-7">
   <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
     <div className="max-w-3xl">
-      <span className="inline-flex items-center gap-2 rounded-full bg-[#4A123F] px-3 py-1 text-[10px] font-medium uppercase tracking-[0.12em] text-white">
+      <span className="inline-flex items-center gap-2 rounded-full bg-[#D6B86D] px-3 py-1 text-[10px] font-medium uppercase tracking-[0.12em] text-[#292725]">
         <Sparkles className="h-3.5 w-3.5 text-[#F0C537]" aria-hidden="true" />
         {simpleCopy.welcomeBadge}
       </span>
