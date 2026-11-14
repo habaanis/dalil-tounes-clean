@@ -40,6 +40,8 @@ interface Business {
   id: string;
   name: string;
   category: string;
+  /** Shop filter that fetched this row; keeps stale general results out of the UI. */
+  shopFilterId?: string;
   subCategories?: string;
   city: string;
   address: string;
@@ -423,7 +425,8 @@ export const Businesses = ({
   const [loading, setLoading] = useState(_initCache === null);
   const [searchTerm, setSearchTerm] = useState(initialSearchKeyword || '');
   const [selectedBusinessId, setSelectedBusinessId] = useState<string | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState('');
+  // Initialize category from the URL before the first data request.
+  const [selectedCategory, setSelectedCategory] = useState(() => typeof window === 'undefined' ? '' : new URLSearchParams(window.location.search).get('categorie') || '');
   const [selectedCity, setSelectedCity] = useState(initialSearchCity || '');
   const [pageCategorie, setPageCategorie] = useState<string | null>(null);
   const [showSuggestForm, setShowSuggestForm] = useState(showSuggestionForm);
@@ -446,6 +449,8 @@ export const Businesses = ({
   const [businessActivitiesByCompany, setBusinessActivitiesByCompany] = useState<Record<string, BusinessActivity[]>>({});
 
   const resultsRef = useRef<HTMLDivElement>(null);
+  // Ignore responses from an older directory request after filters change.
+  const directoryRequestRef = useRef(0);
   // Reset pagination for every new search or category selection.
   useEffect(() => setResultPage(0), [searchTerm, selectedCity, selectedCategory, pageCategorie, selectedChipCategories, filterPremium, filterCommerceLocal, filterStatutCarte]);
 
@@ -872,6 +877,7 @@ export const Businesses = ({
   }, [preselectedBusinessId, businesses]);
 
   const fetchBusinesses = async () => {
+    const requestId = ++directoryRequestRef.current;
     console.log('═══════════════════════════════════════');
     console.log('🔍 [DEBUG fetchBusinesses] Démarrage...');
     console.log('═══════════════════════════════════════');
@@ -910,6 +916,7 @@ export const Businesses = ({
         ? await fetchAllDirectoryRows(query)
         : await query.limit(200);
 
+      if (requestId !== directoryRequestRef.current) return;
       if (error) {
         console.error('❌ [ERREUR CRITIQUE] Échec de la requête Supabase:');
         console.error('Code erreur:', error.code);
@@ -989,9 +996,11 @@ export const Businesses = ({
       console.log(`[DEBUG] ✅ Mapping terminé: ${mappedData.length} entreprises`);
       console.log('═══════════════════════════════════════\n');
 
+      if (requestId !== directoryRequestRef.current) return;
       setLoading(false);
       setBusinesses(mappedData);
     } catch (error) {
+      if (requestId !== directoryRequestRef.current) return;
       console.error('❌ [ERROR] fetchBusinesses:', error);
       setLoading(false);
       setBusinesses([]);
@@ -1001,6 +1010,7 @@ export const Businesses = ({
   };
 
   const performSearch = async () => {
+    const requestId = ++directoryRequestRef.current;
     console.log('═══════════════════════════════════════');
     console.log('🔍 [DEBUG performSearch] Démarrage...');
     console.log('Entreprise sélectionnée:', selectedBusinessId);
@@ -1101,6 +1111,7 @@ export const Businesses = ({
         ? await fetchAllDirectoryRows(query)
         : await query.limit(300);
 
+      if (requestId !== directoryRequestRef.current) return;
       if (error) {
         console.error('❌ [ERREUR CRITIQUE RECHERCHE] Échec de la requête Supabase:');
         console.error('Code erreur:', error.code);
@@ -1139,6 +1150,7 @@ export const Businesses = ({
         : (data || []);
       let mappedData = dedupeByAirtableId(shopRows as { id: string; id_airtable?: string | null }[]).map((item: any) => ({
         id: item.id,
+        shopFilterId: shopFilter || undefined,
         name: extractFrenchName(item.nom),
         category: getCategoryLabel(item),
         subCategories: getSubCategoryLabel(item),
@@ -1234,6 +1246,7 @@ export const Businesses = ({
 
       // Mettre à jour businesses et searching dans le même batch React pour éviter
       // le flash "aucun résultat" entre les deux updates
+      if (requestId !== directoryRequestRef.current) return;
       setSearching(false);
       setBusinesses(mappedData);
 
@@ -1253,6 +1266,7 @@ export const Businesses = ({
         window.scrollTo({ top: Math.max(targetTop, 0), behavior: 'smooth' });
       }, 100);
     } catch (error) {
+      if (requestId !== directoryRequestRef.current) return;
       console.error('❌ [ERROR] performSearch:', error);
       setSearching(false);
       setBusinesses([]);
@@ -1320,7 +1334,10 @@ export const Businesses = ({
 
   const categories = Array.isArray(businesses) ? [...new Set(businesses.map((b) => b.category).filter(Boolean))].sort() : [];
 
-  const filteredBusinesses = Array.isArray(chipFilteredBusinesses) ? chipFilteredBusinesses : [];
+  const activeShopFilter = inPlatformApp ? getShopFilterId(selectedCategory) : null;
+  // Fail closed if general-directory data arrives while a shop shortcut is active.
+  const filteredBusinesses = (Array.isArray(chipFilteredBusinesses) ? chipFilteredBusinesses : [])
+    .filter(business => !activeShopFilter || business.shopFilterId === activeShopFilter);
   // The platform app uses 10 cards per page instead of an endless scroll.
   const APP_RESULTS_PER_PAGE = 6;
   const resultPageCount = Math.max(1, Math.ceil(filteredBusinesses.length / APP_RESULTS_PER_PAGE));
