@@ -886,3 +886,304 @@
   .cvp-lienora-content .cvp-gallery-grid button { height: 86px; }
   .cvp-lienora-content .cvp-gallery-grid button:first-child { height: 179px; }
 }
+
+/* Portfolio compact sections: closed by default, same visual language as Business accordions. */
+.cvp-compact-section {margin:7px 0;border:1px solid color-mix(in srgb,var(--cvp-accent) 54%,transparent);border-radius:11px;overflow:hidden;background:var(--cvp-panel)}
+.cvp-compact-trigger {display:flex;width:100%;min-height:48px;align-items:center;justify-content:space-between;gap:8px;padding:10px 13px;border:0;background:transparent;color:var(--cvp-text);font:inherit;font-weight:750;cursor:pointer;text-align:start}
+.cvp-compact-trigger > span {display:flex;align-items:center;gap:10px}
+.cvp-compact-trigger svg {width:17px;height:17px;flex:none;color:var(--cvp-accent)}
+.cvp-compact-trailing small {color:var(--cvp-accent);border:1px solid color-mix(in srgb,var(--cvp-accent) 55%,transparent);border-radius:999px;padding:2px 7px;font-size:.69rem}
+.cvp-compact-chevron {transition:transform .18s ease}
+.cvp-compact-chevron.open {transform:rotate(90deg)}
+.cvp-compact-body {padding:12px;border-top:1px solid color-mix(in srgb,var(--cvp-accent) 40%,transparent)}
+.cvp-compact-body .cvp-section {margin:0;padding:0}
+.cvp-compact-body .cvp-section-heading {display:none}
+.cvp-compact-body .cvp-gallery-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.cvp-compact-body .cvp-gallery-grid button {height:112px;min-width:0}
+.cvp-compact-body .cvp-gallery-grid button:nth-child(6n + 1) {height:164px;grid-column:span 2}
+.cvp-compact-body .cvp-gallery-grid button:first-child {grid-column:span 2;grid-row:auto;height:164px}
+.cvp-compact-body .cvp-gallery-grid img {height:100%;width:100%;object-fit:cover}
+@media(max-width:390px){.cvp-compact-body .cvp-gallery-grid button {height:92px}.cvp-compact-body .cvp-gallery-grid button:first-child,.cvp-compact-body .cvp-gallery-grid button:nth-child(6n + 1){height:145px}}
+
+/* Photo mosaic inspired by the Business CV: alternating compact tiles in two columns. */
+.cvp-compact-body .cvp-gallery-grid {
+  display:grid;
+  grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);
+  grid-auto-flow:row dense;
+  align-items:stretch;
+  gap:7px;
+}
+.cvp-compact-body .cvp-gallery-grid button,
+.cvp-compact-body .cvp-gallery-grid button:first-child,
+.cvp-compact-body .cvp-gallery-grid button:nth-child(6n + 1) {
+  grid-column:auto;
+  grid-row:auto;
+  height:110px;
+  min-height:0;
+}
+.cvp-compact-body .cvp-gallery-grid button:nth-child(4n + 1) {height:135px}
+.cvp-compact-body .cvp-gallery-grid button:nth-child(4n + 2) {height:135px}
+.cvp-compact-body .cvp-gallery-grid button:nth-child(4n + 3) {height:105px}
+.cvp-compact-body .cvp-gallery-grid button:nth-child(4n + 4) {height:105px}
+.cvp-compact-body .cvp-gallery-grid button img {display:block;width:100%;height:100%;object-fit:cover}
+.cvp-compact-reviews {display:grid;gap:7px}
+.cvp-compact-review-link {display:flex;align-items:center;justify-content:center;gap:9px;min-height:40px;width:100%;border:1px solid color-mix(in srgb,var(--cvp-accent) 50%,transparent);border-radius:9px;background:var(--cvp-panel);color:var(--cvp-text);font:inherit;font-size:.8rem;text-decoration:none;cursor:pointer}
+.cvp-compact-review-link svg {height:17px;width:17px;color:var(--cvp-accent)}
+.cvp-compact-reviews #cvp-write-review {padding:8px 2px}
+@media(max-width:390px){
+  .cvp-compact-body .cvp-gallery-grid button:nth-child(n) {height:95px}
+  .cvp-compact-body .cvp-gallery-grid button:nth-child(4n + 1),
+  .cvp-compact-body .cvp-gallery-grid button:nth-child(4n + 2) {height:117px}
+}
+
+/* Final compact sizing: typography and tile dimensions override legacy gallery styles. */
+.cvp-page--lienora .cvp-compact-trigger {
+  min-height: 41px;
+  padding: 8px 10px;
+  font-size: .73rem;
+  line-height: 1.25;
+  font-weight: 650;
+}
+.cvp-page--lienora .cvp-compact-trigger > span { gap: 7px; min-width: 0; }
+.cvp-page--lienora .cvp-compact-trigger svg { width: 15px; height: 15px; }
+.cvp-page--lienora .cvp-compact-trailing {flex-shrink:0}
+.cvp-page--lienora .cvp-compact-trailing small {font-size:.61rem;padding:1px 5px}
+.cvp-page--lienora .cvp-compact-section {margin:5px 0}
+.cvp-page--lienora .cvp-compact-body {padding:9px}
+.cvp-lienora-content .cvp-compact-body .cvp-gallery-grid {
+  display:grid;
+  grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);
+  grid-auto-flow:row;
+  grid-auto-rows:105px;
+  gap:7px;
+}
+.cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button,
+.cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:first-child,
+.cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:nth-child(n) {
+  grid-column:auto;
+  grid-row:auto;
+  width:100%;
+  height:105px;
+  min-width:0;
+  min-height:0;
+  margin:0;
+  overflow:hidden;
+  align-self:stretch;
+  justify-self:stretch;
+}
+.cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button img {
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+@media (max-width:390px) {
+  .cvp-lienora-content .cvp-compact-body .cvp-gallery-grid {grid-auto-rows:92px;gap:6px}
+  .cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:nth-child(n) {height:92px}
+}
+
+/* Staggered descending photo cascade: intentional, modest overlaps (not a masonry grid). */
+.cvp-lienora-content .cvp-compact-body .cvp-gallery-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  padding: 3px 0 15px;
+}
+.cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:nth-child(n) {
+  position: relative;
+  display: block;
+  flex: none;
+  grid-column: auto;
+  grid-row: auto;
+  align-self: flex-start;
+  width: 100%;
+  height: clamp(105px, 27vw, 155px);
+  margin: 0;
+  border: 2px solid var(--cvp-accent);
+  border-radius: 12px;
+  box-shadow: 0 5px 13px rgba(0, 0, 0, .15);
+  overflow: hidden;
+  background: var(--cvp-panel);
+}
+.cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:nth-child(n+2) { margin-top: -16px; }
+.cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:nth-child(2) {width: 91%;align-self:flex-end;height:142px;z-index:2}
+.cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:nth-child(3) {width: 83%;height:132px;z-index:3}
+.cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:nth-child(4) {width: 75%;align-self:flex-end;height:120px;z-index:4}
+.cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:nth-child(5) {width: 67%;height:110px;z-index:5}
+.cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:nth-child(6) {width: 60%;align-self:flex-end;height:98px;z-index:6}
+.cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:nth-child(n+7) {width: 60%;height:98px;align-self:center;z-index:7}
+.cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button img {width:100%;height:100%;object-fit:cover;display:block}
+.cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:focus-visible {outline:3px solid var(--cvp-text);outline-offset:3px;z-index:10}
+@media(max-width:390px) {
+  .cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:nth-child(n) {height:110px}
+  .cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:nth-child(2) {height:107px}
+  .cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:nth-child(3) {height:102px}
+  .cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:nth-child(4) {height:97px}
+  .cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:nth-child(5) {height:92px}
+  .cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:nth-child(n+6) {height:86px}
+  .cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:nth-child(n+2) {margin-top:-12px}
+}
+/* Dark ink for information displayed over the ivory / gold surface. */
+.cvp-page--lienora.cvp-palette-ivory .cvp-lienora-information-content,
+.cvp-page--lienora.cvp-palette-ivory .cvp-lienora-information-content .dt-hours,
+.cvp-page--lienora.cvp-palette-ivory .cvp-lienora-information-content .dt-hours *,
+.cvp-page--lienora.cvp-palette-ivory .cvp-lienora-information-content .dt-info-list,
+.cvp-page--lienora.cvp-palette-ivory .cvp-lienora-information-content .dt-info-list *,
+.cvp-page--lienora.cvp-palette-ivory .cvp-lienora-information-content .dt-social-link,
+.cvp-page--lienora.cvp-palette-ivory .cvp-lienora-information-content .dt-social-link * {
+  color: #30291d;
+}
+.cvp-page--lienora.cvp-palette-ivory .cvp-lienora-information-content a {color: #2e4538;text-decoration:underline;text-underline-offset:2px}
+
+/* Compact upper Portfolio section: preserve original logo at 76x76px. */
+.cvp-page--lienora .cvp-lienora-cover {height:145px}
+.cvp-page--lienora .cvp-lienora-logo {top:105px}
+.cvp-page--lienora .cvp-lienora-main {padding-top:39px}
+.cvp-page--lienora .cvp-lienora-identity {padding:7px 9px}
+.cvp-page--lienora .cvp-lienora-identity small {font-size:.54rem}
+.cvp-page--lienora .cvp-lienora-identity h1 {margin:2px 0;font-size:1.42rem}
+.cvp-page--lienora .cvp-lienora-identity p {margin-top:3px}
+.cvp-page--lienora .cvp-lienora-rating {margin:3px 0}
+.cvp-page--lienora .cvp-lienora-actions {margin-top:6px}
+@media(max-width:390px) {
+  .cvp-page--lienora .cvp-lienora-cover {height:138px}
+  .cvp-page--lienora .cvp-lienora-logo {top:98px}
+}
+
+/* Compact identity without the duplicate Google trust sentence. */
+.cvp-page--lienora .cvp-lienora-identity {
+  padding: 6px 9px;
+}
+.cvp-page--lienora .cvp-lienora-identity small {
+  letter-spacing:.11em;
+  font-size:.51rem;
+}
+.cvp-page--lienora .cvp-lienora-identity h1 {
+  font-size:1.35rem;
+  line-height:1.06;
+  margin:2px 0;
+}
+.cvp-page--lienora .cvp-lienora-identity .cvp-lienora-activity {
+  padding:4px 10px;
+  margin:4px auto;
+  font-size:.66rem;
+}
+.cvp-page--lienora .cvp-lienora-rating {gap:4px;margin:3px 0}
+.cvp-page--lienora .cvp-lienora-identity p {margin:3px 0 0}
+
+/* Portfolio-only gallery experiment: one fixed-height hero + scrollable thumbnail strip. */
+.cvp-page--lienora .cvp-compact-portfolio-gallery {margin:0;padding:0}
+.cvp-page--lienora .cvp-photo-selector {display:grid;gap:8px;min-width:0}
+.cvp-page--lienora .cvp-photo-selector-main {
+  position:relative;display:block;width:100%;height:160px;overflow:hidden;
+  border:1px solid var(--cvp-accent);border-radius:12px;
+  padding:0;background:var(--cvp-panel);cursor:zoom-in
+}
+.cvp-page--lienora .cvp-photo-selector-main img {display:block;width:100%;height:100%;object-fit:cover}
+.cvp-page--lienora .cvp-photo-selector-main > svg {
+  position:absolute;top:8px;right:8px;width:26px;height:26px;padding:5px;
+  border-radius:50%;color:var(--cvp-accent);background:color-mix(in srgb,var(--cvp-shell-end) 82%,transparent)
+}
+.cvp-page--lienora .cvp-photo-selector-main > span {
+  position:absolute;bottom:8px;right:8px;padding:3px 9px;border-radius:999px;
+  font-size:.66rem;font-weight:700;background:rgba(0,30,25,.78);color:#fff
+}
+.cvp-page--lienora .cvp-photo-selector-thumbnails {
+  display:flex;gap:7px;overflow-x:auto;scroll-snap-type:x proximity;
+  padding:1px 1px 5px;scrollbar-width:thin
+}
+.cvp-page--lienora .cvp-photo-selector-thumbnails > button {
+  position:relative;flex:0 0 58px;width:58px;height:55px;
+  padding:0;overflow:hidden;border-radius:8px;
+  border:2px solid transparent;background:var(--cvp-panel);cursor:pointer;scroll-snap-align:start;opacity:.78
+}
+.cvp-page--lienora .cvp-photo-selector-thumbnails > button.is-selected {
+  border-color:var(--cvp-accent);opacity:1
+}
+.cvp-page--lienora .cvp-photo-selector-thumbnails img {display:block;width:100%;height:100%;object-fit:cover}
+.cvp-page--lienora .cvp-photo-selector-thumbnails > button:focus-visible {outline:2px solid var(--cvp-text);outline-offset:2px}
+@media(max-width:390px) {
+  .cvp-page--lienora .cvp-photo-selector-main {height:145px}
+  .cvp-page--lienora .cvp-photo-selector-thumbnails > button {flex-basis:52px;width:52px;height:49px}
+}
+
+/* Portfolio visual signature: a single permanently visible strip of photos. */
+.cvp-page--lienora .cvp-portfolio-visible-photos {padding:5px 0 2px;margin:3px 0 5px;min-width:0}
+.cvp-page--lienora .cvp-photo-strip {
+  display:flex;align-items:center;gap:7px;
+  overflow-x:auto;overflow-y:hidden;padding:3px 2px 7px;
+  scroll-snap-type:x proximity;scrollbar-width:thin;overscroll-behavior-inline:contain;
+}
+.cvp-page--lienora .cvp-photo-strip > button {
+  display:block;flex:0 0 61px;width:61px;height:68px;min-width:0;
+  padding:0;overflow:hidden;border-radius:10px;
+  border:1px solid var(--cvp-accent);background:var(--cvp-panel);
+  scroll-snap-align:start;cursor:zoom-in;
+}
+.cvp-page--lienora .cvp-photo-strip > button img {display:block;width:100%;height:100%;object-fit:cover}
+.cvp-page--lienora .cvp-photo-strip > button:focus-visible {outline:3px solid var(--cvp-accent);outline-offset:2px}
+@media(max-width:390px) {
+  .cvp-page--lienora .cvp-photo-strip {gap:5px}
+  .cvp-page--lienora .cvp-photo-strip > button {flex-basis:54px;width:54px;height:61px}
+}
+
+/* Portfolio navigation: replace the stacked accordions with six compact tabs. */
+.cvp-page--lienora .cvp-lienora-tabs {
+  display:flex;
+  align-items:stretch;
+  justify-content:space-between;
+  gap:3px;
+  overflow-x:auto;
+  scrollbar-width:thin;
+  padding:3px 0 9px;
+  margin:4px 0 10px;
+}
+.cvp-page--lienora .cvp-lienora-tabs > button,
+.cvp-page--lienora .cvp-lienora-tabs > .cvp-native-boutique-tab {
+  flex:1 0 48px;
+  min-width:48px;
+  max-width:80px;
+  padding:5px 2px;
+  line-height:1.15;
+  font-size:.55rem;
+  border-radius:8px;
+}
+.cvp-page--lienora .cvp-lienora-tabs > button svg {width:18px;height:18px}
+.cvp-page--lienora .cvp-portfolio-tab-panel {
+  border:1px solid color-mix(in srgb,var(--cvp-accent) 40%,transparent);
+  border-radius:11px;
+  padding:11px 12px;
+  background:var(--cvp-panel);
+  margin:6px 0 10px;
+}
+.cvp-page--lienora .cvp-portfolio-tab-panel h2 {font-size:.83rem;line-height:1.25;margin:0 0 8px}
+.cvp-page--lienora .cvp-portfolio-tab-panel h2 small {font-size:.69rem;font-weight:500}
+.cvp-page--lienora .cvp-portfolio-tab-panel .cvp-lienora-information-content {
+  padding:0;
+  border:0;
+}
+.cvp-page--lienora .cvp-portfolio-home-visual {display:grid;gap:7px;margin:3px 0 8px}
+.cvp-page--lienora .cvp-portfolio-featured-photo {
+  position:relative;
+  display:block;
+  width:100%;
+  height:155px;
+  padding:0;
+  overflow:hidden;
+  border:1px solid var(--cvp-accent);
+  border-radius:11px;
+  background:var(--cvp-panel);
+  cursor:zoom-in;
+}
+.cvp-page--lienora .cvp-portfolio-featured-photo img {display:block;width:100%;height:100%;object-fit:cover}
+.cvp-page--lienora .cvp-portfolio-featured-photo svg {
+  position:absolute;right:8px;top:8px;width:26px;height:26px;padding:5px;
+  border-radius:50%;background:rgba(0,30,25,.75);color:var(--cvp-accent)
+}
+.cvp-page--lienora .cvp-portfolio-home-visual .cvp-portfolio-visible-photos {margin:0;padding:0}
+.cvp-page--lienora .cvp-portfolio-home-visual .cvp-photo-strip {padding:1px 0 5px}
+@media(max-width:390px) {
+  .cvp-page--lienora .cvp-lienora-tabs > button {font-size:.5rem;min-width:45px;flex-basis:45px}
+  .cvp-page--lienora .cvp-portfolio-featured-photo {height:135px}
+}
