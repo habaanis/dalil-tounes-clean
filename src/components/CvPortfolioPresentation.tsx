@@ -201,6 +201,8 @@ export function CvPortfolioPresentation({
   const navigationAriaLabel = language === 'ar' ? 'التنقل في الملف المهني المصوّر' : 'Navigation du CV Portfolio';
   const [activeTab, setActiveTab] = useState<PortfolioTab>('home');
   const [expandedAbout, setExpandedAbout] = useState(false);
+  const [homeAboutOpen, setHomeAboutOpen] = useState(false);
+  const [homePhotosOpen, setHomePhotosOpen] = useState(false);
   const [bookingOpen, setBookingOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const [hoursOpen, setHoursOpen] = useState(false);
@@ -230,9 +232,9 @@ export function CvPortfolioPresentation({
 
   const tabs = [
     { id: 'home' as const, label: copy.home, icon: Home, visible: true },
-    { id: 'about' as const, label: copy.about, icon: Info, visible: hasSection('about') },
+    { id: 'about' as const, label: copy.about, icon: Info, visible: false },
     { id: 'services' as const, label: copy.services, icon: Store, visible: hasSection('services') },
-    { id: 'gallery' as const, label: copy.photos, icon: Images, visible: Boolean(boutiqueContent) || hasSection('gallery') },
+    { id: 'gallery' as const, label: copy.photos, icon: Images, visible: Boolean(boutiqueContent) },
     { id: 'reviews' as const, label: copy.reviews, icon: Star, visible: hasSection('reviews') },
   ].filter(tab => tab.visible);
 
@@ -285,7 +287,6 @@ export function CvPortfolioPresentation({
 
   const galleryBlock = (
     <section className="cvp-section">
-      <div className="cvp-section-heading"><h2>{copy.ourWork}</h2></div>
       {gallery.length > 0 ? (
         <div className="cvp-gallery-grid">
           {gallery.map((item, index) => (
@@ -436,25 +437,25 @@ export function CvPortfolioPresentation({
               {activeTab === 'home' && (
                 <>
                   {hasSection('about') && (
-                    <section className="cvp-lienora-about">
-                      <div><h2>{copy.aboutUs}</h2><p>{description}</p></div>
-                      {gallery[0] && (
-                        <button type="button" className="cvp-lienora-zoom" onClick={() => onSelectImage(gallery[0].full)}>
-                          <img src={gallery[0].thumbnail} alt={profile.identity.name} loading="lazy" decoding="async" /><Search />
-                        </button>
-                      )}
+                    <section className="cvp-compact-section">
+                      <button type="button" className="cvp-compact-trigger" onClick={() => setHomeAboutOpen(open => !open)}
+                        aria-expanded={homeAboutOpen} aria-controls="cvp-about-expanded">
+                        <span><Info aria-hidden="true" />{copy.aboutUs}</span>
+                        <ChevronRight className={homeAboutOpen ? 'cvp-compact-chevron open' : 'cvp-compact-chevron'} aria-hidden="true" />
+                      </button>
+                      {homeAboutOpen && <div id="cvp-about-expanded" className="cvp-compact-body">{aboutBlock}</div>}
                     </section>
                   )}
-                  {hasSection('services') && portfolioGallery.length > 0 && (
-                    <section className="cvp-lienora-services">
-                      <header><h2>{copy.photos}</h2><button type="button" onClick={() => goTo('gallery')}>{copy.viewAll} ›</button></header>
-                      <div className="cvp-lienora-photo-mosaic">
-                        {portfolioGallery.map((item, index) => (
-                          <button key={`${item.thumbnail}-${index}`} type="button" className="cvp-lienora-zoom" onClick={() => onSelectImage(item.full)} aria-label={`${copy.photos} ${index + 1}`}>
-                            <img src={item.thumbnail} alt={`${profile.identity.name} — ${index + 1}`} loading="lazy" decoding="async" /><Search />
-                          </button>
-                        ))}
-                      </div>
+                  {hasSection('gallery') && gallery.length > 0 && (
+                    <section className="cvp-compact-section">
+                      <button type="button" className="cvp-compact-trigger" onClick={() => setHomePhotosOpen(open => !open)}
+                        aria-expanded={homePhotosOpen} aria-controls="cvp-photos-expanded">
+                        <span><Images aria-hidden="true" />{language === 'ar' ? 'الصور والأعمال' : language === 'en' ? 'Photos & work' : 'Photos & réalisations'}</span>
+                        <span className="cvp-compact-trailing"><small>{gallery.length}</small>
+                          <ChevronRight className={homePhotosOpen ? 'cvp-compact-chevron open' : 'cvp-compact-chevron'} aria-hidden="true" />
+                        </span>
+                      </button>
+                      {homePhotosOpen && <div id="cvp-photos-expanded" className="cvp-compact-body">{galleryBlock}</div>}
                     </section>
                   )}
                 </>
