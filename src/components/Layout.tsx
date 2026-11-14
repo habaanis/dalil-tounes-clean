@@ -187,6 +187,7 @@ export const Layout = ({ children }: LayoutProps) => {
       label: publicNavLabels.contact,
       path: '/contact',
     },
+    { label: language === 'ar' ? 'حسابي المهني' : 'Mon compte', path: '/dashboard/entreprise' },
   ];
 
   const toggleMenu = (label: string) => {
