@@ -95,7 +95,7 @@ const COPY: Record<string, Copy> = {
     openingHours: 'Horaires', practical: 'Informations pratiques', book: 'Réserver',
     quote: 'Demander un devis', requestInfo: 'Demander une information', myQr: 'Mon QR Business', share: 'Partager', socialNetworks: 'Réseaux', addContact: 'Ajouter aux contacts', certified: 'Certifiée Dalil Tounes',
     viewReviews: 'Voir les avis', giveReview: 'Donner un avis',
-    moreActions: 'Plus d’actions', moreActionsSummary: 'Installer · WhatsApp · E-mail · Réserver · Avis',
+    moreActions: 'Plus d’actions', moreActionsSummary: 'Installer · WhatsApp · E-mail · Avis',
     poweredBy: 'Propulsé par Dalil Tounes',
   },
   ar: {
@@ -104,7 +104,7 @@ const COPY: Record<string, Copy> = {
     ourWork: 'أعمالنا', noPhotos: 'لا توجد صور متاحة.', openingHours: 'أوقات العمل',
     practical: 'معلومات عملية', book: 'احجز', quote: 'طلب عرض سعر', requestInfo: 'طلب معلومات', myQr: 'رمز QR الخاص بي', share: 'مشاركة', socialNetworks: 'شبكات التواصل', addContact: 'إضافة إلى جهات الاتصال',
     viewReviews: 'عرض الآراء', giveReview: 'إضافة رأي',
-    moreActions: 'المزيد من الإجراءات', moreActionsSummary: 'تثبيت · واتساب · البريد · الحجز · الآراء',
+    moreActions: 'المزيد من الإجراءات', moreActionsSummary: 'تثبيت · واتساب · البريد · الآراء',
     certified: 'معتمد من دليل تونس', poweredBy: 'بدعم من دليل تونس',
   },
   en: {
@@ -114,7 +114,7 @@ const COPY: Record<string, Copy> = {
     practical: 'Practical information', book: 'Book', quote: 'Request a quote', requestInfo: 'Request information', myQr: 'My Business QR', share: 'Share', socialNetworks: 'Social networks',
     addContact: 'Add to contacts', certified: 'Certified by Dalil Tounes', poweredBy: 'Powered by Dalil Tounes',
     viewReviews: 'View reviews', giveReview: 'Leave a review',
-    moreActions: 'More actions', moreActionsSummary: 'Install · WhatsApp · E-mail · Booking · Reviews',
+    moreActions: 'More actions', moreActionsSummary: 'Install · WhatsApp · E-mail · Reviews',
   },
   it: {
     home: 'Home', about: 'Chi siamo', services: 'Servizi', photos: 'Foto', reviews: 'Recensioni',
@@ -123,7 +123,7 @@ const COPY: Record<string, Copy> = {
     practical: 'Informazioni pratiche', book: 'Prenota', quote: 'Richiedi un preventivo', requestInfo: 'Richiedi informazioni', myQr: 'Il mio QR Business', share: 'Condividi', socialNetworks: 'Social network',
     addContact: 'Aggiungi ai contatti', certified: 'Certificato da Dalil Tounes', poweredBy: 'Offerto da Dalil Tounes',
     viewReviews: 'Vedi le recensioni', giveReview: 'Lascia una recensione',
-    moreActions: 'Altre azioni', moreActionsSummary: 'Installa · WhatsApp · E-mail · Prenota · Recensioni',
+    moreActions: 'Altre azioni', moreActionsSummary: 'Installa · WhatsApp · E-mail · Recensioni',
   },
   ru: {
     home: 'Главная', about: 'О нас', services: 'Услуги', photos: 'Фото', reviews: 'Отзывы',
@@ -132,7 +132,7 @@ const COPY: Record<string, Copy> = {
     practical: 'Практическая информация', book: 'Забронировать', quote: 'Запросить смету', requestInfo: 'Запросить информацию', myQr: 'Мой Business QR', share: 'Поделиться', socialNetworks: 'Соцсети',
     addContact: 'Добавить в контакты', certified: 'Сертифицировано Dalil Tounes', poweredBy: 'Работает на Dalil Tounes',
     viewReviews: 'Посмотреть отзывы', giveReview: 'Оставить отзыв',
-    moreActions: 'Другие действия', moreActionsSummary: 'Установить · WhatsApp · E-mail · Бронь · Отзывы',
+    moreActions: 'Другие действия', moreActionsSummary: 'Установить · WhatsApp · E-mail · Отзывы',
   },
 };
 
@@ -152,7 +152,6 @@ export interface CvPortfolioPresentationProps {
   hoursContent?: ReactNode;
   hoursBadge?: string;
   practicalContent?: ReactNode;
-  onQuote: () => void;
   boutiqueContent?: ReactNode;
   onShowQr: () => void;
   onShare: () => void;
@@ -182,7 +181,6 @@ export function CvPortfolioPresentation({
   hoursContent,
   hoursBadge,
   practicalContent,
-  onQuote,
   boutiqueContent,
   onShowQr,
   onShare,
@@ -228,7 +226,7 @@ export function CvPortfolioPresentation({
     action !== callAction
       && action !== directionsAction,
   );
-  const portfolioGallery = gallery.slice(0, 4);
+  const portfolioGallery = gallery.slice(0, 6);
 
   const tabs = [
     { id: 'home' as const, label: copy.home, icon: Home, visible: true },
@@ -356,9 +354,6 @@ export function CvPortfolioPresentation({
                 {presentation.visibleActions.includes('reservation') && bookingContent && (
                   <button type="button" onClick={() => setBookingOpen(value => !value)}><CalendarDays />{copy.book}</button>
                 )}
-                {(profile.contact.whatsapp || profile.contact.email) && (
-                  <button type="button" onClick={onQuote}><FileText />{copy.requestInfo}</button>
-                )}
                 {sharingContent && (
                   <button type="button" onClick={() => { onShowQr(); setQrOpen(open => !open); }}><QrCode />{copy.myQr}</button>
                 )}
@@ -377,6 +372,7 @@ export function CvPortfolioPresentation({
                 )}
               </div>
             )}
+            {bookingOpen && bookingContent && <section className="cvp-booking">{bookingContent}</section>}
             {qrOpen && sharingContent && <section className="cvp-booking">{sharingContent}</section>}
 
             <nav className="cvp-lienora-tabs" aria-label={navigationAriaLabel}>
@@ -451,15 +447,12 @@ export function CvPortfolioPresentation({
                   )}
                   {hasSection('services') && portfolioGallery.length > 0 && (
                     <section className="cvp-lienora-services">
-                      <header><h2>{copy.ourServices}</h2><button type="button" onClick={() => goTo('services')}>{copy.viewAll} ›</button></header>
-                      <div>
+                      <header><h2>{copy.photos}</h2><button type="button" onClick={() => goTo('gallery')}>{copy.viewAll} ›</button></header>
+                      <div className="cvp-lienora-photo-mosaic">
                         {portfolioGallery.map((item, index) => (
-                          <article key={`${item.thumbnail}-${index}`}>
-                            <button type="button" className="cvp-lienora-zoom" onClick={() => onSelectImage(item.full)}>
-                              <img src={item.thumbnail} alt={profile.services[index] || profile.identity.activity} loading="lazy" decoding="async" /><Search />
-                            </button>
-                            {profile.services[index] && <b>{profile.services[index]}</b>}
-                          </article>
+                          <button key={`${item.thumbnail}-${index}`} type="button" className="cvp-lienora-zoom" onClick={() => onSelectImage(item.full)} aria-label={`${copy.photos} ${index + 1}`}>
+                            <img src={item.thumbnail} alt={`${profile.identity.name} — ${index + 1}`} loading="lazy" decoding="async" /><Search />
+                          </button>
                         ))}
                       </div>
                     </section>
@@ -478,7 +471,6 @@ export function CvPortfolioPresentation({
                 </section>
               )}
               {activeTab === 'reviews' && reviewsContent && <section className="cvp-section">{reviewsContent}</section>}
-              {bookingOpen && bookingContent && <section className="cvp-booking">{bookingContent}</section>}
               {notice && <p className="cvp-notice" role="status">{notice}</p>}
             </div>
           </div>

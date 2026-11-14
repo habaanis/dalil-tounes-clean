@@ -1089,8 +1089,10 @@ export default function BusinessShowcaseLienoraDetail({
     entitlements: dalilCapabilitiesToPresentationEntitlements(capabilities),
     content: getDalilContentAvailability(cvProfile),
   });
+  // Booking stays opt-in, not an automatic Premium feature.
+  const bookingRequested = business.reservation_enabled === true || business.reservation_enabled === 'oui';
   const hasAction = (action: CvPresentationAction) =>
-    resolvedPresentation.visibleActions.includes(action);
+    resolvedPresentation.visibleActions.includes(action) && (action !== 'reservation' || bookingRequested);
   const hasSection = (section: CvPresentationSection) =>
     resolvedPresentation.visibleSections.includes(section);
   const displayName = cvProfile.identity.name;
@@ -1325,22 +1327,6 @@ export default function BusinessShowcaseLienoraDetail({
     link.click();
     URL.revokeObjectURL(url);
     setNotice(text.addContact);
-  };
-
-  const requestQuote = () => {
-    const message = language === 'ar'
-      ? `السلام عليكم ${displayName}، أود الحصول على مزيد من المعلومات حول خدماتكم.`
-      : `Bonjour ${displayName}, je souhaite obtenir plus d'informations sur vos services.`;
-    const subject = text.requestInfo;
-    if (publicEmail) {
-      window.location.href = `mailto:${publicEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
-      return;
-    }
-    if (whatsappUrl) {
-      window.open(`${whatsappUrl}?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
-      return;
-    }
-    setNotice(text.contactNotice);
   };
 
   const openSharing = () => {
@@ -1719,7 +1705,6 @@ export default function BusinessShowcaseLienoraDetail({
             ? translateOpenStatus(language)
             : schedule ? translateClosedStatus(language) : undefined}
           practicalContent={sections.find(section => section.id === 'practical')?.content}
-          onQuote={requestQuote}
           onShowQr={() => setOpenSection('sharing')}
           onShare={() => void share()}
           sharingContent={sharingContent}
@@ -1874,11 +1859,6 @@ export default function BusinessShowcaseLienoraDetail({
                     );
                   })}
 
-              {(business.email || whatsappUrl) && (
-                <button type="button" className="dt-secondary-action" onClick={requestQuote}>
-                  <FileText aria-hidden="true" />{text.requestInfo}
-                </button>
-              )}
               {hasAction('reservation') && (
                 <button type="button" className="dt-secondary-action" onClick={openBooking}>
                   <CalendarDays aria-hidden="true" />{text.book}
@@ -1929,6 +1909,12 @@ export default function BusinessShowcaseLienoraDetail({
             <p className="dt-action-notice" role="status" aria-live="polite">{contactNotice}</p>
           </section>
 
+          {sections.filter(section => section.id === 'booking').map(section => (
+            <AccordionSection config={section} open={openSection === section.id}
+              onToggle={() => setOpenSection(current => current === section.id ? null : section.id)}
+              key={section.id} />
+          ))}
+
           <div className="dt-showcase-body">
             {(translatedDescription || aboutText) && (
               <section
@@ -1971,7 +1957,7 @@ export default function BusinessShowcaseLienoraDetail({
             )}
 
             <div className="dt-accordion-list">
-              {sections.map(section => section.id === 'gallery' && boutiqueContent
+              {sections.filter(section => section.id !== 'booking').map(section => section.id === 'gallery' && boutiqueContent
                 ? <section className="dt-accordion" key="boutique" style={{padding:'8px 12px',display:'flex',justifyContent:'center'}}>{boutiqueContent}</section>
                 : <AccordionSection
                     config={section}

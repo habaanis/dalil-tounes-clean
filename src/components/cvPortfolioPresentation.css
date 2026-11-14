@@ -845,3 +845,44 @@
     height: 145px;
   }
 }
+
+/* Compact responsive photo mosaic, shared by every CV Portfolio. */
+.cvp-lienora-services > .cvp-lienora-photo-mosaic {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+}
+.cvp-lienora-photo-mosaic > .cvp-lienora-zoom {
+  height: 98px;
+  min-width: 0;
+  border-radius: 10px;
+}
+.cvp-lienora-photo-mosaic > .cvp-lienora-zoom:first-child {
+  grid-column: span 2;
+  grid-row: span 2;
+  height: 203px;
+}
+.cvp-lienora-photo-mosaic .cvp-lienora-zoom img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+.cvp-lienora-content .cvp-gallery-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+}
+.cvp-lienora-content .cvp-gallery-grid button {
+  height: 110px;
+}
+.cvp-lienora-content .cvp-gallery-grid button:first-child {
+  grid-column: span 2;
+  grid-row: span 2;
+  height: 227px;
+}
+@media (max-width: 390px) {
+  .cvp-lienora-photo-mosaic > .cvp-lienora-zoom { height: 77px; }
+  .cvp-lienora-photo-mosaic > .cvp-lienora-zoom:first-child { height: 161px; }
+  .cvp-lienora-content .cvp-gallery-grid button { height: 86px; }
+  .cvp-lienora-content .cvp-gallery-grid button:first-child { height: 179px; }
+}
