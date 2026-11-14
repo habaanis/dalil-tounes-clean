@@ -886,3 +886,21 @@
   .cvp-lienora-content .cvp-gallery-grid button { height: 86px; }
   .cvp-lienora-content .cvp-gallery-grid button:first-child { height: 179px; }
 }
+
+/* Portfolio compact sections: closed by default, same visual language as Business accordions. */
+.cvp-compact-section {margin:7px 0;border:1px solid color-mix(in srgb,var(--cvp-accent) 54%,transparent);border-radius:11px;overflow:hidden;background:var(--cvp-panel)}
+.cvp-compact-trigger {display:flex;width:100%;min-height:48px;align-items:center;justify-content:space-between;gap:8px;padding:10px 13px;border:0;background:transparent;color:var(--cvp-text);font:inherit;font-weight:750;cursor:pointer;text-align:start}
+.cvp-compact-trigger > span {display:flex;align-items:center;gap:10px}
+.cvp-compact-trigger svg {width:17px;height:17px;flex:none;color:var(--cvp-accent)}
+.cvp-compact-trailing small {color:var(--cvp-accent);border:1px solid color-mix(in srgb,var(--cvp-accent) 55%,transparent);border-radius:999px;padding:2px 7px;font-size:.69rem}
+.cvp-compact-chevron {transition:transform .18s ease}
+.cvp-compact-chevron.open {transform:rotate(90deg)}
+.cvp-compact-body {padding:12px;border-top:1px solid color-mix(in srgb,var(--cvp-accent) 40%,transparent)}
+.cvp-compact-body .cvp-section {margin:0;padding:0}
+.cvp-compact-body .cvp-section-heading {display:none}
+.cvp-compact-body .cvp-gallery-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.cvp-compact-body .cvp-gallery-grid button {height:112px;min-width:0}
+.cvp-compact-body .cvp-gallery-grid button:nth-child(6n + 1) {height:164px;grid-column:span 2}
+.cvp-compact-body .cvp-gallery-grid button:first-child {grid-column:span 2;grid-row:auto;height:164px}
+.cvp-compact-body .cvp-gallery-grid img {height:100%;width:100%;object-fit:cover}
+@media(max-width:390px){.cvp-compact-body .cvp-gallery-grid button {height:92px}.cvp-compact-body .cvp-gallery-grid button:first-child,.cvp-compact-body .cvp-gallery-grid button:nth-child(6n + 1){height:145px}}
