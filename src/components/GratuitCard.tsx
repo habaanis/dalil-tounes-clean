@@ -169,7 +169,7 @@ export default function GratuitCard({
               type="button"
               onClick={(e) => { e.stopPropagation(); setShowPhone((previous) => !previous); }}
               aria-expanded={showPhone}
-              style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '10px 14px', background: '#B62226', border: '1px solid #B62226', borderRadius: '10px', color: '#FFFFFF', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}
+              style={{ width: '100%', maxWidth: '260px', minHeight: '44px', alignSelf: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '10px 16px', background: '#B62226', border: '1px solid #B62226', borderRadius: '10px', color: '#FFFFFF', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}
             >
               <Phone size={15} aria-hidden="true" />
               {showPhone ? cardCopy.hidePhone : cardCopy.showPhone}
