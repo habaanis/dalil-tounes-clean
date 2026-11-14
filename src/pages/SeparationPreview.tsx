@@ -360,7 +360,7 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
               <h2 className="mt-2 max-w-3xl font-serif text-xl font-medium sm:text-2xl">{structure.homeCvTitle}</h2>
               <p className="mt-2 text-sm leading-6 text-[#514B43]">{structure.homeCvText}</p>
               <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <a href="/subscription#presence-essentielle" className="inline-flex min-h-11 items-center justify-center rounded-xl border border-[#C9A65D] bg-[#B62226] px-4 py-3 text-center text-sm font-semibold text-white">{structure.freeAction}</a>
+              <a href="/subscription#presence-essentielle" className="inline-flex min-h-11 items-center justify-center rounded-xl border border-[#B68C3B] bg-[#D6B86D] px-4 py-3 text-center text-sm font-semibold text-[#292725] transition hover:bg-[#E4CB91]">{structure.freeAction}</a>
               <a href="/subscription#modeles" className="inline-flex min-h-11 items-center justify-center rounded-xl border border-[#C9A65D] bg-white px-4 py-3 text-center text-sm font-semibold text-[#292725]">{structure.homeCvAction} <ArrowRight className="ms-2 h-4 w-4 shrink-0" aria-hidden="true" /></a>
               </div>
             </section>
@@ -397,7 +397,7 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
 
           <CvBusinessJourney language={lang} />
 
-          <section className="border-y border-[#C9A65D] bg-[#FFF8EA] px-4 py-7 text-[#292725]"><div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left rtl:sm:text-right"><div><p className="text-xs font-black uppercase tracking-[0.16em] text-[#9B762D]">{t.searchEyebrow}</p><h2 className="mt-2 max-w-3xl font-serif text-2xl font-bold">{t.searchTitle}</h2></div><button type="button" onClick={() => fixedView ? navigate('/') : setPreviewView('platform')} className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-[#C9A65D] bg-[#B62226] px-5 py-3 text-sm font-black text-white"><Search className="h-4 w-4" /> {t.explorePlatform}</button></div></section>
+          <section className="border-y border-[#C9A65D] bg-[#FFF8EA] px-4 py-7 text-[#292725]"><div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left rtl:sm:text-right"><div><p className="text-xs font-black uppercase tracking-[0.16em] text-[#9B762D]">{t.searchEyebrow}</p><h2 className="mt-2 max-w-3xl font-serif text-2xl font-bold">{t.searchTitle}</h2></div><button type="button" onClick={() => fixedView ? navigate('/') : setPreviewView('platform')} className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-[#B68C3B] bg-[#D6B86D] px-5 py-3 text-sm font-black text-[#292725] transition hover:bg-[#E4CB91]"><Search className="h-4 w-4" /> {t.explorePlatform}</button></div></section>
         </>
       )}
     </div>
