@@ -43,7 +43,7 @@ export default function ClientOpeningSplash({ name, product, logo, cover, palett
       .dt-client-opening-photo{position:absolute;inset:28% -3% 26%;clip-path:polygon(0 12%,12% 9%,27% 3%,43% 0,59% 5%,77% 11%,100% 2%,100% 86%,82% 94%,64% 100%,47% 96%,29% 88%,12% 98%,0 91%);overflow:hidden}
       .dt-client-opening-photo:after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,#061d15a6 0%,transparent 24%,transparent 73%,#061d1555 100%)}
       .dt-client-opening-photo img{display:block;width:100%;height:100%;object-fit:cover}
-      .dt-client-opening-curves{position:absolute;inset:0;width:100%;height:100%;fill:none;stroke:#e9c36f;stroke-width:1.2;opacity:.82;filter:drop-shadow(0 0 2px #e5b65b55)}
+      .dt-client-opening-curves{position:absolute;inset:0;width:100%;height:100%;fill:none;stroke:#e9c36f;stroke-width:2.8;opacity:.98;filter:drop-shadow(0 0 4px #e5b65ba8)}
       .dt-client-opening-identity{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;transform:translateY(4%);max-width:88vw;text-align:center}
       .dt-client-opening-logo{display:grid;place-items:center;width:clamp(114px,36vw,154px);height:clamp(114px,36vw,154px);padding:7px;overflow:hidden;border:3px solid #d6ac51;border-radius:50%;box-shadow:0 10px 28px #001e18ad,0 0 0 8px #fffaf0d1}
       .dt-client-opening-logo img{display:block;width:100%;height:100%;border-radius:50%;object-fit:contain}
