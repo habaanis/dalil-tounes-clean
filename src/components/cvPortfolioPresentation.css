@@ -904,3 +904,34 @@
 .cvp-compact-body .cvp-gallery-grid button:first-child {grid-column:span 2;grid-row:auto;height:164px}
 .cvp-compact-body .cvp-gallery-grid img {height:100%;width:100%;object-fit:cover}
 @media(max-width:390px){.cvp-compact-body .cvp-gallery-grid button {height:92px}.cvp-compact-body .cvp-gallery-grid button:first-child,.cvp-compact-body .cvp-gallery-grid button:nth-child(6n + 1){height:145px}}
+
+/* Photo mosaic inspired by the Business CV: alternating compact tiles in two columns. */
+.cvp-compact-body .cvp-gallery-grid {
+  display:grid;
+  grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);
+  grid-auto-flow:row dense;
+  align-items:stretch;
+  gap:7px;
+}
+.cvp-compact-body .cvp-gallery-grid button,
+.cvp-compact-body .cvp-gallery-grid button:first-child,
+.cvp-compact-body .cvp-gallery-grid button:nth-child(6n + 1) {
+  grid-column:auto;
+  grid-row:auto;
+  height:110px;
+  min-height:0;
+}
+.cvp-compact-body .cvp-gallery-grid button:nth-child(4n + 1) {height:135px}
+.cvp-compact-body .cvp-gallery-grid button:nth-child(4n + 2) {height:135px}
+.cvp-compact-body .cvp-gallery-grid button:nth-child(4n + 3) {height:105px}
+.cvp-compact-body .cvp-gallery-grid button:nth-child(4n + 4) {height:105px}
+.cvp-compact-body .cvp-gallery-grid button img {display:block;width:100%;height:100%;object-fit:cover}
+.cvp-compact-reviews {display:grid;gap:7px}
+.cvp-compact-review-link {display:flex;align-items:center;justify-content:center;gap:9px;min-height:40px;width:100%;border:1px solid color-mix(in srgb,var(--cvp-accent) 50%,transparent);border-radius:9px;background:var(--cvp-panel);color:var(--cvp-text);font:inherit;font-size:.8rem;text-decoration:none;cursor:pointer}
+.cvp-compact-review-link svg {height:17px;width:17px;color:var(--cvp-accent)}
+.cvp-compact-reviews #cvp-write-review {padding:8px 2px}
+@media(max-width:390px){
+  .cvp-compact-body .cvp-gallery-grid button:nth-child(n) {height:95px}
+  .cvp-compact-body .cvp-gallery-grid button:nth-child(4n + 1),
+  .cvp-compact-body .cvp-gallery-grid button:nth-child(4n + 2) {height:117px}
+}
