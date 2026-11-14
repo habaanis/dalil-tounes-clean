@@ -336,7 +336,7 @@ export default function CitizensServicesLocalized() {
               </ul>
             </div>
             <InfoCard icon={Building2} label={c.authority} value={procedure.authority} />
-            {procedure.formUrl && <div className="mt-6"><a href={procedure.formUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-[#4A1D43] text-[#D4AF37] border border-[#D4AF37] font-semibold"><ExternalLink className="w-4 h-4" />{c.onlineForm}</a></div>}
+            {procedure.formUrl && <div className="mt-6"><a href={procedure.formUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-[#D6B86D] text-[#292725] border border-[#D4AF37] font-semibold"><ExternalLink className="w-4 h-4" />{c.onlineForm}</a></div>}
             {procedure.sourceUrl && <div className="mt-6 flex flex-col sm:flex-row sm:items-center gap-3 text-sm"><span className="text-gray-600">{labels.verified}</span><a href={procedure.sourceUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 font-semibold text-[#292725] underline underline-offset-2"><ExternalLink className="w-4 h-4" />{labels.source}</a></div>}
             <div className="mt-5 p-4 bg-yellow-50 border border-yellow-300 rounded-lg text-sm text-yellow-900 flex items-start gap-2"><AlertCircle className="w-5 h-5 flex-shrink-0" />{c.warning}</div>
           </div>
@@ -430,7 +430,7 @@ export default function CitizensServicesLocalized() {
 }
 
 function TabButton({ active, onClick, icon: Icon, label }: { active: boolean; onClick: () => void; icon: LucideIcon; label: string }) {
-  return <button type="button" onClick={onClick} aria-pressed={active} className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold border-2 transition ${active ? 'bg-[#4A1D43] text-[#D4AF37] border-[#D4AF37]' : 'bg-gray-100 text-gray-700 border-transparent'}`}><Icon className="w-4 h-4" />{label}</button>;
+  return <button type="button" onClick={onClick} aria-pressed={active} className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold border-2 transition ${active ? 'bg-[#D6B86D] text-[#292725] border-[#D4AF37]' : 'bg-gray-100 text-gray-700 border-transparent'}`}><Icon className="w-4 h-4" />{label}</button>;
 }
 
 function InfoCard({ icon: Icon, label, value }: { icon: LucideIcon; label: string; value: string }) {
