@@ -114,7 +114,7 @@ export default function GratuitCard({
         boxShadow: '0 0 10px rgba(212,175,55,0.18), 0 2px 8px rgba(0,0,0,0.06)',
         padding: inPlatformApp ? '6px 9px' : '8px 10px',
         width: '100%',
-        height: '100%',
+        height: inPlatformApp ? 'auto' : '100%',
         display: 'flex',
         flexDirection: 'column',
         position: 'relative',
@@ -201,7 +201,7 @@ export default function GratuitCard({
               <button
                 type="button"
                 aria-expanded={showHours}
-                onClick={(e) => { e.stopPropagation(); setShowHours(previous => !previous); }}
+                onClick={(e) => { e.stopPropagation(); setShowHours(previous => !previous); setShowPhone(false); }}
                 className="flex min-h-10 min-w-0 items-center justify-center gap-1 rounded-lg border border-[#C9A65D] bg-[#FFF9EC] px-2 py-1.5 text-[11px] font-semibold text-[#292725]"
               >
                 <Clock size={14} className="shrink-0" aria-hidden="true" />
@@ -215,7 +215,7 @@ export default function GratuitCard({
               <button
                 type="button"
                 aria-expanded={showPhone}
-                onClick={(e) => { e.stopPropagation(); setShowPhone(previous => !previous); }}
+                onClick={(e) => { e.stopPropagation(); setShowPhone(previous => !previous); setShowHours(false); }}
                 className="flex min-h-10 min-w-0 items-center justify-center gap-1 rounded-lg border border-[#B62226] bg-[#B62226] px-2 py-1.5 text-[11px] font-semibold text-white"
               >
                 <Phone size={14} className="shrink-0" aria-hidden="true" />
