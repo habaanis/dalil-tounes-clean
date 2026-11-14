@@ -21,10 +21,15 @@ export type BoutiqueConfig = {
   demoMode?: boolean;
 };
 
-const isRecentProduct = (product: BoutiqueProduct) => {
-  const timestamp = Date.parse(product.updatedAt || product.approvedAt || '');
-  return Number.isFinite(timestamp) && timestamp <= Date.now() && Date.now() - timestamp < 7 * 24 * 60 * 60 * 1000;
+const recentLabel = (product: BoutiqueProduct): string | null => {
+  const approved = Date.parse(product.approvedAt || '');
+  const updated = Date.parse(product.updatedAt || '');
+  const timestamp = Math.max(Number.isFinite(approved) ? approved : 0, Number.isFinite(updated) ? updated : 0);
+  if (!timestamp || timestamp > Date.now() || Date.now() - timestamp >= 7 * 24 * 60 * 60 * 1000) return null;
+  return Number.isFinite(approved) && Number.isFinite(updated) && updated > approved + 60_000
+    ? 'Mis à jour' : 'Nouveau';
 };
+const isRecentProduct = (product: BoutiqueProduct) => recentLabel(product) !== null;
 
 const priceText = (product: BoutiqueProduct) =>
   typeof product.price === 'number'
@@ -55,6 +60,13 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
   const products = config.products.filter(product => Boolean(product.id && product.title && product.imageUrl));
   const phone = config.whatsapp.replace(/\D/g, '');
   const canWhatsApp = /^\d{8,15}$/.test(phone);
+  useEffect(() => {
+    setSelected(current => {
+      if (!current) return current;
+      const latest = config.products.find(product => product.id === current.id);
+      return latest ?? null;
+    });
+  }, [config.products]);
 
   useEffect(() => {
     if (!open) return;
