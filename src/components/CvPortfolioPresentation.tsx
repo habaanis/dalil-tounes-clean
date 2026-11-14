@@ -95,7 +95,7 @@ const COPY: Record<string, Copy> = {
     openingHours: 'Horaires', practical: 'Informations pratiques', book: 'Réserver',
     quote: 'Demander un devis', requestInfo: 'Demander une information', myQr: 'Mon QR Business', share: 'Partager', socialNetworks: 'Réseaux', addContact: 'Ajouter aux contacts', certified: 'Certifiée Dalil Tounes',
     viewReviews: 'Voir les avis', giveReview: 'Donner un avis',
-    moreActions: 'Plus d’actions', moreActionsSummary: 'Installer · WhatsApp · E-mail · Avis',
+    moreActions: 'Plus d’actions', moreActionsSummary: 'Installer · WhatsApp · E-mail',
     poweredBy: 'Propulsé par Dalil Tounes',
   },
   ar: {
@@ -104,7 +104,7 @@ const COPY: Record<string, Copy> = {
     ourWork: 'أعمالنا', noPhotos: 'لا توجد صور متاحة.', openingHours: 'أوقات العمل',
     practical: 'معلومات عملية', book: 'احجز', quote: 'طلب عرض سعر', requestInfo: 'طلب معلومات', myQr: 'رمز QR الخاص بي', share: 'مشاركة', socialNetworks: 'شبكات التواصل', addContact: 'إضافة إلى جهات الاتصال',
     viewReviews: 'عرض الآراء', giveReview: 'إضافة رأي',
-    moreActions: 'المزيد من الإجراءات', moreActionsSummary: 'تثبيت · واتساب · البريد · الآراء',
+    moreActions: 'المزيد من الإجراءات', moreActionsSummary: 'تثبيت · واتساب · البريد',
     certified: 'معتمد من دليل تونس', poweredBy: 'بدعم من دليل تونس',
   },
   en: {
@@ -114,7 +114,7 @@ const COPY: Record<string, Copy> = {
     practical: 'Practical information', book: 'Book', quote: 'Request a quote', requestInfo: 'Request information', myQr: 'My Business QR', share: 'Share', socialNetworks: 'Social networks',
     addContact: 'Add to contacts', certified: 'Certified by Dalil Tounes', poweredBy: 'Powered by Dalil Tounes',
     viewReviews: 'View reviews', giveReview: 'Leave a review',
-    moreActions: 'More actions', moreActionsSummary: 'Install · WhatsApp · E-mail · Reviews',
+    moreActions: 'More actions', moreActionsSummary: 'Install · WhatsApp · E-mail',
   },
   it: {
     home: 'Home', about: 'Chi siamo', services: 'Servizi', photos: 'Foto', reviews: 'Recensioni',
@@ -123,7 +123,7 @@ const COPY: Record<string, Copy> = {
     practical: 'Informazioni pratiche', book: 'Prenota', quote: 'Richiedi un preventivo', requestInfo: 'Richiedi informazioni', myQr: 'Il mio QR Business', share: 'Condividi', socialNetworks: 'Social network',
     addContact: 'Aggiungi ai contatti', certified: 'Certificato da Dalil Tounes', poweredBy: 'Offerto da Dalil Tounes',
     viewReviews: 'Vedi le recensioni', giveReview: 'Lascia una recensione',
-    moreActions: 'Altre azioni', moreActionsSummary: 'Installa · WhatsApp · E-mail · Recensioni',
+    moreActions: 'Altre azioni', moreActionsSummary: 'Installa · WhatsApp · E-mail',
   },
   ru: {
     home: 'Главная', about: 'О нас', services: 'Услуги', photos: 'Фото', reviews: 'Отзывы',
@@ -132,7 +132,7 @@ const COPY: Record<string, Copy> = {
     practical: 'Практическая информация', book: 'Забронировать', quote: 'Запросить смету', requestInfo: 'Запросить информацию', myQr: 'Мой Business QR', share: 'Поделиться', socialNetworks: 'Соцсети',
     addContact: 'Добавить в контакты', certified: 'Сертифицировано Dalil Tounes', poweredBy: 'Работает на Dalil Tounes',
     viewReviews: 'Посмотреть отзывы', giveReview: 'Оставить отзыв',
-    moreActions: 'Другие действия', moreActionsSummary: 'Установить · WhatsApp · E-mail · Отзывы',
+    moreActions: 'Другие действия', moreActionsSummary: 'Установить · WhatsApp · E-mail',
   },
 };
 
