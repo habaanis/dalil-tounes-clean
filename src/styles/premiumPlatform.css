@@ -1,9 +1,9 @@
 /* Scoped to platform landing pages. Client CVs and mini-apps never receive
    premium-chrome; palette previews keep their own presentation styles. */
-.premium-page { background: #fcfaf5; color: #35172f; }
+.premium-page { background: #fcfaf5; color: #292725; }
 .premium-home-hero { border-bottom: 1px solid #e6dcc5; background: linear-gradient(145deg, #fcfaf5, #fffdf9); }
 .premium-universes { max-width: 64rem; margin: 1.5rem auto 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; text-align: start; }
-.premium-universe { display: flex; align-items: center; gap: .85rem; padding: 1.25rem 1rem; border: 1px solid #d9c9a4; border-radius: 14px; background: #fffdf9; color: #35172f; box-shadow: 0 3px 14px #35172f05; transition: border-color .18s, background .18s; }
+.premium-universe { display: flex; align-items: center; gap: .85rem; padding: 1.25rem 1rem; border: 1px solid #d9c9a4; border-radius: 14px; background: #fffdf9; color: #292725; box-shadow: 0 3px 14px #29272505; transition: border-color .18s, background .18s; }
 .premium-universe:hover { background: #f7f0e2; border-color: #aa8d50; }
 .premium-universe:focus-visible { outline: 2px solid #806336; outline-offset: 3px; }
 .premium-universe-icon { width: 1.5rem; height: 1.5rem; flex-shrink: 0; color: #92733b; }
@@ -16,7 +16,7 @@
 .premium-chrome > nav a:hover, .premium-chrome > nav button:hover { color: #7c6335; }
 .premium-chrome .premium-install { background: #f2ebdc; border-color: #e1d3b5; }
 .premium-chrome .premium-install button { font-size: .8rem; font-weight: 500; }
-.premium-chrome .premium-install button.bg-gray-900 { background: #42213b; box-shadow: none; }
+.premium-chrome .premium-install button.bg-gray-900 { background: #B62226; color: #FFFFFF; box-shadow: none; }
 .premium-chrome footer { background: #080808; border-color: #2b2b2b; padding-top: 2rem; }
 .premium-chrome footer > div > div:first-child { background: transparent; border: 0; border-bottom: 1px solid #b69b624d; border-radius: 0; box-shadow: none; margin-bottom: 1.5rem; padding-bottom: 1.25rem; }
 .premium-chrome footer .gap-10 { gap: 1.5rem; }
@@ -37,8 +37,8 @@
    Layout excludes every client route and dedicated client hostname. */
 .public-page {
   --public-ivory: #fcfaf5;
-  --public-ink: #35172f;
-  --public-muted: #6c6068;
+  --public-ink: #292725;
+  --public-muted: #67615b;
   --public-gold: #d9c9a4;
   background: var(--public-ivory);
   color: var(--public-ink);
@@ -83,6 +83,6 @@
 }
 .public-page [data-public-form] :is(label, [class~="text-[#F5F5DC]"], [class~="text-[#E8D5C4]"]) { color: var(--public-ink); }
 .public-page [data-public-form] :is(input, textarea) { background: white; color: var(--public-ink); border-color: var(--public-gold); }
-.public-page [data-public-form] button[type="submit"] { background: #42213b; color: white; box-shadow: none; border-width: 1px; }
+.public-page [data-public-form] button[type="submit"] { background: #B62226; border-color: #C9A65D; color: white; box-shadow: none; border-width: 1px; }
 .public-page .public-surface { background: var(--public-ivory); }
 .public-page .public-seo-container { width: 100%; max-width: 64rem; margin-inline: auto; }
