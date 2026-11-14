@@ -72,7 +72,7 @@ Deno.serve(async req=>{
     if((count||0)>5000) return json({error:"Capacité temporairement atteinte"},429,origin);
     const {error}=await db.from("dalil_boutique_push_subscriptions").upsert({
       entreprise_id:profileId,endpoint,p256dh,auth,last_seen_at:new Date().toISOString(),
-    },{onConflict:"profile_id,endpoint"});
+    },{onConflict:"entreprise_id,endpoint"});
     return error?json({error:"Abonnement indisponible"},503,origin):json({subscribed:true},200,origin);
   } catch(error) {
     console.error("Boutique subscription error",error instanceof Error?error.name:"unknown");
