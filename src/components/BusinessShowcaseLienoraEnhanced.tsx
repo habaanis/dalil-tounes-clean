@@ -72,6 +72,7 @@ export default function BusinessShowcaseLienoraEnhanced() {
   const { language } = useLanguage();
   const text = getPublicComponentTranslations(language);
   const [business, setBusiness] = useState<BusinessRecord | null>(null);
+  const [approvedBoutiqueProducts, setApprovedBoutiqueProducts] = useState<BoutiqueProduct[]>([]);
 
   const reviewsUrl = useMemo(() => getGoogleReviewsUrl(business), [business]);
 
@@ -118,6 +119,38 @@ export default function BusinessShowcaseLienoraEnhanced() {
   }, [id, slug]);
 
   useEffect(() => {
+    let active = true;
+    setApprovedBoutiqueProducts([]);
+    const enterpriseId = business?.id;
+    if (!enterpriseId) return () => { active = false; };
+    const loadApprovedProducts = async () => {
+      const { data, error } = await supabase
+        .from('dalil_boutique_products')
+        .select('id,title,description,image_url,mode,currency,price')
+        .eq('entreprise_id', enterpriseId)
+        .eq('status', 'approved')
+        .lte('approved_at', new Date().toISOString())
+        .order('position', { ascending: true })
+        .limit(30);
+      if (!active || error) return;
+      const products = (data ?? []).flatMap(item => {
+        if (!item || typeof item.id !== 'string' || typeof item.title !== 'string'
+          || typeof item.image_url !== 'string' || !item.image_url.startsWith('https://')
+          || (item.mode !== 'order' && item.mode !== 'quote') || item.currency !== 'TND') return [];
+        const price = typeof item.price === 'number' && Number.isFinite(item.price) && item.price > 0 ? item.price : undefined;
+        if (item.mode === 'order' && price === undefined) return [];
+        return [{
+          id: item.id, title: item.title, description: String(item.description || ''),
+          imageUrl: item.image_url, mode: item.mode as 'order' | 'quote', currency: 'TND' as const, price,
+        }];
+      });
+      setApprovedBoutiqueProducts(products);
+    };
+    void loadApprovedProducts();
+    return () => { active = false; };
+  }, [business?.id]);
+
+  useEffect(() => {
     const enhance = () => {
       if (!reviewsUrl) return;
 
@@ -162,7 +195,7 @@ export default function BusinessShowcaseLienoraEnhanced() {
       { id: 'bouchees', title: 'Amuse-bouches', imageUrl: images[4], currency: 'TND', mode: 'quote', description: 'Pièces cocktail et propositions sur mesure.' },
     ].filter(product => Boolean(product.imageUrl))
     : [];
-  const visibleProducts = boutiqueDemo ? pilotProducts : products;
+  const visibleProducts = boutiqueDemo ? pilotProducts : approvedBoutiqueProducts.length ? approvedBoutiqueProducts : products;
   const boutiqueContent = visibleProducts.length > 0
     ? <BoutiqueInteractive config={{
         merchantName: String(business?.nom || ''),
