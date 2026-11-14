@@ -170,7 +170,7 @@ export default function InstallAppBanner() {
                   <p className="text-sm font-medium text-gray-900">
                     {language === 'fr' ? 'Faites défiler et appuyez sur' : language === 'ar' ? 'مرر واضغط على' : language === 'en' ? 'Scroll and tap' : language === 'it' ? 'Scorri e tocca' : 'Прокрутите и нажмите'}
                   </p>
-                  <p className="text-sm font-semibold text-[#4A1D43] mt-0.5">
+                  <p className="text-sm font-semibold text-[#292725] mt-0.5">
                     {language === 'fr' ? "Sur l'écran d'accueil" : language === 'ar' ? 'على الشاشة الرئيسية' : language === 'en' ? 'Add to Home Screen' : language === 'it' ? 'Aggiungi a schermata Home' : 'На главный экран'}
                   </p>
                 </div>
