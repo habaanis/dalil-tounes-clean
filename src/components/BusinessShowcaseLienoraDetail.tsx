@@ -98,6 +98,7 @@ import ReservationForm from './ReservationForm';
 import SimilarBusinesses from './seo/SimilarBusinesses';
 import VideoPlayer from './VideoPlayer';
 import { CvPortfolioPresentation } from './CvPortfolioPresentation';
+import { ClientOpeningAuto } from './ClientOpeningSplash';
 import './businessShowcaseLienora.css';
 
 // Les fiches historiques peuvent réunir plusieurs numéros dans un seul champ.
@@ -1115,6 +1116,25 @@ export default function BusinessShowcaseLienoraDetail({
     : `https://dalil-tounes.com/partage/${generateSlug(displayName)}`;
   const coverImage = getCoverImageUrl(business.image_url);
   const logoImage = getLogoUrl(business.logo_url);
+  const openingStyle: 'photo' | 'framed' =
+    String(business.opening_style || '').toLowerCase() === 'framed' ? 'framed' : 'photo';
+  const clientOpening = !embeddedPreview && Boolean(String(business.logo_url || '').trim()) && Boolean(String(business.image_url || '').trim()) ? (
+    <ClientOpeningAuto
+      clientId={business.id}
+      name={business.nom}
+      product={presentationStyle === 'portfolio' ? 'CV Portfolio' : 'CV Business'}
+      logo={logoImage}
+      cover={coverImage}
+      style={openingStyle}
+      palette={{
+        page: activePalette === 'ivory' ? '#fff9e9' : activePalette === 'night' ? '#10243a' : '#063b30',
+        surface: '#fffaf0',
+        border: '#d3aa48',
+        text: '#103b30',
+        accent: '#d3aa48',
+      }}
+    />
+  ) : null;
   const mapsUrl = cvProfile.location.directionsUrl;
   const explicitWhatsappUrl = buildWhatsAppUrl(business.whatsapp);
   const phoneNumbers = Array.from(new Set([
@@ -1672,6 +1692,7 @@ export default function BusinessShowcaseLienoraDetail({
   if (resolvedPresentation.style === 'portfolio') {
     return (
       <main dir={isRTL ? 'rtl' : 'ltr'}>
+        {clientOpening}
         {!embeddedPreview && <>
           <SEOHead
             title={pageTitle}
@@ -1733,6 +1754,7 @@ export default function BusinessShowcaseLienoraDetail({
 
   return (
     <main className={`dt-showcase-page${embeddedPreview ? ' dt-showcase-page--embedded' : ''}`} data-cv-palette={activePalette || 'prestige'} style={themeVariables(visualVariant, activePalette)} dir={isRTL ? 'rtl' : 'ltr'}>
+      {clientOpening}
       {!embeddedPreview && <>
         <SEOHead
           title={pageTitle}
