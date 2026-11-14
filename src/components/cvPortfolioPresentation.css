@@ -981,3 +981,57 @@
   .cvp-lienora-content .cvp-compact-body .cvp-gallery-grid {grid-auto-rows:92px;gap:6px}
   .cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:nth-child(n) {height:92px}
 }
+
+/* Staggered descending photo cascade: intentional, modest overlaps (not a masonry grid). */
+.cvp-lienora-content .cvp-compact-body .cvp-gallery-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  padding: 3px 0 15px;
+}
+.cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:nth-child(n) {
+  position: relative;
+  display: block;
+  flex: none;
+  grid-column: auto;
+  grid-row: auto;
+  align-self: flex-start;
+  width: 100%;
+  height: clamp(105px, 27vw, 155px);
+  margin: 0;
+  border: 2px solid var(--cvp-accent);
+  border-radius: 12px;
+  box-shadow: 0 5px 13px rgba(0, 0, 0, .15);
+  overflow: hidden;
+  background: var(--cvp-panel);
+}
+.cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:nth-child(n+2) { margin-top: -16px; }
+.cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:nth-child(2) {width: 91%;align-self:flex-end;height:142px;z-index:2}
+.cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:nth-child(3) {width: 83%;height:132px;z-index:3}
+.cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:nth-child(4) {width: 75%;align-self:flex-end;height:120px;z-index:4}
+.cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:nth-child(5) {width: 67%;height:110px;z-index:5}
+.cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:nth-child(6) {width: 60%;align-self:flex-end;height:98px;z-index:6}
+.cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:nth-child(n+7) {width: 60%;height:98px;align-self:center;z-index:7}
+.cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button img {width:100%;height:100%;object-fit:cover;display:block}
+.cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:focus-visible {outline:3px solid var(--cvp-text);outline-offset:3px;z-index:10}
+@media(max-width:390px) {
+  .cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:nth-child(n) {height:110px}
+  .cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:nth-child(2) {height:107px}
+  .cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:nth-child(3) {height:102px}
+  .cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:nth-child(4) {height:97px}
+  .cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:nth-child(5) {height:92px}
+  .cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:nth-child(n+6) {height:86px}
+  .cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:nth-child(n+2) {margin-top:-12px}
+}
+/* Dark ink for information displayed over the ivory / gold surface. */
+.cvp-page--lienora.cvp-palette-ivory .cvp-lienora-information-content,
+.cvp-page--lienora.cvp-palette-ivory .cvp-lienora-information-content .dt-hours,
+.cvp-page--lienora.cvp-palette-ivory .cvp-lienora-information-content .dt-hours *,
+.cvp-page--lienora.cvp-palette-ivory .cvp-lienora-information-content .dt-info-list,
+.cvp-page--lienora.cvp-palette-ivory .cvp-lienora-information-content .dt-info-list *,
+.cvp-page--lienora.cvp-palette-ivory .cvp-lienora-information-content .dt-social-link,
+.cvp-page--lienora.cvp-palette-ivory .cvp-lienora-information-content .dt-social-link * {
+  color: #30291d;
+}
+.cvp-page--lienora.cvp-palette-ivory .cvp-lienora-information-content a {color: #2e4538;text-decoration:underline;text-underline-offset:2px}
