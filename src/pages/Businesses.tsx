@@ -215,12 +215,12 @@ function BusinessCenterCard({
 }) {
   const content = (
     <>
-      <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#D4AF37]/12 text-[#800020]">
+      <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#D4AF37]/12 text-[#9B762D]">
         <Icon className="h-5 w-5" />
       </span>
       <h3 className="mt-4 text-lg font-medium text-[#292725]">{title}</h3>
       <p className="mt-2 flex-1 text-sm leading-relaxed text-gray-600">{description}</p>
-      <span className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-[#800020]">
+      <span className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-[#9B762D]">
         {cta}
         {to && <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" />}
       </span>
