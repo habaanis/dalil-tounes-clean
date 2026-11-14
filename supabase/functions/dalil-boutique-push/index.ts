@@ -42,7 +42,7 @@ Deno.serve(async req=>{
       if(!ready?.vapid_public_key) return json({error:"Configuration indisponible"},503,origin);
       return json({publicKey:ready.vapid_public_key,enabled:true},200,origin);
     }
-    if(!["subscribe","unsubscribe","status"].includes(body.action)) return json({error:"Unknown action"},400,origin);
+    if(!["subscribe","unsubscribe","status","test"].includes(body.action)) return json({error:"Unknown action"},400,origin);
     const profileId=body.profileId;
     const sub=body.subscription;
     const endpoint=sub?.endpoint, p256dh=sub?.keys?.p256dh, auth=sub?.keys?.auth;
@@ -59,6 +59,45 @@ Deno.serve(async req=>{
       const {data,error}=await db.from("dalil_boutique_push_subscriptions")
         .select("id").eq("entreprise_id",profileId).eq("endpoint",endpoint).eq("auth",auth).maybeSingle();
       return error?json({error:"Vérification indisponible"},503,origin):json({subscribed:Boolean(data)},200,origin);
+    }
+    if(body.action==="test") {
+      // A self-test sends only to the exact verified browser endpoint, never to other subscribers.
+      const {data:subscriber,error:subscriberError}=await db
+        .from("dalil_boutique_push_subscriptions")
+        .select("id,last_test_at")
+        .eq("entreprise_id",profileId).eq("endpoint",endpoint).eq("auth",auth).eq("p256dh",p256dh).maybeSingle();
+      if(subscriberError) return json({error:"Abonnement indisponible"},503,origin);
+      if(!subscriber) return json({error:"Abonnement non enregistré. Cliquez sur Suivre les nouveautés."},409,origin);
+      const cutoff=new Date(Date.now()-5*60*1000).toISOString();
+      const {data:reserved,error:reserveError}=await db.from("dalil_boutique_push_subscriptions")
+        .update({last_test_at:new Date().toISOString()})
+        .eq("id",subscriber.id).lt("last_test_at",cutoff).select("id").maybeSingle();
+      if(reserveError) return json({error:"Essai indisponible"},503,origin);
+      if(!reserved) return json({error:"Un test est autorisé toutes les 5 minutes."},429,origin);
+      const {data:config,error:configError}=await db.from("dalil_push_config")
+        .select("vapid_public_key,vapid_private_key").eq("id",1).single();
+      if(configError||!config) return json({error:"Service non configuré"},503,origin);
+      const {data:profile}=await db.from("entreprise")
+        .select("slug,ville,nom").eq("id",profileId).maybeSingle();
+      if(!profile) return json({error:"Boutique non disponible"},404,origin);
+      webpush.setVapidDetails("https://dalil-tounes.com",config.vapid_public_key,config.vapid_private_key);
+      try {
+        await webpush.sendNotification({endpoint,keys:{p256dh,auth}},JSON.stringify({
+          title:"🔔 Test Dalil · "+String(profile.nom||"Boutique").slice(0,45),
+          body:"Les nouveautés de cette boutique peuvent vous être signalées.",
+          path:"/entreprise/"+encodeURIComponent(String(profile.ville||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9-]+/g,"-"))+"/"+encodeURIComponent(String(profile.slug||"")),
+          tag:"dalil-boutique-test-"+profileId,
+        }),{TTL:180,urgency:"normal"});
+        return json({sent:true},200,origin);
+      } catch(error) {
+        const status=error&&typeof error==="object"&&"statusCode" in error ? Number(error.statusCode):0;
+        if(status===404||status===410) {
+          await db.from("dalil_boutique_push_subscriptions").delete().eq("id",subscriber.id);
+          return json({error:"Cet abonnement a expiré. Réabonnez-vous."},410,origin);
+        }
+        console.error("Push self-test failed",status||"unknown");
+        return json({error:"Envoi non confirmé. Réessayez ultérieurement."},503,origin);
+      }
     }
     if(body.action==="unsubscribe") {
       const {error}=await db.from("dalil_boutique_push_subscriptions").delete()
