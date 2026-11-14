@@ -1544,7 +1544,7 @@ export const Businesses = ({
             {selectedCategory && (
               <span className="inline-flex items-center gap-1 bg-[#D4AF37]/10 text-[#4A1D43] px-3 py-1.5 rounded-full text-sm font-medium" style={{ border: '1px solid #D4AF37' }}>
                 <Building2 className="w-3.5 h-3.5" />
-                {selectedCategory}
+                {inPlatformApp && getShopFilterId(selectedCategory) ? getShopFilterLabel(getShopFilterId(selectedCategory)!, language) : selectedCategory}
               </span>
             )}
           </div>
