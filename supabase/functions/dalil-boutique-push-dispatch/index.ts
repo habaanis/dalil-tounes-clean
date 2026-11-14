@@ -21,7 +21,7 @@ Deno.serve(async req=>{
     const db=createClient(url,secret,{auth:{persistSession:false,autoRefreshToken:false}});
     const {data:identity,error:authError}=await db.auth.getUser(bearer);
     if(authError||!identity.user) return json({error:"Unauthorized"},401);
-    const {data:admin,error:adminError}=await db.from("dalil_admin_access")
+    const {data:admin,error:adminError}=await db.from("admins")
       .select("id").eq("id",identity.user.id).maybeSingle();
     if(adminError||!admin) return json({error:"Forbidden"},403);
     const input=await req.json();
