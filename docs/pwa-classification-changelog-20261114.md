@@ -55,3 +55,13 @@ Toutes les corrections doivent être effectuées dans Airtable puis vérifiées 
 - Vérification SQL Supabase après restauration : **27 fiches retrouvées, 0 avec pages, 0 ayant `publie` ou statut_publication non vide**.
 - Aucun trigger SQL standard déclaré dans `information_schema.triggers` pour `public.entreprise` au moment de l'audit ; vérifier Airtable Automations, synchronisation bidirectionnelle, Edge Functions et autres traitements externes avant de reprendre.
 - **Ne pas réappliquer le lot 004 tant que le circuit de publication n'est pas isolé.** Les suggestions restent documentées ci-dessus, pas validées pour déploiement.
+
+
+## Cause identifiée et vérifiée dans Airtable Automations
+- Automatisation **active** : `Publication gratuite — saisie terminée` (ID `wflZa2t6KtvYOSP7f`).
+- Son déclencheur `recordMatchesConditions` exige simultanément `statut_validation = terminer la saisi`, **`liste pages` non vide**, ainsi que nom et plusieurs autres champs requis. Il n'exige pas un geste de validation indépendant quand la dernière condition remplie est `liste pages`.
+- Son action `updateRecord` écrit la formule Présence essentielle, `Statut de publication = Publié`, `statut_validation = publie`, statut carte non certifiée. C'est l'explication directe de l'apparition de publications après le reclassement de certaines fiches complètes.
+- Historique des exécutions : **14 succès les 14 novembre à 22:40–22:41 UTC**, concordant avec le lot de modifications. Ce mécanisme est confirmé.
+- Automatisation de synchronisation des modifications vers Supabase `wflVyPTiHCmOaxoof` : active, surveille tous les champs, relaie les modifications via Edge Function `sync-airtable`.
+- Les **7 fiches du lot immobilier précédent** restent affectées aux pages attendues, non publiées au contrôle final.
+- **Ne pas désactiver ou changer l'automatisation de publication sans revue du workflow commercial** : certaines fiches doivent effectivement être publiées automatiquement après validation. Il faut dissocier le classement technique de l'autorisation de publier (champ de validation explicite, ou workflow équivalent) avant de reprendre une migration en masse.
