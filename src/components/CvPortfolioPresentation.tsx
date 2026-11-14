@@ -203,6 +203,7 @@ export function CvPortfolioPresentation({
   const [expandedAbout, setExpandedAbout] = useState(false);
   const [homeAboutOpen, setHomeAboutOpen] = useState(false);
   const [homePhotosOpen, setHomePhotosOpen] = useState(false);
+  const [selectedPortfolioPhoto, setSelectedPortfolioPhoto] = useState(0);
   const [homeReviewsOpen, setHomeReviewsOpen] = useState(false);
   const [writeReviewOpen, setWriteReviewOpen] = useState(false);
   const [bookingOpen, setBookingOpen] = useState(false);
@@ -288,15 +289,31 @@ export function CvPortfolioPresentation({
     </section>
   );
 
+  const activePortfolioPhoto = gallery[Math.min(selectedPortfolioPhoto, Math.max(0, gallery.length - 1))];
+
   const galleryBlock = (
-    <section className="cvp-section">
-      {gallery.length > 0 ? (
-        <div className="cvp-gallery-grid">
-          {gallery.map((item, index) => (
-            <button type="button" onClick={() => onSelectImage(item.full)} key={`${item.thumbnail}-${index}`}>
-              <img src={item.thumbnail} alt={`${profile.identity.name} — ${index + 1}`} loading="lazy" decoding="async" />
-            </button>
-          ))}
+    <section className="cvp-section cvp-compact-portfolio-gallery">
+      {activePortfolioPhoto ? (
+        <div className="cvp-photo-selector">
+          <button type="button" className="cvp-photo-selector-main"
+            onClick={() => onSelectImage(activePortfolioPhoto.full)}
+            aria-label={language === 'ar' ? 'تكبير الصورة المختارة' : 'Agrandir la photo sélectionnée'}>
+            <img src={activePortfolioPhoto.thumbnail} alt={`${profile.identity.name} — ${Math.min(selectedPortfolioPhoto, gallery.length - 1) + 1}`} loading="lazy" decoding="async" />
+            <Search aria-hidden="true" />
+            <span>{Math.min(selectedPortfolioPhoto, gallery.length - 1) + 1} / {gallery.length}</span>
+          </button>
+          <div className="cvp-photo-selector-thumbnails" role="group"
+            aria-label={language === 'ar' ? 'اختيار الصورة' : 'Choisir une photo'}>
+            {gallery.map((item, index) => (
+              <button type="button" key={`${item.thumbnail}-${index}`}
+                className={selectedPortfolioPhoto === index ? 'is-selected' : ''}
+                aria-pressed={selectedPortfolioPhoto === index}
+                aria-label={`${profile.identity.name} — ${index + 1}`}
+                onClick={() => setSelectedPortfolioPhoto(index)}>
+                <img src={item.thumbnail} alt="" loading="lazy" decoding="async" />
+              </button>
+            ))}
+          </div>
         </div>
       ) : <p>{copy.noPhotos}</p>}
     </section>
