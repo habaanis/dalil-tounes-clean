@@ -102,6 +102,41 @@ export function suggestBusinessPages(row: ClassifiedBusiness): BusinessPageSugge
     ];
   }
 
+  if (hasCategory('Maison de retraite', 'Retirement home', 'Casa di riposo') &&
+      hasSubcategory('Retirement home', 'Assisted living facility', 'Maison de retraite')) {
+    return [
+      { page: 'santé', reason: 'Établissement pour personnes âgées confirmé' },
+      { page: 'services citoyens', reason: 'Service aux familles et aux personnes âgées' },
+    ];
+  }
+
+  if (hasCategory('Automobile')) {
+    const repairs = hasSubcategory(
+      'Garage Mécanique', 'Entretien & Réparation', 'mecanicien',
+      'Lavage Auto', 'Électricité Auto', 'Tôlerie & Peinture',
+    );
+    const sales = hasSubcategory(
+      'Vente de Pièces', 'Pièces de rechange', 'Magasin de pièces',
+      'Vente de Voitures',
+    );
+    const rental = hasSubcategory('Location de Voitures');
+    if (repairs || sales || rental) {
+      const suggestions: BusinessPageSuggestion[] = [
+        { page: 'entreprises', reason: 'Activité automobile identifiée' },
+      ];
+      if (repairs || rental) {
+        suggestions.push({ page: 'services citoyens', reason: 'Service automobile aux particuliers' });
+      }
+      if (rental) {
+        suggestions.push({ page: 'tourisme local & expatriation', reason: 'Location de véhicule pour les visiteurs' });
+      }
+      if (sales) {
+        suggestions.push({ page: 'commerces & magasins', reason: 'Vente automobile ou de pièces et accessoires' });
+      }
+      return suggestions;
+    }
+  }
+
   if (hasCategory('Mode & Sport') && hasSubcategory('Nutrition sportive & compléments')) {
     return [{ page: 'commerces & magasins', reason: 'Boutique de nutrition sportive' }];
   }
