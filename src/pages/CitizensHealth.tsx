@@ -220,6 +220,13 @@ export default function CitizensHealth({}: CitizensHealthProps) {
   const t = useTranslation(language);
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as PublicLanguage;
   const c = COPY[lang];
+  const transportUi = {
+    fr: { title: 'Trouver un transport médical adapté', description: 'Recherchez un service selon votre région et vos besoins.', governorate: 'Dans quel gouvernorat ?', vehicle: 'Quel type de transport recherchez-vous ?', search: 'Rechercher un transport' },
+    ar: { title: 'ابحث عن نقل طبي مناسب', description: 'ابحث عن خدمة حسب منطقتك واحتياجاتك.', governorate: 'في أي ولاية؟', vehicle: 'ما نوع النقل الذي تبحث عنه؟', search: 'البحث عن نقل طبي' },
+    en: { title: 'Find suitable medical transport', description: 'Search by region and your needs.', governorate: 'Which governorate?', vehicle: 'What type of transport?', search: 'Search medical transport' },
+    it: { title: 'Trova un trasporto medico adatto', description: 'Cerca per regione e necessità.', governorate: 'In quale governatorato?', vehicle: 'Quale tipo di trasporto?', search: 'Cerca trasporto medico' },
+    ru: { title: 'Найти подходящий медицинский транспорт', description: 'Поиск по региону и потребностям.', governorate: 'В какой провинции?', vehicle: 'Какой вид транспорта?', search: 'Найти транспорт' },
+  }[lang];
   const isRTL = lang === 'ar';
 
   const [transportCity, setTransportCity] = useState('');
@@ -344,21 +351,24 @@ export default function CitizensHealth({}: CitizensHealthProps) {
 
       <section className={`${inPlatformApp && openPanel !== "transport" ? "hidden" : ""} px-4 pb-8`}>
         <div className="max-w-7xl mx-auto">
-          <div className="relative h-32 rounded-xl overflow-hidden mb-4 shadow-lg border border-[#D4AF37]">
+          <div className={inPlatformApp ? "relative h-32 rounded-xl overflow-hidden mb-3 shadow-sm border border-[#C9A65D]" : "relative h-32 rounded-xl overflow-hidden mb-4 shadow-lg border border-[#D4AF37]"}>
             <img src={getSupabaseImageUrl('sante_banner.webp')} alt={c.transportAlt} className="w-full h-full object-cover" decoding="async" />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#4A1D43]/90 to-[#6B2D5C]/80" />
-            <div className="relative min-h-[220px] flex flex-col items-center justify-center text-center px-4 py-7">
-              <h2 className="public-heading text-xl md:text-2xl font-light text-[#D4AF37] mb-1 drop-shadow-lg" style={{ fontFamily: "'Playfair Display', serif" }}>🚑 {c.transportTitle}</h2>
-              <p className="text-white/95 text-xs md:text-sm font-light max-w-2xl mx-auto drop-shadow leading-snug">{c.transportSubtitle}</p>
+            <div className={inPlatformApp ? "absolute inset-0 bg-gradient-to-r from-black/65 via-black/25 to-transparent" : "absolute inset-0 bg-gradient-to-r from-[#4A1D43]/90 to-[#6B2D5C]/80"} />
+            <div className={inPlatformApp ? "relative h-full flex flex-col items-start justify-center px-4 py-3 text-left" : "relative min-h-[220px] flex flex-col items-center justify-center text-center px-4 py-7"}>
+              <h2 className={inPlatformApp ? "public-heading text-lg font-semibold text-white mb-1" : "public-heading text-xl md:text-2xl font-light text-[#D4AF37] mb-1 drop-shadow-lg"} style={{ fontFamily: "'Playfair Display', serif" }}>🚑 {c.transportTitle}</h2>
+              <p className={inPlatformApp ? "text-xs text-white/95 leading-snug line-clamp-2" : "text-white/95 text-xs md:text-sm font-light max-w-2xl mx-auto drop-shadow leading-snug"}>{c.transportSubtitle}</p>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl border border-[#D4AF37] p-4 mb-4 flex flex-wrap gap-3 items-end">
+          <div className={inPlatformApp ? "bg-white rounded-xl border border-[#C9A65D] p-3 mb-3" : "bg-white rounded-xl border border-[#D4AF37] p-4 mb-4 flex flex-wrap gap-3 items-end"}>
+            {inPlatformApp && <><h3 className="text-base font-semibold text-[#292725]">{transportUi.title}</h3><p className="text-xs text-gray-600 mb-3 mt-1">{transportUi.description}</p></>}
+            <div className={inPlatformApp ? "flex flex-col gap-2" : "contents"}>
             <div className="flex-1 min-w-[180px]">
-              <LocationSelectTunisie value={transportCity} onChange={setTransportCity} placeholder={c.governorate} className="px-3 py-2 rounded-lg text-sm" />
+              <LocationSelectTunisie value={transportCity} onChange={setTransportCity} placeholder={inPlatformApp ? transportUi.governorate : c.governorate} className="px-3 py-2 rounded-lg text-sm" />
             </div>
-            <div className="flex-1 min-w-[180px]"><VehicleTypeAutocomplete value={vehicleType} onChange={setVehicleType} /></div>
-            <button onClick={() => searchTransport({ gouvernorat: transportCity, vehicleType, urgenceOnly: false })} className="px-5 py-2 bg-[#4A1D43] text-[#D4AF37] border border-[#D4AF37] rounded-lg text-sm font-medium hover:bg-[#5A2D53] transition-all">{c.search}</button>
+            <div className="flex-1 min-w-[180px]"><VehicleTypeAutocomplete value={vehicleType} onChange={setVehicleType} placeholder={inPlatformApp ? transportUi.vehicle : undefined} /></div>
+            <button onClick={() => searchTransport({ gouvernorat: transportCity, vehicleType, urgenceOnly: false })} className={inPlatformApp ? "w-full rounded-lg border border-[#C9A65D] bg-[#B62226] px-4 py-2 text-sm font-semibold text-white hover:bg-[#941C21]" : "px-5 py-2 bg-[#4A1D43] text-[#D4AF37] border border-[#D4AF37] rounded-lg text-sm font-medium hover:bg-[#5A2D53] transition-all"}>{inPlatformApp ? transportUi.search : c.search}</button>
+            </div>
           </div>
 
           {loadingTransport ? (
@@ -366,7 +376,7 @@ export default function CitizensHealth({}: CitizensHealthProps) {
               <div className="inline-block w-12 h-12 border-4 border-[#4A1D43] border-t-transparent rounded-full animate-spin" />
               <p className="mt-4 text-[#4A1D43]">{c.searching}</p>
             </div>
-          ) : !hasSearchedTransport ? (
+          ) : !hasSearchedTransport && inPlatformApp ? null : !hasSearchedTransport ? (
             <div className="mt-8 text-center py-10 bg-white rounded-xl border border-[#D4AF37]">
               <Search className="w-12 h-12 text-[#D4AF37]/60 mx-auto mb-3" />
               <p className="text-sm text-[#4A1D43] font-medium">{c.transportPrompt}</p>
@@ -388,11 +398,11 @@ export default function CitizensHealth({}: CitizensHealthProps) {
             </div>
           )}
 
-          <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }} className="mt-8 bg-gradient-to-br from-[#4A1D43]/5 to-[#D4AF37]/5 border-2 border-[#D4AF37] rounded-xl p-6 text-center shadow-lg">
+          <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }} className={inPlatformApp ? "mt-4 rounded-xl border border-[#C9A65D] bg-[#FCFAF5] p-3 text-center" : "mt-8 bg-gradient-to-br from-[#4A1D43]/5 to-[#D4AF37]/5 border-2 border-[#D4AF37] rounded-xl p-6 text-center shadow-lg"}>
             <div className="max-w-2xl mx-auto">
-              <h3 className="text-2xl font-light text-[#4A1D43] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>{c.ctaTitle}</h3>
+              <h3 className={inPlatformApp ? "text-lg font-semibold text-[#292725] mb-1" : "text-2xl font-light text-[#4A1D43] mb-2"} style={{ fontFamily: "'Playfair Display', serif" }}>{c.ctaTitle}</h3>
               <p className="text-gray-700 text-sm mb-4 leading-relaxed">{c.ctaText}</p>
-              <button onClick={() => setShowTransportModal(true)} className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#4A1D43] text-[#D4AF37] text-sm font-semibold border border-[#D4AF37] hover:bg-[#5A2D53] hover:shadow-sm transition-all duration-300 transform hover:scale-105">
+              <button onClick={() => setShowTransportModal(true)} className={inPlatformApp ? "inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#B62226] text-white text-xs font-semibold border border-[#C9A65D]" : "inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#4A1D43] text-[#D4AF37] text-sm font-semibold border border-[#D4AF37] hover:bg-[#5A2D53] hover:shadow-sm transition-all duration-300 transform hover:scale-105"}>
                 <Plus className="w-4 h-4" />{c.ctaButton}
               </button>
             </div>
