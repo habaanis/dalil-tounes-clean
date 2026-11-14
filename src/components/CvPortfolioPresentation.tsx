@@ -326,7 +326,6 @@ export function CvPortfolioPresentation({
                   {reviewCount > 0 && <span>{reviewCount} {copy.reviews.toLowerCase()}</span>}
                 </div>
               )}
-              <GoogleRatingSummary trustOnly rating={reviewRating} reviewCount={reviewCount} language={language} />
               {(profile.location.city || profile.location.governorate) && (
                 <p><MapPin />{[profile.location.city, profile.location.governorate].filter(Boolean).join(language === 'ar' ? '، ' : ', ')}</p>
               )}
