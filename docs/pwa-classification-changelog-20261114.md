@@ -15,3 +15,13 @@ Toutes les corrections doivent être effectuées dans Airtable puis vérifiées 
 
 ## Point de sécurité important
 `Coin Bio` (`recH1GnRRVO0y9DiO`) : Airtable validation publie et publication Publié ; Supabase `approved` NULL malgré `cv_business_status` = published et `modele_cv` = portfolio. Toute politique RLS exigeant immédiatement `approved=true` masquerait cette fiche client. Ne pas changer globalement la RLS sans inventaire des exceptions, validation du circuit de modération et rollback documenté.
+
+
+## Lot 002 — Agences immobilières explicitement identifiées
+- Airtable : `recvxcGSx028DsKmb` — Narjess Real Estate Agency ; `recwMjGZo4bdw2fpy` — Real Estate Agency Immo's By Selim.
+- Avant pour les deux : `liste pages` vide.
+- Après Airtable pour les deux : `entreprises `, `tourisme local & expatriation`, `services citoyens`.
+- Base du classement : nom contenant explicitement `Real Estate Agency`, catégorie `Immobilier`, sous-catégorie `Agence Immobilière`, concordantes dans Airtable.
+- Statut préservé : `terminer la saisi` ; `approved=false` et `statut_publication=NULL` dans Supabase, donc fiches non publiques.
+- Première vérification Supabase après mise à jour : `liste_pages=NULL` encore observé pour les deux ; **synchronisation en attente**.
+- Retour arrière : rétablir `liste pages` vide dans Airtable pour chacun, puis vérifier la synchronisation Supabase.
