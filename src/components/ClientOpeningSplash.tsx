@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 
 export type ClientOpeningStyle = 'photo' | 'framed';
 
@@ -37,4 +37,23 @@ export default function ClientOpeningSplash({ name, product, logo, cover, palett
     </div>
     <button type="button" className="absolute bottom-7 right-6 z-20 rounded-full border px-4 py-2 text-xs font-semibold" style={{borderColor:palette.border,backgroundColor:palette.surface,color:palette.text}} onClick={onSkip}>Passer</button>
   </main>;
+}
+
+/** Personal client opening: one short appearance per client and browser tab. */
+export function ClientOpeningAuto(props: Omit<Props, 'onSkip'> & { clientId: string }) {
+  const [visible, setVisible] = useState(() => {
+    if (typeof window === 'undefined' || !props.logo || !props.cover) return false;
+    const key = 'dalil-client-opening-v1:' + props.clientId;
+    try {
+      if (window.sessionStorage.getItem(key) === '1') return false;
+      window.sessionStorage.setItem(key, '1');
+    } catch { /* Storage might be unavailable; keep splash non-blocking. */ }
+    return true;
+  });
+  useEffect(() => {
+    if (!visible) return;
+    const timeout = window.setTimeout(() => setVisible(false), 1900);
+    return () => window.clearTimeout(timeout);
+  }, [visible]);
+  return visible ? <ClientOpeningSplash {...props} onSkip={() => setVisible(false)} /> : null;
 }
