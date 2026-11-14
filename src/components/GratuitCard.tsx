@@ -112,7 +112,7 @@ export default function GratuitCard({
         border: '2px solid #D4AF37',
         borderRadius: '16px',
         boxShadow: '0 0 10px rgba(212,175,55,0.18), 0 2px 8px rgba(0,0,0,0.06)',
-        padding: '8px 10px',
+        padding: inPlatformApp ? '6px 9px' : '8px 10px',
         width: '100%',
         height: '100%',
         display: 'flex',
@@ -120,7 +120,7 @@ export default function GratuitCard({
         position: 'relative',
       }}
     >
-      {cover && (
+      {!inPlatformApp && cover && (
         <div style={{ height: '66px', flexShrink: 0, position: 'relative', marginBottom: '8px', overflow: 'hidden', borderRadius: '10px', background: '#F2F0EA' }}>
           <img
             src={cover}
@@ -141,7 +141,7 @@ export default function GratuitCard({
           )}
         </div>
       )}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', textAlign: 'center', flex: 1 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: inPlatformApp ? '2px' : '4px', textAlign: 'center', flex: 1 }}>
 
         {/* Nom */}
         <p style={{ fontSize: '14px', fontWeight: '700', color: '#1A1A1A', lineHeight: '1.3', margin: 0, letterSpacing: '-0.01em', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', direction: /[\u0600-\u06FF]/.test(name) ? 'rtl' : 'ltr' }}>
@@ -155,7 +155,8 @@ export default function GratuitCard({
             rating={googleRating}
             reviewCount={googleReviewCount}
             language={language}
-            className="text-[#4A1D43]"
+            className={inPlatformApp ? 'text-[#292725]' : 'text-[#4A1D43]'}
+            compactTrustLabel={inPlatformApp}
           />
         )}
         {description_ar && (
@@ -219,7 +220,7 @@ export default function GratuitCard({
             {missing.phone}
           </span>
         )}
-        {onOpen ? (
+        {!inPlatformApp && onOpen ? (
           <button
             type="button"
             onClick={onOpen}
@@ -227,7 +228,7 @@ export default function GratuitCard({
           >
             {cardCopy.details} →
           </button>
-        ) : showDetailsLink && (
+        ) : !inPlatformApp && showDetailsLink && (
           <span style={{ fontSize: '12px', fontWeight: 700, color: '#AD8B22', letterSpacing: '0.01em', textAlign: 'center' }}>
             {cardCopy.details} →
           </span>
