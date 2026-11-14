@@ -57,15 +57,20 @@ export function businessSearchVariants(query: string): string[] {
   const term = normalizeBusinessSearch(query);
   if (!term) return [];
   const values: string[] = [query.trim()];
-  if (term.includes(' ') && term.length >= 5) {
-    // Preserve full multiword intent; don't broaden "laboratoire medical" to all "medical".
-    values.push(term);
+  const words = term.split(' ').filter(Boolean);
+  const stopwords = new Set(['de', 'du', 'des', 'le', 'la', 'les', 'un', 'une', 'aux', 'et', 'en', 'a', 'd', 'l']);
+  const meaningfulWords = words.filter(word => word.length >= 2 && !stopwords.has(word));
+  // Preserve full company-name queries, but also search meaningful components.
+  values.push(...meaningfulWords);
+  if (words.length === 1) {
+    const group = EQUIVALENTS.find(items => items.some(entry => normalizeBusinessSearch(entry) === term));
+    if (group) values.push(...group);
   } else {
-    for (const group of EQUIVALENTS) {
-      if (group.some(entry => normalizeBusinessSearch(entry) === term)) {
-        values.push(...group);
-        break;
-      }
+    // A multiword query must remain an AND of concepts at ranking time.
+    // We expand each concept only to find candidates from Supabase.
+    for (const word of meaningfulWords) {
+      const group = EQUIVALENTS.find(items => items.some(entry => normalizeBusinessSearch(entry) === word));
+      if (group) values.push(...group.slice(0, 5));
     }
   }
   // Cover common plural terms without removing letters from proper names.
@@ -79,14 +84,14 @@ export function businessQueryTerms(query: string): string[] {
   const result: string[] = [];
   for (const term of raw) {
     // For PostgREST OR syntax, allow only safe plain words / spaces.
-    const value = term.replace(/[,%()*\\]/g, ' ').replace(/\s+/g, ' ').trim();
+    const value = term.replace(/[,%()*\\'"]/g, ' ').replace(/\s+/g, ' ').trim();
     if (!value) continue;
     const key = normalizeBusinessSearch(value);
     if (!key || normalized.has(key)) continue;
     normalized.add(key);
     result.push(value);
   }
-  return result.slice(0, 8);
+  return result.slice(0, 12);
 }
 
 export function businessRelevance(row: SearchableBusiness, query: string): {
@@ -97,12 +102,15 @@ export function businessRelevance(row: SearchableBusiness, query: string): {
 } {
   const normalizedQuery = normalizeBusinessSearch(query);
   if (!normalizedQuery) return { score: 0, strongMatch: false, matched: false, specificIntent: false };
-  const group = EQUIVALENTS.find(items => items.some(value => normalizeBusinessSearch(value) === normalizedQuery));
-  const specificIntent = Boolean(group);
+  const tokens = normalizedQuery.split(' ').filter(token => token.length >= 2 && !['de','du','des','le','la','les','un','une','aux','et','en'].includes(token));
+  const groups = tokens.map(token => EQUIVALENTS.find(items => items.some(value => normalizeBusinessSearch(value) === token)));
+  const specificIntent = groups.some(Boolean);
   const terms = businessSearchVariants(query).map(normalizeBusinessSearch).filter(Boolean);
+  const textHas = (text: string, term: string) =>
+    containsTerm(text, term) || (term.length >= 5 && text.split(' ').some(word => word.startsWith(term)));
   const match = (value: unknown) => {
     const text = normalizeBusinessSearch(asText(value));
-    return terms.some(term => containsTerm(text, term) || (term.length >= 5 && text.split(' ').some(word => word.startsWith(term))));
+    return terms.some(term => textHas(text, term));
   };
 
   const name = match(row.nom ?? row.name);
@@ -123,9 +131,21 @@ export function businessRelevance(row: SearchableBusiness, query: string): {
   if (description) score += 6;
   if (geographical) score += 4;
 
-  // Search vocabulary is contaminated on some records; never treat prose alone
-  // as a relevant professional category for an unambiguous profession search.
-  const matched = specificIntent ? strongMatch || (keywords && subtype) : score > 0;
+  // Every meaningful term must match somewhere, including multiword searches
+  // such as "dentiste Tunis" and "coiffeur femme".
+  const combinedText = normalizeBusinessSearch(asText([
+    row.nom, row.name, row.categorie, row.sous_categories_texte,
+    row.sous_categories_clean, row.services, row.keywords_fr,
+    row['mots cles recherche'], row.search_text, row.description,
+    row.ville, row.gouvernorat,
+  ]));
+  const allConceptsMatch = tokens.every((token, i) => {
+    const alternatives = groups[i]?.map(normalizeBusinessSearch) || [token];
+    return alternatives.some(alt => textHas(combinedText, alt));
+  });
+  // Contaminated keywords/prose alone must not make unrelated businesses
+  // appear in a profession-specific search.
+  const matched = allConceptsMatch && (specificIntent ? strongMatch || (keywords && subtype) : score > 0);
   return { score, strongMatch, matched, specificIntent };
 }
 
