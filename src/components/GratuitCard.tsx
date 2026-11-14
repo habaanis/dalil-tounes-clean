@@ -168,7 +168,7 @@ export default function GratuitCard({
         {allKeywords.length > 0 && <span className="sr-only">{allKeywords.join(' ')}</span>}
 
         {/* Les horaires ne s'affichent qu'au clic pour garder une carte compacte. */}
-        {horaires_ok && (
+        {!inPlatformApp && horaires_ok && (
           <div style={{ width: inPlatformApp ? '100%' : '100%', marginTop: inPlatformApp ? '6px' : '10px' }}>
             <button
               type="button"
@@ -187,15 +187,57 @@ export default function GratuitCard({
             )}
           </div>
         )}
-        {!horaires_ok?.trim() && (
+        {!inPlatformApp && !horaires_ok?.trim() && (
           <p style={{ fontSize: '11px', color: '#6B7280', marginTop: '8px' }}>
             <Clock size={13} aria-hidden="true" style={{ display: 'inline', verticalAlign: 'middle', marginRight: '4px' }} />{missing.hours}
           </p>
         )}
       </div>
 
+      {inPlatformApp && (
+        <div className="mt-2 border-t border-[#C9A65D]/35 pt-2">
+          <div className="grid grid-cols-2 gap-2">
+            {horaires_ok?.trim() ? (
+              <button
+                type="button"
+                aria-expanded={showHours}
+                onClick={(e) => { e.stopPropagation(); setShowHours(previous => !previous); }}
+                className="flex min-h-10 min-w-0 items-center justify-center gap-1 rounded-lg border border-[#C9A65D] bg-[#FFF9EC] px-2 py-1.5 text-[11px] font-semibold text-[#292725]"
+              >
+                <Clock size={14} className="shrink-0" aria-hidden="true" />
+                <span>{language === 'ar' ? 'الأوقات' : language === 'en' ? 'Hours' : language === 'it' ? 'Orari' : language === 'ru' ? 'Часы' : 'Horaires'}</span>
+                <ChevronDown size={12} className="shrink-0" aria-hidden="true" style={{ transform: showHours ? 'rotate(180deg)' : undefined }} />
+              </button>
+            ) : (
+              <span className="flex min-h-10 items-center justify-center text-center text-[10px] text-gray-500">{missing.hours}</span>
+            )}
+            {telephone?.trim() ? (
+              <button
+                type="button"
+                aria-expanded={showPhone}
+                onClick={(e) => { e.stopPropagation(); setShowPhone(previous => !previous); }}
+                className="flex min-h-10 min-w-0 items-center justify-center gap-1 rounded-lg border border-[#B62226] bg-[#B62226] px-2 py-1.5 text-[11px] font-semibold text-white"
+              >
+                <Phone size={14} className="shrink-0" aria-hidden="true" />
+                <span>{language === 'ar' ? 'الهاتف' : language === 'en' ? 'Phone' : language === 'it' ? 'Telefono' : language === 'ru' ? 'Телефон' : 'Téléphone'}</span>
+              </button>
+            ) : (
+              <span className="flex min-h-10 items-center justify-center text-center text-[10px] text-gray-500">{missing.phone}</span>
+            )}
+          </div>
+          {showHours && horaires_ok && (
+            <div className="mt-2 rounded-lg border border-[#C9A65D]/60 bg-[#FCFAF5] p-2 text-left text-xs text-[#292725]" onClick={(e) => e.stopPropagation()}>
+              <p className="whitespace-pre-line">{horaires_ok}</p>
+            </div>
+          )}
+          {showPhone && telephone && (
+            <a href={`tel:${telephone.replace(/[^+\\d]/g, '')}`} onClick={(e) => e.stopPropagation()} className="mt-2 block rounded-lg bg-[#FCFAF5] p-2 text-center text-sm font-semibold text-[#292725] underline">{telephone}</a>
+          )}
+        </div>
+      )}
+
       {/* Téléphone sous les horaires : une action claire et accessible. */}
-      <div style={{ marginTop: inPlatformApp ? '6px' : '12px', paddingTop: inPlatformApp ? '6px' : '12px', borderTop: '1px solid rgba(212,175,55,0.25)', display: 'flex', flexDirection: 'column', gap: inPlatformApp ? '5px' : '10px' }}>
+      {!inPlatformApp && <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid rgba(212,175,55,0.25)', display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {telephone && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '7px' }}>
             <button
@@ -233,7 +275,7 @@ export default function GratuitCard({
             {cardCopy.details} →
           </span>
         )}
-      </div>
+      </div>}
     </div>
   );
 }
