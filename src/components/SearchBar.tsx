@@ -153,8 +153,10 @@ export default function SearchBar({
   const isGlobal = scope === 'global';
   const pageLabel = isGlobal ? null : getCategoryDisplayName(scope as PageCategorie);
   const like = (s: string) => `%${(s || '').trim()}%`;
-  const GLOBAL_RAW_RESULT_LIMIT = 150;
-  const CATEGORY_RAW_RESULT_LIMIT = 40;
+  // Fetch enough candidates to rank by business activity on the client.
+  // The old 40-row scope cap omitted schools, laboratories and services.
+  const GLOBAL_RAW_RESULT_LIMIT = 400;
+  const CATEGORY_RAW_RESULT_LIMIT = 160;
 
   const OR_SAFE_FIELDS = ['nom', 'sous_categories_texte', 'sous_categories_clean', 'services', 'keywords_fr', 'search_text', 'description'];
 
