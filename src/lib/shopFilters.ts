@@ -13,23 +13,23 @@ export const SHOP_FILTERS: Record<ShopFilterId, {
 }> = {
   food: {
     categories: ['Alimentation ', 'Alimentation'],
-    labels: { fr: 'Alimentation', ar: 'مواد غذائية', en: 'Food shops', it: 'Alimentari', ru: 'Продукты' },
+    labels: { fr: 'Alimentation & marchés', ar: 'مواد غذائية', en: 'Food shops', it: 'Alimentari', ru: 'Продукты' },
   },
   fashion: {
     categories: ['Mode & Sport'],
-    labels: { fr: 'Mode & accessoires', ar: 'ملابس وإكسسوارات', en: 'Fashion & accessories', it: 'Moda e accessori', ru: 'Мода и аксессуары' },
+    labels: { fr: 'Mode & sport', ar: 'ملابس وإكسسوارات', en: 'Fashion & sport', it: 'Moda e accessori', ru: 'Мода и аксессуары' },
   },
   home: {
     categories: ['Maison & Équipement', 'Commerce & Matériaux', 'Quincaillerie & Bricolage'],
-    labels: { fr: 'Maison & équipement', ar: 'المنزل والتجهيزات', en: 'Home & equipment', it: 'Casa e attrezzature', ru: 'Дом и товары' },
+    labels: { fr: 'Maison & bricolage', ar: 'المنزل والتجهيزات', en: 'Home & equipment', it: 'Casa e attrezzature', ru: 'Дом и товары' },
   },
   beauty: {
     categories: ['Beauté & Bien-être'],
-    labels: { fr: 'Beauté & coiffure', ar: 'الجمال والحلاقة', en: 'Beauty & hair', it: 'Bellezza e parrucchieri', ru: 'Красота и уход' },
+    labels: { fr: 'Beauté & bien-être', ar: 'الجمال والعناية', en: 'Beauty & wellness', it: 'Bellezza e parrucchieri', ru: 'Красота и уход' },
   },
   flowers: {
     categories: ['Fleuriste'],
-    labels: { fr: 'Fleurs & cadeaux', ar: 'زهور وهدايا', en: 'Flowers & gifts', it: 'Fiori e regali', ru: 'Цветы и подарки' },
+    labels: { fr: 'Fleurs & décoration', ar: 'زهور وديكور', en: 'Flowers & decoration', it: 'Fiori e regali', ru: 'Цветы и подарки' },
   },
   all: {
     categories: [],
@@ -74,7 +74,7 @@ export function matchesShopFilter(row: {
   const matchingCategory = SHOP_FILTERS[id].categories.some(value => categories.includes(normalize(value)));
 
   if (id === 'flowers') {
-    return matchingCategory || /cadeau|fleuriste|fleur(?:s|iste)/.test(details);
+    return matchingCategory || /fleuriste|fleur(?:s|iste)|floriste|bouquet|composition florale/.test(details);
   }
 
   if (!matchingCategory) return false;
