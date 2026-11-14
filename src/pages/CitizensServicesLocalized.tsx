@@ -408,7 +408,7 @@ export default function CitizensServicesLocalized() {
 
       {activeTab === 'demarches' && <section className="px-4 py-8 bg-white"><div className="max-w-6xl mx-auto"><div className="text-center mb-6"><h2 className="public-heading text-2xl font-medium text-[#292725]">{c.proceduresTitle}</h2><p className="mt-2 text-gray-600">{c.proceduresIntro}</p></div><div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">{procedures.map((item, index) => <motion.button key={item.title} type="button" whileHover={{ y: -3 }} onClick={() => setSelectedProcedure(index)} className={`text-start bg-white rounded-xl border-2 border-[#D4AF37] p-4 hover:shadow-lg ${isRTL ? 'text-right' : 'text-left'}`}><h3 className="font-medium text-[#292725] mb-2">{item.title}</h3><p className="text-gray-600 text-xs line-clamp-3 mb-3">{item.description}</p><div className="flex justify-between text-xs text-[#292725]"><span>{item.documents.length} {c.pieces}</span><span>{item.delay}</span></div></motion.button>)}</div></div></section>}
 
-      {activeTab === 'social' && <section className="px-4 py-8"><div className="max-w-5xl mx-auto"><div className="text-center mb-5"><h2 className="public-heading text-2xl font-medium text-[#292725]">{c.socialTitle}</h2><p className="mt-2 text-gray-600">{c.socialIntro}</p></div><div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">{emergencyNumbers.map(({ label, number, icon: Icon }) => <a key={number} href={`tel:${number}`} className="flex flex-col items-center justify-center rounded-xl bg-[#4A1D43] border border-[#D4AF37] p-3 text-center"><Icon className="w-5 h-5 text-[#D4AF37] mb-2" /><span className="text-xs text-white">{label}</span><strong className="text-lg text-[#D4AF37]">{number}</strong></a>)}</div><div className="mt-7 grid md:grid-cols-2 gap-3">{SOCIAL_PROGRAMS[lang].map((item) => <SocialCard key={item.title} title={item.title} body={item.body} />)}</div></div></section>}
+      {activeTab === 'social' && <section className="px-4 py-8"><div className="max-w-5xl mx-auto"><div className="text-center mb-5"><h2 className="public-heading text-2xl font-medium text-[#292725]">{c.socialTitle}</h2><p className="mt-2 text-gray-600">{c.socialIntro}</p></div><div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">{emergencyNumbers.map(({ label, number, icon: Icon }) => <a key={number} href={`tel:${number}`} className="flex flex-col items-center justify-center rounded-xl bg-[#D6B86D] border border-[#D4AF37] p-3 text-center"><Icon className="w-5 h-5 text-[#D4AF37] mb-2" /><span className="text-xs text-white">{label}</span><strong className="text-lg text-[#D4AF37]">{number}</strong></a>)}</div><div className="mt-7 grid md:grid-cols-2 gap-3">{SOCIAL_PROGRAMS[lang].map((item) => <SocialCard key={item.title} title={item.title} body={item.body} />)}</div></div></section>}
 
       <section className="px-4 py-8 bg-white border-t border-gray-100">
         <div className="max-w-5xl mx-auto">
@@ -424,7 +424,7 @@ export default function CitizensServicesLocalized() {
         </div>
       </section>
 
-      <section className="px-4 py-4 bg-[#4A1D43] border-t border-[#D4AF37]"><p className="max-w-4xl mx-auto text-center text-sm text-[#D4AF37] font-medium">{c.together}</p></section>
+      <section className="px-4 py-4 bg-[#D6B86D] border-t border-[#D4AF37]"><p className="max-w-4xl mx-auto text-center text-sm text-[#D4AF37] font-medium">{c.together}</p></section>
     </div>
   );
 }
