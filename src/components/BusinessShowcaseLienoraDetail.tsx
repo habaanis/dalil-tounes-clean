@@ -1118,7 +1118,7 @@ export default function BusinessShowcaseLienoraDetail({
   const logoImage = getLogoUrl(business.logo_url);
   const openingStyle: 'photo' | 'framed' =
     String(business.opening_style || '').toLowerCase() === 'framed' ? 'framed' : 'photo';
-  const clientOpening = !embeddedPreview && Boolean(String(business.logo_url || '').trim()) && Boolean(String(business.image_url || '').trim()) ? (
+  const clientOpening = isClientAppMode && !embeddedPreview && Boolean(String(business.logo_url || '').trim()) && Boolean(String(business.image_url || '').trim()) ? (
     <ClientOpeningAuto
       clientId={business.id}
       name={business.nom}
