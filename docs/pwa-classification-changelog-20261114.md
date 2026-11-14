@@ -47,3 +47,11 @@ Toutes les corrections doivent être effectuées dans Airtable puis vérifiées 
 - Validation avant écriture : champs Airtable liste pages vides, métiers/catégories vérifiés, statut `terminer la saisi` pour les 27.
 - Premier contrôle Supabase : 27 présentes, 4 synchronisées, 23 en attente, aucune avec `approved=true`, aucune `statut_publication` non vide.
 - Retour arrière : pour chacune des 27 fiches ci-dessus, remettre le champ Airtable `liste pages` vide, puis attendre le retour à tableau vide/NULL dans Supabase ; vérifier les statuts inchangés.
+
+## INCIDENT — Lot 004 totalement annulé, sécurité de publication (14 novembre 2026)
+- Après les seules affectations `liste pages` sur Airtable, la synchronisation a fait passer **11 fiches automobiles** de `terminer la saisi` / publication vide à `publie` / `Publié` dans Airtable et Supabase ; les 14 établissements de retraite et deux autres fiches automobiles n'ont pas subi ce basculement au moment du constat.
+- Ne pas conclure que la modification de pages seule est la cause certaine : autre automatisation ou traitement concurrent possible. Le fait avéré est une dérive de statuts pendant le lot.
+- Mesures de restauration : remise de `liste pages` vide pour **les 27 fiches dans Airtable**, remise de `statut_validation=terminer la saisi` et `Statut de publication` vide ; remise de `liste_pages=NULL`, `statut_validation='terminer la saisi'`, `statut_publication=NULL` dans Supabase pour les mêmes IDs.
+- Vérification SQL Supabase après restauration : **27 fiches retrouvées, 0 avec pages, 0 ayant `publie` ou statut_publication non vide**.
+- Aucun trigger SQL standard déclaré dans `information_schema.triggers` pour `public.entreprise` au moment de l'audit ; vérifier Airtable Automations, synchronisation bidirectionnelle, Edge Functions et autres traitements externes avant de reprendre.
+- **Ne pas réappliquer le lot 004 tant que le circuit de publication n'est pas isolé.** Les suggestions restent documentées ci-dessus, pas validées pour déploiement.
