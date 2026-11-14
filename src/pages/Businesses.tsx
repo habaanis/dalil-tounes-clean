@@ -412,6 +412,8 @@ export const Businesses = ({
   const location = useLocation();
   const inPlatformApp = isPlatformAppMode();
   const [searchParams] = useSearchParams();
+  const appSearchScope = inPlatformApp && ['sante', 'services', 'magasin'].includes(searchParams.get('scope') || '') ? searchParams.get('scope') : null;
+  const appScopePage = appSearchScope === 'sante' ? 'santé' : appSearchScope === 'services' ? 'services citoyens' : appSearchScope === 'magasin' ? 'commerces & magasins' : null;
   const t = useTranslation(language);
   const pageT = getBusinessesPageTranslations(language);
   const directoryCopy = DIRECTORY_NAV_COPY[language as BusinessCardPreviewLanguage] ?? DIRECTORY_NAV_COPY.fr;
@@ -461,7 +463,7 @@ export const Businesses = ({
     return () => clearTimeout(timeout);
   }, [loading, searching]);
 
-  const hasActiveSearch = !!selectedBusinessId || !!searchTerm || !!selectedCity || !!selectedCategory || !!pageCategorie || filterPremium || filterCommerceLocal || !!filterStatutCarte;
+  const hasActiveSearch = !!appScopePage || !!selectedBusinessId || !!searchTerm || !!selectedCity || !!selectedCategory || !!pageCategorie || filterPremium || filterCommerceLocal || !!filterStatutCarte;
 
   useEffect(() => {
     if (!showDemoModal) return;
@@ -895,6 +897,7 @@ export const Businesses = ({
         .order('nom', { ascending: true })
         .order('id', { ascending: true });
 
+      if (appScopePage) query = query.contains('liste_pages', [appScopePage]);
       if (pageCategorie) {
         console.log(`[DEBUG] Filtre pageCategorie appliqué: "${pageCategorie}"`);
         query = query.or(`sous_categories_texte.ilike.%${pageCategorie}%,sous_categories_clean.ilike.%${pageCategorie}%`);
@@ -1038,6 +1041,7 @@ export const Businesses = ({
       // The shop buttons use the existing page assignment + Airtable categories.
       // They must not search for a generic word among all businesses.
       if (shopFilter) query = query.contains('liste_pages', [SHOP_PAGE]);
+      else if (appScopePage) query = query.contains('liste_pages', [appScopePage]);
 
       if (selectedBusinessId) {
         console.log(`[DEBUG] Filtre ID entreprise: "${selectedBusinessId}"`);
