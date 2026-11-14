@@ -70,7 +70,7 @@ export function ClientOpeningAuto(props: Omit<Props, 'onSkip'> & { clientId: str
   });
   useEffect(() => {
     if (!visible) return;
-    const timeout = window.setTimeout(() => setVisible(false), 1900);
+    const timeout = window.setTimeout(() => setVisible(false), 3000);
     return () => window.clearTimeout(timeout);
   }, [visible]);
   return visible ? <ClientOpeningSplash {...props} onSkip={() => setVisible(false)} /> : null;
