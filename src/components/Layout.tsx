@@ -497,17 +497,17 @@ export const Layout = ({ children }: LayoutProps) => {
           onClick={(e) => e.target === e.currentTarget && setShowIOSGuide(false)}
         >
           <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden">
-            <div className="bg-[#4A1D43] px-5 py-4 flex items-center justify-between">
-              <h3 className="text-base font-semibold text-[#D4AF37]">
+            <div className="bg-[#FFF8EA] px-5 py-4 flex items-center justify-between">
+              <h3 className="text-base font-semibold text-[#292725]">
                 {te.pwa?.installIosTitle || 'Installer sur iPhone / iPad'}
               </h3>
-              <button onClick={() => setShowIOSGuide(false)} className="p-1 text-gray-300 hover:text-white transition" aria-label={te.pwa?.close || 'Fermer'}>
+              <button onClick={() => setShowIOSGuide(false)} className="p-1 text-[#514B43] hover:text-[#292725] transition" aria-label={te.pwa?.close || 'Fermer'}>
                 <X className="w-5 h-5" />
               </button>
             </div>
             <div className="p-5 space-y-4">
               <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#4A1D43] text-[#D4AF37] flex items-center justify-center text-sm font-bold">1</div>
+                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#D6B86D] text-[#292725] flex items-center justify-center text-sm font-bold">1</div>
                 <div>
                   <p className="text-sm font-medium text-gray-900">{te.pwa?.installIosStep1 || 'Appuyez sur le bouton Partager'}</p>
                   <div className="flex items-center gap-1.5 mt-1">
@@ -517,11 +517,11 @@ export const Layout = ({ children }: LayoutProps) => {
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#4A1D43] text-[#D4AF37] flex items-center justify-center text-sm font-bold">2</div>
+                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#D6B86D] text-[#292725] flex items-center justify-center text-sm font-bold">2</div>
                 <p className="text-sm font-medium text-gray-900">{te.pwa?.installIosStep2 || 'Choisissez "Sur l\'ecran d\'accueil"'}</p>
               </div>
               <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#4A1D43] text-[#D4AF37] flex items-center justify-center text-sm font-bold">3</div>
+                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#D6B86D] text-[#292725] flex items-center justify-center text-sm font-bold">3</div>
                 <p className="text-sm font-medium text-gray-900">{te.pwa?.installIosStep3 || 'Confirmez en appuyant sur "Ajouter"'}</p>
               </div>
               <p className="text-xs text-gray-400 text-center pt-2 border-t border-gray-100">{te.pwa?.installIosNote || 'Fonctionne uniquement avec Safari'}</p>
@@ -536,11 +536,11 @@ export const Layout = ({ children }: LayoutProps) => {
           onClick={(e) => e.target === e.currentTarget && setShowInstallGuide(null)}
         >
           <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden" role="dialog" aria-modal="true" aria-labelledby="install-guide-title">
-            <div className="bg-[#4A1D43] px-5 py-4 flex items-center justify-between">
-              <h3 id="install-guide-title" className="text-base font-semibold text-[#D4AF37]">
+            <div className="bg-[#FFF8EA] px-5 py-4 flex items-center justify-between">
+              <h3 id="install-guide-title" className="text-base font-semibold text-[#292725]">
                 {te.pwa?.installAndroidTitle || 'Installer Dalil Tounes'}
               </h3>
-              <button onClick={() => setShowInstallGuide(null)} className="p-1 text-gray-300 hover:text-white transition" aria-label={te.pwa?.close || 'Fermer'}>
+              <button onClick={() => setShowInstallGuide(null)} className="p-1 text-[#514B43] hover:text-[#292725] transition" aria-label={te.pwa?.close || 'Fermer'}>
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -578,7 +578,7 @@ export const Layout = ({ children }: LayoutProps) => {
 function GuideStep({ number, children }: { number: string; children: ReactNode }) {
   return (
     <div className="flex items-start gap-3">
-      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#4A1D43] text-[#D4AF37] flex items-center justify-center text-sm font-bold">{number}</div>
+      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#D6B86D] text-[#292725] flex items-center justify-center text-sm font-bold">{number}</div>
       <p className="pt-1 text-sm font-medium text-gray-900">{children}</p>
     </div>
   );

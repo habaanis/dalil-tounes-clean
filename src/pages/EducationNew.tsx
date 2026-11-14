@@ -696,7 +696,7 @@ export default function EducationNew() {
         <MeilleursSection
           secteurLabel={t.meilleurs.secteurLabel}
           listePage="éducation"
-          accentColor="#4A1D43"
+          accentColor="#B28A44"
           sectionTitle={t.meilleurs.sectionTitle}
           blogArticle={{
             title: t.meilleurs.blogTitle,
@@ -714,13 +714,13 @@ export default function EducationNew() {
           transition={{ duration: 0.6, delay: 0.15 }}
           className="bg-[#FAF9F6] rounded-lg px-3 py-2 mb-6 shadow-sm border border-[#D4AF37]"
         >
-          <h2 className="public-heading text-base md:text-lg font-semibold text-[#4A1D43] mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>
+          <h2 className="public-heading text-base md:text-lg font-semibold text-[#292725] mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>
             {t.eventBanner.title}
           </h2>
           <p className="text-xs text-gray-700 leading-snug mb-1.5">{t.eventBanner.desc}</p>
           <Link
             to="/education-event-form"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#4A1D43] hover:bg-[#5A2D53] border border-[#D4AF37] text-[#D4AF37] hover:text-white font-semibold rounded-lg shadow-sm transition-all transform hover:scale-105 text-xs"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#D6B86D] hover:bg-[#E4CB91] border border-[#C9A65D] text-[#292725] hover:text-[#292725] font-semibold rounded-lg shadow-sm transition-all transform hover:scale-105 text-xs"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
             <Calendar className="w-3.5 h-3.5 text-[#D4AF37]" aria-hidden="true" />
@@ -733,11 +733,11 @@ export default function EducationNew() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-gradient-to-br from-[#4A1D43]/5 to-[#D4AF37]/5 rounded-xl p-6 border border-[#D4AF37]"
+            className="bg-gradient-to-br from-[#FFF8EA] to-[#D4AF37]/5 rounded-xl p-6 border border-[#D4AF37]"
           >
-            <h2 className="public-heading text-lg font-semibold text-[#4A1D43] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>{t.adminBlock.title}</h2>
+            <h2 className="public-heading text-lg font-semibold text-[#292725] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>{t.adminBlock.title}</h2>
             <p className="text-sm text-gray-600 mb-4">{t.adminBlock.desc}</p>
-            <Link to="/citizens/services" className="inline-flex items-center gap-2 text-[#4A1D43] hover:text-[#D4AF37] font-medium text-sm transition-colors">
+            <Link to="/citizens/services" className="inline-flex items-center gap-2 text-[#292725] hover:text-[#D4AF37] font-medium text-sm transition-colors">
               {t.adminBlock.link}
               <ChevronDown className={`w-4 h-4 ${isRTL ? 'rotate-90' : '-rotate-90'}`} aria-hidden="true" />
             </Link>
@@ -747,14 +747,14 @@ export default function EducationNew() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="bg-gradient-to-br from-[#4A1D43]/5 to-[#D4AF37]/5 rounded-xl p-6 border border-[#D4AF37]"
+            className="bg-gradient-to-br from-[#FFF8EA] to-[#D4AF37]/5 rounded-xl p-6 border border-[#D4AF37]"
           >
-            <h2 className="public-heading text-lg font-semibold text-[#4A1D43] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>{t.partnerBlock.title}</h2>
+            <h2 className="public-heading text-lg font-semibold text-[#292725] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>{t.partnerBlock.title}</h2>
             <p className="text-sm text-gray-600 mb-4">{t.partnerBlock.desc}</p>
             <button
               type="button"
               onClick={() => document.getElementById('education-events-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-              className="inline-flex items-center gap-2 text-[#4A1D43] hover:text-[#D4AF37] font-medium text-sm transition-colors"
+              className="inline-flex items-center gap-2 text-[#292725] hover:text-[#D4AF37] font-medium text-sm transition-colors"
             >
               {t.partnerBlock.link}
               <ChevronDown className={`w-4 h-4 ${isRTL ? 'rotate-90' : '-rotate-90'}`} aria-hidden="true" />
@@ -764,14 +764,14 @@ export default function EducationNew() {
       </section>
 
       <section className="max-w-5xl mx-auto px-4 pb-8" aria-labelledby="official-education-links">
-        <h2 id="official-education-links" className="public-heading text-xl font-semibold text-[#4A1D43] text-center mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>{official.title}</h2>
+        <h2 id="official-education-links" className="public-heading text-xl font-semibold text-[#292725] text-center mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>{official.title}</h2>
         <div className="grid gap-3 md:grid-cols-3">
           {[
             { label: official.labels[0], href: 'https://inscription.education.tn/' },
             { label: official.labels[1], href: 'https://www.education.gov.tn/?lang=fr' },
             { label: official.labels[2], href: 'https://www.mes.tn/' },
           ].map((link) => (
-            <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between gap-3 rounded-xl border border-[#D4AF37] bg-white p-4 text-sm font-semibold text-[#4A1D43] hover:bg-[#D4AF37]/10 transition-colors">
+            <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between gap-3 rounded-xl border border-[#D4AF37] bg-white p-4 text-sm font-semibold text-[#292725] hover:bg-[#D4AF37]/10 transition-colors">
               <span>{link.label}</span>
               <ExternalLink className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
             </a>
@@ -787,7 +787,7 @@ export default function EducationNew() {
           className="bg-white rounded-xl px-4 py-4 border border-[#D4AF37] shadow-sm"
         >
           <div className="mb-3">
-            <h2 className="public-heading text-lg font-semibold text-[#4A1D43] mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>{t.careersBlock.title}</h2>
+            <h2 className="public-heading text-lg font-semibold text-[#292725] mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>{t.careersBlock.title}</h2>
             <p className="text-xs text-gray-600">{t.careersBlock.desc}</p>
           </div>
 
@@ -795,13 +795,13 @@ export default function EducationNew() {
             <div className="grid md:grid-cols-3 gap-3 mb-3">
               {jobOffers.map((job) => (
                 <div key={job.id} className="bg-[#FAF9F6] rounded-lg px-3 py-2 border border-[#D4AF37]/30 hover:shadow-md transition">
-                  <h3 className="font-semibold text-[#4A1D43] mb-1 text-sm">{job.title}</h3>
+                  <h3 className="font-semibold text-[#292725] mb-1 text-sm">{job.title}</h3>
                   <p className="text-xs text-gray-600 mb-1">{job.company}</p>
                   <div className="flex items-center gap-1.5 text-xs text-gray-500">
                     <MapPin className="w-3 h-3 text-[#D4AF37]" />
                     <span>{job.city}</span>
                   </div>
-                  <span className="inline-block mt-1.5 px-2 py-0.5 bg-[#D4AF37]/20 text-[#4A1D43] rounded-full text-[10px] font-medium">
+                  <span className="inline-block mt-1.5 px-2 py-0.5 bg-[#D4AF37]/20 text-[#292725] rounded-full text-[10px] font-medium">
                     {job.contract_type}
                   </span>
                 </div>
@@ -813,7 +813,7 @@ export default function EducationNew() {
 
           <Link
             to="/jobs"
-            className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#4A1D43] hover:bg-[#5A2D53] text-[#D4AF37] hover:text-white rounded-lg transition font-semibold text-xs border border-[#D4AF37]"
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#D6B86D] hover:bg-[#E4CB91] text-[#292725] hover:text-[#292725] rounded-lg transition font-semibold text-xs border border-[#D4AF37]"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
             {t.careersBlock.viewAll}
@@ -827,21 +827,21 @@ export default function EducationNew() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-br from-[#4A1D43]/5 to-[#D4AF37]/5 rounded-xl px-3 py-3 border border-[#D4AF37] shadow-sm"
+          className="bg-gradient-to-br from-[#FFF8EA] to-[#D4AF37]/5 rounded-xl px-3 py-3 border border-[#D4AF37] shadow-sm"
         >
           <div className="mb-2">
-            <h2 className="public-heading text-lg font-semibold text-[#4A1D43]" style={{ fontFamily: "'Playfair Display', serif" }}>{t.events.upcoming}</h2>
+            <h2 className="public-heading text-lg font-semibold text-[#292725]" style={{ fontFamily: "'Playfair Display', serif" }}>{t.events.upcoming}</h2>
           </div>
 
           {/* Filtre par ville */}
           <div className="mb-3 max-w-md">
-            <label className="block text-xs font-medium text-[#4A1D43] mb-1.5">
+            <label className="block text-xs font-medium text-[#292725] mb-1.5">
               {t.events.filterByCity}
             </label>
             <select
               value={eventsCity}
               onChange={(e) => setEventsCity(e.target.value)}
-              className="w-full px-3 py-1.5 rounded-lg border border-[#D4AF37] focus:ring-2 focus:ring-[#4A1D43] focus:border-transparent text-sm"
+              className="w-full px-3 py-1.5 rounded-lg border border-[#D4AF37] focus:ring-2 focus:ring-[#C9A65D] focus:border-transparent text-sm"
             >
               <option value="">{t.events.allCities}</option>
               <option value="Tunis">Tunis</option>
@@ -866,7 +866,7 @@ export default function EducationNew() {
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1">
-                      <h3 className="font-semibold text-[#4A1D43] mb-1 text-sm" style={{ fontFamily: "'Playfair Display', serif" }}>
+                      <h3 className="font-semibold text-[#292725] mb-1 text-sm" style={{ fontFamily: "'Playfair Display', serif" }}>
                         {event.event_name}
                       </h3>
                       {event.organizer && (
@@ -898,7 +898,7 @@ export default function EducationNew() {
                         href={event.registration_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex-shrink-0 px-3 py-1.5 bg-[#4A1D43] hover:bg-[#5A2D53] border border-[#D4AF37] text-[#D4AF37] hover:text-white rounded-lg transition text-xs font-semibold"
+                        className="flex-shrink-0 px-3 py-1.5 bg-[#D6B86D] hover:bg-[#E4CB91] border border-[#C9A65D] text-[#292725] hover:text-[#292725] rounded-lg transition text-xs font-semibold"
                         style={{ fontFamily: "'Playfair Display', serif" }}
                       >
                         {t.events.register}

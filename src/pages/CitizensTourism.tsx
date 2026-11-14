@@ -509,7 +509,7 @@ export default function CitizensTourism() {
           className="absolute inset-0 w-full h-full object-cover object-center"
           decoding="async"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#4A1D43]/75 via-[#4A1D43]/60 to-[#4A1D43]/25" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#292725]/75 via-[#292725]/55 to-[#292725]/25" />
         <a className="absolute bottom-1 right-2 z-10 text-[10px] text-white/85 underline" href="https://commons.wikimedia.org/wiki/File:Sidi_bou_said_port.jpg" target="_blank" rel="noopener noreferrer" aria-label="Crédit photo Rania Haddad, licence CC BY-SA 4.0">Photo : Rania Haddad · CC BY-SA 4.0</a>
 
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-4 py-6">
@@ -521,7 +521,7 @@ export default function CitizensTourism() {
       <section className="py-4 px-4">
         <div className="max-w-2xl mx-auto text-center">
           <p className="text-base md:text-lg font-normal mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
-            <span className="text-[#4A1D43]">{t.slogan}</span>
+            <span className="text-[#292725]">{t.slogan}</span>
           </p>
           <div className="flex justify-center"><div className="w-[40px] h-[1px] bg-[#D4AF37]" /></div>
         </div>
@@ -545,25 +545,25 @@ export default function CitizensTourism() {
       <section className="px-4 pt-6">
         <div className="max-w-5xl mx-auto rounded-2xl border border-[#D4AF37]/50 bg-white px-3 py-4 sm:px-5 shadow-sm">
           <div className="flex justify-center gap-2" role="tablist" aria-label={t.title}>
-            <button type="button" role="tab" aria-selected={journeyMode === 'visit'} onClick={() => setJourneyMode('visit')} className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 text-xs sm:text-sm font-semibold transition-colors ${journeyMode === 'visit' ? 'border-[#D4AF37] bg-[#4A1D43] text-[#D4AF37]' : 'border-[#D4AF37]/50 bg-white text-[#4A1D43] hover:bg-[#D4AF37]/10'}`}>
+            <button type="button" role="tab" aria-selected={journeyMode === 'visit'} onClick={() => setJourneyMode('visit')} className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 text-xs sm:text-sm font-semibold transition-colors ${journeyMode === 'visit' ? 'border-[#D4AF37] bg-[#D6B86D] text-[#292725]' : 'border-[#D4AF37]/50 bg-white text-[#292725] hover:bg-[#D4AF37]/10'}`}>
               <Compass className="h-4 w-4" aria-hidden="true" />{journey.visitTab}
             </button>
-            <button type="button" role="tab" aria-selected={journeyMode === 'settle'} onClick={() => setJourneyMode('settle')} className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 text-xs sm:text-sm font-semibold transition-colors ${journeyMode === 'settle' ? 'border-[#D4AF37] bg-[#4A1D43] text-[#D4AF37]' : 'border-[#D4AF37]/50 bg-white text-[#4A1D43] hover:bg-[#D4AF37]/10'}`}>
+            <button type="button" role="tab" aria-selected={journeyMode === 'settle'} onClick={() => setJourneyMode('settle')} className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 text-xs sm:text-sm font-semibold transition-colors ${journeyMode === 'settle' ? 'border-[#D4AF37] bg-[#D6B86D] text-[#292725]' : 'border-[#D4AF37]/50 bg-white text-[#292725] hover:bg-[#D4AF37]/10'}`}>
               <Home className="h-4 w-4" aria-hidden="true" />{journey.settleTab}
             </button>
           </div>
 
           <div className="mt-4 text-center">
-            <h2 className="text-xl font-semibold text-[#4A1D43]" style={{ fontFamily: "'Playfair Display', serif" }}>{journeyMode === 'visit' ? journey.visitTitle : journey.settleTitle}</h2>
+            <h2 className="text-xl font-semibold text-[#292725]" style={{ fontFamily: "'Playfair Display', serif" }}>{journeyMode === 'visit' ? journey.visitTitle : journey.settleTitle}</h2>
             <p className="mx-auto mt-1.5 max-w-2xl text-sm leading-relaxed text-gray-600">{journeyMode === 'visit' ? journey.visitIntro : journey.settleIntro}</p>
           </div>
 
           {journeyMode === 'visit' && <p className="mt-3 text-center text-xs font-semibold tracking-wide text-[#A45A27]">✨ Six façons de vivre la Tunisie, pas seulement de la visiter</p>}
           <div className="mt-4 grid grid-cols-2 gap-2.5 lg:grid-cols-3">
             {topics.map((topic, topicIndex) => journeyMode === 'visit' ? (
-              <Link key={topic.title} to={topic.href} className={`group relative min-w-0 overflow-hidden rounded-2xl border border-[#D9C9A4] px-2.5 py-3 sm:px-4 sm:py-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#4A1D43] bg-[#FFFCF7]`}>
+              <Link key={topic.title} to={topic.href} className={`group relative min-w-0 overflow-hidden rounded-2xl border border-[#D9C9A4] px-2.5 py-3 sm:px-4 sm:py-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#C9A65D] bg-[#FFFCF7]`}>
                 <div className="mb-2 flex items-center justify-between"><span className="text-xl sm:text-2xl" aria-hidden="true">{['🏛️','🌿','🧶','🍲','🎉','🏡'][topicIndex] || '🇹🇳'}</span><span className="rounded-full bg-white/65 px-2 py-0.5 text-[10px] font-semibold text-[#784626]">Explorer</span></div>
-                <div className="flex items-center justify-between gap-3 text-sm font-semibold text-[#4A1D43]">
+                <div className="flex items-center justify-between gap-3 text-sm font-semibold text-[#292725]">
                   <span>{topic.title}</span>
                   <ChevronDown className={`h-4 w-4 flex-shrink-0 -rotate-90 text-[#D4AF37] ${isRTL ? 'rotate-90' : ''}`} aria-hidden="true" />
                 </div>
@@ -577,15 +577,15 @@ export default function CitizensTourism() {
               </Link>
             ) : (
               <details key={topic.title} className="group min-w-0 rounded-xl border border-[#D4AF37]/45 bg-[#FFFDF8] px-3 py-2.5 open:border-[#D4AF37] max-md:open:fixed max-md:open:inset-x-3 max-md:open:top-[10dvh] max-md:open:bottom-[10dvh] max-md:open:z-[100] max-md:open:flex max-md:open:flex-col max-md:open:overflow-hidden max-md:open:bg-white max-md:open:p-0 max-md:open:shadow-2xl">
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-[#4A1D43] [&::-webkit-details-marker]:hidden max-md:group-open:shrink-0 max-md:group-open:border-b max-md:group-open:border-[#D4AF37]/30 max-md:group-open:bg-[#FFFDF8] max-md:group-open:px-4 max-md:group-open:py-4">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-[#292725] [&::-webkit-details-marker]:hidden max-md:group-open:shrink-0 max-md:group-open:border-b max-md:group-open:border-[#D4AF37]/30 max-md:group-open:bg-[#FFFDF8] max-md:group-open:px-4 max-md:group-open:py-4">
                   <span>{topic.title}</span>
-                  <span className="flex shrink-0 items-center gap-1.5"><span className="hidden text-[11px] font-semibold text-[#4A1D43] max-md:group-open:inline">{({fr:'Fermer',ar:'إغلاق',en:'Close',it:'Chiudi',ru:'Закрыть'} as Record<PublicLanguage, string>)[lang]}</span><ChevronDown className="h-4 w-4 text-[#D4AF37] transition-transform group-open:rotate-180" aria-hidden="true" /></span>
+                  <span className="flex shrink-0 items-center gap-1.5"><span className="hidden text-[11px] font-semibold text-[#292725] max-md:group-open:inline">{({fr:'Fermer',ar:'إغلاق',en:'Close',it:'Chiudi',ru:'Закрыть'} as Record<PublicLanguage, string>)[lang]}</span><ChevronDown className="h-4 w-4 text-[#D4AF37] transition-transform group-open:rotate-180" aria-hidden="true" /></span>
                 </summary>
                 <div className="max-md:group-open:min-h-0 max-md:group-open:flex-1 max-md:group-open:overflow-y-auto max-md:group-open:overscroll-contain max-md:group-open:px-4 max-md:group-open:pb-6">
                 <div className="mt-3 flex items-start gap-2">
-                  <p className="min-w-0 flex-1 text-xs font-medium leading-relaxed text-[#4A1D43]">{settleServiceIntros[lang][topicIndex]}</p>
+                  <p className="min-w-0 flex-1 text-xs font-medium leading-relaxed text-[#292725]">{settleServiceIntros[lang][topicIndex]}</p>
                   {SETTLEMENT_SERVICE_PATHS[topicIndex] && (
-                    <a href={SETTLEMENT_SERVICE_PATHS[topicIndex]} aria-label={settlementServiceLinkLabels[lang] + ' — ' + topic.title} title={settlementServiceLinkLabels[lang]} className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#D4AF37]/60 bg-[#FFF8E8] text-[#4A1D43] transition hover:bg-[#F3E2B5] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#4A1D43]">
+                    <a href={SETTLEMENT_SERVICE_PATHS[topicIndex]} aria-label={settlementServiceLinkLabels[lang] + ' — ' + topic.title} title={settlementServiceLinkLabels[lang]} className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#D4AF37]/60 bg-[#FFF8E8] text-[#292725] transition hover:bg-[#F3E2B5] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#C9A65D]">
                       <ExternalLink className="h-4 w-4" aria-hidden="true" />
                     </a>
                   )}
@@ -593,11 +593,11 @@ export default function CitizensTourism() {
                 <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-[#7C5A31]">{({fr:'À faire',ar:'الخطوات',en:'What to do',it:'Cosa fare',ru:'Что делать'} as Record<PublicLanguage, string>)[lang]}</p>
                 {(topicIndex === 1 || topicIndex === 4) && (
                   <div className="mt-2 rounded-lg border border-[#D4AF37]/30 bg-white p-3">
-                    <p className="text-xs font-semibold text-[#4A1D43]">{topicIndex === 1 ? housingBankProfiles[lang].housingTitle : housingBankProfiles[lang].bankTitle}</p>
+                    <p className="text-xs font-semibold text-[#292725]">{topicIndex === 1 ? housingBankProfiles[lang].housingTitle : housingBankProfiles[lang].bankTitle}</p>
                     <div className="mt-2 space-y-1.5">
                       {(topicIndex === 1 ? housingBankProfiles[lang].housing : housingBankProfiles[lang].bank).map(item => (
                         <details key={item.title} className="rounded-md border border-[#D4AF37]/25 bg-[#FFFDF8] p-2">
-                          <summary className="cursor-pointer text-xs font-medium text-[#4A1D43]">{item.title}</summary>
+                          <summary className="cursor-pointer text-xs font-medium text-[#292725]">{item.title}</summary>
                           <p className="mt-1.5 text-xs leading-relaxed text-gray-700">{item.text}</p>
                         </details>
                       ))}
@@ -606,11 +606,11 @@ export default function CitizensTourism() {
                 )}
                 {([2, 3, 6].includes(topicIndex)) && (
                   <div className="mt-2 rounded-lg border border-[#D4AF37]/30 bg-white p-3">
-                    <p className="text-xs font-semibold text-[#4A1D43]">{topicIndex === 2 ? serviceSituationGuides[lang].healthTitle : topicIndex === 3 ? serviceSituationGuides[lang].educationTitle : serviceSituationGuides[lang].workTitle}</p>
+                    <p className="text-xs font-semibold text-[#292725]">{topicIndex === 2 ? serviceSituationGuides[lang].healthTitle : topicIndex === 3 ? serviceSituationGuides[lang].educationTitle : serviceSituationGuides[lang].workTitle}</p>
                     <div className="mt-2 space-y-1.5">
                       {(topicIndex === 2 ? serviceSituationGuides[lang].health : topicIndex === 3 ? serviceSituationGuides[lang].education : serviceSituationGuides[lang].work).map(item => (
                         <details key={item.title} className="rounded-md border border-[#D4AF37]/25 bg-[#FFFDF8] p-2">
-                          <summary className="cursor-pointer text-xs font-medium text-[#4A1D43]">{item.title}</summary>
+                          <summary className="cursor-pointer text-xs font-medium text-[#292725]">{item.title}</summary>
                           <p className="mt-1.5 text-xs leading-relaxed text-gray-700">{item.text}</p>
                         </details>
                       ))}
@@ -619,11 +619,11 @@ export default function CitizensTourism() {
                 )}
                 {topicIndex === 7 && (
                   <div className="mt-2 rounded-lg border border-[#D4AF37]/30 bg-white p-3">
-                    <p className="text-xs font-semibold text-[#4A1D43]">{dailySituations[lang].title}</p>
+                    <p className="text-xs font-semibold text-[#292725]">{dailySituations[lang].title}</p>
                     <div className="mt-2 space-y-1.5">
                       {dailySituations[lang].choices.map(choice => (
                         <details key={choice.title} className="rounded-md border border-[#D4AF37]/25 bg-[#FFFDF8] p-2">
-                          <summary className="cursor-pointer text-xs font-medium text-[#4A1D43]">{choice.title}</summary>
+                          <summary className="cursor-pointer text-xs font-medium text-[#292725]">{choice.title}</summary>
                           <p className="mt-1.5 text-xs leading-relaxed text-gray-700">{choice.detail}</p>
                         </details>
                       ))}
@@ -640,15 +640,15 @@ export default function CitizensTourism() {
                 )}
                 {topicIndex === 0 && (
                   <div className="mt-3 rounded-lg border border-[#D4AF37]/30 bg-white p-3">
-                    <p className="text-xs font-semibold text-[#4A1D43]">{residenceGuide[lang].title}</p>
+                    <p className="text-xs font-semibold text-[#292725]">{residenceGuide[lang].title}</p>
                     <ol className="mt-2 list-decimal space-y-1.5 ps-4 text-xs leading-relaxed text-gray-700">
                       {residenceGuide[lang].steps.map(step => <li key={step}>{step}</li>)}
                     </ol>
-                    <p className="mt-3 text-xs font-semibold text-[#4A1D43]">{residenceProfiles[lang].label}</p>
+                    <p className="mt-3 text-xs font-semibold text-[#292725]">{residenceProfiles[lang].label}</p>
                     <div className="mt-2 space-y-1.5">
                       {residenceProfiles[lang].profiles.map((name, index) => (
                         <details key={name} className="rounded-md border border-[#D4AF37]/25 bg-[#FFFDF8] p-2">
-                          <summary className="cursor-pointer text-xs font-medium text-[#4A1D43]">{name}</summary>
+                          <summary className="cursor-pointer text-xs font-medium text-[#292725]">{name}</summary>
                           <p className="mt-1.5 text-xs leading-relaxed text-gray-700">{residenceProfiles[lang].details[index]}</p>
                         </details>
                       ))}
@@ -658,7 +658,7 @@ export default function CitizensTourism() {
                 )}
                 {topicIndex === 3 && (
                   <div className="mt-3 rounded-lg border border-[#D4AF37]/30 bg-white p-3">
-                    <p className="text-xs font-semibold text-[#4A1D43]">{schoolWorkGuides[lang].schoolTitle}</p>
+                    <p className="text-xs font-semibold text-[#292725]">{schoolWorkGuides[lang].schoolTitle}</p>
                     <ol className="mt-2 list-decimal space-y-1.5 ps-4 text-xs leading-relaxed text-gray-700">
                       {schoolWorkGuides[lang].schoolSteps.map(step => <li key={step}>{step}</li>)}
                     </ol>
@@ -667,7 +667,7 @@ export default function CitizensTourism() {
                 )}
                 {topicIndex === 6 && (
                   <div className="mt-3 rounded-lg border border-[#D4AF37]/30 bg-white p-3">
-                    <p className="text-xs font-semibold text-[#4A1D43]">{schoolWorkGuides[lang].workTitle}</p>
+                    <p className="text-xs font-semibold text-[#292725]">{schoolWorkGuides[lang].workTitle}</p>
                     <ol className="mt-2 list-decimal space-y-1.5 ps-4 text-xs leading-relaxed text-gray-700">
                       {schoolWorkGuides[lang].workSteps.map(step => <li key={step}>{step}</li>)}
                     </ol>
@@ -677,11 +677,11 @@ export default function CitizensTourism() {
                 )}
                 {topicIndex === 5 && (
                   <div className="mt-3 rounded-lg border border-[#D4AF37]/30 bg-white p-3">
-                    <p className="text-xs font-semibold text-[#4A1D43]">{customsGuide[lang].title}</p>
+                    <p className="text-xs font-semibold text-[#292725]">{customsGuide[lang].title}</p>
                     <div className="mt-2 space-y-3">
                       {customsGuide[lang].paths.map((path) => (
                         <details key={path.title} className="rounded-md border border-[#D4AF37]/25 bg-[#FFFDF8] p-2">
-                          <summary className="cursor-pointer text-xs font-semibold text-[#4A1D43]">{path.title}</summary>
+                          <summary className="cursor-pointer text-xs font-semibold text-[#292725]">{path.title}</summary>
                           <p className="mt-2 text-xs leading-relaxed text-gray-700">{path.text}</p>
                         </details>
                       ))}
@@ -691,7 +691,7 @@ export default function CitizensTourism() {
                 )}
                 {topicIndex === 4 && (
                   <div className="mt-3 rounded-lg border border-[#D4AF37]/30 bg-white p-3">
-                    <p className="text-xs font-semibold text-[#4A1D43]">{bankingGuide[lang].title}</p>
+                    <p className="text-xs font-semibold text-[#292725]">{bankingGuide[lang].title}</p>
                     <ol className="mt-2 list-decimal space-y-1.5 ps-4 text-xs leading-relaxed text-gray-700">
                       {bankingGuide[lang].steps.map((step) => <li key={step}>{step}</li>)}
                     </ol>
@@ -701,7 +701,7 @@ export default function CitizensTourism() {
                 )}
 
                   <div className="mt-3 rounded-lg border border-[#D4AF37]/30 bg-[#FFFDF8] p-3">
-                    <p className="text-xs font-semibold text-[#4A1D43]">{settlementPrep[lang].heading}</p>
+                    <p className="text-xs font-semibold text-[#292725]">{settlementPrep[lang].heading}</p>
                     <p className="mt-1.5 text-xs leading-relaxed text-gray-700">{settlementPrep[lang].items[topicIndex]}</p>
                   </div>
                   <p className="mt-3 border-t border-[#D4AF37]/20 pt-2 text-[11px] leading-relaxed text-gray-500">{settlementPrep[lang].disclaimer}</p>
@@ -713,7 +713,7 @@ export default function CitizensTourism() {
 
           {journeyMode === 'settle' && (
             <div className="mt-4 rounded-xl border border-dashed border-[#D4AF37] bg-white px-4 py-3 text-center">
-              <h3 className="text-sm font-semibold text-[#4A1D43]">{journey.bookletTitle}</h3>
+              <h3 className="text-sm font-semibold text-[#292725]">{journey.bookletTitle}</h3>
               <p className="mt-1 text-xs leading-relaxed text-gray-600">{journey.bookletText}</p>
             </div>
           )}
@@ -721,7 +721,7 @@ export default function CitizensTourism() {
           {journeyMode === 'settle' && (
             <nav className="mt-4 flex flex-wrap justify-center gap-2" aria-label={t.expatTitle}>
               {QUICK_LINK_PATHS.map((path, index) => (
-                <Link key={path} to={path} className="rounded-full border border-[#D4AF37]/50 px-3 py-1.5 text-xs font-medium text-[#4A1D43] hover:bg-[#D4AF37]/10">
+                <Link key={path} to={path} className="rounded-full border border-[#D4AF37]/50 px-3 py-1.5 text-xs font-medium text-[#292725] hover:bg-[#D4AF37]/10">
                   {t.quickLinks[index]}
                 </Link>
               ))}
@@ -731,7 +731,7 @@ export default function CitizensTourism() {
       </section>
 
       {journeyMode === 'visit' && <>
-        <div className="mx-auto max-w-5xl px-4 pt-4"><Link to="/citizens/tourism/thermalisme" className="block rounded-xl border border-[#D4AF37] bg-[#FFF8E8] px-4 py-3 text-center text-sm font-semibold text-[#4A1D43] hover:bg-[#F3E2B5]">♨️ {lang === 'ar' ? 'الحمامات المعدنية والعيون الطبيعية والرفاه' : lang === 'en' ? 'Thermal baths, natural springs & wellness' : lang === 'it' ? 'Terme, sorgenti naturali e benessere' : lang === 'ru' ? 'Термальные источники и отдых' : 'Thermalisme, sources naturelles et bien-être'}</Link></div>
+        <div className="mx-auto max-w-5xl px-4 pt-4"><Link to="/citizens/tourism/thermalisme" className="block rounded-xl border border-[#D4AF37] bg-[#FFF8E8] px-4 py-3 text-center text-sm font-semibold text-[#292725] hover:bg-[#F3E2B5]">♨️ {lang === 'ar' ? 'الحمامات المعدنية والعيون الطبيعية والرفاه' : lang === 'en' ? 'Thermal baths, natural springs & wellness' : lang === 'it' ? 'Terme, sorgenti naturali e benessere' : lang === 'ru' ? 'Термальные источники и отдых' : 'Thermalisme, sources naturelles et bien-être'}</Link></div>
         <TourismExperienceDiscovery />
       </>}
 

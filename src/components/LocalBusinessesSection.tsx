@@ -75,7 +75,7 @@ export const LocalBusinessesSection = ({ onCardClick }: LocalBusinessesSectionPr
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-4">
           <div className="flex items-center justify-center gap-2 mb-2">
-            <Store className="w-5 h-5 text-[#4A1D43]" />
+            <Store className="w-5 h-5 text-[#292725]" />
             <h2 className="text-lg md:text-xl font-light text-gray-900">Commerces Locaux</h2>
           </div>
           <p className="text-gray-600 text-sm">Soutenez nos commerçants et artisans locaux</p>
@@ -126,7 +126,7 @@ export const LocalBusinessesSection = ({ onCardClick }: LocalBusinessesSectionPr
           <div className="text-center mt-4">
             <a
               href="#/entreprises?commerce_local=true"
-              className="inline-flex items-center gap-2 px-5 py-2 bg-white text-[#4A1D43] font-medium rounded-lg transition-all duration-300 shadow-[0_2px_10px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.15)] hover:scale-105 border-2 border-[#4A1D43] text-sm"
+              className="inline-flex items-center gap-2 px-5 py-2 bg-white text-[#292725] font-medium rounded-lg transition-all duration-300 shadow-[0_2px_10px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.15)] hover:scale-105 border-2 border-[#C9A65D] text-sm"
             >
               <Store className="w-4 h-4" />
               Découvrir tous nos commerces locaux

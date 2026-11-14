@@ -718,7 +718,7 @@ export default function SearchBar({
       </div>
 
       <div className="mt-4 text-center">
-        <p className="text-sm font-semibold text-[#4A1D43]">
+        <p className="text-sm font-semibold text-[#292725]">
           <span
             aria-hidden="true"
             style={{

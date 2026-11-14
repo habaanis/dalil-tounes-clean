@@ -83,16 +83,16 @@ export default function BusinessNeedsPublic() {
         <div className="mb-8">
           <button
             onClick={() => navigate('/entreprises')}
-            className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#4A1D43] mb-4 transition-colors"
+            className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#292725] mb-4 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             {t.back}
           </button>
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-[#4A1D43] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-[#D6B86D] flex items-center justify-center">
               <Briefcase className="w-5 h-5 text-[#D4AF37]" />
             </div>
-            <h1 className="text-2xl font-bold text-[#4A1D43]">{t.title}</h1>
+            <h1 className="text-2xl font-bold text-[#292725]">{t.title}</h1>
           </div>
           <p className="text-gray-600 text-sm">{t.intro}</p>
         </div>
@@ -147,7 +147,7 @@ export default function BusinessNeedsPublic() {
               return (
                 <div key={need.id} className="bg-white rounded-xl p-5 border border-gray-100 hover:border-[#D4AF37]/30 hover:shadow-sm transition-all">
                   <div className="flex flex-wrap items-start justify-between gap-2 mb-3">
-                    <h3 className="text-base font-semibold text-[#4A1D43] flex-1 min-w-0">{need.title}</h3>
+                    <h3 className="text-base font-semibold text-[#292725] flex-1 min-w-0">{need.title}</h3>
                     <span
                       className="text-[10px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap"
                       style={{ color: urgencyStyle.color, backgroundColor: urgencyStyle.bg }}

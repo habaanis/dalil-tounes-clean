@@ -351,7 +351,7 @@ export default function CitizensHealth({}: CitizensHealthProps) {
             </div>
           ) : !hasSearchedTransport ? null : transportProviders.length > 0 ? (
             <div className="mt-8">
-              <h3 className="text-2xl font-light text-[#4A1D43] mb-6" style={{ fontFamily: "'Playfair Display', serif" }}>
+              <h3 className="text-2xl font-light text-[#292725] mb-6" style={{ fontFamily: "'Playfair Display', serif" }}>
                 {transportProviders.length} {transportProviders.length > 1 ? c.providerPlur : c.providerSing} {transportProviders.length > 1 ? c.availablePlur : c.availableSing}
               </h3>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -361,7 +361,7 @@ export default function CitizensHealth({}: CitizensHealthProps) {
           ) : (
             <div className="mt-8 text-center py-12 bg-white rounded-xl border border-[#D4AF37]">
               <Building2 className="w-16 h-16 text-[#D4AF37]/50 mx-auto mb-4" />
-              <p className="text-[#4A1D43] mb-2 font-medium">{c.noProvider}</p>
+              <p className="text-[#292725] mb-2 font-medium">{c.noProvider}</p>
               <p className="text-sm text-gray-500">{c.modifyCriteria}</p>
             </div>
           )}
@@ -406,9 +406,9 @@ export default function CitizensHealth({}: CitizensHealthProps) {
           <div className="border-t border-[#C9A65D]/40 pt-3">
       <section className="px-3 pb-3">
         <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-3">
-          <div className="bg-white rounded-xl border border-[#D4AF37] p-4 hover:shadow-lg transition-all duration-300"><h4 className="text-sm font-medium text-[#4A1D43] mb-1.5" style={{ fontFamily: "'Playfair Display', serif" }}>{t.health.info.cnamTitle}</h4><p className="text-xs text-gray-700">{t.health.info.cnamBody}</p></div>
-          <div className="bg-white rounded-xl border border-[#D4AF37] p-4 hover:shadow-lg transition-all duration-300"><h4 className="text-sm font-medium text-[#4A1D43] mb-1.5" style={{ fontFamily: "'Playfair Display', serif" }}>{t.health.info.csbTitle}</h4><p className="text-xs text-gray-700">{t.health.info.csbBody}</p></div>
-          <div className="bg-white rounded-xl border border-[#D4AF37] p-4 hover:shadow-lg transition-all duration-300"><h4 className="text-sm font-medium text-[#4A1D43] mb-1.5" style={{ fontFamily: "'Playfair Display', serif" }}>{t.health.info.tipsTitle}</h4><p className="text-xs text-gray-700">{t.health.info.tipsBody}</p></div>
+          <div className="bg-white rounded-xl border border-[#D4AF37] p-4 hover:shadow-lg transition-all duration-300"><h4 className="text-sm font-medium text-[#292725] mb-1.5" style={{ fontFamily: "'Playfair Display', serif" }}>{t.health.info.cnamTitle}</h4><p className="text-xs text-gray-700">{t.health.info.cnamBody}</p></div>
+          <div className="bg-white rounded-xl border border-[#D4AF37] p-4 hover:shadow-lg transition-all duration-300"><h4 className="text-sm font-medium text-[#292725] mb-1.5" style={{ fontFamily: "'Playfair Display', serif" }}>{t.health.info.csbTitle}</h4><p className="text-xs text-gray-700">{t.health.info.csbBody}</p></div>
+          <div className="bg-white rounded-xl border border-[#D4AF37] p-4 hover:shadow-lg transition-all duration-300"><h4 className="text-sm font-medium text-[#292725] mb-1.5" style={{ fontFamily: "'Playfair Display', serif" }}>{t.health.info.tipsTitle}</h4><p className="text-xs text-gray-700">{t.health.info.tipsBody}</p></div>
         </div>
       </section>
 
@@ -423,14 +423,14 @@ export default function CitizensHealth({}: CitizensHealthProps) {
           <div className="border-t border-[#C9A65D]/40 pt-3">
       <section className="px-3 pb-3" aria-labelledby="official-health-links">
         <div className="max-w-5xl mx-auto">
-          <h2 id="official-health-links" className="public-heading text-xl font-semibold text-[#4A1D43] text-center mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>{c.officialTitle}</h2>
+          <h2 id="official-health-links" className="public-heading text-xl font-semibold text-[#292725] text-center mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>{c.officialTitle}</h2>
           <div className="grid gap-3 md:grid-cols-3">
             {[
               { label: c.officialLinks[0], href: 'https://www.cnam.nat.tn/services-en-ligne.jsp' },
               { label: c.officialLinks[1], href: 'https://www.cnam.nat.tn/ar_bureauxMap.jsp' },
               { label: c.officialLinks[2], href: 'https://www.sante.gov.tn/' },
             ].map((link) => (
-              <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between gap-3 rounded-xl border border-[#D4AF37] bg-white p-4 text-sm font-semibold text-[#4A1D43] hover:bg-[#D4AF37]/10 transition-colors">
+              <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between gap-3 rounded-xl border border-[#D4AF37] bg-white p-4 text-sm font-semibold text-[#292725] hover:bg-[#D4AF37]/10 transition-colors">
                 <span>{link.label}</span>
                 <ExternalLink className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
               </a>

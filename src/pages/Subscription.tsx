@@ -935,7 +935,7 @@ function ResponsiveFeatureList({
           type="button"
           aria-expanded={expanded}
           onClick={() => setExpanded((current) => !current)}
-          className={`mt-3 text-sm font-medium underline underline-offset-4 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${variant === 'dark' ? 'text-[#F4CE55] decoration-white/50' : 'text-[#4A123F] decoration-[#D6AF2E]'}`}
+          className={`mt-3 text-sm font-medium underline underline-offset-4 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${variant === 'dark' ? 'text-[#F4CE55] decoration-white/50' : 'text-[#292725] decoration-[#D6AF2E]'}`}
         >
           {expanded ? hideLabel : showLabel}
         </button>
@@ -1019,7 +1019,7 @@ function Modal({
             ref={closeButtonRef}
             type="button"
             onClick={onClose}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-[#D6AF2E] hover:text-[#4A123F] focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-[#D6AF2E] hover:text-[#292725] focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]"
             aria-label={closeLabel}
           >
             <X className="h-5 w-5" aria-hidden="true" />
@@ -1249,7 +1249,7 @@ function CreationPlanCard({
   selected?: boolean;
 }) {
   return (
-    <article className={`relative flex flex-col overflow-hidden rounded-3xl border-2 bg-[#FFF9ED] p-5 text-[#35172F] shadow-[0_12px_30px_rgba(7,84,63,0.16)] transition sm:p-6 ${selected ? 'border-[#C8A557] ring-4 ring-[#D6AF2E]' : 'border-[#D6AF2E]'}`}>
+    <article className={`relative flex flex-col overflow-hidden rounded-3xl border-2 bg-[#FFF9ED] p-5 text-[#292725] shadow-[0_12px_30px_rgba(7,84,63,0.16)] transition sm:p-6 ${selected ? 'border-[#C8A557] ring-4 ring-[#D6AF2E]' : 'border-[#D6AF2E]'}`}>
       <span className="absolute right-0 top-0 rounded-bl-2xl bg-[#D6AF2E] px-4 py-2 text-[11px] font-medium tracking-[0.12em] text-[#30162E]">CV BUSINESS</span>
       <h3 className="mt-8 text-2xl font-medium">{title}</h3>
       <div className="mt-2 flex items-end gap-2 text-[#815E28]">
@@ -1257,7 +1257,7 @@ function CreationPlanCard({
       </div>
       <p className="mt-1 text-xs font-medium uppercase tracking-[0.08em] text-[#645861]">{creationLabel}</p>
       <p className="mt-3 text-sm leading-6 text-[#594F57]">{intro}</p>
-      <p className="mt-3 rounded-xl bg-[#F8F0DE] px-3 py-2 text-sm font-medium text-[#35172F]">{firstYearIncluded}</p>
+      <p className="mt-3 rounded-xl bg-[#F8F0DE] px-3 py-2 text-sm font-medium text-[#292725]">{firstYearIncluded}</p>
       <button
         type="button"
         aria-expanded={expanded}
@@ -1342,39 +1342,39 @@ export const Subscription = () => {
           <p className="mb-3 flex items-center justify-center gap-3 text-xs font-medium uppercase tracking-[0.2em] text-amber-600">
             <span className="h-px w-8 bg-amber-400" /> {copy.heroEyebrow} <span className="h-px w-8 bg-amber-400" />
           </p>
-          <h1 className="font-serif text-2xl font-normal tracking-tight text-[#4A123F] sm:text-3xl">
+          <h1 className="font-serif text-2xl font-normal tracking-tight text-[#292725] sm:text-3xl">
             {structure.professional}
           </h1>
           <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-500 sm:text-base">{structure.freeIntro}</p>
         </header>
 
-        <nav className="mb-5 flex flex-wrap justify-center gap-3 text-sm font-medium text-[#4A1D43]" aria-label={structure.professional}>
+        <nav className="mb-5 flex flex-wrap justify-center gap-3 text-sm font-medium text-[#292725]" aria-label={structure.professional}>
           <a href="#presence-essentielle">{structure.essential}</a><a href="#concept">{structure.concept}</a><a href="#cv-professionnels">{structure.products}</a><a href="#modeles">{structure.models}</a><a href="#offres">{structure.offers}</a>
         </nav>
         <EssentialPresence registration />
         <p className="mt-3 text-sm font-semibold text-emerald-800">{copy.essentialFree}</p>
-        <button type="button" onClick={() => setActivePreview('free')} className="mt-3 min-h-11 rounded-xl border border-[#D4AF37] px-4 py-2 text-sm font-medium text-[#4A1D43]">{copy.previewCard}</button>
+        <button type="button" onClick={() => setActivePreview('free')} className="mt-3 min-h-11 rounded-xl border border-[#D4AF37] px-4 py-2 text-sm font-medium text-[#292725]">{copy.previewCard}</button>
         <section id="concept" className="my-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-5">
-          <h2 className="font-serif text-xl font-medium text-[#4A1D43]">Dalil Tounes</h2>
+          <h2 className="font-serif text-xl font-medium text-[#292725]">Dalil Tounes</h2>
           <p className="my-3 text-sm leading-6 text-slate-600">{structure.intro}</p>
           <p className="my-3 text-sm leading-6 text-slate-600">{copy.heroSubtitle}</p>
-          <details className="rounded-xl border border-[#D4AF37]/40 p-3"><summary className="cursor-pointer font-medium text-[#4A1D43]">{structure.concept}</summary><Concept embedded /></details>
-          <details id="histoire-fondateur" className="mt-3 scroll-mt-32 rounded-xl border border-[#D4AF37]/40 p-3"><summary className="cursor-pointer font-medium text-[#4A1D43]">{structure.story}</summary><FounderStory full /></details>
+          <details className="rounded-xl border border-[#D4AF37]/40 p-3"><summary className="cursor-pointer font-medium text-[#292725]">{structure.concept}</summary><Concept embedded /></details>
+          <details id="histoire-fondateur" className="mt-3 scroll-mt-32 rounded-xl border border-[#D4AF37]/40 p-3"><summary className="cursor-pointer font-medium text-[#292725]">{structure.story}</summary><FounderStory full /></details>
         </section>
         <section id="cv-professionnels" className="my-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-5">
-          <h2 className="font-serif text-xl font-medium text-[#4A1D43]">CV Business · CV Portfolio</h2>
+          <h2 className="font-serif text-xl font-medium text-[#292725]">CV Business · CV Portfolio</h2>
           <p className="my-3 text-sm leading-6 text-slate-600">{structure.cvIntro}</p>
-          <details><summary className="cursor-pointer font-medium text-[#4A1D43]">{structure.details}</summary><CvBusinessHome embedded /></details>
+          <details><summary className="cursor-pointer font-medium text-[#292725]">{structure.details}</summary><CvBusinessHome embedded /></details>
         </section>
         <section id="offres" aria-labelledby="cv-business-products-title" className="order-2 mt-5 sm:mt-0">
 <div className="mb-6 text-center">
   <p className="text-xs font-medium uppercase tracking-[0.18em] text-amber-600">CV BUSINESS DALIL TOUNES</p>
-  <h2 id="cv-business-products-title" className="mt-2 text-2xl font-medium text-[#4A123F] sm:text-3xl">{simpleCopy.productsTitle}</h2>
+  <h2 id="cv-business-products-title" className="mt-2 text-2xl font-medium text-[#292725] sm:text-3xl">{simpleCopy.productsTitle}</h2>
   <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-slate-600">{simpleCopy.productsSubtitle}</p>
 </div>
 
 <details id="modeles" className="mb-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-4">
-  <summary className="cursor-pointer font-medium text-[#4A1D43]">{structure.models}</summary>
+  <summary className="cursor-pointer font-medium text-[#292725]">{structure.models}</summary>
 <CvPresentationModelSelector
   language={language}
   formulaValue={selectedFormula}
@@ -1392,18 +1392,18 @@ export const Subscription = () => {
 <div className="mb-6 overflow-hidden rounded-3xl border border-[#D6AF2E]/60 bg-gradient-to-br from-[#FFF8DF] via-white to-[#FFF9ED] p-5 shadow-[0_12px_30px_rgba(74,18,63,0.07)] sm:p-7">
   <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
     <div className="max-w-3xl">
-      <span className="inline-flex items-center gap-2 rounded-full bg-[#4A123F] px-3 py-1 text-[10px] font-medium uppercase tracking-[0.12em] text-white">
-        <Sparkles className="h-3.5 w-3.5 text-[#F0C537]" aria-hidden="true" />
+      <span className="inline-flex items-center gap-2 rounded-full bg-[#D6B86D] px-3 py-1 text-[10px] font-medium uppercase tracking-[0.12em] text-[#292725]">
+        <Sparkles className="h-3.5 w-3.5 text-[#9B762D]" aria-hidden="true" />
         {simpleCopy.welcomeBadge}
       </span>
-      <h3 className="mt-3 text-xl font-medium text-[#4A123F] sm:text-2xl">{simpleCopy.welcomeTitle}</h3>
+      <h3 className="mt-3 text-xl font-medium text-[#292725] sm:text-2xl">{simpleCopy.welcomeTitle}</h3>
       <p className="mt-3 hidden text-sm leading-6 text-slate-700 sm:block">{simpleCopy.welcomeDescription}</p>
     </div>
-    <div className="hidden rounded-2xl border border-[#D3B16F] bg-[#FFF9ED] px-5 py-4 text-center text-[#4A1D43] shadow-sm sm:block lg:max-w-xs">
-      <p className="text-lg font-medium leading-6 text-[#4A1D43]">{simpleCopy.welcomeHighlight}</p>
+    <div className="hidden rounded-2xl border border-[#D3B16F] bg-[#FFF9ED] px-5 py-4 text-center text-[#292725] shadow-sm sm:block lg:max-w-xs">
+      <p className="text-lg font-medium leading-6 text-[#292725]">{simpleCopy.welcomeHighlight}</p>
     </div>
   </div>
-  <p className="mt-4 rounded-2xl border border-[#D6AF2E]/45 bg-white px-4 py-3 text-sm font-medium leading-6 text-[#4A123F]">{simpleCopy.welcomePayment}</p>
+  <p className="mt-4 rounded-2xl border border-[#D6AF2E]/45 bg-white px-4 py-3 text-sm font-medium leading-6 text-[#292725]">{simpleCopy.welcomePayment}</p>
 </div>
 
 <div className="grid items-stretch gap-5 lg:grid-cols-2">
@@ -1445,16 +1445,16 @@ export const Subscription = () => {
 
 
 
-<details className="mt-5 rounded-2xl border border-[#D4AF37]/50 bg-white p-4"><summary className="cursor-pointer font-medium text-[#4A1D43]">{structure.details}</summary><CvBusinessJourney language={language as OfferLanguage} /></details>
+<details className="mt-5 rounded-2xl border border-[#D4AF37]/50 bg-white p-4"><summary className="cursor-pointer font-medium text-[#292725]">{structure.details}</summary><CvBusinessJourney language={language as OfferLanguage} /></details>
 
 <div className="mt-5 rounded-3xl border border-[#D6AF2E]/60 bg-white p-5 shadow-[0_10px_28px_rgba(74,18,63,0.06)] sm:p-6">
   <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
     <div>
       <span className="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.12em] text-emerald-800">{simpleCopy.maintenanceTiming}</span>
-      <h3 className="mt-3 text-2xl font-medium text-[#4A123F]">{simpleCopy.maintenanceTitle}</h3>
+      <h3 className="mt-3 text-2xl font-medium text-[#292725]">{simpleCopy.maintenanceTitle}</h3>
       <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">{simpleCopy.maintenanceIntro}</p>
     </div>
-    <div className="text-3xl font-medium text-[#4A1D43]">{simpleCopy.maintenancePrice}</div>
+    <div className="text-3xl font-medium text-[#292725]">{simpleCopy.maintenancePrice}</div>
   </div>
   <div className="mt-5">
     <ResponsiveFeatureList
@@ -1464,7 +1464,7 @@ export const Subscription = () => {
       columns
     />
   </div>
-  <p className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold leading-6 text-[#4A123F]">{simpleCopy.noRenewal}</p>
+  <p className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold leading-6 text-[#292725]">{simpleCopy.noRenewal}</p>
 </div>
         </section>
 
@@ -1472,41 +1472,41 @@ export const Subscription = () => {
           type="button"
           aria-expanded={showSecondaryDetails}
           onClick={() => setShowSecondaryDetails((current) => !current)}
-          className="order-4 mt-7 rounded-xl border border-[#D6AF2E] bg-white px-4 py-3 text-sm font-medium text-[#4A123F] shadow-sm"
+          className="order-4 mt-7 rounded-xl border border-[#D6AF2E] bg-white px-4 py-3 text-sm font-medium text-[#292725] shadow-sm"
         >
           {showSecondaryDetails ? mobileCopy.hideSecondary : mobileCopy.showSecondary}
         </button>
 
         <aside className={`${showSecondaryDetails ? 'block' : 'hidden'} order-5 mt-5 rounded-2xl border border-amber-200 bg-white p-5 text-center shadow-sm`} aria-labelledby="cv-choice-help-title">
-          <h2 id="cv-choice-help-title" className="text-lg font-medium text-[#4A123F]">{essentialCopy.helpTitle}</h2>
+          <h2 id="cv-choice-help-title" className="text-lg font-medium text-[#292725]">{essentialCopy.helpTitle}</h2>
           <p className="mx-auto mt-2 max-w-3xl text-sm leading-6 text-slate-700">{essentialCopy.helpText}</p>
           <div className="mt-4 flex flex-wrap justify-center gap-3">
             <a href="https://wa.me/21650390546" target="_blank" rel="noreferrer" className="rounded-xl bg-[#07543F] px-5 py-3 text-sm font-medium text-white transition hover:bg-emerald-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D6AF2E]">
               {(offerCopy[language as OfferLanguage] ?? offerCopy.fr).contactWhatsApp}
             </a>
-            <a href="mailto:contact@dalil-tounes.com" className="rounded-xl border border-[#4A123F]/20 bg-white px-5 py-3 text-sm font-medium text-[#4A123F] transition hover:border-[#D6AF2E] hover:bg-amber-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D6AF2E]">
+            <a href="mailto:contact@dalil-tounes.com" className="rounded-xl border border-[#C9A65D]/20 bg-white px-5 py-3 text-sm font-medium text-[#292725] transition hover:border-[#D6AF2E] hover:bg-amber-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D6AF2E]">
               {(offerCopy[language as OfferLanguage] ?? offerCopy.fr).contactEmail}
             </a>
           </div>
         </aside>
 
-        <section className={`${showSecondaryDetails ? 'block' : 'hidden'} order-6 mt-5 rounded-3xl bg-gradient-to-r from-[#4A123F] to-[#5F174F] p-5 text-white shadow-xl sm:p-7`}>
+        <section className={`${showSecondaryDetails ? 'block' : 'hidden'} order-6 mt-5 rounded-3xl bg-gradient-to-r from-[#FFF8EA] to-[#F0E2BD] p-5 text-[#292725] shadow-sm sm:p-7`}>
           <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-start gap-4">
-              <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-[#D6AF2E] text-[#F0C537]">
+              <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-[#D6AF2E] text-[#9B762D]">
                 <Sparkles className="h-7 w-7" aria-hidden="true" />
               </span>
               <div>
                 <h2 className="text-2xl font-medium">{(offerCopy[language as OfferLanguage] ?? offerCopy.fr).eliteTitle}</h2>
-                <p className="mt-1 font-medium text-[#F0C537]">{(offerCopy[language as OfferLanguage] ?? offerCopy.fr).customSolution}</p>
-                <p className="mt-3 max-w-2xl text-sm leading-6 text-purple-100">{(offerCopy[language as OfferLanguage] ?? offerCopy.fr).eliteIntro}</p>
+                <p className="mt-1 font-medium text-[#9B762D]">{(offerCopy[language as OfferLanguage] ?? offerCopy.fr).customSolution}</p>
+                <p className="mt-3 max-w-2xl text-sm leading-6 text-[#514B43]">{(offerCopy[language as OfferLanguage] ?? offerCopy.fr).eliteIntro}</p>
               </div>
             </div>
             <div className="grid shrink-0 gap-2 sm:min-w-48">
-              <a href="mailto:contact@dalil-tounes.com" aria-label={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).contactEmail} className="rounded-xl bg-white px-5 py-3 text-center text-sm font-medium text-[#4A123F] transition hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]">
+              <a href="mailto:contact@dalil-tounes.com" aria-label={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).contactEmail} className="rounded-xl bg-white px-5 py-3 text-center text-sm font-medium text-[#292725] transition hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]">
                 {(offerCopy[language as OfferLanguage] ?? offerCopy.fr).contactUs}
               </a>
-              <a href="https://wa.me/21650390546" target="_blank" rel="noreferrer" className="rounded-xl border border-[#D6AF2E] px-5 py-3 text-center text-sm font-medium text-[#F0C537] transition hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]">
+              <a href="https://wa.me/21650390546" target="_blank" rel="noreferrer" className="rounded-xl border border-[#D6AF2E] px-5 py-3 text-center text-sm font-medium text-[#292725] transition hover:bg-[#E4CB91] focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]">
                 {(offerCopy[language as OfferLanguage] ?? offerCopy.fr).contactWhatsApp}
               </a>
             </div>
@@ -1514,23 +1514,23 @@ export const Subscription = () => {
         </section>
 
         <div className={`${showSecondaryDetails ? 'flex' : 'hidden'} order-7 mt-5 items-center justify-center gap-3 rounded-2xl border border-amber-200 bg-white px-4 py-4 text-center text-sm text-slate-700`}>
-          <Info className="h-5 w-5 shrink-0 text-[#4A123F]" aria-hidden="true" />
+          <Info className="h-5 w-5 shrink-0 text-[#292725]" aria-hidden="true" />
           <p>{copy.disclaimer}</p>
         </div>
 
-        <section className={`${showSecondaryDetails ? 'flex' : 'hidden'} order-8 mt-5 flex-col gap-5 rounded-3xl bg-gradient-to-r from-[#4A123F] to-[#5F174F] p-5 text-white shadow-xl sm:flex-row sm:items-center sm:justify-between sm:p-7`}>
+        <section className={`${showSecondaryDetails ? 'flex' : 'hidden'} order-8 mt-5 flex-col gap-5 rounded-3xl bg-gradient-to-r from-[#FFF8EA] to-[#F0E2BD] p-5 text-[#292725] shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-7`}>
           <div className="flex items-center gap-4">
-            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-[#D6AF2E] text-[#F0C537]">
+            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-[#D6AF2E] text-[#9B762D]">
               <Rocket className="h-7 w-7" aria-hidden="true" />
             </span>
             <div>
               <h2 className="text-xl font-medium">{copy.ctaTitle}</h2>
-              <p className="mt-1 text-sm text-purple-100">{copy.ctaText}</p>
+              <p className="mt-1 text-sm text-[#514B43]">{copy.ctaText}</p>
             </div>
           </div>
           <a
             href="#cv-business-products-title"
-            className="flex shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-medium text-[#4A123F] transition hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]"
+            className="flex shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-medium text-[#292725] transition hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]"
           >
             {copy.ctaButton} <ChevronRight className="h-4 w-4" aria-hidden="true" />
           </a>
@@ -1539,14 +1539,14 @@ export const Subscription = () => {
 
       {activePreview === 'free' && (
         <Modal title={copy.previewEssentialTitle} onClose={closePreview} closeLabel={copy.closeModal} size="compact">
-          <h2 className="mb-4 text-center text-2xl font-medium text-[#4A123F]">{copy.previewEssentialTitle}</h2>
+          <h2 className="mb-4 text-center text-2xl font-medium text-[#292725]">{copy.previewEssentialTitle}</h2>
           <EssentialCardPreview copy={copy} previewText={simplifiedOfferCopy[language as OfferLanguage].essentialPreviewText} />
         </Modal>
       )}
 
       {activePreview === 'artisan' && (
         <Modal title={simplifiedOfferCopy[language as OfferLanguage].artisanTitle} onClose={closePreview} closeLabel={copy.closeModal} size="preview">
-          <h2 className="mb-4 text-center text-2xl font-medium text-[#4A123F]">{simplifiedOfferCopy[language as OfferLanguage].artisanTitle}</h2>
+          <h2 className="mb-4 text-center text-2xl font-medium text-[#292725]">{simplifiedOfferCopy[language as OfferLanguage].artisanTitle}</h2>
           <BusinessCardPreview
             variant="artisan"
             size="full"
@@ -1559,7 +1559,7 @@ export const Subscription = () => {
 
       {activePreview === 'premium' && (
         <Modal title={simplifiedOfferCopy[language as OfferLanguage].premiumTitle} onClose={closePreview} closeLabel={copy.closeModal} size="preview">
-          <h2 className="mb-4 text-center text-2xl font-medium text-[#4A123F]">{simplifiedOfferCopy[language as OfferLanguage].premiumTitle}</h2>
+          <h2 className="mb-4 text-center text-2xl font-medium text-[#292725]">{simplifiedOfferCopy[language as OfferLanguage].premiumTitle}</h2>
           <BusinessCardPreview
             variant="premium"
             size="full"
@@ -1574,7 +1574,7 @@ export const Subscription = () => {
         <Modal title={copy.launchConditionsDialog} onClose={closePreview} closeLabel={copy.closeModal} size="compact">
           <div className="mx-auto max-w-lg">
             <span className="rounded-full bg-[#D6AF2E] px-3 py-1 text-[10px] font-medium tracking-[0.14em] text-[#07543F]">{copy.launchBadge}</span>
-            <h2 className="mt-3 text-2xl font-medium text-[#4A123F]">{copy.launchConditionsTitle}</h2>
+            <h2 className="mt-3 text-2xl font-medium text-[#292725]">{copy.launchConditionsTitle}</h2>
             <ul className="mt-4 space-y-3">
               {copy.launchConditions.map((condition) => (
                 <li key={condition} className="flex items-start gap-3 text-sm leading-6 text-slate-700">
@@ -1596,7 +1596,7 @@ export const Subscription = () => {
           <div className="mx-auto max-w-[800px]">
             <div className="mb-4 text-center">
               <Send className="mx-auto h-8 w-8 text-[#D6AF2E]" aria-hidden="true" />
-              <h2 className="mt-2 text-2xl font-medium text-[#4A123F]">{copy.requestTitle}</h2>
+              <h2 className="mt-2 text-2xl font-medium text-[#292725]">{copy.requestTitle}</h2>
               <p className="mt-1 text-sm text-slate-600">{selectedPlan.label}</p>
             </div>
             <SubscriptionRequestForm

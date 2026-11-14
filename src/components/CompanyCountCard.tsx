@@ -55,7 +55,7 @@ export default function CompanyCountCard({ language, totalCount, certifiedCount,
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-56 h-[2px] bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent rounded-full" />
 
       <h3
-        className={`text-xl md:text-2xl font-medium text-[#4A1D43] leading-snug max-w-3xl transition-all duration-500 ${
+        className={`text-xl md:text-2xl font-medium text-[#292725] leading-snug max-w-3xl transition-all duration-500 ${
           isRTL ? 'text-right' : 'text-center'
         }`}
         dir={isRTL ? 'rtl' : 'ltr'}
@@ -69,7 +69,7 @@ export default function CompanyCountCard({ language, totalCount, certifiedCount,
       </h3>
 
       <p
-        className={`text-[#4A1D43]/70 text-base md:text-lg mt-1 font-medium ${
+        className={`text-[#292725]/70 text-base md:text-lg mt-1 font-medium ${
           isRTL ? 'text-right' : 'text-center'
         }`}
         dir={isRTL ? 'rtl' : 'ltr'}

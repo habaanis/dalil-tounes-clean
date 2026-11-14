@@ -95,16 +95,16 @@ export default function InstallAppBanner() {
 
   return (
     <>
-      <div className="bg-gradient-to-r from-[#4A1D43] to-[#6B2D63] rounded-xl border border-[#D4AF37]/40 p-4 flex items-center gap-3 shadow-lg">
+      <div className="bg-gradient-to-r from-[#FFF8EA] to-[#F0E2BD] rounded-xl border border-[#D4AF37]/40 p-4 flex items-center gap-3 shadow-lg">
         <div className="flex-shrink-0 w-10 h-10 bg-[#D4AF37]/15 rounded-lg flex items-center justify-center">
           <Download className="w-5 h-5 text-[#D4AF37]" />
         </div>
 
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-white leading-tight">
+          <p className="text-sm font-semibold text-[#292725] leading-tight">
             {language === 'fr' ? 'Installer Dalil Tounes' : language === 'ar' ? 'تثبيت دليل تونس' : language === 'en' ? 'Install Dalil Tounes' : language === 'it' ? 'Installa Dalil Tounes' : 'Установить Dalil Tounes'}
           </p>
-          <p className="text-xs text-gray-300 mt-0.5 leading-snug">
+          <p className="text-xs text-[#514B43] mt-0.5 leading-snug">
             {platform === 'ios'
               ? (language === 'fr' ? "Ajoutez l'app sur votre iPhone" : language === 'ar' ? 'أضف التطبيق على iPhone' : language === 'en' ? 'Add the app to your iPhone' : language === 'it' ? "Aggiungi l'app al tuo iPhone" : 'Добавьте приложение на iPhone')
               : (language === 'fr' ? 'Accès rapide depuis votre mobile' : language === 'ar' ? 'وصول سريع من هاتفك' : language === 'en' ? 'Quick access from your mobile' : language === 'it' ? 'Accesso rapido dal tuo mobile' : 'Быстрый доступ с телефона')}
@@ -113,14 +113,14 @@ export default function InstallAppBanner() {
 
         <button
           onClick={handleInstallClick}
-          className="flex-shrink-0 px-3.5 py-2 bg-[#D4AF37] text-[#4A1D43] text-xs font-bold rounded-lg hover:bg-[#E5C048] transition-colors"
+          className="flex-shrink-0 px-3.5 py-2 bg-[#D6B86D] text-[#292725] text-xs font-bold rounded-lg hover:bg-[#E5C048] transition-colors"
         >
           {language === 'fr' ? 'Installer' : language === 'ar' ? 'تثبيت' : language === 'en' ? 'Install' : language === 'it' ? 'Installa' : 'Установить'}
         </button>
 
         <button
           onClick={handleDismiss}
-          className="flex-shrink-0 p-1.5 text-gray-400 hover:text-white transition-colors"
+          className="flex-shrink-0 p-1.5 text-[#514B43] hover:text-[#292725] transition-colors"
           aria-label={language === 'fr' ? 'Fermer' : language === 'ar' ? 'إغلاق' : language === 'en' ? 'Close' : language === 'it' ? 'Chiudi' : 'Закрыть'}
         >
           <X className="w-4 h-4" />
@@ -133,8 +133,8 @@ export default function InstallAppBanner() {
           onClick={(e) => e.target === e.currentTarget && setShowIOSGuide(false)}
         >
           <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden">
-            <div className="bg-[#4A1D43] px-5 py-4 flex items-center justify-between">
-              <h3 className="text-base font-semibold text-[#D4AF37]">
+            <div className="bg-[#FFF8EA] px-5 py-4 flex items-center justify-between">
+              <h3 className="text-base font-semibold text-[#292725]">
                 {language === 'fr' ? 'Installer sur iPhone / iPad' : language === 'ar' ? 'التثبيت على iPhone / iPad' : language === 'en' ? 'Install on iPhone / iPad' : language === 'it' ? 'Installa su iPhone / iPad' : 'Установить на iPhone / iPad'}
               </h3>
               <button
@@ -148,7 +148,7 @@ export default function InstallAppBanner() {
 
             <div className="p-5 space-y-4">
               <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#4A1D43] text-[#D4AF37] flex items-center justify-center text-sm font-bold">
+                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#D6B86D] text-[#292725] flex items-center justify-center text-sm font-bold">
                   1
                 </div>
                 <div>
@@ -163,21 +163,21 @@ export default function InstallAppBanner() {
               </div>
 
               <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#4A1D43] text-[#D4AF37] flex items-center justify-center text-sm font-bold">
+                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#D6B86D] text-[#292725] flex items-center justify-center text-sm font-bold">
                   2
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-900">
                     {language === 'fr' ? 'Faites défiler et appuyez sur' : language === 'ar' ? 'مرر واضغط على' : language === 'en' ? 'Scroll and tap' : language === 'it' ? 'Scorri e tocca' : 'Прокрутите и нажмите'}
                   </p>
-                  <p className="text-sm font-semibold text-[#4A1D43] mt-0.5">
+                  <p className="text-sm font-semibold text-[#292725] mt-0.5">
                     {language === 'fr' ? "Sur l'écran d'accueil" : language === 'ar' ? 'على الشاشة الرئيسية' : language === 'en' ? 'Add to Home Screen' : language === 'it' ? 'Aggiungi a schermata Home' : 'На главный экран'}
                   </p>
                 </div>
               </div>
 
               <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#4A1D43] text-[#D4AF37] flex items-center justify-center text-sm font-bold">
+                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#D6B86D] text-[#292725] flex items-center justify-center text-sm font-bold">
                   3
                 </div>
                 <div>

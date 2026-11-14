@@ -65,7 +65,7 @@ export const Jobs = () => {
             decoding="async"
           />
         </picture>
-        <div className="absolute inset-0 bg-[#4A1D43]/75" aria-hidden="true" />
+        <div className="absolute inset-0 bg-[#292725]/70" aria-hidden="true" />
 
         <motion.div
           initial={{ opacity: 0, y: 18 }}
@@ -91,20 +91,20 @@ export const Jobs = () => {
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="relative flex h-full flex-col rounded-xl border border-[#D4AF37] bg-[#4A1D43] p-6 shadow-sm"
+            className="relative flex h-full flex-col rounded-xl border border-[#D4AF37] bg-[#FFF8EA] p-6 shadow-sm"
           >
             <span className="absolute right-4 top-4 rounded-md border border-[#D4AF37] bg-black px-2 py-1 text-[10px] font-medium tracking-wider text-[#D4AF37]">
               {copy.employerBadge}
             </span>
-            <span className="mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-[#2A1525] text-[#D4AF37]">
+            <span className="mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-[#D6B86D] text-[#292725]">
               <Building2 className="h-6 w-6" aria-hidden="true" />
             </span>
-            <h2 className="public-heading mb-3 font-serif text-2xl text-[#D4AF37]">{copy.employerTitle}</h2>
-            <p className="mb-6 flex-1 text-sm leading-6 text-white/90">{copy.employerDescription}</p>
+            <h2 className="public-heading mb-3 font-serif text-2xl text-[#292725]">{copy.employerTitle}</h2>
+            <p className="mb-6 flex-1 text-sm leading-6 text-[#514B43]">{copy.employerDescription}</p>
             <button
               type="button"
               onClick={() => setRequestMode('employer')}
-              className="w-full rounded-lg border border-[#D4AF37] bg-white px-5 py-3 text-sm font-semibold text-[#4A1D43] transition hover:bg-[#fcfaf5] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D4AF37]"
+              className="w-full rounded-lg border border-[#D4AF37] bg-white px-5 py-3 text-sm font-semibold text-[#292725] transition hover:bg-[#fcfaf5] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D4AF37]"
             >
               {copy.employerButton}
             </button>
@@ -115,20 +115,20 @@ export const Jobs = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.08 }}
-            className="relative flex h-full flex-col rounded-xl border border-[#D4AF37] bg-[#4A1D43] p-6 shadow-sm"
+            className="relative flex h-full flex-col rounded-xl border border-[#D4AF37] bg-[#FFF8EA] p-6 shadow-sm"
           >
             <span className="absolute right-4 top-4 rounded-md border border-[#D4AF37] bg-black px-2 py-1 text-[10px] font-medium tracking-wider text-[#D4AF37]">
               {copy.candidateBadge}
             </span>
-            <span className="mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-[#2A1525] text-[#D4AF37]">
+            <span className="mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-[#D6B86D] text-[#292725]">
               <UserRound className="h-6 w-6" aria-hidden="true" />
             </span>
-            <h2 className="public-heading mb-3 font-serif text-2xl text-[#D4AF37]">{copy.candidateTitle}</h2>
-            <p className="mb-6 flex-1 text-sm leading-6 text-white/90">{copy.candidateDescription}</p>
+            <h2 className="public-heading mb-3 font-serif text-2xl text-[#292725]">{copy.candidateTitle}</h2>
+            <p className="mb-6 flex-1 text-sm leading-6 text-[#514B43]">{copy.candidateDescription}</p>
             <button
               type="button"
               onClick={() => setRequestMode('candidate')}
-              className="w-full rounded-lg border border-[#D4AF37] bg-white px-5 py-3 text-sm font-semibold text-[#4A1D43] transition hover:bg-[#fcfaf5] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D4AF37]"
+              className="w-full rounded-lg border border-[#D4AF37] bg-white px-5 py-3 text-sm font-semibold text-[#292725] transition hover:bg-[#fcfaf5] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D4AF37]"
             >
               {copy.candidateButton}
             </button>
@@ -141,7 +141,7 @@ export const Jobs = () => {
           <p className="mb-3 text-center text-xs font-medium uppercase tracking-[0.2em] text-[#9A7418]">
             {copy.offersEyebrow}
           </p>
-          <h2 className="public-heading mb-3 text-center font-serif text-3xl text-[#4A1D43]">{copy.offersTitle}</h2>
+          <h2 className="public-heading mb-3 text-center font-serif text-3xl text-[#292725]">{copy.offersTitle}</h2>
           <p className="mb-8 text-center text-sm font-medium text-gray-600">
             {verifiedJobs.length} {copy.offersFound}
           </p>
@@ -165,10 +165,10 @@ export const Jobs = () => {
             </div>
           ) : (
             <div className="rounded-xl border border-[#D4AF37] bg-white px-6 py-10 text-center shadow-sm md:px-12">
-              <span className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-[#4A1D43] text-[#D4AF37]">
+              <span className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-[#D6B86D] text-[#292725]">
                 <Briefcase className="h-7 w-7" aria-hidden="true" />
               </span>
-              <h3 className="mb-3 text-xl font-semibold text-[#4A1D43]">{copy.emptyTitle}</h3>
+              <h3 className="mb-3 text-xl font-semibold text-[#292725]">{copy.emptyTitle}</h3>
               <p className="mx-auto mb-4 max-w-3xl text-sm leading-6 text-gray-600 md:text-base">{copy.emptyDescription}</p>
             </div>
           )}
@@ -179,25 +179,25 @@ export const Jobs = () => {
           </p>
 
           <div className="mt-10 grid gap-5 md:grid-cols-2">
-            <div className="rounded-xl border border-[#D4AF37] bg-[#4A1D43] p-6 text-white">
+            <div className="rounded-xl border border-[#D4AF37] bg-[#FFF8EA] p-6 text-[#292725]">
               <Sparkles className="mb-4 h-7 w-7 text-[#D4AF37]" aria-hidden="true" />
-              <h3 className="mb-3 font-serif text-2xl text-[#D4AF37]">{copy.talentsTitle}</h3>
-              <p className="mb-5 text-sm leading-6 text-white/90">{copy.talentsDescription}</p>
+              <h3 className="mb-3 font-serif text-2xl text-[#292725]">{copy.talentsTitle}</h3>
+              <p className="mb-5 text-sm leading-6 text-[#514B43]">{copy.talentsDescription}</p>
               <Link
                 to="/candidats"
-                className="inline-flex items-center gap-2 rounded-lg border border-[#D4AF37] bg-white px-5 py-3 text-sm font-semibold text-[#4A1D43] transition hover:bg-[#fcfaf5]"
+                className="inline-flex items-center gap-2 rounded-lg border border-[#D4AF37] bg-white px-5 py-3 text-sm font-semibold text-[#292725] transition hover:bg-[#fcfaf5]"
               >
                 {copy.talentsLink}
                 <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden="true" />
               </Link>
             </div>
             <div className="rounded-xl border border-[#D4AF37] bg-white p-6">
-              <Building2 className="mb-4 h-7 w-7 text-[#4A1D43]" aria-hidden="true" />
-              <h3 className="mb-3 font-serif text-2xl text-[#4A1D43]">{copy.businessLink}</h3>
+              <Building2 className="mb-4 h-7 w-7 text-[#292725]" aria-hidden="true" />
+              <h3 className="mb-3 font-serif text-2xl text-[#292725]">{copy.businessLink}</h3>
               <p className="mb-5 text-sm leading-6 text-gray-600">{copy.heroDescription}</p>
               <Link
                 to="/businesses"
-                className="inline-flex items-center gap-2 rounded-lg border border-[#4A1D43] px-5 py-3 text-sm font-semibold text-[#4A1D43] transition hover:bg-[#4A1D43] hover:text-white"
+                className="inline-flex items-center gap-2 rounded-lg border border-[#C9A65D] px-5 py-3 text-sm font-semibold text-[#292725] transition hover:bg-[#F0E2BD] hover:text-[#292725]"
               >
                 {copy.businessLink}
                 <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden="true" />
@@ -218,15 +218,15 @@ export const Jobs = () => {
           }}
         >
           <div className="my-6 w-full max-w-2xl overflow-hidden rounded-xl border border-[#D4AF37] bg-[#1A1A1A] shadow-sm">
-            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[#D4AF37]/60 bg-[#4A1D43] px-5 py-4">
-              <h2 id="job-request-dialog-title" className="public-heading pr-4 font-serif text-xl text-[#D4AF37] md:text-2xl">
+            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[#D4AF37]/60 bg-[#FFF8EA] px-5 py-4">
+              <h2 id="job-request-dialog-title" className="public-heading pr-4 font-serif text-xl text-[#292725] md:text-2xl">
                 {requestMode === 'employer' ? copy.modalEmployerTitle : copy.modalCandidateTitle}
               </h2>
               <button
                 type="button"
                 onClick={() => setRequestMode(null)}
                 aria-label={copy.close}
-                className="rounded-full p-2 text-white transition hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D4AF37]"
+                className="rounded-full p-2 text-[#292725] transition hover:bg-[#F0E2BD] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D4AF37]"
               >
                 <X className="h-6 w-6" aria-hidden="true" />
               </button>

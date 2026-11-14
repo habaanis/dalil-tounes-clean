@@ -245,7 +245,7 @@ function ListRow({ item, accentColor, onClick }: { item: MeilleursItem; accentCo
 export default function MeilleursSection({
   secteurLabel,
   listePage,
-  accentColor = '#4A1D43',
+  accentColor = '#B28A44',
   sectionTitle,
   blogArticle,
   searchQuery,
@@ -567,7 +567,7 @@ export default function MeilleursSection({
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             onClick={() => navigate(`/blog/${blogArticle.slug}`)}
-            className="group cursor-pointer bg-gradient-to-r from-[#4A1D43]/5 via-white to-[#D4AF37]/8 border border-[#D4AF37]/40 rounded-2xl p-5 hover:border-[#D4AF37] hover:shadow-lg transition-all"
+            className="group cursor-pointer bg-gradient-to-r from-[#FFF8EA] via-white to-[#D4AF37]/8 border border-[#D4AF37]/40 rounded-2xl p-5 hover:border-[#D4AF37] hover:shadow-lg transition-all"
           >
             <div className="flex items-start gap-4">
               <div className="shrink-0 w-10 h-10 rounded-xl bg-[#D4AF37]/20 flex items-center justify-center">

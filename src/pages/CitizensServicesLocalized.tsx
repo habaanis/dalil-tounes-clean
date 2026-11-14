@@ -319,25 +319,25 @@ export default function CitizensServicesLocalized() {
           currentPath="/citizens/services"
         />
         <div className="max-w-4xl mx-auto">
-          <button type="button" onClick={() => setSelectedProcedure(null)} aria-label={labels.close} className="inline-flex items-center gap-2 mb-6 text-gray-500 hover:text-[#4A1D43]">
+          <button type="button" onClick={() => setSelectedProcedure(null)} aria-label={labels.close} className="inline-flex items-center gap-2 mb-6 text-gray-500 hover:text-[#292725]">
             <X className="w-4 h-4" /> {labels.close}
           </button>
           <div className="bg-white rounded-xl border-2 border-[#D4AF37] shadow-lg p-6">
-            <h1 className="public-title text-3xl font-medium text-[#4A1D43] mb-4">{procedure.title}</h1>
+            <h1 className="public-title text-3xl font-medium text-[#292725] mb-4">{procedure.title}</h1>
             <p className="text-gray-700 leading-relaxed mb-6">{procedure.description}</p>
             <div className="grid md:grid-cols-2 gap-4 mb-6">
               <InfoCard icon={Clock} label={c.processingTime} value={procedure.delay} />
               <InfoCard icon={CheckCircle} label={c.cost} value={procedure.cost} />
             </div>
             <div className="mb-6">
-              <h2 className="public-heading flex items-center gap-2 font-medium text-lg text-[#4A1D43] mb-3"><FileText className="w-5 h-5" />{c.requiredDocuments}</h2>
+              <h2 className="public-heading flex items-center gap-2 font-medium text-lg text-[#292725] mb-3"><FileText className="w-5 h-5" />{c.requiredDocuments}</h2>
               <ul className="space-y-3">
                 {procedure.documents.map((item) => <li key={item} className="flex items-start gap-3 text-gray-700"><CheckCircle className="w-5 h-5 text-[#D4AF37] mt-0.5 flex-shrink-0" />{item}</li>)}
               </ul>
             </div>
             <InfoCard icon={Building2} label={c.authority} value={procedure.authority} />
-            {procedure.formUrl && <div className="mt-6"><a href={procedure.formUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-[#4A1D43] text-[#D4AF37] border border-[#D4AF37] font-semibold"><ExternalLink className="w-4 h-4" />{c.onlineForm}</a></div>}
-            {procedure.sourceUrl && <div className="mt-6 flex flex-col sm:flex-row sm:items-center gap-3 text-sm"><span className="text-gray-600">{labels.verified}</span><a href={procedure.sourceUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 font-semibold text-[#4A1D43] underline underline-offset-2"><ExternalLink className="w-4 h-4" />{labels.source}</a></div>}
+            {procedure.formUrl && <div className="mt-6"><a href={procedure.formUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-[#D6B86D] text-[#292725] border border-[#D4AF37] font-semibold"><ExternalLink className="w-4 h-4" />{c.onlineForm}</a></div>}
+            {procedure.sourceUrl && <div className="mt-6 flex flex-col sm:flex-row sm:items-center gap-3 text-sm"><span className="text-gray-600">{labels.verified}</span><a href={procedure.sourceUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 font-semibold text-[#292725] underline underline-offset-2"><ExternalLink className="w-4 h-4" />{labels.source}</a></div>}
             <div className="mt-5 p-4 bg-yellow-50 border border-yellow-300 rounded-lg text-sm text-yellow-900 flex items-start gap-2"><AlertCircle className="w-5 h-5 flex-shrink-0" />{c.warning}</div>
           </div>
         </div>
@@ -355,7 +355,7 @@ export default function CitizensServicesLocalized() {
       />
       <section className="relative min-h-[220px] overflow-hidden">
         <img src={getStructureImageUrl('/images/service-social.jpg')} alt={c.title} className="absolute inset-0 w-full h-full object-cover" loading="lazy" decoding="async" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#4A1D43]/90 via-[#4A1D43]/75 to-[#D4AF37]/30" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#292725]/85 via-[#292725]/60 to-[#D4AF37]/30" />
         <div className="relative min-h-[220px] flex items-center justify-center px-4 py-7 text-center text-white">
           <div className="max-w-4xl"><h1 className="public-title text-3xl md:text-4xl font-medium mb-3 text-[#D4AF37]">{c.title}</h1><p className="text-sm md:text-base leading-relaxed">{c.intro}</p></div>
         </div>
@@ -374,7 +374,7 @@ export default function CitizensServicesLocalized() {
           <section className="px-4 pt-8 pb-3">
             <div className="max-w-5xl mx-auto text-center">
               <Building2 className="w-10 h-10 text-[#D4AF37] mx-auto mb-3" />
-              <h2 className="public-heading text-2xl font-medium text-[#4A1D43]">{c.officesTitle}</h2>
+              <h2 className="public-heading text-2xl font-medium text-[#292725]">{c.officesTitle}</h2>
               <p className="mt-2 text-gray-600">{c.officesIntro}</p>
             </div>
           </section>
@@ -396,7 +396,7 @@ export default function CitizensServicesLocalized() {
             <MeilleursSection
               secteurLabel={c.sector}
               listePage="services citoyens"
-              accentColor="#4A1D43"
+              accentColor="#B28A44"
               sectionTitle={c.recommended}
               useGoogleRecommendationCriteria
               excludedKeywords={SERVICE_EXCLUDED_KEYWORDS}
@@ -406,16 +406,16 @@ export default function CitizensServicesLocalized() {
         </>
       )}
 
-      {activeTab === 'demarches' && <section className="px-4 py-8 bg-white"><div className="max-w-6xl mx-auto"><div className="text-center mb-6"><h2 className="public-heading text-2xl font-medium text-[#4A1D43]">{c.proceduresTitle}</h2><p className="mt-2 text-gray-600">{c.proceduresIntro}</p></div><div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">{procedures.map((item, index) => <motion.button key={item.title} type="button" whileHover={{ y: -3 }} onClick={() => setSelectedProcedure(index)} className={`text-start bg-white rounded-xl border-2 border-[#D4AF37] p-4 hover:shadow-lg ${isRTL ? 'text-right' : 'text-left'}`}><h3 className="font-medium text-[#4A1D43] mb-2">{item.title}</h3><p className="text-gray-600 text-xs line-clamp-3 mb-3">{item.description}</p><div className="flex justify-between text-xs text-[#4A1D43]"><span>{item.documents.length} {c.pieces}</span><span>{item.delay}</span></div></motion.button>)}</div></div></section>}
+      {activeTab === 'demarches' && <section className="px-4 py-8 bg-white"><div className="max-w-6xl mx-auto"><div className="text-center mb-6"><h2 className="public-heading text-2xl font-medium text-[#292725]">{c.proceduresTitle}</h2><p className="mt-2 text-gray-600">{c.proceduresIntro}</p></div><div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">{procedures.map((item, index) => <motion.button key={item.title} type="button" whileHover={{ y: -3 }} onClick={() => setSelectedProcedure(index)} className={`text-start bg-white rounded-xl border-2 border-[#D4AF37] p-4 hover:shadow-lg ${isRTL ? 'text-right' : 'text-left'}`}><h3 className="font-medium text-[#292725] mb-2">{item.title}</h3><p className="text-gray-600 text-xs line-clamp-3 mb-3">{item.description}</p><div className="flex justify-between text-xs text-[#292725]"><span>{item.documents.length} {c.pieces}</span><span>{item.delay}</span></div></motion.button>)}</div></div></section>}
 
-      {activeTab === 'social' && <section className="px-4 py-8"><div className="max-w-5xl mx-auto"><div className="text-center mb-5"><h2 className="public-heading text-2xl font-medium text-[#4A1D43]">{c.socialTitle}</h2><p className="mt-2 text-gray-600">{c.socialIntro}</p></div><div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">{emergencyNumbers.map(({ label, number, icon: Icon }) => <a key={number} href={`tel:${number}`} className="flex flex-col items-center justify-center rounded-xl bg-[#4A1D43] border border-[#D4AF37] p-3 text-center"><Icon className="w-5 h-5 text-[#D4AF37] mb-2" /><span className="text-xs text-white">{label}</span><strong className="text-lg text-[#D4AF37]">{number}</strong></a>)}</div><div className="mt-7 grid md:grid-cols-2 gap-3">{SOCIAL_PROGRAMS[lang].map((item) => <SocialCard key={item.title} title={item.title} body={item.body} />)}</div></div></section>}
+      {activeTab === 'social' && <section className="px-4 py-8"><div className="max-w-5xl mx-auto"><div className="text-center mb-5"><h2 className="public-heading text-2xl font-medium text-[#292725]">{c.socialTitle}</h2><p className="mt-2 text-gray-600">{c.socialIntro}</p></div><div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">{emergencyNumbers.map(({ label, number, icon: Icon }) => <a key={number} href={`tel:${number}`} className="flex flex-col items-center justify-center rounded-xl bg-[#D6B86D] border border-[#D4AF37] p-3 text-center"><Icon className="w-5 h-5 text-[#D4AF37] mb-2" /><span className="text-xs text-white">{label}</span><strong className="text-lg text-[#D4AF37]">{number}</strong></a>)}</div><div className="mt-7 grid md:grid-cols-2 gap-3">{SOCIAL_PROGRAMS[lang].map((item) => <SocialCard key={item.title} title={item.title} body={item.body} />)}</div></div></section>}
 
       <section className="px-4 py-8 bg-white border-t border-gray-100">
         <div className="max-w-5xl mx-auto">
-          <h2 className="public-heading text-xl font-medium text-[#4A1D43] text-center mb-4">{c.usefulLinksTitle}</h2>
+          <h2 className="public-heading text-xl font-medium text-[#292725] text-center mb-4">{c.usefulLinksTitle}</h2>
           <div className="grid gap-3 md:grid-cols-3">
             {OFFICIAL_LINKS.map((link) => (
-              <a key={link.url} href={link.url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between gap-3 rounded-xl border border-[#D4AF37] bg-[#FFFDF6] p-4 text-sm font-semibold text-[#4A1D43] hover:bg-[#D4AF37]/10 transition-colors">
+              <a key={link.url} href={link.url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between gap-3 rounded-xl border border-[#D4AF37] bg-[#FFFDF6] p-4 text-sm font-semibold text-[#292725] hover:bg-[#D4AF37]/10 transition-colors">
                 <span>{c.officialLinks[link.key]}</span>
                 <ExternalLink className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
               </a>
@@ -424,19 +424,19 @@ export default function CitizensServicesLocalized() {
         </div>
       </section>
 
-      <section className="px-4 py-4 bg-[#4A1D43] border-t border-[#D4AF37]"><p className="max-w-4xl mx-auto text-center text-sm text-[#D4AF37] font-medium">{c.together}</p></section>
+      <section className="px-4 py-4 bg-[#D6B86D] border-t border-[#D4AF37]"><p className="max-w-4xl mx-auto text-center text-sm text-[#D4AF37] font-medium">{c.together}</p></section>
     </div>
   );
 }
 
 function TabButton({ active, onClick, icon: Icon, label }: { active: boolean; onClick: () => void; icon: LucideIcon; label: string }) {
-  return <button type="button" onClick={onClick} aria-pressed={active} className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold border-2 transition ${active ? 'bg-[#4A1D43] text-[#D4AF37] border-[#D4AF37]' : 'bg-gray-100 text-gray-700 border-transparent'}`}><Icon className="w-4 h-4" />{label}</button>;
+  return <button type="button" onClick={onClick} aria-pressed={active} className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold border-2 transition ${active ? 'bg-[#D6B86D] text-[#292725] border-[#D4AF37]' : 'bg-gray-100 text-gray-700 border-transparent'}`}><Icon className="w-4 h-4" />{label}</button>;
 }
 
 function InfoCard({ icon: Icon, label, value }: { icon: LucideIcon; label: string; value: string }) {
-  return <div className="rounded-xl border border-[#D4AF37] bg-[#FFFDF6] p-4"><div className="flex items-center gap-2 text-[#4A1D43] mb-2"><Icon className="w-5 h-5" /><strong>{label}</strong></div><p className="text-gray-800">{value}</p></div>;
+  return <div className="rounded-xl border border-[#D4AF37] bg-[#FFFDF6] p-4"><div className="flex items-center gap-2 text-[#292725] mb-2"><Icon className="w-5 h-5" /><strong>{label}</strong></div><p className="text-gray-800">{value}</p></div>;
 }
 
 function SocialCard({ title, body }: { title: string; body: string }) {
-  return <div className="rounded-xl border border-[#D4AF37] bg-white p-4"><h3 className="font-medium text-[#4A1D43] mb-2">{title}</h3><p className="text-sm text-gray-700">{body}</p></div>;
+  return <div className="rounded-xl border border-[#D4AF37] bg-white p-4"><h3 className="font-medium text-[#292725] mb-2">{title}</h3><p className="text-sm text-gray-700">{body}</p></div>;
 }

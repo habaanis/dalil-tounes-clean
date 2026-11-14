@@ -286,7 +286,7 @@ export default function CultureEvents() {
               </div>
             </div>
 
-            <h1 className="public-title text-5xl md:text-6xl font-medium text-[#35172f] mb-4 drop-shadow-sm">
+            <h1 className="public-title text-5xl md:text-6xl font-medium text-[#292725] mb-4 drop-shadow-sm">
               {t.title}
             </h1>
             <p className="text-xl text-[#806336] font-semibold mb-4">
@@ -297,19 +297,19 @@ export default function CultureEvents() {
             </p>
 
             <div className="flex justify-center items-center gap-3 mt-8">
-              <label className="text-[#35172f] font-semibold text-sm">
+              <label className="text-[#292725] font-semibold text-sm">
                 {t.filterLabel}
               </label>
               <select
                 value={selectedSecteur}
                 onChange={(e) => setSelectedSecteur(e.target.value)}
-                className="px-6 py-3 rounded-xl border-2 border-[#D4AF37]/30 bg-white/10 backdrop-blur-sm text-[#35172f] font-medium focus:border-[#D4AF37] focus:ring-4 focus:ring-[#D4AF37]/20 outline-none transition-all hover:bg-white/15"
+                className="px-6 py-3 rounded-xl border-2 border-[#D4AF37]/30 bg-white/10 backdrop-blur-sm text-[#292725] font-medium focus:border-[#D4AF37] focus:ring-4 focus:ring-[#D4AF37]/20 outline-none transition-all hover:bg-white/15"
               >
-                <option value="all" className="bg-[#fffdf9] text-[#35172f]">{t.allTypes}</option>
+                <option value="all" className="bg-[#fffdf9] text-[#292725]">{t.allTypes}</option>
                 {SECTEURS_CULTURE.map((secteur) => {
                   const label = t.secteurLabels?.[secteur] || secteur;
                   return (
-                    <option key={secteur} value={secteur} className="bg-[#fffdf9] text-[#35172f]">
+                    <option key={secteur} value={secteur} className="bg-[#fffdf9] text-[#292725]">
                       {label}
                     </option>
                   );
@@ -327,10 +327,10 @@ export default function CultureEvents() {
             <div className="space-y-10 max-w-7xl mx-auto">
               <div>
                 <div className="flex justify-center items-center gap-4 mb-4">
-                  <h2 className="public-heading text-3xl font-medium text-[#35172f] text-center">
+                  <h2 className="public-heading text-3xl font-medium text-[#292725] text-center">
                     {t.premiumAgenda.weekly.badge}
                   </h2>
-                  <span className="px-4 py-2 bg-[#f3eddf] text-[#35172f] rounded-full font-medium text-xl border-2 border-[#d9c9a4]">
+                  <span className="px-4 py-2 bg-[#f3eddf] text-[#292725] rounded-full font-medium text-xl border-2 border-[#d9c9a4]">
                     {weeklyEvents.length} {weeklyEvents.length > 1 ? t.eventPlural : t.eventSingular}
                   </span>
                 </div>
@@ -357,10 +357,10 @@ export default function CultureEvents() {
 
               <div>
                 <div className="flex justify-center items-center gap-4 mb-4">
-                  <h2 className="public-heading text-3xl font-medium text-[#35172f] text-center">
+                  <h2 className="public-heading text-3xl font-medium text-[#292725] text-center">
                     {t.premiumAgenda.monthly.badge}
                   </h2>
-                  <span className="px-4 py-2 bg-[#f3eddf] text-[#35172f] rounded-full font-medium text-xl border-2 border-[#d9c9a4]">
+                  <span className="px-4 py-2 bg-[#f3eddf] text-[#292725] rounded-full font-medium text-xl border-2 border-[#d9c9a4]">
                     {monthlyEvents.length} {monthlyEvents.length > 1 ? t.eventPlural : t.eventSingular}
                   </span>
                 </div>
