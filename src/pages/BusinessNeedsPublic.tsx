@@ -89,7 +89,7 @@ export default function BusinessNeedsPublic() {
             {t.back}
           </button>
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-[#4A1D43] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-[#D6B86D] flex items-center justify-center">
               <Briefcase className="w-5 h-5 text-[#D4AF37]" />
             </div>
             <h1 className="text-2xl font-bold text-[#292725]">{t.title}</h1>
