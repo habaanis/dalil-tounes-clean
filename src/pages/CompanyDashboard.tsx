@@ -1,16 +1,18 @@
 import { useState, useEffect } from 'react';
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { useNavigate } from 'react-router-dom';
 import { Briefcase, Users, Building2, Settings, LogOut, Store, Package, BarChart3, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import JobPostForm from '../components/forms/JobPostForm';
 
 type ScopedBoutiqueStats = { entreprise_id: string; push_subscriptions: number; published_products: number; draft_products: number };
 interface CompanyDashboardProps {
-  onNavigate: (page: any) => void;
+  onNavigate?: (page: any) => void;
 }
 
 export default function CompanyDashboard({ onNavigate }: CompanyDashboardProps) {
   const { user, signOut, loading } = useAuth();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'jobs' | 'candidates' | 'settings' | 'showcase' | 'boutique' | 'stats'>('showcase');
   const [showWelcome, setShowWelcome] = useState(false);
   const [stats, setStats] = useState<ScopedBoutiqueStats[]>([]);
@@ -50,7 +52,8 @@ export default function CompanyDashboard({ onNavigate }: CompanyDashboardProps) 
 
   const handleSignOut = async () => {
     await signOut();
-    onNavigate('home');
+    if (onNavigate) onNavigate('home');
+    else navigate('/');
   };
 
   if (loading) return <main className="min-h-screen bg-[#fbf8f0] p-8 text-center" role="status">Vérification de votre session…</main>;
@@ -198,7 +201,7 @@ export default function CompanyDashboard({ onNavigate }: CompanyDashboardProps) 
                     <Users className="w-16 h-16 mx-auto mb-4 text-gray-300" />
                     <p>Aucun candidat pour le moment</p>
                     <button
-                      onClick={() => onNavigate('candidateList')}
+                      onClick={() => onNavigate ? onNavigate('candidateList') : navigate('/candidats')}
                       className="mt-4 px-6 py-2 bg-[#8f2530] text-white rounded-lg hover:bg-[#73202a] transition-colors"
                     >
                       Voir les candidats
