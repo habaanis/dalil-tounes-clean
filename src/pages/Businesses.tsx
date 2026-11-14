@@ -177,7 +177,7 @@ function SectionIntro({
       {eyebrow && (
         <p className="mb-3 text-xs font-medium uppercase tracking-[0.18em] text-[#D4AF37]">{eyebrow}</p>
       )}
-      <h2 className="public-heading text-2xl font-medium leading-tight text-[#4A1D43] md:text-3xl">{title}</h2>
+      <h2 className="public-heading text-2xl font-medium leading-tight text-[#292725] md:text-3xl">{title}</h2>
       {children && <div className="mt-4 space-y-3 text-sm leading-relaxed text-gray-600 md:text-base">{children}</div>}
     </div>
   );
@@ -193,7 +193,7 @@ function DemoCVBusinessLargePreview({ language }: { language: BusinessCardPrevie
 
 function FeaturePill({ icon: Icon, label }: { icon: React.ComponentType<{ className?: string }>; label: string }) {
   return (
-    <span className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/35 bg-white px-3 py-1.5 text-xs font-semibold text-[#4A1D43] shadow-sm">
+    <span className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/35 bg-white px-3 py-1.5 text-xs font-semibold text-[#292725] shadow-sm">
       <Icon className="h-3.5 w-3.5 text-[#D4AF37]" />
       {label}
     </span>
@@ -218,7 +218,7 @@ function BusinessCenterCard({
       <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#D4AF37]/12 text-[#800020]">
         <Icon className="h-5 w-5" />
       </span>
-      <h3 className="mt-4 text-lg font-medium text-[#4A1D43]">{title}</h3>
+      <h3 className="mt-4 text-lg font-medium text-[#292725]">{title}</h3>
       <p className="mt-2 flex-1 text-sm leading-relaxed text-gray-600">{description}</p>
       <span className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-[#800020]">
         {cta}
@@ -1342,15 +1342,15 @@ export const Businesses = ({
         <nav className="sticky top-16 z-30 order-1 border-y border-[#D4AF37]/25 bg-white/95 px-4 py-2 shadow-sm backdrop-blur" aria-label={pageT.explore.title}>
           <div className="mx-auto flex max-w-5xl gap-2 overflow-x-auto">
             <button type="button" onClick={() => document.getElementById('business-search')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="whitespace-nowrap rounded-full bg-[#B62226] px-4 py-2 text-sm font-medium text-white hover:bg-[#931D23]">{directoryCopy.search}</button>
-            <button type="button" onClick={() => document.getElementById('business-center')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="whitespace-nowrap rounded-full border border-[#D4AF37]/50 bg-white px-4 py-2 text-sm font-medium text-[#4A1D43]">{directoryCopy.businessCenter}</button>
-            <button type="button" onClick={() => document.getElementById('professional-services')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="whitespace-nowrap rounded-full border border-[#D4AF37]/50 bg-white px-4 py-2 text-sm font-medium text-[#4A1D43]">{directoryCopy.professionals}</button>
+            <button type="button" onClick={() => document.getElementById('business-center')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="whitespace-nowrap rounded-full border border-[#D4AF37]/50 bg-white px-4 py-2 text-sm font-medium text-[#292725]">{directoryCopy.businessCenter}</button>
+            <button type="button" onClick={() => document.getElementById('professional-services')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="whitespace-nowrap rounded-full border border-[#D4AF37]/50 bg-white px-4 py-2 text-sm font-medium text-[#292725]">{directoryCopy.professionals}</button>
           </div>
         </nav>
 
         <section id="business-center" className="order-2 scroll-mt-28 px-4 py-8" aria-labelledby="business-center-title">
           <div className="mx-auto max-w-5xl rounded-xl border border-[#D4AF37]/25 bg-[#FFFDF6] p-5 sm:p-7">
             <div className="mx-auto max-w-3xl text-center">
-              <h2 id="business-center-title" className="public-heading text-2xl font-medium text-[#4A1D43] md:text-3xl">
+              <h2 id="business-center-title" className="public-heading text-2xl font-medium text-[#292725] md:text-3xl">
                 {pageT.businessCenter.title}
               </h2>
               <p className="mt-3 text-sm leading-relaxed text-gray-600 md:text-base">
@@ -1409,7 +1409,7 @@ export const Businesses = ({
                 <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#D4AF37]/15 text-[#D4AF37]">
                   <ShieldCheck className="h-5 w-5" />
                 </span>
-                <h3 className="text-lg font-medium text-[#4A1D43]">{pageT.whyProfile.adviceTitle}</h3>
+                <h3 className="text-lg font-medium text-[#292725]">{pageT.whyProfile.adviceTitle}</h3>
               </div>
               <p className="mt-4 text-sm leading-relaxed text-gray-700">
                 {pageT.whyProfile.adviceText}
@@ -1450,20 +1450,20 @@ export const Businesses = ({
         {(searchTerm || selectedCity || selectedCategory) && (
           <div className="order-1 mb-8 flex flex-wrap items-center gap-2 px-4">
             {searchTerm && (
-              <span className="inline-flex items-center gap-1 bg-[#4A1D43]/5 text-[#4A1D43] px-3 py-1.5 rounded-full text-sm font-medium" style={{ border: '1px solid #4A1D43' }}>
+              <span className="inline-flex items-center gap-1 bg-[#4A1D43]/5 text-[#292725] px-3 py-1.5 rounded-full text-sm font-medium" style={{ border: '1px solid #4A1D43' }}>
                 <Search className="w-3.5 h-3.5" />
                 <span>{language === 'ar' ? 'البحث' : language === 'en' ? 'Search' : language === 'it' ? 'Ricerca' : language === 'ru' ? 'Поиск' : 'Recherche'} :</span>
                 <strong>{searchTerm}</strong>
               </span>
             )}
             {selectedCity && (
-              <span className="inline-flex items-center gap-1 bg-[#D4AF37]/10 text-[#4A1D43] px-3 py-1.5 rounded-full text-sm font-medium" style={{ border: '1px solid #D4AF37' }}>
+              <span className="inline-flex items-center gap-1 bg-[#D4AF37]/10 text-[#292725] px-3 py-1.5 rounded-full text-sm font-medium" style={{ border: '1px solid #D4AF37' }}>
                 <MapPin className="w-3.5 h-3.5" />
                 {selectedCity}
               </span>
             )}
             {selectedCategory && (
-              <span className="inline-flex items-center gap-1 bg-[#D4AF37]/10 text-[#4A1D43] px-3 py-1.5 rounded-full text-sm font-medium" style={{ border: '1px solid #D4AF37' }}>
+              <span className="inline-flex items-center gap-1 bg-[#D4AF37]/10 text-[#292725] px-3 py-1.5 rounded-full text-sm font-medium" style={{ border: '1px solid #D4AF37' }}>
                 <Building2 className="w-3.5 h-3.5" />
                 {selectedCategory}
               </span>
@@ -1474,7 +1474,7 @@ export const Businesses = ({
         {pageCategorie && (
           <div className="order-1 mb-6 flex items-center gap-2 px-4">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-sm" style={{ border: '1px solid #D4AF37' }}>
-              <span className="text-sm font-medium text-[#4A1D43]">
+              <span className="text-sm font-medium text-[#292725]">
                 {t.businesses.activeFilter}: {pageCategorie}
               </span>
               <button
@@ -1482,7 +1482,7 @@ export const Businesses = ({
                   setPageCategorie(null);
                   navigate('/entreprises');
                 }}
-                className="text-[#4A1D43] hover:text-[#D4AF37] transition"
+                className="text-[#292725] hover:text-[#D4AF37] transition"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -1492,7 +1492,7 @@ export const Businesses = ({
 
         <div className="order-1 mx-auto mb-4 flex max-w-5xl flex-col gap-2 px-4 text-xs text-gray-600 sm:flex-row sm:flex-wrap sm:justify-center" dir={language === 'ar' ? 'rtl' : 'ltr'}>
           <span className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/35 bg-white px-3 py-2 shadow-sm">
-            <span className="font-medium text-[#4A1D43]">Premium / Artisan</span>
+            <span className="font-medium text-[#292725]">Premium / Artisan</span>
             <span aria-hidden="true">—</span>
             <span>{badgeLegend.service.replace(/^Premium \/ Artisan\s*:\s*/i, '')}</span>
           </span>
@@ -1513,7 +1513,7 @@ export const Businesses = ({
           ) : filteredBusinesses.length === 0 && hasActiveSearch ? (
             <div className="px-4 py-12 text-center">
               <Building2 className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-              <h3 className="text-lg font-medium text-[#4A1D43]">
+              <h3 className="text-lg font-medium text-[#292725]">
                 {language === 'ar'
                   ? 'لم يتم العثور على أي مؤسسة لهذا البحث'
                   : language === 'en'
@@ -1556,7 +1556,7 @@ export const Businesses = ({
                       });
                     }, 50);
                   }}
-                  className="inline-flex items-center justify-center rounded-full bg-[#D4AF37] px-5 py-2.5 text-sm font-medium text-[#4A1D43] transition hover:bg-[#F0CD5A]"
+                  className="inline-flex items-center justify-center rounded-full bg-[#D4AF37] px-5 py-2.5 text-sm font-medium text-[#292725] transition hover:bg-[#F0CD5A]"
                 >
                   {language === 'ar'
                     ? 'إعادة ضبط البحث'
@@ -1571,7 +1571,7 @@ export const Businesses = ({
                 <button
                   type="button"
                   onClick={() => setShowSuggestForm(true)}
-                  className="text-sm font-semibold text-[#4A1D43] underline decoration-[#D4AF37] underline-offset-4 transition hover:text-[#D4AF37]"
+                  className="text-sm font-semibold text-[#292725] underline decoration-[#D4AF37] underline-offset-4 transition hover:text-[#D4AF37]"
                 >
                   {language === 'ar'
                     ? 'اقتراح مؤسسة'
@@ -1588,7 +1588,7 @@ export const Businesses = ({
           ) : filteredBusinesses.length > 0 ? (
             <div className="mx-auto max-w-7xl px-4">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-medium text-[#4A1D43]">
+                <h3 className="text-lg font-medium text-[#292725]">
                   {hasActiveSearch ? pageT.results.searchResults : pageT.results.featured}
                   <span className="ms-2 text-sm text-gray-500 font-normal">
                     ({hasActiveSearch ? filteredBusinesses.length : defaultResultCount} {filteredBusinesses.length > 1 ? pageT.results.businessPlural : pageT.results.businessSingular})
@@ -1614,7 +1614,7 @@ export const Businesses = ({
                         });
                       }, 50);
                     }}
-                    className="text-xs text-[#4A1D43] hover:text-[#D4AF37] font-medium"
+                    className="text-xs text-[#292725] hover:text-[#D4AF37] font-medium"
                   >
                     {pageT.results.reset}
                   </button>
@@ -1679,7 +1679,7 @@ export const Businesses = ({
               )}
               {!hasActiveSearch && filteredBusinesses.length > 3 && (
                 <div className="mt-6 text-center">
-                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#D4AF37]/10 rounded-lg text-xs text-[#4A1D43]" style={{ border: '1px solid #D4AF37' }}>
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#D4AF37]/10 rounded-lg text-xs text-[#292725]" style={{ border: '1px solid #D4AF37' }}>
                     <Search className="w-4 h-4" />
                     <span className="font-medium">{pageT.explore.hint}</span>
                   </div>
@@ -1692,13 +1692,13 @@ export const Businesses = ({
         <section id="professional-services" className="order-3 scroll-mt-28 px-4 py-8">
           <div className="mx-auto max-w-5xl rounded-xl border border-[#D4AF37]/35 bg-gradient-to-br from-[#FFF8DF] to-white p-6 text-center shadow-sm sm:p-8">
             <p className="text-sm font-medium uppercase tracking-[0.14em] text-[#B58A18]">{directoryCopy.professionals}</p>
-            <h2 className="public-heading mt-2 text-2xl font-medium text-[#4A1D43] md:text-3xl">{pageT.cvBusiness.title}</h2>
+            <h2 className="public-heading mt-2 text-2xl font-medium text-[#292725] md:text-3xl">{pageT.cvBusiness.title}</h2>
             <p className="mx-auto mt-3 max-w-3xl text-base leading-7 text-gray-600">{pageT.cvBusiness.paragraphs[0]}</p>
             <div className="mt-5 flex flex-col justify-center gap-3 sm:flex-row">
               <button type="button" onClick={() => navigate('/subscription')} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#4A1D43] px-5 py-3 text-sm font-medium text-white">
                 {pageT.hero.offers}<ArrowRight className="h-4 w-4" aria-hidden="true" />
               </button>
-              <button type="button" aria-expanded={showProfessionalDetails} onClick={() => setShowProfessionalDetails((current) => !current)} className="min-h-11 rounded-xl border border-[#D4AF37] bg-white px-5 py-3 text-sm font-medium text-[#4A1D43]">
+              <button type="button" aria-expanded={showProfessionalDetails} onClick={() => setShowProfessionalDetails((current) => !current)} className="min-h-11 rounded-xl border border-[#D4AF37] bg-white px-5 py-3 text-sm font-medium text-[#292725]">
                 {showProfessionalDetails ? directoryCopy.hideDetails : directoryCopy.showDetails}
               </button>
             </div>
@@ -1727,7 +1727,7 @@ export const Businesses = ({
               <button
                 type="button"
                 onClick={() => setShowDemoModal(true)}
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-[#D4AF37] bg-white px-5 py-2.5 text-sm font-medium text-[#4A1D43] shadow-sm transition hover:bg-[#FFF8E1] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/60"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-[#D4AF37] bg-white px-5 py-2.5 text-sm font-medium text-[#292725] shadow-sm transition hover:bg-[#FFF8E1] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/60"
               >
                 {pageT.cvBusiness.viewLarge}
                 <ArrowRight className="h-4 w-4" />
@@ -1748,7 +1748,7 @@ export const Businesses = ({
             </SectionIntro>
             <div className="mt-6 grid gap-3 md:grid-cols-3">
               {pageT.consistency.benefits.map((item: string) => (
-                <div key={item} className="rounded-xl border border-[#D4AF37]/20 bg-[#FFFDF6] px-4 py-3 text-sm font-semibold text-[#4A1D43]">
+                <div key={item} className="rounded-xl border border-[#D4AF37]/20 bg-[#FFFDF6] px-4 py-3 text-sm font-semibold text-[#292725]">
                   {item}
                 </div>
               ))}
@@ -1765,7 +1765,7 @@ export const Businesses = ({
               >
                 <p>{pageT.customerJourney.description}</p>
                 <div className="mt-5 rounded-xl border border-[#D4AF37]/25 bg-white p-4 text-sm text-gray-700 shadow-sm">
-                  <span className="font-medium text-[#4A1D43]">{pageT.customerJourney.dalilLabel}</span>
+                  <span className="font-medium text-[#292725]">{pageT.customerJourney.dalilLabel}</span>
                   {pageT.customerJourney.dalilMessage}
                 </div>
               </SectionIntro>
@@ -1773,7 +1773,7 @@ export const Businesses = ({
               <div className="space-y-3">
                 {pageT.customerJourney.steps.map((item: string, index: number) => (
                   <div key={item} className="flex gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-                    <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[#D4AF37]/15 text-sm font-medium text-[#4A1D43]">
+                    <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[#D4AF37]/15 text-sm font-medium text-[#292725]">
                       {index + 1}
                     </span>
                     <p className="text-sm leading-relaxed text-gray-700">{item}</p>
@@ -1788,12 +1788,12 @@ export const Businesses = ({
           <div className="max-w-6xl mx-auto">
             <div className="text-center max-w-3xl mx-auto">
               <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#D4AF37] mb-3">{pageT.faq.eyebrow}</p>
-              <h2 className="public-heading text-2xl md:text-3xl font-medium text-[#4A1D43]">{pageT.faq.title}</h2>
+              <h2 className="public-heading text-2xl md:text-3xl font-medium text-[#292725]">{pageT.faq.title}</h2>
             </div>
             <div className="mt-8 grid gap-4 md:grid-cols-2">
               {pageT.faq.items.map((item: { question: string; answer: string }) => (
                 <div key={item.question} className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-                  <h3 className="text-base font-medium text-[#4A1D43]">{item.question}</h3>
+                  <h3 className="text-base font-medium text-[#292725]">{item.question}</h3>
                   <p className="mt-3 text-sm leading-relaxed text-gray-600">{item.answer}</p>
                 </div>
               ))}
@@ -1814,7 +1814,7 @@ export const Businesses = ({
             <button
               type="button"
               onClick={() => navigate('/subscription')}
-              className="mt-7 inline-flex items-center justify-center gap-2 rounded-full bg-[#D4AF37] px-7 py-3 text-sm font-medium text-[#4A1D43] shadow-lg transition hover:bg-[#F0CD5A]"
+              className="mt-7 inline-flex items-center justify-center gap-2 rounded-full bg-[#D4AF37] px-7 py-3 text-sm font-medium text-[#292725] shadow-lg transition hover:bg-[#F0CD5A]"
             >
               {pageT.finalCta.button}
               <ArrowRight className="h-4 w-4" />
@@ -1835,7 +1835,7 @@ export const Businesses = ({
             <div className="relative max-h-[calc(100vh-32px)] w-fit max-w-[95vw] overflow-y-auto overflow-x-hidden">
               <div className="relative mb-3 rounded-xl border border-white/70 bg-white/95 px-12 py-4 text-center shadow-sm backdrop-blur">
                 <div className="mx-auto max-w-sm">
-                  <h2 id="business-demo-modal-title" className="public-heading text-lg font-medium text-[#4A1D43]">
+                  <h2 id="business-demo-modal-title" className="public-heading text-lg font-medium text-[#292725]">
                     {pageT.demo.title}
                   </h2>
                   <p className="mt-1 text-sm leading-relaxed text-gray-600">
@@ -1845,7 +1845,7 @@ export const Businesses = ({
                 <button
                   type="button"
                   onClick={() => setShowDemoModal(false)}
-                  className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 text-gray-600 transition hover:bg-[#fcfaf5] hover:text-[#4A1D43] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/60"
+                  className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 text-gray-600 transition hover:bg-[#fcfaf5] hover:text-[#292725] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/60"
                   aria-label={pageT.demo.close}
                 >
                   <X className="h-5 w-5" />
