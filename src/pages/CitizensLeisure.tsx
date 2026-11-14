@@ -764,7 +764,7 @@ export default function CitizensLeisure() {
           <MeilleursSection
             secteurLabel={t.sector}
             listePage="loisirs & évènements"
-            accentColor="#4A1D43"
+            accentColor="#B28A44"
             sectionTitle={t.recommended}
             useGoogleRecommendationCriteria
             includeRecommendedInTotal
@@ -781,8 +781,8 @@ export default function CitizensLeisure() {
             {/* CARTE 1 - L'Hebdo (Affinée) */}
             {weeklyEvent ? (
               <div className="group relative bg-white rounded-lg overflow-hidden transition-all duration-300 hover:shadow-lg" style={{ border: '1px solid #D4AF37' }}>
-                <div className="bg-[#4A1D43] px-3 py-1.5 text-center">
-                  <span className="text-white font-semibold text-xs tracking-wider uppercase">{t.premiumAgenda.weekly.badge}</span>
+                <div className="bg-[#D6B86D] px-3 py-1.5 text-center">
+                  <span className="text-[#292725] font-semibold text-xs tracking-wider uppercase">{t.premiumAgenda.weekly.badge}</span>
                 </div>
                 <div className="relative h-24 overflow-hidden">
                   <img
@@ -816,7 +816,7 @@ export default function CitizensLeisure() {
                       href={weeklyEvent.lien_billetterie}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-[#4A1D43] hover:bg-[#5A2D53] text-white rounded-md transition-colors text-xs font-medium"
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-[#D6B86D] hover:bg-[#E4CB91] text-[#292725] rounded-md transition-colors text-xs font-medium"
                       style={{ border: '1px solid #D4AF37' }}
                     >
                       <Ticket className="w-3.5 h-3.5" />
@@ -827,8 +827,8 @@ export default function CitizensLeisure() {
               </div>
             ) : (
               <div className="relative bg-white/50 rounded-lg overflow-hidden opacity-60" style={{ border: '1px solid #D4AF37' }}>
-                <div className="bg-[#4A1D43]/70 px-3 py-1.5 text-center">
-                  <span className="text-white font-semibold text-xs tracking-wider uppercase">{t.premiumAgenda.weekly.badge}</span>
+                <div className="bg-[#292725]/65 px-3 py-1.5 text-center">
+                  <span className="text-[#292725] font-semibold text-xs tracking-wider uppercase">{t.premiumAgenda.weekly.badge}</span>
                 </div>
                 <div className="p-6 text-center text-gray-500">
                   <Calendar className="w-10 h-10 mx-auto mb-3 opacity-40 text-[#292725]" />
@@ -840,8 +840,8 @@ export default function CitizensLeisure() {
             {/* CARTE 2 - Le Mensuel (Affinée) */}
             {monthlyEvent ? (
               <div className="group relative bg-white rounded-lg overflow-hidden transition-all duration-300 hover:shadow-lg" style={{ border: '1px solid #D4AF37' }}>
-                <div className="bg-[#4A1D43] px-3 py-1.5 text-center">
-                  <span className="text-white font-semibold text-xs tracking-wider uppercase">{t.premiumAgenda.monthly.badge}</span>
+                <div className="bg-[#D6B86D] px-3 py-1.5 text-center">
+                  <span className="text-[#292725] font-semibold text-xs tracking-wider uppercase">{t.premiumAgenda.monthly.badge}</span>
                 </div>
                 <div className="relative h-24 overflow-hidden">
                   <img
@@ -875,7 +875,7 @@ export default function CitizensLeisure() {
                       href={monthlyEvent.lien_billetterie}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-[#4A1D43] hover:bg-[#5A2D53] text-white rounded-md transition-colors text-xs font-medium"
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-[#D6B86D] hover:bg-[#E4CB91] text-[#292725] rounded-md transition-colors text-xs font-medium"
                       style={{ border: '1px solid #D4AF37' }}
                     >
                       <Ticket className="w-3.5 h-3.5" />
@@ -886,8 +886,8 @@ export default function CitizensLeisure() {
               </div>
             ) : (
               <div className="relative bg-white/50 rounded-lg overflow-hidden opacity-60" style={{ border: '1px solid #D4AF37' }}>
-                <div className="bg-[#4A1D43]/70 px-3 py-1.5 text-center">
-                  <span className="text-white font-semibold text-xs tracking-wider uppercase">{t.premiumAgenda.monthly.badge}</span>
+                <div className="bg-[#292725]/65 px-3 py-1.5 text-center">
+                  <span className="text-[#292725] font-semibold text-xs tracking-wider uppercase">{t.premiumAgenda.monthly.badge}</span>
                 </div>
                 <div className="p-6 text-center text-gray-500">
                   <Calendar className="w-10 h-10 mx-auto mb-3 opacity-40 text-[#292725]" />
@@ -899,8 +899,8 @@ export default function CitizensLeisure() {
             {/* CARTE 3 - L'Annuel (Premium Bordeaux avec bordure dorée) */}
             {annualEvent ? (
               <div className="group relative bg-white rounded-lg overflow-hidden transition-all duration-300 hover:shadow-lg" style={{ border: '2px solid #D4AF37' }}>
-                <div className="bg-[#4A1D43] px-3 py-1.5 text-center">
-                  <span className="text-white font-semibold text-xs tracking-wider uppercase">{t.premiumAgenda.annual.badge}</span>
+                <div className="bg-[#D6B86D] px-3 py-1.5 text-center">
+                  <span className="text-[#292725] font-semibold text-xs tracking-wider uppercase">{t.premiumAgenda.annual.badge}</span>
                 </div>
                 <div className="relative h-24 overflow-hidden">
                   <img
@@ -934,7 +934,7 @@ export default function CitizensLeisure() {
                       href={annualEvent.lien_billetterie}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-[#4A1D43] hover:bg-[#5A2D53] text-white rounded-md transition-colors text-xs font-medium"
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-[#D6B86D] hover:bg-[#E4CB91] text-[#292725] rounded-md transition-colors text-xs font-medium"
                       style={{ border: '1px solid #D4AF37' }}
                     >
                       <Ticket className="w-3.5 h-3.5" />
@@ -945,8 +945,8 @@ export default function CitizensLeisure() {
               </div>
             ) : (
               <div className="relative bg-white/50 rounded-lg overflow-hidden opacity-60" style={{ border: '2px solid #D4AF37' }}>
-                <div className="bg-[#4A1D43]/70 px-3 py-1.5 text-center">
-                  <span className="text-white font-semibold text-xs tracking-wider uppercase">{t.premiumAgenda.annual.badge}</span>
+                <div className="bg-[#292725]/65 px-3 py-1.5 text-center">
+                  <span className="text-[#292725] font-semibold text-xs tracking-wider uppercase">{t.premiumAgenda.annual.badge}</span>
                 </div>
                 <div className="p-6 text-center text-gray-500">
                   <Calendar className="w-10 h-10 mx-auto mb-3 opacity-40 text-[#292725]" />
@@ -963,7 +963,7 @@ export default function CitizensLeisure() {
         <div className="mb-6 text-center">
           <button
             onClick={() => setShowProposalForm(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#4A1D43] hover:bg-[#5A2D53] text-[#D4AF37] hover:text-white rounded-lg font-semibold hover:shadow-sm transition-all hover:scale-105 text-xs"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#D6B86D] hover:bg-[#E4CB91] text-[#292725] hover:text-[#292725] rounded-lg font-semibold hover:shadow-sm transition-all hover:scale-105 text-xs"
             style={{ border: '1px solid #D4AF37', fontFamily: "'Playfair Display', serif" }}
           >
             <Plus className="w-3.5 h-3.5 text-[#D4AF37]" />
@@ -1065,7 +1065,7 @@ export default function CitizensLeisure() {
                           href={event.lien_billetterie}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="block w-full py-2 bg-[#4A1D43] hover:bg-[#5A2D53] text-white rounded-lg font-medium text-center hover:shadow-sm transition-all hover:scale-105 text-sm"
+                          className="block w-full py-2 bg-[#D6B86D] hover:bg-[#E4CB91] text-[#292725] rounded-lg font-medium text-center hover:shadow-sm transition-all hover:scale-105 text-sm"
                           style={{ border: '2px solid #D4AF37' }}
                         >
                           <Ticket className={`w-4 h-4 inline ${language === 'ar' ? 'ml-2' : 'mr-2'}`} />
@@ -1090,7 +1090,7 @@ export default function CitizensLeisure() {
           {/* Active Filter Badge */}
           {selectedActivityType !== 'all' && (
             <div className="mb-6 flex items-center gap-3">
-              <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#4A1D43] text-white rounded-full font-semibold text-sm shadow-lg">
+              <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#D6B86D] text-[#292725] rounded-full font-semibold text-sm shadow-lg">
                 {t.activeFilter}: {ACTIVITY_LABELS[language][selectedActivityType] || selectedActivityType}
               </span>
               <button
