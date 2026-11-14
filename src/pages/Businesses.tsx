@@ -350,12 +350,26 @@ function reviewCount(business: Record<string, any>): number {
   const n = Number(business.nombre_avis ?? business['Compteur Avis Google'] ?? 0);
   return Number.isFinite(n) && n > 0 ? n : 0;
 }
+/**
+ * Commercial display rule: all existing CV/visually premium cards come before
+ * Essential cards. Preserve the legacy premium demonstration cards even where
+ * the CV publication flag is old; this does NOT change certification rights.
+ */
+function getPremiumDisplayPriority(business: Record<string, any>): number {
+  if (hasPublishedCv(business)) return 2;
+  if (isPaidSubscription(business.statut_abonnement)) return 2;
+  if (isCertifiedDalilTounes(business.statut_carte)) return 2;
+  return 1;
+}
+
 function getBusinessSortScore(business: Record<string, any>): number {
   if (hasPublishedCv(business)) return 3;
   if (ratingValue(business) >= 4 && reviewCount(business) >= 5) return 2;
   return 1;
 }
 function compareBusinessesByTrust(a: Record<string, any>, b: Record<string, any>): number {
+  const premium = getPremiumDisplayPriority(b) - getPremiumDisplayPriority(a);
+  if (premium) return premium;
   const group = getBusinessSortScore(b) - getBusinessSortScore(a);
   if (group) return group;
   // A significant volume of good reviews gives more confidence than a handful.
@@ -1152,6 +1166,9 @@ export const Businesses = ({
       if (searchTerm && !selectedBusinessId) {
         const relevance = new Map(relevantRows.map((row: any) => [row.id, Number(row._searchRelevance || 0)]));
         mappedData.sort((a, b) => {
+          // Always show premium CVs before Essential listings, then use relevance.
+          const premium = getPremiumDisplayPriority(b) - getPremiumDisplayPriority(a);
+          if (premium) return premium;
           const difference = (relevance.get(b.id) || 0) - (relevance.get(a.id) || 0);
           return difference || compareBusinessesByTrust(a, b);
         });
@@ -1249,7 +1266,11 @@ export const Businesses = ({
 
   const categories = Array.isArray(businesses) ? [...new Set(businesses.map((b) => b.category).filter(Boolean))].sort() : [];
 
-  const filteredBusinesses = Array.isArray(chipFilteredBusinesses) ? chipFilteredBusinesses : [];
+  // Final safeguard applies to all result paths, including filter chips and cache.
+  // Stable sort leaves the relevance order untouched INSIDE each presentation tier.
+  const filteredBusinesses = Array.isArray(chipFilteredBusinesses)
+    ? [...chipFilteredBusinesses].sort((a, b) => getPremiumDisplayPriority(b) - getPremiumDisplayPriority(a))
+    : [];
   const RESULTS_PER_PAGE = 6;
   const defaultResultCount = Math.min(6, filteredBusinesses.length);
   const resultCount = hasActiveSearch ? filteredBusinesses.length : defaultResultCount;
