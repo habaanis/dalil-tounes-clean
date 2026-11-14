@@ -311,7 +311,7 @@ ${offerFormData.description.trim()}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="relative bg-gradient-to-br from-[#4A1D43] to-[#800020] py-10 px-4 overflow-hidden"
+        className="relative bg-gradient-to-br from-[#FFF8EA] to-[#F0E2BD] py-10 px-4 overflow-hidden"
       >
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-5 left-5 w-48 h-48 bg-[#D4AF37] rounded-full blur-3xl"></div>
@@ -324,14 +324,14 @@ ${offerFormData.description.trim()}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.15, duration: 0.5 }}
           >
-            <h1 className="public-title text-3xl md:text-4xl font-serif text-[#D4AF37] mb-3" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>
+            <h1 className="public-title text-3xl md:text-4xl font-serif text-[#292725] mb-3" style={{ textShadow: 'none' }}>
               {t.partnerSearch.title}
             </h1>
-            <p className="text-base text-white/90 font-light mb-2">
+            <p className="text-base text-[#514B43] font-light mb-2">
               {t.partnerSearch.subtitle}
             </p>
             <div className="max-w-2xl mx-auto">
-              <p className="text-sm text-white/80 leading-relaxed">
+              <p className="text-sm text-[#514B43] leading-relaxed">
                 {t.partnerSearch.description}
               </p>
             </div>
@@ -350,7 +350,7 @@ ${offerFormData.description.trim()}
           >
             <div className="text-center bg-white rounded-lg p-4 shadow-sm border border-[#D4AF37]/30">
               <div className="w-12 h-12 bg-[#D4AF37]/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                <Handshake className="w-6 h-6 text-[#800020]" />
+                <Handshake className="w-6 h-6 text-[#9B762D]" />
               </div>
               <h3 className="text-sm font-semibold text-[#292725] mb-1">{featureLabels.collaboration}</h3>
               <p className="text-xs text-gray-600 leading-relaxed">
@@ -360,7 +360,7 @@ ${offerFormData.description.trim()}
 
             <div className="text-center bg-white rounded-lg p-4 shadow-sm border border-[#D4AF37]/30">
               <div className="w-12 h-12 bg-[#D4AF37]/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                <Network className="w-6 h-6 text-[#800020]" />
+                <Network className="w-6 h-6 text-[#9B762D]" />
               </div>
               <h3 className="text-sm font-semibold text-[#292725] mb-1">{featureLabels.network}</h3>
               <p className="text-xs text-gray-600 leading-relaxed">
@@ -370,7 +370,7 @@ ${offerFormData.description.trim()}
 
             <div className="text-center bg-white rounded-lg p-4 shadow-sm border border-[#D4AF37]/30">
               <div className="w-12 h-12 bg-[#D4AF37]/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                <TrendingUp className="w-6 h-6 text-[#800020]" />
+                <TrendingUp className="w-6 h-6 text-[#9B762D]" />
               </div>
               <h3 className="text-sm font-semibold text-[#292725] mb-1">{featureLabels.opportunity}</h3>
               <p className="text-xs text-gray-600 leading-relaxed">
@@ -523,7 +523,7 @@ ${offerFormData.description.trim()}
                   whileTap={{ scale: 0.99 }}
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-3 bg-gradient-to-r from-[#800020] to-[#4A1D43] text-white rounded-lg font-medium hover:from-[#900030] hover:to-[#5A2D53] transition-all shadow-md border border-[#D4AF37] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="w-full py-3 bg-gradient-to-r from-[#D6B86D] to-[#E4CB91] text-[#292725] rounded-lg font-medium hover:from-[#E4CB91] hover:to-[#F0E2BD] transition-all shadow-md border border-[#D4AF37] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {isSubmitting ? (
                     <>
@@ -587,7 +587,7 @@ ${offerFormData.description.trim()}
                     console.log('[PartnerRequests] 🔵 Proposer mes services cliqué');
                     setShowOfferForm(true);
                   }}
-                  className="px-6 py-2.5 bg-[#4A1D43] text-white rounded-lg text-sm font-medium hover:bg-[#800020] transition-colors shadow-sm border border-[#D4AF37]"
+                  className="px-6 py-2.5 bg-[#D6B86D] text-[#292725] rounded-lg text-sm font-medium hover:bg-[#E4CB91] transition-colors shadow-sm border border-[#D4AF37]"
                 >
                   {t.partnerSearch.serviceProvider.button}
                 </motion.button>
@@ -601,7 +601,7 @@ ${offerFormData.description.trim()}
                       onClick={() => setShowOfferForm(false)}
                       className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
                     >
-                      {isRTL ? <ArrowRight className="w-4 h-4 text-[#800020]" /> : <ArrowLeft className="w-4 h-4 text-[#800020]" />}
+                      {isRTL ? <ArrowRight className="w-4 h-4 text-[#9B762D]" /> : <ArrowLeft className="w-4 h-4 text-[#9B762D]" />}
                     </button>
                     <h3 className="text-lg font-semibold text-[#292725]">{offerT.title}</h3>
                   </div>
@@ -611,7 +611,7 @@ ${offerFormData.description.trim()}
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-[#292725] mb-1.5">
-                        {offerT.company} <span className="text-[#800020]">*</span>
+                        {offerT.company} <span className="text-[#9B762D]">*</span>
                       </label>
                       <input
                         type="text"
@@ -626,7 +626,7 @@ ${offerFormData.description.trim()}
 
                     <div>
                       <label className="block text-sm font-medium text-[#292725] mb-1.5">
-                        {offerT.sector} <span className="text-[#800020]">*</span>
+                        {offerT.sector} <span className="text-[#9B762D]">*</span>
                       </label>
                       <select
                         name="secteurActivite"
@@ -652,7 +652,7 @@ ${offerFormData.description.trim()}
 
                     <div className="md:col-span-2">
                       <label className="block text-sm font-medium text-[#292725] mb-1.5">
-                        {offerT.description} <span className="text-[#800020]">*</span>
+                        {offerT.description} <span className="text-[#9B762D]">*</span>
                       </label>
                       <textarea
                         name="description"
@@ -697,7 +697,7 @@ ${offerFormData.description.trim()}
 
                     <div>
                       <label className="block text-sm font-medium text-[#292725] mb-1.5">
-                        {ui.emailLabel} <span className="text-[#800020]">*</span>
+                        {ui.emailLabel} <span className="text-[#9B762D]">*</span>
                       </label>
                       <input
                         type="email"
@@ -712,7 +712,7 @@ ${offerFormData.description.trim()}
 
                     <div>
                       <label className="block text-sm font-medium text-[#292725] mb-1.5">
-                        {offerT.phone} <span className="text-[#800020]">*</span>
+                        {offerT.phone} <span className="text-[#9B762D]">*</span>
                       </label>
                       <input
                         type="tel"
@@ -727,7 +727,7 @@ ${offerFormData.description.trim()}
 
                     <div className="md:col-span-2">
                       <label className="block text-sm font-medium text-[#292725] mb-1.5">
-                        {offerT.city} <span className="text-[#800020]">*</span>
+                        {offerT.city} <span className="text-[#9B762D]">*</span>
                       </label>
                       <input
                         type="text"
@@ -746,7 +746,7 @@ ${offerFormData.description.trim()}
                     whileTap={{ scale: 0.99 }}
                     type="submit"
                     disabled={isSubmittingOffer}
-                    className="w-full py-3 bg-gradient-to-r from-[#800020] to-[#4A1D43] text-white rounded-lg text-sm font-medium hover:from-[#900030] hover:to-[#5A2D53] transition-all shadow-sm border border-[#D4AF37] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="w-full py-3 bg-gradient-to-r from-[#D6B86D] to-[#E4CB91] text-[#292725] rounded-lg text-sm font-medium hover:from-[#E4CB91] hover:to-[#F0E2BD] transition-all shadow-sm border border-[#D4AF37] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
                     {isSubmittingOffer ? (
                       <>
