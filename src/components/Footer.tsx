@@ -347,7 +347,7 @@ const Footer: React.FC = () => {
             <div className="bg-white text-gray-900 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[#D4AF37]">
               <div className="sticky top-0 bg-white border-b border-[#D4AF37]/40 px-6 py-4 flex items-start justify-between gap-4 rounded-t-2xl">
                 <div>
-                  <h2 className="text-xl font-semibold text-[#4A1D43]">
+                  <h2 className="text-xl font-semibold text-[#292725]">
                     {formT.heading}
                   </h2>
                   <p className="text-sm text-gray-600 mt-1">
@@ -387,7 +387,7 @@ const Footer: React.FC = () => {
                     value={requestForm.title}
                     onChange={(e) => setRequestForm({ ...requestForm, title: e.target.value })}
                     placeholder={formT.titlePlaceholder}
-                    className="w-full px-4 py-3 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#4A1D43] focus:border-[#4A1D43] text-sm"
+                    className="w-full px-4 py-3 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#C9A65D] focus:border-[#C9A65D] text-sm"
                   />
                 </div>
 
@@ -401,7 +401,7 @@ const Footer: React.FC = () => {
                       value={requestForm.phone}
                       onChange={(e) => setRequestForm({ ...requestForm, phone: e.target.value })}
                       placeholder="+216 XX XXX XXX"
-                      className="w-full px-4 py-3 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#4A1D43] focus:border-[#4A1D43] text-sm"
+                      className="w-full px-4 py-3 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#C9A65D] focus:border-[#C9A65D] text-sm"
                     />
                   </div>
 
@@ -414,7 +414,7 @@ const Footer: React.FC = () => {
                       value={requestForm.email}
                       onChange={(e) => setRequestForm({ ...requestForm, email: e.target.value })}
                       placeholder={formT.emailPlaceholder}
-                      className="w-full px-4 py-3 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#4A1D43] focus:border-[#4A1D43] text-sm"
+                      className="w-full px-4 py-3 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#C9A65D] focus:border-[#C9A65D] text-sm"
                     />
                   </div>
                 </div>
@@ -433,7 +433,7 @@ const Footer: React.FC = () => {
                     value={requestForm.message}
                     onChange={(e) => setRequestForm({ ...requestForm, message: e.target.value })}
                     placeholder={formT.messagePlaceholder}
-                    className="w-full px-4 py-3 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#4A1D43] focus:border-[#4A1D43] text-sm resize-none"
+                    className="w-full px-4 py-3 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#C9A65D] focus:border-[#C9A65D] text-sm resize-none"
                   />
                 </div>
 
