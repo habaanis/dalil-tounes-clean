@@ -1393,7 +1393,7 @@ export const Subscription = () => {
   <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
     <div className="max-w-3xl">
       <span className="inline-flex items-center gap-2 rounded-full bg-[#D6B86D] px-3 py-1 text-[10px] font-medium uppercase tracking-[0.12em] text-[#292725]">
-        <Sparkles className="h-3.5 w-3.5 text-[#F0C537]" aria-hidden="true" />
+        <Sparkles className="h-3.5 w-3.5 text-[#9B762D]" aria-hidden="true" />
         {simpleCopy.welcomeBadge}
       </span>
       <h3 className="mt-3 text-xl font-medium text-[#292725] sm:text-2xl">{simpleCopy.welcomeTitle}</h3>
@@ -1490,23 +1490,23 @@ export const Subscription = () => {
           </div>
         </aside>
 
-        <section className={`${showSecondaryDetails ? 'block' : 'hidden'} order-6 mt-5 rounded-3xl bg-gradient-to-r from-[#4A123F] to-[#5F174F] p-5 text-white shadow-xl sm:p-7`}>
+        <section className={`${showSecondaryDetails ? 'block' : 'hidden'} order-6 mt-5 rounded-3xl bg-gradient-to-r from-[#FFF8EA] to-[#F0E2BD] p-5 text-[#292725] shadow-sm sm:p-7`}>
           <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-start gap-4">
-              <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-[#D6AF2E] text-[#F0C537]">
+              <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-[#D6AF2E] text-[#9B762D]">
                 <Sparkles className="h-7 w-7" aria-hidden="true" />
               </span>
               <div>
                 <h2 className="text-2xl font-medium">{(offerCopy[language as OfferLanguage] ?? offerCopy.fr).eliteTitle}</h2>
-                <p className="mt-1 font-medium text-[#F0C537]">{(offerCopy[language as OfferLanguage] ?? offerCopy.fr).customSolution}</p>
-                <p className="mt-3 max-w-2xl text-sm leading-6 text-purple-100">{(offerCopy[language as OfferLanguage] ?? offerCopy.fr).eliteIntro}</p>
+                <p className="mt-1 font-medium text-[#9B762D]">{(offerCopy[language as OfferLanguage] ?? offerCopy.fr).customSolution}</p>
+                <p className="mt-3 max-w-2xl text-sm leading-6 text-[#514B43]">{(offerCopy[language as OfferLanguage] ?? offerCopy.fr).eliteIntro}</p>
               </div>
             </div>
             <div className="grid shrink-0 gap-2 sm:min-w-48">
               <a href="mailto:contact@dalil-tounes.com" aria-label={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).contactEmail} className="rounded-xl bg-white px-5 py-3 text-center text-sm font-medium text-[#292725] transition hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]">
                 {(offerCopy[language as OfferLanguage] ?? offerCopy.fr).contactUs}
               </a>
-              <a href="https://wa.me/21650390546" target="_blank" rel="noreferrer" className="rounded-xl border border-[#D6AF2E] px-5 py-3 text-center text-sm font-medium text-[#F0C537] transition hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]">
+              <a href="https://wa.me/21650390546" target="_blank" rel="noreferrer" className="rounded-xl border border-[#D6AF2E] px-5 py-3 text-center text-sm font-medium text-[#292725] transition hover:bg-[#E4CB91] focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]">
                 {(offerCopy[language as OfferLanguage] ?? offerCopy.fr).contactWhatsApp}
               </a>
             </div>
@@ -1518,14 +1518,14 @@ export const Subscription = () => {
           <p>{copy.disclaimer}</p>
         </div>
 
-        <section className={`${showSecondaryDetails ? 'flex' : 'hidden'} order-8 mt-5 flex-col gap-5 rounded-3xl bg-gradient-to-r from-[#4A123F] to-[#5F174F] p-5 text-white shadow-xl sm:flex-row sm:items-center sm:justify-between sm:p-7`}>
+        <section className={`${showSecondaryDetails ? 'flex' : 'hidden'} order-8 mt-5 flex-col gap-5 rounded-3xl bg-gradient-to-r from-[#FFF8EA] to-[#F0E2BD] p-5 text-[#292725] shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-7`}>
           <div className="flex items-center gap-4">
-            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-[#D6AF2E] text-[#F0C537]">
+            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-[#D6AF2E] text-[#9B762D]">
               <Rocket className="h-7 w-7" aria-hidden="true" />
             </span>
             <div>
               <h2 className="text-xl font-medium">{copy.ctaTitle}</h2>
-              <p className="mt-1 text-sm text-purple-100">{copy.ctaText}</p>
+              <p className="mt-1 text-sm text-[#514B43]">{copy.ctaText}</p>
             </div>
           </div>
           <a
