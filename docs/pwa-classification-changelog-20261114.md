@@ -25,3 +25,13 @@ Toutes les corrections doivent être effectuées dans Airtable puis vérifiées 
 - Statut préservé : `terminer la saisi` ; `approved=false` et `statut_publication=NULL` dans Supabase, donc fiches non publiques.
 - Première vérification Supabase : synchronisation en attente ; second contrôle : **synchronisation confirmée** pour les deux, `liste_pages=['entreprises','tourisme local & expatriation','services citoyens']`.
 - Retour arrière : rétablir `liste pages` vide dans Airtable pour chacun, puis vérifier la synchronisation Supabase.
+
+
+## Lot 003 — Immobilier explicite, sans publication
+- Avant : `liste pages` vide pour chacun.
+- Après Airtable : `entreprises `, `tourisme local & expatriation`, `services citoyens`.
+- Enregistrements : `recKhwzq8l1uRhYSI` DAR KLIF ; `recvb5B009QCgyu0T` Hachfi Real Estate ; `recEaFq7BH4A6Bcp0` HOME IN TUNISIA ; `recIgqTCiFYlDajb7` STE ALPINIA de promotion immobilière.
+- Justification : catégorie Immobilier ; sous-catégorie Agence Immobilière pour les trois premiers, dénomination `promotion immobilière` pour le dernier.
+- Statuts inchangés : `terminer la saisi`, `statut_publication=NULL`; `approved` NULL ou false selon la fiche.
+- Premier contrôle Supabase : champs `liste_pages` encore à NULL ; synchronisation en attente de confirmation.
+- Retour arrière : rétablir `liste pages` vide dans Airtable pour ces 4 records, vérifier Supabase ensuite.
