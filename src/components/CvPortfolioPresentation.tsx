@@ -228,7 +228,6 @@ export function CvPortfolioPresentation({
     action !== callAction
       && action !== directionsAction,
   );
-  const portfolioGallery = gallery.slice(0, 6);
 
   const tabs = [
     { id: 'home' as const, label: copy.home, icon: Home, visible: true },
