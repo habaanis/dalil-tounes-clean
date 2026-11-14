@@ -151,6 +151,8 @@ export default function SearchBar({
   }, [syncDropdownPos]);
 
   const isGlobal = scope === 'global';
+  const appPageScope = isPlatformAppMode() && (scope === 'sante' || scope === 'services' || scope === 'magasin') ? scope : null;
+  const appPageAssignment = appPageScope === 'sante' ? 'santé' : appPageScope === 'services' ? 'services citoyens' : appPageScope === 'magasin' ? 'commerces & magasins' : null;
   const pageLabel = isGlobal ? null : getCategoryDisplayName(scope as PageCategorie);
   const like = (s: string) => `%${(s || '').trim()}%`;
   const GLOBAL_RAW_RESULT_LIMIT = 150;
@@ -289,10 +291,7 @@ export default function SearchBar({
           query = query.or(`gouvernorat.ilike.${cityPattern},ville.ilike.${cityPattern},adresse.ilike.${cityPattern}`);
         }
 
-        if (scope === 'magasin') {
-          // Public autocomplete should not fail if optional commerce flag differs.
-          // Filtering is applied by the destination page.
-        }
+        if (appPageAssignment) query = query.contains('liste_pages', [appPageAssignment]);
 
         const resp = await query;
         if (requestId !== searchSequence.current) return;
@@ -302,7 +301,7 @@ export default function SearchBar({
         let searchRows = resp.data || [];
         if (resp.error) {
           console.error('[Search] broad query error, attempting safe name fallback:', resp.error);
-          const fallback = await supabase
+          let fallback = supabase
             .from(Tables.ENTREPRISE)
             .select('id, id_airtable, nom, ville, gouvernorat, categorie, statut_carte, cv_business_status, cv_business_published_at, "Note Google Globale", "Compteur Avis Google"')
             .not('nom', 'is', null)
@@ -310,14 +309,16 @@ export default function SearchBar({
             .order('cv_business_status', { ascending: false, nullsFirst: false })
             .order('"Compteur Avis Google"', { ascending: false, nullsFirst: false })
             .limit(50);
+          if (appPageAssignment) fallback = fallback.contains('liste_pages', [appPageAssignment]);
+          const fallbackResponse = await fallback;
           if (requestId !== searchSequence.current) return;
-          if (fallback.error) {
-            setErrEnt(fallback.error.message);
+          if (fallbackResponse.error) {
+            setErrEnt(fallbackResponse.error.message);
             setEnt([]);
             setLoadingEnt(false);
             return;
           }
-          searchRows = fallback.data || [];
+          searchRows = fallbackResponse.data || [];
         }
 
         console.log('[Search] raw Supabase results:', searchRows.length,
@@ -495,6 +496,15 @@ export default function SearchBar({
         return;
       }
     }
+    if (appPageScope) {
+      const params = new URLSearchParams();
+      if (query) params.set('q', query);
+      if (city.trim()) params.set('ville', city.trim());
+      params.set('scope', appPageScope);
+      if (certFilter) params.set('statut_carte', certFilter);
+      goTo(`/recherche?${params.toString()}`);
+      return;
+    }
     const url = buildEntrepriseUrl({
       q: item ? getResultLabel(item) : q.trim() || undefined,
       ville: city.trim() || undefined,
@@ -656,6 +666,7 @@ export default function SearchBar({
       const params = new URLSearchParams();
       if (q.trim()) params.set('q', q.trim());
       if (city.trim()) params.set('ville', city.trim());
+      if (appPageScope) params.set('scope', appPageScope);
       return (
         <li
           className="py-2.5 px-2 font-medium cursor-pointer hover:bg-orange-50 rounded transition text-orange-700 flex items-center gap-2"
