@@ -355,7 +355,7 @@ export default function CitizensServicesLocalized() {
       />
       <section className="relative min-h-[220px] overflow-hidden">
         <img src={getStructureImageUrl('/images/service-social.jpg')} alt={c.title} className="absolute inset-0 w-full h-full object-cover" loading="lazy" decoding="async" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#4A1D43]/90 via-[#4A1D43]/75 to-[#D4AF37]/30" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#292725]/85 via-[#292725]/60 to-[#D4AF37]/30" />
         <div className="relative min-h-[220px] flex items-center justify-center px-4 py-7 text-center text-white">
           <div className="max-w-4xl"><h1 className="public-title text-3xl md:text-4xl font-medium mb-3 text-[#D4AF37]">{c.title}</h1><p className="text-sm md:text-base leading-relaxed">{c.intro}</p></div>
         </div>
@@ -396,7 +396,7 @@ export default function CitizensServicesLocalized() {
             <MeilleursSection
               secteurLabel={c.sector}
               listePage="services citoyens"
-              accentColor="#4A1D43"
+              accentColor="#B28A44"
               sectionTitle={c.recommended}
               useGoogleRecommendationCriteria
               excludedKeywords={SERVICE_EXCLUDED_KEYWORDS}
