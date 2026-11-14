@@ -35,3 +35,15 @@ Toutes les corrections doivent être effectuées dans Airtable puis vérifiées 
 - Statuts inchangés : `terminer la saisi`, `statut_publication=NULL`; `approved` NULL ou false selon la fiche.
 - Premier contrôle Supabase : champs `liste_pages` encore à NULL ; second contrôle : **synchronisation confirmée pour les 4 fiches** avec les trois pages, statuts inchangés.
 - Retour arrière : rétablir `liste pages` vide dans Airtable pour ces 4 records, vérifier Supabase ensuite.
+
+
+## Lot 004 — 27 fiches sans pages : établissements personnes âgées et automobile
+- Source : Supabase sans liste_pages, croisé avec Airtable. Affectations écrites **uniquement dans Airtable**. Aucun statut de publication ni d'approbation modifié.
+- 14 établissements de personnes âgées : `recTHCMu6nQlJYNnz`, `reczycQgUo8HPAqeQ`, `recRTB3QyVMdQen9F`, `recRqQS7mQoWFVbdJ`, `recQsDgUA25t6hIFm`, `rec2NmVdPPcA7Kce8`, `recAy4Hg2LZxDwbmh`, `reclPcF3dzfBqbUsH`, `recJJFR3ldZH5xH6f`, `rec52cEqop4vVGz50`, `rec2MV5kxOXorGYOI`, `recMjzzszkpXQRDvw`, `recctHifxH4jP3Pd7`, `recfYooKbhWjngfSK`. Catégories Maison de retraite, Retirement home ou Casa di riposo ; sous-catégories Retirement home ou Assisted living facility. Pages attribuées : `santé`, `services citoyens`.
+- Automobile — `entreprises ` + `services citoyens` : garages `recV2kg2wtttMYvsG`, `recZqRmk3rg5MgpEa`, `recnik1PSxlku85DN` ; lavage `recCbDmEEw2O7zpmV`.
+- Automobile — `entreprises ` + `commerces & magasins` : vente véhicules `recKwMoG3Z2vjp8pJ`, vente accessoires et pièces `recgkbBMMod5ySoaS`, `recoUwtT6ssfB4HQ6`, `reci3GFF6jlDPfiVm`, `recy5aQpcrBDAMnH7`.
+- Automobile — `entreprises ` + `services citoyens` + `commerces & magasins` : réparation et ventes pièces/véhicules `recJl1fAZPDVa3XVz`, `rec4fodWtcECYHXem`, `rec7MTFkjfYYr8iBh`.
+- Automobile — `entreprises ` + `tourisme local & expatriation` + `services citoyens` : location de véhicules `rec8AYKRasyxA3wsy`.
+- Validation avant écriture : champs Airtable liste pages vides, métiers/catégories vérifiés, statut `terminer la saisi` pour les 27.
+- Premier contrôle Supabase : 27 présentes, 4 synchronisées, 23 en attente, aucune avec `approved=true`, aucune `statut_publication` non vide.
+- Retour arrière : pour chacune des 27 fiches ci-dessus, remettre le champ Airtable `liste pages` vide, puis attendre le retour à tableau vide/NULL dans Supabase ; vérifier les statuts inchangés.
