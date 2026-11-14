@@ -315,7 +315,6 @@ export function CvPortfolioPresentation({
           <img className="cvp-lienora-logo" src={logoImage} alt={`Logo ${profile.identity.name}`} />
 
           <div className="cvp-lienora-main">
-            <span className="cvp-lienora-activity">✦ {profile.identity.activity}</span>
             <section className="cvp-lienora-identity">
               <small>{localizedProductLabel}</small>
               <h1>{profile.identity.name}</h1>
