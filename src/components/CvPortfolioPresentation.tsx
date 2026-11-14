@@ -304,7 +304,7 @@ export function CvPortfolioPresentation({
 
   return (
     <div
-      className={`cvp-page cvp-page--lienora${embeddedPreview || hideBack ? ' cvp-page--embedded' : ''}`}
+      className={`cvp-page cvp-page--lienora cvp-palette-${palette || 'prestige'}${embeddedPreview || hideBack ? ' cvp-page--embedded' : ''}`}
       dir={isRTL ? 'rtl' : 'ltr'}
       style={PORTFOLIO_PALETTE_THEMES[palette || 'prestige']}
     >
