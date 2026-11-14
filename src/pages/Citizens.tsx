@@ -169,21 +169,21 @@ export default function Citizens() {
           <div className="absolute inset-0 bg-white/65" />
 
           <div className="relative z-10 px-5 py-6 text-center sm:px-8 md:py-7">
-            <h1 className="text-2xl font-normal text-[#4A1D43] md:text-3xl" style={{ fontFamily: "'Playfair Display', serif" }}>{t.title}</h1>
+            <h1 className="text-2xl font-normal text-[#292725] md:text-3xl" style={{ fontFamily: "'Playfair Display', serif" }}>{t.title}</h1>
             <p className="mx-auto mt-3 max-w-3xl text-sm leading-6 text-gray-700 md:text-base">{t.subtitle}</p>
           </div>
         </motion.div>
 
         {results.length > 0 && (
           <div className="mb-8 rounded-2xl border border-[#D4AF37]/40 bg-white p-4 shadow-sm sm:p-6">
-            <h2 className="mb-4 text-xl font-bold text-[#4A1D43]">{t.results}</h2>
+            <h2 className="mb-4 text-xl font-bold text-[#292725]">{t.results}</h2>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {results.map((result) => (
                 <div key={result.id} className="rounded-xl border border-gray-100 p-4 transition hover:shadow-sm">
                   <h3 className="font-semibold text-gray-900">{result.nom}</h3>
                   <p className="text-sm text-gray-500">{result.ville}</p>
                   {result.description && <p className="mt-1 line-clamp-2 text-sm text-gray-600">{result.description}</p>}
-                  {result.telephone && <a href={`tel:${result.telephone}`} className="mt-2 block text-sm font-medium text-[#4A1D43] hover:underline">📞 {result.telephone}</a>}
+                  {result.telephone && <a href={`tel:${result.telephone}`} className="mt-2 block text-sm font-medium text-[#292725] hover:underline">📞 {result.telephone}</a>}
                 </div>
               ))}
             </div>
@@ -191,7 +191,7 @@ export default function Citizens() {
         )}
 
         <motion.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }} aria-labelledby="citizen-categories">
-          <h2 id="citizen-categories" className="mb-4 text-center text-xl font-normal text-[#4A1D43] md:text-2xl" style={{ fontFamily: "'Playfair Display', serif" }}>{t.chooseTitle}</h2>
+          <h2 id="citizen-categories" className="mb-4 text-center text-xl font-normal text-[#292725] md:text-2xl" style={{ fontFamily: "'Playfair Display', serif" }}>{t.chooseTitle}</h2>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-5">
             {CATEGORY_ROUTES.map((category, index) => (
               <Link
