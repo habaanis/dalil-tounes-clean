@@ -54,7 +54,7 @@ export function PwaUpdatePrompt() {
       <button
         type="button"
         onClick={refresh}
-        className="shrink-0 rounded-full bg-[#B62226] px-4 py-3 text-sm font-extrabold text-white transition hover:bg-[#961D22] focus:outline-none focus:ring-2 focus:ring-[#C9A65D] focus:ring-offset-2"
+        className="shrink-0 rounded-full border border-[#B68C3B] bg-[#D6B86D] px-4 py-3 text-sm font-extrabold text-[#292725] transition hover:bg-[#E4CB91] focus:outline-none focus:ring-2 focus:ring-[#C9A65D] focus:ring-offset-2"
       >
         {copy.action}
       </button>
