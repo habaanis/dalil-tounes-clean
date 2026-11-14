@@ -158,57 +158,6 @@ export default function SearchBar({
 
   const OR_SAFE_FIELDS = ['nom', 'sous_categories_texte', 'sous_categories_clean', 'services', 'keywords_fr', 'search_text', 'description'];
 
-  function rowToSearchableText(row: any): string {
-    const textFields = [
-      row.nom, row.ville, row.gouvernorat, row.adresse,
-      row.description, row.sous_categories_texte, row.sous_categories_clean,
-      row.name_ar, row.services, row.statut_carte,
-      row['mots cles recherche'],
-    ];
-    const arrayFields = [row.categorie, row.sous_categories, row.secteur, row.tags];
-    for (const arr of arrayFields) {
-      if (Array.isArray(arr)) textFields.push(arr.join(' '));
-      else if (typeof arr === 'string') textFields.push(arr);
-    }
-    return normalizeText(textFields.filter(Boolean).join(' '));
-  }
-
-  function scoreResult(row: any, words: string[]): number {
-    const nom = normalizeText(row.nom || '');
-    const fullQ = words.join(' ');
-    let score = 0;
-
-    if (nom === fullQ) score += 100;
-    else if (nom.startsWith(fullQ)) score += 80;
-    else if (nom.includes(fullQ)) score += 60;
-
-    const geoText = normalizeText([row.ville, row.gouvernorat, row.adresse].filter(Boolean).join(' '));
-    const catText = normalizeText([
-      row.sous_categories_texte, row.sous_categories_clean, row.services,
-      row['mots cles recherche'],
-      Array.isArray(row.categorie) ? row.categorie.join(' ') : row.categorie,
-      Array.isArray(row.tags) ? row.tags.join(' ') : row.tags,
-    ].filter(Boolean).join(' '));
-
-    for (const w of words) {
-      if (nom.startsWith(w)) score += 40;
-      else if (nom.includes(w)) score += 25;
-
-      if (geoText.startsWith(w) || geoText.includes(` ${w}`)) score += 20;
-      else if (geoText.includes(w)) score += 12;
-
-      if (catText.includes(w)) score += 15;
-
-      if (normalizeText(row.description || '').includes(w)) score += 5;
-    }
-
-    const sc = normalizeText(row.statut_carte || '');
-    if (sc.includes('certifie') && !sc.includes('non')) score += 3;
-    if (row.is_premium) score += 2;
-
-    return score;
-  }
-
   function trustPriority(row: any): number {
     if (String(row.cv_business_status || '').toLowerCase() === 'published' || row.cv_business_published_at) return 2;
     const rating = Number(row['Note Google Globale'] || 0);
