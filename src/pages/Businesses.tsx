@@ -1314,7 +1314,7 @@ export const Businesses = ({
                 className="absolute inset-y-0 left-1/2 h-full -translate-x-1/2 bg-cover bg-center"
                 style={{ aspectRatio: '946 / 630', backgroundImage: "url('/images/drapeau-tunisie.webp')", maskImage: 'linear-gradient(to right, transparent, black 18%, black 82%, transparent)' }}
               />
-              <div className="absolute inset-0 bg-[#2e102a]/40" />
+              <div className="absolute inset-0 bg-[#292725]/45" />
             </div>
             <div className="relative px-5 py-8 text-center sm:px-8 lg:px-12 lg:py-10">
               <div className="mx-auto max-w-3xl text-white [text-shadow:0_1px_4px_rgba(0,0,0,0.45)]">
@@ -1450,7 +1450,7 @@ export const Businesses = ({
         {(searchTerm || selectedCity || selectedCategory) && (
           <div className="order-1 mb-8 flex flex-wrap items-center gap-2 px-4">
             {searchTerm && (
-              <span className="inline-flex items-center gap-1 bg-[#4A1D43]/5 text-[#292725] px-3 py-1.5 rounded-full text-sm font-medium" style={{ border: '1px solid #4A1D43' }}>
+              <span className="inline-flex items-center gap-1 bg-[#FFF8EA] text-[#292725] px-3 py-1.5 rounded-full text-sm font-medium" style={{ border: '1px solid #C9A65D' }}>
                 <Search className="w-3.5 h-3.5" />
                 <span>{language === 'ar' ? 'البحث' : language === 'en' ? 'Search' : language === 'it' ? 'Ricerca' : language === 'ru' ? 'Поиск' : 'Recherche'} :</span>
                 <strong>{searchTerm}</strong>
@@ -1695,7 +1695,7 @@ export const Businesses = ({
             <h2 className="public-heading mt-2 text-2xl font-medium text-[#292725] md:text-3xl">{pageT.cvBusiness.title}</h2>
             <p className="mx-auto mt-3 max-w-3xl text-base leading-7 text-gray-600">{pageT.cvBusiness.paragraphs[0]}</p>
             <div className="mt-5 flex flex-col justify-center gap-3 sm:flex-row">
-              <button type="button" onClick={() => navigate('/subscription')} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#4A1D43] px-5 py-3 text-sm font-medium text-white">
+              <button type="button" onClick={() => navigate('/subscription')} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#D6B86D] px-5 py-3 text-sm font-medium text-[#292725]">
                 {pageT.hero.offers}<ArrowRight className="h-4 w-4" aria-hidden="true" />
               </button>
               <button type="button" aria-expanded={showProfessionalDetails} onClick={() => setShowProfessionalDetails((current) => !current)} className="min-h-11 rounded-xl border border-[#D4AF37] bg-white px-5 py-3 text-sm font-medium text-[#292725]">
@@ -1802,7 +1802,7 @@ export const Businesses = ({
         </section>
 
         <section className={`${showProfessionalDetails ? 'block' : 'hidden'} order-4 px-4 py-10`}>
-          <div className="max-w-5xl mx-auto rounded-xl border border-[#D4AF37]/35 bg-gradient-to-br from-[#4A1D43] to-[#0B5A45] p-7 md:p-10 text-center text-white shadow-[0_22px_60px_rgba(74,29,67,0.2)]">
+          <div className="max-w-5xl mx-auto rounded-xl border border-[#D4AF37]/35 bg-gradient-to-br from-[#FFF8EA] to-[#F3E8D3] p-7 md:p-10 text-center text-[#292725] shadow-[0_22px_60px_rgba(74,29,67,0.2)]">
             <p className="text-sm font-medium uppercase tracking-[0.18em] text-[#F7D978]">{pageT.finalCta.eyebrow}</p>
             <h2 className="public-heading mt-3 text-2xl md:text-4xl font-medium">{pageT.finalCta.title}</h2>
             <p className="mt-4 max-w-2xl mx-auto text-sm md:text-base leading-relaxed text-white/85">
@@ -1937,7 +1937,7 @@ export const Businesses = ({
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 px-4 py-2 text-sm bg-[#4A1D43] text-white rounded-md hover:bg-[#5A2D53]"
+                    className="flex-1 px-4 py-2 text-sm bg-[#D6B86D] text-[#292725] rounded-md hover:bg-[#E4CB91]"
                     style={{ border: '1px solid #D4AF37' }}
                   >
                     {t.businesses.form.submit}
