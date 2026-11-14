@@ -152,7 +152,6 @@ export interface CvPortfolioPresentationProps {
   hoursContent?: ReactNode;
   hoursBadge?: string;
   practicalContent?: ReactNode;
-  onQuote: () => void;
   boutiqueContent?: ReactNode;
   onShowQr: () => void;
   onShare: () => void;
@@ -182,7 +181,6 @@ export function CvPortfolioPresentation({
   hoursContent,
   hoursBadge,
   practicalContent,
-  onQuote,
   boutiqueContent,
   onShowQr,
   onShare,
@@ -228,7 +226,7 @@ export function CvPortfolioPresentation({
     action !== callAction
       && action !== directionsAction,
   );
-  const portfolioGallery = gallery.slice(0, 4);
+  const portfolioGallery = gallery.slice(0, 6);
 
   const tabs = [
     { id: 'home' as const, label: copy.home, icon: Home, visible: true },
@@ -356,9 +354,6 @@ export function CvPortfolioPresentation({
                 {presentation.visibleActions.includes('reservation') && bookingContent && (
                   <button type="button" onClick={() => setBookingOpen(value => !value)}><CalendarDays />{copy.book}</button>
                 )}
-                {(profile.contact.whatsapp || profile.contact.email) && (
-                  <button type="button" onClick={onQuote}><FileText />{copy.requestInfo}</button>
-                )}
                 {sharingContent && (
                   <button type="button" onClick={() => { onShowQr(); setQrOpen(open => !open); }}><QrCode />{copy.myQr}</button>
                 )}
@@ -377,6 +372,7 @@ export function CvPortfolioPresentation({
                 )}
               </div>
             )}
+            {bookingOpen && bookingContent && <section className="cvp-booking">{bookingContent}</section>}
             {qrOpen && sharingContent && <section className="cvp-booking">{sharingContent}</section>}
 
             <nav className="cvp-lienora-tabs" aria-label={navigationAriaLabel}>
@@ -451,15 +447,12 @@ export function CvPortfolioPresentation({
                   )}
                   {hasSection('services') && portfolioGallery.length > 0 && (
                     <section className="cvp-lienora-services">
-                      <header><h2>{copy.ourServices}</h2><button type="button" onClick={() => goTo('services')}>{copy.viewAll} ›</button></header>
-                      <div>
+                      <header><h2>{copy.photos}</h2><button type="button" onClick={() => goTo('gallery')}>{copy.viewAll} ›</button></header>
+                      <div className="cvp-lienora-photo-mosaic">
                         {portfolioGallery.map((item, index) => (
-                          <article key={`${item.thumbnail}-${index}`}>
-                            <button type="button" className="cvp-lienora-zoom" onClick={() => onSelectImage(item.full)}>
-                              <img src={item.thumbnail} alt={profile.services[index] || profile.identity.activity} loading="lazy" decoding="async" /><Search />
-                            </button>
-                            {profile.services[index] && <b>{profile.services[index]}</b>}
-                          </article>
+                          <button key={`${item.thumbnail}-${index}`} type="button" className="cvp-lienora-zoom" onClick={() => onSelectImage(item.full)} aria-label={`${copy.photos} ${index + 1}`}>
+                            <img src={item.thumbnail} alt={`${profile.identity.name} — ${index + 1}`} loading="lazy" decoding="async" /><Search />
+                          </button>
                         ))}
                       </div>
                     </section>
@@ -478,7 +471,6 @@ export function CvPortfolioPresentation({
                 </section>
               )}
               {activeTab === 'reviews' && reviewsContent && <section className="cvp-section">{reviewsContent}</section>}
-              {bookingOpen && bookingContent && <section className="cvp-booking">{bookingContent}</section>}
               {notice && <p className="cvp-notice" role="status">{notice}</p>}
             </div>
           </div>
