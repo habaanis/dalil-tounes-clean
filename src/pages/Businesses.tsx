@@ -17,6 +17,7 @@ import { Search, MapPin, Phone, Mail, Building2, X, Award, ArrowRight, ShieldChe
 import { Toast } from '../components/Toast';
 import BusinessNeedForm from '../components/BusinessNeedForm';
 import { normalizeText, removeArabicDiacritics, extractFrenchName, cleanSearchTerm, cleanArabicField } from '../lib/textNormalization';
+import { businessQueryTerms, rankBusinessSearchRows } from '../lib/businessSearchRelevance';
 import { BusinessCardWithActivity, type BusinessActivity } from '../components/BusinessCardWithActivity';
 import { BusinessCardPreview, type BusinessCardPreviewLanguage } from '../components/BusinessCardPreview';
 import { CvBusinessSharingInfo } from '../components/CvBusinessSharingInfo';
@@ -108,7 +109,7 @@ interface BusinessNeedActivityRow {
   created_at: string | null;
 }
 
-const ENTREPRISE_SELECT_FIELDS = 'id, id_airtable, nom, sous_categories_texte, sous_categories_clean, categorie, gouvernorat, ville, adresse, telephone, email, site_web, description, a_propos, services, image_url, logo_url, statut_abonnement, cv_business_status, cv_business_published_at, "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, statut_carte, "Note Google Globale", "Compteur Avis Google", name_ar, name_en, name_it, name_ru, description_ar, description_en, description_it, description_ru, slug';
+const ENTREPRISE_SELECT_FIELDS = 'id, id_airtable, nom, sous_categories_texte, sous_categories_clean, categorie, gouvernorat, ville, adresse, telephone, email, site_web, description, a_propos, services, image_url, logo_url, statut_abonnement, cv_business_status, cv_business_published_at, "mots cles recherche", keywords_fr, search_text, "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, statut_carte, "Note Google Globale", "Compteur Avis Google", name_ar, name_en, name_it, name_ru, description_ar, description_en, description_it, description_ru, slug';
 
 const PUBLIC_BUSINESS_NEED_ACTIVITY_TYPES = new Set([
   'supplier_search',
@@ -961,7 +962,15 @@ export const Businesses = ({
         name_ru: item.name_ru || null,
       }));
 
-      mappedData.sort(compareBusinessesByTrust);
+      if (searchTerm && !selectedBusinessId) {
+        const relevance = new Map(relevantRows.map((row: any) => [row.id, Number(row._searchRelevance || 0)]));
+        mappedData.sort((a, b) => {
+          const difference = (relevance.get(b.id) || 0) - (relevance.get(a.id) || 0);
+          return difference || compareBusinessesByTrust(a, b);
+        });
+      } else {
+        mappedData.sort(compareBusinessesByTrust);
+      }
 
       console.log(`[DEBUG] ✅ Mapping terminé: ${mappedData.length} entreprises`);
       console.log('═══════════════════════════════════════\n');
@@ -1021,22 +1030,11 @@ export const Businesses = ({
         // Pour l'arabe : ne pas normaliser (removeArabicDiacritics altère les caractères)
         // Pour le latin : nettoyer seulement les guillemets parasites
         const cleaned = cleanSearchTerm(searchTerm);
-        const searchPattern = `%${cleaned}%`;
-        console.log(`[DEBUG] Filtre Recherche: "${searchTerm}" → nettoyé: "${cleaned}" (pattern: ${searchPattern})`);
-        // Colonnes avec espaces ou accents passées via .filter() séparés pour éviter
-        // les bugs de parsing de la syntaxe .or() string avec noms de colonnes complexes
-        query = query.or(
-          [
-            `nom.ilike.${searchPattern}`,
-            `name_ar.ilike.${searchPattern}`,
-            `description.ilike.${searchPattern}`,
-            `description_ar.ilike.${searchPattern}`,
-            `ville.ilike.${searchPattern}`,
-            `gouvernorat.ilike.${searchPattern}`,
-            `sous_categories_texte.ilike.${searchPattern}`,
-            `sous_categories_clean.ilike.${searchPattern}`,
-          ].join(',')
-        );
+        const terms = businessQueryTerms(cleaned);
+        const fields = ['nom', 'name_ar', 'description', 'description_ar', 'sous_categories_texte', 'sous_categories_clean', 'services', 'keywords_fr', 'search_text', 'ville', 'gouvernorat'];
+        const clauses = terms.flatMap(term => fields.map(field => `${field}.ilike.%${term.replace(/[%_]/g, '')}%`));
+        console.log('[Search] normalized profession variants:', terms);
+        query = query.or(clauses.join(','));
       }
 
       if (!selectedBusinessId && selectedCity) {
@@ -1103,7 +1101,11 @@ export const Businesses = ({
         console.log('[DEBUG] item.nom brut (toutes entreprises):', (data as any[]).map((d: any) => d.nom));
       }
 
-      let mappedData = dedupeByAirtableId((data || []) as { id: string; id_airtable?: string | null }[]).map((item: any) => ({
+      const deduplicatedRows = dedupeByAirtableId((data || []) as { id: string; id_airtable?: string | null }[]);
+      const relevantRows = searchTerm && !selectedBusinessId
+        ? rankBusinessSearchRows(deduplicatedRows as Record<string, unknown>[], searchTerm)
+        : deduplicatedRows;
+      let mappedData = relevantRows.map((item: any) => ({
         id: item.id,
         name: extractFrenchName(item.nom),
         category: getCategoryLabel(item),
@@ -1151,46 +1153,9 @@ export const Businesses = ({
 
       console.log(`[DEBUG] Mapping terminé: ${mappedData.length} entreprises`);
 
-      if (!selectedBusinessId && searchTerm && searchTerm.length > 0) {
-        const normalizedSearchTerm = normalizeText(searchTerm);
-        console.log(`\n🔎 [Recherche Multi-colonnes] Terme recherché: "${searchTerm}"`);
-        console.log(`🔎 [Recherche Multi-colonnes] Terme normalisé: "${normalizedSearchTerm}"`);
-        console.log(`📊 [Debug] Nombre total avant filtre: ${mappedData.length}`);
-
-        if (mappedData.length > 0) {
-          console.log(`📋 [Debug] Exemple entreprise:`, {
-            nom: mappedData[0].name,
-            badges: mappedData[0].badges,
-            mots_cles_recherche: mappedData[0].mots_cles_recherche?.substring(0, 100) || 'NULL',
-            sous_categories: mappedData[0].category
-          });
-        }
-
-        // Le filtre Supabase a déjà retourné les bons résultats via ILIKE.
-        // Ce filtre JS est un garde-fou pour les colonnes non couvertes par le .or() Supabase.
-        // IMPORTANT : pour l'arabe, on compare en lowercase sans normalisation agressive.
-        const lowerTerm = normalizedSearchTerm.toLowerCase();
-        mappedData = mappedData.filter((business) => {
-          const matchNom = normalizeText(business.name || '').includes(lowerTerm);
-          const matchNameAr = (business.name_ar || '').toLowerCase().includes(lowerTerm)
-            || (business.name_ar || '').includes(searchTerm.trim());
-          const matchDescAr = (business.description_ar || '').toLowerCase().includes(lowerTerm)
-            || (business.description_ar || '').includes(searchTerm.trim());
-          const matchSecteur = normalizeText(business.secteur || '').includes(lowerTerm);
-          const matchMotsCles = normalizeText(business.mots_cles_recherche || '').includes(lowerTerm);
-          const matchCategory = normalizeText(business.category || '').includes(lowerTerm);
-          const matchServices = normalizeText(business.services || '').includes(lowerTerm);
-          const matchVille = normalizeText(business.city || '').includes(lowerTerm);
-          const matchGouvernorat = normalizeText(business.gouvernorat || '').includes(lowerTerm);
-
-          return matchNom || matchNameAr || matchDescAr || matchSecteur
-            || matchMotsCles || matchCategory || matchServices
-            || matchVille || matchGouvernorat;
-        });
-
-        console.log(`\n[Recherche Multi-colonnes] ✅ Résultats filtrés: ${mappedData.length}`);
-      }
-
+      // Database rows already passed the shared category-first relevance filter.
+      // Avoid filtering them again by the literal typed word: "coiffeur"
+      // must keep an establishment whose taxonomy says "salon de coiffure".
       // Trier par priorité (CV publié > avis Google fiables > autres).
       mappedData.sort(compareBusinessesByTrust);
 
