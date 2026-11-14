@@ -1,0 +1,17 @@
+# Journal des modifications de classement — 2026-11-14
+
+Toutes les corrections doivent être effectuées dans Airtable puis vérifiées dans Supabase. Ce journal contient exclusivement les modifications effectivement faites.
+
+## Lot 001 — S2M Real Estate
+- Airtable base : `app9Q828Splwvm4jW`; table : `tbl8B6aiFeUe0hoQS`
+- Record : `recwAcgZQLS4rifhs`
+- Avant : `liste pages` vide.
+- Après : `entreprises `, `tourisme local & expatriation`, `services citoyens`.
+- Justification : catégorie Immobilier ; sous-catégories Agence Immobilière et Promoteur Immobilier ; description explicite de promotion immobilière, logements et gestion de propriétés.
+- Autres champs : inchangés. `statut_validation` = `terminer la saisi` ; `statut_publication` = NULL ; `approved` = false.
+- Synchronisation Supabase : confirmée, `liste_pages` = `['entreprises','tourisme local & expatriation','services citoyens']`.
+- Visibilité : ne pas publier ; pas de test d'affichage public nécessaire tant que non approuvée.
+- Retour arrière : rétablir le champ Airtable `liste pages` à vide pour ce record ; attendre puis vérifier le retour à NULL/tableau vide dans Supabase.
+
+## Point de sécurité important
+`Coin Bio` (`recH1GnRRVO0y9DiO`) : Airtable validation publie et publication Publié ; Supabase `approved` NULL malgré `cv_business_status` = published et `modele_cv` = portfolio. Toute politique RLS exigeant immédiatement `approved=true` masquerait cette fiche client. Ne pas changer globalement la RLS sans inventaire des exceptions, validation du circuit de modération et rollback documenté.
