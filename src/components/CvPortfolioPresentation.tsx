@@ -22,7 +22,7 @@ import type { ResolvedCvPresentation } from '../lib/cvPresentationEngine';
 import './cvPortfolioPresentation.css';
 import './cvPortfolioSizing.css';
 
-type PortfolioTab = 'home' | 'about' | 'services' | 'gallery' | 'reviews';
+type PortfolioTab = 'home' | 'about' | 'services' | 'gallery' | 'reviews' | 'hours' | 'practical';
 type PortfolioPalette = 'prestige' | 'ivory' | 'night';
 
 const PORTFOLIO_PALETTE_THEMES: Record<PortfolioPalette, CSSProperties> = {
@@ -201,13 +201,9 @@ export function CvPortfolioPresentation({
   const navigationAriaLabel = language === 'ar' ? 'التنقل في الملف المهني المصوّر' : 'Navigation du CV Portfolio';
   const [activeTab, setActiveTab] = useState<PortfolioTab>('home');
   const [expandedAbout, setExpandedAbout] = useState(false);
-  const [homeAboutOpen, setHomeAboutOpen] = useState(false);
-  const [homeReviewsOpen, setHomeReviewsOpen] = useState(false);
   const [writeReviewOpen, setWriteReviewOpen] = useState(false);
   const [bookingOpen, setBookingOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
-  const [hoursOpen, setHoursOpen] = useState(false);
-  const [practicalOpen, setPracticalOpen] = useState(false);
   const [qrOpen, setQrOpen] = useState(false);
   const [socialOpen, setSocialOpen] = useState(false);
   const isRTL = language === 'ar';
@@ -232,15 +228,17 @@ export function CvPortfolioPresentation({
 
   const tabs = [
     { id: 'home' as const, label: copy.home, icon: Home, visible: true },
-    { id: 'about' as const, label: copy.about, icon: Info, visible: false },
+    { id: 'about' as const, label: copy.about, icon: Info, visible: hasSection('about') },
     { id: 'services' as const, label: copy.services, icon: Store, visible: hasSection('services') },
+    { id: 'hours' as const, label: copy.openingHours, icon: Clock3, visible: Boolean(hoursContent) },
+    { id: 'practical' as const, label: copy.practical, icon: Info, visible: Boolean(practicalContent) },
+    { id: 'reviews' as const, label: copy.reviews, icon: Star, visible: hasSection('reviews') },
     { id: 'gallery' as const, label: copy.photos, icon: Images, visible: Boolean(boutiqueContent) },
-    { id: 'reviews' as const, label: copy.reviews, icon: Star, visible: false },
   ].filter(tab => tab.visible);
 
   const goTo = (tab: PortfolioTab) => {
-    // A second tap on the active Services tab closes it and returns to the compact home.
-    const nextTab = tab === 'services' && activeTab === 'services' ? 'home' : tab;
+    // A second tap closes any opened section and restores the visual homepage.
+    const nextTab = activeTab === tab && tab !== 'home' ? 'home' : tab;
     setActiveTab(nextTab);
     if (embeddedPreview) return;
     window.requestAnimationFrame(() => {
@@ -387,92 +385,52 @@ export function CvPortfolioPresentation({
               )}
             </nav>
 
-            {(hoursContent || practicalContent) && (
-              <div className="cvp-lienora-information">
-                {hoursContent && (
-                  <section className={`cvp-lienora-information-item${hoursOpen ? ' is-open' : ''}`}>
-                    <button
-                      type="button"
-                      className="cvp-lienora-information-toggle"
-                      onClick={() => setHoursOpen(open => !open)}
-                      aria-expanded={hoursOpen}
-                      aria-controls="cvp-portfolio-hours"
-                    >
-                      <span><Clock3 aria-hidden="true" />{copy.openingHours}</span>
-                      <span className="cvp-lienora-information-status">
-                        {hoursBadge && <b>{hoursBadge}</b>}
-                        <ChevronRight aria-hidden="true" />
-                      </span>
-                    </button>
-                    {hoursOpen && (
-                      <div id="cvp-portfolio-hours" className="cvp-lienora-information-content">{hoursContent}</div>
-                    )}
-                  </section>
-                )}
-                {practicalContent && (
-                  <section className={`cvp-lienora-information-item${practicalOpen ? ' is-open' : ''}`}>
-                    <button
-                      type="button"
-                      className="cvp-lienora-information-toggle"
-                      onClick={() => setPracticalOpen(open => !open)}
-                      aria-expanded={practicalOpen}
-                      aria-controls="cvp-portfolio-practical"
-                    >
-                      <span><Info aria-hidden="true" />{copy.practical}</span>
-                      <ChevronRight aria-hidden="true" />
-                    </button>
-                    {practicalOpen && (
-                      <div id="cvp-portfolio-practical" className="cvp-lienora-information-content">{practicalContent}</div>
-                    )}
-                  </section>
-                )}
-              </div>
-            )}
-
             <div className="cvp-lienora-content">
               {activeTab === 'home' && (
-                <>
-                  {hasSection('about') && (
-                    <section className="cvp-compact-section">
-                      <button type="button" className="cvp-compact-trigger" onClick={() => setHomeAboutOpen(open => !open)}
-                        aria-expanded={homeAboutOpen} aria-controls="cvp-about-expanded">
-                        <span><Info aria-hidden="true" />{copy.aboutUs}</span>
-                        <ChevronRight className={homeAboutOpen ? 'cvp-compact-chevron open' : 'cvp-compact-chevron'} aria-hidden="true" />
-                      </button>
-                      {homeAboutOpen && <div id="cvp-about-expanded" className="cvp-compact-body">{aboutBlock}</div>}
-                    </section>
-                  )}
-                  {hasSection('reviews') && (reviewRating > 0 || reviewCount > 0 || Boolean(profile.reviews.url) || Boolean(reviewsContent)) && (
-                    <section className="cvp-compact-section">
-                      <button type="button" className="cvp-compact-trigger" onClick={() => setHomeReviewsOpen(open => !open)}
-                        aria-expanded={homeReviewsOpen} aria-controls="cvp-reviews-expanded">
-                        <span><Star aria-hidden="true" />{language === 'ar' ? 'آراء الحرفاء' : language === 'en' ? 'Customer reviews' : 'Avis clients'}</span>
-                        <span className="cvp-compact-trailing">
-                          {reviewRating > 0 && <small>{reviewRating.toFixed(1)} ★</small>}
-                          {reviewCount > 0 && <small>{reviewCount} {copy.reviews.toLowerCase()}</small>}
-                          <ChevronRight className={homeReviewsOpen ? 'cvp-compact-chevron open' : 'cvp-compact-chevron'} aria-hidden="true" />
-                        </span>
-                      </button>
-                      {homeReviewsOpen && <div id="cvp-reviews-expanded" className="cvp-compact-body cvp-compact-reviews">
-                        {profile.reviews.url && <a className="cvp-compact-review-link" href={profile.reviews.url} target="_blank" rel="noopener noreferrer">
-                          <Star aria-hidden="true" />{copy.viewReviews}
-                        </a>}
-                        {reviewsContent && <>
-                          <button className="cvp-compact-review-link" type="button"
-                            onClick={() => setWriteReviewOpen(open => !open)} aria-expanded={writeReviewOpen}
-                            aria-controls="cvp-write-review"><FileText aria-hidden="true" />{copy.giveReview}
-                            <ChevronRight className={writeReviewOpen ? 'cvp-compact-chevron open' : 'cvp-compact-chevron'} aria-hidden="true" />
-                          </button>
-                          {writeReviewOpen && <div id="cvp-write-review">{reviewsContent}</div>}
-                        </>}
-                      </div>}
-                    </section>
+                <section className="cvp-portfolio-home-visual">
+                  {gallery.length > 0 && (
+                    <button type="button" className="cvp-portfolio-featured-photo"
+                      aria-label={language === 'ar' ? 'تكبير صورة المنتوج' : 'Agrandir la photo du Portfolio'}
+                      onClick={() => onSelectImage((gallery[1] || gallery[0]).full)}>
+                      <img src={(gallery[1] || gallery[0]).thumbnail} alt={profile.identity.name} loading="lazy" decoding="async" />
+                      <Search aria-hidden="true" />
+                    </button>
                   )}
                   {hasSection('gallery') && gallery.length > 0 && galleryBlock}
-                </>
+                </section>
               )}
               {activeTab === 'about' && aboutBlock}
               {activeTab === 'services' && servicesBlock}
+              {activeTab === 'hours' && hoursContent && (
+                <section className="cvp-portfolio-tab-panel">
+                  <h2>{copy.openingHours} {hoursBadge && <small>{hoursBadge}</small>}</h2>
+                  <div className="cvp-lienora-information-content">{hoursContent}</div>
+                </section>
+              )}
+              {activeTab === 'practical' && practicalContent && (
+                <section className="cvp-portfolio-tab-panel">
+                  <h2>{copy.practical}</h2>
+                  <div className="cvp-lienora-information-content">{practicalContent}</div>
+                </section>
+              )}
+              {activeTab === 'reviews' && hasSection('reviews') && (
+                <section className="cvp-portfolio-tab-panel cvp-compact-reviews">
+                  <h2>{copy.reviews} {reviewRating > 0 && <small>{reviewRating.toFixed(1)} ★ · {reviewCount} {copy.reviews.toLowerCase()}</small>}</h2>
+                  {profile.reviews.url && <a className="cvp-compact-review-link" href={profile.reviews.url} target="_blank" rel="noopener noreferrer">
+                    <Star aria-hidden="true" />{copy.viewReviews}
+                  </a>}
+                  {reviewsContent && (
+                    <>
+                      <button className="cvp-compact-review-link" type="button" onClick={() => setWriteReviewOpen(open => !open)}
+                        aria-expanded={writeReviewOpen} aria-controls="cvp-write-review">
+                        <FileText aria-hidden="true" />{copy.giveReview}
+                        <ChevronRight className={writeReviewOpen ? 'cvp-compact-chevron open' : 'cvp-compact-chevron'} aria-hidden="true" />
+                      </button>
+                      {writeReviewOpen && <div id="cvp-write-review">{reviewsContent}</div>}
+                    </>
+                  )}
+                </section>
+              )}
               {activeTab === 'gallery' && galleryBlock}
               {notice && <p className="cvp-notice" role="status">{notice}</p>}
             </div>
