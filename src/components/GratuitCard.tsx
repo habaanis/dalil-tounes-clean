@@ -1,4 +1,5 @@
 import { isCertifiedBusiness, CERTIFIED_LABEL } from '../lib/businessCertification';
+import { isPlatformAppMode } from '../lib/platformAppMode';
 import { useState } from 'react';
 import { Clock, Phone, ChevronDown } from 'lucide-react';
 import { isCurrentlyOpen, translateOpenStatus, translateClosedStatus } from '../lib/horaireUtils';
@@ -83,6 +84,7 @@ export default function GratuitCard({
   googleRating,
   googleReviewCount,
 }: GratuitCardProps) {
+  const inPlatformApp = isPlatformAppMode();
   const [showPhone, setShowPhone] = useState(false);
   const [showHours, setShowHours] = useState(false);
   const locationLabel = ville || gouvernorat || '';
@@ -171,7 +173,7 @@ export default function GratuitCard({
               type="button"
               aria-expanded={showHours}
               onClick={(e) => { e.stopPropagation(); setShowHours((previous) => !previous); }}
-              style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '10px 14px', background: '#FAF8F3', border: '1px solid #E7D9B4', borderRadius: '10px', color: '#4A1D43', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}
+              style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: inPlatformApp ? '6px' : '8px', padding: inPlatformApp ? '8px 10px' : '10px 14px', minHeight: inPlatformApp ? '40px' : undefined, background: '#FAF8F3', border: '1px solid #E7D9B4', borderRadius: '10px', color: inPlatformApp ? '#292725' : '#4A1D43', cursor: 'pointer', fontWeight: inPlatformApp ? 600 : 700, fontSize: '12px' }}
             >
               <Clock size={15} aria-hidden="true" />
               {language === 'ar' ? (showHours ? 'إخفاء ساعات العمل' : 'عرض ساعات العمل') : language === 'en' ? (showHours ? 'Hide hours' : 'View opening hours') : language === 'it' ? (showHours ? 'Nascondi orari' : 'Vedi orari') : language === 'ru' ? (showHours ? 'Скрыть часы работы' : 'Часы работы') : (showHours ? 'Masquer les horaires' : 'Voir les horaires')}
@@ -192,20 +194,20 @@ export default function GratuitCard({
       </div>
 
       {/* Téléphone sous les horaires : une action claire et accessible. */}
-      <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid rgba(212,175,55,0.25)', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+      <div style={{ marginTop: inPlatformApp ? '8px' : '12px', paddingTop: inPlatformApp ? '8px' : '12px', borderTop: '1px solid rgba(212,175,55,0.25)', display: 'flex', flexDirection: 'column', gap: inPlatformApp ? '7px' : '10px' }}>
         {telephone && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '7px' }}>
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); setShowPhone((previous) => !previous); }}
               aria-expanded={showPhone}
-              style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '10px 14px', background: '#4A1D43', border: '1px solid #4A1D43', borderRadius: '10px', color: '#FFFFFF', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}
+              style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: inPlatformApp ? '6px' : '8px', padding: inPlatformApp ? '8px 10px' : '10px 14px', minHeight: inPlatformApp ? '40px' : undefined, background: inPlatformApp ? '#B62226' : '#4A1D43', border: inPlatformApp ? '1px solid #B62226' : '1px solid #4A1D43', borderRadius: '10px', color: '#FFFFFF', fontSize: '12px', fontWeight: inPlatformApp ? 600 : 700, cursor: 'pointer' }}
             >
               <Phone size={15} aria-hidden="true" />
               {showPhone ? cardCopy.hidePhone : cardCopy.showPhone}
             </button>
             {showPhone && (
-              <a href={`tel:${telephone.replace(/[^+\\d]/g, '')}`} onClick={(e) => e.stopPropagation()} style={{ textAlign: 'center', padding: '8px', fontSize: '14px', fontWeight: 700, color: '#4A1D43', textDecoration: 'underline', borderRadius: '8px', background: '#FAF8F3' }}>
+              <a href={`tel:${telephone.replace(/[^+\\d]/g, '')}`} onClick={(e) => e.stopPropagation()} style={{ textAlign: 'center', padding: '8px', fontSize: '14px', fontWeight: 700, color: inPlatformApp ? '#292725' : '#4A1D43', textDecoration: 'underline', borderRadius: '8px', background: '#FAF8F3' }}>
                 {telephone}
               </a>
             )}
@@ -221,7 +223,7 @@ export default function GratuitCard({
           <button
             type="button"
             onClick={onOpen}
-            className="min-h-11 w-full rounded-lg border border-[#D4AF37]/60 bg-[#FFF9EC] px-3 py-2 text-sm font-semibold text-[#4A1D43] hover:bg-[#F8EDCF] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A17D36]"
+            className={inPlatformApp ? "min-h-10 w-full rounded-lg border border-[#C9A65D] bg-[#FFF9EC] px-3 py-1.5 text-xs font-semibold text-[#292725] hover:bg-[#F8EDCF] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A17D36]" : "min-h-11 w-full rounded-lg border border-[#D4AF37]/60 bg-[#FFF9EC] px-3 py-2 text-sm font-semibold text-[#4A1D43] hover:bg-[#F8EDCF] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A17D36]"}
           >
             {cardCopy.details} →
           </button>
