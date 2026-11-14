@@ -48,5 +48,29 @@ assert.equal(suggestBusinessPages({
 }).length, 0);
 assert.equal(suggestBusinessPages({ categorie: [] }).length, 0);
 assert.equal(suggestBusinessPages({ categorie: 'Alimentation' }).length, 0);
+assert.deepEqual(Array.from(suggestBusinessPages({
+  categorie: ['Maison de retraite'],
+  sous_categories_texte: 'Retirement home',
+}), x => x.page), ['santé', 'services citoyens']);
+assert.deepEqual(Array.from(suggestBusinessPages({
+  categorie: ['Casa di riposo'],
+  sous_categories_texte: 'Assisted living facility',
+}), x => x.page), ['santé', 'services citoyens']);
+assert.deepEqual(Array.from(suggestBusinessPages({
+  categorie: ['Automobile'],
+  sous_categories_texte: 'Garage Mécanique, Pièces de rechange',
+}), x => x.page), ['entreprises', 'services citoyens', 'commerces & magasins']);
+assert.deepEqual(Array.from(suggestBusinessPages({
+  categorie: ['Automobile'],
+  sous_categories_texte: 'Location de Voitures',
+}), x => x.page), ['entreprises', 'services citoyens', 'tourisme local & expatriation']);
+assert.deepEqual(Array.from(suggestBusinessPages({
+  categorie: ['Automobile'],
+  sous_categories_texte: 'Lavage Auto',
+}), x => x.page), ['entreprises', 'services citoyens']);
+assert.equal(suggestBusinessPages({
+  categorie: ['Automobile'],
+  sous_categories_texte: 'Activité inconnue',
+}).length, 0);
 assert.ok(!suggestBusinessPages(realEstate).some(x => x.page === 'accueil'));
-console.log('OK: 11 multipage classification assertions');
+console.log('OK: 17 multipage classification assertions');
