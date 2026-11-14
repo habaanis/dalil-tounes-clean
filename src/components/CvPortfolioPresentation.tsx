@@ -240,7 +240,9 @@ export function CvPortfolioPresentation({
   ].filter(tab => tab.visible);
 
   const goTo = (tab: PortfolioTab) => {
-    setActiveTab(tab);
+    // A second tap on the active Services tab closes it and returns to the compact home.
+    const nextTab = tab === 'services' && activeTab === 'services' ? 'home' : tab;
+    setActiveTab(nextTab);
     if (embeddedPreview) return;
     window.requestAnimationFrame(() => {
       document.getElementById('cv-portfolio-content')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -273,7 +275,7 @@ export function CvPortfolioPresentation({
     <section className="cvp-section">
       <div className="cvp-section-heading">
         <h2>{copy.ourServices}</h2>
-        {profile.services.length > 3 && <button type="button" onClick={() => goTo('services')}>{copy.viewAll}<ChevronRight /></button>}
+        <button type="button" onClick={() => goTo('home')} aria-label={language === 'ar' ? 'إغلاق الخدمات' : 'Fermer les services'}>{language === 'ar' ? 'غلق' : language === 'en' ? 'Close' : 'Fermer'}<ChevronRight /></button>
       </div>
       <div className="cvp-service-strip">
         {profile.services.map((service, index) => (
