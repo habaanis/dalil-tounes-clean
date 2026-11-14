@@ -1035,3 +1035,18 @@
   color: #30291d;
 }
 .cvp-page--lienora.cvp-palette-ivory .cvp-lienora-information-content a {color: #2e4538;text-decoration:underline;text-underline-offset:2px}
+
+/* Compact upper Portfolio section: preserve original logo at 76x76px. */
+.cvp-page--lienora .cvp-lienora-cover {height:145px}
+.cvp-page--lienora .cvp-lienora-logo {top:105px}
+.cvp-page--lienora .cvp-lienora-main {padding-top:39px}
+.cvp-page--lienora .cvp-lienora-identity {padding:7px 9px}
+.cvp-page--lienora .cvp-lienora-identity small {font-size:.54rem}
+.cvp-page--lienora .cvp-lienora-identity h1 {margin:2px 0;font-size:1.42rem}
+.cvp-page--lienora .cvp-lienora-identity p {margin-top:3px}
+.cvp-page--lienora .cvp-lienora-rating {margin:3px 0}
+.cvp-page--lienora .cvp-lienora-actions {margin-top:6px}
+@media(max-width:390px) {
+  .cvp-page--lienora .cvp-lienora-cover {height:138px}
+  .cvp-page--lienora .cvp-lienora-logo {top:98px}
+}
