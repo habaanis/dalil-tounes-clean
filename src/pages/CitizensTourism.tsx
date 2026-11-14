@@ -509,7 +509,7 @@ export default function CitizensTourism() {
           className="absolute inset-0 w-full h-full object-cover object-center"
           decoding="async"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#4A1D43]/75 via-[#4A1D43]/60 to-[#4A1D43]/25" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#292725]/75 via-[#292725]/55 to-[#292725]/25" />
         <a className="absolute bottom-1 right-2 z-10 text-[10px] text-white/85 underline" href="https://commons.wikimedia.org/wiki/File:Sidi_bou_said_port.jpg" target="_blank" rel="noopener noreferrer" aria-label="Crédit photo Rania Haddad, licence CC BY-SA 4.0">Photo : Rania Haddad · CC BY-SA 4.0</a>
 
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-4 py-6">
@@ -545,10 +545,10 @@ export default function CitizensTourism() {
       <section className="px-4 pt-6">
         <div className="max-w-5xl mx-auto rounded-2xl border border-[#D4AF37]/50 bg-white px-3 py-4 sm:px-5 shadow-sm">
           <div className="flex justify-center gap-2" role="tablist" aria-label={t.title}>
-            <button type="button" role="tab" aria-selected={journeyMode === 'visit'} onClick={() => setJourneyMode('visit')} className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 text-xs sm:text-sm font-semibold transition-colors ${journeyMode === 'visit' ? 'border-[#D4AF37] bg-[#4A1D43] text-[#D4AF37]' : 'border-[#D4AF37]/50 bg-white text-[#292725] hover:bg-[#D4AF37]/10'}`}>
+            <button type="button" role="tab" aria-selected={journeyMode === 'visit'} onClick={() => setJourneyMode('visit')} className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 text-xs sm:text-sm font-semibold transition-colors ${journeyMode === 'visit' ? 'border-[#D4AF37] bg-[#D6B86D] text-[#292725]' : 'border-[#D4AF37]/50 bg-white text-[#292725] hover:bg-[#D4AF37]/10'}`}>
               <Compass className="h-4 w-4" aria-hidden="true" />{journey.visitTab}
             </button>
-            <button type="button" role="tab" aria-selected={journeyMode === 'settle'} onClick={() => setJourneyMode('settle')} className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 text-xs sm:text-sm font-semibold transition-colors ${journeyMode === 'settle' ? 'border-[#D4AF37] bg-[#4A1D43] text-[#D4AF37]' : 'border-[#D4AF37]/50 bg-white text-[#292725] hover:bg-[#D4AF37]/10'}`}>
+            <button type="button" role="tab" aria-selected={journeyMode === 'settle'} onClick={() => setJourneyMode('settle')} className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 text-xs sm:text-sm font-semibold transition-colors ${journeyMode === 'settle' ? 'border-[#D4AF37] bg-[#D6B86D] text-[#292725]' : 'border-[#D4AF37]/50 bg-white text-[#292725] hover:bg-[#D4AF37]/10'}`}>
               <Home className="h-4 w-4" aria-hidden="true" />{journey.settleTab}
             </button>
           </div>
