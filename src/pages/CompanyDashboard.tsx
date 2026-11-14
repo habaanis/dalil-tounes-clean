@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { Briefcase, Users, Building2, Settings, LogOut, Store, Package, BarChart3, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import JobPostForm from '../components/forms/JobPostForm';
 
+type ScopedBoutiqueStats = { entreprise_id: string; push_subscriptions: number; published_products: number; draft_products: number };
 interface CompanyDashboardProps {
   onNavigate: (page: any) => void;
 }
@@ -11,6 +13,31 @@ export default function CompanyDashboard({ onNavigate }: CompanyDashboardProps) 
   const { user, signOut, loading } = useAuth();
   const [activeTab, setActiveTab] = useState<'jobs' | 'candidates' | 'settings' | 'showcase' | 'boutique' | 'stats'>('showcase');
   const [showWelcome, setShowWelcome] = useState(false);
+  const [stats, setStats] = useState<ScopedBoutiqueStats[]>([]);
+  const [statsLoading, setStatsLoading] = useState(false);
+  const [statsError, setStatsError] = useState(false);
+
+  useEffect(() => {
+    if (!user?.id) {
+      setStats([]);
+      setStatsError(false);
+      return;
+    }
+    let cancelled = false;
+    setStatsLoading(true);
+    setStatsError(false);
+    // The database RPC scopes all results to auth.uid(); never accept an entreprise_id from the browser.
+    import('../lib/supabaseClient')
+      .then(({ supabase }: { supabase: SupabaseClient }) => supabase.rpc('dalil_professional_boutique_stats'))
+      .then(({ data, error }) => {
+        if (cancelled) return;
+        if (error) { setStatsError(true); setStats([]); return; }
+        setStats((data ?? []) as ScopedBoutiqueStats[]);
+      })
+      .catch(() => { if (!cancelled) { setStatsError(true); setStats([]); } })
+      .finally(() => { if (!cancelled) setStatsLoading(false); });
+    return () => { cancelled = true; };
+  }, [user?.id]);
 
   useEffect(() => {
     const isNewUser = localStorage.getItem(`newUser_${user?.id}`);
@@ -130,12 +157,31 @@ export default function CompanyDashboard({ onNavigate }: CompanyDashboardProps) 
                     {activeTab === 'showcase' ? <Store className="text-[#8f2530]" /> : activeTab === 'boutique' ? <Package className="text-[#8f2530]" /> : <BarChart3 className="text-[#8f2530]" />}
                     <h2 className="text-xl font-semibold text-[#62212a]">{activeTab === 'showcase' ? 'Ma vitrine' : activeTab === 'boutique' ? 'Ma boutique' : 'Mes statistiques'}</h2>
                   </div>
-                  <div className="rounded-xl border border-[#dfcda8] bg-[#fbf8f0] p-5">
-                    <p className="font-semibold text-[#62212a]">Accès à votre établissement en préparation</p>
-                    <p className="mt-2 text-sm leading-6 text-gray-700">Pour protéger les données des professionnels, Dalil Tounes doit d’abord vérifier l’attribution de votre compte à une fiche précise. Aucune donnée privée d’une autre entreprise ne sera affichée.</p>
-                    {activeTab === 'stats' && <p className="mt-3 text-sm text-gray-700">Abonnements, produits publiés et brouillons seront affichés ici après validation des droits. Les mesures indisponibles afficheront « — ».</p>}
-                    {activeTab === 'boutique' && <p className="mt-3 text-sm text-gray-700">La gestion des produits et du catalogue optionnel sera activée après contrôle des droits et validation avant publication.</p>}
-                  </div>
+                  {statsLoading ? <p role="status" className="text-sm text-gray-700">Vérification des droits et chargement…</p>
+                    : statsError ? <p role="alert" className="rounded-xl border border-[#dfcda8] bg-[#fbf8f0] p-4 text-sm">Informations temporairement indisponibles. Veuillez réessayer ultérieurement.</p>
+                    : stats.length === 0 ? <div className="rounded-xl border border-[#dfcda8] bg-[#fbf8f0] p-5">
+                      <p className="font-semibold text-[#62212a]">Établissement non encore associé à votre compte</p>
+                      <p className="mt-2 text-sm leading-6 text-gray-700">Pour protéger les données professionnelles, Dalil Tounes doit vérifier votre établissement avant de vous donner accès à sa vitrine, sa boutique et ses statistiques.</p>
+                    </div>
+                    : <div className="space-y-4">{stats.map((record) => <div key={record.entreprise_id} className="rounded-xl border border-[#dfcda8] bg-[#fbf8f0] p-4 sm:p-5">
+                      <p className="mb-3 break-all text-xs text-[#684d47]">Établissement vérifié : {record.entreprise_id}</p>
+                      {activeTab === 'stats' ? <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                        {([
+                          ['Abonnements nouveautés', record.push_subscriptions],
+                          ['Produits publiés', record.published_products],
+                          ['Produits en attente', record.draft_products],
+                          ['Visites', null],
+                          ['Demandes reçues', null],
+                        ] as const).map(([label, value]) => <div key={label} className="rounded-xl border border-[#e7d7b8] bg-white p-3">
+                          <p className="min-h-9 text-xs text-gray-600">{label}</p>
+                          <strong className="text-2xl text-[#8f2530]">{value ?? '—'}</strong>
+                        </div>)}
+                      </div> : <p className="text-sm leading-6 text-gray-700">{activeTab === 'boutique'
+                        ? 'Votre Boutique est associée à votre établissement. La modification des produits sera activée après validation du parcours de soumission.'
+                        : 'Votre établissement est identifié. Les modifications de vitrine seront activées après validation et modération.'}</p>}
+                    </div>)}</div>}
+                  {activeTab === 'stats' && <p className="mt-3 text-xs text-gray-600">Un abonnement représente un appareil ou navigateur, pas nécessairement une personne. Les visites et demandes non suivies affichent « — ».</p>}
+
                 </section>
               )}
               {activeTab === 'jobs' && (
