@@ -1107,3 +1107,23 @@
   .cvp-page--lienora .cvp-photo-selector-main {height:145px}
   .cvp-page--lienora .cvp-photo-selector-thumbnails > button {flex-basis:52px;width:52px;height:49px}
 }
+
+/* Portfolio visual signature: a single permanently visible strip of photos. */
+.cvp-page--lienora .cvp-portfolio-visible-photos {padding:5px 0 2px;margin:3px 0 5px;min-width:0}
+.cvp-page--lienora .cvp-photo-strip {
+  display:flex;align-items:center;gap:7px;
+  overflow-x:auto;overflow-y:hidden;padding:3px 2px 7px;
+  scroll-snap-type:x proximity;scrollbar-width:thin;overscroll-behavior-inline:contain;
+}
+.cvp-page--lienora .cvp-photo-strip > button {
+  display:block;flex:0 0 61px;width:61px;height:68px;min-width:0;
+  padding:0;overflow:hidden;border-radius:10px;
+  border:1px solid var(--cvp-accent);background:var(--cvp-panel);
+  scroll-snap-align:start;cursor:zoom-in;
+}
+.cvp-page--lienora .cvp-photo-strip > button img {display:block;width:100%;height:100%;object-fit:cover}
+.cvp-page--lienora .cvp-photo-strip > button:focus-visible {outline:3px solid var(--cvp-accent);outline-offset:2px}
+@media(max-width:390px) {
+  .cvp-page--lienora .cvp-photo-strip {gap:5px}
+  .cvp-page--lienora .cvp-photo-strip > button {flex-basis:54px;width:54px;height:61px}
+}
