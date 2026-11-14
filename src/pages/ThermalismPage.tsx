@@ -22,8 +22,8 @@ export default function ThermalismPage() {
       <p className="mx-auto mt-2 max-w-3xl text-sm">{c.intro}</p>
     </header>
     <nav className="mx-auto mt-5 flex max-w-5xl flex-wrap justify-center gap-3 px-4" aria-label={c.heading}>
-      <Link className="rounded-full border border-[#D4AF37] bg-white px-4 py-2 text-sm font-semibold text-[#4A1D43]" to="/citizens/health">{c.health}</Link>
-      <Link className="rounded-full border border-[#D4AF37] bg-white px-4 py-2 text-sm font-semibold text-[#4A1D43]" to="/citizens/tourism">{c.tourism}</Link>
+      <Link className="rounded-full border border-[#D4AF37] bg-white px-4 py-2 text-sm font-semibold text-[#292725]" to="/citizens/health">{c.health}</Link>
+      <Link className="rounded-full border border-[#D4AF37] bg-white px-4 py-2 text-sm font-semibold text-[#292725]" to="/citizens/tourism">{c.tourism}</Link>
     </nav>
     <ThermalWellnessExplorer />
   </main>;
