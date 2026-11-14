@@ -352,7 +352,7 @@ ${offerFormData.description.trim()}
               <div className="w-12 h-12 bg-[#D4AF37]/10 rounded-full flex items-center justify-center mx-auto mb-3">
                 <Handshake className="w-6 h-6 text-[#800020]" />
               </div>
-              <h3 className="text-sm font-semibold text-[#4A1D43] mb-1">{featureLabels.collaboration}</h3>
+              <h3 className="text-sm font-semibold text-[#292725] mb-1">{featureLabels.collaboration}</h3>
               <p className="text-xs text-gray-600 leading-relaxed">
                 {t.partnerSearch.intro.paragraph1.split('.')[0]}
               </p>
@@ -362,7 +362,7 @@ ${offerFormData.description.trim()}
               <div className="w-12 h-12 bg-[#D4AF37]/10 rounded-full flex items-center justify-center mx-auto mb-3">
                 <Network className="w-6 h-6 text-[#800020]" />
               </div>
-              <h3 className="text-sm font-semibold text-[#4A1D43] mb-1">{featureLabels.network}</h3>
+              <h3 className="text-sm font-semibold text-[#292725] mb-1">{featureLabels.network}</h3>
               <p className="text-xs text-gray-600 leading-relaxed">
                 {t.partnerSearch.intro.paragraph2.split('.')[0]}
               </p>
@@ -372,7 +372,7 @@ ${offerFormData.description.trim()}
               <div className="w-12 h-12 bg-[#D4AF37]/10 rounded-full flex items-center justify-center mx-auto mb-3">
                 <TrendingUp className="w-6 h-6 text-[#800020]" />
               </div>
-              <h3 className="text-sm font-semibold text-[#4A1D43] mb-1">{featureLabels.opportunity}</h3>
+              <h3 className="text-sm font-semibold text-[#292725] mb-1">{featureLabels.opportunity}</h3>
               <p className="text-xs text-gray-600 leading-relaxed">
                 {t.partnerSearch.intro.paragraph3.split('.')[0]}
               </p>
@@ -387,7 +387,7 @@ ${offerFormData.description.trim()}
             className="bg-white rounded-xl shadow-md border border-[#D4AF37]/20 p-4 mb-8"
           >
             <div className="mb-6">
-              <h2 className="public-heading text-xl font-semibold text-[#4A1D43] mb-3 border-b border-[#D4AF37]/30 pb-2">
+              <h2 className="public-heading text-xl font-semibold text-[#292725] mb-3 border-b border-[#D4AF37]/30 pb-2">
                 {t.partnerSearch.form.title}
               </h2>
               <p className="text-sm text-gray-600 leading-relaxed">
@@ -398,7 +398,7 @@ ${offerFormData.description.trim()}
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-[#4A1D43] mb-1.5">
+                    <label className="block text-sm font-medium text-[#292725] mb-1.5">
                       {t.partnerSearch.form.profileType}
                     </label>
                     <select
@@ -416,7 +416,7 @@ ${offerFormData.description.trim()}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[#4A1D43] mb-1.5">
+                    <label className="block text-sm font-medium text-[#292725] mb-1.5">
                       {t.partnerSearch.form.companyName}
                     </label>
                     <input
@@ -430,7 +430,7 @@ ${offerFormData.description.trim()}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[#4A1D43] mb-1.5">
+                    <label className="block text-sm font-medium text-[#292725] mb-1.5">
                       {t.partnerSearch.form.sector}
                     </label>
                     <input
@@ -444,7 +444,7 @@ ${offerFormData.description.trim()}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[#4A1D43] mb-1.5">
+                    <label className="block text-sm font-medium text-[#292725] mb-1.5">
                       {t.partnerSearch.form.region}
                     </label>
                     <input
@@ -458,7 +458,7 @@ ${offerFormData.description.trim()}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[#4A1D43] mb-1.5">
+                    <label className="block text-sm font-medium text-[#292725] mb-1.5">
                       {t.partnerSearch.form.searchType}
                     </label>
                     <select
@@ -477,7 +477,7 @@ ${offerFormData.description.trim()}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[#4A1D43] mb-1.5">
+                    <label className="block text-sm font-medium text-[#292725] mb-1.5">
                       {t.partnerSearch.form.email}
                     </label>
                     <input
@@ -491,7 +491,7 @@ ${offerFormData.description.trim()}
                   </div>
 
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-[#4A1D43] mb-1.5">
+                    <label className="block text-sm font-medium text-[#292725] mb-1.5">
                       {t.partnerSearch.form.phone}
                     </label>
                     <input
@@ -504,7 +504,7 @@ ${offerFormData.description.trim()}
                   </div>
 
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-[#4A1D43] mb-1.5">
+                    <label className="block text-sm font-medium text-[#292725] mb-1.5">
                       {t.partnerSearch.form.description}
                     </label>
                     <textarea
@@ -603,14 +603,14 @@ ${offerFormData.description.trim()}
                     >
                       {isRTL ? <ArrowRight className="w-4 h-4 text-[#800020]" /> : <ArrowLeft className="w-4 h-4 text-[#800020]" />}
                     </button>
-                    <h3 className="text-lg font-semibold text-[#4A1D43]">{offerT.title}</h3>
+                    <h3 className="text-lg font-semibold text-[#292725]">{offerT.title}</h3>
                   </div>
                 </div>
 
                 <form onSubmit={handleOfferSubmit} className="space-y-4">
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-[#4A1D43] mb-1.5">
+                      <label className="block text-sm font-medium text-[#292725] mb-1.5">
                         {offerT.company} <span className="text-[#800020]">*</span>
                       </label>
                       <input
@@ -625,7 +625,7 @@ ${offerFormData.description.trim()}
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[#4A1D43] mb-1.5">
+                      <label className="block text-sm font-medium text-[#292725] mb-1.5">
                         {offerT.sector} <span className="text-[#800020]">*</span>
                       </label>
                       <select
@@ -651,7 +651,7 @@ ${offerFormData.description.trim()}
                     </div>
 
                     <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-[#4A1D43] mb-1.5">
+                      <label className="block text-sm font-medium text-[#292725] mb-1.5">
                         {offerT.description} <span className="text-[#800020]">*</span>
                       </label>
                       <textarea
@@ -666,7 +666,7 @@ ${offerFormData.description.trim()}
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[#4A1D43] mb-1.5">
+                      <label className="block text-sm font-medium text-[#292725] mb-1.5">
                         {offerT.website}
                       </label>
                       <input
@@ -680,7 +680,7 @@ ${offerFormData.description.trim()}
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[#4A1D43] mb-1.5">
+                      <label className="block text-sm font-medium text-[#292725] mb-1.5">
                         {offerT.experience}
                       </label>
                       <input
@@ -696,7 +696,7 @@ ${offerFormData.description.trim()}
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[#4A1D43] mb-1.5">
+                      <label className="block text-sm font-medium text-[#292725] mb-1.5">
                         {ui.emailLabel} <span className="text-[#800020]">*</span>
                       </label>
                       <input
@@ -711,7 +711,7 @@ ${offerFormData.description.trim()}
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[#4A1D43] mb-1.5">
+                      <label className="block text-sm font-medium text-[#292725] mb-1.5">
                         {offerT.phone} <span className="text-[#800020]">*</span>
                       </label>
                       <input
@@ -726,7 +726,7 @@ ${offerFormData.description.trim()}
                     </div>
 
                     <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-[#4A1D43] mb-1.5">
+                      <label className="block text-sm font-medium text-[#292725] mb-1.5">
                         {offerT.city} <span className="text-[#800020]">*</span>
                       </label>
                       <input
