@@ -1071,3 +1071,39 @@
 }
 .cvp-page--lienora .cvp-lienora-rating {gap:4px;margin:3px 0}
 .cvp-page--lienora .cvp-lienora-identity p {margin:3px 0 0}
+
+/* Portfolio-only gallery experiment: one fixed-height hero + scrollable thumbnail strip. */
+.cvp-page--lienora .cvp-compact-portfolio-gallery {margin:0;padding:0}
+.cvp-page--lienora .cvp-photo-selector {display:grid;gap:8px;min-width:0}
+.cvp-page--lienora .cvp-photo-selector-main {
+  position:relative;display:block;width:100%;height:160px;overflow:hidden;
+  border:1px solid var(--cvp-accent);border-radius:12px;
+  padding:0;background:var(--cvp-panel);cursor:zoom-in
+}
+.cvp-page--lienora .cvp-photo-selector-main img {display:block;width:100%;height:100%;object-fit:cover}
+.cvp-page--lienora .cvp-photo-selector-main > svg {
+  position:absolute;top:8px;right:8px;width:26px;height:26px;padding:5px;
+  border-radius:50%;color:var(--cvp-accent);background:color-mix(in srgb,var(--cvp-shell-end) 82%,transparent)
+}
+.cvp-page--lienora .cvp-photo-selector-main > span {
+  position:absolute;bottom:8px;right:8px;padding:3px 9px;border-radius:999px;
+  font-size:.66rem;font-weight:700;background:rgba(0,30,25,.78);color:#fff
+}
+.cvp-page--lienora .cvp-photo-selector-thumbnails {
+  display:flex;gap:7px;overflow-x:auto;scroll-snap-type:x proximity;
+  padding:1px 1px 5px;scrollbar-width:thin
+}
+.cvp-page--lienora .cvp-photo-selector-thumbnails > button {
+  position:relative;flex:0 0 58px;width:58px;height:55px;
+  padding:0;overflow:hidden;border-radius:8px;
+  border:2px solid transparent;background:var(--cvp-panel);cursor:pointer;scroll-snap-align:start;opacity:.78
+}
+.cvp-page--lienora .cvp-photo-selector-thumbnails > button.is-selected {
+  border-color:var(--cvp-accent);opacity:1
+}
+.cvp-page--lienora .cvp-photo-selector-thumbnails img {display:block;width:100%;height:100%;object-fit:cover}
+.cvp-page--lienora .cvp-photo-selector-thumbnails > button:focus-visible {outline:2px solid var(--cvp-text);outline-offset:2px}
+@media(max-width:390px) {
+  .cvp-page--lienora .cvp-photo-selector-main {height:145px}
+  .cvp-page--lienora .cvp-photo-selector-thumbnails > button {flex-basis:52px;width:52px;height:49px}
+}
