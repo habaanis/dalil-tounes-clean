@@ -218,7 +218,7 @@ export function CvPortfolioPresentation({
   const extraDescription = profile.presentation.about && profile.presentation.description !== profile.presentation.about
     ? profile.presentation.description
     : '';
-  const serviceImages = gallery.length > 0 ? gallery : [{ thumbnail: coverImage, full: coverImage }];
+  const serviceImages = gallery;
   const hasPrimaryContact = presentation.visibleActions.includes('add_contact');
   const callAction = actions.find(action => action.href.startsWith('tel:'));
   const directionsAction = actions.find(action =>
@@ -277,7 +277,9 @@ export function CvPortfolioPresentation({
       <div className="cvp-service-strip">
         {profile.services.map((service, index) => (
           <article className="cvp-service-card" key={`${service}-${index}`}>
-            <img src={serviceImages[index % serviceImages.length].thumbnail} alt="" loading="lazy" decoding="async" />
+            {serviceImages.length > 0 ? (
+              <img src={serviceImages[index % serviceImages.length].thumbnail} alt="" loading="lazy" decoding="async" />
+            ) : <Store aria-hidden="true" style={{ width: 34, height: 34, margin: "24px auto", color: "var(--cvp-accent)" }} />}
             <span>{service}</span>
           </article>
         ))}
@@ -309,8 +311,12 @@ export function CvPortfolioPresentation({
       <div className="cvp-lienora-shell">
         {!hideBack && <button type="button" className="cvp-back" onClick={onBack}>‹ <span>{copy.home}</span></button>}
         <article className="cvp-lienora-card">
-          <div className="cvp-lienora-cover"><img src={coverImage} alt="" loading="eager" decoding="async" /></div>
-          <img className="cvp-lienora-logo" src={logoImage} alt={`Logo ${profile.identity.name}`} />
+          <div className="cvp-lienora-cover">{coverImage && !coverImage.endsWith("/placeholder.jpg") ? (
+            <img src={coverImage} alt="" loading="eager" decoding="async" onError={event => { event.currentTarget.style.display = "none"; }} />
+          ) : <div aria-hidden="true" style={{ height: "100%", display: "grid", placeItems: "center", background: "linear-gradient(140deg,#0f5845,#00352f)" }}><Store size={68} color="#d9bd67" /></div>}</div>
+          {logoImage && !logoImage.includes("logo_dalil_tounes") ? (
+            <img className="cvp-lienora-logo" src={logoImage} alt={`Logo ${profile.identity.name}`} onError={event => { event.currentTarget.style.display = "none"; }} />
+          ) : <div className="cvp-lienora-logo" aria-label={profile.identity.name} style={{ display: "grid", placeItems: "center", background: "#f6eed7", color: "#064538", fontWeight: 800, fontSize: 22, borderRadius: "50%" }}>{profile.identity.name.split(/\s+/).map(word => word[0]).join("").slice(0,2)}</div>}
 
           <div className="cvp-lienora-main">
             <span className="cvp-lienora-activity">✦ {profile.identity.activity}</span>
@@ -466,6 +472,7 @@ export function CvPortfolioPresentation({
                   )}
                 </>
               )}
+              {activeTab === 'home' && hasSection('services') && portfolioGallery.length === 0 && profile.services.length > 0 && servicesBlock}
               {activeTab === 'about' && aboutBlock}
               {activeTab === 'services' && servicesBlock}
               {activeTab === 'gallery' && galleryBlock}
