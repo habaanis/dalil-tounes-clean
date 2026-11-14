@@ -379,7 +379,7 @@ const Footer: React.FC = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {formT.title} <span className="text-[#800020]">*</span>
+                    {formT.title} <span className="text-[#9B762D]">*</span>
                   </label>
                   <input
                     type="text"
@@ -425,7 +425,7 @@ const Footer: React.FC = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {formT.message} <span className="text-[#800020]">*</span>
+                    {formT.message} <span className="text-[#9B762D]">*</span>
                   </label>
                   <textarea
                     required
