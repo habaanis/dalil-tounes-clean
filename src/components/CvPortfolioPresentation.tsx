@@ -202,8 +202,6 @@ export function CvPortfolioPresentation({
   const [activeTab, setActiveTab] = useState<PortfolioTab>('home');
   const [expandedAbout, setExpandedAbout] = useState(false);
   const [homeAboutOpen, setHomeAboutOpen] = useState(false);
-  const [homePhotosOpen, setHomePhotosOpen] = useState(false);
-  const [selectedPortfolioPhoto, setSelectedPortfolioPhoto] = useState(0);
   const [homeReviewsOpen, setHomeReviewsOpen] = useState(false);
   const [writeReviewOpen, setWriteReviewOpen] = useState(false);
   const [bookingOpen, setBookingOpen] = useState(false);
@@ -289,33 +287,19 @@ export function CvPortfolioPresentation({
     </section>
   );
 
-  const activePortfolioPhoto = gallery[Math.min(selectedPortfolioPhoto, Math.max(0, gallery.length - 1))];
-
   const galleryBlock = (
-    <section className="cvp-section cvp-compact-portfolio-gallery">
-      {activePortfolioPhoto ? (
-        <div className="cvp-photo-selector">
-          <button type="button" className="cvp-photo-selector-main"
-            onClick={() => onSelectImage(activePortfolioPhoto.full)}
-            aria-label={language === 'ar' ? 'تكبير الصورة المختارة' : 'Agrandir la photo sélectionnée'}>
-            <img src={activePortfolioPhoto.thumbnail} alt={`${profile.identity.name} — ${Math.min(selectedPortfolioPhoto, gallery.length - 1) + 1}`} loading="lazy" decoding="async" />
-            <Search aria-hidden="true" />
-            <span>{Math.min(selectedPortfolioPhoto, gallery.length - 1) + 1} / {gallery.length}</span>
+    <section className="cvp-section cvp-portfolio-visible-photos"
+      aria-label={language === 'ar' ? 'صور وأعمال' : language === 'en' ? 'Photos and work' : 'Photos et réalisations'}>
+      <div className="cvp-photo-strip">
+        {gallery.map((item, index) => (
+          <button type="button" key={`${item.thumbnail}-${index}`}
+            aria-label={`${language === 'ar' ? 'تكبير الصورة' : 'Agrandir la photo'} ${index + 1}`}
+            onClick={() => onSelectImage(item.full)}>
+            <img src={item.thumbnail} alt={`${profile.identity.name} — ${index + 1}`}
+              loading="lazy" decoding="async" />
           </button>
-          <div className="cvp-photo-selector-thumbnails" role="group"
-            aria-label={language === 'ar' ? 'اختيار الصورة' : 'Choisir une photo'}>
-            {gallery.map((item, index) => (
-              <button type="button" key={`${item.thumbnail}-${index}`}
-                className={selectedPortfolioPhoto === index ? 'is-selected' : ''}
-                aria-pressed={selectedPortfolioPhoto === index}
-                aria-label={`${profile.identity.name} — ${index + 1}`}
-                onClick={() => setSelectedPortfolioPhoto(index)}>
-                <img src={item.thumbnail} alt="" loading="lazy" decoding="async" />
-              </button>
-            ))}
-          </div>
-        </div>
-      ) : <p>{copy.noPhotos}</p>}
+        ))}
+      </div>
     </section>
   );
 
@@ -484,18 +468,7 @@ export function CvPortfolioPresentation({
                       </div>}
                     </section>
                   )}
-                  {hasSection('gallery') && gallery.length > 0 && (
-                    <section className="cvp-compact-section">
-                      <button type="button" className="cvp-compact-trigger" onClick={() => setHomePhotosOpen(open => !open)}
-                        aria-expanded={homePhotosOpen} aria-controls="cvp-photos-expanded">
-                        <span><Images aria-hidden="true" />{language === 'ar' ? 'الصور والأعمال' : language === 'en' ? 'Photos & work' : 'Photos & réalisations'}</span>
-                        <span className="cvp-compact-trailing"><small>{gallery.length}</small>
-                          <ChevronRight className={homePhotosOpen ? 'cvp-compact-chevron open' : 'cvp-compact-chevron'} aria-hidden="true" />
-                        </span>
-                      </button>
-                      {homePhotosOpen && <div id="cvp-photos-expanded" className="cvp-compact-body">{galleryBlock}</div>}
-                    </section>
-                  )}
+                  {hasSection('gallery') && gallery.length > 0 && galleryBlock}
                 </>
               )}
               {activeTab === 'about' && aboutBlock}
