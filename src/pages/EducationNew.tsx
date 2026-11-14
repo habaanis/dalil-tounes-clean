@@ -696,7 +696,7 @@ export default function EducationNew() {
         <MeilleursSection
           secteurLabel={t.meilleurs.secteurLabel}
           listePage="éducation"
-          accentColor="#4A1D43"
+          accentColor="#B28A44"
           sectionTitle={t.meilleurs.sectionTitle}
           blogArticle={{
             title: t.meilleurs.blogTitle,
@@ -720,7 +720,7 @@ export default function EducationNew() {
           <p className="text-xs text-gray-700 leading-snug mb-1.5">{t.eventBanner.desc}</p>
           <Link
             to="/education-event-form"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#4A1D43] hover:bg-[#5A2D53] border border-[#D4AF37] text-[#D4AF37] hover:text-white font-semibold rounded-lg shadow-sm transition-all transform hover:scale-105 text-xs"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#D6B86D] hover:bg-[#E4CB91] border border-[#C9A65D] text-[#292725] hover:text-[#292725] font-semibold rounded-lg shadow-sm transition-all transform hover:scale-105 text-xs"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
             <Calendar className="w-3.5 h-3.5 text-[#D4AF37]" aria-hidden="true" />
@@ -733,7 +733,7 @@ export default function EducationNew() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-gradient-to-br from-[#4A1D43]/5 to-[#D4AF37]/5 rounded-xl p-6 border border-[#D4AF37]"
+            className="bg-gradient-to-br from-[#FFF8EA] to-[#D4AF37]/5 rounded-xl p-6 border border-[#D4AF37]"
           >
             <h2 className="public-heading text-lg font-semibold text-[#292725] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>{t.adminBlock.title}</h2>
             <p className="text-sm text-gray-600 mb-4">{t.adminBlock.desc}</p>
@@ -747,7 +747,7 @@ export default function EducationNew() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="bg-gradient-to-br from-[#4A1D43]/5 to-[#D4AF37]/5 rounded-xl p-6 border border-[#D4AF37]"
+            className="bg-gradient-to-br from-[#FFF8EA] to-[#D4AF37]/5 rounded-xl p-6 border border-[#D4AF37]"
           >
             <h2 className="public-heading text-lg font-semibold text-[#292725] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>{t.partnerBlock.title}</h2>
             <p className="text-sm text-gray-600 mb-4">{t.partnerBlock.desc}</p>
@@ -813,7 +813,7 @@ export default function EducationNew() {
 
           <Link
             to="/jobs"
-            className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#4A1D43] hover:bg-[#5A2D53] text-[#D4AF37] hover:text-white rounded-lg transition font-semibold text-xs border border-[#D4AF37]"
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#D6B86D] hover:bg-[#E4CB91] text-[#292725] hover:text-[#292725] rounded-lg transition font-semibold text-xs border border-[#D4AF37]"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
             {t.careersBlock.viewAll}
@@ -827,7 +827,7 @@ export default function EducationNew() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-br from-[#4A1D43]/5 to-[#D4AF37]/5 rounded-xl px-3 py-3 border border-[#D4AF37] shadow-sm"
+          className="bg-gradient-to-br from-[#FFF8EA] to-[#D4AF37]/5 rounded-xl px-3 py-3 border border-[#D4AF37] shadow-sm"
         >
           <div className="mb-2">
             <h2 className="public-heading text-lg font-semibold text-[#292725]" style={{ fontFamily: "'Playfair Display', serif" }}>{t.events.upcoming}</h2>
@@ -898,7 +898,7 @@ export default function EducationNew() {
                         href={event.registration_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex-shrink-0 px-3 py-1.5 bg-[#4A1D43] hover:bg-[#5A2D53] border border-[#D4AF37] text-[#D4AF37] hover:text-white rounded-lg transition text-xs font-semibold"
+                        className="flex-shrink-0 px-3 py-1.5 bg-[#D6B86D] hover:bg-[#E4CB91] border border-[#C9A65D] text-[#292725] hover:text-[#292725] rounded-lg transition text-xs font-semibold"
                         style={{ fontFamily: "'Playfair Display', serif" }}
                       >
                         {t.events.register}
