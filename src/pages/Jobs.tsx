@@ -104,7 +104,7 @@ export const Jobs = () => {
             <button
               type="button"
               onClick={() => setRequestMode('employer')}
-              className="w-full rounded-lg border border-[#D4AF37] bg-white px-5 py-3 text-sm font-semibold text-[#4A1D43] transition hover:bg-[#fcfaf5] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D4AF37]"
+              className="w-full rounded-lg border border-[#D4AF37] bg-white px-5 py-3 text-sm font-semibold text-[#292725] transition hover:bg-[#fcfaf5] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D4AF37]"
             >
               {copy.employerButton}
             </button>
@@ -128,7 +128,7 @@ export const Jobs = () => {
             <button
               type="button"
               onClick={() => setRequestMode('candidate')}
-              className="w-full rounded-lg border border-[#D4AF37] bg-white px-5 py-3 text-sm font-semibold text-[#4A1D43] transition hover:bg-[#fcfaf5] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D4AF37]"
+              className="w-full rounded-lg border border-[#D4AF37] bg-white px-5 py-3 text-sm font-semibold text-[#292725] transition hover:bg-[#fcfaf5] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D4AF37]"
             >
               {copy.candidateButton}
             </button>
@@ -141,7 +141,7 @@ export const Jobs = () => {
           <p className="mb-3 text-center text-xs font-medium uppercase tracking-[0.2em] text-[#9A7418]">
             {copy.offersEyebrow}
           </p>
-          <h2 className="public-heading mb-3 text-center font-serif text-3xl text-[#4A1D43]">{copy.offersTitle}</h2>
+          <h2 className="public-heading mb-3 text-center font-serif text-3xl text-[#292725]">{copy.offersTitle}</h2>
           <p className="mb-8 text-center text-sm font-medium text-gray-600">
             {verifiedJobs.length} {copy.offersFound}
           </p>
@@ -168,7 +168,7 @@ export const Jobs = () => {
               <span className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-[#4A1D43] text-[#D4AF37]">
                 <Briefcase className="h-7 w-7" aria-hidden="true" />
               </span>
-              <h3 className="mb-3 text-xl font-semibold text-[#4A1D43]">{copy.emptyTitle}</h3>
+              <h3 className="mb-3 text-xl font-semibold text-[#292725]">{copy.emptyTitle}</h3>
               <p className="mx-auto mb-4 max-w-3xl text-sm leading-6 text-gray-600 md:text-base">{copy.emptyDescription}</p>
             </div>
           )}
@@ -185,19 +185,19 @@ export const Jobs = () => {
               <p className="mb-5 text-sm leading-6 text-white/90">{copy.talentsDescription}</p>
               <Link
                 to="/candidats"
-                className="inline-flex items-center gap-2 rounded-lg border border-[#D4AF37] bg-white px-5 py-3 text-sm font-semibold text-[#4A1D43] transition hover:bg-[#fcfaf5]"
+                className="inline-flex items-center gap-2 rounded-lg border border-[#D4AF37] bg-white px-5 py-3 text-sm font-semibold text-[#292725] transition hover:bg-[#fcfaf5]"
               >
                 {copy.talentsLink}
                 <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden="true" />
               </Link>
             </div>
             <div className="rounded-xl border border-[#D4AF37] bg-white p-6">
-              <Building2 className="mb-4 h-7 w-7 text-[#4A1D43]" aria-hidden="true" />
-              <h3 className="mb-3 font-serif text-2xl text-[#4A1D43]">{copy.businessLink}</h3>
+              <Building2 className="mb-4 h-7 w-7 text-[#292725]" aria-hidden="true" />
+              <h3 className="mb-3 font-serif text-2xl text-[#292725]">{copy.businessLink}</h3>
               <p className="mb-5 text-sm leading-6 text-gray-600">{copy.heroDescription}</p>
               <Link
                 to="/businesses"
-                className="inline-flex items-center gap-2 rounded-lg border border-[#4A1D43] px-5 py-3 text-sm font-semibold text-[#4A1D43] transition hover:bg-[#4A1D43] hover:text-white"
+                className="inline-flex items-center gap-2 rounded-lg border border-[#C9A65D] px-5 py-3 text-sm font-semibold text-[#292725] transition hover:bg-[#4A1D43] hover:text-white"
               >
                 {copy.businessLink}
                 <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden="true" />
