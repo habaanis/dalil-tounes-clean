@@ -962,15 +962,7 @@ export const Businesses = ({
         name_ru: item.name_ru || null,
       }));
 
-      if (searchTerm && !selectedBusinessId) {
-        const relevance = new Map(relevantRows.map((row: any) => [row.id, Number(row._searchRelevance || 0)]));
-        mappedData.sort((a, b) => {
-          const difference = (relevance.get(b.id) || 0) - (relevance.get(a.id) || 0);
-          return difference || compareBusinessesByTrust(a, b);
-        });
-      } else {
-        mappedData.sort(compareBusinessesByTrust);
-      }
+      mappedData.sort(compareBusinessesByTrust);
 
       console.log(`[DEBUG] ✅ Mapping terminé: ${mappedData.length} entreprises`);
       console.log('═══════════════════════════════════════\n');
@@ -1156,8 +1148,16 @@ export const Businesses = ({
       // Database rows already passed the shared category-first relevance filter.
       // Avoid filtering them again by the literal typed word: "coiffeur"
       // must keep an establishment whose taxonomy says "salon de coiffure".
-      // Trier par priorité (CV publié > avis Google fiables > autres).
-      mappedData.sort(compareBusinessesByTrust);
+      // Profession/category relevance takes precedence; trust breaks ties only.
+      if (searchTerm && !selectedBusinessId) {
+        const relevance = new Map(relevantRows.map((row: any) => [row.id, Number(row._searchRelevance || 0)]));
+        mappedData.sort((a, b) => {
+          const difference = (relevance.get(b.id) || 0) - (relevance.get(a.id) || 0);
+          return difference || compareBusinessesByTrust(a, b);
+        });
+      } else {
+        mappedData.sort(compareBusinessesByTrust);
+      }
 
       console.log('═══════════════════════════════════════\n');
 
