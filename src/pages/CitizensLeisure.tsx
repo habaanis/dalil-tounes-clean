@@ -673,15 +673,15 @@ export default function CitizensLeisure() {
       style={language === 'ar' ? { fontFamily: "'Amiri', 'Cairo', 'Tajawal', serif" } : {}}
     >
       <div className="mx-auto max-w-7xl px-4 pt-5">
-        <a href="/citizens/tourism/guide/fetes-evenements" className="flex items-center justify-between gap-4 rounded-xl border border-[#D4AF37] bg-white p-4 text-[#4A1D43] shadow-sm hover:bg-amber-50">
+        <a href="/citizens/tourism/guide/fetes-evenements" className="flex items-center justify-between gap-4 rounded-xl border border-[#D4AF37] bg-white p-4 text-[#292725] shadow-sm hover:bg-amber-50">
           <span><strong className="block">🎨 Festivals culturels de Tunisie</strong><span className="mt-1 block text-sm">Découvrez les festivals régionaux et leur patrimoine, même hors des dates de l'agenda.</span></span>
           <span className="shrink-0 text-sm font-semibold">Voir les festivals →</span>
         </a>
-        <a href="/citizens/tourism" className="mt-3 flex items-center justify-between gap-4 rounded-xl border border-[#D4AF37] bg-white p-4 text-[#4A1D43] shadow-sm hover:bg-amber-50">
+        <a href="/citizens/tourism" className="mt-3 flex items-center justify-between gap-4 rounded-xl border border-[#D4AF37] bg-white p-4 text-[#292725] shadow-sm hover:bg-amber-50">
           <span><strong className="block">🤿 Plongée sous-marine et loisirs nautiques</strong><span className="mt-1 block text-sm">Découvrez les clubs, baptêmes et expériences de plongée référencés en Tunisie.</span></span>
           <span className="shrink-0 text-sm font-semibold">Voir les clubs →</span>
         </a>
-        <section className="mt-4 rounded-xl border border-[#D4AF37]/65 bg-white p-4 text-[#4A1D43] shadow-sm" aria-label="Découvertes culturelles régionales">
+        <section className="mt-4 rounded-xl border border-[#D4AF37]/65 bg-white p-4 text-[#292725] shadow-sm" aria-label="Découvertes culturelles régionales">
           <h2 className="public-heading mb-1 text-base font-medium">{language === 'ar' ? 'اكتشف الجهات التونسية' : language === 'en' ? 'Explore Tunisia by region' : 'Découvrir les régions autrement'}</h2>
           <p className="mb-3 text-xs text-gray-600">{language === 'ar' ? 'ثقافة، تراث، حرف وتجارب محلية. تأكد من تواريخ المهرجانات والزيارات قبل التنقل.' : language === 'en' ? 'Cultural sites, craftsmanship and local experiences. Check event dates and visits before travelling.' : 'Patrimoine, artisanat et expériences locales. Les dates des festivals et les possibilités de visite sont à vérifier.'}</p>
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
@@ -793,20 +793,20 @@ export default function CitizensLeisure() {
                   />
                 </div>
                 <div className="p-3 space-y-2">
-                  <h3 className="text-sm font-medium text-[#4A1D43] line-clamp-2">
+                  <h3 className="text-sm font-medium text-[#292725] line-clamp-2">
                     {getTranslatedText(weeklyEvent, 'titre')}
                   </h3>
-                  <div className="flex items-center gap-1.5 text-[#4A1D43]">
+                  <div className="flex items-center gap-1.5 text-[#292725]">
                     <Calendar className="w-3.5 h-3.5" />
                     <span className="text-xs font-medium">{formatEventDate(weeklyEvent.date_debut, weeklyEvent.date_fin)}</span>
                   </div>
-                  <div className="flex items-center gap-1.5 text-[#4A1D43]">
+                  <div className="flex items-center gap-1.5 text-[#292725]">
                     <MapPin className="w-3.5 h-3.5" />
                     <span className="text-xs">{weeklyEvent.localisation_ville}</span>
                   </div>
                   {weeklyEvent.prix && (
                     <div className="flex items-center gap-1.5">
-                      <span className="px-2 py-0.5 bg-[#D4AF37]/20 text-[#4A1D43] rounded-full text-xs font-medium">
+                      <span className="px-2 py-0.5 bg-[#D4AF37]/20 text-[#292725] rounded-full text-xs font-medium">
                         {weeklyEvent.prix}
                       </span>
                     </div>
@@ -831,7 +831,7 @@ export default function CitizensLeisure() {
                   <span className="text-white font-semibold text-xs tracking-wider uppercase">{t.premiumAgenda.weekly.badge}</span>
                 </div>
                 <div className="p-6 text-center text-gray-500">
-                  <Calendar className="w-10 h-10 mx-auto mb-3 opacity-40 text-[#4A1D43]" />
+                  <Calendar className="w-10 h-10 mx-auto mb-3 opacity-40 text-[#292725]" />
                   <p className="text-xs">{t.noEvents}</p>
                 </div>
               </div>
@@ -852,20 +852,20 @@ export default function CitizensLeisure() {
                   />
                 </div>
                 <div className="p-3 space-y-2">
-                  <h3 className="text-sm font-medium text-[#4A1D43] line-clamp-2">
+                  <h3 className="text-sm font-medium text-[#292725] line-clamp-2">
                     {getTranslatedText(monthlyEvent, 'titre')}
                   </h3>
-                  <div className="flex items-center gap-1.5 text-[#4A1D43]">
+                  <div className="flex items-center gap-1.5 text-[#292725]">
                     <Calendar className="w-3.5 h-3.5" />
                     <span className="text-xs font-medium">{formatEventDate(monthlyEvent.date_debut, monthlyEvent.date_fin)}</span>
                   </div>
-                  <div className="flex items-center gap-1.5 text-[#4A1D43]">
+                  <div className="flex items-center gap-1.5 text-[#292725]">
                     <MapPin className="w-3.5 h-3.5" />
                     <span className="text-xs">{monthlyEvent.localisation_ville}</span>
                   </div>
                   {monthlyEvent.prix && (
                     <div className="flex items-center gap-1.5">
-                      <span className="px-2 py-0.5 bg-[#D4AF37]/20 text-[#4A1D43] rounded-full text-xs font-medium">
+                      <span className="px-2 py-0.5 bg-[#D4AF37]/20 text-[#292725] rounded-full text-xs font-medium">
                         {monthlyEvent.prix}
                       </span>
                     </div>
@@ -890,7 +890,7 @@ export default function CitizensLeisure() {
                   <span className="text-white font-semibold text-xs tracking-wider uppercase">{t.premiumAgenda.monthly.badge}</span>
                 </div>
                 <div className="p-6 text-center text-gray-500">
-                  <Calendar className="w-10 h-10 mx-auto mb-3 opacity-40 text-[#4A1D43]" />
+                  <Calendar className="w-10 h-10 mx-auto mb-3 opacity-40 text-[#292725]" />
                   <p className="text-xs">{t.noEvents}</p>
                 </div>
               </div>
@@ -911,20 +911,20 @@ export default function CitizensLeisure() {
                   />
                 </div>
                 <div className="p-3 space-y-2">
-                  <h3 className="text-sm font-medium text-[#4A1D43] line-clamp-2">
+                  <h3 className="text-sm font-medium text-[#292725] line-clamp-2">
                     {getTranslatedText(annualEvent, 'titre')}
                   </h3>
-                  <div className="flex items-center gap-1.5 text-[#4A1D43]">
+                  <div className="flex items-center gap-1.5 text-[#292725]">
                     <Calendar className="w-3.5 h-3.5" />
                     <span className="text-xs font-medium">{formatEventDate(annualEvent.date_debut, annualEvent.date_fin)}</span>
                   </div>
-                  <div className="flex items-center gap-1.5 text-[#4A1D43]">
+                  <div className="flex items-center gap-1.5 text-[#292725]">
                     <MapPin className="w-3.5 h-3.5 text-[#D4AF37]" />
                     <span className="text-xs">{annualEvent.localisation_ville}</span>
                   </div>
                   {annualEvent.prix && (
                     <div className="flex items-center gap-1.5">
-                      <span className="px-2 py-0.5 bg-[#D4AF37]/20 text-[#4A1D43] rounded-full text-xs font-medium">
+                      <span className="px-2 py-0.5 bg-[#D4AF37]/20 text-[#292725] rounded-full text-xs font-medium">
                         {annualEvent.prix}
                       </span>
                     </div>
@@ -949,7 +949,7 @@ export default function CitizensLeisure() {
                   <span className="text-white font-semibold text-xs tracking-wider uppercase">{t.premiumAgenda.annual.badge}</span>
                 </div>
                 <div className="p-6 text-center text-gray-500">
-                  <Calendar className="w-10 h-10 mx-auto mb-3 opacity-40 text-[#4A1D43]" />
+                  <Calendar className="w-10 h-10 mx-auto mb-3 opacity-40 text-[#292725]" />
                   <p className="text-xs">{t.noEvents}</p>
                 </div>
               </div>
@@ -975,7 +975,7 @@ export default function CitizensLeisure() {
         {featuredEvents.length > 0 && (
           <div className="mb-10">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="public-heading text-3xl font-medium text-[#4A1D43] flex items-center gap-3">
+              <h2 className="public-heading text-3xl font-medium text-[#292725] flex items-center gap-3">
                 <Sparkles className="w-8 h-8 text-[#D4AF37] animate-pulse" />
                 {t.featured}
               </h2>
@@ -985,14 +985,14 @@ export default function CitizensLeisure() {
                   className="p-3 bg-white rounded-full shadow-lg hover:shadow-sm hover:scale-110 transition-all duration-300"
                   style={{ border: '2px solid #D4AF37' }}
                 >
-                  <ChevronLeft className="w-6 h-6 text-[#4A1D43]" />
+                  <ChevronLeft className="w-6 h-6 text-[#292725]" />
                 </button>
                 <button
                   onClick={() => scrollCarousel('right')}
                   className="p-3 bg-white rounded-full shadow-lg hover:shadow-sm hover:scale-110 transition-all duration-300"
                   style={{ border: '2px solid #D4AF37' }}
                 >
-                  <ChevronRight className="w-6 h-6 text-[#4A1D43]" />
+                  <ChevronRight className="w-6 h-6 text-[#292725]" />
                 </button>
               </div>
             </div>
@@ -1028,7 +1028,7 @@ export default function CitizensLeisure() {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
                       <div className={`absolute top-3 ${language === 'ar' ? 'right-3' : 'left-3'} flex gap-2`}>
-                        <span className="px-2.5 py-1 bg-[#D4AF37] text-[#4A1D43] font-medium text-xs rounded-full shadow-lg">
+                        <span className="px-2.5 py-1 bg-[#D4AF37] text-[#292725] font-medium text-xs rounded-full shadow-lg">
                           ⭐ VIP
                         </span>
                       </div>
@@ -1081,7 +1081,7 @@ export default function CitizensLeisure() {
         )}
 
         <div className="mb-6 text-center">
-          <h2 className="public-heading text-2xl font-medium text-[#4A1D43]">{t.tabEvents}</h2>
+          <h2 className="public-heading text-2xl font-medium text-[#292725]">{t.tabEvents}</h2>
           <p className="mt-2 text-sm text-gray-600">{t.eventsIntro}</p>
         </div>
 
@@ -1100,7 +1100,7 @@ export default function CitizensLeisure() {
                   cleanUrl.searchParams.delete('category');
                   window.history.replaceState({}, '', `${cleanUrl.pathname}${cleanUrl.search}`);
                 }}
-                className="text-sm text-gray-600 hover:text-[#4A1D43] underline"
+                className="text-sm text-gray-600 hover:text-[#292725] underline"
               >
                 {t.clearFilter}
               </button>
@@ -1182,7 +1182,7 @@ export default function CitizensLeisure() {
         {/* Results */}
         {loading ? (
           <div className="flex items-center justify-center py-12">
-            <div className="w-16 h-16 border-4 border-[#4A1D43] border-t-transparent rounded-full animate-spin" />
+            <div className="w-16 h-16 border-4 border-[#C9A65D] border-t-transparent rounded-full animate-spin" />
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
