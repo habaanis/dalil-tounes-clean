@@ -3,6 +3,7 @@ import GoogleRatingSummary from './GoogleRatingSummary';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { useNavigate } from 'react-router-dom';
+import { isPlatformAppMode } from '../lib/platformAppMode';
 import { supabaseUrl, supabaseAnonKey } from '../lib/supabaseClient';
 import { createClient } from '@supabase/supabase-js';
 
@@ -463,6 +464,11 @@ export default function SearchBar({
 
   const goTo = (path: string) => {
     const cleanPath = path.startsWith('#') ? path.substring(1) : path;
+    // The platform PWA uses BrowserRouter paths, never legacy hash URLs.
+    if (isPlatformAppMode() && cleanPath.startsWith('/entreprises')) {
+      navigate(cleanPath);
+      return;
+    }
     navigate(cleanPath);
   };
 
@@ -552,7 +558,7 @@ export default function SearchBar({
     setEnt([]);
     setVilles([]);
 
-    if (resultMode === 'redirectToResults') {
+    if (resultMode === 'redirectToResults' || (resultMode === 'filterCards' && isPlatformAppMode())) {
       goToResults();
       return;
     }
