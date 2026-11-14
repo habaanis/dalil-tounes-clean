@@ -213,6 +213,7 @@ export default function BusinessShowcaseLienoraEnhanced() {
   const boutiqueContent = visibleProducts.length > 0
     ? <BoutiqueInteractive config={{
         merchantName: String(business?.nom || ''),
+        profileId: String(business?.id || ''),
         whatsapp: String(business?.['whatsapp'] || ''),
         products: visibleProducts,
         paymentsVerified: !boutiqueDemo && business?.['boutique_payments_verified'] === true,

@@ -18,7 +18,7 @@ export function registerServiceWorker(): void {
       const hadController = Boolean(navigator.serviceWorker.controller);
 
       navigator.serviceWorker
-        .register('/service-worker.js?v=15', { updateViaCache: 'none' })
+        .register('/service-worker.js?v=16', { updateViaCache: 'none' })
         .then((registration) => {
           console.log('[PWA] Service Worker enregistré avec succès:', registration.scope);
 

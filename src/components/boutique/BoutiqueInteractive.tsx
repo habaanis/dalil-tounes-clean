@@ -1,4 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react';
+import { BoutiquePushFollow } from './BoutiquePushFollow';
 
 export type BoutiqueProduct = {
   id: string;
@@ -15,6 +16,7 @@ export type BoutiqueProduct = {
 
 export type BoutiqueConfig = {
   merchantName: string;
+  profileId?: string;
   whatsapp: string;
   products: BoutiqueProduct[];
   paymentsVerified?: boolean;
@@ -170,6 +172,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
             {payLink && <a href={payLink} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: '#765421', textAlign: 'center' }}>Payer directement le professionnel (1 article)</a>}
           </div>}
         </>}
+        {!selected && <BoutiquePushFollow profileId={config.profileId} demoMode={config.demoMode} />}
         {config.demoMode && <p style={{ fontSize: 10, margin: '10px 0 0', color: '#796d5f' }}>Aperçu uniquement — aucune demande ou paiement n'est envoyé.</p>}
       </section>
     </div>}
