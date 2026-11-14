@@ -1127,3 +1127,63 @@
   .cvp-page--lienora .cvp-photo-strip {gap:5px}
   .cvp-page--lienora .cvp-photo-strip > button {flex-basis:54px;width:54px;height:61px}
 }
+
+/* Portfolio navigation: replace the stacked accordions with six compact tabs. */
+.cvp-page--lienora .cvp-lienora-tabs {
+  display:flex;
+  align-items:stretch;
+  justify-content:space-between;
+  gap:3px;
+  overflow-x:auto;
+  scrollbar-width:thin;
+  padding:3px 0 9px;
+  margin:4px 0 10px;
+}
+.cvp-page--lienora .cvp-lienora-tabs > button,
+.cvp-page--lienora .cvp-lienora-tabs > .cvp-native-boutique-tab {
+  flex:1 0 48px;
+  min-width:48px;
+  max-width:80px;
+  padding:5px 2px;
+  line-height:1.15;
+  font-size:.55rem;
+  border-radius:8px;
+}
+.cvp-page--lienora .cvp-lienora-tabs > button svg {width:18px;height:18px}
+.cvp-page--lienora .cvp-portfolio-tab-panel {
+  border:1px solid color-mix(in srgb,var(--cvp-accent) 40%,transparent);
+  border-radius:11px;
+  padding:11px 12px;
+  background:var(--cvp-panel);
+  margin:6px 0 10px;
+}
+.cvp-page--lienora .cvp-portfolio-tab-panel h2 {font-size:.83rem;line-height:1.25;margin:0 0 8px}
+.cvp-page--lienora .cvp-portfolio-tab-panel h2 small {font-size:.69rem;font-weight:500}
+.cvp-page--lienora .cvp-portfolio-tab-panel .cvp-lienora-information-content {
+  padding:0;
+  border:0;
+}
+.cvp-page--lienora .cvp-portfolio-home-visual {display:grid;gap:7px;margin:3px 0 8px}
+.cvp-page--lienora .cvp-portfolio-featured-photo {
+  position:relative;
+  display:block;
+  width:100%;
+  height:155px;
+  padding:0;
+  overflow:hidden;
+  border:1px solid var(--cvp-accent);
+  border-radius:11px;
+  background:var(--cvp-panel);
+  cursor:zoom-in;
+}
+.cvp-page--lienora .cvp-portfolio-featured-photo img {display:block;width:100%;height:100%;object-fit:cover}
+.cvp-page--lienora .cvp-portfolio-featured-photo svg {
+  position:absolute;right:8px;top:8px;width:26px;height:26px;padding:5px;
+  border-radius:50%;background:rgba(0,30,25,.75);color:var(--cvp-accent)
+}
+.cvp-page--lienora .cvp-portfolio-home-visual .cvp-portfolio-visible-photos {margin:0;padding:0}
+.cvp-page--lienora .cvp-portfolio-home-visual .cvp-photo-strip {padding:1px 0 5px}
+@media(max-width:390px) {
+  .cvp-page--lienora .cvp-lienora-tabs > button {font-size:.5rem;min-width:45px;flex-basis:45px}
+  .cvp-page--lienora .cvp-portfolio-featured-photo {height:135px}
+}
