@@ -10,20 +10,35 @@ Deno.serve(async req=>{
   }
   const origin=req.headers.get("origin")||"";
   const headers={"access-control-allow-origin":allowedOrigins.has(origin)?origin:"https://dalil-tounes.com","vary":"Origin"};
-  if(req.method!=="POST" || !allowedOrigins.has(origin)) return json({error:"Not allowed"},403);
-  const authorization=req.headers.get("authorization")||"";
-  const bearer=authorization.match(/^Bearer (.+)$/i)?.[1];
-  if(!bearer) return json({error:"Authentication required"},401);
+  if(req.method!=="POST") return json({error:"Not allowed"},405);
   try {
     const url=Deno.env.get("SUPABASE_URL");
     const secret=Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     if(!url||!secret) return json({error:"Service unavailable"},503);
     const db=createClient(url,secret,{auth:{persistSession:false,autoRefreshToken:false}});
-    const {data:identity,error:authError}=await db.auth.getUser(bearer);
-    if(authError||!identity.user) return json({error:"Unauthorized"},401);
-    const {data:admin,error:adminError}=await db.from("admins")
-      .select("id").eq("id",identity.user.id).maybeSingle();
-    if(adminError||!admin) return json({error:"Forbidden"},403);
+    // Approval webhooks must prove possession of the dedicated secret in Vault.
+    // Browser callers still require an authenticated administrator session.
+    const token=req.headers.get("x-dalil-internal-token")||"";
+    let internal=false;
+    if(!origin && /^[a-f0-9]{64}$/.test(token)) {
+      const hash=Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(token))))
+        .map(byte=>byte.toString(16).padStart(2,"0")).join("");
+      const {data:match,error:matchError}=await db.from("dalil_push_internal_config")
+        .select("id").eq("id",1).eq("token_hash",hash).maybeSingle();
+      if(matchError) return json({error:"Internal authentication unavailable"},503);
+      internal=Boolean(match);
+    }
+    if(!internal) {
+      if(!allowedOrigins.has(origin)) return json({error:"Not allowed"},403);
+      const authorization=req.headers.get("authorization")||"";
+      const bearer=authorization.match(/^Bearer (.+)$/i)?.[1];
+      if(!bearer) return json({error:"Authentication required"},401);
+      const {data:identity,error:authError}=await db.auth.getUser(bearer);
+      if(authError||!identity.user) return json({error:"Unauthorized"},401);
+      const {data:admin,error:adminError}=await db.from("admins")
+        .select("id").eq("id",identity.user.id).maybeSingle();
+      if(adminError||!admin) return json({error:"Forbidden"},403);
+    }
     const input=await req.json();
     const productId=input?.productId;
     if(typeof productId!=="string"||!/^[0-9a-f-]{36}$/i.test(productId)) return json({error:"Invalid product"},400);
