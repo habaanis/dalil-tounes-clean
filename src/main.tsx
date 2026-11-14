@@ -5,6 +5,7 @@ import App from './App.tsx';
 import './index.css';
 import './styles/cvBusinessPolish.css';
 import { registerServiceWorker } from './lib/registerServiceWorker';
+import { monitorDalilDeployments } from './lib/monitorDalilDeployments';
 import { supportsWebP } from './lib/imageUtils';
 import { enableCvBusinessVisualPolish } from './lib/cvBusinessVisualPolish';
 import { LanguageProvider } from './context/LanguageContext';
@@ -82,6 +83,7 @@ requestAnimationFrame(() => {
 });
 
 if (import.meta.env.PROD) {
+  monitorDalilDeployments();
   registerServiceWorker();
 }
 
