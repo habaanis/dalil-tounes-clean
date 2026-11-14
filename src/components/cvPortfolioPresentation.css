@@ -935,3 +935,49 @@
   .cvp-compact-body .cvp-gallery-grid button:nth-child(4n + 1),
   .cvp-compact-body .cvp-gallery-grid button:nth-child(4n + 2) {height:117px}
 }
+
+/* Final compact sizing: typography and tile dimensions override legacy gallery styles. */
+.cvp-page--lienora .cvp-compact-trigger {
+  min-height: 41px;
+  padding: 8px 10px;
+  font-size: .73rem;
+  line-height: 1.25;
+  font-weight: 650;
+}
+.cvp-page--lienora .cvp-compact-trigger > span { gap: 7px; min-width: 0; }
+.cvp-page--lienora .cvp-compact-trigger svg { width: 15px; height: 15px; }
+.cvp-page--lienora .cvp-compact-trailing {flex-shrink:0}
+.cvp-page--lienora .cvp-compact-trailing small {font-size:.61rem;padding:1px 5px}
+.cvp-page--lienora .cvp-compact-section {margin:5px 0}
+.cvp-page--lienora .cvp-compact-body {padding:9px}
+.cvp-lienora-content .cvp-compact-body .cvp-gallery-grid {
+  display:grid;
+  grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);
+  grid-auto-flow:row;
+  grid-auto-rows:105px;
+  gap:7px;
+}
+.cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button,
+.cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:first-child,
+.cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:nth-child(n) {
+  grid-column:auto;
+  grid-row:auto;
+  width:100%;
+  height:105px;
+  min-width:0;
+  min-height:0;
+  margin:0;
+  overflow:hidden;
+  align-self:stretch;
+  justify-self:stretch;
+}
+.cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button img {
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+@media (max-width:390px) {
+  .cvp-lienora-content .cvp-compact-body .cvp-gallery-grid {grid-auto-rows:92px;gap:6px}
+  .cvp-lienora-content .cvp-compact-body .cvp-gallery-grid > button:nth-child(n) {height:92px}
+}
