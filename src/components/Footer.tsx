@@ -54,7 +54,7 @@ const EmailContact: React.FC = () => {
           </div>
           <button
             onClick={handleCopy}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-[#4A1D43] hover:bg-[#D4AF37] text-white text-xs font-medium rounded transition-colors border border-[#D4AF37]"
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-[#D6B86D] hover:bg-[#E4CB91] text-[#292725] text-xs font-medium rounded transition-colors border border-[#D4AF37]"
           >
             {copied ? (
               <>
@@ -448,7 +448,7 @@ const Footer: React.FC = () => {
                   <button
                     type="submit"
                     disabled={requestSubmitting}
-                    className="flex-1 px-5 py-3 bg-[#4A1D43] text-[#D4AF37] border border-[#D4AF37] rounded-lg hover:bg-[#5A2D53] transition-all text-sm font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="flex-1 px-5 py-3 bg-[#D6B86D] text-[#292725] border border-[#D4AF37] rounded-lg hover:bg-[#E4CB91] transition-all text-sm font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
                   >
                     {requestSubmitting ? formT.sending : formT.submit}
                   </button>
