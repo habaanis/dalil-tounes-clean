@@ -9,6 +9,8 @@ export type BoutiqueProduct = {
   currency: 'EUR' | 'TND';
   mode: 'order' | 'quote';
   merchantPaymentUrl?: string;
+  approvedAt?: string;
+  updatedAt?: string;
 };
 
 export type BoutiqueConfig = {
@@ -18,6 +20,16 @@ export type BoutiqueConfig = {
   paymentsVerified?: boolean;
   demoMode?: boolean;
 };
+
+const recentLabel = (product: BoutiqueProduct): string | null => {
+  const approved = Date.parse(product.approvedAt || '');
+  const updated = Date.parse(product.updatedAt || '');
+  const timestamp = Math.max(Number.isFinite(approved) ? approved : 0, Number.isFinite(updated) ? updated : 0);
+  if (!timestamp || timestamp > Date.now() || Date.now() - timestamp >= 7 * 24 * 60 * 60 * 1000) return null;
+  return Number.isFinite(approved) && Number.isFinite(updated) && updated > approved + 60_000
+    ? 'Mis à jour' : 'Nouveau';
+};
+const isRecentProduct = (product: BoutiqueProduct) => recentLabel(product) !== null;
 
 const priceText = (product: BoutiqueProduct) =>
   typeof product.price === 'number'
@@ -48,6 +60,13 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
   const products = config.products.filter(product => Boolean(product.id && product.title && product.imageUrl));
   const phone = config.whatsapp.replace(/\D/g, '');
   const canWhatsApp = /^\d{8,15}$/.test(phone);
+  useEffect(() => {
+    setSelected(current => {
+      if (!current) return current;
+      const latest = config.products.find(product => product.id === current.id);
+      return latest ?? null;
+    });
+  }, [config.products]);
 
   useEffect(() => {
     if (!open) return;
@@ -95,7 +114,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
     <button type="button" onClick={() => { setOpen(true); setSelected(null); setRequestOpen(false); }}
       aria-haspopup="dialog" className={triggerClassName}
       style={triggerClassName ? undefined : { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 7, padding: '8px 15px', border: '1px solid #d2b276', background: '#fffaf2', color: '#5a3a52', borderRadius: 24, fontSize: 13, fontWeight: 600, lineHeight: 1.2, cursor: 'pointer' }}>
-      {triggerIcon ?? <span aria-hidden="true">✦</span>}<span>{triggerLabel}</span>
+      {triggerIcon ?? <span aria-hidden="true">✦</span>}<span>{triggerLabel}</span>{!config.demoMode && products.some(isRecentProduct) && <span aria-label="Nouveautés" style={{fontSize:10,color:'#9b773e',fontWeight:700,whiteSpace:'nowrap'}}>●</span>}
     </button>
     {open && <div role="presentation" onMouseDown={close}
       style={{ position: 'fixed', inset: 0, zIndex: 9999, padding: 12, background: 'rgba(15,24,22,.67)', display: 'grid', placeItems: 'center' }}>
@@ -116,6 +135,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
               style={{ display: 'grid', gap: 5, textAlign: 'left', padding: 5, background: '#fff', color: '#382d2c', border: '1px solid #e1d4c3', borderRadius: 12, minWidth: 0, cursor: 'pointer' }}>
               <img src={product.imageUrl} alt={product.title} loading="lazy"
                 style={{ width: '100%', aspectRatio: '1 / 1', objectFit: 'cover', borderRadius: 8 }} />
+              {!config.demoMode && isRecentProduct(product) && <span style={{justifySelf:'start',padding:'2px 7px',borderRadius:20,background:'#f4ecd7',color:'#6d4f28',fontSize:10,fontWeight:700}}>Nouveau</span>}
               <span style={{ padding: '0 4px', fontSize: 12, fontWeight: 600, overflowWrap: 'anywhere' }}>{product.title}</span>
               <span style={{ padding: '0 4px 3px', fontSize: 11, color: '#8c713f' }}>Voir les détails ›</span>
             </button>)}

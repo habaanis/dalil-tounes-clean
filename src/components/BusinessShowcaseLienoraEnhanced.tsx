@@ -120,18 +120,22 @@ export default function BusinessShowcaseLienoraEnhanced() {
 
   useEffect(() => {
     let active = true;
+    let fetching = false;
     setApprovedBoutiqueProducts([]);
     const enterpriseId = business?.id;
     if (!enterpriseId) return () => { active = false; };
     const loadApprovedProducts = async () => {
+      if (!active || fetching || document.visibilityState === 'hidden') return;
+      fetching = true;
       const { data, error } = await supabase
         .from('dalil_boutique_products')
-        .select('id,title,description,image_url,mode,currency,price')
+        .select('id,title,description,image_url,mode,currency,price,approved_at,updated_at')
         .eq('entreprise_id', enterpriseId)
         .eq('status', 'approved')
         .lte('approved_at', new Date().toISOString())
         .order('position', { ascending: true })
         .limit(30);
+      fetching = false;
       if (!active || error) return;
       const products = (data ?? []).flatMap(item => {
         if (!item || typeof item.id !== 'string' || typeof item.title !== 'string'
@@ -142,12 +146,22 @@ export default function BusinessShowcaseLienoraEnhanced() {
         return [{
           id: item.id, title: item.title, description: String(item.description || ''),
           imageUrl: item.image_url, mode: item.mode as 'order' | 'quote', currency: 'TND' as const, price,
+          approvedAt: String(item.approved_at || ''), updatedAt: String(item.updated_at || ''),
         }];
       });
       setApprovedBoutiqueProducts(products);
     };
     void loadApprovedProducts();
-    return () => { active = false; };
+    const onFocus = () => { void loadApprovedProducts(); };
+    const timer = window.setInterval(() => { void loadApprovedProducts(); }, 60_000);
+    window.addEventListener('focus', onFocus);
+    document.addEventListener('visibilitychange', onFocus);
+    return () => {
+      active = false;
+      window.clearInterval(timer);
+      window.removeEventListener('focus', onFocus);
+      document.removeEventListener('visibilitychange', onFocus);
+    };
   }, [business?.id]);
 
   useEffect(() => {
