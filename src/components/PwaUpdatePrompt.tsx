@@ -10,7 +10,7 @@ const COPY: Record<string, { title: string; detail: string; action: string }> = 
 };
 
 export function PwaUpdatePrompt() {
-  const [visible, setVisible] = useState(() => sessionStorage.getItem(UPDATE_KEY) === '1');
+  const [visible, setVisible] = useState(() => { try { return sessionStorage.getItem(UPDATE_KEY) === '1'; } catch { return false; } });
 
   useEffect(() => {
     const show = () => setVisible(true);
@@ -23,7 +23,21 @@ export function PwaUpdatePrompt() {
   const language = (document.documentElement.lang || 'fr').slice(0, 2);
   const copy = COPY[language] || COPY.fr;
   const refresh = () => {
-    sessionStorage.removeItem(UPDATE_KEY);
+    // Avoid losing unsaved information from forms, reservations or client edits.
+    const hasPotentialUnsavedChanges = Array.from(document.querySelectorAll('input, textarea, select')).some((element) => {
+      if (element instanceof HTMLTextAreaElement) return element.value.trim().length > 0;
+      if (element instanceof HTMLInputElement) {
+        if (['hidden', 'submit', 'button', 'checkbox', 'radio', 'file'].includes(element.type)) return false;
+        return element.value.trim().length > 0 && element.value !== element.defaultValue;
+      }
+      return element instanceof HTMLSelectElement && element.value !== Array.from(element.options).find(o => o.defaultSelected)?.value;
+    });
+    if (hasPotentialUnsavedChanges && !window.confirm(language === 'ar'
+      ? 'قد تفقد المعلومات غير المحفوظة. هل تريد تحديث الصفحة؟'
+      : language === 'en' ? 'Unsaved information may be lost. Refresh now?'
+      : 'Des informations non enregistrées risquent d’être perdues. Actualiser maintenant ?')) return;
+    try { sessionStorage.removeItem(UPDATE_KEY); } catch { /* Storage disabled */ }
+    // Reload only on the user's explicit click; fetch new HTML and hashed assets.
     window.location.reload();
   };
 
@@ -31,16 +45,16 @@ export function PwaUpdatePrompt() {
     <aside
       role="status"
       aria-live="polite"
-      className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] left-1/2 z-[10000] flex w-[min(92vw,640px)] -translate-x-1/2 flex-col gap-3 rounded-2xl border border-[#D4AF37] bg-[#063D32] p-4 text-white shadow-2xl sm:flex-row sm:items-center sm:justify-between"
+      className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] left-1/2 z-[10000] flex w-[min(92vw,640px)] -translate-x-1/2 flex-col gap-3 rounded-2xl border border-[#C9A65D] bg-[#FFF9ED] p-4 text-[#292725] shadow-2xl sm:flex-row sm:items-center sm:justify-between"
     >
       <div className="grid gap-1">
         <strong className="text-sm font-bold">{copy.title}</strong>
-        <span className="text-xs text-white/90">{copy.detail}</span>
+        <span className="text-xs text-[#59534A]">{copy.detail}</span>
       </div>
       <button
         type="button"
         onClick={refresh}
-        className="shrink-0 rounded-full bg-[#D4AF37] px-4 py-3 text-sm font-extrabold text-[#063D32] transition hover:bg-[#E6C75B] focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#063D32]"
+        className="shrink-0 rounded-full border border-[#B68C3B] bg-[#D6B86D] px-4 py-3 text-sm font-extrabold text-[#292725] transition hover:bg-[#E4CB91] focus:outline-none focus:ring-2 focus:ring-[#C9A65D] focus:ring-offset-2"
       >
         {copy.action}
       </button>

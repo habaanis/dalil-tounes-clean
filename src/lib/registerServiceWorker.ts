@@ -2,8 +2,6 @@
 // Enregistre le service worker et signale proprement les nouvelles versions.
 
 const UPDATE_KEY = 'dalil-tounes-pwa-update-ready';
-const CLIENT_APP_HOST = 'app.dalil-tounes.com';
-const CLIENT_RELOAD_KEY = 'dalil-client-sw-reloaded-v15';
 
 function announceUpdate(): void {
   try {
@@ -39,25 +37,8 @@ export function registerServiceWorker(): void {
       navigator.serviceWorker.addEventListener('controllerchange', () => {
         if (!hadController) return;
 
-        if (window.location.hostname === CLIENT_APP_HOST) {
-          let alreadyReloaded = false;
-          try {
-            alreadyReloaded = sessionStorage.getItem(CLIENT_RELOAD_KEY) === '1';
-          } catch {
-            // Storage can be denied in restricted browsers.
-            alreadyReloaded = true;
-          }
-          if (!alreadyReloaded) {
-            try {
-              sessionStorage.setItem(CLIENT_RELOAD_KEY, '1');
-              window.location.reload();
-              return;
-            } catch {
-              // Avoid an uncontrolled reload loop if storage is unavailable.
-            }
-          }
-        }
-
+        // Do not force-refresh client mini-apps while a visitor may be using them.
+        // The shared update banner allows explicit, safe refresh.
         announceUpdate();
       });
     });

@@ -355,13 +355,13 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
 
           <div className="mx-auto max-w-5xl space-y-5 px-4 py-6">
             <EssentialPresence />
-            <section className="rounded-2xl bg-[#2E102A] p-5 text-white" aria-label={structure.products}>
-              <p className="text-xs font-medium uppercase tracking-wide text-[#F1D783]">CV Business · CV Portfolio</p>
+            <section className="rounded-2xl border border-[#C9A65D] bg-[#FFF8EA] p-5 text-[#292725]" aria-label={structure.products}>
+              <p className="text-xs font-medium uppercase tracking-wide text-[#9B762D]">CV Business · CV Portfolio</p>
               <h2 className="mt-2 max-w-3xl font-serif text-xl font-medium sm:text-2xl">{structure.homeCvTitle}</h2>
-              <p className="mt-2 text-sm leading-6 text-white/85">{structure.homeCvText}</p>
+              <p className="mt-2 text-sm leading-6 text-[#514B43]">{structure.homeCvText}</p>
               <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <a href="/subscription#presence-essentielle" className="inline-flex min-h-11 items-center justify-center rounded-xl bg-[#FFF9ED] px-4 py-3 text-center text-sm font-medium text-[#35172F]">{structure.freeAction}</a>
-              <a href="/subscription#modeles" className="inline-flex min-h-11 items-center justify-center rounded-xl border border-[#D4AF37] px-4 py-3 text-center text-sm font-medium text-[#F1D783]">{structure.homeCvAction} <ArrowRight className="ms-2 h-4 w-4 shrink-0" aria-hidden="true" /></a>
+              <a href="/subscription#presence-essentielle" className="inline-flex min-h-11 items-center justify-center rounded-xl border border-[#B68C3B] bg-[#D6B86D] px-4 py-3 text-center text-sm font-semibold text-[#292725] transition hover:bg-[#E4CB91]">{structure.freeAction}</a>
+              <a href="/subscription#modeles" className="inline-flex min-h-11 items-center justify-center rounded-xl border border-[#C9A65D] bg-white px-4 py-3 text-center text-sm font-semibold text-[#292725]">{structure.homeCvAction} <ArrowRight className="ms-2 h-4 w-4 shrink-0" aria-hidden="true" /></a>
               </div>
             </section>
           </div>
@@ -380,7 +380,7 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
               <p className="text-xs font-black uppercase tracking-[0.16em] text-[#B58A18]">{t.cardEyebrow}</p><h2 className="public-heading mt-2 max-w-4xl font-serif text-3xl font-medium text-[#2E102A] md:text-4xl">{t.cardTitle}</h2><p className="mt-4 max-w-4xl text-base leading-7 text-gray-700">{t.cardIntro}</p>
               <div className="mt-6 grid gap-3 md:grid-cols-3"><div className="rounded-2xl border border-[#D4AF37]/25 bg-white p-4"><QrCode className="h-5 w-5 text-[#B58A18]" aria-hidden="true" /><p className="mt-3 text-sm font-semibold leading-6 text-[#4A1D43]">{t.qrBenefit}</p></div><div className="rounded-2xl border border-[#D4AF37]/25 bg-white p-4"><MapPin className="h-5 w-5 text-[#B58A18]" aria-hidden="true" /><p className="mt-3 text-sm font-semibold leading-6 text-[#4A1D43]">{t.informationBenefit}</p></div><div className="rounded-2xl border border-[#D4AF37]/25 bg-white p-4"><Share2 className="h-5 w-5 text-[#B58A18]" aria-hidden="true" /><p className="mt-3 text-sm font-semibold leading-6 text-[#4A1D43]">{t.sharingBenefit}</p></div></div>
               <p className="mt-5 max-w-5xl rounded-2xl border border-[#D4AF37]/25 bg-white px-4 py-3 text-sm leading-6 text-gray-700">{t.physicalCard}</p>
-              <div className="mt-5 rounded-2xl bg-[#2E102A] p-5 text-white md:p-6"><h3 className="font-serif text-xl font-bold text-[#F1D783] md:text-2xl">{t.visibilityTitle}</h3><p className="mt-2 max-w-5xl text-sm leading-6 text-white/85 md:text-base">{t.visibilityText}</p></div>
+              <div className="mt-5 rounded-2xl border border-[#C9A65D] bg-[#FFF8EA] p-5 text-[#292725] md:p-6"><h3 className="font-serif text-xl font-bold text-[#292725] md:text-2xl">{t.visibilityTitle}</h3><p className="mt-2 max-w-5xl text-sm leading-6 text-[#514B43] md:text-base">{t.visibilityText}</p></div>
             </div>
           </section>
 
@@ -397,7 +397,7 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
 
           <CvBusinessJourney language={lang} />
 
-          <section className="bg-[#2E102A] px-4 py-7 text-white"><div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left rtl:sm:text-right"><div><p className="text-xs font-black uppercase tracking-[0.16em] text-[#F1D783]">{t.searchEyebrow}</p><h2 className="mt-2 max-w-3xl font-serif text-2xl font-bold">{t.searchTitle}</h2></div><button type="button" onClick={() => fixedView ? navigate('/') : setPreviewView('platform')} className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-[#D4AF37] px-5 py-3 text-sm font-black text-[#F1D783]"><Search className="h-4 w-4" /> {t.explorePlatform}</button></div></section>
+          <section className="border-y border-[#C9A65D] bg-[#FFF8EA] px-4 py-7 text-[#292725]"><div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left rtl:sm:text-right"><div><p className="text-xs font-black uppercase tracking-[0.16em] text-[#9B762D]">{t.searchEyebrow}</p><h2 className="mt-2 max-w-3xl font-serif text-2xl font-bold">{t.searchTitle}</h2></div><button type="button" onClick={() => fixedView ? navigate('/') : setPreviewView('platform')} className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-[#B68C3B] bg-[#D6B86D] px-5 py-3 text-sm font-black text-[#292725] transition hover:bg-[#E4CB91]"><Search className="h-4 w-4" /> {t.explorePlatform}</button></div></section>
         </>
       )}
     </div>
