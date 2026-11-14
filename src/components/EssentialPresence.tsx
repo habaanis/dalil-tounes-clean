@@ -9,6 +9,6 @@ export function EssentialPresence({ registration = false }: { registration?: boo
     <p className="text-xs font-medium text-[#7C6335]">{t.essential}</p>
     <h2 className="mt-2 font-serif text-xl font-medium text-[#292725] sm:text-xl">{t.freeIntro}</h2>
     <ul className="my-4 flex flex-wrap gap-x-5 gap-y-2 text-sm text-slate-700">{t.fields.map(field => <li key={field}>{field}</li>)}</ul>
-    <Link className="inline-flex min-h-11 items-center justify-center rounded-xl border border-[#C9A65D] bg-[#B62226] px-5 py-3 text-center text-sm font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D4AF37]" to={registration ? '/inscription-entreprise' : '/subscription#presence-essentielle'}>{t.freeAction}</Link>
+    <Link className="inline-flex min-h-11 items-center justify-center rounded-xl border border-[#B68C3B] bg-[#D6B86D] px-5 py-3 text-center text-sm font-semibold text-[#292725] transition hover:bg-[#E4CB91] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D4AF37]" to={registration ? '/inscription-entreprise' : '/subscription#presence-essentielle'}>{t.freeAction}</Link>
   </section>;
 }
