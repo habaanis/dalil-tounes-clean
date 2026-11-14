@@ -14,6 +14,7 @@ import { Tables } from '../lib/dbTables';
 import { detectIntent, getCategoryRoute, getCategoryDisplayName, PageCategorie } from '../lib/intentDetection';
 import { FORCE_ENTERPRISE_ONLY } from '../config/searchMode';
 import { expandQuery, rankItemByQuery, MIN_CHARS } from '../lib/searchSynonyms';
+import { businessQueryTerms, rankBusinessSearchRows } from '../lib/businessSearchRelevance';
 import { expandCityVariants } from '../lib/geoAliases';
 import { buildEntrepriseUrl } from '../lib/url';
 import { useLanguage } from '../context/LanguageContext';
@@ -155,7 +156,7 @@ export default function SearchBar({
   const GLOBAL_RAW_RESULT_LIMIT = 150;
   const CATEGORY_RAW_RESULT_LIMIT = 40;
 
-  const OR_SAFE_FIELDS = ['nom', 'ville', 'gouvernorat', 'description', 'sous_categories_texte'];
+  const OR_SAFE_FIELDS = ['nom', 'sous_categories_texte', 'sous_categories_clean', 'services', 'keywords_fr', 'search_text', 'description'];
 
   function rowToSearchableText(row: any): string {
     const textFields = [
@@ -237,7 +238,7 @@ export default function SearchBar({
     try {
       let allResults: any[] = [];
 
-      if (scope === 'education') {
+      if (scope === 'education' && /(?:professeur|enseignant|cours particuliers?|tuteur|teacher)/i.test(trimmedValue)) {
         const searchPattern = `%${trimmedValue}%`;
         let query = supabase
           .from(Tables.PROFESSEURS)
@@ -255,7 +256,7 @@ export default function SearchBar({
         if (resp.error) throw resp.error;
         allResults = resp.data || [];
       } else {
-        const words = normalizeText(trimmedValue).split(/\s+/).filter(w => w.length >= 2);
+        const words = businessQueryTerms(trimmedValue);
         if (words.length === 0) {
           setEnt([]);
           setLoadingEnt(false);
@@ -275,9 +276,10 @@ export default function SearchBar({
 
         let query = supabase
           .from(Tables.ENTREPRISE)
-          .select('id, id_airtable, nom, ville, gouvernorat, adresse, description, sous_categories_texte, sous_categories_clean, categorie, name_ar, services, statut_carte, cv_business_status, cv_business_published_at, "Note Google Globale", "Compteur Avis Google"')
+          .select('id, id_airtable, nom, ville, gouvernorat, adresse, description, sous_categories_texte, sous_categories_clean, categorie, name_ar, services, keywords_fr, search_text, statut_carte, cv_business_status, cv_business_published_at, "Note Google Globale", "Compteur Avis Google"')
           .not('nom', 'is', null)
           .neq('nom', '')
+          .or('statut_publication.is.null,statut_publication.eq.Publié')
           .or(orParts.join(','))
           .order('cv_business_status', { ascending: false, nullsFirst: false })
           .order('"Compteur Avis Google"', { ascending: false, nullsFirst: false })
@@ -305,6 +307,7 @@ export default function SearchBar({
             .from(Tables.ENTREPRISE)
             .select('id, id_airtable, nom, ville, gouvernorat, categorie, statut_carte, cv_business_status, cv_business_published_at, "Note Google Globale", "Compteur Avis Google"')
             .not('nom', 'is', null)
+            .or('statut_publication.is.null,statut_publication.eq.Publié')
             .ilike('nom', `%${trimmedValue}%`)
             .order('cv_business_status', { ascending: false, nullsFirst: false })
             .order('"Compteur Avis Google"', { ascending: false, nullsFirst: false })
@@ -324,25 +327,17 @@ export default function SearchBar({
 
         const rawRows = dedupeByAirtableId(searchRows as { id: string; id_airtable?: string | null }[]);
 
-        let scored = rawRows.map((row: any) => {
-          const s = scoreResult(row, words);
-          return { ...row, _score: s, ville: row.ville || row.gouvernorat || '' };
-        });
-
-        if (words.length > 1) {
-          const beforeFilter = scored.length;
-          scored = scored.filter((r: any) => {
-            const allText = rowToSearchableText(r);
-            return words.every(w => allText.includes(w));
-          });
-          console.log('[Search] multi-word filter:', beforeFilter, '->', scored.length);
-        }
+        let scored = rankBusinessSearchRows(rawRows, trimmedValue).map((row: any) => ({
+          ...row,
+          _score: row._searchRelevance,
+          ville: row.ville || row.gouvernorat || '',
+        }));
 
         scored.sort((a: any, b: any) => {
-          const trustDiff = trustPriority(b) - trustPriority(a);
-          if (trustDiff) return trustDiff;
           const relevanceDiff = b._score - a._score;
           if (relevanceDiff) return relevanceDiff;
+          const trustDiff = trustPriority(b) - trustPriority(a);
+          if (trustDiff) return trustDiff;
           return Number(b['Compteur Avis Google'] || 0) - Number(a['Compteur Avis Google'] || 0);
         });
 
