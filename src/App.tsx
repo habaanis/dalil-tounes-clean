@@ -180,7 +180,7 @@ function App() {
     <>
       <CheckoutRegistrationBridge />
       <PlatformPrestigeLaunch />
-      {!isDedicatedClientApp && <PwaUpdatePrompt />}
+      <PwaUpdatePrompt />
       <AppRouter />
       <WelcomeModal isOpen={showWelcomeModal} onClose={handleCloseWelcomeModal} />
       {showWelcomeDevButton && (
