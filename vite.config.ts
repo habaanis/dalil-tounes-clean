@@ -40,8 +40,21 @@ const analyticsEnvironmentPlugin = {
   },
 };
 
+// Same immutable identifier is embedded in JS and emitted as a small, uncached
+// version manifest. Unlike the service-worker script, it changes on EVERY build.
+const dalilBuildVersion = process.env.VERCEL_GIT_COMMIT_SHA
+  || process.env.GITHUB_SHA
+  || `local-${Date.now()}`;
+const dalilVersionManifestPlugin = {
+  name: 'dalil-version-manifest',
+  generateBundle(this: { emitFile: (file: { type: 'asset'; fileName: string; source: string }) => void }) {
+    this.emitFile({ type: 'asset', fileName: 'version.json', source: JSON.stringify({ version: dalilBuildVersion }) });
+  },
+};
+
 export default defineConfig({
-  plugins: [react(), analyticsEnvironmentPlugin, nonBlockingCssPlugin],
+  define: { __DALIL_BUILD_VERSION__: JSON.stringify(dalilBuildVersion) },
+  plugins: [react(), analyticsEnvironmentPlugin, nonBlockingCssPlugin, dalilVersionManifestPlugin],
   esbuild: {
     drop: ['console', 'debugger'],
   },
