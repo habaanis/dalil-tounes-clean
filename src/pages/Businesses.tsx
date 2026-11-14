@@ -1181,7 +1181,9 @@ export const Businesses = ({
 
       console.log(`[DEBUG] Mapping terminé: ${mappedData.length} entreprises`);
 
-      if (!selectedBusinessId && searchTerm && searchTerm.length > 0) {
+      // The PWA already applies the Supabase multi-column search above. An additional
+      // narrower JS pass can erase valid matches (e.g. profession suggestions).
+      if (!inPlatformApp && !selectedBusinessId && searchTerm && searchTerm.length > 0) {
         const normalizedSearchTerm = normalizeText(searchTerm);
         console.log(`\n🔎 [Recherche Multi-colonnes] Terme recherché: "${searchTerm}"`);
         console.log(`🔎 [Recherche Multi-colonnes] Terme normalisé: "${normalizedSearchTerm}"`);
