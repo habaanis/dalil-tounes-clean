@@ -83,6 +83,8 @@ export function matchesShopFilter(row: {
     // "Mode & Sport" also contains gyms and garages in historical data.
     if (/salle de sport|fitness|club de sport|gym|garage mecanique|auto[- ]?ecole/.test(details)) return false;
     if (!details && /\bgym\b|fitness|\bgarage\b/.test(name)) return false;
+    // Legacy grocery stores can be incorrectly tagged as Mode & Sport.
+    if (/\banouar market\b|supermarche|epicerie|alimentation generale|produits alimentaires/.test(name + ' ' + details)) return false;
   }
 
   if (id === 'beauty') {
