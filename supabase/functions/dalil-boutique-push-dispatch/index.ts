@@ -28,7 +28,7 @@ Deno.serve(async req=>{
     const productId=input?.productId;
     if(typeof productId!=="string"||!/^[0-9a-f-]{36}$/i.test(productId)) return json({error:"Invalid product"},400);
     const {data:product,error:productError}=await db.from("dalil_boutique_products")
-      .select("id,profile_id,title,status,approved_at,updated_at")
+      .select("id,entreprise_id,title,status,approved_at,updated_at")
       .eq("id",productId).eq("status","approved").maybeSingle();
     if(productError||!product||!product.approved_at) return json({error:"Product not approved"},409);
     const {data:profile}=await db.from("entreprise").select("nom,ville,slug,approved,statut_publication,statut_validation")
