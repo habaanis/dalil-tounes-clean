@@ -9,6 +9,12 @@ export function isPlatformAppMode(): boolean {
   if (/^\/(?:qr-business|entreprise|business|cv|p)(?:\/|$)/.test(pathname) || /^\/[^/]+\/cv\/?$/.test(pathname)) return false;
 
   const mainHost = /^(?:www\.)?dalil-tounes\.com$/i.test(hostname);
+  // Dedicated PWA Vercel project: enable the application without a QA query switch.
+  // Keep app.dalil-tounes.com reserved for existing customer mini-app links.
+  const platformAppHost = hostname === 'dalil-tounes-pwa-haba-anis-projects.vercel.app'
+    || hostname.startsWith('dalil-tounes-pwa-') && hostname.endsWith('.vercel.app')
+    || hostname === 'pwa.dalil-tounes.com';
+  if (platformAppHost) return true;
   const previewHost = hostname === 'localhost' || hostname.endsWith('.vercel.app');
   if (previewHost) {
     const previewParam = new URLSearchParams(search).get('app-preview');
