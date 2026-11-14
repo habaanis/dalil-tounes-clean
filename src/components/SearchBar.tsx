@@ -14,6 +14,7 @@ import { Tables } from '../lib/dbTables';
 import { detectIntent, getCategoryRoute, getCategoryDisplayName, PageCategorie } from '../lib/intentDetection';
 import { FORCE_ENTERPRISE_ONLY } from '../config/searchMode';
 import { expandQuery, rankItemByQuery, MIN_CHARS } from '../lib/searchSynonyms';
+import { businessQueryTerms, rankBusinessSearchRows } from '../lib/businessSearchRelevance';
 import { expandCityVariants } from '../lib/geoAliases';
 import { buildEntrepriseUrl } from '../lib/url';
 import { useLanguage } from '../context/LanguageContext';
@@ -152,61 +153,12 @@ export default function SearchBar({
   const isGlobal = scope === 'global';
   const pageLabel = isGlobal ? null : getCategoryDisplayName(scope as PageCategorie);
   const like = (s: string) => `%${(s || '').trim()}%`;
-  const GLOBAL_RAW_RESULT_LIMIT = 150;
-  const CATEGORY_RAW_RESULT_LIMIT = 40;
+  // Fetch enough candidates to rank by business activity on the client.
+  // The old 40-row scope cap omitted schools, laboratories and services.
+  const GLOBAL_RAW_RESULT_LIMIT = 400;
+  const CATEGORY_RAW_RESULT_LIMIT = 160;
 
-  const OR_SAFE_FIELDS = ['nom', 'ville', 'gouvernorat', 'description', 'sous_categories_texte'];
-
-  function rowToSearchableText(row: any): string {
-    const textFields = [
-      row.nom, row.ville, row.gouvernorat, row.adresse,
-      row.description, row.sous_categories_texte, row.sous_categories_clean,
-      row.name_ar, row.services, row.statut_carte,
-      row['mots cles recherche'],
-    ];
-    const arrayFields = [row.categorie, row.sous_categories, row.secteur, row.tags];
-    for (const arr of arrayFields) {
-      if (Array.isArray(arr)) textFields.push(arr.join(' '));
-      else if (typeof arr === 'string') textFields.push(arr);
-    }
-    return normalizeText(textFields.filter(Boolean).join(' '));
-  }
-
-  function scoreResult(row: any, words: string[]): number {
-    const nom = normalizeText(row.nom || '');
-    const fullQ = words.join(' ');
-    let score = 0;
-
-    if (nom === fullQ) score += 100;
-    else if (nom.startsWith(fullQ)) score += 80;
-    else if (nom.includes(fullQ)) score += 60;
-
-    const geoText = normalizeText([row.ville, row.gouvernorat, row.adresse].filter(Boolean).join(' '));
-    const catText = normalizeText([
-      row.sous_categories_texte, row.sous_categories_clean, row.services,
-      row['mots cles recherche'],
-      Array.isArray(row.categorie) ? row.categorie.join(' ') : row.categorie,
-      Array.isArray(row.tags) ? row.tags.join(' ') : row.tags,
-    ].filter(Boolean).join(' '));
-
-    for (const w of words) {
-      if (nom.startsWith(w)) score += 40;
-      else if (nom.includes(w)) score += 25;
-
-      if (geoText.startsWith(w) || geoText.includes(` ${w}`)) score += 20;
-      else if (geoText.includes(w)) score += 12;
-
-      if (catText.includes(w)) score += 15;
-
-      if (normalizeText(row.description || '').includes(w)) score += 5;
-    }
-
-    const sc = normalizeText(row.statut_carte || '');
-    if (sc.includes('certifie') && !sc.includes('non')) score += 3;
-    if (row.is_premium) score += 2;
-
-    return score;
-  }
+  const OR_SAFE_FIELDS = ['nom', 'sous_categories_texte', 'sous_categories_clean', 'services', 'keywords_fr', 'search_text', 'description'];
 
   function trustPriority(row: any): number {
     if (String(row.cv_business_status || '').toLowerCase() === 'published' || row.cv_business_published_at) return 2;
@@ -237,7 +189,7 @@ export default function SearchBar({
     try {
       let allResults: any[] = [];
 
-      if (scope === 'education') {
+      if (scope === 'education' && /(?:professeur|enseignant|cours particuliers?|tuteur|teacher)/i.test(trimmedValue)) {
         const searchPattern = `%${trimmedValue}%`;
         let query = supabase
           .from(Tables.PROFESSEURS)
@@ -255,7 +207,7 @@ export default function SearchBar({
         if (resp.error) throw resp.error;
         allResults = resp.data || [];
       } else {
-        const words = normalizeText(trimmedValue).split(/\s+/).filter(w => w.length >= 2);
+        const words = businessQueryTerms(trimmedValue);
         if (words.length === 0) {
           setEnt([]);
           setLoadingEnt(false);
@@ -275,9 +227,10 @@ export default function SearchBar({
 
         let query = supabase
           .from(Tables.ENTREPRISE)
-          .select('id, id_airtable, nom, ville, gouvernorat, adresse, description, sous_categories_texte, sous_categories_clean, categorie, name_ar, services, statut_carte, cv_business_status, cv_business_published_at, "Note Google Globale", "Compteur Avis Google"')
+          .select('id, id_airtable, nom, ville, gouvernorat, adresse, description, sous_categories_texte, sous_categories_clean, categorie, name_ar, services, keywords_fr, search_text, statut_carte, cv_business_status, cv_business_published_at, "Note Google Globale", "Compteur Avis Google"')
           .not('nom', 'is', null)
           .neq('nom', '')
+          .or('statut_publication.is.null,statut_publication.eq.Publié')
           .or(orParts.join(','))
           .order('cv_business_status', { ascending: false, nullsFirst: false })
           .order('"Compteur Avis Google"', { ascending: false, nullsFirst: false })
@@ -305,6 +258,7 @@ export default function SearchBar({
             .from(Tables.ENTREPRISE)
             .select('id, id_airtable, nom, ville, gouvernorat, categorie, statut_carte, cv_business_status, cv_business_published_at, "Note Google Globale", "Compteur Avis Google"')
             .not('nom', 'is', null)
+            .or('statut_publication.is.null,statut_publication.eq.Publié')
             .ilike('nom', `%${trimmedValue}%`)
             .order('cv_business_status', { ascending: false, nullsFirst: false })
             .order('"Compteur Avis Google"', { ascending: false, nullsFirst: false })
@@ -324,25 +278,17 @@ export default function SearchBar({
 
         const rawRows = dedupeByAirtableId(searchRows as { id: string; id_airtable?: string | null }[]);
 
-        let scored = rawRows.map((row: any) => {
-          const s = scoreResult(row, words);
-          return { ...row, _score: s, ville: row.ville || row.gouvernorat || '' };
-        });
-
-        if (words.length > 1) {
-          const beforeFilter = scored.length;
-          scored = scored.filter((r: any) => {
-            const allText = rowToSearchableText(r);
-            return words.every(w => allText.includes(w));
-          });
-          console.log('[Search] multi-word filter:', beforeFilter, '->', scored.length);
-        }
+        let scored = rankBusinessSearchRows(rawRows, trimmedValue).map((row: any) => ({
+          ...row,
+          _score: row._searchRelevance,
+          ville: row.ville || row.gouvernorat || '',
+        }));
 
         scored.sort((a: any, b: any) => {
-          const trustDiff = trustPriority(b) - trustPriority(a);
-          if (trustDiff) return trustDiff;
           const relevanceDiff = b._score - a._score;
           if (relevanceDiff) return relevanceDiff;
+          const trustDiff = trustPriority(b) - trustPriority(a);
+          if (trustDiff) return trustDiff;
           return Number(b['Compteur Avis Google'] || 0) - Number(a['Compteur Avis Google'] || 0);
         });
 

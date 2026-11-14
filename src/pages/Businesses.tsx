@@ -17,6 +17,7 @@ import { Search, MapPin, Phone, Mail, Building2, X, Award, ArrowRight, ShieldChe
 import { Toast } from '../components/Toast';
 import BusinessNeedForm from '../components/BusinessNeedForm';
 import { normalizeText, removeArabicDiacritics, extractFrenchName, cleanSearchTerm, cleanArabicField } from '../lib/textNormalization';
+import { businessQueryTerms, rankBusinessSearchRows } from '../lib/businessSearchRelevance';
 import { BusinessCardWithActivity, type BusinessActivity } from '../components/BusinessCardWithActivity';
 import { BusinessCardPreview, type BusinessCardPreviewLanguage } from '../components/BusinessCardPreview';
 import { CvBusinessSharingInfo } from '../components/CvBusinessSharingInfo';
@@ -108,7 +109,7 @@ interface BusinessNeedActivityRow {
   created_at: string | null;
 }
 
-const ENTREPRISE_SELECT_FIELDS = 'id, id_airtable, nom, sous_categories_texte, sous_categories_clean, categorie, gouvernorat, ville, adresse, telephone, email, site_web, description, a_propos, services, image_url, logo_url, statut_abonnement, cv_business_status, cv_business_published_at, "mots cles recherche", "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, statut_carte, "Note Google Globale", "Compteur Avis Google", name_ar, name_en, name_it, name_ru, description_ar, description_en, description_it, description_ru, slug';
+const ENTREPRISE_SELECT_FIELDS = 'id, id_airtable, nom, sous_categories_texte, sous_categories_clean, categorie, gouvernorat, ville, adresse, telephone, email, site_web, description, a_propos, services, image_url, logo_url, statut_abonnement, cv_business_status, cv_business_published_at, "mots cles recherche", keywords_fr, search_text, "Lien Instagram", "lien facebook", "Lien TikTok", "Lien LinkedIn", "Lien YouTube", lien_x, horaires_ok, statut_carte, "Note Google Globale", "Compteur Avis Google", name_ar, name_en, name_it, name_ru, description_ar, description_en, description_it, description_ru, slug';
 
 const PUBLIC_BUSINESS_NEED_ACTIVITY_TYPES = new Set([
   'supplier_search',
@@ -349,12 +350,26 @@ function reviewCount(business: Record<string, any>): number {
   const n = Number(business.nombre_avis ?? business['Compteur Avis Google'] ?? 0);
   return Number.isFinite(n) && n > 0 ? n : 0;
 }
+/**
+ * Commercial display rule: all existing CV/visually premium cards come before
+ * Essential cards. Preserve the legacy premium demonstration cards even where
+ * the CV publication flag is old; this does NOT change certification rights.
+ */
+function getPremiumDisplayPriority(business: Record<string, any>): number {
+  if (hasPublishedCv(business)) return 2;
+  if (isPaidSubscription(business.statut_abonnement)) return 2;
+  if (isCertifiedDalilTounes(business.statut_carte)) return 2;
+  return 1;
+}
+
 function getBusinessSortScore(business: Record<string, any>): number {
   if (hasPublishedCv(business)) return 3;
   if (ratingValue(business) >= 4 && reviewCount(business) >= 5) return 2;
   return 1;
 }
 function compareBusinessesByTrust(a: Record<string, any>, b: Record<string, any>): number {
+  const premium = getPremiumDisplayPriority(b) - getPremiumDisplayPriority(a);
+  if (premium) return premium;
   const group = getBusinessSortScore(b) - getBusinessSortScore(a);
   if (group) return group;
   // A significant volume of good reviews gives more confidence than a handful.
@@ -1021,22 +1036,11 @@ export const Businesses = ({
         // Pour l'arabe : ne pas normaliser (removeArabicDiacritics altère les caractères)
         // Pour le latin : nettoyer seulement les guillemets parasites
         const cleaned = cleanSearchTerm(searchTerm);
-        const searchPattern = `%${cleaned}%`;
-        console.log(`[DEBUG] Filtre Recherche: "${searchTerm}" → nettoyé: "${cleaned}" (pattern: ${searchPattern})`);
-        // Colonnes avec espaces ou accents passées via .filter() séparés pour éviter
-        // les bugs de parsing de la syntaxe .or() string avec noms de colonnes complexes
-        query = query.or(
-          [
-            `nom.ilike.${searchPattern}`,
-            `name_ar.ilike.${searchPattern}`,
-            `description.ilike.${searchPattern}`,
-            `description_ar.ilike.${searchPattern}`,
-            `ville.ilike.${searchPattern}`,
-            `gouvernorat.ilike.${searchPattern}`,
-            `sous_categories_texte.ilike.${searchPattern}`,
-            `sous_categories_clean.ilike.${searchPattern}`,
-          ].join(',')
-        );
+        const terms = businessQueryTerms(cleaned);
+        const fields = ['nom', 'name_ar', 'description', 'description_ar', 'sous_categories_texte', 'sous_categories_clean', 'services', 'keywords_fr', 'search_text', 'ville', 'gouvernorat'];
+        const clauses = terms.flatMap(term => fields.map(field => `${field}.ilike.%${term.replace(/[%_]/g, '')}%`));
+        console.log('[Search] normalized profession variants:', terms);
+        query = query.or(clauses.join(','));
       }
 
       if (!selectedBusinessId && selectedCity) {
@@ -1103,7 +1107,11 @@ export const Businesses = ({
         console.log('[DEBUG] item.nom brut (toutes entreprises):', (data as any[]).map((d: any) => d.nom));
       }
 
-      let mappedData = dedupeByAirtableId((data || []) as { id: string; id_airtable?: string | null }[]).map((item: any) => ({
+      const deduplicatedRows = dedupeByAirtableId((data || []) as { id: string; id_airtable?: string | null }[]);
+      const relevantRows = searchTerm && !selectedBusinessId
+        ? rankBusinessSearchRows(deduplicatedRows as Record<string, unknown>[], searchTerm)
+        : deduplicatedRows;
+      let mappedData = relevantRows.map((item: any) => ({
         id: item.id,
         name: extractFrenchName(item.nom),
         category: getCategoryLabel(item),
@@ -1151,48 +1159,22 @@ export const Businesses = ({
 
       console.log(`[DEBUG] Mapping terminé: ${mappedData.length} entreprises`);
 
-      if (!selectedBusinessId && searchTerm && searchTerm.length > 0) {
-        const normalizedSearchTerm = normalizeText(searchTerm);
-        console.log(`\n🔎 [Recherche Multi-colonnes] Terme recherché: "${searchTerm}"`);
-        console.log(`🔎 [Recherche Multi-colonnes] Terme normalisé: "${normalizedSearchTerm}"`);
-        console.log(`📊 [Debug] Nombre total avant filtre: ${mappedData.length}`);
-
-        if (mappedData.length > 0) {
-          console.log(`📋 [Debug] Exemple entreprise:`, {
-            nom: mappedData[0].name,
-            badges: mappedData[0].badges,
-            mots_cles_recherche: mappedData[0].mots_cles_recherche?.substring(0, 100) || 'NULL',
-            sous_categories: mappedData[0].category
-          });
-        }
-
-        // Le filtre Supabase a déjà retourné les bons résultats via ILIKE.
-        // Ce filtre JS est un garde-fou pour les colonnes non couvertes par le .or() Supabase.
-        // IMPORTANT : pour l'arabe, on compare en lowercase sans normalisation agressive.
-        const lowerTerm = normalizedSearchTerm.toLowerCase();
-        mappedData = mappedData.filter((business) => {
-          const matchNom = normalizeText(business.name || '').includes(lowerTerm);
-          const matchNameAr = (business.name_ar || '').toLowerCase().includes(lowerTerm)
-            || (business.name_ar || '').includes(searchTerm.trim());
-          const matchDescAr = (business.description_ar || '').toLowerCase().includes(lowerTerm)
-            || (business.description_ar || '').includes(searchTerm.trim());
-          const matchSecteur = normalizeText(business.secteur || '').includes(lowerTerm);
-          const matchMotsCles = normalizeText(business.mots_cles_recherche || '').includes(lowerTerm);
-          const matchCategory = normalizeText(business.category || '').includes(lowerTerm);
-          const matchServices = normalizeText(business.services || '').includes(lowerTerm);
-          const matchVille = normalizeText(business.city || '').includes(lowerTerm);
-          const matchGouvernorat = normalizeText(business.gouvernorat || '').includes(lowerTerm);
-
-          return matchNom || matchNameAr || matchDescAr || matchSecteur
-            || matchMotsCles || matchCategory || matchServices
-            || matchVille || matchGouvernorat;
+      // Database rows already passed the shared category-first relevance filter.
+      // Avoid filtering them again by the literal typed word: "coiffeur"
+      // must keep an establishment whose taxonomy says "salon de coiffure".
+      // Profession/category relevance takes precedence; trust breaks ties only.
+      if (searchTerm && !selectedBusinessId) {
+        const relevance = new Map(relevantRows.map((row: any) => [row.id, Number(row._searchRelevance || 0)]));
+        mappedData.sort((a, b) => {
+          // Always show premium CVs before Essential listings, then use relevance.
+          const premium = getPremiumDisplayPriority(b) - getPremiumDisplayPriority(a);
+          if (premium) return premium;
+          const difference = (relevance.get(b.id) || 0) - (relevance.get(a.id) || 0);
+          return difference || compareBusinessesByTrust(a, b);
         });
-
-        console.log(`\n[Recherche Multi-colonnes] ✅ Résultats filtrés: ${mappedData.length}`);
+      } else {
+        mappedData.sort(compareBusinessesByTrust);
       }
-
-      // Trier par priorité (CV publié > avis Google fiables > autres).
-      mappedData.sort(compareBusinessesByTrust);
 
       console.log('═══════════════════════════════════════\n');
 
@@ -1284,7 +1266,11 @@ export const Businesses = ({
 
   const categories = Array.isArray(businesses) ? [...new Set(businesses.map((b) => b.category).filter(Boolean))].sort() : [];
 
-  const filteredBusinesses = Array.isArray(chipFilteredBusinesses) ? chipFilteredBusinesses : [];
+  // Final safeguard applies to all result paths, including filter chips and cache.
+  // Stable sort leaves the relevance order untouched INSIDE each presentation tier.
+  const filteredBusinesses = Array.isArray(chipFilteredBusinesses)
+    ? [...chipFilteredBusinesses].sort((a, b) => getPremiumDisplayPriority(b) - getPremiumDisplayPriority(a))
+    : [];
   const RESULTS_PER_PAGE = 6;
   const defaultResultCount = Math.min(6, filteredBusinesses.length);
   const resultCount = hasActiveSearch ? filteredBusinesses.length : defaultResultCount;
