@@ -23,5 +23,5 @@ Toutes les corrections doivent être effectuées dans Airtable puis vérifiées 
 - Après Airtable pour les deux : `entreprises `, `tourisme local & expatriation`, `services citoyens`.
 - Base du classement : nom contenant explicitement `Real Estate Agency`, catégorie `Immobilier`, sous-catégorie `Agence Immobilière`, concordantes dans Airtable.
 - Statut préservé : `terminer la saisi` ; `approved=false` et `statut_publication=NULL` dans Supabase, donc fiches non publiques.
-- Première vérification Supabase après mise à jour : `liste_pages=NULL` encore observé pour les deux ; **synchronisation en attente**.
+- Première vérification Supabase : synchronisation en attente ; second contrôle : **synchronisation confirmée** pour les deux, `liste_pages=['entreprises','tourisme local & expatriation','services citoyens']`.
 - Retour arrière : rétablir `liste pages` vide dans Airtable pour chacun, puis vérifier la synchronisation Supabase.
