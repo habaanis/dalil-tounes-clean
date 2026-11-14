@@ -1,8 +1,8 @@
 // Dalil Tounes Service Worker
-// Version: 1.4.3
+// Version: 1.4.4
 // Strategie: Network-First pour le HTML, cache valide uniquement pour les assets
 
-const CACHE_VERSION = 'v15';
+const CACHE_VERSION = 'v16';
 const STATIC_CACHE = `dalil-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `dalil-dynamic-${CACHE_VERSION}`;
 
@@ -200,18 +200,29 @@ self.addEventListener('message', (event) => {
 
 self.addEventListener('push', (event) => {
   if (!event.data) return;
-  const data = event.data.json();
-  event.waitUntil(
-    self.registration.showNotification(data.title || 'Dalil Tounes', {
-      body: data.body || '',
+  let data;
+  try { data = event.data.json(); } catch { return; }
+  const path = typeof data.path === 'string' && data.path.startsWith('/') && !data.path.startsWith('//') && !data.path.includes('://')
+    ? data.path : '/';
+  event.waitUntil(self.registration.showNotification(
+    typeof data.title === 'string' ? data.title.slice(0,90) : 'Nouveauté · Dalil Tounes',
+    {
+      body: typeof data.body === 'string' ? data.body.slice(0,160) : '',
       icon: '/icons/icon-192x192.png',
       badge: '/icons/icon-96x96.png',
-      data: { url: data.url || '/' },
-    })
-  );
+      tag: typeof data.tag === 'string' ? data.tag.slice(0,100) : 'dalil-boutique',
+      data: { path },
+    }
+  ));
 });
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  event.waitUntil(clients.openWindow(event.notification.data.url || '/'));
+  const path = event.notification.data?.path || '/';
+  const url = new URL(path, self.location.origin).href;
+  event.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(async windows => {
+    const existing = windows.find(client => client.url.startsWith(self.location.origin) && new URL(client.url).pathname === new URL(url).pathname);
+    if (existing) { await existing.focus(); return existing.navigate(url); }
+    return self.clients.openWindow(url);
+  }));
 });
