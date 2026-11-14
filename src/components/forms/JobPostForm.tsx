@@ -126,8 +126,8 @@ export default function JobPostForm({
 
   return (
     <form data-public-form="true" onSubmit={handleSubmit} className="space-y-5">
-      <div className="rounded-lg border border-[#D4AF37] bg-[#4A1D43]/20 p-4">
-        <p className="text-sm leading-relaxed text-[#E8D5C4]">
+      <div className="rounded-lg border border-[#D4AF37] bg-[#FCF8F0] p-4">
+        <p className="text-sm leading-relaxed text-[#493B38]">
           {isEmployer || isCandidateContact ? copy.form.employerIntro : copy.form.candidateIntro}
         </p>
       </div>
@@ -137,8 +137,8 @@ export default function JobPostForm({
           role={feedback.type === 'error' ? 'alert' : 'status'}
           aria-live="polite"
           className={feedback.type === 'success'
-            ? 'flex items-start gap-3 rounded-lg border border-green-600 bg-green-900/30 p-4 text-green-200'
-            : 'rounded-lg border border-red-600 bg-red-900/30 p-4 text-red-200'}
+            ? 'flex items-start gap-3 rounded-lg border border-green-300 bg-green-50 p-4 text-green-900'
+            : 'rounded-lg border border-red-300 bg-red-50 p-4 text-red-900'}
         >
           {feedback.type === 'success' && <CheckCircle className="mt-0.5 h-5 w-5 flex-none" aria-hidden="true" />}
           <p>{feedback.text}</p>
@@ -146,7 +146,7 @@ export default function JobPostForm({
       )}
 
       <div>
-        <label htmlFor={`job-request-title-${mode}`} className="mb-2 block text-sm font-medium text-[#F5F5DC]">
+        <label htmlFor={`job-request-title-${mode}`} className="mb-2 block text-sm font-medium text-[#3B3330]">
           {isEmployer || isCandidateContact ? copy.form.employerTitleLabel : copy.form.candidateTitleLabel}<span className="text-[#D4AF37]"> *</span>
         </label>
         <input
@@ -155,44 +155,44 @@ export default function JobPostForm({
           required
           value={formData.title}
           onChange={(event) => setFormData(previous => ({ ...previous, title: event.target.value }))}
-          className="w-full rounded-lg border border-[#D4AF37] bg-[#2A1525] px-4 py-3 text-[#F5F5DC] placeholder:text-gray-500 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]"
+          className="w-full rounded-lg border border-[#D4AF37] bg-white px-4 py-3 text-[#3B3330] placeholder:text-[#777777] focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/30"
           placeholder={isEmployer || isCandidateContact ? copy.form.employerTitlePlaceholder : copy.form.candidateTitlePlaceholder}
         />
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
         <div>
-          <label htmlFor={`job-request-phone-${mode}`} className="mb-2 block text-sm font-medium text-[#F5F5DC]">{copy.form.phone}</label>
+          <label htmlFor={`job-request-phone-${mode}`} className="mb-2 block text-sm font-medium text-[#3B3330]">{copy.form.phone}</label>
           <input
             id={`job-request-phone-${mode}`}
             type="tel"
             value={formData.phone}
             onChange={(event) => setFormData(previous => ({ ...previous, phone: event.target.value }))}
-            className="w-full rounded-lg border border-[#D4AF37] bg-[#2A1525] px-4 py-3 text-[#F5F5DC] placeholder:text-gray-500 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]"
+            className="w-full rounded-lg border border-[#D4AF37] bg-white px-4 py-3 text-[#3B3330] placeholder:text-[#777777] focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/30"
             placeholder={copy.form.phonePlaceholder}
           />
         </div>
         <div>
-          <label htmlFor={`job-request-email-${mode}`} className="mb-2 block text-sm font-medium text-[#F5F5DC]">{copy.form.email}</label>
+          <label htmlFor={`job-request-email-${mode}`} className="mb-2 block text-sm font-medium text-[#3B3330]">{copy.form.email}</label>
           <input
             id={`job-request-email-${mode}`}
             type="email"
             value={formData.email}
             onChange={(event) => setFormData(previous => ({ ...previous, email: event.target.value }))}
-            className="w-full rounded-lg border border-[#D4AF37] bg-[#2A1525] px-4 py-3 text-[#F5F5DC] placeholder:text-gray-500 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]"
+            className="w-full rounded-lg border border-[#D4AF37] bg-white px-4 py-3 text-[#3B3330] placeholder:text-[#777777] focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/30"
             placeholder={copy.form.emailPlaceholder}
           />
         </div>
       </div>
 
       <div>
-        <label htmlFor={`job-request-message-${mode}`} className="mb-2 block text-sm font-medium text-[#F5F5DC]">{copy.form.message}</label>
+        <label htmlFor={`job-request-message-${mode}`} className="mb-2 block text-sm font-medium text-[#3B3330]">{copy.form.message}</label>
         <textarea
           id={`job-request-message-${mode}`}
           rows={5}
           value={formData.message}
           onChange={(event) => setFormData(previous => ({ ...previous, message: event.target.value }))}
-          className="w-full rounded-lg border border-[#D4AF37] bg-[#2A1525] px-4 py-3 text-[#F5F5DC] placeholder:text-gray-500 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]"
+          className="w-full rounded-lg border border-[#D4AF37] bg-white px-4 py-3 text-[#3B3330] placeholder:text-[#777777] focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/30"
           placeholder={isEmployer || isCandidateContact ? copy.form.employerMessagePlaceholder : copy.form.candidateMessagePlaceholder}
         />
       </div>
