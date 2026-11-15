@@ -129,7 +129,7 @@ export default function BusinessShowcaseLienoraEnhanced() {
       fetching = true;
       const { data, error } = await supabase
         .from('dalil_boutique_products')
-        .select('id,title,description,image_url,mode,currency,price,approved_at,updated_at')
+        .select('id,title,description,category,image_url,mode,currency,price,approved_at,updated_at')
         .eq('entreprise_id', enterpriseId)
         .eq('status', 'approved')
         .lte('approved_at', new Date().toISOString())
@@ -144,7 +144,7 @@ export default function BusinessShowcaseLienoraEnhanced() {
         const price = typeof item.price === 'number' && Number.isFinite(item.price) && item.price > 0 ? item.price : undefined;
         if (item.mode === 'order' && price === undefined) return [];
         return [{
-          id: item.id, title: item.title, description: String(item.description || ''),
+          id: item.id, title: item.title, description: String(item.description || ''), category: typeof item.category === 'string' ? item.category.trim() : '',
           imageUrl: item.image_url, mode: item.mode as 'order' | 'quote', currency: 'TND' as const, price,
           approvedAt: String(item.approved_at || ''), updatedAt: String(item.updated_at || ''),
         }];
