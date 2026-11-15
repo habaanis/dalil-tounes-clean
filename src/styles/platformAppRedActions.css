@@ -1,0 +1,30 @@
+/* Dalil Tounes national PWA only.
+ * Never apply this palette to the public website or customer CV/QR mini-apps.
+ * Existing ivory and soft-gold backgrounds remain unchanged.
+ */
+[data-platform-app-shell] {
+  --dalil-app-action: #B62226;
+  --dalil-app-action-hover: #971B20;
+}
+/* Historical plum utility classes still occur in shared components.
+   Override only interactive controls while they are inside the PWA shell. */
+[data-platform-app-shell] :is(button, a, [role="button"], [role="tab"], summary)[class~="bg-[#4A1D43]"],
+[data-platform-app-shell] :is(button, a, [role="button"], [role="tab"], summary)[class~="bg-[#5A2D53]"],
+[data-platform-app-shell] :is(button, a, [role="button"], [role="tab"], summary)[class~="bg-[#421D3B]"] {
+  background-color: var(--dalil-app-action) !important;
+  color: #fff !important;
+}
+[data-platform-app-shell] :is(button, a, [role="button"], [role="tab"], summary)[class~="bg-[#4A1D43]"]:is(:hover, :focus-visible),
+[data-platform-app-shell] :is(button, a, [role="button"], [role="tab"], summary)[class~="bg-[#5A2D53]"]:is(:hover, :focus-visible),
+[data-platform-app-shell] :is(button, a, [role="button"], [role="tab"], summary)[class~="bg-[#421D3B]"]:is(:hover, :focus-visible) {
+  background-color: var(--dalil-app-action-hover) !important;
+  color: #fff !important;
+}
+/* Outlined/inactive actions keep their ivory background with red text. */
+[data-platform-app-shell] :is(button, a, [role="button"], [role="tab"], summary)[class~="text-[#4A1D43]"]:not([class~="bg-[#4A1D43]"]):not([class~="bg-[#5A2D53]"]):not([class~="bg-[#421D3B]"]) {
+  color: var(--dalil-app-action);
+}
+/* Keyboard focus stays visible against ivory and red. */
+[data-platform-app-shell] :is(button, a, [role="button"], [role="tab"], summary):focus-visible {
+  outline-color: var(--dalil-app-action);
+}
