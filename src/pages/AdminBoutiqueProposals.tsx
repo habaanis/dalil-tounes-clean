@@ -16,6 +16,7 @@ export default function AdminBoutiqueProposals() {
   const [checking, setChecking] = useState(true);
   const [rows, setRows] = useState<Proposal[]>([]);
   const [images, setImages] = useState<Record<string,string>>({});
+  const [businesses, setBusinesses] = useState<Record<string,string>>({});
   const [busy, setBusy] = useState<string|null>(null);
   const [feedback, setFeedback] = useState('');
 
@@ -25,7 +26,14 @@ export default function AdminBoutiqueProposals() {
       .select('id,user_id,entreprise_id,title,category,description,mode,price,photo_path,status,created_at')
       .eq('status','pending').order('created_at',{ascending:true}).limit(100);
     if (error) { setFeedback('Impossible de charger les propositions.'); return; }
-    setRows((data ?? []) as Proposal[]);
+    const proposals = (data ?? []) as Proposal[];
+    setRows(proposals);
+    const ids=[...new Set(proposals.map(item=>item.entreprise_id))];
+    if (ids.length===0) {setBusinesses({});return;}
+    const {data:companies} = await supabase.from('entreprise').select('id,nom,ville').in('id',ids);
+    setBusinesses(Object.fromEntries((companies ?? []).map(company=>[company.id,
+      [company.nom,company.ville].filter(Boolean).join(' — ')
+    ])));
   },[user?.id,admin]);
 
   useEffect(() => {
@@ -98,7 +106,7 @@ export default function AdminBoutiqueProposals() {
       {rows.length===0 && <p className="rounded-xl bg-white p-5 text-sm">Aucune proposition en attente.</p>}
       <div className="space-y-4">{rows.map(row=><article key={row.id} className="rounded-xl border border-[#dfcda8] bg-white p-4">
         <h2 className="font-semibold text-[#642e31]">{row.title}</h2>
-        <p className="mt-1 break-all text-xs text-gray-600">Entreprise : {row.entreprise_id}</p>
+        <p className="mt-1 break-all text-xs text-gray-600">Entreprise : {businesses[row.entreprise_id] || row.entreprise_id}</p>
         {row.category && <p className="mt-2 text-sm">Catégorie : {row.category}</p>}
         <p className="mt-2 whitespace-pre-wrap text-sm">{row.description || 'Aucune description'}</p>
         <p className="mt-2 text-sm">{row.mode==='quote'?'Sur devis':`Prix proposé : ${row.price ?? '—'} TND`}</p>
