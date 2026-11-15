@@ -129,6 +129,14 @@ const HOUSE_BENEFITS: Record<Lang, [string, string, string]> = {
   ru: ['Привлекайте больше клиентов', 'Покажите свои товары', 'Получайте заказы'],
 };
 
+const HOUSE_DETAILS_LABELS: Record<Lang, { more: string; less: string }> = {
+  fr: { more: 'En savoir plus', less: 'Réduire' },
+  ar: { more: 'اكتشف المزيد', less: 'إخفاء التفاصيل' },
+  en: { more: 'Learn more', less: 'Show less' },
+  it: { more: 'Scopri di più', less: 'Mostra meno' },
+  ru: { more: 'Узнать больше', less: 'Свернуть' },
+};
+
 export default function PlatformAppHome({ totalCount, legacyCertifiedCount, recommendedCount }: {
   totalCount?: string | null; legacyCertifiedCount?: string | null; recommendedCount?: string | null;
 }) {
@@ -167,11 +175,6 @@ export default function PlatformAppHome({ totalCount, legacyCertifiedCount, reco
           <h2 className="mt-1 font-serif text-lg font-semibold leading-6 text-[#292725] sm:text-xl sm:leading-7">{teaser.title}</h2>
         </div>
       </div>
-      <div className="mt-3 space-y-2.5 text-[13px] leading-[1.65] text-[#514A45]">
-        <p>{teaser.context}</p>
-        <p className="font-medium text-[#302925]">{teaser.benefit}</p>
-        <p className="rounded-lg border border-[#E8D7AE] bg-[#FFF8EC] px-3 py-2 font-medium text-[#72552C]">{teaser.reach}</p>
-      </div>
       <div className="mt-3 grid grid-cols-3 gap-2" aria-label={lang === 'fr' ? 'Les trois avantages de votre mini-appli' : teaser.title}>
         {HOUSE_BENEFITS[lang].map((label, index) => {
           const BenefitIcon = [Megaphone, ShoppingBag, ClipboardCheck][index];
@@ -183,6 +186,18 @@ export default function PlatformAppHome({ totalCount, legacyCertifiedCount, reco
           );
         })}
       </div>
+      <details data-platform-app-house-details className="group mt-3 rounded-lg border border-[#DDC48D] bg-[#FFFCF8]">
+        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-center gap-2 rounded-lg px-3 py-2 text-center text-sm font-semibold text-[#765726] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B18B46] [&::-webkit-details-marker]:hidden">
+          <span className="group-open:hidden">{HOUSE_DETAILS_LABELS[lang].more}</span>
+          <span className="hidden group-open:inline">{HOUSE_DETAILS_LABELS[lang].less}</span>
+          <span aria-hidden="true" className="text-base transition-transform group-open:rotate-180">⌄</span>
+        </summary>
+        <div className="space-y-2.5 border-t border-[#E8D7AE] px-3 pb-3 pt-3 text-[13px] leading-[1.65] text-[#514A45]">
+          <p>{teaser.context}</p>
+          <p className="font-medium text-[#302925]">{teaser.benefit}</p>
+          <p className="rounded-lg border border-[#E8D7AE] bg-[#FFF8EC] px-3 py-2 font-medium text-[#72552C]">{teaser.reach}</p>
+        </div>
+      </details>
       <Link to="/subscription#cv-professionnels" className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-[#C9A65D] bg-[#FFF8EA] px-3 py-2 text-center text-sm font-semibold text-[#6C5028]">
         {teaser.cta}
       </Link>
