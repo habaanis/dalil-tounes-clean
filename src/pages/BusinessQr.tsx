@@ -178,17 +178,14 @@ export default function BusinessQr() {
     () => (window as InstallPromptWindow).__dalilInstallPrompt || null,
   );
   const [shareConfirmed, setShareConfirmed] = useState(false);
-  const [showBrandSplash, setShowBrandSplash] = useState(() => {
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches
-      || (navigator as Navigator & { standalone?: boolean }).standalone === true;
-    return new URLSearchParams(window.location.search).get('source') === 'pwa' || isStandalone;
-  });
+  const [selectedModel, setSelectedModel] = useState<CvModel | null>(null);
+  const [showBrandSplash, setShowBrandSplash] = useState(false);
   const [openingStyle, setOpeningStyle] = useState<ClientOpeningStyle>('photo');
   const launchPalette = new URLSearchParams(window.location.search).get('palette');
   const paletteTheme = getCvPaletteTheme(business?.palette_cv || launchPalette);
-  const cvModel: CvModel = String(business?.modele_cv || '').toLowerCase().includes('portfolio')
+  const cvModel: CvModel = selectedModel || (String(business?.modele_cv || '').toLowerCase().includes('portfolio')
     ? 'portfolio'
-    : 'business';
+    : 'business');
   const modelText = MODEL_COPY[language as keyof typeof MODEL_COPY]?.[cvModel] || MODEL_COPY.fr[cvModel];
   const userAgent = navigator.userAgent || '';
   const isIos = /iphone|ipad|ipod/i.test(userAgent);
@@ -273,19 +270,25 @@ export default function BusinessQr() {
     : '';
   const clientIdentifier = business ? getClientAppIdentifier(business) : identifier;
   useEffect(() => {
-    setOpeningStyle(business?.opening_style === 'framed' ? 'framed' : 'photo');
+    const requested = new URLSearchParams(window.location.search).get('opening-style');
+    setOpeningStyle(requested === 'framed' || requested === 'photo' ? requested : business?.opening_style === 'framed' ? 'framed' : 'photo');
   }, [business?.id, business?.opening_style]);
   const chooseOpeningStyle = (style: ClientOpeningStyle) => {
     // Preview only. Persisting the company's selection requires authorized admin access.
     setOpeningStyle(style);
   };
-  const cvUrl = buildClientCvUrl(business || identifier, language, paletteTheme.id);
+  const cvLink = new URL(buildClientCvUrl(business || identifier, language, paletteTheme.id));
+  const savedModel = String(business?.modele_cv || '').toLowerCase().includes('portfolio') ? 'portfolio' : 'business';
+  if (selectedModel && selectedModel !== savedModel) cvLink.searchParams.set('preview-model', selectedModel);
+  const cvUrl = cvLink.toString();
+  // Explicitly opening a CV from this QR screen should never replay the logo splash.
+  const directCvLink = new URL(cvUrl);
+  directCvLink.searchParams.set('skip-opening', '1');
+  const directCvUrl = directCvLink.toString();
   // Vue de contrôle sur un AUTRE domaine que la PWA cliente.
   // Le navigateur peut bloquer plusieurs installations sous app.dalil-tounes.com ;
   // cette page reste accessible, sans être capturée par une autre mini-application.
-  const browserCvUrl = isDedicatedClientHostname(window.location.hostname) ? cvUrl
-    : business ? `https://dalil-tounes.com/entreprise/id/${encodeURIComponent(business.id)}?lang=${encodeURIComponent(language)}`
-    : cvUrl;
+  const browserCvUrl = directCvUrl;
   const accountHref = isDedicatedClientHostname(window.location.hostname)
     ? '/' + encodeURIComponent(clientIdentifier) + '/compte'
     : buildClientAppUrl(business || identifier, language).split('?')[0] + '/compte';
@@ -297,15 +300,10 @@ export default function BusinessQr() {
   const qrAccess = cvBusinessAccess || legacyPremiumAccess;
 
   useEffect(() => {
+    // Opening A/B is only replayed on an explicit preview request, not on QR/CV navigation.
     if (!business?.id || !qrAccess) return;
-    const isAppLaunch = new URLSearchParams(window.location.search).get('source') === 'pwa'
-      || window.matchMedia('(display-mode: standalone)').matches
-      || (navigator as Navigator & { standalone?: boolean }).standalone === true;
-    if (!isAppLaunch) return;
-
+    if (new URLSearchParams(window.location.search).get('opening-preview') !== '1') return;
     setShowBrandSplash(true);
-    const timer = window.setTimeout(() => setShowBrandSplash(false), 1800);
-    return () => window.clearTimeout(timer);
   }, [business?.id, qrAccess]);
 
   useEffect(() => {
@@ -436,7 +434,7 @@ export default function BusinessQr() {
   }
 
   return (
-    <main className="fixed inset-0 z-[10000] overflow-y-auto overscroll-contain px-3 pt-3 pb-[calc(6rem+env(safe-area-inset-bottom))] sm:py-6" style={{ backgroundColor: paletteTheme.page }} dir={language === 'ar' ? 'rtl' : 'ltr'}>
+    <main className="fixed inset-0 z-[10000] overflow-y-auto overscroll-contain px-2.5 pt-2 pb-[calc(2rem+env(safe-area-inset-bottom))] sm:py-4" style={{ backgroundColor: paletteTheme.page }} dir={language === 'ar' ? 'rtl' : 'ltr'}>
       {new URLSearchParams(window.location.search).get('opening-preview') === '1' && qrAccess && <div className="mx-auto mb-2 flex max-w-xs items-center justify-center gap-1 rounded-full px-2 py-1 text-xs" style={{backgroundColor:paletteTheme.surface,color:paletteTheme.text}}>
         <span>{language === 'ar' ? 'افتتاح التطبيق' : 'Ouverture'}</span>
         <button type="button" className="rounded-full border px-2 py-1 text-xs" style={{borderColor:paletteTheme.border,backgroundColor:openingStyle === 'photo' ? paletteTheme.border : 'transparent'}} onClick={() => chooseOpeningStyle('photo')}>A</button>
@@ -472,6 +470,8 @@ export default function BusinessQr() {
         poweredText={text.powered}
         openHref={browserCvUrl}
         accountHref={accountHref}
+        model={cvModel}
+        onModelChange={setSelectedModel}
         onShare={shareBusiness}
         onDownload={downloadPng}
         onInstall={installApp}
