@@ -37,8 +37,13 @@
         var hostname = window.location.hostname;
         var isClientHost = hostname === 'app.dalil-tounes.com';
         var legacyMatch = window.location.pathname.match(/^\/qr-business\/([^/]+)/);
+        // Mini-app pages, including account and sign-in, must never paint the site homepage skeleton.
+        // Apply the client-specific shell before the body is parsed.
+        if (isClientHost && window.location.pathname !== '/') {
+          document.documentElement.classList.add('client-app-route');
+        }
         var shortMatch = isClientHost
-          ? window.location.pathname.match(/^\/([a-z0-9-]+)(?:\/cv)?\/?$/i)
+          ? window.location.pathname.match(/^\/([a-z0-9-]+)(?:\/(?:cv|compte|connexion))?\/?$/i)
           : null;
         var match = legacyMatch || shortMatch;
         if (!match) {
