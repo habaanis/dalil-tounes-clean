@@ -21,5 +21,5 @@ Les colonnes modifiées uniquement : `categorie` (Airtable `fldIIcE1DPdcwm40B`) 
 ## Contrôles et suite
 - Avant mise à jour, les 34 identifiants apparaissaient chacun une seule fois dans Supabase.
 - Aucun statut de publication ni approbation modifié. Aucune fiche créée, supprimée ou fusionnée.
-- Première vérification juste après écriture : 0/34 synchronisées, ce qui est compatible avec le délai de l'automatisation. **Attendre et vérifier les 34 avant tout nouveau lot**.
+- Contrôle final Supabase : **34/34 synchronisées**, total 2487, sans rubrique 843, sans catégorie 811. Aucun nouveau lot lancé avant cette confirmation.
 - Aucun déploiement Vercel nécessaire pour des changements de données : les deux projets Vercel ont des déploiements production `READY`. Le fonctionnement visible public reste à valider pour les fiches non publiées.
