@@ -77,12 +77,57 @@ const COPY: Record<Lang, {
   },
 };
 
+/** Home-only introduction to the professional mini-app. Product catalogue is Premium; sales follow the customer's chosen contact method, no online checkout promised. */
+const HOUSE_TEASER: Record<Lang, { eyebrow: string; title: string; context: string; benefit: string; reach: string; cta: string }> = {
+  fr: {
+    eyebrow: 'MAISON DALIL TOUNES',
+    title: 'Vos clients vous trouvent. Facilitez le contact.',
+    context: 'Vos clients peuvent vous découvrir sur Google, Facebook ou Instagram. Mais trouver vos services, réalisations, horaires et coordonnées demande parfois plusieurs recherches.',
+    benefit: 'Avec votre mini-appli Dalil Tounes, rassemblez l’essentiel dans un seul espace professionnel. Un lien ou un QR Code suffit pour présenter votre activité, inspirer confiance et faciliter le contact.',
+    reach: 'Faites connaître votre entreprise partout en partageant votre mini-appli. Avec la boutique et son catalogue (formule Premium), présentez vos produits et facilitez les commandes et les ventes.',
+    cta: 'Découvrir la mini-appli',
+  },
+  ar: {
+    eyebrow: 'بيت دليل تونس',
+    title: 'خلّي حرفاءك يلقاوك ويتّصلوا بيك بسهولة',
+    context: 'حرفاءك ينجموا يلقاوك على Google وFacebook وInstagram، أما الخدمات والإنجازات والأوقات ووسائل الاتصال ساعات تكون متفرقة.',
+    benefit: 'مع التطبيق المصغّر من دليل تونس، اجمع المعلومات المهمة في مكان واحد. رابط واحد أو QR Code يعرّف بنشاطك ويسهّل التواصل مع الحرفاء.',
+    reach: 'عرّف بمؤسستك في كل مكان بمشاركة الرابط. ومع المتجر والكتالوغ (صيغة Premium)، اعرض منتجاتك وسهّل الطلبات والمبيعات.',
+    cta: 'اكتشف التطبيق المصغّر',
+  },
+  en: {
+    eyebrow: 'DALIL TOUNES HOUSE',
+    title: 'Help customers find you and get in touch.',
+    context: 'People may discover you on Google, Facebook or Instagram, but finding your services, work, opening hours and contact details can require several searches.',
+    benefit: 'Your Dalil Tounes mini-app brings everything together. Share one link or QR code to present your business, build confidence and make contact easier.',
+    reach: 'Promote your business wherever you share your mini-app. With the shop and catalogue (Premium plan), showcase products and make orders and sales easier.',
+    cta: 'Discover the mini-app',
+  },
+  it: {
+    eyebrow: 'CASA DALIL TOUNES',
+    title: 'Fatti trovare e facilita il contatto.',
+    context: 'I clienti possono scoprirti su Google, Facebook o Instagram, ma per trovare servizi, lavori, orari e contatti devono spesso fare varie ricerche.',
+    benefit: 'La mini-app Dalil Tounes riunisce le informazioni essenziali in uno spazio professionale. Un link o QR Code per presentarti e facilitare il contatto.',
+    reach: 'Promuovi la tua attività ovunque condividendo la mini-app. Con negozio e catalogo (piano Premium), mostra i prodotti e facilita ordini e vendite.',
+    cta: 'Scopri la mini-app',
+  },
+  ru: {
+    eyebrow: 'ДОМ DALIL TOUNES',
+    title: 'Помогите клиентам найти вас и связаться.',
+    context: 'Клиенты могут узнать о вас в Google, Facebook или Instagram, но услуги, работы, часы и контакты часто приходится искать отдельно.',
+    benefit: 'Мини-приложение Dalil Tounes объединяет важное. Одна ссылка или QR-код помогает представить бизнес, вызвать доверие и упростить общение.',
+    reach: 'Рассказывайте о компании везде, где делитесь мини-приложением. Магазин и каталог (план Premium) помогают показывать товары, принимать запросы и продавать.',
+    cta: 'Узнать о мини-приложении',
+  },
+};
+
 export default function PlatformAppHome({ totalCount, legacyCertifiedCount, recommendedCount }: {
   totalCount?: string | null; legacyCertifiedCount?: string | null; recommendedCount?: string | null;
 }) {
   const { language } = useLanguage();
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as Lang;
   const t = COPY[lang];
+  const teaser = HOUSE_TEASER[lang];
   return <div data-home-color-test="rouge-or-v2" className="space-y-4 bg-[#FAF9F6] px-3 py-4">
     <section className="rounded-2xl border border-[#C9A65D] border-l-[4px] border-l-[#B8954F] bg-gradient-to-br from-white via-white to-[#FFF4E6] px-4 py-5 shadow-[0_4px_20px_rgba(35,32,28,0.035)]">
       <div className="flex items-center gap-2">
@@ -104,17 +149,21 @@ export default function PlatformAppHome({ totalCount, legacyCertifiedCount, reco
       <p className="text-sm font-semibold leading-5 text-[#292929]">{lang === 'ar' ? 'خلّي مؤسستك موجودة في دليل تونس.' : lang === 'en' ? 'Get listed on Dalil Tounes.' : lang === 'it' ? 'Fai conoscere la tua attività su Dalil Tounes.' : lang === 'ru' ? 'Разместите свою компанию на Dalil Tounes.' : 'Soyez répertorié sur Dalil Tounes.'}</p>
       <p className="mt-1 text-xs leading-5 text-[#66615D]">{lang === 'ar' ? 'عزّز حضور نشاطك عبر تطبيق مصغّر مهني خاص بمؤسستك.' : lang === 'en' ? 'Give your business greater impact with your own business mini-app.' : lang === 'it' ? 'Dai più visibilità alla tua attività con una mini-app personalizzata.' : lang === 'ru' ? 'Представьте бизнес с помощью собственного мини-приложения.' : 'Développez votre visibilité avec votre mini-appli professionnelle.'}</p>
     </section>
-    <section data-platform-app-house-teaser className="rounded-xl border border-[#C9A65D] bg-[#FFFCF8] p-3 shadow-[0_2px_12px_rgba(30,25,20,0.025)]" aria-label={lang === 'fr' ? 'Découvrez la mini-appli professionnelle' : 'Professional mini-app'}>
+    <section data-platform-app-house-teaser className="rounded-xl border border-[#C9A65D] bg-[#FFFCF8] p-3.5 shadow-[0_2px_12px_rgba(30,25,20,0.025)]" aria-label={teaser.cta}>
       <div className="flex items-center gap-3">
-        <img src="/images/maison-dalil-tounes-validee.webp" alt={lang === 'fr' ? 'Maison Dalil Tounes : un même endroit pour vos contacts professionnels' : 'Dalil Tounes house'} loading="lazy" decoding="async" className="h-28 w-28 shrink-0 rounded-lg bg-[#FFF8EC] object-contain sm:h-32 sm:w-32" />
+        <img src="/images/maison-dalil-tounes-validee.webp" alt={lang === 'fr' ? 'Maison Dalil Tounes : un même endroit pour vos contacts professionnels' : 'Dalil Tounes house'} loading="lazy" decoding="async" className="h-32 w-32 shrink-0 rounded-xl bg-[#FFF8EC] object-contain sm:h-36 sm:w-36" />
         <div className="min-w-0 flex-1">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.09em] text-[#97752F]">{lang === 'fr' ? 'Maison Dalil Tounes' : lang === 'ar' ? 'بيت دليل تونس' : lang === 'en' ? 'Dalil Tounes House' : lang === 'it' ? 'Casa Dalil Tounes' : 'Дом Dalil Tounes'}</p>
-          <h2 className="mt-1 font-serif text-[16px] font-semibold leading-5 text-[#292725]">{lang === 'fr' ? 'Votre présence, au même endroit' : lang === 'ar' ? 'كل حضورك في مكان واحد' : lang === 'en' ? 'Your business, in one place' : lang === 'it' ? 'La tua attività, in un unico posto' : 'Ваш бизнес в одном месте'}</h2>
-          <p className="mt-1 text-xs leading-5 text-[#665E55]">{lang === 'fr' ? 'Vos services, contacts et réseaux réunis dans une mini-appli facile à partager.' : lang === 'ar' ? 'خدماتك واتصالاتك وشبكاتك في تطبيق مصغّر سهل المشاركة.' : lang === 'en' ? 'Services, contacts and social networks in one shareable mini-app.' : lang === 'it' ? 'Servizi, contatti e social in una mini-app da condividere.' : 'Услуги, контакты и соцсети в одном мини-приложении.'}</p>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.09em] text-[#97752F]">{teaser.eyebrow}</p>
+          <h2 className="mt-1 font-serif text-lg font-semibold leading-6 text-[#292725]">{teaser.title}</h2>
         </div>
       </div>
-      <Link to="/subscription#cv-professionnels" className="mt-3 inline-flex min-h-10 w-full items-center justify-center rounded-lg border border-[#C9A65D] bg-[#FFF8EA] px-3 py-2 text-center text-xs font-semibold text-[#6C5028]">
-        {lang === 'fr' ? 'Découvrir la mini-appli' : lang === 'ar' ? 'اكتشف التطبيق المصغّر' : lang === 'en' ? 'Discover the mini-app' : lang === 'it' ? 'Scopri la mini-app' : 'Узнать о мини-приложении'}
+      <div className="mt-3 space-y-2.5 text-[13px] leading-[1.65] text-[#514A45]">
+        <p>{teaser.context}</p>
+        <p className="font-medium text-[#302925]">{teaser.benefit}</p>
+        <p className="rounded-lg border border-[#E8D7AE] bg-[#FFF8EC] px-3 py-2 font-medium text-[#72552C]">{teaser.reach}</p>
+      </div>
+      <Link to="/subscription#cv-professionnels" className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-[#C9A65D] bg-[#FFF8EA] px-3 py-2 text-center text-sm font-semibold text-[#6C5028]">
+        {teaser.cta}
       </Link>
     </section>
     <PlatformAppHelp language={lang} />
