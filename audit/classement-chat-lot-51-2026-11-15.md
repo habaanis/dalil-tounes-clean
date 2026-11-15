@@ -14,4 +14,4 @@
 - Les choix métier ambigus et identifiants sans correspondance ne sont pas modifiés. Aucun statut de publication ou validation changé; aucune fiche créée/supprimée; aucune écriture directe Supabase, aucun déploiement de code.
 
 ## Contrôle synchronisation
-Premier contrôle après écriture: 3/51 synchronisées (délai Airtable→Supabase), total 2487, sans rubrique 508, sans catégorie 476. À **revérifier avant toute autre écriture**, puis compléter le journal de contrôle.
+Contrôle final Supabase : **51/51 synchronisées**, total 2487, sans rubrique 460, sans catégorie 428. Ne pas retraiter ces identifiants.
