@@ -66,12 +66,12 @@ export default function CitizensServices() {
       nom: 'Carte d\'identité nationale',
       nom_ar: 'بطاقة التعريف الوطنية',
       nom_en: 'National ID Card',
-      nom_it: 'Carta d'identità nazionale',
+      nom_it: 'Carta d\'identità nazionale',
       nom_ru: 'Национальное удостоверение личности',
       description: 'Obtention ou renouvellement de la carte d\'identité nationale pour les citoyens tunisiens.',
       description_ar: 'الحصول على بطاقة التعريف الوطنية أو تجديدها للمواطنين التونسيين.',
       description_en: 'Obtain or renew the national ID card for Tunisian citizens.',
-      description_it: 'Rilascio o rinnovo della carta d'identità nazionale per i cittadini tunisini.',
+      description_it: 'Rilascio o rinnovo della carta d\'identità nazionale per i cittadini tunisini.',
       description_ru: 'Получение или продление национального удостоверения личности для граждан Туниса.',
       pieces_requises: [
         'Acte de naissance (original + 2 photocopies)',
@@ -95,7 +95,7 @@ export default function CitizensServices() {
         'Atto di nascita (originale + 2 copie)',
         'Certificato di residenza (meno di 3 mesi)',
         '2 foto tessera recenti',
-        'Vecchia carta d'identità (in caso di rinnovo)'
+        'Vecchia carta d\'identità (in caso di rinnovo)'
       ],
       pieces_requises_ru: [
         'Свидетельство о рождении (оригинал + 2 копии)',
@@ -143,7 +143,7 @@ export default function CitizensServices() {
         'Old passport (if renewal)'
       ],
       pieces_requises_it: [
-        'Carta d'identità nazionale in corso di validità',
+        'Carta d\'identità nazionale in corso di validità',
         'Estratto di nascita (n°12) originale',
         'Certificato di residenza (meno di 3 mesi)',
         '4 foto tessera in formato biometrico',
@@ -172,7 +172,7 @@ export default function CitizensServices() {
       description: 'Obtention d\'un extrait d\'acte de naissance officiel.',
       description_ar: 'الحصول على نسخة رسمية من عقد الميلاد.',
       description_en: 'Obtain an official birth certificate extract.',
-      description_it: 'Ottenere un estratto ufficiale dell'atto di nascita.',
+      description_it: 'Ottenere un estratto ufficiale dell\'atto di nascita.',
       description_ru: 'Получение официальной выписки из свидетельства о рождении.',
       pieces_requises: [
         'Carte d\'identité du demandeur',
@@ -190,7 +190,7 @@ export default function CitizensServices() {
         'Stamp fees'
       ],
       pieces_requises_it: [
-        'Carta d'identità del richiedente',
+        'Carta d\'identità del richiedente',
         'Modulo di richiesta compilato',
         'Diritti di bollo'
       ],
@@ -233,8 +233,8 @@ export default function CitizensServices() {
         'Physical presence required'
       ],
       pieces_requises_it: [
-        'Carta d'identità nazionale',
-        'Prova di indirizzo (bolletta STEG, SONEDE o ricevuta d'affitto)',
+        'Carta d\'identità nazionale',
+        'Prova di indirizzo (bolletta STEG, SONEDE o ricevuta d\'affitto)',
         'Presenza fisica obbligatoria'
       ],
       pieces_requises_ru: [
@@ -258,7 +258,7 @@ export default function CitizensServices() {
       description: 'Document attestant l\'absence de condamnations pénales.',
       description_ar: 'وثيقة تثبت عدم وجود سوابق عدلية.',
       description_en: 'Document certifying the absence of criminal convictions.',
-      description_it: 'Documento che attesta l'assenza di condanne penali.',
+      description_it: 'Documento che attesta l\'assenza di condanne penali.',
       description_ru: 'Документ, подтверждающий отсутствие судимостей.',
       pieces_requises: [
         'Carte d\'identité nationale',
@@ -276,7 +276,7 @@ export default function CitizensServices() {
         'Application form'
       ],
       pieces_requises_it: [
-        'Carta d'identità nazionale',
+        'Carta d\'identità nazionale',
         'Bollo fiscale da 1 TND',
         'Modulo di richiesta'
       ],
@@ -316,7 +316,7 @@ export default function CitizensServices() {
         'Physical presence required'
       ],
       pieces_requises_it: [
-        'Carta d'identità nazionale',
+        'Carta d\'identità nazionale',
         'Presenza fisica obbligatoria'
       ],
       pieces_requises_ru: [
