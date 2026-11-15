@@ -8,12 +8,13 @@ import JobPostForm from '../components/forms/JobPostForm';
 type ScopedBoutiqueStats = { entreprise_id: string; push_subscriptions: number; published_products: number; draft_products: number };
 interface CompanyDashboardProps {
   onNavigate?: (page: any) => void;
+  clientAppMode?: boolean;
 }
 
-export default function CompanyDashboard({ onNavigate }: CompanyDashboardProps) {
+export default function CompanyDashboard({ onNavigate, clientAppMode = false }: CompanyDashboardProps) {
   const { user, signOut, loading } = useAuth();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'jobs' | 'candidates' | 'settings' | 'showcase' | 'boutique' | 'stats'>('showcase');
+  const [activeTab, setActiveTab] = useState<'jobs' | 'candidates' | 'settings' | 'showcase' | 'boutique' | 'stats'>(clientAppMode ? 'boutique' : 'showcase');
   const [showWelcome, setShowWelcome] = useState(false);
   const [stats, setStats] = useState<ScopedBoutiqueStats[]>([]);
   const [statsLoading, setStatsLoading] = useState(false);
@@ -131,7 +132,7 @@ export default function CompanyDashboard({ onNavigate }: CompanyDashboardProps) 
   if (!user) return <main className="min-h-screen bg-[#fbf8f0] p-8"><section className="mx-auto max-w-md rounded-2xl border border-[#dac59b] bg-white p-6 text-center"><ShieldCheck className="mx-auto mb-3 text-[#8f2530]" /><h1 className="text-xl font-semibold text-[#62212a]">Espace professionnel</h1><p className="my-4 text-sm text-gray-700">Connectez-vous pour accéder à votre espace privé.</p><a className="inline-block rounded-full bg-[#8f2530] px-5 py-3 text-sm font-semibold text-white" href="/connexion">Se connecter</a></section></main>;
 
   return (
-    <div className="min-h-screen bg-[#fbf8f0]">
+    <div className={clientAppMode ? 'min-h-dvh bg-[#fbf8f0]' : 'min-h-screen bg-[#fbf8f0]'}>
       {showWelcome && (
         <div className="fixed top-4 right-4 z-50 bg-[#8f2530] text-white px-6 py-4 rounded-lg shadow-2xl animate-slide-in-right">
           <div className="flex items-center gap-3">
@@ -147,7 +148,7 @@ export default function CompanyDashboard({ onNavigate }: CompanyDashboardProps) 
       )}
 
       <div className="border-b border-[#e8d9bd] bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className={clientAppMode ? 'mx-auto max-w-xl px-4 py-3' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4'}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#fbf1df]">
@@ -155,7 +156,7 @@ export default function CompanyDashboard({ onNavigate }: CompanyDashboardProps) 
               </div>
               <div>
                 <h1 className="text-xl font-bold text-gray-900">
-                  Mon espace professionnel
+                  {clientAppMode ? 'Mon compte' : 'Mon espace professionnel'}
                 </h1>
                 <p className="text-sm text-gray-500">{user?.email}</p>
               </div>
@@ -171,11 +172,11 @@ export default function CompanyDashboard({ onNavigate }: CompanyDashboardProps) 
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <p className="mb-5 max-w-2xl text-sm text-[#684d47]">Retrouvez vos services professionnels dans un seul espace. L’accès aux informations d’une fiche nécessite une attribution vérifiée.</p>
-        <div className="flex flex-col gap-5 lg:flex-row">
-          <div className="w-full flex-shrink-0 lg:w-60">
-            <nav className="grid grid-cols-2 gap-2 rounded-2xl border border-[#e8d9bd] bg-white p-3 shadow-sm sm:grid-cols-3 lg:flex lg:flex-col" aria-label="Rubriques professionnelles">
+      <div className={clientAppMode ? 'mx-auto max-w-xl px-3 py-3 pb-8' : 'mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8'}>
+        {!clientAppMode && <p className="mb-5 max-w-2xl text-sm text-[#684d47]">Retrouvez vos services professionnels dans un seul espace. L’accès aux informations d’une fiche nécessite une attribution vérifiée.</p>}
+        <div className={clientAppMode ? 'flex flex-col gap-3' : 'flex flex-col gap-5 lg:flex-row'}>
+          <div className={clientAppMode ? 'w-full' : 'w-full flex-shrink-0 lg:w-60'}>
+            <nav className={clientAppMode ? 'grid grid-cols-3 gap-1 rounded-2xl border border-[#e8d9bd] bg-white p-2 shadow-sm' : 'grid grid-cols-2 gap-2 rounded-2xl border border-[#e8d9bd] bg-white p-3 shadow-sm sm:grid-cols-3 lg:flex lg:flex-col'} aria-label="Rubriques professionnelles">
               {([
                 { id: 'showcase', label: 'Ma vitrine', Icon: Store },
                 { id: 'boutique', label: 'Ma boutique', Icon: Package },
@@ -183,10 +184,11 @@ export default function CompanyDashboard({ onNavigate }: CompanyDashboardProps) 
               ] as const).map(({ id, label, Icon }) => (
                 <button key={id} type="button" onClick={() => setActiveTab(id)}
                   aria-current={activeTab === id ? 'page' : undefined}
-                  className={`flex w-full items-center gap-2 rounded-xl px-3 py-3 text-left text-sm transition-colors ${activeTab === id ? 'bg-[#fbf1df] font-semibold text-[#8f2530]' : 'text-gray-700 hover:bg-gray-50'}`}>
+                  className={`flex w-full items-center gap-2 rounded-xl px-3 py-3 text-left text-sm transition-colors ${clientAppMode ? 'flex-col justify-center px-1 py-2 text-center text-xs' : ''} ${activeTab === id ? 'bg-[#fbf1df] font-semibold text-[#8f2530]' : 'text-gray-700 hover:bg-gray-50'}`}>
                   <Icon className="h-5 w-5 shrink-0" /><span>{label}</span>
                 </button>
               ))}
+              {!clientAppMode && <>
               <button
                 onClick={() => setActiveTab('jobs')}
                 className={`w-full flex items-center gap-2 px-3 py-3 rounded-xl text-left text-sm transition-colors ${
@@ -220,6 +222,7 @@ export default function CompanyDashboard({ onNavigate }: CompanyDashboardProps) 
                 <Settings className="w-5 h-5" />
                 <span className="font-medium">Paramètres</span>
               </button>
+              </>}
             </nav>
           </div>
 
@@ -238,7 +241,7 @@ export default function CompanyDashboard({ onNavigate }: CompanyDashboardProps) 
                       <p className="mt-2 text-sm leading-6 text-gray-700">Pour protéger les données professionnelles, Dalil Tounes doit vérifier votre établissement avant de vous donner accès à sa vitrine, sa boutique et ses statistiques.</p>
                     </div>
                     : <div className="space-y-4">{stats.map((record) => <div key={record.entreprise_id} className="rounded-xl border border-[#dfcda8] bg-[#fbf8f0] p-4 sm:p-5">
-                      <p className="mb-3 break-all text-xs text-[#684d47]">Établissement vérifié : {record.entreprise_id}</p>
+                      <p className="mb-3 break-all text-xs text-[#684d47]">{clientAppMode ? 'Établissement vérifié' : 'Établissement vérifié : ' + record.entreprise_id}</p>
                       {activeTab === 'stats' ? <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                         {([
                           ['Abonnements nouveautés', record.push_subscriptions],

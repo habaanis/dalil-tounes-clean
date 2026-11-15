@@ -1,4 +1,4 @@
-import { Download, ExternalLink, Home, Share2 } from 'lucide-react';
+import { Download, ExternalLink, Home, Share2, UserRound } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import type { BusinessCardPreviewLanguage } from './BusinessCardPreviewBase';
 import { getCvPaletteTheme, type CvPaletteId } from '../lib/cvPalette';
@@ -45,6 +45,7 @@ export type CvBusinessQrVisualProps = {
   poweredText?: string;
   productLabel?: string;
   openHref?: string;
+  accountHref?: string;
   onShare?: () => void;
   onDownload?: () => void;
   onInstall?: () => void;
@@ -56,7 +57,7 @@ export type CvBusinessQrVisualProps = {
 export function CvBusinessQrVisual({
   language = 'fr', name, category, coverImage = AUX_SAVEURS_COVER, logo = AUX_SAVEURS_LOGO,
   qrValue = DEMO_URL, shareLabel, downloadLabel, addLabel, openLabel, scanText, poweredText,
-  openHref, onShare, onDownload, onInstall, qrId, interactive = false, palette, productLabel,
+  openHref, accountHref, onShare, onDownload, onInstall, qrId, interactive = false, palette, productLabel,
 }: CvBusinessQrVisualProps) {
   const t = copy[language] ?? copy.fr;
   const theme = getCvPaletteTheme(palette);
@@ -80,38 +81,43 @@ export function CvBusinessQrVisual({
         </div>
       )}
     <section dir={isRtl ? 'rtl' : 'ltr'} aria-label={`${displayName} — ${productLabel || 'CV Business'}`}
-      className="mx-auto w-full max-w-[354px] rounded-[28px] border-[2px] px-[15px] pb-[16px] pt-[13px] shadow-[0_14px_34px_rgba(0,0,0,0.16)]"
+      className="mx-auto w-full max-w-[354px] rounded-[24px] border-[2px] px-3 pb-5 pt-3 shadow-[0_14px_34px_rgba(0,0,0,0.16)]"
       style={{ backgroundColor: theme.surface, borderColor: theme.border, color: theme.text }}>
       <div className="overflow-hidden rounded-[18px] border" style={{ backgroundColor: theme.surfaceAlt, borderColor: `${theme.border}99` }}>
-        <img src={coverImage} alt="" className="block h-[136px] w-full object-cover" loading="eager" decoding="async" />
+        <img src={coverImage} alt="" className="block h-[110px] w-full object-cover" loading="eager" decoding="async" />
       </div>
-      <div className="relative -mt-[41px] flex justify-center">
-        <div className="grid h-[86px] w-[86px] place-items-center overflow-hidden rounded-full border-[2px] p-[3px] shadow-[0_4px_12px_rgba(0,0,0,0.18)]"
+      <div className="relative -mt-[34px] flex justify-center">
+        <div className="grid h-[74px] w-[74px] place-items-center overflow-hidden rounded-full border-[2px] p-[3px] shadow-[0_4px_12px_rgba(0,0,0,0.18)]"
           style={{ backgroundColor: theme.surface, borderColor: theme.border }}>
           <img src={logo} alt={`Logo ${displayName}`} className="h-full w-full rounded-full object-cover" />
         </div>
       </div>
       <div className="px-3 text-center">
-        <h3 className="mt-[10px] font-serif text-[27px] font-bold leading-[1.04] tracking-[-0.015em]" style={{ color: theme.text }}>{displayName}</h3>
+        <h3 className="mt-[8px] font-serif text-[23px] font-bold leading-[1.04] tracking-[-0.015em]" style={{ color: theme.text }}>{displayName}</h3>
         <p className="mt-[4px] text-[13px] font-medium leading-tight" style={{ color: theme.accent }}>{displayCategory}</p>
         <p className="mx-auto mt-[12px] max-w-[264px] text-[13px] leading-[1.42]" style={{ color: theme.muted }}>{scanText || t.scan}</p>
       </div>
       {openHref && (
         <a href={openHref}
-          className="mx-auto mt-[14px] flex min-h-[48px] w-[252px] items-center justify-center gap-2 rounded-[11px] border px-4 py-2.5 text-[14px] font-bold no-underline"
+          className="mx-auto mt-[14px] flex min-h-[48px] w-full max-w-[252px] items-center justify-center gap-2 rounded-[11px] border px-4 py-2.5 text-[14px] font-bold no-underline"
           style={{ borderColor: theme.border, backgroundColor: theme.border, color: theme.surface }}>
           <ExternalLink size={17} strokeWidth={1.8} aria-hidden="true" />{openLabel || t.open}
         </a>
       )}
-      <div className="mx-auto mt-[14px] w-[226px] rounded-[16px] p-[10px] shadow-[0_7px_18px_rgba(0,0,0,0.14)]" style={{ backgroundColor: theme.qrBackground }}>
-        <div className="relative mx-auto h-[206px] w-[206px]">
-          <QRCodeSVG id={qrId} value={qrValue} size={206} level="H" includeMargin={false} bgColor={theme.qrBackground} fgColor={theme.qrForeground} />
+      <div className="mx-auto mt-[10px] w-[202px] rounded-[16px] p-[10px] shadow-[0_7px_18px_rgba(0,0,0,0.14)]" style={{ backgroundColor: theme.qrBackground }}>
+        <div className="relative mx-auto h-[182px] w-[182px]">
+          <QRCodeSVG id={qrId} value={qrValue} size={182} level="H" includeMargin={false} bgColor={theme.qrBackground} fgColor={theme.qrForeground} />
           <div className="pointer-events-none absolute left-1/2 top-1/2 grid h-[52px] w-[52px] -translate-x-1/2 -translate-y-1/2 place-items-center overflow-hidden rounded-full border-[3px] border-white shadow-md" style={{ backgroundColor: theme.surface }}>
             <img src={logo} alt="" className="h-full w-full object-cover" />
           </div>
         </div>
       </div>
-      <div className="mx-auto mt-[16px] grid w-[252px] grid-cols-3">
+      {accountHref && <a href={accountHref}
+        className="mx-auto mt-3 flex min-h-11 w-full max-w-[252px] items-center justify-center gap-2 rounded-xl border px-3 py-2 text-center text-[12px] font-semibold"
+        style={{ borderColor: theme.border, color: theme.text, backgroundColor: theme.surfaceAlt }}>
+        <UserRound size={17} aria-hidden="true" />{language === 'ar' ? 'حسابي المهني' : language === 'en' ? 'My professional account' : 'Mon compte professionnel'}
+      </a>}
+      <div className="mx-auto mt-[12px] grid w-full max-w-[252px] grid-cols-3">
         {actions.map(({ icon: Icon, label, action }, index) => (
           <button key={label} type="button" onClick={interactive ? action : undefined}
             className="flex min-h-[62px] min-w-0 flex-col items-center justify-start gap-[6px] px-1 py-[7px] text-center"
@@ -122,9 +128,8 @@ export function CvBusinessQrVisual({
         ))}
       </div>
 
-      <p className="mb-0 mt-[15px] flex items-center justify-center gap-1.5 text-center text-[10px] font-normal" style={{ color: theme.muted }}>
-        <img src="/images/logo_dalil_tounes_sceau_luxe.png" alt="" className="h-[17px] w-[17px] rounded-full object-cover" />
-        <span>{poweredText || t.powered}</span>
+      <p className="mb-0 mt-[12px] text-center text-[10px] font-normal" style={{ color: theme.muted }}>
+        {poweredText || t.powered}
       </p>
     </section>
     </>
