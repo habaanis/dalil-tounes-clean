@@ -226,7 +226,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
             {error && <p role="alert" style={{ fontSize: 12, color: '#9e2828', margin: 0 }}>{error}</p>}
             {selected.mode==='order'&&<p style={{margin:0,fontSize:11,color:'#6c5945'}}>La commande n’est pas encore confirmée. Acompte ou paiement total obligatoire avant validation, selon les modalités du professionnel. Aucun paiement à la livraison.</p>}
             <button type="button" onClick={()=>void send()} disabled={sending||Boolean(confirmation)}
-              style={{ width: '100%', padding: 10, border: 0, borderRadius: 10, background: '#4d2a47', color: '#fff', cursor: sending||confirmation?'default':'pointer', fontSize: 13, fontWeight: 600, opacity:sending||confirmation?.76:1 }}>
+              style={{ width: '100%', padding: 10, border: 0, borderRadius: 10, background: '#4d2a47', color: '#fff', cursor: sending||confirmation?'default':'pointer', fontSize: 13, fontWeight: 600, opacity:(sending || Boolean(confirmation)) ? 0.76 : 1 }}>
               {sending?'Enregistrement…':confirmation?'Demande enregistrée':config.demoMode?'Tester la demande (simulation)':selected.mode === 'quote' ? 'Envoyer la demande de devis' : 'Enregistrer la demande de commande'}
             </button>
             {confirmation&&<div role="status" style={{display:'grid',gap:8,background:'#f3f6ea',color:'#355535',borderRadius:10,padding:12,fontSize:12}}>
