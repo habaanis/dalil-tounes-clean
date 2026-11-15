@@ -1558,7 +1558,11 @@ export const Subscription = () => {
           <h2 className="font-serif text-xl font-medium text-[#4A1D43]">{structure.products}</h2>
           <p className="mt-1 text-xs text-slate-500">CV Business · CV Portfolio</p>
           <p className="my-3 text-sm leading-6 text-slate-600">{structure.cvIntro}</p>
-          <details><summary className="cursor-pointer font-medium text-[#4A1D43]">{structure.details}</summary><CvBusinessHome embedded /></details>
+          <details className={isPwa ? "rounded-xl border border-[#D4AF37]/45 bg-[#FFFDF8] px-3 py-2" : ""}><summary className="min-h-11 cursor-pointer font-medium text-[#4A1D43]">{structure.details}</summary><CvBusinessHome embedded /></details>
+          {isPwa && <details className="mt-3 rounded-xl border border-[#D4AF37]/45 bg-white p-3">
+            <summary className="min-h-11 cursor-pointer text-sm font-semibold text-[#292725]">3 outils complémentaires, un seul parcours</summary>
+            <CvBusinessJourney language={language as OfferLanguage} />
+          </details>}
         </section>
         <section id="offres" aria-labelledby="cv-business-products-title" className={`${isPwa && activeProSection !== 'offres' && activeProSection !== 'modeles' ? 'hidden ' : ''}order-2 mt-5 sm:mt-0`}>
 <div className={isPwa && activeProSection !== 'offres' ? 'hidden' : 'mb-6 text-center'}>
