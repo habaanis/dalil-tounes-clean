@@ -6,7 +6,10 @@ import {
   useMemo,
   useRef,
   useState,
+  cloneElement,
+  isValidElement,
   type CSSProperties,
+  type ReactElement,
   type ReactNode,
 } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
@@ -1519,6 +1522,18 @@ export default function BusinessShowcaseLienoraDetail({
     </div>
   );
 
+  const boutiqueAccordion = boutiqueContent && (
+    <section className="dt-accordion dt-boutique-accordion" key="boutique">
+      {isValidElement(boutiqueContent)
+        ? cloneElement(boutiqueContent as ReactElement<{ triggerClassName?: string; triggerIcon?: ReactNode; triggerLabel?: string }>, {
+            triggerClassName: 'dt-accordion-trigger dt-boutique-trigger',
+            triggerIcon: <Images aria-hidden="true" />,
+            triggerLabel: language === 'ar' ? 'المتجر' : language === 'en' ? 'Shop' : 'Boutique',
+          })
+        : boutiqueContent}
+    </section>
+  );
+
   const sharingContent = (
     <div className="dt-qr-card">
       <div className="dt-qr-copy">
@@ -1743,6 +1758,7 @@ export default function BusinessShowcaseLienoraDetail({
           onSelectImage={setSelectedImage}
           notice={contactNotice}
           hideBack={embeddedPreview || isClientAppMode}
+          showClientQrBack={isDedicatedClientRoute && !embeddedPreview}
           embeddedPreview={embeddedPreview}
           palette={activePalette}
         />
@@ -1989,7 +2005,7 @@ export default function BusinessShowcaseLienoraDetail({
 
             <div className="dt-accordion-list">
               {sections.filter(section => section.id !== 'booking').map(section => section.id === 'gallery' && boutiqueContent
-                ? <section className="dt-accordion" key="boutique" style={{padding:'8px 12px',display:'flex',justifyContent:'center'}}>{boutiqueContent}</section>
+                ? boutiqueAccordion
                 : <AccordionSection
                     config={section}
                     open={openSection === section.id}
@@ -1997,7 +2013,7 @@ export default function BusinessShowcaseLienoraDetail({
                     key={section.id}
                   />
               )}
-              {boutiqueContent && !sections.some(section => section.id === 'gallery') && <section className="dt-accordion" style={{padding:'8px 12px',display:'flex',justifyContent:'center'}}>{boutiqueContent}</section>}
+              {boutiqueContent && !sections.some(section => section.id === 'gallery') && boutiqueAccordion}
             </div>
           </div>
 

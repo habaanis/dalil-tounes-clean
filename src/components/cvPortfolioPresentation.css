@@ -1149,7 +1149,47 @@
   font-size:.55rem;
   border-radius:8px;
 }
-.cvp-page--lienora .cvp-lienora-tabs > button svg {width:18px;height:18px}
+.cvp-page--lienora .cvp-lienora-tabs > .cvp-native-boutique-tab {
+  display: flex;
+  box-sizing: border-box;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  background: transparent;
+  border: 0;
+  color: var(--cvp-text);
+  font-family: inherit;
+  font-weight: inherit;
+  opacity: .7;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: none;
+}
+.cvp-page--lienora .cvp-lienora-tabs > .cvp-native-boutique-tab > span {
+  overflow-wrap: anywhere;
+}
+.cvp-page--lienora .cvp-lienora-tabs > button svg,
+.cvp-page--lienora .cvp-lienora-tabs > .cvp-native-boutique-tab svg {
+  width: 18px;
+  height: 18px;
+}
+.cvp-page--lienora .cvp-back-to-qr {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  gap: 5px;
+  margin: 4px 10px 8px;
+  padding: 7px 12px;
+  border: 1px solid var(--cvp-accent);
+  border-radius: 10px;
+  background: var(--cvp-action);
+  color: var(--cvp-text);
+  font-size: .75rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
 .cvp-page--lienora .cvp-portfolio-tab-panel {
   border:1px solid color-mix(in srgb,var(--cvp-accent) 40%,transparent);
   border-radius:11px;
@@ -1184,6 +1224,7 @@
 .cvp-page--lienora .cvp-portfolio-home-visual .cvp-portfolio-visible-photos {margin:0;padding:0}
 .cvp-page--lienora .cvp-portfolio-home-visual .cvp-photo-strip {padding:1px 0 5px}
 @media(max-width:390px) {
-  .cvp-page--lienora .cvp-lienora-tabs > button {font-size:.5rem;min-width:45px;flex-basis:45px}
+  .cvp-page--lienora .cvp-lienora-tabs > button,
+  .cvp-page--lienora .cvp-lienora-tabs > .cvp-native-boutique-tab {font-size:.5rem;min-width:45px;flex-basis:45px}
   .cvp-page--lienora .cvp-portfolio-featured-photo {height:135px}
 }
