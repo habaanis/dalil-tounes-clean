@@ -369,7 +369,6 @@ export function CvPresentationModelSelector({
 
   // The phone-first visual is the photo-led Portfolio model; the long,
   // structured visual is the Business model.
-  const currentImage = expandedModel === 'portfolio' ? PROFESSIONAL_IMAGE : PORTFOLIO_IMAGE;
   const mobileImage = value === 'portfolio' ? PROFESSIONAL_IMAGE : PORTFOLIO_IMAGE;
 
   return (
@@ -560,36 +559,41 @@ export function CvPresentationModelSelector({
 
       {expandedModel && (
         <div
-          className="fixed inset-0 z-[140] flex items-center justify-center bg-black/75 p-3 backdrop-blur-sm sm:p-6"
+          className="fixed inset-0 z-[140] flex items-center justify-center bg-black/75 p-0 backdrop-blur-sm sm:p-5"
           onMouseDown={(event) => {
             if (event.target === event.currentTarget) setExpandedModel(null);
           }}
         >
-          <div role="dialog" aria-modal="true" aria-label={`${copy.enlarge} — ${getPresentationModelLabel(language, expandedModel)}`} className="relative max-h-[94dvh] max-w-full overflow-auto rounded-3xl bg-white p-3 shadow-2xl sm:p-5">
-            <button
-              type="button"
-              onClick={() => setExpandedModel(null)}
-              className="sticky top-0 z-10 ml-auto grid h-11 w-11 place-items-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-md focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] rtl:ml-0 rtl:mr-auto"
-              aria-label={copy.close}
-              title={copy.close}
-              autoFocus
-            >
-              <X className="h-5 w-5" aria-hidden="true" />
-            </button>
-            <img
-              src={currentImage}
-              alt={`${expandedModel === 'portfolio' ? copy.portfolio : copy.business} — Aux saveurs d'Anis`}
-              className="mx-auto mt-1 max-h-[82dvh] max-w-[calc(100vw-48px)] object-contain object-top"
-              decoding="async"
-            />
-            <a
-              href={`/entreprise/sousse/aux-saveurs-d-anis?preview-model=${expandedModel === 'portfolio' ? 'portfolio' : 'business'}&palette=${paletteValue}&source=subscription&lang=${language}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mx-auto mt-3 flex min-h-11 w-full items-center justify-center rounded-xl bg-[#07543F] px-5 py-2.5 text-center text-sm font-bold text-white transition hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]"
-            >
-              {copy.testModel}
-            </a>
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label={`${copy.enlargedPreview} — ${getPresentationModelLabel(language, expandedModel)}`}
+            className="flex h-dvh w-full max-w-[760px] min-w-0 flex-col overflow-hidden bg-[#F8F6F0] shadow-2xl sm:h-[94dvh] sm:rounded-[22px] sm:border sm:border-[#D6AF2E]/65"
+          >
+            <header className="flex min-h-14 shrink-0 items-center justify-between gap-3 border-b border-[#D6AF2E]/40 bg-white px-3 py-2 sm:min-h-16 sm:px-4">
+              <div className="min-w-0">
+                <small className="block text-[10px] font-medium uppercase tracking-[0.12em] text-[#98732F]">{copy.enlargedPreview}</small>
+                <strong className="block truncate font-serif text-base font-semibold text-[#292725]">{getPresentationModelLabel(language, expandedModel)}</strong>
+              </div>
+              <button
+                type="button"
+                onClick={() => setExpandedModel(null)}
+                className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-[#D6AF2E]/70 bg-[#FFFCF7] text-[#4A4032] focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]"
+                aria-label={copy.close}
+                title={copy.close}
+                autoFocus
+              >
+                <X className="h-5 w-5" aria-hidden="true" />
+              </button>
+            </header>
+            <div data-pwa-live-model-preview className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+              <RealPalettePreview
+                palette={paletteValue}
+                model={expandedModel}
+                language={language}
+                expanded
+              />
+            </div>
           </div>
         </div>
       )}
