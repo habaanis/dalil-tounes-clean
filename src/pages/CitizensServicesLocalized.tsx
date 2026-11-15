@@ -392,8 +392,8 @@ export default function CitizensServicesLocalized() {
             { id: 'social' as Tab, icon: Heart, label: c.tabs.social },
           ]).map(({id,icon:Icon,label}) => (
             <button key={id} type="button" onClick={() => chooseTab(id)} aria-expanded={activeTab === id}
-              className={`flex min-h-[78px] flex-col items-center justify-center gap-2 rounded-xl border px-1.5 py-2 text-center text-xs font-semibold leading-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A17D36] ${activeTab === id ? 'border-[#A17D36] bg-[#4A1D43] text-white' : 'border-[#E2D2B2] bg-white text-[#4A1D43]'}`}>
-              <Icon className={`h-5 w-5 ${activeTab === id ? 'text-[#F3D58A]' : 'text-[#A17D36]'}`} aria-hidden="true" />
+              className={`flex min-h-[78px] flex-col items-center justify-center gap-2 rounded-xl border px-1.5 py-2 text-center text-xs font-semibold leading-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A17D36] ${activeTab === id ? 'border-[#B62226] bg-[#B62226] text-white' : 'border-[#E2D2B2] bg-white text-[#B62226]'}`}>
+              <Icon className={`h-5 w-5 ${activeTab === id ? 'text-white' : 'text-[#B62226]'}`} aria-hidden="true" />
               <span>{label}</span>
             </button>
           ))}
@@ -431,11 +431,11 @@ export default function CitizensServicesLocalized() {
           <p className="text-xs text-[#756873]">{c.socialIntro}</p>
           <div className="grid grid-cols-2 gap-2">
             {emergencyNumbers.map(({ label, number, icon: Icon }) =>
-              <a key={number} href={`tel:${number}`}
-                className="flex min-h-[76px] items-center gap-2 rounded-xl border border-[#D4AF37]/70 bg-[#4A1D43] px-3 py-2">
-                <Icon className="h-4 w-4 shrink-0 text-[#F3D58A]" aria-hidden="true" />
-                <span><strong className="block text-lg leading-6 text-[#F3D58A]">{number}</strong>
-                  <span className="block text-[11px] leading-4 text-white">{label}</span></span>
+              <a key={number} href={`tel:${number}`} data-pwa-emergency
+                className="flex min-h-[76px] items-center gap-2 rounded-xl border border-[#C9A65D] bg-[#FFF9EA] px-3 py-2">
+                <Icon className="h-4 w-4 shrink-0 text-[#927039]" aria-hidden="true" />
+                <span><strong className="block text-lg leading-6 text-[#795D2B]">{number}</strong>
+                  <span className="block text-[11px] leading-4 text-[#292725]">{label}</span></span>
               </a>)}
           </div>
           <details className="rounded-xl border border-[#D4AF37]/45 bg-white p-3">

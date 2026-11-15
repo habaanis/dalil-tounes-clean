@@ -747,8 +747,8 @@ export default function CitizensLeisure() {
                 }
               }}
               className={`flex min-h-[68px] min-w-0 flex-col items-center justify-center gap-1 rounded-xl border px-1.5 py-2 text-center text-[11px] font-medium leading-[1.2] ${appSection === item.id
-                ? 'border-[#D4AF37] bg-[#4A1D43] text-white'
-                : 'border-[#DFD0B7] bg-white text-[#4A1D43]'}`}>
+                ? 'border-[#D4AF37] bg-[#B62226] text-white'
+                : 'border-[#DFD0B7] bg-white text-[#B62226]'}`}>
               <span aria-hidden="true" className="text-base">{item.icon}</span>
               <span>{item[language as 'fr' | 'ar' | 'en' | 'it' | 'ru'] || item.fr}</span>
             </button>
@@ -848,7 +848,7 @@ export default function CitizensLeisure() {
           <MeilleursSection
             secteurLabel={t.sector}
             listePage="loisirs & évènements"
-            accentColor="#4A1D43"
+            accentColor={inPlatformApp ? '#B62226' : '#4A1D43'}
             sectionTitle={inPlatformApp ? (language === 'ar' ? 'أماكن الترفيه الموصى بها من الحرفاء' : language === 'en' ? 'Leisure places recommended by customers' : 'Lieux de loisirs les plus recommandés par les clients') : t.recommended}
             useGoogleRecommendationCriteria
             itemsPerPage={5}
@@ -1430,7 +1430,7 @@ export default function CitizensLeisure() {
               <p className="whitespace-pre-line break-words">{getTranslatedText(openedEvent, 'description')}</p>
             </div>
             {isSafeTicketLink(openedEvent.lien_billetterie) && <a href={openedEvent.lien_billetterie} target="_blank" rel="noopener noreferrer"
-              className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-xl bg-[#4A1D43] px-4 py-2 text-sm font-semibold text-white">
+              className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-xl bg-[#B62226] px-4 py-2 text-sm font-semibold text-white">
               <ExternalLink className="h-4 w-4" />{t.buyTickets}
             </a>}
           </section>

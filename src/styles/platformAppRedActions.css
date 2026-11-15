@@ -1,0 +1,37 @@
+/* National Dalil Tounes PWA ONLY.
+ * Red belongs to actionable buttons, not headings, paragraphs, cards or panels.
+ * The customer CV mini-apps and public site never load this stylesheet.
+ */
+[data-platform-app-shell] {
+  --dalil-app-action: #B62226;
+  --dalil-app-action-hover: #971B20;
+}
+/* Legacy plum buttons and button-like links; do not recolor generic containers. */
+[data-platform-app-shell] :is(button, a, [role="button"], [role="tab"]):is(
+  [class*="bg-[#4A1D43]"],
+  [class*="bg-[#5A2D53]"],
+  [class*="bg-[#421D3B]"],
+  [style*="background-color: rgb(74, 29, 67)"],
+  [style*="background-color: rgb(90, 45, 83)"],
+  [style*="background-color: rgb(66, 29, 59)"]
+):not([data-pwa-emergency]) {
+  background-color: var(--dalil-app-action) !important;
+  color: #fff !important;
+}
+[data-platform-app-shell] :is(button, a, [role="button"], [role="tab"]):is(
+  [class*="bg-[#4A1D43]"], [class*="bg-[#5A2D53]"], [class*="bg-[#421D3B]"]
+):not([data-pwa-emergency]):hover {
+  background-color: var(--dalil-app-action-hover) !important;
+}
+/* Emergency telephone tiles remain ivory/gold, with high-contrast dark text. */
+[data-platform-app-shell] [data-pwa-emergency] {
+  background-color: #FFF9EA !important;
+  border-color: #C9A65D !important;
+  color: #292725 !important;
+}
+[data-platform-app-shell] [data-pwa-emergency] :is(strong, span, svg) {
+  color: #795D2B !important;
+}
+[data-platform-app-shell] :is(button, a, [role="button"], [role="tab"]):focus-visible {
+  outline-color: var(--dalil-app-action);
+}
