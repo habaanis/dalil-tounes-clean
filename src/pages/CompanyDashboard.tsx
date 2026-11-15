@@ -20,8 +20,12 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false }: 
   const [stats, setStats] = useState<ScopedBoutiqueStats[]>([]);
   const [statsLoading, setStatsLoading] = useState(false);
   const [statsError, setStatsError] = useState(false);
+  const [statsRetry, setStatsRetry] = useState(0);
   const [cvChoice, setCvChoice] = useState<'business'|'portfolio'>('portfolio');
   const [openingChoice, setOpeningChoice] = useState<'photo'|'framed'>('photo');
+  const [paletteChoice, setPaletteChoice] = useState<'prestige'|'ivory'|'night'>('ivory');
+  const [paletteSaving, setPaletteSaving] = useState(false);
+  const [paletteFeedback, setPaletteFeedback] = useState('');
   const [presentationLoading, setPresentationLoading] = useState(false);
   const [presentationSaving, setPresentationSaving] = useState(false);
   const [presentationFeedback, setPresentationFeedback] = useState('');
@@ -57,7 +61,7 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false }: 
       .catch(() => { if (!cancelled) { setStatsError(true); setStats([]); } })
       .finally(() => { if (!cancelled) setStatsLoading(false); });
     return () => { cancelled = true; };
-  }, [user?.id]);
+  }, [user?.id,statsRetry]);
 
   useEffect(() => {
     if (!user?.id || stats.length === 0) { setProductRequests([]); return; }
@@ -77,13 +81,18 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false }: 
     let active=true;
     setPresentationLoading(true);
     void import('../lib/supabaseClient').then(({supabase}) =>
-      supabase.from('entreprise').select('modele_cv,opening_style')
+      supabase.from('entreprise').select('modele_cv,opening_style,palette_cv,palette_cv_user_selected,statut_carte')
         .eq('id',stats[0].entreprise_id).maybeSingle()
     ).then(({data,error})=>{
       if (!active) return;
       if (error || !data) {setPresentationFeedback('Présentation temporairement indisponible.');return;}
       setCvChoice(String(data.modele_cv || '').toLowerCase().includes('portfolio') ? 'portfolio' : 'business');
       setOpeningChoice(data.opening_style === 'framed' ? 'framed' : 'photo');
+      const historicalIvory = data.statut_carte === '⭐ CERTIFIÉ DALIL TOUNES';
+      const selected = data.palette_cv_user_selected === true;
+      const palette = String(data.palette_cv || '').toLowerCase();
+      setPaletteChoice(!selected && historicalIvory ? 'ivory' :
+        palette === 'night' || palette === 'ivory' ? palette : 'prestige');
     }).catch(()=>{
       if (active) setPresentationFeedback('Présentation temporairement indisponible.');
     }).finally(()=>{if(active)setPresentationLoading(false)});
@@ -103,6 +112,21 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false }: 
     } catch {
       setPresentationFeedback('Enregistrement impossible. Votre présentation actuelle est conservée.');
     } finally {setPresentationSaving(false);}
+  };
+
+  const savePalette = async () => {
+    if (!user?.id || !stats[0]?.entreprise_id || paletteSaving) return;
+    setPaletteSaving(true);setPaletteFeedback('');
+    try {
+      const {supabase} = await import('../lib/supabaseClient');
+      const {error} = await supabase.rpc('dalil_update_my_cv_palette',{
+        p_entreprise_id:stats[0].entreprise_id,p_palette:paletteChoice,
+      });
+      if (error) throw error;
+      setPaletteFeedback('Couleur enregistrée pour le QR et les deux CV.');
+    } catch {
+      setPaletteFeedback('Couleur non enregistrée. La présentation actuelle est conservée.');
+    } finally {setPaletteSaving(false);}
   };
 
   const submitProductProposal = async (event: FormEvent<HTMLFormElement>) => {
@@ -274,7 +298,10 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false }: 
                     <h2 className="text-xl font-semibold text-[#62212a]">{activeTab === 'showcase' ? 'Ma vitrine' : activeTab === 'boutique' ? 'Ma boutique' : 'Mes statistiques'}</h2>
                   </div>
                   {statsLoading ? <p role="status" className="text-sm text-gray-700">Vérification des droits et chargement…</p>
-                    : statsError ? <p role="alert" className="rounded-xl border border-[#dfcda8] bg-[#fbf8f0] p-4 text-sm">Informations temporairement indisponibles. Veuillez réessayer ultérieurement.</p>
+                    : statsError ? <div role="alert" className="rounded-xl border border-[#dfcda8] bg-[#fbf8f0] p-4 text-sm">
+                        <p>Informations temporairement indisponibles. Votre compte professionnel reste accessible.</p>
+                        <button type="button" onClick={()=>setStatsRetry(n=>n+1)} className="mt-3 min-h-11 rounded-xl border border-[#d8c394] bg-white px-4 py-2 font-semibold text-[#62212a]">Réessayer dans mon compte</button>
+                      </div>
                     : stats.length === 0 ? <div className="rounded-xl border border-[#dfcda8] bg-[#fbf8f0] p-5">
                       <p className="font-semibold text-[#62212a]">Établissement non encore associé à votre compte</p>
                       <p className="mt-2 text-sm leading-6 text-gray-700">Pour protéger les données professionnelles, Dalil Tounes doit vérifier votre établissement avant de vous donner accès à sa vitrine, sa boutique et ses statistiques.</p>
@@ -310,6 +337,25 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false }: 
                       </div>
                     </fieldset>
                     <fieldset className="mt-4">
+                      <legend className="mb-2 text-sm font-semibold text-[#513b37]">Couleur commune — QR et CV</legend>
+                      <div className="grid grid-cols-3 gap-2">
+                        {([
+                          ['prestige','Vert Prestige','#032D21','#fffdf7'],
+                          ['ivory','Ivoire & Or','#FFF8E7','#3B3126'],
+                          ['night','Bleu Nuit','#10243A','#F8F1E4'],
+                        ] as const).map(([id,label,bg,fg])=><button key={id} type="button"
+                          onClick={()=>{setPaletteChoice(id);setPaletteFeedback('')}}
+                          aria-pressed={paletteChoice===id}
+                          className={`min-h-12 rounded-xl border-2 px-2 py-2 text-xs font-semibold ${paletteChoice===id?'border-[#B3871F] ring-2 ring-[#B3871F]/35':'border-[#d7c7ab]'}`}
+                          style={{backgroundColor:bg,color:fg}}>{label}</button>)}
+                      </div>
+                      <button type="button" onClick={()=>void savePalette()} disabled={paletteSaving}
+                        className="mt-3 min-h-11 w-full rounded-xl border border-[#d8c394] bg-[#fbf1df] px-3 py-2 text-sm font-semibold text-[#62212a] disabled:opacity-50">
+                        {paletteSaving?'Enregistrement…':'Appliquer cette couleur au QR et au CV'}
+                      </button>
+                      {paletteFeedback && <p role="status" className="mt-2 text-sm text-[#62212a]">{paletteFeedback}</p>}
+                    </fieldset>
+                    <fieldset className="mt-4">
                       <legend className="mb-2 text-sm font-semibold text-[#513b37]">Présentation du logo à l'ouverture</legend>
                       <div className="grid grid-cols-2 gap-2">
                         <button type="button" onClick={()=>{setOpeningChoice('photo');setPresentationFeedback('')}} aria-pressed={openingChoice==='photo'}
@@ -323,7 +369,7 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false }: 
                       </div>
                     </fieldset>
                     <div className="mt-4 flex flex-wrap gap-2">
-                      <a href={`/${encodeURIComponent(window.location.pathname.split('/')[1])}/cv?preview-model=${cvChoice}&skip-opening=1`}
+                      <a href={`/${encodeURIComponent(window.location.pathname.split('/')[1])}/cv?preview-model=${cvChoice}&palette=${paletteChoice}&skip-opening=1`}
                         className="inline-flex min-h-10 items-center rounded-xl border border-[#d8c394] px-3 py-2 text-xs font-semibold text-[#573e36]">Voir le CV</a>
                       <a href={`/${encodeURIComponent(window.location.pathname.split('/')[1])}?opening-preview=1&opening-style=${openingChoice}`}
                         className="inline-flex min-h-10 items-center rounded-xl border border-[#d8c394] px-3 py-2 text-xs font-semibold text-[#573e36]">Voir l'ouverture {openingChoice==='photo'?'A':'B'}</a>
