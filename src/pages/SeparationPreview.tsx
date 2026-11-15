@@ -505,7 +505,7 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
             <p className="text-sm font-bold text-[#9A7416]">{t.miniAppHighlights}</p>
             <h3 className="font-bold text-[#4A1D43]">{ecosystem.cvAdvantageTitle}</h3>
             <p className="text-sm leading-6 text-slate-600">{ecosystem.cvAdvantageText}</p>
-            <details className="rounded-2xl border border-[#D4AF37]/40 p-4"><summary className="cursor-pointer font-bold text-[#4A1D43]">{structure.details}</summary><VisibilityHouseSection showNetworkProof={false} /></details>
+            {!isPlatformAppMode() && <details className="rounded-2xl border border-[#D4AF37]/40 p-4"><summary className="cursor-pointer font-bold text-[#4A1D43]">{structure.details}</summary><VisibilityHouseSection showNetworkProof={false} /></details>}
           </section>
           </CvSectionFold>
 

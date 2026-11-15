@@ -3,6 +3,7 @@ import Concept from './Concept';
 import '../styles/pwaProConceptCompact.css';
 import '../styles/pwaProMiniCompact.css';
 import '../styles/pwaProOffersCompact.css';
+import '../styles/pwaProModelFrames.css';
 import { FounderStory } from '../components/FounderStory';
 import { CvBusinessHome } from './SeparationPreview';
 import { EssentialPresence } from '../components/EssentialPresence';
