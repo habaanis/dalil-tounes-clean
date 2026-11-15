@@ -74,7 +74,8 @@ export default function CompanyDashboard({ onNavigate }: CompanyDashboardProps) 
     const category = productCategory.trim();
     const description = productDescription.trim();
     const price = Number(productPrice);
-    if (productPhoto && (!['image/jpeg','image/png','image/webp'].includes(productPhoto.type) || productPhoto.size > 5 * 1024 * 1024)) {
+    if (!productPhoto) { setProductMessage('Ajoutez une photo pour proposer un article publiable.'); return; }
+    if (!['image/jpeg','image/png','image/webp'].includes(productPhoto.type) || productPhoto.size > 5 * 1024 * 1024) {
       setProductMessage('Photo refusée : utilisez JPG, PNG ou WebP, 5 Mo maximum.'); return;
     }
     if (title.length < 2 || title.length > 120 || category.length > 60 || description.length > 800 ||
@@ -255,7 +256,7 @@ export default function CompanyDashboard({ onNavigate }: CompanyDashboardProps) 
                     </div>)}</div>}
                   {activeTab === 'boutique' && stats.length > 0 && !statsLoading && !statsError && <div className="mt-5 rounded-xl border border-[#dfcda8] bg-white p-4 sm:p-5">
                     <h3 className="mb-2 font-semibold text-[#62212a]">Proposer un produit</h3>
-                    <p className="mb-4 text-sm text-gray-600">Envoi privé à Dalil Tounes. Votre proposition ne sera visible aux visiteurs qu’après validation et publication par notre équipe. La photo éventuelle reste privée jusqu’à sa validation.</p>
+                    <p className="mb-4 text-sm text-gray-600">Envoi privé à Dalil Tounes. Votre proposition ne sera visible aux visiteurs qu’après validation et publication par notre équipe. La photo est obligatoire pour une publication et reste privée jusqu’à validation.</p>
                     <form onSubmit={submitProductProposal} className="grid gap-3">
                       {stats.length > 1 && <label className="grid gap-1 text-sm">Établissement
                         <select className="rounded-lg border border-[#dfcda8] bg-white p-3 text-gray-900" value={productBusiness || stats[0].entreprise_id} onChange={e => setProductBusiness(e.target.value)}>
@@ -279,8 +280,8 @@ export default function CompanyDashboard({ onNavigate }: CompanyDashboardProps) 
                       <label className="grid gap-1 text-sm">Description
                         <textarea rows={3} maxLength={800} className="rounded-lg border border-[#dfcda8] bg-white p-3 text-gray-900" value={productDescription} onChange={e => setProductDescription(e.target.value)} />
                       </label>
-                      <label className="grid gap-1 text-sm">Photo facultative (JPG, PNG ou WebP, 5 Mo max.)
-                        <input key={productPhotoInputKey} type="file" accept="image/jpeg,image/png,image/webp" className="rounded-lg border border-[#dfcda8] bg-white p-3 text-gray-900" onChange={event => setProductPhoto(event.target.files?.[0] ?? null)} />
+                      <label className="grid gap-1 text-sm">Photo requise pour publication (JPG, PNG ou WebP, 5 Mo max.)
+                        <input required key={productPhotoInputKey} type="file" accept="image/jpeg,image/png,image/webp" className="rounded-lg border border-[#dfcda8] bg-white p-3 text-gray-900" onChange={event => setProductPhoto(event.target.files?.[0] ?? null)} />
                       </label>
                       <button disabled={productSaving} className="rounded-xl bg-[#8f2530] p-3 font-semibold text-white disabled:opacity-50" type="submit">{productSaving ? 'Envoi…' : 'Soumettre à validation'}</button>
                       {productMessage && <p role="status" className="text-sm text-[#62212a]">{productMessage}</p>}
