@@ -274,7 +274,7 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
   const { legacyCertifiedCount, recommendedCount } = useHomeData();
   const structure = siteStructureCopy[lang];
   const CvHeading = embedded ? 'h3' : 'h1';
-  const compactCvApp = view === 'cv' && fixedView === 'cv' && isPlatformAppMode() && !embedded;
+  const compactCvApp = view === 'cv' && fixedView === 'cv' && isPlatformAppMode();
   const [videoOpen, setVideoOpen] = useState(false);
   useEffect(() => {
     if (!videoOpen) return;
