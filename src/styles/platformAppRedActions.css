@@ -1,30 +1,43 @@
-/* Dalil Tounes national PWA only.
- * Never apply this palette to the public website or customer CV/QR mini-apps.
- * Existing ivory and soft-gold backgrounds remain unchanged.
- */
+/* Dalil Tounes national PWA only — never loaded by the site or customer CVs. */
 [data-platform-app-shell] {
   --dalil-app-action: #B62226;
   --dalil-app-action-hover: #971B20;
+  --dalil-app-ink: #292725;
 }
-/* Historical plum utility classes still occur in shared components.
-   Override only interactive controls while they are inside the PWA shell. */
-[data-platform-app-shell] :is(button, a, [role="button"], [role="tab"], summary)[class~="bg-[#4A1D43]"],
-[data-platform-app-shell] :is(button, a, [role="button"], [role="tab"], summary)[class~="bg-[#5A2D53]"],
-[data-platform-app-shell] :is(button, a, [role="button"], [role="tab"], summary)[class~="bg-[#421D3B]"] {
+/* The legacy code contains plum classes with modifiers (/70, hover:bg-...), and
+   some reusable components set their accent directly as an inline style.
+   Match all of these, not only complete class tokens. */
+[data-platform-app-shell] [class*="bg-[#4A1D43]"],
+[data-platform-app-shell] [class*="bg-[#5A2D53]"],
+[data-platform-app-shell] [class*="bg-[#421D3B]"],
+[data-platform-app-shell] [style*="background-color: rgb(74, 29, 67)"],
+[data-platform-app-shell] [style*="background-color: rgb(90, 45, 83)"],
+[data-platform-app-shell] [style*="background-color: rgb(66, 29, 59)"] {
   background-color: var(--dalil-app-action) !important;
-  color: #fff !important;
 }
-[data-platform-app-shell] :is(button, a, [role="button"], [role="tab"], summary)[class~="bg-[#4A1D43]"]:is(:hover, :focus-visible),
-[data-platform-app-shell] :is(button, a, [role="button"], [role="tab"], summary)[class~="bg-[#5A2D53]"]:is(:hover, :focus-visible),
-[data-platform-app-shell] :is(button, a, [role="button"], [role="tab"], summary)[class~="bg-[#421D3B]"]:is(:hover, :focus-visible) {
-  background-color: var(--dalil-app-action-hover) !important;
-  color: #fff !important;
+/* Text originally plum becomes neutral ink; only interactive text goes red. */
+[data-platform-app-shell] [class*="text-[#4A1D43]"],
+[data-platform-app-shell] [class*="text-[#5A2D53]"],
+[data-platform-app-shell] [class*="text-[#421D3B]"],
+[data-platform-app-shell] [style*="color: rgb(74, 29, 67)"],
+[data-platform-app-shell] [style*="color: rgb(90, 45, 83)"],
+[data-platform-app-shell] [style*="color: rgb(66, 29, 59)"] {
+  color: var(--dalil-app-ink) !important;
 }
-/* Outlined/inactive actions keep their ivory background with red text. */
-[data-platform-app-shell] :is(button, a, [role="button"], [role="tab"], summary)[class~="text-[#4A1D43]"]:not([class~="bg-[#4A1D43]"]):not([class~="bg-[#5A2D53]"]):not([class~="bg-[#421D3B]"]) {
-  color: var(--dalil-app-action);
-}
-/* Keyboard focus stays visible against ivory and red. */
+[data-platform-app-shell] :is(button, a, [role="button"], [role="tab"], summary):is(
+  [class*="text-[#4A1D43]"], [class*="text-[#5A2D53]"],
+  [class*="text-[#421D3B]"], [style*="color: rgb(74, 29, 67)"]
+) { color: var(--dalil-app-action) !important; }
+/* White letters remain readable on an active red control, regardless of legacy
+   text utility order or directly injected accent. */
+[data-platform-app-shell] :is(button, a, [role="button"], [role="tab"], summary):is(
+  [class*="bg-[#4A1D43]"], [class*="bg-[#5A2D53]"],
+  [class*="bg-[#421D3B]"], [class*="bg-[#B62226]"],
+  [style*="background-color: rgb(74, 29, 67)"]
+) { color: white !important; }
+[data-platform-app-shell] :is(button, a, [role="button"], [role="tab"], summary):is(
+  [class*="bg-[#4A1D43]"], [class*="bg-[#5A2D53]"], [class*="bg-[#421D3B]"]
+):hover { background-color: var(--dalil-app-action-hover) !important; }
 [data-platform-app-shell] :is(button, a, [role="button"], [role="tab"], summary):focus-visible {
   outline-color: var(--dalil-app-action);
 }
