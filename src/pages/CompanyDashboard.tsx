@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type FormEvent } from 'react';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { useNavigate } from 'react-router-dom';
 import { Briefcase, Users, Building2, Settings, LogOut, Store, Package, BarChart3, ShieldCheck } from 'lucide-react';
@@ -18,6 +18,15 @@ export default function CompanyDashboard({ onNavigate }: CompanyDashboardProps) 
   const [stats, setStats] = useState<ScopedBoutiqueStats[]>([]);
   const [statsLoading, setStatsLoading] = useState(false);
   const [statsError, setStatsError] = useState(false);
+  const [productTitle, setProductTitle] = useState('');
+  const [productCategory, setProductCategory] = useState('');
+  const [productDescription, setProductDescription] = useState('');
+  const [productMode, setProductMode] = useState<'quote' | 'order'>('quote');
+  const [productPrice, setProductPrice] = useState('');
+  const [productBusiness, setProductBusiness] = useState('');
+  const [productSaving, setProductSaving] = useState(false);
+  const [productMessage, setProductMessage] = useState('');
+  const [productRequests, setProductRequests] = useState<{id:string;entreprise_id:string;title:string;status:string;created_at:string}[]>([]);
 
   useEffect(() => {
     if (!user?.id) {
@@ -40,6 +49,48 @@ export default function CompanyDashboard({ onNavigate }: CompanyDashboardProps) 
       .finally(() => { if (!cancelled) setStatsLoading(false); });
     return () => { cancelled = true; };
   }, [user?.id]);
+
+  useEffect(() => {
+    if (!user?.id || stats.length === 0) { setProductRequests([]); return; }
+    let cancelled = false;
+    import('../lib/supabaseClient').then(({supabase}) =>
+      supabase.from('dalil_boutique_product_requests')
+        .select('id,entreprise_id,title,status,created_at')
+        .order('created_at',{ascending:false}).limit(30)
+    ).then(({data,error}) => {
+      if (!cancelled && !error) setProductRequests(data ?? []);
+    }).catch(() => {});
+    return () => { cancelled = true; };
+  }, [user?.id, stats]);
+
+  const submitProductProposal = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!user?.id || productSaving) return;
+    const entrepriseId = productBusiness || stats[0]?.entreprise_id;
+    if (!entrepriseId || !stats.some(record => record.entreprise_id === entrepriseId)) return;
+    const title = productTitle.trim();
+    const category = productCategory.trim();
+    const description = productDescription.trim();
+    const price = Number(productPrice);
+    if (title.length < 2 || title.length > 120 || category.length > 60 || description.length > 800 ||
+      (productMode === 'order' && (!Number.isFinite(price) || price <= 0 || price > 100000))) {
+      setProductMessage('Vérifiez le nom, la catégorie et le prix.'); return;
+    }
+    setProductSaving(true); setProductMessage('');
+    try {
+      const { supabase } = await import('../lib/supabaseClient');
+      const {data,error} = await supabase.from('dalil_boutique_product_requests')
+        .insert({user_id:user.id,entreprise_id:entrepriseId,title,description,category:category || null,
+          mode:productMode,price:productMode === 'quote' ? null : price})
+        .select('id,entreprise_id,title,status,created_at').single();
+      if (error || !data) throw error ?? new Error('Insertion échouée');
+      setProductRequests(current => [data,...current]);
+      setProductTitle('');setProductCategory('');setProductDescription('');setProductPrice('');
+      setProductMessage('Proposition enregistrée. Elle reste en attente de validation avant toute publication.');
+    } catch {
+      setProductMessage('La proposition n’a pas pu être enregistrée. Aucun produit n’a été publié.');
+    } finally { setProductSaving(false); }
+  };
 
   useEffect(() => {
     const isNewUser = localStorage.getItem(`newUser_${user?.id}`);
@@ -179,10 +230,46 @@ export default function CompanyDashboard({ onNavigate }: CompanyDashboardProps) 
                           <p className="min-h-9 text-xs text-gray-600">{label}</p>
                           <strong className="text-2xl text-[#8f2530]">{value ?? '—'}</strong>
                         </div>)}
-                      </div> : <p className="text-sm leading-6 text-gray-700">{activeTab === 'boutique'
-                        ? 'Votre Boutique est associée à votre établissement. La modification des produits sera activée après validation du parcours de soumission.'
-                        : 'Votre établissement est identifié. Les modifications de vitrine seront activées après validation et modération.'}</p>}
+                      </div> : activeTab === 'boutique'
+                        ? <p className="text-sm leading-6 text-gray-700">Votre Boutique est identifiée. Proposez un produit dans le formulaire sécurisé ci-dessous ; aucune publication n'est automatique.</p>
+                        : <p className="text-sm leading-6 text-gray-700">Votre établissement est identifié. Les modifications de vitrine seront activées après validation et modération.</p>}
                     </div>)}</div>}
+                  {activeTab === 'boutique' && stats.length > 0 && !statsLoading && !statsError && <div className="mt-5 rounded-xl border border-[#dfcda8] bg-white p-4 sm:p-5">
+                    <h3 className="mb-2 font-semibold text-[#62212a]">Proposer un produit</h3>
+                    <p className="mb-4 text-sm text-gray-600">Envoi privé à Dalil Tounes. Votre proposition ne sera visible aux visiteurs qu’après validation et publication par notre équipe. Les photos seront ajoutées dans une prochaine étape.</p>
+                    <form onSubmit={submitProductProposal} className="grid gap-3">
+                      {stats.length > 1 && <label className="grid gap-1 text-sm">Établissement
+                        <select className="rounded-lg border border-[#dfcda8] bg-white p-3 text-gray-900" value={productBusiness || stats[0].entreprise_id} onChange={e => setProductBusiness(e.target.value)}>
+                          {stats.map(record => <option key={record.entreprise_id} value={record.entreprise_id}>{record.entreprise_id}</option>)}
+                        </select>
+                      </label>}
+                      <label className="grid gap-1 text-sm">Nom du produit
+                        <input required minLength={2} maxLength={120} className="rounded-lg border border-[#dfcda8] bg-white p-3 text-gray-900" value={productTitle} onChange={e => setProductTitle(e.target.value)} placeholder="Ex. Plateaux traiteur" />
+                      </label>
+                      <label className="grid gap-1 text-sm">Catégorie (facultative)
+                        <input maxLength={60} className="rounded-lg border border-[#dfcda8] bg-white p-3 text-gray-900" value={productCategory} onChange={e => setProductCategory(e.target.value)} placeholder="Ex. Traiteur, Desserts, Créations" />
+                      </label>
+                      <label className="grid gap-1 text-sm">Type de demande
+                        <select className="rounded-lg border border-[#dfcda8] bg-white p-3 text-gray-900" value={productMode} onChange={e => setProductMode(e.target.value as 'quote'|'order')}>
+                          <option value="quote">Sur devis</option><option value="order">Commande avec prix indicatif</option>
+                        </select>
+                      </label>
+                      {productMode === 'order' && <label className="grid gap-1 text-sm">Prix en TND
+                        <input required type="number" min="0.01" max="100000" step="0.01" className="rounded-lg border border-[#dfcda8] bg-white p-3 text-gray-900" value={productPrice} onChange={e => setProductPrice(e.target.value)} />
+                      </label>}
+                      <label className="grid gap-1 text-sm">Description
+                        <textarea rows={3} maxLength={800} className="rounded-lg border border-[#dfcda8] bg-white p-3 text-gray-900" value={productDescription} onChange={e => setProductDescription(e.target.value)} />
+                      </label>
+                      <button disabled={productSaving} className="rounded-xl bg-[#8f2530] p-3 font-semibold text-white disabled:opacity-50" type="submit">{productSaving ? 'Envoi…' : 'Soumettre à validation'}</button>
+                      {productMessage && <p role="status" className="text-sm text-[#62212a]">{productMessage}</p>}
+                    </form>
+                    {productRequests.length > 0 && <div className="mt-5 border-t border-[#dfcda8] pt-4">
+                      <h4 className="mb-2 font-semibold text-[#62212a]">Mes propositions récentes</h4>
+                      <ul className="space-y-2">{productRequests.map(request => <li key={request.id} className="flex justify-between gap-3 rounded-lg bg-[#fbf8f0] p-3 text-sm">
+                        <span className="break-words">{request.title}</span><span className="shrink-0 text-[#62212a]">{request.status === 'pending' ? 'En attente' : request.status === 'approved' ? 'Validée' : 'Refusée'}</span>
+                      </li>)}</ul>
+                    </div>}
+                  </div>}
                   {activeTab === 'stats' && <p className="mt-3 text-xs text-gray-600">Un abonnement représente un appareil ou navigateur, pas nécessairement une personne. Les visites et demandes non suivies affichent « — ».</p>}
 
                 </section>
