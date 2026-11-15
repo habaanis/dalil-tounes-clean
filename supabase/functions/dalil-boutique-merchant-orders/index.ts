@@ -52,6 +52,13 @@ Deno.serve(async req=>{
       if(!current)return respond({error:"Order not found"},404,origin);
       if(["completed","cancelled","rejected"].includes(current.status))
         return respond({error:"Order already closed"},409,origin);
+      const validTransitions:Record<string,Set<string>>={
+        received:new Set(["in_progress","confirmed","rejected","cancelled"]),
+        in_progress:new Set(["confirmed","rejected","cancelled"]),
+        confirmed:new Set(["completed","cancelled"]),
+      };
+      if(!validTransitions[current.status]?.has(status))
+        return respond({error:"Invalid status transition"},409,origin);
       if(status==="confirmed"&&current.kind==="order"&&!["partially_paid","paid"].includes(current.payment_status))
         return respond({error:"Verified deposit or full payment required"},409,origin);
       if(status==="completed"&&(current.status!=="confirmed"||
@@ -61,6 +68,7 @@ Deno.serve(async req=>{
       const {data,error}=await db.from("dalil_boutique_customer_orders")
         .update({status,updated_at:new Date().toISOString()})
         .eq("id",id).eq("entreprise_id",profileId).eq("status",current.status)
+        .eq("payment_status",current.payment_status)
         .select("id,status").maybeSingle();
       if(error)return respond({error:"Update unavailable"},503,origin);
       if(!data)return respond({error:"Order changed, refresh and retry"},409,origin);
