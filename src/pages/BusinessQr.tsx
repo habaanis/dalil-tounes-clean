@@ -283,9 +283,12 @@ export default function BusinessQr() {
   // Vue de contrôle sur un AUTRE domaine que la PWA cliente.
   // Le navigateur peut bloquer plusieurs installations sous app.dalil-tounes.com ;
   // cette page reste accessible, sans être capturée par une autre mini-application.
-  const browserCvUrl = business
-    ? `https://dalil-tounes.com/entreprise/id/${encodeURIComponent(business.id)}?lang=${encodeURIComponent(language)}`
+  const browserCvUrl = isDedicatedClientHostname(window.location.hostname) ? cvUrl
+    : business ? `https://dalil-tounes.com/entreprise/id/${encodeURIComponent(business.id)}?lang=${encodeURIComponent(language)}`
     : cvUrl;
+  const accountHref = isDedicatedClientHostname(window.location.hostname)
+    ? '/' + encodeURIComponent(clientIdentifier) + '/compte'
+    : buildClientAppUrl(business || identifier, language).split('?')[0] + '/compte';
   const logoUrl = business ? getLogoUrl(business.logo_url) : '';
   const coverUrl = getCoverUrl(business?.image_url);
   const tier = business ? mapSubscriptionToTier(business) : 'gratuit';
@@ -433,8 +436,8 @@ export default function BusinessQr() {
   }
 
   return (
-    <main className="fixed inset-0 z-[10000] overflow-y-auto px-3 py-4 sm:py-6" style={{ backgroundColor: paletteTheme.page }} dir={language === 'ar' ? 'rtl' : 'ltr'}>
-      {qrAccess && <div className="mx-auto mb-2 flex max-w-xs items-center justify-center gap-1 rounded-full px-2 py-1 text-xs" style={{backgroundColor:paletteTheme.surface,color:paletteTheme.text}}>
+    <main className="fixed inset-0 z-[10000] overflow-y-auto overscroll-contain px-3 pt-3 pb-[calc(6rem+env(safe-area-inset-bottom))] sm:py-6" style={{ backgroundColor: paletteTheme.page }} dir={language === 'ar' ? 'rtl' : 'ltr'}>
+      {new URLSearchParams(window.location.search).get('opening-preview') === '1' && qrAccess && <div className="mx-auto mb-2 flex max-w-xs items-center justify-center gap-1 rounded-full px-2 py-1 text-xs" style={{backgroundColor:paletteTheme.surface,color:paletteTheme.text}}>
         <span>{language === 'ar' ? 'افتتاح التطبيق' : 'Ouverture'}</span>
         <button type="button" className="rounded-full border px-2 py-1 text-xs" style={{borderColor:paletteTheme.border,backgroundColor:openingStyle === 'photo' ? paletteTheme.border : 'transparent'}} onClick={() => chooseOpeningStyle('photo')}>A</button>
         <button type="button" className="rounded-lg border px-3 py-2" style={{borderColor:paletteTheme.border,backgroundColor:openingStyle === 'framed' ? paletteTheme.border : 'transparent'}} onClick={() => chooseOpeningStyle('framed')}>B</button>
@@ -468,6 +471,7 @@ export default function BusinessQr() {
         productLabel={modelText.product}
         poweredText={text.powered}
         openHref={browserCvUrl}
+        accountHref={accountHref}
         onShare={shareBusiness}
         onDownload={downloadPng}
         onInstall={installApp}
