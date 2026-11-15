@@ -1141,6 +1141,8 @@
 }
 .cvp-page--lienora .cvp-lienora-tabs > button,
 .cvp-page--lienora .cvp-lienora-tabs > .cvp-native-boutique-tab {
+  align-self: stretch;
+  box-sizing: border-box;
   flex:1 0 48px;
   min-width:48px;
   max-width:80px;
@@ -1154,7 +1156,7 @@
   box-sizing: border-box;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 2px;
   background: transparent;
   border: 0;
