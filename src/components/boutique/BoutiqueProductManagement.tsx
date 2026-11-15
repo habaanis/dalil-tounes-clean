@@ -20,12 +20,14 @@ export default function BoutiqueProductManagement({entrepriseIds,userId}:{entrep
   const [position,setPosition]=useState('0');
   const [message,setMessage]=useState('');
   const [loading,setLoading]=useState(true);
+  const [loadError,setLoadError]=useState(false);
+  const [retryKey,setRetryKey]=useState(0);
   const [saving,setSaving]=useState(false);
   const businessIds=entrepriseIds.join(',');
   useEffect(()=>{
     let active=true;
     if(!userId || !businessIds) {setProducts([]);setChanges([]);setLoading(false);return;}
-    setLoading(true);
+    setLoading(true);setLoadError(false);
     const ids=businessIds.split(',');
     void Promise.all([
       supabase.from('dalil_boutique_products').select('id,entreprise_id,title,description,category,mode,price,position')
@@ -34,13 +36,13 @@ export default function BoutiqueProductManagement({entrepriseIds,userId}:{entrep
         .in('entreprise_id',ids).order('created_at',{ascending:false}).limit(30)
     ]).then(([p,c])=>{
       if(!active)return;
-      if(p.error || c.error){setMessage('Gestion des produits temporairement indisponible.');return;}
+      if(p.error || c.error){setLoadError(true);return;}
       setProducts((p.data??[]) as Product[]);
       setChanges((c.data??[]) as Change[]);
-    }).catch(()=>{if(active)setMessage('Gestion des produits temporairement indisponible.');})
+    }).catch(()=>{if(active)setLoadError(true);})
       .finally(()=>{if(active)setLoading(false);});
     return ()=>{active=false};
-  },[businessIds,userId]);
+  },[businessIds,userId,retryKey]);
 
   const choose=(id:string)=>{
     setSelected(id);setMessage('');
@@ -97,7 +99,7 @@ export default function BoutiqueProductManagement({entrepriseIds,userId}:{entrep
   return <section className="mt-5 rounded-xl border border-[#dfcda8] bg-white p-4 sm:p-5">
     <h3 className="font-semibold text-[#62212a]">Gérer mes produits publiés</h3>
     <p className="mt-1 text-sm text-gray-600">Modifiez directement vos produits existants : nom, prix, description, ordre ou retrait. Votre compte doit être vérifié. Les nouveaux produits restent soumis à une première validation.</p>
-    {loading?<p role="status" className="mt-3 text-sm">Chargement des produits…</p>:products.length===0
+    {loading?<p role="status" className="mt-3 text-sm">Chargement des produits…</p>:loadError?<div className="mt-3 text-sm" role="alert"><p>Le chargement des produits a échoué. Votre Boutique publique n'est pas modifiée.</p><button type="button" className="mt-2 min-h-11 rounded-xl border border-[#dfcda8] bg-white px-4 py-2 font-semibold" onClick={()=>setRetryKey(v=>v+1)}>Réessayer</button></div>:products.length===0
       ?<p className="mt-3 text-sm text-gray-600">Aucun produit publié à modifier pour le moment.</p>
       :<form onSubmit={submit} className="mt-4 grid gap-3">
         <label className="grid gap-1 text-sm">Produit
