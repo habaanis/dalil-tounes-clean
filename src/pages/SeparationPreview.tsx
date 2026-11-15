@@ -513,9 +513,9 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
           <CvCapabilitiesSection language={lang} />
           </CvSectionFold>
 
-          <CvSectionFold enabled={compactCvApp} title={lang === 'fr' ? 'Comment créer votre mini-appli ?' : lang === 'ar' ? 'كيفاش تعمل تطبيقك المصغّر؟' : lang === 'en' ? 'How to create your mini-app' : lang === 'it' ? 'Come creare la tua mini-app' : 'Как создать мини-приложение'}>
-          {!embedded && <CvBusinessJourney language={lang} />}
-          </CvSectionFold>
+          {!embedded && <CvSectionFold enabled={compactCvApp} title={lang === 'fr' ? 'Comment créer votre mini-appli ?' : lang === 'ar' ? 'كيفاش تعمل تطبيقك المصغّر؟' : lang === 'en' ? 'How to create your mini-app' : lang === 'it' ? 'Come creare la tua mini-app' : 'Как создать мини-приложение'}>
+          <CvBusinessJourney language={lang} />
+          </CvSectionFold>}
 
           <section className="bg-[#2E102A] px-4 py-7 text-white"><div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left rtl:sm:text-right"><div><p className="text-xs font-black uppercase tracking-[0.16em] text-[#F1D783]">{t.searchEyebrow}</p><h2 className="mt-2 max-w-3xl font-serif text-2xl font-bold">{t.searchTitle}</h2></div><button type="button" onClick={() => fixedView ? navigate('/') : setPreviewView('platform')} className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-[#D4AF37] px-5 py-3 text-sm font-black text-[#F1D783]"><Search className="h-4 w-4" /> {t.explorePlatform}</button></div></section>
         </>
