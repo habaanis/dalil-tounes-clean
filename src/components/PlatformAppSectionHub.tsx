@@ -56,7 +56,7 @@ const COPY: Record<Lang, {
     visit: 'Visiter & découvrir', settle: "S’installer & vivre en Tunisie", moreTopics: 'Autres rubriques', all: 'Afficher la page complète', hint: 'Les informations détaillées restent disponibles.',
     topics: { housing: 'Logement & installation', residence: 'Séjour & résidence',  health: 'Santé', education: 'Éducation', services: 'Services citoyens', shops: 'Commerces & magasins', leisure: 'Loisirs & événements', jobs: 'Emploi',
       heritage: 'Villages & patrimoine', nature: 'Nature & randonnées', craft: 'Artisanat & savoir-faire', food: 'Saveurs & marchés', events: 'Culture & événements',
-      stays: 'Séjours & expériences', settle: 'Guide expatriation & installation', free: 'Inscription gratuite', cv: 'Votre mini-appli professionnelle', models: 'Voir les modèles', offers: 'Offres & tarifs', partners: 'Devenir partenaire', businessPartners: 'Réseau professionnel', businessNeeds: 'Besoins professionnels' },
+      stays: 'Séjours & expériences', settle: 'Guide expatriation & installation', free: 'Inscription gratuite', cv: 'Mini-appli', models: 'Voir les 2 modèles', offers: 'Offres & tarifs', partners: 'Devenir partenaire', businessPartners: 'Réseau professionnel', businessNeeds: 'Besoins professionnels' },
   },
   ar: {
     titles: { citizens: 'شنوة تحتاج اليوم؟', tourism: 'اكتشف تونس', pros: 'مؤسستك في دليل تونس' },
@@ -64,7 +64,7 @@ const COPY: Record<Lang, {
     visit: 'زيارة واكتشاف', settle: 'الإقامة والعيش في تونس', moreTopics: 'أقسام أخرى', all: 'عرض الصفحة الكاملة', hint: 'التفاصيل الكاملة تبقى متوفرة.',
     topics: { housing: 'السكن والاستقرار', residence: 'الإقامة والتصاريح',  health: 'الصحة', education: 'التعليم', services: 'خدمات المواطن', shops: 'المحلات والمتاجر', leisure: 'الترفيه والفعاليات', jobs: 'الشغل',
       heritage: 'القرى والتراث', nature: 'الطبيعة والمشي', craft: 'الحرف والمعارف', food: 'النكهات والأسواق', events: 'الثقافة والفعاليات',
-      stays: 'الإقامات والتجارب', settle: 'دليل الإقامة والاستقرار', free: 'تسجيل مجاني', cv: 'تطبيقك المصغّر المهني', models: 'شوف النماذج', offers: 'العروض والأسعار', partners: 'كن شريك', businessPartners: 'شبكة المهنيين', businessNeeds: 'احتياجات المؤسسات' },
+      stays: 'الإقامات والتجارب', settle: 'دليل الإقامة والاستقرار', free: 'تسجيل مجاني', cv: 'تطبيق مصغّر', models: 'شوف النموذجين', offers: 'العروض والأسعار', partners: 'كن شريك', businessPartners: 'شبكة المهنيين', businessNeeds: 'احتياجات المؤسسات' },
   },
   en: {
     titles: { citizens: 'What do you need?', tourism: 'Explore Tunisia', pros: 'Your business on Dalil Tounes' },
@@ -72,7 +72,7 @@ const COPY: Record<Lang, {
     visit: 'Explore & visit', settle: 'Move to & live in Tunisia', moreTopics: 'More topics', all: 'View the full page', hint: 'Full details remain available.',
     topics: { housing: 'Housing & settling in', residence: 'Stay & residence',  health: 'Health', education: 'Education', services: 'Citizen services', shops: 'Shops & stores', leisure: 'Leisure & events', jobs: 'Jobs',
       heritage: 'Villages & heritage', nature: 'Nature & hiking', craft: 'Crafts & skills', food: 'Food & markets', events: 'Culture & events',
-      stays: 'Stays & experiences', settle: 'Moving & expat guide', free: 'Free business listing', cv: 'Your business mini-app', models: 'Explore models', offers: 'Offers & pricing', partners: 'Become a partner', businessPartners: 'Business network', businessNeeds: 'Business needs' },
+      stays: 'Stays & experiences', settle: 'Moving & expat guide', free: 'Free business listing', cv: 'Mini-app', models: 'See both models', offers: 'Offers & pricing', partners: 'Become a partner', businessPartners: 'Business network', businessNeeds: 'Business needs' },
   },
   it: {
     titles: { citizens: 'Di cosa hai bisogno?', tourism: 'Scopri la Tunisia', pros: 'La tua impresa su Dalil Tounes' },
@@ -80,7 +80,7 @@ const COPY: Record<Lang, {
     visit: 'Visitare & scoprire', settle: 'Vivere in Tunisia', moreTopics: 'Altre sezioni', all: 'Apri la pagina completa', hint: 'I dettagli sono sempre disponibili.',
     topics: { housing: 'Casa e sistemazione', residence: 'Soggiorno e residenza',  health: 'Salute', education: 'Istruzione', services: 'Servizi ai cittadini', shops: 'Negozi', leisure: 'Tempo libero & eventi', jobs: 'Lavoro',
       heritage: 'Borghi & patrimonio', nature: 'Natura & escursioni', craft: 'Artigianato', food: 'Sapori & mercati', events: 'Cultura & eventi',
-      stays: 'Soggiorni & esperienze', settle: 'Guida al trasferimento', free: 'Iscrizione gratuita', cv: 'La tua mini-app professionale', models: 'Scopri i modelli', offers: 'Offerte & prezzi', partners: 'Diventa partner', businessPartners: 'Rete professionale', businessNeeds: 'Esigenze professionali' },
+      stays: 'Soggiorni & esperienze', settle: 'Guida al trasferimento', free: 'Iscrizione gratuita', cv: 'Mini-app', models: 'Scopri i due modelli', offers: 'Offerte & prezzi', partners: 'Diventa partner', businessPartners: 'Rete professionale', businessNeeds: 'Esigenze professionali' },
   },
   ru: {
     titles: { citizens: 'Что вам нужно?', tourism: 'Откройте Тунис', pros: 'Ваш бизнес на Dalil Tounes' },
@@ -88,7 +88,7 @@ const COPY: Record<Lang, {
     visit: 'Путешествия', settle: 'Переезд и жизнь в Тунисе', moreTopics: 'Другие разделы', all: 'Вся страница', hint: 'Полная информация остаётся доступной.',
     topics: { housing: 'Жильё и переезд', residence: 'Проживание и ВНЖ',  health: 'Здоровье', education: 'Образование', services: 'Услуги гражданам', shops: 'Магазины', leisure: 'Отдых и события', jobs: 'Работа',
       heritage: 'Деревни и наследие', nature: 'Природа и походы', craft: 'Ремёсла', food: 'Еда и рынки', events: 'Культура и события',
-      stays: 'Проживание и экскурсии', settle: 'Переезд и жизнь', free: 'Бесплатная регистрация', cv: 'Мини-приложение для бизнеса', models: 'Модели', offers: 'Предложения и цены', partners: 'Стать партнёром', businessPartners: 'Партнёрская сеть', businessNeeds: 'Запросы компаний' },
+      stays: 'Проживание и экскурсии', settle: 'Переезд и жизнь', free: 'Бесплатная регистрация', cv: 'Мини-приложение', models: 'Две модели', offers: 'Предложения и цены', partners: 'Стать партнёром', businessPartners: 'Партнёрская сеть', businessNeeds: 'Запросы компаний' },
   },
 };
 
@@ -167,6 +167,65 @@ export default function PlatformAppSectionHub({ kind }: { kind: Hub }) {
   const closeLabels: Record<Lang, string> = {
     fr: 'Fermer', ar: 'إغلاق', en: 'Close', it: 'Chiudi', ru: 'Закрыть'
   };
+  // Public presentation only. Existing model previews and customer account remain
+  // in their respective client mini-apps; no product creation or authentication here.
+  const proShowcase: Record<Lang, {
+    modelsTitle: string; modelsIntro: string; businessNote: string; portfolioNote: string;
+    preview: string; shopTitle: string; shopIntro: string; shopFoot: string;
+    accountTitle: string; accountIntro: string; accountFoot: string;
+  }> = {
+    fr: {
+      modelsTitle: 'Deux modèles de mini-appli', modelsIntro: 'CV Business et CV Portfolio : découvrez les présentations déjà disponibles sur un exemple réel.',
+      businessNote: 'Services et informations professionnelles', portfolioNote: 'Réalisations et photos mises en avant',
+      preview: "Voir l’aperçu", shopTitle: 'Boutique & catalogue',
+      shopIntro: 'Présentez vos produits dans votre mini-appli avec photos, catégories et demandes de devis.',
+      shopFoot: 'Les produits sont publiés après validation. Aucun paiement direct depuis cette page.',
+      accountTitle: 'Mon compte professionnel',
+      accountIntro: 'Le propriétaire accède à son espace depuis sa mini-appli pour gérer sa présentation et proposer des produits.',
+      accountFoot: 'Accès personnel réservé au professionnel connecté.'
+    },
+    ar: {
+      modelsTitle: 'زوز نماذج للتطبيق المصغّر', modelsIntro: 'CV Business وCV Portfolio: شوف التصميمين الموجودين باستعمال مثال حقيقي.',
+      businessNote: 'الخدمات والمعلومات المهنية', portfolioNote: 'الإنجازات والصور في الواجهة',
+      preview: 'شوف المثال', shopTitle: 'المتجر والكتالوغ',
+      shopIntro: 'اعرض المنتجات بالصور والأصناف وطلبات عرض السعر داخل تطبيقك المصغّر.',
+      shopFoot: 'المنتجات تتنشر بعد الموافقة. ما فماش خلاص مباشر من هالصفحة.',
+      accountTitle: 'حسابي المهني',
+      accountIntro: 'صاحب النشاط يدخل لحسابه من تطبيقه المصغّر لتحديث العرض واقتراح منتجات.',
+      accountFoot: 'الدخول مخصّص لصاحب النشاط بعد تسجيل الدخول.'
+    },
+    en: {
+      modelsTitle: 'Two mini-app models', modelsIntro: 'See the existing CV Business and CV Portfolio designs using a real example.',
+      businessNote: 'Services and business information', portfolioNote: 'Work and photos in the spotlight',
+      preview: 'View example', shopTitle: 'Shop & catalogue',
+      shopIntro: 'Present products with photos, categories and quote requests inside the mini-app.',
+      shopFoot: 'Products are shown after approval. No direct payment on this page.',
+      accountTitle: 'My professional account',
+      accountIntro: 'Business owners access their account from their mini-app to manage their presentation and submit products.',
+      accountFoot: 'Personal access for authenticated business owners.'
+    },
+    it: {
+      modelsTitle: 'Due modelli di mini-app', modelsIntro: 'Scopri CV Business e CV Portfolio con un esempio reale.',
+      businessNote: 'Servizi e informazioni professionali', portfolioNote: 'Lavori e foto in primo piano',
+      preview: 'Vedi esempio', shopTitle: 'Negozio e catalogo',
+      shopIntro: 'Presenta prodotti con foto, categorie e richieste di preventivo nella mini-app.',
+      shopFoot: 'I prodotti vengono pubblicati dopo approvazione. Nessun pagamento diretto qui.',
+      accountTitle: 'Il mio account professionale',
+      accountIntro: 'Il titolare accede dalla propria mini-app per gestire la presentazione e proporre prodotti.',
+      accountFoot: 'Accesso personale riservato al titolare autenticato.'
+    },
+    ru: {
+      modelsTitle: 'Две модели мини-приложения', modelsIntro: 'Посмотрите готовые CV Business и CV Portfolio на реальном примере.',
+      businessNote: 'Услуги и деловая информация', portfolioNote: 'Работы и фотографии',
+      preview: 'Открыть пример', shopTitle: 'Магазин и каталог',
+      shopIntro: 'Показывайте товары с фото, категориями и запросами цен в мини-приложении.',
+      shopFoot: 'Товары публикуются после одобрения. Прямой оплаты на этой странице нет.',
+      accountTitle: 'Мой бизнес-аккаунт',
+      accountIntro: 'Владелец входит из своей мини-программы для обновления данных и предложения товаров.',
+      accountFoot: 'Личный доступ только для авторизованного владельца.'
+    }
+  };
+  const showcase = proShowcase[lang];
   const prosActions = PRO_LINKS.filter(item => ['free', 'cv', 'models', 'offers'].includes(item.id));
   const prosExtras = PRO_LINKS.filter(item => !['free', 'cv', 'models', 'offers'].includes(item.id));
   const renderProCards = (items: Entry[]) => <div className="grid grid-cols-2 gap-2">
@@ -214,6 +273,39 @@ export default function PlatformAppSectionHub({ kind }: { kind: Hub }) {
           {openLabels[lang]} — {copy.topics[selectedPro.id]}
         </Link>
       </section>}
+
+      <section aria-labelledby="pwa-pro-models" className="rounded-2xl border border-[#D4AF37]/40 bg-white p-3">
+        <h2 id="pwa-pro-models" className="font-serif text-lg font-semibold text-[#292725]">{showcase.modelsTitle}</h2>
+        <p className="mt-1 text-xs leading-5 text-[#665F56]">{showcase.modelsIntro}</p>
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          {([
+            { id: 'business', title: 'CV Business', image: '/images/cv-business-professionnel-aux-saveurs-anis.png', detail: showcase.businessNote },
+            { id: 'portfolio', title: 'CV Portfolio', image: '/images/cv-business-portfolio-aux-saveurs-anis.png', detail: showcase.portfolioNote },
+          ] as const).map(model => (
+            <Link key={model.id} to={`/entreprise/sousse/aux-saveurs-d-anis?preview-model=${model.id}&palette=prestige&source=subscription&lang=${lang}`}
+              className="flex min-w-0 flex-col overflow-hidden rounded-xl border border-[#E2D2B2] bg-[#FFFCF7] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B62226]">
+              <div className="flex h-36 items-center justify-center bg-white p-2">
+                <img src={model.image} alt={model.title} loading="lazy" decoding="async" className="h-full w-full object-contain" />
+              </div>
+              <div className="flex flex-1 flex-col p-2.5">
+                <strong className="text-sm text-[#292725]">{model.title}</strong>
+                <span className="mt-1 flex-1 text-xs leading-4 text-[#665F56]">{model.detail}</span>
+                <span className="mt-2 text-xs font-semibold text-[#B62226]">{showcase.preview} →</span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+      <section aria-labelledby="pwa-pro-shop" className="rounded-2xl border border-[#D4AF37]/40 bg-[#FFFDF8] p-3">
+        <h2 id="pwa-pro-shop" className="font-serif text-lg font-semibold text-[#292725]">🛍️ {showcase.shopTitle}</h2>
+        <p className="mt-1 text-sm leading-5 text-[#514A45]">{showcase.shopIntro}</p>
+        <p className="mt-2 text-xs leading-5 text-[#756C61]">{showcase.shopFoot}</p>
+      </section>
+      <section aria-labelledby="pwa-pro-account" className="rounded-2xl border border-[#D4AF37]/40 bg-white p-3">
+        <h2 id="pwa-pro-account" className="font-serif text-lg font-semibold text-[#292725]">👤 {showcase.accountTitle}</h2>
+        <p className="mt-1 text-sm leading-5 text-[#514A45]">{showcase.accountIntro}</p>
+        <p className="mt-2 text-xs leading-5 text-[#756C61]">{showcase.accountFoot}</p>
+      </section>
       <details className="group rounded-2xl border border-[#D4AF37]/40 bg-white p-3">
         <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 px-1 font-medium text-[#45243A] [&::-webkit-details-marker]:hidden">
           {copy.moreTopics}<ChevronDown aria-hidden="true" className="h-5 w-5 shrink-0 text-[#A17D36] transition-transform group-open:rotate-180" />

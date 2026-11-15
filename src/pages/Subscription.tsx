@@ -30,6 +30,7 @@ import {
   type PaletteId,
 } from '../components/CvPresentationModelSelector';
 import { useLanguage } from '../context/LanguageContext';
+import { isPlatformAppMode } from '../lib/platformAppMode';
 
 type PreviewType = 'free' | 'artisan' | 'premium' | 'launch' | 'request' | null;
 type ModalSize = 'preview' | 'compact' | 'medium' | 'large';
@@ -1215,6 +1216,97 @@ const simplifiedOfferCopy: Record<OfferLanguage, {
   },
 };
 
+
+/**
+ * Offer terms displayed only within the national PWA.
+ * Do not use these labels as permission checks in any customer mini-app.
+ * The shared website keeps its prior copy until its separate review.
+ */
+const platformPwaOfferCopy: Record<OfferLanguage, {
+  firstYearIncluded: string;
+  welcomeHighlight: string;
+  maintenanceTiming: string;
+  maintenanceIntro: string;
+  artisanExtras: string[];
+  premiumExtras: string[];
+}> = {
+  fr: {
+    firstYearIncluded: 'Première année incluse (12 mois)',
+    welcomeHighlight: 'La première année de votre mini-appli est incluse, avec son QR Business. Le maintien annuel est proposé à partir de la deuxième année.',
+    maintenanceTiming: 'À partir de la 2e année',
+    maintenanceIntro: 'Après la première année incluse, vous choisissez librement de maintenir votre mini-appli active et entretenue.',
+    artisanExtras: ['Mini-appli CV Business', 'Compte personnel professionnel'],
+    premiumExtras: [
+      'Toutes les fonctionnalités de la formule Artisan',
+      'Compte personnel professionnel',
+      'Choix entre les vitrines CV Business et CV Portfolio',
+      'Choix parmi les 3 palettes de couleurs',
+      'Choix de la présentation du logo à l’ouverture (A/B)',
+      'Bouton Boutique et catalogue de produits (publication après validation)',
+    ],
+  },
+  ar: {
+    firstYearIncluded: 'السنة الأولى مشمولة (12 شهرًا)',
+    welcomeHighlight: 'السنة الأولى من التطبيق المصغّر مشمولة مع QR Business. الصيانة السنوية متاحة ابتداءً من السنة الثانية.',
+    maintenanceTiming: 'ابتداءً من السنة الثانية',
+    maintenanceIntro: 'بعد السنة الأولى المشمولة، يمكنك اختيار مواصلة صيانة التطبيق المصغّر ليبقى نشطًا.',
+    artisanExtras: ['تطبيق مصغّر CV Business', 'حساب مهني شخصي'],
+    premiumExtras: [
+      'جميع مزايا صيغة Artisan',
+      'حساب مهني شخصي',
+      'الاختيار بين CV Business وCV Portfolio',
+      'الاختيار بين 3 لوحات ألوان',
+      'اختيار طريقة ظهور الشعار عند الفتح (A/B)',
+      'زر المتجر وكتالوغ المنتجات (النشر بعد الموافقة)',
+    ],
+  },
+  en: {
+    firstYearIncluded: 'First year included (12 months)',
+    welcomeHighlight: 'Your mini-app includes the first year and its Business QR code. Optional annual maintenance starts from the second year.',
+    maintenanceTiming: 'From the 2nd year',
+    maintenanceIntro: 'After the first included year, you can choose to keep your mini-app active and maintained.',
+    artisanExtras: ['CV Business mini-app', 'Personal professional account'],
+    premiumExtras: [
+      'All Artisan plan features',
+      'Personal professional account',
+      'Choose CV Business or CV Portfolio',
+      'Choose from 3 colour palettes',
+      'Choose the logo opening presentation (A/B)',
+      'Shop button and product catalogue (published after approval)',
+    ],
+  },
+  it: {
+    firstYearIncluded: 'Primo anno incluso (12 mesi)',
+    welcomeHighlight: 'Il primo anno della mini-app è incluso, con il QR Business. La manutenzione annuale facoltativa parte dal secondo anno.',
+    maintenanceTiming: 'Dal 2° anno',
+    maintenanceIntro: 'Dopo il primo anno incluso, puoi scegliere di mantenere la mini-app attiva e aggiornata.',
+    artisanExtras: ['Mini-app CV Business', 'Account professionale personale'],
+    premiumExtras: [
+      'Tutte le funzioni della formula Artisan',
+      'Account professionale personale',
+      'Scelta tra CV Business e CV Portfolio',
+      'Scelta tra 3 palette di colori',
+      'Scelta della presentazione iniziale del logo (A/B)',
+      'Pulsante Negozio e catalogo prodotti (pubblicazione dopo approvazione)',
+    ],
+  },
+  ru: {
+    firstYearIncluded: 'Первый год включён (12 месяцев)',
+    welcomeHighlight: 'Первый год мини-приложения и Business QR включены. Дополнительное ежегодное обслуживание доступно со второго года.',
+    maintenanceTiming: 'Со 2-го года',
+    maintenanceIntro: 'После первого включённого года вы можете продлить обслуживание и работу мини-приложения.',
+    artisanExtras: ['Мини-приложение CV Business', 'Личный профессиональный аккаунт'],
+    premiumExtras: [
+      'Все функции тарифа Artisan',
+      'Личный профессиональный аккаунт',
+      'Выбор CV Business или CV Portfolio',
+      'Выбор одной из 3 цветовых палитр',
+      'Выбор заставки с логотипом (A/B)',
+      'Кнопка магазина и каталог товаров (публикация после одобрения)',
+    ],
+  },
+};
+
 function CreationPlanCard({
   title,
   price,
@@ -1286,7 +1378,23 @@ export const Subscription = () => {
   const isArabic = language === 'ar';
   const copy = subscriptionCopy[language as keyof typeof subscriptionCopy] ?? subscriptionCopy.fr;
   const essentialCopy = essentialCvCopy[language as OfferLanguage] ?? essentialCvCopy.fr;
-  const simpleCopy = simplifiedOfferCopy[language as OfferLanguage] ?? simplifiedOfferCopy.fr;
+  const offerLang = (language in platformPwaOfferCopy ? language : 'fr') as OfferLanguage;
+  const isPwa = isPlatformAppMode();
+  const pwaOffer = platformPwaOfferCopy[offerLang];
+  const defaultSimpleCopy = simplifiedOfferCopy[offerLang];
+  const simpleCopy = isPwa
+    ? {
+        ...defaultSimpleCopy,
+        firstYearIncluded: pwaOffer.firstYearIncluded,
+        welcomeHighlight: pwaOffer.welcomeHighlight,
+        maintenanceTiming: pwaOffer.maintenanceTiming,
+        maintenanceIntro: pwaOffer.maintenanceIntro,
+        artisanFeatures: [...defaultSimpleCopy.artisanFeatures, ...pwaOffer.artisanExtras],
+      }
+    : defaultSimpleCopy;
+  const premiumFeatures = isPwa
+    ? [...(offerCopy[offerLang] ?? offerCopy.fr).premiumFeatures, ...pwaOffer.premiumExtras]
+    : (offerCopy[offerLang] ?? offerCopy.fr).premiumFeatures;
   const mobileCopy = mobileSubscriptionCopy[language as OfferLanguage] ?? mobileSubscriptionCopy.fr;
   const [activePreview, setActivePreview] = useState<PreviewType>(null);
   const [selectedPlan, setSelectedPlan] = useState<{
@@ -1430,9 +1538,9 @@ export const Subscription = () => {
     title={simplifiedOfferCopy[language as OfferLanguage].artisanTitle}
     price={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).artisanPrice}
     creationLabel={simplifiedOfferCopy[language as OfferLanguage].creationLabel}
-    firstYearIncluded={simplifiedOfferCopy[language as OfferLanguage].firstYearIncluded}
+    firstYearIncluded={simpleCopy.firstYearIncluded}
     intro={simplifiedOfferCopy[language as OfferLanguage].artisanIntro}
-    features={simplifiedOfferCopy[language as OfferLanguage].artisanFeatures}
+    features={simpleCopy.artisanFeatures}
     previewLabel={simplifiedOfferCopy[language as OfferLanguage].preview}
     chooseLabel={simplifiedOfferCopy[language as OfferLanguage].chooseArtisan}
     onPreview={() => setActivePreview('artisan')}
@@ -1447,9 +1555,9 @@ export const Subscription = () => {
     title={simplifiedOfferCopy[language as OfferLanguage].premiumTitle}
     price={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).premiumPrice}
     creationLabel={simplifiedOfferCopy[language as OfferLanguage].creationLabel}
-    firstYearIncluded={simplifiedOfferCopy[language as OfferLanguage].firstYearIncluded}
+    firstYearIncluded={simpleCopy.firstYearIncluded}
     intro={simplifiedOfferCopy[language as OfferLanguage].premiumIntro}
-    features={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).premiumFeatures}
+    features={premiumFeatures}
     previewLabel={simplifiedOfferCopy[language as OfferLanguage].preview}
     chooseLabel={simplifiedOfferCopy[language as OfferLanguage].choosePremium}
     onPreview={() => setActivePreview('premium')}
