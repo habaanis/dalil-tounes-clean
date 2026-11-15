@@ -161,6 +161,7 @@ export interface CvPortfolioPresentationProps {
   onSelectImage: (url: string) => void;
   notice: string;
   hideBack?: boolean;
+  showClientQrBack?: boolean;
   embeddedPreview?: boolean;
   palette?: PortfolioPalette | null;
 }
@@ -190,6 +191,7 @@ export function CvPortfolioPresentation({
   onSelectImage,
   notice,
   hideBack = false,
+  showClientQrBack = false,
   embeddedPreview = false,
   palette = 'prestige',
 }: CvPortfolioPresentationProps) {
@@ -308,7 +310,7 @@ export function CvPortfolioPresentation({
       style={PORTFOLIO_PALETTE_THEMES[palette || 'prestige']}
     >
       <div className="cvp-lienora-shell">
-        {!hideBack && <button type="button" className="cvp-back" onClick={onBack}>‹ <span>{copy.home}</span></button>}
+        {(!hideBack || showClientQrBack) && <button type="button" className="cvp-back cvp-back-to-qr" onClick={onBack}>‹ <span>{showClientQrBack ? (language === 'ar' ? 'العودة إلى QR' : language === 'en' ? 'Back to QR' : 'Retour au QR code') : copy.home}</span></button>}
         <article className="cvp-lienora-card">
           <div className="cvp-lienora-cover"><img src={coverImage} alt="" loading="eager" decoding="async" /></div>
           <img className="cvp-lienora-logo" src={logoImage} alt={`Logo ${profile.identity.name}`} />
