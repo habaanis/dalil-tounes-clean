@@ -30,3 +30,11 @@ verify_jwt = true
 
 [functions.sync-airtable]
 verify_jwt = true
+
+# Dalil Boutique: guest submission validated and rate-limited by Edge Function.
+[functions.dalil-boutique-customer-submit]
+verify_jwt = false
+
+# Merchant JWT and professional_profile_access are checked inside the private API.
+[functions.dalil-boutique-merchant-orders]
+verify_jwt = false
