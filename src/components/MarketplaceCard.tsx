@@ -32,7 +32,7 @@ const copy = {
     verified: 'Vérifié',
     shareWhatsApp: 'Partager sur WhatsApp',
     shareFacebook: 'Partager sur Facebook',
-    justNow: 'À l'instant',
+    justNow: "À l'instant",
     hoursAgo: 'Il y a {n}h',
     daysAgo: 'Il y a {n}j',
     weeksAgo: 'Il y a {n}sem',
