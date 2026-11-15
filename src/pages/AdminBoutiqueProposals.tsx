@@ -56,6 +56,23 @@ export default function AdminBoutiqueProposals() {
     return () => {active=false;};
   },[admin,rows,images]);
 
+  const publish = async (id:string) => {
+    if (!window.confirm('Valider ce produit et prévenir ses abonnés ? Vérifiez la photo, les informations et les droits de publication.')) return;
+    setBusy(id);setFeedback('');
+    try {
+      const {data,error}=await supabase.functions.invoke('dalil-boutique-admin-publish',{body:{requestId:id}});
+      if (error || !data?.ok) {
+        setFeedback('Publication refusée. Vérifiez la photo et les informations du produit.');
+      } else {
+        setFeedback('Produit publié après validation. La notification est gérée par le circuit Push existant.');
+        setImages(current => { const next={...current};delete next[id];return next; });
+        await load();
+      }
+    } catch {
+      setFeedback('Publication impossible. Aucune validation confirmée.');
+    } finally {setBusy(null);}
+  };
+
   const reject = async (id:string) => {
     setBusy(id);setFeedback('');
     const {error} = await supabase.from('dalil_boutique_product_requests')
@@ -75,7 +92,7 @@ export default function AdminBoutiqueProposals() {
   return <main className="min-h-screen bg-[#fbf8f0] px-4 py-7 text-[#452f2b]">
     <div className="mx-auto max-w-3xl">
       <h1 className="text-xl font-semibold">Modération des propositions Boutique</h1>
-      <p className="my-3 text-sm text-gray-700">Les photos restent privées. Un refus est possible ici. La validation et la publication d'un produit restent dans le parcours administratif existant, après vérification des images et informations.</p>
+      <p className="my-3 text-sm text-gray-700">Les photos restent privées. Après vérification de la photo et des informations, l’administrateur peut valider et publier. Cette action peut notifier les abonnés de l’entreprise. Les propositions incomplètes restent en attente.</p>
       <button type="button" onClick={()=>void load()} className="mb-4 rounded-lg border border-[#d9c39a] bg-white px-4 py-2 text-sm">Actualiser</button>
       {feedback && <p role="status" className="mb-4 text-sm">{feedback}</p>}
       {rows.length===0 && <p className="rounded-xl bg-white p-5 text-sm">Aucune proposition en attente.</p>}
@@ -87,10 +104,13 @@ export default function AdminBoutiqueProposals() {
         <p className="mt-2 text-sm">{row.mode==='quote'?'Sur devis':`Prix proposé : ${row.price ?? '—'} TND`}</p>
         {row.photo_path && (images[row.id] ? <img src={images[row.id]} alt={`Photo proposée pour ${row.title}`} className="mt-3 max-h-64 w-full rounded-lg object-contain" /> : <p className="mt-3 text-xs">Photo privée en cours de chargement ou inaccessible</p>)}
         <div className="mt-4 flex flex-wrap gap-2">
+          <button type="button" disabled={busy===row.id || !row.photo_path || !images[row.id]} onClick={()=>void publish(row.id)} className="rounded-lg bg-[#8f2530] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">
+            {busy===row.id?'Traitement…':'Valider et publier'}
+          </button>
           <button type="button" disabled={busy===row.id} onClick={()=>void reject(row.id)} className="rounded-lg border border-red-300 bg-red-50 px-4 py-2 text-sm text-red-800 disabled:opacity-60">
             {busy===row.id?'Traitement…':'Refuser la proposition'}
           </button>
-          <span className="self-center text-xs text-gray-600">Publication manuelle uniquement</span>
+          <span className="self-center text-xs text-gray-600">Validation explicite requise</span>
         </div>
       </article>)}</div>
     </div>
