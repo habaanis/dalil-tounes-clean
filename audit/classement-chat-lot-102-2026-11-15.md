@@ -35,4 +35,4 @@ recjEe9SsRzTmq3BP reckscVNfsVLMiDpp reclDyFllsk5I3eOa recm9Bc2ENAFDSY1H recmueTz
 Aucune création de catégorie ou rubrique nouvelle : libellés exacts Airtable, y compris espaces finaux. Statuts et approbations inchangés par les écritures (seuls 2 champs renseignés). Ne pas publier les dossiers. Cas ambigus ou sans lien unique reportés. Total de 2487 inchangé.
 
 ## REPRISE PROCHAINE MISSION CHAT
-**Avant de traiter d'autres fiches, vérifier 102/102 dans Supabase**. Première vérification 6/102 synchronisées, 2487 total, 837 sans rubrique, 805 sans catégorie. Corriger ce journal avec le statut final. Ne pas reclasser les 102 identifiants ci-dessus.
+**Avant de traiter d'autres fiches, vérifier 102/102 dans Supabase**. **Contrôle final : 102/102 synchronisées dans Supabase** (catégorie + liste_pages présentes, correspondance 102 IDs uniques). **Total 2487, sans rubrique 749, sans catégorie 717**. Ne pas reclasser les 102 identifiants ci-dessus.
