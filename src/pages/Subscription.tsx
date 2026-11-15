@@ -2,6 +2,7 @@ import StructuredData from '../components/StructuredData';
 import Concept from './Concept';
 import '../styles/pwaProConceptCompact.css';
 import '../styles/pwaProMiniCompact.css';
+import '../styles/pwaProOffersCompact.css';
 import { FounderStory } from '../components/FounderStory';
 import { CvBusinessHome } from './SeparationPreview';
 import { EssentialPresence } from '../components/EssentialPresence';
@@ -1565,8 +1566,8 @@ export const Subscription = () => {
             <CvBusinessJourney language={language as OfferLanguage} />
           </details>}
         </section>
-        <section id="offres" aria-labelledby="cv-business-products-title" className={`${isPwa && activeProSection !== 'offres' && activeProSection !== 'modeles' ? 'hidden ' : ''}order-2 mt-5 sm:mt-0`}>
-<div className={isPwa && activeProSection !== 'offres' ? 'hidden' : 'mb-6 text-center'}>
+        <section id="offres" data-pwa-offers={isPwa ? "" : undefined} aria-labelledby="cv-business-products-title" className={`${isPwa && activeProSection !== 'offres' && activeProSection !== 'modeles' ? 'hidden ' : ''}order-2 mt-5 sm:mt-0`}>
+<div data-pwa-offers-heading className={isPwa && activeProSection !== 'offres' ? 'hidden' : 'mb-6 text-center'}>
   <p className="text-xs font-medium uppercase tracking-[0.18em] text-amber-600">{language === "ar" ? "تطبيقك المصغّر المهني" : language === "en" ? "YOUR BUSINESS MINI-APP" : language === "it" ? "LA TUA MINI-APP PROFESSIONALE" : language === "ru" ? "ВАШЕ МИНИ-ПРИЛОЖЕНИЕ" : "VOTRE MINI-APPLI PROFESSIONNELLE"}</p>
   <h2 id="cv-business-products-title" className="mt-2 text-2xl font-medium text-[#4A123F] sm:text-3xl">{simpleCopy.productsTitle}</h2>
   <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-slate-600">{simpleCopy.productsSubtitle}</p>
@@ -1589,7 +1590,7 @@ export const Subscription = () => {
 />
 </details>
 <div className={isPwa && activeProSection !== 'offres' ? 'hidden' : 'contents'}>
-<div className="mb-6 overflow-hidden rounded-3xl border border-[#D6AF2E]/60 bg-gradient-to-br from-[#FFF8DF] via-white to-[#FFF9ED] p-5 shadow-[0_12px_30px_rgba(74,18,63,0.07)] sm:p-7">
+<div data-pwa-offers-intro className="mb-6 overflow-hidden rounded-3xl border border-[#D6AF2E]/60 bg-gradient-to-br from-[#FFF8DF] via-white to-[#FFF9ED] p-5 shadow-[0_12px_30px_rgba(74,18,63,0.07)] sm:p-7">
   <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
     <div className="max-w-3xl">
       <span className="inline-flex items-center gap-2 rounded-full bg-[#4A123F] px-3 py-1 text-[10px] font-medium uppercase tracking-[0.12em] text-white">
@@ -1606,7 +1607,7 @@ export const Subscription = () => {
   <p className="mt-4 rounded-2xl border border-[#D6AF2E]/45 bg-white px-4 py-3 text-sm font-medium leading-6 text-[#4A123F]">{simpleCopy.welcomePayment}</p>
 </div>
 
-<div className="grid items-stretch gap-5 lg:grid-cols-2">
+<div data-pwa-offers-plans className="grid items-stretch gap-5 lg:grid-cols-2">
   <CreationPlanCard
     title={simplifiedOfferCopy[language as OfferLanguage].artisanTitle}
     price={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).artisanPrice}
@@ -1647,7 +1648,7 @@ export const Subscription = () => {
 
 {!isPwa && <details className="mt-5 rounded-2xl border border-[#D4AF37]/50 bg-white p-4"><summary className="cursor-pointer font-medium text-[#4A1D43]">{structure.details}</summary><CvBusinessJourney language={language as OfferLanguage} /></details>}
 
-<div className="mt-5 rounded-3xl border border-[#D6AF2E]/60 bg-white p-5 shadow-[0_10px_28px_rgba(74,18,63,0.06)] sm:p-6">
+<div data-pwa-offers-maintenance className="mt-5 rounded-3xl border border-[#D6AF2E]/60 bg-white p-5 shadow-[0_10px_28px_rgba(74,18,63,0.06)] sm:p-6">
   <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
     <div>
       <span className="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.12em] text-emerald-800">{simpleCopy.maintenanceTiming}</span>
@@ -1669,9 +1670,10 @@ export const Subscription = () => {
 </div>
         </section>
 
-        <div className={isPwa && activeProSection !== 'offres' ? 'hidden' : 'contents'}>
+        <div data-pwa-offers-secondary={isPwa ? '' : undefined} className={isPwa && activeProSection !== 'offres' ? 'hidden' : 'contents'}>
         <button
           type="button"
+          data-pwa-offers-secondary-toggle
           aria-expanded={showSecondaryDetails}
           onClick={() => setShowSecondaryDetails((current) => !current)}
           className="order-4 mt-7 rounded-xl border border-[#D6AF2E] bg-white px-4 py-3 text-sm font-medium text-[#4A123F] shadow-sm"
@@ -1679,7 +1681,7 @@ export const Subscription = () => {
           {showSecondaryDetails ? mobileCopy.hideSecondary : mobileCopy.showSecondary}
         </button>
 
-        <aside className={`${showSecondaryDetails ? 'block' : 'hidden'} order-5 mt-5 rounded-2xl border border-amber-200 bg-white p-5 text-center shadow-sm`} aria-labelledby="cv-choice-help-title">
+        <aside data-pwa-offers-help className={`${showSecondaryDetails ? 'block' : 'hidden'} order-5 mt-5 rounded-2xl border border-amber-200 bg-white p-5 text-center shadow-sm`} aria-labelledby="cv-choice-help-title">
           <h2 id="cv-choice-help-title" className="text-lg font-medium text-[#4A123F]">{essentialCopy.helpTitle}</h2>
           <p className="mx-auto mt-2 max-w-3xl text-sm leading-6 text-slate-700">{essentialCopy.helpText}</p>
           <div className="mt-4 flex flex-wrap justify-center gap-3">
@@ -1692,7 +1694,7 @@ export const Subscription = () => {
           </div>
         </aside>
 
-        <section className={`${showSecondaryDetails ? 'block' : 'hidden'} order-6 mt-5 rounded-3xl bg-gradient-to-r from-[#4A123F] to-[#5F174F] p-5 text-white shadow-xl sm:p-7`}>
+        <section data-pwa-offers-elite className={`${showSecondaryDetails ? 'block' : 'hidden'} order-6 mt-5 rounded-3xl bg-gradient-to-r from-[#4A123F] to-[#5F174F] p-5 text-white shadow-xl sm:p-7`}>
           <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-start gap-4">
               <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-[#D6AF2E] text-[#F0C537]">
@@ -1715,12 +1717,12 @@ export const Subscription = () => {
           </div>
         </section>
 
-        <div className={`${showSecondaryDetails ? 'flex' : 'hidden'} order-7 mt-5 items-center justify-center gap-3 rounded-2xl border border-amber-200 bg-white px-4 py-4 text-center text-sm text-slate-700`}>
+        <div data-pwa-offers-disclaimer className={`${showSecondaryDetails ? 'flex' : 'hidden'} order-7 mt-5 items-center justify-center gap-3 rounded-2xl border border-amber-200 bg-white px-4 py-4 text-center text-sm text-slate-700`}>
           <Info className="h-5 w-5 shrink-0 text-[#4A123F]" aria-hidden="true" />
           <p>{copy.disclaimer}</p>
         </div>
 
-        <section className={`${showSecondaryDetails ? 'flex' : 'hidden'} order-8 mt-5 flex-col gap-5 rounded-3xl bg-gradient-to-r from-[#4A123F] to-[#5F174F] p-5 text-white shadow-xl sm:flex-row sm:items-center sm:justify-between sm:p-7`}>
+        <section data-pwa-offers-cta className={`${showSecondaryDetails ? 'flex' : 'hidden'} order-8 mt-5 flex-col gap-5 rounded-3xl bg-gradient-to-r from-[#4A123F] to-[#5F174F] p-5 text-white shadow-xl sm:flex-row sm:items-center sm:justify-between sm:p-7`}>
           <div className="flex items-center gap-4">
             <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-[#D6AF2E] text-[#F0C537]">
               <Rocket className="h-7 w-7" aria-hidden="true" />
