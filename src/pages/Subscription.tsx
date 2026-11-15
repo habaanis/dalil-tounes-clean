@@ -1,6 +1,7 @@
 import StructuredData from '../components/StructuredData';
 import Concept from './Concept';
 import '../styles/pwaProConceptCompact.css';
+import '../styles/pwaProMiniCompact.css';
 import { FounderStory } from '../components/FounderStory';
 import { CvBusinessHome } from './SeparationPreview';
 import { EssentialPresence } from '../components/EssentialPresence';
