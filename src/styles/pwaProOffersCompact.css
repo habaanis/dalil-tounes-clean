@@ -218,3 +218,31 @@
     gap: 11px;
   }
 }
+
+
+/* Only the Premium expanded benefit list is two-column.
+   Artisan and the public website keep their existing presentation. */
+[data-pwa-pro-window] [data-pwa-premium-feature-columns] > ul {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 12px;
+  align-items: start;
+}
+[data-pwa-pro-window] [data-pwa-premium-feature-columns] > ul > li {
+  min-width: 0;
+  gap: 6px;
+  margin: 0;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+[data-pwa-pro-window] [data-pwa-premium-feature-columns] > ul > li > span:first-child {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+}
+[data-pwa-pro-window] [data-pwa-premium-feature-columns] > ul > li svg {
+  width: 11px;
+  height: 11px;
+}
