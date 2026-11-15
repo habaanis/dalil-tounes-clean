@@ -352,6 +352,25 @@
   font-weight: 900;
 }
 
+.dt-presentation-accordion.dt-intro {
+  padding: 0;
+  overflow: hidden;
+}
+/* The introduction trigger has the same outer geometry as the regular accordions. */
+.dt-presentation-accordion .dt-presentation-trigger {
+  min-height: 50px;
+  padding: 8px 11px;
+  margin: 0;
+  border: 0;
+  width: 100%;
+  box-shadow: none;
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+.dt-presentation-accordion .dt-presentation-content {
+  padding: 12px 13px 13px;
+}
+
 .dt-accordion-list {
   margin-top: 7px;
   display: grid;
@@ -882,6 +901,9 @@
   }
 
   .dt-accordion-trigger {
+    min-height: 52px;
+  }
+  .dt-presentation-accordion .dt-presentation-trigger {
     min-height: 52px;
   }
 
