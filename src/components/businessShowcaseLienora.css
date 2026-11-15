@@ -819,3 +819,33 @@
     animation: none;
   }
 }
+
+/* Sales-focused Boutique action in Business CV. Existing Boutique CTA only. */
+.dt-boutique-accordion {
+  border: 1px solid color-mix(in srgb, var(--dt-accent) 75%, #c9a65d);
+  background: linear-gradient(105deg, color-mix(in srgb, var(--dt-accent) 15%, var(--dt-panel-start)), var(--dt-panel-end));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--dt-accent) 16%, transparent);
+}
+.dt-boutique-accordion .dt-boutique-trigger {
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+  min-height: 58px;
+  padding: 11px 14px;
+  font-size: 0.84rem;
+  font-weight: 900;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+}
+.dt-boutique-accordion .dt-boutique-trigger > svg:first-child {
+  width: 20px;
+  height: 20px;
+}
+.dt-boutique-accordion .dt-boutique-trigger > span {
+  white-space: normal;
+  line-height: 1.35;
+}
+.dt-boutique-accordion .dt-boutique-trigger:focus-visible {
+  outline: 2px solid var(--dt-accent);
+  outline-offset: -3px;
+}
