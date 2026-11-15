@@ -45,10 +45,10 @@ const LanguageSelector = ({ clientApp = false }: LanguageSelectorProps) => {
       <label
         data-client-language-selector
         dir="ltr"
-        className="relative inline-flex items-center gap-2 rounded-md border border-gray-200 bg-white px-2.5 text-gray-700 shadow-sm focus-within:ring-2 focus-within:ring-[#D4AF37]"
+        className="relative inline-flex shrink-0 items-center gap-1 rounded-lg border border-gray-200 bg-white px-1.5 text-gray-700 shadow-sm focus-within:ring-2 focus-within:ring-[#D4AF37]"
         style={{ fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" }}
       >
-        <Globe2 className="pointer-events-none h-4 w-4 shrink-0" aria-hidden="true" />
+        <Globe2 className="pointer-events-none h-3.5 w-3.5 shrink-0" aria-hidden="true" />
         <select
           aria-label={accessibleLabel}
           value={language}
@@ -56,14 +56,14 @@ const LanguageSelector = ({ clientApp = false }: LanguageSelectorProps) => {
             const next = event.target.value;
             if (next === 'fr' || next === 'ar' || next === 'en') setLanguage(next);
           }}
-          className="min-h-[44px] cursor-pointer appearance-none bg-transparent py-1.5 pr-5 text-sm font-medium text-gray-700 outline-none"
+          className="min-h-[38px] max-w-[76px] cursor-pointer appearance-none bg-transparent py-1 pr-3 text-[11px] font-semibold text-gray-700 outline-none"
         >
           {!hasClientLanguage && <option value={language} disabled>{currentLang.label}</option>}
-          <option value="fr" lang="fr">Français</option>
-          <option value="ar" lang="ar" dir="rtl">العربية</option>
-          <option value="en" lang="en">English</option>
+          <option value="fr" lang="fr">FR</option>
+          <option value="ar" lang="ar" dir="rtl">AR</option>
+          <option value="en" lang="en">EN</option>
         </select>
-        <ChevronDown className="pointer-events-none absolute right-2.5 h-3.5 w-3.5 text-gray-400" aria-hidden="true" />
+        <ChevronDown className="pointer-events-none absolute right-1 h-3 w-3 text-gray-400" aria-hidden="true" />
       </label>
     );
   }
