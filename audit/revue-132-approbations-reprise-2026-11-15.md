@@ -9,9 +9,9 @@ Sources en lecture seule : Supabase kmvjegbtroksjqaqliyv/public.entreprise et Ai
 - 560 fiches répondent actuellement au prédicat de visibilité RLS public.
 - 132 fiches parmi elles sont toujours `approved=NULL` et `statut_validation=publie`.
 - 131/132 ont leur correspondant exact Airtable, une fiche **Lessing-Institut** (`recuc8IWvSa7vBFxW`) n'a pas de correspondant.
-- 125/132 ont un statut de publication `Publié`, 6 ont `statut_publication=NULL`, 1 au titre de Lessing figure dans les 125. Les six dossiers avec publication vide : Viamercato, Syrine Private School, Chwine Rent a car Mahdia, Bergaoui Prod, TAIEB SAKKA Medical Analysis Laboratory, Mahdia Gym.
+- 126/132 ont un statut de publication `Publié` (dont Lessing-Institut), 6 ont `statut_publication=NULL`. Les six dossiers avec publication vide : Viamercato, Syrine Private School, Chwine Rent a car Mahdia, Bergaoui Prod, TAIEB SAKKA Medical Analysis Laboratory, Mahdia Gym.
 - 7/132 possèdent une case « vérifiée » cochée, mais la vérification ne constitue pas à elle seule une autorisation de publier; cf. compte rendu précédent `audit/verif-8-et-publications-vides-2026-11-15.md`, Coin Bio déjà régularisé.
-- 28 dossiers sur les 131 appariés ont un commentaire Airtable; 104 n'en ont pas (les comptages du rapport précédent étaient 28/104 avant retrait de Coin Bio et demeurent à affiner selon filtres, vérifier si nécessaire avant diffusion externe).
+- 27 dossiers sur les 131 appariés ont un commentaire Airtable; 104 n'en ont pas.
 
 ## Lecture qualitative des commentaires
 Exemples de messages WhatsApp envoyés à des professionnels attestent une communication sur l'existence de leur fiche gratuite, mais ne prouvent pas nécessairement une décision de publication administrative ni l'accord/validation du professionnel. On ne coche pas `approved` sur cette seule base.
