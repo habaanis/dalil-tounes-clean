@@ -189,3 +189,25 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+
+/* Three-step explanation: avoid tall equal-height columns with empty bottoms.
+ * Preserve all wording; cards naturally fit their content. */
+[data-pwa-pro-window] [data-concept-steps] h2 + div {
+  align-items: start;
+  align-content: start;
+}
+[data-pwa-pro-window] [data-concept-steps] article {
+  align-self: start;
+  min-height: 0;
+  height: auto;
+  grid-template-rows: auto auto;
+  row-gap: 0;
+}
+[data-pwa-pro-window] [data-concept-steps] article h3 {
+  align-self: start;
+}
+[data-pwa-pro-window] [data-concept-steps] article p {
+  align-self: start;
+  margin-bottom: 0;
+}
