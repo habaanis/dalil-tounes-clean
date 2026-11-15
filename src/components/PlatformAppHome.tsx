@@ -4,6 +4,7 @@ import SearchBar from './SearchBar';
 import { Building2, ShieldCheck, Star } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import PlatformAppHelp from './PlatformAppHelp';
+import { Link } from 'react-router-dom';
 
 type Lang = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 const COPY: Record<Lang, {
@@ -102,6 +103,19 @@ export default function PlatformAppHome({ totalCount, legacyCertifiedCount, reco
       <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-[#242424]">{lang === 'fr' ? 'Vous êtes professionnel ?' : lang === 'ar' ? 'عندك مؤسسة؟' : lang === 'en' ? 'Are you a professional?' : lang === 'it' ? 'Sei un professionista?' : 'Вы профессионал?'}</p>
       <p className="text-sm font-semibold leading-5 text-[#292929]">{lang === 'ar' ? 'خلّي مؤسستك موجودة في دليل تونس.' : lang === 'en' ? 'Get listed on Dalil Tounes.' : lang === 'it' ? 'Fai conoscere la tua attività su Dalil Tounes.' : lang === 'ru' ? 'Разместите свою компанию на Dalil Tounes.' : 'Soyez répertorié sur Dalil Tounes.'}</p>
       <p className="mt-1 text-xs leading-5 text-[#66615D]">{lang === 'ar' ? 'عزّز حضور نشاطك عبر تطبيق مصغّر مهني خاص بمؤسستك.' : lang === 'en' ? 'Give your business greater impact with your own business mini-app.' : lang === 'it' ? 'Dai più visibilità alla tua attività con una mini-app personalizzata.' : lang === 'ru' ? 'Представьте бизнес с помощью собственного мини-приложения.' : 'Développez votre visibilité avec votre mini-appli professionnelle.'}</p>
+    </section>
+    <section data-platform-app-house-teaser className="rounded-xl border border-[#C9A65D] bg-[#FFFCF8] p-3 shadow-[0_2px_12px_rgba(30,25,20,0.025)]" aria-label={lang === 'fr' ? 'Découvrez la mini-appli professionnelle' : 'Professional mini-app'}>
+      <div className="flex items-center gap-3">
+        <img src="/images/maison-dalil-tounes-validee.webp" alt={lang === 'fr' ? 'Maison Dalil Tounes : un même endroit pour vos contacts professionnels' : 'Dalil Tounes house'} loading="lazy" decoding="async" className="h-28 w-28 shrink-0 rounded-lg bg-[#FFF8EC] object-contain sm:h-32 sm:w-32" />
+        <div className="min-w-0 flex-1">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.09em] text-[#97752F]">{lang === 'fr' ? 'Maison Dalil Tounes' : lang === 'ar' ? 'بيت دليل تونس' : lang === 'en' ? 'Dalil Tounes House' : lang === 'it' ? 'Casa Dalil Tounes' : 'Дом Dalil Tounes'}</p>
+          <h2 className="mt-1 font-serif text-[16px] font-semibold leading-5 text-[#292725]">{lang === 'fr' ? 'Votre présence, au même endroit' : lang === 'ar' ? 'كل حضورك في مكان واحد' : lang === 'en' ? 'Your business, in one place' : lang === 'it' ? 'La tua attività, in un unico posto' : 'Ваш бизнес в одном месте'}</h2>
+          <p className="mt-1 text-xs leading-5 text-[#665E55]">{lang === 'fr' ? 'Vos services, contacts et réseaux réunis dans une mini-appli facile à partager.' : lang === 'ar' ? 'خدماتك واتصالاتك وشبكاتك في تطبيق مصغّر سهل المشاركة.' : lang === 'en' ? 'Services, contacts and social networks in one shareable mini-app.' : lang === 'it' ? 'Servizi, contatti e social in una mini-app da condividere.' : 'Услуги, контакты и соцсети в одном мини-приложении.'}</p>
+        </div>
+      </div>
+      <Link to="/subscription#cv-professionnels" className="mt-3 inline-flex min-h-10 w-full items-center justify-center rounded-lg border border-[#C9A65D] bg-[#FFF8EA] px-3 py-2 text-center text-xs font-semibold text-[#6C5028]">
+        {lang === 'fr' ? 'Découvrir la mini-appli' : lang === 'ar' ? 'اكتشف التطبيق المصغّر' : lang === 'en' ? 'Discover the mini-app' : lang === 'it' ? 'Scopri la mini-app' : 'Узнать о мини-приложении'}
+      </Link>
     </section>
     <PlatformAppHelp language={lang} />
     <section aria-label={t.count(totalCount ?? '—')} className="rounded-xl border border-[#C9A65D] bg-[#FFFDF9] px-4 py-4 shadow-[0_2px_12px_rgba(30,25,20,0.025)]" aria-live="polite">
