@@ -1472,7 +1472,7 @@ export const Subscription = () => {
         const models = document.getElementById('modeles');
         if (models instanceof HTMLDetailsElement) models.open = true;
       }
-      document.getElementById(activeProSection)?.scrollIntoView({ block: 'start' });
+      document.querySelector('[data-pwa-pro-sections]')?.scrollIntoView({ block: 'start' });
     });
     return () => window.cancelAnimationFrame(frame);
   }, [isPwa, activeProSection]);
