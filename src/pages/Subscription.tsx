@@ -1381,6 +1381,29 @@ function CreationPlanCard({
   );
 }
 
+const PWA_PRO_SALES_COPY: Record<OfferLanguage, { intro: string; mini: string }> = {
+  fr: {
+    intro: 'Vous avez votre boutique dans la rue : avec votre mini-appli, vos clients découvrent aussi vos produits sur leur téléphone. Les réseaux sociaux attirent l’attention ; la mini-appli facilite les commandes. Les deux travaillent ensemble.',
+    mini: 'Ne vous contentez pas d’être découvert : présentez vos services et vos produits au même endroit. Avec le catalogue Boutique de la formule Premium, vos clients peuvent consulter votre offre et vous adresser leurs demandes de commande.',
+  },
+  ar: {
+    intro: 'عندك محل في الشارع، ومع التطبيق المصغّر حرفاءك ينجموا يشوفوا منتجاتك من تليفوناتهم. الشبكات الاجتماعية تجلب الانتباه، والتطبيق المصغّر يسهّل الطلبات. الزوز يكملوا بعضهم.',
+    mini: 'موش كان للتعريف بمؤسستك: اجمع خدماتك ومنتجاتك في بلاصة وحدة. مع متجر وكتالوغ Premium، حرفاءك يشوفوا العروض وينجموا يبعثوا طلباتهم.',
+  },
+  en: {
+    intro: 'You have a shop on the street; your mini-app puts your products on customers’ phones. Social media draws attention, and your mini-app makes ordering easier. They work together.',
+    mini: 'Go beyond being discovered: show services and products in one place. The Premium shop catalogue lets customers browse your offer and send order enquiries.',
+  },
+  it: {
+    intro: 'Hai un negozio in strada e, con la mini-app, i tuoi prodotti arrivano anche sul telefono dei clienti. I social attirano l’attenzione; la mini-app facilita gli ordini. Lavorano insieme.',
+    mini: 'Non limitarti a farti trovare: riunisci servizi e prodotti in un unico spazio. Con il catalogo Negozio Premium, i clienti possono consultare l’offerta e inviare richieste d’ordine.',
+  },
+  ru: {
+    intro: 'У вас есть магазин на улице, а мини-приложение показывает товары и на телефонах клиентов. Соцсети привлекают внимание, мини-приложение облегчает заказы. Они работают вместе.',
+    mini: 'Не ограничивайтесь узнаваемостью: представьте услуги и товары вместе. Каталог магазина Premium помогает клиентам увидеть ассортимент и отправлять запросы на заказы.',
+  },
+};
+
 export const Subscription = () => {
   const { language } = useLanguage();
   const structure = siteStructureCopy[language];
@@ -1529,7 +1552,7 @@ export const Subscription = () => {
           <h1 className="font-serif text-2xl font-normal tracking-tight text-[#4A123F] sm:text-3xl">
             {structure.professional}
           </h1>
-          <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-500 sm:text-base">{structure.freeIntro}</p>
+          <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-500 sm:text-base">{isPwa ? PWA_PRO_SALES_COPY[offerLang].intro : structure.freeIntro}</p>
         </header>
 
         {isPwa
@@ -1564,7 +1587,7 @@ export const Subscription = () => {
         <section id="cv-professionnels" className={`${isPwa && activeProSection !== 'cv-professionnels' ? 'hidden ' : ''}my-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-5`}>
           <h2 className="font-serif text-xl font-medium text-[#4A1D43]">{structure.products}</h2>
           <p className="mt-1 text-xs text-slate-500">CV Business · CV Portfolio</p>
-          <p className="my-3 text-sm leading-6 text-slate-600">{structure.cvIntro}</p>
+          <p className="my-3 text-sm leading-6 text-slate-600">{isPwa ? PWA_PRO_SALES_COPY[offerLang].mini : structure.cvIntro}</p>
           <details className={isPwa ? "rounded-xl border border-[#D4AF37]/45 bg-[#FFFDF8] px-3 py-2" : ""}><summary className="min-h-11 cursor-pointer font-medium text-[#4A1D43]">{structure.details}</summary><CvBusinessHome embedded /></details>
           {isPwa && <details className="mt-3 rounded-xl border border-[#D4AF37]/45 bg-white p-3">
             <summary className="min-h-11 cursor-pointer text-sm font-semibold text-[#292725]">3 outils complémentaires, un seul parcours</summary>
