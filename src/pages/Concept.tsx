@@ -136,7 +136,7 @@ export default function Concept({ embedded = false }: { embedded?: boolean }) {
   const isRTL = language === 'ar';
 
   return (
-    <div className="min-h-screen bg-white" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div data-concept-embedded={embedded ? '' : undefined} className="min-h-screen bg-white" dir={isRTL ? 'rtl' : 'ltr'}>
       {!embedded && <><StructuredData data={[{ '@context': 'https://schema.org', '@type': 'AboutPage', name: t.breadcrumbCurrent, description: t.seoDescription, url: 'https://dalil-tounes.com/concept' }, { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: t.breadcrumbHome, item: 'https://dalil-tounes.com/' }, { '@type': 'ListItem', position: 2, name: t.breadcrumbCurrent }] }]} />
       <SEOHead title={t.seoTitle} description={t.seoDescription} keywords={t.seoKeywords} image="/images/pourquoi-business-card.png" type="website" canonical="https://dalil-tounes.com/concept" currentPath={currentPath} />
 
@@ -148,10 +148,10 @@ export default function Concept({ embedded = false }: { embedded?: boolean }) {
       </section>
 
       </>}
-      {embedded && <p className="mx-auto max-w-5xl px-4 pt-5 text-sm leading-6 text-slate-600">{t.heroDescription}</p>}
-      <section className="px-4 pt-7"><div className="mx-auto max-w-5xl"><GuideMascot variant="welcome" pose="hello" position="left" size="sm" title={t.mascotTitle} message={t.mascotMessage} /></div></section>
+      {embedded && <p data-concept-intro className="mx-auto max-w-5xl px-4 pt-5 text-sm leading-6 text-slate-600">{t.heroDescription}</p>}
+      <section data-concept-mascot className="px-4 pt-7"><div className="mx-auto max-w-5xl"><GuideMascot variant="welcome" pose="hello" position="left" size="sm" title={t.mascotTitle} message={t.mascotMessage} /></div></section>
 
-      <section className="px-4 py-10">
+      <section data-concept-paths className="px-4 py-10">
         <div className="mx-auto max-w-5xl">
           <h2 className="text-center text-2xl font-bold text-[#2E102A] sm:text-3xl">{t.pathsTitle}</h2>
           <div className="mt-7 grid gap-5 md:grid-cols-2">
@@ -173,7 +173,7 @@ export default function Concept({ embedded = false }: { embedded?: boolean }) {
         </div>
       </section>
 
-      <section className="bg-gray-50 px-4 py-10">
+      <section data-concept-steps className="bg-gray-50 px-4 py-10">
         <div className="mx-auto max-w-5xl">
           <h2 className="text-center text-2xl font-bold text-[#2E102A] sm:text-3xl">{t.howTitle}</h2>
           <div className="mt-7 grid gap-4 md:grid-cols-3">
@@ -188,14 +188,14 @@ export default function Concept({ embedded = false }: { embedded?: boolean }) {
         </div>
       </section>
 
-      <section className="px-4 py-12">
+      <section data-concept-vision className="px-4 py-12">
         <div className="mx-auto max-w-4xl rounded-3xl bg-gradient-to-br from-[#4A1D43] to-[#07543F] p-7 text-center text-white shadow-xl sm:p-10">
           <h2 className="text-2xl font-bold sm:text-3xl">{t.visionTitle}</h2>
           <p className="mx-auto mt-4 max-w-3xl text-base leading-7 text-white/85"><strong className="text-[#F1D783]">Dalil Tounes</strong> {t.conclusion}</p>
           <div className="mt-6 flex flex-wrap justify-center gap-2">{t.flowSteps.map((label) => <span key={label} className="rounded-full border border-white/20 bg-white/10 px-3 py-2 text-sm font-semibold">{label}</span>)}</div>
         </div>
       </section>
-      <section className="py-8 px-4 border-t border-gray-100"><div className="max-w-3xl mx-auto"><nav className="flex flex-wrap justify-center gap-4 text-sm"><Link to="/entreprises" className="text-[#D4AF37] hover:underline font-medium">{t.searchProfessional}</Link><Link to="/pourquoi-dalil-tounes" className="text-[#D4AF37] hover:underline font-medium">{t.why}</Link><Link to="/subscription#offres" className="text-[#D4AF37] hover:underline font-medium">{t.businessOffers}</Link><Link to="/contact" className="text-[#D4AF37] hover:underline font-medium">{t.contact}</Link></nav></div></section>
+      <section data-concept-links className="py-8 px-4 border-t border-gray-100"><div className="max-w-3xl mx-auto"><nav className="flex flex-wrap justify-center gap-4 text-sm"><Link to="/entreprises" className="text-[#D4AF37] hover:underline font-medium">{t.searchProfessional}</Link><Link to="/pourquoi-dalil-tounes" className="text-[#D4AF37] hover:underline font-medium">{t.why}</Link><Link to="/subscription#offres" className="text-[#D4AF37] hover:underline font-medium">{t.businessOffers}</Link><Link to="/contact" className="text-[#D4AF37] hover:underline font-medium">{t.contact}</Link></nav></div></section>
     </div>
   );
 }
