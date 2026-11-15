@@ -12,7 +12,7 @@ const compiled = ts.transpileModule(source, {
 assert.equal((compiled.diagnostics || []).filter(d => d.category === ts.DiagnosticCategory.Error).length, 0);
 const sandbox = { exports: {} };
 vm.runInNewContext(compiled.outputText, sandbox, { filename: 'businessPageClassification.js' });
-const { canonicalPageId, assignedBusinessPages, suggestBusinessPages, missingSuggestedPages } = sandbox.exports;
+const { canonicalPageId, assignedBusinessPages, suggestBusinessPages, missingSuggestedPages, getPlatformSearchScopePage } = sandbox.exports;
 
 assert.equal(canonicalPageId(' accueil '), 'accueil');
 assert.equal(canonicalPageId('SANTÉ'), 'santé');
@@ -73,4 +73,13 @@ assert.equal(suggestBusinessPages({
   sous_categories_texte: 'Activité inconnue',
 }).length, 0);
 assert.ok(!suggestBusinessPages(realEstate).some(x => x.page === 'accueil'));
-console.log('OK: 17 multipage classification assertions');
+assert.equal(getPlatformSearchScopePage('sante'), 'santé');
+assert.equal(getPlatformSearchScopePage('services'), 'services citoyens');
+assert.equal(getPlatformSearchScopePage('magasin'), 'commerces & magasins');
+assert.equal(getPlatformSearchScopePage('entreprises'), 'entreprises');
+assert.equal(getPlatformSearchScopePage('tourisme'), 'tourisme local & expatriation');
+assert.equal(getPlatformSearchScopePage('education'), 'éducation');
+assert.equal(getPlatformSearchScopePage('loisirs'), 'loisirs & évènements');
+assert.equal(getPlatformSearchScopePage('inconnue'), null);
+assert.equal(getPlatformSearchScopePage(null), null);
+console.log('OK: multipage classification and scoped navigation assertions');
