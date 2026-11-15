@@ -379,7 +379,7 @@ export function CvPortfolioPresentation({
             )}
             {qrOpen && sharingContent && <section className="cvp-booking">{sharingContent}</section>}
 
-            <nav className="cvp-lienora-tabs" aria-label={navigationAriaLabel}>
+            <nav className={`cvp-lienora-tabs${boutiqueContent ? ' cvp-lienora-tabs--with-shop' : ''}`} aria-label={navigationAriaLabel}>
               {tabs.map(({ id, label, icon: Icon }) => (
                 <button type="button" className={activeTab === id ? 'active' : ''} onClick={() => goTo(id)} key={id}>
                   <Icon /><span>{label}</span>
