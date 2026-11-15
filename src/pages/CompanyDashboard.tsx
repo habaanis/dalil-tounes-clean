@@ -23,6 +23,8 @@ export default function CompanyDashboard({ onNavigate }: CompanyDashboardProps) 
   const [productDescription, setProductDescription] = useState('');
   const [productMode, setProductMode] = useState<'quote' | 'order'>('quote');
   const [productPrice, setProductPrice] = useState('');
+  const [productPhoto, setProductPhoto] = useState<File | null>(null);
+  const [productPhotoInputKey, setProductPhotoInputKey] = useState(0);
   const [productBusiness, setProductBusiness] = useState('');
   const [productSaving, setProductSaving] = useState(false);
   const [productMessage, setProductMessage] = useState('');
@@ -72,23 +74,40 @@ export default function CompanyDashboard({ onNavigate }: CompanyDashboardProps) 
     const category = productCategory.trim();
     const description = productDescription.trim();
     const price = Number(productPrice);
+    if (productPhoto && (!['image/jpeg','image/png','image/webp'].includes(productPhoto.type) || productPhoto.size > 5 * 1024 * 1024)) {
+      setProductMessage('Photo refusée : utilisez JPG, PNG ou WebP, 5 Mo maximum.'); return;
+    }
     if (title.length < 2 || title.length > 120 || category.length > 60 || description.length > 800 ||
       (productMode === 'order' && (!Number.isFinite(price) || price <= 0 || price > 100000))) {
       setProductMessage('Vérifiez le nom, la catégorie et le prix.'); return;
     }
     setProductSaving(true); setProductMessage('');
+    let uploadedPath = '';
     try {
       const { supabase } = await import('../lib/supabaseClient');
+      if (productPhoto) {
+        const ext = ({'image/jpeg':'jpg','image/png':'png','image/webp':'webp'} as const)[productPhoto.type as 'image/jpeg'|'image/png'|'image/webp'];
+        uploadedPath = user.id + '/' + crypto.randomUUID() + '.' + ext;
+        const { error: uploadError } = await supabase.storage.from('dalil-boutique-submissions')
+          .upload(uploadedPath,productPhoto,{upsert:false,contentType:productPhoto.type});
+        if (uploadError) throw uploadError;
+      }
       const {data,error} = await supabase.from('dalil_boutique_product_requests')
         .insert({user_id:user.id,entreprise_id:entrepriseId,title,description,category:category || null,
-          mode:productMode,price:productMode === 'quote' ? null : price})
+          mode:productMode,price:productMode === 'quote' ? null : price,photo_path:uploadedPath || null})
         .select('id,entreprise_id,title,status,created_at').single();
       if (error || !data) throw error ?? new Error('Insertion échouée');
       setProductRequests(current => [data,...current]);
-      setProductTitle('');setProductCategory('');setProductDescription('');setProductPrice('');
+      setProductTitle('');setProductCategory('');setProductDescription('');setProductPrice('');setProductPhoto(null);setProductPhotoInputKey(key => key + 1);
       setProductMessage('Proposition enregistrée. Elle reste en attente de validation avant toute publication.');
     } catch {
-      setProductMessage('La proposition n’a pas pu être enregistrée. Aucun produit n’a été publié.');
+      if (uploadedPath) {
+        try {
+          const {supabase} = await import('../lib/supabaseClient');
+          await supabase.storage.from('dalil-boutique-submissions').remove([uploadedPath]);
+        } catch { /* Private orphan, never visible publicly */ }
+      }
+      setProductMessage('La proposition ou la photo n’a pas pu être enregistrée. Aucun produit n’a été publié.');
     } finally { setProductSaving(false); }
   };
 
@@ -236,7 +255,7 @@ export default function CompanyDashboard({ onNavigate }: CompanyDashboardProps) 
                     </div>)}</div>}
                   {activeTab === 'boutique' && stats.length > 0 && !statsLoading && !statsError && <div className="mt-5 rounded-xl border border-[#dfcda8] bg-white p-4 sm:p-5">
                     <h3 className="mb-2 font-semibold text-[#62212a]">Proposer un produit</h3>
-                    <p className="mb-4 text-sm text-gray-600">Envoi privé à Dalil Tounes. Votre proposition ne sera visible aux visiteurs qu’après validation et publication par notre équipe. Les photos seront ajoutées dans une prochaine étape.</p>
+                    <p className="mb-4 text-sm text-gray-600">Envoi privé à Dalil Tounes. Votre proposition ne sera visible aux visiteurs qu’après validation et publication par notre équipe. La photo éventuelle reste privée jusqu’à sa validation.</p>
                     <form onSubmit={submitProductProposal} className="grid gap-3">
                       {stats.length > 1 && <label className="grid gap-1 text-sm">Établissement
                         <select className="rounded-lg border border-[#dfcda8] bg-white p-3 text-gray-900" value={productBusiness || stats[0].entreprise_id} onChange={e => setProductBusiness(e.target.value)}>
@@ -259,6 +278,9 @@ export default function CompanyDashboard({ onNavigate }: CompanyDashboardProps) 
                       </label>}
                       <label className="grid gap-1 text-sm">Description
                         <textarea rows={3} maxLength={800} className="rounded-lg border border-[#dfcda8] bg-white p-3 text-gray-900" value={productDescription} onChange={e => setProductDescription(e.target.value)} />
+                      </label>
+                      <label className="grid gap-1 text-sm">Photo facultative (JPG, PNG ou WebP, 5 Mo max.)
+                        <input key={productPhotoInputKey} type="file" accept="image/jpeg,image/png,image/webp" className="rounded-lg border border-[#dfcda8] bg-white p-3 text-gray-900" onChange={event => setProductPhoto(event.target.files?.[0] ?? null)} />
                       </label>
                       <button disabled={productSaving} className="rounded-xl bg-[#8f2530] p-3 font-semibold text-white disabled:opacity-50" type="submit">{productSaving ? 'Envoi…' : 'Soumettre à validation'}</button>
                       {productMessage && <p role="status" className="text-sm text-[#62212a]">{productMessage}</p>}
