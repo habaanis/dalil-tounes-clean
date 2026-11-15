@@ -180,7 +180,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
             <span style={{ whiteSpace: 'nowrap', fontWeight: 600, fontSize: 12, color: '#826332' }}>{priceText(selected)}</span>
           </div>
           {selected.description && <p style={{ fontSize: 12, lineHeight: 1.5, margin: '6px 0 12px', color: '#62574d' }}>{selected.description}</p>}
-          {!requestOpen ? <button type="button" data-boutique-quote-cta onClick={() => setRequestOpen(true)}
+          {!requestOpen ? <button type="button" onClick={() => setRequestOpen(true)}
             style={{ border: 0, borderRadius: 10, background: '#4d2a47', color: '#fff', fontSize: 13, fontWeight: 600, padding: '11px 14px', width: '100%', cursor: 'pointer' }}>
             {selected.mode === 'quote' ? 'Demander un devis' : 'Commander'}
           </button> : <div style={{ display: 'grid', gap: 10, borderTop: '1px solid #e5d7c3', paddingTop: 12 }}>
