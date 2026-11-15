@@ -82,41 +82,41 @@ const HOUSE_TEASER: Record<Lang, { eyebrow: string; title: string; context: stri
   fr: {
     eyebrow: 'MAISON DALIL TOUNES',
     title: 'Vos clients vous trouvent. Facilitez le contact. Vendez vos produits.',
-    context: 'Vos clients peuvent vous découvrir sur Google, Facebook ou Instagram. Mais trouver vos services, réalisations, horaires et coordonnées demande parfois plusieurs recherches.',
-    benefit: 'Avec votre mini-appli Dalil Tounes, rassemblez l’essentiel dans un seul espace professionnel. Un lien ou un QR Code suffit pour présenter votre activité, inspirer confiance et faciliter le contact.',
-    reach: 'Faites circuler votre mini-appli partout : sur vos réseaux, par message, sur vos supports imprimés ou grâce au QR Business. Avec la boutique et son catalogue (formule Premium), présentez vos produits, recevez des demandes et facilitez vos ventes.',
+    context: 'Vous avez votre boutique dans la rue. Avec votre mini-appli, vos clients peuvent aussi découvrir vos produits sur leur téléphone, où qu’ils soient.',
+    benefit: 'Les réseaux sociaux vous aident à attirer l’attention. Votre mini-appli présente toute votre offre au même endroit et facilite les commandes. Les deux travaillent ensemble.',
+    reach: 'Partagez votre mini-appli partout avec un lien ou un QR Business. Avec la boutique et son catalogue (formule Premium), présentez vos produits et recevez des demandes de commande. Les notifications clients pourront les informer de vos nouveautés lorsqu’elles seront activées, avec leur accord.',
     cta: 'Découvrir la mini-appli',
   },
   ar: {
     eyebrow: 'بيت دليل تونس',
     title: 'خلّي حرفاءك يلقاوك ويتّصلوا بيك ويطلبوا منتجاتك بسهولة',
-    context: 'حرفاءك ينجموا يلقاوك على Google وFacebook وInstagram، أما الخدمات والإنجازات والأوقات ووسائل الاتصال ساعات تكون متفرقة.',
-    benefit: 'مع التطبيق المصغّر من دليل تونس، اجمع المعلومات المهمة في مكان واحد. رابط واحد أو QR Code يعرّف بنشاطك ويسهّل التواصل مع الحرفاء.',
-    reach: 'انشر التطبيق المصغّر في كل مكان: على شبكات التواصل، في الرسائل، على المطبوعات أو عبر QR Business. ومع المتجر والكتالوغ (صيغة Premium)، اعرض منتجاتك واستقبل الطلبات وسهّل المبيعات.',
+    context: 'عندك محل في الشارع، ومع التطبيق المصغّر ينجموا حرفاءك يشوفوا منتجاتك زادة من تليفوناتهم وين ما كانوا.',
+    benefit: 'الشبكات الاجتماعية تعاونك باش تلفت الانتباه. التطبيق المصغّر يجمع عروضك في بلاصة وحدة ويسهّل الطلبات. الزوز يكملوا بعضهم.',
+    reach: 'شارك تطبيقك المصغّر في كل مكان بالرابط أو QR Business. المتجر والكتالوغ (صيغة Premium) يعرضوا منتجاتك ويخلّيو الحرفاء يبعثوا طلبات. الإشعارات بالحاجات الجديدة تتوفّر كي يتم تفعيلها بموافقة الحرفاء.',
     cta: 'اكتشف التطبيق المصغّر',
   },
   en: {
     eyebrow: 'DALIL TOUNES HOUSE',
     title: 'Get discovered. Make contact easy. Sell your products.',
-    context: 'People may discover you on Google, Facebook or Instagram, but finding your services, work, opening hours and contact details can require several searches.',
-    benefit: 'Your Dalil Tounes mini-app brings everything together. Share one link or QR code to present your business, build confidence and make contact easier.',
-    reach: 'Share your mini-app everywhere: social media, messages, printed materials or the Business QR code. With the shop and catalogue (Premium plan), showcase products, receive enquiries and make sales easier.',
+    context: 'You have a shop on the street. With your mini-app, customers can discover your products on their phones, wherever they are.',
+    benefit: 'Social media helps attract attention. Your mini-app brings your full offer together and makes ordering easier. They work together.',
+    reach: 'Share your mini-app anywhere with a link or Business QR code. The shop and catalogue (Premium plan) help customers request orders. Customer notifications may announce new products once enabled with their consent.',
     cta: 'Discover the mini-app',
   },
   it: {
     eyebrow: 'CASA DALIL TOUNES',
     title: 'Fatti trovare, facilita il contatto e vendi i tuoi prodotti.',
-    context: 'I clienti possono scoprirti su Google, Facebook o Instagram, ma per trovare servizi, lavori, orari e contatti devono spesso fare varie ricerche.',
-    benefit: 'La mini-app Dalil Tounes riunisce le informazioni essenziali in uno spazio professionale. Un link o QR Code per presentarti e facilitare il contatto.',
-    reach: 'Condividi la mini-app sui social, nei messaggi, sui supporti stampati e tramite QR Business. Con negozio e catalogo (piano Premium), mostra i prodotti, ricevi richieste e facilita le vendite.',
+    context: 'Hai un negozio in strada. Con la tua mini-app, i clienti possono scoprire i prodotti anche sul telefono, ovunque si trovino.',
+    benefit: 'I social aiutano ad attirare l’attenzione. La mini-app riunisce tutta la tua offerta e facilita gli ordini. Lavorano insieme.',
+    reach: 'Condividi la mini-app tramite link o QR Business. Negozio e catalogo (piano Premium) facilitano le richieste di ordine. Le notifiche ai clienti potranno segnalare le novità quando saranno attivate con il loro consenso.',
     cta: 'Scopri la mini-app',
   },
   ru: {
     eyebrow: 'ДОМ DALIL TOUNES',
     title: 'Помогите клиентам найти вас, связаться и купить товары.',
-    context: 'Клиенты могут узнать о вас в Google, Facebook или Instagram, но услуги, работы, часы и контакты часто приходится искать отдельно.',
-    benefit: 'Мини-приложение Dalil Tounes объединяет важное. Одна ссылка или QR-код помогает представить бизнес, вызвать доверие и упростить общение.',
-    reach: 'Делитесь мини-приложением в соцсетях, сообщениях, на печатных материалах и через Business QR. Магазин и каталог (план Premium) позволяют показывать товары, получать запросы и упрощать продажи.',
+    context: 'У вас есть магазин на улице. С мини-приложением клиенты смогут увидеть товары и на своих телефонах, где бы они ни были.',
+    benefit: 'Соцсети помогают привлечь внимание. Мини-приложение объединяет весь ассортимент и упрощает заказы. Они дополняют друг друга.',
+    reach: 'Делитесь ссылкой или Business QR. Магазин и каталог (Premium) помогают получать запросы на заказы. Уведомления о новинках станут доступны после включения с согласия клиентов.',
     cta: 'Узнать о мини-приложении',
   },
 };
@@ -163,7 +163,7 @@ export default function PlatformAppHome({ totalCount, legacyCertifiedCount, reco
     <section className="rounded-xl border border-[#C9A65D] bg-gradient-to-br from-[#FFF5E7] to-[#FFFCF7] px-4 py-4 text-center shadow-sm" aria-label="Dalil Tounes et mini-appli professionnelle">
       <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-[#242424]">{lang === 'fr' ? 'Vous êtes professionnel ?' : lang === 'ar' ? 'عندك مؤسسة؟' : lang === 'en' ? 'Are you a professional?' : lang === 'it' ? 'Sei un professionista?' : 'Вы профессионал?'}</p>
       <p className="text-sm font-semibold leading-5 text-[#292929]">{lang === 'ar' ? 'خلّي مؤسستك موجودة في دليل تونس.' : lang === 'en' ? 'Get listed on Dalil Tounes.' : lang === 'it' ? 'Fai conoscere la tua attività su Dalil Tounes.' : lang === 'ru' ? 'Разместите свою компанию на Dalil Tounes.' : 'Soyez répertorié sur Dalil Tounes.'}</p>
-      <p className="mt-1 text-xs leading-5 text-[#66615D]">{lang === 'ar' ? 'عزّز حضور نشاطك عبر تطبيق مصغّر مهني خاص بمؤسستك.' : lang === 'en' ? 'Give your business greater impact with your own business mini-app.' : lang === 'it' ? 'Dai più visibilità alla tua attività con una mini-app personalizzata.' : lang === 'ru' ? 'Представьте бизнес с помощью собственного мини-приложения.' : 'Développez votre visibilité avec votre mini-appli professionnelle.'}</p>
+      <p className="mt-1 text-xs leading-5 text-[#66615D]">{lang === 'ar' ? 'عزّز حضور نشاطك عبر تطبيق مصغّر مهني خاص بمؤسستك.' : lang === 'en' ? 'Give your business greater impact with your own business mini-app.' : lang === 'it' ? 'Dai più visibilità alla tua attività con una mini-app personalizzata.' : lang === 'ru' ? 'Представьте бизнес с помощью собственного мини-приложения.' : 'Votre boutique dans la rue et sur le téléphone de vos clients : présentez vos produits et facilitez leurs commandes.'}</p>
     </section>
     <section data-platform-app-house-teaser className="rounded-xl border border-[#C9A65D] bg-[#FFFCF8] p-3.5 shadow-[0_2px_12px_rgba(30,25,20,0.025)]" aria-label={teaser.cta}>
       <div className="grid grid-cols-1 items-center gap-3 sm:grid-cols-[minmax(180px,240px)_minmax(0,1fr)] sm:gap-5">
