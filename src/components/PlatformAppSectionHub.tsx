@@ -226,9 +226,16 @@ export default function PlatformAppSectionHub({ kind }: { kind: Hub }) {
     }
   };
   const showcase = proShowcase[lang];
+  const proGroupCopy: Record<Lang, { free: string; mini: string; services: string }> = {
+    fr: { free: 'Inscription gratuite', mini: 'Mini-applis et leurs possibilités', services: 'Offres et services professionnels' },
+    ar: { free: 'التسجيل المجاني', mini: 'التطبيقات المصغّرة وإمكانياتها', services: 'العروض والخدمات المهنية' },
+    en: { free: 'Free registration', mini: 'Mini-apps and features', services: 'Offers and business services' },
+    it: { free: 'Registrazione gratuita', mini: 'Mini-app e funzionalità', services: 'Offerte e servizi professionali' },
+    ru: { free: 'Бесплатная регистрация', mini: 'Мини-приложения и возможности', services: 'Предложения и бизнес-услуги' }
+  };
   const prosActions = PRO_LINKS.filter(item => ['free', 'cv', 'models', 'offers'].includes(item.id));
   const prosExtras = PRO_LINKS.filter(item => !['free', 'cv', 'models', 'offers'].includes(item.id));
-  const renderProCards = (items: Entry[]) => <div className="grid grid-cols-2 gap-2">
+  const renderProCards = (items: Entry[], columns: 1 | 2 = 2) => <div className={columns === 1 ? 'grid grid-cols-1 gap-2' : 'grid grid-cols-2 gap-2'}>
     {items.map(item => item.id === 'free' || item.id === 'models' || item.id === 'offers'
       ? <Link key={item.id} to={item.href}
           className="flex min-h-[88px] flex-col items-start justify-between rounded-xl border border-[#E5D7BE] bg-white p-3 text-start shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B99143]">
@@ -257,9 +264,26 @@ export default function PlatformAppSectionHub({ kind }: { kind: Hub }) {
     {kind === 'citizens' && <div className="space-y-3">
       <HubLinks items={CITIZEN_LINKS} topics={copy.topics} />
     </div>}
-    {kind === 'pros' && <>
-      {renderProCards(prosActions)}
-      {selectedPro && <section role="region" aria-label={copy.topics[selectedPro.id]}
+    {kind === 'pros' && <div className="space-y-3">
+      <details className="group rounded-2xl border border-[#D4AF37]/45 bg-white p-3">
+        <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-2 rounded-lg px-1 text-sm font-semibold text-[#292725] [&::-webkit-details-marker]:hidden">
+          <span>🆓 {proGroupCopy[lang].free}</span>
+          <ChevronDown aria-hidden="true" className="h-5 w-5 shrink-0 text-[#A17D36] transition-transform group-open:rotate-180" />
+        </summary>
+        <div className="space-y-3 border-t border-[#EFE3CB] pt-3">
+          <p className="text-sm leading-5 text-[#514A45]">{proDetails[lang].free}</p>
+          {renderProCards(prosActions.filter(item => item.id === 'free'), 1)}
+        </div>
+      </details>
+
+      <details open className="group rounded-2xl border border-[#D4AF37]/55 bg-[#FFFDF8] p-3">
+        <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-2 rounded-lg px-1 text-sm font-semibold text-[#292725] [&::-webkit-details-marker]:hidden">
+          <span>📱 {proGroupCopy[lang].mini}</span>
+          <ChevronDown aria-hidden="true" className="h-5 w-5 shrink-0 text-[#A17D36] transition-transform group-open:rotate-180" />
+        </summary>
+        <div className="space-y-3 border-t border-[#EFE3CB] pt-3">
+          {renderProCards(prosActions.filter(item => item.id === 'cv' || item.id === 'models'))}
+      {selectedPro?.id === 'cv' && <section role="region" aria-label={copy.topics[selectedPro.id]}
         className="rounded-2xl border border-[#D4AF37]/60 bg-[#FFFDF8] p-4 shadow-sm">
         <div className="flex items-start justify-between gap-3">
           <h2 className="font-serif text-lg font-semibold text-[#45243A]">{selectedPro.icon} {copy.topics[selectedPro.id]}</h2>
@@ -273,6 +297,7 @@ export default function PlatformAppSectionHub({ kind }: { kind: Hub }) {
           {openLabels[lang]} — {copy.topics[selectedPro.id]}
         </Link>
       </section>}
+
 
       <section aria-labelledby="pwa-pro-models" className="rounded-2xl border border-[#D4AF37]/40 bg-white p-3">
         <h2 id="pwa-pro-models" className="font-serif text-lg font-semibold text-[#292725]">{showcase.modelsTitle}</h2>
@@ -296,23 +321,57 @@ export default function PlatformAppSectionHub({ kind }: { kind: Hub }) {
           ))}
         </div>
       </section>
-      <section aria-labelledby="pwa-pro-shop" className="rounded-2xl border border-[#D4AF37]/40 bg-[#FFFDF8] p-3">
-        <h2 id="pwa-pro-shop" className="font-serif text-lg font-semibold text-[#292725]">🛍️ {showcase.shopTitle}</h2>
-        <p className="mt-1 text-sm leading-5 text-[#514A45]">{showcase.shopIntro}</p>
-        <p className="mt-2 text-xs leading-5 text-[#756C61]">{showcase.shopFoot}</p>
-      </section>
-      <section aria-labelledby="pwa-pro-account" className="rounded-2xl border border-[#D4AF37]/40 bg-white p-3">
-        <h2 id="pwa-pro-account" className="font-serif text-lg font-semibold text-[#292725]">👤 {showcase.accountTitle}</h2>
-        <p className="mt-1 text-sm leading-5 text-[#514A45]">{showcase.accountIntro}</p>
-        <p className="mt-2 text-xs leading-5 text-[#756C61]">{showcase.accountFoot}</p>
-      </section>
-      <details className="group rounded-2xl border border-[#D4AF37]/40 bg-white p-3">
-        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 px-1 font-medium text-[#45243A] [&::-webkit-details-marker]:hidden">
-          {copy.moreTopics}<ChevronDown aria-hidden="true" className="h-5 w-5 shrink-0 text-[#A17D36] transition-transform group-open:rotate-180" />
-        </summary>
-        <div className="pt-2">{renderProCards(prosExtras)}</div>
+
+          <details className="group rounded-xl border border-[#D4AF37]/40 bg-white p-3" data-pro-expand="shop">
+            <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-2 rounded-lg text-start text-sm font-semibold text-[#292725] [&::-webkit-details-marker]:hidden">
+              <span>🛍️ {showcase.shopTitle}</span>
+              <ChevronDown aria-hidden="true" className="h-5 w-5 shrink-0 text-[#A17D36] transition-transform group-open:rotate-180" />
+            </summary>
+            <div className="border-t border-[#EFE3CB] pt-3">
+              <p className="text-sm leading-6 text-[#514A45]">{showcase.shopIntro}</p>
+              <p className="mt-2 text-xs leading-5 text-[#756C61]">{showcase.shopFoot}</p>
+            </div>
+          </details>
+          <details className="group rounded-xl border border-[#D4AF37]/40 bg-white p-3" data-pro-expand="account">
+            <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-2 rounded-lg text-start text-sm font-semibold text-[#292725] [&::-webkit-details-marker]:hidden">
+              <span>👤 {showcase.accountTitle}</span>
+              <ChevronDown aria-hidden="true" className="h-5 w-5 shrink-0 text-[#A17D36] transition-transform group-open:rotate-180" />
+            </summary>
+            <div className="border-t border-[#EFE3CB] pt-3">
+              <p className="text-sm leading-6 text-[#514A45]">{showcase.accountIntro}</p>
+              <p className="mt-2 text-xs leading-5 text-[#756C61]">{showcase.accountFoot}</p>
+            </div>
+          </details>
+        </div>
       </details>
-    </>}
+
+      <details className="group rounded-2xl border border-[#D4AF37]/45 bg-white p-3">
+        <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-2 rounded-lg px-1 text-sm font-semibold text-[#292725] [&::-webkit-details-marker]:hidden">
+          <span>💼 {proGroupCopy[lang].services}</span>
+          <ChevronDown aria-hidden="true" className="h-5 w-5 shrink-0 text-[#A17D36] transition-transform group-open:rotate-180" />
+        </summary>
+        <div className="space-y-3 border-t border-[#EFE3CB] pt-3">
+          {renderProCards(prosActions.filter(item => item.id === 'offers'), 1)}
+          {renderProCards(prosExtras)}
+      {selectedPro && selectedPro.id !== 'cv' && <section role="region" aria-label={copy.topics[selectedPro.id]}
+        className="rounded-2xl border border-[#D4AF37]/60 bg-[#FFFDF8] p-4 shadow-sm">
+        <div className="flex items-start justify-between gap-3">
+          <h2 className="font-serif text-lg font-semibold text-[#45243A]">{selectedPro.icon} {copy.topics[selectedPro.id]}</h2>
+          <button type="button" onClick={() => setOpenPro(null)} aria-label={closeLabels[lang]}
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#E5D7BE] bg-white text-[#45243A]">
+            <X className="h-5 w-5" aria-hidden="true" />
+          </button>
+        </div>
+        <p className="mt-2 text-sm leading-6 text-[#6A5B64]">{proDetails[lang][selectedPro.id]}</p>
+        <Link to={selectedPro.href} className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-xl border border-[#B62226] bg-[#B62226] px-3 py-2 text-center text-sm font-semibold text-white">
+          {openLabels[lang]} — {copy.topics[selectedPro.id]}
+        </Link>
+      </section>}
+
+
+        </div>
+      </details>
+    </div>}
 
     {kind === 'tourism' && <div className="space-y-3">
       <details className="group rounded-2xl border border-[#D4AF37]/45 bg-white p-3">
