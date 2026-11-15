@@ -819,19 +819,3 @@
     animation: none;
   }
 }
-
-/* Business CV only: make the real product quote CTA as easy to identify as in Portfolio.
-   Scope narrowly so Portfolio, catalogue cards, WhatsApp and checkout remain unchanged. */
-.dt-showcase-page [data-boutique-quote-cta] {
-  background-color: #f4dfb1 !important;
-  color: #32251b !important;
-  border: 1px solid #be984d !important;
-  box-shadow: 0 2px 7px rgba(46, 32, 16, 0.12);
-  min-height: 46px;
-  font-size: 14px !important;
-  font-weight: 700 !important;
-}
-.dt-showcase-page [data-boutique-quote-cta]:focus-visible {
-  outline: 3px solid #ab7c29;
-  outline-offset: 3px;
-}
