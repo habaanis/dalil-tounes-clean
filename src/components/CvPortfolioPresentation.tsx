@@ -1,5 +1,5 @@
 import GoogleRatingSummary from './GoogleRatingSummary';
-import { useState, type CSSProperties, type ReactNode } from 'react';
+import { cloneElement, isValidElement, useState, type CSSProperties, type ReactElement, type ReactNode } from 'react';
 import {
   CalendarDays,
   ChevronRight,
@@ -146,6 +146,7 @@ export interface CvPortfolioPresentationProps {
   certification?: string;
   actions: PortfolioAction[];
   gallery: GalleryItem[];
+  boutiqueContent?: ReactNode;
   onBack: () => void;
   bookingContent?: ReactNode;
   reviewsContent?: ReactNode;
@@ -175,6 +176,7 @@ export function CvPortfolioPresentation({
   certification,
   actions,
   gallery,
+  boutiqueContent,
   onBack,
   bookingContent,
   reviewsContent,
@@ -383,6 +385,13 @@ export function CvPortfolioPresentation({
                   <Icon /><span>{label}</span>
                 </button>
               ))}
+              {boutiqueContent && (isValidElement(boutiqueContent)
+                ? cloneElement(boutiqueContent as ReactElement<{ triggerClassName?: string; triggerIcon?: ReactNode; triggerLabel?: string }>, {
+                    triggerClassName: 'cvp-native-boutique-tab',
+                    triggerIcon: <Store aria-hidden="true" />,
+                    triggerLabel: language === 'ar' ? 'المتجر' : language === 'en' ? 'Shop' : 'Boutique',
+                  })
+                : boutiqueContent)}
             </nav>
 
             {(hoursContent || practicalContent) && (
