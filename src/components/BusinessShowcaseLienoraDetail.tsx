@@ -1757,7 +1757,8 @@ export default function BusinessShowcaseLienoraDetail({
           onDownloadContact={downloadContact}
           onSelectImage={setSelectedImage}
           notice={contactNotice}
-          hideBack={embeddedPreview}
+          hideBack={embeddedPreview || isClientAppMode}
+          showClientQrBack={isDedicatedClientRoute && !embeddedPreview}
           embeddedPreview={embeddedPreview}
           palette={activePalette}
         />
