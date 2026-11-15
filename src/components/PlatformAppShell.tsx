@@ -140,8 +140,8 @@ export default function PlatformAppShell({ children }: { children: ReactNode }) 
         <div className="mx-auto grid max-w-xl grid-cols-5 items-stretch px-1">
           {tabs.map(({ label, to, icon: Icon, active }) => (
             <Link key={to} to={to} aria-current={active ? 'page' : undefined}
-              className={`flex min-h-[70px] flex-col items-center justify-center gap-1 rounded-lg px-0.5 text-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-[#B99143] ${homeColorTest ? (active ? 'font-semibold text-[#B62226]' : 'font-medium text-[#79736F]') : (active ? 'font-semibold text-[#B28A44]' : 'font-medium text-[#69635B]')}`}>
-              <Icon className={`h-5 w-5 ${active ? (homeColorTest ? 'text-[#B62226]' : 'text-[#A17D36]') : ''}`} strokeWidth={active ? 2 : 1.6} aria-hidden="true" />
+              className={`flex min-h-[70px] flex-col items-center justify-center gap-1 rounded-lg px-0.5 text-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-[#B99143] ${homeColorTest ? (active ? 'font-semibold text-[#B62226]' : 'font-medium text-[#79736F]') : (active ? 'font-semibold text-[#B62226]' : 'font-medium text-[#69635B]')}`}>
+              <Icon className={`h-5 w-5 ${active ? (homeColorTest ? 'text-[#B62226]' : 'text-[#B62226]') : ''}`} strokeWidth={active ? 2 : 1.6} aria-hidden="true" />
               <span className="max-w-full break-words px-0.5 text-[9px] leading-[1.15] sm:text-[10px]">{label}</span>
             </Link>
           ))}
