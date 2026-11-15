@@ -6,7 +6,10 @@ import {
   useMemo,
   useRef,
   useState,
+  cloneElement,
+  isValidElement,
   type CSSProperties,
+  type ReactElement,
   type ReactNode,
 } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
@@ -840,12 +843,14 @@ export default function BusinessShowcaseLienoraDetail({
   previewVilleSlug,
   previewPalette,
   previewPresentationModel,
+  boutiqueContent,
 }: {
   embeddedPreview?: boolean;
   previewSlug?: string;
   previewVilleSlug?: string;
   previewPalette?: PaletteId;
   previewPresentationModel?: 'business' | 'portfolio';
+  boutiqueContent?: ReactNode;
 } = {}) {
   const routeParams = useParams<{
     id?: string;
@@ -1688,6 +1693,7 @@ export default function BusinessShowcaseLienoraDetail({
           certification={certification}
           actions={portfolioActions}
           gallery={galleryItems}
+          boutiqueContent={boutiqueContent}
           onBack={handleBack}
           bookingContent={sections.find(section => section.id === 'booking')?.content}
           reviewsContent={sections.find(section => section.id === 'reviews')?.content}
@@ -1931,6 +1937,17 @@ export default function BusinessShowcaseLienoraDetail({
                   key={section.id}
                 />
               ))}
+              {boutiqueContent && (
+                <section className="dt-accordion dt-boutique-accordion" data-demo-boutique-business>
+                  {isValidElement(boutiqueContent)
+                    ? cloneElement(boutiqueContent as ReactElement<{ triggerClassName?: string; triggerIcon?: ReactNode; triggerLabel?: string }>, {
+                        triggerClassName: 'dt-accordion-trigger dt-boutique-trigger',
+                        triggerIcon: <Images aria-hidden="true" />,
+                        triggerLabel: language === 'ar' ? 'المتجر' : language === 'en' ? 'Shop' : 'Boutique',
+                      })
+                    : boutiqueContent}
+                </section>
+              )}
             </div>
           </div>
 
