@@ -385,6 +385,59 @@
   text-align: right;
 }
 
+/* Business CV: every section occupies one compact, aligned row. */
+.dt-showcase-body .dt-presentation-trigger,
+.dt-showcase-body .dt-accordion-trigger,
+.dt-showcase-body .dt-boutique-accordion .dt-boutique-trigger {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 44px;
+  height: auto;
+  padding: 7px 11px;
+  align-items: center;
+  text-align: start;
+}
+.dt-showcase-body .dt-presentation-trigger {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr) 18px;
+  column-gap: 7px;
+}
+.dt-showcase-body .dt-presentation-trigger .dt-presentation-spacer {
+  display: none;
+}
+.dt-showcase-body .dt-presentation-trigger > span:nth-child(2) {
+  min-width: 0;
+  justify-self: start;
+  margin: 0;
+  padding: 0;
+  text-align: start;
+}
+.dt-showcase-body .dt-presentation-trigger .dt-presentation-chevron {
+  grid-column: 3;
+  justify-self: center;
+}
+.dt-showcase-body .dt-boutique-accordion .dt-boutique-trigger {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr) 18px;
+  grid-template-rows: 1fr;
+  column-gap: 7px;
+  white-space: nowrap;
+}
+.dt-showcase-body .dt-boutique-accordion .dt-boutique-trigger > span {
+  display: block;
+  grid-column: 2;
+  grid-row: 1;
+  white-space: nowrap;
+}
+.dt-showcase-body .dt-boutique-accordion .dt-boutique-trigger > svg {
+  grid-column: 1;
+  grid-row: 1;
+}
+.dt-showcase-body .dt-boutique-accordion .dt-boutique-trigger::after {
+  grid-column: 3;
+  grid-row: 1;
+}
+
 .dt-boutique-accordion .dt-boutique-trigger {
   width: 100%;
   min-height: 50px;

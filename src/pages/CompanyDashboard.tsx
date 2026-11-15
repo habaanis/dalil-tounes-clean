@@ -322,7 +322,7 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false }: 
                       </div>
                     </fieldset>
                     <div className="mt-4 flex flex-wrap gap-2">
-                      <a href={`/${encodeURIComponent(window.location.pathname.split('/')[1])}/cv?source=pwa&preview-model=${cvChoice}&skip-opening=1`}
+                      <a href={`/${encodeURIComponent(window.location.pathname.split('/')[1])}/cv?preview-model=${cvChoice}&skip-opening=1`}
                         className="inline-flex min-h-10 items-center rounded-xl border border-[#d8c394] px-3 py-2 text-xs font-semibold text-[#573e36]">Voir le CV</a>
                       <a href={`/${encodeURIComponent(window.location.pathname.split('/')[1])}?opening-preview=1&opening-style=${openingChoice}`}
                         className="inline-flex min-h-10 items-center rounded-xl border border-[#d8c394] px-3 py-2 text-xs font-semibold text-[#573e36]">Voir l'ouverture {openingChoice==='photo'?'A':'B'}</a>
