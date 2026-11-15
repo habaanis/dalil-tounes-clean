@@ -1048,7 +1048,9 @@ export default function BusinessShowcaseLienoraDetail({
   // Select the EXISTING Ivoire & Or theme in the CV; never write any Airtable/Supabase field.
   // An explicit ?palette=... continues to take precedence for direct CV previews.
   const isHistoricalIvoryCard = business.statut_carte === '⭐ CERTIFIÉ DALIL TOUNES';
-  const activePalette = resolvedPreviewPalette || (isHistoricalIvoryCard ? 'ivory' : storedPalette);
+  const userSelectedPalette = business.palette_cv_user_selected === true;
+  const activePalette = resolvedPreviewPalette ||
+    (userSelectedPalette ? storedPalette : (isHistoricalIvoryCard ? 'ivory' : storedPalette));
   const storedPresentationModel = [
     business.modele_presentation,
     business.presentation_model,

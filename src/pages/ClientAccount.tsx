@@ -33,7 +33,8 @@ export default function ClientAccount() {
   const {slug} = useParams<{slug:string}>();
   const {user,loading}=useAuth();
   const navigate=useNavigate();
-  const [state,setState]=useState<'checking'|'allowed'|'denied'>('checking');
+  const [state,setState]=useState<'checking'|'allowed'|'denied'|'error'>('checking');
+  const [retry,setRetry]=useState(0);
   const accountLogin='/' + encodeURIComponent(slug || '') + '/connexion';
   const cvPath='/' + encodeURIComponent(slug || '') + '/cv?preview-model=business&skip-opening=1';
   useEffect(()=>{
@@ -42,21 +43,36 @@ export default function ClientAccount() {
     if (!user?.id || !slug) return;
     const key=safeSlug(slug);
     void (async()=>{
-      const [{data:short},{data:long}] = await Promise.all([
+      const [{data:short,error:shortError},{data:long,error:longError}] = await Promise.all([
         supabase.from('entreprise').select('id').eq('slug_court',key).maybeSingle(),
         supabase.from('entreprise').select('id').eq('slug',key).maybeSingle(),
       ]);
+      if (shortError || longError) { if(active)setState('error'); return; }
       const businessId=short?.id || long?.id || (/^[0-9a-f-]{36}$/i.test(key)?key:null);
       if (!businessId) { if(active)setState('denied'); return; }
       const {data,error}=await supabase.from('professional_profile_access')
         .select('entreprise_id').eq('user_id',user.id).eq('entreprise_id',businessId).maybeSingle();
-      if(active)setState(!error && data ? 'allowed':'denied');
-    })().catch(()=>{if(active)setState('denied')});
+      if(active)setState(error ? 'error' : data ? 'allowed':'denied');
+    })().catch(()=>{if(active)setState('error')});
     return ()=>{active=false};
-  },[slug,user?.id]);
+  },[slug,user?.id,retry]);
   if(!slug || window.location.hostname!=='app.dalil-tounes.com') return <p>Page indisponible.</p>;
   if(loading || (user && state==='checking')) return <main role="status" className="min-h-dvh bg-[#fbf8f0] p-6">Vérification de votre accès…</main>;
   if(!user) return <main className="min-h-dvh bg-[#fbf8f0] p-6 text-[#4b302f]"><div className="mx-auto max-w-md rounded-2xl border border-[#d9c59d] bg-white p-5 text-center"><h1 className="font-serif text-xl">Mon compte professionnel</h1><p className="my-4 text-sm">Connectez-vous pour retrouver votre espace privé.</p><Link className="inline-flex min-h-11 items-center rounded-full bg-[#8f2530] px-5 text-white" to={accountLogin}>Se connecter</Link></div></main>;
-  if(state!=='allowed')return <main className="min-h-dvh bg-[#fbf8f0] p-6 text-center text-[#4b302f]"><p>Ce compte n’est pas associé à cette vitrine.</p><Link className="mt-4 inline-block underline" to={cvPath}>Retour au CV Business</Link></main>;
+  if(state==='error')return <main className="min-h-dvh bg-[#fbf8f0] p-6 text-center text-[#4b302f]">
+    <div className="mx-auto max-w-md rounded-2xl border border-[#d9c59d] bg-white p-5">
+      <p role="alert">Le compte professionnel n’a pas pu être chargé. Vous pouvez réessayer sans quitter cet espace.</p>
+      <button type="button" onClick={()=>setRetry(n=>n+1)} className="mt-4 min-h-11 rounded-xl bg-[#8f2530] px-5 text-white">Réessayer mon compte</button>
+      <Link className="mt-3 block min-h-11 rounded-xl border border-[#d9c59d] px-4 py-3" to={accountLogin}>Revenir à la connexion professionnelle</Link>
+      <Link className="mt-3 inline-block underline" to={cvPath}>Voir le CV</Link>
+    </div>
+  </main>;
+  if(state!=='allowed')return <main className="min-h-dvh bg-[#fbf8f0] p-6 text-center text-[#4b302f]">
+    <div className="mx-auto max-w-md rounded-2xl border border-[#d9c59d] bg-white p-5">
+      <p>Ce compte n’est pas encore associé à cette vitrine.</p>
+      <Link className="mt-4 inline-flex min-h-11 items-center rounded-xl bg-[#8f2530] px-5 text-white" to={accountLogin}>Revenir à mon compte professionnel</Link>
+      <Link className="mt-3 block underline" to={cvPath}>Voir le CV</Link>
+    </div>
+  </main>;
   return <div className="min-h-dvh bg-[#fbf8f0] pb-[env(safe-area-inset-bottom)]"><div className="mx-auto max-w-7xl px-4 pt-3"><Link className="inline-flex min-h-11 items-center text-sm underline" to={cvPath}>← Retour au CV Business</Link></div><CompanyDashboard clientAppMode onNavigate={(page)=>{if(page==='home')navigate(cvPath);}} /></div>;
 }

@@ -35,6 +35,8 @@ interface BusinessQrRecord {
   cv_business_status?: string | null;
   modele_cv?: string | null;
   palette_cv?: string | null;
+  palette_cv_user_selected?: boolean | null;
+  statut_carte?: string | null;
   opening_style?: 'photo' | 'framed' | null;
 }
 
@@ -184,7 +186,12 @@ export default function BusinessQr() {
   const [showBrandSplash, setShowBrandSplash] = useState(false);
   const [openingStyle, setOpeningStyle] = useState<ClientOpeningStyle>('photo');
   const launchPalette = new URLSearchParams(window.location.search).get('palette');
-  const paletteTheme = getCvPaletteTheme(business?.palette_cv || launchPalette);
+  // Use exactly the same effective palette as the CV: explicit previews first,
+  // followed by a merchant-selected palette, then the legacy ivory treatment.
+  const effectivePalette = launchPalette ||
+    (business?.palette_cv_user_selected ? business.palette_cv :
+      (business?.statut_carte === '⭐ CERTIFIÉ DALIL TOUNES' ? 'ivory' : business?.palette_cv));
+  const paletteTheme = getCvPaletteTheme(effectivePalette);
   const cvModel: CvModel = selectedModel || (String(business?.modele_cv || '').toLowerCase().includes('portfolio')
     ? 'portfolio'
     : 'business');
@@ -203,7 +210,7 @@ export default function BusinessQr() {
       }
       const selectBusiness = () => supabase
         .from('entreprise')
-        .select('id, nom, slug, slug_court, ville, categorie, name_ar, name_en, name_it, name_ru, categorie_ar, image_url, logo_url, statut_abonnement, cv_business_status, modele_cv, palette_cv, opening_style');
+        .select('id, nom, slug, slug_court, ville, categorie, name_ar, name_en, name_it, name_ru, categorie_ar, image_url, logo_url, statut_abonnement, cv_business_status, modele_cv, palette_cv, palette_cv_user_selected, statut_carte, opening_style');
       const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(identifier);
       let data: BusinessQrRecord | null = null;
 
@@ -436,6 +443,10 @@ export default function BusinessQr() {
               : text.unavailable}
           </p>
           <div className="mt-5 flex flex-col items-center gap-3">
+            <a href={`/${encodeURIComponent(identifier)}/compte`}
+              className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#0B4B3E] px-5 py-2.5 font-semibold text-white">
+              Retour à mon compte professionnel
+            </a>
             <a href={`${recoveryCvUrl.pathname}${recoveryCvUrl.search}`}
               className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#0B4B3E] px-5 py-2.5 font-semibold text-white">
               Ouvrir mon CV Business
