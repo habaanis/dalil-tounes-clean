@@ -15,7 +15,7 @@ Renseigner exclusivement les rubriques pour des fiches où la catégorie était 
 - recaCnwDhVWOgdKNt — SMSA NASRALLAH (Artisanal & Terroir) : entreprises.
 
 ## Contrôles
-9 écritures Airtable confirmées, champ modifié uniquement fld4CGEZ8oLqMsdvx. Les catégories existaient déjà (aucune édition). 9 identifiants Airtable présents chacun une fois dans Supabase. Synchronisation automatique constatée progressive : 7/9 au contrôle intermédiaire. **Vérifier les 9/9 avant tout autre lot.**
+9 écritures Airtable confirmées, champ modifié uniquement fld4CGEZ8oLqMsdvx. Les catégories existaient déjà (aucune édition). 9 identifiants Airtable présents chacun une fois dans Supabase. **Contrôle final Supabase : 9/9 synchronisées.** Compteurs : 2487 total, 394 sans rubrique, 371 sans catégorie. Ne pas retraiter ces 9 identifiants.
 
 Avant ce lot : 2487 entreprises, 403 sans rubrique, 371 sans catégorie. Les cas avec données incohérentes (ex. bâtiment classé Immobilier, maison classée Medical) doivent être examinés manuellement, pas simplement transférés automatiquement.
 Aucune modification des statuts de publication, aucune création/suppression/fusion, pas de déploiement Vercel.
