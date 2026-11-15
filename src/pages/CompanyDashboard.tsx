@@ -19,6 +19,11 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false }: 
   const [stats, setStats] = useState<ScopedBoutiqueStats[]>([]);
   const [statsLoading, setStatsLoading] = useState(false);
   const [statsError, setStatsError] = useState(false);
+  const [cvChoice, setCvChoice] = useState<'business'|'portfolio'>('portfolio');
+  const [openingChoice, setOpeningChoice] = useState<'photo'|'framed'>('photo');
+  const [presentationLoading, setPresentationLoading] = useState(false);
+  const [presentationSaving, setPresentationSaving] = useState(false);
+  const [presentationFeedback, setPresentationFeedback] = useState('');
   const [productTitle, setProductTitle] = useState('');
   const [productCategory, setProductCategory] = useState('');
   const [productDescription, setProductDescription] = useState('');
@@ -65,6 +70,39 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false }: 
     }).catch(() => {});
     return () => { cancelled = true; };
   }, [user?.id, stats]);
+
+  useEffect(() => {
+    if (!clientAppMode || !user?.id || !stats[0]?.entreprise_id) return;
+    let active=true;
+    setPresentationLoading(true);
+    void import('../lib/supabaseClient').then(({supabase}) =>
+      supabase.from('entreprise').select('modele_cv,opening_style')
+        .eq('id',stats[0].entreprise_id).maybeSingle()
+    ).then(({data,error})=>{
+      if (!active) return;
+      if (error || !data) {setPresentationFeedback('Présentation temporairement indisponible.');return;}
+      setCvChoice(String(data.modele_cv || '').toLowerCase().includes('portfolio') ? 'portfolio' : 'business');
+      setOpeningChoice(data.opening_style === 'framed' ? 'framed' : 'photo');
+    }).catch(()=>{
+      if (active) setPresentationFeedback('Présentation temporairement indisponible.');
+    }).finally(()=>{if(active)setPresentationLoading(false)});
+    return ()=>{active=false};
+  },[clientAppMode,user?.id,stats]);
+
+  const savePresentation = async () => {
+    if (!user?.id || !stats[0]?.entreprise_id || presentationSaving) return;
+    setPresentationSaving(true);setPresentationFeedback('');
+    try {
+      const {supabase} = await import('../lib/supabaseClient');
+      const {error} = await supabase.rpc('dalil_update_my_cv_presentation',{
+        p_entreprise_id:stats[0].entreprise_id,p_modele_cv:cvChoice,p_opening_style:openingChoice
+      });
+      if(error)throw error;
+      setPresentationFeedback('Présentation enregistrée. Le modèle choisi est maintenant le modèle principal de votre CV.');
+    } catch {
+      setPresentationFeedback('Enregistrement impossible. Votre présentation actuelle est conservée.');
+    } finally {setPresentationSaving(false);}
+  };
 
   const submitProductProposal = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -257,6 +295,45 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false }: 
                         ? <p className="text-sm leading-6 text-gray-700">Votre Boutique est identifiée. Proposez un produit dans le formulaire sécurisé ci-dessous ; aucune publication n'est automatique.</p>
                         : <p className="text-sm leading-6 text-gray-700">Votre établissement est identifié. Les modifications de vitrine seront activées après validation et modération.</p>}
                     </div>)}</div>}
+                  {activeTab === 'showcase' && clientAppMode && stats.length > 0 && !statsLoading && !statsError && <div className="mt-4 rounded-xl border border-[#dfcda8] bg-white p-4">
+                    <h3 className="font-semibold text-[#62212a]">Présentation de ma vitrine</h3>
+                    <p className="mt-1 text-xs leading-relaxed text-gray-600">Choisissez le CV principal et le style d'ouverture. Vous pouvez voir les deux modèles avant d'enregistrer.</p>
+                    {presentationLoading ? <p role="status" className="mt-3 text-xs">Chargement…</p> : <>
+                    <fieldset className="mt-4">
+                      <legend className="mb-2 text-sm font-semibold text-[#513b37]">Modèle de CV</legend>
+                      <div className="grid grid-cols-2 gap-2">
+                        {(['portfolio','business'] as const).map(model=><button key={model} type="button" onClick={()=>{setCvChoice(model);setPresentationFeedback('')}}
+                          aria-pressed={cvChoice===model} className={`min-h-11 rounded-xl border px-2 py-2 text-sm font-semibold ${cvChoice===model?'border-[#a88446] bg-[#fbf1df] text-[#62212a]':'border-[#dfcda8] bg-white text-gray-700'}`}>
+                          {model==='portfolio'?'CV Portfolio':'CV Business'}
+                        </button>)}
+                      </div>
+                    </fieldset>
+                    <fieldset className="mt-4">
+                      <legend className="mb-2 text-sm font-semibold text-[#513b37]">Présentation du logo à l'ouverture</legend>
+                      <div className="grid grid-cols-2 gap-2">
+                        <button type="button" onClick={()=>{setOpeningChoice('photo');setPresentationFeedback('')}} aria-pressed={openingChoice==='photo'}
+                          className={`min-h-11 rounded-xl border px-2 py-2 text-xs font-semibold ${openingChoice==='photo'?'border-[#a88446] bg-[#fbf1df] text-[#62212a]':'border-[#dfcda8] bg-white text-gray-700'}`}>
+                          A — Photo + logo
+                        </button>
+                        <button type="button" onClick={()=>{setOpeningChoice('framed');setPresentationFeedback('')}} aria-pressed={openingChoice==='framed'}
+                          className={`min-h-11 rounded-xl border px-2 py-2 text-xs font-semibold ${openingChoice==='framed'?'border-[#a88446] bg-[#fbf1df] text-[#62212a]':'border-[#dfcda8] bg-white text-gray-700'}`}>
+                          B — Logo encadré
+                        </button>
+                      </div>
+                    </fieldset>
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      <a href={`/${encodeURIComponent(window.location.pathname.split('/')[1])}/cv?source=pwa&preview-model=${cvChoice}&skip-opening=1`}
+                        className="inline-flex min-h-10 items-center rounded-xl border border-[#d8c394] px-3 py-2 text-xs font-semibold text-[#573e36]">Voir le CV</a>
+                      <a href={`/${encodeURIComponent(window.location.pathname.split('/')[1])}?opening-preview=1&opening-style=${openingChoice}`}
+                        className="inline-flex min-h-10 items-center rounded-xl border border-[#d8c394] px-3 py-2 text-xs font-semibold text-[#573e36]">Voir l'ouverture {openingChoice==='photo'?'A':'B'}</a>
+                    </div>
+                    <button type="button" onClick={()=>void savePresentation()} disabled={presentationSaving}
+                      className="mt-4 min-h-11 w-full rounded-xl bg-[#8f2530] px-4 py-2 font-semibold text-white disabled:opacity-50">
+                      {presentationSaving?'Enregistrement…':'Enregistrer mes choix'}
+                    </button>
+                    {presentationFeedback && <p role="status" className="mt-2 text-sm text-[#62212a]">{presentationFeedback}</p>}
+                    </>}
+                  </div>}
                   {activeTab === 'boutique' && stats.length > 0 && !statsLoading && !statsError && <div className="mt-5 rounded-xl border border-[#dfcda8] bg-white p-4 sm:p-5">
                     <h3 className="mb-2 font-semibold text-[#62212a]">Proposer un produit</h3>
                     <p className="mb-4 text-sm text-gray-600">Envoi privé à Dalil Tounes. Votre proposition ne sera visible aux visiteurs qu’après validation et publication par notre équipe. La photo est obligatoire pour une publication et reste privée jusqu’à validation.</p>
