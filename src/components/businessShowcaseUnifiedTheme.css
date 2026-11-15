@@ -50,7 +50,9 @@
 .dt-secondary-action svg { width: 13px !important; height: 13px !important; }
 .dt-action-notice { min-height: 10px !important; margin-top: 4px !important; font-size: 7px !important; }
 .dt-showcase-body { padding: 0 7px 8px !important; }
-.dt-intro { margin-top: 4px !important; padding: 8px 9px !important; border-radius: 8px !important; }
+.dt-intro:not(.dt-presentation-accordion) { margin-top: 4px !important; padding: 8px 9px !important; border-radius: 8px !important; }
+/* A collapsed Presentation accordion is a normal full-width row, not a padded introduction card. */
+.dt-presentation-accordion.dt-intro { margin-top: 4px !important; padding: 0 !important; border-radius: 8px !important; }
 .dt-eyebrow { margin-bottom: 3px !important; font-size: 7px !important; }
 .dt-intro h2, .dt-qr-card h2 { margin-bottom: 5px !important; font-size: 0.98rem !important; }
 .dt-intro-description { margin-bottom: 5px !important; font-size: 0.68rem !important; line-height: 1.45 !important; }
