@@ -1,0 +1,46 @@
+/* Existing CV Business / Portfolio previews: identical frames, no wasted lower space.
+ * Applies only inside the national PWA professional models panel. */
+[data-pwa-pro-window] #cv-presentation-models [data-pwa-model-card] {
+  padding: 9px;
+  border-radius: 13px;
+  align-self: start;
+  height: auto;
+}
+[data-pwa-pro-window] #cv-presentation-models [data-pwa-model-preview] {
+  height: 238px !important;
+  min-height: 0 !important;
+  padding: 7px;
+  align-items: flex-start;
+  background: #faf7ef;
+  border-radius: 12px;
+  box-shadow: none;
+}
+[data-pwa-pro-window] #cv-presentation-models [data-pwa-model-preview] img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center top;
+}
+[data-pwa-pro-window] #cv-presentation-models [data-pwa-model-preview] > button {
+  width: 36px;
+  height: 36px;
+  right: 8px;
+  top: 8px;
+  box-shadow: none;
+}
+[data-pwa-pro-window] #cv-presentation-models [data-pwa-model-card] > button {
+  margin-top: 5px;
+  min-height: 36px;
+}
+[data-pwa-pro-window] #cv-presentation-models [data-pwa-model-card] > button > span:first-child {
+  font-size: 12px;
+}
+[data-pwa-pro-window] #cv-presentation-models [data-pwa-model-card] > button > span:last-child {
+  font-size: 11px;
+  line-height: 1.45;
+  margin-top: 3px;
+}
+@media(max-width:640px) {
+  [data-pwa-pro-window] #cv-presentation-models [data-pwa-model-preview] { height: 200px !important; }
+  [data-pwa-pro-window] #cv-presentation-models .sm\\:hidden img { max-height: 270px; }
+}
