@@ -174,6 +174,8 @@ export default function BusinessQr() {
   const text = COPY[language as keyof typeof COPY] || COPY.fr;
   const [business, setBusiness] = useState<BusinessQrRecord | null>(null);
   const [loading, setLoading] = useState(true);
+  const [reloadKey, setReloadKey] = useState(0);
+  const [loadingFailed, setLoadingFailed] = useState(false);
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(
     () => (window as InstallPromptWindow).__dalilInstallPrompt || null,
   );
@@ -218,12 +220,13 @@ export default function BusinessQr() {
       }
       if (!cancelled) {
         setBusiness(data);
+        setLoadingFailed(!data);
         setLoading(false);
       }
     };
     void load();
     return () => { cancelled = true; };
-  }, [identifier]);
+  }, [identifier, reloadKey]);
 
   useEffect(() => {
     if (!identifier) return;
@@ -419,11 +422,29 @@ export default function BusinessQr() {
   }
 
   if (!business || !qrAccess) {
+    // A missing Supabase response is not proof that the CV is unpublished.
+    // Keep every recovery action inside the professional mini-app.
+    const recoveryCvUrl = new URL(buildClientCvUrl(business || identifier, language));
+    recoveryCvUrl.searchParams.set('preview-model', 'business');
+    recoveryCvUrl.searchParams.set('skip-opening', '1');
     return (
       <div className="fixed inset-0 z-[10000] grid place-items-center overflow-y-auto bg-[#F6F7F4] px-4 text-center">
-        <div className="max-w-md rounded-3xl border border-[#D4AF37]/40 bg-white p-8 shadow-xl">
-          <p className="text-gray-700">{text.unavailable}</p>
-          <a href={`https://dalil-tounes.com${cvPath}?lang=${language}`} className="mt-5 inline-flex rounded-full bg-[#0B4B3E] px-5 py-2.5 font-semibold text-white">{text.back}</a>
+        <div className="max-w-md rounded-3xl border border-[#D4AF37]/40 bg-white p-6 shadow-xl">
+          <p className="text-gray-700">
+            {!business || loadingFailed
+              ? 'La mini-application n’a pas pu récupérer votre fiche pour le moment.'
+              : text.unavailable}
+          </p>
+          <div className="mt-5 flex flex-col items-center gap-3">
+            <a href={`${recoveryCvUrl.pathname}${recoveryCvUrl.search}`}
+              className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#0B4B3E] px-5 py-2.5 font-semibold text-white">
+              Ouvrir mon CV Business
+            </a>
+            <button type="button" onClick={() => { setLoading(true); setLoadingFailed(false); setReloadKey(key => key+1); }}
+              className="inline-flex min-h-10 items-center justify-center rounded-full border border-[#D4AF37]/60 bg-white px-5 py-2 text-sm font-semibold text-[#0B4B3E]">
+              Réessayer
+            </button>
+          </div>
         </div>
       </div>
     );
