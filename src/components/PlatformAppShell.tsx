@@ -1,4 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react';
+import '../styles/platformAppRedActions.css';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Building2, Compass, Facebook, Home, Instagram, Menu, MessageCircle, Search, Users, X } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
