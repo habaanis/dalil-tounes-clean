@@ -33,6 +33,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { isPlatformAppMode } from '../lib/platformAppMode';
 
 type PreviewType = 'free' | 'artisan' | 'premium' | 'launch' | 'request' | null;
+type ProSection = 'presence-essentielle' | 'concept' | 'cv-professionnels' | 'modeles' | 'offres';
 type ModalSize = 'preview' | 'compact' | 'medium' | 'large';
 
 const MODAL_SIZE_CLASS_NAME: Record<ModalSize, string> = {
@@ -1410,23 +1411,71 @@ export const Subscription = () => {
   const [selectedPresentationModel, setSelectedPresentationModel] = useState<PresentationModel | null>(null);
   const [selectedPalette, setSelectedPalette] = useState<PaletteId>('prestige');
   const [showSecondaryDetails, setShowSecondaryDetails] = useState(false);
-  // Open the requested professional section when coming from an app hub link.
+  // National PWA: keep the long professional page short until a section is chosen.
+  const [activeProSection, setActiveProSection] = useState<ProSection | null>(() => {
+    if (typeof window === 'undefined') return null;
+    const target = window.location.hash.slice(1);
+    if (target === 'histoire-fondateur') return 'concept';
+    if (target === 'cv-presentation-models') return 'modeles';
+    if (target === 'cv-business-products-title') return 'offres';
+    return (['presence-essentielle', 'concept', 'cv-professionnels', 'modeles', 'offres'].includes(target)
+      ? target : null) as ProSection | null;
+  });
+  const proSections: Array<{ id: ProSection; label: string }> = [
+    { id: 'presence-essentielle', label: structure.essential },
+    { id: 'concept', label: structure.concept },
+    { id: 'cv-professionnels', label: structure.products },
+    { id: 'modeles', label: structure.models },
+    { id: 'offres', label: structure.offers },
+  ];
+  const proSelectionHint: Record<OfferLanguage, string> = {
+    fr: 'Choisissez une rubrique ci-dessus pour afficher son contenu.',
+    ar: 'اختر قسمًا من الأعلى لعرض محتواه.',
+    en: 'Choose a section above to view its content.',
+    it: 'Scegli una sezione qui sopra per visualizzarne il contenuto.',
+    ru: 'Выберите раздел выше, чтобы увидеть его содержимое.',
+  };
+  const showProSection = (target: ProSection) => {
+    setActiveProSection(target);
+    window.history.replaceState(window.history.state, '', `${window.location.pathname}${window.location.search}#${target}`);
+  };
+  // Deep links from the compact PWA hub open the matching panel.
   useEffect(() => {
     const openTargetSection = () => {
-      const target = window.location.hash.slice(1);
+      const hash = window.location.hash.slice(1);
+      const target = hash === 'histoire-fondateur' ? 'concept'
+        : hash === 'cv-presentation-models' ? 'modeles'
+        : hash === 'cv-business-products-title' ? 'offres' : hash;
+      if (isPwa) {
+        if (['presence-essentielle', 'concept', 'cv-professionnels', 'modeles', 'offres'].includes(target)) {
+          setActiveProSection(target as ProSection);
+        }
+        return;
+      }
+      // The public website keeps its existing full-page navigation.
       if (target !== 'modeles' && target !== 'offres') return;
       if (target === 'modeles') {
         const models = document.getElementById('modeles');
         if (models instanceof HTMLDetailsElement) models.open = true;
       }
-      window.requestAnimationFrame(() => {
-        document.getElementById(target)?.scrollIntoView({ block: 'start' });
-      });
+      window.requestAnimationFrame(() => document.getElementById(target)?.scrollIntoView({ block: 'start' }));
     };
     openTargetSection();
     window.addEventListener('hashchange', openTargetSection);
     return () => window.removeEventListener('hashchange', openTargetSection);
-  }, []);
+  }, [isPwa]);
+
+  useEffect(() => {
+    if (!isPwa || !activeProSection) return;
+    const frame = window.requestAnimationFrame(() => {
+      if (activeProSection === 'modeles') {
+        const models = document.getElementById('modeles');
+        if (models instanceof HTMLDetailsElement) models.open = true;
+      }
+      document.querySelector('[data-pwa-pro-sections]')?.scrollIntoView({ block: 'start' });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [isPwa, activeProSection]);
 
 
   const closePreview = () => setActivePreview(null);
@@ -1436,6 +1485,7 @@ export const Subscription = () => {
   };
   const selectFormula = (formula: 'artisan' | 'premium') => {
     setSelectedFormula(formula);
+    if (isPwa) showProSection('modeles');
     const models = document.getElementById('modeles');
     if (models instanceof HTMLDetailsElement) models.open = true;
     window.requestAnimationFrame(() => {
@@ -1474,33 +1524,49 @@ export const Subscription = () => {
           <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-500 sm:text-base">{structure.freeIntro}</p>
         </header>
 
-        <nav className="mb-5 flex flex-wrap justify-center gap-3 text-sm font-medium text-[#4A1D43]" aria-label={structure.professional}>
-          <a href="#presence-essentielle">{structure.essential}</a><a href="#concept">{structure.concept}</a><a href="#cv-professionnels">{structure.products}</a><a href="#modeles">{structure.models}</a><a href="#offres">{structure.offers}</a>
-        </nav>
-        <EssentialPresence registration />
-        <p className="mt-3 text-sm font-semibold text-emerald-800">{copy.essentialFree}</p>
-        <button type="button" onClick={() => setActivePreview('free')} className="mt-3 min-h-11 rounded-xl border border-[#D4AF37] px-4 py-2 text-sm font-medium text-[#4A1D43]">{copy.previewCard}</button>
-        <section id="concept" className="my-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-5">
+        {isPwa
+          ? <nav data-pwa-pro-sections aria-label={structure.professional} className="mb-3 grid grid-cols-2 gap-2" role="tablist">
+            {proSections.map((section, index) => <button key={section.id} id={`pro-tab-${section.id}`} type="button"
+              role="tab" aria-selected={activeProSection === section.id} aria-controls="pwa-pro-window"
+              onClick={() => showProSection(section.id)}
+              className={`min-h-11 rounded-xl border px-2 py-2 text-center text-xs font-semibold leading-5 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B62226] ${index === 4 ? 'col-span-2 ' : ''}${activeProSection === section.id ? 'border-[#B62226] bg-[#B62226] text-white' : 'border-[#D4AF37]/60 bg-[#FFFDF8] text-[#302925]'}`}>
+              {section.label}
+            </button>)}
+          </nav>
+          : <nav className="mb-5 flex flex-wrap justify-center gap-3 text-sm font-medium text-[#4A1D43]" aria-label={structure.professional}>
+            <a href="#presence-essentielle">{structure.essential}</a><a href="#concept">{structure.concept}</a><a href="#cv-professionnels">{structure.products}</a><a href="#modeles">{structure.models}</a><a href="#offres">{structure.offers}</a>
+          </nav>}
+        <div id="pwa-pro-window" data-pwa-pro-window={isPwa ? '' : undefined}
+          role={isPwa ? 'tabpanel' : undefined}
+          aria-labelledby={isPwa && activeProSection ? `pro-tab-${activeProSection}` : undefined}
+          className={isPwa ? 'rounded-2xl border border-[#D4AF37]/50 bg-[#FFFCF7] p-3' : 'contents'}>
+          {isPwa && !activeProSection && <p className="py-6 text-center text-sm text-[#655B50]">{proSelectionHint[offerLang]}</p>}
+          <div className={isPwa && activeProSection !== 'presence-essentielle' ? 'hidden' : 'contents'}>
+            <EssentialPresence registration />
+            <p className="mt-3 text-sm font-semibold text-emerald-800">{copy.essentialFree}</p>
+            <button type="button" onClick={() => setActivePreview('free')} className="mt-3 min-h-11 rounded-xl border border-[#D4AF37] px-4 py-2 text-sm font-medium text-[#4A1D43]">{copy.previewCard}</button>
+          </div>
+        <section id="concept" className={`${isPwa && activeProSection !== 'concept' ? 'hidden ' : ''}my-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-5`}>
           <h2 className="font-serif text-xl font-medium text-[#4A1D43]">Dalil Tounes</h2>
           <p className="my-3 text-sm leading-6 text-slate-600">{structure.intro}</p>
           <p className="my-3 text-sm leading-6 text-slate-600">{copy.heroSubtitle}</p>
           <details className="rounded-xl border border-[#D4AF37]/40 p-3"><summary className="cursor-pointer font-medium text-[#4A1D43]">{structure.concept}</summary><Concept embedded /></details>
           <details id="histoire-fondateur" className="mt-3 scroll-mt-32 rounded-xl border border-[#D4AF37]/40 p-3"><summary className="cursor-pointer font-medium text-[#4A1D43]">{structure.story}</summary><FounderStory full /></details>
         </section>
-        <section id="cv-professionnels" className="my-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-5">
+        <section id="cv-professionnels" className={`${isPwa && activeProSection !== 'cv-professionnels' ? 'hidden ' : ''}my-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-5`}>
           <h2 className="font-serif text-xl font-medium text-[#4A1D43]">{structure.products}</h2>
           <p className="mt-1 text-xs text-slate-500">CV Business · CV Portfolio</p>
           <p className="my-3 text-sm leading-6 text-slate-600">{structure.cvIntro}</p>
           <details><summary className="cursor-pointer font-medium text-[#4A1D43]">{structure.details}</summary><CvBusinessHome embedded /></details>
         </section>
-        <section id="offres" aria-labelledby="cv-business-products-title" className="order-2 mt-5 sm:mt-0">
-<div className="mb-6 text-center">
+        <section id="offres" aria-labelledby="cv-business-products-title" className={`${isPwa && activeProSection !== 'offres' && activeProSection !== 'modeles' ? 'hidden ' : ''}order-2 mt-5 sm:mt-0`}>
+<div className={isPwa && activeProSection !== 'offres' ? 'hidden' : 'mb-6 text-center'}>
   <p className="text-xs font-medium uppercase tracking-[0.18em] text-amber-600">{language === "ar" ? "تطبيقك المصغّر المهني" : language === "en" ? "YOUR BUSINESS MINI-APP" : language === "it" ? "LA TUA MINI-APP PROFESSIONALE" : language === "ru" ? "ВАШЕ МИНИ-ПРИЛОЖЕНИЕ" : "VOTRE MINI-APPLI PROFESSIONNELLE"}</p>
   <h2 id="cv-business-products-title" className="mt-2 text-2xl font-medium text-[#4A123F] sm:text-3xl">{simpleCopy.productsTitle}</h2>
   <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-slate-600">{simpleCopy.productsSubtitle}</p>
 </div>
 
-<details id="modeles" className="mb-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-4">
+<details id="modeles" className={`${isPwa && activeProSection !== 'modeles' ? 'hidden ' : ''}mb-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-4`}>
   <summary className="cursor-pointer font-medium text-[#4A1D43]">{structure.models}</summary>
 <CvPresentationModelSelector
   language={language}
@@ -1516,6 +1582,7 @@ export const Subscription = () => {
   onPaletteChange={setSelectedPalette}
 />
 </details>
+<div className={isPwa && activeProSection !== 'offres' ? 'hidden' : 'contents'}>
 <div className="mb-6 overflow-hidden rounded-3xl border border-[#D6AF2E]/60 bg-gradient-to-br from-[#FFF8DF] via-white to-[#FFF9ED] p-5 shadow-[0_12px_30px_rgba(74,18,63,0.07)] sm:p-7">
   <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
     <div className="max-w-3xl">
@@ -1593,8 +1660,10 @@ export const Subscription = () => {
   </div>
   <p className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold leading-6 text-[#4A123F]">{simpleCopy.noRenewal}</p>
 </div>
+</div>
         </section>
 
+        <div className={isPwa && activeProSection !== 'offres' ? 'hidden' : 'contents'}>
         <button
           type="button"
           aria-expanded={showSecondaryDetails}
@@ -1662,6 +1731,8 @@ export const Subscription = () => {
             {copy.ctaButton} <ChevronRight className="h-4 w-4" aria-hidden="true" />
           </a>
         </section>
+        </div>
+        </div>
       </div>
 
       {activePreview === 'free' && (
