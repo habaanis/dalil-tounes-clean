@@ -73,3 +73,11 @@ Toutes les corrections doivent être effectuées dans Airtable puis vérifiées 
 - Lors des réponses d'écriture Airtable : pour les 27, statut toujours `terminer la saisi`, pas de `Statut de publication` renseigné.
 - Premier contrôle de synchronisation Supabase après ce lot : **8/27** nouvelles affectations déjà reçues, **0** nouvelle publication, **0** approbation, compteur **2487** inchangé. Vérification finale nécessaire avant de déclarer ce lot achevé.
 - Retour arrière si nécessaire : remettre `liste pages` vide pour les 27 identifiants déjà listés dans le lot 004 ; ne jamais effacer une fiche pour corriger une classification.
+
+
+### Validation définitive du lot 005
+- Vérification finale Supabase par identifiants : **27/27 affectations synchronisées**.
+- Les **27** fiches restent `statut_validation='terminer la saisi'`, sans `statut_publication`, sans `approved=true`; **0** publication involontaire.
+- Compteur total des fiches : **2487 avant et après** ; aucune création/suppression ni duplication nécessaire.
+- L'automatisation Airtable est confirmée active avec précondition explicite `Prêt à publier`. Cette validation porte sur ce lot, pas sur l'ensemble des autres automatisations ou pages de l'application.
+- **Lot 005 clos (classification et synchronisation)**. Pas de fusion vers `main`, pas de déploiement de nouveau code PWA. La sécurité RLS et les tests de recherche globaux restent des travaux séparés.
