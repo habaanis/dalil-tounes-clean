@@ -81,42 +81,42 @@ const COPY: Record<Lang, {
 const HOUSE_TEASER: Record<Lang, { eyebrow: string; title: string; context: string; benefit: string; reach: string; cta: string }> = {
   fr: {
     eyebrow: 'MAISON DALIL TOUNES',
-    title: 'Vos clients vous trouvent. Facilitez le contact.',
+    title: 'Vos clients vous trouvent. Facilitez le contact. Vendez vos produits.',
     context: 'Vos clients peuvent vous découvrir sur Google, Facebook ou Instagram. Mais trouver vos services, réalisations, horaires et coordonnées demande parfois plusieurs recherches.',
     benefit: 'Avec votre mini-appli Dalil Tounes, rassemblez l’essentiel dans un seul espace professionnel. Un lien ou un QR Code suffit pour présenter votre activité, inspirer confiance et faciliter le contact.',
-    reach: 'Faites connaître votre entreprise partout en partageant votre mini-appli. Avec la boutique et son catalogue (formule Premium), présentez vos produits et facilitez les commandes et les ventes.',
+    reach: 'Faites circuler votre mini-appli partout : sur vos réseaux, par message, sur vos supports imprimés ou grâce au QR Business. Avec la boutique et son catalogue (formule Premium), présentez vos produits, recevez des demandes et facilitez vos ventes.',
     cta: 'Découvrir la mini-appli',
   },
   ar: {
     eyebrow: 'بيت دليل تونس',
-    title: 'خلّي حرفاءك يلقاوك ويتّصلوا بيك بسهولة',
+    title: 'خلّي حرفاءك يلقاوك ويتّصلوا بيك ويطلبوا منتجاتك بسهولة',
     context: 'حرفاءك ينجموا يلقاوك على Google وFacebook وInstagram، أما الخدمات والإنجازات والأوقات ووسائل الاتصال ساعات تكون متفرقة.',
     benefit: 'مع التطبيق المصغّر من دليل تونس، اجمع المعلومات المهمة في مكان واحد. رابط واحد أو QR Code يعرّف بنشاطك ويسهّل التواصل مع الحرفاء.',
-    reach: 'عرّف بمؤسستك في كل مكان بمشاركة الرابط. ومع المتجر والكتالوغ (صيغة Premium)، اعرض منتجاتك وسهّل الطلبات والمبيعات.',
+    reach: 'انشر التطبيق المصغّر في كل مكان: على شبكات التواصل، في الرسائل، على المطبوعات أو عبر QR Business. ومع المتجر والكتالوغ (صيغة Premium)، اعرض منتجاتك واستقبل الطلبات وسهّل المبيعات.',
     cta: 'اكتشف التطبيق المصغّر',
   },
   en: {
     eyebrow: 'DALIL TOUNES HOUSE',
-    title: 'Help customers find you and get in touch.',
+    title: 'Get discovered. Make contact easy. Sell your products.',
     context: 'People may discover you on Google, Facebook or Instagram, but finding your services, work, opening hours and contact details can require several searches.',
     benefit: 'Your Dalil Tounes mini-app brings everything together. Share one link or QR code to present your business, build confidence and make contact easier.',
-    reach: 'Promote your business wherever you share your mini-app. With the shop and catalogue (Premium plan), showcase products and make orders and sales easier.',
+    reach: 'Share your mini-app everywhere: social media, messages, printed materials or the Business QR code. With the shop and catalogue (Premium plan), showcase products, receive enquiries and make sales easier.',
     cta: 'Discover the mini-app',
   },
   it: {
     eyebrow: 'CASA DALIL TOUNES',
-    title: 'Fatti trovare e facilita il contatto.',
+    title: 'Fatti trovare, facilita il contatto e vendi i tuoi prodotti.',
     context: 'I clienti possono scoprirti su Google, Facebook o Instagram, ma per trovare servizi, lavori, orari e contatti devono spesso fare varie ricerche.',
     benefit: 'La mini-app Dalil Tounes riunisce le informazioni essenziali in uno spazio professionale. Un link o QR Code per presentarti e facilitare il contatto.',
-    reach: 'Promuovi la tua attività ovunque condividendo la mini-app. Con negozio e catalogo (piano Premium), mostra i prodotti e facilita ordini e vendite.',
+    reach: 'Condividi la mini-app sui social, nei messaggi, sui supporti stampati e tramite QR Business. Con negozio e catalogo (piano Premium), mostra i prodotti, ricevi richieste e facilita le vendite.',
     cta: 'Scopri la mini-app',
   },
   ru: {
     eyebrow: 'ДОМ DALIL TOUNES',
-    title: 'Помогите клиентам найти вас и связаться.',
+    title: 'Помогите клиентам найти вас, связаться и купить товары.',
     context: 'Клиенты могут узнать о вас в Google, Facebook или Instagram, но услуги, работы, часы и контакты часто приходится искать отдельно.',
     benefit: 'Мини-приложение Dalil Tounes объединяет важное. Одна ссылка или QR-код помогает представить бизнес, вызвать доверие и упростить общение.',
-    reach: 'Рассказывайте о компании везде, где делитесь мини-приложением. Магазин и каталог (план Premium) помогают показывать товары, принимать запросы и продавать.',
+    reach: 'Делитесь мини-приложением в соцсетях, сообщениях, на печатных материалах и через Business QR. Магазин и каталог (план Premium) позволяют показывать товары, получать запросы и упрощать продажи.',
     cta: 'Узнать о мини-приложении',
   },
 };
@@ -150,11 +150,13 @@ export default function PlatformAppHome({ totalCount, legacyCertifiedCount, reco
       <p className="mt-1 text-xs leading-5 text-[#66615D]">{lang === 'ar' ? 'عزّز حضور نشاطك عبر تطبيق مصغّر مهني خاص بمؤسستك.' : lang === 'en' ? 'Give your business greater impact with your own business mini-app.' : lang === 'it' ? 'Dai più visibilità alla tua attività con una mini-app personalizzata.' : lang === 'ru' ? 'Представьте бизнес с помощью собственного мини-приложения.' : 'Développez votre visibilité avec votre mini-appli professionnelle.'}</p>
     </section>
     <section data-platform-app-house-teaser className="rounded-xl border border-[#C9A65D] bg-[#FFFCF8] p-3.5 shadow-[0_2px_12px_rgba(30,25,20,0.025)]" aria-label={teaser.cta}>
-      <div className="flex items-center gap-3">
-        <img src="/images/maison-dalil-tounes-validee.webp" alt={lang === 'fr' ? 'Maison Dalil Tounes : un même endroit pour vos contacts professionnels' : 'Dalil Tounes house'} loading="lazy" decoding="async" className="h-32 w-32 shrink-0 rounded-xl bg-[#FFF8EC] object-contain sm:h-36 sm:w-36" />
-        <div className="min-w-0 flex-1">
+      <div className="grid grid-cols-1 items-center gap-3 sm:grid-cols-[minmax(180px,240px)_minmax(0,1fr)] sm:gap-5">
+        <div className="mx-auto flex w-full max-w-[260px] items-center justify-center rounded-xl bg-[#FFF8EC] p-2 sm:mx-0 sm:max-w-none">
+          <img src="/images/maison-dalil-tounes-validee.webp" alt={lang === 'fr' ? 'Maison Dalil Tounes : un même endroit pour vos contacts professionnels' : 'Dalil Tounes house'} loading="lazy" decoding="async" className="h-44 w-full object-contain sm:h-52" />
+        </div>
+        <div className="min-w-0">
           <p className="text-[10px] font-semibold uppercase tracking-[0.09em] text-[#97752F]">{teaser.eyebrow}</p>
-          <h2 className="mt-1 font-serif text-lg font-semibold leading-6 text-[#292725]">{teaser.title}</h2>
+          <h2 className="mt-1 font-serif text-lg font-semibold leading-6 text-[#292725] sm:text-xl sm:leading-7">{teaser.title}</h2>
         </div>
       </div>
       <div className="mt-3 space-y-2.5 text-[13px] leading-[1.65] text-[#514A45]">
