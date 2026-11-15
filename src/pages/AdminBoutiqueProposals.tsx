@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../context/AuthContext';
+import AdminBoutiqueChanges from './AdminBoutiqueChanges';
 
 type Proposal = {
   id: string; user_id: string; entreprise_id: string; title: string;
@@ -121,6 +122,7 @@ export default function AdminBoutiqueProposals() {
           <span className="self-center text-xs text-gray-600">Validation explicite requise</span>
         </div>
       </article>)}</div>
+      <AdminBoutiqueChanges />
     </div>
   </main>;
 }
