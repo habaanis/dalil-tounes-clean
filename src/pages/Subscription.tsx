@@ -1327,6 +1327,7 @@ function CreationPlanCard({
   expanded,
   onToggle,
   selected = false,
+  twoColumnFeatures = false,
 }: {
   title: string;
   price: string;
@@ -1343,6 +1344,7 @@ function CreationPlanCard({
   expanded: boolean;
   onToggle: () => void;
   selected?: boolean;
+  twoColumnFeatures?: boolean;
 }) {
   return (
     <article className={`relative flex flex-col overflow-hidden rounded-3xl border-2 bg-[#FFF9ED] p-5 text-[#35172F] shadow-[0_12px_30px_rgba(7,84,63,0.16)] transition sm:p-6 ${selected ? 'border-[#C8A557] ring-4 ring-[#D6AF2E]' : 'border-[#D6AF2E]'}`}>
@@ -1365,7 +1367,9 @@ function CreationPlanCard({
       </button>
       {expanded && (
         <div className="mt-4 border-t border-[#D9C69F] pt-4">
-          <FeatureList items={features} variant="light" />
+          <div data-pwa-premium-feature-columns={twoColumnFeatures ? '' : undefined}>
+            <FeatureList items={features} variant="light" />
+          </div>
           <div className="grid gap-2 pt-6 sm:grid-cols-2">
             <button type="button" onClick={onPreview} className="rounded-xl border border-[#D6AF2E] bg-transparent px-4 py-3 text-sm font-medium text-[#815E28] transition hover:bg-[#F8F0DE] focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]">{previewLabel}</button>
             <button type="button" onClick={onRequest} className="rounded-xl bg-[#D6AF2E] px-4 py-3 text-sm font-medium text-[#30162E] transition hover:bg-[#E5C64D] focus:outline-none focus:ring-2 focus:ring-[#986F25]">{chooseLabel}</button>
@@ -1632,6 +1636,7 @@ export const Subscription = () => {
     firstYearIncluded={simpleCopy.firstYearIncluded}
     intro={simplifiedOfferCopy[language as OfferLanguage].premiumIntro}
     features={premiumFeatures}
+    twoColumnFeatures={isPwa}
     previewLabel={simplifiedOfferCopy[language as OfferLanguage].preview}
     chooseLabel={simplifiedOfferCopy[language as OfferLanguage].choosePremium}
     onPreview={() => setActivePreview('premium')}
