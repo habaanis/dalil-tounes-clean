@@ -2,6 +2,7 @@ import { applyCertificationFilter } from '../lib/businessCertification';
 import { isPlatformAppMode } from '../lib/platformAppMode';
 import { hasGreenBusinessCard } from '../lib/businessCardPresentation';
 import { getShopFilterId, getShopFilterLabel, matchesShopFilter, SHOP_PAGE } from '../lib/shopFilters';
+import { getPlatformSearchScopePage } from '../lib/businessPageClassification';
 import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
@@ -414,8 +415,7 @@ export const Businesses = ({
   const location = useLocation();
   const inPlatformApp = isPlatformAppMode();
   const [searchParams] = useSearchParams();
-  const appSearchScope = inPlatformApp && ['sante', 'services', 'magasin'].includes(searchParams.get('scope') || '') ? searchParams.get('scope') : null;
-  const appScopePage = appSearchScope === 'sante' ? 'santé' : appSearchScope === 'services' ? 'services citoyens' : appSearchScope === 'magasin' ? 'commerces & magasins' : null;
+  const appScopePage = inPlatformApp ? getPlatformSearchScopePage(searchParams.get('scope')) : null;
   const t = useTranslation(language);
   const pageT = getBusinessesPageTranslations(language);
   const directoryCopy = DIRECTORY_NAV_COPY[language as BusinessCardPreviewLanguage] ?? DIRECTORY_NAV_COPY.fr;
