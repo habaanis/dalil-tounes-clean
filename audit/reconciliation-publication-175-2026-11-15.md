@@ -31,7 +31,7 @@ Le prédicat de lecture `anon/authenticated` permet 549 fiches : 394 approved=tr
 
 ## Test site et application
 Vercel site et PWA en état READY. Logs d'erreurs 24h précédents vides. Les requêtes HTTP navigateur directes n'ont pas abouti depuis l'environnement disponible (outil Web: aperçu statique du site, PWA et URLs de détail non accessibles; réseau local: résolution DNS impossible). Il est donc incorrect de déclarer la recette fonctionnelle E2E réussie.
-Le commit site `82d436bf3c7cd2d415b20cc22552d0bde43d2af0` et le commit PWA `44299150534e6eca171eabe83fbdf6f4e8a461bc` ne présentent aucun status check individuel retourné par l'API GitHub combinée; cela ne constitue pas des tests passés.
+Le commit site `82d436bf3c7cd2d415b20cc22552d0bde43d2af0` et le commit PWA `44299150534e6eca171eabe83fbdf6f4e8a461bc` présentent chacun deux statuts GitHub Vercel en succès (site et PWA). Il s'agit de statuts de déploiement réussis et non de preuves de tests fonctionnels navigateur.
 Aucun déploiement supplémentaire n'a été lancé.
 
 ## Suites décidables
