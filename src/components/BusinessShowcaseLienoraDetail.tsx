@@ -1943,7 +1943,7 @@ export default function BusinessShowcaseLienoraDetail({
                     ? cloneElement(boutiqueContent as ReactElement<{ triggerClassName?: string; triggerIcon?: ReactNode; triggerLabel?: string }>, {
                         triggerClassName: 'dt-accordion-trigger dt-boutique-trigger',
                         triggerIcon: <Images aria-hidden="true" />,
-                        triggerLabel: language === 'ar' ? 'المتجر' : language === 'en' ? 'Shop' : 'Boutique',
+                        triggerLabel: language === 'ar' ? 'المتجر · طلبات وعروض أسعار' : language === 'en' ? 'Shop · Quotes & orders' : language === 'it' ? 'Negozio · Preventivi e ordini' : language === 'ru' ? 'Магазин · Заказы и цены' : 'Boutique · Devis & commandes',
                       })
                     : boutiqueContent}
                 </section>
