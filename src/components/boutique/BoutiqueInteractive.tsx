@@ -6,6 +6,7 @@ export type BoutiqueProduct = {
   title: string;
   imageUrl: string;
   description?: string;
+  category?: string;
   price?: number;
   currency: 'EUR' | 'TND';
   mode: 'order' | 'quote';
@@ -59,7 +60,18 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
   const [contact, setContact] = useState('');
   const [details, setDetails] = useState('');
   const [error, setError] = useState('');
+  const [catalogueQuery, setCatalogueQuery] = useState('');
+  const [catalogueCategory, setCatalogueCategory] = useState('');
+  const [cataloguePage, setCataloguePage] = useState(1);
   const products = config.products.filter(product => Boolean(product.id && product.title && product.imageUrl));
+  const catalogueCategories = [...new Set(products.map(product => product.category?.trim()).filter((category): category is string => Boolean(category)))].sort((a,b) => a.localeCompare(b,'fr'));
+  const filteredProducts = products.filter(product =>
+    (!catalogueCategory || product.category?.trim() === catalogueCategory)
+    && (!catalogueQuery.trim() || (product.title + ' ' + (product.description || '')).toLocaleLowerCase().includes(catalogueQuery.trim().toLocaleLowerCase()))
+  );
+  const pageCount = Math.max(1, Math.ceil(filteredProducts.length / 12));
+  const safePage = Math.min(cataloguePage, pageCount);
+  const pageProducts = filteredProducts.slice((safePage - 1) * 12, safePage * 12);
   const phone = config.whatsapp.replace(/\D/g, '');
   const canWhatsApp = /^\d{8,15}$/.test(phone);
   useEffect(() => {
@@ -113,7 +125,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
     : '';
 
   return <>
-    <button type="button" onClick={() => { setOpen(true); setSelected(null); setRequestOpen(false); }}
+    <button type="button" onClick={() => { setOpen(true); setSelected(null); setRequestOpen(false); setCataloguePage(1); setCatalogueQuery(''); setCatalogueCategory(''); }}
       aria-haspopup="dialog" className={triggerClassName}
       style={triggerClassName ? undefined : { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 7, padding: '8px 15px', border: '1px solid #d2b276', background: '#fffaf2', color: '#5a3a52', borderRadius: 24, fontSize: 13, fontWeight: 600, lineHeight: 1.2, cursor: 'pointer' }}>
       {triggerIcon ?? <span aria-hidden="true">✦</span>}<span>{triggerLabel}</span>{!config.demoMode && products.some(isRecentProduct) && <span aria-label="Nouveautés" style={{fontSize:10,color:'#9b773e',fontWeight:700,whiteSpace:'nowrap'}}>●</span>}
@@ -132,8 +144,19 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
         </div>
         {!selected ? <>
           <p style={{ fontSize: 12, color: '#74665e', margin: '0 0 12px' }}>Découvrez nos créations. Touchez une photo pour les détails.</p>
+          {(products.length > 12 || catalogueCategories.length > 0) && <div style={{display:'grid',gap:8,margin:'0 0 12px'}}>
+            <label style={{...labelStyle,color:'#594e45'}}>Rechercher une création
+              <input type="search" value={catalogueQuery} onChange={event => {setCatalogueQuery(event.target.value);setCataloguePage(1);}} placeholder="Nom ou description" style={fieldStyle} />
+            </label>
+            {catalogueCategories.length > 0 && <label style={{...labelStyle,color:'#594e45'}}>Catégorie
+              <select value={catalogueCategory} onChange={event => {setCatalogueCategory(event.target.value);setCataloguePage(1);}} style={fieldStyle}>
+                <option value="">Toutes les catégories</option>
+                {catalogueCategories.map(category => <option key={category} value={category}>{category}</option>)}
+              </select>
+            </label>}
+          </div>}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 9 }}>
-            {products.map(product => <button type="button" key={product.id} onClick={() => showProduct(product)}
+            {pageProducts.map(product => <button type="button" key={product.id} onClick={() => showProduct(product)}
               style={{ display: 'grid', gap: 5, textAlign: 'left', padding: 5, background: '#fff', color: '#382d2c', border: '1px solid #e1d4c3', borderRadius: 12, minWidth: 0, cursor: 'pointer' }}>
               <img src={product.imageUrl} alt={product.title} loading="lazy"
                 style={{ width: '100%', aspectRatio: '1 / 1', objectFit: 'cover', borderRadius: 8 }} />
@@ -142,6 +165,12 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
               <span style={{ padding: '0 4px 3px', fontSize: 11, color: '#8c713f' }}>Voir les détails ›</span>
             </button>)}
           </div>
+          {filteredProducts.length === 0 && <p role="status" style={{fontSize:12,color:'#685c50',textAlign:'center',padding:'14px 0'}}>Aucun produit ne correspond à votre recherche.</p>}
+          {pageCount > 1 && <nav aria-label="Pages du catalogue" style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:10,marginTop:12}}>
+            <button type="button" disabled={safePage <= 1} onClick={() => setCataloguePage(p => Math.max(1,p-1))} style={{...iconButton,padding:'0 12px',fontSize:12,opacity:safePage <= 1 ? .4 : 1}}>Précédent</button>
+            <span style={{fontSize:12,color:'#615548'}}>Page {safePage} / {pageCount}</span>
+            <button type="button" disabled={safePage >= pageCount} onClick={() => setCataloguePage(p => Math.min(pageCount,p+1))} style={{...iconButton,padding:'0 12px',fontSize:12,opacity:safePage >= pageCount ? .4 : 1}}>Suivant</button>
+          </nav>}
         </> : <>
           <button type="button" onClick={() => { setSelected(null); setRequestOpen(false); setError(''); }}
             style={{ border: 0, background: 'transparent', fontSize: 12, color: '#806538', padding: '0 0 10px', cursor: 'pointer' }}>‹ Toutes les créations</button>
