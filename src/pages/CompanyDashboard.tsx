@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Briefcase, Users, Building2, Settings, LogOut, Store, Package, BarChart3, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import JobPostForm from '../components/forms/JobPostForm';
+import BoutiqueProductManagement from '../components/boutique/BoutiqueProductManagement';
 
 type ScopedBoutiqueStats = { entreprise_id: string; push_subscriptions: number; published_products: number; draft_products: number };
 interface CompanyDashboardProps {
@@ -334,6 +335,7 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false }: 
                     {presentationFeedback && <p role="status" className="mt-2 text-sm text-[#62212a]">{presentationFeedback}</p>}
                     </>}
                   </div>}
+                  {activeTab === 'boutique' && stats.length > 0 && !statsLoading && !statsError && user && <BoutiqueProductManagement entrepriseIds={stats.map(record => record.entreprise_id)} userId={user.id} />}
                   {activeTab === 'boutique' && stats.length > 0 && !statsLoading && !statsError && <div className="mt-5 rounded-xl border border-[#dfcda8] bg-white p-4 sm:p-5">
                     <h3 className="mb-2 font-semibold text-[#62212a]">Proposer un produit</h3>
                     <p className="mb-4 text-sm text-gray-600">Envoi privé à Dalil Tounes. Votre proposition ne sera visible aux visiteurs qu’après validation et publication par notre équipe. La photo est obligatoire pour une publication et reste privée jusqu’à validation.</p>
