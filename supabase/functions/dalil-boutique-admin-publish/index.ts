@@ -53,13 +53,13 @@ Deno.serve(async (request: Request) => {
     const bytes=new Uint8Array(await file.arrayBuffer());
     if(!validImage(bytes,type)) return respond({error:"Invalid image format"},422,origin);
     const path="boutique-approved/" + requestId + suffix;
-    const {error:uploadError}=await adminClient.storage.from("photos-dalil")
+    const {error:uploadError}=await adminClient.storage.from("dalil-boutique-approved")
       .upload(path,bytes,{upsert:false,contentType:type,cacheControl:"3600"});
     if(uploadError) return respond({error:"Public photo transfer failed; no product was published"},409,origin);
     const ownerClient=createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false},global:{headers:{Authorization:authHeader}}});
     const {data:productId,error:approvalError}=await ownerClient.rpc("dalil_publish_moderated_boutique_product",{p_request_id:requestId,p_image_path:path});
     if(approvalError || !productId) {
-      await adminClient.storage.from("photos-dalil").remove([path]);
+      await adminClient.storage.from("dalil-boutique-approved").remove([path]);
       return respond({error:"Approval failed; no product published"},409,origin);
     }
     return respond({ok:true,productId},200,origin);
