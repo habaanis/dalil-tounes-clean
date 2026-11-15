@@ -17,4 +17,4 @@ recIIzwWQS5DmSYOZ recpdxUQ0t2Qou4jU rec9b28a61Pk8e1hr recy0CzCDQBV8NvSH receaIcz
 Aucune modification de statut publication, validation, approbation, aucun enregistrement créé ou supprimé dans ce lot, aucune écriture Supabase directe, aucun changement de code ni Vercel.
 
 ## Synchronisation à vérifier
-Juste après écriture : les 31 IDs existent dans Supabase mais seuls 2/31 synchronisés après les premiers contrôles. **Vérifier la synchronisation 31/31 avant nouveau lot.**
+**Contrôle final : 31/31 synchronisées dans Supabase.** 2473 établissements conservés, 344 sans rubrique, 326 sans catégorie. Ne pas retraiter ces 31 IDs.
