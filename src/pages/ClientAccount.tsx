@@ -14,6 +14,7 @@ export function ClientAccountLogin() {
   const navigate = useNavigate();
   const [mode,setMode]=useState<'login'|'signup'>('login');
   const accountPath = '/' + encodeURIComponent(slug || '') + '/compte';
+  const cvPath = '/' + encodeURIComponent(slug || '') + '/cv?preview-model=business&skip-opening=1';
   if (!slug || window.location.hostname !== 'app.dalil-tounes.com') return <p>Page indisponible.</p>;
   if (loading) return <main role="status" className="min-h-dvh bg-[#fbf8f0] p-6">Vérification…</main>;
   if (user) return <div className="min-h-dvh bg-[#fbf8f0] p-5"><Link to={accountPath} className="inline-block rounded-xl border border-[#d7bf8a] bg-white px-4 py-3 text-[#552c30]">Ouvrir mon compte professionnel</Link></div>;
