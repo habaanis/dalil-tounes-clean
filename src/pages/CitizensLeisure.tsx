@@ -848,7 +848,7 @@ export default function CitizensLeisure() {
           <MeilleursSection
             secteurLabel={t.sector}
             listePage="loisirs & évènements"
-            accentColor="#4A1D43"
+            accentColor={inPlatformApp ? '#B62226' : '#4A1D43'}
             sectionTitle={inPlatformApp ? (language === 'ar' ? 'أماكن الترفيه الموصى بها من الحرفاء' : language === 'en' ? 'Leisure places recommended by customers' : 'Lieux de loisirs les plus recommandés par les clients') : t.recommended}
             useGoogleRecommendationCriteria
             itemsPerPage={5}
@@ -1141,7 +1141,7 @@ export default function CitizensLeisure() {
           <div className="space-y-4">
             {/* Search Bar */}
             <div className="relative">
-              <div className={`absolute ${language === 'ar' ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 bg-[#4A1D43] rounded-full p-1`}>
+              <div className={`absolute ${language === 'ar' ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 bg-[#B62226] rounded-full p-1`}>
                 <Search className="w-3.5 h-3.5 text-white" />
               </div>
               <input
