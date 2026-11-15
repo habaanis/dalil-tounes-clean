@@ -49,6 +49,26 @@
       "destination": "/index.html"
     },
     {
+      "source": "/:clientSlug([a-z0-9-]+)/compte",
+      "has": [
+        {
+          "type": "host",
+          "value": "app.dalil-tounes.com"
+        }
+      ],
+      "destination": "/index.html"
+    },
+    {
+      "source": "/:clientSlug([a-z0-9-]+)/connexion",
+      "has": [
+        {
+          "type": "host",
+          "value": "app.dalil-tounes.com"
+        }
+      ],
+      "destination": "/index.html"
+    },
+    {
       "source": "/p/:slug",
       "destination": "/index.html"
     },
