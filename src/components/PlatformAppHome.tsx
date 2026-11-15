@@ -1,7 +1,7 @@
 import { FounderStory } from './FounderStory';
 import { DALIL_MASCOT_IMAGE } from '../lib/dalilMascotImage';
 import SearchBar from './SearchBar';
-import { Building2, ShieldCheck, Star } from 'lucide-react';
+import { Building2, ShieldCheck, Star, Megaphone, ShoppingBag, ClipboardCheck } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import PlatformAppHelp from './PlatformAppHelp';
 import { Link } from 'react-router-dom';
@@ -121,6 +121,14 @@ const HOUSE_TEASER: Record<Lang, { eyebrow: string; title: string; context: stri
   },
 };
 
+const HOUSE_BENEFITS: Record<Lang, [string, string, string]> = {
+  fr: ['Touchez plus de clients', 'Présentez vos produits', 'Recevez des commandes'],
+  ar: ['وصل لعدد أكبر من الحرفاء', 'اعرض منتجاتك', 'استقبل الطلبات'],
+  en: ['Reach more customers', 'Showcase your products', 'Receive orders'],
+  it: ['Raggiungi più clienti', 'Presenta i tuoi prodotti', 'Ricevi ordini'],
+  ru: ['Привлекайте больше клиентов', 'Покажите свои товары', 'Получайте заказы'],
+};
+
 export default function PlatformAppHome({ totalCount, legacyCertifiedCount, recommendedCount }: {
   totalCount?: string | null; legacyCertifiedCount?: string | null; recommendedCount?: string | null;
 }) {
@@ -163,6 +171,17 @@ export default function PlatformAppHome({ totalCount, legacyCertifiedCount, reco
         <p>{teaser.context}</p>
         <p className="font-medium text-[#302925]">{teaser.benefit}</p>
         <p className="rounded-lg border border-[#E8D7AE] bg-[#FFF8EC] px-3 py-2 font-medium text-[#72552C]">{teaser.reach}</p>
+      </div>
+      <div className="mt-3 grid grid-cols-3 gap-2" aria-label={lang === 'fr' ? 'Les trois avantages de votre mini-appli' : teaser.title}>
+        {HOUSE_BENEFITS[lang].map((label, index) => {
+          const BenefitIcon = [Megaphone, ShoppingBag, ClipboardCheck][index];
+          return (
+            <div key={index} className="flex min-w-0 flex-col items-center justify-start gap-1.5 rounded-lg border border-[#E6D5AF] bg-white px-1.5 py-2.5 text-center sm:flex-row sm:justify-center sm:gap-2">
+              <BenefitIcon className="h-[18px] w-[18px] shrink-0 text-[#A68038]" aria-hidden="true" />
+              <span className="text-[11px] font-semibold leading-[1.35] text-[#58452F] sm:text-xs">{label}</span>
+            </div>
+          );
+        })}
       </div>
       <Link to="/subscription#cv-professionnels" className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-[#C9A65D] bg-[#FFF8EA] px-3 py-2 text-center text-sm font-semibold text-[#6C5028]">
         {teaser.cta}
