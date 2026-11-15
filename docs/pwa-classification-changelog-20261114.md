@@ -81,3 +81,10 @@ Toutes les corrections doivent être effectuées dans Airtable puis vérifiées 
 - Compteur total des fiches : **2487 avant et après** ; aucune création/suppression ni duplication nécessaire.
 - L'automatisation Airtable est confirmée active avec précondition explicite `Prêt à publier`. Cette validation porte sur ce lot, pas sur l'ensemble des autres automatisations ou pages de l'application.
 - **Lot 005 clos (classification et synchronisation)**. Pas de fusion vers `main`, pas de déploiement de nouveau code PWA. La sécurité RLS et les tests de recherche globaux restent des travaux séparés.
+
+## Lot 006 — Santé / vétérinaire après publication PWA (15 novembre 2026)
+- Précondition : production PWA `a5c4c86` confirmée READY, changement de données seulement.
+- Deux dossiers avec `liste_pages` vide avant : `recMRSmiEw18TGHK8` (New Ariana, catégorie Medical, sous-catégorie Cabinet infirmier) et `rec3w4vfWPpv9nCsN` (THE BLUE CROSS Manouba veterinary clinic, catégorie Animaux, sous-catégorie veterinaire).
+- Airtable : attribué `santé` et `services citoyens` aux deux ; réponse confirme statut `terminer la saisi` et publication non renseignée.
+- Vérification Supabase initiale après écriture : synchronisation encore en attente (deux `liste_pages=NULL`) ; compteur global **2487**.
+- Retour arrière : remettre `liste pages` vide pour ces deux IDs et vérifier `liste_pages` SQL ; ne pas modifier approbation/publication.
