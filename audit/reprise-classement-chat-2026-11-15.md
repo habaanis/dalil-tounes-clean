@@ -20,13 +20,13 @@ Airtable mis à jour: recZ5uvjw28rg5HRV, reczV18sdZ9EW9Hd4, rec6kCU2iojOp8l0v, r
 ## Sous-lot Chat 2 (10)
 IDs: recs5dfYPeJD9X0ld, recQdt6DMGRrt4Eti, recLq3T5uK15dDfIh, recIaAXlcpW3xuHdt, recbOzTs029vnkruN, recprDpkXOLihpZak, recZWyJOMdmg5qsmy, recKYeViSguAyea3Y, rec0N1YlsdYIjkium, recdqaVUdw2HthvDQ.
 - 9 Education & Formation / éducation ; 1 Beauté & Bien-être / commerces & magasins.
-- Airtable confirmé 10/10 ; synchronisation Supabase progressive, 2/10 au dernier contrôle pendant la rédaction. RECONTRÔLER AVANT TOUT AUTRE LOT.
+- Airtable confirmé 10/10 ; synchronisation Supabase 10/10 confirmée au contrôle final.
 
 ## Sécurité
 Aucun statut de publication, approbation, règle RLS, code PWA ou site modifié dans cette reprise. Aucun enregistrement créé ou supprimé. Les métiers ambigus ont été exclus. Une entrée Supabase est liée à chaque ID traité dans le premier sous-lot.
 
 ## Prochaine reprise
-1. Contrôler le second sous-lot de 10 dans Supabase (categories et liste_pages) jusqu'à 10/10.
-2. Recalculer le compteur total, sans rubrique, sans catégorie.
+1. Second sous-lot synchronisé 10/10. Contrôler les nouveaux candidats avant écritures.
+2. Dernier état Supabase: total 2487, sans rubrique 877, sans catégorie 845.
 3. Continuer seulement avec les fiches non classées et avec identifiants Airtable uniques; préserver les statuts.
 4. Poursuivre par sous-lots et vérifier la synchronisation avant le suivant.
