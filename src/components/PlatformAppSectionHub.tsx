@@ -332,16 +332,7 @@ export default function PlatformAppSectionHub({ kind }: { kind: Hub }) {
               <p className="mt-2 text-xs leading-5 text-[#756C61]">{showcase.shopFoot}</p>
             </div>
           </details>
-          <details className="group rounded-xl border border-[#D4AF37]/40 bg-white p-3" data-pro-expand="account">
-            <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-2 rounded-lg text-start text-sm font-semibold text-[#292725] [&::-webkit-details-marker]:hidden">
-              <span>👤 {showcase.accountTitle}</span>
-              <ChevronDown aria-hidden="true" className="h-5 w-5 shrink-0 text-[#A17D36] transition-transform group-open:rotate-180" />
-            </summary>
-            <div className="border-t border-[#EFE3CB] pt-3">
-              <p className="text-sm leading-6 text-[#514A45]">{showcase.accountIntro}</p>
-              <p className="mt-2 text-xs leading-5 text-[#756C61]">{showcase.accountFoot}</p>
-            </div>
-          </details>
+
         </div>
       </details>
 
