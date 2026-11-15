@@ -468,7 +468,7 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
         </>
       ) : (
         <>
-          {compactCvApp && <section className="mx-3 mt-3 rounded-xl border border-[#D4AF37]/40 bg-[#FFFDF8] px-3 py-3">
+          {compactCvApp && !embedded && <section className="mx-3 mt-3 rounded-xl border border-[#D4AF37]/40 bg-[#FFFDF8] px-3 py-3">
             <h1 className="font-serif text-base font-medium text-[#443941]">{({ fr: "Créez votre mini-application professionnelle", ar: "أنشئ تطبيقك المصغّر المهني", en: "Create your own business mini-app", it: "Crea la tua mini-app professionale", ru: "Создайте собственное мини-приложение для бизнеса" } as Record<Lang, string>)[lang]}</h1>
             <p className="mt-1 text-xs leading-5 text-[#655C62]">{({
               fr: 'Une mini-application personnalisée, à l’image de votre entreprise, pour valoriser votre activité, élargir votre visibilité et toucher de nouveaux clients. Facile à partager grâce à son lien et son QR Business.',
@@ -514,7 +514,7 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
           </CvSectionFold>
 
           <CvSectionFold enabled={compactCvApp} title={lang === 'fr' ? 'Comment créer votre mini-appli ?' : lang === 'ar' ? 'كيفاش تعمل تطبيقك المصغّر؟' : lang === 'en' ? 'How to create your mini-app' : lang === 'it' ? 'Come creare la tua mini-app' : 'Как создать мини-приложение'}>
-          <CvBusinessJourney language={lang} />
+          {!embedded && <CvBusinessJourney language={lang} />}
           </CvSectionFold>
 
           <section className="bg-[#2E102A] px-4 py-7 text-white"><div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left rtl:sm:text-right"><div><p className="text-xs font-black uppercase tracking-[0.16em] text-[#F1D783]">{t.searchEyebrow}</p><h2 className="mt-2 max-w-3xl font-serif text-2xl font-bold">{t.searchTitle}</h2></div><button type="button" onClick={() => fixedView ? navigate('/') : setPreviewView('platform')} className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-[#D4AF37] px-5 py-3 text-sm font-black text-[#F1D783]"><Search className="h-4 w-4" /> {t.explorePlatform}</button></div></section>
