@@ -14,4 +14,4 @@ IDs: rec4l2LwyjvjlCUDy recDWGS0Zc1eZpxiV rec0QULLn9oty7mOx recnV5j7MBQ03FRqZ rec
 Aucune nouvelle fiche, aucun doublon, aucun changement de statut de publication ou approbation, aucun code ni Vercel déployé, aucun changement direct Supabase. L'automatisation Airtable→Supabase peut nécessiter un délai.
 
 ## Point de reprise
-Vérifier les 28/28 synchronisations Supabase et le total 2487, puis mettre à jour ce rapport avant un autre lot.
+**Contrôle final : 28/28 synchronisées dans Supabase**, total constant de 2487, 432 sans rubrique, 400 sans catégorie. Aucun déploiement Vercel requis pour ces modifications de données de production. Prochain lot : exclure tous les IDs déjà traités et inspecter les dossiers ambigus.
