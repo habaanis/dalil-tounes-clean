@@ -1546,27 +1546,27 @@ export const Subscription = () => {
             <p className="mt-3 text-sm font-semibold text-emerald-800">{copy.essentialFree}</p>
             <button type="button" onClick={() => setActivePreview('free')} className="mt-3 min-h-11 rounded-xl border border-[#D4AF37] px-4 py-2 text-sm font-medium text-[#4A1D43]">{copy.previewCard}</button>
           </div>
-        <section id="concept" className="my-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-5">
+        <section id="concept" className={`${isPwa && activeProSection !== 'concept' ? 'hidden ' : ''}my-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-5`}>
           <h2 className="font-serif text-xl font-medium text-[#4A1D43]">Dalil Tounes</h2>
           <p className="my-3 text-sm leading-6 text-slate-600">{structure.intro}</p>
           <p className="my-3 text-sm leading-6 text-slate-600">{copy.heroSubtitle}</p>
           <details className="rounded-xl border border-[#D4AF37]/40 p-3"><summary className="cursor-pointer font-medium text-[#4A1D43]">{structure.concept}</summary><Concept embedded /></details>
           <details id="histoire-fondateur" className="mt-3 scroll-mt-32 rounded-xl border border-[#D4AF37]/40 p-3"><summary className="cursor-pointer font-medium text-[#4A1D43]">{structure.story}</summary><FounderStory full /></details>
         </section>
-        <section id="cv-professionnels" className="my-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-5">
+        <section id="cv-professionnels" className={`${isPwa && activeProSection !== 'cv-professionnels' ? 'hidden ' : ''}my-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-5`}>
           <h2 className="font-serif text-xl font-medium text-[#4A1D43]">{structure.products}</h2>
           <p className="mt-1 text-xs text-slate-500">CV Business · CV Portfolio</p>
           <p className="my-3 text-sm leading-6 text-slate-600">{structure.cvIntro}</p>
           <details><summary className="cursor-pointer font-medium text-[#4A1D43]">{structure.details}</summary><CvBusinessHome embedded /></details>
         </section>
-        <section id="offres" aria-labelledby="cv-business-products-title" className="order-2 mt-5 sm:mt-0">
-<div className="mb-6 text-center">
+        <section id="offres" aria-labelledby="cv-business-products-title" className={`${isPwa && activeProSection !== 'offres' && activeProSection !== 'modeles' ? 'hidden ' : ''}order-2 mt-5 sm:mt-0`}>
+<div className={isPwa && activeProSection !== 'offres' ? 'hidden' : 'mb-6 text-center'}>
   <p className="text-xs font-medium uppercase tracking-[0.18em] text-amber-600">{language === "ar" ? "تطبيقك المصغّر المهني" : language === "en" ? "YOUR BUSINESS MINI-APP" : language === "it" ? "LA TUA MINI-APP PROFESSIONALE" : language === "ru" ? "ВАШЕ МИНИ-ПРИЛОЖЕНИЕ" : "VOTRE MINI-APPLI PROFESSIONNELLE"}</p>
   <h2 id="cv-business-products-title" className="mt-2 text-2xl font-medium text-[#4A123F] sm:text-3xl">{simpleCopy.productsTitle}</h2>
   <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-slate-600">{simpleCopy.productsSubtitle}</p>
 </div>
 
-<details id="modeles" className="mb-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-4">
+<details id="modeles" className={`${isPwa && activeProSection !== 'modeles' ? 'hidden ' : ''}mb-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-4`}>
   <summary className="cursor-pointer font-medium text-[#4A1D43]">{structure.models}</summary>
 <CvPresentationModelSelector
   language={language}
@@ -1582,6 +1582,7 @@ export const Subscription = () => {
   onPaletteChange={setSelectedPalette}
 />
 </details>
+<div className={isPwa && activeProSection !== 'offres' ? 'hidden' : 'contents'}>
 <div className="mb-6 overflow-hidden rounded-3xl border border-[#D6AF2E]/60 bg-gradient-to-br from-[#FFF8DF] via-white to-[#FFF9ED] p-5 shadow-[0_12px_30px_rgba(74,18,63,0.07)] sm:p-7">
   <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
     <div className="max-w-3xl">
@@ -1659,8 +1660,10 @@ export const Subscription = () => {
   </div>
   <p className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold leading-6 text-[#4A123F]">{simpleCopy.noRenewal}</p>
 </div>
+</div>
         </section>
 
+        <div className={isPwa && activeProSection !== 'offres' ? 'hidden' : 'contents'}>
         <button
           type="button"
           aria-expanded={showSecondaryDetails}
@@ -1728,6 +1731,8 @@ export const Subscription = () => {
             {copy.ctaButton} <ChevronRight className="h-4 w-4" aria-hidden="true" />
           </a>
         </section>
+        </div>
+        </div>
       </div>
 
       {activePreview === 'free' && (
