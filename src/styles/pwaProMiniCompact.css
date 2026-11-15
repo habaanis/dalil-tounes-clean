@@ -1,0 +1,18 @@
+/* PWA professional panel only: visually compact existing mini-app content.
+   No copy, links, video sources or functions are changed. */
+[data-pwa-pro-window] #cv-professionnels { margin: 0; padding: 12px; border-radius: 14px; }
+[data-pwa-pro-window] #cv-professionnels > h2 { font-size: 17px; line-height: 1.35; font-weight: 600; color: #302925; }
+[data-pwa-pro-window] #cv-professionnels > p { margin-top: 7px; margin-bottom: 7px; font-size: 12px; line-height: 1.6; }
+[data-pwa-pro-window] #cv-professionnels > details { margin-top: 8px; border-radius: 12px; }
+[data-pwa-pro-window] #cv-professionnels > details > summary { padding: 8px 2px; font-size: 13px; line-height: 1.5; }
+[data-pwa-pro-window] #cv-professionnels .cv-business-app-type { max-width: 100%; }
+[data-pwa-pro-window] #cv-professionnels .cv-business-app-type section { padding: 10px !important; }
+[data-pwa-pro-window] #cv-professionnels .cv-business-app-type section > div { padding: 9px !important; }
+[data-pwa-pro-window] #cv-professionnels .cv-business-app-type section .public-title { font-size: 18px !important; line-height: 1.25 !important; }
+[data-pwa-pro-window] #cv-professionnels .cv-business-app-type section .public-heading { font-size: 16px !important; line-height: 1.3 !important; }
+[data-pwa-pro-window] #cv-professionnels .cv-business-app-type section p { line-height: 1.55 !important; }
+[data-pwa-pro-window] #cv-professionnels .cv-business-app-type section video,
+[data-pwa-pro-window] #cv-professionnels .cv-business-app-type section img { max-height: 230px !important; object-fit: contain; }
+[data-pwa-pro-window] #cv-professionnels .cv-business-app-type section [class*="h-[390px]"] { height: 230px !important; }
+[data-pwa-pro-window] #cv-professionnels > details:last-of-type > div,
+[data-pwa-pro-window] #cv-professionnels > details:last-of-type > section { max-width: 100%; }
