@@ -88,3 +88,9 @@ Toutes les corrections doivent être effectuées dans Airtable puis vérifiées 
 - Airtable : attribué `santé` et `services citoyens` aux deux ; réponse confirme statut `terminer la saisi` et publication non renseignée.
 - Vérification Supabase initiale après écriture : synchronisation encore en attente (deux `liste_pages=NULL`) ; compteur global **2487**.
 - Retour arrière : remettre `liste pages` vide pour ces deux IDs et vérifier `liste_pages` SQL ; ne pas modifier approbation/publication.
+
+### Lot 006 — Contrôle final
+- Supabase confirmé : **2/2** listes_pages synchronisées vers `['santé','services citoyens']`.
+- `statut_validation='terminer la saisi'`, `statut_publication=NULL`, `approved=NULL` pour les deux ; aucune publication forcée.
+- `get_enterprise_record_count` / total de la table = **2487**. Aucune création ni suppression.
+- Aucun redéploiement Vercel nécessaire pour ces changements de données, déjà lus depuis Supabase par la version live.
