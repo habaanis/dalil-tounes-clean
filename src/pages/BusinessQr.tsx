@@ -443,6 +443,10 @@ export default function BusinessQr() {
               : text.unavailable}
           </p>
           <div className="mt-5 flex flex-col items-center gap-3">
+            <a href={`/${encodeURIComponent(identifier)}/compte`}
+              className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#0B4B3E] px-5 py-2.5 font-semibold text-white">
+              Retour à mon compte professionnel
+            </a>
             <a href={`${recoveryCvUrl.pathname}${recoveryCvUrl.search}`}
               className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#0B4B3E] px-5 py-2.5 font-semibold text-white">
               Ouvrir mon CV Business
