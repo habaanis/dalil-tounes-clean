@@ -1,5 +1,6 @@
 import StructuredData from '../components/StructuredData';
 import Concept from './Concept';
+import '../styles/pwaProConceptCompact.css';
 import { FounderStory } from '../components/FounderStory';
 import { CvBusinessHome } from './SeparationPreview';
 import { EssentialPresence } from '../components/EssentialPresence';
@@ -1551,7 +1552,7 @@ export const Subscription = () => {
           <p className="my-3 text-sm leading-6 text-slate-600">{structure.intro}</p>
           <p className="my-3 text-sm leading-6 text-slate-600">{copy.heroSubtitle}</p>
           <details className="rounded-xl border border-[#D4AF37]/40 p-3"><summary className="cursor-pointer font-medium text-[#4A1D43]">{structure.concept}</summary><Concept embedded /></details>
-          <details id="histoire-fondateur" className="mt-3 scroll-mt-32 rounded-xl border border-[#D4AF37]/40 p-3"><summary className="cursor-pointer font-medium text-[#4A1D43]">{structure.story}</summary><FounderStory full /></details>
+          {!isPwa && <details id="histoire-fondateur" className="mt-3 scroll-mt-32 rounded-xl border border-[#D4AF37]/40 p-3"><summary className="cursor-pointer font-medium text-[#4A1D43]">{structure.story}</summary><FounderStory full /></details>}
         </section>
         <section id="cv-professionnels" className={`${isPwa && activeProSection !== 'cv-professionnels' ? 'hidden ' : ''}my-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-5`}>
           <h2 className="font-serif text-xl font-medium text-[#4A1D43]">{structure.products}</h2>

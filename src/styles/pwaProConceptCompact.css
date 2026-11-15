@@ -1,0 +1,191 @@
+/*
+ * Dalil Tounes PLATFORM PWA: compact embedded Concept inside the Pros panel.
+ * Purely presentational; all copy, buttons, routes and link targets remain intact.
+ * The public site and standalone Concept page do not match this selector.
+ */
+[data-pwa-pro-window] [data-concept-embedded] {
+  min-height: 0;
+  background: transparent;
+  font-size: 14px;
+  color: #34312f;
+}
+[data-pwa-pro-window] #concept {
+  margin-block: 0;
+  padding: 12px;
+  border-radius: 14px;
+}
+[data-pwa-pro-window] #concept > h2 {
+  font-size: 17px;
+  line-height: 1.35;
+  font-weight: 600;
+  color: #302925;
+}
+[data-pwa-pro-window] #concept > p {
+  margin-block: 7px;
+  font-size: 12px;
+  line-height: 1.65;
+}
+[data-pwa-pro-window] #concept > details {
+  margin-top: 10px;
+  border-radius: 12px;
+  padding: 8px;
+}
+[data-pwa-pro-window] #concept > details > summary {
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 5px 3px;
+}
+[data-pwa-pro-window] [data-concept-intro] {
+  padding: 10px 2px 0;
+  font-size: 12px;
+  line-height: 1.6;
+}
+[data-pwa-pro-window] [data-concept-mascot] {
+  padding: 12px 2px 0;
+}
+[data-pwa-pro-window] [data-concept-mascot] .guide-mascot {
+  flex-direction: row;
+  align-items: center;
+  gap: 11px;
+  padding: 11px 12px;
+  border-radius: 14px;
+  text-align: start;
+  box-shadow: none;
+}
+[data-pwa-pro-window] [data-concept-mascot] .guide-mascot-figure {
+  flex: 0 0 54px;
+  width: 54px;
+  height: 62px;
+}
+[data-pwa-pro-window] [data-concept-mascot] .guide-mascot > div:last-child {
+  min-width: 0;
+  flex: 1;
+}
+[data-pwa-pro-window] [data-concept-mascot] h3 {
+  font-size: 13px;
+  line-height: 1.4;
+  margin: 0;
+  font-weight: 650;
+}
+[data-pwa-pro-window] [data-concept-mascot] .guide-mascot > div:last-child > div {
+  font-size: 11px;
+  line-height: 1.55;
+  margin-top: 3px;
+}
+[data-pwa-pro-window] :is([data-concept-paths],[data-concept-steps],[data-concept-vision],[data-concept-links]) {
+  padding: 13px 2px;
+}
+[data-pwa-pro-window] [data-concept-steps] {
+  background: #fbfaf6;
+  border-radius: 12px;
+}
+[data-pwa-pro-window] :is([data-concept-paths],[data-concept-steps]) h2 {
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 1.35;
+  text-align: start;
+  color: #302925;
+}
+[data-pwa-pro-window] :is([data-concept-paths],[data-concept-steps]) h2 + div {
+  margin-top: 10px;
+  gap: 8px;
+}
+[data-pwa-pro-window] [data-concept-paths] article {
+  border-radius: 13px;
+  padding: 12px;
+  box-shadow: none;
+}
+[data-pwa-pro-window] [data-concept-paths] article > span:first-child {
+  width: 34px;
+  height: 34px;
+}
+[data-pwa-pro-window] [data-concept-paths] article > p:first-of-type {
+  font-size: 10px;
+  line-height: 1.45;
+  margin-top: 8px;
+  letter-spacing: .07em;
+}
+[data-pwa-pro-window] [data-concept-paths] article h3 {
+  margin-top: 5px;
+  font-size: 14px;
+  line-height: 1.45;
+}
+[data-pwa-pro-window] [data-concept-paths] article > p:last-of-type {
+  margin-top: 7px;
+  font-size: 12px;
+  line-height: 1.55;
+}
+[data-pwa-pro-window] [data-concept-paths] article a {
+  display: inline-flex;
+  margin-top: 10px;
+  min-height: 38px;
+  border-radius: 10px;
+  padding: 7px 11px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+[data-pwa-pro-window] [data-concept-steps] article {
+  display: grid;
+  grid-template-columns: 32px minmax(0,1fr);
+  column-gap: 9px;
+  align-items: start;
+  padding: 11px;
+  border-radius: 12px;
+  box-shadow: none;
+}
+[data-pwa-pro-window] [data-concept-steps] article > span:first-child {
+  grid-row: 1 / span 2;
+  width: 30px;
+  height: 30px;
+  font-size: 12px;
+}
+[data-pwa-pro-window] [data-concept-steps] article h3 {
+  margin-top: 0;
+  font-size: 13px;
+  line-height: 1.45;
+}
+[data-pwa-pro-window] [data-concept-steps] article p {
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 1.55;
+}
+[data-pwa-pro-window] [data-concept-vision] > div {
+  padding: 15px 12px;
+  border-radius: 16px;
+  box-shadow: none;
+}
+[data-pwa-pro-window] [data-concept-vision] h2 {
+  font-size: 16px;
+  line-height: 1.4;
+}
+[data-pwa-pro-window] [data-concept-vision] p {
+  margin-top: 8px;
+  font-size: 12px;
+  line-height: 1.65;
+}
+[data-pwa-pro-window] [data-concept-vision] p + div {
+  margin-top: 12px;
+  gap: 5px;
+}
+[data-pwa-pro-window] [data-concept-vision] p + div span {
+  padding: 5px 8px;
+  font-size: 10px;
+}
+[data-pwa-pro-window] [data-concept-links] {
+  border: 0;
+}
+[data-pwa-pro-window] [data-concept-links] nav {
+  gap: 8px 13px;
+}
+[data-pwa-pro-window] [data-concept-links] a {
+  font-size: 11px;
+  line-height: 1.45;
+}
+@media (max-width: 640px) {
+  /* The original page's 2 and 3-column layouts are desktop components.
+     On mobile each compact card gets readable full width. */
+  [data-pwa-pro-window] [data-concept-paths] h2 + div,
+  [data-pwa-pro-window] [data-concept-steps] h2 + div {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
