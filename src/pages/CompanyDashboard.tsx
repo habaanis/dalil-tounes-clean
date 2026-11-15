@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type FormEvent } from 'react';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { useNavigate } from 'react-router-dom';
 import { Briefcase, Users, Building2, Settings, LogOut, Store, Package, BarChart3, ShieldCheck } from 'lucide-react';
@@ -63,7 +63,7 @@ export default function CompanyDashboard({ onNavigate }: CompanyDashboardProps) 
     return () => { cancelled = true; };
   }, [user?.id, stats]);
 
-  const submitProductProposal = async (event: React.FormEvent<HTMLFormElement>) => {
+  const submitProductProposal = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!user?.id || productSaving) return;
     const entrepriseId = productBusiness || stats[0]?.entreprise_id;
