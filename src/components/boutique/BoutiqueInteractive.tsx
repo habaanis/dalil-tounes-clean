@@ -60,6 +60,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
   const [contact, setContact] = useState('');
   const [details, setDetails] = useState('');
   const [error, setError] = useState('');
+  const [demoMessage, setDemoMessage] = useState('');
   const [catalogueQuery, setCatalogueQuery] = useState('');
   const [catalogueCategory, setCatalogueCategory] = useState('');
   const [cataloguePage, setCataloguePage] = useState(1);
@@ -96,28 +97,42 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
 
   if (!products.length) return null;
 
-  const close = () => { setOpen(false); setSelected(null); setRequestOpen(false); setError(''); };
+  const close = () => { setOpen(false); setSelected(null); setRequestOpen(false); setError(''); setDemoMessage(''); };
   const showProduct = (product: BoutiqueProduct) => {
     setSelected(product); setRequestOpen(false); setQuantity(1);
-    setName(''); setContact(''); setDetails(''); setError('');
+    setName(''); setContact(''); setDetails(''); setError(''); setDemoMessage('');
   };
+  const orderTotal = selected?.mode === 'order' && typeof selected.price === 'number'
+    && Number.isFinite(selected.price) && selected.price > 0
+    ? selected.price * quantity
+    : null;
   const send = () => {
     if (!selected) return;
-    if (config.demoMode) { setError('Démonstration : aucun devis, message ou paiement réel n’est envoyé.'); return; }
+    setDemoMessage('');
     if (!name.trim() || !contact.trim()) { setError('Indiquez votre nom et votre contact.'); return; }
-    if (!canWhatsApp) { setError('WhatsApp doit être configuré par le professionnel.'); return; }
+    if (selected.mode === 'order' && orderTotal === null) { setError('Le prix doit être confirmé avant toute demande de commande.'); return; }
+    if (!config.demoMode && !canWhatsApp) { setError('WhatsApp doit être configuré par le professionnel.'); return; }
     const text = [
-      selected.mode === 'quote' ? 'Demande de devis' : 'Demande de commande',
+      selected.mode === 'quote' ? 'Demande de devis' : 'Demande de commande (en attente de confirmation)',
       'Professionnel : ' + config.merchantName,
       'Article : ' + selected.title,
       'Quantité : ' + quantity,
-      'Prix : ' + priceText(selected),
+      selected.mode === 'order' ? 'Prix unitaire : ' + priceText(selected) : 'Prix : Sur devis',
+      orderTotal !== null ? 'Total des articles : ' + priceText({ ...selected, price: orderTotal }) : '',
       'Nom : ' + name.trim(),
       'Contact : ' + contact.trim(),
       details.trim() ? 'Précisions : ' + details.trim() : '',
       'Vitrine : ' + window.location.href,
-      'À confirmer par le professionnel. Aucun paiement effectué.',
+      selected.mode === 'order'
+        ? 'Commande à confirmer par le professionnel après acompte ou paiement intégral selon ses modalités. Aucun paiement à la livraison. Aucun paiement effectué ici.'
+        : 'Devis à confirmer par le professionnel. Aucun paiement effectué.',
     ].filter(Boolean).join('\n');
+    setError('');
+    if (config.demoMode) {
+      // Demonstrate the full WhatsApp message without contacting anyone.
+      setDemoMessage(text);
+      return;
+    }
     window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(text), '_blank', 'noopener,noreferrer');
   };
   const payLink = selected?.mode === 'order' && config.paymentsVerified && !config.demoMode && quantity === 1
@@ -125,7 +140,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
     : '';
 
   return <>
-    <button type="button" onClick={() => { setOpen(true); setSelected(null); setRequestOpen(false); setCataloguePage(1); setCatalogueQuery(''); setCatalogueCategory(''); }}
+    <button type="button" onClick={() => { setOpen(true); setSelected(null); setRequestOpen(false); setDemoMessage(''); setCataloguePage(1); setCatalogueQuery(''); setCatalogueCategory(''); }}
       aria-haspopup="dialog" className={triggerClassName}
       style={triggerClassName ? undefined : { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 7, padding: '8px 15px', border: '1px solid #d2b276', background: '#fffaf2', color: '#5a3a52', borderRadius: 24, fontSize: 13, fontWeight: 600, lineHeight: 1.2, cursor: 'pointer' }}>
       {triggerIcon ?? <span aria-hidden="true">✦</span>}<span>{triggerLabel}</span>{!config.demoMode && products.some(isRecentProduct) && <span aria-label="Nouveautés" style={{fontSize:10,color:'#9b773e',fontWeight:700,whiteSpace:'nowrap'}}>●</span>}
@@ -172,7 +187,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
             <button type="button" disabled={safePage >= pageCount} onClick={() => setCataloguePage(p => Math.min(pageCount,p+1))} style={{...iconButton,padding:'0 12px',fontSize:12,opacity:safePage >= pageCount ? .4 : 1}}>Suivant</button>
           </nav>}
         </> : <>
-          <button type="button" onClick={() => { setSelected(null); setRequestOpen(false); setError(''); }}
+          <button type="button" onClick={() => { setSelected(null); setRequestOpen(false); setError(''); setDemoMessage(''); }}
             style={{ border: 0, background: 'transparent', fontSize: 12, color: '#806538', padding: '0 0 10px', cursor: 'pointer' }}>‹ Toutes les créations</button>
           <img src={selected.imageUrl} alt={selected.title} style={{ display: 'block', width: '100%', maxHeight: 190, aspectRatio: '16 / 9', objectFit: 'contain', background: '#f4eee5', borderRadius: 11 }} />
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 8, marginTop: 12 }}>
@@ -180,7 +195,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
             <span style={{ whiteSpace: 'nowrap', fontWeight: 600, fontSize: 12, color: '#826332' }}>{priceText(selected)}</span>
           </div>
           {selected.description && <p style={{ fontSize: 12, lineHeight: 1.5, margin: '6px 0 12px', color: '#62574d' }}>{selected.description}</p>}
-          {!requestOpen ? <button type="button" onClick={() => setRequestOpen(true)}
+          {!requestOpen ? <button type="button" onClick={() => { setRequestOpen(true); setDemoMessage(''); }}
             style={{ border: 0, borderRadius: 10, background: '#4d2a47', color: '#fff', fontSize: 13, fontWeight: 600, padding: '11px 14px', width: '100%', cursor: 'pointer' }}>
             {selected.mode === 'quote' ? 'Demander un devis' : 'Commander'}
           </button> : <div style={{ display: 'grid', gap: 10, borderTop: '1px solid #e5d7c3', paddingTop: 12 }}>
@@ -190,14 +205,24 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 9 }}>
               <label style={labelStyle}>Nom<input value={name} onChange={event => setName(event.target.value)} maxLength={120} placeholder="Votre nom" style={fieldStyle}/></label>
-              <label style={labelStyle}>Qté<input type="number" min="1" max="99" value={quantity} onChange={event => setQuantity(Math.max(1,Math.min(99,Number(event.target.value)||1)))} style={fieldStyle}/></label>
+              <label style={labelStyle}>Qté<input type="number" min="1" max="99" value={quantity} onChange={event => { setQuantity(Math.max(1,Math.min(99,Number(event.target.value)||1))); setDemoMessage(''); }} style={fieldStyle}/></label>
             </div>
             <label style={labelStyle}>Téléphone ou e-mail<input value={contact} onChange={event => setContact(event.target.value)} maxLength={150} placeholder="Vos coordonnées" style={fieldStyle}/></label>
-            <label style={labelStyle}>Précisions (facultatif)<textarea value={details} onChange={event => setDetails(event.target.value)} maxLength={1000} rows={2} placeholder="Date, nombre de personnes, livraison…" style={{...fieldStyle, resize: 'vertical'}}/></label>
+            <label style={labelStyle}>Précisions (facultatif)<textarea value={details} onChange={event => { setDetails(event.target.value); setDemoMessage(''); }} maxLength={1000} rows={2} placeholder="Date, nombre de personnes, livraison…" style={{...fieldStyle, resize: 'vertical'}}/></label>
+            {orderTotal !== null && <p aria-live="polite" style={{ margin: 0, padding: '10px 12px', background: '#f6f0e4', border: '1px solid #ddccab', borderRadius: 9, fontSize: 12, color: '#53402b' }}>
+              <strong>Total des articles : {priceText({ ...selected, price: orderTotal })}</strong>
+              <span style={{ display: 'block', marginTop: 4 }}>Hors éventuels frais de livraison. Demande non confirmée.</span>
+            </p>}
+            {selected.mode === 'order' && <p style={{ fontSize: 11, lineHeight: 1.5, color: '#655444', margin: 0 }}>Validation uniquement après accord du professionnel et versement d’un acompte ou paiement intégral. Aucun paiement à la livraison.</p>}
             {error && <p role="alert" style={{ fontSize: 12, color: '#9e2828', margin: 0 }}>{error}</p>}
             <button type="button" onClick={send} style={{ width: '100%', padding: 10, border: 0, borderRadius: 10, background: '#4d2a47', color: '#fff', cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>
-              {config.demoMode ? 'Tester la demande (simulation)' : selected.mode === 'quote' ? 'Envoyer la demande de devis' : 'Envoyer la commande'}
+              {config.demoMode ? 'Prévisualiser le message WhatsApp (simulation)' : selected.mode === 'quote' ? 'Envoyer la demande de devis' : 'Envoyer la demande de commande'}
             </button>
+            {demoMessage && <div role="status" style={{ padding: '10px 12px', border: '1px solid #dec89f', borderRadius: 9, background: '#fff8eb', color: '#53412e', fontSize: 11, lineHeight: 1.5 }}>
+              <strong>Simulation uniquement — aucun message WhatsApp, devis, commande ou paiement n’a été envoyé.</strong>
+              <p style={{ margin: '8px 0 4px' }}>Voici le message qui serait préparé pour le professionnel :</p>
+              <pre style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', fontFamily: 'inherit', fontSize: 11, margin: 0 }}>{demoMessage}</pre>
+            </div>}
             {payLink && <a href={payLink} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: '#765421', textAlign: 'center' }}>Payer directement le professionnel (1 article)</a>}
           </div>}
         </>}
