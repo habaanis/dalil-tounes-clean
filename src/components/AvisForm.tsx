@@ -18,7 +18,7 @@ const copy = {
     charsCount: 'caractères',
     cancel: 'Annuler',
     publishing: 'Publication...',
-    submit: 'Publier l'avis',
+    submit: "Publier l'avis",
     errorSelectRating: 'Veuillez sélectionner une note',
     errorCommentRequired: 'Veuillez écrire un commentaire',
     errorLoginRequired: 'Vous devez être connecté pour laisser un avis',
