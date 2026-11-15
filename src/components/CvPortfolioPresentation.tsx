@@ -374,13 +374,14 @@ export function CvPortfolioPresentation({
 
             <nav className="cvp-lienora-tabs" aria-label={navigationAriaLabel}>
               {tabs.map(({ id, label, icon: Icon }) => id === 'gallery' && boutiqueContent
-                ? <span key="gallery-boutique" style={{ display: 'contents' }}>
-                    {isValidElement(boutiqueContent)
-                      ? cloneElement(boutiqueContent as ReactElement<{ triggerClassName?: string; triggerIcon?: ReactNode; triggerLabel?: string }>, {
-                          triggerClassName: 'cvp-native-boutique-tab', triggerIcon: <Images aria-hidden="true" />, triggerLabel: language === 'ar' ? 'المتجر' : 'Boutique',
-                        })
-                      : boutiqueContent}
-                  </span>
+                ? (isValidElement(boutiqueContent)
+                    ? cloneElement(boutiqueContent as ReactElement<{ triggerClassName?: string; triggerIcon?: ReactNode; triggerLabel?: string }>, {
+                        key: 'gallery-boutique',
+                        triggerClassName: 'cvp-native-boutique-tab',
+                        triggerIcon: <Images aria-hidden="true" />,
+                        triggerLabel: language === 'ar' ? 'المتجر' : language === 'en' ? 'Shop' : 'Boutique',
+                      })
+                    : boutiqueContent)
                 : <button type="button" className={activeTab === id ? 'active' : ''} onClick={() => goTo(id)} key={id}>
                     <Icon /><span>{label}</span>
                   </button>

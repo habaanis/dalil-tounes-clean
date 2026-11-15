@@ -1975,9 +1975,8 @@ export default function BusinessShowcaseLienoraDetail({
                   aria-controls="dt-presentation-panel"
                   onClick={togglePresentation}
                 >
-                  <span className="dt-presentation-icon" aria-hidden="true">i</span>
+                  <Info aria-hidden="true" />
                   <span>{text.presentation}</span>
-                  <span className="dt-presentation-spacer" aria-hidden="true" />
                   <ChevronRight className="dt-accordion-chevron dt-presentation-chevron" aria-hidden="true" />
                 </button>
                 <div className="dt-presentation-content" id="dt-presentation-panel">
