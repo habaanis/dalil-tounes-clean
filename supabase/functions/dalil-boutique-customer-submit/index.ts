@@ -40,12 +40,15 @@ Deno.serve(async req => {
   if(!url||!key||!secret||secret.length<24)return reply({error:"Service unavailable"},503,origin);
   try{
     const db=createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false}});
+    const requestFingerprint=await hash(secret+":request:"+JSON.stringify([
+      profileId,productId,quantity,customerName,contact,note
+    ]));
     // Retries cannot create duplicates, including when the user opens WhatsApp or loses network.
     const {data:existing,error:existingError}=await db.from("dalil_boutique_customer_orders")
-      .select("id,product_id,quantity,kind").eq("entreprise_id",profileId).eq("idempotency_key",idempotencyKey).maybeSingle();
+      .select("id,request_fingerprint,kind").eq("entreprise_id",profileId).eq("idempotency_key",idempotencyKey).maybeSingle();
     if(existingError)return reply({error:"Service unavailable"},503,origin);
     if(existing){
-      if(existing.product_id!==productId||existing.quantity!==quantity)return reply({error:"Reference mismatch"},409,origin);
+      if(existing.request_fingerprint!==requestFingerprint)return reply({error:"Reference mismatch"},409,origin);
       return reply({accepted:true,reference:existing.id,kind:existing.kind},200,origin);
     }
     // The exact merchant and product must still be publicly published.
@@ -84,14 +87,14 @@ Deno.serve(async req => {
       .insert({entreprise_id:profileId,product_id:productId,kind:product.mode,quantity,
         product_title:product.title,currency:"TND",unit_price:price,amount_total:amountTotal,
         customer_name:customerName,customer_contact:contact,customer_note:note||null,
-        idempotency_key:idempotencyKey})
+        idempotency_key:idempotencyKey,request_fingerprint:requestFingerprint})
       .select("id,kind").single();
     if(writeError){
       if(writeError.code==="23505"){
         const {data:retry}=await db.from("dalil_boutique_customer_orders")
-          .select("id,product_id,kind,quantity").eq("entreprise_id",profileId)
+          .select("id,request_fingerprint,kind").eq("entreprise_id",profileId)
           .eq("idempotency_key",idempotencyKey).maybeSingle();
-        if(retry&&retry.product_id===productId&&retry.quantity===quantity)
+        if(retry&&retry.request_fingerprint===requestFingerprint)
           return reply({accepted:true,reference:retry.id,kind:retry.kind},200,origin);
       }
       return reply({error:"Request not saved. Please retry."},503,origin);
