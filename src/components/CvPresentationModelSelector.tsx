@@ -1,6 +1,8 @@
 import { useEffect, useState, type CSSProperties } from 'react';
 import { Check, Palette, X, ZoomIn } from 'lucide-react';
 import BusinessShowcaseLienoraDetail from './BusinessShowcaseLienoraDetail';
+import { BoutiqueInteractive, type BoutiqueProduct } from './boutique/BoutiqueInteractive';
+import { supabase } from '../lib/supabaseClient';
 
 type SupportedLanguage = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 
@@ -240,11 +242,13 @@ function RealPalettePreview({
   palette,
   model,
   language,
+  products,
   expanded = false,
 }: {
   palette: PaletteId;
   model: PresentationModel;
   language: string;
+  products: BoutiqueProduct[];
   expanded?: boolean;
 }) {
   const previewUrl = `/entreprise/sousse/aux-saveurs-d-anis?preview-model=${model}&palette=${palette}&source=subscription&lang=${language}`;
@@ -268,6 +272,15 @@ function RealPalettePreview({
           previewVilleSlug="sousse"
           previewPalette={palette}
           previewPresentationModel={model}
+          boutiqueContent={products.length
+            ? <BoutiqueInteractive config={{
+                merchantName: "Aux Saveurs d'Anis",
+                profileId: '36f84b99-2c37-47d1-91ba-4c35cda8c1af',
+                whatsapp: '',
+                products,
+                demoMode: true,
+              }} />
+            : undefined}
         />
       </div>
     </div>
@@ -332,6 +345,38 @@ export function CvPresentationModelSelector({
   const [expandedModel, setExpandedModel] = useState<PresentationModel | null>(null);
   const [expandedPalette, setExpandedPalette] = useState<PaletteId | null>(null);
   const [showPalettePanel, setShowPalettePanel] = useState(false);
+  const [demoProducts, setDemoProducts] = useState<BoutiqueProduct[]>([]);
+  // The catalogue reuses only publicly approved products. There are no draft
+  // examples, live orders, WhatsApp messages, payments, or push opt-ins in a demo.
+  useEffect(() => {
+    let active = true;
+    void (async () => {
+      const { data, error } = await supabase
+        .from('dalil_boutique_products')
+        .select('id,title,description,category,image_url,mode,currency,price,approved_at,updated_at')
+        .eq('entreprise_id', '36f84b99-2c37-47d1-91ba-4c35cda8c1af')
+        .eq('status', 'approved')
+        .lte('approved_at', new Date().toISOString())
+        .order('position', { ascending: true })
+        .limit(100);
+      if (!active || error) return;
+      const products: BoutiqueProduct[] = (data ?? []).flatMap(item => {
+        if (!item || typeof item.id !== 'string' || typeof item.title !== 'string'
+          || typeof item.image_url !== 'string' || !item.image_url.startsWith('https://')
+          || (item.mode !== 'quote' && item.mode !== 'order') || item.currency !== 'TND') return [];
+        const price = typeof item.price === 'number' && Number.isFinite(item.price) && item.price > 0 ? item.price : undefined;
+        if (item.mode === 'order' && price === undefined) return [];
+        return [{
+          id: item.id, title: item.title, description: String(item.description || ''),
+          category: typeof item.category === 'string' ? item.category : '',
+          imageUrl: item.image_url, mode: item.mode as 'quote' | 'order',
+          currency: 'TND' as const, price,
+        }];
+      });
+      setDemoProducts(products);
+    })();
+    return () => { active = false; };
+  }, []);
   const selectedModelLabel = value ? getPresentationModelLabel(language, value) : null;
   const selectedPaletteLabel = getPaletteLabel(language, paletteValue);
   const canContinue = Boolean(selectedFormulaLabel && value);
@@ -515,6 +560,7 @@ export function CvPresentationModelSelector({
                 palette={paletteValue}
                 model={value ?? 'business'}
                 language={language}
+                products={demoProducts}
               />
               <button
                 type="button"
@@ -591,6 +637,7 @@ export function CvPresentationModelSelector({
                 palette={paletteValue}
                 model={expandedModel}
                 language={language}
+                products={demoProducts}
                 expanded
               />
             </div>
@@ -632,6 +679,7 @@ export function CvPresentationModelSelector({
               palette={expandedPalette}
               model={value ?? 'business'}
               language={language}
+              products={demoProducts}
               expanded
             />
           </div>
