@@ -1524,12 +1524,28 @@ export const Subscription = () => {
           <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-500 sm:text-base">{structure.freeIntro}</p>
         </header>
 
-        <nav className="mb-5 flex flex-wrap justify-center gap-3 text-sm font-medium text-[#4A1D43]" aria-label={structure.professional}>
-          <a href="#presence-essentielle">{structure.essential}</a><a href="#concept">{structure.concept}</a><a href="#cv-professionnels">{structure.products}</a><a href="#modeles">{structure.models}</a><a href="#offres">{structure.offers}</a>
-        </nav>
-        <EssentialPresence registration />
-        <p className="mt-3 text-sm font-semibold text-emerald-800">{copy.essentialFree}</p>
-        <button type="button" onClick={() => setActivePreview('free')} className="mt-3 min-h-11 rounded-xl border border-[#D4AF37] px-4 py-2 text-sm font-medium text-[#4A1D43]">{copy.previewCard}</button>
+        {isPwa
+          ? <nav data-pwa-pro-sections aria-label={structure.professional} className="mb-3 grid grid-cols-2 gap-2" role="tablist">
+            {proSections.map((section, index) => <button key={section.id} id={`pro-tab-${section.id}`} type="button"
+              role="tab" aria-selected={activeProSection === section.id} aria-controls="pwa-pro-window"
+              onClick={() => showProSection(section.id)}
+              className={`min-h-11 rounded-xl border px-2 py-2 text-center text-xs font-semibold leading-5 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B62226] ${index === 4 ? 'col-span-2 ' : ''}${activeProSection === section.id ? 'border-[#B62226] bg-[#B62226] text-white' : 'border-[#D4AF37]/60 bg-[#FFFDF8] text-[#302925]'}`}>
+              {section.label}
+            </button>)}
+          </nav>
+          : <nav className="mb-5 flex flex-wrap justify-center gap-3 text-sm font-medium text-[#4A1D43]" aria-label={structure.professional}>
+            <a href="#presence-essentielle">{structure.essential}</a><a href="#concept">{structure.concept}</a><a href="#cv-professionnels">{structure.products}</a><a href="#modeles">{structure.models}</a><a href="#offres">{structure.offers}</a>
+          </nav>}
+        <div id="pwa-pro-window" data-pwa-pro-window={isPwa ? '' : undefined}
+          role={isPwa ? 'tabpanel' : undefined}
+          aria-labelledby={isPwa && activeProSection ? `pro-tab-${activeProSection}` : undefined}
+          className={isPwa ? 'rounded-2xl border border-[#D4AF37]/50 bg-[#FFFCF7] p-3' : 'contents'}>
+          {isPwa && !activeProSection && <p className="py-6 text-center text-sm text-[#655B50]">{proSelectionHint[offerLang]}</p>}
+          <div className={isPwa && activeProSection !== 'presence-essentielle' ? 'hidden' : 'contents'}>
+            <EssentialPresence registration />
+            <p className="mt-3 text-sm font-semibold text-emerald-800">{copy.essentialFree}</p>
+            <button type="button" onClick={() => setActivePreview('free')} className="mt-3 min-h-11 rounded-xl border border-[#D4AF37] px-4 py-2 text-sm font-medium text-[#4A1D43]">{copy.previewCard}</button>
+          </div>
         <section id="concept" className="my-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-5">
           <h2 className="font-serif text-xl font-medium text-[#4A1D43]">Dalil Tounes</h2>
           <p className="my-3 text-sm leading-6 text-slate-600">{structure.intro}</p>
