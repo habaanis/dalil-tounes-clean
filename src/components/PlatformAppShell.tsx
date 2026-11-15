@@ -39,7 +39,7 @@ export default function PlatformAppShell({ children }: { children: ReactNode }) 
   // Visual experiment limited to the actual PWA homepage, not other app pages.
   const homeColorTest = location.pathname === '/';
   const hub = getPlatformHub(location.pathname);
-  const useCompactHub = hub !== null && new URLSearchParams(location.search).get('app-full') !== '1';
+  const useCompactHub = hub !== null && hub !== 'pros' && new URLSearchParams(location.search).get('app-full') !== '1';
   const [menuOpen, setMenuOpen] = useState(false);
   useEffect(() => setMenuOpen(false), [location.pathname, location.search]);
   useEffect(() => {
