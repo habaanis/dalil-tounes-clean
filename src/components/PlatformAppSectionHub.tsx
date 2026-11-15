@@ -167,18 +167,18 @@ export default function PlatformAppSectionHub({ kind }: { kind: Hub }) {
   const closeLabels: Record<Lang, string> = {
     fr: 'Fermer', ar: 'إغلاق', en: 'Close', it: 'Chiudi', ru: 'Закрыть'
   };
-  const prosActions = PRO_LINKS.filter(item => item.id === 'free' || item.id === 'cv');
-  const prosExtras = PRO_LINKS.filter(item => item.id !== 'free' && item.id !== 'cv');
+  const prosActions = PRO_LINKS.filter(item => ['free', 'cv', 'models', 'offers'].includes(item.id));
+  const prosExtras = PRO_LINKS.filter(item => !['free', 'cv', 'models', 'offers'].includes(item.id));
   const renderProCards = (items: Entry[]) => <div className="grid grid-cols-2 gap-2">
-    {items.map(item => item.id === 'free'
+    {items.map(item => item.id === 'free' || item.id === 'models' || item.id === 'offers'
       ? <Link key={item.id} to={item.href}
-          className="flex min-h-[74px] flex-col items-start justify-between rounded-xl border border-[#E5D7BE] bg-white p-3 text-start shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B99143]">
+          className="flex min-h-[88px] flex-col items-start justify-between rounded-xl border border-[#E5D7BE] bg-white p-3 text-start shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B99143]">
           <span aria-hidden="true" className="text-xl leading-none">{item.icon}</span>
           <span className="mt-2 text-sm font-medium leading-5 text-[#45243A]">{copy.topics[item.id]}</span>
         </Link>
       : <button key={item.id} type="button" aria-expanded={openPro === item.id}
       onClick={() => setOpenPro(current => current === item.id ? null : item.id)}
-      className={`flex min-h-[74px] flex-col items-start justify-between rounded-xl border p-3 text-start shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B99143] ${openPro === item.id ? 'border-[#B99143] bg-[#FFF9EF]' : 'border-[#E5D7BE] bg-white'}`}>
+      className={`flex min-h-[88px] flex-col items-start justify-between rounded-xl border p-3 text-start shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B99143] ${openPro === item.id ? 'border-[#B99143] bg-[#FFF9EF]' : 'border-[#E5D7BE] bg-white'}`}>
       <span aria-hidden="true" className="text-xl leading-none">{item.icon}</span>
       <span className="mt-2 text-sm font-medium leading-5 text-[#45243A]">{copy.topics[item.id]}</span>
     </button>)}
@@ -200,12 +200,6 @@ export default function PlatformAppSectionHub({ kind }: { kind: Hub }) {
     </div>}
     {kind === 'pros' && <>
       {renderProCards(prosActions)}
-      <details className="group rounded-2xl border border-[#D4AF37]/40 bg-white p-3">
-        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 px-1 font-medium text-[#45243A] [&::-webkit-details-marker]:hidden">
-          {copy.moreTopics}<ChevronDown aria-hidden="true" className="h-5 w-5 shrink-0 text-[#A17D36] transition-transform group-open:rotate-180" />
-        </summary>
-        <div className="pt-2">{renderProCards(prosExtras)}</div>
-      </details>
       {selectedPro && <section role="region" aria-label={copy.topics[selectedPro.id]}
         className="rounded-2xl border border-[#D4AF37]/60 bg-[#FFFDF8] p-4 shadow-sm">
         <div className="flex items-start justify-between gap-3">
@@ -216,8 +210,16 @@ export default function PlatformAppSectionHub({ kind }: { kind: Hub }) {
           </button>
         </div>
         <p className="mt-2 text-sm leading-6 text-[#6A5B64]">{proDetails[lang][selectedPro.id]}</p>
-
+        <Link to={selectedPro.href} className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-xl border border-[#B62226] bg-[#B62226] px-3 py-2 text-center text-sm font-semibold text-white">
+          {openLabels[lang]} — {copy.topics[selectedPro.id]}
+        </Link>
       </section>}
+      <details className="group rounded-2xl border border-[#D4AF37]/40 bg-white p-3">
+        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 px-1 font-medium text-[#45243A] [&::-webkit-details-marker]:hidden">
+          {copy.moreTopics}<ChevronDown aria-hidden="true" className="h-5 w-5 shrink-0 text-[#A17D36] transition-transform group-open:rotate-180" />
+        </summary>
+        <div className="pt-2">{renderProCards(prosExtras)}</div>
+      </details>
     </>}
 
     {kind === 'tourism' && <div className="space-y-3">
