@@ -18,4 +18,4 @@ recB0mm1vDCHrkFk (= LAMI MODE - LINEN COLOR) est bien modifié dans Airtable mai
 Aucune création/suppression de fiche, aucun changement du statut validation ou publication, aucune écriture directe Supabase, aucun redéploiement site/PWA. 2487 lignes maintenues.
 
 ## Synchronisation et reprise
-Au dernier contrôle intermédiaire : 2487 lignes, 714 sans rubrique, 682 sans catégorie, et synchronisation en cours. Refaire le contrôle individuel des 148 IDs avec correspondance Supabase (149 moins l'ID sans correspondance), vérifier exactitude des catégories et rubriques ainsi que statuts avant tout lot suivant. Ne pas reclasser ces IDs.
+Contrôle final Supabase : 148/148 IDs correspondants synchronisés (147 confirmés par requête de lot, plus recL6QeIzMGwX2zwy = Ideal Academy Training vérifié séparément). Un ID Airtable, recB0mm1vDCHrkFk, sans correspondant Supabase : il reste à vérifier, sans fusion automatique. Total Supabase 2487, sans rubrique 592, sans catégorie 560. Ne pas reclasser ces IDs.
