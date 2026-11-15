@@ -1640,7 +1640,7 @@ export const Subscription = () => {
 
 
 
-<details className="mt-5 rounded-2xl border border-[#D4AF37]/50 bg-white p-4"><summary className="cursor-pointer font-medium text-[#4A1D43]">{structure.details}</summary><CvBusinessJourney language={language as OfferLanguage} /></details>
+{!isPwa && <details className="mt-5 rounded-2xl border border-[#D4AF37]/50 bg-white p-4"><summary className="cursor-pointer font-medium text-[#4A1D43]">{structure.details}</summary><CvBusinessJourney language={language as OfferLanguage} /></details>}
 
 <div className="mt-5 rounded-3xl border border-[#D6AF2E]/60 bg-white p-5 shadow-[0_10px_28px_rgba(74,18,63,0.06)] sm:p-6">
   <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
