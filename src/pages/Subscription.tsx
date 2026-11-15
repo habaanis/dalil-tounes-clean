@@ -33,6 +33,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { isPlatformAppMode } from '../lib/platformAppMode';
 
 type PreviewType = 'free' | 'artisan' | 'premium' | 'launch' | 'request' | null;
+type ProSection = 'presence-essentielle' | 'concept' | 'cv-professionnels' | 'modeles' | 'offres';
 type ModalSize = 'preview' | 'compact' | 'medium' | 'large';
 
 const MODAL_SIZE_CLASS_NAME: Record<ModalSize, string> = {
@@ -1410,23 +1411,71 @@ export const Subscription = () => {
   const [selectedPresentationModel, setSelectedPresentationModel] = useState<PresentationModel | null>(null);
   const [selectedPalette, setSelectedPalette] = useState<PaletteId>('prestige');
   const [showSecondaryDetails, setShowSecondaryDetails] = useState(false);
-  // Open the requested professional section when coming from an app hub link.
+  // National PWA: keep the long professional page short until a section is chosen.
+  const [activeProSection, setActiveProSection] = useState<ProSection | null>(() => {
+    if (typeof window === 'undefined') return null;
+    const target = window.location.hash.slice(1);
+    if (target === 'histoire-fondateur') return 'concept';
+    if (target === 'cv-presentation-models') return 'modeles';
+    if (target === 'cv-business-products-title') return 'offres';
+    return (['presence-essentielle', 'concept', 'cv-professionnels', 'modeles', 'offres'].includes(target)
+      ? target : null) as ProSection | null;
+  });
+  const proSections: Array<{ id: ProSection; label: string }> = [
+    { id: 'presence-essentielle', label: structure.essential },
+    { id: 'concept', label: structure.concept },
+    { id: 'cv-professionnels', label: structure.products },
+    { id: 'modeles', label: structure.models },
+    { id: 'offres', label: structure.offers },
+  ];
+  const proSelectionHint: Record<OfferLanguage, string> = {
+    fr: 'Choisissez une rubrique ci-dessus pour afficher son contenu.',
+    ar: 'اختر قسمًا من الأعلى لعرض محتواه.',
+    en: 'Choose a section above to view its content.',
+    it: 'Scegli una sezione qui sopra per visualizzarne il contenuto.',
+    ru: 'Выберите раздел выше, чтобы увидеть его содержимое.',
+  };
+  const showProSection = (target: ProSection) => {
+    setActiveProSection(target);
+    window.history.replaceState(window.history.state, '', `${window.location.pathname}${window.location.search}#${target}`);
+  };
+  // Deep links from the compact PWA hub open the matching panel.
   useEffect(() => {
     const openTargetSection = () => {
-      const target = window.location.hash.slice(1);
+      const hash = window.location.hash.slice(1);
+      const target = hash === 'histoire-fondateur' ? 'concept'
+        : hash === 'cv-presentation-models' ? 'modeles'
+        : hash === 'cv-business-products-title' ? 'offres' : hash;
+      if (isPwa) {
+        if (['presence-essentielle', 'concept', 'cv-professionnels', 'modeles', 'offres'].includes(target)) {
+          setActiveProSection(target as ProSection);
+        }
+        return;
+      }
+      // The public website keeps its existing full-page navigation.
       if (target !== 'modeles' && target !== 'offres') return;
       if (target === 'modeles') {
         const models = document.getElementById('modeles');
         if (models instanceof HTMLDetailsElement) models.open = true;
       }
-      window.requestAnimationFrame(() => {
-        document.getElementById(target)?.scrollIntoView({ block: 'start' });
-      });
+      window.requestAnimationFrame(() => document.getElementById(target)?.scrollIntoView({ block: 'start' }));
     };
     openTargetSection();
     window.addEventListener('hashchange', openTargetSection);
     return () => window.removeEventListener('hashchange', openTargetSection);
-  }, []);
+  }, [isPwa]);
+
+  useEffect(() => {
+    if (!isPwa || !activeProSection) return;
+    const frame = window.requestAnimationFrame(() => {
+      if (activeProSection === 'modeles') {
+        const models = document.getElementById('modeles');
+        if (models instanceof HTMLDetailsElement) models.open = true;
+      }
+      document.getElementById(activeProSection)?.scrollIntoView({ block: 'start' });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [isPwa, activeProSection]);
 
 
   const closePreview = () => setActivePreview(null);
@@ -1436,6 +1485,7 @@ export const Subscription = () => {
   };
   const selectFormula = (formula: 'artisan' | 'premium') => {
     setSelectedFormula(formula);
+    if (isPwa) showProSection('modeles');
     const models = document.getElementById('modeles');
     if (models instanceof HTMLDetailsElement) models.open = true;
     window.requestAnimationFrame(() => {
