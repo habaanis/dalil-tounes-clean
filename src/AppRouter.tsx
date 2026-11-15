@@ -79,6 +79,9 @@ const BusinessEvents = lazy(() => import('./pages/BusinessEvents').then(m => ({ 
 const BusinessNeeds = lazy(() => import('./pages/BusinessNeeds'));
 const BusinessDetail = lazy(() => import('./components/BusinessShowcaseDetail'));
 const BusinessQr = lazy(() => import('./pages/BusinessQr'));
+const ClientAccount = lazy(() => import('./pages/ClientAccount'));
+const ClientAccountLogin = lazy(() => import('./pages/ClientAccount').then(m => ({default:m.ClientAccountLogin})));
+
 const LegacyBusinessRedirect = lazy(() => import('./components/LegacyBusinessRedirect').then(m => ({ default: m.LegacyBusinessRedirect })));
 const TransportInscription = lazy(() => import('./pages/TransportInscription'));
 const Education = lazy(() => import('./pages/EducationNew'));
@@ -266,6 +269,8 @@ function AppRouter() {
           <Route path="/qr-business/:id/cv" element={<BusinessDetail />} />
           <Route path="/qr-business/:id" element={<BusinessQr />} />
           <Route path="/:slug/cv" element={<ClientCvRoute />} />
+          <Route path="/:slug/compte" element={<ClientAccount />} />
+          <Route path="/:slug/connexion" element={<ClientAccountLogin />} />
 
           <Route path="/jobs" element={<Jobs />} />
           <Route path="/emploi" element={<Jobs />} />
