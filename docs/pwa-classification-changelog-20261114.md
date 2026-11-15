@@ -65,3 +65,11 @@ Toutes les corrections doivent être effectuées dans Airtable puis vérifiées 
 - Automatisation de synchronisation des modifications vers Supabase `wflVyPTiHCmOaxoof` : active, surveille tous les champs, relaie les modifications via Edge Function `sync-airtable`.
 - Les **7 fiches du lot immobilier précédent** restent affectées aux pages attendues, non publiées au contrôle final.
 - **Ne pas désactiver ou changer l'automatisation de publication sans revue du workflow commercial** : certaines fiches doivent effectivement être publiées automatiquement après validation. Il faut dissocier le classement technique de l'autorisation de publier (champ de validation explicite, ou workflow équivalent) avant de reprendre une migration en masse.
+
+## Lot 005 — Relance du lot 004 après correction effective de l'automatisation
+- Précondition : automatisation Airtable `wflZa2t6KtvYOSP7f` **deployed**, conditions imposant `statut_validation=terminer la saisi` et `Statut de publication=Prêt à publier`, et toutes les exclusions anciennes conservées. Le simple renseignement de `liste pages` ne satisfait donc plus le déclencheur.
+- Avant modification : total Supabase **2487** ; **27/27** fiches à classer avec `liste_pages` vide, **0** publiée, **0** approuvée explicitement.
+- Affectations Airtable (mêmes 27 enregistrements, mêmes rubriques par métier) réappliquées conformément à la proposition documentée dans le lot 004 : **14 établissements pour personnes âgées**, **13 entreprises automobiles**.
+- Lors des réponses d'écriture Airtable : pour les 27, statut toujours `terminer la saisi`, pas de `Statut de publication` renseigné.
+- Premier contrôle de synchronisation Supabase après ce lot : **8/27** nouvelles affectations déjà reçues, **0** nouvelle publication, **0** approbation, compteur **2487** inchangé. Vérification finale nécessaire avant de déclarer ce lot achevé.
+- Retour arrière si nécessaire : remettre `liste pages` vide pour les 27 identifiants déjà listés dans le lot 004 ; ne jamais effacer une fiche pour corriger une classification.
