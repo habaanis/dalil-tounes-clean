@@ -153,3 +153,23 @@ export function missingSuggestedPages(row: ClassifiedBusiness): BusinessPageSugg
   const assigned = new Set(assignedBusinessPages(row));
   return suggestBusinessPages(row).filter(suggestion => !assigned.has(suggestion.page));
 }
+
+/**
+ * The PWA can link directly to the same directory using a scoped page.
+ * Keep these ids aligned with the values actually synchronized from Airtable.
+ * Unknown scopes deliberately return null (no accidental filter).
+ */
+const PLATFORM_SCOPE_PAGES: Readonly<Record<string, BusinessPageId>> = {
+  sante: 'santé',
+  services: 'services citoyens',
+  magasin: 'commerces & magasins',
+  entreprises: 'entreprises',
+  tourisme: 'tourisme local & expatriation',
+  education: 'éducation',
+  loisirs: 'loisirs & évènements',
+};
+
+export function getPlatformSearchScopePage(scope: string | null | undefined): BusinessPageId | null {
+  if (!scope) return null;
+  return PLATFORM_SCOPE_PAGES[scope] ?? null;
+}
