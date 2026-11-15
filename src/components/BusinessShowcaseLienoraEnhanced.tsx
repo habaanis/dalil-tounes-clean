@@ -220,12 +220,5 @@ export default function BusinessShowcaseLienoraEnhanced() {
         demoMode: boutiqueDemo,
       }} />
     : undefined;
-  return <>
-    <BusinessShowcaseLienoraDetail boutiqueContent={boutiqueContent} />
-    <div className="mx-auto max-w-xl px-4 pb-8 pt-2 text-center">
-      <a href="https://dalil-tounes.com/dashboard/entreprise" className="inline-flex min-h-10 items-center justify-center rounded-full border border-[#C5AE7D] bg-white px-4 py-2 text-xs font-medium text-[#5B302B] hover:bg-[#FCF8EF]">
-        {language === 'ar' ? 'حسابي المهني' : language === 'en' ? 'Professional account' : 'Mon compte professionnel'}
-      </a>
-    </div>
-  </>;
+  return <BusinessShowcaseLienoraDetail boutiqueContent={boutiqueContent} />;
 }
