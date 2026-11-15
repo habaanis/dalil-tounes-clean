@@ -1,6 +1,8 @@
 import StructuredData from '../components/StructuredData';
 import Concept from './Concept';
 import '../styles/pwaProConceptCompact.css';
+import PlatformAppSectionHub from '../components/PlatformAppSectionHub';
+import { useLocation } from 'react-router-dom';
 import '../styles/pwaProMiniCompact.css';
 import '../styles/pwaProOffersCompact.css';
 import '../styles/pwaProModelFrames.css';
@@ -1412,6 +1414,7 @@ export const Subscription = () => {
   const essentialCopy = essentialCvCopy[language as OfferLanguage] ?? essentialCvCopy.fr;
   const offerLang = (language in platformPwaOfferCopy ? language : 'fr') as OfferLanguage;
   const isPwa = isPlatformAppMode();
+  const appLocation = useLocation();
   const pwaOffer = platformPwaOfferCopy[offerLang];
   const defaultSimpleCopy = simplifiedOfferCopy[offerLang];
   const simpleCopy = isPwa
@@ -1494,7 +1497,7 @@ export const Subscription = () => {
     openTargetSection();
     window.addEventListener('hashchange', openTargetSection);
     return () => window.removeEventListener('hashchange', openTargetSection);
-  }, [isPwa]);
+  }, [isPwa, appLocation.hash]);
 
   useEffect(() => {
     if (!isPwa || !activeProSection) return;
@@ -1557,6 +1560,11 @@ export const Subscription = () => {
 
         {isPwa
           ? <nav data-pwa-pro-sections aria-label={structure.professional} className="mb-3 grid grid-cols-2 gap-2" role="tablist">
+            <button type="button" role="tab" id="pro-tab-overview" aria-selected={!activeProSection} aria-controls="pwa-pro-window"
+              onClick={() => { setActiveProSection(null); window.history.replaceState(window.history.state, '', `${window.location.pathname}${window.location.search}`); }}
+              className={`col-span-2 min-h-11 rounded-xl border px-2 py-2 text-center text-xs font-semibold leading-5 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B62226] ${!activeProSection ? 'border-[#B62226] bg-[#B62226] text-white' : 'border-[#D4AF37]/60 bg-[#FFFDF8] text-[#302925]'}`}>
+              {offerLang === 'fr' ? "Vue d’ensemble" : offerLang === 'ar' ? 'نظرة عامة' : offerLang === 'en' ? 'Overview' : offerLang === 'it' ? 'Panoramica' : 'Обзор'}
+            </button>
             {proSections.map((section, index) => <button key={section.id} id={`pro-tab-${section.id}`} type="button"
               role="tab" aria-selected={activeProSection === section.id} aria-controls="pwa-pro-window"
               onClick={() => showProSection(section.id)}
@@ -1569,9 +1577,9 @@ export const Subscription = () => {
           </nav>}
         <div id="pwa-pro-window" data-pwa-pro-window={isPwa ? '' : undefined}
           role={isPwa ? 'tabpanel' : undefined}
-          aria-labelledby={isPwa && activeProSection ? `pro-tab-${activeProSection}` : undefined}
+          aria-labelledby={isPwa ? (activeProSection ? `pro-tab-${activeProSection}` : 'pro-tab-overview') : undefined}
           className={isPwa ? 'rounded-2xl border border-[#D4AF37]/50 bg-[#FFFCF7] p-3' : 'contents'}>
-          {isPwa && !activeProSection && <p className="py-6 text-center text-sm text-[#655B50]">{proSelectionHint[offerLang]}</p>}
+          {isPwa && !activeProSection && <PlatformAppSectionHub kind="pros" />}
           <div className={isPwa && activeProSection !== 'presence-essentielle' ? 'hidden' : 'contents'}>
             <EssentialPresence registration />
             <p className="mt-3 text-sm font-semibold text-emerald-800">{copy.essentialFree}</p>
