@@ -21,3 +21,9 @@
 - Les 56 écritures Airtable sont confirmées avec validation `terminer la saisi`, sans marqueur de publication.
 - Supabase se synchronise progressivement ; au contrôle intermédiaire lot A **30/30** et lot B **12/26**, compteur **2487**. Faire un nouveau contrôle avant de compter tout le lot comme synchronisé.
 - Production PWA `4832e5aa6cf2672ed945c1cd600d22686b02faf1` `READY` ; aucune différence de code entre la version publiée et la branche, seulement les documents de suivi. Ne pas redéployer inutilement : les modifications de catégorie sont des données synchronisées, non du code.
+
+## Validation définitive des 56 fiches
+- SQL Supabase final par les 56 identifiants : **56/56** catégories et listes de pages synchronisées, **0** avec statut de validation `publie`, publication non vide ou `approved=true`.
+- **2487** fiches enregistrées au total (compteur inchangé), **1331** sans page et **1294** sans page ni catégorie.
+- Les 56 corrections ont été effectuées dans Airtable et synchronisées dans Supabase ; elles ne demandent pas un nouveau build de la PWA.
+- Vérification GitHub : le code du projet courant sur la branche d'audit n'a pas changé depuis le commit de production `4832e5a`, seuls des fichiers de documentation ont été ajoutés ; aucun redéploiement identique n'est nécessaire.
