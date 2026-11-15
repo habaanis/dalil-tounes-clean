@@ -134,7 +134,7 @@ export default function BusinessShowcaseLienoraEnhanced() {
         .eq('status', 'approved')
         .lte('approved_at', new Date().toISOString())
         .order('position', { ascending: true })
-        .limit(30);
+        .limit(100);
       fetching = false;
       if (!active || error) return;
       const products = (data ?? []).flatMap(item => {
