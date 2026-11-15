@@ -84,9 +84,9 @@ export default function AdminBoutiqueProposals() {
 
   const reject = async (id:string) => {
     setBusy(id);setFeedback('');
-    const {error} = await supabase.from('dalil_boutique_product_requests')
-      .update({status:'rejected',reviewed_at:new Date().toISOString()})
-      .eq('id',id).eq('status','pending');
+    const {error} = await supabase.rpc('dalil_reject_boutique_proposal', {
+      p_request_id: id,
+    });
     if (error) setFeedback('Refus non enregistré : vérifiez les droits administrateur.');
     else { setFeedback('Proposition refusée. Aucune publication.'); await load(); }
     setBusy(null);
