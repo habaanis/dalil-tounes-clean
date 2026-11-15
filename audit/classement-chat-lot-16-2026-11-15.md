@@ -21,4 +21,4 @@ recnszpXU6WXbrwJQ reccR3dw1hu7YRQfQ recaqy2YZLFb6u5ds rec3aqF6cqoyOONl8 recEsbCV
 
 ## Sécurité et reprise
 Aucun changement des statuts de validation/publication, aucune création ni suppression, aucune écriture Supabase directe, aucun déploiement Vercel. Mise à jour uniquement de données métiers.
-Vérifier 16/16 synchronisées Supabase, garder 2487 lignes, noter les chiffres sans rubrique et sans catégorie. Les dossiers aux noms génériques et les identifiants manquants restent à examiner.
+**Vérifié : 16/16 synchronisées dans Supabase** ; total 2487 ; 416 sans rubrique ; 384 sans catégorie. Ne pas retraiter ces identifiants. Les dossiers aux noms génériques et les identifiants manquants restent à examiner.
