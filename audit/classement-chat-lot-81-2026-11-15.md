@@ -17,5 +17,5 @@ Quatre IDs écartés du lot car pas classables en l'état dans Airtable: recIipE
 Également les cas ambigus, les identifiants sans correspondance Supabase, et les fiches déjà classées.
 
 ## Contrôle synchronisation
-Immédiatement après écriture : 81/81 IDs présents dans Supabase, 3/81 synchronisés (délai automatisation). **Recontrôler avant toute autre écriture.**
+Contrôle progressif Supabase : 81/81 IDs présents, 39/81 synchronisés au dernier contrôle ; 553 sans rubrique, 521 sans catégorie, total 2487. **Ne pas réécrire ni déclarer les 81 entièrement synchronisés tant que 81/81 n'est pas vérifié.**
 Aucun déploiement Vercel de code n'est nécessaire pour ces mises à jour de données de production. Vérification de l'affichage public distincte et soumise à la politique de publication.
