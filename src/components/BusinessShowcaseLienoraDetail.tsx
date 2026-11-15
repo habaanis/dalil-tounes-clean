@@ -1119,7 +1119,7 @@ export default function BusinessShowcaseLienoraDetail({
   const logoImage = getLogoUrl(business.logo_url);
   const openingStyle: 'photo' | 'framed' =
     String(business.opening_style || '').toLowerCase() === 'framed' ? 'framed' : 'photo';
-  const clientOpening = isClientAppMode && !embeddedPreview && Boolean(String(business.logo_url || '').trim()) && Boolean(String(business.image_url || '').trim()) ? (
+  const clientOpening = isClientAppMode && !embeddedPreview && new URLSearchParams(location.search).get('skip-opening') !== '1' && Boolean(String(business.logo_url || '').trim()) && Boolean(String(business.image_url || '').trim()) ? (
     <ClientOpeningAuto
       clientId={business.id}
       name={business.nom}
@@ -1160,7 +1160,7 @@ export default function BusinessShowcaseLienoraDetail({
   }));
   const certification = isCertifiedBusiness(business) ? CERTIFIED_LABEL : '';
   const activityPill = serviceItems[0] || categoryLabel || displayName;
-  const contactNotice = notice || text.contactNotice;
+  const contactNotice = isClientAppMode ? (notice || '') : (notice || text.contactNotice);
 
   const seo = getBusinessSeoMeta(
     {
@@ -1937,7 +1937,7 @@ export default function BusinessShowcaseLienoraDetail({
                 </div>}
               </>
             )}
-            <p className="dt-action-notice" role="status" aria-live="polite">{contactNotice}</p>
+            {contactNotice && <p className="dt-action-notice" role="status" aria-live="polite">{contactNotice}</p>}
           </section>
 
           {sections.filter(section => section.id === 'booking').map(section => (
