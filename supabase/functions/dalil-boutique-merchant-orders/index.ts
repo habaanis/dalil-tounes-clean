@@ -14,7 +14,7 @@ Deno.serve(async req=>{
   if(req.method==="OPTIONS"){
     if(!origins.has(origin))return respond({error:"Forbidden"},403,origin);
     return new Response(null,{status:204,headers:{"access-control-allow-origin":origin,
-      "access-control-allow-methods":"POST,OPTIONS","access-control-allow-headers":"authorization,apikey,content-type",
+      "access-control-allow-methods":"POST,OPTIONS","access-control-allow-headers":"authorization,x-client-info,apikey,content-type,x-retry-count,traceparent,tracestate,baggage",
       "vary":"Origin"}});
   }
   if(req.method!=="POST")return respond({error:"Method not allowed"},405,origin);
