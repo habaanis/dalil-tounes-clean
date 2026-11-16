@@ -26,7 +26,7 @@ Deno.serve(async req => {
     return reply({error:"JSON required"},415,origin);
   const raw=await req.text().catch(()=>"");
   if(new TextEncoder().encode(raw).length>8192)return reply({error:"Payload too large"},413,origin);
-  let body:Record<string,unknown>|null=null;
+  let body:any=null;
   try { const parsed=JSON.parse(raw); if(parsed&&typeof parsed==="object"&&!Array.isArray(parsed))body=parsed; } catch { /* Invalid JSON */ }
   if(!body)return reply({error:"Invalid request"},400,origin);
   const {profileId,productId,idempotencyKey,quantity}=body;
