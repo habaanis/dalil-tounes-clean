@@ -32,7 +32,7 @@ Deno.serve(async req=>{
       return respond({error:"JSON required"},415,origin);
     const raw=await req.text().catch(()=>"");
     if(new TextEncoder().encode(raw).length>8192)return respond({error:"Too large"},413,origin);
-    let input:Record<string,unknown>|null=null;
+    let input:any=null;
     try { const parsed=JSON.parse(raw); if(parsed&&typeof parsed==="object"&&!Array.isArray(parsed))input=parsed; } catch { /* Invalid JSON */ }
     const profileId=input?.profileId;
     if(typeof profileId!=="string"||!companyId.test(profileId))return respond({error:"Invalid company"},400,origin);
