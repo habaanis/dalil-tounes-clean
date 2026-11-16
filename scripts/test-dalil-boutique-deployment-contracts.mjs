@@ -9,6 +9,7 @@ const safety=read('supabase/migrations/20261115224500_dalil_order_safety_constra
 const publicApi=read('supabase/functions/dalil-boutique-customer-submit/index.ts');
 const merchantApi=read('supabase/functions/dalil-boutique-merchant-orders/index.ts');
 const frontend=read('src/components/boutique/BoutiqueInteractive.tsx');
+const merchantUi=read('src/components/boutique/BoutiqueCustomerOrders.tsx');
 let count=0;
 function check(label,condition){assert.ok(condition,label);console.log('PASS',label);count++}
 check('private orders table with RLS',/CREATE TABLE public\.dalil_boutique_customer_orders\b/i.test(registry)&&/ALTER TABLE public\.dalil_boutique_customer_orders ENABLE ROW LEVEL SECURITY/i.test(registry));
@@ -24,4 +25,5 @@ check('both API routes enforce actual JSON byte size',publicApi.includes('new Te
 check('no unverified external payment CTA',!frontend.includes('href={payLink}')&&!frontend.includes('merchantPaymentLink('));
 check('EUR checkout is explicitly blocked',frontend.includes("selected.currency !== 'TND'"));
 check('server does not accept EUR until approved migration',publicApi.includes('product.currency!=="TND"')&&registry.includes("CHECK (currency = 'TND')"));
+check('merchant UI hides reject after confirmation',merchantUi.includes("['received','in_progress'].includes(order.status)&&<button")&&merchantUi.includes("order.status==='confirmed'&&<button")&&merchantUi.includes("update(order,'cancelled')"));
 console.log(`${count}/${count} Boutique static pre-deployment contracts passed (no database calls).`);
