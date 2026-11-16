@@ -81,8 +81,11 @@ Deno.serve(async req => {
     // Transactional limits on rotating salted fingerprints. Never store raw IP in the limiter.
     const ip=req.headers.get("cf-connecting-ip")||req.headers.get("x-forwarded-for")?.split(",")[0]?.trim()||"unknown";
     const bucket=new Date(Math.floor(Date.now()/600000)*600000).toISOString();
+    // Do not collapse all customers into one shared "unknown" IP bucket
+    // when a proxy does not provide a trustworthy address header.
+    // Contact throttling remains active for every request.
     const fingerprints=await Promise.all([
-      hash(secret+":ip:"+ip+":"+profileId),
+      ...(ip!=="unknown" ? [hash(secret+":ip:"+ip+":"+profileId)] : []),
       hash(secret+":contact:"+contact.toLowerCase()+":"+profileId),
     ]);
     for(const fingerprint of fingerprints){
@@ -104,8 +107,11 @@ Deno.serve(async req => {
         const {data:retry}=await db.from("dalil_boutique_customer_orders")
           .select("id,request_fingerprint,kind").eq("entreprise_id",profileId)
           .eq("idempotency_key",idempotencyKey).maybeSingle();
-        if(retry&&retry.request_fingerprint===requestFingerprint)
-          return reply({accepted:true,reference:retry.id,kind:retry.kind},200,origin);
+        if(retry){
+          if(retry.request_fingerprint===requestFingerprint)
+            return reply({accepted:true,reference:retry.id,kind:retry.kind},200,origin);
+          return reply({error:"Reference mismatch"},409,origin);
+        }
       }
       return reply({error:"Request not saved. Please retry."},503,origin);
     }
