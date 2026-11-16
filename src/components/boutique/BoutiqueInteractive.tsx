@@ -58,6 +58,9 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
   const [confirmation, setConfirmation] = useState('');
   // Keep the same UUID across retries to prevent duplicates after network failure.
   const [requestKey, setRequestKey] = useState(() => crypto.randomUUID());
+  // A retry with unchanged data keeps the idempotency key. Editing a field
+  // starts a new request so the server does not return 409 for changed details.
+  const editRequest = () => { setRequestKey(crypto.randomUUID()); setError(''); };
   const [catalogueQuery, setCatalogueQuery] = useState('');
   const [catalogueCategory, setCatalogueCategory] = useState('');
   const [cataloguePage, setCataloguePage] = useState(1);
@@ -221,12 +224,12 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
               <button type="button" onClick={() => setRequestOpen(false)} style={{ border: 0, color: '#8a6a42', background: 'transparent', fontSize: 12, cursor: 'pointer' }}>Réduire</button>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 9 }}>
-              <label style={labelStyle}>Nom<input value={name} disabled={Boolean(confirmation)||sending} onChange={event => setName(event.target.value)} maxLength={120} placeholder="Votre nom" style={fieldStyle}/></label>
-              <label style={labelStyle}>Qté<input type="number" min="1" max="99" value={quantity} disabled={Boolean(confirmation)||sending} onChange={event => setQuantity(Math.max(1,Math.min(99,Number(event.target.value)||1)))} style={fieldStyle}/></label>
+              <label style={labelStyle}>Nom<input value={name} disabled={Boolean(confirmation)||sending} onChange={event => { setName(event.target.value); editRequest(); }} maxLength={120} placeholder="Votre nom" style={fieldStyle}/></label>
+              <label style={labelStyle}>Qté<input type="number" min="1" max="99" value={quantity} disabled={Boolean(confirmation)||sending} onChange={event => { setQuantity(Math.max(1,Math.min(99,Number(event.target.value)||1))); editRequest(); }} style={fieldStyle}/></label>
             </div>
-            <label style={labelStyle}>Téléphone ou e-mail<input value={contact} disabled={Boolean(confirmation)||sending} onChange={event => setContact(event.target.value)} maxLength={150} placeholder="Vos coordonnées" style={fieldStyle}/></label>
-            <label style={labelStyle}>Date souhaitée (facultative)<input type="date" value={requestedDate} disabled={Boolean(confirmation)||sending} onChange={event => setRequestedDate(event.target.value)} min={new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10)} style={fieldStyle}/></label>
-            <label style={labelStyle}>Précisions (facultatif)<textarea value={details} disabled={Boolean(confirmation)||sending} onChange={event => setDetails(event.target.value)} maxLength={960} rows={2} placeholder="Nombre de personnes, retrait ou livraison…" style={{...fieldStyle, resize: 'vertical'}}/></label>
+            <label style={labelStyle}>Téléphone ou e-mail<input value={contact} disabled={Boolean(confirmation)||sending} onChange={event => { setContact(event.target.value); editRequest(); }} maxLength={150} placeholder="Vos coordonnées" style={fieldStyle}/></label>
+            <label style={labelStyle}>Date souhaitée (facultative)<input type="date" value={requestedDate} disabled={Boolean(confirmation)||sending} onChange={event => { setRequestedDate(event.target.value); editRequest(); }} min={new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10)} style={fieldStyle}/></label>
+            <label style={labelStyle}>Précisions (facultatif)<textarea value={details} disabled={Boolean(confirmation)||sending} onChange={event => { setDetails(event.target.value); editRequest(); }} maxLength={960} rows={2} placeholder="Nombre de personnes, retrait ou livraison…" style={{...fieldStyle, resize: 'vertical'}}/></label>
             {selected.mode === 'order' && typeof selected.price === 'number' && Number.isFinite(selected.price) && selected.price > 0 && <p style={{margin:0,fontSize:12,fontWeight:600,color:'#6d4d2b'}}>Total indicatif : {new Intl.NumberFormat('fr-FR',{style:'currency',currency:selected.currency}).format(Math.round(selected.price * quantity * (selected.currency === 'TND' ? 1000 : 100))/(selected.currency === 'TND' ? 1000 : 100))} · hors livraison éventuelle</p>}
             {selected.currency !== 'TND' && !config.demoMode && <p role="note" style={{margin:0,fontSize:11,color:'#88552a'}}>Prise de commandes en euros indisponible pour le moment. Cette vitrine reste consultable.</p>}
             {selected.mode === 'order' && (typeof selected.price !== 'number' || !Number.isFinite(selected.price) || selected.price <= 0) && <p role="note" style={{margin:0,fontSize:11,color:'#88552a'}}>Prix à confirmer par le professionnel : aucune commande ne peut être enregistrée sans prix valide.</p>}
