@@ -34,4 +34,6 @@ check('idempotency key refreshes after editing request fields',frontend.includes
    'setQuantity(Math.max(1,Math.min(99,Number(event.target.value)||1))); editRequest();'].every(snippet=>frontend.includes(snippet)));
 check('unchanged retry retains idempotency key',frontend.includes('idempotencyKey:requestKey')&&
   !frontend.includes('setRequestKey(crypto.randomUUID());\n    setSending(true)'));
+check('cancellation warns about independent refund processing',merchantUi.includes("cancellationNotice")&&merchantUi.includes("ne déclenche aucun remboursement")&&merchantUi.includes("ne rembourse pas automatiquement le client"));
+check('merchant cannot write payment evidence',merchantUi.includes("action:'update'")&&!merchantUi.includes("action:'mark_paid'")&&!merchantApi.includes('payment_status:status'));
 console.log(`${count}/${count} Boutique static pre-deployment contracts passed (no database calls).`);
