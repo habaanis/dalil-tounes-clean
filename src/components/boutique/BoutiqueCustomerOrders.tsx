@@ -123,8 +123,10 @@ export default function BoutiqueCustomerOrders({entrepriseIds}:{entrepriseIds:st
                 onClick={()=>void update(order,'confirmed')} className="min-h-11 rounded-lg border border-[#c6ad79] bg-[#fbf3e6] px-3 text-xs font-semibold text-[#64352f] disabled:opacity-50">Confirmer</button>}
               {canFinish&&<button type="button" disabled={Boolean(busy)} onClick={()=>void update(order,'completed')}
                 className="min-h-11 rounded-lg border border-[#c6ad79] bg-[#fbf3e6] px-3 text-xs font-semibold text-[#64352f] disabled:opacity-50">Terminer</button>}
-              <button type="button" disabled={Boolean(busy)} onClick={()=>void update(order,'rejected')}
-                className="min-h-11 rounded-lg border border-[#d8cbb5] bg-white px-3 text-xs font-semibold text-[#7b4141] disabled:opacity-50">Refuser</button>
+              {['received','in_progress'].includes(order.status)&&<button type="button" disabled={Boolean(busy)} onClick={()=>void update(order,'rejected')}
+                className="min-h-11 rounded-lg border border-[#d8cbb5] bg-white px-3 text-xs font-semibold text-[#7b4141] disabled:opacity-50">Refuser</button>}
+              {order.status==='confirmed'&&<button type="button" disabled={Boolean(busy)} onClick={()=>void update(order,'cancelled')}
+                className="min-h-11 rounded-lg border border-[#d8cbb5] bg-white px-3 text-xs font-semibold text-[#7b4141] disabled:opacity-50">Annuler</button>}
             </div>}
             {order.kind==='order'&&order.payment_status==='not_requested'&&<p className="mt-2 text-xs text-[#725b3e]">Confirmation bloquée jusqu’à vérification d’un acompte ou du paiement total. Aucun paiement à la livraison.</p>}
           </article>;
