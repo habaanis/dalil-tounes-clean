@@ -1,0 +1,36 @@
+name: Dalil Boutique security (no production writes)
+
+on:
+  pull_request:
+    paths:
+      - 'src/components/boutique/**'
+      - 'supabase/functions/dalil-boutique-*/**'
+      - 'supabase/migrations/*dalil*'
+      - 'scripts/test-dalil-boutique-*.mjs'
+      - '.github/workflows/dalil-boutique-security.yml'
+  push:
+    branches:
+      - 'fix/dalil-boutique-order-security-gates-20261115'
+
+permissions:
+  contents: read
+
+jobs:
+  boutique-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Simulated API security checks (no Supabase credentials)
+        run: node scripts/test-dalil-boutique-order-guards.mjs
+      - name: Festive menu currency and selection fixture
+        run: node scripts/test-dalil-boutique-festive-menu-fixture.mjs
+      - name: Production compilation only (does not deploy)
+        run: npm run build
