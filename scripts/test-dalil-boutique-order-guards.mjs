@@ -13,6 +13,7 @@ const data={
   professional_profile_access:[{user_id:'merchant-1',entreprise_id:entreprise}],
 };
 let rateLimited=false;
+let liveOrdersEnabled=true;
 function mockQuery(table){
   assert.ok(data[table], 'Unexpected table '+table);
   let filters=[],operation='read',payload;
@@ -54,7 +55,8 @@ async function loadEndpoint(slug){
     Request,Response,Date,URL,crypto,TextEncoder,Set,RegExp,Number,String,JSON,Array,Promise,Uint8Array,
     Deno:{serve:fn=>{handler=fn;},env:{get:k=>k==='SUPABASE_URL'?'https://example.supabase.co':
       k==='SUPABASE_SERVICE_ROLE_KEY'?'fake-private-key':
-      k==='DALIL_BOUTIQUE_ORDERS_RATE_LIMIT_SECRET'?'local-test-only-secret-12345678901234567890':null}},
+      k==='DALIL_BOUTIQUE_ORDERS_RATE_LIMIT_SECRET'?'local-test-only-secret-12345678901234567890':
+      k==='DALIL_BOUTIQUE_ORDERS_ENABLED'?(liveOrdersEnabled?'true':'false'):null}},
     mockCreateClient:mockClient,
   },{filename:slug+'.js'});
   return handler;
@@ -111,6 +113,11 @@ for (const [slug,handler] of [['customer-submit',submit],['merchant-orders',merc
     console.log('PASS',slug,scenario,status);
   }
 }
+liveOrdersEnabled=false;
+const closed=await submit(request(input));
+assert.equal(closed.status,503,'Orders must fail closed without explicit server opt-in');
+console.log('PASS disabled live order intake fails closed 503');
+liveOrdersEnabled=true;
 const cases=[
   ['Reject Lienora origin',()=>submit(request(input,undefined,'https://lienora.fr')),403],
   ['Reject missing fields',()=>submit(request({})),400],
