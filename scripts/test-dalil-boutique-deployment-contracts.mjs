@@ -26,4 +26,6 @@ check('no unverified external payment CTA',!frontend.includes('href={payLink}')&
 check('EUR checkout is explicitly blocked',frontend.includes("selected.currency !== 'TND'"));
 check('server does not accept EUR until approved migration',publicApi.includes('product.currency!=="TND"')&&registry.includes("CHECK (currency = 'TND')"));
 check('merchant UI hides reject after confirmation',merchantUi.includes("['received','in_progress'].includes(order.status)&&<button")&&merchantUi.includes("order.status==='confirmed'&&<button")&&merchantUi.includes("update(order,'cancelled')"));
+check('optional date picker persists in customer request note',frontend.includes('type="date"')&&frontend.includes("const note = [requestedDate ? 'Date souhaitée : '+requestedDate")&&frontend.includes("contact:contact.trim(),note,"));
+check('outdated dates rejected before customer API call',frontend.includes("requestedDate < localToday")&&frontend.includes("Sélectionnez une date d’événement valide"));
 console.log(`${count}/${count} Boutique static pre-deployment contracts passed (no database calls).`);
