@@ -28,7 +28,12 @@ Deno.serve(async req=>{
     const db=createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false}});
     const {data:identity,error:identityError}=await db.auth.getUser(token);
     if(identityError||!identity.user)return respond({error:"Unauthorized"},401,origin);
-    const input=await req.json().catch(()=>null);
+    if(!/^application\/json(?:\s*;|\s*$)/i.test(req.headers.get("content-type")||""))
+      return respond({error:"JSON required"},415,origin);
+    const raw=await req.text().catch(()=>"");
+    if(new TextEncoder().encode(raw).length>8192)return respond({error:"Too large"},413,origin);
+    let input:Record<string,unknown>|null=null;
+    try { const parsed=JSON.parse(raw); if(parsed&&typeof parsed==="object"&&!Array.isArray(parsed))input=parsed; } catch { /* Invalid JSON */ }
     const profileId=input?.profileId;
     if(typeof profileId!=="string"||!companyId.test(profileId))return respond({error:"Invalid company"},400,origin);
     const {data:access,error:accessError}=await db.from("professional_profile_access")
