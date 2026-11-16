@@ -28,4 +28,10 @@ check('server does not accept EUR until approved migration',publicApi.includes('
 check('merchant UI hides reject after confirmation',merchantUi.includes("['received','in_progress'].includes(order.status)&&<button")&&merchantUi.includes("order.status==='confirmed'&&<button")&&merchantUi.includes("update(order,'cancelled')"));
 check('optional date picker persists in customer request note',frontend.includes('type="date"')&&frontend.includes("const note = [requestedDate ? 'Date souhaitée : '+requestedDate")&&frontend.includes("contact:contact.trim(),note,"));
 check('outdated dates rejected before customer API call',frontend.includes("requestedDate < localToday")&&frontend.includes("Sélectionnez une date d’événement valide"));
+check('idempotency key refreshes after editing request fields',frontend.includes('const editRequest = () => { setRequestKey(crypto.randomUUID());') &&
+  ['setName(event.target.value); editRequest();','setContact(event.target.value); editRequest();',
+   'setRequestedDate(event.target.value); editRequest();','setDetails(event.target.value); editRequest();',
+   'setQuantity(Math.max(1,Math.min(99,Number(event.target.value)||1))); editRequest();'].every(snippet=>frontend.includes(snippet)));
+check('unchanged retry retains idempotency key',frontend.includes('idempotencyKey:requestKey')&&
+  !frontend.includes('setRequestKey(crypto.randomUUID());\n    setSending(true)'));
 console.log(`${count}/${count} Boutique static pre-deployment contracts passed (no database calls).`);
