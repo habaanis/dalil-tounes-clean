@@ -36,4 +36,5 @@ check('unchanged retry retains idempotency key',frontend.includes('idempotencyKe
   !frontend.includes('setRequestKey(crypto.randomUUID());\n    setSending(true)'));
 check('cancellation warns about independent refund processing',merchantUi.includes("cancellationNotice")&&merchantUi.includes("ne déclenche aucun remboursement")&&merchantUi.includes("ne rembourse pas automatiquement le client"));
 check('merchant cannot write payment evidence',merchantUi.includes("action:'update'")&&!merchantUi.includes("action:'mark_paid'")&&!merchantApi.includes('payment_status:status'));
+check('live customer order intake requires explicit server flag',publicApi.includes('Deno.env.get("DALIL_BOUTIQUE_ORDERS_ENABLED")!=="true"'));
 console.log(`${count}/${count} Boutique static pre-deployment contracts passed (no database calls).`);
