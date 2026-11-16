@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import '../styles/platformAppRedActions.css';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Building2, Compass, Facebook, Home, Instagram, Menu, MessageCircle, Search, Users, X } from 'lucide-react';
+import { ArrowLeft, Building2, Compass, Download, Facebook, Home, Instagram, Menu, MessageCircle, Search, Users, X } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import LanguageSelector from './LanguageSelector';
 import PlatformAppSectionHub, { getPlatformHub } from './PlatformAppSectionHub';
@@ -41,6 +41,38 @@ export default function PlatformAppShell({ children }: { children: ReactNode }) 
   const hub = getPlatformHub(location.pathname);
   const useCompactHub = hub !== null && hub !== 'pros' && new URLSearchParams(location.search).get('app-full') !== '1';
   const [menuOpen, setMenuOpen] = useState(false);
+  const [installPrompt, setInstallPrompt] = useState<null | (Event & { prompt: () => Promise<void>; userChoice: Promise<{ outcome: string }> })>(null);
+  const [installGuide, setInstallGuide] = useState(false);
+  const [installed, setInstalled] = useState(() =>
+    typeof window !== 'undefined' && (window.matchMedia('(display-mode: standalone)').matches || Boolean((navigator as Navigator & { standalone?: boolean }).standalone))
+  );
+  const requestedInstall = new URLSearchParams(location.search).get('install') === '1';
+  useEffect(() => {
+    const onPrompt = (event: Event) => {
+      event.preventDefault();
+      setInstallPrompt(event as Event & { prompt: () => Promise<void>; userChoice: Promise<{ outcome: string }> });
+    };
+    const onInstalled = () => { setInstalled(true); setInstallPrompt(null); setInstallGuide(false); };
+    window.addEventListener('beforeinstallprompt', onPrompt);
+    window.addEventListener('appinstalled', onInstalled);
+    return () => {
+      window.removeEventListener('beforeinstallprompt', onPrompt);
+      window.removeEventListener('appinstalled', onInstalled);
+    };
+  }, []);
+  const installApp = async () => {
+    if (!installPrompt) { setInstallGuide(true); return; }
+    try {
+      await installPrompt.prompt();
+      const choice = await installPrompt.userChoice;
+      if (choice.outcome === 'accepted') setInstalled(true);
+    } catch {
+      setInstallGuide(true);
+    } finally {
+      setInstallPrompt(null);
+    }
+  };
+
   useEffect(() => setMenuOpen(false), [location.pathname, location.search]);
   useEffect(() => {
     if (useCompactHub) window.scrollTo({ top: 0, left: 0 });
@@ -86,6 +118,23 @@ export default function PlatformAppShell({ children }: { children: ReactNode }) 
           </div>
         </nav>}
       </header>
+
+      {requestedInstall && !installed && (
+        <section aria-label="Installer l’application Dalil Tounes" className="mx-auto max-w-xl border-b border-[#C9A65D] bg-[#FFF9EA] px-4 py-3">
+          <p className="text-sm font-semibold text-[#292725]">{lang === 'ar' ? 'ثبّت تطبيق دليل تونس' : 'Installer l’application Dalil Tounes'}</p>
+          <p className="mt-1 text-xs leading-5 text-[#514A45]">{lang === 'ar' ? 'ثبّت التطبيق على شاشة هاتفك من المتصفح.' : 'Ajoutez la vraie application à votre écran d’accueil depuis ce navigateur.'}</p>
+          <button type="button" onClick={installApp} className="mt-2 inline-flex min-h-11 items-center gap-2 rounded-xl bg-[#B62226] px-4 py-2 text-sm font-semibold text-white">
+            <Download className="h-4 w-4" aria-hidden="true" />{lang === 'ar' ? 'تثبيت التطبيق' : 'Installer l’application'}
+          </button>
+          {installGuide && <div role="status" className="mt-3 rounded-lg border border-[#C9A65D] bg-white p-3 text-xs leading-6 text-[#292725]">
+            {/iPad|iPhone|iPod/i.test(navigator.userAgent)
+              ? 'Sur iPhone : ouvrez cette page dans Safari, touchez Partager puis « Sur l’écran d’accueil » et Ajouter.'
+              : /android/i.test(navigator.userAgent)
+                ? 'Sur Android : dans Chrome, ouvrez le menu ⋮ puis « Installer l’application » ou « Ajouter à l’écran d’accueil ».'
+                : 'Dans Chrome ou Edge, utilisez l’icône Installer dans la barre d’adresse ou le menu ⋮ puis « Installer l’application ».'}
+          </div>}
+        </section>
+      )}
 
       {location.pathname === '/' && <div aria-label="Réseaux sociaux Dalil Tounes" className="mx-auto flex max-w-xl items-center justify-end gap-2 px-3 pt-2">
         <a href="https://www.facebook.com/daliltounes/" target="_blank" rel="noopener noreferrer"

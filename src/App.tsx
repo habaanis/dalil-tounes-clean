@@ -6,6 +6,7 @@ import { CheckoutRegistrationBridge } from './components/CheckoutRegistrationBri
 import { PwaUpdatePrompt } from './components/PwaUpdatePrompt';
 import { PlatformPrestigeLaunch } from './components/PlatformPrestigeLaunch';
 import { isDedicatedClientHostname } from './lib/clientAppUrl';
+import { isPlatformAppMode } from './lib/platformAppMode';
 
 const WELCOME_SEEN_KEY = 'dalilTounes_welcome_seen_v1';
 
@@ -42,7 +43,9 @@ function App() {
   const isHashRouter = window.location.hash.startsWith('#/') || import.meta.env.DEV;
   const isEmbeddedClientPreview = new URLSearchParams(location.search).get('source') === 'pwa';
   const isDedicatedClientApp = isDedicatedClientHostname(window.location.hostname) && location.pathname !== '/';
-  const showWelcomeModal = !isDedicatedClientApp && !isEmbeddedClientPreview && !welcomeDismissed && shouldShowWelcomeForPath(location.pathname);
+  // A visitor who explicitly chose to install the dedicated PWA should see its install action first.
+  const installEntry = isPlatformAppMode() && new URLSearchParams(location.search).get('install') === '1';
+  const showWelcomeModal = !installEntry && !isDedicatedClientApp && !isEmbeddedClientPreview && !welcomeDismissed && shouldShowWelcomeForPath(location.pathname);
   const showWelcomeDevButton = import.meta.env.DEV && isLocalhost;
 
   const handleCloseWelcomeModal = () => {
