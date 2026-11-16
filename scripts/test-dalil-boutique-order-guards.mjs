@@ -100,7 +100,7 @@ for (const [slug,handler] of [['customer-submit',submit],['merchant-orders',merc
     headers:{origin:'https://app.dalil-tounes.com',...headers},body});
   const cases=[
     ['non-JSON content type',create('{}',{'content-type':'text/plain'}),415],
-    ['oversized body without Content-Length',create(JSON.stringify({padding:'x'.repeat(8300)}),{'content-type':'application/json'}),413],
+    ['oversized JSON body',create(JSON.stringify({padding:'x'.repeat(8300)}),{'content-type':'application/json'}),413],
     ['JSON array forbidden',create('[]',{'content-type':'application/json'}),400],
   ];
   for(const [scenario,request,status] of cases){
