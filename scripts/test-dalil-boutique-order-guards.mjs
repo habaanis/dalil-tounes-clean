@@ -93,6 +93,24 @@ for(const [slug,handler] of [
   assert.equal(forbidden.status,403,slug+' foreign origin must be rejected');
   console.log('PASS',slug+' foreign-origin preflight rejected 403');
 }
+// Request parsing and size-limit regression tests for both public and private handlers.
+for (const [slug,handler] of [['customer-submit',submit],['merchant-orders',merchant]]) {
+  const url='https://example.invalid';
+  const create=(body,headers={})=>new Request(url,{method:'POST',
+    headers:{origin:'https://app.dalil-tounes.com',...headers},body});
+  const cases=[
+    ['non-JSON content type',create('{}',{'content-type':'text/plain'}),415],
+    ['oversized body without Content-Length',create(JSON.stringify({padding:'x'.repeat(8300)}),{'content-type':'application/json'}),413],
+    ['JSON array forbidden',create('[]',{'content-type':'application/json'}),400],
+  ];
+  for(const [scenario,request,status] of cases){
+    // The merchant endpoint checks authentication before parsing the body.
+    if(slug==='merchant-orders')request.headers.set('authorization','Bearer merchant-token');
+    const response=await handler(request);
+    assert.equal(response.status,status,slug+': '+scenario);
+    console.log('PASS',slug,scenario,status);
+  }
+}
 const cases=[
   ['Reject Lienora origin',()=>submit(request(input,undefined,'https://lienora.fr')),403],
   ['Reject missing fields',()=>submit(request({})),400],
