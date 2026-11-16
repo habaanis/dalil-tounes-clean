@@ -52,6 +52,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
   const [name, setName] = useState('');
   const [contact, setContact] = useState('');
   const [details, setDetails] = useState('');
+  const [requestedDate, setRequestedDate] = useState('');
   const [error, setError] = useState('');
   const [sending, setSending] = useState(false);
   const [confirmation, setConfirmation] = useState('');
@@ -100,7 +101,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
   };
   const showProduct = (product: BoutiqueProduct) => {
     setSelected(product); setRequestOpen(false); setQuantity(1);
-    setName(''); setContact(''); setDetails(''); setError('');
+    setName(''); setContact(''); setDetails(''); setRequestedDate(''); setError('');
     setConfirmation(''); setSending(false); setRequestKey(crypto.randomUUID());
   };
   const send = async () => {
@@ -115,13 +116,21 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
     if (name.trim().length < 2 || contact.trim().length < 3) {
       setError('Indiquez votre nom et vos coordonnées.'); return;
     }
+    // The selected date is part of the stored note and therefore of the server's idempotency fingerprint.
+    const today = new Date();
+    const localToday = [today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
+    if (requestedDate && (!/^\d{4}-\d{2}-\d{2}$/.test(requestedDate) || requestedDate < localToday)) {
+      setError('Sélectionnez une date d’événement valide, aujourd’hui ou plus tard.'); return;
+    }
+    const note = [requestedDate ? 'Date souhaitée : '+requestedDate : '',details.trim()].filter(Boolean).join('\n');
+    if (note.length > 1000) { setError('Les précisions sont trop longues. Raccourcissez votre message.'); return; }
     setSending(true);setError('');
     try {
       const response=await fetch(supabaseUrl+'/functions/v1/dalil-boutique-customer-submit',{
         method:'POST',
         headers:{'content-type':'application/json',apikey:supabaseAnonKey},
         body:JSON.stringify({profileId:config.profileId,productId:selected.id,quantity,
-          name:name.trim(),contact:contact.trim(),note:details.trim(),
+          name:name.trim(),contact:contact.trim(),note,
           idempotencyKey:requestKey}),
       });
       const data=await response.json().catch(()=>({error:'Réponse invalide du serveur'}));
@@ -142,6 +151,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
       'Référence : '+confirmation,
       'Article : '+selected.title,
       'Quantité : '+quantity,
+      ...(requestedDate ? ['Date souhaitée : '+requestedDate] : []),
       'Demande en attente de votre réponse. Aucun paiement effectué.',
     ].join('\n');
     window.open('https://wa.me/'+phone+'?text='+encodeURIComponent(message),'_blank','noopener,noreferrer');
@@ -215,7 +225,8 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
               <label style={labelStyle}>Qté<input type="number" min="1" max="99" value={quantity} disabled={Boolean(confirmation)||sending} onChange={event => setQuantity(Math.max(1,Math.min(99,Number(event.target.value)||1)))} style={fieldStyle}/></label>
             </div>
             <label style={labelStyle}>Téléphone ou e-mail<input value={contact} disabled={Boolean(confirmation)||sending} onChange={event => setContact(event.target.value)} maxLength={150} placeholder="Vos coordonnées" style={fieldStyle}/></label>
-            <label style={labelStyle}>Précisions (facultatif)<textarea value={details} disabled={Boolean(confirmation)||sending} onChange={event => setDetails(event.target.value)} maxLength={1000} rows={2} placeholder="Date, nombre de personnes, livraison…" style={{...fieldStyle, resize: 'vertical'}}/></label>
+            <label style={labelStyle}>Date souhaitée (facultative)<input type="date" value={requestedDate} disabled={Boolean(confirmation)||sending} onChange={event => setRequestedDate(event.target.value)} min={new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10)} style={fieldStyle}/></label>
+            <label style={labelStyle}>Précisions (facultatif)<textarea value={details} disabled={Boolean(confirmation)||sending} onChange={event => setDetails(event.target.value)} maxLength={960} rows={2} placeholder="Nombre de personnes, retrait ou livraison…" style={{...fieldStyle, resize: 'vertical'}}/></label>
             {selected.mode === 'order' && typeof selected.price === 'number' && Number.isFinite(selected.price) && selected.price > 0 && <p style={{margin:0,fontSize:12,fontWeight:600,color:'#6d4d2b'}}>Total indicatif : {new Intl.NumberFormat('fr-FR',{style:'currency',currency:selected.currency}).format(Math.round(selected.price * quantity * (selected.currency === 'TND' ? 1000 : 100))/(selected.currency === 'TND' ? 1000 : 100))} · hors livraison éventuelle</p>}
             {selected.currency !== 'TND' && !config.demoMode && <p role="note" style={{margin:0,fontSize:11,color:'#88552a'}}>Prise de commandes en euros indisponible pour le moment. Cette vitrine reste consultable.</p>}
             {selected.mode === 'order' && (typeof selected.price !== 'number' || !Number.isFinite(selected.price) || selected.price <= 0) && <p role="note" style={{margin:0,fontSize:11,color:'#88552a'}}>Prix à confirmer par le professionnel : aucune commande ne peut être enregistrée sans prix valide.</p>}
