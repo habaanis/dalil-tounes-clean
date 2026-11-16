@@ -40,14 +40,6 @@ const priceText = (product: BoutiqueProduct) =>
     ? new Intl.NumberFormat('fr-FR', { style: 'currency', currency: product.currency }).format(product.price)
     : 'Sur devis';
 
-const merchantPaymentLink = (value?: string) => {
-  if (!value) return '';
-  try {
-    const url = new URL(value);
-    return url.protocol === 'https:' && !url.username && !url.password ? url.href : '';
-  } catch { return ''; }
-};
-
 const labelStyle = { display: 'grid', gap: 4, fontSize: 12, fontWeight: 500 } as const;
 const fieldStyle = { boxSizing: 'border-box', width: '100%', minWidth: 0, border: '1px solid #d7c7ae', borderRadius: 9, padding: '9px 10px', fontSize: 14, background: '#fff' } as const;
 const iconButton = { background: '#fffaf3', border: '1px solid #d7c7ae', borderRadius: 24, height: 34, minWidth: 34, cursor: 'pointer', color: '#4c3046', fontSize: 20 } as const;
@@ -154,10 +146,6 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
     ].join('\n');
     window.open('https://wa.me/'+phone+'?text='+encodeURIComponent(message),'_blank','noopener,noreferrer');
   };
-  const payLink = selected?.mode === 'order' && config.paymentsVerified && !config.demoMode && quantity === 1
-    ? merchantPaymentLink(selected.merchantPaymentUrl)
-    : '';
-
   return <>
     <button type="button" onClick={() => { setOpen(true); setSelected(null); setRequestOpen(false); setConfirmation(''); setCataloguePage(1); setCatalogueQuery(''); setCatalogueCategory(''); }}
       aria-haspopup="dialog" className={triggerClassName}
@@ -246,7 +234,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
               </button>}
               <span>WhatsApp est facultatif. Votre demande reste enregistrée même si vous ne l’ouvrez pas.</span>
             </div>}
-            {confirmation&&payLink && <a href={payLink} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: '#765421', textAlign: 'center' }}>Payer directement le professionnel (1 article)</a>}
+            {confirmation && selected.mode === 'order' && <p style={{margin:0,fontSize:11,color:'#6c5945'}}>Aucun paiement n’a été effectué. Le règlement ne sera proposé qu’après validation d’un parcours de paiement vérifiable.</p>}
           </div>}
         </>}
         {!selected && <BoutiquePushFollow profileId={config.profileId} demoMode={config.demoMode} />}
