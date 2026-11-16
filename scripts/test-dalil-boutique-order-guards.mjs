@@ -67,6 +67,32 @@ const submit=await loadEndpoint('dalil-boutique-customer-submit');
 const merchant=await loadEndpoint('dalil-boutique-merchant-orders');
 const input={profileId:entreprise,productId,idempotencyKey:'8e445ab7-10be-4bb4-ac9d-0c865e49dacb',
   quantity:2,name:'Test Client',contact:'test@example.com',note:'Test only'};
+// Browser preflight must accept real Supabase client headers, while excluding
+// unknown origins and preserving the requirement for authenticated merchant POSTs.
+const requiredBrowserHeaders=['authorization','x-client-info','apikey','content-type'];
+for(const [slug,handler] of [
+  ['customer-submit',submit], ['merchant-orders',merchant],
+]){
+  const preflight=await handler(new Request('https://example.invalid',{
+    method:'OPTIONS',
+    headers:{origin:'https://dalil-tounes-pwa.vercel.app',
+      'access-control-request-method':'POST',
+      'access-control-request-headers':requiredBrowserHeaders.join(',')},
+  }));
+  assert.equal(preflight.status,204,slug+' preflight must succeed');
+  const permitted=(preflight.headers.get('access-control-allow-headers')||'').split(',').map(x=>x.trim().toLowerCase());
+  for(const header of requiredBrowserHeaders) assert.ok(permitted.includes(header),slug+' missing CORS header '+header);
+  assert.equal(preflight.headers.get('access-control-allow-origin'),'https://dalil-tounes-pwa.vercel.app');
+  console.log('PASS',slug+' Supabase browser CORS preflight 204');
+  const forbidden=await handler(new Request('https://example.invalid',{
+    method:'OPTIONS',
+    headers:{origin:'https://lienora.fr',
+      'access-control-request-method':'POST',
+      'access-control-request-headers':requiredBrowserHeaders.join(',')},
+  }));
+  assert.equal(forbidden.status,403,slug+' foreign origin must be rejected');
+  console.log('PASS',slug+' foreign-origin preflight rejected 403');
+}
 const cases=[
   ['Reject Lienora origin',()=>submit(request(input,undefined,'https://lienora.fr')),403],
   ['Reject missing fields',()=>submit(request({})),400],
