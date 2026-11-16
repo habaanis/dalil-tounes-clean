@@ -20,6 +20,10 @@ Deno.serve(async req => {
   }
   if(req.method!=="POST")return reply({error:"Method not allowed"},405,origin);
   if(!origins.has(origin))return reply({error:"Forbidden"},403,origin);
+  // Fail closed even if the function is deployed before payments and migrations are ready.
+  // Only a server-side secret explicitly set to "true" can enable live intake.
+  if(Deno.env.get("DALIL_BOUTIQUE_ORDERS_ENABLED")!=="true")
+    return reply({error:"Orders are not yet active"},503,origin);
   if(Number(req.headers.get("content-length")||"0")>8192)return reply({error:"Payload too large"},413,origin);
   // Reject oversized or non-JSON bodies even when Content-Length is omitted or falsified.
   if(!/^application\/json(?:\s*;|\s*$)/i.test(req.headers.get("content-type")||""))
