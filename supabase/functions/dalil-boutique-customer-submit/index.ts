@@ -21,8 +21,14 @@ Deno.serve(async req => {
   if(req.method!=="POST")return reply({error:"Method not allowed"},405,origin);
   if(!origins.has(origin))return reply({error:"Forbidden"},403,origin);
   if(Number(req.headers.get("content-length")||"0")>8192)return reply({error:"Payload too large"},413,origin);
-  const body=await req.json().catch(()=>null);
-  if(!body || typeof body!=="object")return reply({error:"Invalid request"},400,origin);
+  // Reject oversized or non-JSON bodies even when Content-Length is omitted or falsified.
+  if(!/^application\/json(?:\s*;|\s*$)/i.test(req.headers.get("content-type")||""))
+    return reply({error:"JSON required"},415,origin);
+  const raw=await req.text().catch(()=>"");
+  if(new TextEncoder().encode(raw).length>8192)return reply({error:"Payload too large"},413,origin);
+  let body:Record<string,unknown>|null=null;
+  try { const parsed=JSON.parse(raw); if(parsed&&typeof parsed==="object"&&!Array.isArray(parsed))body=parsed; } catch { /* Invalid JSON */ }
+  if(!body)return reply({error:"Invalid request"},400,origin);
   const {profileId,productId,idempotencyKey,quantity}=body;
   const customerName=typeof body.name==="string"?body.name.trim():"";
   const contact=typeof body.contact==="string"?body.contact.trim():"";
