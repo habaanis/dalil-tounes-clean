@@ -117,6 +117,9 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
     if (!config.profileId) { setError('Les demandes ne sont pas encore activées pour cet établissement.'); return; }
     // The current orders API validates only TND. Refuse EUR here rather than imply that an order was recorded.
     if (selected.currency !== 'TND') { setError('Les commandes en euros ne sont pas encore activées sur Dalil Tounes. Contactez directement le professionnel.'); return; }
+    if (selected.mode === 'order' && (typeof selected.price !== 'number' || !Number.isFinite(selected.price) || selected.price <= 0)) {
+      setError('Cet article n’a pas de prix valide pour une commande. Demandez un devis au professionnel.'); return;
+    }
     if (name.trim().length < 2 || contact.trim().length < 3) {
       setError('Indiquez votre nom et vos coordonnées.'); return;
     }
@@ -225,8 +228,9 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
             </div>
             <label style={labelStyle}>Téléphone ou e-mail<input value={contact} disabled={Boolean(confirmation)||sending} onChange={event => setContact(event.target.value)} maxLength={150} placeholder="Vos coordonnées" style={fieldStyle}/></label>
             <label style={labelStyle}>Précisions (facultatif)<textarea value={details} disabled={Boolean(confirmation)||sending} onChange={event => setDetails(event.target.value)} maxLength={1000} rows={2} placeholder="Date, nombre de personnes, livraison…" style={{...fieldStyle, resize: 'vertical'}}/></label>
-            {selected.mode === 'order' && typeof selected.price === 'number' && Number.isFinite(selected.price) && selected.price > 0 && <p style={{margin:0,fontSize:12,fontWeight:600,color:'#6d4d2b'}}>Total indicatif : {new Intl.NumberFormat('fr-FR',{style:'currency',currency:selected.currency}).format(Math.round(selected.price * quantity * 100)/100)} · hors livraison éventuelle</p>}
+            {selected.mode === 'order' && typeof selected.price === 'number' && Number.isFinite(selected.price) && selected.price > 0 && <p style={{margin:0,fontSize:12,fontWeight:600,color:'#6d4d2b'}}>Total indicatif : {new Intl.NumberFormat('fr-FR',{style:'currency',currency:selected.currency}).format(Math.round(selected.price * quantity * (selected.currency === 'TND' ? 1000 : 100))/(selected.currency === 'TND' ? 1000 : 100))} · hors livraison éventuelle</p>}
             {selected.currency !== 'TND' && !config.demoMode && <p role="note" style={{margin:0,fontSize:11,color:'#88552a'}}>Prise de commandes en euros indisponible pour le moment. Cette vitrine reste consultable.</p>}
+            {selected.mode === 'order' && (typeof selected.price !== 'number' || !Number.isFinite(selected.price) || selected.price <= 0) && <p role="note" style={{margin:0,fontSize:11,color:'#88552a'}}>Prix à confirmer par le professionnel : aucune commande ne peut être enregistrée sans prix valide.</p>}
             {error && <p role="alert" style={{ fontSize: 12, color: '#9e2828', margin: 0 }}>{error}</p>
             {selected.mode==='order'&&<p style={{margin:0,fontSize:11,color:'#6c5945'}}>La commande n’est pas encore confirmée. Acompte ou paiement total obligatoire avant validation, selon les modalités du professionnel. Aucun paiement à la livraison.</p>}
             <button type="button" onClick={()=>void send()} disabled={sending||Boolean(confirmation)}
