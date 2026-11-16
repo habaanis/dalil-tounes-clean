@@ -465,18 +465,18 @@ export const Layout = ({ children }: LayoutProps) => {
                 <Download className="w-4 h-4 md:w-5 md:h-5 text-gray-900 flex-shrink-0" />
                 <div className="min-w-0">
                   <p className="text-sm md:text-base font-bold text-gray-900 truncate md:whitespace-normal">
-                    <button
-                      type="button"
-                      onClick={handleInstallApp}
-                      aria-label={te.pwa?.installApp || 'Installer Dalil Tounes'}
+                    <a
+                      href="https://dalil-tounes-pwa.vercel.app/?install=1"
+                      data-platform-install-link="header"
+                      aria-label={language === 'ar' ? 'تحميل تطبيق دليل تونس' : 'Télécharger l’application Dalil Tounes'}
                       className="underline decoration-2 decoration-gray-900/40 underline-offset-2 hover:decoration-gray-900 transition-colors cursor-pointer bg-transparent border-none p-0 m-0 font-bold text-gray-900 text-sm md:text-base"
                     >
-                      Dalil Tounes
-                    </button>
-                    {' '}{te.pwa?.installOnMobile || 'sur mobile + inscriptions gratuites !'}
+                      {language === 'ar' ? 'تحميل التطبيق' : language === 'en' ? 'Download the app' : language === 'it' ? "Scarica l'app" : language === 'ru' ? 'Скачать приложение' : 'Télécharger l’application'}
+                    </a>
+                    <span className="hidden sm:inline"> {' '}{te.pwa?.installOnMobile || 'sur mobile + inscriptions gratuites !'}</span>
                   </p>
                   <p className="hidden md:block text-xs text-gray-800">
-                    {te.pwa?.installHint || "Cliquez pour installer l'application. Si Chrome ne la propose pas, un guide s'affichera."}
+                    {language === 'ar' ? 'افتح التطبيق الوطني ثم ثبّته على هاتفك.' : 'Ouvrez l’application nationale puis installez-la sur votre téléphone.'}
                   </p>
                 </div>
               </div>
