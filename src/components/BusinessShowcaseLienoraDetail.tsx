@@ -1041,7 +1041,12 @@ export default function BusinessShowcaseLienoraDetail({
     ? previewPalette
     : new URLSearchParams(location.search).get('palette');
   const resolvedPreviewPalette = resolvePaletteId(previewPaletteParam);
-  const activePalette = resolvedPreviewPalette || storedPalette;
+  // Honor the saved merchant choice before the historic ivory fallback.
+  // QR and CV must resolve the same theme for the same company and URL.
+  const isHistoricalIvoryCard = business.statut_carte === '⭐ CERTIFIÉ DALIL TOUNES';
+  const userSelectedPalette = business.palette_cv_user_selected === true;
+  const activePalette = resolvedPreviewPalette ||
+    (userSelectedPalette ? storedPalette : (isHistoricalIvoryCard ? 'ivory' : storedPalette));
   const storedPresentationModel = [
     business.modele_presentation,
     business.presentation_model,
@@ -1359,6 +1364,8 @@ export default function BusinessShowcaseLienoraDetail({
   const handleBack = () => {
     if (isDedicatedClientRoute) {
       const clientAppUrl = new URL(buildClientAppUrl(business, language));
+      const explicitPalette = new URLSearchParams(location.search).get('palette');
+      if (resolvePaletteId(explicitPalette)) clientAppUrl.searchParams.set('palette', activePalette || 'prestige');
       navigate(`${clientAppUrl.pathname}${clientAppUrl.search}`);
       return;
     }
