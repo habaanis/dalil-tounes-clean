@@ -32,5 +32,7 @@ jobs:
         run: node scripts/test-dalil-boutique-order-guards.mjs
       - name: Festive menu currency and selection fixture
         run: node scripts/test-dalil-boutique-festive-menu-fixture.mjs
+      - name: Static migration and authorization readiness contracts
+        run: node scripts/test-dalil-boutique-deployment-contracts.mjs
       - name: Production compilation only (does not deploy)
         run: npm run build
