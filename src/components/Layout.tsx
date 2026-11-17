@@ -55,7 +55,7 @@ export const Layout = ({ children }: LayoutProps) => {
       localStorage.setItem('dalilTounes_welcome_seen_v1', 'true');
     } catch { /* Private mode: dismiss for this page at least. */ }
     setMobileAppChoice(true);
-    if (choice === 'app') window.location.assign('https://dalil-tounes-pwa.vercel.app/');
+    if (choice === 'app') window.location.assign('https://appli.dalil-tounes.com/');
   };
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [openMenu, setOpenMenu] = useState<string | null>(null);
@@ -506,7 +506,7 @@ export const Layout = ({ children }: LayoutProps) => {
                 <div className="min-w-0">
                   <p className="text-sm md:text-base font-bold text-gray-900 truncate md:whitespace-normal">
                     <a
-                      href="https://dalil-tounes-pwa.vercel.app/?install=1"
+                      href="https://appli.dalil-tounes.com/?install=1"
                       data-platform-install-link="header"
                       aria-label={language === 'ar' ? 'تحميل تطبيق دليل تونس' : 'Télécharger l’application Dalil Tounes'}
                       className="underline decoration-2 decoration-gray-900/40 underline-offset-2 hover:decoration-gray-900 transition-colors cursor-pointer bg-transparent border-none p-0 m-0 font-bold text-gray-900 text-sm md:text-base"
