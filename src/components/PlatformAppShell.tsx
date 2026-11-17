@@ -97,6 +97,19 @@ export default function PlatformAppShell({ children }: { children: ReactNode }) 
   return (
     <div data-platform-app-shell className={homeColorTest ? "min-h-screen bg-[#FAF9F6] text-[#292929]" : "min-h-screen bg-[#FFFCF7] text-[#292725]"} dir={rtl ? 'rtl' : 'ltr'}>
       <header className={homeColorTest ? "sticky top-0 z-50 border-b border-[#EBE3D7] bg-white/95 backdrop-blur" : "sticky top-0 z-50 border-b border-[#D4AF37]/40 bg-[#FFFCF7]/95 backdrop-blur"}>
+        {!installed && !requestedInstall && location.pathname === '/' && (
+          <div className="mx-auto flex max-w-xl justify-start border-b border-[#D4AF37]/20 px-3 py-1">
+            <button
+              type="button"
+              onClick={installApp}
+              className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-[#D4AF37]/50 bg-[#FFF9EA] px-2.5 py-1 text-xs font-semibold text-[#292725] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B99143]"
+              aria-label={lang === 'ar' ? 'تحميل تطبيق دليل تونس' : 'Télécharger l’application Dalil Tounes'}
+            >
+              <Download className="h-3.5 w-3.5" aria-hidden="true" />
+              {lang === 'ar' ? 'تحميل التطبيق' : lang === 'en' ? 'Install app' : lang === 'it' ? "Installa l'app" : lang === 'ru' ? 'Установить приложение' : "Télécharger l’appli"}
+            </button>
+          </div>
+        )}
         <div className="mx-auto flex h-14 max-w-xl items-center justify-between gap-2 px-3">
           <Link to="/" className="inline-flex min-h-11 items-center gap-2 rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B99143]" aria-label="Dalil Tounes">
             <img src="/icons/dalil-logo-emblem-2026.png?v=2" alt="" aria-hidden="true" className="h-10 w-10 shrink-0 object-contain" width="40" height="40" decoding="async" />
@@ -119,7 +132,7 @@ export default function PlatformAppShell({ children }: { children: ReactNode }) 
         </nav>}
       </header>
 
-      {requestedInstall && !installed && (
+      {(requestedInstall || installGuide) && !installed && (
         <section aria-label="Installer l’application Dalil Tounes" className="mx-auto max-w-xl border-b border-[#C9A65D] bg-[#FFF9EA] px-4 py-3">
           <p className="text-sm font-semibold text-[#292725]">{lang === 'ar' ? 'ثبّت تطبيق دليل تونس' : 'Installer l’application Dalil Tounes'}</p>
           <p className="mt-1 text-xs leading-5 text-[#514A45]">{lang === 'ar' ? 'ثبّت التطبيق على شاشة هاتفك من المتصفح.' : 'Ajoutez la vraie application à votre écran d’accueil depuis ce navigateur.'}</p>
