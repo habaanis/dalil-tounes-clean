@@ -474,7 +474,7 @@ export const Layout = ({ children }: LayoutProps) => {
 
       {location.pathname === '/' && !isDedicatedClientHost && (
         <>
-          {isSmartphone && !pwaInstalled && !mobileAppChoice && (
+          {!pwaInstalled && !mobileAppChoice && (
             <section className="md:hidden mt-16 border-b border-[#C8A65B]/40 bg-[#FFFCF5] px-4 py-3" aria-label="Choisir le site ou l'application Dalil Tounes">
               <div className="mx-auto max-w-md rounded-xl border border-[#D6B86D]/55 bg-white p-3 shadow-sm">
                 <p className="text-sm font-semibold text-[#292725]">
@@ -496,7 +496,14 @@ export const Layout = ({ children }: LayoutProps) => {
               </div>
             </section>
           )}
-          {isSmartphone && (mobileAppChoice || pwaInstalled) && <div className="md:hidden h-16" aria-hidden="true" />}
+          <div className={`md:hidden px-4 py-2 border-b border-[#D4AF37]/35 bg-[#FFFCF5] ${mobileAppChoice || pwaInstalled ? 'mt-16' : ''}`}>
+            <a href="https://appli.dalil-tounes.com/?install=1"
+              data-platform-install-link="mobile-always-visible"
+              className="mx-auto flex max-w-md min-h-11 items-center justify-center gap-2 rounded-lg border border-[#C8A65B] bg-[#FFF9E9] px-3 py-2 text-sm font-bold text-[#292725] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A17D36]">
+              <Download className="h-4 w-4" aria-hidden="true" />
+              {language === 'ar' ? 'تحميل تطبيق دليل تونس' : language === 'en' ? 'Download the app' : language === 'it' ? "Scarica l'app" : language === 'ru' ? 'Скачать приложение' : 'Télécharger l’application Dalil Tounes'}
+            </a>
+          </div>
           <div className={isSmartphone ? 'hidden md:block' : ''}>
         <div className="premium-install bg-yellow-400 border-b border-yellow-500 mt-16">
           <div className="max-w-7xl mx-auto px-4 py-2.5 md:py-3">
