@@ -42,6 +42,21 @@ export const Layout = ({ children }: LayoutProps) => {
   const t = useTranslation(language);
   const navigate = useNavigate();
   const location = useLocation();
+  // Mobile site-to-PWA orientation: preserve visitor choice across visits.
+  const [mobileAppChoice, setMobileAppChoice] = useState(() => {
+    try { return localStorage.getItem('dalil_mobile_pwa_choice_v1') !== null; }
+    catch { return false; }
+  });
+  const isSmartphone = typeof navigator !== 'undefined' && /Android.*Mobile|iPhone|iPod|Mobile/i.test(navigator.userAgent);
+  const rememberMobileAppChoice = (choice: 'app' | 'site') => {
+    try {
+      localStorage.setItem('dalil_mobile_pwa_choice_v1', choice);
+      // Avoid opening the legacy welcome overlay immediately after opting to stay.
+      localStorage.setItem('dalilTounes_welcome_seen_v1', 'true');
+    } catch { /* Private mode: dismiss for this page at least. */ }
+    setMobileAppChoice(true);
+    if (choice === 'app') window.location.assign('https://dalil-tounes-pwa.vercel.app/');
+  };
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [mobileExpandedMenu, setMobileExpandedMenu] = useState<string | null>(null);
@@ -457,7 +472,31 @@ export const Layout = ({ children }: LayoutProps) => {
         <PageHeader />
       </Suspense>
 
-      {location.pathname === '/' && (
+      {location.pathname === '/' && !isDedicatedClientHost && (
+        <>
+          {isSmartphone && !pwaInstalled && !mobileAppChoice && (
+            <section className="md:hidden mt-16 border-b border-[#C8A65B]/40 bg-[#FFFCF5] px-4 py-3" aria-label="Choisir le site ou l'application Dalil Tounes">
+              <div className="mx-auto max-w-md rounded-xl border border-[#D6B86D]/55 bg-white p-3 shadow-sm">
+                <p className="text-sm font-semibold text-[#292725]">
+                  {language === 'ar' ? 'دليل تونس على هاتفك' : language === 'en' ? 'Dalil Tounes on your phone' : language === 'it' ? 'Dalil Tounes sul telefono' : language === 'ru' ? 'Dalil Tounes на телефоне' : 'Dalil Tounes sur votre téléphone'}
+                </p>
+                <p className="mt-1 text-xs leading-5 text-[#514B43]">
+                  {language === 'ar' ? 'افتح التطبيق للوصول السريع أو تابع تصفح الموقع.' : language === 'en' ? 'Open the app for quick access, or keep browsing the website.' : language === 'it' ? "Apri l'app per un accesso rapido o continua sul sito." : language === 'ru' ? 'Откройте приложение или продолжите на сайте.' : "Accédez plus rapidement aux services dans l’application, ou restez sur le site."}
+                </p>
+                <div className="mt-3 grid grid-cols-2 gap-2">
+                  <button type="button" onClick={() => rememberMobileAppChoice('app')}
+                    className="min-h-11 rounded-lg bg-[#B69346] px-2 py-2 text-xs font-bold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#292725]">
+                    {language === 'ar' ? 'افتح التطبيق' : language === 'en' ? 'Open the app' : language === 'it' ? "Apri l'app" : language === 'ru' ? 'Открыть приложение' : "Ouvrir l’application"}
+                  </button>
+                  <button type="button" onClick={() => rememberMobileAppChoice('site')}
+                    className="min-h-11 rounded-lg border border-[#B69346]/60 bg-[#FFF9EE] px-2 py-2 text-xs font-semibold text-[#292725] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B69346]">
+                    {language === 'ar' ? 'تابع على الموقع' : language === 'en' ? 'Continue on website' : language === 'it' ? 'Continua sul sito' : language === 'ru' ? 'Продолжить на сайте' : 'Continuer sur le site'}
+                  </button>
+                </div>
+              </div>
+            </section>
+          )}
+          <div className={isSmartphone ? 'hidden md:block' : ''}>
         <div className="premium-install bg-yellow-400 border-b border-yellow-500 mt-16">
           <div className="max-w-7xl mx-auto px-4 py-2.5 md:py-3">
             <div className="flex items-center justify-between gap-3 md:gap-4">
@@ -490,6 +529,8 @@ export const Layout = ({ children }: LayoutProps) => {
             </div>
           </div>
         </div>
+          </div>
+        </>
       )}
 
       {showIOSGuide && (
