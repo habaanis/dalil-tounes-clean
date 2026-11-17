@@ -42,7 +42,9 @@ function App() {
   const isHashRouter = window.location.hash.startsWith('#/') || import.meta.env.DEV;
   const isEmbeddedClientPreview = new URLSearchParams(location.search).get('source') === 'pwa';
   const isDedicatedClientApp = isDedicatedClientHostname(window.location.hostname) && location.pathname !== '/';
-  const showWelcomeModal = !isDedicatedClientApp && !isEmbeddedClientPreview && !welcomeDismissed && shouldShowWelcomeForPath(location.pathname);
+  // On the mobile homepage the compact app/site choice replaces the welcome overlay.
+  const isMobileHomepage = location.pathname === '/' && /Android.*Mobile|iPhone|iPod|Mobile/i.test(navigator.userAgent);
+  const showWelcomeModal = !isMobileHomepage && !isDedicatedClientApp && !isEmbeddedClientPreview && !welcomeDismissed && shouldShowWelcomeForPath(location.pathname);
   const showWelcomeDevButton = import.meta.env.DEV && isLocalhost;
 
   const handleCloseWelcomeModal = () => {
