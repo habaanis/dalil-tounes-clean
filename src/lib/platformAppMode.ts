@@ -11,7 +11,8 @@ export function isPlatformAppMode(): boolean {
   const mainHost = /^(?:www\.)?dalil-tounes\.com$/i.test(hostname);
   // Dedicated PWA Vercel project: enable the application without a QA query switch.
   // Keep app.dalil-tounes.com reserved for existing customer mini-app links.
-  const platformAppHost = hostname === 'dalil-tounes-pwa.vercel.app'
+  const platformAppHost = hostname === 'appli.dalil-tounes.com'
+    || hostname === 'dalil-tounes-pwa.vercel.app'
     || hostname === 'dalil-tounes-pwa-haba-anis-projects.vercel.app'
     || hostname.startsWith('dalil-tounes-pwa-') && hostname.endsWith('.vercel.app')
     || hostname === 'pwa.dalil-tounes.com';
