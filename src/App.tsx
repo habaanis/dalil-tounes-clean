@@ -45,7 +45,7 @@ function App() {
   const isDedicatedClientApp = isDedicatedClientHostname(window.location.hostname) && location.pathname !== '/';
   // A visitor who explicitly chose to install the dedicated PWA should see its install action first.
   const installEntry = isPlatformAppMode() && new URLSearchParams(location.search).get('install') === '1';
-  const showWelcomeModal = !installEntry && !isDedicatedClientApp && !isEmbeddedClientPreview && !welcomeDismissed && shouldShowWelcomeForPath(location.pathname);
+  const showWelcomeModal = !(isPlatformAppMode() && location.pathname === '/') && !installEntry && !isDedicatedClientApp && !isEmbeddedClientPreview && !welcomeDismissed && shouldShowWelcomeForPath(location.pathname);
   const showWelcomeDevButton = import.meta.env.DEV && isLocalhost;
 
   const handleCloseWelcomeModal = () => {
