@@ -496,6 +496,7 @@ export const Layout = ({ children }: LayoutProps) => {
               </div>
             </section>
           )}
+          {isSmartphone && (mobileAppChoice || pwaInstalled) && <div className="md:hidden h-16" aria-hidden="true" />}
           <div className={isSmartphone ? 'hidden md:block' : ''}>
         <div className="premium-install bg-yellow-400 border-b border-yellow-500 mt-16">
           <div className="max-w-7xl mx-auto px-4 py-2.5 md:py-3">
