@@ -503,7 +503,8 @@ export default function BusinessQr() {
         openHref={browserCvUrl}
         accountHref={accountHref}
         model={cvModel}
-        onModelChange={setSelectedModel}
+        // Public QR is for visiting/sharing the published CV, not changing its model.
+        // Model and opening choices belong to the authenticated professional flow.
         onShare={shareBusiness}
         onDownload={downloadPng}
         onInstall={installApp}
