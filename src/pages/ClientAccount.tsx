@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabaseClient';
 import { isDedicatedClientHostname } from '../lib/clientAppUrl';
@@ -10,9 +10,18 @@ function safeSlug(slug?:string) { return (slug || '').trim().toLowerCase(); }
 
 export function ClientAccountLogin() {
   const {slug} = useParams<{slug:string}>();
-  const {user,loading,signUp}=useAuth();
+  const {user,loading,signUp,signOut}=useAuth();
   const navigate = useNavigate();
-  const [mode,setMode]=useState<'login'|'signup'>('login');
+  const location = useLocation();
+  const isResetReturn = new URLSearchParams(location.search).get('reset') === '1';
+  const [mode,setMode]=useState<'login'|'signup'|'recovery'>('login');
+  const [recoverySent,setRecoverySent]=useState(false);
+  const [recoveryBusy,setRecoveryBusy]=useState(false);
+  const [recoveryError,setRecoveryError]=useState('');
+  const [newPassword,setNewPassword]=useState('');
+  const [confirmNewPassword,setConfirmNewPassword]=useState('');
+  const [resetBusy,setResetBusy]=useState(false);
+  const [resetError,setResetError]=useState('');
   const [email,setEmail]=useState('');
   const [password,setPassword]=useState('');
   const [confirm,setConfirm]=useState('');
@@ -47,8 +56,60 @@ export function ClientAccountLogin() {
         : message);
     }finally{setSubmitting(false);}
   };
+  const requestRecovery = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (recoveryBusy) return;
+    setRecoveryBusy(true);
+    setRecoveryError('');
+    try {
+      const recoveryUrl = new URL(location.pathname, window.location.origin);
+      recoveryUrl.searchParams.set('reset', '1');
+      const {error} = await supabase.auth.resetPasswordForEmail(email.trim().toLowerCase(), {
+        redirectTo: recoveryUrl.toString(),
+      });
+      if (error) throw error;
+      // Deliberately do not reveal whether the address exists.
+      setRecoverySent(true);
+    } catch {
+      setRecoveryError('Le lien ne peut pas être envoyé pour le moment. Réessayez plus tard.');
+    } finally {
+      setRecoveryBusy(false);
+    }
+  };
+  const saveRecoveredPassword = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (resetBusy) return;
+    if (newPassword.length < 8) { setResetError('Choisissez au moins 8 caractères.'); return; }
+    if (newPassword !== confirmNewPassword) { setResetError('Les mots de passe ne correspondent pas.'); return; }
+    setResetBusy(true);
+    setResetError('');
+    try {
+      const {error} = await supabase.auth.updateUser({password: newPassword});
+      if (error) throw error;
+      // Force a fresh sign-in to make the success state unambiguous.
+      await signOut();
+      navigate(location.pathname, {replace:true});
+    } catch {
+      setResetError('La modification a échoué. Le lien a peut-être expiré. Demandez-en un nouveau.');
+    } finally {
+      setResetBusy(false);
+    }
+  };
   if(!slug || !isDedicatedClientHostname(window.location.hostname))return <p>Page indisponible.</p>;
   if(loading)return <main role="status" className="min-h-dvh bg-[#fbf8f0] p-6">Vérification de la session…</main>;
+  if(isResetReturn)return <main className="min-h-dvh bg-[#fbf8f0] px-4 py-6 text-[#4b302f]">
+    <div className="mx-auto max-w-md rounded-2xl border border-[#d9c59d] bg-white p-5">
+      <h1 className="font-serif text-xl font-semibold">Choisir un nouveau mot de passe</h1>
+      {!user ? <p className="my-4 text-sm">Ce lien a expiré ou n'a pas ouvert de session. Retournez à la connexion pour demander un nouveau lien.</p> :
+        <form onSubmit={e=>void saveRecoveredPassword(e)} className="mt-4 space-y-3">
+          <label className="block text-sm">Nouveau mot de passe<input type="password" minLength={8} required autoComplete="new-password" value={newPassword} onChange={e=>setNewPassword(e.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-[#d9c59d] px-3"/></label>
+          <label className="block text-sm">Confirmer le mot de passe<input type="password" minLength={8} required autoComplete="new-password" value={confirmNewPassword} onChange={e=>setConfirmNewPassword(e.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-[#d9c59d] px-3"/></label>
+          {resetError&&<p role="alert" className="text-sm text-red-700">{resetError}</p>}
+          <button type="submit" disabled={resetBusy} className="min-h-11 w-full rounded-xl bg-[#8f2530] px-4 text-white disabled:opacity-60">{resetBusy?'Enregistrement…':'Enregistrer le mot de passe'}</button>
+        </form>}
+      <Link to={location.pathname} className="mt-4 inline-flex min-h-11 items-center underline">Revenir à la connexion</Link>
+    </div>
+  </main>;
   if(user)return <main className="min-h-dvh bg-[#fbf8f0] p-5 text-[#4b302f]">
     <div className="mx-auto max-w-md">{navigation}
       <p className="mb-3 text-sm">Connecté : <strong className="break-all">{user.email || 'Compte actif'}</strong></p>
@@ -65,7 +126,21 @@ export function ClientAccountLogin() {
         <button type="button" onClick={()=>{setMode('signup');setSignupError('');}} aria-pressed={mode==='signup'}
           className={mode==='signup'?'rounded-xl bg-[#8f2530] px-3 py-3 text-white':'rounded-xl border border-[#d9c59d] bg-white px-3 py-3'}>Créer un compte</button>
       </div>
-      {mode==='login' ? <LoginForm onSuccess={()=>navigate(accountPath,{replace:true})} onSwitchToSignup={()=>setMode('signup')} allowSignup={false}/> :
+      {mode==='login' ? <div>
+          <LoginForm onSuccess={()=>navigate(accountPath,{replace:true})} onSwitchToSignup={()=>setMode('signup')} allowSignup={false}/>
+          <button type="button" onClick={()=>{setMode('recovery');setRecoverySent(false);setRecoveryError('');}}
+            className="mt-3 min-h-11 w-full text-center text-sm underline">Mot de passe oublié ?</button>
+        </div> : mode==='recovery' ?
+        <div className="rounded-2xl border border-[#d9c59d] bg-white p-5">
+          <h2 className="font-serif text-lg font-semibold">Retrouver mon compte</h2>
+          {recoverySent ? <p role="status" className="mt-3 text-sm">Si cette adresse correspond à un compte, un lien de réinitialisation vous a été envoyé. Vérifiez également les courriers indésirables.</p> :
+            <form onSubmit={e=>void requestRecovery(e)} className="mt-3 space-y-3">
+              <label className="block text-sm">E-mail du compte<input type="email" autoComplete="email" required value={email} onChange={e=>setEmail(e.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-[#d9c59d] px-3"/></label>
+              {recoveryError&&<p role="alert" className="text-sm text-red-700">{recoveryError}</p>}
+              <button type="submit" disabled={recoveryBusy} className="min-h-11 w-full rounded-xl bg-[#8f2530] px-4 text-white disabled:opacity-60">{recoveryBusy?'Envoi…':'Recevoir un lien par e-mail'}</button>
+            </form>}
+          <button type="button" onClick={()=>{setMode('login');setRecoverySent(false);}} className="mt-4 min-h-11 w-full text-sm underline">Retour à la connexion</button>
+        </div> :
         signupDone ? <div role="status" className="rounded-2xl border border-[#d9c59d] bg-white p-5">
           <p className="font-semibold">Compte créé.</p>
           <p className="mt-2 text-sm">Vérifiez votre e-mail si une confirmation est demandée. Le compte n’est pas encore autorisé à gérer cette vitrine : le rattachement doit être vérifié. Vous pouvez revenir à la vitrine à tout moment.</p>
