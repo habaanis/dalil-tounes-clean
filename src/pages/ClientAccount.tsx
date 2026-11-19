@@ -16,6 +16,7 @@ export function ClientAccountLogin() {
   const isResetReturn = new URLSearchParams(location.search).get('reset') === '1';
   const [mode,setMode]=useState<'login'|'signup'|'recovery'>('login');
   const [recoverySent,setRecoverySent]=useState(false);
+  const [switchingExistingAccount,setSwitchingExistingAccount]=useState(false);
   const [recoveryBusy,setRecoveryBusy]=useState(false);
   const [recoveryError,setRecoveryError]=useState('');
   const [newPassword,setNewPassword]=useState('');
@@ -114,6 +115,8 @@ export function ClientAccountLogin() {
     <div className="mx-auto max-w-md">{navigation}
       <p className="mb-3 text-sm">Connecté : <strong className="break-all">{user.email || 'Compte actif'}</strong></p>
       <Link to={accountPath} className="inline-flex min-h-11 items-center rounded-xl bg-[#8f2530] px-5 text-white">Accéder à mon compte</Link>
+      <button type="button" disabled={switchingExistingAccount} onClick={()=>{setSwitchingExistingAccount(true);void signOut().finally(()=>setSwitchingExistingAccount(false));}}
+        className="mt-3 block min-h-11 text-sm underline disabled:opacity-60">{switchingExistingAccount?'Déconnexion…':'Se connecter avec un autre compte'}</button>
     </div>
   </main>;
   return <main className="min-h-dvh bg-[#fbf8f0] px-4 py-6 text-[#4b302f]">
