@@ -6,6 +6,7 @@ import { useLanguage } from '../../context/LanguageContext';
 interface LoginFormProps {
   onSuccess: (email?: string) => void;
   onSwitchToSignup: () => void;
+  allowSignup?: boolean;
 }
 
 const copy = {
@@ -16,7 +17,7 @@ const copy = {
   ru: { title:'Вход', welcome:'Добро пожаловать в Dalil Tounes', email:'Эл. почта', password:'Пароль', passwordPlaceholder:'Ваш пароль', hide:'Скрыть пароль', show:'Показать пароль', login:'Войти', noAccount:'Нет аккаунта?', signup:'Зарегистрироваться', create:'Создать аккаунт', join:'Присоединитесь к Dalil Tounes за несколько секунд.', missing:'Введите электронную почту и пароль.', invalid:'Неверные данные: электронная почта или пароль указаны неправильно.', unconfirmed:'Аккаунт не подтвержден. Проверьте почту.', rate:'Слишком много попыток входа. Подождите несколько минут.', notFound:'Аккаунт с такой почтой не найден.', generic:'Ошибка при входе', unexpected:'Произошла ошибка' },
 } as const;
 
-export default function LoginForm({ onSuccess, onSwitchToSignup }: LoginFormProps) {
+export default function LoginForm({ onSuccess, onSwitchToSignup, allowSignup = true }: LoginFormProps) {
   const { signIn } = useAuth();
   const { language } = useLanguage();
   const t = copy[language] ?? copy.fr;
@@ -62,8 +63,8 @@ export default function LoginForm({ onSuccess, onSwitchToSignup }: LoginFormProp
           <div><label className="block text-sm font-medium text-gray-700 mb-2">{t.password}</label><div className="relative"><Lock className={`${language === 'ar' ? 'absolute right-3' : 'absolute left-3'} top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400`} /><input type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" className={`w-full ${language === 'ar' ? 'pr-10 pl-12' : 'pl-10 pr-12'} py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500`} placeholder={t.passwordPlaceholder} required /><button type="button" onClick={() => setShowPassword((v) => !v)} aria-label={showPassword ? t.hide : t.show} className={`${language === 'ar' ? 'absolute left-3' : 'absolute right-3'} top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500 rounded`}>{showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}</button></div></div>
           <button type="submit" disabled={loading} className="w-full py-3 bg-orange-600 text-white rounded-lg font-semibold hover:bg-orange-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">{loading && <span className="inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />}{t.login}</button>
         </form>
-        <div className="mt-6 text-center"><p className="text-sm text-gray-600">{t.noAccount}{' '}<button onClick={onSwitchToSignup} className="text-orange-600 hover:text-orange-700 font-semibold">{t.signup}</button></p></div>
-        <div className="mt-6 pt-6 border-t border-gray-200"><button type="button" onClick={onSwitchToSignup} className="w-full py-3 bg-white border-2 border-orange-600 text-orange-600 rounded-lg font-semibold hover:bg-orange-50 transition-colors">{t.create}</button><p className="mt-2 text-xs text-center text-gray-500">{t.join}</p></div>
+        {allowSignup && <div className="mt-6 text-center"><p className="text-sm text-gray-600">{t.noAccount}{' '}<button onClick={onSwitchToSignup} className="text-orange-600 hover:text-orange-700 font-semibold">{t.signup}</button></p></div>}
+        {allowSignup && <div className="mt-6 pt-6 border-t border-gray-200"><button type="button" onClick={onSwitchToSignup} className="w-full py-3 bg-white border-2 border-orange-600 text-orange-600 rounded-lg font-semibold hover:bg-orange-50 transition-colors">{t.create}</button><p className="mt-2 text-xs text-center text-gray-500">{t.join}</p></div>}
       </div>
     </div>
   );
