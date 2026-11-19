@@ -1124,7 +1124,15 @@ export default function BusinessShowcaseLienoraDetail({
   const logoImage = getLogoUrl(business.logo_url);
   const openingStyle: 'photo' | 'framed' =
     String(business.opening_style || '').toLowerCase() === 'framed' ? 'framed' : 'photo';
-  const clientOpening = isClientAppMode && !embeddedPreview && new URLSearchParams(location.search).get('skip-opening') !== '1' && Boolean(String(business.logo_url || '').trim()) && Boolean(String(business.image_url || '').trim()) ? (
+  // A client launch animation belongs to the initial external entry only.
+  // Internal React Router returns must never cover the vitrine with a photo flash.
+  const isInternalClientReturn = typeof window.history.state?.idx === 'number'
+    && window.history.state.idx > 0;
+  const clientOpening = isClientAppMode && !embeddedPreview
+    && !isInternalClientReturn
+    && new URLSearchParams(location.search).get('skip-opening') !== '1'
+    && Boolean(String(business.logo_url || '').trim())
+    && Boolean(String(business.image_url || '').trim()) ? (
     <ClientOpeningAuto
       clientId={business.id}
       name={business.nom}
@@ -1281,19 +1289,23 @@ export default function BusinessShowcaseLienoraDetail({
     },
   ].filter((action): action is ActionConfig => Boolean(action));
 
-  const portfolioActions: ActionConfig[] = [...primaryActions];
+  // The dedicated QR entry owns installation. Do not repeat the action in the CV.
+  const cvActions = isDedicatedClientHostname(window.location.hostname)
+    ? primaryActions.filter(action => action.label !== installLabel)
+    : primaryActions;
+  const portfolioActions: ActionConfig[] = [...cvActions];
 
   // Prioritize Lienora's four visible actions: install, call, email, directions.
   // WhatsApp, website, and any extra action remain available inside the drawer.
   const priorityActions = [installLabel, text.call, text.email, text.directions];
-  const sortedPrimaryActions = [...primaryActions].sort((first, second) => {
+  const sortedPrimaryActions = [...cvActions].sort((first, second) => {
     const firstPriority = priorityActions.indexOf(first.label);
     const secondPriority = priorityActions.indexOf(second.label);
     return (firstPriority < 0 ? priorityActions.length : firstPriority)
       - (secondPriority < 0 ? priorityActions.length : secondPriority);
   });
   const displayedPrimaryActions = embeddedPreview
-    ? primaryActions.filter(action => [installLabel, text.call, text.whatsapp, text.email, text.directions].includes(action.label))
+    ? cvActions.filter(action => [installLabel, text.call, text.whatsapp, text.email, text.directions].includes(action.label))
     : sortedPrimaryActions.slice(0, 4);
   const extraPrimaryActions = embeddedPreview ? [] : sortedPrimaryActions.slice(4);
   const moreActionsLabel = language === 'ar' ? 'المزيد من الخيارات'
