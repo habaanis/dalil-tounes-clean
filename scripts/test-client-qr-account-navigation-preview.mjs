@@ -1,5 +1,6 @@
 // Static navigation contract — checks the real client mini-app files, without account access.
 import assert from 'node:assert/strict';
+import { runInNewContext } from 'node:vm';
 import { readFileSync } from 'node:fs';
 const read=p=>readFileSync(p,'utf8');
 const showcase=read('src/components/BusinessShowcaseLienoraDetail.tsx');
@@ -79,4 +80,44 @@ check('opening animation blocked during internal return navigation',
   showcase.includes("window.history.state?.idx === 'number'")&&
   showcase.includes('!isInternalClientReturn')&&
   showcase.includes("get('skip-opening') !== '1'"));
+// Exercise the actual early HTML boot script, not only string snippets.
+// This caught previews rendering the generic site shell instead of the client mini-app.
+const earlyHtmlScript = read('index.html').match(/<script>\\s*([\\s\\S]*?)<\\/script>/)?.[1];
+check('early mini-app bootstrap script is present', Boolean(earlyHtmlScript));
+function runEarlyShell(hostname, pathname, search, stored = {}) {
+  const classes = new Set();
+  const theme = { content: '' };
+  const manifest = { href: '' };
+  const document = {
+    title: '',
+    getElementById: (name) => name === 'app-manifest' ? manifest : name === 'app-theme-color' ? theme : null,
+    documentElement: {
+      classList: { add: (value) => classes.add(value) },
+      style: { setProperty: () => {} },
+      lang: '', dir: '',
+    },
+  };
+  const window = {
+    location: { hostname, pathname, search, hash: '', replace: () => {} },
+    sessionStorage: {
+      getItem: (key) => stored[key] ?? null,
+      setItem: (key, value) => { stored[key] = value; },
+    },
+  };
+  runInNewContext(earlyHtmlScript, { window, document, URLSearchParams, encodeURIComponent, decodeURIComponent });
+  return { classes, manifest, title: document.title };
+}
+const previewHost = 'dalil-tounes-clean-test123-haba-anis-projects.vercel.app';
+const previewStorage = {};
+const previewEntry = runEarlyShell(previewHost, '/aux-saveurs-anis', '?client-preview=1', previewStorage);
+check('preview QR loads client-app shell immediately', previewEntry.classes.has('client-app-route') && previewEntry.manifest.href.includes('business-manifest'));
+const previewAccount = runEarlyShell(previewHost, '/aux-saveurs-anis/compte', '?return-model=portfolio&client-preview=1', previewStorage);
+check('preview Portfolio account uses the mini-app shell', previewAccount.classes.has('client-app-route'));
+const previewReturn = runEarlyShell(previewHost, '/aux-saveurs-anis/cv', '?preview-model=portfolio&skip-opening=1', previewStorage);
+check('preview Portfolio return keeps mini-app shell after navigation', previewReturn.classes.has('client-app-route'));
+const previewUnopted = runEarlyShell(previewHost, '/aux-saveurs-anis/cv', '', {});
+check('preview is not enabled without opt-in', !previewUnopted.classes.has('client-app-route'));
+const officialApp = runEarlyShell('app.dalil-tounes.com', '/aux-saveurs-anis/cv', '?preview-model=portfolio', {});
+check('official client app still loads its client shell', officialApp.classes.has('client-app-route'));
+
 console.log('PASS QR/vitrine/compte navigation contracts');
