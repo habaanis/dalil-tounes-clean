@@ -1,0 +1,27 @@
+name: Dalil PWA Boutique integration QA
+on:
+  push:
+    branches:
+      - integration/pwa-boutique-pilot-20261119
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '20'
+          cache: npm
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+      - name: Verify PWA Boutique contracts
+        run: node scripts/test-pwa-boutique-integration.mjs
+      - name: Compile PWA safely, no deployment
+        run: npm run build
