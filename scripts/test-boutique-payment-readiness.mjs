@@ -14,7 +14,7 @@ check('quote is never displayed as a paid order',
  inbox.includes("order.kind === 'quote'") && inbox.includes("aucun montant à encaisser"));
 check('merchant cannot self-attest card, deposit or balance',
  !inbox.includes("action:'mark_paid'") && !inbox.includes("payment_status:status") &&
- !inbox.includes("paid_amount:") && !inbox.includes("payment_provider:"));
+ !inbox.includes("payment_provider:") && !inbox.includes("action:'verify_payment'"));
 check('deposit confirmation does not allow completion before full payment',
  inbox.includes("const canConfirm=order.kind==='quote'||['partially_paid','paid'].includes(order.payment_status)") &&
  inbox.includes("const canFinish=order.status==='confirmed'&&(order.kind==='quote'||order.payment_status==='paid')"));
