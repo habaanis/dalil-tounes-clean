@@ -78,7 +78,16 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
   const filteredProducts = products.filter(product =>
     (!catalogueCategory || product.category?.trim() === catalogueCategory)
     && (!catalogueQuery.trim() || (product.title + ' ' + (product.description || '')).toLocaleLowerCase().includes(catalogueQuery.trim().toLocaleLowerCase()))
-  );
+  ).sort((a,b) => {
+    // Sort only across known festive-menu sections; retain the merchant's
+    // published order within each section and for uncategorized products.
+    if (catalogueCategory || catalogueQuery.trim()) return 0;
+    const first = rankCategory(a.category?.trim() || ''), second = rankCategory(b.category?.trim() || '');
+    if (first < 0 && second < 0) return 0;
+    if (first < 0) return 1;
+    if (second < 0) return -1;
+    return first - second;
+  });
   const pageCount = Math.max(1, Math.ceil(filteredProducts.length / 12));
   const safePage = Math.min(cataloguePage, pageCount);
   const pageProducts = filteredProducts.slice((safePage - 1) * 12, safePage * 12);
