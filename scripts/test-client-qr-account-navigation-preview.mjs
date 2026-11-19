@@ -25,6 +25,16 @@ check('the chosen Business or Portfolio model follows the user into Mon compte',
   account.includes("get('return-model')") &&
   account.includes("selectedModel ? '&preview-model=' + selectedModel") &&
   !account.includes('preview-model=business&skip-opening=1'));
+check('Portfolio and preview flags survive QR, account, login, CV and QR navigation',
+  qr.includes("cvLink.searchParams.set('preview-model', cvModel)") &&
+  qr.includes("cvLink.searchParams.set('client-preview', '1')") &&
+  qr.includes("'?return-model=' + cvModel + previewMarker") &&
+  showcase.includes("const accountReturnHref =") &&
+  showcase.includes("'/compte?return-model=' + presentationStyle") &&
+  showcase.includes("if (isIsolatedClientPreview) clientQrReturnUrl.searchParams.set('client-preview', '1')") &&
+  account.includes("const previewQuery = clientPreview ? '&client-preview=1' : ''") &&
+  account.includes("const qrPath = '/' + encodeURIComponent(slug || '') + (clientPreview ? '?client-preview=1' : '')") &&
+  !account.includes("preview-model=business&skip-opening=1"));
 check('the QR error fallback does not force Business for a Portfolio',
   qr.includes("recoveryCvUrl.searchParams.set('preview-model', cvModel)") &&
   !qr.includes("recoveryCvUrl.searchParams.set('preview-model', 'business')"));
