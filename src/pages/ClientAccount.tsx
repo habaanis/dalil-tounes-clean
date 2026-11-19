@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabaseClient';
+import { isDedicatedClientHostname } from '../lib/clientAppUrl';
 import LoginForm from '../components/auth/LoginForm';
 import CompanyDashboard from './CompanyDashboard';
 
@@ -14,7 +15,7 @@ export function ClientAccountLogin() {
   const accountPath = '/' + encodeURIComponent(slug || '') + '/compte';
   const cvPath = '/' + encodeURIComponent(slug || '') + '/cv?preview-model=business&skip-opening=1';
   const qrPath = '/' + encodeURIComponent(slug || '');
-  if (!slug || window.location.hostname !== 'app.dalil-tounes.com') return <p>Page indisponible.</p>;
+  if (!slug || !isDedicatedClientHostname(window.location.hostname)) return <p>Page indisponible.</p>;
   if (loading) return <main role="status" className="min-h-dvh bg-[#fbf8f0] p-6">Vérification…</main>;
   if (user) return <div className="min-h-dvh bg-[#fbf8f0] p-5"><Link to={accountPath} className="inline-block rounded-xl border border-[#d7bf8a] bg-white px-4 py-3 text-[#552c30]">Ouvrir mon compte professionnel</Link></div>;
   return <main className="min-h-dvh bg-[#fbf8f0] px-4 py-6 text-[#4b302f]">
@@ -68,7 +69,7 @@ export default function ClientAccount() {
     })().catch(()=>{if(active)setState('error')});
     return ()=>{active=false};
   },[slug,user?.id,retry]);
-  if(!slug || window.location.hostname!=='app.dalil-tounes.com') return <p>Page indisponible.</p>;
+  if(!slug || !isDedicatedClientHostname(window.location.hostname)) return <p>Page indisponible.</p>;
   if(loading || (user && state==='checking')) return <main role="status" className="min-h-dvh bg-[#fbf8f0] p-6">Vérification de votre accès…</main>;
   if(!user) return <main className="min-h-dvh bg-[#fbf8f0] p-6 text-[#4b302f]"><div className="mx-auto max-w-md rounded-2xl border border-[#d9c59d] bg-white p-5 text-center"><h1 className="font-serif text-xl">Mon compte professionnel</h1><p className="my-4 text-sm">Connectez-vous pour retrouver votre espace privé.</p><Link className="inline-flex min-h-11 items-center rounded-full bg-[#8f2530] px-5 text-white" to={accountLogin}>Se connecter</Link>{returnLinks}</div></main>;
   if(state==='error')return <main className="min-h-dvh bg-[#fbf8f0] p-6 text-center text-[#4b302f]">
