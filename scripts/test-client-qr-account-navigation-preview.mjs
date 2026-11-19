@@ -20,12 +20,16 @@ check('QR screen still owns account and install entry',
 check('client CV has a persistent return to QR and one account link',
   showcase.includes('Navigation de la mini-application')&&
   showcase.includes('Retour au QR code')&&showcase.includes("'/compte?return-model=' + presentationStyle"));
-check('the chosen Business or Portfolio model follows the user into Mon compte',
+check('both account entries lead to the same business and the return uses its SAVED CV model',
   showcase.includes("'/compte?return-model=' + presentationStyle") &&
   qr.includes("'?return-model=' + cvModel") &&
   account.includes("get('return-model')") &&
-  account.includes("selectedModel ? '&preview-model=' + selectedModel") &&
-  !account.includes('preview-model=business&skip-opening=1'));
+  !account.includes("selectedModel ? '&preview-model=' + selectedModel") &&
+  !account.includes('preview-model=business&skip-opening=1') &&
+  account.includes("const cvPath = '/' + encodeURIComponent(slug || '') + '/cv?skip-opening=1' + previewQuery") &&
+  account.includes("const cvPath='/' + encodeURIComponent(slug || '') + '/cv?skip-opening=1' + previewQuery") &&
+  showcase.includes("business.modele_cv") &&
+  showcase.includes("storedPresentationModel.includes('portfolio')"));
 check('Portfolio and preview flags survive QR, account, login, CV and QR navigation',
   qr.includes("cvLink.searchParams.set('preview-model', cvModel)") &&
   qr.includes("cvLink.searchParams.set('client-preview', '1')") &&
