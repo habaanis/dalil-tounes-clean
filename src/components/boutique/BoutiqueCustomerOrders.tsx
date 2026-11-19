@@ -69,7 +69,9 @@ export default function BoutiqueCustomerOrders({entrepriseIds}:{entrepriseIds:st
   },[activeCompany,refresh,call]);
   const update=async (order:Order,status:ProcessingStatus)=>{
     if(busy||!activeCompany)return;
-    if(!window.confirm('Changer le statut en « '+processingLabels[status]+' » ?'))return;
+    const cancellationNotice = status==='cancelled' && order.kind==='order' && ['partially_paid','paid'].includes(order.payment_status)
+      ? 'Attention : cette annulation ne déclenche aucun remboursement. Le règlement devra être traité séparément et vérifié.\n\n' : '';
+    if(!window.confirm(cancellationNotice+'Changer le statut en « '+processingLabels[status]+' » ?'))return;
     setBusy(order.id);setError('');
     try{
       const data=await call({action:'update',profileId:activeCompany,id:order.id,status});
@@ -123,9 +125,12 @@ export default function BoutiqueCustomerOrders({entrepriseIds}:{entrepriseIds:st
                 onClick={()=>void update(order,'confirmed')} className="min-h-11 rounded-lg border border-[#c6ad79] bg-[#fbf3e6] px-3 text-xs font-semibold text-[#64352f] disabled:opacity-50">Confirmer</button>}
               {canFinish&&<button type="button" disabled={Boolean(busy)} onClick={()=>void update(order,'completed')}
                 className="min-h-11 rounded-lg border border-[#c6ad79] bg-[#fbf3e6] px-3 text-xs font-semibold text-[#64352f] disabled:opacity-50">Terminer</button>}
-              <button type="button" disabled={Boolean(busy)} onClick={()=>void update(order,'rejected')}
-                className="min-h-11 rounded-lg border border-[#d8cbb5] bg-white px-3 text-xs font-semibold text-[#7b4141] disabled:opacity-50">Refuser</button>
+              {['received','in_progress'].includes(order.status)&&<button type="button" disabled={Boolean(busy)} onClick={()=>void update(order,'rejected')}
+                className="min-h-11 rounded-lg border border-[#d8cbb5] bg-white px-3 text-xs font-semibold text-[#7b4141] disabled:opacity-50">Refuser</button>}
+              {order.status==='confirmed'&&<button type="button" disabled={Boolean(busy)} onClick={()=>void update(order,'cancelled')}
+                className="min-h-11 rounded-lg border border-[#d8cbb5] bg-white px-3 text-xs font-semibold text-[#7b4141] disabled:opacity-50">Annuler</button>}
             </div>}
+            {order.status==='confirmed' && ['partially_paid','paid'].includes(order.payment_status) && <p role="note" className="mt-2 text-xs text-[#725b3e]">Annuler cette commande ne rembourse pas automatiquement le client.</p>}
             {order.kind==='order'&&order.payment_status==='not_requested'&&<p className="mt-2 text-xs text-[#725b3e]">Confirmation bloquée jusqu’à vérification d’un acompte ou du paiement total. Aucun paiement à la livraison.</p>}
           </article>;
         })}
