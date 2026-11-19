@@ -59,7 +59,7 @@ interface CacheEntry extends HomeQueryResult {
   ts: number;
 }
 
-const CACHE_KEY = 'home_data_v22';
+const CACHE_KEY = 'home_data_v23';
 const STALE_TIME = 5 * 60_000;
 // Keep the last verified counts for 30 days when Supabase is temporarily unavailable.
 const GC_TIME = 30 * 24 * 60 * 60_000;
@@ -233,7 +233,8 @@ async function doFetch(): Promise<HomeQueryResult> {
       .not('nom', 'is', null)
       .neq('nom', '')
       .or('statut_publication.is.null,statut_publication.eq.Publié')
-      .eq('cv_business_status', 'published')
+      .eq('statut_carte', CERTIFIED_LABEL)
+      .eq('statut_validation', 'publie')
       .limit(1),
 
     // Historical certification label, kept separate from published CV certification.
