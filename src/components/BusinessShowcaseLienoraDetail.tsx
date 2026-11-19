@@ -1704,15 +1704,22 @@ export default function BusinessShowcaseLienoraDetail({
 
   // Keep professional access visible on both Business and Portfolio mini-apps.
   // Authorization is enforced by ClientAccount after the link is opened.
+  const isIsolatedClientPreview = !embeddedPreview && isDedicatedClientHostname(window.location.hostname)
+    && window.location.hostname !== 'app.dalil-tounes.com';
+  const clientQrReturnUrl = new URL(buildClientAppUrl(business, language));
+  if (isIsolatedClientPreview) clientQrReturnUrl.searchParams.set('client-preview', '1');
+  const accountReturnHref = '/' + encodeURIComponent(String(business.slug_court || business.slug || business.id))
+    + '/compte?return-model=' + presentationStyle
+    + (isIsolatedClientPreview ? '&client-preview=1' : '');
   const clientAccountButton = !embeddedPreview && isDedicatedClientHostname(window.location.hostname)
     && capabilities.variant === 'premium' ? (
       <nav aria-label="Navigation de la mini-application"
         className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-2 px-4 pt-3" dir={isRTL ? 'rtl' : 'ltr'}>
-        <a href={buildClientAppUrl(business, language)}
+        <a href={clientQrReturnUrl.toString()}
           className="inline-flex min-h-10 items-center rounded-full border border-[#d7bf8a] bg-[#fffcf6] px-4 py-2 text-xs font-semibold text-[#593b30] shadow-sm">
           {language === 'ar' ? 'العودة إلى QR' : language === 'en' ? 'Back to QR' : 'Retour au QR code'}
         </a>
-        <a href={'/' + encodeURIComponent(String(business.slug_court || business.slug || business.id)) + '/compte?return-model=' + presentationStyle}
+        <a href={accountReturnHref}
           className="inline-flex min-h-10 items-center gap-2 rounded-full border border-[#d7bf8a] bg-[#fffcf6] px-4 py-2 text-xs font-semibold text-[#593b30] shadow-sm">
           <UserRound size={16} aria-hidden="true" />
           {language === 'ar' ? 'حسابي المهني' : language === 'en' ? 'My account' : 'Mon compte'}
