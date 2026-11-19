@@ -1,5 +1,11 @@
 name: Harness - mise a jour du pilotage GitHub
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/harness-status.mjs'
+      - '.github/workflows/harness-status.yml'
+      - 'docs/harness/README.md'
   workflow_dispatch:
   schedule:
     - cron: '40 5 * * *'
