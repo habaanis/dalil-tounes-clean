@@ -14,7 +14,7 @@ export function getClientAppIdentifier(business: string | ClientAppBusinessIdent
 // Preview opt-in is isolated to Vercel's project-specific deployment host.
 // The public site and production host keep their existing routing.
 function isClientPreviewHostname(hostname: string): boolean {
-  if (!/^dalil-tounes-clean-[a-z0-9-]+-haba-anis-projects\\.vercel\\.app$/i.test(hostname)) return false;
+  if (!/^dalil-tounes-clean-[a-z0-9-]+-haba-anis-projects\.vercel\.app$/i.test(hostname)) return false;
   if (typeof window === 'undefined' || window.location.hostname !== hostname) return false;
   try {
     if (new URLSearchParams(window.location.search).get('client-preview') === '1')
