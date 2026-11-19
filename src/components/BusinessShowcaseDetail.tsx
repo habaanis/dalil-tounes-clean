@@ -51,6 +51,8 @@ interface BusinessRecord {
   horaires_ok?: string | null;
   statut_abonnement?: string | null;
   statut_validation?: string | null;
+  statut_publication?: string | null;
+  approved?: boolean | null;
   statut_carte?: string | null;
   cv_business_status?: string | null;
   latitude?: number | string | null;
@@ -106,7 +108,8 @@ export default function BusinessShowcaseDetail() {
     const chooseByCity = (rows: BusinessRecord[]): BusinessRecord | null => {
       if (rows.length === 0) return null;
       if (!urlVilleSlug) return rows[0];
-      return rows.find(row => generateSlug(String(row.ville || '')) === urlVilleSlug) || rows[0];
+      // A city-qualified URL must never resolve to a homonym in another city.
+      return rows.find(row => generateSlug(String(row.ville || '')) === urlVilleSlug) || null;
     };
 
     const loadBusiness = async () => {
@@ -115,6 +118,7 @@ export default function BusinessShowcaseDetail() {
 
       try {
         let record: BusinessRecord | null = cachedShowcaseRecord(urlId || urlSlug) as BusinessRecord | null;
+        if (record && urlVilleSlug && generateSlug(String(record.ville || '')) !== urlVilleSlug) record = null;
         const isClientAppPath = location.pathname.startsWith('/qr-business/')
           || isDedicatedClientHostname(window.location.hostname);
         const fullUuid = urlId || urlSlug?.match(
@@ -188,6 +192,8 @@ export default function BusinessShowcaseDetail() {
           }
         }
 
+        // Legacy short IDs and Airtable records must also honor the city in the URL.
+        if (record && urlVilleSlug && generateSlug(String(record.ville || '')) !== urlVilleSlug) record = null;
         if (cancelled) return;
 
         if (!record) {
@@ -301,7 +307,7 @@ export default function BusinessShowcaseDetail() {
         currentPath={canonicalPath}
         type="website"
         author={displayName}
-        noindex={!isPublished(business.statut_validation)}
+        noindex={business.approved !== true || !isPublished(business.statut_publication) || !isPublished(business.statut_validation)}
       />
       <StructuredData data={structuredData} />
 
