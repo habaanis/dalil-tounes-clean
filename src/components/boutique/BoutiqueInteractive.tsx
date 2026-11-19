@@ -173,7 +173,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
       'Article : '+selected.title,
       'Quantité : '+quantity,
       ...(requestedDate ? ['Date souhaitée : '+requestedDate] : []),
-      'Demande en attente de votre réponse. Aucun paiement effectué.',
+      'Demande en attente de votre réponse. Nous convenons directement du paiement et de la livraison.',
     ].join('\n');
     window.open('https://wa.me/'+phone+'?text='+encodeURIComponent(message),'_blank','noopener,noreferrer');
   };
@@ -252,7 +252,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
             {selected.currency !== 'TND' && !config.demoMode && <p role="note" style={{margin:0,fontSize:11,color:'#88552a'}}>Prise de commandes en euros indisponible pour le moment. Cette vitrine reste consultable.</p>}
             {selected.mode === 'order' && (typeof selected.price !== 'number' || !Number.isFinite(selected.price) || selected.price <= 0) && <p role="note" style={{margin:0,fontSize:11,color:'#88552a'}}>Prix à confirmer par le professionnel : aucune commande ne peut être enregistrée sans prix valide.</p>}
             {error && <p role="alert" style={{ fontSize: 12, color: '#9e2828', margin: 0 }}>{error}</p>}
-            {selected.mode==='order'&&<p style={{margin:0,fontSize:11,color:'#6c5945'}}>La commande n’est pas encore confirmée. Acompte ou paiement total obligatoire avant validation, selon les modalités du professionnel. Aucun paiement à la livraison.</p>}
+            {selected.mode==='order'&&<p style={{margin:0,fontSize:11,color:'#6c5945'}}>Votre demande est enregistrée sans paiement sur Dalil Tounes. Le professionnel vous contactera pour convenir directement des modalités de règlement et de livraison.</p>}
             <button type="button" onClick={()=>void send()} disabled={sending||Boolean(confirmation)}
               style={{ width: '100%', padding: 10, border: 0, borderRadius: 10, background: '#063b30', color: '#fff', cursor: sending||confirmation?'default':'pointer', fontSize: 13, fontWeight: 600, opacity:(sending || Boolean(confirmation)) ? 0.76 : 1 }}>
               {sending?'Enregistrement…':confirmation?'Demande enregistrée':config.demoMode?'Tester la demande (simulation)':selected.mode === 'quote' ? 'Envoyer la demande de devis' : 'Enregistrer la demande de commande'}
@@ -264,9 +264,9 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
                 style={{border:'1px solid #b3c9b3',borderRadius:10,padding:'11px 12px',background:'#fff',color:'#245c37',fontWeight:700,cursor:'pointer'}}>
                 Contacter le professionnel sur WhatsApp
               </button>}
-              <span>WhatsApp est facultatif. Votre demande reste enregistrée même si vous ne l’ouvrez pas.</span>
+              <span>Votre demande reste enregistrée dans Dalil Tounes, même si vous ne contactez pas le professionnel sur WhatsApp.</span>
             </div>}
-            {confirmation && selected.mode === 'order' && <p style={{margin:0,fontSize:11,color:'#6c5945'}}>Aucun paiement n’a été effectué. Le règlement ne sera proposé qu’après validation d’un parcours de paiement vérifiable.</p>}
+            {confirmation && selected.mode === 'order' && <p style={{margin:0,fontSize:11,color:'#6c5945'}}>Dalil Tounes ne collecte aucun paiement pour cette commande. Convenez directement du règlement avec le professionnel, par WhatsApp ou un autre moyen.</p>}
           </div>}
         </>}
         {!selected && <BoutiquePushFollow profileId={config.profileId} demoMode={config.demoMode} />}

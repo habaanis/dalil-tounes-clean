@@ -32,7 +32,7 @@ check('merchant inbox uses JWT and scoped profileId',
 check('merchant cannot self-attest payment',
   !inbox.includes("action:'mark_paid'")&&
   !inbox.includes('payment_status:status'));
-check('cancellation makes clear it does not refund',
-  inbox.includes('ne rembourse pas automatiquement le client'));
+check('cancellation makes clear direct payments are not refunded by Dalil',
+  inbox.includes('ne rembourse aucun paiement convenu directement avec le client'));
 check('product management remains available',management.includes('export default'));
 console.log('PASS Dalil PWA Boutique integration contracts');
