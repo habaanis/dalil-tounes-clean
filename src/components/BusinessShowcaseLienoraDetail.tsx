@@ -1715,10 +1715,24 @@ export default function BusinessShowcaseLienoraDetail({
     },
   ].filter(Boolean) as AccordionConfig[];
 
+  // Keep professional access visible on both Business and Portfolio mini-apps.
+  // Authorization is enforced by ClientAccount after the link is opened.
+  const clientAccountButton = !embeddedPreview && isDedicatedClientHostname(window.location.hostname)
+    && capabilities.variant === 'premium' ? (
+      <div className="mx-auto flex w-full max-w-5xl justify-end px-4 pt-3" dir="ltr">
+        <a href={'/' + encodeURIComponent(String(business.slug_court || business.slug || business.id)) + '/compte'}
+          className="inline-flex min-h-10 items-center gap-2 rounded-full border border-[#d7bf8a] bg-[#fffcf6] px-4 py-2 text-xs font-semibold text-[#593b30] shadow-sm">
+          <UserRound size={16} aria-hidden="true" />
+          {language === 'ar' ? 'حسابي المهني' : language === 'en' ? 'My account' : 'Mon compte'}
+        </a>
+      </div>
+    ) : null;
+
   if (resolvedPresentation.style === 'portfolio') {
     return (
       <main dir={isRTL ? 'rtl' : 'ltr'}>
         {clientOpening}
+        {clientAccountButton}
         {!embeddedPreview && <>
           <SEOHead
             title={pageTitle}
@@ -1782,6 +1796,7 @@ export default function BusinessShowcaseLienoraDetail({
   return (
     <main className={`dt-showcase-page${embeddedPreview ? ' dt-showcase-page--embedded' : ''}`} data-cv-palette={activePalette || 'prestige'} style={themeVariables(visualVariant, activePalette)} dir={isRTL ? 'rtl' : 'ltr'}>
       {clientOpening}
+      {clientAccountButton}
       {!embeddedPreview && <>
         <SEOHead
           title={pageTitle}
