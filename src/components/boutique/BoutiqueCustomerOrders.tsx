@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { supabase, supabaseUrl, supabaseAnonKey } from '../../lib/supabaseClient';
 
 type ProcessingStatus = 'received' | 'in_progress' | 'confirmed' | 'completed' | 'rejected' | 'cancelled';
-type PaymentStatus = 'not_requested' | 'pending' | 'partially_paid' | 'paid' | 'failed' | 'refunded';
 type Order = {
   id: string;
   kind: 'quote' | 'order';
@@ -15,24 +14,16 @@ type Order = {
   customer_contact: string;
   customer_note: string | null;
   status: ProcessingStatus;
-  payment_option: 'undecided' | 'deposit' | 'full';
-  payment_status: PaymentStatus;
-  paid_amount: number;
   created_at: string;
 };
 const processingLabels: Record<ProcessingStatus, string> = {
   received:'Reçue', in_progress:'En cours', confirmed:'Confirmée',
   completed:'Terminée', rejected:'Refusée', cancelled:'Annulée',
 };
-const paymentLabels: Record<PaymentStatus,string> = {
-  not_requested:'Non demandé', pending:'En attente de paiement',
-  partially_paid:'Acompte vérifié', paid:'Paiement vérifié', failed:'Échec de paiement', refunded:'Remboursé',
-};
 const amount = (value:number | null, currency:string) =>
   value === null ? 'Sur devis' : new Intl.NumberFormat('fr-TN',{style:'currency',currency,minimumFractionDigits:3,maximumFractionDigits:3}).format(value);
 
 export default function BoutiqueCustomerOrders({entrepriseIds}:{entrepriseIds:string[]}) {
-  const ids=entrepriseIds.join(',');
   const [company,setCompany]=useState(entrepriseIds[0] || '');
   const [orders,setOrders]=useState<Order[]>([]);
   const [loading,setLoading]=useState(true);
@@ -69,8 +60,8 @@ export default function BoutiqueCustomerOrders({entrepriseIds}:{entrepriseIds:st
   },[activeCompany,refresh,call]);
   const update=async (order:Order,status:ProcessingStatus)=>{
     if(busy||!activeCompany)return;
-    const cancellationNotice = status==='cancelled' && order.kind==='order' && ['partially_paid','paid'].includes(order.payment_status)
-      ? 'Attention : cette annulation ne déclenche aucun remboursement. Le règlement devra être traité séparément et vérifié.\n\n' : '';
+    const cancellationNotice = status==='cancelled' && order.kind==='order'
+      ? 'Attention : l’annulation dans Dalil Tounes ne rembourse aucun paiement convenu directement avec le client.\\n\\n' : '';
     if(!window.confirm(cancellationNotice+'Changer le statut en « '+processingLabels[status]+' » ?'))return;
     setBusy(order.id);setError('');
     try{
@@ -84,7 +75,7 @@ export default function BoutiqueCustomerOrders({entrepriseIds}:{entrepriseIds:st
     <div className="flex flex-wrap items-start justify-between gap-2">
       <div>
         <h3 className="font-serif text-lg font-semibold text-[#62212a]">Mes commandes et devis</h3>
-        <p className="mt-1 text-xs leading-5 text-[#655b51]">Demandes enregistrées sur Dalil Tounes, même lorsque le client ne poursuit pas sur WhatsApp. Une demande reçue n’est pas une commande payée.</p>
+        <p className="mt-1 text-xs leading-5 text-[#655b51]">Demandes enregistrées sur Dalil Tounes, même sans WhatsApp. Le paiement se règle directement entre le client et le professionnel, hors Dalil Tounes.</p>
       </div>
       <button type="button" onClick={()=>setRefresh(n=>n+1)} disabled={loading||Boolean(busy)}
         className="min-h-11 rounded-lg border border-[#d5bd8b] bg-white px-3 text-sm font-semibold text-[#62303a] disabled:opacity-50">Actualiser</button>
@@ -100,8 +91,8 @@ export default function BoutiqueCustomerOrders({entrepriseIds}:{entrepriseIds:st
       !error&&<div className="grid gap-3">
         {orders.map(order=>{
           const closed=['completed','rejected','cancelled'].includes(order.status);
-          const canConfirm=order.kind==='quote'||['partially_paid','paid'].includes(order.payment_status);
-          const canFinish=order.status==='confirmed'&&(order.kind==='quote'||order.payment_status==='paid');
+          const canConfirm=['received','in_progress'].includes(order.status);
+          const canFinish=order.status==='confirmed';
           return <article key={order.id} className="min-w-0 rounded-xl border border-[#dfcfaf] bg-white p-3 text-sm shadow-sm">
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div>
@@ -116,18 +107,13 @@ export default function BoutiqueCustomerOrders({entrepriseIds}:{entrepriseIds:st
               <div><dt className="inline font-semibold">Quantité : </dt><dd className="inline">{order.quantity}</dd></div>
               <div><dt className="inline font-semibold">Montant des articles : </dt><dd className="inline font-semibold">{amount(order.amount_total,order.currency)}</dd></div>
               {order.customer_note&&<div><dt className="inline font-semibold">Précisions : </dt><dd className="inline whitespace-pre-wrap break-words">{order.customer_note}</dd></div>}
-              <div><dt className="inline font-semibold">Règlement : </dt><dd className="inline">{paymentLabels[order.payment_status]||order.payment_status}{order.payment_option==='deposit'?' · acompte':order.payment_option==='full'?' · total':''}</dd></div>
-              {order.kind === 'order' && order.amount_total !== null && <>
-                <div><dt className="inline font-semibold">Montant vérifié : </dt><dd className="inline">{amount(['partially_paid','paid','refunded'].includes(order.payment_status) ? order.paid_amount : 0,order.currency)}</dd></div>
-                {order.payment_status !== 'refunded' && <div><dt className="inline font-semibold">Solde restant : </dt><dd className="inline">{amount(Math.max(0,Math.round((order.amount_total - (['partially_paid','paid'].includes(order.payment_status) ? order.paid_amount : 0))*1000)/1000),order.currency)}</dd></div>}
-                {order.payment_status === 'refunded' && <div><dt className="inline font-semibold">Remboursement : </dt><dd className="inline">Statut enregistré ; montant remboursé à rapprocher du prestataire de paiement.</dd></div>}
-              </>}
-              {order.kind === 'quote' && <p className="text-xs text-[#725b3e]">Devis : aucun montant à encaisser avant accord et création d'une commande chiffrée.</p>}
+              <div><dt className="inline font-semibold">Règlement : </dt><dd className="inline">À convenir directement avec le client (WhatsApp ou autre moyen). Dalil Tounes n'encaisse pas.</dd></div>
+              {order.kind==='quote'&&<p className="text-xs text-[#725b3e]">Le montant de ce devis sera convenu directement avec le client.</p>}
             </dl>
             {!closed&&<div className="mt-3 flex flex-wrap gap-2 border-t border-[#ede1c9] pt-3">
               {order.status==='received'&&<button type="button" disabled={Boolean(busy)} onClick={()=>void update(order,'in_progress')}
                 className="min-h-11 rounded-lg border border-[#c9ae7b] bg-[#fbf3e6] px-3 text-xs font-semibold text-[#673a31] disabled:opacity-50">Prendre en charge</button>}
-              {['received','in_progress'].includes(order.status)&&canConfirm&&<button type="button" disabled={Boolean(busy)}
+              {canConfirm&&<button type="button" disabled={Boolean(busy)}
                 onClick={()=>void update(order,'confirmed')} className="min-h-11 rounded-lg border border-[#c6ad79] bg-[#fbf3e6] px-3 text-xs font-semibold text-[#64352f] disabled:opacity-50">Confirmer</button>}
               {canFinish&&<button type="button" disabled={Boolean(busy)} onClick={()=>void update(order,'completed')}
                 className="min-h-11 rounded-lg border border-[#c6ad79] bg-[#fbf3e6] px-3 text-xs font-semibold text-[#64352f] disabled:opacity-50">Terminer</button>}
@@ -136,10 +122,7 @@ export default function BoutiqueCustomerOrders({entrepriseIds}:{entrepriseIds:st
               {order.status==='confirmed'&&<button type="button" disabled={Boolean(busy)} onClick={()=>void update(order,'cancelled')}
                 className="min-h-11 rounded-lg border border-[#d8cbb5] bg-white px-3 text-xs font-semibold text-[#7b4141] disabled:opacity-50">Annuler</button>}
             </div>}
-            {order.status==='confirmed' && ['partially_paid','paid'].includes(order.payment_status) && <p role="note" className="mt-2 text-xs text-[#725b3e]">Annuler cette commande ne rembourse pas automatiquement le client.</p>}
-            {order.kind==='order'&&['not_requested','pending','failed'].includes(order.payment_status)&&<p className="mt-2 text-xs text-[#725b3e]">Confirmation bloquée tant qu'aucun acompte ou paiement total n'a été vérifié par le service de paiement. Aucun paiement à la livraison.</p>}
-            {order.kind==='order'&&order.payment_status==='partially_paid'&&<p role="note" className="mt-2 text-xs text-[#725b3e]">Acompte vérifié : vous pouvez confirmer la commande. La clôture reste bloquée jusqu'à vérification du solde total.</p>}
-            {order.kind==='order'&&order.payment_status==='paid'&&<p role="note" className="mt-2 text-xs text-[#725b3e]">Paiement intégral vérifié par le serveur. Aucun bouton manuel pour marquer la commande payée.</p>}
+            {order.kind==='order'&&<p className="mt-2 text-xs text-[#725b3e]">Les boutons confirment le traitement de la commande, pas la réception du paiement. Vérifiez directement avec le client les conditions convenues.</p>}
           </article>;
         })}
       </div>}
