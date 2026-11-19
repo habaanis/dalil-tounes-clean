@@ -1760,7 +1760,7 @@ export default function BusinessShowcaseLienoraDetail({
           practicalContent={sections.find(section => section.id === 'practical')?.content}
           onShowQr={() => setOpenSection('sharing')}
           onShare={() => void share()}
-          sharingContent={sharingContent}
+          sharingContent={isDedicatedClientRoute ? undefined : sharingContent}
           socialActions={socialLinks}
           onDownloadContact={downloadContact}
           onSelectImage={setSelectedImage}
@@ -1920,7 +1920,7 @@ export default function BusinessShowcaseLienoraDetail({
                   <CalendarDays aria-hidden="true" />{text.book}
                 </button>
               )}
-              {(capabilities.showQrCode || capabilities.showShareTools) && (
+              {!isDedicatedClientRoute && (capabilities.showQrCode || capabilities.showShareTools) && (
                 <button type="button" className="dt-secondary-action" onClick={openSharing}>
                   <QrCode aria-hidden="true" />{text.myQr}
                 </button>
@@ -1941,9 +1941,9 @@ export default function BusinessShowcaseLienoraDetail({
                   </a>
                 );
               })}
-              <button type="button" className="dt-secondary-action" onClick={downloadContact}>
+              {!isDedicatedClientRoute && <button type="button" className="dt-secondary-action" onClick={downloadContact}>
                 <Contact aria-hidden="true" />{text.addContact}
-              </button>
+              </button>}
               {hasSection('reviews') && cvProfile.reviews.url && (
                 <a
                   className="dt-secondary-action"
