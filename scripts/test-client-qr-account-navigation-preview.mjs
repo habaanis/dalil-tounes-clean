@@ -45,4 +45,14 @@ check('signup never redirects to the platform or assigns business ownership',
   account.includes('le rattachement doit être vérifié'));
 check('denied access shows connected identity and allows account switching',
   account.includes('Compte connecté :')&&account.includes('Se connecter avec un autre compte'));
+check('mini-app hides duplicate install/contact/QR actions',
+  showcase.includes('const cvActions = isDedicatedClientHostname(window.location.hostname)')&&
+  showcase.includes('primaryActions.filter(action => action.label !== installLabel)')&&
+  showcase.includes('sharingContent={isDedicatedClientRoute ? undefined : sharingContent}')&&
+  showcase.includes('!isDedicatedClientRoute && (capabilities.showQrCode || capabilities.showShareTools)')&&
+  showcase.includes('!isDedicatedClientRoute && <button type="button" className="dt-secondary-action" onClick={downloadContact}'));
+check('opening animation blocked during internal return navigation',
+  showcase.includes("window.history.state?.idx === 'number'")&&
+  showcase.includes('!isInternalClientReturn')&&
+  showcase.includes("get('skip-opening') !== '1'"));
 console.log('PASS QR/vitrine/compte navigation contracts');
