@@ -1,5 +1,6 @@
 // Static navigation contract — checks the real client mini-app files, without account access.
 import assert from 'node:assert/strict';
+import { runInNewContext } from 'node:vm';
 import { readFileSync } from 'node:fs';
 const read=p=>readFileSync(p,'utf8');
 const showcase=read('src/components/BusinessShowcaseLienoraDetail.tsx');
@@ -18,7 +19,35 @@ check('QR screen still owns account and install entry',
   qr.includes('accountHref={accountHref}')&&qr.includes('onInstall={installApp}'));
 check('client CV has a persistent return to QR and one account link',
   showcase.includes('Navigation de la mini-application')&&
-  showcase.includes('Retour au QR code')&&showcase.includes("+ '/compte'"));
+  showcase.includes('Retour au QR code')&&showcase.includes("'/compte?return-model=' + presentationStyle"));
+check('both account entries lead to the same business and the return uses its SAVED CV model',
+  showcase.includes("'/compte?return-model=' + presentationStyle") &&
+  qr.includes("'?return-model=' + cvModel") &&
+  account.includes("get('return-model')") &&
+  !account.includes("selectedModel ? '&preview-model=' + selectedModel") &&
+  !account.includes('preview-model=business&skip-opening=1') &&
+  account.includes("const cvPath = '/' + encodeURIComponent(slug || '') + '/cv?skip-opening=1' + previewQuery") &&
+  account.includes("const cvPath='/' + encodeURIComponent(slug || '') + '/cv?skip-opening=1' + previewQuery") &&
+  showcase.includes("business.modele_cv") &&
+  showcase.includes("storedPresentationModel.includes('portfolio')"));
+check('Portfolio and preview flags survive QR, account, login, CV and QR navigation',
+  qr.includes("cvLink.searchParams.set('preview-model', cvModel)") &&
+  qr.includes("cvLink.searchParams.set('client-preview', '1')") &&
+  qr.includes("'?return-model=' + cvModel + previewMarker") &&
+  showcase.includes("const accountReturnHref =") &&
+  showcase.includes("'/compte?return-model=' + presentationStyle") &&
+  showcase.includes("if (isIsolatedClientPreview) clientQrReturnUrl.searchParams.set('client-preview', '1')") &&
+  account.includes("const previewQuery = clientPreview ? '&client-preview=1' : ''") &&
+  account.includes("const qrPath = '/' + encodeURIComponent(slug || '') + (clientPreview ? '?client-preview=1' : '')") &&
+  !account.includes("preview-model=business&skip-opening=1"));
+check('the QR error fallback does not force Business for a Portfolio',
+  qr.includes("recoveryCvUrl.searchParams.set('preview-model', cvModel)") &&
+  !qr.includes("recoveryCvUrl.searchParams.set('preview-model', 'business')"));
+check('existing accounts can recover their password without a duplicate registration',
+  account.includes('Mot de passe oublié ?') &&
+  account.includes('resetPasswordForEmail') &&
+  account.includes('supabase.auth.updateUser({password: newPassword})') &&
+  account.includes('Se connecter avec un autre compte'));
 check('no second Portfolio or Business back control on client host',
   showcase.includes('showClientQrBack={false}')&&
   showcase.includes('!isDedicatedClientHostname(window.location.hostname) && <button'));
@@ -55,4 +84,44 @@ check('opening animation blocked during internal return navigation',
   showcase.includes("window.history.state?.idx === 'number'")&&
   showcase.includes('!isInternalClientReturn')&&
   showcase.includes("get('skip-opening') !== '1'"));
+// Exercise the actual early HTML boot script, not only string snippets.
+// This caught previews rendering the generic site shell instead of the client mini-app.
+const earlyHtmlScript = read('index.html').split('<script>')[1]?.split('</script>')[0];
+check('early mini-app bootstrap script is present', Boolean(earlyHtmlScript));
+function runEarlyShell(hostname, pathname, search, stored = {}) {
+  const classes = new Set();
+  const theme = { content: '' };
+  const manifest = { href: '' };
+  const document = {
+    title: '',
+    getElementById: (name) => name === 'app-manifest' ? manifest : name === 'app-theme-color' ? theme : null,
+    documentElement: {
+      classList: { add: (value) => classes.add(value) },
+      style: { setProperty: () => {} },
+      lang: '', dir: '',
+    },
+  };
+  const window = {
+    location: { hostname, pathname, search, hash: '', replace: () => {} },
+    sessionStorage: {
+      getItem: (key) => stored[key] ?? null,
+      setItem: (key, value) => { stored[key] = value; },
+    },
+  };
+  runInNewContext(earlyHtmlScript, { window, document, URLSearchParams, encodeURIComponent, decodeURIComponent });
+  return { classes, manifest, title: document.title };
+}
+const previewHost = 'dalil-tounes-clean-test123-haba-anis-projects.vercel.app';
+const previewStorage = {};
+const previewEntry = runEarlyShell(previewHost, '/aux-saveurs-anis', '?client-preview=1', previewStorage);
+check('preview QR loads client-app shell immediately', previewEntry.classes.has('client-app-route') && previewEntry.manifest.href.includes('business-manifest'));
+const previewAccount = runEarlyShell(previewHost, '/aux-saveurs-anis/compte', '?return-model=portfolio&client-preview=1', previewStorage);
+check('preview Portfolio account uses the mini-app shell', previewAccount.classes.has('client-app-route'));
+const previewReturn = runEarlyShell(previewHost, '/aux-saveurs-anis/cv', '?preview-model=portfolio&skip-opening=1', previewStorage);
+check('preview Portfolio return keeps mini-app shell after navigation', previewReturn.classes.has('client-app-route'));
+const previewUnopted = runEarlyShell(previewHost, '/aux-saveurs-anis/cv', '', {});
+check('preview is not enabled without opt-in', !previewUnopted.classes.has('client-app-route'));
+const officialApp = runEarlyShell('app.dalil-tounes.com', '/aux-saveurs-anis/cv', '?preview-model=portfolio', {});
+check('official client app still loads its client shell', officialApp.classes.has('client-app-route'));
+
 console.log('PASS QR/vitrine/compte navigation contracts');
