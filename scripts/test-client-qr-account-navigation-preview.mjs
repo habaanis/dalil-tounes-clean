@@ -18,7 +18,21 @@ check('QR screen still owns account and install entry',
   qr.includes('accountHref={accountHref}')&&qr.includes('onInstall={installApp}'));
 check('client CV has a persistent return to QR and one account link',
   showcase.includes('Navigation de la mini-application')&&
-  showcase.includes('Retour au QR code')&&showcase.includes("+ '/compte'"));
+  showcase.includes('Retour au QR code')&&showcase.includes("'/compte?return-model=' + presentationStyle"));
+check('the chosen Business or Portfolio model follows the user into Mon compte',
+  showcase.includes("'/compte?return-model=' + presentationStyle") &&
+  qr.includes("'?return-model=' + cvModel") &&
+  account.includes("get('return-model')") &&
+  account.includes("selectedModel ? '&preview-model=' + selectedModel") &&
+  !account.includes('preview-model=business&skip-opening=1'));
+check('the QR error fallback does not force Business for a Portfolio',
+  qr.includes("recoveryCvUrl.searchParams.set('preview-model', cvModel)") &&
+  !qr.includes("recoveryCvUrl.searchParams.set('preview-model', 'business')"));
+check('existing accounts can recover their password without a duplicate registration',
+  account.includes('Mot de passe oublié ?') &&
+  account.includes('resetPasswordForEmail') &&
+  account.includes('supabase.auth.updateUser({password: newPassword})') &&
+  account.includes('Se connecter avec un autre compte'));
 check('no second Portfolio or Business back control on client host',
   showcase.includes('showClientQrBack={false}')&&
   showcase.includes('!isDedicatedClientHostname(window.location.hostname) && <button'));
