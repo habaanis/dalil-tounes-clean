@@ -35,7 +35,20 @@
       (function () {
         var manifest = document.getElementById('app-manifest');
         var hostname = window.location.hostname;
-        var isClientHost = hostname === 'app.dalil-tounes.com';
+        // On a Vercel preview, use the same initial mini-app shell as on the real client host.
+        // Require an explicit preview opt-in; never enable client routes on ordinary site pages.
+        var isPreviewHostname = /^dalil-tounes-clean-[a-z0-9-]+-haba-anis-projects\.vercel\.app$/i.test(hostname);
+        var previewRequested = isPreviewHostname &&
+          new URLSearchParams(window.location.search).get('client-preview') === '1';
+        var rememberedPreview = false;
+        if (isPreviewHostname) {
+          try {
+            rememberedPreview = window.sessionStorage.getItem('dalil-client-route-preview') === '1';
+            if (previewRequested) window.sessionStorage.setItem('dalil-client-route-preview', '1');
+          } catch (error) { /* Preview still works from an explicit URL when storage is blocked. */ }
+        }
+        var isClientHost = hostname === 'app.dalil-tounes.com' ||
+          (isPreviewHostname && (previewRequested || rememberedPreview));
         var legacyMatch = window.location.pathname.match(/^\/qr-business\/([^/]+)/);
         // Mini-app pages, including account and sign-in, must never paint the site homepage skeleton.
         // Apply the client-specific shell before the body is parsed.
