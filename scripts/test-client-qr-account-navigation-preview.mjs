@@ -82,7 +82,7 @@ check('opening animation blocked during internal return navigation',
   showcase.includes("get('skip-opening') !== '1'"));
 // Exercise the actual early HTML boot script, not only string snippets.
 // This caught previews rendering the generic site shell instead of the client mini-app.
-const earlyHtmlScript = read('index.html').match(/<script>\\s*([\\s\\S]*?)<\\/script>/)?.[1];
+const earlyHtmlScript = read('index.html').split('<script>')[1]?.split('</script>')[0];
 check('early mini-app bootstrap script is present', Boolean(earlyHtmlScript));
 function runEarlyShell(hostname, pathname, search, stored = {}) {
   const classes = new Set();
