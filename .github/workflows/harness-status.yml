@@ -1,0 +1,31 @@
+name: Harness - mise a jour du pilotage GitHub
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/harness-status.mjs'
+      - '.github/workflows/harness-status.yml'
+      - 'docs/harness/README.md'
+  workflow_dispatch:
+  schedule:
+    - cron: '40 5 * * *'
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+  actions: read
+  deployments: read
+jobs:
+  status:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Rafraichir le tableau GitHub
+        run: node scripts/harness-status.mjs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HARNESS_ISSUE_NUMBER: '294'
