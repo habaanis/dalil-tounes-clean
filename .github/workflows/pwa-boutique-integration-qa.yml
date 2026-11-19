@@ -4,6 +4,7 @@ on:
     branches:
       - integration/pwa-boutique-pilot-20261119
       - feat/boutique-a-catalogue-recette-20261119
+      - feat/boutique-merchant-order-alerts-20261119
   workflow_dispatch:
 
 permissions:
@@ -26,5 +27,7 @@ jobs:
         run: node scripts/test-pwa-boutique-integration.mjs
       - name: Boutique A catalogue and payment safety contracts
         run: node scripts/test-boutique-a-catalogue-qa.mjs
+      - name: Merchant order alerts contract tests
+        run: node scripts/test-boutique-merchant-alerts.mjs
       - name: Compile PWA safely, no deployment
         run: npm run build
