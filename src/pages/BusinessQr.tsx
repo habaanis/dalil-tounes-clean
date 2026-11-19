@@ -182,7 +182,6 @@ export default function BusinessQr() {
     () => (window as InstallPromptWindow).__dalilInstallPrompt || null,
   );
   const [shareConfirmed, setShareConfirmed] = useState(false);
-  const [selectedModel, setSelectedModel] = useState<CvModel | null>(null);
   const [showBrandSplash, setShowBrandSplash] = useState(false);
   const [openingStyle, setOpeningStyle] = useState<ClientOpeningStyle>('photo');
   const launchPalette = new URLSearchParams(window.location.search).get('palette');
@@ -192,9 +191,9 @@ export default function BusinessQr() {
     (business?.palette_cv_user_selected ? business.palette_cv :
       (business?.statut_carte === '⭐ CERTIFIÉ DALIL TOUNES' ? 'ivory' : business?.palette_cv));
   const paletteTheme = getCvPaletteTheme(effectivePalette);
-  const cvModel: CvModel = selectedModel || (String(business?.modele_cv || '').toLowerCase().includes('portfolio')
+  const cvModel: CvModel = String(business?.modele_cv || '').toLowerCase().includes('portfolio')
     ? 'portfolio'
-    : 'business');
+    : 'business';
   const modelText = MODEL_COPY[language as keyof typeof MODEL_COPY]?.[cvModel] || MODEL_COPY.fr[cvModel];
   const userAgent = navigator.userAgent || '';
   const isIos = /iphone|ipad|ipod/i.test(userAgent);
@@ -288,8 +287,6 @@ export default function BusinessQr() {
     setOpeningStyle(style);
   };
   const cvLink = new URL(buildClientCvUrl(business || identifier, language, paletteTheme.id));
-  const savedModel = String(business?.modele_cv || '').toLowerCase().includes('portfolio') ? 'portfolio' : 'business';
-  if (selectedModel && selectedModel !== savedModel) cvLink.searchParams.set('preview-model', selectedModel);
   const cvUrl = cvLink.toString();
   // Explicitly opening a CV from this QR screen should never replay the logo splash.
   const directCvLink = new URL(cvUrl);
@@ -503,8 +500,6 @@ export default function BusinessQr() {
         openHref={browserCvUrl}
         accountHref={accountHref}
         model={cvModel}
-        // Public QR is for visiting/sharing the published CV, not changing its model.
-        // Model and opening choices belong to the authenticated professional flow.
         onShare={shareBusiness}
         onDownload={downloadPng}
         onInstall={installApp}
