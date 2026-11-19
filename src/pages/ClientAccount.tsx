@@ -31,12 +31,25 @@ export function ClientAccountLogin() {
 
 export default function ClientAccount() {
   const {slug} = useParams<{slug:string}>();
-  const {user,loading}=useAuth();
+  const {user,loading,signOut}=useAuth();
   const navigate=useNavigate();
   const [state,setState]=useState<'checking'|'allowed'|'denied'|'error'>('checking');
   const [retry,setRetry]=useState(0);
   const accountLogin='/' + encodeURIComponent(slug || '') + '/connexion';
   const cvPath='/' + encodeURIComponent(slug || '') + '/cv?preview-model=business&skip-opening=1';
+  const [switchingAccount,setSwitchingAccount]=useState(false);
+  const switchAccount=async()=>{
+    if(switchingAccount)return;
+    setSwitchingAccount(true);
+    try{
+      await signOut();
+      navigate(accountLogin,{replace:true});
+    }catch{
+      setState('error');
+    }finally{
+      setSwitchingAccount(false);
+    }
+  };
   useEffect(()=>{
     let active=true;
     setState('checking');
@@ -69,8 +82,12 @@ export default function ClientAccount() {
   </main>;
   if(state!=='allowed')return <main className="min-h-dvh bg-[#fbf8f0] p-6 text-center text-[#4b302f]">
     <div className="mx-auto max-w-md rounded-2xl border border-[#d9c59d] bg-white p-5">
-      <p>Ce compte n’est pas encore associé à cette vitrine.</p>
-      <Link className="mt-4 inline-flex min-h-11 items-center rounded-xl bg-[#8f2530] px-5 text-white" to={accountLogin}>Revenir à mon compte professionnel</Link>
+      <p role="alert">Le compte actuellement connecté n’a pas accès à cette vitrine.</p>
+      <p className="mt-2 text-sm text-[#655b51]">Si vous avez plusieurs comptes Dalil Tounes, connectez-vous avec celui associé à cet établissement. Aucune nouvelle inscription n’est nécessaire.</p>
+      <button type="button" disabled={switchingAccount} onClick={()=>void switchAccount()}
+        className="mt-4 inline-flex min-h-11 items-center rounded-xl bg-[#8f2530] px-5 text-white disabled:opacity-60">
+        {switchingAccount?'Déconnexion…':'Se connecter avec un autre compte'}
+      </button>
       <Link className="mt-3 block underline" to={cvPath}>Voir le CV</Link>
     </div>
   </main>;
