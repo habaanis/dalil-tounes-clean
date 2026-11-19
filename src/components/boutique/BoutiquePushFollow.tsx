@@ -94,40 +94,11 @@ export function BoutiquePushFollow({ profileId, demoMode }: { profileId?: string
     } catch (error) { setNotice(error instanceof Error ? error.message : 'Notifications indisponibles.'); }
     finally { setBusy(false); }
   };
-  const testNotification = async () => {
-    if (busy || !subscribed) return;
-    setBusy(true);
-    setNotice('');
-    try {
-      const registration = await navigator.serviceWorker.ready;
-      const subscription = await registration.pushManager.getSubscription();
-      if (!subscription) {
-        setSubscribed(false);
-        window.localStorage.removeItem('dalil:push:' + profileId);
-        throw new Error('Abonnement expiré. Cliquez sur Suivre les nouveautés.');
-      }
-      const response = await api('test', { profileId, subscription: subscription.toJSON() });
-      const result = await response.json() as PushResult;
-      if (!response.ok || result.sent !== true) {
-        if (response.status === 409 || response.status === 410) setSubscribed(false);
-        throw new Error(result.error || 'Test indisponible.');
-      }
-      setNotice('Notification de test envoyée. Vérifiez les alertes de votre appareil.');
-    } catch (error) {
-      setNotice(error instanceof Error ? error.message : 'Test indisponible.');
-    } finally {
-      setBusy(false);
-    }
-  };
   return <div style={{ marginTop: 12, borderTop: '1px solid #e5d8c7', paddingTop: 11, textAlign: 'center' }}>
     <button type="button" onClick={() => void toggle()} disabled={busy}
       style={{ background: '#fffaf2', color: '#5e4731', border: '1px solid #d9bd88', padding: '8px 13px', fontSize: 12, borderRadius: 20, cursor: busy ? 'wait' : 'pointer', fontWeight: 600 }}>
       {subscribed ? '✓ Ne plus suivre les nouveautés' : '♧ Suivre les nouveautés'}
     </button>
-    {subscribed && <button type="button" onClick={() => void testNotification()} disabled={busy}
-      style={{ marginLeft: 8, background: '#eaf4ef', color: '#174e3c', border: '1px solid #a9cabb', padding: '8px 13px', fontSize: 12, borderRadius: 20, cursor: busy ? 'wait' : 'pointer', fontWeight: 600 }}>
-      🔔 Tester une notification
-    </button>}
     <p style={{ fontSize: 10, color: '#7e7668', margin: '6px 0 0' }}>Alertes volontaires lors de nouveaux produits validés. Désabonnement ici, à tout moment.</p>
     {notice && <p role="status" style={{ fontSize: 11, margin: '7px 0 0', color: '#5a5146' }}>{notice}</p>}
   </div>;
