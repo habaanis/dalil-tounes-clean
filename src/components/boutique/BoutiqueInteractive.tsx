@@ -42,7 +42,7 @@ const priceText = (product: BoutiqueProduct) =>
 
 const labelStyle = { display: 'grid', gap: 4, fontSize: 12, fontWeight: 500 } as const;
 const fieldStyle = { boxSizing: 'border-box', width: '100%', minWidth: 0, border: '1px solid #d7c7ae', borderRadius: 9, padding: '9px 10px', fontSize: 14, background: '#fff' } as const;
-const iconButton = { background: '#fffaf3', border: '1px solid #d7c7ae', borderRadius: 24, height: 34, minWidth: 34, cursor: 'pointer', color: '#4c3046', fontSize: 20 } as const;
+const iconButton = { background: '#fffaf3', border: '1px solid #d7c7ae', borderRadius: 24, height: 34, minWidth: 34, cursor: 'pointer', color: '#063b30', fontSize: 20 } as const;
 
 export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = 'Boutique', triggerIcon }: { config: BoutiqueConfig; triggerClassName?: string; triggerLabel?: string; triggerIcon?: ReactNode }) {
   const [open, setOpen] = useState(false);
@@ -65,7 +65,16 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
   const [catalogueCategory, setCatalogueCategory] = useState('');
   const [cataloguePage, setCataloguePage] = useState(1);
   const products = config.products.filter(product => Boolean(product.id && product.title && product.imageUrl));
-  const catalogueCategories = [...new Set(products.map(product => product.category?.trim()).filter((category): category is string => Boolean(category)))].sort((a,b) => a.localeCompare(b,'fr'));
+  // Keep the approved festive-menu order; any other category follows alphabetically.
+  const preferredCategories = ['Menu des fêtes', 'Entrées', 'Plats', 'Fromages', 'Desserts'];
+  const rankCategory = (name: string) => preferredCategories.findIndex(
+    preferred => preferred.toLocaleLowerCase('fr') === name.toLocaleLowerCase('fr')
+  );
+  const catalogueCategories = [...new Set(products.map(product => product.category?.trim()).filter((category): category is string => Boolean(category)))].sort((a,b) => {
+    const aRank = rankCategory(a), bRank = rankCategory(b);
+    if (aRank !== bRank) return aRank < 0 ? 1 : bRank < 0 ? -1 : aRank - bRank;
+    return a.localeCompare(b, 'fr');
+  });
   const filteredProducts = products.filter(product =>
     (!catalogueCategory || product.category?.trim() === catalogueCategory)
     && (!catalogueQuery.trim() || (product.title + ' ' + (product.description || '')).toLocaleLowerCase().includes(catalogueQuery.trim().toLocaleLowerCase()))
@@ -162,7 +171,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
   return <>
     <button type="button" onClick={() => { setOpen(true); setSelected(null); setRequestOpen(false); setConfirmation(''); setCataloguePage(1); setCatalogueQuery(''); setCatalogueCategory(''); }}
       aria-haspopup="dialog" className={triggerClassName}
-      style={triggerClassName ? undefined : { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 7, padding: '8px 15px', border: '1px solid #d2b276', background: '#fffaf2', color: '#5a3a52', borderRadius: 24, fontSize: 13, fontWeight: 600, lineHeight: 1.2, cursor: 'pointer' }}>
+      style={triggerClassName ? undefined : { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 7, padding: '8px 15px', border: '1px solid #d2b276', background: '#fffaf2', color: '#063b30', borderRadius: 24, fontSize: 13, fontWeight: 600, lineHeight: 1.2, cursor: 'pointer' }}>
       {triggerIcon ?? <span aria-hidden="true">✦</span>}<span>{triggerLabel}</span>{!config.demoMode && products.some(isRecentProduct) && <span aria-label="Nouveautés" style={{fontSize:10,color:'#9b773e',fontWeight:700,whiteSpace:'nowrap'}}>●</span>}
     </button>
     {open && <div role="presentation" onMouseDown={close}
@@ -173,7 +182,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 12 }}>
           <div style={{ display: 'grid', gap: 2 }}>
             <span style={{ color: '#947244', fontSize: 10, letterSpacing: '.09em', textTransform: 'uppercase' }}>{config.merchantName}</span>
-            <strong style={{ color: '#4b2e47', fontSize: 17 }}>{selected ? selected.title : 'Boutique'}</strong>
+            <strong style={{ color: '#063b30', fontSize: 17 }}>{selected ? selected.title : 'Boutique'}</strong>
           </div>
           <button type="button" style={iconButton} onClick={close} aria-label="Fermer la boutique">×</button>
         </div>
@@ -211,12 +220,12 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
             style={{ border: 0, background: 'transparent', fontSize: 12, color: '#806538', padding: '0 0 10px', cursor: 'pointer' }}>‹ Toutes les créations</button>
           <img src={selected.imageUrl} alt={selected.title} style={{ display: 'block', width: '100%', maxHeight: 190, aspectRatio: '16 / 9', objectFit: 'contain', background: '#f4eee5', borderRadius: 11 }} />
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 8, marginTop: 12 }}>
-            <strong style={{ color: '#4b2e47', fontSize: 16 }}>{selected.title}</strong>
+            <strong style={{ color: '#063b30', fontSize: 16 }}>{selected.title}</strong>
             <span style={{ whiteSpace: 'nowrap', fontWeight: 600, fontSize: 12, color: '#826332' }}>{priceText(selected)}</span>
           </div>
           {selected.description && <p style={{ fontSize: 12, lineHeight: 1.5, margin: '6px 0 12px', color: '#62574d' }}>{selected.description}</p>}
           {!requestOpen ? <button type="button" onClick={() => setRequestOpen(true)}
-            style={{ border: 0, borderRadius: 10, background: '#4d2a47', color: '#fff', fontSize: 13, fontWeight: 600, padding: '11px 14px', width: '100%', cursor: 'pointer' }}>
+            style={{ border: 0, borderRadius: 10, background: '#063b30', color: '#fff', fontSize: 13, fontWeight: 600, padding: '11px 14px', width: '100%', cursor: 'pointer' }}>
             {selected.mode === 'quote' ? 'Demander un devis' : 'Commander'}
           </button> : <div style={{ display: 'grid', gap: 10, borderTop: '1px solid #e5d7c3', paddingTop: 12 }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -236,7 +245,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
             {error && <p role="alert" style={{ fontSize: 12, color: '#9e2828', margin: 0 }}>{error}</p>}
             {selected.mode==='order'&&<p style={{margin:0,fontSize:11,color:'#6c5945'}}>La commande n’est pas encore confirmée. Acompte ou paiement total obligatoire avant validation, selon les modalités du professionnel. Aucun paiement à la livraison.</p>}
             <button type="button" onClick={()=>void send()} disabled={sending||Boolean(confirmation)}
-              style={{ width: '100%', padding: 10, border: 0, borderRadius: 10, background: '#4d2a47', color: '#fff', cursor: sending||confirmation?'default':'pointer', fontSize: 13, fontWeight: 600, opacity:(sending || Boolean(confirmation)) ? 0.76 : 1 }}>
+              style={{ width: '100%', padding: 10, border: 0, borderRadius: 10, background: '#063b30', color: '#fff', cursor: sending||confirmation?'default':'pointer', fontSize: 13, fontWeight: 600, opacity:(sending || Boolean(confirmation)) ? 0.76 : 1 }}>
               {sending?'Enregistrement…':confirmation?'Demande enregistrée':config.demoMode?'Tester la demande (simulation)':selected.mode === 'quote' ? 'Envoyer la demande de devis' : 'Enregistrer la demande de commande'}
             </button>
             {confirmation&&<div role="status" style={{display:'grid',gap:8,background:'#f3f6ea',color:'#355535',borderRadius:10,padding:12,fontSize:12}}>
