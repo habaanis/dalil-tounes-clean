@@ -5,12 +5,15 @@ import { transform } from 'esbuild';
 import vm from 'node:vm';
 
 const entreprise='36f84b99-2c37-47d1-91ba-4c35cda8c1af';
+const secondEntreprise='46f84b99-2c37-47d1-91ba-4c35cda8c1af';
 const productId='9e445ab7-10be-4bb4-ac9d-0c865e49dacb';
 const data={
-  entreprise:[{id:entreprise,approved:true,statut_publication:'Publié',statut_validation:'publie'}],
+  entreprise:[{id:entreprise,approved:true,statut_publication:'Publié',statut_validation:'publie'},
+    {id:secondEntreprise,approved:true,statut_publication:'Publié',statut_validation:'publie'}],
   dalil_boutique_products:[{id:productId,entreprise_id:entreprise,title:'Test',mode:'order',price:30,currency:'TND',status:'approved',approved_at:'2026-11-14T10:00:00Z'}],
   dalil_boutique_customer_orders:[],
-  professional_profile_access:[{user_id:'merchant-1',entreprise_id:entreprise}],
+  professional_profile_access:[{user_id:'merchant-1',entreprise_id:entreprise},
+    {user_id:'merchant-2',entreprise_id:secondEntreprise}],
 };
 let rateLimited=false;
 let liveOrdersEnabled=true;
@@ -43,7 +46,7 @@ function mockQuery(table){
 }
 function mockClient(){
   return{from:mockQuery,rpc:async()=>({data:!rateLimited,error:null}),
-    auth:{getUser:async token=>({data:{user:{id:token==='merchant-token'?'merchant-1':'outsider'}},error:null})}};
+    auth:{getUser:async token=>({data:{user:{id:token==='merchant-token'?'merchant-1':token==='second-merchant-token'?'merchant-2':'outsider'}},error:null})}};
 }
 async function loadEndpoint(slug){
   const file='supabase/functions/'+slug+'/index.ts';
@@ -129,6 +132,10 @@ const cases=[
   ['Deny unauthenticated merchant',()=>merchant(request({profileId:entreprise,action:'list'})),401],
   ['Deny other merchant',()=>merchant(request({profileId:entreprise,action:'list'},'outsider-token')),403],
   ['Merchant own inbox',()=>merchant(request({profileId:entreprise,action:'list'},'merchant-token')),200],
+  ['Second merchant own inbox',()=>merchant(request({profileId:secondEntreprise,action:'list'},'second-merchant-token')),200],
+  ['First merchant cannot read second merchant orders',()=>merchant(request({profileId:secondEntreprise,action:'list'},'merchant-token')),403],
+  ['Second merchant cannot read first merchant orders',()=>merchant(request({profileId:entreprise,action:'list'},'second-merchant-token')),403],
+  ['Second merchant cannot update first merchant order through own profile',()=>merchant(request({profileId:secondEntreprise,action:'update',id:data.dalil_boutique_customer_orders[0].id,status:'in_progress'},'second-merchant-token')),404],
   ['Cannot confirm unpaid order',()=>merchant(request({profileId:entreprise,action:'update',id:data.dalil_boutique_customer_orders[0].id,status:'confirmed'},'merchant-token')),409],
   ['Allow start processing',()=>merchant(request({profileId:entreprise,action:'update',id:data.dalil_boutique_customer_orders[0].id,status:'in_progress'},'merchant-token')),200],
   ['Cannot jump to completed',()=>merchant(request({profileId:entreprise,action:'update',id:data.dalil_boutique_customer_orders[0].id,status:'completed'},'merchant-token')),409],
