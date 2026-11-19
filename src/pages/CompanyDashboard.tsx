@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import JobPostForm from '../components/forms/JobPostForm';
 import BoutiqueProductManagement from '../components/boutique/BoutiqueProductManagement';
 import BoutiqueCustomerOrders from '../components/boutique/BoutiqueCustomerOrders';
+import BoutiqueMerchantOrderAlerts from '../components/boutique/BoutiqueMerchantOrderAlerts';
 
 type ScopedBoutiqueStats = { entreprise_id: string; push_subscriptions: number; published_products: number; draft_products: number };
 interface CompanyDashboardProps {
@@ -16,7 +17,7 @@ interface CompanyDashboardProps {
 export default function CompanyDashboard({ onNavigate, clientAppMode = false }: CompanyDashboardProps) {
   const { user, signOut, loading } = useAuth();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'jobs' | 'candidates' | 'settings' | 'showcase' | 'boutique' | 'orders' | 'stats'>(clientAppMode ? 'boutique' : 'showcase');
+  const [activeTab, setActiveTab] = useState<'jobs' | 'candidates' | 'settings' | 'showcase' | 'boutique' | 'orders' | 'stats'>(() => new URLSearchParams(window.location.search).get('tab') === 'orders' ? 'orders' : clientAppMode ? 'boutique' : 'showcase');
   const [showWelcome, setShowWelcome] = useState(false);
   const [stats, setStats] = useState<ScopedBoutiqueStats[]>([]);
   const [statsLoading, setStatsLoading] = useState(false);
@@ -434,7 +435,10 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false }: 
                         <button type="button" onClick={()=>setStatsRetry(n=>n+1)} className="ml-2 underline">Réessayer</button>
                       </div>
                     : stats.length===0 ? <p className="rounded-xl bg-[#fbf8f0] p-4 text-sm text-[#684d47]">Aucun établissement encore associé à ce compte. L’accès aux commandes nécessite une attribution vérifiée.</p>
-                    : <BoutiqueCustomerOrders entrepriseIds={stats.map(record=>record.entreprise_id)} />}
+                    : <div className="space-y-4">
+                        {stats.map(record => <BoutiqueMerchantOrderAlerts key={record.entreprise_id} profileId={record.entreprise_id}/>)}
+                        <BoutiqueCustomerOrders entrepriseIds={stats.map(record=>record.entreprise_id)} />
+                      </div>}
                 </section>
               )}
               {activeTab === 'jobs' && (
