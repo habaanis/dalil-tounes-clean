@@ -17,7 +17,7 @@ check('QR screen still owns account and install entry',
   qr.includes('accountHref={accountHref}')&&qr.includes('onInstall={installApp}'));
 check('client CV has a persistent return to QR and one account link',
   showcase.includes('Navigation de la mini-application')&&
-  showcase.includes('Retour au QR code')&&showcase.includes("' + '/compte'"));
+  showcase.includes('Retour au QR code')&&showcase.includes("+ '/compte'"));
 check('no second Portfolio or Business back control on client host',
   showcase.includes('showClientQrBack={false}')&&
   showcase.includes('!isDedicatedClientHostname(window.location.hostname) && <button'));
