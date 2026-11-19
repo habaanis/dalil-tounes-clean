@@ -6,6 +6,7 @@ on:
       - feat/boutique-a-catalogue-recette-20261119
       - feat/boutique-merchant-order-alerts-20261119
       - fix/boutique-payment-readiness-20261119
+      - feat/boutique-konnect-direct-merchant-sandbox-20261119
   workflow_dispatch:
 
 permissions:
@@ -32,5 +33,7 @@ jobs:
         run: node scripts/test-boutique-merchant-alerts.mjs
       - name: Payment readiness safety contracts
         run: node scripts/test-boutique-payment-readiness.mjs
+      - name: Konnect direct-merchant sandbox readiness tests
+        run: node scripts/test-boutique-konnect-merchant-preparation.mjs
       - name: Compile PWA safely, no deployment
         run: npm run build
