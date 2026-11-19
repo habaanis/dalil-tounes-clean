@@ -25,9 +25,10 @@ export default function CertifiedBusinesses() {
     supabase
       .from('entreprise')
       .select('*')
-      .eq('cv_business_status', 'published')
+      .eq('statut_carte', '⭐ CERTIFIÉ DALIL TOUNES')
+      .eq('statut_validation', 'publie')
       .order('nom', { ascending: true })
-      .limit(100)
+      .limit(200)
       .then(({ data, error }) => {
         if (!active) return;
         if (!error) setRows(data || []);
