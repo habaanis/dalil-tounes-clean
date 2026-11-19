@@ -29,8 +29,11 @@ export function ClientAccountLogin() {
   const [submitting,setSubmitting]=useState(false);
   const [signupError,setSignupError]=useState('');
   const [signupDone,setSignupDone]=useState(false);
-  const accountPath = '/' + encodeURIComponent(slug || '') + '/compte';
-  const cvPath = '/' + encodeURIComponent(slug || '') + '/cv?preview-model=business&skip-opening=1';
+  const returnModel = new URLSearchParams(location.search).get('return-model');
+  const selectedModel = returnModel === 'portfolio' || returnModel === 'business' ? returnModel : null;
+  const accountPath = '/' + encodeURIComponent(slug || '') + '/compte' + (selectedModel ? '?return-model=' + selectedModel : '');
+  // When no explicit selection was supplied, the CV reads the merchant's saved model.
+  const cvPath = '/' + encodeURIComponent(slug || '') + '/cv?skip-opening=1' + (selectedModel ? '&preview-model=' + selectedModel : '');
   const qrPath = '/' + encodeURIComponent(slug || '');
   const navigation = <nav aria-label="Retour à ma mini-application" className="mb-5 flex flex-wrap gap-4 text-sm">
     <Link to={cvPath} className="inline-flex min-h-11 items-center underline">← Retour à ma vitrine</Link>
@@ -166,10 +169,14 @@ export default function ClientAccount() {
   const {slug} = useParams<{slug:string}>();
   const {user,loading,signOut}=useAuth();
   const navigate=useNavigate();
+  const location = useLocation();
+  const returnModel = new URLSearchParams(location.search).get('return-model');
+  const selectedModel = returnModel === 'portfolio' || returnModel === 'business' ? returnModel : null;
+  const preservedModel = selectedModel ? '?return-model=' + selectedModel : '';
   const [state,setState]=useState<'checking'|'allowed'|'denied'|'error'>('checking');
   const [retry,setRetry]=useState(0);
-  const accountLogin='/' + encodeURIComponent(slug || '') + '/connexion';
-  const cvPath='/' + encodeURIComponent(slug || '') + '/cv?preview-model=business&skip-opening=1';
+  const accountLogin='/' + encodeURIComponent(slug || '') + '/connexion' + preservedModel;
+  const cvPath='/' + encodeURIComponent(slug || '') + '/cv?skip-opening=1' + (selectedModel ? '&preview-model=' + selectedModel : '');
   const qrPath='/' + encodeURIComponent(slug || '');
   const returnLinks=(<nav aria-label="Retour à la mini-application" className="mt-4 flex flex-wrap justify-center gap-4 text-sm"><Link className="inline-flex min-h-11 items-center underline" to={cvPath}>Retour à ma vitrine</Link><Link className="inline-flex min-h-11 items-center underline" to={qrPath}>Retour au QR code</Link></nav>);
   const [switchingAccount,setSwitchingAccount]=useState(false);
