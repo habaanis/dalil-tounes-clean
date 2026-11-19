@@ -30,7 +30,6 @@ function mockQuery(table){
     update:values=>{operation='update';payload=values;return query;},
     maybeSingle:async()=>{
       if(operation==='insert'){
-        if(matched().length) return {data:null,error:{code:'23505'}};
         const old=data[table].find(row=>row.entreprise_id===payload.entreprise_id&&row.idempotency_key===payload.idempotency_key);
         if(old)return {data:null,error:{code:'23505'}};
         const row={...payload,id:crypto.randomUUID(),status:'received',payment_status:'not_requested',created_at:new Date().toISOString()};
