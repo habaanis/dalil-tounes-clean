@@ -1547,20 +1547,6 @@ export default function BusinessShowcaseLienoraDetail({
         <QRCodeSVG value={shortShareUrl} size={100} level="M" title={`QR Code de ${displayName}`} />
       </div>
       <div className="dt-qr-actions">
-        {capabilities.variant === 'premium' && (
-          <a className="dt-qr-action" href={buildClientAppUrl(business, language)}>
-            <QrCode aria-hidden="true" />
-            {language === 'ar' ? 'تثبيت أو عرض CV Business' : language === 'en' ? 'Install / present my Business CV' : language === 'it' ? 'Installa / mostra il mio CV Business' : language === 'ru' ? 'Установить / показать Business CV' : 'Installer / présenter mon CV Business'}
-          </a>
-        )}
-        {capabilities.variant === 'premium' && (
-          <a className="dt-qr-action" href={isDedicatedClientHostname(window.location.hostname)
-            ? '/' + encodeURIComponent(String(business.slug_court || business.slug || business.id || '')) + '/compte'
-            : buildClientAppUrl(business, language).split('?')[0] + '/compte'}>
-            <UserRound aria-hidden="true" />
-            {language === 'ar' ? 'حسابي المهني' : language === 'en' ? 'My professional account' : 'Mon compte'}
-          </a>
-        )}
         <button type="button" className="dt-qr-action" onClick={() => void share()}>
           <Share2 aria-hidden="true" />{text.share}
         </button>
@@ -1568,18 +1554,7 @@ export default function BusinessShowcaseLienoraDetail({
           {copied ? <Check aria-hidden="true" /> : <Copy aria-hidden="true" />}
           {copied ? text.copied : text.copy}
         </button>
-        <button type="button" className="dt-qr-action" onClick={downloadContact}>
-          <Contact aria-hidden="true" />{text.addContact}
-        </button>
       </div>
-      <details className="dt-install-help">
-        <summary>{text.installTitle}</summary>
-        <p>{text.installDescription}</p>
-        <ul>
-          <li>{text.installIphone}</li>
-          <li>{text.installAndroid}</li>
-        </ul>
-      </details>
     </div>
   );
 
@@ -1719,13 +1694,18 @@ export default function BusinessShowcaseLienoraDetail({
   // Authorization is enforced by ClientAccount after the link is opened.
   const clientAccountButton = !embeddedPreview && isDedicatedClientHostname(window.location.hostname)
     && capabilities.variant === 'premium' ? (
-      <div className="mx-auto flex w-full max-w-5xl justify-end px-4 pt-3" dir="ltr">
+      <nav aria-label="Navigation de la mini-application"
+        className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-2 px-4 pt-3" dir={isRTL ? 'rtl' : 'ltr'}>
+        <a href={buildClientAppUrl(business, language)}
+          className="inline-flex min-h-10 items-center rounded-full border border-[#d7bf8a] bg-[#fffcf6] px-4 py-2 text-xs font-semibold text-[#593b30] shadow-sm">
+          {language === 'ar' ? 'العودة إلى QR' : language === 'en' ? 'Back to QR' : 'Retour au QR code'}
+        </a>
         <a href={'/' + encodeURIComponent(String(business.slug_court || business.slug || business.id)) + '/compte'}
           className="inline-flex min-h-10 items-center gap-2 rounded-full border border-[#d7bf8a] bg-[#fffcf6] px-4 py-2 text-xs font-semibold text-[#593b30] shadow-sm">
           <UserRound size={16} aria-hidden="true" />
           {language === 'ar' ? 'حسابي المهني' : language === 'en' ? 'My account' : 'Mon compte'}
         </a>
-      </div>
+      </nav>
     ) : null;
 
   if (resolvedPresentation.style === 'portfolio') {
@@ -1774,7 +1754,7 @@ export default function BusinessShowcaseLienoraDetail({
           onSelectImage={setSelectedImage}
           notice={contactNotice}
           hideBack={embeddedPreview || isClientAppMode}
-          showClientQrBack={isDedicatedClientRoute && !embeddedPreview}
+          showClientQrBack={false}
           embeddedPreview={embeddedPreview}
           palette={activePalette}
         />
@@ -1813,7 +1793,7 @@ export default function BusinessShowcaseLienoraDetail({
       </>}
 
       <div className="dt-showcase-wrap">
-        {!embeddedPreview && <button type="button" className="dt-back-button" onClick={handleBack}>
+        {!embeddedPreview && !isDedicatedClientHostname(window.location.hostname) && <button type="button" className="dt-back-button" onClick={handleBack}>
           <ArrowLeft aria-hidden="true" />{text.back}
         </button>}
 
