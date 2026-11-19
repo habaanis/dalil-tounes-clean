@@ -305,7 +305,7 @@ function AppRouter() {
           <Route path="/inscription" element={<Auth />} />
 
           <Route path="/dashboard/candidat" element={<CandidateDashboard />} />
-          <Route path="/dashboard/entreprise" element={<CompanyDashboard />} />
+          <Route path="/dashboard/entreprise" element={<CompanyDashboard clientAppMode={inPlatformApp || isClientAppRoute} />} />
 
           <Route path="/inscription-entreprise" element={<BusinessRegistration />} />
           <Route path="/subscription" element={<Subscription />} />
