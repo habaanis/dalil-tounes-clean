@@ -31,10 +31,16 @@ export function ClientAccountLogin() {
   const [signupDone,setSignupDone]=useState(false);
   const returnModel = new URLSearchParams(location.search).get('return-model');
   const selectedModel = returnModel === 'portfolio' || returnModel === 'business' ? returnModel : null;
-  const accountPath = '/' + encodeURIComponent(slug || '') + '/compte' + (selectedModel ? '?return-model=' + selectedModel : '');
-  // When no explicit selection was supplied, the CV reads the merchant's saved model.
-  const cvPath = '/' + encodeURIComponent(slug || '') + '/cv?skip-opening=1' + (selectedModel ? '&preview-model=' + selectedModel : '');
-  const qrPath = '/' + encodeURIComponent(slug || '');
+  // Explicitly preserve preview routing across full-page navigation (some mobile
+  // browsers do not keep sessionStorage when switching between account and CV).
+  const clientPreview = window.location.hostname !== 'app.dalil-tounes.com'
+    && isDedicatedClientHostname(window.location.hostname);
+  const previewQuery = clientPreview ? '&client-preview=1' : '';
+  const accountPath = '/' + encodeURIComponent(slug || '') + '/compte'
+    + '?return-model=' + (selectedModel || '') + previewQuery;
+  const cvPath = '/' + encodeURIComponent(slug || '') + '/cv?skip-opening=1'
+    + (selectedModel ? '&preview-model=' + selectedModel : '') + previewQuery;
+  const qrPath = '/' + encodeURIComponent(slug || '') + (clientPreview ? '?client-preview=1' : '');
   const navigation = <nav aria-label="Retour à ma mini-application" className="mb-5 flex flex-wrap gap-4 text-sm">
     <Link to={cvPath} className="inline-flex min-h-11 items-center underline">← Retour à ma vitrine</Link>
     <Link to={qrPath} className="inline-flex min-h-11 items-center underline">Retour au QR code</Link>
@@ -172,12 +178,16 @@ export default function ClientAccount() {
   const location = useLocation();
   const returnModel = new URLSearchParams(location.search).get('return-model');
   const selectedModel = returnModel === 'portfolio' || returnModel === 'business' ? returnModel : null;
-  const preservedModel = selectedModel ? '?return-model=' + selectedModel : '';
+  const clientPreview = window.location.hostname !== 'app.dalil-tounes.com'
+    && isDedicatedClientHostname(window.location.hostname);
+  const previewQuery = clientPreview ? '&client-preview=1' : '';
+  const preservedModel = '?return-model=' + (selectedModel || '') + previewQuery;
   const [state,setState]=useState<'checking'|'allowed'|'denied'|'error'>('checking');
   const [retry,setRetry]=useState(0);
   const accountLogin='/' + encodeURIComponent(slug || '') + '/connexion' + preservedModel;
-  const cvPath='/' + encodeURIComponent(slug || '') + '/cv?skip-opening=1' + (selectedModel ? '&preview-model=' + selectedModel : '');
-  const qrPath='/' + encodeURIComponent(slug || '');
+  const cvPath='/' + encodeURIComponent(slug || '') + '/cv?skip-opening=1'
+    + (selectedModel ? '&preview-model=' + selectedModel : '') + previewQuery;
+  const qrPath='/' + encodeURIComponent(slug || '') + (clientPreview ? '?client-preview=1' : '');
   const returnLinks=(<nav aria-label="Retour à la mini-application" className="mt-4 flex flex-wrap justify-center gap-4 text-sm"><Link className="inline-flex min-h-11 items-center underline" to={cvPath}>Retour à ma vitrine</Link><Link className="inline-flex min-h-11 items-center underline" to={qrPath}>Retour au QR code</Link></nav>);
   const [switchingAccount,setSwitchingAccount]=useState(false);
   const switchAccount=async()=>{
