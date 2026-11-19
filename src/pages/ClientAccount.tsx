@@ -38,8 +38,9 @@ export function ClientAccountLogin() {
   const previewQuery = clientPreview ? '&client-preview=1' : '';
   const accountPath = '/' + encodeURIComponent(slug || '') + '/compte'
     + '?return-model=' + (selectedModel || '') + previewQuery;
-  const cvPath = '/' + encodeURIComponent(slug || '') + '/cv?skip-opening=1'
-    + (selectedModel ? '&preview-model=' + selectedModel : '') + previewQuery;
+  // The account is not a model preview: return to the CV saved for this merchant.
+  // Never replay an old Business selection from a QR/account URL.
+  const cvPath = '/' + encodeURIComponent(slug || '') + '/cv?skip-opening=1' + previewQuery;
   const qrPath = '/' + encodeURIComponent(slug || '') + (clientPreview ? '?client-preview=1' : '');
   const navigation = <nav aria-label="Retour à ma mini-application" className="mb-5 flex flex-wrap gap-4 text-sm">
     <Link to={cvPath} className="inline-flex min-h-11 items-center underline">← Retour à ma vitrine</Link>
@@ -185,8 +186,8 @@ export default function ClientAccount() {
   const [state,setState]=useState<'checking'|'allowed'|'denied'|'error'>('checking');
   const [retry,setRetry]=useState(0);
   const accountLogin='/' + encodeURIComponent(slug || '') + '/connexion' + preservedModel;
-  const cvPath='/' + encodeURIComponent(slug || '') + '/cv?skip-opening=1'
-    + (selectedModel ? '&preview-model=' + selectedModel : '') + previewQuery;
+  // The saved business model wins on return (Portfolio for Aux Saveurs d'Anis).
+  const cvPath='/' + encodeURIComponent(slug || '') + '/cv?skip-opening=1' + previewQuery;
   const qrPath='/' + encodeURIComponent(slug || '') + (clientPreview ? '?client-preview=1' : '');
   const returnLinks=(<nav aria-label="Retour à la mini-application" className="mt-4 flex flex-wrap justify-center gap-4 text-sm"><Link className="inline-flex min-h-11 items-center underline" to={cvPath}>Retour à ma vitrine</Link><Link className="inline-flex min-h-11 items-center underline" to={qrPath}>Retour au QR code</Link></nav>);
   const [switchingAccount,setSwitchingAccount]=useState(false);
