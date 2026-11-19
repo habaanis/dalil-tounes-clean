@@ -1712,7 +1712,7 @@ export default function BusinessShowcaseLienoraDetail({
           className="inline-flex min-h-10 items-center rounded-full border border-[#d7bf8a] bg-[#fffcf6] px-4 py-2 text-xs font-semibold text-[#593b30] shadow-sm">
           {language === 'ar' ? 'العودة إلى QR' : language === 'en' ? 'Back to QR' : 'Retour au QR code'}
         </a>
-        <a href={'/' + encodeURIComponent(String(business.slug_court || business.slug || business.id)) + '/compte'}
+        <a href={'/' + encodeURIComponent(String(business.slug_court || business.slug || business.id)) + '/compte?return-model=' + presentationStyle}
           className="inline-flex min-h-10 items-center gap-2 rounded-full border border-[#d7bf8a] bg-[#fffcf6] px-4 py-2 text-xs font-semibold text-[#593b30] shadow-sm">
           <UserRound size={16} aria-hidden="true" />
           {language === 'ar' ? 'حسابي المهني' : language === 'en' ? 'My account' : 'Mon compte'}
