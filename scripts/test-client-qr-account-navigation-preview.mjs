@@ -6,6 +6,7 @@ const showcase=read('src/components/BusinessShowcaseLienoraDetail.tsx');
 const account=read('src/pages/ClientAccount.tsx');
 const login=read('src/components/auth/LoginForm.tsx');
 const qr=read('src/pages/BusinessQr.tsx');
+const clientUrls=read('src/lib/clientAppUrl.ts');
 const check=(label,ok)=>{assert.ok(ok,label);console.log('PASS '+label)};
 const share=showcase.split('const sharingContent = (')[1]?.split('  const sections = [')[0]||'';
 check('QR share panel retains share and copy actions',
@@ -28,4 +29,10 @@ check('login to an existing business does not invite duplicate registration',
   !account.includes('SignupForm')&&login.includes('allowSignup &&'));
 check('authorization remains tied to original business and signed in user',
   account.includes("eq('user_id',user.id).eq('entreprise_id',businessId)"));
+check('client preview remains opt-in and isolated to Vercel host',
+  clientUrls.includes("get('client-preview') === '1'")&&
+  clientUrls.includes('sessionStorage')&&
+  clientUrls.includes('return CLIENT_APP_ORIGIN;'));
+check('account route recognizes isolated preview host',
+  account.includes('isDedicatedClientHostname(window.location.hostname)'));
 console.log('PASS QR/vitrine/compte navigation contracts');
