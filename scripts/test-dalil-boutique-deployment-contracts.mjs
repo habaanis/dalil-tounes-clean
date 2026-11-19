@@ -43,4 +43,5 @@ check('rate limiter skips shared unknown-IP bucket while retaining contact guard
 check('concurrent same-key changed payload returns 409',
   publicApi.includes('if(retry.request_fingerprint===requestFingerprint)') &&
   publicApi.includes('return reply({error:"Reference mismatch"},409,origin)'));
+check('new Dalil platform PWA host can submit and manage orders',publicApi.includes('https://appli.dalil-tounes.com')&&merchantApi.includes('https://appli.dalil-tounes.com'));
 console.log(`${count}/${count} Boutique static pre-deployment contracts passed (no database calls).`);
