@@ -296,9 +296,10 @@ export default function BusinessQr() {
   // Le navigateur peut bloquer plusieurs installations sous app.dalil-tounes.com ;
   // cette page reste accessible, sans être capturée par une autre mini-application.
   const browserCvUrl = directCvUrl;
-  const accountHref = isDedicatedClientHostname(window.location.hostname)
+  const accountHref = (isDedicatedClientHostname(window.location.hostname)
     ? '/' + encodeURIComponent(clientIdentifier) + '/compte'
-    : buildClientAppUrl(business || identifier, language).split('?')[0] + '/compte';
+    : buildClientAppUrl(business || identifier, language).split('?')[0] + '/compte')
+    + '?return-model=' + cvModel;
   const logoUrl = business ? getLogoUrl(business.logo_url) : '';
   const coverUrl = getCoverUrl(business?.image_url);
   const tier = business ? mapSubscriptionToTier(business) : 'gratuit';
@@ -429,7 +430,7 @@ export default function BusinessQr() {
     // A missing Supabase response is not proof that the CV is unpublished.
     // Keep every recovery action inside the professional mini-app.
     const recoveryCvUrl = new URL(buildClientCvUrl(business || identifier, language));
-    recoveryCvUrl.searchParams.set('preview-model', 'business');
+    recoveryCvUrl.searchParams.set('preview-model', cvModel);
     recoveryCvUrl.searchParams.set('skip-opening', '1');
     return (
       <div className="fixed inset-0 z-[10000] grid place-items-center overflow-y-auto bg-[#F6F7F4] px-4 text-center">
@@ -446,7 +447,7 @@ export default function BusinessQr() {
             </a>
             <a href={`${recoveryCvUrl.pathname}${recoveryCvUrl.search}`}
               className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#0B4B3E] px-5 py-2.5 font-semibold text-white">
-              Ouvrir mon CV Business
+              Ouvrir mon CV {cvModel === 'portfolio' ? 'Portfolio' : 'Business'}
             </a>
             <button type="button" onClick={() => { setLoading(true); setLoadingFailed(false); setReloadKey(key => key+1); }}
               className="inline-flex min-h-10 items-center justify-center rounded-full border border-[#D4AF37]/60 bg-white px-5 py-2 text-sm font-semibold text-[#0B4B3E]">
