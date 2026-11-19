@@ -117,6 +117,12 @@ export default function BoutiqueCustomerOrders({entrepriseIds}:{entrepriseIds:st
               <div><dt className="inline font-semibold">Montant des articles : </dt><dd className="inline font-semibold">{amount(order.amount_total,order.currency)}</dd></div>
               {order.customer_note&&<div><dt className="inline font-semibold">Précisions : </dt><dd className="inline whitespace-pre-wrap break-words">{order.customer_note}</dd></div>}
               <div><dt className="inline font-semibold">Règlement : </dt><dd className="inline">{paymentLabels[order.payment_status]||order.payment_status}{order.payment_option==='deposit'?' · acompte':order.payment_option==='full'?' · total':''}</dd></div>
+              {order.kind === 'order' && order.amount_total !== null && <>
+                <div><dt className="inline font-semibold">Montant vérifié : </dt><dd className="inline">{amount(['partially_paid','paid','refunded'].includes(order.payment_status) ? order.paid_amount : 0,order.currency)}</dd></div>
+                {order.payment_status !== 'refunded' && <div><dt className="inline font-semibold">Solde restant : </dt><dd className="inline">{amount(Math.max(0,Math.round((order.amount_total - (['partially_paid','paid'].includes(order.payment_status) ? order.paid_amount : 0))*1000)/1000),order.currency)}</dd></div>}
+                {order.payment_status === 'refunded' && <div><dt className="inline font-semibold">Remboursement : </dt><dd className="inline">Statut enregistré ; montant remboursé à rapprocher du prestataire de paiement.</dd></div>}
+              </>}
+              {order.kind === 'quote' && <p className="text-xs text-[#725b3e]">Devis : aucun montant à encaisser avant accord et création d'une commande chiffrée.</p>}
             </dl>
             {!closed&&<div className="mt-3 flex flex-wrap gap-2 border-t border-[#ede1c9] pt-3">
               {order.status==='received'&&<button type="button" disabled={Boolean(busy)} onClick={()=>void update(order,'in_progress')}
@@ -131,7 +137,9 @@ export default function BoutiqueCustomerOrders({entrepriseIds}:{entrepriseIds:st
                 className="min-h-11 rounded-lg border border-[#d8cbb5] bg-white px-3 text-xs font-semibold text-[#7b4141] disabled:opacity-50">Annuler</button>}
             </div>}
             {order.status==='confirmed' && ['partially_paid','paid'].includes(order.payment_status) && <p role="note" className="mt-2 text-xs text-[#725b3e]">Annuler cette commande ne rembourse pas automatiquement le client.</p>}
-            {order.kind==='order'&&order.payment_status==='not_requested'&&<p className="mt-2 text-xs text-[#725b3e]">Confirmation bloquée jusqu’à vérification d’un acompte ou du paiement total. Aucun paiement à la livraison.</p>}
+            {order.kind==='order'&&['not_requested','pending','failed'].includes(order.payment_status)&&<p className="mt-2 text-xs text-[#725b3e]">Confirmation bloquée tant qu'aucun acompte ou paiement total n'a été vérifié par le service de paiement. Aucun paiement à la livraison.</p>}
+            {order.kind==='order'&&order.payment_status==='partially_paid'&&<p role="note" className="mt-2 text-xs text-[#725b3e]">Acompte vérifié : vous pouvez confirmer la commande. La clôture reste bloquée jusqu'à vérification du solde total.</p>}
+            {order.kind==='order'&&order.payment_status==='paid'&&<p role="note" className="mt-2 text-xs text-[#725b3e]">Paiement intégral vérifié par le serveur. Aucun bouton manuel pour marquer la commande payée.</p>}
           </article>;
         })}
       </div>}
