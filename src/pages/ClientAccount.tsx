@@ -10,19 +10,76 @@ function safeSlug(slug?:string) { return (slug || '').trim().toLowerCase(); }
 
 export function ClientAccountLogin() {
   const {slug} = useParams<{slug:string}>();
-  const {user,loading}=useAuth();
+  const {user,loading,signUp}=useAuth();
   const navigate = useNavigate();
+  const [mode,setMode]=useState<'login'|'signup'>('login');
+  const [email,setEmail]=useState('');
+  const [password,setPassword]=useState('');
+  const [confirm,setConfirm]=useState('');
+  const [submitting,setSubmitting]=useState(false);
+  const [signupError,setSignupError]=useState('');
+  const [signupDone,setSignupDone]=useState(false);
   const accountPath = '/' + encodeURIComponent(slug || '') + '/compte';
   const cvPath = '/' + encodeURIComponent(slug || '') + '/cv?preview-model=business&skip-opening=1';
   const qrPath = '/' + encodeURIComponent(slug || '');
-  if (!slug || !isDedicatedClientHostname(window.location.hostname)) return <p>Page indisponible.</p>;
-  if (loading) return <main role="status" className="min-h-dvh bg-[#fbf8f0] p-6">Vérification…</main>;
-  if (user) return <div className="min-h-dvh bg-[#fbf8f0] p-5"><Link to={accountPath} className="inline-block rounded-xl border border-[#d7bf8a] bg-white px-4 py-3 text-[#552c30]">Ouvrir mon compte professionnel</Link></div>;
+  const navigation = <nav aria-label="Retour à ma mini-application" className="mb-5 flex flex-wrap gap-4 text-sm">
+    <Link to={cvPath} className="inline-flex min-h-11 items-center underline">← Retour à ma vitrine</Link>
+    <Link to={qrPath} className="inline-flex min-h-11 items-center underline">Retour au QR code</Link>
+  </nav>;
+  const createAccount = async(event:React.FormEvent)=>{
+    event.preventDefault();
+    if(submitting)return;
+    setSignupError('');
+    if(password.length<6){setSignupError('Le mot de passe doit comporter au moins 6 caractères.');return;}
+    if(password!==confirm){setSignupError('Les deux mots de passe ne correspondent pas.');return;}
+    setSubmitting(true);
+    try{
+      const {user:created,error}=await signUp(email.trim().toLowerCase(),password,'company');
+      if(error)throw error;
+      if(!created)throw new Error('La création du compte n’a pas pu être confirmée.');
+      // A new identity must NEVER receive access to a business automatically.
+      // The identity can later be approved by the existing professional-access process.
+      setSignupDone(true);
+    }catch(error){
+      const message=error instanceof Error ? error.message : 'Inscription indisponible.';
+      setSignupError(/already.registered|already.been.registered|user.already.exists/i.test(message)
+        ? 'Cette adresse possède déjà un compte. Utilisez « Se connecter ».'
+        : message);
+    }finally{setSubmitting(false);}
+  };
+  if(!slug || !isDedicatedClientHostname(window.location.hostname))return <p>Page indisponible.</p>;
+  if(loading)return <main role="status" className="min-h-dvh bg-[#fbf8f0] p-6">Vérification de la session…</main>;
+  if(user)return <main className="min-h-dvh bg-[#fbf8f0] p-5 text-[#4b302f]">
+    <div className="mx-auto max-w-md">{navigation}
+      <p className="mb-3 text-sm">Connecté : <strong className="break-all">{user.email || 'Compte actif'}</strong></p>
+      <Link to={accountPath} className="inline-flex min-h-11 items-center rounded-xl bg-[#8f2530] px-5 text-white">Accéder à mon compte</Link>
+    </div>
+  </main>;
   return <main className="min-h-dvh bg-[#fbf8f0] px-4 py-6 text-[#4b302f]">
-    <div className="mx-auto max-w-md">
-      <div className="mb-5 flex flex-wrap gap-4 text-sm"><Link to={cvPath} className="inline-flex min-h-11 items-center underline">← Retour à ma vitrine</Link><Link to={qrPath} className="inline-flex min-h-11 items-center underline">Retour au QR code</Link></div>
-      <div className="mb-4 text-center"><h1 className="font-serif text-xl font-semibold">Mon compte professionnel</h1><p className="mt-2 text-sm">Utilisez votre compte Dalil Tounes existant. Aucun nouveau compte n’est nécessaire.</p></div>
-      <LoginForm onSuccess={()=>navigate(accountPath,{replace:true})} onSwitchToSignup={()=>{}} allowSignup={false} />
+    <div className="mx-auto max-w-md">{navigation}
+      <h1 className="mb-2 text-center font-serif text-xl font-semibold">Mon compte professionnel</h1>
+      <p className="mb-4 text-center text-sm">Un compte Dalil Tounes suffit. Connectez-vous avec celui déjà associé à votre activité.</p>
+      <div className="mb-4 grid grid-cols-2 gap-2" aria-label="Choix du parcours">
+        <button type="button" onClick={()=>{setMode('login');setSignupError('');}} aria-pressed={mode==='login'}
+          className={mode==='login'?'rounded-xl bg-[#8f2530] px-3 py-3 text-white':'rounded-xl border border-[#d9c59d] bg-white px-3 py-3'}>Se connecter</button>
+        <button type="button" onClick={()=>{setMode('signup');setSignupError('');}} aria-pressed={mode==='signup'}
+          className={mode==='signup'?'rounded-xl bg-[#8f2530] px-3 py-3 text-white':'rounded-xl border border-[#d9c59d] bg-white px-3 py-3'}>Créer un compte</button>
+      </div>
+      {mode==='login' ? <LoginForm onSuccess={()=>navigate(accountPath,{replace:true})} onSwitchToSignup={()=>setMode('signup')} allowSignup={false}/> :
+        signupDone ? <div role="status" className="rounded-2xl border border-[#d9c59d] bg-white p-5">
+          <p className="font-semibold">Compte créé.</p>
+          <p className="mt-2 text-sm">Vérifiez votre e-mail si une confirmation est demandée. Le compte n’est pas encore autorisé à gérer cette vitrine : le rattachement doit être vérifié. Vous pouvez revenir à la vitrine à tout moment.</p>
+          <button type="button" onClick={()=>{setSignupDone(false);setMode('login');}} className="mt-4 min-h-11 rounded-xl bg-[#8f2530] px-4 text-white">Se connecter</button>
+        </div> :
+        <form onSubmit={e=>void createAccount(e)} className="space-y-3 rounded-2xl border border-[#d9c59d] bg-white p-5">
+          <h2 className="font-semibold">Créer mon compte Dalil Tounes</h2>
+          <p className="text-sm">Si votre entreprise possède déjà un compte, utilisez plutôt « Se connecter ». Une nouvelle inscription ne rattache pas automatiquement une vitrine existante.</p>
+          <label className="block text-sm">E-mail<input autoComplete="email" type="email" required value={email} onChange={e=>setEmail(e.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-[#d9c59d] px-3"/></label>
+          <label className="block text-sm">Mot de passe<input autoComplete="new-password" type="password" required minLength={6} value={password} onChange={e=>setPassword(e.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-[#d9c59d] px-3"/></label>
+          <label className="block text-sm">Confirmer le mot de passe<input autoComplete="new-password" type="password" required value={confirm} onChange={e=>setConfirm(e.target.value)} className="mt-1 min-h-11 w-full rounded-lg border border-[#d9c59d] px-3"/></label>
+          {signupError&&<p role="alert" className="text-sm text-red-700">{signupError}</p>}
+          <button type="submit" disabled={submitting} className="min-h-11 w-full rounded-xl bg-[#8f2530] px-4 text-white disabled:opacity-60">{submitting?'Création…':'Créer mon compte'}</button>
+        </form>}
     </div>
   </main>;
 }
@@ -82,7 +139,8 @@ export default function ClientAccount() {
   </main>;
   if(state!=='allowed')return <main className="min-h-dvh bg-[#fbf8f0] p-6 text-center text-[#4b302f]">
     <div className="mx-auto max-w-md rounded-2xl border border-[#d9c59d] bg-white p-5">
-      <p role="alert">Le compte actuellement connecté n’a pas accès à cette vitrine.</p>
+      <p role="alert">Ce compte n’est pas encore autorisé à gérer cette vitrine.</p>
+      <p className="mt-2 break-all text-xs">Compte connecté : <strong>{user.email || 'compte sans e-mail disponible'}</strong></p>
       <p className="mt-2 text-sm text-[#655b51]">Si vous avez plusieurs comptes Dalil Tounes, connectez-vous avec celui associé à cet établissement. Aucune nouvelle inscription n’est nécessaire.</p>
       <button type="button" disabled={switchingAccount} onClick={()=>void switchAccount()}
         className="mt-4 inline-flex min-h-11 items-center rounded-xl bg-[#8f2530] px-5 text-white disabled:opacity-60">
