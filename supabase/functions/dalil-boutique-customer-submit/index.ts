@@ -1,7 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.112.2";
 
 // Server-validated customer requests. Never trust client price, payment state or product ownership.
-const origins = new Set(["https://dalil-tounes.com","https://www.dalil-tounes.com","https://app.dalil-tounes.com","https://dalil-tounes-pwa.vercel.app","http://localhost:5173"]);
+const origins = new Set(["https://dalil-tounes.com","https://www.dalil-tounes.com","https://app.dalil-tounes.com","https://appli.dalil-tounes.com","https://pwa.dalil-tounes.com","https://dalil-tounes-pwa.vercel.app","http://localhost:5173"]);
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const entrepriseId = /^[a-z0-9][a-z0-9_-]{0,99}$/i;
 const reply = (data:unknown,status=200,origin="") => new Response(JSON.stringify(data),{status,headers:{
