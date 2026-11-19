@@ -7,10 +7,13 @@ import vm from 'node:vm';
 const entreprise='36f84b99-2c37-47d1-91ba-4c35cda8c1af';
 const secondEntreprise='46f84b99-2c37-47d1-91ba-4c35cda8c1af';
 const productId='9e445ab7-10be-4bb4-ac9d-0c865e49dacb';
+// Existing approved quote item from Aux Saveurs d'Anis; requests stay synthetic.
+const pilotQuoteId='f371389d-5db1-4987-a47d-d275ed085d2c';
 const data={
   entreprise:[{id:entreprise,approved:true,statut_publication:'Publié',statut_validation:'publie'},
     {id:secondEntreprise,approved:true,statut_publication:'Publié',statut_validation:'publie'}],
-  dalil_boutique_products:[{id:productId,entreprise_id:entreprise,title:'Test',mode:'order',price:30,currency:'TND',status:'approved',approved_at:'2026-11-14T10:00:00Z'}],
+  dalil_boutique_products:[{id:productId,entreprise_id:entreprise,title:'Test',mode:'order',price:30,currency:'TND',status:'approved',approved_at:'2026-11-14T10:00:00Z'},
+    {id:pilotQuoteId,entreprise_id:entreprise,title:'Buffet de mariage',mode:'quote',price:null,currency:'TND',status:'approved',approved_at:'2026-11-14T19:59:36Z'}],
   dalil_boutique_customer_orders:[],
   professional_profile_access:[{user_id:'merchant-1',entreprise_id:entreprise},
     {user_id:'merchant-2',entreprise_id:secondEntreprise}],
@@ -30,7 +33,7 @@ function mockQuery(table){
         if(matched().length) return {data:null,error:{code:'23505'}};
         const old=data[table].find(row=>row.entreprise_id===payload.entreprise_id&&row.idempotency_key===payload.idempotency_key);
         if(old)return {data:null,error:{code:'23505'}};
-        const row={...payload,id:'e1ac9661-8fd8-4bcb-af79-b1c0e6edbd92',status:'received',payment_status:'not_requested',created_at:new Date().toISOString()};
+        const row={...payload,id:crypto.randomUUID(),status:'received',payment_status:'not_requested',created_at:new Date().toISOString()};
         data[table].push(row);return{data:row,error:null};
       }
       if(operation==='update'){
@@ -147,3 +150,46 @@ for(const [name,act,status] of cases){
 }
 assert.equal(data.dalil_boutique_customer_orders.length,1,'No duplicate must be inserted');
 console.log('PASS single stored order, no external communications');
+ 
+// Full quote journey for the real pilot catalogue product, using mocked endpoints only.
+// No production customer, order, payment, WhatsApp or email is created.
+rateLimited=false;
+const pilotRequest={profileId:entreprise,productId:pilotQuoteId,
+  idempotencyKey:'3b89089b-d302-4a81-b1a1-f527a1412bb5',
+  quantity:3,name:'ESSAI PILOTE - NE PAS TRAITER',
+  contact:'pilot@example.invalid',note:'Date souhaitée : 2026-12-22\\nSimulation sans commande réelle'};
+const pilotSubmitted=await submit(request(pilotRequest));
+assert.equal(pilotSubmitted.status,201,'Pilot quote must be recorded');
+const pilotPayload=await pilotSubmitted.json();
+assert.equal(pilotPayload.kind,'quote');
+assert.ok(pilotPayload.reference,'Pilot reference must exist');
+assert.equal(data.dalil_boutique_customer_orders.length,2);
+console.log('PASS pilot quote submitted with reference, no paid amount');
+const pilotRetry=await submit(request(pilotRequest));
+assert.equal(pilotRetry.status,200,'Retry must not duplicate quote');
+assert.equal((await pilotRetry.json()).reference,pilotPayload.reference);
+assert.equal(data.dalil_boutique_customer_orders.length,2);
+console.log('PASS pilot quote retry does not duplicate');
+const pilotInbox=await merchant(request({profileId:entreprise,action:'list'},'merchant-token'));
+assert.equal(pilotInbox.status,200);
+const pilotOrders=(await pilotInbox.json()).orders;
+const storedPilot=pilotOrders.find(item=>item.id===pilotPayload.reference);
+assert.ok(storedPilot,'Pilot quote must appear in professional inbox');
+assert.equal(storedPilot.kind,'quote');
+assert.equal(storedPilot.amount_total,null);
+assert.equal(storedPilot.customer_note,pilotRequest.note);
+console.log('PASS pilot quote visible to assigned merchant with chosen date');
+const stolen=await merchant(request({profileId:entreprise,action:'list'},'second-merchant-token'));
+assert.equal(stolen.status,403);
+console.log('PASS pilot quote not visible to another merchant');
+const pilotConfirmed=await merchant(request({profileId:entreprise,action:'update',
+  id:pilotPayload.reference,status:'confirmed'},'merchant-token'));
+assert.equal(pilotConfirmed.status,200,'Quote can be confirmed without payment');
+const pilotCompleted=await merchant(request({profileId:entreprise,action:'update',
+  id:pilotPayload.reference,status:'completed'},'merchant-token'));
+assert.equal(pilotCompleted.status,200,'Quote can be completed');
+const pilotRepeat=await merchant(request({profileId:entreprise,action:'update',
+  id:pilotPayload.reference,status:'completed'},'merchant-token'));
+assert.equal(pilotRepeat.status,409,'Closed quote cannot be modified again');
+console.log('PASS quote workflow received to confirmed to completed, no payment claim');
+
