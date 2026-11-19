@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - fix/client-qr-account-navigation-preview-20261119
+      - fix/client-account-complete-auth-flow-preview-20261119
   pull_request:
     paths:
       - src/pages/ClientAccount.tsx
