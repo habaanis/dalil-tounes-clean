@@ -35,4 +35,14 @@ check('client preview remains opt-in and isolated to Vercel host',
   clientUrls.includes('return CLIENT_APP_ORIGIN;'));
 check('account route recognizes isolated preview host',
   account.includes('isDedicatedClientHostname(window.location.hostname)'));
+check('signup and login are both available inside the client app',
+  account.includes("setMode('signup')")&&account.includes("setMode('login')")&&
+  account.includes("signUp(email.trim().toLowerCase(),password,'company')"));
+check('signup never redirects to the platform or assigns business ownership',
+  !account.includes("navigate('/commercial')")&&
+  !account.includes(".insert({user_id:")&&
+  !account.includes(".upsert({user_id:")&&
+  account.includes('le rattachement doit être vérifié'));
+check('denied access shows connected identity and allows account switching',
+  account.includes('Compte connecté :')&&account.includes('Se connecter avec un autre compte'));
 console.log('PASS QR/vitrine/compte navigation contracts');
