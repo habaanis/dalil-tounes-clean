@@ -1124,7 +1124,15 @@ export default function BusinessShowcaseLienoraDetail({
   const logoImage = getLogoUrl(business.logo_url);
   const openingStyle: 'photo' | 'framed' =
     String(business.opening_style || '').toLowerCase() === 'framed' ? 'framed' : 'photo';
-  const clientOpening = isClientAppMode && !embeddedPreview && new URLSearchParams(location.search).get('skip-opening') !== '1' && Boolean(String(business.logo_url || '').trim()) && Boolean(String(business.image_url || '').trim()) ? (
+  // A client launch animation belongs to the initial external entry only.
+  // Internal React Router returns must never cover the vitrine with a photo flash.
+  const isInternalClientReturn = typeof window.history.state?.idx === 'number'
+    && window.history.state.idx > 0;
+  const clientOpening = isClientAppMode && !embeddedPreview
+    && !isInternalClientReturn
+    && new URLSearchParams(location.search).get('skip-opening') !== '1'
+    && Boolean(String(business.logo_url || '').trim())
+    && Boolean(String(business.image_url || '').trim()) ? (
     <ClientOpeningAuto
       clientId={business.id}
       name={business.nom}
@@ -1281,19 +1289,23 @@ export default function BusinessShowcaseLienoraDetail({
     },
   ].filter((action): action is ActionConfig => Boolean(action));
 
-  const portfolioActions: ActionConfig[] = [...primaryActions];
+  // The dedicated QR entry owns installation. Do not repeat the action in the CV.
+  const cvActions = isDedicatedClientHostname(window.location.hostname)
+    ? primaryActions.filter(action => action.label !== installLabel)
+    : primaryActions;
+  const portfolioActions: ActionConfig[] = [...cvActions];
 
   // Prioritize Lienora's four visible actions: install, call, email, directions.
   // WhatsApp, website, and any extra action remain available inside the drawer.
   const priorityActions = [installLabel, text.call, text.email, text.directions];
-  const sortedPrimaryActions = [...primaryActions].sort((first, second) => {
+  const sortedPrimaryActions = [...cvActions].sort((first, second) => {
     const firstPriority = priorityActions.indexOf(first.label);
     const secondPriority = priorityActions.indexOf(second.label);
     return (firstPriority < 0 ? priorityActions.length : firstPriority)
       - (secondPriority < 0 ? priorityActions.length : secondPriority);
   });
   const displayedPrimaryActions = embeddedPreview
-    ? primaryActions.filter(action => [installLabel, text.call, text.whatsapp, text.email, text.directions].includes(action.label))
+    ? cvActions.filter(action => [installLabel, text.call, text.whatsapp, text.email, text.directions].includes(action.label))
     : sortedPrimaryActions.slice(0, 4);
   const extraPrimaryActions = embeddedPreview ? [] : sortedPrimaryActions.slice(4);
   const moreActionsLabel = language === 'ar' ? 'المزيد من الخيارات'
@@ -1692,15 +1704,22 @@ export default function BusinessShowcaseLienoraDetail({
 
   // Keep professional access visible on both Business and Portfolio mini-apps.
   // Authorization is enforced by ClientAccount after the link is opened.
+  const isIsolatedClientPreview = !embeddedPreview && isDedicatedClientHostname(window.location.hostname)
+    && window.location.hostname !== 'app.dalil-tounes.com';
+  const clientQrReturnUrl = new URL(buildClientAppUrl(business, language));
+  if (isIsolatedClientPreview) clientQrReturnUrl.searchParams.set('client-preview', '1');
+  const accountReturnHref = '/' + encodeURIComponent(String(business.slug_court || business.slug || business.id))
+    + '/compte?return-model=' + presentationStyle
+    + (isIsolatedClientPreview ? '&client-preview=1' : '');
   const clientAccountButton = !embeddedPreview && isDedicatedClientHostname(window.location.hostname)
     && capabilities.variant === 'premium' ? (
       <nav aria-label="Navigation de la mini-application"
         className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-2 px-4 pt-3" dir={isRTL ? 'rtl' : 'ltr'}>
-        <a href={buildClientAppUrl(business, language)}
+        <a href={clientQrReturnUrl.toString()}
           className="inline-flex min-h-10 items-center rounded-full border border-[#d7bf8a] bg-[#fffcf6] px-4 py-2 text-xs font-semibold text-[#593b30] shadow-sm">
           {language === 'ar' ? 'العودة إلى QR' : language === 'en' ? 'Back to QR' : 'Retour au QR code'}
         </a>
-        <a href={'/' + encodeURIComponent(String(business.slug_court || business.slug || business.id)) + '/compte'}
+        <a href={accountReturnHref}
           className="inline-flex min-h-10 items-center gap-2 rounded-full border border-[#d7bf8a] bg-[#fffcf6] px-4 py-2 text-xs font-semibold text-[#593b30] shadow-sm">
           <UserRound size={16} aria-hidden="true" />
           {language === 'ar' ? 'حسابي المهني' : language === 'en' ? 'My account' : 'Mon compte'}
@@ -1748,7 +1767,7 @@ export default function BusinessShowcaseLienoraDetail({
           practicalContent={sections.find(section => section.id === 'practical')?.content}
           onShowQr={() => setOpenSection('sharing')}
           onShare={() => void share()}
-          sharingContent={sharingContent}
+          sharingContent={isDedicatedClientRoute ? undefined : sharingContent}
           socialActions={socialLinks}
           onDownloadContact={downloadContact}
           onSelectImage={setSelectedImage}
@@ -1908,7 +1927,7 @@ export default function BusinessShowcaseLienoraDetail({
                   <CalendarDays aria-hidden="true" />{text.book}
                 </button>
               )}
-              {(capabilities.showQrCode || capabilities.showShareTools) && (
+              {!isDedicatedClientRoute && (capabilities.showQrCode || capabilities.showShareTools) && (
                 <button type="button" className="dt-secondary-action" onClick={openSharing}>
                   <QrCode aria-hidden="true" />{text.myQr}
                 </button>
@@ -1929,9 +1948,9 @@ export default function BusinessShowcaseLienoraDetail({
                   </a>
                 );
               })}
-              <button type="button" className="dt-secondary-action" onClick={downloadContact}>
+              {!isDedicatedClientRoute && <button type="button" className="dt-secondary-action" onClick={downloadContact}>
                 <Contact aria-hidden="true" />{text.addContact}
-              </button>
+              </button>}
               {hasSection('reviews') && cvProfile.reviews.url && (
                 <a
                   className="dt-secondary-action"

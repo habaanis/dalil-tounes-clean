@@ -69,6 +69,54 @@
       "destination": "/index.html"
     },
     {
+      "source": "/:clientSlug([a-z0-9-]+)",
+      "has": [
+        {
+          "type": "host",
+          "value": {
+            "re": "^dalil-tounes-clean-[a-z0-9-]+-haba-anis-projects\\.vercel\\.app$"
+          }
+        }
+      ],
+      "destination": "/index.html"
+    },
+    {
+      "source": "/:clientSlug([a-z0-9-]+)/cv",
+      "has": [
+        {
+          "type": "host",
+          "value": {
+            "re": "^dalil-tounes-clean-[a-z0-9-]+-haba-anis-projects\\.vercel\\.app$"
+          }
+        }
+      ],
+      "destination": "/index.html"
+    },
+    {
+      "source": "/:clientSlug([a-z0-9-]+)/compte",
+      "has": [
+        {
+          "type": "host",
+          "value": {
+            "re": "^dalil-tounes-clean-[a-z0-9-]+-haba-anis-projects\\.vercel\\.app$"
+          }
+        }
+      ],
+      "destination": "/index.html"
+    },
+    {
+      "source": "/:clientSlug([a-z0-9-]+)/connexion",
+      "has": [
+        {
+          "type": "host",
+          "value": {
+            "re": "^dalil-tounes-clean-[a-z0-9-]+-haba-anis-projects\\.vercel\\.app$"
+          }
+        }
+      ],
+      "destination": "/index.html"
+    },
+    {
       "source": "/p/:slug",
       "destination": "/index.html"
     },
