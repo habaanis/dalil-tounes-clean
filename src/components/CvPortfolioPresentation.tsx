@@ -27,7 +27,7 @@ type PortfolioPalette = 'prestige' | 'ivory' | 'night';
 
 const PORTFOLIO_PALETTE_THEMES: Record<PortfolioPalette, CSSProperties> = {
   prestige: {
-    '--cvp-page': '#eef1ef', '--cvp-text': '#f7f4ec', '--cvp-shell-start': '#073226',
+    '--cvp-page': '#031d18', '--cvp-text': '#f7f4ec', '--cvp-shell-start': '#073226',
     '--cvp-shell-mid': '#031d18', '--cvp-shell-end': '#021e18', '--cvp-identity-start': '#073226',
     '--cvp-identity-end': '#021e18', '--cvp-panel': '#031d18', '--cvp-action': 'rgba(7,50,38,.55)',
     '--cvp-badge': '#087051', '--cvp-overlay': 'rgba(0,45,39,.95)', '--cvp-accent': '#e7b943',
