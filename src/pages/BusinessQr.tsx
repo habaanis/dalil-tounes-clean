@@ -306,19 +306,10 @@ export default function BusinessQr() {
     // Preview only. Persisting the company's selection requires authorized admin access.
     setOpeningStyle(style);
   };
-  const cvLink = new URL(buildClientCvUrl(business || identifier, language, paletteTheme.id));
-  const cvUrl = cvLink.toString();
-  // The QR only needs the permanent CV destination, not language/palette parameters.
-  // A compact URL makes the QR much easier to scan on older phone cameras.
+  // QR, Open and Share must use the exact same permanent client URL.
+  // Do not pin a palette or language in a forwarded link: these can change later.
   const scannableCvUrl = new URL('/' + encodeURIComponent(clientIdentifier) + '/cv?skip-opening=1', 'https://app.dalil-tounes.com').toString();
-  // Explicitly opening a CV from this QR screen should never replay the logo splash.
-  const directCvLink = new URL(cvUrl);
-  directCvLink.searchParams.set('skip-opening', '1');
-  const directCvUrl = directCvLink.toString();
-  // Vue de contrôle sur un AUTRE domaine que la PWA cliente.
-  // Le navigateur peut bloquer plusieurs installations sous app.dalil-tounes.com ;
-  // cette page reste accessible, sans être capturée par une autre mini-application.
-  const browserCvUrl = directCvUrl;
+  const browserCvUrl = scannableCvUrl;
   // A professional can explicitly switch between Portfolio and Business.
   // The last CV actually viewed takes precedence over the default published model.
   const explicitReturnModel = new URLSearchParams(window.location.search).get('preview-model');
@@ -400,7 +391,7 @@ export default function BusinessQr() {
     const shareData = {
       title: displayName,
       text: `${displayName} — ${modelText.product} Dalil Tounes`,
-      url: cvUrl,
+      url: scannableCvUrl,
     };
 
     try {
@@ -408,13 +399,13 @@ export default function BusinessQr() {
         await navigator.share(shareData);
         return;
       }
-      await navigator.clipboard.writeText(cvUrl);
+      await navigator.clipboard.writeText(scannableCvUrl);
       setShareConfirmed(true);
       window.setTimeout(() => setShareConfirmed(false), 1800);
     } catch (error) {
       if ((error as DOMException)?.name !== 'AbortError') {
         try {
-          await navigator.clipboard.writeText(cvUrl);
+          await navigator.clipboard.writeText(scannableCvUrl);
           setShareConfirmed(true);
           window.setTimeout(() => setShareConfirmed(false), 1800);
         } catch {
