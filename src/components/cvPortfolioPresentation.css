@@ -1230,3 +1230,57 @@
   .cvp-page--lienora .cvp-lienora-tabs > .cvp-native-boutique-tab {font-size:.5rem;min-width:45px;flex-basis:45px}
   .cvp-page--lienora .cvp-portfolio-featured-photo {height:135px}
 }
+
+/* Consistent secondary actions: same palette, border and height for every action,
+   including the existing Boutique trigger and share/social controls. */
+.cvp-page--lienora .cvp-lienora-extra-actions > a,
+.cvp-page--lienora .cvp-lienora-extra-actions > button {
+  min-height: 38px;
+  border: 1px solid var(--cvp-accent);
+  background: var(--cvp-panel);
+  color: var(--cvp-text);
+  border-radius: 9px;
+  font: inherit;
+  font-size: .58rem;
+  font-weight: 500;
+  line-height: 1.25;
+  padding: 7px;
+}
+.cvp-page--lienora .cvp-lienora-extra-actions > :is(a, button) svg {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 auto;
+}
+.cvp-page--lienora .cvp-lienora-extra-actions > :is(a, button):focus-visible {
+  outline: 2px solid var(--cvp-accent);
+  outline-offset: 2px;
+}
+
+/* Boutique keeps the CV palette identity, but form fields remain light and legible
+   regardless of the phone/browser dark-mode setting. */
+.dalil-boutique-dialog {
+  color-scheme: light;
+}
+.dalil-boutique-dialog input,
+.dalil-boutique-dialog select,
+.dalil-boutique-dialog textarea {
+  color-scheme: light;
+  background-color: #fffaf2;
+  color: #30291d;
+  border-color: var(--boutique-accent, #d4af37);
+}
+.dalil-boutique-dialog input::placeholder,
+.dalil-boutique-dialog textarea::placeholder {
+  color: #796d5e;
+  opacity: 1;
+}
+.dalil-boutique-dialog input:focus-visible,
+.dalil-boutique-dialog select:focus-visible,
+.dalil-boutique-dialog textarea:focus-visible {
+  outline: 2px solid var(--boutique-accent, #d4af37);
+  outline-offset: 1px;
+}
+.dalil-boutique-dialog button:focus-visible {
+  outline: 2px solid var(--boutique-accent, #d4af37);
+  outline-offset: 2px;
+}
