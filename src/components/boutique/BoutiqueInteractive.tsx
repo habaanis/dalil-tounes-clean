@@ -20,6 +20,7 @@ export type BoutiqueConfig = {
   merchantName: string;
   profileId?: string;
   whatsapp: string;
+  email?: string;
   products: BoutiqueProduct[];
   paymentsVerified?: boolean;
   demoMode?: boolean;
@@ -51,6 +52,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
   const [quantity, setQuantity] = useState(1);
   const [name, setName] = useState('');
   const [contact, setContact] = useState('');
+  const [contactChannel, setContactChannel] = useState<'whatsapp' | 'email'>('whatsapp');
   const [details, setDetails] = useState('');
   const [requestedDate, setRequestedDate] = useState('');
   const [error, setError] = useState('');
@@ -94,6 +96,9 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
   const pageProducts = filteredProducts.slice((safePage - 1) * 12, safePage * 12);
   const phone = config.whatsapp.replace(/\D/g, '');
   const canWhatsApp = /^\d{8,15}$/.test(phone);
+  // The existing pilot is configured with a public business e-mail address.
+  const merchantEmail = config.email?.trim() || (config.profileId === '36f84b99-2c37-47d1-91ba-4c35cda8c1af' ? 'aux.saveurs@hotmail.com' : '');
+  const canEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(merchantEmail);
   useEffect(() => {
     if(!open)return;
     if(config.demoMode){setOrderAvailability('available');return;}
@@ -140,7 +145,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
   };
   const showProduct = (product: BoutiqueProduct) => {
     setSelected(product); setRequestOpen(false); setQuantity(1);
-    setName(''); setContact(''); setDetails(''); setRequestedDate(''); setError('');
+    setName(''); setContact(''); setContactChannel('whatsapp'); setDetails(''); setRequestedDate(''); setError('');
     setConfirmation(''); setSending(false); setRequestKey(crypto.randomUUID());
   };
   const send = async () => {
@@ -153,8 +158,12 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
     if (selected.mode === 'order' && (typeof selected.price !== 'number' || !Number.isFinite(selected.price) || selected.price <= 0)) {
       setError('Cet article n’a pas de prix valide pour une commande. Demandez un devis au professionnel.'); return;
     }
-    if (name.trim().length < 2 || contact.trim().length < 3) {
-      setError('Indiquez votre nom et vos coordonnées.'); return;
+    if (name.trim().length < 2) { setError('Indiquez votre nom.'); return; }
+    if (contactChannel === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.trim())) {
+      setError('Indiquez une adresse e-mail valide.'); return;
+    }
+    if (contactChannel === 'whatsapp' && !/^\+?[\d\s().-]{8,20}$/.test(contact.trim())) {
+      setError('Indiquez un numéro de téléphone valide pour WhatsApp.'); return;
     }
     // The selected date is part of the stored note and therefore of the server's idempotency fingerprint.
     const today = new Date();
@@ -162,7 +171,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
     if (requestedDate && (!/^\d{4}-\d{2}-\d{2}$/.test(requestedDate) || requestedDate < localToday)) {
       setError('Sélectionnez une date d’événement valide, aujourd’hui ou plus tard.'); return;
     }
-    const note = [requestedDate ? 'Date souhaitée : '+requestedDate : '',details.trim()].filter(Boolean).join('\n');
+    const note = ['Canal de réponse souhaité : '+(contactChannel === 'email' ? 'E-mail' : 'WhatsApp'), requestedDate ? 'Date souhaitée : '+requestedDate : '',details.trim()].filter(Boolean).join('\n');
     if (note.length > 1000) { setError('Les précisions sont trop longues. Raccourcissez votre message.'); return; }
     setSending(true);setError('');
     try {
@@ -192,6 +201,12 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
       'Ce message est envoyé directement : aucune commande n’a été enregistrée sur Dalil Tounes.',
     ].join('\\n');
     window.open('https://wa.me/'+phone+'?text='+encodeURIComponent(message),'_blank','noopener,noreferrer');
+  };
+  const contactEmail=()=>{
+    if(!confirmation || !canEmail || !selected)return;
+    const subject='Demande Dalil Tounes '+confirmation.slice(0,8).toUpperCase()+' - '+selected.title;
+    const body=['Bonjour,','Je vous contacte au sujet de ma demande enregistrée sur Dalil Tounes.','Référence : '+confirmation,'Article : '+selected.title,'Quantité : '+quantity, ...(requestedDate ? ['Date souhaitée : '+requestedDate] : []),'Nom : '+name.trim(),'E-mail : '+contact.trim()].join('\n');
+    window.location.href='mailto:'+merchantEmail+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
   };
   const contactWhatsApp=()=>{
     if(!confirmation || !canWhatsApp || !selected)return;
@@ -281,7 +296,14 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
               <label style={labelStyle}>Nom<input value={name} disabled={Boolean(confirmation)||sending} onChange={event => { setName(event.target.value); editRequest(); }} maxLength={120} placeholder="Votre nom" style={fieldStyle}/></label>
               <label style={labelStyle}>Qté<input type="number" min="1" max="99" value={quantity} disabled={Boolean(confirmation)||sending} onChange={event => { setQuantity(Math.max(1,Math.min(99,Number(event.target.value)||1))); editRequest(); }} style={fieldStyle}/></label>
             </div>
-            <label style={labelStyle}>Téléphone ou e-mail<input value={contact} disabled={Boolean(confirmation)||sending} onChange={event => { setContact(event.target.value); editRequest(); }} maxLength={150} placeholder="Vos coordonnées" style={fieldStyle}/></label>
+            <fieldset disabled={Boolean(confirmation)||sending} style={{border:0,padding:0,margin:0,display:'grid',gap:7}}>
+              <legend style={{fontSize:12,fontWeight:600,marginBottom:5}}>Comment souhaitez-vous être contacté ?</legend>
+              <div style={{display:'flex',gap:14,fontSize:12}}>
+                <label><input type="radio" name="boutique-contact-channel" checked={contactChannel==='whatsapp'} onChange={() => {setContactChannel('whatsapp');setContact('');editRequest();}} /> WhatsApp</label>
+                <label><input type="radio" name="boutique-contact-channel" checked={contactChannel==='email'} onChange={() => {setContactChannel('email');setContact('');editRequest();}} /> E-mail</label>
+              </div>
+            </fieldset>
+            <label style={labelStyle}>{contactChannel==='email'?'Adresse e-mail':'Numéro de téléphone (WhatsApp)'}<input type={contactChannel==='email'?'email':'tel'} autoComplete={contactChannel==='email'?'email':'tel'} value={contact} disabled={Boolean(confirmation)||sending} onChange={event => { setContact(event.target.value); editRequest(); }} maxLength={150} placeholder={contactChannel==='email'?'nom@exemple.com':'+216 XX XXX XXX'} style={fieldStyle}/></label>
             <label style={labelStyle}>Date souhaitée (facultative)<input type="date" value={requestedDate} disabled={Boolean(confirmation)||sending} onChange={event => { setRequestedDate(event.target.value); editRequest(); }} min={new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10)} style={fieldStyle}/></label>
             <label style={labelStyle}>Précisions (facultatif)<textarea value={details} disabled={Boolean(confirmation)||sending} onChange={event => { setDetails(event.target.value); editRequest(); }} maxLength={960} rows={2} placeholder="Nombre de personnes, retrait ou livraison…" style={{...fieldStyle, resize: 'vertical'}}/></label>
             {selected.mode === 'order' && typeof selected.price === 'number' && Number.isFinite(selected.price) && selected.price > 0 && <p style={{margin:0,fontSize:12,fontWeight:600,color:'#6d4d2b'}}>Total indicatif : {new Intl.NumberFormat('fr-FR',{style:'currency',currency:selected.currency}).format(Math.round(selected.price * quantity * (selected.currency === 'TND' ? 1000 : 100))/(selected.currency === 'TND' ? 1000 : 100))} · hors livraison éventuelle</p>}
@@ -296,11 +318,15 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
             {confirmation&&<div role="status" style={{display:'grid',gap:8,background:'#f3f6ea',color:'#355535',borderRadius:10,padding:12,fontSize:12}}>
               <strong>Demande enregistrée dans Mon compte du professionnel.</strong>
               <span>Référence : {confirmation.slice(0,8).toUpperCase()} · En attente de traitement · Aucun paiement enregistré.</span>
-              {canWhatsApp&&<button type="button" onClick={contactWhatsApp}
+              {contactChannel==='email' && canEmail && <button type="button" onClick={contactEmail}
+                style={{border:'1px solid #b3c9b3',borderRadius:10,padding:'11px 12px',background:'#fff',color:'#245c37',fontWeight:700,cursor:'pointer'}}>
+                Envoyer également un e-mail au professionnel
+              </button>}
+              {contactChannel==='whatsapp' && canWhatsApp&&<button type="button" onClick={contactWhatsApp}
                 style={{border:'1px solid #b3c9b3',borderRadius:10,padding:'11px 12px',background:'#fff',color:'#245c37',fontWeight:700,cursor:'pointer'}}>
                 Contacter le professionnel sur WhatsApp
               </button>}
-              <span>Votre demande reste enregistrée dans Dalil Tounes, même si vous ne contactez pas le professionnel sur WhatsApp.</span>
+              <span>La demande reste enregistrée dans Dalil Tounes, même sans envoi de message supplémentaire.</span>
             </div>}
             {confirmation && selected.mode === 'order' && <p style={{margin:0,fontSize:11,color:'#6c5945'}}>Dalil Tounes ne collecte aucun paiement pour cette commande. Convenez directement du règlement avec le professionnel, par WhatsApp ou un autre moyen.</p>}
           </div>}
