@@ -8,6 +8,7 @@ on:
       - fix/boutique-payment-readiness-20261119
       - fix/boutique-intermediary-whatsapp-flow-20261119
       - fix/boutique-public-availability-20261120
+      - fix/boutique-merchant-inbox-refresh-20261120
   workflow_dispatch:
 
 permissions:
@@ -36,5 +37,7 @@ jobs:
         run: node scripts/test-boutique-payment-readiness.mjs
       - name: Public order availability and fail-closed contracts
         run: node scripts/test-boutique-public-availability.mjs
+      - name: Merchant inbox refresh and permissions tests
+        run: node scripts/test-boutique-inbox-autorefresh.mjs
       - name: Compile PWA safely, no deployment
         run: npm run build

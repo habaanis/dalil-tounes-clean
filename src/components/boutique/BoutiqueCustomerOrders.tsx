@@ -58,6 +58,27 @@ export default function BoutiqueCustomerOrders({entrepriseIds}:{entrepriseIds:st
       .finally(()=>{if(live)setLoading(false);});
     return()=>{live=false;};
   },[activeCompany,refresh,call]);
+  // Refresh the private inbox while it is being viewed. This is a fallback for
+  // professionals who have not yet enabled mobile push notifications.
+  useEffect(()=>{
+    if(!activeCompany || busy)return;
+    let live=true;
+    let pending=false;
+    const check=()=>{
+      if(document.visibilityState!=='visible' || pending)return;
+      pending=true;
+      void call({action:'list',profileId:activeCompany})
+        .then(data=>{
+          if(live && Array.isArray(data.orders))setOrders(data.orders);
+        })
+        .catch(()=>{/* Keep existing orders visible; manual refresh exposes errors. */})
+        .finally(()=>{pending=false;});
+    };
+    const timer=window.setInterval(check,60000);
+    const onVisible=()=>{if(document.visibilityState==='visible')check();};
+    document.addEventListener('visibilitychange',onVisible);
+    return()=>{live=false;window.clearInterval(timer);document.removeEventListener('visibilitychange',onVisible);};
+  },[activeCompany,busy,call]);
   const update=async (order:Order,status:ProcessingStatus)=>{
     if(busy||!activeCompany)return;
     const cancellationNotice = status==='cancelled' && order.kind==='order'
@@ -76,6 +97,7 @@ export default function BoutiqueCustomerOrders({entrepriseIds}:{entrepriseIds:st
       <div>
         <h3 className="font-serif text-lg font-semibold text-[#62212a]">Mes commandes et devis</h3>
         <p className="mt-1 text-xs leading-5 text-[#655b51]">Demandes enregistrées sur Dalil Tounes, même sans WhatsApp. Le paiement se règle directement entre le client et le professionnel, hors Dalil Tounes.</p>
+        <p className="mt-1 text-xs text-[#655b51]">Liste actualisée automatiquement lorsque cette page est ouverte. Pour une alerte lorsque l’application est fermée, activez les notifications professionnelles ci-dessus.</p>
       </div>
       <button type="button" onClick={()=>setRefresh(n=>n+1)} disabled={loading||Boolean(busy)}
         className="min-h-11 rounded-lg border border-[#d5bd8b] bg-white px-3 text-sm font-semibold text-[#62303a] disabled:opacity-50">Actualiser</button>
