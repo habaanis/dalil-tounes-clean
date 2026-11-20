@@ -9,6 +9,7 @@ on:
       - fix/boutique-intermediary-whatsapp-flow-20261119
       - fix/boutique-public-availability-20261120
       - fix/boutique-merchant-inbox-refresh-20261120
+      - release/boutique-pilot-aux-saveurs-20261120
   workflow_dispatch:
 
 permissions:
