@@ -7,7 +7,6 @@ import {
   Contact,
   FileText,
   Home,
-  QrCode,
   Share2,
   Images,
   Info,
@@ -153,9 +152,7 @@ export interface CvPortfolioPresentationProps {
   hoursBadge?: string;
   practicalContent?: ReactNode;
   boutiqueContent?: ReactNode;
-  onShowQr: () => void;
   onShare: () => void;
-  sharingContent?: ReactNode;
   socialActions?: PortfolioAction[];
   onDownloadContact: () => void;
   onSelectImage: (url: string) => void;
@@ -183,9 +180,7 @@ export function CvPortfolioPresentation({
   hoursBadge,
   practicalContent,
   boutiqueContent,
-  onShowQr,
   onShare,
-  sharingContent,
   socialActions = [],
   onDownloadContact,
   onSelectImage,
@@ -206,7 +201,6 @@ export function CvPortfolioPresentation({
   const [writeReviewOpen, setWriteReviewOpen] = useState(false);
   const [bookingOpen, setBookingOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
-  const [qrOpen, setQrOpen] = useState(false);
   const [socialOpen, setSocialOpen] = useState(false);
   const isRTL = language === 'ar';
   const hasSection = (section: ResolvedCvPresentation['visibleSections'][number]) =>
@@ -357,9 +351,6 @@ export function CvPortfolioPresentation({
                 {presentation.visibleActions.includes('reservation') && bookingContent && (
                   <button type="button" onClick={() => setBookingOpen(value => !value)}><CalendarDays />{copy.book}</button>
                 )}
-                {sharingContent && (
-                  <button type="button" onClick={() => { onShowQr(); setQrOpen(open => !open); }}><QrCode />{copy.myQr}</button>
-                )}
                 <button type="button" onClick={onShare}><Share2 />{copy.share}</button>
                 {socialActions.length > 0 && (
                   <button type="button" onClick={() => setSocialOpen(open => !open)}><Share2 />{copy.socialNetworks}</button>
@@ -370,7 +361,6 @@ export function CvPortfolioPresentation({
               </div>
             )}
             {bookingOpen && bookingContent && <section className="cvp-booking">{bookingContent}</section>}
-            {qrOpen && sharingContent && <section className="cvp-booking">{sharingContent}</section>}
 
             <nav className="cvp-lienora-tabs" aria-label={navigationAriaLabel}>
               {tabs.map(({ id, label, icon: Icon }) => id === 'gallery' && boutiqueContent
