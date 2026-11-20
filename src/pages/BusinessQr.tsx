@@ -15,6 +15,7 @@ import {
   buildClientCvUrl,
   getClientAppIdentifier,
   isDedicatedClientHostname,
+  isPreviewClientMode,
 } from '../lib/clientAppUrl';
 
 interface BusinessQrRecord {
@@ -294,9 +295,11 @@ export default function BusinessQr() {
   // Vue de contrôle sur un AUTRE domaine que la PWA cliente.
   // Le navigateur peut bloquer plusieurs installations sous app.dalil-tounes.com ;
   // cette page reste accessible, sans être capturée par une autre mini-application.
-  const browserCvUrl = business
-    ? `https://dalil-tounes.com/entreprise/id/${encodeURIComponent(business.id)}?lang=${encodeURIComponent(language)}`
-    : cvUrl;
+  const browserCvUrl = isPreviewClientMode()
+    ? cvUrl
+    : business
+      ? `https://dalil-tounes.com/entreprise/id/${encodeURIComponent(business.id)}?lang=${encodeURIComponent(language)}`
+      : cvUrl;
   const logoUrl = business ? getLogoUrl(business.logo_url) : '';
   const coverUrl = getCoverUrl(business?.image_url);
   const tier = business ? mapSubscriptionToTier(business) : 'gratuit';
