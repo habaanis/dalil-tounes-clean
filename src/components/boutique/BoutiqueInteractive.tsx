@@ -100,7 +100,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
     if(!config.profileId){setOrderAvailability('unavailable');return;}
     let active=true;
     setOrderAvailability('checking');
-    void fetch(supabaseUrl+'/functions/v1/dalil-boutique-customer-submit',{
+    void fetch(supabaseUrl+'/functions/v1/dalil-boutique-customer-submit?profileId='+encodeURIComponent(config.profileId),{
       method:'GET',headers:{apikey:supabaseAnonKey},cache:'no-store',
     }).then(async response=>{
       const data=await response.json().catch(()=>null);
