@@ -42,8 +42,8 @@ const priceText = (product: BoutiqueProduct) =>
     : 'Sur devis';
 
 const labelStyle = { display: 'grid', gap: 4, fontSize: 12, fontWeight: 500 } as const;
-const fieldStyle = { boxSizing: 'border-box', width: '100%', minWidth: 0, border: '1px solid #d7c7ae', borderRadius: 9, padding: '9px 10px', fontSize: 14, background: '#fff' } as const;
-const iconButton = { background: '#fffaf3', border: '1px solid #d7c7ae', borderRadius: 24, height: 34, minWidth: 34, cursor: 'pointer', color: '#063b30', fontSize: 20 } as const;
+const fieldStyle = { boxSizing: 'border-box', width: '100%', minWidth: 0, border: '1px solid var(--boutique-accent, #d7c7ae)', borderRadius: 9, padding: '9px 10px', fontSize: 14, background: '#fffaf2', color: '#30291d', colorScheme: 'light' } as const;
+const iconButton = { background: 'var(--boutique-button, #063b30)', border: '1px solid var(--boutique-accent, #d7c7ae)', borderRadius: 24, height: 34, minWidth: 34, cursor: 'pointer', color: 'var(--boutique-button-ink, #fff)', fontSize: 20 } as const;
 
 export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = 'Boutique', triggerIcon }: { config: BoutiqueConfig; triggerClassName?: string; triggerLabel?: string; triggerIcon?: ReactNode }) {
   const [open, setOpen] = useState(false);
@@ -236,13 +236,13 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
     </button>
     {open && <div role="presentation" onMouseDown={close}
       style={{ position: 'fixed', inset: 0, zIndex: 9999, padding: 12, background: 'rgba(15,24,22,.67)', display: 'grid', placeItems: 'center' }}>
-      <section role="dialog" aria-modal="true" aria-label={selected ? selected.title : 'Boutique'}
+      <section role="dialog" aria-modal="true" className="dalil-boutique-dialog" aria-label={selected ? selected.title : 'Boutique'}
         onMouseDown={event => event.stopPropagation()}
-        style={{ boxSizing: 'border-box', width: 'min(100%,450px)', maxHeight: 'min(87dvh,760px)', overflowY: 'auto', background: '#fffcf6', color: '#3c302e', borderRadius: 19, border: '1px solid #dfc699', boxShadow: '0 16px 55px #0005', padding: '14px 15px 17px' }}>
+        style={{ boxSizing: 'border-box', width: 'min(100%,450px)', maxHeight: 'min(87dvh,760px)', overflowY: 'auto', background: 'var(--boutique-surface, #fffcf6)', color: 'var(--boutique-ink, #3c302e)', borderRadius: 19, border: '1px solid var(--boutique-accent, #dfc699)', boxShadow: '0 16px 55px #0005', padding: '14px 15px 17px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 12 }}>
           <div style={{ display: 'grid', gap: 2 }}>
-            <span style={{ color: '#947244', fontSize: 10, letterSpacing: '.09em', textTransform: 'uppercase' }}>{config.merchantName}</span>
-            <strong style={{ color: '#063b30', fontSize: 17 }}>{selected ? selected.title : 'Boutique'}</strong>
+            <span style={{ color: 'var(--boutique-accent, #947244)', fontSize: 10, letterSpacing: '.09em', textTransform: 'uppercase' }}>{config.merchantName}</span>
+            <strong style={{ color: 'var(--boutique-ink, #063b30)', fontSize: 17 }}>{selected ? selected.title : 'Boutique'}</strong>
           </div>
           <button type="button" style={iconButton} onClick={close} aria-label="Fermer la boutique">×</button>
         </div>
@@ -285,7 +285,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
           </div>
           {selected.description && <p style={{ fontSize: 12, lineHeight: 1.5, margin: '6px 0 12px', color: '#62574d' }}>{selected.description}</p>}
           {!requestOpen ? (orderAvailability==='available'||config.demoMode) ? <button type="button" onClick={() => setRequestOpen(true)}
-            style={{ border: 0, borderRadius: 10, background: '#063b30', color: '#fff', fontSize: 13, fontWeight: 600, padding: '11px 14px', width: '100%', cursor: 'pointer' }}>
+            style={{ border: '1px solid var(--boutique-accent, #d4af37)', borderRadius: 10, background: 'var(--boutique-button, #063b30)', color: 'var(--boutique-button-ink, #fff)', fontSize: 13, fontWeight: 600, padding: '11px 14px', width: '100%', cursor: 'pointer' }}>
             {selected.mode === 'quote' ? 'Demander un devis' : 'Commander'}
           </button> : <div role="status" style={{display:'grid',gap:9,padding:12,border:'1px solid #e3d6c0',borderRadius:10,background:'#fffaf3'}}>
             <p style={{margin:0,fontSize:12,color:'#655548'}}>{orderAvailability==='checking'
@@ -320,18 +320,18 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
             {error && <p role="alert" style={{ fontSize: 12, color: '#9e2828', margin: 0 }}>{error}</p>}
             {selected.mode==='order'&&<p style={{margin:0,fontSize:11,color:'#6c5945'}}>Votre demande est enregistrée sans paiement sur Dalil Tounes. Le professionnel vous contactera pour convenir directement des modalités de règlement et de livraison.</p>}
             <button type="button" onClick={()=>void send()} disabled={sending||Boolean(confirmation)}
-              style={{ width: '100%', padding: 10, border: 0, borderRadius: 10, background: '#063b30', color: '#fff', cursor: sending||confirmation?'default':'pointer', fontSize: 13, fontWeight: 600, opacity:(sending || Boolean(confirmation)) ? 0.76 : 1 }}>
+              style={{ width: '100%', padding: 10, border: '1px solid var(--boutique-accent, #d4af37)', borderRadius: 10, background: 'var(--boutique-button, #063b30)', color: 'var(--boutique-button-ink, #fff)', cursor: sending||confirmation?'default':'pointer', fontSize: 13, fontWeight: 600, opacity:(sending || Boolean(confirmation)) ? 0.76 : 1 }}>
               {sending?'Enregistrement…':confirmation?'Demande enregistrée':config.demoMode?'Tester la demande (simulation)':selected.mode === 'quote' ? 'Envoyer la demande de devis' : 'Enregistrer la demande de commande'}
             </button>
-            {confirmation&&<div role="status" style={{display:'grid',gap:8,background:'#f3f6ea',color:'#355535',borderRadius:10,padding:12,fontSize:12}}>
+            {confirmation&&<div role="status" style={{display:'grid',gap:8,background:'var(--boutique-button, #f3f6ea)',color:'var(--boutique-button-ink, #355535)',border:'1px solid var(--boutique-accent, #d4af37)',borderRadius:10,padding:12,fontSize:12}}>
               <strong>Demande enregistrée dans Mon compte du professionnel.</strong>
               <span>Référence : {confirmation.slice(0,8).toUpperCase()} · En attente de traitement · Aucun paiement enregistré.</span>
               {contactChannel==='email' && canEmail && <button type="button" onClick={contactEmail}
-                style={{border:'1px solid #b3c9b3',borderRadius:10,padding:'11px 12px',background:'#fff',color:'#245c37',fontWeight:700,cursor:'pointer'}}>
+                style={{border:'1px solid var(--boutique-accent, #d4af37)',borderRadius:10,padding:'11px 12px',background:'var(--boutique-surface, #fff)',color:'var(--boutique-ink, #245c37)',fontWeight:700,cursor:'pointer'}}>
                 Préparer un e-mail au professionnel
               </button>}
               {contactChannel==='whatsapp' && canWhatsApp&&<button type="button" onClick={contactWhatsApp}
-                style={{border:'1px solid #b3c9b3',borderRadius:10,padding:'11px 12px',background:'#fff',color:'#245c37',fontWeight:700,cursor:'pointer'}}>
+                style={{border:'1px solid var(--boutique-accent, #d4af37)',borderRadius:10,padding:'11px 12px',background:'var(--boutique-surface, #fff)',color:'var(--boutique-ink, #245c37)',fontWeight:700,cursor:'pointer'}}>
                 Contacter le professionnel sur WhatsApp
               </button>}
               <span>La demande reste enregistrée dans Dalil Tounes, même sans message supplémentaire. L'envoi d'un e-mail doit être confirmé dans votre messagerie.</span>
