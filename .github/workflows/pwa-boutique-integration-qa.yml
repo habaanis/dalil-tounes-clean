@@ -7,6 +7,7 @@ on:
       - feat/boutique-merchant-order-alerts-20261119
       - fix/boutique-payment-readiness-20261119
       - fix/boutique-intermediary-whatsapp-flow-20261119
+      - fix/boutique-public-availability-20261120
   workflow_dispatch:
 
 permissions:
@@ -33,5 +34,7 @@ jobs:
         run: node scripts/test-boutique-merchant-alerts.mjs
       - name: Intermediary business flow and security contracts
         run: node scripts/test-boutique-payment-readiness.mjs
+      - name: Public order availability and fail-closed contracts
+        run: node scripts/test-boutique-public-availability.mjs
       - name: Compile PWA safely, no deployment
         run: npm run build
