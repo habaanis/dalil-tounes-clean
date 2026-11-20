@@ -48,6 +48,7 @@ interface FormState {
   description: string;
   message: string;
   consent: boolean;
+  trialInterest: 'yes' | 'no';
   verificationField: string;
 }
 
@@ -69,6 +70,7 @@ const INITIAL_PUBLIC_STATE: FormState = {
   description: '',
   message: '',
   consent: false,
+  trialInterest: 'no',
   verificationField: '',
 };
 
@@ -381,6 +383,54 @@ const COPY = {
   },
 };
 
+const TRIAL_COPY = {
+  fr: {
+    title: 'Découvrez votre mini-appli professionnelle',
+    description: 'Présentez votre activité, proposez vos produits à la vente et facilitez les demandes et commandes de vos clients grâce à un lien et un QR code.',
+    duration: '30 jours d’essai gratuits, sans engagement.',
+    after: 'Après l’essai : modèle Artisan à 30 DT, uniquement si vous décidez de l’acheter.',
+    maintenance: 'Aucun frais d’entretien pendant l’essai. En cas d’achat, les conditions d’entretien de l’offre choisie s’appliquent.',
+    yes: 'Oui, je souhaite être contacté pour tester ma mini-appli.',
+    no: 'Non, je souhaite seulement mon inscription gratuite.',
+  },
+  ar: {
+    title: 'اكتشف تطبيقك المهني المصغّر',
+    description: 'عرّف بنشاطك، اعرض منتجاتك للبيع وسهّل طلبات حرفائك عبر رابط ورمز QR.',
+    duration: 'تجربة مجانية لمدة 30 يوماً، دون التزام.',
+    after: 'بعد التجربة: نموذج الحرفي بسعر 30 ديناراً فقط إذا قررت شراءه.',
+    maintenance: 'لا توجد رسوم صيانة خلال التجربة. عند الشراء، تطبق شروط صيانة العرض المختار.',
+    yes: 'نعم، أرغب في التواصل معي لتجربة التطبيق المصغّر.',
+    no: 'لا، أريد التسجيل المجاني فقط.',
+  },
+  en: {
+    title: 'Discover your professional mini-app',
+    description: 'Showcase your business, offer products for sale, and make customer enquiries and orders easier with a link and QR code.',
+    duration: '30-day free trial, no commitment.',
+    after: 'After the trial: Artisan model for 30 DT, only if you decide to buy.',
+    maintenance: 'No maintenance fees during the trial. Maintenance terms of the chosen offer apply only after purchase.',
+    yes: 'Yes, please contact me about trying the mini-app.',
+    no: 'No, I only want the free listing.',
+  },
+  it: {
+    title: 'Scopri la tua mini-app professionale',
+    description: 'Presenta la tua attività, proponi prodotti in vendita e facilita richieste e ordini con un link e un codice QR.',
+    duration: '30 giorni di prova gratuita, senza impegno.',
+    after: 'Dopo la prova: modello Artigiano a 30 DT, solo se decidi di acquistarlo.',
+    maintenance: 'Nessun costo di manutenzione durante la prova. Le condizioni di manutenzione si applicano solo dopo l’acquisto.',
+    yes: 'Sì, desidero essere contattato per provare la mini-app.',
+    no: 'No, desidero solo la registrazione gratuita.',
+  },
+  ru: {
+    title: 'Откройте для себя профессиональное мини-приложение',
+    description: 'Представьте свой бизнес, предложите товары к продаже и упростите заявки и заказы по ссылке и QR-коду.',
+    duration: '30 дней бесплатно, без обязательств.',
+    after: 'После пробного периода: модель Artisan за 30 DT, только по вашему желанию.',
+    maintenance: 'Во время пробного периода платы за обслуживание нет. Условия обслуживания действуют только после покупки.',
+    yes: 'Да, свяжитесь со мной по поводу пробного периода.',
+    no: 'Нет, мне нужна только бесплатная регистрация.',
+  },
+} as const;
+
 const inputClassName =
   'w-full rounded-xl border border-[#D4AF37]/70 bg-white px-4 py-3 text-base text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-[#4A1D43] focus:ring-2 focus:ring-[#4A1D43]/20 disabled:bg-gray-50 disabled:text-gray-500';
 
@@ -392,6 +442,7 @@ export function BusinessRegistrationRequestForm({
 }: BusinessRegistrationRequestFormProps) {
   const { language } = useLanguage();
   const text = COPY[language as keyof typeof COPY] || COPY.fr;
+  const trialText = TRIAL_COPY[language as keyof typeof TRIAL_COPY] || TRIAL_COPY.fr;
   const isArabic = language === 'ar';
   const isSubscription = mode === 'subscription';
   const startedAtRef = useRef(Date.now());
@@ -488,7 +539,12 @@ export function BusinessRegistrationRequestForm({
             instagram: normalizeWebAddress(form.instagram, 'instagram'),
             whatsapp: form.whatsapp.trim() ? normalizePhone(form.whatsapp) : '',
             description: cleanMultiline(form.description),
-            message: buildEssentialRegistrationMessage(form.message, form.openingHours, siteStructureCopy[language].fields[4]),
+            // The existing submission channel stores trial interest alongside the registration.
+            // A request does not automatically activate a paid plan or start the trial.
+            message: [
+              form.trialInterest === 'yes' ? 'DEMANDE ESSAI MINI-APPLI ARTISAN 30 JOURS - ACHAT FACULTATIF 30 DT' : '',
+              buildEssentialRegistrationMessage(form.message, form.openingHours, siteStructureCopy[language].fields[4]),
+            ].filter(Boolean).join('\n\n').slice(0, 1200),
             consent: form.consent,
           };
 
@@ -872,6 +928,24 @@ export function BusinessRegistrationRequestForm({
               </div>
             </div>
           </details>
+
+          <fieldset className="rounded-2xl border border-[#C9A65D]/60 bg-[#FCFAF5] p-4 sm:p-5">
+            <legend className="px-1 text-base font-semibold text-[#292725]">{trialText.title}</legend>
+            <p className="mt-1 text-sm leading-relaxed text-[#292725]">{trialText.description}</p>
+            <p className="mt-2 text-sm font-semibold text-[#292725]">{trialText.duration}</p>
+            <p className="mt-1 text-sm text-gray-700">{trialText.after}</p>
+            <p className="mt-1 text-xs leading-relaxed text-gray-600">{trialText.maintenance}</p>
+            <div className="mt-3 space-y-2">
+              <label className="flex cursor-pointer items-start gap-2 text-sm text-[#292725]">
+                <input type="radio" name="trialInterest" value="yes" checked={form.trialInterest === 'yes'} onChange={setField} disabled={submitting} className="mt-1 accent-[#B62226]" />
+                <span>{trialText.yes}</span>
+              </label>
+              <label className="flex cursor-pointer items-start gap-2 text-sm text-[#292725]">
+                <input type="radio" name="trialInterest" value="no" checked={form.trialInterest === 'no'} onChange={setField} disabled={submitting} className="mt-1 accent-[#B62226]" />
+                <span>{trialText.no}</span>
+              </label>
+            </div>
+          </fieldset>
 
           <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-gray-200 bg-white p-4 text-sm leading-relaxed text-gray-700">
             <input
