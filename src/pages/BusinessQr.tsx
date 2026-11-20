@@ -296,11 +296,21 @@ export default function BusinessQr() {
   // Le navigateur peut bloquer plusieurs installations sous app.dalil-tounes.com ;
   // cette page reste accessible, sans être capturée par une autre mini-application.
   const browserCvUrl = directCvUrl;
+  // A professional can explicitly switch between Portfolio and Business.
+  // The last CV actually viewed takes precedence over the default published model.
+  const explicitReturnModel = new URLSearchParams(window.location.search).get('preview-model');
+  let rememberedReturnModel:string|null=null;
+  try { rememberedReturnModel=window.sessionStorage.getItem('dalil-return-cv:'+clientIdentifier.toLowerCase()); }
+  catch { /* Storage may be disabled by the browser. */ }
+  const accountReturnModel =
+    explicitReturnModel==='portfolio'||explicitReturnModel==='business' ? explicitReturnModel :
+    rememberedReturnModel==='portfolio'||rememberedReturnModel==='business' ? rememberedReturnModel :
+    cvModel;
   // Preserve the selected published model when entering the professional account.
   const accountHref = (isDedicatedClientHostname(window.location.hostname)
     ? '/' + encodeURIComponent(clientIdentifier) + '/compte'
     : buildClientAppUrl(business || identifier, language).split('?')[0] + '/compte')
-    + '?cv=' + cvModel;
+    + '?cv=' + accountReturnModel;
   const logoUrl = business ? getLogoUrl(business.logo_url) : '';
   const coverUrl = getCoverUrl(business?.image_url);
   const tier = business ? mapSubscriptionToTier(business) : 'gratuit';
@@ -442,7 +452,7 @@ export default function BusinessQr() {
               : text.unavailable}
           </p>
           <div className="mt-5 flex flex-col items-center gap-3">
-            <a href={`/${encodeURIComponent(identifier)}/compte?cv=${cvModel}`}
+            <a href={`/${encodeURIComponent(identifier)}/compte?cv=${accountReturnModel}`}
               className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#0B4B3E] px-5 py-2.5 font-semibold text-white">
               Retour à mon compte professionnel
             </a>
