@@ -111,12 +111,9 @@ export function CvBusinessQrVisual({
           <ExternalLink size={15} strokeWidth={1.8} aria-hidden="true" />{openLabel || t.open}
         </a>
       )}
-      <div className="mx-auto mt-[9px] w-[184px] rounded-[14px] p-[8px] shadow-[0_7px_18px_rgba(0,0,0,0.14)]" style={{ backgroundColor: theme.qrBackground }}>
-        <div className="relative mx-auto h-[168px] w-[168px]">
-          <QRCodeSVG id={qrId} value={qrValue} size={168} level="H" includeMargin={false} bgColor={theme.qrBackground} fgColor={theme.qrForeground} />
-          <div className="pointer-events-none absolute left-1/2 top-1/2 grid h-[44px] w-[44px] -translate-x-1/2 -translate-y-1/2 place-items-center overflow-hidden rounded-full border-[3px] border-white shadow-md" style={{ backgroundColor: theme.surface }}>
-            <img src={logo} alt="" className="h-full w-full object-cover" />
-          </div>
+      <div className="mx-auto mt-[9px] w-[200px] rounded-[14px] p-[6px] shadow-[0_7px_18px_rgba(0,0,0,0.14)]" style={{ backgroundColor: theme.qrBackground }}>
+        <div className="relative mx-auto h-[188px] w-[188px]">
+          <QRCodeSVG id={qrId} value={qrValue} size={188} level="H" includeMargin bgColor={theme.qrBackground} fgColor={theme.qrForeground} />
         </div>
       </div>
       {accountHref && <a href={accountHref}
