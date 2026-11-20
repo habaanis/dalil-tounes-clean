@@ -1752,9 +1752,7 @@ export default function BusinessShowcaseLienoraDetail({
             ? translateOpenStatus(language)
             : schedule ? translateClosedStatus(language) : undefined}
           practicalContent={sections.find(section => section.id === 'practical')?.content}
-          onShowQr={() => setOpenSection('sharing')}
           onShare={() => void share()}
-          sharingContent={sharingContent}
           socialActions={socialLinks}
           onDownloadContact={downloadContact}
           onSelectImage={setSelectedImage}

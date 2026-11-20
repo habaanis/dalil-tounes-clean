@@ -7,7 +7,6 @@ import {
   Contact,
   FileText,
   Home,
-  QrCode,
   Share2,
   Images,
   Info,
@@ -153,9 +152,7 @@ export interface CvPortfolioPresentationProps {
   hoursBadge?: string;
   practicalContent?: ReactNode;
   boutiqueContent?: ReactNode;
-  onShowQr: () => void;
   onShare: () => void;
-  sharingContent?: ReactNode;
   socialActions?: PortfolioAction[];
   onDownloadContact: () => void;
   onSelectImage: (url: string) => void;
@@ -183,9 +180,7 @@ export function CvPortfolioPresentation({
   hoursBadge,
   practicalContent,
   boutiqueContent,
-  onShowQr,
   onShare,
-  sharingContent,
   socialActions = [],
   onDownloadContact,
   onSelectImage,
@@ -206,7 +201,6 @@ export function CvPortfolioPresentation({
   const [writeReviewOpen, setWriteReviewOpen] = useState(false);
   const [bookingOpen, setBookingOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
-  const [qrOpen, setQrOpen] = useState(false);
   const [socialOpen, setSocialOpen] = useState(false);
   const isRTL = language === 'ar';
   const hasSection = (section: ResolvedCvPresentation['visibleSections'][number]) =>
@@ -235,7 +229,6 @@ export function CvPortfolioPresentation({
     { id: 'hours' as const, label: copy.openingHours, icon: Clock3, visible: Boolean(hoursContent) },
     { id: 'practical' as const, label: copy.practical, icon: Info, visible: Boolean(practicalContent) },
     { id: 'reviews' as const, label: copy.reviews, icon: Star, visible: hasSection('reviews') },
-    { id: 'gallery' as const, label: copy.photos, icon: Images, visible: Boolean(boutiqueContent) },
   ].filter(tab => tab.visible);
 
   const goTo = (tab: PortfolioTab) => {
@@ -357,9 +350,14 @@ export function CvPortfolioPresentation({
                 {presentation.visibleActions.includes('reservation') && bookingContent && (
                   <button type="button" onClick={() => setBookingOpen(value => !value)}><CalendarDays />{copy.book}</button>
                 )}
-                {sharingContent && (
-                  <button type="button" onClick={() => { onShowQr(); setQrOpen(open => !open); }}><QrCode />{copy.myQr}</button>
-                )}
+                {boutiqueContent && (isValidElement(boutiqueContent)
+                  ? cloneElement(boutiqueContent as ReactElement<{ triggerClassName?: string; triggerIcon?: ReactNode; triggerLabel?: string }>, {
+                      key: 'more-boutique',
+                      triggerClassName: 'cvp-extra-boutique-action',
+                      triggerIcon: <Store aria-hidden="true" />,
+                      triggerLabel: language === 'ar' ? 'المتجر' : language === 'en' ? 'Shop' : 'Boutique',
+                    })
+                  : boutiqueContent)}
                 <button type="button" onClick={onShare}><Share2 />{copy.share}</button>
                 {socialActions.length > 0 && (
                   <button type="button" onClick={() => setSocialOpen(open => !open)}><Share2 />{copy.socialNetworks}</button>
@@ -370,21 +368,12 @@ export function CvPortfolioPresentation({
               </div>
             )}
             {bookingOpen && bookingContent && <section className="cvp-booking">{bookingContent}</section>}
-            {qrOpen && sharingContent && <section className="cvp-booking">{sharingContent}</section>}
 
             <nav className="cvp-lienora-tabs" aria-label={navigationAriaLabel}>
-              {tabs.map(({ id, label, icon: Icon }) => id === 'gallery' && boutiqueContent
-                ? (isValidElement(boutiqueContent)
-                    ? cloneElement(boutiqueContent as ReactElement<{ triggerClassName?: string; triggerIcon?: ReactNode; triggerLabel?: string }>, {
-                        key: 'gallery-boutique',
-                        triggerClassName: 'cvp-native-boutique-tab',
-                        triggerIcon: <Images aria-hidden="true" />,
-                        triggerLabel: language === 'ar' ? 'المتجر' : language === 'en' ? 'Shop' : 'Boutique',
-                      })
-                    : boutiqueContent)
-                : <button type="button" className={activeTab === id ? 'active' : ''} onClick={() => goTo(id)} key={id}>
-                    <Icon /><span>{label}</span>
-                  </button>
+              {tabs.map(({ id, label, icon: Icon }) =>
+                <button type="button" className={activeTab === id ? 'active' : ''} onClick={() => goTo(id)} key={id}>
+                  <Icon /><span>{label}</span>
+                </button>
               )}
             </nav>
 
