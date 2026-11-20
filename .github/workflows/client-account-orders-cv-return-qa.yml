@@ -1,0 +1,24 @@
+name: Dalil client professional account orders and CV return QA
+on:
+  push:
+    branches:
+      - fix/client-account-orders-cv-return-20261120
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  client-account:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Verify account orders and CV navigation
+        run: node scripts/test-client-account-orders-cv-return.mjs
+      - name: Compile site without deployment
+        run: npm run build
