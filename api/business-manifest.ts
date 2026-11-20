@@ -172,7 +172,9 @@ export default async function handler(request: VercelRequest, response: VercelRe
   const appPath = resolvedAppSlug
     ? `/${encodeURIComponent(resolvedAppSlug)}`
     : `/qr-business/${encodeURIComponent(id)}`;
-  const startUrl = `${appPath}?source=pwa&app=client&lang=${lang}&palette=${palette}`;
+  // Do not pin the palette inside installed launch URLs: the merchant may change it later.
+  // The QR/CV fetch the published palette from the business record on every visit.
+  const startUrl = `${appPath}?source=pwa&app=client&lang=${lang}`;
   const shortName = name.length <= 24
     ? name
     : name.split(/\s+/).slice(0, 2).join(' ').slice(0, 24);
