@@ -12,7 +12,7 @@ export function getClientAppIdentifier(business: string | ClientAppBusinessIdent
 }
 
 export function isDedicatedClientHostname(hostname: string): boolean {
-  return hostname === 'app.dalil-tounes.com';
+  return hostname === 'app.dalil-tounes.com' || (\n    hostname.endsWith('.vercel.app') &&\n    typeof window !== 'undefined' &&\n    new URLSearchParams(window.location.search).get('preview-client') === '1'\n  );
 }
 
 export function buildClientAppUrl(
