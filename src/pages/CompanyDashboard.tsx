@@ -1,10 +1,12 @@
 import { useState, useEffect, type FormEvent } from 'react';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { useNavigate } from 'react-router-dom';
-import { Briefcase, Users, Building2, Settings, LogOut, Store, Package, BarChart3, ShieldCheck } from 'lucide-react';
+import { Briefcase, Users, Building2, Settings, LogOut, Store, Package, BarChart3, ShieldCheck, ClipboardList } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import JobPostForm from '../components/forms/JobPostForm';
 import BoutiqueProductManagement from '../components/boutique/BoutiqueProductManagement';
+import BoutiqueCustomerOrders from '../components/boutique/BoutiqueCustomerOrders';
+import BoutiqueMerchantOrderAlerts from '../components/boutique/BoutiqueMerchantOrderAlerts';
 
 type ScopedBoutiqueStats = { entreprise_id: string; push_subscriptions: number; published_products: number; draft_products: number };
 interface CompanyDashboardProps {
@@ -15,7 +17,7 @@ interface CompanyDashboardProps {
 export default function CompanyDashboard({ onNavigate, clientAppMode = false }: CompanyDashboardProps) {
   const { user, signOut, loading } = useAuth();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'jobs' | 'candidates' | 'settings' | 'showcase' | 'boutique' | 'stats'>(clientAppMode ? 'boutique' : 'showcase');
+  const [activeTab, setActiveTab] = useState<'jobs' | 'candidates' | 'settings' | 'showcase' | 'boutique' | 'orders' | 'stats'>(() => new URLSearchParams(window.location.search).get('tab') === 'orders' ? 'orders' : clientAppMode ? 'boutique' : 'showcase');
   const [showWelcome, setShowWelcome] = useState(false);
   const [stats, setStats] = useState<ScopedBoutiqueStats[]>([]);
   const [statsLoading, setStatsLoading] = useState(false);
@@ -239,10 +241,11 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false }: 
         {!clientAppMode && <p className="mb-5 max-w-2xl text-sm text-[#684d47]">Retrouvez vos services professionnels dans un seul espace. L’accès aux informations d’une fiche nécessite une attribution vérifiée.</p>}
         <div className={clientAppMode ? 'flex flex-col gap-3' : 'flex flex-col gap-5 lg:flex-row'}>
           <div className={clientAppMode ? 'w-full' : 'w-full flex-shrink-0 lg:w-60'}>
-            <nav className={clientAppMode ? 'grid grid-cols-3 gap-1 rounded-2xl border border-[#e8d9bd] bg-white p-2 shadow-sm' : 'grid grid-cols-2 gap-2 rounded-2xl border border-[#e8d9bd] bg-white p-3 shadow-sm sm:grid-cols-3 lg:flex lg:flex-col'} aria-label="Rubriques professionnelles">
+            <nav className={clientAppMode ? 'grid grid-cols-2 gap-1 rounded-2xl border border-[#e8d9bd] bg-white p-2 shadow-sm' : 'grid grid-cols-2 gap-2 rounded-2xl border border-[#e8d9bd] bg-white p-3 shadow-sm sm:grid-cols-3 lg:flex lg:flex-col'} aria-label="Rubriques professionnelles">
               {([
                 { id: 'showcase', label: 'Ma vitrine', Icon: Store },
                 { id: 'boutique', label: 'Ma boutique', Icon: Package },
+                { id: 'orders', label: 'Mes commandes', Icon: ClipboardList },
                 { id: 'stats', label: 'Mes statistiques', Icon: BarChart3 },
               ] as const).map(({ id, label, Icon }) => (
                 <button key={id} type="button" onClick={() => setActiveTab(id)}
@@ -423,6 +426,19 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false }: 
                   </div>}
                   {activeTab === 'stats' && <p className="mt-3 text-xs text-gray-600">Un abonnement représente un appareil ou navigateur, pas nécessairement une personne. Les visites et demandes non suivies affichent « — ».</p>}
 
+                </section>
+              )}
+              {activeTab === 'orders' && (
+                <section aria-live="polite">
+                  {statsLoading ? <p role="status" className="text-sm text-gray-600">Vérification des droits d’accès…</p>
+                    : statsError ? <div role="alert" className="rounded-xl bg-[#fff7e8] p-4 text-sm">Vérification des établissements momentanément indisponible.
+                        <button type="button" onClick={()=>setStatsRetry(n=>n+1)} className="ml-2 underline">Réessayer</button>
+                      </div>
+                    : stats.length===0 ? <p className="rounded-xl bg-[#fbf8f0] p-4 text-sm text-[#684d47]">Aucun établissement encore associé à ce compte. L’accès aux commandes nécessite une attribution vérifiée.</p>
+                    : <div className="space-y-4">
+                        {stats.map(record => <BoutiqueMerchantOrderAlerts key={record.entreprise_id} profileId={record.entreprise_id}/>)}
+                        <BoutiqueCustomerOrders entrepriseIds={stats.map(record=>record.entreprise_id)} />
+                      </div>}
                 </section>
               )}
               {activeTab === 'jobs' && (
