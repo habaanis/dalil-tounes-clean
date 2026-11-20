@@ -16,14 +16,14 @@ export type CvPaletteTheme = {
 export const CV_PALETTE_THEMES: Record<CvPaletteId, CvPaletteTheme> = {
   prestige: {
     id: 'prestige',
-    page: '#003C35',
-    surface: '#003C35',
-    surfaceAlt: '#002F2B',
-    accent: '#E8BD43',
+    page: '#031D18',
+    surface: '#031D18',
+    surfaceAlt: '#073226',
+    accent: '#E7B943',
     text: '#F7F4EC',
     muted: '#D0DDD5',
-    border: '#E8BD43',
-    qrForeground: '#003C35',
+    border: '#D6AA43',
+    qrForeground: '#031D18',
     qrBackground: '#FFFFFF',
   },
   ivory: {
