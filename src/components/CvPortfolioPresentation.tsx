@@ -1,4 +1,5 @@
 import GoogleRatingSummary from './GoogleRatingSummary';
+import { createPortal } from 'react-dom';
 import { cloneElement, isValidElement, useState, type CSSProperties, type ReactElement, type ReactNode } from 'react';
 import {
   CalendarDays,
@@ -26,7 +27,7 @@ type PortfolioPalette = 'prestige' | 'ivory' | 'night';
 
 const PORTFOLIO_PALETTE_THEMES: Record<PortfolioPalette, CSSProperties> = {
   prestige: {
-    '--cvp-page': '#eef1ef', '--cvp-text': '#f7f4ec', '--cvp-shell-start': '#073226',
+    '--cvp-page': '#031d18', '--cvp-text': '#f7f4ec', '--cvp-shell-start': '#073226',
     '--cvp-shell-mid': '#031d18', '--cvp-shell-end': '#021e18', '--cvp-identity-start': '#073226',
     '--cvp-identity-end': '#021e18', '--cvp-panel': '#031d18', '--cvp-action': 'rgba(7,50,38,.55)',
     '--cvp-badge': '#087051', '--cvp-overlay': 'rgba(0,45,39,.95)', '--cvp-accent': '#e7b943',
@@ -302,6 +303,12 @@ export function CvPortfolioPresentation({
     </section>
   );
 
+  const qrBackTarget = showClientQrBack && typeof document !== 'undefined'
+    ? document.getElementById('dalil-client-cv-back-slot') : null;
+  const qrBackButton = (!hideBack || showClientQrBack)
+    ? <button type="button" className="cvp-back cvp-back-to-qr" onClick={onBack}>‹ <span>{showClientQrBack ? (language === 'ar' ? 'العودة إلى QR' : language === 'en' ? 'Back to QR' : 'Retour au QR code') : copy.home}</span></button>
+    : null;
+
   return (
     <div
       className={`cvp-page cvp-page--lienora cvp-palette-${palette || 'prestige'}${embeddedPreview || hideBack ? ' cvp-page--embedded' : ''}`}
@@ -309,7 +316,7 @@ export function CvPortfolioPresentation({
       style={PORTFOLIO_PALETTE_THEMES[palette || 'prestige']}
     >
       <div className="cvp-lienora-shell">
-        {(!hideBack || showClientQrBack) && <button type="button" className="cvp-back cvp-back-to-qr" onClick={onBack}>‹ <span>{showClientQrBack ? (language === 'ar' ? 'العودة إلى QR' : language === 'en' ? 'Back to QR' : 'Retour au QR code') : copy.home}</span></button>}
+        {qrBackTarget ? createPortal(qrBackButton, qrBackTarget) : qrBackButton && !showClientQrBack ? qrBackButton : null}
         <article className="cvp-lienora-card">
           <div className="cvp-lienora-cover"><img src={coverImage} alt="" loading="eager" decoding="async" /></div>
           <img className="cvp-lienora-logo" src={logoImage} alt={`Logo ${profile.identity.name}`} />

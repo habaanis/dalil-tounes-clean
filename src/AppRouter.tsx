@@ -145,8 +145,9 @@ function ClientCvRoute() {
 
   return (
     <>
-      <div style={{ backgroundColor: theme.page }}>
-        <div className="mx-auto flex w-full max-w-6xl justify-end px-4 py-2" dir="ltr">
+      <div className="dalil-client-cv-toolbar-wrap" style={{ backgroundColor: theme.page }}>
+        <div id="dalil-client-cv-toolbar" className="mx-auto flex min-h-[46px] w-full max-w-[430px] items-center justify-between gap-2 px-3 py-1" dir="ltr">
+          <span id="dalil-client-cv-back-slot" className="inline-flex min-w-0 items-center" />
           <LanguageSelector clientApp />
         </div>
       </div>

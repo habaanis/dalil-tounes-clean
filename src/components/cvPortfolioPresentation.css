@@ -1284,3 +1284,29 @@
   outline: 2px solid var(--boutique-accent, #d4af37);
   outline-offset: 2px;
 }
+
+/* Installed client CV: keep the QR return and language selector on one compact row. */
+.dalil-client-cv-toolbar-wrap {
+  background: #031d18;
+}
+body:has(.cvp-page--lienora.cvp-palette-prestige) .dalil-client-cv-toolbar-wrap {
+  background: #031d18 !important;
+}
+body:has(.cvp-page--lienora.cvp-palette-ivory) .dalil-client-cv-toolbar-wrap {
+  background: #FFFFF0 !important;
+}
+body:has(.cvp-page--lienora.cvp-palette-night) .dalil-client-cv-toolbar-wrap {
+  background: #06101d !important;
+}
+#dalil-client-cv-back-slot .cvp-back {
+  margin: 0;
+  padding: 7px 0;
+  color: #f7f4ec;
+  font-size: 12px;
+  line-height: 1.2;
+  white-space: nowrap;
+  min-height: 38px;
+}
+body:has(.cvp-page--lienora.cvp-palette-ivory) #dalil-client-cv-back-slot .cvp-back {
+  color: #3B3126;
+}
