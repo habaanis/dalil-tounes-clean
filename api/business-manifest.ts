@@ -71,7 +71,7 @@ type BusinessManifestRecord = {
 };
 
 const PALETTE_COLORS: Record<PaletteId, { theme: string; background: string }> = {
-  prestige: { theme: '#003C35', background: '#003C35' },
+  prestige: { theme: '#031D18', background: '#031D18' },
   ivory: { theme: '#FFF8E7', background: '#FFF8E7' },
   night: { theme: '#10243A', background: '#10243A' },
 };
