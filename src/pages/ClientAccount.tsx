@@ -101,5 +101,5 @@ export default function ClientAccount() {
       <Link className="mt-3 block underline" to={cvPath}>Voir le CV</Link>
     </div>
   </main>;
-  return <div className="min-h-dvh bg-[#fbf8f0] pb-[env(safe-area-inset-bottom)]"><div className="mx-auto max-w-7xl px-4 pt-3"><Link className="inline-flex min-h-11 items-center text-sm underline" to={cvPath}>← Retour au CV Business</Link></div><CompanyDashboard clientAppMode onNavigate={(page)=>{if(page==='home')navigate(cvPath);}} /></div>;
+  return <div className="min-h-dvh bg-[#fbf8f0] pb-[env(safe-area-inset-bottom)]"><div className="mx-auto max-w-7xl px-4 pt-3"><Link className="inline-flex min-h-11 items-center text-sm underline" to={cvPath}>← Retour à mon CV {returnModel==='portfolio'?'Portfolio':'Business'}</Link></div><CompanyDashboard clientAppMode onNavigate={(page)=>{if(page==='home')navigate(cvPath);}} /></div>;
 }
