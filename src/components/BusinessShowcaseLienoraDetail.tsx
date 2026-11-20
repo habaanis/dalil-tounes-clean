@@ -559,7 +559,7 @@ const PALETTE_THEMES: Record<PaletteId, CSSProperties> = {
     '--dt-badge-end': '#087a50',
     '--dt-action-start': '#06382d',
     '--dt-action-end': '#011f1a',
-    '--boutique-surface': '#003c35', '--boutique-ink': '#f7f4ec', '--boutique-card': '#002f2b', '--boutique-field': '#fffaf2', '--boutique-accent': '#e8bd43',
+    '--boutique-surface': '#003c35', '--boutique-ink': '#f7f4ec', '--boutique-card': '#002f2b', '--boutique-field': '#ffffff', '--boutique-field-ink': '#12372e', '--boutique-accent': '#e8bd43',
     '--boutique-button': '#003c35', '--boutique-button-ink': '#f7f4ec', '--boutique-muted': '#50695b',
   } as CSSProperties,
   ivory: {
@@ -583,7 +583,7 @@ const PALETTE_THEMES: Record<PaletteId, CSSProperties> = {
     '--dt-badge-end': '#D4AF37',
     '--dt-action-start': '#FFFFF8',
     '--dt-action-end': '#F0D999',
-    '--boutique-surface': '#FFFFF0', '--boutique-ink': '#3B3126', '--boutique-card': '#f6edd3', '--boutique-field': '#fffaf2', '--boutique-accent': '#D4AF37',
+    '--boutique-surface': '#FFFFF0', '--boutique-ink': '#3B3126', '--boutique-card': '#f6edd3', '--boutique-field': '#ffffff', '--boutique-field-ink': '#3B3126', '--boutique-accent': '#D4AF37',
     '--boutique-button': '#F0D999', '--boutique-button-ink': '#3B3126', '--boutique-muted': '#64513d',
   } as CSSProperties,
   night: {
@@ -607,7 +607,7 @@ const PALETTE_THEMES: Record<PaletteId, CSSProperties> = {
     '--dt-badge-end': '#172f4b',
     '--dt-action-start': '#1d3a5a',
     '--dt-action-end': '#06101d',
-    '--boutique-surface': '#10243a', '--boutique-ink': '#f8f1e4', '--boutique-card': '#172f4b', '--boutique-field': '#f8f1e4', '--boutique-accent': '#e5c486',
+    '--boutique-surface': '#10243a', '--boutique-ink': '#f8f1e4', '--boutique-card': '#172f4b', '--boutique-field': '#ffffff', '--boutique-field-ink': '#14283d', '--boutique-accent': '#e5c486',
     '--boutique-button': '#172f4b', '--boutique-button-ink': '#f8f1e4', '--boutique-muted': '#52657c',
   } as CSSProperties,
 };
