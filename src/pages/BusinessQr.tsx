@@ -296,9 +296,11 @@ export default function BusinessQr() {
   // Le navigateur peut bloquer plusieurs installations sous app.dalil-tounes.com ;
   // cette page reste accessible, sans être capturée par une autre mini-application.
   const browserCvUrl = directCvUrl;
-  const accountHref = isDedicatedClientHostname(window.location.hostname)
+  // Preserve the selected published model when entering the professional account.
+  const accountHref = (isDedicatedClientHostname(window.location.hostname)
     ? '/' + encodeURIComponent(clientIdentifier) + '/compte'
-    : buildClientAppUrl(business || identifier, language).split('?')[0] + '/compte';
+    : buildClientAppUrl(business || identifier, language).split('?')[0] + '/compte')
+    + '?cv=' + cvModel;
   const logoUrl = business ? getLogoUrl(business.logo_url) : '';
   const coverUrl = getCoverUrl(business?.image_url);
   const tier = business ? mapSubscriptionToTier(business) : 'gratuit';
@@ -440,7 +442,7 @@ export default function BusinessQr() {
               : text.unavailable}
           </p>
           <div className="mt-5 flex flex-col items-center gap-3">
-            <a href={`/${encodeURIComponent(identifier)}/compte`}
+            <a href={`/${encodeURIComponent(identifier)}/compte?cv=${cvModel}`}
               className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#0B4B3E] px-5 py-2.5 font-semibold text-white">
               Retour à mon compte professionnel
             </a>
