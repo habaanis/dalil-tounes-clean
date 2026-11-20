@@ -56,6 +56,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
   const [error, setError] = useState('');
   const [sending, setSending] = useState(false);
   const [confirmation, setConfirmation] = useState('');
+  const [orderAvailability,setOrderAvailability] = useState<'checking'|'available'|'unavailable'>('checking');
   // Keep the same UUID across retries to prevent duplicates after network failure.
   const [requestKey, setRequestKey] = useState(() => crypto.randomUUID());
   // A retry with unchanged data keeps the idempotency key. Editing a field
@@ -94,6 +95,23 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
   const phone = config.whatsapp.replace(/\D/g, '');
   const canWhatsApp = /^\d{8,15}$/.test(phone);
   useEffect(() => {
+    if(!open)return;
+    if(config.demoMode){setOrderAvailability('available');return;}
+    if(!config.profileId){setOrderAvailability('unavailable');return;}
+    let active=true;
+    setOrderAvailability('checking');
+    void fetch(supabaseUrl+'/functions/v1/dalil-boutique-customer-submit',{
+      method:'GET',headers:{apikey:supabaseAnonKey},cache:'no-store',
+    }).then(async response=>{
+      const data=await response.json().catch(()=>null);
+      return response.ok && data?.available===true;
+    }).then(available=>{
+      if(active)setOrderAvailability(available?'available':'unavailable');
+    }).catch(()=>{if(active)setOrderAvailability('unavailable');});
+    return ()=>{active=false;};
+  },[open,config.demoMode,config.profileId]);
+
+  useEffect(() => {
     setSelected(current => {
       if (!current) return current;
       const latest = config.products.find(product => product.id === current.id);
@@ -128,6 +146,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
   const send = async () => {
     if (!selected || sending || confirmation) return;
     if (config.demoMode) { setError('Démonstration : aucune demande, message ou paiement réel n’est envoyé.'); return; }
+    if(orderAvailability!=='available'){setError('Les commandes ne sont pas ouvertes. Contactez directement le professionnel. Aucune demande n’a été enregistrée.');return;}
     if (!config.profileId) { setError('Les demandes ne sont pas encore activées pour cet établissement.'); return; }
     // The current orders API validates only TND. Refuse EUR here rather than imply that an order was recorded.
     if (selected.currency !== 'TND') { setError('Les commandes en euros ne sont pas encore activées sur Dalil Tounes. Contactez directement le professionnel.'); return; }
@@ -164,6 +183,15 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
     } catch(err) {
       setError(err instanceof Error?err.message:'Demande non enregistrée. Réessayez.');
     } finally {setSending(false);}
+  };
+  const contactDirectWhatsApp=()=>{
+    if(!canWhatsApp||!selected)return;
+    const message=[
+      'Bonjour, je vous contacte au sujet de : '+selected.title,
+      'Je souhaite connaître les modalités de commande.',
+      'Ce message est envoyé directement : aucune commande n’a été enregistrée sur Dalil Tounes.',
+    ].join('\\n');
+    window.open('https://wa.me/'+phone+'?text='+encodeURIComponent(message),'_blank','noopener,noreferrer');
   };
   const contactWhatsApp=()=>{
     if(!confirmation || !canWhatsApp || !selected)return;
@@ -233,10 +261,18 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
             <span style={{ whiteSpace: 'nowrap', fontWeight: 600, fontSize: 12, color: '#826332' }}>{priceText(selected)}</span>
           </div>
           {selected.description && <p style={{ fontSize: 12, lineHeight: 1.5, margin: '6px 0 12px', color: '#62574d' }}>{selected.description}</p>}
-          {!requestOpen ? <button type="button" onClick={() => setRequestOpen(true)}
+          {!requestOpen ? (orderAvailability==='available'||config.demoMode) ? <button type="button" onClick={() => setRequestOpen(true)}
             style={{ border: 0, borderRadius: 10, background: '#063b30', color: '#fff', fontSize: 13, fontWeight: 600, padding: '11px 14px', width: '100%', cursor: 'pointer' }}>
             {selected.mode === 'quote' ? 'Demander un devis' : 'Commander'}
-          </button> : <div style={{ display: 'grid', gap: 10, borderTop: '1px solid #e5d7c3', paddingTop: 12 }}>
+          </button> : <div role="status" style={{display:'grid',gap:9,padding:12,border:'1px solid #e3d6c0',borderRadius:10,background:'#fffaf3'}}>
+            <p style={{margin:0,fontSize:12,color:'#655548'}}>{orderAvailability==='checking'
+              ? 'Vérification de la disponibilité des demandes…'
+              : 'Les demandes via Dalil Tounes ne sont pas encore ouvertes. Aucun formulaire n’est envoyé ni enregistré.'}</p>
+            {orderAvailability==='unavailable' && canWhatsApp && <button type="button" onClick={contactDirectWhatsApp}
+              style={{border:'1px solid #b4c3b2',borderRadius:10,padding:'11px 12px',background:'#fff',color:'#245c37',fontWeight:700}}>
+              Contacter directement sur WhatsApp (sans enregistrement)
+            </button>}
+          </div> : <div style={{ display: 'grid', gap: 10, borderTop: '1px solid #e5d7c3', paddingTop: 12 }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <strong style={{ fontSize: 13 }}>Votre demande</strong>
               <button type="button" onClick={() => setRequestOpen(false)} style={{ border: 0, color: '#8a6a42', background: 'transparent', fontSize: 12, cursor: 'pointer' }}>Réduire</button>
