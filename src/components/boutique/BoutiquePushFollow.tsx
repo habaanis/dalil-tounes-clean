@@ -94,12 +94,12 @@ export function BoutiquePushFollow({ profileId, demoMode }: { profileId?: string
     } catch (error) { setNotice(error instanceof Error ? error.message : 'Notifications indisponibles.'); }
     finally { setBusy(false); }
   };
-  return <div style={{ marginTop: 12, borderTop: '1px solid #e5d8c7', paddingTop: 11, textAlign: 'center' }}>
+  return <div style={{ marginTop: 12, borderTop: '1px solid var(--boutique-accent, #e8bd43)', paddingTop: 11, textAlign: 'center' }}>
     <button type="button" onClick={() => void toggle()} disabled={busy}
-      style={{ background: '#fffaf2', color: '#5e4731', border: '1px solid #d9bd88', padding: '8px 13px', fontSize: 12, borderRadius: 20, cursor: busy ? 'wait' : 'pointer', fontWeight: 600 }}>
+      style={{ background: 'var(--boutique-button, #003c35)', color: 'var(--boutique-button-ink, #f7f4ec)', border: '1px solid var(--boutique-accent, #e8bd43)', padding: '8px 13px', fontSize: 12, borderRadius: 20, cursor: busy ? 'wait' : 'pointer', fontWeight: 600 }}>
       {subscribed ? '✓ Ne plus suivre les nouveautés' : '♧ Suivre les nouveautés'}
     </button>
-    <p style={{ fontSize: 10, color: '#7e7668', margin: '6px 0 0' }}>Alertes volontaires lors de nouveaux produits validés. Désabonnement ici, à tout moment.</p>
-    {notice && <p role="status" style={{ fontSize: 11, margin: '7px 0 0', color: '#5a5146' }}>{notice}</p>}
+    <p style={{ fontSize: 10, color: 'var(--boutique-muted, #d0ddd5)', margin: '6px 0 0' }}>Alertes volontaires lors de nouveaux produits validés. Désabonnement ici, à tout moment.</p>
+    {notice && <p role="status" style={{ fontSize: 11, margin: '7px 0 0', color: 'var(--boutique-ink, #f7f4ec)' }}>{notice}</p>}
   </div>;
 }
