@@ -39,7 +39,6 @@ import {
   Navigation,
   Phone,
   QrCode,
-  UserRound,
   Share2,
   Smartphone,
   Star,
