@@ -204,6 +204,16 @@ self.addEventListener('push', (event) => {
   try { data = event.data.json(); } catch { return; }
   const path = typeof data.path === 'string' && data.path.startsWith('/') && !data.path.startsWith('//') && !data.path.includes('://')
     ? data.path : '/';
+  // Merchant order alerts may originate from the national PWA: navigate to
+  // the dedicated client mini-app account only when the target host is trusted.
+  let destination = path;
+  if (typeof data.url === 'string') {
+    try {
+      const target = new URL(data.url);
+      if (target.protocol === 'https:' && target.hostname === 'app.dalil-tounes.com'
+        && !target.username && !target.password) destination = target.href;
+    } catch { /* Fall back to the validated relative path. */ }
+  }
   event.waitUntil(self.registration.showNotification(
     typeof data.title === 'string' ? data.title.slice(0,90) : 'Nouveauté · Dalil Tounes',
     {
@@ -211,7 +221,7 @@ self.addEventListener('push', (event) => {
       icon: '/icons/icon-192x192.png',
       badge: '/icons/icon-96x96.png',
       tag: typeof data.tag === 'string' ? data.tag.slice(0,100) : 'dalil-boutique',
-      data: { path },
+      data: { path: destination },
     }
   ));
 });
