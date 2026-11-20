@@ -28,8 +28,9 @@ check('Account never hardcodes return to Business',
  account.includes("returnModel==='portfolio'?'Portfolio':'Business'") &&
  account.includes("cvReturnPath(slug,returnModel)"));
 check('QR preserves published model for account navigation',
- qr.includes("'?cv=' + cvModel") &&
- qr.includes("compte?cv=\u0024{cvModel}"));
+ qr.includes("'?cv=' + accountReturnModel") &&
+ qr.includes("compte?cv=\u0024{accountReturnModel}") &&
+ qr.includes("sessionStorage.getItem('dalil-return-cv:'"));
 check('CV route remembers explicit preview model',
  route.includes("sessionStorage.setItem('dalil-return-cv:'") &&
  route.includes("selectedModel !== 'portfolio' && selectedModel !== 'business'"));
