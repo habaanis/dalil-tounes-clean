@@ -347,7 +347,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
                 style={{marginTop:2,flexShrink:0}}/>
               <span>Recevoir une notification sur ce téléphone quand ma commande sera confirmée (facultatif).</span>
             </label>
-            {customerPushNotice && <p role="status" style={{margin:0,fontSize:11,color:'var(--boutique-muted, #d0ddd5)'}}>{customerPushNotice}</p>
+            {customerPushNotice && <p role="status" style={{margin:0,fontSize:11,color:'var(--boutique-muted, #d0ddd5)'}}>{customerPushNotice}</p>}
             {selected.mode === 'order' && typeof selected.price === 'number' && Number.isFinite(selected.price) && selected.price > 0 && <p style={{margin:0,fontSize:12,fontWeight:600,color:'var(--boutique-muted, #d0ddd5)'}}>Total indicatif : {new Intl.NumberFormat('fr-FR',{style:'currency',currency:selected.currency}).format(Math.round(selected.price * quantity * (selected.currency === 'TND' ? 1000 : 100))/(selected.currency === 'TND' ? 1000 : 100))} · hors livraison éventuelle</p>}
             {selected.currency !== 'TND' && !config.demoMode && <p role="note" style={{margin:0,fontSize:11,color:'var(--boutique-muted, #d0ddd5)'}}>Prise de commandes en euros indisponible pour le moment. Cette vitrine reste consultable.</p>}
             {selected.mode === 'order' && (typeof selected.price !== 'number' || !Number.isFinite(selected.price) || selected.price <= 0) && <p role="note" style={{margin:0,fontSize:11,color:'var(--boutique-muted, #d0ddd5)'}}>Prix à confirmer par le professionnel : aucune commande ne peut être enregistrée sans prix valide.</p>}
