@@ -29,6 +29,17 @@
       "destination": "/index.html"
     },
     {
+      "source": "/:clientSlug([a-z0-9-]+)/cv",
+      "has": [
+        {
+          "type": "query",
+          "key": "preview-client",
+          "value": "1"
+        }
+      ],
+      "destination": "/index.html"
+    },
+    {
       "source": "/:clientSlug([a-z0-9-]+)",
       "has": [
         {
