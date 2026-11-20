@@ -324,7 +324,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
               {sending?'Enregistrement…':confirmation?'Demande enregistrée':config.demoMode?'Tester la demande (simulation)':selected.mode === 'quote' ? 'Envoyer la demande de devis' : 'Enregistrer la demande de commande'}
             </button>
             {confirmation&&<div role="status" style={{display:'grid',gap:8,background:'var(--boutique-button, #f3f6ea)',color:'var(--boutique-button-ink, #355535)',border:'1px solid var(--boutique-accent, #d4af37)',borderRadius:10,padding:12,fontSize:12}}>
-              <strong>Demande enregistrée dans Mon compte du professionnel.</strong>
+              <strong>Votre demande a bien été transmise au professionnel.</strong>
               <span>Référence : {confirmation.slice(0,8).toUpperCase()} · En attente de traitement · Aucun paiement enregistré.</span>
               {contactChannel==='email' && canEmail && <button type="button" onClick={contactEmail}
                 style={{border:'1px solid var(--boutique-accent, #d4af37)',borderRadius:10,padding:'11px 12px',background:'var(--boutique-surface, #fff)',color:'var(--boutique-ink, #245c37)',fontWeight:700,cursor:'pointer'}}>
