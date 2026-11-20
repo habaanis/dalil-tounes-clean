@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   MapPin,
@@ -592,6 +592,7 @@ export default function EducationNew() {
 
   const [jobOffers, setJobOffers] = useState<JobOffer[]>([]);
   const [educationEvents, setEducationEvents] = useState<EducationEvent[]>([]);
+  const eventsDetailsRef = useRef<HTMLDetailsElement>(null);
   const [eventsCity, setEventsCity] = useState('');
 
   useEffect(() => {
@@ -651,12 +652,12 @@ export default function EducationNew() {
   }, [eventsCity]);
 
   return (
-    <div className="public-surface min-h-screen bg-gradient-to-b from-blue-50 to-white" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="public-surface min-h-screen bg-gradient-to-b from-[#FCFAF5] to-white" dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Hero Section with Background Image */}
       <section
         className="relative text-white pb-10 px-4 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: `linear-gradient(rgba(74, 29, 67, 0.6), rgba(74, 29, 67, 0.6)), url(${getSupabaseImageUrl('classe-ecole.jpg')})`
+          backgroundImage: `linear-gradient(rgba(32, 29, 23, 0.64), rgba(32, 29, 23, 0.52)), url(${getSupabaseImageUrl('classe-ecole.jpg')})`
         }}
       >
         <div className="max-w-5xl mx-auto text-center">
@@ -691,6 +692,12 @@ export default function EducationNew() {
         </div>
       </section>
 
+      <details className="group mx-auto mb-3 max-w-5xl rounded-xl border border-[#C9A65D] bg-white">
+        <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-semibold text-[#292725] [&::-webkit-details-marker]:hidden">
+          <span>⭐ {t.meilleurs.sectionTitle}</span>
+          <ChevronDown className="h-4 w-4 shrink-0 text-[#B28A44] transition group-open:rotate-180" aria-hidden="true" />
+        </summary>
+        <div className="border-t border-[#C9A65D]/40 pt-3">
       {/* Meilleurs établissements + article blog */}
       <section className="py-8 bg-white">
         <MeilleursSection
@@ -704,9 +711,19 @@ export default function EducationNew() {
             slug: "bien-choisir-son-ecole"
           }}
           useGoogleRecommendationCriteria
+          showSearchCta={false}
         />
       </section>
 
+        </div>
+      </details>
+
+      <details className="group mx-auto mb-3 max-w-5xl rounded-xl border border-[#C9A65D] bg-white">
+        <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-semibold text-[#292725] [&::-webkit-details-marker]:hidden">
+          <span>📅 {t.eventBanner.title}</span>
+          <ChevronDown className="h-4 w-4 shrink-0 text-[#B28A44] transition group-open:rotate-180" aria-hidden="true" />
+        </summary>
+        <div className="border-t border-[#C9A65D]/40 pt-3">
       <section className="max-w-5xl mx-auto px-4 pb-8" aria-label={t.eventBanner.title}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -720,7 +737,7 @@ export default function EducationNew() {
           <p className="text-xs text-gray-700 leading-snug mb-1.5">{t.eventBanner.desc}</p>
           <Link
             to="/education-event-form"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#D6B86D] hover:bg-[#E4CB91] border border-[#C9A65D] text-[#292725] hover:text-[#292725] font-semibold rounded-lg shadow-sm transition-all transform hover:scale-105 text-xs"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#B62226] hover:bg-[#931D23] border border-[#D4AF37] text-white hover:text-white font-semibold rounded-lg shadow-sm transition-all transform hover:scale-105 text-xs"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
             <Calendar className="w-3.5 h-3.5 text-[#D4AF37]" aria-hidden="true" />
@@ -753,7 +770,7 @@ export default function EducationNew() {
             <p className="text-sm text-gray-600 mb-4">{t.partnerBlock.desc}</p>
             <button
               type="button"
-              onClick={() => document.getElementById('education-events-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+              onClick={() => { if (eventsDetailsRef.current) { eventsDetailsRef.current.open = true; eventsDetailsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }}
               className="inline-flex items-center gap-2 text-[#292725] hover:text-[#D4AF37] font-medium text-sm transition-colors"
             >
               {t.partnerBlock.link}
@@ -763,6 +780,15 @@ export default function EducationNew() {
         </div>
       </section>
 
+        </div>
+      </details>
+
+      <details className="group mx-auto mb-3 max-w-5xl rounded-xl border border-[#C9A65D] bg-white">
+        <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-semibold text-[#292725] [&::-webkit-details-marker]:hidden">
+          <span>🔗 {official.title}</span>
+          <ChevronDown className="h-4 w-4 shrink-0 text-[#B28A44] transition group-open:rotate-180" aria-hidden="true" />
+        </summary>
+        <div className="border-t border-[#C9A65D]/40 pt-3">
       <section className="max-w-5xl mx-auto px-4 pb-8" aria-labelledby="official-education-links">
         <h2 id="official-education-links" className="public-heading text-xl font-semibold text-[#292725] text-center mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>{official.title}</h2>
         <div className="grid gap-3 md:grid-cols-3">
@@ -779,6 +805,15 @@ export default function EducationNew() {
         </div>
       </section>
 
+        </div>
+      </details>
+
+      <details className="group mx-auto mb-3 max-w-5xl rounded-xl border border-[#C9A65D] bg-white">
+        <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-semibold text-[#292725] [&::-webkit-details-marker]:hidden">
+          <span>💼 {t.careersBlock.title}</span>
+          <ChevronDown className="h-4 w-4 shrink-0 text-[#B28A44] transition group-open:rotate-180" aria-hidden="true" />
+        </summary>
+        <div className="border-t border-[#C9A65D]/40 pt-3">
       {/* Bloc Carrières dans l'Éducation - Version compacte */}
       <section className="max-w-7xl mx-auto px-4 pb-6">
         <motion.div
@@ -813,7 +848,7 @@ export default function EducationNew() {
 
           <Link
             to="/jobs"
-            className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#D6B86D] hover:bg-[#E4CB91] text-[#292725] hover:text-[#292725] rounded-lg transition font-semibold text-xs border border-[#D4AF37]"
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#B62226] hover:bg-[#931D23] text-white hover:text-white rounded-lg transition font-semibold text-xs border border-[#D4AF37]"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
             {t.careersBlock.viewAll}
@@ -822,6 +857,15 @@ export default function EducationNew() {
         </motion.div>
       </section>
 
+        </div>
+      </details>
+
+      <details ref={eventsDetailsRef} className="group mx-auto mb-3 max-w-5xl rounded-xl border border-[#C9A65D] bg-white">
+        <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-semibold text-[#292725] [&::-webkit-details-marker]:hidden">
+          <span>🗓️ {t.events.upcoming}</span>
+          <ChevronDown className="h-4 w-4 shrink-0 text-[#B28A44] transition group-open:rotate-180" aria-hidden="true" />
+        </summary>
+        <div className="border-t border-[#C9A65D]/40 pt-3">
       {/* Section Événements Éducation (en bas avec ancre) - Version ultra compacte */}
       <section id="education-events-section" className="max-w-7xl mx-auto px-4 pb-6 scroll-mt-24">
         <motion.div
@@ -898,7 +942,7 @@ export default function EducationNew() {
                         href={event.registration_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex-shrink-0 px-3 py-1.5 bg-[#D6B86D] hover:bg-[#E4CB91] border border-[#C9A65D] text-[#292725] hover:text-[#292725] rounded-lg transition text-xs font-semibold"
+                        className="flex-shrink-0 px-3 py-1.5 bg-[#B62226] hover:bg-[#931D23] border border-[#D4AF37] text-white hover:text-white rounded-lg transition text-xs font-semibold"
                         style={{ fontFamily: "'Playfair Display', serif" }}
                       >
                         {t.events.register}
@@ -919,6 +963,9 @@ export default function EducationNew() {
           )}
         </motion.div>
       </section>
+        </div>
+      </details>
+
 
     </div>
   );
