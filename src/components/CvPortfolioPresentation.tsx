@@ -30,7 +30,7 @@ const PORTFOLIO_PALETTE_THEMES: Record<PortfolioPalette, CSSProperties> = {
     '--cvp-shell-mid': '#002f2b', '--cvp-shell-end': '#001d1b', '--cvp-identity-start': '#004e42',
     '--cvp-identity-end': '#002723', '--cvp-panel': '#003c35', '--cvp-action': 'rgba(0,74,61,.55)',
     '--cvp-badge': '#087051', '--cvp-overlay': 'rgba(0,45,39,.95)', '--cvp-accent': '#e8bd43',
-    '--boutique-surface': '#002f2b', '--boutique-ink': '#f7f4ec', '--boutique-accent': '#e8bd43',
+    '--boutique-surface': '#f0f5ef', '--boutique-ink': '#12372e', '--boutique-accent': '#e8bd43',
     '--boutique-button': '#003c35', '--boutique-button-ink': '#f7f4ec', '--boutique-muted': '#d0ddd5',
   } as CSSProperties,
   ivory: {
@@ -46,7 +46,7 @@ const PORTFOLIO_PALETTE_THEMES: Record<PortfolioPalette, CSSProperties> = {
     '--cvp-shell-mid': '#10243a', '--cvp-shell-end': '#06101d', '--cvp-identity-start': '#1d3a5a',
     '--cvp-identity-end': '#172f4b', '--cvp-panel': '#172f4b', '--cvp-action': 'rgba(29,58,90,.72)',
     '--cvp-badge': '#1d3a5a', '--cvp-overlay': 'rgba(16,36,58,.95)', '--cvp-accent': '#e5c486',
-    '--boutique-surface': '#10243a', '--boutique-ink': '#f8f1e4', '--boutique-accent': '#e5c486',
+    '--boutique-surface': '#edf1f7', '--boutique-ink': '#14283d', '--boutique-accent': '#e5c486',
     '--boutique-button': '#172f4b', '--boutique-button-ink': '#f8f1e4', '--boutique-muted': '#d1d9e2',
   } as CSSProperties,
 };
