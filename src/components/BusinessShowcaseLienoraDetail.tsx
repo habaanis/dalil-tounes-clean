@@ -1559,14 +1559,6 @@ export default function BusinessShowcaseLienoraDetail({
             {language === 'ar' ? 'تثبيت أو عرض CV Business' : language === 'en' ? 'Install / present my Business CV' : language === 'it' ? 'Installa / mostra il mio CV Business' : language === 'ru' ? 'Установить / показать Business CV' : 'Installer / présenter mon CV Business'}
           </a>
         )}
-        {capabilities.variant === 'premium' && (
-          <a className="dt-qr-action" href={isDedicatedClientHostname(window.location.hostname)
-            ? '/' + encodeURIComponent(String(business.slug_court || business.slug || business.id || '')) + '/compte'
-            : buildClientAppUrl(business, language).split('?')[0] + '/compte'}>
-            <UserRound aria-hidden="true" />
-            {language === 'ar' ? 'حسابي المهني' : language === 'en' ? 'My professional account' : 'Mon compte'}
-          </a>
-        )}
         <button type="button" className="dt-qr-action" onClick={() => void share()}>
           <Share2 aria-hidden="true" />{text.share}
         </button>
