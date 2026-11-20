@@ -24,8 +24,11 @@ function selectedCvModel(slug:string|undefined,search:string,defaultModel:CvMode
 function cvReturnPath(slug:string|undefined,model:CvModel):string {
   return '/' + encodeURIComponent(slug || '') + '/cv?preview-model=' + model + '&skip-opening=1';
 }
-function withCvContext(path:string,model:CvModel):string {
-  return path + '?cv=' + model;
+function withCvContext(path:string,model:CvModel,search=''):string {
+  const query=new URLSearchParams();
+  query.set('cv',model);
+  if(new URLSearchParams(search).get('tab')==='orders')query.set('tab','orders');
+  return path + '?' + query.toString();
 }
 
 export function ClientAccountLogin() {
@@ -35,7 +38,7 @@ export function ClientAccountLogin() {
   const {search}=useLocation();
   const returnModel=selectedCvModel(slug,search);
   const [mode,setMode]=useState<'login'|'signup'>('login');
-  const accountPath = withCvContext('/' + encodeURIComponent(slug || '') + '/compte',returnModel);
+  const accountPath = withCvContext('/' + encodeURIComponent(slug || '') + '/compte',returnModel,search);
   const cvPath = cvReturnPath(slug,returnModel);
   if (!slug || window.location.hostname !== 'app.dalil-tounes.com') return <p>Page indisponible.</p>;
   if (loading) return <main role="status" className="min-h-dvh bg-[#fbf8f0] p-6">Vérification…</main>;
@@ -60,7 +63,7 @@ export default function ClientAccount() {
   const returnModel=selectedCvModel(slug,search,publishedModel);
   const [state,setState]=useState<'checking'|'allowed'|'denied'|'error'>('checking');
   const [retry,setRetry]=useState(0);
-  const accountLogin=withCvContext('/' + encodeURIComponent(slug || '') + '/connexion',returnModel);
+  const accountLogin=withCvContext('/' + encodeURIComponent(slug || '') + '/connexion',returnModel,search);
   const cvPath=cvReturnPath(slug,returnModel);
   useEffect(()=>{
     let active=true;
