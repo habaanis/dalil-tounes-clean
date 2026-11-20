@@ -31,7 +31,7 @@ const copy = {
   },
   en: {
     title: 'Best deals right now',
-    subtitle: 'Don't miss the best opportunities!',
+    subtitle: "Don't miss the best opportunities!",
     urgent: 'URGENT',
     goodDeal: '🔥 Great deal',
     negotiate: 'Negotiable',

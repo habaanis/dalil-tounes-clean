@@ -90,7 +90,7 @@ const translations = {
     noPhoto: 'Nessuna foto',
     postedOn: 'Pubblicato il',
     urgent: 'URGENTE',
-    makeOffer: 'Fai un'offerta',
+    makeOffer: "Fai un'offerta",
     share: 'Condividi',
     report: 'Segnala',
     newSeller: 'Nuovo',

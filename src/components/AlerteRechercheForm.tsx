@@ -16,7 +16,7 @@ const copy = {
     cityPlaceholder: 'Sélectionnez une ville',
     categoryLabel: 'Catégorie',
     allCategories: 'Toutes les catégories',
-    typeLabel: 'Type d'annonce',
+    typeLabel: "Type d'annonce",
     allTypes: 'Tous les types',
     sell: 'À vendre',
     buy: 'Recherche',
