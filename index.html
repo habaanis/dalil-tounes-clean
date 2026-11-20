@@ -64,7 +64,7 @@
         // Only an explicit opening preview may override the professional's live choice.
         var requestedPalette = params.get('opening-preview') === '1' ? params.get('palette') : null;
         var palette = ['prestige', 'ivory', 'night'].indexOf(requestedPalette) >= 0 ? requestedPalette : 'prestige';
-        var paletteBackgrounds = { prestige: '#003C35', ivory: '#FFFFF0', night: '#10243A' };
+        var paletteBackgrounds = { prestige: '#031D18', ivory: '#FFFFF0', night: '#10243A' };
         document.documentElement.style.setProperty('--client-app-bg', paletteBackgrounds[palette]);
         document.getElementById('app-theme-color').content = paletteBackgrounds[palette];
         document.documentElement.lang = lang;
