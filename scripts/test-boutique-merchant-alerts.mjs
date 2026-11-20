@@ -20,7 +20,8 @@ check('private table has RLS and no direct client grants',
  sql.includes('enable row level security')&&sql.includes('revoke all')&&
  sql.includes('from anon,authenticated'));
 check('order submissions remain closed without explicit server setting',
- submit.includes('Deno.env.get("DALIL_BOUTIQUE_ORDERS_ENABLED")!=="true"'));
+ submit.includes('id===pilotEntrepriseId || Deno.env.get("DALIL_BOUTIQUE_ORDERS_ENABLED")==="true"') &&
+ submit.includes('if(typeof profileId!=="string" || !entrepriseId.test(profileId) || !intakeEnabled(profileId))'));
 check('existing idempotent retries never send merchant notifications',
  submit.indexOf('if(existing){')<submit.indexOf('sendMerchantAlert(db,profileId,created.id')&&
  submit.includes('if(writeError.code==="23505")'));

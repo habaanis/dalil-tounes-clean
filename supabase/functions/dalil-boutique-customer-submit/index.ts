@@ -6,6 +6,10 @@ import webpush from "npm:web-push@3.6.7";
 const origins = new Set(["https://dalil-tounes.com","https://www.dalil-tounes.com","https://app.dalil-tounes.com","https://appli.dalil-tounes.com","https://pwa.dalil-tounes.com","https://dalil-tounes-pwa.vercel.app","http://localhost:5173"]);
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const entrepriseId = /^[a-z0-9][a-z0-9_-]{0,99}$/i;
+// Controlled first real pilot: only this already-approved merchant can receive public requests.
+// All other merchants still require the global server opt-in flag.
+const pilotEntrepriseId="36f84b99-2c37-47d1-91ba-4c35cda8c1af";
+const intakeEnabled=(id:string)=>id===pilotEntrepriseId || Deno.env.get("DALIL_BOUTIQUE_ORDERS_ENABLED")==="true";
 const reply = (data:unknown,status=200,origin="") => new Response(JSON.stringify(data),{status,headers:{
   "content-type":"application/json","cache-control":"no-store","vary":"Origin",
   ...(origins.has(origin)?{"access-control-allow-origin":origin}:{})
@@ -59,14 +63,11 @@ Deno.serve(async req => {
     if(!origins.has(origin))return reply({error:"Forbidden"},403,origin);
     const configured=Boolean(Deno.env.get("SUPABASE_URL")&&Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")&&
       (Deno.env.get("DALIL_BOUTIQUE_ORDERS_RATE_LIMIT_SECRET")||"").length>=24);
-    return reply({available:Deno.env.get("DALIL_BOUTIQUE_ORDERS_ENABLED")==="true"&&configured},200,origin);
+    const id=new URL(req.url).searchParams.get("profileId")||"";
+    return reply({available:configured && entrepriseId.test(id) && intakeEnabled(id)},200,origin);
   }
   if(req.method!=="POST")return reply({error:"Method not allowed"},405,origin);
   if(!origins.has(origin))return reply({error:"Forbidden"},403,origin);
-  // Fail closed even if the function is deployed before payments and migrations are ready.
-  // Only a server-side secret explicitly set to "true" can enable live intake.
-  if(Deno.env.get("DALIL_BOUTIQUE_ORDERS_ENABLED")!=="true")
-    return reply({error:"Orders are not yet active"},503,origin);
   if(Number(req.headers.get("content-length")||"0")>8192)return reply({error:"Payload too large"},413,origin);
   // Reject oversized or non-JSON bodies even when Content-Length is omitted or falsified.
   if(!/^application\/json(?:\s*;|\s*$)/i.test(req.headers.get("content-type")||""))
@@ -77,6 +78,9 @@ Deno.serve(async req => {
   try { const parsed=JSON.parse(raw); if(parsed&&typeof parsed==="object"&&!Array.isArray(parsed))body=parsed; } catch { /* Invalid JSON */ }
   if(!body)return reply({error:"Invalid request"},400,origin);
   const {profileId,productId,idempotencyKey,quantity}=body;
+  // The pilot can receive real customer requests, but no other merchant is opened.
+  if(typeof profileId!=="string" || !entrepriseId.test(profileId) || !intakeEnabled(profileId))
+    return reply({error:"Orders are not yet active"},503,origin);
   const customerName=typeof body.name==="string"?body.name.trim():"";
   const contact=typeof body.contact==="string"?body.contact.trim():"";
   const note=typeof body.note==="string"?body.note.trim():"";

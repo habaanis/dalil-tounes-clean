@@ -19,7 +19,7 @@ vm.runInNewContext(compiled,{
   mockWebpush:{},Request,Response,Date,URL,crypto,TextEncoder,Set,RegExp,Number,String,JSON,Array,Promise,Uint8Array,
 },{filename:'customer-submit.js'});
 assert.equal(typeof handler,'function');
-const request=(method,origin='https://appli.dalil-tounes.com')=>new Request('https://example.invalid',{method,
+const request=(method,origin='https://appli.dalil-tounes.com',profileId='')=>new Request('https://example.invalid?profileId='+encodeURIComponent(profileId),{method,
   headers:{origin,...(method==='POST'?{'content-type':'application/json'}:{})},
   ...(method==='POST'?{body:'{}'}:{})});
 const closed=await handler(request('GET'));
@@ -30,15 +30,24 @@ console.log('PASS GET readiness rejects closed orders without accessing data');
 const denied=await handler(request('GET','https://lienora.fr'));
 assert.equal(denied.status,403);
 console.log('PASS readiness rejects other origins');
+const pilotId='36f84b99-2c37-47d1-91ba-4c35cda8c1af';
+const another='46f84b99-2c37-47d1-91ba-4c35cda8c1af';
+const allowed=await handler(request('GET','https://appli.dalil-tounes.com',pilotId));
+assert.deepEqual(JSON.parse(await allowed.text()),{available:true});
+assert.equal(dbCalls,0);
+console.log('PASS specifically approved merchant pilot readiness opens');
+const stillClosed=await handler(request('GET','https://appli.dalil-tounes.com',another));
+assert.deepEqual(JSON.parse(await stillClosed.text()),{available:false});
+console.log('PASS unapproved merchants stay closed');
 const post=await handler(request('POST'));
 assert.equal(post.status,503);
 assert.equal(dbCalls,0);
-console.log('PASS existing submission gate remains closed without server opt-in');
+console.log('PASS non-pilot POST remains closed');
 live=true;
-const eligible=await handler(request('GET'));
+const eligible=await handler(request('GET','https://appli.dalil-tounes.com',another));
 assert.deepEqual(JSON.parse(await eligible.text()),{available:true});
 assert.equal(dbCalls,0);
-console.log('PASS GET reflects server-side opt-in but never activates it');
+console.log('PASS full rollout still requires the separate server-side flag');
 const preflight=await handler(request('OPTIONS'));
 assert.equal(preflight.status,204);
 assert.ok(preflight.headers.get('access-control-allow-methods')?.includes('GET'));
@@ -46,6 +55,8 @@ console.log('PASS browser CORS allows read-only availability request');
 
 const ui=readFileSync('src/components/boutique/BoutiqueInteractive.tsx','utf8');
 assert.ok(ui.includes("orderAvailability==='available'||config.demoMode"));
+assert.ok(ui.includes('encodeURIComponent(config.profileId)'));
+
 assert.ok(ui.includes("orderAvailability!=='available'"));
 assert.ok(ui.includes('Aucune demande n’a été enregistrée'));
 assert.ok(ui.includes('sans enregistrement'));

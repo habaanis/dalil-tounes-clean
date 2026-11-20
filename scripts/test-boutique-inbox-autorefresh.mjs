@@ -22,5 +22,6 @@ check('merchant changes only order processing status, never payment evidence',
   !inbox.includes("action:'mark_paid'") &&
   merchant.includes('.update({status,updated_at:new Date().toISOString()})'));
 check('public order intake remains gated',
-  submission.includes('Deno.env.get("DALIL_BOUTIQUE_ORDERS_ENABLED")!=="true"'));
+  submission.includes('id===pilotEntrepriseId || Deno.env.get("DALIL_BOUTIQUE_ORDERS_ENABLED")==="true"') &&
+  submission.includes('if(typeof profileId!=="string" || !entrepriseId.test(profileId) || !intakeEnabled(profileId))'));
 console.log('PASS inbox fallback without public orders or payments');
