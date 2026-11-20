@@ -1,5 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { BoutiquePushFollow } from './BoutiquePushFollow';
+import { supabase, supabaseUrl, supabaseAnonKey } from '../../lib/supabaseClient';
 
 export type BoutiqueProduct = {
   id: string;
@@ -19,6 +20,7 @@ export type BoutiqueConfig = {
   merchantName: string;
   profileId?: string;
   whatsapp: string;
+  email?: string;
   products: BoutiqueProduct[];
   paymentsVerified?: boolean;
   demoMode?: boolean;
@@ -39,17 +41,9 @@ const priceText = (product: BoutiqueProduct) =>
     ? new Intl.NumberFormat('fr-FR', { style: 'currency', currency: product.currency }).format(product.price)
     : 'Sur devis';
 
-const merchantPaymentLink = (value?: string) => {
-  if (!value) return '';
-  try {
-    const url = new URL(value);
-    return url.protocol === 'https:' && !url.username && !url.password ? url.href : '';
-  } catch { return ''; }
-};
-
 const labelStyle = { display: 'grid', gap: 4, fontSize: 12, fontWeight: 500 } as const;
 const fieldStyle = { boxSizing: 'border-box', width: '100%', minWidth: 0, border: '1px solid #d7c7ae', borderRadius: 9, padding: '9px 10px', fontSize: 14, background: '#fff' } as const;
-const iconButton = { background: '#fffaf3', border: '1px solid #d7c7ae', borderRadius: 24, height: 34, minWidth: 34, cursor: 'pointer', color: '#4c3046', fontSize: 20 } as const;
+const iconButton = { background: '#fffaf3', border: '1px solid #d7c7ae', borderRadius: 24, height: 34, minWidth: 34, cursor: 'pointer', color: '#063b30', fontSize: 20 } as const;
 
 export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = 'Boutique', triggerIcon }: { config: BoutiqueConfig; triggerClassName?: string; triggerLabel?: string; triggerIcon?: ReactNode }) {
   const [open, setOpen] = useState(false);
@@ -58,22 +52,78 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
   const [quantity, setQuantity] = useState(1);
   const [name, setName] = useState('');
   const [contact, setContact] = useState('');
+  const [contactChannel, setContactChannel] = useState<'whatsapp' | 'email'>('whatsapp');
+  const [merchantEmail, setMerchantEmail] = useState(config.email?.trim() || '');
   const [details, setDetails] = useState('');
+  const [requestedDate, setRequestedDate] = useState('');
   const [error, setError] = useState('');
+  const [sending, setSending] = useState(false);
+  const [confirmation, setConfirmation] = useState('');
+  const [orderAvailability,setOrderAvailability] = useState<'checking'|'available'|'unavailable'>('checking');
+  // Keep the same UUID across retries to prevent duplicates after network failure.
+  const [requestKey, setRequestKey] = useState(() => crypto.randomUUID());
+  // A retry with unchanged data keeps the idempotency key. Editing a field
+  // starts a new request so the server does not return 409 for changed details.
+  const editRequest = () => { setRequestKey(crypto.randomUUID()); setError(''); };
   const [catalogueQuery, setCatalogueQuery] = useState('');
   const [catalogueCategory, setCatalogueCategory] = useState('');
   const [cataloguePage, setCataloguePage] = useState(1);
   const products = config.products.filter(product => Boolean(product.id && product.title && product.imageUrl));
-  const catalogueCategories = [...new Set(products.map(product => product.category?.trim()).filter((category): category is string => Boolean(category)))].sort((a,b) => a.localeCompare(b,'fr'));
+  // Keep the approved festive-menu order; any other category follows alphabetically.
+  const preferredCategories = ['Menu des fêtes', 'Entrées', 'Plats', 'Fromages', 'Desserts'];
+  const rankCategory = (name: string) => preferredCategories.findIndex(
+    preferred => preferred.toLocaleLowerCase('fr') === name.toLocaleLowerCase('fr')
+  );
+  const catalogueCategories = [...new Set(products.map(product => product.category?.trim()).filter((category): category is string => Boolean(category)))].sort((a,b) => {
+    const aRank = rankCategory(a), bRank = rankCategory(b);
+    if (aRank !== bRank) return aRank < 0 ? 1 : bRank < 0 ? -1 : aRank - bRank;
+    return a.localeCompare(b, 'fr');
+  });
   const filteredProducts = products.filter(product =>
     (!catalogueCategory || product.category?.trim() === catalogueCategory)
     && (!catalogueQuery.trim() || (product.title + ' ' + (product.description || '')).toLocaleLowerCase().includes(catalogueQuery.trim().toLocaleLowerCase()))
-  );
+  ).sort((a,b) => {
+    // Sort only across known festive-menu sections; retain the merchant's
+    // published order within each section and for uncategorized products.
+    if (catalogueCategory || catalogueQuery.trim()) return 0;
+    const first = rankCategory(a.category?.trim() || ''), second = rankCategory(b.category?.trim() || '');
+    if (first < 0 && second < 0) return 0;
+    if (first < 0) return 1;
+    if (second < 0) return -1;
+    return first - second;
+  });
   const pageCount = Math.max(1, Math.ceil(filteredProducts.length / 12));
   const safePage = Math.min(cataloguePage, pageCount);
   const pageProducts = filteredProducts.slice((safePage - 1) * 12, safePage * 12);
   const phone = config.whatsapp.replace(/\D/g, '');
   const canWhatsApp = /^\d{8,15}$/.test(phone);
+  const canEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(merchantEmail);
+  useEffect(() => {
+    setMerchantEmail(config.email?.trim() || '');
+    if (!open || config.email?.trim() || !config.profileId || config.demoMode) return;
+    let active = true;
+    void supabase.from('entreprise').select('email').eq('id', config.profileId).maybeSingle().then(({ data }) => {
+      if (active && typeof data?.email === 'string') setMerchantEmail(data.email.trim());
+    });
+    return () => { active = false; };
+  }, [open, config.profileId, config.email, config.demoMode]);
+  useEffect(() => {
+    if(!open)return;
+    if(config.demoMode){setOrderAvailability('available');return;}
+    if(!config.profileId){setOrderAvailability('unavailable');return;}
+    let active=true;
+    setOrderAvailability('checking');
+    void fetch(supabaseUrl+'/functions/v1/dalil-boutique-customer-submit?profileId='+encodeURIComponent(config.profileId),{
+      method:'GET',headers:{apikey:supabaseAnonKey},cache:'no-store',
+    }).then(async response=>{
+      const data=await response.json().catch(()=>null);
+      return response.ok && data?.available===true;
+    }).then(available=>{
+      if(active)setOrderAvailability(available?'available':'unavailable');
+    }).catch(()=>{if(active)setOrderAvailability('unavailable');});
+    return ()=>{active=false;};
+  },[open,config.demoMode,config.profileId]);
+
   useEffect(() => {
     setSelected(current => {
       if (!current) return current;
@@ -96,38 +146,92 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
 
   if (!products.length) return null;
 
-  const close = () => { setOpen(false); setSelected(null); setRequestOpen(false); setError(''); };
+  const close = () => {
+    if (sending) return;
+    setOpen(false); setSelected(null); setRequestOpen(false); setError('');
+    setConfirmation(''); setRequestKey(crypto.randomUUID());
+  };
   const showProduct = (product: BoutiqueProduct) => {
     setSelected(product); setRequestOpen(false); setQuantity(1);
-    setName(''); setContact(''); setDetails(''); setError('');
+    setName(''); setContact(''); setContactChannel('whatsapp'); setDetails(''); setRequestedDate(''); setError('');
+    setConfirmation(''); setSending(false); setRequestKey(crypto.randomUUID());
   };
-  const send = () => {
-    if (!selected) return;
-    if (config.demoMode) { setError('Démonstration : aucun devis, message ou paiement réel n’est envoyé.'); return; }
-    if (!name.trim() || !contact.trim()) { setError('Indiquez votre nom et votre contact.'); return; }
-    if (!canWhatsApp) { setError('WhatsApp doit être configuré par le professionnel.'); return; }
-    const text = [
-      selected.mode === 'quote' ? 'Demande de devis' : 'Demande de commande',
-      'Professionnel : ' + config.merchantName,
-      'Article : ' + selected.title,
-      'Quantité : ' + quantity,
-      'Prix : ' + priceText(selected),
-      'Nom : ' + name.trim(),
-      'Contact : ' + contact.trim(),
-      details.trim() ? 'Précisions : ' + details.trim() : '',
-      'Vitrine : ' + window.location.href,
-      'À confirmer par le professionnel. Aucun paiement effectué.',
-    ].filter(Boolean).join('\n');
-    window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(text), '_blank', 'noopener,noreferrer');
+  const send = async () => {
+    if (!selected || sending || confirmation) return;
+    if (config.demoMode) { setError('Démonstration : aucune demande, message ou paiement réel n’est envoyé.'); return; }
+    if(orderAvailability!=='available'){setError('Les commandes ne sont pas ouvertes. Contactez directement le professionnel. Aucune demande n’a été enregistrée.');return;}
+    if (!config.profileId) { setError('Les demandes ne sont pas encore activées pour cet établissement.'); return; }
+    // The current orders API validates only TND. Refuse EUR here rather than imply that an order was recorded.
+    if (selected.currency !== 'TND') { setError('Les commandes en euros ne sont pas encore activées sur Dalil Tounes. Contactez directement le professionnel.'); return; }
+    if (selected.mode === 'order' && (typeof selected.price !== 'number' || !Number.isFinite(selected.price) || selected.price <= 0)) {
+      setError('Cet article n’a pas de prix valide pour une commande. Demandez un devis au professionnel.'); return;
+    }
+    if (name.trim().length < 2) { setError('Indiquez votre nom.'); return; }
+    if (contactChannel === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.trim())) {
+      setError('Indiquez une adresse e-mail valide.'); return;
+    }
+    if (contactChannel === 'whatsapp' && !/^\+?[\d\s().-]{8,20}$/.test(contact.trim())) {
+      setError('Indiquez un numéro de téléphone valide pour WhatsApp.'); return;
+    }
+    // The selected date is part of the stored note and therefore of the server's idempotency fingerprint.
+    const today = new Date();
+    const localToday = [today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
+    if (requestedDate && (!/^\d{4}-\d{2}-\d{2}$/.test(requestedDate) || requestedDate < localToday)) {
+      setError('Sélectionnez une date d’événement valide, aujourd’hui ou plus tard.'); return;
+    }
+    const note = ['Réponse souhaitée : '+(contactChannel === 'email' ? 'E-mail' : 'WhatsApp'),requestedDate ? 'Date souhaitée : '+requestedDate : '',details.trim()].filter(Boolean).join('\n');
+    if (note.length > 1000) { setError('Les précisions sont trop longues. Raccourcissez votre message.'); return; }
+    setSending(true);setError('');
+    try {
+      const response=await fetch(supabaseUrl+'/functions/v1/dalil-boutique-customer-submit',{
+        method:'POST',
+        headers:{'content-type':'application/json',apikey:supabaseAnonKey},
+        body:JSON.stringify({profileId:config.profileId,productId:selected.id,quantity,
+          name:name.trim(),contact:contact.trim(),note,
+          idempotencyKey:requestKey}),
+      });
+      const data=await response.json().catch(()=>({error:'Réponse invalide du serveur'}));
+      if(!response.ok || data.accepted!==true || typeof data.reference!=='string') {
+        throw new Error(response.status===503?'Enregistrement temporairement indisponible. Vos informations sont conservées.':
+          typeof data.error==='string'?data.error:'Demande non enregistrée. Réessayez.');
+      }
+      // Only a positive acknowledgement from the server can display a confirmation.
+      setConfirmation(data.reference);
+    } catch(err) {
+      setError(err instanceof Error?err.message:'Demande non enregistrée. Réessayez.');
+    } finally {setSending(false);}
   };
-  const payLink = selected?.mode === 'order' && config.paymentsVerified && !config.demoMode && quantity === 1
-    ? merchantPaymentLink(selected.merchantPaymentUrl)
-    : '';
-
+  const contactDirectWhatsApp=()=>{
+    if(!canWhatsApp||!selected)return;
+    const message=[
+      'Bonjour, je vous contacte au sujet de : '+selected.title,
+      'Je souhaite connaître les modalités de commande.',
+      'Ce message est envoyé directement : aucune commande n’a été enregistrée sur Dalil Tounes.',
+    ].join('\\n');
+    window.open('https://wa.me/'+phone+'?text='+encodeURIComponent(message),'_blank','noopener,noreferrer');
+  };
+  const contactEmail=()=>{
+    if(!confirmation || !canEmail || !selected)return;
+    const subject='Demande Dalil Tounes '+confirmation.slice(0,8).toUpperCase()+' - '+selected.title;
+    const body=['Bonjour,','Ma demande est déjà enregistrée sur Dalil Tounes.','Référence : '+confirmation,'Article : '+selected.title,'Quantité : '+quantity,...(requestedDate ? ['Date souhaitée : '+requestedDate] : []),'Nom : '+name.trim(),'E-mail : '+contact.trim()].join('\n');
+    window.location.href='mailto:'+merchantEmail+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+  };
+  const contactWhatsApp=()=>{
+    if(!confirmation || !canWhatsApp || !selected)return;
+    const message=[
+      'Bonjour, je vous contacte au sujet de ma demande enregistrée sur Dalil Tounes.',
+      'Référence : '+confirmation,
+      'Article : '+selected.title,
+      'Quantité : '+quantity,
+      ...(requestedDate ? ['Date souhaitée : '+requestedDate] : []),
+      'Demande en attente de votre réponse. Nous convenons directement du paiement et de la livraison.',
+    ].join('\n');
+    window.open('https://wa.me/'+phone+'?text='+encodeURIComponent(message),'_blank','noopener,noreferrer');
+  };
   return <>
-    <button type="button" onClick={() => { setOpen(true); setSelected(null); setRequestOpen(false); setCataloguePage(1); setCatalogueQuery(''); setCatalogueCategory(''); }}
+    <button type="button" onClick={() => { setOpen(true); setSelected(null); setRequestOpen(false); setConfirmation(''); setCataloguePage(1); setCatalogueQuery(''); setCatalogueCategory(''); }}
       aria-haspopup="dialog" className={triggerClassName}
-      style={triggerClassName ? undefined : { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 7, padding: '8px 15px', border: '1px solid #d2b276', background: '#fffaf2', color: '#5a3a52', borderRadius: 24, fontSize: 13, fontWeight: 600, lineHeight: 1.2, cursor: 'pointer' }}>
+      style={triggerClassName ? undefined : { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 7, padding: '8px 15px', border: '1px solid #d2b276', background: '#fffaf2', color: '#063b30', borderRadius: 24, fontSize: 13, fontWeight: 600, lineHeight: 1.2, cursor: 'pointer' }}>
       {triggerIcon ?? <span aria-hidden="true">✦</span>}<span>{triggerLabel}</span>{!config.demoMode && products.some(isRecentProduct) && <span aria-label="Nouveautés" style={{fontSize:10,color:'#9b773e',fontWeight:700,whiteSpace:'nowrap'}}>●</span>}
     </button>
     {open && <div role="presentation" onMouseDown={close}
@@ -138,7 +242,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 12 }}>
           <div style={{ display: 'grid', gap: 2 }}>
             <span style={{ color: '#947244', fontSize: 10, letterSpacing: '.09em', textTransform: 'uppercase' }}>{config.merchantName}</span>
-            <strong style={{ color: '#4b2e47', fontSize: 17 }}>{selected ? selected.title : 'Boutique'}</strong>
+            <strong style={{ color: '#063b30', fontSize: 17 }}>{selected ? selected.title : 'Boutique'}</strong>
           </div>
           <button type="button" style={iconButton} onClick={close} aria-label="Fermer la boutique">×</button>
         </div>
@@ -172,33 +276,67 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
             <button type="button" disabled={safePage >= pageCount} onClick={() => setCataloguePage(p => Math.min(pageCount,p+1))} style={{...iconButton,padding:'0 12px',fontSize:12,opacity:safePage >= pageCount ? .4 : 1}}>Suivant</button>
           </nav>}
         </> : <>
-          <button type="button" onClick={() => { setSelected(null); setRequestOpen(false); setError(''); }}
+          <button type="button" onClick={() => { if(sending)return; setSelected(null); setRequestOpen(false); setError(''); setConfirmation(''); }}
             style={{ border: 0, background: 'transparent', fontSize: 12, color: '#806538', padding: '0 0 10px', cursor: 'pointer' }}>‹ Toutes les créations</button>
           <img src={selected.imageUrl} alt={selected.title} style={{ display: 'block', width: '100%', maxHeight: 190, aspectRatio: '16 / 9', objectFit: 'contain', background: '#f4eee5', borderRadius: 11 }} />
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 8, marginTop: 12 }}>
-            <strong style={{ color: '#4b2e47', fontSize: 16 }}>{selected.title}</strong>
+            <strong style={{ color: '#063b30', fontSize: 16 }}>{selected.title}</strong>
             <span style={{ whiteSpace: 'nowrap', fontWeight: 600, fontSize: 12, color: '#826332' }}>{priceText(selected)}</span>
           </div>
           {selected.description && <p style={{ fontSize: 12, lineHeight: 1.5, margin: '6px 0 12px', color: '#62574d' }}>{selected.description}</p>}
-          {!requestOpen ? <button type="button" onClick={() => setRequestOpen(true)}
-            style={{ border: 0, borderRadius: 10, background: '#4d2a47', color: '#fff', fontSize: 13, fontWeight: 600, padding: '11px 14px', width: '100%', cursor: 'pointer' }}>
+          {!requestOpen ? (orderAvailability==='available'||config.demoMode) ? <button type="button" onClick={() => setRequestOpen(true)}
+            style={{ border: 0, borderRadius: 10, background: '#063b30', color: '#fff', fontSize: 13, fontWeight: 600, padding: '11px 14px', width: '100%', cursor: 'pointer' }}>
             {selected.mode === 'quote' ? 'Demander un devis' : 'Commander'}
-          </button> : <div style={{ display: 'grid', gap: 10, borderTop: '1px solid #e5d7c3', paddingTop: 12 }}>
+          </button> : <div role="status" style={{display:'grid',gap:9,padding:12,border:'1px solid #e3d6c0',borderRadius:10,background:'#fffaf3'}}>
+            <p style={{margin:0,fontSize:12,color:'#655548'}}>{orderAvailability==='checking'
+              ? 'Vérification de la disponibilité des demandes…'
+              : 'Les demandes via Dalil Tounes ne sont pas encore ouvertes. Aucun formulaire n’est envoyé ni enregistré.'}</p>
+            {orderAvailability==='unavailable' && canWhatsApp && <button type="button" onClick={contactDirectWhatsApp}
+              style={{border:'1px solid #b4c3b2',borderRadius:10,padding:'11px 12px',background:'#fff',color:'#245c37',fontWeight:700}}>
+              Contacter directement sur WhatsApp (sans enregistrement)
+            </button>}
+          </div> : <div style={{ display: 'grid', gap: 10, borderTop: '1px solid #e5d7c3', paddingTop: 12 }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <strong style={{ fontSize: 13 }}>Votre demande</strong>
               <button type="button" onClick={() => setRequestOpen(false)} style={{ border: 0, color: '#8a6a42', background: 'transparent', fontSize: 12, cursor: 'pointer' }}>Réduire</button>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 9 }}>
-              <label style={labelStyle}>Nom<input value={name} onChange={event => setName(event.target.value)} maxLength={120} placeholder="Votre nom" style={fieldStyle}/></label>
-              <label style={labelStyle}>Qté<input type="number" min="1" max="99" value={quantity} onChange={event => setQuantity(Math.max(1,Math.min(99,Number(event.target.value)||1)))} style={fieldStyle}/></label>
+              <label style={labelStyle}>Nom<input value={name} disabled={Boolean(confirmation)||sending} onChange={event => { setName(event.target.value); editRequest(); }} maxLength={120} placeholder="Votre nom" style={fieldStyle}/></label>
+              <label style={labelStyle}>Qté<input type="number" min="1" max="99" value={quantity} disabled={Boolean(confirmation)||sending} onChange={event => { setQuantity(Math.max(1,Math.min(99,Number(event.target.value)||1))); editRequest(); }} style={fieldStyle}/></label>
             </div>
-            <label style={labelStyle}>Téléphone ou e-mail<input value={contact} onChange={event => setContact(event.target.value)} maxLength={150} placeholder="Vos coordonnées" style={fieldStyle}/></label>
-            <label style={labelStyle}>Précisions (facultatif)<textarea value={details} onChange={event => setDetails(event.target.value)} maxLength={1000} rows={2} placeholder="Date, nombre de personnes, livraison…" style={{...fieldStyle, resize: 'vertical'}}/></label>
+            <fieldset disabled={Boolean(confirmation)||sending} style={{border:0,padding:0,margin:0,display:'grid',gap:7}}>
+              <legend style={{fontSize:12,fontWeight:600,marginBottom:5}}>Comment souhaitez-vous être contacté ?</legend>
+              <div style={{display:'flex',gap:14,fontSize:12}}>
+                <label><input type="radio" name="boutique-contact-channel" checked={contactChannel==='whatsapp'} onChange={() => {setContactChannel('whatsapp');setContact('');editRequest();}} /> WhatsApp</label>
+                <label><input type="radio" name="boutique-contact-channel" checked={contactChannel==='email'} onChange={() => {setContactChannel('email');setContact('');editRequest();}} /> E-mail</label>
+              </div>
+            </fieldset>
+            <label style={labelStyle}>{contactChannel==='email'?'Adresse e-mail':'Numéro de téléphone (WhatsApp)'}<input type={contactChannel==='email'?'email':'tel'} autoComplete={contactChannel==='email'?'email':'tel'} value={contact} disabled={Boolean(confirmation)||sending} onChange={event => { setContact(event.target.value); editRequest(); }} maxLength={150} placeholder={contactChannel==='email'?'nom@exemple.com':'+216 XX XXX XXX'} style={fieldStyle}/></label>
+            <label style={labelStyle}>Date souhaitée (facultative)<input type="date" value={requestedDate} disabled={Boolean(confirmation)||sending} onChange={event => { setRequestedDate(event.target.value); editRequest(); }} min={new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10)} style={fieldStyle}/></label>
+            <label style={labelStyle}>Précisions (facultatif)<textarea value={details} disabled={Boolean(confirmation)||sending} onChange={event => { setDetails(event.target.value); editRequest(); }} maxLength={960} rows={2} placeholder="Nombre de personnes, retrait ou livraison…" style={{...fieldStyle, resize: 'vertical'}}/></label>
+            {selected.mode === 'order' && typeof selected.price === 'number' && Number.isFinite(selected.price) && selected.price > 0 && <p style={{margin:0,fontSize:12,fontWeight:600,color:'#6d4d2b'}}>Total indicatif : {new Intl.NumberFormat('fr-FR',{style:'currency',currency:selected.currency}).format(Math.round(selected.price * quantity * (selected.currency === 'TND' ? 1000 : 100))/(selected.currency === 'TND' ? 1000 : 100))} · hors livraison éventuelle</p>}
+            {selected.currency !== 'TND' && !config.demoMode && <p role="note" style={{margin:0,fontSize:11,color:'#88552a'}}>Prise de commandes en euros indisponible pour le moment. Cette vitrine reste consultable.</p>}
+            {selected.mode === 'order' && (typeof selected.price !== 'number' || !Number.isFinite(selected.price) || selected.price <= 0) && <p role="note" style={{margin:0,fontSize:11,color:'#88552a'}}>Prix à confirmer par le professionnel : aucune commande ne peut être enregistrée sans prix valide.</p>}
             {error && <p role="alert" style={{ fontSize: 12, color: '#9e2828', margin: 0 }}>{error}</p>}
-            <button type="button" onClick={send} style={{ width: '100%', padding: 10, border: 0, borderRadius: 10, background: '#4d2a47', color: '#fff', cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>
-              {config.demoMode ? 'Tester la demande (simulation)' : selected.mode === 'quote' ? 'Envoyer la demande de devis' : 'Envoyer la commande'}
+            {selected.mode==='order'&&<p style={{margin:0,fontSize:11,color:'#6c5945'}}>Votre demande est enregistrée sans paiement sur Dalil Tounes. Le professionnel vous contactera pour convenir directement des modalités de règlement et de livraison.</p>}
+            <button type="button" onClick={()=>void send()} disabled={sending||Boolean(confirmation)}
+              style={{ width: '100%', padding: 10, border: 0, borderRadius: 10, background: '#063b30', color: '#fff', cursor: sending||confirmation?'default':'pointer', fontSize: 13, fontWeight: 600, opacity:(sending || Boolean(confirmation)) ? 0.76 : 1 }}>
+              {sending?'Enregistrement…':confirmation?'Demande enregistrée':config.demoMode?'Tester la demande (simulation)':selected.mode === 'quote' ? 'Envoyer la demande de devis' : 'Enregistrer la demande de commande'}
             </button>
-            {payLink && <a href={payLink} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: '#765421', textAlign: 'center' }}>Payer directement le professionnel (1 article)</a>}
+            {confirmation&&<div role="status" style={{display:'grid',gap:8,background:'#f3f6ea',color:'#355535',borderRadius:10,padding:12,fontSize:12}}>
+              <strong>Demande enregistrée dans Mon compte du professionnel.</strong>
+              <span>Référence : {confirmation.slice(0,8).toUpperCase()} · En attente de traitement · Aucun paiement enregistré.</span>
+              {contactChannel==='email' && canEmail && <button type="button" onClick={contactEmail}
+                style={{border:'1px solid #b3c9b3',borderRadius:10,padding:'11px 12px',background:'#fff',color:'#245c37',fontWeight:700,cursor:'pointer'}}>
+                Préparer un e-mail au professionnel
+              </button>}
+              {contactChannel==='whatsapp' && canWhatsApp&&<button type="button" onClick={contactWhatsApp}
+                style={{border:'1px solid #b3c9b3',borderRadius:10,padding:'11px 12px',background:'#fff',color:'#245c37',fontWeight:700,cursor:'pointer'}}>
+                Contacter le professionnel sur WhatsApp
+              </button>}
+              <span>La demande reste enregistrée dans Dalil Tounes, même sans message supplémentaire. L'envoi d'un e-mail doit être confirmé dans votre messagerie.</span>
+            </div>}
+            {confirmation && selected.mode === 'order' && <p style={{margin:0,fontSize:11,color:'#6c5945'}}>Dalil Tounes ne collecte aucun paiement pour cette commande. Convenez directement du règlement avec le professionnel, par WhatsApp ou un autre moyen.</p>}
           </div>}
         </>}
         {!selected && <BoutiquePushFollow profileId={config.profileId} demoMode={config.demoMode} />}
