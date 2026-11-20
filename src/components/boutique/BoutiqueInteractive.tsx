@@ -59,6 +59,8 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
   const [error, setError] = useState('');
   const [sending, setSending] = useState(false);
   const [confirmation, setConfirmation] = useState('');
+  const [customerPushOptIn, setCustomerPushOptIn] = useState(false);
+  const [customerPushNotice, setCustomerPushNotice] = useState('');
   const [orderAvailability,setOrderAvailability] = useState<'checking'|'available'|'unavailable'>('checking');
   // Keep the same UUID across retries to prevent duplicates after network failure.
   const [requestKey, setRequestKey] = useState(() => crypto.randomUUID());
@@ -149,12 +151,12 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
   const close = () => {
     if (sending) return;
     setOpen(false); setSelected(null); setRequestOpen(false); setError('');
-    setConfirmation(''); setRequestKey(crypto.randomUUID());
+    setConfirmation(''); setCustomerPushOptIn(false); setCustomerPushNotice(''); setRequestKey(crypto.randomUUID());
   };
   const showProduct = (product: BoutiqueProduct) => {
     setSelected(product); setRequestOpen(false); setQuantity(1);
     setName(''); setContact(''); setContactChannel('whatsapp'); setDetails(''); setRequestedDate(''); setError('');
-    setConfirmation(''); setSending(false); setRequestKey(crypto.randomUUID());
+    setConfirmation(''); setCustomerPushOptIn(false); setCustomerPushNotice(''); setSending(false); setRequestKey(crypto.randomUUID());
   };
   const send = async () => {
     if (!selected || sending || confirmation) return;
@@ -182,13 +184,38 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
     const note = ['Réponse souhaitée : '+(contactChannel === 'email' ? 'E-mail' : 'WhatsApp'),requestedDate ? 'Date souhaitée : '+requestedDate : '',details.trim()].filter(Boolean).join('\n');
     if (note.length > 1000) { setError('Les précisions sont trop longues. Raccourcissez votre message.'); return; }
     setSending(true);setError('');
+    let customerPush: PushSubscriptionJSON | undefined;
+    if (customerPushOptIn) {
+      try {
+        if (!('Notification' in window) || !('serviceWorker' in navigator) || !('PushManager' in window) || !window.isSecureContext)
+          throw new Error('Notifications non disponibles sur ce téléphone.');
+        const permission=await Notification.requestPermission();
+        if(permission!=='granted')throw new Error('Notifications non autorisées.');
+        const settings=await fetch(supabaseUrl+'/functions/v1/dalil-boutique-push',{
+          method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({action:'config'})
+        });
+        const configuration=await settings.json();
+        if(!settings.ok||!configuration.enabled||typeof configuration.publicKey!=='string')
+          throw new Error('Service de notifications indisponible.');
+        const registration=await navigator.serviceWorker.ready;
+        const publicKey=configuration.publicKey.replace(/-/g,'+').replace(/_/g,'/');
+        const bytes=Uint8Array.from(atob(publicKey+'='.repeat((4-publicKey.length%4)%4)),ch=>ch.charCodeAt(0));
+        const subscription=await registration.pushManager.getSubscription()
+          || await registration.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:bytes as BufferSource});
+        customerPush=subscription.toJSON();
+        setCustomerPushNotice('');
+      } catch {
+        // An order must still be accepted when notifications are denied or unavailable.
+        setCustomerPushNotice('La commande sera enregistrée sans notification sur ce téléphone.');
+      }
+    }
     try {
       const response=await fetch(supabaseUrl+'/functions/v1/dalil-boutique-customer-submit',{
         method:'POST',
         headers:{'content-type':'application/json',apikey:supabaseAnonKey},
         body:JSON.stringify({profileId:config.profileId,productId:selected.id,quantity,
           name:name.trim(),contact:contact.trim(),note,
-          idempotencyKey:requestKey}),
+          idempotencyKey:requestKey,customerPush}),
       });
       const data=await response.json().catch(()=>({error:'Réponse invalide du serveur'}));
       if(!response.ok || data.accepted!==true || typeof data.reference!=='string') {
@@ -314,6 +341,13 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
             <label style={labelStyle}>{contactChannel==='email'?'Adresse e-mail':'Numéro de téléphone (WhatsApp)'}<input type={contactChannel==='email'?'email':'tel'} autoComplete={contactChannel==='email'?'email':'tel'} value={contact} disabled={Boolean(confirmation)||sending} onChange={event => { setContact(event.target.value); editRequest(); }} maxLength={150} placeholder={contactChannel==='email'?'nom@exemple.com':'+216 XX XXX XXX'} style={fieldStyle}/></label>
             <label style={labelStyle}>Date souhaitée (facultative)<input type="date" value={requestedDate} disabled={Boolean(confirmation)||sending} onChange={event => { setRequestedDate(event.target.value); editRequest(); }} min={new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10)} style={fieldStyle}/></label>
             <label style={labelStyle}>Précisions (facultatif)<textarea value={details} disabled={Boolean(confirmation)||sending} onChange={event => { setDetails(event.target.value); editRequest(); }} maxLength={960} rows={2} placeholder="Nombre de personnes, retrait ou livraison…" style={{...fieldStyle, resize: 'vertical'}}/></label>
+            <label style={{display:'flex',gap:8,alignItems:'flex-start',fontSize:11,lineHeight:1.4}}>
+              <input type="checkbox" checked={customerPushOptIn} disabled={Boolean(confirmation)||sending}
+                onChange={event=>{setCustomerPushOptIn(event.target.checked);setCustomerPushNotice('');}}
+                style={{marginTop:2,flexShrink:0}}/>
+              <span>Recevoir une notification sur ce téléphone quand ma commande sera confirmée (facultatif).</span>
+            </label>
+            {customerPushNotice && <p role="status" style={{margin:0,fontSize:11,color:'var(--boutique-muted, #d0ddd5)'}}>{customerPushNotice}</p>
             {selected.mode === 'order' && typeof selected.price === 'number' && Number.isFinite(selected.price) && selected.price > 0 && <p style={{margin:0,fontSize:12,fontWeight:600,color:'var(--boutique-muted, #d0ddd5)'}}>Total indicatif : {new Intl.NumberFormat('fr-FR',{style:'currency',currency:selected.currency}).format(Math.round(selected.price * quantity * (selected.currency === 'TND' ? 1000 : 100))/(selected.currency === 'TND' ? 1000 : 100))} · hors livraison éventuelle</p>}
             {selected.currency !== 'TND' && !config.demoMode && <p role="note" style={{margin:0,fontSize:11,color:'var(--boutique-muted, #d0ddd5)'}}>Prise de commandes en euros indisponible pour le moment. Cette vitrine reste consultable.</p>}
             {selected.mode === 'order' && (typeof selected.price !== 'number' || !Number.isFinite(selected.price) || selected.price <= 0) && <p role="note" style={{margin:0,fontSize:11,color:'var(--boutique-muted, #d0ddd5)'}}>Prix à confirmer par le professionnel : aucune commande ne peut être enregistrée sans prix valide.</p>}
