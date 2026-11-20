@@ -26,12 +26,12 @@ type PortfolioPalette = 'prestige' | 'ivory' | 'night';
 
 const PORTFOLIO_PALETTE_THEMES: Record<PortfolioPalette, CSSProperties> = {
   prestige: {
-    '--cvp-page': '#eef1ef', '--cvp-text': '#f7f4ec', '--cvp-shell-start': '#005044',
-    '--cvp-shell-mid': '#002f2b', '--cvp-shell-end': '#001d1b', '--cvp-identity-start': '#004e42',
-    '--cvp-identity-end': '#002723', '--cvp-panel': '#003c35', '--cvp-action': 'rgba(0,74,61,.55)',
-    '--cvp-badge': '#087051', '--cvp-overlay': 'rgba(0,45,39,.95)', '--cvp-accent': '#e8bd43',
-    '--boutique-surface': '#003c35', '--boutique-ink': '#f7f4ec', '--boutique-card': '#002f2b', '--boutique-field': '#ffffff', '--boutique-field-ink': '#12372e', '--boutique-accent': '#e8bd43',
-    '--boutique-button': '#003c35', '--boutique-button-ink': '#f7f4ec', '--boutique-muted': '#d0ddd5',
+    '--cvp-page': '#eef1ef', '--cvp-text': '#f7f4ec', '--cvp-shell-start': '#073226',
+    '--cvp-shell-mid': '#031d18', '--cvp-shell-end': '#021e18', '--cvp-identity-start': '#073226',
+    '--cvp-identity-end': '#021e18', '--cvp-panel': '#031d18', '--cvp-action': 'rgba(7,50,38,.55)',
+    '--cvp-badge': '#087051', '--cvp-overlay': 'rgba(0,45,39,.95)', '--cvp-accent': '#e7b943',
+    '--boutique-surface': '#031d18', '--boutique-ink': '#f7f4ec', '--boutique-card': '#073226', '--boutique-field': '#ffffff', '--boutique-field-ink': '#12372e', '--boutique-accent': '#d6aa43',
+    '--boutique-button': '#031d18', '--boutique-button-ink': '#f7f4ec', '--boutique-muted': '#d0ddd5',
   } as CSSProperties,
   ivory: {
     '--cvp-page': '#FFFFF0', '--cvp-text': '#3B3126', '--cvp-shell-start': '#FFFFF8',
