@@ -51,7 +51,15 @@ Deno.serve(async req => {
   if(req.method==="OPTIONS"){
     if(!origins.has(origin))return reply({error:"Forbidden"},403,origin);
     return new Response(null,{status:204,headers:{"access-control-allow-origin":origin,
-      "access-control-allow-methods":"POST,OPTIONS","access-control-allow-headers":"authorization,x-client-info,apikey,content-type,x-retry-count,traceparent,tracestate,baggage","vary":"Origin"}});
+      "access-control-allow-methods":"GET,POST,OPTIONS","access-control-allow-headers":"authorization,x-client-info,apikey,content-type,x-retry-count,traceparent,tracestate,baggage","vary":"Origin"}});
+  }
+  // Public read-only readiness check: no credentials, payment, customer data or order writes.
+  // Browser must not present a writable form while live intake remains disabled.
+  if(req.method==="GET"){
+    if(!origins.has(origin))return reply({error:"Forbidden"},403,origin);
+    const configured=Boolean(Deno.env.get("SUPABASE_URL")&&Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")&&
+      (Deno.env.get("DALIL_BOUTIQUE_ORDERS_RATE_LIMIT_SECRET")||"").length>=24);
+    return reply({available:Deno.env.get("DALIL_BOUTIQUE_ORDERS_ENABLED")==="true"&&configured},200,origin);
   }
   if(req.method!=="POST")return reply({error:"Method not allowed"},405,origin);
   if(!origins.has(origin))return reply({error:"Forbidden"},403,origin);
