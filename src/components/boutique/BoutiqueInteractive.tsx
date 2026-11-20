@@ -42,7 +42,7 @@ const priceText = (product: BoutiqueProduct) =>
     : 'Sur devis';
 
 const labelStyle = { display: 'grid', gap: 4, fontSize: 12, fontWeight: 500 } as const;
-const fieldStyle = { boxSizing: 'border-box', width: '100%', minWidth: 0, border: '1px solid var(--boutique-accent, #d7c7ae)', borderRadius: 9, padding: '9px 10px', fontSize: 14, background: '#fffaf2', color: '#30291d', colorScheme: 'light' } as const;
+const fieldStyle = { boxSizing: 'border-box', width: '100%', minWidth: 0, border: '1px solid var(--boutique-accent, #d7c7ae)', borderRadius: 9, padding: '9px 10px', fontSize: 14, background: 'var(--boutique-field, #fff)', color: 'var(--boutique-field-ink, #12372e)', colorScheme: 'light' } as const;
 const iconButton = { background: 'var(--boutique-button, #063b30)', border: '1px solid var(--boutique-accent, #d7c7ae)', borderRadius: 24, height: 34, minWidth: 34, cursor: 'pointer', color: 'var(--boutique-button-ink, #fff)', fontSize: 20 } as const;
 
 export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = 'Boutique', triggerIcon }: { config: BoutiqueConfig; triggerClassName?: string; triggerLabel?: string; triggerIcon?: ReactNode }) {
@@ -231,28 +231,28 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
   return <>
     <button type="button" onClick={() => { setOpen(true); setSelected(null); setRequestOpen(false); setConfirmation(''); setCataloguePage(1); setCatalogueQuery(''); setCatalogueCategory(''); }}
       aria-haspopup="dialog" className={triggerClassName}
-      style={triggerClassName ? undefined : { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 7, padding: '8px 15px', border: '1px solid #d2b276', background: '#fffaf2', color: '#063b30', borderRadius: 24, fontSize: 13, fontWeight: 600, lineHeight: 1.2, cursor: 'pointer' }}>
-      {triggerIcon ?? <span aria-hidden="true">✦</span>}<span>{triggerLabel}</span>{!config.demoMode && products.some(isRecentProduct) && <span aria-label="Nouveautés" style={{fontSize:10,color:'#9b773e',fontWeight:700,whiteSpace:'nowrap'}}>●</span>}
+      style={triggerClassName ? undefined : { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 7, padding: '8px 15px', border: '1px solid var(--boutique-accent, #e8bd43)', background: 'var(--boutique-button, #003c35)', color: 'var(--boutique-button-ink, #f7f4ec)', borderRadius: 24, fontSize: 13, fontWeight: 600, lineHeight: 1.2, cursor: 'pointer' }}>
+      {triggerIcon ?? <span aria-hidden="true">✦</span>}<span>{triggerLabel}</span>{!config.demoMode && products.some(isRecentProduct) && <span aria-label="Nouveautés" style={{fontSize:10,color:'var(--boutique-accent, #e8bd43)',fontWeight:700,whiteSpace:'nowrap'}}>●</span>}
     </button>
     {open && <div role="presentation" onMouseDown={close}
       style={{ position: 'fixed', inset: 0, zIndex: 9999, padding: 12, background: 'rgba(15,24,22,.67)', display: 'grid', placeItems: 'center' }}>
       <section role="dialog" aria-modal="true" className="dalil-boutique-dialog" aria-label={selected ? selected.title : 'Boutique'}
         onMouseDown={event => event.stopPropagation()}
-        style={{ boxSizing: 'border-box', width: 'min(100%,450px)', maxHeight: 'min(87dvh,760px)', overflowY: 'auto', background: 'var(--boutique-surface, #fffcf6)', color: 'var(--boutique-ink, #3c302e)', borderRadius: 19, border: '1px solid var(--boutique-accent, #dfc699)', boxShadow: '0 16px 55px #0005', padding: '14px 15px 17px' }}>
+        style={{ boxSizing: 'border-box', width: 'min(100%,450px)', maxHeight: 'min(87dvh,760px)', overflowY: 'auto', background: 'var(--boutique-surface, #003c35)', color: 'var(--boutique-ink, #f7f4ec)', borderRadius: 19, border: '1px solid var(--boutique-accent, #e8bd43)', boxShadow: '0 16px 55px #0005', padding: '14px 15px 17px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 12 }}>
           <div style={{ display: 'grid', gap: 2 }}>
-            <span style={{ color: 'var(--boutique-accent, #947244)', fontSize: 10, letterSpacing: '.09em', textTransform: 'uppercase' }}>{config.merchantName}</span>
+            <span style={{ color: 'var(--boutique-accent, #e8bd43)', fontSize: 10, letterSpacing: '.09em', textTransform: 'uppercase' }}>{config.merchantName}</span>
             <strong style={{ color: 'var(--boutique-ink, #063b30)', fontSize: 17 }}>{selected ? selected.title : 'Boutique'}</strong>
           </div>
           <button type="button" style={iconButton} onClick={close} aria-label="Fermer la boutique">×</button>
         </div>
         {!selected ? <>
-          <p style={{ fontSize: 12, color: '#74665e', margin: '0 0 12px' }}>Découvrez nos créations. Touchez une photo pour les détails.</p>
+          <p style={{ fontSize: 12, color: 'var(--boutique-muted, #d0ddd5)', margin: '0 0 12px' }}>Découvrez nos créations. Touchez une photo pour les détails.</p>
           {(products.length > 12 || catalogueCategories.length > 0) && <div style={{display:'grid',gap:8,margin:'0 0 12px'}}>
-            <label style={{...labelStyle,color:'#594e45'}}>Rechercher une création
+            <label style={{...labelStyle,color:'var(--boutique-ink, #f7f4ec)'}}>Rechercher une création
               <input type="search" value={catalogueQuery} onChange={event => {setCatalogueQuery(event.target.value);setCataloguePage(1);}} placeholder="Nom ou description" style={fieldStyle} />
             </label>
-            {catalogueCategories.length > 0 && <label style={{...labelStyle,color:'#594e45'}}>Catégorie
+            {catalogueCategories.length > 0 && <label style={{...labelStyle,color:'var(--boutique-ink, #f7f4ec)'}}>Catégorie
               <select value={catalogueCategory} onChange={event => {setCatalogueCategory(event.target.value);setCataloguePage(1);}} style={fieldStyle}>
                 <option value="">Toutes les catégories</option>
                 {catalogueCategories.map(category => <option key={category} value={category}>{category}</option>)}
@@ -261,44 +261,44 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
           </div>}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 9 }}>
             {pageProducts.map(product => <button type="button" key={product.id} onClick={() => showProduct(product)}
-              style={{ display: 'grid', gap: 5, textAlign: 'left', padding: 5, background: '#fff', color: '#382d2c', border: '1px solid #e1d4c3', borderRadius: 12, minWidth: 0, cursor: 'pointer' }}>
+              style={{ display: 'grid', gap: 5, textAlign: 'left', padding: 5, background: 'var(--boutique-card, #002f2b)', color: 'var(--boutique-ink, #f7f4ec)', border: '1px solid var(--boutique-accent, #e8bd43)', borderRadius: 12, minWidth: 0, cursor: 'pointer' }}>
               <img src={product.imageUrl} alt={product.title} loading="lazy"
                 style={{ width: '100%', aspectRatio: '1 / 1', objectFit: 'cover', borderRadius: 8 }} />
-              {!config.demoMode && isRecentProduct(product) && <span style={{justifySelf:'start',padding:'2px 7px',borderRadius:20,background:'#f4ecd7',color:'#6d4f28',fontSize:10,fontWeight:700}}>Nouveau</span>}
+              {!config.demoMode && isRecentProduct(product) && <span style={{justifySelf:'start',padding:'2px 7px',borderRadius:20,background:'var(--boutique-accent, #e8bd43)',color:'var(--boutique-button, #003c35)',fontSize:10,fontWeight:700}}>Nouveau</span>}
               <span style={{ padding: '0 4px', fontSize: 12, fontWeight: 600, overflowWrap: 'anywhere' }}>{product.title}</span>
-              <span style={{ padding: '0 4px 3px', fontSize: 11, color: '#8c713f' }}>Voir les détails ›</span>
+              <span style={{ padding: '0 4px 3px', fontSize: 11, color: 'var(--boutique-accent, #e8bd43)' }}>Voir les détails ›</span>
             </button>)}
           </div>
-          {filteredProducts.length === 0 && <p role="status" style={{fontSize:12,color:'#685c50',textAlign:'center',padding:'14px 0'}}>Aucun produit ne correspond à votre recherche.</p>}
+          {filteredProducts.length === 0 && <p role="status" style={{fontSize:12,color:'var(--boutique-muted, #d0ddd5)',textAlign:'center',padding:'14px 0'}}>Aucun produit ne correspond à votre recherche.</p>}
           {pageCount > 1 && <nav aria-label="Pages du catalogue" style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:10,marginTop:12}}>
             <button type="button" disabled={safePage <= 1} onClick={() => setCataloguePage(p => Math.max(1,p-1))} style={{...iconButton,padding:'0 12px',fontSize:12,opacity:safePage <= 1 ? .4 : 1}}>Précédent</button>
-            <span style={{fontSize:12,color:'#615548'}}>Page {safePage} / {pageCount}</span>
+            <span style={{fontSize:12,color:'var(--boutique-muted, #d0ddd5)'}}>Page {safePage} / {pageCount}</span>
             <button type="button" disabled={safePage >= pageCount} onClick={() => setCataloguePage(p => Math.min(pageCount,p+1))} style={{...iconButton,padding:'0 12px',fontSize:12,opacity:safePage >= pageCount ? .4 : 1}}>Suivant</button>
           </nav>}
         </> : <>
           <button type="button" onClick={() => { if(sending)return; setSelected(null); setRequestOpen(false); setError(''); setConfirmation(''); }}
-            style={{ border: 0, background: 'transparent', fontSize: 12, color: '#806538', padding: '0 0 10px', cursor: 'pointer' }}>‹ Toutes les créations</button>
-          <img src={selected.imageUrl} alt={selected.title} style={{ display: 'block', width: '100%', maxHeight: 190, aspectRatio: '16 / 9', objectFit: 'contain', background: '#f4eee5', borderRadius: 11 }} />
+            style={{ border: 0, background: 'transparent', fontSize: 12, color: 'var(--boutique-accent, #e8bd43)', padding: '0 0 10px', cursor: 'pointer' }}>‹ Toutes les créations</button>
+          <img src={selected.imageUrl} alt={selected.title} style={{ display: 'block', width: '100%', maxHeight: 190, aspectRatio: '16 / 9', objectFit: 'contain', background: 'var(--boutique-card, #002f2b)', borderRadius: 11 }} />
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 8, marginTop: 12 }}>
-            <strong style={{ color: '#063b30', fontSize: 16 }}>{selected.title}</strong>
-            <span style={{ whiteSpace: 'nowrap', fontWeight: 600, fontSize: 12, color: '#826332' }}>{priceText(selected)}</span>
+            <strong style={{ color: 'var(--boutique-ink, #f7f4ec)', fontSize: 16 }}>{selected.title}</strong>
+            <span style={{ whiteSpace: 'nowrap', fontWeight: 600, fontSize: 12, color: 'var(--boutique-accent, #e8bd43)' }}>{priceText(selected)}</span>
           </div>
-          {selected.description && <p style={{ fontSize: 12, lineHeight: 1.5, margin: '6px 0 12px', color: '#62574d' }}>{selected.description}</p>}
+          {selected.description && <p style={{ fontSize: 12, lineHeight: 1.5, margin: '6px 0 12px', color: 'var(--boutique-muted, #d0ddd5)' }}>{selected.description}</p>}
           {!requestOpen ? (orderAvailability==='available'||config.demoMode) ? <button type="button" onClick={() => setRequestOpen(true)}
             style={{ border: '1px solid var(--boutique-accent, #d4af37)', borderRadius: 10, background: 'var(--boutique-button, #063b30)', color: 'var(--boutique-button-ink, #fff)', fontSize: 13, fontWeight: 600, padding: '11px 14px', width: '100%', cursor: 'pointer' }}>
             {selected.mode === 'quote' ? 'Demander un devis' : 'Commander'}
-          </button> : <div role="status" style={{display:'grid',gap:9,padding:12,border:'1px solid #e3d6c0',borderRadius:10,background:'#fffaf3'}}>
-            <p style={{margin:0,fontSize:12,color:'#655548'}}>{orderAvailability==='checking'
+          </button> : <div role="status" style={{display:'grid',gap:9,padding:12,border:'1px solid var(--boutique-accent, #e8bd43)',borderRadius:10,background:'var(--boutique-card, #002f2b)'}}>
+            <p style={{margin:0,fontSize:12,color:'var(--boutique-muted, #d0ddd5)'}}>{orderAvailability==='checking'
               ? 'Vérification de la disponibilité des demandes…'
               : 'Les demandes via Dalil Tounes ne sont pas encore ouvertes. Aucun formulaire n’est envoyé ni enregistré.'}</p>
             {orderAvailability==='unavailable' && canWhatsApp && <button type="button" onClick={contactDirectWhatsApp}
-              style={{border:'1px solid #b4c3b2',borderRadius:10,padding:'11px 12px',background:'#fff',color:'#245c37',fontWeight:700}}>
+              style={{border:'1px solid var(--boutique-accent, #e8bd43)',borderRadius:10,padding:'11px 12px',background:'var(--boutique-button, #003c35)',color:'var(--boutique-button-ink, #f7f4ec)',fontWeight:700}}>
               Contacter directement sur WhatsApp (sans enregistrement)
             </button>}
-          </div> : <div style={{ display: 'grid', gap: 10, borderTop: '1px solid #e5d7c3', paddingTop: 12 }}>
+          </div> : <div style={{ display: 'grid', gap: 10, borderTop: '1px solid var(--boutique-accent, #e8bd43)', paddingTop: 12 }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <strong style={{ fontSize: 13 }}>Votre demande</strong>
-              <button type="button" onClick={() => setRequestOpen(false)} style={{ border: 0, color: '#8a6a42', background: 'transparent', fontSize: 12, cursor: 'pointer' }}>Réduire</button>
+              <button type="button" onClick={() => setRequestOpen(false)} style={{ border: 0, color: 'var(--boutique-accent, #e8bd43)', background: 'transparent', fontSize: 12, cursor: 'pointer' }}>Réduire</button>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 9 }}>
               <label style={labelStyle}>Nom<input value={name} disabled={Boolean(confirmation)||sending} onChange={event => { setName(event.target.value); editRequest(); }} maxLength={120} placeholder="Votre nom" style={fieldStyle}/></label>
@@ -314,11 +314,11 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
             <label style={labelStyle}>{contactChannel==='email'?'Adresse e-mail':'Numéro de téléphone (WhatsApp)'}<input type={contactChannel==='email'?'email':'tel'} autoComplete={contactChannel==='email'?'email':'tel'} value={contact} disabled={Boolean(confirmation)||sending} onChange={event => { setContact(event.target.value); editRequest(); }} maxLength={150} placeholder={contactChannel==='email'?'nom@exemple.com':'+216 XX XXX XXX'} style={fieldStyle}/></label>
             <label style={labelStyle}>Date souhaitée (facultative)<input type="date" value={requestedDate} disabled={Boolean(confirmation)||sending} onChange={event => { setRequestedDate(event.target.value); editRequest(); }} min={new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10)} style={fieldStyle}/></label>
             <label style={labelStyle}>Précisions (facultatif)<textarea value={details} disabled={Boolean(confirmation)||sending} onChange={event => { setDetails(event.target.value); editRequest(); }} maxLength={960} rows={2} placeholder="Nombre de personnes, retrait ou livraison…" style={{...fieldStyle, resize: 'vertical'}}/></label>
-            {selected.mode === 'order' && typeof selected.price === 'number' && Number.isFinite(selected.price) && selected.price > 0 && <p style={{margin:0,fontSize:12,fontWeight:600,color:'#6d4d2b'}}>Total indicatif : {new Intl.NumberFormat('fr-FR',{style:'currency',currency:selected.currency}).format(Math.round(selected.price * quantity * (selected.currency === 'TND' ? 1000 : 100))/(selected.currency === 'TND' ? 1000 : 100))} · hors livraison éventuelle</p>}
-            {selected.currency !== 'TND' && !config.demoMode && <p role="note" style={{margin:0,fontSize:11,color:'#88552a'}}>Prise de commandes en euros indisponible pour le moment. Cette vitrine reste consultable.</p>}
-            {selected.mode === 'order' && (typeof selected.price !== 'number' || !Number.isFinite(selected.price) || selected.price <= 0) && <p role="note" style={{margin:0,fontSize:11,color:'#88552a'}}>Prix à confirmer par le professionnel : aucune commande ne peut être enregistrée sans prix valide.</p>}
+            {selected.mode === 'order' && typeof selected.price === 'number' && Number.isFinite(selected.price) && selected.price > 0 && <p style={{margin:0,fontSize:12,fontWeight:600,color:'var(--boutique-muted, #d0ddd5)'}}>Total indicatif : {new Intl.NumberFormat('fr-FR',{style:'currency',currency:selected.currency}).format(Math.round(selected.price * quantity * (selected.currency === 'TND' ? 1000 : 100))/(selected.currency === 'TND' ? 1000 : 100))} · hors livraison éventuelle</p>}
+            {selected.currency !== 'TND' && !config.demoMode && <p role="note" style={{margin:0,fontSize:11,color:'var(--boutique-muted, #d0ddd5)'}}>Prise de commandes en euros indisponible pour le moment. Cette vitrine reste consultable.</p>}
+            {selected.mode === 'order' && (typeof selected.price !== 'number' || !Number.isFinite(selected.price) || selected.price <= 0) && <p role="note" style={{margin:0,fontSize:11,color:'var(--boutique-muted, #d0ddd5)'}}>Prix à confirmer par le professionnel : aucune commande ne peut être enregistrée sans prix valide.</p>}
             {error && <p role="alert" style={{ fontSize: 12, color: '#9e2828', margin: 0 }}>{error}</p>}
-            {selected.mode==='order'&&<p style={{margin:0,fontSize:11,color:'#6c5945'}}>Votre demande est enregistrée sans paiement sur Dalil Tounes. Le professionnel vous contactera pour convenir directement des modalités de règlement et de livraison.</p>}
+            {selected.mode==='order'&&<p style={{margin:0,fontSize:11,color:'var(--boutique-muted, #d0ddd5)'}}>Votre demande est enregistrée sans paiement sur Dalil Tounes. Le professionnel vous contactera pour convenir directement des modalités de règlement et de livraison.</p>}
             <button type="button" onClick={()=>void send()} disabled={sending||Boolean(confirmation)}
               style={{ width: '100%', padding: 10, border: '1px solid var(--boutique-accent, #d4af37)', borderRadius: 10, background: 'var(--boutique-button, #063b30)', color: 'var(--boutique-button-ink, #fff)', cursor: sending||confirmation?'default':'pointer', fontSize: 13, fontWeight: 600, opacity:(sending || Boolean(confirmation)) ? 0.76 : 1 }}>
               {sending?'Enregistrement…':confirmation?'Demande enregistrée':config.demoMode?'Tester la demande (simulation)':selected.mode === 'quote' ? 'Envoyer la demande de devis' : 'Enregistrer la demande de commande'}
@@ -336,11 +336,11 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
               </button>}
               <span>La demande reste enregistrée dans Dalil Tounes, même sans message supplémentaire. L'envoi d'un e-mail doit être confirmé dans votre messagerie.</span>
             </div>}
-            {confirmation && selected.mode === 'order' && <p style={{margin:0,fontSize:11,color:'#6c5945'}}>Dalil Tounes ne collecte aucun paiement pour cette commande. Convenez directement du règlement avec le professionnel, par WhatsApp ou un autre moyen.</p>}
+            {confirmation && selected.mode === 'order' && <p style={{margin:0,fontSize:11,color:'var(--boutique-muted, #d0ddd5)'}}>Dalil Tounes ne collecte aucun paiement pour cette commande. Convenez directement du règlement avec le professionnel, par WhatsApp ou un autre moyen.</p>}
           </div>}
         </>}
         {!selected && <BoutiquePushFollow profileId={config.profileId} demoMode={config.demoMode} />}
-        {config.demoMode && <p style={{ fontSize: 10, margin: '10px 0 0', color: '#796d5f' }}>Aperçu uniquement — aucune demande ou paiement n'est envoyé.</p>}
+        {config.demoMode && <p style={{ fontSize: 10, margin: '10px 0 0', color: 'var(--boutique-muted, #d0ddd5)' }}>Aperçu uniquement — aucune demande ou paiement n'est envoyé.</p>}
       </section>
     </div>}
   </>;

@@ -1265,13 +1265,13 @@
 .dalil-boutique-dialog select,
 .dalil-boutique-dialog textarea {
   color-scheme: light;
-  background-color: #fffaf2;
-  color: #30291d;
+  background-color: var(--boutique-field, #fff);
+  color: var(--boutique-field-ink, #12372e);
   border-color: var(--boutique-accent, #d4af37);
 }
 .dalil-boutique-dialog input::placeholder,
 .dalil-boutique-dialog textarea::placeholder {
-  color: #796d5e;
+  color: #60716c;
   opacity: 1;
 }
 .dalil-boutique-dialog input:focus-visible,
