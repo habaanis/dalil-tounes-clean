@@ -34,5 +34,6 @@ check('no checkout provider or actual payments introduced',
  !checkout.includes('init-payment') &&
  checkout.includes("selected.currency !== 'TND'"));
 check('customer requests still disabled until separately verified',
- submit.includes('Deno.env.get("DALIL_BOUTIQUE_ORDERS_ENABLED")!=="true"'));
+ submit.includes('id===pilotEntrepriseId || Deno.env.get("DALIL_BOUTIQUE_ORDERS_ENABLED")==="true"') &&
+ submit.includes('if(typeof profileId!=="string" || !entrepriseId.test(profileId) || !intakeEnabled(profileId))'));
 console.log('PASS Boutique direct-settlement intermediary flow contracts');
