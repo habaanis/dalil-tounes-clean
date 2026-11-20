@@ -184,10 +184,15 @@ export default function BusinessQr() {
   const [shareConfirmed, setShareConfirmed] = useState(false);
   const [showBrandSplash, setShowBrandSplash] = useState(false);
   const [openingStyle, setOpeningStyle] = useState<ClientOpeningStyle>('photo');
+  const [ownerAccountVisible, setOwnerAccountVisible] = useState(false);
   const launchPalette = new URLSearchParams(window.location.search).get('palette');
   // Use exactly the same effective palette as the CV: explicit previews first,
   // followed by a merchant-selected palette, then the legacy ivory treatment.
-  const effectivePalette = launchPalette ||
+  // Installed PWA start URLs may retain an old palette. The published professional
+  // palette wins for customers; explicit previews can still override it.
+  const previewPalette = new URLSearchParams(window.location.search).get('opening-preview') === '1'
+    ? launchPalette : null;
+  const effectivePalette = previewPalette ||
     (business?.palette_cv_user_selected ? business.palette_cv :
       (business?.statut_carte === '⭐ CERTIFIÉ DALIL TOUNES' ? 'ivory' : business?.palette_cv));
   const paletteTheme = getCvPaletteTheme(effectivePalette);
@@ -233,6 +238,21 @@ export default function BusinessQr() {
     void load();
     return () => { cancelled = true; };
   }, [identifier, reloadKey]);
+
+  useEffect(() => {
+    let active = true;
+    setOwnerAccountVisible(false);
+    if (!business?.id || !isDedicatedClientHostname(window.location.hostname)) return;
+    void (async () => {
+      const { data: authData, error: authError } = await supabase.auth.getUser();
+      if (authError || !authData.user?.id || !active) return;
+      const { data, error } = await supabase.from('professional_profile_access')
+        .select('entreprise_id').eq('user_id', authData.user.id)
+        .eq('entreprise_id', business.id).maybeSingle();
+      if (active && !error && data) setOwnerAccountVisible(true);
+    })().catch(() => {});
+    return () => { active = false; };
+  }, [business?.id]);
 
   useEffect(() => {
     if (!identifier) return;
@@ -288,6 +308,9 @@ export default function BusinessQr() {
   };
   const cvLink = new URL(buildClientCvUrl(business || identifier, language, paletteTheme.id));
   const cvUrl = cvLink.toString();
+  // The QR only needs the permanent CV destination, not language/palette parameters.
+  // A compact URL makes the QR much easier to scan on older phone cameras.
+  const scannableCvUrl = new URL('/' + encodeURIComponent(clientIdentifier) + '/cv?skip-opening=1', 'https://app.dalil-tounes.com').toString();
   // Explicitly opening a CV from this QR screen should never replay the logo splash.
   const directCvLink = new URL(cvUrl);
   directCvLink.searchParams.set('skip-opening', '1');
@@ -501,7 +524,7 @@ export default function BusinessQr() {
         category={displayCategory || undefined}
         coverImage={coverUrl}
         logo={logoUrl}
-        qrValue={cvUrl}
+        qrValue={scannableCvUrl}
         shareLabel={shareConfirmed ? text.shared : text.share}
         downloadLabel={text.download}
         addLabel={isInAppBrowser ? text.openBrowser : text.install}
@@ -510,7 +533,7 @@ export default function BusinessQr() {
         productLabel={modelText.product}
         poweredText={text.powered}
         openHref={browserCvUrl}
-        accountHref={accountHref}
+        accountHref={ownerAccountVisible ? accountHref : undefined}
         model={cvModel}
         onShare={shareBusiness}
         onDownload={downloadPng}
