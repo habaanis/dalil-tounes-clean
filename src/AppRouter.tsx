@@ -132,7 +132,14 @@ const CardPreview = lazy(() => import('./pages/CardPreview'));
 const CertifiedBusinesses = lazy(() => import('./pages/CertifiedBusinesses'));
 
 function ClientCvRoute() {
-  const { search } = useLocation();
+  const { pathname, search } = useLocation();
+  const selectedModel = new URLSearchParams(search).get('preview-model');
+  useEffect(() => {
+    const identifier = pathname.split('/')[1];
+    if (!identifier || (selectedModel !== 'portfolio' && selectedModel !== 'business')) return;
+    try { window.sessionStorage.setItem('dalil-return-cv:' + identifier.toLowerCase(), selectedModel); }
+    catch { /* Storage can be unavailable in embedded browsers. */ }
+  }, [pathname, selectedModel]);
   if (!isDedicatedClientHostname(window.location.hostname)) return <NotFound />;
   const theme = getCvPaletteTheme(new URLSearchParams(search).get('palette'));
 
