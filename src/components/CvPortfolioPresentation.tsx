@@ -30,18 +30,24 @@ const PORTFOLIO_PALETTE_THEMES: Record<PortfolioPalette, CSSProperties> = {
     '--cvp-shell-mid': '#002f2b', '--cvp-shell-end': '#001d1b', '--cvp-identity-start': '#004e42',
     '--cvp-identity-end': '#002723', '--cvp-panel': '#003c35', '--cvp-action': 'rgba(0,74,61,.55)',
     '--cvp-badge': '#087051', '--cvp-overlay': 'rgba(0,45,39,.95)', '--cvp-accent': '#e8bd43',
+    '--boutique-surface': '#f0f5ef', '--boutique-ink': '#12372e', '--boutique-accent': '#e8bd43',
+    '--boutique-button': '#003c35', '--boutique-button-ink': '#f7f4ec', '--boutique-muted': '#d0ddd5',
   } as CSSProperties,
   ivory: {
     '--cvp-page': '#FFFFF0', '--cvp-text': '#3B3126', '--cvp-shell-start': '#FFFFF8',
     '--cvp-shell-mid': '#FFFFF0', '--cvp-shell-end': '#F4E4B7', '--cvp-identity-start': '#FFFFF8',
     '--cvp-identity-end': '#F4E4B7', '--cvp-panel': '#F0D999', '--cvp-action': 'rgba(255,255,240,.82)',
     '--cvp-badge': '#D4AF37', '--cvp-overlay': 'rgba(59,49,38,.62)', '--cvp-accent': '#D4AF37',
+    '--boutique-surface': '#FFFFF0', '--boutique-ink': '#3B3126', '--boutique-accent': '#D4AF37',
+    '--boutique-button': '#F0D999', '--boutique-button-ink': '#3B3126', '--boutique-muted': '#64513d',
   } as CSSProperties,
   night: {
     '--cvp-page': '#06101d', '--cvp-text': '#f8f1e4', '--cvp-shell-start': '#1d3a5a',
     '--cvp-shell-mid': '#10243a', '--cvp-shell-end': '#06101d', '--cvp-identity-start': '#1d3a5a',
     '--cvp-identity-end': '#172f4b', '--cvp-panel': '#172f4b', '--cvp-action': 'rgba(29,58,90,.72)',
     '--cvp-badge': '#1d3a5a', '--cvp-overlay': 'rgba(16,36,58,.95)', '--cvp-accent': '#e5c486',
+    '--boutique-surface': '#edf1f7', '--boutique-ink': '#14283d', '--boutique-accent': '#e5c486',
+    '--boutique-button': '#172f4b', '--boutique-button-ink': '#f8f1e4', '--boutique-muted': '#d1d9e2',
   } as CSSProperties,
 };
 

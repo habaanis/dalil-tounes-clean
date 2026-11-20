@@ -560,6 +560,8 @@ const PALETTE_THEMES: Record<PaletteId, CSSProperties> = {
     '--dt-badge-end': '#087a50',
     '--dt-action-start': '#06382d',
     '--dt-action-end': '#011f1a',
+    '--boutique-surface': '#f0f5ef', '--boutique-ink': '#12372e', '--boutique-accent': '#e8bd43',
+    '--boutique-button': '#003c35', '--boutique-button-ink': '#f7f4ec', '--boutique-muted': '#50695b',
   } as CSSProperties,
   ivory: {
     '--dt-page': '#FFFFF0',
@@ -582,6 +584,8 @@ const PALETTE_THEMES: Record<PaletteId, CSSProperties> = {
     '--dt-badge-end': '#D4AF37',
     '--dt-action-start': '#FFFFF8',
     '--dt-action-end': '#F0D999',
+    '--boutique-surface': '#FFFFF0', '--boutique-ink': '#3B3126', '--boutique-accent': '#D4AF37',
+    '--boutique-button': '#F0D999', '--boutique-button-ink': '#3B3126', '--boutique-muted': '#64513d',
   } as CSSProperties,
   night: {
     '--dt-copy': '#ffffff',
@@ -604,6 +608,8 @@ const PALETTE_THEMES: Record<PaletteId, CSSProperties> = {
     '--dt-badge-end': '#172f4b',
     '--dt-action-start': '#1d3a5a',
     '--dt-action-end': '#06101d',
+    '--boutique-surface': '#edf1f7', '--boutique-ink': '#14283d', '--boutique-accent': '#e5c486',
+    '--boutique-button': '#172f4b', '--boutique-button-ink': '#f8f1e4', '--boutique-muted': '#52657c',
   } as CSSProperties,
 };
 

@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
 
+// Vite replaces this constant with the Git commit SHA in every production bundle.
+declare const __DALIL_BUILD_VERSION__: string;
+
 const UPDATE_KEY = 'dalil-tounes-pwa-update-ready';
 const COPY: Record<string, { title: string; detail: string; action: string }> = {
   fr: { title: 'Nouvelle version disponible', detail: 'Actualisez Dalil Tounes pour profiter des dernières améliorations.', action: 'Actualiser maintenant' },
@@ -15,7 +18,41 @@ export function PwaUpdatePrompt() {
   useEffect(() => {
     const show = () => setVisible(true);
     window.addEventListener('pwa-update-ready', show);
-    return () => window.removeEventListener('pwa-update-ready', show);
+
+    // A new web bundle does not always change the service-worker script itself.
+    // Compare the per-deployment version manifest when the app is reopened or resumed.
+    // Never reload a visitor in the middle of filling an order or contact form.
+    let active = true;
+    let checking = false;
+    const checkVersion = async () => {
+      if (checking || document.visibilityState === 'hidden') return;
+      checking = true;
+      try {
+        const response = await fetch('/version.json', { cache: 'no-store' });
+        if (!response.ok) return;
+        const payload: unknown = await response.json();
+        const latest = payload && typeof payload === 'object' && 'version' in payload
+          ? (payload as { version?: unknown }).version : null;
+        if (active && typeof latest === 'string' && latest !== __DALIL_BUILD_VERSION__) show();
+      } catch {
+        // Offline use remains available; recheck on the next focus/visibility event.
+      } finally {
+        checking = false;
+      }
+    };
+    void checkVersion();
+    const onFocus = () => { void checkVersion(); };
+    const onVisibility = () => { if (document.visibilityState === 'visible') void checkVersion(); };
+    window.addEventListener('focus', onFocus);
+    document.addEventListener('visibilitychange', onVisibility);
+    const interval = window.setInterval(() => { void checkVersion(); }, 10 * 60 * 1000);
+    return () => {
+      active = false;
+      window.removeEventListener('pwa-update-ready', show);
+      window.removeEventListener('focus', onFocus);
+      document.removeEventListener('visibilitychange', onVisibility);
+      window.clearInterval(interval);
+    };
   }, []);
 
   if (!visible) return null;
