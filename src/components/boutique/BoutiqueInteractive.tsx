@@ -48,6 +48,8 @@ const iconButton = { background: 'var(--boutique-button, #063b30)', border: '1px
 export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = 'Boutique', triggerIcon }: { config: BoutiqueConfig; triggerClassName?: string; triggerLabel?: string; triggerIcon?: ReactNode }) {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<BoutiqueProduct | null>(null);
+  const [offersOpen,setOffersOpen] = useState(false);
+  const [offers,setOffers] = useState<{id:string;title:string;description:string;value:number;weekday:number|null}[]>([]);
   const [requestOpen, setRequestOpen] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [name, setName] = useState('');
@@ -70,6 +72,13 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
   const [catalogueQuery, setCatalogueQuery] = useState('');
   const [catalogueCategory, setCatalogueCategory] = useState('');
   const [cataloguePage, setCataloguePage] = useState(1);
+  useEffect(()=>{
+    if(!open||!config.profileId||config.demoMode){setOffers([]);return;}
+    let live=true;
+    void supabase.from('dalil_sales_programs').select('id,title,description,value,weekday').eq('entreprise_id',config.profileId).eq('kind','offer').eq('active',true)
+      .then(({data,error})=>{if(live)setOffers(error?[]:(data||[]).filter(row=>row.weekday==null||row.weekday===new Date().getDay()));});
+    return()=>{live=false;};
+  },[open,config.profileId,config.demoMode]);
   const products = config.products.filter(product => Boolean(product.id && product.title && product.imageUrl));
   // Keep the approved festive-menu order; any other category follows alphabetically.
   const preferredCategories = ['Menu des fêtes', 'Entrées', 'Plats', 'Fromages', 'Desserts', 'Packs cadeaux'];
@@ -256,7 +265,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
     window.open('https://wa.me/'+phone+'?text='+encodeURIComponent(message),'_blank','noopener,noreferrer');
   };
   return <>
-    <button type="button" onClick={() => { setOpen(true); setSelected(null); setRequestOpen(false); setConfirmation(''); setCataloguePage(1); setCatalogueQuery(''); setCatalogueCategory(''); }}
+    <button type="button" onClick={() => { setOpen(true); setSelected(null); setRequestOpen(false); setConfirmation(''); setCataloguePage(1); setCatalogueQuery(''); setCatalogueCategory(''); setOffersOpen(false); }}
       aria-haspopup="dialog" className={triggerClassName}
       style={triggerClassName ? undefined : { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 7, padding: '8px 15px', border: '1px solid var(--boutique-accent, #e8bd43)', background: 'var(--boutique-button, #003c35)', color: 'var(--boutique-button-ink, #f7f4ec)', borderRadius: 24, fontSize: 13, fontWeight: 600, lineHeight: 1.2, cursor: 'pointer' }}>
       {triggerIcon ?? <span aria-hidden="true">✦</span>}<span>{triggerLabel}</span>{!config.demoMode && products.some(isRecentProduct) && <span aria-label="Nouveautés" style={{fontSize:10,color:'var(--boutique-accent, #e8bd43)',fontWeight:700,whiteSpace:'nowrap'}}>●</span>}
@@ -275,6 +284,20 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
         </div>
         {!selected ? <>
           <p style={{ fontSize: 12, color: 'var(--boutique-muted, #d0ddd5)', margin: '0 0 12px' }}>Découvrez nos créations. Touchez une photo pour les détails.</p>
+          {offers.length>0&&<>
+            <button type="button" aria-expanded={offersOpen} onClick={()=>setOffersOpen(v=>!v)}
+              style={{width:'100%',marginBottom:10,padding:'10px 12px',border:'1px solid var(--boutique-accent, #e8bd43)',borderRadius:11,
+                background:'var(--boutique-card, #002f2b)',color:'var(--boutique-ink, #f7f4ec)',fontSize:12,fontWeight:700,textAlign:'left',cursor:'pointer'}}>
+              🏷️ {offersOpen?'Fermer les offres':'Voir les offres du moment'} {offersOpen?'−':'＋'}
+            </button>
+            {offersOpen&&<div style={{display:'grid',gap:7,marginBottom:11}}>
+              {offers.map(offer=><div key={offer.id} style={{border:'1px solid var(--boutique-accent, #e8bd43)',background:'var(--boutique-card, #002f2b)',padding:11,borderRadius:10}}>
+                <strong style={{fontSize:12}}>{offer.title} · −{offer.value} %</strong>
+                {offer.description&&<p style={{margin:'5px 0',fontSize:11}}>{offer.description}</p>}
+              </div>)}
+              <span style={{fontSize:10,color:'var(--boutique-muted, #d0ddd5)'}}>Réduction à confirmer directement avec le commerçant. Le total de la commande n’est pas recalculé automatiquement.</span>
+            </div>}
+          </>}
           {catalogueCategories.some(category=>category.toLowerCase()==='packs cadeaux') && <button type="button"
             aria-pressed={catalogueCategory==='Packs cadeaux'}
             onClick={()=>{setCatalogueCategory(current=>current==='Packs cadeaux'?'':'Packs cadeaux');setCataloguePage(1);}}
