@@ -97,6 +97,13 @@ export default function PlatformAppShell({ children }: { children: ReactNode }) 
           className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#E0C79E] bg-[#FFF7EB] text-[#A8242D] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B62226]">
           <Instagram aria-hidden="true" className="h-4 w-4" />
         </a>
+        <a href="https://www.tiktok.com/@daliltounes" target="_blank" rel="noopener noreferrer"
+          aria-label="TikTok Dalil Tounes (nouvel onglet)"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#E0C79E] bg-[#FFF7EB] text-[#A8242D] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B62226]">
+          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M16.9 2h-3.1v12.2a3.3 3.3 0 1 1-3.3-3.3c.3 0 .5 0 .8.1V7.8a6.6 6.6 0 1 0 5.6 6.5V8.1a8 8 0 0 0 4.5 1.3V6.3a5 5 0 0 1-4.5-4.3z" />
+          </svg>
+        </a>
         <a href="https://wa.me/21627642252" target="_blank" rel="noopener noreferrer"
           aria-label="WhatsApp Dalil Tounes (nouvel onglet)"
           className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#E0C79E] bg-[#FFF7EB] text-[#A8242D] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B62226]">
