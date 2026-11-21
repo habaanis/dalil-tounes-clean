@@ -37,10 +37,10 @@ const recentLabel = (product: BoutiqueProduct): string | null => {
 };
 const isRecentProduct = (product: BoutiqueProduct) => recentLabel(product) !== null;
 
-const priceText = (product: BoutiqueProduct) =>
+const priceText = (product: BoutiqueProduct, ar=false) =>
   typeof product.price === 'number'
-    ? new Intl.NumberFormat('fr-FR', { style: 'currency', currency: product.currency }).format(product.price)
-    : 'Sur devis';
+    ? new Intl.NumberFormat(ar?'ar-TN':'fr-FR', { style: 'currency', currency: product.currency }).format(product.price)
+    : ar?'السعر حسب الطلب':'Sur devis';
 
 const labelStyle = { display: 'grid', gap: 4, fontSize: 12, fontWeight: 500 } as const;
 const fieldStyle = { boxSizing: 'border-box', width: '100%', minWidth: 0, border: '1px solid var(--boutique-accent, #d7c7ae)', borderRadius: 9, padding: '9px 10px', fontSize: 14, background: 'var(--boutique-field, #fff)', color: 'var(--boutique-field-ink, #12372e)', colorScheme: 'light' } as const;
@@ -408,6 +408,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
           </div>
           <button type="button" style={iconButton} onClick={close} aria-label={t('Fermer la boutique','إغلاق المتجر')}>×</button>
         </div>
+        <div dir={ar?'rtl':'ltr'}>
         {!selected ? <>
           <p style={{ fontSize: 12, color: 'var(--boutique-muted, #d0ddd5)', margin: '0 0 12px' }}>{t("Découvrez nos créations. Touchez une photo pour les détails.","اكتشف منتجاتنا. اضغط على الصورة لمعرفة التفاصيل.")}</p>
           {offers.length>0&&<>
@@ -475,10 +476,10 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
           <img src={selected.imageUrl} alt={selected.title} style={{ display: 'block', width: '100%', maxHeight: 190, aspectRatio: '16 / 9', objectFit: 'contain', background: 'var(--boutique-card, #002f2b)', borderRadius: 11 }} />
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 8, marginTop: 12 }}>
             <strong style={{ color: 'var(--boutique-ink, #f7f4ec)', fontSize: 16 }}>{selected.title}</strong>
-            <span style={{ whiteSpace: 'nowrap', fontWeight: 600, fontSize: 12, color: 'var(--boutique-accent, #e8bd43)' }}>{priceText(selected)}</span>
+            <span style={{ whiteSpace: 'nowrap', fontWeight: 600, fontSize: 12, color: 'var(--boutique-accent, #e8bd43)' }}>{priceText(selected,ar)}</span>
           </div>
-          {selected.category?.trim().toLowerCase()==='packs cadeaux' && <p style={{fontSize:11,color:'var(--boutique-accent, #e8bd43)',margin:'7px 0 0',fontWeight:700}}>🎁 Pack cadeau · prix fixé par le commerçant</p>}
-          {selected.category?.trim().toLowerCase()==='cartes cadeaux' && <p style={{fontSize:11,color:'var(--boutique-accent, #e8bd43)',margin:'7px 0 0',fontWeight:700}}>🎟️ Carte cadeau · activée par le commerçant après vérification du paiement</p>}
+          {selected.category?.trim().toLowerCase()==='packs cadeaux' && <p style={{fontSize:11,color:'var(--boutique-accent, #e8bd43)',margin:'7px 0 0',fontWeight:700}}>🎁 {t('Pack cadeau · prix fixé par le commerçant','باقة هدايا · السعر يحدده التاجر')}</p>}
+          {selected.category?.trim().toLowerCase()==='cartes cadeaux' && <p style={{fontSize:11,color:'var(--boutique-accent, #e8bd43)',margin:'7px 0 0',fontWeight:700}}>🎟️ {t('Carte cadeau · activée par le commerçant après vérification du paiement','بطاقة هدية · تُفعّل بعد التحقق من الدفع')}</p>}
           {selected.description && <p style={{ fontSize: 12, lineHeight: 1.5, margin: '6px 0 12px', color: 'var(--boutique-muted, #d0ddd5)' }}>{selected.description}</p>}
           {!requestOpen ? (orderAvailability==='available'||config.demoMode) ? <button type="button" onClick={() => setRequestOpen(true)}
             style={{ border: '1px solid var(--boutique-accent, #d4af37)', borderRadius: 10, background: 'var(--boutique-button, #063b30)', color: 'var(--boutique-button-ink, #fff)', fontSize: 13, fontWeight: 600, padding: '11px 14px', width: '100%', cursor: 'pointer' }}>
@@ -489,7 +490,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
               : t('Les demandes via Dalil Tounes ne sont pas encore ouvertes. Aucun formulaire n’est envoyé ni enregistré.','الطلبات عبر دليل تونس غير متاحة حالياً. لن يتم تسجيل أي طلب.')}</p>
             {orderAvailability==='unavailable' && canWhatsApp && <button type="button" onClick={contactDirectWhatsApp}
               style={{border:'1px solid var(--boutique-accent, #e8bd43)',borderRadius:10,padding:'11px 12px',background:'var(--boutique-button, #003c35)',color:'var(--boutique-button-ink, #f7f4ec)',fontWeight:700}}>
-              Contacter directement sur WhatsApp (sans enregistrement)
+              {t('Contacter directement sur WhatsApp (sans enregistrement)','التواصل مباشرة عبر واتساب (دون تسجيل طلب)')}
             </button>}
           </div> : <div style={{ display: 'grid', gap: 10, borderTop: '1px solid var(--boutique-accent, #e8bd43)', paddingTop: 12 }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -528,14 +529,14 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
             </button>
             {confirmation&&<div role="status" style={{display:'grid',gap:8,background:'var(--boutique-button, #f3f6ea)',color:'var(--boutique-button-ink, #355535)',border:'1px solid var(--boutique-accent, #d4af37)',borderRadius:10,padding:12,fontSize:12}}>
               <strong>{selected&&isUnpricedCustomerOrder(config.profileId,selected.title)?t('Merci pour votre commande ! Elle a bien été transmise au professionnel.','شكراً على طلبكم! تم إرسال طلبكم إلى التاجر.'):t('Votre demande a bien été transmise au professionnel.','تم إرسال طلبكم إلى التاجر بنجاح.')}</strong>
-              <span>Référence : {confirmation.slice(0,8).toUpperCase()} · En attente de traitement · Aucun paiement enregistré.</span>
+              <span>{t('Référence :','المرجع:')} {confirmation.slice(0,8).toUpperCase()} · {t('En attente de traitement','بانتظار المعالجة')} · {t('Aucun paiement enregistré.','لم يتم تسجيل أي دفع.')}</span>
               {contactChannel==='email' && canEmail && <button type="button" onClick={contactEmail}
                 style={{border:'1px solid var(--boutique-accent, #d4af37)',borderRadius:10,padding:'11px 12px',background:'var(--boutique-surface, #fff)',color:'var(--boutique-ink, #245c37)',fontWeight:700,cursor:'pointer'}}>
-                Préparer un e-mail au professionnel
+                {t('Préparer un e-mail au professionnel','إعداد بريد إلكتروني للتاجر')}
               </button>}
               {contactChannel==='whatsapp' && canWhatsApp&&<button type="button" onClick={contactWhatsApp}
                 style={{border:'1px solid var(--boutique-accent, #d4af37)',borderRadius:10,padding:'11px 12px',background:'var(--boutique-surface, #fff)',color:'var(--boutique-ink, #245c37)',fontWeight:700,cursor:'pointer'}}>
-                Contacter le professionnel sur WhatsApp
+                {t('Contacter le professionnel sur WhatsApp','التواصل مع التاجر عبر واتساب')}
               </button>}
               <span>{t("La demande reste enregistrée dans Dalil Tounes, même sans message supplémentaire. L'envoi d'un e-mail doit être confirmé dans votre messagerie.","يبقى طلبك مسجلاً في دليل تونس حتى دون إرسال رسالة إضافية. يجب تأكيد إرسال البريد من تطبيق البريد.")}</span>
             </div>}
@@ -640,6 +641,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
           <BoutiquePushFollow profileId={config.profileId} demoMode={config.demoMode} promotion />
         </>}
         {config.demoMode && <p style={{ fontSize: 10, margin: '10px 0 0', color: 'var(--boutique-muted, #d0ddd5)' }}>{t("Aperçu uniquement — aucune demande ou paiement n'est envoyé.","عرض تجريبي فقط — لن يتم إرسال أي طلب أو دفع.")}</p>}
+        </div>
       </section>
     </div>}
   </>;
