@@ -1,5 +1,5 @@
 import { MessageCircle } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 
 interface WhatsAppSupportProps {
@@ -15,6 +15,8 @@ export const WhatsAppSupport = ({
   const [helpOpen,setHelpOpen] = useState(false);
   const [helpTopic,setHelpTopic] = useState('inscription');
   const [helpDetails,setHelpDetails] = useState('');
+  const [answerLanguage,setAnswerLanguage] = useState<'fr'|'ar'>(language === 'ar' ? 'ar' : 'fr');
+  useEffect(()=>setAnswerLanguage(language === 'ar' ? 'ar' : 'fr'),[language]);
 
   const translations = {
     fr: {
@@ -41,16 +43,35 @@ export const WhatsAppSupport = ({
 
   const text = translations[language as keyof typeof translations] || translations.fr;
 
-  const topics:Record<string,string> = {
-    inscription:'Je souhaite m’inscrire sur Dalil Tounes',
-    decouvrir:'À quoi servent Dalil Tounes et son application ?',
-    commercant:'Je suis commerçant : quels avantages pour mon activité et mes clients ?',
-    offres:'Je souhaite découvrir les offres professionnelles',
-    autre:'J’ai une autre question'
+  const topics:Record<string,{fr:{label:string;answer:string};ar:{label:string;answer:string}}> = {
+    inscription:{
+      fr:{label:'Je souhaite m’inscrire sur Dalil Tounes',answer:'Vous pouvez demander l’inscription de votre activité sur Dalil Tounes. Une présence gratuite et une mini-appli professionnelle sont proposées selon vos besoins. Pour être accompagné, contactez-nous sur WhatsApp.'},
+      ar:{label:'أريد تسجيل نشاطي في دليل تونس',answer:'يمكنك طلب تسجيل نشاطك في دليل تونس. تتوفر خدمة حضور مجاني وميني تطبيق مهني حسب احتياجاتك. إذا أردت المساعدة، تواصل معنا عبر واتساب.'}
+    },
+    decouvrir:{
+      fr:{label:'À quoi servent Dalil Tounes et son application ?',answer:'Dalil Tounes aide à trouver des professionnels, commerces et services en Tunisie. Son application permet de les découvrir et de les contacter plus facilement. Les professionnels peuvent présenter leur activité dans une mini-appli.'},
+      ar:{label:'ما فائدة دليل تونس وتطبيقه؟',answer:'يساعدك دليل تونس على العثور على مهنيين ومحلات وخدمات في تونس، والتواصل معهم بسهولة. ويمكن لأصحاب الأنشطة عرض خدماتهم عبر ميني تطبيق مهني.'}
+    },
+    commercant:{
+      fr:{label:'Je suis commerçant : quels avantages pour mon activité et mes clients ?',answer:'Votre mini-appli réunit votre présentation, vos coordonnées et, selon les fonctions activées, un catalogue, des commandes, des offres et la fidélité. Vos clients accèdent à vos informations et peuvent vous contacter ou commander plus facilement.'},
+      ar:{label:'أنا تاجر: ما الفائدة لي ولحرفائي؟',answer:'يجمع الميني تطبيق التعريف بنشاطك وطرق التواصل معك، ويمكن أن يضم كتالوج المنتجات والطلبات والعروض والوفاء حسب الخدمات المفعّلة. هكذا يجد حرفاؤك معلوماتك ويتواصلون معك أو يطلبون بسهولة أكبر.'}
+    },
+    offres:{
+      fr:{label:'Je souhaite découvrir les offres professionnelles',answer:'Dalil Tounes propose une présence essentielle gratuite et des mini-applis professionnelles avec des outils de présentation et de vente. Contactez-nous pour connaître les possibilités et les conditions de l’offre qui vous convient.'},
+      ar:{label:'أريد معرفة العروض المخصصة للمهنيين',answer:'يوفّر دليل تونس حضوراً أساسياً مجانياً وميني تطبيقات مهنية بأدوات للتعريف بالنشاط وتسهيل البيع. تواصل معنا لمعرفة الخيارات والشروط المناسبة لنشاطك.'}
+    },
+    autre:{
+      fr:{label:'J’ai une autre question',answer:'Vous pouvez nous écrire directement. Choisissez ce sujet, précisez votre question si vous le souhaitez, puis envoyez-la sur WhatsApp.'},
+      ar:{label:'عندي سؤال آخر',answer:'يمكنك مراسلتنا مباشرة. اختر هذا الموضوع، واكتب سؤالك إذا أردت، ثم أرسله عبر واتساب.'}
+    }
   };
+  const ui = answerLanguage === 'ar'
+    ? {heading:'كيف يمكننا مساعدتك؟',instruction:'اختر موضوعك لعرض إجابة فورية.',subject:'موضوع السؤال',answer:'الإجابة',more:'هل لديك سؤال آخر؟ (اختياري)',placeholder:'اكتب رسالتك هنا…',send:'متابعة عبر واتساب',close:'إغلاق'}
+    : {heading:'Comment pouvons-nous vous aider ?',instruction:'Choisissez un sujet pour voir une première réponse.',subject:'Votre demande concerne',answer:'Notre réponse',more:'Une autre question ? (facultatif)',placeholder:'Votre message…',send:'Continuer sur WhatsApp',close:'Fermer'};
   const sendHelp = () => {
     const details=helpDetails.trim();
-    const message = encodeURIComponent('Bonjour Dalil Tounes,\nSujet : '+topics[helpTopic]+(details?'\nMa demande : '+details:'')+'\n(Page : '+window.location.pathname+')');
+    const subject=topics[helpTopic][answerLanguage].label;
+    const message = encodeURIComponent((answerLanguage==='ar'?'مرحباً دليل تونس،\nالموضوع: ':'Bonjour Dalil Tounes,\nSujet : ')+subject+(details?(answerLanguage==='ar'?'\nسؤالي: ':'\nMa question : ')+details:'')+'\n(Page : '+window.location.pathname+')');
     window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank', 'noopener,noreferrer');
     setHelpOpen(false);setHelpDetails('');
   };
@@ -90,26 +111,34 @@ export const WhatsAppSupport = ({
         </span>
       </button>
 
-      {helpOpen && <section role="dialog" aria-label="Préciser votre demande Dalil Tounes"
-        className="w-[min(88vw,310px)] max-h-[70dvh] overflow-y-auto rounded-xl border border-[#d5b66a] bg-[#fbf8f0] p-3 text-sm text-[#252525] shadow-xl">
-        <div className="mb-2 flex items-center justify-between gap-2">
-          <strong>Comment pouvons-nous vous aider ?</strong>
-          <button type="button" onClick={()=>setHelpOpen(false)} aria-label="Fermer le formulaire" className="min-h-9 rounded-lg px-2">✕</button>
+      {helpOpen && <section role="dialog" aria-label={ui.heading} dir={answerLanguage==='ar'?'rtl':'ltr'}
+        className="w-[min(88vw,340px)] max-h-[75dvh] overflow-y-auto rounded-xl border border-[#d5b66a] bg-[#fbf8f0] p-3 text-sm text-[#252525] shadow-xl">
+        <div className="mb-2 flex items-start justify-between gap-2">
+          <strong>{ui.heading}</strong>
+          <button type="button" onClick={()=>setHelpOpen(false)} aria-label={ui.close} className="min-h-9 rounded-lg px-2">✕</button>
         </div>
-        <p className="mb-2 text-xs">Choisissez le sujet de votre demande.</p>
-        <label className="mb-2 grid gap-1 text-xs">Votre demande concerne
-          <select value={helpTopic} onChange={e=>setHelpTopic(e.target.value)} className="min-h-11 rounded-lg border border-[#d5b66a] bg-white p-2">
-            {Object.entries(topics).map(([value,label])=><option key={value} value={value}>{label}</option>)}
+        <div className="mb-2 flex gap-2" role="group" aria-label="Langue de la réponse">
+          <button type="button" aria-pressed={answerLanguage==='fr'} onClick={()=>setAnswerLanguage('fr')} className={`min-h-9 rounded-lg border px-3 text-xs ${answerLanguage==='fr'?'border-[#b8954c] bg-[#f1e2bc] font-bold':'border-[#d5b66a]'}`}>Français</button>
+          <button type="button" aria-pressed={answerLanguage==='ar'} onClick={()=>setAnswerLanguage('ar')} className={`min-h-9 rounded-lg border px-3 text-xs ${answerLanguage==='ar'?'border-[#b8954c] bg-[#f1e2bc] font-bold':'border-[#d5b66a]'}`}>العربية</button>
+        </div>
+        <p className="mb-2 text-xs">{ui.instruction}</p>
+        <label className="mb-2 grid gap-1 text-xs">{ui.subject}
+          <select value={helpTopic} onChange={e=>setHelpTopic(e.target.value)} className="min-h-11 w-full rounded-lg border border-[#d5b66a] bg-white p-2">
+            {Object.entries(topics).map(([value,labels])=><option key={value} value={value}>{labels[answerLanguage].label}</option>)}
           </select>
         </label>
-        <label className="grid gap-1 text-xs">Précisez votre demande (facultatif)
+        <div className="mb-2 rounded-lg border border-[#d5b66a] bg-white p-3" role="status" aria-live="polite">
+          <strong className="text-xs text-[#715427]">{ui.answer}</strong>
+          <p className="mt-1 text-xs leading-relaxed">{topics[helpTopic][answerLanguage].answer}</p>
+        </div>
+        <label className="grid gap-1 text-xs">{ui.more}
           <textarea rows={2} maxLength={500} value={helpDetails}
             onChange={e=>setHelpDetails(e.target.value)}
-            placeholder="Votre message…" className="rounded-lg border border-[#d5b66a] bg-white p-2" />
+            placeholder={ui.placeholder} className="rounded-lg border border-[#d5b66a] bg-white p-2" />
         </label>
         <button type="button" onClick={sendHelp}
-          className="mt-2 min-h-11 w-full rounded-xl bg-[#073b30] px-3 text-xs font-semibold text-white disabled:opacity-50">
-          Envoyer sur WhatsApp
+          className="mt-2 min-h-11 w-full rounded-xl bg-[#073b30] px-3 text-xs font-semibold text-white">
+          {ui.send}
         </button>
       </section>}
       {/* Bouton WhatsApp */}
