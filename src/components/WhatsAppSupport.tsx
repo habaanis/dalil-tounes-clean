@@ -13,7 +13,7 @@ export const WhatsAppSupport = ({
 }: WhatsAppSupportProps) => {
   const { language } = useLanguage();
   const [helpOpen,setHelpOpen] = useState(false);
-  const [helpTopic,setHelpTopic] = useState('compte');
+  const [helpTopic,setHelpTopic] = useState('inscription');
   const [helpDetails,setHelpDetails] = useState('');
 
   const translations = {
@@ -42,13 +42,15 @@ export const WhatsAppSupport = ({
   const text = translations[language as keyof typeof translations] || translations.fr;
 
   const topics:Record<string,string> = {
-    compte:'Connexion / compte', boutique:'Boutique / commande',
-    fidelite:'Fidélité / carte cadeau', fiche:'Fiche professionnelle', autre:'Autre question'
+    inscription:'Je souhaite m’inscrire sur Dalil Tounes',
+    decouvrir:'À quoi servent Dalil Tounes et son application ?',
+    commercant:'Je suis commerçant : quels avantages pour mon activité et mes clients ?',
+    offres:'Je souhaite découvrir les offres professionnelles',
+    autre:'J’ai une autre question'
   };
   const sendHelp = () => {
     const details=helpDetails.trim();
-    if(details.length<8)return;
-    const message = encodeURIComponent('Dalil Tounes — Assistance\nSujet : '+topics[helpTopic]+'\nMa demande : '+details+'\n(Page : '+window.location.pathname+')');
+    const message = encodeURIComponent('Bonjour Dalil Tounes,\nSujet : '+topics[helpTopic]+(details?'\nMa demande : '+details:'')+'\n(Page : '+window.location.pathname+')');
     window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank', 'noopener,noreferrer');
     setHelpOpen(false);setHelpDetails('');
   };
@@ -91,21 +93,21 @@ export const WhatsAppSupport = ({
       {helpOpen && <section role="dialog" aria-label="Préciser votre demande Dalil Tounes"
         className="w-[min(88vw,310px)] max-h-[70dvh] overflow-y-auto rounded-xl border border-[#d5b66a] bg-[#fbf8f0] p-3 text-sm text-[#252525] shadow-xl">
         <div className="mb-2 flex items-center justify-between gap-2">
-          <strong>Assistance Dalil Tounes</strong>
+          <strong>Comment pouvons-nous vous aider ?</strong>
           <button type="button" onClick={()=>setHelpOpen(false)} aria-label="Fermer le formulaire" className="min-h-9 rounded-lg px-2">✕</button>
         </div>
-        <p className="mb-2 text-xs">Précisez votre problème avant d’envoyer le message WhatsApp.</p>
-        <label className="mb-2 grid gap-1 text-xs">Votre sujet
+        <p className="mb-2 text-xs">Choisissez le sujet de votre demande.</p>
+        <label className="mb-2 grid gap-1 text-xs">Votre demande concerne
           <select value={helpTopic} onChange={e=>setHelpTopic(e.target.value)} className="min-h-11 rounded-lg border border-[#d5b66a] bg-white p-2">
             {Object.entries(topics).map(([value,label])=><option key={value} value={value}>{label}</option>)}
           </select>
         </label>
-        <label className="grid gap-1 text-xs">Expliquez votre demande
-          <textarea rows={3} minLength={8} maxLength={500} value={helpDetails}
+        <label className="grid gap-1 text-xs">Précisez votre demande (facultatif)
+          <textarea rows={2} maxLength={500} value={helpDetails}
             onChange={e=>setHelpDetails(e.target.value)}
-            placeholder="Ex. Je ne retrouve pas mes commandes…" className="rounded-lg border border-[#d5b66a] bg-white p-2" />
+            placeholder="Votre message…" className="rounded-lg border border-[#d5b66a] bg-white p-2" />
         </label>
-        <button type="button" disabled={helpDetails.trim().length<8} onClick={sendHelp}
+        <button type="button" onClick={sendHelp}
           className="mt-2 min-h-11 w-full rounded-xl bg-[#073b30] px-3 text-xs font-semibold text-white disabled:opacity-50">
           Envoyer sur WhatsApp
         </button>
