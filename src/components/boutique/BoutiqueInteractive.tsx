@@ -113,11 +113,29 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
   const safePage = Math.min(cataloguePage, pageCount);
   const pageProducts = filteredProducts.slice((safePage - 1) * 12, safePage * 12);
   const lookupCard=async()=>{
-    if(!config.profileId||!(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i).test(cardCode.trim())){
-      setCardInfo(null);setCardNotice('Saisissez le code complet de votre carte.');return;
+    const code=cardCode.trim();
+    if(!config.profileId||(cardLookupKind==='loyalty'?!/^[0-9]{4}$/.test(code):
+      !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(code))){
+      setCardInfo(null);setCardNotice(cardLookupKind==='loyalty'?'Saisissez les 4 chiffres de votre carte de fidélité.':'Saisissez le code complet de votre carte cadeau.');return;
     }
     setCardChecking(true);setCardNotice('');setCardInfo(null);
-    const {data,error}=await supabase.rpc('dalil_sales_card_status',{p_business:config.profileId,p_kind:cardLookupKind,p_code:cardCode.trim()});
+    if(cardLookupKind==='loyalty'){
+      try{
+        const response=await fetch(supabaseUrl+'/functions/v1/dalil-loyalty-check',{
+          method:'POST',headers:{'content-type':'application/json'},
+          body:JSON.stringify({profileId:config.profileId,code})
+        });
+        const result=await response.json() as {card?:Record<string,unknown>;error?:string};
+        if(!response.ok||!result.card){
+          setCardNotice(response.status===429?'Trop de vérifications. Réessayez dans une heure.':response.status===404?'Carte introuvable pour cette boutique.':'Vérification temporairement indisponible.');
+          return;
+        }
+        setCardInfo(result.card);
+      }catch{setCardNotice('Vérification temporairement indisponible.');}
+      finally{setCardChecking(false);}
+      return;
+    }
+    const {data,error}=await supabase.rpc('dalil_sales_card_status',{p_business:config.profileId,p_kind:'gift_card',p_code:code});
     setCardChecking(false);
     if(error||!data){setCardNotice('Carte introuvable pour cette boutique. Vérifiez le code.');return;}
     setCardInfo(data as Record<string,unknown>);
@@ -440,12 +458,14 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
             </button>
             {cardLookupOpen&&<div style={{display:'grid',gap:8,marginTop:9}}>
               <label style={labelStyle}>Type de carte
-                <select style={fieldStyle} value={cardLookupKind} onChange={e=>{setCardLookupKind(e.target.value as 'loyalty'|'gift_card');setCardInfo(null);}}>
+                <select style={fieldStyle} value={cardLookupKind} onChange={e=>{setCardLookupKind(e.target.value as 'loyalty'|'gift_card');setCardCode('');setCardInfo(null);setCardNotice('');}}>
                   <option value="loyalty">Carte de fidélité</option><option value="gift_card">Carte cadeau</option>
                 </select>
               </label>
-              <label style={labelStyle}>Code complet communiqué par le commerçant
-                <input style={fieldStyle} value={cardCode} onChange={e=>{setCardCode(e.target.value);setCardInfo(null);}} placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" maxLength={36}/>
+              <label style={labelStyle}>{cardLookupKind==='loyalty'?'Code de fidélité (4 chiffres)':'Code complet de la carte cadeau'}
+                <input style={fieldStyle} value={cardCode} onChange={e=>{setCardCode(cardLookupKind==='loyalty'?e.target.value.replace(/\D/g,'').slice(0,4):e.target.value);setCardInfo(null);}}
+                  placeholder={cardLookupKind==='loyalty'?'Ex. 0427':'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'}
+                  inputMode={cardLookupKind==='loyalty'?'numeric':'text'} autoComplete="off" maxLength={cardLookupKind==='loyalty'?4:36}/>
               </label>
               <button type="button" disabled={cardChecking} onClick={()=>void lookupCard()}
                 style={{padding:11,borderRadius:10,border:'1px solid var(--boutique-accent, #e8bd43)',background:'var(--boutique-button, #003c35)',color:'var(--boutique-button-ink, #fff)',fontWeight:700}}>
