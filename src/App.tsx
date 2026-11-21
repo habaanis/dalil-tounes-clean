@@ -42,7 +42,10 @@ function App() {
   const isHashRouter = window.location.hash.startsWith('#/') || import.meta.env.DEV;
   const isEmbeddedClientPreview = new URLSearchParams(location.search).get('source') === 'pwa';
   const isDedicatedClientApp = isDedicatedClientHostname(window.location.hostname) && location.pathname !== '/';
-  const showWelcomeModal = !isDedicatedClientApp && !isEmbeddedClientPreview && !welcomeDismissed && shouldShowWelcomeForPath(location.pathname);
+  // The independent PWA already has its own app shell and language selector.
+  // The animated website welcome overlay can briefly flash above the app on reload.
+  const isIndependentPwa = ['appli.dalil-tounes.com','dalil-tounes-pwa.vercel.app'].includes(window.location.hostname);
+  const showWelcomeModal = !isIndependentPwa && !isDedicatedClientApp && !isEmbeddedClientPreview && !welcomeDismissed && shouldShowWelcomeForPath(location.pathname);
   const showWelcomeDevButton = import.meta.env.DEV && isLocalhost;
 
   const handleCloseWelcomeModal = () => {

@@ -184,13 +184,10 @@ const PageLoader = () => (
 );
 
 // Platform PWA should never briefly show the website's flag hero on route changes.
+// Match the actual platform-app background during lazy route loading.
+// Avoid a temporary pulsing placeholder that appears as a page flash on refresh.
 const PlatformRouteLoader = () => (
-  <div aria-hidden="true" className="min-h-[130px] bg-[#FFFCF7] px-4 pt-4">
-    <div className="mx-auto max-w-xl space-y-3">
-      <div className="h-4 w-32 rounded-md bg-[#EDE4D4] animate-pulse" />
-      <div className="h-16 rounded-xl border border-[#EDE4D4] bg-[#FFFAF0] animate-pulse" />
-    </div>
-  </div>
+  <div aria-hidden="true" className="min-h-[130px] bg-[#FAF9F6]" />
 );
 
 const ClientPageLoader = () => (
