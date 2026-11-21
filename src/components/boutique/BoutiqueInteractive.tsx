@@ -534,7 +534,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
               style={{padding:9,borderRadius:8,border:'1px solid var(--boutique-accent, #e8bd43)',background:'var(--boutique-button, #003c35)',color:'var(--boutique-button-ink, #fff)',fontWeight:700,opacity:statusChecking?0.7:1}}>
               {statusChecking?'Actualisation…':'Actualiser le statut de mes demandes'}
              </button>}
-             {statusNotice&&<p role="status" style={{margin:0}}>{statusNotice}</p>
+             {statusNotice&&<p role="status" style={{margin:0}}>{statusNotice}</p>}
              {localRequests.length===0?<p style={{margin:0}}>Aucune référence conservée sur cet appareil.</p>:
               localRequests.map(item=><div key={item.reference} style={{display:'grid',gap:3,padding:9,border:'1px solid var(--boutique-accent, #e8bd43)',borderRadius:8}}>
                <strong>{item.kind==='quote'?'Devis':'Commande'} · {new Date(item.createdAt).toLocaleDateString('fr-FR')}</strong>
