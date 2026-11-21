@@ -210,8 +210,13 @@ export const Layout = ({ children }: LayoutProps) => {
 
   const handleFaqNavigation = (sectionId: 'faq'|'suggestions'='faq') => {
     setShowMobileMenu(false);setMobileExpandedMenu(null);setOpenMenu(null);
-    navigate('/#'+sectionId);
+    // A repeated click on the current hash does not trigger React Router effects.
+    // Inform the accordion directly and scroll even when the URL is unchanged.
+    if (location.pathname !== '/' || location.hash !== '#'+sectionId) {
+      navigate('/#'+sectionId);
+    }
     if (location.pathname === '/') {
+      window.dispatchEvent(new CustomEvent('dalil-open-home-section',{detail:{sectionId}}));
       window.requestAnimationFrame(()=>document.getElementById(sectionId)?.scrollIntoView({behavior:'smooth',block:'start'}));
     }
   };
