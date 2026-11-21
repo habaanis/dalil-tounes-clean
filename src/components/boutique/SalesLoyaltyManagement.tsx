@@ -121,14 +121,14 @@ export default function SalesLoyaltyManagement({entrepriseIds}:{entrepriseIds:st
   setRedeemAmount(old=>({...old,[card.id]:''}));setMessage(action==='activate'?'Carte activée après vérification du paiement.':'Montant déduit du solde.');reload();
  };
  return <section className="mt-3 rounded-xl border border-[#dfcda8] bg-[#fbf8f0] p-3 sm:p-4" aria-label="Ventes et fidélité">
-  <h3 className="font-semibold text-[#62212a]">Ventes & Fidélité</h3>
+  <h3 className="font-semibold text-[#252525]">Ventes & Fidélité</h3>
   <p className="mt-1 text-xs text-gray-600">Tout au même endroit, sans nouvelles pages. Les prix et les récompenses sont choisis par le commerçant.</p>
   {entrepriseIds.length>1&&<label className="mt-3 block text-xs">Établissement
    <select className={fields} value={company} onChange={e=>{setCompany(e.target.value);setSection(null);}}>{entrepriseIds.map(id=><option key={id} value={id}>{id}</option>)}</select>
   </label>}
   <div className="mt-3 grid gap-2">{panelNames.map(item=><div key={item.id} className={tile}>
    <button type="button" aria-expanded={section===item.id} onClick={()=>choose(item.id)}
-    className="flex min-h-11 w-full items-center justify-between gap-2 text-left text-sm font-semibold text-[#62212a]">
+    className="flex min-h-11 w-full items-center justify-between gap-2 text-left text-sm font-semibold text-[#252525]">
     {item.label}<span aria-hidden="true">{section===item.id?'−':'＋'}</span>
    </button>
    {section===item.id&&<div className="mt-3 grid gap-3 border-t border-[#e8d9bd] pt-3">
@@ -153,10 +153,10 @@ export default function SalesLoyaltyManagement({entrepriseIds}:{entrepriseIds:st
       </div>
       <label className="flex items-center gap-2 text-xs"><input type="checkbox" checked={active} onChange={e=>setActive(e.target.checked)}/> Publier cette offre dès sa période de validité</label>
      </>}
-     <button type="submit" disabled={busy} className="min-h-11 rounded-xl bg-[#62212a] px-3 py-2 text-sm font-semibold text-white disabled:opacity-50">Enregistrer</button>
+     <button type="submit" disabled={busy} className="min-h-11 rounded-xl bg-[#252525] px-3 py-2 text-sm font-semibold text-white disabled:opacity-50">Enregistrer</button>
     </form>
     <div className="grid gap-2">
-     <strong className="text-xs text-[#62212a]">Mes {item.id==='offer'?'offres':item.id==='loyalty'?'programmes de fidélité':'montants de cartes cadeaux'}</strong>
+     <strong className="text-xs text-[#252525]">Mes {item.id==='offer'?'offres':item.id==='loyalty'?'programmes de fidélité':'montants de cartes cadeaux'}</strong>
      {programs.filter(p=>p.kind===item.id).length===0&&<p className="text-xs text-gray-600">Aucune configuration enregistrée.</p>}
      {programs.filter(p=>p.kind===item.id).map(p=><div key={p.id} className="rounded-xl border border-[#e8d9bd] bg-[#fffdf8] p-3 text-xs">
       <div className="flex items-start justify-between gap-2"><strong>{p.title}</strong><strong>{p.kind==='offer'?p.value+' %':p.kind==='loyalty'?p.value+' achats':money(p.value)}</strong></div>
@@ -179,7 +179,7 @@ export default function SalesLoyaltyManagement({entrepriseIds}:{entrepriseIds:st
       <label className="grid gap-1 text-xs">{item.id==='loyalty'?'Nom du client':'Nom du bénéficiaire'}
        <input className={fields} maxLength={120} value={customer} onChange={e=>setCustomer(e.target.value)}/>
       </label>
-      <button type="button" disabled={busy||!chosenProgram} onClick={()=>void issue(item.id)} className="min-h-11 rounded-xl border border-[#d5bd8b] bg-[#fbf1df] text-sm font-semibold text-[#62212a] disabled:opacity-50">Créer la carte</button>
+      <button type="button" disabled={busy||!chosenProgram} onClick={()=>void issue(item.id as 'loyalty'|'gift_card')} className="min-h-11 rounded-xl border border-[#d5bd8b] bg-[#fbf1df] text-sm font-semibold text-[#252525] disabled:opacity-50">Créer la carte</button>
       {item.id==='gift_card'&&<p className="text-xs text-gray-600">Aucun paiement n’est encaissé ici. Carte inactive tant que vous n’avez pas confirmé le paiement.</p>}
      </div>
      <strong className="text-xs">{item.id==='loyalty'?'Cartes de fidélité en cours':'Cartes cadeaux émises'}</strong>
@@ -206,7 +206,7 @@ export default function SalesLoyaltyManagement({entrepriseIds}:{entrepriseIds:st
   </div>)}</div>
   {loading&&<p role="status" className="mt-3 text-xs">Chargement…</p>}
   {error&&<p role="alert" className="mt-3 rounded-lg border border-[#d5bd8b] bg-white p-2 text-xs text-red-800">{error} <button type="button" className="underline" onClick={reload}>Réessayer</button></p>}
-  {message&&<p role="status" className="mt-3 text-xs text-[#62212a]">{message}</p>}
+  {message&&<p role="status" className="mt-3 text-xs text-[#252525]">{message}</p>}
   <p className="mt-3 text-xs text-gray-600">Les promotions affichées ne modifient pas automatiquement le montant des commandes. Les cartes fidélité et cadeaux se valident au comptoir : pas encore de portefeuille client en libre-service.</p>
  </section>;
 }
