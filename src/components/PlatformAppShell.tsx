@@ -9,23 +9,23 @@ type AppLang = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 const APP_COPY: Record<AppLang, {
   home: string; search: string; citizens: string; discover: string; pros: string;
   more: string; menu: string; close: string; back: string; jobs: string; events: string;
-  partners: string; blog: string; contact: string;
+  partners: string; blog: string; contact: string; faq: string;
 }> = {
   fr: { home: 'Accueil', search: 'Chercher', citizens: 'Citoyens', discover: 'Tourisme & Expat', pros: 'Pros',
     more: 'Plus de rubriques', menu: 'Ouvrir le menu', close: 'Fermer le menu', back: 'Retour', jobs: 'Emploi',
-    events: 'Événements', partners: 'Partenaires', blog: 'Guides & articles', contact: 'Contact' },
+    events: 'Événements', partners: 'Partenaires', blog: 'Guides & articles', contact: 'Contact', faq: 'Mes questions' },
   ar: { home: 'الرئيسية', search: 'بحث', citizens: 'مواطنون', discover: 'سياحة ومقيمون', pros: 'مهنيون',
     more: 'أقسام أخرى', menu: 'فتح القائمة', close: 'إغلاق القائمة', back: 'رجوع', jobs: 'الشغل',
-    events: 'الفعاليات', partners: 'الشركاء', blog: 'مقالات وأدلة', contact: 'اتصل بنا' },
+    events: 'الفعاليات', partners: 'الشركاء', blog: 'مقالات وأدلة', contact: 'اتصل بنا', faq: 'أسئلتكم' },
   en: { home: 'Home', search: 'Search', citizens: 'Citizens', discover: 'Tourism & Expat', pros: 'Business',
     more: 'More sections', menu: 'Open menu', close: 'Close menu', back: 'Back', jobs: 'Jobs',
-    events: 'Events', partners: 'Partners', blog: 'Guides & articles', contact: 'Contact' },
+    events: 'Events', partners: 'Partners', blog: 'Guides & articles', contact: 'Contact', faq: 'Your questions' },
   it: { home: 'Home', search: 'Cerca', citizens: 'Cittadini', discover: 'Turismo & Expat', pros: 'Imprese',
     more: 'Altre sezioni', menu: 'Apri menu', close: 'Chiudi menu', back: 'Indietro', jobs: 'Lavoro',
-    events: 'Eventi', partners: 'Partner', blog: 'Guide e articoli', contact: 'Contatti' },
+    events: 'Eventi', partners: 'Partner', blog: 'Guide e articoli', contact: 'Contatti', faq: 'Le vostre domande' },
   ru: { home: 'Главная', search: 'Поиск', citizens: 'Граждане', discover: 'Туризм & экспат', pros: 'Бизнес',
     more: 'Другие разделы', menu: 'Открыть меню', close: 'Закрыть меню', back: 'Назад', jobs: 'Работа',
-    events: 'События', partners: 'Партнёры', blog: 'Статьи и гиды', contact: 'Контакты' },
+    events: 'События', partners: 'Партнёры', blog: 'Статьи и гиды', contact: 'Контакты', faq: 'Ваши вопросы' },
 };
 
 export default function PlatformAppShell({ children }: { children: ReactNode }) {
@@ -59,6 +59,7 @@ export default function PlatformAppShell({ children }: { children: ReactNode }) 
     { label: copy.partners, to: '/devenir-partenaire' },
     { label: copy.blog, to: '/blog' },
     { label: copy.contact, to: '/contact' },
+    { label: copy.faq, to: '/#faq' },
   ];
 
   return (
@@ -80,7 +81,7 @@ export default function PlatformAppShell({ children }: { children: ReactNode }) 
         </div>
         {menuOpen && <nav id="dalil-platform-app-more" aria-label={copy.more} className="mx-auto max-w-xl border-t border-[#E4D6B8] bg-white px-3 py-2">
           <div className="grid grid-cols-2 gap-2">
-            {extra.map(item => <Link key={item.to} to={item.to} onClick={() => setMenuOpen(false)}
+            {extra.map(item => <Link key={item.to} to={item.to} onClick={() => { setMenuOpen(false); if (item.to === '/#faq' && location.pathname === '/') document.getElementById('faq')?.scrollIntoView({behavior:'smooth',block:'start'}); }}
               className="flex min-h-11 items-center rounded-xl border border-[#C9A65D] px-3 text-sm font-medium text-[#292725]">{item.label}</Link>)}
           </div>
         </nav>}
