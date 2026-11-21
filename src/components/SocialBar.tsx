@@ -22,6 +22,16 @@ const SOCIAL_LINKS = [
     ),
   },
   {
+    label: 'TikTok',
+    href: 'https://www.tiktok.com/@daliltounes',
+    color: 'bg-[#111111]',
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M16.9 2h-3.1v12.2a3.3 3.3 0 1 1-3.3-3.3c.3 0 .5 0 .8.1V7.8a6.6 6.6 0 1 0 5.6 6.5V8.1a8 8 0 0 0 4.5 1.3V6.3a5 5 0 0 1-4.5-4.3z" />
+      </svg>
+    ),
+  },
+  {
     label: 'WhatsApp',
     href: 'https://wa.me/21627642252',
     color: 'bg-[#25D366]',
