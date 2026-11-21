@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CvBusinessJourney from '../components/CvBusinessJourney';
 import CvCapabilitiesSection from '../components/CvCapabilitiesSection';
+import DalilFAQ from '../components/DalilFAQ';
 import SearchBar from '../components/SearchBar';
 import { useLanguage } from '../context/LanguageContext';
 import { useHomeData } from '../hooks/useHomeData';
@@ -400,6 +401,7 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
           <section className="border-y border-[#C9A65D] bg-[#FFF8EA] px-4 py-7 text-[#292725]"><div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left rtl:sm:text-right"><div><p className="text-xs font-black uppercase tracking-[0.16em] text-[#9B762D]">{t.searchEyebrow}</p><h2 className="mt-2 max-w-3xl font-serif text-2xl font-bold">{t.searchTitle}</h2></div><button type="button" onClick={() => fixedView ? navigate('/') : setPreviewView('platform')} className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-[#B68C3B] bg-[#D6B86D] px-5 py-3 text-sm font-black text-[#292725] transition hover:bg-[#E4CB91]"><Search className="h-4 w-4" /> {t.explorePlatform}</button></div></section>
         </>
       )}
+      <DalilFAQ />
     </div>
   );
 }
