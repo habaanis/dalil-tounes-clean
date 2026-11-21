@@ -105,7 +105,7 @@
       body{margin:0;overflow-x:hidden;background:#fff}
       /* Le root React est caché jusqu'à ce que le skeleton soit retiré :
          garantit un seul et même pixel drapeau visible sans flash entre les deux. */
-      #root{opacity:0;transition:opacity 0s}
+      #root{opacity:1;min-height:100vh}
       html.client-app-route body{background:var(--client-app-bg,#032D21)}
       html.client-app-route #pre-skeleton{display:none!important}
       html.client-app-route #root{opacity:1!important}
@@ -280,60 +280,10 @@
     </script>
   </head>
   <body>
-    <div id="pre-skeleton">
-      <div id="pre-nav">
-        <div class="sk" style="width:120px;height:28px"></div>
-      </div>
-      
-      <div id="pre-hero">
-        <div id="pre-hero-inner">
-          <img
-            src="/images/drapeau-tunisie.webp?v=1"
-            id="pre-hero-img"
-            alt="Drapeau de la Tunisie"
-            width="1200"
-            height="400"
-            fetchpriority="high"
-            decoding="async"
-          >
-          <div id="pre-hero-overlay"></div>
-          <div class="hero-content-sk">
-            <div class="sk h1-sk"></div>
-            <div class="sk" style="width:50%;max-width:220px;height:16px;background:rgba(255,255,255,0.12);border-radius:.25rem"></div>
-          </div>
-        </div>
-      </div>
-
-      <div id="pre-search">
-        <div class="sk input-sk"></div>
-      </div>
-    </div>
+    <!-- The application mounts directly: no fake homepage on route refresh. -->
 
     <div id="root"></div>
 
-    <script>
-      // Stratégie LCP stable :
-      // 1. Le skeleton HTML peint l'image drapeau le plus tôt possible.
-      // 2. React monte ensuite dans #root, invisible (opacity:0), avec la MÊME image
-      //    drapeau chargée depuis le cache — donc même pixel, aucun reflow.
-      // 3. Quand React signale "ready" (window.__appMounted), on swappe : on retire
-      //    le skeleton d'un coup, et #root devient visible. Le navigateur continue
-      //    de voir exactement le même drapeau => le LCP reste figé sur ce peint.
-      (function(){
-        var skeletonRemoved = false;
-        function removeSkeleton(){
-          if (skeletonRemoved) return;
-          skeletonRemoved = true;
-          var sk = document.getElementById('pre-skeleton');
-          if (sk) sk.remove();
-          var r = document.getElementById('root');
-          if (r) r.style.opacity = '1';
-        }
-        window.__removeSkeleton = removeSkeleton;
-        // Secours : si React n'émet pas le signal sous 2.5s, on affiche quand même.
-        setTimeout(removeSkeleton, 2500);
-      })();
-    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
