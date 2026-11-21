@@ -210,10 +210,10 @@ export const Layout = ({ children }: LayoutProps) => {
 
   const handleFaqNavigation = (sectionId: 'faq'|'suggestions'='faq') => {
     setShowMobileMenu(false);setMobileExpandedMenu(null);setOpenMenu(null);
+    navigate('/#'+sectionId);
     if (location.pathname === '/') {
-      window.history.replaceState(window.history.state, '', '/#'+sectionId);
-      document.getElementById(sectionId)?.scrollIntoView({behavior:'smooth',block:'start'});
-    } else navigate('/#'+sectionId);
+      window.requestAnimationFrame(()=>document.getElementById(sectionId)?.scrollIntoView({behavior:'smooth',block:'start'}));
+    }
   };
   const toggleMenu = (label: string) => {
     setOpenMenu(openMenu === label ? null : label);
