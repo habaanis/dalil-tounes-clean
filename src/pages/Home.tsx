@@ -13,6 +13,8 @@ import { supabase } from '../lib/BoltDatabase';
 import { notifyAdmin } from '../lib/notifyAdmin';
 import React, { lazy, Suspense, useEffect, useState } from 'react';
 import InstallAppBanner from '../components/InstallAppBanner';
+import { VisitorSuggestions } from '../components/VisitorSuggestions';
+import DalilFAQ from '../components/DalilFAQ';
 import SearchBar from '../components/SearchBar';
 import VisibilityHouseSection from '../components/VisibilityHouseSection';
 import { getHomeJobsResidualTranslations } from '../lib/homeJobsResidualTranslations';
@@ -554,6 +556,14 @@ export const Home = ({ onNavigate, onNavigateToBusiness }: HomeProps = {}) => {
               <HomeTestimonials />
             </Suspense>
           )}
+        </div>
+      </section>
+
+      {/* Existing FAQ and feedback share one compact area. */}
+      <section className="px-4 py-5 bg-[#f7f0e2]" aria-label={language==='ar'?'الأسئلة والاقتراحات':'Questions et suggestions'}>
+        <div className="mx-auto max-w-xl space-y-3">
+          <DalilFAQ />
+          <VisitorSuggestions source={typeof window!=='undefined'&&window.location.hostname.startsWith('app.')?'app':'site'} />
         </div>
       </section>
 

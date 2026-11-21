@@ -204,15 +204,16 @@ export const Layout = ({ children }: LayoutProps) => {
       path: '/contact',
     },
     {label: language === 'ar' ? 'أسئلتكم' : language === 'en' ? 'Your questions' : language === 'it' ? 'Le vostre domande' : language === 'ru' ? 'Ваши вопросы' : 'Mes questions', path: '/#faq'},
+    {label: language === 'ar' ? 'اقتراحاتكم' : 'Vos suggestions',path:'/#suggestions'},
     { label: language === 'ar' ? 'حسابي المهني' : 'Mon compte', path: '/dashboard/entreprise' },
   ];
 
-  const handleFaqNavigation = () => {
+  const handleFaqNavigation = (sectionId: 'faq'|'suggestions'='faq') => {
     setShowMobileMenu(false);setMobileExpandedMenu(null);setOpenMenu(null);
     if (location.pathname === '/') {
-      window.history.replaceState(window.history.state, '', '/#faq');
-      document.getElementById('faq')?.scrollIntoView({behavior:'smooth',block:'start'});
-    } else navigate('/#faq');
+      window.history.replaceState(window.history.state, '', '/#'+sectionId);
+      document.getElementById(sectionId)?.scrollIntoView({behavior:'smooth',block:'start'});
+    } else navigate('/#'+sectionId);
   };
   const toggleMenu = (label: string) => {
     setOpenMenu(openMenu === label ? null : label);
@@ -317,8 +318,8 @@ export const Layout = ({ children }: LayoutProps) => {
                         }`}
                       />
                     </button>
-                  ) : navItem.path === '/#faq' ? (
-                    <button type="button" onClick={handleFaqNavigation}
+                  ) : (navItem.path === '/#faq' || navItem.path === '/#suggestions') ? (
+                    <button type="button" onClick={()=>handleFaqNavigation(navItem.path==='/#faq'?'faq':'suggestions')}
                       className="whitespace-nowrap text-xs transition-all text-gray-600 hover:text-gray-900">{navItem.label}</button>
                   ) : (
                     <Link
@@ -391,8 +392,8 @@ export const Layout = ({ children }: LayoutProps) => {
                         >
                           {navItem.label}
                         </button>
-                      ) : navItem.path === '/#faq' ? (
-                        <button type="button" onClick={handleFaqNavigation}
+                      ) : (navItem.path === '/#faq' || navItem.path === '/#suggestions') ? (
+                        <button type="button" onClick={()=>handleFaqNavigation(navItem.path==='/#faq'?'faq':'suggestions')}
                           className="flex-1 text-start px-4 py-2 rounded-lg text-gray-700 hover:bg-[#fff6e4]">{navItem.label}</button>
                       ) : (
                         <Link
