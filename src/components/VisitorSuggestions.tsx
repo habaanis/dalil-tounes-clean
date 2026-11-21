@@ -15,11 +15,17 @@ export function VisitorSuggestions({source='site'}:{source?:'site'|'app'}) {
   const t=(fr:string,arabic:string)=>ar?arabic:fr;
   const [open,setOpen]=useState(false);
   useEffect(()=>{
-    if(location.hash!=='#suggestions')return;
-    setOpen(true);
-    const scroll=()=>document.getElementById('suggestions')?.scrollIntoView({block:'start',behavior:'smooth'});
-    const frame=window.requestAnimationFrame(()=>window.requestAnimationFrame(scroll));
-    return ()=>window.cancelAnimationFrame(frame);
+    const openSection=()=>{
+      setOpen(true);
+      window.requestAnimationFrame(()=>window.requestAnimationFrame(()=>
+        document.getElementById('suggestions')?.scrollIntoView({block:'start',behavior:'smooth'})));
+    };
+    if(location.hash==='#suggestions')openSection();
+    const onNavigation=(event:Event)=>{
+      if((event as CustomEvent<{sectionId:string}>).detail?.sectionId==='suggestions')openSection();
+    };
+    window.addEventListener('dalil-open-home-section',onNavigation);
+    return ()=>window.removeEventListener('dalil-open-home-section',onNavigation);
   },[location.pathname,location.hash]);
   const [audience,setAudience]=useState<Visitor>('visiteur');
   const [category,setCategory]=useState<Subject>('idee');
