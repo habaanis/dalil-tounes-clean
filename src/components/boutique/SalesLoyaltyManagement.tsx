@@ -128,6 +128,17 @@ export default function SalesLoyaltyManagement({entrepriseIds}:{entrepriseIds:st
   if(e){setError(e.message||'Archivage impossible.');return;}
   setMessage(archive?'Carte archivée, historique conservé.':'Carte réactivée.');reload();
  };
+ const deleteCard=async(card:LoyaltyCard)=>{
+  if(busy||!card.archived_at)return;
+  const confirmed=window.confirm('Supprimer définitivement la carte de '+card.customer_label+' ?\\n\\nLe code à 4 chiffres, les achats, les récompenses et leur historique seront effacés. Cette action est irréversible. Les commandes restent inchangées.');
+  if(!confirmed)return;
+  if(window.prompt('Pour confirmer la suppression définitive, écrivez SUPPRIMER :')!=='SUPPRIMER')return;
+  setBusy(true);setError('');setMessage('');
+  const {data,error:e}=await supabase.rpc('dalil_sales_delete_loyalty_card',{p_card:card.id});
+  setBusy(false);
+  if(e||data!==true){setError(e?.message||'Suppression refusée.');return;}
+  setMessage('Carte client et historique de fidélité supprimés définitivement. Les commandes restent inchangées.');reload();
+ };
  const stampMultiple=async(card:LoyaltyCard)=>{
   const count=Number(batchCount[card.id]);
   const program=programs.find(p=>p.id===card.program_id);
@@ -219,7 +230,7 @@ export default function SalesLoyaltyManagement({entrepriseIds}:{entrepriseIds:st
       <strong className="text-xs">{item.id==='loyalty'?'Cartes de fidélité':'Cartes cadeaux émises'}</strong>
       {item.id==='loyalty'&&<button type="button" onClick={()=>setShowArchived(x=>!x)} className="min-h-10 rounded-lg border border-[#d5bd8b] bg-white px-3 text-xs font-semibold">{showArchived?'Voir les cartes en cours':'Voir les archives'}</button>}
      </div>
-     {item.id==='loyalty'&&<p className="text-xs text-gray-600">{showArchived?'Cartes archivées : code inactif, historique conservé.':'Communiquez le code à 4 chiffres au client. Il le saisit dans Boutique → Consulter ma fidélité → Voir ma carte.'}</p>}
+     {item.id==='loyalty'&&<p className="text-xs text-gray-600">{showArchived?'Cartes archivées : code inactif, historique conservé jusqu’à une éventuelle suppression définitive.':'Communiquez le code à 4 chiffres au client. Il le saisit dans Boutique → Consulter ma fidélité → Voir ma carte.'}</p>}
      {item.id==='loyalty'?loyalty.filter(c=>programs.some(p=>p.id===c.program_id)&&Boolean(c.archived_at)===showArchived).map(c=>{
       const p=programs.find(p=>p.id===c.program_id)!;
       return <div key={c.id} className="rounded-xl border border-[#e8d9bd] bg-white p-3 text-xs">
@@ -238,6 +249,7 @@ export default function SalesLoyaltyManagement({entrepriseIds}:{entrepriseIds:st
         <button type="button" disabled={busy||c.stamps>=p.value} onClick={()=>void stampMultiple(c)} className="min-h-10 rounded-lg border border-[#d5bd8b] px-3 font-semibold disabled:opacity-50">Valider le lot</button>
        </div>}
        <button type="button" disabled={busy} onClick={()=>void archiveCard(c,!showArchived)} className="mt-2 min-h-10 rounded-lg border border-[#d5bd8b] bg-[#fff9ee] px-3 font-semibold">{showArchived?'Réactiver la carte':'Archiver la carte'}</button>
+       {showArchived&&<button type="button" disabled={busy} onClick={()=>void deleteCard(c)} className="ml-2 mt-2 min-h-10 rounded-lg border border-[#9f3c37] bg-white px-3 font-semibold text-[#9f3c37] disabled:opacity-50">Supprimer définitivement</button>}
       </div>;
      }):gifts.map(c=><div key={c.id} className="rounded-xl border border-[#e8d9bd] bg-white p-3 text-xs">
       <div className="flex justify-between gap-2"><strong>{c.recipient_label}</strong><span>Réf. {shortCode(c.id)}</span></div>
