@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Building2, CheckCircle2, CreditCard, Smartphone, type LucideIcon } from 'lucide-react';
 import { BusinessRegistrationRequestForm } from '../components/BusinessRegistrationRequestForm';
 import { useLanguage } from '../context/LanguageContext';
@@ -44,6 +45,8 @@ const PAGE_COPY = {
 
 export default function BusinessRegistration() {
   const { language } = useLanguage();
+  const { search } = useLocation();
+  const direct = new URLSearchParams(search).get('direct') === '1';
   const text = language === 'ar' ? PAGE_COPY.ar : PAGE_COPY.fr;
 
   useEffect(() => {
@@ -65,7 +68,7 @@ export default function BusinessRegistration() {
   return (
     <div className="public-surface min-h-screen bg-[#fcfaf5] px-4 pb-14 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl">
-        <section className="overflow-hidden rounded-xl border border-[#D4AF37]/40 bg-gradient-to-br from-[#4A1D43] via-[#632652] to-[#0B5A45] px-5 py-9 text-white shadow-[0_24px_70px_rgba(74,29,67,0.18)] sm:px-8 sm:py-12 lg:px-12">
+        {!direct && <section className="overflow-hidden rounded-xl border border-[#D4AF37]/40 bg-gradient-to-br from-[#4A1D43] via-[#632652] to-[#0B5A45] px-5 py-9 text-white shadow-[0_24px_70px_rgba(74,29,67,0.18)] sm:px-8 sm:py-12 lg:px-12">
           <div className="max-w-3xl">
             <p className="inline-flex rounded-full border border-[#D4AF37]/50 bg-white/10 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.16em] text-[#F7D978]">
               {text.eyebrow}
@@ -80,16 +83,16 @@ export default function BusinessRegistration() {
               <TrustItem icon={CheckCircle2} label={text.followUp} />
             </div>
           </div>
-        </section>
+        </section>}
 
-        <section className="mx-auto mt-6 grid max-w-5xl gap-5 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
+        <section className={`mx-auto grid max-w-5xl gap-5 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start ${direct ? 'pt-4' : 'mt-6'}`}>
           <div className="rounded-xl border border-[#D4AF37]/35 bg-white p-5 shadow-sm sm:p-8">
             <div className="mb-6">
               <div className="flex items-center gap-3">
                 <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#4A1D43] text-[#D4AF37]">
                   <Building2 className="h-5 w-5" aria-hidden="true" />
                 </span>
-                <h2 className="public-heading text-xl font-medium text-[#4A1D43] sm:text-2xl">{text.formTitle}</h2>
+                <h2 className="public-heading text-xl font-medium text-[#4A1D43] sm:text-2xl">{direct ? text.title : text.formTitle}</h2>
               </div>
               <p className="mt-3 text-sm leading-relaxed text-gray-600">{text.formHint}</p>
             </div>

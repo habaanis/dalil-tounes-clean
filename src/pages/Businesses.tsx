@@ -1324,7 +1324,7 @@ export const Businesses = ({
                 <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-white md:text-lg">
                   {pageT.explore.description}
                 </p>
-                <div className="mt-6 flex justify-center">
+                <div className="mt-6 flex flex-wrap justify-center gap-3">
                   <button
                     type="button"
                     onClick={() => document.getElementById('business-search')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
@@ -1332,6 +1332,9 @@ export const Businesses = ({
                   >
                     {pageT.hero.search}
                     <Search className="h-4 w-4" />
+                  </button>
+                  <button type="button" onClick={() => navigate('/inscription-entreprise?direct=1')} className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#D4AF37] bg-[#FFF9EE] px-6 py-3 text-sm font-semibold text-[#292725] shadow-sm">
+                    {language === 'ar' ? 'تسجيل مجاني' : 'Inscription gratuite'}
                   </button>
                 </div>
               </div>
@@ -1344,6 +1347,7 @@ export const Businesses = ({
             <button type="button" onClick={() => document.getElementById('business-search')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="whitespace-nowrap rounded-full bg-[#B62226] px-4 py-2 text-sm font-medium text-white hover:bg-[#931D23]">{directoryCopy.search}</button>
             <button type="button" onClick={() => document.getElementById('business-center')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="whitespace-nowrap rounded-full border border-[#D4AF37]/50 bg-white px-4 py-2 text-sm font-medium text-[#292725]">{directoryCopy.businessCenter}</button>
             <button type="button" onClick={() => document.getElementById('professional-services')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} className="whitespace-nowrap rounded-full border border-[#D4AF37]/50 bg-white px-4 py-2 text-sm font-medium text-[#292725]">{directoryCopy.professionals}</button>
+            <button type="button" onClick={() => navigate('/inscription-entreprise?direct=1')} className="whitespace-nowrap rounded-full border border-[#D4AF37] bg-[#FFF9EE] px-4 py-2 text-sm font-semibold text-[#292725]">{language === 'ar' ? 'تسجيل مجاني' : 'Inscription gratuite'}</button>
           </div>
         </nav>
 

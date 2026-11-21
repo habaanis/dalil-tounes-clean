@@ -152,6 +152,7 @@ export const Layout = ({ children }: LayoutProps) => {
       path: '/businesses',
       children: [
         { label: t.navMenu?.businesses?.directory || 'Plateforme', path: '/businesses' },
+        { label: language === 'ar' ? 'تسجيل مجاني' : 'Inscription gratuite', path: '/inscription-entreprise?direct=1' },
         { label: t.navMenu?.businesses?.partners || 'Partenaires', path: '/partner-search' },
         { label: t.businessNeeds?.title || 'Besoins & stocks professionnels', path: '/besoins-professionnels' },
         { label: tx.navExtra?.candidatesAvailable || 'Candidats disponibles', path: '/candidats' },
@@ -542,7 +543,7 @@ export const Layout = ({ children }: LayoutProps) => {
                 </div>
               </div>
               <button
-                onClick={() => navigate('/subscription#presence-essentielle')}
+                onClick={() => navigate('/inscription-entreprise?direct=1')}
                 className="flex-shrink-0 px-3 py-1.5 md:px-6 md:py-2.5 bg-gray-900 text-white text-sm md:text-base font-bold rounded-lg md:hover:bg-gray-800 md:hover:scale-105 md:transition-all md:duration-200 md:shadow-md whitespace-nowrap"
                 aria-label={structure.freeAction}
               >
