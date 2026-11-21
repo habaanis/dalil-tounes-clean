@@ -19,6 +19,7 @@ const panelNames:{id:Kind;label:string;hint:string}[]=[
 
 export default function SalesLoyaltyManagement({entrepriseIds}:{entrepriseIds:string[]}) {
  const [company,setCompany]=useState(entrepriseIds[0]||'');
+ const [merchantAppSlug,setMerchantAppSlug]=useState('');
  const [section,setSection]=useState<Kind|null>(null);
  const [programs,setPrograms]=useState<Program[]>([]);
  const [loyalty,setLoyalty]=useState<LoyaltyCard[]>([]);
@@ -43,6 +44,27 @@ export default function SalesLoyaltyManagement({entrepriseIds}:{entrepriseIds:st
  const [customer,setCustomer]=useState('');
  const [redeemAmount,setRedeemAmount]=useState<Record<string,string>>({});
  const reload=()=>setRefresh(v=>v+1);
+ useEffect(()=>{
+  let live=true;
+  setMerchantAppSlug('');
+  void supabase.from('entreprise').select('slug_court,slug').eq('id',company).maybeSingle()
+   .then(({data})=>{if(live)setMerchantAppSlug(String(data?.slug_court||data?.slug||''));});
+  return ()=>{live=false;};
+ },[company]);
+ const loyaltyShareMessage=(card:LoyaltyCard)=>{
+  const appLink=merchantAppSlug
+   ? 'https://app.dalil-tounes.com/'+encodeURIComponent(merchantAppSlug)
+   : 'https://app.dalil-tounes.com';
+  return 'Bonjour '+card.customer_label+', votre carte de fidélité est prête !\\n'
+   +'Code à 4 chiffres : '+card.public_code+'\\n'
+   +'Ouvrez votre mini-appli : '+appLink+'\\n'
+   +'Puis Boutique → Consulter ma fidélité → Voir ma carte.\\n'
+   +'Ce code affiche uniquement votre progression fidélité, pas vos commandes.';
+ };
+ const shareLoyaltyCard=(card:LoyaltyCard)=>{
+  const message=loyaltyShareMessage(card);
+  window.open('https://wa.me/?text='+encodeURIComponent(message),'_blank','noopener,noreferrer');
+ };
  useEffect(()=>{
   let live=true;
   setLoading(true);setError('');
@@ -107,7 +129,7 @@ export default function SalesLoyaltyManagement({entrepriseIds}:{entrepriseIds:st
    ?await supabase.from('dalil_sales_loyalty_cards').insert({entreprise_id:company,program_id:p.id,customer_label:customer.trim()})
    :await supabase.from('dalil_sales_gift_cards').insert({entreprise_id:company,program_id:p.id,recipient_label:customer.trim(),face_value:p.value,balance:p.value,state:'pending'});
   setBusy(false);if(e){setError('Création refusée. Vérifiez votre compte professionnel.');return;}
-  setCustomer('');setMessage(kind==='loyalty'?'Carte de fidélité créée.':'Carte cadeau créée en attente de paiement.');reload();
+  setCustomer('');setMessage(kind==='loyalty'?'Carte créée. Retrouvez-la ci-dessous et choisissez Partager au client via WhatsApp, ou Copier le message. Aucun envoi automatique n’est effectué.':'Carte cadeau créée en attente de paiement.');reload();
  };
  const stamp=async(card:LoyaltyCard,reward:boolean)=>{
   if(busy)return;
@@ -238,6 +260,8 @@ export default function SalesLoyaltyManagement({entrepriseIds}:{entrepriseIds:st
        <div className="my-2 flex flex-wrap items-center justify-between gap-1">
         <span className="text-lg font-bold tracking-[.2em] text-[#252525]">{c.public_code}</span>
         <button type="button" className="min-h-9 rounded-lg border border-[#d5bd8b] px-2" onClick={()=>void navigator.clipboard?.writeText(c.public_code)}>Copier les 4 chiffres</button>
+        {!showArchived&&<button type="button" onClick={()=>shareLoyaltyCard(c)} className="min-h-9 rounded-lg border border-[#d5bd8b] bg-[#fbf1df] px-2 font-semibold">Partager au client via WhatsApp</button>}
+        {!showArchived&&<button type="button" onClick={()=>void navigator.clipboard?.writeText(loyaltyShareMessage(c))} className="min-h-9 rounded-lg border border-[#d5bd8b] px-2">Copier le message</button>}
        </div>
        <p className="my-2">{c.stamps} / {p.value} achats · {c.rewards_given} récompense(s) remise(s)</p>
        {!showArchived&&p.active&&<div className="grid grid-cols-2 gap-2">
