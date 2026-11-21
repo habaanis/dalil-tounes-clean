@@ -34,17 +34,33 @@ export default function DalilFAQ() {
   const locale=language==='ar'?'ar':'fr';
   const t=labels[locale];
   const [expanded,setExpanded]=useState<number|null>(null);
+  const [panelOpen,setPanelOpen]=useState(()=>typeof window!=='undefined' && window.location.hash==='#faq');
   useEffect(()=>{
-    if (window.location.hash === '#faq') {
-      document.getElementById('faq')?.scrollIntoView({block:'start',behavior:'auto'});
-    }
+    const openFromNavigation=()=>{
+      if(window.location.hash==='#faq'){
+        setPanelOpen(true);
+        window.requestAnimationFrame(()=>document.getElementById('faq')?.scrollIntoView({block:'start',behavior:'smooth'}));
+      }
+    };
+    openFromNavigation();
+    window.addEventListener('hashchange',openFromNavigation);
+    return ()=>window.removeEventListener('hashchange',openFromNavigation);
   },[]);
   return <section id="faq" aria-label={t.title} dir={locale==='ar'?'rtl':'ltr'} className="scroll-mt-20 rounded-xl border border-[#C9A65D] bg-[#FFFCF6] px-3 py-3 shadow-sm">
     <div className="mx-auto max-w-5xl">
-      <p className="text-xs font-bold uppercase tracking-[.12em] text-[#9B762D]">{t.eyebrow}</p>
-      <h2 className="mt-1 font-serif text-base font-semibold leading-tight text-[#183b2f]">{t.title}</h2>
-      <p className="mt-2 max-w-3xl text-sm text-[#555d59]">{t.description}</p>
-      <div className="mt-3 space-y-2">
+      <button type="button" aria-expanded={panelOpen} aria-controls="dalil-faq-items"
+        onClick={()=>{setPanelOpen(current=>!current);setExpanded(null);}}
+        className="flex min-h-11 w-full items-center justify-between gap-3 text-start text-sm font-semibold text-[#183b2f] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B79245]">
+        <span>{locale==='ar'?'أسئلتكم وإجاباتنا':'Mes questions, nos réponses'}</span>
+        <span className="inline-flex shrink-0 items-center gap-1 text-xs text-[#8B6C35]">
+          {locale==='ar'?(panelOpen?'تصغير':'تكبير'):(panelOpen?'Réduire':'Agrandir')}
+          <ChevronDown aria-hidden="true" className={'h-4 w-4 transition-transform '+(panelOpen?'rotate-180':'')}/>
+        </span>
+      </button>
+      {panelOpen&&<div id="dalil-faq-items" className="border-t border-[#e6d9bf] pt-3">
+        <h2 className="font-serif text-base font-semibold leading-tight text-[#183b2f]">{t.title}</h2>
+        <p className="mt-2 max-w-3xl text-sm text-[#555d59]">{t.description}</p>
+        <div className="mt-3 space-y-2">
         {faq[locale].map((entry,index)=><div key={index} className="overflow-hidden rounded-xl border border-[#e6d9bf] bg-white">
           <button type="button" aria-expanded={expanded===index}
             aria-controls={'dalil-faq-answer-'+index}
@@ -55,7 +71,8 @@ export default function DalilFAQ() {
           </button>
           {expanded===index&&<div id={'dalil-faq-answer-'+index} className="border-t border-[#efe6d3] px-4 py-3 text-sm leading-6 text-[#3e4843]">{entry.a}</div>}
         </div>)}
-      </div>
+        </div>
+      </div>}
     </div>
   </section>;
 }
