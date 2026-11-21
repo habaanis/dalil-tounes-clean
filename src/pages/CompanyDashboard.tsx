@@ -192,6 +192,17 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false }: 
     }
   }, [user]);
 
+  const openProfessionalTab = (tab: 'jobs' | 'candidates' | 'settings' | 'showcase' | 'boutique' | 'orders' | 'stats') => {
+    setActiveTab(tab);
+    // Switching from a long Boutique/Fidelity panel can leave mobile scrolled
+    // below the newly selected section, making existing orders appear missing.
+    window.requestAnimationFrame(() => {
+      document.getElementById('professional-tab-content')?.scrollIntoView({
+        behavior: 'smooth', block: 'start',
+      });
+    });
+  };
+
   const handleSignOut = async () => {
     await signOut();
     if (onNavigate) onNavigate('home');
@@ -250,10 +261,10 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false }: 
               {([
                 { id: 'showcase', label: 'Ma vitrine', Icon: Store },
                 { id: 'boutique', label: 'Ma boutique', Icon: Package },
-                { id: 'orders', label: 'Mes commandes', Icon: ClipboardList },
+                { id: 'orders', label: 'Commandes & devis', Icon: ClipboardList },
                 { id: 'stats', label: 'Mes statistiques', Icon: BarChart3 },
               ] as const).map(({ id, label, Icon }) => (
-                <button key={id} type="button" onClick={() => setActiveTab(id)}
+                <button key={id} type="button" onClick={() => openProfessionalTab(id)}
                   aria-current={activeTab === id ? 'page' : undefined}
                   className={`flex w-full items-center gap-2 rounded-xl px-3 py-3 text-left text-sm transition-colors ${clientAppMode ? 'flex-col justify-center px-1 py-2 text-center text-xs' : ''} ${activeTab === id ? 'bg-[#fbf1df] font-semibold text-[#8f2530]' : 'text-gray-700 hover:bg-gray-50'}`}>
                   <Icon className="h-5 w-5 shrink-0" /><span>{label}</span>
@@ -261,7 +272,7 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false }: 
               ))}
               {!clientAppMode && <>
               <button
-                onClick={() => setActiveTab('jobs')}
+                onClick={() => openProfessionalTab('jobs')}
                 className={`w-full flex items-center gap-2 px-3 py-3 rounded-xl text-left text-sm transition-colors ${
                   activeTab === 'jobs'
                     ? 'bg-[#fbf1df] text-[#8f2530]'
@@ -272,7 +283,7 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false }: 
                 <span className="font-medium">Mes offres</span>
               </button>
               <button
-                onClick={() => setActiveTab('candidates')}
+                onClick={() => openProfessionalTab('candidates')}
                 className={`w-full flex items-center gap-2 px-3 py-3 rounded-xl text-left text-sm transition-colors ${
                   activeTab === 'candidates'
                     ? 'bg-[#fbf1df] text-[#8f2530]'
@@ -283,7 +294,7 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false }: 
                 <span className="font-medium">Candidats</span>
               </button>
               <button
-                onClick={() => setActiveTab('settings')}
+                onClick={() => openProfessionalTab('settings')}
                 className={`w-full flex items-center gap-2 px-3 py-3 rounded-xl text-left text-sm transition-colors ${
                   activeTab === 'settings'
                     ? 'bg-[#fbf1df] text-[#8f2530]'
@@ -297,7 +308,7 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false }: 
             </nav>
           </div>
 
-          <div className="min-w-0 flex-1">
+          <div id="professional-tab-content" className="min-w-0 flex-1 scroll-mt-24">
             <div className="rounded-2xl border border-[#e8d9bd] bg-white p-4 shadow-sm sm:p-6">
               {(['showcase', 'boutique', 'stats'] as const).includes(activeTab as 'showcase' | 'boutique' | 'stats') && (
                 <section aria-live="polite">
@@ -406,6 +417,7 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false }: 
                         className="col-span-2 min-h-11 rounded-xl border border-[#c6ad79] bg-[#fbf1df] px-3 py-2 text-sm font-semibold text-[#62212a]">
                         {boutiquePanel==='sales'?'− Fermer Ventes & Fidélité':'＋ Ventes & Fidélité'}
                       </button>
+                      <button type="button" onClick={() => openProfessionalTab('orders')} className="col-span-2 min-h-11 rounded-xl border border-[#c6ad79] bg-white px-3 py-2 text-sm font-semibold text-[#292725]">Voir mes commandes et devis</button>
                     </div>
                     {boutiquePanel==='manage' && user &&
                       <BoutiqueProductManagement entrepriseIds={stats.map(record => record.entreprise_id)} userId={user.id} />}
