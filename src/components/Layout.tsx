@@ -202,9 +202,17 @@ export const Layout = ({ children }: LayoutProps) => {
       label: publicNavLabels.contact,
       path: '/contact',
     },
+    {label: language === 'ar' ? 'أسئلتكم' : language === 'en' ? 'Your questions' : language === 'it' ? 'Le vostre domande' : language === 'ru' ? 'Ваши вопросы' : 'Mes questions', path: '/#faq'},
     { label: language === 'ar' ? 'حسابي المهني' : 'Mon compte', path: '/dashboard/entreprise' },
   ];
 
+  const handleFaqNavigation = () => {
+    setShowMobileMenu(false);setMobileExpandedMenu(null);setOpenMenu(null);
+    if (location.pathname === '/') {
+      window.history.replaceState(window.history.state, '', '/#faq');
+      document.getElementById('faq')?.scrollIntoView({behavior:'smooth',block:'start'});
+    } else navigate('/#faq');
+  };
   const toggleMenu = (label: string) => {
     setOpenMenu(openMenu === label ? null : label);
   };
@@ -284,7 +292,7 @@ export const Layout = ({ children }: LayoutProps) => {
               </span>
             </Link>
 
-            <div className="hidden md:flex items-center gap-4 xl:gap-6">
+            <div className="hidden 2xl:flex min-w-0 items-center gap-3">
               {navigationStructure.map((navItem, index) => (
                 <div
                   key={index}
@@ -295,7 +303,7 @@ export const Layout = ({ children }: LayoutProps) => {
                   {navItem.children ? (
                     <button
                       onClick={() => handleNavClick(navItem.path)}
-                      className={`text-sm transition-all flex items-center gap-1 ${
+                      className={`whitespace-nowrap text-xs transition-all flex items-center gap-1 ${
                         isActive(navItem.path)
                           ? 'text-orange-600 font-medium'
                           : 'text-gray-600 hover:text-gray-900'
@@ -308,10 +316,13 @@ export const Layout = ({ children }: LayoutProps) => {
                         }`}
                       />
                     </button>
+                  ) : navItem.path === '/#faq' ? (
+                    <button type="button" onClick={handleFaqNavigation}
+                      className="whitespace-nowrap text-xs transition-all text-gray-600 hover:text-gray-900">{navItem.label}</button>
                   ) : (
                     <Link
                       to={navItem.path}
-                      className={`text-sm transition-all ${
+                      className={`whitespace-nowrap text-xs transition-all ${
                         isActive(navItem.path)
                           ? 'text-orange-600 font-medium'
                           : 'text-gray-600 hover:text-gray-900'
@@ -350,13 +361,13 @@ export const Layout = ({ children }: LayoutProps) => {
               )}
             </div>
 
-            <div className="ml-auto mr-2 hidden sm:block md:hidden">
+            <div className="ml-auto mr-2 hidden sm:block 2xl:hidden">
               <Suspense fallback={null}><SocialBar mobile /></Suspense>
             </div>
             <button
               type="button"
               onClick={() => setShowMobileMenu(!showMobileMenu)}
-              className="md:hidden p-2 text-gray-700 hover:text-orange-600"
+              className="2xl:hidden p-2 text-gray-700 hover:text-orange-600"
               aria-label={showMobileMenu ? (te.pwa?.closeMenu || 'Fermer le menu principal') : (te.pwa?.openMenu || 'Ouvrir le menu principal')}
               aria-expanded={showMobileMenu}
             >
@@ -365,7 +376,7 @@ export const Layout = ({ children }: LayoutProps) => {
           </div>
 
           {showMobileMenu && (
-            <div className="md:hidden py-4 border-t border-gray-200">
+            <div className="2xl:hidden max-h-[calc(100dvh-4rem)] overflow-y-auto overscroll-contain py-4 border-t border-gray-200">
               <div className="flex flex-col gap-2">
                 {navigationStructure.map((navItem, index) => (
                   <div key={index}>
@@ -379,6 +390,9 @@ export const Layout = ({ children }: LayoutProps) => {
                         >
                           {navItem.label}
                         </button>
+                      ) : navItem.path === '/#faq' ? (
+                        <button type="button" onClick={handleFaqNavigation}
+                          className="flex-1 text-start px-4 py-2 rounded-lg text-gray-700 hover:bg-[#fff6e4]">{navItem.label}</button>
                       ) : (
                         <Link
                           to={navItem.path}
@@ -456,7 +470,7 @@ export const Layout = ({ children }: LayoutProps) => {
                   </div>
                 )}
 
-                <div className="md:hidden border-t border-gray-200 mt-2 px-4 pt-3">
+                <div className="2xl:hidden border-t border-gray-200 mt-2 px-4 pt-3">
                   <Suspense fallback={null}><SocialBar mobile /></Suspense>
                 </div>
                 <div className="border-t border-gray-200 pt-3 mt-2 px-4">

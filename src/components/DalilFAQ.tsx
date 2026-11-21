@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -34,7 +34,12 @@ export default function DalilFAQ() {
   const locale=language==='ar'?'ar':'fr';
   const t=labels[locale];
   const [expanded,setExpanded]=useState<number|null>(null);
-  return <section id="faq" aria-label={t.title} dir={locale==='ar'?'rtl':'ltr'} className="bg-[#FFFCF6] px-4 py-9 md:py-12">
+  useEffect(()=>{
+    if (window.location.hash === '#faq') {
+      document.getElementById('faq')?.scrollIntoView({block:'start',behavior:'auto'});
+    }
+  },[]);
+  return <section id="faq" aria-label={t.title} dir={locale==='ar'?'rtl':'ltr'} className="scroll-mt-20 bg-[#FFFCF6] px-4 py-9 md:py-12">
     <div className="mx-auto max-w-5xl">
       <p className="text-xs font-bold uppercase tracking-[.12em] text-[#9B762D]">{t.eyebrow}</p>
       <h2 className="mt-2 font-serif text-2xl font-bold leading-tight text-[#183b2f] md:text-3xl">{t.title}</h2>
