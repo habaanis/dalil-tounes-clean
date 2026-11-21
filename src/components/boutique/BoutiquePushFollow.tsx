@@ -4,10 +4,10 @@ import { supabaseUrl } from '../../lib/supabaseClient';
 type PushConfig = { enabled?: boolean; publicKey?: string };
 type PushResult = { subscribed?: boolean; error?: string };
 
-const api = (action: string, payload: object = {}) => {
+const api = (action: string, payload: object = {}, promotion = false) => {
   const supabase = supabaseUrl;
   if (!supabase || !/^https:\/\/[a-z0-9-]+\.supabase\.co$/.test(supabase)) throw new Error('Notifications indisponibles.');
-  return fetch(supabase + '/functions/v1/dalil-boutique-push', {
+  return fetch(supabase + (promotion && action !== 'config' ? '/functions/v1/dalil-sales-promos' : '/functions/v1/dalil-boutique-push'), {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ action, ...payload }),
@@ -18,7 +18,7 @@ const toBytes = (key: string) => {
   return Uint8Array.from(raw, ch => ch.charCodeAt(0));
 };
 
-export function BoutiquePushFollow({ profileId, demoMode }: { profileId?: string; demoMode?: boolean }) {
+export function BoutiquePushFollow({ profileId, demoMode, promotion = false }: { profileId?: string; demoMode?: boolean; promotion?: boolean }) {
   const [key, setKey] = useState('');
   const [subscribed, setSubscribed] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -40,17 +40,17 @@ export function BoutiquePushFollow({ profileId, demoMode }: { profileId?: string
         const registration = await navigator.serviceWorker.ready;
         const existing = await registration.pushManager.getSubscription();
         if (active && existing) {
-          const check = await api('status', { profileId, subscription: existing.toJSON() });
+          const check = await api('status', { profileId, subscription: existing.toJSON() }, promotion);
           const result = await check.json() as PushResult;
           if (active && check.ok) {
             setSubscribed(result.subscribed === true);
-            if (!result.subscribed) window.localStorage.removeItem('dalil:push:' + profileId);
+            if (!result.subscribed) window.localStorage.removeItem('dalil:push:' + (promotion ? 'promo:' : '') + profileId);
           }
         }
       } catch { /* Do not advertise unavailable notifications. */ }
     })();
     return () => { active = false; };
-  }, [profileId, demoMode]);
+  }, [profileId, demoMode, promotion]);
 
   if (!available || !profileId || demoMode) return null;
 
@@ -63,16 +63,16 @@ export function BoutiquePushFollow({ profileId, demoMode }: { profileId?: string
       const previous = await registration.pushManager.getSubscription();
       if (subscribed && !previous) {
         setSubscribed(false);
-        window.localStorage.removeItem('dalil:push:' + profileId);
+        window.localStorage.removeItem('dalil:push:' + (promotion ? 'promo:' : '') + profileId);
         throw new Error('Abonnement du navigateur expiré. Réessayez.');
       }
       if (subscribed && previous) {
-        const response = await api('unsubscribe', { profileId, subscription: previous.toJSON() });
+        const response = await api('unsubscribe', { profileId, subscription: previous.toJSON() }, promotion);
         const result = await response.json() as PushResult;
         if (!response.ok || result.error) throw new Error('Désabonnement indisponible.');
-        window.localStorage.removeItem('dalil:push:' + profileId);
+        window.localStorage.removeItem('dalil:push:' + (promotion ? 'promo:' : '') + profileId);
         setSubscribed(false);
-        setNotice('Vous ne suivez plus cette boutique.');
+        setNotice(promotion?'Vous ne recevrez plus les offres promotionnelles.':'Vous ne suivez plus cette boutique.');
       } else {
         if (Notification.permission === 'denied') throw new Error('Activez les notifications dans les réglages du navigateur.');
         const permission = await Notification.requestPermission();
@@ -81,15 +81,15 @@ export function BoutiquePushFollow({ profileId, demoMode }: { profileId?: string
           userVisibleOnly: true,
           applicationServerKey: toBytes(key) as BufferSource,
         });
-        const response = await api('subscribe', { profileId, subscription: subscription.toJSON() });
+        const response = await api('subscribe', { profileId, subscription: subscription.toJSON() }, promotion);
         const result = await response.json() as PushResult;
         if (!response.ok || !result.subscribed) throw new Error(result.error || 'Abonnement indisponible.');
-        const verify = await api('status', { profileId, subscription: subscription.toJSON() });
+        const verify = await api('status', { profileId, subscription: subscription.toJSON() }, promotion);
         const verified = await verify.json() as PushResult;
         if (!verify.ok || verified.subscribed !== true) throw new Error('Inscription non confirmée. Réessayez.');
-        window.localStorage.setItem('dalil:push:' + profileId, subscription.endpoint);
+        window.localStorage.setItem('dalil:push:' + (promotion ? 'promo:' : '') + profileId, subscription.endpoint);
         setSubscribed(true);
-        setNotice('Vous suivrez les nouveautés de cette boutique.');
+        setNotice(promotion?'Vous recevrez les offres de cette boutique. Désabonnement possible ici.':'Vous suivrez les nouveautés de cette boutique.');
       }
     } catch (error) { setNotice(error instanceof Error ? error.message : 'Notifications indisponibles.'); }
     finally { setBusy(false); }
@@ -97,9 +97,9 @@ export function BoutiquePushFollow({ profileId, demoMode }: { profileId?: string
   return <div style={{ marginTop: 12, borderTop: '1px solid var(--boutique-accent, #e8bd43)', paddingTop: 11, textAlign: 'center' }}>
     <button type="button" onClick={() => void toggle()} disabled={busy}
       style={{ background: 'var(--boutique-button, #003c35)', color: 'var(--boutique-button-ink, #f7f4ec)', border: '1px solid var(--boutique-accent, #e8bd43)', padding: '8px 13px', fontSize: 12, borderRadius: 20, cursor: busy ? 'wait' : 'pointer', fontWeight: 600 }}>
-      {subscribed ? '✓ Ne plus suivre les nouveautés' : '♧ Suivre les nouveautés'}
+      {promotion?(subscribed?'✓ Ne plus recevoir les offres':'🔔 Recevoir les offres commerciales'):(subscribed?'✓ Ne plus suivre les nouveautés':'♧ Suivre les nouveautés')}
     </button>
-    <p style={{ fontSize: 10, color: 'var(--boutique-muted, #d0ddd5)', margin: '6px 0 0' }}>Alertes volontaires lors de nouveaux produits validés. Désabonnement ici, à tout moment.</p>
+    <p style={{ fontSize: 10, color: 'var(--boutique-muted, #d0ddd5)', margin: '6px 0 0' }}>{promotion?'Notifications publicitaires facultatives. Vous pouvez vous désabonner ici, à tout moment.':'Alertes volontaires lors de nouveaux produits validés. Désabonnement ici, à tout moment.'}</p>
     {notice && <p role="status" style={{ fontSize: 11, margin: '7px 0 0', color: 'var(--boutique-ink, #f7f4ec)' }}>{notice}</p>}
   </div>;
 }
