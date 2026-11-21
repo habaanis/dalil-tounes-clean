@@ -68,32 +68,32 @@ export function BoutiquePushFollow({ profileId, demoMode, promotion = false }: {
       if (subscribed && !previous) {
         setSubscribed(false);
         window.localStorage.removeItem('dalil:push:' + (promotion ? 'promo:' : '') + profileId);
-        throw new Error('Abonnement du navigateur expiré. Réessayez.');
+        throw new Error(t('Abonnement du navigateur expiré. Réessayez.','انتهى اشتراك المتصفح. حاول مجدداً.'));
       }
       if (subscribed && previous) {
         const response = await api('unsubscribe', { profileId, subscription: previous.toJSON() }, promotion);
         const result = await response.json() as PushResult;
-        if (!response.ok || result.error) throw new Error('Désabonnement indisponible.');
+        if (!response.ok || result.error) throw new Error(t('Désabonnement indisponible.','إلغاء الاشتراك غير متاح.'));
         window.localStorage.removeItem('dalil:push:' + (promotion ? 'promo:' : '') + profileId);
         setSubscribed(false);
-        setNotice(promotion?'Vous ne recevrez plus les offres promotionnelles.':'Vous ne suivez plus cette boutique.');
+        setNotice(promotion?t('Vous ne recevrez plus les offres promotionnelles.','لن تصلك العروض الترويجية بعد الآن.'):t('Vous ne suivez plus cette boutique.','لم تعد تتابع هذا المتجر.'));
       } else {
-        if (Notification.permission === 'denied') throw new Error('Activez les notifications dans les réglages du navigateur.');
+        if (Notification.permission === 'denied') throw new Error(t('Activez les notifications dans les réglages du navigateur.','فعّل الإشعارات من إعدادات المتصفح.'));
         const permission = await Notification.requestPermission();
-        if (permission !== 'granted') throw new Error('Notifications non autorisées.');
+        if (permission !== 'granted') throw new Error(t('Notifications non autorisées.','لم يتم السماح بالإشعارات.'));
         const subscription = previous || await registration.pushManager.subscribe({
           userVisibleOnly: true,
           applicationServerKey: toBytes(key) as BufferSource,
         });
         const response = await api('subscribe', { profileId, subscription: subscription.toJSON() }, promotion);
         const result = await response.json() as PushResult;
-        if (!response.ok || !result.subscribed) throw new Error(result.error || 'Abonnement indisponible.');
+        if (!response.ok || !result.subscribed) throw new Error(result.error || t('Abonnement indisponible.','الاشتراك غير متاح.'));
         const verify = await api('status', { profileId, subscription: subscription.toJSON() }, promotion);
         const verified = await verify.json() as PushResult;
-        if (!verify.ok || verified.subscribed !== true) throw new Error('Inscription non confirmée. Réessayez.');
+        if (!verify.ok || verified.subscribed !== true) throw new Error(t('Inscription non confirmée. Réessayez.','لم يتأكد الاشتراك. حاول مجدداً.'));
         window.localStorage.setItem('dalil:push:' + (promotion ? 'promo:' : '') + profileId, subscription.endpoint);
         setSubscribed(true);
-        setNotice(promotion?'Vous recevrez les offres de cette boutique. Désabonnement possible ici.':'Vous suivrez les nouveautés de cette boutique.');
+        setNotice(promotion?t('Vous recevrez les offres de cette boutique. Désabonnement possible ici.','ستصلك عروض هذا المتجر. يمكنك إلغاء الاشتراك هنا.'):t('Vous suivrez les nouveautés de cette boutique.','ستصلك أحدث منتجات هذا المتجر.'));
       }
     } catch (error) { setNotice(error instanceof Error ? error.message : 'Notifications indisponibles.'); }
     finally { setBusy(false); }
