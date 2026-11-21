@@ -13,7 +13,7 @@ const shortCode=(id:string)=>id.slice(0,8).toUpperCase();
 const panelNames:{id:Kind;label:string;hint:string}[]=[
  {id:'offer',label:'🏷️ Offres & réductions',hint:'Choisissez le pourcentage, le jour et la période. La remise est une annonce : le montant de la commande reste calculé par la Boutique existante.'},
  {id:'loyalty',label:'⭐ Fidélité',hint:'Choisissez le nombre d’achats et la récompense. Vous validez les passages et remettez le cadeau manuellement.'},
- {id:'gift_card',label:'🎁 Cartes cadeaux',hint:'Choisissez les montants. Vérifiez d’abord le paiement avec le client avant d’activer une carte.'}
+ {id:'gift_card',label:'🎁 Cartes cadeaux',hint:'Choisissez les montants. Les clients peuvent commander une carte via la Boutique. Après vérification du paiement, créez et activez ici son code.'}
 ];
 
 export default function SalesLoyaltyManagement({entrepriseIds}:{entrepriseIds:string[]}) {
@@ -187,6 +187,10 @@ export default function SalesLoyaltyManagement({entrepriseIds}:{entrepriseIds:st
       const p=programs.find(p=>p.id===c.program_id)!;
       return <div key={c.id} className="rounded-xl border border-[#e8d9bd] bg-white p-3 text-xs">
        <div className="flex justify-between gap-2"><strong>{c.customer_label}</strong><span>Réf. {shortCode(c.id)}</span></div>
+       <div className="my-2 flex flex-wrap items-center justify-between gap-1">
+        <span className="break-all text-[10px] text-gray-500">Code : {c.id}</span>
+        <button type="button" className="min-h-9 rounded-lg border border-[#d5bd8b] px-2" onClick={()=>void navigator.clipboard?.writeText(c.id)}>Copier</button>
+       </div>
        <p className="my-2">{c.stamps} / {p.value} achats · {c.rewards_given} récompense(s) remise(s)</p>
        <div className="grid grid-cols-2 gap-2">
         <button type="button" disabled={busy||c.stamps>=p.value} onClick={()=>void stamp(c,false)} className="min-h-11 rounded-xl border border-[#d5bd8b] px-2 disabled:opacity-50">＋ Valider un achat</button>
@@ -196,7 +200,10 @@ export default function SalesLoyaltyManagement({entrepriseIds}:{entrepriseIds:st
      }):gifts.map(c=><div key={c.id} className="rounded-xl border border-[#e8d9bd] bg-white p-3 text-xs">
       <div className="flex justify-between gap-2"><strong>{c.recipient_label}</strong><span>Réf. {shortCode(c.id)}</span></div>
       <p className="mt-1">Solde : {money(c.balance)} / {money(c.face_value)} · {c.state==='pending'?'À activer après paiement':c.state==='active'?'Active':c.state==='spent'?'Utilisée':'Annulée'}</p>
-      <p className="mt-1 break-all text-[10px] text-gray-500">Code complet : {c.id}</p>
+      <div className="mt-1 flex flex-wrap items-center justify-between gap-1">
+       <span className="break-all text-[10px] text-gray-500">Code complet : {c.id}</span>
+       <button type="button" className="min-h-9 rounded-lg border border-[#d5bd8b] px-2" onClick={()=>void navigator.clipboard?.writeText(c.id)}>Copier</button>
+      </div>
       {c.state==='pending'&&<button type="button" disabled={busy} onClick={()=>void giftAction(c,'activate')} className="mt-2 min-h-11 rounded-xl border border-[#d5bd8b] px-3">Paiement vérifié → Activer</button>}
       {c.state==='active'&&<div className="mt-2 flex gap-2"><input aria-label="Montant utilisé en DT" className={fields} type="number" min="0.001" step="0.001" max={c.balance} placeholder="DT utilisés" value={redeemAmount[c.id]||''} onChange={e=>setRedeemAmount(old=>({...old,[c.id]:e.target.value}))}/>
        <button type="button" disabled={busy} onClick={()=>void giftAction(c,'redeem')} className="rounded-xl border border-[#d5bd8b] px-3 font-semibold">Déduire</button></div>}
