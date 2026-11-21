@@ -44,7 +44,7 @@ const priceText = (product: BoutiqueProduct) =>
 const labelStyle = { display: 'grid', gap: 4, fontSize: 12, fontWeight: 500 } as const;
 const fieldStyle = { boxSizing: 'border-box', width: '100%', minWidth: 0, border: '1px solid var(--boutique-accent, #d7c7ae)', borderRadius: 9, padding: '9px 10px', fontSize: 14, background: 'var(--boutique-field, #fff)', color: 'var(--boutique-field-ink, #12372e)', colorScheme: 'light' } as const;
 type LocalRequest = {reference:string; createdAt:string; kind:'quote'|'order';proof?:string};
-type LiveOrderStatus = {reference:string;kind:'quote'|'order';status:string;createdAt:string;updatedAt:string;productTitle:string;quantity:number};
+type LiveOrderStatus = {reference:string;kind:'quote'|'order';status:string;createdAt:string;updatedAt:string;productTitle:string;quantity:number;requestedDate?:string|null};
 const uuidPattern=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const customerStatusLabels:Record<string,string>={
   received:'Demande reçue',confirmed:'Confirmée',cancelled:'Annulée',
@@ -129,7 +129,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
           statuses[item.reference]=item;
       }
       setLiveStatuses(statuses);
-      setStatusNotice(result.items.length+' statut(s) récupéré(s) auprès de Dalil Tounes.');
+      setStatusNotice(result.items.length?'Votre suivi est à jour.':'Aucune nouvelle information disponible pour ces demandes.');
     }catch{setStatusNotice('Connexion indisponible. Vos références locales sont conservées.');}
     finally{setStatusChecking(false);}
   };
@@ -529,7 +529,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
              📋 Mon suivi (sans compte) {myFollowupOpen?'−':'＋'}
             </button>
             {myFollowupOpen&&<div style={{display:'grid',gap:8,marginBottom:10,fontSize:12,color:'var(--boutique-ink, #f7f4ec)'}}>
-             <p style={{margin:0}}>Retrouvez vos demandes enregistrées sur ce téléphone. Aucun compte n’est nécessaire. Le suivi détaillé exige la clé privée conservée lors de la demande.</p>
+             <p style={{margin:0}}>Retrouvez vos demandes et leurs confirmations sur ce téléphone, sans créer de compte.</p>
              {localRequests.some(item=>item.proof)&&<button type="button" disabled={statusChecking} onClick={()=>void refreshCustomerStatuses()}
               style={{padding:9,borderRadius:8,border:'1px solid var(--boutique-accent, #e8bd43)',background:'var(--boutique-button, #003c35)',color:'var(--boutique-button-ink, #fff)',fontWeight:700,opacity:statusChecking?0.7:1}}>
               {statusChecking?'Actualisation…':'Actualiser le statut de mes demandes'}
@@ -537,13 +537,28 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
              {statusNotice&&<p role="status" style={{margin:0}}>{statusNotice}</p>}
              {localRequests.length===0?<p style={{margin:0}}>Aucune référence conservée sur cet appareil.</p>:
               localRequests.map(item=><div key={item.reference} style={{display:'grid',gap:3,padding:9,border:'1px solid var(--boutique-accent, #e8bd43)',borderRadius:8}}>
-               <strong>{item.kind==='quote'?'Devis':'Commande'} · {new Date(item.createdAt).toLocaleDateString('fr-FR')}</strong>
-               <span>Référence : {item.reference.slice(0,8).toUpperCase()}</span>
-               {liveStatuses[item.reference]?
-                <><span>Statut : {customerStatusLabels[liveStatuses[item.reference].status]||'En cours de traitement'}</span>
-                  <span>Article : {liveStatuses[item.reference].productTitle} · Quantité : {liveStatuses[item.reference].quantity}</span>
-                  <span>Dernière mise à jour : {new Date(liveStatuses[item.reference].updatedAt).toLocaleDateString('fr-FR')}</span></>:
-                <span>{item.proof?'Appuyez sur « Actualiser » pour consulter le statut sécurisé.':'Ancienne référence : suivi non disponible.'}</span>}
+               {liveStatuses[item.reference]?(()=>{
+                 const detail=liveStatuses[item.reference];
+                 const confirmed=detail.status==='confirmed';
+                 const kind=detail.kind==='quote'?'demande de devis':'commande';
+                 const requested=detail.requestedDate&&/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(detail.requestedDate)?
+                   detail.requestedDate.split('-').reverse().join('/'):null;
+                 return <>
+                   <strong style={{fontSize:15}}>{confirmed?
+                     'Votre '+kind+' a bien été confirmée.':
+                     detail.status==='received'?'Votre '+kind+' a bien été reçue.':
+                     'Votre '+kind+' : '+(customerStatusLabels[detail.status]||'En cours de traitement')+'.'}</strong>
+                   <span>Numéro de suivi : <strong>{item.reference.slice(0,8).toUpperCase()}</strong></span>
+                   <span>Article : {detail.productTitle}</span>
+                   <span>Quantité : {detail.quantity}</span>
+                   {requested&&<span>Date souhaitée : {requested}</span>}
+                   <span>{confirmed?'Merci de votre confiance !':'Nous vous informerons de la suite de votre demande.'}</span>
+                 </>;
+               })():<>
+                 <strong>{item.kind==='quote'?'Votre demande de devis':'Votre commande'} du {new Date(item.createdAt).toLocaleDateString('fr-FR')}</strong>
+                 <span>Numéro de suivi : {item.reference.slice(0,8).toUpperCase()}</span>
+                 <span>{item.proof?'Appuyez sur « Actualiser » pour retrouver les informations de votre demande.':'Le suivi de cette ancienne demande n’est pas disponible.'}</span>
+               </>}
               </div>)}
              {localRequests.length>0&&<button type="button" onClick={()=>{
                if(!window.confirm('Effacer les références de ce téléphone ? Les demandes enregistrées chez le commerçant ne seront pas supprimées.'))return;
