@@ -5,6 +5,7 @@ import { Briefcase, Users, Building2, Settings, LogOut, Store, Package, BarChart
 import { useAuth } from '../context/AuthContext';
 import JobPostForm from '../components/forms/JobPostForm';
 import BoutiqueProductManagement from '../components/boutique/BoutiqueProductManagement';
+import SalesLoyaltyManagement from '../components/boutique/SalesLoyaltyManagement';
 import BoutiqueCustomerOrders from '../components/boutique/BoutiqueCustomerOrders';
 import BoutiqueMerchantOrderAlerts from '../components/boutique/BoutiqueMerchantOrderAlerts';
 
@@ -32,7 +33,7 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false }: 
   const [presentationSaving, setPresentationSaving] = useState(false);
   const [presentationFeedback, setPresentationFeedback] = useState('');
   const [productTitle, setProductTitle] = useState('');
-  const [boutiquePanel, setBoutiquePanel] = useState<'manage'|'create'|null>(null);
+  const [boutiquePanel, setBoutiquePanel] = useState<'manage'|'create'|'sales'|null>(null);
   const [productKind, setProductKind] = useState<'product'|'gift_pack'>('product');
   const [productCategory, setProductCategory] = useState('');
   const [productDescription, setProductDescription] = useState('');
@@ -400,9 +401,15 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false }: 
                         className="min-h-11 rounded-xl border border-[#dfcda8] bg-white px-3 py-2 text-sm font-semibold text-[#62212a]">
                         {boutiquePanel==='create'?'− Fermer':'＋ Ajouter un article'}
                       </button>
+                      <button type="button" aria-expanded={boutiquePanel==='sales'}
+                        onClick={()=>setBoutiquePanel(current=>current==='sales'?null:'sales')}
+                        className="col-span-2 min-h-11 rounded-xl border border-[#c6ad79] bg-[#fbf1df] px-3 py-2 text-sm font-semibold text-[#62212a]">
+                        {boutiquePanel==='sales'?'− Fermer Ventes & Fidélité':'＋ Ventes & Fidélité'}
+                      </button>
                     </div>
                     {boutiquePanel==='manage' && user &&
                       <BoutiqueProductManagement entrepriseIds={stats.map(record => record.entreprise_id)} userId={user.id} />}
+                    {boutiquePanel==='sales' && <SalesLoyaltyManagement entrepriseIds={stats.map(record => record.entreprise_id)} />}
                   </>}
                   {activeTab === 'boutique' && boutiquePanel==='create' && stats.length > 0 && !statsLoading && !statsError && <div className="mt-3 rounded-xl border border-[#dfcda8] bg-white p-4 sm:p-5">
                     <h3 className="mb-2 font-semibold text-[#62212a]">Proposer un produit ou un pack cadeau</h3>
