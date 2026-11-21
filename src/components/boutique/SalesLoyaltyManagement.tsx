@@ -3,7 +3,8 @@ import { supabase } from '../../lib/supabaseClient';
 
 type Kind = 'offer' | 'loyalty' | 'gift_card';
 type Program = { id:string; entreprise_id:string; kind:Kind; title:string; description:string; value:number; weekday:number|null; begins_at:string|null; ends_at:string|null; active:boolean; created_at:string };
-type LoyaltyCard = { id:string;entreprise_id:string;program_id:string;customer_label:string;public_code:string;stamps:number;rewards_given:number };
+type LoyaltyCard = { id:string;entreprise_id:string;program_id:string;customer_label:string;public_code:string;stamps:number;rewards_given:number;archived_at:string|null };
+type LoyaltyOperation = {id:number;card_id:string;action:string;amount:number;created_at:string};
 type GiftCard = { id:string;entreprise_id:string;program_id:string;recipient_label:string;face_value:number;balance:number;state:'pending'|'active'|'spent'|'cancelled' };
 const days=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
 const fields='min-h-11 w-full rounded-xl border border-[#d7c7ab] bg-white p-3 text-sm text-gray-900';
@@ -22,6 +23,10 @@ export default function SalesLoyaltyManagement({entrepriseIds}:{entrepriseIds:st
  const [programs,setPrograms]=useState<Program[]>([]);
  const [loyalty,setLoyalty]=useState<LoyaltyCard[]>([]);
  const [gifts,setGifts]=useState<GiftCard[]>([]);
+ const [operations,setOperations]=useState<LoyaltyOperation[]>([]);
+ const [showArchived,setShowArchived]=useState(false);
+ const [batchCount,setBatchCount]=useState<Record<string,string>>({});
+ const [historyOpen,setHistoryOpen]=useState(false);
  const [loading,setLoading]=useState(true);
  const [error,setError]=useState('');
  const [message,setMessage]=useState('');
@@ -43,14 +48,16 @@ export default function SalesLoyaltyManagement({entrepriseIds}:{entrepriseIds:st
   setLoading(true);setError('');
   void Promise.all([
    supabase.from('dalil_sales_programs').select('id,entreprise_id,kind,title,description,value,weekday,begins_at,ends_at,active,created_at').eq('entreprise_id',company).order('created_at',{ascending:false}),
-   supabase.from('dalil_sales_loyalty_cards').select('id,entreprise_id,program_id,customer_label,public_code,stamps,rewards_given').eq('entreprise_id',company).order('created_at',{ascending:false}).limit(60),
-   supabase.from('dalil_sales_gift_cards').select('id,entreprise_id,program_id,recipient_label,face_value,balance,state').eq('entreprise_id',company).order('issued_at',{ascending:false}).limit(60)
-  ]).then(([a,b,c])=>{
+   supabase.from('dalil_sales_loyalty_cards').select('id,entreprise_id,program_id,customer_label,public_code,stamps,rewards_given,archived_at').eq('entreprise_id',company).order('created_at',{ascending:false}).limit(60),
+   supabase.from('dalil_sales_gift_cards').select('id,entreprise_id,program_id,recipient_label,face_value,balance,state').eq('entreprise_id',company).order('issued_at',{ascending:false}).limit(60),
+   supabase.from('dalil_sales_operations').select('id,card_id,action,amount,created_at').eq('entreprise_id',company).eq('kind','loyalty').order('created_at',{ascending:false}).limit(100)
+  ]).then(([a,b,c,d])=>{
    if(!live)return;
-   if(a.error||b.error||c.error){setError('Chargement impossible. Vérifiez que votre compte professionnel est autorisé.');return;}
+   if(a.error||b.error||c.error||d.error){setError('Chargement impossible. Vérifiez que votre compte professionnel est autorisé.');return;}
    setPrograms((a.data||[]) as Program[]);
    setLoyalty((b.data||[]) as LoyaltyCard[]);
    setGifts((c.data||[]) as GiftCard[]);
+   setOperations((d.data||[]) as LoyaltyOperation[]);
   }).catch(()=>{if(live)setError('Connexion impossible.');}).finally(()=>{if(live)setLoading(false);});
   return()=>{live=false};
  },[company,refresh]);
@@ -94,7 +101,7 @@ export default function SalesLoyaltyManagement({entrepriseIds}:{entrepriseIds:st
  const issue=async(kind:'loyalty'|'gift_card')=>{
   if(!chosenProgram||customer.trim().length<2||busy){setError('Choisissez un programme et indiquez le client ou bénéficiaire.');return;}
   const p=programs.find(x=>x.id===chosenProgram&&x.kind===kind&&x.entreprise_id===company);
-  if(!p){setError('Programme invalide.');return;}
+  if(!p||!p.active){setError('Programme inactif ou invalide.');return;}
   setBusy(true);setError('');setMessage('');
   const {error:e}=kind==='loyalty'
    ?await supabase.from('dalil_sales_loyalty_cards').insert({entreprise_id:company,program_id:p.id,customer_label:customer.trim()})
@@ -109,6 +116,31 @@ export default function SalesLoyaltyManagement({entrepriseIds}:{entrepriseIds:st
   const {error:e}=await supabase.rpc('dalil_sales_stamp',{p_card:card.id,p_reward:reward});
   setBusy(false);if(e){setError(e.message||'Action impossible.');return;}
   setMessage(reward?'Récompense remise et enregistrée.':'Achat comptabilisé.');reload();
+ };
+ const archiveCard=async(card:LoyaltyCard,archive:boolean)=>{
+  if(busy)return;
+  if(!window.confirm(archive
+   ?'Archiver la carte de '+card.customer_label+' ? Elle ne sera plus consultable avec son code. L historique des récompenses sera conservé.'
+   :'Réactiver la carte de '+card.customer_label+' ?'))return;
+  setBusy(true);setError('');setMessage('');
+  const {error:e}=await supabase.rpc('dalil_sales_archive_loyalty',{p_card:card.id,p_archive:archive});
+  setBusy(false);
+  if(e){setError(e.message||'Archivage impossible.');return;}
+  setMessage(archive?'Carte archivée, historique conservé.':'Carte réactivée.');reload();
+ };
+ const stampMultiple=async(card:LoyaltyCard)=>{
+  const count=Number(batchCount[card.id]);
+  const program=programs.find(p=>p.id===card.program_id);
+  if(busy||!program||!Number.isInteger(count)||count<1||count>30||card.stamps+count>program.value){
+   setError('Choisissez un nombre entier sans dépasser les achats restants avant le cadeau.');return;
+  }
+  if(!window.confirm('Valider '+count+' achat(s) pour '+card.customer_label+' ? Cette action sera enregistrée.'))return;
+  setBusy(true);setError('');setMessage('');
+  const {error:e}=await supabase.rpc('dalil_sales_stamp_batch',{p_card:card.id,p_count:count});
+  setBusy(false);
+  if(e){setError(e.message||'Validation impossible.');return;}
+  setBatchCount(old=>({...old,[card.id]:''}));
+  setMessage(count+' achat(s) comptabilisé(s).');reload();
  };
  const giftAction=async(card:GiftCard,action:'activate'|'redeem')=>{
   if(busy)return;
@@ -161,6 +193,7 @@ export default function SalesLoyaltyManagement({entrepriseIds}:{entrepriseIds:st
      {programs.filter(p=>p.kind===item.id).map(p=><div key={p.id} className="rounded-xl border border-[#e8d9bd] bg-[#fffdf8] p-3 text-xs">
       <div className="flex items-start justify-between gap-2"><strong>{p.title}</strong><strong>{p.kind==='offer'?p.value+' %':p.kind==='loyalty'?p.value+' achats':money(p.value)}</strong></div>
       {p.description&&<p className="mt-1 text-gray-600">{p.description}</p>}
+      {p.kind==='loyalty'&&<div className="mt-2 flex items-center justify-between gap-2"><span>{p.active?'Actif':'Suspendu'}</span><button type="button" disabled={busy} onClick={()=>void changeActive(p)} className="min-h-10 rounded-lg border border-[#d5bd8b] px-3 font-semibold">{p.active?'Suspendre':'Réactiver'}</button></div>}
       {p.kind==='offer'&&<div className="mt-2 flex items-center justify-between gap-2">
        <span>{p.active?'Publiée selon ses dates':'Désactivée'}{p.weekday!==null?' · '+days[p.weekday]:''}</span>
        <div className="flex flex-wrap gap-1">
@@ -174,7 +207,7 @@ export default function SalesLoyaltyManagement({entrepriseIds}:{entrepriseIds:st
      <div className="grid gap-2 rounded-xl border border-[#e8d9bd] bg-white p-3">
       <strong className="text-sm">{item.id==='loyalty'?'Créer une carte client':'Préparer une carte cadeau'}</strong>
       <label className="grid gap-1 text-xs">Programme
-       <select className={fields} value={chosenProgram} onChange={e=>setChosenProgram(e.target.value)}><option value="">Choisir…</option>{programs.filter(p=>p.kind===item.id).map(p=><option key={p.id} value={p.id}>{p.title}</option>)}</select>
+       <select className={fields} value={chosenProgram} onChange={e=>setChosenProgram(e.target.value)}><option value="">Choisir…</option>{programs.filter(p=>p.kind===item.id&&p.active).map(p=><option key={p.id} value={p.id}>{p.title}</option>)}</select>
       </label>
       <label className="grid gap-1 text-xs">{item.id==='loyalty'?'Nom du client':'Nom du bénéficiaire'}
        <input className={fields} maxLength={120} value={customer} onChange={e=>setCustomer(e.target.value)}/>
@@ -182,8 +215,12 @@ export default function SalesLoyaltyManagement({entrepriseIds}:{entrepriseIds:st
       <button type="button" disabled={busy||!chosenProgram} onClick={()=>void issue(item.id as 'loyalty'|'gift_card')} className="min-h-11 rounded-xl border border-[#d5bd8b] bg-[#fbf1df] text-sm font-semibold text-[#252525] disabled:opacity-50">Créer la carte</button>
       {item.id==='gift_card'&&<p className="text-xs text-gray-600">Aucun paiement n’est encaissé ici. Carte inactive tant que vous n’avez pas confirmé le paiement.</p>}
      </div>
-     <strong className="text-xs">{item.id==='loyalty'?'Cartes de fidélité en cours':'Cartes cadeaux émises'}</strong>
-     {item.id==='loyalty'?loyalty.filter(c=>programs.some(p=>p.id===c.program_id)).map(c=>{
+     <div className="flex flex-wrap items-center justify-between gap-2">
+      <strong className="text-xs">{item.id==='loyalty'?'Cartes de fidélité':'Cartes cadeaux émises'}</strong>
+      {item.id==='loyalty'&&<button type="button" onClick={()=>setShowArchived(x=>!x)} className="min-h-10 rounded-lg border border-[#d5bd8b] bg-white px-3 text-xs font-semibold">{showArchived?'Voir les cartes en cours':'Voir les archives'}</button>}
+     </div>
+     {item.id==='loyalty'&&<p className="text-xs text-gray-600">{showArchived?'Cartes archivées : code inactif, historique conservé.':'Communiquez le code à 4 chiffres au client. Il le saisit dans Boutique → Consulter ma fidélité → Voir ma carte.'}</p>}
+     {item.id==='loyalty'?loyalty.filter(c=>programs.some(p=>p.id===c.program_id)&&Boolean(c.archived_at)===showArchived).map(c=>{
       const p=programs.find(p=>p.id===c.program_id)!;
       return <div key={c.id} className="rounded-xl border border-[#e8d9bd] bg-white p-3 text-xs">
        <div className="flex justify-between gap-2"><strong>{c.customer_label}</strong><span>Fidélité</span></div>
@@ -192,10 +229,15 @@ export default function SalesLoyaltyManagement({entrepriseIds}:{entrepriseIds:st
         <button type="button" className="min-h-9 rounded-lg border border-[#d5bd8b] px-2" onClick={()=>void navigator.clipboard?.writeText(c.public_code)}>Copier les 4 chiffres</button>
        </div>
        <p className="my-2">{c.stamps} / {p.value} achats · {c.rewards_given} récompense(s) remise(s)</p>
-       <div className="grid grid-cols-2 gap-2">
+       {!showArchived&&p.active&&<div className="grid grid-cols-2 gap-2">
         <button type="button" disabled={busy||c.stamps>=p.value} onClick={()=>void stamp(c,false)} className="min-h-11 rounded-xl border border-[#d5bd8b] px-2 disabled:opacity-50">＋ Valider un achat</button>
         <button type="button" disabled={busy||c.stamps<p.value} onClick={()=>void stamp(c,true)} className="min-h-11 rounded-xl border border-[#d5bd8b] px-2 disabled:opacity-50">🎁 Remettre le cadeau</button>
-       </div>
+       </div>}
+       {!showArchived&&p.active&&<div className="mt-2 flex flex-wrap items-center gap-2">
+        <label className="text-xs">Plusieurs achats <input type="number" min="1" max={Math.min(30,Math.max(0,p.value-c.stamps))} step="1" inputMode="numeric" className="ml-2 w-16 rounded-lg border border-[#d5bd8b] p-2" value={batchCount[c.id]||''} onChange={e=>setBatchCount(old=>({...old,[c.id]:e.target.value}))}/></label>
+        <button type="button" disabled={busy||c.stamps>=p.value} onClick={()=>void stampMultiple(c)} className="min-h-10 rounded-lg border border-[#d5bd8b] px-3 font-semibold disabled:opacity-50">Valider le lot</button>
+       </div>}
+       <button type="button" disabled={busy} onClick={()=>void archiveCard(c,!showArchived)} className="mt-2 min-h-10 rounded-lg border border-[#d5bd8b] bg-[#fff9ee] px-3 font-semibold">{showArchived?'Réactiver la carte':'Archiver la carte'}</button>
       </div>;
      }):gifts.map(c=><div key={c.id} className="rounded-xl border border-[#e8d9bd] bg-white p-3 text-xs">
       <div className="flex justify-between gap-2"><strong>{c.recipient_label}</strong><span>Réf. {shortCode(c.id)}</span></div>
@@ -208,6 +250,13 @@ export default function SalesLoyaltyManagement({entrepriseIds}:{entrepriseIds:st
       {c.state==='active'&&<div className="mt-2 flex gap-2"><input aria-label="Montant utilisé en DT" className={fields} type="number" min="0.001" step="0.001" max={c.balance} placeholder="DT utilisés" value={redeemAmount[c.id]||''} onChange={e=>setRedeemAmount(old=>({...old,[c.id]:e.target.value}))}/>
        <button type="button" disabled={busy} onClick={()=>void giftAction(c,'redeem')} className="rounded-xl border border-[#d5bd8b] px-3 font-semibold">Déduire</button></div>}
      </div>)}
+     {item.id==='loyalty'&&<div className="rounded-xl border border-[#e8d9bd] bg-white p-3">
+      <button type="button" className="min-h-10 text-left text-xs font-semibold" onClick={()=>setHistoryOpen(v=>!v)} aria-expanded={historyOpen}>{historyOpen?'− Masquer':'＋ Afficher'} l’historique des récompenses</button>
+      {historyOpen&&<div className="mt-2 grid gap-1">
+       {operations.filter(op=>op.action==='reward').length===0?<p className="text-xs text-gray-600">Aucune récompense remise.</p>:
+       operations.filter(op=>op.action==='reward').map(op=><p key={op.id} className="text-xs text-gray-700">{new Date(op.created_at).toLocaleDateString('fr-FR')} · {loyalty.find(card=>card.id===op.card_id)?.customer_label||'Carte ancienne'} · Cadeau remis</p>)}
+      </div>}
+     </div>}
     </>}
    </div>}
   </div>)}</div>
