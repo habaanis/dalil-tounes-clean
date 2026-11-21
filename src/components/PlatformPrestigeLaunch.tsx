@@ -6,6 +6,9 @@ const FIRST_OPEN_KEY = 'dalil-platform-prestige-opened-v2';
 
 function shouldShowPlatformOpening() {
   if (typeof window === 'undefined' || window.location.pathname !== '/') return false;
+  // On the public website an opening overlay obscures navigation after refresh.
+  // Keep platform-app opening behavior on the independent PWA only.
+  if (['dalil-tounes.com','www.dalil-tounes.com','app.dalil-tounes.com'].includes(window.location.hostname)) return false;
   // Show the platform branding on an ordinary link as well as on the installed app.
   // Only once per browser tab to avoid interrupting every return to the homepage.
   try {
