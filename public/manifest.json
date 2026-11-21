@@ -2,7 +2,7 @@
   "name": "Dalil Tounes - Plateforme Tunisienne",
   "short_name": "Dalil Tounes",
   "description": "La plateforme tunisienne des entreprises, services et événements. Trouvez les meilleurs établissements autour de vous.",
-  "start_url": "/",
+  "start_url": "/?source=pwa",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
@@ -37,5 +37,6 @@
     }
   ],
   "related_applications": [],
-  "prefer_related_applications": false
+  "prefer_related_applications": false,
+  "id": "/dalil-tounes-app"
 }
