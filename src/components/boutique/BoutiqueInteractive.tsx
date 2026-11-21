@@ -49,6 +49,12 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<BoutiqueProduct | null>(null);
   const [offersOpen,setOffersOpen] = useState(false);
+  const [cardLookupOpen,setCardLookupOpen] = useState(false);
+  const [cardLookupKind,setCardLookupKind] = useState<'loyalty'|'gift_card'>('loyalty');
+  const [cardCode,setCardCode] = useState('');
+  const [cardInfo,setCardInfo] = useState<Record<string,unknown>|null>(null);
+  const [cardNotice,setCardNotice] = useState('');
+  const [cardChecking,setCardChecking] = useState(false);
   const [offers,setOffers] = useState<{id:string;title:string;description:string;value:number;weekday:number|null}[]>([]);
   const [requestOpen, setRequestOpen] = useState(false);
   const [quantity, setQuantity] = useState(1);
@@ -81,7 +87,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
   },[open,config.profileId,config.demoMode]);
   const products = config.products.filter(product => Boolean(product.id && product.title && product.imageUrl));
   // Keep the approved festive-menu order; any other category follows alphabetically.
-  const preferredCategories = ['Menu des fêtes', 'Entrées', 'Plats', 'Fromages', 'Desserts', 'Packs cadeaux'];
+  const preferredCategories = ['Menu des fêtes', 'Entrées', 'Plats', 'Fromages', 'Desserts', 'Packs cadeaux', 'Cartes cadeaux'];
   const rankCategory = (name: string) => preferredCategories.findIndex(
     preferred => preferred.toLocaleLowerCase('fr') === name.toLocaleLowerCase('fr')
   );
@@ -106,6 +112,16 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
   const pageCount = Math.max(1, Math.ceil(filteredProducts.length / 12));
   const safePage = Math.min(cataloguePage, pageCount);
   const pageProducts = filteredProducts.slice((safePage - 1) * 12, safePage * 12);
+  const lookupCard=async()=>{
+    if(!config.profileId||!(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i).test(cardCode.trim())){
+      setCardInfo(null);setCardNotice('Saisissez le code complet de votre carte.');return;
+    }
+    setCardChecking(true);setCardNotice('');setCardInfo(null);
+    const {data,error}=await supabase.rpc('dalil_sales_card_status',{p_business:config.profileId,p_kind:cardLookupKind,p_code:cardCode.trim()});
+    setCardChecking(false);
+    if(error||!data){setCardNotice('Carte introuvable pour cette boutique. Vérifiez le code.');return;}
+    setCardInfo(data as Record<string,unknown>);
+  };
   const phone = config.whatsapp.replace(/\D/g, '');
   const canWhatsApp = /^\d{8,15}$/.test(phone);
   const canEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(merchantEmail);
@@ -265,7 +281,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
     window.open('https://wa.me/'+phone+'?text='+encodeURIComponent(message),'_blank','noopener,noreferrer');
   };
   return <>
-    <button type="button" onClick={() => { setOpen(true); setSelected(null); setRequestOpen(false); setConfirmation(''); setCataloguePage(1); setCatalogueQuery(''); setCatalogueCategory(''); setOffersOpen(false); }}
+    <button type="button" onClick={() => { setOpen(true); setSelected(null); setRequestOpen(false); setConfirmation(''); setCataloguePage(1); setCatalogueQuery(''); setCatalogueCategory(''); setOffersOpen(false); setCardLookupOpen(false); setCardInfo(null); }}
       aria-haspopup="dialog" className={triggerClassName}
       style={triggerClassName ? undefined : { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 7, padding: '8px 15px', border: '1px solid var(--boutique-accent, #e8bd43)', background: 'var(--boutique-button, #003c35)', color: 'var(--boutique-button-ink, #f7f4ec)', borderRadius: 24, fontSize: 13, fontWeight: 600, lineHeight: 1.2, cursor: 'pointer' }}>
       {triggerIcon ?? <span aria-hidden="true">✦</span>}<span>{triggerLabel}</span>{!config.demoMode && products.some(isRecentProduct) && <span aria-label="Nouveautés" style={{fontSize:10,color:'var(--boutique-accent, #e8bd43)',fontWeight:700,whiteSpace:'nowrap'}}>●</span>}
@@ -298,6 +314,14 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
               <span style={{fontSize:10,color:'var(--boutique-muted, #d0ddd5)'}}>Réduction à confirmer directement avec le commerçant. Le total de la commande n’est pas recalculé automatiquement.</span>
             </div>}
           </>}
+          {catalogueCategories.some(category=>category.toLowerCase()==='cartes cadeaux') && <button type="button"
+            aria-pressed={catalogueCategory==='Cartes cadeaux'}
+            onClick={()=>{setCatalogueCategory(current=>current==='Cartes cadeaux'?'':'Cartes cadeaux');setCataloguePage(1);}}
+            style={{width:'100%',margin:'0 0 10px',padding:'10px 12px',border:'1px solid var(--boutique-accent, #e8bd43)',
+              borderRadius:11,background:'var(--boutique-card, #002f2b)',color:'var(--boutique-ink, #f7f4ec)',fontSize:12,
+              fontWeight:700,textAlign:'left',cursor:'pointer'}}>
+            🎟️ {catalogueCategory==='Cartes cadeaux'?'Fermer les cartes cadeaux':'Découvrir les cartes cadeaux'}
+          </button>}
           {catalogueCategories.some(category=>category.toLowerCase()==='packs cadeaux') && <button type="button"
             aria-pressed={catalogueCategory==='Packs cadeaux'}
             onClick={()=>{setCatalogueCategory(current=>current==='Packs cadeaux'?'':'Packs cadeaux');setCataloguePage(1);}}
@@ -324,6 +348,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
                 style={{ width: '100%', aspectRatio: '1 / 1', objectFit: 'cover', borderRadius: 8 }} />
               {!config.demoMode && isRecentProduct(product) && <span style={{justifySelf:'start',padding:'2px 7px',borderRadius:20,background:'var(--boutique-accent, #e8bd43)',color:'var(--boutique-button, #003c35)',fontSize:10,fontWeight:700}}>Nouveau</span>}
               {product.category?.trim().toLowerCase()==='packs cadeaux' && <span style={{padding:'0 4px',fontSize:10,color:'var(--boutique-accent, #e8bd43)'}}>🎁 Pack cadeau</span>}
+              {product.category?.trim().toLowerCase()==='cartes cadeaux' && <span style={{padding:'0 4px',fontSize:10,color:'var(--boutique-accent, #e8bd43)'}}>🎟️ Carte cadeau</span>}
               <span style={{ padding: '0 4px', fontSize: 12, fontWeight: 600, overflowWrap: 'anywhere' }}>{product.title}</span>
               <span style={{ padding: '0 4px 3px', fontSize: 11, color: 'var(--boutique-accent, #e8bd43)' }}>Voir les détails ›</span>
             </button>)}
@@ -343,6 +368,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
             <span style={{ whiteSpace: 'nowrap', fontWeight: 600, fontSize: 12, color: 'var(--boutique-accent, #e8bd43)' }}>{priceText(selected)}</span>
           </div>
           {selected.category?.trim().toLowerCase()==='packs cadeaux' && <p style={{fontSize:11,color:'var(--boutique-accent, #e8bd43)',margin:'7px 0 0',fontWeight:700}}>🎁 Pack cadeau · prix fixé par le commerçant</p>}
+          {selected.category?.trim().toLowerCase()==='cartes cadeaux' && <p style={{fontSize:11,color:'var(--boutique-accent, #e8bd43)',margin:'7px 0 0',fontWeight:700}}>🎟️ Carte cadeau · activée par le commerçant après vérification du paiement</p>}
           {selected.description && <p style={{ fontSize: 12, lineHeight: 1.5, margin: '6px 0 12px', color: 'var(--boutique-muted, #d0ddd5)' }}>{selected.description}</p>}
           {!requestOpen ? (orderAvailability==='available'||config.demoMode) ? <button type="button" onClick={() => setRequestOpen(true)}
             style={{ border: '1px solid var(--boutique-accent, #d4af37)', borderRadius: 10, background: 'var(--boutique-button, #063b30)', color: 'var(--boutique-button-ink, #fff)', fontSize: 13, fontWeight: 600, padding: '11px 14px', width: '100%', cursor: 'pointer' }}>
@@ -407,6 +433,33 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
           </div>}
         </>}
         {!selected && <>
+          {!config.demoMode && config.profileId && <div style={{marginTop:12,borderTop:'1px solid var(--boutique-accent, #e8bd43)',paddingTop:10}}>
+            <button type="button" aria-expanded={cardLookupOpen} onClick={()=>{setCardLookupOpen(v=>!v);setCardInfo(null);setCardNotice('');}}
+              style={{width:'100%',padding:11,borderRadius:10,border:'1px solid var(--boutique-accent, #e8bd43)',background:'var(--boutique-card, #002f2b)',color:'var(--boutique-ink, #f7f4ec)',cursor:'pointer',fontSize:12,fontWeight:700,textAlign:'left'}}>
+              ⭐ Consulter ma fidélité ou ma carte cadeau {cardLookupOpen?'−':'＋'}
+            </button>
+            {cardLookupOpen&&<div style={{display:'grid',gap:8,marginTop:9}}>
+              <label style={labelStyle}>Type de carte
+                <select style={fieldStyle} value={cardLookupKind} onChange={e=>{setCardLookupKind(e.target.value as 'loyalty'|'gift_card');setCardInfo(null);}}>
+                  <option value="loyalty">Carte de fidélité</option><option value="gift_card">Carte cadeau</option>
+                </select>
+              </label>
+              <label style={labelStyle}>Code complet communiqué par le commerçant
+                <input style={fieldStyle} value={cardCode} onChange={e=>{setCardCode(e.target.value);setCardInfo(null);}} placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" maxLength={36}/>
+              </label>
+              <button type="button" disabled={cardChecking} onClick={()=>void lookupCard()}
+                style={{padding:11,borderRadius:10,border:'1px solid var(--boutique-accent, #e8bd43)',background:'var(--boutique-button, #003c35)',color:'var(--boutique-button-ink, #fff)',fontWeight:700}}>
+                {cardChecking?'Vérification…':'Voir ma carte'}
+              </button>
+              {cardNotice&&<p role="status" style={{fontSize:11,margin:0}}>{cardNotice}</p>}
+              {cardInfo&&<div role="status" style={{border:'1px solid var(--boutique-accent, #e8bd43)',padding:10,borderRadius:9,fontSize:12}}>
+                <strong>{String(cardInfo.title||'Ma carte')}</strong>
+                {cardInfo.kind==='loyalty'&&<p style={{margin:'5px 0 0'}}>{String(cardInfo.stamps)} / {String(cardInfo.target)} achats · récompense : {String(cardInfo.reward||'à définir avec le commerçant')}</p>}
+                {cardInfo.kind==='gift_card'&&<p style={{margin:'5px 0 0'}}>Solde : {Number(cardInfo.balance).toFixed(3)} DT · {cardInfo.state==='active'?'Carte active':cardInfo.state==='pending'?'En attente d’activation':'Carte utilisée ou inactive'}</p>}
+              </div>}
+              <span style={{fontSize:10,color:'var(--boutique-muted, #d0ddd5)'}}>La validation des achats et l’utilisation du solde sont faites par le commerçant.</span>
+            </div>}
+          </div>}
           <BoutiquePushFollow profileId={config.profileId} demoMode={config.demoMode} />
           <BoutiquePushFollow profileId={config.profileId} demoMode={config.demoMode} promotion />
         </>}
