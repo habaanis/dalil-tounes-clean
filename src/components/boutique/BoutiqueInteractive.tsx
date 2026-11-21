@@ -406,7 +406,10 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
             {confirmation && selected.mode === 'order' && <p style={{margin:0,fontSize:11,color:'var(--boutique-muted, #d0ddd5)'}}>Dalil Tounes ne collecte aucun paiement pour cette commande. Convenez directement du règlement avec le professionnel, par WhatsApp ou un autre moyen.</p>}
           </div>}
         </>}
-        {!selected && <BoutiquePushFollow profileId={config.profileId} demoMode={config.demoMode} />}
+        {!selected && <>
+          <BoutiquePushFollow profileId={config.profileId} demoMode={config.demoMode} />
+          <BoutiquePushFollow profileId={config.profileId} demoMode={config.demoMode} promotion />
+        </>}
         {config.demoMode && <p style={{ fontSize: 10, margin: '10px 0 0', color: 'var(--boutique-muted, #d0ddd5)' }}>Aperçu uniquement — aucune demande ou paiement n'est envoyé.</p>}
       </section>
     </div>}
