@@ -143,6 +143,7 @@ export const Layout = ({ children }: LayoutProps) => {
             children: [
               { label: te.adminNav?.commercialManagement || 'Gestion Commerciaux', path: '/admin/commercial?tab=wallet' },
               { label: te.adminNav?.paymentsTracking || 'Suivi des Versements', path: '/admin/commercial?tab=versements' },
+              { label: language === 'ar' ? 'الاقتراحات المستلمة' : 'Suggestions reçues', path: '/admin/suggestions' },
             ],
           } as NavItem,
         ]
