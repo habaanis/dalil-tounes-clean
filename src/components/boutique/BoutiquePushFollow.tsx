@@ -94,12 +94,12 @@ export function BoutiquePushFollow({ profileId, demoMode, promotion = false }: {
     } catch (error) { setNotice(error instanceof Error ? error.message : 'Notifications indisponibles.'); }
     finally { setBusy(false); }
   };
-  return <div style={{ marginTop: 12, borderTop: '1px solid var(--boutique-accent, #e8bd43)', paddingTop: 11, textAlign: 'center' }}>
+  return <div style={{ marginTop: 8, borderTop: '1px solid var(--boutique-accent, #e8bd43)', paddingTop: 8, textAlign: 'left' }}>
     <button type="button" onClick={() => void toggle()} disabled={busy}
-      style={{ background: 'var(--boutique-button, #003c35)', color: 'var(--boutique-button-ink, #f7f4ec)', border: '1px solid var(--boutique-accent, #e8bd43)', padding: '8px 13px', fontSize: 12, borderRadius: 20, cursor: busy ? 'wait' : 'pointer', fontWeight: 600 }}>
+      style={{ background: 'var(--boutique-button, #003c35)', color: 'var(--boutique-button-ink, #f7f4ec)', border: '1px solid var(--boutique-accent, #e8bd43)', padding: '8px 11px', fontSize: 11, borderRadius: 16, cursor: busy ? 'wait' : 'pointer', fontWeight: 600 }}>
       {promotion?(subscribed?'✓ Ne plus recevoir les offres':'🔔 Recevoir les offres commerciales'):(subscribed?'✓ Ne plus suivre les nouveautés':'♧ Suivre les nouveautés')}
     </button>
-    <p style={{ fontSize: 10, color: 'var(--boutique-muted, #d0ddd5)', margin: '6px 0 0' }}>{promotion?'Notifications publicitaires facultatives. Vous pouvez vous désabonner ici, à tout moment.':'Alertes volontaires lors de nouveaux produits validés. Désabonnement ici, à tout moment.'}</p>
+    <p style={{ fontSize: 10, color: 'var(--boutique-muted, #d0ddd5)', margin: '4px 0 0' }}>{promotion?'Offres : abonnement facultatif et réversible.':'Nouveautés : abonnement facultatif et réversible.'}</p>
     {notice && <p role="status" style={{ fontSize: 11, margin: '7px 0 0', color: 'var(--boutique-ink, #f7f4ec)' }}>{notice}</p>}
   </div>;
 }
