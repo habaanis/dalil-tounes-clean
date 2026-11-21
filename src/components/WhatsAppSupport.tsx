@@ -140,7 +140,7 @@ export const WhatsAppSupport = ({
           className="mt-2 min-h-11 w-full rounded-xl bg-[#073b30] px-3 text-xs font-semibold text-white">
           {ui.send}
         </button>
-      </section>
+      </section>}
       {/* Bouton WhatsApp */}
       <button
         onClick={handleWhatsAppClick}
