@@ -57,6 +57,21 @@ const customerStatusLabels:Record<string,string>={
 const isUnpricedCustomerOrder=(profileId:string|undefined,title:string)=>
   profileId==='36f84b99-2c37-47d1-91ba-4c35cda8c1af'&&
   ['buffet de mariage','plateaux traiteur'].includes(title.trim().toLocaleLowerCase('fr'));
+// Only the two verified Aux Saveurs d'Anis catalogue entries have reviewed Arabic copy.
+// This is a display translation: merchant data in Supabase remains unchanged.
+const auxSaveursTitleAr:Record<string,string>={
+  'buffet de mariage':'بوفيه حفلات الزفاف',
+  'plateaux traiteur':'أطباق تقديم للمناسبات'
+};
+const auxSaveursDescriptionAr:Record<string,string>={
+  'buffets et réceptions sur devis':'بوفيهات وحفلات استقبال، السعر حسب الطلب',
+  'préparations traiteur pour vos événements, sur devis':'أطباق ومأكولات لمناسباتكم، السعر حسب الطلب'
+};
+const translateAuxSaveurs=(profileId:string|undefined,fr:string,ar:boolean,description=false)=>{
+  if(!ar||profileId!=='36f84b99-2c37-47d1-91ba-4c35cda8c1af')return fr;
+  const normalized=fr.trim().replace(/[.]$/,'').trim().toLocaleLowerCase('fr');
+  return (description?auxSaveursDescriptionAr:auxSaveursTitleAr)[normalized]||fr;
+};
 const savedLoyaltyKey=(id:string)=>'dalil-loyalty-local:'+id;
 const localRequestKey=(profileId:string)=>'dalil-customer-requests:'+profileId;
 const readLocalRequests=(profileId:string):LocalRequest[]=>{
@@ -79,6 +94,8 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
   const {language}=useLanguage();
   const ar=language==='ar';
   const t=(fr:string,arabic:string)=>ar?arabic:fr;
+  const titleFor=(title:string)=>translateAuxSaveurs(config.profileId,title,ar);
+  const descriptionFor=(description:string)=>translateAuxSaveurs(config.profileId,description,ar,true);
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<BoutiqueProduct | null>(null);
   const [offersOpen,setOffersOpen] = useState(false);
@@ -398,7 +415,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
     </button>
     {open && <div role="presentation" onMouseDown={close}
       style={{ position: 'fixed', inset: 0, zIndex: 9999, padding: 12, background: 'rgba(15,24,22,.67)', display: 'grid', placeItems: 'center' }}>
-      <section role="dialog" aria-modal="true" className="dalil-boutique-dialog" aria-label={selected ? selected.title : t('Boutique','المتجر')}
+      <section role="dialog" aria-modal="true" className="dalil-boutique-dialog" aria-label={selected ? titleFor(selected.title) : t('Boutique','المتجر')}
         onMouseDown={event => event.stopPropagation()}
         style={{ boxSizing: 'border-box', width: 'min(100%,450px)', maxHeight: 'min(87dvh,760px)', overflowY: 'auto', background: 'var(--boutique-surface, #003c35)', color: 'var(--boutique-ink, #f7f4ec)', borderRadius: 19, border: '1px solid var(--boutique-accent, #e8bd43)', boxShadow: '0 16px 55px #0005', padding: '14px 15px 17px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 12 }}>
@@ -460,7 +477,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
               {!config.demoMode && isRecentProduct(product) && <span style={{justifySelf:'start',padding:'2px 7px',borderRadius:20,background:'var(--boutique-accent, #e8bd43)',color:'var(--boutique-button, #003c35)',fontSize:10,fontWeight:700}}>{t('Nouveau','جديد')}</span>}
               {product.category?.trim().toLowerCase()==='packs cadeaux' && <span style={{padding:'0 4px',fontSize:10,color:'var(--boutique-accent, #e8bd43)'}}>🎁 {t('Pack cadeau','باقة هدايا')}</span>}
               {product.category?.trim().toLowerCase()==='cartes cadeaux' && <span style={{padding:'0 4px',fontSize:10,color:'var(--boutique-accent, #e8bd43)'}}>🎟️ {t('Carte cadeau','بطاقة هدية')}</span>}
-              <span style={{ padding: '0 4px', fontSize: 12, fontWeight: 600, overflowWrap: 'anywhere' }}>{product.title}</span>
+              <span style={{ padding: '0 4px', fontSize: 12, fontWeight: 600, overflowWrap: 'anywhere' }}>{titleFor(product.title)}</span>
               <span style={{ padding: '0 4px 3px', fontSize: 11, color: 'var(--boutique-accent, #e8bd43)' }}>{t("Voir les détails ›","عرض التفاصيل ›")}</span>
             </button>)}
           </div>
@@ -475,12 +492,12 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
             style={{ border: 0, background: 'transparent', fontSize: 12, color: 'var(--boutique-accent, #e8bd43)', padding: '0 0 10px', cursor: 'pointer' }}>{t("‹ Toutes les créations","‹ جميع المنتجات")}</button>
           <img src={selected.imageUrl} alt={selected.title} style={{ display: 'block', width: '100%', maxHeight: 190, aspectRatio: '16 / 9', objectFit: 'contain', background: 'var(--boutique-card, #002f2b)', borderRadius: 11 }} />
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 8, marginTop: 12 }}>
-            <strong style={{ color: 'var(--boutique-ink, #f7f4ec)', fontSize: 16 }}>{selected.title}</strong>
+            <strong style={{ color: 'var(--boutique-ink, #f7f4ec)', fontSize: 16 }}>{titleFor(selected.title)}</strong>
             <span style={{ whiteSpace: 'nowrap', fontWeight: 600, fontSize: 12, color: 'var(--boutique-accent, #e8bd43)' }}>{priceText(selected,ar)}</span>
           </div>
           {selected.category?.trim().toLowerCase()==='packs cadeaux' && <p style={{fontSize:11,color:'var(--boutique-accent, #e8bd43)',margin:'7px 0 0',fontWeight:700}}>🎁 {t('Pack cadeau · prix fixé par le commerçant','باقة هدايا · السعر يحدده التاجر')}</p>}
           {selected.category?.trim().toLowerCase()==='cartes cadeaux' && <p style={{fontSize:11,color:'var(--boutique-accent, #e8bd43)',margin:'7px 0 0',fontWeight:700}}>🎟️ {t('Carte cadeau · activée par le commerçant après vérification du paiement','بطاقة هدية · تُفعّل بعد التحقق من الدفع')}</p>}
-          {selected.description && <p style={{ fontSize: 12, lineHeight: 1.5, margin: '6px 0 12px', color: 'var(--boutique-muted, #d0ddd5)' }}>{selected.description}</p>}
+          {selected.description && <p style={{ fontSize: 12, lineHeight: 1.5, margin: '6px 0 12px', color: 'var(--boutique-muted, #d0ddd5)' }}>{descriptionFor(selected.description)}</p>}
           {!requestOpen ? (orderAvailability==='available'||config.demoMode) ? <button type="button" onClick={() => setRequestOpen(true)}
             style={{ border: '1px solid var(--boutique-accent, #d4af37)', borderRadius: 10, background: 'var(--boutique-button, #063b30)', color: 'var(--boutique-button-ink, #fff)', fontSize: 13, fontWeight: 600, padding: '11px 14px', width: '100%', cursor: 'pointer' }}>
             {selected.mode === 'quote'&&!isUnpricedCustomerOrder(config.profileId,selected.title) ? t('Demander un devis','طلب عرض سعر') : t('Commander','اطلب الآن')}
@@ -571,13 +588,13 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
                      detail.status==='received'?(ar?'تم استلام '+kind+' بنجاح.':'Votre '+kind+' a bien été reçue.'):
                      (ar?'حالة '+kind+': '+({'cancelled':'ملغى','completed':'مكتمل','fulfilled':'مكتمل','accepted':'مقبول','rejected':'مرفوض'}[detail.status]||'قيد المعالجة'):'Votre '+kind+' : '+(customerStatusLabels[detail.status]||'En cours de traitement')+'.')}</strong>
                    <span>{t('Numéro de suivi :','رقم المتابعة:')} <strong>{item.reference.slice(0,8).toUpperCase()}</strong></span>
-                   <span>{t('Article :','المنتج:')} {detail.productTitle}</span>
+                   <span>{t('Article :','المنتج:')} {titleFor(detail.productTitle)}</span>
                    <span>{t('Quantité :','الكمية:')} {detail.quantity}</span>
                    {requested&&<span>{t('Date souhaitée :','التاريخ المطلوب:')} {requested}</span>}
                    <span>{confirmed?(customerOrder?t('Merci pour votre commande et votre confiance !','شكراً على طلبكم وثقتكم!'):t('Merci pour votre confiance !','شكراً لثقتكم!')):t('Nous vous informerons de la suite de votre demande.','سنعلمكم بمستجدات طلبكم.')}</span>
                  </>;
                })():<>
-                 <strong>{item.kind==='quote'?t('Votre demande de devis','طلب عرض السعر'):t('Votre commande','الطلب')} {t('du','بتاريخ')} {new Date(item.createdAt).toLocaleDateString('fr-FR')}</strong>
+                 <strong>{item.kind==='quote'?t('Votre demande','طلبك'):t('Votre commande','الطلب')} {t('du','بتاريخ')} {new Date(item.createdAt).toLocaleDateString('fr-FR')}</strong>
                  <span>{t('Numéro de suivi :','رقم المتابعة:')} {item.reference.slice(0,8).toUpperCase()}</span>
                  <span>{item.proof?t('Appuyez sur « Actualiser » pour retrouver les informations de votre demande.','اضغط على تحديث للاطلاع على تفاصيل طلبك.'):t('Le suivi de cette ancienne demande n’est pas disponible.','متابعة هذا الطلب القديم غير متاحة.')}</span>
                </>}
