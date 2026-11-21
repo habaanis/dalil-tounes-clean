@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabaseUrl } from '../../lib/supabaseClient';
+import { useLanguage } from '../../context/LanguageContext';
 
 type PushConfig = { enabled?: boolean; publicKey?: string };
 type PushResult = { subscribed?: boolean; error?: string };
@@ -19,6 +20,9 @@ const toBytes = (key: string) => {
 };
 
 export function BoutiquePushFollow({ profileId, demoMode, promotion = false }: { profileId?: string; demoMode?: boolean; promotion?: boolean }) {
+  const {language}=useLanguage();
+  const ar=language==='ar';
+  const t=(fr:string,arabic:string)=>ar?arabic:fr;
   const [key, setKey] = useState('');
   const [subscribed, setSubscribed] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -64,42 +68,42 @@ export function BoutiquePushFollow({ profileId, demoMode, promotion = false }: {
       if (subscribed && !previous) {
         setSubscribed(false);
         window.localStorage.removeItem('dalil:push:' + (promotion ? 'promo:' : '') + profileId);
-        throw new Error('Abonnement du navigateur expiré. Réessayez.');
+        throw new Error(t('Abonnement du navigateur expiré. Réessayez.','انتهى اشتراك المتصفح. حاول مجدداً.'));
       }
       if (subscribed && previous) {
         const response = await api('unsubscribe', { profileId, subscription: previous.toJSON() }, promotion);
         const result = await response.json() as PushResult;
-        if (!response.ok || result.error) throw new Error('Désabonnement indisponible.');
+        if (!response.ok || result.error) throw new Error(t('Désabonnement indisponible.','إلغاء الاشتراك غير متاح.'));
         window.localStorage.removeItem('dalil:push:' + (promotion ? 'promo:' : '') + profileId);
         setSubscribed(false);
-        setNotice(promotion?'Vous ne recevrez plus les offres promotionnelles.':'Vous ne suivez plus cette boutique.');
+        setNotice(promotion?t('Vous ne recevrez plus les offres promotionnelles.','لن تصلك العروض الترويجية بعد الآن.'):t('Vous ne suivez plus cette boutique.','لم تعد تتابع هذا المتجر.'));
       } else {
-        if (Notification.permission === 'denied') throw new Error('Activez les notifications dans les réglages du navigateur.');
+        if (Notification.permission === 'denied') throw new Error(t('Activez les notifications dans les réglages du navigateur.','فعّل الإشعارات من إعدادات المتصفح.'));
         const permission = await Notification.requestPermission();
-        if (permission !== 'granted') throw new Error('Notifications non autorisées.');
+        if (permission !== 'granted') throw new Error(t('Notifications non autorisées.','لم يتم السماح بالإشعارات.'));
         const subscription = previous || await registration.pushManager.subscribe({
           userVisibleOnly: true,
           applicationServerKey: toBytes(key) as BufferSource,
         });
         const response = await api('subscribe', { profileId, subscription: subscription.toJSON() }, promotion);
         const result = await response.json() as PushResult;
-        if (!response.ok || !result.subscribed) throw new Error(result.error || 'Abonnement indisponible.');
+        if (!response.ok || !result.subscribed) throw new Error(result.error || t('Abonnement indisponible.','الاشتراك غير متاح.'));
         const verify = await api('status', { profileId, subscription: subscription.toJSON() }, promotion);
         const verified = await verify.json() as PushResult;
-        if (!verify.ok || verified.subscribed !== true) throw new Error('Inscription non confirmée. Réessayez.');
+        if (!verify.ok || verified.subscribed !== true) throw new Error(t('Inscription non confirmée. Réessayez.','لم يتأكد الاشتراك. حاول مجدداً.'));
         window.localStorage.setItem('dalil:push:' + (promotion ? 'promo:' : '') + profileId, subscription.endpoint);
         setSubscribed(true);
-        setNotice(promotion?'Vous recevrez les offres de cette boutique. Désabonnement possible ici.':'Vous suivrez les nouveautés de cette boutique.');
+        setNotice(promotion?t('Vous recevrez les offres de cette boutique. Désabonnement possible ici.','ستصلك عروض هذا المتجر. يمكنك إلغاء الاشتراك هنا.'):t('Vous suivrez les nouveautés de cette boutique.','ستصلك أحدث منتجات هذا المتجر.'));
       }
     } catch (error) { setNotice(error instanceof Error ? error.message : 'Notifications indisponibles.'); }
     finally { setBusy(false); }
   };
-  return <div style={{ marginTop: 8, borderTop: '1px solid var(--boutique-accent, #e8bd43)', paddingTop: 8, textAlign: 'left' }}>
+  return <div style={{ marginTop: 8, borderTop: '1px solid var(--boutique-accent, #e8bd43)', paddingTop: 8, textAlign: ar?'right':'left' }}>
     <button type="button" onClick={() => void toggle()} disabled={busy}
       style={{ background: 'var(--boutique-button, #003c35)', color: 'var(--boutique-button-ink, #f7f4ec)', border: '1px solid var(--boutique-accent, #e8bd43)', padding: '8px 11px', fontSize: 11, borderRadius: 16, cursor: busy ? 'wait' : 'pointer', fontWeight: 600 }}>
-      {promotion?(subscribed?'✓ Ne plus recevoir les offres':'🔔 Recevoir les offres commerciales'):(subscribed?'✓ Ne plus suivre les nouveautés':'♧ Suivre les nouveautés')}
+      {promotion?(subscribed?t('✓ Ne plus recevoir les offres','✓ إيقاف العروض'):t('🔔 Recevoir les offres commerciales','🔔 تلقي العروض التجارية')):(subscribed?t('✓ Ne plus suivre les nouveautés','✓ إيقاف متابعة الجديد'):t('♧ Suivre les nouveautés','♧ متابعة الجديد'))}
     </button>
-    <p style={{ fontSize: 10, color: 'var(--boutique-muted, #d0ddd5)', margin: '4px 0 0' }}>{promotion?'Offres : abonnement facultatif et réversible.':'Nouveautés : abonnement facultatif et réversible.'}</p>
+    <p style={{ fontSize: 10, color: 'var(--boutique-muted, #d0ddd5)', margin: '4px 0 0' }}>{promotion?t('Offres : abonnement facultatif et réversible.','العروض: الاشتراك اختياري ويمكن إلغاؤه.'):t('Nouveautés : abonnement facultatif et réversible.','الجديد: الاشتراك اختياري ويمكن إلغاؤه.')}</p>
     {notice && <p role="status" style={{ fontSize: 11, margin: '7px 0 0', color: 'var(--boutique-ink, #f7f4ec)' }}>{notice}</p>}
   </div>;
 }

@@ -37,10 +37,10 @@ const recentLabel = (product: BoutiqueProduct): string | null => {
 };
 const isRecentProduct = (product: BoutiqueProduct) => recentLabel(product) !== null;
 
-const priceText = (product: BoutiqueProduct) =>
+const priceText = (product: BoutiqueProduct, ar=false) =>
   typeof product.price === 'number'
-    ? new Intl.NumberFormat('fr-FR', { style: 'currency', currency: product.currency }).format(product.price)
-    : 'Sur devis';
+    ? new Intl.NumberFormat(ar?'ar-TN':'fr-FR', { style: 'currency', currency: product.currency }).format(product.price)
+    : ar?'السعر حسب الطلب':'Sur devis';
 
 const labelStyle = { display: 'grid', gap: 4, fontSize: 12, fontWeight: 500 } as const;
 const fieldStyle = { boxSizing: 'border-box', width: '100%', minWidth: 0, border: '1px solid var(--boutique-accent, #d7c7ae)', borderRadius: 9, padding: '9px 10px', fontSize: 14, background: 'var(--boutique-field, #fff)', color: 'var(--boutique-field-ink, #12372e)', colorScheme: 'light' } as const;
@@ -125,7 +125,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
     if(statusChecking||!config.profileId)return;
     const entries=localRequests.filter(item=>item.proof&&uuidPattern.test(item.proof)).slice(0,20);
     if(entries.length===0){
-      setStatusNotice('Les demandes déjà enregistrées sans clé sécurisée ne peuvent pas être consultées. Faites une nouvelle demande pour activer ce suivi.');
+      setStatusNotice(t('Les demandes déjà enregistrées sans clé sécurisée ne peuvent pas être consultées. Faites une nouvelle demande pour activer ce suivi.','لا يمكن متابعة الطلبات القديمة دون رمز تحقق آمن. أرسل طلباً جديداً لتفعيل المتابعة.'));
       return;
     }
     setStatusChecking(true);setStatusNotice('');
@@ -137,7 +137,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
       });
       const result=await response.json() as {items?:LiveOrderStatus[];error?:string};
       if(!response.ok||!Array.isArray(result.items)){
-        setStatusNotice(response.status===429?'Trop de vérifications. Réessayez plus tard.':'Vérification temporairement indisponible.');
+        setStatusNotice(response.status===429?t('Trop de vérifications. Réessayez plus tard.','محاولات كثيرة. حاول لاحقاً.'):t('Vérification temporairement indisponible.','التحقق غير متاح مؤقتاً.'));
         return;
       }
       const statuses:Record<string,LiveOrderStatus>={};
@@ -147,7 +147,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
       }
       setLiveStatuses(statuses);
       setStatusNotice(result.items.length?t('Votre suivi est à jour.','تم تحديث المتابعة.'):t('Aucune nouvelle information disponible pour ces demandes.','لا توجد معلومات جديدة.'));
-    }catch{setStatusNotice('Connexion indisponible. Vos références locales sont conservées.');}
+    }catch{setStatusNotice(t('Connexion indisponible. Vos références locales sont conservées.','الاتصال غير متاح. تم الاحتفاظ بمراجع الطلبات على هذا الهاتف.'));}
     finally{setStatusChecking(false);}
   };
   // A retry with unchanged data keeps the idempotency key. Editing a field
@@ -194,7 +194,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
     const code=(knownCode??cardCode).trim();
     if(!config.profileId||(cardLookupKind==='loyalty'?!/^[0-9]{4}$/.test(code):
       !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(code))){
-      setCardInfo(null);setCardNotice(cardLookupKind==='loyalty'?'Saisissez les 4 chiffres de votre carte de fidélité.':'Saisissez le code complet de votre carte cadeau.');return;
+      setCardInfo(null);setCardNotice(cardLookupKind==='loyalty'?t('Saisissez les 4 chiffres de votre carte de fidélité.','أدخل رمز بطاقة الوفاء المكون من 4 أرقام.'):t('Saisissez le code complet de votre carte cadeau.','أدخل الرمز الكامل لبطاقة الهدية.'));return;
     }
     setCardChecking(true);setCardNotice('');setCardInfo(null);
     if(cardLookupKind==='loyalty'){
@@ -212,13 +212,13 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
         if(config.profileId&&rememberLoyalty){try{
           localStorage.setItem(savedLoyaltyKey(config.profileId),code);setSavedLoyalty(code);
         }catch{/* unavailable */}}
-      }catch{setCardNotice('Vérification temporairement indisponible.');}
+      }catch{setCardNotice(t('Vérification temporairement indisponible.','التحقق غير متاح مؤقتاً.'));}
       finally{setCardChecking(false);}
       return;
     }
     const {data,error}=await supabase.rpc('dalil_sales_card_status',{p_business:config.profileId,p_kind:'gift_card',p_code:code});
     setCardChecking(false);
-    if(error||!data){setCardNotice('Carte introuvable pour cette boutique. Vérifiez le code.');return;}
+    if(error||!data){setCardNotice(t('Carte introuvable pour cette boutique. Vérifiez le code.','لم يتم العثور على البطاقة في هذا المتجر. تحقق من الرمز.'));return;}
     setCardInfo(data as Record<string,unknown>);
   };
   const phone = config.whatsapp.replace(/\D/g, '');
@@ -394,22 +394,23 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
     <button type="button" onClick={() => { setOpen(true); setSelected(null); setRequestOpen(false); setConfirmation(''); setCataloguePage(1); setCatalogueQuery(''); setCatalogueCategory(''); setOffersOpen(false); setCardLookupOpen(false); setCardInfo(null); }}
       aria-haspopup="dialog" className={triggerClassName}
       style={triggerClassName ? undefined : { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 7, padding: '8px 15px', border: '1px solid var(--boutique-accent, #e8bd43)', background: 'var(--boutique-button, #003c35)', color: 'var(--boutique-button-ink, #f7f4ec)', borderRadius: 24, fontSize: 13, fontWeight: 600, lineHeight: 1.2, cursor: 'pointer' }}>
-      {triggerIcon ?? <span aria-hidden="true">✦</span>}<span>{triggerLabel}</span>{!config.demoMode && products.some(isRecentProduct) && <span aria-label="Nouveautés" style={{fontSize:10,color:'var(--boutique-accent, #e8bd43)',fontWeight:700,whiteSpace:'nowrap'}}>●</span>}
+      {triggerIcon ?? <span aria-hidden="true">✦</span>}<span>{triggerLabel}</span>{!config.demoMode && products.some(isRecentProduct) && <span aria-label={t('Nouveautés','منتجات جديدة')} style={{fontSize:10,color:'var(--boutique-accent, #e8bd43)',fontWeight:700,whiteSpace:'nowrap'}}>●</span>}
     </button>
     {open && <div role="presentation" onMouseDown={close}
       style={{ position: 'fixed', inset: 0, zIndex: 9999, padding: 12, background: 'rgba(15,24,22,.67)', display: 'grid', placeItems: 'center' }}>
-      <section role="dialog" aria-modal="true" className="dalil-boutique-dialog" aria-label={selected ? selected.title : 'Boutique'}
+      <section role="dialog" aria-modal="true" className="dalil-boutique-dialog" aria-label={selected ? selected.title : t('Boutique','المتجر')}
         onMouseDown={event => event.stopPropagation()}
         style={{ boxSizing: 'border-box', width: 'min(100%,450px)', maxHeight: 'min(87dvh,760px)', overflowY: 'auto', background: 'var(--boutique-surface, #003c35)', color: 'var(--boutique-ink, #f7f4ec)', borderRadius: 19, border: '1px solid var(--boutique-accent, #e8bd43)', boxShadow: '0 16px 55px #0005', padding: '14px 15px 17px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 12 }}>
           <div style={{ display: 'grid', gap: 2 }}>
             <span style={{ color: 'var(--boutique-accent, #e8bd43)', fontSize: 10, letterSpacing: '.09em', textTransform: 'uppercase' }}>{config.merchantName}</span>
-            <strong style={{ color: 'var(--boutique-ink, #063b30)', fontSize: 17 }}>{selected ? selected.title : 'Boutique'}</strong>
+            <strong style={{ color: 'var(--boutique-ink, #063b30)', fontSize: 17 }}>{selected ? selected.title : t('Boutique','المتجر')}</strong>
           </div>
-          <button type="button" style={iconButton} onClick={close} aria-label="Fermer la boutique">×</button>
+          <button type="button" style={iconButton} onClick={close} aria-label={t('Fermer la boutique','إغلاق المتجر')}>×</button>
         </div>
+        <div dir={ar?'rtl':'ltr'}>
         {!selected ? <>
-          <p style={{ fontSize: 12, color: 'var(--boutique-muted, #d0ddd5)', margin: '0 0 12px' }}>Découvrez nos créations. Touchez une photo pour les détails.</p>
+          <p style={{ fontSize: 12, color: 'var(--boutique-muted, #d0ddd5)', margin: '0 0 12px' }}>{t("Découvrez nos créations. Touchez une photo pour les détails.","اكتشف منتجاتنا. اضغط على الصورة لمعرفة التفاصيل.")}</p>
           {offers.length>0&&<>
             <button type="button" aria-expanded={offersOpen} onClick={()=>setOffersOpen(v=>!v)}
               style={{width:'100%',marginBottom:10,padding:'10px 12px',border:'1px solid var(--boutique-accent, #e8bd43)',borderRadius:11,
@@ -421,7 +422,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
                 <strong style={{fontSize:12}}>{offer.title} · −{offer.value} %</strong>
                 {offer.description&&<p style={{margin:'5px 0',fontSize:11}}>{offer.description}</p>}
               </div>)}
-              <span style={{fontSize:10,color:'var(--boutique-muted, #d0ddd5)'}}>Réduction à confirmer directement avec le commerçant. Le total de la commande n’est pas recalculé automatiquement.</span>
+              <span style={{fontSize:10,color:'var(--boutique-muted, #d0ddd5)'}}>{t("Réduction à confirmer directement avec le commerçant. Le total de la commande n’est pas recalculé automatiquement.","يُرجى تأكيد الخصم مباشرة مع التاجر. لا يتم احتساب الخصم تلقائياً.")}</span>
             </div>}
           </>}
           {catalogueCategories.some(category=>category.toLowerCase()==='cartes cadeaux') && <button type="button"
@@ -430,7 +431,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
             style={{width:'100%',margin:'0 0 10px',padding:'10px 12px',border:'1px solid var(--boutique-accent, #e8bd43)',
               borderRadius:11,background:'var(--boutique-card, #002f2b)',color:'var(--boutique-ink, #f7f4ec)',fontSize:12,
               fontWeight:700,textAlign:'left',cursor:'pointer'}}>
-            🎟️ {catalogueCategory==='Cartes cadeaux'?'Fermer les cartes cadeaux':'Découvrir les cartes cadeaux'}
+            🎟️ {catalogueCategory==='Cartes cadeaux'?t('Fermer les cartes cadeaux','إغلاق بطاقات الهدايا'):t('Découvrir les cartes cadeaux','اكتشف بطاقات الهدايا')}
           </button>}
           {catalogueCategories.some(category=>category.toLowerCase()==='packs cadeaux') && <button type="button"
             aria-pressed={catalogueCategory==='Packs cadeaux'}
@@ -438,15 +439,15 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
             style={{width:'100%',margin:'0 0 10px',padding:'10px 12px',border:'1px solid var(--boutique-accent, #e8bd43)',
               borderRadius:11,background:'var(--boutique-card, #002f2b)',color:'var(--boutique-ink, #f7f4ec)',fontSize:12,
               fontWeight:700,textAlign:'left',cursor:'pointer'}}>
-            🎁 {catalogueCategory==='Packs cadeaux'?'Fermer les packs cadeaux':'Découvrir les packs cadeaux'}
+            🎁 {catalogueCategory==='Packs cadeaux'?t('Fermer les packs cadeaux','إغلاق باقات الهدايا'):t('Découvrir les packs cadeaux','اكتشف باقات الهدايا')}
           </button>}
           {(products.length > 12 || catalogueCategories.length > 0) && <div style={{display:'grid',gap:8,margin:'0 0 12px'}}>
-            <label style={{...labelStyle,color:'var(--boutique-ink, #f7f4ec)'}}>Rechercher une création
-              <input type="search" value={catalogueQuery} onChange={event => {setCatalogueQuery(event.target.value);setCataloguePage(1);}} placeholder="Nom ou description" style={fieldStyle} />
+            <label style={{...labelStyle,color:'var(--boutique-ink, #f7f4ec)'}}>{t("Rechercher une création","البحث عن منتج")}
+              <input type="search" value={catalogueQuery} onChange={event => {setCatalogueQuery(event.target.value);setCataloguePage(1);}} placeholder={t('Nom ou description','الاسم أو الوصف')} style={fieldStyle} />
             </label>
-            {catalogueCategories.length > 0 && <label style={{...labelStyle,color:'var(--boutique-ink, #f7f4ec)'}}>Catégorie
+            {catalogueCategories.length > 0 && <label style={{...labelStyle,color:'var(--boutique-ink, #f7f4ec)'}}>{t('Catégorie','الفئة')}
               <select value={catalogueCategory} onChange={event => {setCatalogueCategory(event.target.value);setCataloguePage(1);}} style={fieldStyle}>
-                <option value="">Toutes les catégories</option>
+                <option value="">{t("Toutes les catégories","كل الفئات")}</option>
                 {catalogueCategories.map(category => <option key={category} value={category}>{category}</option>)}
               </select>
             </label>}
@@ -456,90 +457,90 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
               style={{ display: 'grid', gap: 5, textAlign: 'left', padding: 5, background: 'var(--boutique-card, #002f2b)', color: 'var(--boutique-ink, #f7f4ec)', border: '1px solid var(--boutique-accent, #e8bd43)', borderRadius: 12, minWidth: 0, cursor: 'pointer' }}>
               <img src={product.imageUrl} alt={product.title} loading="lazy"
                 style={{ width: '100%', aspectRatio: '1 / 1', objectFit: 'cover', borderRadius: 8 }} />
-              {!config.demoMode && isRecentProduct(product) && <span style={{justifySelf:'start',padding:'2px 7px',borderRadius:20,background:'var(--boutique-accent, #e8bd43)',color:'var(--boutique-button, #003c35)',fontSize:10,fontWeight:700}}>Nouveau</span>}
-              {product.category?.trim().toLowerCase()==='packs cadeaux' && <span style={{padding:'0 4px',fontSize:10,color:'var(--boutique-accent, #e8bd43)'}}>🎁 Pack cadeau</span>}
-              {product.category?.trim().toLowerCase()==='cartes cadeaux' && <span style={{padding:'0 4px',fontSize:10,color:'var(--boutique-accent, #e8bd43)'}}>🎟️ Carte cadeau</span>}
+              {!config.demoMode && isRecentProduct(product) && <span style={{justifySelf:'start',padding:'2px 7px',borderRadius:20,background:'var(--boutique-accent, #e8bd43)',color:'var(--boutique-button, #003c35)',fontSize:10,fontWeight:700}}>{t('Nouveau','جديد')}</span>}
+              {product.category?.trim().toLowerCase()==='packs cadeaux' && <span style={{padding:'0 4px',fontSize:10,color:'var(--boutique-accent, #e8bd43)'}}>🎁 {t('Pack cadeau','باقة هدايا')}</span>}
+              {product.category?.trim().toLowerCase()==='cartes cadeaux' && <span style={{padding:'0 4px',fontSize:10,color:'var(--boutique-accent, #e8bd43)'}}>🎟️ {t('Carte cadeau','بطاقة هدية')}</span>}
               <span style={{ padding: '0 4px', fontSize: 12, fontWeight: 600, overflowWrap: 'anywhere' }}>{product.title}</span>
-              <span style={{ padding: '0 4px 3px', fontSize: 11, color: 'var(--boutique-accent, #e8bd43)' }}>Voir les détails ›</span>
+              <span style={{ padding: '0 4px 3px', fontSize: 11, color: 'var(--boutique-accent, #e8bd43)' }}>{t("Voir les détails ›","عرض التفاصيل ›")}</span>
             </button>)}
           </div>
-          {filteredProducts.length === 0 && <p role="status" style={{fontSize:12,color:'var(--boutique-muted, #d0ddd5)',textAlign:'center',padding:'14px 0'}}>Aucun produit ne correspond à votre recherche.</p>}
-          {pageCount > 1 && <nav aria-label="Pages du catalogue" style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:10,marginTop:12}}>
-            <button type="button" disabled={safePage <= 1} onClick={() => setCataloguePage(p => Math.max(1,p-1))} style={{...iconButton,padding:'0 12px',fontSize:12,opacity:safePage <= 1 ? .4 : 1}}>Précédent</button>
-            <span style={{fontSize:12,color:'var(--boutique-muted, #d0ddd5)'}}>Page {safePage} / {pageCount}</span>
-            <button type="button" disabled={safePage >= pageCount} onClick={() => setCataloguePage(p => Math.min(pageCount,p+1))} style={{...iconButton,padding:'0 12px',fontSize:12,opacity:safePage >= pageCount ? .4 : 1}}>Suivant</button>
+          {filteredProducts.length === 0 && <p role="status" style={{fontSize:12,color:'var(--boutique-muted, #d0ddd5)',textAlign:'center',padding:'14px 0'}}>{t("Aucun produit ne correspond à votre recherche.","لا توجد منتجات مطابقة لبحثك.")}</p>}
+          {pageCount > 1 && <nav aria-label={t('Pages du catalogue','صفحات قائمة المنتجات')} style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:10,marginTop:12}}>
+            <button type="button" disabled={safePage <= 1} onClick={() => setCataloguePage(p => Math.max(1,p-1))} style={{...iconButton,padding:'0 12px',fontSize:12,opacity:safePage <= 1 ? .4 : 1}}>{t("Précédent","السابق")}</button>
+            <span style={{fontSize:12,color:'var(--boutique-muted, #d0ddd5)'}}>{t('Page','صفحة')} {safePage} / {pageCount}</span>
+            <button type="button" disabled={safePage >= pageCount} onClick={() => setCataloguePage(p => Math.min(pageCount,p+1))} style={{...iconButton,padding:'0 12px',fontSize:12,opacity:safePage >= pageCount ? .4 : 1}}>{t("Suivant","التالي")}</button>
           </nav>}
         </> : <>
           <button type="button" onClick={() => { if(sending)return; setSelected(null); setRequestOpen(false); setError(''); setConfirmation(''); }}
-            style={{ border: 0, background: 'transparent', fontSize: 12, color: 'var(--boutique-accent, #e8bd43)', padding: '0 0 10px', cursor: 'pointer' }}>‹ Toutes les créations</button>
+            style={{ border: 0, background: 'transparent', fontSize: 12, color: 'var(--boutique-accent, #e8bd43)', padding: '0 0 10px', cursor: 'pointer' }}>{t("‹ Toutes les créations","‹ جميع المنتجات")}</button>
           <img src={selected.imageUrl} alt={selected.title} style={{ display: 'block', width: '100%', maxHeight: 190, aspectRatio: '16 / 9', objectFit: 'contain', background: 'var(--boutique-card, #002f2b)', borderRadius: 11 }} />
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 8, marginTop: 12 }}>
             <strong style={{ color: 'var(--boutique-ink, #f7f4ec)', fontSize: 16 }}>{selected.title}</strong>
-            <span style={{ whiteSpace: 'nowrap', fontWeight: 600, fontSize: 12, color: 'var(--boutique-accent, #e8bd43)' }}>{priceText(selected)}</span>
+            <span style={{ whiteSpace: 'nowrap', fontWeight: 600, fontSize: 12, color: 'var(--boutique-accent, #e8bd43)' }}>{priceText(selected,ar)}</span>
           </div>
-          {selected.category?.trim().toLowerCase()==='packs cadeaux' && <p style={{fontSize:11,color:'var(--boutique-accent, #e8bd43)',margin:'7px 0 0',fontWeight:700}}>🎁 Pack cadeau · prix fixé par le commerçant</p>}
-          {selected.category?.trim().toLowerCase()==='cartes cadeaux' && <p style={{fontSize:11,color:'var(--boutique-accent, #e8bd43)',margin:'7px 0 0',fontWeight:700}}>🎟️ Carte cadeau · activée par le commerçant après vérification du paiement</p>}
+          {selected.category?.trim().toLowerCase()==='packs cadeaux' && <p style={{fontSize:11,color:'var(--boutique-accent, #e8bd43)',margin:'7px 0 0',fontWeight:700}}>🎁 {t('Pack cadeau · prix fixé par le commerçant','باقة هدايا · السعر يحدده التاجر')}</p>}
+          {selected.category?.trim().toLowerCase()==='cartes cadeaux' && <p style={{fontSize:11,color:'var(--boutique-accent, #e8bd43)',margin:'7px 0 0',fontWeight:700}}>🎟️ {t('Carte cadeau · activée par le commerçant après vérification du paiement','بطاقة هدية · تُفعّل بعد التحقق من الدفع')}</p>}
           {selected.description && <p style={{ fontSize: 12, lineHeight: 1.5, margin: '6px 0 12px', color: 'var(--boutique-muted, #d0ddd5)' }}>{selected.description}</p>}
           {!requestOpen ? (orderAvailability==='available'||config.demoMode) ? <button type="button" onClick={() => setRequestOpen(true)}
             style={{ border: '1px solid var(--boutique-accent, #d4af37)', borderRadius: 10, background: 'var(--boutique-button, #063b30)', color: 'var(--boutique-button-ink, #fff)', fontSize: 13, fontWeight: 600, padding: '11px 14px', width: '100%', cursor: 'pointer' }}>
-            {selected.mode === 'quote' ? 'Demander un devis' : 'Commander'}
+            {selected.mode === 'quote'&&!isUnpricedCustomerOrder(config.profileId,selected.title) ? t('Demander un devis','طلب عرض سعر') : t('Commander','اطلب الآن')}
           </button> : <div role="status" style={{display:'grid',gap:9,padding:12,border:'1px solid var(--boutique-accent, #e8bd43)',borderRadius:10,background:'var(--boutique-card, #002f2b)'}}>
             <p style={{margin:0,fontSize:12,color:'var(--boutique-muted, #d0ddd5)'}}>{orderAvailability==='checking'
-              ? 'Vérification de la disponibilité des demandes…'
-              : 'Les demandes via Dalil Tounes ne sont pas encore ouvertes. Aucun formulaire n’est envoyé ni enregistré.'}</p>
+              ? t('Vérification de la disponibilité des demandes…','جارٍ التحقق من توفر الطلبات…')
+              : t('Les demandes via Dalil Tounes ne sont pas encore ouvertes. Aucun formulaire n’est envoyé ni enregistré.','الطلبات عبر دليل تونس غير متاحة حالياً. لن يتم تسجيل أي طلب.')}</p>
             {orderAvailability==='unavailable' && canWhatsApp && <button type="button" onClick={contactDirectWhatsApp}
               style={{border:'1px solid var(--boutique-accent, #e8bd43)',borderRadius:10,padding:'11px 12px',background:'var(--boutique-button, #003c35)',color:'var(--boutique-button-ink, #f7f4ec)',fontWeight:700}}>
-              Contacter directement sur WhatsApp (sans enregistrement)
+              {t('Contacter directement sur WhatsApp (sans enregistrement)','التواصل مباشرة عبر واتساب (دون تسجيل طلب)')}
             </button>}
           </div> : <div style={{ display: 'grid', gap: 10, borderTop: '1px solid var(--boutique-accent, #e8bd43)', paddingTop: 12 }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <strong style={{ fontSize: 13 }}>Votre demande</strong>
-              <button type="button" onClick={() => setRequestOpen(false)} style={{ border: 0, color: 'var(--boutique-accent, #e8bd43)', background: 'transparent', fontSize: 12, cursor: 'pointer' }}>Réduire</button>
+              <strong style={{ fontSize: 13 }}>{t("Votre demande","طلبك")}</strong>
+              <button type="button" onClick={() => setRequestOpen(false)} style={{ border: 0, color: 'var(--boutique-accent, #e8bd43)', background: 'transparent', fontSize: 12, cursor: 'pointer' }}>{t("Réduire","تصغير")}</button>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 9 }}>
-              <label style={labelStyle}>Nom<input value={name} disabled={Boolean(confirmation)||sending} onChange={event => { setName(event.target.value); editRequest(); }} maxLength={120} placeholder="Votre nom" style={fieldStyle}/></label>
-              <label style={labelStyle}>Qté<input type="number" min="1" max="99" value={quantity} disabled={Boolean(confirmation)||sending} onChange={event => { setQuantity(Math.max(1,Math.min(99,Number(event.target.value)||1))); editRequest(); }} style={fieldStyle}/></label>
+              <label style={labelStyle}>{t('Nom','الاسم')}<input value={name} disabled={Boolean(confirmation)||sending} onChange={event => { setName(event.target.value); editRequest(); }} maxLength={120} placeholder={t('Votre nom','اسمك')} style={fieldStyle}/></label>
+              <label style={labelStyle}>{t('Qté','الكمية')}<input type="number" min="1" max="99" value={quantity} disabled={Boolean(confirmation)||sending} onChange={event => { setQuantity(Math.max(1,Math.min(99,Number(event.target.value)||1))); editRequest(); }} style={fieldStyle}/></label>
             </div>
             <fieldset disabled={Boolean(confirmation)||sending} style={{border:0,padding:0,margin:0,display:'grid',gap:7}}>
-              <legend style={{fontSize:12,fontWeight:600,marginBottom:5}}>Comment souhaitez-vous être contacté ?</legend>
+              <legend style={{fontSize:12,fontWeight:600,marginBottom:5}}>{t("Comment souhaitez-vous être contacté ?","كيف تفضل أن نتواصل معك؟")}</legend>
               <div style={{display:'flex',gap:14,fontSize:12}}>
                 <label><input type="radio" name="boutique-contact-channel" checked={contactChannel==='whatsapp'} onChange={() => {setContactChannel('whatsapp');setContact('');editRequest();}} /> WhatsApp</label>
-                <label><input type="radio" name="boutique-contact-channel" checked={contactChannel==='email'} onChange={() => {setContactChannel('email');setContact('');editRequest();}} /> E-mail</label>
+                <label><input type="radio" name="boutique-contact-channel" checked={contactChannel==='email'} onChange={() => {setContactChannel('email');setContact('');editRequest();}} /> {t('E-mail','البريد الإلكتروني')}</label>
               </div>
             </fieldset>
-            <label style={labelStyle}>{contactChannel==='email'?'Adresse e-mail':'Numéro de téléphone (WhatsApp)'}<input type={contactChannel==='email'?'email':'tel'} autoComplete={contactChannel==='email'?'email':'tel'} value={contact} disabled={Boolean(confirmation)||sending} onChange={event => { setContact(event.target.value); editRequest(); }} maxLength={150} placeholder={contactChannel==='email'?'nom@exemple.com':'+216 XX XXX XXX'} style={fieldStyle}/></label>
-            <label style={labelStyle}>Date souhaitée (facultative)<input type="date" value={requestedDate} disabled={Boolean(confirmation)||sending} onChange={event => { setRequestedDate(event.target.value); editRequest(); }} min={new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10)} style={fieldStyle}/></label>
-            <label style={labelStyle}>Précisions (facultatif)<textarea value={details} disabled={Boolean(confirmation)||sending} onChange={event => { setDetails(event.target.value); editRequest(); }} maxLength={960} rows={2} placeholder="Nombre de personnes, retrait ou livraison…" style={{...fieldStyle, resize: 'vertical'}}/></label>
+            <label style={labelStyle}>{contactChannel==='email'?t('Adresse e-mail','البريد الإلكتروني'):t('Numéro de téléphone (WhatsApp)','رقم الهاتف (واتساب)')}<input type={contactChannel==='email'?'email':'tel'} autoComplete={contactChannel==='email'?'email':'tel'} value={contact} disabled={Boolean(confirmation)||sending} onChange={event => { setContact(event.target.value); editRequest(); }} maxLength={150} placeholder={contactChannel==='email'?'nom@exemple.com':'+216 XX XXX XXX'} style={fieldStyle}/></label>
+            <label style={labelStyle}>{t("Date souhaitée (facultative)","التاريخ المطلوب (اختياري)")}<input type="date" value={requestedDate} disabled={Boolean(confirmation)||sending} onChange={event => { setRequestedDate(event.target.value); editRequest(); }} min={new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10)} style={fieldStyle}/></label>
+            <label style={labelStyle}>{t("Précisions (facultatif)","تفاصيل إضافية (اختياري)")}<textarea value={details} disabled={Boolean(confirmation)||sending} onChange={event => { setDetails(event.target.value); editRequest(); }} maxLength={960} rows={2} placeholder={t('Nombre de personnes, retrait ou livraison…','عدد الأشخاص، الاستلام أو التوصيل…')} style={{...fieldStyle, resize: 'vertical'}}/></label>
             <label style={{display:'flex',gap:8,alignItems:'flex-start',fontSize:11,lineHeight:1.4}}>
               <input type="checkbox" checked={customerPushOptIn} disabled={Boolean(confirmation)||sending}
                 onChange={event=>{setCustomerPushOptIn(event.target.checked);setCustomerPushNotice('');}}
                 style={{marginTop:2,flexShrink:0}}/>
-              <span>Recevoir une notification sur ce téléphone quand ma commande sera confirmée (facultatif).</span>
+              <span>{t("Recevoir une notification sur ce téléphone quand ma commande sera confirmée (facultatif).","تلقي إشعار على هذا الهاتف عند تأكيد طلبي (اختياري).")}</span>
             </label>
             {customerPushNotice && <p role="status" style={{margin:0,fontSize:11,color:'var(--boutique-muted, #d0ddd5)'}}>{customerPushNotice}</p>}
-            {selected.mode === 'order' && typeof selected.price === 'number' && Number.isFinite(selected.price) && selected.price > 0 && <p style={{margin:0,fontSize:12,fontWeight:600,color:'var(--boutique-muted, #d0ddd5)'}}>Total indicatif : {new Intl.NumberFormat('fr-FR',{style:'currency',currency:selected.currency}).format(Math.round(selected.price * quantity * (selected.currency === 'TND' ? 1000 : 100))/(selected.currency === 'TND' ? 1000 : 100))} · hors livraison éventuelle</p>}
-            {selected.currency !== 'TND' && !config.demoMode && <p role="note" style={{margin:0,fontSize:11,color:'var(--boutique-muted, #d0ddd5)'}}>Prise de commandes en euros indisponible pour le moment. Cette vitrine reste consultable.</p>}
-            {selected.mode === 'order' && (typeof selected.price !== 'number' || !Number.isFinite(selected.price) || selected.price <= 0) && <p role="note" style={{margin:0,fontSize:11,color:'var(--boutique-muted, #d0ddd5)'}}>Prix à confirmer par le professionnel : aucune commande ne peut être enregistrée sans prix valide.</p>}
+            {selected.mode === 'order' && typeof selected.price === 'number' && Number.isFinite(selected.price) && selected.price > 0 && <p style={{margin:0,fontSize:12,fontWeight:600,color:'var(--boutique-muted, #d0ddd5)'}}>{t('Total indicatif :','المجموع التقريبي:')} {new Intl.NumberFormat('fr-FR',{style:'currency',currency:selected.currency}).format(Math.round(selected.price * quantity * (selected.currency === 'TND' ? 1000 : 100))/(selected.currency === 'TND' ? 1000 : 100))} · hors livraison éventuelle</p>}
+            {selected.currency !== 'TND' && !config.demoMode && <p role="note" style={{margin:0,fontSize:11,color:'var(--boutique-muted, #d0ddd5)'}}>{t("Prise de commandes en euros indisponible pour le moment. Cette vitrine reste consultable.","الطلبات باليورو غير متاحة حالياً. يمكنك الاستمرار في تصفح الواجهة.")}</p>}
+            {selected.mode === 'order' && (typeof selected.price !== 'number' || !Number.isFinite(selected.price) || selected.price <= 0) && <p role="note" style={{margin:0,fontSize:11,color:'var(--boutique-muted, #d0ddd5)'}}>{t('Prix à confirmer par le professionnel','يحدد التاجر السعر')} : aucune commande ne peut être enregistrée sans prix valide.</p>}
             {error && <p role="alert" style={{ fontSize: 12, color: '#9e2828', margin: 0 }}>{error}</p>}
-            {selected.mode==='order'&&<p style={{margin:0,fontSize:11,color:'var(--boutique-muted, #d0ddd5)'}}>Votre demande est enregistrée sans paiement sur Dalil Tounes. Le professionnel vous contactera pour convenir directement des modalités de règlement et de livraison.</p>}
+            {selected.mode==='order'&&<p style={{margin:0,fontSize:11,color:'var(--boutique-muted, #d0ddd5)'}}>{t("Votre demande est enregistrée sans paiement sur Dalil Tounes. Le professionnel vous contactera pour convenir directement des modalités de règlement et de livraison.","تم تسجيل طلبك دون دفع عبر دليل تونس. سيتواصل معك التاجر للاتفاق على الدفع والتسليم.")}</p>}
             <button type="button" onClick={()=>void send()} disabled={sending||Boolean(confirmation)}
               style={{ width: '100%', padding: 10, border: '1px solid var(--boutique-accent, #d4af37)', borderRadius: 10, background: 'var(--boutique-button, #063b30)', color: 'var(--boutique-button-ink, #fff)', cursor: sending||confirmation?'default':'pointer', fontSize: 13, fontWeight: 600, opacity:(sending || Boolean(confirmation)) ? 0.76 : 1 }}>
-              {sending?'Enregistrement…':confirmation?'Demande enregistrée':config.demoMode?'Tester la demande (simulation)':selected.mode==='quote'&&!isUnpricedCustomerOrder(config.profileId,selected.title)?'Envoyer la demande de devis':'Envoyer ma commande'}
+              {sending?t('Enregistrement…','جارٍ التسجيل…'):confirmation?t('Demande enregistrée','تم تسجيل الطلب'):config.demoMode?t('Tester la demande (simulation)','تجربة الطلب (محاكاة)'):selected.mode==='quote'&&!isUnpricedCustomerOrder(config.profileId,selected.title)?t('Envoyer la demande de devis','إرسال طلب عرض سعر'):t('Envoyer ma commande','إرسال طلبي')}
             </button>
             {confirmation&&<div role="status" style={{display:'grid',gap:8,background:'var(--boutique-button, #f3f6ea)',color:'var(--boutique-button-ink, #355535)',border:'1px solid var(--boutique-accent, #d4af37)',borderRadius:10,padding:12,fontSize:12}}>
-              <strong>{selected&&isUnpricedCustomerOrder(config.profileId,selected.title)?'Merci pour votre commande ! Elle a bien été transmise au professionnel.':'Votre demande a bien été transmise au professionnel.'}</strong>
-              <span>Référence : {confirmation.slice(0,8).toUpperCase()} · En attente de traitement · Aucun paiement enregistré.</span>
+              <strong>{selected&&isUnpricedCustomerOrder(config.profileId,selected.title)?t('Merci pour votre commande ! Elle a bien été transmise au professionnel.','شكراً على طلبكم! تم إرسال طلبكم إلى التاجر.'):t('Votre demande a bien été transmise au professionnel.','تم إرسال طلبكم إلى التاجر بنجاح.')}</strong>
+              <span>{t('Référence :','المرجع:')} {confirmation.slice(0,8).toUpperCase()} · {t('En attente de traitement','بانتظار المعالجة')} · {t('Aucun paiement enregistré.','لم يتم تسجيل أي دفع.')}</span>
               {contactChannel==='email' && canEmail && <button type="button" onClick={contactEmail}
                 style={{border:'1px solid var(--boutique-accent, #d4af37)',borderRadius:10,padding:'11px 12px',background:'var(--boutique-surface, #fff)',color:'var(--boutique-ink, #245c37)',fontWeight:700,cursor:'pointer'}}>
-                Préparer un e-mail au professionnel
+                {t('Préparer un e-mail au professionnel','إعداد بريد إلكتروني للتاجر')}
               </button>}
               {contactChannel==='whatsapp' && canWhatsApp&&<button type="button" onClick={contactWhatsApp}
                 style={{border:'1px solid var(--boutique-accent, #d4af37)',borderRadius:10,padding:'11px 12px',background:'var(--boutique-surface, #fff)',color:'var(--boutique-ink, #245c37)',fontWeight:700,cursor:'pointer'}}>
-                Contacter le professionnel sur WhatsApp
+                {t('Contacter le professionnel sur WhatsApp','التواصل مع التاجر عبر واتساب')}
               </button>}
-              <span>La demande reste enregistrée dans Dalil Tounes, même sans message supplémentaire. L'envoi d'un e-mail doit être confirmé dans votre messagerie.</span>
+              <span>{t("La demande reste enregistrée dans Dalil Tounes, même sans message supplémentaire. L'envoi d'un e-mail doit être confirmé dans votre messagerie.","يبقى طلبك مسجلاً في دليل تونس حتى دون إرسال رسالة إضافية. يجب تأكيد إرسال البريد من تطبيق البريد.")}</span>
             </div>}
-            {confirmation && selected.mode === 'order' && <p style={{margin:0,fontSize:11,color:'var(--boutique-muted, #d0ddd5)'}}>Dalil Tounes ne collecte aucun paiement pour cette commande. Convenez directement du règlement avec le professionnel, par WhatsApp ou un autre moyen.</p>}
+            {confirmation && selected.mode === 'order' && <p style={{margin:0,fontSize:11,color:'var(--boutique-muted, #d0ddd5)'}}>{t("Dalil Tounes ne collecte aucun paiement pour cette commande. Convenez directement du règlement avec le professionnel, par WhatsApp ou un autre moyen.","دليل تونس لا يجمع أي دفع مقابل هذا الطلب. اتفق مباشرة مع التاجر على طريقة الدفع.")}</p>}
           </div>}
         </>}
         {!selected && <>
@@ -582,7 +583,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
                </>}
               </div>)}
              {localRequests.length>0&&<button type="button" onClick={()=>{
-               if(!window.confirm('Effacer les références de ce téléphone ? Les demandes enregistrées chez le commerçant ne seront pas supprimées.'))return;
+               if(!window.confirm(t('Effacer les références de ce téléphone ? Les demandes enregistrées chez le commerçant ne seront pas supprimées.','هل تريد حذف المراجع من هذا الهاتف؟ لن يتم حذف الطلبات المسجلة لدى التاجر.')))return;
                try{window.localStorage.removeItem(localRequestKey(config.profileId!));}catch{/* ignored */}
                setLocalRequests([]);setLiveStatuses({});setStatusNotice('');
               }} style={{padding:9,borderRadius:8,border:'1px solid var(--boutique-accent, #e8bd43)',background:'transparent',color:'inherit'}}>{t('Effacer les références de cet appareil','حذف المراجع من هذا الجهاز')}</button>}
@@ -623,14 +624,14 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
               </button>
               {cardNotice&&<p role="status" style={{fontSize:11,margin:0}}>{cardNotice}</p>}
               {cardInfo&&<div role="status" style={{border:'1px solid var(--boutique-accent, #e8bd43)',padding:10,borderRadius:9,fontSize:12}}>
-                <strong>{String(cardInfo.title||'Ma carte')}</strong>
+                <strong>{String(cardInfo.title||t('Ma carte','بطاقتي'))}</strong>
                 {cardInfo.kind==='loyalty'&&<div style={{display:'grid',gap:4,marginTop:6}}>
                   <strong>{String(cardInfo.stamps)} {t('achat(s) sur','عملية شراء من أصل')} {String(cardInfo.target)} {t('pour votre prochain cadeau','للحصول على هديتك القادمة')}</strong>
-                  <span>{t('Votre cadeau :','هديتك:')} {String(cardInfo.reward||'à définir avec le commerçant')}</span>
+                  <span>{t('Votre cadeau :','هديتك:')} {String(cardInfo.reward||t('à définir avec le commerçant','يحددها التاجر'))}</span>
                   <span>{t('Récompenses déjà remises :','الهدايا المستلمة:')} {Number.isFinite(Number(cardInfo.rewards_given))?Number(cardInfo.rewards_given):0}</span>
                   {Number(cardInfo.stamps)>=Number(cardInfo.target)&&<strong>{t('Votre cadeau est prêt ! Contactez le commerçant pour en profiter.','هديتك جاهزة! تواصل مع التاجر لاستلامها.')}</strong>}
                 </div>}
-                {cardInfo.kind==='gift_card'&&<p style={{margin:'5px 0 0'}}>Solde : {Number(cardInfo.balance).toFixed(3)} DT · {cardInfo.state==='active'?'Carte active':cardInfo.state==='pending'?'En attente d’activation':'Carte utilisée ou inactive'}</p>}
+                {cardInfo.kind==='gift_card'&&<p style={{margin:'5px 0 0'}}>{t('Solde :','الرصيد:')} {Number(cardInfo.balance).toFixed(3)} {t('DT','د.ت')} · {cardInfo.state==='active'?t('Carte active','بطاقة مفعلة'):cardInfo.state==='pending'?t('En attente d’activation','بانتظار التفعيل'):t('Carte utilisée ou inactive','بطاقة مستعملة أو غير نشطة')}</p>}
               </div>}
               <span style={{fontSize:11,color:'var(--boutique-muted, #d0ddd5)'}}>{t('Vos achats sont ajoutés après validation par le commerçant. Une demande ou une commande confirmée ne donne pas automatiquement un point.','تُضاف المشتريات بعد تأكيد التاجر. تأكيد الطلب لا يمنح نقاط وفاء تلقائياً.')}</span>
             </div>}
@@ -639,7 +640,8 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
           <BoutiquePushFollow profileId={config.profileId} demoMode={config.demoMode} />
           <BoutiquePushFollow profileId={config.profileId} demoMode={config.demoMode} promotion />
         </>}
-        {config.demoMode && <p style={{ fontSize: 10, margin: '10px 0 0', color: 'var(--boutique-muted, #d0ddd5)' }}>Aperçu uniquement — aucune demande ou paiement n'est envoyé.</p>}
+        {config.demoMode && <p style={{ fontSize: 10, margin: '10px 0 0', color: 'var(--boutique-muted, #d0ddd5)' }}>{t("Aperçu uniquement — aucune demande ou paiement n'est envoyé.","عرض تجريبي فقط — لن يتم إرسال أي طلب أو دفع.")}</p>}
+        </div>
       </section>
     </div>}
   </>;
