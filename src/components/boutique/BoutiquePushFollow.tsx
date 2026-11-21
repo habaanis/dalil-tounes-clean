@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabaseUrl } from '../../lib/supabaseClient';
+import { useLanguage } from '../../context/LanguageContext';
 
 type PushConfig = { enabled?: boolean; publicKey?: string };
 type PushResult = { subscribed?: boolean; error?: string };
@@ -19,6 +20,9 @@ const toBytes = (key: string) => {
 };
 
 export function BoutiquePushFollow({ profileId, demoMode, promotion = false }: { profileId?: string; demoMode?: boolean; promotion?: boolean }) {
+  const {language}=useLanguage();
+  const ar=language==='ar';
+  const t=(fr:string,arabic:string)=>ar?arabic:fr;
   const [key, setKey] = useState('');
   const [subscribed, setSubscribed] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -94,12 +98,12 @@ export function BoutiquePushFollow({ profileId, demoMode, promotion = false }: {
     } catch (error) { setNotice(error instanceof Error ? error.message : 'Notifications indisponibles.'); }
     finally { setBusy(false); }
   };
-  return <div style={{ marginTop: 8, borderTop: '1px solid var(--boutique-accent, #e8bd43)', paddingTop: 8, textAlign: 'left' }}>
+  return <div style={{ marginTop: 8, borderTop: '1px solid var(--boutique-accent, #e8bd43)', paddingTop: 8, textAlign: ar?'right':'left' }}>
     <button type="button" onClick={() => void toggle()} disabled={busy}
       style={{ background: 'var(--boutique-button, #003c35)', color: 'var(--boutique-button-ink, #f7f4ec)', border: '1px solid var(--boutique-accent, #e8bd43)', padding: '8px 11px', fontSize: 11, borderRadius: 16, cursor: busy ? 'wait' : 'pointer', fontWeight: 600 }}>
-      {promotion?(subscribed?'✓ Ne plus recevoir les offres':'🔔 Recevoir les offres commerciales'):(subscribed?'✓ Ne plus suivre les nouveautés':'♧ Suivre les nouveautés')}
+      {promotion?(subscribed?t('✓ Ne plus recevoir les offres','✓ إيقاف العروض'):t('🔔 Recevoir les offres commerciales','🔔 تلقي العروض التجارية')):(subscribed?t('✓ Ne plus suivre les nouveautés','✓ إيقاف متابعة الجديد'):t('♧ Suivre les nouveautés','♧ متابعة الجديد'))}
     </button>
-    <p style={{ fontSize: 10, color: 'var(--boutique-muted, #d0ddd5)', margin: '4px 0 0' }}>{promotion?'Offres : abonnement facultatif et réversible.':'Nouveautés : abonnement facultatif et réversible.'}</p>
+    <p style={{ fontSize: 10, color: 'var(--boutique-muted, #d0ddd5)', margin: '4px 0 0' }}>{promotion?t('Offres : abonnement facultatif et réversible.','العروض: الاشتراك اختياري ويمكن إلغاؤه.'):t('Nouveautés : abonnement facultatif et réversible.','الجديد: الاشتراك اختياري ويمكن إلغاؤه.')}</p>
     {notice && <p role="status" style={{ fontSize: 11, margin: '7px 0 0', color: 'var(--boutique-ink, #f7f4ec)' }}>{notice}</p>}
   </div>;
 }
