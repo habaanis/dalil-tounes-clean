@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Building2, Compass, Facebook, Home, Instagram, Menu, MessageCircle, Search, Users, X } from 'lucide-react';
+import { ArrowLeft, Building2, ChevronDown, Compass, Facebook, Home, Instagram, Menu, MessageCircle, Search, Users, X } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import LanguageSelector from './LanguageSelector';
 import PlatformAppSectionHub, { getPlatformHub } from './PlatformAppSectionHub';
@@ -80,13 +80,32 @@ export default function PlatformAppShell({ children }: { children: ReactNode }) 
             </button>
           </div>
         </div>
-        {menuOpen && <nav id="dalil-platform-app-more" aria-label={copy.more} className="mx-auto max-w-xl border-t border-[#E4D6B8] bg-white px-3 py-2">
-          <div className="grid grid-cols-2 gap-2">
-            {extra.map(item => <Link key={item.to} to={item.to} onClick={() => { setMenuOpen(false); if (item.to === '/#faq' || item.to === '/#suggestions') {
-                const id=item.to.slice(2);
-                window.requestAnimationFrame(()=>document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'}));
-              } }}
-              className="flex min-h-11 items-center rounded-xl border border-[#C9A65D] px-3 text-sm font-medium text-[#292725]">{item.label}</Link>)}
+        {menuOpen && <nav id="dalil-platform-app-more" aria-label={copy.more} className="mx-auto max-w-xl border-t border-[#E4D6B8] bg-[#FFFCF7] px-3 py-3">
+          <div className="space-y-2">
+            {[
+              { title: language === 'ar' ? 'اكتشاف ومعلومات' : 'Découvrir', items: extra.slice(0,4) },
+              { title: language === 'ar' ? 'مساعدة ومشاركة' : 'Aide & participation', items: extra.slice(4) },
+            ].map((group, index) => (
+              <details key={index} className="group overflow-hidden rounded-xl border border-[#DBC69B] bg-white">
+                <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 px-3 py-2.5 text-sm font-semibold text-[#2F302A] [&::-webkit-details-marker]:hidden">
+                  <span>{group.title}</span>
+                  <ChevronDown aria-hidden="true" className="h-4 w-4 text-[#9F8246] transition-transform group-open:rotate-180" />
+                </summary>
+                <div className="grid grid-cols-2 gap-2 border-t border-[#EEE4D0] p-2">
+                  {group.items.map(item => <Link key={item.to} to={item.to}
+                    onClick={() => {
+                      setMenuOpen(false);
+                      if ((item.to === '/#faq' || item.to === '/#suggestions') && location.pathname === '/') {
+                        const id=item.to.slice(2);
+                        window.requestAnimationFrame(()=>document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'}));
+                      }
+                    }}
+                    className="flex min-h-10 items-center rounded-lg border border-[#ECE1CA] bg-[#FFFDF8] px-3 py-2 text-xs font-medium text-[#3D3B35] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B99143]">
+                    {item.label}
+                  </Link>)}
+                </div>
+              </details>
+            ))}
           </div>
         </nav>}
       </header>
