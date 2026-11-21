@@ -51,6 +51,11 @@ const customerStatusLabels:Record<string,string>={
   completed:'Terminée',fulfilled:'Terminée',pending:'En attente',
   accepted:'Acceptée',rejected:'Refusée'
 };
+// Merchant-specific products without fixed prices that are accepted as orders,
+// rather than price quotations. This changes customer wording only, never payment state.
+const isUnpricedCustomerOrder=(profileId:string|undefined,title:string)=>
+  profileId==='36f84b99-2c37-47d1-91ba-4c35cda8c1af'&&
+  ['buffet de mariage','plateaux traiteur'].includes(title.trim().toLocaleLowerCase('fr'));
 const localRequestKey=(profileId:string)=>'dalil-customer-requests:'+profileId;
 const readLocalRequests=(profileId:string):LocalRequest[]=>{
   try {
@@ -504,10 +509,10 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
             {selected.mode==='order'&&<p style={{margin:0,fontSize:11,color:'var(--boutique-muted, #d0ddd5)'}}>Votre demande est enregistrée sans paiement sur Dalil Tounes. Le professionnel vous contactera pour convenir directement des modalités de règlement et de livraison.</p>}
             <button type="button" onClick={()=>void send()} disabled={sending||Boolean(confirmation)}
               style={{ width: '100%', padding: 10, border: '1px solid var(--boutique-accent, #d4af37)', borderRadius: 10, background: 'var(--boutique-button, #063b30)', color: 'var(--boutique-button-ink, #fff)', cursor: sending||confirmation?'default':'pointer', fontSize: 13, fontWeight: 600, opacity:(sending || Boolean(confirmation)) ? 0.76 : 1 }}>
-              {sending?'Enregistrement…':confirmation?'Demande enregistrée':config.demoMode?'Tester la demande (simulation)':selected.mode === 'quote' ? 'Envoyer la demande de devis' : 'Enregistrer la demande de commande'}
+              {sending?'Enregistrement…':confirmation?'Demande enregistrée':config.demoMode?'Tester la demande (simulation)':selected.mode==='quote'&&!isUnpricedCustomerOrder(config.profileId,selected.title)?'Envoyer la demande de devis':'Envoyer ma commande'}
             </button>
             {confirmation&&<div role="status" style={{display:'grid',gap:8,background:'var(--boutique-button, #f3f6ea)',color:'var(--boutique-button-ink, #355535)',border:'1px solid var(--boutique-accent, #d4af37)',borderRadius:10,padding:12,fontSize:12}}>
-              <strong>Votre demande a bien été transmise au professionnel.</strong>
+              <strong>{selected&&isUnpricedCustomerOrder(config.profileId,selected.title)?'Merci pour votre commande ! Elle a bien été transmise au professionnel.':'Votre demande a bien été transmise au professionnel.'}</strong>
               <span>Référence : {confirmation.slice(0,8).toUpperCase()} · En attente de traitement · Aucun paiement enregistré.</span>
               {contactChannel==='email' && canEmail && <button type="button" onClick={contactEmail}
                 style={{border:'1px solid var(--boutique-accent, #d4af37)',borderRadius:10,padding:'11px 12px',background:'var(--boutique-surface, #fff)',color:'var(--boutique-ink, #245c37)',fontWeight:700,cursor:'pointer'}}>
@@ -540,7 +545,8 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
                {liveStatuses[item.reference]?(()=>{
                  const detail=liveStatuses[item.reference];
                  const confirmed=detail.status==='confirmed';
-                 const kind=detail.kind==='quote'?'demande de devis':'commande';
+                 const customerOrder=detail.kind==='order'||isUnpricedCustomerOrder(config.profileId,detail.productTitle);
+                 const kind=customerOrder?'commande':'demande de devis';
                  const requested=detail.requestedDate&&/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(detail.requestedDate)?
                    detail.requestedDate.split('-').reverse().join('/'):null;
                  return <>
@@ -552,7 +558,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
                    <span>Article : {detail.productTitle}</span>
                    <span>Quantité : {detail.quantity}</span>
                    {requested&&<span>Date souhaitée : {requested}</span>}
-                   <span>{confirmed?'Merci de votre confiance !':'Nous vous informerons de la suite de votre demande.'}</span>
+                   <span>{confirmed?(customerOrder?'Merci pour votre commande et votre confiance !':'Merci pour votre confiance !'):'Nous vous informerons de la suite de votre demande.'}</span>
                  </>;
                })():<>
                  <strong>{item.kind==='quote'?'Votre demande de devis':'Votre commande'} du {new Date(item.createdAt).toLocaleDateString('fr-FR')}</strong>
