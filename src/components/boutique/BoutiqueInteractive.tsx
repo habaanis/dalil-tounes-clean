@@ -205,7 +205,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
         });
         const result=await response.json() as {card?:Record<string,unknown>;error?:string};
         if(!response.ok||!result.card){
-          setCardNotice(response.status===429?'Trop de vérifications. Réessayez dans une heure.':response.status===404?'Carte introuvable pour cette boutique.':'Vérification temporairement indisponible.');
+          setCardNotice(response.status===429?t('Trop de vérifications. Réessayez dans une heure.','محاولات كثيرة. حاول بعد ساعة.'):response.status===404?t('Carte introuvable pour cette boutique.','لم يتم العثور على البطاقة.'):t('Vérification temporairement indisponible.','التحقق غير متاح مؤقتاً.'));
           return;
         }
         setCardInfo(result.card);
@@ -543,7 +543,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
           </div>}
         </>}
         {!selected && <>
-          {!config.demoMode && config.profileId && <div style={{marginTop:12,borderTop:'1px solid var(--boutique-accent, #e8bd43)',paddingTop:10}}>
+          {!config.demoMode && config.profileId && <div dir={ar?'rtl':'ltr'} style={{marginTop:12,borderTop:'1px solid var(--boutique-accent, #e8bd43)',paddingTop:10}}>
             <button type="button" aria-expanded={myFollowupOpen} onClick={()=>setMyFollowupOpen(v=>!v)}
              style={{width:'100%',padding:11,marginBottom:8,borderRadius:10,border:'1px solid var(--boutique-accent, #e8bd43)',background:'var(--boutique-card, #002f2b)',color:'var(--boutique-ink, #f7f4ec)',cursor:'pointer',fontSize:12,fontWeight:700,textAlign:'left'}}>
              {t('📋 Mon suivi (sans compte)','📋 متابعتي دون حساب')} {myFollowupOpen?'−':'＋'}
@@ -568,7 +568,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
                    <strong style={{fontSize:15}}>{confirmed?
                      (ar?'تم تأكيد '+kind+' بنجاح.':'Votre '+kind+' a bien été confirmée.'):
                      detail.status==='received'?(ar?'تم استلام '+kind+' بنجاح.':'Votre '+kind+' a bien été reçue.'):
-                     'Votre '+kind+' : '+(customerStatusLabels[detail.status]||'En cours de traitement')+'.'}</strong>
+                     (ar?'حالة '+kind+': '+({'cancelled':'ملغى','completed':'مكتمل','fulfilled':'مكتمل','accepted':'مقبول','rejected':'مرفوض'}[detail.status]||'قيد المعالجة'):'Votre '+kind+' : '+(customerStatusLabels[detail.status]||'En cours de traitement')+'.')}</strong>
                    <span>{t('Numéro de suivi :','رقم المتابعة:')} <strong>{item.reference.slice(0,8).toUpperCase()}</strong></span>
                    <span>{t('Article :','المنتج:')} {detail.productTitle}</span>
                    <span>{t('Quantité :','الكمية:')} {detail.quantity}</span>
@@ -576,9 +576,9 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
                    <span>{confirmed?(customerOrder?t('Merci pour votre commande et votre confiance !','شكراً على طلبكم وثقتكم!'):t('Merci pour votre confiance !','شكراً لثقتكم!')):t('Nous vous informerons de la suite de votre demande.','سنعلمكم بمستجدات طلبكم.')}</span>
                  </>;
                })():<>
-                 <strong>{item.kind==='quote'?'Votre demande de devis':'Votre commande'} du {new Date(item.createdAt).toLocaleDateString('fr-FR')}</strong>
-                 <span>Numéro de suivi : {item.reference.slice(0,8).toUpperCase()}</span>
-                 <span>{item.proof?'Appuyez sur « Actualiser » pour retrouver les informations de votre demande.':'Le suivi de cette ancienne demande n’est pas disponible.'}</span>
+                 <strong>{item.kind==='quote'?t('Votre demande de devis','طلب عرض السعر'):t('Votre commande','الطلب')} {t('du','بتاريخ')} {new Date(item.createdAt).toLocaleDateString('fr-FR')}</strong>
+                 <span>{t('Numéro de suivi :','رقم المتابعة:')} {item.reference.slice(0,8).toUpperCase()}</span>
+                 <span>{item.proof?t('Appuyez sur « Actualiser » pour retrouver les informations de votre demande.','اضغط على تحديث للاطلاع على تفاصيل طلبك.'):t('Le suivi de cette ancienne demande n’est pas disponible.','متابعة هذا الطلب القديم غير متاحة.')}</span>
                </>}
               </div>)}
              {localRequests.length>0&&<button type="button" onClick={()=>{
@@ -608,7 +608,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
                   <option value="loyalty">{t('Carte de fidélité','بطاقة الوفاء')}</option><option value="gift_card">{t('Carte cadeau','بطاقة هدية')}</option>
                 </select>
               </label>
-              <label style={labelStyle}>{cardLookupKind==='loyalty'?'Code de fidélité (4 chiffres)':'Code complet de la carte cadeau'}
+              <label style={labelStyle}>{cardLookupKind==='loyalty'?t('Code de fidélité (4 chiffres)','رمز الوفاء (4 أرقام)'):t('Code complet de la carte cadeau','الرمز الكامل لبطاقة الهدية')}
                 <input style={fieldStyle} value={cardCode} onChange={e=>{setCardCode(cardLookupKind==='loyalty'?e.target.value.replace(/\D/g,'').slice(0,4):e.target.value);setCardInfo(null);}}
                   placeholder={cardLookupKind==='loyalty'?'Ex. 0427':'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'}
                   inputMode={cardLookupKind==='loyalty'?'numeric':'text'} autoComplete="off" maxLength={cardLookupKind==='loyalty'?4:36}/>
@@ -625,14 +625,14 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
               {cardInfo&&<div role="status" style={{border:'1px solid var(--boutique-accent, #e8bd43)',padding:10,borderRadius:9,fontSize:12}}>
                 <strong>{String(cardInfo.title||'Ma carte')}</strong>
                 {cardInfo.kind==='loyalty'&&<div style={{display:'grid',gap:4,marginTop:6}}>
-                  <strong>{String(cardInfo.stamps)} achat(s) sur {String(cardInfo.target)} pour votre prochain cadeau</strong>
+                  <strong>{String(cardInfo.stamps)} {t('achat(s) sur','عملية شراء من أصل')} {String(cardInfo.target)} {t('pour votre prochain cadeau','للحصول على هديتك القادمة')}</strong>
                   <span>{t('Votre cadeau :','هديتك:')} {String(cardInfo.reward||'à définir avec le commerçant')}</span>
                   <span>{t('Récompenses déjà remises :','الهدايا المستلمة:')} {Number.isFinite(Number(cardInfo.rewards_given))?Number(cardInfo.rewards_given):0}</span>
                   {Number(cardInfo.stamps)>=Number(cardInfo.target)&&<strong>{t('Votre cadeau est prêt ! Contactez le commerçant pour en profiter.','هديتك جاهزة! تواصل مع التاجر لاستلامها.')}</strong>}
                 </div>}
                 {cardInfo.kind==='gift_card'&&<p style={{margin:'5px 0 0'}}>Solde : {Number(cardInfo.balance).toFixed(3)} DT · {cardInfo.state==='active'?'Carte active':cardInfo.state==='pending'?'En attente d’activation':'Carte utilisée ou inactive'}</p>}
               </div>}
-              <span style={{fontSize:11,color:'var(--boutique-muted, #d0ddd5)'}}>Vos achats sont ajoutés après validation par le commerçant. Une demande ou une commande confirmée ne donne pas automatiquement un point.</span>
+              <span style={{fontSize:11,color:'var(--boutique-muted, #d0ddd5)'}}>{t('Vos achats sont ajoutés après validation par le commerçant. Une demande ou une commande confirmée ne donne pas automatiquement un point.','تُضاف المشتريات بعد تأكيد التاجر. تأكيد الطلب لا يمنح نقاط وفاء تلقائياً.')}</span>
             </div>}
             </>}
           </div>}
