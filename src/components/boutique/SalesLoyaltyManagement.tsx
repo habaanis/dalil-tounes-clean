@@ -98,6 +98,17 @@ export default function SalesLoyaltyManagement({entrepriseIds}:{entrepriseIds:st
   if(e||data?.error){setError(data?.error||'Envoi impossible. Réessayez plus tard.');return;}
   setMessage(String(data.sent||0)+' notification(s) envoyée(s) · '+String(data.failed||0)+' échec(s).'+(data.pending?' Relancez pour le lot suivant.':''));
  };
+ const shareLoyalty=async(card:LoyaltyCard)=>{
+  const program=programs.find(p=>p.id===card.program_id);
+  const text=['Bonjour '+card.customer_label+',','Votre carte de fidélité '+(program?.title||'')+' est prête.',
+   'Votre code personnel de consultation : '+card.public_code,
+   'Ouvrez votre mini-appli '+company+' → Boutique → Consulter ma fidélité → Voir ma carte.',
+   'Les achats sont validés par le commerçant, pas automatiquement après une demande de devis.'].join('\n');
+  try{
+   if(typeof navigator.share==='function')await navigator.share({text});
+   else {await navigator.clipboard.writeText(text);setMessage('Message de fidélité copié. Envoyez-le à votre cliente par WhatsApp ou SMS.');}
+  }catch(e){if((e as Error)?.name!=='AbortError')setError('Partage non disponible. Copiez le code et transmettez-le à votre cliente.');}
+ };
  const issue=async(kind:'loyalty'|'gift_card')=>{
   if(!chosenProgram||customer.trim().length<2||busy){setError('Choisissez un programme et indiquez le client ou bénéficiaire.');return;}
   const p=programs.find(x=>x.id===chosenProgram&&x.kind===kind&&x.entreprise_id===company);
@@ -240,6 +251,7 @@ export default function SalesLoyaltyManagement({entrepriseIds}:{entrepriseIds:st
         <button type="button" className="min-h-9 rounded-lg border border-[#d5bd8b] px-2" onClick={()=>void navigator.clipboard?.writeText(c.public_code)}>Copier les 4 chiffres</button>
        </div>
        <p className="my-2">{c.stamps} / {p.value} achats · {c.rewards_given} récompense(s) remise(s)</p>
+       {!showArchived&&<button type="button" onClick={()=>void shareLoyalty(c)} className="mb-2 min-h-10 rounded-lg border border-[#d5bd8b] bg-[#fbf1df] px-3 font-semibold">Partager le code avec le client</button>}
        {!showArchived&&p.active&&<div className="grid grid-cols-2 gap-2">
         <button type="button" disabled={busy||c.stamps>=p.value} onClick={()=>void stamp(c,false)} className="min-h-11 rounded-xl border border-[#d5bd8b] px-2 disabled:opacity-50">＋ Valider un achat</button>
         <button type="button" disabled={busy||c.stamps<p.value} onClick={()=>void stamp(c,true)} className="min-h-11 rounded-xl border border-[#d5bd8b] px-2 disabled:opacity-50">🎁 Remettre le cadeau</button>

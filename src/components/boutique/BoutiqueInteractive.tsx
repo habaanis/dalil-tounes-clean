@@ -43,6 +43,19 @@ const priceText = (product: BoutiqueProduct) =>
 
 const labelStyle = { display: 'grid', gap: 4, fontSize: 12, fontWeight: 500 } as const;
 const fieldStyle = { boxSizing: 'border-box', width: '100%', minWidth: 0, border: '1px solid var(--boutique-accent, #d7c7ae)', borderRadius: 9, padding: '9px 10px', fontSize: 14, background: 'var(--boutique-field, #fff)', color: 'var(--boutique-field-ink, #12372e)', colorScheme: 'light' } as const;
+type LocalRequest = {reference:string; createdAt:string; kind:'quote'|'order'};
+const localRequestKey=(profileId:string)=>'dalil-customer-requests:'+profileId;
+const readLocalRequests=(profileId:string):LocalRequest[]=>{
+  try {
+    const raw=window.localStorage.getItem(localRequestKey(profileId));
+    const entries=JSON.parse(raw||'[]') as unknown;
+    return Array.isArray(entries)?entries.filter((x):x is LocalRequest=>
+      Boolean(x&&typeof x==='object'&&'reference' in x&&
+      typeof x.reference==='string'&&/^[0-9a-f-]{36}$/i.test(x.reference)&&
+      'createdAt' in x&&typeof x.createdAt==='string'&&
+      'kind' in x&&(x.kind==='quote'||x.kind==='order'))).slice(0,20):[];
+  }catch{return [];}
+};
 const iconButton = { background: 'var(--boutique-button, #063b30)', border: '1px solid var(--boutique-accent, #d7c7ae)', borderRadius: 24, height: 34, minWidth: 34, cursor: 'pointer', color: 'var(--boutique-button-ink, #fff)', fontSize: 20 } as const;
 
 export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = 'Boutique', triggerIcon }: { config: BoutiqueConfig; triggerClassName?: string; triggerLabel?: string; triggerIcon?: ReactNode }) {
@@ -50,6 +63,9 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
   const [selected, setSelected] = useState<BoutiqueProduct | null>(null);
   const [offersOpen,setOffersOpen] = useState(false);
   const [cardLookupOpen,setCardLookupOpen] = useState(false);
+  const [myFollowupOpen,setMyFollowupOpen] = useState(false);
+  const [localRequests,setLocalRequests] = useState<LocalRequest[]>([]);
+  useEffect(()=>{setLocalRequests(config.profileId?readLocalRequests(config.profileId):[]);},[config.profileId,open]);
   const [cardLookupKind,setCardLookupKind] = useState<'loyalty'|'gift_card'>('loyalty');
   const [cardCode,setCardCode] = useState('');
   const [cardInfo,setCardInfo] = useState<Record<string,unknown>|null>(null);
@@ -267,6 +283,17 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
       }
       // Only a positive acknowledgement from the server can display a confirmation.
       setConfirmation(data.reference);
+      // This is only a device-local receipt list; it does not grant access
+      // to order details and must not be mistaken for a live server-side status.
+      if(config.profileId) {
+        try{
+          const old=readLocalRequests(config.profileId);
+          const next=[{reference:data.reference,createdAt:new Date().toISOString(),
+            kind:data.kind==='order'?'order' as const:'quote' as const},...old.filter(x=>x.reference!==data.reference)].slice(0,20);
+          window.localStorage.setItem(localRequestKey(config.profileId),JSON.stringify(next));
+          setLocalRequests(next);
+        }catch{/* private storage unavailable: server receipt is still valid */}
+      }
     } catch(err) {
       setError(err instanceof Error?err.message:'Demande non enregistrée. Réessayez.');
     } finally {setSending(false);}
@@ -452,6 +479,26 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
         </>}
         {!selected && <>
           {!config.demoMode && config.profileId && <div style={{marginTop:12,borderTop:'1px solid var(--boutique-accent, #e8bd43)',paddingTop:10}}>
+            <button type="button" aria-expanded={myFollowupOpen} onClick={()=>setMyFollowupOpen(v=>!v)}
+             style={{width:'100%',padding:11,marginBottom:8,borderRadius:10,border:'1px solid var(--boutique-accent, #e8bd43)',background:'var(--boutique-card, #002f2b)',color:'var(--boutique-ink, #f7f4ec)',cursor:'pointer',fontSize:12,fontWeight:700,textAlign:'left'}}>
+             📋 Mon suivi (sans compte) {myFollowupOpen?'−':'＋'}
+            </button>
+            {myFollowupOpen&&<div style={{display:'grid',gap:8,marginBottom:10,fontSize:12,color:'var(--boutique-ink, #f7f4ec)'}}>
+             <p style={{margin:0}}>Demandes enregistrées depuis ce téléphone et ce navigateur. La liste conserve uniquement les références, pas les coordonnées personnelles.</p>
+             {localRequests.length===0?<p style={{margin:0}}>Aucune référence conservée sur cet appareil.</p>:
+              localRequests.map(item=><div key={item.reference} style={{display:'grid',gap:3,padding:9,border:'1px solid var(--boutique-accent, #e8bd43)',borderRadius:8}}>
+               <strong>{item.kind==='quote'?'Devis':'Commande'} · {new Date(item.createdAt).toLocaleDateString('fr-FR')}</strong>
+               <span>Référence : {item.reference.slice(0,8).toUpperCase()}</span>
+               <span>Le statut en direct et les détails de la demande ne sont pas encore disponibles ici.</span>
+              </div>)}
+             {localRequests.length>0&&<button type="button" onClick={()=>{
+               if(!window.confirm('Effacer les références de ce téléphone ? Les demandes enregistrées chez le commerçant ne seront pas supprimées.'))return;
+               try{window.localStorage.removeItem(localRequestKey(config.profileId!));}catch{/* ignored */}
+               setLocalRequests([]);
+              }} style={{padding:9,borderRadius:8,border:'1px solid var(--boutique-accent, #e8bd43)',background:'transparent',color:'inherit'}}>Effacer les références de cet appareil</button>}
+             <p style={{margin:0}}>Pour consulter la fidélité, utilisez la rubrique ci-dessous et le code communiqué par le commerçant.</p>
+            </div>}
+
             <button type="button" aria-expanded={cardLookupOpen} onClick={()=>{setCardLookupOpen(v=>!v);setCardInfo(null);setCardNotice('');}}
               style={{width:'100%',padding:11,borderRadius:10,border:'1px solid var(--boutique-accent, #e8bd43)',background:'var(--boutique-card, #002f2b)',color:'var(--boutique-ink, #f7f4ec)',cursor:'pointer',fontSize:12,fontWeight:700,textAlign:'left'}}>
               ⭐ Consulter ma fidélité ou ma carte cadeau {cardLookupOpen?'−':'＋'}
