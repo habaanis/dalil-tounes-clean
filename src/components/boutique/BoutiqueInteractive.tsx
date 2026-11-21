@@ -43,7 +43,14 @@ const priceText = (product: BoutiqueProduct) =>
 
 const labelStyle = { display: 'grid', gap: 4, fontSize: 12, fontWeight: 500 } as const;
 const fieldStyle = { boxSizing: 'border-box', width: '100%', minWidth: 0, border: '1px solid var(--boutique-accent, #d7c7ae)', borderRadius: 9, padding: '9px 10px', fontSize: 14, background: 'var(--boutique-field, #fff)', color: 'var(--boutique-field-ink, #12372e)', colorScheme: 'light' } as const;
-type LocalRequest = {reference:string; createdAt:string; kind:'quote'|'order'};
+type LocalRequest = {reference:string; createdAt:string; kind:'quote'|'order';proof?:string};
+type LiveOrderStatus = {reference:string;kind:'quote'|'order';status:string;createdAt:string;updatedAt:string;productTitle:string;quantity:number};
+const uuidPattern=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const customerStatusLabels:Record<string,string>={
+  received:'Demande reçue',confirmed:'Confirmée',cancelled:'Annulée',
+  completed:'Terminée',fulfilled:'Terminée',pending:'En attente',
+  accepted:'Acceptée',rejected:'Refusée'
+};
 const localRequestKey=(profileId:string)=>'dalil-customer-requests:'+profileId;
 const readLocalRequests=(profileId:string):LocalRequest[]=>{
   try {
@@ -51,9 +58,12 @@ const readLocalRequests=(profileId:string):LocalRequest[]=>{
     const entries=JSON.parse(raw||'[]') as unknown;
     return Array.isArray(entries)?entries.filter((x):x is LocalRequest=>
       Boolean(x&&typeof x==='object'&&'reference' in x&&
-      typeof x.reference==='string'&&/^[0-9a-f-]{36}$/i.test(x.reference)&&
+      typeof x.reference==='string'&&uuidPattern.test(x.reference)&&
       'createdAt' in x&&typeof x.createdAt==='string'&&
-      'kind' in x&&(x.kind==='quote'||x.kind==='order'))).slice(0,20):[];
+      'kind' in x&&(x.kind==='quote'||x.kind==='order'))).map(x=>({
+        reference:x.reference,createdAt:x.createdAt,kind:x.kind,
+        proof:typeof x.proof==='string'&&uuidPattern.test(x.proof)?x.proof:undefined
+      })).slice(0,20):[];
   }catch{return [];}
 };
 const iconButton = { background: 'var(--boutique-button, #063b30)', border: '1px solid var(--boutique-accent, #d7c7ae)', borderRadius: 24, height: 34, minWidth: 34, cursor: 'pointer', color: 'var(--boutique-button-ink, #fff)', fontSize: 20 } as const;
@@ -65,7 +75,13 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
   const [cardLookupOpen,setCardLookupOpen] = useState(false);
   const [myFollowupOpen,setMyFollowupOpen] = useState(false);
   const [localRequests,setLocalRequests] = useState<LocalRequest[]>([]);
-  useEffect(()=>{setLocalRequests(config.profileId?readLocalRequests(config.profileId):[]);},[config.profileId,open]);
+  const [liveStatuses,setLiveStatuses] = useState<Record<string,LiveOrderStatus>>({});
+  const [statusChecking,setStatusChecking] = useState(false);
+  const [statusNotice,setStatusNotice] = useState('');
+  useEffect(()=>{
+    setLocalRequests(config.profileId?readLocalRequests(config.profileId):[]);
+    setLiveStatuses({});setStatusNotice('');
+  },[config.profileId,open]);
   const [cardLookupKind,setCardLookupKind] = useState<'loyalty'|'gift_card'>('loyalty');
   const [cardCode,setCardCode] = useState('');
   const [cardInfo,setCardInfo] = useState<Record<string,unknown>|null>(null);
@@ -88,6 +104,35 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
   const [orderAvailability,setOrderAvailability] = useState<'checking'|'available'|'unavailable'>('checking');
   // Keep the same UUID across retries to prevent duplicates after network failure.
   const [requestKey, setRequestKey] = useState(() => crypto.randomUUID());
+  const refreshCustomerStatuses=async()=>{
+    if(statusChecking||!config.profileId)return;
+    const entries=localRequests.filter(item=>item.proof&&uuidPattern.test(item.proof)).slice(0,20);
+    if(entries.length===0){
+      setStatusNotice('Les demandes déjà enregistrées sans clé sécurisée ne peuvent pas être consultées. Faites une nouvelle demande pour activer ce suivi.');
+      return;
+    }
+    setStatusChecking(true);setStatusNotice('');
+    try{
+      const response=await fetch(supabaseUrl+'/functions/v1/dalil-boutique-customer-status',{
+        method:'POST',headers:{'content-type':'application/json'},
+        body:JSON.stringify({profileId:config.profileId,
+          entries:entries.map(item=>({reference:item.reference,proof:item.proof}))})
+      });
+      const result=await response.json() as {items?:LiveOrderStatus[];error?:string};
+      if(!response.ok||!Array.isArray(result.items)){
+        setStatusNotice(response.status===429?'Trop de vérifications. Réessayez plus tard.':'Vérification temporairement indisponible.');
+        return;
+      }
+      const statuses:Record<string,LiveOrderStatus>={};
+      for(const item of result.items){
+        if(item&&typeof item.reference==='string'&&typeof item.status==='string')
+          statuses[item.reference]=item;
+      }
+      setLiveStatuses(statuses);
+      setStatusNotice(result.items.length+' statut(s) récupéré(s) auprès de Dalil Tounes.');
+    }catch{setStatusNotice('Connexion indisponible. Vos références locales sont conservées.');}
+    finally{setStatusChecking(false);}
+  };
   // A retry with unchanged data keeps the idempotency key. Editing a field
   // starts a new request so the server does not return 409 for changed details.
   const editRequest = () => { setRequestKey(crypto.randomUUID()); setError(''); };
@@ -283,13 +328,13 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
       }
       // Only a positive acknowledgement from the server can display a confirmation.
       setConfirmation(data.reference);
-      // This is only a device-local receipt list; it does not grant access
-      // to order details and must not be mistaken for a live server-side status.
+      // A successful response binds this receipt to its original random
+      // idempotency UUID. Never show full request details without that proof.
       if(config.profileId) {
         try{
           const old=readLocalRequests(config.profileId);
           const next=[{reference:data.reference,createdAt:new Date().toISOString(),
-            kind:data.kind==='order'?'order' as const:'quote' as const},...old.filter(x=>x.reference!==data.reference)].slice(0,20);
+            kind:data.kind==='order'?'order' as const:'quote' as const,proof:requestKey},...old.filter(x=>x.reference!==data.reference)].slice(0,20);
           window.localStorage.setItem(localRequestKey(config.profileId),JSON.stringify(next));
           setLocalRequests(next);
         }catch{/* private storage unavailable: server receipt is still valid */}
@@ -484,17 +529,26 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
              📋 Mon suivi (sans compte) {myFollowupOpen?'−':'＋'}
             </button>
             {myFollowupOpen&&<div style={{display:'grid',gap:8,marginBottom:10,fontSize:12,color:'var(--boutique-ink, #f7f4ec)'}}>
-             <p style={{margin:0}}>Demandes enregistrées depuis ce téléphone et ce navigateur. La liste conserve uniquement les références, pas les coordonnées personnelles.</p>
+             <p style={{margin:0}}>Retrouvez vos demandes enregistrées sur ce téléphone. Aucun compte n’est nécessaire. Le suivi détaillé exige la clé privée conservée lors de la demande.</p>
+             {localRequests.some(item=>item.proof)&&<button type="button" disabled={statusChecking} onClick={()=>void refreshCustomerStatuses()}
+              style={{padding:9,borderRadius:8,border:'1px solid var(--boutique-accent, #e8bd43)',background:'var(--boutique-button, #003c35)',color:'var(--boutique-button-ink, #fff)',fontWeight:700,opacity:statusChecking?0.7:1}}>
+              {statusChecking?'Actualisation…':'Actualiser le statut de mes demandes'}
+             </button>}
+             {statusNotice&&<p role="status" style={{margin:0}}>{statusNotice}</p>
              {localRequests.length===0?<p style={{margin:0}}>Aucune référence conservée sur cet appareil.</p>:
               localRequests.map(item=><div key={item.reference} style={{display:'grid',gap:3,padding:9,border:'1px solid var(--boutique-accent, #e8bd43)',borderRadius:8}}>
                <strong>{item.kind==='quote'?'Devis':'Commande'} · {new Date(item.createdAt).toLocaleDateString('fr-FR')}</strong>
                <span>Référence : {item.reference.slice(0,8).toUpperCase()}</span>
-               <span>Le statut en direct et les détails de la demande ne sont pas encore disponibles ici.</span>
+               {liveStatuses[item.reference]?
+                <><span>Statut : {customerStatusLabels[liveStatuses[item.reference].status]||'En cours de traitement'}</span>
+                  <span>Article : {liveStatuses[item.reference].productTitle} · Quantité : {liveStatuses[item.reference].quantity}</span>
+                  <span>Dernière mise à jour : {new Date(liveStatuses[item.reference].updatedAt).toLocaleDateString('fr-FR')}</span></>:
+                <span>{item.proof?'Appuyez sur « Actualiser » pour consulter le statut sécurisé.':'Ancienne référence : suivi non disponible.'}</span>}
               </div>)}
              {localRequests.length>0&&<button type="button" onClick={()=>{
                if(!window.confirm('Effacer les références de ce téléphone ? Les demandes enregistrées chez le commerçant ne seront pas supprimées.'))return;
                try{window.localStorage.removeItem(localRequestKey(config.profileId!));}catch{/* ignored */}
-               setLocalRequests([]);
+               setLocalRequests([]);setLiveStatuses({});setStatusNotice('');
               }} style={{padding:9,borderRadius:8,border:'1px solid var(--boutique-accent, #e8bd43)',background:'transparent',color:'inherit'}}>Effacer les références de cet appareil</button>}
              <p style={{margin:0}}>Pour consulter la fidélité, utilisez la rubrique ci-dessous et le code communiqué par le commerçant.</p>
             </div>}
