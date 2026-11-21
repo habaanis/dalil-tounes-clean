@@ -571,12 +571,13 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
                try{window.localStorage.removeItem(localRequestKey(config.profileId!));}catch{/* ignored */}
                setLocalRequests([]);setLiveStatuses({});setStatusNotice('');
               }} style={{padding:9,borderRadius:8,border:'1px solid var(--boutique-accent, #e8bd43)',background:'transparent',color:'inherit'}}>Effacer les références de cet appareil</button>}
-             <p style={{margin:0}}>Pour consulter la fidélité, utilisez la rubrique ci-dessous et le code communiqué par le commerçant.</p>
+             <p style={{margin:0}}>Votre carte de fidélité se consulte ici, avec le code remis par le commerçant.</p>
             </div>}
 
+            {myFollowupOpen&&<>
             <button type="button" aria-expanded={cardLookupOpen} onClick={()=>{setCardLookupOpen(v=>!v);setCardInfo(null);setCardNotice('');}}
               style={{width:'100%',padding:11,borderRadius:10,border:'1px solid var(--boutique-accent, #e8bd43)',background:'var(--boutique-card, #002f2b)',color:'var(--boutique-ink, #f7f4ec)',cursor:'pointer',fontSize:12,fontWeight:700,textAlign:'left'}}>
-              ⭐ Consulter ma fidélité ou ma carte cadeau {cardLookupOpen?'−':'＋'}
+              ⭐ Ma fidélité et mes cartes cadeaux {cardLookupOpen?'−':'＋'}
             </button>
             {cardLookupOpen&&<div style={{display:'grid',gap:8,marginTop:9}}>
               <label style={labelStyle}>Type de carte
@@ -596,11 +597,17 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
               {cardNotice&&<p role="status" style={{fontSize:11,margin:0}}>{cardNotice}</p>}
               {cardInfo&&<div role="status" style={{border:'1px solid var(--boutique-accent, #e8bd43)',padding:10,borderRadius:9,fontSize:12}}>
                 <strong>{String(cardInfo.title||'Ma carte')}</strong>
-                {cardInfo.kind==='loyalty'&&<p style={{margin:'5px 0 0'}}>{String(cardInfo.stamps)} / {String(cardInfo.target)} achats · récompense : {String(cardInfo.reward||'à définir avec le commerçant')}</p>}
+                {cardInfo.kind==='loyalty'&&<div style={{display:'grid',gap:4,marginTop:6}}>
+                  <strong>{String(cardInfo.stamps)} achat(s) sur {String(cardInfo.target)} pour votre prochain cadeau</strong>
+                  <span>Votre cadeau : {String(cardInfo.reward||'à définir avec le commerçant')}</span>
+                  <span>Récompenses déjà remises : {Number.isFinite(Number(cardInfo.rewards_given))?Number(cardInfo.rewards_given):0}</span>
+                  {Number(cardInfo.stamps)>=Number(cardInfo.target)&&<strong>Votre cadeau est prêt ! Contactez le commerçant pour en profiter.</strong>}
+                </div>}
                 {cardInfo.kind==='gift_card'&&<p style={{margin:'5px 0 0'}}>Solde : {Number(cardInfo.balance).toFixed(3)} DT · {cardInfo.state==='active'?'Carte active':cardInfo.state==='pending'?'En attente d’activation':'Carte utilisée ou inactive'}</p>}
               </div>}
-              <span style={{fontSize:10,color:'var(--boutique-muted, #d0ddd5)'}}>La validation des achats et l’utilisation du solde sont faites par le commerçant.</span>
+              <span style={{fontSize:11,color:'var(--boutique-muted, #d0ddd5)'}}>Vos achats sont ajoutés après validation par le commerçant. Une demande ou une commande confirmée ne donne pas automatiquement un point.</span>
             </div>}
+            </>}
           </div>}
           <BoutiquePushFollow profileId={config.profileId} demoMode={config.demoMode} />
           <BoutiquePushFollow profileId={config.profileId} demoMode={config.demoMode} promotion />
