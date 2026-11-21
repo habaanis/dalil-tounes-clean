@@ -13,6 +13,7 @@ import { supabase } from '../lib/BoltDatabase';
 import { notifyAdmin } from '../lib/notifyAdmin';
 import React, { lazy, Suspense, useEffect, useState } from 'react';
 import InstallAppBanner from '../components/InstallAppBanner';
+import { VisitorSuggestions } from '../components/VisitorSuggestions';
 import SearchBar from '../components/SearchBar';
 import VisibilityHouseSection from '../components/VisibilityHouseSection';
 import { getHomeJobsResidualTranslations } from '../lib/homeJobsResidualTranslations';
@@ -555,6 +556,11 @@ export const Home = ({ onNavigate, onNavigateToBusiness }: HomeProps = {}) => {
             </Suspense>
           )}
         </div>
+      </section>
+
+      {/* Suggestions des visiteurs : bloc repliable partagé avec l'application. */}
+      <section className="px-4 py-5 bg-[#f7f0e2]" aria-label={language==='ar'?'اقتراحاتكم':'Vos suggestions'}>
+        <VisitorSuggestions source={typeof window!=='undefined'&&window.location.hostname.startsWith('app.')?'app':'site'} />
       </section>
 
       {/* Formulaire d'avis public (avis_entreprise, entreprise_id = null) */}
