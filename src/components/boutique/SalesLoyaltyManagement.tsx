@@ -82,6 +82,15 @@ export default function SalesLoyaltyManagement({entrepriseIds}:{entrepriseIds:st
   const {error:e}=await supabase.from('dalil_sales_programs').update({active:!p.active}).eq('id',p.id).eq('entreprise_id',company);
   setBusy(false);if(e)setError('La modification n’a pas été enregistrée.');else {setMessage('Statut enregistré.');reload();}
  };
+ const sendPromo=async(p:Program)=>{
+  if(busy||!p.active)return;
+  if(!window.confirm('Envoyer cette offre uniquement aux clients ayant accepté les notifications promotionnelles ?'))return;
+  setBusy(true);setError('');setMessage('');
+  const {data,error:e}=await supabase.functions.invoke('dalil-sales-promos',{body:{action:'send',programId:p.id}});
+  setBusy(false);
+  if(e||data?.error){setError(data?.error||'Envoi impossible. Réessayez plus tard.');return;}
+  setMessage(String(data.sent||0)+' notification(s) envoyée(s) · '+String(data.failed||0)+' échec(s).'+(data.pending?' Relancez pour le lot suivant.':''));
+ };
  const issue=async(kind:'loyalty'|'gift_card')=>{
   if(!chosenProgram||customer.trim().length<2||busy){setError('Choisissez un programme et indiquez le client ou bénéficiaire.');return;}
   const p=programs.find(x=>x.id===chosenProgram&&x.kind===kind&&x.entreprise_id===company);
@@ -154,7 +163,10 @@ export default function SalesLoyaltyManagement({entrepriseIds}:{entrepriseIds:st
       {p.description&&<p className="mt-1 text-gray-600">{p.description}</p>}
       {p.kind==='offer'&&<div className="mt-2 flex items-center justify-between gap-2">
        <span>{p.active?'Publiée selon ses dates':'Désactivée'}{p.weekday!==null?' · '+days[p.weekday]:''}</span>
-       <button type="button" disabled={busy} onClick={()=>void changeActive(p)} className="min-h-10 rounded-lg border border-[#d5bd8b] px-3 font-semibold">{p.active?'Suspendre':'Activer'}</button>
+       <div className="flex flex-wrap gap-1">
+        <button type="button" disabled={busy} onClick={()=>void changeActive(p)} className="min-h-10 rounded-lg border border-[#d5bd8b] px-3 font-semibold">{p.active?'Suspendre':'Activer'}</button>
+        {p.active&&<button type="button" disabled={busy} onClick={()=>void sendPromo(p)} className="min-h-10 rounded-lg border border-[#d5bd8b] bg-[#fbf1df] px-3 font-semibold">🔔 Prévenir les abonnés</button>}
+       </div>
       </div>}
      </div>)}
     </div>
@@ -195,6 +207,6 @@ export default function SalesLoyaltyManagement({entrepriseIds}:{entrepriseIds:st
   {loading&&<p role="status" className="mt-3 text-xs">Chargement…</p>}
   {error&&<p role="alert" className="mt-3 rounded-lg border border-[#d5bd8b] bg-white p-2 text-xs text-red-800">{error} <button type="button" className="underline" onClick={reload}>Réessayer</button></p>}
   {message&&<p role="status" className="mt-3 text-xs text-[#62212a]">{message}</p>}
-  <p className="mt-3 text-xs text-gray-600">Les promotions affichées ne modifient pas automatiquement le montant des commandes. Les notifications promotionnelles et le partage client des cartes nécessitent une activation distincte.</p>
+  <p className="mt-3 text-xs text-gray-600">Les promotions affichées ne modifient pas automatiquement le montant des commandes. Les cartes fidélité et cadeaux se valident au comptoir : pas encore de portefeuille client en libre-service.</p>
  </section>;
 }
