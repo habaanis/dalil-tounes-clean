@@ -32,6 +32,8 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false }: 
   const [presentationSaving, setPresentationSaving] = useState(false);
   const [presentationFeedback, setPresentationFeedback] = useState('');
   const [productTitle, setProductTitle] = useState('');
+  const [boutiquePanel, setBoutiquePanel] = useState<'manage'|'create'|null>(null);
+  const [productKind, setProductKind] = useState<'product'|'gift_pack'>('product');
   const [productCategory, setProductCategory] = useState('');
   const [productDescription, setProductDescription] = useState('');
   const [productMode, setProductMode] = useState<'quote' | 'order'>('quote');
@@ -137,7 +139,7 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false }: 
     const entrepriseId = productBusiness || stats[0]?.entreprise_id;
     if (!entrepriseId || !stats.some(record => record.entreprise_id === entrepriseId)) return;
     const title = productTitle.trim();
-    const category = productCategory.trim();
+    const category = productKind === 'gift_pack' ? 'Packs cadeaux' : productCategory.trim();
     const description = productDescription.trim();
     const price = Number(productPrice);
     if (!productPhoto) { setProductMessage('Ajoutez une photo pour proposer un article publiable.'); return; }
@@ -145,6 +147,7 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false }: 
       setProductMessage('Photo refusée : utilisez JPG, PNG ou WebP, 5 Mo maximum.'); return;
     }
     if (title.length < 2 || title.length > 120 || category.length > 60 || description.length > 800 ||
+      (productKind === 'gift_pack' && (description.length < 5 || productMode !== 'order')) ||
       (productMode === 'order' && (!Number.isFinite(price) || price <= 0 || price > 100000))) {
       setProductMessage('Vérifiez le nom, la catégorie et le prix.'); return;
     }
@@ -166,6 +169,7 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false }: 
       if (error || !data) throw error ?? new Error('Insertion échouée');
       setProductRequests(current => [data,...current]);
       setProductTitle('');setProductCategory('');setProductDescription('');setProductPrice('');setProductPhoto(null);setProductPhotoInputKey(key => key + 1);
+      setProductKind('product');
       setProductMessage('Proposition enregistrée. Elle reste en attente de validation avant toute publication.');
     } catch {
       if (uploadedPath) {
@@ -384,32 +388,58 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false }: 
                     {presentationFeedback && <p role="status" className="mt-2 text-sm text-[#62212a]">{presentationFeedback}</p>}
                     </>}
                   </div>}
-                  {activeTab === 'boutique' && stats.length > 0 && !statsLoading && !statsError && user && <BoutiqueProductManagement entrepriseIds={stats.map(record => record.entreprise_id)} userId={user.id} />}
-                  {activeTab === 'boutique' && stats.length > 0 && !statsLoading && !statsError && <div className="mt-5 rounded-xl border border-[#dfcda8] bg-white p-4 sm:p-5">
-                    <h3 className="mb-2 font-semibold text-[#62212a]">Proposer un produit</h3>
-                    <p className="mb-4 text-sm text-gray-600">Envoi privé à Dalil Tounes. Votre proposition ne sera visible aux visiteurs qu’après validation et publication par notre équipe. La photo est obligatoire pour une publication et reste privée jusqu’à validation.</p>
+                  {activeTab === 'boutique' && stats.length > 0 && !statsLoading && !statsError && <>
+                    <div className="mt-5 grid grid-cols-2 gap-2" aria-label="Gestion de la boutique">
+                      <button type="button" aria-expanded={boutiquePanel==='manage'}
+                        onClick={()=>setBoutiquePanel(current=>current==='manage'?null:'manage')}
+                        className="min-h-11 rounded-xl border border-[#dfcda8] bg-white px-3 py-2 text-sm font-semibold text-[#62212a]">
+                        {boutiquePanel==='manage'?'− Fermer':'＋ Gérer mes articles'}
+                      </button>
+                      <button type="button" aria-expanded={boutiquePanel==='create'}
+                        onClick={()=>setBoutiquePanel(current=>current==='create'?null:'create')}
+                        className="min-h-11 rounded-xl border border-[#dfcda8] bg-white px-3 py-2 text-sm font-semibold text-[#62212a]">
+                        {boutiquePanel==='create'?'− Fermer':'＋ Ajouter un article'}
+                      </button>
+                    </div>
+                    {boutiquePanel==='manage' && user &&
+                      <BoutiqueProductManagement entrepriseIds={stats.map(record => record.entreprise_id)} userId={user.id} />}
+                  </>}
+                  {activeTab === 'boutique' && boutiquePanel==='create' && stats.length > 0 && !statsLoading && !statsError && <div className="mt-3 rounded-xl border border-[#dfcda8] bg-white p-4 sm:p-5">
+                    <h3 className="mb-2 font-semibold text-[#62212a]">Proposer un produit ou un pack cadeau</h3>
+                    <p className="mb-4 text-sm text-gray-600">Même formulaire et même Boutique : le commerçant fixe librement son prix. Les nouveaux articles sont validés avant publication.</p>
                     <form onSubmit={submitProductProposal} className="grid gap-3">
+                      <fieldset className="grid gap-2">
+                        <legend className="mb-1 text-sm font-semibold text-[#62212a]">Je propose</legend>
+                        <div className="grid grid-cols-2 gap-2">
+                          {([['product','Un produit'],['gift_pack','Un pack cadeau']] as const).map(([value,label])=>
+                            <button key={value} type="button" aria-pressed={productKind===value}
+                              onClick={()=>{setProductKind(value);setProductMessage('');setProductMode('order');}}
+                              className={`min-h-11 rounded-xl border px-2 py-2 text-sm ${productKind===value?'border-[#b28b43] bg-[#fbf1df] font-semibold text-[#62212a]':'border-[#dfcda8] bg-white text-gray-700'}`}>
+                              {label}
+                            </button>)}
+                        </div>
+                      </fieldset>
                       {stats.length > 1 && <label className="grid gap-1 text-sm">Établissement
                         <select className="rounded-lg border border-[#dfcda8] bg-white p-3 text-gray-900" value={productBusiness || stats[0].entreprise_id} onChange={e => setProductBusiness(e.target.value)}>
                           {stats.map(record => <option key={record.entreprise_id} value={record.entreprise_id}>{record.entreprise_id}</option>)}
                         </select>
                       </label>}
-                      <label className="grid gap-1 text-sm">Nom du produit
-                        <input required minLength={2} maxLength={120} className="rounded-lg border border-[#dfcda8] bg-white p-3 text-gray-900" value={productTitle} onChange={e => setProductTitle(e.target.value)} placeholder="Ex. Plateaux traiteur" />
+                      <label className="grid gap-1 text-sm">{productKind==='gift_pack'?'Nom du pack cadeau':'Nom du produit'}
+                        <input required minLength={2} maxLength={120} className="rounded-lg border border-[#dfcda8] bg-white p-3 text-gray-900" value={productTitle} onChange={e => setProductTitle(e.target.value)} placeholder={productKind==='gift_pack'?'Ex. Coffret gourmand':'Ex. Plateaux traiteur'} />
                       </label>
-                      <label className="grid gap-1 text-sm">Catégorie (facultative)
+                      {productKind==='product' && <label className="grid gap-1 text-sm">Catégorie (facultative)
                         <input maxLength={60} className="rounded-lg border border-[#dfcda8] bg-white p-3 text-gray-900" value={productCategory} onChange={e => setProductCategory(e.target.value)} placeholder="Ex. Traiteur, Desserts, Créations" />
-                      </label>
-                      <label className="grid gap-1 text-sm">Type de demande
+                      </label>}
+                      {productKind==='product' && <label className="grid gap-1 text-sm">Type de demande
                         <select className="rounded-lg border border-[#dfcda8] bg-white p-3 text-gray-900" value={productMode} onChange={e => setProductMode(e.target.value as 'quote'|'order')}>
                           <option value="quote">Sur devis</option><option value="order">Commande avec prix indicatif</option>
                         </select>
-                      </label>
-                      {productMode === 'order' && <label className="grid gap-1 text-sm">Prix en TND
+                      </label>}
+                      {(productMode === 'order' || productKind==='gift_pack') && <label className="grid gap-1 text-sm">{productKind==='gift_pack'?'Prix du pack en TND (choisi par vous)':'Prix en TND'}
                         <input required type="number" min="0.01" max="100000" step="0.01" className="rounded-lg border border-[#dfcda8] bg-white p-3 text-gray-900" value={productPrice} onChange={e => setProductPrice(e.target.value)} />
                       </label>}
-                      <label className="grid gap-1 text-sm">Description
-                        <textarea rows={3} maxLength={800} className="rounded-lg border border-[#dfcda8] bg-white p-3 text-gray-900" value={productDescription} onChange={e => setProductDescription(e.target.value)} />
+                      <label className="grid gap-1 text-sm">{productKind==='gift_pack'?'Contenu du pack (produits ou prestations inclus)':'Description'}
+                        <textarea rows={3} required={productKind==='gift_pack'} minLength={productKind==='gift_pack'?5:undefined} maxLength={800} className="rounded-lg border border-[#dfcda8] bg-white p-3 text-gray-900" value={productDescription} onChange={e => setProductDescription(e.target.value)} placeholder={productKind==='gift_pack'?'Ex. Pâtisseries, dattes et chocolats ; préciser les quantités.':''} />
                       </label>
                       <label className="grid gap-1 text-sm">Photo requise pour publication (JPG, PNG ou WebP, 5 Mo max.)
                         <input required key={productPhotoInputKey} type="file" accept="image/jpeg,image/png,image/webp" className="rounded-lg border border-[#dfcda8] bg-white p-3 text-gray-900" onChange={event => setProductPhoto(event.target.files?.[0] ?? null)} />
