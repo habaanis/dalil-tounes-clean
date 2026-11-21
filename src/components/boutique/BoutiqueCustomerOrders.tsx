@@ -107,6 +107,7 @@ export default function BoutiqueCustomerOrders({entrepriseIds}:{entrepriseIds:st
         {entrepriseIds.map(id=><option key={id} value={id}>{id}</option>)}
       </select>
     </label>}
+    {!loading && !error && <p role="status" className="rounded-lg border border-[#d6c29e] bg-[#fff9ec] px-3 py-2 text-sm font-semibold text-[#3b3328]">{orders.length} demande{orders.length!==1?'s':''} chargée{orders.length!==1?'s':''} (commandes et devis)</p>}
     {error&&<div role="alert" className="rounded-lg border border-[#e2c59e] bg-[#fff8eb] p-3 text-sm text-[#754024]">{error}</div>}
     {loading?<p role="status" className="text-sm text-gray-600">Chargement des commandes…</p>:
       !error&&orders.length===0?<p role="status" className="rounded-lg border border-[#e6d8bc] bg-[#fffcf8] p-4 text-sm text-[#62564a]">Aucune demande enregistrée pour cet établissement.</p>:
