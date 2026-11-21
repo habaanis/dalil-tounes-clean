@@ -3,7 +3,7 @@ import { DALIL_MASCOT_IMAGE } from '../lib/dalilMascotImage';
 import SearchBar from './SearchBar';
 import { Building2, ShieldCheck, Star } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
-import PlatformAppHelp from './PlatformAppHelp';
+import DalilFAQ from './DalilFAQ';
 
 type Lang = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 const COPY: Record<Lang, {
@@ -103,7 +103,7 @@ export default function PlatformAppHome({ totalCount, legacyCertifiedCount, reco
       <p className="text-sm font-semibold leading-5 text-[#292929]">{lang === 'ar' ? 'خلّي مؤسستك موجودة في دليل تونس.' : lang === 'en' ? 'Get listed on Dalil Tounes.' : lang === 'it' ? 'Fai conoscere la tua attività su Dalil Tounes.' : lang === 'ru' ? 'Разместите свою компанию на Dalil Tounes.' : 'Soyez répertorié sur Dalil Tounes.'}</p>
       <p className="mt-1 text-xs leading-5 text-[#66615D]">{lang === 'ar' ? 'عزّز حضور نشاطك عبر تطبيق مصغّر مهني خاص بمؤسستك.' : lang === 'en' ? 'Give your business greater impact with your own business mini-app.' : lang === 'it' ? 'Dai più visibilità alla tua attività con una mini-app personalizzata.' : lang === 'ru' ? 'Представьте бизнес с помощью собственного мини-приложения.' : 'Développez votre visibilité avec votre mini-appli professionnelle.'}</p>
     </section>
-    <PlatformAppHelp language={lang} />
+    <DalilFAQ />
     <section aria-label={t.count(totalCount ?? '—')} className="rounded-xl border border-[#C9A65D] bg-[#FFFDF9] px-4 py-4 shadow-[0_2px_12px_rgba(30,25,20,0.025)]" aria-live="polite">
       <div className="flex items-start gap-2.5">
         <Building2 className="mt-0.5 h-4 w-4 shrink-0 text-[#B28A44]" aria-hidden="true" />
