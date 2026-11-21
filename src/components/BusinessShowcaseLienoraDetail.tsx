@@ -49,6 +49,7 @@ import {
 import { QRCodeSVG } from 'qrcode.react';
 import { supabase } from '../lib/supabaseClient';
 import { useLanguage } from '../context/LanguageContext';
+import { VisitorSuggestions } from './VisitorSuggestions';
 import { mapSubscriptionToTier } from '../lib/subscriptionTiers';
 import { getBusinessShowcaseCapabilities } from '../lib/businessShowcaseConfig';
 import {
@@ -1759,6 +1760,12 @@ export default function BusinessShowcaseLienoraDetail({
           embeddedPreview={embeddedPreview}
           palette={activePalette}
         />
+        {!embeddedPreview && isClientAppMode && (
+          <div className="mx-auto max-w-xl px-4 pb-5">
+            <p className="mb-2 text-center text-xs text-[#a78a50]">{language==='ar'?'هل لديك فكرة لتحسين دليل تونس؟ (ليس تقييماً لهذا التاجر)':'Une idée pour améliorer Dalil Tounes ? (Ce n’est pas un avis sur ce commerçant.)'}</p>
+            <VisitorSuggestions source="app"/>
+          </div>
+        )}
         {selectedImage && (
           <GalleryLightbox
             images={galleryItems}
@@ -2013,6 +2020,12 @@ export default function BusinessShowcaseLienoraDetail({
             </div>
           </div>
 
+          {!embeddedPreview && isClientAppMode && (
+            <div className="mx-auto max-w-xl px-3 pb-4">
+              <p className="mb-2 text-center text-xs text-[#bb9d61]">{language==='ar'?'هل لديك فكرة لتحسين دليل تونس؟ (ليس تقييماً لهذا التاجر)':'Une idée pour améliorer Dalil Tounes ? (Ce n’est pas un avis sur ce commerçant.)'}</p>
+              <VisitorSuggestions source="app"/>
+            </div>
+          )}
           <p className="dt-powered-by">
             {language === 'ar' ? 'مدعوم من' : language === 'en' ? 'Powered by' : language === 'it' ? 'Offerto da' : language === 'ru' ? 'При поддержке' : 'Propulsé par'}
             <img src="/images/logo_dalil_tounes_crop.png" alt="" />
