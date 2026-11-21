@@ -82,7 +82,10 @@ export default function PlatformAppShell({ children }: { children: ReactNode }) 
         </div>
         {menuOpen && <nav id="dalil-platform-app-more" aria-label={copy.more} className="mx-auto max-w-xl border-t border-[#E4D6B8] bg-white px-3 py-2">
           <div className="grid grid-cols-2 gap-2">
-            {extra.map(item => <Link key={item.to} to={item.to} onClick={() => { setMenuOpen(false); if ((item.to === '/#faq' || item.to === '/#suggestions') && location.pathname === '/') document.getElementById(item.to.slice(2))?.scrollIntoView({behavior:'smooth',block:'start'}); }}
+            {extra.map(item => <Link key={item.to} to={item.to} onClick={() => { setMenuOpen(false); if (item.to === '/#faq' || item.to === '/#suggestions') {
+                const id=item.to.slice(2);
+                window.requestAnimationFrame(()=>document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'}));
+              } }}
               className="flex min-h-11 items-center rounded-xl border border-[#C9A65D] px-3 text-sm font-medium text-[#292725]">{item.label}</Link>)}
           </div>
         </nav>}

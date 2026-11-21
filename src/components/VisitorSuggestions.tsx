@@ -1,4 +1,5 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Lightbulb, ChevronDown } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { supabaseUrl } from '../lib/supabaseClient';
@@ -8,10 +9,18 @@ type Subject = 'idee'|'amelioration'|'probleme';
 
 /** Same lightweight feedback form for website and app, with no account needed. */
 export function VisitorSuggestions({source='site'}:{source?:'site'|'app'}) {
-  const {language}=useLanguage();
+  const {language,setLanguage}=useLanguage();
+  const location=useLocation();
   const ar=language==='ar';
   const t=(fr:string,arabic:string)=>ar?arabic:fr;
   const [open,setOpen]=useState(false);
+  useEffect(()=>{
+    if(location.hash!=='#suggestions')return;
+    setOpen(true);
+    const frame=window.requestAnimationFrame(()=>window.requestAnimationFrame(()=>
+      document.getElementById('suggestions')?.scrollIntoView({block:'start',behavior:'smooth'})));
+    return ()=>window.cancelAnimationFrame(frame);
+  },[location.pathname,location.hash]);
   const [audience,setAudience]=useState<Visitor>('visiteur');
   const [category,setCategory]=useState<Subject>('idee');
   const [message,setMessage]=useState('');
@@ -47,6 +56,12 @@ export function VisitorSuggestions({source='site'}:{source?:'site'|'app'}) {
       <ChevronDown className={`h-4 w-4 transition-transform ${open?'rotate-180':''}`}/>
     </button>
     {open&&<div id="dalil-visitor-ideas-panel" className="border-t border-[#e8dac1] px-4 pb-4 pt-3">
+      <div className="mb-3 flex items-center justify-end gap-2" dir="ltr" role="group" aria-label={t('Langue du formulaire','لغة الاستمارة')}>
+        <button type="button" aria-pressed={!ar} onClick={()=>setLanguage('fr')}
+          className={`rounded-lg border px-3 py-1.5 text-xs font-semibold ${!ar?'border-[#a67c36] bg-[#f4e8ca]':'border-[#dbd3c2] bg-white'}`}>FR</button>
+        <button type="button" aria-pressed={ar} onClick={()=>setLanguage('ar')}
+          className={`rounded-lg border px-3 py-1.5 text-xs font-semibold ${ar?'border-[#a67c36] bg-[#f4e8ca]':'border-[#dbd3c2] bg-white'}`}>AR</button>
+      </div>
       <p className="text-xs mb-3 text-[#59574f]">{t('Quelle fonction ou amélioration aimeriez-vous voir ? Aucun compte nécessaire.','ما الميزة أو التحسين الذي ترغب في رؤيته؟ دون إنشاء حساب.')}</p>
       <form onSubmit={send} className="space-y-3">
         <label className="block text-xs font-medium">{t('Vous êtes','أنت')}
