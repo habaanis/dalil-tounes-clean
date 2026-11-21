@@ -1,5 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { BoutiquePushFollow } from './BoutiquePushFollow';
+import { useLanguage } from '../../context/LanguageContext';
 import { supabase, supabaseUrl, supabaseAnonKey } from '../../lib/supabaseClient';
 
 export type BoutiqueProduct = {
@@ -56,6 +57,7 @@ const customerStatusLabels:Record<string,string>={
 const isUnpricedCustomerOrder=(profileId:string|undefined,title:string)=>
   profileId==='36f84b99-2c37-47d1-91ba-4c35cda8c1af'&&
   ['buffet de mariage','plateaux traiteur'].includes(title.trim().toLocaleLowerCase('fr'));
+const savedLoyaltyKey=(id:string)=>'dalil-loyalty-local:'+id;
 const localRequestKey=(profileId:string)=>'dalil-customer-requests:'+profileId;
 const readLocalRequests=(profileId:string):LocalRequest[]=>{
   try {
@@ -74,6 +76,9 @@ const readLocalRequests=(profileId:string):LocalRequest[]=>{
 const iconButton = { background: 'var(--boutique-button, #063b30)', border: '1px solid var(--boutique-accent, #d7c7ae)', borderRadius: 24, height: 34, minWidth: 34, cursor: 'pointer', color: 'var(--boutique-button-ink, #fff)', fontSize: 20 } as const;
 
 export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = 'Boutique', triggerIcon }: { config: BoutiqueConfig; triggerClassName?: string; triggerLabel?: string; triggerIcon?: ReactNode }) {
+  const {language}=useLanguage();
+  const ar=language==='ar';
+  const t=(fr:string,arabic:string)=>ar?arabic:fr;
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<BoutiqueProduct | null>(null);
   const [offersOpen,setOffersOpen] = useState(false);
@@ -89,6 +94,13 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
   },[config.profileId,open]);
   const [cardLookupKind,setCardLookupKind] = useState<'loyalty'|'gift_card'>('loyalty');
   const [cardCode,setCardCode] = useState('');
+  const [savedLoyalty,setSavedLoyalty] = useState('');
+  const [rememberLoyalty,setRememberLoyalty] = useState(true);
+  useEffect(()=>{
+    let code='';
+    if(config.profileId){try{code=localStorage.getItem(savedLoyaltyKey(config.profileId))||'';}catch{/* unavailable */}}
+    setSavedLoyalty(/^[0-9]{4}$/.test(code)?code:'');
+  },[config.profileId,open]);
   const [cardInfo,setCardInfo] = useState<Record<string,unknown>|null>(null);
   const [cardNotice,setCardNotice] = useState('');
   const [cardChecking,setCardChecking] = useState(false);
@@ -134,7 +146,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
           statuses[item.reference]=item;
       }
       setLiveStatuses(statuses);
-      setStatusNotice(result.items.length?'Votre suivi est à jour.':'Aucune nouvelle information disponible pour ces demandes.');
+      setStatusNotice(result.items.length?t('Votre suivi est à jour.','تم تحديث المتابعة.'):t('Aucune nouvelle information disponible pour ces demandes.','لا توجد معلومات جديدة.'));
     }catch{setStatusNotice('Connexion indisponible. Vos références locales sont conservées.');}
     finally{setStatusChecking(false);}
   };
@@ -178,8 +190,8 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
   const pageCount = Math.max(1, Math.ceil(filteredProducts.length / 12));
   const safePage = Math.min(cataloguePage, pageCount);
   const pageProducts = filteredProducts.slice((safePage - 1) * 12, safePage * 12);
-  const lookupCard=async()=>{
-    const code=cardCode.trim();
+  const lookupCard=async(knownCode?:string)=>{
+    const code=(knownCode??cardCode).trim();
     if(!config.profileId||(cardLookupKind==='loyalty'?!/^[0-9]{4}$/.test(code):
       !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(code))){
       setCardInfo(null);setCardNotice(cardLookupKind==='loyalty'?'Saisissez les 4 chiffres de votre carte de fidélité.':'Saisissez le code complet de votre carte cadeau.');return;
@@ -197,6 +209,9 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
           return;
         }
         setCardInfo(result.card);
+        if(config.profileId&&rememberLoyalty){try{
+          localStorage.setItem(savedLoyaltyKey(config.profileId),code);setSavedLoyalty(code);
+        }catch{/* unavailable */}}
       }catch{setCardNotice('Vérification temporairement indisponible.');}
       finally{setCardChecking(false);}
       return;
@@ -531,34 +546,34 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
           {!config.demoMode && config.profileId && <div style={{marginTop:12,borderTop:'1px solid var(--boutique-accent, #e8bd43)',paddingTop:10}}>
             <button type="button" aria-expanded={myFollowupOpen} onClick={()=>setMyFollowupOpen(v=>!v)}
              style={{width:'100%',padding:11,marginBottom:8,borderRadius:10,border:'1px solid var(--boutique-accent, #e8bd43)',background:'var(--boutique-card, #002f2b)',color:'var(--boutique-ink, #f7f4ec)',cursor:'pointer',fontSize:12,fontWeight:700,textAlign:'left'}}>
-             📋 Mon suivi (sans compte) {myFollowupOpen?'−':'＋'}
+             {t('📋 Mon suivi (sans compte)','📋 متابعتي دون حساب')} {myFollowupOpen?'−':'＋'}
             </button>
             {myFollowupOpen&&<div style={{display:'grid',gap:8,marginBottom:10,fontSize:12,color:'var(--boutique-ink, #f7f4ec)'}}>
-             <p style={{margin:0}}>Retrouvez vos demandes et leurs confirmations sur ce téléphone, sans créer de compte.</p>
+             <p style={{margin:0}}>{t('Retrouvez vos demandes et leurs confirmations sur ce téléphone, sans créer de compte.','تابع طلباتك وتأكيداتها على هذا الهاتف دون إنشاء حساب.')}</p>
              {localRequests.some(item=>item.proof)&&<button type="button" disabled={statusChecking} onClick={()=>void refreshCustomerStatuses()}
               style={{padding:9,borderRadius:8,border:'1px solid var(--boutique-accent, #e8bd43)',background:'var(--boutique-button, #003c35)',color:'var(--boutique-button-ink, #fff)',fontWeight:700,opacity:statusChecking?0.7:1}}>
-              {statusChecking?'Actualisation…':'Actualiser le statut de mes demandes'}
+              {statusChecking?t('Actualisation…','جارٍ التحديث…'):t('Actualiser le statut de mes demandes','تحديث حالة الطلبات')}
              </button>}
              {statusNotice&&<p role="status" style={{margin:0}}>{statusNotice}</p>}
-             {localRequests.length===0?<p style={{margin:0}}>Aucune référence conservée sur cet appareil.</p>:
+             {localRequests.length===0?<p style={{margin:0}}>{t('Aucune référence conservée sur cet appareil.','لا توجد طلبات محفوظة على هذا الجهاز.')}</p>:
               localRequests.map(item=><div key={item.reference} style={{display:'grid',gap:3,padding:9,border:'1px solid var(--boutique-accent, #e8bd43)',borderRadius:8}}>
                {liveStatuses[item.reference]?(()=>{
                  const detail=liveStatuses[item.reference];
                  const confirmed=detail.status==='confirmed';
                  const customerOrder=detail.kind==='order'||isUnpricedCustomerOrder(config.profileId,detail.productTitle);
-                 const kind=customerOrder?'commande':'demande de devis';
+                 const kind=customerOrder?t('commande','الطلب'):t('demande de devis','طلب عرض سعر');
                  const requested=detail.requestedDate&&/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(detail.requestedDate)?
                    detail.requestedDate.split('-').reverse().join('/'):null;
                  return <>
                    <strong style={{fontSize:15}}>{confirmed?
-                     'Votre '+kind+' a bien été confirmée.':
-                     detail.status==='received'?'Votre '+kind+' a bien été reçue.':
+                     (ar?'تم تأكيد '+kind+' بنجاح.':'Votre '+kind+' a bien été confirmée.'):
+                     detail.status==='received'?(ar?'تم استلام '+kind+' بنجاح.':'Votre '+kind+' a bien été reçue.'):
                      'Votre '+kind+' : '+(customerStatusLabels[detail.status]||'En cours de traitement')+'.'}</strong>
-                   <span>Numéro de suivi : <strong>{item.reference.slice(0,8).toUpperCase()}</strong></span>
-                   <span>Article : {detail.productTitle}</span>
-                   <span>Quantité : {detail.quantity}</span>
-                   {requested&&<span>Date souhaitée : {requested}</span>}
-                   <span>{confirmed?(customerOrder?'Merci pour votre commande et votre confiance !':'Merci pour votre confiance !'):'Nous vous informerons de la suite de votre demande.'}</span>
+                   <span>{t('Numéro de suivi :','رقم المتابعة:')} <strong>{item.reference.slice(0,8).toUpperCase()}</strong></span>
+                   <span>{t('Article :','المنتج:')} {detail.productTitle}</span>
+                   <span>{t('Quantité :','الكمية:')} {detail.quantity}</span>
+                   {requested&&<span>{t('Date souhaitée :','التاريخ المطلوب:')} {requested}</span>}
+                   <span>{confirmed?(customerOrder?t('Merci pour votre commande et votre confiance !','شكراً على طلبكم وثقتكم!'):t('Merci pour votre confiance !','شكراً لثقتكم!')):t('Nous vous informerons de la suite de votre demande.','سنعلمكم بمستجدات طلبكم.')}</span>
                  </>;
                })():<>
                  <strong>{item.kind==='quote'?'Votre demande de devis':'Votre commande'} du {new Date(item.createdAt).toLocaleDateString('fr-FR')}</strong>
@@ -570,19 +585,27 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
                if(!window.confirm('Effacer les références de ce téléphone ? Les demandes enregistrées chez le commerçant ne seront pas supprimées.'))return;
                try{window.localStorage.removeItem(localRequestKey(config.profileId!));}catch{/* ignored */}
                setLocalRequests([]);setLiveStatuses({});setStatusNotice('');
-              }} style={{padding:9,borderRadius:8,border:'1px solid var(--boutique-accent, #e8bd43)',background:'transparent',color:'inherit'}}>Effacer les références de cet appareil</button>}
-             <p style={{margin:0}}>Votre carte de fidélité se consulte ici, avec le code remis par le commerçant.</p>
+              }} style={{padding:9,borderRadius:8,border:'1px solid var(--boutique-accent, #e8bd43)',background:'transparent',color:'inherit'}}>{t('Effacer les références de cet appareil','حذف المراجع من هذا الجهاز')}</button>}
+             <p style={{margin:0}}>{t('Votre carte de fidélité se consulte ici, avec le code remis par le commerçant.','يمكنك عرض بطاقة الوفاء هنا برمز التاجر.')}</p>
             </div>}
 
             {myFollowupOpen&&<>
             <button type="button" aria-expanded={cardLookupOpen} onClick={()=>{setCardLookupOpen(v=>!v);setCardInfo(null);setCardNotice('');}}
               style={{width:'100%',padding:11,borderRadius:10,border:'1px solid var(--boutique-accent, #e8bd43)',background:'var(--boutique-card, #002f2b)',color:'var(--boutique-ink, #f7f4ec)',cursor:'pointer',fontSize:12,fontWeight:700,textAlign:'left'}}>
-              ⭐ Ma fidélité et mes cartes cadeaux {cardLookupOpen?'−':'＋'}
+              {t('⭐ Ma fidélité et mes cartes cadeaux','⭐ بطاقة الوفاء وبطاقات الهدايا')} {cardLookupOpen?'−':'＋'}
             </button>
-            {cardLookupOpen&&<div style={{display:'grid',gap:8,marginTop:9}}>
-              <label style={labelStyle}>Type de carte
+            {cardLookupOpen&&<div dir={ar?'rtl':'ltr'} style={{display:'grid',gap:8,marginTop:9}}>
+              {savedLoyalty&&cardLookupKind==='loyalty'&&<div style={{display:'grid',gap:6}}>
+                <button type="button" disabled={cardChecking} onClick={()=>void lookupCard(savedLoyalty)} style={{padding:10,borderRadius:9,border:'1px solid var(--boutique-accent, #e8bd43)',background:'var(--boutique-button, #003c35)',color:'var(--boutique-button-ink, #fff)',fontWeight:700}}>
+                  {t('Voir directement ma carte','عرض بطاقتي مباشرة')}
+                </button>
+                <button type="button" onClick={()=>{if(!config.profileId)return;try{localStorage.removeItem(savedLoyaltyKey(config.profileId));}catch{/* unavailable */}setSavedLoyalty('');setCardInfo(null);}} style={{padding:9,borderRadius:9,border:'1px solid var(--boutique-accent, #e8bd43)',background:'transparent',color:'inherit'}}>
+                  {t('Oublier ma carte sur ce téléphone','حذف البطاقة المحفوظة من هذا الهاتف')}
+                </button>
+              </div>}
+              <label style={labelStyle}>{t('Type de carte','نوع البطاقة')}
                 <select style={fieldStyle} value={cardLookupKind} onChange={e=>{setCardLookupKind(e.target.value as 'loyalty'|'gift_card');setCardCode('');setCardInfo(null);setCardNotice('');}}>
-                  <option value="loyalty">Carte de fidélité</option><option value="gift_card">Carte cadeau</option>
+                  <option value="loyalty">{t('Carte de fidélité','بطاقة الوفاء')}</option><option value="gift_card">{t('Carte cadeau','بطاقة هدية')}</option>
                 </select>
               </label>
               <label style={labelStyle}>{cardLookupKind==='loyalty'?'Code de fidélité (4 chiffres)':'Code complet de la carte cadeau'}
@@ -590,18 +613,22 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
                   placeholder={cardLookupKind==='loyalty'?'Ex. 0427':'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'}
                   inputMode={cardLookupKind==='loyalty'?'numeric':'text'} autoComplete="off" maxLength={cardLookupKind==='loyalty'?4:36}/>
               </label>
+              {cardLookupKind==='loyalty'&&<label style={{display:'flex',gap:6,fontSize:11,alignItems:'center'}}>
+                <input type="checkbox" checked={rememberLoyalty} onChange={e=>setRememberLoyalty(e.target.checked)}/>
+                {t('Garder ma carte sur ce téléphone (éviter les appareils partagés)','حفظ بطاقتي على هذا الهاتف (تجنب الأجهزة المشتركة)')}
+              </label>}
               <button type="button" disabled={cardChecking} onClick={()=>void lookupCard()}
                 style={{padding:11,borderRadius:10,border:'1px solid var(--boutique-accent, #e8bd43)',background:'var(--boutique-button, #003c35)',color:'var(--boutique-button-ink, #fff)',fontWeight:700}}>
-                {cardChecking?'Vérification…':'Voir ma carte'}
+                {cardChecking?t('Vérification…','جارٍ التحقق…'):t('Voir ma carte','عرض البطاقة')}
               </button>
               {cardNotice&&<p role="status" style={{fontSize:11,margin:0}}>{cardNotice}</p>}
               {cardInfo&&<div role="status" style={{border:'1px solid var(--boutique-accent, #e8bd43)',padding:10,borderRadius:9,fontSize:12}}>
                 <strong>{String(cardInfo.title||'Ma carte')}</strong>
                 {cardInfo.kind==='loyalty'&&<div style={{display:'grid',gap:4,marginTop:6}}>
                   <strong>{String(cardInfo.stamps)} achat(s) sur {String(cardInfo.target)} pour votre prochain cadeau</strong>
-                  <span>Votre cadeau : {String(cardInfo.reward||'à définir avec le commerçant')}</span>
-                  <span>Récompenses déjà remises : {Number.isFinite(Number(cardInfo.rewards_given))?Number(cardInfo.rewards_given):0}</span>
-                  {Number(cardInfo.stamps)>=Number(cardInfo.target)&&<strong>Votre cadeau est prêt ! Contactez le commerçant pour en profiter.</strong>}
+                  <span>{t('Votre cadeau :','هديتك:')} {String(cardInfo.reward||'à définir avec le commerçant')}</span>
+                  <span>{t('Récompenses déjà remises :','الهدايا المستلمة:')} {Number.isFinite(Number(cardInfo.rewards_given))?Number(cardInfo.rewards_given):0}</span>
+                  {Number(cardInfo.stamps)>=Number(cardInfo.target)&&<strong>{t('Votre cadeau est prêt ! Contactez le commerçant pour en profiter.','هديتك جاهزة! تواصل مع التاجر لاستلامها.')}</strong>}
                 </div>}
                 {cardInfo.kind==='gift_card'&&<p style={{margin:'5px 0 0'}}>Solde : {Number(cardInfo.balance).toFixed(3)} DT · {cardInfo.state==='active'?'Carte active':cardInfo.state==='pending'?'En attente d’activation':'Carte utilisée ou inactive'}</p>}
               </div>}
