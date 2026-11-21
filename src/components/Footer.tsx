@@ -243,6 +243,16 @@ const Footer: React.FC = () => {
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" fill="none" stroke="currentColor" strokeWidth="2"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
                 Instagram
               </a>
+              <a
+                href="https://www.tiktok.com/@daliltounes"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Suivez-nous sur TikTok"
+                className="inline-flex items-center gap-2 text-gray-400 hover:text-[#D4AF37] transition-colors text-xs"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.9 2h-3.1v12.2a3.3 3.3 0 1 1-3.3-3.3c.3 0 .5 0 .8.1V7.8a6.6 6.6 0 1 0 5.6 6.5V8.1a8 8 0 0 0 4.5 1.3V6.3a5 5 0 0 1-4.5-4.3z"/></svg>
+                TikTok
+              </a>
             </div>
           </div>
 
