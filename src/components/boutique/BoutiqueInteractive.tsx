@@ -72,7 +72,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
   const [cataloguePage, setCataloguePage] = useState(1);
   const products = config.products.filter(product => Boolean(product.id && product.title && product.imageUrl));
   // Keep the approved festive-menu order; any other category follows alphabetically.
-  const preferredCategories = ['Menu des fêtes', 'Entrées', 'Plats', 'Fromages', 'Desserts'];
+  const preferredCategories = ['Menu des fêtes', 'Entrées', 'Plats', 'Fromages', 'Desserts', 'Packs cadeaux'];
   const rankCategory = (name: string) => preferredCategories.findIndex(
     preferred => preferred.toLocaleLowerCase('fr') === name.toLocaleLowerCase('fr')
   );
@@ -275,6 +275,14 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
         </div>
         {!selected ? <>
           <p style={{ fontSize: 12, color: 'var(--boutique-muted, #d0ddd5)', margin: '0 0 12px' }}>Découvrez nos créations. Touchez une photo pour les détails.</p>
+          {catalogueCategories.some(category=>category.toLowerCase()==='packs cadeaux') && <button type="button"
+            aria-pressed={catalogueCategory==='Packs cadeaux'}
+            onClick={()=>{setCatalogueCategory(current=>current==='Packs cadeaux'?'':'Packs cadeaux');setCataloguePage(1);}}
+            style={{width:'100%',margin:'0 0 10px',padding:'10px 12px',border:'1px solid var(--boutique-accent, #e8bd43)',
+              borderRadius:11,background:'var(--boutique-card, #002f2b)',color:'var(--boutique-ink, #f7f4ec)',fontSize:12,
+              fontWeight:700,textAlign:'left',cursor:'pointer'}}>
+            🎁 {catalogueCategory==='Packs cadeaux'?'Fermer les packs cadeaux':'Découvrir les packs cadeaux'}
+          </button>}
           {(products.length > 12 || catalogueCategories.length > 0) && <div style={{display:'grid',gap:8,margin:'0 0 12px'}}>
             <label style={{...labelStyle,color:'var(--boutique-ink, #f7f4ec)'}}>Rechercher une création
               <input type="search" value={catalogueQuery} onChange={event => {setCatalogueQuery(event.target.value);setCataloguePage(1);}} placeholder="Nom ou description" style={fieldStyle} />
@@ -292,6 +300,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
               <img src={product.imageUrl} alt={product.title} loading="lazy"
                 style={{ width: '100%', aspectRatio: '1 / 1', objectFit: 'cover', borderRadius: 8 }} />
               {!config.demoMode && isRecentProduct(product) && <span style={{justifySelf:'start',padding:'2px 7px',borderRadius:20,background:'var(--boutique-accent, #e8bd43)',color:'var(--boutique-button, #003c35)',fontSize:10,fontWeight:700}}>Nouveau</span>}
+              {product.category?.trim().toLowerCase()==='packs cadeaux' && <span style={{padding:'0 4px',fontSize:10,color:'var(--boutique-accent, #e8bd43)'}}>🎁 Pack cadeau</span>}
               <span style={{ padding: '0 4px', fontSize: 12, fontWeight: 600, overflowWrap: 'anywhere' }}>{product.title}</span>
               <span style={{ padding: '0 4px 3px', fontSize: 11, color: 'var(--boutique-accent, #e8bd43)' }}>Voir les détails ›</span>
             </button>)}
@@ -310,6 +319,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
             <strong style={{ color: 'var(--boutique-ink, #f7f4ec)', fontSize: 16 }}>{selected.title}</strong>
             <span style={{ whiteSpace: 'nowrap', fontWeight: 600, fontSize: 12, color: 'var(--boutique-accent, #e8bd43)' }}>{priceText(selected)}</span>
           </div>
+          {selected.category?.trim().toLowerCase()==='packs cadeaux' && <p style={{fontSize:11,color:'var(--boutique-accent, #e8bd43)',margin:'7px 0 0',fontWeight:700}}>🎁 Pack cadeau · prix fixé par le commerçant</p>}
           {selected.description && <p style={{ fontSize: 12, lineHeight: 1.5, margin: '6px 0 12px', color: 'var(--boutique-muted, #d0ddd5)' }}>{selected.description}</p>}
           {!requestOpen ? (orderAvailability==='available'||config.demoMode) ? <button type="button" onClick={() => setRequestOpen(true)}
             style={{ border: '1px solid var(--boutique-accent, #d4af37)', borderRadius: 10, background: 'var(--boutique-button, #063b30)', color: 'var(--boutique-button-ink, #fff)', fontSize: 13, fontWeight: 600, padding: '11px 14px', width: '100%', cursor: 'pointer' }}>
