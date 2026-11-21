@@ -3,7 +3,7 @@ import { supabase } from '../../lib/supabaseClient';
 
 type Kind = 'offer' | 'loyalty' | 'gift_card';
 type Program = { id:string; entreprise_id:string; kind:Kind; title:string; description:string; value:number; weekday:number|null; begins_at:string|null; ends_at:string|null; active:boolean; created_at:string };
-type LoyaltyCard = { id:string;entreprise_id:string;program_id:string;customer_label:string;stamps:number;rewards_given:number };
+type LoyaltyCard = { id:string;entreprise_id:string;program_id:string;customer_label:string;public_code:string;stamps:number;rewards_given:number };
 type GiftCard = { id:string;entreprise_id:string;program_id:string;recipient_label:string;face_value:number;balance:number;state:'pending'|'active'|'spent'|'cancelled' };
 const days=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
 const fields='min-h-11 w-full rounded-xl border border-[#d7c7ab] bg-white p-3 text-sm text-gray-900';
@@ -43,7 +43,7 @@ export default function SalesLoyaltyManagement({entrepriseIds}:{entrepriseIds:st
   setLoading(true);setError('');
   void Promise.all([
    supabase.from('dalil_sales_programs').select('id,entreprise_id,kind,title,description,value,weekday,begins_at,ends_at,active,created_at').eq('entreprise_id',company).order('created_at',{ascending:false}),
-   supabase.from('dalil_sales_loyalty_cards').select('id,entreprise_id,program_id,customer_label,stamps,rewards_given').eq('entreprise_id',company).order('created_at',{ascending:false}).limit(60),
+   supabase.from('dalil_sales_loyalty_cards').select('id,entreprise_id,program_id,customer_label,public_code,stamps,rewards_given').eq('entreprise_id',company).order('created_at',{ascending:false}).limit(60),
    supabase.from('dalil_sales_gift_cards').select('id,entreprise_id,program_id,recipient_label,face_value,balance,state').eq('entreprise_id',company).order('issued_at',{ascending:false}).limit(60)
   ]).then(([a,b,c])=>{
    if(!live)return;
@@ -186,10 +186,10 @@ export default function SalesLoyaltyManagement({entrepriseIds}:{entrepriseIds:st
      {item.id==='loyalty'?loyalty.filter(c=>programs.some(p=>p.id===c.program_id)).map(c=>{
       const p=programs.find(p=>p.id===c.program_id)!;
       return <div key={c.id} className="rounded-xl border border-[#e8d9bd] bg-white p-3 text-xs">
-       <div className="flex justify-between gap-2"><strong>{c.customer_label}</strong><span>Réf. {shortCode(c.id)}</span></div>
+       <div className="flex justify-between gap-2"><strong>{c.customer_label}</strong><span>Fidélité</span></div>
        <div className="my-2 flex flex-wrap items-center justify-between gap-1">
-        <span className="break-all text-[10px] text-gray-500">Code : {c.id}</span>
-        <button type="button" className="min-h-9 rounded-lg border border-[#d5bd8b] px-2" onClick={()=>void navigator.clipboard?.writeText(c.id)}>Copier</button>
+        <span className="text-lg font-bold tracking-[.2em] text-[#252525]">{c.public_code}</span>
+        <button type="button" className="min-h-9 rounded-lg border border-[#d5bd8b] px-2" onClick={()=>void navigator.clipboard?.writeText(c.public_code)}>Copier les 4 chiffres</button>
        </div>
        <p className="my-2">{c.stamps} / {p.value} achats · {c.rewards_given} récompense(s) remise(s)</p>
        <div className="grid grid-cols-2 gap-2">
