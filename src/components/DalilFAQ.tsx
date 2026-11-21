@@ -1,0 +1,54 @@
+import { useState } from 'react';
+import { ChevronDown } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
+
+type Question = { q: string; a: string };
+const faq: Record<'fr' | 'ar',Question[]> = {
+  fr: [
+    {q:'À quoi servent Dalil Tounes et son application ?',a:'Dalil Tounes aide à rechercher des entreprises, commerces, professionnels et services en Tunisie. Son application donne accès aux fiches publiées et facilite la recherche et le contact depuis un téléphone.'},
+    {q:'Comment inscrire gratuitement mon activité ?',a:'Vous pouvez demander une Présence Essentielle gratuite sur Dalil Tounes. Votre fiche est vérifiée avant sa publication. Les outils professionnels plus complets sont présentés séparément dans notre espace professionnel.'},
+    {q:'J’ai déjà Facebook ou un site Internet. Pourquoi une mini-appli ?',a:'Les réseaux sociaux attirent l’attention. Votre mini-appli réunit au même endroit vos coordonnées, vos prestations, votre QR Code et, selon les options activées, vos produits et votre Boutique. Elle complète vos réseaux : elle ne les remplace pas.'},
+    {q:'Quels avantages pour un commerçant et ses clients ?',a:'Le commerçant dispose d’une présentation facile à partager. Ses clients retrouvent ses informations depuis un lien ou un QR Code, peuvent le contacter et, si la Boutique est activée, lui transmettre des demandes ou commandes.'},
+    {q:'Une mini-appli peut-elle m’aider à vendre ?',a:'Oui, en facilitant la consultation d’un catalogue et l’envoi de commandes ou devis lorsque ces fonctions sont activées. Des packs cadeaux, offres et outils de fidélité peuvent compléter la Boutique. Les ventes ne sont pas garanties : les résultats dépendent de votre activité et de vos clients.'},
+    {q:'Quel est le prix d’une mini-appli Dalil Tounes ?',a:'L’offre de référence présentée pour la Tunisie est de 59 DT pour la création, avec la première année incluse. L’entretien ultérieur et les conditions de l’offre sont détaillés dans l’espace professionnel. La Présence Essentielle reste gratuite.'},
+    {q:'Est-ce compliqué à utiliser ou à partager ?',a:'Votre mini-appli se partage par lien ou QR Code et s’ouvre depuis le téléphone du client. Elle fonctionne comme une application web : le client n’a pas besoin de créer un compte pour consulter votre présentation. Certaines actions, comme gérer ses commandes, nécessitent le compte du professionnel.'}
+  ],
+  ar: [
+    {q:'ما فائدة دليل تونس وتطبيقه؟',a:'يساعد دليل تونس على البحث عن المؤسسات والمحلات والمهنيين والخدمات في تونس. يسهّل التطبيق تصفّح الملفات المنشورة والبحث والتواصل عبر الهاتف.'},
+    {q:'كيف يمكنني تسجيل نشاطي مجاناً؟',a:'يمكنك طلب حضور أساسي مجاني لنشاطك في دليل تونس. تتم مراجعة الملف قبل نشره، أما الأدوات المهنية الإضافية فتجد تفاصيلها في الفضاء المهني.'},
+    {q:'لدي صفحة فيسبوك أو موقع إلكتروني، فلماذا أحتاج إلى ميني تطبيق؟',a:'تجلب وسائل التواصل الانتباه، بينما يجمع الميني تطبيق بياناتك وخدماتك ورمز QR، ويمكن أن يضم منتجاتك ومتجرك حسب الخدمات المفعّلة. هو مكمّل لشبكاتك الاجتماعية وليس بديلاً عنها.'},
+    {q:'ما الفائدة للتاجر ولحرفائه؟',a:'يستطيع التاجر مشاركة عرض واضح لنشاطه بسهولة. ويجد الحرفاء معلوماته عبر رابط أو رمز QR، ويتواصلون معه، ويمكنهم إرسال طلبات أو طلبيات إذا كانت خدمة المتجر مفعّلة.'},
+    {q:'هل يساعدني الميني تطبيق على البيع؟',a:'نعم، فهو يسهّل عرض المنتجات وإرسال الطلبات أو طلب عروض الأسعار عند تفعيل هذه الخدمات. ويمكن إضافة علب الهدايا والعروض وأدوات الوفاء. لكن المبيعات ليست مضمونة وتعتمد على النشاط والحرفاء.'},
+    {q:'ما هو سعر الميني تطبيق في دليل تونس؟',a:'العرض المرجعي في تونس هو 59 ديناراً لإنشاء الميني تطبيق، مع السنة الأولى مشمولة. تجد شروط الصيانة اللاحقة وتفاصيل العرض في الفضاء المهني. أما الحضور الأساسي فهو مجاني.'},
+    {q:'هل استعمال الميني تطبيق ومشاركته سهل؟',a:'يمكن مشاركة الميني تطبيق عبر رابط أو رمز QR وفتحه من هاتف الحريف. لا يحتاج الزائر إلى حساب لتصفّح العرض، بينما تتطلب إدارة الطلبات حساباً مهنياً.'}
+  ]
+};
+const labels = {
+  fr: { eyebrow:'VOS QUESTIONS, NOS RÉPONSES',title:'Ce que Dalil Tounes peut apporter à votre activité',description:'L’essentiel en quelques questions. Ouvrez une réponse pour en savoir plus.' },
+  ar: { eyebrow:'أسئلتكم وإجاباتنا',title:'كيف يمكن أن يفيدك دليل تونس في نشاطك؟',description:'إجابات مختصرة عن الأسئلة الأكثر شيوعاً. اضغط على السؤال لمعرفة التفاصيل.' }
+};
+export default function DalilFAQ() {
+  const {language}=useLanguage();
+  const locale=language==='ar'?'ar':'fr';
+  const t=labels[locale];
+  const [expanded,setExpanded]=useState<number|null>(null);
+  return <section id="faq" aria-label={t.title} dir={locale==='ar'?'rtl':'ltr'} className="bg-[#FFFCF6] px-4 py-9 md:py-12">
+    <div className="mx-auto max-w-5xl">
+      <p className="text-xs font-bold uppercase tracking-[.12em] text-[#9B762D]">{t.eyebrow}</p>
+      <h2 className="mt-2 font-serif text-2xl font-bold leading-tight text-[#183b2f] md:text-3xl">{t.title}</h2>
+      <p className="mt-2 max-w-3xl text-sm text-[#555d59]">{t.description}</p>
+      <div className="mt-5 space-y-2">
+        {faq[locale].map((entry,index)=><div key={index} className="overflow-hidden rounded-xl border border-[#e6d9bf] bg-white">
+          <button type="button" aria-expanded={expanded===index}
+            aria-controls={'dalil-faq-answer-'+index}
+            onClick={()=>setExpanded(current=>current===index?null:index)}
+            className="flex min-h-12 w-full items-center justify-between gap-3 px-4 py-3 text-start text-sm font-semibold text-[#183b2f] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B79245] md:text-base">
+            <span>{entry.q}</span>
+            <ChevronDown aria-hidden="true" className={'h-4 w-4 shrink-0 text-[#9B762D] transition-transform '+(expanded===index?'rotate-180':'')}/>
+          </button>
+          {expanded===index&&<div id={'dalil-faq-answer-'+index} className="border-t border-[#efe6d3] px-4 py-3 text-sm leading-6 text-[#3e4843]">{entry.a}</div>}
+        </div>)}
+      </div>
+    </div>
+  </section>;
+}
