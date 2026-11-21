@@ -100,3 +100,20 @@ Ces phrases sont **des propositions éditoriales à valider**, pas des publicati
 ---
 
 **Prochaine étape projet :** campagne pilote de tests sur Aux Saveurs d'Anis, puis préparation des publications après validation.
+
+
+## 7. Contrôle technique du 21 novembre 2026 — hors test mobile
+
+**Vérification réalisée :** tests SQL isolés dans une transaction avec `ROLLBACK` ; aucune fiche de fidélité, carte cadeau, offre ou opération de test n'est conservée.
+
+- Offre test à **15 %**, programmée pour un jour de la semaine : création et paramètres vérifiés dans la transaction.
+- Fidélité test à **2 achats** : crédit des achats, refus d'un tampon de trop, remise de la récompense, compteur réinitialisé.
+- Carte cadeau test à **50 DT** : refus d'une dépense avant activation, activation, dépense partielle de **20 DT** (solde **30 DT**), refus du dépassement de solde, solde final à **0 DT** et refus d'une deuxième dépense.
+- Consultation par code et traçabilité des utilisations incluses dans l'essai transactionnel.
+- Sécurité : tables de cartes protégées par RLS, lecture anonyme des soldes et des abonnements marketing interdite, débit direct du solde interdit, seul le contrôle volontaire par code est publiquement accessible.
+- Version active du site/app : route `/dashboard/entreprise?tab=boutique` répond HTTP 200 ; interface authentifiée non pilotée dans ces tests.
+- Après vérification, **0 offre, 0 carte fidélité, 0 carte cadeau, 0 opération et 0 abonnement marketing réel** présents au moment du contrôle.
+
+**Toujours à tester sur deux vrais téléphones :** les panneaux repliables Android, l'affichage des offres à la bonne date, la consultation par code sur l'appareil client, l'activation depuis le compte pro, l'opt-in et l'opt-out push, puis la réception d'une notification volontaire. L'essai technique ne garantit pas le fonctionnement sur le téléphone de madame.
+
+**Ne pas faire d'envoi promotionnel de masse pour les tests.** Préférer un consentement explicite avec un téléphone test, puis un envoi ciblé dans le cadre du test ; ne pas laisser de fausse annonce publique.
