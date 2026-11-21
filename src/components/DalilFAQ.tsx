@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ChevronDown } from 'lucide-react';
+import { VisitorSuggestions } from './VisitorSuggestions';
 import { useLanguage } from '../context/LanguageContext';
 
 type Question = { q: string; a: string };
@@ -46,7 +47,7 @@ export default function DalilFAQ() {
     window.addEventListener('hashchange',openFromNavigation);
     return ()=>window.removeEventListener('hashchange',openFromNavigation);
   },[]);
-  return <section id="faq" aria-label={t.title} dir={locale==='ar'?'rtl':'ltr'} className="scroll-mt-20 rounded-xl border border-[#C9A65D] bg-[#FFFCF6] px-3 py-3 shadow-sm">
+  return <><section id="faq" aria-label={t.title} dir={locale==='ar'?'rtl':'ltr'} className="scroll-mt-20 rounded-xl border border-[#C9A65D] bg-[#FFFCF6] px-3 py-3 shadow-sm">
     <div className="mx-auto max-w-5xl">
       <button type="button" aria-expanded={panelOpen} aria-controls="dalil-faq-items"
         onClick={()=>{setPanelOpen(current=>!current);setExpanded(null);}}
@@ -74,5 +75,7 @@ export default function DalilFAQ() {
         </div>
       </div>}
     </div>
-  </section>;
+  </section>
+    <div className="mt-3"><VisitorSuggestions source="app" /></div>
+  </>;
 }
