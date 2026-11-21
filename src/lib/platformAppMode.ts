@@ -14,6 +14,9 @@ export function isPlatformAppMode(): boolean {
   const platformAppHost = hostname === 'appli.dalil-tounes.com'
     || hostname === 'dalil-tounes-pwa.vercel.app'
     || hostname === 'dalil-tounes-pwa-haba-anis-projects.vercel.app'
+    // Vercel creates random hostnames for branch previews of the independent PWA.
+    // Recognize ONLY this project's deployment hosts, never website previews.
+    || /^dalil-tounes-(?!clean-)[a-z0-9]+-haba-anis-projects\\.vercel\\.app$/i.test(hostname)
     || hostname.startsWith('dalil-tounes-pwa-') && hostname.endsWith('.vercel.app')
     || hostname === 'pwa.dalil-tounes.com';
   if (platformAppHost) return true;
