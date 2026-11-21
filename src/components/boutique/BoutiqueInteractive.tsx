@@ -631,7 +631,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
                   <span>{t('Récompenses déjà remises :','الهدايا المستلمة:')} {Number.isFinite(Number(cardInfo.rewards_given))?Number(cardInfo.rewards_given):0}</span>
                   {Number(cardInfo.stamps)>=Number(cardInfo.target)&&<strong>{t('Votre cadeau est prêt ! Contactez le commerçant pour en profiter.','هديتك جاهزة! تواصل مع التاجر لاستلامها.')}</strong>}
                 </div>}
-                {cardInfo.kind==='gift_card'&&<p style={{margin:'5px 0 0'}>{t('Solde :','الرصيد:')} {Number(cardInfo.balance).toFixed(3)} {t('DT','د.ت')} · {cardInfo.state==='active'?t('Carte active','بطاقة مفعلة'):cardInfo.state==='pending'?t('En attente d’activation','بانتظار التفعيل'):t('Carte utilisée ou inactive','بطاقة مستعملة أو غير نشطة')}</p>}
+                {cardInfo.kind==='gift_card'&&<p style={{margin:'5px 0 0'}}>{t('Solde :','الرصيد:')} {Number(cardInfo.balance).toFixed(3)} {t('DT','د.ت')} · {cardInfo.state==='active'?t('Carte active','بطاقة مفعلة'):cardInfo.state==='pending'?t('En attente d’activation','بانتظار التفعيل'):t('Carte utilisée ou inactive','بطاقة مستعملة أو غير نشطة')}</p>}
               </div>}
               <span style={{fontSize:11,color:'var(--boutique-muted, #d0ddd5)'}}>{t('Vos achats sont ajoutés après validation par le commerçant. Une demande ou une commande confirmée ne donne pas automatiquement un point.','تُضاف المشتريات بعد تأكيد التاجر. تأكيد الطلب لا يمنح نقاط وفاء تلقائياً.')}</span>
             </div>}
