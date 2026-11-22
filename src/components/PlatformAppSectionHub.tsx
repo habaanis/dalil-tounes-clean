@@ -199,6 +199,28 @@ export default function PlatformAppSectionHub({ kind }: { kind: Hub }) {
       <HubLinks items={CITIZEN_LINKS} topics={copy.topics} />
     </div>}
     {kind === 'pros' && <>
+      <section aria-label={lang === 'fr' ? 'Les avantages de votre mini-appli' : 'Business mini-app benefits'} className="rounded-2xl border border-[#D4AF37]/45 bg-[#FFFCF7] p-3">
+        <h2 className="font-serif text-lg font-semibold leading-6 text-[#35172F]">
+          {lang === 'fr' ? 'Présenter, vendre et fidéliser' : lang === 'ar' ? 'اعرض، بيع وحافظ على حرفائك' : lang === 'it' ? 'Presenta, vendi e fidelizza' : lang === 'ru' ? 'Рассказывайте, продавайте и удерживайте клиентов' : 'Showcase, sell and build loyalty'}
+        </h2>
+        <p className="mt-1 text-xs leading-5 text-[#6A5B64]">
+          {lang === 'fr' ? 'Une mini-appli à partager par lien ou QR Business, pour faciliter les ventes et les échanges avec vos clients.' : lang === 'ar' ? 'تطبيق مصغّر تشاركه برابط أو رمز QR لتسهيل الطلبات والتواصل مع الحرفاء.' : 'A shareable mini-app with a link or Business QR code to simplify orders and customer relations.'}
+        </p>
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          {([
+            { icon: '📱', title: lang === 'fr' ? 'Présenter' : lang === 'ar' ? 'التعريف' : 'Showcase', detail: lang === 'fr' ? 'CV Business, Portfolio, photos et QR Business' : lang === 'ar' ? 'عرض الأعمال والصور ورمز QR' : 'Business CV, Portfolio, photos and QR' },
+            { icon: '🛍️', title: lang === 'fr' ? 'Vendre' : lang === 'ar' ? 'البيع' : 'Sell', detail: lang === 'fr' ? 'Boutique, catalogue, commandes et devis' : lang === 'ar' ? 'متجر، منتجات، طلبات وعروض أسعار' : 'Shop, catalogue, orders and quotes' },
+            { icon: '🎁', title: lang === 'fr' ? 'Fidéliser' : lang === 'ar' ? 'الوفاء' : 'Loyalty', detail: lang === 'fr' ? 'Cartes de fidélité, cadeaux et offres selon activation' : lang === 'ar' ? 'بطاقات وفاء وهدايا وعروض حسب التفعيل' : 'Loyalty, gift cards and offers when enabled' },
+            { icon: '📋', title: lang === 'fr' ? 'Suivre' : lang === 'ar' ? 'المتابعة' : 'Track', detail: lang === 'fr' ? 'Demandes suivies par le client et le professionnel' : lang === 'ar' ? 'متابعة الطلبات للحريف والمهني' : 'Customer and professional order tracking' },
+          ] as const).map(item => (
+            <div key={item.title} className="rounded-xl border border-[#E5D7BE] bg-white p-3">
+              <span className="text-xl" aria-hidden="true">{item.icon}</span>
+              <h3 className="mt-1 text-sm font-semibold text-[#35172F]">{item.title}</h3>
+              <p className="mt-1 text-xs leading-5 text-[#6A5B64]">{item.detail}</p>
+            </div>
+          ))}
+        </div>
+      </section>
       {renderProCards(prosActions)}
       <details className="group rounded-2xl border border-[#D4AF37]/40 bg-white p-3">
         <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 px-1 font-medium text-[#45243A] [&::-webkit-details-marker]:hidden">
