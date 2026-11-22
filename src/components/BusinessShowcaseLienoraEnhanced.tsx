@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { useLanguage } from '../context/LanguageContext';
 import { getPublicComponentTranslations } from '../lib/publicComponentTranslations';
+import { BoutiqueInteractive, type BoutiqueProduct } from './boutique/BoutiqueInteractive';
 import BusinessShowcaseLienoraDetail from './BusinessShowcaseLienoraDetail';
 import './businessShowcasePreviewEnhancements.css';
 
@@ -71,6 +72,7 @@ export default function BusinessShowcaseLienoraEnhanced() {
   const { language } = useLanguage();
   const text = getPublicComponentTranslations(language);
   const [business, setBusiness] = useState<BusinessRecord | null>(null);
+  const [approvedBoutiqueProducts, setApprovedBoutiqueProducts] = useState<BoutiqueProduct[]>([]);
 
   const reviewsUrl = useMemo(() => getGoogleReviewsUrl(business), [business]);
 
@@ -117,6 +119,52 @@ export default function BusinessShowcaseLienoraEnhanced() {
   }, [id, slug]);
 
   useEffect(() => {
+    let active = true;
+    let fetching = false;
+    setApprovedBoutiqueProducts([]);
+    const enterpriseId = business?.id;
+    if (!enterpriseId) return () => { active = false; };
+    const loadApprovedProducts = async () => {
+      if (!active || fetching || document.visibilityState === 'hidden') return;
+      fetching = true;
+      const { data, error } = await supabase
+        .from('dalil_boutique_products')
+        .select('id,title,description,category,image_url,mode,currency,price,approved_at,updated_at')
+        .eq('entreprise_id', enterpriseId)
+        .eq('status', 'approved')
+        .lte('approved_at', new Date().toISOString())
+        .order('position', { ascending: true })
+        .limit(100);
+      fetching = false;
+      if (!active || error) return;
+      const products = (data ?? []).flatMap(item => {
+        if (!item || typeof item.id !== 'string' || typeof item.title !== 'string'
+          || typeof item.image_url !== 'string' || !item.image_url.startsWith('https://')
+          || (item.mode !== 'order' && item.mode !== 'quote') || item.currency !== 'TND') return [];
+        const price = typeof item.price === 'number' && Number.isFinite(item.price) && item.price > 0 ? item.price : undefined;
+        if (item.mode === 'order' && price === undefined) return [];
+        return [{
+          id: item.id, title: item.title, description: String(item.description || ''), category: typeof item.category === 'string' ? item.category.trim() : '',
+          imageUrl: item.image_url, mode: item.mode as 'order' | 'quote', currency: 'TND' as const, price,
+          approvedAt: String(item.approved_at || ''), updatedAt: String(item.updated_at || ''),
+        }];
+      });
+      setApprovedBoutiqueProducts(products);
+    };
+    void loadApprovedProducts();
+    const onFocus = () => { void loadApprovedProducts(); };
+    const timer = window.setInterval(() => { void loadApprovedProducts(); }, 60_000);
+    window.addEventListener('focus', onFocus);
+    document.addEventListener('visibilitychange', onFocus);
+    return () => {
+      active = false;
+      window.clearInterval(timer);
+      window.removeEventListener('focus', onFocus);
+      document.removeEventListener('visibilitychange', onFocus);
+    };
+  }, [business?.id]);
+
+  useEffect(() => {
     const enhance = () => {
       if (!reviewsUrl) return;
 
@@ -147,5 +195,30 @@ export default function BusinessShowcaseLienoraEnhanced() {
     return () => observer.disconnect();
   }, [reviewsUrl, text.googleReviews]);
 
-  return <BusinessShowcaseLienoraDetail />;
+  const rawProducts = business?.['boutique_products'];
+  const products: BoutiqueProduct[] = Array.isArray(rawProducts) ? rawProducts.filter((item): item is BoutiqueProduct => Boolean(item && typeof item === 'object' && typeof item.id === 'string' && typeof item.title === 'string' && typeof item.imageUrl === 'string' && (item.mode === 'order' || item.mode === 'quote') && item.currency === 'TND')) : [];
+  const boutiqueDemo = new URLSearchParams(window.location.search).get('boutique-demo') === '1'
+    && (String(business?.nom || '').trim().toLowerCase() === "aux saveurs d'anis")
+    && String(business?.ville || '').toLowerCase() === 'sousse';
+  const images = (String(business?.['image_url'] || '').match(/https:\/\/[^\s,]+/g) || []).map(url => url.trim());
+  const pilotProducts: BoutiqueProduct[] = boutiqueDemo
+    ? [
+      { id: 'mariage', title: 'Buffet de mariage', imageUrl: images[1], currency: 'TND', mode: 'quote', description: 'Prestation traiteur sur mesure — devis personnalisé.' },
+      { id: 'plateaux', title: 'Plateaux traiteur', imageUrl: images[3], currency: 'TND', mode: 'quote', description: 'Pour vos événements et repas professionnels.' },
+      { id: 'dessert', title: 'Desserts à l’assiette', imageUrl: images[0], currency: 'TND', mode: 'quote', description: 'Créations et desserts selon votre événement.' },
+      { id: 'bouchees', title: 'Amuse-bouches', imageUrl: images[4], currency: 'TND', mode: 'quote', description: 'Pièces cocktail et propositions sur mesure.' },
+    ].filter(product => Boolean(product.imageUrl))
+    : [];
+  const visibleProducts = boutiqueDemo ? pilotProducts : approvedBoutiqueProducts.length ? approvedBoutiqueProducts : products;
+  const boutiqueContent = visibleProducts.length > 0
+    ? <BoutiqueInteractive config={{
+        merchantName: String(business?.nom || ''),
+        profileId: String(business?.id || ''),
+        whatsapp: String(business?.['whatsapp'] || ''),
+        products: visibleProducts,
+        paymentsVerified: !boutiqueDemo && business?.['boutique_payments_verified'] === true,
+        demoMode: boutiqueDemo,
+      }} />
+    : undefined;
+  return <BusinessShowcaseLienoraDetail boutiqueContent={boutiqueContent} />;
 }
