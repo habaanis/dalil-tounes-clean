@@ -6,6 +6,7 @@ import {
   useMemo,
   useRef,
   useState,
+  Fragment,
   cloneElement,
   isValidElement,
   type CSSProperties,
@@ -2012,15 +2013,16 @@ export default function BusinessShowcaseLienoraDetail({
             )}
 
             <div className="dt-accordion-list">
-              {sections.filter(section => section.id !== 'booking').map(section => section.id === 'gallery' && boutiqueContent
-                ? boutiqueAccordion
-                : <AccordionSection
+              {sections.filter(section => section.id !== 'booking').map(section => (
+                <Fragment key={section.id}>
+                  <AccordionSection
                     config={section}
                     open={openSection === section.id}
                     onToggle={() => setOpenSection(current => current === section.id ? null : section.id)}
-                    key={section.id}
                   />
-              )}
+                  {section.id === 'gallery' && boutiqueAccordion}
+                </Fragment>
+              ))}
               {boutiqueContent && !sections.some(section => section.id === 'gallery') && boutiqueAccordion}
             </div>
           </div>
