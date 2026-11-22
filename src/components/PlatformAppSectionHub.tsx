@@ -52,7 +52,7 @@ const COPY: Record<Lang, {
 }> = {
   fr: {
     titles: { citizens: 'De quoi avez-vous besoin ?', tourism: 'Découvrir la Tunisie', pros: 'Votre entreprise sur Dalil Tounes' },
-    intros: { citizens: 'Accédez aux services de santé, à l’éducation, aux démarches administratives et aux commerces. Sélectionnez la rubrique correspondant à votre besoin.', tourism: 'Explorez les régions, le patrimoine et les expériences locales, ou préparez votre installation : séjour, logement, santé, scolarité et travail.', pros: 'Inscrivez gratuitement votre entreprise, créez votre mini-appli personnalisée et découvrez les modèles et offres disponibles.' },
+    intros: { citizens: 'Accédez aux services de santé, à l’éducation, aux démarches administratives et aux commerces. Sélectionnez la rubrique correspondant à votre besoin.', tourism: 'Explorez les régions, le patrimoine et les expériences locales, ou préparez votre installation : séjour, logement, santé, scolarité et travail.', pros: 'Présentez votre activité, proposez vos produits dans une boutique et fidélisez vos clients. Inscription gratuite et modèles de mini-applis à découvrir.' },
     visit: 'Visiter & découvrir', settle: "S’installer & vivre en Tunisie", moreTopics: 'Autres rubriques', all: 'Afficher la page complète', hint: 'Les informations détaillées restent disponibles.',
     topics: { housing: 'Logement & installation', residence: 'Séjour & résidence',  health: 'Santé', education: 'Éducation', services: 'Services citoyens', shops: 'Commerces & magasins', leisure: 'Loisirs & événements', jobs: 'Emploi',
       heritage: 'Villages & patrimoine', nature: 'Nature & randonnées', craft: 'Artisanat & savoir-faire', food: 'Saveurs & marchés', events: 'Culture & événements',
@@ -117,8 +117,8 @@ export default function PlatformAppSectionHub({ kind }: { kind: Hub }) {
   const proDetails: Record<Lang, Record<string, string>> = {
     fr: {
       free: "Demandez gratuitement le référencement de votre activité. Le formulaire recueille les informations essentielles et l'équipe vérifie votre demande.",
-      cv: "Votre mini-appli personnalisée présente vos services, vos réalisations et vos contacts. Elle se partage facilement par lien et QR Business.",
-      models: "Découvrez les deux présentations, leurs mises en page et leurs palettes pour choisir celle qui convient à votre activité.",
+      cv: "Présentez votre activité et vos réalisations, proposez un catalogue et recevez des commandes ou demandes de devis. Le client peut suivre sa demande depuis la boutique, sans compte. Fidélité, cartes cadeaux et notifications sont proposées selon les fonctions activées. Les remises sont à confirmer avec le commerçant.",
+      models: "Comparez les CV Business et Portfolio et testez les vrais boutons, les photos et la boutique avant de choisir votre présentation.",
       offers: "Comparez les prestations proposées et consultez les tarifs avant de faire votre demande.",
       partners: "Découvrez les conditions pour devenir partenaire commercial de Dalil Tounes.",
       businessPartners: "Recherchez des professionnels et des partenaires potentiels dans le réseau.",
