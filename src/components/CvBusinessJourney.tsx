@@ -283,13 +283,10 @@ function ExpandedJourneyVisual({
             </div>
           )}
           {(visual === 'cv-business' || visual === 'cv-portfolio') && (
-            <img
-              src={visual === 'cv-portfolio'
-                ? '/images/cv-business-professionnel-aux-saveurs-anis.png'
-                : '/images/cv-business-portfolio-aux-saveurs-anis.png'}
-              alt={`${title} — Aux saveurs d’Anis`}
-              className="max-h-[82dvh] max-w-[calc(100vw-64px)] object-contain"
-              decoding="async"
+            <iframe
+              title={`${title} — CV et Boutique actuels`}
+              src={journeyCvDemoUrl(visual === 'cv-portfolio' ? 'portfolio' : 'business', language)}
+              className="h-[76dvh] min-h-[480px] w-[min(90vw,580px)] rounded-xl border border-[#D5B257]/40"
             />
           )}
         </div>
@@ -297,6 +294,10 @@ function ExpandedJourneyVisual({
     </div>
   );
 }
+
+// Reuse the actual published CV components for the marketing demonstration.
+const journeyCvDemoUrl = (model: 'business' | 'portfolio', language: string) =>
+  `/cv/aux-saveurs-anis?preview-model=${model}&boutique-demo=1&skip-opening=1&lang=${language}`;
 
 export default function CvBusinessJourney({ language }: { language: BusinessCardPreviewLanguage }) {
   const t = COPY[language];
@@ -310,9 +311,6 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
   const videoSrc = videoLanguage === 'ar'
     ? 'https://static.metricool.com/video/4610595/202609/0a154ec0c4a44fb7.mp4'
     : 'https://static.metricool.com/video/4610595/202609/eaaff4e56ccf4aba.mp4';
-  const activeCvImage = activeCvModel === 'portfolio'
-    ? '/images/cv-business-professionnel-aux-saveurs-anis.png'
-    : '/images/cv-business-portfolio-aux-saveurs-anis.png';
   const activeCvLabel = activeCvModel === 'portfolio' ? t.portfolioModel : t.professionalModel;
   const mobileSteps: Array<{ id: MobileJourneyStep; label: string }> = [
     { id: 'pwa', label: t.pwaShort },
@@ -422,12 +420,13 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
                 </div>
               )}
               {activeMobileStep === 'cv' && (
-                <img
-                  src={activeCvImage}
-                  alt={`${t.cvTitle} — ${activeCvLabel} — Aux saveurs d’Anis`}
-                  className="h-[360px] w-auto max-w-none object-contain object-top"
+                <iframe
+                  title={`${t.cvTitle} — ${activeCvLabel}`}
+                  src={journeyCvDemoUrl(activeCvModel, language)}
                   loading="lazy"
-                  decoding="async"
+                  tabIndex={-1}
+                  className="pointer-events-none h-[700px] w-[584px] max-w-none origin-top border-0"
+                  style={{ zoom: 0.5 }}
                 />
               )}
               <PreviewButton
@@ -484,12 +483,13 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
               </button>
             </div>
             <div className="relative mx-auto flex h-[331px] w-[180px] items-center justify-center overflow-hidden">
-              <img
-                src={activeCvImage}
-                alt={`${t.cvTitle} — ${activeCvLabel} — Aux saveurs d’Anis`}
-                className="h-[345px] w-auto max-w-none object-contain"
+              <iframe
+                title={`${t.cvTitle} — ${activeCvLabel}`}
+                src={journeyCvDemoUrl(activeCvModel, language)}
                 loading="lazy"
-                decoding="async"
+                tabIndex={-1}
+                className="pointer-events-none h-[800px] w-[584px] max-w-none origin-top border-0"
+                style={{ zoom: 0.3 }}
               />
               <PreviewButton
                 label={`${t.openPreview} — ${t.cvTitle} — ${activeCvLabel}`}
