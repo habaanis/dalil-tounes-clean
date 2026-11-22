@@ -1351,6 +1351,28 @@ export const Subscription = () => {
     openRequest(selectedFormula, `${selectedFormulaLabel} — ${modelLabel} — ${paletteLabel}`, selectedFormula, undefined, modelLabel, paletteLabel);
   };
 
+  // PWA only: comparison of the two designs, separate from pricing and checkout.
+  if (new URLSearchParams(window.location.search).get('app-models') === '1' && window.location.hostname !== 'dalil-tounes.com' && window.location.hostname !== 'www.dalil-tounes.com') {
+    return <div className="premium-page mx-auto max-w-xl px-3 py-4" dir={isArabic ? 'rtl' : 'ltr'}>
+      <h1 className="font-serif text-2xl font-semibold text-[#35172F]">{language === 'ar' ? 'شاهد النماذج' : 'Voir les modèles'}</h1>
+      <p className="mt-2 text-sm leading-6 text-slate-600">{language === 'ar' ? 'قارن بين نموذجي Business وPortfolio. الأسعار متوفرة في قسم العروض.' : 'Comparez simplement les deux présentations. Les prix et les conditions sont dans « Offres & tarifs ».'}</p>
+      <div className="mt-4 grid grid-cols-2 gap-3">
+        {(['business','portfolio'] as const).map(model => <a key={model}
+          href={`/cv/aux-saveurs-anis?preview-model=${model}&boutique-demo=1&skip-opening=1`}
+          className="rounded-xl border border-[#D4AF37]/50 bg-white p-3 text-center shadow-sm">
+          <div className="pointer-events-none mx-auto h-52 overflow-hidden rounded-lg bg-[#FAF6EC]">
+            <img src={model === 'business' ? '/images/cv-business-professionnel-aux-saveurs-anis.png' : '/images/cv-business-portfolio-aux-saveurs-anis.png'} alt="" className="h-full w-full object-contain" />
+          </div>
+          <strong className="mt-2 block text-sm text-[#35172F]">CV {model === 'business' ? 'Business' : 'Portfolio'}</strong>
+          <span className="mt-1 block text-xs text-slate-600">{language === 'ar' ? 'جرّب التطبيق' : 'Ouvrir le modèle réel'}</span>
+        </a>)}
+      </div>
+      <a href="/subscription?app-full=1#offres" className="mt-4 block rounded-xl border border-[#D4AF37] px-4 py-3 text-center text-sm font-semibold text-[#35172F]">
+        {language === 'ar' ? 'الأسعار والعروض' : 'Consulter les offres et tarifs'}
+      </a>
+    </div>;
+  }
+
   return (
     <div className="premium-page px-4 py-6 sm:py-8" dir={isArabic ? 'rtl' : 'ltr'}>
       <div className="mx-auto max-w-6xl">
