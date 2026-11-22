@@ -1,5 +1,6 @@
 import GoogleRatingSummary from './GoogleRatingSummary';
-import { useState, type CSSProperties, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
+import { cloneElement, isValidElement, useState, type CSSProperties, type ReactElement, type ReactNode } from 'react';
 import {
   CalendarDays,
   ChevronRight,
@@ -7,7 +8,6 @@ import {
   Contact,
   FileText,
   Home,
-  QrCode,
   Share2,
   Images,
   Info,
@@ -22,27 +22,33 @@ import type { ResolvedCvPresentation } from '../lib/cvPresentationEngine';
 import './cvPortfolioPresentation.css';
 import './cvPortfolioSizing.css';
 
-type PortfolioTab = 'home' | 'about' | 'services' | 'gallery' | 'reviews';
+type PortfolioTab = 'home' | 'about' | 'services' | 'gallery' | 'reviews' | 'hours' | 'practical';
 type PortfolioPalette = 'prestige' | 'ivory' | 'night';
 
 const PORTFOLIO_PALETTE_THEMES: Record<PortfolioPalette, CSSProperties> = {
   prestige: {
-    '--cvp-page': '#eef1ef', '--cvp-text': '#f7f4ec', '--cvp-shell-start': '#005044',
-    '--cvp-shell-mid': '#002f2b', '--cvp-shell-end': '#001d1b', '--cvp-identity-start': '#004e42',
-    '--cvp-identity-end': '#002723', '--cvp-panel': '#003c35', '--cvp-action': 'rgba(0,74,61,.55)',
-    '--cvp-badge': '#087051', '--cvp-overlay': 'rgba(0,45,39,.95)', '--cvp-accent': '#e8bd43',
+    '--cvp-page': '#031d18', '--cvp-text': '#f7f4ec', '--cvp-shell-start': '#073226',
+    '--cvp-shell-mid': '#031d18', '--cvp-shell-end': '#021e18', '--cvp-identity-start': '#073226',
+    '--cvp-identity-end': '#021e18', '--cvp-panel': '#031d18', '--cvp-action': 'rgba(7,50,38,.55)',
+    '--cvp-badge': '#087051', '--cvp-overlay': 'rgba(0,45,39,.95)', '--cvp-accent': '#e7b943',
+    '--boutique-surface': '#031d18', '--boutique-ink': '#f7f4ec', '--boutique-card': '#073226', '--boutique-field': '#ffffff', '--boutique-field-ink': '#12372e', '--boutique-accent': '#d6aa43',
+    '--boutique-button': '#031d18', '--boutique-button-ink': '#f7f4ec', '--boutique-muted': '#d0ddd5',
   } as CSSProperties,
   ivory: {
     '--cvp-page': '#FFFFF0', '--cvp-text': '#3B3126', '--cvp-shell-start': '#FFFFF8',
     '--cvp-shell-mid': '#FFFFF0', '--cvp-shell-end': '#F4E4B7', '--cvp-identity-start': '#FFFFF8',
     '--cvp-identity-end': '#F4E4B7', '--cvp-panel': '#F0D999', '--cvp-action': 'rgba(255,255,240,.82)',
     '--cvp-badge': '#D4AF37', '--cvp-overlay': 'rgba(59,49,38,.62)', '--cvp-accent': '#D4AF37',
+    '--boutique-surface': '#FFFFF0', '--boutique-ink': '#3B3126', '--boutique-card': '#f6edd3', '--boutique-field': '#ffffff', '--boutique-field-ink': '#3B3126', '--boutique-accent': '#D4AF37',
+    '--boutique-button': '#F0D999', '--boutique-button-ink': '#3B3126', '--boutique-muted': '#64513d',
   } as CSSProperties,
   night: {
     '--cvp-page': '#06101d', '--cvp-text': '#f8f1e4', '--cvp-shell-start': '#1d3a5a',
     '--cvp-shell-mid': '#10243a', '--cvp-shell-end': '#06101d', '--cvp-identity-start': '#1d3a5a',
     '--cvp-identity-end': '#172f4b', '--cvp-panel': '#172f4b', '--cvp-action': 'rgba(29,58,90,.72)',
     '--cvp-badge': '#1d3a5a', '--cvp-overlay': 'rgba(16,36,58,.95)', '--cvp-accent': '#e5c486',
+    '--boutique-surface': '#10243a', '--boutique-ink': '#f8f1e4', '--boutique-card': '#172f4b', '--boutique-field': '#ffffff', '--boutique-field-ink': '#14283d', '--boutique-accent': '#e5c486',
+    '--boutique-button': '#172f4b', '--boutique-button-ink': '#f8f1e4', '--boutique-muted': '#d1d9e2',
   } as CSSProperties,
 };
 
@@ -95,7 +101,7 @@ const COPY: Record<string, Copy> = {
     openingHours: 'Horaires', practical: 'Informations pratiques', book: 'Réserver',
     quote: 'Demander un devis', requestInfo: 'Demander une information', myQr: 'Mon QR Business', share: 'Partager', socialNetworks: 'Réseaux', addContact: 'Ajouter aux contacts', certified: 'Certifiée Dalil Tounes',
     viewReviews: 'Voir les avis', giveReview: 'Donner un avis',
-    moreActions: 'Plus d’actions', moreActionsSummary: 'Installer · WhatsApp · E-mail · Réserver · Avis',
+    moreActions: 'Plus d’actions', moreActionsSummary: 'Installer · WhatsApp · E-mail',
     poweredBy: 'Propulsé par Dalil Tounes',
   },
   ar: {
@@ -104,7 +110,7 @@ const COPY: Record<string, Copy> = {
     ourWork: 'أعمالنا', noPhotos: 'لا توجد صور متاحة.', openingHours: 'أوقات العمل',
     practical: 'معلومات عملية', book: 'احجز', quote: 'طلب عرض سعر', requestInfo: 'طلب معلومات', myQr: 'رمز QR الخاص بي', share: 'مشاركة', socialNetworks: 'شبكات التواصل', addContact: 'إضافة إلى جهات الاتصال',
     viewReviews: 'عرض الآراء', giveReview: 'إضافة رأي',
-    moreActions: 'المزيد من الإجراءات', moreActionsSummary: 'تثبيت · واتساب · البريد · الحجز · الآراء',
+    moreActions: 'المزيد من الإجراءات', moreActionsSummary: 'تثبيت · واتساب · البريد',
     certified: 'معتمد من دليل تونس', poweredBy: 'بدعم من دليل تونس',
   },
   en: {
@@ -114,7 +120,7 @@ const COPY: Record<string, Copy> = {
     practical: 'Practical information', book: 'Book', quote: 'Request a quote', requestInfo: 'Request information', myQr: 'My Business QR', share: 'Share', socialNetworks: 'Social networks',
     addContact: 'Add to contacts', certified: 'Certified by Dalil Tounes', poweredBy: 'Powered by Dalil Tounes',
     viewReviews: 'View reviews', giveReview: 'Leave a review',
-    moreActions: 'More actions', moreActionsSummary: 'Install · WhatsApp · E-mail · Booking · Reviews',
+    moreActions: 'More actions', moreActionsSummary: 'Install · WhatsApp · E-mail',
   },
   it: {
     home: 'Home', about: 'Chi siamo', services: 'Servizi', photos: 'Foto', reviews: 'Recensioni',
@@ -123,7 +129,7 @@ const COPY: Record<string, Copy> = {
     practical: 'Informazioni pratiche', book: 'Prenota', quote: 'Richiedi un preventivo', requestInfo: 'Richiedi informazioni', myQr: 'Il mio QR Business', share: 'Condividi', socialNetworks: 'Social network',
     addContact: 'Aggiungi ai contatti', certified: 'Certificato da Dalil Tounes', poweredBy: 'Offerto da Dalil Tounes',
     viewReviews: 'Vedi le recensioni', giveReview: 'Lascia una recensione',
-    moreActions: 'Altre azioni', moreActionsSummary: 'Installa · WhatsApp · E-mail · Prenota · Recensioni',
+    moreActions: 'Altre azioni', moreActionsSummary: 'Installa · WhatsApp · E-mail',
   },
   ru: {
     home: 'Главная', about: 'О нас', services: 'Услуги', photos: 'Фото', reviews: 'Отзывы',
@@ -132,7 +138,7 @@ const COPY: Record<string, Copy> = {
     practical: 'Практическая информация', book: 'Забронировать', quote: 'Запросить смету', requestInfo: 'Запросить информацию', myQr: 'Мой Business QR', share: 'Поделиться', socialNetworks: 'Соцсети',
     addContact: 'Добавить в контакты', certified: 'Сертифицировано Dalil Tounes', poweredBy: 'Работает на Dalil Tounes',
     viewReviews: 'Посмотреть отзывы', giveReview: 'Оставить отзыв',
-    moreActions: 'Другие действия', moreActionsSummary: 'Установить · WhatsApp · E-mail · Бронь · Отзывы',
+    moreActions: 'Другие действия', moreActionsSummary: 'Установить · WhatsApp · E-mail',
   },
 };
 
@@ -152,15 +158,14 @@ export interface CvPortfolioPresentationProps {
   hoursContent?: ReactNode;
   hoursBadge?: string;
   practicalContent?: ReactNode;
-  onQuote: () => void;
-  onShowQr: () => void;
+  boutiqueContent?: ReactNode;
   onShare: () => void;
-  sharingContent?: ReactNode;
   socialActions?: PortfolioAction[];
   onDownloadContact: () => void;
   onSelectImage: (url: string) => void;
   notice: string;
   hideBack?: boolean;
+  showClientQrBack?: boolean;
   embeddedPreview?: boolean;
   palette?: PortfolioPalette | null;
 }
@@ -181,15 +186,14 @@ export function CvPortfolioPresentation({
   hoursContent,
   hoursBadge,
   practicalContent,
-  onQuote,
-  onShowQr,
+  boutiqueContent,
   onShare,
-  sharingContent,
   socialActions = [],
   onDownloadContact,
   onSelectImage,
   notice,
   hideBack = false,
+  showClientQrBack = false,
   embeddedPreview = false,
   palette = 'prestige',
 }: CvPortfolioPresentationProps) {
@@ -201,11 +205,9 @@ export function CvPortfolioPresentation({
   const navigationAriaLabel = language === 'ar' ? 'التنقل في الملف المهني المصوّر' : 'Navigation du CV Portfolio';
   const [activeTab, setActiveTab] = useState<PortfolioTab>('home');
   const [expandedAbout, setExpandedAbout] = useState(false);
+  const [writeReviewOpen, setWriteReviewOpen] = useState(false);
   const [bookingOpen, setBookingOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
-  const [hoursOpen, setHoursOpen] = useState(false);
-  const [practicalOpen, setPracticalOpen] = useState(false);
-  const [qrOpen, setQrOpen] = useState(false);
   const [socialOpen, setSocialOpen] = useState(false);
   const isRTL = language === 'ar';
   const hasSection = (section: ResolvedCvPresentation['visibleSections'][number]) =>
@@ -222,22 +224,28 @@ export function CvPortfolioPresentation({
   const directionsAction = actions.find(action =>
     action.href.includes('maps') || action.href.includes('google.com/maps'),
   );
+  // Keep the existing website and social links together in the same compact group.
+  const websiteAction = actions.find(action => profile.contact.website && action.href === profile.contact.website);
   const extraActions = actions.filter(action =>
     action !== callAction
-      && action !== directionsAction,
+      && action !== directionsAction
+      && action !== websiteAction,
   );
-  const portfolioGallery = gallery.slice(0, 4);
 
   const tabs = [
     { id: 'home' as const, label: copy.home, icon: Home, visible: true },
     { id: 'about' as const, label: copy.about, icon: Info, visible: hasSection('about') },
-    { id: 'services' as const, label: copy.services, icon: Store, visible: hasSection('services') },
-    { id: 'gallery' as const, label: copy.photos, icon: Images, visible: hasSection('gallery') },
+    { id: 'boutique' as const, label: language === 'ar' ? 'المتجر' : language === 'en' ? 'Shop' : 'Boutique', icon: Store, visible: Boolean(boutiqueContent) },
+    { id: 'services' as const, label: copy.services, icon: Store, visible: hasSection('services') && !boutiqueContent },
+    { id: 'hours' as const, label: copy.openingHours, icon: Clock3, visible: Boolean(hoursContent) },
+    { id: 'practical' as const, label: copy.practical, icon: Info, visible: Boolean(practicalContent) },
     { id: 'reviews' as const, label: copy.reviews, icon: Star, visible: hasSection('reviews') },
   ].filter(tab => tab.visible);
 
   const goTo = (tab: PortfolioTab) => {
-    setActiveTab(tab);
+    // A second tap closes any opened section and restores the visual homepage.
+    const nextTab = activeTab === tab && tab !== 'home' ? 'home' : tab;
+    setActiveTab(nextTab);
     if (embeddedPreview) return;
     window.requestAnimationFrame(() => {
       document.getElementById('cv-portfolio-content')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -270,7 +278,7 @@ export function CvPortfolioPresentation({
     <section className="cvp-section">
       <div className="cvp-section-heading">
         <h2>{copy.ourServices}</h2>
-        {profile.services.length > 3 && <button type="button" onClick={() => goTo('services')}>{copy.viewAll}<ChevronRight /></button>}
+        <button type="button" onClick={() => goTo('home')} aria-label={language === 'ar' ? 'إغلاق الخدمات' : 'Fermer les services'}>{language === 'ar' ? 'غلق' : language === 'en' ? 'Close' : 'Fermer'}<ChevronRight /></button>
       </div>
       <div className="cvp-service-strip">
         {profile.services.map((service, index) => (
@@ -284,34 +292,40 @@ export function CvPortfolioPresentation({
   );
 
   const galleryBlock = (
-    <section className="cvp-section">
-      <div className="cvp-section-heading"><h2>{copy.ourWork}</h2></div>
-      {gallery.length > 0 ? (
-        <div className="cvp-gallery-grid">
-          {gallery.map((item, index) => (
-            <button type="button" onClick={() => onSelectImage(item.full)} key={`${item.thumbnail}-${index}`}>
-              <img src={item.thumbnail} alt={`${profile.identity.name} — ${index + 1}`} loading="lazy" decoding="async" />
-            </button>
-          ))}
-        </div>
-      ) : <p>{copy.noPhotos}</p>}
+    <section className="cvp-section cvp-portfolio-visible-photos"
+      aria-label={language === 'ar' ? 'صور وأعمال' : language === 'en' ? 'Photos and work' : 'Photos et réalisations'}>
+      <div className="cvp-photo-strip">
+        {gallery.map((item, index) => (
+          <button type="button" key={`${item.thumbnail}-${index}`}
+            aria-label={`${language === 'ar' ? 'تكبير الصورة' : 'Agrandir la photo'} ${index + 1}`}
+            onClick={() => onSelectImage(item.full)}>
+            <img src={item.thumbnail} alt={`${profile.identity.name} — ${index + 1}`}
+              loading="lazy" decoding="async" />
+          </button>
+        ))}
+      </div>
     </section>
   );
 
+  const qrBackTarget = showClientQrBack && typeof document !== 'undefined'
+    ? document.getElementById('dalil-client-cv-back-slot') : null;
+  const qrBackButton = (!hideBack || showClientQrBack)
+    ? <button type="button" className="cvp-back cvp-back-to-qr" onClick={onBack}>‹ <span>{showClientQrBack ? (language === 'ar' ? 'العودة إلى QR' : language === 'en' ? 'Back to QR' : 'Retour au QR code') : copy.home}</span></button>
+    : null;
+
   return (
     <div
-      className={`cvp-page cvp-page--lienora${embeddedPreview || hideBack ? ' cvp-page--embedded' : ''}`}
+      className={`cvp-page cvp-page--lienora cvp-palette-${palette || 'prestige'}${embeddedPreview || hideBack ? ' cvp-page--embedded' : ''}`}
       dir={isRTL ? 'rtl' : 'ltr'}
       style={PORTFOLIO_PALETTE_THEMES[palette || 'prestige']}
     >
       <div className="cvp-lienora-shell">
-        {!hideBack && <button type="button" className="cvp-back" onClick={onBack}>‹ <span>{copy.home}</span></button>}
+        {qrBackTarget ? createPortal(qrBackButton, qrBackTarget) : qrBackButton && !showClientQrBack ? qrBackButton : null}
         <article className="cvp-lienora-card">
           <div className="cvp-lienora-cover"><img src={coverImage} alt="" loading="eager" decoding="async" /></div>
           <img className="cvp-lienora-logo" src={logoImage} alt={`Logo ${profile.identity.name}`} />
 
           <div className="cvp-lienora-main">
-            <span className="cvp-lienora-activity">✦ {profile.identity.activity}</span>
             <section className="cvp-lienora-identity">
               <small>{localizedProductLabel}</small>
               <h1>{profile.identity.name}</h1>
@@ -323,7 +337,6 @@ export function CvPortfolioPresentation({
                   {reviewCount > 0 && <span>{reviewCount} {copy.reviews.toLowerCase()}</span>}
                 </div>
               )}
-              <GoogleRatingSummary trustOnly rating={reviewRating} reviewCount={reviewCount} language={language} />
               {(profile.location.city || profile.location.governorate) && (
                 <p><MapPin />{[profile.location.city, profile.location.governorate].filter(Boolean).join(language === 'ar' ? '، ' : ', ')}</p>
               )}
@@ -354,122 +367,91 @@ export function CvPortfolioPresentation({
                 {presentation.visibleActions.includes('reservation') && bookingContent && (
                   <button type="button" onClick={() => setBookingOpen(value => !value)}><CalendarDays />{copy.book}</button>
                 )}
-                {(profile.contact.whatsapp || profile.contact.email) && (
-                  <button type="button" onClick={onQuote}><FileText />{copy.requestInfo}</button>
-                )}
-                {sharingContent && (
-                  <button type="button" onClick={() => { onShowQr(); setQrOpen(open => !open); }}><QrCode />{copy.myQr}</button>
-                )}
                 <button type="button" onClick={onShare}><Share2 />{copy.share}</button>
                 {socialActions.length > 0 && (
-                  <button type="button" onClick={() => setSocialOpen(open => !open)}><Share2 />{copy.socialNetworks}</button>
+                  <button type="button" onClick={() => setSocialOpen(open => !open)} aria-expanded={socialOpen}>
+                    <Share2 />{copy.socialNetworks}
+                  </button>
                 )}
                 {socialOpen && socialActions.map(({ label, href, icon: Icon }) => (
                   <a href={href} target="_blank" rel="noopener noreferrer" key={label}><Icon />{label}</a>
                 ))}
-                {profile.reviews.url && (
-                  <a href={profile.reviews.url} target="_blank" rel="noopener noreferrer"><Star />{copy.viewReviews}</a>
-                )}
-                {reviewsContent && (
-                  <button type="button" onClick={() => { setMoreOpen(false); goTo('reviews'); }}><FileText />{copy.giveReview}</button>
-                )}
+                {websiteAction && (() => {
+                  const Icon = websiteAction.icon;
+                  return (
+                    <a href={websiteAction.href} target="_blank" rel="noopener noreferrer">
+                      <Icon />{websiteAction.label}
+                    </a>
+                  );
+                })()}
               </div>
             )}
-            {qrOpen && sharingContent && <section className="cvp-booking">{sharingContent}</section>}
+            {bookingOpen && bookingContent && <section className="cvp-booking">{bookingContent}</section>}
 
             <nav className="cvp-lienora-tabs" aria-label={navigationAriaLabel}>
-              {tabs.map(({ id, label, icon: Icon }) => (
-                <button type="button" className={activeTab === id ? 'active' : ''} onClick={() => goTo(id)} key={id}>
-                  <Icon /><span>{label}</span>
-                </button>
-              ))}
+              {tabs.map(({ id, label, icon: Icon }) =>
+                id === 'boutique'
+                  ? isValidElement(boutiqueContent)
+                    ? cloneElement(boutiqueContent as ReactElement<{ triggerClassName?: string; triggerIcon?: ReactNode; triggerLabel?: string }>, {
+                        key: 'boutique-tab',
+                        triggerClassName: 'cvp-boutique-nav-trigger',
+                        triggerIcon: <Store aria-hidden="true" />,
+                        triggerLabel: label,
+                      })
+                    : <div key="boutique-tab" className="cvp-boutique-nav-wrapper">{boutiqueContent}</div>
+                  : <button type="button" className={activeTab === id ? 'active' : ''} onClick={() => goTo(id)} key={id}>
+                      <Icon /><span>{label}</span>
+                    </button>
+              )}
             </nav>
-
-            {(hoursContent || practicalContent) && (
-              <div className="cvp-lienora-information">
-                {hoursContent && (
-                  <section className={`cvp-lienora-information-item${hoursOpen ? ' is-open' : ''}`}>
-                    <button
-                      type="button"
-                      className="cvp-lienora-information-toggle"
-                      onClick={() => setHoursOpen(open => !open)}
-                      aria-expanded={hoursOpen}
-                      aria-controls="cvp-portfolio-hours"
-                    >
-                      <span><Clock3 aria-hidden="true" />{copy.openingHours}</span>
-                      <span className="cvp-lienora-information-status">
-                        {hoursBadge && <b>{hoursBadge}</b>}
-                        <ChevronRight aria-hidden="true" />
-                      </span>
-                    </button>
-                    {hoursOpen && (
-                      <div id="cvp-portfolio-hours" className="cvp-lienora-information-content">{hoursContent}</div>
-                    )}
-                  </section>
-                )}
-                {practicalContent && (
-                  <section className={`cvp-lienora-information-item${practicalOpen ? ' is-open' : ''}`}>
-                    <button
-                      type="button"
-                      className="cvp-lienora-information-toggle"
-                      onClick={() => setPracticalOpen(open => !open)}
-                      aria-expanded={practicalOpen}
-                      aria-controls="cvp-portfolio-practical"
-                    >
-                      <span><Info aria-hidden="true" />{copy.practical}</span>
-                      <ChevronRight aria-hidden="true" />
-                    </button>
-                    {practicalOpen && (
-                      <div id="cvp-portfolio-practical" className="cvp-lienora-information-content">{practicalContent}</div>
-                    )}
-                  </section>
-                )}
-              </div>
-            )}
 
             <div className="cvp-lienora-content">
               {activeTab === 'home' && (
-                <>
-                  {hasSection('about') && (
-                    <section className="cvp-lienora-about">
-                      <div><h2>{copy.aboutUs}</h2><p>{description}</p></div>
-                      {gallery[0] && (
-                        <button type="button" className="cvp-lienora-zoom" onClick={() => onSelectImage(gallery[0].full)}>
-                          <img src={gallery[0].thumbnail} alt={profile.identity.name} loading="lazy" decoding="async" /><Search />
-                        </button>
-                      )}
-                    </section>
+                <section className="cvp-portfolio-home-visual">
+                  {gallery.length > 0 && (
+                    <button type="button" className="cvp-portfolio-featured-photo"
+                      aria-label={language === 'ar' ? 'تكبير صورة المنتوج' : 'Agrandir la photo du Portfolio'}
+                      onClick={() => onSelectImage((gallery[1] || gallery[0]).full)}>
+                      <img src={(gallery[1] || gallery[0]).thumbnail} alt={profile.identity.name} loading="lazy" decoding="async" />
+                      <Search aria-hidden="true" />
+                    </button>
                   )}
-                  {hasSection('services') && portfolioGallery.length > 0 && (
-                    <section className="cvp-lienora-services">
-                      <header><h2>{copy.ourServices}</h2><button type="button" onClick={() => goTo('services')}>{copy.viewAll} ›</button></header>
-                      <div>
-                        {portfolioGallery.map((item, index) => (
-                          <article key={`${item.thumbnail}-${index}`}>
-                            <button type="button" className="cvp-lienora-zoom" onClick={() => onSelectImage(item.full)}>
-                              <img src={item.thumbnail} alt={profile.services[index] || profile.identity.activity} loading="lazy" decoding="async" /><Search />
-                            </button>
-                            {profile.services[index] && <b>{profile.services[index]}</b>}
-                          </article>
-                        ))}
-                      </div>
-                    </section>
-                  )}
-                </>
-              )}
-              {activeTab === 'about' && aboutBlock}
-              {activeTab === 'services' && servicesBlock}
-              {activeTab === 'gallery' && galleryBlock}
-              {activeTab === 'reviews' && (
-                <section className="cvp-section cvp-review-panel">
-                  <Star fill="currentColor" />
-                  <h2>{reviewRating ? `${reviewRating.toFixed(1)} / 5` : copy.reviews}</h2>
-                  {reviewCount > 0 && <p>{reviewCount} {copy.reviews.toLowerCase()}</p>}
-                  {profile.reviews.url && <a href={profile.reviews.url} target="_blank" rel="noopener noreferrer">{copy.reviews}<ChevronRight /></a>}
+                  {hasSection('gallery') && gallery.length > 0 && galleryBlock}
                 </section>
               )}
-              {activeTab === 'reviews' && reviewsContent && <section className="cvp-section">{reviewsContent}</section>}
-              {bookingOpen && bookingContent && <section className="cvp-booking">{bookingContent}</section>}
+              {activeTab === 'about' && <>{aboutBlock}{boutiqueContent && hasSection('services') && servicesBlock}</>}
+              {activeTab === 'services' && servicesBlock}
+              {activeTab === 'hours' && hoursContent && (
+                <section className="cvp-portfolio-tab-panel">
+                  <h2>{copy.openingHours} {hoursBadge && <small>{hoursBadge}</small>}</h2>
+                  <div className="cvp-lienora-information-content">{hoursContent}</div>
+                </section>
+              )}
+              {activeTab === 'practical' && practicalContent && (
+                <section className="cvp-portfolio-tab-panel">
+                  <h2>{copy.practical}</h2>
+                  <div className="cvp-lienora-information-content">{practicalContent}</div>
+                </section>
+              )}
+              {activeTab === 'reviews' && hasSection('reviews') && (
+                <section className="cvp-portfolio-tab-panel cvp-compact-reviews">
+                  <h2>{copy.reviews} {reviewRating > 0 && <small>{reviewRating.toFixed(1)} ★ · {reviewCount} {copy.reviews.toLowerCase()}</small>}</h2>
+                  {profile.reviews.url && <a className="cvp-compact-review-link" href={profile.reviews.url} target="_blank" rel="noopener noreferrer">
+                    <Star aria-hidden="true" />{copy.viewReviews}
+                  </a>}
+                  {reviewsContent && (
+                    <>
+                      <button className="cvp-compact-review-link" type="button" onClick={() => setWriteReviewOpen(open => !open)}
+                        aria-expanded={writeReviewOpen} aria-controls="cvp-write-review">
+                        <FileText aria-hidden="true" />{copy.giveReview}
+                        <ChevronRight className={writeReviewOpen ? 'cvp-compact-chevron open' : 'cvp-compact-chevron'} aria-hidden="true" />
+                      </button>
+                      {writeReviewOpen && <div id="cvp-write-review">{reviewsContent}</div>}
+                    </>
+                  )}
+                </section>
+              )}
+              {activeTab === 'gallery' && galleryBlock}
               {notice && <p className="cvp-notice" role="status">{notice}</p>}
             </div>
           </div>
