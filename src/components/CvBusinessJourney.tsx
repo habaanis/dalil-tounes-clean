@@ -1,3 +1,4 @@
+import CvEmbeddedPreviewSafe from './CvEmbeddedPreviewSafe';
 import { useEffect, useState } from 'react';
 import { ArrowRight, Download, PlayCircle, Smartphone, X, ZoomIn } from 'lucide-react';
 import type { BusinessCardPreviewLanguage } from './BusinessCardPreview';
@@ -26,9 +27,9 @@ const COPY: Record<BusinessCardPreviewLanguage, {
   closePreview: string;
 }> = {
   fr: {
-    eyebrow: 'Votre mini-appli dans votre poche',
+    eyebrow: 'Votre CV Business dans votre poche',
     title: '3 outils complémentaires, un seul parcours',
-    subtitle: 'Votre mini-appli et votre QR Business rendent votre présentation accessible et facile à partager.',
+    subtitle: 'Votre application vous donne un accès rapide à votre QR Business. Le QR ouvre ensuite votre CV Business professionnel.',
     pwaTitle: '1. Application mobile (PWA)',
     pwaShort: 'Application',
     pwaText: 'Votre activité accessible depuis l’écran d’accueil comme une application.',
@@ -48,7 +49,7 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     closePreview: 'Fermer le visuel',
   },
   ar: {
-    eyebrow: 'تطبيقك المصغّر دائماً معك',
+    eyebrow: 'CV Business الخاص بك دائمًا معك',
     title: '3 أدوات متكاملة، في مسار واحد',
     subtitle: 'يمنحك التطبيق وصولًا سريعًا إلى QR Business، ومنه يتم فتح CV Business المهني الخاص بنشاطك.',
     pwaTitle: '1. تطبيق الهاتف (PWA)',
@@ -70,7 +71,7 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     closePreview: 'إغلاق الصورة',
   },
   en: {
-    eyebrow: 'Your business mini-app in your pocket',
+    eyebrow: 'Your Business CV in your pocket',
     title: '3 complementary tools, one simple journey',
     subtitle: 'Your app gives you quick access to your Business QR. The QR then opens your professional Business CV.',
     pwaTitle: '1. Mobile app (PWA)',
@@ -92,7 +93,7 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     closePreview: 'Close visual',
   },
   it: {
-    eyebrow: 'La tua mini-app sempre con te',
+    eyebrow: 'Il tuo CV Business sempre con te',
     title: '3 strumenti complementari, un solo percorso',
     subtitle: "L’app ti dà accesso rapido al QR Business. Il QR apre poi il tuo CV Business professionale.",
     pwaTitle: '1. Applicazione mobile (PWA)',
@@ -114,7 +115,7 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     closePreview: 'Chiudi il visual',
   },
   ru: {
-    eyebrow: 'Ваше мини-приложение всегда с вами',
+    eyebrow: 'Ваш Business CV всегда с вами',
     title: '3 взаимосвязанных инструмента, один путь',
     subtitle: 'Приложение даёт быстрый доступ к Business QR, а QR открывает ваш профессиональный Business CV.',
     pwaTitle: '1. Мобильное приложение (PWA)',
@@ -283,20 +284,19 @@ function ExpandedJourneyVisual({
             </div>
           )}
           {(visual === 'cv-business' || visual === 'cv-portfolio') && (
-            <img
-              src={visual === 'cv-portfolio'
-                ? '/images/cv-business-professionnel-aux-saveurs-anis.png'
-                : '/images/cv-business-portfolio-aux-saveurs-anis.png'}
-              alt={`${title} — Aux saveurs d’Anis`}
-              className="max-h-[82dvh] max-w-[calc(100vw-64px)] object-contain"
-              decoding="async"
-            />
+            <div className="h-[76dvh] min-h-[480px] w-[min(90vw,580px)] overflow-y-auto rounded-xl border border-[#D5B257]/40">
+              <CvEmbeddedPreviewSafe model={visual === 'cv-portfolio' ? 'portfolio' : 'business'} language={language} />
+            </div>
           )}
         </div>
       </div>
     </div>
   );
 }
+
+// Reuse the actual published CV components for the marketing demonstration.
+const journeyCvDemoUrl = (model: 'business' | 'portfolio', language: string) =>
+  `/cv/aux-saveurs-anis?preview-model=${model}&boutique-demo=1&skip-opening=1&lang=${language}`;
 
 export default function CvBusinessJourney({ language }: { language: BusinessCardPreviewLanguage }) {
   const t = COPY[language];
@@ -310,9 +310,6 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
   const videoSrc = videoLanguage === 'ar'
     ? 'https://static.metricool.com/video/4610595/202609/0a154ec0c4a44fb7.mp4'
     : 'https://static.metricool.com/video/4610595/202609/eaaff4e56ccf4aba.mp4';
-  const activeCvImage = activeCvModel === 'portfolio'
-    ? '/images/cv-business-professionnel-aux-saveurs-anis.png'
-    : '/images/cv-business-portfolio-aux-saveurs-anis.png';
   const activeCvLabel = activeCvModel === 'portfolio' ? t.portfolioModel : t.professionalModel;
   const mobileSteps: Array<{ id: MobileJourneyStep; label: string }> = [
     { id: 'pwa', label: t.pwaShort },
@@ -422,13 +419,9 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
                 </div>
               )}
               {activeMobileStep === 'cv' && (
-                <img
-                  src={activeCvImage}
-                  alt={`${t.cvTitle} — ${activeCvLabel} — Aux saveurs d’Anis`}
-                  className="h-[360px] w-auto max-w-none object-contain object-top"
-                  loading="lazy"
-                  decoding="async"
-                />
+                <div className="pointer-events-none w-[584px] max-w-none origin-top" style={{ zoom: 0.5 }}>
+                  <CvEmbeddedPreviewSafe model={activeCvModel} language={language} />
+                </div>
               )}
               <PreviewButton
                 label={`${t.openPreview} — ${mobileStepTitle}`}
@@ -484,13 +477,9 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
               </button>
             </div>
             <div className="relative mx-auto flex h-[331px] w-[180px] items-center justify-center overflow-hidden">
-              <img
-                src={activeCvImage}
-                alt={`${t.cvTitle} — ${activeCvLabel} — Aux saveurs d’Anis`}
-                className="h-[345px] w-auto max-w-none object-contain"
-                loading="lazy"
-                decoding="async"
-              />
+              <div className="pointer-events-none w-[584px] max-w-none origin-top" style={{ zoom: 0.3 }}>
+                <CvEmbeddedPreviewSafe model={activeCvModel} language={language} />
+              </div>
               <PreviewButton
                 label={`${t.openPreview} — ${t.cvTitle} — ${activeCvLabel}`}
                 onClick={() => setExpandedVisual(activeCvModel === 'portfolio' ? 'cv-portfolio' : 'cv-professional')}
