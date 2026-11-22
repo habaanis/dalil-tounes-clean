@@ -1,4 +1,4 @@
-import BusinessShowcaseLienoraEnhanced from './BusinessShowcaseLienoraEnhanced';
+import CvEmbeddedPreviewSafe from './CvEmbeddedPreviewSafe';
 import { useEffect, useState } from 'react';
 import { ArrowRight, Download, PlayCircle, Smartphone, X, ZoomIn } from 'lucide-react';
 import type { BusinessCardPreviewLanguage } from './BusinessCardPreview';
@@ -285,7 +285,7 @@ function ExpandedJourneyVisual({
           )}
           {(visual === 'cv-business' || visual === 'cv-portfolio') && (
             <div className="h-[76dvh] min-h-[480px] w-[min(90vw,580px)] overflow-y-auto rounded-xl border border-[#D5B257]/40">
-              <BusinessShowcaseLienoraEnhanced embeddedPreview previewSlug="aux-saveurs-d-anis" previewVilleSlug="sousse" previewPresentationModel={visual === 'cv-portfolio' ? 'portfolio' : 'business'} />
+              <CvEmbeddedPreviewSafe model={visual === 'cv-portfolio' ? 'portfolio' : 'business'} language={language} />
             </div>
           )}
         </div>
@@ -420,7 +420,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
               )}
               {activeMobileStep === 'cv' && (
                 <div className="pointer-events-none w-[584px] max-w-none origin-top" style={{ zoom: 0.5 }}>
-                  <BusinessShowcaseLienoraEnhanced embeddedPreview previewSlug="aux-saveurs-d-anis" previewVilleSlug="sousse" previewPresentationModel={activeCvModel} />
+                  <CvEmbeddedPreviewSafe model={activeCvModel} language={language} />
                 </div>
               )}
               <PreviewButton
@@ -478,7 +478,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
             </div>
             <div className="relative mx-auto flex h-[331px] w-[180px] items-center justify-center overflow-hidden">
               <div className="pointer-events-none w-[584px] max-w-none origin-top" style={{ zoom: 0.3 }}>
-                <BusinessShowcaseLienoraEnhanced embeddedPreview previewSlug="aux-saveurs-d-anis" previewVilleSlug="sousse" previewPresentationModel={activeCvModel} />
+                <CvEmbeddedPreviewSafe model={activeCvModel} language={language} />
               </div>
               <PreviewButton
                 label={`${t.openPreview} — ${t.cvTitle} — ${activeCvLabel}`}
