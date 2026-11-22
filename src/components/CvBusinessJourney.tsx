@@ -421,7 +421,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
               {activeMobileStep === 'cv' && (
                 <div className="pointer-events-none w-[584px] max-w-none origin-top" style={{ zoom: 0.5 }}>
                   <BusinessShowcaseLienoraEnhanced embeddedPreview previewSlug="aux-saveurs-d-anis" previewVilleSlug="sousse" previewPresentationModel={activeCvModel} />
-                </div>/>
+                </div>
               )}
               <PreviewButton
                 label={`${t.openPreview} — ${mobileStepTitle}`}
@@ -479,7 +479,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
             <div className="relative mx-auto flex h-[331px] w-[180px] items-center justify-center overflow-hidden">
               <div className="pointer-events-none w-[584px] max-w-none origin-top" style={{ zoom: 0.3 }}>
                 <BusinessShowcaseLienoraEnhanced embeddedPreview previewSlug="aux-saveurs-d-anis" previewVilleSlug="sousse" previewPresentationModel={activeCvModel} />
-              </div>/>
+              </div>
               <PreviewButton
                 label={`${t.openPreview} — ${t.cvTitle} — ${activeCvLabel}`}
                 onClick={() => setExpandedVisual(activeCvModel === 'portfolio' ? 'cv-portfolio' : 'cv-professional')}
