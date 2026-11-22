@@ -831,6 +831,8 @@ const offerCopy: Record<OfferLanguage, {
       'Jusqu’à 10 photos — Présente plus largement tes produits, ton établissement, ton équipe ou tes réalisations.',
       'Des statistiques plus détaillées — Suis les consultations, clics WhatsApp, appels, visites du site et l’évolution de ta visibilité.',
       'Bouton de réservation ou de demande — Selon ton activité, les visiteurs peuvent demander un rendez-vous, une réservation ou des informations.',
+      'Boutique et catalogue — Présente tes produits avec photos et prix, et facilite les demandes de commande ou de devis.',
+      'Commandes et fidélité — Suivi des demandes, offres, remises et cartes de fidélité selon les fonctions activées.',
       'Un accompagnement prioritaire — Tes questions et demandes de modification sont traitées plus rapidement.',
     ],
     cvSectionTitle: 'Bien plus qu’une simple présentation',
@@ -1084,19 +1086,19 @@ const simplifiedOfferCopy: Record<OfferLanguage, {
     welcomeBadge: 'Offre de bienvenue',
     welcomeTitle: 'Notre modèle évolue pour mieux accompagner les professionnels tunisiens',
     welcomeDescription: 'Nous connaissons les réalités des artisans, des indépendants et des petites entreprises. Dalil Tounes supprime donc les abonnements mensuels : vous réglez une seule fois la création de votre mini-appli personnalisée.',
-    welcomeHighlight: 'La première année est incluse et les deux années suivantes sont offertes : 3 ans de mini-appli sans renouvellement à régler, avec votre carte Business et son QR Code.',
+    welcomeHighlight: 'La première année est incluse dans le prix de création de votre mini-appli, avec votre carte Business et son QR Code.',
     welcomePayment: 'Seul le prix de création de votre mini-appli est à régler : 30 TND pour Artisan ou 59 TND pour Premium.',
     creationLabel: 'Création — paiement unique',
-    firstYearIncluded: '12 mois inclus + 24 mois offerts — 3 ans au total',
+    firstYearIncluded: 'Première année incluse',
     artisanTitle: 'Formule Artisan',
     artisanIntro: 'Une présentation légère et professionnelle pour les artisans, indépendants, commerçants et petites activités.',
     artisanFeatures: ['Présentation légère', 'Activité et services', 'Coordonnées', 'Téléphone et WhatsApp', 'Horaires', '2 réseaux sociaux du professionnel', 'Jusqu’à 5 photos', 'QR Code Business'],
     premiumTitle: 'Formule Premium',
-    premiumIntro: 'Le mini-appli complet de Dalil Tounes, avec la présentation Premium et les fonctionnalités actuelles de la formule.',
+    premiumIntro: 'Présentez votre activité et vos produits avec une mini-appli complète, sa boutique et son catalogue.',
     maintenanceTitle: 'Maintien annuel de votre mini-appli',
-    maintenanceTiming: 'À partir de la 4e année',
+    maintenanceTiming: 'À partir de la 2e année',
     maintenancePrice: '50 TND / an',
-    maintenanceIntro: 'Après les trois années de l’offre de bienvenue, vous choisissez librement de maintenir votre mini-appli active et entretenue.',
+    maintenanceIntro: 'À partir de la deuxième année, vous choisissez librement de renouveler l’entretien de votre mini-appli.',
     maintenanceFeatures: ['Maintien du mini-appli en ligne', 'Hébergement inclus', 'QR Business actif', 'Maintenance technique', 'Mises à jour techniques de la plateforme Dalil Tounes', 'Jusqu’à 10 demandes de modification par an', 'Assistance Dalil Tounes'],
     noRenewal: 'Sans renouvellement, votre entreprise reste présente gratuitement sur Dalil Tounes avec la Présence essentielle. Les fonctions de la mini-appli sont désactivées jusqu’à sa réactivation.',
     preview: 'Aperçu de votre mini-appli',
@@ -1111,19 +1113,19 @@ const simplifiedOfferCopy: Record<OfferLanguage, {
     welcomeBadge: 'عرض ترحيبي',
     welcomeTitle: 'طوّرنا نموذجنا لمرافقة المهنيين التونسيين بشكل أفضل',
     welcomeDescription: 'نحن ندرك واقع الحرفيين والمستقلين والمؤسسات الصغيرة. لذلك ألغى دليل تونس الاشتراكات الشهرية: تدفع مرة واحدة فقط مقابل إنشاء التطبيق المصغّر الذي تختاره.',
-    welcomeHighlight: 'السنة الأولى مشمولة والسنتان التاليتان مجانًا: 3 سنوات من التطبيق المصغّر دون أي تجديد، مع بطاقة Business ورمز QR الخاص بها.',
+    welcomeHighlight: 'السنة الأولى مشمولة في سعر إنشاء التطبيق المصغّر مع بطاقة Business ورمز QR الخاص بها.',
     welcomePayment: 'تدفع فقط سعر إنشاء التطبيق المصغّر المختار: 30 د.ت لصيغة الحرفي أو 59 د.ت لصيغة Premium.',
     creationLabel: 'الإنشاء — دفعة واحدة',
-    firstYearIncluded: '12 شهرًا مشمولة + 24 شهرًا مجانًا — 3 سنوات إجمالًا',
+    firstYearIncluded: 'السنة الأولى مشمولة',
     artisanTitle: 'صيغة الحرفي',
     artisanIntro: 'عرض مهني خفيف للحرفيين والمستقلين والتجار والأنشطة الصغيرة.',
     artisanFeatures: ['عرض مختصر', 'النشاط والخدمات', 'بيانات الاتصال', 'الهاتف وواتساب', 'أوقات العمل', 'شبكتان اجتماعيتان للمهني', 'حتى 5 صور', 'QR Business'],
     premiumTitle: 'صيغة Premium',
-    premiumIntro: 'النسخة الكاملة من التطبيق المصغّر في دليل تونس مع عرض Premium ووظائفه الحالية.',
+    premiumIntro: 'تطبيق مصغّر متكامل لعرض نشاطك ومنتجاتك مع متجر وكتالوج.',
     maintenanceTitle: 'الصيانة السنوية لـ التطبيق المصغّر',
-    maintenanceTiming: 'ابتداءً من السنة الرابعة',
+    maintenanceTiming: 'ابتداءً من السنة الثانية',
     maintenancePrice: '50 د.ت / سنة',
-    maintenanceIntro: 'بعد السنوات الثلاث للعرض الترحيبي، تختار بحرية مواصلة صيانة التطبيق المصغّر ليبقى نشطًا ومحدّثًا.',
+    maintenanceIntro: 'ابتداءً من السنة الثانية، تختار بحرية تجديد صيانة التطبيق المصغّر.',
     maintenanceFeatures: ['إبقاء التطبيق المصغّر منشورًا', 'الاستضافة مشمولة', 'QR Business نشط', 'الصيانة التقنية', 'التحديثات التقنية لمنصة دليل تونس', 'حتى 10 طلبات تعديل في السنة', 'مساعدة دليل تونس'],
     noRenewal: 'دون تجديد، يبقى نشاطك حاضرًا مجانًا على دليل تونس ضمن الحضور الأساسي، ويتم تعطيل وظائف التطبيق المصغّر إلى حين إعادة تفعيله.',
     preview: 'معاينة التطبيق المصغّر',
@@ -1138,19 +1140,19 @@ const simplifiedOfferCopy: Record<OfferLanguage, {
     welcomeBadge: 'Welcome offer',
     welcomeTitle: 'Our model is evolving to better support Tunisian professionals',
     welcomeDescription: 'We understand the realities faced by craftspeople, independents and small businesses. Dalil Tounes has therefore removed monthly subscriptions: you pay once for the creation of the business mini-app you choose.',
-    welcomeHighlight: 'The first year is included and the following two years are free: 3 years of business mini-app with no renewal to pay, including your Business card and its QR Code.',
+    welcomeHighlight: 'The first year is included in the mini-app creation price, with your Business card and QR Code.',
     welcomePayment: 'You only pay the creation price of your chosen business mini-app: 30 TND for Artisan or 59 TND for Premium.',
     creationLabel: 'Creation — one-time payment',
-    firstYearIncluded: '12 months included + 24 months free — 3 years in total',
+    firstYearIncluded: 'First year included',
     artisanTitle: 'Artisan Plan',
     artisanIntro: 'A light professional presentation for craftspeople, independents, shops and small businesses.',
     artisanFeatures: ['Light presentation', 'Activity and services', 'Contact details', 'Phone and WhatsApp', 'Opening hours', '2 client social networks', 'Up to 5 photos', 'Business QR Code'],
     premiumTitle: 'Premium Plan',
-    premiumIntro: 'The complete Dalil Tounes business mini-app with the current Premium presentation and features.',
+    premiumIntro: 'A complete mini-app to showcase your business and sell products with a shop and catalogue.',
     maintenanceTitle: 'Annual business mini-app maintenance',
-    maintenanceTiming: 'From the 4th year',
+    maintenanceTiming: 'From the 2nd year',
     maintenancePrice: '50 TND / year',
-    maintenanceIntro: 'After the three years included in the welcome offer, you freely choose whether to keep your business mini-app active and maintained.',
+    maintenanceIntro: 'From the second year, you can choose whether to renew maintenance for your business mini-app.',
     maintenanceFeatures: ['business mini-app kept online', 'Hosting included', 'Business QR Code kept active', 'Technical maintenance', 'Dalil Tounes platform technical updates', 'Up to 10 modification requests per year', 'Dalil Tounes assistance'],
     noRenewal: 'Without renewal, your business remains listed for free on Dalil Tounes with Essential Presence. business mini-app features are disabled until reactivation.',
     preview: 'business mini-app preview',
@@ -1165,19 +1167,19 @@ const simplifiedOfferCopy: Record<OfferLanguage, {
     welcomeBadge: 'Offerta di benvenuto',
     welcomeTitle: 'Il nostro modello evolve per sostenere meglio i professionisti tunisini',
     welcomeDescription: 'Conosciamo la realtà di artigiani, indipendenti e piccole imprese. Per questo Dalil Tounes elimina gli abbonamenti mensili: paghi una sola volta la creazione della tua mini-app personalizzata.',
-    welcomeHighlight: 'Il primo anno è incluso e i due anni successivi sono offerti: 3 anni di mini-app senza rinnovi da pagare, con la tua carta Business e il suo QR Code.',
+    welcomeHighlight: 'Il primo anno è incluso nel prezzo di creazione della mini-app, con la carta Business e il relativo QR Code.',
     welcomePayment: 'Paghi solo il prezzo di creazione del mini-app scelto: 30 TND per Artisan o 59 TND per Premium.',
     creationLabel: 'Creazione — pagamento unico',
-    firstYearIncluded: '12 mesi inclusi + 24 mesi offerti — 3 anni in totale',
+    firstYearIncluded: 'Primo anno incluso',
     artisanTitle: 'Formula Artisan',
     artisanIntro: 'Una presentazione professionale leggera per artigiani, indipendenti, commercianti e piccole attività.',
     artisanFeatures: ['Presentazione leggera', 'Attività e servizi', 'Recapiti', 'Telefono e WhatsApp', 'Orari', '2 social network del cliente', 'Fino a 5 foto', 'QR Code Business'],
     premiumTitle: 'Formula Premium',
-    premiumIntro: 'Il mini-app completo di Dalil Tounes con la presentazione Premium e le funzionalità attuali.',
+    premiumIntro: 'Mini-app completa per presentare la tua attività e i tuoi prodotti con negozio e catalogo.',
     maintenanceTitle: 'Mantenimento annuale della mini-app',
-    maintenanceTiming: 'Dal 4° anno',
+    maintenanceTiming: 'Dal 2° anno',
     maintenancePrice: '50 TND / anno',
-    maintenanceIntro: 'Dopo i tre anni dell’offerta di benvenuto, scegli liberamente se mantenere attivo e curato il tuo mini-app.',
+    maintenanceIntro: 'Dal secondo anno, puoi scegliere liberamente se rinnovare la manutenzione della mini-app.',
     maintenanceFeatures: ['mini-app mantenuto online', 'Hosting incluso', 'QR Business attivo', 'Manutenzione tecnica', 'Aggiornamenti tecnici della piattaforma Dalil Tounes', 'Fino a 10 richieste di modifica all’anno', 'Assistenza Dalil Tounes'],
     noRenewal: 'Senza rinnovo, l’attività resta presente gratuitamente su Dalil Tounes con la Presenza essenziale. Le funzioni del mini-app vengono disattivate fino alla riattivazione.',
     preview: 'Anteprima mini-app',
@@ -1192,19 +1194,19 @@ const simplifiedOfferCopy: Record<OfferLanguage, {
     welcomeBadge: 'Приветственное предложение',
     welcomeTitle: 'Наша модель развивается, чтобы лучше поддерживать тунисских специалистов',
     welcomeDescription: 'Мы понимаем реальное положение мастеров, независимых специалистов и малого бизнеса. Поэтому Dalil Tounes отменяет ежемесячную подписку: вы один раз оплачиваете создание выбранного мини-приложение.',
-    welcomeHighlight: 'Первый год включён, а следующие два года предоставляются бесплатно: 3 года мини-приложение без оплаты продления, включая вашу Business-карту и её QR-код.',
+    welcomeHighlight: 'Первый год включён в стоимость создания мини-приложения вместе с Business-картой и QR-кодом.',
     welcomePayment: 'Оплачивается только создание выбранного мини-приложение: 30 TND за Artisan или 59 TND за Premium.',
     creationLabel: 'Создание — разовая оплата',
-    firstYearIncluded: '12 месяцев включены + 24 месяца бесплатно — всего 3 года',
+    firstYearIncluded: 'Первый год включён',
     artisanTitle: 'Тариф Artisan',
     artisanIntro: 'Лёгкая профессиональная презентация для мастеров, независимых специалистов, магазинов и малого бизнеса.',
     artisanFeatures: ['Краткая презентация', 'Деятельность и услуги', 'Контактные данные', 'Телефон и WhatsApp', 'Часы работы', '2 социальные сети клиента', 'До 5 фотографий', 'Business QR Code'],
     premiumTitle: 'Тариф Premium',
-    premiumIntro: 'Полный мини-приложение Dalil Tounes с текущей Premium-презентацией и функциями.',
+    premiumIntro: 'Полное мини-приложение с магазином и каталогом для презентации бизнеса и товаров.',
     maintenanceTitle: 'Ежегодное обслуживание мини-приложение',
-    maintenanceTiming: 'С 4-го года',
+    maintenanceTiming: 'Со 2-го года',
     maintenancePrice: '50 TND / год',
-    maintenanceIntro: 'После трёх лет приветственного предложения вы сами решаете, продолжать ли обслуживание активного мини-приложение.',
+    maintenanceIntro: 'Со второго года вы самостоятельно решаете, продлевать ли обслуживание мини-приложения.',
     maintenanceFeatures: ['мини-приложение остаётся онлайн', 'Хостинг включён', 'Business QR Code активен', 'Техническое обслуживание', 'Технические обновления платформы Dalil Tounes', 'До 10 запросов на изменения в год', 'Поддержка Dalil Tounes'],
     noRenewal: 'Без продления компания остаётся бесплатно представлена на Dalil Tounes в формате Essential Presence. Функции мини-приложение отключаются до повторной активации.',
     preview: 'Предпросмотр мини-приложение',
@@ -1350,6 +1352,28 @@ export const Subscription = () => {
     const paletteLabel = getPaletteLabel(language, selectedPalette);
     openRequest(selectedFormula, `${selectedFormulaLabel} — ${modelLabel} — ${paletteLabel}`, selectedFormula, undefined, modelLabel, paletteLabel);
   };
+
+  // PWA only: comparison of the two designs, separate from pricing and checkout.
+  if (new URLSearchParams(window.location.search).get('app-models') === '1' && window.location.hostname !== 'dalil-tounes.com' && window.location.hostname !== 'www.dalil-tounes.com') {
+    return <div className="premium-page mx-auto max-w-xl px-3 py-4" dir={isArabic ? 'rtl' : 'ltr'}>
+      <h1 className="font-serif text-2xl font-semibold text-[#35172F]">{language === 'ar' ? 'شاهد النماذج' : 'Voir les modèles'}</h1>
+      <p className="mt-2 text-sm leading-6 text-slate-600">{language === 'ar' ? 'قارن بين نموذجي Business وPortfolio. الأسعار متوفرة في قسم العروض.' : 'Comparez simplement les deux présentations. Les prix et les conditions sont dans « Offres & tarifs ».'}</p>
+      <div className="mt-4 grid grid-cols-2 gap-3">
+        {(['business','portfolio'] as const).map(model => <a key={model}
+          href={`/cv/aux-saveurs-anis?preview-model=${model}&boutique-demo=1&skip-opening=1`}
+          className="rounded-xl border border-[#D4AF37]/50 bg-white p-3 text-center shadow-sm">
+          <div className="pointer-events-none mx-auto h-52 overflow-hidden rounded-lg bg-[#FAF6EC]">
+            <img src={model === 'business' ? '/images/cv-business-professionnel-aux-saveurs-anis.png' : '/images/cv-business-portfolio-aux-saveurs-anis.png'} alt="" className="h-full w-full object-contain" />
+          </div>
+          <strong className="mt-2 block text-sm text-[#35172F]">CV {model === 'business' ? 'Business' : 'Portfolio'}</strong>
+          <span className="mt-1 block text-xs text-slate-600">{language === 'ar' ? 'جرّب التطبيق' : 'Ouvrir le modèle réel'}</span>
+        </a>)}
+      </div>
+      <a href="/subscription?app-full=1#offres" className="mt-4 block rounded-xl border border-[#D4AF37] px-4 py-3 text-center text-sm font-semibold text-[#35172F]">
+        {language === 'ar' ? 'الأسعار والعروض' : 'Consulter les offres et tarifs'}
+      </a>
+    </div>;
+  }
 
   return (
     <div className="premium-page px-4 py-6 sm:py-8" dir={isArabic ? 'rtl' : 'ltr'}>

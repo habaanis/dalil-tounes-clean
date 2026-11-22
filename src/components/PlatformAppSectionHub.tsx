@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
-import { ChevronDown, X } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { DALIL_MASCOT_IMAGE } from '../lib/dalilMascotImage';
 
@@ -38,7 +37,7 @@ const SETTLE_LINKS: Entry[] = [
 const PRO_LINKS: Entry[] = [
   { id: 'free', icon: '🆓', href: '/inscription-entreprise' },
   { id: 'cv', icon: '📱', href: '/cv-business' },
-  { id: 'models', icon: '🎨', href: '/subscription?app-full=1#modeles' },
+  { id: 'models', icon: '🎨', href: '/subscription?app-full=1&app-models=1' },
   { id: 'offers', icon: '💼', href: '/subscription?app-full=1#offres' },
   { id: 'partners', icon: '🤝', href: '/devenir-partenaire' },
   { id: 'businessPartners', icon: '🔗', href: '/partner-search' },
@@ -113,77 +112,66 @@ export default function PlatformAppSectionHub({ kind }: { kind: Hub }) {
   const { language } = useLanguage();
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as Lang;
   const copy = COPY[lang];
-  const [openPro, setOpenPro] = useState<string | null>(null);
-  const proDetails: Record<Lang, Record<string, string>> = {
+  // Descriptions très courtes : toutes les cartes naviguent directement, sans panneau intermédiaire.
+  const proSummaries: Record<Lang, Record<string, string>> = {
     fr: {
-      free: "Demandez gratuitement le référencement de votre activité. Le formulaire recueille les informations essentielles et l'équipe vérifie votre demande.",
-      cv: "Présentez votre activité et vos réalisations, proposez un catalogue et recevez des commandes ou demandes de devis. Le client peut suivre sa demande depuis la boutique, sans compte. Fidélité, cartes cadeaux et notifications sont proposées selon les fonctions activées. Les remises sont à confirmer avec le commerçant.",
-      models: "Comparez les CV Business et Portfolio et testez les vrais boutons, les photos et la boutique avant de choisir votre présentation.",
-      offers: "Comparez les prestations proposées et consultez les tarifs avant de faire votre demande.",
-      partners: "Découvrez les conditions pour devenir partenaire commercial de Dalil Tounes.",
-      businessPartners: "Recherchez des professionnels et des partenaires potentiels dans le réseau.",
-      businessNeeds: "Consultez les besoins professionnels publiés sur la plateforme."
+      free: 'Référencez gratuitement votre activité.',
+      cv: 'Découvrez votre vitrine et ses fonctionnalités.',
+      models: 'Comparez Business et Portfolio.',
+      offers: 'Formules, tarifs et conditions.',
+      partners: 'Recommandez Dalil Tounes.',
+      businessPartners: 'Trouvez des partenaires professionnels.',
+      businessNeeds: 'Consultez les demandes des professionnels.',
     },
     ar: {
-      free: "اطلب تسجيل نشاطك مجاناً. أدخل المعلومات الأساسية ليتم التثبت من طلبك.",
-      cv: "تطبيقك المصغّر المهني يجمع خدماتك وأعمالك وبيانات الاتصال والروابط، وتشاركه بسهولة عبر رابط ورمز QR Business.",
-      models: "اكتشف نموذجي العرض والألوان المتاحة لاختيار الأنسب لنشاطك.",
-      offers: "قارن الخدمات والأسعار قبل إرسال طلبك.",
-      partners: "تعرّف على شروط الشراكة التجارية مع دليل تونس.",
-      businessPartners: "ابحث عن مهنيين وشركاء محتملين في الشبكة.",
-      businessNeeds: "اطّلع على احتياجات المؤسسات المنشورة على المنصة."
+      free: 'سجّل نشاطك مجاناً.',
+      cv: 'اكتشف تطبيقك المصغّر ومميزاته.',
+      models: 'قارن بين Business وPortfolio.',
+      offers: 'العروض والأسعار والشروط.',
+      partners: 'ساهم في التعريف بدليل تونس.',
+      businessPartners: 'ابحث عن شركاء مهنيين.',
+      businessNeeds: 'اطّلع على طلبات المهنيين.',
     },
     en: {
-      free: "Request a free business listing. Submit your essential details for review.",
-      cv: "Show your services, work, contact details and links in a Business or Portfolio CV with a shareable link and QR code.",
-      models: "Explore both presentation styles and their available colour palettes.",
-      offers: "Compare services and prices before sending a request.",
-      partners: "Learn about Dalil Tounes commercial partnerships.",
-      businessPartners: "Find professionals and potential partners in the network.",
-      businessNeeds: "Explore published business needs."
+      free: 'List your business for free.',
+      cv: 'Explore your mini-app and its features.',
+      models: 'Compare Business and Portfolio.',
+      offers: 'Plans, pricing and conditions.',
+      partners: 'Recommend Dalil Tounes.',
+      businessPartners: 'Find professional partners.',
+      businessNeeds: 'Browse professional requests.',
     },
     it: {
-      free: "Richiedi la registrazione gratuita della tua attività con i dati essenziali.",
-      cv: "La tua mini-app professionale raccoglie servizi, lavori, contatti e link, ed è facile da condividere con link e QR Business.",
-      models: "Scopri i due modelli e le palette disponibili.",
-      offers: "Confronta servizi e prezzi prima di inviare una richiesta.",
-      partners: "Scopri le condizioni della collaborazione commerciale.",
-      businessPartners: "Trova professionisti e potenziali partner.",
-      businessNeeds: "Consulta le esigenze professionali pubblicate."
+      free: 'Registra gratuitamente la tua attività.',
+      cv: 'Scopri la tua mini-app.',
+      models: 'Confronta Business e Portfolio.',
+      offers: 'Offerte, prezzi e condizioni.',
+      partners: 'Consiglia Dalil Tounes.',
+      businessPartners: 'Trova partner professionali.',
+      businessNeeds: 'Consulta le richieste professionali.',
     },
     ru: {
-      free: "Подайте заявку на бесплатное размещение компании с основными сведениями.",
-      cv: "Представьте услуги, работы и контакты в Business или Portfolio CV со ссылкой и QR-кодом.",
-      models: "Посмотрите два варианта оформления и цветовые палитры.",
-      offers: "Сравните услуги и цены перед отправкой заявки.",
-      partners: "Узнайте об условиях коммерческого партнёрства.",
-      businessPartners: "Найдите специалистов и потенциальных партнёров.",
-      businessNeeds: "Посмотрите опубликованные бизнес-запросы."
-    }
-  };
-  const openLabels: Record<Lang, string> = {
-    fr: 'Ouvrir la rubrique', ar: 'فتح القسم', en: 'Open section', it: 'Apri la sezione', ru: 'Открыть раздел'
-  };
-  const closeLabels: Record<Lang, string> = {
-    fr: 'Fermer', ar: 'إغلاق', en: 'Close', it: 'Chiudi', ru: 'Закрыть'
+      free: 'Добавьте компанию бесплатно.',
+      cv: 'Посмотрите мини-приложение и функции.',
+      models: 'Сравните Business и Portfolio.',
+      offers: 'Тарифы, цены и условия.',
+      partners: 'Рекомендуйте Dalil Tounes.',
+      businessPartners: 'Найдите деловых партнёров.',
+      businessNeeds: 'Посмотрите запросы специалистов.',
+    },
   };
   const prosActions = PRO_LINKS.filter(item => item.id === 'free' || item.id === 'cv');
   const prosExtras = PRO_LINKS.filter(item => item.id !== 'free' && item.id !== 'cv');
   const renderProCards = (items: Entry[]) => <div className="grid grid-cols-2 gap-2">
-    {items.map(item => item.id === 'free'
-      ? <Link key={item.id} to={item.href}
-          className="flex min-h-[74px] flex-col items-start justify-between rounded-xl border border-[#E5D7BE] bg-white p-3 text-start shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B99143]">
-          <span aria-hidden="true" className="text-xl leading-none">{item.icon}</span>
-          <span className="mt-2 text-sm font-medium leading-5 text-[#45243A]">{copy.topics[item.id]}</span>
-        </Link>
-      : <button key={item.id} type="button" aria-expanded={openPro === item.id}
-      onClick={() => setOpenPro(current => current === item.id ? null : item.id)}
-      className={`flex min-h-[74px] flex-col items-start justify-between rounded-xl border p-3 text-start shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B99143] ${openPro === item.id ? 'border-[#B99143] bg-[#FFF9EF]' : 'border-[#E5D7BE] bg-white'}`}>
-      <span aria-hidden="true" className="text-xl leading-none">{item.icon}</span>
-      <span className="mt-2 text-sm font-medium leading-5 text-[#45243A]">{copy.topics[item.id]}</span>
-    </button>)}
+    {items.map(item => (
+      <Link key={item.id} to={item.href} state={{ from: '/subscription' }}
+        className="flex min-h-[96px] flex-col items-start rounded-xl border border-[#E5D7BE] bg-white p-3 text-start shadow-sm transition-colors hover:border-[#B99143] hover:bg-[#FFF9EF] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B99143]">
+        <span aria-hidden="true" className="text-xl leading-none">{item.icon}</span>
+        <span className="mt-2 text-sm font-semibold leading-5 text-[#45243A]">{copy.topics[item.id]}</span>
+        <span className="mt-1 text-xs leading-4 text-[#6A5B64]">{proSummaries[lang][item.id]}</span>
+      </Link>
+    ))}
   </div>;
-  const selectedPro = PRO_LINKS.find(item => item.id === openPro);
 
   return <div data-platform-app-hub={kind} className="space-y-4 px-3 py-4">
     <section className="flex items-center gap-3 rounded-2xl border border-[#D4AF37]/45 bg-[#FFF9EF] p-3">
@@ -199,6 +187,28 @@ export default function PlatformAppSectionHub({ kind }: { kind: Hub }) {
       <HubLinks items={CITIZEN_LINKS} topics={copy.topics} />
     </div>}
     {kind === 'pros' && <>
+      <section aria-label={lang === 'fr' ? 'Les avantages de votre mini-appli' : 'Business mini-app benefits'} className="rounded-2xl border border-[#D4AF37]/45 bg-[#FFFCF7] p-3">
+        <h2 className="font-serif text-lg font-semibold leading-6 text-[#35172F]">
+          {lang === 'fr' ? 'Présenter, vendre et fidéliser' : lang === 'ar' ? 'اعرض، بيع وحافظ على حرفائك' : lang === 'it' ? 'Presenta, vendi e fidelizza' : lang === 'ru' ? 'Рассказывайте, продавайте и удерживайте клиентов' : 'Showcase, sell and build loyalty'}
+        </h2>
+        <p className="mt-1 text-xs leading-5 text-[#6A5B64]">
+          {lang === 'fr' ? 'Une mini-appli à partager par lien ou QR Business, pour faciliter les ventes et les échanges avec vos clients.' : lang === 'ar' ? 'تطبيق مصغّر تشاركه برابط أو رمز QR لتسهيل الطلبات والتواصل مع الحرفاء.' : 'A shareable mini-app with a link or Business QR code to simplify orders and customer relations.'}
+        </p>
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          {([
+            { icon: '📱', title: lang === 'fr' ? 'Présenter' : lang === 'ar' ? 'التعريف' : 'Showcase', detail: lang === 'fr' ? 'CV Business, Portfolio, photos et QR Business' : lang === 'ar' ? 'عرض الأعمال والصور ورمز QR' : 'Business CV, Portfolio, photos and QR' },
+            { icon: '🛍️', title: lang === 'fr' ? 'Vendre' : lang === 'ar' ? 'البيع' : 'Sell', detail: lang === 'fr' ? 'Boutique, catalogue, commandes et devis' : lang === 'ar' ? 'متجر، منتجات، طلبات وعروض أسعار' : 'Shop, catalogue, orders and quotes' },
+            { icon: '🎁', title: lang === 'fr' ? 'Fidéliser' : lang === 'ar' ? 'الوفاء' : 'Loyalty', detail: lang === 'fr' ? 'Cartes de fidélité, cadeaux et offres selon activation' : lang === 'ar' ? 'بطاقات وفاء وهدايا وعروض حسب التفعيل' : 'Loyalty, gift cards and offers when enabled' },
+            { icon: '📋', title: lang === 'fr' ? 'Suivre' : lang === 'ar' ? 'المتابعة' : 'Track', detail: lang === 'fr' ? 'Demandes suivies par le client et le professionnel' : lang === 'ar' ? 'متابعة الطلبات للحريف والمهني' : 'Customer and professional order tracking' },
+          ] as const).map(item => (
+            <div key={item.title} className="rounded-xl border border-[#E5D7BE] bg-[#FCFAF6] p-3">
+              <span className="text-xl" aria-hidden="true">{item.icon}</span>
+              <h3 className="mt-1 text-sm font-semibold text-[#35172F]">{item.title}</h3>
+              <p className="mt-1 text-xs leading-5 text-[#6A5B64]">{item.detail}</p>
+            </div>
+          ))}
+        </div>
+      </section>
       {renderProCards(prosActions)}
       <details className="group rounded-2xl border border-[#D4AF37]/40 bg-white p-3">
         <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 px-1 font-medium text-[#45243A] [&::-webkit-details-marker]:hidden">
@@ -206,23 +216,6 @@ export default function PlatformAppSectionHub({ kind }: { kind: Hub }) {
         </summary>
         <div className="pt-2">{renderProCards(prosExtras)}</div>
       </details>
-      {selectedPro && <section role="region" aria-label={copy.topics[selectedPro.id]}
-        className="rounded-2xl border border-[#D4AF37]/60 bg-[#FFFDF8] p-4 shadow-sm">
-        <div className="flex items-start justify-between gap-3">
-          <h2 className="font-serif text-lg font-semibold text-[#45243A]">{selectedPro.icon} {copy.topics[selectedPro.id]}</h2>
-          <button type="button" onClick={() => setOpenPro(null)} aria-label={closeLabels[lang]}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#E5D7BE] bg-white text-[#45243A]">
-            <X className="h-5 w-5" aria-hidden="true" />
-          </button>
-        </div>
-        <p className="mt-2 text-sm leading-6 text-[#6A5B64]">{proDetails[lang][selectedPro.id]}</p>
-        <Link
-          to={selectedPro.href}
-          className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-[#07543F] px-4 py-3 text-center text-sm font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B99143]"
-        >
-          {openLabels[lang]} — {copy.topics[selectedPro.id]}
-        </Link>
-      </section>}
     </>}
 
     {kind === 'tourism' && <div className="space-y-3">
