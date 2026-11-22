@@ -1,3 +1,4 @@
+import BusinessShowcaseLienoraEnhanced from './BusinessShowcaseLienoraEnhanced';
 import { useEffect, useState } from 'react';
 import { ArrowRight, Download, PlayCircle, Smartphone, X, ZoomIn } from 'lucide-react';
 import type { BusinessCardPreviewLanguage } from './BusinessCardPreview';
@@ -283,11 +284,9 @@ function ExpandedJourneyVisual({
             </div>
           )}
           {(visual === 'cv-business' || visual === 'cv-portfolio') && (
-            <iframe
-              title={`${title} — CV et Boutique actuels`}
-              src={journeyCvDemoUrl(visual === 'cv-portfolio' ? 'portfolio' : 'business', language)}
-              className="h-[76dvh] min-h-[480px] w-[min(90vw,580px)] rounded-xl border border-[#D5B257]/40"
-            />
+            <div className="h-[76dvh] min-h-[480px] w-[min(90vw,580px)] overflow-y-auto rounded-xl border border-[#D5B257]/40">
+              <BusinessShowcaseLienoraEnhanced embeddedPreview previewSlug="aux-saveurs-d-anis" previewVilleSlug="sousse" previewPresentationModel={visual === 'cv-portfolio' ? 'portfolio' : 'business'} />
+            </div>
           )}
         </div>
       </div>
@@ -420,14 +419,9 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
                 </div>
               )}
               {activeMobileStep === 'cv' && (
-                <iframe
-                  title={`${t.cvTitle} — ${activeCvLabel}`}
-                  src={journeyCvDemoUrl(activeCvModel, language)}
-                  loading="lazy"
-                  tabIndex={-1}
-                  className="pointer-events-none h-[700px] w-[584px] max-w-none origin-top border-0"
-                  style={{ zoom: 0.5 }}
-                />
+                <div className="pointer-events-none w-[584px] max-w-none origin-top" style={{ zoom: 0.5 }}>
+                  <BusinessShowcaseLienoraEnhanced embeddedPreview previewSlug="aux-saveurs-d-anis" previewVilleSlug="sousse" previewPresentationModel={activeCvModel} />
+                </div>/>
               )}
               <PreviewButton
                 label={`${t.openPreview} — ${mobileStepTitle}`}
@@ -483,14 +477,9 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
               </button>
             </div>
             <div className="relative mx-auto flex h-[331px] w-[180px] items-center justify-center overflow-hidden">
-              <iframe
-                title={`${t.cvTitle} — ${activeCvLabel}`}
-                src={journeyCvDemoUrl(activeCvModel, language)}
-                loading="lazy"
-                tabIndex={-1}
-                className="pointer-events-none h-[800px] w-[584px] max-w-none origin-top border-0"
-                style={{ zoom: 0.3 }}
-              />
+              <div className="pointer-events-none w-[584px] max-w-none origin-top" style={{ zoom: 0.3 }}>
+                <BusinessShowcaseLienoraEnhanced embeddedPreview previewSlug="aux-saveurs-d-anis" previewVilleSlug="sousse" previewPresentationModel={activeCvModel} />
+              </div>/>
               <PreviewButton
                 label={`${t.openPreview} — ${t.cvTitle} — ${activeCvLabel}`}
                 onClick={() => setExpandedVisual(activeCvModel === 'portfolio' ? 'cv-portfolio' : 'cv-professional')}
