@@ -1392,6 +1392,17 @@ export const Subscription = () => {
   <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-slate-600">{simpleCopy.productsSubtitle}</p>
 </div>
 
+{['appli.dalil-tounes.com', 'dalil-tounes-pwa.vercel.app'].includes(window.location.hostname) && (
+  <section aria-label="Démonstrations des mini-applis" className="mb-5 rounded-2xl border border-[#D4AF37]/60 bg-[#FFFCF7] p-4">
+    <h2 className="text-lg font-semibold text-[#173B30]">{language === 'ar' ? 'جرّب النماذج مباشرة' : 'Voir et tester les modèles'}</h2>
+    <p className="mt-1 text-sm text-slate-600">{language === 'ar' ? 'افتح التطبيق الحقيقي واختبر الأزرار والمتجر.' : 'Ouvrez la vraie mini-appli et testez les boutons, les photos et la boutique.'}</p>
+    <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
+      <a href="/cv/aux-saveurs-anis?preview-model=business&boutique-demo=1&skip-opening=1" className="flex min-h-12 items-center justify-center rounded-xl bg-[#07543F] px-3 py-3 text-center text-sm font-semibold text-white">CV Business</a>
+      <a href="/cv/aux-saveurs-anis?preview-model=portfolio&boutique-demo=1&skip-opening=1" className="flex min-h-12 items-center justify-center rounded-xl bg-[#07543F] px-3 py-3 text-center text-sm font-semibold text-white">CV Portfolio</a>
+      <a href="/cv/aux-saveurs-anis?preview-model=business&boutique-demo=1&skip-opening=1#boutique" className="flex min-h-12 items-center justify-center rounded-xl border border-[#D4AF37] bg-white px-3 py-3 text-center text-sm font-semibold text-[#173B30]">Tester la boutique</a>
+    </div>
+  </section>
+)}
 <details id="modeles" className="mb-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-4">
   <summary className="cursor-pointer font-medium text-[#4A1D43]">{structure.models}</summary>
 <CvPresentationModelSelector
