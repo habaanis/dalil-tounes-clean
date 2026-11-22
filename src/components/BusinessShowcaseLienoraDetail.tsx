@@ -1425,106 +1425,43 @@ export default function BusinessShowcaseLienoraDetail({
     },
   ].filter(Boolean) as Array<{ label: string; href: string; icon: LucideIcon }>;
 
+  // The original photos stay clickable; the staggered layout replaces only the grid.
   const galleryContent = galleryItems.length > 0 ? (
-    <>
-      <div className="dt-gallery-main">
-        {galleryItems.slice(0, 3).map((item, index) => (
-          <button
-            type="button"
-            className="dt-gallery-item"
-            onClick={() => setSelectedImage(item.full)}
-            key={`${item.thumbnail}-${index}`}
-          >
-            <img
-              src={item.thumbnail}
-              alt={`Réalisation ${index + 1} de ${displayName}`}
-              loading="lazy"
-              decoding="async"
-            />
-            <span>Réalisation {index + 1}</span>
-          </button>
-        ))}
-      </div>
-      {galleryItems.length > 3 && (
-        <div className="dt-gallery-extra">
-          {galleryItems.slice(3).map((item, index) => (
-            <button
-              type="button"
-              className="dt-gallery-item"
-              onClick={() => setSelectedImage(item.full)}
-              key={`${item.thumbnail}-${index + 3}`}
-            >
-              <img
-                src={item.thumbnail}
-                alt={`Réalisation ${index + 4} de ${displayName}`}
-                loading="lazy"
-                decoding="async"
-              />
-              <span>Réalisation {index + 4}</span>
-            </button>
-          ))}
-        </div>
-      )}
-    </>
+    <div className="dt-gallery-staircase">
+      {galleryItems.map((item, index) => (
+        <button
+          type="button"
+          className="dt-gallery-item"
+          onClick={() => setSelectedImage(item.full)}
+          key={`${item.thumbnail}-${index}`}
+        >
+          <img src={item.thumbnail} alt={`Réalisation ${index + 1} de ${displayName}`} loading="lazy" decoding="async" />
+          <span>{language === 'ar' ? `صورة ${index + 1}` : `Réalisation ${index + 1}`}</span>
+        </button>
+      ))}
+    </div>
   ) : null;
 
   const practicalContent = (
-    <div>
-      <div className="dt-info-list">
-        {business.adresse && (
+    <div className="dt-practical-compact">
+      {schedule && schedule.schedule.length > 0 && (
+        <div className="dt-practical-hours">
+          <p className="dt-practical-heading"><Clock3 aria-hidden="true" />{text.hours}</p>
+          <dl className="dt-hours">
+            {schedule.schedule.map((day, index) => (
+              <div className={`dt-hour-row ${day.isOpen ? '' : 'closed'}`} key={`${day.day}-${index}`}>
+                <dt>{getDayName(index, language)}</dt>
+                <dd>{day.hours}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      )}
+      {business.adresse && (
+        <div className="dt-info-list">
           <div className="dt-info-row">
             <MapPin aria-hidden="true" />
             <span><b>{text.address}</b>{business.adresse}</span>
-          </div>
-        )}
-        {business.telephone && (
-          <div className="dt-info-row">
-            <Phone aria-hidden="true" />
-            <span><b>{text.phone}</b>{business.telephone}</span>
-          </div>
-        )}
-        {business.telephone2 && (
-          <div className="dt-info-row">
-            <Phone aria-hidden="true" />
-            <span><b>{text.secondPhone}</b>{business.telephone2}</span>
-          </div>
-        )}
-        {business.email && (
-          <div className="dt-info-row">
-            <Mail aria-hidden="true" />
-            <span><b>{text.emailLabel}</b>{business.email}</span>
-          </div>
-        )}
-        {websiteUrl && (
-          <div className="dt-info-row">
-            <Globe2 aria-hidden="true" />
-            <span>
-              <b>{text.website}</b>
-              <a href={websiteUrl} target="_blank" rel="noopener noreferrer">{websiteUrl}</a>
-            </span>
-          </div>
-        )}
-      </div>
-      {socialLinks.length > 0 && (
-        <div className="dt-socials">
-          <b>{text.social}</b>
-          <div className="dt-social-grid">
-            {socialLinks.map(link => {
-              const Icon = link.icon;
-              return (
-                <a
-                  className="dt-social-link"
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  key={link.label}
-                >
-                  <Icon aria-hidden="true" />
-                  <span>{link.label}</span>
-                  <ExternalLink aria-hidden="true" />
-                </a>
-              );
-            })}
           </div>
         </div>
       )}
@@ -1617,24 +1554,6 @@ export default function BusinessShowcaseLienoraDetail({
           maxVideos={capabilities.maxVideos}
           className="overflow-hidden rounded-xl"
         />
-      ),
-    },
-    schedule && schedule.schedule.length > 0 && {
-      id: 'hours' as const,
-      title: text.hours,
-      icon: Clock3,
-      badge: schedule.isCurrentlyOpen
-        ? translateOpenStatus(language)
-        : translateClosedStatus(language),
-      content: (
-        <dl className="dt-hours">
-          {schedule.schedule.map((day, index) => (
-            <div className={`dt-hour-row ${day.isOpen ? '' : 'closed'}`} key={`${day.day}-${index}`}>
-              <dt>{getDayName(index, language)}</dt>
-              <dd>{day.hours}</dd>
-            </div>
-          ))}
-        </dl>
       ),
     },
     {
@@ -1947,12 +1866,19 @@ export default function BusinessShowcaseLienoraDetail({
               </button>
               {hasSection('reviews') && cvProfile.reviews.url && (
                 <a
-                  className="dt-secondary-action"
+                  className="dt-secondary-action dt-review-summary-action"
                   href={cvProfile.reviews.url}
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label={`${text.reviews}${rating > 0 ? ` ${rating.toFixed(1)} étoiles` : ''}${googleReviewCount > 0 ? ` · ${googleReviewCount} avis` : ''}`}
                 >
-                  <Star aria-hidden="true" />{text.viewReviews}
+                  <Star aria-hidden="true" />
+                  <span className="dt-review-summary-copy">
+                    <b>{text.reviews}</b>
+                    {(rating > 0 || googleReviewCount > 0) && (
+                      <small>{rating > 0 && `${rating.toFixed(1)} ★`}{rating > 0 && googleReviewCount > 0 && ' · '}{googleReviewCount > 0 && `${googleReviewCount} ${text.reviews.toLowerCase()}`}</small>
+                    )}
+                  </span>
                 </a>
               )}
               {hasSection('reviews') && (
@@ -2013,7 +1939,7 @@ export default function BusinessShowcaseLienoraDetail({
             )}
 
             <div className="dt-accordion-list">
-              {sections.filter(section => section.id !== 'booking').map(section => (
+              {sections.filter(section => section.id !== 'booking' && section.id !== 'reviews').map(section => (
                 <Fragment key={section.id}>
                   <AccordionSection
                     config={section}
@@ -2024,6 +1950,14 @@ export default function BusinessShowcaseLienoraDetail({
                 </Fragment>
               ))}
               {boutiqueContent && !sections.some(section => section.id === 'gallery') && boutiqueAccordion}
+              {openSection === 'reviews' && sections.filter(section => section.id === 'reviews').map(section => (
+                <section className="dt-accordion open" id="dt-section-reviews" key={section.id}>
+                  <button type="button" className="dt-accordion-trigger" onClick={() => setOpenSection(null)} aria-label={language === 'ar' ? 'إغلاق الآراء' : 'Fermer les avis'}>
+                    <Star aria-hidden="true" /><span>{text.leaveReview}</span><X aria-hidden="true" />
+                  </button>
+                  <div className="dt-accordion-panel" id="dt-panel-reviews">{section.content}</div>
+                </section>
+              ))}
             </div>
           </div>
 
