@@ -1,4 +1,3 @@
-import GoogleRatingSummary from './GoogleRatingSummary';
 import { isCertifiedBusiness, CERTIFIED_LABEL } from '../lib/businessCertification';
 import { cachedShowcaseRecord, rememberShowcaseRecord } from '../lib/showcaseRecordCache';
 import {
@@ -1778,9 +1777,7 @@ export default function BusinessShowcaseLienoraDetail({
               <div className="dt-identity-panel">
                 <small className="dt-product-label">{localizedBusinessProductLabel}</small>
                 <h1>{displayName}</h1>
-                <strong className="dt-professional-badge">
-                  {certification || `★ ${text.professional}`}
-                </strong>
+                {certification && <strong className="dt-professional-badge">{certification}</strong>}
                 {slogan && <p className="dt-slogan">{slogan}</p>}
                 {(cvProfile.location.city || cvProfile.location.governorate) && (
                   <p className="dt-location">
@@ -1790,7 +1787,6 @@ export default function BusinessShowcaseLienoraDetail({
                       .join(language === 'ar' ? '، ' : ', ')}
                   </p>
                 )}
-                <GoogleRatingSummary trustOnly rating={rating} reviewCount={googleReviewCount} language={language} />
                 {rating > 0 && (
                   <p className="dt-rating">
                     <Star aria-hidden="true" fill="currentColor" />
