@@ -1,6 +1,6 @@
 import { useEffect, useState, type CSSProperties } from 'react';
 import { Check, Palette, X, ZoomIn } from 'lucide-react';
-import BusinessShowcaseLienoraDetail from './BusinessShowcaseLienoraDetail';
+import BusinessShowcaseLienoraEnhanced from './BusinessShowcaseLienoraEnhanced';
 
 type SupportedLanguage = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 
@@ -215,14 +215,10 @@ function ModelPreview({
 }) {
   return (
     <div className="group relative flex h-[300px] w-full items-start justify-center overflow-hidden rounded-xl border border-slate-200 bg-[#F7F5EF] shadow-inner sm:rounded-2xl md:h-[420px]">
-      <iframe
-        title={`Aperçu CV ${model} avec Boutique`}
-        src={cvDemoUrl(model, palette, language)}
-        loading="lazy"
-        className="pointer-events-none absolute left-1/2 top-0 h-[850px] w-[584px] max-w-none -translate-x-1/2 origin-top border-0"
-        style={{ zoom: 0.49 }}
-        tabIndex={-1}
-      />
+      <div className="pointer-events-none absolute left-1/2 top-0 w-[584px] max-w-none -translate-x-1/2 origin-top" style={{ zoom: 0.49 }}>
+        <BusinessShowcaseLienoraEnhanced embeddedPreview previewSlug="aux-saveurs-d-anis"
+          previewVilleSlug="sousse" previewPalette={palette} previewPresentationModel={model} />
+      </div>
       <button type="button" onClick={onEnlarge}
         className="absolute right-3 top-3 grid h-10 w-10 place-items-center rounded-full border border-[#D6AF2E]/70 bg-white/95 text-[#07543F] shadow-md focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]"
         aria-label={enlargeLabel} title={enlargeLabel}>
@@ -244,14 +240,10 @@ function RealPalettePreview({
     <div className={expanded
       ? 'mx-auto w-full max-w-[760px] bg-[#F8F6F0]'
       : 'mx-auto h-[450px] w-[292px] max-w-full overflow-hidden rounded-[26px] border-2 border-[#D6AF2E]/70 bg-[#F7F5EF] shadow-lg'}>
-      <iframe
-        title={`CV ${model} ${palette} — démonstration Boutique`}
-        src={cvDemoUrl(model, palette, language)}
-        loading="lazy"
-        className={expanded ? 'h-[76dvh] min-h-[520px] w-full border-0' : 'pointer-events-none h-[900px] w-[584px] max-w-none origin-top border-0'}
-        style={expanded ? undefined : ({ zoom: 0.5 } as CSSProperties)}
-        tabIndex={expanded ? 0 : -1}
-      />
+      <div className={expanded ? 'w-full' : 'pointer-events-none w-[584px] max-w-none origin-top'} style={expanded ? undefined : ({ zoom: 0.5 } as CSSProperties)}>
+        <BusinessShowcaseLienoraEnhanced embeddedPreview previewSlug="aux-saveurs-d-anis"
+          previewVilleSlug="sousse" previewPalette={palette} previewPresentationModel={model} />
+      </div>
     </div>
   );
 }
@@ -413,14 +405,10 @@ export function CvPresentationModelSelector({
             className={`mt-3 flex w-full justify-center overflow-hidden rounded-2xl border bg-[#F7F5EF] p-2 transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value ? 'border-[#D6AF2E] shadow-md' : 'border-slate-200'}`}
             aria-label={value === 'portfolio' ? copy.portfolio : copy.business}
           >
-            <iframe
-              title={`CV ${value ?? 'business'} — aperçu réel`}
-              src={cvDemoUrl(value ?? 'business', paletteValue, language)}
-              loading="lazy"
-              tabIndex={-1}
-              className="pointer-events-none h-[780px] w-[584px] max-w-none origin-top border-0"
-              style={{ zoom: 0.5 }}
-            />
+            <div className="pointer-events-none w-[584px] max-w-none origin-top" style={{ zoom: 0.5 }}>
+              <BusinessShowcaseLienoraEnhanced embeddedPreview previewSlug="aux-saveurs-d-anis"
+                previewVilleSlug="sousse" previewPalette={paletteValue} previewPresentationModel={value ?? 'business'} />
+            </div>
           </button>
         </div>
 
@@ -555,11 +543,10 @@ export function CvPresentationModelSelector({
             >
               <X className="h-5 w-5" aria-hidden="true" />
             </button>
-            <iframe
-              title={`Démonstration réelle du CV ${expandedModel} avec Boutique`}
-              src={cvDemoUrl(expandedModel, paletteValue, language)}
-              className="mx-auto mt-1 h-[72dvh] min-h-[420px] w-[min(95vw,680px)] max-w-full rounded-xl border border-[#D6AF2E]/40"
-            />
+            <div className="mx-auto mt-1 h-[72dvh] min-h-[420px] w-[min(95vw,680px)] max-w-full overflow-y-auto rounded-xl border border-[#D6AF2E]/40">
+              <BusinessShowcaseLienoraEnhanced embeddedPreview previewSlug="aux-saveurs-d-anis"
+                previewVilleSlug="sousse" previewPalette={paletteValue} previewPresentationModel={expandedModel} />
+            </div>
             <a
               href={cvDemoUrl(expandedModel, paletteValue, language)}
               target="_blank"
