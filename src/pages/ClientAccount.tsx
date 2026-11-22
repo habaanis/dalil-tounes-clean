@@ -60,7 +60,19 @@ export default function ClientAccount() {
   const navigate=useNavigate();
   const {search}=useLocation();
   const [publishedModel,setPublishedModel]=useState<CvModel>('business');
-  const returnModel=selectedCvModel(slug,search,publishedModel);
+  const [savedModel,setSavedModel]=useState<CvModel|null>(null);
+  // Once the professional saves a choice, it wins over the old ?cv= return context.
+  const returnModel=savedModel ?? selectedCvModel(slug,search,publishedModel);
+  const onPresentationSaved=(model:CvModel)=>{
+    setSavedModel(model);
+    setPublishedModel(model);
+    try { window.sessionStorage.setItem('dalil-return-cv:'+safeSlug(slug),model); }
+    catch { /* storage may be unavailable in an embedded browser */ }
+    // Keep browser history and subsequent account links aligned with the new model.
+    const query=new URLSearchParams(search);
+    query.set('cv',model);
+    navigate({search:'?'+query.toString()},{replace:true});
+  };
   const [state,setState]=useState<'checking'|'allowed'|'denied'|'error'>('checking');
   const [retry,setRetry]=useState(0);
   const accountLogin=withCvContext('/' + encodeURIComponent(slug || '') + '/connexion',returnModel,search);
@@ -104,5 +116,5 @@ export default function ClientAccount() {
       <Link className="mt-3 block underline" to={cvPath}>Voir le CV</Link>
     </div>
   </main>;
-  return <div className="min-h-dvh bg-[#fbf8f0] pb-[env(safe-area-inset-bottom)]"><div className="mx-auto max-w-7xl px-4 pt-3"><Link className="inline-flex min-h-11 items-center text-sm underline" to={cvPath}>← Retour à mon CV {returnModel==='portfolio'?'Portfolio':'Business'}</Link></div><CompanyDashboard clientAppMode onNavigate={(page)=>{if(page==='home')navigate(cvPath);}} /></div>;
+  return <div className="min-h-dvh bg-[#fbf8f0] pb-[env(safe-area-inset-bottom)]"><div className="mx-auto max-w-7xl px-4 pt-3"><Link className="inline-flex min-h-11 items-center text-sm underline" to={cvPath}>← Retour à mon CV {returnModel==='portfolio'?'Portfolio':'Business'}</Link></div><CompanyDashboard clientAppMode onPresentationSaved={onPresentationSaved} onNavigate={(page)=>{if(page==='home')navigate(cvReturnPath(slug, savedModel ?? returnModel));}} /></div>;
 }
