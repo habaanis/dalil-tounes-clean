@@ -1292,7 +1292,7 @@ export default function BusinessShowcaseLienoraDetail({
   // Prioritize Lienora's four visible actions: install, call, email, directions.
   // WhatsApp, website, and any extra action remain available inside the drawer.
   const priorityActions = [installLabel, text.call, text.email, text.directions];
-  const sortedPrimaryActions = [...primaryActions].sort((first, second) => {
+  const sortedPrimaryActions = primaryActions.filter(action => action.label !== text.website).sort((first, second) => {
     const firstPriority = priorityActions.indexOf(first.label);
     const secondPriority = priorityActions.indexOf(second.label);
     return (firstPriority < 0 ? priorityActions.length : firstPriority)
@@ -1923,6 +1923,11 @@ export default function BusinessShowcaseLienoraDetail({
               <button type="button" className="dt-secondary-action" onClick={() => void share()}>
                 <Share2 aria-hidden="true" />{text.share}
               </button>
+              {websiteUrl && (
+                <a className="dt-secondary-action" href={websiteUrl} target="_blank" rel="noopener noreferrer">
+                  <Globe2 aria-hidden="true" />{text.website}
+                </a>
+              )}
               {socialLinks.length > 0 && (
                 <button type="button" className="dt-secondary-action" onClick={() => setSocialOpen(open => !open)} aria-expanded={socialOpen}>
                   <Share2 aria-hidden="true" />{text.socialNetworks}
