@@ -1828,7 +1828,7 @@ export default function BusinessShowcaseLienoraDetail({
                 )}
               </div>
             )}
-            {!embeddedPreview && (
+            {(
               <>
                 <button
                   type="button"
