@@ -211,7 +211,7 @@ export default function BusinessShowcaseLienoraEnhanced({
 
   const rawProducts = business?.['boutique_products'];
   const products: BoutiqueProduct[] = Array.isArray(rawProducts) ? rawProducts.filter((item): item is BoutiqueProduct => Boolean(item && typeof item === 'object' && typeof item.id === 'string' && typeof item.title === 'string' && typeof item.imageUrl === 'string' && (item.mode === 'order' || item.mode === 'quote') && item.currency === 'TND')) : [];
-  const boutiqueDemo = new URLSearchParams(window.location.search).get('boutique-demo') === '1'
+  const boutiqueDemo = (embeddedPreview || new URLSearchParams(window.location.search).get('boutique-demo') === '1')
     && (String(business?.nom || '').trim().toLowerCase() === "aux saveurs d'anis")
     && String(business?.ville || '').toLowerCase() === 'sousse';
   const images = (String(business?.['image_url'] || '').match(/https:\/\/[^\s,]+/g) || []).map(url => url.trim());
