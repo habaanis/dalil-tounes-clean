@@ -232,7 +232,8 @@ export function CvPortfolioPresentation({
   const tabs = [
     { id: 'home' as const, label: copy.home, icon: Home, visible: true },
     { id: 'about' as const, label: copy.about, icon: Info, visible: hasSection('about') },
-    { id: 'services' as const, label: copy.services, icon: Store, visible: hasSection('services') },
+    { id: 'boutique' as const, label: language === 'ar' ? 'المتجر' : language === 'en' ? 'Shop' : 'Boutique', icon: Store, visible: Boolean(boutiqueContent) },
+    { id: 'services' as const, label: copy.services, icon: Store, visible: hasSection('services') && !boutiqueContent },
     { id: 'hours' as const, label: copy.openingHours, icon: Clock3, visible: Boolean(hoursContent) },
     { id: 'practical' as const, label: copy.practical, icon: Info, visible: Boolean(practicalContent) },
     { id: 'reviews' as const, label: copy.reviews, icon: Star, visible: hasSection('reviews') },
@@ -363,14 +364,6 @@ export function CvPortfolioPresentation({
                 {presentation.visibleActions.includes('reservation') && bookingContent && (
                   <button type="button" onClick={() => setBookingOpen(value => !value)}><CalendarDays />{copy.book}</button>
                 )}
-                {boutiqueContent && (isValidElement(boutiqueContent)
-                  ? cloneElement(boutiqueContent as ReactElement<{ triggerClassName?: string; triggerIcon?: ReactNode; triggerLabel?: string }>, {
-                      key: 'more-boutique',
-                      triggerClassName: 'cvp-extra-boutique-action',
-                      triggerIcon: <Store aria-hidden="true" />,
-                      triggerLabel: language === 'ar' ? 'المتجر' : language === 'en' ? 'Shop' : 'Boutique',
-                    })
-                  : boutiqueContent)}
                 <button type="button" onClick={onShare}><Share2 />{copy.share}</button>
                 {socialActions.length > 0 && (
                   <button type="button" onClick={() => setSocialOpen(open => !open)}><Share2 />{copy.socialNetworks}</button>
@@ -384,9 +377,18 @@ export function CvPortfolioPresentation({
 
             <nav className="cvp-lienora-tabs" aria-label={navigationAriaLabel}>
               {tabs.map(({ id, label, icon: Icon }) =>
-                <button type="button" className={activeTab === id ? 'active' : ''} onClick={() => goTo(id)} key={id}>
-                  <Icon /><span>{label}</span>
-                </button>
+                id === 'boutique'
+                  ? isValidElement(boutiqueContent)
+                    ? cloneElement(boutiqueContent as ReactElement<{ triggerClassName?: string; triggerIcon?: ReactNode; triggerLabel?: string }>, {
+                        key: 'boutique-tab',
+                        triggerClassName: 'cvp-boutique-nav-trigger',
+                        triggerIcon: <Store aria-hidden="true" />,
+                        triggerLabel: label,
+                      })
+                    : <div key="boutique-tab" className="cvp-boutique-nav-wrapper">{boutiqueContent}</div>
+                  : <button type="button" className={activeTab === id ? 'active' : ''} onClick={() => goTo(id)} key={id}>
+                      <Icon /><span>{label}</span>
+                    </button>
               )}
             </nav>
 
@@ -404,7 +406,7 @@ export function CvPortfolioPresentation({
                   {hasSection('gallery') && gallery.length > 0 && galleryBlock}
                 </section>
               )}
-              {activeTab === 'about' && aboutBlock}
+              {activeTab === 'about' && <>{aboutBlock}{boutiqueContent && hasSection('services') && servicesBlock}</>}
               {activeTab === 'services' && servicesBlock}
               {activeTab === 'hours' && hoursContent && (
                 <section className="cvp-portfolio-tab-panel">
