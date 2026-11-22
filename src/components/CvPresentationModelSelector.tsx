@@ -1,6 +1,6 @@
 import { useEffect, useState, type CSSProperties } from 'react';
 import { Check, Palette, X, ZoomIn } from 'lucide-react';
-import BusinessShowcaseLienoraEnhanced from './BusinessShowcaseLienoraEnhanced';
+import CvEmbeddedPreviewSafe from './CvEmbeddedPreviewSafe';
 
 type SupportedLanguage = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 
@@ -216,8 +216,7 @@ function ModelPreview({
   return (
     <div className="group relative flex h-[300px] w-full items-start justify-center overflow-hidden rounded-xl border border-slate-200 bg-[#F7F5EF] shadow-inner sm:rounded-2xl md:h-[420px]">
       <div className="pointer-events-none absolute left-1/2 top-0 w-[584px] max-w-none -translate-x-1/2 origin-top" style={{ zoom: 0.49 }}>
-        <BusinessShowcaseLienoraEnhanced embeddedPreview previewSlug="aux-saveurs-d-anis"
-          previewVilleSlug="sousse" previewPalette={palette} previewPresentationModel={model} />
+        <CvEmbeddedPreviewSafe palette={palette} model={model} language={language} />
       </div>
       <button type="button" onClick={onEnlarge}
         className="absolute right-3 top-3 grid h-10 w-10 place-items-center rounded-full border border-[#D6AF2E]/70 bg-white/95 text-[#07543F] shadow-md focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]"
@@ -241,8 +240,7 @@ function RealPalettePreview({
       ? 'mx-auto w-full max-w-[760px] bg-[#F8F6F0]'
       : 'mx-auto h-[450px] w-[292px] max-w-full overflow-hidden rounded-[26px] border-2 border-[#D6AF2E]/70 bg-[#F7F5EF] shadow-lg'}>
       <div className={expanded ? 'w-full' : 'pointer-events-none w-[584px] max-w-none origin-top'} style={expanded ? undefined : ({ zoom: 0.5 } as CSSProperties)}>
-        <BusinessShowcaseLienoraEnhanced embeddedPreview previewSlug="aux-saveurs-d-anis"
-          previewVilleSlug="sousse" previewPalette={palette} previewPresentationModel={model} />
+        <CvEmbeddedPreviewSafe palette={palette} model={model} language={language} />
       </div>
     </div>
   );
@@ -406,8 +404,7 @@ export function CvPresentationModelSelector({
             aria-label={value === 'portfolio' ? copy.portfolio : copy.business}
           >
             <div className="pointer-events-none w-[584px] max-w-none origin-top" style={{ zoom: 0.5 }}>
-              <BusinessShowcaseLienoraEnhanced embeddedPreview previewSlug="aux-saveurs-d-anis"
-                previewVilleSlug="sousse" previewPalette={paletteValue} previewPresentationModel={value ?? 'business'} />
+              <CvEmbeddedPreviewSafe palette={paletteValue} model={value ?? 'business'} language={language} />
             </div>
           </button>
         </div>
@@ -544,8 +541,7 @@ export function CvPresentationModelSelector({
               <X className="h-5 w-5" aria-hidden="true" />
             </button>
             <div className="mx-auto mt-1 h-[72dvh] min-h-[420px] w-[min(95vw,680px)] max-w-full overflow-y-auto rounded-xl border border-[#D6AF2E]/40">
-              <BusinessShowcaseLienoraEnhanced embeddedPreview previewSlug="aux-saveurs-d-anis"
-                previewVilleSlug="sousse" previewPalette={paletteValue} previewPresentationModel={expandedModel} />
+              <CvEmbeddedPreviewSafe palette={paletteValue} model={expandedModel} language={language} />
             </div>
             <a
               href={cvDemoUrl(expandedModel, paletteValue, language)}
