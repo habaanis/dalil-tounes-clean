@@ -13,9 +13,10 @@ type ScopedBoutiqueStats = { entreprise_id: string; push_subscriptions: number; 
 interface CompanyDashboardProps {
   onNavigate?: (page: any) => void;
   clientAppMode?: boolean;
+  onPresentationSaved?: (model: 'business' | 'portfolio') => void;
 }
 
-export default function CompanyDashboard({ onNavigate, clientAppMode = false }: CompanyDashboardProps) {
+export default function CompanyDashboard({ onNavigate, clientAppMode = false, onPresentationSaved }: CompanyDashboardProps) {
   const { user, signOut, loading } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'jobs' | 'candidates' | 'settings' | 'showcase' | 'boutique' | 'orders' | 'stats'>(() => new URLSearchParams(window.location.search).get('tab') === 'orders' ? 'orders' : clientAppMode ? 'boutique' : 'showcase');
@@ -113,6 +114,8 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false }: 
         p_entreprise_id:stats[0].entreprise_id,p_modele_cv:cvChoice,p_opening_style:openingChoice
       });
       if(error)throw error;
+      // The account's CV return link should reflect the saved selection immediately.
+      onPresentationSaved?.(cvChoice);
       setPresentationFeedback('Présentation enregistrée. Le modèle choisi est maintenant le modèle principal de votre CV.');
     } catch {
       setPresentationFeedback('Enregistrement impossible. Votre présentation actuelle est conservée.');
