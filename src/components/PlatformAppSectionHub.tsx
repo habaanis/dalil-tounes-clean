@@ -216,7 +216,12 @@ export default function PlatformAppSectionHub({ kind }: { kind: Hub }) {
           </button>
         </div>
         <p className="mt-2 text-sm leading-6 text-[#6A5B64]">{proDetails[lang][selectedPro.id]}</p>
-
+        <Link
+          to={selectedPro.href}
+          className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-[#07543F] px-4 py-3 text-center text-sm font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B99143]"
+        >
+          {openLabels[lang]} — {copy.topics[selectedPro.id]}
+        </Link>
       </section>}
     </>}
 
