@@ -376,17 +376,14 @@ export function CvPortfolioPresentation({
                 {socialOpen && socialActions.map(({ label, href, icon: Icon }) => (
                   <a href={href} target="_blank" rel="noopener noreferrer" key={label}><Icon />{label}</a>
                 ))}
-                {websiteAction && (
-                  <div className="cvp-lienora-web-group">
-                    <span className="cvp-lienora-web-heading">{language === 'ar' ? 'الموقع الإلكتروني' : language === 'en' ? 'Website' : 'Site web'}</span>
-                    <div className="cvp-lienora-web-links">
-                      {(() => {
-                        const Icon = websiteAction.icon;
-                        return <a href={websiteAction.href} target="_blank" rel="noopener noreferrer"><Icon />{websiteAction.label}</a>;
-                      })()}
-                    </div>
-                  </div>
-                )}
+                {websiteAction && (() => {
+                  const Icon = websiteAction.icon;
+                  return (
+                    <a href={websiteAction.href} target="_blank" rel="noopener noreferrer">
+                      <Icon />{websiteAction.label}
+                    </a>
+                  );
+                })()}
               </div>
             )}
             {bookingOpen && bookingContent && <section className="cvp-booking">{bookingContent}</section>}
