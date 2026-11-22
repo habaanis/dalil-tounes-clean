@@ -119,6 +119,12 @@ export default function PlatformAppShell({ children }: { children: ReactNode }) 
       <main id="platform-app-content" className="mx-auto min-h-[calc(100vh-9rem)] max-w-xl overflow-x-clip pb-[calc(5.8rem+env(safe-area-inset-bottom))]">
         {location.pathname !== '/' && <div className="px-3 pt-2">
           <button type="button" onClick={() => {
+            const source = (location.state as { from?: string } | null)?.from;
+            const params = new URLSearchParams(location.search);
+            if (source === '/subscription' || (location.pathname === '/subscription' && (params.get('app-full') === '1' || params.get('app-models') === '1'))) {
+              navigate('/subscription', { replace: true });
+              return;
+            }
             const index = (window.history.state as { idx?: number } | null)?.idx;
             if (typeof index === 'number' && index > 0) {
               navigate(-1);
