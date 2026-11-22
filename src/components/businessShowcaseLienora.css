@@ -967,26 +967,6 @@
 }
 
 
-/* Preview: staggered photo cascade, maintaining the existing lightbox buttons. */
-.dt-gallery-staircase {
-  columns: 2;
-  column-gap: 9px;
-  padding: 2px 1px 24px;
-}
-.dt-gallery-staircase .dt-gallery-item {
-  display: block;
-  width: 100%;
-  height: 164px;
-  margin: 0 0 9px;
-  break-inside: avoid;
-  -webkit-column-break-inside: avoid;
-  cursor: zoom-in;
-}
-.dt-gallery-staircase .dt-gallery-item:nth-child(4n + 1) { height: 216px; }
-.dt-gallery-staircase .dt-gallery-item:nth-child(4n + 2) { height: 144px; }
-.dt-gallery-staircase .dt-gallery-item:nth-child(4n + 3) { height: 184px; }
-.dt-gallery-staircase .dt-gallery-item:nth-child(4n + 4) { height: 198px; }
-.dt-gallery-staircase .dt-gallery-item:nth-child(even) { transform: translateY(16px); }
 .dt-practical-compact { display: grid; gap: 11px; }
 .dt-practical-hours { padding-bottom: 8px; border-bottom: 1px solid color-mix(in srgb, var(--dt-border) 25%, transparent); }
 .dt-practical-heading {
