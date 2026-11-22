@@ -222,9 +222,12 @@ export function CvPortfolioPresentation({
   const directionsAction = actions.find(action =>
     action.href.includes('maps') || action.href.includes('google.com/maps'),
   );
+  // Website and social profiles belong together, away from contact/booking tools.
+  const websiteAction = actions.find(action => profile.contact.website && action.href === profile.contact.website);
   const extraActions = actions.filter(action =>
     action !== callAction
-      && action !== directionsAction,
+      && action !== directionsAction
+      && action !== websiteAction,
   );
   const portfolioGallery = gallery.slice(0, 4);
 
@@ -361,12 +364,23 @@ export function CvPortfolioPresentation({
                   <button type="button" onClick={() => { onShowQr(); setQrOpen(open => !open); }}><QrCode />{copy.myQr}</button>
                 )}
                 <button type="button" onClick={onShare}><Share2 />{copy.share}</button>
-                {socialActions.length > 0 && (
-                  <button type="button" onClick={() => setSocialOpen(open => !open)}><Share2 />{copy.socialNetworks}</button>
+                {(websiteAction || socialActions.length > 0) && (
+                  <div className="cvp-lienora-web-group">
+                    <span className="cvp-lienora-web-heading">{language === 'ar' ? 'الموقع والتواصل الاجتماعي' : language === 'en' ? 'Website & social' : 'Site & réseaux'}</span>
+                    <div className="cvp-lienora-web-links">
+                      {websiteAction && (() => {
+                        const Icon = websiteAction.icon;
+                        return <a href={websiteAction.href} target="_blank" rel="noopener noreferrer"><Icon />{websiteAction.label}</a>;
+                      })()}
+                      {socialActions.length > 0 && (
+                        <button type="button" onClick={() => setSocialOpen(open => !open)} aria-expanded={socialOpen}><Share2 />{copy.socialNetworks}</button>
+                      )}
+                      {socialOpen && socialActions.map(({ label, href, icon: Icon }) => (
+                        <a href={href} target="_blank" rel="noopener noreferrer" key={label}><Icon />{label}</a>
+                      ))}
+                    </div>
+                  </div>
                 )}
-                {socialOpen && socialActions.map(({ label, href, icon: Icon }) => (
-                  <a href={href} target="_blank" rel="noopener noreferrer" key={label}><Icon />{label}</a>
-                ))}
                 {profile.reviews.url && (
                   <a href={profile.reviews.url} target="_blank" rel="noopener noreferrer"><Star />{copy.viewReviews}</a>
                 )}
