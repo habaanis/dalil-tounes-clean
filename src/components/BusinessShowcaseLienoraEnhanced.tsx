@@ -67,8 +67,22 @@ const isReviewsLabel = (label: string): boolean => {
   );
 };
 
-export default function BusinessShowcaseLienoraEnhanced() {
-  const { id, slug } = useParams<{ id?: string; slug?: string }>();
+export default function BusinessShowcaseLienoraEnhanced({
+  embeddedPreview = false,
+  previewSlug,
+  previewVilleSlug,
+  previewPalette,
+  previewPresentationModel,
+}: {
+  embeddedPreview?: boolean;
+  previewSlug?: string;
+  previewVilleSlug?: string;
+  previewPalette?: 'prestige' | 'ivory' | 'night';
+  previewPresentationModel?: 'business' | 'portfolio';
+} = {}) {
+  const route = useParams<{ id?: string; slug?: string }>();
+  const { id } = route;
+  const slug = embeddedPreview ? previewSlug : route.slug;
   const { language } = useLanguage();
   const text = getPublicComponentTranslations(language);
   const [business, setBusiness] = useState<BusinessRecord | null>(null);
@@ -220,5 +234,12 @@ export default function BusinessShowcaseLienoraEnhanced() {
         demoMode: boutiqueDemo,
       }} />
     : undefined;
-  return <BusinessShowcaseLienoraDetail boutiqueContent={boutiqueContent} />;
+  return <BusinessShowcaseLienoraDetail
+    embeddedPreview={embeddedPreview}
+    previewSlug={previewSlug}
+    previewVilleSlug={previewVilleSlug}
+    previewPalette={previewPalette}
+    previewPresentationModel={previewPresentationModel}
+    boutiqueContent={boutiqueContent}
+  />;
 }
