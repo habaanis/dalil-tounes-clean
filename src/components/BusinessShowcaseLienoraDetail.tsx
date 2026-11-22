@@ -1,4 +1,3 @@
-import GoogleRatingSummary from './GoogleRatingSummary';
 import { isCertifiedBusiness, CERTIFIED_LABEL } from '../lib/businessCertification';
 import { cachedShowcaseRecord, rememberShowcaseRecord } from '../lib/showcaseRecordCache';
 import {
@@ -6,7 +5,11 @@ import {
   useMemo,
   useRef,
   useState,
+  Fragment,
+  cloneElement,
+  isValidElement,
   type CSSProperties,
+  type ReactElement,
   type ReactNode,
 } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
@@ -99,6 +102,7 @@ import ReservationForm from './ReservationForm';
 import SimilarBusinesses from './seo/SimilarBusinesses';
 import VideoPlayer from './VideoPlayer';
 import { CvPortfolioPresentation } from './CvPortfolioPresentation';
+import { ClientOpeningAuto } from './ClientOpeningSplash';
 import './businessShowcaseLienora.css';
 
 // Les fiches historiques peuvent réunir plusieurs numéros dans un seul champ.
@@ -539,23 +543,25 @@ const PALETTE_THEMES: Record<PaletteId, CSSProperties> = {
     '--dt-copy': '#ffffff',
     '--dt-page': '#eef1ef',
     '--dt-ink': '#0f2d23',
-    '--dt-accent': '#F4CE55',
-    '--dt-border': '#D4AF37',
+    '--dt-accent': '#E7B943',
+    '--dt-border': '#D6AA43',
     '--dt-muted': '#B8D2C9',
     '--dt-glow': 'rgba(20, 111, 77, 0.34)',
     '--dt-glow-soft': 'rgba(17, 92, 67, 0.25)',
-    '--dt-shell-start': '#031d18',
-    '--dt-shell-mid': '#042d24',
-    '--dt-shell-end': '#011914',
+    '--dt-shell-start': '#073226',
+    '--dt-shell-mid': '#031d18',
+    '--dt-shell-end': '#021e18',
     '--dt-identity-start': '#032a22fa',
     '--dt-identity-end': '#011915fc',
     '--dt-panel-start': '#05352aeb',
     '--dt-panel-end': '#011915f0',
-    '--dt-panel-dark': '#021e19',
+    '--dt-panel-dark': '#031d18',
     '--dt-badge-start': '#076044',
     '--dt-badge-end': '#087a50',
     '--dt-action-start': '#06382d',
     '--dt-action-end': '#011f1a',
+    '--boutique-surface': '#031d18', '--boutique-ink': '#f7f4ec', '--boutique-card': '#073226', '--boutique-field': '#ffffff', '--boutique-field-ink': '#12372e', '--boutique-accent': '#d6aa43',
+    '--boutique-button': '#031d18', '--boutique-button-ink': '#f7f4ec', '--boutique-muted': '#50695b',
   } as CSSProperties,
   ivory: {
     '--dt-page': '#FFFFF0',
@@ -578,6 +584,8 @@ const PALETTE_THEMES: Record<PaletteId, CSSProperties> = {
     '--dt-badge-end': '#D4AF37',
     '--dt-action-start': '#FFFFF8',
     '--dt-action-end': '#F0D999',
+    '--boutique-surface': '#FFFFF0', '--boutique-ink': '#3B3126', '--boutique-card': '#f6edd3', '--boutique-field': '#ffffff', '--boutique-field-ink': '#3B3126', '--boutique-accent': '#D4AF37',
+    '--boutique-button': '#F0D999', '--boutique-button-ink': '#3B3126', '--boutique-muted': '#64513d',
   } as CSSProperties,
   night: {
     '--dt-copy': '#ffffff',
@@ -600,6 +608,8 @@ const PALETTE_THEMES: Record<PaletteId, CSSProperties> = {
     '--dt-badge-end': '#172f4b',
     '--dt-action-start': '#1d3a5a',
     '--dt-action-end': '#06101d',
+    '--boutique-surface': '#10243a', '--boutique-ink': '#f8f1e4', '--boutique-card': '#172f4b', '--boutique-field': '#ffffff', '--boutique-field-ink': '#14283d', '--boutique-accent': '#e5c486',
+    '--boutique-button': '#172f4b', '--boutique-button-ink': '#f8f1e4', '--boutique-muted': '#52657c',
   } as CSSProperties,
 };
 
@@ -841,12 +851,14 @@ export default function BusinessShowcaseLienoraDetail({
   previewVilleSlug,
   previewPalette,
   previewPresentationModel,
+  boutiqueContent,
 }: {
   embeddedPreview?: boolean;
   previewSlug?: string;
   previewVilleSlug?: string;
   previewPalette?: PaletteId;
   previewPresentationModel?: 'business' | 'portfolio';
+  boutiqueContent?: ReactNode;
 } = {}) {
   const routeParams = useParams<{
     id?: string;
@@ -879,6 +891,7 @@ export default function BusinessShowcaseLienoraDetail({
   const [copied, setCopied] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
   const [socialOpen, setSocialOpen] = useState(false);
+  const [moreActionsOpen, setMoreActionsOpen] = useState(false);
   const presentationRef = useRef<HTMLElement>(null);
 
   const togglePresentation = () => {
@@ -1037,7 +1050,13 @@ export default function BusinessShowcaseLienoraDetail({
     ? previewPalette
     : new URLSearchParams(location.search).get('palette');
   const resolvedPreviewPalette = resolvePaletteId(previewPaletteParam);
-  const activePalette = resolvedPreviewPalette || storedPalette;
+  // Keep legacy premium cards consistent with their ivory directory presentation.
+  // Select the EXISTING Ivoire & Or theme in the CV; never write any Airtable/Supabase field.
+  // An explicit ?palette=... continues to take precedence for direct CV previews.
+  const isHistoricalIvoryCard = business.statut_carte === '⭐ CERTIFIÉ DALIL TOUNES';
+  const userSelectedPalette = business.palette_cv_user_selected === true;
+  const activePalette = resolvedPreviewPalette ||
+    (userSelectedPalette ? storedPalette : (isHistoricalIvoryCard ? 'ivory' : storedPalette));
   const storedPresentationModel = [
     business.modele_presentation,
     business.presentation_model,
@@ -1083,8 +1102,10 @@ export default function BusinessShowcaseLienoraDetail({
     entitlements: dalilCapabilitiesToPresentationEntitlements(capabilities),
     content: getDalilContentAvailability(cvProfile),
   });
+  // Booking stays opt-in, not an automatic Premium feature.
+  const bookingRequested = business.reservation_enabled === true || business.reservation_enabled === 'oui';
   const hasAction = (action: CvPresentationAction) =>
-    resolvedPresentation.visibleActions.includes(action);
+    resolvedPresentation.visibleActions.includes(action) && (action !== 'reservation' || bookingRequested);
   const hasSection = (section: CvPresentationSection) =>
     resolvedPresentation.visibleSections.includes(section);
   const displayName = cvProfile.identity.name;
@@ -1107,6 +1128,25 @@ export default function BusinessShowcaseLienoraDetail({
     : `https://dalil-tounes.com/partage/${generateSlug(displayName)}`;
   const coverImage = getCoverImageUrl(business.image_url);
   const logoImage = getLogoUrl(business.logo_url);
+  const openingStyle: 'photo' | 'framed' =
+    String(business.opening_style || '').toLowerCase() === 'framed' ? 'framed' : 'photo';
+  const clientOpening = isClientAppMode && !embeddedPreview && new URLSearchParams(location.search).get('skip-opening') !== '1' && Boolean(String(business.logo_url || '').trim()) && Boolean(String(business.image_url || '').trim()) ? (
+    <ClientOpeningAuto
+      clientId={business.id}
+      name={business.nom}
+      product={presentationStyle === 'portfolio' ? 'CV Portfolio' : 'CV Business'}
+      logo={logoImage}
+      cover={coverImage}
+      style={openingStyle}
+      palette={{
+        page: activePalette === 'ivory' ? '#fff9e9' : activePalette === 'night' ? '#10243a' : '#063b30',
+        surface: '#fffaf0',
+        border: '#d3aa48',
+        text: '#103b30',
+        accent: '#d3aa48',
+      }}
+    />
+  ) : null;
   const mapsUrl = cvProfile.location.directionsUrl;
   const explicitWhatsappUrl = buildWhatsAppUrl(business.whatsapp);
   const phoneNumbers = Array.from(new Set([
@@ -1131,7 +1171,7 @@ export default function BusinessShowcaseLienoraDetail({
   }));
   const certification = isCertifiedBusiness(business) ? CERTIFIED_LABEL : '';
   const activityPill = serviceItems[0] || categoryLabel || displayName;
-  const contactNotice = notice || text.contactNotice;
+  const contactNotice = isClientAppMode ? (notice || '') : (notice || text.contactNotice);
 
   const seo = getBusinessSeoMeta(
     {
@@ -1249,9 +1289,24 @@ export default function BusinessShowcaseLienoraDetail({
 
   const portfolioActions: ActionConfig[] = [...primaryActions];
 
+  // Prioritize Lienora's four visible actions: install, call, email, directions.
+  // WhatsApp, website, and any extra action remain available inside the drawer.
+  const priorityActions = [installLabel, text.call, text.email, text.directions];
+  const sortedPrimaryActions = primaryActions.filter(action => action.label !== text.website).sort((first, second) => {
+    const firstPriority = priorityActions.indexOf(first.label);
+    const secondPriority = priorityActions.indexOf(second.label);
+    return (firstPriority < 0 ? priorityActions.length : firstPriority)
+      - (secondPriority < 0 ? priorityActions.length : secondPriority);
+  });
   const displayedPrimaryActions = embeddedPreview
     ? primaryActions.filter(action => [installLabel, text.call, text.whatsapp, text.email, text.directions].includes(action.label))
-    : primaryActions;
+    : sortedPrimaryActions.slice(0, 4);
+  const extraPrimaryActions = embeddedPreview ? [] : sortedPrimaryActions.slice(4);
+  const moreActionsLabel = language === 'ar' ? 'المزيد من الخيارات'
+    : language === 'en' ? 'More actions'
+    : language === 'it' ? 'Altre azioni'
+    : language === 'ru' ? 'Другие действия'
+    : "Plus d’actions";
 
   const copyLink = async () => {
     try {
@@ -1304,22 +1359,6 @@ export default function BusinessShowcaseLienoraDetail({
     link.click();
     URL.revokeObjectURL(url);
     setNotice(text.addContact);
-  };
-
-  const requestQuote = () => {
-    const message = language === 'ar'
-      ? `السلام عليكم ${displayName}، أود الحصول على مزيد من المعلومات حول خدماتكم.`
-      : `Bonjour ${displayName}, je souhaite obtenir plus d'informations sur vos services.`;
-    const subject = text.requestInfo;
-    if (publicEmail) {
-      window.location.href = `mailto:${publicEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
-      return;
-    }
-    if (whatsappUrl) {
-      window.open(`${whatsappUrl}?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
-      return;
-    }
-    setNotice(text.contactNotice);
   };
 
   const openSharing = () => {
@@ -1429,66 +1468,41 @@ export default function BusinessShowcaseLienoraDetail({
   ) : null;
 
   const practicalContent = (
-    <div>
-      <div className="dt-info-list">
-        {business.adresse && (
+    <div className="dt-practical-compact">
+      {schedule && schedule.schedule.length > 0 && (
+        <div className="dt-practical-hours">
+          <p className="dt-practical-heading"><Clock3 aria-hidden="true" />{text.hours}</p>
+          <dl className="dt-hours">
+            {schedule.schedule.map((day, index) => (
+              <div className={`dt-hour-row ${day.isOpen ? '' : 'closed'}`} key={`${day.day}-${index}`}>
+                <dt>{getDayName(index, language)}</dt>
+                <dd>{day.hours}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      )}
+      {business.adresse && (
+        <div className="dt-info-list">
           <div className="dt-info-row">
             <MapPin aria-hidden="true" />
             <span><b>{text.address}</b>{business.adresse}</span>
           </div>
-        )}
-        {business.telephone && (
-          <div className="dt-info-row">
-            <Phone aria-hidden="true" />
-            <span><b>{text.phone}</b>{business.telephone}</span>
-          </div>
-        )}
-        {business.telephone2 && (
-          <div className="dt-info-row">
-            <Phone aria-hidden="true" />
-            <span><b>{text.secondPhone}</b>{business.telephone2}</span>
-          </div>
-        )}
-        {business.email && (
-          <div className="dt-info-row">
-            <Mail aria-hidden="true" />
-            <span><b>{text.emailLabel}</b>{business.email}</span>
-          </div>
-        )}
-        {websiteUrl && (
-          <div className="dt-info-row">
-            <Globe2 aria-hidden="true" />
-            <span>
-              <b>{text.website}</b>
-              <a href={websiteUrl} target="_blank" rel="noopener noreferrer">{websiteUrl}</a>
-            </span>
-          </div>
-        )}
-      </div>
-      {socialLinks.length > 0 && (
-        <div className="dt-socials">
-          <b>{text.social}</b>
-          <div className="dt-social-grid">
-            {socialLinks.map(link => {
-              const Icon = link.icon;
-              return (
-                <a
-                  className="dt-social-link"
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  key={link.label}
-                >
-                  <Icon aria-hidden="true" />
-                  <span>{link.label}</span>
-                  <ExternalLink aria-hidden="true" />
-                </a>
-              );
-            })}
-          </div>
         </div>
       )}
     </div>
+  );
+
+  const boutiqueAccordion = boutiqueContent && (
+    <section className="dt-accordion dt-boutique-accordion" key="boutique">
+      {isValidElement(boutiqueContent)
+        ? cloneElement(boutiqueContent as ReactElement<{ triggerClassName?: string; triggerIcon?: ReactNode; triggerLabel?: string }>, {
+            triggerClassName: 'dt-accordion-trigger dt-boutique-trigger',
+            triggerIcon: <Images aria-hidden="true" />,
+            triggerLabel: language === 'ar' ? 'المتجر' : language === 'en' ? 'Shop' : 'Boutique',
+          })
+        : boutiqueContent}
+    </section>
   );
 
   const sharingContent = (
@@ -1565,24 +1579,6 @@ export default function BusinessShowcaseLienoraDetail({
           maxVideos={capabilities.maxVideos}
           className="overflow-hidden rounded-xl"
         />
-      ),
-    },
-    schedule && schedule.schedule.length > 0 && {
-      id: 'hours' as const,
-      title: text.hours,
-      icon: Clock3,
-      badge: schedule.isCurrentlyOpen
-        ? translateOpenStatus(language)
-        : translateClosedStatus(language),
-      content: (
-        <dl className="dt-hours">
-          {schedule.schedule.map((day, index) => (
-            <div className={`dt-hour-row ${day.isOpen ? '' : 'closed'}`} key={`${day.day}-${index}`}>
-              <dt>{getDayName(index, language)}</dt>
-              <dd>{day.hours}</dd>
-            </div>
-          ))}
-        </dl>
       ),
     },
     {
@@ -1665,6 +1661,7 @@ export default function BusinessShowcaseLienoraDetail({
   if (resolvedPresentation.style === 'portfolio') {
     return (
       <main dir={isRTL ? 'rtl' : 'ltr'}>
+        {clientOpening}
         {!embeddedPreview && <>
           <SEOHead
             title={pageTitle}
@@ -1688,6 +1685,7 @@ export default function BusinessShowcaseLienoraDetail({
           productLabel={resolvedPresentation.productName}
           certification={certification}
           actions={portfolioActions}
+          boutiqueContent={boutiqueContent}
           gallery={galleryItems}
           onBack={handleBack}
           bookingContent={sections.find(section => section.id === 'booking')?.content}
@@ -1697,15 +1695,13 @@ export default function BusinessShowcaseLienoraDetail({
             ? translateOpenStatus(language)
             : schedule ? translateClosedStatus(language) : undefined}
           practicalContent={sections.find(section => section.id === 'practical')?.content}
-          onQuote={requestQuote}
-          onShowQr={() => setOpenSection('sharing')}
           onShare={() => void share()}
-          sharingContent={sharingContent}
           socialActions={socialLinks}
           onDownloadContact={downloadContact}
           onSelectImage={setSelectedImage}
           notice={contactNotice}
           hideBack={embeddedPreview || isClientAppMode}
+          showClientQrBack={isDedicatedClientRoute && !embeddedPreview}
           embeddedPreview={embeddedPreview}
           palette={activePalette}
         />
@@ -1731,7 +1727,8 @@ export default function BusinessShowcaseLienoraDetail({
   }
 
   return (
-    <main className={`dt-showcase-page${embeddedPreview ? ' dt-showcase-page--embedded' : ''}`} style={themeVariables(visualVariant, activePalette)} dir={isRTL ? 'rtl' : 'ltr'}>
+    <main className={`dt-showcase-page${embeddedPreview ? ' dt-showcase-page--embedded' : ''}`} data-cv-palette={activePalette || 'prestige'} style={themeVariables(visualVariant, activePalette)} dir={isRTL ? 'rtl' : 'ltr'}>
+      {clientOpening}
       {!embeddedPreview && <>
         <SEOHead
           title={pageTitle}
@@ -1780,9 +1777,7 @@ export default function BusinessShowcaseLienoraDetail({
               <div className="dt-identity-panel">
                 <small className="dt-product-label">{localizedBusinessProductLabel}</small>
                 <h1>{displayName}</h1>
-                <strong className="dt-professional-badge">
-                  {certification || `★ ${text.professional}`}
-                </strong>
+                {certification && <strong className="dt-professional-badge">{certification}</strong>}
                 {slogan && <p className="dt-slogan">{slogan}</p>}
                 {(cvProfile.location.city || cvProfile.location.governorate) && (
                   <p className="dt-location">
@@ -1792,7 +1787,6 @@ export default function BusinessShowcaseLienoraDetail({
                       .join(language === 'ar' ? '، ' : ', ')}
                   </p>
                 )}
-                <GoogleRatingSummary trustOnly rating={rating} reviewCount={googleReviewCount} language={language} />
                 {rating > 0 && (
                   <p className="dt-rating">
                     <Star aria-hidden="true" fill="currentColor" />
@@ -1834,12 +1828,30 @@ export default function BusinessShowcaseLienoraDetail({
                 )}
               </div>
             )}
-            {!embeddedPreview && <div className="dt-secondary-actions">
-              {(business.email || whatsappUrl) && (
-                <button type="button" className="dt-secondary-action" onClick={requestQuote}>
-                  <FileText aria-hidden="true" />{text.requestInfo}
+            {!embeddedPreview && (
+              <>
+                <button
+                  type="button"
+                  className="dt-more-actions-trigger dt-secondary-action"
+                  aria-controls="dt-more-actions-panel"
+                  aria-expanded={moreActionsOpen}
+                  onClick={() => setMoreActionsOpen(value => !value)}
+                >
+                  <span className="dt-more-actions-label"><span aria-hidden="true">•••</span> {moreActionsLabel}</span>
+                  <ChevronRight className={moreActionsOpen ? "dt-more-actions-chevron is-open" : "dt-more-actions-chevron"} aria-hidden="true" />
                 </button>
-              )}
+                {moreActionsOpen && <div className="dt-secondary-actions dt-more-actions-panel" id="dt-more-actions-panel">
+                  {extraPrimaryActions.map(action => {
+                    const Icon = action.icon;
+                    return (
+                      <a key={action.label} className="dt-secondary-action"
+                        href={action.href} target={action.external ? '_blank' : undefined}
+                        rel={action.external ? 'noopener noreferrer' : undefined}>
+                        <Icon aria-hidden="true" />{action.label}
+                      </a>
+                    );
+                  })}
+
               {hasAction('reservation') && (
                 <button type="button" className="dt-secondary-action" onClick={openBooking}>
                   <CalendarDays aria-hidden="true" />{text.book}
@@ -1853,6 +1865,11 @@ export default function BusinessShowcaseLienoraDetail({
               <button type="button" className="dt-secondary-action" onClick={() => void share()}>
                 <Share2 aria-hidden="true" />{text.share}
               </button>
+              {websiteUrl && (
+                <a className="dt-secondary-action" href={websiteUrl} target="_blank" rel="noopener noreferrer">
+                  <Globe2 aria-hidden="true" />{text.website}
+                </a>
+              )}
               {socialLinks.length > 0 && (
                 <button type="button" className="dt-secondary-action" onClick={() => setSocialOpen(open => !open)} aria-expanded={socialOpen}>
                   <Share2 aria-hidden="true" />{text.socialNetworks}
@@ -1871,12 +1888,19 @@ export default function BusinessShowcaseLienoraDetail({
               </button>
               {hasSection('reviews') && cvProfile.reviews.url && (
                 <a
-                  className="dt-secondary-action"
+                  className="dt-secondary-action dt-review-summary-action"
                   href={cvProfile.reviews.url}
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label={`${text.reviews}${rating > 0 ? ` ${rating.toFixed(1)} étoiles` : ''}${googleReviewCount > 0 ? ` · ${googleReviewCount} avis` : ''}`}
                 >
-                  <Star aria-hidden="true" />{text.viewReviews}
+                  <Star aria-hidden="true" />
+                  <span className="dt-review-summary-copy">
+                    <b>{text.reviews}</b>
+                    {(rating > 0 || googleReviewCount > 0) && (
+                      <small>{rating > 0 && `${rating.toFixed(1)} ★`}{rating > 0 && googleReviewCount > 0 && ' · '}{googleReviewCount > 0 && `${googleReviewCount} ${text.reviews.toLowerCase()}`}</small>
+                    )}
+                  </span>
                 </a>
               )}
               {hasSection('reviews') && (
@@ -1884,9 +1908,17 @@ export default function BusinessShowcaseLienoraDetail({
                   <FileText aria-hidden="true" />{text.leaveReview}
                 </button>
               )}
-            </div>}
-            <p className="dt-action-notice" role="status" aria-live="polite">{contactNotice}</p>
+                </div>}
+              </>
+            )}
+            {contactNotice && <p className="dt-action-notice" role="status" aria-live="polite">{contactNotice}</p>}
           </section>
+
+          {sections.filter(section => section.id === 'booking').map(section => (
+            <AccordionSection config={section} open={openSection === section.id}
+              onToggle={() => setOpenSection(current => current === section.id ? null : section.id)}
+              key={section.id} />
+          ))}
 
           <div className="dt-showcase-body">
             {(translatedDescription || aboutText) && (
@@ -1901,9 +1933,8 @@ export default function BusinessShowcaseLienoraDetail({
                   aria-controls="dt-presentation-panel"
                   onClick={togglePresentation}
                 >
-                  <span className="dt-presentation-icon" aria-hidden="true">i</span>
+                  <Info aria-hidden="true" />
                   <span>{text.presentation}</span>
-                  <span className="dt-presentation-spacer" aria-hidden="true" />
                   <ChevronRight className="dt-accordion-chevron dt-presentation-chevron" aria-hidden="true" />
                 </button>
                 <div className="dt-presentation-content" id="dt-presentation-panel">
@@ -1930,13 +1961,24 @@ export default function BusinessShowcaseLienoraDetail({
             )}
 
             <div className="dt-accordion-list">
-              {sections.map(section => (
-                <AccordionSection
-                  config={section}
-                  open={openSection === section.id}
-                  onToggle={() => setOpenSection(current => current === section.id ? null : section.id)}
-                  key={section.id}
-                />
+              {sections.filter(section => section.id !== 'booking' && section.id !== 'reviews').map(section => (
+                <Fragment key={section.id}>
+                  <AccordionSection
+                    config={section}
+                    open={openSection === section.id}
+                    onToggle={() => setOpenSection(current => current === section.id ? null : section.id)}
+                  />
+                  {section.id === 'gallery' && boutiqueAccordion}
+                </Fragment>
+              ))}
+              {boutiqueContent && !sections.some(section => section.id === 'gallery') && boutiqueAccordion}
+              {openSection === 'reviews' && sections.filter(section => section.id === 'reviews').map(section => (
+                <section className="dt-accordion open" id="dt-section-reviews" key={section.id}>
+                  <button type="button" className="dt-accordion-trigger" onClick={() => setOpenSection(null)} aria-label={language === 'ar' ? 'إغلاق الآراء' : 'Fermer les avis'}>
+                    <Star aria-hidden="true" /><span>{text.leaveReview}</span><X aria-hidden="true" />
+                  </button>
+                  <div className="dt-accordion-panel" id="dt-panel-reviews">{section.content}</div>
+                </section>
               ))}
             </div>
           </div>
