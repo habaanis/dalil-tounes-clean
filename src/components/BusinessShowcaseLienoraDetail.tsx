@@ -1425,21 +1425,47 @@ export default function BusinessShowcaseLienoraDetail({
     },
   ].filter(Boolean) as Array<{ label: string; href: string; icon: LucideIcon }>;
 
-  // The original photos stay clickable; the staggered layout replaces only the grid.
   const galleryContent = galleryItems.length > 0 ? (
-    <div className="dt-gallery-staircase">
-      {galleryItems.map((item, index) => (
-        <button
-          type="button"
-          className="dt-gallery-item"
-          onClick={() => setSelectedImage(item.full)}
-          key={`${item.thumbnail}-${index}`}
-        >
-          <img src={item.thumbnail} alt={`Réalisation ${index + 1} de ${displayName}`} loading="lazy" decoding="async" />
-          <span>{language === 'ar' ? `صورة ${index + 1}` : `Réalisation ${index + 1}`}</span>
-        </button>
-      ))}
-    </div>
+    <>
+      <div className="dt-gallery-main">
+        {galleryItems.slice(0, 3).map((item, index) => (
+          <button
+            type="button"
+            className="dt-gallery-item"
+            onClick={() => setSelectedImage(item.full)}
+            key={`${item.thumbnail}-${index}`}
+          >
+            <img
+              src={item.thumbnail}
+              alt={`Réalisation ${index + 1} de ${displayName}`}
+              loading="lazy"
+              decoding="async"
+            />
+            <span>Réalisation {index + 1}</span>
+          </button>
+        ))}
+      </div>
+      {galleryItems.length > 3 && (
+        <div className="dt-gallery-extra">
+          {galleryItems.slice(3).map((item, index) => (
+            <button
+              type="button"
+              className="dt-gallery-item"
+              onClick={() => setSelectedImage(item.full)}
+              key={`${item.thumbnail}-${index + 3}`}
+            >
+              <img
+                src={item.thumbnail}
+                alt={`Réalisation ${index + 4} de ${displayName}`}
+                loading="lazy"
+                decoding="async"
+              />
+              <span>Réalisation {index + 4}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </>
   ) : null;
 
   const practicalContent = (
