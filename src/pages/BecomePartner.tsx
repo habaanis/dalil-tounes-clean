@@ -46,8 +46,8 @@ export default function BecomePartner() {
             <figcaption className="absolute start-3 top-3 rounded-full bg-[#4A1D43] px-3 py-1 text-[10px] font-medium uppercase tracking-wider text-[#F4CE55]">{t.portfolio}</figcaption>
             <button type="button" onClick={() => setModelZoom({src:'/images/cv-business-professionnel-aux-saveurs-anis.png',label:t.portfolio})} className="absolute bottom-3 end-3 z-10 flex min-h-11 items-center gap-2 rounded-full border-2 border-[#F4CE55] bg-[#4A1D43] px-3 text-xs font-medium text-white shadow-sm" aria-label={`${t.portfolio} — ${rtl ? 'تكبير' : language === 'en' ? 'Enlarge' : language === 'it' ? 'Ingrandisci' : language === 'ru' ? 'Увеличить' : 'Agrandir'}`}><ZoomIn size={18}/><span className="hidden sm:inline">{rtl ? 'تكبير' : language === 'en' ? 'Enlarge' : language === 'it' ? 'Ingrandisci' : language === 'ru' ? 'Увеличить' : 'Agrandir'}</span></button>
           </figure>
-        </div>
-      </div>}
+        </div>}
+      </div>
     </section>
 
     {!compactApp && <Section eyebrow={t.solutionEyebrow} title={t.solutionTitle} intro={t.solutionIntro} centered>
