@@ -20,14 +20,19 @@ export function registerServiceWorker(): void {
       const hadController = Boolean(navigator.serviceWorker.controller);
 
       navigator.serviceWorker
-        .register('/service-worker.js?v=16', { updateViaCache: 'none' })
+        .register('/service-worker.js?v=17', { updateViaCache: 'none' })
         .then((registration) => {
           console.log('[PWA] Service Worker enregistré avec succès:', registration.scope);
 
           const checkForUpdate = () => registration.update().catch(() => undefined);
           void checkForUpdate();
 
-          setInterval(checkForUpdate, 60 * 60 * 1000);
+          // PWA launch/resume is a strong signal that the user wants the latest release.
+          const updateInterval = window.setInterval(checkForUpdate, 15 * 60 * 1000);
+          window.addEventListener('focus', checkForUpdate);
+          window.addEventListener('pageshow', checkForUpdate);
+          // There is no component unmount for this app-level registration.
+          void updateInterval;
           document.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'visible') void checkForUpdate();
           });

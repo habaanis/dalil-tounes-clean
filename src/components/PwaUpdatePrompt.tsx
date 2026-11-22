@@ -10,7 +10,10 @@ const COPY: Record<string, { title: string; detail: string; action: string }> = 
 };
 
 export function PwaUpdatePrompt() {
-  const [visible, setVisible] = useState(() => sessionStorage.getItem(UPDATE_KEY) === '1');
+  const [visible, setVisible] = useState(() => {
+    try { return sessionStorage.getItem(UPDATE_KEY) === '1'; }
+    catch { return false; }
+  });
 
   useEffect(() => {
     const show = () => setVisible(true);
@@ -23,7 +26,8 @@ export function PwaUpdatePrompt() {
   const language = (document.documentElement.lang || 'fr').slice(0, 2);
   const copy = COPY[language] || COPY.fr;
   const refresh = () => {
-    sessionStorage.removeItem(UPDATE_KEY);
+    try { sessionStorage.removeItem(UPDATE_KEY); }
+    catch { /* Storage is not required for a refresh. */ }
     window.location.reload();
   };
 
