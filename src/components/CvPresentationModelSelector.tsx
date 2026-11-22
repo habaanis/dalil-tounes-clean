@@ -39,7 +39,7 @@ type Copy = {
 const COPY: Record<SupportedLanguage, Copy> = {
   fr: {
     eyebrow: 'Votre choix',
-    title: 'Personnalisez votre mini-appli',
+    title: 'Composez votre CV Business',
     subtitle: 'Choisissez votre formule, puis le modèle qui correspond le mieux à votre métier.',
     business: 'CV Business',
     businessDescription: 'Clair, structuré et direct. Idéal pour présenter rapidement votre activité et vos informations.',
@@ -67,7 +67,7 @@ const COPY: Record<SupportedLanguage, Copy> = {
   },
   ar: {
     eyebrow: 'اختيارك',
-    title: 'خصّص تطبيقك المصغّر',
+    title: 'كوّن CV Business الخاص بك',
     subtitle: 'اختر الصيغة، ثم النموذج الأنسب لمهنتك.',
     business: 'CV Business',
     businessDescription: 'واضح ومنظم ومباشر لعرض نشاطك ومعلوماتك بسرعة.',
@@ -95,7 +95,7 @@ const COPY: Record<SupportedLanguage, Copy> = {
   },
   en: {
     eyebrow: 'Your choice',
-    title: 'Personalise your business mini-app',
+    title: 'Build your Business CV',
     subtitle: 'Choose your plan, then the presentation model that best suits your profession.',
     business: 'Business CV',
     businessDescription: 'Clear, structured and direct. Ideal for presenting your activity and key information quickly.',
@@ -123,7 +123,7 @@ const COPY: Record<SupportedLanguage, Copy> = {
   },
   it: {
     eyebrow: 'La tua scelta',
-    title: 'Personalizza la tua mini-app',
+    title: 'Componi il tuo CV business',
     subtitle: 'Scegli la formula, poi il modello più adatto alla tua professione.',
     business: 'CV Business',
     businessDescription: 'Chiaro, strutturato e diretto. Ideale per presentare rapidamente attività e informazioni.',
@@ -151,7 +151,7 @@ const COPY: Record<SupportedLanguage, Copy> = {
   },
   ru: {
     eyebrow: 'Ваш выбор',
-    title: 'Настройте своё мини-приложение',
+    title: 'Соберите свой Business CV',
     subtitle: 'Выберите тариф, затем модель оформления, подходящую вашей профессии.',
     business: 'CV Business',
     businessDescription: 'Чёткая, структурированная и прямая подача деятельности и ключевой информации.',
@@ -200,36 +200,32 @@ export function getPaletteLabel(language: string, palette: PaletteId): string {
   return copy[palette];
 }
 
+// Always show the current CV design in the commercial previews, not an outdated image.
+const cvDemoUrl = (model: PresentationModel, palette: PaletteId, language: string) =>
+  `/cv/aux-saveurs-anis?preview-model=${model}&palette=${palette}&lang=${language}&boutique-demo=1&skip-opening=1`;
+
 function ModelPreview({
-  src,
-  alt,
-  enlargeLabel,
-  onEnlarge,
+  model, palette, language, enlargeLabel, onEnlarge,
 }: {
-  src: string;
-  alt: string;
+  model: PresentationModel;
+  palette: PaletteId;
+  language: string;
   enlargeLabel: string;
   onEnlarge: () => void;
 }) {
   return (
-    <div className="group relative flex h-[300px] w-full items-start justify-center overflow-hidden rounded-xl border border-slate-200 bg-[#F7F5EF] p-2 shadow-inner sm:rounded-2xl md:h-[420px]">
-      <img
-        src={src}
-        alt={alt}
-        className="h-full w-full object-contain object-top transition duration-300 group-hover:scale-[1.06]"
+    <div className="group relative flex h-[300px] w-full items-start justify-center overflow-hidden rounded-xl border border-slate-200 bg-[#F7F5EF] shadow-inner sm:rounded-2xl md:h-[420px]">
+      <iframe
+        title={`Aperçu CV ${model} avec Boutique`}
+        src={cvDemoUrl(model, palette, language)}
         loading="lazy"
-        decoding="async"
+        className="pointer-events-none absolute left-1/2 top-0 h-[850px] w-[584px] max-w-none -translate-x-1/2 origin-top border-0"
+        style={{ zoom: 0.49 }}
+        tabIndex={-1}
       />
-      <button
-        type="button"
-        onClick={(event) => {
-          event.stopPropagation();
-          onEnlarge();
-        }}
-        className="absolute right-3 top-3 grid h-10 w-10 place-items-center rounded-full border border-[#D6AF2E]/70 bg-white/95 text-[#07543F] shadow-md transition hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]"
-        aria-label={enlargeLabel}
-        title={enlargeLabel}
-      >
+      <button type="button" onClick={onEnlarge}
+        className="absolute right-3 top-3 grid h-10 w-10 place-items-center rounded-full border border-[#D6AF2E]/70 bg-white/95 text-[#07543F] shadow-md focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]"
+        aria-label={enlargeLabel} title={enlargeLabel}>
         <ZoomIn className="h-5 w-5" aria-hidden="true" />
       </button>
     </div>
@@ -237,39 +233,25 @@ function ModelPreview({
 }
 
 function RealPalettePreview({
-  palette,
-  model,
-  language,
-  expanded = false,
+  palette, model, language, expanded = false,
 }: {
   palette: PaletteId;
   model: PresentationModel;
   language: string;
   expanded?: boolean;
 }) {
-  const previewUrl = `/entreprise/sousse/aux-saveurs-d-anis?preview-model=${model}&palette=${palette}&source=subscription&lang=${language}`;
-
   return (
-    <div
-      className={expanded
-        ? 'mx-auto w-full bg-[#F8F6F0]'
-        : 'mx-auto h-[450px] w-[292px] max-w-full overflow-hidden rounded-[26px] border-2 border-[#D6AF2E]/70 bg-[#F7F5EF] shadow-lg'}
-    >
-      <div
-        key={previewUrl}
-        className={expanded
-          ? 'pointer-events-auto w-full bg-[#F8F6F0]'
-          : 'w-[584px] origin-top-left bg-white'}
+    <div className={expanded
+      ? 'mx-auto w-full max-w-[760px] bg-[#F8F6F0]'
+      : 'mx-auto h-[450px] w-[292px] max-w-full overflow-hidden rounded-[26px] border-2 border-[#D6AF2E]/70 bg-[#F7F5EF] shadow-lg'}>
+      <iframe
+        title={`CV ${model} ${palette} — démonstration Boutique`}
+        src={cvDemoUrl(model, palette, language)}
+        loading="lazy"
+        className={expanded ? 'h-[76dvh] min-h-[520px] w-full border-0' : 'pointer-events-none h-[900px] w-[584px] max-w-none origin-top border-0'}
         style={expanded ? undefined : ({ zoom: 0.5 } as CSSProperties)}
-      >
-        <BusinessShowcaseLienoraDetail
-          embeddedPreview
-          previewSlug="aux-saveurs-d-anis"
-          previewVilleSlug="sousse"
-          previewPalette={palette}
-          previewPresentationModel={model}
-        />
-      </div>
+        tabIndex={expanded ? 0 : -1}
+      />
     </div>
   );
 }
@@ -369,8 +351,6 @@ export function CvPresentationModelSelector({
 
   // The phone-first visual is the photo-led Portfolio model; the long,
   // structured visual is the Business model.
-  const currentImage = expandedModel === 'portfolio' ? PROFESSIONAL_IMAGE : PORTFOLIO_IMAGE;
-  const mobileImage = value === 'portfolio' ? PROFESSIONAL_IMAGE : PORTFOLIO_IMAGE;
 
   return (
     <section id="cv-presentation-models" className="mt-5 scroll-mt-24 rounded-3xl border border-[#D6AF2E]/55 bg-white p-3 shadow-[0_8px_24px_rgba(74,18,63,0.05)] sm:p-5">
@@ -433,12 +413,13 @@ export function CvPresentationModelSelector({
             className={`mt-3 flex w-full justify-center overflow-hidden rounded-2xl border bg-[#F7F5EF] p-2 transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value ? 'border-[#D6AF2E] shadow-md' : 'border-slate-200'}`}
             aria-label={value === 'portfolio' ? copy.portfolio : copy.business}
           >
-            <img
-              src={mobileImage}
-              alt={`${value === 'portfolio' ? copy.portfolio : copy.business} — Aux saveurs d'Anis`}
-              className="h-[390px] w-auto max-w-none object-contain object-top"
+            <iframe
+              title={`CV ${value ?? 'business'} — aperçu réel`}
+              src={cvDemoUrl(value ?? 'business', paletteValue, language)}
               loading="lazy"
-              decoding="async"
+              tabIndex={-1}
+              className="pointer-events-none h-[780px] w-[584px] max-w-none origin-top border-0"
+              style={{ zoom: 0.5 }}
             />
           </button>
         </div>
@@ -448,8 +429,7 @@ export function CvPresentationModelSelector({
           className={`flex min-w-0 flex-col rounded-2xl border p-3.5 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'portfolio' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
         >
           <ModelPreview
-            src={PROFESSIONAL_IMAGE}
-            alt={`${copy.portfolio} — Aux saveurs d'Anis`}
+            model="portfolio" palette={paletteValue} language={language}
             enlargeLabel={`${copy.enlarge} — ${copy.portfolio}`}
             onEnlarge={() => setExpandedModel('portfolio')}
           />
@@ -463,8 +443,7 @@ export function CvPresentationModelSelector({
           className={`flex min-w-0 flex-col rounded-2xl border p-3.5 text-left transition focus:outline-none focus:ring-2 focus:ring-[#D6AF2E] ${value === 'business' ? 'border-[#D6AF2E] bg-amber-50/70 shadow-md' : 'border-slate-200 bg-[#FFFCF7] hover:border-[#D6AF2E]/70'}`}
         >
           <ModelPreview
-            src={PORTFOLIO_IMAGE}
-            alt={`${copy.business} — Aux saveurs d'Anis`}
+            model="business" palette={paletteValue} language={language}
             enlargeLabel={`${copy.enlarge} — ${copy.business}`}
             onEnlarge={() => setExpandedModel('business')}
           />
@@ -576,14 +555,13 @@ export function CvPresentationModelSelector({
             >
               <X className="h-5 w-5" aria-hidden="true" />
             </button>
-            <img
-              src={currentImage}
-              alt={`${expandedModel === 'portfolio' ? copy.portfolio : copy.business} — Aux saveurs d'Anis`}
-              className="mx-auto mt-1 max-h-[82dvh] max-w-[calc(100vw-48px)] object-contain object-top"
-              decoding="async"
+            <iframe
+              title={`Démonstration réelle du CV ${expandedModel} avec Boutique`}
+              src={cvDemoUrl(expandedModel, paletteValue, language)}
+              className="mx-auto mt-1 h-[72dvh] min-h-[420px] w-[min(95vw,680px)] max-w-full rounded-xl border border-[#D6AF2E]/40"
             />
             <a
-              href={`/entreprise/sousse/aux-saveurs-d-anis?preview-model=${expandedModel === 'portfolio' ? 'portfolio' : 'business'}&palette=${paletteValue}&source=subscription&lang=${language}`}
+              href={cvDemoUrl(expandedModel, paletteValue, language)}
               target="_blank"
               rel="noopener noreferrer"
               className="mx-auto mt-3 flex min-h-11 w-full items-center justify-center rounded-xl bg-[#07543F] px-5 py-2.5 text-center text-sm font-bold text-white transition hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]"
