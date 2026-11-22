@@ -37,7 +37,7 @@ const SETTLE_LINKS: Entry[] = [
 const PRO_LINKS: Entry[] = [
   { id: 'free', icon: '🆓', href: '/inscription-entreprise' },
   { id: 'cv', icon: '📱', href: '/cv-business' },
-  { id: 'models', icon: '🎨', href: '/subscription?app-full=1#modeles' },
+  { id: 'models', icon: '🎨', href: '/subscription?app-full=1&app-models=1' },
   { id: 'offers', icon: '💼', href: '/subscription?app-full=1#offres' },
   { id: 'partners', icon: '🤝', href: '/devenir-partenaire' },
   { id: 'businessPartners', icon: '🔗', href: '/partner-search' },
@@ -164,7 +164,7 @@ export default function PlatformAppSectionHub({ kind }: { kind: Hub }) {
   const prosExtras = PRO_LINKS.filter(item => item.id !== 'free' && item.id !== 'cv');
   const renderProCards = (items: Entry[]) => <div className="grid grid-cols-2 gap-2">
     {items.map(item => (
-      <Link key={item.id} to={item.href}
+      <Link key={item.id} to={item.href} state={{ from: '/subscription' }}
         className="flex min-h-[96px] flex-col items-start rounded-xl border border-[#E5D7BE] bg-white p-3 text-start shadow-sm transition-colors hover:border-[#B99143] hover:bg-[#FFF9EF] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B99143]">
         <span aria-hidden="true" className="text-xl leading-none">{item.icon}</span>
         <span className="mt-2 text-sm font-semibold leading-5 text-[#45243A]">{copy.topics[item.id]}</span>
