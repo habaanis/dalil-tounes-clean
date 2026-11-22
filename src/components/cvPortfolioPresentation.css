@@ -1310,3 +1310,51 @@ body:has(.cvp-page--lienora.cvp-palette-night) .dalil-client-cv-toolbar-wrap {
 body:has(.cvp-page--lienora.cvp-palette-ivory) #dalil-client-cv-back-slot .cvp-back {
   color: #3B3126;
 }
+
+/* CV Portfolio: compact, slightly emphasized Boutique tab.
+   Uses the existing BoutiqueInteractive trigger and its live order dialog. */
+.cvp-lienora-tabs > .cvp-boutique-nav-trigger {
+  display: flex;
+  min-width: 0;
+  width: calc(100% - 4px);
+  min-height: 40px;
+  align-self: center;
+  justify-self: center;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  margin: 0 2px;
+  padding: 5px 2px;
+  border: 1px solid var(--cvp-accent);
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--cvp-accent) 15%, var(--cvp-panel));
+  color: var(--cvp-text);
+  opacity: 1;
+  font: inherit;
+  font-size: 0.62rem;
+  font-weight: 800;
+  line-height: 1.15;
+  cursor: pointer;
+  box-shadow: 0 1px 5px color-mix(in srgb, var(--cvp-accent) 13%, transparent);
+}
+.cvp-lienora-tabs > .cvp-boutique-nav-trigger svg {
+  width: 17px;
+  height: 17px;
+  color: var(--cvp-accent);
+}
+.cvp-lienora-tabs > .cvp-boutique-nav-trigger:focus-visible {
+  outline: 2px solid var(--cvp-accent);
+  outline-offset: 2px;
+}
+.cvp-lienora-tabs > .cvp-boutique-nav-wrapper { min-width: 0; }
+
+.cvp-lienora-extra-actions .cvp-lienora-web-group {
+  grid-column: 1 / -1;
+  border: 1px solid color-mix(in srgb,var(--cvp-accent) 40%,transparent);
+  border-radius: 9px;
+  padding: 7px;
+}
+.cvp-lienora-web-heading {display:block;margin-bottom:6px;font-size:.59rem;font-weight:700;color:var(--cvp-accent);}
+.cvp-lienora-web-links {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;}
+.cvp-lienora-web-links a,.cvp-lienora-web-links button {min-width:0;min-height:34px;overflow-wrap:anywhere;}
