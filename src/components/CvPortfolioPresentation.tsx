@@ -224,9 +224,12 @@ export function CvPortfolioPresentation({
   const directionsAction = actions.find(action =>
     action.href.includes('maps') || action.href.includes('google.com/maps'),
   );
+  // Keep the existing website and social links together in the same compact group.
+  const websiteAction = actions.find(action => profile.contact.website && action.href === profile.contact.website);
   const extraActions = actions.filter(action =>
     action !== callAction
-      && action !== directionsAction,
+      && action !== directionsAction
+      && action !== websiteAction,
   );
 
   const tabs = [
@@ -365,12 +368,23 @@ export function CvPortfolioPresentation({
                   <button type="button" onClick={() => setBookingOpen(value => !value)}><CalendarDays />{copy.book}</button>
                 )}
                 <button type="button" onClick={onShare}><Share2 />{copy.share}</button>
-                {socialActions.length > 0 && (
-                  <button type="button" onClick={() => setSocialOpen(open => !open)}><Share2 />{copy.socialNetworks}</button>
+                {(websiteAction || socialActions.length > 0) && (
+                  <div className="cvp-lienora-web-group">
+                    <span className="cvp-lienora-web-heading">{language === 'ar' ? 'الموقع والتواصل الاجتماعي' : language === 'en' ? 'Website & social' : 'Site & réseaux'}</span>
+                    <div className="cvp-lienora-web-links">
+                      {websiteAction && (() => {
+                        const Icon = websiteAction.icon;
+                        return <a href={websiteAction.href} target="_blank" rel="noopener noreferrer"><Icon />{websiteAction.label}</a>;
+                      })()}
+                      {socialActions.length > 0 && (
+                        <button type="button" onClick={() => setSocialOpen(open => !open)} aria-expanded={socialOpen}><Share2 />{copy.socialNetworks}</button>
+                      )}
+                      {socialOpen && socialActions.map(({ label, href, icon: Icon }) => (
+                        <a href={href} target="_blank" rel="noopener noreferrer" key={label}><Icon />{label}</a>
+                      ))}
+                    </div>
+                  </div>
                 )}
-                {socialOpen && socialActions.map(({ label, href, icon: Icon }) => (
-                  <a href={href} target="_blank" rel="noopener noreferrer" key={label}><Icon />{label}</a>
-                ))}
               </div>
             )}
             {bookingOpen && bookingContent && <section className="cvp-booking">{bookingContent}</section>}
