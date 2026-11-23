@@ -164,12 +164,12 @@ export default function PlatformAppSectionHub({ kind }: { kind: Hub }) {
   const prosExtras = PRO_LINKS.filter(item => item.id !== 'free' && item.id !== 'cv');
   const renderProCards = (items: Entry[]) => <div className="grid grid-cols-2 gap-2">
     {items.map(item => (
-      <Link key={item.id} to={item.href} state={{ from: '/subscription' }}
+      <a key={item.id} href={item.href}
         className="flex min-h-[96px] flex-col items-start rounded-xl border border-[#E5D7BE] bg-white p-3 text-start shadow-sm transition-colors hover:border-[#B99143] hover:bg-[#FFF9EF] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B99143]">
         <span aria-hidden="true" className="text-xl leading-none">{item.icon}</span>
         <span className="mt-2 text-sm font-semibold leading-5 text-[#45243A]">{copy.topics[item.id]}</span>
         <span className="mt-1 text-xs leading-4 text-[#6A5B64]">{proSummaries[lang][item.id]}</span>
-      </Link>
+      </a>
     ))}
   </div>;
 
