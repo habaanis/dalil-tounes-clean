@@ -241,6 +241,49 @@ export default function SearchBar({
     try {
       let allResults: any[] = [];
 
+      // Reuse the existing accent-insensitive Supabase search over synced
+      // Airtable names, activities, categories, services and keywords.
+      // Keep the legacy client query below only as a fallback.
+      if (isPlatformAppMode() && mode === 'entreprises') {
+        const { data: suggestions, error: smartError } = await supabase.rpc('search_entreprise_smart', {
+          p_q: trimmedValue,
+          p_ville: cityValue.trim() || null,
+          p_categorie: null,
+          p_scope: appPageScope ?? null,
+          p_limit: 120,
+        });
+        if (requestId !== searchSequence.current) return;
+        if (!smartError) {
+          const matches = (suggestions || []).filter((row: any) => Number(row.score) >= 30);
+          const ids = matches.map((row: any) => row.id);
+          if (!ids.length) {
+            setEnt([]);
+            cache.current.set(cacheKey, []);
+            setLoadingEnt(false);
+            return;
+          }
+          const { data: detailed, error: detailError } = await supabase
+            .from(Tables.ENTREPRISE)
+            .select('id, id_airtable, nom, ville, gouvernorat, categorie, sous_categories_texte, statut_carte, cv_business_status, cv_business_published_at, "Note Google Globale", "Compteur Avis Google"')
+            .in('id', ids);
+          if (requestId !== searchSequence.current) return;
+          if (!detailError) {
+            const order = new Map(matches.map((row: any, index: number) => [row.id, index]));
+            const unique = dedupeByAirtableId((detailed || []) as { id: string; id_airtable?: string | null }[]);
+            const results = unique
+              .filter((row: any) => !cert || (cert === 'certifie' ? isCertifiedBusiness(row) : !isCertifiedBusiness(row)))
+              .sort((x: any, y: any) => Number(order.get(x.id) ?? 999) - Number(order.get(y.id) ?? 999))
+              .slice(0, 8);
+            setEnt(results);
+            cache.current.set(cacheKey, results);
+            setLoadingEnt(false);
+            return;
+          }
+          console.warn('[Search] smart detail lookup failed; using legacy fallback', detailError);
+        } else {
+          console.warn('[Search] smart RPC unavailable; using legacy fallback', smartError);
+        }
+      }
       if (scope === 'education') {
         const searchPattern = `%${trimmedValue}%`;
         let query = supabase
