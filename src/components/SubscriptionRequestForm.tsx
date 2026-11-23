@@ -113,6 +113,7 @@ interface SubscriptionFormState {
   googleMapsUrl: string;
   googleReviewsUrl: string;
   logoUrl: string;
+  logoChoice: 'existing' | 'create' | 'none';
   photoUrls: string;
   productsDescription: string;
   tiktok: string;
@@ -673,6 +674,7 @@ const INITIAL_STATE: SubscriptionFormState = {
   googleMapsUrl: '',
   googleReviewsUrl: '',
   logoUrl: '',
+  logoChoice: 'none',
   photoUrls: '',
   productsDescription: '',
   tiktok: '',
@@ -880,7 +882,9 @@ export function SubscriptionRequestForm({
           `Horaires : ${cleanMultiline(form.openingHours)}`,
           `Google Maps : ${form.googleMapsUrl}`,
           `Lien avis Google : ${form.googleReviewsUrl}`,
-          `Logo : ${form.logoUrl}`,
+          `Logo choisi : ${form.logoChoice === 'create' ? 'Création Dalil Tounes +20 TND — droits sur le logo final transférés après paiement et livraison' : form.logoChoice === 'existing' ? 'Logo fourni par le professionnel' : 'Aucun logo demandé'}`,
+          `Supplément création logo : ${form.logoChoice === 'create' ? '20 TND' : '0 TND'}`,
+          `Montant total demandé : ${(selectedPlan === 'artisan' ? 30 : 59) + (form.logoChoice === 'create' ? 20 : 0)} TND`,
           `Photos : ${form.photoUrls}`,
           `Catalogue et produits : ${cleanMultiline(form.productsDescription)}`,
           `TikTok : ${form.tiktok}`, `YouTube : ${form.youtube}`, `LinkedIn : ${form.linkedin}`,
@@ -1208,7 +1212,23 @@ export function SubscriptionRequestForm({
                 <summary className="cursor-pointer font-semibold">Logo, photos, avis et catalogue</summary>
                 <div className="mt-3 space-y-3">
                   <p className="text-xs text-slate-600">Indiquez ici les liens des fichiers déjà en ligne. Le téléchargement direct de photos et logos sera raccordé au stockage sécurisé ensuite.</p>
-                  <FieldLabel label="Lien du logo"><input type="url" name="logoUrl" value={form.logoUrl} onChange={setField} className={inputClassName} placeholder="https://..." /></FieldLabel>
+                  <fieldset className="rounded-xl border border-[#D4AF37]/40 bg-[#FFFDF7] p-3">
+                    <legend className="px-1 font-semibold text-[#292725]">Votre logo</legend>
+                    <div className="mt-2 grid gap-2">
+                      {([
+                        ['existing', 'J’ai déjà mon logo'],
+                        ['create', 'Je souhaite que Dalil Tounes crée mon logo (+20 TND)'],
+                        ['none', 'Je ne souhaite pas de logo pour le moment'],
+                      ] as const).map(([value, label]) => (
+                        <label key={value} className="flex cursor-pointer items-center gap-3 rounded-lg border border-slate-200 px-3 py-2 text-sm">
+                          <input type="radio" name="logoChoice" value={value} checked={form.logoChoice === value} onChange={setField} className="h-4 w-4 accent-[#07543F]" />
+                          <span>{label}</span>
+                        </label>
+                      ))}
+                    </div>
+                    {form.logoChoice === 'create' && <p className="mt-3 rounded-lg bg-emerald-50 px-3 py-3 text-sm leading-6 text-[#07543F]"><strong>Le logo final sera votre propriété après règlement et livraison.</strong> Vous pourrez le réutiliser librement en dehors de Dalil Tounes. Les éventuels éléments ou polices sous licence tierce restent soumis à leurs conditions d’utilisation. Création simple avec une proposition et deux ajustements inclus.</p>}
+                    {form.logoChoice === 'existing' && <FieldLabel label="Lien du logo existant (facultatif pour le premier envoi)"><input type="url" name="logoUrl" value={form.logoUrl} onChange={setField} className={inputClassName} placeholder="https://..." /></FieldLabel>}
+                  </fieldset>
                   <FieldLabel label="Liens des photos (un par ligne)"><textarea name="photoUrls" value={form.photoUrls} onChange={setField} rows={3} className={inputClassName} placeholder="https://.../photo1.jpg" /></FieldLabel>
                   <FieldLabel label="Lien des avis Google"><input type="url" name="googleReviewsUrl" value={form.googleReviewsUrl} onChange={setField} className={inputClassName} placeholder="https://..." /></FieldLabel>
                   <FieldLabel label="Produits, prestations et prix"><textarea name="productsDescription" value={form.productsDescription} onChange={setField} rows={4} className={inputClassName} placeholder="Produit — prix — description" /></FieldLabel>
@@ -1339,6 +1359,9 @@ export function SubscriptionRequestForm({
             {presentationModelLabel && <p><strong>{isArabic ? 'النموذج' : 'Modèle'} :</strong> {presentationModelLabel}</p>}
             {paletteLabel && <p><strong>{isArabic ? 'الألوان' : 'Palette'} :</strong> {paletteLabel}</p>}
             <p><strong>{isArabic ? 'السعر' : 'Prix de création'} :</strong> {selectedPlan === 'artisan' ? '30 TND' : '59 TND'}</p>
+            <p><strong>Logo :</strong> {form.logoChoice === 'create' ? 'Création de logo Dalil Tounes (+20 TND)' : form.logoChoice === 'existing' ? 'Logo fourni' : 'Aucun logo demandé'}</p>
+            <p><strong>Total :</strong> {(selectedPlan === 'artisan' ? 30 : 59) + (form.logoChoice === 'create' ? 20 : 0)} TND</p>
+            {form.logoChoice === 'create' && <p className="text-xs text-[#07543F]">Le logo final vous appartient après règlement et livraison, sous réserve des licences éventuelles d’éléments tiers.</p>
             <p>{isArabic ? 'السنة الأولى مشمولة، ثم صيانة اختيارية بقيمة 50 د.ت/سنة.' : 'Première année incluse ; entretien facultatif ensuite : 50 TND/an.'}</p>
           </div>
           <div className="rounded-2xl border border-slate-200 bg-white p-4 text-sm leading-7 text-slate-700">
