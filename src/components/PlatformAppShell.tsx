@@ -1,31 +1,33 @@
+import { QRCodeSVG } from 'qrcode.react';
 import { useEffect, useState, type ReactNode } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Building2, Compass, Facebook, Home, Instagram, Menu, MessageCircle, Search, Users, X } from 'lucide-react';
+import { ArrowLeft, Building2, Compass, Facebook, Home, Instagram, Menu, MessageCircle, Search, Share2, Copy, Users, X } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import LanguageSelector from './LanguageSelector';
 import PlatformAppSectionHub, { getPlatformHub } from './PlatformAppSectionHub';
 
+const APP_SHARE_URL = 'https://appli.dalil-tounes.com/';
 type AppLang = 'fr' | 'ar' | 'en' | 'it' | 'ru';
 const APP_COPY: Record<AppLang, {
   home: string; search: string; citizens: string; discover: string; pros: string;
   more: string; menu: string; close: string; back: string; jobs: string; events: string;
-  partners: string; blog: string; contact: string; faq: string;
+  partners: string; blog: string; contact: string; faq: string; share: string; shareHelp: string; copyLink: string; shareLink: string; copied: string;
 }> = {
   fr: { home: 'Accueil', search: 'Chercher', citizens: 'Citoyens', discover: 'Tourisme & Expat', pros: 'Pros',
     more: 'Plus de rubriques', menu: 'Ouvrir le menu', close: 'Fermer le menu', back: 'Retour', jobs: 'Emploi',
-    events: 'Événements', partners: 'Partenaires', blog: 'Guides & articles', contact: 'Contact', faq: 'Mes questions' },
+    events: 'Événements', partners: 'Partenaires', blog: 'Guides & articles', contact: 'Contact', faq: 'Mes questions', share: 'Partager l’application', shareHelp: 'Scannez ce QR Code pour ouvrir Dalil Tounes et l’installer sur votre téléphone.', copyLink: 'Copier le lien', shareLink: 'Envoyer le lien', copied: 'Lien copié' },
   ar: { home: 'الرئيسية', search: 'بحث', citizens: 'مواطنون', discover: 'سياحة ومقيمون', pros: 'مهنيون',
     more: 'أقسام أخرى', menu: 'فتح القائمة', close: 'إغلاق القائمة', back: 'رجوع', jobs: 'الشغل',
-    events: 'الفعاليات', partners: 'الشركاء', blog: 'مقالات وأدلة', contact: 'اتصل بنا', faq: 'أسئلتكم' },
+    events: 'الفعاليات', partners: 'الشركاء', blog: 'مقالات وأدلة', contact: 'اتصل بنا', faq: 'أسئلتكم', share: 'شارك التطبيق', shareHelp: 'امسح رمز QR لفتح دليل تونس وتثبيته على هاتفك.', copyLink: 'نسخ الرابط', shareLink: 'إرسال الرابط', copied: 'تم نسخ الرابط' },
   en: { home: 'Home', search: 'Search', citizens: 'Citizens', discover: 'Tourism & Expat', pros: 'Business',
     more: 'More sections', menu: 'Open menu', close: 'Close menu', back: 'Back', jobs: 'Jobs',
-    events: 'Events', partners: 'Partners', blog: 'Guides & articles', contact: 'Contact', faq: 'Your questions' },
+    events: 'Events', partners: 'Partners', blog: 'Guides & articles', contact: 'Contact', faq: 'Your questions', share: 'Share the app', shareHelp: 'Scan this QR code to open Dalil Tounes and install it on your phone.', copyLink: 'Copy link', shareLink: 'Send link', copied: 'Link copied' },
   it: { home: 'Home', search: 'Cerca', citizens: 'Cittadini', discover: 'Turismo & Expat', pros: 'Imprese',
     more: 'Altre sezioni', menu: 'Apri menu', close: 'Chiudi menu', back: 'Indietro', jobs: 'Lavoro',
-    events: 'Eventi', partners: 'Partner', blog: 'Guide e articoli', contact: 'Contatti', faq: 'Le vostre domande' },
+    events: 'Eventi', partners: 'Partner', blog: 'Guide e articoli', contact: 'Contatti', faq: 'Le vostre domande', share: 'Condividi l’app', shareHelp: 'Scansiona il codice QR per aprire Dalil Tounes e installarlo sul telefono.', copyLink: 'Copia link', shareLink: 'Invia link', copied: 'Link copiato' },
   ru: { home: 'Главная', search: 'Поиск', citizens: 'Граждане', discover: 'Туризм & экспат', pros: 'Бизнес',
     more: 'Другие разделы', menu: 'Открыть меню', close: 'Закрыть меню', back: 'Назад', jobs: 'Работа',
-    events: 'События', partners: 'Партнёры', blog: 'Статьи и гиды', contact: 'Контакты', faq: 'Ваши вопросы' },
+    events: 'События', partners: 'Партнёры', blog: 'Статьи и гиды', contact: 'Контакты', faq: 'Ваши вопросы', share: 'Поделиться приложением', shareHelp: 'Сканируйте QR-код, чтобы открыть Dalil Tounes и установить на телефон.', copyLink: 'Скопировать ссылку', shareLink: 'Отправить ссылку', copied: 'Ссылка скопирована' },
 };
 
 export default function PlatformAppShell({ children }: { children: ReactNode }) {
@@ -40,6 +42,8 @@ export default function PlatformAppShell({ children }: { children: ReactNode }) 
   const hub = getPlatformHub(location.pathname);
   const useCompactHub = hub !== null && new URLSearchParams(location.search).get('app-full') !== '1';
   const [menuOpen, setMenuOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
   useEffect(() => setMenuOpen(false), [location.pathname, location.search]);
   useEffect(() => {
     if (useCompactHub) window.scrollTo({ top: 0, left: 0 });
@@ -88,8 +92,41 @@ export default function PlatformAppShell({ children }: { children: ReactNode }) 
               } }}
               className="flex min-h-11 items-center rounded-xl border border-[#C9A65D] px-3 text-sm font-medium text-[#292725]">{item.label}</Link>)}
           </div>
+          <button type="button" onClick={() => { setMenuOpen(false); setCopied(false); setShareOpen(true); }}
+            className="mt-2 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-[#B99143] bg-[#FFF7E9] px-3 text-sm font-semibold text-[#292725]">
+            <Share2 className="h-4 w-4" aria-hidden="true" />{copy.share}
+          </button>
         </nav>}
       </header>
+
+      {shareOpen && <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4" onClick={() => setShareOpen(false)}>
+        <section role="dialog" aria-modal="true" aria-label={copy.share} onClick={event => event.stopPropagation()}
+          className="w-full max-w-sm rounded-2xl border-2 border-[#C9A65D] bg-[#FFFCF7] p-4 text-center shadow-xl">
+          <div className="flex items-center justify-between gap-2">
+            <h2 className="text-base font-semibold text-[#292725]">{copy.share}</h2>
+            <button type="button" onClick={() => setShareOpen(false)} aria-label={copy.close}
+              className="flex h-11 w-11 items-center justify-center rounded-lg"><X className="h-5 w-5" /></button>
+          </div>
+          <p className="mb-3 text-xs leading-5 text-[#605B54]">{copy.shareHelp}</p>
+          <div className="mx-auto w-fit rounded-xl border border-[#C9A65D] bg-white p-3">
+            <QRCodeSVG value={APP_SHARE_URL} size={192} level="H" includeMargin={false} fgColor="#222222" bgColor="#FFFFFF" />
+          </div>
+          <p dir="ltr" className="my-3 break-all text-xs text-[#605B54]">{APP_SHARE_URL}</p>
+          <div className="grid grid-cols-2 gap-2">
+            <button type="button" onClick={async () => { try { await navigator.clipboard.writeText(APP_SHARE_URL); setCopied(true); } catch { window.prompt(copy.copyLink, APP_SHARE_URL); } }}
+              className="flex min-h-11 items-center justify-center gap-1 rounded-xl border border-[#C9A65D] bg-white px-2 text-xs font-semibold">
+              <Copy className="h-4 w-4" />{copied ? copy.copied : copy.copyLink}
+            </button>
+            <button type="button" onClick={async () => {
+              if (navigator.share) {
+                try { await navigator.share({ title: 'Dalil Tounes', url: APP_SHARE_URL }); } catch { /* Share dismissed */ }
+              } else { window.open('https://wa.me/?text=' + encodeURIComponent(APP_SHARE_URL), '_blank', 'noopener,noreferrer'); }
+            }} className="flex min-h-11 items-center justify-center gap-1 rounded-xl bg-[#1C5948] px-2 text-xs font-semibold text-white">
+              <Share2 className="h-4 w-4" />{copy.shareLink}
+            </button>
+          </div>
+        </section>
+      </div>}
 
       {location.pathname === '/' && <div aria-label="Réseaux sociaux Dalil Tounes" className="mx-auto flex max-w-xl items-center justify-end gap-2 px-3 pt-2">
         <a href="https://www.facebook.com/daliltounes/" target="_blank" rel="noopener noreferrer"
