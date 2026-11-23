@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { FounderStory } from './FounderStory';
 import { DALIL_MASCOT_IMAGE } from '../lib/dalilMascotImage';
 import SearchBar from './SearchBar';
@@ -24,7 +25,7 @@ const COPY: Record<Lang, {
     review: 'Avis Google indépendants des offres', certifiedHint: 'CV Business ou Portfolio publié',
     founder: 'Pourquoi j’ai créé Dalil Tounes', founderDetail: 'Faire découvrir les bons professionnels, les services utiles et les richesses de toute la Tunisie.',
     founderAction: 'Découvrir mon histoire', free: 'Vous êtes professionnel ?', freeDetail: 'Faites connaître votre activité gratuitement ou créez votre mini-appli professionnelle.',
-    freeAction: 'Découvrir les offres', more: 'Tous les services',
+    freeAction: 'Découvrir et s’inscrire', more: 'Tous les services',
   },
   ar: {
     headline: 'تونس الكل في يدك', intro: 'اكتشف مؤسسات وخدمات وأماكن في تونس.',
@@ -98,11 +99,14 @@ export default function PlatformAppHome({ totalCount, legacyCertifiedCount, reco
       <h2 className="mb-2 font-serif text-base font-semibold text-[#242424]">{t.search}</h2>
       <SearchBar scope="global" autoSearch resultMode="redirectToResults" />
     </section>
-    <section className="rounded-xl border border-[#C9A65D] bg-gradient-to-br from-[#FFF5E7] to-[#FFFCF7] px-4 py-4 text-center shadow-sm" aria-label="Dalil Tounes et mini-appli professionnelle">
-      <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-[#242424]">{lang === 'fr' ? 'Vous êtes professionnel ?' : lang === 'ar' ? 'عندك مؤسسة؟' : lang === 'en' ? 'Are you a professional?' : lang === 'it' ? 'Sei un professionista?' : 'Вы профессионал?'}</p>
-      <p className="text-sm font-semibold leading-5 text-[#292929]">{lang === 'ar' ? 'خلّي مؤسستك موجودة في دليل تونس.' : lang === 'en' ? 'Get listed on Dalil Tounes.' : lang === 'it' ? 'Fai conoscere la tua attività su Dalil Tounes.' : lang === 'ru' ? 'Разместите свою компанию на Dalil Tounes.' : 'Soyez répertorié sur Dalil Tounes.'}</p>
-      <p className="mt-1 text-xs leading-5 text-[#66615D]">{lang === 'ar' ? 'عزّز حضور نشاطك عبر تطبيق مصغّر مهني خاص بمؤسستك.' : lang === 'en' ? 'Give your business greater impact with your own business mini-app.' : lang === 'it' ? 'Dai più visibilità alla tua attività con una mini-app personalizzata.' : lang === 'ru' ? 'Представьте бизнес с помощью собственного мини-приложения.' : 'Développez votre visibilité avec votre mini-appli professionnelle.'}</p>
-    </section>
+    <Link to="/subscription"
+      className="block rounded-xl border border-[#C9A65D] bg-gradient-to-br from-[#FFF5E7] to-[#FFFCF7] px-4 py-4 text-center shadow-sm transition-colors hover:border-[#B18B45] hover:bg-[#FFF7E9] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B99143]"
+      aria-label={t.free + ' — ' + t.freeAction}>
+      <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-[#242424]">{t.free}</p>
+      <p className="text-sm font-semibold leading-5 text-[#292929]">{lang === 'fr' ? 'Développez votre visibilité et vendez vos produits grâce à votre mini-appli professionnelle.' : lang === 'ar' ? 'عزّز ظهور مؤسستك وبِع منتجاتك بفضل تطبيقك المصغّر المهني.' : lang === 'en' ? 'Grow your visibility and sell products with your business mini-app.' : lang === 'it' ? 'Aumenta la tua visibilità e vendi prodotti con la mini-app professionale.' : 'Повышайте узнаваемость и продавайте товары через бизнес-мини-приложение.'}</p>
+      <p className="mt-1 text-xs leading-5 text-[#66615D]">{lang === 'fr' ? 'Présentez votre activité, partagez votre QR Business et proposez les produits de votre boutique dans votre mini-appli.' : lang === 'ar' ? 'عرّف بنشاطك، شارك رمز QR Business واعرض منتجات متجرك داخل تطبيقك المصغّر.' : lang === 'en' ? 'Showcase your business, share your Business QR code and offer your shop products in your mini-app.' : lang === 'it' ? 'Presenta la tua attività, condividi il QR Business e proponi i prodotti del negozio nella mini-app.' : 'Представьте свой бизнес, поделитесь QR Business и покажите товары магазина в мини-приложении.'}</p>
+      <span className="mt-2 inline-block text-xs font-semibold text-[#07543F]">{t.freeAction} →</span>
+    </Link>
     <DalilFAQ />
     <section aria-label={t.count(totalCount ?? '—')} className="rounded-xl border border-[#C9A65D] bg-[#FFFDF9] px-4 py-4 shadow-[0_2px_12px_rgba(30,25,20,0.025)]" aria-live="polite">
       <div className="flex items-start gap-2.5">
