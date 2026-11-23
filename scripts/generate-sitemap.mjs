@@ -107,7 +107,7 @@ async function fetchBusinesses() {
   const pageSize = 1000;
   for (let offset = 0; ; offset += pageSize) {
     const endpoint = new URL(`${supabaseUrl.replace(/\/$/, '')}/rest/v1/entreprise`);
-    endpoint.searchParams.set('select', 'slug,nom,ville,updated_at,is_premium');
+    endpoint.searchParams.set('select', 'slug,slug_court,nom,ville,updated_at,is_premium,statut_abonnement');
     endpoint.searchParams.set('approved', 'eq.true');
     endpoint.searchParams.set('statut_publication', 'eq.Publié');
     endpoint.searchParams.set('order', 'updated_at.desc.nullslast');
@@ -121,6 +121,10 @@ async function fetchBusinesses() {
   }
   return rows;
 }
+
+const clientCvEntries = new Map();
+const clientAppOrigin = 'https://app.dalil-tounes.com';
+const professionalTier = /artisan|premium|elite|personnalis|custom/i;
 
 let businessCount = 0;
 let skippedBusinessCount = 0;
@@ -141,6 +145,10 @@ try {
     const route = villeSlug ? `/entreprise/${villeSlug}/${businessSlug}` : `/entreprise/${businessSlug}`;
     const lastmod = business.updated_at ? new Date(business.updated_at).toISOString().split('T')[0] : TODAY;
     add(route, business.is_premium ? '0.9' : '0.7', 'weekly', lastmod);
+    const clientSlug = String(business.slug_court || business.slug || '').trim();
+    if ((business.is_premium || professionalTier.test(String(business.statut_abonnement || ''))) && /^[a-z0-9-]+$/i.test(clientSlug)) {
+      clientCvEntries.set(`/${clientSlug}/cv`, lastmod);
+    }
     businessCount += 1;
   }
 } catch (error) {
@@ -158,5 +166,26 @@ const xml = [
 ].join('\n');
 
 fs.writeFileSync(path.join(distDir, 'sitemap.xml'), xml);
+// A separate sitemap is served only from the client-app hostname. Never expose
+// unpublished, account, login or QR installation pages as search landing pages.
+const clientXml = [
+  '<?xml version="1.0" encoding="UTF-8"?>',
+  '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+  ...Array.from(clientCvEntries.entries()).map(([route, lastmod]) =>
+    `  <url>\\n    <loc>${xmlEscape(`${clientAppOrigin}${route}`)}</loc>\\n    <lastmod>${lastmod}</lastmod>\\n  </url>`
+  ),
+  '</urlset>',
+  '',
+].join('\\n');
+fs.writeFileSync(path.join(distDir, 'sitemap-client.xml'), clientXml);
+fs.writeFileSync(path.join(distDir, 'robots-client.txt'), [
+  'User-agent: *',
+  'Allow: /',
+  'Disallow: /*/compte',
+  'Disallow: /*/connexion',
+  'Sitemap: https://app.dalil-tounes.com/sitemap.xml',
+  '',
+].join('\\n'));
+console.log(`Sitemap mini-applis : ${clientCvEntries.size} CV professionnels publiés.`);
 fs.rmSync(shortRoutesManifestPath, { force: true });
 console.log(`Sitemap généré : ${entries.size} URLs, dont ${businessCount} entreprises nommées, ${shortRouteCount} routes SEO courtes solides et ${skippedBusinessCount} entreprises incomplètes exclues.`);
