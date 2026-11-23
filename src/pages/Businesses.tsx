@@ -17,6 +17,7 @@ import { Search, MapPin, Phone, Mail, Building2, X, Award, ArrowRight, ShieldChe
 import { Toast } from '../components/Toast';
 import BusinessNeedForm from '../components/BusinessNeedForm';
 import { normalizeText, removeArabicDiacritics, extractFrenchName, cleanSearchTerm, cleanArabicField } from '../lib/textNormalization';
+import { findSearchCorrection, isArabicSearch, isNewSearchSuggestion, type SearchCorrection } from '../lib/searchCorrection';
 import { businessQueryTerms, rankBusinessSearchRows } from '../lib/businessSearchRelevance';
 import { BusinessCardWithActivity, type BusinessActivity } from '../components/BusinessCardWithActivity';
 import { BusinessCardPreview, type BusinessCardPreviewLanguage } from '../components/BusinessCardPreview';
@@ -415,6 +416,7 @@ export const Businesses = ({
   const [businesses, setBusinesses] = useState<Business[]>((_initCache?.businesses as unknown as Business[]) ?? []);
   const [loading, setLoading] = useState(_initCache === null);
   const [searchTerm, setSearchTerm] = useState(initialSearchKeyword || '');
+  const [searchSuggestion, setSearchSuggestion] = useState<SearchCorrection | null>(null);
   const [selectedBusinessId, setSelectedBusinessId] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedCity, setSelectedCity] = useState(initialSearchCity || '');
@@ -993,6 +995,7 @@ export const Businesses = ({
   };
 
   const performSearch = async () => {
+    setSearchSuggestion(null);
     console.log('═══════════════════════════════════════');
     console.log('🔍 [DEBUG performSearch] Démarrage...');
     console.log('Entreprise sélectionnée:', selectedBusinessId);
@@ -1036,7 +1039,15 @@ export const Businesses = ({
         // Pour l'arabe : ne pas normaliser (removeArabicDiacritics altère les caractères)
         // Pour le latin : nettoyer seulement les guillemets parasites
         const cleaned = cleanSearchTerm(searchTerm);
+        const correction = await findSearchCorrection(supabase, cleaned);
+        const hasCorrection = correction && correction.searchQuery.toLowerCase() !== cleaned.toLowerCase();
+        if (correction && isNewSearchSuggestion(cleaned, correction)) setSearchSuggestion(correction);
         const terms = businessQueryTerms(cleaned);
+        if (hasCorrection && correction) {
+          for (const word of businessQueryTerms(correction.searchQuery)) {
+            if (!terms.includes(word)) terms.push(word);
+          }
+        }
         const fields = ['nom', 'name_ar', 'description', 'description_ar', 'sous_categories_texte', 'sous_categories_clean', 'services', 'keywords_fr', 'search_text', 'ville', 'gouvernorat'];
         const clauses = terms.flatMap(term => fields.map(field => `${field}.ilike.%${term.replace(/[%_]/g, '')}%`));
         console.log('[Search] normalized profession variants:', terms);
@@ -1108,8 +1119,11 @@ export const Businesses = ({
       }
 
       const deduplicatedRows = dedupeByAirtableId((data || []) as { id: string; id_airtable?: string | null }[]);
+      // Corrected query terms can be synonyms in another language. Avoid
+      // discarding their rows with an unrelated literal-text ranking pass.
+      const relevanceQuery = searchSuggestion?.searchQuery || searchTerm;
       const relevantRows = searchTerm && !selectedBusinessId
-        ? rankBusinessSearchRows(deduplicatedRows as Record<string, unknown>[], searchTerm)
+        ? rankBusinessSearchRows(deduplicatedRows as Record<string, unknown>[], relevanceQuery)
         : deduplicatedRows;
       let mappedData = relevantRows.map((item: any) => ({
         id: item.id,
@@ -1472,6 +1486,17 @@ export const Businesses = ({
                 {selectedCategory}
               </span>
             )}
+          </div>
+        )}
+
+        {searchSuggestion && isNewSearchSuggestion(searchTerm, searchSuggestion) && (
+          <div className="mb-3 mx-4 rounded-xl border border-[#D4AF37]/60 bg-[#FFF8EA] p-3 text-sm text-[#173B30]" role="status">
+            <span>{isArabicSearch(searchTerm) || language === 'ar' ? 'هل تقصد:' : 'Vouliez-vous dire :'}</span>{' '}
+            <button type="button" className="font-bold underline underline-offset-2"
+              onClick={() => {
+                const url = buildEntrepriseUrl({ q: searchSuggestion.searchQuery });
+                navigate(url.startsWith('#') ? url.substring(1) : url);
+              }}>{searchSuggestion.suggestion}</button>
           </div>
         )}
 
