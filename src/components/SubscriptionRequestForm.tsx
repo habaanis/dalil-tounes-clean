@@ -1398,7 +1398,7 @@ export function SubscriptionRequestForm({
             <p><strong>{isArabic ? 'العرض' : 'Formule'} :</strong> {selectedPlanLabel}</p>
             {presentationModelLabel && <p><strong>{isArabic ? 'النموذج' : 'Modèle'} :</strong> {presentationModelLabel}</p>}
             {paletteLabel && <p><strong>{isArabic ? 'الألوان' : 'Palette'} :</strong> {paletteLabel}</p>}
-            <p><strong>Ouverture :</strong> {form.openingStyle === 'photo' ? 'A · Photo plein fond' : 'B · Présentation Prestige'}</p>}
+            <p><strong>Ouverture :</strong> {form.openingStyle === 'photo' ? 'A · Photo plein fond' : 'B · Présentation Prestige'}</p>
             <p><strong>{isArabic ? 'السعر' : 'Prix de création'} :</strong> {selectedPlan === 'artisan' ? '30 TND' : '59 TND'}</p>
             <p><strong>Logo :</strong> {form.logoChoice === 'create' ? 'Création de logo Dalil Tounes (+20 TND)' : form.logoChoice === 'existing' ? 'Logo fourni' : 'Aucun logo demandé'}</p>
             <p><strong>Total :</strong> {(selectedPlan === 'artisan' ? 30 : 59) + (form.logoChoice === 'create' ? 20 : 0)} TND</p>
