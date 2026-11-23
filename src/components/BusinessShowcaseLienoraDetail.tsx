@@ -1125,7 +1125,7 @@ export default function BusinessShowcaseLienoraDetail({
     ? `https://app.dalil-tounes.com/${encodeURIComponent(getClientAppIdentifier(business))}/cv`
     : `https://dalil-tounes.com${canonicalPath}`;
   const seoPath = isDedicatedClientRoute ? location.pathname : canonicalPath;
-  const officialLinkRel = isVerifiedOfficialWebsite(business.id, business.site_web)
+  const officialLinkRel = isVerifiedOfficialWebsite(business.id, cvProfile.contact.website)
     ? 'noopener noreferrer'
     : 'noopener noreferrer sponsored';
   const shortShareUrl = isDedicatedClientRoute
