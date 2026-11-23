@@ -21,6 +21,7 @@ import { Toast } from '../components/Toast';
 import BusinessNeedForm from '../components/BusinessNeedForm';
 import { normalizeText, removeArabicDiacritics, extractFrenchName, cleanSearchTerm, cleanArabicField } from '../lib/textNormalization';
 import { getSearchVariants } from '../lib/searchVariants';
+import { findSearchCorrection, isArabicSearch, isNewSearchSuggestion, type SearchCorrection } from '../lib/searchCorrection';
 import { BusinessCardWithActivity, type BusinessActivity } from '../components/BusinessCardWithActivity';
 import { BusinessCardPreview, type BusinessCardPreviewLanguage } from '../components/BusinessCardPreview';
 import { CvBusinessSharingInfo } from '../components/CvBusinessSharingInfo';
@@ -425,6 +426,7 @@ export const Businesses = ({
   const [businesses, setBusinesses] = useState<Business[]>((_initCache?.businesses as unknown as Business[]) ?? []);
   const [loading, setLoading] = useState(_initCache === null);
   const [searchTerm, setSearchTerm] = useState(initialSearchKeyword || '');
+  const [searchSuggestion, setSearchSuggestion] = useState<SearchCorrection | null>(null);
   const [selectedBusinessId, setSelectedBusinessId] = useState<string | null>(null);
   // Initialize category from the URL before the first data request.
   const [selectedCategory, setSelectedCategory] = useState(() => typeof window === 'undefined' ? '' : new URLSearchParams(window.location.search).get('categorie') || '');
@@ -1020,6 +1022,7 @@ export const Businesses = ({
 
   const performSearch = async () => {
     const requestId = ++directoryRequestRef.current;
+    setSearchSuggestion(null);
     console.log('═══════════════════════════════════════');
     console.log('🔍 [DEBUG performSearch] Démarrage...');
     console.log('Entreprise sélectionnée:', selectedBusinessId);
@@ -1080,9 +1083,31 @@ export const Businesses = ({
           });
           if (requestId !== directoryRequestRef.current) return;
           if (!smart.error) {
-            smartIds = (smart.data || [])
-              .filter((row: any) => Number(row.score) >= 30)
-              .map((row: any) => row.id);
+            const found = (smart.data || []).filter((row: any) => Number(row.score) >= 30);
+            const ids = new Set<string>(found.map((row: any) => row.id as string));
+            if (!ids.size || isArabicSearch(searchTerm)) {
+              const correction = await findSearchCorrection(supabase, searchTerm);
+              if (requestId !== directoryRequestRef.current) return;
+              if (correction) {
+                if (isNewSearchSuggestion(searchTerm, correction)) setSearchSuggestion(correction);
+                if (correction.searchQuery && correction.searchQuery.toLowerCase() !== searchTerm.trim().toLowerCase()) {
+                  const alternate = await supabase.rpc('search_entreprise_smart', {
+                    p_q: correction.searchQuery,
+                    p_ville: null,
+                    p_categorie: null,
+                    p_scope: null,
+                    p_limit: 1200,
+                  });
+                  if (requestId !== directoryRequestRef.current) return;
+                  if (!alternate.error) {
+                    for (const row of (alternate.data || [])) {
+                      if (Number(row.score) >= 30) ids.add(row.id);
+                    }
+                  }
+                }
+              }
+            }
+            smartIds = Array.from(ids);
           } else {
             console.warn('[Directory] smart search unavailable; using legacy text search', smart.error);
           }
@@ -1584,6 +1609,24 @@ export const Businesses = ({
           </div>
         )}
 
+        {inPlatformApp && searchSuggestion && isNewSearchSuggestion(searchTerm, searchSuggestion) && (
+          <div className="order-1 mx-3 mb-3 rounded-xl border border-[#D4AF37]/60 bg-[#FFF8EA] p-3 text-sm text-[#173B30]" role="status">
+            <span>{isArabicSearch(searchTerm) || language === 'ar' ? 'هل تقصد:' : 'Vouliez-vous dire :'}</span>{' '}
+            <button type="button" className="font-bold underline underline-offset-2"
+              onClick={() => {
+                const params = new URLSearchParams(location.search);
+                params.set('q', searchSuggestion.searchQuery);
+                navigate(`/recherche?${params.toString()}`);
+              }}>
+              {searchSuggestion.suggestion}
+            </button>
+            <p className="mt-1 text-xs text-[#655B4B]">
+              {isArabicSearch(searchTerm) || language === 'ar'
+                ? 'نبحث أيضًا عن نتائج قريبة، دون تغيير ما كتبته.'
+                : 'Les résultats proches sont aussi recherchés, sans modifier votre texte.'}
+            </p>
+          </div>
+        )}
         {pageCategorie && (
           <div className="order-1 mb-6 flex items-center gap-2 px-4">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-sm" style={{ border: '1px solid #D4AF37' }}>
