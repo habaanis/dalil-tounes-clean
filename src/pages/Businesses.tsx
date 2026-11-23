@@ -647,7 +647,15 @@ export const Businesses = ({
       console.log('═══════════════════════════════════════');
       console.log('🌐 [DEBUG URL] Chargement des paramètres URL...');
 
-      const params = readParams();
+      const params = inPlatformApp
+        ? {
+            q: new URLSearchParams(location.search).get('q') || '',
+            ville: new URLSearchParams(location.search).get('ville') || '',
+            categorie: new URLSearchParams(location.search).get('categorie') || '',
+            selected_id: new URLSearchParams(location.search).get('selected_id') || '',
+            statut_carte: new URLSearchParams(location.search).get('statut_carte') || '',
+          }
+        : readParams();
       console.log('[DEBUG URL] readParams() retourne:', params);
 
       const urlQ = params.q || initialSearchKeyword || '';
