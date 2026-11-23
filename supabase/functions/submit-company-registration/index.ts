@@ -17,6 +17,9 @@ const MAX_SUBMISSIONS_PER_CONTACT = 3;
 const DEFAULT_ALLOWED_ORIGINS = [
   'https://dalil-tounes.com',
   'https://www.dalil-tounes.com',
+  'https://appli.dalil-tounes.com',
+  'https://app.dalil-tounes.com',
+  'https://dalil-tounes-pwa.vercel.app',
   'http://localhost:5173',
   'http://127.0.0.1:5173',
 ];
