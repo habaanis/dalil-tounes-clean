@@ -10,7 +10,7 @@ export function getSearchVariants(input: string): string[] {
   const aliases: Record<string, string[]> = {
     gite: ['gîte', 'gîtes', 'gite', 'gites', 'gît'],
     gites: ['gîte', 'gîtes', 'gite', 'gites', 'gît'],
-    creche: ['crèche', 'crèches', 'creche', 'creches', 'garderie', 'jardin d’enfants', "jardin d'enfants"],
+    creche: ['crèche', 'crèches', 'creche', 'creches', 'garderie', 'jardin'],
     creches: ['crèche', 'crèches', 'creche', 'creches', 'garderie', 'jardin d’enfants', "jardin d'enfants"],
     garderie: ['garderie', 'garderies', 'crèche', 'crèches'],
     ecole: ['école', 'ecole', 'écoles', 'ecoles'],
