@@ -68,7 +68,7 @@ import { HERO_IMAGE_URL } from '../constants/images';
 import { findMetierByValue, findVilleByLabel } from '../lib/seoLandingData';
 import GratuitCard from '../components/GratuitCard';
 import ReservationForm from '../components/ReservationForm';
-import { buildClientAppUrl } from '../lib/clientAppUrl';
+import { buildClientAppUrl, isDedicatedClientHostname } from '../lib/clientAppUrl';
 
 function TikTokIcon({ className = 'text-white', size = 10 }: { className?: string; size?: number }) {
   return (
@@ -564,7 +564,7 @@ export const BusinessDetail = ({
 
         const canonicalPath = buildEntrepriseUrl(data);
         const currentPathname = routerLocation.pathname;
-        if (!asModal && !businessIdProp && canonicalPath !== '/' && currentPathname !== canonicalPath) {
+        if (!isDedicatedClientHostname(window.location.hostname) && !asModal && !businessIdProp && canonicalPath !== '/' && currentPathname !== canonicalPath) {
           navigate(canonicalPath, { replace: true });
         }
 
@@ -1018,7 +1018,9 @@ export const BusinessDetail = ({
       {!preview && business && actualBusinessId && (
         <>
           {(() => {
-            const bizSeo = getBusinessSeoMeta({ nom: business.nom, ville: business.ville, telephone: business.telephone, categorie: translatedCategory, description: translatedDescription || undefined }, buildEntrepriseShareUrl(business));
+            const clientCvPage = isDedicatedClientHostname(window.location.hostname);
+            const appCanonical = `https://app.dalil-tounes.com${routerLocation.pathname.replace(/\/$/, '')}`;
+            const bizSeo = getBusinessSeoMeta({ nom: business.nom, ville: business.ville, telephone: business.telephone, categorie: translatedCategory, description: translatedDescription || undefined }, clientCvPage ? appCanonical : buildEntrepriseShareUrl(business));
             return (
               <SEOHead
                 title={bizSeo.title}
@@ -1029,7 +1031,7 @@ export const BusinessDetail = ({
                 type="article"
                 author={business.nom}
                 currentPath={currentPath}
-                noindex={business.statut_validation !== 'publié' && business.statut_validation !== 'publie'}
+                noindex={(business.statut_validation !== 'publié' && business.statut_validation !== 'publie') || (clientCvPage && tier === 'gratuit')}
               />
             );
           })()}
