@@ -2,7 +2,7 @@ import { isCertifiedBusiness } from '../lib/businessCertification';
 import GoogleRatingSummary from './GoogleRatingSummary';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { supabaseUrl, supabaseAnonKey } from '../lib/supabaseClient';
 import { createClient } from '@supabase/supabase-js';
 
@@ -104,6 +104,7 @@ export default function SearchBar({
   mode = 'entreprises';
   const { language } = useLanguage();
   const navigate = useNavigate();
+  const location = useLocation();
   const dir = isRTL(language as Lang) ? 'rtl' : 'ltr';
 
   const [q, setQ] = React.useState('');
@@ -120,6 +121,9 @@ export default function SearchBar({
   const certFilter = certSelection.value;
   const setCertFilter = (value: CertFilter) => setCertSelection({ applied: appliedCertificationFilter, value });
   const [ent, setEnt] = React.useState<ResultItem[]>([]);
+  const [suggestionsOpen, setSuggestionsOpen] = React.useState(false);
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
+  const inputRef = React.useRef<HTMLInputElement>(null);
   const [suggested, setSuggested] = React.useState<SearchCorrection | null>(null);
   const [villes, setVilles] = React.useState<VilleItem[]>([]);
   const [loadingEnt, setLoadingEnt] = React.useState(false);
@@ -348,6 +352,7 @@ export default function SearchBar({
 
   const onChangeQ = (e: React.ChangeEvent<HTMLInputElement>) => {
     const v = e.currentTarget.value ?? '';
+    setSuggestionsOpen(true);
     setQ(v);
     searchSequence.current += 1;
     setEnt([]);
@@ -432,7 +437,32 @@ export default function SearchBar({
     };
   }, []);
 
+  // The results page can keep SearchBar mounted, so closing only the rows
+  // is insufficient: the portal remains visible when q still has text.
+  const dismissSuggestions = () => {
+    setSuggestionsOpen(false);
+    searchSequence.current += 1;
+    if (tEnt.current) window.clearTimeout(tEnt.current);
+    inputRef.current?.blur();
+  };
+
+  React.useEffect(() => {
+    dismissSuggestions();
+  }, [location.pathname, location.search, location.hash]);
+
+  React.useEffect(() => {
+    const closeIfOutside = (event: PointerEvent) => {
+      const target = event.target as Node;
+      if (!formRef.current?.contains(target) && !dropdownRef.current?.contains(target)) {
+        setSuggestionsOpen(false);
+      }
+    };
+    document.addEventListener('pointerdown', closeIfOutside);
+    return () => document.removeEventListener('pointerdown', closeIfOutside);
+  }, []);
+
   const goTo = (path: string) => {
+    dismissSuggestions();
     const cleanPath = path.startsWith('#') ? path.substring(1) : path;
     navigate(cleanPath);
   };
@@ -481,6 +511,7 @@ export default function SearchBar({
           resultMode,
         });
         setEnt([]);
+        dismissSuggestions();
         return;
       }
 
@@ -517,6 +548,7 @@ export default function SearchBar({
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    dismissSuggestions();
     const query = q.trim();
     const villeParam = city.trim();
     let detectedCategory: string | undefined;
@@ -636,7 +668,7 @@ export default function SearchBar({
   };
 
   const hasResults = q.trim().length >= MIN_CHARS && (ent.length > 0 || !loadingEnt || showSeeAllItem);
-  const shouldRenderDropdown = hasResults;
+  const shouldRenderDropdown = suggestionsOpen && hasResults;
 
   return (
     <form
@@ -650,6 +682,7 @@ export default function SearchBar({
       <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-2.5">
         <div className="relative z-10">
           <input
+            ref={inputRef}
             type="search"
             inputMode="search"
             autoCapitalize="none"
@@ -676,6 +709,7 @@ export default function SearchBar({
 
       {shouldRenderDropdown && ReactDOM.createPortal(
         <div
+          ref={dropdownRef}
           className="rounded-xl border bg-white shadow-2xl p-3 space-y-3 max-h-[60vh] overflow-auto"
           style={{
             position: 'fixed',
