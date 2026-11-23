@@ -103,7 +103,7 @@ function verifiedOfficialWebsite(business) {
   const urlValue = validHttpUrl(business.site_web);
   if (!expectedHost || !urlValue) return '';
   try {
-    const host = new URL(urlValue).hostname.toLowerCase().replace(/^www\\./, '');
+    const host = new URL(urlValue).hostname.toLowerCase().replace(/^www\./, '');
     return host === expectedHost ? urlValue : '';
   } catch { return ''; }
 }
