@@ -63,6 +63,7 @@ import { getLogoUrl } from '../lib/logoUtils';
 import {
   buildClientAppUrl,
   buildClientCvUrl,
+  getClientAppIdentifier,
   isDedicatedClientHostname,
 } from '../lib/clientAppUrl';
 import { adaptDalilBusiness } from '../lib/cvBusinessDalilAdapter';
@@ -76,6 +77,7 @@ import {
   type CvPresentationSection,
 } from '../lib/cvPresentationEngine';
 import { getBusinessSeoMeta } from '../lib/seoMetaTemplates';
+import { isVerifiedOfficialWebsite } from '../lib/officialWebsiteSeo';
 import {
   findGouvernoratBySlug,
   findMetierByValue,
@@ -1119,7 +1121,13 @@ export default function BusinessShowcaseLienoraDetail({
     : '';
   const slogan = cvProfile.identity.slogan;
   const canonicalPath = buildEntrepriseUrl(business);
-  const canonicalUrl = `https://dalil-tounes.com${canonicalPath}`;
+  const canonicalUrl = isDedicatedClientRoute
+    ? `https://app.dalil-tounes.com/${encodeURIComponent(getClientAppIdentifier(business))}/cv`
+    : `https://dalil-tounes.com${canonicalPath}`;
+  const seoPath = isDedicatedClientRoute ? location.pathname : canonicalPath;
+  const officialLinkRel = isVerifiedOfficialWebsite(business.id, business.site_web)
+    ? 'noopener noreferrer'
+    : 'noopener noreferrer sponsored';
   const shortShareUrl = isDedicatedClientRoute
     ? buildClientCvUrl(business, language, activePalette)
     : buildShortShareUrl(business) || canonicalUrl;
@@ -1669,7 +1677,7 @@ export default function BusinessShowcaseLienoraDetail({
             keywords={seo.keywords}
             image={coverImage}
             canonical={canonicalUrl}
-            currentPath={canonicalPath}
+            currentPath={seoPath}
             type="website"
             author={displayName}
             noindex={!isPublished(business.statut_validation)}
@@ -1736,7 +1744,7 @@ export default function BusinessShowcaseLienoraDetail({
           keywords={seo.keywords}
           image={coverImage}
           canonical={canonicalUrl}
-          currentPath={canonicalPath}
+          currentPath={seoPath}
           type="website"
           author={displayName}
           noindex={!isPublished(business.statut_validation)}
@@ -1812,7 +1820,7 @@ export default function BusinessShowcaseLienoraDetail({
                       className="dt-primary-action"
                       href={action.href}
                       target={action.external ? '_blank' : undefined}
-                      rel={action.external ? 'noopener noreferrer' : undefined}
+                      rel={action.external ? (action.label === text.website ? officialLinkRel : 'noopener noreferrer') : undefined}
                       key={action.label}
                     >
                       <Icon aria-hidden="true" />
@@ -1846,7 +1854,7 @@ export default function BusinessShowcaseLienoraDetail({
                     return (
                       <a key={action.label} className="dt-secondary-action"
                         href={action.href} target={action.external ? '_blank' : undefined}
-                        rel={action.external ? 'noopener noreferrer' : undefined}>
+                        rel={action.external ? (action.label === text.website ? officialLinkRel : 'noopener noreferrer') : undefined}>
                         <Icon aria-hidden="true" />{action.label}
                       </a>
                     );
@@ -1866,7 +1874,7 @@ export default function BusinessShowcaseLienoraDetail({
                 <Share2 aria-hidden="true" />{text.share}
               </button>
               {websiteUrl && (
-                <a className="dt-secondary-action" href={websiteUrl} target="_blank" rel="noopener noreferrer">
+                <a className="dt-secondary-action" href={websiteUrl} target="_blank" rel={officialLinkRel}>
                   <Globe2 aria-hidden="true" />{text.website}
                 </a>
               )}
