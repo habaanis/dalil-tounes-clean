@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 import { submitEmploymentRequest } from '../../lib/employmentIntake';
 import { useLanguage } from '../../context/LanguageContext';
