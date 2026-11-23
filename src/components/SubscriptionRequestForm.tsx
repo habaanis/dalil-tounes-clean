@@ -1361,7 +1361,7 @@ export function SubscriptionRequestForm({
             <p><strong>{isArabic ? 'السعر' : 'Prix de création'} :</strong> {selectedPlan === 'artisan' ? '30 TND' : '59 TND'}</p>
             <p><strong>Logo :</strong> {form.logoChoice === 'create' ? 'Création de logo Dalil Tounes (+20 TND)' : form.logoChoice === 'existing' ? 'Logo fourni' : 'Aucun logo demandé'}</p>
             <p><strong>Total :</strong> {(selectedPlan === 'artisan' ? 30 : 59) + (form.logoChoice === 'create' ? 20 : 0)} TND</p>
-            {form.logoChoice === 'create' && <p className="text-xs text-[#07543F]">Le logo final vous appartient après règlement et livraison, sous réserve des licences éventuelles d’éléments tiers.</p>
+            {form.logoChoice === 'create' && <p className="text-xs text-[#07543F]">Le logo final vous appartient après règlement et livraison, sous réserve des licences éventuelles d’éléments tiers.</p>}
             <p>{isArabic ? 'السنة الأولى مشمولة، ثم صيانة اختيارية بقيمة 50 د.ت/سنة.' : 'Première année incluse ; entretien facultatif ensuite : 50 TND/an.'}</p>
           </div>
           <div className="rounded-2xl border border-slate-200 bg-white p-4 text-sm leading-7 text-slate-700">
