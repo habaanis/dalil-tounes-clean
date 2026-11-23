@@ -356,6 +356,7 @@ let generated = 0;
 let skipped = 0;
 let withHours = 0;
 let withSocialProfiles = 0;
+let verifiedBacklinks = 0;
 
 for (const business of businesses) {
   const seo = buildSeo(business);
@@ -372,6 +373,8 @@ for (const business of businesses) {
   if (seo.officialWebsite) {
     const websiteLink = `<p data-official-website-link><a href="${htmlEscape(seo.officialWebsite)}">Site officiel de ${htmlEscape(seo.businessName)}</a></p>`;
     pageHtml = pageHtml.replace('<div id="root"></div>', `<div id="root">${websiteLink}</div>`);
+    if (!pageHtml.includes(websiteLink)) throw new Error(`Lien officiel vérifié non injecté pour ${seo.businessName}`);
+    verifiedBacklinks += 1;
   }
   fs.writeFileSync(path.join(dir, 'index.html'), pageHtml);
 
@@ -391,5 +394,5 @@ for (const business of businesses) {
   if (seo.structuredData.sameAs?.some((url) => !url.includes(business.site_web || '__none__'))) withSocialProfiles += 1;
 }
 
-console.log(`SEO fiches entreprises : ${generated} pages HTML générées, ${skipped} ignorées faute de nom/slug exploitable.`);
+console.log(`SEO fiches entreprises : ${generated} pages HTML générées, ${skipped} ignorées faute de nom/slug exploitable, ${verifiedBacklinks} liens officiels vérifiés intégrés au HTML.`);
 console.log(`Données structurées enrichies : ${withHours} fiches avec horaires parsés, ${withSocialProfiles} avec au moins un profil social valide.`);
