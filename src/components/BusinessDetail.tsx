@@ -69,6 +69,7 @@ import { findMetierByValue, findVilleByLabel } from '../lib/seoLandingData';
 import GratuitCard from '../components/GratuitCard';
 import ReservationForm from '../components/ReservationForm';
 import { buildClientAppUrl, isDedicatedClientHostname } from '../lib/clientAppUrl';
+import { isVerifiedOfficialWebsite } from '../lib/officialWebsiteSeo';
 
 function TikTokIcon({ className = 'text-white', size = 10 }: { className?: string; size?: number }) {
   return (
@@ -2201,7 +2202,9 @@ export const BusinessDetail = ({
                 <a
                   href={/^https?:\/\//i.test(business.site_web) ? business.site_web : `https://${business.site_web}`}
                   target="_blank"
-                  rel={tier === 'gratuit' ? 'noopener noreferrer' : 'noopener noreferrer sponsored'}
+                  rel={isVerifiedOfficialWebsite(business.id, business.site_web) || tier === 'gratuit'
+                    ? 'noopener noreferrer'
+                    : 'noopener noreferrer sponsored'}
                   onClick={(e) => e.stopPropagation()}
                   className="inline-flex items-center gap-0.5 text-white px-2 py-0.5 rounded-full font-bold text-[8px] uppercase tracking-wide shadow-lg hover:scale-105 transition-transform flex-shrink-0 cursor-pointer"
                   style={{

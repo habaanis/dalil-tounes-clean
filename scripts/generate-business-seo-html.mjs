@@ -7,6 +7,7 @@ const indexPath = path.join(distDir, 'index.html');
 const supabaseClientPath = path.join(root, 'src', 'lib', 'supabaseClient.ts');
 const ORIGIN = 'https://dalil-tounes.com';
 const DEFAULT_IMAGE = `${ORIGIN}/images/logo_dalil_tounes_crop.png`;
+const verifiedOfficialSites = JSON.parse(fs.readFileSync(path.join(root, 'src', 'data', 'verified-official-websites.json'), 'utf8'));
 
 if (!fs.existsSync(indexPath)) {
   throw new Error('dist/index.html introuvable. Exécutez Vite avant ce script.');
@@ -95,6 +96,16 @@ function validHttpUrl(value) {
   } catch {
     return '';
   }
+}
+
+function verifiedOfficialWebsite(business) {
+  const expectedHost = verifiedOfficialSites[String(business.id || '')];
+  const urlValue = validHttpUrl(business.site_web);
+  if (!expectedHost || !urlValue) return '';
+  try {
+    const host = new URL(urlValue).hostname.toLowerCase().replace(/^www\./, '');
+    return host === expectedHost ? urlValue : '';
+  } catch { return ''; }
 }
 
 function socialProfileUrl(value, platform) {
@@ -203,7 +214,7 @@ async function fetchBusinesses() {
     const endpoint = new URL(`${url.replace(/\/$/, '')}/rest/v1/entreprise`);
     endpoint.searchParams.set(
       'select',
-      'slug,nom,ville,categorie,sous_categories_texte,description,logo_url,image_url,telephone,adresse,site_web,email,horaires_ok,"lien facebook","Lien Instagram","Lien TikTok","Lien LinkedIn","Lien YouTube"'
+      'id,slug,nom,ville,categorie,sous_categories_texte,description,logo_url,image_url,telephone,adresse,site_web,email,horaires_ok,"lien facebook","Lien Instagram","Lien TikTok","Lien LinkedIn","Lien YouTube"'
     );
     endpoint.searchParams.set('approved', 'eq.true');
     endpoint.searchParams.set('statut_publication', 'eq.Publié');
@@ -324,7 +335,7 @@ function buildSeo(business) {
     ...(openingHoursSpecification.length > 0 ? { openingHoursSpecification } : {}),
   };
 
-  return { route, title, description, canonical, image, structuredData };
+  return { route, title, description, canonical, image, structuredData, officialWebsite: verifiedOfficialWebsite(business), businessName: name };
 }
 
 function buildShareHtml(seo, shareUrl) {
@@ -345,6 +356,7 @@ let generated = 0;
 let skipped = 0;
 let withHours = 0;
 let withSocialProfiles = 0;
+let verifiedBacklinks = 0;
 
 for (const business of businesses) {
   const seo = buildSeo(business);
@@ -355,7 +367,16 @@ for (const business of businesses) {
   const cleanRoute = seo.route.replace(/^\/+|\/+$/g, '');
   const dir = path.join(distDir, ...cleanRoute.split('/'));
   fs.mkdirSync(dir, { recursive: true });
-  fs.writeFileSync(path.join(dir, 'index.html'), replaceMeta(baseHtml, seo));
+  // Preserve a real crawlable anchor in the initial HTML, before React mounts.
+  // This editorial link is never sold and only exists for the reviewed official domain.
+  let pageHtml = replaceMeta(baseHtml, seo);
+  if (seo.officialWebsite) {
+    const websiteLink = `<p data-official-website-link><a href="${htmlEscape(seo.officialWebsite)}">Site officiel de ${htmlEscape(seo.businessName)}</a></p>`;
+    pageHtml = pageHtml.replace('<div id="root"></div>', `<div id="root">${websiteLink}</div>`);
+    if (!pageHtml.includes(websiteLink)) throw new Error(`Lien officiel vérifié non injecté pour ${seo.businessName}`);
+    verifiedBacklinks += 1;
+  }
+  fs.writeFileSync(path.join(dir, 'index.html'), pageHtml);
 
   // Fresh, stable share URL for rich-link clients (Apple Mail, WhatsApp, etc.).
   // It exposes the same company-specific metadata, then redirects humans to the canonical profile.
@@ -373,5 +394,5 @@ for (const business of businesses) {
   if (seo.structuredData.sameAs?.some((url) => !url.includes(business.site_web || '__none__'))) withSocialProfiles += 1;
 }
 
-console.log(`SEO fiches entreprises : ${generated} pages HTML générées, ${skipped} ignorées faute de nom/slug exploitable.`);
+console.log(`SEO fiches entreprises : ${generated} pages HTML générées, ${skipped} ignorées faute de nom/slug exploitable, ${verifiedBacklinks} liens officiels vérifiés intégrés au HTML.`);
 console.log(`Données structurées enrichies : ${withHours} fiches avec horaires parsés, ${withSocialProfiles} avec au moins un profil social valide.`);
