@@ -14,6 +14,9 @@ type SearchableBusiness = Record<string, unknown>;
 
 const EQUIVALENTS: readonly (readonly string[])[] = [
   ['coiffeur', 'coiffeuse', 'coiffure', 'salon de coiffure', 'hairdresser', 'barbier', 'barber'],
+  ['garage', 'garage automobile', 'garage mécanique', 'garage mecanique', 'atelier automobile', 'réparation automobile', 'reparation automobile', 'mécanique automobile'],
+  ['hôpital', 'hopital', 'hospitals', 'hospital', 'hôpitaux', 'hopitaux', 'hôpital public'],
+  ['crèche', 'creche', 'garderie', 'jardin d enfants', 'jardin d’enfants', 'nursery'],
   ['lycee', 'lycée', 'lycees', 'lycées', 'enseignement secondaire', 'high school'],
   ['ecole', 'école', 'ecoles', 'écoles', 'school', 'primaire', 'enseignement primaire'],
   ['laboratoire', 'laboratoires', 'laboratory', 'laboratories', 'labo', "laboratoire d'analyses", 'analyses medicales'],
@@ -113,13 +116,13 @@ export function businessRelevance(row: SearchableBusiness, query: string): {
     return terms.some(term => textHas(text, term));
   };
 
-  const name = match(row.nom ?? row.name);
-  const subtype = match([row.sous_categories_texte, row.sous_categories_clean, row.sous_categories, row.categorie]);
-  const services = match(row.services);
+  const name = match([row.nom, row.name, row.name_ar]);
+  const subtype = match([row.sous_categories_texte, row.sous_categories_clean, row.sous_categories, row.categorie, row.categorie_ar]);
+  const services = match([row.services, row.services_ar]);
   const keywords = match([row.keywords_fr, row['mots cles recherche'], row.search_text]);
   const description = match([row.description, row.description_ar]);
   const geographical = match([row.ville, row.gouvernorat]);
-  const directName = containsTerm(normalizeBusinessSearch(row.nom ?? row.name), normalizedQuery);
+  const directName = containsTerm(normalizeBusinessSearch(row.nom ?? row.name ?? row.name_ar), normalizedQuery);
   const strongMatch = name || subtype || services;
 
   let score = 0;
@@ -134,9 +137,9 @@ export function businessRelevance(row: SearchableBusiness, query: string): {
   // Every meaningful term must match somewhere, including multiword searches
   // such as "dentiste Tunis" and "coiffeur femme".
   const combinedText = normalizeBusinessSearch(asText([
-    row.nom, row.name, row.categorie, row.sous_categories_texte,
-    row.sous_categories_clean, row.services, row.keywords_fr,
-    row['mots cles recherche'], row.search_text, row.description,
+    row.nom, row.name, row.name_ar, row.categorie, row.categorie_ar, row.sous_categories_texte,
+    row.sous_categories_clean, row.services, row.services_ar, row.keywords_fr,
+    row['mots cles recherche'], row.search_text, row.description, row.description_ar,
     row.ville, row.gouvernorat,
   ]));
   const allConceptsMatch = tokens.every((token, i) => {
@@ -145,7 +148,9 @@ export function businessRelevance(row: SearchableBusiness, query: string): {
   });
   // Contaminated keywords/prose alone must not make unrelated businesses
   // appear in a profession-specific search.
-  const matched = allConceptsMatch && (specificIntent ? strongMatch || (keywords && subtype) : score > 0);
+  // Descriptions matter for businesses with opaque names. However they are
+  // secondary to a matching professional activity when such matches exist.
+  const matched = allConceptsMatch && score > 0;
   return { score, strongMatch, matched, specificIntent };
 }
 
@@ -155,9 +160,10 @@ export function businessRelevance(row: SearchableBusiness, query: string): {
  */
 export function rankBusinessSearchRows<T extends SearchableBusiness>(rows: T[], query: string): Array<T & { _searchRelevance: number }> {
   const rated = rows.map(row => ({ row, ...businessRelevance(row, query) }));
-  const candidates = rated.some(entry => entry.specificIntent && entry.strongMatch)
-    ? rated.filter(entry => !entry.specificIntent || entry.matched)
-    : rated.filter(entry => entry.matched);
+  const hasClassifiedProfession = rated.some(entry => entry.specificIntent && entry.strongMatch && entry.matched);
+  const candidates = rated.filter(entry =>
+    entry.matched && (!hasClassifiedProfession || !entry.specificIntent || entry.strongMatch)
+  );
   return candidates
     .sort((a, b) => b.score - a.score)
     .map(({ row, score }) => ({ ...row, _searchRelevance: score }));
