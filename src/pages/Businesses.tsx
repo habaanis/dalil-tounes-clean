@@ -20,6 +20,7 @@ import { Search, MapPin, Phone, Mail, Building2, X, Award, ArrowRight, ShieldChe
 import { Toast } from '../components/Toast';
 import BusinessNeedForm from '../components/BusinessNeedForm';
 import { normalizeText, removeArabicDiacritics, extractFrenchName, cleanSearchTerm, cleanArabicField } from '../lib/textNormalization';
+import { getSearchVariants } from '../lib/searchVariants';
 import { BusinessCardWithActivity, type BusinessActivity } from '../components/BusinessCardWithActivity';
 import { BusinessCardPreview, type BusinessCardPreviewLanguage } from '../components/BusinessCardPreview';
 import { CvBusinessSharingInfo } from '../components/CvBusinessSharingInfo';
@@ -1060,21 +1061,25 @@ export const Businesses = ({
         // Pour l'arabe : ne pas normaliser (removeArabicDiacritics altère les caractères)
         // Pour le latin : nettoyer seulement les guillemets parasites
         const cleaned = cleanSearchTerm(searchTerm);
+        const variants = getSearchVariants(cleaned);
         const searchPattern = `%${cleaned}%`;
-        console.log(`[DEBUG] Filtre Recherche: "${searchTerm}" → nettoyé: "${cleaned}" (pattern: ${searchPattern})`);
+        console.log(`[DEBUG] Filtre Recherche: "${searchTerm}" → variantes: ${variants.join(', ')}`);
         // Colonnes avec espaces ou accents passées via .filter() séparés pour éviter
         // les bugs de parsing de la syntaxe .or() string avec noms de colonnes complexes
         query = query.or(
-          [
-            `nom.ilike.${searchPattern}`,
-            `name_ar.ilike.${searchPattern}`,
-            `description.ilike.${searchPattern}`,
-            `description_ar.ilike.${searchPattern}`,
-            `ville.ilike.${searchPattern}`,
-            `gouvernorat.ilike.${searchPattern}`,
-            `sous_categories_texte.ilike.${searchPattern}`,
-            `sous_categories_clean.ilike.${searchPattern}`,
-          ].join(',')
+          variants.flatMap(term => {
+            const pattern = `%${term.replace(/[%_]/g, '')}%`;
+            return [
+              `nom.ilike.${pattern}`,
+              `name_ar.ilike.${pattern}`,
+              `description.ilike.${pattern}`,
+              `description_ar.ilike.${pattern}`,
+              `ville.ilike.${pattern}`,
+              `gouvernorat.ilike.${pattern}`,
+              `sous_categories_texte.ilike.${pattern}`,
+              `sous_categories_clean.ilike.${pattern}`,
+            ];
+          }).join(',')
         );
       }
 
