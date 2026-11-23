@@ -1,6 +1,16 @@
 {
   "rewrites": [
     {
+      "source": "/sitemap.xml",
+      "has": [{ "type": "host", "value": "app.dalil-tounes.com" }],
+      "destination": "/sitemap-client.xml"
+    },
+    {
+      "source": "/robots.txt",
+      "has": [{ "type": "host", "value": "app.dalil-tounes.com" }],
+      "destination": "/robots-client.txt"
+    },
+    {
       "source": "/apercu-ouverture-prestige",
       "destination": "/index.html"
     },
