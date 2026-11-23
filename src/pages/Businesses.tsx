@@ -21,6 +21,7 @@ import { Toast } from '../components/Toast';
 import BusinessNeedForm from '../components/BusinessNeedForm';
 import { normalizeText, removeArabicDiacritics, extractFrenchName, cleanSearchTerm, cleanArabicField } from '../lib/textNormalization';
 import { getSearchVariants } from '../lib/searchVariants';
+import { rankBusinessSearchRows } from '../lib/businessSearchRelevance';
 import { findSearchCorrection, isArabicSearch, isNewSearchSuggestion, type SearchCorrection } from '../lib/searchCorrection';
 import { BusinessCardWithActivity, type BusinessActivity } from '../components/BusinessCardWithActivity';
 import { BusinessCardPreview, type BusinessCardPreviewLanguage } from '../components/BusinessCardPreview';
@@ -1002,7 +1003,14 @@ export const Businesses = ({
         name_ru: item.name_ru || null,
       }));
 
-      mappedData.sort(inPlatformApp ? compareAppBusinesses : compareBusinessesByTrust);
+      if (inPlatformApp && searchTerm && !selectedBusinessId) {
+        const relevance = new Map(rankedRows.map((row: any) => [row.id, Number(row._searchRelevance || 0)]));
+        mappedData.sort((a, b) =>
+          (relevance.get(b.id) || 0) - (relevance.get(a.id) || 0) || compareAppBusinesses(a, b)
+        );
+      } else {
+        mappedData.sort(inPlatformApp ? compareAppBusinesses : compareBusinessesByTrust);
+      }
 
       console.log(`[DEBUG] ✅ Mapping terminé: ${mappedData.length} entreprises`);
       console.log('═══════════════════════════════════════\n');
@@ -1022,6 +1030,7 @@ export const Businesses = ({
 
   const performSearch = async () => {
     const requestId = ++directoryRequestRef.current;
+    let relevanceSearchQuery = searchTerm;
     setSearchSuggestion(null);
     console.log('═══════════════════════════════════════');
     console.log('🔍 [DEBUG performSearch] Démarrage...');
@@ -1090,6 +1099,7 @@ export const Businesses = ({
               if (requestId !== directoryRequestRef.current) return;
               if (correction) {
                 if (isNewSearchSuggestion(searchTerm, correction)) setSearchSuggestion(correction);
+                if (correction.searchQuery) relevanceSearchQuery = correction.searchQuery;
                 if (correction.searchQuery && correction.searchQuery.toLowerCase() !== searchTerm.trim().toLowerCase()) {
                   const alternate = await supabase.rpc('search_entreprise_smart', {
                     p_q: correction.searchQuery,
@@ -1207,7 +1217,19 @@ export const Businesses = ({
       const shopRows = shopFilter
         ? (data || []).filter((row: any) => matchesShopFilter(row, shopFilter))
         : (data || []);
-      let mappedData = dedupeByAirtableId(shopRows as { id: string; id_airtable?: string | null }[]).map((item: any) => ({
+      const uniqueRows = dedupeByAirtableId(shopRows as { id: string; id_airtable?: string | null }[]);
+      const exactRows = inPlatformApp && searchTerm && !selectedBusinessId
+        ? rankBusinessSearchRows(uniqueRows as Record<string, unknown>[], searchTerm)
+        : [];
+      const correctedRows = inPlatformApp && searchTerm && !selectedBusinessId && relevanceSearchQuery !== searchTerm
+        ? rankBusinessSearchRows(uniqueRows as Record<string, unknown>[], relevanceSearchQuery)
+        : [];
+      const rankedRows = inPlatformApp && searchTerm && !selectedBusinessId
+        ? (exactRows.length && !isArabicSearch(searchTerm) ? exactRows :
+            [...exactRows, ...correctedRows].filter((row, index, rows) =>
+              rows.findIndex(other => other.id === row.id) === index))
+        : uniqueRows;
+      let mappedData = rankedRows.map((item: any) => ({
         id: item.id,
         shopFilterId: shopFilter || undefined,
         name: extractFrenchName(item.nom),
