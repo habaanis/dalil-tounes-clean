@@ -893,6 +893,15 @@ export function SubscriptionRequestForm({
       consent: form.consent,
     };
 
+    // The currently deployed intake function limits the free-text payload to 1,500 characters.
+    // Fail explicitly rather than silently losing CV details during the transition.
+    if (request.message.length > 1500) {
+      setErrorMessage('Votre dossier contient trop d’informations pour le système actuel (1 500 caractères). Réduisez les notes ou les listes de produits avant l’envoi ; l’envoi complet sera disponible après adaptation du service de réception.');
+      submittingRef.current = false;
+      setSubmitting(false);
+      return;
+    }
+
     try {
       const response = await submitBusinessRegistration(request);
       if (!response.duplicate) {
