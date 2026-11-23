@@ -542,6 +542,14 @@ export default function SearchBar({
       goTo(`/recherche?${params.toString()}`);
       return;
     }
+    if (isPlatformAppMode()) {
+      const params = new URLSearchParams();
+      if (query) params.set('q', query);
+      if (city.trim()) params.set('ville', city.trim());
+      if (certFilter) params.set('statut_carte', certFilter);
+      goTo(`/recherche?${params.toString()}`);
+      return;
+    }
     const url = buildEntrepriseUrl({
       q: item ? getResultLabel(item) : q.trim() || undefined,
       ville: city.trim() || undefined,
@@ -644,10 +652,11 @@ export default function SearchBar({
   };
 
   const renderSeeAll = () => {
-    if (!showSeeAllItem) return null;
+    if (!showSeeAllItem || q.trim().length < 2) return null;
 
-    if (resultMode === 'redirectToResults' && q.trim().length >= 2) {
-      const categoryLabel: string | null = null;
+    // BrowserRouter in the installed PWA: never generate legacy #/ paths or
+    // add an inferred category that narrows an ordinary profession search.
+    if (isPlatformAppMode()) {
       return (
         <li
           className="py-2.5 px-2 font-medium cursor-pointer hover:bg-gray-50 rounded transition text-gray-700 flex items-center gap-2"
@@ -655,66 +664,31 @@ export default function SearchBar({
           onClick={() => goToResults()}
         >
           <span>➡️</span>
-          <span>{categoryLabel ? (language === 'fr' ? `Voir dans ${categoryLabel}` : language === 'ar' ? `عرض في ${categoryLabel}` : language === 'en' ? `See in ${categoryLabel}` : t(language as Lang, 'search.seeAll')) : t(language as Lang, 'search.seeAll')}</span>
-        </li>
-      );
-    }
-
-    if (isGlobal && q.trim().length >= 2) {
-      const res = detectIntent(q);
-      if (res.categorie && res.confidence >= 0.75) {
-        const label = getCategoryDisplayName(res.categorie);
-        const url = buildEntrepriseUrl({
-          q: q.trim(),
-          ville: city.trim() || undefined,
-          categorie: res.categorie
-        });
-        return (
-          <li
-            className="py-2.5 px-2 font-medium cursor-pointer hover:bg-blue-50 rounded transition text-blue-700 flex items-center gap-2"
-            onClick={() => goTo(url)}
-          >
-            <span>➡️</span>
-            <span>{language === 'fr' ? `Voir tout dans ${label}` : language === 'ar' ? `عرض الكل في ${label}` : language === 'en' ? `See all in ${label}` : language === 'it' ? `Vedi tutto in ${label}` : `Все в ${label}`}</span>
-          </li>
-        );
-      }
-
-      if (q.trim().length >= 2) {
-        const url = buildEntrepriseUrl({
-          q: q.trim(),
-          ville: city.trim() || undefined
-        });
-        return (
-          <li
-            className="py-2.5 px-2 font-medium cursor-pointer hover:bg-gray-50 rounded transition text-gray-700 flex items-center gap-2"
-            onMouseDown={(e) => e.preventDefault()}
-            onClick={() => goTo(url)}
-          >
-            <span>➡️</span>
-            <span>{t(language as Lang, 'search.seeAll')}</span>
-          </li>
-        );
-      }
-    }
-
-    if (!isGlobal && q.trim().length >= 2) {
-      const params = new URLSearchParams();
-      if (q.trim()) params.set('q', q.trim());
-      if (city.trim()) params.set('ville', city.trim());
-      if (appPageScope) params.set('scope', appPageScope);
-      return (
-        <li
-          className="py-2.5 px-2 font-medium cursor-pointer hover:bg-orange-50 rounded transition text-orange-700 flex items-center gap-2"
-          onClick={() => goTo(`/recherche?${params.toString()}`)}
-        >
-          <span>➡️</span>
           <span>{t(language as Lang, 'search.seeAll')}</span>
         </li>
       );
     }
 
-    return null;
+    if (resultMode === 'redirectToResults') {
+      return (
+        <li className="py-2.5 px-2 font-medium cursor-pointer hover:bg-gray-50 rounded transition text-gray-700 flex items-center gap-2"
+          onMouseDown={(e) => e.preventDefault()} onClick={() => goToResults()}>
+          <span>➡️</span><span>{t(language as Lang, 'search.seeAll')}</span>
+        </li>
+      );
+    }
+
+    const params = new URLSearchParams();
+    params.set('q', q.trim());
+    if (city.trim()) params.set('ville', city.trim());
+    if (appPageScope) params.set('scope', appPageScope);
+    return (
+      <li className="py-2.5 px-2 font-medium cursor-pointer hover:bg-gray-50 rounded transition text-gray-700 flex items-center gap-2"
+        onMouseDown={(e) => e.preventDefault()}
+        onClick={() => goTo(`/recherche?${params.toString()}`)}>
+        <span>➡️</span><span>{t(language as Lang, 'search.seeAll')}</span>
+      </li>
+    );
   };
 
   const hasResults = q.trim().length >= MIN_CHARS && (ent.length > 0 || !loadingEnt || showSeeAllItem);
