@@ -60,6 +60,14 @@ Deno.serve(async request => {
       .select('id').eq('id', id).maybeSingle();
     if (existingError) return json({ success: false, error: 'Database lookup failed' }, 500, headers);
     if (!existing) {
+      const contact = [phone, email].filter(Boolean).join(' - ');
+      const recent = await admin.from('suggestions_entreprises')
+        .select('id')
+        .eq('contact_suggere', contact)
+        .gte('created_at', new Date(Date.now() - 10 * 60_000).toISOString())
+        .limit(4);
+      if (recent.error) return json({ success: false, error: 'Rate limit lookup failed' }, 500, headers);
+      if ((recent.data?.length || 0) >= 3) return json({ success: false, error: 'Too many submissions' }, 429, headers);
       const label = labelByMode[mode];
       const row = {
         id,
