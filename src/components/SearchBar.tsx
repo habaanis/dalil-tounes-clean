@@ -20,6 +20,7 @@ import { buildEntrepriseUrl } from '../lib/url';
 import { useLanguage } from '../context/LanguageContext';
 import { t, isRTL, type Lang } from '../lib/i18n';
 import { normalizeText } from '../lib/textNormalization';
+import { findSearchCorrection, isArabicSearch, isNewSearchSuggestion, type SearchCorrection } from '../lib/searchCorrection';
 import { dedupeByAirtableId } from '../lib/dedupeByAirtableId';
 import LocationSelectTunisie from './LocationSelectTunisie';
 
@@ -119,6 +120,7 @@ export default function SearchBar({
   const certFilter = certSelection.value;
   const setCertFilter = (value: CertFilter) => setCertSelection({ applied: appliedCertificationFilter, value });
   const [ent, setEnt] = React.useState<ResultItem[]>([]);
+  const [suggested, setSuggested] = React.useState<SearchCorrection | null>(null);
   const [villes, setVilles] = React.useState<VilleItem[]>([]);
   const [loadingEnt, setLoadingEnt] = React.useState(false);
   const [loadingVille, setLoadingVille] = React.useState(false);
@@ -170,6 +172,7 @@ export default function SearchBar({
   const runSearch = React.useCallback(async (qValue: string, cityValue: string, cert: CertFilter) => {
     const requestId = ++searchSequence.current;
     const trimmedValue = qValue.trim();
+    setSuggested(null);
 
     if (trimmedValue.length < MIN_CHARS) {
       setEnt([]);
@@ -178,7 +181,7 @@ export default function SearchBar({
     }
 
     const cacheKey = `${normalizeText(trimmedValue)}-${cityValue}-${scope}-${cert}`;
-    if (cache.current.has(cacheKey)) {
+    if (false && cache.current.has(cacheKey)) {
       setEnt(cache.current.get(cacheKey)!);
       setLoadingEnt(false);
       return;
@@ -207,7 +210,19 @@ export default function SearchBar({
         if (resp.error) throw resp.error;
         allResults = resp.data || [];
       } else {
+        // The site's original profession search remains first; a typo or Arabic
+        // term may also use the existing Airtable-backed bilingual suggestion.
+        const suggestion = await findSearchCorrection(supabase, trimmedValue);
+        if (requestId !== searchSequence.current) return;
+        if (suggestion && isNewSearchSuggestion(trimmedValue, suggestion)) setSuggested(suggestion);
+        const alternateTerm = suggestion && suggestion.searchQuery.toLowerCase() !== trimmedValue.toLowerCase()
+          ? suggestion.searchQuery : null;
         const words = businessQueryTerms(trimmedValue);
+        if (alternateTerm && (isArabicSearch(trimmedValue) || words.length > 0)) {
+          for (const word of businessQueryTerms(alternateTerm)) {
+            if (!words.includes(word)) words.push(word);
+          }
+        }
         if (words.length === 0) {
           setEnt([]);
           setLoadingEnt(false);
@@ -327,6 +342,7 @@ export default function SearchBar({
     setQ(v);
     searchSequence.current += 1;
     setEnt([]);
+    setSuggested(null);
     setLoadingEnt(false);
     setErrEnt(null);
     if (tEnt.current) window.clearTimeout(tEnt.current);
@@ -662,6 +678,23 @@ export default function SearchBar({
           }}
         >
           <ul className="divide-y">
+            {suggested && isNewSearchSuggestion(q, suggested) && (
+              <li className="rounded-lg bg-[#FFF8EA] px-2 py-3 text-sm text-[#173B30]">
+                <button type="button" className="w-full text-left font-medium"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => {
+                    const url = buildEntrepriseUrl({
+                      q: suggested.searchQuery,
+                      ville: city.trim() || undefined,
+                    });
+                    goTo(url);
+                    setSuggested(null);
+                  }}>
+                  {isArabicSearch(q) || language === 'ar' ? 'هل تقصد:' : 'Vouliez-vous dire :'}{' '}
+                  <span className="font-bold underline decoration-[#D4AF37] underline-offset-2">{suggested.suggestion}</span>
+                </button>
+              </li>
+            )}
             {renderSeeAll()}
             {ent.length > 0 ? (
               <>
