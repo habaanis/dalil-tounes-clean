@@ -505,6 +505,16 @@ export const BusinessDetail = ({
             data = slugRow;
           }
 
+          // Dedicated client mini-app links can use slug_court instead of slug.
+          if (!data && isDedicatedClientHostname(window.location.hostname)) {
+            const { data: shortSlugRow } = await supabase
+              .from('entreprise')
+              .select('*')
+              .eq('slug_court', normalized)
+              .maybeSingle();
+            if (shortSlugRow) data = shortSlugRow;
+          }
+
           if (!data && urlVilleSlug) {
             const villeLabel = urlVilleSlug
               .split('-')
