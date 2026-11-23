@@ -244,7 +244,7 @@ export default function SearchBar({
       // Reuse the existing accent-insensitive Supabase search over synced
       // Airtable names, activities, categories, services and keywords.
       // Keep the legacy client query below only as a fallback.
-      if (isPlatformAppMode() && mode === 'entreprises') {
+      if (isPlatformAppMode() && mode === 'entreprises' && scope !== 'education') {
         const { data: suggestions, error: smartError } = await supabase.rpc('search_entreprise_smart', {
           p_q: trimmedValue,
           p_ville: cityValue.trim() || null,
