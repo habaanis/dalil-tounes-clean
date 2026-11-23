@@ -21,6 +21,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { t, isRTL, type Lang } from '../lib/i18n';
 import { normalizeText } from '../lib/textNormalization';
 import { getSearchVariants } from '../lib/searchVariants';
+import { rankBusinessSearchRows } from '../lib/businessSearchRelevance';
 import { findSearchCorrection, isArabicSearch, isNewSearchSuggestion, type SearchCorrection } from '../lib/searchCorrection';
 import { dedupeByAirtableId } from '../lib/dedupeByAirtableId';
 import LocationSelectTunisie from './LocationSelectTunisie';
@@ -258,12 +259,14 @@ export default function SearchBar({
         if (requestId !== searchSequence.current) return;
         if (!smartError) {
           let matches = (suggestions || []).filter((row: any) => Number(row.score) >= 30);
+          let correctedQuery: string | null = null;
           // Only correct a typo when original search is empty; for Arabic,
           // also search the equivalent FR category when available.
           if (matches.length === 0 || isArabicSearch(trimmedValue)) {
             const correction = await findSearchCorrection(supabase, trimmedValue);
             if (requestId !== searchSequence.current) return;
             if (correction) {
+              correctedQuery = correction.searchQuery || null;
               if (isNewSearchSuggestion(trimmedValue, correction)) setSuggested(correction);
               if (correction.searchQuery && correction.searchQuery.toLowerCase() !== trimmedValue.toLowerCase()) {
                 const alternative = await supabase.rpc('search_entreprise_smart', {
@@ -295,15 +298,21 @@ export default function SearchBar({
           }
           const { data: detailed, error: detailError } = await supabase
             .from(Tables.ENTREPRISE)
-            .select('id, id_airtable, nom, ville, gouvernorat, categorie, sous_categories_texte, statut_carte, cv_business_status, cv_business_published_at, "Note Google Globale", "Compteur Avis Google"')
+            .select('id, id_airtable, nom, name_ar, ville, gouvernorat, categorie, sous_categories_texte, sous_categories_clean, description, description_ar, services, statut_carte, cv_business_status, cv_business_published_at, "Note Google Globale", "Compteur Avis Google"')
             .in('id', ids);
           if (requestId !== searchSequence.current) return;
           if (!detailError) {
-            const order = new Map(matches.map((row: any, index: number) => [row.id, index]));
             const unique = dedupeByAirtableId((detailed || []) as { id: string; id_airtable?: string | null }[]);
-            const results = unique
+            const exact = rankBusinessSearchRows(unique as Record<string, unknown>[], trimmedValue);
+            const corrected = correctedQuery && correctedQuery !== trimmedValue
+              ? rankBusinessSearchRows(unique as Record<string, unknown>[], correctedQuery)
+              : [];
+            const relevant = exact.length && !isArabicSearch(trimmedValue) ? exact
+              : [...exact, ...corrected].filter((row, index, rows) =>
+                  rows.findIndex(other => other.id === row.id) === index);
+            const results = relevant
               .filter((row: any) => !cert || (cert === 'certifie' ? isCertifiedBusiness(row) : !isCertifiedBusiness(row)))
-              .sort((x: any, y: any) => Number(order.get(x.id) ?? 999) - Number(order.get(y.id) ?? 999))
+              .sort((x: any, y: any) => Number(y._searchRelevance || 0) - Number(x._searchRelevance || 0))
               .slice(0, 8);
             setEnt(results);
             cache.current.set(cacheKey, results);
