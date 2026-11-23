@@ -114,6 +114,7 @@ interface SubscriptionFormState {
   googleReviewsUrl: string;
   logoUrl: string;
   logoChoice: 'existing' | 'create' | 'none';
+  openingStyle: 'photo' | 'framed';
   photoUrls: string;
   productsDescription: string;
   tiktok: string;
@@ -675,6 +676,7 @@ const INITIAL_STATE: SubscriptionFormState = {
   googleReviewsUrl: '',
   logoUrl: '',
   logoChoice: 'none',
+  openingStyle: 'photo',
   photoUrls: '',
   productsDescription: '',
   tiktok: '',
@@ -883,6 +885,7 @@ export function SubscriptionRequestForm({
           `Google Maps : ${form.googleMapsUrl}`,
           `Lien avis Google : ${form.googleReviewsUrl}`,
           `Logo choisi : ${form.logoChoice === 'create' ? 'Création Dalil Tounes +20 TND — droits sur le logo final transférés après paiement et livraison' : form.logoChoice === 'existing' ? 'Logo fourni par le professionnel' : 'Aucun logo demandé'}`,
+          `Ouverture mini-appli : ${form.openingStyle === 'photo' ? 'A · Photo plein fond' : 'B · Présentation encadrée Prestige'}`,
           `Supplément création logo : ${form.logoChoice === 'create' ? '20 TND' : '0 TND'}`,
           `Montant total demandé : ${(selectedPlan === 'artisan' ? 30 : 59) + (form.logoChoice === 'create' ? 20 : 0)} TND`,
           `Photos : ${form.photoUrls}`,
@@ -1165,39 +1168,31 @@ export function SubscriptionRequestForm({
             </>
           )}
 
-          <ChoiceGroup legend={copy.platformsQuestion}>
-            {PLATFORMS.map((platform) => (
-              <CheckboxChoice
-                key={platform}
-                checked={form.selectedPlatforms.includes(platform)}
-                onChange={() => togglePlatform(platform)}
-                label={copy.platformLabels[platform]}
-              />
-            ))}
-          </ChoiceGroup>
-
-          <details className="group rounded-2xl border border-gray-200 bg-gray-50/70 p-4 open:bg-white">
-            <summary className="cursor-pointer list-none font-semibold text-[#4A1D43] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]">
-              {creationMode ? 'Liens des plateformes cochées ci-dessus — obligatoires' : copy.linksSummary}
-              <span className="ms-2 inline-block text-[#D4AF37] transition group-open:rotate-180" aria-hidden="true">⌄</span>
-            </summary>
-            <p className="mt-2 text-xs text-gray-500">{copy.linksHint}</p>
-            <div className="mt-4 grid gap-4 md:grid-cols-2">
-              {(!creationMode || form.selectedPlatforms.includes('website')) && <FieldLabel label={creationMode ? 'Site Internet *' : copy.website}>
-                <input type="text" name="website" maxLength={300} value={form.website} onChange={setField} className={inputClassName} inputMode="url" dir="ltr" />
-              </FieldLabel>}
-              {(!creationMode || form.selectedPlatforms.includes('whatsapp_business')) && <FieldLabel label={copy.whatsapp}>
-                <input type="tel" name="whatsapp" maxLength={24} value={form.whatsapp} onChange={setField} className={inputClassName} inputMode="tel" dir="ltr" />
-              </FieldLabel>}
-              {(!creationMode || form.selectedPlatforms.includes('facebook')) && <FieldLabel label={creationMode ? 'Facebook *' : copy.facebook}>
-                <input type="text" name="facebook" maxLength={300} value={form.facebook} onChange={setField} className={inputClassName} inputMode="url" dir="ltr" />
-              </FieldLabel>}
-              {(!creationMode || form.selectedPlatforms.includes('instagram')) && <FieldLabel label={creationMode ? 'Instagram *' : copy.instagram}>
-                <input type="text" name="instagram" maxLength={300} value={form.instagram} onChange={setField} className={inputClassName} inputMode="url" dir="ltr" />
-              </FieldLabel>}
-              {creationMode && form.selectedPlatforms.includes('google_business') && <FieldLabel label="Google Maps *"><input type="url" name="googleMapsUrl" value={form.googleMapsUrl} onChange={setField} className={inputClassName} placeholder="https://maps.app.goo.gl/..." /></FieldLabel>}
+          <section className="rounded-2xl border border-[#D4AF37]/40 bg-white p-4 space-y-3" aria-label="Réseaux sociaux et liens">
+            <h4 className="text-base font-semibold text-[#292725]">Réseaux sociaux, site et Google</h4>
+            <p className="text-xs text-slate-600">Sélectionnez vos plateformes et renseignez leurs liens directement ici. Les liens des plateformes cochées sont obligatoires.</p>
+            <ChoiceGroup legend={copy.platformsQuestion}>
+              {PLATFORMS.map((platform) => (
+                <CheckboxChoice
+                  key={platform}
+                  checked={form.selectedPlatforms.includes(platform)}
+                  onChange={() => togglePlatform(platform)}
+                  label={copy.platformLabels[platform]}
+                />
+              ))}
+            </ChoiceGroup>
+            <div className="grid gap-3 md:grid-cols-2">
+              {(!creationMode || form.selectedPlatforms.includes('website')) && <FieldLabel label={creationMode ? 'Site Internet *' : copy.website}><input type="url" name="website" value={form.website} onChange={setField} className={inputClassName} placeholder="https://..." /></FieldLabel>}
+              {(!creationMode || form.selectedPlatforms.includes('facebook')) && <FieldLabel label={creationMode ? 'Facebook *' : copy.facebook}><input type="url" name="facebook" value={form.facebook} onChange={setField} className={inputClassName} placeholder="https://www.facebook.com/..." /></FieldLabel>}
+              {(!creationMode || form.selectedPlatforms.includes('instagram')) && <FieldLabel label={creationMode ? 'Instagram *' : copy.instagram}><input type="url" name="instagram" value={form.instagram} onChange={setField} className={inputClassName} placeholder="https://www.instagram.com/..." /></FieldLabel>}
+              {(!creationMode || form.selectedPlatforms.includes('whatsapp_business')) && <FieldLabel label="Numéro WhatsApp (si différent du téléphone)"><input type="tel" name="whatsapp" value={form.whatsapp} onChange={setField} className={inputClassName} placeholder="+216..." /></FieldLabel>}
+              {creationMode && form.selectedPlatforms.includes('google_business') && <FieldLabel label="Lien Google Maps / Fiche Google *"><input type="url" name="googleMapsUrl" value={form.googleMapsUrl} onChange={setField} className={inputClassName} placeholder="https://maps.app.goo.gl/..." /></FieldLabel>}
+              {creationMode && form.selectedPlatforms.includes('other') && <FieldLabel label="Autre plateforme *"><input type="url" name="otherPlatformUrl" value={form.otherPlatformUrl} onChange={setField} className={inputClassName} placeholder="https://..." /></FieldLabel>}
+              {creationMode && <FieldLabel label="TikTok"><input type="url" name="tiktok" value={form.tiktok} onChange={setField} className={inputClassName} placeholder="https://www.tiktok.com/@..." /></FieldLabel>}
+              {creationMode && <FieldLabel label="YouTube"><input type="url" name="youtube" value={form.youtube} onChange={setField} className={inputClassName} placeholder="https://www.youtube.com/..." /></FieldLabel>}
+              {creationMode && <FieldLabel label="LinkedIn"><input type="url" name="linkedin" value={form.linkedin} onChange={setField} className={inputClassName} placeholder="https://www.linkedin.com/..." /></FieldLabel>}
             </div>
-          </details>
+          </section>
 
           {creationMode && (
             <div className="space-y-4 rounded-2xl border border-[#D4AF37]/40 p-4">
@@ -1208,6 +1203,18 @@ export function SubscriptionRequestForm({
               </div>
               <p className="text-xs text-slate-600">Pour le lien Google exact : ouvrez Google Maps, cherchez votre établissement, cliquez « Partager » puis « Copier le lien ». Collez le lien ci-dessus.</p>
               <FieldLabel label="Horaires d’ouverture"><textarea name="openingHours" value={form.openingHours} onChange={setField} rows={3} className={inputClassName} placeholder="Lundi au vendredi : 9h–18h ; samedi : 9h–13h ; dimanche : fermé" /></FieldLabel>
+              <fieldset className="rounded-xl border border-[#D4AF37]/40 bg-[#FFFDF7] p-3">
+                <legend className="px-1 font-semibold text-[#292725]">Ouverture de votre mini-appli</legend>
+                <p className="mb-2 text-xs text-slate-600">Les présentations A et B déjà utilisées par Dalil Tounes, avec la palette de couleurs choisie plus haut.</p>
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {([['photo', 'A · Photo plein fond'], ['framed', 'B · Présentation Prestige encadrée']] as const).map(([value, label]) => (
+                    <label key={value} className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white px-3 py-3 text-sm">
+                      <input type="radio" name="openingStyle" value={value} checked={form.openingStyle === value} onChange={setField} />
+                      {label}
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
               <details className="rounded-xl border border-slate-200 p-3">
                 <summary className="cursor-pointer font-semibold">Logo, photos, avis et catalogue</summary>
                 <div className="mt-3 space-y-3">
@@ -1232,15 +1239,6 @@ export function SubscriptionRequestForm({
                   <FieldLabel label="Liens des photos (un par ligne)"><textarea name="photoUrls" value={form.photoUrls} onChange={setField} rows={3} className={inputClassName} placeholder="https://.../photo1.jpg" /></FieldLabel>
                   <FieldLabel label="Lien des avis Google"><input type="url" name="googleReviewsUrl" value={form.googleReviewsUrl} onChange={setField} className={inputClassName} placeholder="https://..." /></FieldLabel>
                   <FieldLabel label="Produits, prestations et prix"><textarea name="productsDescription" value={form.productsDescription} onChange={setField} rows={4} className={inputClassName} placeholder="Produit — prix — description" /></FieldLabel>
-                </div>
-              </details>
-              <details className="rounded-xl border border-slate-200 p-3">
-                <summary className="cursor-pointer font-semibold">Réseaux complémentaires</summary>
-                <div className="mt-3 grid gap-3 md:grid-cols-2">
-                  <FieldLabel label="TikTok"><input type="url" name="tiktok" value={form.tiktok} onChange={setField} className={inputClassName} /></FieldLabel>
-                  <FieldLabel label="YouTube"><input type="url" name="youtube" value={form.youtube} onChange={setField} className={inputClassName} /></FieldLabel>
-                  <FieldLabel label="LinkedIn"><input type="url" name="linkedin" value={form.linkedin} onChange={setField} className={inputClassName} /></FieldLabel>
-                  {form.selectedPlatforms.includes('other') && <FieldLabel label="Autre plateforme *"><input type="url" name="otherPlatformUrl" value={form.otherPlatformUrl} onChange={setField} className={inputClassName} /></FieldLabel>}
                 </div>
               </details>
             </div>
@@ -1358,6 +1356,7 @@ export function SubscriptionRequestForm({
             <p><strong>{isArabic ? 'العرض' : 'Formule'} :</strong> {selectedPlanLabel}</p>
             {presentationModelLabel && <p><strong>{isArabic ? 'النموذج' : 'Modèle'} :</strong> {presentationModelLabel}</p>}
             {paletteLabel && <p><strong>{isArabic ? 'الألوان' : 'Palette'} :</strong> {paletteLabel}</p>}
+            <p><strong>Ouverture :</strong> {form.openingStyle === 'photo' ? 'A · Photo plein fond' : 'B · Présentation Prestige'}</p>}
             <p><strong>{isArabic ? 'السعر' : 'Prix de création'} :</strong> {selectedPlan === 'artisan' ? '30 TND' : '59 TND'}</p>
             <p><strong>Logo :</strong> {form.logoChoice === 'create' ? 'Création de logo Dalil Tounes (+20 TND)' : form.logoChoice === 'existing' ? 'Logo fourni' : 'Aucun logo demandé'}</p>
             <p><strong>Total :</strong> {(selectedPlan === 'artisan' ? 30 : 59) + (form.logoChoice === 'create' ? 20 : 0)} TND</p>
