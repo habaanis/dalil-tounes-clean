@@ -21,6 +21,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { t, isRTL, type Lang } from '../lib/i18n';
 import { normalizeText } from '../lib/textNormalization';
 import { getSearchVariants } from '../lib/searchVariants';
+import { findSearchCorrection, isArabicSearch, isNewSearchSuggestion, type SearchCorrection } from '../lib/searchCorrection';
 import { dedupeByAirtableId } from '../lib/dedupeByAirtableId';
 import LocationSelectTunisie from './LocationSelectTunisie';
 
@@ -120,6 +121,7 @@ export default function SearchBar({
   const certFilter = certSelection.value;
   const setCertFilter = (value: CertFilter) => setCertSelection({ applied: appliedCertificationFilter, value });
   const [ent, setEnt] = React.useState<ResultItem[]>([]);
+  const [suggested, setSuggested] = React.useState<SearchCorrection | null>(null);
   const [villes, setVilles] = React.useState<VilleItem[]>([]);
   const [loadingEnt, setLoadingEnt] = React.useState(false);
   const [loadingVille, setLoadingVille] = React.useState(false);
@@ -222,6 +224,7 @@ export default function SearchBar({
   const runSearch = React.useCallback(async (qValue: string, cityValue: string, cert: CertFilter) => {
     const requestId = ++searchSequence.current;
     const trimmedValue = qValue.trim();
+    setSuggested(null);
 
     if (trimmedValue.length < MIN_CHARS) {
       setEnt([]);
@@ -230,7 +233,7 @@ export default function SearchBar({
     }
 
     const cacheKey = `${normalizeText(trimmedValue)}-${cityValue}-${scope}-${cert}`;
-    if (cache.current.has(cacheKey)) {
+    if (!isPlatformAppMode() && cache.current.has(cacheKey)) {
       setEnt(cache.current.get(cacheKey)!);
       setLoadingEnt(false);
       return;
@@ -254,7 +257,35 @@ export default function SearchBar({
         });
         if (requestId !== searchSequence.current) return;
         if (!smartError) {
-          const matches = (suggestions || []).filter((row: any) => Number(row.score) >= 30);
+          let matches = (suggestions || []).filter((row: any) => Number(row.score) >= 30);
+          // Only correct a typo when original search is empty; for Arabic,
+          // also search the equivalent FR category when available.
+          if (matches.length === 0 || isArabicSearch(trimmedValue)) {
+            const correction = await findSearchCorrection(supabase, trimmedValue);
+            if (requestId !== searchSequence.current) return;
+            if (correction) {
+              if (isNewSearchSuggestion(trimmedValue, correction)) setSuggested(correction);
+              if (correction.searchQuery && correction.searchQuery.toLowerCase() !== trimmedValue.toLowerCase()) {
+                const alternative = await supabase.rpc('search_entreprise_smart', {
+                  p_q: correction.searchQuery,
+                  p_ville: cityValue.trim() || null,
+                  p_categorie: null,
+                  p_scope: appPageScope ?? null,
+                  p_limit: 120,
+                });
+                if (requestId !== searchSequence.current) return;
+                if (!alternative.error) {
+                  const known = new Set(matches.map((row: any) => row.id));
+                  for (const row of (alternative.data || [])) {
+                    if (Number(row.score) >= 30 && !known.has(row.id)) {
+                      matches.push(row);
+                      known.add(row.id);
+                    }
+                  }
+                }
+              }
+            }
+          }
           const ids = matches.map((row: any) => row.id);
           if (!ids.length) {
             setEnt([]);
@@ -429,6 +460,7 @@ export default function SearchBar({
     setQ(v);
     searchSequence.current += 1;
     setEnt([]);
+    setSuggested(null);
     setLoadingEnt(false);
     setErrEnt(null);
     if (tEnt.current) window.clearTimeout(tEnt.current);
@@ -743,6 +775,23 @@ export default function SearchBar({
           }}
         >
           <ul className="divide-y">
+            {suggested && isNewSearchSuggestion(q, suggested) && (
+              <li className="rounded-lg bg-[#FFF8EA] px-2 py-3 text-sm text-[#173B30]">
+                <button type="button" className="w-full text-left font-medium rtl:text-right"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => {
+                    const params = new URLSearchParams();
+                    params.set('q', suggested.searchQuery);
+                    if (city.trim()) params.set('ville', city.trim());
+                    if (appPageScope) params.set('scope', appPageScope);
+                    goTo(`/recherche?${params.toString()}`);
+                    setSuggested(null);
+                  }}>
+                  {isArabicSearch(q) || language === 'ar' ? 'هل تقصد:' : 'Vouliez-vous dire :'}{' '}
+                  <span className="font-bold underline decoration-[#D4AF37] underline-offset-2">{suggested.suggestion}</span>
+                </button>
+              </li>
+            )}
             {renderSeeAll()}
             {ent.length > 0 ? (
               <>
