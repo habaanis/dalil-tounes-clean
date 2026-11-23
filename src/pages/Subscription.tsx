@@ -1417,7 +1417,7 @@ export const Subscription = () => {
           <span className="mt-1 block text-xs text-slate-600">{language === 'ar' ? 'جرّب التطبيق' : 'Ouvrir le modèle réel'}</span>
         </a>)}
       </div>
-      <a href="/subscription?app-full=1#offres" className="mt-4 block rounded-xl border border-[#D4AF37] px-4 py-3 text-center text-sm font-semibold text-[#35172F]">
+      <a href="/subscription?app-full=1&app-offers=1" className="mt-4 block rounded-xl border border-[#D4AF37] px-4 py-3 text-center text-sm font-semibold text-[#35172F]">
         {language === 'ar' ? 'الأسعار والعروض' : 'Consulter les offres et tarifs'}
       </a>
     </div>;
