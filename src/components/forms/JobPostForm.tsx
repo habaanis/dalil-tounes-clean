@@ -1,7 +1,6 @@
-import { useState, type FormEvent } from 'react';
+import { useRef, useState, type FormEvent } from 'react';
 import { CheckCircle } from 'lucide-react';
-import { supabase } from '../../lib/supabaseClient';
-import { notifyAdmin } from '../../lib/notifyAdmin';
+import { submitEmploymentRequest } from '../../lib/employmentIntake';
 import { useLanguage } from '../../context/LanguageContext';
 import { useFormTranslation } from '../../hooks/useFormTranslation';
 import { getJobsPageTranslations, type JobRequestMode } from '../../lib/jobsPageTranslations';
@@ -31,6 +30,7 @@ export default function JobPostForm({
   const { language } = useLanguage();
   const copy = getJobsPageTranslations(language);
   const { submission_lang } = useFormTranslation();
+  const requestId = useRef(crypto.randomUUID());
   const [saving, setSaving] = useState(false);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [formData, setFormData] = useState<RequestData>(() => ({ ...EMPTY_FORM, title: initialTitle }));
@@ -65,45 +65,17 @@ export default function JobPostForm({
       return;
     }
 
-    const requestType = isCandidateContact
-      ? 'Demande mise en relation candidat'
-      : isEmployer
-        ? 'Demande publication offre emploi'
-        : 'Candidature emploi';
-    const contact = [phone, email].filter(Boolean).join(' - ');
-
     try {
-      const { error } = await supabase.from('suggestions_entreprises').insert([{
-        nom_entreprise: isCandidateContact
-          ? `Mise en relation : ${title}`
-          : isEmployer
-            ? title
-            : `Candidature : ${title}`,
-        secteur: requestType,
-        ville: null,
-        contact_suggere: contact,
-        raison_suggestion: [requestType, message || 'Aucune présentation complémentaire.'].join('\n\n'),
-        submission_lang,
-      }]);
-
-      if (error) throw error;
-
-      notifyAdmin(
-        isCandidateContact
-          ? 'Nouvelle demande de mise en relation candidat'
-          : isEmployer
-            ? 'Nouvelle demande de publication emploi'
-            : 'Nouvelle candidature emploi',
-        {
-          Poste: title,
-          Telephone: phone || 'Non renseigné',
-          Email: email || 'Non renseigné',
-          Presentation: message || 'Non renseignée',
-          Langue: language,
-          UserId: userId,
-        },
-        '/admin/sourcing',
-      );
+      await submitEmploymentRequest({
+        requestId: requestId.current,
+        mode,
+        title,
+        phone,
+        email,
+        message,
+        language: submission_lang,
+      });
+      requestId.current = crypto.randomUUID();
 
       setFeedback({
         type: 'success',

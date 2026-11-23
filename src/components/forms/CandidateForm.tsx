@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { supabase } from '../../lib/supabaseClient';
-import { notifyAdmin } from '../../lib/notifyAdmin';
+import { submitEmploymentRequest } from '../../lib/employmentIntake';
 import { useLanguage } from '../../context/LanguageContext';
 import { useFormTranslation } from '../../hooks/useFormTranslation';
 import { useRTL } from '../../lib/useRTL';
@@ -127,6 +127,7 @@ export default function CandidateForm({ userId, onSuccess }: CandidateFormProps)
 
   const t = translations[language as keyof typeof translations] || translations.fr;
 
+  const requestId = useRef(crypto.randomUUID());
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -198,12 +199,16 @@ export default function CandidateForm({ userId, onSuccess }: CandidateFormProps)
         return;
       }
 
-      notifyAdmin('Nouvelle demande candidat', {
-        Titre: payload.nom_complet,
-        Telephone: payload.telephone,
-        Email: payload.email,
-        Message: payload.availability,
-      }, '/candidats');
+      await submitEmploymentRequest({
+        requestId: requestId.current,
+        mode: 'candidate-info',
+        title: payload.nom_complet,
+        phone: payload.telephone,
+        email: payload.email,
+        message: payload.availability,
+        language: submission_lang,
+      });
+      requestId.current = crypto.randomUUID();
 
       setMessage({ type: 'success', text: t.success });
 
