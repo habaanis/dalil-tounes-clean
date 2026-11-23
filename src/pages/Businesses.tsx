@@ -1123,9 +1123,16 @@ export const Businesses = ({
       const deduplicatedRows = dedupeByAirtableId((data || []) as { id: string; id_airtable?: string | null }[]);
       // Corrected query terms can be synonyms in another language. Avoid
       // discarding their rows with an unrelated literal-text ranking pass.
-      const relevanceQuery = effectiveSearchQuery;
+      const exactResults = searchTerm && !selectedBusinessId
+        ? rankBusinessSearchRows(deduplicatedRows as Record<string, unknown>[], searchTerm)
+        : [];
+      const correctedResults = searchTerm && !selectedBusinessId && effectiveSearchQuery !== searchTerm
+        ? rankBusinessSearchRows(deduplicatedRows as Record<string, unknown>[], effectiveSearchQuery)
+        : [];
       const relevantRows = searchTerm && !selectedBusinessId
-        ? rankBusinessSearchRows(deduplicatedRows as Record<string, unknown>[], relevanceQuery)
+        ? (exactResults.length && !isArabicSearch(searchTerm) ? exactResults :
+            [...exactResults, ...correctedResults].filter((row, index, rows) =>
+              rows.findIndex(other => other.id === row.id) === index))
         : deduplicatedRows;
       let mappedData = relevantRows.map((item: any) => ({
         id: item.id,
@@ -1182,11 +1189,12 @@ export const Businesses = ({
       if (searchTerm && !selectedBusinessId) {
         const relevance = new Map(relevantRows.map((row: any) => [row.id, Number(row._searchRelevance || 0)]));
         mappedData.sort((a, b) => {
-          // Always show premium CVs before Essential listings, then use relevance.
-          const premium = getPremiumDisplayPriority(b) - getPremiumDisplayPriority(a);
-          if (premium) return premium;
+          // A truly matching profession comes first. Premium presentation
+          // remains a tie-breaker, never a reason to hide relevant Essentials.
           const difference = (relevance.get(b.id) || 0) - (relevance.get(a.id) || 0);
-          return difference || compareBusinessesByTrust(a, b);
+          if (difference) return difference;
+          const premium = getPremiumDisplayPriority(b) - getPremiumDisplayPriority(a);
+          return premium || compareBusinessesByTrust(a, b);
         });
       } else {
         mappedData.sort(compareBusinessesByTrust);
