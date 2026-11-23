@@ -1224,7 +1224,22 @@ export function SubscriptionRequestForm({
               </fieldset>
               <fieldset className="rounded-2xl border border-gray-200 p-4">
                 <legend className="font-semibold">{copy.contactTime} — plusieurs choix possibles</legend>
-                {(['morning','afternoon','evening','anytime'] as const).map(time=><CheckboxChoice key={time} checked={form.preferredContactTimes.includes(time)} label={time==='morning'?copy.morning:time==='afternoon'?copy.afternoon:time==='evening'?copy.anyTime} onChange={() => { setForm(current=>({...current,preferredContactTimes:time==='anytime'?(current.preferredContactTimes.includes(time)?[]:['anytime']):current.preferredContactTimes.includes(time)?current.preferredContactTimes.filter(t=>t!==time):[...current.preferredContactTimes.filter(t=>t!=='anytime'),time]}));setErrorMessage(''); }} />)}
+                {(['morning','afternoon','evening','anytime'] as const).map(time => (
+                  <CheckboxChoice key={time} checked={form.preferredContactTimes.includes(time)}
+                    label={time === 'morning' ? copy.morning : time === 'afternoon' ? copy.afternoon : time === 'evening' ? copy.evening : copy.anyTime}
+                    onChange={() => {
+                      setForm(current => ({
+                        ...current,
+                        preferredContactTimes: time === 'anytime'
+                          ? (current.preferredContactTimes.includes('anytime') ? [] : ['anytime'])
+                          : current.preferredContactTimes.includes(time)
+                            ? current.preferredContactTimes.filter(item => item !== time)
+                            : [...current.preferredContactTimes.filter(item => item !== 'anytime'), time],
+                      }));
+                      setErrorMessage('');
+                    }}
+                  />
+                ))}
               </fieldset>
             </div>
           ) : (
