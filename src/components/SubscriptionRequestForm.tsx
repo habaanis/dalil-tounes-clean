@@ -1172,13 +1172,13 @@ export function SubscriptionRequestForm({
             <div className="mt-4 grid gap-4 md:grid-cols-2">
               {(!creationMode || form.selectedPlatforms.includes('website')) && <FieldLabel label={creationMode ? 'Site Internet *' : copy.website}>
                 <input type="text" name="website" maxLength={300} value={form.website} onChange={setField} className={inputClassName} inputMode="url" dir="ltr" />
-              </FieldLabel>
+              </FieldLabel>}
               {(!creationMode || form.selectedPlatforms.includes('whatsapp_business')) && <FieldLabel label={copy.whatsapp}>
                 <input type="tel" name="whatsapp" maxLength={24} value={form.whatsapp} onChange={setField} className={inputClassName} inputMode="tel" dir="ltr" />
-              </FieldLabel>
+              </FieldLabel>}
               {(!creationMode || form.selectedPlatforms.includes('facebook')) && <FieldLabel label={creationMode ? 'Facebook *' : copy.facebook}>
                 <input type="text" name="facebook" maxLength={300} value={form.facebook} onChange={setField} className={inputClassName} inputMode="url" dir="ltr" />
-              </FieldLabel>
+              </FieldLabel>}
               {(!creationMode || form.selectedPlatforms.includes('instagram')) && <FieldLabel label={creationMode ? 'Instagram *' : copy.instagram}>
                 <input type="text" name="instagram" maxLength={300} value={form.instagram} onChange={setField} className={inputClassName} inputMode="url" dir="ltr" />
               </FieldLabel>}
@@ -1191,7 +1191,7 @@ export function SubscriptionRequestForm({
               <h4 className="font-semibold">Informations du CV professionnel</h4>
               <div className="grid gap-3 md:grid-cols-2">
                 <FieldLabel label="Adresse complète"><input name="address" value={form.address} onChange={setField} maxLength={240} className={inputClassName} placeholder="Rue, numéro et quartier" /></FieldLabel>
-                <FieldLabel label="Lien Google Maps"><input name="googleMapsUrl" type="url" value={form.googleMapsUrl} onChange={setField} className={inputClassName} placeholder="https://maps.app.goo.gl/..." /></FieldLabel>
+                {!form.selectedPlatforms.includes('google_business') && <FieldLabel label="Lien Google Maps (facultatif)"><input name="googleMapsUrl" type="url" value={form.googleMapsUrl} onChange={setField} className={inputClassName} placeholder="https://maps.app.goo.gl/..." /></FieldLabel>}
               </div>
               <p className="text-xs text-slate-600">Pour le lien Google exact : ouvrez Google Maps, cherchez votre établissement, cliquez « Partager » puis « Copier le lien ». Collez le lien ci-dessus.</p>
               <FieldLabel label="Horaires d’ouverture"><textarea name="openingHours" value={form.openingHours} onChange={setField} rows={3} className={inputClassName} placeholder="Lundi au vendredi : 9h–18h ; samedi : 9h–13h ; dimanche : fermé" /></FieldLabel>
