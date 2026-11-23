@@ -59,6 +59,8 @@ export function normalizeLang(value?: string | null): string {
 
 export function normalizeType(value?: string | null): string {
   const raw = (value || '').toLowerCase();
+  if (raw.includes('mise en relation candidat')) return 'Mise en relation';
+  if (raw.includes('publication offre emploi')) return 'Offre emploi';
   if (raw.includes('candidat')) return 'Candidat emploi';
   if (raw.includes('chauffeur')) return 'Chauffeur privé';
   if (raw.includes('professeur')) return 'Professeur privé';
@@ -85,6 +87,7 @@ export function normalizeSource(value?: string | null): string {
   if (raw.includes('home') || raw.includes('accueil')) return 'Home';
   if (raw.includes('footer')) return 'Footer';
   if (raw.includes('subscription') || raw.includes('abonnement')) return 'Subscription';
+  if (raw.includes('emploi')) return 'Emploi';
   if (raw.includes('candidate') || raw.includes('candidat')) return 'Candidate';
   if (raw.includes('health') || raw.includes('sant')) return 'Health';
   if (raw.includes('transport')) return 'Transport';
