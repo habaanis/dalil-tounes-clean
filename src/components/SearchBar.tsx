@@ -604,8 +604,7 @@ export default function SearchBar({
     if (!showSeeAllItem) return null;
 
     if (resultMode === 'redirectToResults' && q.trim().length >= 2) {
-      const intent = null;
-      const categoryLabel = intent?.categorie && intent.shouldRedirect ? getCategoryDisplayName(intent.categorie) : null;
+      const categoryLabel: string | null = null;
       return (
         <li
           className="py-2.5 px-2 font-medium cursor-pointer hover:bg-gray-50 rounded transition text-gray-700 flex items-center gap-2"
