@@ -20,6 +20,7 @@ import { Search, MapPin, Phone, Mail, Building2, X, Award, ArrowRight, ShieldChe
 import { Toast } from '../components/Toast';
 import BusinessNeedForm from '../components/BusinessNeedForm';
 import { normalizeText, removeArabicDiacritics, extractFrenchName, cleanSearchTerm, cleanArabicField } from '../lib/textNormalization';
+import { getSearchVariants } from '../lib/searchVariants';
 import { BusinessCardWithActivity, type BusinessActivity } from '../components/BusinessCardWithActivity';
 import { BusinessCardPreview, type BusinessCardPreviewLanguage } from '../components/BusinessCardPreview';
 import { CvBusinessSharingInfo } from '../components/CvBusinessSharingInfo';
@@ -1057,25 +1058,50 @@ export const Businesses = ({
         console.log(`[DEBUG] Filtre ID entreprise: "${selectedBusinessId}"`);
         query = query.eq('id', selectedBusinessId);
       } else if (searchTerm && cleanSearchTerm(searchTerm).length >= 2) {
-        // Pour l'arabe : ne pas normaliser (removeArabicDiacritics altère les caractères)
-        // Pour le latin : nettoyer seulement les guillemets parasites
-        const cleaned = cleanSearchTerm(searchTerm);
-        const searchPattern = `%${cleaned}%`;
-        console.log(`[DEBUG] Filtre Recherche: "${searchTerm}" → nettoyé: "${cleaned}" (pattern: ${searchPattern})`);
-        // Colonnes avec espaces ou accents passées via .filter() séparés pour éviter
-        // les bugs de parsing de la syntaxe .or() string avec noms de colonnes complexes
-        query = query.or(
-          [
-            `nom.ilike.${searchPattern}`,
-            `name_ar.ilike.${searchPattern}`,
-            `description.ilike.${searchPattern}`,
-            `description_ar.ilike.${searchPattern}`,
-            `ville.ilike.${searchPattern}`,
-            `gouvernorat.ilike.${searchPattern}`,
-            `sous_categories_texte.ilike.${searchPattern}`,
-            `sous_categories_clean.ilike.${searchPattern}`,
-          ].join(',')
-        );
+        // One source of truth: the existing Supabase search built from Airtable
+        // classifications, including text[] categories, services and keywords.
+        // Preserve the original PostgREST query as a fallback for outages.
+        let smartIds: string[] | null = null;
+        if (inPlatformApp) {
+          const smart = await supabase.rpc('search_entreprise_smart', {
+            p_q: cleanSearchTerm(searchTerm),
+            p_ville: null,
+            p_categorie: null,
+            p_scope: null,
+            p_limit: 1200,
+          });
+          if (requestId !== directoryRequestRef.current) return;
+          if (!smart.error) {
+            smartIds = (smart.data || [])
+              .filter((row: any) => Number(row.score) >= 30)
+              .map((row: any) => row.id);
+          } else {
+            console.warn('[Directory] smart search unavailable; using legacy text search', smart.error);
+          }
+        }
+        if (smartIds !== null) {
+          query = smartIds.length
+            ? query.in('id', smartIds)
+            : query.eq('id', '00000000-0000-0000-0000-000000000000');
+        } else {
+          const cleaned = cleanSearchTerm(searchTerm);
+          const variants = getSearchVariants(cleaned);
+          query = query.or(
+            variants.flatMap(term => {
+              const pattern = `%${term.replace(/[%_]/g, '')}%`;
+              return [
+                `nom.ilike.${pattern}`,
+                `name_ar.ilike.${pattern}`,
+                `description.ilike.${pattern}`,
+                `description_ar.ilike.${pattern}`,
+                `ville.ilike.${pattern}`,
+                `gouvernorat.ilike.${pattern}`,
+                `sous_categories_texte.ilike.${pattern}`,
+                `sous_categories_clean.ilike.${pattern}`,
+              ];
+            }).join(',')
+          );
+        }
       }
 
       if (!selectedBusinessId && selectedCity) {

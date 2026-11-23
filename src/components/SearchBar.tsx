@@ -20,6 +20,7 @@ import { buildEntrepriseUrl } from '../lib/url';
 import { useLanguage } from '../context/LanguageContext';
 import { t, isRTL, type Lang } from '../lib/i18n';
 import { normalizeText } from '../lib/textNormalization';
+import { getSearchVariants } from '../lib/searchVariants';
 import { dedupeByAirtableId } from '../lib/dedupeByAirtableId';
 import LocationSelectTunisie from './LocationSelectTunisie';
 
@@ -158,7 +159,7 @@ export default function SearchBar({
   const GLOBAL_RAW_RESULT_LIMIT = 150;
   const CATEGORY_RAW_RESULT_LIMIT = 40;
 
-  const OR_SAFE_FIELDS = ['nom', 'ville', 'gouvernorat', 'description', 'sous_categories_texte'];
+  const OR_SAFE_FIELDS = ['nom', 'ville', 'gouvernorat', 'description', 'sous_categories_texte', 'sous_categories_clean'];
 
   function rowToSearchableText(row: any): string {
     const textFields = [
@@ -240,6 +241,49 @@ export default function SearchBar({
     try {
       let allResults: any[] = [];
 
+      // Reuse the existing accent-insensitive Supabase search over synced
+      // Airtable names, activities, categories, services and keywords.
+      // Keep the legacy client query below only as a fallback.
+      if (isPlatformAppMode() && mode === 'entreprises' && scope !== 'education') {
+        const { data: suggestions, error: smartError } = await supabase.rpc('search_entreprise_smart', {
+          p_q: trimmedValue,
+          p_ville: cityValue.trim() || null,
+          p_categorie: null,
+          p_scope: appPageScope ?? null,
+          p_limit: 120,
+        });
+        if (requestId !== searchSequence.current) return;
+        if (!smartError) {
+          const matches = (suggestions || []).filter((row: any) => Number(row.score) >= 30);
+          const ids = matches.map((row: any) => row.id);
+          if (!ids.length) {
+            setEnt([]);
+            cache.current.set(cacheKey, []);
+            setLoadingEnt(false);
+            return;
+          }
+          const { data: detailed, error: detailError } = await supabase
+            .from(Tables.ENTREPRISE)
+            .select('id, id_airtable, nom, ville, gouvernorat, categorie, sous_categories_texte, statut_carte, cv_business_status, cv_business_published_at, "Note Google Globale", "Compteur Avis Google"')
+            .in('id', ids);
+          if (requestId !== searchSequence.current) return;
+          if (!detailError) {
+            const order = new Map(matches.map((row: any, index: number) => [row.id, index]));
+            const unique = dedupeByAirtableId((detailed || []) as { id: string; id_airtable?: string | null }[]);
+            const results = unique
+              .filter((row: any) => !cert || (cert === 'certifie' ? isCertifiedBusiness(row) : !isCertifiedBusiness(row)))
+              .sort((x: any, y: any) => Number(order.get(x.id) ?? 999) - Number(order.get(y.id) ?? 999))
+              .slice(0, 8);
+            setEnt(results);
+            cache.current.set(cacheKey, results);
+            setLoadingEnt(false);
+            return;
+          }
+          console.warn('[Search] smart detail lookup failed; using legacy fallback', detailError);
+        } else {
+          console.warn('[Search] smart RPC unavailable; using legacy fallback', smartError);
+        }
+      }
       if (scope === 'education') {
         const searchPattern = `%${trimmedValue}%`;
         let query = supabase
@@ -267,9 +311,11 @@ export default function SearchBar({
 
         const orParts: string[] = [];
         for (const word of words) {
-          const escaped = word.replace(/[%_]/g, (c) => `\\${c}`);
-          for (const field of OR_SAFE_FIELDS) {
-            orParts.push(`${field}.ilike.%${escaped}%`);
+          for (const variant of getSearchVariants(word)) {
+            const escaped = variant.replace(/[%_]/g, (c) => `\\\\${c}`);
+            for (const field of OR_SAFE_FIELDS) {
+              orParts.push(`${field}.ilike.%${escaped}%`);
+            }
           }
         }
 
@@ -486,16 +532,7 @@ export default function SearchBar({
       goTo('/citizens/tourism?type=plongee');
       return;
     }
-    if (isGlobal && !item && query) {
-      const intent = detectIntent(query);
-      if (intent.categorie && intent.shouldRedirect) {
-        const params = new URLSearchParams();
-        params.set('q', query);
-        if (city.trim()) params.set('ville', city.trim());
-        goTo(`${getCategoryRoute(intent.categorie)}?${params.toString()}`);
-        return;
-      }
-    }
+    // Keep global "See all" on the complete business directory.
     if (appPageScope) {
       const params = new URLSearchParams();
       if (query) params.set('q', query);
@@ -610,8 +647,7 @@ export default function SearchBar({
     if (!showSeeAllItem) return null;
 
     if (resultMode === 'redirectToResults' && q.trim().length >= 2) {
-      const intent = isGlobal ? detectIntent(q.trim()) : null;
-      const categoryLabel = intent?.categorie && intent.shouldRedirect ? getCategoryDisplayName(intent.categorie) : null;
+      const categoryLabel: string | null = null;
       return (
         <li
           className="py-2.5 px-2 font-medium cursor-pointer hover:bg-gray-50 rounded transition text-gray-700 flex items-center gap-2"
