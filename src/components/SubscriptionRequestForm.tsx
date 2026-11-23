@@ -733,6 +733,9 @@ export function SubscriptionRequestForm({
   const [submitted, setSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [openingCheckout, setOpeningCheckout] = useState(false);
+  // Local selection for the preview only; never claim these files are uploaded.
+  const [selectedLogoFile, setSelectedLogoFile] = useState<File | null>(null);
+  const [selectedPhotoFiles, setSelectedPhotoFiles] = useState<File[]>([]);
 
   useEffect(() => {
     if (!errorMessage && !submitted) return;
@@ -838,6 +841,10 @@ export function SubscriptionRequestForm({
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (step !== (creationMode ? 3 : 2) || submittingRef.current) return;
+    if (creationMode && (selectedLogoFile || selectedPhotoFiles.length)) {
+      setErrorMessage('Les fichiers sélectionnés ne sont pas encore téléversés. Pour éviter de perdre vos photos ou votre logo, l’envoi est bloqué jusqu’au raccordement au stockage sécurisé.');
+      return;
+    }
 
     const validationError = validateStepOne() || validateStepTwo();
     if (validationError) {
@@ -1234,9 +1241,44 @@ export function SubscriptionRequestForm({
                       ))}
                     </div>
                     {form.logoChoice === 'create' && <p className="mt-3 rounded-lg bg-emerald-50 px-3 py-3 text-sm leading-6 text-[#07543F]"><strong>Le logo final sera votre propriété après règlement et livraison.</strong> Vous pourrez le réutiliser librement en dehors de Dalil Tounes. Les éventuels éléments ou polices sous licence tierce restent soumis à leurs conditions d’utilisation. Création simple avec une proposition et deux ajustements inclus.</p>}
-                    {form.logoChoice === 'existing' && <FieldLabel label="Lien du logo existant (facultatif pour le premier envoi)"><input type="url" name="logoUrl" value={form.logoUrl} onChange={setField} className={inputClassName} placeholder="https://..." /></FieldLabel>}
+                    {form.logoChoice === 'existing' && (
+                      <div className="mt-3 space-y-2">
+                        <label className="block text-sm font-medium">Choisir le fichier du logo (PNG, JPG ou WEBP ; 5 Mo max)
+                          <input type="file" accept="image/png,image/jpeg,image/webp" className={inputClassName}
+                            onChange={event => {
+                              const file = event.target.files?.[0] || null;
+                              if (file && (file.size > 5 * 1024 * 1024 || !['image/png','image/jpeg','image/webp'].includes(file.type))) {
+                                setSelectedLogoFile(null);
+                                setErrorMessage('Le logo doit être une image PNG, JPG ou WEBP de 5 Mo maximum.');
+                                return;
+                              }
+                              setErrorMessage('');
+                              setSelectedLogoFile(file);
+                            }}
+                          />
+                        </label>
+                        {selectedLogoFile && <p className="text-xs text-[#07543F]">Sélectionné pour aperçu : {selectedLogoFile.name}</p>}
+                        <FieldLabel label="Ou fournir le lien du logo"><input type="url" name="logoUrl" value={form.logoUrl} onChange={setField} className={inputClassName} placeholder="https://..." /></FieldLabel>
+                      </div>
+                    )}
                   </fieldset>
-                  <FieldLabel label="Liens des photos (un par ligne)"><textarea name="photoUrls" value={form.photoUrls} onChange={setField} rows={3} className={inputClassName} placeholder="https://.../photo1.jpg" /></FieldLabel>
+                  <label className="block text-sm font-medium">Choisir les photos du CV (jusqu’à 10 fichiers, PNG/JPG/WEBP, 5 Mo chacune)
+                    <input type="file" accept="image/png,image/jpeg,image/webp" multiple className={inputClassName}
+                      onChange={event => {
+                        const files = Array.from(event.target.files || []);
+                        if (files.length > 10 || files.some(file => file.size > 5 * 1024 * 1024 || !['image/png','image/jpeg','image/webp'].includes(file.type))) {
+                          setSelectedPhotoFiles([]);
+                          setErrorMessage('Choisissez au maximum 10 images PNG, JPG ou WEBP de 5 Mo chacune.');
+                          return;
+                        }
+                        setSelectedPhotoFiles(files);
+                        setErrorMessage('');
+                      }}
+                    />
+                    {selectedPhotoFiles.length > 0 && <span className="mt-2 block text-xs text-[#07543F]">{selectedPhotoFiles.length} photo(s) sélectionnée(s) : {selectedPhotoFiles.map(file => file.name).join(', ')}</span>}
+                  </label>
+                  <p className="rounded-lg border border-amber-200 bg-amber-50 p-2 text-xs text-amber-900">Sélection locale uniquement dans cette prévisualisation. Ces fichiers ne seront pas enregistrés tant que le téléchargement sécurisé n’est pas raccordé ; l’envoi d’une commande contenant des fichiers est bloqué.</p>
+                  <FieldLabel label="Ou fournir les liens des photos (un par ligne)"><textarea name="photoUrls" value={form.photoUrls} onChange={setField} rows={3} className={inputClassName} placeholder="https://.../photo1.jpg" /></FieldLabel>
                   <FieldLabel label="Lien des avis Google"><input type="url" name="googleReviewsUrl" value={form.googleReviewsUrl} onChange={setField} className={inputClassName} placeholder="https://..." /></FieldLabel>
                   <FieldLabel label="Produits, prestations et prix"><textarea name="productsDescription" value={form.productsDescription} onChange={setField} rows={4} className={inputClassName} placeholder="Produit — prix — description" /></FieldLabel>
                 </div>
@@ -1375,6 +1417,8 @@ export function SubscriptionRequestForm({
             {form.openingHours && <p className="whitespace-pre-wrap"><strong>Horaires :</strong> {form.openingHours}</p>}
             {form.googleMapsUrl && <p className="break-all"><strong>Google Maps :</strong> {form.googleMapsUrl}</p>}
             {form.logoUrl && <p className="break-all"><strong>Logo :</strong> {form.logoUrl}</p>}
+            {selectedLogoFile && <p><strong>Logo sélectionné (non envoyé) :</strong> {selectedLogoFile.name}</p>}
+            {selectedPhotoFiles.length > 0 && <p><strong>Photos sélectionnées (non envoyées) :</strong> {selectedPhotoFiles.map(f=>f.name).join(', ')}</p>}
             {form.photoUrls && <p className="whitespace-pre-wrap"><strong>Photos :</strong> {form.photoUrls}</p>}
             {form.productsDescription && <p className="whitespace-pre-wrap"><strong>Produits :</strong> {form.productsDescription}</p>}
             <p><strong>Contacts :</strong> {form.preferredContactMethods.join(', ')}</p>
