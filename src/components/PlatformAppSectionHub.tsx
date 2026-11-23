@@ -38,7 +38,7 @@ const PRO_LINKS: Entry[] = [
   { id: 'free', icon: '🆓', href: '/inscription-entreprise' },
   { id: 'cv', icon: '📱', href: '/cv-business' },
   { id: 'models', icon: '🎨', href: '/subscription?app-full=1&app-models=1' },
-  { id: 'offers', icon: '💼', href: '/subscription?app-full=1#offres' },
+  { id: 'offers', icon: '💼', href: '/subscription?app-full=1&app-offers=1' },
   { id: 'partners', icon: '🤝', href: '/devenir-partenaire' },
   { id: 'businessPartners', icon: '🔗', href: '/partner-search' },
   { id: 'businessNeeds', icon: '📦', href: '/besoins-professionnels' },

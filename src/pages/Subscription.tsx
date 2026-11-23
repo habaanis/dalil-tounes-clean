@@ -1353,6 +1353,54 @@ export const Subscription = () => {
     openRequest(selectedFormula, `${selectedFormulaLabel} — ${modelLabel} — ${paletteLabel}`, selectedFormula, undefined, modelLabel, paletteLabel);
   };
 
+  // The compact PWA Offers & Pricing destination shows only prices and conditions.
+  // Detailed models, demonstrations and the three-tools journey stay in their own sections.
+  if (new URLSearchParams(window.location.search).get('app-offers') === '1' &&
+      ['appli.dalil-tounes.com', 'dalil-tounes-pwa.vercel.app'].includes(window.location.hostname)) {
+    const prices = offerCopy[language as OfferLanguage] ?? offerCopy.fr;
+    return <main className="mx-auto max-w-xl space-y-4 px-3 py-4" dir={isArabic ? 'rtl' : 'ltr'}>
+      <header className="rounded-2xl border border-[#C9A65D] bg-[#FFF9EF] px-4 py-4 text-center">
+        <h1 className="font-serif text-xl font-semibold text-[#173B30]">{structure.offers}</h1>
+        <p className="mt-2 text-sm leading-6 text-[#605950]">{simpleCopy.productsSubtitle}</p>
+      </header>
+      <section aria-label={structure.offers} className="grid gap-3">
+        {([
+          { id: 'artisan', title: simpleCopy.artisanTitle, price: prices.artisanPrice, intro: simpleCopy.artisanIntro, features: simpleCopy.artisanFeatures },
+          { id: 'premium', title: simpleCopy.premiumTitle, price: prices.premiumPrice, intro: simpleCopy.premiumIntro, features: prices.premiumFeatures },
+        ] as const).map(plan => <article key={plan.id} className="rounded-2xl border border-[#D4AF37]/60 bg-white p-4 shadow-sm">
+          <div className="flex items-start justify-between gap-3">
+            <h2 className="text-lg font-semibold text-[#173B30]">{plan.title}</h2>
+            <strong className="shrink-0 text-xl text-[#815E28]">{plan.price}</strong>
+          </div>
+          <p className="mt-1 text-xs font-medium text-[#7A684B]">{simpleCopy.creationLabel}</p>
+          <p className="mt-2 text-sm leading-6 text-[#544F49]">{plan.intro}</p>
+          <p className="mt-2 text-sm font-semibold text-[#173B30]">{simpleCopy.firstYearIncluded}</p>
+          <details className="mt-3 border-t border-[#E8DCC4] pt-3">
+            <summary className="cursor-pointer text-sm font-medium text-[#815E28]">{mobileCopy.showBenefits}</summary>
+            <ul className="mt-3 list-disc space-y-1 ps-5 text-sm leading-6 text-[#544F49]">
+              {plan.features.map(feature => <li key={feature}>{feature}</li>)}
+            </ul>
+          </details>
+        </article>)}
+      </section>
+      <section className="rounded-2xl border border-[#D4AF37]/60 bg-[#FFFCF7] p-4">
+        <div className="flex items-start justify-between gap-3">
+          <h2 className="text-base font-semibold text-[#173B30]">{simpleCopy.maintenanceTitle}</h2>
+          <strong className="shrink-0 text-lg text-[#815E28]">{simpleCopy.maintenancePrice}</strong>
+        </div>
+        <p className="mt-1 text-sm text-[#605950]">{simpleCopy.maintenanceTiming}</p>
+        <p className="mt-2 text-sm leading-6 text-[#605950]">{simpleCopy.maintenanceIntro}</p>
+        <details className="mt-3 border-t border-[#E8DCC4] pt-3">
+          <summary className="cursor-pointer text-sm font-medium text-[#815E28]">{mobileCopy.showBenefits}</summary>
+          <ul className="mt-3 list-disc space-y-1 ps-5 text-sm leading-6 text-[#544F49]">
+            {simpleCopy.maintenanceFeatures.map(feature => <li key={feature}>{feature}</li>)}
+          </ul>
+          <p className="mt-3 text-xs leading-5 text-[#605950]">{simpleCopy.noRenewal}</p>
+        </details>
+      </section>
+    </main>;
+  }
+
   // PWA only: comparison of the two designs, separate from pricing and checkout.
   if (new URLSearchParams(window.location.search).get('app-models') === '1' && window.location.hostname !== 'dalil-tounes.com' && window.location.hostname !== 'www.dalil-tounes.com') {
     return <div className="premium-page mx-auto max-w-xl px-3 py-4" dir={isArabic ? 'rtl' : 'ltr'}>
