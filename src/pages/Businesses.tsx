@@ -995,6 +995,7 @@ export const Businesses = ({
   };
 
   const performSearch = async () => {
+    let effectiveSearchQuery = searchTerm;
     setSearchSuggestion(null);
     console.log('═══════════════════════════════════════');
     console.log('🔍 [DEBUG performSearch] Démarrage...');
@@ -1044,6 +1045,7 @@ export const Businesses = ({
         if (correction && isNewSearchSuggestion(cleaned, correction)) setSearchSuggestion(correction);
         const terms = businessQueryTerms(cleaned);
         if (hasCorrection && correction) {
+          effectiveSearchQuery = correction.searchQuery;
           for (const word of businessQueryTerms(correction.searchQuery)) {
             if (!terms.includes(word)) terms.push(word);
           }
@@ -1121,7 +1123,7 @@ export const Businesses = ({
       const deduplicatedRows = dedupeByAirtableId((data || []) as { id: string; id_airtable?: string | null }[]);
       // Corrected query terms can be synonyms in another language. Avoid
       // discarding their rows with an unrelated literal-text ranking pass.
-      const relevanceQuery = searchSuggestion?.searchQuery || searchTerm;
+      const relevanceQuery = effectiveSearchQuery;
       const relevantRows = searchTerm && !selectedBusinessId
         ? rankBusinessSearchRows(deduplicatedRows as Record<string, unknown>[], relevanceQuery)
         : deduplicatedRows;
