@@ -2186,17 +2186,11 @@ export const BusinessDetail = ({
                 )}
 
               {business.site_web && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-
-                    window.open(
-                      business.site_web!.startsWith('http')
-                        ? business.site_web!
-                        : `https://${business.site_web}`,
-                      '_blank'
-                    );
-                  }}
+                <a
+                  href={/^https?:\/\//i.test(business.site_web) ? business.site_web : `https://${business.site_web}`}
+                  target="_blank"
+                  rel={tier === 'gratuit' ? 'noopener noreferrer' : 'noopener noreferrer sponsored'}
+                  onClick={(e) => e.stopPropagation()}
                   className="inline-flex items-center gap-0.5 text-white px-2 py-0.5 rounded-full font-bold text-[8px] uppercase tracking-wide shadow-lg hover:scale-105 transition-transform flex-shrink-0 cursor-pointer"
                   style={{
                     backgroundColor: '#1a7f5a',
@@ -2208,7 +2202,7 @@ export const BusinessDetail = ({
                 >
                   <Globe size={9} strokeWidth={3} />
                   <span className="truncate max-w-[80px]">{language === 'fr' ? 'Site web' : language === 'ar' ? 'موقع' : language === 'en' ? 'Website' : language === 'it' ? 'Sito' : 'Сайт'}</span>
-                </button>
+                </a>
               )}
             </div>
 
