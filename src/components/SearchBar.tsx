@@ -293,7 +293,16 @@ export default function SearchBar({
 
         const rawRows = dedupeByAirtableId(searchRows as { id: string; id_airtable?: string | null }[]);
 
-        let scored = rankBusinessSearchRows(rawRows, trimmedValue).map((row: any) => ({
+        // Preserve exact company names. Use the spell-corrected occupation
+        // only as a fallback (or in addition to Arabic search terms).
+        const exactMatches = rankBusinessSearchRows(rawRows, trimmedValue);
+        const correctedMatches = alternateTerm ? rankBusinessSearchRows(rawRows, alternateTerm) : [];
+        const ranked = exactMatches.length && !isArabicSearch(trimmedValue)
+          ? exactMatches
+          : [...exactMatches, ...correctedMatches].filter((row, i, arr) =>
+              arr.findIndex(candidate => candidate.id === row.id) === i
+            );
+        let scored = ranked.map((row: any) => ({
           ...row,
           _score: row._searchRelevance,
           ville: row.ville || row.gouvernorat || '',
