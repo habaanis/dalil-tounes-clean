@@ -172,11 +172,11 @@ const clientXml = [
   '<?xml version="1.0" encoding="UTF-8"?>',
   '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
   ...Array.from(clientCvEntries.entries()).map(([route, lastmod]) =>
-    `  <url>\\n    <loc>${xmlEscape(`${clientAppOrigin}${route}`)}</loc>\\n    <lastmod>${lastmod}</lastmod>\\n  </url>`
+    `  <url>\n    <loc>${xmlEscape(`${clientAppOrigin}${route}`)}</loc>\n    <lastmod>${lastmod}</lastmod>\n  </url>`
   ),
   '</urlset>',
   '',
-].join('\\n');
+].join('\n');
 fs.writeFileSync(path.join(distDir, 'sitemap-client.xml'), clientXml);
 fs.writeFileSync(path.join(distDir, 'robots-client.txt'), [
   'User-agent: *',
@@ -185,7 +185,7 @@ fs.writeFileSync(path.join(distDir, 'robots-client.txt'), [
   'Disallow: /*/connexion',
   'Sitemap: https://app.dalil-tounes.com/sitemap.xml',
   '',
-].join('\\n'));
+].join('\n'));
 console.log(`Sitemap mini-applis : ${clientCvEntries.size} CV professionnels publiés.`);
 fs.rmSync(shortRoutesManifestPath, { force: true });
 console.log(`Sitemap généré : ${entries.size} URLs, dont ${businessCount} entreprises nommées, ${shortRouteCount} routes SEO courtes solides et ${skippedBusinessCount} entreprises incomplètes exclues.`);
