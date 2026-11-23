@@ -1308,7 +1308,7 @@ export const Subscription = () => {
   useEffect(() => {
     const openTargetSection = () => {
       const target = window.location.hash.slice(1);
-      if (target !== 'modeles' && target !== 'offres') return;
+      if (target !== 'modeles' && target !== 'offres' && target !== 'cv-professionnels') return;
       if (target === 'modeles') {
         const models = document.getElementById('modeles');
         if (models instanceof HTMLDetailsElement) models.open = true;
