@@ -108,6 +108,19 @@ interface SubscriptionFormState {
   preferredContactTime: '' | 'morning' | 'afternoon' | 'evening' | 'anytime';
   message: string;
   activityDescription: string;
+  address: string;
+  openingHours: string;
+  googleMapsUrl: string;
+  googleReviewsUrl: string;
+  logoUrl: string;
+  photoUrls: string;
+  productsDescription: string;
+  tiktok: string;
+  youtube: string;
+  linkedin: string;
+  otherPlatformUrl: string;
+  preferredContactMethods: Array<'whatsapp' | 'phone' | 'email'>;
+  preferredContactTimes: Array<'morning' | 'afternoon' | 'evening' | 'anytime'>;
   consent: boolean;
   verificationField: string;
 }
@@ -655,6 +668,19 @@ const INITIAL_STATE: SubscriptionFormState = {
   preferredContactTime: '',
   message: '',
   activityDescription: '',
+  address: '',
+  openingHours: '',
+  googleMapsUrl: '',
+  googleReviewsUrl: '',
+  logoUrl: '',
+  photoUrls: '',
+  productsDescription: '',
+  tiktok: '',
+  youtube: '',
+  linkedin: '',
+  otherPlatformUrl: '',
+  preferredContactMethods: [],
+  preferredContactTimes: [],
   consent: false,
   verificationField: '',
 };
@@ -766,9 +792,27 @@ export function SubscriptionRequestForm({
     ) {
       return copy.requiredPaymentSchedule;
     }
-    if (!form.preferredContactMethod) return copy.requiredContactMethod;
-    if (form.preferredContactMethod === 'email' && !form.email.trim()) return copy.emailNeeded;
-    if (!form.preferredContactTime) return copy.requiredContactTime;
+    if (creationMode) {
+      if (!form.preferredContactMethods.length) return copy.requiredContactMethod;
+      if (form.preferredContactMethods.includes('email') && !form.email.trim()) return copy.emailNeeded;
+      if (!form.preferredContactTimes.length) return copy.requiredContactTime;
+      const chosenLinks: Array<[Platform,string,string]> = [
+        ['facebook',form.facebook,'Facebook'],['instagram',form.instagram,'Instagram'],
+        ['whatsapp_business',form.whatsapp || form.phone,'WhatsApp'],
+        ['google_business',form.googleMapsUrl,'Google Maps'],
+        ['website',form.website,'Site Internet'],['other',form.otherPlatformUrl,'Autre plateforme'],
+      ];
+      for(const [platform,link,label] of chosenLinks) {
+        if(form.selectedPlatforms.includes(platform) && !link.trim()) return `Lien ou numéro obligatoire : ${label}`;
+      }
+      for(const link of [form.googleMapsUrl,form.googleReviewsUrl,form.logoUrl,form.tiktok,form.youtube,form.linkedin,form.otherPlatformUrl,...form.photoUrls.split(/\n/).filter(Boolean)]) {
+        if(link.trim() && !isValidWebAddress(link.trim())) return 'Un lien est invalide. Vérifiez les adresses saisies.';
+      }
+    } else {
+      if (!form.preferredContactMethod) return copy.requiredContactMethod;
+      if (form.preferredContactMethod === 'email' && !form.email.trim()) return copy.emailNeeded;
+      if (!form.preferredContactTime) return copy.requiredContactTime;
+    }
     if (!isValidWebAddress(form.website)) return copy.invalidWebsite;
     if (!isValidWebAddress(form.facebook, 'facebook')) return copy.invalidFacebook;
     if (!isValidWebAddress(form.instagram, 'instagram')) return copy.invalidInstagram;
@@ -823,14 +867,27 @@ export function SubscriptionRequestForm({
       selectedPlatforms: form.selectedPlatforms,
       requestedBillingPeriod: creationMode ? 'one_time' : planKind === 'cv' ? '' : form.requestedBillingPeriod,
       requestedPaymentSchedule: form.requestedPaymentSchedule,
-      preferredContactMethod: form.preferredContactMethod,
-      preferredContactTime: form.preferredContactTime,
+      preferredContactMethod: creationMode ? (form.preferredContactMethods.includes('whatsapp') ? 'whatsapp' : form.preferredContactMethods.includes('phone') ? 'phone' : 'email') : form.preferredContactMethod,
+      preferredContactTime: creationMode ? (form.preferredContactTimes.length > 1 || form.preferredContactTimes.includes('anytime') ? 'anytime' : form.preferredContactTimes[0] || 'anytime') : form.preferredContactTime,
       message: cleanMultiline([
         // Internal admin-only label — not user-visible, intentionally kept in French
         creationMode ? `OFFRE ACTUELLE — paiement unique — ${planKind === 'artisan' ? 'Formule Artisan 30 TND' : 'Formule Premium 59 TND'} — ne pas traiter comme un abonnement mensuel` : '',
         presentationModelLabel ? `Modèle de présentation choisi : ${presentationModelLabel}` : '',
         paletteLabel ? `Palette choisie : ${paletteLabel}` : '',
         form.activityDescription ? `Description de l'activité : ${cleanMultiline(form.activityDescription)}` : '',
+        ...(creationMode ? [
+          `Adresse : ${cleanSingleLine(form.address)}`,
+          `Horaires : ${cleanMultiline(form.openingHours)}`,
+          `Google Maps : ${form.googleMapsUrl}`,
+          `Lien avis Google : ${form.googleReviewsUrl}`,
+          `Logo : ${form.logoUrl}`,
+          `Photos : ${form.photoUrls}`,
+          `Catalogue et produits : ${cleanMultiline(form.productsDescription)}`,
+          `TikTok : ${form.tiktok}`, `YouTube : ${form.youtube}`, `LinkedIn : ${form.linkedin}`,
+          `Autre plateforme : ${form.otherPlatformUrl}`,
+          `Contacts souhaités : ${form.preferredContactMethods.join(', ')}`,
+          `Moments souhaités : ${form.preferredContactTimes.join(', ')}`,
+        ] : []),
         form.message,
       ].filter(Boolean).join('\n')),
       consent: form.consent,
@@ -1033,7 +1090,7 @@ export function SubscriptionRequestForm({
             </FieldLabel>
           </div>
 
-          <FieldLabel label={copy.emailOptional}>
+          <FieldLabel label={creationMode ? 'E-mail (à renseigner si vous choisissez le contact par e-mail)' : copy.emailOptional}>
             <input
               type="email"
               name="email"
@@ -1108,26 +1165,69 @@ export function SubscriptionRequestForm({
 
           <details className="group rounded-2xl border border-gray-200 bg-gray-50/70 p-4 open:bg-white">
             <summary className="cursor-pointer list-none font-semibold text-[#4A1D43] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]">
-              {copy.linksSummary}
+              {creationMode ? 'Liens des plateformes cochées ci-dessus — obligatoires' : copy.linksSummary}
               <span className="ms-2 inline-block text-[#D4AF37] transition group-open:rotate-180" aria-hidden="true">⌄</span>
             </summary>
             <p className="mt-2 text-xs text-gray-500">{copy.linksHint}</p>
             <div className="mt-4 grid gap-4 md:grid-cols-2">
-              <FieldLabel label={copy.website}>
+              {(!creationMode || form.selectedPlatforms.includes('website')) && <FieldLabel label={creationMode ? 'Site Internet *' : copy.website}>
                 <input type="text" name="website" maxLength={300} value={form.website} onChange={setField} className={inputClassName} inputMode="url" dir="ltr" />
               </FieldLabel>
-              <FieldLabel label={copy.whatsapp}>
+              {(!creationMode || form.selectedPlatforms.includes('whatsapp_business')) && <FieldLabel label={copy.whatsapp}>
                 <input type="tel" name="whatsapp" maxLength={24} value={form.whatsapp} onChange={setField} className={inputClassName} inputMode="tel" dir="ltr" />
               </FieldLabel>
-              <FieldLabel label={copy.facebook}>
+              {(!creationMode || form.selectedPlatforms.includes('facebook')) && <FieldLabel label={creationMode ? 'Facebook *' : copy.facebook}>
                 <input type="text" name="facebook" maxLength={300} value={form.facebook} onChange={setField} className={inputClassName} inputMode="url" dir="ltr" />
               </FieldLabel>
-              <FieldLabel label={copy.instagram}>
+              {(!creationMode || form.selectedPlatforms.includes('instagram')) && <FieldLabel label={creationMode ? 'Instagram *' : copy.instagram}>
                 <input type="text" name="instagram" maxLength={300} value={form.instagram} onChange={setField} className={inputClassName} inputMode="url" dir="ltr" />
-              </FieldLabel>
+              </FieldLabel>}
+              {creationMode && form.selectedPlatforms.includes('google_business') && <FieldLabel label="Google Maps *"><input type="url" name="googleMapsUrl" value={form.googleMapsUrl} onChange={setField} className={inputClassName} placeholder="https://maps.app.goo.gl/..." /></FieldLabel>}
             </div>
           </details>
 
+          {creationMode && (
+            <div className="space-y-4 rounded-2xl border border-[#D4AF37]/40 p-4">
+              <h4 className="font-semibold">Informations du CV professionnel</h4>
+              <div className="grid gap-3 md:grid-cols-2">
+                <FieldLabel label="Adresse complète"><input name="address" value={form.address} onChange={setField} maxLength={240} className={inputClassName} placeholder="Rue, numéro et quartier" /></FieldLabel>
+                <FieldLabel label="Lien Google Maps"><input name="googleMapsUrl" type="url" value={form.googleMapsUrl} onChange={setField} className={inputClassName} placeholder="https://maps.app.goo.gl/..." /></FieldLabel>
+              </div>
+              <p className="text-xs text-slate-600">Pour le lien Google exact : ouvrez Google Maps, cherchez votre établissement, cliquez « Partager » puis « Copier le lien ». Collez le lien ci-dessus.</p>
+              <FieldLabel label="Horaires d’ouverture"><textarea name="openingHours" value={form.openingHours} onChange={setField} rows={3} className={inputClassName} placeholder="Lundi au vendredi : 9h–18h ; samedi : 9h–13h ; dimanche : fermé" /></FieldLabel>
+              <details className="rounded-xl border border-slate-200 p-3">
+                <summary className="cursor-pointer font-semibold">Logo, photos, avis et catalogue</summary>
+                <div className="mt-3 space-y-3">
+                  <p className="text-xs text-slate-600">Indiquez ici les liens des fichiers déjà en ligne. Le téléchargement direct de photos et logos sera raccordé au stockage sécurisé ensuite.</p>
+                  <FieldLabel label="Lien du logo"><input type="url" name="logoUrl" value={form.logoUrl} onChange={setField} className={inputClassName} placeholder="https://..." /></FieldLabel>
+                  <FieldLabel label="Liens des photos (un par ligne)"><textarea name="photoUrls" value={form.photoUrls} onChange={setField} rows={3} className={inputClassName} placeholder="https://.../photo1.jpg" /></FieldLabel>
+                  <FieldLabel label="Lien des avis Google"><input type="url" name="googleReviewsUrl" value={form.googleReviewsUrl} onChange={setField} className={inputClassName} placeholder="https://..." /></FieldLabel>
+                  <FieldLabel label="Produits, prestations et prix"><textarea name="productsDescription" value={form.productsDescription} onChange={setField} rows={4} className={inputClassName} placeholder="Produit — prix — description" /></FieldLabel>
+                </div>
+              </details>
+              <details className="rounded-xl border border-slate-200 p-3">
+                <summary className="cursor-pointer font-semibold">Réseaux complémentaires</summary>
+                <div className="mt-3 grid gap-3 md:grid-cols-2">
+                  <FieldLabel label="TikTok"><input type="url" name="tiktok" value={form.tiktok} onChange={setField} className={inputClassName} /></FieldLabel>
+                  <FieldLabel label="YouTube"><input type="url" name="youtube" value={form.youtube} onChange={setField} className={inputClassName} /></FieldLabel>
+                  <FieldLabel label="LinkedIn"><input type="url" name="linkedin" value={form.linkedin} onChange={setField} className={inputClassName} /></FieldLabel>
+                  {form.selectedPlatforms.includes('other') && <FieldLabel label="Autre plateforme *"><input type="url" name="otherPlatformUrl" value={form.otherPlatformUrl} onChange={setField} className={inputClassName} /></FieldLabel>}
+                </div>
+              </details>
+            </div>
+          )}
+          {creationMode ? (
+            <div className="grid gap-4 md:grid-cols-2">
+              <fieldset className="rounded-2xl border border-gray-200 p-4">
+                <legend className="font-semibold">{copy.contactMethod} — plusieurs choix possibles</legend>
+                {(['whatsapp','phone','email'] as const).map(method => <CheckboxChoice key={method} checked={form.preferredContactMethods.includes(method)} label={method==='whatsapp'?copy.contactWhatsApp:method==='phone'?copy.contactPhone:copy.contactEmail} onChange={() => { setForm(current=>({...current,preferredContactMethods:current.preferredContactMethods.includes(method)?current.preferredContactMethods.filter(m=>m!==method):[...current.preferredContactMethods,method]}));setErrorMessage(''); }} />)}
+              </fieldset>
+              <fieldset className="rounded-2xl border border-gray-200 p-4">
+                <legend className="font-semibold">{copy.contactTime} — plusieurs choix possibles</legend>
+                {(['morning','afternoon','evening','anytime'] as const).map(time=><CheckboxChoice key={time} checked={form.preferredContactTimes.includes(time)} label={time==='morning'?copy.morning:time==='afternoon'?copy.afternoon:time==='evening'?copy.anyTime} onChange={() => { setForm(current=>({...current,preferredContactTimes:time==='anytime'?(current.preferredContactTimes.includes(time)?[]:['anytime']):current.preferredContactTimes.includes(time)?current.preferredContactTimes.filter(t=>t!==time):[...current.preferredContactTimes.filter(t=>t!=='anytime'),time]}));setErrorMessage(''); }} />)}
+              </fieldset>
+            </div>
+          ) : (
           <div className="grid gap-5 md:grid-cols-2">
             <ChoiceGroup legend={copy.contactMethod}>
               <RadioChoice name="preferredContactMethod" value="whatsapp" checked={form.preferredContactMethod === 'whatsapp'} onChange={setField} label={copy.contactWhatsApp} />
@@ -1141,11 +1241,15 @@ export function SubscriptionRequestForm({
               <RadioChoice name="preferredContactTime" value="anytime" checked={form.preferredContactTime === 'anytime'} onChange={setField} label={copy.anyTime} />
             </ChoiceGroup>
           </div>
+          )}
 
           {creationMode && (
             <FieldLabel label={isArabic ? 'وصف نشاطك (اختياري)' : 'Description de votre activité (facultatif)'}>
               <textarea name="activityDescription" rows={3} maxLength={1500} value={form.activityDescription} onChange={setField} className={`${inputClassName} resize-y`} disabled={submitting} placeholder={isArabic ? 'ماذا تقدم لعملائك؟' : 'Présentez vos services, spécialités et ce qui vous distingue.'} />
             </FieldLabel>
+          )}
+          {creationMode && (
+            <p className="text-xs font-semibold text-[#07543F]">Réseaux sélectionnés : les liens correspondants doivent être remplis. L’adresse du site ou les autres liens non sélectionnés restent facultatifs.</p>
           )}
           <FieldLabel label={copy.messageOptional}>
             <textarea
@@ -1221,6 +1325,14 @@ export function SubscriptionRequestForm({
             <p><strong>{isArabic ? 'الهاتف' : 'Téléphone'} :</strong> {form.phone}</p>
             {form.email && <p><strong>Email :</strong> {form.email}</p>}
             {form.activityDescription && <p className="whitespace-pre-wrap"><strong>{isArabic ? 'الوصف' : 'Description'} :</strong> {form.activityDescription}</p>}
+            {form.address && <p><strong>Adresse :</strong> {form.address}</p>}
+            {form.openingHours && <p className="whitespace-pre-wrap"><strong>Horaires :</strong> {form.openingHours}</p>}
+            {form.googleMapsUrl && <p className="break-all"><strong>Google Maps :</strong> {form.googleMapsUrl}</p>}
+            {form.logoUrl && <p className="break-all"><strong>Logo :</strong> {form.logoUrl}</p>}
+            {form.photoUrls && <p className="whitespace-pre-wrap"><strong>Photos :</strong> {form.photoUrls}</p>}
+            {form.productsDescription && <p className="whitespace-pre-wrap"><strong>Produits :</strong> {form.productsDescription}</p>}
+            <p><strong>Contacts :</strong> {form.preferredContactMethods.join(', ')}</p>
+            <p><strong>Créneaux :</strong> {form.preferredContactTimes.join(', ')}</p>
             {form.selectedPlatforms.length > 0 && <p><strong>{isArabic ? 'المنصات' : 'Plateformes'} :</strong> {form.selectedPlatforms.map((item) => copy.platformLabels[item]).join(', ')}</p>}
             {[form.website, form.facebook, form.instagram, form.whatsapp].filter(Boolean).length > 0 && <p className="break-words"><strong>{isArabic ? 'الروابط' : 'Liens et WhatsApp'} :</strong> {[form.website, form.facebook, form.instagram, form.whatsapp].filter(Boolean).join(' · ')}</p>}
             {form.message && <p className="whitespace-pre-wrap"><strong>{isArabic ? 'ملاحظات' : 'Précisions'} :</strong> {form.message}</p>}
