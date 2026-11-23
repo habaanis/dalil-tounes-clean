@@ -107,6 +107,7 @@ interface SubscriptionFormState {
   preferredContactMethod: '' | 'whatsapp' | 'phone' | 'email';
   preferredContactTime: '' | 'morning' | 'afternoon' | 'evening' | 'anytime';
   message: string;
+  activityDescription: string;
   consent: boolean;
   verificationField: string;
 }
@@ -653,6 +654,7 @@ const INITIAL_STATE: SubscriptionFormState = {
   preferredContactMethod: '',
   preferredContactTime: '',
   message: '',
+  activityDescription: '',
   consent: false,
   verificationField: '',
 };
@@ -691,7 +693,7 @@ export function SubscriptionRequestForm({
   const requestIdRef = useRef(createRequestId());
   const submittingRef = useRef(false);
   const feedbackRef = useRef<HTMLDivElement>(null);
-  const [step, setStep] = useState<1 | 2>(1);
+  const [step, setStep] = useState<1 | 2 | 3>(1);
   const [form, setForm] = useState<SubscriptionFormState>(() => ({
     ...INITIAL_STATE,
     requestedBillingPeriod: initialBillingPeriod ?? '',
@@ -787,7 +789,7 @@ export function SubscriptionRequestForm({
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (step !== 2 || submittingRef.current) return;
+    if (step !== (creationMode ? 3 : 2) || submittingRef.current) return;
 
     const validationError = validateStepOne() || validateStepTwo();
     if (validationError) {
@@ -828,6 +830,7 @@ export function SubscriptionRequestForm({
         creationMode ? `OFFRE ACTUELLE — paiement unique — ${planKind === 'artisan' ? 'Formule Artisan 30 TND' : 'Formule Premium 59 TND'} — ne pas traiter comme un abonnement mensuel` : '',
         presentationModelLabel ? `Modèle de présentation choisi : ${presentationModelLabel}` : '',
         paletteLabel ? `Palette choisie : ${paletteLabel}` : '',
+        form.activityDescription ? `Description de l'activité : ${cleanMultiline(form.activityDescription)}` : '',
         form.message,
       ].filter(Boolean).join('\n')),
       consent: form.consent,
@@ -916,11 +919,11 @@ export function SubscriptionRequestForm({
 
       <div className="rounded-2xl border border-[#D4AF37]/35 bg-[#FFFDF7] p-4">
         <div className="flex items-center justify-between gap-4 text-xs font-bold uppercase tracking-[0.12em] text-[#4A1D43]">
-          <span>{step === 1 ? copy.stepOne : copy.stepTwo}</span>
-          <span aria-hidden="true">{step}/2</span>
+          <span>{creationMode ? (step === 1 ? (isArabic ? '١. النشاط' : '1. Activité') : step === 2 ? (isArabic ? '٢. التفاصيل' : '2. Informations') : (isArabic ? '٣. المراجعة' : '3. Récapitulatif')) : (step === 1 ? copy.stepOne : copy.stepTwo)}</span>
+          <span aria-hidden="true">{step}/{creationMode ? 3 : 2}</span>
         </div>
         <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[#D4AF37]/20">
-          <div className={`h-full rounded-full bg-[#D4AF37] transition-all ${step === 1 ? 'w-1/2' : 'w-full'}`} />
+          <div className={`h-full rounded-full bg-[#D4AF37] transition-all ${creationMode ? (step === 1 ? 'w-1/3' : step === 2 ? 'w-2/3' : 'w-full') : (step === 1 ? 'w-1/2' : 'w-full')}`} />
         </div>
       </div>
 
@@ -1046,7 +1049,7 @@ export function SubscriptionRequestForm({
             />
           </FieldLabel>
         </section>
-      ) : (
+      ) : step === 2 ? (
         <section aria-labelledby="subscription-request-title" className="space-y-5">
           <h3 id="subscription-request-title" className="text-xl font-bold text-[#4A1D43]">{copy.requestTitle}</h3>
 
@@ -1139,6 +1142,11 @@ export function SubscriptionRequestForm({
             </ChoiceGroup>
           </div>
 
+          {creationMode && (
+            <FieldLabel label={isArabic ? 'وصف نشاطك (اختياري)' : 'Description de votre activité (facultatif)'}>
+              <textarea name="activityDescription" rows={3} maxLength={1500} value={form.activityDescription} onChange={setField} className={`${inputClassName} resize-y`} disabled={submitting} placeholder={isArabic ? 'ماذا تقدم لعملائك؟' : 'Présentez vos services, spécialités et ce qui vous distingue.'} />
+            </FieldLabel>
+          )}
           <FieldLabel label={copy.messageOptional}>
             <textarea
               name="message"
@@ -1170,7 +1178,7 @@ export function SubscriptionRequestForm({
             </span>
           </label>
 
-          <p className="text-center text-sm font-semibold text-[#4A1D43]">{copy.freeNotice}</p>
+          <p className="text-center text-sm font-semibold text-[#4A1D43]">{creationMode ? (isArabic ? 'إرسال الطلب لا يعني أن الدفع قد تم. يتم التحقق من التحويل البنكي قبل بدء التحضير.' : 'L’envoi de la demande ne confirme aucun paiement. Le virement sera vérifié avant la préparation.') : copy.freeNotice}</p>
           {!creationMode && (
             <div className="rounded-xl border border-[#D4AF37]/40 bg-[#FFF9E8] px-4 py-3 text-sm leading-6 text-[#4A1D43]">
               <p>{checkoutCopy.currencyNotice}</p>
@@ -1180,7 +1188,7 @@ export function SubscriptionRequestForm({
           {creationMode && (
             <div className="rounded-2xl border border-[#D4AF37]/55 bg-[#FFF9E8] p-4 text-sm leading-6 text-[#4A1D43]">
               <p className="text-base font-black">{language === 'fr' ? 'Commande et paiement en dinars tunisiens' : language === 'ar' ? 'الطلب والدفع بالدينار التونسي' : language === 'it' ? 'Ordine e pagamento in dinari tunisini' : language === 'ru' ? 'Заказ и оплата в тунисских динарах' : 'Order and payment in Tunisian dinars'}</p>
-              <p className="mt-2">{language === 'fr' ? `Montant : ${planKind === 'artisan' ? '30 TND' : '59 TND'}. Envoyez d’abord votre demande ci-dessous. Notre équipe vous transmettra ensuite les instructions de règlement BIAT en privé par WhatsApp.` : language === 'ar' ? `المبلغ: ${planKind === 'artisan' ? '30 د.ت' : '59 د.ت'}. أرسل طلبك أولاً أدناه، ثم يرسل لك فريقنا تعليمات الدفع عبر BIAT بشكل خاص على واتساب.` : language === 'it' ? `Importo: ${planKind === 'artisan' ? '30 TND' : '59 TND'}. Invia prima la richiesta qui sotto; il nostro team ti comunicherà privatamente su WhatsApp le istruzioni BIAT.` : language === 'ru' ? `Сумма: ${planKind === 'artisan' ? '30 TND' : '59 TND'}. Сначала отправьте заявку ниже, затем команда лично пришлёт инструкции BIAT в WhatsApp.` : `Amount: ${planKind === 'artisan' ? '30 TND' : '59 TND'}. First send your request below; our team will then privately send the BIAT payment instructions via WhatsApp.`}</p>
+              <p className="mt-2">{language === 'fr' ? `Montant : ${planKind === 'artisan' ? '30 TND' : '59 TND'}. Envoyez d’abord votre demande ci-dessous. Notre équipe vous transmettra ensuite les instructions bancaires en privé par WhatsApp.` : language === 'ar' ? `المبلغ: ${planKind === 'artisan' ? '30 د.ت' : '59 د.ت'}. أرسل طلبك أولاً أدناه، ثم يرسل لك فريقنا تعليمات التحويل البنكي بشكل خاص على واتساب.` : language === 'it' ? `Importo: ${planKind === 'artisan' ? '30 TND' : '59 TND'}. Invia prima la richiesta qui sotto; il nostro team ti comunicherà privatamente su WhatsApp le istruzioni per il bonifico.` : language === 'ru' ? `Сумма: ${planKind === 'artisan' ? '30 TND' : '59 TND'}. Сначала отправьте заявку ниже, затем команда лично пришлёт банковские реквизиты в WhatsApp.` : `Amount: ${planKind === 'artisan' ? '30 TND' : '59 TND'}. First send your request below; our team will then privately send the bank transfer instructions via WhatsApp.`}</p>
               <p className="mt-2 font-semibold">{language === 'fr' ? 'Aucune coordonnée bancaire n’est publiée sur le site. La création commence après vérification du règlement.' : language === 'ar' ? 'لا يتم نشر أي بيانات بنكية على الموقع. يبدأ العمل بعد التحقق من الدفع.' : language === 'it' ? 'Nessun dato bancario viene pubblicato sul sito. La creazione inizia dopo la verifica del pagamento.' : language === 'ru' ? 'Банковские реквизиты на сайте не публикуются. Работа начинается после проверки оплаты.' : 'No bank details are published on the website. Creation starts after payment verification.'}</p>
             </div>
           )}
@@ -1194,6 +1202,33 @@ export function SubscriptionRequestForm({
               {openingCheckout ? checkoutCopy.checkoutLoading : `${checkoutCopy.paySecurely} — ${'eur' in checkoutSelection ? checkoutSelection.eur : checkoutSelection.amount}`}
             </button>
           )}
+        </section>
+      ) : (
+        <section aria-labelledby="miniapp-review-title" className="space-y-4">
+          <h3 id="miniapp-review-title" className="text-xl font-bold text-[#292725]">{isArabic ? 'تحقق من طلبك قبل الإرسال' : 'Vérifiez votre demande avant envoi'}</h3>
+          <div className="rounded-2xl border border-[#D4AF37]/45 bg-[#FFFDF7] p-4 text-sm leading-7 text-[#292725]">
+            <p><strong>{isArabic ? 'العرض' : 'Formule'} :</strong> {selectedPlanLabel}</p>
+            {presentationModelLabel && <p><strong>{isArabic ? 'النموذج' : 'Modèle'} :</strong> {presentationModelLabel}</p>}
+            {paletteLabel && <p><strong>{isArabic ? 'الألوان' : 'Palette'} :</strong> {paletteLabel}</p>}
+            <p><strong>{isArabic ? 'السعر' : 'Prix de création'} :</strong> {selectedPlan === 'artisan' ? '30 TND' : '59 TND'}</p>
+            <p>{isArabic ? 'السنة الأولى مشمولة، ثم صيانة اختيارية بقيمة 50 د.ت/سنة.' : 'Première année incluse ; entretien facultatif ensuite : 50 TND/an.'}</p>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 text-sm leading-7 text-slate-700">
+            <p><strong>{isArabic ? 'النشاط' : 'Activité'} :</strong> {form.companyName}</p>
+            <p><strong>{isArabic ? 'المسؤول' : 'Responsable'} :</strong> {form.managerName}</p>
+            <p><strong>{isArabic ? 'القطاع' : 'Secteur'} :</strong> {form.sector}</p>
+            <p><strong>{isArabic ? 'المدينة' : 'Localisation'} :</strong> {form.city}, {form.governorate}</p>
+            <p><strong>{isArabic ? 'الهاتف' : 'Téléphone'} :</strong> {form.phone}</p>
+            {form.email && <p><strong>Email :</strong> {form.email}</p>}
+            {form.activityDescription && <p className="whitespace-pre-wrap"><strong>{isArabic ? 'الوصف' : 'Description'} :</strong> {form.activityDescription}</p>}
+            {form.selectedPlatforms.length > 0 && <p><strong>{isArabic ? 'المنصات' : 'Plateformes'} :</strong> {form.selectedPlatforms.map((item) => copy.platformLabels[item]).join(', ')}</p>}
+            {[form.website, form.facebook, form.instagram, form.whatsapp].filter(Boolean).length > 0 && <p className="break-words"><strong>{isArabic ? 'الروابط' : 'Liens et WhatsApp'} :</strong> {[form.website, form.facebook, form.instagram, form.whatsapp].filter(Boolean).join(' · ')}</p>}
+            {form.message && <p className="whitespace-pre-wrap"><strong>{isArabic ? 'ملاحظات' : 'Précisions'} :</strong> {form.message}</p>}
+          </div>
+          <div className="rounded-xl border border-[#D4AF37]/40 bg-[#FFF9E8] px-4 py-3 text-sm leading-6 text-[#292725]">
+            {isArabic ? 'بعد إرسال الطلب، سيرسل لك فريق دليل تونس تعليمات التحويل البنكي بشكل خاص. لا يتم تأكيد الدفع أو النشر آلياً.' : 'Après l’envoi, Dalil Tounes vous communiquera les instructions de virement en privé. Ni le paiement ni la publication ne seront confirmés automatiquement.'}
+          </div>
+          <button type="button" onClick={() => setStep(1)} className="text-sm font-semibold text-[#07543F] underline underline-offset-2">{isArabic ? 'تعديل بيانات النشاط' : 'Modifier les coordonnées de mon activité'}</button>
         </section>
       )}
 
@@ -1212,14 +1247,18 @@ export function SubscriptionRequestForm({
           </>
         ) : (
           <>
-            <button type="button" onClick={() => { setStep(1); setErrorMessage(''); }} disabled={submitting} className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 disabled:opacity-60">
+            <button type="button" onClick={() => { setStep(step === 3 ? 2 : 1); setErrorMessage(''); }} disabled={submitting} className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 disabled:opacity-60">
               {isArabic ? <ArrowRight className="h-4 w-4" aria-hidden="true" /> : <ArrowLeft className="h-4 w-4" aria-hidden="true" />}
               {copy.back}
             </button>
-            <button type="submit" disabled={submitting || submitted} className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl border border-[#D4AF37] bg-[#4A1D43] px-5 py-3 text-sm font-bold text-[#D4AF37] transition hover:bg-[#5A2D53] disabled:cursor-not-allowed disabled:opacity-60">
-              <Send className="h-4 w-4" aria-hidden="true" />
-              {submitting ? copy.submitting : copy.submit}
-            </button>
+            {creationMode && step === 2 ? (
+              <button type="button" onClick={() => { const error = validateStepTwo(); if (error) setErrorMessage(error); else { setErrorMessage(''); setStep(3); } }} disabled={submitting} className="inline-flex min-h-12 flex-1 items-center justify-center rounded-xl border border-[#D4AF37] bg-[#07543F] px-5 py-3 text-sm font-bold text-white">{isArabic ? 'مراجعة الطلب' : 'Voir le récapitulatif'}</button>
+            ) : (
+              <button type="submit" disabled={submitting || submitted} className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl border border-[#D4AF37] bg-[#4A1D43] px-5 py-3 text-sm font-bold text-[#D4AF37] transition hover:bg-[#5A2D53] disabled:cursor-not-allowed disabled:opacity-60">
+                <Send className="h-4 w-4" aria-hidden="true" />
+                {submitting ? copy.submitting : copy.submit}
+              </button>
+            )}
           </>
         )}
       </div>
