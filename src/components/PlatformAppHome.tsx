@@ -99,7 +99,7 @@ export default function PlatformAppHome({ totalCount, legacyCertifiedCount, reco
       <h2 className="mb-2 font-serif text-base font-semibold text-[#242424]">{t.search}</h2>
       <SearchBar scope="global" autoSearch resultMode="redirectToResults" />
     </section>
-    <Link to="/subscription?app-full=1#cv-professionnels"
+    <Link to="/cv-business"
       className="block rounded-xl border border-[#C9A65D] bg-gradient-to-br from-[#FFF5E7] to-[#FFFCF7] px-4 py-4 text-center shadow-sm transition-colors hover:border-[#B18B45] hover:bg-[#FFF7E9] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B99143]"
       aria-label={t.free + ' — ' + t.freeAction}>
       <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-[#242424]">{t.free}</p>
