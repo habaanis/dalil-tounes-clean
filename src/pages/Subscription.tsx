@@ -1,6 +1,4 @@
 import StructuredData from '../components/StructuredData';
-import Concept from './Concept';
-import { FounderStory } from '../components/FounderStory';
 import { CvBusinessHome } from './SeparationPreview';
 import { EssentialPresence } from '../components/EssentialPresence';
 import { siteStructureCopy } from '../lib/siteStructureCopy';
@@ -1302,6 +1300,20 @@ export const Subscription = () => {
   const [selectedPalette, setSelectedPalette] = useState<PaletteId>('prestige');
   const [showSecondaryDetails, setShowSecondaryDetails] = useState(false);
 
+  useEffect(() => {
+    const openTargetSection = () => {
+      const params = new URLSearchParams(window.location.search);
+      const target = window.location.hash.slice(1) || (params.get('app-offers') === '1' ? 'offres' : params.get('app-models') === '1' ? 'modeles' : '');
+      if (!target) return;
+      const detail = document.getElementById(target === 'cv-professionnels' ? 'mini-appli-details' : target);
+      if (detail instanceof HTMLDetailsElement) detail.open = true;
+      window.requestAnimationFrame(() => document.getElementById(target)?.scrollIntoView({ block: 'start' }));
+    };
+    openTargetSection();
+    window.addEventListener('hashchange', openTargetSection);
+    return () => window.removeEventListener('hashchange', openTargetSection);
+  }, []);
+
   const closePreview = () => setActivePreview(null);
   const openRequest = (code: SubscriptionPlanCode, label: string, checkoutOffer: CheckoutOffer, billingPeriod?: BillingPeriod, presentationModelLabel?: string, paletteLabel?: string) => {
     setSelectedPlan({ code, label, checkoutOffer, billingPeriod, presentationModelLabel, paletteLabel });
@@ -1348,31 +1360,17 @@ export const Subscription = () => {
         </header>
 
         <nav className="mb-5 flex flex-wrap justify-center gap-3 text-sm font-medium text-[#292725]" aria-label={structure.professional}>
-          <a href="#presence-essentielle">{structure.essential}</a><a href="#concept">{structure.concept}</a><a href="#cv-professionnels">{structure.products}</a><a href="#modeles">{structure.models}</a><a href="#offres">{structure.offers}</a>
+          <a href="#presence-essentielle">{structure.essential}</a><a href="#cv-professionnels">{structure.products}</a><a href="#modeles">{structure.models}</a><a href="#offres">{structure.offers}</a>
         </nav>
         <EssentialPresence registration />
         <p className="mt-3 text-sm font-semibold text-emerald-800">{copy.essentialFree}</p>
         <button type="button" onClick={() => setActivePreview('free')} className="mt-3 min-h-11 rounded-xl border border-[#D4AF37] px-4 py-2 text-sm font-medium text-[#292725]">{copy.previewCard}</button>
-        <section id="concept" className="my-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-5">
-          <h2 className="font-serif text-xl font-medium text-[#292725]">Dalil Tounes</h2>
-          <p className="my-3 text-sm leading-6 text-slate-600">{structure.intro}</p>
-          <p className="my-3 text-sm leading-6 text-slate-600">{copy.heroSubtitle}</p>
-          <details className="rounded-xl border border-[#D4AF37]/40 p-3"><summary className="cursor-pointer font-medium text-[#292725]">{structure.concept}</summary><Concept embedded /></details>
-          <details id="histoire-fondateur" className="mt-3 scroll-mt-32 rounded-xl border border-[#D4AF37]/40 p-3"><summary className="cursor-pointer font-medium text-[#292725]">{structure.story}</summary><FounderStory full /></details>
-        </section>
         <section id="cv-professionnels" className="my-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-5">
           <h2 className="font-serif text-xl font-medium text-[#292725]">CV Business · CV Portfolio</h2>
           <p className="my-3 text-sm leading-6 text-slate-600">{structure.cvIntro}</p>
-          <details><summary className="cursor-pointer font-medium text-[#292725]">{structure.details}</summary><CvBusinessHome embedded /></details>
+          <details id="mini-appli-details" name="professional-sections"><summary className="cursor-pointer font-medium text-[#292725]">{structure.details}</summary><CvBusinessHome embedded /></details>
         </section>
-        <section id="offres" aria-labelledby="cv-business-products-title" className="order-2 mt-5 sm:mt-0">
-<div className="mb-6 text-center">
-  <p className="text-xs font-medium uppercase tracking-[0.18em] text-amber-600">CV BUSINESS DALIL TOUNES</p>
-  <h2 id="cv-business-products-title" className="mt-2 text-2xl font-medium text-[#292725] sm:text-3xl">{simpleCopy.productsTitle}</h2>
-  <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-slate-600">{simpleCopy.productsSubtitle}</p>
-</div>
-
-<details id="modeles" className="mb-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-4">
+<details name="professional-sections" id="modeles" className="mb-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-4">
   <summary className="cursor-pointer font-medium text-[#292725]">{structure.models}</summary>
 <CvPresentationModelSelector
   language={language}
@@ -1388,6 +1386,14 @@ export const Subscription = () => {
   onPaletteChange={setSelectedPalette}
 />
 </details>
+
+        <section id="offres" aria-labelledby="cv-business-products-title" className="order-2 mt-5 sm:mt-0">
+<div className="mb-6 text-center">
+    <h2 id="cv-business-products-title" className="text-xl font-medium text-[#292725] sm:text-2xl">{structure.offers}</h2>
+  <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-slate-600">{simpleCopy.productsSubtitle}</p>
+</div>
+
+
 <div className="mb-4 rounded-xl border border-[#D6AF2E]/60 bg-[#FFF9ED] p-3 sm:p-4">
   <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
     <div className="max-w-3xl">
