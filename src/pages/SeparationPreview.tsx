@@ -386,7 +386,7 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
 
           <CvCapabilitiesSection language={lang} showActions={false} />
 
-          <CvBusinessJourney language={lang} />
+          <CvBusinessJourney language={lang} showVideo={!heroVideoSrc} />
 
           <div className="mx-auto my-3 flex flex-wrap justify-center gap-2"><a href={embedded ? "#offres" : "/subscription#offres"} className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-[#D6B86D] px-5 py-3 text-sm font-black text-[#292725]">{t.offers} <ArrowRight className={`h-4 w-4 ${lang === 'ar' ? 'rotate-180' : ''}`} /></a><a href="/contact" className="inline-flex min-h-12 items-center rounded-xl border border-[#D4AF37] bg-white px-5 py-3 text-sm font-bold text-[#292725]">{t.information}</a></div>
 
