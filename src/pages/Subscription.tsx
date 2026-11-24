@@ -1301,12 +1301,15 @@ export const Subscription = () => {
   const [selectedPresentationModel, setSelectedPresentationModel] = useState<PresentationModel | null>(null);
   const [selectedPalette, setSelectedPalette] = useState<PaletteId>('prestige');
   const [showSecondaryDetails, setShowSecondaryDetails] = useState(false);
+  const [miniAppOpen, setMiniAppOpen] = useState(false);
+  const composeLabel = ({fr:'Composez votre mini-appli', ar:'خصّص تطبيقك المصغّر', en:'Build your mini-app', it:'Componi la tua mini-app', ru:'Настройте мини-приложение'})[language as OfferLanguage] ?? 'Composez votre mini-appli';
   useEffect(() => {
     const openTargetSection = () => {
       const params = new URLSearchParams(window.location.search);
       const target = window.location.hash.slice(1) || (params.get('app-offers') === '1' ? 'offres' : params.get('app-models') === '1' ? 'modeles' : '');
       if (!target) return;
-      const detail = document.getElementById(target === 'cv-professionnels' ? 'mini-appli-details' : target);
+      if (target === 'cv-professionnels') setMiniAppOpen(true);
+      const detail = document.getElementById(target);
       if (detail instanceof HTMLDetailsElement) detail.open = true;
       window.requestAnimationFrame(() => document.getElementById(target)?.scrollIntoView({ block: 'start' }));
     };
@@ -1322,7 +1325,7 @@ export const Subscription = () => {
   };
   const selectFormula = (formula: 'artisan' | 'premium') => {
     setSelectedFormula(formula);
-    const models = document.getElementById('modeles');
+    const models = document.getElementById('personnalisation');
     if (models instanceof HTMLDetailsElement) models.open = true;
     window.requestAnimationFrame(() => {
       document.getElementById('cv-presentation-models')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1362,19 +1365,30 @@ export const Subscription = () => {
         </header>
 
         <nav className="mb-5 flex flex-wrap justify-center gap-3 text-sm font-medium text-[#4A1D43]" aria-label={structure.professional}>
-          <a href="#presence-essentielle">{structure.essential}</a><a href="#cv-professionnels">{structure.products}</a><a href="#modeles">{structure.models}</a><a href="#offres">{structure.offers}</a>
+          <a href="#presence-essentielle">{structure.essential}</a><a href="#cv-professionnels" onClick={() => setMiniAppOpen(true)}>{structure.products}</a><a href="#modeles">{structure.models}</a><a href="#personnalisation">{composeLabel}</a><a href="#offres">{structure.offers}</a>
         </nav>
         <EssentialPresence registration />
         <p className="mt-3 text-sm font-semibold text-emerald-800">{copy.essentialFree}</p>
         <button type="button" onClick={() => setActivePreview('free')} className="mt-3 min-h-11 rounded-xl border border-[#D4AF37] px-4 py-2 text-sm font-medium text-[#4A1D43]">{copy.previewCard}</button>
-        <section id="cv-professionnels" className="my-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-5">
-          <h2 className="font-serif text-xl font-medium text-[#4A1D43]">{structure.products}</h2>
-          <p className="mt-1 text-xs text-slate-500">CV Business · CV Portfolio</p>
-          <p className="my-3 text-sm leading-6 text-slate-600">{structure.cvIntro}</p>
-          <details id="mini-appli-details" className="rounded-lg border border-[#D4AF37]/40 p-2"><summary className="cursor-pointer py-2 font-medium text-[#292725]">{structure.details}</summary><CvBusinessHome embedded /></details>
+        <section id="cv-professionnels" className="my-4 scroll-mt-32 rounded-xl border border-[#D4AF37]/50 bg-white p-3">
+          <button type="button" aria-expanded={miniAppOpen} aria-controls="mini-appli-details" onClick={() => setMiniAppOpen(value => !value)} className="flex w-full min-h-12 items-center justify-between gap-3 text-start font-medium text-[#292725]">
+            {structure.homeCvAction}<span aria-hidden="true">{miniAppOpen ? '−' : '+'}</span>
+          </button>
+          {miniAppOpen && <div id="mini-appli-details"><CvBusinessHome embedded /></div>}
         </section>
-<details id="modeles" className="mb-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-4">
-  <summary className="cursor-pointer font-medium text-[#4A1D43]">{structure.models}</summary>
+
+
+<details id="modeles" className="mb-4 scroll-mt-32 rounded-xl border border-[#D4AF37]/50 bg-white p-3">
+  <summary className="cursor-pointer py-2 font-medium text-[#292725]">{structure.models}</summary>
+  <div className="mt-3 grid grid-cols-2 gap-3">
+    {(['business','portfolio'] as const).map(model => <a key={model} href={`/cv/aux-saveurs-anis?preview-model=${model}&boutique-demo=1&skip-opening=1&lang=${language}`} className="rounded-xl border border-[#D4AF37]/40 p-2 text-center text-sm font-medium text-[#292725]">
+      <img src={model === 'business' ? '/images/cv-business-professionnel-aux-saveurs-anis.png' : '/images/cv-business-portfolio-aux-saveurs-anis.png'} alt={getPresentationModelLabel(language, model)} className="mx-auto h-40 w-full object-contain sm:h-56" loading="lazy" />
+      {getPresentationModelLabel(language, model)}
+    </a>)}
+  </div>
+</details>
+<details id="personnalisation" className="mb-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-4">
+  <summary className="cursor-pointer font-medium text-[#4A1D43]">{composeLabel}</summary>
 <CvPresentationModelSelector
   language={language}
   formulaValue={selectedFormula}
@@ -1389,15 +1403,6 @@ export const Subscription = () => {
   onPaletteChange={setSelectedPalette}
 />
 </details>
-  <section aria-label="Démonstrations des mini-applis" className="mb-5 rounded-2xl border border-[#D4AF37]/60 bg-[#FFFCF7] p-4">
-    <h2 className="text-lg font-semibold text-[#173B30]">{language === 'ar' ? 'جرّب النماذج مباشرة' : 'Voir et tester les modèles'}</h2>
-    <p className="mt-1 text-sm text-slate-600">{language === 'ar' ? 'افتح التطبيق الحقيقي واختبر الأزرار والمتجر.' : 'Ouvrez la vraie mini-appli et testez les boutons, les photos et la boutique.'}</p>
-    <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
-      <a href="/cv/aux-saveurs-anis?preview-model=business&boutique-demo=1&skip-opening=1" className="flex min-h-12 items-center justify-center rounded-xl bg-[#07543F] px-3 py-3 text-center text-sm font-semibold text-white">CV Business</a>
-      <a href="/cv/aux-saveurs-anis?preview-model=portfolio&boutique-demo=1&skip-opening=1" className="flex min-h-12 items-center justify-center rounded-xl bg-[#07543F] px-3 py-3 text-center text-sm font-semibold text-white">CV Portfolio</a>
-      <a href="/cv/aux-saveurs-anis?preview-model=business&boutique-demo=1&skip-opening=1#boutique" className="flex min-h-12 items-center justify-center rounded-xl border border-[#D4AF37] bg-white px-3 py-3 text-center text-sm font-semibold text-[#173B30]">Tester la boutique</a>
-    </div>
-  </section>
         <section id="offres" aria-labelledby="cv-business-products-title" className="order-2 mt-5 sm:mt-0">
 <div className="mb-6 text-center">
     <h2 id="cv-business-products-title" className="text-xl font-medium text-[#292725] sm:text-2xl">{structure.offers}</h2>
