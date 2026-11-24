@@ -1,6 +1,4 @@
 import StructuredData from '../components/StructuredData';
-import Concept from './Concept';
-import { FounderStory } from '../components/FounderStory';
 import { CvBusinessHome } from './SeparationPreview';
 import { EssentialPresence } from '../components/EssentialPresence';
 import { siteStructureCopy } from '../lib/siteStructureCopy';
@@ -21,7 +19,6 @@ import {
 import { SubscriptionRequestForm } from '../components/SubscriptionRequestForm';
 import type { BillingPeriod, CheckoutOffer, SubscriptionPlanCode } from '../components/SubscriptionRequestForm';
 import { BusinessCardPreview } from '../components/BusinessCardPreview';
-import CvBusinessJourney from '../components/CvBusinessJourney';
 import {
   CvPresentationModelSelector,
   getPresentationModelLabel,
@@ -1303,6 +1300,20 @@ export const Subscription = () => {
   const [selectedPalette, setSelectedPalette] = useState<PaletteId>('prestige');
   const [showSecondaryDetails, setShowSecondaryDetails] = useState(false);
 
+  useEffect(() => {
+    const openTargetSection = () => {
+      const params = new URLSearchParams(window.location.search);
+      const target = window.location.hash.slice(1) || (params.get('app-offers') === '1' ? 'offres' : params.get('app-models') === '1' ? 'modeles' : '');
+      if (!target) return;
+      const detail = document.getElementById(target === 'cv-professionnels' ? 'mini-appli-details' : target);
+      if (detail instanceof HTMLDetailsElement) detail.open = true;
+      window.requestAnimationFrame(() => document.getElementById(target)?.scrollIntoView({ block: 'start' }));
+    };
+    openTargetSection();
+    window.addEventListener('hashchange', openTargetSection);
+    return () => window.removeEventListener('hashchange', openTargetSection);
+  }, []);
+
   const closePreview = () => setActivePreview(null);
   const openRequest = (code: SubscriptionPlanCode, label: string, checkoutOffer: CheckoutOffer, billingPeriod?: BillingPeriod, presentationModelLabel?: string, paletteLabel?: string) => {
     setSelectedPlan({ code, label, checkoutOffer, billingPeriod, presentationModelLabel, paletteLabel });
@@ -1349,30 +1360,16 @@ export const Subscription = () => {
         </header>
 
         <nav className="mb-5 flex flex-wrap justify-center gap-3 text-sm font-medium text-[#292725]" aria-label={structure.professional}>
-          <a href="#presence-essentielle">{structure.essential}</a><a href="#concept">{structure.concept}</a><a href="#cv-professionnels">{structure.products}</a><a href="#modeles">{structure.models}</a><a href="#offres">{structure.offers}</a>
+          <a href="#presence-essentielle">{structure.essential}</a><a href="#cv-professionnels">{structure.products}</a><a href="#modeles">{structure.models}</a><a href="#offres">{structure.offers}</a>
         </nav>
         <EssentialPresence registration />
         <p className="mt-3 text-sm font-semibold text-emerald-800">{copy.essentialFree}</p>
         <button type="button" onClick={() => setActivePreview('free')} className="mt-3 min-h-11 rounded-xl border border-[#D4AF37] px-4 py-2 text-sm font-medium text-[#292725]">{copy.previewCard}</button>
-        <section id="concept" className="my-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-5">
-          <h2 className="font-serif text-xl font-medium text-[#292725]">Dalil Tounes</h2>
-          <p className="my-3 text-sm leading-6 text-slate-600">{structure.intro}</p>
-          <p className="my-3 text-sm leading-6 text-slate-600">{copy.heroSubtitle}</p>
-          <details className="rounded-xl border border-[#D4AF37]/40 p-3"><summary className="cursor-pointer font-medium text-[#292725]">{structure.concept}</summary><Concept embedded /></details>
-          <details id="histoire-fondateur" className="mt-3 scroll-mt-32 rounded-xl border border-[#D4AF37]/40 p-3"><summary className="cursor-pointer font-medium text-[#292725]">{structure.story}</summary><FounderStory full /></details>
-        </section>
         <section id="cv-professionnels" className="my-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-5">
           <h2 className="font-serif text-xl font-medium text-[#292725]">CV Business · CV Portfolio</h2>
           <p className="my-3 text-sm leading-6 text-slate-600">{structure.cvIntro}</p>
-          <details><summary className="cursor-pointer font-medium text-[#292725]">{structure.details}</summary><CvBusinessHome embedded /></details>
+          <details id="mini-appli-details" className="rounded-lg border border-[#D4AF37]/40 p-2"><summary className="cursor-pointer py-2 font-medium text-[#292725]">{structure.details}</summary><CvBusinessHome embedded /></details>
         </section>
-        <section id="offres" aria-labelledby="cv-business-products-title" className="order-2 mt-5 sm:mt-0">
-<div className="mb-6 text-center">
-  <p className="text-xs font-medium uppercase tracking-[0.18em] text-amber-600">CV BUSINESS DALIL TOUNES</p>
-  <h2 id="cv-business-products-title" className="mt-2 text-2xl font-medium text-[#292725] sm:text-3xl">{simpleCopy.productsTitle}</h2>
-  <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-slate-600">{simpleCopy.productsSubtitle}</p>
-</div>
-
 <details id="modeles" className="mb-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-4">
   <summary className="cursor-pointer font-medium text-[#292725]">{structure.models}</summary>
 <CvPresentationModelSelector
@@ -1389,7 +1386,15 @@ export const Subscription = () => {
   onPaletteChange={setSelectedPalette}
 />
 </details>
-<div className="mb-6 overflow-hidden rounded-3xl border border-[#D6AF2E]/60 bg-gradient-to-br from-[#FFF8DF] via-white to-[#FFF9ED] p-5 shadow-[0_12px_30px_rgba(74,18,63,0.07)] sm:p-7">
+
+        <section id="offres" aria-labelledby="cv-business-products-title" className="order-2 mt-5 sm:mt-0">
+<div className="mb-6 text-center">
+    <h2 id="cv-business-products-title" className="text-xl font-medium text-[#292725] sm:text-2xl">{structure.offers}</h2>
+  <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-slate-600">{simpleCopy.productsSubtitle}</p>
+</div>
+
+
+<div className="mb-4 rounded-xl border border-[#D6AF2E]/60 bg-[#FFF9ED] p-3 sm:p-4">
   <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
     <div className="max-w-3xl">
       <span className="inline-flex items-center gap-2 rounded-full bg-[#D6B86D] px-3 py-1 text-[10px] font-medium uppercase tracking-[0.12em] text-[#292725]">
@@ -1397,13 +1402,13 @@ export const Subscription = () => {
         {simpleCopy.welcomeBadge}
       </span>
       <h3 className="mt-3 text-xl font-medium text-[#292725] sm:text-2xl">{simpleCopy.welcomeTitle}</h3>
-      <p className="mt-3 hidden text-sm leading-6 text-slate-700 sm:block">{simpleCopy.welcomeDescription}</p>
+      <p className="mt-2 hidden text-sm leading-5 text-slate-700 sm:block">{simpleCopy.welcomeDescription}</p>
     </div>
     <div className="hidden rounded-2xl border border-[#D3B16F] bg-[#FFF9ED] px-5 py-4 text-center text-[#292725] shadow-sm sm:block lg:max-w-xs">
       <p className="text-lg font-medium leading-6 text-[#292725]">{simpleCopy.welcomeHighlight}</p>
     </div>
   </div>
-  <p className="mt-4 rounded-2xl border border-[#D6AF2E]/45 bg-white px-4 py-3 text-sm font-medium leading-6 text-[#292725]">{simpleCopy.welcomePayment}</p>
+  <p className="mt-2 rounded-xl border border-[#D6AF2E]/45 bg-white px-3 py-2 text-sm font-medium leading-5 text-[#292725]">{simpleCopy.welcomePayment}</p>
 </div>
 
 <div className="grid items-stretch gap-5 lg:grid-cols-2">
@@ -1445,7 +1450,7 @@ export const Subscription = () => {
 
 
 
-<details className="mt-5 rounded-2xl border border-[#D4AF37]/50 bg-white p-4"><summary className="cursor-pointer font-medium text-[#292725]">{structure.details}</summary><CvBusinessJourney language={language as OfferLanguage} /></details>
+
 
 <div className="mt-5 rounded-3xl border border-[#D6AF2E]/60 bg-white p-5 shadow-[0_10px_28px_rgba(74,18,63,0.06)] sm:p-6">
   <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">

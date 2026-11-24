@@ -1,12 +1,11 @@
 import { FounderStory } from '../components/FounderStory';
-import VisibilityHouseSection from '../components/VisibilityHouseSection';
 import { EssentialPresence } from '../components/EssentialPresence';
 import { siteStructureCopy } from '../lib/siteStructureCopy';
 import { SEOHead } from '../components/SEOHead';
 import StructuredData from '../components/StructuredData';
 import { getHomeSeoMeta } from '../lib/seoMetaTemplates';
 import { generateOrganizationSchema, generateWebSiteSchema } from '../lib/structuredDataSchemas';
-import { ArrowRight, Users, Compass, Building2, MapPin, QrCode, Search, Share2, Sparkles } from 'lucide-react';
+import { ArrowRight, Users, Compass, Building2, MapPin, Search, Sparkles } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CvBusinessJourney from '../components/CvBusinessJourney';
@@ -369,39 +368,32 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
         </>
       ) : (
         <>
-          <section className="border-b border-[#D4AF37]/25 bg-[radial-gradient(circle_at_top_left,rgba(212,175,55,0.18),transparent_28%),linear-gradient(135deg,#fffdf8_0%,#ffffff_52%,#f7f0f5_100%)] px-4 py-8 md:py-14">
-            <div className="mx-auto grid max-w-[1180px] items-center gap-8 lg:grid-cols-[1fr_0.72fr]">
-              <div><div className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/45 bg-white px-3 py-1.5 text-xs font-black uppercase tracking-[0.14em] text-[#292725] shadow-sm"><Sparkles className="h-4 w-4 text-[#D4AF37]" /> {t.cvLabel}</div><CvHeading className="public-title mt-5 font-serif text-4xl font-bold leading-tight text-[#292725] md:text-5xl">{t.cvTitle}</CvHeading><p className="mt-3 font-serif text-2xl font-bold leading-tight text-[#B58A18] md:text-3xl">{t.cvSubtitle}</p><p className="mt-5 max-w-xl text-base leading-7 text-gray-600">{t.cvDescription}</p><div className="mt-6 flex flex-wrap gap-3"><a href="/subscription" className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-[#D6B86D] px-5 py-3 text-sm font-black text-[#292725]">{t.offers} <ArrowRight className={`h-4 w-4 ${lang === 'ar' ? 'rotate-180' : ''}`} /></a><a href="/contact" className="inline-flex min-h-12 items-center rounded-xl border border-[#D4AF37] bg-white px-5 py-3 text-sm font-bold text-[#292725]">{t.information}</a></div></div>
-              <div className="rounded-[30px] border border-[#D4AF37]/45 bg-white/90 p-4 shadow-[0_28px_70px_rgba(74,29,67,0.16)]"><p className="mb-3 text-center text-xs font-bold text-[#292725]">{t.example}</p><div className="flex h-[390px] items-center justify-center overflow-hidden rounded-[18px] bg-[#032D21]">{heroVideoSrc ? <video key={heroVideoSrc} src={heroVideoSrc} controls playsInline preload="metadata" poster="/images/cv-business-portfolio-aux-saveurs-anis.png" className="h-[390px] w-auto max-w-full object-contain" aria-label={t.example} /> : <img src="/images/cv-business-portfolio-aux-saveurs-anis.png" alt="CV Business Aux saveurs d’Anis" className="h-[390px] w-auto object-contain object-top" />}</div></div>
+          <section className="border-b border-[#D4AF37]/25 bg-[radial-gradient(circle_at_top_left,rgba(212,175,55,0.18),transparent_28%),linear-gradient(135deg,#fffdf8_0%,#ffffff_52%,#fff9ed_100%)] px-3 py-4 md:py-6">
+            <div className="mx-auto grid max-w-[1180px] items-center gap-4 lg:grid-cols-[1fr_0.72fr]">
+              <div><div className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/45 bg-white px-3 py-1.5 text-xs font-black uppercase tracking-[0.14em] text-[#292725] shadow-sm"><Sparkles className="h-4 w-4 text-[#D4AF37]" /> {t.cvLabel}</div><CvHeading className="public-title mt-2 font-serif text-2xl font-medium leading-tight text-[#292725] md:text-3xl">{t.cvTitle}</CvHeading><p className="mt-2 font-serif text-lg font-medium leading-tight text-[#B58A18] md:text-xl">{t.cvSubtitle}</p><p className="mt-2 max-w-xl text-sm leading-5 text-gray-600">{t.cvDescription}</p></div>
+              <div className="rounded-2xl border border-[#D4AF37]/45 bg-white/90 p-4 shadow-[0_28px_70px_rgba(74,29,67,0.16)]"><p className="mb-3 text-center text-xs font-bold text-[#292725]">{t.example}</p><div className="flex h-[280px] items-center justify-center overflow-hidden rounded-[18px] bg-[#032D21]">{heroVideoSrc ? <video key={heroVideoSrc} src={heroVideoSrc} controls playsInline preload="metadata" poster="/images/cv-business-portfolio-aux-saveurs-anis.png" className="h-[280px] w-auto max-w-full object-contain" aria-label={t.example} /> : <img src="/images/cv-business-portfolio-aux-saveurs-anis.png" alt="CV Business Aux saveurs d’Anis" className="h-[280px] w-auto object-contain object-top" />}</div></div>
             </div>
           </section>
 
-          <section className="bg-white px-4 py-10 md:py-14">
-            <div className="mx-auto max-w-6xl rounded-[30px] border border-[#D4AF37]/35 bg-[#FFFCF5] p-5 shadow-[0_20px_55px_rgba(74,29,67,0.08)] md:p-8">
-              <p className="text-xs font-black uppercase tracking-[0.16em] text-[#B58A18]">{t.cardEyebrow}</p><h2 className="public-heading mt-2 max-w-4xl font-serif text-3xl font-medium text-[#292725] md:text-4xl">{t.cardTitle}</h2><p className="mt-4 max-w-4xl text-base leading-7 text-gray-700">{t.cardIntro}</p>
-              <div className="mt-6 grid gap-3 md:grid-cols-3"><div className="rounded-2xl border border-[#D4AF37]/25 bg-white p-4"><QrCode className="h-5 w-5 text-[#B58A18]" aria-hidden="true" /><p className="mt-3 text-sm font-semibold leading-6 text-[#292725]">{t.qrBenefit}</p></div><div className="rounded-2xl border border-[#D4AF37]/25 bg-white p-4"><MapPin className="h-5 w-5 text-[#B58A18]" aria-hidden="true" /><p className="mt-3 text-sm font-semibold leading-6 text-[#292725]">{t.informationBenefit}</p></div><div className="rounded-2xl border border-[#D4AF37]/25 bg-white p-4"><Share2 className="h-5 w-5 text-[#B58A18]" aria-hidden="true" /><p className="mt-3 text-sm font-semibold leading-6 text-[#292725]">{t.sharingBenefit}</p></div></div>
-              <p className="mt-5 max-w-5xl rounded-2xl border border-[#D4AF37]/25 bg-white px-4 py-3 text-sm leading-6 text-gray-700">{t.physicalCard}</p>
-              <div className="mt-5 rounded-2xl border border-[#C9A65D] bg-[#FFF8EA] p-5 text-[#292725] md:p-6"><h3 className="font-serif text-xl font-bold text-[#292725] md:text-2xl">{t.visibilityTitle}</h3><p className="mt-2 max-w-5xl text-sm leading-6 text-[#514B43] md:text-base">{t.visibilityText}</p></div>
-            </div>
-          </section>
 
-          <section className="mx-auto max-w-5xl space-y-4 px-4 py-5">
+          <section className="mx-auto max-w-5xl space-y-2 px-3 py-3">
             <h2 className="font-serif text-xl font-bold text-[#292725]">{t.miniAppTitle}</h2>
-            <p className="text-sm leading-6 text-slate-600">{t.miniAppText}</p>
+            <p className="text-sm leading-5 text-slate-600">{t.miniAppText}</p>
             <p className="text-sm font-bold text-[#9A7416]">{t.miniAppHighlights}</p>
             <h3 className="font-bold text-[#292725]">{ecosystem.cvAdvantageTitle}</h3>
-            <p className="text-sm leading-6 text-slate-600">{ecosystem.cvAdvantageText}</p>
-            <details className="rounded-2xl border border-[#D4AF37]/40 p-4"><summary className="cursor-pointer font-bold text-[#292725]">{structure.details}</summary><VisibilityHouseSection showNetworkProof={false} /></details>
+            <p className="text-sm leading-5 text-slate-600">{ecosystem.cvAdvantageText}</p>
           </section>
 
-          <CvCapabilitiesSection language={lang} />
+          <CvCapabilitiesSection language={lang} showActions={false} />
 
           <CvBusinessJourney language={lang} />
 
-          <section className="border-y border-[#C9A65D] bg-[#FFF8EA] px-4 py-7 text-[#292725]"><div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left rtl:sm:text-right"><div><p className="text-xs font-black uppercase tracking-[0.16em] text-[#9B762D]">{t.searchEyebrow}</p><h2 className="mt-2 max-w-3xl font-serif text-2xl font-bold">{t.searchTitle}</h2></div><button type="button" onClick={() => fixedView ? navigate('/') : setPreviewView('platform')} className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-[#B68C3B] bg-[#D6B86D] px-5 py-3 text-sm font-black text-[#292725] transition hover:bg-[#E4CB91]"><Search className="h-4 w-4" /> {t.explorePlatform}</button></div></section>
+          <div className="mx-auto my-3 flex flex-wrap justify-center gap-2"><a href={embedded ? "#offres" : "/subscription#offres"} className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-[#D6B86D] px-5 py-3 text-sm font-black text-[#292725]">{t.offers} <ArrowRight className={`h-4 w-4 ${lang === 'ar' ? 'rotate-180' : ''}`} /></a><a href="/contact" className="inline-flex min-h-12 items-center rounded-xl border border-[#D4AF37] bg-white px-5 py-3 text-sm font-bold text-[#292725]">{t.information}</a></div>
+
+          {!embedded && (<section className="border-y border-[#C9A65D] bg-[#FFF8EA] px-4 py-7 text-[#292725]"><div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left rtl:sm:text-right"><div><p className="text-xs font-black uppercase tracking-[0.16em] text-[#9B762D]">{t.searchEyebrow}</p><h2 className="mt-2 max-w-3xl font-serif text-2xl font-bold">{t.searchTitle}</h2></div><button type="button" onClick={() => fixedView ? navigate('/') : setPreviewView('platform')} className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-[#B68C3B] bg-[#D6B86D] px-5 py-3 text-sm font-black text-[#292725] transition hover:bg-[#E4CB91]"><Search className="h-4 w-4" /> {t.explorePlatform}</button></div></section>)}
         </>
       )}
-      <DalilFAQ />
+      {view === 'platform' && <DalilFAQ />}
     </div>
   );
 }
