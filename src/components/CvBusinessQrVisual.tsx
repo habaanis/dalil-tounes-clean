@@ -99,6 +99,29 @@ const usageCopy: Record<BusinessCardPreviewLanguage, [string, string, string[], 
 };
 const usageIcons = [CreditCard, Truck, Store, Monitor, FileText, Package];
 
+export function QrBusinessUsage({ language = 'fr' }: { language?: BusinessCardPreviewLanguage }) {
+  const usage = usageCopy[language] ?? usageCopy.fr;
+  return (
+      <details dir={language === 'ar' ? 'rtl' : 'ltr'} className="group mx-auto mt-2 w-full max-w-xl rounded-lg border border-[#C5A56A] bg-[#FBF8F0] text-[#292929]">
+        <summary className="flex min-h-9 cursor-pointer list-none items-center justify-between gap-2 px-2.5 py-2 text-[11px] font-semibold [&::-webkit-details-marker]:hidden">
+          {usage[0]} <ChevronDown size={14} className="shrink-0 text-[#92703B] group-open:rotate-180" aria-hidden="true" />
+        </summary>
+        <div className="px-2.5 pb-2.5 text-[11px] leading-relaxed">
+          <p>{usage[1]}</p>
+          <ul className="my-2 grid grid-cols-2 gap-1.5 md:grid-cols-3">
+            {usageIcons.map((Icon, index) => (
+              <li key={index} className="flex min-w-0 flex-col items-center gap-1 rounded-md border border-[#C5A56A]/40 p-1.5 text-center leading-tight">
+                <Icon size={19} strokeWidth={1.6} className="text-[#92703B]" aria-hidden="true" />
+                <span>{usage[2][index]}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="font-semibold">{usage[3]}</p>
+        </div>
+      </details>
+  );
+}
+
 export type CvBusinessQrVisualProps = {
   language?: BusinessCardPreviewLanguage;
   name?: string;
@@ -119,16 +142,16 @@ export type CvBusinessQrVisualProps = {
   onInstall?: () => void;
   qrId?: string;
   interactive?: boolean;
+  showUsage?: boolean;
   palette?: CvPaletteId | string | null;
 };
 
 export function CvBusinessQrVisual({
   language = 'fr', name, category, coverImage = AUX_SAVEURS_COVER, logo = AUX_SAVEURS_LOGO,
   qrValue = DEMO_URL, shareLabel, downloadLabel, addLabel, openLabel, scanText, poweredText,
-  openHref, onShare, onDownload, onInstall, qrId, interactive = false, palette, productLabel,
+  openHref, onShare, onDownload, onInstall, qrId, interactive = false, palette, productLabel, showUsage = true,
 }: CvBusinessQrVisualProps) {
   const t = copy[language] ?? copy.fr;
-  const usage = usageCopy[language] ?? usageCopy.fr;
   const theme = getCvPaletteTheme(palette);
   const isRtl = language === 'ar';
   const displayName = name || t.name;
@@ -192,23 +215,7 @@ export function CvBusinessQrVisual({
         ))}
       </div>
 
-      <details className="group mx-auto mt-2 w-full rounded-lg border border-[#C5A56A] bg-[#FBF8F0] text-[#292929]">
-        <summary className="flex min-h-9 cursor-pointer list-none items-center justify-between gap-2 px-2.5 py-2 text-[11px] font-semibold [&::-webkit-details-marker]:hidden">
-          {usage[0]} <ChevronDown size={14} className="shrink-0 text-[#92703B] group-open:rotate-180" aria-hidden="true" />
-        </summary>
-        <div className="px-2.5 pb-2.5 text-[11px] leading-relaxed">
-          <p>{usage[1]}</p>
-          <ul className="my-2 grid grid-cols-2 gap-1.5 md:grid-cols-3">
-            {usageIcons.map((Icon, index) => (
-              <li key={index} className="flex min-w-0 flex-col items-center gap-1 rounded-md border border-[#C5A56A]/40 p-1.5 text-center leading-tight">
-                <Icon size={19} strokeWidth={1.6} className="text-[#92703B]" aria-hidden="true" />
-                <span>{usage[2][index]}</span>
-              </li>
-            ))}
-          </ul>
-          <p className="font-semibold">{usage[3]}</p>
-        </div>
-      </details>
+      {showUsage && <QrBusinessUsage language={language} />}
 
       <p className="mb-0 mt-[15px] flex items-center justify-center gap-1.5 text-center text-[10px] font-normal" style={{ color: theme.muted }}>
         <img src="/images/logo_dalil_tounes_sceau_luxe.png" alt="" className="h-[17px] w-[17px] rounded-full object-cover" />
