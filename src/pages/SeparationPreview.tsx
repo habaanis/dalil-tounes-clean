@@ -17,8 +17,9 @@ import { useLanguage } from '../context/LanguageContext';
 import { useHomeData } from '../hooks/useHomeData';
 
 function CvSectionFold({ enabled, title, children, initiallyOpen = false }: { enabled: boolean; title: string; children: ReactNode; initiallyOpen?: boolean }) {
+  const [expanded, setExpanded] = useState(initiallyOpen);
   if (!enabled) return <>{children}</>;
-  return <details open={undefined} className="mx-3 my-3 overflow-hidden rounded-xl border border-[#D4AF37]/45 bg-white">
+  return <details open={expanded} onToggle={event => setExpanded(event.currentTarget.open)} className="mx-3 my-3 overflow-hidden rounded-xl border border-[#D4AF37]/45 bg-white">
     <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 bg-[#FFFDF8] px-4 py-3 text-sm font-semibold text-[#4A1D43] [&::-webkit-details-marker]:hidden">
       <span>{title}</span><span aria-hidden="true" className="text-xl text-[#A17D36]">⌄</span>
     </summary>
