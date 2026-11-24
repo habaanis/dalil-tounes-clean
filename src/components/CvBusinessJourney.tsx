@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ArrowRight, Download, PlayCircle, Smartphone, X, ZoomIn } from 'lucide-react';
 import type { BusinessCardPreviewLanguage } from './BusinessCardPreview';
-import { CvBusinessQrVisual, AUX_SAVEURS_LOGO } from './CvBusinessQrVisual';
+import { CvBusinessQrVisual, QrBusinessUsage, AUX_SAVEURS_LOGO } from './CvBusinessQrVisual';
 
 const COPY: Record<BusinessCardPreviewLanguage, {
   eyebrow: string;
@@ -417,7 +417,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
               {activeMobileStep === 'qr' && (
                 <div className="h-[300px] w-[148px] overflow-hidden">
                   <div className="w-[354px] origin-top-left scale-[0.416] rtl:origin-top-right">
-                    <CvBusinessQrVisual language={language} />
+                    <CvBusinessQrVisual language={language} showUsage={false} />
                   </div>
                 </div>
               )}
@@ -454,7 +454,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
             <div className="mb-1.5 inline-flex rounded-full bg-[#032D21] px-2.5 py-1 text-[10px] font-black text-[#F4CE55]">{t.qrTitle}</div>
             <div className="relative mx-auto h-[360px] w-[180px] overflow-hidden">
               <div className="absolute left-[2px] top-0 w-[354px] origin-top-left scale-[0.496] rtl:left-auto rtl:right-[2px] rtl:origin-top-right">
-                <CvBusinessQrVisual language={language} />
+                <CvBusinessQrVisual language={language} showUsage={false} />
               </div>
               <PreviewButton label={`${t.openPreview} — ${t.qrTitle}`} onClick={() => setExpandedVisual('qr')} />
             </div>
@@ -504,6 +504,10 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
           <Download className="h-3.5 w-3.5 shrink-0 text-[#F4CE55]" aria-hidden="true" />
           <span>{t.summary}</span>
         </div>
+      </div>
+
+      <div className="mx-auto mt-2 w-full max-w-xl">
+        <QrBusinessUsage language={language} />
       </div>
 
       {expandedVisual && (
