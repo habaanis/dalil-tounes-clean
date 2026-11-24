@@ -158,7 +158,7 @@ function JourneyArrow({ rtl }: { rtl: boolean }) {
   );
 }
 
-function PwaPhone({ language }: { language: BusinessCardPreviewLanguage }) {
+function PwaPhone({ language, showVideo = true }: { language: BusinessCardPreviewLanguage; showVideo?: boolean }) {
   const t = COPY[language];
   const rtl = language === 'ar';
   return (
@@ -350,7 +350,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
             {t.eyebrow}
           </div>
           <h2 className="mt-2 font-serif text-2xl font-bold text-[#292725] sm:text-[28px]">{t.title}</h2>
-          {videoCopy && (
+          {showVideo && videoCopy && (
             <button
               type="button"
               onClick={() => setVideoOpen(true)}
