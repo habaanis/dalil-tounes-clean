@@ -116,7 +116,12 @@ export function businessRelevance(row: SearchableBusiness, query: string): {
     return terms.some(term => textHas(text, term));
   };
 
-  const name = match([row.nom, row.name, row.name_ar]);
+  // Keep a short typed prefix of a business name searchable. This is
+  // deliberately limited to names: do not widen matches in descriptions.
+  const nameText = normalizeBusinessSearch(asText([row.nom, row.name, row.name_ar]));
+  const namePrefix = normalizedQuery.length >= 4 &&
+    nameText.split(' ').some(word => word.startsWith(normalizedQuery));
+  const name = match([row.nom, row.name, row.name_ar]) || namePrefix;
   const subtype = match([row.sous_categories_texte, row.sous_categories_clean, row.sous_categories, row.categorie, row.categorie_ar]);
   const services = match([row.services, row.services_ar]);
   const keywords = match([row.keywords_fr, row['mots cles recherche'], row.search_text]);
@@ -144,7 +149,8 @@ export function businessRelevance(row: SearchableBusiness, query: string): {
   ]));
   const allConceptsMatch = tokens.every((token, i) => {
     const alternatives = groups[i]?.map(normalizeBusinessSearch) || [token];
-    return alternatives.some(alt => textHas(combinedText, alt));
+    return alternatives.some(alt => textHas(combinedText, alt)) ||
+      (tokens.length === 1 && namePrefix);
   });
   // Contaminated keywords/prose alone must not make unrelated businesses
   // appear in a profession-specific search.
