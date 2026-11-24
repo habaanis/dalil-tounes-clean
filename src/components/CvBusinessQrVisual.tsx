@@ -1,4 +1,4 @@
-import { Download, ExternalLink, Home, Share2 } from 'lucide-react';
+import { ChevronDown, CreditCard, Truck, Store, Monitor, FileText, Package, Download, ExternalLink, Home, Share2 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import type { BusinessCardPreviewLanguage } from './BusinessCardPreviewBase';
 import { getCvPaletteTheme, type CvPaletteId } from '../lib/cvPalette';
@@ -30,6 +30,75 @@ const copy: Record<BusinessCardPreviewLanguage, VisualCopy> = {
   ru: { name: "Aux saveurs d'Anis", category: 'Выездной кейтеринг', scan: 'Покажите этот QR-код, чтобы сразу открыть Business CV.', share: 'Поделиться', download: 'Скачать', add: 'Добавить на главный экран', open: 'Открыть Business CV', powered: 'При поддержке Dalil Tounes' },
 };
 
+const usageCopy: Record<BusinessCardPreviewLanguage, [string, string, string[], string]> = {
+  "fr": [
+    "Où utiliser votre QR Business ?",
+    "Téléchargez et imprimez votre QR code personnalisé pour donner à vos clients un accès direct à votre mini-appli, vos services et votre boutique.",
+    [
+      "Cartes de visite",
+      "Véhicules professionnels",
+      "Devant votre établissement ou sur votre vitrine",
+      "Bureau et comptoir",
+      "Flyers et menus",
+      "Produits et emballages"
+    ],
+    "Un simple scan pour découvrir votre activité, consulter vos produits, vous contacter ou passer commande."
+  ],
+  "ar": [
+    "أين تستخدم رمز QR Business؟",
+    "نزّل رمز QR الشخصي واطبعه ليتمكن عملاؤك من الوصول مباشرة إلى تطبيقك المصغّر وخدماتك ومتجرك.",
+    [
+      "بطاقات العمل",
+      "المركبات المهنية",
+      "أمام مؤسستك أو على واجهتها",
+      "المكتب وطاولة الاستقبال",
+      "المنشورات وقوائم الطعام",
+      "المنتجات والتغليف"
+    ],
+    "مسح واحد للتعرّف على نشاطك وتصفّح منتجاتك والتواصل معك أو تقديم طلب."
+  ],
+  "en": [
+    "Where can you use your QR Business?",
+    "Download and print your personalised QR code to give customers direct access to your mini-app, services and shop.",
+    [
+      "Business cards",
+      "Business vehicles",
+      "Outside your premises or on your shop window",
+      "Desk and counter",
+      "Flyers and menus",
+      "Products and packaging"
+    ],
+    "One scan to discover your business, browse your products, contact you or place an order."
+  ],
+  "it": [
+    "Dove usare il tuo QR Business?",
+    "Scarica e stampa il tuo codice QR personalizzato per offrire ai clienti accesso diretto alla tua mini-app, ai servizi e al negozio.",
+    [
+      "Biglietti da visita",
+      "Veicoli aziendali",
+      "All’esterno della sede o in vetrina",
+      "Scrivania e bancone",
+      "Volantini e menu",
+      "Prodotti e confezioni"
+    ],
+    "Una semplice scansione per scoprire la tua attività, consultare i prodotti, contattarti o effettuare un ordine."
+  ],
+  "ru": [
+    "Где использовать ваш QR Business?",
+    "Скачайте и распечатайте персональный QR-код, чтобы клиенты могли сразу открыть ваше мини-приложение, услуги и магазин.",
+    [
+      "Визитные карточки",
+      "Служебный транспорт",
+      "Перед заведением или на витрине",
+      "Рабочий стол и стойка",
+      "Листовки и меню",
+      "Товары и упаковка"
+    ],
+    "Одно сканирование, чтобы узнать о вашей деятельности, посмотреть товары, связаться с вами или оформить заказ."
+  ]
+};
+const usageIcons = [CreditCard, Truck, Store, Monitor, FileText, Package];
+
 export type CvBusinessQrVisualProps = {
   language?: BusinessCardPreviewLanguage;
   name?: string;
@@ -59,6 +128,7 @@ export function CvBusinessQrVisual({
   openHref, onShare, onDownload, onInstall, qrId, interactive = false, palette, productLabel,
 }: CvBusinessQrVisualProps) {
   const t = copy[language] ?? copy.fr;
+  const usage = usageCopy[language] ?? usageCopy.fr;
   const theme = getCvPaletteTheme(palette);
   const isRtl = language === 'ar';
   const displayName = name || t.name;
@@ -121,6 +191,24 @@ export function CvBusinessQrVisual({
           </button>
         ))}
       </div>
+
+      <details className="group mx-auto mt-2 w-full rounded-lg border border-[#C5A56A] bg-[#FBF8F0] text-[#292929]">
+        <summary className="flex min-h-9 cursor-pointer list-none items-center justify-between gap-2 px-2.5 py-2 text-[11px] font-semibold [&::-webkit-details-marker]:hidden">
+          {usage[0]} <ChevronDown size={14} className="shrink-0 text-[#92703B] group-open:rotate-180" aria-hidden="true" />
+        </summary>
+        <div className="px-2.5 pb-2.5 text-[11px] leading-relaxed">
+          <p>{usage[1]}</p>
+          <ul className="my-2 grid grid-cols-2 gap-1.5 md:grid-cols-3">
+            {usageIcons.map((Icon, index) => (
+              <li key={index} className="flex min-w-0 flex-col items-center gap-1 rounded-md border border-[#C5A56A]/40 p-1.5 text-center leading-tight">
+                <Icon size={19} strokeWidth={1.6} className="text-[#92703B]" aria-hidden="true" />
+                <span>{usage[2][index]}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="font-semibold">{usage[3]}</p>
+        </div>
+      </details>
 
       <p className="mb-0 mt-[15px] flex items-center justify-center gap-1.5 text-center text-[10px] font-normal" style={{ color: theme.muted }}>
         <img src="/images/logo_dalil_tounes_sceau_luxe.png" alt="" className="h-[17px] w-[17px] rounded-full object-cover" />
