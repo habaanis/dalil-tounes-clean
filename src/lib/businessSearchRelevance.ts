@@ -110,7 +110,7 @@ export function businessRelevance(row: SearchableBusiness, query: string): {
   const specificIntent = groups.some(Boolean);
   const terms = businessSearchVariants(query).map(normalizeBusinessSearch).filter(Boolean);
   const textHas = (text: string, term: string) =>
-    containsTerm(text, term) || (term.length >= 4 && text.split(' ').some(word => word.startsWith(term)));
+    containsTerm(text, term) || (term.length >= 5 && text.split(' ').some(word => word.startsWith(term)));
   const match = (value: unknown) => {
     const text = normalizeBusinessSearch(asText(value));
     return terms.some(term => textHas(text, term));
