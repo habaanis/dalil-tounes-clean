@@ -21,7 +21,6 @@ import {
 import { SubscriptionRequestForm } from '../components/SubscriptionRequestForm';
 import type { BillingPeriod, CheckoutOffer, SubscriptionPlanCode } from '../components/SubscriptionRequestForm';
 import { BusinessCardPreview } from '../components/BusinessCardPreview';
-import CvBusinessJourney from '../components/CvBusinessJourney';
 import {
   CvPresentationModelSelector,
   getPresentationModelLabel,
@@ -1491,7 +1490,7 @@ export const Subscription = () => {
   onPaletteChange={setSelectedPalette}
 />
 </details>
-<div className="mb-6 overflow-hidden rounded-3xl border border-[#D6AF2E]/60 bg-gradient-to-br from-[#FFF8DF] via-white to-[#FFF9ED] p-5 shadow-[0_12px_30px_rgba(74,18,63,0.07)] sm:p-7">
+<div className="mb-4 rounded-xl border border-[#D6AF2E]/60 bg-[#FFF9ED] p-3 sm:p-4">
   <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
     <div className="max-w-3xl">
       <span className="inline-flex items-center gap-2 rounded-full bg-[#4A123F] px-3 py-1 text-[10px] font-medium uppercase tracking-[0.12em] text-white">
@@ -1499,13 +1498,13 @@ export const Subscription = () => {
         {simpleCopy.welcomeBadge}
       </span>
       <h3 className="mt-3 text-xl font-medium text-[#4A123F] sm:text-2xl">{simpleCopy.welcomeTitle}</h3>
-      <p className="mt-3 hidden text-sm leading-6 text-slate-700 sm:block">{simpleCopy.welcomeDescription}</p>
+      <p className="mt-2 hidden text-sm leading-5 text-slate-700 sm:block">{simpleCopy.welcomeDescription}</p>
     </div>
     <div className="hidden rounded-2xl border border-[#D3B16F] bg-[#FFF9ED] px-5 py-4 text-center text-[#4A1D43] shadow-sm sm:block lg:max-w-xs">
       <p className="text-lg font-medium leading-6 text-[#4A1D43]">{simpleCopy.welcomeHighlight}</p>
     </div>
   </div>
-  <p className="mt-4 rounded-2xl border border-[#D6AF2E]/45 bg-white px-4 py-3 text-sm font-medium leading-6 text-[#4A123F]">{simpleCopy.welcomePayment}</p>
+  <p className="mt-2 rounded-xl border border-[#D6AF2E]/45 bg-white px-3 py-2 text-sm font-medium leading-5 text-[#4A123F]">{simpleCopy.welcomePayment}</p>
 </div>
 
 <div className="grid items-stretch gap-5 lg:grid-cols-2">
@@ -1547,7 +1546,7 @@ export const Subscription = () => {
 
 
 
-<details className="mt-5 rounded-2xl border border-[#D4AF37]/50 bg-white p-4"><summary className="cursor-pointer font-medium text-[#4A1D43]">{structure.details}</summary><CvBusinessJourney language={language as OfferLanguage} /></details>
+
 
 <div className="mt-5 rounded-3xl border border-[#D6AF2E]/60 bg-white p-5 shadow-[0_10px_28px_rgba(74,18,63,0.06)] sm:p-6">
   <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
