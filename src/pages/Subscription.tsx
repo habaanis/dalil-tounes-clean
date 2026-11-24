@@ -1368,9 +1368,9 @@ export const Subscription = () => {
         <section id="cv-professionnels" className="my-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-5">
           <h2 className="font-serif text-xl font-medium text-[#292725]">CV Business · CV Portfolio</h2>
           <p className="my-3 text-sm leading-6 text-slate-600">{structure.cvIntro}</p>
-          <details id="mini-appli-details" name="professional-sections"><summary className="cursor-pointer font-medium text-[#292725]">{structure.details}</summary><CvBusinessHome embedded /></details>
+          <details id="mini-appli-details" className="rounded-lg border border-[#D4AF37]/40 p-2"><summary className="cursor-pointer py-2 font-medium text-[#292725]">{structure.details}</summary><CvBusinessHome embedded /></details>
         </section>
-<details name="professional-sections" id="modeles" className="mb-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-4">
+<details id="modeles" className="mb-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-4">
   <summary className="cursor-pointer font-medium text-[#292725]">{structure.models}</summary>
 <CvPresentationModelSelector
   language={language}
