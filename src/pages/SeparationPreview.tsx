@@ -7,7 +7,7 @@ import { SEOHead } from '../components/SEOHead';
 import StructuredData from '../components/StructuredData';
 import { getHomeSeoMeta } from '../lib/seoMetaTemplates';
 import { generateOrganizationSchema, generateWebSiteSchema } from '../lib/structuredDataSchemas';
-import { ArrowRight, Users, Compass, Building2, MapPin, QrCode, Search, Share2, Sparkles, Play, X } from 'lucide-react';
+import { ArrowRight, Users, Compass, Building2, MapPin, Search, Sparkles, Play, X } from 'lucide-react';
 import { useEffect, useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CvBusinessJourney from '../components/CvBusinessJourney';
@@ -18,7 +18,7 @@ import { useHomeData } from '../hooks/useHomeData';
 
 function CvSectionFold({ enabled, title, children, initiallyOpen = false }: { enabled: boolean; title: string; children: ReactNode; initiallyOpen?: boolean }) {
   if (!enabled) return <>{children}</>;
-  return <details defaultOpen={initiallyOpen} className="mx-3 my-3 overflow-hidden rounded-xl border border-[#D4AF37]/45 bg-white">
+  return <details open={initiallyOpen || undefined} className="mx-3 my-3 overflow-hidden rounded-xl border border-[#D4AF37]/45 bg-white">
     <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 bg-[#FFFDF8] px-4 py-3 text-sm font-semibold text-[#4A1D43] [&::-webkit-details-marker]:hidden">
       <span>{title}</span><span aria-hidden="true" className="text-xl text-[#A17D36]">⌄</span>
     </summary>
@@ -486,16 +486,6 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
           </section>
           </CvSectionFold>
 
-          <CvSectionFold enabled={compactCvApp} title={t.cardTitle}>
-          <section className="bg-white px-3 py-3 md:py-5">
-            <div className="mx-auto max-w-6xl rounded-2xl border border-[#D4AF37]/35 bg-[#FFFCF5] p-3 md:p-4">
-              <p className="text-xs font-black uppercase tracking-[0.16em] text-[#B58A18]">{t.cardEyebrow}</p><h2 className="public-heading mt-1 max-w-4xl font-serif text-lg font-medium text-[#292725] md:text-xl">{t.cardTitle}</h2><p className="mt-2 max-w-4xl text-sm leading-5 text-gray-700">{t.cardIntro}</p>
-              <div className="mt-2 grid gap-2 sm:grid-cols-3"><div className="rounded-2xl border border-[#D4AF37]/25 bg-white p-2.5"><QrCode className="h-5 w-5 text-[#B58A18]" aria-hidden="true" /><p className="mt-1 text-xs font-medium leading-5 text-[#292725]">{t.qrBenefit}</p></div><div className="rounded-2xl border border-[#D4AF37]/25 bg-white p-2.5"><MapPin className="h-5 w-5 text-[#B58A18]" aria-hidden="true" /><p className="mt-1 text-xs font-medium leading-5 text-[#292725]">{t.informationBenefit}</p></div><div className="rounded-2xl border border-[#D4AF37]/25 bg-white p-2.5"><Share2 className="h-5 w-5 text-[#B58A18]" aria-hidden="true" /><p className="mt-1 text-xs font-medium leading-5 text-[#292725]">{t.sharingBenefit}</p></div></div>
-              <p className="mt-2 max-w-5xl rounded-xl border border-[#D4AF37]/25 bg-white px-3 py-2 text-xs leading-5 text-gray-700">{t.physicalCard}</p>
-              <div className="mt-2 rounded-xl border border-[#C9A65D] bg-[#FFF8EA] p-3 text-[#292725]"><h3 className="font-serif text-xl font-bold text-[#292725] md:text-lg">{t.visibilityTitle}</h3><p className="mt-2 max-w-5xl text-sm leading-5 text-[#514B43] md:text-sm">{t.visibilityText}</p></div>
-            </div>
-          </section>
-          </CvSectionFold>
 
           <CvSectionFold enabled={compactCvApp} title={t.miniAppTitle}>
           <section className="mx-auto max-w-5xl space-y-2 px-3 py-3">
