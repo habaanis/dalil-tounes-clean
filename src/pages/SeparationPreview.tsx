@@ -371,7 +371,7 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
         <>
           <section className="border-b border-[#D4AF37]/25 bg-[radial-gradient(circle_at_top_left,rgba(212,175,55,0.18),transparent_28%),linear-gradient(135deg,#fffdf8_0%,#ffffff_52%,#fff9ed_100%)] px-3 py-4 md:py-6">
             <div className="mx-auto grid max-w-[1180px] items-center gap-4 lg:grid-cols-[1fr_0.72fr]">
-              <div><div className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/45 bg-white px-3 py-1.5 text-xs font-black uppercase tracking-[0.14em] text-[#292725] shadow-sm"><Sparkles className="h-4 w-4 text-[#D4AF37]" /> {t.cvLabel}</div><CvHeading className="public-title mt-2 font-serif text-2xl font-medium leading-tight text-[#292725] md:text-3xl">{t.cvTitle}</CvHeading><p className="mt-2 font-serif text-lg font-medium leading-tight text-[#B58A18] md:text-xl">{t.cvSubtitle}</p><p className="mt-2 max-w-xl text-sm leading-5 text-gray-600">{t.cvDescription}</p><div className="mt-3 flex flex-wrap gap-2"><a href="/subscription" className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-[#D6B86D] px-5 py-3 text-sm font-black text-[#292725]">{t.offers} <ArrowRight className={`h-4 w-4 ${lang === 'ar' ? 'rotate-180' : ''}`} /></a><a href="/contact" className="inline-flex min-h-12 items-center rounded-xl border border-[#D4AF37] bg-white px-5 py-3 text-sm font-bold text-[#292725]">{t.information}</a></div></div>
+              <div><div className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/45 bg-white px-3 py-1.5 text-xs font-black uppercase tracking-[0.14em] text-[#292725] shadow-sm"><Sparkles className="h-4 w-4 text-[#D4AF37]" /> {t.cvLabel}</div><CvHeading className="public-title mt-2 font-serif text-2xl font-medium leading-tight text-[#292725] md:text-3xl">{t.cvTitle}</CvHeading><p className="mt-2 font-serif text-lg font-medium leading-tight text-[#B58A18] md:text-xl">{t.cvSubtitle}</p><p className="mt-2 max-w-xl text-sm leading-5 text-gray-600">{t.cvDescription}</p></div>
               <div className="rounded-2xl border border-[#D4AF37]/45 bg-white/90 p-4 shadow-[0_28px_70px_rgba(74,29,67,0.16)]"><p className="mb-3 text-center text-xs font-bold text-[#292725]">{t.example}</p><div className="flex h-[280px] items-center justify-center overflow-hidden rounded-[18px] bg-[#032D21]">{heroVideoSrc ? <video key={heroVideoSrc} src={heroVideoSrc} controls playsInline preload="metadata" poster="/images/cv-business-portfolio-aux-saveurs-anis.png" className="h-[280px] w-auto max-w-full object-contain" aria-label={t.example} /> : <img src="/images/cv-business-portfolio-aux-saveurs-anis.png" alt="CV Business Aux saveurs d’Anis" className="h-[280px] w-auto object-contain object-top" />}</div></div>
             </div>
           </section>
@@ -394,14 +394,16 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
             <details className="rounded-2xl border border-[#D4AF37]/40 p-4"><summary className="cursor-pointer font-bold text-[#292725]">{structure.details}</summary><VisibilityHouseSection showNetworkProof={false} /></details>
           </section>
 
-          <CvCapabilitiesSection language={lang} />
+          <CvCapabilitiesSection language={lang} showActions={false} />
 
           <CvBusinessJourney language={lang} />
+
+          <div className="mx-auto my-3 flex flex-wrap justify-center gap-2"><a href="/subscription#offres" className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-[#D6B86D] px-5 py-3 text-sm font-black text-[#292725]">{t.offers} <ArrowRight className={`h-4 w-4 ${lang === 'ar' ? 'rotate-180' : ''}`} /></a><a href="/contact" className="inline-flex min-h-12 items-center rounded-xl border border-[#D4AF37] bg-white px-5 py-3 text-sm font-bold text-[#292725]">{t.information}</a></div>
 
           <section className="border-y border-[#C9A65D] bg-[#FFF8EA] px-4 py-7 text-[#292725]"><div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left rtl:sm:text-right"><div><p className="text-xs font-black uppercase tracking-[0.16em] text-[#9B762D]">{t.searchEyebrow}</p><h2 className="mt-2 max-w-3xl font-serif text-2xl font-bold">{t.searchTitle}</h2></div><button type="button" onClick={() => fixedView ? navigate('/') : setPreviewView('platform')} className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-[#B68C3B] bg-[#D6B86D] px-5 py-3 text-sm font-black text-[#292725] transition hover:bg-[#E4CB91]"><Search className="h-4 w-4" /> {t.explorePlatform}</button></div></section>
         </>
       )}
-      <DalilFAQ />
+      {view === 'platform' && <DalilFAQ />}
     </div>
   );
 }
