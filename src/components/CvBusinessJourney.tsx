@@ -345,11 +345,11 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
     <section className="border-y border-[#D5B257]/25 bg-[radial-gradient(circle_at_top,rgba(213,178,87,0.12),transparent_32%),linear-gradient(180deg,#fffdf8_0%,#ffffff_100%)] px-4 py-5 sm:py-6" dir={rtl ? 'rtl' : 'ltr'}>
       <div className="mx-auto max-w-[900px]">
         <div className="mx-auto max-w-2xl text-center">
-          <div className="inline-flex items-center gap-1.5 rounded-full border border-[#D5B257]/45 bg-white px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.11em] text-[#4A1D43] shadow-sm">
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-[#D5B257]/45 bg-white px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.11em] text-[#292725] shadow-sm">
             <Smartphone className="h-3 w-3 text-[#D5B257]" aria-hidden="true" />
             {t.eyebrow}
           </div>
-          <h2 className="mt-2 font-serif text-2xl font-bold text-[#2E102A] sm:text-[28px]">{t.title}</h2>
+          <h2 className="mt-2 font-serif text-2xl font-bold text-[#292725] sm:text-[28px]">{t.title}</h2>
           <p className="mx-auto mt-1 max-w-xl text-xs leading-5 text-gray-600 sm:text-[13px]">{t.subtitle}</p>
           {videoCopy && (
             <button
@@ -373,7 +373,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
                 role="tab"
                 aria-selected={activeMobileStep === step.id}
                 onClick={() => setActiveMobileStep(step.id)}
-                className={`min-h-11 rounded-xl border px-1.5 py-2 text-[11px] font-black leading-4 transition focus:outline-none focus:ring-2 focus:ring-[#D5B257] ${activeMobileStep === step.id ? 'border-[#032D21] bg-[#032D21] text-[#F4CE55] shadow-sm' : 'border-[#D5B257]/45 bg-white text-[#4A1D43]'}`}
+                className={`min-h-11 rounded-xl border px-1.5 py-2 text-[11px] font-black leading-4 transition focus:outline-none focus:ring-2 focus:ring-[#D5B257] ${activeMobileStep === step.id ? 'border-[#032D21] bg-[#032D21] text-[#F4CE55] shadow-sm' : 'border-[#D5B257]/45 bg-white text-[#292725]'}`}
               >
                 <span className="block text-[9px] opacity-75">{index + 1}</span>
                 {step.label}
@@ -382,7 +382,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
           </div>
 
           <article className="mt-3 rounded-2xl border border-[#D5B257]/45 bg-white/90 p-3 text-center shadow-sm">
-            <h3 className="text-sm font-black text-[#4A1D43]">{mobileStepTitle}</h3>
+            <h3 className="text-sm font-black text-[#292725]">{mobileStepTitle}</h3>
             <p className="mx-auto mt-1 max-w-xs text-xs leading-5 text-gray-600">{mobileStepText}</p>
 
             {activeMobileStep === 'cv' && (
@@ -391,7 +391,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
                   type="button"
                   aria-pressed={activeCvModel === 'business'}
                   onClick={() => setActiveCvModel('business')}
-                  className={`rounded-md px-2 py-1.5 text-[10px] font-black transition ${activeCvModel === 'business' ? 'bg-[#032D21] text-[#F4CE55]' : 'bg-white text-[#4A1D43]'}`}
+                  className={`rounded-md px-2 py-1.5 text-[10px] font-black transition ${activeCvModel === 'business' ? 'bg-[#032D21] text-[#F4CE55]' : 'bg-white text-[#292725]'}`}
                 >
                   {t.professionalModel}
                 </button>
@@ -399,7 +399,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
                   type="button"
                   aria-pressed={activeCvModel === 'portfolio'}
                   onClick={() => setActiveCvModel('portfolio')}
-                  className={`rounded-md px-2 py-1.5 text-[10px] font-black transition ${activeCvModel === 'portfolio' ? 'bg-[#032D21] text-[#F4CE55]' : 'bg-white text-[#4A1D43]'}`}
+                  className={`rounded-md px-2 py-1.5 text-[10px] font-black transition ${activeCvModel === 'portfolio' ? 'bg-[#032D21] text-[#F4CE55]' : 'bg-white text-[#292725]'}`}
                 >
                   {t.portfolioModel}
                 </button>
@@ -435,6 +435,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
                 onClick={() => setExpandedVisual(activeMobileStep === 'cv' ? (activeCvModel === 'portfolio' ? 'cv-portfolio' : 'cv-business') : activeMobileStep)}
               />
             </div>
+            {activeMobileStep === 'qr' && <QrBusinessUsage language={language} />}
           </article>
         </div>
 
@@ -470,7 +471,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
                 type="button"
                 aria-pressed={activeCvModel === 'business'}
                 onClick={() => setActiveCvModel('business')}
-                className={`min-w-0 rounded-md px-1 py-1 text-[8px] font-black leading-3 transition ${activeCvModel === 'business' ? 'bg-[#032D21] text-[#F4CE55] shadow-sm' : 'bg-white text-[#4A1D43] hover:bg-amber-50'}`}
+                className={`min-w-0 rounded-md px-1 py-1 text-[8px] font-black leading-3 transition ${activeCvModel === 'business' ? 'bg-[#032D21] text-[#F4CE55] shadow-sm' : 'bg-white text-[#292725] hover:bg-amber-50'}`}
               >
                 {t.professionalModel}
               </button>
@@ -478,7 +479,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
                 type="button"
                 aria-pressed={activeCvModel === 'portfolio'}
                 onClick={() => setActiveCvModel('portfolio')}
-                className={`min-w-0 rounded-md px-1 py-1 text-[8px] font-black leading-3 transition ${activeCvModel === 'portfolio' ? 'bg-[#032D21] text-[#F4CE55] shadow-sm' : 'bg-white text-[#4A1D43] hover:bg-amber-50'}`}
+                className={`min-w-0 rounded-md px-1 py-1 text-[8px] font-black leading-3 transition ${activeCvModel === 'portfolio' ? 'bg-[#032D21] text-[#F4CE55] shadow-sm' : 'bg-white text-[#292725] hover:bg-amber-50'}`}
               >
                 {t.portfolioModel}
               </button>
@@ -506,7 +507,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
         </div>
       </div>
 
-      <div className="mx-auto mt-2 w-full max-w-xl">
+      <div className="mx-auto mt-2 hidden w-full max-w-xl lg:block">
         <QrBusinessUsage language={language} />
       </div>
 
@@ -533,7 +534,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
             style={{ width: 'min(430px, 46.125dvh, calc(100vw - 24px))' }}
           >
             <div className="flex items-center justify-between gap-3 border-b border-[#D5B257]/35 px-4 py-3">
-              <h3 className="text-sm font-black text-[#2E102A] sm:text-base">{videoCopy.title}</h3>
+              <h3 className="text-sm font-black text-[#292725] sm:text-base">{videoCopy.title}</h3>
               <button
                 type="button"
                 onClick={() => setVideoOpen(false)}
