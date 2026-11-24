@@ -350,7 +350,6 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
             {t.eyebrow}
           </div>
           <h2 className="mt-2 font-serif text-2xl font-bold text-[#292725] sm:text-[28px]">{t.title}</h2>
-          <p className="mx-auto mt-1 max-w-xl text-xs leading-5 text-gray-600 sm:text-[13px]">{t.subtitle}</p>
           {videoCopy && (
             <button
               type="button"
