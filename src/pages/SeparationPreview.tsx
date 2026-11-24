@@ -1,5 +1,4 @@
 import { FounderStory } from '../components/FounderStory';
-import VisibilityHouseSection from '../components/VisibilityHouseSection';
 import { EssentialPresence } from '../components/EssentialPresence';
 import { siteStructureCopy } from '../lib/siteStructureCopy';
 import { SEOHead } from '../components/SEOHead';
@@ -391,16 +390,15 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
             <p className="text-sm font-bold text-[#9A7416]">{t.miniAppHighlights}</p>
             <h3 className="font-bold text-[#292725]">{ecosystem.cvAdvantageTitle}</h3>
             <p className="text-sm leading-5 text-slate-600">{ecosystem.cvAdvantageText}</p>
-            <details className="rounded-2xl border border-[#D4AF37]/40 p-4"><summary className="cursor-pointer font-bold text-[#292725]">{structure.details}</summary><VisibilityHouseSection showNetworkProof={false} /></details>
           </section>
 
           <CvCapabilitiesSection language={lang} showActions={false} />
 
           <CvBusinessJourney language={lang} />
 
-          <div className="mx-auto my-3 flex flex-wrap justify-center gap-2"><a href="/subscription#offres" className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-[#D6B86D] px-5 py-3 text-sm font-black text-[#292725]">{t.offers} <ArrowRight className={`h-4 w-4 ${lang === 'ar' ? 'rotate-180' : ''}`} /></a><a href="/contact" className="inline-flex min-h-12 items-center rounded-xl border border-[#D4AF37] bg-white px-5 py-3 text-sm font-bold text-[#292725]">{t.information}</a></div>
+          <div className="mx-auto my-3 flex flex-wrap justify-center gap-2"><a href={embedded ? "#offres" : "/subscription#offres"} className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-[#D6B86D] px-5 py-3 text-sm font-black text-[#292725]">{t.offers} <ArrowRight className={`h-4 w-4 ${lang === 'ar' ? 'rotate-180' : ''}`} /></a><a href="/contact" className="inline-flex min-h-12 items-center rounded-xl border border-[#D4AF37] bg-white px-5 py-3 text-sm font-bold text-[#292725]">{t.information}</a></div>
 
-          <section className="border-y border-[#C9A65D] bg-[#FFF8EA] px-4 py-7 text-[#292725]"><div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left rtl:sm:text-right"><div><p className="text-xs font-black uppercase tracking-[0.16em] text-[#9B762D]">{t.searchEyebrow}</p><h2 className="mt-2 max-w-3xl font-serif text-2xl font-bold">{t.searchTitle}</h2></div><button type="button" onClick={() => fixedView ? navigate('/') : setPreviewView('platform')} className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-[#B68C3B] bg-[#D6B86D] px-5 py-3 text-sm font-black text-[#292725] transition hover:bg-[#E4CB91]"><Search className="h-4 w-4" /> {t.explorePlatform}</button></div></section>
+          {!embedded && (<section className="border-y border-[#C9A65D] bg-[#FFF8EA] px-4 py-7 text-[#292725]"><div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left rtl:sm:text-right"><div><p className="text-xs font-black uppercase tracking-[0.16em] text-[#9B762D]">{t.searchEyebrow}</p><h2 className="mt-2 max-w-3xl font-serif text-2xl font-bold">{t.searchTitle}</h2></div><button type="button" onClick={() => fixedView ? navigate('/') : setPreviewView('platform')} className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-[#B68C3B] bg-[#D6B86D] px-5 py-3 text-sm font-black text-[#292725] transition hover:bg-[#E4CB91]"><Search className="h-4 w-4" /> {t.explorePlatform}</button></div></section>)}
         </>
       )}
       {view === 'platform' && <DalilFAQ />}
