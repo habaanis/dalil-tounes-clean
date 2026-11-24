@@ -1,6 +1,4 @@
 import StructuredData from '../components/StructuredData';
-import Concept from './Concept';
-import { FounderStory } from '../components/FounderStory';
 import { CvBusinessHome } from './SeparationPreview';
 import { EssentialPresence } from '../components/EssentialPresence';
 import { siteStructureCopy } from '../lib/siteStructureCopy';
@@ -21,7 +19,6 @@ import {
 import { SubscriptionRequestForm } from '../components/SubscriptionRequestForm';
 import type { BillingPeriod, CheckoutOffer, SubscriptionPlanCode } from '../components/SubscriptionRequestForm';
 import { BusinessCardPreview } from '../components/BusinessCardPreview';
-import CvBusinessJourney from '../components/CvBusinessJourney';
 import {
   CvPresentationModelSelector,
   getPresentationModelLabel,
@@ -1304,24 +1301,19 @@ export const Subscription = () => {
   const [selectedPresentationModel, setSelectedPresentationModel] = useState<PresentationModel | null>(null);
   const [selectedPalette, setSelectedPalette] = useState<PaletteId>('prestige');
   const [showSecondaryDetails, setShowSecondaryDetails] = useState(false);
-  // Open the requested professional section when coming from an app hub link.
   useEffect(() => {
     const openTargetSection = () => {
-      const target = window.location.hash.slice(1);
-      if (target !== 'modeles' && target !== 'offres' && target !== 'cv-professionnels') return;
-      if (target === 'modeles') {
-        const models = document.getElementById('modeles');
-        if (models instanceof HTMLDetailsElement) models.open = true;
-      }
-      window.requestAnimationFrame(() => {
-        document.getElementById(target)?.scrollIntoView({ block: 'start' });
-      });
+      const params = new URLSearchParams(window.location.search);
+      const target = window.location.hash.slice(1) || (params.get('app-offers') === '1' ? 'offres' : params.get('app-models') === '1' ? 'modeles' : '');
+      if (!target) return;
+      const detail = document.getElementById(target === 'cv-professionnels' ? 'mini-appli-details' : target);
+      if (detail instanceof HTMLDetailsElement) detail.open = true;
+      window.requestAnimationFrame(() => document.getElementById(target)?.scrollIntoView({ block: 'start' }));
     };
     openTargetSection();
     window.addEventListener('hashchange', openTargetSection);
     return () => window.removeEventListener('hashchange', openTargetSection);
   }, []);
-
 
   const closePreview = () => setActivePreview(null);
   const openRequest = (code: SubscriptionPlanCode, label: string, checkoutOffer: CheckoutOffer, billingPeriod?: BillingPeriod, presentationModelLabel?: string, paletteLabel?: string) => {
@@ -1354,75 +1346,6 @@ export const Subscription = () => {
   };
 
   // The compact PWA Offers & Pricing destination shows only prices and conditions.
-  // Detailed models, demonstrations and the three-tools journey stay in their own sections.
-  if (new URLSearchParams(window.location.search).get('app-offers') === '1' &&
-      ['appli.dalil-tounes.com', 'dalil-tounes-pwa.vercel.app'].includes(window.location.hostname)) {
-    const prices = offerCopy[language as OfferLanguage] ?? offerCopy.fr;
-    return <main className="mx-auto max-w-xl space-y-4 px-3 py-4" dir={isArabic ? 'rtl' : 'ltr'}>
-      <header className="rounded-2xl border border-[#C9A65D] bg-[#FFF9EF] px-4 py-4 text-center">
-        <h1 className="font-serif text-xl font-semibold text-[#173B30]">{structure.offers}</h1>
-        <p className="mt-2 text-sm leading-6 text-[#605950]">{simpleCopy.productsSubtitle}</p>
-      </header>
-      <section aria-label={structure.offers} className="grid gap-3">
-        {([
-          { id: 'artisan', title: simpleCopy.artisanTitle, price: prices.artisanPrice, intro: simpleCopy.artisanIntro, features: simpleCopy.artisanFeatures },
-          { id: 'premium', title: simpleCopy.premiumTitle, price: prices.premiumPrice, intro: simpleCopy.premiumIntro, features: prices.premiumFeatures },
-        ] as const).map(plan => <article key={plan.id} className="rounded-2xl border border-[#D4AF37]/60 bg-white p-4 shadow-sm">
-          <div className="flex items-start justify-between gap-3">
-            <h2 className="text-lg font-semibold text-[#173B30]">{plan.title}</h2>
-            <strong className="shrink-0 text-xl text-[#815E28]">{plan.price}</strong>
-          </div>
-          <p className="mt-1 text-xs font-medium text-[#7A684B]">{simpleCopy.creationLabel}</p>
-          <p className="mt-2 text-sm leading-6 text-[#544F49]">{plan.intro}</p>
-          <p className="mt-2 text-sm font-semibold text-[#173B30]">{simpleCopy.firstYearIncluded}</p>
-          <details className="mt-3 border-t border-[#E8DCC4] pt-3">
-            <summary className="cursor-pointer text-sm font-medium text-[#815E28]">{mobileCopy.showBenefits}</summary>
-            <ul className="mt-3 list-disc space-y-1 ps-5 text-sm leading-6 text-[#544F49]">
-              {plan.features.map(feature => <li key={feature}>{feature}</li>)}
-            </ul>
-          </details>
-        </article>)}
-      </section>
-      <section className="rounded-2xl border border-[#D4AF37]/60 bg-[#FFFCF7] p-4">
-        <div className="flex items-start justify-between gap-3">
-          <h2 className="text-base font-semibold text-[#173B30]">{simpleCopy.maintenanceTitle}</h2>
-          <strong className="shrink-0 text-lg text-[#815E28]">{simpleCopy.maintenancePrice}</strong>
-        </div>
-        <p className="mt-1 text-sm text-[#605950]">{simpleCopy.maintenanceTiming}</p>
-        <p className="mt-2 text-sm leading-6 text-[#605950]">{simpleCopy.maintenanceIntro}</p>
-        <details className="mt-3 border-t border-[#E8DCC4] pt-3">
-          <summary className="cursor-pointer text-sm font-medium text-[#815E28]">{mobileCopy.showBenefits}</summary>
-          <ul className="mt-3 list-disc space-y-1 ps-5 text-sm leading-6 text-[#544F49]">
-            {simpleCopy.maintenanceFeatures.map(feature => <li key={feature}>{feature}</li>)}
-          </ul>
-          <p className="mt-3 text-xs leading-5 text-[#605950]">{simpleCopy.noRenewal}</p>
-        </details>
-      </section>
-    </main>;
-  }
-
-  // PWA only: comparison of the two designs, separate from pricing and checkout.
-  if (new URLSearchParams(window.location.search).get('app-models') === '1' && window.location.hostname !== 'dalil-tounes.com' && window.location.hostname !== 'www.dalil-tounes.com') {
-    return <div className="premium-page mx-auto max-w-xl px-3 py-4" dir={isArabic ? 'rtl' : 'ltr'}>
-      <h1 className="font-serif text-2xl font-semibold text-[#35172F]">{language === 'ar' ? 'شاهد النماذج' : 'Voir les modèles'}</h1>
-      <p className="mt-2 text-sm leading-6 text-slate-600">{language === 'ar' ? 'قارن بين نموذجي Business وPortfolio. الأسعار متوفرة في قسم العروض.' : 'Comparez simplement les deux présentations. Les prix et les conditions sont dans « Offres & tarifs ».'}</p>
-      <div className="mt-4 grid grid-cols-2 gap-3">
-        {(['business','portfolio'] as const).map(model => <a key={model}
-          href={`/cv/aux-saveurs-anis?preview-model=${model}&boutique-demo=1&skip-opening=1`}
-          className="rounded-xl border border-[#D4AF37]/50 bg-white p-3 text-center shadow-sm">
-          <div className="pointer-events-none mx-auto h-52 overflow-hidden rounded-lg bg-[#FAF6EC]">
-            <img src={model === 'business' ? '/images/cv-business-professionnel-aux-saveurs-anis.png' : '/images/cv-business-portfolio-aux-saveurs-anis.png'} alt="" className="h-full w-full object-contain" />
-          </div>
-          <strong className="mt-2 block text-sm text-[#35172F]">CV {model === 'business' ? 'Business' : 'Portfolio'}</strong>
-          <span className="mt-1 block text-xs text-slate-600">{language === 'ar' ? 'جرّب التطبيق' : 'Ouvrir le modèle réel'}</span>
-        </a>)}
-      </div>
-      <a href="/subscription?app-full=1&app-offers=1" className="mt-4 block rounded-xl border border-[#D4AF37] px-4 py-3 text-center text-sm font-semibold text-[#35172F]">
-        {language === 'ar' ? 'الأسعار والعروض' : 'Consulter les offres et tarifs'}
-      </a>
-    </div>;
-  }
-
   return (
     <div className="premium-page px-4 py-6 sm:py-8" dir={isArabic ? 'rtl' : 'ltr'}>
       <div className="mx-auto max-w-6xl">
@@ -1439,42 +1362,17 @@ export const Subscription = () => {
         </header>
 
         <nav className="mb-5 flex flex-wrap justify-center gap-3 text-sm font-medium text-[#4A1D43]" aria-label={structure.professional}>
-          <a href="#presence-essentielle">{structure.essential}</a><a href="#concept">{structure.concept}</a><a href="#cv-professionnels">{structure.products}</a><a href="#modeles">{structure.models}</a><a href="#offres">{structure.offers}</a>
+          <a href="#presence-essentielle">{structure.essential}</a><a href="#cv-professionnels">{structure.products}</a><a href="#modeles">{structure.models}</a><a href="#offres">{structure.offers}</a>
         </nav>
         <EssentialPresence registration />
         <p className="mt-3 text-sm font-semibold text-emerald-800">{copy.essentialFree}</p>
         <button type="button" onClick={() => setActivePreview('free')} className="mt-3 min-h-11 rounded-xl border border-[#D4AF37] px-4 py-2 text-sm font-medium text-[#4A1D43]">{copy.previewCard}</button>
-        <section id="concept" className="my-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-5">
-          <h2 className="font-serif text-xl font-medium text-[#4A1D43]">Dalil Tounes</h2>
-          <p className="my-3 text-sm leading-6 text-slate-600">{structure.intro}</p>
-          <p className="my-3 text-sm leading-6 text-slate-600">{copy.heroSubtitle}</p>
-          <details className="rounded-xl border border-[#D4AF37]/40 p-3"><summary className="cursor-pointer font-medium text-[#4A1D43]">{structure.concept}</summary><Concept embedded /></details>
-          <details id="histoire-fondateur" className="mt-3 scroll-mt-32 rounded-xl border border-[#D4AF37]/40 p-3"><summary className="cursor-pointer font-medium text-[#4A1D43]">{structure.story}</summary><FounderStory full /></details>
-        </section>
         <section id="cv-professionnels" className="my-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-5">
           <h2 className="font-serif text-xl font-medium text-[#4A1D43]">{structure.products}</h2>
           <p className="mt-1 text-xs text-slate-500">CV Business · CV Portfolio</p>
           <p className="my-3 text-sm leading-6 text-slate-600">{structure.cvIntro}</p>
-          <details><summary className="cursor-pointer font-medium text-[#4A1D43]">{structure.details}</summary><CvBusinessHome embedded /></details>
+          <details id="mini-appli-details" className="rounded-lg border border-[#D4AF37]/40 p-2"><summary className="cursor-pointer py-2 font-medium text-[#292725]">{structure.details}</summary><CvBusinessHome embedded /></details>
         </section>
-        <section id="offres" aria-labelledby="cv-business-products-title" className="order-2 mt-5 sm:mt-0">
-<div className="mb-6 text-center">
-  <p className="text-xs font-medium uppercase tracking-[0.18em] text-amber-600">{language === "ar" ? "تطبيقك المصغّر المهني" : language === "en" ? "YOUR BUSINESS MINI-APP" : language === "it" ? "LA TUA MINI-APP PROFESSIONALE" : language === "ru" ? "ВАШЕ МИНИ-ПРИЛОЖЕНИЕ" : "VOTRE MINI-APPLI PROFESSIONNELLE"}</p>
-  <h2 id="cv-business-products-title" className="mt-2 text-2xl font-medium text-[#4A123F] sm:text-3xl">{simpleCopy.productsTitle}</h2>
-  <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-slate-600">{simpleCopy.productsSubtitle}</p>
-</div>
-
-{['appli.dalil-tounes.com', 'dalil-tounes-pwa.vercel.app'].includes(window.location.hostname) && (
-  <section aria-label="Démonstrations des mini-applis" className="mb-5 rounded-2xl border border-[#D4AF37]/60 bg-[#FFFCF7] p-4">
-    <h2 className="text-lg font-semibold text-[#173B30]">{language === 'ar' ? 'جرّب النماذج مباشرة' : 'Voir et tester les modèles'}</h2>
-    <p className="mt-1 text-sm text-slate-600">{language === 'ar' ? 'افتح التطبيق الحقيقي واختبر الأزرار والمتجر.' : 'Ouvrez la vraie mini-appli et testez les boutons, les photos et la boutique.'}</p>
-    <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
-      <a href="/cv/aux-saveurs-anis?preview-model=business&boutique-demo=1&skip-opening=1" className="flex min-h-12 items-center justify-center rounded-xl bg-[#07543F] px-3 py-3 text-center text-sm font-semibold text-white">CV Business</a>
-      <a href="/cv/aux-saveurs-anis?preview-model=portfolio&boutique-demo=1&skip-opening=1" className="flex min-h-12 items-center justify-center rounded-xl bg-[#07543F] px-3 py-3 text-center text-sm font-semibold text-white">CV Portfolio</a>
-      <a href="/cv/aux-saveurs-anis?preview-model=business&boutique-demo=1&skip-opening=1#boutique" className="flex min-h-12 items-center justify-center rounded-xl border border-[#D4AF37] bg-white px-3 py-3 text-center text-sm font-semibold text-[#173B30]">Tester la boutique</a>
-    </div>
-  </section>
-)}
 <details id="modeles" className="mb-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-4">
   <summary className="cursor-pointer font-medium text-[#4A1D43]">{structure.models}</summary>
 <CvPresentationModelSelector
@@ -1491,7 +1389,23 @@ export const Subscription = () => {
   onPaletteChange={setSelectedPalette}
 />
 </details>
-<div className="mb-6 overflow-hidden rounded-3xl border border-[#D6AF2E]/60 bg-gradient-to-br from-[#FFF8DF] via-white to-[#FFF9ED] p-5 shadow-[0_12px_30px_rgba(74,18,63,0.07)] sm:p-7">
+  <section aria-label="Démonstrations des mini-applis" className="mb-5 rounded-2xl border border-[#D4AF37]/60 bg-[#FFFCF7] p-4">
+    <h2 className="text-lg font-semibold text-[#173B30]">{language === 'ar' ? 'جرّب النماذج مباشرة' : 'Voir et tester les modèles'}</h2>
+    <p className="mt-1 text-sm text-slate-600">{language === 'ar' ? 'افتح التطبيق الحقيقي واختبر الأزرار والمتجر.' : 'Ouvrez la vraie mini-appli et testez les boutons, les photos et la boutique.'}</p>
+    <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
+      <a href="/cv/aux-saveurs-anis?preview-model=business&boutique-demo=1&skip-opening=1" className="flex min-h-12 items-center justify-center rounded-xl bg-[#07543F] px-3 py-3 text-center text-sm font-semibold text-white">CV Business</a>
+      <a href="/cv/aux-saveurs-anis?preview-model=portfolio&boutique-demo=1&skip-opening=1" className="flex min-h-12 items-center justify-center rounded-xl bg-[#07543F] px-3 py-3 text-center text-sm font-semibold text-white">CV Portfolio</a>
+      <a href="/cv/aux-saveurs-anis?preview-model=business&boutique-demo=1&skip-opening=1#boutique" className="flex min-h-12 items-center justify-center rounded-xl border border-[#D4AF37] bg-white px-3 py-3 text-center text-sm font-semibold text-[#173B30]">Tester la boutique</a>
+    </div>
+  </section>
+        <section id="offres" aria-labelledby="cv-business-products-title" className="order-2 mt-5 sm:mt-0">
+<div className="mb-6 text-center">
+    <h2 id="cv-business-products-title" className="text-xl font-medium text-[#292725] sm:text-2xl">{structure.offers}</h2>
+  <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-slate-600">{simpleCopy.productsSubtitle}</p>
+</div>
+
+
+<div className="mb-4 rounded-xl border border-[#D6AF2E]/60 bg-[#FFF9ED] p-3 sm:p-4">
   <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
     <div className="max-w-3xl">
       <span className="inline-flex items-center gap-2 rounded-full bg-[#4A123F] px-3 py-1 text-[10px] font-medium uppercase tracking-[0.12em] text-white">
@@ -1499,13 +1413,13 @@ export const Subscription = () => {
         {simpleCopy.welcomeBadge}
       </span>
       <h3 className="mt-3 text-xl font-medium text-[#4A123F] sm:text-2xl">{simpleCopy.welcomeTitle}</h3>
-      <p className="mt-3 hidden text-sm leading-6 text-slate-700 sm:block">{simpleCopy.welcomeDescription}</p>
+      <p className="mt-2 hidden text-sm leading-5 text-slate-700 sm:block">{simpleCopy.welcomeDescription}</p>
     </div>
     <div className="hidden rounded-2xl border border-[#D3B16F] bg-[#FFF9ED] px-5 py-4 text-center text-[#4A1D43] shadow-sm sm:block lg:max-w-xs">
       <p className="text-lg font-medium leading-6 text-[#4A1D43]">{simpleCopy.welcomeHighlight}</p>
     </div>
   </div>
-  <p className="mt-4 rounded-2xl border border-[#D6AF2E]/45 bg-white px-4 py-3 text-sm font-medium leading-6 text-[#4A123F]">{simpleCopy.welcomePayment}</p>
+  <p className="mt-2 rounded-xl border border-[#D6AF2E]/45 bg-white px-3 py-2 text-sm font-medium leading-5 text-[#4A123F]">{simpleCopy.welcomePayment}</p>
 </div>
 
 <div className="grid items-stretch gap-5 lg:grid-cols-2">
@@ -1547,7 +1461,7 @@ export const Subscription = () => {
 
 
 
-<details className="mt-5 rounded-2xl border border-[#D4AF37]/50 bg-white p-4"><summary className="cursor-pointer font-medium text-[#4A1D43]">{structure.details}</summary><CvBusinessJourney language={language as OfferLanguage} /></details>
+
 
 <div className="mt-5 rounded-3xl border border-[#D6AF2E]/60 bg-white p-5 shadow-[0_10px_28px_rgba(74,18,63,0.06)] sm:p-6">
   <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">

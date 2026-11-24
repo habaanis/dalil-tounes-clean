@@ -59,7 +59,6 @@ function RetiredMarketplaceRedirect() {
 const PrestigeOpeningPreview = lazy(() => import('./pages/PrestigeOpeningPreview'));
 const SeparationPreview = lazy(() => import('./pages/SeparationPreview'));
 const PlatformHome = lazy(() => import('./pages/SeparationPreview').then(m => ({ default: m.PlatformHome })));
-const CvBusinessHome = lazy(() => import('./pages/SeparationPreview').then(m => ({ default: m.CvBusinessHome })));
 const Subscription = lazy(() => import('./pages/SubscriptionWithJourney'));
 const PaiementConfirmation = lazy(() => import('./pages/PaiementConfirmation'));
 const NotFound = lazy(() => import('./pages/NotFound'));
@@ -306,13 +305,13 @@ function AppRouter() {
 
           <Route path="/inscription-entreprise" element={<BusinessRegistration />} />
           <Route path="/subscription" element={<Subscription />} />
-          <Route path="/cv-business" element={<CvBusinessHome />} />
+          <Route path="/cv-business" element={<CommercialRedirect section="cv-professionnels" />} />
           <Route path="/preview/separation-plateforme-cv" element={<SeparationPreview />} />
           <Route path="/abonnement" element={<CommercialRedirect />} />
           <Route path="/paiement/confirmation" element={<PaiementConfirmation />} />
-          <Route path="/concept" element={<CommercialRedirect section="concept" />} />
+          <Route path="/concept" element={<Navigate to="/#concept" replace />} />
           <Route path="/devenir-partenaire" element={<BecomePartner />} />
-          <Route path="/notre-concept" element={<CommercialRedirect section="concept" />} />
+          <Route path="/notre-concept" element={<Navigate to="/#concept" replace />} />
           <Route path="/pourquoi-dalil-tounes" element={<PourquoiDalilTounes />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />

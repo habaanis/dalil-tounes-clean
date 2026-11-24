@@ -50,7 +50,7 @@ const details = {
     "note": "Les possibilités dépendent de la formule choisie, des informations transmises et des options activées. Le CV Business et le CV Portfolio présentent les mêmes fonctions essentielles sous deux formats différents.",
     "cta": "Découvrir votre mini-appli",
     "contact": "Demander des informations",
-    "personalTitle": "Vous souhaitez apporter votre touche personnelle à votre mini-appli ?",
+    "personalTitle": "Vous souhaitez apporter votre touche personnelle à votre mini-appli professionnelle ?",
     "personalText": "Choisissez les boutons adaptés à votre métier parmi les fonctions disponibles. Vos textes, photos et services peuvent évoluer ; pour une demande particulière, voyons ensemble ce qui est possible."
   },
   "en": {
@@ -260,7 +260,7 @@ const interactionCopy: Record<BusinessCardPreviewLanguage, { more: string; back:
 };
 
 /** Public-facing benefits section; no diagnostic form and no lead collection. */
-export default function CvCapabilitiesSection({ language }: {language: BusinessCardPreviewLanguage}) {
+export default function CvCapabilitiesSection({ language, showActions = true }: {language: BusinessCardPreviewLanguage; showActions?: boolean}) {
   const content = details[language] ?? details.fr;
   const ui = interactionCopy[language] ?? interactionCopy.fr;
   const [selectedGroup, setSelectedGroup] = useState<(typeof content.groups)[number] | null>(null);
@@ -279,29 +279,29 @@ export default function CvCapabilitiesSection({ language }: {language: BusinessC
     };
   }, [selectedGroup]);
 
-  return <section className="bg-[#FFF9F1] px-4 py-12 sm:py-16" aria-labelledby="dt-home-cv-capabilities">
+  return <section className="bg-[#FFF9F1] px-3 py-4 sm:py-6" aria-labelledby="dt-home-cv-capabilities">
     <div className="mx-auto max-w-6xl">
       <div className="mx-auto max-w-3xl text-center">
         <p className="text-xs font-extrabold uppercase tracking-widest text-[#A47B2F]">{content.label}</p>
-        <h2 id="dt-home-cv-capabilities" className="mt-3 font-serif text-2xl font-extrabold leading-tight text-[#8F182A] sm:text-4xl">{content.title}</h2>
-        <p className="mx-auto mt-3 max-w-2xl text-base leading-7 text-[#60514C]">{content.intro}</p>
+        <h2 id="dt-home-cv-capabilities" className="mt-3 font-serif text-lg font-semibold leading-tight text-[#292725] sm:text-xl">{content.title}</h2>
+        <p className="mx-auto mt-2 max-w-2xl text-sm leading-5 text-[#60514C]">{content.intro}</p>
       </div>
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {content.groups.map(group=><button type="button" key={group.title} onClick={() => setSelectedGroup(group)} className="group rounded-2xl border border-[#E9D6BA] bg-[#FFFDF9] p-5 text-left shadow-[0_10px_30px_rgba(102,30,41,0.06)] transition hover:-translate-y-1 hover:border-[#B48A36] hover:shadow-[0_14px_34px_rgba(102,30,41,0.10)] focus:outline-none focus:ring-2 focus:ring-[#B48A36] rtl:text-right sm:p-6">
-          <h3 className="font-serif text-xl font-bold leading-snug text-[#971A30] sm:text-2xl">{group.title}</h3>
-          <p className="mt-3 text-sm leading-6 text-[#60514C]">{group.items[0]}</p>
-          <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-extrabold text-[#9A7416] group-hover:text-[#6E2732]">{ui.more}<ArrowRight className={`h-3.5 w-3.5 ${language === 'ar' ? 'rotate-180' : ''}`} aria-hidden="true" /></span>
+      <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+        {content.groups.map(group=><button type="button" key={group.title} onClick={() => setSelectedGroup(group)} className="group rounded-2xl border border-[#E9D6BA] bg-[#FFFDF9] p-3 text-left shadow-[0_10px_30px_rgba(102,30,41,0.06)] transition hover:-translate-y-1 hover:border-[#B48A36] hover:shadow-[0_14px_34px_rgba(102,30,41,0.10)] focus:outline-none focus:ring-2 focus:ring-[#B48A36] rtl:text-right sm:p-3">
+          <h3 className="font-serif text-sm font-semibold leading-snug text-[#292725] sm:text-base">{group.title}</h3>
+          <p className="mt-1 text-xs leading-5 text-[#60514C]">{group.items[0]}</p>
+          <span className="mt-2 inline-flex items-center gap-1.5 text-xs font-extrabold text-[#9A7416] group-hover:text-[#6E2732]">{ui.more}<ArrowRight className={`h-3.5 w-3.5 ${language === 'ar' ? 'rotate-180' : ''}`} aria-hidden="true" /></span>
         </button>)}
       </div>
-      <div className="mt-6 rounded-2xl border border-[#DDC38E] bg-[#FFF0DE] p-5 sm:p-7">
-        <h3 className="font-serif text-xl font-bold text-[#8F182A] sm:text-2xl">{content.personalTitle}</h3>
-        <p className="mt-2 max-w-4xl text-sm leading-7 text-[#4B3E38] sm:text-base">{content.personalText}</p>
+      <div className="mt-6 rounded-2xl border border-[#DDC38E] bg-[#FFF0DE] p-3 sm:p-4">
+        <h3 className="font-serif text-base font-semibold text-[#292725] sm:text-lg">{content.personalTitle}</h3>
+        <p className="mt-2 max-w-4xl text-sm leading-5 text-[#4B3E38]">{content.personalText}</p>
       </div>
-      <p className="mx-auto mt-6 max-w-3xl text-center text-sm leading-6 text-[#71635A]">{content.note}</p>
-      <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+      <p className="mx-auto mt-3 max-w-3xl text-center text-xs leading-5 text-[#71635A]">{content.note}</p>
+      {showActions && <div className="mt-3 flex flex-wrap items-center justify-center gap-3">
         <Link to="/cv-business" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#A51A30] px-6 py-3 text-sm font-bold text-white hover:bg-[#851528]">{content.cta}<ArrowRight className="h-4 w-4" aria-hidden="true"/></Link>
         <Link to="/contact" className="inline-flex min-h-11 items-center justify-center rounded-xl border border-[#B48A36] bg-white px-6 py-3 text-sm font-bold text-[#6E2732] hover:bg-[#FFF3DB]">{content.contact}</Link>
-      </div>
+      </div>}
     </div>
     {selectedGroup && <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#24131F]/70 p-4 backdrop-blur-sm" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setSelectedGroup(null); }}>
       <div role="dialog" aria-modal="true" aria-label={ui.dialogLabel} className="max-h-[88vh] w-full max-w-2xl overflow-y-auto rounded-3xl border border-[#D4AF37] bg-[#FFFDF9] p-5 shadow-[0_28px_80px_rgba(0,0,0,0.35)] sm:p-8">
