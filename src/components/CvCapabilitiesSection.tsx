@@ -5,8 +5,8 @@ import type { BusinessCardPreviewLanguage } from './BusinessCardPreview';
 
 const details = {
   "fr": {
-    "label": "Un CV professionnel, bien plus qu'une fiche",
-    "title": "Tout ce que votre CV Dalil Tounes peut faire pour vous",
+    "label": "Votre mini-appli professionnelle, bien plus qu'une fiche",
+    "title": "Tout ce que votre mini-appli peut faire pour vous",
     "intro": "Votre activité, vos réalisations, vos contacts et votre QR Business réunis dans une mini-application simple à montrer et à partager.",
     "groups": [
       {
