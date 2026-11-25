@@ -408,6 +408,17 @@ export function CvPortfolioPresentation({
             <div className="cvp-lienora-content">
               {activeTab === 'home' && (
                 <section className="cvp-portfolio-home-visual">
+                  <div className="cvp-portfolio-discover-wrap">
+                    {boutiqueContent && isValidElement(boutiqueContent)
+                      ? cloneElement(boutiqueContent as ReactElement<{ triggerClassName?: string; triggerIcon?: ReactNode; triggerLabel?: string }>, {
+                          triggerClassName: 'cvp-portfolio-discover-cta',
+                          triggerIcon: <></>,
+                          triggerLabel: language === 'ar' ? 'اكتشف واطلب' : language === 'en' ? 'Discover and order' : language === 'it' ? 'Scopri e ordina' : language === 'ru' ? 'Смотреть и заказать' : 'Découvrir et commander',
+                        })
+                      : <button type="button" className="cvp-portfolio-discover-cta" onClick={() => document.querySelector('.cvp-portfolio-visible-photos')?.scrollIntoView({behavior:'smooth',block:'start'})}>
+                          {language === 'ar' ? 'اكتشف أعمالنا' : language === 'en' ? 'Discover our work' : language === 'it' ? 'Scopri i nostri lavori' : language === 'ru' ? 'Наши работы' : 'Découvrir nos réalisations'}
+                        </button>}
+                  </div>
                   {gallery.length > 0 && (
                     <button type="button" className="cvp-portfolio-featured-photo"
                       aria-label={language === 'ar' ? 'تكبير صورة المنتوج' : 'Agrandir la photo du Portfolio'}
