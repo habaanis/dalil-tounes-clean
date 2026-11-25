@@ -159,7 +159,7 @@ function JourneyArrow({ rtl }: { rtl: boolean }) {
   );
 }
 
-function PwaPhone({ language, showVideo = true }: { language: BusinessCardPreviewLanguage; showVideo?: boolean }) {
+function PwaPhone({ language }: { language: BusinessCardPreviewLanguage }) {
   const t = COPY[language];
   const rtl = language === 'ar';
   return (
@@ -298,7 +298,7 @@ function ExpandedJourneyVisual({
 const journeyCvDemoUrl = (model: 'business' | 'portfolio', language: string) =>
   `/cv/aux-saveurs-anis?preview-model=${model}&boutique-demo=1&skip-opening=1&lang=${language}`;
 
-export default function CvBusinessJourney({ language }: { language: BusinessCardPreviewLanguage }) {
+export default function CvBusinessJourney({ language, showVideo = true }: { language: BusinessCardPreviewLanguage; showVideo?: boolean }) {
   const t = COPY[language];
   const rtl = language === 'ar';
   const [expandedVisual, setExpandedVisual] = useState<JourneyVisual | null>(null);
