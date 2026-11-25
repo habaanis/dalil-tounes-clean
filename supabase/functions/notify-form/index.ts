@@ -114,7 +114,7 @@ function normalizeData(value: unknown): Record<string, string> {
       : typeof rawValue === 'number' || typeof rawValue === 'boolean'
         ? String(rawValue)
         : JSON.stringify(rawValue);
-    normalized[key] = cleanMultiline(text, 2500);
+    normalized[key] = cleanMultiline(text, key === 'Message' ? 10000 : 2500);
   }
   return normalized;
 }
