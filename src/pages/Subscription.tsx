@@ -1212,6 +1212,134 @@ const simplifiedOfferCopy: Record<OfferLanguage, {
   },
 };
 
+const currentCreationOffers = {
+  "fr": {
+    "artisanIntro": "Présentez votre activité et vendez vos produits.",
+    "premiumIntro": "Présentez, vendez et fidélisez vos clients.",
+    "artisan": [
+      "1 modèle, 1 palette et 1 ouverture au choix",
+      "Votre QR Business",
+      "5 photos",
+      "2 réseaux sociaux",
+      "Boutique et catalogue",
+      "Coordonnées, horaires et localisation"
+    ],
+    "premium": [
+      "2 modèles, 3 palettes et 2 ouvertures inclus",
+      "Votre QR Business",
+      "10 photos",
+      "Vos réseaux sociaux",
+      "Boutique et catalogue",
+      "Commandes et devis",
+      "Votre compte professionnel",
+      "Offres, fidélité et cartes cadeaux",
+      "Notifications selon activation",
+      "Meilleure visibilité dans Dalil Tounes",
+      "Accompagnement prioritaire"
+    ]
+  },
+  "ar": {
+    "artisanIntro": "قدّم نشاطك وبع منتجاتك.",
+    "premiumIntro": "قدّم نشاطك وبع منتجاتك وحافظ على عملائك.",
+    "artisan": [
+      "نموذج واحد وألوان وشاشة افتتاحية حسب الاختيار",
+      "رمز QR للأعمال",
+      "5 صور",
+      "شبكتان اجتماعيتان",
+      "متجر وكتالوج",
+      "الاتصال والمواعيد والموقع"
+    ],
+    "premium": [
+      "نموذجان و3 لوحات ألوان وشاشتا افتتاح",
+      "رمز QR للأعمال",
+      "10 صور",
+      "شبكات التواصل",
+      "متجر وكتالوج",
+      "الطلبات وعروض الأسعار",
+      "حسابك المهني",
+      "العروض والوفاء وبطاقات الهدايا",
+      "إشعارات حسب التفعيل",
+      "ظهور أفضل في دليل تونس",
+      "مساعدة ذات أولوية"
+    ]
+  },
+  "en": {
+    "artisanIntro": "Showcase your business and sell your products.",
+    "premiumIntro": "Showcase, sell and build customer loyalty.",
+    "artisan": [
+      "1 model, 1 palette and 1 opening style",
+      "Business QR",
+      "5 photos",
+      "2 social networks",
+      "Shop and catalogue",
+      "Contact, hours and location"
+    ],
+    "premium": [
+      "2 models, 3 palettes and 2 opening styles included",
+      "Business QR",
+      "10 photos",
+      "Social networks",
+      "Shop and catalogue",
+      "Orders and quotes",
+      "Your professional account",
+      "Offers, loyalty and gift cards",
+      "Notifications when enabled",
+      "Better visibility in Dalil Tounes",
+      "Priority support"
+    ]
+  },
+  "it": {
+    "artisanIntro": "Presenta la tua attività e vendi i tuoi prodotti.",
+    "premiumIntro": "Presenta, vendi e fidelizza i clienti.",
+    "artisan": [
+      "1 modello, 1 palette e 1 apertura a scelta",
+      "QR Business",
+      "5 foto",
+      "2 social network",
+      "Negozio e catalogo",
+      "Contatti, orari e posizione"
+    ],
+    "premium": [
+      "2 modelli, 3 palette e 2 aperture inclusi",
+      "QR Business",
+      "10 foto",
+      "Social network",
+      "Negozio e catalogo",
+      "Ordini e preventivi",
+      "Account professionale",
+      "Offerte, fedeltà e carte regalo",
+      "Notifiche se attivate",
+      "Più visibilità su Dalil Tounes",
+      "Assistenza prioritaria"
+    ]
+  },
+  "ru": {
+    "artisanIntro": "Представьте свой бизнес и продавайте товары.",
+    "premiumIntro": "Представляйте, продавайте и удерживайте клиентов.",
+    "artisan": [
+      "1 модель, 1 палитра и 1 экран на выбор",
+      "Business QR",
+      "5 фото",
+      "2 соцсети",
+      "Магазин и каталог",
+      "Контакты, часы и адрес"
+    ],
+    "premium": [
+      "2 модели, 3 палитры и 2 экрана включены",
+      "Business QR",
+      "10 фото",
+      "Социальные сети",
+      "Магазин и каталог",
+      "Заказы и запросы цен",
+      "Профессиональный аккаунт",
+      "Акции, лояльность и подарочные карты",
+      "Уведомления при активации",
+      "Больше видимости в Dalil Tounes",
+      "Приоритетная поддержка"
+    ]
+  }
+};
+
 function CreationPlanCard({
   title,
   price,
@@ -1219,14 +1347,8 @@ function CreationPlanCard({
   firstYearIncluded,
   intro,
   features,
-  previewLabel,
   chooseLabel,
-  onPreview,
   onRequest,
-  showBenefitsLabel,
-  hideBenefitsLabel,
-  expanded,
-  onToggle,
   selected = false,
 }: {
   title: string;
@@ -1235,44 +1357,23 @@ function CreationPlanCard({
   firstYearIncluded: string;
   intro: string;
   features: string[];
-  previewLabel: string;
   chooseLabel: string;
-  onPreview: () => void;
   onRequest: () => void;
-  showBenefitsLabel: string;
-  hideBenefitsLabel: string;
-  expanded: boolean;
-  onToggle: () => void;
   selected?: boolean;
 }) {
   return (
-    <article className={`relative flex flex-col overflow-hidden rounded-3xl border-2 bg-[#FFF9ED] p-5 text-[#292725] shadow-[0_12px_30px_rgba(7,84,63,0.16)] transition sm:p-6 ${selected ? 'border-[#C8A557] ring-4 ring-[#D6AF2E]' : 'border-[#D6AF2E]'}`}>
-      <span className="absolute right-0 top-0 rounded-bl-2xl bg-[#D6AF2E] px-4 py-2 text-[11px] font-medium tracking-[0.12em] text-[#30162E]">CV BUSINESS</span>
-      <h3 className="mt-8 text-2xl font-medium">{title}</h3>
+    <article className={`relative flex flex-col overflow-hidden min-w-0 rounded-xl border bg-[#FFF9ED] p-2 text-[#292725] shadow-[0_12px_30px_rgba(7,84,63,0.16)] transition sm:p-5 ${selected ? 'border-[#C8A557] ring-4 ring-[#D6AF2E]' : 'border-[#D6AF2E]'}`}>
+      <h3 className="text-base sm:text-2xl font-medium">{title}</h3>
       <div className="mt-2 flex items-end gap-2 text-[#815E28]">
-        <span className="text-3xl font-medium">{price}</span>
+        <span className="text-2xl sm:text-3xl font-medium">{price}</span>
       </div>
       <p className="mt-1 text-xs font-medium uppercase tracking-[0.08em] text-[#645861]">{creationLabel}</p>
-      <p className="mt-3 text-sm leading-6 text-[#594F57]">{intro}</p>
-      <p className="mt-3 rounded-xl bg-[#F8F0DE] px-3 py-2 text-sm font-medium text-[#292725]">{firstYearIncluded}</p>
-      <button
-        type="button"
-        aria-expanded={expanded}
-        onClick={onToggle}
-        className="mt-4 flex w-full items-center justify-between rounded-xl border border-[#D6AF2E] px-4 py-3 text-left text-sm font-medium text-[#815E28] transition hover:bg-[#F8F0DE] focus:outline-none focus:ring-2 focus:ring-[#986F25]"
-      >
-        <span>{expanded ? hideBenefitsLabel : showBenefitsLabel}</span>
-        <ChevronRight className={`h-5 w-5 transition-transform ${expanded ? 'rotate-90' : ''}`} aria-hidden="true" />
-      </button>
-      {expanded && (
-        <div className="mt-4 border-t border-[#D9C69F] pt-4">
-          <FeatureList items={features} variant="light" />
-          <div className="grid gap-2 pt-6 sm:grid-cols-2">
-            <button type="button" onClick={onPreview} className="rounded-xl border border-[#D6AF2E] bg-transparent px-4 py-3 text-sm font-medium text-[#815E28] transition hover:bg-[#F8F0DE] focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]">{previewLabel}</button>
-            <button type="button" onClick={onRequest} className="rounded-xl bg-[#D6AF2E] px-4 py-3 text-sm font-medium text-[#30162E] transition hover:bg-[#E5C64D] focus:outline-none focus:ring-2 focus:ring-[#986F25]">{chooseLabel}</button>
-          </div>
-        </div>
-      )}
+      <p className="mt-2 text-xs leading-4 sm:text-sm text-[#594F57]">{intro}</p>
+      <p className="mt-2 rounded-lg bg-[#F8F0DE] px-2 py-2 text-xs font-medium text-[#292725]">{firstYearIncluded}</p>
+      <ul className="mt-3 mb-3 grid gap-2 text-xs sm:text-sm">
+        {features.map(feature => <li key={feature} className="flex items-start gap-1.5 break-words"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#07543F]" aria-hidden="true"/><span className="min-w-0">{feature}</span></li>)}
+      </ul>
+      <button type="button" onClick={onRequest} className="mt-auto min-h-11 w-full rounded-xl bg-[#D6AF2E] px-2 py-2 text-xs font-semibold text-[#292725] sm:text-sm">{chooseLabel}</button>
     </article>
   );
 }
@@ -1295,7 +1396,6 @@ export const Subscription = () => {
     paletteLabel?: string;
   } | null>(null);
   const [selectedFormula, setSelectedFormula] = useState<'artisan' | 'premium' | null>(null);
-  const [expandedFormula, setExpandedFormula] = useState<'artisan' | 'premium' | null>(null);
   const [selectedPresentationModel, setSelectedPresentationModel] = useState<PresentationModel | null>(null);
   const [selectedPalette, setSelectedPalette] = useState<PaletteId>('prestige');
   const [showSecondaryDetails, setShowSecondaryDetails] = useState(false);
@@ -1411,22 +1511,16 @@ export const Subscription = () => {
   <p className="mt-2 rounded-xl border border-[#D6AF2E]/45 bg-white px-3 py-2 text-sm font-medium leading-5 text-[#292725]">{simpleCopy.welcomePayment}</p>
 </div>
 
-<div className="grid items-stretch gap-5 lg:grid-cols-2">
+<div className="grid grid-cols-2 items-stretch gap-2 sm:gap-5">
   <CreationPlanCard
     title={simplifiedOfferCopy[language as OfferLanguage].artisanTitle}
     price={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).artisanPrice}
     creationLabel={simplifiedOfferCopy[language as OfferLanguage].creationLabel}
     firstYearIncluded={simplifiedOfferCopy[language as OfferLanguage].firstYearIncluded}
-    intro={simplifiedOfferCopy[language as OfferLanguage].artisanIntro}
-    features={simplifiedOfferCopy[language as OfferLanguage].artisanFeatures}
-    previewLabel={simplifiedOfferCopy[language as OfferLanguage].preview}
+    intro={currentCreationOffers[language as OfferLanguage].artisanIntro}
+    features={currentCreationOffers[language as OfferLanguage].artisan}
     chooseLabel={simplifiedOfferCopy[language as OfferLanguage].chooseArtisan}
-    onPreview={() => setActivePreview('artisan')}
     onRequest={() => selectFormula('artisan')}
-    showBenefitsLabel={mobileCopy.showBenefits}
-    hideBenefitsLabel={mobileCopy.hideBenefits}
-    expanded={expandedFormula === 'artisan'}
-    onToggle={() => setExpandedFormula((current) => current === 'artisan' ? null : 'artisan')}
     selected={selectedFormula === 'artisan'}
   />
   <CreationPlanCard
@@ -1434,16 +1528,10 @@ export const Subscription = () => {
     price={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).premiumPrice}
     creationLabel={simplifiedOfferCopy[language as OfferLanguage].creationLabel}
     firstYearIncluded={simplifiedOfferCopy[language as OfferLanguage].firstYearIncluded}
-    intro={simplifiedOfferCopy[language as OfferLanguage].premiumIntro}
-    features={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).premiumFeatures}
-    previewLabel={simplifiedOfferCopy[language as OfferLanguage].preview}
+    intro={currentCreationOffers[language as OfferLanguage].premiumIntro}
+    features={currentCreationOffers[language as OfferLanguage].premium}
     chooseLabel={simplifiedOfferCopy[language as OfferLanguage].choosePremium}
-    onPreview={() => setActivePreview('premium')}
     onRequest={() => selectFormula('premium')}
-    showBenefitsLabel={mobileCopy.showBenefits}
-    hideBenefitsLabel={mobileCopy.hideBenefits}
-    expanded={expandedFormula === 'premium'}
-    onToggle={() => setExpandedFormula((current) => current === 'premium' ? null : 'premium')}
     selected={selectedFormula === 'premium'}
   />
 </div>
