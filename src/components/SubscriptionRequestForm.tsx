@@ -107,6 +107,23 @@ interface SubscriptionFormState {
   preferredContactMethod: '' | 'whatsapp' | 'phone' | 'email';
   preferredContactTime: '' | 'morning' | 'afternoon' | 'evening' | 'anytime';
   message: string;
+  activityDescription: string;
+  assistance: 'self' | 'assisted';
+  address: string;
+  openingHours: string;
+  googleMapsUrl: string;
+  googleReviewsUrl: string;
+  logoUrl: string;
+  logoChoice: 'existing' | 'create' | 'none';
+  openingStyle: 'photo' | 'framed';
+  photoUrls: string;
+  productsDescription: string;
+  tiktok: string;
+  youtube: string;
+  linkedin: string;
+  otherPlatformUrl: string;
+  preferredContactMethods: Array<'whatsapp' | 'phone' | 'email'>;
+  preferredContactTimes: Array<'morning' | 'afternoon' | 'evening' | 'anytime'>;
   consent: boolean;
   verificationField: string;
 }
@@ -653,6 +670,23 @@ const INITIAL_STATE: SubscriptionFormState = {
   preferredContactMethod: '',
   preferredContactTime: '',
   message: '',
+  activityDescription: '',
+  assistance: 'self',
+  address: '',
+  openingHours: '',
+  googleMapsUrl: '',
+  googleReviewsUrl: '',
+  logoUrl: '',
+  logoChoice: 'none',
+  openingStyle: 'photo',
+  photoUrls: '',
+  productsDescription: '',
+  tiktok: '',
+  youtube: '',
+  linkedin: '',
+  otherPlatformUrl: '',
+  preferredContactMethods: [],
+  preferredContactTimes: [],
   consent: false,
   verificationField: '',
 };
@@ -687,11 +721,13 @@ export function SubscriptionRequestForm({
   const checkoutCopy = CHECKOUT_COPY[currentLanguage];
   const isArabic = currentLanguage === 'ar';
   const planKind = getPlanKind(selectedPlan);
+  const premiumCreation = creationMode && planKind === 'premium';
+  const maxPhotos = premiumCreation ? 10 : 5;
   const startedAtRef = useRef(Date.now());
   const requestIdRef = useRef(createRequestId());
   const submittingRef = useRef(false);
   const feedbackRef = useRef<HTMLDivElement>(null);
-  const [step, setStep] = useState<1 | 2>(1);
+  const [step, setStep] = useState<1 | 2 | 3>(1);
   const [form, setForm] = useState<SubscriptionFormState>(() => ({
     ...INITIAL_STATE,
     requestedBillingPeriod: initialBillingPeriod ?? '',
@@ -749,6 +785,7 @@ export function SubscriptionRequestForm({
     if (!cleanSingleLine(form.city)) return copy.requiredCity;
     if (!form.phone.trim()) return copy.requiredPhone;
     if (!isValidPhone(form.phone)) return copy.invalidPhone;
+    if (creationMode && !form.email.trim()) return isArabic ? 'أدخل بريدك الإلكتروني.' : 'Renseignez votre adresse e-mail.';
     if (!isValidEmail(form.email)) return copy.invalidEmail;
     return null;
   };
@@ -764,9 +801,30 @@ export function SubscriptionRequestForm({
     ) {
       return copy.requiredPaymentSchedule;
     }
-    if (!form.preferredContactMethod) return copy.requiredContactMethod;
-    if (form.preferredContactMethod === 'email' && !form.email.trim()) return copy.emailNeeded;
-    if (!form.preferredContactTime) return copy.requiredContactTime;
+    if (creationMode) {
+      const socialCount = [form.facebook, form.instagram, form.tiktok, form.youtube, form.linkedin, form.otherPlatformUrl].filter(link => link.trim()).length;
+      if (!premiumCreation && socialCount > 2) return isArabic ? 'اختر شبكتين اجتماعيتين كحد أقصى.' : 'La formule Artisan comprend deux réseaux sociaux au maximum.';
+      if (form.photoUrls.split(/\n/).filter(link => link.trim()).length > maxPhotos) return `Maximum ${maxPhotos} photos.`;
+      if (!form.preferredContactMethods.length) return copy.requiredContactMethod;
+      if (form.preferredContactMethods.includes('email') && !form.email.trim()) return copy.emailNeeded;
+      if (!form.preferredContactTimes.length) return copy.requiredContactTime;
+      const chosenLinks: Array<[Platform,string,string]> = [
+        ['facebook',form.facebook,'Facebook'],['instagram',form.instagram,'Instagram'],
+        ['whatsapp_business',form.whatsapp || form.phone,'WhatsApp'],
+        ['google_business',form.googleMapsUrl,'Google Maps'],
+        ['website',form.website,'Site Internet'],['other',form.otherPlatformUrl,'Autre plateforme'],
+      ];
+      for(const [platform,link,label] of chosenLinks) {
+        if(form.selectedPlatforms.includes(platform) && !link.trim()) return `Lien ou numéro obligatoire : ${label}`;
+      }
+      for(const link of [form.googleMapsUrl,form.googleReviewsUrl,form.logoUrl,form.tiktok,form.youtube,form.linkedin,form.otherPlatformUrl,...form.photoUrls.split(/\n/).filter(Boolean)]) {
+        if(link.trim() && !isValidWebAddress(link.trim())) return 'Un lien est invalide. Vérifiez les adresses saisies.';
+      }
+    } else {
+      if (!form.preferredContactMethod) return copy.requiredContactMethod;
+      if (form.preferredContactMethod === 'email' && !form.email.trim()) return copy.emailNeeded;
+      if (!form.preferredContactTime) return copy.requiredContactTime;
+    }
     if (!isValidWebAddress(form.website)) return copy.invalidWebsite;
     if (!isValidWebAddress(form.facebook, 'facebook')) return copy.invalidFacebook;
     if (!isValidWebAddress(form.instagram, 'instagram')) return copy.invalidInstagram;
@@ -787,7 +845,7 @@ export function SubscriptionRequestForm({
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (step !== 2 || submittingRef.current) return;
+    if (step !== (creationMode ? 3 : 2) || submittingRef.current) return;
 
     const validationError = validateStepOne() || validateStepTwo();
     if (validationError) {
@@ -821,17 +879,46 @@ export function SubscriptionRequestForm({
       selectedPlatforms: form.selectedPlatforms,
       requestedBillingPeriod: creationMode ? 'one_time' : planKind === 'cv' ? '' : form.requestedBillingPeriod,
       requestedPaymentSchedule: form.requestedPaymentSchedule,
-      preferredContactMethod: form.preferredContactMethod,
-      preferredContactTime: form.preferredContactTime,
+      preferredContactMethod: creationMode ? (form.preferredContactMethods.includes('whatsapp') ? 'whatsapp' : form.preferredContactMethods.includes('phone') ? 'phone' : 'email') : form.preferredContactMethod,
+      preferredContactTime: creationMode ? (form.preferredContactTimes.length > 1 || form.preferredContactTimes.includes('anytime') ? 'anytime' : form.preferredContactTimes[0] || 'anytime') : form.preferredContactTime,
       message: cleanMultiline([
         // Internal admin-only label — not user-visible, intentionally kept in French
         creationMode ? `OFFRE ACTUELLE — paiement unique — ${planKind === 'artisan' ? 'Formule Artisan 30 TND' : 'Formule Premium 59 TND'} — ne pas traiter comme un abonnement mensuel` : '',
         presentationModelLabel ? `Modèle de présentation choisi : ${presentationModelLabel}` : '',
         paletteLabel ? `Palette choisie : ${paletteLabel}` : '',
+        form.activityDescription ? `Description de l'activité : ${cleanMultiline(form.activityDescription)}` : '',
+        ...(creationMode ? [
+          `Parcours : ${form.assistance === 'assisted' ? 'Accompagnement demandé' : 'Autonome'}`,
+          premiumCreation ? 'Inclus : Business + Portfolio, 3 palettes, ouvertures A + B, 10 photos.' : 'Inclus : 1 modèle, 1 palette, 1 ouverture, 5 photos, 2 réseaux.',
+          `Adresse : ${cleanSingleLine(form.address)}`,
+          `Horaires : ${cleanMultiline(form.openingHours)}`,
+          `Google Maps : ${form.googleMapsUrl}`,
+          `Lien avis Google : ${form.googleReviewsUrl}`,
+          form.logoUrl ? `Lien logo : ${form.logoUrl}` : '',
+          `Logo choisi : ${form.logoChoice === 'create' ? 'Création Dalil Tounes +20 TND — droits sur le logo final transférés après paiement et livraison' : form.logoChoice === 'existing' ? 'Logo fourni par le professionnel' : 'Aucun logo demandé'}`,
+          `Ouverture mini-appli : ${form.openingStyle === 'photo' ? 'A · Photo plein fond' : 'B · Présentation encadrée Prestige'}`,
+          `Supplément création logo : ${form.logoChoice === 'create' ? '20 TND' : '0 TND'}`,
+          `Montant total demandé : ${(selectedPlan === 'artisan' ? 30 : 59) + (form.logoChoice === 'create' ? 20 : 0)} TND`,
+          `Photos : ${form.photoUrls}`,
+          `Catalogue et produits : ${cleanMultiline(form.productsDescription)}`,
+          `TikTok : ${form.tiktok}`, `YouTube : ${form.youtube}`, `LinkedIn : ${form.linkedin}`,
+          `Autre plateforme : ${form.otherPlatformUrl}`,
+          `Contacts souhaités : ${form.preferredContactMethods.join(', ')}`,
+          `Moments souhaités : ${form.preferredContactTimes.join(', ')}`,
+        ] : []),
         form.message,
       ].filter(Boolean).join('\n')),
       consent: form.consent,
     };
+
+    // The currently deployed intake function limits the free-text payload to 1,500 characters.
+    // Fail explicitly rather than silently losing CV details during the transition.
+    if (request.message.length > 1500) {
+      setErrorMessage('Votre dossier contient trop d’informations pour le système actuel (1 500 caractères). Réduisez les notes ou les listes de produits avant l’envoi ; l’envoi complet sera disponible après adaptation du service de réception.');
+      submittingRef.current = false;
+      setSubmitting(false);
+      return;
+    }
 
     try {
       const response = await submitBusinessRegistration(request);
@@ -916,11 +1003,11 @@ export function SubscriptionRequestForm({
 
       <div className="rounded-2xl border border-[#D4AF37]/35 bg-[#FFFDF7] p-4">
         <div className="flex items-center justify-between gap-4 text-xs font-bold uppercase tracking-[0.12em] text-[#4A1D43]">
-          <span>{step === 1 ? copy.stepOne : copy.stepTwo}</span>
-          <span aria-hidden="true">{step}/2</span>
+          <span>{creationMode ? (step === 1 ? (isArabic ? '١. النشاط' : '1. Activité') : step === 2 ? (isArabic ? '٢. التفاصيل' : '2. Informations') : (isArabic ? '٣. المراجعة' : '3. Récapitulatif')) : (step === 1 ? copy.stepOne : copy.stepTwo)}</span>
+          <span aria-hidden="true">{step}/{creationMode ? 3 : 2}</span>
         </div>
         <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[#D4AF37]/20">
-          <div className={`h-full rounded-full bg-[#D4AF37] transition-all ${step === 1 ? 'w-1/2' : 'w-full'}`} />
+          <div className={`h-full rounded-full bg-[#D4AF37] transition-all ${creationMode ? (step === 1 ? 'w-1/3' : step === 2 ? 'w-2/3' : 'w-full') : (step === 1 ? 'w-1/2' : 'w-full')}`} />
         </div>
       </div>
 
@@ -942,6 +1029,14 @@ export function SubscriptionRequestForm({
       {step === 1 ? (
         <section aria-labelledby="subscription-activity-title" className="space-y-4">
           <h3 id="subscription-activity-title" className="text-xl font-bold text-[#4A1D43]">{copy.activityTitle}</h3>
+          {creationMode && <div className="space-y-3 rounded-xl border border-[#D4AF37]/50 bg-[#FFFDF7] p-3">
+            <p className="font-semibold text-[#07543F]">{premiumCreation ? (isArabic ? "النموذجان والألوان الثلاثة وشاشتا الافتتاح مشمولة" : "✓ Business et Portfolio · 3 palettes · 2 ouvertures incluses") : (isArabic ? "نموذج واحد وألوان وشاشة افتتاحية" : "✓ 1 modèle · 1 palette · 1 ouverture")}</p>
+            {premiumCreation && <p className="text-xs">{isArabic ? "الاختيارات تحدد العرض الأول فقط." : "Vos choix déterminent uniquement l’affichage initial."}</p>}
+            <fieldset className="grid gap-2"><legend className="mb-2 text-sm font-semibold">{isArabic ? "كيف تريد إعداد تطبيقك؟" : "Comment souhaitez-vous créer votre mini-appli ?"}</legend>
+              <label className="flex items-center gap-2 text-sm"><input type="radio" name="assistance" value="self" checked={form.assistance === "self"} onChange={setField}/>{isArabic ? "أقوم بذلك بنفسي" : "Je le fais moi-même"}</label>
+              <label className="flex items-center gap-2 text-sm"><input type="radio" name="assistance" value="assisted" checked={form.assistance === "assisted"} onChange={setField}/>{isArabic ? "أرغب في المساعدة" : "Je souhaite être accompagné"}</label>
+            </fieldset>
+          </div>}
           <div className="grid gap-4 md:grid-cols-2">
             <FieldLabel label={copy.companyName} required>
               <input
@@ -1030,10 +1125,11 @@ export function SubscriptionRequestForm({
             </FieldLabel>
           </div>
 
-          <FieldLabel label={copy.emailOptional}>
+          <FieldLabel label={creationMode ? (isArabic ? 'البريد الإلكتروني *' : 'E-mail *') : copy.emailOptional}>
             <input
               type="email"
               name="email"
+              required={creationMode}
               maxLength={180}
               value={form.email}
               onChange={setField}
@@ -1046,7 +1142,7 @@ export function SubscriptionRequestForm({
             />
           </FieldLabel>
         </section>
-      ) : (
+      ) : step === 2 ? (
         <section aria-labelledby="subscription-request-title" className="space-y-5">
           <h3 id="subscription-request-title" className="text-xl font-bold text-[#4A1D43]">{copy.requestTitle}</h3>
 
@@ -1092,39 +1188,112 @@ export function SubscriptionRequestForm({
             </>
           )}
 
-          <ChoiceGroup legend={copy.platformsQuestion}>
-            {PLATFORMS.map((platform) => (
-              <CheckboxChoice
-                key={platform}
-                checked={form.selectedPlatforms.includes(platform)}
-                onChange={() => togglePlatform(platform)}
-                label={copy.platformLabels[platform]}
-              />
-            ))}
-          </ChoiceGroup>
-
-          <details className="group rounded-2xl border border-gray-200 bg-gray-50/70 p-4 open:bg-white">
-            <summary className="cursor-pointer list-none font-semibold text-[#4A1D43] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]">
-              {copy.linksSummary}
-              <span className="ms-2 inline-block text-[#D4AF37] transition group-open:rotate-180" aria-hidden="true">⌄</span>
-            </summary>
-            <p className="mt-2 text-xs text-gray-500">{copy.linksHint}</p>
-            <div className="mt-4 grid gap-4 md:grid-cols-2">
-              <FieldLabel label={copy.website}>
-                <input type="text" name="website" maxLength={300} value={form.website} onChange={setField} className={inputClassName} inputMode="url" dir="ltr" />
-              </FieldLabel>
-              <FieldLabel label={copy.whatsapp}>
-                <input type="tel" name="whatsapp" maxLength={24} value={form.whatsapp} onChange={setField} className={inputClassName} inputMode="tel" dir="ltr" />
-              </FieldLabel>
-              <FieldLabel label={copy.facebook}>
-                <input type="text" name="facebook" maxLength={300} value={form.facebook} onChange={setField} className={inputClassName} inputMode="url" dir="ltr" />
-              </FieldLabel>
-              <FieldLabel label={copy.instagram}>
-                <input type="text" name="instagram" maxLength={300} value={form.instagram} onChange={setField} className={inputClassName} inputMode="url" dir="ltr" />
-              </FieldLabel>
+          <section className="rounded-2xl border border-[#D4AF37]/40 bg-white p-4 space-y-3" aria-label="Réseaux sociaux et liens">
+            <h4 className="text-base font-semibold text-[#292725]">Réseaux sociaux, site et Google</h4>
+            <p className="text-xs text-slate-600">Sélectionnez vos plateformes et renseignez leurs liens directement ici. Les liens des plateformes cochées sont obligatoires.</p>
+            <ChoiceGroup legend={copy.platformsQuestion}>
+              {PLATFORMS.map((platform) => (
+                <CheckboxChoice
+                  key={platform}
+                  checked={form.selectedPlatforms.includes(platform)}
+                  onChange={() => togglePlatform(platform)}
+                  label={copy.platformLabels[platform]}
+                />
+              ))}
+            </ChoiceGroup>
+            <div className="grid gap-3 md:grid-cols-2">
+              {(!creationMode || form.selectedPlatforms.includes('website')) && <FieldLabel label={creationMode ? 'Site Internet *' : copy.website}><input type="url" name="website" value={form.website} onChange={setField} className={inputClassName} placeholder="https://..." /></FieldLabel>}
+              {(!creationMode || form.selectedPlatforms.includes('facebook')) && <FieldLabel label={creationMode ? 'Facebook *' : copy.facebook}><input type="url" name="facebook" value={form.facebook} onChange={setField} className={inputClassName} placeholder="https://www.facebook.com/..." /></FieldLabel>}
+              {(!creationMode || form.selectedPlatforms.includes('instagram')) && <FieldLabel label={creationMode ? 'Instagram *' : copy.instagram}><input type="url" name="instagram" value={form.instagram} onChange={setField} className={inputClassName} placeholder="https://www.instagram.com/..." /></FieldLabel>}
+              {(!creationMode || form.selectedPlatforms.includes('whatsapp_business')) && <FieldLabel label="Numéro WhatsApp (si différent du téléphone)"><input type="tel" name="whatsapp" value={form.whatsapp} onChange={setField} className={inputClassName} placeholder="+216..." /></FieldLabel>}
+              {creationMode && form.selectedPlatforms.includes('google_business') && <FieldLabel label="Lien Google Maps / Fiche Google *"><input type="url" name="googleMapsUrl" value={form.googleMapsUrl} onChange={setField} className={inputClassName} placeholder="https://maps.app.goo.gl/..." /></FieldLabel>}
+              {creationMode && form.selectedPlatforms.includes('other') && <FieldLabel label="Autre plateforme *"><input type="url" name="otherPlatformUrl" value={form.otherPlatformUrl} onChange={setField} className={inputClassName} placeholder="https://..." /></FieldLabel>}
+              {creationMode && <FieldLabel label="TikTok"><input type="url" name="tiktok" value={form.tiktok} onChange={setField} className={inputClassName} placeholder="https://www.tiktok.com/@..." /></FieldLabel>}
+              {creationMode && <FieldLabel label="YouTube"><input type="url" name="youtube" value={form.youtube} onChange={setField} className={inputClassName} placeholder="https://www.youtube.com/..." /></FieldLabel>}
+              {creationMode && <FieldLabel label="LinkedIn"><input type="url" name="linkedin" value={form.linkedin} onChange={setField} className={inputClassName} placeholder="https://www.linkedin.com/..." /></FieldLabel>}
             </div>
-          </details>
+          </section>
 
+          {creationMode && (
+            <div className="space-y-4 rounded-2xl border border-[#D4AF37]/40 p-4">
+              <h4 className="font-semibold">Informations du CV professionnel</h4>
+              <div className="grid gap-3 md:grid-cols-2">
+                <FieldLabel label="Adresse complète"><input name="address" value={form.address} onChange={setField} maxLength={240} className={inputClassName} placeholder="Rue, numéro et quartier" /></FieldLabel>
+                {!form.selectedPlatforms.includes('google_business') && <FieldLabel label="Lien Google Maps (facultatif)"><input name="googleMapsUrl" type="url" value={form.googleMapsUrl} onChange={setField} className={inputClassName} placeholder="https://maps.app.goo.gl/..." /></FieldLabel>}
+              </div>
+              <p className="text-xs text-slate-600">Pour le lien Google exact : ouvrez Google Maps, cherchez votre établissement, cliquez « Partager » puis « Copier le lien ». Collez le lien ci-dessus.</p>
+              <FieldLabel label="Horaires d’ouverture"><textarea name="openingHours" value={form.openingHours} onChange={setField} rows={3} className={inputClassName} placeholder="Lundi au vendredi : 9h–18h ; samedi : 9h–13h ; dimanche : fermé" /></FieldLabel>
+              <fieldset className="rounded-xl border border-[#D4AF37]/40 bg-[#FFFDF7] p-3">
+                <legend className="px-1 font-semibold text-[#292725]">Ouverture de votre mini-appli</legend>
+                <p className="mb-2 text-xs text-slate-600">{premiumCreation ? 'Les deux ouvertures sont incluses : choisissez celle affichée au départ.' : 'Choisissez votre présentation d’ouverture.'}</p>
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {([['photo', 'A · Photo plein fond'], ['framed', 'B · Présentation Prestige encadrée']] as const).map(([value, label]) => (
+                    <label key={value} className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white px-3 py-3 text-sm">
+                      <input type="radio" name="openingStyle" value={value} checked={form.openingStyle === value} onChange={setField} />
+                      {label}
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+              <details className="rounded-xl border border-slate-200 p-3">
+                <summary className="cursor-pointer font-semibold">Logo, photos, avis et catalogue</summary>
+                <div className="mt-3 space-y-3">
+                  <p className="text-xs text-slate-600">Indiquez les liens de vos images déjà en ligne, ou demandez à notre équipe de vous accompagner pour les transmettre. L’envoi direct de fichiers n’est pas encore disponible.</p>
+                  <fieldset className="rounded-xl border border-[#D4AF37]/40 bg-[#FFFDF7] p-3">
+                    <legend className="px-1 font-semibold text-[#292725]">Votre logo</legend>
+                    <div className="mt-2 grid gap-2">
+                      {([
+                        ['existing', 'J’ai déjà mon logo'],
+                        ['create', 'Je souhaite que Dalil Tounes crée mon logo (+20 TND)'],
+                        ['none', 'Je ne souhaite pas de logo pour le moment'],
+                      ] as const).map(([value, label]) => (
+                        <label key={value} className="flex cursor-pointer items-center gap-3 rounded-lg border border-slate-200 px-3 py-2 text-sm">
+                          <input type="radio" name="logoChoice" value={value} checked={form.logoChoice === value} onChange={setField} className="h-4 w-4 accent-[#07543F]" />
+                          <span>{label}</span>
+                        </label>
+                      ))}
+                    </div>
+                    {form.logoChoice === 'create' && <p className="mt-3 rounded-lg bg-emerald-50 px-3 py-3 text-sm leading-6 text-[#07543F]"><strong>Le logo final sera votre propriété après règlement et livraison.</strong> Vous pourrez le réutiliser librement en dehors de Dalil Tounes. Les éventuels éléments ou polices sous licence tierce restent soumis à leurs conditions d’utilisation. Création simple avec une proposition et deux ajustements inclus.</p>}
+                    {form.logoChoice === 'existing' && (
+                      <div className="mt-3 space-y-2">
+                        <FieldLabel label="Lien du logo"><input type="url" name="logoUrl" value={form.logoUrl} onChange={setField} className={inputClassName} placeholder="https://..." /></FieldLabel>
+                      </div>
+                    )}
+                  </fieldset>
+                  <FieldLabel label={`Liens des photos (maximum ${maxPhotos}, un par ligne)`}><textarea name="photoUrls" value={form.photoUrls} onChange={setField} rows={3} className={inputClassName} placeholder="https://.../photo1.jpg" /></FieldLabel>
+                  <FieldLabel label="Lien des avis Google"><input type="url" name="googleReviewsUrl" value={form.googleReviewsUrl} onChange={setField} className={inputClassName} placeholder="https://..." /></FieldLabel>
+                  <FieldLabel label="Produits, prestations et prix"><textarea name="productsDescription" value={form.productsDescription} onChange={setField} rows={4} className={inputClassName} placeholder="Produit — prix — description" /></FieldLabel>
+                </div>
+              </details>
+            </div>
+          )}
+          {creationMode ? (
+            <div className="grid gap-4 md:grid-cols-2">
+              <fieldset className="rounded-2xl border border-gray-200 p-4">
+                <legend className="font-semibold">{copy.contactMethod} — plusieurs choix possibles</legend>
+                {(['whatsapp','phone','email'] as const).map(method => <CheckboxChoice key={method} checked={form.preferredContactMethods.includes(method)} label={method==='whatsapp'?copy.contactWhatsApp:method==='phone'?copy.contactPhone:copy.contactEmail} onChange={() => { setForm(current=>({...current,preferredContactMethods:current.preferredContactMethods.includes(method)?current.preferredContactMethods.filter(m=>m!==method):[...current.preferredContactMethods,method]}));setErrorMessage(''); }} />)}
+              </fieldset>
+              <fieldset className="rounded-2xl border border-gray-200 p-4">
+                <legend className="font-semibold">{copy.contactTime} — plusieurs choix possibles</legend>
+                {(['morning','afternoon','evening','anytime'] as const).map(time => (
+                  <CheckboxChoice key={time} checked={form.preferredContactTimes.includes(time)}
+                    label={time === 'morning' ? copy.morning : time === 'afternoon' ? copy.afternoon : time === 'evening' ? copy.evening : copy.anyTime}
+                    onChange={() => {
+                      setForm(current => ({
+                        ...current,
+                        preferredContactTimes: time === 'anytime'
+                          ? (current.preferredContactTimes.includes('anytime') ? [] : ['anytime'])
+                          : current.preferredContactTimes.includes(time)
+                            ? current.preferredContactTimes.filter(item => item !== time)
+                            : [...current.preferredContactTimes.filter(item => item !== 'anytime'), time],
+                      }));
+                      setErrorMessage('');
+                    }}
+                  />
+                ))}
+              </fieldset>
+            </div>
+          ) : (
           <div className="grid gap-5 md:grid-cols-2">
             <ChoiceGroup legend={copy.contactMethod}>
               <RadioChoice name="preferredContactMethod" value="whatsapp" checked={form.preferredContactMethod === 'whatsapp'} onChange={setField} label={copy.contactWhatsApp} />
@@ -1138,7 +1307,16 @@ export function SubscriptionRequestForm({
               <RadioChoice name="preferredContactTime" value="anytime" checked={form.preferredContactTime === 'anytime'} onChange={setField} label={copy.anyTime} />
             </ChoiceGroup>
           </div>
+          )}
 
+          {creationMode && (
+            <FieldLabel label={isArabic ? 'وصف نشاطك (اختياري)' : 'Description de votre activité (facultatif)'}>
+              <textarea name="activityDescription" rows={3} maxLength={1500} value={form.activityDescription} onChange={setField} className={`${inputClassName} resize-y`} disabled={submitting} placeholder={isArabic ? 'ماذا تقدم لعملائك؟' : 'Présentez vos services, spécialités et ce qui vous distingue.'} />
+            </FieldLabel>
+          )}
+          {creationMode && (
+            <p className="text-xs font-semibold text-[#07543F]">Réseaux sélectionnés : les liens correspondants doivent être remplis. L’adresse du site ou les autres liens non sélectionnés restent facultatifs.</p>
+          )}
           <FieldLabel label={copy.messageOptional}>
             <textarea
               name="message"
@@ -1170,7 +1348,7 @@ export function SubscriptionRequestForm({
             </span>
           </label>
 
-          <p className="text-center text-sm font-semibold text-[#4A1D43]">{copy.freeNotice}</p>
+          <p className="text-center text-sm font-semibold text-[#4A1D43]">{creationMode ? (isArabic ? 'إرسال الطلب لا يعني أن الدفع قد تم. يتم التحقق من التحويل البنكي قبل بدء التحضير.' : 'L’envoi de la demande ne confirme aucun paiement. Le virement sera vérifié avant la préparation.') : copy.freeNotice}</p>
           {!creationMode && (
             <div className="rounded-xl border border-[#D4AF37]/40 bg-[#FFF9E8] px-4 py-3 text-sm leading-6 text-[#4A1D43]">
               <p>{checkoutCopy.currencyNotice}</p>
@@ -1180,7 +1358,7 @@ export function SubscriptionRequestForm({
           {creationMode && (
             <div className="rounded-2xl border border-[#D4AF37]/55 bg-[#FFF9E8] p-4 text-sm leading-6 text-[#4A1D43]">
               <p className="text-base font-black">{language === 'fr' ? 'Commande et paiement en dinars tunisiens' : language === 'ar' ? 'الطلب والدفع بالدينار التونسي' : language === 'it' ? 'Ordine e pagamento in dinari tunisini' : language === 'ru' ? 'Заказ и оплата в тунисских динарах' : 'Order and payment in Tunisian dinars'}</p>
-              <p className="mt-2">{language === 'fr' ? `Montant : ${planKind === 'artisan' ? '30 TND' : '59 TND'}. Envoyez d’abord votre demande ci-dessous. Notre équipe vous transmettra ensuite les instructions de règlement BIAT en privé par WhatsApp.` : language === 'ar' ? `المبلغ: ${planKind === 'artisan' ? '30 د.ت' : '59 د.ت'}. أرسل طلبك أولاً أدناه، ثم يرسل لك فريقنا تعليمات الدفع عبر BIAT بشكل خاص على واتساب.` : language === 'it' ? `Importo: ${planKind === 'artisan' ? '30 TND' : '59 TND'}. Invia prima la richiesta qui sotto; il nostro team ti comunicherà privatamente su WhatsApp le istruzioni BIAT.` : language === 'ru' ? `Сумма: ${planKind === 'artisan' ? '30 TND' : '59 TND'}. Сначала отправьте заявку ниже, затем команда лично пришлёт инструкции BIAT в WhatsApp.` : `Amount: ${planKind === 'artisan' ? '30 TND' : '59 TND'}. First send your request below; our team will then privately send the BIAT payment instructions via WhatsApp.`}</p>
+              <p className="mt-2">{language === 'fr' ? `Montant : ${planKind === 'artisan' ? '30 TND' : '59 TND'}. Envoyez d’abord votre demande ci-dessous. Notre équipe vous transmettra ensuite les instructions bancaires en privé par WhatsApp.` : language === 'ar' ? `المبلغ: ${planKind === 'artisan' ? '30 د.ت' : '59 د.ت'}. أرسل طلبك أولاً أدناه، ثم يرسل لك فريقنا تعليمات التحويل البنكي بشكل خاص على واتساب.` : language === 'it' ? `Importo: ${planKind === 'artisan' ? '30 TND' : '59 TND'}. Invia prima la richiesta qui sotto; il nostro team ti comunicherà privatamente su WhatsApp le istruzioni per il bonifico.` : language === 'ru' ? `Сумма: ${planKind === 'artisan' ? '30 TND' : '59 TND'}. Сначала отправьте заявку ниже, затем команда лично пришлёт банковские реквизиты в WhatsApp.` : `Amount: ${planKind === 'artisan' ? '30 TND' : '59 TND'}. First send your request below; our team will then privately send the bank transfer instructions via WhatsApp.`}</p>
               <p className="mt-2 font-semibold">{language === 'fr' ? 'Aucune coordonnée bancaire n’est publiée sur le site. La création commence après vérification du règlement.' : language === 'ar' ? 'لا يتم نشر أي بيانات بنكية على الموقع. يبدأ العمل بعد التحقق من الدفع.' : language === 'it' ? 'Nessun dato bancario viene pubblicato sul sito. La creazione inizia dopo la verifica del pagamento.' : language === 'ru' ? 'Банковские реквизиты на сайте не публикуются. Работа начинается после проверки оплаты.' : 'No bank details are published on the website. Creation starts after payment verification.'}</p>
             </div>
           )}
@@ -1194,6 +1372,47 @@ export function SubscriptionRequestForm({
               {openingCheckout ? checkoutCopy.checkoutLoading : `${checkoutCopy.paySecurely} — ${'eur' in checkoutSelection ? checkoutSelection.eur : checkoutSelection.amount}`}
             </button>
           )}
+        </section>
+      ) : (
+        <section aria-labelledby="miniapp-review-title" className="space-y-4">
+          <h3 id="miniapp-review-title" className="text-xl font-bold text-[#292725]">{isArabic ? 'تحقق من طلبك قبل الإرسال' : 'Vérifiez votre demande avant envoi'}</h3>
+          <div className="rounded-2xl border border-[#D4AF37]/45 bg-[#FFFDF7] p-4 text-sm leading-7 text-[#292725]">
+            <p><strong>{isArabic ? 'العرض' : 'Formule'} :</strong> {selectedPlanLabel}</p>
+            <p>{form.assistance === "assisted" ? "Accompagnement demandé" : "Création autonome"}</p>
+            {premiumCreation && <p className="font-semibold text-[#07543F]">✓ Business + Portfolio · 3 palettes · 2 ouvertures incluses</p>}
+            {presentationModelLabel && <p><strong>{isArabic ? 'النموذج' : 'Modèle'} :</strong> {presentationModelLabel}</p>}
+            {paletteLabel && <p><strong>{isArabic ? 'الألوان' : 'Palette'} :</strong> {paletteLabel}</p>}
+            <p><strong>Ouverture :</strong> {form.openingStyle === 'photo' ? 'A · Photo plein fond' : 'B · Présentation Prestige'}</p>
+            <p><strong>{isArabic ? 'السعر' : 'Prix de création'} :</strong> {selectedPlan === 'artisan' ? '30 TND' : '59 TND'}</p>
+            <p><strong>Logo :</strong> {form.logoChoice === 'create' ? 'Création de logo Dalil Tounes (+20 TND)' : form.logoChoice === 'existing' ? 'Logo fourni' : 'Aucun logo demandé'}</p>
+            <p><strong>Total :</strong> {(selectedPlan === 'artisan' ? 30 : 59) + (form.logoChoice === 'create' ? 20 : 0)} TND</p>
+            {form.logoChoice === 'create' && <p className="text-xs text-[#07543F]">Le logo final vous appartient après règlement et livraison, sous réserve des licences éventuelles d’éléments tiers.</p>}
+            <p>{isArabic ? 'السنة الأولى مشمولة، ثم صيانة اختيارية بقيمة 50 د.ت/سنة.' : 'Première année incluse ; entretien facultatif ensuite : 50 TND/an.'}</p>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 text-sm leading-7 text-slate-700">
+            <p><strong>{isArabic ? 'النشاط' : 'Activité'} :</strong> {form.companyName}</p>
+            <p><strong>{isArabic ? 'المسؤول' : 'Responsable'} :</strong> {form.managerName}</p>
+            <p><strong>{isArabic ? 'القطاع' : 'Secteur'} :</strong> {form.sector}</p>
+            <p><strong>{isArabic ? 'المدينة' : 'Localisation'} :</strong> {form.city}, {form.governorate}</p>
+            <p><strong>{isArabic ? 'الهاتف' : 'Téléphone'} :</strong> {form.phone}</p>
+            {form.email && <p><strong>Email :</strong> {form.email}</p>}
+            {form.activityDescription && <p className="whitespace-pre-wrap"><strong>{isArabic ? 'الوصف' : 'Description'} :</strong> {form.activityDescription}</p>}
+            {form.address && <p><strong>Adresse :</strong> {form.address}</p>}
+            {form.openingHours && <p className="whitespace-pre-wrap"><strong>Horaires :</strong> {form.openingHours}</p>}
+            {form.googleMapsUrl && <p className="break-all"><strong>Google Maps :</strong> {form.googleMapsUrl}</p>}
+            {form.logoUrl && <p className="break-all"><strong>Logo :</strong> {form.logoUrl}</p>}
+            {form.photoUrls && <p className="whitespace-pre-wrap"><strong>Photos :</strong> {form.photoUrls}</p>}
+            {form.productsDescription && <p className="whitespace-pre-wrap"><strong>Produits :</strong> {form.productsDescription}</p>}
+            <p><strong>Contacts :</strong> {form.preferredContactMethods.join(', ')}</p>
+            <p><strong>Créneaux :</strong> {form.preferredContactTimes.join(', ')}</p>
+            {form.selectedPlatforms.length > 0 && <p><strong>{isArabic ? 'المنصات' : 'Plateformes'} :</strong> {form.selectedPlatforms.map((item) => copy.platformLabels[item]).join(', ')}</p>}
+            {[form.website, form.facebook, form.instagram, form.whatsapp].filter(Boolean).length > 0 && <p className="break-words"><strong>{isArabic ? 'الروابط' : 'Liens et WhatsApp'} :</strong> {[form.website, form.facebook, form.instagram, form.whatsapp].filter(Boolean).join(' · ')}</p>}
+            {form.message && <p className="whitespace-pre-wrap"><strong>{isArabic ? 'ملاحظات' : 'Précisions'} :</strong> {form.message}</p>}
+          </div>
+          <div className="rounded-xl border border-[#D4AF37]/40 bg-[#FFF9E8] px-4 py-3 text-sm leading-6 text-[#292725]">
+            {isArabic ? 'بعد إرسال الطلب، سيرسل لك فريق دليل تونس تعليمات التحويل البنكي بشكل خاص. لا يتم تأكيد الدفع أو النشر آلياً.' : 'Après l’envoi, Dalil Tounes vous communiquera les instructions de virement en privé. Ni le paiement ni la publication ne seront confirmés automatiquement.'}
+          </div>
+          <button type="button" onClick={() => setStep(1)} className="text-sm font-semibold text-[#07543F] underline underline-offset-2">{isArabic ? 'تعديل بيانات النشاط' : 'Modifier les coordonnées de mon activité'}</button>
         </section>
       )}
 
@@ -1212,14 +1431,18 @@ export function SubscriptionRequestForm({
           </>
         ) : (
           <>
-            <button type="button" onClick={() => { setStep(1); setErrorMessage(''); }} disabled={submitting} className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 disabled:opacity-60">
+            <button type="button" onClick={() => { setStep(step === 3 ? 2 : 1); setErrorMessage(''); }} disabled={submitting} className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 disabled:opacity-60">
               {isArabic ? <ArrowRight className="h-4 w-4" aria-hidden="true" /> : <ArrowLeft className="h-4 w-4" aria-hidden="true" />}
               {copy.back}
             </button>
-            <button type="submit" disabled={submitting || submitted} className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl border border-[#D4AF37] bg-[#4A1D43] px-5 py-3 text-sm font-bold text-[#D4AF37] transition hover:bg-[#5A2D53] disabled:cursor-not-allowed disabled:opacity-60">
-              <Send className="h-4 w-4" aria-hidden="true" />
-              {submitting ? copy.submitting : copy.submit}
-            </button>
+            {creationMode && step === 2 ? (
+              <button type="button" onClick={() => { const error = validateStepTwo(); if (error) setErrorMessage(error); else { setErrorMessage(''); setStep(3); } }} disabled={submitting} className="inline-flex min-h-12 flex-1 items-center justify-center rounded-xl border border-[#D4AF37] bg-[#07543F] px-5 py-3 text-sm font-bold text-white">{isArabic ? 'مراجعة الطلب' : 'Voir le récapitulatif'}</button>
+            ) : (
+              <button type="submit" disabled={submitting || submitted} className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl border border-[#D4AF37] bg-[#4A1D43] px-5 py-3 text-sm font-bold text-[#D4AF37] transition hover:bg-[#5A2D53] disabled:cursor-not-allowed disabled:opacity-60">
+                <Send className="h-4 w-4" aria-hidden="true" />
+                {submitting ? copy.submitting : copy.submit}
+              </button>
+            )}
           </>
         )}
       </div>
