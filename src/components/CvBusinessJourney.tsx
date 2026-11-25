@@ -298,6 +298,8 @@ function ExpandedJourneyVisual({
   );
 }
 
+const journeyCvDemoUrl = (model: CvModel, language: string) => `/cv/aux-saveurs-anis?preview-model=${model}&boutique-demo=1&skip-opening=1&lang=${language}`;
+
 export default function CvBusinessJourney({ language, showVideo = true, selectedModel, onModelSelect }: { language: BusinessCardPreviewLanguage; showVideo?: boolean; selectedModel?: CvModel | null; onModelSelect?: (model: CvModel) => void }) {
   const t = COPY[language];
   const rtl = language === 'ar';
