@@ -16,15 +16,28 @@ import SearchBar from '../components/SearchBar';
 import { useLanguage } from '../context/LanguageContext';
 import { useHomeData } from '../hooks/useHomeData';
 
-function CvSectionFold({ enabled, title, children, initiallyOpen = false }: { enabled: boolean; title: string; children: ReactNode; initiallyOpen?: boolean }) {
+function CvSectionFold({ enabled, title, summary, children, initiallyOpen = false, models = false }: { enabled: boolean; title: string; summary?: string; children: ReactNode; initiallyOpen?: boolean; models?: boolean }) {
+  const { language } = useLanguage();
+  const labels = ({fr:['Lire la suite','Réduire'],ar:['اقرأ المزيد','طيّ'],en:['Read more','Show less'],it:['Leggi di più','Riduci'],ru:['Подробнее','Свернуть']} as Record<string,string[]>)[language] ?? ['Lire la suite','Réduire'];
   const [expanded, setExpanded] = useState(initiallyOpen);
+  useEffect(() => {
+    if (!models) return;
+    const openModels = () => setExpanded(true);
+    const check = () => { if (['#modeles','#personnalisation'].includes(window.location.hash) || new URLSearchParams(window.location.search).get('section') === 'models' || new URLSearchParams(window.location.search).get('app-models') === '1') openModels(); };
+    check();
+    window.addEventListener('hashchange', check);
+    window.addEventListener('dalil:choose-model', openModels);
+    return () => { window.removeEventListener('hashchange', check); window.removeEventListener('dalil:choose-model', openModels); };
+  }, [models]);
   if (!enabled) return <>{children}</>;
-  return <details open={expanded} onToggle={event => setExpanded(event.currentTarget.open)} className="mx-3 my-3 overflow-hidden rounded-xl border border-[#D4AF37]/45 bg-white">
-    <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 bg-[#FFFDF8] px-4 py-3 text-sm font-semibold text-[#4A1D43] [&::-webkit-details-marker]:hidden">
-      <span>{title}</span><span aria-hidden="true" className="text-xl text-[#A17D36]">⌄</span>
-    </summary>
-    <div className="border-t border-[#D4AF37]/30">{children}</div>
-  </details>;
+  return <section className="mx-1 my-2 rounded-xl border border-[#D4AF37]/45 bg-white">
+    <div className="px-3 pt-3 pb-2">
+      <h2 className="text-base font-semibold text-[#292725]">{title}</h2>
+      {summary && <p className="mt-1 text-xs leading-5 text-slate-600">{summary}</p>}
+      <button type="button" aria-expanded={expanded} onClick={() => setExpanded(v => !v)} className="mt-2 flex min-h-10 w-full items-center justify-between rounded-lg border border-[#D4AF37]/45 bg-[#FFFDF8] px-3 text-sm font-medium text-[#815E28]">{labels[expanded ? 1 : 0]}<span aria-hidden="true">{expanded ? '⌃' : '⌄'}</span></button>
+    </div>
+    <div hidden={!expanded} className="border-t border-[#D4AF37]/30">{children}</div>
+  </section>;
 }
 
 type Lang = 'fr' | 'ar' | 'en' | 'it' | 'ru';
@@ -276,6 +289,8 @@ function SeparationExperience({ fixedView, embedded = false, selectedModel, onMo
   const structure = siteStructureCopy[lang];
   const CvHeading = embedded ? 'h3' : 'h1';
   const compactCvApp = view === 'cv' && fixedView === 'cv' && isPlatformAppMode() && !embedded;
+  const foldCvSections = view === 'cv' && fixedView === 'cv' && isPlatformAppMode();
+  const foldCopy = ({fr:{features:'Vos contacts, services, photos, boutique et commandes réunis dans votre mini-appli.', tools:'Application mobile, QR Business et votre CV : découvrez et choisissez votre modèle.', toolsTitle:'3 outils complémentaires'},ar:{features:'جهات الاتصال والخدمات والصور والمتجر والطلبات في تطبيقك.',tools:'التطبيق ورمز QR والسيرة المهنية: اكتشف واختر النموذج.',toolsTitle:'3 أدوات متكاملة'},en:{features:'Contacts, services, photos, shop and orders in one mini-app.',tools:'Mobile app, Business QR and your CV: explore and choose your model.',toolsTitle:'3 complementary tools'},it:{features:'Contatti, servizi, foto, negozio e ordini in una mini-app.',tools:'App, QR Business e CV: scopri e scegli il modello.',toolsTitle:'3 strumenti complementari'},ru:{features:'Контакты, услуги, фото, магазин и заказы в одном приложении.',tools:'Приложение, QR Business и CV: выберите модель.',toolsTitle:'3 взаимодополняющих инструмента'}})[lang];
   const [videoOpen, setVideoOpen] = useState(false);
   useEffect(() => {
     if (!videoOpen) return;
@@ -479,7 +494,7 @@ function SeparationExperience({ fixedView, embedded = false, selectedModel, onMo
               ru: 'Персональное мини-приложение в стиле вашей компании поможет представить услуги, расширить охват и привлечь новых клиентов. Им легко поделиться по ссылке и QR-коду Business.'
             } as Record<Lang, string>)[lang]}</p>
           </section>}
-          <CvSectionFold enabled={compactCvApp} title={compactCvApp ? ({fr:'Votre mini-appli',ar:'تطبيقك المصغّر',en:'Your mini-app',it:'La tua mini-app',ru:'Ваше мини-приложение'} as Record<Lang,string>)[lang] : t.cvLabel} initiallyOpen>
+          <CvSectionFold enabled={foldCvSections} summary={t.cvDescription} title={foldCvSections ? ({fr:'Votre mini-appli',ar:'تطبيقك المصغّر',en:'Your mini-app',it:'La tua mini-app',ru:'Ваше мини-приложение'} as Record<Lang,string>)[lang] : t.cvLabel}>
           <section className="border-b border-[#D4AF37]/25 bg-[radial-gradient(circle_at_top_left,rgba(212,175,55,0.18),transparent_28%),linear-gradient(135deg,#fffdf8_0%,#ffffff_52%,#fff9ed_100%)] px-3 py-4 md:py-6">
             <div className="mx-auto grid max-w-[1180px] items-center gap-4 lg:grid-cols-[1fr_0.72fr]">
               <div><div className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/45 bg-white px-3 py-1.5 text-xs font-black uppercase tracking-[0.14em] text-[#292725] shadow-sm"><Sparkles className="h-4 w-4 text-[#D4AF37]" /> {t.cvLabel}</div><CvHeading className="public-title mt-2 font-serif text-2xl font-medium leading-tight text-[#292725] md:text-3xl">{t.cvTitle}</CvHeading><p className="mt-2 font-serif text-lg font-medium leading-tight text-[#B58A18] md:text-xl">{t.cvSubtitle}</p><p className="mt-2 max-w-xl text-sm leading-5 text-gray-600">{t.cvDescription}</p></div>
@@ -489,7 +504,7 @@ function SeparationExperience({ fixedView, embedded = false, selectedModel, onMo
           </CvSectionFold>
 
 
-          <CvSectionFold enabled={compactCvApp} title={t.miniAppTitle}>
+          <CvSectionFold enabled={foldCvSections} title={t.miniAppTitle} summary={t.miniAppText}>
           <section className="mx-auto max-w-5xl space-y-2 px-3 py-3">
             <h2 className="font-serif text-xl font-bold text-[#292725]">{t.miniAppTitle}</h2>
             <p className="text-sm leading-5 text-slate-600">{t.miniAppText}</p>
@@ -499,11 +514,11 @@ function SeparationExperience({ fixedView, embedded = false, selectedModel, onMo
           </section>
           </CvSectionFold>
 
-          <CvSectionFold enabled={compactCvApp} title={lang === 'fr' ? 'Fonctionnalités de votre mini-appli' : lang === 'ar' ? 'مميزات تطبيقك المصغّر' : lang === 'en' ? 'Your mini-app features' : lang === 'it' ? 'Funzioni della tua mini-app' : 'Возможности мини-приложения'}>
+          <CvSectionFold enabled={foldCvSections} summary={foldCopy.features} title={lang === 'fr' ? 'Fonctionnalités de votre mini-appli' : lang === 'ar' ? 'مميزات تطبيقك المصغّر' : lang === 'en' ? 'Your mini-app features' : lang === 'it' ? 'Funzioni della tua mini-app' : 'Возможности мини-приложения'}>
           <CvCapabilitiesSection language={lang} showActions={false} />
           </CvSectionFold>
 
-          <CvSectionFold enabled={compactCvApp} title={lang === 'fr' ? 'Comment créer votre mini-appli ?' : lang === 'ar' ? 'كيفاش تعمل تطبيقك المصغّر؟' : lang === 'en' ? 'How to create your mini-app' : lang === 'it' ? 'Come creare la tua mini-app' : 'Как создать мини-приложение'}>
+          <CvSectionFold enabled={foldCvSections} title={foldCopy.toolsTitle} summary={foldCopy.tools} models>
           <CvBusinessJourney language={lang} showVideo={!heroVideoSrc} selectedModel={selectedModel} onModelSelect={onModelSelect} />
           </CvSectionFold>
 
