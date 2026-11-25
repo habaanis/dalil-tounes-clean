@@ -19,13 +19,7 @@ import {
 import { SubscriptionRequestForm } from '../components/SubscriptionRequestForm';
 import type { BillingPeriod, CheckoutOffer, SubscriptionPlanCode } from '../components/SubscriptionRequestForm';
 import { BusinessCardPreview } from '../components/BusinessCardPreview';
-import {
-  CvPresentationModelSelector,
-  getPresentationModelLabel,
-  getPaletteLabel,
-  type PresentationModel,
-  type PaletteId,
-} from '../components/CvPresentationModelSelector';
+import { getPresentationModelLabel, type PresentationModel } from '../components/CvPresentationModelSelector';
 import { useLanguage } from '../context/LanguageContext';
 
 type PreviewType = 'free' | 'artisan' | 'premium' | 'launch' | 'request' | null;
@@ -1297,15 +1291,14 @@ export const Subscription = () => {
   const [selectedFormula, setSelectedFormula] = useState<'artisan' | 'premium' | null>(null);
   const [expandedFormula, setExpandedFormula] = useState<'artisan' | 'premium' | null>(null);
   const [selectedPresentationModel, setSelectedPresentationModel] = useState<PresentationModel | null>(null);
-  const [selectedPalette, setSelectedPalette] = useState<PaletteId>('prestige');
   const [showSecondaryDetails, setShowSecondaryDetails] = useState(false);
-  const [miniAppOpen, setMiniAppOpen] = useState(false);
-  const composeLabel = ({fr:'Composez votre mini-appli', ar:'خصّص تطبيقك المصغّر', en:'Build your mini-app', it:'Componi la tua mini-app', ru:'Настройте мини-приложение'})[language as OfferLanguage] ?? 'Composez votre mini-appli';
+  const [miniAppOpen, setMiniAppOpen] = useState(true);
 
   useEffect(() => {
     const openTargetSection = () => {
       const params = new URLSearchParams(window.location.search);
-      const target = window.location.hash.slice(1) || (params.get('app-offers') === '1' ? 'offres' : params.get('app-models') === '1' ? 'modeles' : '');
+      const rawTarget = window.location.hash.slice(1) || (params.get('app-offers') === '1' ? 'offres' : params.get('app-models') === '1' ? 'modeles' : '');
+      const target = rawTarget === 'personnalisation' ? 'modeles' : rawTarget;
       if (!target) return;
       if (target === 'cv-professionnels') setMiniAppOpen(true);
       const detail = document.getElementById(target);
@@ -1324,28 +1317,21 @@ export const Subscription = () => {
   };
   const selectFormula = (formula: 'artisan' | 'premium') => {
     setSelectedFormula(formula);
-    const models = document.getElementById('personnalisation');
-    if (models instanceof HTMLDetailsElement) models.open = true;
-    window.requestAnimationFrame(() => {
-      document.getElementById('cv-presentation-models')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-  };
-  const selectedFormulaLabel = selectedFormula
-    ? `${simplifiedOfferCopy[language as OfferLanguage][`${selectedFormula}Title`]} — ${(offerCopy[language as OfferLanguage] ?? offerCopy.fr)[`${selectedFormula}Price`]}`
-    : null;
-  const continueWithModel = () => {
-    if (!selectedFormula || !selectedFormulaLabel) {
-      document.getElementById('cv-presentation-models')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      return;
-    }
     if (!selectedPresentationModel) {
-      document.getElementById('cv-presentation-models')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.getElementById('modeles')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       return;
     }
     const modelLabel = getPresentationModelLabel(language, selectedPresentationModel);
-    const paletteLabel = getPaletteLabel(language, selectedPalette);
-    openRequest(selectedFormula, `${selectedFormulaLabel} — ${modelLabel} — ${paletteLabel}`, selectedFormula, undefined, modelLabel, paletteLabel);
+    const label = `${simpleCopy[`${formula}Title`]} — ${(offerCopy[language as OfferLanguage] ?? offerCopy.fr)[`${formula}Price`]} — ${modelLabel}`;
+    openRequest(formula, label, formula, undefined, modelLabel);
   };
+  const orderCopy = ({
+    fr: {title:'Choisissez votre modèle', business:'Présentez votre activité et vos services.', portfolio:'Valorisez vos photos et réalisations.', demo:'Tester le modèle', choose:'Choisir', selected:'Sélectionné', next:'Choisissez ensuite votre offre', help:'Besoin d’aide ?', order:'Commander ma mini-appli'},
+    ar: {title:'اختر النموذج', business:'قدّم نشاطك وخدماتك.', portfolio:'أبرز صورك وأعمالك.', demo:'جرّب النموذج', choose:'اختر', selected:'تم الاختيار', next:'اختر العرض', help:'تحتاج مساعدة؟', order:'اطلب تطبيقك المصغّر'},
+    en: {title:'Choose your model', business:'Showcase your activity and services.', portfolio:'Highlight your photos and work.', demo:'Try the model', choose:'Choose', selected:'Selected', next:'Choose your offer', help:'Need help?', order:'Order my mini-app'},
+    it: {title:'Scegli il modello', business:'Presenta attività e servizi.', portfolio:'Valorizza foto e lavori.', demo:'Prova il modello', choose:'Scegli', selected:'Selezionato', next:'Scegli l’offerta', help:'Serve aiuto?', order:'Ordina la mini-app'},
+    ru: {title:'Выберите модель', business:'Представьте услуги и бизнес.', portfolio:'Покажите фотографии и работы.', demo:'Попробовать модель', choose:'Выбрать', selected:'Выбрано', next:'Выберите предложение', help:'Нужна помощь?', order:'Заказать мини-приложение'}
+  })[language as OfferLanguage];
 
   return (
     <div className="premium-page px-4 py-6 sm:py-8" dir={isArabic ? 'rtl' : 'ltr'}>
@@ -1363,7 +1349,7 @@ export const Subscription = () => {
         </header>
 
         <nav className="mb-5 flex flex-wrap justify-center gap-3 text-sm font-medium text-[#292725]" aria-label={structure.professional}>
-          <a href="#presence-essentielle">{structure.essential}</a><a href="#cv-professionnels" onClick={() => setMiniAppOpen(true)}>{structure.products}</a><a href="#modeles">{structure.models}</a><a href="#personnalisation">{composeLabel}</a><a href="#offres">{structure.offers}</a>
+          <a href="#presence-essentielle">{structure.essential}</a><a href="#cv-professionnels" onClick={() => setMiniAppOpen(true)}>{structure.products}</a><a href="#modeles">{structure.models}</a><a href="#offres">{structure.offers}</a>
         </nav>
         <EssentialPresence registration />
         <p className="mt-3 text-sm font-semibold text-emerald-800">{copy.essentialFree}</p>
@@ -1376,34 +1362,21 @@ export const Subscription = () => {
         </section>
 
 
-<details id="modeles" className="mb-4 scroll-mt-32 rounded-xl border border-[#D4AF37]/50 bg-white p-3">
-  <summary className="cursor-pointer py-2 font-medium text-[#292725]">{structure.models}</summary>
-  <div className="mt-3 grid grid-cols-2 gap-3">
-    {(['business','portfolio'] as const).map(model => <a key={model} href={`/cv/aux-saveurs-anis?preview-model=${model}&boutique-demo=1&skip-opening=1&lang=${language}`} className="rounded-xl border border-[#D4AF37]/40 p-2 text-center text-sm font-medium text-[#292725]">
+<section id="modeles" className="mb-4 scroll-mt-32 rounded-xl border border-[#D4AF37]/50 bg-white p-3">
+  <h2 className="text-center font-serif text-lg font-medium text-[#292725]">{orderCopy.title}</h2>
+  <div className="mt-3 grid grid-cols-2 gap-2">
+    {(['business','portfolio'] as const).map(model => <article key={model} className={`rounded-xl border p-2 text-center ${selectedPresentationModel === model ? 'border-[#A38549] bg-[#FFF9ED]' : 'border-[#D4AF37]/40 bg-white'}`}>
       <img src={model === 'business' ? '/images/cv-business-professionnel-aux-saveurs-anis.png' : '/images/cv-business-portfolio-aux-saveurs-anis.png'} alt={getPresentationModelLabel(language, model)} className="mx-auto h-40 w-full object-contain sm:h-56" loading="lazy" />
-      {getPresentationModelLabel(language, model)}
-    </a>)}
+      <h3 className="mt-1 text-sm font-semibold text-[#292725]">{getPresentationModelLabel(language, model)}</h3>
+      <p className="mt-1 text-xs text-slate-600">{orderCopy[model]}</p>
+      <a href={`/cv/aux-saveurs-anis?preview-model=${model}&boutique-demo=1&skip-opening=1&lang=${language}`} className="mt-2 block text-xs font-medium underline text-[#815E28]">{orderCopy.demo}</a>
+      <button type="button" aria-pressed={selectedPresentationModel === model} onClick={() => { setSelectedPresentationModel(model); if (selectedFormula) document.getElementById('offres')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="mt-2 min-h-10 w-full rounded-lg border border-[#A38549] bg-[#FFF9ED] px-2 text-xs font-semibold text-[#292725]">{selectedPresentationModel === model ? '✓ ' + orderCopy.selected : orderCopy.choose}</button>
+    </article>)}
   </div>
-</details>
-<details id="personnalisation" className="mb-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-4">
-  <summary className="cursor-pointer font-medium text-[#292725]">{composeLabel}</summary>
-<CvPresentationModelSelector
-  language={language}
-  formulaValue={selectedFormula}
-  onFormulaChange={setSelectedFormula}
-  artisanLabel={`${simplifiedOfferCopy[language as OfferLanguage].artisanTitle} — ${(offerCopy[language as OfferLanguage] ?? offerCopy.fr).artisanPrice}`}
-  premiumLabel={`${simplifiedOfferCopy[language as OfferLanguage].premiumTitle} — ${(offerCopy[language as OfferLanguage] ?? offerCopy.fr).premiumPrice}`}
-  value={selectedPresentationModel}
-  onChange={setSelectedPresentationModel}
-  selectedFormulaLabel={selectedFormulaLabel}
-  onContinue={continueWithModel}
-  paletteValue={selectedPalette}
-  onPaletteChange={setSelectedPalette}
-/>
-</details>
+</section>
         <section id="offres" aria-labelledby="cv-business-products-title" className="order-2 mt-5 sm:mt-0">
 <div className="mb-6 text-center">
-    <h2 id="cv-business-products-title" className="text-xl font-medium text-[#292725] sm:text-2xl">{structure.offers}</h2>
+    <h2 id="cv-business-products-title" className="text-xl font-medium text-[#292725] sm:text-2xl">{orderCopy.next}</h2>
   <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-slate-600">{simpleCopy.productsSubtitle}</p>
 </div>
 
@@ -1434,7 +1407,7 @@ export const Subscription = () => {
     intro={simplifiedOfferCopy[language as OfferLanguage].artisanIntro}
     features={simplifiedOfferCopy[language as OfferLanguage].artisanFeatures}
     previewLabel={simplifiedOfferCopy[language as OfferLanguage].preview}
-    chooseLabel={simplifiedOfferCopy[language as OfferLanguage].chooseArtisan}
+    chooseLabel={orderCopy.order}
     onPreview={() => setActivePreview('artisan')}
     onRequest={() => selectFormula('artisan')}
     showBenefitsLabel={mobileCopy.showBenefits}
@@ -1451,7 +1424,7 @@ export const Subscription = () => {
     intro={simplifiedOfferCopy[language as OfferLanguage].premiumIntro}
     features={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).premiumFeatures}
     previewLabel={simplifiedOfferCopy[language as OfferLanguage].preview}
-    chooseLabel={simplifiedOfferCopy[language as OfferLanguage].choosePremium}
+    chooseLabel={orderCopy.order}
     onPreview={() => setActivePreview('premium')}
     onRequest={() => selectFormula('premium')}
     showBenefitsLabel={mobileCopy.showBenefits}
@@ -1486,6 +1459,7 @@ export const Subscription = () => {
   <p className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold leading-6 text-[#292725]">{simpleCopy.noRenewal}</p>
 </div>
         </section>
+        <a href="https://wa.me/21650390546" target="_blank" rel="noreferrer" className="mt-3 block text-center text-sm font-medium text-[#07543F]">{orderCopy.help} WhatsApp</a>
 
         <button
           type="button"
