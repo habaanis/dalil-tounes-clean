@@ -521,6 +521,8 @@ export default function BusinessQr() {
         onShare={shareBusiness}
         onDownload={downloadPng}
         onInstall={installApp}
+        // Commercial usage explanations belong only to the platform presentation.
+        showUsage={false}
         qrId="dt-business-qr"
         palette={paletteTheme.id}
         interactive
