@@ -1371,23 +1371,6 @@ export const Subscription = () => {
 </div>
 
 
-<div className="mb-4 rounded-xl border border-[#D6AF2E]/60 bg-[#FFF9ED] p-3 sm:p-4">
-  <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-    <div className="max-w-3xl">
-      <span className="inline-flex items-center gap-2 rounded-full bg-[#4A123F] px-3 py-1 text-[10px] font-medium uppercase tracking-[0.12em] text-white">
-        <Sparkles className="h-3.5 w-3.5 text-[#F0C537]" aria-hidden="true" />
-        {simpleCopy.welcomeBadge}
-      </span>
-      <h3 className="mt-3 text-xl font-medium text-[#4A123F] sm:text-2xl">{simpleCopy.welcomeTitle}</h3>
-      <p className="mt-2 hidden text-sm leading-5 text-slate-700 sm:block">{simpleCopy.welcomeDescription}</p>
-    </div>
-    <div className="hidden rounded-2xl border border-[#D3B16F] bg-[#FFF9ED] px-5 py-4 text-center text-[#4A1D43] shadow-sm sm:block lg:max-w-xs">
-      <p className="text-lg font-medium leading-6 text-[#4A1D43]">{simpleCopy.welcomeHighlight}</p>
-    </div>
-  </div>
-  <p className="mt-2 rounded-xl border border-[#D6AF2E]/45 bg-white px-3 py-2 text-sm font-medium leading-5 text-[#4A123F]">{simpleCopy.welcomePayment}</p>
-</div>
-
 <div className="grid items-stretch gap-5 lg:grid-cols-2">
   <CreationPlanCard
     title={simplifiedOfferCopy[language as OfferLanguage].artisanTitle}
@@ -1473,51 +1456,7 @@ export const Subscription = () => {
           </div>
         </aside>
 
-        <section className={`${showSecondaryDetails ? 'block' : 'hidden'} order-6 mt-5 rounded-3xl bg-gradient-to-r from-[#4A123F] to-[#5F174F] p-5 text-white shadow-xl sm:p-7`}>
-          <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-start gap-4">
-              <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-[#D6AF2E] text-[#F0C537]">
-                <Sparkles className="h-7 w-7" aria-hidden="true" />
-              </span>
-              <div>
-                <h2 className="text-2xl font-medium">{(offerCopy[language as OfferLanguage] ?? offerCopy.fr).eliteTitle}</h2>
-                <p className="mt-1 font-medium text-[#F0C537]">{(offerCopy[language as OfferLanguage] ?? offerCopy.fr).customSolution}</p>
-                <p className="mt-3 max-w-2xl text-sm leading-6 text-purple-100">{(offerCopy[language as OfferLanguage] ?? offerCopy.fr).eliteIntro}</p>
-              </div>
-            </div>
-            <div className="grid shrink-0 gap-2 sm:min-w-48">
-              <a href="mailto:contact@dalil-tounes.com" aria-label={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).contactEmail} className="rounded-xl bg-white px-5 py-3 text-center text-sm font-medium text-[#4A123F] transition hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]">
-                {(offerCopy[language as OfferLanguage] ?? offerCopy.fr).contactUs}
-              </a>
-              <a href="https://wa.me/21650390546" target="_blank" rel="noreferrer" className="rounded-xl border border-[#D6AF2E] px-5 py-3 text-center text-sm font-medium text-[#F0C537] transition hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]">
-                {(offerCopy[language as OfferLanguage] ?? offerCopy.fr).contactWhatsApp}
-              </a>
-            </div>
-          </div>
-        </section>
 
-        <div className={`${showSecondaryDetails ? 'flex' : 'hidden'} order-7 mt-5 items-center justify-center gap-3 rounded-2xl border border-amber-200 bg-white px-4 py-4 text-center text-sm text-slate-700`}>
-          <Info className="h-5 w-5 shrink-0 text-[#4A123F]" aria-hidden="true" />
-          <p>{copy.disclaimer}</p>
-        </div>
-
-        <section className={`${showSecondaryDetails ? 'flex' : 'hidden'} order-8 mt-5 flex-col gap-5 rounded-3xl bg-gradient-to-r from-[#4A123F] to-[#5F174F] p-5 text-white shadow-xl sm:flex-row sm:items-center sm:justify-between sm:p-7`}>
-          <div className="flex items-center gap-4">
-            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-[#D6AF2E] text-[#F0C537]">
-              <Rocket className="h-7 w-7" aria-hidden="true" />
-            </span>
-            <div>
-              <h2 className="text-xl font-medium">{copy.ctaTitle}</h2>
-              <p className="mt-1 text-sm text-purple-100">{copy.ctaText}</p>
-            </div>
-          </div>
-          <a
-            href="#cv-business-products-title"
-            className="flex shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-medium text-[#4A123F] transition hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]"
-          >
-            {copy.ctaButton} <ChevronRight className="h-4 w-4" aria-hidden="true" />
-          </a>
-        </section>
       </div>
 
       {activePreview === 'free' && (
