@@ -1212,171 +1212,138 @@ const simplifiedOfferCopy: Record<OfferLanguage, {
   },
 };
 
-const currentCreationOffers = {
-  "fr": {
-    "artisanIntro": "Présentez votre activité et vendez vos produits.",
-    "premiumIntro": "Présentez, vendez et fidélisez vos clients.",
-    "artisan": [
-      "1 modèle, 1 palette et 1 ouverture au choix",
-      "Votre QR Business",
-      "5 photos",
-      "2 réseaux sociaux",
-      "Boutique et catalogue",
-      "Coordonnées, horaires et localisation"
-    ],
-    "premium": [
-      "2 modèles, 3 palettes et 2 ouvertures inclus",
-      "Votre QR Business",
-      "10 photos",
-      "Vos réseaux sociaux",
-      "Boutique et catalogue",
-      "Commandes et devis",
-      "Votre compte professionnel",
-      "Offres, fidélité et cartes cadeaux",
-      "Notifications selon activation",
-      "Meilleure visibilité dans Dalil Tounes",
-      "Accompagnement prioritaire"
-    ]
-  },
-  "ar": {
-    "artisanIntro": "قدّم نشاطك وبع منتجاتك.",
-    "premiumIntro": "قدّم نشاطك وبع منتجاتك وحافظ على عملائك.",
-    "artisan": [
-      "نموذج واحد وألوان وشاشة افتتاحية حسب الاختيار",
-      "رمز QR للأعمال",
-      "5 صور",
-      "شبكتان اجتماعيتان",
-      "متجر وكتالوج",
-      "الاتصال والمواعيد والموقع"
-    ],
-    "premium": [
-      "نموذجان و3 لوحات ألوان وشاشتا افتتاح",
-      "رمز QR للأعمال",
-      "10 صور",
-      "شبكات التواصل",
-      "متجر وكتالوج",
-      "الطلبات وعروض الأسعار",
-      "حسابك المهني",
-      "العروض والوفاء وبطاقات الهدايا",
-      "إشعارات حسب التفعيل",
-      "ظهور أفضل في دليل تونس",
-      "مساعدة ذات أولوية"
-    ]
-  },
-  "en": {
-    "artisanIntro": "Showcase your business and sell your products.",
-    "premiumIntro": "Showcase, sell and build customer loyalty.",
-    "artisan": [
-      "1 model, 1 palette and 1 opening style",
-      "Business QR",
-      "5 photos",
-      "2 social networks",
-      "Shop and catalogue",
-      "Contact, hours and location"
-    ],
-    "premium": [
-      "2 models, 3 palettes and 2 opening styles included",
-      "Business QR",
-      "10 photos",
-      "Social networks",
-      "Shop and catalogue",
-      "Orders and quotes",
-      "Your professional account",
-      "Offers, loyalty and gift cards",
-      "Notifications when enabled",
-      "Better visibility in Dalil Tounes",
-      "Priority support"
-    ]
-  },
-  "it": {
-    "artisanIntro": "Presenta la tua attività e vendi i tuoi prodotti.",
-    "premiumIntro": "Presenta, vendi e fidelizza i clienti.",
-    "artisan": [
-      "1 modello, 1 palette e 1 apertura a scelta",
-      "QR Business",
-      "5 foto",
-      "2 social network",
-      "Negozio e catalogo",
-      "Contatti, orari e posizione"
-    ],
-    "premium": [
-      "2 modelli, 3 palette e 2 aperture inclusi",
-      "QR Business",
-      "10 foto",
-      "Social network",
-      "Negozio e catalogo",
-      "Ordini e preventivi",
-      "Account professionale",
-      "Offerte, fedeltà e carte regalo",
-      "Notifiche se attivate",
-      "Più visibilità su Dalil Tounes",
-      "Assistenza prioritaria"
-    ]
-  },
-  "ru": {
-    "artisanIntro": "Представьте свой бизнес и продавайте товары.",
-    "premiumIntro": "Представляйте, продавайте и удерживайте клиентов.",
-    "artisan": [
-      "1 модель, 1 палитра и 1 экран на выбор",
-      "Business QR",
-      "5 фото",
-      "2 соцсети",
-      "Магазин и каталог",
-      "Контакты, часы и адрес"
-    ],
-    "premium": [
-      "2 модели, 3 палитры и 2 экрана включены",
-      "Business QR",
-      "10 фото",
-      "Социальные сети",
-      "Магазин и каталог",
-      "Заказы и запросы цен",
-      "Профессиональный аккаунт",
-      "Акции, лояльность и подарочные карты",
-      "Уведомления при активации",
-      "Больше видимости в Dalil Tounes",
-      "Приоритетная поддержка"
-    ]
-  }
+const comparisonLabels = {
+  "fr": [
+    "Fonction",
+    "Modèles Business / Portfolio",
+    "Palettes de couleurs",
+    "Ouvertures A / B",
+    "QR Business",
+    "Photos",
+    "Réseaux sociaux",
+    "Coordonnées et horaires",
+    "Boutique et catalogue",
+    "Commandes et devis",
+    "Compte professionnel",
+    "Cartes de fidélité",
+    "Cartes cadeaux",
+    "Offres promotionnelles",
+    "Notifications commerciales",
+    "Statistiques",
+    "Première année",
+    "1 au choix",
+    "Les 2",
+    "Les 3",
+    "Tous",
+    "En option",
+    "Incluse",
+    "Selon activation"
+  ],
+  "ar": [
+    "الميزة",
+    "نماذج Business / Portfolio",
+    "لوحات الألوان",
+    "شاشات الافتتاح A / B",
+    "رمز QR للأعمال",
+    "الصور",
+    "شبكات التواصل",
+    "الاتصال والمواعيد",
+    "متجر وكتالوج",
+    "الطلبات وعروض الأسعار",
+    "الحساب المهني",
+    "بطاقات الوفاء",
+    "بطاقات الهدايا",
+    "العروض الترويجية",
+    "الإشعارات التجارية",
+    "الإحصائيات",
+    "السنة الأولى",
+    "1 حسب الاختيار",
+    "الاثنان",
+    "الثلاثة",
+    "الكل",
+    "اختياري",
+    "مشمولة",
+    "حسب التفعيل"
+  ],
+  "en": [
+    "Feature",
+    "Business / Portfolio models",
+    "Colour palettes",
+    "Opening styles A / B",
+    "Business QR",
+    "Photos",
+    "Social networks",
+    "Contact and hours",
+    "Shop and catalogue",
+    "Orders and quotes",
+    "Professional account",
+    "Loyalty cards",
+    "Gift cards",
+    "Promotional offers",
+    "Commercial notifications",
+    "Statistics",
+    "First year",
+    "1 of your choice",
+    "Both",
+    "All 3",
+    "All",
+    "Optional",
+    "Included",
+    "When enabled"
+  ],
+  "it": [
+    "Funzione",
+    "Modelli Business / Portfolio",
+    "Palette colori",
+    "Aperture A / B",
+    "QR Business",
+    "Foto",
+    "Social network",
+    "Contatti e orari",
+    "Negozio e catalogo",
+    "Ordini e preventivi",
+    "Account professionale",
+    "Carte fedeltà",
+    "Carte regalo",
+    "Offerte promozionali",
+    "Notifiche commerciali",
+    "Statistiche",
+    "Primo anno",
+    "1 a scelta",
+    "Entrambi",
+    "Tutte e 3",
+    "Tutti",
+    "Opzionale",
+    "Incluso",
+    "Se attivate"
+  ],
+  "ru": [
+    "Функция",
+    "Модели Business / Portfolio",
+    "Цветовые палитры",
+    "Экраны A / B",
+    "Business QR",
+    "Фото",
+    "Соцсети",
+    "Контакты и часы",
+    "Магазин и каталог",
+    "Заказы и запросы цен",
+    "Профессиональный аккаунт",
+    "Карты лояльности",
+    "Подарочные карты",
+    "Акции",
+    "Коммерческие уведомления",
+    "Статистика",
+    "Первый год",
+    "1 на выбор",
+    "Обе",
+    "Все 3",
+    "Все",
+    "Опция",
+    "Включён",
+    "При активации"
+  ]
 };
-
-function CreationPlanCard({
-  title,
-  price,
-  creationLabel,
-  firstYearIncluded,
-  intro,
-  features,
-  chooseLabel,
-  onRequest,
-  selected = false,
-}: {
-  title: string;
-  price: string;
-  creationLabel: string;
-  firstYearIncluded: string;
-  intro: string;
-  features: string[];
-  chooseLabel: string;
-  onRequest: () => void;
-  selected?: boolean;
-}) {
-  return (
-    <article className={`relative flex flex-col overflow-hidden min-w-0 rounded-xl border bg-[#FFF9ED] p-2 text-[#292725] shadow-[0_12px_30px_rgba(7,84,63,0.16)] transition sm:p-5 ${selected ? 'border-[#C8A557] ring-4 ring-[#D6AF2E]' : 'border-[#D6AF2E]'}`}>
-      <h3 className="text-base sm:text-2xl font-medium">{title}</h3>
-      <div className="mt-2 flex items-end gap-2 text-[#815E28]">
-        <span className="text-2xl sm:text-3xl font-medium">{price}</span>
-      </div>
-      <p className="mt-1 text-xs font-medium uppercase tracking-[0.08em] text-[#645861]">{creationLabel}</p>
-      <p className="mt-2 text-xs leading-4 sm:text-sm text-[#594F57]">{intro}</p>
-      <p className="mt-2 rounded-lg bg-[#F8F0DE] px-2 py-2 text-xs font-medium text-[#292725]">{firstYearIncluded}</p>
-      <ul className="mt-3 mb-3 grid gap-2 text-xs sm:text-sm">
-        {features.map(feature => <li key={feature} className="flex items-start gap-1.5 break-words"><Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#07543F]" aria-hidden="true"/><span className="min-w-0">{feature}</span></li>)}
-      </ul>
-      <button type="button" onClick={onRequest} className="mt-auto min-h-11 w-full rounded-xl bg-[#D6AF2E] px-2 py-2 text-xs font-semibold text-[#292725] sm:text-sm">{chooseLabel}</button>
-    </article>
-  );
-}
 
 export const Subscription = () => {
   const { language } = useLanguage();
@@ -1511,30 +1478,32 @@ export const Subscription = () => {
   <p className="mt-2 rounded-xl border border-[#D6AF2E]/45 bg-white px-3 py-2 text-sm font-medium leading-5 text-[#292725]">{simpleCopy.welcomePayment}</p>
 </div>
 
-<div className="grid grid-cols-2 items-stretch gap-2 sm:gap-5">
-  <CreationPlanCard
-    title={simplifiedOfferCopy[language as OfferLanguage].artisanTitle}
-    price={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).artisanPrice}
-    creationLabel={simplifiedOfferCopy[language as OfferLanguage].creationLabel}
-    firstYearIncluded={simplifiedOfferCopy[language as OfferLanguage].firstYearIncluded}
-    intro={currentCreationOffers[language as OfferLanguage].artisanIntro}
-    features={currentCreationOffers[language as OfferLanguage].artisan}
-    chooseLabel={simplifiedOfferCopy[language as OfferLanguage].chooseArtisan}
-    onRequest={() => selectFormula('artisan')}
-    selected={selectedFormula === 'artisan'}
-  />
-  <CreationPlanCard
-    title={simplifiedOfferCopy[language as OfferLanguage].premiumTitle}
-    price={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).premiumPrice}
-    creationLabel={simplifiedOfferCopy[language as OfferLanguage].creationLabel}
-    firstYearIncluded={simplifiedOfferCopy[language as OfferLanguage].firstYearIncluded}
-    intro={currentCreationOffers[language as OfferLanguage].premiumIntro}
-    features={currentCreationOffers[language as OfferLanguage].premium}
-    chooseLabel={simplifiedOfferCopy[language as OfferLanguage].choosePremium}
-    onRequest={() => selectFormula('premium')}
-    selected={selectedFormula === 'premium'}
-  />
-</div>
+{(() => {
+  const l = comparisonLabels[language as OfferLanguage] ?? comparisonLabels.fr;
+  const rows: [number, string | boolean, string | boolean][] = [
+    [1,l[17],l[18]], [2,l[17],l[19]], [3,l[17],l[18]], [4,true,true],
+    [5,'5','10'], [6,'2',l[20]], [7,true,true], [8,true,true], [9,true,true],
+    [10,true,true], [11,false,true], [12,false,true], [13,false,true],
+    [14,false,l[23]], [15,l[21],l[21]], [16,true,true],
+  ];
+  const cell = (value: string | boolean) => value === true ? <><Check className="mx-auto h-4 w-4 text-[#07543F]" aria-hidden="true"/><span className="sr-only">{l[22]}</span></> : value === false ? <span aria-label={language==='fr'?'Non inclus':'—'} className="text-slate-400">—</span> : value;
+  return <div className="overflow-hidden rounded-xl border border-[#D6AF2E] bg-[#FFF9ED]">
+    <table className="w-full table-fixed border-collapse text-xs text-[#292725] sm:text-sm">
+      <colgroup><col style={{width:'44%'}}/><col style={{width:'28%'}}/><col style={{width:'28%'}}/></colgroup>
+      <thead><tr className="bg-[#F8F0DE]">
+        <th scope="col" className="p-2 text-start font-medium">{l[0]}</th>
+        <th scope="col" className="p-2 text-center"><span className="block">Artisan</span><span className="block text-lg text-[#815E28]">{(offerCopy[language as OfferLanguage] ?? offerCopy.fr).artisanPrice}</span></th>
+        <th scope="col" className="p-2 text-center"><span className="block">Premium</span><span className="block text-lg text-[#815E28]">{(offerCopy[language as OfferLanguage] ?? offerCopy.fr).premiumPrice}</span></th>
+      </tr></thead>
+      <tbody>{rows.map(([index,artisan,premium])=><tr key={index} className="border-t border-[#D6AF2E]/30">
+        <th scope="row" className="break-words p-2 text-start font-medium">{l[index]}</th>
+        <td className="break-words border-s border-[#D6AF2E]/25 p-1.5 text-center">{cell(artisan)}</td>
+        <td className="break-words border-s border-[#D6AF2E]/25 bg-[#F8F0DE]/50 p-1.5 text-center">{cell(premium)}</td>
+      </tr>)}</tbody>
+      <tfoot><tr className="border-t border-[#D6AF2E]"><td/><td className="p-1"><button type="button" onClick={()=>selectFormula('artisan')} className="min-h-11 w-full break-words rounded-lg bg-[#D6B86D] p-1.5 font-semibold text-[#292725]">{simpleCopy.chooseArtisan}</button></td><td className="p-1"><button type="button" onClick={()=>selectFormula('premium')} className="min-h-11 w-full break-words rounded-lg bg-[#07543F] p-1.5 font-semibold text-white">{simpleCopy.choosePremium}</button></td></tr></tfoot>
+    </table>
+  </div>;
+})()}
 
 
 
