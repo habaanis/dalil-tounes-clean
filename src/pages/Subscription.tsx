@@ -1,3 +1,5 @@
+import { useLocation, useNavigate } from 'react-router-dom';
+import { isPlatformAppMode } from '../lib/platformAppMode';
 import StructuredData from '../components/StructuredData';
 import { CvBusinessHome } from './SeparationPreview';
 import { EssentialPresence } from '../components/EssentialPresence';
@@ -1274,6 +1276,12 @@ function CreationPlanCard({
 }
 
 export const Subscription = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const params = new URLSearchParams(location.search);
+  const appSection = isPlatformAppMode() ? (params.get('section') || (params.get('app-offers') === '1' || location.hash === '#offres' ? 'offers' : params.get('app-models') === '1' || location.hash === '#modeles' ? 'models' : location.hash === '#cv-professionnels' ? 'mini' : '')) : '';
+  const focused = ['mini','models','offers'].includes(appSection);
+  const [pendingFormula, setPendingFormula] = useState<'artisan' | 'premium' | null>(null);
   const { language } = useLanguage();
   const structure = siteStructureCopy[language];
   const isArabic = language === 'ar';
@@ -1300,7 +1308,7 @@ export const Subscription = () => {
       const params = new URLSearchParams(window.location.search);
       const rawTarget = window.location.hash.slice(1) || (params.get('app-offers') === '1' ? 'offres' : params.get('app-models') === '1' ? 'modeles' : '');
       const target = rawTarget === 'personnalisation' ? 'modeles' : rawTarget;
-      if (!target) return;
+      if (!target || focused) return;
       if (target === 'cv-professionnels' || target === 'modeles') setMiniAppOpen(true);
       const detail = document.getElementById(target);
       if (detail instanceof HTMLDetailsElement) detail.open = true;
@@ -1309,7 +1317,7 @@ export const Subscription = () => {
     openTargetSection();
     window.addEventListener('hashchange', openTargetSection);
     return () => window.removeEventListener('hashchange', openTargetSection);
-  }, []);
+  }, [location.hash, location.search, focused]);
 
   const closePreview = () => setActivePreview(null);
   const openRequest = (code: SubscriptionPlanCode, label: string, checkoutOffer: CheckoutOffer, billingPeriod?: BillingPeriod, presentationModelLabel?: string, paletteLabel?: string) => {
@@ -1319,6 +1327,7 @@ export const Subscription = () => {
   const selectFormula = (formula: 'artisan' | 'premium') => {
     setSelectedFormula(formula);
     if (!selectedPresentationModel) {
+      if (focused) { setPendingFormula(formula); navigate('/subscription?app-full=1&section=models'); return; }
       setMiniAppOpen(true);
       window.requestAnimationFrame(() => { window.dispatchEvent(new Event('dalil:choose-model')); document.getElementById('modeles')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
       return;
@@ -1340,6 +1349,7 @@ export const Subscription = () => {
       <div className="mx-auto max-w-6xl">
         <StructuredData data={{ '@context': 'https://schema.org', '@type': 'AboutPage', name: structure.professional, description: structure.intro, url: 'https://dalil-tounes.com/subscription' }} />
         <SEOHead title={`${structure.professional} | ${structure.products} | Dalil Tounes`} description={`${structure.freeIntro} ${structure.cvIntro}`} canonical="https://dalil-tounes.com/subscription" currentPath="/subscription" />
+        {!focused && <>
         <header className="order-1 mb-2 text-center sm:mb-6">
           <p className="mb-3 flex items-center justify-center gap-3 text-xs font-medium uppercase tracking-[0.2em] text-amber-600">
             <span className="h-px w-8 bg-amber-400" /> {copy.heroEyebrow} <span className="h-px w-8 bg-amber-400" />
@@ -1356,17 +1366,16 @@ export const Subscription = () => {
         <EssentialPresence registration />
         <p className="mt-3 text-sm font-semibold text-emerald-800">{copy.essentialFree}</p>
         <button type="button" onClick={() => setActivePreview('free')} className="mt-3 min-h-11 rounded-xl border border-[#D4AF37] px-4 py-2 text-sm font-medium text-[#4A1D43]">{copy.previewCard}</button>
-        <section id="cv-professionnels" className="my-4 scroll-mt-32 rounded-xl border border-[#D4AF37]/50 bg-white p-3">
-          <button type="button" aria-expanded={miniAppOpen} aria-controls="mini-appli-details" onClick={() => setMiniAppOpen(value => !value)} className="flex w-full min-h-12 items-center justify-between gap-3 text-start font-medium text-[#292725]">
-            {structure.homeCvAction}<span aria-hidden="true">{miniAppOpen ? '−' : '+'}</span>
-          </button>
-          {miniAppOpen && <div id="mini-appli-details"><CvBusinessHome embedded selectedModel={selectedPresentationModel} onModelSelect={setSelectedPresentationModel} /></div>}
-        </section>
-
-
+        </>}
+        {(!focused || appSection === 'mini' || appSection === 'models') && <section id="cv-professionnels" className="my-3 rounded-xl border border-[#D4AF37]/50 bg-white p-2">
+          {!focused && <button type="button" aria-expanded={miniAppOpen} onClick={() => setMiniAppOpen(v => !v)} className="flex w-full min-h-12 items-center justify-between gap-3 text-start font-medium text-[#292725]">{structure.homeCvAction}<span>{miniAppOpen ? '−' : '+'}</span></button>}
+          {(focused || miniAppOpen) && <div id="mini-appli-details"><CvBusinessHome embedded selectedModel={selectedPresentationModel} onModelSelect={model => { setSelectedPresentationModel(model); if (pendingFormula) { const label = getPresentationModelLabel(language, model); openRequest(pendingFormula, `${simpleCopy[`${pendingFormula}Title`]} — ${(offerCopy[language as OfferLanguage] ?? offerCopy.fr)[`${pendingFormula}Price`]} — ${label}`, pendingFormula, undefined, label); setPendingFormula(null); } }} /></div>}
+          {focused && <button type="button" onClick={() => navigate('/subscription?app-full=1&section=offers')} className="mt-3 w-full rounded-lg bg-[#D6B86D] px-3 py-3 text-sm font-semibold text-[#292725]">{structure.offers}</button>}
+        </section>}
+        {(!focused || appSection === 'offers') && <>
         <section id="offres" aria-labelledby="cv-business-products-title" className="order-2 mt-5 sm:mt-0">
 <div className="mb-6 text-center">
-    <h2 id="cv-business-products-title" className="text-xl font-medium text-[#292725] sm:text-2xl">{orderCopy.next}</h2>
+    <h2 id="cv-business-products-title" className="text-xl font-medium text-[#292725] sm:text-2xl">{focused ? structure.offers : orderCopy.next}</h2>
   <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-slate-600">{simpleCopy.productsSubtitle}</p>
 </div>
 
@@ -1455,6 +1464,7 @@ export const Subscription = () => {
             </a>
           </div>
         </aside>
+        </>}
 
 
       </div>
