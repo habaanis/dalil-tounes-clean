@@ -45,7 +45,7 @@ const COPY: Record<SupportedLanguage, Copy> = {
     businessDescription: 'Clair, structuré et direct. Idéal pour présenter rapidement votre activité et vos informations.',
     portfolio: 'CV Portfolio',
     portfolioDescription: 'Plus visuel, avec davantage de place pour les photos, les réalisations et le savoir-faire.',
-    note: 'Les deux modèles sont disponibles avec la Formule Artisan et la Formule Premium, sans changement de prix ni de contenu.',
+    note: 'Artisan : un modèle au choix. Premium : les deux modèles et les trois palettes sont inclus.',
     selectedFormula: 'Formule',
     selectedModel: 'Modèle',
     chooseFormulaFirst: "Choisissez d'abord la Formule Artisan ou la Formule Premium ci-dessus.",
@@ -334,7 +334,7 @@ export function CvPresentationModelSelector({
   const [showPalettePanel, setShowPalettePanel] = useState(false);
   const selectedModelLabel = value ? getPresentationModelLabel(language, value) : null;
   const selectedPaletteLabel = getPaletteLabel(language, paletteValue);
-  const canContinue = Boolean(selectedFormulaLabel && value);
+  const canContinue = Boolean(selectedFormulaLabel);
 
   useEffect(() => {
     if (!expandedModel && !expandedPalette) return;
@@ -541,12 +541,12 @@ export function CvPresentationModelSelector({
           ) : (
             <p>{copy.chooseFormulaFirst}</p>
           )}
-          {selectedModelLabel ? (
+          {formulaValue === 'premium' ? <p>Business et Portfolio · 3 palettes incluses</p> : selectedModelLabel ? (
             <p><strong className="text-[#4A123F]">{copy.selectedModel} :</strong> {selectedModelLabel}</p>
           ) : (
             <p>{copy.chooseModel}</p>
           )}
-          <p><strong className="text-[#4A123F]">{copy.selectedPalette} :</strong> {selectedPaletteLabel}</p>
+          {formulaValue !== 'premium' && <p><strong className="text-[#4A123F]">{copy.selectedPalette} :</strong> {selectedPaletteLabel}</p>}
         </div>
         <button
           type="button"
