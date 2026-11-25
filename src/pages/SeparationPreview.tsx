@@ -251,7 +251,8 @@ const HOME_ECOSYSTEM_COPY: Record<Lang, {
   },
 };
 
-function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'platform' | 'cv'; embedded?: boolean }) {
+type ModelChoiceProps = { selectedModel?: 'business' | 'portfolio' | null; onModelSelect?: (model: 'business' | 'portfolio') => void };
+function SeparationExperience({ fixedView, embedded = false, selectedModel, onModelSelect }: { fixedView?: 'platform' | 'cv'; embedded?: boolean } & ModelChoiceProps) {
   const [previewView, setPreviewView] = useState<'platform' | 'cv'>('platform');
   const navigate = useNavigate();
   const view = fixedView ?? previewView;
@@ -386,9 +387,8 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
 
           <CvCapabilitiesSection language={lang} showActions={false} />
 
-          <CvBusinessJourney language={lang} />
+          <CvBusinessJourney language={lang} showVideo={!heroVideoSrc} selectedModel={selectedModel} onModelSelect={onModelSelect} />
 
-          <div className="mx-auto my-3 flex flex-wrap justify-center gap-2"><a href={embedded ? "#offres" : "/subscription#offres"} className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-[#D6B86D] px-5 py-3 text-sm font-black text-[#292725]">{t.offers} <ArrowRight className={`h-4 w-4 ${lang === 'ar' ? 'rotate-180' : ''}`} /></a><a href="/contact" className="inline-flex min-h-12 items-center rounded-xl border border-[#D4AF37] bg-white px-5 py-3 text-sm font-bold text-[#292725]">{t.information}</a></div>
 
           {!embedded && (<section className="border-y border-[#C9A65D] bg-[#FFF8EA] px-4 py-7 text-[#292725]"><div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left rtl:sm:text-right"><div><p className="text-xs font-black uppercase tracking-[0.16em] text-[#9B762D]">{t.searchEyebrow}</p><h2 className="mt-2 max-w-3xl font-serif text-2xl font-bold">{t.searchTitle}</h2></div><button type="button" onClick={() => fixedView ? navigate('/') : setPreviewView('platform')} className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-[#B68C3B] bg-[#D6B86D] px-5 py-3 text-sm font-black text-[#292725] transition hover:bg-[#E4CB91]"><Search className="h-4 w-4" /> {t.explorePlatform}</button></div></section>)}
         </>
@@ -402,8 +402,8 @@ export function PlatformHome() {
   return <SeparationExperience fixedView="platform" />;
 }
 
-export function CvBusinessHome({ embedded = false }: { embedded?: boolean }) {
-  return <SeparationExperience fixedView="cv" embedded={embedded} />;
+export function CvBusinessHome({ embedded = false, selectedModel, onModelSelect }: { embedded?: boolean } & ModelChoiceProps) {
+  return <SeparationExperience fixedView="cv" embedded={embedded} selectedModel={selectedModel} onModelSelect={onModelSelect} />;
 }
 
 export default function SeparationPreview() {

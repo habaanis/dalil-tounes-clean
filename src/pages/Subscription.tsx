@@ -19,13 +19,7 @@ import {
 import { SubscriptionRequestForm } from '../components/SubscriptionRequestForm';
 import type { BillingPeriod, CheckoutOffer, SubscriptionPlanCode } from '../components/SubscriptionRequestForm';
 import { BusinessCardPreview } from '../components/BusinessCardPreview';
-import {
-  CvPresentationModelSelector,
-  getPresentationModelLabel,
-  getPaletteLabel,
-  type PresentationModel,
-  type PaletteId,
-} from '../components/CvPresentationModelSelector';
+import { getPresentationModelLabel, type PresentationModel } from '../components/CvPresentationModelSelector';
 import { useLanguage } from '../context/LanguageContext';
 
 type PreviewType = 'free' | 'artisan' | 'premium' | 'launch' | 'request' | null;
@@ -1297,17 +1291,19 @@ export const Subscription = () => {
   const [selectedFormula, setSelectedFormula] = useState<'artisan' | 'premium' | null>(null);
   const [expandedFormula, setExpandedFormula] = useState<'artisan' | 'premium' | null>(null);
   const [selectedPresentationModel, setSelectedPresentationModel] = useState<PresentationModel | null>(null);
-  const [selectedPalette, setSelectedPalette] = useState<PaletteId>('prestige');
   const [showSecondaryDetails, setShowSecondaryDetails] = useState(false);
+  const [miniAppOpen, setMiniAppOpen] = useState(true);
 
   useEffect(() => {
     const openTargetSection = () => {
       const params = new URLSearchParams(window.location.search);
-      const target = window.location.hash.slice(1) || (params.get('app-offers') === '1' ? 'offres' : params.get('app-models') === '1' ? 'modeles' : '');
+      const rawTarget = window.location.hash.slice(1) || (params.get('app-offers') === '1' ? 'offres' : params.get('app-models') === '1' ? 'modeles' : '');
+      const target = rawTarget === 'personnalisation' ? 'modeles' : rawTarget;
       if (!target) return;
-      const detail = document.getElementById(target === 'cv-professionnels' ? 'mini-appli-details' : target);
+      if (target === 'cv-professionnels' || target === 'modeles') setMiniAppOpen(true);
+      const detail = document.getElementById(target);
       if (detail instanceof HTMLDetailsElement) detail.open = true;
-      window.requestAnimationFrame(() => document.getElementById(target)?.scrollIntoView({ block: 'start' }));
+      window.requestAnimationFrame(() => (document.getElementById(target) ?? document.getElementById('cv-professionnels'))?.scrollIntoView({ block: 'start' }));
     };
     openTargetSection();
     window.addEventListener('hashchange', openTargetSection);
@@ -1321,28 +1317,22 @@ export const Subscription = () => {
   };
   const selectFormula = (formula: 'artisan' | 'premium') => {
     setSelectedFormula(formula);
-    const models = document.getElementById('modeles');
-    if (models instanceof HTMLDetailsElement) models.open = true;
-    window.requestAnimationFrame(() => {
-      document.getElementById('cv-presentation-models')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-  };
-  const selectedFormulaLabel = selectedFormula
-    ? `${simplifiedOfferCopy[language as OfferLanguage][`${selectedFormula}Title`]} — ${(offerCopy[language as OfferLanguage] ?? offerCopy.fr)[`${selectedFormula}Price`]}`
-    : null;
-  const continueWithModel = () => {
-    if (!selectedFormula || !selectedFormulaLabel) {
-      document.getElementById('cv-presentation-models')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      return;
-    }
     if (!selectedPresentationModel) {
-      document.getElementById('cv-presentation-models')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setMiniAppOpen(true);
+      window.requestAnimationFrame(() => { window.dispatchEvent(new Event('dalil:choose-model')); document.getElementById('modeles')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
       return;
     }
     const modelLabel = getPresentationModelLabel(language, selectedPresentationModel);
-    const paletteLabel = getPaletteLabel(language, selectedPalette);
-    openRequest(selectedFormula, `${selectedFormulaLabel} — ${modelLabel} — ${paletteLabel}`, selectedFormula, undefined, modelLabel, paletteLabel);
+    const label = `${simpleCopy[`${formula}Title`]} — ${(offerCopy[language as OfferLanguage] ?? offerCopy.fr)[`${formula}Price`]} — ${modelLabel}`;
+    openRequest(formula, label, formula, undefined, modelLabel);
   };
+  const orderCopy = ({
+    fr: {title:'Choisissez votre modèle', business:'Présentez votre activité et vos services.', portfolio:'Valorisez vos photos et réalisations.', demo:'Tester le modèle', choose:'Choisir', selected:'Sélectionné', next:'Choisissez ensuite votre offre', help:'Besoin d’aide ?', order:'Commander ma mini-appli'},
+    ar: {title:'اختر النموذج', business:'قدّم نشاطك وخدماتك.', portfolio:'أبرز صورك وأعمالك.', demo:'جرّب النموذج', choose:'اختر', selected:'تم الاختيار', next:'اختر العرض', help:'تحتاج مساعدة؟', order:'اطلب تطبيقك المصغّر'},
+    en: {title:'Choose your model', business:'Showcase your activity and services.', portfolio:'Highlight your photos and work.', demo:'Try the model', choose:'Choose', selected:'Selected', next:'Choose your offer', help:'Need help?', order:'Order my mini-app'},
+    it: {title:'Scegli il modello', business:'Presenta attività e servizi.', portfolio:'Valorizza foto e lavori.', demo:'Prova il modello', choose:'Scegli', selected:'Selezionato', next:'Scegli l’offerta', help:'Serve aiuto?', order:'Ordina la mini-app'},
+    ru: {title:'Выберите модель', business:'Представьте услуги и бизнес.', portfolio:'Покажите фотографии и работы.', demo:'Попробовать модель', choose:'Выбрать', selected:'Выбрано', next:'Выберите предложение', help:'Нужна помощь?', order:'Заказать мини-приложение'}
+  })[language as OfferLanguage];
 
   return (
     <div className="premium-page px-4 py-6 sm:py-8" dir={isArabic ? 'rtl' : 'ltr'}>
@@ -1360,56 +1350,25 @@ export const Subscription = () => {
         </header>
 
         <nav className="mb-5 flex flex-wrap justify-center gap-3 text-sm font-medium text-[#292725]" aria-label={structure.professional}>
-          <a href="#presence-essentielle">{structure.essential}</a><a href="#cv-professionnels">{structure.products}</a><a href="#modeles">{structure.models}</a><a href="#offres">{structure.offers}</a>
+          <a href="#presence-essentielle">{structure.essential}</a><a href="#cv-professionnels" onClick={() => setMiniAppOpen(true)}>{structure.products}</a><a href="#offres">{structure.offers}</a>
         </nav>
         <EssentialPresence registration />
         <p className="mt-3 text-sm font-semibold text-emerald-800">{copy.essentialFree}</p>
         <button type="button" onClick={() => setActivePreview('free')} className="mt-3 min-h-11 rounded-xl border border-[#D4AF37] px-4 py-2 text-sm font-medium text-[#292725]">{copy.previewCard}</button>
-        <section id="cv-professionnels" className="my-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-5">
-          <h2 className="font-serif text-xl font-medium text-[#292725]">CV Business · CV Portfolio</h2>
-          <p className="my-3 text-sm leading-6 text-slate-600">{structure.cvIntro}</p>
-          <details id="mini-appli-details" className="rounded-lg border border-[#D4AF37]/40 p-2"><summary className="cursor-pointer py-2 font-medium text-[#292725]">{structure.details}</summary><CvBusinessHome embedded /></details>
+        <section id="cv-professionnels" className="my-4 scroll-mt-32 rounded-xl border border-[#D4AF37]/50 bg-white p-3">
+          <button type="button" aria-expanded={miniAppOpen} aria-controls="mini-appli-details" onClick={() => setMiniAppOpen(value => !value)} className="flex w-full min-h-12 items-center justify-between gap-3 text-start font-medium text-[#292725]">
+            {structure.homeCvAction}<span aria-hidden="true">{miniAppOpen ? '−' : '+'}</span>
+          </button>
+          {miniAppOpen && <div id="mini-appli-details"><CvBusinessHome embedded selectedModel={selectedPresentationModel} onModelSelect={setSelectedPresentationModel} /></div>}
         </section>
-<details id="modeles" className="mb-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-4">
-  <summary className="cursor-pointer font-medium text-[#292725]">{structure.models}</summary>
-<CvPresentationModelSelector
-  language={language}
-  formulaValue={selectedFormula}
-  onFormulaChange={setSelectedFormula}
-  artisanLabel={`${simplifiedOfferCopy[language as OfferLanguage].artisanTitle} — ${(offerCopy[language as OfferLanguage] ?? offerCopy.fr).artisanPrice}`}
-  premiumLabel={`${simplifiedOfferCopy[language as OfferLanguage].premiumTitle} — ${(offerCopy[language as OfferLanguage] ?? offerCopy.fr).premiumPrice}`}
-  value={selectedPresentationModel}
-  onChange={setSelectedPresentationModel}
-  selectedFormulaLabel={selectedFormulaLabel}
-  onContinue={continueWithModel}
-  paletteValue={selectedPalette}
-  onPaletteChange={setSelectedPalette}
-/>
-</details>
+
 
         <section id="offres" aria-labelledby="cv-business-products-title" className="order-2 mt-5 sm:mt-0">
 <div className="mb-6 text-center">
-    <h2 id="cv-business-products-title" className="text-xl font-medium text-[#292725] sm:text-2xl">{structure.offers}</h2>
+    <h2 id="cv-business-products-title" className="text-xl font-medium text-[#292725] sm:text-2xl">{orderCopy.next}</h2>
   <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-slate-600">{simpleCopy.productsSubtitle}</p>
 </div>
 
-
-<div className="mb-4 rounded-xl border border-[#D6AF2E]/60 bg-[#FFF9ED] p-3 sm:p-4">
-  <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-    <div className="max-w-3xl">
-      <span className="inline-flex items-center gap-2 rounded-full bg-[#D6B86D] px-3 py-1 text-[10px] font-medium uppercase tracking-[0.12em] text-[#292725]">
-        <Sparkles className="h-3.5 w-3.5 text-[#9B762D]" aria-hidden="true" />
-        {simpleCopy.welcomeBadge}
-      </span>
-      <h3 className="mt-3 text-xl font-medium text-[#292725] sm:text-2xl">{simpleCopy.welcomeTitle}</h3>
-      <p className="mt-2 hidden text-sm leading-5 text-slate-700 sm:block">{simpleCopy.welcomeDescription}</p>
-    </div>
-    <div className="hidden rounded-2xl border border-[#D3B16F] bg-[#FFF9ED] px-5 py-4 text-center text-[#292725] shadow-sm sm:block lg:max-w-xs">
-      <p className="text-lg font-medium leading-6 text-[#292725]">{simpleCopy.welcomeHighlight}</p>
-    </div>
-  </div>
-  <p className="mt-2 rounded-xl border border-[#D6AF2E]/45 bg-white px-3 py-2 text-sm font-medium leading-5 text-[#292725]">{simpleCopy.welcomePayment}</p>
-</div>
 
 <div className="grid items-stretch gap-5 lg:grid-cols-2">
   <CreationPlanCard
@@ -1420,7 +1379,7 @@ export const Subscription = () => {
     intro={simplifiedOfferCopy[language as OfferLanguage].artisanIntro}
     features={simplifiedOfferCopy[language as OfferLanguage].artisanFeatures}
     previewLabel={simplifiedOfferCopy[language as OfferLanguage].preview}
-    chooseLabel={simplifiedOfferCopy[language as OfferLanguage].chooseArtisan}
+    chooseLabel={orderCopy.order}
     onPreview={() => setActivePreview('artisan')}
     onRequest={() => selectFormula('artisan')}
     showBenefitsLabel={mobileCopy.showBenefits}
@@ -1437,7 +1396,7 @@ export const Subscription = () => {
     intro={simplifiedOfferCopy[language as OfferLanguage].premiumIntro}
     features={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).premiumFeatures}
     previewLabel={simplifiedOfferCopy[language as OfferLanguage].preview}
-    chooseLabel={simplifiedOfferCopy[language as OfferLanguage].choosePremium}
+    chooseLabel={orderCopy.order}
     onPreview={() => setActivePreview('premium')}
     onRequest={() => selectFormula('premium')}
     showBenefitsLabel={mobileCopy.showBenefits}
@@ -1472,6 +1431,7 @@ export const Subscription = () => {
   <p className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold leading-6 text-[#292725]">{simpleCopy.noRenewal}</p>
 </div>
         </section>
+        <a href="https://wa.me/21650390546" target="_blank" rel="noreferrer" className="mt-3 block text-center text-sm font-medium text-[#07543F]">{orderCopy.help} WhatsApp</a>
 
         <button
           type="button"
@@ -1495,51 +1455,7 @@ export const Subscription = () => {
           </div>
         </aside>
 
-        <section className={`${showSecondaryDetails ? 'block' : 'hidden'} order-6 mt-5 rounded-3xl bg-gradient-to-r from-[#FFF8EA] to-[#F0E2BD] p-5 text-[#292725] shadow-sm sm:p-7`}>
-          <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-start gap-4">
-              <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-[#D6AF2E] text-[#9B762D]">
-                <Sparkles className="h-7 w-7" aria-hidden="true" />
-              </span>
-              <div>
-                <h2 className="text-2xl font-medium">{(offerCopy[language as OfferLanguage] ?? offerCopy.fr).eliteTitle}</h2>
-                <p className="mt-1 font-medium text-[#9B762D]">{(offerCopy[language as OfferLanguage] ?? offerCopy.fr).customSolution}</p>
-                <p className="mt-3 max-w-2xl text-sm leading-6 text-[#514B43]">{(offerCopy[language as OfferLanguage] ?? offerCopy.fr).eliteIntro}</p>
-              </div>
-            </div>
-            <div className="grid shrink-0 gap-2 sm:min-w-48">
-              <a href="mailto:contact@dalil-tounes.com" aria-label={(offerCopy[language as OfferLanguage] ?? offerCopy.fr).contactEmail} className="rounded-xl bg-white px-5 py-3 text-center text-sm font-medium text-[#292725] transition hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]">
-                {(offerCopy[language as OfferLanguage] ?? offerCopy.fr).contactUs}
-              </a>
-              <a href="https://wa.me/21650390546" target="_blank" rel="noreferrer" className="rounded-xl border border-[#D6AF2E] px-5 py-3 text-center text-sm font-medium text-[#292725] transition hover:bg-[#E4CB91] focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]">
-                {(offerCopy[language as OfferLanguage] ?? offerCopy.fr).contactWhatsApp}
-              </a>
-            </div>
-          </div>
-        </section>
 
-        <div className={`${showSecondaryDetails ? 'flex' : 'hidden'} order-7 mt-5 items-center justify-center gap-3 rounded-2xl border border-amber-200 bg-white px-4 py-4 text-center text-sm text-slate-700`}>
-          <Info className="h-5 w-5 shrink-0 text-[#292725]" aria-hidden="true" />
-          <p>{copy.disclaimer}</p>
-        </div>
-
-        <section className={`${showSecondaryDetails ? 'flex' : 'hidden'} order-8 mt-5 flex-col gap-5 rounded-3xl bg-gradient-to-r from-[#FFF8EA] to-[#F0E2BD] p-5 text-[#292725] shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-7`}>
-          <div className="flex items-center gap-4">
-            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-[#D6AF2E] text-[#9B762D]">
-              <Rocket className="h-7 w-7" aria-hidden="true" />
-            </span>
-            <div>
-              <h2 className="text-xl font-medium">{copy.ctaTitle}</h2>
-              <p className="mt-1 text-sm text-[#514B43]">{copy.ctaText}</p>
-            </div>
-          </div>
-          <a
-            href="#cv-business-products-title"
-            className="flex shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-medium text-[#292725] transition hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-[#D6AF2E]"
-          >
-            {copy.ctaButton} <ChevronRight className="h-4 w-4" aria-hidden="true" />
-          </a>
-        </section>
       </div>
 
       {activePreview === 'free' && (
