@@ -1344,6 +1344,53 @@ export const Subscription = () => {
     openRequest(selectedFormula, `${selectedFormulaLabel} — ${modelLabel} — ${paletteLabel}`, selectedFormula, undefined, modelLabel, paletteLabel);
   };
 
+  // Direct, preview-only entry to the already existing mini-app order form.
+  // The standard professional page remains unchanged when the query is absent.
+  if (new URLSearchParams(window.location.search).get('miniapp') === '1') {
+    const directFormula = selectedFormula ?? 'artisan';
+    const directModel = selectedPresentationModel ?? 'business';
+    const directFormulaLabel = `${simplifiedOfferCopy[language as OfferLanguage][`${directFormula}Title`]} — ${directFormula === 'artisan' ? '30 TND' : '59 TND'}`;
+    const directModelLabel = getPresentationModelLabel(language, directModel);
+    const directPaletteLabel = getPaletteLabel(language, selectedPalette);
+    return (
+      <div className="premium-page min-h-screen bg-[#FCFAF5] px-4 py-6 sm:px-6 sm:py-10" dir={isArabic ? 'rtl' : 'ltr'}>
+        <main className="mx-auto max-w-3xl space-y-5">
+          <header className="rounded-2xl border border-[#D4AF37]/50 bg-white p-5 text-center">
+            <h1 className="font-serif text-2xl font-semibold text-[#292725]">{isArabic ? 'أنشئ تطبيقك المصغّر' : 'Créez votre mini-appli'}</h1>
+            <p className="mt-2 text-sm text-slate-600">{isArabic ? 'اختر العرض والتصميم ثم أكمل طلبك.' : 'Choisissez votre formule, votre présentation et complétez le formulaire ci-dessous.'}</p>
+            <p className="mt-2 text-xs text-slate-600">{isArabic ? 'السنة الأولى مشمولة · صيانة اختيارية بعد ذلك: 50 د.ت/سنة' : 'Première année incluse · entretien facultatif ensuite : 50 TND/an'}</p>
+          </header>
+          <section className="rounded-2xl border border-[#D4AF37]/40 bg-white p-4" aria-label={isArabic ? 'اختيار العرض والتصميم' : 'Choix de la formule et du modèle'}>
+            <CvPresentationModelSelector
+              language={language}
+              formulaValue={directFormula}
+              onFormulaChange={setSelectedFormula}
+              artisanLabel={`${simplifiedOfferCopy[language as OfferLanguage].artisanTitle} — 30 TND`}
+              premiumLabel={`${simplifiedOfferCopy[language as OfferLanguage].premiumTitle} — 59 TND`}
+              value={directModel}
+              onChange={setSelectedPresentationModel}
+              selectedFormulaLabel={directFormulaLabel}
+              onContinue={() => document.getElementById('miniapp-order-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+              paletteValue={selectedPalette}
+              onPaletteChange={setSelectedPalette}
+            />
+          </section>
+          <section id="miniapp-order-form" className="scroll-mt-8 rounded-2xl border border-[#D4AF37]/40 bg-white p-4 sm:p-6">
+            <h2 className="mb-3 font-serif text-xl font-semibold text-[#292725]">{isArabic ? 'استمارة الطلب' : 'Formulaire de commande'}</h2>
+            <SubscriptionRequestForm
+              selectedPlan={directFormula}
+              selectedPlanLabel={`${directFormulaLabel} — ${directModelLabel} — ${directPaletteLabel}`}
+              checkoutOffer={directFormula}
+              creationMode
+              presentationModelLabel={directModelLabel}
+              paletteLabel={directPaletteLabel}
+            />
+          </section>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="premium-page px-4 py-6 sm:py-8" dir={isArabic ? 'rtl' : 'ltr'}>
       <div className="mx-auto max-w-6xl">
