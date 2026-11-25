@@ -21,7 +21,7 @@ import {
 import { SubscriptionRequestForm } from '../components/SubscriptionRequestForm';
 import type { BillingPeriod, CheckoutOffer, SubscriptionPlanCode } from '../components/SubscriptionRequestForm';
 import { BusinessCardPreview } from '../components/BusinessCardPreview';
-import { getPresentationModelLabel, type PresentationModel } from '../components/CvPresentationModelSelector';
+import { getPresentationModelLabel, getPaletteLabel, PALETTE_IDS, type PaletteId, type PresentationModel } from '../components/CvPresentationModelSelector';
 import { useLanguage } from '../context/LanguageContext';
 
 type PreviewType = 'free' | 'artisan' | 'premium' | 'launch' | 'request' | null;
@@ -1282,6 +1282,7 @@ export const Subscription = () => {
   const appSection = isPlatformAppMode() ? (params.get('section') || (params.get('app-offers') === '1' || location.hash === '#offres' ? 'offers' : params.get('app-models') === '1' || location.hash === '#modeles' ? 'models' : location.hash === '#cv-professionnels' ? 'mini' : '')) : '';
   const focused = ['mini','models','offers'].includes(appSection);
   const [pendingFormula, setPendingFormula] = useState<'artisan' | 'premium' | null>(null);
+  const [orderPalette, setOrderPalette] = useState<PaletteId | null>(null);
   const { language } = useLanguage();
   const structure = siteStructureCopy[language];
   const isArabic = language === 'ar';
@@ -1326,15 +1327,17 @@ export const Subscription = () => {
   };
   const selectFormula = (formula: 'artisan' | 'premium') => {
     setSelectedFormula(formula);
-    if (!selectedPresentationModel) {
-      if (focused) { setPendingFormula(formula); navigate('/subscription?app-full=1&section=models'); return; }
-      setMiniAppOpen(true);
-      window.requestAnimationFrame(() => { window.dispatchEvent(new Event('dalil:choose-model')); document.getElementById('modeles')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
-      return;
-    }
+    setActivePreview(null);
+    setPendingFormula(formula);
+    setOrderPalette(null);
+  };
+  const confirmOrderOptions = () => {
+    if (!pendingFormula || !selectedPresentationModel || !orderPalette) return;
     const modelLabel = getPresentationModelLabel(language, selectedPresentationModel);
-    const label = `${simpleCopy[`${formula}Title`]} — ${(offerCopy[language as OfferLanguage] ?? offerCopy.fr)[`${formula}Price`]} — ${modelLabel}`;
-    openRequest(formula, label, formula, undefined, modelLabel);
+    const paletteLabel = getPaletteLabel(language, orderPalette);
+    const label = `${simpleCopy[`${pendingFormula}Title`]} — ${(offerCopy[language as OfferLanguage] ?? offerCopy.fr)[`${pendingFormula}Price`]} — ${modelLabel} — ${paletteLabel}`;
+    openRequest(pendingFormula, label, pendingFormula, undefined, modelLabel, paletteLabel);
+    setPendingFormula(null);
   };
   const orderCopy = ({
     fr: {title:'Choisissez votre modèle', business:'Présentez votre activité et vos services.', portfolio:'Valorisez vos photos et réalisations.', demo:'Tester le modèle', choose:'Choisir', selected:'Sélectionné', next:'Choisissez ensuite votre offre', help:'Besoin d’aide ?', order:'Commander ma mini-appli'},
@@ -1369,7 +1372,7 @@ export const Subscription = () => {
         </>}
         {(!focused || appSection === 'mini' || appSection === 'models') && <section id="cv-professionnels" className="my-3 rounded-xl border border-[#D4AF37]/50 bg-white p-2">
           {!focused && <button type="button" aria-expanded={miniAppOpen} onClick={() => setMiniAppOpen(v => !v)} className="flex w-full min-h-12 items-center justify-between gap-3 text-start font-medium text-[#292725]">{structure.homeCvAction}<span>{miniAppOpen ? '−' : '+'}</span></button>}
-          {(focused || miniAppOpen) && <div id="mini-appli-details"><CvBusinessHome embedded selectedModel={selectedPresentationModel} onModelSelect={model => { setSelectedPresentationModel(model); if (pendingFormula) { const label = getPresentationModelLabel(language, model); openRequest(pendingFormula, `${simpleCopy[`${pendingFormula}Title`]} — ${(offerCopy[language as OfferLanguage] ?? offerCopy.fr)[`${pendingFormula}Price`]} — ${label}`, pendingFormula, undefined, label); setPendingFormula(null); } }} /></div>}
+          {(focused || miniAppOpen) && <div id="mini-appli-details"><CvBusinessHome embedded selectedModel={selectedPresentationModel} onModelSelect={setSelectedPresentationModel} /></div>}
           {focused && <button type="button" onClick={() => navigate('/subscription?app-full=1&section=offers')} className="mt-3 w-full rounded-lg bg-[#D6B86D] px-3 py-3 text-sm font-semibold text-[#292725]">{structure.offers}</button>}
         </section>}
         {(!focused || appSection === 'offers') && <>
@@ -1519,6 +1522,23 @@ export const Subscription = () => {
                 </li>
               ))}
             </ul>
+          </div>
+        </Modal>
+      )}
+
+      {pendingFormula && (
+        <Modal title={orderCopy.order} onClose={() => setPendingFormula(null)} closeLabel={copy.closeModal} size="medium">
+          <div className="grid gap-4 p-2">
+            <p className="font-semibold text-[#292725]">{simpleCopy[`${pendingFormula}Title`]} — {(offerCopy[language as OfferLanguage] ?? offerCopy.fr)[`${pendingFormula}Price`]}</p>
+            <h3 className="font-medium">{orderCopy.title}</h3>
+            <div className="grid grid-cols-2 gap-2">
+              {(['business','portfolio'] as PresentationModel[]).map(model => <button key={model} type="button" aria-pressed={selectedPresentationModel===model} onClick={()=>setSelectedPresentationModel(model)} className={`rounded-xl border p-3 text-sm ${selectedPresentationModel===model?'border-[#07543F] bg-[#07543F] text-white':'border-[#D6AF2E] bg-white text-[#292725]'}`}>{getPresentationModelLabel(language,model)}</button>)}
+            </div>
+            <h3 className="font-medium">{language==='ar'?'اختر الألوان':language==='en'?'Choose your colours':language==='it'?'Scegli i colori':language==='ru'?'Выберите цвета':'Choisissez votre palette'}</h3>
+            <div className="grid gap-2">
+              {PALETTE_IDS.map(palette => <button key={palette} type="button" aria-pressed={orderPalette===palette} onClick={()=>setOrderPalette(palette)} className={`rounded-xl border p-3 text-sm ${orderPalette===palette?'border-[#07543F] bg-[#07543F] text-white':'border-[#D6AF2E] bg-white text-[#292725]'}`}>{getPaletteLabel(language,palette)}</button>)}
+            </div>
+            <button type="button" disabled={!selectedPresentationModel||!orderPalette} onClick={confirmOrderOptions} className="rounded-xl bg-[#D6B86D] p-3 font-semibold text-[#292725] disabled:opacity-50">{language==='ar'?'متابعة إلى الاستمارة':language==='en'?'Continue to form':language==='it'?'Continua al modulo':language==='ru'?'Перейти к анкете':'Continuer vers le formulaire'}</button>
           </div>
         </Modal>
       )}
