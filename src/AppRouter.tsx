@@ -38,7 +38,7 @@ function ScrollToTop() {
 
 function CommercialRedirect({ section }: { section?: string }) {
   const { search, hash } = useLocation();
-  return <Navigate to={{ pathname: '/subscription', search, hash: hash || (section ? `#${section}` : '') }} replace />;
+  return <Navigate to={{ pathname: '/subscription', search: section ? `?${new URLSearchParams([...new URLSearchParams(search), ['app-full', '1']]).toString()}` : search, hash: hash || (section ? `#${section}` : '') }} replace />;
 }
 
 function CitizenServicesRedirect() {

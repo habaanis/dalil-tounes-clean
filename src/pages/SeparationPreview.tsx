@@ -17,8 +17,9 @@ import { useLanguage } from '../context/LanguageContext';
 import { useHomeData } from '../hooks/useHomeData';
 
 function CvSectionFold({ enabled, title, children, initiallyOpen = false }: { enabled: boolean; title: string; children: ReactNode; initiallyOpen?: boolean }) {
+  const [expanded, setExpanded] = useState(initiallyOpen);
   if (!enabled) return <>{children}</>;
-  return <details open={initiallyOpen || undefined} className="mx-3 my-3 overflow-hidden rounded-xl border border-[#D4AF37]/45 bg-white">
+  return <details open={expanded} onToggle={event => setExpanded(event.currentTarget.open)} className="mx-3 my-3 overflow-hidden rounded-xl border border-[#D4AF37]/45 bg-white">
     <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 bg-[#FFFDF8] px-4 py-3 text-sm font-semibold text-[#4A1D43] [&::-webkit-details-marker]:hidden">
       <span>{title}</span><span aria-hidden="true" className="text-xl text-[#A17D36]">⌄</span>
     </summary>
@@ -262,7 +263,8 @@ const HOME_ECOSYSTEM_COPY: Record<Lang, {
   },
 };
 
-function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'platform' | 'cv'; embedded?: boolean }) {
+type ModelChoiceProps = { selectedModel?: 'business' | 'portfolio' | null; onModelSelect?: (model: 'business' | 'portfolio') => void };
+function SeparationExperience({ fixedView, embedded = false, selectedModel, onModelSelect }: { fixedView?: 'platform' | 'cv'; embedded?: boolean } & ModelChoiceProps) {
   const [previewView, setPreviewView] = useState<'platform' | 'cv'>('platform');
   const navigate = useNavigate();
   const view = fixedView ?? previewView;
@@ -502,9 +504,8 @@ function SeparationExperience({ fixedView, embedded = false }: { fixedView?: 'pl
           </CvSectionFold>
 
           <CvSectionFold enabled={compactCvApp} title={lang === 'fr' ? 'Comment créer votre mini-appli ?' : lang === 'ar' ? 'كيفاش تعمل تطبيقك المصغّر؟' : lang === 'en' ? 'How to create your mini-app' : lang === 'it' ? 'Come creare la tua mini-app' : 'Как создать мини-приложение'}>
-          <CvBusinessJourney language={lang} />
+          <CvBusinessJourney language={lang} showVideo={!heroVideoSrc} selectedModel={selectedModel} onModelSelect={onModelSelect} />
           </CvSectionFold>
-          <div className="mx-auto my-3 flex flex-wrap justify-center gap-2"><a href={embedded ? "#offres" : "/subscription#offres"} className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-[#292725] px-5 py-3 text-sm font-black text-white">{t.offers} <ArrowRight className={`h-4 w-4 ${lang === 'ar' ? 'rotate-180' : ''}`} /></a><a href="/contact" className="inline-flex min-h-12 items-center rounded-xl border border-[#D4AF37] bg-white px-5 py-3 text-sm font-bold text-[#292725]">{t.information}</a></div>
 
           {!embedded && (<section className="bg-[#2E102A] px-4 py-7 text-white"><div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left rtl:sm:text-right"><div><p className="text-xs font-black uppercase tracking-[0.16em] text-[#F1D783]">{t.searchEyebrow}</p><h2 className="mt-2 max-w-3xl font-serif text-2xl font-bold">{t.searchTitle}</h2></div><button type="button" onClick={() => fixedView ? navigate('/') : setPreviewView('platform')} className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-[#D4AF37] px-5 py-3 text-sm font-black text-[#F1D783]"><Search className="h-4 w-4" /> {t.explorePlatform}</button></div></section>)}
         </>
@@ -525,8 +526,8 @@ export function PlatformHome() {
   return <SeparationExperience fixedView="platform" />;
 }
 
-export function CvBusinessHome({ embedded = false }: { embedded?: boolean }) {
-  return <SeparationExperience fixedView="cv" embedded={embedded} />;
+export function CvBusinessHome({ embedded = false, selectedModel, onModelSelect }: { embedded?: boolean } & ModelChoiceProps) {
+  return <SeparationExperience fixedView="cv" embedded={embedded} selectedModel={selectedModel} onModelSelect={onModelSelect} />;
 }
 
 export default function SeparationPreview() {

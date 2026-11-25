@@ -39,10 +39,10 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     qrTitle: '2. QR Business',
     qrShort: 'QR Business',
     qrText: 'Présentez, partagez ou imprimez votre QR Business.',
-    cvTitle: '3. CV Business',
-    cvShort: 'CV Business',
+    cvTitle: '3. Votre CV',
+    cvShort: 'Votre CV',
     cvText: 'Deux modèles au choix : Professionnel ou Portfolio.',
-    professionalModel: 'Professionnel',
+    professionalModel: 'Business',
     portfolioModel: 'Portfolio',
     summary: 'Application = accès rapide • QR Business = partage immédiat • CV Business = présentation professionnelle complète',
     openPreview: 'Agrandir le visuel',
@@ -61,8 +61,8 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     qrTitle: '2. QR Business',
     qrShort: 'QR Business',
     qrText: 'اعرض QR Business أو شاركه أو اطبعه بسهولة.',
-    cvTitle: '3. CV Business',
-    cvShort: 'CV Business',
+    cvTitle: '3. سيرتك المهنية',
+    cvShort: 'سيرتك المهنية',
     cvText: 'نموذجان للاختيار: احترافي أو معرض أعمال.',
     professionalModel: 'احترافي',
     portfolioModel: 'معرض أعمال',
@@ -83,10 +83,10 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     qrTitle: '2. Business QR',
     qrShort: 'Business QR',
     qrText: 'Show, share or print your Business QR.',
-    cvTitle: '3. Business CV',
-    cvShort: 'Business CV',
+    cvTitle: '3. Your CV',
+    cvShort: 'Your CV',
     cvText: 'Two models to choose from: Professional or Portfolio.',
-    professionalModel: 'Professional',
+    professionalModel: 'Business',
     portfolioModel: 'Portfolio',
     summary: 'App = quick access • Business QR = instant sharing • Business CV = complete professional presentation',
     openPreview: 'Enlarge visual',
@@ -105,8 +105,8 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     qrTitle: '2. QR Business',
     qrShort: 'QR Business',
     qrText: 'Mostra, condividi o stampa il tuo QR Business.',
-    cvTitle: '3. CV Business',
-    cvShort: 'CV Business',
+    cvTitle: '3. Il tuo CV',
+    cvShort: 'Il tuo CV',
     cvText: 'Due modelli a scelta: Professionale o Portfolio.',
     professionalModel: 'Professionale',
     portfolioModel: 'Portfolio',
@@ -127,8 +127,8 @@ const COPY: Record<BusinessCardPreviewLanguage, {
     qrTitle: '2. Business QR',
     qrShort: 'Business QR',
     qrText: 'Показывайте, отправляйте или печатайте ваш Business QR.',
-    cvTitle: '3. Business CV',
-    cvShort: 'Business CV',
+    cvTitle: '3. Ваше CV',
+    cvShort: 'Ваше CV',
     cvText: 'Две модели на выбор: Профессиональная или Портфолио.',
     professionalModel: 'Профи',
     portfolioModel: 'Портфолио',
@@ -298,13 +298,18 @@ function ExpandedJourneyVisual({
 const journeyCvDemoUrl = (model: 'business' | 'portfolio', language: string) =>
   `/cv/aux-saveurs-anis?preview-model=${model}&boutique-demo=1&skip-opening=1&lang=${language}`;
 
-export default function CvBusinessJourney({ language }: { language: BusinessCardPreviewLanguage }) {
+export default function CvBusinessJourney({ language, showVideo = true, selectedModel, onModelSelect }: { language: BusinessCardPreviewLanguage; showVideo?: boolean; selectedModel?: CvModel | null; onModelSelect?: (model: CvModel) => void }) {
   const t = COPY[language];
   const rtl = language === 'ar';
   const [expandedVisual, setExpandedVisual] = useState<JourneyVisual | null>(null);
   const [videoOpen, setVideoOpen] = useState(false);
-  const [activeCvModel, setActiveCvModel] = useState<CvModel>('business');
+  const [previewModel, setPreviewModel] = useState<CvModel>('business');
+  const activeCvModel = selectedModel ?? previewModel;
+  const setActiveCvModel = (model: CvModel) => { setPreviewModel(model); onModelSelect?.(model); };
+  const chooseLabel = ({fr:'Choisir ce CV',ar:'اختر هذا النموذج',en:'Choose this CV',it:'Scegli questo CV',ru:'Выбрать этот CV'})[language];
+  const selectedLabel = ({fr:'CV sélectionné',ar:'تم الاختيار',en:'CV selected',it:'CV selezionato',ru:'CV выбран'})[language];
   const [activeMobileStep, setActiveMobileStep] = useState<MobileJourneyStep>('pwa');
+  useEffect(() => { const openModels = () => { if (['#modeles','#personnalisation'].includes(window.location.hash)) setActiveMobileStep('cv'); }; openModels(); window.addEventListener('hashchange', openModels); window.addEventListener('dalil:choose-model', openModelsDirect); function openModelsDirect() { setActiveMobileStep('cv'); } return () => { window.removeEventListener('hashchange', openModels); window.removeEventListener('dalil:choose-model', openModelsDirect); }; }, []);
   const videoLanguage = language === 'fr' || language === 'ar' ? language : null;
   const videoCopy = videoLanguage ? VIDEO_COPY[videoLanguage] : null;
   const videoSrc = videoLanguage === 'ar'
@@ -339,7 +344,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
   }, [videoOpen]);
 
   return (
-    <section className="border-y border-[#D5B257]/25 bg-[radial-gradient(circle_at_top,rgba(213,178,87,0.12),transparent_32%),linear-gradient(180deg,#fffdf8_0%,#ffffff_100%)] px-4 py-5 sm:py-6" dir={rtl ? 'rtl' : 'ltr'}>
+    <section id={onModelSelect ? "modeles" : undefined} className="scroll-mt-32 border-y border-[#D5B257]/25 bg-[radial-gradient(circle_at_top,rgba(213,178,87,0.12),transparent_32%),linear-gradient(180deg,#fffdf8_0%,#ffffff_100%)] px-4 py-5 sm:py-6" dir={rtl ? 'rtl' : 'ltr'}>
       <div className="mx-auto max-w-[900px]">
         <div className="mx-auto max-w-2xl text-center">
           <div className="inline-flex items-center gap-1.5 rounded-full border border-[#D5B257]/45 bg-white px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.11em] text-[#292725] shadow-sm">
@@ -347,7 +352,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
             {t.eyebrow}
           </div>
           <h2 className="mt-2 font-serif text-2xl font-bold text-[#292725] sm:text-[28px]">{t.title}</h2>
-          {videoCopy && (
+          {showVideo && videoCopy && (
             <button
               type="button"
               onClick={() => setVideoOpen(true)}
@@ -427,6 +432,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
                 onClick={() => setExpandedVisual(activeMobileStep === 'cv' ? (activeCvModel === 'portfolio' ? 'cv-portfolio' : 'cv-business') : activeMobileStep)}
               />
             </div>
+            {activeMobileStep === 'cv' && (onModelSelect && <div className="mt-2 flex flex-col items-center gap-1"><a href={journeyCvDemoUrl(activeCvModel, language)} className="text-xs underline text-[#815E28]">{({fr:'Tester le modèle',ar:'جرّب النموذج',en:'Try the model',it:'Prova il modello',ru:'Попробовать модель'})[language]}</a><button type="button" onClick={() => onModelSelect(activeCvModel)} aria-pressed={selectedModel === activeCvModel} className="min-h-10 rounded-lg border border-[#A38549] bg-[#FFF9ED] px-3 py-1 text-xs font-semibold text-[#292725]">{selectedModel === activeCvModel ? '✓ ' + selectedLabel : chooseLabel}</button></div>)}
             {activeMobileStep === 'qr' && <QrBusinessUsage language={language} />}
           </article>
         </div>
@@ -486,6 +492,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
               />
             </div>
             <p className="mx-auto mt-2 max-w-[180px] text-[11px] leading-4.5 text-gray-700">{t.cvText}</p>
+            {onModelSelect && <div className="mt-2 flex flex-col items-center gap-1"><a href={journeyCvDemoUrl(activeCvModel, language)} className="text-xs underline text-[#815E28]">{({fr:'Tester le modèle',ar:'جرّب النموذج',en:'Try the model',it:'Prova il modello',ru:'Попробовать модель'})[language]}</a><button type="button" onClick={() => onModelSelect(activeCvModel)} aria-pressed={selectedModel === activeCvModel} className="min-h-10 rounded-lg border border-[#A38549] bg-[#FFF9ED] px-3 py-1 text-xs font-semibold text-[#292725]">{selectedModel === activeCvModel ? '✓ ' + selectedLabel : chooseLabel}</button></div>}
           </article>
         </div>
 
