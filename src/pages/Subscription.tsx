@@ -1394,17 +1394,14 @@ export const Subscription = () => {
   };
   const selectFormula = (formula: 'artisan' | 'premium') => {
     setSelectedFormula(formula);
-    setActivePreview(null);
-    setPendingFormula(formula);
-    setOrderPalette(null);
+    setPendingFormula(null);
+    const label = `${simpleCopy[`${formula}Title`]} — ${(offerCopy[language as OfferLanguage] ?? offerCopy.fr)[`${formula}Price`]}`;
+    openRequest(formula, label, formula, undefined,
+      formula === 'artisan' && selectedPresentationModel ? getPresentationModelLabel(language, selectedPresentationModel) : undefined,
+      formula === 'artisan' && orderPalette ? getPaletteLabel(language, orderPalette) : undefined);
   };
   const confirmOrderOptions = () => {
-    if (!pendingFormula || !selectedPresentationModel || !orderPalette) return;
-    const modelLabel = getPresentationModelLabel(language, selectedPresentationModel);
-    const paletteLabel = getPaletteLabel(language, orderPalette);
-    const label = `${simpleCopy[`${pendingFormula}Title`]} — ${(offerCopy[language as OfferLanguage] ?? offerCopy.fr)[`${pendingFormula}Price`]} — ${modelLabel} — ${paletteLabel}`;
-    openRequest(pendingFormula, label, pendingFormula, undefined, modelLabel, paletteLabel);
-    setPendingFormula(null);
+    if (pendingFormula) selectFormula(pendingFormula);
   };
   const orderCopy = ({
     fr: {title:'Choisissez votre modèle', business:'Présentez votre activité et vos services.', portfolio:'Valorisez vos photos et réalisations.', demo:'Tester le modèle', choose:'Choisir', selected:'Sélectionné', next:'Choisissez ensuite votre offre', help:'Besoin d’aide ?', order:'Commander ma mini-appli'},
