@@ -26,7 +26,7 @@ export type SubscriptionPlanCode = 'cv_business' | 'artisan' | 'premium';
 export type CheckoutOffer = 'cv_essential' | 'cv_complete' | 'artisan' | 'premium';
 export type BillingPeriod = 'monthly' | 'annual';
 type PlanKind = 'cv' | 'artisan' | 'premium';
-type Platform = 'facebook' | 'instagram' | 'whatsapp_business' | 'google_business' | 'website' | 'other' | 'none';
+type Platform = 'tiktok' | 'youtube' | 'linkedin' | 'facebook' | 'instagram' | 'whatsapp_business' | 'google_business' | 'website' | 'other' | 'none';
 
 interface SubscriptionRequestFormProps {
   selectedPlan: SubscriptionPlanCode;
@@ -239,6 +239,9 @@ const COPY: Record<SupportedLanguage, FormCopy> = {
     premiumFlyerInfo: '500 flyers sont inclus après le paiement complet et la validation du modèle.',
     platformsQuestion: 'Quelles plateformes utilisez-vous déjà ? — facultatif',
     platformLabels: {
+      tiktok: 'TikTok',
+      youtube: 'YouTube',
+      linkedin: 'LinkedIn',
       facebook: 'Facebook',
       instagram: 'Instagram',
       whatsapp_business: 'WhatsApp Business',
@@ -327,6 +330,9 @@ const COPY: Record<SupportedLanguage, FormCopy> = {
     premiumFlyerInfo: 'يشمل العرض 500 منشور إعلاني بعد اكتمال الدفع والمصادقة على النموذج.',
     platformsQuestion: 'ما المنصات التي تستخدمها حالياً؟ — اختياري',
     platformLabels: {
+      tiktok: 'TikTok',
+      youtube: 'YouTube',
+      linkedin: 'LinkedIn',
       facebook: 'فيسبوك',
       instagram: 'إنستغرام',
       whatsapp_business: 'واتساب للأعمال',
@@ -415,6 +421,9 @@ const COPY: Record<SupportedLanguage, FormCopy> = {
     premiumFlyerInfo: '500 flyers are included after full payment and approval of the design.',
     platformsQuestion: 'Which platforms do you already use? — optional',
     platformLabels: {
+      tiktok: 'TikTok',
+      youtube: 'YouTube',
+      linkedin: 'LinkedIn',
       facebook: 'Facebook',
       instagram: 'Instagram',
       whatsapp_business: 'WhatsApp Business',
@@ -503,6 +512,9 @@ const COPY: Record<SupportedLanguage, FormCopy> = {
     premiumFlyerInfo: '500 volantini sono inclusi dopo il pagamento completo e l’approvazione del modello.',
     platformsQuestion: 'Quali piattaforme utilizzi già? — facoltativo',
     platformLabels: {
+      tiktok: 'TikTok',
+      youtube: 'YouTube',
+      linkedin: 'LinkedIn',
       facebook: 'Facebook',
       instagram: 'Instagram',
       whatsapp_business: 'WhatsApp Business',
@@ -591,6 +603,9 @@ const COPY: Record<SupportedLanguage, FormCopy> = {
     premiumFlyerInfo: '500 флаеров включены после полной оплаты и утверждения макета.',
     platformsQuestion: 'Какие платформы вы уже используете? — необязательно',
     platformLabels: {
+      tiktok: 'TikTok',
+      youtube: 'YouTube',
+      linkedin: 'LinkedIn',
       facebook: 'Facebook',
       instagram: 'Instagram',
       whatsapp_business: 'WhatsApp Business',
@@ -694,6 +709,9 @@ const INITIAL_STATE: SubscriptionFormState = {
 const PLATFORMS: Platform[] = [
   'facebook',
   'instagram',
+  'tiktok',
+  'youtube',
+  'linkedin',
   'whatsapp_business',
   'google_business',
   'website',
@@ -772,18 +790,15 @@ export function SubscriptionRequestForm({
   };
 
   const togglePlatform = (platform: Platform) => {
-    setForm((current) => {
-      if (platform === 'none') {
-        return { ...current, selectedPlatforms: current.selectedPlatforms.includes('none') ? [] : ['none'] };
-      }
-      const withoutNone = current.selectedPlatforms.filter((item) => item !== 'none');
-      return {
-        ...current,
-        selectedPlatforms: withoutNone.includes(platform)
-          ? withoutNone.filter((item) => item !== platform)
-          : [...withoutNone, platform],
-      };
+    setForm(current => {
+      const linkFields = { facebook: 'facebook', instagram: 'instagram', tiktok: 'tiktok', youtube: 'youtube', linkedin: 'linkedin', website: 'website', other: 'otherPlatformUrl', whatsapp_business: 'whatsapp' } as const;
+      if (platform === 'none') return { ...current, selectedPlatforms: current.selectedPlatforms.includes('none') ? [] : ['none'], ...(creationMode ? {facebook:'',instagram:'',tiktok:'',youtube:'',linkedin:'',website:'',otherPlatformUrl:'',whatsapp:''} : {}) };
+      const withoutNone = current.selectedPlatforms.filter(item => item !== 'none');
+      const removing = withoutNone.includes(platform);
+      const field = linkFields[platform as keyof typeof linkFields];
+      return { ...current, ...(creationMode && removing && field ? {[field]: ''} : {}), selectedPlatforms: removing ? withoutNone.filter(item => item !== platform) : [...withoutNone, platform] };
     });
+    setErrorMessage('');
   };
 
   const validateStepOne = (): string | null => {
@@ -813,14 +828,14 @@ export function SubscriptionRequestForm({
     }
     if (creationMode) {
       if (weeklyHours.some(day => day.status === 'open' && (!day.start || !day.end || day.start >= day.end || (day.split && (!day.secondStart || !day.secondEnd || day.end > day.secondStart || day.secondStart >= day.secondEnd))))) return 'Vérifiez les horaires : les créneaux doivent se suivre sans chevauchement.';
-      const socialCount = [form.facebook, form.instagram, form.tiktok, form.youtube, form.linkedin, form.otherPlatformUrl].filter(link => link.trim()).length;
+      const socialCount = form.selectedPlatforms.filter(platform => ['facebook','instagram','tiktok','youtube','linkedin','other'].includes(platform)).length;
       if (!premiumCreation && socialCount > 2) return isArabic ? 'اختر شبكتين اجتماعيتين كحد أقصى.' : 'La formule Artisan comprend deux réseaux sociaux au maximum.';
       if (form.photoUrls.split(/\n/).filter(link => link.trim()).length > maxPhotos) return `Maximum ${maxPhotos} photos.`;
       if (!form.preferredContactMethods.length) return copy.requiredContactMethod;
       if (form.preferredContactMethods.includes('email') && !form.email.trim()) return copy.emailNeeded;
       if (!form.preferredContactTimes.length) return copy.requiredContactTime;
       const chosenLinks: Array<[Platform,string,string]> = [
-        ['facebook',form.facebook,'Facebook'],['instagram',form.instagram,'Instagram'],
+        ['facebook',form.facebook,'Facebook'],['instagram',form.instagram,'Instagram'],['tiktok',form.tiktok,'TikTok'],['youtube',form.youtube,'YouTube'],['linkedin',form.linkedin,'LinkedIn'],
         ['whatsapp_business',form.whatsapp || form.phone,'WhatsApp'],
         ['google_business',form.googleMapsUrl,'Google Maps'],
         ['website',form.website,'Site Internet'],['other',form.otherPlatformUrl,'Autre plateforme'],
@@ -887,7 +902,7 @@ export function SubscriptionRequestForm({
       facebook: normalizeWebAddress(form.facebook, 'facebook'),
       instagram: normalizeWebAddress(form.instagram, 'instagram'),
       whatsapp: form.whatsapp.trim() ? normalizePhone(form.whatsapp) : '',
-      selectedPlatforms: form.selectedPlatforms,
+      selectedPlatforms: form.selectedPlatforms.filter(platform => !['tiktok','youtube','linkedin'].includes(platform)),
       requestedBillingPeriod: creationMode ? 'one_time' : planKind === 'cv' ? '' : form.requestedBillingPeriod,
       requestedPaymentSchedule: form.requestedPaymentSchedule,
       preferredContactMethod: creationMode ? (form.preferredContactMethods.includes('whatsapp') ? 'whatsapp' : form.preferredContactMethods.includes('phone') ? 'phone' : 'email') : form.preferredContactMethod,
@@ -912,7 +927,7 @@ export function SubscriptionRequestForm({
           `Montant total demandé : ${(selectedPlan === 'artisan' ? 30 : 59) + (form.logoChoice === 'create' ? 20 : 0)} TND`,
           `Photos : ${form.photoUrls}`,
           `Catalogue et produits : ${cleanMultiline(form.productsDescription)}`,
-          `TikTok : ${form.tiktok}`, `YouTube : ${form.youtube}`, `LinkedIn : ${form.linkedin}`,
+          `Plateformes sélectionnées : ${form.selectedPlatforms.map(platform => copy.platformLabels[platform]).join(', ')}`, form.tiktok ? `TikTok : ${form.tiktok}` : '', form.youtube ? `YouTube : ${form.youtube}` : '', form.linkedin ? `LinkedIn : ${form.linkedin}` : '',
           `Autre plateforme : ${form.otherPlatformUrl}`,
           `Contacts souhaités : ${form.preferredContactMethods.join(', ')}`,
           `Moments souhaités : ${form.preferredContactTimes.join(', ')}`,
@@ -1206,7 +1221,7 @@ export function SubscriptionRequestForm({
             <h4 className="text-base font-semibold text-[#292725]">Réseaux sociaux, site et Google</h4>
             <p className="text-xs text-slate-600">Sélectionnez vos plateformes et renseignez leurs liens directement ici. Les liens des plateformes cochées sont obligatoires.</p>
             <ChoiceGroup legend={copy.platformsQuestion}>
-              {PLATFORMS.map((platform) => (
+              {PLATFORMS.filter(platform => creationMode || !['tiktok','youtube','linkedin'].includes(platform)).map((platform) => (
                 <CheckboxChoice
                   key={platform}
                   checked={form.selectedPlatforms.includes(platform)}
@@ -1222,9 +1237,9 @@ export function SubscriptionRequestForm({
               {(!creationMode || form.selectedPlatforms.includes('whatsapp_business')) && <FieldLabel label="Numéro WhatsApp (si différent du téléphone)"><input type="tel" name="whatsapp" value={form.whatsapp} onChange={setField} className={inputClassName} placeholder="+216..." /></FieldLabel>}
               {creationMode && form.selectedPlatforms.includes('google_business') && <FieldLabel label="Lien Google Maps / Fiche Google *"><input type="url" name="googleMapsUrl" value={form.googleMapsUrl} onChange={setField} className={inputClassName} placeholder="https://maps.app.goo.gl/..." /></FieldLabel>}
               {creationMode && form.selectedPlatforms.includes('other') && <FieldLabel label="Autre plateforme *"><input type="url" name="otherPlatformUrl" value={form.otherPlatformUrl} onChange={setField} className={inputClassName} placeholder="https://..." /></FieldLabel>}
-              {creationMode && <FieldLabel label="TikTok"><input type="url" name="tiktok" value={form.tiktok} onChange={setField} className={inputClassName} placeholder="https://www.tiktok.com/@..." /></FieldLabel>}
-              {creationMode && <FieldLabel label="YouTube"><input type="url" name="youtube" value={form.youtube} onChange={setField} className={inputClassName} placeholder="https://www.youtube.com/..." /></FieldLabel>}
-              {creationMode && <FieldLabel label="LinkedIn"><input type="url" name="linkedin" value={form.linkedin} onChange={setField} className={inputClassName} placeholder="https://www.linkedin.com/..." /></FieldLabel>}
+              {creationMode && form.selectedPlatforms.includes('tiktok') && <FieldLabel label="TikTok *"><input type="url" name="tiktok" value={form.tiktok} onChange={setField} className={inputClassName} placeholder="https://www.tiktok.com/@..." /></FieldLabel>}
+              {creationMode && form.selectedPlatforms.includes('youtube') && <FieldLabel label="YouTube *"><input type="url" name="youtube" value={form.youtube} onChange={setField} className={inputClassName} placeholder="https://www.youtube.com/..." /></FieldLabel>}
+              {creationMode && form.selectedPlatforms.includes('linkedin') && <FieldLabel label="LinkedIn *"><input type="url" name="linkedin" value={form.linkedin} onChange={setField} className={inputClassName} placeholder="https://www.linkedin.com/..." /></FieldLabel>}
             </div>
           </section>
 
@@ -1235,7 +1250,7 @@ export function SubscriptionRequestForm({
                 <FieldLabel label="Adresse complète"><input name="address" value={form.address} onChange={setField} maxLength={240} className={inputClassName} placeholder="Rue, numéro et quartier" /></FieldLabel>
                 {!form.selectedPlatforms.includes('google_business') && <FieldLabel label="Lien Google Maps (facultatif)"><input name="googleMapsUrl" type="url" value={form.googleMapsUrl} onChange={setField} className={inputClassName} placeholder="https://maps.app.goo.gl/..." /></FieldLabel>}
               </div>
-              <p className="text-xs text-slate-600">Pour le lien Google exact : ouvrez Google Maps, cherchez votre établissement, cliquez « Partager » puis « Copier le lien ». Collez le lien ci-dessus.</p>
+              <details className="rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-600"><summary className="cursor-pointer font-medium">Comment récupérer mon lien GPS / Google Maps ?</summary><p className="mt-2">Ouvrez Google Maps, recherchez votre établissement ou son emplacement exact, cliquez sur « Partager », puis « Copier le lien ». Collez ce lien dans le champ Google Maps.</p></details>
               <fieldset className="rounded-xl border border-[#D4AF37]/40 p-3">
                 <legend className="px-1 font-semibold">Horaires d’ouverture</legend>
                 <div className="grid gap-3">{weeklyHours.map((day,i)=><div key={day.day} className="border-b border-slate-100 pb-2">
@@ -1283,7 +1298,7 @@ export function SubscriptionRequestForm({
                     )}
                   </fieldset>
                   <FieldLabel label={`Liens des photos (maximum ${maxPhotos}, un par ligne)`}><textarea name="photoUrls" value={form.photoUrls} onChange={setField} rows={3} className={inputClassName} placeholder="https://.../photo1.jpg" /></FieldLabel>
-                  <FieldLabel label="Lien des avis Google"><input type="url" name="googleReviewsUrl" value={form.googleReviewsUrl} onChange={setField} className={inputClassName} placeholder="https://..." /></FieldLabel>
+                  <FieldLabel label="Lien des avis Google"><input type="url" name="googleReviewsUrl" value={form.googleReviewsUrl} onChange={setField} className={inputClassName} placeholder="https://g.page/r/.../review" /></FieldLabel><details className="rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-600"><summary className="cursor-pointer font-medium">Comment récupérer mon lien d’avis Google ?</summary><p className="mt-2">Connectez-vous au compte Google qui gère votre fiche d’établissement. Ouvrez votre fiche, choisissez « Demander des avis » (ou « Obtenir plus d’avis »), puis copiez le lien proposé et collez-le ci-dessus.</p></details>
                   <FieldLabel label="Produits, prestations et prix"><textarea name="productsDescription" value={form.productsDescription} onChange={setField} rows={4} className={inputClassName} placeholder="Produit — prix — description" /></FieldLabel>
                 </div>
               </details>
@@ -1421,14 +1436,14 @@ export function SubscriptionRequestForm({
             {form.activityDescription && <p className="whitespace-pre-wrap"><strong>{isArabic ? 'الوصف' : 'Description'} :</strong> {form.activityDescription}</p>}
             {form.address && <p><strong>Adresse :</strong> {form.address}</p>}
             {form.openingHours && <p className="whitespace-pre-wrap"><strong>Horaires :</strong> {form.openingHours}</p>}
-            {form.googleMapsUrl && <p className="break-all"><strong>Google Maps :</strong> {form.googleMapsUrl}</p>}
+            {form.googleMapsUrl && <p className="break-all"><strong>Google Maps :</strong> {form.googleMapsUrl}</p>}{form.googleReviewsUrl && <p className="break-all"><strong>Avis Google :</strong> {form.googleReviewsUrl}</p>}
             {form.logoUrl && <p className="break-all"><strong>Logo :</strong> {form.logoUrl}</p>}
             {form.photoUrls && <p className="whitespace-pre-wrap"><strong>Photos :</strong> {form.photoUrls}</p>}
             {form.productsDescription && <p className="whitespace-pre-wrap"><strong>Produits :</strong> {form.productsDescription}</p>}
             <p><strong>Contacts :</strong> {form.preferredContactMethods.join(', ')}</p>
             <p><strong>Créneaux :</strong> {form.preferredContactTimes.join(', ')}</p>
             {form.selectedPlatforms.length > 0 && <p><strong>{isArabic ? 'المنصات' : 'Plateformes'} :</strong> {form.selectedPlatforms.map((item) => copy.platformLabels[item]).join(', ')}</p>}
-            {[form.website, form.facebook, form.instagram, form.whatsapp].filter(Boolean).length > 0 && <p className="break-words"><strong>{isArabic ? 'الروابط' : 'Liens et WhatsApp'} :</strong> {[form.website, form.facebook, form.instagram, form.whatsapp].filter(Boolean).join(' · ')}</p>}
+            {[form.website, form.facebook, form.instagram, form.whatsapp, form.tiktok, form.youtube, form.linkedin, form.otherPlatformUrl].filter(Boolean).length > 0 && <p className="break-words"><strong>{isArabic ? 'الروابط' : 'Liens et WhatsApp'} :</strong> {[form.website, form.facebook, form.instagram, form.whatsapp, form.tiktok, form.youtube, form.linkedin, form.otherPlatformUrl].filter(Boolean).join(' · ')}</p>}
             {form.message && <p className="whitespace-pre-wrap"><strong>{isArabic ? 'ملاحظات' : 'Précisions'} :</strong> {form.message}</p>}
           </div>
           <div className="rounded-xl border border-[#D4AF37]/40 bg-[#FFF9E8] px-4 py-3 text-sm leading-6 text-[#292725]">
