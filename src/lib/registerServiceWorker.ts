@@ -20,11 +20,19 @@ export function registerServiceWorker(): void {
       const hadController = Boolean(navigator.serviceWorker.controller);
 
       navigator.serviceWorker
-        .register('/service-worker.js?v=17', { updateViaCache: 'none' })
+        .register('/service-worker.js?v=18', { updateViaCache: 'none' })
         .then((registration) => {
           console.log('[PWA] Service Worker enregistré avec succès:', registration.scope);
 
           const checkForUpdate = () => registration.update().catch(() => undefined);
+          if (hadController && registration.waiting) announceUpdate();
+          registration.addEventListener('updatefound', () => {
+            const worker = registration.installing;
+            if (!worker) return;
+            worker.addEventListener('statechange', () => {
+              if (worker.state === 'installed' && navigator.serviceWorker.controller) announceUpdate();
+            });
+          });
           void checkForUpdate();
 
           // PWA launch/resume is a strong signal that the user wants the latest release.
