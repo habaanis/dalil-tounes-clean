@@ -1300,10 +1300,10 @@ export const Subscription = () => {
       const rawTarget = window.location.hash.slice(1) || (params.get('app-offers') === '1' ? 'offres' : params.get('app-models') === '1' ? 'modeles' : '');
       const target = rawTarget === 'personnalisation' ? 'modeles' : rawTarget;
       if (!target) return;
-      if (target === 'cv-professionnels') setMiniAppOpen(true);
+      if (target === 'cv-professionnels' || target === 'modeles') setMiniAppOpen(true);
       const detail = document.getElementById(target);
       if (detail instanceof HTMLDetailsElement) detail.open = true;
-      window.requestAnimationFrame(() => document.getElementById(target)?.scrollIntoView({ block: 'start' }));
+      window.requestAnimationFrame(() => (document.getElementById(target) ?? document.getElementById('cv-professionnels'))?.scrollIntoView({ block: 'start' }));
     };
     openTargetSection();
     window.addEventListener('hashchange', openTargetSection);
@@ -1318,7 +1318,8 @@ export const Subscription = () => {
   const selectFormula = (formula: 'artisan' | 'premium') => {
     setSelectedFormula(formula);
     if (!selectedPresentationModel) {
-      document.getElementById('modeles')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setMiniAppOpen(true);
+      window.requestAnimationFrame(() => { window.dispatchEvent(new Event('dalil:choose-model')); document.getElementById('modeles')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
       return;
     }
     const modelLabel = getPresentationModelLabel(language, selectedPresentationModel);
@@ -1349,7 +1350,7 @@ export const Subscription = () => {
         </header>
 
         <nav className="mb-5 flex flex-wrap justify-center gap-3 text-sm font-medium text-[#292725]" aria-label={structure.professional}>
-          <a href="#presence-essentielle">{structure.essential}</a><a href="#cv-professionnels" onClick={() => setMiniAppOpen(true)}>{structure.products}</a><a href="#modeles">{structure.models}</a><a href="#offres">{structure.offers}</a>
+          <a href="#presence-essentielle">{structure.essential}</a><a href="#cv-professionnels" onClick={() => setMiniAppOpen(true)}>{structure.products}</a><a href="#offres">{structure.offers}</a>
         </nav>
         <EssentialPresence registration />
         <p className="mt-3 text-sm font-semibold text-emerald-800">{copy.essentialFree}</p>
@@ -1358,22 +1359,10 @@ export const Subscription = () => {
           <button type="button" aria-expanded={miniAppOpen} aria-controls="mini-appli-details" onClick={() => setMiniAppOpen(value => !value)} className="flex w-full min-h-12 items-center justify-between gap-3 text-start font-medium text-[#292725]">
             {structure.homeCvAction}<span aria-hidden="true">{miniAppOpen ? '−' : '+'}</span>
           </button>
-          {miniAppOpen && <div id="mini-appli-details"><CvBusinessHome embedded /></div>}
+          {miniAppOpen && <div id="mini-appli-details"><CvBusinessHome embedded selectedModel={selectedPresentationModel} onModelSelect={setSelectedPresentationModel} /></div>}
         </section>
 
 
-<section id="modeles" className="mb-4 scroll-mt-32 rounded-xl border border-[#D4AF37]/50 bg-white p-3">
-  <h2 className="text-center font-serif text-lg font-medium text-[#292725]">{orderCopy.title}</h2>
-  <div className="mt-3 grid grid-cols-2 gap-2">
-    {(['business','portfolio'] as const).map(model => <article key={model} className={`rounded-xl border p-2 text-center ${selectedPresentationModel === model ? 'border-[#A38549] bg-[#FFF9ED]' : 'border-[#D4AF37]/40 bg-white'}`}>
-      <img src={model === 'business' ? '/images/cv-business-professionnel-aux-saveurs-anis.png' : '/images/cv-business-portfolio-aux-saveurs-anis.png'} alt={getPresentationModelLabel(language, model)} className="mx-auto h-40 w-full object-contain sm:h-56" loading="lazy" />
-      <h3 className="mt-1 text-sm font-semibold text-[#292725]">{getPresentationModelLabel(language, model)}</h3>
-      <p className="mt-1 text-xs text-slate-600">{orderCopy[model]}</p>
-      <a href={`/cv/aux-saveurs-anis?preview-model=${model}&boutique-demo=1&skip-opening=1&lang=${language}`} className="mt-2 block text-xs font-medium underline text-[#815E28]">{orderCopy.demo}</a>
-      <button type="button" aria-pressed={selectedPresentationModel === model} onClick={() => { setSelectedPresentationModel(model); if (selectedFormula) document.getElementById('offres')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="mt-2 min-h-10 w-full rounded-lg border border-[#A38549] bg-[#FFF9ED] px-2 text-xs font-semibold text-[#292725]">{selectedPresentationModel === model ? '✓ ' + orderCopy.selected : orderCopy.choose}</button>
-    </article>)}
-  </div>
-</section>
         <section id="offres" aria-labelledby="cv-business-products-title" className="order-2 mt-5 sm:mt-0">
 <div className="mb-6 text-center">
     <h2 id="cv-business-products-title" className="text-xl font-medium text-[#292725] sm:text-2xl">{orderCopy.next}</h2>
