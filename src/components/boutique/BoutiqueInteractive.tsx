@@ -101,6 +101,7 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
   const [offersOpen,setOffersOpen] = useState(false);
   const [cardLookupOpen,setCardLookupOpen] = useState(false);
   const [myFollowupOpen,setMyFollowupOpen] = useState(false);
+  const [notificationPreferencesOpen,setNotificationPreferencesOpen] = useState(false);
   const [localRequests,setLocalRequests] = useState<LocalRequest[]>([]);
   const [liveStatuses,setLiveStatuses] = useState<Record<string,LiveOrderStatus>>({});
   const [statusChecking,setStatusChecking] = useState(false);
@@ -654,8 +655,15 @@ export function BoutiqueInteractive({ config, triggerClassName, triggerLabel = '
             </div>}
             </>}
           </div>}
-          <BoutiquePushFollow profileId={config.profileId} demoMode={config.demoMode} />
-          <BoutiquePushFollow profileId={config.profileId} demoMode={config.demoMode} promotion />
+          <div style={{marginTop:8}}>
+            <button type="button" aria-expanded={notificationPreferencesOpen} onClick={()=>setNotificationPreferencesOpen(v=>!v)} style={{width:'100%',background:'var(--boutique-button, #003c35)',color:'var(--boutique-button-ink, #f7f4ec)',border:'1px solid var(--boutique-accent, #e8bd43)',borderRadius:16,padding:'8px 11px',fontSize:12,fontWeight:600}}>
+              {t('🔔 Suivre les nouveautés et les offres','🔔 متابعة الجديد والعروض')} {notificationPreferencesOpen?'−':'＋'}
+            </button>
+            <div hidden={!notificationPreferencesOpen}>
+              <BoutiquePushFollow profileId={config.profileId} demoMode={config.demoMode} />
+              <BoutiquePushFollow profileId={config.profileId} demoMode={config.demoMode} promotion />
+            </div>
+          </div>
         </>}
         {config.demoMode && <p style={{ fontSize: 10, margin: '10px 0 0', color: 'var(--boutique-muted, #d0ddd5)' }}>{t("Aperçu uniquement — aucune demande ou paiement n'est envoyé.","عرض تجريبي فقط — لن يتم إرسال أي طلب أو دفع.")}</p>}
         </div>
