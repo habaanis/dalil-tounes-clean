@@ -184,8 +184,6 @@ export default function BusinessQr() {
   const [shareConfirmed, setShareConfirmed] = useState(false);
   const [showBrandSplash, setShowBrandSplash] = useState(false);
   const [openingStyle, setOpeningStyle] = useState<ClientOpeningStyle>('photo');
-  const [savingOpeningStyle, setSavingOpeningStyle] = useState(false);
-  const [openingStyleNotice, setOpeningStyleNotice] = useState('');
   const [ownerAccountVisible, setOwnerAccountVisible] = useState(false);
   const launchPalette = new URLSearchParams(window.location.search).get('palette');
   // Use exactly the same effective palette as the CV: explicit previews first,
@@ -304,34 +302,6 @@ export default function BusinessQr() {
     const requested = new URLSearchParams(window.location.search).get('opening-style');
     setOpeningStyle(requested === 'framed' || requested === 'photo' ? requested : business?.opening_style === 'framed' ? 'framed' : 'photo');
   }, [business?.id, business?.opening_style]);
-  const chooseOpeningStyle = (style: ClientOpeningStyle) => {
-    setOpeningStyle(style);
-    setOpeningStyleNotice('');
-  };
-  const saveOpeningStyle = async () => {
-    if (!business?.id || !ownerAccountVisible || savingOpeningStyle) return;
-    setSavingOpeningStyle(true);
-    setOpeningStyleNotice('');
-    try {
-      // The existing entreprise RLS only authorizes administrators/staff to change
-      // opening_style; never bypass those policies from the public client app.
-      const { data, error } = await supabase.from('entreprise')
-        .update({ opening_style: openingStyle })
-        .eq('id', business.id)
-        .select('opening_style')
-        .single();
-      if (error || data?.opening_style !== openingStyle) {
-        setOpeningStyleNotice('Enregistrement refusé : faites valider le choix depuis votre administration.');
-      } else {
-        setBusiness(current => current ? { ...current, opening_style: openingStyle } : current);
-        setOpeningStyleNotice('Présentation enregistrée pour tous les clients.');
-      }
-    } catch {
-      setOpeningStyleNotice('Enregistrement impossible. Réessayez depuis votre administration.');
-    } finally {
-      setSavingOpeningStyle(false);
-    }
-  };
   // QR, Open and Share must use the exact same permanent client URL.
   // Do not pin a palette or language in a forwarded link: these can change later.
   const scannableCvUrl = new URL('/' + encodeURIComponent(clientIdentifier) + '/cv?skip-opening=1', 'https://app.dalil-tounes.com').toString();
@@ -516,14 +486,6 @@ export default function BusinessQr() {
 
   return (
     <main className="fixed inset-0 z-[10000] overflow-y-auto overscroll-contain px-2.5 pt-2 pb-[calc(2rem+env(safe-area-inset-bottom))] sm:py-4" style={{ backgroundColor: paletteTheme.page }} dir={language === 'ar' ? 'rtl' : 'ltr'}>
-      {qrAccess && ownerAccountVisible && <div className="mx-auto mb-2 flex max-w-[354px] flex-wrap items-center justify-center gap-2 rounded-xl border px-2 py-2 text-xs" style={{backgroundColor:paletteTheme.surface,color:paletteTheme.text,borderColor:paletteTheme.border}}>
-        <span className="font-semibold">{language === 'ar' ? 'عرض البداية' : 'Écran d’ouverture'}</span>
-        <button type="button" aria-pressed={openingStyle === 'photo'} className="rounded-lg border px-2 py-1" style={{borderColor:paletteTheme.border,backgroundColor:openingStyle === 'photo' ? paletteTheme.border : 'transparent',color:openingStyle === 'photo' ? '#031d18' : paletteTheme.text}} onClick={() => chooseOpeningStyle('photo')}>A · Photo + logo</button>
-        <button type="button" aria-pressed={openingStyle === 'framed'} className="rounded-lg border px-2 py-1" style={{borderColor:paletteTheme.border,backgroundColor:openingStyle === 'framed' ? paletteTheme.border : 'transparent',color:openingStyle === 'framed' ? '#031d18' : paletteTheme.text}} onClick={() => chooseOpeningStyle('framed')}>B · Logo encadré</button>
-        <button type="button" className="underline" onClick={() => setShowBrandSplash(true)}>Aperçu</button>
-        <button type="button" disabled={savingOpeningStyle || openingStyle === business?.opening_style} className="rounded-lg border px-2 py-1 disabled:opacity-50" style={{borderColor:paletteTheme.border}} onClick={() => void saveOpeningStyle()}>{savingOpeningStyle ? 'Enregistrement…' : 'Enregistrer'}</button>
-        {openingStyleNotice && <span role="status" className="w-full text-center">{openingStyleNotice}</span>}
-      </div>}
       {qrAccess && isDedicatedClientHostname(window.location.hostname) && new URLSearchParams(window.location.search).get('source') === 'pwa' && new URLSearchParams(window.location.search).get('opening-preview') !== '1' && !new URLSearchParams(window.location.search).has('skip-opening') && logoUrl && coverUrl &&
         <ClientOpeningAuto clientId={business!.id} name={displayName} product={modelText.product} logo={logoUrl} cover={coverUrl} palette={paletteTheme} style={openingStyle} />}
       {isInAppBrowser && (

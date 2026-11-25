@@ -209,11 +209,6 @@ export function CvBusinessQrVisual({
           <QRCodeSVG id={qrId} value={qrValue} size={188} level="H" includeMargin bgColor={theme.qrBackground} fgColor={theme.qrForeground} />
         </div>
       </div>
-      {accountHref && <a href={accountHref}
-        className="mx-auto mt-2 flex min-h-10 w-full max-w-[235px] items-center justify-center gap-2 rounded-xl border px-3 py-2 text-center text-[12px] font-semibold"
-        style={{ borderColor: theme.border, color: theme.text, backgroundColor: theme.surfaceAlt }}>
-        <UserRound size={17} aria-hidden="true" />{language === 'ar' ? 'حسابي المهني' : language === 'en' ? 'My professional account' : 'Mon compte professionnel'}
-      </a>}
       <div className="mx-auto mt-[8px] grid w-full max-w-[252px] grid-cols-3">
         {actions.map(({ icon: Icon, label, action }, index) => (
           <button key={label} type="button" onClick={interactive ? action : undefined}
@@ -226,6 +221,11 @@ export function CvBusinessQrVisual({
       </div>
 
       {showUsage && <QrBusinessUsage language={language} />}
+      {accountHref && <div className="mx-auto mt-3 max-w-[285px] border-t pt-3" style={{borderColor: theme.border}}>
+        <a href={accountHref} className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border px-2 py-2 text-center text-[12px] font-semibold" style={{borderColor:theme.border,color:theme.text,backgroundColor:theme.surfaceAlt}}>
+          <UserRound size={17} aria-hidden="true" />{({fr:'Accéder à mon compte professionnel',ar:'الدخول إلى حسابي المهني',en:'Access my professional account',it:'Accedi al mio account professionale',ru:'Войти в профессиональный аккаунт'})[language]}
+        </a>
+      </div>}
 
       <p className="mb-0 mt-[12px] text-center text-[10px] font-normal" style={{ color: theme.muted }}>
         {poweredText || t.powered}
