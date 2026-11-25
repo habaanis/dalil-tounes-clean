@@ -1388,27 +1388,20 @@ export const Subscription = () => {
   };
   const selectFormula = (formula: 'artisan' | 'premium') => {
     setSelectedFormula(formula);
-    const models = document.getElementById('modeles');
-    if (models instanceof HTMLDetailsElement) models.open = true;
-    window.requestAnimationFrame(() => {
-      document.getElementById('cv-presentation-models')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
+    const label = `${simpleCopy[`${formula}Title`]} — ${(offerCopy[language as OfferLanguage] ?? offerCopy.fr)[`${formula}Price`]}`;
+    openRequest(formula, label, formula, undefined,
+      formula === 'artisan' && selectedPresentationModel ? getPresentationModelLabel(language, selectedPresentationModel) : undefined,
+      formula === 'artisan' && selectedPresentationModel ? getPaletteLabel(language, selectedPalette) : undefined);
   };
   const selectedFormulaLabel = selectedFormula
-    ? `${simplifiedOfferCopy[language as OfferLanguage][`${selectedFormula}Title`]} — ${(offerCopy[language as OfferLanguage] ?? offerCopy.fr)[`${selectedFormula}Price`]}`
+    ? `${simpleCopy[`${selectedFormula}Title`]} — ${(offerCopy[language as OfferLanguage] ?? offerCopy.fr)[`${selectedFormula}Price`]}`
     : null;
   const continueWithModel = () => {
-    if (!selectedFormula || !selectedFormulaLabel) {
-      document.getElementById('cv-presentation-models')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (!selectedFormula) {
+      document.getElementById('offres')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       return;
     }
-    if (!selectedPresentationModel) {
-      document.getElementById('cv-presentation-models')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      return;
-    }
-    const modelLabel = getPresentationModelLabel(language, selectedPresentationModel);
-    const paletteLabel = getPaletteLabel(language, selectedPalette);
-    openRequest(selectedFormula, `${selectedFormulaLabel} — ${modelLabel} — ${paletteLabel}`, selectedFormula, undefined, modelLabel, paletteLabel);
+    selectFormula(selectedFormula);
   };
 
   return (
