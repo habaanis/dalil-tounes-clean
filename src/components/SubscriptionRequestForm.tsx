@@ -911,10 +911,10 @@ export function SubscriptionRequestForm({
       consent: form.consent,
     };
 
-    // The currently deployed intake function limits the free-text payload to 1,500 characters.
+    // Creation dossiers allow 10,000 characters; legacy subscriptions retain 1,500.
     // Fail explicitly rather than silently losing CV details during the transition.
-    if (request.message.length > 1500) {
-      setErrorMessage('Votre dossier contient trop d’informations pour le système actuel (1 500 caractères). Réduisez les notes ou les listes de produits avant l’envoi ; l’envoi complet sera disponible après adaptation du service de réception.');
+    if (request.message.length > (creationMode ? 10000 : 1500)) {
+      setErrorMessage('Votre dossier dépasse la longueur autorisée. Réduisez les notes ou les listes de produits avant l’envoi.');
       submittingRef.current = false;
       setSubmitting(false);
       return;
