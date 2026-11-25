@@ -10,13 +10,16 @@ import {
   buildSuggestionRow,
 } from '../_shared/companyRegistrationRecord.ts';
 
-const MAX_BODY_BYTES = 30_000;
+const MAX_BODY_BYTES = 65_536;
 const DUPLICATE_WINDOW_MS = 5 * 60 * 1000;
 const SUBMISSION_BURST_WINDOW_MS = 10 * 60 * 1000;
 const MAX_SUBMISSIONS_PER_CONTACT = 3;
 const DEFAULT_ALLOWED_ORIGINS = [
   'https://dalil-tounes.com',
   'https://www.dalil-tounes.com',
+  'https://appli.dalil-tounes.com',
+  'https://app.dalil-tounes.com',
+  'https://dalil-tounes-pwa.vercel.app',
   'http://localhost:5173',
   'http://127.0.0.1:5173',
 ];
