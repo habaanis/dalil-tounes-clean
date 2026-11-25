@@ -733,6 +733,15 @@ export function SubscriptionRequestForm({
     requestedBillingPeriod: initialBillingPeriod ?? '',
     requestedPaymentSchedule: initialBillingPeriod === 'annual' ? 'one_payment' : '',
   }));
+  const [artisanModel, setArtisanModel] = useState(presentationModelLabel ?? '');
+  const [artisanPalette, setArtisanPalette] = useState(paletteLabel ?? '');
+  const [weeklyHours, setWeeklyHours] = useState(() => ['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'].map(day => ({ day, status: '', start: '09:00', end: '18:00', split: false, secondStart: '14:00', secondEnd: '18:00' })));
+  const updateHours = (index: number, patch: Partial<(typeof weeklyHours)[number]>) => {
+    const next = weeklyHours.map((day, i) => i === index ? { ...day, ...patch } : day);
+    setWeeklyHours(next);
+    setForm(current => ({ ...current, openingHours: next.filter(day => day.status).map(day => day.day + ' : ' + (day.status === 'closed' ? 'Fermé' : day.start + '–' + day.end + (day.split ? ' / ' + day.secondStart + '–' + day.secondEnd : ''))).join('\n') }));
+    setErrorMessage('');
+  };
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -778,6 +787,7 @@ export function SubscriptionRequestForm({
   };
 
   const validateStepOne = (): string | null => {
+    if (creationMode && !premiumCreation && (!artisanModel || !artisanPalette)) return isArabic ? 'اختر النموذج والألوان.' : 'Choisissez votre modèle et votre palette.';
     if (!cleanSingleLine(form.companyName)) return copy.requiredCompanyName;
     if (!cleanSingleLine(form.managerName)) return copy.requiredManagerName;
     if (!form.sector) return copy.requiredSector;
@@ -802,6 +812,7 @@ export function SubscriptionRequestForm({
       return copy.requiredPaymentSchedule;
     }
     if (creationMode) {
+      if (weeklyHours.some(day => day.status === 'open' && (!day.start || !day.end || day.start >= day.end || (day.split && (!day.secondStart || !day.secondEnd || day.end > day.secondStart || day.secondStart >= day.secondEnd))))) return 'Vérifiez les horaires : les créneaux doivent se suivre sans chevauchement.';
       const socialCount = [form.facebook, form.instagram, form.tiktok, form.youtube, form.linkedin, form.otherPlatformUrl].filter(link => link.trim()).length;
       if (!premiumCreation && socialCount > 2) return isArabic ? 'اختر شبكتين اجتماعيتين كحد أقصى.' : 'La formule Artisan comprend deux réseaux sociaux au maximum.';
       if (form.photoUrls.split(/\n/).filter(link => link.trim()).length > maxPhotos) return `Maximum ${maxPhotos} photos.`;
@@ -884,8 +895,8 @@ export function SubscriptionRequestForm({
       message: cleanMultiline([
         // Internal admin-only label — not user-visible, intentionally kept in French
         creationMode ? `OFFRE ACTUELLE — paiement unique — ${planKind === 'artisan' ? 'Formule Artisan 30 TND' : 'Formule Premium 59 TND'} — ne pas traiter comme un abonnement mensuel` : '',
-        presentationModelLabel ? `Modèle de présentation choisi : ${presentationModelLabel}` : '',
-        paletteLabel ? `Palette choisie : ${paletteLabel}` : '',
+        !premiumCreation && (creationMode ? artisanModel : presentationModelLabel) ? `Modèle de présentation choisi : ${creationMode ? artisanModel : presentationModelLabel}` : '',
+        !premiumCreation && (creationMode ? artisanPalette : paletteLabel) ? `Palette choisie : ${creationMode ? artisanPalette : paletteLabel}` : '',
         form.activityDescription ? `Description de l'activité : ${cleanMultiline(form.activityDescription)}` : '',
         ...(creationMode ? [
           `Parcours : ${form.assistance === 'assisted' ? 'Accompagnement demandé' : 'Autonome'}`,
@@ -896,7 +907,7 @@ export function SubscriptionRequestForm({
           `Lien avis Google : ${form.googleReviewsUrl}`,
           form.logoUrl ? `Lien logo : ${form.logoUrl}` : '',
           `Logo choisi : ${form.logoChoice === 'create' ? 'Création Dalil Tounes +20 TND — droits sur le logo final transférés après paiement et livraison' : form.logoChoice === 'existing' ? 'Logo fourni par le professionnel' : 'Aucun logo demandé'}`,
-          `Ouverture mini-appli : ${form.openingStyle === 'photo' ? 'A · Photo plein fond' : 'B · Présentation encadrée Prestige'}`,
+          premiumCreation ? 'Ouvertures mini-appli : A et B incluses ; aucun choix initial imposé.' : `Ouverture mini-appli : ${form.openingStyle === 'photo' ? 'A · Photo plein fond' : 'B · Présentation encadrée Prestige'}`,
           `Supplément création logo : ${form.logoChoice === 'create' ? '20 TND' : '0 TND'}`,
           `Montant total demandé : ${(selectedPlan === 'artisan' ? 30 : 59) + (form.logoChoice === 'create' ? 20 : 0)} TND`,
           `Photos : ${form.photoUrls}`,
@@ -1031,7 +1042,10 @@ export function SubscriptionRequestForm({
           <h3 id="subscription-activity-title" className="text-xl font-bold text-[#4A1D43]">{copy.activityTitle}</h3>
           {creationMode && <div className="space-y-3 rounded-xl border border-[#D4AF37]/50 bg-[#FFFDF7] p-3">
             <p className="font-semibold text-[#07543F]">{premiumCreation ? (isArabic ? "النموذجان والألوان الثلاثة وشاشتا الافتتاح مشمولة" : "✓ Business et Portfolio · 3 palettes · 2 ouvertures incluses") : (isArabic ? "نموذج واحد وألوان وشاشة افتتاحية" : "✓ 1 modèle · 1 palette · 1 ouverture")}</p>
-            {premiumCreation && <p className="text-xs">{isArabic ? "الاختيارات تحدد العرض الأول فقط." : "Vos choix déterminent uniquement l’affichage initial."}</p>}
+            {!premiumCreation && <div className="grid gap-2 sm:grid-cols-2">
+              <FieldLabel label="Modèle"><select value={artisanModel} onChange={event=>setArtisanModel(event.target.value)} className={inputClassName}><option value="">Choisir</option>{Array.from(new Set([artisanModel,'CV Business','CV Portfolio'].filter(Boolean))).map(model=><option key={model}>{model}</option>)}</select></FieldLabel>
+              <FieldLabel label="Palette"><select value={artisanPalette} onChange={event=>setArtisanPalette(event.target.value)} className={inputClassName}><option value="">Choisir</option>{Array.from(new Set([artisanPalette,'Vert Prestige','Ivoire & Or','Bleu Nuit & Champagne'].filter(Boolean))).map(palette=><option key={palette}>{palette}</option>)}</select></FieldLabel>
+            </div>}
             <fieldset className="grid gap-2"><legend className="mb-2 text-sm font-semibold">{isArabic ? "كيف تريد إعداد تطبيقك؟" : "Comment souhaitez-vous créer votre mini-appli ?"}</legend>
               <label className="flex items-center gap-2 text-sm"><input type="radio" name="assistance" value="self" checked={form.assistance === "self"} onChange={setField}/>{isArabic ? "أقوم بذلك بنفسي" : "Je le fais moi-même"}</label>
               <label className="flex items-center gap-2 text-sm"><input type="radio" name="assistance" value="assisted" checked={form.assistance === "assisted"} onChange={setField}/>{isArabic ? "أرغب في المساعدة" : "Je souhaite être accompagné"}</label>
@@ -1222,8 +1236,16 @@ export function SubscriptionRequestForm({
                 {!form.selectedPlatforms.includes('google_business') && <FieldLabel label="Lien Google Maps (facultatif)"><input name="googleMapsUrl" type="url" value={form.googleMapsUrl} onChange={setField} className={inputClassName} placeholder="https://maps.app.goo.gl/..." /></FieldLabel>}
               </div>
               <p className="text-xs text-slate-600">Pour le lien Google exact : ouvrez Google Maps, cherchez votre établissement, cliquez « Partager » puis « Copier le lien ». Collez le lien ci-dessus.</p>
-              <FieldLabel label="Horaires d’ouverture"><textarea name="openingHours" value={form.openingHours} onChange={setField} rows={3} className={inputClassName} placeholder="Lundi au vendredi : 9h–18h ; samedi : 9h–13h ; dimanche : fermé" /></FieldLabel>
-              <fieldset className="rounded-xl border border-[#D4AF37]/40 bg-[#FFFDF7] p-3">
+              <fieldset className="rounded-xl border border-[#D4AF37]/40 p-3">
+                <legend className="px-1 font-semibold">Horaires d’ouverture</legend>
+                <div className="grid gap-3">{weeklyHours.map((day,i)=><div key={day.day} className="border-b border-slate-100 pb-2">
+                  <div className="flex items-center justify-between gap-2"><span className="text-sm font-medium">{day.day}</span><select aria-label={day.day+' — état'} value={day.status} onChange={event=>updateHours(i,{status:event.target.value})} className="rounded-lg border border-slate-300 p-2 text-sm"><option value="">Non renseigné</option><option value="open">Ouvert</option><option value="closed">Fermé</option></select></div>
+                  {day.status==='open' && <div className="mt-2 grid gap-2"><div className="flex items-center gap-2"><input aria-label={day.day+' début'} type="time" value={day.start} onChange={event=>updateHours(i,{start:event.target.value})} className="min-w-0 flex-1 rounded-lg border p-2"/><span>à</span><input aria-label={day.day+' fin'} type="time" value={day.end} onChange={event=>updateHours(i,{end:event.target.value})} className="min-w-0 flex-1 rounded-lg border p-2"/></div>
+                  <label className="flex gap-2 text-sm"><input type="checkbox" checked={day.split} onChange={event=>updateHours(i,{split:event.target.checked})}/>Deuxième créneau</label>
+                  {day.split && <div className="flex items-center gap-2"><input aria-label={day.day+' reprise'} type="time" value={day.secondStart} onChange={event=>updateHours(i,{secondStart:event.target.value})} className="min-w-0 flex-1 rounded-lg border p-2"/><span>à</span><input aria-label={day.day+' deuxième fin'} type="time" value={day.secondEnd} onChange={event=>updateHours(i,{secondEnd:event.target.value})} className="min-w-0 flex-1 rounded-lg border p-2"/></div>}</div>}
+                </div>)}</div>
+              </fieldset>
+              {!premiumCreation && <fieldset className="rounded-xl border border-[#D4AF37]/40 bg-[#FFFDF7] p-3">
                 <legend className="px-1 font-semibold text-[#292725]">Ouverture de votre mini-appli</legend>
                 <p className="mb-2 text-xs text-slate-600">{premiumCreation ? 'Les deux ouvertures sont incluses : choisissez celle affichée au départ.' : 'Choisissez votre présentation d’ouverture.'}</p>
                 <div className="grid gap-2 sm:grid-cols-2">
@@ -1234,7 +1256,7 @@ export function SubscriptionRequestForm({
                     </label>
                   ))}
                 </div>
-              </fieldset>
+              </fieldset>}
               <details className="rounded-xl border border-slate-200 p-3">
                 <summary className="cursor-pointer font-semibold">Logo, photos, avis et catalogue</summary>
                 <div className="mt-3 space-y-3">
@@ -1380,9 +1402,9 @@ export function SubscriptionRequestForm({
             <p><strong>{isArabic ? 'العرض' : 'Formule'} :</strong> {selectedPlanLabel}</p>
             <p>{form.assistance === "assisted" ? "Accompagnement demandé" : "Création autonome"}</p>
             {premiumCreation && <p className="font-semibold text-[#07543F]">✓ Business + Portfolio · 3 palettes · 2 ouvertures incluses</p>}
-            {presentationModelLabel && <p><strong>{isArabic ? 'النموذج' : 'Modèle'} :</strong> {presentationModelLabel}</p>}
-            {paletteLabel && <p><strong>{isArabic ? 'الألوان' : 'Palette'} :</strong> {paletteLabel}</p>}
-            <p><strong>Ouverture :</strong> {form.openingStyle === 'photo' ? 'A · Photo plein fond' : 'B · Présentation Prestige'}</p>
+            {!premiumCreation && artisanModel && <p><strong>Modèle :</strong> {artisanModel}</p>}
+            {!premiumCreation && artisanPalette && <p><strong>Palette :</strong> {artisanPalette}</p>}
+            <p><strong>Ouverture :</strong> {premiumCreation ? 'A et B incluses' : form.openingStyle === 'photo' ? 'A · Photo plein fond' : 'B · Présentation Prestige'}</p>
             <p><strong>{isArabic ? 'السعر' : 'Prix de création'} :</strong> {selectedPlan === 'artisan' ? '30 TND' : '59 TND'}</p>
             <p><strong>Logo :</strong> {form.logoChoice === 'create' ? 'Création de logo Dalil Tounes (+20 TND)' : form.logoChoice === 'existing' ? 'Logo fourni' : 'Aucun logo demandé'}</p>
             <p><strong>Total :</strong> {(selectedPlan === 'artisan' ? 30 : 59) + (form.logoChoice === 'create' ? 20 : 0)} TND</p>
