@@ -173,7 +173,9 @@ export function validateRegistrationRequest(raw: RawRegistrationRequest): Valida
 
   const phone = normalizePhone(singleLine(raw.phone, 24));
   const email = normalizeEmail(singleLine(raw.email, 180));
-  const message = multiline(raw.message, mode === 'subscription' ? 1500 : 1200);
+  const maxMessageLength = mode === 'subscription' && raw.requestedBillingPeriod === 'one_time' ? 10000 : mode === 'subscription' ? 1500 : 1200;
+  const message = multiline(raw.message, maxMessageLength + 1);
+  if (message.length > maxMessageLength) return invalid(`Message trop long (maximum ${maxMessageLength} caractères).`, 'message');
 
   if (mode === 'legacy_suggestion') {
     const title = singleLine(raw.title, 140);
