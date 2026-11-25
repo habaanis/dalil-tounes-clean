@@ -1,5 +1,6 @@
 import { ChevronDown, CreditCard, Truck, Store, Monitor, FileText, Package, Download, ExternalLink, Home, Share2, UserRound } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
+import { useEffect, useState } from 'react';
 import type { BusinessCardPreviewLanguage } from './BusinessCardPreviewBase';
 import { getCvPaletteTheme, type CvPaletteId } from '../lib/cvPalette';
 import { isDedicatedClientHostname } from '../lib/clientAppUrl';
@@ -155,6 +156,29 @@ export function CvBusinessQrVisual({
   openHref, accountHref, model, onModelChange, onShare, onDownload, onInstall, qrId, interactive = false, palette, productLabel, showUsage = true,
 }: CvBusinessQrVisualProps) {
   const t = copy[language] ?? copy.fr;
+  const [embeddedLogo, setEmbeddedLogo] = useState<{source:string; data:string}|null>(null);
+  useEffect(() => {
+    if (!interactive || !logo) return;
+    let active = true;
+    const image = new Image();
+    image.crossOrigin = 'anonymous';
+    image.onload = () => {
+      if (!active || !image.naturalWidth || !image.naturalHeight) return;
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = canvas.height = 192;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        ctx.fillStyle = '#ffffff'; ctx.fillRect(0,0,192,192);
+        const scale = Math.min(164/image.naturalWidth,164/image.naturalHeight);
+        const w=image.naturalWidth*scale, h=image.naturalHeight*scale;
+        ctx.drawImage(image,(192-w)/2,(192-h)/2,w,h);
+        setEmbeddedLogo({source:logo,data:canvas.toDataURL('image/png')});
+      } catch { /* Keep the original scannable QR if the logo cannot be embedded. */ }
+    };
+    image.src = logo;
+    return () => { active=false; image.onload=null; };
+  }, [interactive,logo]);
   const theme = getCvPaletteTheme(palette);
   const isRtl = language === 'ar';
   const displayName = name || t.name;
@@ -206,7 +230,7 @@ export function CvBusinessQrVisual({
       )}
       <div className="mx-auto mt-[9px] w-[200px] rounded-[14px] p-[6px] shadow-[0_7px_18px_rgba(0,0,0,0.14)]" style={{ backgroundColor: theme.qrBackground }}>
         <div className="relative mx-auto h-[188px] w-[188px]">
-          <QRCodeSVG id={qrId} value={qrValue} size={188} level="H" includeMargin bgColor={theme.qrBackground} fgColor={theme.qrForeground} />
+          <QRCodeSVG id={qrId} value={qrValue} size={188} level="H" includeMargin bgColor={theme.qrBackground} fgColor={theme.qrForeground} imageSettings={interactive && embeddedLogo?.source === logo ? {src:embeddedLogo.data,width:32,height:32,excavate:true} : undefined} />
         </div>
       </div>
       <div className="mx-auto mt-[8px] grid w-full max-w-[252px] grid-cols-3">
