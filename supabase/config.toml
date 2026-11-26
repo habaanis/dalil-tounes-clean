@@ -30,3 +30,10 @@ verify_jwt = true
 
 [functions.sync-airtable]
 verify_jwt = true
+
+# Existing public submission and internally authenticated merchant inbox.
+[functions.dalil-boutique-customer-submit]
+verify_jwt = false
+
+[functions.dalil-boutique-merchant-orders]
+verify_jwt = false

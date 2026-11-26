@@ -16,3 +16,13 @@ export function cachedShowcaseRecord(identifier?: string | null): CachedRecord |
   if (Date.now() > entry.expires) { records.delete(normalize(identifier)); return null; }
   return entry.value;
 }
+
+export function invalidateShowcaseRecord(identifier: string) {
+  const target = normalize(identifier);
+  for (const [key, entry] of records) {
+    if (key === target || ['id', 'slug', 'slug_court', 'id_airtable'].some(field => {
+      const value = entry.value[field];
+      return typeof value === 'string' && normalize(value) === target;
+    })) records.delete(key);
+  }
+}
