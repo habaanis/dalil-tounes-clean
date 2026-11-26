@@ -5,7 +5,7 @@ import { SEOHead } from '../components/SEOHead';
 import StructuredData from '../components/StructuredData';
 import { getHomeSeoMeta } from '../lib/seoMetaTemplates';
 import { generateOrganizationSchema, generateWebSiteSchema } from '../lib/structuredDataSchemas';
-import { ArrowRight, Users, Compass, Building2, MapPin, Search, Sparkles } from 'lucide-react';
+import { ArrowRight, Users, Compass, Building2, BriefcaseBusiness, MapPin, Search, Sparkles } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CvBusinessJourney from '../components/CvBusinessJourney';
@@ -329,10 +329,10 @@ function SeparationExperience({ fixedView, embedded = false, selectedModel, onMo
                 <p className="text-base font-medium leading-relaxed md:text-base">{countsAvailable ? t.networkProof(localizedCount) : <span className="text-sm font-semibold opacity-70" role="status">{t.loadingCount}</span>}</p>
                 <p className="mt-1 text-sm font-medium text-[#9A7416] md:text-base">{countsAvailable ? t.certifiedProof(localizedCertifiedCount) : <span className="text-sm font-medium opacity-70" role="status">{t.certifiedLoading}</span>}</p>
               </div>
-              <nav className="premium-universes" aria-label={structure.platform}>
+              <nav className="premium-universes !grid !grid-cols-2 lg:!grid-cols-4" aria-label={structure.platform}>
                 {structure.universes.map((universe, index) => {
-                  const Icon = [Users, Compass, Building2][index];
-                  const href = ['/citizens', '/citizens/tourism', '/subscription'][index];
+                  const Icon = [Users, Compass, Building2, BriefcaseBusiness][index];
+                  const href = ['/citizens', '/citizens/tourism', '/subscription', '/jobs'][index];
                   return <a key={href} href={href} className="premium-universe">
                     <Icon className="premium-universe-icon" strokeWidth={1.4} aria-hidden="true" />
                     <span><span className="premium-universe-title">{universe.title}</span><span className="premium-universe-copy">{universe.text}</span></span>
