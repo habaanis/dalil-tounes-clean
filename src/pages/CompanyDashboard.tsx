@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Briefcase, Users, Building2, Settings, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import {supabase} from '../lib/supabaseClient';
+import { claimMyMiniapps } from '../lib/professionalAccountClaim';
 import JobPostForm from '../components/forms/JobPostForm';
 
 interface CompanyDashboardProps {
@@ -14,9 +15,14 @@ export default function CompanyDashboard({ onNavigate }: CompanyDashboardProps) 
   const [accounts,setAccounts]=useState<string[]>([]);
   const [accountError,setAccountError]=useState(false);
   useEffect(()=>{let current=true;setAccounts([]);setAccountError(false);
-    if(user?.id)void supabase.from('professional_profile_access').select('entreprise_id').eq('user_id',user.id).then(({data,error})=>{
-      if(current){setAccountError(Boolean(error));setAccounts((data||[]).map(row=>row.entreprise_id));}
-    });return ()=>{current=false};
+    if(user?.id)void (async()=>{
+      let claimError: unknown = null;
+      try { await claimMyMiniapps(supabase); } catch(error) { claimError = error; }
+      const {data,error}=await supabase.from('professional_profile_access').select('entreprise_id').eq('user_id',user.id);
+      // Preserve existing access if automatic association is temporarily unavailable.
+      if(current){setAccountError(Boolean(error || (claimError && !data?.length)));setAccounts(error?[]:(data||[]).map(row=>row.entreprise_id));}
+    })().catch(()=>{if(current){setAccountError(true);setAccounts([]);}});
+    return ()=>{current=false};
   },[user?.id]);
   const [showWelcome, setShowWelcome] = useState(false);
 
