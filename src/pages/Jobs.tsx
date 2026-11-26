@@ -53,6 +53,7 @@ export const Jobs = () => {
   const [requestMode, setRequestMode] = useState<JobRequestMode | null>(null);
   const [params] = useSearchParams();
   const selectedJob = params.get('job');
+  const selectedJobs = new Set((params.get('jobs') || '').split(',').filter(id=>/^[0-9a-f-]{36}$/i.test(id)).slice(0,20));
   const [keyword, setKeyword] = useState('');
   const [city, setCity] = useState('');
   const [page, setPage] = useState(1);
@@ -101,7 +102,7 @@ export const Jobs = () => {
   const cities = [...new Set(currentJobs.map(offer => offer.city))].sort();
   const terms = normalize(keyword.trim()).split(/\s+/).filter(Boolean);
   const verifiedJobs = currentJobs.filter(offer =>
-    (!selectedJob || offer.id === selectedJob) &&
+    (!selectedJob || offer.id === selectedJob) && (!selectedJobs.size || selectedJobs.has(offer.id)) &&
     (!city || offer.city === city) &&
     terms.every(term => normalize([offer.title, offer.company, offer.sector, offer.city, offer.governorate ?? '', offer.contract, offer.experience, ...offer.skills].join(' ')).includes(term))
   ).sort((a, b) => b.verifiedAt.localeCompare(a.verifiedAt) || a.id.localeCompare(b.id));
@@ -187,7 +188,7 @@ export const Jobs = () => {
               {cities.map(value => <option key={value} value={value}>{value}</option>)}
             </select>
           </div>
-          {selectedJob&&<Link to="/jobs" className="mb-3 inline-block text-sm underline">{searchCopy[3]}</Link>}
+          {(selectedJob||selectedJobs.size>0)&&<Link to="/jobs" className="mb-3 inline-block text-sm underline">{searchCopy[3]}</Link>}
           <JobAlerts initialKeyword={keyword} initialRegion={currentJobs.find(j=>j.city===city)?.governorate || ''} />
           <p ref={resultsTop} aria-live="polite" className="mb-3 scroll-mt-24 text-center text-sm font-medium text-gray-600">
             {loadState === 'ready' ? <>{verifiedJobs.length} {copy.offersFound}{verifiedJobs.length > 0 && <> · {start + 1}–{Math.min(start + PAGE_SIZE, verifiedJobs.length)} / {verifiedJobs.length}</>}</> : null}
