@@ -20,7 +20,7 @@ const copy:Record<string,[string,string,string]> = {
  it:['Dalil Tounes · Lavoro','Nuove offerte corrispondenti alla ricerca','Avviso lavoro: notifica di prova'],
  ru:['Dalil Tounes · Работа','Новые вакансии по вашему запросу','Оповещение о работе: тестовое уведомление']
 };
-const fields='id,keyword,governorate,contract,frequency,language,enabled';
+const fields='id,keyword,governorate,contract,frequency,language,enabled,criteria_since,last_dispatch_at,consent_at';
 Deno.serve(async req=>{
  const origin=req.headers.get('origin')||'';
  const headers={'Content-Type':'application/json','Cache-Control':'no-store','Vary':'Origin',...(allowedOrigin(origin)?{'Access-Control-Allow-Origin':origin}:{}),'Access-Control-Allow-Headers':'authorization,apikey,content-type,x-client-info','Access-Control-Allow-Methods':'POST, OPTIONS'};
@@ -33,11 +33,13 @@ Deno.serve(async req=>{
  try {
   const raw=await req.text();if(raw.length>12000)return json({error:'size'},413);
   const b=JSON.parse(raw);
+  if(!b||typeof b!=='object'||Array.isArray(b))return json({error:'invalid'},400);
   const cfg=await db.from('emploi_alert_config').select('enabled,dispatch_hash').eq('id',1).single();
   if(cfg.error)return json({error:'unavailable'},503);
   if(b.action==='dispatch'){
    if(!tokenValid(b.dispatchToken)||await hash(b.dispatchToken)!==cfg.data.dispatch_hash)return json({error:'forbidden'},403);
    await db.from('emploi_alert_rate_limits').delete().lt('expires_at',new Date().toISOString());
+   await db.from('emploi_alert_deliveries').update({status:'unknown'}).eq('status','reserved').lt('reserved_at',new Date(Date.now()-15*60_000).toISOString());
    if(!cfg.data.enabled)return json({ok:true,disabled:true,sent:0});
    const config=await db.from('dalil_push_config').select('vapid_public_key,vapid_private_key').eq('id',1).single();
    if(config.error)return json({error:'unavailable'},503);
@@ -52,9 +54,14 @@ Deno.serve(async req=>{
     if(current.error||active.error){await finish('failed');failed++;return;}
     if(!current.data?.enabled||current.data.criteria_since!==s.criteria_since||current.data.endpoint!==s.endpoint||current.data.auth!==s.auth||current.data.p256dh!==s.p256dh||!active.data?.length){await finish('failed');skipped++;return;}
     const jobs=active.data;const t=copy[s.language]||copy.fr;
-    const path=jobs.length===1?'/jobs?job='+encodeURIComponent(jobs[0].id):'/jobs?alert=1';
+    const path=jobs.length===1?'/jobs?job='+encodeURIComponent(jobs[0].id):'/jobs?jobs='+encodeURIComponent(jobs.map(j=>j.id).join(','));
     const payload=JSON.stringify({title:t[0],body:jobs.length===1?jobs[0].title+' · '+jobs[0].city:jobs.length+' · '+t[1],path,url:path,tag:'emploi-'+s.subscription_id+'-'+s.job_ids[0]});
-    try{await webpush.sendNotification({endpoint:s.endpoint,keys:{p256dh:s.p256dh,auth:s.auth}},payload,{TTL:3600,urgency:'normal',timeout:8000});await finish('sent');sent++;}
+    try{await webpush.sendNotification({endpoint:s.endpoint,keys:{p256dh:s.p256dh,auth:s.auth}},payload,{TTL:3600,urgency:'normal',timeout:8000});const actualIds=jobs.map(j=>j.id);
+      const written=await db.from('emploi_alert_deliveries').update({status:'sent',sent_at:new Date().toISOString()}).eq('subscription_id',s.subscription_id).in('job_id',actualIds);
+      if(written.error)console.error('emploi delivery status failed',written.error.code);
+      const excluded=s.job_ids.filter((id:string)=>!actualIds.includes(id));
+      if(excluded.length)await db.from('emploi_alert_deliveries').update({status:'failed'}).eq('subscription_id',s.subscription_id).in('job_id',excluded);
+      sent++;}
     catch(e){const status=Number((e as {statusCode?:number})?.statusCode||0);if(status===404||status===410){await db.from('emploi_alert_subscriptions').delete().eq('id',s.subscription_id);}else await finish(status>=400&&status<500?'failed':'unknown');failed++;}
    }));
    return json({ok:true,sent,failed,skipped});
@@ -68,7 +75,7 @@ Deno.serve(async req=>{
    const admin=await db.from('admins').select('id').eq('id',u.data.user.id).maybeSingle();
    return !admin.error&&!!admin.data;
   };
-  const available=cfg.data.enabled || await pilot();
+  const available=(cfg.data.enabled && origins.has(origin)) || await pilot();
   if(b.action==='config'){
    if(!available)return json({enabled:false});
    const r=await db.from('dalil_push_config').select('vapid_public_key').eq('id',1).single();
@@ -98,14 +105,16 @@ Deno.serve(async req=>{
    const sub=b.subscription;
    if(b.consent!==true||keyword.length>120||governorate.length>80||!['','CDI','CDD','SIVP','Stage','Saisonnier','Temps partiel'].includes(contract)||(!keyword&&!governorate&&!contract)||!['instant','daily','weekly'].includes(b.frequency)||!Object.hasOwn(copy,b.language)||!endpointValid(sub?.endpoint)||!keyValid(sub?.keys?.p256dh,65)||!keyValid(sub?.keys?.auth,16))return json({error:'invalid'},400);
    const now=new Date().toISOString();
-   const row={management_token_hash:digest,endpoint:sub.endpoint,p256dh:sub.keys.p256dh,auth:sub.keys.auth,keyword,governorate,contract,frequency:b.frequency,language:b.language,enabled:true,consent_at:now,criteria_since:now,last_dispatch_at:null};
+   const prior=existing.data;
+   const unchanged=prior?.enabled && prior.keyword===keyword && prior.governorate===governorate && prior.contract===contract && prior.frequency===b.frequency;
+   const row={management_token_hash:digest,endpoint:sub.endpoint,p256dh:sub.keys.p256dh,auth:sub.keys.auth,keyword,governorate,contract,frequency:b.frequency,language:b.language,enabled:true,consent_at:prior?.consent_at||now,criteria_since:unchanged?prior.criteria_since:now,last_dispatch_at:unchanged?prior.last_dispatch_at:null};
    const r=await db.from('emploi_alert_subscriptions').upsert(row,{onConflict:'management_token_hash'}).select(fields).single();
    return r.error?json({error:r.error.code==='23505'?'existing':'unavailable'},r.error.code==='23505'?409:503):json({alert:r.data});
   }
   if(b.action==='test'){
    if(!existing.data?.enabled)return json({error:'inactive'},409);
-   const limit=await db.rpc('emploi_alert_rate_limit',{p_fingerprint:await hash('test:'+digest+':'+new Date().toISOString().slice(0,13))});
-   if(limit.error||limit.data!==true)return json({error:'rate'},429);
+   const limit=await db.from('emploi_alert_rate_limits').insert({fingerprint:await hash('test:'+digest+':'+new Date().toISOString().slice(0,16)),expires_at:new Date(Date.now()+2*60*60_000).toISOString()});
+   if(limit.error)return json({error:'rate'},429);
    const sub=await db.from('emploi_alert_subscriptions').select('endpoint,p256dh,auth,language').eq('management_token_hash',digest).eq('enabled',true).single();
    const config=await db.from('dalil_push_config').select('vapid_public_key,vapid_private_key').eq('id',1).single();
    if(sub.error||config.error)return json({error:'unavailable'},503);
