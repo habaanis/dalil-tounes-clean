@@ -1366,14 +1366,15 @@ export const Subscription = () => {
   const [selectedPresentationModel, setSelectedPresentationModel] = useState<PresentationModel | null>(null);
   const [selectedPalette, setSelectedPalette] = useState<PaletteId>('prestige');
   const [showSecondaryDetails, setShowSecondaryDetails] = useState(false);
+  const [miniAppOpen, setMiniAppOpen] = useState(true);
 
   useEffect(() => {
     const openTargetSection = () => {
       const params = new URLSearchParams(window.location.search);
-      const target = window.location.hash.slice(1) || (params.get('app-offers') === '1' ? 'offres' : params.get('app-models') === '1' ? 'modeles' : '');
-      if (!target) return;
-      const detail = document.getElementById(target === 'cv-professionnels' ? 'mini-appli-details' : target);
-      if (detail instanceof HTMLDetailsElement) detail.open = true;
+      const requested = window.location.hash.slice(1) || (params.get('app-offers') === '1' ? 'offres' : params.get('app-models') === '1' ? 'modeles' : '');
+      if (!requested) return;
+      const target = requested === 'modeles' || requested === 'personnalisation' ? 'cv-professionnels' : requested;
+      if (target === 'cv-professionnels') setMiniAppOpen(true);
       window.requestAnimationFrame(() => document.getElementById(target)?.scrollIntoView({ block: 'start' }));
     };
     openTargetSection();
@@ -1420,32 +1421,17 @@ export const Subscription = () => {
         </header>
 
         <nav className="mb-5 flex flex-wrap justify-center gap-3 text-sm font-medium text-[#292725]" aria-label={structure.professional}>
-          <a href="#presence-essentielle">{structure.essential}</a><a href="#cv-professionnels">{structure.products}</a><a href="#modeles">{structure.models}</a><a href="#offres">{structure.offers}</a>
+          <a href="#presence-essentielle">{structure.essential}</a><a href="#cv-professionnels" onClick={() => setMiniAppOpen(true)}>{structure.products}</a><a href="#offres">{structure.offers}</a>
         </nav>
         <EssentialPresence registration />
         <p className="mt-3 text-sm font-semibold text-emerald-800">{copy.essentialFree}</p>
         <button type="button" onClick={() => setActivePreview('free')} className="mt-3 min-h-11 rounded-xl border border-[#D4AF37] px-4 py-2 text-sm font-medium text-[#292725]">{copy.previewCard}</button>
-        <section id="cv-professionnels" className="my-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-5">
-          <h2 className="font-serif text-xl font-medium text-[#292725]">CV Business · CV Portfolio</h2>
-          <p className="my-3 text-sm leading-6 text-slate-600">{structure.cvIntro}</p>
-          <details id="mini-appli-details" className="rounded-lg border border-[#D4AF37]/40 p-2"><summary className="cursor-pointer py-2 font-medium text-[#292725]">{structure.details}</summary><CvBusinessHome embedded /></details>
+        <section id="cv-professionnels" className="my-4 scroll-mt-32 rounded-xl border border-[#D4AF37]/50 bg-white p-3">
+          <button type="button" aria-expanded={miniAppOpen} aria-controls="mini-appli-details" onClick={() => setMiniAppOpen(value => !value)} className="flex w-full min-h-12 items-center justify-between gap-3 text-start font-medium text-[#292725]">
+            {structure.homeCvAction}<span aria-hidden="true">{miniAppOpen ? '−' : '+'}</span>
+          </button>
+          {miniAppOpen && <div id="mini-appli-details"><CvBusinessHome embedded selectedModel={selectedPresentationModel} onModelSelect={setSelectedPresentationModel} /></div>}
         </section>
-<details id="modeles" className="mb-5 scroll-mt-32 rounded-2xl border border-[#D4AF37]/50 bg-white p-4">
-  <summary className="cursor-pointer font-medium text-[#292725]">{structure.models}</summary>
-<CvPresentationModelSelector
-  language={language}
-  formulaValue={selectedFormula}
-  onFormulaChange={setSelectedFormula}
-  artisanLabel={`${simplifiedOfferCopy[language as OfferLanguage].artisanTitle} — ${(offerCopy[language as OfferLanguage] ?? offerCopy.fr).artisanPrice}`}
-  premiumLabel={`${simplifiedOfferCopy[language as OfferLanguage].premiumTitle} — ${(offerCopy[language as OfferLanguage] ?? offerCopy.fr).premiumPrice}`}
-  value={selectedPresentationModel}
-  onChange={setSelectedPresentationModel}
-  selectedFormulaLabel={selectedFormulaLabel}
-  onContinue={continueWithModel}
-  paletteValue={selectedPalette}
-  onPaletteChange={setSelectedPalette}
-/>
-</details>
 
         <section id="offres" aria-labelledby="cv-business-products-title" className="order-2 mt-5 sm:mt-0">
 <div className="mb-6 text-center">
