@@ -67,8 +67,22 @@ const isReviewsLabel = (label: string): boolean => {
   );
 };
 
-export default function BusinessShowcaseLienoraEnhanced() {
-  const { id, slug } = useParams<{ id?: string; slug?: string }>();
+export default function BusinessShowcaseLienoraEnhanced({
+  embeddedPreview = false,
+  previewSlug,
+  previewVilleSlug,
+  previewPalette,
+  previewPresentationModel,
+}: {
+  embeddedPreview?: boolean;
+  previewSlug?: string;
+  previewVilleSlug?: string;
+  previewPalette?: 'prestige' | 'ivory' | 'night';
+  previewPresentationModel?: 'business' | 'portfolio';
+} = {}) {
+  const route = useParams<{ id?: string; slug?: string }>();
+  const { id } = route;
+  const slug = embeddedPreview ? previewSlug : route.slug;
   const { language } = useLanguage();
   const text = getPublicComponentTranslations(language);
   const [business, setBusiness] = useState<BusinessRecord | null>(null);
@@ -197,7 +211,7 @@ export default function BusinessShowcaseLienoraEnhanced() {
 
   const rawProducts = business?.['boutique_products'];
   const products: BoutiqueProduct[] = Array.isArray(rawProducts) ? rawProducts.filter((item): item is BoutiqueProduct => Boolean(item && typeof item === 'object' && typeof item.id === 'string' && typeof item.title === 'string' && typeof item.imageUrl === 'string' && (item.mode === 'order' || item.mode === 'quote') && item.currency === 'TND')) : [];
-  const boutiqueDemo = new URLSearchParams(window.location.search).get('boutique-demo') === '1'
+  const boutiqueDemo = (embeddedPreview || new URLSearchParams(window.location.search).get('boutique-demo') === '1')
     && (String(business?.nom || '').trim().toLowerCase() === "aux saveurs d'anis")
     && String(business?.ville || '').toLowerCase() === 'sousse';
   const images = (String(business?.['image_url'] || '').match(/https:\/\/[^\s,]+/g) || []).map(url => url.trim());
@@ -220,5 +234,12 @@ export default function BusinessShowcaseLienoraEnhanced() {
         demoMode: boutiqueDemo,
       }} />
     : undefined;
-  return <BusinessShowcaseLienoraDetail boutiqueContent={boutiqueContent} />;
+  return <BusinessShowcaseLienoraDetail
+    embeddedPreview={embeddedPreview}
+    previewSlug={previewSlug}
+    previewVilleSlug={previewVilleSlug}
+    previewPalette={previewPalette}
+    previewPresentationModel={previewPresentationModel}
+    boutiqueContent={boutiqueContent}
+  />;
 }

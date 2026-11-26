@@ -1803,7 +1803,7 @@ export default function BusinessShowcaseLienoraDetail({
               <div
                 className="dt-primary-actions"
                 style={{
-                  gridTemplateColumns: `repeat(${Math.min(displayedPrimaryActions.length + (embeddedPreview ? 1 : 0), 4)}, minmax(0, 1fr))`,
+                  gridTemplateColumns: `repeat(${Math.min(displayedPrimaryActions.length, 4)}, minmax(0, 1fr))`,
                 }}
               >
                 {displayedPrimaryActions.map(action => {
@@ -1821,15 +1821,9 @@ export default function BusinessShowcaseLienoraDetail({
                     </a>
                   );
                 })}
-                {embeddedPreview && (
-                  <button type="button" className="dt-primary-action" onClick={downloadContact}>
-                    <Contact aria-hidden="true" />
-                    <span>{text.addContact}</span>
-                  </button>
-                )}
               </div>
             )}
-            {!embeddedPreview && (
+            {(
               <>
                 <button
                   type="button"
