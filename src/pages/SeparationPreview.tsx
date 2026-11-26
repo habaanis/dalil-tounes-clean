@@ -267,6 +267,36 @@ function SeparationExperience({ fixedView, embedded = false, selectedModel, onMo
   // The actual public landing page is PlatformHome (not the legacy Home.tsx).
   // Read the authoritative aggregate directly; never display the old 2 351 total
   // from a stale client cache while the current RPC is still loading.
+  const [activeJobs, setActiveJobs] = useState<number | null>(null);
+  useEffect(() => {
+    if (view !== 'platform') return;
+    let cancelled = false;
+    let busy = false;
+    const refreshJobs = async () => {
+      if (busy || cancelled) return;
+      busy = true;
+      try {
+        const { supabase } = await import('../lib/supabaseClient');
+        const parts = new Intl.DateTimeFormat('en-CA', { timeZone: 'Africa/Tunis', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date());
+        const today = ['year', 'month', 'day'].map(key => parts.find(p => p.type === key)?.value).join('-');
+        const { count, error } = await supabase.from('verified_job_offers').select('id', { count: 'exact', head: true }).eq('status', 'published').lte('verified_at', today).gte('review_until', today);
+        if (!cancelled) setActiveJobs(error ? null : count);
+      } catch {
+        if (!cancelled) setActiveJobs(null);
+      } finally { busy = false; }
+    };
+    void refreshJobs();
+    const timer = window.setInterval(refreshJobs, 300000);
+    window.addEventListener('focus', refreshJobs);
+    return () => { cancelled = true; window.clearInterval(timer); window.removeEventListener('focus', refreshJobs); };
+  }, [view]);
+  const jobsCountLabel = activeJobs === null ? null : {
+    fr: activeJobs === 1 ? '1 offre active' : activeJobs.toLocaleString('fr-FR') + ' offres actives',
+    ar: activeJobs.toLocaleString('ar-TN') + ' عروض عمل نشطة',
+    en: activeJobs.toLocaleString('en-GB') + (activeJobs === 1 ? ' active job' : ' active jobs'),
+    it: activeJobs.toLocaleString('it-IT') + (activeJobs === 1 ? ' offerta attiva' : ' offerte attive'),
+    ru: 'Активных вакансий: ' + activeJobs.toLocaleString('ru-RU'),
+  }[lang];
   const [verifiedTotal, setVerifiedTotal] = useState<number | null>(null);
   useEffect(() => {
     if (view !== 'platform') return;
@@ -335,7 +365,7 @@ function SeparationExperience({ fixedView, embedded = false, selectedModel, onMo
                   const href = ['/citizens', '/citizens/tourism', '/subscription', '/jobs'][index];
                   return <a key={href} href={href} className="premium-universe">
                     <Icon className="premium-universe-icon" strokeWidth={1.4} aria-hidden="true" />
-                    <span><span className="premium-universe-title">{universe.title}</span><span className="premium-universe-copy">{universe.text}</span></span>
+                    <span><span className="premium-universe-title">{universe.title}</span><span className="premium-universe-copy">{index === 3 && jobsCountLabel !== null ? jobsCountLabel : universe.text}</span></span>
                     <ArrowRight className="premium-universe-arrow" aria-hidden="true" />
                   </a>;
                 })}
