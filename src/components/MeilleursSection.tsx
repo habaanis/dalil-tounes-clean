@@ -28,7 +28,7 @@ interface MeilleursItem {
   statut_carte?: string | null;
   cv_business_status?: string | null;
   cv_business_published_at?: string | null;
-  categorie?: string | null;
+  categorie?: string | string[] | null;
 }
 
 interface BlogArticleLink {
@@ -47,6 +47,9 @@ interface MeilleursProps {
   useGoogleRecommendationCriteria?: boolean;
   includeRecommendedInTotal?: boolean;
   excludedKeywords?: readonly string[];
+  allowedCategories?: readonly string[];
+  requiredSubcategoryKeywords?: readonly string[];
+  publicDirectory?: boolean;
   allReferencedLabel?: string;
   searchOtherLabel?: string;
   showSearchCta?: boolean;
@@ -252,6 +255,9 @@ export default function MeilleursSection({
   useGoogleRecommendationCriteria = false,
   includeRecommendedInTotal = true,
   excludedKeywords = EMPTY_EXCLUDED_KEYWORDS,
+  allowedCategories = EMPTY_EXCLUDED_KEYWORDS,
+  requiredSubcategoryKeywords = EMPTY_EXCLUDED_KEYWORDS,
+  publicDirectory = false,
   allReferencedLabel,
   searchOtherLabel,
   showSearchCta = true,
@@ -318,9 +324,17 @@ export default function MeilleursSection({
         const normalizedExcludedKeywords = excludedKeywords.map((keyword) => (
           keyword.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim()
         ));
+        const normalizeCategory = (value: string) => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+        const allowed = allowedCategories.map(normalizeCategory);
+        const typedItems = mappedItems.filter(item => {
+          const categories = (Array.isArray(item.categorie) ? item.categorie : [item.categorie]).filter((v): v is string => typeof v === 'string');
+          const subs = (Array.isArray(item.sous_categories) ? item.sous_categories : [item.sous_categories]).filter((v): v is string => typeof v === 'string');
+          return (!allowed.length || categories.some(v => allowed.includes(normalizeCategory(v))))
+            && (!requiredSubcategoryKeywords.length || subs.some(v => requiredSubcategoryKeywords.some(k => normalizeCategory(v).includes(normalizeCategory(k)))));
+        });
         const all = normalizedExcludedKeywords.length === 0
-          ? mappedItems
-          : mappedItems.filter((item) => {
+          ? typedItems
+          : typedItems.filter((item) => {
               const searchableText = [
                 item.nom,
                 item.categorie,
@@ -335,7 +349,7 @@ export default function MeilleursSection({
               return !normalizedExcludedKeywords.some((keyword) => searchableText.includes(keyword));
             });
 
-        all.sort(sortBusinesses);
+        all.sort(publicDirectory ? (a, b) => (a.gouvernorat || '').localeCompare(b.gouvernorat || '', 'fr') || a.nom.localeCompare(b.nom, 'fr') : sortBusinesses);
 
         const recommended = useGoogleRecommendationCriteria
           ? all.filter((item) => (
@@ -343,7 +357,7 @@ export default function MeilleursSection({
               && parseCount(item['Compteur Avis Google']) >= 5
             ))
           : all;
-        const top = recommended.slice(0, TOP_COUNT);
+        const top = publicDirectory ? [] : recommended.slice(0, TOP_COUNT);
         const topIds = new Set(top.map((item) => item.id));
         const rest = all.filter((item) => !topIds.has(item.id));
 
@@ -360,7 +374,7 @@ export default function MeilleursSection({
 
     fetchData();
     setPage(0);
-  }, [excludedKeywords, listePage, useGoogleRecommendationCriteria]);
+  }, [excludedKeywords, allowedCategories, requiredSubcategoryKeywords, publicDirectory, listePage, useGoogleRecommendationCriteria]);
 
   const totalPages = Math.ceil(allItems.length / PAGE_SIZE);
   const pagedItems = allItems.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
@@ -386,7 +400,7 @@ export default function MeilleursSection({
   return (
     <div className="space-y-12">
       {/* === Section 1 : Meilleurs === */}
-      <section className="max-w-7xl mx-auto px-4">
+      <section className={`${publicDirectory ? 'hidden' : ''} max-w-7xl mx-auto px-4`}>
         <div className="flex items-center gap-3 mb-8">
           <div className="w-9 h-9 rounded-xl bg-[#D4AF37]/15 flex items-center justify-center">
             <Trophy className="w-5 h-5 text-[#D4AF37]" />
@@ -452,7 +466,7 @@ export default function MeilleursSection({
       </section>
 
       {/* === Section 2 : Tous les établissements === */}
-      {(loadingAll || allItems.length > 0) && (
+      {(loadingAll || allItems.length > 0 || publicDirectory) && (
         <section className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
@@ -516,7 +530,7 @@ export default function MeilleursSection({
               {/* Pagination */}
               {totalPages > 1 && (
                 <div className="flex flex-wrap items-center justify-center gap-2 mt-6 pt-4 border-t border-gray-100">
-                  {useGoogleRecommendationCriteria && (
+                  {(useGoogleRecommendationCriteria || publicDirectory) && (
                     <button
                       type="button"
                       onClick={() => setPage((current) => Math.max(0, current - 1))}
@@ -526,7 +540,7 @@ export default function MeilleursSection({
                       {tx('pagPrev', 'Précédent')}
                     </button>
                   )}
-                  {(useGoogleRecommendationCriteria ? paginationItems : Array.from({ length: totalPages }, (_, index) => index)).map((item) => typeof item === 'number' ? (
+                  {((useGoogleRecommendationCriteria || publicDirectory) ? paginationItems : Array.from({ length: totalPages }, (_, index) => index)).map((item) => typeof item === 'number' ? (
                     <button
                       key={item}
                       type="button"
@@ -543,7 +557,7 @@ export default function MeilleursSection({
                   ) : (
                     <span key={item} className="px-0.5 text-gray-400" aria-hidden="true">…</span>
                   ))}
-                  {useGoogleRecommendationCriteria && (
+                  {(useGoogleRecommendationCriteria || publicDirectory) && (
                     <button
                       type="button"
                       onClick={() => setPage((current) => Math.min(totalPages - 1, current + 1))}
@@ -604,7 +618,7 @@ export default function MeilleursSection({
         </div>
       </section>}
 
-      <div className="max-w-5xl mx-auto px-4 pb-6">
+      {!publicDirectory && <div className="max-w-5xl mx-auto px-4 pb-6">
         <p className="text-center text-[11px] text-gray-400 leading-relaxed">
           {useGoogleRecommendationCriteria
             ? tx('rankingDisclosure', 'Les recommandations exigent au moins 4/5 et 5 avis Google. Les CV publiés sont prioritaires ; Dalil Tounes n’attribue aucune note.')
@@ -613,7 +627,7 @@ export default function MeilleursSection({
             {useGoogleRecommendationCriteria ? tx('learnMore', 'En savoir plus') : 'En savoir plus'}
           </Link>
         </p>
-      </div>
+      </div>}
     </div>
   );
 }
