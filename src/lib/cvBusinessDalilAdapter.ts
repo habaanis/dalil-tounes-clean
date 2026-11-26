@@ -1,6 +1,7 @@
 import { isCertifiedBusiness, CERTIFIED_LABEL } from './businessCertification';
 import { getMultilingualField } from './databaseI18n';
 import type { Language } from './i18n';
+import { parseImageUrls } from './imagekitUtils';
 
 export type CvBusinessStyle = 'business' | 'portfolio';
 export type CvBusinessBrand = 'dalil_tounes';
@@ -276,13 +277,13 @@ export function adaptDalilBusiness(
   const services = translatedServices.length ? translatedServices : fallbackServices;
 
   const photos = uniqueNonEmpty(
-    splitList(record.image_url)
+    parseImageUrls(record.image_url)
       .map(cleanMediaUrl)
       .filter(Boolean),
   );
   const savedCover = cleanMediaUrl(record.image_couverture);
   const cover = savedCover || photos[0] || '';
-  const gallery = photos.filter(photo => photo !== cover);
+  const gallery = photos;
 
   const ratingValue = numericValue(record['Note Google Globale']);
   const countValue = numericValue(record['Compteur Avis Google']);
