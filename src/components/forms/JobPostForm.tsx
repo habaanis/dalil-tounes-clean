@@ -1,7 +1,6 @@
-import { useState, type FormEvent } from 'react';
+import { useRef, useState, type FormEvent } from 'react';
 import { CheckCircle } from 'lucide-react';
-import { supabase } from '../../lib/supabaseClient';
-import { notifyAdmin } from '../../lib/notifyAdmin';
+import { submitEmploymentRequest } from '../../lib/employmentIntake';
 import { useLanguage } from '../../context/LanguageContext';
 import { useFormTranslation } from '../../hooks/useFormTranslation';
 import { getJobsPageTranslations, type JobRequestMode } from '../../lib/jobsPageTranslations';
@@ -10,6 +9,7 @@ interface JobPostFormProps {
   userId?: string;
   mode?: JobRequestMode;
   initialTitle?: string;
+  candidateId?: string;
   onSuccess?: () => void;
 }
 
@@ -23,14 +23,16 @@ interface RequestData {
 const EMPTY_FORM: RequestData = { title: '', phone: '', email: '', message: '' };
 
 export default function JobPostForm({
-  userId = 'public-jobs-page',
   mode = 'employer',
   initialTitle = '',
+  candidateId,
   onSuccess,
 }: JobPostFormProps) {
   const { language } = useLanguage();
   const copy = getJobsPageTranslations(language);
   const { submission_lang } = useFormTranslation();
+  const requestId = useRef(crypto.randomUUID());
+  const submitting = useRef(false);
   const [saving, setSaving] = useState(false);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [formData, setFormData] = useState<RequestData>(() => ({ ...EMPTY_FORM, title: initialTitle }));
@@ -39,6 +41,7 @@ export default function JobPostForm({
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (submitting.current) return;
     setSaving(true);
     setFeedback(null);
 
@@ -47,7 +50,7 @@ export default function JobPostForm({
     const email = formData.email.trim();
     const message = formData.message.trim();
 
-    if (!title) {
+    if (title.length < 2) {
       setFeedback({ type: 'error', text: copy.form.requiredTitle });
       setSaving(false);
       return;
@@ -65,45 +68,21 @@ export default function JobPostForm({
       return;
     }
 
-    const requestType = isCandidateContact
-      ? 'Demande mise en relation candidat'
-      : isEmployer
-        ? 'Demande publication offre emploi'
-        : 'Candidature emploi';
-    const contact = [phone, email].filter(Boolean).join(' - ');
-
+    submitting.current = true;
     try {
-      const { error } = await supabase.from('suggestions_entreprises').insert([{
-        nom_entreprise: isCandidateContact
-          ? `Mise en relation : ${title}`
-          : isEmployer
-            ? title
-            : `Candidature : ${title}`,
-        secteur: requestType,
-        ville: null,
-        contact_suggere: contact,
-        raison_suggestion: [requestType, message || 'Aucune présentation complémentaire.'].join('\n\n'),
-        submission_lang,
-      }]);
-
-      if (error) throw error;
-
-      notifyAdmin(
-        isCandidateContact
-          ? 'Nouvelle demande de mise en relation candidat'
-          : isEmployer
-            ? 'Nouvelle demande de publication emploi'
-            : 'Nouvelle candidature emploi',
-        {
-          Poste: title,
-          Telephone: phone || 'Non renseigné',
-          Email: email || 'Non renseigné',
-          Presentation: message || 'Non renseignée',
-          Langue: language,
-          UserId: userId,
-        },
-        '/admin/sourcing',
-      );
+      const requestMessage = isCandidateContact && candidateId
+        ? 'Référence candidat : ' + candidateId + '\n\n' + message
+        : message;
+      await submitEmploymentRequest({
+        requestId: requestId.current,
+        mode,
+        title,
+        phone,
+        email,
+        message: requestMessage,
+        language: submission_lang,
+      });
+      requestId.current = crypto.randomUUID();
 
       setFeedback({
         type: 'success',
@@ -120,12 +99,13 @@ export default function JobPostForm({
       console.error('[JobPostForm] submission error:', error);
       setFeedback({ type: 'error', text: copy.form.genericError });
     } finally {
+      submitting.current = false;
       setSaving(false);
     }
   };
 
   return (
-    <form data-public-form="true" onSubmit={handleSubmit} className="space-y-5">
+    <form data-public-form="true" onSubmit={handleSubmit} className="space-y-4">
       <div className="rounded-lg border border-[#D4AF37] bg-[#FCF8F0] p-4">
         <p className="text-sm leading-relaxed text-[#493B38]">
           {isEmployer || isCandidateContact ? copy.form.employerIntro : copy.form.candidateIntro}
@@ -152,6 +132,7 @@ export default function JobPostForm({
         <input
           id={`job-request-title-${mode}`}
           type="text"
+          maxLength={180}
           required
           value={formData.title}
           onChange={(event) => setFormData(previous => ({ ...previous, title: event.target.value }))}
@@ -166,6 +147,7 @@ export default function JobPostForm({
           <input
             id={`job-request-phone-${mode}`}
             type="tel"
+            maxLength={48}
             value={formData.phone}
             onChange={(event) => setFormData(previous => ({ ...previous, phone: event.target.value }))}
             className="w-full rounded-lg border border-[#D4AF37] bg-white px-4 py-3 text-[#3B3330] placeholder:text-[#777777] focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/30"
@@ -177,6 +159,7 @@ export default function JobPostForm({
           <input
             id={`job-request-email-${mode}`}
             type="email"
+            maxLength={254}
             value={formData.email}
             onChange={(event) => setFormData(previous => ({ ...previous, email: event.target.value }))}
             className="w-full rounded-lg border border-[#D4AF37] bg-white px-4 py-3 text-[#3B3330] placeholder:text-[#777777] focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/30"
@@ -190,6 +173,7 @@ export default function JobPostForm({
         <textarea
           id={`job-request-message-${mode}`}
           rows={5}
+          maxLength={5300}
           value={formData.message}
           onChange={(event) => setFormData(previous => ({ ...previous, message: event.target.value }))}
           className="w-full rounded-lg border border-[#D4AF37] bg-white px-4 py-3 text-[#3B3330] placeholder:text-[#777777] focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/30"
