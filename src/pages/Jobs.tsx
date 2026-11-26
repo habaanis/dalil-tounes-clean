@@ -20,11 +20,28 @@ const JOB_LOCALES = {
   ru: 'ru-RU',
 } as const;
 
+const SEARCH_COPY = {
+  fr: ['Métier ou mot-clé', 'Toutes les villes', 'Aucun résultat pour ces critères', 'Réinitialiser'],
+  ar: ['المهنة أو كلمة البحث', 'جميع المدن', 'لا توجد نتائج مطابقة', 'إعادة ضبط'],
+  en: ['Job or keyword', 'All cities', 'No matching results', 'Reset'],
+  it: ['Professione o parola chiave', 'Tutte le città', 'Nessun risultato', 'Azzera'],
+  ru: ['Профессия или ключевое слово', 'Все города', 'Нет результатов', 'Сбросить'],
+} as const;
+const normalize = (value: string) => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+
 export const Jobs = () => {
   const { language } = useLanguage();
   const copy = getJobsPageTranslations(language);
   const [requestMode, setRequestMode] = useState<JobRequestMode | null>(null);
-  const verifiedJobs = getCurrentVerifiedJobs();
+  const [keyword, setKeyword] = useState('');
+  const [city, setCity] = useState('');
+  const searchCopy = SEARCH_COPY[language];
+  const currentJobs = getCurrentVerifiedJobs();
+  const cities = [...new Set(currentJobs.map(offer => offer.city))].sort();
+  const verifiedJobs = currentJobs.filter(offer =>
+    (!city || offer.city === city) &&
+    normalize([offer.title, offer.company, offer.sector, ...offer.skills].join(' ')).includes(normalize(keyword.trim()))
+  ).sort((a, b) => b.verifiedAt.localeCompare(a.verifiedAt));
 
   useEffect(() => {
     if (!requestMode) return undefined;
@@ -85,7 +102,56 @@ export const Jobs = () => {
         </motion.div>
       </section>
 
-      <section className="px-4 py-12" aria-label={copy.heroSubtitle}>
+      <section className="px-4 pb-16 pt-4">
+        <div className="mx-auto max-w-5xl">
+          <p className="mb-3 text-center text-xs font-medium uppercase tracking-[0.2em] text-[#9A7418]">
+            {copy.offersEyebrow}
+          </p>
+          <h2 className="public-heading mb-3 text-center font-serif text-3xl text-[#292725]">{copy.offersTitle}</h2>
+          <div className="mb-4 grid gap-2 sm:grid-cols-2">
+            <input type="search" aria-label={searchCopy[0]} placeholder={searchCopy[0]} value={keyword} onChange={event => setKeyword(event.target.value)} className="rounded-lg border border-[#D4AF37] bg-white px-4 py-3 text-[#292725]" />
+            <select aria-label={searchCopy[1]} value={city} onChange={event => setCity(event.target.value)} className="rounded-lg border border-[#D4AF37] bg-white px-4 py-3 text-[#292725]">
+              <option value="">{searchCopy[1]}</option>
+              {cities.map(value => <option key={value} value={value}>{value}</option>)}
+            </select>
+          </div>
+          <p className="mb-8 text-center text-sm font-medium text-gray-600">
+            {verifiedJobs.length} {copy.offersFound}
+          </p>
+
+          {verifiedJobs.length > 0 ? (
+            <div className="grid gap-5 md:grid-cols-2">
+              {verifiedJobs.map((offer) => (
+                <VerifiedJobCard
+                  key={offer.id}
+                  offer={offer}
+                  locale={JOB_LOCALES[language]}
+                  labels={{
+                    verifiedOn: copy.verifiedOn,
+                    reviewUntil: copy.reviewUntil,
+                    source: copy.source,
+                    apply: copy.applyAtSource,
+                    externalNotice: copy.externalNotice,
+                  }}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-xl border border-[#D4AF37] bg-white px-6 py-10 text-center shadow-sm md:px-12">
+              <span className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-[#D6B86D] text-[#292725]">
+                <Briefcase className="h-7 w-7" aria-hidden="true" />
+              </span>
+              <h3 className="mb-3 text-xl font-semibold text-[#292725]">{currentJobs.length ? searchCopy[2] : copy.emptyTitle}</h3>
+              <p className="mx-auto mb-4 max-w-3xl text-sm leading-6 text-gray-600 md:text-base">{currentJobs.length ? <button type="button" onClick={() => { setKeyword(''); setCity(''); }} className="underline">{searchCopy[3]}</button> : copy.emptyDescription}</p>
+            </div>
+          )}
+
+          <p className="mx-auto mt-8 flex max-w-3xl items-start justify-center gap-2 text-center text-sm font-medium text-gray-700">
+            <ShieldCheck className="mt-0.5 h-5 w-5 flex-none text-[#9A7418]" aria-hidden="true" />
+            <span>{copy.emptyNote}</span>
+          </p>
+
+      <section className="py-6" aria-label={copy.heroSubtitle}>
         <div className="mx-auto grid max-w-5xl gap-6 md:grid-cols-2">
           <motion.article
             initial={{ opacity: 0, y: 24 }}
@@ -135,48 +201,6 @@ export const Jobs = () => {
           </motion.article>
         </div>
       </section>
-
-      <section className="px-4 pb-16 pt-4">
-        <div className="mx-auto max-w-5xl">
-          <p className="mb-3 text-center text-xs font-medium uppercase tracking-[0.2em] text-[#9A7418]">
-            {copy.offersEyebrow}
-          </p>
-          <h2 className="public-heading mb-3 text-center font-serif text-3xl text-[#292725]">{copy.offersTitle}</h2>
-          <p className="mb-8 text-center text-sm font-medium text-gray-600">
-            {verifiedJobs.length} {copy.offersFound}
-          </p>
-
-          {verifiedJobs.length > 0 ? (
-            <div className="grid gap-5 md:grid-cols-2">
-              {verifiedJobs.map((offer) => (
-                <VerifiedJobCard
-                  key={offer.id}
-                  offer={offer}
-                  locale={JOB_LOCALES[language]}
-                  labels={{
-                    verifiedOn: copy.verifiedOn,
-                    reviewUntil: copy.reviewUntil,
-                    source: copy.source,
-                    apply: copy.applyAtSource,
-                    externalNotice: copy.externalNotice,
-                  }}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="rounded-xl border border-[#D4AF37] bg-white px-6 py-10 text-center shadow-sm md:px-12">
-              <span className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-[#D6B86D] text-[#292725]">
-                <Briefcase className="h-7 w-7" aria-hidden="true" />
-              </span>
-              <h3 className="mb-3 text-xl font-semibold text-[#292725]">{copy.emptyTitle}</h3>
-              <p className="mx-auto mb-4 max-w-3xl text-sm leading-6 text-gray-600 md:text-base">{copy.emptyDescription}</p>
-            </div>
-          )}
-
-          <p className="mx-auto mt-8 flex max-w-3xl items-start justify-center gap-2 text-center text-sm font-medium text-gray-700">
-            <ShieldCheck className="mt-0.5 h-5 w-5 flex-none text-[#9A7418]" aria-hidden="true" />
-            <span>{copy.emptyNote}</span>
-          </p>
 
           <div className="mt-10 grid gap-5 md:grid-cols-2">
             <div className="rounded-xl border border-[#D4AF37] bg-[#FFF8EA] p-6 text-[#292725]">

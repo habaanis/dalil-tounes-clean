@@ -200,9 +200,9 @@ export default function JobPostForm({
       <button
         type="submit"
         disabled={saving}
-        className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-[#D4AF37] bg-white px-6 py-3 font-semibold text-[#4A1D43] transition-all hover:shadow-[0_0_25px_rgba(212,175,55,0.4)] disabled:cursor-not-allowed disabled:opacity-50"
+        className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-[#D4AF37] bg-white px-6 py-3 font-semibold text-[#292725] transition-all hover:shadow-[0_0_25px_rgba(212,175,55,0.4)] disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {saving && <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#4A1D43] border-t-transparent" aria-hidden="true" />}
+        {saving && <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#292725] border-t-transparent" aria-hidden="true" />}
         {isCandidateContact
           ? copy.form.contactCandidateSubmit
           : isEmployer
