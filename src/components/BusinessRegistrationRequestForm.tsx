@@ -432,7 +432,7 @@ const TRIAL_COPY = {
 } as const;
 
 const inputClassName =
-  'w-full rounded-xl border border-[#D4AF37]/70 bg-white px-4 py-3 text-base text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-[#4A1D43] focus:ring-2 focus:ring-[#4A1D43]/20 disabled:bg-gray-50 disabled:text-gray-500';
+  'w-full rounded-xl border border-[#D4AF37]/70 bg-white px-4 py-3 text-base text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-[#292725] focus:ring-2 focus:ring-[#292725]/20 disabled:bg-gray-50 disabled:text-gray-500';
 
 export function BusinessRegistrationRequestForm({
   mode = 'company_registration',
@@ -585,12 +585,12 @@ export function BusinessRegistrationRequestForm({
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
           <CheckCircle2 className="h-9 w-9 text-green-700" aria-hidden="true" />
         </div>
-        <h2 className="mt-5 text-2xl font-bold text-[#4A1D43]">{text.successTitle}</h2>
+        <h2 className="mt-5 text-2xl font-bold text-[#292725]">{text.successTitle}</h2>
         <p className="mx-auto mt-3 max-w-xl text-base leading-relaxed text-gray-600">{text.successText}</p>
         <button
           type="button"
           onClick={resetForm}
-          className="mt-7 rounded-xl border border-[#D4AF37] bg-white px-6 py-3 text-sm font-bold text-[#4A1D43] transition hover:bg-[#FFF9E8] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/60"
+          className="mt-7 rounded-xl border border-[#D4AF37] bg-white px-6 py-3 text-sm font-bold text-[#292725] transition hover:bg-[#FFF9E8] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/60"
         >
           {text.anotherRequest}
         </button>
@@ -695,7 +695,7 @@ export function BusinessRegistrationRequestForm({
         <>
           <div className="rounded-2xl border border-[#D4AF37]/30 bg-[#FFFDF7] p-4 text-sm leading-relaxed text-gray-700">
             <div className="flex items-start gap-3">
-              <ShieldCheck className="mt-0.5 h-5 w-5 flex-none text-[#4A1D43]" aria-hidden="true" />
+              <ShieldCheck className="mt-0.5 h-5 w-5 flex-none text-[#292725]" aria-hidden="true" />
               <p>{text.shieldHint}</p>
             </div>
           </div>
@@ -845,7 +845,7 @@ export function BusinessRegistrationRequestForm({
           </FieldLabel>
 
           <details className="group rounded-2xl border border-gray-200 bg-gray-50/70 p-4 open:bg-white">
-            <summary className="cursor-pointer list-none font-semibold text-[#4A1D43] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]">
+            <summary className="cursor-pointer list-none font-semibold text-[#292725] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]">
               <span>{text.optionalDetails}</span>
               <span className="ms-2 inline-block text-[#D4AF37] transition group-open:rotate-180" aria-hidden="true">⌄</span>
             </summary>
@@ -955,15 +955,15 @@ export function BusinessRegistrationRequestForm({
               checked={form.consent}
               onChange={setField}
               disabled={submitting}
-              className="mt-1 h-5 w-5 flex-none rounded border-gray-300 text-[#4A1D43] focus:ring-[#D4AF37]"
+              className="mt-1 h-5 w-5 flex-none rounded border-gray-300 text-[#292725] focus:ring-[#D4AF37]"
             />
             <span>
               {text.consentPrefix}{' '}
-              <a href="/cgu" className="font-semibold text-[#4A1D43] underline decoration-[#D4AF37] underline-offset-2">
+              <a href="/cgu" className="font-semibold text-[#292725] underline decoration-[#D4AF37] underline-offset-2">
                 {text.terms}
               </a>{' '}
               {text.conjunction}{' '}
-              <a href="/politique-confidentialite" className="font-semibold text-[#4A1D43] underline decoration-[#D4AF37] underline-offset-2">
+              <a href="/politique-confidentialite" className="font-semibold text-[#292725] underline decoration-[#D4AF37] underline-offset-2">
                 {text.privacy}
               </a>.
             </span>
@@ -985,7 +985,7 @@ export function BusinessRegistrationRequestForm({
         <button
           type="submit"
           disabled={submitting || submitted}
-          className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl border border-[#D4AF37] bg-[#4A1D43] px-5 py-3 text-sm font-bold text-[#D4AF37] shadow-sm transition hover:bg-[#5A2D53] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/70 disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl border border-[#D4AF37] bg-[#292725] px-5 py-3 text-sm font-bold text-[#D4AF37] shadow-sm transition hover:bg-[#383634] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/70 disabled:cursor-not-allowed disabled:opacity-60"
         >
           <Send className="h-4 w-4" aria-hidden="true" />
           {submitting ? text.submitting : text.submit}
@@ -1007,7 +1007,7 @@ function FieldLabel({
   return (
     <label className="block">
       <span className="mb-2 block text-sm font-semibold text-gray-800">
-        {label} {required && <span className="text-[#800020]">*</span>}
+        {label} {required && <span className="text-[#B62226]">*</span>}
       </span>
       {children}
     </label>

@@ -724,7 +724,7 @@ const PLATFORMS: Platform[] = [
 ];
 
 const inputClassName =
-  'w-full rounded-xl border border-[#D4AF37]/70 bg-white px-4 py-3 text-base text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-[#4A1D43] focus:ring-2 focus:ring-[#4A1D43]/20 disabled:bg-gray-50 disabled:text-gray-500';
+  'w-full rounded-xl border border-[#D4AF37]/70 bg-white px-4 py-3 text-base text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-[#292725] focus:ring-2 focus:ring-[#292725]/20 disabled:bg-gray-50 disabled:text-gray-500';
 
 const RECEIPT_COPY: Record<SupportedLanguage, { saved: string; reference: string; pending: string; rateLimited: string; rejected: string; conflict: string }> = {
   fr: { saved: 'Votre demande a bien été enregistrée.', reference: 'Référence', pending: 'Votre dossier est conservé. Notre équipe pourra reprendre sa transmission sans vous demander de le renvoyer.', rateLimited: 'Plusieurs demandes ont été envoyées récemment. Attendez quelques minutes avant de réessayer.', rejected: 'Cette demande n’a pas été enregistrée. Vérifiez le formulaire puis réessayez.', conflict: 'Cette tentative correspond déjà à un dossier différent. Fermez puis rouvrez le formulaire pour envoyer une nouvelle demande.' },
@@ -1074,7 +1074,7 @@ export function SubscriptionRequestForm({
       </div>
 
       <div className="rounded-2xl border border-[#D4AF37]/35 bg-[#FFFDF7] p-4">
-        <div className="flex items-center justify-between gap-4 text-xs font-bold uppercase tracking-[0.12em] text-[#4A1D43]">
+        <div className="flex items-center justify-between gap-4 text-xs font-bold uppercase tracking-[0.12em] text-[#292725]">
           <span>{creationMode ? (step === 1 ? (isArabic ? '١. النشاط' : '1. Activité') : step === 2 ? (isArabic ? '٢. التفاصيل' : '2. Informations') : (isArabic ? '٣. المراجعة' : '3. Récapitulatif')) : (step === 1 ? copy.stepOne : copy.stepTwo)}</span>
           <span aria-hidden="true">{step}/{creationMode ? 3 : 2}</span>
         </div>
@@ -1106,7 +1106,7 @@ export function SubscriptionRequestForm({
 
       {step === 1 ? (
         <section aria-labelledby="subscription-activity-title" className="space-y-4">
-          <h3 id="subscription-activity-title" className="text-xl font-bold text-[#4A1D43]">{copy.activityTitle}</h3>
+          <h3 id="subscription-activity-title" className="text-xl font-bold text-[#292725]">{copy.activityTitle}</h3>
           {creationMode && <div className="space-y-3 rounded-xl border border-[#D4AF37]/50 bg-[#FFFDF7] p-3">
             <p className="font-semibold text-[#07543F]">{premiumCreation ? (isArabic ? "النموذجان والألوان الثلاثة وشاشتا الافتتاح مشمولة" : "✓ Business et Portfolio · 3 palettes · 2 ouvertures incluses") : (isArabic ? "نموذج واحد وألوان وشاشة افتتاحية" : "✓ 1 modèle · 1 palette · 1 ouverture")}</p>
             {!premiumCreation && <div className="grid gap-2 sm:grid-cols-2">
@@ -1225,11 +1225,11 @@ export function SubscriptionRequestForm({
         </section>
       ) : step === 2 ? (
         <section aria-labelledby="subscription-request-title" className="space-y-5">
-          <h3 id="subscription-request-title" className="text-xl font-bold text-[#4A1D43]">{copy.requestTitle}</h3>
+          <h3 id="subscription-request-title" className="text-xl font-bold text-[#292725]">{copy.requestTitle}</h3>
 
           <div className="rounded-2xl border border-[#D4AF37]/40 bg-[#FFF9E8] p-4">
             <span className="block text-xs font-bold uppercase tracking-[0.12em] text-slate-600">{copy.selectedSolution}</span>
-            <strong className="mt-1 block text-base text-[#4A1D43]">{selectedPlanLabel}</strong>
+            <strong className="mt-1 block text-base text-[#292725]">{selectedPlanLabel}</strong>
             {planKind !== 'cv' && checkoutSelection && 'tnd' in checkoutSelection && (
               <div className="mt-3 border-t border-[#D4AF37]/30 pt-3 text-sm text-slate-700">
                 <p className="font-bold text-[#07543F]">{selectedPlanLabel}{checkoutSelection.period ? ` — ${checkoutSelection.period}` : ''}</p>
@@ -1262,7 +1262,7 @@ export function SubscriptionRequestForm({
               )}
 
               {planKind === 'premium' && form.requestedBillingPeriod === 'annual' && (
-                <p className="rounded-xl border border-[#D4AF37]/50 bg-[#FFF9E8] px-4 py-3 text-sm font-semibold leading-relaxed text-[#4A1D43]">
+                <p className="rounded-xl border border-[#D4AF37]/50 bg-[#FFF9E8] px-4 py-3 text-sm font-semibold leading-relaxed text-[#292725]">
                   {copy.premiumFlyerInfo}
                 </p>
               )}
@@ -1427,25 +1427,25 @@ export function SubscriptionRequestForm({
               checked={form.consent}
               onChange={setField}
               disabled={submitting}
-              className="mt-1 h-5 w-5 flex-none rounded border-gray-300 text-[#4A1D43] focus:ring-[#D4AF37]"
+              className="mt-1 h-5 w-5 flex-none rounded border-gray-300 text-[#292725] focus:ring-[#D4AF37]"
             />
             <span>
               {copy.consentPrefix}{' '}
-              <a href="/cgu" className="font-semibold text-[#4A1D43] underline decoration-[#D4AF37] underline-offset-2">{copy.terms}</a>{' '}
+              <a href="/cgu" className="font-semibold text-[#292725] underline decoration-[#D4AF37] underline-offset-2">{copy.terms}</a>{' '}
               {copy.conjunction}{' '}
-              <a href="/politique-confidentialite" className="font-semibold text-[#4A1D43] underline decoration-[#D4AF37] underline-offset-2">{copy.privacy}</a>.
+              <a href="/politique-confidentialite" className="font-semibold text-[#292725] underline decoration-[#D4AF37] underline-offset-2">{copy.privacy}</a>.
             </span>
           </label>
 
-          <p className="text-center text-sm font-semibold text-[#4A1D43]">{creationMode ? (isArabic ? 'إرسال الطلب لا يعني أن الدفع قد تم. يتم التحقق من التحويل البنكي قبل بدء التحضير.' : 'L’envoi de la demande ne confirme aucun paiement. Le virement sera vérifié avant la préparation.') : copy.freeNotice}</p>
+          <p className="text-center text-sm font-semibold text-[#292725]">{creationMode ? (isArabic ? 'إرسال الطلب لا يعني أن الدفع قد تم. يتم التحقق من التحويل البنكي قبل بدء التحضير.' : 'L’envoi de la demande ne confirme aucun paiement. Le virement sera vérifié avant la préparation.') : copy.freeNotice}</p>
           {!creationMode && (
-            <div className="rounded-xl border border-[#D4AF37]/40 bg-[#FFF9E8] px-4 py-3 text-sm leading-6 text-[#4A1D43]">
+            <div className="rounded-xl border border-[#D4AF37]/40 bg-[#FFF9E8] px-4 py-3 text-sm leading-6 text-[#292725]">
               <p>{checkoutCopy.currencyNotice}</p>
               <p className="mt-1 font-semibold">{checkoutCopy.installmentsNotice}</p>
             </div>
           )}
           {creationMode && (
-            <div className="rounded-2xl border border-[#D4AF37]/55 bg-[#FFF9E8] p-4 text-sm leading-6 text-[#4A1D43]">
+            <div className="rounded-2xl border border-[#D4AF37]/55 bg-[#FFF9E8] p-4 text-sm leading-6 text-[#292725]">
               <p className="text-base font-black">{language === 'fr' ? 'Commande et paiement en dinars tunisiens' : language === 'ar' ? 'الطلب والدفع بالدينار التونسي' : language === 'it' ? 'Ordine e pagamento in dinari tunisini' : language === 'ru' ? 'Заказ и оплата в тунисских динарах' : 'Order and payment in Tunisian dinars'}</p>
               <p className="mt-2">{language === 'fr' ? `Montant : ${planKind === 'artisan' ? '30 TND' : '59 TND'}. Envoyez d’abord votre demande ci-dessous. Notre équipe vous transmettra ensuite les instructions bancaires en privé par WhatsApp.` : language === 'ar' ? `المبلغ: ${planKind === 'artisan' ? '30 د.ت' : '59 د.ت'}. أرسل طلبك أولاً أدناه، ثم يرسل لك فريقنا تعليمات التحويل البنكي بشكل خاص على واتساب.` : language === 'it' ? `Importo: ${planKind === 'artisan' ? '30 TND' : '59 TND'}. Invia prima la richiesta qui sotto; il nostro team ti comunicherà privatamente su WhatsApp le istruzioni per il bonifico.` : language === 'ru' ? `Сумма: ${planKind === 'artisan' ? '30 TND' : '59 TND'}. Сначала отправьте заявку ниже, затем команда лично пришлёт банковские реквизиты в WhatsApp.` : `Amount: ${planKind === 'artisan' ? '30 TND' : '59 TND'}. First send your request below; our team will then privately send the bank transfer instructions via WhatsApp.`}</p>
               <p className="mt-2 font-semibold">{language === 'fr' ? 'Aucune coordonnée bancaire n’est publiée sur le site. La création commence après vérification du règlement.' : language === 'ar' ? 'لا يتم نشر أي بيانات بنكية على الموقع. يبدأ العمل بعد التحقق من الدفع.' : language === 'it' ? 'Nessun dato bancario viene pubblicato sul sito. La creazione inizia dopo la verifica del pagamento.' : language === 'ru' ? 'Банковские реквизиты на сайте не публикуются. Работа начинается после проверки оплаты.' : 'No bank details are published on the website. Creation starts after payment verification.'}</p>
@@ -1513,7 +1513,7 @@ export function SubscriptionRequestForm({
                 {copy.cancel}
               </button>
             )}
-            <button type="button" onClick={continueToStepTwo} disabled={submitting} className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl border border-[#D4AF37] bg-[#4A1D43] px-5 py-3 text-sm font-bold text-[#D4AF37] transition hover:bg-[#5A2D53] disabled:opacity-60">
+            <button type="button" onClick={continueToStepTwo} disabled={submitting} className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl border border-[#D4AF37] bg-[#292725] px-5 py-3 text-sm font-bold text-[#D4AF37] transition hover:bg-[#383634] disabled:opacity-60">
               {copy.continue}
               {isArabic ? <ArrowLeft className="h-4 w-4" aria-hidden="true" /> : <ArrowRight className="h-4 w-4" aria-hidden="true" />}
             </button>
@@ -1527,7 +1527,7 @@ export function SubscriptionRequestForm({
             {creationMode && step === 2 ? (
               <button type="button" onClick={() => { const error = validateStepTwo(); if (error) setErrorMessage(error); else { setErrorMessage(''); setStep(3); } }} disabled={submitting} className="inline-flex min-h-12 flex-1 items-center justify-center rounded-xl border border-[#D4AF37] bg-[#07543F] px-5 py-3 text-sm font-bold text-white">{isArabic ? 'مراجعة الطلب' : 'Voir le récapitulatif'}</button>
             ) : (
-              <button type="submit" disabled={submitting || submitted} className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl border border-[#D4AF37] bg-[#4A1D43] px-5 py-3 text-sm font-bold text-[#D4AF37] transition hover:bg-[#5A2D53] disabled:cursor-not-allowed disabled:opacity-60">
+              <button type="submit" disabled={submitting || submitted} className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl border border-[#D4AF37] bg-[#292725] px-5 py-3 text-sm font-bold text-[#D4AF37] transition hover:bg-[#383634] disabled:cursor-not-allowed disabled:opacity-60">
                 <Send className="h-4 w-4" aria-hidden="true" />
                 {submitting ? copy.submitting : copy.submit}
               </button>
@@ -1543,7 +1543,7 @@ function FieldLabel({ label, required = false, children }: { label: string; requ
   return (
     <label className="block">
       <span className="mb-2 block text-sm font-semibold text-gray-800">
-        {label} {required && <span className="text-[#800020]">*</span>}
+        {label} {required && <span className="text-[#B62226]">*</span>}
       </span>
       {children}
     </label>
@@ -1574,7 +1574,7 @@ function RadioChoice({
 }) {
   return (
     <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-700 transition has-[:checked]:border-[#D4AF37] has-[:checked]:bg-[#FFF9E8]">
-      <input type="radio" name={name} value={value} checked={checked} onChange={onChange} className="mt-0.5 h-4 w-4 text-[#4A1D43] focus:ring-[#D4AF37]" />
+      <input type="radio" name={name} value={value} checked={checked} onChange={onChange} className="mt-0.5 h-4 w-4 text-[#292725] focus:ring-[#D4AF37]" />
       <span>{label}</span>
     </label>
   );
@@ -1583,7 +1583,7 @@ function RadioChoice({
 function CheckboxChoice({ checked, onChange, label }: { checked: boolean; onChange: () => void; label: string }) {
   return (
     <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-700 transition has-[:checked]:border-[#D4AF37] has-[:checked]:bg-[#FFF9E8]">
-      <input type="checkbox" checked={checked} onChange={onChange} className="mt-0.5 h-4 w-4 rounded text-[#4A1D43] focus:ring-[#D4AF37]" />
+      <input type="checkbox" checked={checked} onChange={onChange} className="mt-0.5 h-4 w-4 rounded text-[#292725] focus:ring-[#D4AF37]" />
       <span>{label}</span>
     </label>
   );
