@@ -27,7 +27,7 @@ export const siteStructureCopy = {
     "platform": "La plateforme Dalil Tounes",
     "intro": "Recherchez un professionnel, découvrez la Tunisie et contactez directement les activités référencées.",
     "cvIntro": "Créez une mini-appli personnalisée pour présenter votre entreprise, élargir votre visibilité et toucher de nouveaux clients. Partagez-la par lien ou QR Business.",
-    "offers": "Offres et inscription",
+    "offers": "Tarifs et inscription",
     "products": "Votre mini-appli professionnelle",
     "services": "Services et informations utiles"
   },
@@ -57,7 +57,7 @@ export const siteStructureCopy = {
     "platform": "منصة دليل تونس",
     "intro": "ابحث عن مهني واكتشف تونس واتصل مباشرة بالأنشطة المدرجة.",
     "cvIntro": "أنشئ تطبيقاً مصغّراً مخصصاً لمؤسستك لتقديم نشاطك والوصول إلى حرفاء جدد. شاركه عبر رابط أو رمز QR Business.",
-    "offers": "العروض والتسجيل",
+    "offers": "الأسعار والتسجيل",
     "products": "تطبيقك المصغّر المهني",
     "services": "الخدمات والمعلومات المفيدة"
   },
@@ -87,7 +87,7 @@ export const siteStructureCopy = {
     "platform": "Dalil Tounes platform",
     "intro": "Find a professional, discover Tunisia and contact listed businesses directly.",
     "cvIntro": "Create a personalised mini-app to showcase your business, increase your visibility and reach new customers. Share it by link or Business QR code.",
-    "offers": "Offers and registration",
+    "offers": "Pricing and registration",
     "products": "Your business mini-app",
     "services": "Useful services and information"
   },
@@ -117,7 +117,7 @@ export const siteStructureCopy = {
     "platform": "La piattaforma Dalil Tounes",
     "intro": "Trova un professionista, scopri la Tunisia e contatta direttamente le attività elencate.",
     "cvIntro": "Crea una mini-app personalizzata per presentare la tua attività, aumentare la visibilità e raggiungere nuovi clienti. Condividila con link o QR Business.",
-    "offers": "Offerte e iscrizione",
+    "offers": "Tariffe e iscrizione",
     "products": "La tua mini-app professionale",
     "services": "Servizi e informazioni utili"
   },
@@ -147,7 +147,7 @@ export const siteStructureCopy = {
     "platform": "Платформа Dalil Tounes",
     "intro": "Найдите специалиста, откройте Тунис и свяжитесь с компаниями напрямую.",
     "cvIntro": "Создайте персональное мини-приложение, чтобы представить бизнес, расширить охват и привлечь новых клиентов. Делитесь ссылкой или QR-кодом.",
-    "offers": "Предложения и регистрация",
+    "offers": "Цены и регистрация",
     "products": "Ваше мини-приложение для бизнеса",
     "services": "Полезные услуги и информация"
   }
