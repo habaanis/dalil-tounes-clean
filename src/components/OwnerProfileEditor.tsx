@@ -37,7 +37,7 @@ export default function OwnerProfileEditor({id,section}:{id:string;section:'info
  if(!original||busy)return;
  const next={...form};
  if(hoursChanged){
- if(hours.some(d=>d.open&&(!d.start||!d.end||d.start>=d.end||(d.split&&(!d.second||!d.last||d.end>d.second||d.second>=d.last)))){setMessage('Vérifiez les heures et les chevauchements.');return}
+ if(hours.some(d=>d.open&&(!d.start||!d.end||d.start>=d.end||(d.split&&(!d.second||!d.last||d.end>d.second||d.second>=d.last))))){setMessage('Vérifiez les heures et les chevauchements.');return}
  next.horaires_ok=hours.map((d,i)=>days[i]+' : '+(d.open?d.start+'–'+d.end+(d.split?' / '+d.second+'–'+d.last:''):'Fermé')).join('\n');
  }
  const changed=keys.filter(k=>next[k]!==original[k]);if(!changed.length){setMessage('Aucune modification.');return}
