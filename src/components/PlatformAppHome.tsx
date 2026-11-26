@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { supabase } from '../lib/supabaseClient';
 import { FounderStory } from './FounderStory';
 import { DALIL_MASCOT_IMAGE } from '../lib/dalilMascotImage';
 import SearchBar from './SearchBar';
-import { Building2, ShieldCheck, Star } from 'lucide-react';
+import { Building2, ShieldCheck, Star, Briefcase } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import DalilFAQ from './DalilFAQ';
 
@@ -77,12 +79,39 @@ const COPY: Record<Lang, {
   },
 };
 
-export default function PlatformAppHome({ totalCount, legacyCertifiedCount, recommendedCount }: {
-  totalCount?: string | null; legacyCertifiedCount?: string | null; recommendedCount?: string | null;
+export default function PlatformAppHome({ totalCount, legacyCertifiedCount, recommendedCount, jobsCountLabel }: {
+  totalCount?: string | null; legacyCertifiedCount?: string | null; recommendedCount?: string | null; jobsCountLabel?: string | null;
 }) {
   const { language } = useLanguage();
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as Lang;
   const t = COPY[lang];
+  const [isEmploiAdmin, setIsEmploiAdmin] = useState(false);
+  const [authRevision, setAuthRevision] = useState(0);
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => setAuthRevision(n => n + 1));
+    return () => subscription.unsubscribe();
+  }, []);
+  useEffect(() => {
+    let cancelled = false;
+    setIsEmploiAdmin(false);
+    const check = async () => {
+      try {
+        const { data: { user }, error } = await supabase.auth.getUser();
+        if (error || !user || cancelled) return;
+        const { data, error: adminError } = await supabase.from('admins').select('id').eq('id', user.id).maybeSingle();
+        if (!cancelled) setIsEmploiAdmin(!adminError && Boolean(data));
+      } catch { /* Never expose admin shortcut on errors. */ }
+    };
+    void check();
+    return () => { cancelled = true; };
+  }, [authRevision]);
+  const emploi = {
+    fr: ['Emploi', 'Offres et recrutement', 'Gestion Emploi'],
+    ar: ['الشغل', 'عروض الشغل والانتداب', 'إدارة عروض الشغل'],
+    en: ['Jobs', 'Jobs and recruitment', 'Job administration'],
+    it: ['Lavoro', 'Offerte e assunzioni', 'Gestione offerte'],
+    ru: ['Работа', 'Вакансии и подбор персонала', 'Управление вакансиями'],
+  }[lang];
   return <div data-home-color-test="rouge-or-v2" className="space-y-4 bg-[#FAF9F6] px-3 py-4">
     <section className="rounded-2xl border border-[#C9A65D] border-l-[4px] border-l-[#B8954F] bg-gradient-to-br from-white via-white to-[#FFF4E6] px-4 py-5 shadow-[0_4px_20px_rgba(35,32,28,0.035)]">
       <div className="flex items-center gap-2">
@@ -98,6 +127,17 @@ export default function PlatformAppHome({ totalCount, legacyCertifiedCount, reco
     <section className="relative z-10 rounded-2xl border border-[#C9A65D] bg-[#FFFCF8] p-3.5 shadow-[0_2px_14px_rgba(30,25,20,0.03)]" aria-label={t.search}>
       <h2 className="mb-2 font-serif text-base font-semibold text-[#242424]">{t.search}</h2>
       <SearchBar scope="global" autoSearch resultMode="redirectToResults" />
+    </section>
+    <section className="rounded-xl border border-[#C9A65D] bg-[#FFFDF9] p-3 shadow-sm">
+      <Link to="/jobs" className="flex items-center gap-3 rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B99143]">
+        <Briefcase className="h-5 w-5 shrink-0 text-[#B28A44]" aria-hidden="true" />
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-semibold text-[#292725]">{emploi[0]}</p>
+          <p className="text-xs leading-5 text-[#64605D]" aria-live="polite">{jobsCountLabel ?? emploi[1]}</p>
+        </div>
+        <span aria-hidden="true" className="text-[#B28A44]">→</span>
+      </Link>
+      {isEmploiAdmin && <Link to="/admin/emploi" className="mt-2 block border-t border-[#EEE8E0] pt-2 text-xs font-medium text-[#07543F]">{emploi[2]} →</Link>}
     </section>
     <Link to="/subscription?app-full=1#cv-professionnels"
       className="block rounded-xl border border-[#C9A65D] bg-gradient-to-br from-[#FFF5E7] to-[#FFFCF7] px-4 py-4 text-center shadow-sm transition-colors hover:border-[#B18B45] hover:bg-[#FFF7E9] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B99143]"
