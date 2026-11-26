@@ -24,7 +24,6 @@ import {
   Clock3,
   Contact,
   Copy,
-  ExternalLink,
   Facebook,
   FileText,
   Globe2,
@@ -58,7 +57,7 @@ import {
   extractShortIdFromSlug,
   generateSlug,
 } from '../lib/slugify';
-import { getCoverImageUrl, getGalleryImageUrls } from '../lib/imagekitUtils';
+import { getCoverImageUrl, getShowcaseGalleryItems } from '../lib/imagekitUtils';
 import { getLogoUrl } from '../lib/logoUtils';
 import {
   buildClientAppUrl,
@@ -146,6 +145,7 @@ interface BusinessRecord {
   video_url?: string | null;
   horaires_ok?: string | null;
   statut_abonnement?: string | null;
+  formule_commerciale?: string | null;
   statut_validation?: string | null;
   statut_carte?: string | null;
   cv_business_status?: string | null;
@@ -909,8 +909,8 @@ export default function BusinessShowcaseLienoraDetail({
   };
 
   const tier = useMemo(
-    () => mapSubscriptionToTier({ statut_abonnement: business?.statut_abonnement }),
-    [business?.statut_abonnement],
+    () => mapSubscriptionToTier({ statut_abonnement: business?.statut_abonnement, formule_commerciale: business?.formule_commerciale }),
+    [business?.statut_abonnement, business?.formule_commerciale],
   );
   const capabilities = useMemo(() => getBusinessShowcaseCapabilities(tier), [tier]);
 
@@ -1159,16 +1159,9 @@ export default function BusinessShowcaseLienoraDetail({
   const rating = cvProfile.reviews.rating || 0;
   const googleReviewCount = cvProfile.reviews.count;
   const schedule = business.horaires_ok ? getParsedSchedule(business.horaires_ok) : null;
-  const galleryThumbs = capabilities.showGallery
-    ? getGalleryImageUrls(business.image_url, 'thumbnail').slice(0, capabilities.maxPhotos)
+  const galleryItems = capabilities.showGallery
+    ? getShowcaseGalleryItems(business.image_url)
     : [];
-  const galleryFull = capabilities.showGallery
-    ? getGalleryImageUrls(business.image_url, 'full').slice(0, capabilities.maxPhotos)
-    : [];
-  const galleryItems = galleryThumbs.map((thumbnail, index) => ({
-    thumbnail,
-    full: galleryFull[index] || thumbnail,
-  }));
   const certification = isCertifiedBusiness(business) ? CERTIFIED_LABEL : '';
   const activityPill = serviceItems[0] || categoryLabel || displayName;
   const contactNotice = isClientAppMode ? (notice || '') : (notice || text.contactNotice);

@@ -7,6 +7,7 @@ export type SubscriptionTier = 'gratuit' | 'artisan' | 'premium' | 'elite' | 'cu
 
 export interface SubscriptionData {
   statut_abonnement?: string | null;
+  formule_commerciale?: string | null;
   niveau_priorite_abonnement?: number | null;
 }
 
@@ -22,7 +23,10 @@ export interface MediaLimits {
  * Plans: Gratuit, Artisan, Premium, Elite Pro, Pack personnalisé
  */
 export function mapSubscriptionToTier(data: SubscriptionData): SubscriptionTier {
-  const rawValue = data.statut_abonnement;
+  // The commercial plan remains identifiable when Airtable sends a generic status such as Actif.
+  const commercial = data.formule_commerciale?.trim();
+  const rawValue = commercial && /^(artisan|premium|[eé]lite|custom|pack personnalis)/i.test(commercial)
+    ? commercial : data.statut_abonnement;
 
   if (!rawValue) {
     return 'gratuit';
