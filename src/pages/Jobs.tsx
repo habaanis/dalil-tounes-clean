@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Briefcase, Building2, ShieldCheck, Sparkles, UserRound, X } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { SEOHead } from '../components/SEOHead';
 import StructuredData from '../components/StructuredData';
 import JobPostForm from '../components/forms/JobPostForm';
 import VerifiedJobCard from '../components/VerifiedJobCard';
+import JobAlerts from '../components/JobAlerts';
 import { HERO_IMAGE_JPG_URL, HERO_IMAGE_URL } from '../constants/images';
 import { useLanguage } from '../context/LanguageContext';
 import { generateCollectionPageSchema } from '../lib/structuredDataSchemas';
@@ -50,6 +51,8 @@ export const Jobs = () => {
   const { language } = useLanguage();
   const copy = getJobsPageTranslations(language);
   const [requestMode, setRequestMode] = useState<JobRequestMode | null>(null);
+  const [params] = useSearchParams();
+  const selectedJob = params.get('job');
   const [keyword, setKeyword] = useState('');
   const [city, setCity] = useState('');
   const [page, setPage] = useState(1);
@@ -98,6 +101,7 @@ export const Jobs = () => {
   const cities = [...new Set(currentJobs.map(offer => offer.city))].sort();
   const terms = normalize(keyword.trim()).split(/\s+/).filter(Boolean);
   const verifiedJobs = currentJobs.filter(offer =>
+    (!selectedJob || offer.id === selectedJob) &&
     (!city || offer.city === city) &&
     terms.every(term => normalize([offer.title, offer.company, offer.sector, offer.city, offer.governorate ?? '', offer.contract, offer.experience, ...offer.skills].join(' ')).includes(term))
   ).sort((a, b) => b.verifiedAt.localeCompare(a.verifiedAt) || a.id.localeCompare(b.id));
@@ -183,6 +187,8 @@ export const Jobs = () => {
               {cities.map(value => <option key={value} value={value}>{value}</option>)}
             </select>
           </div>
+          {selectedJob&&<Link to="/jobs" className="mb-3 inline-block text-sm underline">{searchCopy[3]}</Link>}
+          <JobAlerts initialKeyword={keyword} initialRegion={currentJobs.find(j=>j.city===city)?.governorate || ''} />
           <p ref={resultsTop} aria-live="polite" className="mb-3 scroll-mt-24 text-center text-sm font-medium text-gray-600">
             {loadState === 'ready' ? <>{verifiedJobs.length} {copy.offersFound}{verifiedJobs.length > 0 && <> · {start + 1}–{Math.min(start + PAGE_SIZE, verifiedJobs.length)} / {verifiedJobs.length}</>}</> : null}
           </p>
