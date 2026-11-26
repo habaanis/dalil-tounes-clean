@@ -178,7 +178,7 @@ export default function GratuitCard({
             ) : <span className="flex min-h-11 items-center justify-center text-center text-[10px] text-gray-500">{missing.phone}</span>}
           </div>
           {showHours && horaires_ok && <div className="mt-2 rounded-lg border border-[#C9A65D]/60 bg-[#FCFAF5] p-2 text-left text-xs text-[#292725]"><p className="whitespace-pre-line">{horaires_ok}</p></div>}
-          {showPhone && telephone && <a href={`tel:${telephone.replace(/[^+\\d]/g, '')}`} className="mt-2 block rounded-lg bg-[#FCFAF5] p-2 text-center text-sm font-semibold text-[#292725] underline">{telephone}</a>}
+          {showPhone && telephone && <a href={`tel:${telephone.replace(/[^+0-9]/g, '')}`} className="mt-2 block rounded-lg bg-[#FCFAF5] p-2 text-center text-sm font-semibold text-[#292725] underline">{telephone}</a>}
         </div>
       )}
       {/* Téléphone sous les horaires : une action claire et accessible. */}
@@ -195,7 +195,7 @@ export default function GratuitCard({
               {showPhone ? cardCopy.hidePhone : cardCopy.showPhone}
             </button>
             {showPhone && (
-              <a href={`tel:${telephone.replace(/[^+\\d]/g, '')}`} onClick={(e) => e.stopPropagation()} style={{ textAlign: 'center', padding: '8px', fontSize: '14px', fontWeight: 700, color: '#B62226', textDecoration: 'underline', borderRadius: '8px', background: '#FAF8F3' }}>
+              <a href={`tel:${telephone.replace(/[^+0-9]/g, '')}`} onClick={(e) => e.stopPropagation()} style={{ textAlign: 'center', padding: '8px', fontSize: '14px', fontWeight: 700, color: '#B62226', textDecoration: 'underline', borderRadius: '8px', background: '#FAF8F3' }}>
                 {telephone}
               </a>
             )}
