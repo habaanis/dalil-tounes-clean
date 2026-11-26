@@ -1,3 +1,5 @@
+import { validateCreationDossier, type CreationDossier } from './companyCreationDossier.ts';
+
 export type RegistrationMode = 'company_registration' | 'subscription' | 'legacy_suggestion';
 
 export interface RawRegistrationRequest {
@@ -30,6 +32,7 @@ export interface RawRegistrationRequest {
   message?: unknown;
   consent?: unknown;
   legacyType?: unknown;
+  creationDossier?: unknown;
 }
 
 export interface NormalizedRegistrationRequest {
@@ -62,6 +65,7 @@ export interface NormalizedRegistrationRequest {
   message: string;
   consent: boolean;
   legacyType: 'general' | 'medical_transport' | '';
+  creationDossier?: CreationDossier | null;
 }
 
 export type ValidationResult =
@@ -298,6 +302,10 @@ export function validateRegistrationRequest(raw: RawRegistrationRequest): Valida
     }
     if (!consent) return invalid('Consentement obligatoire.', 'consent');
 
+    if (raw.creationDossier != null && requestedBillingPeriod !== 'one_time') return invalid('Dossier de création réservé au paiement unique.', 'creationDossier');
+    const dossier = validateCreationDossier(raw.creationDossier, { selectedPlan, companyName, managerName, phone, email, sector, governorate, city });
+    if (!dossier.ok) return invalid(dossier.message, dossier.field);
+
     return {
       ok: true,
       value: {
@@ -333,6 +341,7 @@ export function validateRegistrationRequest(raw: RawRegistrationRequest): Valida
         message,
         consent,
         legacyType: '',
+        creationDossier: dossier.value,
       },
     };
   }

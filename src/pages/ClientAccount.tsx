@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabaseClient';
 import LoginForm from '../components/auth/LoginForm';
 import SignupForm from '../components/auth/SignupForm';
 import CompanyDashboard from './CompanyDashboard';
+import { claimMyMiniapps } from '../lib/professionalAccountClaim';
 
 function safeSlug(slug?:string) { return (slug || '').trim().toLowerCase(); }
 
@@ -49,7 +50,7 @@ export function ClientAccountLogin() {
       <div className="mb-4 text-center"><h1 className="font-serif text-xl font-semibold">Mon compte professionnel</h1><p className="mt-2 text-sm">Utilisez votre compte Dalil Tounes existant. Aucun nouveau compte n’est nécessaire.</p></div>
       {mode==='login'
         ? <LoginForm onSuccess={()=>navigate(accountPath,{replace:true})} onSwitchToSignup={()=>setMode('signup')} />
-        : <SignupForm onSuccess={()=>navigate(accountPath,{replace:true})} onSwitchToLogin={()=>setMode('login')} />}
+        : <SignupForm professionalMode returnPath={accountPath} onSuccess={()=>navigate(accountPath,{replace:true})} onSwitchToLogin={()=>setMode('login')} />}
     </div>
   </main>;
 }
@@ -93,8 +94,13 @@ export default function ClientAccount() {
       const savedModel=String(short?.modele_cv || long?.modele_cv || '').toLowerCase();
       if(active && savedModel)setPublishedModel(savedModel.includes('portfolio')?'portfolio':'business');
       if (!businessId) { if(active)setState('denied'); return; }
-      const {data,error}=await supabase.from('professional_profile_access')
+      const readAccess = () => supabase.from('professional_profile_access')
         .select('entreprise_id').eq('user_id',user.id).eq('entreprise_id',businessId).maybeSingle();
+      let {data,error}=await readAccess();
+      if (!data && !error) {
+        await claimMyMiniapps(supabase);
+        ({data,error}=await readAccess());
+      }
       if(active){setAccountId(data ? businessId : '');setState(error ? 'error' : data ? 'allowed':'denied');}
     })().catch(()=>{if(active)setState('error')});
     return ()=>{active=false};

@@ -14,6 +14,7 @@ import BoutiqueProductManagement from '../components/boutique/BoutiqueProductMan
 import SalesLoyaltyManagement from '../components/boutique/SalesLoyaltyManagement';
 import BoutiqueCustomerOrders from '../components/boutique/BoutiqueCustomerOrders';
 import BoutiqueMerchantOrderAlerts from '../components/boutique/BoutiqueMerchantOrderAlerts';
+import { claimMyMiniapps } from '../lib/professionalAccountClaim';
 
 type ScopedBoutiqueStats = { entreprise_id: string; push_subscriptions: number; published_products: number; draft_products: number };
 interface CompanyDashboardProps {
@@ -68,7 +69,15 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false, ac
     setStatsError(false);
     // The database RPC scopes all results to auth.uid(); never accept an entreprise_id from the browser.
     import('../lib/supabaseClient')
-      .then(({ supabase }: { supabase: SupabaseClient }) => supabase.rpc('dalil_professional_boutique_stats'))
+      .then(async ({ supabase }: { supabase: SupabaseClient }) => {
+        let claimError: unknown = null;
+        try { await claimMyMiniapps(supabase); } catch (error) { claimError = error; }
+        const result = await supabase.rpc('dalil_professional_boutique_stats');
+        // An unavailable claim must not interrupt an already assigned account.
+        // New accounts get the existing retry state instead of a false success.
+        if (claimError && !result.error && !result.data?.length) throw claimError;
+        return result;
+      })
       .then(({ data, error }) => {
         if (cancelled) return;
         if (error) { setStatsError(true); setStats([]); return; }

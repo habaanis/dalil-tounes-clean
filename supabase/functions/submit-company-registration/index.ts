@@ -9,11 +9,10 @@ import {
   buildNotificationPayload,
   buildSuggestionRow,
 } from '../_shared/companyRegistrationRecord.ts';
+import { deliverRegistrationIntegrations, integrationSummary, type IntegrationStatus } from '../_shared/companyRegistrationDelivery.ts';
 
 const MAX_BODY_BYTES = 65_536;
-const DUPLICATE_WINDOW_MS = 5 * 60 * 1000;
-const SUBMISSION_BURST_WINDOW_MS = 10 * 60 * 1000;
-const MAX_SUBMISSIONS_PER_CONTACT = 3;
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const DEFAULT_ALLOWED_ORIGINS = [
   'https://dalil-tounes.com',
   'https://www.dalil-tounes.com',
@@ -64,6 +63,7 @@ Deno.serve(async (request: Request) => {
     let rawPayload: RawRegistrationRequest;
     try {
       rawPayload = JSON.parse(rawText) as RawRegistrationRequest;
+      if (!rawPayload || typeof rawPayload !== 'object' || Array.isArray(rawPayload)) throw new Error('Invalid body');
     } catch {
       return json({ success: false, error: 'Invalid JSON body' }, 400, corsHeaders);
     }
@@ -71,8 +71,7 @@ Deno.serve(async (request: Request) => {
     const validation = validateRegistrationRequest(rawPayload);
     if (!validation.ok) {
       if (validation.code === 'spam') {
-        // Réponse volontairement neutre : le robot ne peut pas déduire la protection utilisée.
-        return json({ success: true, duplicate: true, integrations: skippedIntegrations() }, 200, corsHeaders);
+        return json({ success: false, code: 'submission_rejected', error: 'La demande n’a pas été enregistrée. Vérifiez le formulaire puis réessayez.' }, 422, corsHeaders);
       }
       return json(
         {
@@ -91,26 +90,33 @@ Deno.serve(async (request: Request) => {
       auth: { persistSession: false, autoRefreshToken: false },
     });
 
-    const existingByRequestId = await adminClient
+    const row = buildSuggestionRow(form);
+    // Old cached forms can retry an already-saved receipt without replaying unknown old notifications.
+    const legacyReceipt = await adminClient
       .from('suggestions_entreprises')
-      .select('id, synced_to_airtable, airtable_record_id')
+      .select('id, message, telephone, email, synced_to_airtable, integration_status')
+      .is('request_id', null)
+      .eq('source_page', form.sourcePage)
       .ilike('message', `%Request-ID: ${form.requestId}%`)
       .maybeSingle();
 
-    if (existingByRequestId.error) {
-      console.error('[submit-company-registration] request_id lookup failed', existingByRequestId.error);
+    if (legacyReceipt.error) {
+      console.error('[submit-company-registration] Legacy receipt lookup failed', legacyReceipt.error.code);
       return json({ success: false, error: 'Database lookup failed' }, 500, corsHeaders);
     }
-
-    if (existingByRequestId.data) {
+    if (legacyReceipt.data) {
+      if (legacyReceipt.data.message !== row.message || (legacyReceipt.data.telephone || '') !== form.phone || (legacyReceipt.data.email || '') !== form.email) {
+        return json({ success: false, code: 'request_conflict', error: 'This attempt already belongs to a different dossier.' }, 409, corsHeaders);
+      }
       return json(
         {
           success: true,
-          id: existingByRequestId.data.id,
+          id: legacyReceipt.data.id,
           duplicate: true,
+          integration_status: legacyReceipt.data.integration_status || {},
           integrations: {
-            airtable: existingByRequestId.data.synced_to_airtable ? 'ok' : 'skipped',
-            notification: 'skipped',
+            airtable: legacyReceipt.data.synced_to_airtable ? 'ok' : 'unknown',
+            notification: 'unknown',
           },
         },
         200,
@@ -118,82 +124,49 @@ Deno.serve(async (request: Request) => {
       );
     }
 
-    const burstCheck = await hasSubmissionBurst(adminClient, form);
-    if (burstCheck.error) {
-      console.error('[submit-company-registration] submission burst lookup failed', burstCheck.error);
-      return json({ success: false, error: 'Database lookup failed' }, 500, corsHeaders);
+    let requesterUserId: string | null = null;
+    const bearer = request.headers.get('authorization')?.match(/^Bearer (.+)$/i)?.[1];
+    if (bearer) {
+      const user = await adminClient.auth.getUser(bearer);
+      if (!user.error && user.data.user) requesterUserId = user.data.user.id;
     }
-
-    if (burstCheck.blocked) {
-      return json(
-        { success: true, duplicate: true, integrations: skippedIntegrations() },
-        200,
-        corsHeaders,
-      );
-    }
-
-    const recentDuplicate = await findRecentDuplicate(adminClient, form);
-    if (recentDuplicate.error) {
-      console.error('[submit-company-registration] recent duplicate lookup failed', recentDuplicate.error);
-      return json({ success: false, error: 'Database lookup failed' }, 500, corsHeaders);
-    }
-
-    if (recentDuplicate.id) {
-      return json(
-        {
-          success: true,
-          id: recentDuplicate.id,
-          duplicate: true,
-          integrations: skippedIntegrations(),
-        },
-        200,
-        corsHeaders,
-      );
-    }
-
-    const row = buildSuggestionRow(form);
-    const inserted = await adminClient
-      .from('suggestions_entreprises')
-      .insert(row)
-      .select('*')
-      .single();
-
-    if (inserted.error || !inserted.data) {
-      console.error('[submit-company-registration] insert failed', inserted.error);
+    const stored = await adminClient.rpc('dalil_registration_store', {
+      p_request_id: await registrationAttemptId(form.requestId),
+      p_fingerprint: await registrationFingerprint(form),
+      p_row: row,
+      p_creation_dossier: form.creationDossier || null,
+      p_requester_user_id: requesterUserId,
+      p_notification: buildNotificationPayload(form, ''),
+    });
+    if (stored.error) {
+      console.error('[submit-company-registration] Receipt transaction failed', stored.error.code);
       return json({ success: false, error: 'Database insert failed' }, 500, corsHeaders);
     }
-
-    const [airtableResult, notificationResult] = await Promise.all([
-      callEdgeFunction(
-        `${supabaseUrl}/functions/v1/sync-suggestion-to-airtable`,
-        serviceRoleKey,
-        { id: inserted.data.id },
-      ),
-      callEdgeFunction(
-        `${supabaseUrl}/functions/v1/notify-form`,
-        serviceRoleKey,
-        buildNotificationPayload(form, inserted.data.id),
-      ),
-    ]);
-
-    if (!airtableResult.ok) {
-      console.error('[submit-company-registration] Airtable sync failed', airtableResult.error);
+    if (stored.data?.error === 'rate_limited') {
+      return json({ success: false, code: 'rate_limited', error: 'Veuillez attendre avant de renvoyer une demande.', retryAfterSeconds: 600 }, 429, { ...corsHeaders, 'Retry-After': '600' });
     }
-    if (!notificationResult.ok) {
-      console.error('[submit-company-registration] Admin notification failed', notificationResult.error);
+    if (stored.data?.error === 'request_conflict') {
+      return json({ success: false, code: 'request_conflict', error: 'This attempt already belongs to a different dossier.' }, 409, corsHeaders);
     }
-
+    if (typeof stored.data?.id !== 'string' || !UUID.test(stored.data.id)) {
+      return json({ success: false, error: 'Receipt could not be confirmed' }, 500, corsHeaders);
+    }
+    let status = (stored.data.integration_status || {}) as IntegrationStatus;
+    try {
+      status = await deliverRegistrationIntegrations(adminClient, supabaseUrl, serviceRoleKey, stored.data.id);
+    } catch (error) {
+      // The receipt and its jobs are already committed; the admin can resume them without another dossier.
+      console.error('[submit-company-registration] Delivery status pending', error instanceof Error ? error.message : 'unknown');
+    }
     return json(
       {
         success: true,
-        id: inserted.data.id,
-        duplicate: false,
-        integrations: {
-          airtable: airtableResult.ok ? 'ok' : 'failed',
-          notification: notificationResult.ok ? 'ok' : 'failed',
-        },
+        id: stored.data.id,
+        duplicate: stored.data.duplicate === true,
+        integration_status: status,
+        integrations: integrationSummary(status),
       },
-      201,
+      stored.data.duplicate ? 200 : 201,
       corsHeaders,
     );
   } catch (error) {
@@ -202,77 +175,20 @@ Deno.serve(async (request: Request) => {
   }
 });
 
-async function hasSubmissionBurst(
-  adminClient: ReturnType<typeof createClient>,
-  form: NormalizedRegistrationRequest,
-): Promise<{ blocked: boolean; error: unknown | null }> {
-  const cutoff = new Date(Date.now() - SUBMISSION_BURST_WINDOW_MS).toISOString();
-  let query = adminClient
-    .from('suggestions_entreprises')
-    .select('id', { count: 'exact', head: true })
-    .eq('source_page', form.sourcePage)
-    .gte('created_at', cutoff);
-
-  query = form.phone ? query.eq('telephone', form.phone) : query.eq('email', form.email);
-  const result = await query;
-  return {
-    blocked: (result.count || 0) >= MAX_SUBMISSIONS_PER_CONTACT,
-    error: result.error || null,
-  };
+async function registrationFingerprint(form: NormalizedRegistrationRequest): Promise<string> {
+  const stable = { ...form } as Partial<NormalizedRegistrationRequest>;
+  delete stable.requestId; delete stable.elapsedMs; delete stable.verificationField;
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(JSON.stringify(stable)));
+  return Array.from(new Uint8Array(digest), value => value.toString(16).padStart(2, '0')).join('');
 }
 
-async function findRecentDuplicate(
-  adminClient: ReturnType<typeof createClient>,
-  form: NormalizedRegistrationRequest,
-): Promise<{ id: string | null; error: unknown | null }> {
-  const cutoff = new Date(Date.now() - DUPLICATE_WINDOW_MS).toISOString();
-  let query = adminClient
-    .from('suggestions_entreprises')
-    .select('id')
-    .eq('titre_demande', form.mode === 'subscription' ? form.title : form.companyName)
-    .eq('source_page', form.sourcePage)
-    .gte('created_at', cutoff)
-    .order('created_at', { ascending: false })
-    .limit(1);
-
-  query = form.phone ? query.eq('telephone', form.phone) : query.eq('email', form.email);
-  const result = await query.maybeSingle();
-  return { id: result.data?.id || null, error: result.error || null };
-}
-
-async function callEdgeFunction(
-  url: string,
-  serviceRoleKey: string,
-  body: Record<string, unknown>,
-): Promise<{ ok: boolean; error?: string }> {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 12_000);
-
-  try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        apikey: serviceRoleKey,
-        Authorization: `Bearer ${serviceRoleKey}`,
-      },
-      body: JSON.stringify(body),
-      signal: controller.signal,
-    });
-
-    if (!response.ok) {
-      return { ok: false, error: `${response.status}: ${await response.text()}`.slice(0, 1000) };
-    }
-    return { ok: true };
-  } catch (error) {
-    return { ok: false, error: error instanceof Error ? error.message : String(error) };
-  } finally {
-    clearTimeout(timeout);
-  }
-}
-
-function skippedIntegrations() {
-  return { airtable: 'skipped' as const, notification: 'skipped' as const };
+async function registrationAttemptId(requestId: string): Promise<string> {
+  if (UUID.test(requestId)) return requestId.toLowerCase();
+  // Backward-compatible deterministic UUID for old clients' timestamp/random attempt IDs.
+  const hash = new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(`dalil-registration:${requestId}`)));
+  hash[6] = (hash[6] & 15) | 80; hash[8] = (hash[8] & 63) | 128;
+  const hex = Array.from(hash.slice(0, 16), value => value.toString(16).padStart(2, '0')).join('');
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 }
 
 function isAllowedOrigin(origin: string | null): boolean {
