@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
-import { supabase } from '../../lib/supabaseClient';
-import { notifyAdmin } from '../../lib/notifyAdmin';
+import React, { useRef, useState } from 'react';
+import { submitEmploymentRequest } from '../../lib/employmentIntake';
 import { useLanguage } from '../../context/LanguageContext';
 import { useFormTranslation } from '../../hooks/useFormTranslation';
 import { useRTL } from '../../lib/useRTL';
@@ -120,13 +119,15 @@ const translations = {
   },
 };
 
-export default function CandidateForm({ userId, onSuccess }: CandidateFormProps) {
+export default function CandidateForm({ onSuccess }: CandidateFormProps) {
   const { language } = useLanguage();
   const { submission_lang } = useFormTranslation();
   const { isRTL } = useRTL();
 
   const t = translations[language as keyof typeof translations] || translations.fr;
 
+  const requestId = useRef(crypto.randomUUID());
+  const submitting = useRef(false);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -139,11 +140,13 @@ export default function CandidateForm({ userId, onSuccess }: CandidateFormProps)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (submitting.current) return;
+    submitting.current = true;
     setSaving(true);
     setMessage(null);
 
     try {
-      if (!formData.titre.trim()) {
+      if (formData.titre.trim().length < 2) {
         setMessage({ type: 'error', text: t.errTitle });
         setSaving(false);
         return;
@@ -168,42 +171,16 @@ export default function CandidateForm({ userId, onSuccess }: CandidateFormProps)
         return;
       }
 
-      const payload = {
-        nom_complet: formData.titre.trim(),
-        prenom: '',
+      await submitEmploymentRequest({
+        requestId: requestId.current,
+        mode: 'candidate-info',
+        title: formData.titre.trim(),
+        phone: formData.telephone.trim(),
         email: formData.email.trim(),
-        telephone: formData.telephone.trim(),
-        adresse: '',
-        ville_residence: '',
-        category: 'demande_information_inscription',
-        diplome: '',
-        competences: [],
-        annees_experience: 0,
-        languages: [],
-        contrats_souhaites: [],
-        visibility: 'private',
-        cv_url: '',
-        availability: formData.message.trim(),
-        est_premium: false,
-        created_by: userId,
-        updated_at: new Date().toISOString(),
-        submission_lang,
-      };
-
-      const { error } = await supabase.from('candidates').upsert(payload);
-
-      if (error) {
-        console.error('[CandidateForm] Supabase error:', error);
-        setMessage({ type: 'error', text: t.errGeneric });
-        return;
-      }
-
-      notifyAdmin('Nouvelle demande candidat', {
-        Titre: payload.nom_complet,
-        Telephone: payload.telephone,
-        Email: payload.email,
-        Message: payload.availability,
-      }, '/candidats');
+        message: formData.message.trim(),
+        language: submission_lang,
+      });
+      requestId.current = crypto.randomUUID();
 
       setMessage({ type: 'success', text: t.success });
 
@@ -219,6 +196,7 @@ export default function CandidateForm({ userId, onSuccess }: CandidateFormProps)
       console.error('[CandidateForm] Unexpected error:', error);
       setMessage({ type: 'error', text: t.errGeneric });
     } finally {
+      submitting.current = false;
       setSaving(false);
     }
   };
@@ -226,10 +204,10 @@ export default function CandidateForm({ userId, onSuccess }: CandidateFormProps)
   return (
     <form data-public-form="true" onSubmit={handleSubmit} className="space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
       <div className="mb-2">
-        <h3 className="text-xl font-bold text-[#F5F5DC] mb-2">
+        <h3 className="text-xl font-bold text-[#292725] mb-2">
           {t.title}
         </h3>
-        <p className="text-sm text-[#E8D5C4] leading-relaxed">
+        <p className="text-sm text-[#514B43] leading-relaxed">
           {t.intro}
         </p>
       </div>
@@ -238,8 +216,8 @@ export default function CandidateForm({ userId, onSuccess }: CandidateFormProps)
         <div
           className={`p-4 rounded-lg ${
             message.type === 'success'
-              ? 'bg-green-900/30 border border-green-600 text-green-300'
-              : 'bg-red-900/30 border border-red-600 text-red-300'
+              ? 'bg-green-50 border border-green-300 text-green-900'
+              : 'bg-red-50 border border-red-300 text-red-900'
           }`}
         >
           {message.text}
@@ -247,56 +225,59 @@ export default function CandidateForm({ userId, onSuccess }: CandidateFormProps)
       )}
 
       <div>
-        <label className="block text-sm font-medium text-[#F5F5DC] mb-2">
+        <label className="block text-sm font-medium text-[#292725] mb-2">
           {t.labelTitle} <span className="text-[#D4AF37]">*</span>
         </label>
         <input
           type="text"
+          maxLength={180}
           required
           value={formData.titre}
           onChange={(e) => setFormData((prev) => ({ ...prev, titre: e.target.value }))}
-          className="w-full px-4 py-2 bg-[#2A1525] text-[#F5F5DC] border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37]"
+          className="w-full px-4 py-2 bg-white text-[#292725] border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37]"
           placeholder={t.placeholderTitle}
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-[#F5F5DC] mb-2">
+        <label className="block text-sm font-medium text-[#292725] mb-2">
           {t.labelPhone} <span className="text-[#D4AF37]">*</span>
         </label>
         <input
           type="tel"
+          maxLength={48}
           required
           value={formData.telephone}
           onChange={(e) => setFormData((prev) => ({ ...prev, telephone: e.target.value }))}
-          className="w-full px-4 py-2 bg-[#2A1525] text-[#F5F5DC] border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37]"
+          className="w-full px-4 py-2 bg-white text-[#292725] border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37]"
           placeholder={t.placeholderPhone}
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-[#F5F5DC] mb-2">
+        <label className="block text-sm font-medium text-[#292725] mb-2">
           {t.labelEmail} <span className="text-[#D4AF37]">*</span>
         </label>
         <input
           type="email"
+          maxLength={254}
           required
           value={formData.email}
           onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
-          className="w-full px-4 py-2 bg-[#2A1525] text-[#F5F5DC] border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37]"
+          className="w-full px-4 py-2 bg-white text-[#292725] border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37]"
           placeholder={t.placeholderEmail}
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-[#F5F5DC] mb-2">
+        <label className="block text-sm font-medium text-[#292725] mb-2">
           {t.labelMessage}
         </label>
         <textarea
           rows={4}
           value={formData.message}
           onChange={(e) => setFormData((prev) => ({ ...prev, message: e.target.value }))}
-          className="w-full px-4 py-2 bg-[#2A1525] text-[#F5F5DC] border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] placeholder-gray-500"
+          className="w-full px-4 py-2 bg-white text-[#292725] border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] placeholder-gray-500"
           placeholder={t.placeholderMessage}
         />
       </div>

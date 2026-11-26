@@ -64,9 +64,9 @@ export default function CandidateList() {
 
     const loadCandidates = async () => {
       const { data, error: queryError } = await supabase
-        .from('candidates')
+        .from('emploi_public_talents')
         .select('id, city, category, skills, experience_years, languages, desired_contracts, updated_at')
-        .eq('visibility', 'public');
+        .order('updated_at', { ascending: false });
 
       if (!active) return;
       if (queryError) {
@@ -241,13 +241,13 @@ export default function CandidateList() {
 
       {selectedCandidate && (
         <div role="dialog" aria-modal="true" aria-labelledby="candidate-contact-title" className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/75 p-4 backdrop-blur-sm" onMouseDown={(event) => { if (event.currentTarget === event.target) setSelectedCandidate(null); }}>
-          <div className="my-6 w-full max-w-2xl overflow-hidden rounded-xl border border-[#D4AF37] bg-[#1A1A1A] shadow-sm">
+          <div className="my-6 w-full max-w-2xl overflow-hidden rounded-xl border border-[#D4AF37] bg-[#FFFDF9] shadow-sm">
             <div className="flex items-center justify-between border-b border-[#D4AF37]/60 bg-[#292725] px-5 py-4">
               <h2 id="candidate-contact-title" className="public-heading font-serif text-xl text-[#D4AF37]">{copy.modalTitle}</h2>
               <button type="button" onClick={() => setSelectedCandidate(null)} aria-label={copy.close} className="rounded-full p-2 text-white hover:bg-white/15"><X className="h-6 w-6" aria-hidden="true" /></button>
             </div>
             <div className="max-h-[calc(100vh-8rem)] overflow-y-auto p-4 md:p-7">
-              <JobPostForm mode="candidate-contact" initialTitle={`${selectedCandidate.category || copy.profileFallback} · ${selectedCandidate.city || ''}`} onSuccess={() => setSelectedCandidate(null)} />
+              <JobPostForm mode="candidate-contact" candidateId={selectedCandidate.id} initialTitle={`${selectedCandidate.category || copy.profileFallback} · ${selectedCandidate.city || ''}`} onSuccess={() => setSelectedCandidate(null)} />
             </div>
           </div>
         </div>
