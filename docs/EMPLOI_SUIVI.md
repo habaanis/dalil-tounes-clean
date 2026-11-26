@@ -31,3 +31,11 @@ Chaque exécution doit consigner dans le journal durable : date/heure, sources c
 - PR #461 site et #462 PWA : lecture dynamique paginée par 200, rafraîchissement toutes les cinq minutes et au focus, messages de chargement/erreur en cinq langues, recherche incluant ville et gouvernorat. Pas de retour aux anciennes annonces statiques en cas d'erreur.
 - À vérifier : builds, accès Data API réel depuis navigateur, rendu et filtre avec offres réelles, migration versionnée du schéma, journal administratif, automatisation quotidienne et compteur exact. Les anciens droits de job_postings restent à auditer séparément.
 - Aucun lot d'annonces réelles publié à cette date.
+
+## Suite — accueil et suivi administratif
+- PR #461 et #462 fusionnées et production READY (2dd95e74, 42b46054).
+- Journal privé `emploi_collection_runs` créé; premier bilan partiel enregistré. Cinq pistes pending, zéro publiée.
+- Tâche quotidienne existante retrouvée active (27/11/2026 08h Europe/Paris); premier résultat à contrôler. Vérifier réellement le journal et les alertes.
+- Compteur accueil : SELECT count exact sur verified_job_offers, filtré explicitement par statut published et date tunisienne, rafraîchissement au focus et toutes les 5 minutes; texte générique si erreur. La PWA ne disposait que de trois univers; ajout du quatrième Emploi dans les cinq langues sans remplacer les autres textes.
+- Page site /admin/emploi en lecture seule, contrôle d'identité via Supabase Auth et table admins existante; accès données protégé par RLS. Journal des 30 derniers bilans, 100 dernières offres pending, comptages exacts, alerte visuelle si dernier bilan complet absent ou >48h. Pas de nouvelle authentification.
+- Les tests navigateur et la publication de vraies offres restent nécessaires. Aucun changement Lienora.
