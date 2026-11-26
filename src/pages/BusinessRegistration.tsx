@@ -68,7 +68,7 @@ export default function BusinessRegistration() {
   return (
     <div className="public-surface min-h-screen bg-[#fcfaf5] px-4 pb-14 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl">
-        {!direct && <section className="overflow-hidden rounded-xl border border-[#D4AF37]/40 bg-gradient-to-br from-[#4A1D43] via-[#632652] to-[#0B5A45] px-5 py-9 text-white shadow-[0_24px_70px_rgba(74,29,67,0.18)] sm:px-8 sm:py-12 lg:px-12">
+        {!direct && <section className="overflow-hidden rounded-xl border border-[#D4AF37]/40 bg-gradient-to-br from-[#292725] via-[#632652] to-[#0B5A45] px-5 py-9 text-white shadow-[0_24px_70px_rgba(74,29,67,0.18)] sm:px-8 sm:py-12 lg:px-12">
           <div className="max-w-3xl">
             <p className="inline-flex rounded-full border border-[#D4AF37]/50 bg-white/10 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.16em] text-[#F7D978]">
               {text.eyebrow}
@@ -89,10 +89,10 @@ export default function BusinessRegistration() {
           <div className="rounded-xl border border-[#D4AF37]/35 bg-white p-5 shadow-sm sm:p-8">
             <div className="mb-6">
               <div className="flex items-center gap-3">
-                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#4A1D43] text-[#D4AF37]">
+                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#292725] text-[#D4AF37]">
                   <Building2 className="h-5 w-5" aria-hidden="true" />
                 </span>
-                <h2 className="public-heading text-xl font-medium text-[#4A1D43] sm:text-2xl">{direct ? text.title : text.formTitle}</h2>
+                <h2 className="public-heading text-xl font-medium text-[#292725] sm:text-2xl">{direct ? text.title : text.formTitle}</h2>
               </div>
               <p className="mt-3 text-sm leading-relaxed text-gray-600">{text.formHint}</p>
             </div>
@@ -101,10 +101,10 @@ export default function BusinessRegistration() {
           </div>
 
           <aside className="rounded-xl border border-[#D4AF37]/30 bg-[#FFFDF7] p-5 shadow-sm lg:sticky lg:top-28">
-            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#D4AF37]/15 text-[#4A1D43]">
+            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#D4AF37]/15 text-[#292725]">
               <CheckCircle2 className="h-5 w-5" aria-hidden="true" />
             </div>
-            <h2 className="public-heading mt-4 text-lg font-medium text-[#4A1D43]">{text.privacyTitle}</h2>
+            <h2 className="public-heading mt-4 text-lg font-medium text-[#292725]">{text.privacyTitle}</h2>
             <p className="mt-2 text-sm leading-relaxed text-gray-600">{text.privacyText}</p>
           </aside>
         </section>
