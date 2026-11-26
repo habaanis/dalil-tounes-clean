@@ -118,7 +118,7 @@ Deno.serve(async req=>{
           order_not_found:"Commande introuvable ou inaccessible.",
           order_changed:"Cette commande a changé. Actualisez la liste.",
           order_closed_required:"Terminez, refusez ou annulez la demande avant de l’archiver.",
-          financial_history_protected:"Cette demande doit conserver son historique. Vous pouvez l’archiver.",
+          financial_history_protected:"Suppression indisponible : cette demande doit conserver son historique.",
           delete_confirmation_required:"Confirmez la suppression de cette demande.",
         };
         const status=error.code==="42501"?403:error.code==="22023"?400:error.code==="P0002"?404:

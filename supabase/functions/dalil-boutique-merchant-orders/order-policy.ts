@@ -12,10 +12,10 @@ export type OrderProtection = {
 export const isClosedOrder = (status: string) =>
   ['completed', 'rejected', 'cancelled'].includes(status);
 
-// A completed service may have been paid outside Dalil. Keep its history even
-// when no online payment was recorded. Only abandoned unpaid requests can be removed.
+// Confirmed/completed services may have been paid outside Dalil. Keep their
+// history. An unconfirmed unpaid request is cancelled atomically when removed.
 export const canDeleteOrder = (order: OrderProtection) =>
-  !order.deleted_at && ['rejected', 'cancelled'].includes(order.status) &&
+  !order.deleted_at && ['received', 'in_progress', 'rejected', 'cancelled'].includes(order.status) &&
   ['not_requested', 'failed'].includes(order.payment_status) &&
   Number(order.paid_amount) === 0 && order.payment_provider === null &&
   order.payment_reference === null && order.payment_verified_at === null;

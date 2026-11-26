@@ -80,6 +80,9 @@ const migration = await readFile(new URL('../supabase/migrations/20261126095355_
 await db.exec(migration);
 check('Actual archive/delete migration executes on PostgreSQL with existing payment constraints', true);
 const baseline = JSON.stringify((await db.query('select * from public.dalil_boutique_customer_orders order by id')).rows);
+const directDeleteMigration = await readFile(new URL('../supabase/migrations/20261126104230_dalil_merchant_order_direct_delete.sql', import.meta.url), 'utf8');
+await db.exec(directDeleteMigration);
+check('Actual direct-delete migration executes without changing existing orders', JSON.stringify((await db.query('select * from public.dalil_boutique_customer_orders order by id')).rows) === baseline);
 const rpc = 'public.dalil_merchant_manage_order(uuid,text,uuid,text,timestamptz,boolean)';
 for (const role of ['anon','authenticated']) {
   const result = await db.query('select has_function_privilege($1,$2,\'EXECUTE\') as allowed', [role,rpc]);
@@ -89,9 +92,12 @@ const functionMode = await db.query("select prosecdef,proconfig from pg_proc whe
 check('Mutation RPC runs as invoker with fixed empty search path', functionMode.rows[0].prosecdef === false && functionMode.rows[0].proconfig.includes('search_path=""'));
 const suite = await readFile(new URL('../supabase/tests/dalil_merchant_order_management.sql', import.meta.url), 'utf8');
 await db.exec(suite);
-check('Real service-role rollback suite: owner/cross-company/stale guards and all nine active-state/action combinations', true);
-check('Real PostgreSQL rejects pending, paid, partially paid, refunded and completed-history deletion', true);
+check('Real service-role rollback suite: owner/cross-company/stale/confirmation guards leave active requests unchanged', true);
+check('Real PostgreSQL directly deletes received/in-progress orders and quotes with final cancelled status', true);
+check('Real PostgreSQL rejects active archive/restore and direct confirmed/completed deletion', true);
+check('Real PostgreSQL rejects every pending/paid/partially-paid/refunded combination for all four eligible statuses', true);
 check('Real PostgreSQL archives, restores, requires confirmation, redacts, keeps final reference, removes push and records audit', true);
+check('Deleted tombstones block late status changes, repeated actions, idempotency reuse and push recreation', true);
 check('Full fixture rollback preserves all pre-existing orders byte for byte', JSON.stringify((await db.query('select * from public.dalil_boutique_customer_orders order by id')).rows) === baseline);
 check('Rollback leaves no new push subscription or action audit', (await db.query('select (select count(*) from public.dalil_boutique_order_push_subscriptions)+(select count(*) from public.dalil_boutique_order_management_events) as count')).rows[0].count === 0);
 // Validate SQL constraints themselves, including future accidental server writes.
