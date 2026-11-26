@@ -75,6 +75,7 @@ export default function ClientAccount() {
   };
   const [state,setState]=useState<'checking'|'allowed'|'denied'|'error'>('checking');
   const [retry,setRetry]=useState(0);
+  const [accountId,setAccountId]=useState('');
   const accountLogin=withCvContext('/' + encodeURIComponent(slug || '') + '/connexion',returnModel,search);
   const cvPath=cvReturnPath(slug,returnModel);
   useEffect(()=>{
@@ -94,7 +95,7 @@ export default function ClientAccount() {
       if (!businessId) { if(active)setState('denied'); return; }
       const {data,error}=await supabase.from('professional_profile_access')
         .select('entreprise_id').eq('user_id',user.id).eq('entreprise_id',businessId).maybeSingle();
-      if(active)setState(error ? 'error' : data ? 'allowed':'denied');
+      if(active){setAccountId(data ? businessId : '');setState(error ? 'error' : data ? 'allowed':'denied');}
     })().catch(()=>{if(active)setState('error')});
     return ()=>{active=false};
   },[slug,user?.id,retry]);
@@ -116,5 +117,5 @@ export default function ClientAccount() {
       <Link className="mt-3 block underline" to={cvPath}>Voir le CV</Link>
     </div>
   </main>;
-  return <div className="min-h-dvh bg-[#fbf8f0] pb-[env(safe-area-inset-bottom)]"><div className="mx-auto max-w-7xl px-4 pt-3"><Link className="inline-flex min-h-11 items-center text-sm underline" to={cvPath}>← Retour à mon CV {returnModel==='portfolio'?'Portfolio':'Business'}</Link></div><CompanyDashboard clientAppMode onPresentationSaved={onPresentationSaved} onNavigate={(page)=>{if(page==='home')navigate(cvReturnPath(slug, savedModel ?? returnModel));}} /></div>;
+  return <div className="min-h-dvh bg-[#fbf8f0] pb-[env(safe-area-inset-bottom)]"><div className="mx-auto max-w-7xl px-4 pt-3"><Link className="inline-flex min-h-11 items-center text-sm underline" to={cvPath}>← Retour à mon CV {returnModel==='portfolio'?'Portfolio':'Business'}</Link></div><CompanyDashboard accountId={accountId} clientAppMode onPresentationSaved={onPresentationSaved} onNavigate={(page)=>{if(page==='home')navigate(cvReturnPath(slug, savedModel ?? returnModel));}} /></div>;
 }
