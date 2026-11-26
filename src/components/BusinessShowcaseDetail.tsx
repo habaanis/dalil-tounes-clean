@@ -335,6 +335,9 @@ export default function BusinessShowcaseDetail() {
             googleReviewCount={business['Compteur Avis Google'] as number | string | null}
             showDetailsLink={false}
           />
+          {business.adresse?.trim() && (
+            <p className="mt-2 break-words text-sm text-slate-600">{business.adresse}</p>
+          )}
           <VisitBeforeTravelAdvice business={business} language={language} />
         </section>
       </div>
