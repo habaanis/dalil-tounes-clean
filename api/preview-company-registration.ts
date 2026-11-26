@@ -40,17 +40,21 @@ export default async function handler(request: PreviewRequest, response: Preview
     return response.status(400).json({ success: false });
   }
   const body = JSON.stringify(payload);
-  if (new TextEncoder().encode(body).length > 30000) return response.status(413).json({ success: false });
+  if (new TextEncoder().encode(body).length > 65_536) return response.status(413).json({ success: false });
   if (!['company_registration', 'subscription'].includes(String(payload.mode))) {
     return response.status(422).json({ success: false });
   }
+  const bearer = request.headers.authorization;
+  const authorization = typeof bearer === 'string' && /^Bearer \S+$/i.test(bearer) ? bearer : `Bearer ${key}`;
   try {
     const upstream = await fetch('https://kmvjegbtroksjqaqliyv.supabase.co/functions/v1/submit-company-registration', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', apikey: key, Authorization: `Bearer ${key}` },
+      headers: { 'Content-Type': 'application/json', apikey: key, Authorization: authorization },
       body,
       signal: AbortSignal.timeout(19000),
     });
+    const retryAfter = upstream.headers.get('Retry-After');
+    if (retryAfter) response.setHeader('Retry-After', retryAfter);
     return response.status(upstream.status).json(await upstream.json());
   } catch {
     console.error('[preview-company-registration] Upstream unavailable');

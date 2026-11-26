@@ -1,8 +1,8 @@
 // Dalil Tounes Service Worker
-// Version: 1.4.8 - release v29 pricing and registration section label
+// Version: 1.4.9 - release v30 creation dossiers and verified professional access
 // Strategie: Network-First pour le HTML, cache valide uniquement pour les assets
 
-const CACHE_VERSION = 'v29';
+const CACHE_VERSION = 'v30';
 const STATIC_CACHE = `dalil-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `dalil-dynamic-${CACHE_VERSION}`;
 
