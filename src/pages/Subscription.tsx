@@ -1364,21 +1364,47 @@ export const Subscription = () => {
   const [selectedPresentationModel, setSelectedPresentationModel] = useState<PresentationModel | null>(null);
   const [selectedPalette, setSelectedPalette] = useState<PaletteId>('prestige');
   const [showSecondaryDetails, setShowSecondaryDetails] = useState(false);
-  const [miniAppOpen, setMiniAppOpen] = useState(true);
+  type ProSection = 'free' | 'cv' | 'models' | 'offers';
+  const sectionFromLocation = (): ProSection | null => {
+    const hash = window.location.hash.slice(1);
+    const params = new URLSearchParams(window.location.search);
+    if (hash === 'offres' || params.get('app-offers') === '1') return 'offers';
+    if (hash === 'modeles' || hash === 'personnalisation' || params.get('app-models') === '1') return 'models';
+    if (hash === 'cv-professionnels') return 'cv';
+    if (hash === 'presence-essentielle') return 'free';
+    return null;
+  };
+  const [activeProSection, setActiveProSection] = useState<ProSection | null>(sectionFromLocation);
+  const openProSection = (section: ProSection) => {
+    setActiveProSection(section);
+    const destinations: Record<ProSection, string> = {free:'presence-essentielle',cv:'cv-professionnels',models:'modeles',offers:'offres'};
+    window.history.replaceState(window.history.state, '', '#'+destinations[section]);
+    window.requestAnimationFrame(() => document.getElementById('pro-navigation')?.scrollIntoView({block:'start',behavior:'smooth'}));
+  };
+  const proTitles = {
+    fr: ['Inscription gratuite','Votre mini-appli','Voir les modèles','Tarifs et inscription'],
+    ar: ['تسجيل مجاني','تطبيقك المصغّر','شوف النماذج','الأسعار والتسجيل'],
+    en: ['Free listing','Your mini-app','Explore models','Pricing and registration'],
+    it: ['Iscrizione gratuita','La tua mini-app','Scopri i modelli','Tariffe e iscrizione'],
+    ru: ['Бесплатная регистрация','Ваше мини-приложение','Модели','Тарифы и регистрация']
+  }[language as OfferLanguage];
+  const proDescriptions = {
+    fr: ['Référencez votre activité.','Présenter, vendre, fidéliser et suivre.','Essayez Business et Portfolio.','Artisan 30 DT · Premium 59 DT.'],
+    ar: ['سجّل نشاطك.','عرّف، بيع وتابع الطلبات.','جرّب Business وPortfolio.','حرفي 30 د.ت · Premium 59 د.ت'],
+    en: ['List your business.','Showcase, sell and track orders.','Try Business and Portfolio.','Artisan 30 DT · Premium 59 DT.'],
+    it: ['Registra la tua attività.','Presenta, vendi e segui gli ordini.','Prova Business e Portfolio.','Artisan 30 DT · Premium 59 DT.'],
+    ru: ['Добавьте бизнес.','Представляйте, продавайте и следите.','Попробуйте Business и Portfolio.','Artisan 30 DT · Premium 59 DT.']
+  }[language as OfferLanguage];
 
   useEffect(() => {
-    const openTargetSection = () => {
-      const params = new URLSearchParams(window.location.search);
-      const requested = window.location.hash.slice(1) || (params.get('app-offers') === '1' ? 'offres' : params.get('app-models') === '1' ? 'modeles' : '');
-      if (!requested) return;
-      const target = requested === 'modeles' || requested === 'personnalisation' ? 'cv-professionnels' : requested;
-      if (target === 'cv-professionnels') setMiniAppOpen(true);
-      window.requestAnimationFrame(() => document.getElementById(target)?.scrollIntoView({ block: 'start' }));
+    const onHashChange = () => {
+      const requested = sectionFromLocation();
+      if (requested) setActiveProSection(requested);
     };
-    openTargetSection();
-    window.addEventListener('hashchange', openTargetSection);
-    return () => window.removeEventListener('hashchange', openTargetSection);
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
+
 
   const closePreview = () => setActivePreview(null);
   const openRequest = (code: SubscriptionPlanCode, label: string, checkoutOffer: CheckoutOffer, billingPeriod?: BillingPeriod, presentationModelLabel?: string, paletteLabel?: string) => {
