@@ -39,3 +39,8 @@ Chaque exécution doit consigner dans le journal durable : date/heure, sources c
 - Compteur accueil : SELECT count exact sur verified_job_offers, filtré explicitement par statut published et date tunisienne, rafraîchissement au focus et toutes les 5 minutes; texte générique si erreur. La PWA ne disposait que de trois univers; ajout du quatrième Emploi dans les cinq langues sans remplacer les autres textes.
 - Page site /admin/emploi en lecture seule, contrôle d'identité via Supabase Auth et table admins existante; accès données protégé par RLS. Journal des 30 derniers bilans, 100 dernières offres pending, comptages exacts, alerte visuelle si dernier bilan complet absent ou >48h. Pas de nouvelle authentification.
 - Les tests navigateur et la publication de vraies offres restent nécessaires. Aucun changement Lienora.
+
+## Retour utilisateur du 26 novembre — annonces compactes
+- 50 pistes enregistrées ; 2 passées au statut published (ANPE et Hamelin) sur preuve éditoriale indexée, ouverture directe HTTP non confirmée, 48 pending. Ne pas assimiler à 50 offres validées.
+- Carte VerifiedJobCard existante compactée sur site et PWA : titre, employeur, ville, contrat, bouton détails replié. Expérience, secteur, compétences, source et lien candidature à l’intérieur. Dates verified_at/review_until non affichées aux candidats ; restent inchangées dans Supabase pour contrôle et expiration. Cinq langues conservées.
+- Espacement de grille réduit, alignement en haut afin que l’ouverture d’une carte ne dilate pas les autres cartes. Vérifier compilation et rendu mobile avant fusion.
