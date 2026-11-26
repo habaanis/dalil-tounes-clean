@@ -171,7 +171,7 @@ export const Jobs = () => {
               {loadState === 'loading' ? loadCopy[0] : <>{loadCopy[1]} <button type="button" className="underline" onClick={() => setRetry(value => value + 1)}>{loadCopy[2]}</button></>}
             </div>
           ) : verifiedJobs.length > 0 ? (
-            <div className="grid gap-5 md:grid-cols-2">
+            <div className="grid items-start gap-2 md:grid-cols-2 md:gap-3">
               {verifiedJobs.map((offer) => (
                 <VerifiedJobCard
                   key={offer.id}
