@@ -7,7 +7,7 @@ import { SEOHead } from '../components/SEOHead';
 import StructuredData from '../components/StructuredData';
 import { getHomeSeoMeta } from '../lib/seoMetaTemplates';
 import { generateOrganizationSchema, generateWebSiteSchema } from '../lib/structuredDataSchemas';
-import { ArrowRight, Users, Compass, Building2, MapPin, Search, Sparkles, Play, X } from 'lucide-react';
+import { ArrowRight, Users, Compass, Building2, Briefcase, MapPin, Search, Sparkles, Play, X } from 'lucide-react';
 import { useEffect, useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CvBusinessJourney from '../components/CvBusinessJourney';
@@ -301,6 +301,36 @@ function SeparationExperience({ fixedView, embedded = false, selectedModel, onMo
   // The actual public landing page is PlatformHome (not the legacy Home.tsx).
   // Read the authoritative aggregate directly; never display the old 2 351 total
   // from a stale client cache while the current RPC is still loading.
+  const [activeJobs, setActiveJobs] = useState<number | null>(null);
+  useEffect(() => {
+    if (view !== 'platform') return;
+    let cancelled = false;
+    let busy = false;
+    const refreshJobs = async () => {
+      if (busy || cancelled) return;
+      busy = true;
+      try {
+        const { supabase } = await import('../lib/supabaseClient');
+        const parts = new Intl.DateTimeFormat('en-CA', { timeZone: 'Africa/Tunis', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date());
+        const today = ['year', 'month', 'day'].map(key => parts.find(p => p.type === key)?.value).join('-');
+        const { count, error } = await supabase.from('verified_job_offers').select('id', { count: 'exact', head: true }).eq('status', 'published').lte('verified_at', today).gte('review_until', today);
+        if (!cancelled) setActiveJobs(error ? null : count);
+      } catch {
+        if (!cancelled) setActiveJobs(null);
+      } finally { busy = false; }
+    };
+    void refreshJobs();
+    const timer = window.setInterval(refreshJobs, 300000);
+    window.addEventListener('focus', refreshJobs);
+    return () => { cancelled = true; window.clearInterval(timer); window.removeEventListener('focus', refreshJobs); };
+  }, [view]);
+  const jobsCountLabel = activeJobs === null ? null : {
+    fr: activeJobs === 1 ? '1 offre active' : activeJobs.toLocaleString('fr-FR') + ' offres actives',
+    ar: activeJobs.toLocaleString('ar-TN') + ' عروض عمل نشطة',
+    en: activeJobs.toLocaleString('en-GB') + (activeJobs === 1 ? ' active job' : ' active jobs'),
+    it: activeJobs.toLocaleString('it-IT') + (activeJobs === 1 ? ' offerta attiva' : ' offerte attive'),
+    ru: 'Активных вакансий: ' + activeJobs.toLocaleString('ru-RU'),
+  }[lang];
   const [verifiedTotal, setVerifiedTotal] = useState<number | null>(null);
   useEffect(() => {
     if (view !== 'platform') return;
@@ -443,13 +473,13 @@ function SeparationExperience({ fixedView, embedded = false, selectedModel, onMo
                 <p className="text-base font-medium leading-relaxed md:text-base">{countsAvailable ? t.networkProof(localizedCount) : <span className="text-sm font-semibold opacity-70" role="status">{t.loadingCount}</span>}</p>
                 <p className="mt-1 text-sm font-medium text-[#9A7416] md:text-base">{countsAvailable ? t.certifiedProof(localizedCertifiedCount) : <span className="text-sm font-medium opacity-70" role="status">{t.certifiedLoading}</span>}</p>
               </div>
-              <nav className="premium-universes" aria-label={structure.platform}>
+              <nav className="premium-universes !grid !grid-cols-2 lg:!grid-cols-4" aria-label={structure.platform}>
                 {structure.universes.map((universe, index) => {
-                  const Icon = [Users, Compass, Building2][index];
-                  const href = ['/citizens', '/citizens/tourism', '/subscription'][index];
+                  const Icon = [Users, Compass, Building2, Briefcase][index];
+                  const href = ['/citizens', '/citizens/tourism', '/subscription', '/jobs'][index];
                   return <a key={href} href={href} className="premium-universe">
                     <Icon className="premium-universe-icon" strokeWidth={1.4} aria-hidden="true" />
-                    <span><span className="premium-universe-title">{universe.title}</span><span className="premium-universe-copy">{universe.text}</span></span>
+                    <span><span className="premium-universe-title">{universe.title}</span><span className="premium-universe-copy">{index === 3 && jobsCountLabel !== null ? jobsCountLabel : universe.text}</span></span>
                     <ArrowRight className="premium-universe-arrow" aria-hidden="true" />
                   </a>;
                 })}
