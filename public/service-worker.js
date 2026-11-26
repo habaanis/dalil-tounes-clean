@@ -1,8 +1,8 @@
 // Dalil Tounes Service Worker
-// Version: 1.4.7 - release v28 complete saved galleries and commercial plan recognition
+// Version: 1.4.8 - release v29 pricing and registration section label
 // Strategie: Network-First pour le HTML, cache valide uniquement pour les assets
 
-const CACHE_VERSION = 'v28';
+const CACHE_VERSION = 'v29';
 const STATIC_CACHE = `dalil-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `dalil-dynamic-${CACHE_VERSION}`;
 
