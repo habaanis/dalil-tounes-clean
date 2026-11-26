@@ -11,7 +11,7 @@ try { require.resolve('react-test-renderer'); }
 catch { reactRequire = createRequire(path.resolve(process.env.DALIL_QA_RUNTIME || '../qa-runtime', 'package.json')); }
 const React = reactRequire('react');
 const { act, create } = reactRequire('react-test-renderer');
-const networkNames = ['Facebook', 'Instagram', 'TikTok', 'LinkedIn', 'YouTube', 'X'];
+const networkNames = ['Facebook', 'Instagram', 'TikTok', 'LinkedIn', 'YouTube', 'X / Autre réseau'];
 const networkKeys = ['lien facebook', 'Lien Instagram', 'Lien TikTok', 'Lien LinkedIn', 'Lien YouTube', 'lien_x'];
 const modelNames = ['CV Portfolio', 'CV Business'];
 const paletteNames = ['Vert Prestige', 'Ivoire & Or', 'Bleu Nuit'];
@@ -112,7 +112,7 @@ try {
   await mount(Editor,{rights:premiumRights,networks:1});
   for(const name of networkNames.slice(1)){
     assert.equal(labelledInput(name).props.disabled,false);
-    await toggle(name,true);await setInput('Lien '+name,`https://networks.example.test/${name.toLowerCase()}`);
+    await toggle(name,true);await setInput('Lien '+name,`https://networks.example.test/${encodeURIComponent(name.toLowerCase())}`);
   }
   await submitProfile();assert.equal(selectedNetworks().length,6);assert.ok(hasText('6/6 réseaux sélectionnés'));
   assert.ok(hasText('Modifications enregistrées.'));

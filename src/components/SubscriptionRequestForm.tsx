@@ -3,8 +3,12 @@ import { ArrowLeft, ArrowRight, CheckCircle2, Send } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import {
   BusinessRegistrationError,
+  createRegistrationRequestId,
+  resolveCreationModel,
+  resolveCreationPalette,
   submitBusinessRegistration,
   type BusinessRegistrationRequest,
+  type BusinessRegistrationResponse,
 } from '../lib/businessRegistration';
 import {
   BUSINESS_SECTORS,
@@ -722,6 +726,14 @@ const PLATFORMS: Platform[] = [
 const inputClassName =
   'w-full rounded-xl border border-[#D4AF37]/70 bg-white px-4 py-3 text-base text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-[#4A1D43] focus:ring-2 focus:ring-[#4A1D43]/20 disabled:bg-gray-50 disabled:text-gray-500';
 
+const RECEIPT_COPY: Record<SupportedLanguage, { saved: string; reference: string; pending: string; rateLimited: string; rejected: string; conflict: string }> = {
+  fr: { saved: 'Votre demande a bien été enregistrée.', reference: 'Référence', pending: 'Votre dossier est conservé. Notre équipe pourra reprendre sa transmission sans vous demander de le renvoyer.', rateLimited: 'Plusieurs demandes ont été envoyées récemment. Attendez quelques minutes avant de réessayer.', rejected: 'Cette demande n’a pas été enregistrée. Vérifiez le formulaire puis réessayez.', conflict: 'Cette tentative correspond déjà à un dossier différent. Fermez puis rouvrez le formulaire pour envoyer une nouvelle demande.' },
+  ar: { saved: 'تم تسجيل طلبك بنجاح.', reference: 'المرجع', pending: 'تم حفظ ملفك. يمكن لفريقنا متابعة إرساله دون الحاجة إلى إعادة تقديمه.', rateLimited: 'تم إرسال عدة طلبات مؤخراً. انتظر بضع دقائق ثم أعد المحاولة.', rejected: 'لم يتم تسجيل الطلب. تحقق من الاستمارة ثم أعد المحاولة.', conflict: 'هذه المحاولة مرتبطة بملف مختلف. أغلق الاستمارة وافتحها مجدداً لتقديم طلب جديد.' },
+  en: { saved: 'Your request has been saved.', reference: 'Reference', pending: 'Your dossier is saved. Our team can resume its delivery without asking you to submit it again.', rateLimited: 'Several requests were sent recently. Wait a few minutes before trying again.', rejected: 'This request was not saved. Check the form and try again.', conflict: 'This attempt already belongs to a different dossier. Close and reopen the form to submit a new request.' },
+  it: { saved: 'La tua richiesta è stata registrata.', reference: 'Riferimento', pending: 'Il tuo dossier è stato salvato. Il nostro team può riprenderne la trasmissione senza chiederti di inviarlo di nuovo.', rateLimited: 'Sono state inviate diverse richieste di recente. Attendi qualche minuto prima di riprovare.', rejected: 'La richiesta non è stata registrata. Controlla il modulo e riprova.', conflict: 'Questo tentativo corrisponde già a un dossier diverso. Chiudi e riapri il modulo per inviare una nuova richiesta.' },
+  ru: { saved: 'Ваш запрос сохранён.', reference: 'Номер заявки', pending: 'Ваше досье сохранено. Команда сможет продолжить его передачу без повторной отправки с вашей стороны.', rateLimited: 'Недавно было отправлено несколько запросов. Подождите несколько минут и повторите попытку.', rejected: 'Запрос не сохранён. Проверьте форму и повторите попытку.', conflict: 'Эта попытка уже относится к другому досье. Закройте и снова откройте форму для новой заявки.' },
+};
+
 export function SubscriptionRequestForm({
   selectedPlan,
   selectedPlanLabel,
@@ -762,6 +774,7 @@ export function SubscriptionRequestForm({
   };
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [receipt, setReceipt] = useState<BusinessRegistrationResponse | null>(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [openingCheckout, setOpeningCheckout] = useState(false);
 
@@ -935,6 +948,34 @@ export function SubscriptionRequestForm({
         form.message,
       ].filter(Boolean).join('\n')),
       consent: form.consent,
+      ...(creationMode ? {
+        creationDossier: {
+          schemaVersion: 1 as const,
+          assistance: form.assistance === 'self' ? 'autonomous' as const : 'assisted' as const,
+          presentationModel: premiumCreation ? null : resolveCreationModel(artisanModel),
+          palette: premiumCreation ? null : resolveCreationPalette(artisanPalette),
+          openingStyle: premiumCreation ? null : form.openingStyle,
+          address: cleanSingleLine(form.address),
+          openingHours: cleanMultiline(form.openingHours),
+          googleMapsUrl: normalizeWebAddress(form.googleMapsUrl),
+          googleReviewsUrl: normalizeWebAddress(form.googleReviewsUrl),
+          logoChoice: form.logoChoice,
+          logoUrl: form.logoChoice === 'existing' ? normalizeWebAddress(form.logoUrl) : '',
+          photoUrls: form.photoUrls.split(/\n/).map(link => link.trim()).filter(Boolean).map(link => normalizeWebAddress(link)),
+          productsDescription: cleanMultiline(form.productsDescription),
+          activityDescription: cleanMultiline(form.activityDescription),
+          notes: cleanMultiline(form.message),
+          socialLinks: {
+            facebook: normalizeWebAddress(form.facebook, 'facebook'), instagram: normalizeWebAddress(form.instagram, 'instagram'),
+            tiktok: normalizeWebAddress(form.tiktok), youtube: normalizeWebAddress(form.youtube), linkedin: normalizeWebAddress(form.linkedin),
+            website: normalizeWebAddress(form.website), other: normalizeWebAddress(form.otherPlatformUrl),
+            whatsapp: normalizePhone(form.whatsapp || form.phone), googleBusiness: normalizeWebAddress(form.googleMapsUrl),
+          },
+          selectedPlatforms: [...form.selectedPlatforms],
+          preferredContactMethods: [...form.preferredContactMethods],
+          preferredContactTimes: [...form.preferredContactTimes],
+        },
+      } : {}),
     };
 
     // Creation dossiers allow 10,000 characters; legacy subscriptions retain 1,500.
@@ -948,16 +989,21 @@ export function SubscriptionRequestForm({
 
     try {
       const response = await submitBusinessRegistration(request);
-      if (!response.duplicate) {
-        trackMetaEvent('Lead', { content_name: 'Business offer request' });
-      }
+      setReceipt(response);
       setSubmitted(true);
+      if (!response.duplicate) {
+        // Analytics must never turn a confirmed receipt into an apparent submission failure.
+        try { trackMetaEvent('Lead', { content_name: 'Business offer request' }); } catch { /* receipt already confirmed */ }
+      }
       onSuccess?.();
     } catch (error) {
       if (error instanceof BusinessRegistrationError) {
         if (error.code === 'network_error') setErrorMessage(copy.networkError);
         else if (error.code === 'timeout') setErrorMessage(copy.timeoutError);
         else if (error.code === 'validation_error') setErrorMessage(copy.formError);
+        else if (error.code === 'rate_limited') setErrorMessage(RECEIPT_COPY[currentLanguage].rateLimited);
+        else if (error.code === 'submission_rejected') setErrorMessage(RECEIPT_COPY[currentLanguage].rejected);
+        else if (error.code === 'request_conflict') setErrorMessage(RECEIPT_COPY[currentLanguage].conflict);
         else setErrorMessage(copy.serverError);
       } else {
         setErrorMessage(copy.serverError);
@@ -1042,7 +1088,13 @@ export function SubscriptionRequestForm({
           {submitted ? (
             <div className="flex items-center gap-2 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800" role="status" aria-live="polite">
               <CheckCircle2 className="h-5 w-5" aria-hidden="true" />
-              {copy.success}
+              <div className="min-w-0">
+                <p>{RECEIPT_COPY[currentLanguage].saved}</p>
+                {receipt && <p className="mt-1 break-all text-xs">{RECEIPT_COPY[currentLanguage].reference} : <span dir="ltr">{receipt.id}</span></p>}
+                {receipt && Object.values(receipt.integration_status || {}).some(item => item?.status !== 'ok') && (
+                  <p className="mt-2 text-xs">{RECEIPT_COPY[currentLanguage].pending}</p>
+                )}
+              </div>
             </div>
           ) : (
             <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800" role="alert" aria-live="assertive">
@@ -1554,8 +1606,5 @@ function isSupportedLanguage(language: string): language is SupportedLanguage {
 }
 
 function createRequestId(): string {
-  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
-    return crypto.randomUUID();
-  }
-  return `${Date.now()}-${Math.random().toString(36).slice(2, 12)}`;
+  return createRegistrationRequestId();
 }

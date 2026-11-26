@@ -10,6 +10,7 @@ const fr = {
   networkLimit: 'La limite de réseaux de votre formule est atteinte. Retirez un réseau pour le remplacer.',
   rightsError: 'Impossible de vérifier les droits de votre formule. Les réseaux actuels restent modifiables.',
   loadingNetworks: 'Vérification des réseaux autorisés…',
+  otherNetwork: 'X / Autre réseau', otherNetworkLink: 'Lien X / Autre réseau',
 };
 type Copy = { [K in keyof typeof fr]: string };
 const texts: Record<Language, Copy> = {
@@ -20,6 +21,7 @@ const texts: Record<Language, Copy> = {
     choices: 'Choose from the layouts, palettes and openings included in your plan.', single: 'Your current layout, palette and opening are those included in your plan.',
     networks: 'Social networks', networkCount: '{count}/{limit} networks selected', networkLimit: 'Your plan’s network limit is reached. Remove a network to replace it.',
     rightsError: 'Your plan permissions could not be checked. Existing networks can still be edited.', loadingNetworks: 'Checking available networks…',
+    otherNetwork: 'X / Other network', otherNetworkLink: 'X / Other network link',
   },
   ar: {
     loading: 'جارٍ التحقق من باقتك…', unavailable: 'تعذر تحميل صلاحياتك مؤقتًا. أعد تحميل الصفحة قبل تغيير اختياراتك.',
@@ -27,6 +29,7 @@ const texts: Record<Language, Copy> = {
     choices: 'اختر من النماذج والألوان وشاشات الافتتاح المشمولة في باقتك.', single: 'نموذجك وألوانك وشاشة الافتتاح الحالية هي المشمولة في باقتك.',
     networks: 'شبكات التواصل الاجتماعي', networkCount: 'تم اختيار {count}/{limit} شبكات', networkLimit: 'بلغت الحد الأقصى للشبكات في باقتك. احذف شبكة لاستبدالها.',
     rightsError: 'تعذر التحقق من صلاحيات باقتك. يمكنك تعديل الشبكات الحالية.', loadingNetworks: 'جارٍ التحقق من الشبكات المسموح بها…',
+    otherNetwork: 'X / شبكة أخرى', otherNetworkLink: 'رابط X / شبكة أخرى',
   },
   it: {
     loading: 'Verifica della formula…', unavailable: 'I tuoi diritti non sono disponibili al momento. Ricarica prima di cambiare le scelte.',
@@ -34,6 +37,7 @@ const texts: Record<Language, Copy> = {
     choices: 'Scegli tra i modelli, i colori e le aperture inclusi nella tua formula.', single: 'Il modello, i colori e l’apertura attuali sono quelli inclusi nella tua formula.',
     networks: 'Social network', networkCount: '{count}/{limit} reti selezionate', networkLimit: 'Hai raggiunto il limite di social network. Rimuovine uno per sostituirlo.',
     rightsError: 'Impossibile verificare i diritti della formula. Le reti esistenti restano modificabili.', loadingNetworks: 'Verifica delle reti consentite…',
+    otherNetwork: 'X / Altra rete', otherNetworkLink: 'Link X / Altra rete',
   },
   ru: {
     loading: 'Проверка вашего тарифа…', unavailable: 'Ваши права временно недоступны. Обновите страницу перед изменением настроек.',
@@ -41,6 +45,7 @@ const texts: Record<Language, Copy> = {
     choices: 'Выберите модели, палитры и заставки, включённые в ваш тариф.', single: 'Текущие модель, палитра и заставка включены в ваш тариф.',
     networks: 'Социальные сети', networkCount: 'Выбрано сетей: {count}/{limit}', networkLimit: 'Достигнут лимит социальных сетей. Удалите одну, чтобы заменить её.',
     rightsError: 'Не удалось проверить права тарифа. Существующие сети можно редактировать.', loadingNetworks: 'Проверка доступных сетей…',
+    otherNetwork: 'X / Другая сеть', otherNetworkLink: 'Ссылка X / Другая сеть',
   },
 };
 export function professionalRightsText(language: Language): Copy { return texts[language] ?? fr; }

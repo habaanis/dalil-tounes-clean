@@ -12,7 +12,8 @@ export type CvBusinessSocialNetwork =
   | 'tiktok'
   | 'linkedin'
   | 'youtube'
-  | 'x';
+  | 'x'
+  | 'other';
 
 export interface DalilBusinessRecord {
   id: string;
@@ -110,6 +111,7 @@ export interface CvBusinessProfile {
   socialLinks: Array<{
     network: CvBusinessSocialNetwork;
     url: string;
+    label: string;
   }>;
   reviews: {
     rating: number | null;
@@ -221,7 +223,7 @@ const buildDirectionsUrl = (record: DalilBusinessRecord): string => {
     : '';
 };
 
-const buildSocialLinks = (
+export const buildSocialLinks = (
   record: DalilBusinessRecord,
 ): CvBusinessProfile['socialLinks'] => {
   const candidates: Array<[CvBusinessSocialNetwork, unknown]> = [
@@ -230,13 +232,19 @@ const buildSocialLinks = (
     ['tiktok', record['Lien TikTok']],
     ['linkedin', record['Lien LinkedIn']],
     ['youtube', record['Lien YouTube']],
-    ['x', record.lien_x],
   ];
-
-  return candidates.flatMap(([network, value]) => {
+  const labels = { facebook: 'Facebook', instagram: 'Instagram', tiktok: 'TikTok', linkedin: 'LinkedIn', youtube: 'YouTube', x: 'X', other: '' };
+  const links: CvBusinessProfile['socialLinks'] = candidates.flatMap(([network, value]) => {
     const url = normalizeExternalUrl(value);
-    return url ? [{ network, url }] : [];
+    return url ? [{ network, url, label: labels[network] }] : [];
   });
+  const additionalUrl = normalizeExternalUrl(record.lien_x);
+  if (additionalUrl) {
+    const hostname = new URL(additionalUrl).hostname.toLowerCase().replace(/^www\./, '');
+    const isX = ['x.com', 'twitter.com'].some(domain => hostname === domain || hostname.endsWith(`.${domain}`));
+    links.push({ network: isX ? 'x' : 'other', url: additionalUrl, label: isX ? 'X' : hostname });
+  }
+  return links;
 };
 
 const getTranslatedText = (

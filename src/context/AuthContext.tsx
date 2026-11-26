@@ -16,8 +16,8 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signUp: (email: string, password: string, userType: 'candidate' | 'company') => Promise<{ user: User | null; error: any }>;
-  signIn: (email: string, password: string) => Promise<{ user: User | null; error: any }>;
+  signUp: (email: string, password: string, userType: 'candidate' | 'company', returnPath?: string) => Promise<{ user: User | null; session: Session | null; error: Error | null }>;
+  signIn: (email: string, password: string) => Promise<{ user: User | null; error: Error | null }>;
   signOut: () => Promise<void>;
   userType: 'candidate' | 'company' | null;
 }
@@ -108,13 +108,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const signUp = async (email: string, password: string, userType: 'candidate' | 'company') => {
+  const signUp = async (email: string, password: string, userType: 'candidate' | 'company', returnPath?: string) => {
     try {
       const supabase = await loadSupabase();
+      let emailRedirectTo: string | undefined;
+      if (returnPath?.startsWith('/') && !returnPath.startsWith('//')) {
+        const destination = new URL(returnPath, window.location.origin);
+        if (destination.origin === window.location.origin) emailRedirectTo = destination.href;
+      }
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
+          // The caller supplies an application path, never an external redirect.
+          ...(emailRedirectTo ? { emailRedirectTo } : {}),
           data: {
             user_type: userType,
           },
@@ -122,7 +129,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (error) {
-        return { user: null, error };
+        return { user: null, session: null, error };
       }
 
       if (data.user) {
@@ -130,9 +137,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUserType(userType);
       }
 
-      return { user: data.user, error: null };
+      return { user: data.user, session: data.session, error: null };
     } catch (error) {
-      return { user: null, error };
+      return { user: null, session: null, error: error instanceof Error ? error : new Error('Authentication failed') };
     }
   };
 
@@ -154,7 +161,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       return { user: data.user, error: null };
     } catch (error) {
-      return { user: null, error };
+      return { user: null, error: error instanceof Error ? error : new Error('Authentication failed') };
     }
   };
 

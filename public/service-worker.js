@@ -1,8 +1,8 @@
 // Dalil Tounes Service Worker
-// Version: 1.4.7 - Tarifs et inscription
+// Version: 1.4.8 - Creation dossiers, verified payment and professional access
 // Strategie: Network-First pour le HTML, cache valide uniquement pour les assets
 
-const CACHE_VERSION = 'v19';
+const CACHE_VERSION = 'v20';
 const STATIC_CACHE = `dalil-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `dalil-dynamic-${CACHE_VERSION}`;
 

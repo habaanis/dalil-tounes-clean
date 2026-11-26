@@ -30,6 +30,7 @@ import {
   Images,
   Info,
   Instagram,
+  Link2,
   Linkedin,
   Mail,
   MapPin,
@@ -513,12 +514,6 @@ const normalizeForComparison = (value: unknown): string =>
     .toLowerCase()
     .replace(/\s+/g, ' ')
     .trim();
-
-const normalizeExternalUrl = (value: unknown): string => {
-  const raw = String(value || '').trim();
-  if (!raw) return '';
-  return /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
-};
 
 const buildWhatsAppUrl = (value: unknown): string => {
   const digits = String(value || '').replace(/\D/g, '');
@@ -1230,17 +1225,12 @@ export default function BusinessShowcaseLienoraDetail({
     return normalizedSector.includes(normalizedLabel) || normalizedLabel.includes(normalizedSector);
   });
 
+  const socialIcons = { instagram: Instagram, facebook: Facebook, linkedin: Linkedin, youtube: Youtube, tiktok: Music2, x: X, other: Link2 };
+  const socialOrder = ['instagram', 'facebook', 'linkedin', 'youtube', 'tiktok', 'x', 'other'];
   const socialLinks: ActionConfig[] = hasSection('social_links')
-    ? [
-        { label: 'Instagram', href: normalizeExternalUrl(business['Lien Instagram']), icon: Instagram },
-        { label: 'Facebook', href: normalizeExternalUrl(business['lien facebook']), icon: Facebook },
-        { label: 'LinkedIn', href: normalizeExternalUrl(business['Lien LinkedIn']), icon: Linkedin },
-        { label: 'YouTube', href: normalizeExternalUrl(business['Lien YouTube']), icon: Youtube },
-        { label: 'TikTok', href: normalizeExternalUrl(business['Lien TikTok']), icon: Music2 },
-      ]
-        .filter(link => link.href)
-        .slice(0, capabilities.variant === 'artisan' ? 2 : undefined)
-        .map(link => ({ ...link, external: true }))
+    ? [...cvProfile.socialLinks]
+        .sort((a, b) => socialOrder.indexOf(a.network) - socialOrder.indexOf(b.network))
+        .map(link => ({ label: link.label, href: link.url, icon: socialIcons[link.network], external: true }))
     : [];
 
   const installLabel = language === 'ar'

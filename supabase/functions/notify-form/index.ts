@@ -1,4 +1,5 @@
 import 'jsr:@supabase/functions-js@2.4.4/edge-runtime.d.ts';
+import { createClient } from 'npm:@supabase/supabase-js@2.57.4';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -14,6 +15,9 @@ type NotifyPayload = {
   type?: unknown;
   data?: unknown;
   admin_url?: unknown;
+  registration_id?: unknown;
+  delivery_token?: unknown;
+  received_at?: unknown;
 };
 
 Deno.serve(async (request: Request) => {
@@ -25,30 +29,59 @@ Deno.serve(async (request: Request) => {
     return json({ success: false, error: 'Method not allowed' }, 405);
   }
 
+  let providerAttempted = false;
   try {
     const resendKey = Deno.env.get('RESEND_API_KEY');
     if (!resendKey) {
       console.error('[notify-form] RESEND_API_KEY is not configured');
-      return json({ success: false, error: 'Server configuration error' }, 500);
+      return json({ success: false, delivery: 'not_sent', error: 'Server configuration error' }, 500);
     }
 
-    const raw = await request.json() as NotifyPayload;
+    let raw = await request.json() as NotifyPayload;
+    let idempotencyKey: string | null = null;
+    let receivedAt: string | undefined;
+    if (raw.registration_id !== undefined) {
+      const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+      if (typeof raw.registration_id !== 'string' || !uuid.test(raw.registration_id) || typeof raw.delivery_token !== 'string' || !uuid.test(raw.delivery_token)) {
+        return json({ success: false, delivery: 'not_sent', error: 'Invalid delivery claim' }, 403);
+      }
+      const registrationId = raw.registration_id;
+      const url = Deno.env.get('SUPABASE_URL');
+      const key = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+      if (!url || !key) return json({ success: false, delivery: 'not_sent', error: 'Server configuration error' }, 500);
+      const db = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
+      const claim = await db.from('dalil_registration_integration_jobs').select('payload')
+        .eq('suggestion_id', registrationId).eq('channel', 'notification')
+        .eq('status', 'running').eq('lease_token', raw.delivery_token)
+        .gt('lease_expires_at', new Date().toISOString()).maybeSingle();
+      if (claim.error) return json({ success: false, delivery: 'not_sent', error: 'Delivery claim unavailable' }, 503);
+      if (!claim.data) return json({ success: false, delivery: 'not_sent', error: 'Invalid delivery claim' }, 403);
+      // Use the original frozen job, never caller-supplied content. Every retry has the same provider body.
+      raw = claim.data.payload as NotifyPayload;
+      if (typeof raw.received_at !== 'string' || !Number.isFinite(Date.parse(raw.received_at))) {
+        return json({ success: false, delivery: 'not_sent', error: 'Invalid stored delivery date' }, 500);
+      }
+      receivedAt = raw.received_at;
+      idempotencyKey = `dalil-registration/${registrationId}/admin-v1`;
+    }
     const type = cleanSingleLine(raw.type, 120);
     const data = normalizeData(raw.data);
     const adminUrl = normalizeAdminUrl(raw.admin_url);
 
     if (!type || Object.keys(data).length === 0) {
-      return json({ success: false, error: "Missing 'type' or 'data' in payload" }, 400);
+      return json({ success: false, delivery: 'not_sent', error: "Missing 'type' or 'data' in payload" }, 400);
     }
 
     const subject = `[Dalil Tounes] ${type}`.replace(/[\r\n]+/g, ' ').slice(0, 180);
-    const html = buildHtml(type, data, adminUrl);
+    const html = buildHtml(type, data, adminUrl, receivedAt);
 
+    providerAttempted = true;
     const resendResponse = await fetchWithTimeout('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${resendKey}`,
         'Content-Type': 'application/json',
+        ...(idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : {}),
       },
       body: JSON.stringify({
         from: FROM_EMAIL,
@@ -59,21 +92,22 @@ Deno.serve(async (request: Request) => {
     }, 10_000);
 
     if (!resendResponse.ok) {
-      const details = (await resendResponse.text()).slice(0, 1000);
-      console.error('[notify-form] Resend API error', resendResponse.status, details);
-      return json({ success: false, error: 'Email notification failed' }, 502);
+      console.error('[notify-form] Resend API rejected request', resendResponse.status);
+      const certainRejection = resendResponse.status >= 400 && resendResponse.status < 500 && ![408, 409].includes(resendResponse.status);
+      return json({ success: false, delivery: certainRejection ? 'not_sent' : 'unknown', error: 'Email notification failed' }, 502);
     }
 
     const result = await resendResponse.json() as { id?: string };
-    return json({ success: true, id: result.id || null }, 200);
+    if (typeof result.id !== 'string' || !result.id) return json({ success: false, delivery: 'unknown', error: 'Email acceptance could not be confirmed' }, 502);
+    return json({ success: true, id: result.id, delivery: 'accepted' }, 200);
   } catch (error) {
     console.error('[notify-form] Unexpected error', error);
-    return json({ success: false, error: 'Unexpected notification error' }, 500);
+    return json({ success: false, delivery: providerAttempted ? 'unknown' : 'not_sent', error: 'Unexpected notification error' }, 500);
   }
 });
 
-function buildHtml(type: string, data: Record<string, string>, adminUrl: string | null): string {
-  const receivedAt = new Date().toLocaleString('fr-TN', { timeZone: 'Africa/Tunis' });
+function buildHtml(type: string, data: Record<string, string>, adminUrl: string | null, receivedAtInput?: string): string {
+  const receivedAt = (receivedAtInput ? new Date(receivedAtInput) : new Date()).toLocaleString('fr-TN', { timeZone: 'Africa/Tunis' });
   const rows = Object.entries(data)
     .map(([key, value]) => `
       <tr>
