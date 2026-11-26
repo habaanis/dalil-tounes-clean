@@ -128,21 +128,26 @@ export default function BoutiqueCustomerOrders({ entrepriseIds }: { entrepriseId
 
   const manage = async (order: Order, action: OrderAction) => {
     if (busy || !activeCompany) return;
+    const deletesActive = action === 'delete' && ['received', 'in_progress'].includes(order.status);
     if (action === 'delete' && !window.confirm(
-      'Supprimer définitivement cette demande refusée ou annulée ?\n\nConfirmez qu’il s’agit d’un test, d’un doublon ou d’une demande sans transaction ni paiement à conserver. Ses coordonnées seront effacées et elle disparaîtra de vos listes. Le client conservera sa référence et son statut final. Cette action ne rembourse aucun paiement.'
+      (deletesActive
+        ? 'Supprimer définitivement cette demande ?\n\nElle sera annulée et retirée de vos listes en une seule action. Le client conservera sa référence avec le statut « Annulée ». '
+        : 'Supprimer définitivement cette demande refusée ou annulée ?\n\nElle disparaîtra de vos listes. Le client conservera sa référence et son statut final. ') +
+      'Confirmez qu’il s’agit d’un test, d’un doublon ou d’une demande sans transaction ni paiement à conserver. Ses coordonnées seront effacées. Cette action ne rembourse aucun paiement.'
     )) return;
     setBusy(order.id); setError(''); setNotice('');
     try {
       const data = await call({ action, profileId: activeCompany, id: order.id,
         expectedUpdatedAt: order.updated_at, confirmDelete: action === 'delete' });
-      if (data.order?.id !== order.id || data.order?.action !== action ||
+      if (data.profileId !== activeCompany || data.order?.id !== order.id || data.order?.action !== action ||
         (action === 'archive' && !data.order.archived_at) ||
         (action === 'restore' && data.order.archived_at !== null) ||
-        (action === 'delete' && !data.order.deleted_at)) {
+        (action === 'delete' && (!data.order.deleted_at || data.order.status !== (deletesActive ? 'cancelled' : order.status)))) {
         throw new Error('Confirmation de modification absente. Actualisez la liste.');
       }
       setNotice(action === 'archive' ? 'Commande archivée. Son historique est conservé.' :
-        action === 'restore' ? 'Commande restaurée dans la liste principale.' : 'Demande supprimée de vos listes.');
+        action === 'restore' ? 'Commande restaurée dans la liste principale.' :
+        deletesActive ? 'Demande annulée et supprimée de vos listes.' : 'Demande supprimée de vos listes.');
       setRefresh(n => n + 1);
     } catch (err) { setError(err instanceof Error ? err.message : 'Modification indisponible.'); }
     finally { setBusy(''); }
@@ -152,6 +157,7 @@ export default function BoutiqueCustomerOrders({ entrepriseIds }: { entrepriseId
     const closed = ['completed', 'rejected', 'cancelled'].includes(order.status);
     const canConfirm = ['received', 'in_progress'].includes(order.status);
     const canFinish = order.status === 'confirmed';
+    const hasActions = order.can_archive || order.can_restore || order.can_delete;
     return <article key={order.id} className="min-w-0 rounded-xl border border-[#dfcfaf] bg-white p-3 text-sm shadow-sm">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
@@ -168,23 +174,21 @@ export default function BoutiqueCustomerOrders({ entrepriseIds }: { entrepriseId
         {order.customer_note && <div><dt className="inline font-semibold">Précisions : </dt><dd className="inline whitespace-pre-wrap break-words">{order.customer_note}</dd></div>}
         <div><dt className="inline font-semibold">Règlement : </dt><dd className="inline">À convenir directement avec le client. Dalil Tounes n'encaisse pas.</dd></div>
       </dl>
-      {!closed && <div className="mt-3 flex flex-wrap gap-2 border-t border-[#ede1c9] pt-3">
+      {(!closed || hasActions) && <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-[#ede1c9] pt-3">
         {order.status === 'received' && <button type="button" disabled={Boolean(busy)} onClick={() => void update(order, 'in_progress')} className={buttonClass}>Prendre en charge</button>}
         {canConfirm && <button type="button" disabled={Boolean(busy)} onClick={() => void update(order, 'confirmed')} className={buttonClass}>Confirmer</button>}
         {canFinish && <button type="button" disabled={Boolean(busy)} onClick={() => void update(order, 'completed')} className={buttonClass}>Terminer</button>}
         {['received', 'in_progress'].includes(order.status) && <button type="button" disabled={Boolean(busy)} onClick={() => void update(order, 'rejected')} className={buttonClass}>Refuser</button>}
         {order.status === 'confirmed' && <button type="button" disabled={Boolean(busy)} onClick={() => void update(order, 'cancelled')} className={buttonClass}>Annuler</button>}
-      </div>}
-      {closed && <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-[#ede1c9] pt-2">
-        <select aria-label={'Actions pour la demande ' + order.id.slice(0, 8).toUpperCase()}
+        {hasActions && <select aria-label={'Actions pour la demande ' + order.id.slice(0, 8).toUpperCase()}
           value="" disabled={Boolean(busy)} className={buttonClass}
           onChange={event => { const action = event.target.value as OrderAction; if (action) void manage(order, action); }}>
           <option value="" disabled>Actions…</option>
           {order.can_archive && <option value="archive">Archiver</option>}
           {order.can_restore && <option value="restore">Restaurer</option>}
           {order.can_delete && <option value="delete">Supprimer</option>}
-        </select>
-        {!order.can_delete && <span className="max-w-xs text-xs text-[#725b3e]">Historique protégé : archivage possible, suppression indisponible.</span>}
+        </select>}
+        {closed && !order.can_delete && <span className="max-w-xs text-xs text-[#725b3e]">Historique protégé : suppression indisponible.</span>}
       </div>}
       {order.kind === 'order' && !closed && <p className="mt-2 text-xs text-[#725b3e]">Le statut confirme le traitement de la commande, pas la réception du paiement.</p>}
     </article>;

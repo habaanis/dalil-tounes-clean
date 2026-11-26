@@ -21,15 +21,31 @@ await test('Cancelled and rejected unpaid requests may be removed', () => {
   assert.equal(canDeleteOrder(clean), true);
   assert.equal(canDeleteOrder({ ...clean, status: 'rejected', payment_status: 'failed' }), true);
 });
-for (const status of ['received', 'in_progress', 'confirmed', 'completed']) {
+for (const status of ['received', 'in_progress']) {
+  await test(`${status} unpaid requests expose direct deletion without archive or restore`, () => {
+    const caps = orderCapabilities({ ...clean, status });
+    assert.equal(caps.can_delete, true);
+    assert.equal(caps.can_archive, false);
+    assert.equal(caps.can_restore, false);
+  });
+}
+for (const status of ['confirmed', 'completed']) {
   await test(`${status} requests keep their records`, () => assert.equal(canDeleteOrder({ ...clean, status }), false));
 }
 for (const payment_status of ['pending', 'paid', 'partially_paid', 'refunded']) {
-  await test(`${payment_status} payment prevents deletion`, () => assert.equal(canDeleteOrder({ ...clean, payment_status }), false));
+  await test(`${payment_status} payment prevents deletion for every removable processing status`, () => {
+    for (const status of ['received', 'in_progress', 'rejected', 'cancelled']) {
+      assert.equal(canDeleteOrder({ ...clean, status, payment_status }), false);
+    }
+  });
 }
 for (const evidence of [{ paid_amount: 1 }, { payment_provider: 'bank' }, { payment_reference: 'ref' },
   { payment_verified_at: '2026-11-26T00:00:00Z' }, { deleted_at: '2026-11-26T00:00:00Z' }]) {
-  await test(`Retain any payment/deletion evidence ${Object.keys(evidence)[0]}`, () => assert.equal(canDeleteOrder({ ...clean, ...evidence }), false));
+  await test(`Retain any payment/deletion evidence ${Object.keys(evidence)[0]}`, () => {
+    for (const status of ['received', 'in_progress', 'rejected', 'cancelled']) {
+      assert.equal(canDeleteOrder({ ...clean, status, ...evidence }), false);
+    }
+  });
 }
 await test('Completed history can archive and restore without becoming deletable', () => {
   const caps = orderCapabilities({ ...clean, status: 'completed', archived_at: '2026-11-26T00:00:00Z' });
@@ -112,6 +128,22 @@ await test('Archive forwards verified actor and expected revision, never client 
   assert.equal(rpcCalls[0].args.p_profile_id, company);
   assert.equal(rpcCalls[0].args.p_expected_updated_at, updatedAt);
 });
+await test('Direct delete uses one atomic RPC and returns the final cancelled tracking state', async () => {
+  reset();
+  rpcAnswer = () => ({ data: { id: orderId, action: 'delete', status: 'cancelled', archived_at: updatedAt,
+    deleted_at: updatedAt, updated_at: updatedAt }, error: null });
+  const response = await handler(request({ action: 'delete', profileId: company, id: orderId,
+    expectedUpdatedAt: updatedAt, confirmDelete: true, userId: 'attacker' }));
+  assert.equal(response.status, 200);
+  assert.equal((await response.json()).order.status, 'cancelled');
+  assert.equal(rpcCalls.length, 1);
+  assert.equal(rpcCalls[0].name, 'dalil_merchant_manage_order');
+  assert.equal(rpcCalls[0].args.p_user_id, actor);
+  assert.equal(rpcCalls[0].args.p_action, 'delete');
+  assert.equal(rpcCalls[0].args.p_confirm_delete, true);
+  assert.equal(rpcCalls[0].args.p_expected_updated_at, updatedAt);
+  assert.equal(queries.some(query => query.operations.some(op => ['update', 'delete'].includes(op[0]))), false);
+});
 for (const [code, message, expected] of [['23514', 'financial_history_protected', 409], ['40001', 'order_changed', 409], ['P0002', 'order_not_found', 404], ['42501', 'order_not_found', 403]]) {
   await test(`Server mutation rejects ${message} (${code})`, async () => {
     reset(); rpcAnswer = () => ({ data: null, error: { code, message } });
@@ -120,6 +152,13 @@ for (const [code, message, expected] of [['23514', 'financial_history_protected'
     const data = await response.json(); assert.ok(data.error); assert.equal(data.order, undefined);
   });
 }
+await test('Financial protection message does not suggest archiving an active request', async () => {
+  reset(); rpcAnswer = () => ({ data: null, error: { code: '23514', message: 'financial_history_protected' } });
+  const response = await handler(request({ action: 'delete', profileId: company, id: orderId,
+    expectedUpdatedAt: updatedAt, confirmDelete: true }));
+  assert.equal(response.status, 409);
+  assert.equal((await response.json()).error, 'Suppression indisponible : cette demande doit conserver son historique.');
+});
 await test('A missing mutation result never reports success', async () => {
   reset();
   assert.equal((await handler(request({ action: 'restore', profileId: company, id: orderId, expectedUpdatedAt: updatedAt }))).status, 503);
@@ -138,6 +177,19 @@ await test('Archive list is scoped, paginated, excludes deleted and withholds pa
   assert.ok(query.operations.some(op => op[0] === 'is' && op[1] === 'deleted_at' && op[2] === null));
   assert.ok(query.operations.some(op => op[0] === 'not' && op[1] === 'archived_at' && op[2] === 'is' && op[3] === null));
   assert.ok(query.operations.some(op => op[0] === 'range' && op[1] === 50 && op[2] === 99));
+});
+await test('Active list advertises direct delete only for unconfirmed requests without payment', async () => {
+  reset();
+  const statuses = ['received', 'in_progress', 'confirmed', 'completed'];
+  const rows = statuses.map(status => ({ ...clean, status, id: orderId }));
+  rows.push({ ...clean, status: 'received', id: orderId, payment_status: 'pending' });
+  queryAnswer = query => query.table === 'professional_profile_access' ?
+    { data: { entreprise_id: company }, error: null } : { data: rows, count: rows.length, error: null };
+  const response = await handler(request({ action: 'list', profileId: company, archived: false }));
+  assert.equal(response.status, 200);
+  const data = await response.json();
+  assert.deepEqual(data.orders.map(order => order.can_delete), [true, true, false, false, false]);
+  assert.deepEqual(data.orders.map(order => order.can_archive), [false, false, false, true, false]);
 });
 await test('Invalid pagination cannot reach the order table', async () => {
   reset();
