@@ -1364,21 +1364,47 @@ export const Subscription = () => {
   const [selectedPresentationModel, setSelectedPresentationModel] = useState<PresentationModel | null>(null);
   const [selectedPalette, setSelectedPalette] = useState<PaletteId>('prestige');
   const [showSecondaryDetails, setShowSecondaryDetails] = useState(false);
-  const [miniAppOpen, setMiniAppOpen] = useState(true);
+  type ProSection = 'free' | 'cv' | 'models' | 'offers';
+  const sectionFromLocation = (): ProSection | null => {
+    const hash = window.location.hash.slice(1);
+    const params = new URLSearchParams(window.location.search);
+    if (hash === 'offres' || params.get('app-offers') === '1') return 'offers';
+    if (hash === 'modeles' || hash === 'personnalisation' || params.get('app-models') === '1') return 'models';
+    if (hash === 'cv-professionnels') return 'cv';
+    if (hash === 'presence-essentielle') return 'free';
+    return null;
+  };
+  const [activeProSection, setActiveProSection] = useState<ProSection | null>(sectionFromLocation);
+  const openProSection = (section: ProSection) => {
+    setActiveProSection(section);
+    const destinations: Record<ProSection, string> = {free:'presence-essentielle',cv:'cv-professionnels',models:'modeles',offers:'offres'};
+    window.history.replaceState(window.history.state, '', '#'+destinations[section]);
+    window.requestAnimationFrame(() => document.getElementById('pro-navigation')?.scrollIntoView({block:'start',behavior:'smooth'}));
+  };
+  const proTitles = {
+    fr: ['Inscription gratuite','Votre mini-appli','Voir les modèles','Tarifs et inscription'],
+    ar: ['تسجيل مجاني','تطبيقك المصغّر','شوف النماذج','الأسعار والتسجيل'],
+    en: ['Free listing','Your mini-app','Explore models','Pricing and registration'],
+    it: ['Iscrizione gratuita','La tua mini-app','Scopri i modelli','Tariffe e iscrizione'],
+    ru: ['Бесплатная регистрация','Ваше мини-приложение','Модели','Тарифы и регистрация']
+  }[language as OfferLanguage];
+  const proDescriptions = {
+    fr: ['Référencez votre activité.','Présenter, vendre, fidéliser et suivre.','Essayez Business et Portfolio.','Artisan 30 DT · Premium 59 DT.'],
+    ar: ['سجّل نشاطك.','عرّف، بيع وتابع الطلبات.','جرّب Business وPortfolio.','حرفي 30 د.ت · Premium 59 د.ت'],
+    en: ['List your business.','Showcase, sell and track orders.','Try Business and Portfolio.','Artisan 30 DT · Premium 59 DT.'],
+    it: ['Registra la tua attività.','Presenta, vendi e segui gli ordini.','Prova Business e Portfolio.','Artisan 30 DT · Premium 59 DT.'],
+    ru: ['Добавьте бизнес.','Представляйте, продавайте и следите.','Попробуйте Business и Portfolio.','Artisan 30 DT · Premium 59 DT.']
+  }[language as OfferLanguage];
 
   useEffect(() => {
-    const openTargetSection = () => {
-      const params = new URLSearchParams(window.location.search);
-      const requested = window.location.hash.slice(1) || (params.get('app-offers') === '1' ? 'offres' : params.get('app-models') === '1' ? 'modeles' : '');
-      if (!requested) return;
-      const target = requested === 'modeles' || requested === 'personnalisation' ? 'cv-professionnels' : requested;
-      if (target === 'cv-professionnels') setMiniAppOpen(true);
-      window.requestAnimationFrame(() => document.getElementById(target)?.scrollIntoView({ block: 'start' }));
+    const onHashChange = () => {
+      const requested = sectionFromLocation();
+      if (requested) setActiveProSection(requested);
     };
-    openTargetSection();
-    window.addEventListener('hashchange', openTargetSection);
-    return () => window.removeEventListener('hashchange', openTargetSection);
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
+
 
   const closePreview = () => setActivePreview(null);
   const openRequest = (code: SubscriptionPlanCode, label: string, checkoutOffer: CheckoutOffer, billingPeriod?: BillingPeriod, presentationModelLabel?: string, paletteLabel?: string) => {
@@ -1396,53 +1422,79 @@ export const Subscription = () => {
       <div className="mx-auto max-w-6xl">
         <StructuredData data={{ '@context': 'https://schema.org', '@type': 'AboutPage', name: structure.professional, description: structure.intro, url: 'https://dalil-tounes.com/subscription' }} />
         <SEOHead title={`${structure.professional} | ${structure.products} | Dalil Tounes`} description={`${structure.freeIntro} ${structure.cvIntro}`} canonical="https://dalil-tounes.com/subscription" currentPath="/subscription" />
-        <header className="order-1 mb-2 text-center sm:mb-6">
-          <p className="mb-3 flex items-center justify-center gap-3 text-xs font-medium uppercase tracking-[0.2em] text-amber-600">
-            <span className="h-px w-8 bg-amber-400" /> {copy.heroEyebrow} <span className="h-px w-8 bg-amber-400" />
+        <header className="mb-4 text-center">
+          <h1 className="font-serif text-2xl font-medium text-[#292725]">{structure.professional}</h1>
+          <p className="mx-auto mt-2 max-w-2xl text-sm leading-5 text-slate-600">{structure.freeIntro}</p>
+          <p className="mt-2 text-sm font-semibold text-[#815E28]">
+            {language === 'ar' ? 'التعريف · البيع · الوفاء · المتابعة' : language === 'fr' ? 'Présenter · Vendre · Fidéliser · Suivre' : 'Showcase · Sell · Loyalty · Track'}
           </p>
-          <h1 className="font-serif text-2xl font-normal tracking-tight text-[#292725] sm:text-3xl">
-            {structure.professional}
-          </h1>
-          <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-500 sm:text-base">{structure.freeIntro}</p>
         </header>
-
-        <nav className="mb-5 flex flex-wrap justify-center gap-3 text-sm font-medium text-[#292725]" aria-label={structure.professional}>
-          <a href="#presence-essentielle">{structure.essential}</a><a href="#cv-professionnels" onClick={() => setMiniAppOpen(true)}>{structure.products}</a><a href="#offres">{structure.offers}</a>
+        <nav id="pro-navigation" aria-label={structure.professional} className="grid scroll-mt-28 grid-cols-2 gap-2 sm:grid-cols-4">
+          {(['free','cv','models','offers'] as const).map((section, index) => (
+            <button key={section} type="button" onClick={() => openProSection(section)}
+              aria-pressed={activeProSection === section}
+              className={activeProSection === section
+                ? 'flex min-h-[94px] flex-col items-start rounded-xl border-2 border-[#B99143] bg-[#FFF9EF] p-3 text-start'
+                : 'flex min-h-[94px] flex-col items-start rounded-xl border border-[#E5D7BE] bg-white p-3 text-start transition-colors hover:border-[#B99143]'}>
+              <span aria-hidden="true" className="text-lg">{['🆓','📱','🎨','💼'][index]}</span>
+              <span className="mt-1 text-sm font-semibold text-[#292725]">{proTitles[index]}</span>
+              <span className="mt-1 text-xs leading-4 text-slate-600">{proDescriptions[index]}</span>
+            </button>
+          ))}
         </nav>
-        <EssentialPresence registration />
-        <p className="mt-3 text-sm font-semibold text-emerald-800">{copy.essentialFree}</p>
-        <button type="button" onClick={() => setActivePreview('free')} className="mt-3 min-h-11 rounded-xl border border-[#D4AF37] px-4 py-2 text-sm font-medium text-[#292725]">{copy.previewCard}</button>
-        <section id="cv-professionnels" className="my-4 scroll-mt-32 rounded-xl border border-[#D4AF37]/50 bg-white p-3">
-          <button type="button" aria-expanded={miniAppOpen} aria-controls="mini-appli-details" onClick={() => setMiniAppOpen(value => !value)} className="flex w-full min-h-12 items-center justify-between gap-3 text-start font-medium text-[#292725]">
-            {structure.homeCvAction}<span aria-hidden="true">{miniAppOpen ? '−' : '+'}</span>
-          </button>
-          {miniAppOpen && <div id="mini-appli-details"><CvBusinessHome embedded selectedModel={selectedPresentationModel} onModelSelect={setSelectedPresentationModel} /></div>}
-        </section>
-
-        <section id="offres" aria-labelledby="cv-business-products-title" className="order-2 mt-5 sm:mt-0">
-<div className="mb-6 text-center">
-    <h2 id="cv-business-products-title" className="text-xl font-medium text-[#292725] sm:text-2xl">{structure.offers}</h2>
-  <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-slate-600">{simpleCopy.productsSubtitle}</p>
-</div>
-
-
-<div className="mb-4 rounded-xl border border-[#D6AF2E]/60 bg-[#FFF9ED] p-3 sm:p-4">
-  <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-    <div className="max-w-3xl">
-      <span className="inline-flex items-center gap-2 rounded-full bg-[#D6B86D] px-3 py-1 text-[10px] font-medium uppercase tracking-[0.12em] text-[#292725]">
-        <Sparkles className="h-3.5 w-3.5 text-[#9B762D]" aria-hidden="true" />
-        {simpleCopy.welcomeBadge}
-      </span>
-      <h3 className="mt-3 text-xl font-medium text-[#292725] sm:text-2xl">{simpleCopy.welcomeTitle}</h3>
-      <p className="mt-2 hidden text-sm leading-5 text-slate-700 sm:block">{simpleCopy.welcomeDescription}</p>
-    </div>
-    <div className="hidden rounded-2xl border border-[#D3B16F] bg-[#FFF9ED] px-5 py-4 text-center text-[#292725] shadow-sm sm:block lg:max-w-xs">
-      <p className="text-lg font-medium leading-6 text-[#292725]">{simpleCopy.welcomeHighlight}</p>
-    </div>
-  </div>
-  <p className="mt-2 rounded-xl border border-[#D6AF2E]/45 bg-white px-3 py-2 text-sm font-medium leading-5 text-[#292725]">{simpleCopy.welcomePayment}</p>
-</div>
-
+        {activeProSection === 'free' && (
+          <section id="presence-essentielle" className="mt-3 rounded-xl border border-[#E5D7BE] bg-white p-3 sm:p-4">
+            <EssentialPresence registration />
+            <p className="mt-2 text-sm font-semibold text-emerald-800">{copy.essentialFree}</p>
+            <button type="button" onClick={() => setActivePreview('free')} className="mt-2 min-h-11 rounded-lg border border-[#D4AF37] px-4 py-2 text-sm font-medium text-[#292725]">{copy.previewCard}</button>
+          </section>
+        )}
+        {activeProSection === 'cv' && (
+          <section id="cv-professionnels" className="mt-3 rounded-xl border border-[#E5D7BE] bg-white p-3 sm:p-4">
+            <h2 className="font-serif text-lg font-semibold text-[#292725]">{proTitles[1]}</h2>
+            <p className="mt-1 text-sm leading-5 text-slate-600">{structure.cvIntro}</p>
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              {(language === 'fr'
+                ? ['📱 Présentation, photos et QR Business','🛍️ Boutique, catalogue et commandes','🎁 Fidélité et cadeaux selon activation','📋 Suivi des demandes et commandes']
+                : language === 'ar'
+                ? ['📱 عرض وصور ورمز QR','🛍️ متجر ومنتجات وطلبات','🎁 وفاء وهدايا حسب التفعيل','📋 متابعة الطلبات']
+                : ['📱 Profile, photos and Business QR','🛍️ Shop, catalogue and orders','🎁 Loyalty and gifts when enabled','📋 Track requests and orders']
+              ).map(item => <div key={item} className="rounded-lg border border-[#E5D7BE] bg-[#FCFAF5] p-3 text-xs leading-5 text-[#292725]">{item}</div>)}
+            </div>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <button type="button" onClick={() => openProSection('models')} className="min-h-11 rounded-lg border border-[#C9A65D] px-4 py-2 text-sm font-semibold text-[#292725]">{proTitles[2]}</button>
+              <button type="button" onClick={() => openProSection('offers')} className="min-h-11 rounded-lg bg-[#B62226] px-4 py-2 text-sm font-semibold text-white">{proTitles[3]}</button>
+            </div>
+          </section>
+        )}
+        {activeProSection === 'models' && (
+          <section id="modeles" className="mt-3 overflow-hidden rounded-xl border border-[#E5D7BE] bg-white">
+            <h2 className="px-3 pt-3 font-serif text-lg font-semibold text-[#292725]">{proTitles[2]}</h2>
+            <CvBusinessHome embedded selectedModel={selectedPresentationModel} onModelSelect={setSelectedPresentationModel} />
+            <div className="px-3 pb-3">
+              <button type="button" onClick={() => openProSection('offers')} className="min-h-11 rounded-lg bg-[#B62226] px-4 py-2 text-sm font-semibold text-white">{proTitles[3]}</button>
+            </div>
+          </section>
+        )}
+        {activeProSection === 'offers' && <>
+        <section id="offres" aria-labelledby="cv-business-products-title" className="mt-3 rounded-xl border border-[#E5D7BE] bg-white p-3 sm:p-4">
+          <h2 id="cv-business-products-title" className="font-serif text-lg font-semibold text-[#292725]">{proTitles[3]}</h2>
+          <p className="mt-1 text-sm text-slate-600">{simpleCopy.productsSubtitle}</p>
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <div className="rounded-lg border border-[#D4AF37]/50 bg-[#FFF9EF] p-3 text-center">
+              <div className="font-semibold text-[#292725]">Artisan</div>
+              <div className="mt-1 text-lg font-semibold text-[#815E28]">{(offerCopy[language as OfferLanguage] ?? offerCopy.fr).artisanPrice}</div>
+              <button type="button" onClick={() => selectFormula('artisan')} className="mt-2 min-h-11 w-full rounded-lg bg-[#D6B86D] px-2 py-2 text-sm font-semibold text-[#292725]">{simpleCopy.chooseArtisan}</button>
+            </div>
+            <div className="rounded-lg border border-[#D4AF37]/50 bg-[#FFF9EF] p-3 text-center">
+              <div className="font-semibold text-[#292725]">Premium</div>
+              <div className="mt-1 text-lg font-semibold text-[#815E28]">{(offerCopy[language as OfferLanguage] ?? offerCopy.fr).premiumPrice}</div>
+              <button type="button" onClick={() => selectFormula('premium')} className="mt-2 min-h-11 w-full rounded-lg bg-[#07543F] px-2 py-2 text-sm font-semibold text-white">{simpleCopy.choosePremium}</button>
+            </div>
+          </div>
+          <details className="mt-3 rounded-lg border border-[#E5D7BE] bg-[#FCFAF5] p-3">
+            <summary className="cursor-pointer text-sm font-semibold text-[#292725]">{language === 'fr' ? 'Comparer les avantages Artisan / Premium' : language === 'ar' ? 'مقارنة مزايا حرفي وPremium' : 'Compare Artisan / Premium features'}</summary>
+            <div className="mt-3">
 {(() => {
   const l = comparisonLabels[language as OfferLanguage] ?? comparisonLabels.fr;
   const rows: [number, string | boolean, string | boolean][] = [
@@ -1469,11 +1521,10 @@ export const Subscription = () => {
     </table>
   </div>;
 })()}
-
-
-
-
-
+            </div>
+          </details>
+          <details className="mt-3 rounded-lg border border-[#E5D7BE] bg-[#FCFAF5] p-3">
+            <summary className="cursor-pointer text-sm font-semibold text-[#292725]">{language === 'fr' ? 'Entretien annuel et conditions' : language === 'ar' ? 'الصيانة السنوية والشروط' : 'Annual maintenance and terms'}</summary>
 <div className="mt-5 rounded-3xl border border-[#D6AF2E]/60 bg-white p-5 shadow-[0_10px_28px_rgba(74,18,63,0.06)] sm:p-6">
   <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
     <div>
@@ -1493,6 +1544,8 @@ export const Subscription = () => {
   </div>
   <p className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold leading-6 text-[#292725]">{simpleCopy.noRenewal}</p>
 </div>
+          </details>
+          <p className="mt-3 text-sm leading-5 text-slate-600">{simpleCopy.welcomePayment}</p>
         </section>
 
         <button
@@ -1562,6 +1615,7 @@ export const Subscription = () => {
             {copy.ctaButton} <ChevronRight className="h-4 w-4" aria-hidden="true" />
           </a>
         </section>
+        </>}
       </div>
 
       {activePreview === 'free' && (
