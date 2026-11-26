@@ -47,6 +47,7 @@ interface MeilleursProps {
   useGoogleRecommendationCriteria?: boolean;
   includeRecommendedInTotal?: boolean;
   excludedKeywords?: readonly string[];
+  allowedCategoryKeywords?: readonly string[];
   allReferencedLabel?: string;
   searchOtherLabel?: string;
   showSearchCta?: boolean;
@@ -252,6 +253,7 @@ export default function MeilleursSection({
   useGoogleRecommendationCriteria = false,
   includeRecommendedInTotal = true,
   excludedKeywords = EMPTY_EXCLUDED_KEYWORDS,
+  allowedCategoryKeywords = EMPTY_EXCLUDED_KEYWORDS,
   allReferencedLabel,
   searchOtherLabel,
   showSearchCta = true,
@@ -335,17 +337,23 @@ export default function MeilleursSection({
               return !normalizedExcludedKeywords.some((keyword) => searchableText.includes(keyword));
             });
 
-        all.sort(sortBusinesses);
+        const normalizeCategory = (value: string) => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+        const allowed = allowedCategoryKeywords.map(normalizeCategory);
+        const eligible = allowed.length === 0 ? all : all.filter(item => {
+          const categories = [item.categorie, ...(Array.isArray(item.sous_categories) ? item.sous_categories : [item.sous_categories])].filter(Boolean).map(value => normalizeCategory(String(value)));
+          return categories.some(category => allowed.some(keyword => category === keyword || category.startsWith(keyword + ' ') || category.startsWith(keyword + ',')));
+        });
+        eligible.sort(sortBusinesses);
 
         const recommended = useGoogleRecommendationCriteria
-          ? all.filter((item) => (
+          ? eligible.filter((item) => (
               parseRating(item['Note Google Globale']) >= 4
               && parseCount(item['Compteur Avis Google']) >= 5
             ))
-          : all;
+          : eligible;
         const top = recommended.slice(0, TOP_COUNT);
         const topIds = new Set(top.map((item) => item.id));
-        const rest = all.filter((item) => !topIds.has(item.id));
+        const rest = eligible.filter((item) => !topIds.has(item.id));
 
         setTopItems(top);
         setAllItems(rest);
@@ -360,7 +368,7 @@ export default function MeilleursSection({
 
     fetchData();
     setPage(0);
-  }, [excludedKeywords, listePage, useGoogleRecommendationCriteria]);
+  }, [excludedKeywords, allowedCategoryKeywords, listePage, useGoogleRecommendationCriteria]);
 
   const totalPages = Math.ceil(allItems.length / PAGE_SIZE);
   const pagedItems = allItems.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
