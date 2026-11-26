@@ -3,6 +3,8 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { useNavigate } from 'react-router-dom';
 import { Briefcase, Users, Building2, Settings, LogOut, Store, Package, BarChart3, ShieldCheck, ClipboardList } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import OwnerProfileEditor from '../components/OwnerProfileEditor';
+import OwnerShowcaseMedia from '../components/OwnerShowcaseMedia';
 import JobPostForm from '../components/forms/JobPostForm';
 import BoutiqueProductManagement from '../components/boutique/BoutiqueProductManagement';
 import SalesLoyaltyManagement from '../components/boutique/SalesLoyaltyManagement';
@@ -13,10 +15,11 @@ type ScopedBoutiqueStats = { entreprise_id: string; push_subscriptions: number; 
 interface CompanyDashboardProps {
   onNavigate?: (page: any) => void;
   clientAppMode?: boolean;
+  accountId?: string;
   onPresentationSaved?: (model: 'business' | 'portfolio') => void;
 }
 
-export default function CompanyDashboard({ onNavigate, clientAppMode = false, onPresentationSaved }: CompanyDashboardProps) {
+export default function CompanyDashboard({ onNavigate, clientAppMode = false, accountId, onPresentationSaved }: CompanyDashboardProps) {
   const { user, signOut, loading } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'jobs' | 'candidates' | 'settings' | 'showcase' | 'boutique' | 'orders' | 'stats'>(() => new URLSearchParams(window.location.search).get('tab') === 'orders' ? 'orders' : clientAppMode ? 'boutique' : 'showcase');
@@ -62,12 +65,12 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false, on
       .then(({ data, error }) => {
         if (cancelled) return;
         if (error) { setStatsError(true); setStats([]); return; }
-        setStats((data ?? []) as ScopedBoutiqueStats[]);
+        setStats(((data ?? []) as ScopedBoutiqueStats[]).filter(row=>!accountId||row.entreprise_id===accountId));
       })
       .catch(() => { if (!cancelled) { setStatsError(true); setStats([]); } })
       .finally(() => { if (!cancelled) setStatsLoading(false); });
     return () => { cancelled = true; };
-  }, [user?.id,statsRetry]);
+  }, [user?.id,statsRetry,accountId]);
 
   useEffect(() => {
     if (!user?.id || stats.length === 0) { setProductRequests([]); return; }
@@ -345,6 +348,14 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false, on
                         ? <p className="text-sm leading-6 text-gray-700">Votre Boutique est identifiée. Proposez un produit dans le formulaire sécurisé ci-dessous ; aucune publication n'est automatique.</p>
                         : <p className="text-sm leading-6 text-gray-700">Votre établissement est identifié. Les modifications de vitrine seront activées après validation et modération.</p>}
                     </div>)}</div>}
+                  {activeTab==='showcase' && !statsLoading && !statsError && stats.map(row=><div key={row.entreprise_id}>
+                    {stats.length>1&&<p>Établissement {row.entreprise_id}</p>}
+                    <OwnerProfileEditor id={row.entreprise_id} section="infos"/>
+                    <OwnerProfileEditor id={row.entreprise_id} section="presentation"/>
+                    <OwnerShowcaseMedia id={row.entreprise_id} field="logo_url"/>
+                    <OwnerShowcaseMedia id={row.entreprise_id} field="image_url"/>
+                    <a className="mt-3 inline-block underline" href={'https://app.dalil-tounes.com/'+encodeURIComponent(row.entreprise_id)+'/cv'}>Prévisualiser ma mini-appli</a>
+                  </div>)}
                   {activeTab === 'showcase' && clientAppMode && stats.length > 0 && !statsLoading && !statsError && <div className="mt-4 rounded-xl border border-[#dfcda8] bg-white p-4">
                     <h3 className="font-semibold text-[#62212a]">Présentation de ma vitrine</h3>
                     <p className="mt-1 text-xs leading-relaxed text-gray-600">Choisissez le CV principal et le style d'ouverture. Vous pouvez voir les deux modèles avant d'enregistrer.</p>
