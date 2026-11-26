@@ -27,11 +27,11 @@ export default function PublishJob() {
           <h1 className="public-title mb-3 font-serif text-3xl font-light text-[#806336] md:text-4xl">
             {copy.publishPageTitle}
           </h1>
-          <p className="text-[#6c6068]">{copy.publishPageSubtitle}</p>
+          <p className="text-[#514B43]">{copy.publishPageSubtitle}</p>
         </div>
 
         <div className="mb-8 rounded-lg border border-[#D4AF37] bg-[#fffdf9] p-4">
-          <p className="flex items-start gap-3 text-sm leading-6 text-[#35172f]">
+          <p className="flex items-start gap-3 text-sm leading-6 text-[#292725]">
             <CheckCircle2 className="mt-0.5 h-5 w-5 flex-none text-[#806336]" aria-hidden="true" />
             <span>{copy.publishPageNotice}</span>
           </p>
@@ -42,8 +42,8 @@ export default function PublishJob() {
         </div>
 
         <div className="mt-8 rounded-lg border border-[#D4AF37] bg-[#fffdf9] p-6">
-          <h2 className="public-heading mb-3 text-lg font-medium text-[#35172f]">{copy.helpTitle}</h2>
-          <ul className="space-y-2 text-sm text-[#6c6068]">
+          <h2 className="public-heading mb-3 text-lg font-medium text-[#292725]">{copy.helpTitle}</h2>
+          <ul className="space-y-2 text-sm text-[#514B43]">
             {copy.helpTips.map(tip => <li key={tip}>• {tip}</li>)}
           </ul>
         </div>
