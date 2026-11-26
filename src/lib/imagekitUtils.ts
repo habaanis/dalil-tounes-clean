@@ -82,9 +82,19 @@ export function parseImageUrls(imageUrlString: string | null | undefined): strin
   // Les noms de fichiers (notamment Wikimedia Commons) peuvent contenir des virgules.
   // Ne découper qu'avant une nouvelle URL complète ou un chemin absolu.
   return imageUrlString
-    .split(/,(?=\s*(?:https?:\/\/|\/))/i)
-    .map(url => url.trim())
+    .replace(/\\r\\n|\\n|\\r/g, '\n')
+    .split(/(?:,|\r?\n)(?=\s*(?:https?:\/\/|\/))/i)
+    .map(url => url.trim().replace(/,+$/, '').trim())
     .filter(url => url.length > 0);
+}
+
+/** Persisted presentation photos are never truncated when displayed. Quotas
+ * apply to owner writes; an older customer's saved gallery remains visible. */
+export function getShowcaseGalleryItems(imageUrls: string | null | undefined) {
+  return parseImageUrls(imageUrls).map(url => ({
+    thumbnail: addImageKitTransform(url, ImageKitTransforms.GALLERY_THUMBNAIL),
+    full: addImageKitTransform(url, ImageKitTransforms.GALLERY_FULL),
+  }));
 }
 
 /**

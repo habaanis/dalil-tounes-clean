@@ -3,6 +3,10 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { useNavigate } from 'react-router-dom';
 import { Briefcase, Users, Building2, Settings, LogOut, Store, Package, BarChart3, ShieldCheck, ClipboardList } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
+import { isProfessionalEntitlements, type ProfessionalEntitlements } from '../lib/professionalEntitlements';
+import { professionalRightsText } from '../lib/professionalRightsTranslations';
+import { invalidateShowcaseRecord } from '../lib/showcaseRecordCache';
 import OwnerProfileEditor from '../components/OwnerProfileEditor';
 import OwnerShowcaseMedia from '../components/OwnerShowcaseMedia';
 import JobPostForm from '../components/forms/JobPostForm';
@@ -13,7 +17,7 @@ import BoutiqueMerchantOrderAlerts from '../components/boutique/BoutiqueMerchant
 
 type ScopedBoutiqueStats = { entreprise_id: string; push_subscriptions: number; published_products: number; draft_products: number };
 interface CompanyDashboardProps {
-  onNavigate?: (page: any) => void;
+  onNavigate?: (page: 'home' | 'candidateList') => void;
   clientAppMode?: boolean;
   accountId?: string;
   onPresentationSaved?: (model: 'business' | 'portfolio') => void;
@@ -21,6 +25,9 @@ interface CompanyDashboardProps {
 
 export default function CompanyDashboard({ onNavigate, clientAppMode = false, accountId, onPresentationSaved }: CompanyDashboardProps) {
   const { user, signOut, loading } = useAuth();
+  const { language } = useLanguage();
+  const rightsText = professionalRightsText(language);
+  const [entitlements, setEntitlements] = useState<ProfessionalEntitlements | null>(null);
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'jobs' | 'candidates' | 'settings' | 'showcase' | 'boutique' | 'orders' | 'stats'>(() => new URLSearchParams(window.location.search).get('tab') === 'orders' ? 'orders' : clientAppMode ? 'boutique' : 'showcase');
   const [showWelcome, setShowWelcome] = useState(false);
@@ -89,34 +96,32 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false, ac
     if (!clientAppMode || !user?.id || !stats[0]?.entreprise_id) return;
     let active=true;
     setPresentationLoading(true);
+    setEntitlements(null);
     void import('../lib/supabaseClient').then(({supabase}) =>
-      supabase.from('entreprise').select('modele_cv,opening_style,palette_cv,palette_cv_user_selected,statut_carte')
-        .eq('id',stats[0].entreprise_id).maybeSingle()
+      supabase.rpc('dalil_get_my_showcase_entitlements', {p_id: stats[0].entreprise_id})
     ).then(({data,error})=>{
       if (!active) return;
-      if (error || !data) {setPresentationFeedback('Présentation temporairement indisponible.');return;}
-      setCvChoice(String(data.modele_cv || '').toLowerCase().includes('portfolio') ? 'portfolio' : 'business');
-      setOpeningChoice(data.opening_style === 'framed' ? 'framed' : 'photo');
-      const historicalIvory = data.statut_carte === '⭐ CERTIFIÉ DALIL TOUNES';
-      const selected = data.palette_cv_user_selected === true;
-      const palette = String(data.palette_cv || '').toLowerCase();
-      setPaletteChoice(!selected && historicalIvory ? 'ivory' :
-        palette === 'night' || palette === 'ivory' ? palette : 'prestige');
+      if (error || !isProfessionalEntitlements(data)) {setPresentationFeedback(rightsText.unavailable);return;}
+      setEntitlements(data);
+      setCvChoice(data.current_model);
+      setOpeningChoice(data.current_opening);
+      setPaletteChoice(data.current_palette);
     }).catch(()=>{
       if (active) setPresentationFeedback('Présentation temporairement indisponible.');
     }).finally(()=>{if(active)setPresentationLoading(false)});
     return ()=>{active=false};
-  },[clientAppMode,user?.id,stats]);
+  },[clientAppMode,user?.id,stats,rightsText.unavailable]);
 
   const savePresentation = async () => {
-    if (!user?.id || !stats[0]?.entreprise_id || presentationSaving) return;
+    if (!user?.id || !stats[0]?.entreprise_id || presentationSaving || !entitlements?.models.includes(cvChoice) || !entitlements.openings.includes(openingChoice)) return;
     setPresentationSaving(true);setPresentationFeedback('');
     try {
       const {supabase} = await import('../lib/supabaseClient');
-      const {error} = await supabase.rpc('dalil_update_my_cv_presentation',{
+      const {data,error} = await supabase.rpc('dalil_update_my_cv_presentation',{
         p_entreprise_id:stats[0].entreprise_id,p_modele_cv:cvChoice,p_opening_style:openingChoice
       });
-      if(error)throw error;
+      if(error || data?.modele_cv !== cvChoice || data?.opening_style !== openingChoice) throw error ?? new Error('Save not confirmed');
+      invalidateShowcaseRecord(stats[0].entreprise_id);
       // The account's CV return link should reflect the saved selection immediately.
       onPresentationSaved?.(cvChoice);
       setPresentationFeedback('Présentation enregistrée. Le modèle choisi est maintenant le modèle principal de votre CV.');
@@ -126,14 +131,15 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false, ac
   };
 
   const savePalette = async () => {
-    if (!user?.id || !stats[0]?.entreprise_id || paletteSaving) return;
+    if (!user?.id || !stats[0]?.entreprise_id || paletteSaving || !entitlements?.palettes.includes(paletteChoice)) return;
     setPaletteSaving(true);setPaletteFeedback('');
     try {
       const {supabase} = await import('../lib/supabaseClient');
-      const {error} = await supabase.rpc('dalil_update_my_cv_palette',{
+      const {data,error} = await supabase.rpc('dalil_update_my_cv_palette',{
         p_entreprise_id:stats[0].entreprise_id,p_palette:paletteChoice,
       });
-      if (error) throw error;
+      if (error || data?.palette_cv !== paletteChoice) throw error ?? new Error('Save not confirmed');
+      invalidateShowcaseRecord(stats[0].entreprise_id);
       setPaletteFeedback('Couleur enregistrée pour le QR et les deux CV.');
     } catch {
       setPaletteFeedback('Couleur non enregistrée. La présentation actuelle est conservée.');
@@ -358,13 +364,14 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false, ac
                   </div>)}
                   {activeTab === 'showcase' && clientAppMode && stats.length > 0 && !statsLoading && !statsError && <div className="mt-4 rounded-xl border border-[#dfcda8] bg-white p-4">
                     <h3 className="font-semibold text-[#62212a]">Présentation de ma vitrine</h3>
-                    <p className="mt-1 text-xs leading-relaxed text-gray-600">Choisissez le CV principal et le style d'ouverture. Vous pouvez voir les deux modèles avant d'enregistrer.</p>
+                    <p className="mt-1 text-xs leading-relaxed text-gray-600">{entitlements ? entitlements.confirmation_required ? rightsText.unconfirmed : rightsText[entitlements.plan === 'unconfirmed' ? 'legacy' : entitlements.plan] : rightsText.loading}</p>
+                    {entitlements && <p className="mt-1 text-xs text-gray-600">{entitlements.models.length === 1 ? rightsText.single : rightsText.choices}</p>}
                     {presentationLoading ? <p role="status" className="mt-3 text-xs">Chargement…</p> : <>
                     <fieldset className="mt-4">
                       <legend className="mb-2 text-sm font-semibold text-[#513b37]">Modèle de CV</legend>
                       <div className="grid grid-cols-2 gap-2">
-                        {(['portfolio','business'] as const).map(model=><button key={model} type="button" onClick={()=>{setCvChoice(model);setPresentationFeedback('')}}
-                          aria-pressed={cvChoice===model} className={`min-h-11 rounded-xl border px-2 py-2 text-sm font-semibold ${cvChoice===model?'border-[#a88446] bg-[#fbf1df] text-[#62212a]':'border-[#dfcda8] bg-white text-gray-700'}`}>
+                        {(['portfolio','business'] as const).map(model=><button key={model} type="button" disabled={!entitlements?.models.includes(model)} onClick={()=>{setCvChoice(model);setPresentationFeedback('')}}
+                          aria-pressed={cvChoice===model} className={`disabled:opacity-40 disabled:cursor-not-allowed min-h-11 rounded-xl border px-2 py-2 text-sm font-semibold ${cvChoice===model?'border-[#a88446] bg-[#fbf1df] text-[#62212a]':'border-[#dfcda8] bg-white text-gray-700'}`}>
                           {model==='portfolio'?'CV Portfolio':'CV Business'}
                         </button>)}
                       </div>
@@ -376,13 +383,13 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false, ac
                           ['prestige','Vert Prestige','#032D21','#fffdf7'],
                           ['ivory','Ivoire & Or','#FFF8E7','#3B3126'],
                           ['night','Bleu Nuit','#10243A','#F8F1E4'],
-                        ] as const).map(([id,label,bg,fg])=><button key={id} type="button"
+                        ] as const).map(([id,label,bg,fg])=><button key={id} type="button" disabled={!entitlements?.palettes.includes(id)}
                           onClick={()=>{setPaletteChoice(id);setPaletteFeedback('')}}
                           aria-pressed={paletteChoice===id}
-                          className={`min-h-12 rounded-xl border-2 px-2 py-2 text-xs font-semibold ${paletteChoice===id?'border-[#B3871F] ring-2 ring-[#B3871F]/35':'border-[#d7c7ab]'}`}
+                          className={`disabled:opacity-40 disabled:cursor-not-allowed min-h-12 rounded-xl border-2 px-2 py-2 text-xs font-semibold ${paletteChoice===id?'border-[#B3871F] ring-2 ring-[#B3871F]/35':'border-[#d7c7ab]'}`}
                           style={{backgroundColor:bg,color:fg}}>{label}</button>)}
                       </div>
-                      <button type="button" onClick={()=>void savePalette()} disabled={paletteSaving}
+                      <button type="button" onClick={()=>void savePalette()} disabled={paletteSaving || !entitlements?.palettes.includes(paletteChoice)}
                         className="mt-3 min-h-11 w-full rounded-xl border border-[#d8c394] bg-[#fbf1df] px-3 py-2 text-sm font-semibold text-[#62212a] disabled:opacity-50">
                         {paletteSaving?'Enregistrement…':'Appliquer cette couleur au QR et au CV'}
                       </button>
@@ -391,12 +398,12 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false, ac
                     <fieldset className="mt-4">
                       <legend className="mb-2 text-sm font-semibold text-[#513b37]">Présentation du logo à l'ouverture</legend>
                       <div className="grid grid-cols-2 gap-2">
-                        <button type="button" onClick={()=>{setOpeningChoice('photo');setPresentationFeedback('')}} aria-pressed={openingChoice==='photo'}
-                          className={`min-h-11 rounded-xl border px-2 py-2 text-xs font-semibold ${openingChoice==='photo'?'border-[#a88446] bg-[#fbf1df] text-[#62212a]':'border-[#dfcda8] bg-white text-gray-700'}`}>
+                        <button type="button" disabled={!entitlements?.openings.includes('photo')} onClick={()=>{setOpeningChoice('photo');setPresentationFeedback('')}} aria-pressed={openingChoice==='photo'}
+                          className={`disabled:opacity-40 disabled:cursor-not-allowed min-h-11 rounded-xl border px-2 py-2 text-xs font-semibold ${openingChoice==='photo'?'border-[#a88446] bg-[#fbf1df] text-[#62212a]':'border-[#dfcda8] bg-white text-gray-700'}`}>
                           A — Photo + logo
                         </button>
-                        <button type="button" onClick={()=>{setOpeningChoice('framed');setPresentationFeedback('')}} aria-pressed={openingChoice==='framed'}
-                          className={`min-h-11 rounded-xl border px-2 py-2 text-xs font-semibold ${openingChoice==='framed'?'border-[#a88446] bg-[#fbf1df] text-[#62212a]':'border-[#dfcda8] bg-white text-gray-700'}`}>
+                        <button type="button" disabled={!entitlements?.openings.includes('framed')} onClick={()=>{setOpeningChoice('framed');setPresentationFeedback('')}} aria-pressed={openingChoice==='framed'}
+                          className={`disabled:opacity-40 disabled:cursor-not-allowed min-h-11 rounded-xl border px-2 py-2 text-xs font-semibold ${openingChoice==='framed'?'border-[#a88446] bg-[#fbf1df] text-[#62212a]':'border-[#dfcda8] bg-white text-gray-700'}`}>
                           B — Logo encadré
                         </button>
                       </div>
@@ -407,7 +414,7 @@ export default function CompanyDashboard({ onNavigate, clientAppMode = false, ac
                       <a href={`/${encodeURIComponent(window.location.pathname.split('/')[1])}?opening-preview=1&opening-style=${openingChoice}`}
                         className="inline-flex min-h-10 items-center rounded-xl border border-[#d8c394] px-3 py-2 text-xs font-semibold text-[#573e36]">Voir l'ouverture {openingChoice==='photo'?'A':'B'}</a>
                     </div>
-                    <button type="button" onClick={()=>void savePresentation()} disabled={presentationSaving}
+                    <button type="button" onClick={()=>void savePresentation()} disabled={presentationSaving || !entitlements?.models.includes(cvChoice) || !entitlements?.openings.includes(openingChoice)}
                       className="mt-4 min-h-11 w-full rounded-xl bg-[#8f2530] px-4 py-2 font-semibold text-white disabled:opacity-50">
                       {presentationSaving?'Enregistrement…':'Enregistrer mes choix'}
                     </button>
