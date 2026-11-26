@@ -21,3 +21,13 @@ Chaque exécution doit consigner dans le journal durable : date/heure, sources c
 - Prune confirmé dans Jobs.tsx application et VerifiedJobCard.tsx et JobPostForm.tsx sur les deux branches.
 - La tâche quotidienne annoncée n'a pas pu être recontrôlée (erreur 404). Ne pas présumer son fonctionnement.
 - Aucun premier lot de 30–50 offres validé ou publié à ce stade.
+
+
+## Avancement du 26 novembre 2026 — connexion dynamique
+- PR #459 et #460 fusionnées et déploiements de production READY (commits 215d22f4 et 5f5b0f02).
+- Table publique dédiée `verified_job_offers` créée dans Supabase, distincte de `job_postings` et du circuit des demandes `suggestions_entreprises`.
+- RLS activée : SELECT anonyme/authentifié réservé aux lignes published dont verified_at <= jour tunisien <= review_until. Aucun INSERT/UPDATE/DELETE public. Ecriture par service_role ou administrateur SQL uniquement. URL HTTPS unique; statut pending par défaut; validité maximale de 30 jours après vérification.
+- Test transactionnel avec trois lignes temporaires (active, expirée, pending) sous rôle anon : seule la ligne active lisible; écriture interdite. ROLLBACK confirmé, zéro ligne de test restante.
+- PR #461 site et #462 PWA : lecture dynamique paginée par 200, rafraîchissement toutes les cinq minutes et au focus, messages de chargement/erreur en cinq langues, recherche incluant ville et gouvernorat. Pas de retour aux anciennes annonces statiques en cas d'erreur.
+- À vérifier : builds, accès Data API réel depuis navigateur, rendu et filtre avec offres réelles, migration versionnée du schéma, journal administratif, automatisation quotidienne et compteur exact. Les anciens droits de job_postings restent à auditer séparément.
+- Aucun lot d'annonces réelles publié à cette date.
