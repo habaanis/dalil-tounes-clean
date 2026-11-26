@@ -27,7 +27,7 @@ export const siteStructureCopy = {
     "platform": "La plateforme Dalil Tounes",
     "intro": "Recherchez un professionnel, découvrez la Tunisie et contactez directement les activités référencées.",
     "cvIntro": "Choisissez une présentation professionnelle à partager par lien ou QR Code.",
-    "offers": "Offres et inscription",
+    "offers": "Tarifs et inscription",
     "products": "CV Business et CV Portfolio",
     "services": "Services et informations utiles"
   },
@@ -57,7 +57,7 @@ export const siteStructureCopy = {
     "platform": "منصة دليل تونس",
     "intro": "ابحث عن مهني واكتشف تونس واتصل مباشرة بالأنشطة المدرجة.",
     "cvIntro": "اختر عرضاً مهنياً تشاركه عبر رابط أو رمز QR.",
-    "offers": "العروض والتسجيل",
+    "offers": "الأسعار والتسجيل",
     "products": "CV Business وCV Portfolio",
     "services": "الخدمات والمعلومات المفيدة"
   },
@@ -87,7 +87,7 @@ export const siteStructureCopy = {
     "platform": "Dalil Tounes platform",
     "intro": "Find a professional, discover Tunisia and contact listed businesses directly.",
     "cvIntro": "Choose a professional presentation to share by link or QR code.",
-    "offers": "Offers and registration",
+    "offers": "Pricing and registration",
     "products": "Business CV and Portfolio CV",
     "services": "Useful services and information"
   },
@@ -117,7 +117,7 @@ export const siteStructureCopy = {
     "platform": "La piattaforma Dalil Tounes",
     "intro": "Trova un professionista, scopri la Tunisia e contatta direttamente le attività elencate.",
     "cvIntro": "Scegli una presentazione professionale da condividere tramite link o codice QR.",
-    "offers": "Offerte e iscrizione",
+    "offers": "Tariffe e iscrizione",
     "products": "CV Business e CV Portfolio",
     "services": "Servizi e informazioni utili"
   },
@@ -147,7 +147,7 @@ export const siteStructureCopy = {
     "platform": "Платформа Dalil Tounes",
     "intro": "Найдите специалиста, откройте Тунис и свяжитесь с компаниями напрямую.",
     "cvIntro": "Выберите профессиональную презентацию для отправки по ссылке или QR-коду.",
-    "offers": "Предложения и регистрация",
+    "offers": "Цены и регистрация",
     "products": "Business CV и Portfolio CV",
     "services": "Полезные услуги и информация"
   }
