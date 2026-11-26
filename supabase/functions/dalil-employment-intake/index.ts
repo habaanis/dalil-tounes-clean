@@ -74,7 +74,8 @@ Deno.serve(async request => {
         titre_demande: title,
         nom_entreprise: title,
         secteur: label,
-        type_demande: label,
+        // Keep the existing database enum; the precise employment mode is in secteur.
+        type_demande: 'demande_information',
         source_page: 'emploi',
         telephone: phone || null,
         email: email || null,
