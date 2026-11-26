@@ -1476,30 +1476,25 @@ export const Subscription = () => {
             </div>
           </section>
         )}
-        <section id="offres" aria-labelledby="cv-business-products-title" className="order-2 mt-5 sm:mt-0">
-<div className="mb-6 text-center">
-    <h2 id="cv-business-products-title" className="text-xl font-medium text-[#292725] sm:text-2xl">{structure.offers}</h2>
-  <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-slate-600">{simpleCopy.productsSubtitle}</p>
-</div>
-
-
-<div className="mb-4 rounded-xl border border-[#D6AF2E]/60 bg-[#FFF9ED] p-3 sm:p-4">
-  <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-    <div className="max-w-3xl">
-      <span className="inline-flex items-center gap-2 rounded-full bg-[#D6B86D] px-3 py-1 text-[10px] font-medium uppercase tracking-[0.12em] text-[#292725]">
-        <Sparkles className="h-3.5 w-3.5 text-[#9B762D]" aria-hidden="true" />
-        {simpleCopy.welcomeBadge}
-      </span>
-      <h3 className="mt-3 text-xl font-medium text-[#292725] sm:text-2xl">{simpleCopy.welcomeTitle}</h3>
-      <p className="mt-2 hidden text-sm leading-5 text-slate-700 sm:block">{simpleCopy.welcomeDescription}</p>
-    </div>
-    <div className="hidden rounded-2xl border border-[#D3B16F] bg-[#FFF9ED] px-5 py-4 text-center text-[#292725] shadow-sm sm:block lg:max-w-xs">
-      <p className="text-lg font-medium leading-6 text-[#292725]">{simpleCopy.welcomeHighlight}</p>
-    </div>
-  </div>
-  <p className="mt-2 rounded-xl border border-[#D6AF2E]/45 bg-white px-3 py-2 text-sm font-medium leading-5 text-[#292725]">{simpleCopy.welcomePayment}</p>
-</div>
-
+        {activeProSection === 'offers' && <>
+        <section id="offres" aria-labelledby="cv-business-products-title" className="mt-3 rounded-xl border border-[#E5D7BE] bg-white p-3 sm:p-4">
+          <h2 id="cv-business-products-title" className="font-serif text-lg font-semibold text-[#292725]">{proTitles[3]}</h2>
+          <p className="mt-1 text-sm text-slate-600">{simpleCopy.productsSubtitle}</p>
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <div className="rounded-lg border border-[#D4AF37]/50 bg-[#FFF9EF] p-3 text-center">
+              <div className="font-semibold text-[#292725]">Artisan</div>
+              <div className="mt-1 text-lg font-semibold text-[#815E28]">{(offerCopy[language as OfferLanguage] ?? offerCopy.fr).artisanPrice}</div>
+              <button type="button" onClick={() => selectFormula('artisan')} className="mt-2 min-h-11 w-full rounded-lg bg-[#D6B86D] px-2 py-2 text-sm font-semibold text-[#292725]">{simpleCopy.chooseArtisan}</button>
+            </div>
+            <div className="rounded-lg border border-[#D4AF37]/50 bg-[#FFF9EF] p-3 text-center">
+              <div className="font-semibold text-[#292725]">Premium</div>
+              <div className="mt-1 text-lg font-semibold text-[#815E28]">{(offerCopy[language as OfferLanguage] ?? offerCopy.fr).premiumPrice}</div>
+              <button type="button" onClick={() => selectFormula('premium')} className="mt-2 min-h-11 w-full rounded-lg bg-[#07543F] px-2 py-2 text-sm font-semibold text-white">{simpleCopy.choosePremium}</button>
+            </div>
+          </div>
+          <details className="mt-3 rounded-lg border border-[#E5D7BE] bg-[#FCFAF5] p-3">
+            <summary className="cursor-pointer text-sm font-semibold text-[#292725]">{language === 'fr' ? 'Comparer les avantages Artisan / Premium' : language === 'ar' ? 'مقارنة مزايا حرفي وPremium' : 'Compare Artisan / Premium features'}</summary>
+            <div className="mt-3">
 {(() => {
   const l = comparisonLabels[language as OfferLanguage] ?? comparisonLabels.fr;
   const rows: [number, string | boolean, string | boolean][] = [
@@ -1526,11 +1521,10 @@ export const Subscription = () => {
     </table>
   </div>;
 })()}
-
-
-
-
-
+            </div>
+          </details>
+          <details className="mt-3 rounded-lg border border-[#E5D7BE] bg-[#FCFAF5] p-3">
+            <summary className="cursor-pointer text-sm font-semibold text-[#292725]">{language === 'fr' ? 'Entretien annuel et conditions' : language === 'ar' ? 'الصيانة السنوية والشروط' : 'Annual maintenance and terms'}</summary>
 <div className="mt-5 rounded-3xl border border-[#D6AF2E]/60 bg-white p-5 shadow-[0_10px_28px_rgba(74,18,63,0.06)] sm:p-6">
   <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
     <div>
@@ -1550,6 +1544,8 @@ export const Subscription = () => {
   </div>
   <p className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold leading-6 text-[#292725]">{simpleCopy.noRenewal}</p>
 </div>
+          </details>
+          <p className="mt-3 text-sm leading-5 text-slate-600">{simpleCopy.welcomePayment}</p>
         </section>
 
         <button
@@ -1619,6 +1615,7 @@ export const Subscription = () => {
             {copy.ctaButton} <ChevronRight className="h-4 w-4" aria-hidden="true" />
           </a>
         </section>
+        </>}
       </div>
 
       {activePreview === 'free' && (
