@@ -2,7 +2,7 @@ import type { Language } from './i18n';
 
 export const siteStructureCopy = {
   "fr": {
-    "universes": [{"title": "Citoyens", "text": "Santé, éducation, commerces et services."}, {"title": "Tourisme & Expat", "text": "Découvrir la Tunisie et s’installer."}, {"title": "Entreprises", "text": "Inscription gratuite et mini-appli professionnelle."}],
+    "universes": [{"title": "Citoyens", "text": "Santé, éducation, commerces et services."}, {"title": "Tourisme & Expat", "text": "Découvrir la Tunisie et s’installer."}, {"title": "Entreprises", "text": "Inscription gratuite et mini-appli professionnelle."}, {"title":"Emploi","text":"Offres d’emploi et recrutement."}],
     "homeCvTitle": "Vous souhaitez attirer plus de clients et faire connaître votre activité ?",
     "homeCvText": "Gagnez en visibilité, inspirez confiance et partagez votre activité avec un lien professionnel ou un QR Code.",
     "homeCvAction": "Découvrir votre mini-appli professionnelle",
@@ -32,7 +32,7 @@ export const siteStructureCopy = {
     "services": "Services et informations utiles"
   },
   "ar": {
-    "universes": [{"title": "المواطنون", "text": "الصحة والتعليم والمتاجر والخدمات."}, {"title": "السياحة والاستقرار", "text": "اكتشف تونس واستقرّ فيها."}, {"title": "المؤسسات", "text": "تسجيل مجاني وتطبيق مصغّر مهني."}],
+    "universes": [{"title": "المواطنون", "text": "الصحة والتعليم والمتاجر والخدمات."}, {"title": "السياحة والاستقرار", "text": "اكتشف تونس واستقرّ فيها."}, {"title": "المؤسسات", "text": "تسجيل مجاني وتطبيق مصغّر مهني."}, {"title":"الشغل","text":"عروض الشغل والانتداب."}],
     "homeCvTitle": "هل ترغب في جذب المزيد من العملاء والتعريف بنشاطك؟",
     "homeCvText": "عزّز ظهور نشاطك، وابنِ الثقة وشاركه عبر رابط مهني أو رمز QR.",
     "homeCvAction": "اكتشف تطبيقك المصغّر المهني",
@@ -62,7 +62,7 @@ export const siteStructureCopy = {
     "services": "الخدمات والمعلومات المفيدة"
   },
   "en": {
-    "universes": [{"title": "Citizens", "text": "Health, education, shops and services."}, {"title": "Tourism & Expat", "text": "Discover Tunisia and settle in."}, {"title": "Businesses", "text": "Free listing and a personalised business mini-app."}],
+    "universes": [{"title": "Citizens", "text": "Health, education, shops and services."}, {"title": "Tourism & Expat", "text": "Discover Tunisia and settle in."}, {"title": "Businesses", "text": "Free listing and a personalised business mini-app."}, {"title":"Jobs","text":"Job offers and recruitment."}],
     "homeCvTitle": "Would you like to attract more customers and make your business known?",
     "homeCvText": "Build visibility and trust, and share your business with a professional link or QR code.",
     "homeCvAction": "Discover your business mini-app",
@@ -92,7 +92,7 @@ export const siteStructureCopy = {
     "services": "Useful services and information"
   },
   "it": {
-    "universes": [{"title": "Cittadini", "text": "Salute, istruzione, negozi e servizi."}, {"title": "Turismo & Expat", "text": "Scoprire la Tunisia e stabilirsi."}, {"title": "Imprese", "text": "Iscrizione gratuita e mini-app professionale."}],
+    "universes": [{"title": "Cittadini", "text": "Salute, istruzione, negozi e servizi."}, {"title": "Turismo & Expat", "text": "Scoprire la Tunisia e stabilirsi."}, {"title": "Imprese", "text": "Iscrizione gratuita e mini-app professionale."}, {"title":"Lavoro","text":"Offerte di lavoro e assunzioni."}],
     "homeCvTitle": "Vuoi attirare più clienti e far conoscere la tua attività?",
     "homeCvText": "Aumenta la visibilità, ispira fiducia e condividi la tua attività con un link professionale o un codice QR.",
     "homeCvAction": "Scopri la tua mini-app professionale",
@@ -122,7 +122,7 @@ export const siteStructureCopy = {
     "services": "Servizi e informazioni utili"
   },
   "ru": {
-    "universes": [{"title": "Жителям", "text": "Здоровье, образование, магазины и услуги."}, {"title": "Туризм и переезд", "text": "Откройте Тунис и обустройтесь здесь."}, {"title": "Бизнес", "text": "Бесплатное размещение и мини-приложение для бизнеса."}],
+    "universes": [{"title": "Жителям", "text": "Здоровье, образование, магазины и услуги."}, {"title": "Туризм и переезд", "text": "Откройте Тунис и обустройтесь здесь."}, {"title": "Бизнес", "text": "Бесплатное размещение и мини-приложение для бизнеса."}, {"title":"Работа","text":"Вакансии и подбор персонала."}],
     "homeCvTitle": "Хотите привлечь больше клиентов и рассказать о своей деятельности?",
     "homeCvText": "Повышайте узнаваемость, укрепляйте доверие и делитесь своей деятельностью через профессиональную ссылку или QR-код.",
     "homeCvAction": "Узнать о вашем мини-приложении",
