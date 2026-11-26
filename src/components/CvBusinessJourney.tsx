@@ -504,6 +504,7 @@ export default function CvBusinessJourney({ language, showVideo = true, selected
               />
             </div>
             <p className="mx-auto mt-2 max-w-[180px] text-[11px] leading-4.5 text-gray-700">{t.cvText}</p>
+            {onModelSelect && <div className="mt-2 flex flex-col items-center gap-1"><a href={journeyCvDemoUrl(activeCvModel, language)} className="text-xs underline text-[#815E28]">{({fr:'Tester le modèle',ar:'جرّب النموذج',en:'Try the model',it:'Prova il modello',ru:'Попробовать модель'})[language]}</a><button type="button" onClick={() => onModelSelect(activeCvModel)} aria-pressed={selectedModel === activeCvModel} className="min-h-10 rounded-lg border border-[#A38549] bg-[#FFF9ED] px-3 py-1 text-xs font-semibold text-[#292725]">{selectedModel === activeCvModel ? '✓ ' + chooseLabel : chooseLabel}</button></div>}
           </article>
         </div>
 
