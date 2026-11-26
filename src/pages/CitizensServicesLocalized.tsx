@@ -265,6 +265,13 @@ const SOCIAL_PROGRAMS: Record<Lang, Array<{ title: string; body: string }>> = {
   ],
 };
 
+const SERVICE_ALLOWED_CATEGORIES = [
+  'mairie', 'municipalite', 'bureau de poste', 'poste de police', 'commissariat de police',
+  'garde nationale', 'tribunal', 'bureau d etat civil', "bureau d'état civil",
+  'recette des finances', 'centre des impots', 'cnam', 'cnss', 'caisse nationale de securite sociale',
+  "caisse nationale d'assurance maladie", 'protection civile', 'gouvernorat', 'delegation',
+  'bureau administratif', 'administration publique', 'service public', 'bureau des douanes',
+];
 const SERVICE_EXCLUDED_KEYWORDS = [
   'dentiste',
   'dentaire',
@@ -400,7 +407,7 @@ export default function CitizensServicesLocalized() {
               sectionTitle={c.recommended}
               useGoogleRecommendationCriteria
               excludedKeywords={SERVICE_EXCLUDED_KEYWORDS}
-              blogArticle={{ title: c.articleTitle, excerpt: c.articleExcerpt, slug: 'activites-en-famille' }}
+              allowedCategoryKeywords={SERVICE_ALLOWED_CATEGORIES}
             />
           </section>
         </>
