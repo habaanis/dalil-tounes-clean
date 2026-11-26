@@ -318,7 +318,7 @@ export const Home = ({ onNavigate, onNavigateToBusiness }: HomeProps = {}) => {
         <button
           type="button"
           onClick={() => document.getElementById('dalil-home-search')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-          className="inline-flex items-center gap-2 rounded-xl border border-[#D4AF37] bg-[#4A1D43] px-5 py-2.5 text-sm font-semibold text-[#D4AF37] transition hover:bg-[#5A2D53] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D4AF37]"
+          className="inline-flex items-center gap-2 rounded-xl border border-[#D4AF37] bg-[#292725] px-5 py-2.5 text-sm font-semibold text-[#D4AF37] transition hover:bg-[#383634] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D4AF37]"
         >
           <Search className="h-4 w-4" aria-hidden="true" />
           {homeLabels.search}
@@ -338,22 +338,22 @@ export const Home = ({ onNavigate, onNavigateToBusiness }: HomeProps = {}) => {
             <button
               type="button"
               onClick={() => navigate('/pourquoi-dalil-tounes')}
-              className="mt-2 inline-flex items-center text-[11px] font-semibold text-[#4A1D43] transition hover:text-[#D4AF37] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/60 rounded"
+              className="mt-2 inline-flex items-center text-[11px] font-semibold text-[#292725] transition hover:text-[#D4AF37] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/60 rounded"
             >
               {residualT.purposeCta}
             </button>
           </div>
 
           <details className="group mt-3">
-            <summary className="mx-auto inline-flex cursor-pointer list-none items-center gap-2 rounded-xl border border-[#D4AF37] px-4 py-2.5 text-sm font-semibold text-[#4A1D43] transition hover:bg-[#D4AF37]/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4A1D43] [&::-webkit-details-marker]:hidden">
+            <summary className="mx-auto inline-flex cursor-pointer list-none items-center gap-2 rounded-xl border border-[#D4AF37] px-4 py-2.5 text-sm font-semibold text-[#292725] transition hover:bg-[#D4AF37]/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#292725] [&::-webkit-details-marker]:hidden">
               <span className="group-open:hidden">{homeLabels.more}</span>
               <span className="hidden group-open:inline">{homeLabels.less}</span>
               <ChevronRight className="h-4 w-4 transition-transform group-open:rotate-90" aria-hidden="true" />
             </summary>
             <div className="mt-4 grid gap-2 text-start md:grid-cols-2 lg:grid-cols-4">
-            <div className="group bg-white rounded-xl p-3 border border-[#D4AF37] hover:shadow-[0_6px_20px_rgba(74,29,67,0.12)] transition-all duration-300 hover:scale-105">
+            <div className="group bg-white rounded-xl p-3 border border-[#D4AF37] hover:shadow-[0_6px_20px_rgba(41,39,37,0.12)] transition-all duration-300 hover:scale-105">
               <div className="w-8 h-8 bg-transparent rounded-lg flex items-center justify-center mb-2 group-hover:bg-[#D4AF37]/10 transition-colors">
-                <Search className="w-3.5 h-3.5 text-[#4A1D43]" />
+                <Search className="w-3.5 h-3.5 text-[#292725]" />
               </div>
               <h3 className="text-xs font-medium text-gray-900 mb-1">
                 {residualT.findTitle}
@@ -363,9 +363,9 @@ export const Home = ({ onNavigate, onNavigateToBusiness }: HomeProps = {}) => {
               </p>
             </div>
 
-            <div className="group bg-white rounded-xl p-3 border border-[#D4AF37] hover:shadow-[0_6px_20px_rgba(74,29,67,0.12)] transition-all duration-300 hover:scale-105">
+            <div className="group bg-white rounded-xl p-3 border border-[#D4AF37] hover:shadow-[0_6px_20px_rgba(41,39,37,0.12)] transition-all duration-300 hover:scale-105">
               <div className="w-8 h-8 bg-transparent rounded-lg flex items-center justify-center mb-2 group-hover:bg-[#D4AF37]/10 transition-colors">
-                <Building2 className="w-3.5 h-3.5 text-[#4A1D43]" />
+                <Building2 className="w-3.5 h-3.5 text-[#292725]" />
               </div>
               <h3 className="text-xs font-medium text-gray-900 mb-1">
                 {residualT.visibilityTitle}
@@ -375,9 +375,9 @@ export const Home = ({ onNavigate, onNavigateToBusiness }: HomeProps = {}) => {
               </p>
             </div>
 
-            <div className="group bg-white rounded-xl p-3 border border-[#D4AF37] hover:shadow-[0_6px_20px_rgba(74,29,67,0.12)] transition-all duration-300 hover:scale-105">
+            <div className="group bg-white rounded-xl p-3 border border-[#D4AF37] hover:shadow-[0_6px_20px_rgba(41,39,37,0.12)] transition-all duration-300 hover:scale-105">
               <div className="w-8 h-8 bg-transparent rounded-lg flex items-center justify-center mb-2 group-hover:bg-[#D4AF37]/10 transition-colors">
-                <Handshake className="w-3.5 h-3.5 text-[#4A1D43]" />
+                <Handshake className="w-3.5 h-3.5 text-[#292725]" />
               </div>
               <h3 className="text-xs font-medium text-gray-900 mb-1">
                 {residualT.connectTitle}
@@ -387,9 +387,9 @@ export const Home = ({ onNavigate, onNavigateToBusiness }: HomeProps = {}) => {
               </p>
             </div>
 
-            <div className="group bg-white rounded-xl p-3 border border-[#D4AF37] hover:shadow-[0_6px_20px_rgba(74,29,67,0.12)] transition-all duration-300 hover:scale-105">
+            <div className="group bg-white rounded-xl p-3 border border-[#D4AF37] hover:shadow-[0_6px_20px_rgba(41,39,37,0.12)] transition-all duration-300 hover:scale-105">
               <div className="w-8 h-8 bg-transparent rounded-lg flex items-center justify-center mb-2 group-hover:bg-[#D4AF37]/10 transition-colors">
-                <ArrowRight className="w-3.5 h-3.5 text-[#4A1D43]" />
+                <ArrowRight className="w-3.5 h-3.5 text-[#292725]" />
               </div>
               <h3 className="text-xs font-medium text-gray-900 mb-1">
                 {residualT.discoverTitle}
@@ -400,7 +400,7 @@ export const Home = ({ onNavigate, onNavigateToBusiness }: HomeProps = {}) => {
               <button
                 type="button"
                 onClick={() => navigate('/pourquoi-dalil-tounes')}
-                className="mt-2 inline-flex items-center gap-1 text-[11px] font-semibold text-[#4A1D43] transition hover:text-[#D4AF37] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/60 rounded"
+                className="mt-2 inline-flex items-center gap-1 text-[11px] font-semibold text-[#292725] transition hover:text-[#D4AF37] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/60 rounded"
               >
                 {residualT.learnMore}
                 <ChevronRight className="w-3 h-3" aria-hidden="true" />
@@ -444,7 +444,7 @@ export const Home = ({ onNavigate, onNavigateToBusiness }: HomeProps = {}) => {
 
   <button
     onClick={handleSuggestBusiness}
-    className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#4A1D43] text-[#D4AF37] font-bold rounded-xl border border-[#D4AF37] text-sm md:shadow-[0_4px_15px_rgba(212,175,55,0.25)] md:hover:bg-[#5A2D53] md:hover:shadow-[0_6px_25px_rgba(212,175,55,0.4)] md:transition-all md:duration-300 md:hover:scale-105 cursor-pointer"
+    className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#292725] text-[#D4AF37] font-bold rounded-xl border border-[#D4AF37] text-sm md:shadow-[0_4px_15px_rgba(212,175,55,0.25)] md:hover:bg-[#383634] md:hover:shadow-[0_6px_25px_rgba(212,175,55,0.4)] md:transition-all md:duration-300 md:hover:scale-105 cursor-pointer"
   >
     {residualT.requestButton}
   </button>
@@ -467,7 +467,7 @@ export const Home = ({ onNavigate, onNavigateToBusiness }: HomeProps = {}) => {
       {/* 5.5 Slogan Marketing */}
       <section className="py-8 px-4 bg-white">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-2xl md:text-3xl font-light mb-3 text-[#4A0404]" style={{ fontFamily: "'Playfair Display', serif" }}>
+          <h2 className="text-2xl md:text-3xl font-light mb-3 text-[#292725]" style={{ fontFamily: "'Playfair Display', serif" }}>
             {(t as any).homeExtra?.slogan}
           </h2>
           <div className="flex justify-center">
@@ -487,7 +487,7 @@ export const Home = ({ onNavigate, onNavigateToBusiness }: HomeProps = {}) => {
       <section className="py-6 px-4 bg-white relative z-[1]">
         <div className="max-w-2xl mx-auto text-center">
           <p className="text-lg md:text-xl font-light mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
-            <span className="text-[#4A0404]">{(t as any).homeExtra?.presentNotFindable}</span>
+            <span className="text-[#292725]">{(t as any).homeExtra?.presentNotFindable}</span>
           </p>
 
           <div className="flex justify-center">
@@ -542,7 +542,7 @@ export const Home = ({ onNavigate, onNavigateToBusiness }: HomeProps = {}) => {
         <div className="max-w-6xl mx-auto relative z-[1]">
           <div className="text-center mb-6">
             <h2
-              className="text-2xl md:text-3xl font-light text-[#4A1D43] mb-2"
+              className="text-2xl md:text-3xl font-light text-[#292725] mb-2"
               style={{ fontFamily: "'Playfair Display', serif" }}
             >
               {(t as any).homeExtra?.testimonialsTitle || 'Ils parlent de nous'}
@@ -568,7 +568,7 @@ export const Home = ({ onNavigate, onNavigateToBusiness }: HomeProps = {}) => {
       </section>
 
       {/* Formulaire d'avis public (avis_entreprise, entreprise_id = null) */}
-      <section className="py-6 px-4 bg-[#4A1D43] relative z-[1]">
+      <section className="py-6 px-4 bg-[#292725] relative z-[1]">
         <div className="max-w-xl mx-auto relative z-[1]">
           <div className="text-center mb-4">
             <h2
@@ -596,7 +596,7 @@ export const Home = ({ onNavigate, onNavigateToBusiness }: HomeProps = {}) => {
           <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[#D4AF37]">
             <div className="sticky top-0 bg-white border-b border-[#D4AF37]/40 px-6 py-4 flex items-start justify-between gap-4 rounded-t-2xl">
               <div>
-                <h2 className="text-xl font-semibold text-[#4A1D43]">
+                <h2 className="text-xl font-semibold text-[#292725]">
                   {residualT.requestButton}
                 </h2>
                 <p className="text-sm text-gray-600 mt-1">
@@ -628,7 +628,7 @@ export const Home = ({ onNavigate, onNavigateToBusiness }: HomeProps = {}) => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Titre de votre demande <span className="text-[#800020]">*</span>
+                  Titre de votre demande <span className="text-[#B62226]">*</span>
                 </label>
                 <input
                   type="text"
@@ -636,7 +636,7 @@ export const Home = ({ onNavigate, onNavigateToBusiness }: HomeProps = {}) => {
                   value={requestForm.title}
                   onChange={(e) => setRequestForm({ ...requestForm, title: e.target.value })}
                   placeholder="Ex : inscription entreprise, candidat emploi, chauffeur privé, professeur..."
-                  className="w-full px-4 py-3 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#4A1D43] focus:border-[#4A1D43] text-sm"
+                  className="w-full px-4 py-3 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#292725] focus:border-[#292725] text-sm"
                 />
               </div>
 
@@ -650,7 +650,7 @@ export const Home = ({ onNavigate, onNavigateToBusiness }: HomeProps = {}) => {
                     value={requestForm.phone}
                     onChange={(e) => setRequestForm({ ...requestForm, phone: e.target.value })}
                     placeholder="+216 XX XXX XXX"
-                    className="w-full px-4 py-3 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#4A1D43] focus:border-[#4A1D43] text-sm"
+                    className="w-full px-4 py-3 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#292725] focus:border-[#292725] text-sm"
                   />
                 </div>
 
@@ -663,7 +663,7 @@ export const Home = ({ onNavigate, onNavigateToBusiness }: HomeProps = {}) => {
                     value={requestForm.email}
                     onChange={(e) => setRequestForm({ ...requestForm, email: e.target.value })}
                     placeholder="votre@email.com"
-                    className="w-full px-4 py-3 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#4A1D43] focus:border-[#4A1D43] text-sm"
+                    className="w-full px-4 py-3 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#292725] focus:border-[#292725] text-sm"
                   />
                 </div>
               </div>
@@ -674,7 +674,7 @@ export const Home = ({ onNavigate, onNavigateToBusiness }: HomeProps = {}) => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Message <span className="text-[#800020]">*</span>
+                  Message <span className="text-[#B62226]">*</span>
                 </label>
                 <textarea
                   required
@@ -682,7 +682,7 @@ export const Home = ({ onNavigate, onNavigateToBusiness }: HomeProps = {}) => {
                   value={requestForm.message}
                   onChange={(e) => setRequestForm({ ...requestForm, message: e.target.value })}
                   placeholder="Expliquez brièvement votre demande, votre activité ou votre question..."
-                  className="w-full px-4 py-3 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#4A1D43] focus:border-[#4A1D43] text-sm resize-none"
+                  className="w-full px-4 py-3 border border-[#D4AF37] rounded-lg focus:ring-2 focus:ring-[#292725] focus:border-[#292725] text-sm resize-none"
                 />
               </div>
 
@@ -697,7 +697,7 @@ export const Home = ({ onNavigate, onNavigateToBusiness }: HomeProps = {}) => {
                 <button
                   type="submit"
                   disabled={requestSubmitting}
-                  className="flex-1 px-5 py-3 bg-[#4A1D43] text-[#D4AF37] border border-[#D4AF37] rounded-lg hover:bg-[#5A2D53] transition-all text-sm font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="flex-1 px-5 py-3 bg-[#292725] text-[#D4AF37] border border-[#D4AF37] rounded-lg hover:bg-[#383634] transition-all text-sm font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {requestSubmitting ? 'Envoi en cours...' : 'Envoyer ma demande'}
                 </button>
