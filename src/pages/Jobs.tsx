@@ -320,7 +320,7 @@ export const Jobs = () => {
             if (event.currentTarget === event.target) setRequestMode(null);
           }}
         >
-          <div className="my-6 w-full max-w-2xl overflow-hidden rounded-xl border border-[#D4AF37] bg-[#1A1A1A] shadow-sm">
+          <div className="my-6 w-full max-w-2xl overflow-hidden rounded-xl border border-[#D4AF37] bg-[#FFFDF9] shadow-sm">
             <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[#D4AF37]/60 bg-[#FFF8EA] px-5 py-4">
               <h2 id="job-request-dialog-title" className="public-heading pr-4 font-serif text-xl text-[#292725] md:text-2xl">
                 {requestMode === 'employer' ? copy.modalEmployerTitle : copy.modalCandidateTitle}
