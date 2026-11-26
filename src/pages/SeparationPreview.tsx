@@ -372,7 +372,7 @@ function SeparationExperience({ fixedView, embedded = false, selectedModel, onMo
     return <>
       <SEOHead {...getHomeSeoMeta()} currentPath="/" />
       <StructuredData data={[generateOrganizationSchema(), generateWebSiteSchema()]} />
-      <PlatformAppHome totalCount={countsAvailable ? localizedCount : null}
+      <PlatformAppHome jobsCountLabel={jobsCountLabel} totalCount={countsAvailable ? localizedCount : null}
         recommendedCount={localizedRecommendedCount}
         legacyCertifiedCount={countsAvailable ? localizedLegacyCertifiedCount : null} />
     </>;
