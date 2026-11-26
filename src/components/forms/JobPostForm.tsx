@@ -98,7 +98,7 @@ export default function JobPostForm({
 
   return (
     <form data-public-form="true" onSubmit={handleSubmit} className="space-y-5">
-      <div className="rounded-lg border border-[#D4AF37] bg-[#4A1D43]/20 p-4">
+      <div className="rounded-lg border border-[#D4AF37] bg-[#292725]/20 p-4">
         <p className="text-sm leading-relaxed text-[#E8D5C4]">
           {isEmployer || isCandidateContact ? copy.form.employerIntro : copy.form.candidateIntro}
         </p>
@@ -127,7 +127,7 @@ export default function JobPostForm({
           required
           value={formData.title}
           onChange={(event) => setFormData(previous => ({ ...previous, title: event.target.value }))}
-          className="w-full rounded-lg border border-[#D4AF37] bg-[#2A1525] px-4 py-3 text-[#F5F5DC] placeholder:text-gray-500 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]"
+          className="w-full rounded-lg border border-[#D4AF37] bg-[#292725] px-4 py-3 text-[#F5F5DC] placeholder:text-gray-500 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]"
           placeholder={isEmployer || isCandidateContact ? copy.form.employerTitlePlaceholder : copy.form.candidateTitlePlaceholder}
         />
       </div>
@@ -140,7 +140,7 @@ export default function JobPostForm({
             type="tel"
             value={formData.phone}
             onChange={(event) => setFormData(previous => ({ ...previous, phone: event.target.value }))}
-            className="w-full rounded-lg border border-[#D4AF37] bg-[#2A1525] px-4 py-3 text-[#F5F5DC] placeholder:text-gray-500 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]"
+            className="w-full rounded-lg border border-[#D4AF37] bg-[#292725] px-4 py-3 text-[#F5F5DC] placeholder:text-gray-500 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]"
             placeholder={copy.form.phonePlaceholder}
           />
         </div>
@@ -151,7 +151,7 @@ export default function JobPostForm({
             type="email"
             value={formData.email}
             onChange={(event) => setFormData(previous => ({ ...previous, email: event.target.value }))}
-            className="w-full rounded-lg border border-[#D4AF37] bg-[#2A1525] px-4 py-3 text-[#F5F5DC] placeholder:text-gray-500 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]"
+            className="w-full rounded-lg border border-[#D4AF37] bg-[#292725] px-4 py-3 text-[#F5F5DC] placeholder:text-gray-500 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]"
             placeholder={copy.form.emailPlaceholder}
           />
         </div>
@@ -164,7 +164,7 @@ export default function JobPostForm({
           rows={5}
           value={formData.message}
           onChange={(event) => setFormData(previous => ({ ...previous, message: event.target.value }))}
-          className="w-full rounded-lg border border-[#D4AF37] bg-[#2A1525] px-4 py-3 text-[#F5F5DC] placeholder:text-gray-500 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]"
+          className="w-full rounded-lg border border-[#D4AF37] bg-[#292725] px-4 py-3 text-[#F5F5DC] placeholder:text-gray-500 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]"
           placeholder={isEmployer || isCandidateContact ? copy.form.employerMessagePlaceholder : copy.form.candidateMessagePlaceholder}
         />
       </div>
@@ -172,9 +172,9 @@ export default function JobPostForm({
       <button
         type="submit"
         disabled={saving}
-        className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-[#D4AF37] bg-white px-6 py-3 font-semibold text-[#4A1D43] transition-all hover:shadow-[0_0_25px_rgba(212,175,55,0.4)] disabled:cursor-not-allowed disabled:opacity-50"
+        className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-[#D4AF37] bg-white px-6 py-3 font-semibold text-[#292725] transition-all hover:shadow-[0_0_25px_rgba(212,175,55,0.4)] disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {saving && <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#4A1D43] border-t-transparent" aria-hidden="true" />}
+        {saving && <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#292725] border-t-transparent" aria-hidden="true" />}
         {isCandidateContact
           ? copy.form.contactCandidateSubmit
           : isEmployer
