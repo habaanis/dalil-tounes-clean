@@ -298,13 +298,19 @@ function ExpandedJourneyVisual({
   );
 }
 
-export default function CvBusinessJourney({ language }: { language: BusinessCardPreviewLanguage }) {
+const journeyCvDemoUrl = (model: CvModel, language: string) => `/cv/aux-saveurs-anis?preview-model=${model}&boutique-demo=1&skip-opening=1&lang=${language}`;
+
+export default function CvBusinessJourney({ language, showVideo = true, selectedModel, onModelSelect }: { language: BusinessCardPreviewLanguage; showVideo?: boolean; selectedModel?: CvModel | null; onModelSelect?: (model: CvModel) => void }) {
   const t = COPY[language];
   const rtl = language === 'ar';
   const [expandedVisual, setExpandedVisual] = useState<JourneyVisual | null>(null);
   const [videoOpen, setVideoOpen] = useState(false);
-  const [activeCvModel, setActiveCvModel] = useState<CvModel>('business');
+  const [previewModel, setPreviewModel] = useState<CvModel>('business');
+  const activeCvModel = selectedModel ?? previewModel;
+  const setActiveCvModel = (model: CvModel) => { setPreviewModel(model); onModelSelect?.(model); };
+  const chooseLabel = ({fr:'Choisir ce modèle',ar:'اختر هذا النموذج',en:'Choose this model',it:'Scegli questo modello',ru:'Выберите эту модель'})[language];
   const [activeMobileStep, setActiveMobileStep] = useState<MobileJourneyStep>('pwa');
+  useEffect(() => { if (onModelSelect) setActiveMobileStep('cv'); }, [onModelSelect]);
   const videoLanguage = language === 'fr' || language === 'ar' ? language : null;
   const videoCopy = videoLanguage ? VIDEO_COPY[videoLanguage] : null;
   const videoSrc = videoLanguage === 'ar'
@@ -350,7 +356,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
             {t.eyebrow}
           </div>
           <h2 className="mt-2 font-serif text-2xl font-bold text-[#292725] sm:text-[28px]">{t.title}</h2>
-          {videoCopy && (
+          {showVideo && videoCopy && (
             <button
               type="button"
               onClick={() => setVideoOpen(true)}
@@ -434,6 +440,7 @@ export default function CvBusinessJourney({ language }: { language: BusinessCard
                 onClick={() => setExpandedVisual(activeMobileStep === 'cv' ? (activeCvModel === 'portfolio' ? 'cv-portfolio' : 'cv-business') : activeMobileStep)}
               />
             </div>
+            {activeMobileStep === 'cv' && onModelSelect && <div className="mt-2 flex flex-col items-center gap-1"><a href={journeyCvDemoUrl(activeCvModel, language)} className="text-xs underline text-[#815E28]">{({fr:'Tester le modèle',ar:'جرّب النموذج',en:'Try the model',it:'Prova il modello',ru:'Попробовать модель'})[language]}</a><button type="button" onClick={() => onModelSelect(activeCvModel)} aria-pressed={selectedModel === activeCvModel} className="min-h-10 rounded-lg border border-[#A38549] bg-[#FFF9ED] px-3 py-1 text-xs font-semibold text-[#292725]">{selectedModel === activeCvModel ? '✓ ' + chooseLabel : chooseLabel}</button></div>}
             {activeMobileStep === 'qr' && <QrBusinessUsage language={language} />}
           </article>
         </div>
