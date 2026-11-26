@@ -10,7 +10,8 @@ import { HERO_IMAGE_JPG_URL, HERO_IMAGE_URL } from '../constants/images';
 import { useLanguage } from '../context/LanguageContext';
 import { generateCollectionPageSchema } from '../lib/structuredDataSchemas';
 import { getJobsPageTranslations, type JobRequestMode } from '../lib/jobsPageTranslations';
-import { getCurrentVerifiedJobs } from '../lib/verifiedJobs';
+import { type VerifiedJobOffer } from '../lib/verifiedJobs';
+import { supabase } from '../lib/supabaseClient';
 
 const JOB_LOCALES = {
   fr: 'fr-FR',
@@ -27,6 +28,14 @@ const SEARCH_COPY = {
   it: ['Professione o parola chiave', 'Tutte le città', 'Nessun risultato', 'Azzera'],
   ru: ['Профессия или ключевое слово', 'Все города', 'Нет результатов', 'Сбросить'],
 } as const;
+const LOAD_COPY = {
+  fr: ['Chargement des offres…', 'Les offres sont temporairement indisponibles.', 'Réessayer'],
+  ar: ['جار تحميل العروض…', 'العروض غير متاحة مؤقتاً.', 'إعادة المحاولة'],
+  en: ['Loading jobs…', 'Job offers are temporarily unavailable.', 'Retry'],
+  it: ['Caricamento delle offerte…', 'Offerte temporaneamente non disponibili.', 'Riprova'],
+  ru: ['Загрузка вакансий…', 'Вакансии временно недоступны.', 'Повторить'],
+} as const;
+type LiveOffer = VerifiedJobOffer & { governorate: string | null };
 const normalize = (value: string) => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 
 export const Jobs = () => {
@@ -36,11 +45,49 @@ export const Jobs = () => {
   const [keyword, setKeyword] = useState('');
   const [city, setCity] = useState('');
   const searchCopy = SEARCH_COPY[language];
-  const currentJobs = getCurrentVerifiedJobs();
+  const [currentJobs, setCurrentJobs] = useState<LiveOffer[]>([]);
+  const [loadState, setLoadState] = useState<'loading' | 'ready' | 'error'>('loading');
+  const [retry, setRetry] = useState(0);
+  const loadCopy = LOAD_COPY[language];
+  useEffect(() => {
+    let disposed = false;
+    let running = false;
+    const load = async () => {
+      if (running || disposed) return;
+      running = true;
+      try {
+        const day = new Intl.DateTimeFormat('en-CA', { timeZone: 'Africa/Tunis', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date());
+        const date = ['year', 'month', 'day'].map(part => day.find(p => p.type === part)?.value).join('-');
+        const offers: LiveOffer[] = [];
+        const batch = 200;
+        for (let offset = 0; ; offset += batch) {
+          const { data, error } = await supabase.from('verified_job_offers')
+            .select('id,title,company,city,governorate,contract,sector,experience,skills,source_name,source_url,verified_at,review_until')
+            .eq('status', 'published').lte('verified_at', date).gte('review_until', date)
+            .order('verified_at', { ascending: false }).order('id').range(offset, offset + batch - 1);
+          if (disposed) return;
+          if (error) throw error;
+          for (const row of data ?? []) {
+            if (!row.source_url.startsWith('https://')) continue;
+            offers.push({ id: row.id, title: row.title, company: row.company, city: row.city, governorate: row.governorate, contract: row.contract, sector: row.sector, experience: row.experience, skills: row.skills, sourceName: row.source_name, sourceUrl: row.source_url, verifiedAt: row.verified_at, reviewUntil: row.review_until });
+          }
+          if (!data || data.length < batch) break;
+        }
+        if (!disposed) { setCurrentJobs(offers); setLoadState('ready'); }
+      } catch {
+        if (!disposed) { setCurrentJobs([]); setLoadState('error'); }
+      } finally { running = false; }
+    };
+    setLoadState('loading');
+    void load();
+    const timer = window.setInterval(load, 5 * 60 * 1000);
+    window.addEventListener('focus', load);
+    return () => { disposed = true; window.clearInterval(timer); window.removeEventListener('focus', load); };
+  }, [retry]);
   const cities = [...new Set(currentJobs.map(offer => offer.city))].sort();
   const verifiedJobs = currentJobs.filter(offer =>
     (!city || offer.city === city) &&
-    normalize([offer.title, offer.company, offer.sector, ...offer.skills].join(' ')).includes(normalize(keyword.trim()))
+    normalize([offer.title, offer.company, offer.sector, offer.city, offer.governorate ?? '', ...offer.skills].join(' ')).includes(normalize(keyword.trim()))
   ).sort((a, b) => b.verifiedAt.localeCompare(a.verifiedAt));
 
   useEffect(() => {
@@ -116,10 +163,14 @@ export const Jobs = () => {
             </select>
           </div>
           <p className="mb-8 text-center text-sm font-medium text-gray-600">
-            {verifiedJobs.length} {copy.offersFound}
+            {loadState === 'ready' ? <>{verifiedJobs.length} {copy.offersFound}</> : null}
           </p>
 
-          {verifiedJobs.length > 0 ? (
+          {loadState !== 'ready' ? (
+            <div role="status" className="rounded-xl border border-[#D4AF37] bg-white p-5 text-center text-sm text-[#292725]">
+              {loadState === 'loading' ? loadCopy[0] : <>{loadCopy[1]} <button type="button" className="underline" onClick={() => setRetry(value => value + 1)}>{loadCopy[2]}</button></>}
+            </div>
+          ) : verifiedJobs.length > 0 ? (
             <div className="grid gap-5 md:grid-cols-2">
               {verifiedJobs.map((offer) => (
                 <VerifiedJobCard
