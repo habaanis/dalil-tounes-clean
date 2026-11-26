@@ -1361,7 +1361,6 @@ export const Subscription = () => {
     presentationModelLabel?: string;
     paletteLabel?: string;
   } | null>(null);
-  const [selectedFormula, setSelectedFormula] = useState<'artisan' | 'premium' | null>(null);
   const [selectedPresentationModel, setSelectedPresentationModel] = useState<PresentationModel | null>(null);
   const [selectedPalette, setSelectedPalette] = useState<PaletteId>('prestige');
   const [showSecondaryDetails, setShowSecondaryDetails] = useState(false);
@@ -1387,7 +1386,6 @@ export const Subscription = () => {
     setActivePreview('request');
   };
   const selectFormula = (formula: 'artisan' | 'premium') => {
-    setSelectedFormula(formula);
     const label = `${simpleCopy[`${formula}Title`]} — ${(offerCopy[language as OfferLanguage] ?? offerCopy.fr)[`${formula}Price`]}`;
     openRequest(formula, label, formula, undefined,
       formula === 'artisan' && selectedPresentationModel ? getPresentationModelLabel(language, selectedPresentationModel) : undefined,
