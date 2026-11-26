@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Briefcase, Users, Building2, Settings, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import {supabase} from '../lib/supabaseClient';
 import JobPostForm from '../components/forms/JobPostForm';
 
 interface CompanyDashboardProps {
@@ -10,6 +11,13 @@ interface CompanyDashboardProps {
 export default function CompanyDashboard({ onNavigate }: CompanyDashboardProps) {
   const { user, signOut } = useAuth();
   const [activeTab, setActiveTab] = useState<'jobs' | 'candidates' | 'settings'>('jobs');
+  const [accounts,setAccounts]=useState<string[]>([]);
+  const [accountError,setAccountError]=useState(false);
+  useEffect(()=>{let current=true;setAccounts([]);setAccountError(false);
+    if(user?.id)void supabase.from('professional_profile_access').select('entreprise_id').eq('user_id',user.id).then(({data,error})=>{
+      if(current){setAccountError(Boolean(error));setAccounts((data||[]).map(row=>row.entreprise_id));}
+    });return ()=>{current=false};
+  },[user?.id]);
   const [showWelcome, setShowWelcome] = useState(false);
 
   useEffect(() => {
@@ -70,6 +78,8 @@ export default function CompanyDashboard({ onNavigate }: CompanyDashboardProps) 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex gap-6">
           <div className="w-64 flex-shrink-0">
+            {accounts.map(id=><a key={id} href={'https://app.dalil-tounes.com/'+encodeURIComponent(id)+'/compte'} className="block rounded-xl border p-3">Mes informations et ma vitrine{accounts.length>1?' · '+id:''}</a>)}
+            {accountError&&<p role="alert">Impossible de charger les accès professionnels.</p>}
             <nav className="bg-white rounded-lg shadow-sm p-4 space-y-2">
               <button
                 onClick={() => setActiveTab('jobs')}
