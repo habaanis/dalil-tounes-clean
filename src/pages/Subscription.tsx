@@ -20,7 +20,6 @@ import { SubscriptionRequestForm } from '../components/SubscriptionRequestForm';
 import type { BillingPeriod, CheckoutOffer, SubscriptionPlanCode } from '../components/SubscriptionRequestForm';
 import { BusinessCardPreview } from '../components/BusinessCardPreview';
 import {
-  CvPresentationModelSelector,
   getPresentationModelLabel,
   getPaletteLabel,
   type PresentationModel,
@@ -1394,17 +1393,6 @@ export const Subscription = () => {
       formula === 'artisan' && selectedPresentationModel ? getPresentationModelLabel(language, selectedPresentationModel) : undefined,
       formula === 'artisan' && selectedPresentationModel ? getPaletteLabel(language, selectedPalette) : undefined);
   };
-  const selectedFormulaLabel = selectedFormula
-    ? `${simpleCopy[`${selectedFormula}Title`]} — ${(offerCopy[language as OfferLanguage] ?? offerCopy.fr)[`${selectedFormula}Price`]}`
-    : null;
-  const continueWithModel = () => {
-    if (!selectedFormula) {
-      document.getElementById('offres')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      return;
-    }
-    selectFormula(selectedFormula);
-  };
-
   return (
     <div className="premium-page px-4 py-6 sm:py-8" dir={isArabic ? 'rtl' : 'ltr'}>
       <div className="mx-auto max-w-6xl">
