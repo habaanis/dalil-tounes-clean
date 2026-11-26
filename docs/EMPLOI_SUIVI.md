@@ -44,3 +44,7 @@ Chaque exécution doit consigner dans le journal durable : date/heure, sources c
 - 50 pistes enregistrées ; 2 passées au statut published (ANPE et Hamelin) sur preuve éditoriale indexée, ouverture directe HTTP non confirmée, 48 pending. Ne pas assimiler à 50 offres validées.
 - Carte VerifiedJobCard existante compactée sur site et PWA : titre, employeur, ville, contrat, bouton détails replié. Expérience, secteur, compétences, source et lien candidature à l’intérieur. Dates verified_at/review_until non affichées aux candidats ; restent inchangées dans Supabase pour contrôle et expiration. Cinq langues conservées.
 - Espacement de grille réduit, alignement en haut afin que l’ouverture d’une carte ne dilate pas les autres cartes. Vérifier compilation et rendu mobile avant fusion.
+
+## Pagination des annonces — 26 novembre
+- PR #466/#467 fusionnées et productions READY. 50 fiches publiées dans Supabase et lisibles sous rôle anon; contrôle éditorial indexé mais accès HTTP direct non confirmé. 48 nouvelles publications à recontrôler au plus tard sous 7 jours, ou avant échéance réelle.
+- Pagination publique par 10 après filtrage intégral du catalogue, et non avant. Recherche multi-mots insensible aux accents et à la casse, inclut métier, entreprise, secteur, ville, gouvernorat, contrat, expérience et compétences. Changement de filtre remet en page 1; réduction du catalogue borne la page; précédent/suivant et intervalle de résultats, 5 langues. Préserver la pagination lors des futurs lots.

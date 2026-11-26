@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Briefcase, Building2, ShieldCheck, Sparkles, UserRound, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -28,6 +28,14 @@ const SEARCH_COPY = {
   it: ['Professione o parola chiave', 'Tutte le città', 'Nessun risultato', 'Azzera'],
   ru: ['Профессия или ключевое слово', 'Все города', 'Нет результатов', 'Сбросить'],
 } as const;
+const PAGE_SIZE = 10;
+const PAGE_COPY = {
+  fr: ['Précédent', 'Suivant', 'Page', 'sur', 'Pages des offres'],
+  ar: ['السابق', 'التالي', 'الصفحة', 'من', 'صفحات العروض'],
+  en: ['Previous', 'Next', 'Page', 'of', 'Job offer pages'],
+  it: ['Precedente', 'Successiva', 'Pagina', 'di', 'Pagine delle offerte'],
+  ru: ['Назад', 'Далее', 'Страница', 'из', 'Страницы вакансий'],
+} as const;
 const LOAD_COPY = {
   fr: ['Chargement des offres…', 'Les offres sont temporairement indisponibles.', 'Réessayer'],
   ar: ['جار تحميل العروض…', 'العروض غير متاحة مؤقتاً.', 'إعادة المحاولة'],
@@ -44,6 +52,9 @@ export const Jobs = () => {
   const [requestMode, setRequestMode] = useState<JobRequestMode | null>(null);
   const [keyword, setKeyword] = useState('');
   const [city, setCity] = useState('');
+  const [page, setPage] = useState(1);
+  const resultsTop = useRef<HTMLParagraphElement>(null);
+  const pageCopy = PAGE_COPY[language];
   const searchCopy = SEARCH_COPY[language];
   const [currentJobs, setCurrentJobs] = useState<LiveOffer[]>([]);
   const [loadState, setLoadState] = useState<'loading' | 'ready' | 'error'>('loading');
@@ -85,10 +96,20 @@ export const Jobs = () => {
     return () => { disposed = true; window.clearInterval(timer); window.removeEventListener('focus', load); };
   }, [retry]);
   const cities = [...new Set(currentJobs.map(offer => offer.city))].sort();
+  const terms = normalize(keyword.trim()).split(/\s+/).filter(Boolean);
   const verifiedJobs = currentJobs.filter(offer =>
     (!city || offer.city === city) &&
-    normalize([offer.title, offer.company, offer.sector, offer.city, offer.governorate ?? '', ...offer.skills].join(' ')).includes(normalize(keyword.trim()))
-  ).sort((a, b) => b.verifiedAt.localeCompare(a.verifiedAt));
+    terms.every(term => normalize([offer.title, offer.company, offer.sector, offer.city, offer.governorate ?? '', offer.contract, offer.experience, ...offer.skills].join(' ')).includes(term))
+  ).sort((a, b) => b.verifiedAt.localeCompare(a.verifiedAt) || a.id.localeCompare(b.id));
+  const pageCount = Math.max(1, Math.ceil(verifiedJobs.length / PAGE_SIZE));
+  const currentPage = Math.min(page, pageCount);
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const visibleJobs = verifiedJobs.slice(start, start + PAGE_SIZE);
+  useEffect(() => { setPage(value => Math.min(value, pageCount)); }, [pageCount]);
+  const changePage = (value: number) => {
+    setPage(Math.max(1, Math.min(value, pageCount)));
+    resultsTop.current?.scrollIntoView({ block: 'start' });
+  };
 
   useEffect(() => {
     if (!requestMode) return undefined;
@@ -156,14 +177,14 @@ export const Jobs = () => {
           </p>
           <h2 className="public-heading mb-3 text-center font-serif text-3xl text-[#292725]">{copy.offersTitle}</h2>
           <div className="mb-4 grid gap-2 sm:grid-cols-2">
-            <input type="search" aria-label={searchCopy[0]} placeholder={searchCopy[0]} value={keyword} onChange={event => setKeyword(event.target.value)} className="rounded-lg border border-[#D4AF37] bg-white px-4 py-3 text-[#292725]" />
-            <select aria-label={searchCopy[1]} value={city} onChange={event => setCity(event.target.value)} className="rounded-lg border border-[#D4AF37] bg-white px-4 py-3 text-[#292725]">
+            <input type="search" aria-label={searchCopy[0]} placeholder={searchCopy[0]} value={keyword} onChange={event => { setKeyword(event.target.value); setPage(1); }} className="rounded-lg border border-[#D4AF37] bg-white px-4 py-3 text-[#292725]" />
+            <select aria-label={searchCopy[1]} value={city} onChange={event => { setCity(event.target.value); setPage(1); }} className="rounded-lg border border-[#D4AF37] bg-white px-4 py-3 text-[#292725]">
               <option value="">{searchCopy[1]}</option>
               {cities.map(value => <option key={value} value={value}>{value}</option>)}
             </select>
           </div>
-          <p className="mb-8 text-center text-sm font-medium text-gray-600">
-            {loadState === 'ready' ? <>{verifiedJobs.length} {copy.offersFound}</> : null}
+          <p ref={resultsTop} aria-live="polite" className="mb-3 scroll-mt-24 text-center text-sm font-medium text-gray-600">
+            {loadState === 'ready' ? <>{verifiedJobs.length} {copy.offersFound}{verifiedJobs.length > 0 && <> · {start + 1}–{Math.min(start + PAGE_SIZE, verifiedJobs.length)} / {verifiedJobs.length}</>}</> : null}
           </p>
 
           {loadState !== 'ready' ? (
@@ -171,8 +192,9 @@ export const Jobs = () => {
               {loadState === 'loading' ? loadCopy[0] : <>{loadCopy[1]} <button type="button" className="underline" onClick={() => setRetry(value => value + 1)}>{loadCopy[2]}</button></>}
             </div>
           ) : verifiedJobs.length > 0 ? (
+            <>
             <div className="grid items-start gap-2 md:grid-cols-2 md:gap-3">
-              {verifiedJobs.map((offer) => (
+              {visibleJobs.map((offer) => (
                 <VerifiedJobCard
                   key={offer.id}
                   offer={offer}
@@ -187,13 +209,19 @@ export const Jobs = () => {
                 />
               ))}
             </div>
+            {pageCount > 1 && <nav aria-label={pageCopy[4]} className="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs sm:text-sm">
+              <button type="button" disabled={currentPage === 1} onClick={() => changePage(currentPage - 1)} className="rounded-lg border border-[#D4AF37] bg-white px-3 py-2 text-[#292725] disabled:opacity-40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#D4AF37]">{pageCopy[0]}</button>
+              <span aria-live="polite" className="px-1 font-medium text-[#292725]">{pageCopy[2]} {currentPage} {pageCopy[3]} {pageCount}</span>
+              <button type="button" disabled={currentPage === pageCount} onClick={() => changePage(currentPage + 1)} className="rounded-lg border border-[#D4AF37] bg-white px-3 py-2 text-[#292725] disabled:opacity-40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#D4AF37]">{pageCopy[1]}</button>
+            </nav>}
+            </>
           ) : (
             <div className="rounded-xl border border-[#D4AF37] bg-white px-4 py-6 text-center shadow-sm md:px-12">
               <span className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-[#D6B86D] text-[#292725]">
                 <Briefcase className="h-7 w-7" aria-hidden="true" />
               </span>
               <h3 className="mb-3 text-xl font-semibold text-[#292725]">{currentJobs.length ? searchCopy[2] : copy.emptyTitle}</h3>
-              <p className="mx-auto mb-4 max-w-3xl text-sm leading-6 text-gray-600 md:text-base">{currentJobs.length ? <button type="button" onClick={() => { setKeyword(''); setCity(''); }} className="underline">{searchCopy[3]}</button> : copy.emptyDescription}</p>
+              <p className="mx-auto mb-4 max-w-3xl text-sm leading-6 text-gray-600 md:text-base">{currentJobs.length ? <button type="button" onClick={() => { setKeyword(''); setCity(''); setPage(1); }} className="underline">{searchCopy[3]}</button> : copy.emptyDescription}</p>
             </div>
           )}
 
