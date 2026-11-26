@@ -64,9 +64,9 @@ export default function CandidateList() {
 
     const loadCandidates = async () => {
       const { data, error: queryError } = await supabase
-        .from('candidates')
+        .from('emploi_public_talents')
         .select('id, city, category, skills, experience_years, languages, desired_contracts, updated_at')
-        .eq('visibility', 'public');
+        .order('updated_at', { ascending: false });
 
       if (!active) return;
       if (queryError) {
