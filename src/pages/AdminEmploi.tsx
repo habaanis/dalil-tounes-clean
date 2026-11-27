@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { Briefcase, RefreshCw } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 type Run = { id: string; recorded_at: string; status: string; found: number; verified: number; published: number; rejected: number; pending: number; sources: string[]; details: string };
 type Offer = { id: string; title: string; company: string; city: string; status: string; source_url: string; review_until: string | null };
@@ -64,9 +65,10 @@ export default function AdminEmploi() {
         <button onClick={refresh} className="flex items-center gap-2 rounded-lg border border-[#D4AF37] bg-white px-3 py-2 text-sm"><RefreshCw className="h-4 w-4" /> Actualiser</button>
       </header>
       {state === 'loading' && <p role="status">Chargement…</p>}
-      {state === 'denied' && <p role="alert">Accès réservé aux administrateurs autorisés. Connectez-vous avec votre compte administrateur.</p>}
+      {state === 'denied' && <div className="rounded-xl border border-[#D4AF37]/50 bg-white p-4"><p role="alert" className="mb-3 text-sm">Accès réservé aux administrateurs autorisés. Connectez-vous avec votre compte administrateur.</p><Link to="/login" state={{from:'/admin/emploi'}} className="inline-flex rounded-lg bg-[#292725] px-4 py-2 text-sm font-medium text-white">Se connecter</Link></div>}
       {state === 'error' && <p role="alert">Lecture impossible. Veuillez réessayer.</p>}
       {state === 'ready' && <>
+        <Link to="/jobs" className="inline-flex rounded-lg border border-[#D4AF37] bg-white px-3 py-2 text-sm font-medium">Gérer et tester les alertes emploi →</Link>
         <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
           {['Annonces enregistrées','Offres actives','À vérifier','Bilans enregistrés'].map((label,i)=><div key={label} className="rounded-xl border border-[#D4AF37]/50 bg-white p-3"><p className="text-xs text-gray-600">{label}</p><p className="text-2xl font-semibold">{counts[i]}</p></div>)}
         </div>
