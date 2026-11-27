@@ -140,7 +140,7 @@ export const Layout = ({ children }: LayoutProps) => {
       ? [
           {
             label: {fr:'Espace administrateur',ar:'فضاء الإدارة',en:'Administrator area',it:'Area amministratore',ru:'Раздел администратора'}[language],
-            path: '/admin/commercial',
+            path: '/admin',
             children: [
               { label: {fr:'Gestion Emploi',ar:'إدارة الوظائف',en:'Job administration',it:'Gestione lavoro',ru:'Управление вакансиями'}[language], path: '/admin/emploi' },
               { label: te.adminNav?.commercialManagement || 'Gestion Commerciaux', path: '/admin/commercial?tab=wallet' },
