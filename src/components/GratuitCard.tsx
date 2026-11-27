@@ -62,6 +62,31 @@ function renderStatutCarteBadge(statut_carte: string | null | undefined, languag
   );
 }
 
+
+/** Format existing public-service schedules without inferring any opening times. */
+function CompactPublicHours({ value }: { value: string }) {
+  const lines = value.split(/\r?\n/).flatMap(line => line.split(/;\s*(?=(?:lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche|été|hiver|ramadan|permanence)\b)/i)).map(line => line.trim()).filter(Boolean);
+  return (
+    <div className="mt-1.5 max-h-40 overflow-y-auto rounded-lg border border-[#E7D9B4] bg-[#FCFAF5] px-2 py-1.5 text-start text-[11px] leading-[1.5] text-[#292725]" onClick={event => event.stopPropagation()} tabIndex={0}>
+      {lines.map((line, index) => {
+        const colon = line.indexOf(':');
+        const heading = colon >= 0 ? line.slice(0, colon).trim() : '';
+        const body = colon >= 0 ? line.slice(colon + 1).trim() : line;
+        const hasHeading = heading.length > 0 && heading.length < 100 && !/\d$/.test(heading);
+        const slots = hasHeading ? body : line;
+        const match = slots.match(/^([^0-9]{1,45}?)[\s,:]+(\d{1,2}[:h]\d{2}.*)$/i);
+        const simple = match && match[2].length < 48;
+        return (
+          <div key={index} className={index ? 'mt-1 border-t border-[#E7D9B4]/70 pt-1' : ''}>
+            {hasHeading && <p className="m-0 font-semibold text-[#806329]">{heading}</p>}
+            {simple ? <div className="flex flex-wrap items-baseline justify-between gap-x-2"><span>{match[1]}</span><span className="font-semibold tabular-nums">{match[2]}</span></div> : <p className="m-0 whitespace-pre-line break-words">{slots}</p>}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function GratuitCard({
   name,
   logoUrl,
@@ -145,18 +170,18 @@ export default function GratuitCard({
             <button
               type="button"
               aria-expanded={showHours}
-              onClick={(e) => { e.stopPropagation(); setShowHours((previous) => !previous); }}
+              onClick={(e) => { e.stopPropagation(); setShowHours((previous) => !previous); if (adresse) setShowPhone(false); }}
               style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '10px 14px', background: '#FAF8F3', border: '1px solid #E7D9B4', borderRadius: '10px', color: '#4A1D43', cursor: 'pointer', fontWeight: 700, fontSize: '12px' }}
             >
               <Clock size={15} aria-hidden="true" />
               {language === 'ar' ? (showHours ? 'إخفاء ساعات العمل' : 'عرض ساعات العمل') : language === 'en' ? (showHours ? 'Hide hours' : 'View opening hours') : language === 'it' ? (showHours ? 'Nascondi orari' : 'Vedi orari') : language === 'ru' ? (showHours ? 'Скрыть часы работы' : 'Часы работы') : (showHours ? 'Masquer les horaires' : 'Voir les horaires')}
               <ChevronDown size={15} aria-hidden="true" style={{ transform: showHours ? 'rotate(180deg)' : undefined, transition: 'transform 0.2s' }} />
             </button>
-            {showHours && (
+            {showHours && (adresse ? <CompactPublicHours value={horaires_ok} /> : (
               <div style={{ marginTop: '8px', padding: '12px', background: '#FFFFFF', border: '1px solid #E7D9B4', borderRadius: '10px', textAlign: 'left' }} onClick={(e) => e.stopPropagation()}>
                 <p style={{ fontSize: '12px', lineHeight: '1.7', color: '#334155', whiteSpace: 'pre-line', margin: 0 }}>{horaires_ok}</p>
               </div>
-            )}
+            ))}
           </div>
         )}
         {!installedApp && !horaires_ok?.trim() && (
@@ -170,17 +195,19 @@ export default function GratuitCard({
         <div className="mt-2 border-t border-[#C9A65D]/35 pt-2" onClick={(event) => event.stopPropagation()}>
           <div className="grid grid-cols-2 gap-2">
             {horaires_ok?.trim() ? (
-              <button type="button" aria-expanded={showHours} onClick={() => setShowHours(previous => !previous)} className="flex min-h-11 min-w-0 items-center justify-center gap-1 rounded-lg border border-[#C9A65D] bg-[#FFF9EC] px-2 py-1.5 text-[11px] font-semibold text-[#292725]">
+              <button type="button" aria-expanded={showHours} onClick={() => { setShowHours(previous => !previous); if (adresse) setShowPhone(false); }} className="flex min-h-11 min-w-0 items-center justify-center gap-1 rounded-lg border border-[#C9A65D] bg-[#FFF9EC] px-2 py-1.5 text-[11px] font-semibold text-[#292725]">
                 <Clock size={14} aria-hidden="true" />{language === 'ar' ? 'الأوقات' : language === 'en' ? 'Hours' : language === 'it' ? 'Orari' : language === 'ru' ? 'Часы' : 'Horaires'}
               </button>
             ) : <span className="flex min-h-11 items-center justify-center text-center text-[10px] text-gray-500">{missing.hours}</span>}
             {telephone?.trim() ? (
-              <button type="button" aria-expanded={showPhone} onClick={() => setShowPhone(previous => !previous)} className="flex min-h-11 min-w-0 items-center justify-center gap-1 rounded-lg border border-[#B62226] bg-[#B62226] px-2 py-1.5 text-[11px] font-semibold text-white">
+              <button type="button" aria-expanded={showPhone} onClick={() => { setShowPhone(previous => !previous); if (adresse) setShowHours(false); }} className="flex min-h-11 min-w-0 items-center justify-center gap-1 rounded-lg border border-[#B62226] bg-[#B62226] px-2 py-1.5 text-[11px] font-semibold text-white">
                 <Phone size={14} aria-hidden="true" />{language === 'ar' ? 'الهاتف' : language === 'en' ? 'Phone' : language === 'it' ? 'Telefono' : language === 'ru' ? 'Телефон' : 'Téléphone'}
               </button>
             ) : <span className="flex min-h-11 items-center justify-center text-center text-[10px] text-gray-500">{missing.phone}</span>}
           </div>
-          {showHours && horaires_ok && <div className="mt-2 rounded-lg border border-[#C9A65D]/60 bg-[#FCFAF5] p-2 text-left text-xs text-[#292725]"><p className="whitespace-pre-line">{horaires_ok}</p></div>}
+          {showHours && horaires_ok && (adresse ? <CompactPublicHours value={horaires_ok} /> : (
+            <div className="mt-2 rounded-lg border border-[#C9A65D]/60 bg-[#FCFAF5] p-2 text-left text-xs text-[#292725]" onClick={(e) => e.stopPropagation()}><p className="whitespace-pre-line">{horaires_ok}</p></div>
+          ))}
           {showPhone && telephone && <a href={`tel:${telephone.replace(/[^+\\d]/g, '')}`} className="mt-2 block rounded-lg bg-[#FCFAF5] p-2 text-center text-sm font-semibold text-[#292725] underline">{telephone}</a>}
         </div>
       )}
@@ -190,7 +217,7 @@ export default function GratuitCard({
           <div style={{ display: 'flex', flexDirection: 'column', gap: '7px' }}>
             <button
               type="button"
-              onClick={(e) => { e.stopPropagation(); setShowPhone((previous) => !previous); }}
+              onClick={(e) => { e.stopPropagation(); setShowPhone((previous) => !previous); if (adresse) setShowHours(false); }}
               aria-expanded={showPhone}
               style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '10px 14px', background: '#B62226', border: '1px solid #B62226', borderRadius: '10px', color: '#FFFFFF', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}
             >
