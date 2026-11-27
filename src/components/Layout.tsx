@@ -6,11 +6,11 @@ import { isPlatformAppMode } from '../lib/platformAppMode';
 import PlatformAppShell from './PlatformAppShell';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
+import { useVerifiedAdmin } from '../lib/useVerifiedAdmin';
 import { useTranslation } from '../lib/i18n';
 import { useTranslationExtended } from '../lib/useTranslationExtended';
 import AdminNotifications from './AdminNotifications';
 
-const ADMIN_EMAILS = ['contact@dalil-tounes.com', 'zenanis75@hotmail.com'];
 import { Menu, X, ChevronDown, ChevronRight, Download, Share } from 'lucide-react';
 import LanguageSelector from './LanguageSelector';
 import { WhatsAppSupport } from './WhatsAppSupport';
@@ -48,8 +48,8 @@ export const Layout = ({ children }: LayoutProps) => {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [mobileExpandedMenu, setMobileExpandedMenu] = useState<string | null>(null);
   const isRTL = language === 'ar';
-  const { user } = useAuth();
-  const isAdmin = !!user?.email && ADMIN_EMAILS.includes(user.email.toLowerCase());
+  const { user, loading: authLoading } = useAuth();
+  const isAdmin = useVerifiedAdmin();
 
   // PWA install banner state
   const [deferredPrompt, setDeferredPrompt] = useState<InstallPromptEvent | null>(
@@ -111,7 +111,7 @@ export const Layout = ({ children }: LayoutProps) => {
     setShowInstallGuide(platform === 'android' ? 'android' : 'desktop');
   };
 
-  const showAdminLink = isAdmin || import.meta.env.DEV || import.meta.env.VITE_SHOW_ADMIN_LINK === 'true';
+  const showAdminLink = isAdmin;
 
   const tx = t as any;
   const te = useTranslationExtended(language);
@@ -122,12 +122,14 @@ export const Layout = ({ children }: LayoutProps) => {
 
   const structure = siteStructureCopy[language];
   const navigationStructure: NavItem[] = [
+    ...(!authLoading && !user ? [{ label: {fr:'Connexion',ar:'تسجيل الدخول',en:'Sign in',it:'Accedi',ru:'Войти'}[language], path: '/login' }] : []),
     ...(isAdmin
       ? [
           {
-            label: te.adminNav?.adminSpace || 'Espace Admin',
+            label: {fr:'Espace administrateur',ar:'فضاء الإدارة',en:'Administrator area',it:'Area amministratore',ru:'Раздел администратора'}[language],
             path: '/admin/commercial',
             children: [
+              { label: {fr:'Gestion Emploi',ar:'إدارة الوظائف',en:'Job administration',it:'Gestione lavoro',ru:'Управление вакансиями'}[language], path: '/admin/emploi' },
               { label: te.adminNav?.commercialManagement || 'Gestion Commerciaux', path: '/admin/commercial?tab=wallet' },
               { label: te.adminNav?.paymentsTracking || 'Suivi des Versements', path: '/admin/commercial?tab=versements' },
             ],
