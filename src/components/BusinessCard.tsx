@@ -106,6 +106,7 @@ export const BusinessCard = ({ business, onClick, showGoogleRating = true, compa
           category={translatedCategory}
           ville={business.ville}
           gouvernorat={business.gouvernorat || undefined}
+          adresse={/etat\s*\/\s*service public|municipalit|baladiya|recette des finances|jibaya|cnss|cnam|cnrps|cnrpps|tribunal|justice|douane|steg|sonede|office public|administration|direction regionale|gouvernorat|delegation|poste \(la poste\)|commissariat/i.test(normalizedCategory.normalize('NFD').replace(/[\u0300-\u036f]/g, '')) ? business.adresse : undefined}
           horaires_ok={business.horaires_ok}
           telephone={business.telephone || business.phone}
           language={language}
