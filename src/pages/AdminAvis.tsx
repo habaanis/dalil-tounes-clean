@@ -67,13 +67,15 @@ export default function AdminAvis() {
   const updateStatus = async (id: string, newStatus: 'approved' | 'rejected') => {
     setActionLoading(id);
 
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('avis_entreprise')
       .update({ status: newStatus })
-      .eq('id', id);
-    if (error) {
+      .eq('id', id)
+      .select('id,status')
+      .maybeSingle();
+    if (error || !data || data.status !== newStatus) {
       console.error('[AdminAvis] Update error:', error);
-      showToast(`Erreur : ${error.message}`, false);
+      showToast(error?.message || 'Modification non confirmée. Actualisez les avis.', false);
       setActionLoading(null);
       return;
     }

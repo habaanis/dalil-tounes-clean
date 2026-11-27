@@ -135,15 +135,12 @@ ${formData.description}
       sector: formData.sector,
     };
 
-    console.log('[PartnerRequests] 📤 Submitting to partner_requests', insertData);
 
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('partner_requests')
-        .insert([insertData])
-        .select();
+        .insert([insertData]);
 
-      console.log('[PartnerRequests] Supabase insert result', { data, error });
 
       if (error) {
         console.error('[PartnerRequests] ❌ Insert ERROR', error);
@@ -152,7 +149,6 @@ ${formData.description}
         return;
       }
 
-      console.log('[PartnerRequests] ✅ Insert SUCCESS', data);
       setSubmitStatus('success');
 
       // Réinitialiser le formulaire
@@ -237,12 +233,10 @@ ${offerFormData.description.trim()}
         sector: offerFormData.secteurActivite.trim(),
       };
 
-      console.log('✅ Envoi à partner_requests:', insertData);
 
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('partner_requests')
-        .insert([insertData])
-        .select();
+        .insert([insertData]);
 
       if (error) {
         console.error('❌ ERREUR Supabase:', error);
@@ -257,8 +251,6 @@ ${offerFormData.description.trim()}
       }
 
       console.log('✅ SUCCÈS: Offre de service créée dans Supabase');
-      console.log('Données créées:', data);
-      console.log('ID offre:', data?.[0]?.id);
 
       setOfferSubmitStatus('success');
 
