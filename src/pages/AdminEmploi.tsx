@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { Briefcase, RefreshCw } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import JobAlerts from '../components/JobAlerts';
 
 type Run = { id: string; recorded_at: string; status: string; found: number; verified: number; published: number; rejected: number; pending: number; sources: string[]; details: string };
 type Offer = { id: string; title: string; company: string; city: string; status: string; source_url: string; review_until: string | null };
@@ -68,21 +69,21 @@ export default function AdminEmploi() {
       {state === 'denied' && <div className="rounded-xl border border-[#D4AF37]/50 bg-white p-4"><p role="alert" className="mb-3 text-sm">Accès réservé aux administrateurs autorisés. Connectez-vous avec votre compte administrateur.</p><Link to="/login" state={{from:'/admin/emploi'}} className="inline-flex rounded-lg bg-[#292725] px-4 py-2 text-sm font-medium text-white">Se connecter</Link></div>}
       {state === 'error' && <p role="alert">Lecture impossible. Veuillez réessayer.</p>}
       {state === 'ready' && <>
-        <Link to="/jobs" className="inline-flex rounded-lg border border-[#D4AF37] bg-white px-3 py-2 text-sm font-medium">Gérer et tester les alertes emploi →</Link>
+        <details className="rounded-xl border border-[#D4AF37]/40 bg-white p-3"><summary className="cursor-pointer font-semibold">Gérer et tester les alertes emploi</summary><div className="mt-3"><JobAlerts adminPanel /></div></details>
         <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
           {['Annonces enregistrées','Offres actives','À vérifier','Bilans enregistrés'].map((label,i)=><div key={label} className="rounded-xl border border-[#D4AF37]/50 bg-white p-3"><p className="text-xs text-gray-600">{label}</p><p className="text-2xl font-semibold">{counts[i]}</p></div>)}
         </div>
         <p role="status" className="rounded-lg border border-[#D4AF37]/50 bg-white p-3 text-sm">{stale ? 'Attention : aucun bilan complet dans les dernières 48 heures.' : 'Dernier bilan complet : ' + date(lastComplete!)}</p>
-        <section className="rounded-xl border border-[#D4AF37]/40 bg-white p-3">
-          <h2 className="mb-3 font-semibold">Journal des 30 derniers bilans</h2>
+        <details className="rounded-xl border border-[#D4AF37]/40 bg-white p-3">
+          <summary className="cursor-pointer font-semibold">Historique des recherches (30 derniers bilans)</summary>
           {!runs.length && <p className="text-sm">Aucun bilan enregistré.</p>}
           {runs.map(run=><details key={run.id} className="border-b py-2 text-sm"><summary className="cursor-pointer font-medium">{date(run.recorded_at)} · {run.status === 'completed' ? 'Complet' : run.status === 'partial' ? 'Partiel' : 'Échec'} · {run.published} publiées</summary><p className="mt-2">Trouvées : {run.found} · Vérifiées : {run.verified} · Publiées : {run.published} · Rejetées : {run.rejected} · En attente : {run.pending}</p><p className="mt-1 break-words">Sources : {run.sources.join(', ') || 'Non renseignées'}</p><p className="mt-1 whitespace-pre-wrap break-words">{run.details}</p></details>)}
-        </section>
-        <section className="rounded-xl border border-[#D4AF37]/40 bg-white p-3">
-          <h2 className="mb-3 font-semibold">Annonces à contrôler (100 dernières)</h2>
+        </details>
+        <details className="rounded-xl border border-[#D4AF37]/40 bg-white p-3">
+          <summary className="cursor-pointer font-semibold">Annonces à contrôler ({counts[2] ?? 0})</summary><p className="mt-2 text-xs text-gray-600">Suivi des vérifications en cours. Aucune action manuelle obligatoire.</p>
           {!offers.length && <p className="text-sm">Aucune annonce en attente.</p>}
           {offers.map(offer=><div key={offer.id} className="border-b py-2 text-sm"><p className="font-medium">{offer.title} — {offer.company}</p><p>{offer.city} · En attente</p>{offer.source_url.startsWith('https://') && <a className="underline" href={offer.source_url} target="_blank" rel="noopener noreferrer">Vérifier la source</a>}</div>)}
-        </section>
+        </details>
       </>}
     </div>
   </main>;
