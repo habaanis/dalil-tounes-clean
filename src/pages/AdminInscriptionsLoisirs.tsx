@@ -1,35 +1,40 @@
 import React, { useEffect, useState } from 'react';
 import { Calendar, MapPin, DollarSign, User, Phone, Clock, CheckCircle, XCircle, MessageCircle, Filter } from 'lucide-react';
-import { supabase } from '../lib/BoltDatabase';
+import { supabase } from '../lib/supabaseClient';
 import { Layout } from '../components/Layout';
 import { Toast } from '../components/Toast';
 
 interface Inscription {
   id: string;
-  prenom: string;
-  nom_evenement: string;
+  nom_et_prenom: string | null;
+  titre_nom_evenement: string | null;
   organisateur: string;
   ville: string;
   date_prevue: string | null;
   date_debut: string | null;
   date_fin: string | null;
-  prix_entree: string;
+  prix: string | null;
   description: string;
   whatsapp: string;
   type_affichage: string;
-  est_organisateur: boolean;
-  contact_tel: string;
-  statut: string;
-  statut_whatsylync: string;
+  statut: string | null;
+  statut_whalesync: string | null;
   lien_contact_whatsapp: string;
   lien_billetterie: string | null;
   created_at: string;
+}
+
+function safeHttpUrl(value: string | null | undefined): string | null {
+  if (!value) return null;
+  try { const url = new URL(value); return ['https:', 'http:'].includes(url.protocol) ? url.href : null; } catch { return null; }
 }
 
 const AdminInscriptionsLoisirs: React.FC = () => {
   const [inscriptions, setInscriptions] = useState<Inscription[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterStatut, setFilterStatut] = useState<string>('all');
+  const [linkDrafts, setLinkDrafts] = useState<Record<string, string>>({});
+  const [savingId, setSavingId] = useState<string | null>(null);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<'success' | 'error'>('success');
@@ -47,7 +52,8 @@ const AdminInscriptionsLoisirs: React.FC = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setInscriptions(data || []);
+      setInscriptions((data || []) as Inscription[]);
+      setLinkDrafts({});
     } catch (error) {
       console.error('Erreur lors du chargement des inscriptions:', error);
       setToastType('error');
@@ -59,13 +65,17 @@ const AdminInscriptionsLoisirs: React.FC = () => {
   };
 
   const updateStatut = async (id: string, newStatut: string) => {
+    if (savingId || !window.confirm('Enregistrer ce statut : ' + newStatut + ' ?')) return;
+    setSavingId(id);
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('inscriptions_loisirs')
         .update({ statut: newStatut })
-        .eq('id', id);
+        .eq('id', id)
+        .select('id,statut')
+        .maybeSingle();
 
-      if (error) throw error;
+      if (error || !data || data.statut !== newStatut) throw error || new Error('Statut non confirmé');
 
       setInscriptions(prev =>
         prev.map(ins => ins.id === id ? { ...ins, statut: newStatut } : ins)
@@ -79,17 +89,27 @@ const AdminInscriptionsLoisirs: React.FC = () => {
       setToastType('error');
       setToastMessage('Erreur lors de la mise à jour du statut');
       setShowToast(true);
-    }
+    } finally { setSavingId(null); }
   };
 
   const updateLienBilletterie = async (id: string, lienBilletterie: string) => {
+    if (savingId) return;
+    const value = lienBilletterie.trim();
+    if (value && !safeHttpUrl(value)) {
+      setToastType('error'); setToastMessage('Saisissez un lien HTTP ou HTTPS valide.'); setShowToast(true); return;
+    }
+    lienBilletterie = value;
+    setSavingId(id);
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('inscriptions_loisirs')
         .update({ lien_billetterie: lienBilletterie || null })
-        .eq('id', id);
+        .eq('id', id)
+        .select('id,lien_billetterie')
+        .maybeSingle();
 
-      if (error) throw error;
+      if (error || !data || data.lien_billetterie !== (lienBilletterie || null)) throw error || new Error('Lien non confirmé');
+      setLinkDrafts(prev => { const next = { ...prev }; delete next[id]; return next; });
 
       setInscriptions(prev =>
         prev.map(ins => ins.id === id ? { ...ins, lien_billetterie: lienBilletterie || null } : ins)
@@ -103,14 +123,14 @@ const AdminInscriptionsLoisirs: React.FC = () => {
       setToastType('error');
       setToastMessage('Erreur lors de la mise à jour du lien de billetterie');
       setShowToast(true);
-    }
+    } finally { setSavingId(null); }
   };
 
   const filteredInscriptions = filterStatut === 'all'
     ? inscriptions
-    : inscriptions.filter(ins => ins.statut === filterStatut);
+    : inscriptions.filter(ins => filterStatut === 'unset' ? !ins.statut : ins.statut === filterStatut);
 
-  const getStatutBadge = (statut: string) => {
+  const getStatutBadge = (statut: string | null) => {
     const styles = {
       'En attente': 'bg-yellow-100 text-yellow-800 border-yellow-300',
       'Validé': 'bg-green-100 text-green-800 border-green-300',
@@ -166,6 +186,7 @@ const AdminInscriptionsLoisirs: React.FC = () => {
                   className="px-4 py-2 rounded-lg border-2 border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition-all"
                 >
                   <option value="all">Tous</option>
+                  <option value="unset">Non renseigné</option>
                   <option value="En attente">En attente</option>
                   <option value="Validé">Validé</option>
                   <option value="Refusé">Refusé</option>
@@ -190,17 +211,13 @@ const AdminInscriptionsLoisirs: React.FC = () => {
                         <div className="flex items-start gap-3 mb-3">
                           <div className="flex-1">
                             <h3 className="text-2xl font-bold text-gray-800 mb-2">
-                              {inscription.nom_evenement}
+                              {inscription.titre_nom_evenement}
                             </h3>
                             <div className="flex flex-wrap gap-2 mb-3">
                               <span className={`px-3 py-1 rounded-full text-sm font-semibold border-2 ${getStatutBadge(inscription.statut)}`}>
-                                {inscription.statut}
+                                {inscription.statut || 'Non renseigné'}
                               </span>
-                              {inscription.est_organisateur && (
-                                <span className="px-3 py-1 rounded-full text-sm font-semibold bg-blue-100 text-blue-800 border-2 border-blue-300">
-                                  Organisateur
-                                </span>
-                              )}
+                              {inscription.statut_whalesync && <span className="text-xs text-gray-600">Suivi : {inscription.statut_whalesync}</span>}
                               <span className="px-3 py-1 rounded-full text-sm font-semibold bg-purple-100 text-purple-800 border-2 border-purple-300">
                                 {inscription.type_affichage}
                               </span>
@@ -212,7 +229,7 @@ const AdminInscriptionsLoisirs: React.FC = () => {
                           <div className="flex items-center gap-2 text-gray-700">
                             <User className="w-5 h-5 text-blue-500 flex-shrink-0" />
                             <span className="font-medium">Proposé par:</span>
-                            <span className="text-gray-900 font-semibold">{inscription.prenom}</span>
+                            <span className="text-gray-900 font-semibold">{inscription.nom_et_prenom}</span>
                           </div>
 
                           <div className="flex items-center gap-2 text-gray-700">
@@ -242,7 +259,7 @@ const AdminInscriptionsLoisirs: React.FC = () => {
                           <div className="flex items-center gap-2 text-gray-700">
                             <DollarSign className="w-5 h-5 text-yellow-600 flex-shrink-0" />
                             <span className="font-medium">Prix:</span>
-                            <span className="text-gray-900 font-semibold">{inscription.prix_entree}</span>
+                            <span className="text-gray-900 font-semibold">{inscription.prix}</span>
                           </div>
 
                           <div className="flex items-center gap-2 text-gray-700 col-span-2">
@@ -268,13 +285,13 @@ const AdminInscriptionsLoisirs: React.FC = () => {
                           </div>
                         )}
 
-                        {inscription.lien_billetterie && (
+                        {safeHttpUrl(inscription.lien_billetterie) && (
                           <div className="bg-green-50 rounded-xl p-4 mb-4 border-2 border-green-200">
                             <p className="text-sm font-semibold text-green-800 mb-2">
                               Lien de Billetterie:
                             </p>
                             <a
-                              href={inscription.lien_billetterie}
+                              href={safeHttpUrl(inscription.lien_billetterie) || undefined}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-sm text-green-700 hover:text-green-900 underline break-all"
@@ -287,34 +304,36 @@ const AdminInscriptionsLoisirs: React.FC = () => {
                     </div>
 
                     <div className="space-y-3">
-                      <div className="flex items-center gap-3">
+                      <div className="flex flex-wrap items-center gap-3">
                         <label className="text-sm font-semibold text-gray-700 whitespace-nowrap">
                           Lien Billetterie:
                         </label>
                         <input
                           type="url"
-                          value={inscription.lien_billetterie || ''}
-                          onChange={(e) => updateLienBilletterie(inscription.id, e.target.value)}
+                          value={linkDrafts[inscription.id] ?? inscription.lien_billetterie ?? ''}
+                          onChange={(e) => setLinkDrafts(prev => ({ ...prev, [inscription.id]: e.target.value }))}
                           className="flex-1 px-4 py-2 rounded-lg border-2 border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
-                          placeholder="https://whatsylync.com/event/..."
+                          placeholder="https://..."
                         />
+                        <button type="button" disabled={savingId !== null || linkDrafts[inscription.id] === undefined || linkDrafts[inscription.id] === (inscription.lien_billetterie || '')} onClick={() => void updateLienBilletterie(inscription.id, linkDrafts[inscription.id] ?? '')} className="rounded-lg border px-3 py-2 text-sm disabled:opacity-50">Enregistrer</button>
                       </div>
                     </div>
 
                     <div className="flex flex-wrap gap-3">
-                      <a
-                        href={inscription.lien_contact_whatsapp}
+                      {safeHttpUrl(inscription.lien_contact_whatsapp) && <a
+                        href={safeHttpUrl(inscription.lien_contact_whatsapp) || undefined}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex-1 min-w-[200px] px-6 py-3 bg-gradient-to-r from-yellow-500 to-amber-500 text-white rounded-xl font-semibold hover:shadow-xl transition-all hover:scale-105 flex items-center justify-center gap-2"
                       >
                         <MessageCircle className="w-5 h-5" />
                         Contacter sur WhatsApp
-                      </a>
+                      </a>}
 
-                      {inscription.statut === 'En attente' && (
+                      {(!inscription.statut || inscription.statut === 'En attente') && (
                         <>
                           <button
+                            disabled={savingId !== null}
                             onClick={() => updateStatut(inscription.id, 'Validé')}
                             className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl font-semibold hover:shadow-xl transition-all hover:scale-105 flex items-center gap-2"
                           >
@@ -322,6 +341,7 @@ const AdminInscriptionsLoisirs: React.FC = () => {
                             Valider
                           </button>
                           <button
+                            disabled={savingId !== null}
                             onClick={() => updateStatut(inscription.id, 'Refusé')}
                             className="px-6 py-3 bg-gradient-to-r from-red-500 to-rose-500 text-white rounded-xl font-semibold hover:shadow-xl transition-all hover:scale-105 flex items-center gap-2"
                           >
@@ -331,9 +351,10 @@ const AdminInscriptionsLoisirs: React.FC = () => {
                         </>
                       )}
 
-                      {inscription.statut !== 'En attente' && (
+                      {inscription.statut && inscription.statut !== 'En attente' && (
                         <button
-                          onClick={() => updateStatut(inscription.id, 'En attente')}
+                          disabled={savingId !== null}
+                            onClick={() => updateStatut(inscription.id, 'En attente')}
                           className="px-6 py-3 bg-gradient-to-r from-gray-500 to-gray-600 text-white rounded-xl font-semibold hover:shadow-xl transition-all hover:scale-105 flex items-center gap-2"
                         >
                           <Clock className="w-5 h-5" />
