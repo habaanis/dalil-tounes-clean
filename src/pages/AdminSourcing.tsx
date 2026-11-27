@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
+import { useAdminAccess } from '../lib/useVerifiedAdmin';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { supabase, SUPABASE_URL } from '../lib/BoltDatabase';
-import { Lock, CheckCircle, MapPin, Phone, Building2, Tag, Map, Navigation, Maximize2, Minimize2, Filter, ExternalLink, AlertCircle, Loader, Eye } from 'lucide-react';
+import { CheckCircle, MapPin, Phone, Building2, Tag, Map, Navigation, Maximize2, Minimize2, Filter, ExternalLink, AlertCircle, Loader, Eye } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useTranslation } from '../lib/i18n';
 
@@ -89,9 +90,8 @@ export default function AdminSourcing() {
     };
   }, []);
 
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [password, setPassword] = useState('');
-  const [authError, setAuthError] = useState('');
+  const adminAccess = useAdminAccess();
+  const isAuthenticated = adminAccess === 'allowed';
 
   // Map states
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
@@ -259,16 +259,6 @@ export default function AdminSourcing() {
     return `https://supabase.com/dashboard/project/${projectId}/editor/28539?schema=public&tableId=28539&filter=id%3Aeq%3A${id}`;
   };
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (password === 'daliltounes2025') {
-      setIsAuthenticated(true);
-      setAuthError('');
-    } else {
-      setAuthError('Mot de passe incorrect');
-    }
-  };
-
   const handleCategoryToggle = (category: string) => {
     setFormData(prev => ({
       ...prev,
@@ -332,49 +322,7 @@ export default function AdminSourcing() {
     }
   };
 
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center px-4">
-        <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
-          <div className="flex flex-col items-center mb-6">
-            <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
-              <Lock className="w-8 h-8 text-orange-600" />
-            </div>
-            <h1 className="text-2xl font-bold text-gray-900">Outil de Sourcing Rapide</h1>
-            <p className="text-sm text-gray-600 mt-2">Accès réservé aux administrateurs</p>
-          </div>
-
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Mot de passe
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                placeholder="Entrez le mot de passe"
-              />
-            </div>
-
-            {authError && (
-              <div className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded">
-                {authError}
-              </div>
-            )}
-
-            <button
-              type="submit"
-              className="w-full bg-orange-600 text-white py-3 rounded-lg font-medium hover:bg-orange-700 transition"
-            >
-              Se connecter
-            </button>
-          </form>
-        </div>
-      </div>
-    );
-  }
+  if (!isAuthenticated) return <main className="mx-auto max-w-lg p-6" role="status">{adminAccess === 'checking' ? 'Vérification des droits…' : 'Accès administrateur requis.'}</main>;
 
   if (loading) {
     return (

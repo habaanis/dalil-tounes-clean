@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { useVerifiedAdmin } from '../lib/useVerifiedAdmin';
+import { useAdminAccess, useVerifiedAdmin } from '../lib/useVerifiedAdmin';
 import { supabase } from '../lib/supabaseClient';
 
 const adminLinks = [
@@ -39,6 +39,23 @@ export function AdminNavigation() {
     </nav>
     {error && <p role="alert" className="mt-2 text-sm text-red-700">Déconnexion impossible. Réessayez.</p>}
   </div>;
+}
+
+export function AdminRouteGuard() {
+  const { user } = useAuth();
+  const access = useAdminAccess();
+  const location = useLocation();
+  if (access === 'allowed') return <Outlet key={user?.id} />;
+  if (access === 'checking') return <main className="mx-auto max-w-lg p-6" role="status">Vérification des droits…</main>;
+  if (access === 'denied' && user && location.pathname === '/admin/commercial') {
+    return <Navigate to={'/commercial' + location.search} replace />;
+  }
+  return <main className="mx-auto max-w-lg px-5 py-12">
+    <h1 className="text-xl font-semibold">Accès administrateur réservé</h1>
+    <p className="mt-3 text-sm" role="alert">{access === 'error' ? 'Impossible de vérifier vos droits. Réessayez en actualisant la page.' : 'Connectez-vous avec un compte administrateur autorisé.'}</p>
+    {!user && <Link to="/login" state={{from:location.pathname + location.search}} className="mt-4 inline-block underline">Se connecter</Link>}
+    <Link to="/" className="mt-4 block underline">Retour à l’accueil</Link>
+  </main>;
 }
 
 export default function AdminHub() {
