@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { AlertCircle, Baby, Building2, CheckCircle, ChevronDown, Clock, ExternalLink, FileText, Heart, Phone, Shield, X, type LucideIcon } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { getStructureImageUrl } from '../lib/imageUtils';
-const SearchBar = lazy(() => import('../components/SearchBar'));
 const MeilleursSection = lazy(() => import('../components/MeilleursSection'));
 import { SEOHead } from '../components/SEOHead';
 import { isPlatformAppMode } from '../lib/platformAppMode';
@@ -385,12 +384,7 @@ export default function CitizensServicesLocalized() {
           </div>
         </section>
 
-        <section className="relative z-20 mx-3 mt-3 rounded-xl border border-[#D4AF37]/40 bg-white p-3" style={{ overflow: 'visible' }}>
-          <Suspense fallback={<p role="status" className="px-2 py-3 text-xs text-[#726571]">…</p>}>
-            <SearchBar scope="services" intentEnabled={false} enabled resultMode="redirectToResults"
-              preferredTitle={c.searchTitle} preferredSubtitle={c.searchSubtitle} />
-          </Suspense>
-        </section>
+        
 
         <nav className="mx-3 mt-3 grid grid-cols-3 gap-2" aria-label={c.title}>
           {([
@@ -506,22 +500,7 @@ export default function CitizensServicesLocalized() {
               <p className="mt-2 text-gray-600">{c.officesIntro}</p>
             </div>
           </section>
-          <section className="py-3 px-4">
-            <div className="max-w-5xl mx-auto">
-              <div className="bg-white rounded-xl border border-[#D4AF37] p-3">
-                <Suspense fallback={<div className="h-14 animate-pulse rounded-lg bg-[#F5F0E9]" />}>
-                  <SearchBar
-                    scope="services"
-                    intentEnabled={false}
-                    enabled
-                    resultMode="redirectToResults"
-                    preferredTitle={c.searchTitle}
-                    preferredSubtitle={c.searchSubtitle}
-                  />
-                </Suspense>
-              </div>
-            </div>
-          </section>
+          
           <section className="py-6 bg-white">
             <Suspense fallback={<div className="h-24 animate-pulse rounded-xl bg-[#F5F0E9]" />}>
               <MeilleursSection
