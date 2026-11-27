@@ -6,6 +6,7 @@ import { isPlatformAppMode } from '../../lib/platformAppMode';
 
 interface SeoBusinessCardProps {
   showGoogleRating?: boolean;
+  publicDirectory?: boolean;
   business: {
     id: string;
     nom: string;
@@ -38,7 +39,7 @@ function toLabel(value: string | string[] | null | undefined): string {
   return value || '';
 }
 
-const SeoBusinessCard: React.FC<SeoBusinessCardProps> = ({ business, showGoogleRating = true }) => {
+const SeoBusinessCard: React.FC<SeoBusinessCardProps> = ({ business, showGoogleRating = true, publicDirectory = false }) => {
   const navigate = useNavigate();
   const categoryLabel =
     toLabel(business.sous_categories) ||
@@ -83,6 +84,7 @@ const SeoBusinessCard: React.FC<SeoBusinessCardProps> = ({ business, showGoogleR
         }
       }}
       showGoogleRating={showGoogleRating}
+      publicDirectory={publicDirectory}
     />
   );
 };
