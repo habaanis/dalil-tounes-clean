@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { Briefcase, RefreshCw } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import JobAlerts from '../components/JobAlerts';
 
 
 export default function AdminEmploi() {
+  const location = useLocation();
+  const notificationsView = new URLSearchParams(location.search).get('vue') === 'notifications';
   const [state, setState] = useState<'loading' | 'denied' | 'error' | 'ready'>('loading');
   const [counts, setCounts] = useState<number[]>([]);
   const [revision, setRevision] = useState(0);
@@ -48,14 +50,14 @@ export default function AdminEmploi() {
   return <main className="min-h-screen bg-[#FFFCF7] p-4 text-[#292725]">
     <div className="mx-auto max-w-6xl space-y-4">
       <header className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="flex items-center gap-2 text-xl font-semibold"><Briefcase className="h-5 w-5" /> Gestion Emploi</h1>
+        <h1 className="flex items-center gap-2 text-xl font-semibold"><Briefcase className="h-5 w-5" /> {notificationsView ? 'Notifications Emploi' : 'Gestion Emploi'}</h1>
         <button onClick={refresh} className="flex items-center gap-2 rounded-lg border border-[#D4AF37] bg-white px-3 py-2 text-sm"><RefreshCw className="h-4 w-4" /> Actualiser</button>
       </header>
       {state === 'loading' && <p role="status">Chargement…</p>}
       {state === 'denied' && <div className="rounded-xl border border-[#D4AF37]/50 bg-white p-4"><p role="alert" className="mb-3 text-sm">Accès réservé aux administrateurs autorisés. Connectez-vous avec votre compte administrateur.</p><Link to="/login" state={{from:'/admin/emploi'}} className="inline-flex rounded-lg bg-[#292725] px-4 py-2 text-sm font-medium text-white">Se connecter</Link></div>}
       {state === 'error' && <p role="alert">Lecture impossible. Veuillez réessayer.</p>}
       {state === 'ready' && <>
-        <details className="rounded-xl border border-[#D4AF37]/40 bg-white p-3"><summary className="cursor-pointer font-semibold">Gérer et tester les alertes emploi</summary><div className="mt-3"><JobAlerts adminPanel /></div></details>
+        <details key={String(notificationsView)} open={notificationsView || undefined} className="rounded-xl border border-[#D4AF37]/40 bg-white p-3"><summary className="cursor-pointer font-semibold">Gérer et tester les alertes emploi</summary><div className="mt-3"><JobAlerts key={String(notificationsView)} adminPanel /></div></details>
         <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
           {['Annonces enregistrées','Offres actives','En cours de vérification'].map((label,i)=><div key={label} className="rounded-xl border border-[#D4AF37]/50 bg-white p-3"><p className="text-xs text-gray-600">{label}</p><p className="text-2xl font-semibold">{counts[i]}</p></div>)}
         </div>

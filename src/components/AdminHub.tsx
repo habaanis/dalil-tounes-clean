@@ -1,13 +1,15 @@
 import { useState } from 'react';
-import { Link, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Link, Navigate, Outlet, useLocation, useNavigate, useOutletContext } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useAdminAccess, useVerifiedAdmin } from '../lib/useVerifiedAdmin';
 import { supabase } from '../lib/supabaseClient';
 
 const adminLinks = [
-  ['Gestion Emploi', '/admin/emploi', 'Offres, suivi et alertes emploi'],
+  ['Gestion Emploi', '/admin/emploi', 'Offres et suivi emploi'],
+  ['Notifications Emploi', '/admin/emploi?vue=notifications', 'Gérer et tester les alertes sur cet appareil'],
   ['Gestion commerciale et financière', '/admin/commercial?tab=wallet', 'Commerciaux, commissions et versements'],
   ['Professionnels et abonnements', '/admin/abonnements', 'Gestion des offres professionnelles'],
+  ['Mini-applis clients', '/admin/abonnements?vue=mini-apps', 'Ouvrir les mini-applis publiées'],
   ['Avis et modération', '/admin/super-moderation', 'Consulter, approuver ou refuser les avis'],
   ['Inscriptions loisirs', '/admin/inscriptions-loisirs', 'Suivi des demandes reçues'],
   ['Demandes de partenaires', '/admin/partner-requests', 'Demandes reçues'],
@@ -45,7 +47,7 @@ export function AdminRouteGuard() {
   const { user } = useAuth();
   const access = useAdminAccess();
   const location = useLocation();
-  if (access === 'allowed') return <Outlet key={user?.id} />;
+  if (access === 'allowed') return <Outlet key={user?.id} context={true} />;
   if (access === 'checking') return <main className="mx-auto max-w-lg p-6" role="status">Vérification des droits…</main>;
   if (access === 'denied' && user && location.pathname === '/admin/commercial') {
     return <Navigate to={'/commercial' + location.search} replace />;
@@ -59,12 +61,11 @@ export function AdminRouteGuard() {
 }
 
 export default function AdminHub() {
-  const { user, loading } = useAuth();
-  const verified = useVerifiedAdmin();
+  const verified = useOutletContext<boolean>() === true;
   return <main className="min-h-screen bg-[#FFFCF7] p-4 text-[#292725]">
     <div className="mx-auto max-w-5xl space-y-4">
       <h1 className="text-xl font-semibold">Administration · Dalil Tounes</h1>
-      {loading ? <p role="status">Chargement…</p> : !user ? <Link to="/login" state={{from:'/admin'}} className="underline">Se connecter</Link> : !verified ? <p role="status">Accès réservé aux administrateurs autorisés. Vérification des droits en cours ou accès non autorisé.</p> :
+      {!verified ? <p role="alert">Accès réservé aux administrateurs autorisés.</p> :
       <div className="grid gap-3 md:grid-cols-2">{adminLinks.map(([label, path, detail]) => <Link key={path} to={path} className="rounded-xl border border-[#D4AF37] bg-white p-4 hover:bg-[#FFF8EA]"><h2 className="font-semibold">{label} →</h2><p className="mt-1 text-sm text-gray-600">{detail}</p></Link>)}</div>}
     </div>
   </main>;
