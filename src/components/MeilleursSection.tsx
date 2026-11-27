@@ -491,6 +491,7 @@ export default function MeilleursSection({
               <SeoBusinessCard
                 key={item.id}
                 showGoogleRating={useGoogleRecommendationCriteria}
+                publicDirectory={publicDirectory}
                 business={{
                   id: item.id,
                   nom: item.nom,
@@ -582,6 +583,7 @@ export default function MeilleursSection({
                   >
                     <SeoBusinessCard
                       showGoogleRating={useGoogleRecommendationCriteria}
+                      publicDirectory={publicDirectory}
                       business={{
                         id: item.id,
                         nom: item.nom,
