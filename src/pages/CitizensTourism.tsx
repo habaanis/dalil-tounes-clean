@@ -493,6 +493,7 @@ export default function CitizensTourism() {
   const journey = journeyCopy[lang];
   const isRTL = lang === 'ar';
   const [journeyMode, setJourneyMode] = useState<JourneyMode>(() => new URLSearchParams(window.location.search).get('tab') === 'settle' ? 'settle' : 'visit');
+  const [circuitsOpen, setCircuitsOpen] = useState(false);
   const topics = journeyMode === 'visit' ? journey.visitTopics : journey.settleTopics;
 
   return (
@@ -559,11 +560,11 @@ export default function CitizensTourism() {
             <p className="mx-auto mt-1.5 max-w-2xl text-sm leading-relaxed text-gray-600">{journeyMode === 'visit' ? journey.visitIntro : journey.settleIntro}</p>
           </div>
 
-          {journeyMode === 'visit' && <p className="mt-3 text-center text-xs font-semibold tracking-wide text-[#A45A27]">✨ Six façons de vivre la Tunisie, pas seulement de la visiter</p>}
-          <div className="mt-4 grid grid-cols-2 gap-2.5 lg:grid-cols-3">
+          {journeyMode === 'visit' && <p className="mt-3 text-center text-xs font-semibold tracking-wide text-[#A45A27]">✨ Huit façons de vivre la Tunisie, pas seulement de la visiter</p>}
+          <div className={`mt-4 grid grid-cols-2 gap-2.5 ${journeyMode === 'visit' ? 'lg:grid-cols-4' : 'lg:grid-cols-3'}`}>
             {topics.map((topic, topicIndex) => journeyMode === 'visit' ? (
-              <Link key={topic.title} to={topic.href} className={`group relative min-w-0 overflow-hidden rounded-2xl border border-[#D9C9A4] px-2.5 py-3 sm:px-4 sm:py-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#C9A65D] bg-[#FFFCF7]`}>
-                <div className="mb-2 flex items-center justify-between"><span className="text-xl sm:text-2xl" aria-hidden="true">{['🏛️','🌿','🧶','🍲','🎉','🏡'][topicIndex] || '🇹🇳'}</span><span className="rounded-full bg-white/65 px-2 py-0.5 text-[10px] font-semibold text-[#784626]">Explorer</span></div>
+              <Link key={topic.title} to={topic.href} className={`group relative min-w-0 overflow-hidden rounded-2xl border border-[#D9C9A4] px-2.5 py-3 sm:px-4 sm:py-4 lg:px-3 lg:py-2.5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#C9A65D] bg-[#FFFCF7]`}>
+                <div className="mb-2 lg:mb-1 flex items-center justify-between"><span className="text-xl sm:text-2xl lg:text-xl" aria-hidden="true">{['🏛️','🌿','🧶','🍲','🎉','🏡'][topicIndex] || '🇹🇳'}</span><span className="rounded-full bg-white/65 px-2 py-0.5 text-[10px] font-semibold text-[#784626]">Explorer</span></div>
                 <div className="flex items-center justify-between gap-3 text-sm font-semibold text-[#292725]">
                   <span>{topic.title}</span>
                   <ChevronDown className={`h-4 w-4 flex-shrink-0 -rotate-90 text-[#D4AF37] ${isRTL ? 'rotate-90' : ''}`} aria-hidden="true" />
@@ -574,7 +575,7 @@ export default function CitizensTourism() {
                     <li key={example} className="rounded-full border border-[#D4AF37]/35 bg-white px-2.5 py-1 text-[11px] leading-tight text-gray-700">{example}</li>
                   ))}
                 </ul>
-                <span className="mt-3 inline-flex rounded-full bg-white/75 px-3 py-1.5 text-xs font-semibold text-[#5B2345] shadow-sm transition group-hover:bg-white">{journey.discover}</span>
+                <span className="mt-3 lg:mt-2 inline-flex rounded-full bg-white/75 px-3 py-1.5 text-xs font-semibold text-[#784626] shadow-sm transition group-hover:bg-white">{journey.discover}</span>
               </Link>
             ) : (
               <details key={topic.title} className="group min-w-0 rounded-xl border border-[#D4AF37]/45 bg-[#FFFDF8] px-3 py-2.5 open:border-[#D4AF37] max-md:open:fixed max-md:open:inset-x-3 max-md:open:top-[10dvh] max-md:open:bottom-[10dvh] max-md:open:z-[100] max-md:open:flex max-md:open:flex-col max-md:open:overflow-hidden max-md:open:bg-white max-md:open:p-0 max-md:open:shadow-2xl">
@@ -710,7 +711,22 @@ export default function CitizensTourism() {
                 </div>
               </details>
             ))}
+            {journeyMode === 'visit' && <>
+              <Link to="/citizens/tourism/thermalisme" className="group relative min-w-0 overflow-hidden rounded-2xl border border-[#D9C9A4] px-2.5 py-3 sm:px-4 sm:py-4 lg:px-3 lg:py-2.5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#C9A65D] bg-[#FFFCF7]">
+                <div className="mb-2 lg:mb-1 flex items-center justify-between"><span className="text-xl sm:text-2xl lg:text-xl" aria-hidden="true">♨️</span><span className="rounded-full bg-white/65 px-2 py-0.5 text-[10px] font-semibold text-[#784626]">Explorer</span></div>
+                <div className="flex items-center justify-between gap-3 text-sm font-semibold text-[#292725]"><span>{({fr:'Thermalisme, sources naturelles et bien-être',ar:'الحمامات المعدنية والعيون الطبيعية والرفاه',en:'Thermal baths, natural springs & wellness',it:'Terme, sorgenti naturali e benessere',ru:'Термальные источники и отдых'})[lang]}</span><ChevronDown className="h-4 w-4 shrink-0 -rotate-90 text-[#D4AF37]" aria-hidden="true" /></div>
+                <p className="mt-1.5 text-xs leading-relaxed text-gray-600">{({fr:'Découvrir les sources et les traditions thermales.',ar:'اكتشف العيون الطبيعية والتقاليد الاستشفائية.',en:'Discover natural springs and thermal traditions.',it:'Scopri le sorgenti e le tradizioni termali.',ru:'Откройте природные источники и термальные традиции.'})[lang]}</p>
+                <span className="mt-3 lg:mt-2 inline-flex rounded-full bg-white/75 px-3 py-1.5 text-xs font-semibold text-[#784626] shadow-sm">{journey.discover}</span>
+              </Link>
+              <button type="button" aria-expanded={circuitsOpen} aria-controls={circuitsOpen ? 'tourism-circuits' : undefined} onClick={() => setCircuitsOpen(!circuitsOpen)} className="group relative min-w-0 overflow-hidden rounded-2xl border border-[#D9C9A4] px-2.5 py-3 sm:px-4 sm:py-4 lg:px-3 lg:py-2.5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#C9A65D] bg-[#FFFCF7] text-start">
+                <div className="mb-2 lg:mb-1 flex items-center justify-between"><span className="text-xl sm:text-2xl lg:text-xl" aria-hidden="true">🧭</span><span className="rounded-full bg-white/65 px-2 py-0.5 text-[10px] font-semibold text-[#784626]">Explorer</span></div>
+                <div className="flex items-center justify-between gap-3 text-sm font-semibold text-[#292725]"><span>{({fr:'Mini-circuits hors des sentiers battus',ar:'مسارات قصيرة خارج الطرق المعتادة',en:'Short itineraries off the beaten path',it:'Piccoli itinerari fuori dai sentieri battuti',ru:'Короткие маршруты вдали от проторённых дорог'})[lang]}</span><ChevronDown className={`h-4 w-4 shrink-0 text-[#D4AF37] transition-transform ${circuitsOpen ? 'rotate-180' : ''}`} aria-hidden="true" /></div>
+                <p className="mt-1.5 text-xs leading-relaxed text-gray-600">{({fr:'13 itinéraires pour explorer la Tunisie autrement.',ar:'13 مسارًا لاكتشاف تونس بطريقة مختلفة.',en:'13 itineraries to explore Tunisia differently.',it:'13 itinerari per esplorare la Tunisia diversamente.',ru:'13 маршрутов для знакомства с другим Тунисом.'})[lang]}</p>
+                <span className="mt-3 lg:mt-2 inline-flex rounded-full bg-white/75 px-3 py-1.5 text-xs font-semibold text-[#784626] shadow-sm">{circuitsOpen ? ({fr:'Fermer',ar:'إغلاق',en:'Close',it:'Chiudi',ru:'Закрыть'})[lang] : journey.discover}</span>
+              </button>
+            </>}
           </div>
+          {journeyMode === 'visit' && circuitsOpen && <TourismCircuitPanel lang={lang} embedded />}
 
           {journeyMode === 'settle' && (
             <div className="mt-4 rounded-xl border border-dashed border-[#D4AF37] bg-white px-4 py-3 text-center">
@@ -732,8 +748,6 @@ export default function CitizensTourism() {
       </section>
 
       {journeyMode === 'visit' && <>
-        <div className="mx-auto max-w-5xl px-4 pt-4"><Link to="/citizens/tourism/thermalisme" className="block rounded-xl border border-[#D4AF37] bg-[#FFF8E8] px-4 py-3 text-center text-sm font-semibold text-[#292725] hover:bg-[#F3E2B5]">♨️ {lang === 'ar' ? 'الحمامات المعدنية والعيون الطبيعية والرفاه' : lang === 'en' ? 'Thermal baths, natural springs & wellness' : lang === 'it' ? 'Terme, sorgenti naturali e benessere' : lang === 'ru' ? 'Термальные источники и отдых' : 'Thermalisme, sources naturelles et bien-être'}</Link></div>
-        <TourismCircuitPanel lang={lang} />
         <TourismExperienceDiscovery />
       </>}
 
