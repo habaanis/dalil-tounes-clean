@@ -447,15 +447,15 @@ const circuitPanelLabels = {
   ru: ['Короткие маршруты вдали от проторённых дорог', 'Назад', 'Далее'],
 };
 
-export function TourismCircuitPanel({ lang }: { lang: keyof typeof circuitPanelLabels }) {
+export function TourismCircuitPanel({ lang, embedded = false }: { lang: keyof typeof circuitPanelLabels; embedded?: boolean }) {
   const [page, setPage] = useState(0);
   const pageSize = 4;
   const pages = Math.ceil(circuits.length / pageSize);
   const [title, previous, next] = circuitPanelLabels[lang];
   return (
-    <section className="mx-auto max-w-5xl px-4 pt-4">
-      <details className="rounded-xl border border-[#D4AF37]/50 bg-white p-4">
-        <summary className="cursor-pointer font-semibold">{title} ({circuits.length})</summary>
+    <section id={embedded ? "tourism-circuits" : undefined} className={embedded ? "mt-3" : "mx-auto max-w-5xl px-4 pt-4"}>
+      <details open={embedded || undefined} className="rounded-xl border border-[#D4AF37]/50 bg-white p-3 sm:p-4">
+        <summary className={embedded ? "sr-only" : "cursor-pointer font-semibold"} tabIndex={embedded ? -1 : undefined} onClick={embedded ? event => event.preventDefault() : undefined}>{title} ({circuits.length})</summary>
         <ul className="mt-3 space-y-2">
           {circuits.slice(page * pageSize, (page + 1) * pageSize).map(circuit => (
             <li key={circuit.name}>
