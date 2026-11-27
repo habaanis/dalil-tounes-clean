@@ -28,7 +28,7 @@ function keyBytes(v:string){
  const s=atob(v.replace(/-/g,'+').replace(/_/g,'/'));
  return Uint8Array.from(s,c=>c.charCodeAt(0));
 }
-export default function JobAlerts({initialKeyword='',initialRegion=''}:{initialKeyword?:string;initialRegion?:string}){
+export default function JobAlerts({initialKeyword='',initialRegion='',adminPanel=false}:{initialKeyword?:string;initialRegion?:string;adminPanel?:boolean}){
  const {language}=useLanguage(), t=texts[language];
  const [config,setConfig]=useState<Config|null>(null),[alert,setAlert]=useState<Alert|null>(null);
  const [open,setOpen]=useState(false),[keyword,setKeyword]=useState(''),[region,setRegion]=useState(''),[contract,setContract]=useState(''),[frequency,setFrequency]=useState('daily');
@@ -41,7 +41,7 @@ export default function JobAlerts({initialKeyword='',initialRegion=''}:{initialK
  }catch{if(alive)setConfig({enabled:false});}};void load();
  const {data:{subscription}}=supabase.auth.onAuthStateChange(()=>{setTimeout(()=>{if(alive)void load();},0)});
  return()=>{alive=false;subscription.unsubscribe();};},[]);
- if(!config?.enabled&&!hasToken)return null;
+ if(!config?.enabled&&!hasToken)return adminPanel ? <p role="status" className="text-sm">{config ? t[19] : 'Chargement des alertes…'}</p> : null;
  const act=async(action:string)=>{
   if(busy)return;setBusy(true);setMessage('');
   try{

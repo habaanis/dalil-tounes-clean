@@ -63,7 +63,7 @@ export default function PlatformAppShell({ children }: { children: ReactNode }) 
 
   const extra = [
     ...(!loading&&!user ? [{label:{fr:'Connexion',ar:'تسجيل الدخول',en:'Sign in',it:'Accedi',ru:'Войти'}[lang],to:'/login'}] : []),
-    ...(isAdmin ? [{label:{fr:'Espace administrateur',ar:'فضاء الإدارة',en:'Administrator area',it:'Area amministratore',ru:'Раздел администратора'}[lang],to:'/admin/emploi'}] : []),
+    ...(isAdmin ? [{label:{fr:'Espace administrateur',ar:'فضاء الإدارة',en:'Administrator area',it:'Area amministratore',ru:'Раздел администратора'}[lang],to:'/admin'}] : []),
     { label: copy.jobs, to: '/emplois' },
     { label: copy.events, to: '/citizens/leisure' },
     { label: copy.partners, to: '/devenir-partenaire' },
@@ -160,7 +160,7 @@ export default function PlatformAppShell({ children }: { children: ReactNode }) 
       </div>}
 
       <main id="platform-app-content" className="mx-auto min-h-[calc(100vh-9rem)] max-w-xl overflow-x-clip pb-[calc(5.8rem+env(safe-area-inset-bottom))]">
-        {location.pathname !== '/' && <div className="px-3 pt-2">
+        {location.pathname !== '/' && !/^\/admin(?:\/|$)/.test(location.pathname) && <div className="px-3 pt-2">
           <button type="button" onClick={() => {
             const source = (location.state as { from?: string } | null)?.from;
             const params = new URLSearchParams(location.search);

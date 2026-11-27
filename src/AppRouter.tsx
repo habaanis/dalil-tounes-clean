@@ -104,6 +104,8 @@ const AdminOpeningModels = lazy(() => import('./pages/AdminOpeningModels'));
 const AdminCommercial = lazy(() => import('./pages/AdminCommercial'));
 const AdminDownloads = lazy(() => import('./pages/AdminDownloads'));
 const AdminEmploi = lazy(() => import('./pages/AdminEmploi'));
+const AdminHub = lazy(() => import('./components/AdminHub'));
+const AdminNavigation = lazy(() => import('./components/AdminHub').then(m => ({ default: m.AdminNavigation })));
 const AdminBusinessNeeds = lazy(() => import('./pages/AdminBusinessNeeds'));
 const Auth = lazy(() => import('./pages/Auth'));
 const CandidateDashboard = lazy(() => import('./pages/CandidateDashboard'));
@@ -240,6 +242,7 @@ function AppRouter() {
       <ScrollToTop />
       <RouteLoadBoundary routeKey={location.pathname}>
       <Suspense fallback={isClientAppRoute ? <ClientPageLoader /> : inPlatformApp ? <PlatformRouteLoader /> : <PageLoader />}>
+        <AdminNavigation />
         <Routes>
           <Route path="/" element={<PlatformHome />} />
           <Route path="/apercu-ouverture-prestige" element={<PrestigeOpeningPreview />} />
@@ -343,6 +346,7 @@ function AppRouter() {
           <Route path="/commercial" element={<AdminCommercial />} />
           <Route path="/admin/downloads" element={<AdminDownloads />} />
           <Route path="/admin/business-needs" element={<AdminBusinessNeeds />} />
+          <Route path="/admin" element={<AdminHub />} />
           <Route path="/admin/emploi" element={<AdminEmploi />} />
 
           <Route path="/card-preview" element={<CardPreview />} />
