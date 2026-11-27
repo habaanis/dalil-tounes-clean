@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { AlertCircle, Baby, Building2, CheckCircle, Clock, ExternalLink, FileText, Heart, Phone, Shield, X, type LucideIcon } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { getStructureImageUrl } from '../lib/imageUtils';
-import SearchBar from '../components/SearchBar';
 import MeilleursSection from '../components/MeilleursSection';
 import { SEOHead } from '../components/SEOHead';
 
@@ -394,20 +393,7 @@ export default function CitizensServicesLocalized() {
               <p className="mt-2 text-gray-600">{c.officesIntro}</p>
             </div>
           </section>
-          <section className="py-3 px-4">
-            <div className="max-w-5xl mx-auto">
-              <div className="bg-white rounded-xl border border-[#D4AF37] p-3">
-                <SearchBar
-                  scope="services"
-                  intentEnabled={false}
-                  enabled
-                  resultMode="redirectToResults"
-                  preferredTitle={c.searchTitle}
-                  preferredSubtitle={c.searchSubtitle}
-                />
-              </div>
-            </div>
-          </section>
+          
           <section className="py-6 bg-white">
             <MeilleursSection
               secteurLabel={c.sector}
