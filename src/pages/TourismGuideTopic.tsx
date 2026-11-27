@@ -11,6 +11,7 @@ type Place = {
   tags: string[];
   image?: string;
   photoSource?: string;
+  photoCredit?: string;
   mapQuery?: string;
   bestTime?: string;
   practical?: string;
@@ -49,6 +50,8 @@ const unescoStatus = (place: Place) => unescoWorldHeritage.has(place.name)
   : unescoIntangible.has(place.name) ? 'intangible' : unescoTentative.has(place.name) ? 'tentative' : null;
 
 const getVisitInfo = (place: Place, slug?: string): VisitInfo => {
+  if (place.name === 'Djebel Chambi') return { duration: 'Ne pas prévoir de visite', level: 'Zone formellement déconseillée', car: 'Ne pas se rendre sur place', family: 'Visite déconseillée', guide: 'Consulter les conseils officiels' };
+  if (place.name === 'Table de Jugurtha') return { duration: 'Selon le circuit organisé', level: 'Passages exposés', car: 'À confirmer avec le guide', family: 'Selon le circuit', guide: 'Guide en lien avec les autorités locales' };
   const words = `${place.name} ${place.tags.join(' ')}`.toLocaleLowerCase('fr');
   const isVillage = slug === 'villages-patrimoine';
   const isCraft = slug === 'artisanat-savoir-faire';
@@ -143,6 +146,16 @@ const topics: Record<string, Topic> = {
       { name: 'Guermessa', region: 'Tataouine', text: 'Ancien village de montagne dont les ruines épousent une crête rocheuse.', tags: ['village perché', 'Dahar'], image: commonsImage('Guermassa , village berbere du sud tunisien.jpg'), photoSource: 'https://commons.wikimedia.org/wiki/File:Guermassa_%2C_village_berbere_du_sud_tunisien.jpg', mapQuery: 'Vieux village Guermessa Tataouine Tunisie', bestTime: 'Octobre à avril.', practical: 'Site isolé, escarpé et sans beaucoup d’ombre : eau, chaussures adaptées et guide local sont conseillés.', history: 'Le vieux Guermessa formait un habitat défensif perché du Dahar. Ses constructions, ses grottes et ses espaces de stockage racontent l’organisation des communautés montagnardes du Sud.' },
       { name: 'Ksar Ouled Soltane', region: 'Tataouine', text: 'Grenier collectif remarquable par ses cours et ses ghorfas superposées.', tags: ['ksar', 'ghorfas'], image: commonsImage('Ksar Ouled Soltane.jpg'), photoSource: 'https://commons.wikimedia.org/wiki/File:Ksar_Ouled_Soltane.jpg', mapQuery: 'Ksar Ouled Soltane Tataouine Tunisie', bestTime: 'Octobre à avril.', practical: 'Respectez les artisans et les parties restaurées ; demandez avant de photographier une personne ou son étal.', history: 'Le ksar servait de grenier collectif : chaque famille utilisait des ghorfas fermées pour conserver céréales, huile et biens précieux. Les cellules superposées entourent deux cours intérieures.' },
       { name: 'Ksar Hadada', region: 'Tataouine', text: 'Ensemble de ghorfas en terre, caractéristique des greniers collectifs du Sud tunisien.', tags: ['ksar', 'architecture'], image: commonsImage('Ksar Hadadda.JPG'), photoSource: 'https://commons.wikimedia.org/wiki/File:Ksar_Hadadda.JPG', mapQuery: 'Ksar Hadada Tataouine Tunisie', bestTime: 'Octobre à avril.', practical: 'Certaines parties accueillent des activités touristiques : vérifiez les horaires et respectez les zones non accessibles.', history: 'Ksar Hadada appartenait au réseau de greniers collectifs du Sud-Est. Ses ghorfas voûtées, regroupées autour de cours, protégeaient les réserves des familles et facilitaient leur gestion commune.' },
+      { name: "Chemtou (Chimtou)", region: "Jendouba", text: "Le site de Simitthus associe les vestiges d’une ville numide et romaine aux anciennes carrières de marbre et à un musée archéologique.", tags: ["patrimoine","ruines","musée"], mapQuery: "Chemtou (Chimtou) Jendouba Tunisie", bestTime: "Selon les horaires et l’accès confirmés.", practical: "Vérifiez les horaires du musée et l’état des travaux avant de partir. Restez sur les accès publics autorisés ; dans le Nord-Ouest, évitez les abords de la frontière algérienne selon les conseils de sécurité en vigueur.", history: "Le marbre numidique extrait sur place a été exploité à grande échelle pendant l’époque romaine.", detailsUrl: "https://www.patrimoinedetunisie.com.tn/fr/sites/le-site-archeologique-de-chimtou/", image: commonsImage("Chemtou Marble Quarry.JPG"), photoSource: "https://commons.wikimedia.org/wiki/File:Chemtou_Marble_Quarry.JPG", photoCredit: "Karl-Heinz Gompf · CC BY-SA 3.0" },
+      { name: "Bulla Regia", region: "Jendouba", text: "Les vestiges de cette cité antique sont particulièrement connus pour leurs maisons à étage souterrain et leurs mosaïques.", tags: ["patrimoine","ruines","architecture"], mapQuery: "Bulla Regia Jendouba Tunisie", bestTime: "Selon les horaires et l’accès confirmés.", practical: "Renseignez-vous sur les horaires et les parties accessibles pendant les travaux. Ne descendez pas dans les espaces fermés au public.", history: "Les demeures de Bulla Regia illustrent une forme remarquable d’architecture domestique antique.", detailsUrl: "https://www.patrimoinedetunisie.com.tn/fr/sites/site-archeologique-de-bulla-regia/", image: commonsImage("UNDERGROUND HOUSE - BULLAREGIA.jpg"), photoSource: "https://commons.wikimedia.org/wiki/File:UNDERGROUND_HOUSE_-_BULLAREGIA.jpg", photoCredit: "Meryem ATHIMNI · CC BY-SA 4.0" },
+      { name: "Musée Sidi Ali Ben Aissa", region: "Le Kef", text: "Un musée des arts et traditions populaires consacré au patrimoine culturel de la région du Kef.", tags: ["musée","patrimoine","tradition"], mapQuery: "Musée Sidi Ali Ben Aissa Le Kef Tunisie", bestTime: "Selon les horaires et l’accès confirmés.", practical: "Le musée est répertorié par l’Institut national du patrimoine. Vérifiez son ouverture et les horaires avant la visite.", history: "Les collections de traditions populaires permettent de découvrir les modes de vie et savoir-faire du Haut-Tell.", detailsUrl: "https://www.inp2020.tn/fr/inp_tunisie/musees_fr/_musees_tunisiens/" },
+      { name: "Musée du Sahara à Douz", region: "Kébili", text: "Au cœur de Douz, le musée du Sahara présente des objets et traditions associés à la vie des communautés sahariennes.", tags: ["musée","patrimoine","tradition"], mapQuery: "Musée du Sahara à Douz Kébili Tunisie", bestTime: "Selon les horaires et l’accès confirmés.", practical: "Contactez le musée pour confirmer son ouverture. La visite du musée en ville ne nécessite pas de partir dans les pistes désertiques.", history: "Les objets du quotidien et les costumes illustrent la mémoire des populations sahariennes.", detailsUrl: "https://www.inp2020.tn/en/inp_tunisie/musees/", image: commonsImage("Musée du Sahara Douz.JPG"), photoSource: "https://commons.wikimedia.org/wiki/File:Mus%C3%A9e_du_Sahara_Douz.JPG", photoCredit: "Yamen · CC BY-SA 3.0" },
+      { name: "Musée archéologique de Gafsa", region: "Gafsa", text: "Des collections préhistoriques et antiques racontent l’histoire de Gafsa, notamment la culture capsienne et la période romaine.", tags: ["musée","patrimoine","ruines"], mapQuery: "Musée archéologique de Gafsa Gafsa Tunisie", bestTime: "Selon les horaires et l’accès confirmés.", practical: "Le musée se situe près des piscines dites romaines, dans la ville ancienne. Confirmez les horaires auprès de l’agence du patrimoine.", history: "Les collections comprennent des outils préhistoriques et des mosaïques romaines.", detailsUrl: "https://www.patrimoinedetunisie.com.tn/fr/musees/musee-archeologique-de-gafsa/apercu/" },
+      { name: "Gightis (Gigthi)", region: "Médenine", text: "À Bou Ghrara, les vestiges de Gigthi témoignent de l’histoire antique du littoral du golfe de Gabès.", tags: ["patrimoine","ruines","architecture"], mapQuery: "Gightis (Gigthi) Médenine Tunisie", bestTime: "Selon les horaires et l’accès confirmés.", practical: "Des travaux de réhabilitation de l’accueil ont été annoncés en 2026. Confirmez l’ouverture et les zones visitables auprès de l’agence du patrimoine avant tout déplacement.", history: "Le site conserve des traces puniques et des vestiges de la cité romaine.", detailsUrl: "https://www.patrimoinedetunisie.com.tn/fr/sites/gigthi/" },
+      { name: "Sidi Médiane (Sidi Médien)", region: "Zaghouan", text: "Petit village du massif de Zaghouan, entouré de reliefs et de paysages agricoles, où l’on peut découvrir le patrimoine rural.", tags: ["village","patrimoine","montagne"], mapQuery: "Sidi Médiane (Sidi Médien) Zaghouan Tunisie", bestTime: "Selon les horaires et l’accès confirmés.", practical: "Renseignez-vous sur les accès autorisés et faites-vous accompagner par un guide local. Respectez les habitations, terrains privés et sites religieux.", history: "Les associations de randonnée locales documentent ce village et ses environs.", detailsUrl: "https://arez.tn/randonnees.html" },
+      { name: "Médina et Kasbah du Kef", region: "Le Kef", text: "La vieille ville s’étage au pied d’une forteresse ottomane, au milieu de monuments de différentes époques et traditions.", tags: ["médina","patrimoine","architecture"], mapQuery: "Médina et Kasbah du Kef Le Kef Tunisie", bestTime: "Selon les horaires et l’accès confirmés.", practical: "Privilégiez la visite urbaine de jour ; vérifiez l’ouverture de la kasbah et des monuments. Ne vous aventurez pas vers les zones frontalières déconseillées.", history: "La médina réunit des héritages antiques et religieux, dont le mausolée de Sidi Bou Makhlouf.", detailsUrl: "https://www.discovertunisia.com/decouvrir/le-kef", image: commonsImage("La Kasbah du Kef 01.jpg"), photoSource: "https://commons.wikimedia.org/wiki/File:La_Kasbah_du_Kef_01.jpg", photoCredit: "Majbri wael · CC0 1.0" },
+      { name: "Piscines dites romaines de Gafsa", region: "Gafsa", text: "Les anciens bassins de la ville constituent un témoignage du patrimoine hydraulique et urbain de Gafsa.", tags: ["patrimoine","ruines","architecture"], mapQuery: "Piscines dites romaines de Gafsa Gafsa Tunisie", bestTime: "Selon les horaires et l’accès confirmés.", practical: "Patrimoine à observer, et non lieu de baignade recommandé. Vérifiez l’état du site et respectez les accès autorisés.", history: "Les bassins se trouvent près du musée archéologique dans le quartier historique.", detailsUrl: "https://www.patrimoinedetunisie.com.tn/fr/musees/musee-archeologique-de-gafsa/apercu/" },
+      { name: "Ghomrassen", region: "Tataouine", text: "La ville du Dahar possède un patrimoine local porté notamment par des associations de sauvegarde et des artisans.", tags: ["village","patrimoine","artisanat"], mapQuery: "Ghomrassen Tataouine Tunisie", bestTime: "Selon les horaires et l’accès confirmés.", practical: "Privilégiez les rencontres en ville et les activités confirmées auprès des acteurs locaux. Ne visitez pas les ruines, grottes ou sites rupestres isolés sans confirmation de leur sécurité et autorisation d’accès.", history: "Les initiatives locales témoignent de l’importance de préserver et transmettre les savoir-faire et le patrimoine régional.", detailsUrl: "https://jamaity.org/association/association-de-sauvegarde-du-patrimoine-de-ghomrassen/" },
     ],
   },
   'nature-randonnees': {
@@ -157,7 +170,7 @@ const topics: Record<string, Topic> = {
       { name: 'Parc national de l’Ichkeul', region: 'Bizerte', text: 'Lac, marais et montagne composent une grande zone naturelle importante pour les oiseaux migrateurs.', tags: ['lac', 'oiseaux'], image: commonsImage('201echkkell5.jpg'), photoSource: 'https://commons.wikimedia.org/wiki/File:201echkkell5.jpg', mapQuery: 'Parc national Ichkeul Tunisie', bestTime: 'Automne et hiver pour l’observation des oiseaux.', practical: 'Jumelles utiles ; respectez les sentiers et les zones naturelles protégées.' },
       { name: 'Cap Serrat et Sejnane', region: 'Bizerte', text: 'Une région où se rencontrent littoral sauvage, collines, forêts et savoir-faire ruraux.', tags: ['littoral', 'forêt'], image: commonsImage('Cap Serrat Bizerte.jpg'), photoSource: 'https://commons.wikimedia.org/wiki/Category:Cap_Serrat', mapQuery: 'Cap Serrat Tunisie', bestTime: 'Printemps, début d’été et automne.', practical: 'Certaines routes sont sinueuses ou peu équipées : prévoyez eau, carburant et réseau hors ligne.' },
       { name: 'Parc naturel de Djebba', region: 'Béja', text: 'Un territoire de montagne connu pour ses vergers, ses figuiers et ses paysages ruraux au pied du Djebel Gorra.', tags: ['montagne', 'vergers'], image: commonsImage('Parc naturel de Djebba (Tunisie).jpg'), photoSource: 'https://commons.wikimedia.org/wiki/File:Parc_naturel_de_Djebba_(Tunisie).jpg', mapQuery: 'Parc naturel de Djebba Tunisie', bestTime: 'Printemps et automne.', practical: 'Prenez le temps de découvrir les vergers et les produits locaux avec un habitant ou un accompagnateur de la région.' },
-      { name: 'Table de Jugurtha', region: 'Le Kef', text: 'Un imposant plateau rocheux dominant les plaines autour de Kalaat Senan, entre randonnée, géologie et mémoire historique.', tags: ['montagne', 'histoire'], image: commonsImage('Table de Jughurta.JPG'), photoSource: 'https://commons.wikimedia.org/wiki/File:Table_de_Jughurta.JPG', mapQuery: 'Table de Jugurtha Kalaat Senan Tunisie', bestTime: 'Printemps et automne.', practical: 'L’ascension comporte des escaliers et des passages exposés : partez par temps clair, bien chaussé et de préférence accompagné.' },
+      { name: 'Table de Jugurtha', region: 'Le Kef', text: 'Un imposant plateau rocheux dominant les plaines autour de Kalaat Senan, entre randonnée, géologie et mémoire historique.', tags: ['montagne', 'histoire'], image: commonsImage('Table de Jughurta.JPG'), photoSource: 'https://commons.wikimedia.org/wiki/File:Table_de_Jughurta.JPG', mapQuery: 'Table de Jugurtha Kalaat Senan Tunisie', bestTime: 'Printemps et automne.', practical: 'France Diplomatie recommande une visite organisée par des guides de voyage en lien avec les autorités locales. Confirmez les conditions avant tout départ. L’ascension comporte des passages exposés.', detailsUrl: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/tunisie/conseils-aux-voyageurs-securite' },
       { name: 'Parc national de Djebel Serj', region: 'Siliana', text: 'Un massif calcaire aux crêtes marquées, avec paysages de montagne, forêt et itinéraires exigeants.', tags: ['montagne', 'parc national'], image: commonsImage('Jebel Serj.jpg'), photoSource: 'https://commons.wikimedia.org/wiki/File:Jebel_Serj.jpg', mapQuery: 'Parc national Djebel Serj Tunisie', bestTime: 'Printemps et automne.', practical: 'Choisissez un parcours adapté à votre niveau et renseignez-vous localement sur les accès avant toute randonnée.' },
       { name: 'Oasis de Gabès et Chenini', region: 'Gabès', text: 'Paysages agricoles d’oasis littorale où palmiers, cultures irriguées et artisanat local participent à la vie régionale.', tags: ['oasis', 'palmeraie', 'agriculture'], mapQuery: 'Oasis Chenini Gabès Tunisie', bestTime: 'Printemps et automne.', practical: 'Les parcelles sont des terres agricoles : demandez une autorisation pour toute visite et respectez les cultures et canaux.', history: 'Les oasis de Gabès sont inscrites sur la liste indicative de la Tunisie auprès de l’UNESCO, ce qui n’est pas une inscription au patrimoine mondial.', officialUrl: 'https://whc.unesco.org/fr/etatsparties/tn/' },
       { name: 'Littoral et oiseaux de Kerkennah', region: 'Sfax · Kerkennah', text: 'Îles, hauts fonds et paysages marins du golfe de Gabès, où l’on observe des oiseaux côtiers et les traditions de pêche insulaire.', tags: ['mer', 'île', 'oiseaux', 'nature'], mapQuery: 'Kerkennah Tunisie', bestTime: 'Printemps et automne ; hiver pour l’observation des oiseaux.', practical: 'Consultez les traversées maritimes avant de partir et respectez les zones de pêche et de nidification.', history: 'Le golfe de Gabès est remarquable pour ses hauts fonds et ses marées, qui façonnent la pêche et les habitats littoraux.', officialUrl: 'https://discovertunisia.com/decouvrir' },
@@ -167,7 +180,7 @@ const topics: Record<string, Topic> = {
       { name: 'Korbous et son djebel', region: 'Nabeul', text: 'Falaises, sources thermales et vues sur le golfe de Tunis composent un paysage singulier du Cap Bon.', tags: ['montagne', 'littoral'], image: commonsImage('Jebel Korbous.jpg'), photoSource: 'https://commons.wikimedia.org/wiki/File:Jebel_Korbous.jpg', mapQuery: 'Korbous Nabeul Tunisie', bestTime: 'Printemps et automne.', practical: 'La route côtière est sinueuse et les abords des falaises exigent de la prudence. Respectez les accès et zones sécurisées.' },
       { name: 'Djebel Zaghouan', region: 'Zaghouan', text: 'Massif calcaire dominant la région, apprécié pour les sentiers, les panoramas et les sources.', tags: ['montagne', 'randonnée'], image: commonsImage('Jbal Zaghouan.jpg'), photoSource: 'https://commons.wikimedia.org/wiki/File:Jbal_Zaghouan.jpg', mapQuery: 'Djebel Zaghouan Tunisie', bestTime: 'Automne, hiver doux et printemps.', practical: 'Choisissez un parcours adapté à votre niveau et évitez les heures les plus chaudes.' },
       { name: 'Parc national de Boukornine', region: 'Ben Arous', text: 'Montagne proche du Grand Tunis offrant des itinéraires nature et des vues sur le golfe.', tags: ['parc national', 'Grand Tunis'], image: commonsImage('Bougarnine au lever du soleil.jpg'), photoSource: 'https://commons.wikimedia.org/wiki/File:Bougarnine_au_lever_du_soleil.jpg', mapQuery: 'Parc national Boukornine Tunisie', bestTime: 'Automne à printemps.', practical: 'Vérifiez l’ouverture et les accès autorisés ; partez tôt avec eau et protection solaire.' },
-      { name: 'Djebel Chambi', region: 'Kasserine', text: 'Le plus haut sommet de Tunisie, dans un environnement montagneux à aborder avec préparation et renseignements locaux.', tags: ['sommet', 'montagne'], image: commonsImage('Djebel Chambi.jpg'), photoSource: 'https://commons.wikimedia.org/wiki/File:Djebel_Chambi.jpg', mapQuery: 'Djebel Chambi Tunisie', bestTime: 'Printemps et automne, selon les conditions locales.', practical: 'Consultez impérativement les autorités et guides locaux sur l’accessibilité et la sécurité avant tout déplacement.' },
+      { name: 'Djebel Chambi', region: 'Kasserine', text: 'Le plus haut sommet de Tunisie, présenté ici uniquement comme patrimoine naturel, sans recommandation de visite.', tags: ['sommet', 'montagne'], image: commonsImage('Djebel Chambi.jpg'), photoSource: 'https://commons.wikimedia.org/wiki/File:Djebel_Chambi.jpg', bestTime: 'Visite déconseillée.', practical: 'France Diplomatie déconseille formellement tout déplacement dans ce massif pour des raisons de sécurité. Ne prévoyez pas de randonnée.', detailsUrl: 'https://www.diplomatie.gouv.fr/fr/information-par-pays/tunisie/conseils-aux-voyageurs-securite' },
       { name: 'Chebika', region: 'Tozeur', text: 'Oasis de montagne où l’eau descend entre les roches, avec palmeraie, sentiers et points de vue.', tags: ['oasis', 'cascade'], image: commonsImage('Abandoned Chebika Village and Oasis.jpg'), photoSource: 'https://commons.wikimedia.org/wiki/File:Abandoned_Chebika_Village_and_Oasis.jpg', mapQuery: 'Oasis Chebika Tozeur Tunisie', bestTime: 'Octobre à avril.', practical: 'Bonnes chaussures, eau et chapeau ; les pierres peuvent être glissantes près des sources.' },
       { name: 'Tamerza', region: 'Tozeur', text: 'Paysages de montagne, cascades et gorges aux portes du Sahara.', tags: ['gorge', 'oasis'], image: commonsImage('A waterfall in the Tamaghza (Tamerza) oasis.jpg'), photoSource: 'https://commons.wikimedia.org/wiki/File:A_waterfall_in_the_Tamaghza_(Tamerza)_oasis.jpg', mapQuery: 'Cascade Tamerza Tunisie', bestTime: 'Octobre à avril.', practical: 'La chaleur devient forte en journée ; combinez la visite avec Chebika et Midès avec un accompagnateur local.' },
       { name: 'Canyon et oasis de Midès', region: 'Tozeur', text: 'Un ravin spectaculaire bordé par une ancienne oasis de montagne et sa palmeraie, près de la frontière algérienne.', tags: ['oasis', 'canyon', 'ravin'], image: commonsImage('Tunisia 10-12 - 173 - Atlas Mountains & Mides Canyon (6610491215).jpg'), photoSource: 'https://commons.wikimedia.org/wiki/File:Tunisia_10-12_-_173_-_Atlas_Mountains_%26_Mides_Canyon_(6610491215).jpg', mapQuery: 'Canyon Midès Tunisie', bestTime: 'Octobre à avril.', practical: 'Site proche de la frontière : restez sur les parcours autorisés et renseignez-vous sur les conditions locales.' },
@@ -181,6 +194,11 @@ const topics: Record<string, Topic> = {
       { name: 'Degache et sa palmeraie', region: 'Tozeur', text: 'Une ville-oasis du Jérid bordée de palmiers-dattiers, proche du Chott el-Jérid et de l’ancien site de Thagis.', tags: ['oasis', 'dattes'], image: commonsImage('Degache.JPG'), photoSource: 'https://commons.wikimedia.org/wiki/File:Degache.JPG', mapQuery: 'Degache Tozeur Tunisie', bestTime: 'Octobre à avril.', practical: 'Combinez la palmeraie avec une découverte du bourg ; demandez l’autorisation avant d’entrer dans une parcelle agricole.' },
       { name: 'Parc national de Dghoumès', region: 'Tozeur', text: 'Un paysage saharien protégé où reliefs arides, végétation adaptée et faune réintroduite racontent le désert vivant.', tags: ['désert', 'parc national'], image: commonsImage('Payasage du parc dghoumes.jpg'), photoSource: 'https://commons.wikimedia.org/wiki/File:Payasage_du_parc_dghoumes.jpg', mapQuery: 'Parc national de Dghoumès Tunisie', bestTime: 'Novembre à mars.', practical: 'Renseignez-vous avant le départ sur l’ouverture, l’accès et la nécessité d’un accompagnement ; ne quittez pas les parcours autorisés.' },
       { name: 'Massif du Dahar', region: 'Tataouine / Médenine', text: 'Montagnes, plateaux désertiques, villages berbères et ksour forment des itinéraires très variés.', tags: ['montagne', 'désert'], image: commonsImage('Vue panoramique du village berbère de Chenini, Tataouine, Tunisie.jpg'), photoSource: 'https://commons.wikimedia.org/wiki/File:Vue_panoramique_du_village_berb%C3%A8re_de_Chenini,_Tataouine,_Tunisie.jpg', mapQuery: 'Dahar Tataouine Tunisie', bestTime: 'Octobre à avril.', practical: 'Le territoire est vaste : préparez une boucle précise et privilégiez un guide pour les pistes et villages éloignés.' },
+      { name: "Vallée de l’Oued El Dalia", region: "Zaghouan", text: "Une vallée du massif de Zaghouan connue des randonneurs pour ses reliefs calcaires et ses paysages de montagne.", tags: ["montagne","randonnée","nature"], mapQuery: "Vallée de l’Oued El Dalia Zaghouan Tunisie", bestTime: "À choisir selon la météo et les conditions locales.", practical: "Parcours sportif à préparer avec un accompagnateur local ; évitez les ravins par pluie ou orage et n’entrez pas dans les cavités sans encadrement adapté.", history: "La vallée fait partie des itinéraires documentés par les acteurs de randonnée de Zaghouan.", detailsUrl: "https://arez.tn/randonnees.html", landscapes: ["montagne"] },
+      { name: "Djebel Sidi Zid", region: "Zaghouan", text: "Une montagne à l’est de Zaghouan où les paysages de maquis rencontrent des traces archéologiques, notamment des tombeaux creusés dans la roche.", tags: ["montagne","randonnée","patrimoine"], mapQuery: "Djebel Sidi Zid Zaghouan Tunisie", bestTime: "À choisir selon la météo et les conditions locales.", practical: "Choisissez un accompagnement local, vérifiez l’accès et restez à distance des constructions anciennes fragiles. Ne touchez pas aux vestiges.", history: "L’Association tunisienne des randonneurs décrit une nécropole à haouanets sur ce relief.", detailsUrl: "https://www.randotunisie.tn/randonnee-djebel-sidi-zid/", landscapes: ["montagne"] },
+      { name: "Cascades de l’Oued Zitoun", region: "Bizerte", text: "Dans la région de Bizerte, près de Bazina, une vallée boisée abrite des chutes d’eau dont le débit varie avec les pluies.", tags: ["nature","forêt","randonnée"], mapQuery: "Cascades de l’Oued Zitoun Bizerte Tunisie", bestTime: "À choisir selon la météo et les conditions locales.", practical: "Accès et débit non garantis. Consultez les conditions locales avant le départ ; évitez les berges et rochers glissants après les pluies et en cas de crue.", history: "Les paysages de l’oued associent végétation, reliefs rocheux et cours d’eau saisonnier.", detailsUrl: "https://www.tunest.tn/zones-details/oued-zitoun-waterfalls", landscapes: ["forêt"] },
+      { name: "Barrage Sidi El Barrak", region: "Béja", text: "Près de Nefza, le paysage du barrage et des forêts voisines offre une découverte différente du Nord-Ouest.", tags: ["lac","forêt","randonnée"], mapQuery: "Barrage Sidi El Barrak Béja Tunisie", bestTime: "À choisir selon la météo et les conditions locales.", practical: "Vérifiez les accès autorisés avec les acteurs locaux. Ne pénétrez pas dans les installations du barrage et ne vous baignez pas dans la retenue.", history: "Des parcours associatifs documentent les forêts de chênes-lièges et de pins dans les environs.", detailsUrl: "https://www.randotunisie.tn/circuits-randonnee-barrage-el-barrak/", landscapes: ["lac","forêt"] },
+      { name: "Dunes pétrifiées de Debabcha (Debebcha)", region: "Kébili", text: "Près du Chott el-Jérid, les formations de sable consolidé de Debabcha présentent un paysage géologique original.", tags: ["désert","nature"], mapQuery: "Dunes pétrifiées de Debabcha (Debebcha) Kébili Tunisie", bestTime: "À choisir selon la météo et les conditions locales.", practical: "L’accès n’est pas confirmé en temps réel. Renseignez-vous auprès d’un professionnel local et restez sur les accès autorisés, sans quitter la route sur le chott ni grimper sur les formations fragiles.", history: "Ces formations constituent un élément remarquable du paysage du Nefzaoua.", detailsUrl: "https://www.webdo.tn/fr/actualite/everyday-tunisians/everyday-tunisians-jalel-et-les-dunes-petrifiees-de-debabcha/398825/", landscapes: ["désert"] },
     ],
   },
   'artisanat-savoir-faire': {
@@ -274,6 +292,21 @@ const arabicTopicCopy: Record<string, { title: string; intro: string; note: stri
 };
 
 const arabicNames: Record<string, string> = {
+  "Chemtou (Chimtou)": "شمتو",
+  "Bulla Regia": "بلاريجيا",
+  "Musée Sidi Ali Ben Aissa": "متحف سيدي علي بن عيسى",
+  "Musée du Sahara à Douz": "متحف الصحراء بدوز",
+  "Musée archéologique de Gafsa": "المتحف الأثري بقفصة",
+  "Gightis (Gigthi)": "قيطيس (جِغثي)",
+  "Sidi Médiane (Sidi Médien)": "سيدي مدين",
+  "Médina et Kasbah du Kef": "مدينة الكاف العتيقة والقصبة",
+  "Piscines dites romaines de Gafsa": "المسابح المعروفة بالرومانية بقفصة",
+  "Ghomrassen": "غمراسن",
+  "Vallée de l’Oued El Dalia": "وادي الدالية",
+  "Djebel Sidi Zid": "جبل سيدي زيد",
+  "Cascades de l’Oued Zitoun": "شلالات وادي الزيتون",
+  "Barrage Sidi El Barrak": "سد سيدي البراق",
+  "Dunes pétrifiées de Debabcha (Debebcha)": "الكثبان المتحجرة بدبابشة",
   'Les oasis de montagne': 'واحات الجبال', 'Les villages du Dahar': 'قرى الظاهر', 'La route des ksour': 'طريق القصور الصحراوية', 'Les forêts du Nord-Ouest': 'غابات الشمال الغربي', 'Autour de Matmata': 'حول مطماطة', 'Les oasis du Jérid': 'واحات الجريد',
   'Tunis, marchés et médina': 'تونس: الأسواق والمدينة العتيقة', 'Les saveurs du Cap Bon': 'نكهات الوطن القبلي', 'Kairouan et le Sahel gourmand': 'القيروان والساحل: رحلة في النكهات', 'Sfax et Kerkennah': 'صفاقس وقرقنة', 'Djerba, du souk à la table': 'جربة: من السوق إلى المائدة', 'Les dattes et oasis du Jérid': 'تمور وواحات الجريد', 'La route de l’huile d’olive': 'طريق زيت الزيتون',
   'Takrouna': 'تكرونة', 'Kesra': 'كسرى', 'Chenini': 'شنني', 'Douiret': 'دويرات', 'Matmata': 'مطماطة', 'Testour': 'تستور', 'Zriba Olia': 'زريبة العليا', 'Toujane': 'توجان', 'Tamezret': 'تمزرط', 'Guermessa': 'قرماسة', 'Ksar Ouled Soltane': 'قصر أولاد سلطان', 'Ksar Hadada': 'قصر حدادة',
@@ -301,11 +334,99 @@ const arabicRegion = (region: string) => region
   .replaceAll('Nefta', 'نفطة').replaceAll('Degache', 'دقاش').replaceAll('Cap Bon', 'الوطن القبلي').replaceAll('Zaghouan', 'زغوان')
   .replaceAll('Nord-Ouest', 'الشمال الغربي').replaceAll('Plusieurs régions', 'عدّة جهات').replaceAll('Toute la Tunisie', 'كامل تونس')
   .replaceAll('Siliana', 'سليانة').replaceAll('Le Kef', 'الكاف').replaceAll('Ben Arous', 'بن عروس').replaceAll('Kasserine', 'القصرين')
-  .replaceAll('Kébili', 'قبلي').replaceAll('Médenine', 'مدنين').replaceAll('El Jem', 'الجم').replaceAll('Carthage', 'قرطاج')
+  .replaceAll('Gafsa', 'قفصة').replaceAll('Kébili', 'قبلي').replaceAll('Médenine', 'مدنين').replaceAll('El Jem', 'الجم').replaceAll('Carthage', 'قرطاج')
   .replaceAll('Hammamet', 'الحمامات').replaceAll('Tabarka', 'طبرقة').replaceAll('Testour', 'تستور').replaceAll('Dougga', 'دقة')
   .replaceAll('Kerkennah', 'قرقنة').replaceAll('Sahel', 'الساحل').replaceAll('Jérid', 'الجريد').replaceAll('Sud', 'الجنوب')
   .replaceAll('Aïn Draham', 'عين دراهم').replaceAll('Béni M’Tir', 'بني مطير').replaceAll('Ksar Ghilane', 'قصر غيلان').replaceAll('Zaafrane', 'زعفران')
   .replaceAll('Ghar El Melh', 'غار الملح');
+
+const arabicVerifiedPlaceCopy: Record<string, Pick<Place, 'text' | 'practical' | 'history'>> = {
+  "Chemtou (Chimtou)": {
+    "text": "موقع سيميتوس الأثري يجمع آثار مدينة نوميدية ورومانية ومحاجر الرخام القديمة ومتحفاً أثرياً.",
+    "practical": "تثبّت من أوقات فتح المتحف والأشغال قبل التنقل، والتزم بالمسالك المفتوحة للعموم وتجنّب الاقتراب من الحدود الجزائرية حسب التوصيات الأمنية.",
+    "history": "اشتهرت شمتو برخامها النوميدي الذي استُغل على نطاق واسع في العصر الروماني."
+  },
+  "Bulla Regia": {
+    "text": "تشتهر المدينة الأثرية بمنازلها ذات الطوابق تحت الأرض ولوحات الفسيفساء.",
+    "practical": "تثبّت من أوقات الفتح والأجزاء المسموح بزيارتها أثناء الأشغال ولا تدخل الأماكن المغلقة.",
+    "history": "تمثل مساكن بلاريجيا نموذجاً مميزاً للعمارة السكنية القديمة."
+  },
+  "Musée Sidi Ali Ben Aissa": {
+    "text": "متحف للفنون والتقاليد الشعبية يعرّف بالتراث الثقافي لجهة الكاف.",
+    "practical": "المتحف مدرج لدى المعهد الوطني للتراث؛ تثبّت من فتحه ومواعيد الزيارة مسبقاً.",
+    "history": "تساعد مجموعاته على فهم أنماط العيش والمهارات التقليدية في منطقة التل الأعلى."
+  },
+  "Musée du Sahara à Douz": {
+    "text": "يعرض متحف الصحراء بدوز قطعاً وتقاليد ترتبط بحياة سكان الصحراء.",
+    "practical": "تثبّت من فتح المتحف قبل الزيارة. زيارة المتحف داخل المدينة لا تتطلب التنقل عبر المسالك الصحراوية.",
+    "history": "تروي الأزياء والأدوات اليومية جانباً من ذاكرة سكان الصحراء."
+  },
+  "Musée archéologique de Gafsa": {
+    "text": "تعرّف مجموعات المتحف بعصور ما قبل التاريخ وبالحضارة القبصية والفترة الرومانية.",
+    "practical": "يقع المتحف قرب المسابح المعروفة بالرومانية في المدينة القديمة. تثبّت من مواعيد الفتح لدى الجهة المشرفة.",
+    "history": "تضم المجموعات أدوات من عصور ما قبل التاريخ ولوحات فسيفساء رومانية."
+  },
+  "Gightis (Gigthi)": {
+    "text": "تشهد آثار قيطيس في بوغرارة على التاريخ القديم لساحل خليج قابس.",
+    "practical": "أُعلن عن أعمال تأهيل لمرافق استقبال الموقع في 2026؛ تثبّت من فتحه والأجزاء المتاحة للزيارة لدى الجهة المشرفة قبل التنقل.",
+    "history": "يحتفظ الموقع بشواهد بونية وبآثار المدينة الرومانية."
+  },
+  "Sidi Médiane (Sidi Médien)": {
+    "text": "قرية صغيرة في منطقة جبل زغوان تحيط بها المرتفعات والأراضي الفلاحية وتتميز بتراثها الريفي.",
+    "practical": "تثبّت من المسالك المسموحة واستعن بدليل محلي واحترم مساكن الأهالي والأراضي الخاصة والمعالم الدينية.",
+    "history": "وثّقت جمعيات المشي المحلية القرية ومحيطها."
+  },
+  "Médina et Kasbah du Kef": {
+    "text": "تمتد المدينة القديمة أسفل قصبة عثمانية وتجمع معالم من فترات وتقاليد مختلفة.",
+    "practical": "فضّل الزيارة داخل المدينة نهاراً وتثبّت من فتح القصبة والمعالم وتجنّب المناطق الحدودية التي يُنصح بعدم زيارتها.",
+    "history": "تجمع المدينة شواهد قديمة ودينية من بينها مقام سيدي بومخلوف."
+  },
+  "Piscines dites romaines de Gafsa": {
+    "text": "تشهد الأحواض القديمة على التراث المائي والعمراني لمدينة قفصة.",
+    "practical": "هي معلم للمعاينة وليست مكاناً موصى به للسباحة. تثبّت من حالة الموقع والتزم بالأماكن المسموحة.",
+    "history": "تقع الأحواض قرب المتحف الأثري في الحي التاريخي."
+  },
+  "Ghomrassen": {
+    "text": "تتميز مدينة غمراسن في الظاهر بتراث محلي تسعى جمعيات المحافظة على التراث والحرفيون إلى صونه.",
+    "practical": "فضّل اللقاءات داخل المدينة والأنشطة المؤكدة لدى الفاعلين المحليين. لا تدخل الآثار أو المغارات أو المواقع المعزولة دون التثبّت من السلامة والترخيص.",
+    "history": "تساهم المبادرات المحلية في صون المهارات والتراث الجهوي ونقلهما."
+  },
+  "Vallée de l’Oued El Dalia": {
+    "text": "وادٍ في جبل زغوان يعرفه هواة المشي بتضاريسه الكلسية ومناظره الجبلية.",
+    "practical": "مسار رياضي يتطلب التحضير مع مرافق محلي. تجنّب مجاري الأودية عند المطر أو العواصف ولا تدخل المغارات دون تأطير مناسب.",
+    "history": "الوادي من المسالك التي وثّقها الفاعلون المحليون في مجال المشي."
+  },
+  "Djebel Sidi Zid": {
+    "text": "جبل شرقي زغوان يجمع بين الغطاء النباتي وآثار قديمة منها قبور منحوتة في الصخر.",
+    "practical": "استعن بمرافق محلي وتثبّت من المسالك وابتعد عن المباني القديمة الهشة ولا تلمس الآثار.",
+    "history": "وثّقت الجمعية التونسية لهواة المشي وجود حوانيت جنائزية في هذا الجبل."
+  },
+  "Cascades de l’Oued Zitoun": {
+    "text": "وادٍ مشجّر قرب بازينة في جهة بنزرت، تتغيّر غزارة شلالاته حسب الأمطار.",
+    "practical": "لا ضمان لإمكانية الدخول أو تدفق المياه. تثبّت من الظروف المحلية وابتعد عن الصخور الزلقة وضفاف الوادي بعد المطر وأثناء الفيضانات.",
+    "history": "يجمع المشهد بين الغطاء النباتي والتضاريس الصخرية والمجرى المائي الموسمي."
+  },
+  "Barrage Sidi El Barrak": {
+    "text": "قرب نفزة، يكشف مشهد السد والغابات المحيطة وجهاً مختلفاً للشمال الغربي.",
+    "practical": "تثبّت من المسالك المفتوحة مع الفاعلين المحليين ولا تدخل منشآت السد أو تسبح في مياهه.",
+    "history": "وثّقت الجمعيات مسالك تمر بغابات الفلين والصنوبر في المنطقة."
+  },
+  "Dunes pétrifiées de Debabcha (Debebcha)": {
+    "text": "قرب شط الجريد، تشكل الرمال المتصلبة في دبابشة مشهداً جيولوجياً مميزاً.",
+    "practical": "الدخول غير مؤكد حالياً. استفسر لدى مختص محلي والتزم بالمسالك المسموحة ولا تخرج عن الطريق في الشط ولا تتسلق التكوينات الهشة.",
+    "history": "تعد هذه التكوينات من العناصر الجيولوجية المميزة لمنطقة نفزاوة."
+  },
+  "Djebel Chambi": {
+    "text": "جبل الشعانبي أعلى قمة في تونس؛ يُذكر هنا للتعريف الجغرافي فقط.",
+    "practical": "تنصح وزارة الخارجية الفرنسية بعدم التوجه إلى هذا الجبل بسبب المخاطر الأمنية. لا تنظّم رحلة أو مسار مشي إلى المنطقة.",
+    "history": "يُعرض الموقع لأهميته الطبيعية دون توصية بزيارته."
+  },
+  "Table de Jugurtha": {
+    "text": "هضبة صخرية في منطقة قلعة سنان ذات أهمية تاريخية وطبيعية.",
+    "practical": "توصي وزارة الخارجية الفرنسية بأن تكون الزيارة ضمن جولة منظمة مع دليل يعمل بالتنسيق مع السلطات المحلية. تثبّت من شروط الوصول قبل التنقل.",
+    "history": "تتميز الهضبة بتضاريسها وذاكرتها التاريخية."
+  }
+};
 
 const arabicPlaceCopy = (place: Place, slug: string): Place => {
   const name = arabicNames[place.name] || place.name;
@@ -329,7 +450,8 @@ const arabicPlaceCopy = (place: Place, slug: string): Place => {
         : slug === 'fetes-evenements' ? `تساهم هذه التظاهرة في التعريف بتراث الجهة وفنونها ولقاء سكانها.`
           : slug === 'hebergements-experiences' ? `تستمد هذه التجربة قيمتها من عمارة الجهة وطبيعتها وعلاقة الإقامة بالحياة المحلية.`
             : `يرتبط ${name} بتاريخ الجهة وعمارتها وذاكرة سكانها.`;
-  return { ...place, name, region, text: common, tags: place.tags.map((tag) => arabicTags[tag] || 'محلي'), bestTime: 'تختلف حسب الموسم والطقس؛ الربيع والخريف مناسبان غالباً، والجنوب أفضل من أكتوبر إلى أفريل.', practical, history };
+  const verified = arabicVerifiedPlaceCopy[place.name];
+  return { ...place, name, region, text: verified?.text || common, tags: place.tags.map((tag) => arabicTags[tag] || 'محلي'), bestTime: 'تختلف حسب الموسم والطقس؛ الربيع والخريف مناسبان غالباً، والجنوب أفضل من أكتوبر إلى أفريل.', practical: verified?.practical || practical, history: verified?.history || history };
 };
 
 const arabicVisitInfo = (slug?: string): VisitInfo => slug === 'hebergements-experiences'
@@ -430,7 +552,7 @@ export default function TourismGuideTopic() {
               {selectedPlace.officialUrl && <a href={selectedPlace.officialUrl} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-[#4A1D43]/30 bg-[#fcfaf5] px-4 py-2.5 text-xs font-semibold text-[#4A1D43] hover:border-[#D4AF37]"><ExternalLink className="h-4 w-4" />{ui.eventSite}</a>}
               {selectedPlace.detailsUrl && <a href={selectedPlace.detailsUrl} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-[#4A1D43]/25 bg-white px-4 py-2 text-xs font-semibold text-[#4A1D43] hover:border-[#D4AF37]"><ExternalLink className="h-3.5 w-3.5" />{ui.moreDetails}</a>}
               {!selectedPlace.officialUrl && !selectedPlace.detailsUrl && topic.source && <a href={topic.source} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-[#4A1D43]/25 bg-white px-4 py-2 text-xs font-semibold text-[#4A1D43] hover:border-[#D4AF37]"><ExternalLink className="h-3.5 w-3.5" />{ui.moreDetails}</a>}
-              {selectedPlace.photoSource && <a href={selectedPlace.photoSource} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1 text-[10px] text-gray-400 hover:text-[#4A1D43]"><ExternalLink className="h-3 w-3" />{ui.photo}</a>}
+              {selectedPlace.photoSource && <a href={selectedPlace.photoSource} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1 text-[10px] text-gray-400 hover:text-[#4A1D43]"><ExternalLink className="h-3 w-3" />{ui.photo}{selectedPlace.photoCredit ? ` · ${selectedPlace.photoCredit}` : ''}</a>}
             </div>
           </div>
         </div>
