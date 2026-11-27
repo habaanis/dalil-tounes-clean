@@ -271,6 +271,9 @@ export default function MeilleursSection({
   const [loadingTop, setLoadingTop] = useState(true);
   const [loadingAll, setLoadingAll] = useState(true);
   const [page, setPage] = useState(0);
+  const [directoryQuery, setDirectoryQuery] = useState('');
+  const [directoryRegion, setDirectoryRegion] = useState('');
+  const [directoryService, setDirectoryService] = useState('');
 
   useEffect(() => {
     function parseRating(raw: unknown): number {
@@ -376,9 +379,30 @@ export default function MeilleursSection({
     setPage(0);
   }, [excludedKeywords, allowedCategories, requiredSubcategoryKeywords, publicDirectory, listePage, useGoogleRecommendationCriteria]);
 
-  const totalPages = Math.ceil(allItems.length / PAGE_SIZE);
-  const pagedItems = allItems.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
-  const displayedEstablishmentCount = useGoogleRecommendationCriteria && includeRecommendedInTotal
+  const directoryCopy = ({
+    fr: ['CNSS, mairie, douane…', 'Tous les gouvernorats', 'Tous les services', 'Aucun établissement ne correspond à votre recherche.', 'Réinitialiser'],
+    ar: ['الصندوق الوطني، البلدية، الديوانة…', 'جميع الولايات', 'جميع الخدمات', 'لا توجد نتائج مطابقة للبحث.', 'إعادة ضبط'],
+    en: ['Social security, municipality, customs…', 'All governorates', 'All services', 'No matching offices.', 'Reset'],
+    it: ['Previdenza, comune, dogana…', 'Tutti i governatorati', 'Tutti i servizi', 'Nessun ufficio corrispondente.', 'Azzera'],
+    ru: ['Соцстрахование, муниципалитет, таможня…', 'Все губернаторства', 'Все службы', 'Нет подходящих учреждений.', 'Сбросить'],
+  } as Record<string, string[]>)[lang] || ['CNSS, mairie, douane…', 'Tous les gouvernorats', 'Tous les services', 'Aucun établissement ne correspond à votre recherche.', 'Réinitialiser'];
+  const normalizeDirectory = (value: unknown) => String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+  const serviceLabels = (item: MeilleursItem) => (Array.isArray(item.sous_categories) ? item.sous_categories : [item.sous_categories]).filter((s): s is string => typeof s === 'string' && Boolean(s.trim()));
+  const optionsFor = (values: string[]) => [...new Map(values.filter(Boolean).map(value => [normalizeDirectory(value), value] as const)).values()].sort((a, b) => a.localeCompare(b, 'fr'));
+  const regionOptions = publicDirectory ? optionsFor(allItems.map(item => item.gouvernorat || '')) : [];
+  const serviceOptions = publicDirectory ? optionsFor(allItems.flatMap(serviceLabels)) : [];
+  const queryTokens = normalizeDirectory(directoryQuery).split(' ').filter(Boolean);
+  const directoryResults = publicDirectory ? allItems.filter(item => {
+    const text = normalizeDirectory([item.nom, item.ville, item.gouvernorat, ...serviceLabels(item), (item as any).adresse, item.nom.includes('Municipalité') ? 'mairie baladiya بلدية' : ''].filter(Boolean).join(' '));
+    return (!directoryRegion || normalizeDirectory(item.gouvernorat) === normalizeDirectory(directoryRegion))
+      && (!directoryService || serviceLabels(item).some(label => normalizeDirectory(label) === normalizeDirectory(directoryService)))
+      && queryTokens.every(token => text.includes(token));
+  }) : allItems;
+  const hasDirectoryFilters = Boolean(directoryQuery || directoryRegion || directoryService);
+  const resetDirectory = () => { setDirectoryQuery(''); setDirectoryRegion(''); setDirectoryService(''); setPage(0); };
+  const totalPages = Math.ceil(directoryResults.length / PAGE_SIZE);
+  const pagedItems = directoryResults.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+  const displayedEstablishmentCount = publicDirectory ? directoryResults.length : useGoogleRecommendationCriteria && includeRecommendedInTotal
     ? topItems.length + allItems.length
     : allItems.length;
   const paginationItems: Array<number | string> = [];
@@ -487,10 +511,32 @@ export default function MeilleursSection({
             </div>
           </div>
 
+          {publicDirectory && !loadingAll && (
+            <div className="mb-3 space-y-2 rounded-lg border border-[#E7D9B4] bg-[#FCFAF5] p-2">
+              <div className="flex items-center gap-2 rounded-lg border border-[#E7D9B4] bg-white px-2">
+                <Search className="h-4 w-4 shrink-0 text-[#A17D36]" aria-hidden="true" />
+                <input type="search" value={directoryQuery} onChange={event => { setDirectoryQuery(event.target.value); setPage(0); }} placeholder={directoryCopy[0]} aria-label={directoryCopy[0]} className="min-h-10 min-w-0 flex-1 bg-transparent text-sm text-[#292725] outline-none" />
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <select aria-label={directoryCopy[1]} value={directoryRegion} onChange={event => { setDirectoryRegion(event.target.value); setPage(0); }} className="min-h-10 min-w-0 w-full rounded-lg border border-[#E7D9B4] bg-white px-2 text-xs text-[#292725]">
+                  <option value="">{directoryCopy[1]}</option>
+                  {regionOptions.map(region => <option key={region} value={region}>{region}</option>)}
+                </select>
+                <select aria-label={directoryCopy[2]} value={directoryService} onChange={event => { setDirectoryService(event.target.value); setPage(0); }} className="min-h-10 min-w-0 w-full rounded-lg border border-[#E7D9B4] bg-white px-2 text-xs text-[#292725]">
+                  <option value="">{directoryCopy[2]}</option>
+                  {serviceOptions.map(service => <option key={service} value={service}>{service}</option>)}
+                </select>
+              </div>
+              {hasDirectoryFilters && <button type="button" onClick={resetDirectory} className="text-xs text-[#806329] underline underline-offset-2">{directoryCopy[4]}</button>}
+            </div>
+          )}
+
           {loadingAll ? (
             <div className="flex items-center justify-center py-10">
               <div className="w-7 h-7 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: `${accentColor} transparent ${accentColor} ${accentColor}` }} />
             </div>
+          ) : publicDirectory && directoryResults.length === 0 ? (
+            <p role="status" className="rounded-lg border border-[#E7D9B4] p-3 text-center text-xs text-gray-600">{directoryCopy[3]}</p>
           ) : (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
