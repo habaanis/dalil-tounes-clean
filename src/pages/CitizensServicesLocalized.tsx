@@ -411,7 +411,10 @@ export default function CitizensServicesLocalized() {
           <p className="px-3 pb-2 text-xs leading-5 text-[#756873]">{c.officesIntro}</p>
           <Suspense fallback={<p role="status" className="px-3 py-4 text-sm text-[#726571]">…</p>}>
             <MeilleursSection secteurLabel={c.sector} listePage="services citoyens"
-              accentColor="#292725" sectionTitle={c.recommended}
+              accentColor="#292725"
+              publicDirectory
+              unifiedRecommendedList
+              allReferencedLabel={OFFICE_DIRECTORY_LABELS[lang]}
               allowedCategories={CITIZEN_OFFICE_CATEGORIES}
               requiredSubcategoryKeywords={CITIZEN_OFFICE_SUBCATEGORIES}
               useGoogleRecommendationCriteria={false}
