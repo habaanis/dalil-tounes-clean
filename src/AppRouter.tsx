@@ -106,6 +106,7 @@ const AdminDownloads = lazy(() => import('./pages/AdminDownloads'));
 const AdminEmploi = lazy(() => import('./pages/AdminEmploi'));
 const AdminHub = lazy(() => import('./components/AdminHub'));
 const AdminNavigation = lazy(() => import('./components/AdminHub').then(m => ({ default: m.AdminNavigation })));
+const AdminRouteGuard = lazy(() => import('./components/AdminHub').then(m => ({ default: m.AdminRouteGuard })));
 const AdminBusinessNeeds = lazy(() => import('./pages/AdminBusinessNeeds'));
 const Auth = lazy(() => import('./pages/Auth'));
 const CandidateDashboard = lazy(() => import('./pages/CandidateDashboard'));
@@ -334,20 +335,22 @@ function AppRouter() {
           <Route path="/business-list" element={<BusinessList />} />
           <Route path="/suggest-business" element={<SuggestBusiness />} />
 
-          <Route path="/admin/partner-requests" element={<PartnerRequestsAdmin />} />
-          <Route path="/admin/inscriptions-loisirs" element={<AdminInscriptionsLoisirs />} />
-          <Route path="/admin/sourcing" element={<AdminSourcing />} />
-          <Route path="/admin/avis" element={<AdminAvis />} />
-          <Route path="/admin/super-moderation" element={<SuperModeration />} />
-          <Route path="/admin/premium" element={<AdminPremium />} />
-          <Route path="/admin/opening-models" element={<AdminOpeningModels />} />
-          <Route path="/admin/abonnements" element={<AdminPremium />} />
-          <Route path="/admin/commercial" element={<AdminCommercial />} />
+          <Route element={<AdminRouteGuard />}>
+            <Route path="/admin/partner-requests" element={<PartnerRequestsAdmin />} />
+            <Route path="/admin/inscriptions-loisirs" element={<AdminInscriptionsLoisirs />} />
+            <Route path="/admin/sourcing" element={<AdminSourcing />} />
+            <Route path="/admin/avis" element={<AdminAvis />} />
+            <Route path="/admin/super-moderation" element={<SuperModeration />} />
+            <Route path="/admin/premium" element={<AdminPremium />} />
+            <Route path="/admin/opening-models" element={<AdminOpeningModels />} />
+            <Route path="/admin/abonnements" element={<AdminPremium />} />
+            <Route path="/admin/commercial" element={<AdminCommercial />} />
+            <Route path="/admin/downloads" element={<AdminDownloads />} />
+            <Route path="/admin/business-needs" element={<AdminBusinessNeeds />} />
+            <Route path="/admin" element={<AdminHub />} />
+            <Route path="/admin/emploi" element={<AdminEmploi />} />
+          </Route>
           <Route path="/commercial" element={<AdminCommercial />} />
-          <Route path="/admin/downloads" element={<AdminDownloads />} />
-          <Route path="/admin/business-needs" element={<AdminBusinessNeeds />} />
-          <Route path="/admin" element={<AdminHub />} />
-          <Route path="/admin/emploi" element={<AdminEmploi />} />
 
           <Route path="/card-preview" element={<CardPreview />} />
           <Route path="/searchDebug" element={<SearchDebug />} />
