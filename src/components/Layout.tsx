@@ -130,8 +130,7 @@ export const Layout = ({ children }: LayoutProps) => {
             path: '/admin',
             children: [
               { label: {fr:'Gestion Emploi',ar:'إدارة الوظائف',en:'Job administration',it:'Gestione lavoro',ru:'Управление вакансиями'}[language], path: '/admin/emploi' },
-              { label: te.adminNav?.commercialManagement || 'Gestion Commerciaux', path: '/admin/commercial?tab=wallet' },
-              { label: te.adminNav?.paymentsTracking || 'Suivi des Versements', path: '/admin/commercial?tab=versements' },
+              { label: {fr:'Gestion commerciale et financière',ar:'الإدارة التجارية والمالية',en:'Sales and finance',it:'Gestione commerciale e finanziaria',ru:'Продажи и финансы'}[language], path: '/admin/commercial?tab=wallet' },
             ],
           } as NavItem,
         ]
