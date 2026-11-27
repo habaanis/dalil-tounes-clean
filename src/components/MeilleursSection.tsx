@@ -58,6 +58,7 @@ interface MeilleursProps {
   itemsPerPage?: number;
   /** Show qualified recommendations as one paginated list instead of a top-4 and remainder. */
   unifiedRecommendedList?: boolean;
+  publicDirectory?: boolean;
 }
 
 const PAGE_SIZE = 4;
@@ -268,6 +269,7 @@ export default function MeilleursSection({
   hideSearchCta = false,
   itemsPerPage,
   unifiedRecommendedList = false,
+  publicDirectory = false,
 }: MeilleursProps) {
   const navigate = useNavigate();
   const inPlatformApp = isPlatformAppMode();
@@ -367,7 +369,7 @@ export default function MeilleursSection({
               return !normalizedExcludedKeywords.some((keyword) => searchableText.includes(keyword));
             });
 
-        all.sort(sortBusinesses);
+        all.sort(publicDirectory ? (a, b) => (a.gouvernorat || '').localeCompare(b.gouvernorat || '', 'fr') || a.nom.localeCompare(b.nom, 'fr') : sortBusinesses);
 
         const recommended = useGoogleRecommendationCriteria
           ? all.filter((item) => (
@@ -398,7 +400,7 @@ export default function MeilleursSection({
 
     fetchData();
     setPage(0);
-  }, [excludedKeywords, allowedCategories, requiredSubcategoryKeywords, listePage, useGoogleRecommendationCriteria, inPlatformApp, unifiedRecommendedList]);
+  }, [excludedKeywords, allowedCategories, requiredSubcategoryKeywords, listePage, useGoogleRecommendationCriteria, inPlatformApp, unifiedRecommendedList, publicDirectory]);
 
   const activePageSize = itemsPerPage ?? (inPlatformApp ? APP_PAGE_SIZE : PAGE_SIZE);
   const totalPages = Math.ceil(allItems.length / activePageSize);
@@ -561,7 +563,7 @@ export default function MeilleursSection({
               {/* Pagination */}
               {totalPages > 1 && (
                 <div className="flex flex-wrap items-center justify-center gap-2 mt-6 pt-4 border-t border-gray-100">
-                  {useGoogleRecommendationCriteria && (
+                  {(useGoogleRecommendationCriteria || publicDirectory) && (
                     <button
                       type="button"
                       onClick={() => changePage(Math.max(0, page - 1))}
@@ -571,7 +573,7 @@ export default function MeilleursSection({
                       {tx('pagPrev', 'Précédent')}
                     </button>
                   )}
-                  {(useGoogleRecommendationCriteria ? paginationItems : Array.from({ length: totalPages }, (_, index) => index)).map((item) => typeof item === 'number' ? (
+                  {((useGoogleRecommendationCriteria || publicDirectory) ? paginationItems : Array.from({ length: totalPages }, (_, index) => index)).map((item) => typeof item === 'number' ? (
                     <button
                       key={item}
                       type="button"
@@ -588,7 +590,7 @@ export default function MeilleursSection({
                   ) : (
                     <span key={item} className="px-0.5 text-gray-400" aria-hidden="true">…</span>
                   ))}
-                  {useGoogleRecommendationCriteria && (
+                  {(useGoogleRecommendationCriteria || publicDirectory) && (
                     <button
                       type="button"
                       onClick={() => changePage(Math.min(totalPages - 1, page + 1))}
@@ -649,7 +651,7 @@ export default function MeilleursSection({
         </div>
       </section>}
 
-      <div className="max-w-5xl mx-auto px-4 pb-6">
+      {!publicDirectory && <div className="max-w-5xl mx-auto px-4 pb-6">
         <p className="text-center text-[11px] text-gray-400 leading-relaxed">
           {useGoogleRecommendationCriteria
             ? tx('rankingDisclosure', 'Les recommandations exigent au moins 4/5 et 5 avis Google. Les CV publiés sont prioritaires ; Dalil Tounes n’attribue aucune note.')
@@ -658,7 +660,7 @@ export default function MeilleursSection({
             {useGoogleRecommendationCriteria ? tx('learnMore', 'En savoir plus') : 'En savoir plus'}
           </Link>
         </p>
-      </div>
+      </div>}
     </div>
   );
 }
