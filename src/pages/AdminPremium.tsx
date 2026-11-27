@@ -56,6 +56,7 @@ interface DossierProps {
 }
 
 function RegistrationDossier({ row, businesses, copy: c, onSaved, onBusy, onReload }: DossierProps) {
+  const { language } = useLanguage();
   const [dossier, setDossier] = useState(() => reviewDossier(row));
   const [ownerEmail, setOwnerEmail] = useState(row.owner_email || row.email || '');
   const [businessId, setBusinessId] = useState(row.company_created ? '' : row.entreprise_id || '');
@@ -201,7 +202,7 @@ function RegistrationDossier({ row, businesses, copy: c, onSaved, onBusy, onRelo
         <div className="grid gap-3 sm:grid-cols-2">
           <Field name="companyName" label={c.companyName} value={dossier.companyName} onChange={value => updateDossier('companyName', value)} required />
           <Field name="managerName" label={c.manager} value={dossier.managerName} onChange={value => updateDossier('managerName', value)} />
-          <label className="block text-sm">{c.sector}<select name="sector" required value={dossier.sector} onChange={event => updateDossier('sector', event.target.value)} className={control}><option value="">—</option>{dossier.sector && !BUSINESS_SECTORS.some(item => item.value === dossier.sector) && <option value={dossier.sector}>{dossier.sector}</option>}{BUSINESS_SECTORS.map(item => <option key={item.value} value={item.value}>{item.labelFr}</option>)}</select></label>
+          <label className="block text-sm">{c.sector}<select name="sector" required value={dossier.sector} onChange={event => updateDossier('sector', event.target.value)} className={control}><option value="">—</option>{dossier.sector && !BUSINESS_SECTORS.some(item => item.value === dossier.sector) && <option value={dossier.sector}>{dossier.sector}</option>}{BUSINESS_SECTORS.map(item => <option key={item.value} value={item.value}>{language === 'ar' ? item.labelAr : language === 'en' ? item.labelEn : language === 'it' ? item.labelIt : language === 'ru' ? item.labelRu : item.labelFr}</option>)}</select></label>
           <Field name="governorate" label={c.governorate} value={dossier.governorate} onChange={value => updateDossier('governorate', value)} />
           <Field name="city" label={c.city} value={dossier.city} onChange={value => updateDossier('city', value)} required />
           <Field name="phone" label={c.phone} value={dossier.phone} onChange={value => updateDossier('phone', value)} type="tel" required />
@@ -310,9 +311,50 @@ function RegistrationDossier({ row, businesses, copy: c, onSaved, onBusy, onRelo
   </div>;
 }
 
+type MiniAppClient = { id: string; nom: string | null; ville: string | null; slug: string | null; slug_court: string | null };
+
+function AdminMiniApps() {
+  const [clients, setClients] = useState<MiniAppClient[]>([]);
+  const [search, setSearch] = useState('');
+  const [state, setState] = useState<'loading' | 'ready' | 'error'>('loading');
+  const [revision, setRevision] = useState(0);
+  useEffect(() => {
+    let live = true;
+    setState('loading');
+    void (async () => {
+      try {
+        const { data, error } = await supabase.from('entreprise')
+          .select('id,nom,ville,slug,slug_court').eq('cv_business_status', 'published')
+          .eq('approved', true).order('nom');
+        if (error) throw error;
+        if (live) { setClients((data || []) as MiniAppClient[]); setState('ready'); }
+      } catch { if (live) { setClients([]); setState('error'); } }
+    })();
+    return () => { live = false; };
+  }, [revision]);
+  const normalized = (value: string) => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  const filtered = clients.filter(client => normalized([client.nom, client.ville].filter(Boolean).join(' ')).includes(normalized(search.trim())));
+  return <main className="min-h-screen bg-[#fbf8f0] px-4 py-6 text-[#273b30]">
+    <div className="mx-auto max-w-4xl space-y-4">
+      <h1 className="font-serif text-2xl">Mini-applis clients</h1>
+      <p className="text-sm text-gray-600">Mini-applis publiées et approuvées. Ouvrez-les dans un nouvel onglet pour conserver votre administration.</p>
+      <div className="flex flex-wrap gap-2"><input type="search" aria-label="Rechercher une mini-appli" placeholder="Nom ou ville" value={search} onChange={event => setSearch(event.target.value)} className={control + ' flex-1 min-w-[180px]'} /><button type="button" className={secondary} onClick={() => setSearch('')}>Effacer</button><button type="button" className={secondary} onClick={() => setRevision(n => n + 1)}>Actualiser</button></div>
+      {state === 'loading' && <p role="status">Chargement…</p>}
+      {state === 'error' && <p role="alert" className="text-red-700">Lecture impossible. Actualisez pour réessayer.</p>}
+      {state === 'ready' && <><p className="text-sm" role="status">{filtered.length} mini-appli(s)</p>
+        <div className="space-y-2">{filtered.map(client => <article key={client.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#dfd6c0] bg-white p-3"><div><strong>{client.nom || 'Sans nom'}</strong><p className="text-xs text-gray-600">{client.ville || '—'}</p></div><a href={buildClientAppUrl(client)} target="_blank" rel="noopener noreferrer" className={primary}>Ouvrir la mini-appli</a></article>)}</div>
+        {!filtered.length && <p>Aucune mini-appli correspondante.</p>}</>}
+      <Link to="/admin/abonnements" className="text-sm underline">Professionnels et abonnements</Link>
+    </div>
+  </main>;
+}
+
 export default function AdminPremium() {
   const location = useLocation();
-  const miniAppsView = new URLSearchParams(location.search).get('vue') === 'mini-apps';
+  return new URLSearchParams(location.search).get('vue') === 'mini-apps' ? <AdminMiniApps /> : <AdminRegistrationList />;
+}
+
+function AdminRegistrationList() {
   const { user, loading: authLoading } = useAuth();
   const { language } = useLanguage();
   const c = adminRegistrationCopy[language] || adminRegistrationCopy.fr;
@@ -382,7 +424,7 @@ export default function AdminPremium() {
   const resetLabel = {fr:'Effacer les filtres',en:'Clear filters',ar:'مسح الفلاتر',it:'Azzera filtri',ru:'Сбросить фильтры'}[language];
   return <main className="min-h-screen bg-[#fbf8f0] px-4 py-7 text-[#273b30]" dir={language === 'ar' ? 'rtl' : undefined}>
     <div className="mx-auto max-w-4xl space-y-5">
-      <header><h1 className="font-serif text-3xl">{miniAppsView ? 'Mini-applis clients' : c.title}</h1><p className="mt-2 text-sm text-gray-600">{c.intro}</p></header>
+      <header><h1 className="font-serif text-3xl">{c.title}</h1><p className="mt-2 text-sm text-gray-600">{c.intro}</p></header>
       <form className="flex flex-wrap items-end gap-2" onSubmit={event => { event.preventDefault(); if (!busy) void load(search); }}>
         <label className="min-w-[180px] flex-1 text-sm">{c.search}<input type="search" value={search} disabled={busy} onChange={event => setSearch(event.target.value)} placeholder={c.searchPlaceholder} className={control} /></label>
         <button type="submit" disabled={busy || loading} className={secondary}>{c.search}</button>
@@ -397,7 +439,7 @@ export default function AdminPremium() {
       {loading && <p role="status" className="text-sm">{c.loading}</p>}
       {!loading && !error && <p role="status" className="text-sm">{countsLabel} : {filtered.length} / {rows.length}</p>}
       {!loading && !error && filtered.length === 0 && <p className="rounded-xl border border-[#e3ddcc] bg-white p-6 text-sm">{c.empty}</p>}
-      <div className={miniAppsView ? "hidden" : "space-y-3"}>{filtered.map(row => <article key={row.id} className="overflow-hidden rounded-xl border border-[#dfd6c0] bg-white">
+      <div className="space-y-3">{filtered.map(row => <article key={row.id} className="overflow-hidden rounded-xl border border-[#dfd6c0] bg-white">
         <button type="button" disabled={busy} aria-expanded={selectedId === row.id} aria-label={`${selectedId === row.id ? c.close : c.open} : ${row.name}`} onClick={() => { setSelectedId(selectedId === row.id ? null : row.id); setFeedback(''); }} className="flex w-full flex-wrap items-center justify-between gap-3 p-4 text-start disabled:opacity-60">
           <span><strong className="block">{row.name}</strong><span className="text-xs text-gray-600">{row.city || '—'} · {row.confirmed_plan === 'premium' || (!row.confirmed_plan && row.requested_plan === 'premium') ? c.premium : c.artisan}</span></span>
           <span className="rounded-full bg-[#f0f4ec] px-3 py-1 text-xs font-semibold">{c[row.status]}</span>
@@ -408,7 +450,7 @@ export default function AdminPremium() {
             setRows(previous => previous.map(item => item.id === saved.id ? saved : item)); setFeedback(message);
           }} />}
       </article>)}</div>
-      <details open={miniAppsView || undefined} className="rounded-xl border border-[#dfd6c0] bg-white p-4"><summary className="cursor-pointer text-sm font-semibold">{c.existing} ({businesses.length})</summary>
+      <details className="rounded-xl border border-[#dfd6c0] bg-white p-4"><summary className="cursor-pointer text-sm font-semibold">{c.existing} ({businesses.length})</summary>
         <p className="mt-2 text-xs text-gray-600">{c.preserve}</p>
         <div className="mt-3 divide-y divide-[#eee8db]">{businesses.map(business => {
           const url = business.approved ? buildClientAppUrl(business) : null;
