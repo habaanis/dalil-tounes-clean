@@ -438,3 +438,42 @@ export default function TourismGuideTopic() {
     </div>
   );
 }
+
+const circuitPanelLabels = {
+  fr: ['Mini-circuits hors des sentiers battus', 'Précédent', 'Suivant'],
+  ar: ['مسارات قصيرة خارج الطرق المعتادة', 'السابق', 'التالي'],
+  en: ['Short itineraries off the beaten path', 'Previous', 'Next'],
+  it: ['Piccoli itinerari fuori dai sentieri battuti', 'Indietro', 'Avanti'],
+  ru: ['Короткие маршруты вдали от проторённых дорог', 'Назад', 'Далее'],
+};
+
+export function TourismCircuitPanel({ lang }: { lang: keyof typeof circuitPanelLabels }) {
+  const [page, setPage] = useState(0);
+  const pageSize = 4;
+  const pages = Math.ceil(circuits.length / pageSize);
+  const [title, previous, next] = circuitPanelLabels[lang];
+  return (
+    <section className="mx-auto max-w-5xl px-4 pt-4">
+      <details className="rounded-xl border border-[#D4AF37]/50 bg-white p-4">
+        <summary className="cursor-pointer font-semibold">{title} ({circuits.length})</summary>
+        <ul className="mt-3 space-y-2">
+          {circuits.slice(page * pageSize, (page + 1) * pageSize).map(circuit => (
+            <li key={circuit.name}>
+              <details className="rounded-lg border border-[#D4AF37]/30 p-3">
+                <summary className="cursor-pointer text-sm font-medium">{lang === 'ar' ? arabicNames[circuit.name] || circuit.name : circuit.name}</summary>
+                <p className="mt-2 text-sm">{circuit.stages.map(stage => lang === 'ar' ? arabicNames[stage] || stage : stage).join(' · ')}</p>
+                <p className="mt-1 text-sm">{circuit.duration} · {circuit.distance}</p>
+                <p className="mt-1 text-sm">{circuit.advice}</p>
+              </details>
+            </li>
+          ))}
+        </ul>
+        <nav aria-label={title} className="mt-3 flex items-center justify-center gap-3 text-sm">
+          <button type="button" disabled={page === 0} onClick={() => setPage(page - 1)} className="p-2 disabled:opacity-40">{previous}</button>
+          <span aria-live="polite">{page + 1} / {pages}</span>
+          <button type="button" disabled={page + 1 >= pages} onClick={() => setPage(page + 1)} className="p-2 disabled:opacity-40">{next}</button>
+        </nav>
+      </details>
+    </section>
+  );
+}
