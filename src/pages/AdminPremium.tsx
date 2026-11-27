@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
+import { buildClientAppUrl } from '../lib/clientAppUrl';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { supabase } from '../lib/supabaseClient';
@@ -72,7 +73,8 @@ function RegistrationDossier({ row, businesses, copy: c, onSaved, onBusy, onRelo
   const persistedDossier = row.reviewed_dossier || row.creation_dossier;
   const needsAssets = !row.assets_ready;
   const expectedAmount = registrationTotal(plan, persistedDossier);
-  const publicUrl = safeMiniappUrl(row.public_url);
+  const linkedBusiness = businesses.find(b => b.id === row.entreprise_id && b.approved);
+  const publicUrl = safeMiniappUrl(row.public_url) || (linkedBusiness ? buildClientAppUrl(linkedBusiness) : null);
   const accountUrl = safeMiniappUrl(row.account_url);
   const baseArgs = { p_request_id: row.id, p_expected_version: row.version };
 
@@ -361,6 +363,11 @@ export default function AdminPremium() {
   }, [authorized, userId, c.loadError]);
 
   useEffect(() => { if (authorized) void load(); }, [authorized, load]);
+  useEffect(() => {
+    if (!authorized || busy || search.trim() === appliedSearch.current) return;
+    const timer = window.setTimeout(() => { void load(search); }, 350);
+    return () => window.clearTimeout(timer);
+  }, [authorized, busy, search, load]);
 
   if (authLoading || checking) return <main className="min-h-screen bg-[#fbf8f0] p-6" role="status">{c.checking}</main>;
   if (!authorized) return <main className="mx-auto max-w-lg px-5 py-16">
@@ -368,20 +375,24 @@ export default function AdminPremium() {
   </main>;
 
   const filtered = rows.filter(row => filter === 'all' || row.status === filter);
+  const countsLabel = {fr:'Dossiers affichés',en:'Requests shown',ar:'الطلبات المعروضة',it:'Richieste visualizzate',ru:'Показано заявок'}[language];
+  const resetLabel = {fr:'Effacer les filtres',en:'Clear filters',ar:'مسح الفلاتر',it:'Azzera filtri',ru:'Сбросить фильтры'}[language];
   return <main className="min-h-screen bg-[#fbf8f0] px-4 py-7 text-[#273b30]" dir={language === 'ar' ? 'rtl' : undefined}>
     <div className="mx-auto max-w-4xl space-y-5">
       <header><h1 className="font-serif text-3xl">{c.title}</h1><p className="mt-2 text-sm text-gray-600">{c.intro}</p></header>
       <form className="flex flex-wrap items-end gap-2" onSubmit={event => { event.preventDefault(); if (!busy) void load(search); }}>
         <label className="min-w-[180px] flex-1 text-sm">{c.search}<input type="search" value={search} disabled={busy} onChange={event => setSearch(event.target.value)} placeholder={c.searchPlaceholder} className={control} /></label>
         <button type="submit" disabled={busy || loading} className={secondary}>{c.search}</button>
+        <button type="button" disabled={busy} onClick={() => { setSearch(''); setFilter('all'); setSelectedId(null); void load(''); }} className={secondary} aria-label={resetLabel}>× {resetLabel}</button>
         <button type="button" disabled={busy || loading} onClick={() => void load()} className={secondary}>{c.refresh}</button>
-        <select aria-label={c.all} value={filter} disabled={busy} onChange={event => setFilter(event.target.value as RegistrationStatus | 'all')} className="rounded-lg border border-[#d9d6c8] bg-white px-3 py-2 text-sm">
-          <option value="all">{c.all}</option>{(['received', 'draft', 'paid', 'published', 'active'] as const).map(status => <option key={status} value={status}>{c[status]}</option>)}
+        <select aria-label={c.all} value={filter} disabled={busy} onChange={event => { setFilter(event.target.value as RegistrationStatus | 'all'); setSelectedId(null); }} className="rounded-lg border border-[#d9d6c8] bg-white px-3 py-2 text-sm">
+          <option value="all">{c.all} ({rows.length})</option>{(['received', 'draft', 'paid', 'published', 'active'] as const).map(status => <option key={status} value={status}>{c[status]} ({rows.filter(row => row.status === status).length})</option>)}
         </select>
       </form>
       {error && <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-800">{error}</p>}
       {feedback && <p role="status" className="rounded-lg bg-emerald-50 p-3 text-sm text-[#07543F]">{feedback}</p>}
       {loading && <p role="status" className="text-sm">{c.loading}</p>}
+      {!loading && !error && <p role="status" className="text-sm">{countsLabel} : {filtered.length} / {rows.length}</p>}
       {!loading && !error && filtered.length === 0 && <p className="rounded-xl border border-[#e3ddcc] bg-white p-6 text-sm">{c.empty}</p>}
       <div className="space-y-3">{filtered.map(row => <article key={row.id} className="overflow-hidden rounded-xl border border-[#dfd6c0] bg-white">
         <button type="button" disabled={busy} aria-expanded={selectedId === row.id} aria-label={`${selectedId === row.id ? c.close : c.open} : ${row.name}`} onClick={() => { setSelectedId(selectedId === row.id ? null : row.id); setFeedback(''); }} className="flex w-full flex-wrap items-center justify-between gap-3 p-4 text-start disabled:opacity-60">
@@ -397,7 +408,7 @@ export default function AdminPremium() {
       <details className="rounded-xl border border-[#dfd6c0] bg-white p-4"><summary className="cursor-pointer text-sm font-semibold">{c.existing} ({businesses.length})</summary>
         <p className="mt-2 text-xs text-gray-600">{c.preserve}</p>
         <div className="mt-3 divide-y divide-[#eee8db]">{businesses.map(business => {
-          const url = business.approved && business.slug ? safeMiniappUrl(`https://app.dalil-tounes.com/${encodeURIComponent(business.slug)}`) : null;
+          const url = business.approved ? buildClientAppUrl(business) : null;
           return <div key={business.id} className="flex flex-wrap items-center justify-between gap-2 py-2 text-sm">
             <span>{business.name} <span className="text-xs text-gray-500">· {business.city || '—'}{business.plan ? ` · ${business.plan}` : ''}</span></span>
             {url ? <a href={url} target="_blank" rel="noopener noreferrer" className="text-xs text-[#07543F] underline">{c.publicLink}</a> : <span className="text-xs text-gray-500">{c.draft}</span>}
