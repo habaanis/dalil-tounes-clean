@@ -328,7 +328,7 @@ const Footer: React.FC = () => {
             <p className="text-gray-600 text-xs">
               © 2025 Dalil Tounes. {rights}
             </p>
-            <Link to="/admin/emploi" className="inline-flex items-center gap-2 rounded-md border border-[#D4AF37]/50 px-3 py-2 text-xs font-medium text-gray-300 hover:text-[#D4AF37] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#D4AF37]">{{fr:'Espace administrateur',ar:'فضاء الإدارة',en:'Administrator area',it:'Area amministratore',ru:'Раздел администратора'}[language]}</Link>
+            <Link to="/login" className="inline-flex items-center gap-2 rounded-md border border-[#D4AF37]/50 px-3 py-2 text-xs font-medium text-gray-300 hover:text-[#D4AF37] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#D4AF37]">{{fr:'Connexion',ar:'تسجيل الدخول',en:'Sign in',it:'Accedi',ru:'Войти'}[language]}</Link>
             <button
               type="button"
               onClick={openRequestForm}

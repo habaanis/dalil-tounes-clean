@@ -3,6 +3,8 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Building2, Compass, Facebook, Home, Instagram, Menu, MessageCircle, Search, Share2, Copy, Users, X } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
+import { useVerifiedAdmin } from '../lib/useVerifiedAdmin';
 import LanguageSelector from './LanguageSelector';
 import PlatformAppSectionHub, { getPlatformHub } from './PlatformAppSectionHub';
 
@@ -36,6 +38,8 @@ export default function PlatformAppShell({ children }: { children: ReactNode }) 
   const { language } = useLanguage();
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as AppLang;
   const copy = APP_COPY[lang];
+  const {user,loading} = useAuth();
+  const isAdmin = useVerifiedAdmin();
   const rtl = lang === 'ar';
   // Visual experiment limited to the actual PWA homepage, not other app pages.
   const homeColorTest = location.pathname === '/';
@@ -58,6 +62,8 @@ export default function PlatformAppShell({ children }: { children: ReactNode }) 
   ];
 
   const extra = [
+    ...(!loading&&!user ? [{label:{fr:'Connexion',ar:'تسجيل الدخول',en:'Sign in',it:'Accedi',ru:'Войти'}[lang],to:'/login'}] : []),
+    ...(isAdmin ? [{label:{fr:'Espace administrateur',ar:'فضاء الإدارة',en:'Administrator area',it:'Area amministratore',ru:'Раздел администратора'}[lang],to:'/admin/emploi'}] : []),
     { label: copy.jobs, to: '/emplois' },
     { label: copy.events, to: '/citizens/leisure' },
     { label: copy.partners, to: '/devenir-partenaire' },
