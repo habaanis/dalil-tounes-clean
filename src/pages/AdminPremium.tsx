@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { BUSINESS_SECTORS } from '../lib/businessRegistrationValidation';
 import { buildClientAppUrl } from '../lib/clientAppUrl';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
@@ -200,7 +201,7 @@ function RegistrationDossier({ row, businesses, copy: c, onSaved, onBusy, onRelo
         <div className="grid gap-3 sm:grid-cols-2">
           <Field name="companyName" label={c.companyName} value={dossier.companyName} onChange={value => updateDossier('companyName', value)} required />
           <Field name="managerName" label={c.manager} value={dossier.managerName} onChange={value => updateDossier('managerName', value)} />
-          <Field name="sector" label={c.sector} value={dossier.sector} onChange={value => updateDossier('sector', value)} required />
+          <label className="block text-sm">{c.sector}<select name="sector" required value={dossier.sector} onChange={event => updateDossier('sector', event.target.value)} className={control}><option value="">—</option>{dossier.sector && !BUSINESS_SECTORS.some(item => item.value === dossier.sector) && <option value={dossier.sector}>{dossier.sector}</option>}{BUSINESS_SECTORS.map(item => <option key={item.value} value={item.value}>{item.labelFr}</option>)}</select></label>
           <Field name="governorate" label={c.governorate} value={dossier.governorate} onChange={value => updateDossier('governorate', value)} />
           <Field name="city" label={c.city} value={dossier.city} onChange={value => updateDossier('city', value)} required />
           <Field name="phone" label={c.phone} value={dossier.phone} onChange={value => updateDossier('phone', value)} type="tel" required />
@@ -310,6 +311,8 @@ function RegistrationDossier({ row, businesses, copy: c, onSaved, onBusy, onRelo
 }
 
 export default function AdminPremium() {
+  const location = useLocation();
+  const miniAppsView = new URLSearchParams(location.search).get('vue') === 'mini-apps';
   const { user, loading: authLoading } = useAuth();
   const { language } = useLanguage();
   const c = adminRegistrationCopy[language] || adminRegistrationCopy.fr;
@@ -379,7 +382,7 @@ export default function AdminPremium() {
   const resetLabel = {fr:'Effacer les filtres',en:'Clear filters',ar:'مسح الفلاتر',it:'Azzera filtri',ru:'Сбросить фильтры'}[language];
   return <main className="min-h-screen bg-[#fbf8f0] px-4 py-7 text-[#273b30]" dir={language === 'ar' ? 'rtl' : undefined}>
     <div className="mx-auto max-w-4xl space-y-5">
-      <header><h1 className="font-serif text-3xl">{c.title}</h1><p className="mt-2 text-sm text-gray-600">{c.intro}</p></header>
+      <header><h1 className="font-serif text-3xl">{miniAppsView ? 'Mini-applis clients' : c.title}</h1><p className="mt-2 text-sm text-gray-600">{c.intro}</p></header>
       <form className="flex flex-wrap items-end gap-2" onSubmit={event => { event.preventDefault(); if (!busy) void load(search); }}>
         <label className="min-w-[180px] flex-1 text-sm">{c.search}<input type="search" value={search} disabled={busy} onChange={event => setSearch(event.target.value)} placeholder={c.searchPlaceholder} className={control} /></label>
         <button type="submit" disabled={busy || loading} className={secondary}>{c.search}</button>
@@ -394,7 +397,7 @@ export default function AdminPremium() {
       {loading && <p role="status" className="text-sm">{c.loading}</p>}
       {!loading && !error && <p role="status" className="text-sm">{countsLabel} : {filtered.length} / {rows.length}</p>}
       {!loading && !error && filtered.length === 0 && <p className="rounded-xl border border-[#e3ddcc] bg-white p-6 text-sm">{c.empty}</p>}
-      <div className="space-y-3">{filtered.map(row => <article key={row.id} className="overflow-hidden rounded-xl border border-[#dfd6c0] bg-white">
+      <div className={miniAppsView ? "hidden" : "space-y-3"}>{filtered.map(row => <article key={row.id} className="overflow-hidden rounded-xl border border-[#dfd6c0] bg-white">
         <button type="button" disabled={busy} aria-expanded={selectedId === row.id} aria-label={`${selectedId === row.id ? c.close : c.open} : ${row.name}`} onClick={() => { setSelectedId(selectedId === row.id ? null : row.id); setFeedback(''); }} className="flex w-full flex-wrap items-center justify-between gap-3 p-4 text-start disabled:opacity-60">
           <span><strong className="block">{row.name}</strong><span className="text-xs text-gray-600">{row.city || '—'} · {row.confirmed_plan === 'premium' || (!row.confirmed_plan && row.requested_plan === 'premium') ? c.premium : c.artisan}</span></span>
           <span className="rounded-full bg-[#f0f4ec] px-3 py-1 text-xs font-semibold">{c[row.status]}</span>
@@ -405,7 +408,7 @@ export default function AdminPremium() {
             setRows(previous => previous.map(item => item.id === saved.id ? saved : item)); setFeedback(message);
           }} />}
       </article>)}</div>
-      <details className="rounded-xl border border-[#dfd6c0] bg-white p-4"><summary className="cursor-pointer text-sm font-semibold">{c.existing} ({businesses.length})</summary>
+      <details open={miniAppsView || undefined} className="rounded-xl border border-[#dfd6c0] bg-white p-4"><summary className="cursor-pointer text-sm font-semibold">{c.existing} ({businesses.length})</summary>
         <p className="mt-2 text-xs text-gray-600">{c.preserve}</p>
         <div className="mt-3 divide-y divide-[#eee8db]">{businesses.map(business => {
           const url = business.approved ? buildClientAppUrl(business) : null;
