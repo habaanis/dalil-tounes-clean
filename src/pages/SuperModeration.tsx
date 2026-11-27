@@ -57,12 +57,14 @@ export default function SuperModeration() {
 
   const approve = async (id: string) => {
     setActionId(id);
-    const { error: err } = await supabase
+    const { data, error: err } = await supabase
       .from('avis_entreprise')
       .update({ status: 'approved' })
-      .eq('id', id);
-    if (err) {
-      alert('Erreur update :\n' + JSON.stringify(err, null, 2));
+      .eq('id', id)
+      .select('id,status')
+      .maybeSingle();
+    if (err || !data || data.status !== 'approved') {
+      alert(err?.message || 'Modification non confirmée. Actualisez les avis.');
     } else {
       setAvis(prev => prev.map(a => a.id === id ? { ...a, status: 'approved' } : a));
     }
@@ -71,12 +73,14 @@ export default function SuperModeration() {
 
   const reject = async (id: string) => {
     setActionId(id);
-    const { error: err } = await supabase
+    const { data, error: err } = await supabase
       .from('avis_entreprise')
       .update({ status: 'rejected' })
-      .eq('id', id);
-    if (err) {
-      alert('Erreur update :\n' + JSON.stringify(err, null, 2));
+      .eq('id', id)
+      .select('id,status')
+      .maybeSingle();
+    if (err || !data || data.status !== 'rejected') {
+      alert(err?.message || 'Modification non confirmée. Actualisez les avis.');
     } else {
       setAvis(prev => prev.map(a => a.id === id ? { ...a, status: 'rejected' } : a));
     }
@@ -86,12 +90,14 @@ export default function SuperModeration() {
   const remove = async (id: string) => {
     if (!window.confirm('Supprimer définitivement cet avis ?')) return;
     setActionId(id);
-    const { error: err } = await supabase
+    const { data, error: err } = await supabase
       .from('avis_entreprise')
       .delete()
-      .eq('id', id);
-    if (err) {
-      alert('Erreur delete :\n' + JSON.stringify(err, null, 2));
+      .eq('id', id)
+      .select('id')
+      .maybeSingle();
+    if (err || !data) {
+      alert(err?.message || 'Suppression non confirmée. Actualisez les avis.');
     } else {
       setAvis(prev => prev.filter(a => a.id !== id));
     }
