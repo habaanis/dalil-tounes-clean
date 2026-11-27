@@ -6,8 +6,7 @@ import { supabase } from '../lib/supabaseClient';
 
 const adminLinks = [
   ['Gestion Emploi', '/admin/emploi', 'Offres, suivi et alertes emploi'],
-  ['Gestion des commerciaux', '/admin/commercial?tab=wallet', 'Commerciaux et commissions'],
-  ['Paiements et versements', '/admin/commercial?tab=versements', 'Suivi des versements'],
+  ['Gestion commerciale et financière', '/admin/commercial?tab=wallet', 'Commerciaux, commissions et versements'],
   ['Professionnels et abonnements', '/admin/abonnements', 'Gestion des offres professionnelles'],
   ['Modération', '/admin/super-moderation', 'Contrôle des contenus'],
   ['Avis', '/admin/avis', 'Gestion des avis'],
