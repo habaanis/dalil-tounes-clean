@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { BUSINESS_SECTORS } from '../lib/businessRegistrationValidation';
 import { buildClientAppUrl } from '../lib/clientAppUrl';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
@@ -55,6 +56,7 @@ interface DossierProps {
 }
 
 function RegistrationDossier({ row, businesses, copy: c, onSaved, onBusy, onReload }: DossierProps) {
+  const { language } = useLanguage();
   const [dossier, setDossier] = useState(() => reviewDossier(row));
   const [ownerEmail, setOwnerEmail] = useState(row.owner_email || row.email || '');
   const [businessId, setBusinessId] = useState(row.company_created ? '' : row.entreprise_id || '');
@@ -200,7 +202,7 @@ function RegistrationDossier({ row, businesses, copy: c, onSaved, onBusy, onRelo
         <div className="grid gap-3 sm:grid-cols-2">
           <Field name="companyName" label={c.companyName} value={dossier.companyName} onChange={value => updateDossier('companyName', value)} required />
           <Field name="managerName" label={c.manager} value={dossier.managerName} onChange={value => updateDossier('managerName', value)} />
-          <Field name="sector" label={c.sector} value={dossier.sector} onChange={value => updateDossier('sector', value)} required />
+          <label className="block text-sm">{c.sector}<select name="sector" required value={dossier.sector} onChange={event => updateDossier('sector', event.target.value)} className={control}><option value="">—</option>{dossier.sector && !BUSINESS_SECTORS.some(item => item.value === dossier.sector) && <option value={dossier.sector}>{dossier.sector}</option>}{BUSINESS_SECTORS.map(item => <option key={item.value} value={item.value}>{language === 'ar' ? item.labelAr : language === 'en' ? item.labelEn : language === 'it' ? item.labelIt : language === 'ru' ? item.labelRu : item.labelFr}</option>)}</select></label>
           <Field name="governorate" label={c.governorate} value={dossier.governorate} onChange={value => updateDossier('governorate', value)} />
           <Field name="city" label={c.city} value={dossier.city} onChange={value => updateDossier('city', value)} required />
           <Field name="phone" label={c.phone} value={dossier.phone} onChange={value => updateDossier('phone', value)} type="tel" required />
@@ -309,7 +311,50 @@ function RegistrationDossier({ row, businesses, copy: c, onSaved, onBusy, onRelo
   </div>;
 }
 
+type MiniAppClient = { id: string; nom: string | null; ville: string | null; slug: string | null; slug_court: string | null };
+
+function AdminMiniApps() {
+  const [clients, setClients] = useState<MiniAppClient[]>([]);
+  const [search, setSearch] = useState('');
+  const [state, setState] = useState<'loading' | 'ready' | 'error'>('loading');
+  const [revision, setRevision] = useState(0);
+  useEffect(() => {
+    let live = true;
+    setState('loading');
+    void (async () => {
+      try {
+        const { data, error } = await supabase.from('entreprise')
+          .select('id,nom,ville,slug,slug_court').eq('cv_business_status', 'published')
+          .eq('approved', true).order('nom');
+        if (error) throw error;
+        if (live) { setClients((data || []) as MiniAppClient[]); setState('ready'); }
+      } catch { if (live) { setClients([]); setState('error'); } }
+    })();
+    return () => { live = false; };
+  }, [revision]);
+  const normalized = (value: string) => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  const filtered = clients.filter(client => normalized([client.nom, client.ville].filter(Boolean).join(' ')).includes(normalized(search.trim())));
+  return <main className="min-h-screen bg-[#fbf8f0] px-4 py-6 text-[#273b30]">
+    <div className="mx-auto max-w-4xl space-y-4">
+      <h1 className="font-serif text-2xl">Mini-applis clients</h1>
+      <p className="text-sm text-gray-600">Mini-applis publiées et approuvées. Ouvrez-les dans un nouvel onglet pour conserver votre administration.</p>
+      <div className="flex flex-wrap gap-2"><input type="search" aria-label="Rechercher une mini-appli" placeholder="Nom ou ville" value={search} onChange={event => setSearch(event.target.value)} className={control + ' flex-1 min-w-[180px]'} /><button type="button" className={secondary} onClick={() => setSearch('')}>Effacer</button><button type="button" className={secondary} onClick={() => setRevision(n => n + 1)}>Actualiser</button></div>
+      {state === 'loading' && <p role="status">Chargement…</p>}
+      {state === 'error' && <p role="alert" className="text-red-700">Lecture impossible. Actualisez pour réessayer.</p>}
+      {state === 'ready' && <><p className="text-sm" role="status">{filtered.length} mini-appli(s)</p>
+        <div className="space-y-2">{filtered.map(client => <article key={client.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#dfd6c0] bg-white p-3"><div><strong>{client.nom || 'Sans nom'}</strong><p className="text-xs text-gray-600">{client.ville || '—'}</p></div><a href={buildClientAppUrl(client)} target="_blank" rel="noopener noreferrer" className={primary}>Ouvrir la mini-appli</a></article>)}</div>
+        {!filtered.length && <p>Aucune mini-appli correspondante.</p>}</>}
+      <Link to="/admin/abonnements" className="text-sm underline">Professionnels et abonnements</Link>
+    </div>
+  </main>;
+}
+
 export default function AdminPremium() {
+  const location = useLocation();
+  return new URLSearchParams(location.search).get('vue') === 'mini-apps' ? <AdminMiniApps /> : <AdminRegistrationList />;
+}
+
+function AdminRegistrationList() {
   const { user, loading: authLoading } = useAuth();
   const { language } = useLanguage();
   const c = adminRegistrationCopy[language] || adminRegistrationCopy.fr;

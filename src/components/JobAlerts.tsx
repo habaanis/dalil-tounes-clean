@@ -31,7 +31,7 @@ function keyBytes(v:string){
 export default function JobAlerts({initialKeyword='',initialRegion='',adminPanel=false}:{initialKeyword?:string;initialRegion?:string;adminPanel?:boolean}){
  const {language}=useLanguage(), t=texts[language];
  const [config,setConfig]=useState<Config|null>(null),[alert,setAlert]=useState<Alert|null>(null);
- const [open,setOpen]=useState(false),[keyword,setKeyword]=useState(''),[region,setRegion]=useState(''),[contract,setContract]=useState(''),[frequency,setFrequency]=useState('daily');
+ const [open,setOpen]=useState(adminPanel),[keyword,setKeyword]=useState(''),[region,setRegion]=useState(''),[contract,setContract]=useState(''),[frequency,setFrequency]=useState('daily');
  const [busy,setBusy]=useState(false),[message,setMessage]=useState('');
  const [hasToken,setHasToken]=useState(false);
  useEffect(()=>{let alive=true;const load=async()=>{try{
