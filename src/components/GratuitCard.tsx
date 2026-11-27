@@ -12,6 +12,7 @@ interface GratuitCardProps {
   category?: string | null;
   ville?: string | null;
   gouvernorat?: string | null;
+  adresse?: string | null;
   horaires_ok?: string | null;
   telephone?: string | null;
   language: string;
@@ -68,6 +69,7 @@ export default function GratuitCard({
   category,
   ville,
   gouvernorat,
+  adresse,
   horaires_ok,
   telephone,
   language,
@@ -119,6 +121,7 @@ export default function GratuitCard({
         </p>
         {category && <p style={{ fontSize: '12px', color: '#475569', margin: 0 }}>{category}</p>}
         {locationLabel && <p style={{ fontSize: '12px', color: '#475569', margin: 0 }}>{locationLabel}</p>}
+        {adresse?.trim() && adresse.trim() !== locationLabel && <p style={{ fontSize: '12px', color: '#475569', lineHeight: '1.4', margin: 0, overflowWrap: 'anywhere' }}>{adresse.trim()}</p>}
         {renderStatutCarteBadge(isCertifiedBusiness({ cv_business_status }) ? CERTIFIED_LABEL : null, language, showGoogleRating)}
         {showGoogleRating && (
           <GoogleRatingSummary
