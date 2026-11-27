@@ -56,3 +56,6 @@ Chaque exécution doit consigner dans le journal durable : date/heure, sources c
 ## 27 novembre — accès administrateur permanent
 - Bouton « Espace administrateur » en pied de page sur site et application (5 langues). Ouvre /admin/emploi, qui conserve le contrôle de la table admins. Si accès refusé, bouton de connexion existante avec retour à /admin/emploi; si autorisé, accès à /jobs pour gérer et tester les alertes. Aucun nouveau mécanisme d'authentification.
 - PR #474/#475 fusionnées, production READY; serveur alertes v2, cron 5 minutes, service public désactivé en attente de recette push réelle. Test de suppression non confirmé, abonnement technique suspendu. N'envoyer que des offres réellement reconfirmées.
+
+## 27 novembre — correction menu réel et confidentialité
+- Les PR #476/#477 sont fusionnées et READY; le pied de page n'est pas rendu dans PlatformAppShell. Le lien public administrateur est remplacé par une connexion neutre. Le raccourci de gestion Emploi est présent dans le menu réel de l'application et dans la navigation du site uniquement après contrôle de la session et de la table admins. Deux comptes administrateurs actuellement. Aucun changement aux droits de base. Les alertes publiques restent désactivées tant que réception réelle non vérifiée.
