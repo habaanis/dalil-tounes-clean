@@ -29,13 +29,6 @@ const BANK_DETAILS = {
 };
 const D17_PHONE = '+216 27 642 252';
 
-// Emails autorisés en tant qu'admin principal.
-// Si l'utilisateur connecté a l'un de ces emails, il est reconnu comme admin,
-// même sans ligne dans la table `admins` (auto-insertion en base au 1er accès).
-const ADMIN_EMAILS = [
-  'contact@dalil-tounes.com',
-  'zenanis75@hotmail.com',
-];
 
 const TIER_AMOUNTS: Record<string, number> = {
   artisan: 120,
@@ -94,6 +87,11 @@ interface VersementAdmin extends Versement {
 }
 
 export default function AdminCommercial() {
+  const { user } = useAuth();
+  return <AdminCommercialSession key={user?.id ?? 'anonymous'} />;
+}
+
+function AdminCommercialSession() {
   const { user, loading: authLoading } = useAuth();
   const location = useLocation();
   const initialTab: Tab = (() => {
@@ -126,15 +124,7 @@ export default function AdminCommercial() {
   const [allVersements, setAllVersements] = useState<VersementAdmin[]>([]);
   const [loading, setLoading] = useState(true);
   const [authzChecking, setAuthzChecking] = useState(true);
-  const [authzDebug, setAuthzDebug] = useState<{
-    userId?: string;
-    email?: string;
-    adminRowFound?: boolean;
-    adminRowError?: string;
-    commercialRowFound?: boolean;
-    commercialRowError?: string;
-    whitelisted?: boolean;
-  } | null>(null);
+  const [accessError, setAccessError] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{ ok: boolean; msg: string } | null>(null);
 
   // onglet Encaisser
@@ -164,66 +154,45 @@ export default function AdminCommercial() {
     setLoading(true);
     setAuthzChecking(true);
 
-    const emailLc = (user.email || '').toLowerCase();
-    const isWhitelistedAdmin = ADMIN_EMAILS.includes(emailLc);
+    setAccessError(null);
+    setIsAdmin(false);
+    setProfil(null);
+    setEncaissements([]);
+    setVersements([]);
+    setAllCommerciaux([]);
+    setAllVersements([]);
+    try {
+      const { data: { user: current }, error: sessionError } = await supabase.auth.getUser();
+      if (sessionError || current?.id !== user.id) throw new Error('Session non vérifiée');
+      const [adminResult, commercialResult] = await Promise.all([
+        supabase.rpc('dalil_registration_is_admin'),
+        supabase.from('commerciaux').select('nom, zone, actif').eq('id', user.id).maybeSingle(),
+      ]);
+      if (adminResult.error || commercialResult.error) throw new Error('Droits non vérifiés');
+      const admin = adminResult.data === true;
+      const comm = commercialResult.data?.actif === true ? commercialResult.data : null;
+      if (!admin && !comm) return;
+      setIsAdmin(admin);
+      setProfil(comm);
 
-    if (isWhitelistedAdmin) {
-      const { error: upsertErr } = await supabase
-        .from('admins')
-        .upsert({ id: user.id, email: emailLc }, { onConflict: 'id' });
-      if (upsertErr) {
-        console.error('[admins.upsert] auto-provisioning échoué', upsertErr);
-      }
-    }
-
-    const { data: adminRow, error: adminErr } = await supabase
-      .from('admins')
-      .select('id')
-      .eq('id', user.id)
-      .maybeSingle();
-    if (adminErr) {
-      console.error('[admins.select] erreur Supabase', { error: adminErr, userId: user.id });
-    }
-    const admin = !!adminRow || isWhitelistedAdmin;
-    setIsAdmin(admin);
-
-    const { data: comm, error: commErr } = await supabase
-      .from('commerciaux')
-      .select('nom, zone')
-      .eq('id', user.id)
-      .maybeSingle();
-    if (commErr) {
-      console.error('[commerciaux.select] erreur Supabase', { error: commErr, userId: user.id });
-    }
-    setProfil(comm ?? null);
-
-    setAuthzDebug({
-      userId: user.id,
-      email: emailLc,
-      adminRowFound: !!adminRow,
-      adminRowError: adminErr?.message,
-      commercialRowFound: !!comm,
-      commercialRowError: commErr?.message,
-      whitelisted: isWhitelistedAdmin,
-    });
-    setAuthzChecking(false);
-
-    const { data: enc } = await supabase
+    const { data: enc, error: encError } = await supabase
       .from('encaissements_cash')
       .select('id, commercial_id, entreprise_id, tier, montant, recu_numero, verse, created_at')
       .eq('commercial_id', user.id)
       .order('created_at', { ascending: false });
+    if (encError) throw encError;
     setEncaissements((enc || []) as Encaissement[]);
 
-    const { data: vers } = await supabase
+    const { data: vers, error: versError } = await supabase
       .from('versements_commerciaux')
       .select('id, montant, methode, preuve_url, statut, created_at')
       .eq('commercial_id', user.id)
       .order('created_at', { ascending: false });
+    if (versError) throw versError;
     setVersements((vers || []) as Versement[]);
 
     if (admin) {
-      const [{ data: allComm }, { data: allEnc }, { data: allVers }] = await Promise.all([
+      const [{ data: allComm, error: commError }, { data: allEnc, error: cashError }, { data: allVers, error: paymentsError }] = await Promise.all([
         supabase.from('commerciaux').select('id, nom, zone, actif').order('nom'),
         supabase
           .from('encaissements_cash')
@@ -234,6 +203,7 @@ export default function AdminCommercial() {
           .order('created_at', { ascending: false }),
       ]);
 
+      if (commError || cashError || paymentsError) throw new Error('Lecture financière impossible');
       const byCommId: Record<string, { portefeuille: number; total: number }> = {};
       (allEnc || []).forEach((e: any) => {
         const b = (byCommId[e.commercial_id] ||= { portefeuille: 0, total: 0 });
@@ -269,16 +239,27 @@ export default function AdminCommercial() {
       );
     }
 
-    setLoading(false);
+    } catch {
+      setIsAdmin(false);
+      setProfil(null);
+      setAccessError('Impossible de vérifier vos droits ou de charger les données. Réessayez.');
+    } finally {
+      setAuthzChecking(false);
+      setLoading(false);
+    }
   };
 
   const confirmerVersement = async (vId: string) => {
-    const { error } = await supabase
+    if (!isAdmin || !window.confirm('Confirmer ce versement après vérification de la preuve ?')) return;
+    const { data, error } = await supabase
       .from('versements_commerciaux')
       .update({ statut: 'confirme' })
-      .eq('id', vId);
-    if (error) {
-      setFeedback({ ok: false, msg: error.message });
+      .eq('id', vId)
+      .eq('statut', 'en_attente')
+      .select('id,statut')
+      .maybeSingle();
+    if (error || !data || data.statut !== 'confirme') {
+      setFeedback({ ok: false, msg: 'Versement non confirmé. Actualisez et vérifiez son état.' });
     } else {
       setFeedback({ ok: true, msg: 'Versement confirmé.' });
       await loadAll();
@@ -472,6 +453,7 @@ export default function AdminCommercial() {
   };
 
   const addCommercial = async () => {
+    if (!isAdmin) return;
     if (!newComm.nom.trim() || !newComm.zone.trim()) {
       setFeedback({ ok: false, msg: 'Nom et zone sont obligatoires.' });
       return;
@@ -526,35 +508,18 @@ export default function AdminCommercial() {
     );
   }
 
-  const hasAuthzError = !!(authzDebug?.adminRowError || authzDebug?.commercialRowError);
-  const noAuthzMatch = !profil && !isAdmin;
+  if (accessError || (!profil && !isAdmin)) return (
+    <main className="mx-auto max-w-lg px-5 py-12 text-center">
+      <h1 className="text-xl font-semibold">Accès commercial réservé</h1>
+      <p className="mt-3 text-sm" role="alert">{accessError || 'Aucun accès commercial autorisé pour ce compte.'}</p>
+      {accessError && <button type="button" onClick={() => void loadAll()} className="mt-4 underline">Réessayer</button>}
+      <Link to="/" className="mt-4 block underline">Retour à l’accueil</Link>
+    </main>
+  );
 
   return (
     <div className="py-8 px-4 bg-gray-50 min-h-screen">
       <div className="max-w-5xl mx-auto">
-        {(hasAuthzError || noAuthzMatch) && (
-          <div className="mb-6 bg-amber-50 border border-amber-300 rounded-xl p-5">
-            <h2 className="font-bold text-amber-900 mb-2">Diagnostic accès</h2>
-            <div className="bg-white border border-amber-200 rounded-lg p-3 text-xs font-mono space-y-1 text-gray-800">
-              <div><span className="text-gray-500">user.id :</span> {authzDebug?.userId || '—'}</div>
-              <div><span className="text-gray-500">email :</span> {authzDebug?.email || '—'}</div>
-              <div><span className="text-gray-500">whitelisté (ADMIN_EMAILS) :</span> {String(authzDebug?.whitelisted)}</div>
-              <div><span className="text-gray-500">ligne dans admins :</span> {String(authzDebug?.adminRowFound)}</div>
-              {authzDebug?.adminRowError && (
-                <div className="text-red-600 break-all">erreur admins : {authzDebug.adminRowError}</div>
-              )}
-              <div><span className="text-gray-500">ligne dans commerciaux :</span> {String(authzDebug?.commercialRowFound)}</div>
-              {authzDebug?.commercialRowError && (
-                <div className="text-red-600 break-all">erreur commerciaux : {authzDebug.commercialRowError}</div>
-              )}
-            </div>
-            {noAuthzMatch && !hasAuthzError && (
-              <p className="text-xs text-amber-800 mt-3">
-                Aucune fiche commercial/admin trouvée. L'accès reste ouvert pour diagnostic. La sécurité fine sera gérée plus tard.
-              </p>
-            )}
-          </div>
-        )}
         <header className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900">
             {profil
