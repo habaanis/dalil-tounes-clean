@@ -526,6 +526,7 @@ export default function CitizensServicesLocalized() {
                 listePage="services citoyens"
                 accentColor="#292725"
                 unifiedRecommendedList
+                publicDirectory
                 allReferencedLabel={OFFICE_DIRECTORY_LABELS[lang]}
                 useGoogleRecommendationCriteria={false}
                 allowedCategories={CITIZEN_OFFICE_CATEGORIES}
