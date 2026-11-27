@@ -53,6 +53,7 @@ interface BusinessCardProps {
   variant?: 'simple' | 'premium';
   showGoogleRating?: boolean;
   compact?: boolean;
+  publicDirectory?: boolean;
 }
 
 /**
@@ -63,7 +64,7 @@ interface BusinessCardProps {
  * Les fiches gratuites sont utilisables directement sans navigation ; les CV payants restent ouvrables.
  * Aucun champ Airtable/Supabase ni droit d'abonnement n'est modifié ici.
  */
-export const BusinessCard = ({ business, onClick, showGoogleRating = true, compact = true }: BusinessCardProps) => {
+export const BusinessCard = ({ business, onClick, showGoogleRating = true, compact = true, publicDirectory = false }: BusinessCardProps) => {
   const { language } = useLanguage();
   const { getCategory } = useCategoryTranslation();
 
@@ -99,6 +100,7 @@ export const BusinessCard = ({ business, onClick, showGoogleRating = true, compa
     return (
       <div className="h-full rounded-2xl">
         <GratuitCard
+          publicDirectory={publicDirectory}
           cv_business_status={business.cv_business_status}
           name={displayName}
           logoUrl={business.logoUrl}
@@ -106,7 +108,7 @@ export const BusinessCard = ({ business, onClick, showGoogleRating = true, compa
           category={translatedCategory}
           ville={business.ville}
           gouvernorat={business.gouvernorat || undefined}
-          adresse={/etat\s*\/\s*service public|municipalit|baladiya|recette des finances|jibaya|cnss|cnam|cnrps|cnrpps|tribunal|justice|douane|steg|sonede|office public|administration|direction regionale|gouvernorat|delegation|poste \(la poste\)|commissariat/i.test(normalizedCategory.normalize('NFD').replace(/[\u0300-\u036f]/g, '')) ? business.adresse : undefined}
+          adresse={publicDirectory ? business.adresse : /etat\s*\/\s*service public|municipalit|baladiya|recette des finances|jibaya|cnss|cnam|cnrps|cnrpps|tribunal|justice|douane|steg|sonede|office public|administration|direction regionale|gouvernorat|delegation|poste \(la poste\)|commissariat/i.test(normalizedCategory.normalize('NFD').replace(/[\u0300-\u036f]/g, '')) ? business.adresse : undefined}
           horaires_ok={business.horaires_ok}
           telephone={business.telephone || business.phone}
           language={language}
