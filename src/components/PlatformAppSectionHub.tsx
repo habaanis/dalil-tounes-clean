@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { TourismCircuitPanel } from '../pages/TourismGuideTopic';
 import { Link } from 'react-router-dom';
 import { ChevronDown } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
@@ -23,6 +25,7 @@ const VISIT_LINKS: Entry[] = [
   { id: 'food', icon: '🍽️', href: '/citizens/tourism/guide/marches-gastronomie' },
   { id: 'events', icon: '🎉', href: '/citizens/tourism/guide/fetes-evenements' },
   { id: 'stays', icon: '🏡', href: '/citizens/tourism/guide/hebergements-experiences' },
+  { id: 'thermal', icon: '♨️', href: '/citizens/tourism/thermalisme' },
 ];
 
 const SETTLE_LINKS: Entry[] = [
@@ -53,7 +56,7 @@ const COPY: Record<Lang, {
     titles: { citizens: 'De quoi avez-vous besoin ?', tourism: 'Découvrir la Tunisie', pros: 'Votre entreprise sur Dalil Tounes' },
     intros: { citizens: 'Accédez aux services de santé, à l’éducation, aux démarches administratives et aux commerces. Sélectionnez la rubrique correspondant à votre besoin.', tourism: 'Explorez les régions, le patrimoine et les expériences locales, ou préparez votre installation : séjour, logement, santé, scolarité et travail.', pros: 'Présentez votre activité, proposez vos produits dans une boutique et fidélisez vos clients. Inscription gratuite et modèles de mini-applis à découvrir.' },
     visit: 'Visiter & découvrir', settle: "S’installer & vivre en Tunisie", moreTopics: 'Autres rubriques', all: 'Afficher la page complète', hint: 'Les informations détaillées restent disponibles.',
-    topics: { housing: 'Logement & installation', residence: 'Séjour & résidence',  health: 'Santé', education: 'Éducation', services: 'Services citoyens', shops: 'Commerces & magasins', leisure: 'Loisirs & événements', jobs: 'Emploi',
+    topics: { thermal: 'Thermalisme, sources naturelles et bien-être', circuits: 'Mini-circuits hors des sentiers battus', housing: 'Logement & installation', residence: 'Séjour & résidence',  health: 'Santé', education: 'Éducation', services: 'Services citoyens', shops: 'Commerces & magasins', leisure: 'Loisirs & événements', jobs: 'Emploi',
       heritage: 'Villages & patrimoine', nature: 'Nature & randonnées', craft: 'Artisanat & savoir-faire', food: 'Saveurs & marchés', events: 'Culture & événements',
       stays: 'Séjours & expériences', settle: 'Guide expatriation & installation', free: 'Inscription gratuite', cv: 'Votre mini-appli professionnelle', models: 'Voir les modèles', offers: 'Tarifs et inscription', partners: 'Devenir partenaire', businessPartners: 'Réseau professionnel', businessNeeds: 'Besoins professionnels' },
   },
@@ -61,7 +64,7 @@ const COPY: Record<Lang, {
     titles: { citizens: 'شنوة تحتاج اليوم؟', tourism: 'اكتشف تونس', pros: 'مؤسستك في دليل تونس' },
     intros: { citizens: 'تعرّف على خدمات الصحة والتعليم والإجراءات الإدارية والمحلات. اختر القسم المناسب لحاجتك.', tourism: 'اكتشف الجهات والتراث والتجارب المحلية، أو حضّر إقامتك: السكن والصحة والدراسة والعمل.', pros: 'سجّل مؤسستك مجاناً، وأنشئ تطبيقك المصغّر المهني، واكتشف النماذج والعروض المتوفرة.' },
     visit: 'زيارة واكتشاف', settle: 'الإقامة والعيش في تونس', moreTopics: 'أقسام أخرى', all: 'عرض الصفحة الكاملة', hint: 'التفاصيل الكاملة تبقى متوفرة.',
-    topics: { housing: 'السكن والاستقرار', residence: 'الإقامة والتصاريح',  health: 'الصحة', education: 'التعليم', services: 'خدمات المواطن', shops: 'المحلات والمتاجر', leisure: 'الترفيه والفعاليات', jobs: 'الشغل',
+    topics: { thermal: 'الحمامات المعدنية والعيون الطبيعية والرفاه', circuits: 'مسارات قصيرة خارج الطرق المعتادة', housing: 'السكن والاستقرار', residence: 'الإقامة والتصاريح',  health: 'الصحة', education: 'التعليم', services: 'خدمات المواطن', shops: 'المحلات والمتاجر', leisure: 'الترفيه والفعاليات', jobs: 'الشغل',
       heritage: 'القرى والتراث', nature: 'الطبيعة والمشي', craft: 'الحرف والمعارف', food: 'النكهات والأسواق', events: 'الثقافة والفعاليات',
       stays: 'الإقامات والتجارب', settle: 'دليل الإقامة والاستقرار', free: 'تسجيل مجاني', cv: 'تطبيقك المصغّر المهني', models: 'شوف النماذج', offers: 'الأسعار والتسجيل', partners: 'كن شريك', businessPartners: 'شبكة المهنيين', businessNeeds: 'احتياجات المؤسسات' },
   },
@@ -69,7 +72,7 @@ const COPY: Record<Lang, {
     titles: { citizens: 'What do you need?', tourism: 'Explore Tunisia', pros: 'Your business on Dalil Tounes' },
     intros: { citizens: 'Find health, education, administrative services and local shops. Choose the section you need.', tourism: 'Explore regions, heritage and local experiences, or prepare your move: housing, health, school and work.', pros: 'List your business for free, present it with a Business or Portfolio CV, and explore available designs and offers.' },
     visit: 'Explore & visit', settle: 'Move to & live in Tunisia', moreTopics: 'More topics', all: 'View the full page', hint: 'Full details remain available.',
-    topics: { housing: 'Housing & settling in', residence: 'Stay & residence',  health: 'Health', education: 'Education', services: 'Citizen services', shops: 'Shops & stores', leisure: 'Leisure & events', jobs: 'Jobs',
+    topics: { thermal: 'Thermal baths, natural springs & wellness', circuits: 'Short itineraries off the beaten path', housing: 'Housing & settling in', residence: 'Stay & residence',  health: 'Health', education: 'Education', services: 'Citizen services', shops: 'Shops & stores', leisure: 'Leisure & events', jobs: 'Jobs',
       heritage: 'Villages & heritage', nature: 'Nature & hiking', craft: 'Crafts & skills', food: 'Food & markets', events: 'Culture & events',
       stays: 'Stays & experiences', settle: 'Moving & expat guide', free: 'Free business listing', cv: 'Your business mini-app', models: 'Explore models', offers: 'Pricing and registration', partners: 'Become a partner', businessPartners: 'Business network', businessNeeds: 'Business needs' },
   },
@@ -77,7 +80,7 @@ const COPY: Record<Lang, {
     titles: { citizens: 'Di cosa hai bisogno?', tourism: 'Scopri la Tunisia', pros: 'La tua impresa su Dalil Tounes' },
     intros: { citizens: 'Trova sanità, istruzione, servizi amministrativi e negozi. Seleziona la sezione che ti serve.', tourism: 'Esplora regioni, patrimonio ed esperienze locali, oppure prepara il trasferimento: alloggio, salute, scuola e lavoro.', pros: 'Registra gratuitamente la tua attività, crea la tua mini-app professionale e scopri modelli e offerte.' },
     visit: 'Visitare & scoprire', settle: 'Vivere in Tunisia', moreTopics: 'Altre sezioni', all: 'Apri la pagina completa', hint: 'I dettagli sono sempre disponibili.',
-    topics: { housing: 'Casa e sistemazione', residence: 'Soggiorno e residenza',  health: 'Salute', education: 'Istruzione', services: 'Servizi ai cittadini', shops: 'Negozi', leisure: 'Tempo libero & eventi', jobs: 'Lavoro',
+    topics: { thermal: 'Terme, sorgenti naturali e benessere', circuits: 'Piccoli itinerari fuori dai sentieri battuti', housing: 'Casa e sistemazione', residence: 'Soggiorno e residenza',  health: 'Salute', education: 'Istruzione', services: 'Servizi ai cittadini', shops: 'Negozi', leisure: 'Tempo libero & eventi', jobs: 'Lavoro',
       heritage: 'Borghi & patrimonio', nature: 'Natura & escursioni', craft: 'Artigianato', food: 'Sapori & mercati', events: 'Cultura & eventi',
       stays: 'Soggiorni & esperienze', settle: 'Guida al trasferimento', free: 'Iscrizione gratuita', cv: 'La tua mini-app professionale', models: 'Scopri i modelli', offers: 'Tariffe e iscrizione', partners: 'Diventa partner', businessPartners: 'Rete professionale', businessNeeds: 'Esigenze professionali' },
   },
@@ -85,7 +88,7 @@ const COPY: Record<Lang, {
     titles: { citizens: 'Что вам нужно?', tourism: 'Откройте Тунис', pros: 'Ваш бизнес на Dalil Tounes' },
     intros: { citizens: 'Найдите медицинские, образовательные, административные услуги и магазины. Выберите нужный раздел.', tourism: 'Исследуйте регионы, наследие и местные впечатления или подготовьте переезд: жильё, здоровье, учёба и работа.', pros: 'Зарегистрируйте компанию бесплатно, представьте её через Business или Portfolio CV и изучите модели и предложения.' },
     visit: 'Путешествия', settle: 'Переезд и жизнь в Тунисе', moreTopics: 'Другие разделы', all: 'Вся страница', hint: 'Полная информация остаётся доступной.',
-    topics: { housing: 'Жильё и переезд', residence: 'Проживание и ВНЖ',  health: 'Здоровье', education: 'Образование', services: 'Услуги гражданам', shops: 'Магазины', leisure: 'Отдых и события', jobs: 'Работа',
+    topics: { thermal: 'Термальные источники и отдых', circuits: 'Короткие маршруты вдали от проторённых дорог', housing: 'Жильё и переезд', residence: 'Проживание и ВНЖ',  health: 'Здоровье', education: 'Образование', services: 'Услуги гражданам', shops: 'Магазины', leisure: 'Отдых и события', jobs: 'Работа',
       heritage: 'Деревни и наследие', nature: 'Природа и походы', craft: 'Ремёсла', food: 'Еда и рынки', events: 'Культура и события',
       stays: 'Проживание и экскурсии', settle: 'Переезд и жизнь', free: 'Бесплатная регистрация', cv: 'Мини-приложение для бизнеса', models: 'Модели', offers: 'Цены и регистрация', partners: 'Стать партнёром', businessPartners: 'Партнёрская сеть', businessNeeds: 'Запросы компаний' },
   },
@@ -112,6 +115,7 @@ export default function PlatformAppSectionHub({ kind }: { kind: Hub }) {
   const { language } = useLanguage();
   const lang = (['fr', 'ar', 'en', 'it', 'ru'].includes(language) ? language : 'fr') as Lang;
   const copy = COPY[lang];
+  const [circuitsOpen, setCircuitsOpen] = useState(false);
   // Descriptions très courtes : toutes les cartes naviguent directement, sans panneau intermédiaire.
   const proSummaries: Record<Lang, Record<string, string>> = {
     fr: {
@@ -223,7 +227,19 @@ export default function PlatformAppSectionHub({ kind }: { kind: Hub }) {
         <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 px-1 font-medium text-[#45243A] [&::-webkit-details-marker]:hidden">
           <span>{copy.visit}</span><ChevronDown aria-hidden="true" className="h-5 w-5 shrink-0 text-[#A17D36] transition-transform group-open:rotate-180" />
         </summary>
-        <div className="pt-2"><HubLinks items={VISIT_LINKS} topics={copy.topics} /></div>
+        <div className="pt-2 grid grid-cols-2 gap-2">
+          {VISIT_LINKS.map(item => <Link key={item.id} to={item.href}
+            className="flex min-h-[74px] flex-col items-start justify-between rounded-xl border border-[#E5D7BE] bg-white p-3 text-start shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B99143]">
+            <span aria-hidden="true" className="text-xl leading-none">{item.icon}</span>
+            <span className="mt-2 text-sm font-medium leading-5 text-[#45243A]">{copy.topics[item.id]}</span>
+          </Link>)}
+          <button type="button" aria-expanded={circuitsOpen} aria-controls={circuitsOpen ? 'tourism-circuits' : undefined} onClick={() => setCircuitsOpen(open => !open)}
+            className="flex min-h-[74px] flex-col items-start justify-between rounded-xl border border-[#E5D7BE] bg-white p-3 text-start shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#B99143]">
+            <span aria-hidden="true" className="text-xl leading-none">🧭</span>
+            <span className="mt-2 text-sm font-medium leading-5 text-[#45243A]">{copy.topics.circuits}</span>
+          </button>
+        </div>
+        {circuitsOpen && <TourismCircuitPanel lang={lang} embedded />}
       </details>
       <details className="group rounded-2xl border border-[#D4AF37]/45 bg-white p-3">
         <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 px-1 font-medium text-[#45243A] [&::-webkit-details-marker]:hidden">
